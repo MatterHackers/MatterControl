@@ -374,6 +374,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (printer?.ViewState.ViewMode != PartViewMode.Model)
 			{
+				view3DWidget.ShowBedViewOptions(popupMenu);
 				this.ShowGCodeOverflowMenu(popupMenu);
 			}
 			else

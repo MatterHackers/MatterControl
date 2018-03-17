@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -116,31 +118,118 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private static ImageBuffer radioIconUnchecked;
 
-		public MenuItem CreateBoolMenuItem(string name, Func<bool> getter, Action<bool> setter, bool useRadioStyle = false)
+		public class CheckboxMenuItem : MenuItem, IIgnoredPopupChild, ICheckbox
 		{
-			if (useRadioStyle
-				&& radioIconChecked == null)
+			private bool _checked;
+
+			public CheckboxMenuItem(GuiWidget widget, ThemeConfig theme)
+				: base(widget, theme)
 			{
-				radioIconChecked = new ImageBuffer(16, 16).SetPreMultiply();
-				radioIconUnchecked = new ImageBuffer(16, 16).SetPreMultiply();
-
-				var rect = new RectangleDouble(0, 0, 16, 16);
-
-				RadioImage.DrawCircle(
-					radioIconChecked.NewGraphics2D(),
-					rect.Center,
-					Color.Black,
-					isChecked: true,
-					isActive: false);
-
-				RadioImage.DrawCircle(
-					radioIconUnchecked.NewGraphics2D(),
-					rect.Center,
-					Color.Black,
-					isChecked: false,
-					isActive: false);
 			}
 
+			public override void OnLoad(EventArgs args)
+			{
+				this.Image = _checked ? faChecked : null;
+				base.OnLoad(args);
+			}
+
+			public bool Checked
+			{
+				get => _checked;
+				set
+				{
+					if (_checked != value)
+					{
+						_checked = value;
+						this.Image = _checked ? faChecked : null;
+
+						this.CheckedStateChanged?.Invoke(this, null);
+						this.Invalidate();
+					}
+				}
+			}
+
+			public event EventHandler CheckedStateChanged;
+		}
+
+		public class RadioMenuItem : MenuItem, IIgnoredPopupChild, IRadioButton
+		{
+			private bool _checked;
+
+			public RadioMenuItem(GuiWidget widget, ThemeConfig theme)
+				: base (widget, theme)
+			{
+			}
+
+			public override void OnLoad(EventArgs args)
+			{
+				// Init static radio icons if null
+				if (radioIconChecked == null)
+				{
+					radioIconChecked = new ImageBuffer(16, 16).SetPreMultiply();
+					radioIconUnchecked = new ImageBuffer(16, 16).SetPreMultiply();
+
+					var rect = new RectangleDouble(0, 0, 16, 16);
+
+					RadioImage.DrawCircle(
+						radioIconChecked.NewGraphics2D(),
+						rect.Center,
+						Color.Black,
+						isChecked: true,
+						isActive: false);
+
+					RadioImage.DrawCircle(
+						radioIconUnchecked.NewGraphics2D(),
+						rect.Center,
+						Color.Gray,
+						isChecked: false,
+						isActive: false);
+				}
+
+				this.Image = _checked ? radioIconChecked : radioIconUnchecked;
+
+				this.Invalidate();
+
+				if (!this.SiblingRadioButtonList.Contains(this))
+				{
+					this.SiblingRadioButtonList.Add(this);
+				}
+
+				base.OnLoad(args);
+			}
+
+			public IList<GuiWidget> SiblingRadioButtonList { get; set; }
+
+			public bool Checked
+			{
+				get => _checked;
+				set
+				{
+					Console.WriteLine($" *** Consider setting {this.Name} from {_checked} to {value} ###");
+
+					if (_checked != value)
+					{
+						_checked = value;
+
+						this.Image = _checked ? radioIconChecked : radioIconUnchecked;
+
+						if (_checked)
+						{
+							this.UncheckAllOtherRadioButtons();
+						}
+
+						this.CheckedStateChanged?.Invoke(this, null);
+
+						this.Invalidate();
+					}
+				}
+			}
+
+			public event EventHandler CheckedStateChanged;
+		}
+
+		public MenuItem CreateBoolMenuItem(string name, Func<bool> getter, Action<bool> setter, bool useRadioStyle = false, IList<GuiWidget> SiblingRadioButtonList = null)
+		{
 			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize)
 			{
 				Padding = MenuPadding,
@@ -148,18 +237,43 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			bool isChecked = (getter?.Invoke() == true);
 
-			ImageBuffer checkedIcon = (useRadioStyle) ? radioIconChecked : faChecked;
-			ImageBuffer uncheckedIcon = (useRadioStyle) ? radioIconUnchecked : null;
+			MenuItem menuItem;
 
-			var menuItem = new MenuItem(textWidget, theme)
+			if (useRadioStyle)
 			{
-				Name = name + " Menu Item",
-				Image = (isChecked) ? checkedIcon : uncheckedIcon
-			};
+				menuItem = new RadioMenuItem(textWidget, theme)
+				{
+					Name = name + " Menu Item",
+					Checked = isChecked,
+					SiblingRadioButtonList = SiblingRadioButtonList
+				};
+			}
+			else
+			{
+				menuItem = new CheckboxMenuItem(textWidget, theme)
+				{
+					Name = name + " Menu Item",
+					Checked = isChecked
+				};
+			}
 
 			menuItem.Click += (s, e) =>
 			{
-				isChecked = !isChecked;
+				if (menuItem is RadioMenuItem radioMenu)
+				{
+					// Do nothing on reclick of active radio menu
+					if (radioMenu.Checked)
+					{
+						return;
+					}
+
+					isChecked  = radioMenu.Checked = !radioMenu.Checked;
+				}
+				else if (menuItem is CheckboxMenuItem checkboxMenu)
+				{
+					isChecked = checkboxMenu.Checked = !isChecked;
+				}
+
 				setter?.Invoke(isChecked);
 			};
 
@@ -228,6 +342,5 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				base.OnDraw(graphics2D);
 			}
 		}
-
 	}
 }

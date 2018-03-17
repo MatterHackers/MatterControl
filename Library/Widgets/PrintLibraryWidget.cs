@@ -110,37 +110,46 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			toolbar.OverflowButton.Name = "Print Library View Options";
 			toolbar.ExtendOverflowMenu = (popupMenu) =>
 			{
+				var siblingList = new List<GuiWidget>();
+
 				popupMenu.CreateBoolMenuItem(
 					"Date Created".Localize(),
 					() => libraryView.ActiveSort == ListView.SortKey.CreatedDate,
 					(v) => libraryView.ActiveSort = ListView.SortKey.CreatedDate,
-					useRadioStyle: true);
+					useRadioStyle: true,
+					SiblingRadioButtonList: siblingList);
 
 				popupMenu.CreateBoolMenuItem(
 					"Date Modified".Localize(),
 					() => libraryView.ActiveSort == ListView.SortKey.ModifiedDate,
 					(v) => libraryView.ActiveSort = ListView.SortKey.ModifiedDate,
-					useRadioStyle: true);
+					useRadioStyle: true,
+					SiblingRadioButtonList: siblingList);
 
 				popupMenu.CreateBoolMenuItem(
 					"Name".Localize(),
 					() => libraryView.ActiveSort == ListView.SortKey.Name,
 					(v) => libraryView.ActiveSort = ListView.SortKey.Name,
-					useRadioStyle: true);
+					useRadioStyle: true,
+					SiblingRadioButtonList: siblingList);
 
 				popupMenu.CreateHorizontalLine();
+
+				siblingList = new List<GuiWidget>();
 
 				popupMenu.CreateBoolMenuItem(
 					"Ascending".Localize(),
 					() => libraryView.Ascending,
 					(v) => libraryView.Ascending = true,
-					useRadioStyle: true);
+					useRadioStyle: true,
+					SiblingRadioButtonList: siblingList);
 
 				popupMenu.CreateBoolMenuItem(
 					"Descending".Localize(),
 					() => !libraryView.Ascending,
 					(v) => libraryView.Ascending = false,
-					useRadioStyle: true);
+					useRadioStyle: true,
+					SiblingRadioButtonList: siblingList);
 			};
 
 			toolbar.Padding = theme.ToolbarPadding;
@@ -179,22 +188,72 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				var popupMenu = new PopupMenu(theme);
 
-				foreach (var menuAction in this.GetViewMenu())
-				{
-					if (menuAction is MenuSeparator)
-					{
-						popupMenu.CreateHorizontalLine();
-						continue;
-					}
+				var listView = this.libraryView;
 
-					var menuItem = popupMenu.CreateMenuItem(menuAction.Title.Replace("View ", ""));
-					menuItem.Name = $"{menuAction.Title} Menu Item";
-					menuItem.ClearRemovedFlag();
-					menuItem.Click += (s, e) =>
+				var siblingList = new List<GuiWidget>();
+
+				ListViewModes activeMode = ListViewModes.IconListView;
+
+				popupMenu.CreateBoolMenuItem(
+					"View List".Localize(),
+					() => activeMode == ListViewModes.RowListView,
+					(isChecked) =>
 					{
-						menuAction.Action(Enumerable.Empty<ILibraryItem>(), this.libraryView);
-					};
-				}
+						activeMode = ListViewModes.RowListView;
+						listView.ListContentView = new RowListView();
+						listView.Reload().ConfigureAwait(false);
+					},
+					useRadioStyle: true,
+					SiblingRadioButtonList: siblingList);
+
+				popupMenu.CreateBoolMenuItem(
+					"View XSmall Icons".Localize(),
+					() => activeMode == ListViewModes.IconListView18,
+					(isChecked) =>
+					{
+						activeMode = ListViewModes.IconListView18;
+						listView.ListContentView = new IconListView(18);
+						listView.Reload().ConfigureAwait(false);
+					},
+					useRadioStyle: true,
+					SiblingRadioButtonList: siblingList);
+
+
+				popupMenu.CreateBoolMenuItem(
+					"View Small Icons".Localize(),
+					() => activeMode == ListViewModes.IconListView70,
+					(isChecked) =>
+					{
+						activeMode = ListViewModes.IconListView70;
+						listView.ListContentView = new IconListView(70);
+						listView.Reload().ConfigureAwait(false);
+					},
+					useRadioStyle: true,
+					SiblingRadioButtonList: siblingList);
+
+				popupMenu.CreateBoolMenuItem(
+					"View Icons".Localize(),
+					() => activeMode == ListViewModes.IconListView,
+					(isChecked) =>
+					{
+						activeMode = ListViewModes.IconListView;
+						listView.ListContentView = new IconListView();
+						listView.Reload().ConfigureAwait(false);
+					},
+					useRadioStyle: true,
+					SiblingRadioButtonList: siblingList);
+
+				popupMenu.CreateBoolMenuItem(
+					"View Large Icons".Localize(),
+					() => activeMode == ListViewModes.IconListView256,
+					(isChecked) =>
+					{
+						activeMode = ListViewModes.IconListView256;
+						listView.ListContentView = new IconListView(256);
+						listView.Reload().ConfigureAwait(false);
+					},
+					useRadioStyle: true,
+					SiblingRadioButtonList: siblingList);
 
 				return popupMenu;
 			};
@@ -261,6 +320,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			allControls.AnchorAll();
 
 			this.AddChild(allControls);
+		}
+
+		private enum ListViewModes
+		{
+			RowListView,
+			IconListView,
+			IconListView18,
+			IconListView70,
+			IconListView256
 		}
 
 		private void PerformSearch()
@@ -503,7 +571,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					// Multiselect - disallow containers
 					return listView.SelectedItems.Any()
 						&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
-				}		
+				}
 			});
 
 			// edit menu item
@@ -751,69 +819,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 			});
 		}
-
-		public List<PrintItemAction> GetViewMenu()
-		{
-			var menuActions = new List<PrintItemAction>();
-			menuActions.Add(new PrintItemAction()
-			{
-				Title = "View List".Localize(),
-				Action = (selectedLibraryItems, listView) =>
-				{
-					listView.ListContentView = new RowListView();
-					listView.Reload().ConfigureAwait(false);
-				},
-				IsEnabled = (selectedListItems, listView) => true
-			});
-
-			menuActions.Add(new PrintItemAction()
-			{
-				Title = "View XSmall Icons".Localize(),
-				Action = (selectedLibraryItems, listView) =>
-				{
-					listView.ListContentView = new IconListView(18);
-					listView.Reload().ConfigureAwait(false);
-				},
-				IsEnabled = (selectedListItems, listView) => true
-			});
-
-
-			menuActions.Add(new PrintItemAction()
-			{
-				Title = "View Small Icons".Localize(),
-				Action = (selectedLibraryItems, listView) =>
-				{
-					listView.ListContentView = new IconListView(70);
-					listView.Reload().ConfigureAwait(false);
-				},
-				IsEnabled = (selectedListItems, listView) => true
-			});
-
-			menuActions.Add(new PrintItemAction()
-			{
-				Title = "View Icons".Localize(),
-				Action = (selectedLibraryItems, listView) =>
-				{
-					listView.ListContentView = new IconListView();
-					listView.Reload().ConfigureAwait(false);
-				},
-				IsEnabled = (selectedListItems, listView) => true
-			});
-
-			menuActions.Add(new PrintItemAction()
-			{
-				Title = "View Large Icons".Localize(),
-				Action = (selectedLibraryItems, listView) =>
-				{
-					listView.ListContentView = new IconListView(256);
-					listView.Reload().ConfigureAwait(false);
-				},
-				IsEnabled = (selectedListItems, listView) => true
-			});
-
-			return menuActions;
-		}
-
 
 		public override void OnClosed(ClosedEventArgs e)
 		{

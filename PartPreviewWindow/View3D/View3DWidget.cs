@@ -1258,23 +1258,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal GuiWidget ShowOverflowMenu(PopupMenu popupMenu)
 		{
-			var meshViewer = meshViewerWidget;
-
-			popupMenu.CreateBoolMenuItem(
-				"Show Print Bed".Localize(),
-				() => sceneContext.RendererOptions.RenderBed,
-				(value) =>
-				{
-					sceneContext.RendererOptions.RenderBed = value;
-				});
-
-			if (sceneContext.BuildHeight > 0)
-			{
-				popupMenu.CreateBoolMenuItem(
-					"Show Print Area".Localize(),
-					() => meshViewer.RenderBuildVolume,
-					(value) => meshViewer.RenderBuildVolume = value);
-			}
+			this.ShowBedViewOptions(popupMenu);
 
 			popupMenu.CreateHorizontalLine();
 
@@ -1284,41 +1268,68 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, renderType.ToString());
 			}
 
+			var siblingList = new List<GuiWidget>();
+
 			popupMenu.CreateBoolMenuItem(
 				"Shaded".Localize(),
 				() => meshViewerWidget.RenderType == RenderTypes.Shaded,
 				(v) => switchToRenderType(RenderTypes.Shaded),
-				useRadioStyle: true);
+				useRadioStyle: true,
+				SiblingRadioButtonList: siblingList);
 
 			popupMenu.CreateBoolMenuItem(
 				"Outlines".Localize(),
 				() => meshViewerWidget.RenderType == RenderTypes.Outlines,
 				(v) => switchToRenderType(RenderTypes.Outlines),
-				useRadioStyle: true);
+				useRadioStyle: true,
+				SiblingRadioButtonList: siblingList);
 
 			popupMenu.CreateBoolMenuItem(
 				"Polygons".Localize(),
 				() => meshViewerWidget.RenderType == RenderTypes.Polygons,
 				(v) => switchToRenderType(RenderTypes.Polygons),
-				useRadioStyle: true);
+				useRadioStyle: true,
+				SiblingRadioButtonList: siblingList);
 
 			popupMenu.CreateBoolMenuItem(
 				"Materials".Localize(),
 				() => meshViewerWidget.RenderType == RenderTypes.Materials,
 				(v) => switchToRenderType(RenderTypes.Materials),
-				useRadioStyle: true);
+				useRadioStyle: true,
+				SiblingRadioButtonList: siblingList);
 
 			popupMenu.CreateBoolMenuItem(
 				"Overhang".Localize(),
 				() => meshViewerWidget.RenderType == RenderTypes.Overhang,
 				(value) => switchToRenderType(RenderTypes.Overhang),
-				useRadioStyle: true);
+				useRadioStyle: true,
+				SiblingRadioButtonList: siblingList);
 
 			popupMenu.CreateHorizontalLine();
 
 			popupMenu.AddChild(new GridOptionsPanel(this.InteractionLayer));
 
 			return popupMenu;
+		}
+
+		internal void ShowBedViewOptions(PopupMenu popupMenu)
+		{
+			popupMenu.CreateBoolMenuItem(
+				"Show Print Bed".Localize(),
+				() => sceneContext.RendererOptions.RenderBed,
+				(value) =>
+				{
+					sceneContext.RendererOptions.RenderBed = value;
+				});
+
+			if (sceneContext.BuildHeight > 0
+				&& printer?.ViewState.ViewMode != PartViewMode.Layers2D)
+			{
+				popupMenu.CreateBoolMenuItem(
+					"Show Print Area".Localize(),
+					() => meshViewerWidget.RenderBuildVolume,
+					(value) => meshViewerWidget.RenderBuildVolume = value);
+			}
 		}
 
 		protected bool autoRotating = false;

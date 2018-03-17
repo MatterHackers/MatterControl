@@ -212,8 +212,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			// Folder items
 			foreach (var childContainer in this.SortItems(containerItems))
 			{
-				Console.WriteLine($"{childContainer.Name}:{childContainer.DateCreated}");
-
 				var listViewItem = new ListViewItem(childContainer, this);
 				listViewItem.DoubleClick += listViewItem_DoubleClick;
 				items.Add(listViewItem);
@@ -233,7 +231,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				foreach (var item in this.SortItems(filteredResults))
 				{
-					Console.WriteLine($"{item.Name}:{item.DateCreated}");
 					var listViewItem = new ListViewItem(item, this);
 					listViewItem.DoubleClick += listViewItem_DoubleClick;
 					items.Add(listViewItem);
