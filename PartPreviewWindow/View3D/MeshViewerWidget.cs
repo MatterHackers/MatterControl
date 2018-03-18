@@ -63,6 +63,26 @@ namespace MatterHackers.MeshVisualizer
 
 	public static class MaterialRendering
 	{
+		public static void RenderAabb(this WorldView world, AxisAlignedBoundingBox bounds, Matrix4X4 matrix, Color color, double width)
+		{
+			GLHelper.PrepareFor3DLineRender(true);
+
+			Frustum frustum = world.GetClippingFrustum();
+			for (int i = 0; i < 4; i++)
+			{
+				Vector3 bottomStartPosition = Vector3.Transform(bounds.GetBottomCorner(i), matrix);
+				Vector3 bottomEndPosition = Vector3.Transform(bounds.GetBottomCorner((i + 1) % 4), matrix);
+				Vector3 topStartPosition = Vector3.Transform(bounds.GetTopCorner(i), matrix);
+				Vector3 topEndPosition = Vector3.Transform(bounds.GetTopCorner((i + 1) % 4), matrix);
+
+				GLHelper.Render3DLineNoPrep(frustum, world, bottomStartPosition, bottomEndPosition, color, width);
+				GLHelper.Render3DLineNoPrep(frustum, world, topStartPosition, topEndPosition, color, width);
+				GLHelper.Render3DLineNoPrep(frustum, world, topStartPosition, bottomStartPosition, color, width);
+			}
+
+			GL.Enable(EnableCap.Lighting);
+		}
+
 		public static Color Color(int materialIndex)
 		{
 			return ColorF.FromHSL(Math.Max(materialIndex, 0) / 10.0, .99, .49).ToColor();
@@ -521,9 +541,7 @@ namespace MatterHackers.MeshVisualizer
 					if (totalVertices > maxVerticesToRenderOutline
 						&& scene.DebugItem == null)
 					{
-						GLHelper.PrepareFor3DLineRender(true);
-						RenderAABB(frustum, object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity), Matrix4X4.Identity, selectionColor, selectionHighlightWidth);
-						GL.Enable(EnableCap.Lighting);
+						World.RenderAabb(object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity), Matrix4X4.Identity, selectionColor, selectionHighlightWidth);
 					}
 					else
 					{
@@ -538,8 +556,7 @@ namespace MatterHackers.MeshVisualizer
 
 					var aabb = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
-					GLHelper.PrepareFor3DLineRender(true);
-					RenderAABB(frustum, aabb, Matrix4X4.Identity, debugBorderColor, 1);
+					World.RenderAabb(aabb, Matrix4X4.Identity, debugBorderColor, 1);
 
 					if (item.mesh != null)
 					{
@@ -656,12 +673,12 @@ namespace MatterHackers.MeshVisualizer
 
 				if(!renderedAnything)
 				{
-					RenderAABB(frustum, renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.WorldMatrix(), selectionColor, selectionHighlightWidth);
+					World.RenderAabb(renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.WorldMatrix(), selectionColor, selectionHighlightWidth);
 				}
 			}
 			else // just render the bounding box
 			{
-				RenderAABB(frustum, renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.WorldMatrix(), selectionColor, selectionHighlightWidth);
+				World.RenderAabb(renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.WorldMatrix(), selectionColor, selectionHighlightWidth);
 			}
 		}
 
@@ -674,21 +691,6 @@ namespace MatterHackers.MeshVisualizer
 
 			t -= 0.5f;
 			return 2.0f * t * (1.0f - t) + 0.5;
-		}
-
-		void RenderAABB(Frustum frustum, AxisAlignedBoundingBox bounds, Matrix4X4 matrix, Color color, double width)
-		{
-			for (int i = 0; i < 4; i++)
-			{
-				Vector3 bottomStartPosition = Vector3.Transform(bounds.GetBottomCorner(i), matrix);
-				Vector3 bottomEndPosition = Vector3.Transform(bounds.GetBottomCorner((i + 1) % 4), matrix);
-				Vector3 topStartPosition = Vector3.Transform(bounds.GetTopCorner(i), matrix);
-				Vector3 topEndPosition = Vector3.Transform(bounds.GetTopCorner((i + 1) % 4), matrix);
-
-				GLHelper.Render3DLineNoPrep(frustum, World, bottomStartPosition, bottomEndPosition, color, width);
-				GLHelper.Render3DLineNoPrep(frustum, World, topStartPosition, topEndPosition, color, width);
-				GLHelper.Render3DLineNoPrep(frustum, World, topStartPosition, bottomStartPosition, color, width);
-			}
 		}
 
 		public enum EditorType { Printer, Part }

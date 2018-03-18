@@ -78,6 +78,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var aabb = this.GetAxisAlignedBoundingBox();
 
 			Mesh = PlatonicSolids.CreateCube(Width, Depth, Height);
+
 			if (aabb.ZSize > 0)
 			{
 				// If the part was already created and at a height, maintain the height.

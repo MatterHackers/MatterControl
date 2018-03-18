@@ -27,52 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
+
 using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
-using MatterHackers.VectorMath;
+using MatterHackers.MatterControl.PartPreviewWindow;
 
-namespace MatterHackers.MatterControl.DesignTools.Operations
+namespace MatterHackers.MatterControl.DesignTools
 {
-	public class ScaleObject3D : Object3D, IRebuildable
+	public interface IEditorDraw
 	{
-		public ScaleObject3D()
-		{
-		}
-
-		public override bool CanRemove => true;
-		public override bool CanBake => true;
-
-		public override void Remove()
-		{
-			throw new NotImplementedException();
-		}
-
-		public void Rebuild(UndoBuffer undoBuffer)
-		{
-			var aabb = this.GetAxisAlignedBoundingBox();
-
-			// TODO: check if the has code for the children
-			//if (ChildrenBounds.Count == 0)
-			{
-				this.Children.Modify(list =>
-				{
-					foreach (var child in list)
-					{
-						//ChildrenBounds.Add(child.GetAxisAlignedBoundingBox());
-					}
-				});
-			}
-
-			this.Children.Modify(list =>
-			{
-//				var firstBounds = ChildrenBounds[0];
-				int i = 0;
-				foreach (var child in list)
-				{
-					i++;
-				}
-			});
-		}
+		void DrawEditor(object sender, DrawEventArgs e);
 	}
 }

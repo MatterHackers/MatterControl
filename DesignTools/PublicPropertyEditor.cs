@@ -77,6 +77,15 @@ namespace MatterHackers.MatterControl.DesignTools
 				HAnchor = HAnchor.Stretch
 			};
 
+			if(item is IEditorDraw editorDraw)
+			{
+				view3DWidget.InteractionLayer.DrawGlOpaqueContent += editorDraw.DrawEditor;
+				mainContainer.Closed += (s, e) =>
+				{
+					view3DWidget.InteractionLayer.DrawGlOpaqueContent -= editorDraw.DrawEditor;
+				};
+			}
+
 			if (this.item != null)
 			{
 				ModifyObject(view3DWidget, mainContainer, theme);

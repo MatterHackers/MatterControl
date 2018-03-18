@@ -41,7 +41,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			Name = "Linear Array".Localize();
 		}
-
 		
 		public override bool CanBake => true;
 		public override bool CanRemove => true;
