@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public enum MaintainRatio { None, X_Y, X_Y_Z }
 
-	public class FitToBounds : Object3D, IRebuildable, IEditorDraw
+	public class FitToBounds3D : Object3D, IRebuildable, IEditorDraw
 	{
 		public double Width { get; set; }
 		public double Depth { get; set; }
@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		IObject3D ScaleItem => Children.First();
 		IObject3D ItemToScale => Children.First().Children.First();
 
-		public FitToBounds()
+		public FitToBounds3D()
 		{
 		}
 
@@ -66,9 +66,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			base.OnInvalidate();
 		}
 
-		public static FitToBounds Create(IObject3D itemToFit)
+		public static FitToBounds3D Create(IObject3D itemToFit)
 		{
-			FitToBounds fitToBounds = new FitToBounds();
+			FitToBounds3D fitToBounds = new FitToBounds3D();
 			var aabb = itemToFit.GetAxisAlignedBoundingBox();
 
 			fitToBounds.Width = aabb.XSize;

@@ -39,12 +39,28 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	using Aabb = AxisAlignedBoundingBox;
 
-	public class ArrangeObject3D : Object3D, IRebuildable, IPropertyGridModifier
+	public class Arrange3D : Object3D, IRebuildable, IPropertyGridModifier
 	{
 		// We need to serialize this so we can remove the arrange and get back to the objects before arranging
-		public List<Aabb> ChildrenBounds = new List<Aabb>();
+		public List<Aabb> OriginalChildrenBounds = new List<Aabb>();
+		List<Aabb> CurrentChildrenBounds
+		{
+			get
+			{
+				List<Aabb> currentChildrenBounds = new List<Aabb>();
+				this.Children.Modify(list =>
+				{
+					foreach (var child in list)
+					{
+						currentChildrenBounds.Add(child.GetAxisAlignedBoundingBox());
+					}
+				});
 
-		public ArrangeObject3D()
+				return currentChildrenBounds;
+			}
+		}
+
+		public Arrange3D()
 		{
 			Name = "Arrange".Localize();
 		}
@@ -95,20 +111,21 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			var aabb = this.GetAxisAlignedBoundingBox();
 
 			// TODO: check if the has code for the children
-			if (ChildrenBounds.Count == 0)
+			if (OriginalChildrenBounds.Count == 0)
 			{
 				this.Children.Modify(list =>
 				{
 					foreach (var child in list)
 					{
-						ChildrenBounds.Add(child.GetAxisAlignedBoundingBox());
+						OriginalChildrenBounds.Add(child.GetAxisAlignedBoundingBox());
 					}
 				});
 			}
 
+			var currentChildrenBounds = CurrentChildrenBounds;
 			this.Children.Modify(list =>
 			{
-				var firstBounds = ChildrenBounds[0];
+				var firstBounds = currentChildrenBounds[0];
 				int i = 0;
 				foreach (var child in list)
 				{
@@ -117,27 +134,27 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						if (XAlign == Align.None)
 						{
 							// make sure it is where it started
-							AlignAxis(0, Align.Min, ChildrenBounds[i].minXYZ.X, 0, child);
+							AlignAxis(0, Align.Min, currentChildrenBounds[i].minXYZ.X, 0, child);
 						}
 						else
 						{
-							AlignAxis(0, XAlign, GetAlignToOffset(0, (!Advanced || XAlignTo == Align.None) ? XAlign : XAlignTo), XOffset, child);
+							AlignAxis(0, XAlign, GetAlignToOffset(currentChildrenBounds, 0, (!Advanced || XAlignTo == Align.None) ? XAlign : XAlignTo), XOffset, child);
 						}
 						if (YAlign == Align.None)
 						{
-							AlignAxis(1, Align.Min, ChildrenBounds[i].minXYZ.Y, 0, child);
+							AlignAxis(1, Align.Min, currentChildrenBounds[i].minXYZ.Y, 0, child);
 						}
 						else
 						{
-							AlignAxis(1, YAlign, GetAlignToOffset(1, (!Advanced || YAlignTo == Align.None) ? YAlign : YAlignTo), YOffset, child);
+							AlignAxis(1, YAlign, GetAlignToOffset(currentChildrenBounds, 1, (!Advanced || YAlignTo == Align.None) ? YAlign : YAlignTo), YOffset, child);
 						}
 						if (ZAlign == Align.None)
 						{
-							AlignAxis(2, Align.Min, ChildrenBounds[i].minXYZ.Z, 0, child);
+							AlignAxis(2, Align.Min, currentChildrenBounds[i].minXYZ.Z, 0, child);
 						}
 						else
 						{
-							AlignAxis(2, ZAlign, GetAlignToOffset(2, (!Advanced || ZAlignTo == Align.None) ? ZAlign : ZAlignTo), ZOffset, child);
+							AlignAxis(2, ZAlign, GetAlignToOffset(currentChildrenBounds, 2, (!Advanced || ZAlignTo == Align.None) ? ZAlign : ZAlignTo), ZOffset, child);
 						}
 					}
 					i++;
@@ -148,13 +165,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public override void Remove()
 		{
 			// put everything back to where it was before the arange started
-			if (ChildrenBounds.Count == Children.Count)
+			if (OriginalChildrenBounds.Count == Children.Count)
 			{
 				int i = 0;
 				foreach (var child in Children)
 				{
 					// Where you are minus where you started to get back to where you started
-					child.Translate(-(child.GetAxisAlignedBoundingBox().minXYZ - ChildrenBounds[i].minXYZ));
+					child.Translate(-(child.GetAxisAlignedBoundingBox().minXYZ - OriginalChildrenBounds[i].minXYZ));
 					i++;
 				}
 			}
@@ -196,18 +213,18 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			item.Translate(translate);
 		}
 
-		private double GetAlignToOffset(int axis, Align alignTo)
+		private double GetAlignToOffset(List<Aabb> currentChildrenBounds, int axis, Align alignTo)
 		{
 			switch (alignTo)
 			{
 				case Align.Min:
-					return ChildrenBounds[0].minXYZ[axis];
+					return currentChildrenBounds[0].minXYZ[axis];
 
 				case Align.Center:
-					return ChildrenBounds[0].Center[axis];
+					return currentChildrenBounds[0].Center[axis];
 
 				case Align.Max:
-					return ChildrenBounds[0].maxXYZ[axis];
+					return currentChildrenBounds[0].maxXYZ[axis];
 
 				default:
 					throw new NotImplementedException();

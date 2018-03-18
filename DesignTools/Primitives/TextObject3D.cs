@@ -82,8 +82,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
-		
-
 		[DisplayName("Name")]
 		public string NameToWrite { get; set; } = "Text";
 

@@ -36,14 +36,12 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayRadialObject3D : Object3D, IRebuildable
+	public class ArrayRadial3D : Object3D, IRebuildable
 	{
-		public ArrayRadialObject3D()
+		public ArrayRadial3D()
 		{
 			Name = "Radial Array".Localize();
 		}
-
-		
 
 		public override bool CanBake => true;
 		public override bool CanRemove => true;
