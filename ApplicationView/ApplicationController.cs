@@ -40,6 +40,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 
@@ -456,6 +457,23 @@ namespace MatterHackers.MatterControl
 					}
 				},
 				Icon = AggContext.StaticData.LoadIcon("array_advanced.png").SetPreMultiply(),
+				IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
+			},
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Fit to Bounds".Localize(),
+				Action = (scene) =>
+				{
+					var selectedItem = scene.SelectedItem;
+					scene.SelectedItem = null;
+					var fit = FitToBounds.Create(selectedItem.Clone());
+					fit.MakeNameNonColliding();
+
+					scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, new List<IObject3D> { fit }));
+					
+					scene.SelectedItem = fit;
+				},
+				//Icon = AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
 			},
 #if DEBUG // keep this work in progress to the editor for now

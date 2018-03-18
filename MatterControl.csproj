@@ -92,6 +92,7 @@
     <Compile Include="DesignTools\Attributes\IconsAttribute.cs" />
     <Compile Include="DesignTools\Attributes\WebPageLinkAttribute.cs" />
     <Compile Include="DesignTools\ImageAsset.cs" />
+    <Compile Include="DesignTools\Interfaces\IEditorDraw.cs" />
     <Compile Include="DesignTools\Interfaces\IPropertyGridModifier.cs" />
     <Compile Include="DesignTools\Interfaces\IRebuildable.cs" />
     <Compile Include="DesignTools\Operations\ArrangeObject3D.cs" />
@@ -99,11 +100,11 @@
     <Compile Include="DesignTools\Operations\ArrayLinearObject3D.cs" />
     <Compile Include="DesignTools\Operations\ArrayRadialObject3D.cs" />
     <Compile Include="DesignTools\Operations\BendObject3D.cs" />
+    <Compile Include="DesignTools\Operations\FitToBounds.cs" />
     <Compile Include="DesignTools\Operations\Object3DExtensions.cs" />
     <Compile Include="DesignTools\Operations\Align.cs" />
     <Compile Include="DesignTools\Operations\Rotate.cs" />
     <Compile Include="DesignTools\Operations\Scale.cs" />
-    <Compile Include="DesignTools\Operations\ScaleObject3D.cs" />
     <Compile Include="DesignTools\Operations\SmoothPath.cs" />
     <Compile Include="DesignTools\Primitives\BaseObject3D.cs" />
     <Compile Include="DesignTools\Primitives\RingObject3D.cs" />
