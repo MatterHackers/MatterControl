@@ -74,6 +74,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 									{
 										printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
 										printer.Connection.StartPrint(lastPrint.PrintingGCodeFileName, lastPrint);
+										ApplicationController.Instance.MonitorPrintTask(printer).ConfigureAwait(false);
 									}
 								});
 							}
