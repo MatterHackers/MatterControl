@@ -348,11 +348,11 @@ namespace MatterHackers.MatterControl
 			new SceneSelectionSeparator(),
 			new SceneSelectionOperation()
 			{
-				TitleResolver = () => "Arrange".Localize(),
+				TitleResolver = () => "Align".Localize(),
 				Action = (scene) =>
 				{
-					scene.AddSelectionAsChildren(new ArrangeObject3D());
-					if(scene.SelectedItem is ArrangeObject3D arange)
+					scene.AddSelectionAsChildren(new Align3D());
+					if(scene.SelectedItem is Align3D arange)
 					{
 						arange.Rebuild(null);
 					}
@@ -422,8 +422,8 @@ namespace MatterHackers.MatterControl
 				TitleResolver = () => "Linear Array".Localize(),
 				Action = (scene) =>
 				{
-					scene.AddSelectionAsChildren(new ArrayLinearObject3D());
-					if(scene.SelectedItem is ArrayLinearObject3D array)
+					scene.AddSelectionAsChildren(new ArrayLinear3D());
+					if(scene.SelectedItem is ArrayLinear3D array)
 					{
 						array.Rebuild(null);
 					}
@@ -436,8 +436,8 @@ namespace MatterHackers.MatterControl
 				TitleResolver = () => "Radial Array".Localize(),
 				Action = (scene) =>
 				{
-					scene.AddSelectionAsChildren(new ArrayRadialObject3D());
-					if(scene.SelectedItem is ArrayRadialObject3D array)
+					scene.AddSelectionAsChildren(new ArrayRadial3D());
+					if(scene.SelectedItem is ArrayRadial3D array)
 					{
 						array.Rebuild(null);
 					}
@@ -450,8 +450,8 @@ namespace MatterHackers.MatterControl
 				TitleResolver = () => "Advanced Array".Localize(),
 				Action = (scene) =>
 				{
-					scene.AddSelectionAsChildren(new ArrayAdvancedObject3D());
-					if(scene.SelectedItem is ArrayAdvancedObject3D array)
+					scene.AddSelectionAsChildren(new ArrayAdvanced3D());
+					if(scene.SelectedItem is ArrayAdvanced3D array)
 					{
 						array.Rebuild(null);
 					}
@@ -466,7 +466,7 @@ namespace MatterHackers.MatterControl
 				{
 					var selectedItem = scene.SelectedItem;
 					scene.SelectedItem = null;
-					var fit = FitToBounds.Create(selectedItem.Clone());
+					var fit = FitToBounds3D.Create(selectedItem.Clone());
 					fit.MakeNameNonColliding();
 
 					scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, new List<IObject3D> { fit }));
@@ -483,7 +483,14 @@ namespace MatterHackers.MatterControl
 				TitleResolver = () => "Package".Localize(),
 				Action = (scene) =>
 				{
-					scene.WrapSelection(new Package());
+					var selectedItem = scene.SelectedItem;
+					scene.SelectedItem = null;
+					var package = Package3D.Create(selectedItem.Clone());
+					package.MakeNameNonColliding();
+
+					scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, new List<IObject3D> { package }));
+
+					scene.SelectedItem = package;
 				},
 				IsEnabled = (scene) => scene.HasSelection,
 			},

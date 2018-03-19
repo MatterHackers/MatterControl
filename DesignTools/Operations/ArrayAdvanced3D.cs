@@ -35,18 +35,27 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayLinearObject3D : Object3D, IRebuildable
+	public class ArrayAdvanced3D : Object3D, IRebuildable
 	{
-		public ArrayLinearObject3D()
+		public ArrayAdvanced3D()
 		{
-			Name = "Linear Array".Localize();
+			Name = "Advanced Array".Localize();
 		}
-		
+
 		public override bool CanBake => true;
 		public override bool CanRemove => true;
+
 		public int Count { get; set; } = 3;
-		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };
-		public double Distance { get; set; } = 30;
+
+		public Vector3 Offset { get; set; } = new Vector3(30, 0, 0);
+
+		public double Rotate { get; set; } = 0;
+
+		public bool RotatePart { get; set; } = true;
+
+		public double Scale { get; set; } = 1;
+
+		public bool ScaleOffset { get; set; } = true;
 
 		public void Rebuild(UndoBuffer undoBuffer)
 		{
@@ -55,11 +64,25 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				IObject3D lastChild = list.First();
 				list.Clear();
 				list.Add(lastChild);
-				var offset = Vector3.Zero;
+				var offset = Offset;
 				for (int i = 1; i < Count; i++)
 				{
+					var rotateRadians = MathHelper.DegreesToRadians(Rotate);
+					if (ScaleOffset)
+					{
+						offset *= Scale;
+					}
+
 					var next = lastChild.Clone();
-					next.Matrix *= Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance);
+					offset = Vector3.Transform(offset, Matrix4X4.CreateRotationZ(rotateRadians));
+					next.Matrix *= Matrix4X4.CreateTranslation(offset);
+
+					if (RotatePart)
+					{
+						next.ApplyAtBoundsCenter(Matrix4X4.CreateRotationZ(rotateRadians));
+					}
+
+					next.ApplyAtBoundsCenter(Matrix4X4.CreateScale(Scale));
 					list.Add(next);
 					lastChild = next;
 				}
@@ -77,5 +100,16 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			base.Remove();
 		}
+	}
+
+	public class DirectionAxis
+	{
+		public Vector3 Normal { get; set; }
+		public Vector3 Origin { get; set; }
+	}
+
+	public class DirectionVector
+	{
+		public Vector3 Normal { get; set; }
 	}
 }

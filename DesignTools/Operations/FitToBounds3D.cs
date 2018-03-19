@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public enum MaintainRatio { None, X_Y, X_Y_Z }
 
-	public class FitToBounds : Object3D, IRebuildable, IEditorDraw
+	public class FitToBounds3D : Object3D, IRebuildable, IEditorDraw
 	{
 		public double Width { get; set; }
 		public double Depth { get; set; }
@@ -56,8 +56,43 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		IObject3D ScaleItem => Children.First();
 		IObject3D ItemToScale => Children.First().Children.First();
 
-		public FitToBounds()
+		public FitToBounds3D()
 		{
+		}
+
+		public override void Bake()
+		{
+			// push our matrix into our children
+			foreach (var child in this.Children)
+			{
+				child.Matrix *= this.Matrix;
+			}
+
+			// push child into children
+			ItemToScale.Matrix *= ScaleItem.Matrix;
+
+			// add our children to our parent and remove from parent
+			this.Parent.Children.Modify(list =>
+			{
+				list.Remove(this);
+				list.AddRange(ScaleItem.Children);
+			});
+		}
+
+		public override void Remove()
+		{
+			// push our matrix into inner children
+			foreach (var child in ScaleItem.Children)
+			{
+				child.Matrix *= this.Matrix;
+			}
+
+			// add inner children to our parent and remove from parent
+			this.Parent.Children.Modify(list =>
+			{
+				list.Remove(this);
+				list.AddRange(ScaleItem.Children);
+			});
 		}
 
 		protected override void OnInvalidate()
@@ -66,9 +101,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			base.OnInvalidate();
 		}
 
-		public static FitToBounds Create(IObject3D itemToFit)
+		public static FitToBounds3D Create(IObject3D itemToFit)
 		{
-			FitToBounds fitToBounds = new FitToBounds();
+			FitToBounds3D fitToBounds = new FitToBounds3D();
 			var aabb = itemToFit.GetAxisAlignedBoundingBox();
 
 			fitToBounds.Width = aabb.XSize;
