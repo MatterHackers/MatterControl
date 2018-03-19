@@ -1438,51 +1438,7 @@ namespace MatterHackers.MatterControl
 								this.ArchiveAndStartPrint(partFilePath, gcodeFilePath);
 							}
 
-							await ApplicationController.Instance.Tasks.Execute("Printing".Localize(),
-								(reporterB, cancellationTokenB) =>
-								{
-									var progressStatus = new ProgressStatus();
-									reporterB.Report(progressStatus);
-
-									return Task.Run(() =>
-									{
-										string printing = "Printing".Localize();
-										int totalLayers = printer.Connection.TotalLayersInPrint;
-
-										while (!printer.Connection.PrinterIsPrinting
-											&& !cancellationTokenB.IsCancellationRequested)
-										{
-											// Wait for printing
-											Thread.Sleep(200);
-										}
-
-										while ((printer.Connection.PrinterIsPrinting || printer.Connection.PrinterIsPaused)
-											&& !cancellationTokenB.IsCancellationRequested)
-										{
-											//progressStatus.Status = $"{printing} Layer ({printer.Connection.CurrentlyPrintingLayer } of {totalLayers})";
-											progressStatus.Status = $"{printing} ({printer.Connection.CurrentlyPrintingLayer + 1})";
-											progressStatus.Progress0To1 = printer.Connection.PercentComplete / 100;
-											reporterB.Report(progressStatus);
-											Thread.Sleep(200);
-										}
-									});
-								},
-								taskActions: new RunningTaskActions()
-								{
-									RichProgressWidget = () => PrinterTabPage.PrintProgressWidget(printer),
-									Pause = () => UiThread.RunOnIdle(() =>
-									{
-										printer.Connection.RequestPause();
-									}),
-									Resume = () => UiThread.RunOnIdle(() =>
-									{
-										printer.Connection.Resume();
-									}),
-									Stop = () => UiThread.RunOnIdle(() =>
-									{
-										ApplicationController.Instance.ConditionalCancelPrint();
-									})
-								});
+							await MonitorPrintTask(printer);
 						}
 					}
 				}
@@ -1490,6 +1446,55 @@ namespace MatterHackers.MatterControl
 			catch (Exception)
 			{
 			}
+		}
+
+		public async Task MonitorPrintTask(PrinterConfig printer)
+		{
+			await ApplicationController.Instance.Tasks.Execute("Printing".Localize(),
+				(reporterB, cancellationTokenB) =>
+				{
+					var progressStatus = new ProgressStatus();
+					reporterB.Report(progressStatus);
+
+					return Task.Run(() =>
+					{
+						string printing = "Printing".Localize();
+						int totalLayers = printer.Connection.TotalLayersInPrint;
+
+						while (!printer.Connection.PrinterIsPrinting
+							&& !cancellationTokenB.IsCancellationRequested)
+						{
+							// Wait for printing
+							Thread.Sleep(200);
+						}
+
+						while ((printer.Connection.PrinterIsPrinting || printer.Connection.PrinterIsPaused)
+							&& !cancellationTokenB.IsCancellationRequested)
+						{
+							//progressStatus.Status = $"{printing} Layer ({printer.Connection.CurrentlyPrintingLayer } of {totalLayers})";
+							progressStatus.Status = $"{printing} ({printer.Connection.CurrentlyPrintingLayer + 1})";
+							progressStatus.Progress0To1 = printer.Connection.PercentComplete / 100;
+							reporterB.Report(progressStatus);
+							Thread.Sleep(200);
+						}
+					});
+				},
+				taskActions: new RunningTaskActions()
+				{
+					RichProgressWidget = () => PrinterTabPage.PrintProgressWidget(printer),
+					Pause = () => UiThread.RunOnIdle(() =>
+					{
+						printer.Connection.RequestPause();
+					}),
+					Resume = () => UiThread.RunOnIdle(() =>
+					{
+						printer.Connection.Resume();
+					}),
+					Stop = () => UiThread.RunOnIdle(() =>
+					{
+						ApplicationController.Instance.ConditionalCancelPrint();
+					})
+				});
 		}
 
 		/// <summary>
