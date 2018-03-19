@@ -60,6 +60,41 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 		}
 
+		public override void Bake()
+		{
+			// push our matrix into our children
+			foreach (var child in this.Children)
+			{
+				child.Matrix *= this.Matrix;
+			}
+
+			// push child into children
+			ItemToScale.Matrix *= ScaleItem.Matrix;
+
+			// add our children to our parent and remove from parent
+			this.Parent.Children.Modify(list =>
+			{
+				list.Remove(this);
+				list.AddRange(ScaleItem.Children);
+			});
+		}
+
+		public override void Remove()
+		{
+			// push our matrix into inner children
+			foreach (var child in ScaleItem.Children)
+			{
+				child.Matrix *= this.Matrix;
+			}
+
+			// add inner children to our parent and remove from parent
+			this.Parent.Children.Modify(list =>
+			{
+				list.Remove(this);
+				list.AddRange(ScaleItem.Children);
+			});
+		}
+
 		protected override void OnInvalidate()
 		{
 			// If the child bounds changed than adjust the scale control

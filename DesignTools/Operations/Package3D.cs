@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				fit.Rebuild(null);
 			}
 
-			var align = this.Descendants<Arrange3D>().FirstOrDefault();
+			var align = this.Descendants<Align3D>().FirstOrDefault();
 			if (align != null)
 			{
 				align.Rebuild(null);

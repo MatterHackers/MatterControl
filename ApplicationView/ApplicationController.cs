@@ -348,11 +348,11 @@ namespace MatterHackers.MatterControl
 			new SceneSelectionSeparator(),
 			new SceneSelectionOperation()
 			{
-				TitleResolver = () => "Arrange".Localize(),
+				TitleResolver = () => "Align".Localize(),
 				Action = (scene) =>
 				{
-					scene.AddSelectionAsChildren(new Arrange3D());
-					if(scene.SelectedItem is Arrange3D arange)
+					scene.AddSelectionAsChildren(new Align3D());
+					if(scene.SelectedItem is Align3D arange)
 					{
 						arange.Rebuild(null);
 					}
