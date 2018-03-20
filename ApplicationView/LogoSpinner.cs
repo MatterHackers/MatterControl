@@ -39,6 +39,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.MatterControl.PartPreviewWindow;
+	using MatterHackers.PolygonMesh;
 	using MatterHackers.RenderOpenGl;
 	using MatterHackers.VectorMath;
 
@@ -53,8 +54,12 @@ namespace MatterHackers.MatterControl
 			// loading animation stuff
 			LightingData lighting = new LightingData();
 
-			var logoPath = AggContext.StaticData.MapPath(Path.Combine("Stls", "MH Logo.stl"));
-			var logoMesh = MeshFileIo.Load(logoPath, CancellationToken.None).Mesh;
+			Mesh logoMesh;
+
+			using (var logoStream = AggContext.StaticData.OpenStream(Path.Combine("Stls", "MH Logo.stl")))
+			{
+				logoMesh = MeshFileIo.Load(logoStream, ".stl", CancellationToken.None).Mesh;
+			}
 
 			// Position
 			var aabb = logoMesh.GetAxisAlignedBoundingBox();
