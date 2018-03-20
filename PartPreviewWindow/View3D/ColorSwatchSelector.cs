@@ -91,8 +91,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var colorWidget = new GuiWidget()
 			{
 				BackgroundColor = color,
-				Width = buttonSize,
-				Height = buttonSize,
+				Width = buttonSize * GuiWidget.DeviceScale,
+				Height = buttonSize * GuiWidget.DeviceScale,
 				Margin = buttonSpacing
 			};
 
