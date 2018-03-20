@@ -75,10 +75,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				if (_image == null)
 				{
-					if (File.Exists(this.AssetPath))
-					{
-						_image = this.LoadImage();
+					_image = this.LoadImage();
 
+					if (_image != null)
+					{
 						if (this.Invert)
 						{
 							_image = InvertLightness.DoInvertLightness(_image);
