@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			typeof(double), typeof(int), typeof(char), typeof(string), typeof(bool),
 			typeof(Vector2), typeof(Vector3),
 			typeof(DirectionVector), typeof(DirectionAxis),
-			typeof(ImageAsset)
+			typeof(ImageObject3D)
 		};
 
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -458,12 +458,10 @@ namespace MatterHackers.MatterControl.DesignTools
 					editControlsContainer.AddChild(rowContainer);
 				}
 				// create an image asset editor
-				else if (property.Value is ImageAsset imageAsset)
+				else if (property.Value is ImageObject3D imageObject)
 				{
-					rowContainer = CreateImageEditor(rebuildable,
-							imageAsset,
-							theme,
-							undoBuffer);
+					var editor = new ImageEditor();
+					rowContainer = editor.Create(imageObject, view3DWidget, theme);
 					editControlsContainer.AddChild(rowContainer);
 				}
 
@@ -524,158 +522,6 @@ namespace MatterHackers.MatterControl.DesignTools
 				row.AddChild(detailsLink);
 				editControlsContainer.AddChild(row);
 			}
-		}
-
-		private GuiWidget CreateImageEditor(IRebuildable item,
-			ImageAsset imageAsset,
-			ThemeConfig theme,
-			UndoBuffer undoBuffer)
-		{
-			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch
-			};
-
-			var imageSection = new SectionWidget(
-				"Image".Localize(),
-				new FlowLayoutWidget(FlowDirection.TopToBottom),
-				theme).ApplyBoxStyle(margin: 0);
-
-			column.AddChild(imageSection);
-
-			ImageBuffer thumbnailImage = SetImage(theme, imageAsset);
-
-			ImageWidget thumbnailWidget;
-			imageSection.ContentPanel.AddChild(thumbnailWidget = new ImageWidget(thumbnailImage)
-			{
-				Margin = new BorderDouble(bottom: 5),
-				HAnchor = HAnchor.Center
-			});
-
-			// add a search Google box
-			var searchRow = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-			};
-			imageSection.ContentPanel.AddChild(searchRow);
-
-			MHTextEditWidget textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Search Google".Localize());
-			textToAddWidget.HAnchor = HAnchor.Stretch;
-			searchRow.AddChild(textToAddWidget);
-			textToAddWidget.ActualTextEditWidget.EnterPressed += (object sender, KeyEventArgs keyEvent) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					textToAddWidget.Unfocus();
-					string search = "http://www.google.com/search?q={0} silhouette&tbm=isch".FormatWith(textToAddWidget.Text);
-					ApplicationController.Instance.LaunchBrowser(search);
-				});
-			};
-
-			// add in the invert checkbox and change image button 
-			var changeImageButton = new TextButton("Change".Localize(), theme)
-			{
-				BackgroundColor = theme.MinimalShade
-			};
-			changeImageButton.Click += (sender, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					// we do this using to make sure that the stream is closed before we try and insert the Picture
-					AggContext.FileDialogs.OpenFileDialog(
-						new OpenFileDialogParams(
-							"Select an image file|*.jpg;*.png;*.bmp;*.gif;*.pdf",
-							multiSelect: false,
-							title: "Add Image".Localize()),
-						(openParams) =>
-						{
-							if (!File.Exists(openParams.FileName))
-							{
-								return;
-							}
-
-							imageAsset.AssetPath = openParams.FileName;
-							thumbnailWidget.Image = SetImage(theme, imageAsset);
-
-							item?.Rebuild(undoBuffer);
-
-							column.Invalidate();
-						});
-				});
-			};
-
-			var row = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-			};
-			imageSection.ContentPanel.AddChild(row);
-
-			// Invert checkbox
-			var invertCheckbox = new CheckBox(new CheckBoxViewText("Invert".Localize(), textColor: theme.Colors.PrimaryTextColor))
-			{
-				Checked = imageAsset.Invert,
-				Margin = new BorderDouble(0),
-			};
-			invertCheckbox.CheckedStateChanged += (s, e) =>
-			{
-				imageAsset.Invert = invertCheckbox.Checked;
-				thumbnailWidget.Image = SetImage(theme, imageAsset);
-				item?.Rebuild(undoBuffer);
-			};
-			row.AddChild(invertCheckbox);
-
-			row.AddChild(new HorizontalSpacer());
-
-			row.AddChild(changeImageButton);
-
-			return column;
-		}
-
-		private ImageBuffer SetImage(ThemeConfig theme, ImageAsset imageAsset)
-		{
-			var image = imageAsset.Image;
-			// Show image load error if needed
-			if (image == null)
-			{
-				image = new ImageBuffer(185, 185).SetPreMultiply();
-				var graphics2D = image.NewGraphics2D();
-
-				graphics2D.FillRectangle(0, 0, 185, 185, theme.MinimalShade);
-				graphics2D.Rectangle(0, 0, 185, 185, theme.SlightShade);
-				graphics2D.DrawString("Error Loading Image".Localize() + "...", 10, 185 / 2, baseline: Agg.Font.Baseline.BoundsCenter, color: Color.Red, pointSize: theme.DefaultFontSize, drawFromHintedCach: true);
-			}
-
-			return (image.Height <= 185) ? image : ScaleThumbnailImage(185, image);
-		}
-
-		private ImageBuffer ScaleThumbnailImage(int height, ImageBuffer imageBuffer)
-		{
-			if (imageBuffer.Height != height)
-			{
-				var factor = (double)height / imageBuffer.Height;
-
-				int width = (int)(imageBuffer.Width * factor);
-
-				var scaledImageBuffer = new ImageBuffer(width, height);
-				scaledImageBuffer.NewGraphics2D().Render(imageBuffer, 0, 0, width, height);
-				return scaledImageBuffer;
-			}
-
-			return imageBuffer;
-		}
-
-		private ImageBuffer ScaleThumbnailImage(int width, int height, ImageBuffer imageBuffer)
-		{
-			if (imageBuffer.Width != width)
-			{
-				var scaledImageBuffer = new ImageBuffer(width, height);
-				scaledImageBuffer.NewGraphics2D().Render(imageBuffer, 0, 0, scaledImageBuffer.Width, scaledImageBuffer.Height);
-				imageBuffer = scaledImageBuffer;
-			}
-
-			return imageBuffer;
 		}
 
 		private GuiWidget CreateEnumEditor(IRebuildable item,

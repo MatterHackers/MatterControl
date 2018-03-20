@@ -65,8 +65,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public double OuterDiameter { get; set; } = 20;
-		public double InnerDiameter { get; set; } = 25;
-		public double Height { get; set; } = 20;
+		public double InnerDiameter { get; set; } = 15;
+		public double Height { get; set; } = 5;
 		public int Sides { get; set; } = 30;
 
 		public void Rebuild(UndoBuffer undoBuffer)
