@@ -91,7 +91,6 @@
     <Compile Include="DesignTools\Attributes\HideUpdateButtonAttribute.cs" />
     <Compile Include="DesignTools\Attributes\IconsAttribute.cs" />
     <Compile Include="DesignTools\Attributes\WebPageLinkAttribute.cs" />
-    <Compile Include="DesignTools\ImageAsset.cs" />
     <Compile Include="DesignTools\Interfaces\IEditorDraw.cs" />
     <Compile Include="DesignTools\Interfaces\IPropertyGridModifier.cs" />
     <Compile Include="DesignTools\Interfaces\IRebuildable.cs" />
@@ -107,6 +106,7 @@
     <Compile Include="DesignTools\Operations\Scale.cs" />
     <Compile Include="DesignTools\Operations\SmoothPath.cs" />
     <Compile Include="DesignTools\Primitives\BaseObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\ImageObject3D.cs" />
     <Compile Include="DesignTools\Primitives\RingObject3D.cs" />
     <Compile Include="DesignTools\Primitives\RoofObject3D.cs" />
     <Compile Include="DesignTools\Primitives\RoundRoofObject3D.cs" />
@@ -135,6 +135,7 @@
     <Compile Include="PartPreviewWindow\MaterialControls.cs" />
     <Compile Include="PartPreviewWindow\MoveItemPage.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\CombineEditor.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\ImageEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\MeshWrapperObject3D.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\SubtractAndReplace.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\OverflowBar.cs" />
