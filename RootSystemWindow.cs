@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl
 {
 	public class RootSystemWindow : SystemWindow
 	{
-		private static Vector2 minSize { get; set; } = new Vector2(600, 600);
+		private static Vector2 minSize { get; set; } = new Vector2(600, 480);
 
 		private Stopwatch totalDrawTime = new Stopwatch();
 

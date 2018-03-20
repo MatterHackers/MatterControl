@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		Vector2 lastMovePosition;
 
 		public TumbleCubeControl(InteractionLayer interactionLayer)
-			: base(100, 100)
+			: base(100 * GuiWidget.DeviceScale, 100 * GuiWidget.DeviceScale)
 		{
 			this.interactionLayer = interactionLayer;
 

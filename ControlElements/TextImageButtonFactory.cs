@@ -122,10 +122,10 @@ namespace MatterHackers.MatterControl
 		{
 			// Create button based on view container widget
 			var buttonViewWidget = new ButtonViewStates(
-				new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, Margin, null, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
-				new TextImageWidget(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, Margin, null, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
-				new TextImageWidget(label, pressedFillColor, pressedBorderColor, pressedTextColor, borderWidth, Margin, null, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
-				new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, Margin, null, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing)
+				new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, Margin, null, fontSize: this.fontSize, height: this.FixedHeight * GuiWidget.DeviceScale, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, Margin, null, fontSize: this.fontSize, height: this.FixedHeight * GuiWidget.DeviceScale, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, pressedFillColor, pressedBorderColor, pressedTextColor, borderWidth, Margin, null, fontSize: this.fontSize, height: this.FixedHeight * GuiWidget.DeviceScale, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, Margin, null, fontSize: this.fontSize, height: this.FixedHeight * GuiWidget.DeviceScale, imageSpacing: ImageSpacing)
 			);
 
 			var textImageButton = new Button(0, 0, buttonViewWidget)
