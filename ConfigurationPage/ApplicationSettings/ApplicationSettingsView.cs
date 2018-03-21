@@ -220,10 +220,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 										ApplicationController.Instance.Library.NotifyContainerChanged();
 									}
-								}, 
-								rebuildThumbnailsMessage, 
-								rebuildThumbnailsTitle, 
-								StyledMessageBox.MessageType.YES_NO, 
+								},
+								rebuildThumbnailsMessage,
+								rebuildThumbnailsTitle,
+								StyledMessageBox.MessageType.YES_NO,
 								"Rebuild".Localize());
 						});
 					}
@@ -434,36 +434,41 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		[Conditional("DEBUG")]
 		private void GenerateLocalizationValidationFile()
 		{
-			char currentChar = 'A';
-
-			string outputPath = AggContext.StaticData.MapPath(Path.Combine("Translations", "L10N", "Translation.txt"));
-
-			// Ensure the output directory exists
-			Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
-
-			using (var outstream = new StreamWriter(outputPath))
+			if (AggContext.StaticData is FileSystemStaticData fileSystemStaticData)
 			{
-				foreach (var line in File.ReadAllLines(AggContext.StaticData.MapPath(Path.Combine("Translations", "Master.txt"))))
+				char currentChar = 'A';
+
+				// Note: Functionality only expected to work on Desktop/Debug builds and as such, is coupled to FileSystemStaticData
+				string outputPath = fileSystemStaticData.MapPath(Path.Combine("Translations", "L10N", "Translation.txt"));
+				string sourceFilePath = fileSystemStaticData.MapPath(Path.Combine("Translations", "Master.txt"));
+
+				// Ensure the output directory exists
+				Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
+
+				using (var outstream = new StreamWriter(outputPath))
 				{
-					if (line.StartsWith("Translated:"))
+					foreach (var line in File.ReadAllLines(sourceFilePath))
 					{
-						var pos = line.IndexOf(':');
-						var segments = new string[]
+						if (line.StartsWith("Translated:"))
 						{
+							var pos = line.IndexOf(':');
+							var segments = new string[]
+							{
 							line.Substring(0, pos),
 							line.Substring(pos + 1),
-						};
+							};
 
-						outstream.WriteLine("{0}:{1}", segments[0], new string(segments[1].ToCharArray().Select(c => c == ' ' ? ' ' : currentChar).ToArray()));
+							outstream.WriteLine("{0}:{1}", segments[0], new string(segments[1].ToCharArray().Select(c => c == ' ' ? ' ' : currentChar).ToArray()));
 
-						if (currentChar++ == 'Z')
-						{
-							currentChar = 'A';
+							if (currentChar++ == 'Z')
+							{
+								currentChar = 'A';
+							}
 						}
-					}
-					else
-					{
-						outstream.WriteLine(line);
+						else
+						{
+							outstream.WriteLine(line);
+						}
 					}
 				}
 			}

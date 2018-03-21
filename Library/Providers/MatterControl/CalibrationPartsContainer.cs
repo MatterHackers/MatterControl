@@ -27,9 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -47,36 +49,55 @@ namespace MatterHackers.MatterControl.Library
 
 		public override void Load()
 		{
-			// TODO: Long term do we want to have multiple categories in the view - OEM parts and printer specific calibration parts? Easy to do if so
-			/*
-			IEnumerable<string> printerFiles;
-
-			string printerCalibrationFiles = ActiveSliceSettings.Instance.GetValue("calibration_files");
-			if (string.IsNullOrEmpty(printerCalibrationFiles))
-			{
-				return;
-			}
-
-			string[] calibrationPrintFileNames = printerCalibrationFiles.Split(';');
-			if (calibrationPrintFileNames.Length < 0)
-			{
-				printerFiles = Enumerable.Empty<string>();
-			}
-			else
-			{
-				printerFiles = calibrationPrintFileNames;
-			} */
-
 			var oemParts = AggContext.StaticData.GetFiles(Path.Combine("OEMSettings", "SampleParts"));
-			Items = oemParts.Select(s =>
-			{
-				// TODO: Won't work on Android - make stream based
-				return new FileSystemFileItem(AggContext.StaticData.MapPath(s));
-			}).ToList<ILibraryItem>();
+			Items = oemParts.Select(s => new StaticDataItem(s)).ToList<ILibraryItem>();
 		}
 
-		public override void Dispose()
+		private class StaticDataItem : ILibraryAssetStream
 		{
+			private string relativePath;
+
+			public StaticDataItem()
+			{
+			}
+
+			public StaticDataItem(string relativePath)
+			{
+				this.relativePath = relativePath;
+			}
+
+			public string FileName => Path.GetFileName(relativePath);
+
+			public string ContentType => Path.GetExtension(relativePath).ToLower().Trim('.');
+
+			public string AssetPath => relativePath;
+
+			public long FileSize { get; } = -1;
+
+			public bool LocalContentExists => true;
+
+			public string Category { get; } = "";
+
+			public string ID => relativePath.GetHashCode().ToString();
+
+			public string Name => this.FileName;
+
+			public bool IsProtected => true;
+
+			public bool IsVisible => true;
+
+			public DateTime DateModified { get; } = DateTime.Now;
+
+			public DateTime DateCreated { get; } = DateTime.Now;
+
+			public Task<StreamAndLength> GetStream(Action<double, string> progress)
+			{
+				return Task.FromResult(new StreamAndLength()
+				{
+					Stream = AggContext.StaticData.OpenStream(relativePath),
+					Length = -1
+				});
+			}
 		}
 	}
 }
