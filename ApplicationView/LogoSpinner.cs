@@ -82,16 +82,7 @@ namespace MatterHackers.MatterControl
 				InteractionLayer.UnsetGlContext();
 			};
 
-			Action action = null;
-			action = () =>
-			{
-				widget.Invalidate();
-				if (!widget.HasBeenClosed)
-				{
-					UiThread.RunOnIdle(action, .05);
-				}
-			};
-			UiThread.RunOnIdle(action, .05);
+			UiThread.SetInterval(widget.Invalidate, .05, () => !widget.HasBeenClosed);
 		}
 	}
 }

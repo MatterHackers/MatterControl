@@ -61,6 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// this data needs to be made on the ui thread
 			UiThread.RunOnIdle(() =>
 			{
+				cube.CleanAndMergeMesh(CancellationToken.None);
 				TextureFace(cube.Faces[0], "Top");
 				TextureFace(cube.Faces[1], "Left", Matrix4X4.CreateRotationZ(MathHelper.Tau / 4));
 				TextureFace(cube.Faces[2], "Right", Matrix4X4.CreateRotationZ(-MathHelper.Tau / 4));

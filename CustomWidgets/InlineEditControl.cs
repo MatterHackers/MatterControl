@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			VAnchor = VAnchor.Fit;
 			HAnchor = HAnchor.Fit;
 
-			UiThread.RunOnIdle(CheckControlsVisibility, .1);
+			UiThread.SetInterval(CheckControlsVisibility, .1, () => !HasBeenClosed);
 		}
 
 		public event EventHandler EditComplete;
@@ -203,8 +203,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				// If the user is hovering on a different control
 				Visible = false;
 			}
-
-			UiThread.RunOnIdle(CheckControlsVisibility, .1);
 		}
 	}
 }
