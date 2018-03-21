@@ -727,7 +727,7 @@ namespace MatterHackers.MatterControl
 						if (!cancellationToken.IsCancellationRequested
 							&& printerConnection.ContinuWaitingToTurnOffHeaters)
 						{
-							printerConnection.TurnOffBedAndExtruders(true);
+							printerConnection.TurnOffBedAndExtruders(TurnOff.Now);
 						}
 
 						if(cancellationToken.IsCancellationRequested)

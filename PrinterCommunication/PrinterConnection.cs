@@ -51,6 +51,8 @@ using Microsoft.Win32.SafeHandles;
 
 namespace MatterHackers.MatterControl.PrinterCommunication
 {
+	public enum TurnOff { Now, AfterDelay }
+
 	public enum CommunicationStates
 	{
 		Disconnected,
@@ -428,7 +430,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					case CommunicationStates.Disconnected:
 						if (communicationPossible)
 						{
-							TurnOffBedAndExtruders(true);
+							TurnOffBedAndExtruders(TurnOff.Now);
 							for (int hotendIndex = 0; hotendIndex < MAX_EXTRUDERS; hotendIndex++)
 							{
 								actualHotendTemperature[hotendIndex] = 0;
@@ -950,7 +952,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 										CreateStreamProcessors(null, false);
 
-										TurnOffBedAndExtruders(true); // make sure our ui and the printer agree and that the printer is in a known state (not heating).
+										TurnOffBedAndExtruders(TurnOff.Now); // make sure our ui and the printer agree and that the printer is in a known state (not heating).
 										haveReportedError = false;
 
 										QueueLine(this.ConnectGCode);
@@ -1036,7 +1038,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				// the motors and heaters (a good idea and something for the future).
 				forceImmediateWrites = true;
 				ReleaseMotors();
-				TurnOffBedAndExtruders(true);
+				TurnOffBedAndExtruders(TurnOff.Now);
 				FanSpeed0To255 = 0;
 				forceImmediateWrites = false;
 
@@ -1053,7 +1055,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			else
 			{
 				//Need to reset UI - even if manual disconnect
-				TurnOffBedAndExtruders(true);
+				TurnOffBedAndExtruders(TurnOff.Now);
 				FanSpeed0To255 = 0;
 			}
 			OnEnabledChanged(null);
@@ -2066,7 +2068,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			this.PrintJobName = null;
 
 			// never leave the extruder and the bed hot
-			TurnOffBedAndExtruders(false);
+			TurnOffBedAndExtruders(TurnOff.Now);
 
 			ReleaseMotors();
 		}
@@ -2404,7 +2406,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						CommunicationState = CommunicationStates.Connected;
 						// never leave the extruder and the bed hot
 						ReleaseMotors();
-						TurnOffBedAndExtruders(false);
+						TurnOffBedAndExtruders(TurnOff.AfterDelay);
 						this.PrintWasCanceled = false;
 					}
 					else if (communicationState == CommunicationStates.Printing)// we finished printing normally
@@ -2418,7 +2420,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 						// never leave the extruder and the bed hot
 						ReleaseMotors();
-						TurnOffBedAndExtruders(false);
+						TurnOffBedAndExtruders(TurnOff.Now);
 					}
 				}
 			}
@@ -2426,9 +2428,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public int TurnOffHeatDelay { get; set; } = 60;
 
-		public void TurnOffBedAndExtruders(bool now)
+		public void TurnOffBedAndExtruders(TurnOff turnOffTime)
 		{
-			if (now)
+			if (turnOffTime == TurnOff.Now)
 			{
 				for (int i = 0; i < this.ExtruderCount; i++)
 				{
