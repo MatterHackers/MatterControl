@@ -434,6 +434,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		[Conditional("DEBUG")]
 		private void GenerateLocalizationValidationFile()
 		{
+#if ! __ANDROID__
 			if (AggContext.StaticData is FileSystemStaticData fileSystemStaticData)
 			{
 				char currentChar = 'A';
@@ -472,6 +473,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					}
 				}
 			}
+#endif
 		}
 	}
 }
