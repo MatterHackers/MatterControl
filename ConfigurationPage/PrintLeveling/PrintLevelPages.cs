@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			Parent.Closed += (s, e) =>
 			{
 				// Make sure when the wizard closes we turn off the bed heating
-				printer.Connection.TurnOffBedAndExtruders(false);
+				printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
 			};
 
 			if (printer.Settings.Helpers.UseZProbe())
@@ -230,7 +230,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			container.backButton.Enabled = false;
 
 			// Make sure when the wizard is done we turn off the bed heating
-			printer.Connection.TurnOffBedAndExtruders(false);
+			printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
 
 			base.PageIsBecomingActive();
 		}
