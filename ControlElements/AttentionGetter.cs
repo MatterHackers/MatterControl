@@ -107,7 +107,6 @@ namespace MatterHackers.MatterControl
 					widgetToHighlight = null;
 					return;
 				}
-				UiThread.RunOnIdle(ChangeBackgroundColor, animationDelay);
 			}
 		}
 
@@ -132,7 +131,7 @@ namespace MatterHackers.MatterControl
 			startColor = parent.BackgroundColor;
 			timeSinceStart = Stopwatch.StartNew();
 			widgetToHighlight.AfterDraw -= ConnectToWidget;
-			UiThread.RunOnIdle(ChangeBackgroundColor, animationDelay);
+			UiThread.SetInterval(ChangeBackgroundColor, animationDelay, () => parent.HasBeenClosed);
 		}
 	}
 }

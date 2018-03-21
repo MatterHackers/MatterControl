@@ -2451,6 +2451,21 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						while (TimeHaveBeenWaitingToTurnOffHeaters.Elapsed.TotalSeconds < TurnOffHeatDelay
 							&& ContinuWaitingToTurnOffHeaters)
 						{
+							bool anyHeatIsOn = false;
+							// check if any temps are set
+							for (int i = 0; i < this.ExtruderCount; i++)
+							{
+								if(GetTargetHotendTemperature(i) > 0)
+								{
+									anyHeatIsOn = true;
+									break;
+								}
+							}
+							anyHeatIsOn |= TargetBedTemperature > 0;
+							if(!anyHeatIsOn)
+							{
+								ContinuWaitingToTurnOffHeaters = false;
+							}
 							SecondsUntilTurnOffHeaters = ContinuWaitingToTurnOffHeaters ? Math.Max(0, TurnOffHeatDelay - TimeHaveBeenWaitingToTurnOffHeaters.Elapsed.TotalSeconds) : 0;
 							Thread.Sleep(100);
 						}

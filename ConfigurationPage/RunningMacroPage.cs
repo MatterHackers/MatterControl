@@ -111,7 +111,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				timeToWaitMs = (long)(macroData.countDown * 1000);
 				startTimeMs = UiThread.CurrentTimerMs;
-				UiThread.RunOnIdle(CountDownTime);
+				UiThread.SetInterval(CountDownTime, .2, () =>
+				{
+					return (!HasBeenClosed && progressBar.RatioComplete < 1);
+				});
 			}
 		}
 
@@ -152,10 +155,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			progressBar.RatioComplete = timeToWaitMs == 0 ? 1 : Math.Max(0, Math.Min(1, ((double)timeSinceStartMs / (double)timeToWaitMs)));
 			int seconds = (int)((timeToWaitMs - (timeToWaitMs * (progressBar.RatioComplete))) / 1000);
 			progressBarText.Text = $"Time Remaining: {seconds / 60:#0}:{seconds % 60:00}";
-			if (!HasBeenClosed && progressBar.RatioComplete < 1)
-			{
-				UiThread.RunOnIdle(CountDownTime, .2);
-			}
 		}
 
 		double startingTemp;
@@ -166,23 +165,17 @@ namespace MatterHackers.MatterControl.PrinterControls
 				&& stringEvent.Data.Contains("M104"))
 			{
 				startingTemp = printer.Connection.GetActualHotendTemperature(0);
-				UiThread.RunOnIdle(ShowTempChangeProgress);
-			}
-		}
-
-		private void ShowTempChangeProgress()
-		{
-			progressBar.Visible = true;
-			double targetTemp = printer.Connection.GetTargetHotendTemperature(0);
-			double actualTemp = printer.Connection.GetActualHotendTemperature(0);
-			double totalDelta = targetTemp - startingTemp;
-			double currentDelta = actualTemp - startingTemp;
-			double ratioDone = totalDelta != 0 ? (currentDelta / totalDelta) : 1;
-			progressBar.RatioComplete = Math.Min(Math.Max(0, ratioDone), 1);
-			progressBarText.Text = $"Temperature: {actualTemp:0} / {targetTemp:0}";
-			if (!HasBeenClosed && ratioDone < 1)
-			{
-				UiThread.RunOnIdle(ShowTempChangeProgress, 1);
+				UiThread.SetInterval(() =>
+				{
+					progressBar.Visible = true;
+					double targetTemp = printer.Connection.GetTargetHotendTemperature(0);
+					double actualTemp = printer.Connection.GetActualHotendTemperature(0);
+					double totalDelta = targetTemp - startingTemp;
+					double currentDelta = actualTemp - startingTemp;
+					double ratioDone = totalDelta != 0 ? (currentDelta / totalDelta) : 1;
+					progressBar.RatioComplete = Math.Min(Math.Max(0, ratioDone), 1);
+					progressBarText.Text = $"Temperature: {actualTemp:0} / {targetTemp:0}";
+				}, 1, () => !HasBeenClosed && progressBar.RatioComplete < 1);
 			}
 		}
 	}

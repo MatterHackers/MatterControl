@@ -531,24 +531,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			timeContainer.AddChild(timeWidget);
 
-			Action updatePrintProgress = null;
-			updatePrintProgress = () =>
-			{
-				int secondsPrinted = printer.Connection.SecondsPrinted;
-				int hoursPrinted = (int)(secondsPrinted / (60 * 60));
-				int minutesPrinted = (secondsPrinted / 60 - hoursPrinted * 60);
-
-				secondsPrinted = secondsPrinted % 60;
-
-				// TODO: Consider if the consistency of a common time format would look and feel better than changing formats based on elapsed duration
-				timeWidget.Text = (hoursPrinted <= 0) ? $"{minutesPrinted}:{secondsPrinted:00}" : $"{hoursPrinted}:{minutesPrinted:00}:{secondsPrinted:00}";
-
-				progressDial.LayerIndex = printer.Connection.CurrentlyPrintingLayer;
-				progressDial.LayerCompletedRatio = printer.Connection.RatioIntoCurrentLayer;
-				progressDial.CompletedRatio = printer.Connection.PercentComplete / 100;
-
-				if (!bodyRow.HasBeenClosed)
+			UiThread.SetInterval(
+				() =>
 				{
+					int secondsPrinted = printer.Connection.SecondsPrinted;
+					int hoursPrinted = (int)(secondsPrinted / (60 * 60));
+					int minutesPrinted = (secondsPrinted / 60 - hoursPrinted * 60);
+
+					secondsPrinted = secondsPrinted % 60;
+
+					// TODO: Consider if the consistency of a common time format would look and feel better than changing formats based on elapsed duration
+					timeWidget.Text = (hoursPrinted <= 0) ? $"{minutesPrinted}:{secondsPrinted:00}" : $"{hoursPrinted}:{minutesPrinted:00}:{secondsPrinted:00}";
+
+					progressDial.LayerIndex = printer.Connection.CurrentlyPrintingLayer;
+					progressDial.LayerCompletedRatio = printer.Connection.RatioIntoCurrentLayer;
+					progressDial.CompletedRatio = printer.Connection.PercentComplete / 100;
+
 					switch (printer.Connection.CommunicationState)
 					{
 						case CommunicationStates.PreparingToPrint:
@@ -561,12 +559,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							bodyRow.Visible = false;
 							break;
 					}
-
-					UiThread.RunOnIdle(updatePrintProgress, 1);
-				}
-			};
-
-			UiThread.RunOnIdle(updatePrintProgress, 1);
+				}, 1, () => !bodyRow.HasBeenClosed);
 
 			bodyRow.Visible = false;
 

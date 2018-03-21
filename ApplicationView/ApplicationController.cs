@@ -1860,7 +1860,10 @@ namespace MatterHackers.MatterControl
 			reporter?.Invoke(0.91, "OnLoadActions");
 			ApplicationController.Instance.OnLoadActions();
 
-			UiThread.RunOnIdle(CheckOnPrinter);
+			UiThread.SetInterval(() =>
+			{
+				ApplicationController.Instance.ActivePrinter.Connection.OnIdle();
+			}, .1, () => true);
 
 			return ApplicationController.Instance.MainView;
 		}
@@ -1878,24 +1881,6 @@ namespace MatterHackers.MatterControl
 
 				lastSection = section;
 			});
-		}
-
-		private static void CheckOnPrinter()
-		{
-			try
-			{
-				// TODO: UiThread should not be driving anything in Printer.Connection
-				ApplicationController.Instance.ActivePrinter.Connection.OnIdle();
-			}
-			catch (Exception e)
-			{
-				Debug.Print(e.Message);
-				GuiWidget.BreakInDebugger();
-#if DEBUG
-				throw e;
-#endif
-			}
-			UiThread.RunOnIdle(CheckOnPrinter);
 		}
 	}
 }

@@ -117,7 +117,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			container.AddChild(row);
 
 			// add in the temp graph
-			Action fillGraph = null;
 			var graph = new DataViewGraph()
 			{
 				DynamiclyScaleRange = false,
@@ -131,14 +130,10 @@ namespace MatterHackers.MatterControl.ActionBar
 				Margin = new BorderDouble(0, 5, 0, 0),
 			};
 
-			fillGraph = () =>
+			UiThread.SetInterval(() =>
 			{
 				graph.AddData(this.ActualTemperature);
-				if (!this.HasBeenClosed)
-				{
-					UiThread.RunOnIdle(fillGraph, 1);
-				}
-			};
+			}, 1, () => !HasBeenClosed);
 
 			var valueField = row.Descendants<MHNumberEdit>().FirstOrDefault();
 			var settingsRow = row.DescendantsAndSelf<SliceSettingsRow>().FirstOrDefault();
@@ -158,8 +153,6 @@ namespace MatterHackers.MatterControl.ActionBar
 				};
 			}, ref unregisterEvents);
 
-
-			UiThread.RunOnIdle(fillGraph);
 			container.AddChild(graph);
 
 			return widget;

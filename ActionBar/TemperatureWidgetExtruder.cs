@@ -253,7 +253,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			container.AddChild(row);
 
 			// add in the temp graph
-			Action fillGraph = null;
 			var graph = new DataViewGraph()
 			{
 				DynamiclyScaleRange = false,
@@ -265,14 +264,10 @@ namespace MatterHackers.MatterControl.ActionBar
 				Width = widget.Width - 20,
 				Height = 35, // this works better if it is a common multiple of the Width
 			};
-			fillGraph = () =>
+			UiThread.SetInterval(() =>
 			{
 				graph.AddData(this.ActualTemperature);
-				if (!this.HasBeenClosed)
-				{
-					UiThread.RunOnIdle(fillGraph, 1);
-				}
-			};
+			}, 1, () => !HasBeenClosed);
 
 			var valueField = row.Descendants<MHNumberEdit>().FirstOrDefault();
 			valueField.Name = "Temperature Input";
@@ -295,7 +290,6 @@ namespace MatterHackers.MatterControl.ActionBar
 				};
 			}, ref unregisterEvents);
 
-			UiThread.RunOnIdle(fillGraph);
 			container.AddChild(graph);
 
 			if (hotendIndex == 0)

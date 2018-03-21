@@ -130,7 +130,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingActive()
 		{
 			startingTemp = printer.Connection.ActualBedTemperature;
-			UiThread.RunOnIdle(ShowTempChangeProgress);
+
+			UiThread.SetInterval(ShowTempChangeProgress, 1, () => !HasBeenClosed);
 
 			// start heating the bed and show our progress
 			printer.Connection.TargetBedTemperature = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
@@ -176,10 +177,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			double ratioDone = totalDelta != 0 ? (currentDelta / totalDelta) : 1;
 			progressBar.RatioComplete = Math.Min(Math.Max(0, ratioDone), 1);
 			progressBarText.Text = $"Temperature: {actualTemp:0} / {targetTemp:0}";
-			if (!HasBeenClosed)
-			{
-				UiThread.RunOnIdle(ShowTempChangeProgress, 1);
-			}
 
 			// if we are within 1 degree of our target
 			if (Math.Abs(targetTemp - actualTemp) < 1
@@ -434,14 +431,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(10, 0),
 			};
-			Action<TextWidget> updateUntilClose = null;
-			updateUntilClose = (tw) =>
+
+			UiThread.SetInterval(() =>
 			{
 				Vector3 destinationPosition = printer.Connection.CurrentDestination;
 				zPosition.Text = "Z: {0:0.00}".FormatWith(destinationPosition.Z);
-				UiThread.RunOnIdle(() => updateUntilClose(zPosition), .3);
-			};
-			updateUntilClose(zPosition);
+			}, .3, () => !HasBeenClosed);
 
 			zButtonsAndInfo.AddChild(zPosition);
 
