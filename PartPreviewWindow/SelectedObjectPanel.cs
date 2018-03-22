@@ -320,7 +320,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				// Get all public, instance properties where property type is IObject3D
+				// Get all public, instance properties where property type is marked with IObject3DComponentAttribute
 				var members = from item in selectedItemType.GetProperties(PublicPropertyEditor.OwnedPropertiesOnly)
 							  let propertyType = item.PropertyType
 							  where Attribute.IsDefined(item, componentAttribute)
@@ -338,7 +338,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						activeEditors.Add((editor, member.Value));
 					}
 				}
-
 			}
 
 			if (mappedEditors?.Any() == true)
