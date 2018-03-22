@@ -412,7 +412,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				editorPanel.AddChild(editorWidget);
 
 				// Only add Operation buttons if the item is rooted in the scene
-				if (selectedItem.Parent.IsRoot())
+				if (selectedItem.Parent.IsRoot() 
+					|| selectedItem.Parent?.Parent.IsRoot() == true)
 				{
 					var buttons = new List<OperationButton>();
 
