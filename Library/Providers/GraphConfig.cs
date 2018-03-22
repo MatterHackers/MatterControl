@@ -35,28 +35,30 @@ using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class GraphOperation
+	public class NodeOperation
 	{
 		public string Title { get; set; }
 		public List<Type> MappedTypes { get; set; }
 		public Func<IObject3D, InteractiveScene, Task> Operation { get; set; }
 		public Func<IObject3D, bool> IsEnabled { get; set; }
+		public Func<IObject3D, bool> IsVisible { get; set; }
 	}
 
 	public class GraphConfig
 	{
-		private List<GraphOperation> _operations = new List<GraphOperation>();
+		private List<NodeOperation> _operations = new List<NodeOperation>();
 
-		public IEnumerable<GraphOperation> Operations => _operations;
+		public IEnumerable<NodeOperation> Operations => _operations;
 
-		public void RegisterOperation(Type type, string title, Func<IObject3D, InteractiveScene, Task> operation, Func<IObject3D, bool> isEnabled)
+		public void RegisterOperation(Type type, string title, Func<IObject3D, InteractiveScene, Task> operation, Func<IObject3D, bool> isEnabled, Func<IObject3D, bool> isVisible = null)
 		{
-			_operations.Add(new GraphOperation()
+			_operations.Add(new NodeOperation()
 			{
 				MappedTypes = new List<Type> { type },
 				Title = title,
 				Operation = operation,
-				IsEnabled = isEnabled
+				IsEnabled = isEnabled,
+				IsVisible = isVisible
 			});
 		}
 	}
