@@ -410,54 +410,63 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				editorPanel.AddChild(editorWidget);
 
-				var buttons = new List<OperationButton>();
-
-				foreach (var graphOperation in ApplicationController.Instance.Graph.Operations)
+				// Only add Operation buttons if the item is rooted in the scene
+				if (selectedItem.Parent.Parent == null)
 				{
-					foreach (var type in graphOperation.MappedTypes)
-					{
-						if (type.IsAssignableFrom(selectedItemType))
-						{
-							var button = new OperationButton(graphOperation, selectedItem, theme)
-							{
-								BackgroundColor = theme.MinimalShade,
-								Margin = theme.ButtonSpacing
-							};
-							button.EnsureAvailablity();
-							button.Click += (s, e) =>
-							{
-								graphOperation.Operation(selectedItem, scene).ConfigureAwait(false);
-							};
+					var buttons = new List<OperationButton>();
 
-							buttons.Add(button);
+					foreach (var graphOperation in ApplicationController.Instance.Graph.Operations)
+					{
+						foreach (var type in graphOperation.MappedTypes)
+						{
+							if (type.IsAssignableFrom(selectedItemType))
+							{
+								var button = new OperationButton(graphOperation, selectedItem, theme)
+								{
+									BackgroundColor = theme.MinimalShade,
+									Margin = theme.ButtonSpacing
+								};
+								button.EnsureAvailablity();
+								button.Click += (s, e) =>
+								{
+									graphOperation.Operation(selectedItem, scene).ConfigureAwait(false);
+								};
+
+								buttons.Add(button);
+							}
 						}
+					}
+
+					if (buttons.Any())
+					{
+						var toolbar = new Toolbar()
+						{
+							HAnchor = HAnchor.Stretch,
+							VAnchor = VAnchor.Fit,
+							Padding = theme.ToolbarPadding,
+							Margin = new BorderDouble(0, 8)
+						};
+						editorPanel.AddChild(toolbar);
+
+						foreach (var button in buttons)
+						{
+							toolbar.AddChild(button);
+						}
+
+						// TODO: Fix likely leak
+						selectedItem.Invalidated += (s, e) =>
+						{
+							foreach (var button in toolbar.ActionArea.Children.OfType<OperationButton>())
+							{
+								button.EnsureAvailablity();
+							}
+						};
 					}
 				}
-
-				if (buttons.Any())
+				else
 				{
-					var toolbar = new Toolbar()
-					{
-						HAnchor = HAnchor.Stretch,
-						VAnchor = VAnchor.Fit,
-						Padding = theme.ToolbarPadding,
-						Margin = new BorderDouble(0, 8)
-					};
-					editorPanel.AddChild(toolbar);
-
-					foreach (var button in buttons)
-					{
-						toolbar.AddChild(button);
-					}
-
-					// TODO: Fix likely leak
-					selectedItem.Invalidated += (s, e) =>
-					{
-						foreach (var button in toolbar.ActionArea.Children.OfType<OperationButton>())
-						{
-							button.EnsureAvailablity();
-						}
-					};
+					// If the button toolbar isn't added, ensure panel has bottom margin
+					editorWidget.Margin = editorWidget.Margin.Clone(bottom: 15);
 				}
 			}
 		}
