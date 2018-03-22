@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 							GenerateLocalizationValidationFile();
 						}
 
-						LocalizedString.ResetTranslationMap();
+						ApplicationController.Instance.ResetTranslationMap();
 						ApplicationController.Instance.ReloadAll();
 					}
 				});

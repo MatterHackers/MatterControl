@@ -1448,6 +1448,11 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public void ResetTranslationMap()
+		{
+			TranslationMap.ActiveTranslationMap = new TranslationMap("Translations", UserSettings.Instance.Language);
+		}
+
 		public async Task MonitorPrintTask(PrinterConfig printer)
 		{
 			await ApplicationController.Instance.Tasks.Execute("Printing".Localize(),
@@ -1798,6 +1803,8 @@ namespace MatterHackers.MatterControl
 					{
 						ReportStartupProgress(0.2 + progress0To1 * 0.7, status);
 					});
+
+					TranslationMap.ActiveTranslationMap = new TranslationMap("Translations", UserSettings.Instance.Language);
 
 					ReportStartupProgress(0.9, "AddChild->MainView");
 					systemWindow.AddChild(mainView, 0);
