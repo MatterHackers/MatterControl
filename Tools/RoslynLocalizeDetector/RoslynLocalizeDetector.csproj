@@ -3,8 +3,8 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net471</TargetFramework>
-    <AssemblyName>RoslinLocalizeDetector</AssemblyName>
-    <RootNamespace>RoslinLocalizeDetector</RootNamespace>
+    <AssemblyName>RoslynLocalizeDetector</AssemblyName>
+    <RootNamespace>RoslynLocalizeDetector</RootNamespace>
     <StartupObject></StartupObject>
   </PropertyGroup>
 
