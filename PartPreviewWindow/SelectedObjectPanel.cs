@@ -42,6 +42,11 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+	public class IObject3DComponentAttribute: Attribute
+	{
+	}
+
 	public interface IObject3DComponent
 	{
 	}
@@ -263,6 +268,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		private static Type componentAttribute = typeof(IObject3DComponentAttribute);
 		private static Type componentType = typeof(IObject3DComponent);
 		private static Type iobject3DType = typeof(IObject3D);
 
@@ -290,18 +296,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var activeEditors = new List<(IObject3DEditor, IObject3D)>();
 
+			// If item is IObject3DComponent
 			if (componentType.IsAssignableFrom(selectedItemType))
 			{
+				// Get all public, instance properties where property type is IObject3D
 				var members = from item in selectedItemType.GetProperties(PublicPropertyEditor.OwnedPropertiesOnly)
-								let value = item.GetValue(selectedItem, null) as IObject3D
 								let propertyType = item.PropertyType
 								where iobject3DType.IsAssignableFrom(propertyType)
 								select new
 								{
 									Type = propertyType,
-									Value = value
+									Value = item.GetValue(selectedItem, null) as IObject3D
 								};
 
+				// Shown known editors for any matching properties
 				foreach (var member in members)
 				{
 					if (this.GetEditorsForType(member.Type)?.FirstOrDefault() is IObject3DEditor editor)
@@ -309,6 +317,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						activeEditors.Add((editor, member.Value));
 					}
 				}
+			}
+			else
+			{
+				// Get all public, instance properties where property type is IObject3D
+				var members = from item in selectedItemType.GetProperties(PublicPropertyEditor.OwnedPropertiesOnly)
+							  let propertyType = item.PropertyType
+							  where Attribute.IsDefined(item, componentAttribute)
+							  select new
+							  {
+								  Type = propertyType,
+								  Value = item.GetValue(selectedItem, null) as IObject3D
+							  };
+
+				// Shown known editors for any matching properties
+				foreach (var member in members)
+				{
+					if (this.GetEditorsForType(member.Type)?.FirstOrDefault() is IObject3DEditor editor)
+					{
+						activeEditors.Add((editor, member.Value));
+					}
+				}
+
 			}
 
 			if (mappedEditors?.Any() == true)
