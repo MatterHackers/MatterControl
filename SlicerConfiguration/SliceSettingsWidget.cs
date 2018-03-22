@@ -436,7 +436,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Name = "GroupPanel" + groupPanelCount++
 			};
 
-			var sectionWidget = new SectionWidget(group.Name, groupPanel, theme).ApplyBoxStyle();
+			var sectionWidget = new SectionWidget(group.Name.Localize(), groupPanel, theme).ApplyBoxStyle();
 
 			foreach (var subGroup in group.SubGroups)
 			{
@@ -884,7 +884,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return new WrappedTextWidget(label, pointSize: 10, textColor: textColor)
 			{
 				VAnchor = VAnchor.Center | VAnchor.Fit,
-				ToolTipText = helpText,
+				ToolTipText = helpText.Localize(),
 				Margin = new BorderDouble(0, 5, 5, 5),
 			};
 		}
