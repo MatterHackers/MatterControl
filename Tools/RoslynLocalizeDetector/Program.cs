@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.MSBuild;
 using Newtonsoft.Json;
 
-namespace RoslinLocalizeDetector
+namespace RoslynLocalizeDetector
 {
 	class Program
 	{

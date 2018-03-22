@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace RoslinLocalizeDetector
+namespace RoslynLocalizeDetector
 {
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public class LocalizeDetector : DiagnosticAnalyzer
