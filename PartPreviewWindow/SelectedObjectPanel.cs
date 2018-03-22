@@ -37,6 +37,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
 
@@ -411,7 +412,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				editorPanel.AddChild(editorWidget);
 
 				// Only add Operation buttons if the item is rooted in the scene
-				if (selectedItem.Parent.Parent == null)
+				if (selectedItem.Parent.IsRoot())
 				{
 					var buttons = new List<OperationButton>();
 

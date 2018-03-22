@@ -42,6 +42,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public static class Object3DExtensions
 	{
+		public static bool IsRoot(this IObject3D object3D)
+		{
+			return object3D.Parent == null;
+		}
+
 		public static IObject3D Translate(this IObject3D objectToTranslate, double x = 0, double y = 0, double z = 0, string name = "")
 		{
 			return objectToTranslate.Translate(new Vector3(x, y, z), name);
