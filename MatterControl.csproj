@@ -191,7 +191,6 @@
     <Compile Include="PartPreviewWindow\View3D\Actions\IntersectionEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\MeshWrapper.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\SubtractEditor.cs" />
-    <Compile Include="PartPreviewWindow\View3D\LightingData.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\CancelButton.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\PauseResumeButton.cs" />
     <Compile Include="Library\ReadOnlyStreamItem.cs" />
