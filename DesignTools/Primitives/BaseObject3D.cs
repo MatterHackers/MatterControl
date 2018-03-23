@@ -29,14 +29,13 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.Linq;
 using ClipperLib;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
-using MatterHackers.PolygonMesh;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -52,12 +51,12 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 		}
 
-		
-
 		public double ExtrusionHeight { get; set; } = 5;
 		public int InfillAmount { get; internal set; }
 		public BaseTypes CurrentBaseType { get; set; }
 		public int BaseSize { get; set; }
+
+		public IVertexSource VertexSource { get; set; }
 
 		public static BaseObject3D Create()
 		{
@@ -70,8 +69,14 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var aabb = this.GetAxisAlignedBoundingBox();
 
-			Polygons polygonShape = null;
+			// Fall back to sibling content if VertexSource is unset
+			var vertexSource = this.VertexSource ?? this.Parent.Children.OfType<IPathObject>().FirstOrDefault().VertexSource;
+
+			// Convert VertexSource into expected Polygons
+			Polygons polygonShape = (vertexSource == null) ? null : VertexSourceToClipperPolygons.CreatePolygons(vertexSource);
+
 			GenerateBase(polygonShape);
+
 			if (aabb.ZSize > 0)
 			{
 				// If the part was already created and at a height, maintain the height.
