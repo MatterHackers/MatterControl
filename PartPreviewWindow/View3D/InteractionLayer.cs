@@ -36,6 +36,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.RayTracer;
 using MatterHackers.RayTracer.Traceable;
+using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 using static MatterHackers.MeshVisualizer.MeshViewerWidget;
@@ -82,9 +83,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (DoOpenGlDrawing)
 			{
-				SetGlContext(this.World, renderSource.TransformToScreenSpace(renderSource.LocalBounds), lighting);
+				GLHelper.SetGlContext(this.World, renderSource.TransformToScreenSpace(renderSource.LocalBounds), lighting);
 				OnDrawGlContent(e);
-				UnsetGlContext();
+				GLHelper.UnsetGlContext();
 			}
 		}
 
@@ -184,7 +185,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			base.OnMouseMove(mouseEvent);
 
-			if (SuppressUiVolumes 
+			if (SuppressUiVolumes
 				|| !this.PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y))
 			{
 				return;
@@ -326,89 +327,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			DrawGlOpaqueContent?.Invoke(this, e);
 			DrawGlTransparentContent?.Invoke(this, e);
-		}
-
-		private static float[] ambientColor = new float[] { 0, 0, 0, 0 };
-
-		public static void SetGlContext(WorldView worldView, RectangleDouble screenRect, LightingData lighting)
-		{
-			SetGlContext(worldView, screenRect, lighting, ambientColor);
-		}
-
-		public static void SetGlContext(WorldView worldView, RectangleDouble screenRect, LightingData lighting, float[] ambientColor)
-		{
-			GL.ClearDepth(1.0);
-			GL.Clear(ClearBufferMask.DepthBufferBit);   // Clear the Depth Buffer
-
-			GL.PushAttrib(AttribMask.ViewportBit);
-			GL.Viewport((int)screenRect.Left, (int)screenRect.Bottom, (int)screenRect.Width, (int)screenRect.Height);
-
-			GL.ShadeModel(ShadingModel.Smooth);
-
-			GL.FrontFace(FrontFaceDirection.Ccw);
-			GL.CullFace(CullFaceMode.Back);
-
-			GL.DepthFunc(DepthFunction.Lequal);
-
-			GL.Disable(EnableCap.DepthTest);
-			//ClearToGradient();
-
-			GL.Light(LightName.Light0, LightParameter.Ambient, lighting.ambientLight);
-
-			GL.Light(LightName.Light0, LightParameter.Diffuse, lighting.diffuseLight0);
-			GL.Light(LightName.Light0, LightParameter.Specular, lighting.specularLight0);
-
-			GL.Light(LightName.Light0, LightParameter.Ambient, ambientColor);
-			GL.Light(LightName.Light1, LightParameter.Diffuse, lighting.diffuseLight1);
-			GL.Light(LightName.Light1, LightParameter.Specular, lighting.specularLight1);
-
-			GL.ColorMaterial(MaterialFace.FrontAndBack, ColorMaterialParameter.AmbientAndDiffuse);
-
-			GL.Enable(EnableCap.Light0);
-			GL.Enable(EnableCap.Light1);
-			GL.Enable(EnableCap.DepthTest);
-			GL.Enable(EnableCap.Blend);
-			GL.Enable(EnableCap.Normalize);
-			GL.Enable(EnableCap.Lighting);
-			GL.Enable(EnableCap.ColorMaterial);
-
-			Vector3 lightDirectionVector = new Vector3(lighting.lightDirection0[0], lighting.lightDirection0[1], lighting.lightDirection0[2]);
-			lightDirectionVector.Normalize();
-			lighting.lightDirection0[0] = (float)lightDirectionVector.X;
-			lighting.lightDirection0[1] = (float)lightDirectionVector.Y;
-			lighting.lightDirection0[2] = (float)lightDirectionVector.Z;
-			GL.Light(LightName.Light0, LightParameter.Position, lighting.lightDirection0);
-			GL.Light(LightName.Light1, LightParameter.Position, lighting.lightDirection1);
-
-			// set the projection matrix
-			GL.MatrixMode(MatrixMode.Projection);
-			GL.PushMatrix();
-			GL.LoadMatrix(worldView.ProjectionMatrix.GetAsDoubleArray());
-
-			// set the modelview matrix
-			GL.MatrixMode(MatrixMode.Modelview);
-			GL.PushMatrix();
-			GL.LoadMatrix(worldView.ModelviewMatrix.GetAsDoubleArray());
-		}
-
-		public static void UnsetGlContext()
-		{
-			GL.MatrixMode(MatrixMode.Projection);
-			GL.PopMatrix();
-
-			GL.MatrixMode(MatrixMode.Modelview);
-			GL.PopMatrix();
-
-			GL.Disable(EnableCap.ColorMaterial);
-			GL.Disable(EnableCap.Lighting);
-			GL.Disable(EnableCap.Light0);
-			GL.Disable(EnableCap.Light1);
-
-			GL.Disable(EnableCap.Normalize);
-			GL.Disable(EnableCap.Blend);
-			GL.Disable(EnableCap.DepthTest);
-
-			GL.PopAttrib();
 		}
 	}
 }

@@ -82,9 +82,9 @@ namespace MatterHackers.MatterControl
 				world.Translate(new Vector3(0, yOffset, 0));
 				world.Rotate(Quaternion.FromEulerAngles(new Vector3(rotateX, 0, 0)));
 
-				InteractionLayer.SetGlContext(world, screenSpaceBounds, lighting, this.AmbientColor);
+				GLHelper.SetGlContext(world, screenSpaceBounds, lighting);
 				GLHelper.Render(logoMesh, this.MeshColor, Matrix4X4.CreateRotationY(angle), RenderTypes.Shaded);
-				InteractionLayer.UnsetGlContext();
+				GLHelper.UnsetGlContext();
 			};
 
 			UiThread.SetInterval(widget.Invalidate, .05, () => !widget.HasBeenClosed);
