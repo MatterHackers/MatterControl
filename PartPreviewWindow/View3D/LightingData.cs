@@ -32,14 +32,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class LightingData
 	{
-		internal float[] ambientLight = { 0.2f, 0.2f, 0.2f, 1.0f };
+		public float[] AmbientLight { get; set; } = { 0, 0, 0, 0 }; //{ 0.2f, 0.2f, 0.2f, 1.0f };
 
-		internal float[] diffuseLight0 = { 0.7f, 0.7f, 0.7f, 1.0f };
-		internal float[] specularLight0 = { 0.5f, 0.5f, 0.5f, 1.0f };
-		internal float[] lightDirection0 = { -1, -1, 1, 0.0f };
+		public float[] DiffuseLight0 { get; set; } = { 0.7f, 0.7f, 0.7f, 1.0f };
+		public float[] SpecularLight0 { get; set; } = { 0.5f, 0.5f, 0.5f, 1.0f };
+		public float[] LightDirection0 { get; set; } = { -1, -1, 1, 0.0f };
 
-		internal float[] diffuseLight1 = { 0.5f, 0.5f, 0.5f, 1.0f };
-		internal float[] specularLight1 = { 0.3f, 0.3f, 0.3f, 1.0f };
-		internal float[] lightDirection1 = { 1, 1, 1, 0.0f };
+		public float[] DiffuseLight1 { get; set; } = { 0.5f, 0.5f, 0.5f, 1.0f };
+		public float[] SpecularLight1 { get; set; } = { 0.3f, 0.3f, 0.3f, 1.0f };
+		public float[] LightDirection1 { get; set; } = { 1, 1, 1, 0.0f };
 	}
 }

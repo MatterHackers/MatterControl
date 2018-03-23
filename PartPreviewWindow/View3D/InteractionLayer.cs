@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			base.OnMouseMove(mouseEvent);
 
-			if (SuppressUiVolumes 
+			if (SuppressUiVolumes
 				|| !this.PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y))
 			{
 				return;
@@ -346,12 +346,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			GL.Disable(EnableCap.DepthTest);
 			//ClearToGradient();
 
-			GL.Light(LightName.Light0, LightParameter.Ambient, lighting.ambientLight);
-			GL.Light(LightName.Light0, LightParameter.Diffuse, lighting.diffuseLight0);
-			GL.Light(LightName.Light0, LightParameter.Specular, lighting.specularLight0);
+			GL.Light(LightName.Light0, LightParameter.Ambient, lighting.AmbientLight);
+			GL.Light(LightName.Light0, LightParameter.Diffuse, lighting.DiffuseLight0);
+			GL.Light(LightName.Light0, LightParameter.Specular, lighting.SpecularLight0);
 
-			GL.Light(LightName.Light1, LightParameter.Diffuse, lighting.diffuseLight1);
-			GL.Light(LightName.Light1, LightParameter.Specular, lighting.specularLight1);
+			GL.Light(LightName.Light1, LightParameter.Diffuse, lighting.DiffuseLight1);
+			GL.Light(LightName.Light1, LightParameter.Specular, lighting.SpecularLight1);
 
 			GL.ColorMaterial(MaterialFace.FrontAndBack, ColorMaterialParameter.AmbientAndDiffuse);
 
@@ -363,13 +363,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			GL.Enable(EnableCap.Lighting);
 			GL.Enable(EnableCap.ColorMaterial);
 
-			Vector3 lightDirectionVector = new Vector3(lighting.lightDirection0[0], lighting.lightDirection0[1], lighting.lightDirection0[2]);
+			Vector3 lightDirectionVector = new Vector3(lighting.LightDirection0[0], lighting.LightDirection0[1], lighting.LightDirection0[2]);
 			lightDirectionVector.Normalize();
-			lighting.lightDirection0[0] = (float)lightDirectionVector.X;
-			lighting.lightDirection0[1] = (float)lightDirectionVector.Y;
-			lighting.lightDirection0[2] = (float)lightDirectionVector.Z;
-			GL.Light(LightName.Light0, LightParameter.Position, lighting.lightDirection0);
-			GL.Light(LightName.Light1, LightParameter.Position, lighting.lightDirection1);
+			lighting.LightDirection0[0] = (float)lightDirectionVector.X;
+			lighting.LightDirection0[1] = (float)lightDirectionVector.Y;
+			lighting.LightDirection0[2] = (float)lightDirectionVector.Z;
+			GL.Light(LightName.Light0, LightParameter.Position, lighting.LightDirection0);
+			GL.Light(LightName.Light1, LightParameter.Position, lighting.LightDirection1);
 
 			// set the projection matrix
 			GL.MatrixMode(MatrixMode.Projection);
