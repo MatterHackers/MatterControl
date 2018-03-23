@@ -86,9 +86,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var directionUp = Vector3.TransformNormal(up, interactionLayer.World.InverseModelviewMatrix);
 			world.RotationMatrix = Matrix4X4.LookAt(Vector3.Zero, directionForward, directionUp);
 
-			InteractionLayer.SetGlContext(world, screenSpaceBounds, lighting);
+			GLHelper.SetGlContext(world, screenSpaceBounds, lighting);
 			GLHelper.Render(cube, Color.White, Matrix4X4.Identity, RenderTypes.Shaded);
-			InteractionLayer.UnsetGlContext();
+			GLHelper.UnsetGlContext();
 
 			base.OnDraw(graphics2D);
 		}
