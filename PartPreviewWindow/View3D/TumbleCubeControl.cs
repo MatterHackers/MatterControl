@@ -76,8 +76,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			var screenSpcaeBounds = this.TransformToScreenSpace(LocalBounds);
-			world = new WorldView(screenSpcaeBounds.Width, screenSpcaeBounds.Height);
+			var screenSpaceBounds = this.TransformToScreenSpace(LocalBounds);
+			world = new WorldView(screenSpaceBounds.Width, screenSpaceBounds.Height);
 
 			var forward = -Vector3.UnitZ;
 			var directionForward = Vector3.TransformNormal(forward, interactionLayer.World.InverseModelviewMatrix);
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var directionUp = Vector3.TransformNormal(up, interactionLayer.World.InverseModelviewMatrix);
 			world.RotationMatrix = Matrix4X4.LookAt(Vector3.Zero, directionForward, directionUp);
 
-			InteractionLayer.SetGlContext(world, screenSpcaeBounds, lighting);
+			InteractionLayer.SetGlContext(world, screenSpaceBounds, lighting);
 			GLHelper.Render(cube, Color.White, Matrix4X4.Identity, RenderTypes.Shaded);
 			InteractionLayer.UnsetGlContext();
 
@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					interactionLayer.Invalidate();
 				}
 			}
-			else if(world != null 
+			else if(world != null
 				&& cubeTraceData != null) // Make sure we don't use the trace data before it is ready
 			{
 				Ray ray = world.GetRayForLocalBounds(mouseEvent.Position);
