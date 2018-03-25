@@ -10,7 +10,11 @@ namespace MatterHackers.MatterControl
 	public class ClickWidget : GuiWidget
 	{
 		private int borderWidth = 0;
-		private Color borderColor = Color.Black;
+
+		public ClickWidget()
+		{
+			this.BorderColor = Color.Black;
+		}
 
 		public int BorderWidth
 		{
@@ -18,16 +22,6 @@ namespace MatterHackers.MatterControl
 			set
 			{
 				this.borderWidth = value;
-				this.Invalidate();
-			}
-		}
-
-		public Color BorderColor
-		{
-			get { return borderColor; }
-			set
-			{
-				this.borderColor = value;
 				this.Invalidate();
 			}
 		}
