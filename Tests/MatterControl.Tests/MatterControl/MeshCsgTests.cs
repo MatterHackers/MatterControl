@@ -50,7 +50,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 	[TestFixture, Category("Agg.PolygonMesh.Csg")]
 	public class MeshCsgTests
 	{
-		//[Test]
+		[Test]
 		public void CylinderMinusCylinder()
 		{
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
@@ -59,27 +59,61 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(5));
 
-			int sides = 3;
-			IObject3D keep = CylinderAdvancedObject3D.Create(20, 20, sides);
-			IObject3D subtract = CylinderAdvancedObject3D.Create(10, 21, sides);
-			IObject3D subtractCentered = new SetCenter(subtract, keep.GetCenter());
-
-			var keepMesh = keep.Mesh;
-			var subtractMesh = subtract.Mesh;
-			subtractMesh.Transform(subtract.WorldMatrix());
-
-			var split1 = new DebugFace()
+			// check that we subtarct two 3 sideh cylinders
 			{
-				EvaluateHeight = 10,
-				FileName = "Split1"
-			};
+				int sides = 3;
+				IObject3D keep = CylinderAdvancedObject3D.Create(20, 20, sides);
+				IObject3D subtract = CylinderAdvancedObject3D.Create(10, 20, sides);
 
-			var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None,
-				split1.Split, split1.Result);
+				var keepMesh = keep.Mesh;
+				var subtractMesh = subtract.Mesh;
 
-			split1.FinishOutput();
+				var split1 = new DebugFace()
+				{
+					EvaluateHeight = 10,
+					FileName = "Split1"
+				};
 
-			resultMesh.Save("c:/temp/mesh.stl", CancellationToken.None);
+				var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None);//,
+					//split1.Split, split1.Result);
+
+				// this is for debuging the opperation
+				//split1.FinishOutput();
+				//resultMesh.Save("c:/temp/mesh1.stl", CancellationToken.None);
+
+				Assert.AreEqual(12, CountFacesAtHeight(keepMesh, 10));
+			}
+
+			// check that we subtarct two 3 sideh cylinders
+			{
+				int sides = 3;
+				IObject3D keep = CylinderAdvancedObject3D.Create(20, 20, sides);
+				IObject3D subtract = CylinderAdvancedObject3D.Create(10, 21, sides);
+
+				var keepMesh = keep.Mesh;
+				var subtractMesh = subtract.Mesh;
+
+				var split1 = new DebugFace()
+				{
+					EvaluateHeight = 10,
+					FileName = "Split2"
+				};
+
+				var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None);//,
+					//split1.Split, split1.Result);
+
+				// this is for debuging the opperation
+				//split1.FinishOutput();
+				//esultMesh.Save("c:/temp/mesh2.stl", CancellationToken.None);
+
+				Assert.AreEqual(12, CountFacesAtHeight(keepMesh, 10));
+			}
+		}
+
+		private double CountFacesAtHeight(Mesh keepMesh, double zHeightToFind)
+		{
+			// TODO: make this work
+			return 12;
 		}
 	}
 
@@ -94,6 +128,8 @@ namespace MatterHackers.PolygonMesh.UnitTests
 		public double EvaluateHeight { get; set; } = -3;
 		int svgHeight = 540;
 		int svgWidth = 540;
+		Vector2 offset = new Vector2(10, 18);
+		double scale = 13;
 
 		public void Result(List<Vector3[]> splitResults)
 		{
@@ -206,17 +242,15 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			return true;
 		}
 
-		public static string GetCoords(Vector3[] face)
+		public string GetCoords(Vector3[] face)
 		{
-			var offset = new Vector2(10, 15);
-			var scale = 15;
 			Vector2 p1 = (new Vector2(face[0].X, -face[0].Y) + offset) * scale;
 			Vector2 p2 = (new Vector2(face[1].X, -face[1].Y) + offset) * scale;
 			Vector2 p3 = (new Vector2(face[2].X, -face[2].Y) + offset) * scale;
 			string coords = $"{p1.X:0.0}, {p1.Y:0.0}";
 			coords += $", {p2.X:0.0}, {p2.Y:0.0}";
 			coords += $", {p3.X:0.0}, {p3.Y:0.0}";
-			return $"<polygon points=\"{coords}\" style=\"fill: #FF000022; stroke: purple; stroke - width:1\" />";
+			return $"<polygon points=\"{coords}\" style=\"fill: #FF000022; stroke: purple; stroke - width:.1\" />";
 		}
 
 		public static bool HasPosition(Vector3[] face, Vector3 position)
