@@ -74,12 +74,12 @@ namespace MatterHackers.PolygonMesh.UnitTests
 					FileName = "Split1"
 				};
 
-				var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None,
-					split1.Split, split1.Result);
+				var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None);//,
+					//split1.Split, split1.Result);
 
 				// this is for debuging the opperation
-				split1.FinishOutput();
-				resultMesh.Save("c:/temp/mesh1.stl", CancellationToken.None);
+				//split1.FinishOutput();
+				//resultMesh.Save("c:/temp/mesh1.stl", CancellationToken.None);
 
 				Assert.AreEqual(12, CountFacesAtHeight(keepMesh, 10));
 			}
@@ -99,12 +99,12 @@ namespace MatterHackers.PolygonMesh.UnitTests
 					FileName = "Split2"
 				};
 
-				var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None,
-					split1.Split, split1.Result);
+				var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None);//,
+					//split1.Split, split1.Result);
 
 				// this is for debuging the opperation
-				split1.FinishOutput();
-				resultMesh.Save("c:/temp/mesh2.stl", CancellationToken.None);
+				//split1.FinishOutput();
+				//esultMesh.Save("c:/temp/mesh2.stl", CancellationToken.None);
 
 				Assert.AreEqual(12, CountFacesAtHeight(keepMesh, 10));
 			}
