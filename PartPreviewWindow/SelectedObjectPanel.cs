@@ -61,7 +61,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private View3DWidget view3DWidget;
 		private InteractiveScene scene;
 		private PrinterConfig printer;
-		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 		private SectionWidget editorSection;
 		private TextButton editButton;
 
@@ -113,7 +112,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Margin = new BorderDouble(0)
 			});
-
 
 			var editorColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -248,25 +246,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				sectionWidget.ContentPanel.Padding = new BorderDouble(10, 10, 10, 0);
 			}
-
-			HashSet<IObject3DEditor> mappedEditors;
-			objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
-
-			// TODO: Consider only loading once into a static
-			var objectEditors = PluginFinder.CreateInstancesOf<IObject3DEditor>();
-			foreach (IObject3DEditor editor in objectEditors)
-			{
-				foreach (Type type in editor.SupportedTypes())
-				{
-					if (!objectEditorsByType.TryGetValue(type, out mappedEditors))
-					{
-						mappedEditors = new HashSet<IObject3DEditor>();
-						objectEditorsByType.Add(type, mappedEditors);
-					}
-
-					mappedEditors.Add(editor);
-				}
-			}
 		}
 
 		private static Type componentAttribute = typeof(IObject3DComponentAttribute);
@@ -293,7 +272,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.Parent.Visible = viewMode == null || viewMode == PartViewMode.Model;
 
-			HashSet<IObject3DEditor> mappedEditors = GetEditorsForType(selectedItemType);
+			HashSet<IObject3DEditor> mappedEditors = ApplicationController.Instance.GetEditorsForType(selectedItemType);
 
 			var activeEditors = new List<(IObject3DEditor, IObject3D)>();
 
@@ -313,7 +292,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Shown known editors for any matching properties
 				foreach (var member in members)
 				{
-					if (this.GetEditorsForType(member.Type)?.FirstOrDefault() is IObject3DEditor editor)
+					if (ApplicationController.Instance.GetEditorsForType(member.Type)?.FirstOrDefault() is IObject3DEditor editor)
 					{
 						activeEditors.Add((editor, member.Value));
 					}
@@ -334,7 +313,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Shown known editors for any matching properties
 				foreach (var member in members)
 				{
-					if (this.GetEditorsForType(member.Type)?.FirstOrDefault() is IObject3DEditor editor)
+					if (ApplicationController.Instance.GetEditorsForType(member.Type)?.FirstOrDefault() is IObject3DEditor editor)
 					{
 						activeEditors.Add((editor, member.Value));
 					}
@@ -348,28 +327,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			ShowObjectEditor(activeEditors);
-		}
-
-		private HashSet<IObject3DEditor> GetEditorsForType(Type selectedItemType)
-		{
-			HashSet<IObject3DEditor> mappedEditors;
-			objectEditorsByType.TryGetValue(selectedItemType, out mappedEditors);
-
-			if (mappedEditors == null)
-			{
-				foreach (var kvp in objectEditorsByType)
-				{
-					var editorType = kvp.Key;
-
-					if (editorType.IsAssignableFrom(selectedItemType))
-					{
-						mappedEditors = kvp.Value;
-						break;
-					}
-				}
-			}
-
-			return mappedEditors;
 		}
 
 		private class OperationButton :TextButton
