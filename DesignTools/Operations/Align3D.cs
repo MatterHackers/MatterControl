@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -40,7 +41,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	using Aabb = AxisAlignedBoundingBox;
 
-	public enum Align { None, Min, Center, Max }
+	public enum Align { None, Min, Center, Max, Origin }
 
 	public enum Alignment { X, Y, Z, negX, negY, negZ };
 
@@ -232,33 +233,33 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		[DisplayName("X")]
-		[Icons(new string[] { "424.png", "align_left.png", "align_center_x.png", "align_right.png" })]
+		[Icons(new string[] { "424.png", "align_left.png", "align_center_x.png", "align_right.png", "align_origin.png" })]
 		public Align XAlign { get; set; } = Align.None;
 
 		[DisplayName("Start X")]
-		[Icons(new string[] { "424.png", "align_to_left.png", "align_to_center_x.png", "align_to_right.png" })]
+		[Icons(new string[] { "424.png", "align_to_left.png", "align_to_center_x.png", "align_to_right.png", "" })]
 		public Align XAlignTo { get; set; } = Align.None;
 
 		[DisplayName("Offset X")]
 		public double XOffset { get; set; } = 0;
 
 		[DisplayName("Y")]
-		[Icons(new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_top.png" })]
+		[Icons(new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_top.png", "align_origin.png" })]
 		public Align YAlign { get; set; } = Align.None;
 
 		[DisplayName("Start Y")]
-		[Icons(new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png" })]
+		[Icons(new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png", "" })]
 		public Align YAlignTo { get; set; } = Align.None;
 
 		[DisplayName("Offset Y")]
 		public double YOffset { get; set; } = 0;
 
 		[DisplayName("Z")]
-		[Icons(new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_top.png" })]
+		[Icons(new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_top.png", "align_origin.png" })]
 		public Align ZAlign { get; set; } = Align.None;
 
 		[DisplayName("Start Z")]
-		[Icons(new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png" })]
+		[Icons(new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png", "" })]
 		public Align ZAlignTo { get; set; } = Align.None;
 
 		[DisplayName("Offset Z")]
@@ -349,7 +350,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						}
 						else
 						{
-							AlignAxis(0, XAlign, GetAlignToOffset(currentChildrenBounds, 0, (!Advanced || XAlignTo == Align.None) ? XAlign : XAlignTo), XOffset, child);
+							if (XAlign == Align.Origin)
+							{
+								// find the origin in world space of the child
+								var firstOrigin = Vector3.Transform(Vector3.Zero, this.Children.First().WorldMatrix());
+								var childOrigin = Vector3.Transform(Vector3.Zero, child.WorldMatrix());
+								child.Translate(new Vector3(-(childOrigin - firstOrigin).X + (Advanced ? XOffset : 0), 0, 0));
+							}
+							else
+							{
+								AlignAxis(0, XAlign, GetAlignToOffset(currentChildrenBounds, 0, (!Advanced || XAlignTo == Align.None) ? XAlign : XAlignTo), XOffset, child);
+							}
 						}
 						if (YAlign == Align.None)
 						{
@@ -357,7 +368,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						}
 						else
 						{
-							AlignAxis(1, YAlign, GetAlignToOffset(currentChildrenBounds, 1, (!Advanced || YAlignTo == Align.None) ? YAlign : YAlignTo), YOffset, child);
+							if (YAlign == Align.Origin)
+							{
+								// find the origin in world space of the child
+								var firstOrigin = Vector3.Transform(Vector3.Zero, this.Children.First().WorldMatrix());
+								var childOrigin = Vector3.Transform(Vector3.Zero, child.WorldMatrix());
+								child.Translate(new Vector3(0, -(childOrigin - firstOrigin).Y + (Advanced ? YOffset : 0), 0));
+							}
+							else
+							{
+								AlignAxis(1, YAlign, GetAlignToOffset(currentChildrenBounds, 1, (!Advanced || YAlignTo == Align.None) ? YAlign : YAlignTo), YOffset, child);
+							}
 						}
 						if (ZAlign == Align.None)
 						{
@@ -365,7 +386,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						}
 						else
 						{
-							AlignAxis(2, ZAlign, GetAlignToOffset(currentChildrenBounds, 2, (!Advanced || ZAlignTo == Align.None) ? ZAlign : ZAlignTo), ZOffset, child);
+							if (ZAlign == Align.Origin)
+							{
+								// find the origin in world space of the child
+								var firstOrigin = Vector3.Transform(Vector3.Zero, this.Children.First().WorldMatrix());
+								var childOrigin = Vector3.Transform(Vector3.Zero, child.WorldMatrix());
+								child.Translate(new Vector3(0, 0, -(childOrigin - firstOrigin).Z + (Advanced ? ZOffset : 0) ));
+							}
+							else
+							{
+								AlignAxis(2, ZAlign, GetAlignToOffset(currentChildrenBounds, 2, (!Advanced || ZAlignTo == Align.None) ? ZAlign : ZAlignTo), ZOffset, child);
+							}
 						}
 					}
 					i++;
@@ -375,7 +406,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override void Remove()
 		{
-			// put everything back to where it was before the arange started
+			// put everything back to where it was before the arrange started
 			if (OriginalChildrenBounds.Count == Children.Count)
 			{
 				int i = 0;
@@ -392,11 +423,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void UpdateControls(PublicPropertyEditor editor)
 		{
-			editor.GetEditRow(nameof(XAlignTo)).Visible = Advanced;
+			editor.GetEditRow(nameof(XAlignTo)).Visible = Advanced && XAlign != Align.Origin;
 			editor.GetEditRow(nameof(XOffset)).Visible = Advanced;
-			editor.GetEditRow(nameof(YAlignTo)).Visible = Advanced;
+			editor.GetEditRow(nameof(YAlignTo)).Visible = Advanced && YAlign != Align.Origin;
 			editor.GetEditRow(nameof(YOffset)).Visible = Advanced;
-			editor.GetEditRow(nameof(ZAlignTo)).Visible = Advanced;
+			editor.GetEditRow(nameof(ZAlignTo)).Visible = Advanced && ZAlign != Align.Origin;
 			editor.GetEditRow(nameof(ZOffset)).Visible = Advanced;
 		}
 
@@ -414,8 +445,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return false;
 		}
 
-		private void AlignAxis(int axis, Align align, double alignTo, double offset,
-																															IObject3D item)
+		private void AlignAxis(int axis, Align align, double alignTo, double offset, IObject3D item)
 		{
 			var aabb = item.GetAxisAlignedBoundingBox();
 			var translate = Vector3.Zero;

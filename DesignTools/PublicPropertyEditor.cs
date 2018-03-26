@@ -551,50 +551,55 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					var localIndex = index;
 					ImageBuffer iconImage = null;
-					if (iconsAttribute.Width > 0)
+					var iconPath = iconsAttribute.IconPaths[localIndex];
+					if (!string.IsNullOrWhiteSpace(iconPath))
 					{
-						iconImage = AggContext.StaticData.LoadIcon(iconsAttribute.IconPaths[localIndex], iconsAttribute.Width, iconsAttribute.Height);
-					}
-					else
-					{
-						iconImage = AggContext.StaticData.LoadIcon(iconsAttribute.IconPaths[localIndex]);
-					}
-					var radioButton = new RadioButton(new ImageWidget(iconImage));
-					// set it if checked
-					if (enumItem.Value == value.ToString())
-					{
-						radioButton.Checked = true;
-						if (localIndex != 0
-							|| !iconsAttribute.Item0IsNone)
+						if (iconsAttribute.Width > 0)
 						{
-							radioButton.BackgroundColor = new Color(Color.Black, 100);
+							iconImage = AggContext.StaticData.LoadIcon(iconPath, iconsAttribute.Width, iconsAttribute.Height);
 						}
-					}
-
-					rowContainer.AddChild(radioButton);
-
-					var localItem = enumItem;
-					radioButton.CheckedStateChanged += (sender, e) =>
-					{
-						if (radioButton.Checked)
+						else
 						{
-							propertyInfo.GetSetMethod().Invoke(
-								this.item,
-								new Object[] { Enum.Parse(propertyType, localItem.Key) });
-							item?.Rebuild(undoBuffer);
-							propertyGridModifier?.UpdateControls(this);
+							iconImage = AggContext.StaticData.LoadIcon(iconPath);
+						}
+						var radioButton = new RadioButton(new ImageWidget(iconImage));
+						radioButton.ToolTipText = enumItem.Key;
+						// set it if checked
+						if (enumItem.Value == value.ToString())
+						{
+							radioButton.Checked = true;
 							if (localIndex != 0
 								|| !iconsAttribute.Item0IsNone)
 							{
 								radioButton.BackgroundColor = new Color(Color.Black, 100);
 							}
 						}
-						else
+
+						rowContainer.AddChild(radioButton);
+
+						var localItem = enumItem;
+						radioButton.CheckedStateChanged += (sender, e) =>
 						{
-							radioButton.BackgroundColor = Color.Transparent;
-						}
-					};
-					index++;
+							if (radioButton.Checked)
+							{
+								propertyInfo.GetSetMethod().Invoke(
+									this.item,
+									new Object[] { Enum.Parse(propertyType, localItem.Key) });
+								item?.Rebuild(undoBuffer);
+								propertyGridModifier?.UpdateControls(this);
+								if (localIndex != 0
+									|| !iconsAttribute.Item0IsNone)
+								{
+									radioButton.BackgroundColor = new Color(Color.Black, 100);
+								}
+							}
+							else
+							{
+								radioButton.BackgroundColor = Color.Transparent;
+							}
+						};
+						index++;
+					}
 				}
 			}
 			else
@@ -608,12 +613,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					MenuItem newItem = dropDownList.AddItem(orderItem.Value);
 
-					var localOredrItem = orderItem;
+					var localOrderedItem = orderItem;
 					newItem.Selected += (sender, e) =>
 					{
 						propertyInfo.GetSetMethod().Invoke(
 							this.item,
-							new Object[] { Enum.Parse(propertyType, localOredrItem.Key) });
+							new Object[] { Enum.Parse(propertyType, localOrderedItem.Key) });
 						item?.Rebuild(undoBuffer);
 						propertyGridModifier?.UpdateControls(this);
 					};
