@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using MatterHackers.Agg;
@@ -41,7 +40,6 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools.Operations;
-using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -57,6 +55,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public bool Unlocked { get; } = true;
 
+		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(IRebuildable) };
+
+		private Dictionary<string, GuiWidget> editRows = new Dictionary<string, GuiWidget>();
+
 		private static Type[] allowedTypes =
 		{
 			typeof(double), typeof(int), typeof(char), typeof(string), typeof(bool),
@@ -64,6 +66,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			typeof(DirectionVector), typeof(DirectionAxis),
 			typeof(ImageObject3D)
 		};
+
+		private static Type IObject3DType = typeof(IObject3D);
 
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
@@ -93,10 +97,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			return mainContainer;
 		}
-
-		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(IRebuildable) };
-
-		Dictionary<string, GuiWidget> editRows = new Dictionary<string, GuiWidget>();
 
 		public GuiWidget GetEditRow(string propertyName)
 		{
@@ -135,8 +135,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			var nameAttribute = prop.GetCustomAttributes(true).OfType<DisplayNameAttribute>().FirstOrDefault();
 			return nameAttribute?.DisplayName ?? prop.Name.SplitCamelCase();
 		}
-
-		private static Type IObject3DType = typeof(IObject3D);
 
 		private string GetDescription(PropertyInfo prop)
 		{
