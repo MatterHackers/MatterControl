@@ -94,6 +94,7 @@
     <Compile Include="DesignTools\Interfaces\IEditorDraw.cs" />
     <Compile Include="DesignTools\Interfaces\IPropertyGridModifier.cs" />
     <Compile Include="DesignTools\Interfaces\IRebuildable.cs" />
+    <Compile Include="DesignTools\Lithophane.cs" />
     <Compile Include="DesignTools\Operations\Align3D.cs" />
     <Compile Include="DesignTools\Operations\ArrayAdvanced3D.cs" />
     <Compile Include="DesignTools\Operations\ArrayLinear3D.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="CustomWidgets\InlineTitleEdit.cs" />
     <Compile Include="Library\DynamicContentStore.cs" />
     <Compile Include="Library\InMemoryLibraryItem.cs" />
+    <Compile Include="DesignTools\LithophaneObject3D.cs" />
     <Compile Include="PartPreviewWindow\LibraryBrowserPage.cs" />
     <Compile Include="PartPreviewWindow\MaterialControls.cs" />
     <Compile Include="PartPreviewWindow\MoveItemPage.cs" />

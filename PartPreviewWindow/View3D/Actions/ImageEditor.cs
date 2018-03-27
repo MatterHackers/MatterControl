@@ -49,6 +49,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		string IObject3DEditor.Name => "Image Editor";
 
+		IEnumerable<Type> IObject3DEditor.SupportedTypes() => new[] { typeof(ImageObject3D) };
+
 		public GuiWidget Create(IObject3D item, View3DWidget parentView3D, ThemeConfig theme)
 		{
 			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -101,7 +103,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 			}
 
-			// add in the invert checkbox and change image button 
+			// add in the invert checkbox and change image button
 			var addButton = new TextButton("Change".Localize(), theme)
 			{
 				BackgroundColor = theme.MinimalShade
@@ -187,8 +189,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			return (image.Height <= 185) ? image : ScaleThumbnailImage(185, image);
 		}
-
-		IEnumerable<Type> IObject3DEditor.SupportedTypes() => new[] { typeof(ImageObject3D) };
 
 		private ImageBuffer ScaleThumbnailImage(int height, ImageBuffer imageBuffer)
 		{
