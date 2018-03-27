@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			if (this.item != null)
 			{
-				ModifyObject(view3DWidget, mainContainer, theme);
+				this.CreateEditor(view3DWidget, mainContainer, theme);
 			}
 
 			return mainContainer;
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return nameAttribute?.Description ?? null;
 		}
 
-		private void ModifyObject(View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
+		private void CreateEditor(View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
 		{
 			var undoBuffer = view3DWidget.sceneContext.Scene.UndoBuffer;
 			editRows.Clear();
