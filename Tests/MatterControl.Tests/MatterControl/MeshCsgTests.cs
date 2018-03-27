@@ -61,27 +61,43 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 			// check that we subtarct two 3 sideh cylinders
 			{
+				double topHeight = 10;
 				int sides = 3;
-				IObject3D keep = CylinderAdvancedObject3D.Create(20, 20, sides);
-				IObject3D subtract = CylinderAdvancedObject3D.Create(10, 20, sides);
+				IObject3D keep = CylinderAdvancedObject3D.Create(20, topHeight*2, sides);
+				IObject3D subtract = CylinderAdvancedObject3D.Create(10, topHeight*2, sides);
 
 				var keepMesh = keep.Mesh;
 				var subtractMesh = subtract.Mesh;
 
 				var split1 = new DebugFace()
 				{
-					EvaluateHeight = 10,
+					EvaluateHeight = topHeight,
 					FileName = "Split1"
 				};
 
-				var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None);//,
-					//split1.Split, split1.Result);
+				var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None,
+					split1.Split, split1.Result);
 
 				// this is for debuging the opperation
-				//split1.FinishOutput();
-				//resultMesh.Save("c:/temp/mesh1.stl", CancellationToken.None);
+				split1.FinishOutput();
+				resultMesh.Save("c:/temp/mesh1.stl", CancellationToken.None);
 
-				Assert.AreEqual(12, CountFacesAtHeight(keepMesh, 10));
+				if (false)
+				{
+					var topZero = new Vector3(0, 0, topHeight);
+					foreach (var topVertex in keepMesh.Vertices
+						.Where((v) => v.Position.Z == topHeight && v.Position != topZero)
+						.Select((gv) => gv.Position))
+					{
+						Assert.IsTrue(resultMesh.Vertices.Where((v) => v.Position == topVertex).Any(), "Have all top vertexes");
+					}
+					foreach (var topVertex in subtractMesh.Vertices
+						.Where((v) => v.Position.Z == topHeight && v.Position != topZero)
+						.Select((gv) => gv.Position))
+					{
+						Assert.IsTrue(resultMesh.Vertices.Where((v) => v.Position == topVertex).Any(), "Have all top vertexes");
+					}
+				}
 			}
 
 			// check that we subtarct two 3 sideh cylinders
@@ -99,21 +115,49 @@ namespace MatterHackers.PolygonMesh.UnitTests
 					FileName = "Split2"
 				};
 
-				var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None);//,
-					//split1.Split, split1.Result);
+				var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None,
+					split1.Split, split1.Result);
 
 				// this is for debuging the opperation
-				//split1.FinishOutput();
-				//esultMesh.Save("c:/temp/mesh2.stl", CancellationToken.None);
+				split1.FinishOutput();
+				resultMesh.Save("c:/temp/mesh2.stl", CancellationToken.None);
 
-				Assert.AreEqual(12, CountFacesAtHeight(keepMesh, 10));
+				#if false
+				{
+					var topZero = new Vector3(0, 0, topHeight);
+					foreach (var topVertex in keepMesh.Vertices
+						.Where((v) => v.Position.Z == topHeight && v.Position != topZero)
+						.Select((gv) => gv.Position))
+					{
+						Assert.IsTrue(resultMesh.Vertices.Where((v) => v.Position == topVertex).Any(), "Have all top vertexes");
+					}
+					foreach (var topVertex in subtractMesh.Vertices
+						.Where((v) => v.Position.Z == topHeight && v.Position != topZero)
+						.Select((gv) => gv.Position))
+					{
+						Assert.IsTrue(resultMesh.Vertices.Where((v) => v.Position == topVertex).Any(), "Have all top vertexes");
+					}
+				}
+#endif
 			}
 		}
 
-		private double CountFacesAtHeight(Mesh keepMesh, double zHeightToFind)
+		private double CountFacesAtHeight(Mesh keepMesh, double zHeight)
 		{
-			// TODO: make this work
-			return 12;
+			int count = 0;
+			foreach (var face in keepMesh.Faces)
+			{
+				var triangles = face.AsTriangles().ToList();
+				if (DebugFace.FaceAtHeight(new Vector3[] 
+				{
+					triangles[0].p0,triangles[0].p1,triangles[0].p2,
+				}, zHeight))
+				{
+					count++;
+				}
+			}
+
+			return count;
 		}
 	}
 
