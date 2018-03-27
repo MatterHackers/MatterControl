@@ -85,8 +85,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private RadioIconButton scaleButton;
 		private RadioIconButton partSelectButton;
 
-		private EventHandler unregisterEvents;
-
 		private View3DWidget view3DWidget;
 		private BedConfig sceneContext;
 
@@ -611,7 +609,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 	}

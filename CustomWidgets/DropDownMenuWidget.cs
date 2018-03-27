@@ -90,8 +90,6 @@ namespace MatterHackers.Agg.UI
 
 		public BorderDouble MenuItemsPadding { get; set; }
 
-		public Color BorderColor { get; set; }
-
 		public Color NormalArrowColor { get; set; }
 
 		public Color HoverArrowColor { get; set; }
@@ -109,7 +107,7 @@ namespace MatterHackers.Agg.UI
 				if (value != textColor)
 				{
 					textColor = value;
-					
+
 					if (textWidget != null)
 					{
 						textWidget.TextColor = textColor;
@@ -330,7 +328,7 @@ namespace MatterHackers.Agg.UI
 
 					PointSize = pointSize,
 					Padding = MenuItemsPadding,
-				}, 
+				},
 				value);
 
 			menuItem.Text = name;

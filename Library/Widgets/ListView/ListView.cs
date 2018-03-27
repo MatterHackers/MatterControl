@@ -46,8 +46,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		public event EventHandler ContentReloaded;
 
-		private EventHandler unregisterEvents;
-
 		private ILibraryContext LibraryContext;
 
 		private int scrollAmount = -1;
@@ -178,7 +176,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		/// Empties the list children and repopulates the list with the source container content
 		/// </summary>
 		/// <param name="sourceContainer">The container to load</param>
-		private async Task DisplayContainerContent(ILibraryContainer sourceContainer)
+		private Task DisplayContainerContent(ILibraryContainer sourceContainer)
 		{
 			if (this.ActiveContainer is ILibraryWritableContainer activeWritable)
 			{
@@ -187,7 +185,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			if (sourceContainer == null)
 			{
-				return;
+				return Task.CompletedTask;
 			}
 
 			var itemsNeedingLoad = new List<ListViewItem>();
@@ -250,6 +248,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Invalidate();
 
 			this.ContentReloaded?.Invoke(this, null);
+
+			return Task.CompletedTask;
 		}
 
 		private IEnumerable<ILibraryItem> SortItems(IEnumerable<ILibraryItem> items)
@@ -518,7 +518,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				this.LibraryContext.ContentChanged -= this.ActiveContainer_ContentChanged;
 			}
 
-			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 	}

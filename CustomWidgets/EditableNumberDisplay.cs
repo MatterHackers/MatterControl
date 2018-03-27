@@ -25,7 +25,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		Color _borderColor = Color.White;
-		public Color BorderColor
+		public override Color BorderColor
 		{
 			get { return _borderColor; }
 			set

@@ -342,7 +342,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 		}
 
-		protected virtual async void UpdateHoverState()
+		protected virtual void UpdateHoverState()
 		{
 		}
 

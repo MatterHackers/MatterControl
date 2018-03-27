@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Checked = false,
 				Padding = 0
 			};
-			expandButton.CheckedStateChanged += async (s, e) =>
+			expandButton.CheckedStateChanged += (s, e) =>
 			{
 				progressBar.FillColor = expandButton.Checked ? theme.Shade : ActiveTheme.Instance.PrimaryAccentColor;
 				detailsPanel.Visible = expandButton.Checked;

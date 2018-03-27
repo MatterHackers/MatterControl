@@ -37,7 +37,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	{
 		private double nextPercent = -1;
 		PrinterConfig printer;
-		PrintTask activePrintTask;
 
 		public SendProgressStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(internalStream)
