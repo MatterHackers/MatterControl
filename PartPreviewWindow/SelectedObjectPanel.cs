@@ -311,7 +311,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							  };
 
 				// Shown known editors for any matching properties
-				foreach (var member in members)
+				foreach (var member in members.Where(m => m.Value != null))
 				{
 					if (ApplicationController.Instance.GetEditorsForType(member.Type)?.FirstOrDefault() is IObject3DEditor editor)
 					{
