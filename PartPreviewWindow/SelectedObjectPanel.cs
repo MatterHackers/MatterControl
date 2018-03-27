@@ -61,7 +61,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private View3DWidget view3DWidget;
 		private InteractiveScene scene;
 		private PrinterConfig printer;
-		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 		private SectionWidget editorSection;
 		private TextButton editButton;
 
@@ -113,7 +112,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Margin = new BorderDouble(0)
 			});
-
 
 			var editorColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -248,25 +246,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				sectionWidget.ContentPanel.Padding = new BorderDouble(10, 10, 10, 0);
 			}
-
-			HashSet<IObject3DEditor> mappedEditors;
-			objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
-
-			// TODO: Consider only loading once into a static
-			var objectEditors = PluginFinder.CreateInstancesOf<IObject3DEditor>();
-			foreach (IObject3DEditor editor in objectEditors)
-			{
-				foreach (Type type in editor.SupportedTypes())
-				{
-					if (!objectEditorsByType.TryGetValue(type, out mappedEditors))
-					{
-						mappedEditors = new HashSet<IObject3DEditor>();
-						objectEditorsByType.Add(type, mappedEditors);
-					}
-
-					mappedEditors.Add(editor);
-				}
-			}
 		}
 
 		private static Type componentAttribute = typeof(IObject3DComponentAttribute);
@@ -293,9 +272,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.Parent.Visible = viewMode == null || viewMode == PartViewMode.Model;
 
-			HashSet<IObject3DEditor> mappedEditors = GetEditorsForType(selectedItemType);
+			HashSet<IObject3DEditor> mappedEditors = ApplicationController.Instance.GetEditorsForType(selectedItemType);
 
-			var activeEditors = new List<(IObject3DEditor, IObject3D)>();
+			var activeEditors = new List<(IObject3DEditor, IObject3D, string)>();
 
 			// If item is IObject3DComponent
 			if (componentType.IsAssignableFrom(selectedItemType))
@@ -307,15 +286,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								select new
 								{
 									Type = propertyType,
-									Value = item.GetValue(selectedItem, null) as IObject3D
+									Value = item.GetValue(selectedItem, null) as IObject3D,
+									DisplayName = PublicPropertyEditor.GetDisplayName(item)
 								};
 
 				// Shown known editors for any matching properties
 				foreach (var member in members)
 				{
-					if (this.GetEditorsForType(member.Type)?.FirstOrDefault() is IObject3DEditor editor)
+					if (ApplicationController.Instance.GetEditorsForType(member.Type)?.FirstOrDefault() is IObject3DEditor editor)
 					{
-						activeEditors.Add((editor, member.Value));
+						activeEditors.Add((editor, member.Value, member.DisplayName));
 					}
 				}
 			}
@@ -323,20 +303,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				// Get all public, instance properties where property type is marked with IObject3DComponentAttribute
 				var members = from item in selectedItemType.GetProperties(PublicPropertyEditor.OwnedPropertiesOnly)
-							  let propertyType = item.PropertyType
 							  where Attribute.IsDefined(item, componentAttribute)
 							  select new
 							  {
-								  Type = propertyType,
-								  Value = item.GetValue(selectedItem, null) as IObject3D
+								  Type = item.PropertyType,
+								  Value = item.GetValue(selectedItem, null) as IObject3D,
+								  DisplayName = PublicPropertyEditor.GetDisplayName(item)
 							  };
 
 				// Shown known editors for any matching properties
-				foreach (var member in members)
+				foreach (var member in members.Where(m => m.Value != null))
 				{
-					if (this.GetEditorsForType(member.Type)?.FirstOrDefault() is IObject3DEditor editor)
+					if (ApplicationController.Instance.GetEditorsForType(member.Type)?.FirstOrDefault() is IObject3DEditor editor)
 					{
-						activeEditors.Add((editor, member.Value));
+						activeEditors.Add((editor, member.Value, member.DisplayName));
 					}
 				}
 			}
@@ -344,32 +324,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (mappedEditors?.Any() == true)
 			{
 				// Use first filtered or fall back to unfiltered first
-				activeEditors.Add((mappedEditors.First(), selectedItem));
+				activeEditors.Add((mappedEditors.First(), selectedItem, null));
 			}
 
-			ShowObjectEditor(activeEditors);
-		}
-
-		private HashSet<IObject3DEditor> GetEditorsForType(Type selectedItemType)
-		{
-			HashSet<IObject3DEditor> mappedEditors;
-			objectEditorsByType.TryGetValue(selectedItemType, out mappedEditors);
-
-			if (mappedEditors == null)
-			{
-				foreach (var kvp in objectEditorsByType)
-				{
-					var editorType = kvp.Key;
-
-					if (editorType.IsAssignableFrom(selectedItemType))
-					{
-						mappedEditors = kvp.Value;
-						break;
-					}
-				}
-			}
-
-			return mappedEditors;
+			ShowObjectEditor(activeEditors, selectedItem);
 		}
 
 		private class OperationButton :TextButton
@@ -390,7 +348,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void ShowObjectEditor(IEnumerable<(IObject3DEditor editor, IObject3D item)> scope)
+		private void ShowObjectEditor(IEnumerable<(IObject3DEditor editor, IObject3D item, string displayName)> scope, IObject3D rootSelection)
 		{
 			editorPanel.CloseAllChildren();
 
@@ -407,7 +365,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var editorWidget = scopeItem.editor.Create(selectedItem, view3DWidget, theme);
 				editorWidget.HAnchor = HAnchor.Stretch;
 				editorWidget.VAnchor = VAnchor.Fit;
-				editorWidget.Padding = 0;
+
+				if (scopeItem.item != rootSelection
+					&& scopeItem.editor is PublicPropertyEditor)
+				{
+					editorWidget.Padding = new BorderDouble(10, 10, 10, 0);
+
+					// EditOutline section
+					var sectionWidget = new SectionWidget(
+							scopeItem.displayName ?? "Unknown",
+							editorWidget,
+							theme).ApplyBoxStyle(margin: 0);
+
+					editorWidget = sectionWidget;
+				}
+				else
+				{
+					editorWidget.Padding = 0;
+				}
 
 				editorPanel.AddChild(editorWidget);
 
@@ -466,7 +441,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// If the button toolbar isn't added, ensure panel has bottom margin
 					editorWidget.Margin = editorWidget.Margin.Clone(bottom: 15);
 				}
-
 			}
 		}
 
@@ -479,6 +453,4 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 		}
 	}
-
-	public enum AxisAlignment { Min, Center, Max, SourceCoordinateSystem };
 }

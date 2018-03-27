@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using MatterHackers.Agg;
@@ -41,7 +40,6 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools.Operations;
-using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -57,6 +55,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public bool Unlocked { get; } = true;
 
+		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(IRebuildable) };
+
+		private Dictionary<string, GuiWidget> editRows = new Dictionary<string, GuiWidget>();
+
 		private static Type[] allowedTypes =
 		{
 			typeof(double), typeof(int), typeof(char), typeof(string), typeof(bool),
@@ -64,6 +66,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			typeof(DirectionVector), typeof(DirectionAxis),
 			typeof(ImageObject3D)
 		};
+
+		private static Type IObject3DType = typeof(IObject3D);
 
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
@@ -88,15 +92,11 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			if (this.item != null)
 			{
-				ModifyObject(view3DWidget, mainContainer, theme);
+				this.CreateEditor(view3DWidget, mainContainer, theme);
 			}
 
 			return mainContainer;
 		}
-
-		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(IRebuildable) };
-
-		Dictionary<string, GuiWidget> editRows = new Dictionary<string, GuiWidget>();
 
 		public GuiWidget GetEditRow(string propertyName)
 		{
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return rowContainer;
 		}
 
-		private string GetDisplayName(PropertyInfo prop)
+		public static string GetDisplayName(PropertyInfo prop)
 		{
 			var nameAttribute = prop.GetCustomAttributes(true).OfType<DisplayNameAttribute>().FirstOrDefault();
 			return nameAttribute?.DisplayName ?? prop.Name.SplitCamelCase();
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return nameAttribute?.Description ?? null;
 		}
 
-		private void ModifyObject(View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
+		private void CreateEditor(View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
 		{
 			var undoBuffer = view3DWidget.sceneContext.Scene.UndoBuffer;
 			editRows.Clear();
@@ -457,11 +457,11 @@ namespace MatterHackers.MatterControl.DesignTools
 							theme, undoBuffer);
 					editControlsContainer.AddChild(rowContainer);
 				}
-				// create an image asset editor
-				else if (property.Value is ImageObject3D imageObject)
+				// Use known IObject3D editors
+				else if (property.Value is IObject3D object3D
+					&& ApplicationController.Instance.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor editor)
 				{
-					var editor = new ImageEditor();
-					rowContainer = editor.Create(imageObject, view3DWidget, theme);
+					rowContainer = editor.Create( object3D, view3DWidget, theme);
 					editControlsContainer.AddChild(rowContainer);
 				}
 

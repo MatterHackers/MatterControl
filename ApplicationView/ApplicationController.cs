@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl
 	public class AppContext
 	{
 		/// <summary>
-		/// Native platform features 
+		/// Native platform features
 		/// </summary>
 		public static INativePlatformFeatures Platform { get; set; }
 
@@ -87,6 +87,8 @@ namespace MatterHackers.MatterControl
 
 	public class ApplicationController
 	{
+		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
+
 		public ThemeConfig Theme { get; set; } = new ThemeConfig();
 
 		public RunningTasksConfig Tasks { get; set; } = new RunningTasksConfig();
@@ -98,7 +100,7 @@ namespace MatterHackers.MatterControl
 
 		private static string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache");
 
-		// TODO: Any references to this property almost certainly need to be reconsidered. ActiveSliceSettings static references that assume a single printer 
+		// TODO: Any references to this property almost certainly need to be reconsidered. ActiveSliceSettings static references that assume a single printer
 		// selection are being redirected here. This allows us to break the dependency to the original statics and consolidates
 		// us down to a single point where code is making assumptions about the presence of a printer, printer counts, etc. If we previously checked for
 		// PrinterConnection.IsPrinterConnected, that could should be updated to iterate ActiverPrinters, checking each one and acting on each as it would
@@ -164,7 +166,7 @@ namespace MatterHackers.MatterControl
 				}
 
 				BedSettings.SetMakeAndModel(
-					printer.Settings.GetValue(SettingsKey.make), 
+					printer.Settings.GetValue(SettingsKey.make),
 					printer.Settings.GetValue(SettingsKey.model));
 
 				ActiveSliceSettings.SwitchToPrinterTheme();
@@ -275,7 +277,7 @@ namespace MatterHackers.MatterControl
 					}
 					else
 					{
-						// Process until queuedThumbCallbacks is empty then wait for new tasks via QueueForGeneration 
+						// Process until queuedThumbCallbacks is empty then wait for new tasks via QueueForGeneration
 						thumbGenResetEvent.WaitOne();
 					}
 				}
@@ -470,7 +472,7 @@ namespace MatterHackers.MatterControl
 					fit.MakeNameNonColliding();
 
 					scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, new List<IObject3D> { fit }));
-					
+
 					scene.SelectedItem = fit;
 				},
 				//Icon = AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
@@ -696,7 +698,7 @@ namespace MatterHackers.MatterControl
 				{
 					Tasks.Execute("Disable Heaters".Localize(), (reporter, cancellationToken) =>
 					{
-						EventHandler heatChanged = (s2, e2) => 
+						EventHandler heatChanged = (s2, e2) =>
 						{
 							printerConnection.ContinuWaitingToTurnOffHeaters = false;
 						};
@@ -744,7 +746,6 @@ namespace MatterHackers.MatterControl
 				}
 			}, ref unregisterEvents);
 
-
 			PrinterConnection.ErrorReported.RegisterEvent((s, e) =>
 			{
 				var foundStringEventArgs = e as FoundStringEventArgs;
@@ -778,6 +779,45 @@ namespace MatterHackers.MatterControl
 					}
 				}
 			}, ref unregisterEvents);
+
+			HashSet<IObject3DEditor> mappedEditors;
+			objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
+
+			foreach (IObject3DEditor editor in PluginFinder.CreateInstancesOf<IObject3DEditor>())
+			{
+				foreach (Type type in editor.SupportedTypes())
+				{
+					if (!objectEditorsByType.TryGetValue(type, out mappedEditors))
+					{
+						mappedEditors = new HashSet<IObject3DEditor>();
+						objectEditorsByType.Add(type, mappedEditors);
+					}
+
+					mappedEditors.Add(editor);
+				}
+			}
+		}
+
+		public HashSet<IObject3DEditor> GetEditorsForType(Type selectedItemType)
+		{
+			HashSet<IObject3DEditor> mappedEditors;
+			objectEditorsByType.TryGetValue(selectedItemType, out mappedEditors);
+
+			if (mappedEditors == null)
+			{
+				foreach (var kvp in objectEditorsByType)
+				{
+					var editorType = kvp.Key;
+
+					if (editorType.IsAssignableFrom(selectedItemType))
+					{
+						mappedEditors = kvp.Value;
+						break;
+					}
+				}
+			}
+
+			return mappedEditors;
 		}
 
 		internal void Shutdown()
@@ -915,7 +955,7 @@ namespace MatterHackers.MatterControl
 			string extensionWithoutPeriod = extension.Trim('.');
 
 			return !string.IsNullOrEmpty(extension)
-				&& (ApplicationSettings.OpenDesignFileParams.Contains(extension) 
+				&& (ApplicationSettings.OpenDesignFileParams.Contains(extension)
 					|| this.Library.ContentProviders.Keys.Contains(extensionWithoutPeriod));
 		}
 
@@ -1095,7 +1135,7 @@ namespace MatterHackers.MatterControl
 
 			if (AssetObject3D.AssetManager == null)
 			{
-				AssetObject3D.AssetManager = new AssetManager(); 
+				AssetObject3D.AssetManager = new AssetManager();
 			}
 
 			//HtmlWindowTest();
@@ -1151,7 +1191,7 @@ namespace MatterHackers.MatterControl
 
 			// If profiles.json was created, run the import wizard to pull in any SQLite printers
 			if (guest?.Profiles?.Any() == true
-				&& !ProfileManager.Instance.IsGuestProfile 
+				&& !ProfileManager.Instance.IsGuestProfile
 				&& !ProfileManager.Instance.PrintersImported)
 			{
 				// Show the import printers wizard
@@ -1575,8 +1615,8 @@ namespace MatterHackers.MatterControl
 			await ApplicationController.Instance.Tasks.Execute("Slicing".Localize(), async (reporter, cancellationToken) =>
 			{
 				slicingSucceeded = await Slicer.SliceItem(
-					object3D, 
-					gcodeFilePath, 
+					object3D,
+					gcodeFilePath,
 					printer,
 					new SliceProgressReporter(reporter, printer),
 					cancellationToken);
