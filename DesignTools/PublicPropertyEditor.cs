@@ -136,6 +136,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			return nameAttribute?.DisplayName ?? prop.Name.SplitCamelCase();
 		}
 
+		private static Type IObject3DType = typeof(IObject3D);
+
 		private string GetDescription(PropertyInfo prop)
 		{
 			var nameAttribute = prop.GetCustomAttributes(true).OfType<DescriptionAttribute>().FirstOrDefault();
@@ -457,11 +459,11 @@ namespace MatterHackers.MatterControl.DesignTools
 							theme, undoBuffer);
 					editControlsContainer.AddChild(rowContainer);
 				}
-				// create an image asset editor
-				else if (property.Value is ImageObject3D imageObject)
+				// Use known IObject3D editors
+				else if (property.Value is IObject3D object3D
+					&& ApplicationController.Instance.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor editor)
 				{
-					var editor = new ImageEditor();
-					rowContainer = editor.Create(imageObject, view3DWidget, theme);
+					rowContainer = editor.Create( object3D, view3DWidget, theme);
 					editControlsContainer.AddChild(rowContainer);
 				}
 
