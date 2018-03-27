@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.item = selectedItem;
 		}
 
-		public async void Do()
+		public void Do()
 		{
 			var selectedItem = scene.SelectedItem;
 			if (selectedItem == item)

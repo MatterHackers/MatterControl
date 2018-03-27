@@ -250,9 +250,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Clear selected printer state
 			ProfileManager.Instance.LastProfileID = "";
 
-			UiThread.RunOnIdle(() =>
+			UiThread.RunOnIdle(async () =>
 			{
-				ApplicationController.Instance.ClearActivePrinter();
+				await ApplicationController.Instance.ClearActivePrinter();
 
 				// Notify listeners of a ProfileListChange event due to this printers removal
 				ProfileManager.ProfilesListChanged.CallEvents(this, null);
