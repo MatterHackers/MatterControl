@@ -50,8 +50,6 @@ namespace MatterHackers.MatterControl
 
 		private Stopwatch totalDrawTime = new Stopwatch();
 
-		private bool dropWasOnChild = true;
-
 		private AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();
 
 		internal static bool ShowMemoryUsed = false;
@@ -361,11 +359,6 @@ namespace MatterHackers.MatterControl
 						//mouseEvent.AcceptDrop = true;
 					}
 				}
-				dropWasOnChild = false;
-			}
-			else
-			{
-				dropWasOnChild = true;
 			}
 
 			if (GuiWidget.DebugBoundsUnderMouse)

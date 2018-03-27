@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl
 						if (addedFileNames.Contains(item.ID))
 						{
 							StyledMessageBox.ShowMessageBox(
-								string.Format("Duplicate file name found but in a different folder '{0}'. This part will not be added to the collection.\n\n{1}", item.Name, item.ID), 
+								string.Format("Duplicate file name found but in a different folder '{0}'. This part will not be added to the collection.\n\n{1}", item.Name, item.ID),
 								"Duplicate File");
 							continue;
 						}
@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl
 		public void SaveAs()
 		{
 			AggContext.FileDialogs.SaveFileDialog(
-				new SaveFileDialogParams("Save Project|*.zip"), 
+				new SaveFileDialogParams("Save Project|*.zip"),
 				(saveParams) =>
 				{
 					if (!string.IsNullOrEmpty(saveParams.FileName))
@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl
 				{
 					File.Delete(savedFileName);
 				}
-				catch (Exception ex)
+				catch
 				{
 					string directory = Path.GetDirectoryName(savedFileName);
 					string fileName = Path.GetFileNameWithoutExtension(savedFileName);

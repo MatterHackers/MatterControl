@@ -33,7 +33,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -43,11 +42,9 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using MatterHackers.VectorMath;
-using Microsoft.Win32.SafeHandles;
 
 namespace MatterHackers.MatterControl.PrinterCommunication
 {
@@ -217,8 +214,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		// we start out by setting it to a nothing file
 		private IFrostedSerialPort serialPort;
 
-		private bool stopTryingToConnect = false;
-
 		private double _targetBedTemperature;
 
 		private double[] targetHotendTemperature = new double[MAX_EXTRUDERS];
@@ -247,8 +242,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private double secondsSinceUpdateHistory = 0;
 		private long lineSinceUpdateHistory = 0;
 
-		private EventHandler unregisterEvents;
-
 		public PrinterConnection(PrinterConfig printer)
 		{
 			this.printer = printer;
@@ -276,7 +269,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadLineStartCallBacks.AddCallbackToKey("C:", ReadTargetPositions);
 			ReadLineStartCallBacks.AddCallbackToKey("ok C:", ReadTargetPositions); // smoothie is reporting the C: with an ok first.
 			ReadLineStartCallBacks.AddCallbackToKey("X:", ReadTargetPositions);
-			ReadLineStartCallBacks.AddCallbackToKey("ok X:", ReadTargetPositions); // 
+			ReadLineStartCallBacks.AddCallbackToKey("ok X:", ReadTargetPositions); //
 
 			ReadLineStartCallBacks.AddCallbackToKey("rs ", PrinterRequestsResend); // smoothie is lower case and no :
 			ReadLineStartCallBacks.AddCallbackToKey("RS:", PrinterRequestsResend);
@@ -785,7 +778,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		// HACK: PrinterConnection must be revised to take a constructor that receives and stores a reference to its parent PrinterConfig - this 
+		// HACK: PrinterConnection must be revised to take a constructor that receives and stores a reference to its parent PrinterConfig - this
 		private PrinterConfig printer { get; set; }
 
 		public void ReleaseAndReportFailedConnection(ConnectionFailure reason, string details = null)
@@ -842,7 +835,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			TerminalLog.Clear();
 			//Attempt connecting to a specific printer
-			this.stopTryingToConnect = false;
 			this.FirmwareType = FirmwareTypes.Unknown;
 
 			// On Android, there will never be more than one serial port available for us to connect to. Override the current .ComPort value to account for
@@ -944,8 +936,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 										// Place all consumed data back in the buffer to be processed by ReadFromPrinter
 
-										// Setting connected before calling ReadThread.Start causes the misguided CheckOnPrinter logic to spin up new  ReadThreads 
-										/* 
+										// Setting connected before calling ReadThread.Start causes the misguided CheckOnPrinter logic to spin up new  ReadThreads
+										/*
 										// Switch to connected state when a newline is found and we haven't exceeded the invalid char count
 										CommunicationState = CommunicationStates.Connected;
 										*/
@@ -1138,7 +1130,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void HaltConnectionThread()
 		{
-			this.stopTryingToConnect = true;
+			// TODO: stopTryingToConnect is not longer used by anyone. Likely we need to wire up setting CancellationToken from this context
+			//this.stopTryingToConnect = true;
 		}
 
 		public void HomeAxis(Axis axis)

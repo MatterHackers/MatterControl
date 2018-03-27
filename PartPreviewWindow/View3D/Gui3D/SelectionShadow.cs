@@ -47,7 +47,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class SelectionShadow : InteractionVolume
 	{
 		static Mesh normalShadowMesh;
-		static Mesh demoShadowMesh;
 		static Color shadowColor = new Color(22, 80, 220);
 		readonly int shadowAlpha = 40;
 

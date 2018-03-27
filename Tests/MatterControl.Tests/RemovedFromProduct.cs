@@ -66,11 +66,11 @@ namespace MatterControl.Tests
 					string releaseNotesFile = Path.Combine("C:\\Users\\lbrubaker\\Downloads", "test1.html");
 					htmlContent = File.ReadAllText(releaseNotesFile);
 				}
-				else
-				{
-					WebClient webClient = new WebClient();
-					htmlContent = webClient.DownloadString("http://www.matterhackers.com/s/store?q=pla");
-				}
+				//else
+				//{
+				//	WebClient webClient = new WebClient();
+				//	htmlContent = webClient.DownloadString("http://www.matterhackers.com/s/store?q=pla");
+				//}
 
 				HtmlWidget content = new HtmlWidget(htmlContent, Color.Black);
 				content.AddChild(new GuiWidget()
@@ -89,7 +89,6 @@ namespace MatterControl.Tests
 			}
 			catch
 			{
-				int stop = 1;
 			}
 		}
 
@@ -144,10 +143,8 @@ namespace MatterControl.Tests
 					list.Add(booleanGroup);
 				});
 			}
-			catch (Exception e2)
+			catch
 			{
-				string text = e2.Message;
-				int a = 0;
 			}
 		}
 

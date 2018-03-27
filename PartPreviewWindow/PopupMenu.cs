@@ -205,8 +205,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				get => _checked;
 				set
 				{
-					Console.WriteLine($" *** Consider setting {this.Name} from {_checked} to {value} ###");
-
 					if (_checked != value)
 					{
 						_checked = value;

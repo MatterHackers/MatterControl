@@ -42,18 +42,15 @@ using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
-using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PrinterEmulator;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using NUnit.Framework;
-using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
-using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
@@ -93,7 +90,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Directory.CreateDirectory(PathToDownloadsSubFolder);
 			}
 		}
-		
+
 		public static void DeleteDownloadsSubFolder()
 		{
 			Directory.Delete(PathToDownloadsSubFolder, true);
@@ -627,7 +624,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			var (width, height) = RootSystemWindow.GetStartupBounds();
 
 			rootSystemWindow = Application.LoadRootWindow(
-				overrideWidth == -1 ? width : overrideWidth, 
+				overrideWidth == -1 ? width : overrideWidth,
 				overrideHeight == -1 ? height : overrideHeight);
 
 			await AutomationRunner.ShowWindowAndExecuteTests(
@@ -937,7 +934,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public double HeatupTime { get; set; } = 0.5;
 
 		/// <summary>
-		/// The number of seconds to wait after reaching the target temp before continuing. Analogous to 
+		/// The number of seconds to wait after reaching the target temp before continuing. Analogous to
 		/// firmware dwell time for temperature stabilization
 		/// </summary>
 		public double TempStabilizationTime { get; set; } = 0.5;

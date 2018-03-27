@@ -46,8 +46,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		public event EventHandler ContentReloaded;
 
-		private EventHandler unregisterEvents;
-
 		private ILibraryContext LibraryContext;
 
 		private int scrollAmount = -1;
@@ -518,7 +516,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				this.LibraryContext.ContentChanged -= this.ActiveContainer_ContentChanged;
 			}
 
-			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 	}
