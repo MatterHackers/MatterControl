@@ -453,6 +453,4 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 		}
 	}
-
-	public enum AxisAlignment { Min, Center, Max, SourceCoordinateSystem };
 }
