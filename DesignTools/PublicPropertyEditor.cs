@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return rowContainer;
 		}
 
-		private string GetDisplayName(PropertyInfo prop)
+		public static string GetDisplayName(PropertyInfo prop)
 		{
 			var nameAttribute = prop.GetCustomAttributes(true).OfType<DisplayNameAttribute>().FirstOrDefault();
 			return nameAttribute?.DisplayName ?? prop.Name.SplitCamelCase();

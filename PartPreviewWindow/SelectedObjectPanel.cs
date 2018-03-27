@@ -274,7 +274,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			HashSet<IObject3DEditor> mappedEditors = ApplicationController.Instance.GetEditorsForType(selectedItemType);
 
-			var activeEditors = new List<(IObject3DEditor, IObject3D)>();
+			var activeEditors = new List<(IObject3DEditor, IObject3D, string)>();
 
 			// If item is IObject3DComponent
 			if (componentType.IsAssignableFrom(selectedItemType))
@@ -286,7 +286,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								select new
 								{
 									Type = propertyType,
-									Value = item.GetValue(selectedItem, null) as IObject3D
+									Value = item.GetValue(selectedItem, null) as IObject3D,
+									DisplayName = PublicPropertyEditor.GetDisplayName(item)
 								};
 
 				// Shown known editors for any matching properties
@@ -294,7 +295,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (ApplicationController.Instance.GetEditorsForType(member.Type)?.FirstOrDefault() is IObject3DEditor editor)
 					{
-						activeEditors.Add((editor, member.Value));
+						activeEditors.Add((editor, member.Value, member.DisplayName));
 					}
 				}
 			}
@@ -302,12 +303,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				// Get all public, instance properties where property type is marked with IObject3DComponentAttribute
 				var members = from item in selectedItemType.GetProperties(PublicPropertyEditor.OwnedPropertiesOnly)
-							  let propertyType = item.PropertyType
 							  where Attribute.IsDefined(item, componentAttribute)
 							  select new
 							  {
-								  Type = propertyType,
-								  Value = item.GetValue(selectedItem, null) as IObject3D
+								  Type = item.PropertyType,
+								  Value = item.GetValue(selectedItem, null) as IObject3D,
+								  DisplayName = PublicPropertyEditor.GetDisplayName(item)
 							  };
 
 				// Shown known editors for any matching properties
@@ -315,7 +316,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (ApplicationController.Instance.GetEditorsForType(member.Type)?.FirstOrDefault() is IObject3DEditor editor)
 					{
-						activeEditors.Add((editor, member.Value));
+						activeEditors.Add((editor, member.Value, member.DisplayName));
 					}
 				}
 			}
@@ -323,10 +324,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (mappedEditors?.Any() == true)
 			{
 				// Use first filtered or fall back to unfiltered first
-				activeEditors.Add((mappedEditors.First(), selectedItem));
+				activeEditors.Add((mappedEditors.First(), selectedItem, null));
 			}
 
-			ShowObjectEditor(activeEditors);
+			ShowObjectEditor(activeEditors, selectedItem);
 		}
 
 		private class OperationButton :TextButton
@@ -347,7 +348,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void ShowObjectEditor(IEnumerable<(IObject3DEditor editor, IObject3D item)> scope)
+		private void ShowObjectEditor(IEnumerable<(IObject3DEditor editor, IObject3D item, string displayName)> scope, IObject3D rootSelection)
 		{
 			editorPanel.CloseAllChildren();
 
@@ -364,7 +365,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var editorWidget = scopeItem.editor.Create(selectedItem, view3DWidget, theme);
 				editorWidget.HAnchor = HAnchor.Stretch;
 				editorWidget.VAnchor = VAnchor.Fit;
-				editorWidget.Padding = 0;
+
+				if (scopeItem.item != rootSelection
+					&& scopeItem.editor is PublicPropertyEditor)
+				{
+					editorWidget.Padding = new BorderDouble(10, 10, 10, 0);
+
+					// EditOutline section
+					var sectionWidget = new SectionWidget(
+							scopeItem.displayName ?? "Unknown",
+							editorWidget,
+							theme).ApplyBoxStyle(margin: 0);
+
+					editorWidget = sectionWidget;
+				}
+				else
+				{
+					editorWidget.Padding = 0;
+				}
 
 				editorPanel.AddChild(editorWidget);
 
@@ -423,7 +441,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// If the button toolbar isn't added, ensure panel has bottom margin
 					editorWidget.Margin = editorWidget.Margin.Clone(bottom: 15);
 				}
-
 			}
 		}
 
