@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// TODO: lookup settings values
 				bool anySettingOverridden = false;
 
-				var sectionWidget = new SectionWidget("Advanced", subPanel, theme, expanded: anySettingOverridden)
+				var sectionWidget = new SectionWidget("Advanced", subPanel, theme, expanded: true)
 				{
 					Name = "Advanced Section",
 					HAnchor = HAnchor.Stretch,
@@ -123,6 +123,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Margin = 0
 				};
 				column.AddChild(sectionWidget);
+
+				sectionWidget.Load += (s, e) =>
+				{
+					sectionWidget.Checkbox.Checked = anySettingOverridden;
+				};
 
 				foreach (var key in new[] { "spiral_vase", "layer_to_pause" })
 				{
@@ -168,7 +173,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							CancellationToken.None);
 					});
 				};
-				button.EnabledChanged += (s, e) => Console.WriteLine();
 				column.AddChild(button);
 
 				return column;
