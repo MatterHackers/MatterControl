@@ -43,6 +43,7 @@ using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.PolygonMesh.Csg;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
+using Net3dBool;
 using NUnit.Framework;
 
 namespace MatterHackers.PolygonMesh.UnitTests
@@ -51,7 +52,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 	public class MeshCsgTests
 	{
 		[Test]
-		public void CylinderMinusCylinder()
+		public void CsgCylinderMinusCylinder()
 		{
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
@@ -63,8 +64,8 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			{
 				double topHeight = 10;
 				int sides = 3;
-				IObject3D keep = CylinderAdvancedObject3D.Create(20, topHeight*2, sides);
-				IObject3D subtract = CylinderAdvancedObject3D.Create(10, topHeight*2, sides);
+				IObject3D keep = CylinderAdvancedObject3D.Create(20, topHeight * 2, sides);
+				IObject3D subtract = CylinderAdvancedObject3D.Create(10, topHeight * 2, sides);
 
 				var keepMesh = keep.Mesh;
 				var subtractMesh = subtract.Mesh;
@@ -75,28 +76,30 @@ namespace MatterHackers.PolygonMesh.UnitTests
 					FileName = "Split1"
 				};
 
-				var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None,
-					split1.Split, split1.Result);
+				BooleanModeller.Object1SplitFace = split1.Split;
+				BooleanModeller.Object1SplitResults = split1.Result;
+
+				BooleanModeller.Object1ClassifyFace = split1.Classify1;
+				BooleanModeller.Object2ClassifyFace = split1.Classify2;
+
+				var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None);
 
 				// this is for debuging the opperation
 				split1.FinishOutput();
 				resultMesh.Save("c:/temp/mesh1.stl", CancellationToken.None);
 
-				if (false)
+				var topZero = new Vector3(0, 0, topHeight);
+				foreach (var topVertex in keepMesh.Vertices
+					.Where((v) => v.Position.Z == topHeight && v.Position != topZero)
+					.Select((gv) => gv.Position))
 				{
-					var topZero = new Vector3(0, 0, topHeight);
-					foreach (var topVertex in keepMesh.Vertices
-						.Where((v) => v.Position.Z == topHeight && v.Position != topZero)
-						.Select((gv) => gv.Position))
-					{
-						Assert.IsTrue(resultMesh.Vertices.Where((v) => v.Position == topVertex).Any(), "Have all top vertexes");
-					}
-					foreach (var topVertex in subtractMesh.Vertices
-						.Where((v) => v.Position.Z == topHeight && v.Position != topZero)
-						.Select((gv) => gv.Position))
-					{
-						Assert.IsTrue(resultMesh.Vertices.Where((v) => v.Position == topVertex).Any(), "Have all top vertexes");
-					}
+					Assert.IsTrue(resultMesh.Vertices.Where((v) => v.Position == topVertex).Any(), "Have all top vertexes");
+				}
+				foreach (var topVertex in subtractMesh.Vertices
+					.Where((v) => v.Position.Z == topHeight && v.Position != topZero)
+					.Select((gv) => gv.Position))
+				{
+					Assert.IsTrue(resultMesh.Vertices.Where((v) => v.Position == topVertex).Any(), "Have all top vertexes");
 				}
 			}
 
@@ -104,7 +107,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			{
 				int sides = 3;
 				IObject3D keep = CylinderAdvancedObject3D.Create(20, 20, sides);
-				IObject3D subtract = CylinderAdvancedObject3D.Create(10, 21, sides);
+				IObject3D subtract = CylinderAdvancedObject3D.Create(10, 22, sides);
 
 				var keepMesh = keep.Mesh;
 				var subtractMesh = subtract.Mesh;
@@ -115,56 +118,40 @@ namespace MatterHackers.PolygonMesh.UnitTests
 					FileName = "Split2"
 				};
 
-				var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None,
-					split1.Split, split1.Result);
+				BooleanModeller.Object1SplitFace = split1.Split;
+				BooleanModeller.Object1SplitResults = split1.Result;
+
+				var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None);
 
 				// this is for debuging the opperation
 				split1.FinishOutput();
 				resultMesh.Save("c:/temp/mesh2.stl", CancellationToken.None);
 
-				#if false
+				foreach (var topVertex in keepMesh.Vertices
+					.Where((v) => v.Position.Z == 10 && v.Position != new Vector3(0, 0, 10))
+					.Select((gv) => gv.Position))
 				{
-					var topZero = new Vector3(0, 0, topHeight);
-					foreach (var topVertex in keepMesh.Vertices
-						.Where((v) => v.Position.Z == topHeight && v.Position != topZero)
-						.Select((gv) => gv.Position))
-					{
-						Assert.IsTrue(resultMesh.Vertices.Where((v) => v.Position == topVertex).Any(), "Have all top vertexes");
-					}
-					foreach (var topVertex in subtractMesh.Vertices
-						.Where((v) => v.Position.Z == topHeight && v.Position != topZero)
-						.Select((gv) => gv.Position))
-					{
-						Assert.IsTrue(resultMesh.Vertices.Where((v) => v.Position == topVertex).Any(), "Have all top vertexes");
-					}
+					Assert.IsTrue(resultMesh.Vertices.Where((v) => v.Position == topVertex).Any(), "Have all top vertexes");
 				}
-#endif
-			}
-		}
-
-		private double CountFacesAtHeight(Mesh keepMesh, double zHeight)
-		{
-			int count = 0;
-			foreach (var face in keepMesh.Faces)
-			{
-				var triangles = face.AsTriangles().ToList();
-				if (DebugFace.FaceAtHeight(new Vector3[] 
+				foreach (var topVertex in subtractMesh.Vertices
+					.Where((v) => v.Position.Z == 11 && v.Position != new Vector3(0, 0, 11))
+					.Select((gv) => gv.Position))
 				{
-					triangles[0].p0,triangles[0].p1,triangles[0].p2,
-				}, zHeight))
-				{
-					count++;
+					Assert.IsTrue(resultMesh.Vertices
+						.Where((v) => v.Position.Equals(new Vector3(topVertex.X, topVertex.Y, 10), .0001))
+						.Any(), "Have all top vertexes");
 				}
 			}
-
-			return count;
 		}
 	}
 
 	public class DebugFace
 	{
 		private int currentIndex;
-		private StringBuilder allPolygonDebug = new StringBuilder();
+		private StringBuilder allSplitPolygonDebug = new StringBuilder();
+		private StringBuilder allResultsPolygonDebug = new StringBuilder();
+		private StringBuilder classifiedFaces1 = new StringBuilder();
+		private StringBuilder classifiedFaces2 = new StringBuilder();
 		private StringBuilder htmlContent = new StringBuilder();
 		private StringBuilder individualPolygonDebug = new StringBuilder();
 
@@ -175,7 +162,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 		Vector2 offset = new Vector2(10, 18);
 		double scale = 13;
 
-		public void Result(List<Vector3[]> splitResults)
+		public void Result(List<CsgFace> splitResults)
 		{
 			if (splitResults.Count > 0
 				&& FaceAtHeight(splitResults[0], EvaluateHeight))
@@ -185,19 +172,17 @@ namespace MatterHackers.PolygonMesh.UnitTests
 				foreach (var face in splitResults)
 				{
 					individualPolygonDebug.AppendLine(GetCoords(face));
+					allResultsPolygonDebug.AppendLine(GetCoords(face));
 				}
 				individualPolygonDebug.AppendLine("</svg>");
 			}
 		}
 
-		public void Split(Vector3[] faceToSplit, Vector3[] splitAtFace)
+		public void Split(CsgFace faceToSplit, CsgFace splitAtFace)
 		{
 			if (FaceAtHeight(faceToSplit, EvaluateHeight))
 			{
-				string faceToSplitCoords = GetCoords(faceToSplit);
-				string splitAtFaceCoords = GetCoords(splitAtFace);
-
-				allPolygonDebug.AppendLine(faceToSplitCoords);
+				allSplitPolygonDebug.AppendLine(GetCoords(faceToSplit));
 
 				if (currentIndex == 0)
 				{
@@ -210,21 +195,31 @@ namespace MatterHackers.PolygonMesh.UnitTests
 				currentIndex++;
 				individualPolygonDebug.AppendLine($"<br>{currentIndex}</br>");
 				individualPolygonDebug.AppendLine($"<svg height='{svgHeight}' width='{svgWidth}'>");
-				individualPolygonDebug.AppendLine(faceToSplitCoords);
-				individualPolygonDebug.AppendLine(splitAtFaceCoords);
+				individualPolygonDebug.AppendLine(GetCoords(faceToSplit));
+				individualPolygonDebug.AppendLine(GetCoords(splitAtFace));
 				individualPolygonDebug.AppendLine("</svg>");
 			}
 		}
 
 		public void FinishOutput()
 		{
-			htmlContent.AppendLine($"<svg height='{svgHeight}' width='640'>");
+			htmlContent.AppendLine($"<svg height='{svgHeight}' width='{svgWidth}'>");
+			htmlContent.Append(allSplitPolygonDebug.ToString());
+			htmlContent.AppendLine("</svg>");
 
-			htmlContent.Append(allPolygonDebug.ToString());
-
+			htmlContent.AppendLine($"<svg height='{svgHeight}' width='{svgWidth}'>");
+			htmlContent.Append(allResultsPolygonDebug.ToString());
 			htmlContent.AppendLine("</svg>");
 
 			htmlContent.Append(individualPolygonDebug.ToString());
+
+			htmlContent.AppendLine($"<svg height='{svgHeight}' width='{svgWidth}'>");
+			htmlContent.Append(classifiedFaces1.ToString());
+			htmlContent.AppendLine("</svg>");
+
+			htmlContent.AppendLine($"<svg height='{svgHeight}' width='{svgWidth}'>");
+			htmlContent.Append(classifiedFaces2.ToString());
+			htmlContent.AppendLine("</svg>");
 
 			htmlContent.AppendLine("</body>");
 			htmlContent.AppendLine("</html>");
@@ -243,19 +238,19 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			return false;
 		}
 
-		public static bool FaceAtHeight(Vector3[] face, double height)
+		public static bool FaceAtHeight(CsgFace face, double height)
 		{
-			if (!AreEqual(face[0].Z, height))
+			if (!AreEqual(face.v1.Position.Z, height))
 			{
 				return false;
 			}
 
-			if (!AreEqual(face[1].Z, height))
+			if (!AreEqual(face.v2.Position.Z, height))
 			{
 				return false;
 			}
 
-			if (!AreEqual(face[2].Z, height))
+			if (!AreEqual(face.v3.Position.Z, height))
 			{
 				return false;
 			}
@@ -286,15 +281,20 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			return true;
 		}
 
-		public string GetCoords(Vector3[] face)
+		public string GetCoords(CsgFace face)
 		{
-			Vector2 p1 = (new Vector2(face[0].X, -face[0].Y) + offset) * scale;
-			Vector2 p2 = (new Vector2(face[1].X, -face[1].Y) + offset) * scale;
-			Vector2 p3 = (new Vector2(face[2].X, -face[2].Y) + offset) * scale;
+			return GetCoords(face, Color.Black, new Color(Color.Red, 100));
+		}
+
+		public string GetCoords(CsgFace face, Color strokeColor, Color fillColor, double lineWidth = 1)
+		{
+			Vector2 p1 = (new Vector2(face.v1.Position.X, -face.v1.Position.Y) + offset) * scale;
+			Vector2 p2 = (new Vector2(face.v2.Position.X, -face.v2.Position.Y) + offset) * scale;
+			Vector2 p3 = (new Vector2(face.v3.Position.X, -face.v3.Position.Y) + offset) * scale;
 			string coords = $"{p1.X:0.0}, {p1.Y:0.0}";
 			coords += $", {p2.X:0.0}, {p2.Y:0.0}";
 			coords += $", {p3.X:0.0}, {p3.Y:0.0}";
-			return $"<polygon points=\"{coords}\" style=\"fill: #FF000022; stroke: purple; stroke - width:.1\" />";
+			return $"<polygon points=\"{coords}\" style=\"fill: {fillColor.Html}; stroke: {strokeColor}; stroke - width:.1\" />";
 		}
 
 		public static bool HasPosition(Vector3[] face, Vector3 position)
@@ -313,6 +313,78 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			}
 
 			return false;
+		}
+
+		public void Classify1(CsgFace face)
+		{
+			//if (FaceAtHeight(face, EvaluateHeight))
+			{
+				Color color = new Color();
+				switch (face.Status)
+				{
+					case FaceStatus.Unknown:
+						color = Color.Cyan;
+						break;
+					case FaceStatus.Inside:
+						color = Color.Green;
+						break;
+					case FaceStatus.Outside:
+						color = Color.Red;
+						break;
+					case FaceStatus.Same:
+						color = Color.Gray;
+						break;
+					case FaceStatus.Opposite:
+						color = Color.Yellow;
+						break;
+					case FaceStatus.Boundary:
+						color = Color.Indigo;
+						break;
+					default:
+						throw new NotImplementedException();
+				}
+
+				// make it transparent
+				color = new Color(color, 100);
+
+				classifiedFaces1.AppendLine(GetCoords(face, Color.Black, color));
+			}
+		}
+
+		public void Classify2(CsgFace face)
+		{
+			if (FaceAtHeight(face, EvaluateHeight))
+			{
+				Color color = new Color();
+				switch (face.Status)
+				{
+					case FaceStatus.Unknown:
+						color = Color.Cyan;
+						break;
+					case FaceStatus.Inside:
+						color = Color.Green;
+						break;
+					case FaceStatus.Outside:
+						color = Color.Red;
+						break;
+					case FaceStatus.Same:
+						color = Color.Gray;
+						break;
+					case FaceStatus.Opposite:
+						color = Color.Yellow;
+						break;
+					case FaceStatus.Boundary:
+						color = Color.Indigo;
+						break;
+					default:
+						throw new NotImplementedException();
+				}
+
+				// make it transparent
+				color = new Color(color, 100);
+
+				classifiedFaces2.AppendLine(GetCoords(face, Color.Black, color));
+			}
 		}
 	}
 }
