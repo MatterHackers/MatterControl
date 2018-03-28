@@ -424,7 +424,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				foreach (string loadedFileName in filesToLoadIncludingZips)
 				{
 					string extension = Path.GetExtension(loadedFileName).ToUpper();
-					if ((extension != "" && ApplicationSettings.ValidFileExtensions.Contains(extension)))
+					if ((extension != ""
+						&& extension != ".ZIP"
+						&& ApplicationController.Instance.Library.IsContentFileType(loadedFileName)))
 					{
 						filesToLoad.Add(loadedFileName);
 					}
@@ -440,8 +442,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 					}
 				}
-
-				string progressMessage = "Loading Parts...".Localize();
 
 				var itemCache = new Dictionary<string, IObject3D>();
 
@@ -485,10 +485,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, IconColor.Raw),
 					Action = () =>
 					{
+						var extensionsWithoutPeriod = new HashSet<string>(ApplicationSettings.OpenDesignFileParams.Split('|').First().Split(',').Select(s => s.Trim().Trim('.')));
+
+						foreach(var extension in ApplicationController.Instance.Library.ContentProviders.Keys)
+						{
+							extensionsWithoutPeriod.Add(extension.ToUpper());
+						}
+
+						var extensionsArray = extensionsWithoutPeriod.OrderBy(t => t).ToArray();
+
+						string filter = string.Format(
+							"{0}|{1}",
+							string.Join(",", extensionsArray),
+							string.Join("", extensionsArray.Select(e => $"*.{e.ToLower()};").ToArray()));
+
 						UiThread.RunOnIdle(() =>
 						{
 							AggContext.FileDialogs.OpenFileDialog(
-								new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
+								new OpenFileDialogParams(filter, multiSelect: true),
 								(openParams) =>
 								{
 									this.LoadAndAddPartsToPlate(openParams.FileNames, sceneContext.Scene);
