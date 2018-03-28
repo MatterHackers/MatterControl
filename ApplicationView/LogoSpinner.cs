@@ -49,6 +49,8 @@ namespace MatterHackers.MatterControl
 
 		public float[] AmbientColor { get; set; } = new float[] { 0, 0, 0, 0 };
 
+		public bool SpinLogo { get; set; } = true;
+
 		public LogoSpinner(GuiWidget widget, double scale = 1.6, double spinSpeed = 0.6, double yOffset = 0.5, double rotateX = -0.1)
 		{
 			// loading animation stuff
@@ -73,10 +75,12 @@ namespace MatterHackers.MatterControl
 
 			widget.BeforeDraw += (s, e) =>
 			{
-				var thisAngle = Math.Min(anglePerDraw, loadTime.Elapsed.TotalSeconds * MathHelper.Tau);
-				angle += thisAngle;
-				loadTime.Restart();
-
+				if (this.SpinLogo)
+				{
+					var thisAngle = Math.Min(anglePerDraw, loadTime.Elapsed.TotalSeconds * MathHelper.Tau);
+					angle += thisAngle;
+					loadTime.Restart();
+				}
 				var screenSpaceBounds = widget.TransformToScreenSpace(widget.LocalBounds);
 				WorldView world = new WorldView(screenSpaceBounds.Width, screenSpaceBounds.Height);
 				world.Translate(new Vector3(0, yOffset, 0));
