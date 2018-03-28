@@ -113,7 +113,6 @@ namespace MatterHackers.MatterControl
 		private static ApplicationController globalInstance;
 		public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
-		public RootedObjectEventHandler PluginsLoaded = new RootedObjectEventHandler();
 
 		public static Action SignInAction;
 		public static Action SignOutAction;
@@ -1896,10 +1895,6 @@ namespace MatterHackers.MatterControl
 			// now that we are all set up lets load our plugins and allow them their chance to set things up
 			reporter?.Invoke(0.8, "Plugins");
 			AppContext.Platform.FindAndInstantiatePlugins(systemWindow);
-			if (ApplicationController.Instance.PluginsLoaded != null)
-			{
-				ApplicationController.Instance.PluginsLoaded.CallEvents(null, null);
-			}
 
 			reporter?.Invoke(0.9, "Process Commandline");
 			AppContext.Platform.ProcessCommandline();
