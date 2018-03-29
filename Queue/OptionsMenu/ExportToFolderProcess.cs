@@ -188,30 +188,14 @@ namespace MatterHackers.MatterControl.PrintQueue
 #if DEBUG
 								if (instruction.movementType != PrinterMachineInstruction.MovementTypes.Absolute)
 								{
-									throw new Exception("Radial functions can only execute absolute moves.");
+									throw new Exception("Leveling functions can only execute absolute moves.");
 								}
 #endif
 								Vector3 currentDestination = instruction.Position;
 
 								var printerSettings = ActiveSliceSettings.Instance;
 
-								switch (levelingData.CurrentPrinterLevelingSystem)
-								{
-									case PrintLevelingData.LevelingSystem.Probe3Points:
-										instruction.Line = LevelWizard3Point.ApplyLeveling(printerSettings, instruction.Line, currentDestination, instruction.movementType);
-										break;
-
-									case PrintLevelingData.LevelingSystem.Probe7PointRadial:
-										instruction.Line = LevelWizard7PointRadial.ApplyLeveling(printerSettings, instruction.Line, currentDestination);
-										break;
-
-									case PrintLevelingData.LevelingSystem.Probe13PointRadial:
-										instruction.Line = LevelWizard13PointRadial.ApplyLeveling(printerSettings, instruction.Line, currentDestination);
-										break;
-
-									default:
-										throw new NotImplementedException();
-								}
+								instruction.Line = LevelWizardBase.ApplyLeveling(printerSettings, instruction.Line, currentDestination);
 							}
 							unleveledGCode.Save(outputPathAndName);
 						}

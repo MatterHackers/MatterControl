@@ -29,36 +29,76 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class LevelWizard13PointRadial : LevelWizardBase
+	public class LevelWizard3x3Mesh : LevelWizardBase
 	{
-		public LevelWizard13PointRadial(PrinterConfig printer, LevelWizardBase.RuningState runningState)
-			: base(printer, runningState, 3 * 3)
+		public LevelWizard3x3Mesh(PrinterConfig printer, LevelWizardBase.RuningState runningState)
+			: base(printer, runningState, 9 * 3)
 		{
 		}
 
-		public override int ProbeCount => 3;
+		public override int ProbeCount => 9;
 
 		public override Vector2 GetPrintLevelPositionToSample(int index)
 		{
-			int numberOfRadialSamples = 6;
-			double bedRadius = Math.Min(printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).X, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
+			Vector2 bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
+			Vector2 printCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
 
-			Vector2 bedCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
-			if (index < numberOfRadialSamples)
+			if (printer.Settings.GetValue<BedShape>(SettingsKey.bed_shape) == BedShape.Circular)
 			{
-				Vector2 position = new Vector2(bedRadius, 0);
-				position.Rotate(MathHelper.Tau / numberOfRadialSamples * index);
-				position += bedCenter;
-				return position;
+				// reduce the bed size by the ratio of the radius (square root of 2) so that the sample positions will fit on a ciclular bed
+				bedSize *= 1.0 / Math.Sqrt(2);
 			}
-			else
+
+			// we know we are getting 3x3 sample positions they run like this
+			// 6 7 8  Y max
+			// 3 4 5
+			// 0 1 2  Y min
+			int xIndex = index % 3;
+			int yIndex = index / 3;
+
+			Vector2 samplePosition = new Vector2();
+			switch (xIndex)
 			{
-				return bedCenter;
+				case 0:
+					samplePosition.X = printCenter.X - (bedSize.X / 2) * .8;
+					break;
+
+				case 1:
+					samplePosition.X = printCenter.X;
+					break;
+
+				case 2:
+					samplePosition.X = printCenter.X + (bedSize.X / 2) * .8;
+					break;
+
+				default:
+					throw new IndexOutOfRangeException();
 			}
+
+			switch (yIndex)
+			{
+				case 0:
+					samplePosition.Y = printCenter.Y - (bedSize.Y / 2) * .8;
+					break;
+
+				case 1:
+					samplePosition.Y = printCenter.Y;
+					break;
+
+				case 2:
+					samplePosition.Y = printCenter.Y + (bedSize.Y / 2) * .8;
+					break;
+
+				default:
+					throw new IndexOutOfRangeException();
+			}
+
+			return samplePosition;
 		}
 	}
 }

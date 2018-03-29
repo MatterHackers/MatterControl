@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -44,8 +45,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public Vector3 position;
 	}
 
-	public class LevelWizardBase : SystemWindow
+	public abstract class LevelWizardBase : SystemWindow
 	{
+		private static MeshLevlingFunctions currentLevelingFunctions = null;
 		private LevelingStrings levelingStrings;
 
 		public enum RuningState { InitialStartupCalibration, UserRequestedCalibration }
@@ -55,105 +57,147 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		protected int totalSteps { get; private set; }
 		protected PrinterConfig printer;
 
-		public LevelWizardBase(PrinterConfig printer, int width, int height, int totalSteps)
-			: base(width, height)
+		public abstract int ProbeCount { get; }
+
+		public LevelWizardBase(PrinterConfig printer, RuningState runningState, int totalSteps)
+			: base(500, 370)
 		{
 			levelingStrings = new LevelingStrings(printer.Settings);
 			this.printer = printer;
 			AlwaysOnTopOfMain = true;
 			this.totalSteps = totalSteps;
-		}
 
-		public static List<Vector2> GetManualPositions(string settingsValue, int requiredCount)
-		{
-			// can look like "0,1:100,2:50,101"
-			if (!string.IsNullOrEmpty(settingsValue))
+
+
+
+
+
+			levelingStrings = new LevelingStrings(printer.Settings);
+			string printLevelWizardTitle = ApplicationController.Instance.ProductName;
+			string printLevelWizardTitleFull = "Print Leveling Wizard".Localize();
+			Title = string.Format("{0} - {1}", printLevelWizardTitle, printLevelWizardTitleFull);
+			List<ProbePosition> probePositions = new List<ProbePosition>(ProbeCount);
+			for (int i = 0; i < ProbeCount; i++)
 			{
-				var coordinates = settingsValue.Split(':');
-				if(coordinates.Length == requiredCount)
-				{
-					var result = new List<Vector2>();
-					foreach(var coordinate in coordinates)
-					{
-						var xyData = coordinate.Split(',');
-						if(xyData.Length != 2)
-						{
-							// bad data
-							return null;
-						}
+				probePositions.Add(new ProbePosition());
+			}
 
-						Vector2 probePosition = new Vector2();
-						if (!double.TryParse(xyData[0], out probePosition.X))
-						{
-							// error
-							return null;
-						}
-						if (!double.TryParse(xyData[1], out probePosition.Y))
-						{
-							// error
-							return null;
-						}
-						result.Add(probePosition);
-					}
-					if (result.Count == requiredCount)
-					{
-						return result;
-					}
+			printLevelWizard = new WizardControl();
+			AddChild(printLevelWizard);
+
+			if (runningState == LevelWizardBase.RuningState.InitialStartupCalibration)
+			{
+				string requiredPageInstructions = "{0}\n\n{1}".FormatWith(levelingStrings.requiredPageInstructions1, levelingStrings.requiredPageInstructions2);
+				printLevelWizard.AddPage(new FirstPageInstructions(printer, levelingStrings.initialPrinterSetupStepText, requiredPageInstructions));
+			}
+
+			printLevelWizard.AddPage(new FirstPageInstructions(printer, levelingStrings.OverviewText, levelingStrings.WelcomeText(ProbeCount, 5)));
+
+			bool useZProbe = printer.Settings.Helpers.UseZProbe();
+			if (!useZProbe)
+			{
+				printLevelWizard.AddPage(new CleanExtruderInstructionPage(printer, "Check Nozzle".Localize(), levelingStrings.CleanExtruder));
+			}
+
+			var printerSettings = printer.Settings;
+
+			// To make sure the bed is at the correct temp, put in a filament selection page.
+			bool hasHeatedBed = printerSettings.GetValue<bool>(SettingsKey.has_heated_bed);
+			if (hasHeatedBed)
+			{
+				string filamentSelectionPage = "{0}\n\n{1}".FormatWith(levelingStrings.materialPageInstructions1, levelingStrings.materialPageInstructions2);
+				printLevelWizard.AddPage(new SelectMaterialPage(printer, levelingStrings.materialStepText, filamentSelectionPage));
+			}
+			printLevelWizard.AddPage(new HomePrinterPage(printer, printLevelWizard,
+				levelingStrings.HomingPageStepText,
+				levelingStrings.HomingPageInstructions(useZProbe),
+				useZProbe));
+			if (hasHeatedBed)
+			{
+				printLevelWizard.AddPage(new WaitForTempPage(printer, printLevelWizard, levelingStrings));
+			}
+
+			string positionLabel = "Position".Localize();
+			string autoCalibrateLabel = "Auto Calibrate".Localize();
+			string lowPrecisionLabel = "Low Precision".Localize();
+			string medPrecisionLabel = "Medium Precision".Localize();
+			string highPrecisionLabel = "High Precision".Localize();
+
+			double bedRadius = Math.Min(printerSettings.GetValue<Vector2>(SettingsKey.bed_size).X, printerSettings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
+
+			double startProbeHeight = printerSettings.GetValue<double>(SettingsKey.print_leveling_probe_start);
+			for (int i = 0; i < ProbeCount; i++)
+			{
+				Vector2 probePosition = GetPrintLevelPositionToSample(i);
+
+				if (printerSettings.Helpers.UseZProbe())
+				{
+					var stepString = string.Format("{0} {1} {2} {3}:", levelingStrings.stepTextBeg, i + 1, levelingStrings.stepTextEnd, ProbeCount);
+					printLevelWizard.AddPage(new AutoProbeFeedback(printer, printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", stepString, positionLabel, i + 1, autoCalibrateLabel), probePositions, i));
+				}
+				else
+				{
+					printLevelWizard.AddPage(new GetCoarseBedHeight(printer, printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, lowPrecisionLabel), probePositions, i, levelingStrings));
+					printLevelWizard.AddPage(new GetFineBedHeight(printer, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, medPrecisionLabel), probePositions, i, levelingStrings));
+					printLevelWizard.AddPage(new GetUltraFineBedHeight(printer, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, highPrecisionLabel), probePositions, i, levelingStrings));
 				}
 			}
-			return null;
-		}
 
-		public static Vector2 GetPrintLevelPositionToSample(PrinterSettings printerSettings, int index)
-		{
-			var manualPositions = GetManualPositions(printerSettings.GetValue(SettingsKey.leveling_manual_positions), 3);
-			if(manualPositions != null)
-			{
-				return manualPositions[index];
-			}
-
-			Vector2 bedSize = printerSettings.GetValue<Vector2>(SettingsKey.bed_size);
-			Vector2 printCenter = printerSettings.GetValue<Vector2>(SettingsKey.print_center);
-
-			switch (printerSettings.GetValue<BedShape>(SettingsKey.bed_shape))
-			{
-				case BedShape.Circular:
-					Vector2 firstPosition = new Vector2(printCenter.X, printCenter.Y + (bedSize.Y / 2) * .5);
-					switch (index)
-					{
-						case 0:
-							return firstPosition;
-
-						case 1:
-							return Vector2.Rotate(firstPosition, MathHelper.Tau / 3);
-
-						case 2:
-							return Vector2.Rotate(firstPosition, MathHelper.Tau * 2 / 3);
-
-						default:
-							throw new IndexOutOfRangeException();
-					}
-
-				case BedShape.Rectangular:
-				default:
-					switch (index)
-					{
-						case 0:
-							return new Vector2(printCenter.X, printCenter.Y + (bedSize.Y / 2) * .8);
-
-						case 1:
-							return new Vector2(printCenter.X - (bedSize.X / 2) * .8, printCenter.Y - (bedSize.Y / 2) * .8);
-
-						case 2:
-							return new Vector2(printCenter.X + (bedSize.X / 2) * .8, printCenter.Y - (bedSize.Y / 2) * .8);
-
-						default:
-							throw new IndexOutOfRangeException();
-					}
-			}
+			printLevelWizard.AddPage(new LastPagelInstructions(printer, printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions));
 		}
 
 		private static SystemWindow printLevelWizardWindow;
+
+		public static string ApplyLeveling(PrinterSettings printerSettings, string lineBeingSent, Vector3 currentDestination)
+		{
+			if (printerSettings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
+				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 "))
+				&& lineBeingSent.Length > 2
+				&& lineBeingSent[2] == ' ')
+			{
+				PrintLevelingData levelingData = printerSettings.Helpers.GetPrintLevelingData();
+				return GetLevelingFunctions(printerSettings, 3, 3, levelingData)
+					.DoApplyLeveling(lineBeingSent, currentDestination);
+			}
+
+			return lineBeingSent;
+		}
+
+		public static List<string> ProcessCommand(string lineBeingSent)
+		{
+			int commentIndex = lineBeingSent.IndexOf(';');
+			if (commentIndex > 0) // there is content in front of the ;
+			{
+				lineBeingSent = lineBeingSent.Substring(0, commentIndex).Trim();
+			}
+			List<string> lines = new List<string>();
+			lines.Add(lineBeingSent);
+			if (lineBeingSent.StartsWith("G28")
+				|| lineBeingSent.StartsWith("G29"))
+			{
+				lines.Add("M114");
+			}
+
+			return lines;
+		}
+
+		public static MeshLevlingFunctions GetLevelingFunctions(PrinterSettings printerSettings, int gridWidth, int gridHeight, PrintLevelingData levelingData)
+		{
+			if (currentLevelingFunctions == null
+				|| !levelingData.SamplesAreSame(currentLevelingFunctions.SampledPositions))
+			{
+				if (currentLevelingFunctions != null)
+				{
+					currentLevelingFunctions.Dispose();
+				}
+
+				currentLevelingFunctions = new MeshLevlingFunctions(printerSettings, gridWidth, gridHeight, levelingData);
+			}
+
+			return currentLevelingFunctions;
+		}
+
+		public abstract Vector2 GetPrintLevelPositionToSample(int index);
 
 		public static void ShowPrintLevelWizard(PrinterConfig printer)
 		{

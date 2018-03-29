@@ -99,27 +99,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 			if (levelingData != null)
 			{
-				switch (levelingData.CurrentPrinterLevelingSystem)
-				{
-					case PrintLevelingData.LevelingSystem.Probe3Points:
-						lineBeingSent = LevelWizard3Point.ApplyLeveling(printerSettings, lineBeingSent, currentDestination.position, PrinterMachineInstruction.MovementTypes.Absolute);
-						break;
-
-					case PrintLevelingData.LevelingSystem.Probe7PointRadial:
-						lineBeingSent = LevelWizard7PointRadial.ApplyLeveling(printerSettings, lineBeingSent, currentDestination.position);
-						break;
-
-					case PrintLevelingData.LevelingSystem.Probe13PointRadial:
-						lineBeingSent = LevelWizard13PointRadial.ApplyLeveling(printerSettings, lineBeingSent, currentDestination.position);
-						break;
-
-					case PrintLevelingData.LevelingSystem.Probe3x3Mesh:
-						lineBeingSent = LevelWizard3x3Mesh.ApplyLeveling(printerSettings, lineBeingSent, currentDestination.position);
-						break;
-
-					default:
-						throw new NotImplementedException();
-				}
+				lineBeingSent = LevelWizardBase.ApplyLeveling(printerSettings, lineBeingSent, currentDestination.position);
 			}
 
 			return lineBeingSent;
