@@ -303,7 +303,6 @@
     <Compile Include="PartPreviewWindow\View3D\DebugBvh.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\UngroupCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\InsertCommand.cs" />
-    <Compile Include="PartPreviewWindow\View3D\UndoCommands\GroupCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\SnapingIndicator.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\SelectionShadow.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\MoveInZControl.cs" />

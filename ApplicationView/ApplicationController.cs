@@ -318,7 +318,40 @@ namespace MatterHackers.MatterControl
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Group".Localize(),
-				Action = (scene) => scene.GroupSelection(),
+				Action = (scene) =>
+				{
+					var selectedItem = scene.SelectedItem;
+					scene.SelectedItem = null;
+
+					var newGroup = new Object3D()
+					{
+						Name = "Group".Localize()
+					};
+
+					// When grouping items, move them to be centered on their bounding box
+					newGroup.Children.Modify((gChildren) =>
+					{
+						selectedItem.Clone().Children.Modify((sChildren) =>
+						{
+							var center = selectedItem.GetAxisAlignedBoundingBox().Center;
+
+							foreach (var child in sChildren)
+							{
+								child.Translate(-center.X, -center.Y, 0);
+								gChildren.Add(child);
+							}
+
+							newGroup.Translate(center.X, center.Y, 0);
+						});
+					});
+
+					scene.UndoBuffer.AddAndDo(new ReplaceCommand(selectedItem.Children.ToList(), new List<IObject3D> { newGroup }));
+
+					newGroup.MakeNameNonColliding();
+
+					scene.SelectedItem = newGroup;
+
+				},
 				IsEnabled = (scene) => scene.HasSelection
 					&& scene.SelectedItem is SelectionGroup
 					&& scene.SelectedItem.Children.Count > 1,
@@ -505,7 +538,7 @@ namespace MatterHackers.MatterControl
 			{
 				// Should be a pinch command that makes a pinch object with the correct controls
 				TitleResolver = () => "Pinch".Localize(),
-				Action = (scene) => scene.UndoBuffer.AddAndDo(new GroupCommand(scene, scene.SelectedItem)),
+				//Action = (scene) => scene.UndoBuffer.AddAndDo(new GroupCommand(scene, scene.SelectedItem)),
 				IsEnabled = (scene) => scene.HasSelection,
 			}
 #endif

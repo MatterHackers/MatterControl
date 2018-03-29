@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Mesh = mesh,
 							Matrix = ungroupItem.Matrix,
 						}));
-						
+
 						// add and do the undo data
 						Scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { ungroupItem }, addItems));
 					}
@@ -97,23 +97,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// leave no selection
 				Scene.SelectedItem = null;
-			}
-		}
-
-		public static async void GroupSelection(this InteractiveScene Scene)
-		{
-			if (Scene.HasChildren())
-			{
-				var selectedItem = Scene.SelectedItem;
-
-				await Task.Run(() =>
-				{
-					// Create and perform the delete operation
-					var operation = new GroupCommand(Scene, selectedItem);
-
-					// Store the operation for undo/redo
-					Scene.UndoBuffer.AddAndDo(operation);
-				});
 			}
 		}
 
