@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl
 				{
 					// If this is MatterControlApplication, include Scene
 					var partContext = ApplicationController.Instance.DragDropData;
-					return new InspectForm(inspectingWindow, partContext.SceneContext.Scene, partContext.View3DWidget);
+					return new InspectForm(inspectingWindow, partContext.SceneContext?.Scene ?? null, partContext.View3DWidget);
 				}
 				else
 				{

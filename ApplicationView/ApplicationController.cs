@@ -113,7 +113,6 @@ namespace MatterHackers.MatterControl
 		private static ApplicationController globalInstance;
 		public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
-		public RootedObjectEventHandler PluginsLoaded = new RootedObjectEventHandler();
 
 		public static Action SignInAction;
 		public static Action SignOutAction;
@@ -319,7 +318,40 @@ namespace MatterHackers.MatterControl
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Group".Localize(),
-				Action = (scene) => scene.GroupSelection(),
+				Action = (scene) =>
+				{
+					var selectedItem = scene.SelectedItem;
+					scene.SelectedItem = null;
+
+					var newGroup = new Object3D()
+					{
+						Name = "Group".Localize()
+					};
+
+					// When grouping items, move them to be centered on their bounding box
+					newGroup.Children.Modify((gChildren) =>
+					{
+						selectedItem.Clone().Children.Modify((sChildren) =>
+						{
+							var center = selectedItem.GetAxisAlignedBoundingBox().Center;
+
+							foreach (var child in sChildren)
+							{
+								child.Translate(-center.X, -center.Y, 0);
+								gChildren.Add(child);
+							}
+
+							newGroup.Translate(center.X, center.Y, 0);
+						});
+					});
+
+					scene.UndoBuffer.AddAndDo(new ReplaceCommand(selectedItem.Children.ToList(), new List<IObject3D> { newGroup }));
+
+					newGroup.MakeNameNonColliding();
+
+					scene.SelectedItem = newGroup;
+
+				},
 				IsEnabled = (scene) => scene.HasSelection
 					&& scene.SelectedItem is SelectionGroup
 					&& scene.SelectedItem.Children.Count > 1,
@@ -506,7 +538,7 @@ namespace MatterHackers.MatterControl
 			{
 				// Should be a pinch command that makes a pinch object with the correct controls
 				TitleResolver = () => "Pinch".Localize(),
-				Action = (scene) => scene.UndoBuffer.AddAndDo(new GroupCommand(scene, scene.SelectedItem)),
+				//Action = (scene) => scene.UndoBuffer.AddAndDo(new GroupCommand(scene, scene.SelectedItem)),
 				IsEnabled = (scene) => scene.HasSelection,
 			}
 #endif
@@ -1838,20 +1870,63 @@ namespace MatterHackers.MatterControl
 				//UiThread.RunOnIdle(() =>
 				Task.Run(async () =>
 				{
-					ReportStartupProgress(0.15, "MatterControlApplication.Initialize");
-					var mainView = await Initialize(systemWindow, (progress0To1, status) =>
+					try
 					{
-						ReportStartupProgress(0.2 + progress0To1 * 0.7, status);
-					});
+						ReportStartupProgress(0.15, "MatterControlApplication.Initialize");
+						var mainView = await Initialize(systemWindow, (progress0To1, status) =>
+						{
+							ReportStartupProgress(0.2 + progress0To1 * 0.7, status);
+						});
 
-					TranslationMap.ActiveTranslationMap = new TranslationMap("Translations", UserSettings.Instance.Language);
+						TranslationMap.ActiveTranslationMap = new TranslationMap("Translations", UserSettings.Instance.Language);
 
-					ReportStartupProgress(0.9, "AddChild->MainView");
-					systemWindow.AddChild(mainView, 0);
+						ReportStartupProgress(0.9, "AddChild->MainView");
+						systemWindow.AddChild(mainView, 0);
 
-					ReportStartupProgress(1, "");
-					systemWindow.BackgroundColor = Color.Transparent;
-					overlay.Close();
+						ReportStartupProgress(1, "");
+						systemWindow.BackgroundColor = Color.Transparent;
+						overlay.Close();
+					}
+					catch (Exception ex)
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							var theme = ApplicationController.Instance.Theme;
+
+							statusText.Visible = false;
+
+							var errorTextColor = Color.White;
+
+							progressPanel.Margin = 0;
+							progressPanel.VAnchor = VAnchor.Center | VAnchor.Fit;
+							progressPanel.BackgroundColor = Color.DarkGray;
+							progressPanel.Padding = 20;
+							progressPanel.Border = 1;
+							progressPanel.BorderColor = Color.Red;
+
+							progressPanel.AddChild(
+								new TextWidget("Startup Failure".Localize() + ":", pointSize: theme.DefaultFontSize, textColor: errorTextColor));
+
+							progressPanel.AddChild(
+								new TextWidget(ex.Message, pointSize: theme.FontSize9, textColor: errorTextColor));
+
+							var closeButton = new TextButton("Close", theme, Color.White)
+							{
+								BackgroundColor = theme.SlightShade,
+								HAnchor = HAnchor.Right,
+								VAnchor = VAnchor.Absolute
+							};
+							closeButton.Click += (s1, e1) =>
+							{
+								systemWindow.Close();
+							};
+
+							spinner.SpinLogo = false;
+							progressBar.Visible = false;
+
+							progressPanel.AddChild(closeButton);
+						});
+					}
 
 					AppContext.IsLoading = false;
 				});
@@ -1896,10 +1971,6 @@ namespace MatterHackers.MatterControl
 			// now that we are all set up lets load our plugins and allow them their chance to set things up
 			reporter?.Invoke(0.8, "Plugins");
 			AppContext.Platform.FindAndInstantiatePlugins(systemWindow);
-			if (ApplicationController.Instance.PluginsLoaded != null)
-			{
-				ApplicationController.Instance.PluginsLoaded.CallEvents(null, null);
-			}
 
 			reporter?.Invoke(0.9, "Process Commandline");
 			AppContext.Platform.ProcessCommandline();

@@ -30,20 +30,23 @@ namespace MatterHackers.MatterControl
 		{
 			this.view3DWidget = view3DWidget;
 			this.scene = scene;
-			this.scene.Children.ItemsModified += Scene_ChildrenModified;
-			sceneTreeView.SuspendLayout();
-			this.AddTree(scene, null);
-
-			sceneTreeView.ResumeLayout();
-
-			if (view3DWidget.ContainsFocus)
+			if (scene != null)
 			{
-				tabControl1.SelectedIndex = 1;
+				this.scene.Children.ItemsModified += Scene_ChildrenModified;
+				sceneTreeView.SuspendLayout();
+				this.AddTree(scene, null);
 
-				if (scene.HasSelection
-					&& sceneTreeNodes.TryGetValue(scene.SelectedItem, out TreeNode treeNodeToSelect))
+				sceneTreeView.ResumeLayout();
+
+				if (view3DWidget?.ContainsFocus == true)
 				{
-					sceneTreeView.SelectedNode = treeNodeToSelect;
+					tabControl1.SelectedIndex = 1;
+
+					if (scene.HasSelection
+						&& sceneTreeNodes.TryGetValue(scene.SelectedItem, out TreeNode treeNodeToSelect))
+					{
+						sceneTreeView.SelectedNode = treeNodeToSelect;
+					}
 				}
 			}
 		}

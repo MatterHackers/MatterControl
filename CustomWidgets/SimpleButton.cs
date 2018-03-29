@@ -103,6 +103,20 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 			set => base.BackgroundColor = value;
 		}
+
+		public override bool Enabled
+		{
+			get => base.Enabled;
+			set
+			{
+				base.Enabled = value;
+
+				if (!base.Enabled)
+				{
+					mouseInBounds = false;
+				}
+			}
+		}
 	}
 
 	public class SimpleFlowButton : FlowLayoutWidget

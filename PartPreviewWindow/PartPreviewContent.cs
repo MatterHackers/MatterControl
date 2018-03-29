@@ -162,14 +162,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Name = "Initial Plus Tab"
 					});
 			}
-
-			// When the application is first started, plugins are loaded after the MainView control has been initialized,
-			// and as such they not around when this constructor executes. In that case, we run the AddRightElement 
-			// delegate after the plugins have been initialized via the PluginsLoaded event
-			ApplicationController.Instance.PluginsLoaded.RegisterEvent((s, e) =>
-			{
-				ApplicationController.Instance.NotifyPrintersTabRightElement(extensionArea);
-			}, ref unregisterEvents);
 		}
 
 		private ChromeTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)
