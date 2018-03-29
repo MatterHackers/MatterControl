@@ -47,46 +47,23 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override int ProbeCount => 3;
 
-		public override Vector2 GetPrintLevelPositionToSample(int index)
+		public override IEnumerable<Vector2> GetPrintLevelPositionToSample()
 		{
 			Vector2 bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
 			Vector2 printCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
 
-			switch (printer.Settings.GetValue<BedShape>(SettingsKey.bed_shape))
+			if (printer.Settings.GetValue<BedShape>(SettingsKey.bed_shape) == BedShape.Circular)
 			{
-				case BedShape.Circular:
-					Vector2 firstPosition = new Vector2(printCenter.X, printCenter.Y + (bedSize.Y / 2) * .5);
-					switch (index)
-					{
-						case 0:
-							return firstPosition;
-
-						case 1:
-							return Vector2.Rotate(firstPosition, MathHelper.Tau / 3);
-
-						case 2:
-							return Vector2.Rotate(firstPosition, MathHelper.Tau * 2 / 3);
-
-						default:
-							throw new IndexOutOfRangeException();
-					}
-
-				case BedShape.Rectangular:
-				default:
-					switch (index)
-					{
-						case 0:
-							return new Vector2(printCenter.X, printCenter.Y + (bedSize.Y / 2) * .8);
-
-						case 1:
-							return new Vector2(printCenter.X - (bedSize.X / 2) * .8, printCenter.Y - (bedSize.Y / 2) * .8);
-
-						case 2:
-							return new Vector2(printCenter.X + (bedSize.X / 2) * .8, printCenter.Y - (bedSize.Y / 2) * .8);
-
-						default:
-							throw new IndexOutOfRangeException();
-					}
+				Vector2 firstPosition = new Vector2(printCenter.X, printCenter.Y + (bedSize.Y / 2) * .5);
+				yield return firstPosition;
+				yield return Vector2.Rotate(firstPosition, MathHelper.Tau / 3);
+				yield return Vector2.Rotate(firstPosition, MathHelper.Tau * 2 / 3);
+			}
+			else
+			{
+				yield return new Vector2(printCenter.X, printCenter.Y + (bedSize.Y / 2) * .8);
+				yield return new Vector2(printCenter.X - (bedSize.X / 2) * .8, printCenter.Y - (bedSize.Y / 2) * .8);
+				yield return new Vector2(printCenter.X + (bedSize.X / 2) * .8, printCenter.Y - (bedSize.Y / 2) * .8);
 			}
 		}
 	}

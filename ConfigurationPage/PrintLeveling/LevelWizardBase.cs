@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			string printLevelWizardTitleFull = "Print Leveling Wizard".Localize();
 			Title = string.Format("{0} - {1}", printLevelWizardTitle, printLevelWizardTitleFull);
 			List<ProbePosition> probePositions = new List<ProbePosition>(ProbeCount);
-			for (int i = 0; i < ProbeCount; i++)
+			for (int j = 0; j < ProbeCount; j++)
 			{
 				probePositions.Add(new ProbePosition());
 			}
@@ -122,24 +122,42 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			double bedRadius = Math.Min(printerSettings.GetValue<Vector2>(SettingsKey.bed_size).X, printerSettings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
 
 			double startProbeHeight = printerSettings.GetValue<double>(SettingsKey.print_leveling_probe_start);
-			for (int i = 0; i < ProbeCount; i++)
+			int i= 0;
+			foreach (var goalProbePosition in GetPrintLevelPositionToSample())
 			{
-				Vector2 probePosition = GetPrintLevelPositionToSample(i);
+				var validProbePosition = EnsureInPrintBounds(printerSettings, goalProbePosition);
 
 				if (printerSettings.Helpers.UseZProbe())
 				{
 					var stepString = string.Format("{0} {1} {2} {3}:", levelingStrings.stepTextBeg, i + 1, levelingStrings.stepTextEnd, ProbeCount);
-					printLevelWizard.AddPage(new AutoProbeFeedback(printer, printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", stepString, positionLabel, i + 1, autoCalibrateLabel), probePositions, i));
+					printLevelWizard.AddPage(new AutoProbeFeedback(printer, printLevelWizard, new Vector3(validProbePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", stepString, positionLabel, i + 1, autoCalibrateLabel), probePositions, i));
 				}
 				else
 				{
-					printLevelWizard.AddPage(new GetCoarseBedHeight(printer, printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, lowPrecisionLabel), probePositions, i, levelingStrings));
+					printLevelWizard.AddPage(new GetCoarseBedHeight(printer, printLevelWizard, new Vector3(validProbePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, lowPrecisionLabel), probePositions, i, levelingStrings));
 					printLevelWizard.AddPage(new GetFineBedHeight(printer, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, medPrecisionLabel), probePositions, i, levelingStrings));
 					printLevelWizard.AddPage(new GetUltraFineBedHeight(printer, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, highPrecisionLabel), probePositions, i, levelingStrings));
 				}
+				i++;
 			}
 
 			printLevelWizard.AddPage(new LastPagelInstructions(printer, printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions));
+		}
+
+		private Vector2 EnsureInPrintBounds(PrinterSettings printerSettings, Vector2 probePosition)
+		{
+			// check that the position is within the printing arrea and if not move it back in
+			if (printerSettings.Helpers.UseZProbe())
+			{
+				var probeOffset = printer.Settings.GetValue<Vector2>(SettingsKey.z_probe_xy_offset);
+				var actualNozzlePosition = probePosition + probeOffset;
+				// clamp this to the bed bounds
+
+				// and push it back into the probePosition
+				probePosition = actualNozzlePosition - probeOffset;
+			}
+
+			return probePosition;
 		}
 
 		private static SystemWindow printLevelWizardWindow;
@@ -193,7 +211,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return currentLevelingFunctions;
 		}
 
-		public abstract Vector2 GetPrintLevelPositionToSample(int index);
+		public abstract IEnumerable<Vector2> GetPrintLevelPositionToSample();
 
 		public static void ShowPrintLevelWizard(PrinterConfig printer)
 		{

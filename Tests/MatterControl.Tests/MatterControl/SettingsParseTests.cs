@@ -23,24 +23,20 @@ namespace MatterControl.Tests.MatterControl
 			LevelWizard3Point levelingSolution = new LevelWizard3Point(ActiveSliceSettings.Instance.printer, LevelWizardBase.RuningState.InitialStartupCalibration);
 			var printerSettings = ActiveSliceSettings.Instance;
 			{
-				var sample0 = levelingSolution.GetPrintLevelPositionToSample(0);
-				var sample1 = levelingSolution.GetPrintLevelPositionToSample(1);
-				var sample2 = levelingSolution.GetPrintLevelPositionToSample(2);
+				var samples = levelingSolution.GetPrintLevelPositionToSample().ToList();
 				Assert.AreEqual("200,200", ActiveSliceSettings.Instance.GetValue(SettingsKey.bed_size));
 				Assert.AreEqual("100,100", ActiveSliceSettings.Instance.GetValue(SettingsKey.print_center));
 				Assert.AreEqual("rectangular", ActiveSliceSettings.Instance.GetValue(SettingsKey.bed_shape));
-				Assert.AreEqual(new Vector2(100, 180), sample0);
-				Assert.AreEqual(new Vector2(20, 20), sample1);
-				Assert.AreEqual(new Vector2(180, 20), sample2);
+				Assert.AreEqual(new Vector2(100, 180), samples[0]);
+				Assert.AreEqual(new Vector2(20, 20), samples[1]);
+				Assert.AreEqual(new Vector2(180, 20), samples[2]);
 			}
 
 			{
-				var sample0 = levelingSolution.GetPrintLevelPositionToSample(0);
-				var sample1 = levelingSolution.GetPrintLevelPositionToSample(1);
-				var sample2 = levelingSolution.GetPrintLevelPositionToSample(2);
-				Assert.IsTrue(sample0 == new Vector2(1, 2));
-				Assert.IsTrue(sample1 == new Vector2(211, 3));
-				Assert.IsTrue(sample2 == new Vector2(113, 104));
+				var samples = levelingSolution.GetPrintLevelPositionToSample().ToList();
+				Assert.IsTrue(samples[0] == new Vector2(1, 2));
+				Assert.IsTrue(samples[1] == new Vector2(211, 3));
+				Assert.IsTrue(samples[2] == new Vector2(113, 104));
 			}
 		}
 

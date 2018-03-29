@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -42,23 +43,33 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override int ProbeCount => 13;
 
-		public override Vector2 GetPrintLevelPositionToSample(int index)
+		public override IEnumerable<Vector2> GetPrintLevelPositionToSample()
 		{
-			int numberOfRadialSamples = 6;
 			double bedRadius = Math.Min(printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).X, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
-
 			Vector2 bedCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
-			if (index < numberOfRadialSamples)
+
+			// around the outside
+			int numberOfOuterSamples = 6;
+			for (int i = 0; i < numberOfOuterSamples; i++)
 			{
 				Vector2 position = new Vector2(bedRadius, 0);
-				position.Rotate(MathHelper.Tau / numberOfRadialSamples * index);
+				position.Rotate(MathHelper.Tau / numberOfOuterSamples * i);
 				position += bedCenter;
-				return position;
+				yield return position;
 			}
-			else
+
+			// around an inner circle
+			int numberOfInnerSamples = 6;
+			for (int i = 0; i < numberOfInnerSamples; i++)
 			{
-				return bedCenter;
+				Vector2 position = new Vector2(bedRadius / 2, 0);
+				position.Rotate(MathHelper.Tau / numberOfInnerSamples * i);
+				position += bedCenter;
+				yield return position;
 			}
+
+			// the center
+			yield return bedCenter;
 		}
 	}
 }

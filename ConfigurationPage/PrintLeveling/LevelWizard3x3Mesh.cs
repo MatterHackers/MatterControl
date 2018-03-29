@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
@@ -43,7 +44,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override int ProbeCount => 9;
 
-		public override Vector2 GetPrintLevelPositionToSample(int index)
+		public override IEnumerable<Vector2> GetPrintLevelPositionToSample()
+		{
+			for(int y=0; y<3; y++)
+			{
+				for(int x=0; x<3; x++)
+				{
+					yield return GetPosition(x, y);
+				}
+			}
+		}
+
+		private Vector2 GetPosition(int xIndex, int yIndex)
 		{
 			Vector2 bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
 			Vector2 printCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
@@ -53,13 +65,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				// reduce the bed size by the ratio of the radius (square root of 2) so that the sample positions will fit on a ciclular bed
 				bedSize *= 1.0 / Math.Sqrt(2);
 			}
-
-			// we know we are getting 3x3 sample positions they run like this
-			// 6 7 8  Y max
-			// 3 4 5
-			// 0 1 2  Y min
-			int xIndex = index % 3;
-			int yIndex = index / 3;
 
 			Vector2 samplePosition = new Vector2();
 			switch (xIndex)
