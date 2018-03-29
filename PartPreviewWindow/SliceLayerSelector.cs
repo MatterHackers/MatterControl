@@ -45,6 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private BedConfig sceneContext;
 
 		private SolidSlider layerSlider;
+		private double layerInfoHalfHeight;
 
 		public SliceLayerSelector(PrinterConfig printer, BedConfig sceneContext)
 		{
@@ -70,6 +71,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				layerScrollbar.Value = currentLayerInfo.Value - 1;
 			};
 			this.AddChild(currentLayerInfo);
+
+			currentLayerInfo.Visible = true;
+			layerInfoHalfHeight = currentLayerInfo.Height / 2;
+			currentLayerInfo.Visible = false;
+
+			layerSlider.ValueChanged += (s, e) =>
+			{
+				currentLayerInfo.Position = new Vector2(0, (double)(layerSlider.Position.Y + layerSlider.PositionPixelsFromFirstValue - layerInfoHalfHeight));
+			};
+
+			// Set initial position
+			currentLayerInfo.Position = new Vector2(0, (double)(layerSlider.Position.Y + layerSlider.PositionPixelsFromFirstValue - layerInfoHalfHeight));
 
 			sceneContext.ActiveLayerChanged += SetPositionAndValue;
 			layerScrollbar.MouseEnter += SetPositionAndValue;
@@ -100,7 +113,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			UiThread.RunOnIdle(() =>
 			{
 				currentLayerInfo.Value = sceneContext.ActiveLayerIndex;
-				currentLayerInfo.Position = new Vector2(0, (double)(layerSlider.Position.Y + layerSlider.PositionPixelsFromFirstValue - 3));
 				currentLayerInfo.Visible = true;
 			});
 		}
