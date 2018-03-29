@@ -90,13 +90,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			get
 			{
-				return this.Visible && (numberEdit.Visible || this.UnderMouseState != UnderMouseState.NotUnderMouse);
+				return this.Visible && ((numberEdit.Visible && numberEdit.ContainsFocus) || this.UnderMouseState != UnderMouseState.NotUnderMouse);
 			}
 		}
 
 		public Func<bool> ForceHide { get; set; }
 
-		Func<double, string> _GetDisplayString = (value) => "{0:0.0}".FormatWith(value);
+		private Func<double, string> _GetDisplayString = (value) => "{0:0.0}".FormatWith(value);
 		public Func<double, string> GetDisplayString
 		{
 			get { return _GetDisplayString; }
