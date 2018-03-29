@@ -127,6 +127,10 @@
       <Project>{670BDDFF-927B-425D-9DD1-22ACB14356EB}</Project>
       <Name>PlatformWin32</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Submodules\agg-sharp\PolygonMesh\Net3dBool\Net3dBool.csproj">
+      <Project>{7ee4636d-8a92-4015-9562-7fcd6add0645}</Project>
+      <Name>Net3dBool</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj">
       <Project>{86F6AAF2-9B50-40B8-A427-1897D76471C5}</Project>
       <Name>PolygonMesh</Name>

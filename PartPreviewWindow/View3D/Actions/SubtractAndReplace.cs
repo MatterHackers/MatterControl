@@ -209,6 +209,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				if (paintObjects.Any()
 					&& keepObjects.Any())
 				{
+					var totalOperations = paintObjects.Count * keepObjects.Count;
+					double amountPerOperation = 1.0 / totalOperations;
+					double percentCompleted = 0;
+
 					foreach (var paint in paintObjects)
 					{
 						var transformedPaint = Mesh.Copy(paint.Mesh, cancellationToken);
@@ -223,7 +227,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							transformedKeep.Transform(keep.WorldMatrix());
 
 							// remove the paint from the original
-							var intersectAndSubtract = PolygonMesh.Csg.CsgOperations.IntersectAndSubtract(transformedKeep, transformedPaint);
+							var intersectAndSubtract = PolygonMesh.Csg.CsgOperations.IntersectAndSubtract(transformedKeep, transformedPaint, (status, progress0To1) =>
+							{
+								// Abort if flagged
+								cancellationToken.ThrowIfCancellationRequested();
+
+								progressStatus.Status = status;
+								progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
+								reporter?.Report(progressStatus);
+							}, cancellationToken);
 							var inverseKeep = keep.WorldMatrix();
 							inverseKeep.Invert();
 							intersectAndSubtract.subtract.Transform(inverseKeep);

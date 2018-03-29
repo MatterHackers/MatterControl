@@ -216,12 +216,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					{
 						progressStatus.Status = "Copy Remove";
 						reporter?.Report(progressStatus);
-						var transformedRemove = Mesh.Copy(remove.Mesh, CancellationToken.None);
+						var transformedRemove = Mesh.Copy(remove.Mesh, cancellationToken);
 						transformedRemove.Transform(remove.WorldMatrix());
 
 						progressStatus.Status = "Copy Keep";
 						reporter?.Report(progressStatus);
-						var transformedKeep = Mesh.Copy(keep.Mesh, CancellationToken.None);
+						var transformedKeep = Mesh.Copy(keep.Mesh, cancellationToken);
 						transformedKeep.Transform(keep.WorldMatrix());
 
 						progressStatus.Status = "Do CSG";

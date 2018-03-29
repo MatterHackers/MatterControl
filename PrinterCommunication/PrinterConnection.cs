@@ -2466,7 +2466,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						}
 
 						// times up turn off heaters
-						if (ContinuWaitingToTurnOffHeaters)
+						if (ContinuWaitingToTurnOffHeaters
+							&& !PrinterIsPrinting
+							&& !PrinterIsPaused)
 						{
 							UiThread.RunOnIdle(() =>
 							{
