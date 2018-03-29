@@ -49,6 +49,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public SliceLayerSelector(PrinterConfig printer, BedConfig sceneContext)
 		{
+			var theme = ApplicationController.Instance.Theme;
+
 			this.sceneContext = sceneContext;
 
 			this.AddChild(layerScrollbar = new LayerScrollbar(printer, sceneContext)
@@ -61,6 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			currentLayerInfo = new InlineEditControl("1000")
 			{
+				TextColor = theme.Colors.PrimaryTextColor,
 				GetDisplayString = (value) => $"{value + 1}",
 				HAnchor = HAnchor.Right | HAnchor.Fit,
 				VAnchor = VAnchor.Absolute | VAnchor.Fit,

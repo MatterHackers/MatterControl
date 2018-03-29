@@ -82,6 +82,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			UiThread.SetInterval(CheckControlsVisibility, .1, () => !HasBeenClosed);
 		}
 
+		public Color TextColor { get; set; } = Color.Black;
+
 		public event EventHandler EditComplete;
 
 		public bool Editing
@@ -160,7 +162,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 			else
 			{
-				numberDisplay.TextColor = Color.Black;
+				numberDisplay.TextColor = this.TextColor;
 			}
 			base.OnDraw(graphics2D);
 		}
