@@ -105,8 +105,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			layerScrollbar = new SliceLayerSelector(printer, sceneContext)
 			{
 				VAnchor = VAnchor.Stretch,
-				HAnchor = HAnchor.Right | HAnchor.Absolute,
-				Width = 60,
+				HAnchor = HAnchor.Right | HAnchor.Fit,
 				Margin = new BorderDouble(0, 4, 4, 4),
 				Maximum = sceneContext.LoadedGCode?.LayerCount ?? 1
 			};

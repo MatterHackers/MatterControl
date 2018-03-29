@@ -61,9 +61,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			currentLayerInfo = new InlineEditControl("1000")
 			{
 				GetDisplayString = (value) => $"{value + 1}",
-				HAnchor = HAnchor.Absolute,
-				VAnchor = VAnchor.Absolute,
-				MinimumSize = new Vector2(50, 25),
+				HAnchor = HAnchor.Right | HAnchor.Fit,
+				VAnchor = VAnchor.Absolute | VAnchor.Fit,
+				Margin = new BorderDouble(right: layerScrollbar.Width + layerScrollbar.Margin.Width),
 			};
 			currentLayerInfo.EditComplete += (s, e) =>
 			{
