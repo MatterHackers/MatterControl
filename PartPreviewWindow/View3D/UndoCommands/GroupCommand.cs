@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -56,18 +57,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Name = "Group".Localize()
 				};
+
+				// When grouping items, move them to be centered on their bounding box
 				newGroup.Children.Modify((gChildren) =>
 				{
 					selectedItem.Children.Modify((sChildren) =>
 					{
-						foreach(var child in sChildren)
+						var center = selectedItem.GetAxisAlignedBoundingBox().Center;
+
+						foreach (var child in sChildren)
 						{
+							child.Translate(-center.X, -center.Y, 0);
 							gChildren.Add(child);
 						}
+
+						newGroup.Translate(center.X, center.Y, 0);
 
 						sChildren.Clear();
 					});
 				});
+
 				scene.Children.Add(newGroup);
 				scene.SelectedItem = null;
 				item = newGroup;
