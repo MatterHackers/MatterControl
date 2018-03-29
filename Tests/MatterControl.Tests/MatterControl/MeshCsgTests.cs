@@ -70,23 +70,26 @@ namespace MatterHackers.PolygonMesh.UnitTests
 				var keepMesh = keep.Mesh;
 				var subtractMesh = subtract.Mesh;
 
-				var split1 = new DebugFace()
+				if (false)
 				{
-					EvaluateHeight = topHeight,
-					FileName = "Split1"
-				};
+					var split1 = new DebugFace()
+					{
+						EvaluateHeight = topHeight,
+						FileName = "Split1"
+					};
 
-				BooleanModeller.Object1SplitFace = split1.Split;
-				BooleanModeller.Object1SplitResults = split1.Result;
+					BooleanModeller.Object1SplitFace = split1.Split;
+					BooleanModeller.Object1SplitResults = split1.Result;
 
-				BooleanModeller.Object1ClassifyFace = split1.Classify1;
-				BooleanModeller.Object2ClassifyFace = split1.Classify2;
+					BooleanModeller.Object1ClassifyFace = split1.Classify1;
+					BooleanModeller.Object2ClassifyFace = split1.Classify2;
+				}
 
 				var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None);
 
 				// this is for debuging the opperation
-				split1.FinishOutput();
-				resultMesh.Save("c:/temp/mesh1.stl", CancellationToken.None);
+				//split1.FinishOutput();
+				//resultMesh.Save("c:/temp/mesh1.stl", CancellationToken.None);
 
 				var topZero = new Vector3(0, 0, topHeight);
 				foreach (var topVertex in keepMesh.Vertices
@@ -112,20 +115,23 @@ namespace MatterHackers.PolygonMesh.UnitTests
 				var keepMesh = keep.Mesh;
 				var subtractMesh = subtract.Mesh;
 
-				var split1 = new DebugFace()
+				if (false)
 				{
-					EvaluateHeight = 10,
-					FileName = "Split2"
-				};
+					var split1 = new DebugFace()
+					{
+						EvaluateHeight = 10,
+						FileName = "Split2"
+					};
 
-				BooleanModeller.Object1SplitFace = split1.Split;
-				BooleanModeller.Object1SplitResults = split1.Result;
+					BooleanModeller.Object1SplitFace = split1.Split;
+					BooleanModeller.Object1SplitResults = split1.Result;
+				}
 
 				var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None);
 
 				// this is for debuging the opperation
-				split1.FinishOutput();
-				resultMesh.Save("c:/temp/mesh2.stl", CancellationToken.None);
+				//split1.FinishOutput();
+				//resultMesh.Save("c:/temp/mesh2.stl", CancellationToken.None);
 
 				foreach (var topVertex in keepMesh.Vertices
 					.Where((v) => v.Position.Z == 10 && v.Position != new Vector3(0, 0, 10))
