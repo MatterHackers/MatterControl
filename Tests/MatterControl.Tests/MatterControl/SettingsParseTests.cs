@@ -29,14 +29,12 @@ namespace MatterControl.Tests.MatterControl
 				Assert.AreEqual("200,200", ActiveSliceSettings.Instance.GetValue(SettingsKey.bed_size));
 				Assert.AreEqual("100,100", ActiveSliceSettings.Instance.GetValue(SettingsKey.print_center));
 				Assert.AreEqual("rectangular", ActiveSliceSettings.Instance.GetValue(SettingsKey.bed_shape));
-				Assert.AreEqual("", ActiveSliceSettings.Instance.GetValue(SettingsKey.leveling_manual_positions));
 				Assert.AreEqual(new Vector2(100, 180), sample0);
 				Assert.AreEqual(new Vector2(20, 20), sample1);
 				Assert.AreEqual(new Vector2(180, 20), sample2);
 			}
 
 			{
-				ActiveSliceSettings.Instance.SetValue(SettingsKey.leveling_manual_positions, "1,2:211,3:113,104");
 				var sample0 = levelingSolution.GetPrintLevelPositionToSample(0);
 				var sample1 = levelingSolution.GetPrintLevelPositionToSample(1);
 				var sample2 = levelingSolution.GetPrintLevelPositionToSample(2);

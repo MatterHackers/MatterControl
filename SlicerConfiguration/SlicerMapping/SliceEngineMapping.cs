@@ -63,7 +63,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.filament_cost,
 			SettingsKey.filament_density,
 			SettingsKey.filament_runout_sensor,
-			SettingsKey.leveling_manual_positions,
 			SettingsKey.z_probe_z_offset,
 			SettingsKey.use_z_probe,
 			SettingsKey.z_probe_samples,

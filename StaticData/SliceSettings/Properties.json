@@ -790,18 +790,6 @@
     "RebuildGCodeOnChange": false
   },
   {
-    "SlicerConfigName": "leveling_manual_positions",
-    "PresentationName": "Leveling Positions",
-    "HelpText": "If set, these positions will be used when running the leveling solution. Leave empty for defaults. Data Format:'X1,Y1:...:Xn,Yn'",
-    "DataEditType": "STRING",
-    "Units": "empty for default",
-    "ShowAsOverride": true,
-    "ShowIfSet": "!has_hardware_leveling&print_leveling_solution=3 Point Plane|print_leveling_solution=3x3 Mesh",
-    "ResetAtEndOfPrint": false,
-    "DefaultValue": "",
-    "RebuildGCodeOnChange": false
-  },
-  {
     "SlicerConfigName": "filament_runout_sensor",
     "PresentationName": "Has Filament Runout Sensor",
     "HelpText": "Specifies that the firmware has support for ros_0 endstop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.",

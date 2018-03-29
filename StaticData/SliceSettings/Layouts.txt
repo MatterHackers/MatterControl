@@ -161,7 +161,6 @@ Printer
     Leveling
       Print Leveling
         print_leveling_solution
-        leveling_manual_positions
         print_leveling_required_to_print
       Leveling Probe
         print_leveling_probe_start

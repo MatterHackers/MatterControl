@@ -59,18 +59,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public abstract int ProbeCount { get; }
 
-		public LevelWizardBase(PrinterConfig printer, RuningState runningState, int totalSteps)
+		public int TotalSteps => ProbeCount * 3;
+
+		public LevelWizardBase(PrinterConfig printer, RuningState runningState)
 			: base(500, 370)
 		{
 			levelingStrings = new LevelingStrings(printer.Settings);
 			this.printer = printer;
 			AlwaysOnTopOfMain = true;
-			this.totalSteps = totalSteps;
-
-
-
-
-
 
 			levelingStrings = new LevelingStrings(printer.Settings);
 			string printLevelWizardTitle = ApplicationController.Instance.ProductName;

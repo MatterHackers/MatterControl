@@ -36,11 +36,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public class LevelWizard7PointRadial : LevelWizardBase
 	{
 		public LevelWizard7PointRadial(PrinterConfig printer, LevelWizardBase.RuningState runningState)
-			: base(printer, runningState, 3 * 3)
+			: base(printer, runningState)
 		{
 		}
 
-		public override int ProbeCount => 3;
+		public override int ProbeCount => 7;
 
 		public override Vector2 GetPrintLevelPositionToSample(int index)
 		{
