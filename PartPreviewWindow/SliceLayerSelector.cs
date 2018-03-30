@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Name = "currentLayerInfo",
 				TextColor = theme.Colors.PrimaryTextColor,
-				GetDisplayString = (value) => $"{value + 1}",
+				GetDisplayString = (value) => $"{value}",
 				HAnchor = HAnchor.Right | HAnchor.Fit,
 				VAnchor = VAnchor.Absolute | VAnchor.Fit,
 			};
@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				currentLayerInfo.Value = sceneContext.ActiveLayerIndex;
+				currentLayerInfo.Value = sceneContext.ActiveLayerIndex + 1;
 				currentLayerInfo.Visible = true;
 			});
 		}
