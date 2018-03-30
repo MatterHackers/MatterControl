@@ -304,17 +304,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (printLevelingData == null)
 			{
-				printLevelingData = PrintLevelingData.Create(
-					printerSettings,
-					printerSettings.GetValue(SettingsKey.print_leveling_data));
-
-				if (printLevelingData.SampledPositions.Count == 3)
+				var jsonData = printerSettings.GetValue(SettingsKey.print_leveling_data);
+				if (!string.IsNullOrEmpty(jsonData))
 				{
-					PrintLevelingPlane.Instance.SetPrintLevelingEquation(
-						printLevelingData.SampledPositions[0],
-						printLevelingData.SampledPositions[1],
-						printLevelingData.SampledPositions[2],
-						printerSettings.GetValue<Vector2>(SettingsKey.print_center));
+					printLevelingData = JsonConvert.DeserializeObject<PrintLevelingData>(jsonData);
+				}
+
+				// if it is still null
+				if (printLevelingData == null)
+				{
+					printLevelingData = new PrintLevelingData();
 				}
 			}
 

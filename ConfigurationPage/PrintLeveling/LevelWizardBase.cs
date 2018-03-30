@@ -184,21 +184,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
 
 			LevelWizardBase printLevelWizardWindow;
-			switch (levelingData.CurrentPrinterLevelingSystem)
+			switch (levelingData.LevelingSystem)
 			{
-				case PrintLevelingData.LevelingSystem.Probe3Points:
+				case LevelingSystem.Probe3Points:
 					printLevelWizardWindow = new LevelWizard3Point(printer, runningState);
 					break;
 
-				case PrintLevelingData.LevelingSystem.Probe7PointRadial:
+				case LevelingSystem.Probe7PointRadial:
 					printLevelWizardWindow = new LevelWizard7PointRadial(printer, runningState);
 					break;
 
-				case PrintLevelingData.LevelingSystem.Probe13PointRadial:
+				case LevelingSystem.Probe13PointRadial:
 					printLevelWizardWindow = new LevelWizard13PointRadial(printer, runningState);
 					break;
 
-				case PrintLevelingData.LevelingSystem.Probe3x3Mesh:
+				case LevelingSystem.Probe3x3Mesh:
 					printLevelWizardWindow = new LevelWizard3x3Mesh(printer, runningState);
 					break;
 

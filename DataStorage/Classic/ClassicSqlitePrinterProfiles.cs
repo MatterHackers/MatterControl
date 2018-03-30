@@ -122,13 +122,6 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 
 			printerSettings.UserLayer[SettingsKey.publish_bed_image] = publishBedImage?.Value == "true" ? "1" : "0";
 
-			// Print leveling
-			var printLevelingData = PrintLevelingData.Create(
-				printerSettings, 
-				printer.PrintLevelingJsonData, 
-				printer.PrintLevelingProbePositions);
-
-			printerSettings.UserLayer[SettingsKey.print_leveling_data] = JsonConvert.SerializeObject(printLevelingData);
 			printerSettings.UserLayer[SettingsKey.print_leveling_enabled] = printer.DoPrintLeveling ? "true" : "false";
 			printerSettings.UserLayer[SettingsKey.manual_movement_speeds] = printer.ManualMovementSpeeds;
 

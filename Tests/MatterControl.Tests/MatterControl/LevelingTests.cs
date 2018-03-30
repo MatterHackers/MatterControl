@@ -51,7 +51,7 @@ namespace MatterControl.Tests.MatterControl
 			var printerSettings = ActiveSliceSettings.Instance;
 			// a 2 x 2 mesh that goes form 0 on the left to 10 on the right
 			{
-				var levelingData = new PrintLevelingData(printerSettings);
+				var levelingData = new PrintLevelingData();
 
 				// put them in left to right - bottom to top
 				levelingData.SampledPositions = new List<Vector3>();
@@ -87,7 +87,7 @@ namespace MatterControl.Tests.MatterControl
 
 			// a 3 x 3 mesh that goes form 0 on the left to 10 on the right
 			{
-				var levelingData = new PrintLevelingData(printerSettings);
+				var levelingData = new PrintLevelingData();
 
 				// put them in left to right - bottom to top
 				levelingData.SampledPositions = new List<Vector3>();

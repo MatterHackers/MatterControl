@@ -32,10 +32,12 @@ using System.Collections.Generic;
 using System.Text;
 using MatterControl.Printing;
 using MatterHackers.Agg;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
+using MIConvexHull;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -50,26 +52,37 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.printerSettings = printerSettings;
 			this.SampledPositions = new List<Vector3>(levelingData.SampledPositions);
 
-			for (int y = 0; y < gridHeight - 1; y++)
+			// get the delaunay triangulation
+			var vertices = new List<DefaultVertex>();
+			foreach(var sample in SampledPositions)
 			{
-				for (int x = 0; x < gridWidth - 1; x++)
+				vertices.Add(new DefaultVertex()
 				{
-					// add all the regions
-					Regions.Add(new Region()
-					{
-						LeftBottom = levelingData.SampledPositions[y * gridWidth + x],
-						RightBottom = levelingData.SampledPositions[y * gridWidth + x + 1],
-						LeftTop = levelingData.SampledPositions[(y + 1) * gridWidth + x],
-						RightTop = levelingData.SampledPositions[(y + 1) * gridWidth + x + 1],
-					});
-				}
+					Position = new double[] { sample.X, sample.Y }//, sample.Z }
+				});
+			};
+			var triangles = DelaunayTriangulation<DefaultVertex, DefaultTriangulationCell<DefaultVertex>>.Create(vertices, .001);
+
+			// make all the triangle planes for these triangles
+			foreach (var triangle in triangles.Cells)
+			{
+				var p0 = triangle.Vertices[0].Position;
+				var p1 = triangle.Vertices[1].Position;
+				var p2 = triangle.Vertices[2].Position;
+				var p3 = triangle.Vertices[3].Position;
+				var v0 = new Vector3(p0[0], p0[1], p0[2]);
+				var v1 = new Vector3(p1[0], p1[1], p1[2]);
+				var v2 = new Vector3(p2[0], p2[1], p2[2]);
+				var v3 = new Vector3(p3[0], p3[1], p3[2]);
+				// add all the regions
+				Regions.Add(new LevelingTriangle(v0, v1, v2));
 			}
 		}
 
 		// you can only set this on construction
 		public List<Vector3> SampledPositions { get; private set; }
 
-		public List<Region> Regions { get; private set; } = new List<Region>();
+		public List<LevelingTriangle> Regions { get; private set; } = new List<LevelingTriangle>();
 
 		public void Dispose()
 		{
@@ -110,7 +123,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public Vector3 GetPositionWithZOffset(Vector3 currentDestination)
 		{
-			Region region = GetCorrectRegion(currentDestination);
+			LevelingTriangle region = GetCorrectRegion(currentDestination);
 
 			return region.GetPositionWithZOffset(currentDestination);
 		}
@@ -158,7 +171,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		private Region GetCorrectRegion(Vector3 currentDestination)
+		private LevelingTriangle GetCorrectRegion(Vector3 currentDestination)
 		{
 			int bestIndex = 0;
 			double bestDist = double.PositiveInfinity;
@@ -177,53 +190,34 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return Regions[bestIndex];
 		}
 
-		public class Region
+		public class LevelingTriangle
 		{
-			public Vector3 LeftBottom { get; set; }
-			public Vector3 LeftTop { get; set; }
-			public Vector3 RightBottom { get; set; }
-			public Vector3 RightTop { get; set; }
+			VertexStorage triangle = new VertexStorage();
 
-			internal Vector3 Center { get; private set; }
-			internal Vector3 LeftBottomCenter { get; private set; }
-			internal Vector3 RightTopCenter { get; private set; }
+			public Vector3 V0 { get; private set; }
+			public Vector3 V1 { get; private set; }
+			public Vector3 V2 { get; private set; }
 
-			internal Plane LeftBottomPlane { get; private set; }
-			internal Plane RightTopPlane { get; private set; }
+			public Vector3 Center { get; private set; }
+			public Plane plane { get; private set; }
 
-			internal Vector3 GetPositionWithZOffset(Vector3 currentDestination)
+			public LevelingTriangle(Vector3 v0, Vector3 v1, Vector3 v2)
 			{
-				if (LeftBottomPlane.PlaneNormal == Vector3.Zero)
-				{
-					InitializePlanes();
-				}
-
-				var destinationAtZ0 = new Vector3(currentDestination.X, currentDestination.Y, 0);
-
-				// which triangle to check (distance to the centers)
-				if ((LeftBottomCenter - destinationAtZ0).LengthSquared < (RightTopCenter - destinationAtZ0).LengthSquared)
-				{
-					double hitDistance = LeftBottomPlane.GetDistanceToIntersection(destinationAtZ0, Vector3.UnitZ);
-					currentDestination.Z += hitDistance;
-				}
-				else
-				{
-					double hitDistance = RightTopPlane.GetDistanceToIntersection(destinationAtZ0, Vector3.UnitZ);
-					currentDestination.Z += hitDistance;
-				}
-
-				return currentDestination;
+				V0 = v0;
+				V1 = v1;
+				V2 = v2;
+				Center = (V0 + V1 + V2) / 3;
+				plane = new Plane(V0, V1, V2);
 			}
 
-			private void InitializePlanes()
+			public Vector3 GetPositionWithZOffset(Vector3 currentDestination)
 			{
-				LeftBottomPlane = new Plane(LeftBottom, RightBottom, LeftTop);
-				LeftBottomCenter = (LeftBottom + RightBottom + LeftTop) / 3;
+				var destinationAtZ0 = new Vector3(currentDestination.X, currentDestination.Y, 0);
 
-				RightTopPlane = new Plane(RightBottom, RightTop, LeftTop);
-				RightTopCenter = (RightBottom + RightTop + LeftTop) / 3;
+				double hitDistance = plane.GetDistanceToIntersection(destinationAtZ0, Vector3.UnitZ);
+				currentDestination.Z += hitDistance;
 
-				Center = (LeftBottomCenter + RightTopCenter) / 2;
+				return currentDestination;
 			}
 		}
 	}
