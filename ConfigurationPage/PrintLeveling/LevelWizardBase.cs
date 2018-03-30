@@ -30,36 +30,20 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	// this class is so that it is not passed by value
-	public class ProbePosition
-	{
-		public Vector3 position;
-	}
-
 	public abstract class LevelWizardBase : SystemWindow
 	{
-		private static MeshLevlingFunctions currentLevelingFunctions = null;
-		private LevelingStrings levelingStrings;
-
-		public enum RuningState { InitialStartupCalibration, UserRequestedCalibration }
-
-		protected WizardControl printLevelWizard;
-
-		protected int totalSteps { get; private set; }
 		protected PrinterConfig printer;
-
-		public abstract int ProbeCount { get; }
-
-		public int TotalSteps => ProbeCount * 3;
+		protected WizardControl printLevelWizard;
+		private static MeshLevlingFunctions currentLevelingFunctions = null;
+		private static SystemWindow printLevelWizardWindow;
+		private LevelingStrings levelingStrings;
 
 		public LevelWizardBase(PrinterConfig printer, RuningState runningState)
 			: base(500, 370)
@@ -122,7 +106,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			double bedRadius = Math.Min(printerSettings.GetValue<Vector2>(SettingsKey.bed_size).X, printerSettings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
 
 			double startProbeHeight = printerSettings.GetValue<double>(SettingsKey.print_leveling_probe_start);
-			int i= 0;
+			int i = 0;
 			foreach (var goalProbePosition in GetPrintLevelPositionToSample())
 			{
 				var validProbePosition = EnsureInPrintBounds(printerSettings, goalProbePosition);
@@ -144,30 +128,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizard.AddPage(new LastPagelInstructions(printer, printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions));
 		}
 
-		private Vector2 EnsureInPrintBounds(PrinterSettings printerSettings, Vector2 probePosition)
-		{
-			// check that the position is within the printing arrea and if not move it back in
-			if (printerSettings.Helpers.UseZProbe())
-			{
-				var probeOffset = printer.Settings.GetValue<Vector2>(SettingsKey.z_probe_xy_offset);
-				var actualNozzlePosition = probePosition + probeOffset;
-				// clamp this to the bed bounds
+		public enum RuningState { InitialStartupCalibration, UserRequestedCalibration }
 
-				// and push it back into the probePosition
-				probePosition = actualNozzlePosition - probeOffset;
-			}
-
-			return probePosition;
-		}
-
-		private static SystemWindow printLevelWizardWindow;
+		public abstract int ProbeCount { get; }
+		public int TotalSteps => ProbeCount * 3;
+		protected int totalSteps { get; private set; }
 
 		public static string ApplyLeveling(PrinterSettings printerSettings, string lineBeingSent, Vector3 currentDestination)
 		{
 			if (printerSettings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
-				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 "))
-				&& lineBeingSent.Length > 2
-				&& lineBeingSent[2] == ' ')
+				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 ")))
 			{
 				PrintLevelingData levelingData = printerSettings.Helpers.GetPrintLevelingData();
 				return GetLevelingFunctions(printerSettings, 3, 3, levelingData)
@@ -175,24 +145,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			return lineBeingSent;
-		}
-
-		public static List<string> ProcessCommand(string lineBeingSent)
-		{
-			int commentIndex = lineBeingSent.IndexOf(';');
-			if (commentIndex > 0) // there is content in front of the ;
-			{
-				lineBeingSent = lineBeingSent.Substring(0, commentIndex).Trim();
-			}
-			List<string> lines = new List<string>();
-			lines.Add(lineBeingSent);
-			if (lineBeingSent.StartsWith("G28")
-				|| lineBeingSent.StartsWith("G29"))
-			{
-				lines.Add("M114");
-			}
-
-			return lines;
 		}
 
 		public static MeshLevlingFunctions GetLevelingFunctions(PrinterSettings printerSettings, int gridWidth, int gridHeight, PrintLevelingData levelingData)
@@ -210,8 +162,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			return currentLevelingFunctions;
 		}
-
-		public abstract IEnumerable<Vector2> GetPrintLevelPositionToSample();
 
 		public static void ShowPrintLevelWizard(PrinterConfig printer)
 		{
@@ -235,7 +185,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					printLevelWizardWindow = null;
 
-					// make sure we raise the probe on close 
+					// make sure we raise the probe on close
 					if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
 						&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
 						&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
@@ -251,6 +201,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printLevelWizardWindow.BringToFront();
 			}
 		}
+
+		public abstract IEnumerable<Vector2> GetPrintLevelPositionToSample();
 
 		private static LevelWizardBase CreateAndShowWizard(PrinterConfig printer, LevelWizardBase.RuningState runningState)
 		{
@@ -287,9 +239,27 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizardWindow.ShowAsSystemWindow();
 			return printLevelWizardWindow;
 		}
+
+		private Vector2 EnsureInPrintBounds(PrinterSettings printerSettings, Vector2 probePosition)
+		{
+			// check that the position is within the printing arrea and if not move it back in
+			if (printerSettings.Helpers.UseZProbe())
+			{
+				var probeOffset = printer.Settings.GetValue<Vector2>(SettingsKey.z_probe_xy_offset);
+				var actualNozzlePosition = probePosition + probeOffset;
+				// clamp this to the bed bounds
+
+				// and push it back into the probePosition
+				probePosition = actualNozzlePosition - probeOffset;
+			}
+
+			return probePosition;
+		}
 	}
 
-	public class PrintLevelingInfo
+	// this class is so that it is not passed by value
+	public class ProbePosition
 	{
+		public Vector3 position;
 	}
 }
