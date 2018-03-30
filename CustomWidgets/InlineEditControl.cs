@@ -44,6 +44,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.Visible = false;
 
 			double pointSize = 12;
+
 			numberDisplay = new TextWidget(defaultSizeString, 0, 0, pointSize, justification: justification)
 			{
 				Visible = false,
@@ -52,6 +53,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Text = "0",
 			};
 			AddChild(numberDisplay);
+
 			numberEdit = new NumberEdit(0, 50, 50, pointSize, pixelWidth: numberDisplay.Width, allowNegatives: true, allowDecimals: true)
 			{
 				Visible = false,
@@ -79,8 +81,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			VAnchor = VAnchor.Fit;
 			HAnchor = HAnchor.Fit;
 
-			UiThread.SetInterval(CheckControlsVisibility, .1, () => !HasBeenClosed);
+			UiThread.SetInterval(HideIfApplicable, .1, () => !HasBeenClosed);
 		}
+
+		public Color TextColor { get; set; } = Color.Black;
 
 		public event EventHandler EditComplete;
 
@@ -88,13 +92,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			get
 			{
-				return this.Visible && (numberEdit.Visible || this.UnderMouseState != UnderMouseState.NotUnderMouse);
+				return this.Visible && ((numberEdit.Visible && numberEdit.ContainsFocus) || this.UnderMouseState != UnderMouseState.NotUnderMouse);
 			}
 		}
 
 		public Func<bool> ForceHide { get; set; }
 
-		Func<double, string> _GetDisplayString = (value) => "{0:0.0}".FormatWith(value);
+		private Func<double, string> _GetDisplayString = (value) => "{0:0.0}".FormatWith(value);
 		public Func<double, string> GetDisplayString
 		{
 			get { return _GetDisplayString; }
@@ -160,7 +164,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 			else
 			{
-				numberDisplay.TextColor = Color.Black;
+				numberDisplay.TextColor = this.TextColor;
 			}
 			base.OnDraw(graphics2D);
 		}
@@ -179,29 +183,21 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.OnMouseDown(mouseEvent);
 		}
 
-		private void CheckControlsVisibility()
+		private void HideIfApplicable()
 		{
-			if (!this.Editing)
+			if (this.Visible)
 			{
-				if (timeSinceMouseUp.IsRunning)
+				if (!this.Editing
+					&& timeSinceMouseUp.IsRunning
+					&& timeSinceMouseUp.ElapsedMilliseconds > SecondsToShowNumberEdit * 1000)
 				{
-					if (timeSinceMouseUp.ElapsedMilliseconds > SecondsToShowNumberEdit * 1000)
-					{
-						if (this.Editing)
-						{
-						}
-						else if (timeSinceMouseUp.IsRunning)
-						{
-							Visible = false;
-						}
-					}
+					Visible = false;
 				}
-			}
-
-			if (Visible && ForceHide?.Invoke() == true)
-			{
-				// If the user is hovering on a different control
-				Visible = false;
+				else if (this.ForceHide?.Invoke() == true)
+				{
+					// Hide if custom ForceHide implementations say to do so
+					this.Visible = false;
+				}
 			}
 		}
 	}

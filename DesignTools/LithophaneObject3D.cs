@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 
 		public int Width { get; set; } = 150;
 
-		public bool Invert { get; set; }
+		public bool Invert { get; set; } = true;
 
 		public Vector3 ImageOffset { get; private set; } = Vector3.Zero;
 
