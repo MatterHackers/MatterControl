@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public class HorizontalTag : GuiWidget
 	{
-		private VertexStorage tabShape = null;
+		private IVertexSource tabShape = null;
 
 		public Color TagColor { get; set; }
 
@@ -237,13 +237,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var centerY = rect.YCenter;
 
 			// Tab - core
-			tabShape = new VertexStorage();
-			tabShape.MoveTo(rect.Left, rect.Bottom);
-			tabShape.LineTo(rect.Left, rect.Top);
-			tabShape.LineTo(rect.Right - 8, rect.Top);
-			tabShape.LineTo(rect.Right, centerY);
-			tabShape.LineTo(rect.Right - 8, rect.Bottom);
-			tabShape.LineTo(rect.Left, rect.Bottom);
+			var radius = 3.0;
+			var tabShape2 = new VertexStorage();
+			tabShape2.MoveTo(rect.Left + radius, rect.Bottom);
+			tabShape2.curve3(rect.Left, rect.Bottom, rect.Left, rect.Bottom + radius);
+			tabShape2.LineTo(rect.Left, rect.Top - radius);
+			tabShape2.curve3(rect.Left, rect.Top, rect.Left + radius, rect.Top);
+			tabShape2.LineTo(rect.Right - 8, rect.Top);
+			tabShape2.LineTo(rect.Right, centerY);
+			tabShape2.LineTo(rect.Right - 8, rect.Bottom);
+			tabShape2.LineTo(rect.Left, rect.Bottom);
+
+			tabShape = new FlattenCurves(tabShape2);
 		}
 
 		public override void OnDrawBackground(Graphics2D graphics2D)
@@ -256,5 +261,4 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 	}
-
 }
