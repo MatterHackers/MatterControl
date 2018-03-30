@@ -96,10 +96,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		private string RunPrintLevelingTranslations(string lineBeingSent, PrinterMove currentDestination)
 		{
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-			if (levelingData != null)
+			PrintLevelingData levelingData = printerSettings.Helpers.GetPrintLevelingData();
+			if (levelingData != null
+				&& printerSettings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
+				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 ")))
 			{
-				lineBeingSent = LevelWizardBase.ApplyLeveling(printerSettings, lineBeingSent, currentDestination.position);
+				lineBeingSent = LevelWizardBase.GetLevelingFunctions(printerSettings, 3, 3, levelingData)
+					.DoApplyLeveling(lineBeingSent, currentDestination.position);
 			}
 
 			return lineBeingSent;

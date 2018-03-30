@@ -385,7 +385,6 @@
     <Compile Include="Utilities\AuthenticationData.cs" />
     <Compile Include="Utilities\LimitCallFrequency.cs" />
     <Compile Include="Utilities\SelectedListItems.cs" />
-    <Compile Include="Queue\OptionsMenu\ExportToFolderFeedbackWindow.cs" />
     <Compile Include="EeProm\EePromMarlinSettings.cs" />
     <Compile Include="History\PrintHistoryListItem.cs" />
     <Compile Include="Queue\QueueData.cs" />
@@ -416,7 +415,6 @@
     <Compile Include="CustomWidgets\DropDownMenuWidget.cs" />
     <Compile Include="ControlElements\ImageButtonFactory.cs" />
     <Compile Include="ControlElements\LinkButtonFactory.cs" />
-    <Compile Include="Queue\OptionsMenu\ExportToSdCardFeedbackWindow.cs" />
     <Compile Include="CustomWidgets\SlidePanelWidget.cs" />
     <Compile Include="ControlElements\StyledMessageBoxWindow.cs" />
     <Compile Include="CustomWidgets\WizardControl.cs" />
@@ -444,7 +442,6 @@
     <Compile Include="PrinterControls\PrinterConnections\PrinterChooser.cs" />
     <Compile Include="PrinterControls\XYZJogControls.cs" />
     <Compile Include="Library\Widgets\PrintLibraryWidget.cs" />
-    <Compile Include="Queue\OptionsMenu\ExportToFolderProcess.cs" />
     <Compile Include="Queue\PrintItemWrapper.cs" />
     <Compile Include="MatterControlApplication.cs" />
     <Compile Include="Utilities\ProjectFileHandler.cs" />

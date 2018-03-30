@@ -134,19 +134,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public int TotalSteps => ProbeCount * 3;
 		protected int totalSteps { get; private set; }
 
-		public static string ApplyLeveling(PrinterSettings printerSettings, string lineBeingSent, Vector3 currentDestination)
-		{
-			if (printerSettings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
-				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 ")))
-			{
-				PrintLevelingData levelingData = printerSettings.Helpers.GetPrintLevelingData();
-				return GetLevelingFunctions(printerSettings, 3, 3, levelingData)
-					.DoApplyLeveling(lineBeingSent, currentDestination);
-			}
-
-			return lineBeingSent;
-		}
-
 		public static MeshLevlingFunctions GetLevelingFunctions(PrinterSettings printerSettings, int gridWidth, int gridHeight, PrintLevelingData levelingData)
 		{
 			if (currentLevelingFunctions == null
