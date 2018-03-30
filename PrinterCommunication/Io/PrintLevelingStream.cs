@@ -27,8 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterControl.Printing;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -36,9 +34,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class PrintLevelingStream : GCodeStreamProxy
 	{
-		PrinterSettings printerSettings;
-		bool activePrinting;
 		protected PrinterMove lastDestination = new PrinterMove();
+		private bool activePrinting;
+		private MeshLevlingFunctions currentLevelingFunctions = null;
+		private PrinterSettings printerSettings;
+
 		public PrintLevelingStream(PrinterSettings printerSettings, GCodeStream internalStream, bool activePrinting)
 			: base(internalStream)
 		{
@@ -46,9 +46,24 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			this.activePrinting = activePrinting;
 		}
 
+		public static bool Enabled { get; set; } = true;
 		public PrinterMove LastDestination { get { return lastDestination; } }
 
-		public static bool Enabled { get; set; } = true;
+		public MeshLevlingFunctions GetLevelingFunctions(PrinterSettings printerSettings, int gridWidth, int gridHeight, PrintLevelingData levelingData)
+		{
+			if (currentLevelingFunctions == null
+				|| !levelingData.SamplesAreSame(currentLevelingFunctions.SampledPositions))
+			{
+				if (currentLevelingFunctions != null)
+				{
+					currentLevelingFunctions.Dispose();
+				}
+
+				currentLevelingFunctions = new MeshLevlingFunctions(printerSettings, gridWidth, gridHeight, levelingData);
+			}
+
+			return currentLevelingFunctions;
+		}
 
 		public override string ReadLine()
 		{
@@ -101,7 +116,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				&& printerSettings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
 				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 ")))
 			{
-				lineBeingSent = LevelWizardBase.GetLevelingFunctions(printerSettings, 3, 3, levelingData)
+				lineBeingSent = GetLevelingFunctions(printerSettings, 3, 3, levelingData)
 					.DoApplyLeveling(lineBeingSent, currentDestination.position);
 			}
 

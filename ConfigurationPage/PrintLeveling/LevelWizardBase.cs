@@ -41,7 +41,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		protected PrinterConfig printer;
 		protected WizardControl printLevelWizard;
-		private static MeshLevlingFunctions currentLevelingFunctions = null;
 		private static SystemWindow printLevelWizardWindow;
 		private LevelingStrings levelingStrings;
 
@@ -133,22 +132,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public abstract int ProbeCount { get; }
 		public int TotalSteps => ProbeCount * 3;
 		protected int totalSteps { get; private set; }
-
-		public static MeshLevlingFunctions GetLevelingFunctions(PrinterSettings printerSettings, int gridWidth, int gridHeight, PrintLevelingData levelingData)
-		{
-			if (currentLevelingFunctions == null
-				|| !levelingData.SamplesAreSame(currentLevelingFunctions.SampledPositions))
-			{
-				if (currentLevelingFunctions != null)
-				{
-					currentLevelingFunctions.Dispose();
-				}
-
-				currentLevelingFunctions = new MeshLevlingFunctions(printerSettings, gridWidth, gridHeight, levelingData);
-			}
-
-			return currentLevelingFunctions;
-		}
 
 		public static void ShowPrintLevelWizard(PrinterConfig printer)
 		{
