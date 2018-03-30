@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 
@@ -61,19 +62,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			layerSlider = layerScrollbar.layerSlider;
 
+			var tagContainer = new HorizontalTag()
+			{
+				HAnchor = HAnchor.Fit | HAnchor.Right,
+				VAnchor = VAnchor.Fit,
+				Padding = new BorderDouble(2, 2, 10, 2),
+				Margin = new BorderDouble(right: layerScrollbar.Width + layerScrollbar.Margin.Width),
+				TagColor = theme.SlightShade
+			};
+
 			currentLayerInfo = new InlineEditControl("1000")
 			{
+				Name = "currentLayerInfo",
 				TextColor = theme.Colors.PrimaryTextColor,
 				GetDisplayString = (value) => $"{value + 1}",
 				HAnchor = HAnchor.Right | HAnchor.Fit,
 				VAnchor = VAnchor.Absolute | VAnchor.Fit,
-				Margin = new BorderDouble(right: layerScrollbar.Width + layerScrollbar.Margin.Width),
 			};
 			currentLayerInfo.EditComplete += (s, e) =>
 			{
 				layerScrollbar.Value = currentLayerInfo.Value - 1;
 			};
-			this.AddChild(currentLayerInfo);
+
+			tagContainer.AddChild(currentLayerInfo);
+			this.AddChild(tagContainer);
 
 			currentLayerInfo.Visible = true;
 			layerInfoHalfHeight = currentLayerInfo.Height / 2;
@@ -210,4 +222,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 	}
+
+	public class HorizontalTag : GuiWidget
+	{
+		private VertexStorage tabShape = null;
+
+		public Color TagColor { get; set; }
+
+		public override void OnBoundsChanged(EventArgs e)
+		{
+			base.OnBoundsChanged(e);
+
+			var rect = this.LocalBounds;
+			var centerY = rect.YCenter;
+
+			// Tab - core
+			tabShape = new VertexStorage();
+			tabShape.MoveTo(rect.Left, rect.Bottom);
+			tabShape.LineTo(rect.Left, rect.Top);
+			tabShape.LineTo(rect.Right - 8, rect.Top);
+			tabShape.LineTo(rect.Right, centerY);
+			tabShape.LineTo(rect.Right - 8, rect.Bottom);
+			tabShape.LineTo(rect.Left, rect.Bottom);
+		}
+
+		public override void OnDrawBackground(Graphics2D graphics2D)
+		{
+			base.OnDrawBackground(graphics2D);
+
+			if (tabShape != null)
+			{
+				graphics2D.Render(tabShape, this.TagColor);
+			}
+		}
+	}
+
 }
