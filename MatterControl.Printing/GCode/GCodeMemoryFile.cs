@@ -766,8 +766,8 @@ namespace MatterControl.Printing
 		{
 			if (instructionIndexToCheck > 1 && instructionIndexToCheck < GCodeCommandQueue.Count)
 			{
-				double extrusionLengeth = GCodeCommandQueue[instructionIndexToCheck].EPosition - GCodeCommandQueue[instructionIndexToCheck - 1].EPosition;
-				if (extrusionLengeth > 0)
+				double extrusionLength = GCodeCommandQueue[instructionIndexToCheck].EPosition - GCodeCommandQueue[instructionIndexToCheck - 1].EPosition;
+				if (extrusionLength > 0)
 				{
 					return true;
 				}
