@@ -86,18 +86,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			base.Bake();
 		}
 
-		public static void WrapSelection(MeshWrapperObject3D meshWrapper,  InteractiveScene scene)
+		public static void WrapSelection(MeshWrapperObject3D meshWrapper, InteractiveScene scene)
 		{
-			if (scene.HasSelection && scene.SelectedItem.Children.Count() > 1)
+			if (scene.HasSelection)
 			{
-				var children = scene.SelectedItem.Children;
+				var selectedItem = scene.SelectedItem;
 				scene.SelectedItem = null;
 
-				meshWrapper.WrapAndAddAsChildren(new List<IObject3D>(children.Select((i) => i.Clone())));
+				List<IObject3D> originalItems;
+
+				if (selectedItem.Children.Count() > 1)
+				{
+					originalItems = selectedItem.Children.ToList();
+
+				}
+				else
+				{
+					originalItems = new List<IObject3D> { selectedItem.Clone() };
+				}
+
+				var itemsToAdd = new List<IObject3D>(originalItems.Select((i) => i.Clone()));
+				meshWrapper.WrapAndAddAsChildren(itemsToAdd);
 
 				scene.UndoBuffer.AddAndDo(
 					new ReplaceCommand(
-						new List<IObject3D>(children),
+						new List<IObject3D>(originalItems),
 						new List<IObject3D> { meshWrapper }));
 
 				meshWrapper.MakeNameNonColliding();
