@@ -299,6 +299,11 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
+		public Color GetBorderColor(int alpha)
+		{
+			return new Color(ActiveTheme.Instance.SecondaryTextColor, alpha);
+		}
+
 		// Compute a fixed color from a source and a target alpha
 		public Color ResolveColor(Color background, Color overlay)
 		{
