@@ -62,16 +62,20 @@ namespace MatterHackers.GCodeVisualizer
 		public static Color TravelColor = Color.Green;
 
 		private GCodeFile gCodeFileToDraw;
+		public GCodeFile GCodeFileToDraw => gCodeFileToDraw;
 
-		public GCodeFile GCodeFileToDraw { get { return gCodeFileToDraw; } }
-
-		private ExtrusionColors extrusionColors;
+		public ExtrusionColors ExtrusionColors { get; } = null;
 
 		public GCodeRenderer(GCodeFile gCodeFileToDraw)
 		{
 			if (gCodeFileToDraw != null)
 			{
 				this.gCodeFileToDraw = gCodeFileToDraw;
+
+				if (gCodeFileToDraw is GCodeMemoryFile memoryFile)
+				{
+					this.ExtrusionColors = new ExtrusionColors(memoryFile.Speeds);
+				}
 
 				for (int i = 0; i < gCodeFileToDraw.LayerCount; i++)
 				{
@@ -82,30 +86,6 @@ namespace MatterHackers.GCodeVisualizer
 
 		public void CreateFeaturesForLayerIfRequired(int layerToCreate)
 		{
-			if (extrusionColors == null
-				&& gCodeFileToDraw != null
-				&& gCodeFileToDraw.LineCount > 0)
-			{
-				extrusionColors = new ExtrusionColors();
-				HashSet<float> speeds = new HashSet<float>();
-				PrinterMachineInstruction prevInstruction = gCodeFileToDraw.Instruction(0);
-				for (int i = 1; i < gCodeFileToDraw.LineCount; i++)
-				{
-					PrinterMachineInstruction instruction = gCodeFileToDraw.Instruction(i);
-					if (instruction.EPosition > prevInstruction.EPosition && (instruction.Line.IndexOf('X') != -1 || instruction.Line.IndexOf('Y') != -1))
-					{
-						speeds.Add((float)instruction.FeedRate);
-					}
-
-					prevInstruction = instruction;
-				}
-
-				foreach (float speed in speeds)
-				{
-					extrusionColors.GetColorForSpeed(speed);
-				}
-			}
-
 			if (renderFeatures.Count == 0
 				|| renderFeatures[layerToCreate].Count > 0)
 			{
@@ -156,7 +136,7 @@ namespace MatterHackers.GCodeVisualizer
 							layerThickness = gCodeFileToDraw.GetFirstLayerHeight();
 						}
 
-						Color extrusionColor = extrusionColors.GetColorForSpeed((float)currentInstruction.FeedRate);
+						Color extrusionColor = ExtrusionColors.GetColorForSpeed((float)currentInstruction.FeedRate);
 						renderFeaturesForLayer.Add(new RenderFeatureExtrusion(previousInstruction.Position, currentInstruction.Position, currentInstruction.ExtruderIndex, currentInstruction.FeedRate, currentInstruction.EPosition - previousInstruction.EPosition, gCodeFileToDraw.GetFilamentDiameter(), layerThickness, extrusionColor));
 					}
 					else

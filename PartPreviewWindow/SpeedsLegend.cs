@@ -42,25 +42,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public SpeedsLegend(GCodeFile gcodeFileTest, ThemeConfig theme, int pointSize)
 			: base(FlowDirection.TopToBottom)
 		{
-			HashSet<float> speeds = new HashSet<float>();
-			PrinterMachineInstruction previousInstruction = gcodeFileTest.Instruction(0);
-			for (int i = 1; i < gcodeFileTest.LineCount; i++)
+			GCodeMemoryFile memoryFile = gcodeFileTest as GCodeMemoryFile;
+			if (memoryFile == null)
 			{
-				PrinterMachineInstruction instruction = gcodeFileTest.Instruction(i);
-				if (instruction.EPosition > previousInstruction.EPosition && (instruction.Line.IndexOf('X') != -1 || instruction.Line.IndexOf('Y') != -1))
-				{
-					speeds.Add((float)instruction.FeedRate);
-				}
-				previousInstruction = instruction;
+				// File was too big to load, content contained in GCodeFileStream and speeds should not be rendered
+				return;
 			}
 
-			ExtrusionColors extrusionColors = new ExtrusionColors();
-
-			speeds.Select(speed => extrusionColors.GetColorForSpeed(speed)).ToArray();
-
-			if(speeds.Count <= 0)
+			GCodeRenderer renderer = ApplicationController.Instance.ActivePrinter.Bed.GCodeRenderer;
+			if (renderer == null)
 			{
-				// There are no paths so don't generate the rest of the widget.
+				// Renderer did not load for content and speeds should not be rendered
+				return;
+			}
+
+			var speeds = memoryFile.Speeds;
+			if (speeds.Count <= 0)
+			{
+				// No speeds were discovered during parsing and speeds should not be rendered
 				return;
 			}
 
@@ -82,7 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				rangeValues = Enumerable.Range(0, maxItems).Select(x => (int)(min + increment * index++)).ToArray();
 			}
 
-			Color[] speedColors = rangeValues.OrderBy(s => s).Select(speed => extrusionColors.GetColorForSpeed(speed)).ToArray();
+			Color[] speedColors = rangeValues.OrderBy(s => s).Select(speed => renderer.ExtrusionColors.GetColorForSpeed(speed)).ToArray();
 
 			for (int i = 0; i < speedColors.Length; i++)
 			{

@@ -236,6 +236,9 @@ namespace MatterControl.Printing
 				gcodeHasExplicitLayerChangeInfo = true;
 			}
 
+			PrinterMachineInstruction previousInstruction = null;
+			var speeds = new HashSet<float>();
+
 			GCodeMemoryFile loadedGCodeFile = new GCodeMemoryFile(gcodeHasExplicitLayerChangeInfo);
 
 			int crCount = CountNumLines(gCodeString);
@@ -300,6 +303,14 @@ namespace MatterControl.Printing
 
 				loadedGCodeFile.GCodeCommandQueue.Add(machineInstructionForLine);
 
+				// Accumulate speeds for extruded moves
+				if (previousInstruction != null
+					&& machineInstructionForLine.EPosition > previousInstruction.EPosition
+					&& (machineInstructionForLine.Line.IndexOf('X') != -1 || machineInstructionForLine.Line.IndexOf('Y') != -1))
+				{
+					speeds.Add((float)machineInstructionForLine.FeedRate);
+				}
+
 				if (progressReporter != null && maxProgressReport.ElapsedMilliseconds > 200)
 				{
 					progressReporter((double)lineIndex / crCount / 2, "");
@@ -312,6 +323,8 @@ namespace MatterControl.Printing
 					maxProgressReport.Restart();
 				}
 
+				previousInstruction = machineInstructionForLine;
+
 				lineIndex++;
 			}
 
@@ -320,6 +333,8 @@ namespace MatterControl.Printing
 				maxVelocityMmPerS,
 				velocitySameAsStopMmPerS,
 				speedMultiplier);
+
+			loadedGCodeFile.Speeds = speeds;
 
 			loadTime.Stop();
 			Console.WriteLine("Time To Load Seconds: {0:0.00}".FormatWith(loadTime.Elapsed.TotalSeconds));
@@ -434,6 +449,8 @@ namespace MatterControl.Printing
 		{
 			get { return indexOfChangeInZ.Count; }
 		}
+
+		public HashSet<float> Speeds { get; private set; }
 
 		private void ParseMLine(string lineString, PrinterMachineInstruction processingMachineState)
 		{
@@ -766,8 +783,8 @@ namespace MatterControl.Printing
 		{
 			if (instructionIndexToCheck > 1 && instructionIndexToCheck < GCodeCommandQueue.Count)
 			{
-				double extrusionLengeth = GCodeCommandQueue[instructionIndexToCheck].EPosition - GCodeCommandQueue[instructionIndexToCheck - 1].EPosition;
-				if (extrusionLengeth > 0)
+				double extrusionLength = GCodeCommandQueue[instructionIndexToCheck].EPosition - GCodeCommandQueue[instructionIndexToCheck - 1].EPosition;
+				if (extrusionLength > 0)
 				{
 					return true;
 				}

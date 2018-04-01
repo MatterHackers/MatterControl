@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
@@ -35,41 +36,49 @@ namespace MatterHackers.GCodeVisualizer
 {
 	public class ExtrusionColors
 	{
-		private SortedList<float, Color> speedColorLookup = new SortedList<float, Color>();
+		private Dictionary<float, Color> speedColors = new Dictionary<float, Color>();
+
+		private double startColor = 223.0 / 360.0;
+		private double endColor = 5.0 / 360.0;
+		private double range;
+		private double delta;
+		private float min;
+		private float max;
+
+		public ExtrusionColors(HashSet<float> speeds)
+		{
+			min = speeds.Min();
+			max = speeds.Max();
+
+			range = max - min;
+			delta = startColor - endColor;
+
+			foreach (var speed in speeds)
+			{
+				speedColors[speed] = this.ComputeColor(speed);
+			}
+		}
 
 		public Color GetColorForSpeed(float speed)
 		{
-			if (speed > 0)
+			if (speedColors.TryGetValue(speed, out Color color))
 			{
-				lock(speedColorLookup)
-				{
-					double startColor = 223.0 / 360.0;
-					double endColor = 5.0 / 360.0;
-					double delta = startColor - endColor;
-
-					if (!speedColorLookup.ContainsKey(speed))
-					{
-						Color color = ColorF.FromHSL(startColor, .99, .49).ToColor();
-						speedColorLookup.Add(speed, color);
-
-						if (speedColorLookup.Count > 1)
-						{
-							double step = delta / (speedColorLookup.Count - 1);
-							for (int index = 0; index < speedColorLookup.Count; index++)
-							{
-								double offset = step * index;
-								double fixedColor = startColor - offset;
-								KeyValuePair<float, Color> keyValue = speedColorLookup.ElementAt(index);
-								speedColorLookup[keyValue.Key] = ColorF.FromHSL(fixedColor, .99, .49).ToColor();
-							}
-						}
-					}
-
-					return speedColorLookup[speed];
-				}
+				return color;
 			}
 
-			return Color.Black;
+			// Compute value if missing from dictionary (legend uses non-existing speeds)
+			return this.ComputeColor(speed);
+		}
+
+		private Color ComputeColor(float speed)
+		{
+			var rangedValue = speed - min;
+			var factor = rangedValue / range;
+
+			double offset = factor * delta;
+			double fixedColor = startColor - offset;
+
+			return ColorF.FromHSL(fixedColor, .99, .49).ToColor();
 		}
 	}
 }
