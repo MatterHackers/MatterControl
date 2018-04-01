@@ -12,7 +12,7 @@ namespace MatterHackers.MatterControl
 			: base("Default", ActiveTheme.Instance.PrimaryTextColor)
 		{
 			this.MinimumSize = new Vector2(this.LocalBounds.Width, this.LocalBounds.Height);
-
+			this.BorderColor = ApplicationController.Instance.Theme.GetBorderColor(75);
 			CreateLanguageDict();
 
 			string languageCode = UserSettings.Instance.get("Language");

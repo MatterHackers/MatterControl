@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// Prevent droplist interaction when connected
 				Enabled = canChangeComPort,
 				TextColor = canChangeComPort ? ActiveTheme.Instance.PrimaryTextColor : new Color(ActiveTheme.Instance.PrimaryTextColor, 150),
-				BorderColor = canChangeComPort ? ActiveTheme.Instance.SecondaryTextColor : new Color(ActiveTheme.Instance.SecondaryTextColor, 150),
+				BorderColor = theme.GetBorderColor(75)
 			};
 
 			dropdownList.Click += (s, e) =>
@@ -86,7 +86,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				canChangeComPort = !printer.Connection.IsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
 				dropdownList.Enabled = canChangeComPort;
 				dropdownList.TextColor = canChangeComPort ? ActiveTheme.Instance.PrimaryTextColor : new Color(ActiveTheme.Instance.PrimaryTextColor, 150);
-				dropdownList.BorderColor = canChangeComPort ? ActiveTheme.Instance.SecondaryTextColor : new Color(ActiveTheme.Instance.SecondaryTextColor, 150);
 			}, ref unregisterEvents);
 
 			// Release event listener on close

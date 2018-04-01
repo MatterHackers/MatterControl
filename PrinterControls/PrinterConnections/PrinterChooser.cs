@@ -40,6 +40,7 @@ namespace MatterHackers.MatterControl
 		public BoundDropList(string noSelectionString, int maxHeight = 0)
 			: base(noSelectionString, ActiveTheme.Instance.PrimaryTextColor, maxHeight: maxHeight, pointSize: ApplicationController.Instance.Theme.DefaultFontSize)
 		{
+			this.BorderColor = ApplicationController.Instance.Theme.GetBorderColor(75);
 		}
 
 		public List<KeyValuePair<string, string>> ListSource
