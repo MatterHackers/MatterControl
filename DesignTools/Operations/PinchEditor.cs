@@ -61,12 +61,24 @@ namespace MatterHackers.MatterControl.DesignTools
 			var meshWrapper = this.Descendants()
 				.Where((obj) => obj.OwnerID == this.ID).ToList();
 
-			foreach (var meshes in meshWrapper.Select((mw) => (Original: mw.Children.First().Mesh,
-				 Transformed: mw.Mesh)))
+			foreach (var items in meshWrapper.Select((mw) => (Original: mw.Children.First(),
+				 Transformed: mw)))
 			{
-				for (int i = 0; i < meshes.Original.Vertices.Count; i++)
+				var transformedMesh = items.Transformed.Mesh;
+				var originalMesh = items.Original.Mesh;
+				var itemMatrix = items.Original.WorldMatrix(this);
+				var invItemMatrix = itemMatrix;
+				invItemMatrix.Invert();
+				// make sure we are working witha copy
+				if (transformedMesh == originalMesh)
 				{
-					var pos = meshes.Original.Vertices[i].Position;
+					transformedMesh = Mesh.Copy(originalMesh, CancellationToken.None);
+					items.Transformed.Mesh = transformedMesh;
+				}
+				for (int i = 0; i < originalMesh.Vertices.Count; i++)
+				{
+					var pos = originalMesh.Vertices[i].Position;
+					pos = Vector3.Transform(pos, itemMatrix);
 
 					var ratioToApply = PinchRatio;
 
@@ -76,11 +88,14 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					// find out how much to pinch based on y position
 					var amountOfRatio = (pos.Y - aabb.minXYZ.Y) / aabb.YSize;
-					meshes.Transformed.Vertices[i].Position = new Vector3(pos.X + delta * amountOfRatio, pos.Y, pos.Z);
+					var newPos = new Vector3(pos.X + delta * amountOfRatio, pos.Y, pos.Z);
+					newPos = Vector3.Transform(newPos, invItemMatrix);
+
+					transformedMesh.Vertices[i].Position = newPos;
 				}
 
-				meshes.Transformed.MarkAsChanged();
-				meshes.Transformed.CalculateNormals();
+				transformedMesh.MarkAsChanged();
+				transformedMesh.CalculateNormals();
 			}
 		}
 	}

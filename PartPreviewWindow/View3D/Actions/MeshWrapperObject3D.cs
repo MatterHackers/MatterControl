@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				}
 				else
 				{
-					originalItems = new List<IObject3D> { selectedItem.Clone() };
+					originalItems = new List<IObject3D> { selectedItem };
 				}
 
 				var itemsToAdd = new List<IObject3D>(originalItems.Select((i) => i.Clone()));
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			// Wrap every first descendant that has a mesh
 			foreach (var child in this.VisibleMeshes().ToList())
 			{
-				// wrap the child in a DifferenceItem
+				// wrap the child
 				child.object3D.Parent.Children.Modify((list) =>
 				{
 					list.Remove(child.object3D);
