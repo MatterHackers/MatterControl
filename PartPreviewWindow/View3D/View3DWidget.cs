@@ -1207,8 +1207,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				popupMenu.CreateBoolMenuItem(
 					"Show Print Area".Localize(),
-					() => meshViewerWidget.RenderBuildVolume,
-					(value) => meshViewerWidget.RenderBuildVolume = value);
+					() => sceneContext.RendererOptions.RenderBuildVolume,
+					(value) => sceneContext.RendererOptions.RenderBuildVolume = value);
 			}
 		}
 

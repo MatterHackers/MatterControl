@@ -180,7 +180,6 @@ namespace MatterHackers.MeshVisualizer
 			};
 
 			RenderType = RenderTypes.Shaded;
-			RenderBuildVolume = false;
 			BedColor = new ColorF(.8, .8, .8, .7).ToColor();
 			BuildVolumeColor = new ColorF(.2, .8, .3, .2).ToColor();
 
@@ -334,8 +333,6 @@ namespace MatterHackers.MeshVisualizer
 		}
 
 		protected InteractiveScene scene { get; }
-
-		public bool RenderBuildVolume { get; set; }
 
 		public RenderTypes RenderType
 		{
@@ -825,7 +822,7 @@ namespace MatterHackers.MeshVisualizer
 					}
 				}
 
-				if (sceneContext.BuildVolumeMesh != null && RenderBuildVolume)
+				if (sceneContext.BuildVolumeMesh != null && sceneContext.RendererOptions.RenderBuildVolume)
 				{
 					GLHelper.Render(sceneContext.BuildVolumeMesh, this.BuildVolumeColor, RenderTypes.Shaded, World.ModelviewMatrix);
 				}

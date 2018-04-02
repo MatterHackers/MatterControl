@@ -1056,5 +1056,7 @@ namespace MatterHackers.MatterControl
 				this.IsDirty = true;
 			}
 		}
+
+		public bool RenderBuildVolume { get; set; }
 	}
 }
