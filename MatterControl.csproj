@@ -102,6 +102,7 @@
     <Compile Include="DesignTools\Operations\ArrayLinear3D.cs" />
     <Compile Include="DesignTools\Operations\ArrayRadial3D.cs" />
     <Compile Include="DesignTools\Operations\BendObject3D.cs" />
+    <Compile Include="DesignTools\Operations\CurveObject3D.cs" />
     <Compile Include="DesignTools\Operations\FitToBounds3D.cs" />
     <Compile Include="DesignTools\Operations\Object3DExtensions.cs" />
     <Compile Include="DesignTools\Operations\Package3D.cs" />

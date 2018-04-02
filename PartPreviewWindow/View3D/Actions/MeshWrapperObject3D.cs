@@ -95,10 +95,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 				List<IObject3D> originalItems;
 
-				if (selectedItem.Children.Count() > 1)
+				if (selectedItem is SelectionGroup)
 				{
 					originalItems = selectedItem.Children.ToList();
-
 				}
 				else
 				{

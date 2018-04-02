@@ -501,9 +501,19 @@ namespace MatterHackers.MatterControl
 				{
 					var pinch = new PinchObject3D();
 					MeshWrapperObject3D.WrapSelection(pinch, scene);
-					pinch.MakeNameNonColliding();
 				},
 				Icon = AggContext.StaticData.LoadIcon("pinch.png", 16, 16),
+				IsEnabled = (scene) => scene.HasSelection,
+			},
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Curve".Localize(),
+				Action = (scene) =>
+				{
+					var curve = new CurveObject3D();
+					MeshWrapperObject3D.WrapSelection(curve, scene);
+				},
+				Icon = AggContext.StaticData.LoadIcon("curve.png", 16, 16),
 				IsEnabled = (scene) => scene.HasSelection,
 			},
 			new SceneSelectionOperation()

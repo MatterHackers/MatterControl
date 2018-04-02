@@ -27,30 +27,26 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class PinchObject3D : MeshWrapperObject3D, IRebuildable
+	public class CurveObject3D : MeshWrapperObject3D, IRebuildable
 	{
-		[DisplayName("Back Ratio")]
-		public double PinchRatio { get; set; } = 1;
+		[DisplayName("Angle")]
+		public double AngleDegrees { get; set; } = 0;
 
-		public PinchObject3D()
+		[DisplayName("Bend Up")]
+		public bool BendCW { get; set; } = true;
+
+		public CurveObject3D()
 		{
 		}
 
@@ -77,24 +73,48 @@ namespace MatterHackers.MatterControl.DesignTools
 					transformedMesh = Mesh.Copy(originalMesh, CancellationToken.None);
 					items.Transformed.Mesh = transformedMesh;
 				}
-				for (int i = 0; i < originalMesh.Vertices.Count; i++)
+
+				if (AngleDegrees > 0)
 				{
-					var pos = originalMesh.Vertices[i].Position;
-					pos = Vector3.Transform(pos, itemMatrix);
+					// find the radius that will make the x-size sweep out the requested angle
+					// c = Tr ; r = c/T
+					var angleRadians = MathHelper.DegreesToRadians(AngleDegrees);
+					var circumference = aabb.XSize * MathHelper.Tau / angleRadians;
+					var radius = circumference / MathHelper.Tau;
 
-					var ratioToApply = PinchRatio;
+					var rotateXyPos = new Vector2(aabb.minXYZ.X, BendCW ? aabb.maxXYZ.Y : aabb.minXYZ.Y);
+					if (!BendCW)
+					{
+						angleRadians = -angleRadians;
+					}
 
-					var distFromCenter = pos.X - aabb.Center.X;
-					var distanceToPinch = distFromCenter * (1 - PinchRatio);
-					var delta = (aabb.Center.X + distFromCenter * ratioToApply) - pos.X;
+					for (int i = 0; i < originalMesh.Vertices.Count; i++)
+					{
+						var pos = originalMesh.Vertices[i].Position;
+						pos = Vector3.Transform(pos, itemMatrix);
 
-					// find out how much to pinch based on y position
-					var amountOfRatio = (pos.Y - aabb.minXYZ.Y) / aabb.YSize;
+						var pos2D = new Vector2(pos);
+						Vector2 rotateSpace = pos2D - rotateXyPos;
+						var rotateRatio = rotateSpace.X / aabb.XSize;
 
-					var newPos = new Vector3(pos.X + delta * amountOfRatio, pos.Y, pos.Z);
-					newPos = Vector3.Transform(newPos, invItemMatrix);
+						rotateSpace.X = 0;
+						rotateSpace.Y += BendCW ? -radius : radius;
+						rotateSpace.Rotate(angleRadians * rotateRatio);
+						rotateSpace.Y += BendCW ? radius : -radius; ;
+						rotateSpace += rotateXyPos;
 
-					transformedMesh.Vertices[i].Position = newPos;
+						var newPos = new Vector3(rotateSpace.X, rotateSpace.Y, pos.Z);
+						newPos = Vector3.Transform(newPos, invItemMatrix);
+
+						transformedMesh.Vertices[i].Position = newPos;
+					}
+				}
+				else
+				{
+					for (int i = 0; i < transformedMesh.Vertices.Count; i++)
+					{
+						transformedMesh.Vertices[i].Position = originalMesh.Vertices[i].Position;
+					}
 				}
 
 				transformedMesh.MarkAsChanged();
