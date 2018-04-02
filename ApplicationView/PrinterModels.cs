@@ -764,8 +764,6 @@ namespace MatterHackers.MatterControl
 			this.Connection.ReadLineReplacementString = this.Settings.GetValue(SettingsKey.read_regex);
 		}
 
-		
-
 		public PrinterViewState ViewState { get; } = new PrinterViewState();
 
 		private PrinterSettings _settings;

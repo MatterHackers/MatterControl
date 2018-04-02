@@ -200,7 +200,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				set => layerSlider.Value = value;
 			}
 
-
 			public override void OnBoundsChanged(EventArgs e)
 			{
 				base.OnBoundsChanged(e);
@@ -210,6 +209,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					//layerSlider.OriginRelativeParent = new Vector2(this.Width - 20, 78);
 					layerSlider.TotalWidthInPixels = layerSlider.Height;
 				}
+			}
+
+			public override void OnClosed(ClosedEventArgs e)
+			{
+				base.OnClosed(e);
+
+				sceneContext.ActiveLayerChanged -= ActiveLayer_Changed;
 			}
 
 			private void ActiveLayer_Changed(object sender, EventArgs e)
