@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					buttonPanel,
 					enforceGutter: false));
 
-			var viewOptions = new[]
+			var viewOptions = new List<BoolOption>
 			{
 				new BoolOption(
 					"Show Print Bed".Localize(),
@@ -205,7 +205,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					(value) =>
 					{
 						gcodeOptions.RenderBed = value;
-					}),
+					})
+			};
+
+			if (sceneContext.BuildHeight > 0
+				&& printer?.ViewState.ViewMode != PartViewMode.Layers2D)
+			{
+				viewOptions.Add(
+					new BoolOption(
+						"Show Print Area".Localize(),
+						() => gcodeOptions.RenderBuildVolume,
+						(value) => gcodeOptions.RenderBuildVolume = value));
+			}
+
+			viewOptions.AddRange(new[]
+			{
 				new BoolOption(
 					"Moves".Localize(),
 					() => gcodeOptions.RenderMoves,
@@ -239,7 +253,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							//layerRenderRatioSlider.SecondValue = 1;
 						}
 					})
-			};
+			});
 
 			foreach(var option in viewOptions)
 			{
