@@ -532,6 +532,32 @@ namespace MatterHackers.MatterControl
 
 			return Task.CompletedTask;
 		}
+
+		public List<BoolOption> GetBaseViewOptions()
+		{
+			var viewOptions = new List<BoolOption>
+			{
+				new BoolOption(
+					"Show Print Bed".Localize(),
+					() => this.RendererOptions.RenderBed,
+					(value) =>
+					{
+						this.RendererOptions.RenderBed = value;
+					})
+			};
+
+			if (this.BuildHeight > 0
+				&& this.Printer?.ViewState.ViewMode != PartViewMode.Layers2D)
+			{
+				viewOptions.Add(
+					new BoolOption(
+						"Show Print Area".Localize(),
+						() => this.RendererOptions.RenderBuildVolume,
+						(value) => this.RendererOptions.RenderBuildVolume = value));
+			}
+
+			return viewOptions;
+		}
 	}
 
 	public class EditContext

@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -36,10 +37,11 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MeshVisualizer;
+using MatterHackers.RenderOpenGl;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-
 	public interface IToggleOption
 	{
 		string Title { get; }
@@ -56,7 +58,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public Func<bool> IsVisible { get; }
 
 		public Action<bool> SetValue { get; }
-
 
 		public BoolOption(string title, Func<bool> isChecked, Action<bool> setValue)
 			: this(title, isChecked, setValue, () => true)
@@ -197,26 +198,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					buttonPanel,
 					enforceGutter: false));
 
-			var viewOptions = new List<BoolOption>
-			{
-				new BoolOption(
-					"Show Print Bed".Localize(),
-					() => gcodeOptions.RenderBed,
-					(value) =>
-					{
-						gcodeOptions.RenderBed = value;
-					})
-			};
+			gcodeOptions = sceneContext.RendererOptions;
 
-			if (sceneContext.BuildHeight > 0
-				&& printer?.ViewState.ViewMode != PartViewMode.Layers2D)
-			{
-				viewOptions.Add(
-					new BoolOption(
-						"Show Print Area".Localize(),
-						() => gcodeOptions.RenderBuildVolume,
-						(value) => gcodeOptions.RenderBuildVolume = value));
-			}
+			var viewOptions = sceneContext.GetBaseViewOptions();
 
 			viewOptions.AddRange(new[]
 			{

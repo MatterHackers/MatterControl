@@ -79,6 +79,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.scene = scene;
 			this.printer = printer;
 
+			this.AddChild(
+				new SectionWidget(
+					"Options".Localize(),
+					new ModelOptionsPanel(printer.Bed, view3DWidget.meshViewerWidget, theme)
+					{
+						Padding = new BorderDouble(10, 10, 10, 0)
+					},
+					theme)
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit,
+				});
+
 			this.AddChild(inlineTitleEdit = new InlineTitleEdit("", theme, "Object Name"));
 			inlineTitleEdit.TitleChanged += (s, e) =>
 			{
@@ -268,8 +281,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.item = selectedItem;
 
 			var viewMode = printer?.ViewState.ViewMode;
-
-			this.Parent.Visible = viewMode == null || viewMode == PartViewMode.Model;
 
 			HashSet<IObject3DEditor> mappedEditors = ApplicationController.Instance.GetEditorsForType(selectedItemType);
 

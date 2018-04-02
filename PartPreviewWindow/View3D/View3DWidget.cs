@@ -157,7 +157,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Absolute,
 				SpliterBarColor = theme.SplitterBackground,
 				SplitterWidth = theme.SplitterWidth,
-				Visible = false,
 			};
 			selectedObjectContainer.AddChild(selectedObjectPanel);
 			splitContainer.AddChild(selectedObjectContainer);
@@ -1112,7 +1111,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
 				}
 
-				selectedObjectContainer.Visible = false;
 				return;
 			}
 
@@ -1140,53 +1138,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.ShowBedViewOptions(popupMenu);
 
-			popupMenu.CreateHorizontalLine();
-
-			void switchToRenderType(RenderTypes renderType)
-			{
-				meshViewerWidget.RenderType = renderType;
-				UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, renderType.ToString());
-			}
-
-			var siblingList = new List<GuiWidget>();
-
-			popupMenu.CreateBoolMenuItem(
-				"Shaded".Localize(),
-				() => meshViewerWidget.RenderType == RenderTypes.Shaded,
-				(v) => switchToRenderType(RenderTypes.Shaded),
-				useRadioStyle: true,
-				SiblingRadioButtonList: siblingList);
-
-			popupMenu.CreateBoolMenuItem(
-				"Outlines".Localize(),
-				() => meshViewerWidget.RenderType == RenderTypes.Outlines,
-				(v) => switchToRenderType(RenderTypes.Outlines),
-				useRadioStyle: true,
-				SiblingRadioButtonList: siblingList);
-
-			popupMenu.CreateBoolMenuItem(
-				"Polygons".Localize(),
-				() => meshViewerWidget.RenderType == RenderTypes.Polygons,
-				(v) => switchToRenderType(RenderTypes.Polygons),
-				useRadioStyle: true,
-				SiblingRadioButtonList: siblingList);
-
-			popupMenu.CreateBoolMenuItem(
-				"Materials".Localize(),
-				() => meshViewerWidget.RenderType == RenderTypes.Materials,
-				(v) => switchToRenderType(RenderTypes.Materials),
-				useRadioStyle: true,
-				SiblingRadioButtonList: siblingList);
-
-			popupMenu.CreateBoolMenuItem(
-				"Overhang".Localize(),
-				() => meshViewerWidget.RenderType == RenderTypes.Overhang,
-				(value) => switchToRenderType(RenderTypes.Overhang),
-				useRadioStyle: true,
-				SiblingRadioButtonList: siblingList);
-
-			popupMenu.CreateHorizontalLine();
-
 			popupMenu.AddChild(new GridOptionsPanel(this.InteractionLayer));
 
 			return popupMenu;
@@ -1194,22 +1145,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal void ShowBedViewOptions(PopupMenu popupMenu)
 		{
-			popupMenu.CreateBoolMenuItem(
-				"Show Print Bed".Localize(),
-				() => sceneContext.RendererOptions.RenderBed,
-				(value) =>
-				{
-					sceneContext.RendererOptions.RenderBed = value;
-				});
-
-			if (sceneContext.BuildHeight > 0
-				&& printer?.ViewState.ViewMode != PartViewMode.Layers2D)
-			{
-				popupMenu.CreateBoolMenuItem(
-					"Show Print Area".Localize(),
-					() => sceneContext.RendererOptions.RenderBuildVolume,
-					(value) => sceneContext.RendererOptions.RenderBuildVolume = value);
-			}
+			// TODO: Extend popup menu if applicable
+			// popupMenu.CreateHorizontalLine();
 		}
 
 		protected bool autoRotating = false;
