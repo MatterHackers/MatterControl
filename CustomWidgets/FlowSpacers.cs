@@ -53,21 +53,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public HorizontalLine(int alpha = 255, int height = 1)
 			: base(1, height)
 		{
-			BackgroundColor = GetBorderColor(alpha);
+			BackgroundColor = ApplicationController.Instance.Theme.GetBorderColor(alpha);
 			HAnchor = HAnchor.Stretch;
-		}
-
-		internal static Color GetBorderColor(int alpha)
-		{
-			Color color = ActiveTheme.Instance.SecondaryTextColor;
-
-			if (alpha != 255)
-			{
-				color = new Color(ActiveTheme.Instance.SecondaryTextColor);
-				color.alpha = (byte)alpha;
-			}
-
-			return color;
 		}
 	}
 
@@ -76,7 +63,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public VerticalLine(int alpha = 255)
 			: base(1, 1)
 		{
-			BackgroundColor = HorizontalLine.GetBorderColor(alpha);
+			BackgroundColor = ApplicationController.Instance.Theme.GetBorderColor(alpha);
 			VAnchor = VAnchor.Stretch;
 		}
 	}

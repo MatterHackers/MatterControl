@@ -235,6 +235,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				HAnchor = HAnchor.Stretch,
 				MenuItemsPadding = new BorderDouble(10, 7, 7, 7),
 				TextColor = whiteBackground ? Color.Black : theme.Colors.PrimaryTextColor,
+				BorderColor = theme.GetBorderColor(75)
 			};
 
 			dropDownList.Name = layerType.ToString() + " DropDown List";

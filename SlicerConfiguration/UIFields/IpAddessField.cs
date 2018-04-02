@@ -44,9 +44,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				Enabled = canChangeComPort,
 				TextColor = canChangeComPort ? theme.Colors.PrimaryTextColor : new Color(theme.Colors.PrimaryTextColor, 150),
-				BorderColor = canChangeComPort ? theme.Colors.SecondaryTextColor : new Color(theme.Colors.SecondaryTextColor, 150),
-
-
+				BorderColor = theme.GetBorderColor(75)
 			};
 
 			//Create default option

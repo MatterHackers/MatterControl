@@ -183,21 +183,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return leftToRight;
 		}
 
-		class DropDownMenuFloating : DropDownMenu, IIgnoredPopupChild
-		{
-			internal DropDownMenuFloating()
-				: base("Scale ", Direction.Down)
-			{
-
-			}
-		}
-
 		public class ScaleOptionsPanel : FlowLayoutWidget, IIgnoredPopupChild
 		{
 			public ScaleOptionsPanel(ScaleControls scaleControls, ThemeConfig theme)
 				: base(FlowDirection.TopToBottom)
 			{
 				this.HAnchor = HAnchor.Stretch;
+				this.BorderColor = theme.GetBorderColor(75);
 
 				var scaleSettings = new Dictionary<double, string>()
 				{
@@ -210,7 +202,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var dropDownList = new DropDownList("Scale".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
 				{
-					HAnchor = HAnchor.Left
+					HAnchor = HAnchor.Left,
+					BorderColor = theme.GetBorderColor(75)
 				};
 
 				foreach (var scaleSetting in scaleSettings)

@@ -37,6 +37,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public GridOptionsPanel(InteractionLayer interactionLayer) : base(FlowDirection.TopToBottom)
 		{
+			var theme = ApplicationController.Instance.Theme;
+
 			this.HAnchor = HAnchor.Stretch;
 
 			this.AddChild(new TextWidget("Snap Grid".Localize())
@@ -61,7 +63,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				TextColor = Color.Black,
 				Margin = new BorderDouble(35, 15, 35, 5),
-				HAnchor = HAnchor.Left
+				HAnchor = HAnchor.Left,
+				BorderColor = theme.GetBorderColor(75)
 			};
 
 			foreach (var snapSetting in snapSettings)

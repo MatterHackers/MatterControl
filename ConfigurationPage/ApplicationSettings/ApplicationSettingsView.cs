@@ -168,6 +168,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				var thumbnailsModeDropList = new DropDownList("", theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
 				{
 					TextColor = menuTextColor,
+					BorderColor = theme.GetBorderColor(75)
 				};
 				thumbnailsModeDropList.AddItem("Flat".Localize(), "orthographic");
 				thumbnailsModeDropList.AddItem("3D".Localize(), "raytraced");

@@ -32,7 +32,6 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
@@ -48,7 +47,7 @@ namespace MatterHackers.MatterControl
 			Rebuild();
 
 			this.Name = "Printers... Menu";
-
+			this.BorderColor = theme.GetBorderColor(75);
 			this.SelectionChanged += (s, e) =>
 			{
 				string printerID = this.SelectedValue;
@@ -60,7 +59,7 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
-					// TODO: when this oppens a new tab we will not need to check any printer
+					// TODO: when this opens a new tab we will not need to check any printer
 					if (ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting
 						|| ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPaused)
 					{

@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex,
 				Margin = new BorderDouble(),
+				BorderColor = theme.GetBorderColor(75)
 			};
 
 			foreach (string listItem in this.ListItems)

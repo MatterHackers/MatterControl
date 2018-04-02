@@ -229,7 +229,10 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						rowContainer = CreateSettingsRow(property.DisplayName.Localize());
 
-						var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize);
+						var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
+						{
+							BorderColor = theme.GetBorderColor(75)
+						};
 
 						var orderedItems = new string[] { "Right", "Back", "Up" };
 
@@ -604,7 +607,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else
 			{
-				var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize);
+				var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
+				{
+					BorderColor = theme.GetBorderColor(75)
+				};
 
 				var sortableAttribute = propertyInfo.GetCustomAttributes(true).OfType<SortableAttribute>().FirstOrDefault();
 				var orderedItems = sortableAttribute != null ? enumItems.OrderBy(n => n.Value) : enumItems;
