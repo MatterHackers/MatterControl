@@ -57,7 +57,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new SectionWidget(
 					"Options".Localize(),
 					new GCodeOptionsPanel(sceneContext, printer, theme),
-					theme)
+					theme,
+					ApplicationController.Instance.GetViewOptionButtons(printer, theme))
 				{
 					HAnchor = HAnchor.Stretch,
 					VAnchor = VAnchor.Fit

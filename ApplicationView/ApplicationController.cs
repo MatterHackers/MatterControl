@@ -1666,6 +1666,49 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
+		internal GuiWidget GetViewOptionButtons(PrinterConfig printer, ThemeConfig theme)
+		{
+			var container = new FlowLayoutWidget();
+
+			var bedButton = new RadioIconButton(AggContext.StaticData.LoadIcon("bed.png", IconColor.Theme), theme)
+			{
+				Name = "Bed Button",
+				ToolTipText = "Show Print Bed".Localize(),
+				Checked = printer.Bed.RendererOptions.RenderBed,
+				Margin = theme.ButtonSpacing,
+				ToggleButton = true,
+				Height = 24,
+				Width = 24
+			};
+			bedButton.CheckedStateChanged += (s, e) =>
+			{
+				printer.Bed.RendererOptions.RenderBed = bedButton.Checked;
+			};
+			container.AddChild(bedButton);
+
+			if (printer.Bed.BuildHeight > 0
+				&& printer?.ViewState.ViewMode != PartViewMode.Layers2D)
+			{
+				var printAreaButton = new RadioIconButton(AggContext.StaticData.LoadIcon("print_area.png", IconColor.Theme), theme)
+				{
+					Name = "Bed Button",
+					ToolTipText = "Show Print Area".Localize(),
+					Checked = printer.Bed.RendererOptions.RenderBuildVolume,
+					Margin = theme.ButtonSpacing,
+					ToggleButton = true,
+					Height = 24,
+					Width = 24
+				};
+				printAreaButton.CheckedStateChanged += (s, e) =>
+				{
+					printer.Bed.RendererOptions.RenderBuildVolume = printAreaButton.Checked;
+				};
+				container.AddChild(printAreaButton);
+			}
+
+			return container;
+		}
+
 		public class CloudSyncEventArgs : EventArgs
 		{
 			public bool IsAuthenticated { get; set; }

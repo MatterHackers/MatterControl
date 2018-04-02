@@ -86,7 +86,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						Padding = new BorderDouble(10, 10, 10, 0)
 					},
-					theme)
+					theme,
+					ApplicationController.Instance.GetViewOptionButtons(printer, theme))
 				{
 					HAnchor = HAnchor.Stretch,
 					VAnchor = VAnchor.Fit,
