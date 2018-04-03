@@ -66,6 +66,8 @@ namespace MatterHackers.MatterControl
 						{
 							vertex.Position = vertex.Position + new Vector3(0, 0, displayVolumeToBuild.Z / 2);
 						}
+						var bspTree = FaceBspTree.Create(buildVolume);
+						buildVolume.FaceBspTree = bspTree;
 					}
 
 					bedplateImage = CreateRectangularBedGridImage(printer);
