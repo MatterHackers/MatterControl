@@ -61,9 +61,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 			else
 			{
-				yield return new Vector2(printCenter.X, printCenter.Y + (bedSize.Y / 2) * .8);
 				yield return new Vector2(printCenter.X - (bedSize.X / 2) * .8, printCenter.Y - (bedSize.Y / 2) * .8);
 				yield return new Vector2(printCenter.X + (bedSize.X / 2) * .8, printCenter.Y - (bedSize.Y / 2) * .8);
+				yield return new Vector2(printCenter.X, printCenter.Y + (bedSize.Y / 2) * .8);
 			}
 		}
 	}

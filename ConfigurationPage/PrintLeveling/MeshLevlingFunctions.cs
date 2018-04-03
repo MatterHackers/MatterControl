@@ -68,9 +68,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				}
 			};
 
+			int extraXPosition = -50000;
 			vertices.Add(new DefaultVertex()
 			{
-				Position = new double[] { SampledPositions[0].X, SampledPositions[0].Y }
+				Position = new double[] { extraXPosition, SampledPositions[0].Y }
 			});
 
 			var triangles = DelaunayTriangulation<DefaultVertex, DefaultTriangulationCell<DefaultVertex>>.Create(vertices, .001);
@@ -81,11 +82,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				var p0 = triangle.Vertices[0].Position;
 				var p1 = triangle.Vertices[1].Position;
 				var p2 = triangle.Vertices[2].Position;
-				var v0 = new Vector3(p0[0], p0[1], zDictionary[(p0[0], p0[1])]);
-				var v1 = new Vector3(p1[0], p1[1], zDictionary[(p1[0], p1[1])]);
-				var v2 = new Vector3(p2[0], p2[1], zDictionary[(p2[0], p2[1])]);
-				// add all the regions
-				Regions.Add(new LevelingTriangle(v0, v1, v2));
+				if (p0[0] != extraXPosition && p1[0] != extraXPosition && p2[0] != extraXPosition)
+				{
+					var v0 = new Vector3(p0[0], p0[1], zDictionary[(p0[0], p0[1])]);
+					var v1 = new Vector3(p1[0], p1[1], zDictionary[(p1[0], p1[1])]);
+					var v2 = new Vector3(p2[0], p2[1], zDictionary[(p2[0], p2[1])]);
+					// add all the regions
+					Regions.Add(new LevelingTriangle(v0, v1, v2));
+				}
 			}
 		}
 
