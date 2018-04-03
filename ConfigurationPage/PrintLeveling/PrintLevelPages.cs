@@ -212,10 +212,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
 			levelingData.SampledPositions.Clear();
 
-			Vector3 zProbeOffset = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.z_probe_z_offset));
 			for (int i = 0; i < probePositions.Count; i++)
 			{
-				levelingData.SampledPositions.Add(probePositions[i].position - zProbeOffset);
+				levelingData.SampledPositions.Add(probePositions[i].position);
 			}
 
 			// Invoke setter forcing persistence of leveling data
@@ -255,10 +254,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingActive()
 		{
 			// make sure we don't have leveling data
-			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
-			levelingData.SampledPositions.Clear();
-			printer.Settings.Helpers.SetPrintLevelingData(levelingData, true);
-
 			double newProbeOffset = autoProbePositions[0].position.Z - manualProbePositions[0].position.Z;
 			printer.Settings.SetValue(SettingsKey.z_probe_z_offset, newProbeOffset.ToString("0.###"));
 

@@ -66,27 +66,36 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			if (runningState == LevelWizardBase.RuningState.InitialStartupCalibration)
 			{
-				string requiredPageInstructions = "{0}\n\n{1}".FormatWith(levelingStrings.requiredPageInstructions1, levelingStrings.requiredPageInstructions2);
+				string part1 = "Congratulations on connecting to your new printer. Before starting your first print we need to run a simple calibration procedure.".Localize();
+				string part2 = "The next few screens will walk your through the print leveling wizard.".Localize();
+				string requiredPageInstructions = $"{part1}\n\n{part2}";
 				printLevelWizard.AddPage(new FirstPageInstructions(printer, levelingStrings.initialPrinterSetupStepText, requiredPageInstructions));
 			}
 
-			printLevelWizard.AddPage(new FirstPageInstructions(printer, levelingStrings.OverviewText, levelingStrings.WelcomeText(ProbeCount, 5)));
-
+			// To make sure the bed is at the correct temp, put in a filament selection page.
+			bool hasHeatedBed = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed);
 			bool useZProbe = printer.Settings.Helpers.UseZProbe();
+			int zProbeSamples = printer.Settings.GetValue<int>(SettingsKey.z_probe_samples);
+
+			var secondsPerManualSpot = 10 * 3;
+			var secondsPerAutomaticSpot = 3 * zProbeSamples;
+			var secondsToCompleteWizard = ProbeCount * (useZProbe ? secondsPerAutomaticSpot : secondsPerManualSpot);
+			secondsToCompleteWizard += (hasHeatedBed ? 60 * 3 : 0);
+			printLevelWizard.AddPage(new FirstPageInstructions(printer, 
+				"Print Leveling Overview".Localize(), 
+				levelingStrings.WelcomeText(ProbeCount, (int)Math.Round(secondsToCompleteWizard / 60.0))));
+
 			if (!useZProbe)
 			{
 				printLevelWizard.AddPage(new CleanExtruderInstructionPage(printer, "Check Nozzle".Localize(), levelingStrings.CleanExtruder));
 			}
 
-			var printerSettings = printer.Settings;
-
-			// To make sure the bed is at the correct temp, put in a filament selection page.
-			bool hasHeatedBed = printerSettings.GetValue<bool>(SettingsKey.has_heated_bed);
 			if (hasHeatedBed)
 			{
 				string filamentSelectionPage = "{0}\n\n{1}".FormatWith(levelingStrings.materialPageInstructions1, levelingStrings.materialPageInstructions2);
 				printLevelWizard.AddPage(new SelectMaterialPage(printer, levelingStrings.materialStepText, filamentSelectionPage));
 			}
+
 			printLevelWizard.AddPage(new HomePrinterPage(printer, printLevelWizard,
 				levelingStrings.HomingPageStepText,
 				levelingStrings.HomingPageInstructions(useZProbe),
@@ -102,17 +111,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			string medPrecisionLabel = "Medium Precision".Localize();
 			string highPrecisionLabel = "High Precision".Localize();
 
-			double bedRadius = Math.Min(printerSettings.GetValue<Vector2>(SettingsKey.bed_size).X, printerSettings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
+			double bedRadius = Math.Min(printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).X, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
 
-			double startProbeHeight = printerSettings.GetValue<double>(SettingsKey.print_leveling_probe_start);
+			double startProbeHeight = printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start);
 			int i = 0;
 			foreach (var goalProbePosition in GetPrintLevelPositionToSample())
 			{
-				var validProbePosition = EnsureInPrintBounds(printerSettings, goalProbePosition);
+				var validProbePosition = EnsureInPrintBounds(printer.Settings, goalProbePosition);
 
-				if (printerSettings.Helpers.UseZProbe())
+				if (printer.Settings.Helpers.UseZProbe())
 				{
-					var stepString = string.Format("{0} {1} {2} {3}:", levelingStrings.stepTextBeg, i + 1, levelingStrings.stepTextEnd, ProbeCount);
+					var stepString = string.Format("{0} {1} {2} {3}:", "Step".Localize(), i + 1, levelingStrings.stepTextEnd, ProbeCount);
 					printLevelWizard.AddPage(new AutoProbeFeedback(printer, printLevelWizard, new Vector3(validProbePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", stepString, positionLabel, i + 1, autoCalibrateLabel), probePositions, i));
 				}
 				else

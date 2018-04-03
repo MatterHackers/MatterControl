@@ -76,6 +76,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			var triangles = DelaunayTriangulation<DefaultVertex, DefaultTriangulationCell<DefaultVertex>>.Create(vertices, .001);
 
+			var probeOffset = new Vector3(0, 0, printerSettings.GetValue<double>(SettingsKey.z_probe_z_offset));
 			// make all the triangle planes for these triangles
 			foreach (var triangle in triangles.Cells)
 			{
@@ -88,7 +89,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					var v1 = new Vector3(p1[0], p1[1], zDictionary[(p1[0], p1[1])]);
 					var v2 = new Vector3(p2[0], p2[1], zDictionary[(p2[0], p2[1])]);
 					// add all the regions
-					Regions.Add(new LevelingTriangle(v0, v1, v2));
+					Regions.Add(new LevelingTriangle(v0 - probeOffset, v1 - probeOffset, v2 - probeOffset));
 				}
 			}
 		}
