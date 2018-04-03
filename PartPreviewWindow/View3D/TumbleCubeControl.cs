@@ -40,6 +40,7 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
+using MatterHackers.VectorMath.TrackBall;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
