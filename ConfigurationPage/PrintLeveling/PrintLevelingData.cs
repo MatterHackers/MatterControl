@@ -14,10 +14,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 	public class PrintLevelingData
 	{
-		public List<Vector3> SampledPositions = new List<Vector3>()
-		{
-			new Vector3(),new Vector3(),new Vector3()
-		};
+		public List<Vector3> SampledPositions = new List<Vector3>();
 
 		public LevelingSystem LevelingSystem;
 

@@ -53,6 +53,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.SampledPositions = new List<Vector3>(levelingData.SampledPositions);
 
 			// get the delaunay triangulation
+			var zDictionary = new Dictionary<(double, double), double>();
 			var vertices = new List<DefaultVertex>();
 			foreach(var sample in SampledPositions)
 			{
@@ -60,7 +61,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					Position = new double[] { sample.X, sample.Y }//, sample.Z }
 				});
+				var key = (sample.X, sample.Y);
+				if (!zDictionary.ContainsKey(key))
+				{
+					zDictionary.Add(key, sample.Z);
+				}
 			};
+
+			vertices.Add(new DefaultVertex()
+			{
+				Position = new double[] { SampledPositions[0].X, SampledPositions[0].Y }
+			});
+
 			var triangles = DelaunayTriangulation<DefaultVertex, DefaultTriangulationCell<DefaultVertex>>.Create(vertices, .001);
 
 			// make all the triangle planes for these triangles
@@ -69,11 +81,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				var p0 = triangle.Vertices[0].Position;
 				var p1 = triangle.Vertices[1].Position;
 				var p2 = triangle.Vertices[2].Position;
-				var p3 = triangle.Vertices[3].Position;
-				var v0 = new Vector3(p0[0], p0[1], p0[2]);
-				var v1 = new Vector3(p1[0], p1[1], p1[2]);
-				var v2 = new Vector3(p2[0], p2[1], p2[2]);
-				var v3 = new Vector3(p3[0], p3[1], p3[2]);
+				var v0 = new Vector3(p0[0], p0[1], zDictionary[(p0[0], p0[1])]);
+				var v1 = new Vector3(p1[0], p1[1], zDictionary[(p1[0], p1[1])]);
+				var v2 = new Vector3(p2[0], p2[1], zDictionary[(p2[0], p2[1])]);
 				// add all the regions
 				Regions.Add(new LevelingTriangle(v0, v1, v2));
 			}
