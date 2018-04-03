@@ -97,10 +97,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			printer.ViewState.ViewModeChanged += (s, e) =>
-			{
-				this.SetViewMode(e.ViewMode);
-			};
+			printer.ViewState.ViewModeChanged += ViewState_ViewModeChanged;
 
 			layerScrollbar = new SliceLayerSelector(printer, sceneContext)
 			{
@@ -207,6 +204,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.SetSliderVisibility();
 			}, ref unregisterEvents);
 
+		}
+
+		private void ViewState_ViewModeChanged(object sender, ViewModeChangedEventArgs e)
+		{
+			this.SetViewMode(e.ViewMode);
 		}
 
 		private void ConfigurePrinter_Changed(object sender, EventArgs e)
@@ -400,6 +402,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			sceneContext.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
 			printer.ViewState.ConfigurePrinterChanged -= ConfigurePrinter_Changed;
+			printer.ViewState.ViewModeChanged -= ViewState_ViewModeChanged;
 
 			base.OnClosed(e);
 		}
