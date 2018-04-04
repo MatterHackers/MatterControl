@@ -783,6 +783,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					default:
 #if DEBUG
 						throw new NotImplementedException();
+#else
+						break;
 #endif
 				}
 
