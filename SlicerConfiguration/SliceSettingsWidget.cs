@@ -367,7 +367,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Restore the last selected tab
 			if (int.TryParse(UserSettings.Instance.get(databaseMRUKey), out int tabIndex)
 				&& tabIndex >= 0
-				&& tabIndex < this.TabCount - 1)
+				&& tabIndex < this.TabCount)
 			{
 				this.SelectedTabIndex = tabIndex;
 			}
