@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,7 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
+using MatterHackers.VectorMath.TrackBall;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -115,7 +116,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			trackballTumbleWidget = new TrackballTumbleWidget(sceneContext.World, meshViewerWidget)
 			{
-				TransformState = TrackBallController.MouseDownType.Rotation
+				TransformState = TrackBallTransformType.Rotation
 			};
 			trackballTumbleWidget.AnchorAll();
 
@@ -141,7 +142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AnchorAll();
 
-			trackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
+			trackballTumbleWidget.TransformState = TrackBallTransformType.Rotation;
 
 			selectedObjectPanel = new SelectedObjectPanel(this, scene, theme, printer)
 			{
@@ -227,19 +228,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			switch (e.TransformMode)
 			{
 				case ViewControls3DButtons.Rotate:
-					trackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
+					trackballTumbleWidget.TransformState = TrackBallTransformType.Rotation;
 					break;
 
 				case ViewControls3DButtons.Translate:
-					trackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Translation;
+					trackballTumbleWidget.TransformState = TrackBallTransformType.Translation;
 					break;
 
 				case ViewControls3DButtons.Scale:
-					trackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Scale;
+					trackballTumbleWidget.TransformState = TrackBallTransformType.Scale;
 					break;
 
 				case ViewControls3DButtons.PartSelect:
-					trackballTumbleWidget.TransformState = TrackBallController.MouseDownType.None;
+					trackballTumbleWidget.TransformState = TrackBallTransformType.None;
 					break;
 			}
 		}
@@ -256,7 +257,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void Draw_GlOpaqueContent(object sender, DrawEventArgs e)
 		{
 			if (CurrentSelectInfo.DownOnPart
-				&& trackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
+				&& trackballTumbleWidget.TransformState == TrackBallTransformType.None
 				&& Keyboard.IsKeyDown(Keys.ShiftKey))
 			{
 				// draw marks on the bed to show that the part is constrained to x and y
@@ -784,7 +785,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					&&
 					(ModifierKeys == Keys.Shift || ModifierKeys == Keys.Control)
 					|| (
-						trackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
+						trackballTumbleWidget.TransformState == TrackBallTransformType.None
 						&& ModifierKeys != Keys.Control
 						&& ModifierKeys != Keys.Alt))
 				{
@@ -895,7 +896,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			if (CurrentSelectInfo.DownOnPart && trackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
+			if (CurrentSelectInfo.DownOnPart && trackballTumbleWidget.TransformState == TrackBallTransformType.None)
 			{
 				DragSelectedObject(new Vector2(mouseEvent.X, mouseEvent.Y));
 			}
@@ -1044,7 +1045,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.FinishDrop(mouseUpInBounds: true);
 			}
 
-			if (trackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
+			if (trackballTumbleWidget.TransformState == TrackBallTransformType.None)
 			{
 				if (scene.SelectedItem != null
 					&& CurrentSelectInfo.DownOnPart
