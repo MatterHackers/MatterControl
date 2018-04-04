@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			if (probeCalibrationWizardWindow == null)
 			{
 				// turn off print leveling
-				PrintLevelingStream.AlowLeveling = false;
+				PrintLevelingStream.AllowLeveling = false;
 
 				probeCalibrationWizardWindow = new ProbeCalibrationWizard(printer);
 
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				probeCalibrationWizardWindow.Closed += (s, e) =>
 				{
 					// If leveling was on when we started, make sure it is on when we are done.
-					PrintLevelingStream.AlowLeveling = true;
+					PrintLevelingStream.AllowLeveling = true;
 
 					probeCalibrationWizardWindow = null;
 

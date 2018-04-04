@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private static SystemWindow printLevelWizardWindow;
 		private LevelingStrings levelingStrings;
 
-		public LevelWizardBase(PrinterConfig printer, RuningState runningState)
+		public LevelWizardBase(PrinterConfig printer, RunningState runningState)
 			: base(500, 370)
 		{
 			levelingStrings = new LevelingStrings(printer.Settings);
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizard = new WizardControl();
 			AddChild(printLevelWizard);
 
-			if (runningState == LevelWizardBase.RuningState.InitialStartupCalibration)
+			if (runningState == LevelWizardBase.RunningState.InitialStartupCalibration)
 			{
 				string part1 = "Congratulations on connecting to your new printer. Before starting your first print we need to run a simple calibration procedure.".Localize();
 				string part2 = "The next few screens will walk your through the print leveling wizard.".Localize();
@@ -82,8 +82,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			var secondsPerAutomaticSpot = 3 * zProbeSamples;
 			var secondsToCompleteWizard = ProbeCount * (useZProbe ? secondsPerAutomaticSpot : secondsPerManualSpot);
 			secondsToCompleteWizard += (hasHeatedBed ? 60 * 3 : 0);
-			printLevelWizard.AddPage(new FirstPageInstructions(printer, 
-				"Print Leveling Overview".Localize(), 
+			printLevelWizard.AddPage(new FirstPageInstructions(printer,
+				"Print Leveling Overview".Localize(),
 				levelingStrings.WelcomeText(ProbeCount, (int)Math.Round(secondsToCompleteWizard / 60.0))));
 
 			if (!useZProbe)
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			printLevelWizard.AddPage(new HomePrinterPage(printer, printLevelWizard,
 				levelingStrings.HomingPageStepText,
-				levelingStrings.HomingPageInstructions(useZProbe, hasHeatedBed), 
+				levelingStrings.HomingPageInstructions(useZProbe, hasHeatedBed),
 				useZProbe));
 
 			if (hasHeatedBed)
@@ -138,37 +138,37 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizard.AddPage(new LastPagelInstructions(printer, printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions));
 		}
 
-		public enum RuningState { InitialStartupCalibration, UserRequestedCalibration }
+		public enum RunningState { InitialStartupCalibration, UserRequestedCalibration }
 
 		public abstract int ProbeCount { get; }
 		public int TotalSteps => ProbeCount * 3;
 
 		public static void ShowPrintLevelWizard(PrinterConfig printer)
 		{
-			LevelWizardBase.RuningState runningState = LevelWizardBase.RuningState.UserRequestedCalibration;
+			LevelWizardBase.RunningState runningState = LevelWizardBase.RunningState.UserRequestedCalibration;
 
 			if (printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
 			{
 				// run in the first run state
-				runningState = LevelWizardBase.RuningState.InitialStartupCalibration;
+				runningState = LevelWizardBase.RunningState.InitialStartupCalibration;
 			}
 
 			ShowPrintLevelWizard(printer, runningState);
 		}
 
-		public static void ShowPrintLevelWizard(PrinterConfig printer, LevelWizardBase.RuningState runningState)
+		public static void ShowPrintLevelWizard(PrinterConfig printer, LevelWizardBase.RunningState runningState)
 		{
 			if (printLevelWizardWindow == null)
 			{
 				// turn off print leveling
-				PrintLevelingStream.AlowLeveling = false;
+				PrintLevelingStream.AllowLeveling = false;
 
 				printLevelWizardWindow = LevelWizardBase.CreateAndShowWizard(printer, runningState);
 
 				printLevelWizardWindow.Closed += (sender, e) =>
 				{
 					// If leveling was on when we started, make sure it is on when we are done.
-					PrintLevelingStream.AlowLeveling = true;
+					PrintLevelingStream.AllowLeveling = true;
 
 					printLevelWizardWindow = null;
 
@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public abstract IEnumerable<Vector2> GetPrintLevelPositionToSample();
 
-		private static LevelWizardBase CreateAndShowWizard(PrinterConfig printer, LevelWizardBase.RuningState runningState)
+		private static LevelWizardBase CreateAndShowWizard(PrinterConfig printer, LevelWizardBase.RunningState runningState)
 		{
 			// clear any data that we are going to be acquiring (sampled positions, after z home offset)
 			PrintLevelingData levelingData = new PrintLevelingData()
@@ -239,15 +239,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				var probeOffset = printer.Settings.GetValue<Vector2>(SettingsKey.z_probe_xy_offset);
 				var actualNozzlePosition = probePosition - probeOffset;
-				
+
 				// clamp this to the bed bounds
 				Vector2 bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
 				Vector2 printCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
 				RectangleDouble bedBounds = new RectangleDouble(printCenter - bedSize/2, printCenter + bedSize/2);
-				Vector2 adjustedPostion = bedBounds.Clamp(actualNozzlePosition);
+				Vector2 adjustedPosition = bedBounds.Clamp(actualNozzlePosition);
 
 				// and push it back into the probePosition
-				probePosition = adjustedPostion + probeOffset;
+				probePosition = adjustedPosition + probeOffset;
 			}
 
 			return probePosition;

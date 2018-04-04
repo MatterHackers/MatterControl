@@ -325,7 +325,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			layerRenderRatioSlider.TotalWidthInPixels = view3DWidget.InteractionLayer.Width - 32;
 		}
 
-		private double lastPostion = 0;
+		private double lastPosition = 0;
 		private TumbleCubeControl tumbleCubeControl;
 
 		private bool SetAnimationPosition()
@@ -335,10 +335,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			double currentPosition = printer.Connection.RatioIntoCurrentLayer;
 			layerRenderRatioSlider.FirstValue = 0;
 
-			if (lastPostion != currentPosition)
+			if (lastPosition != currentPosition)
 			{
 				layerRenderRatioSlider.SecondValue = currentPosition;
-				lastPostion = currentPosition;
+				lastPosition = currentPosition;
 				return true;
 			}
 

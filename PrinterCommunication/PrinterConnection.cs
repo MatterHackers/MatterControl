@@ -2072,7 +2072,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			PrintingCanContinue(this, null);
 		}
 
-		private void KeepTrackOfAbsolutePostionAndDestination(string lineBeingSent)
+		private void KeepTrackOfAbsolutePositionAndDestination(string lineBeingSent)
 		{
 			if (lineBeingSent.StartsWith("G0 ")
 				|| lineBeingSent.StartsWith("G1 ")
@@ -2494,7 +2494,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			// remove the comment if any
 			lineToWrite = RemoveCommentIfAny(lineToWrite);
 
-			KeepTrackOfAbsolutePostionAndDestination(lineToWrite);
+			KeepTrackOfAbsolutePositionAndDestination(lineToWrite);
 
 			if (this.SendWithChecksum && sendLineWithChecksum)
 			{

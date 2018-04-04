@@ -44,12 +44,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			: base(internalStream)
 		{
 			// always reset this when we construct
-			AlowLeveling = true;
+			AllowLeveling = true;
 			this.printerSettings = printerSettings;
 			this.activePrinting = activePrinting;
 		}
 
-		public static bool AlowLeveling { get; set; }
+		public static bool AllowLeveling { get; set; }
 
 		public PrinterMove LastDestination { get { return lastDestination; } }
 
@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			get
 			{
-				return AlowLeveling
+				return AllowLeveling
 					&& printerSettings.GetValue<bool>(SettingsKey.print_leveling_enabled)
 					&& !printerSettings.GetValue<bool>(SettingsKey.has_hardware_leveling);
 			}
