@@ -775,7 +775,6 @@
     "ShowAsOverride": true,
     "ShowIfSet": "!has_hardware_leveling",
     "DefaultValue": "3 Point Plane",
-    "ReloadUiWhenChanged": true,
     "RebuildGCodeOnChange": false
   },
   {

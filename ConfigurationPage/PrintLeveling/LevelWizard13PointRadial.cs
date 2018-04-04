@@ -48,28 +48,29 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			double bedRadius = Math.Min(printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).X, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
 			Vector2 bedCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
 
-			// around the outside
-			int numberOfOuterSamples = 6;
-			for (int i = 0; i < numberOfOuterSamples; i++)
-			{
-				Vector2 position = new Vector2(bedRadius, 0);
-				position.Rotate(MathHelper.Tau / numberOfOuterSamples * i);
-				position += bedCenter;
-				yield return position;
-			}
+			// the center
+			yield return bedCenter;
 
 			// around an inner circle
-			int numberOfInnerSamples = 6;
+			int numberOfInnerSamples = 4;
 			for (int i = 0; i < numberOfInnerSamples; i++)
 			{
-				Vector2 position = new Vector2(bedRadius / 2, 0);
+				Vector2 position = new Vector2(bedRadius * .45, 0);
 				position.Rotate(MathHelper.Tau / numberOfInnerSamples * i);
 				position += bedCenter;
 				yield return position;
 			}
 
-			// the center
-			yield return bedCenter;
+			// around the outside
+			int numberOfOuterSamples = 8;
+			for (int i = 0; i < numberOfOuterSamples; i++)
+			{
+				Vector2 position = new Vector2(bedRadius * .9, 0);
+				// the -MathHelper.Tau / 4 is to start out just under the last inner point
+				position.Rotate(MathHelper.Tau / numberOfOuterSamples * i - MathHelper.Tau / 4);
+				position += bedCenter;
+				yield return position;
+			}
 		}
 	}
 }

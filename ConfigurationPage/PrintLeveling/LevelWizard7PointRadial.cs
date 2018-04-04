@@ -49,15 +49,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			double bedRadius = Math.Min(printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).X, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
 			Vector2 bedCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
 
+			yield return bedCenter;
+
 			for (int i = 0; i < numberOfRadialSamples; i++)
 			{
-				Vector2 position = new Vector2(bedRadius, 0);
+				Vector2 position = new Vector2(bedRadius * .9, 0);
 				position.Rotate(MathHelper.Tau / numberOfRadialSamples * i);
 				position += bedCenter;
 				yield return position;
 			}
-
-			yield return bedCenter;
 		}
 	}
 }

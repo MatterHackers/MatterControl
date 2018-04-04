@@ -238,11 +238,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			if (printerSettings.Helpers.UseZProbe())
 			{
 				var probeOffset = printer.Settings.GetValue<Vector2>(SettingsKey.z_probe_xy_offset);
-				var actualNozzlePosition = probePosition + probeOffset;
+				var actualNozzlePosition = probePosition - probeOffset;
+				
 				// clamp this to the bed bounds
+				Vector2 bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
+				Vector2 printCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
+				RectangleDouble bedBounds = new RectangleDouble(printCenter - bedSize/2, printCenter + bedSize/2);
+				Vector2 adjustedPostion = bedBounds.Clamp(actualNozzlePosition);
 
 				// and push it back into the probePosition
-				probePosition = actualNozzlePosition - probeOffset;
+				probePosition = adjustedPostion + probeOffset;
 			}
 
 			return probePosition;
