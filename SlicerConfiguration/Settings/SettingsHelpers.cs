@@ -104,7 +104,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string layer_height = nameof(layer_height);
 		public const string layer_name = nameof(layer_name);
 		public const string layer_to_pause = nameof(layer_to_pause);
-		public const string leveling_manual_positions = nameof(leveling_manual_positions);
 		public const string make = nameof(make);
 		public const string manual_movement_speeds = nameof(manual_movement_speeds);
 		public const string max_acceleration = nameof(max_acceleration);
@@ -300,23 +299,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			printerSettings.SetValue(SettingsKey.printer_name, name);
 		}
 
-		private PrintLevelingData printLevelingData = null;
 		public PrintLevelingData GetPrintLevelingData()
 		{
+			PrintLevelingData printLevelingData = null;
+			var jsonData = printerSettings.GetValue(SettingsKey.print_leveling_data);
+			if (!string.IsNullOrEmpty(jsonData))
+			{
+				printLevelingData = JsonConvert.DeserializeObject<PrintLevelingData>(jsonData);
+			}
+
+			// if it is still null
 			if (printLevelingData == null)
 			{
-				printLevelingData = PrintLevelingData.Create(
-					printerSettings,
-					printerSettings.GetValue(SettingsKey.print_leveling_data));
-
-				if (printLevelingData.SampledPositions.Count == 3)
-				{
-					PrintLevelingPlane.Instance.SetPrintLevelingEquation(
-						printLevelingData.SampledPositions[0],
-						printLevelingData.SampledPositions[1],
-						printLevelingData.SampledPositions[2],
-						printerSettings.GetValue<Vector2>(SettingsKey.print_center));
-				}
+				printLevelingData = new PrintLevelingData();
 			}
 
 			return printLevelingData;
@@ -328,7 +323,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				printerSettings.SetValue(SettingsKey.baby_step_z_offset, "0");
 			}
-			printLevelingData = data;
+
 			printerSettings.SetValue(SettingsKey.print_leveling_data, JsonConvert.SerializeObject(data));
 		}
 
@@ -342,25 +337,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			printerSettings.SetValue(SettingsKey.print_leveling_enabled, doLeveling ? "1" : "0");
 
-			if (doLeveling)
-			{
-				UpdateLevelSettings();
-			}
-
 			printerSettings.PrintLevelingEnabledChanged?.CallEvents(this, null);
-		}
-
-		public void UpdateLevelSettings()
-		{
-			PrintLevelingData levelingData = this.GetPrintLevelingData();
-			if (levelingData.SampledPositions.Count > 2)
-			{
-				PrintLevelingPlane.Instance.SetPrintLevelingEquation(
-					levelingData.SampledPositions[0],
-					levelingData.SampledPositions[1],
-					levelingData.SampledPositions[2],
-					printerSettings.GetValue<Vector2>(SettingsKey.print_center));
-			}
 		}
 
 		public Vector2 ExtruderOffset(int extruderIndex)

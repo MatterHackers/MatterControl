@@ -179,7 +179,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			progressBarText.Text = $"Temperature: {actualTemp:0} / {targetTemp:0}";
 
 			// if we are within 1 degree of our target
-			if (Math.Abs(targetTemp - actualTemp) < 1
+			if (Math.Abs(targetTemp - actualTemp) < 2
 				&& doneText.Visible == false)
 			{
 				doneText.Visible = true;
@@ -212,14 +212,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
 			levelingData.SampledPositions.Clear();
 
-			Vector3 zProbeOffset = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.z_probe_z_offset));
 			for (int i = 0; i < probePositions.Count; i++)
 			{
-				levelingData.SampledPositions.Add(probePositions[i].position - zProbeOffset);
+				levelingData.SampledPositions.Add(probePositions[i].position);
 			}
+
+			levelingData.LevelingSystem = printer.Settings.GetValue<LevelingSystem>(SettingsKey.print_leveling_solution);
+			levelingData.CreationData = DateTime.Now;
+			// record the temp the bed was when we measured it (or 0 if no heated bed)
+			levelingData.BedTemperature = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?
+				printer.Settings.GetValue<double>(SettingsKey.bed_temperature)
+				: 0;
 
 			// Invoke setter forcing persistence of leveling data
 			printer.Settings.Helpers.SetPrintLevelingData(levelingData, true);
+			PrintLevelingStream.AlowLeveling = true;
 			printer.Settings.Helpers.DoPrintLeveling(true);
 
 			if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
@@ -255,10 +262,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingActive()
 		{
 			// make sure we don't have leveling data
-			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
-			levelingData.SampledPositions.Clear();
-			printer.Settings.Helpers.SetPrintLevelingData(levelingData, true);
-
 			double newProbeOffset = autoProbePositions[0].position.Z - manualProbePositions[0].position.Z;
 			printer.Settings.SetValue(SettingsKey.z_probe_z_offset, newProbeOffset.ToString("0.###"));
 
@@ -448,7 +451,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingActive()
 		{
 			// always make sure we don't have print leveling turned on
-			printer.Settings.Helpers.DoPrintLeveling(false);
+			PrintLevelingStream.AlowLeveling = false;
 
 			base.PageIsBecomingActive();
 			this.Parents<SystemWindow>().First().KeyDown += TopWindowKeyDown;
@@ -599,7 +602,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingActive()
 		{
 			// always make sure we don't have print leveling turned on
-			printer.Settings.Helpers.DoPrintLeveling(false);
+			PrintLevelingStream.AlowLeveling = false;
 
 			base.PageIsBecomingActive();
 
@@ -654,7 +657,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		protected Vector3 probeStartPosition;
 
 		public GetCoarseBedHeight(PrinterConfig printer, WizardControl container, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
-			: base(printer, container, pageDescription, levelingStrings.CoarseInstruction1, levelingStrings.CoarseInstruction2, 1, probePositions, probePositionsBeingEditedIndex)
+			: base(printer, container, pageDescription, "Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.".Localize(),
+				  levelingStrings.CoarseInstruction2, 1, probePositions, probePositionsBeingEditedIndex)
 		{
 			this.probeStartPosition = probeStartPosition;
 		}

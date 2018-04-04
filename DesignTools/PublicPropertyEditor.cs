@@ -136,10 +136,35 @@ namespace MatterHackers.MatterControl.DesignTools
 			return nameAttribute?.DisplayName ?? prop.Name.SplitCamelCase();
 		}
 
-		private string GetDescription(PropertyInfo prop)
+		public class EditableProperty
 		{
-			var nameAttribute = prop.GetCustomAttributes(true).OfType<DescriptionAttribute>().FirstOrDefault();
-			return nameAttribute?.Description ?? null;
+			public Object Item { get; private set; }
+			public PropertyInfo PropertyInfo { get; private set; }
+			public EditableProperty(PropertyInfo p, object item)
+			{
+				this.Item = item;
+				this.PropertyInfo = p;
+			}
+
+			private string GetDescription(PropertyInfo prop)
+			{
+				var nameAttribute = prop.GetCustomAttributes(true).OfType<DescriptionAttribute>().FirstOrDefault();
+				return nameAttribute?.Description ?? null;
+			}
+
+			public object Value => PropertyInfo.GetGetMethod().Invoke(Item, null);
+			public string DisplayName => GetDisplayName(PropertyInfo);
+			public string Description => GetDescription(PropertyInfo);
+			public Type ptype => PropertyInfo.PropertyType;
+		}
+
+		public static IEnumerable<EditableProperty> GetEditablePropreties(Object item)
+		{
+			return item.GetType().GetProperties(OwnedPropertiesOnly)
+				.Where(pi => (allowedTypes.Contains(pi.PropertyType) || pi.PropertyType.IsEnum)
+					&& pi.GetGetMethod() != null
+					&& pi.GetSetMethod() != null)
+				.Select(p => new EditableProperty(p, item));
 		}
 
 		private void CreateEditor(View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
@@ -150,18 +175,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var rebuildable = item as IRebuildable;
 			var propertyGridModifier = item as IPropertyGridModifier;
 
-			var editableProperties = this.item.GetType().GetProperties(OwnedPropertiesOnly)
-				.Where(pi => (allowedTypes.Contains(pi.PropertyType) || pi.PropertyType.IsEnum)
-					&& pi.GetGetMethod() != null
-					&& pi.GetSetMethod() != null)
-				.Select(p => new
-				{
-					Value = p.GetGetMethod().Invoke(this.item, null),
-					DisplayName = GetDisplayName(p),
-					Description = GetDescription(p),
-					PropertyType = p.PropertyType,
-					PropertyInfo = p
-				});
+			var editableProperties = GetEditablePropreties(item);
 
 			AddWebPageLinkIfRequired(editControlsContainer, theme);
 			AddUnlockLinkIfRequired(editControlsContainer, theme);
@@ -453,16 +467,16 @@ namespace MatterHackers.MatterControl.DesignTools
 					editControlsContainer.AddChild(rowContainer);
 				}
 				// create an enum editor
-				else if (property.PropertyType.IsEnum)
+				else if (property.ptype.IsEnum)
 				{
 					rowContainer = CreateEnumEditor(rebuildable,
-							property.PropertyInfo, property.PropertyType, property.Value, property.DisplayName,
+							property.PropertyInfo, property.ptype, property.Value, property.DisplayName,
 							theme, undoBuffer);
 					editControlsContainer.AddChild(rowContainer);
 				}
 				// Use known IObject3D editors
 				else if (property.Value is IObject3D object3D
-					&& ApplicationController.Instance.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor editor)
+					&& ApplicationController.Instance.GetEditorsForType(property.ptype)?.FirstOrDefault() is IObject3DEditor editor)
 				{
 					rowContainer = editor.Create( object3D, view3DWidget, theme);
 					editControlsContainer.AddChild(rowContainer);

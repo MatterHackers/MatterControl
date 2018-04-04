@@ -116,48 +116,6 @@ namespace MatterHackers.MatterControl
 				scrollArrea.AddChild(leftRightEdit);
 			}
 
-			var runWizardButton = new TextButton("Run Leveling Wizard".Localize(), theme)
-			{
-				VAnchor = VAnchor.Absolute,
-				HAnchor = HAnchor.Right,
-				BackgroundColor = theme.MinimalShade,
-				Margin = new BorderDouble(5, 0, 5, 20)
-			};
-			runWizardButton.Click += (s, e) =>
-			{
-				this.WizardWindow.CloseOnIdle();
-				UiThread.RunOnIdle(() =>
-				{
-					LevelWizardBase.ShowPrintLevelWizard(printer, LevelWizardBase.RuningState.UserRequestedCalibration);
-				});
-			};
-
-			scrollArrea.AddChild(runWizardButton);
-
-			// add in the controls for configuring probe offset
-			if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
-				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
-				&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
-			{
-				var runCalibrateProbeButton = new TextButton("Recalibrate Probe".Localize(), theme)
-				{
-					VAnchor = VAnchor.Absolute,
-					HAnchor = HAnchor.Right,
-					BackgroundColor = theme.MinimalShade,
-					Margin = new BorderDouble(5, 0, 5, 20)
-				};
-				runCalibrateProbeButton.Click += (s, e) =>
-				{
-					this.WizardWindow.CloseOnIdle();
-					UiThread.RunOnIdle(() =>
-					{
-						ProbeCalibrationWizard.ShowProbeCalibrationWizard(printer);
-					});
-				};
-
-				scrollArrea.AddChild(runCalibrateProbeButton);
-			}
-
 			Button savePresetsButton = textImageButtonFactory.Generate("Save".Localize());
 			savePresetsButton.Click += (s, e) =>
 			{
@@ -171,7 +129,6 @@ namespace MatterHackers.MatterControl
 					}
 
 					printer.Settings.Helpers.SetPrintLevelingData(newLevelingData, false);
-					printer.Settings.Helpers.UpdateLevelSettings();
 					this.WizardWindow.Close();
 				});
 			};

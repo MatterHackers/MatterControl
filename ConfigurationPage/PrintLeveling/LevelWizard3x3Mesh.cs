@@ -30,47 +30,84 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class LevelWizard13PointRadial : LevelWizardBase
+	public class LevelWizard3x3Mesh : LevelWizardBase
 	{
-		public LevelWizard13PointRadial(PrinterConfig printer, LevelWizardBase.RuningState runningState)
+		public LevelWizard3x3Mesh(PrinterConfig printer, LevelWizardBase.RuningState runningState)
 			: base(printer, runningState)
 		{
 		}
 
-		public override int ProbeCount => 13;
+		public override int ProbeCount => 9;
 
 		public override IEnumerable<Vector2> GetPrintLevelPositionToSample()
 		{
-			double bedRadius = Math.Min(printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).X, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
-			Vector2 bedCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
+			yield return GetPosition(0, 0);
+			yield return GetPosition(1, 0);
+			yield return GetPosition(2, 0);
 
-			// the center
-			yield return bedCenter;
+			yield return GetPosition(2, 1);
+			yield return GetPosition(1, 1);
+			yield return GetPosition(0, 1);
 
-			// around an inner circle
-			int numberOfInnerSamples = 4;
-			for (int i = 0; i < numberOfInnerSamples; i++)
+			yield return GetPosition(0, 2);
+			yield return GetPosition(1, 2);
+			yield return GetPosition(2, 2);
+		}
+
+		private Vector2 GetPosition(int xIndex, int yIndex)
+		{
+			Vector2 bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
+			Vector2 printCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
+
+			if (printer.Settings.GetValue<BedShape>(SettingsKey.bed_shape) == BedShape.Circular)
 			{
-				Vector2 position = new Vector2(bedRadius * .45, 0);
-				position.Rotate(MathHelper.Tau / numberOfInnerSamples * i);
-				position += bedCenter;
-				yield return position;
+				// reduce the bed size by the ratio of the radius (square root of 2) so that the sample positions will fit on a ciclular bed
+				bedSize *= 1.0 / Math.Sqrt(2);
 			}
 
-			// around the outside
-			int numberOfOuterSamples = 8;
-			for (int i = 0; i < numberOfOuterSamples; i++)
+			Vector2 samplePosition = new Vector2();
+			switch (xIndex)
 			{
-				Vector2 position = new Vector2(bedRadius * .9, 0);
-				// the -MathHelper.Tau / 4 is to start out just under the last inner point
-				position.Rotate(MathHelper.Tau / numberOfOuterSamples * i - MathHelper.Tau / 4);
-				position += bedCenter;
-				yield return position;
+				case 0:
+					samplePosition.X = printCenter.X - (bedSize.X / 2) * .8;
+					break;
+
+				case 1:
+					samplePosition.X = printCenter.X;
+					break;
+
+				case 2:
+					samplePosition.X = printCenter.X + (bedSize.X / 2) * .8;
+					break;
+
+				default:
+					throw new IndexOutOfRangeException();
 			}
+
+			switch (yIndex)
+			{
+				case 0:
+					samplePosition.Y = printCenter.Y - (bedSize.Y / 2) * .8;
+					break;
+
+				case 1:
+					samplePosition.Y = printCenter.Y;
+					break;
+
+				case 2:
+					samplePosition.Y = printCenter.Y + (bedSize.Y / 2) * .8;
+					break;
+
+				default:
+					throw new IndexOutOfRangeException();
+			}
+
+			return samplePosition;
 		}
 	}
 }

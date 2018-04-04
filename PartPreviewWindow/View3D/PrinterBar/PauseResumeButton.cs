@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Threading;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -60,6 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BackgroundColor = theme.ButtonFactory.Options.NormalFillColor,
 				HoverColor = theme.ButtonFactory.Options.HoverFillColor,
 			};
+
 			finishSetupButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(async () =>
@@ -83,6 +85,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UiThread.RunOnIdle(SetButtonStates);
 			}, ref unregisterEvents);
 
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			{
+				if (e is StringEventArgs stringEvent
+					&& (stringEvent.Data == SettingsKey.z_probe_z_offset
+						|| stringEvent.Data == SettingsKey.print_leveling_data
+						|| stringEvent.Data == SettingsKey.print_leveling_solution))
+				{
+					SetButtonStates();
+				}
+			}, ref unregisterEvents);
+
 			SetButtonStates();
 		}
 
@@ -100,7 +113,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				case CommunicationStates.Connected:
 					if (levelingData != null && printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
-						&& !levelingData.HasBeenRunAndEnabled())
+						&& !levelingData.HasBeenRunAndEnabled(printer))
 					{
 						SetChildVisible(finishSetupButton, true);
 					}
@@ -121,7 +134,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				default:
 					if (levelingData != null && printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
-						&& !levelingData.HasBeenRunAndEnabled())
+						&& !levelingData.HasBeenRunAndEnabled(printer))
 					{
 						SetChildVisible(finishSetupButton, false);
 					}

@@ -771,11 +771,10 @@
     "PresentationName": "Leveling Solution",
     "HelpText": "The print leveling algorithm to use.",
     "DataEditType": "LIST",
-    "ListValues": "3 Point Plane,7 Point Disk,13 Point Disk,3x3 Mesh",
+    "ListValues": "3 Point Plane,7 Point Disk,13 Point Disk,3x3 Mesh,5x5 Mesh",
     "ShowAsOverride": true,
     "ShowIfSet": "!has_hardware_leveling",
     "DefaultValue": "3 Point Plane",
-    "ReloadUiWhenChanged": true,
     "RebuildGCodeOnChange": false
   },
   {
@@ -787,18 +786,6 @@
     "DefaultValue": "0",
     "ShowAsOverride": true,
     "ReloadUiWhenChanged": true,
-    "RebuildGCodeOnChange": false
-  },
-  {
-    "SlicerConfigName": "leveling_manual_positions",
-    "PresentationName": "Leveling Positions",
-    "HelpText": "If set, these positions will be used when running the leveling solution. Leave empty for defaults. Data Format:'X1,Y1:...:Xn,Yn'",
-    "DataEditType": "STRING",
-    "Units": "empty for default",
-    "ShowAsOverride": true,
-    "ShowIfSet": "!has_hardware_leveling&print_leveling_solution=3 Point Plane|print_leveling_solution=3x3 Mesh",
-    "ResetAtEndOfPrint": false,
-    "DefaultValue": "",
     "RebuildGCodeOnChange": false
   },
   {

@@ -191,9 +191,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private QueuedCommandsStream queuedCommandStream3 = null;
 		private MacroProcessingStream macroProcessingStream4 = null;
 		private RelativeToAbsoluteStream relativeToAbsoluteStream5 = null;
-		private PrintLevelingStream printLevelingStream6 = null;
-		private WaitForTempStream waitForTempStream7 = null;
-		private BabyStepsStream babyStepsStream8 = null;
+		private PrintLevelingStream printLevelingStream7 = null;
+		private WaitForTempStream waitForTempStream8 = null;
+		private BabyStepsStream babyStepsStream6 = null;
 		private ExtrusionMultiplyerStream extrusionMultiplyerStream9 = null;
 		private FeedRateMultiplyerStream feedrateMultiplyerStream10 = null;
 		private RequestTemperaturesStream requestTemperaturesStream11 = null;
@@ -2112,7 +2112,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			totalGCodeStream?.Dispose();
 
-			GCodeStream firstStream = null;
+			GCodeStream firstStreamToRead = null;
 			if (gcodeFilename != null)
 			{
 				gCodeFileStream0 = new GCodeFileStream(GCodeFile.Load(gcodeFilename,
@@ -2136,26 +2136,26 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 
 				pauseHandlingStream2 = new PauseHandlingStream(printer, sendProgressStream1);
-				firstStream = pauseHandlingStream2;
+				firstStreamToRead = pauseHandlingStream2;
 			}
 			else
 			{
 				gCodeFileStream0 = null;
-				firstStream = new NotPrintingStream();
+				firstStreamToRead = new NotPrintingStream();
 			}
 
-			queuedCommandStream3 = new QueuedCommandsStream(firstStream);
+			queuedCommandStream3 = new QueuedCommandsStream(firstStreamToRead);
 			macroProcessingStream4 = new MacroProcessingStream(queuedCommandStream3, printer);
 			relativeToAbsoluteStream5 = new RelativeToAbsoluteStream(macroProcessingStream4);
-			printLevelingStream6 = new PrintLevelingStream(printer.Settings, relativeToAbsoluteStream5, true);
-			waitForTempStream7 = new WaitForTempStream(this, printLevelingStream6);
-			babyStepsStream8 = new BabyStepsStream(printer.Settings, waitForTempStream7, gcodeFilename == null ? 2000 : 1);
+			babyStepsStream6 = new BabyStepsStream(printer.Settings, relativeToAbsoluteStream5, gcodeFilename == null ? 2000 : 1);
 			if (activePrintTask != null)
 			{
 				// make sure we are in the position we were when we stopped printing
-				babyStepsStream8.Offset = new Vector3(activePrintTask.PrintingOffsetX, activePrintTask.PrintingOffsetY, activePrintTask.PrintingOffsetZ);
+				babyStepsStream6.Offset = new Vector3(activePrintTask.PrintingOffsetX, activePrintTask.PrintingOffsetY, activePrintTask.PrintingOffsetZ);
 			}
-			extrusionMultiplyerStream9 = new ExtrusionMultiplyerStream(babyStepsStream8);
+			printLevelingStream7 = new PrintLevelingStream(printer.Settings, babyStepsStream6, true);
+			waitForTempStream8 = new WaitForTempStream(this, printLevelingStream7);
+			extrusionMultiplyerStream9 = new ExtrusionMultiplyerStream(waitForTempStream8);
 			feedrateMultiplyerStream10 = new FeedRateMultiplyerStream(extrusionMultiplyerStream9);
 			requestTemperaturesStream11 = new RequestTemperaturesStream(this, feedrateMultiplyerStream10);
 			processWriteRegExStream12 = new ProcessWriteRegexStream(this.printer.Settings, requestTemperaturesStream11, queuedCommandStream3);
@@ -2195,13 +2195,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					// Only update the amount done if it is greater than what is recorded.
 					// We don't want to mess up the resume before we actually resume it.
 					if (activePrintTask != null
-					    && babyStepsStream8 != null
+					    && babyStepsStream6 != null
 						&& activePrintTask.PercentDone < currentDone)
 					{
 						activePrintTask.PercentDone = currentDone;
-						activePrintTask.PrintingOffsetX = (float)babyStepsStream8.Offset.X;
-						activePrintTask.PrintingOffsetY = (float)babyStepsStream8.Offset.Y;
-						activePrintTask.PrintingOffsetZ = (float)babyStepsStream8.Offset.Z;
+						activePrintTask.PrintingOffsetX = (float)babyStepsStream6.Offset.X;
+						activePrintTask.PrintingOffsetY = (float)babyStepsStream6.Offset.Y;
+						activePrintTask.PrintingOffsetZ = (float)babyStepsStream6.Offset.Z;
 						activePrintTask?.Commit();
 
 						// Interval looks to be ~10ms
@@ -2290,11 +2290,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				DetailedPrintingState = DetailedPrintingState.HomingAxis;
 			}
-			else if (waitForTempStream7?.HeatingBed ?? false)
+			else if (waitForTempStream8?.HeatingBed ?? false)
 			{
 				DetailedPrintingState = DetailedPrintingState.HeatingBed;
 			}
-			else if (waitForTempStream7?.HeatingExtruder ?? false)
+			else if (waitForTempStream8?.HeatingExtruder ?? false)
 			{
 				DetailedPrintingState = DetailedPrintingState.HeatingExtruder;
 			}
@@ -2640,8 +2640,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void MacroCancel()
 		{
-			babyStepsStream8?.CancelMoves();
-			waitForTempStream7?.Cancel();
+			babyStepsStream6?.CancelMoves();
+			waitForTempStream8?.Cancel();
 			queuedCommandStream3?.Cancel();
 			macroProcessingStream4?.Cancel();
 		}

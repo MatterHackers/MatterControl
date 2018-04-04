@@ -75,6 +75,9 @@
     <Compile Include="AboutPage\CheckForUpdatesPage.cs" />
     <Compile Include="ApplicationView\LogoSpinner.cs" />
     <Compile Include="ConfigurationPage\CalibrationSettings\CalibrationControls.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\LevelingFunctions.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard3x3Mesh.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard5x5Mesh.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\ProbeCalibrationWizard.cs" />
     <Compile Include="CustomWidgets\ConfigurePrinterWidget.cs" />
     <Compile Include="AboutPage\HTMLParser\HtmlWidget.cs" />
@@ -100,9 +103,11 @@
     <Compile Include="DesignTools\Operations\ArrayLinear3D.cs" />
     <Compile Include="DesignTools\Operations\ArrayRadial3D.cs" />
     <Compile Include="DesignTools\Operations\BendObject3D.cs" />
+    <Compile Include="DesignTools\Operations\CurveObject3D.cs" />
     <Compile Include="DesignTools\Operations\FitToBounds3D.cs" />
     <Compile Include="DesignTools\Operations\Object3DExtensions.cs" />
     <Compile Include="DesignTools\Operations\Package3D.cs" />
+    <Compile Include="DesignTools\Operations\PinchEditor.cs" />
     <Compile Include="DesignTools\Operations\Rotate.cs" />
     <Compile Include="DesignTools\Operations\Scale.cs" />
     <Compile Include="DesignTools\Operations\SmoothPath.cs" />
@@ -225,7 +230,6 @@
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\InstructionsPage.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingStrings.cs" />
-    <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardMesh.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard7PointRadial.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard13PointRadial.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard3Point.cs" />
@@ -384,7 +388,6 @@
     <Compile Include="Utilities\AuthenticationData.cs" />
     <Compile Include="Utilities\LimitCallFrequency.cs" />
     <Compile Include="Utilities\SelectedListItems.cs" />
-    <Compile Include="Queue\OptionsMenu\ExportToFolderFeedbackWindow.cs" />
     <Compile Include="EeProm\EePromMarlinSettings.cs" />
     <Compile Include="History\PrintHistoryListItem.cs" />
     <Compile Include="Queue\QueueData.cs" />
@@ -415,7 +418,6 @@
     <Compile Include="CustomWidgets\DropDownMenuWidget.cs" />
     <Compile Include="ControlElements\ImageButtonFactory.cs" />
     <Compile Include="ControlElements\LinkButtonFactory.cs" />
-    <Compile Include="Queue\OptionsMenu\ExportToSdCardFeedbackWindow.cs" />
     <Compile Include="CustomWidgets\SlidePanelWidget.cs" />
     <Compile Include="ControlElements\StyledMessageBoxWindow.cs" />
     <Compile Include="CustomWidgets\WizardControl.cs" />
@@ -443,7 +445,6 @@
     <Compile Include="PrinterControls\PrinterConnections\PrinterChooser.cs" />
     <Compile Include="PrinterControls\XYZJogControls.cs" />
     <Compile Include="Library\Widgets\PrintLibraryWidget.cs" />
-    <Compile Include="Queue\OptionsMenu\ExportToFolderProcess.cs" />
     <Compile Include="Queue\PrintItemWrapper.cs" />
     <Compile Include="MatterControlApplication.cs" />
     <Compile Include="Utilities\ProjectFileHandler.cs" />
@@ -475,6 +476,9 @@
     <Compile Include="PrinterCommunication\Io\SendProgressStream.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="MIConvexHull, Version=1.0.17.1019, Culture=neutral, PublicKeyToken=bdc96d69606221fd, processorArchitecture=MSIL">
+      <HintPath>packages\MIConvexHull.1.1.17.1019\lib\netstandard1.0\MIConvexHull.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Mindscape.Raygun4Net, Version=5.5.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Mindscape.Raygun4Net.5.5.2\lib\net40\Mindscape.Raygun4Net.dll</HintPath>
@@ -548,6 +552,7 @@
     <Content Include="application.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="MIConvexHull.xml" />
     <Content Include="StaticData\OEMSettings\AboutPage.html" />
     <Content Include="StaticData\SliceSettings\Layouts.txt" />
     <Content Include="StaticData\SliceSettings\load_filament.txt" />

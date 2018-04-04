@@ -131,12 +131,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			ApplicationController.Instance.ReloadAll();
-			base.OnClosed(e);
-		}
-
 		private void next_Click(object sender, EventArgs mouseEvent)
 		{
 			pageIndex = Math.Min(pages.Count - 1, pageIndex + 1);

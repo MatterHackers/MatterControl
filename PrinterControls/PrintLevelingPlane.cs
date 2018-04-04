@@ -28,26 +28,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void SetPrintLevelingEquation(Vector3 position0, Vector3 position1, Vector3 position2, Vector2 bedCenter)
-		{
-			if (position0 == position1 || position1 == position2 || position2 == position0)
-			{
-				return;
-			}
-
-			Plane planeOfPoints = new Plane(position0, position1, position2);
-
-			Ray ray = new Ray(new Vector3(bedCenter, 0), Vector3.UnitZ);
-			bool inFront;
-			double distanceToPlaneAtBedCenter = planeOfPoints.GetDistanceToIntersection(ray, out inFront);
-
-			Matrix4X4 makePointsFlatMatrix = Matrix4X4.CreateTranslation(-bedCenter.X, -bedCenter.Y, -distanceToPlaneAtBedCenter);
-			makePointsFlatMatrix *= Matrix4X4.CreateRotation(planeOfPoints.PlaneNormal, Vector3.UnitZ);
-			makePointsFlatMatrix *= Matrix4X4.CreateTranslation(bedCenter.X, bedCenter.Y, 0);
-
-			bedLevelMatrix = Matrix4X4.Invert(makePointsFlatMatrix);
-		}
-
 		public Vector3 ApplyLeveling(Vector3 inPosition)
 		{
 			return Vector3.TransformPosition(inPosition, bedLevelMatrix);

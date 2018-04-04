@@ -493,6 +493,29 @@ namespace MatterHackers.MatterControl
 				Icon = AggContext.StaticData.LoadIcon("array_advanced.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
 			},
+			new SceneSelectionSeparator(),
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Pinch".Localize(),
+				Action = (scene) =>
+				{
+					var pinch = new PinchObject3D();
+					MeshWrapperObject3D.WrapSelection(pinch, scene);
+				},
+				Icon = AggContext.StaticData.LoadIcon("pinch.png", 16, 16),
+				IsEnabled = (scene) => scene.HasSelection,
+			},
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Curve".Localize(),
+				Action = (scene) =>
+				{
+					var curve = new CurveObject3D();
+					MeshWrapperObject3D.WrapSelection(curve, scene);
+				},
+				Icon = AggContext.StaticData.LoadIcon("curve.png", 16, 16),
+				IsEnabled = (scene) => scene.HasSelection,
+			},
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Fit to Bounds".Localize(),
@@ -534,13 +557,6 @@ namespace MatterHackers.MatterControl
 				Action = (scene) => new BendObject3D(scene.SelectedItem),
 				IsEnabled = (scene) => scene.HasSelection,
 			},
-			new SceneSelectionOperation()
-			{
-				// Should be a pinch command that makes a pinch object with the correct controls
-				TitleResolver = () => "Pinch".Localize(),
-				//Action = (scene) => scene.UndoBuffer.AddAndDo(new GroupCommand(scene, scene.SelectedItem)),
-				IsEnabled = (scene) => scene.HasSelection,
-			}
 #endif
 		};
 
@@ -805,7 +821,7 @@ namespace MatterHackers.MatterControl
 					|| printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled)))
 				{
 					PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
-					if (levelingData?.HasBeenRunAndEnabled() != true)
+					if (levelingData?.HasBeenRunAndEnabled(printer) != true)
 					{
 						UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(printer));
 					}
@@ -1435,7 +1451,7 @@ namespace MatterHackers.MatterControl
 					|| ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
 				{
 					PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-					if (levelingData?.HasBeenRunAndEnabled() != true)
+					if (levelingData?.HasBeenRunAndEnabled(printer) != true)
 					{
 						LevelWizardBase.ShowPrintLevelWizard(printer);
 						return;
