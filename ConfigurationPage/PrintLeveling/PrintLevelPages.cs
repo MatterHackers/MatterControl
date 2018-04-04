@@ -179,7 +179,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			progressBarText.Text = $"Temperature: {actualTemp:0} / {targetTemp:0}";
 
 			// if we are within 1 degree of our target
-			if (Math.Abs(targetTemp - actualTemp) < 1
+			if (Math.Abs(targetTemp - actualTemp) < 2
 				&& doneText.Visible == false)
 			{
 				doneText.Visible = true;
@@ -216,6 +216,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				levelingData.SampledPositions.Add(probePositions[i].position);
 			}
+
+			levelingData.LevelingSystem = printer.Settings.GetValue<LevelingSystem>(SettingsKey.print_leveling_solution);
+			levelingData.CreationData = DateTime.Now;
+			// record the temp the bed was when we measured it (or 0 if no heated bed)
+			levelingData.BedTemperature = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?
+				printer.Settings.GetValue<double>(SettingsKey.bed_temperature)
+				: 0;
 
 			// Invoke setter forcing persistence of leveling data
 			printer.Settings.Helpers.SetPrintLevelingData(levelingData, true);

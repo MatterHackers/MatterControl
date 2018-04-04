@@ -47,17 +47,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private string doneLine2 = "Remove the paper".Localize();
 		private string doneLine3 = "If you need to recalibrate the printer in the future, the print leveling controls can be found under: Controls, Calibration";
 		private string doneLine3b = "Click 'Done' to close this window.".Localize();
-		private string homingLine1 = "The printer should now be 'homing'. Once it is finished homing we will heat the bed.";
-		private string homingLine1b = "To complete the next few steps you will need".Localize();
-		private string homingLine2 = "A standard sheet of paper".Localize();
-		private string homingLine3 = "We will use this paper to measure the distance between the extruder and the bed.";
 		private int stepNumber = 1;
 		private string welcomeLine1 = "Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.".Localize();
 		private string selectMaterial = "Select the material you are printing".Localize();
 		private string heatTheBed = "Heat the bed".Localize();
 		private string sampelAtPoints = "Sample the bed at {0} points".Localize();
 		private string turnOnLeveling = "Turn auto leveling on".Localize();
-		private string timeToDone = "We should be done in less than {0} minutes.".Localize();
+		private string timeToDone = "We should be done in approximately {0} minutes.".Localize();
 		public string CleanExtruder => "Be sure the tip of the extruder is clean and the bed is clear.".Localize();
 		public string ClickNext => "Click 'Next' to continue.".Localize();
 
@@ -100,15 +96,23 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		public string HomingPageInstructions(bool useZProbe)
+		public string HomingPageInstructions(bool useZProbe, bool heatBed)
 		{
+			string line1 = "The printer should now be 'homing'.".Localize();
+			if (heatBed)
+			{
+				line1 += " " + "Once it is finished homing we will heat the bed.".Localize();
+			}
 			if (useZProbe)
 			{
-				return homingLine1;
+				return line1;
 			}
 			else
 			{
-				return "{0}\n\n{1}:\n\n\t• {2}\n\n{3}\n\n{4}".FormatWith(homingLine1, homingLine1b, homingLine2, homingLine3, ClickNext);
+				string line2 = "To complete the next few steps you will need".Localize();
+				string line3 = "A standard sheet of paper".Localize();
+				string line4 = "We will use this paper to measure the distance between the extruder and the bed.".Localize();
+				return $"{line1}\n\n{line2}:\n\n\t• {line3}\n\n{line4}\n\n{ClickNext}";
 			}
 		}
 
@@ -144,11 +148,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public string WelcomeText(int numberOfSteps, int numberOfMinutes)
 		{
-			if (printerSettings.Helpers.UseZProbe())
-			{
-				numberOfMinutes = 2;
-			}
-
 			if (printerSettings.GetValue<bool>(SettingsKey.has_heated_bed))
 			{
 				return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\t• {4}\n\t• {5}\n\n{6}\n\n{7}".FormatWith(

@@ -36,7 +36,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	{
 		protected PrinterMove lastDestination = new PrinterMove();
 		private bool activePrinting;
-		private MeshLevlingFunctions currentLevelingFunctions = null;
+		private LevelingFunctions currentLevelingFunctions = null;
+		private double currentProbeOffset;
 		private PrinterSettings printerSettings;
 
 		public PrintLevelingStream(PrinterSettings printerSettings, GCodeStream internalStream, bool activePrinting)
@@ -52,35 +53,26 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public PrinterMove LastDestination { get { return lastDestination; } }
 
-		public MeshLevlingFunctions GetLevelingFunctions(PrinterSettings printerSettings, int gridWidth, int gridHeight, PrintLevelingData levelingData)
+		bool LevelingActive
 		{
-			if (currentLevelingFunctions == null
-				|| !levelingData.SamplesAreSame(currentLevelingFunctions.SampledPositions))
+			get
 			{
-				if (currentLevelingFunctions != null)
-				{
-					currentLevelingFunctions.Dispose();
-				}
-
-				currentLevelingFunctions = new MeshLevlingFunctions(printerSettings, gridWidth, gridHeight, levelingData);
+				return AlowLeveling
+					&& printerSettings.GetValue<bool>(SettingsKey.print_leveling_enabled)
+					&& !printerSettings.GetValue<bool>(SettingsKey.has_hardware_leveling);
 			}
-
-			return currentLevelingFunctions;
 		}
 
 		public override string ReadLine()
 		{
 			string lineFromChild = base.ReadLine();
 
-			if (lineFromChild != null
-				&& AlowLeveling
-				&& printerSettings.GetValue<bool>(SettingsKey.print_leveling_enabled)
-				&& !printerSettings.GetValue<bool>(SettingsKey.has_hardware_leveling))
+			if (lineFromChild != null && LevelingActive)
 			{
 				if (LineIsMovement(lineFromChild))
 				{
 					PrinterMove currentDestination = GetPosition(lineFromChild, lastDestination);
-					lineFromChild = RunPrintLevelingTranslations(lineFromChild, currentDestination);
+					lineFromChild = GetLeveledPosition(lineFromChild, currentDestination);
 					lastDestination = currentDestination;
 
 					return lineFromChild;
@@ -97,30 +89,49 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override void SetPrinterPosition(PrinterMove position)
 		{
-			string lineBeingSent = CreateMovementLine(position);
-			string leveledPosition = RunPrintLevelingTranslations(lineBeingSent, position);
+			if (LevelingActive)
+			{
+				string lineBeingSent = CreateMovementLine(position);
+				string leveledPosition = GetLeveledPosition(lineBeingSent, position);
 
-			PrinterMove leveledDestination = GetPosition(leveledPosition, PrinterMove.Nowhere);
-			PrinterMove deltaToLeveledPosition = leveledDestination - position;
+				PrinterMove leveledDestination = GetPosition(leveledPosition, PrinterMove.Nowhere);
+				PrinterMove deltaToLeveledPosition = leveledDestination - position;
 
-			PrinterMove withoutLevelingOffset = position - deltaToLeveledPosition;
+				PrinterMove withoutLevelingOffset = position - deltaToLeveledPosition;
 
-			lastDestination = withoutLevelingOffset;
-			lastDestination.extrusion = position.extrusion;
-			lastDestination.feedRate = position.feedRate;
+				lastDestination = withoutLevelingOffset;
+				lastDestination.extrusion = position.extrusion;
+				lastDestination.feedRate = position.feedRate;
 
-			internalStream.SetPrinterPosition(lastDestination);
+				internalStream.SetPrinterPosition(lastDestination);
+			}
+			else
+			{
+				internalStream.SetPrinterPosition(position);
+			}
 		}
 
-		private string RunPrintLevelingTranslations(string lineBeingSent, PrinterMove currentDestination)
+		private string GetLeveledPosition(string lineBeingSent, PrinterMove currentDestination)
 		{
 			PrintLevelingData levelingData = printerSettings.Helpers.GetPrintLevelingData();
 			if (levelingData != null
 				&& printerSettings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
 				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 ")))
 			{
-				lineBeingSent = GetLevelingFunctions(printerSettings, 3, 3, levelingData)
-					.DoApplyLeveling(lineBeingSent, currentDestination.position);
+				if (currentLevelingFunctions == null
+					|| currentProbeOffset != printerSettings.GetValue<double>(SettingsKey.z_probe_z_offset)
+					|| !levelingData.SamplesAreSame(currentLevelingFunctions.SampledPositions))
+				{
+					if (currentLevelingFunctions != null)
+					{
+						currentLevelingFunctions.Dispose();
+					}
+
+					currentProbeOffset = printerSettings.GetValue<double>(SettingsKey.z_probe_z_offset);
+					currentLevelingFunctions = new LevelingFunctions(printerSettings, levelingData);
+				}
+
+				lineBeingSent = currentLevelingFunctions.DoApplyLeveling(lineBeingSent, currentDestination.position);
 			}
 
 			return lineBeingSent;

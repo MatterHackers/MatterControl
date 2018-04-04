@@ -778,6 +778,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						return (T)(object)(LevelingSystem.Probe13PointRadial);
 					case "3x3 Mesh":
 						return (T)(object)(LevelingSystem.Probe3x3Mesh);
+					case "5x5 Mesh":
+						return (T)(object)(LevelingSystem.Probe5x5Mesh);
 					default:
 #if DEBUG
 						throw new NotImplementedException();

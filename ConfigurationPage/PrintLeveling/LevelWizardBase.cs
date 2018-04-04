@@ -99,8 +99,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			printLevelWizard.AddPage(new HomePrinterPage(printer, printLevelWizard,
 				levelingStrings.HomingPageStepText,
-				levelingStrings.HomingPageInstructions(useZProbe),
+				levelingStrings.HomingPageInstructions(useZProbe, hasHeatedBed), 
 				useZProbe));
+
 			if (hasHeatedBed)
 			{
 				printLevelWizard.AddPage(new WaitForTempPage(printer, printLevelWizard, levelingStrings));
@@ -217,6 +218,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				case LevelingSystem.Probe3x3Mesh:
 					printLevelWizardWindow = new LevelWizard3x3Mesh(printer, runningState);
+					break;
+
+				case LevelingSystem.Probe5x5Mesh:
+					printLevelWizardWindow = new LevelWizard5x5Mesh(printer, runningState);
 					break;
 
 				default:

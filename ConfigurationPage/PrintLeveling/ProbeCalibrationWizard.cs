@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			bool useZProbe = printer.Settings.Helpers.UseZProbe();
 			printLevelWizard.AddPage(new HomePrinterPage(printer, printLevelWizard, 
 				levelingStrings.HomingPageStepText, 
-				levelingStrings.HomingPageInstructions(useZProbe),
+				levelingStrings.HomingPageInstructions(useZProbe, false),
 				false));
 
 			string lowPrecisionLabel = "Low Precision".Localize();

@@ -60,7 +60,7 @@ namespace MatterControl.Tests.MatterControl
 				levelingData.SampledPositions.Add(new Vector3(0, 10, 0));
 				levelingData.SampledPositions.Add(new Vector3(10, 10, 10));
 
-				MeshLevlingFunctions levelingFunctionsMesh2x2 = new MeshLevlingFunctions(printerSettings, 2, 2, levelingData);
+				LevelingFunctions levelingFunctionsMesh2x2 = new LevelingFunctions(printerSettings, levelingData);
 
 				// check on points
 				AssertMeshLevelPoint(new Vector3(0, 0, 0), new Vector3(0, 0, 0), levelingFunctionsMesh2x2);
@@ -101,7 +101,7 @@ namespace MatterControl.Tests.MatterControl
 				levelingData.SampledPositions.Add(new Vector3(5, 10, 5));
 				levelingData.SampledPositions.Add(new Vector3(10, 10, 10));
 
-				MeshLevlingFunctions levelingFunctionsMesh2x2 = new MeshLevlingFunctions(printerSettings, 3, 3, levelingData);
+				LevelingFunctions levelingFunctionsMesh2x2 = new LevelingFunctions(printerSettings, levelingData);
 
 				// check on points
 				AssertMeshLevelPoint(new Vector3(0, 0, 0), new Vector3(0, 0, 0), levelingFunctionsMesh2x2);
@@ -128,7 +128,7 @@ namespace MatterControl.Tests.MatterControl
 
 		}
 
-		void AssertMeshLevelPoint(Vector3 testUnleveled, Vector3 controlLeveled, MeshLevlingFunctions levelingFunctions)
+		void AssertMeshLevelPoint(Vector3 testUnleveled, Vector3 controlLeveled, LevelingFunctions levelingFunctions)
 		{
 			Vector3 testLeveled = levelingFunctions.GetPositionWithZOffset(testUnleveled);
 			Assert.AreEqual(testLeveled.X, testUnleveled.X, .001, "We don't adjust the x or y on mesh leveling");

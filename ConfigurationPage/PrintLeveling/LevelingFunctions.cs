@@ -41,13 +41,13 @@ using MIConvexHull;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class MeshLevlingFunctions : IDisposable
+	public class LevelingFunctions : IDisposable
 	{
 		private Vector3 lastDestinationWithLevelingApplied = new Vector3();
 
 		PrinterSettings printerSettings;
 
-		public MeshLevlingFunctions(PrinterSettings printerSettings, int gridWidth, int gridHeight, PrintLevelingData levelingData)
+		public LevelingFunctions(PrinterSettings printerSettings, PrintLevelingData levelingData)
 		{
 			this.printerSettings = printerSettings;
 			this.SampledPositions = new List<Vector3>(levelingData.SampledPositions);

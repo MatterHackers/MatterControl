@@ -35,21 +35,25 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class LevelWizard3x3Mesh : LevelWizardBase
+	public class LevelWizard5x5Mesh : LevelWizardBase
 	{
-		public LevelWizard3x3Mesh(PrinterConfig printer, LevelWizardBase.RuningState runningState)
+		public LevelWizard5x5Mesh(PrinterConfig printer, LevelWizardBase.RuningState runningState)
 			: base(printer, runningState)
 		{
 		}
 
-		public override int ProbeCount => 9;
+		public override int ProbeCount => 25;
 
 		public override IEnumerable<Vector2> GetPrintLevelPositionToSample()
 		{
 			yield return GetPosition(0, 0);
 			yield return GetPosition(1, 0);
 			yield return GetPosition(2, 0);
+			yield return GetPosition(3, 0);
+			yield return GetPosition(4, 0);
 
+			yield return GetPosition(4, 1);
+			yield return GetPosition(3, 1);
 			yield return GetPosition(2, 1);
 			yield return GetPosition(1, 1);
 			yield return GetPosition(0, 1);
@@ -57,6 +61,20 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			yield return GetPosition(0, 2);
 			yield return GetPosition(1, 2);
 			yield return GetPosition(2, 2);
+			yield return GetPosition(3, 2);
+			yield return GetPosition(4, 2);
+
+			yield return GetPosition(4, 3);
+			yield return GetPosition(3, 3);
+			yield return GetPosition(2, 3);
+			yield return GetPosition(1, 3);
+			yield return GetPosition(0, 3);
+
+			yield return GetPosition(0, 4);
+			yield return GetPosition(1, 4);
+			yield return GetPosition(2, 4);
+			yield return GetPosition(3, 4);
+			yield return GetPosition(4, 4);
 		}
 
 		private Vector2 GetPosition(int xIndex, int yIndex)
@@ -78,10 +96,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					break;
 
 				case 1:
-					samplePosition.X = printCenter.X;
+					samplePosition.X = printCenter.X - (bedSize.X / 2) * .4;
 					break;
 
 				case 2:
+					samplePosition.X = printCenter.X;
+					break;
+
+				case 3:
+					samplePosition.X = printCenter.X + (bedSize.X / 2) * .4;
+					break;
+
+				case 4:
 					samplePosition.X = printCenter.X + (bedSize.X / 2) * .8;
 					break;
 
@@ -96,10 +122,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					break;
 
 				case 1:
-					samplePosition.Y = printCenter.Y;
+					samplePosition.Y = printCenter.Y - (bedSize.Y / 2) * .4;
 					break;
 
 				case 2:
+					samplePosition.Y = printCenter.Y;
+					break;
+
+				case 3:
+					samplePosition.Y = printCenter.Y + (bedSize.Y / 2) * .4;
+					break;
+
+				case 4:
 					samplePosition.Y = printCenter.Y + (bedSize.Y / 2) * .8;
 					break;
 
