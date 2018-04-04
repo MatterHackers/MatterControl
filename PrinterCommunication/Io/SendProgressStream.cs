@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				}
 				else
 				{
-					return String.Format("M117 Printing: {0:0}%", printer.Connection.activePrintTask.PercentDone);
+					return String.Format("M117 Printing - {0:0}%", printer.Connection.activePrintTask.PercentDone);
 				}
 			}
 
