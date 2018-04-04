@@ -46,6 +46,7 @@ using System.Collections.ObjectModel;
 
 namespace MatterHackers.MatterControl
 {
+	using System.ComponentModel;
 	using System.IO.Compression;
 	using System.Net;
 	using System.Reflection;
@@ -1686,10 +1687,12 @@ namespace MatterHackers.MatterControl
 			};
 			container.AddChild(bedButton);
 
+			RadioIconButton printAreaButton = null;
+
 			if (printer.Bed.BuildHeight > 0
 				&& printer?.ViewState.ViewMode != PartViewMode.Layers2D)
 			{
-				var printAreaButton = new RadioIconButton(AggContext.StaticData.LoadIcon("print_area.png", IconColor.Theme), theme)
+				printAreaButton = new RadioIconButton(AggContext.StaticData.LoadIcon("print_area.png", IconColor.Theme), theme)
 				{
 					Name = "Bed Button",
 					ToolTipText = "Show Print Area".Localize(),
@@ -1706,7 +1709,38 @@ namespace MatterHackers.MatterControl
 				container.AddChild(printAreaButton);
 			}
 
+			this. BindBedOptions(container, bedButton, printAreaButton, printer.Bed.RendererOptions);
+
 			return container;
+		}
+
+		public void BindBedOptions(GuiWidget container, ICheckbox bedButton, ICheckbox printAreaButton, View3DConfig renderOptions)
+		{
+			PropertyChangedEventHandler syncProperties = (s, e) =>
+			{
+				switch (e.PropertyName)
+				{
+					case nameof(renderOptions.RenderBed):
+						bedButton.Checked = renderOptions.RenderBed;
+						break;
+
+					case nameof(renderOptions.RenderBuildVolume) when printAreaButton != null:
+						printAreaButton.Checked = renderOptions.RenderBuildVolume;
+						break;
+				}
+			};
+
+			renderOptions.PropertyChanged += syncProperties;
+
+			container.Closed += (s, e) =>
+			{
+				renderOptions.PropertyChanged -= syncProperties;
+			};
+		}
+
+		private void RendererOptions_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			throw new NotImplementedException();
 		}
 
 		public class CloudSyncEventArgs : EventArgs

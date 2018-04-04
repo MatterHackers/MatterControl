@@ -33,6 +33,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -101,6 +102,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					item.Name = inlineTitleEdit.Text;
 				}
 			};
+
+			this.AddChild(new RoundedToggleSwitch(theme)
+			{
+				Width = 100,
+				Height = 34
+			});
 
 			scrollableContent = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{

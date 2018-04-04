@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			}
 			else if (enforceGutter)
 			{
-				// Add an icon place holder to get consistent label indenting on items lacking icons 
+				// Add an icon placeholder to get consistent label indenting on items lacking icons
 				this.AddChild(new GuiWidget()
 				{
 					Width = 24 + 12,
@@ -82,17 +82,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		public GuiWidget SettingsControl { get; }
 
-		private static CheckBox CreateToggleSwitch(ToggleSwitchConfig toggleSwitchConfig, Color textColor)
+		private static GuiWidget CreateToggleSwitch(ToggleSwitchConfig toggleSwitchConfig, Color textColor)
 		{
 			if (toggleSwitchConfig == null)
 			{
 				return null;
 			}
 
-			var toggleSwitch = ImageButtonFactory.CreateToggleSwitch(toggleSwitchConfig.Checked, textColor);
-			toggleSwitch.VAnchor = VAnchor.Center;
-			toggleSwitch.Name = toggleSwitchConfig.Name;
-			toggleSwitch.Margin = new BorderDouble(left: 16);
+			var toggleSwitch = new RoundedToggleSwitch(ApplicationController.Instance.Theme)
+			{
+				VAnchor = VAnchor.Center,
+				Checked = toggleSwitchConfig.Checked,
+				Name = toggleSwitchConfig.Name,
+				Margin = new BorderDouble(left: 16),
+			};
+
 			toggleSwitch.CheckedStateChanged += (sender, e) =>
 			{
 				toggleSwitchConfig.ToggleAction?.Invoke(toggleSwitch.Checked);

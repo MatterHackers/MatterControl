@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}, ref unregisterEvents);
 
 			printer.Bed.LoadedGCodeChanged += Bed_LoadedGCodeChanged;
-			printer.Bed.RendererOptions.GCodeOptionsChanged += RendererOptions_GCodeOptionsChanged;
+			printer.Bed.RendererOptions.PropertyChanged += RendererOptions_PropertyChanged;
 		}
 
 		private void RefreshGCodeDetails(PrinterConfig printer)
@@ -109,13 +109,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						VAnchor = VAnchor.Fit
 					});
 
+				bool renderSpeeds = printer.Bed.RendererOptions.GCodeLineColorStyle == "Speeds";
+
 				loadedGCodeSection.AddChild(
 					speedsWidget = new SectionWidget(
 						"Speeds".Localize(),
 						new SpeedsLegend(sceneContext.LoadedGCode, theme, pointSize: theme.FontSize12)
 						{
 							HAnchor = HAnchor.Stretch,
-							Visible = sceneContext.RendererOptions.RenderSpeeds,
+							Visible = renderSpeeds,
 							Padding = new BorderDouble(15, 4)
 						},
 						theme)
@@ -124,7 +126,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						VAnchor = VAnchor.Fit
 					});
 
-				speedsWidget.Visible = printer.Bed.RendererOptions.RenderSpeeds;
+				speedsWidget.Visible = renderSpeeds;
 			}
 
 			// Enforce panel padding in sidebar
@@ -141,17 +143,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			UiThread.RunOnIdle(() => this.RefreshGCodeDetails(printer));
 		}
 
-		private void RendererOptions_GCodeOptionsChanged(object sender, EventArgs e)
+		private void RendererOptions_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if (speedsWidget != null)
+			if (speedsWidget != null
+				&& e.PropertyName == "GCodeLineColorStyle")
 			{
-				speedsWidget.Visible = printer.Bed.RendererOptions.RenderSpeeds;
+				speedsWidget.Visible = printer.Bed.RendererOptions.GCodeLineColorStyle == "Speeds";
 			}
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			printer.Bed.RendererOptions.GCodeOptionsChanged -= RendererOptions_GCodeOptionsChanged;
+			printer.Bed.RendererOptions.PropertyChanged -= RendererOptions_PropertyChanged;
 			printer.Bed.LoadedGCodeChanged -= Bed_LoadedGCodeChanged;
 
 			unregisterEvents?.Invoke(this, null);

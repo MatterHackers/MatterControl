@@ -105,8 +105,8 @@ namespace MatterHackers.MatterControl.ActionBar
 				},
 				enforceGutter: false));
 
-			heatToggle = hotendRow.Descendants<CheckBox>().FirstOrDefault();
-			heatToggle.Name = "Toggle Heater";
+			//heatToggle = hotendRow.Descendants<CheckBox>().FirstOrDefault();
+			//heatToggle.Name = "Toggle Heater";
 
 			int tabIndex = 0;
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);

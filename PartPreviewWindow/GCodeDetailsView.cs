@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -239,24 +240,53 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					})
 			});
 
-			foreach(var option in viewOptions)
+			var optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				if (option.IsVisible())
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			};
+			this.AddChild(optionsContainer);
+
+			void BuildMenu()
+			{
+				foreach (var option in viewOptions)
 				{
-					this.AddChild(
-						new SettingsItem(
-							option.Title,
-							theme.Colors.PrimaryTextColor,
-							new SettingsItem.ToggleSwitchConfig()
-							{
-								Name = option.Title + " Toggle",
-								Checked = option.IsChecked(),
-								ToggleAction = option.SetValue
-							},
-							enforceGutter: false)
-					);
+					if (option.IsVisible())
+					{
+						optionsContainer.AddChild(
+							new SettingsItem(
+								option.Title,
+								theme.Colors.PrimaryTextColor,
+								new SettingsItem.ToggleSwitchConfig()
+								{
+									Name = option.Title + " Toggle",
+									Checked = option.IsChecked(),
+									ToggleAction = option.SetValue
+								},
+								enforceGutter: false)
+						);
+					}
 				}
 			}
+
+			BuildMenu();
+
+			PropertyChangedEventHandler syncProperties = (s, e) =>
+			{
+				if (e.PropertyName == nameof(gcodeOptions.RenderBed)
+					|| e.PropertyName == nameof(gcodeOptions.RenderBuildVolume))
+				{
+					optionsContainer.CloseAllChildren();
+					BuildMenu();
+				}
+			};
+
+			gcodeOptions.PropertyChanged += syncProperties;
+
+			optionsContainer.Closed += (s, e) =>
+			{
+				gcodeOptions.PropertyChanged -= syncProperties;
+			};
 		}
 
 		private void SwitchColorModes_Click(object sender, MouseEventArgs e)
