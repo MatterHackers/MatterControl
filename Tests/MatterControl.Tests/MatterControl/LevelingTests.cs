@@ -48,7 +48,9 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
+
 			var printerSettings = ActiveSliceSettings.Instance;
+			printerSettings.SetValue(SettingsKey.z_probe_z_offset, "0");
 			// a 2 x 2 mesh that goes form 0 on the left to 10 on the right
 			{
 				var levelingData = new PrintLevelingData();
