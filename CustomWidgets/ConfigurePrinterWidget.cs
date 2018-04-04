@@ -68,6 +68,7 @@ namespace MatterHackers.MatterControl
 			this.AddChild(
 				sliceSettingsTabView = new SliceSettingsTabView(
 					settingsContext,
+					"ConfigurePrinter",
 					printer,
 					"Printer",
 					theme,
