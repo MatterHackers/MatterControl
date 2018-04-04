@@ -471,7 +471,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& this.DragDropObject != null)
 			{
 				// Move the DropDropObject the target item
-				DragSelectedObject(localMousePostion: this.TransformFromParentSpace(topMostParent, screenSpaceMousePosition));
+				DragSelectedObject(localMousePosition: this.TransformFromParentSpace(topMostParent, screenSpaceMousePosition));
 			}
 		}
 
@@ -925,9 +925,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
 		}
 
-		public void DragSelectedObject(Vector2 localMousePostion)
+		public void DragSelectedObject(Vector2 localMousePosition)
 		{
-			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, localMousePostion);
+			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, localMousePosition);
 			Ray ray = this.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
 			IntersectInfo info = CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);

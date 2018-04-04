@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class LevelWizard3Point : LevelWizardBase
 	{
-		public LevelWizard3Point(PrinterConfig printer, LevelWizardBase.RuningState runningState)
+		public LevelWizard3Point(PrinterConfig printer, LevelWizardBase.RunningState runningState)
 			: base(printer, runningState)
 		{
 		}

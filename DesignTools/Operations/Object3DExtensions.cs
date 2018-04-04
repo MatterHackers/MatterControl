@@ -180,11 +180,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return ApplyAtPosition(currentTransform, transformToApply, boundsToApplyTo.Center);
 		}
 
-		public static Matrix4X4 ApplyAtPosition(Matrix4X4 currentTransform, Matrix4X4 transformToApply, Vector3 postionToApplyAt)
+		public static Matrix4X4 ApplyAtPosition(Matrix4X4 currentTransform, Matrix4X4 transformToApply, Vector3 positionToApplyAt)
 		{
-			currentTransform *= Matrix4X4.CreateTranslation(-postionToApplyAt);
+			currentTransform *= Matrix4X4.CreateTranslation(-positionToApplyAt);
 			currentTransform *= transformToApply;
-			currentTransform *= Matrix4X4.CreateTranslation(postionToApplyAt);
+			currentTransform *= Matrix4X4.CreateTranslation(positionToApplyAt);
 
 			return currentTransform;
 		}

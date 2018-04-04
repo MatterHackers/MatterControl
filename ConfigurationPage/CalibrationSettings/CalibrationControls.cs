@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						LevelWizardBase.ShowPrintLevelWizard(printer, LevelWizardBase.RuningState.UserRequestedCalibration);
+						LevelWizardBase.ShowPrintLevelWizard(printer, LevelWizardBase.RunningState.UserRequestedCalibration);
 					});
 				};
 

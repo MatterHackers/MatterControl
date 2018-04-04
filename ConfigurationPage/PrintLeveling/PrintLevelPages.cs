@@ -226,7 +226,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// Invoke setter forcing persistence of leveling data
 			printer.Settings.Helpers.SetPrintLevelingData(levelingData, true);
-			PrintLevelingStream.AlowLeveling = true;
+			PrintLevelingStream.AllowLeveling = true;
 			printer.Settings.Helpers.DoPrintLeveling(true);
 
 			if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
@@ -451,7 +451,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingActive()
 		{
 			// always make sure we don't have print leveling turned on
-			PrintLevelingStream.AlowLeveling = false;
+			PrintLevelingStream.AllowLeveling = false;
 
 			base.PageIsBecomingActive();
 			this.Parents<SystemWindow>().First().KeyDown += TopWindowKeyDown;
@@ -563,7 +563,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					probePositions[probePositionsBeingEditedIndex].position.X = probeStartPosition.X;
 					probePositions[probePositionsBeingEditedIndex].position.Y = probeStartPosition.Y;
-					// smoothie returns the position relative to the start postion
+					// smoothie returns the position relative to the start position
 					double reportedProbeZ = 0;
 					GCodeFile.GetFirstNumberAfter("Z:", currentEvent.Data, ref reportedProbeZ);
 					sampleRead = probeStartPosition.Z - reportedProbeZ;
@@ -602,7 +602,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingActive()
 		{
 			// always make sure we don't have print leveling turned on
-			PrintLevelingStream.AlowLeveling = false;
+			PrintLevelingStream.AllowLeveling = false;
 
 			base.PageIsBecomingActive();
 
