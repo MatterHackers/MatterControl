@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				case CommunicationStates.Connected:
 					if (levelingData != null && printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
-						&& !levelingData.HasBeenRunAndEnabled())
+						&& !levelingData.HasBeenRunAndEnabled(printer))
 					{
 						SetChildVisible(finishSetupButton, true);
 					}
@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				default:
 					if (levelingData != null && printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
-						&& !levelingData.HasBeenRunAndEnabled())
+						&& !levelingData.HasBeenRunAndEnabled(printer))
 					{
 						SetChildVisible(finishSetupButton, false);
 					}

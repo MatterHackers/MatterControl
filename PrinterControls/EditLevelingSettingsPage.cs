@@ -129,7 +129,6 @@ namespace MatterHackers.MatterControl
 					}
 
 					printer.Settings.Helpers.SetPrintLevelingData(newLevelingData, false);
-					printer.Settings.Helpers.UpdateLevelSettings();
 					this.WizardWindow.Close();
 				});
 			};

@@ -41,6 +41,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MeshVisualizer;
@@ -764,6 +765,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				// this way we can use the common pattern without errer
 				return (T)(object)this.GetValue(settingsKey);
+			}
+			else if(typeof(T) == typeof(LevelingSystem))
+			{
+				switch(this.GetValue(settingsKey))
+				{
+					case "3 Point Plane":
+						return (T)(object)(LevelingSystem.Probe3Points);
+					case "7 Point Disk":
+						return (T)(object)(LevelingSystem.Probe7PointRadial);
+					case "13 Point Disk":
+						return (T)(object)(LevelingSystem.Probe13PointRadial);
+					case "3x3 Mesh":
+						return (T)(object)(LevelingSystem.Probe3x3Mesh);
+					default:
+#if DEBUG
+						throw new NotImplementedException();
+#endif
+				}
+
+				return (T)(object)(LevelingSystem.Probe3Points);
 			}
 			else if (typeof(T) == typeof(bool))
 			{

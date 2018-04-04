@@ -219,6 +219,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// Invoke setter forcing persistence of leveling data
 			printer.Settings.Helpers.SetPrintLevelingData(levelingData, true);
+			PrintLevelingStream.AlowLeveling = true;
 			printer.Settings.Helpers.DoPrintLeveling(true);
 
 			if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
@@ -443,7 +444,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingActive()
 		{
 			// always make sure we don't have print leveling turned on
-			printer.Settings.Helpers.DoPrintLeveling(false);
+			PrintLevelingStream.AlowLeveling = false;
 
 			base.PageIsBecomingActive();
 			this.Parents<SystemWindow>().First().KeyDown += TopWindowKeyDown;
@@ -594,7 +595,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingActive()
 		{
 			// always make sure we don't have print leveling turned on
-			printer.Settings.Helpers.DoPrintLeveling(false);
+			PrintLevelingStream.AlowLeveling = false;
 
 			base.PageIsBecomingActive();
 
@@ -649,7 +650,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		protected Vector3 probeStartPosition;
 
 		public GetCoarseBedHeight(PrinterConfig printer, WizardControl container, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
-			: base(printer, container, pageDescription, levelingStrings.CoarseInstruction1, levelingStrings.CoarseInstruction2, 1, probePositions, probePositionsBeingEditedIndex)
+			: base(printer, container, pageDescription, "Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.".Localize(),
+				  levelingStrings.CoarseInstruction2, 1, probePositions, probePositionsBeingEditedIndex)
 		{
 			this.probeStartPosition = probeStartPosition;
 		}

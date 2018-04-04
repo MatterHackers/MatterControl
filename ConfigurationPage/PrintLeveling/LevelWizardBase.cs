@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
@@ -121,14 +122,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				if (printer.Settings.Helpers.UseZProbe())
 				{
-					var stepString = string.Format("{0} {1} {2} {3}:", "Step".Localize(), i + 1, levelingStrings.stepTextEnd, ProbeCount);
+					var stepString = $"{"Step".Localize()} {i + 1} {"of".Localize()} {ProbeCount}:";
 					printLevelWizard.AddPage(new AutoProbeFeedback(printer, printLevelWizard, new Vector3(validProbePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", stepString, positionLabel, i + 1, autoCalibrateLabel), probePositions, i));
 				}
 				else
 				{
-					printLevelWizard.AddPage(new GetCoarseBedHeight(printer, printLevelWizard, new Vector3(validProbePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, lowPrecisionLabel), probePositions, i, levelingStrings));
-					printLevelWizard.AddPage(new GetFineBedHeight(printer, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, medPrecisionLabel), probePositions, i, levelingStrings));
-					printLevelWizard.AddPage(new GetUltraFineBedHeight(printer, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, highPrecisionLabel), probePositions, i, levelingStrings));
+					printLevelWizard.AddPage(new GetCoarseBedHeight(printer, printLevelWizard, new Vector3(validProbePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(TotalSteps), positionLabel, i + 1, lowPrecisionLabel), probePositions, i, levelingStrings));
+					printLevelWizard.AddPage(new GetFineBedHeight(printer, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(TotalSteps), positionLabel, i + 1, medPrecisionLabel), probePositions, i, levelingStrings));
+					printLevelWizard.AddPage(new GetUltraFineBedHeight(printer, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(TotalSteps), positionLabel, i + 1, highPrecisionLabel), probePositions, i, levelingStrings));
 				}
 				i++;
 			}
@@ -140,7 +141,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public abstract int ProbeCount { get; }
 		public int TotalSteps => ProbeCount * 3;
-		protected int totalSteps { get; private set; }
 
 		public static void ShowPrintLevelWizard(PrinterConfig printer)
 		{
@@ -159,9 +159,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			if (printLevelWizardWindow == null)
 			{
+				// turn off print leveling
+				PrintLevelingStream.AlowLeveling = false;
+
 				printLevelWizardWindow = LevelWizardBase.CreateAndShowWizard(printer, runningState);
+
 				printLevelWizardWindow.Closed += (sender, e) =>
 				{
+					// If leveling was on when we started, make sure it is on when we are done.
+					PrintLevelingStream.AlowLeveling = true;
+
 					printLevelWizardWindow = null;
 
 					// make sure we raise the probe on close
@@ -185,11 +192,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private static LevelWizardBase CreateAndShowWizard(PrinterConfig printer, LevelWizardBase.RuningState runningState)
 		{
-			// turn off print leveling
-			printer.Settings.Helpers.DoPrintLeveling(false);
 			// clear any data that we are going to be acquiring (sampled positions, after z home offset)
-			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
-			levelingData.SampledPositions.Clear();
+			PrintLevelingData levelingData = new PrintLevelingData()
+			{
+				LevelingSystem = printer.Settings.GetValue<LevelingSystem>(SettingsKey.print_leveling_solution)
+			};
+
 			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
 
 			LevelWizardBase printLevelWizardWindow;

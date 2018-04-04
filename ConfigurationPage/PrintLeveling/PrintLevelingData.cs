@@ -22,7 +22,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 		}
 
-		public bool HasBeenRunAndEnabled()
+		public bool HasBeenRunAndEnabled(PrinterConfig printer)
 		{
 			if(!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
 			{
@@ -41,6 +41,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					return false;
 				}
+			}
+
+			if(printer.Settings.GetValue<LevelingSystem>(SettingsKey.print_leveling_solution) != LevelingSystem)
+			{
+				return false;
 			}
 
 			switch (LevelingSystem)

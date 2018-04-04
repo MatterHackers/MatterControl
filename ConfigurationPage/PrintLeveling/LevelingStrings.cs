@@ -42,7 +42,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public string materialStepText = "Select Material".Localize();
 		public string materialPageInstructions1 = "The temperature of the bed can have a significant effect on the quality of leveling.";
 		public string materialPageInstructions2 = "Please select the material you will be printing, so we can adjust the temperature before calibrating.";
-		public string stepTextEnd = "of".Localize();
 		private string doneLine1 = "Congratulations!";
 		private string doneLine1b = "Auto Print Leveling is now configured and enabled.".Localize();
 		private string doneLine2 = "Remove the paper".Localize();
@@ -117,7 +116,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		string setZHeightRaise = "Press [Z+] once to release the paper".Localize();
 		string setZHeightNext = "Finally click 'Next' to continue.".Localize();
 
-		public string CoarseInstruction1 => "Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.".Localize();
 		public string CoarseInstruction2
 		{
 			get
@@ -141,7 +139,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public string GetStepString(int totalSteps)
 		{
-			return "{0} {1} {2} {3}:".FormatWith("Step".Localize(), stepNumber++, stepTextEnd, totalSteps);
+			return $"{"Step".Localize()} {stepNumber++} {"of".Localize()} {totalSteps}:";
 		}
 
 		public string WelcomeText(int numberOfSteps, int numberOfMinutes)

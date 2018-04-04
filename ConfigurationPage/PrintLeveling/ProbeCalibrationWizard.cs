@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			int i = 0;
 			// do the automatic probing of the center position
-			var stepString = string.Format($"{"Step".Localize()} {i + 1} {levelingStrings.stepTextEnd} {3}:");
+			var stepString = $"{"Step".Localize()} {i + 1} {"of".Localize()} 3:";
 			printLevelWizard.AddPage(new AutoProbeFeedback(printer, printLevelWizard, 
 				new Vector3(probePosition, startProbeHeight), 
 				$"{stepString} {"Position".Localize()} {i + 1} - {"Auto Calibrate".Localize()}", 
@@ -120,9 +120,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			if (probeCalibrationWizardWindow == null)
 			{
-				bool levelingWasOn = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
 				// turn off print leveling
-				printer.Settings.Helpers.DoPrintLeveling(false);
+				PrintLevelingStream.AlowLeveling = false;
 
 				probeCalibrationWizardWindow = new ProbeCalibrationWizard(printer);
 
@@ -131,10 +130,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				probeCalibrationWizardWindow.Closed += (s, e) =>
 				{
 					// If leveling was on when we started, make sure it is on when we are done.
-					if (levelingWasOn)
-					{
-						printer.Settings.Helpers.DoPrintLeveling(true);
-					}
+					PrintLevelingStream.AlowLeveling = true;
 
 					probeCalibrationWizardWindow = null;
 

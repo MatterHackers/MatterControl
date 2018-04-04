@@ -821,7 +821,7 @@ namespace MatterHackers.MatterControl
 					|| printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled)))
 				{
 					PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
-					if (levelingData?.HasBeenRunAndEnabled() != true)
+					if (levelingData?.HasBeenRunAndEnabled(printer) != true)
 					{
 						UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(printer));
 					}
@@ -1451,7 +1451,7 @@ namespace MatterHackers.MatterControl
 					|| ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
 				{
 					PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-					if (levelingData?.HasBeenRunAndEnabled() != true)
+					if (levelingData?.HasBeenRunAndEnabled(printer) != true)
 					{
 						LevelWizardBase.ShowPrintLevelWizard(printer);
 						return;

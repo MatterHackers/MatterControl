@@ -42,11 +42,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public PrintLevelingStream(PrinterSettings printerSettings, GCodeStream internalStream, bool activePrinting)
 			: base(internalStream)
 		{
+			// always reset this when we construct
+			AlowLeveling = true;
 			this.printerSettings = printerSettings;
 			this.activePrinting = activePrinting;
 		}
 
-		public static bool Enabled { get; set; } = true;
+		public static bool AlowLeveling { get; set; }
+
 		public PrinterMove LastDestination { get { return lastDestination; } }
 
 		public MeshLevlingFunctions GetLevelingFunctions(PrinterSettings printerSettings, int gridWidth, int gridHeight, PrintLevelingData levelingData)
@@ -70,7 +73,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			string lineFromChild = base.ReadLine();
 
 			if (lineFromChild != null
-				&& PrintLevelingStream.Enabled
+				&& AlowLeveling
 				&& printerSettings.GetValue<bool>(SettingsKey.print_leveling_enabled)
 				&& !printerSettings.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
