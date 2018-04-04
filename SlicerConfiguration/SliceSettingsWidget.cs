@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -40,7 +41,7 @@ using MatterHackers.MatterControl.SetupWizard;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
-{ 
+{
 	public class SliceSettingsWidget : FlowLayoutWidget
 	{
 		internal PresetsToolbar settingsControlBar;
@@ -90,6 +91,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.AddChild(
 				sliceSettingsTabView = new SliceSettingsTabView(
 					settingsContext,
+					"SliceSettings",
 					printer,
 					this.UserLevel,
 					theme,
@@ -176,6 +178,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class SliceSettingsTabView : SimpleTabs
 	{
+		// Sanitize group names for use as keys in db fields
+		private static Regex nameSanitizer = new Regex("[^a-zA-Z0-9-]", RegexOptions.Compiled);
+
 		private int tabIndexForItem = 0;
 		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
 		private ThemeConfig theme;
@@ -190,13 +195,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private TextWidget filteredItemsHeading;
 		private EventHandler unregisterEvents;
 		private Action<PopupMenu> externalExtendMenu;
+		private string scopeName;
 
-		public SliceSettingsTabView(SettingsContext settingsContext, PrinterConfig printer, string UserLevel, ThemeConfig theme, bool isPrimarySettingsView, string databaseMRUKey, Action<PopupMenu> extendPopupMenu = null)
+		public SliceSettingsTabView(SettingsContext settingsContext, string scopeName, PrinterConfig printer, string UserLevel, ThemeConfig theme, bool isPrimarySettingsView, string databaseMRUKey, Action<PopupMenu> extendPopupMenu = null)
 			: base (theme)
 		{
 			this.VAnchor = VAnchor.Stretch;
 			this.HAnchor = HAnchor.Stretch;
 			this.externalExtendMenu = extendPopupMenu;
+			this.scopeName = scopeName;
 
 			var overflowBar = this.TabBar as OverflowBar;
 			overflowBar.ExtendOverflowMenu = this.ExtendOverflowMenu;
@@ -319,11 +326,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (groupContent.Descendants<SliceSettingsRow>().Any())
 					{
 						categoryPanel.AddChild(groupContent);
+
+						// TODO: Determine if should be executed on first run and never again, or resolve how it stomping on user preferences would be acceptable?
+						// Collapse all but first
+						/*
 						if(groupContent is SectionWidget sectionWidget)
 						{
 							sectionWidget.Checkbox.Checked = first;
 							first = false;
-						}
+						}*/
 					}
 				}
 
@@ -407,11 +418,33 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				ref unregisterEvents);
 		}
 
+		public enum ExpansionMode { Expanded, Collapsed }
+
+		public void ForceExpansionMode(ExpansionMode expansionMode)
+		{
+			foreach (var sectionWidget in this.ActiveTab.TabContent.Descendants<SectionWidget>())
+			{
+				sectionWidget.Checkbox.Checked = expansionMode == ExpansionMode.Expanded;
+			}
+		}
+
 		private void ExtendOverflowMenu(PopupMenu popupMenu)
 		{
 			popupMenu.CreateMenuItem("View Just My Settings".Localize()).Click += (s, e) =>
 			{
 				this.FilterToOverrides();
+			};
+
+			popupMenu.CreateHorizontalLine();
+
+			popupMenu.CreateMenuItem("Expand All".Localize()).Click += (s, e) =>
+			{
+				this.ForceExpansionMode(ExpansionMode.Expanded);
+			};
+
+			popupMenu.CreateMenuItem("Collapse All".Localize()).Click += (s, e) =>
+			{
+				this.ForceExpansionMode(ExpansionMode.Collapsed);
 			};
 
 			popupMenu.CreateHorizontalLine();
@@ -436,7 +469,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Name = "GroupPanel" + groupPanelCount++
 			};
 
-			var sectionWidget = new SectionWidget(group.Name.Localize(), groupPanel, theme).ApplyBoxStyle();
+			string userSettingsKey = string.Format(
+				"{0}_{1}_{2}",
+				scopeName,
+				nameSanitizer.Replace(group.Category.Name, ""),
+				nameSanitizer.Replace(group.Name, ""));
+
+			var isExpanded = UserSettings.Instance.get(userSettingsKey) == "1";
+
+			var sectionWidget = new SectionWidget(group.Name.Localize(), groupPanel, theme, expanded: isExpanded).ApplyBoxStyle();
+			sectionWidget.Checkbox.CheckedStateChanged += (s, e) =>
+			{
+				UserSettings.Instance.set(userSettingsKey, sectionWidget.Checkbox.Checked ? "1" : "0");
+			};
 
 			foreach (var subGroup in group.SubGroups)
 			{
