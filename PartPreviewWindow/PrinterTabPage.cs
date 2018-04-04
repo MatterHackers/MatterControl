@@ -467,7 +467,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					"Printer".Localize(),
 					new ConfigurePrinterWidget(sliceSettingsWidget.settingsContext, printer, theme)
 					{
-						BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Stretch,
 					});
