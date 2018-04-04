@@ -66,11 +66,13 @@ namespace MatterHackers.MatterControl
 						{
 							vertex.Position = vertex.Position + new Vector3(0, 0, displayVolumeToBuild.Z / 2);
 						}
+						var bspTree = FaceBspTree.Create(buildVolume);
+						buildVolume.FaceBspTree = bspTree;
 					}
 
 					bedplateImage = CreateRectangularBedGridImage(printer);
 
-					ApplyOemBedImage(bedplateImage);
+					ApplyOemBedImage(bedplateImage, printer);
 
 					printerBed = PlatonicSolids.CreateCube(displayVolumeToBuild.X, displayVolumeToBuild.Y, 1.8);
 					{
@@ -92,7 +94,7 @@ namespace MatterHackers.MatterControl
 
 						bedplateImage = CreateCircularBedGridImage(printer);
 
-						ApplyOemBedImage(bedplateImage);
+						ApplyOemBedImage(bedplateImage, printer);
 
 						printerBed = VertexSourceToMesh.Extrude(new Ellipse(new Vector2(), displayVolumeToBuild.X / 2, displayVolumeToBuild.Y / 2), 1.8);
 						{
@@ -129,7 +131,7 @@ namespace MatterHackers.MatterControl
 					vertex.Position = vertex.Position - new Vector3(-printer.Bed.BedCenter, 2.2);
 				}
 			}
-			
+
 			return (printerBed, buildVolume);
 		}
 
@@ -308,7 +310,7 @@ namespace MatterHackers.MatterControl
 			return bedplateImage;
 		}
 
-		private void ApplyOemBedImage(ImageBuffer bedImage)
+		private void ApplyOemBedImage(ImageBuffer bedImage, PrinterConfig printer)
 		{
 			// Add an oem/watermark image to the bedplate grid
 			string imagePathAndFile = Path.Combine("OEMSettings", "bedimage.png");
@@ -319,12 +321,16 @@ namespace MatterHackers.MatterControl
 					watermarkImage = AggContext.StaticData.LoadImage(imagePathAndFile);
 				}
 
+				var xYRatio = printer.Bed.ViewerVolume.X / (double)printer.Bed.ViewerVolume.Y;
+				var scaledWidth = watermarkImage.Width;
+				var scaledHeight = watermarkImage.Height * xYRatio;
 				Graphics2D bedGraphics = bedImage.NewGraphics2D();
 				bedGraphics.Render(
-					watermarkImage, 
+					watermarkImage,
 					new Vector2(
-						(bedImage.Width - watermarkImage.Width) / 2, 
-						(bedImage.Height - watermarkImage.Height) / 2));
+						(bedImage.Width - scaledWidth) / 2,
+						(bedImage.Height - scaledHeight) / 2),
+					scaledWidth, scaledHeight);
 			}
 		}
 	}

@@ -309,7 +309,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 
 				// Loop over all groups in this tab and add their content
-				bool first = true;
+				bool hasVisibleSection = false;
 
 				foreach (var group in category.Groups)
 				{
@@ -319,23 +319,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							this.CreateOemProfileInfoRow());
 					}
 
-					var groupContent = this.CreateGroupContent(group);
+					var groupSection = this.CreateGroupSection(group);
 
-					groupContent.Name = group.Name + " Panel";
+					groupSection.Name = group.Name + " Panel";
 
-					if (groupContent.Descendants<SliceSettingsRow>().Any())
+					if (groupSection.Descendants<SliceSettingsRow>().Any())
 					{
-						categoryPanel.AddChild(groupContent);
-
-						// TODO: Determine if should be executed on first run and never again, or resolve how it stomping on user preferences would be acceptable?
-						// Collapse all but first
-						/*
-						if(groupContent is SectionWidget sectionWidget)
-						{
-							sectionWidget.Checkbox.Checked = first;
-							first = false;
-						}*/
+						categoryPanel.AddChild(groupSection);
 					}
+
+					hasVisibleSection = hasVisibleSection || groupSection.Checkbox.Checked;
+				}
+
+				if (!hasVisibleSection
+					&& categoryPanel.Children.OfType<SectionWidget>().FirstOrDefault() is SectionWidget sectionWidget)
+				{
+					sectionWidget.Checkbox.Checked = true;
 				}
 
 				if (categoryPanel.Descendants<SliceSettingsRow>().Any())
@@ -422,9 +421,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void ForceExpansionMode(ExpansionMode expansionMode)
 		{
-			foreach (var sectionWidget in this.ActiveTab.TabContent.Descendants<SectionWidget>())
+			bool firstItem = true;
+			foreach (var sectionWidget in this.ActiveTab.TabContent.Descendants<SectionWidget>().Reverse())
 			{
-				sectionWidget.Checkbox.Checked = expansionMode == ExpansionMode.Expanded;
+				if (firstItem)
+				{
+					sectionWidget.Checkbox.Checked = true;
+					firstItem = false;
+				}
+				else
+				{
+					sectionWidget.Checkbox.Checked = expansionMode == ExpansionMode.Expanded;
+				}
 			}
 		}
 
@@ -459,7 +467,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public Dictionary<string, UIField> UIFields => allUiFields;
 
-		public FlowLayoutWidget CreateGroupContent(SettingsOrganizer.Group group)
+		public SectionWidget CreateGroupSection(SettingsOrganizer.Group group)
 		{
 			var groupPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
