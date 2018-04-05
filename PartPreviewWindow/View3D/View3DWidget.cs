@@ -171,6 +171,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					HAnchor = HAnchor.Stretch,
 					VAnchor = VAnchor.Fit,
+					Margin = new BorderDouble(right: 5)
 				});
 
 			modelViewSidePanel.AddChild(selectedObjectPanel);

@@ -61,7 +61,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					ApplicationController.Instance.GetViewOptionButtons(printer, theme))
 				{
 					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Fit
+					VAnchor = VAnchor.Fit,
+					Margin = new BorderDouble(right: 10)
 				});
 
 			this.AddChild(
