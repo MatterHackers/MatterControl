@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.VectorMath;
@@ -43,6 +44,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private Color activeBarColor;
 
 		private bool mouseIsDown;
+		private bool mouseInBounds = false;
+
+		private double centerY;
+		private double left;
+		private double right;
+		private RoundedRect backgroundBar;
+		private int halfBarHeight;
 
 		public bool Checked { get; set; }
 
@@ -51,9 +59,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public RoundedToggleSwitch(ThemeConfig theme)
 		{
 			this.theme = theme;
-			//this.DoubleBuffer = true;
-			inactiveBarColor = theme.ResolveColor(theme.ActiveTabColor, theme.SlightShade);
-			activeBarColor = new Color(theme.Colors.PrimaryAccentColor, 100);
+			this.DoubleBuffer = true;
+			inactiveBarColor = theme.Colors.IsDarkTheme ? theme.Shade : theme.SlightShade;
+			activeBarColor = new Color(theme.Colors.PrimaryAccentColor, (theme.Colors.IsDarkTheme ? 100 : 70));
 
 			this.MinimumSize = new Vector2(50, theme.ButtonHeight);
 		}
@@ -74,6 +82,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Invalidate();
 		}
 
+		public override void OnMouseMove(MouseEventArgs mouseEvent)
+		{
+			var inBounds = this.PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y);
+
+			if (inBounds != mouseInBounds)
+			{
+				mouseInBounds = inBounds;
+				this.Invalidate();
+			}
+
+			base.OnMouseMove(mouseEvent);
+		}
 
 		public override void OnClick(MouseEventArgs mouseEvent)
 		{
@@ -98,75 +118,56 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			CheckedStateChanged?.Invoke(this, null);
 		}
 
-		public bool ShowBubble { get; set; }
-
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			base.OnDraw(graphics2D);
 
-			var center = this.LocalBounds.Center;
-
 			var toggleRadius = 10;
 			var bubbleRadius = toggleRadius * 1.7;
 
-			var halfBarHeight = 14 / 2;
-			var halfBarWidth = 36 / 2;
-
-			//var barRect = new RectangleDouble(
-			//	new Vector2(26, 0),
-			//	new Vector2(0, 14));
-
-			var left = center.X - halfBarWidth;
-			var right = center.X + halfBarWidth;
-
 			Color barColor = (this.Checked) ? activeBarColor : inactiveBarColor;
+			Color toggleColor = (this.Checked) ? theme.Colors.PrimaryAccentColor : Color.Gray;
 
-			if (mouseIsDown)
+			if (mouseIsDown && mouseInBounds)
 			{
-				if (this.ShowBubble)
-				{
-					graphics2D.Render(
-						new RoundedRect(
-							new RectangleDouble(
-								left,
-								center.Y - halfBarHeight,
-								right,
-								center.Y + halfBarHeight),
-							halfBarHeight),
-						barColor);
-
-					graphics2D.Circle(
-						new Vector2(
-							(this.Checked) ? right : left,
-							center.Y),
-						bubbleRadius,
-						new Color(this.Checked ? theme.Colors.PrimaryAccentColor : Color.Gray, 80));
-				}
-				else
-				{
-					barColor = (this.Checked) ? Color.Gray : theme.Colors.PrimaryAccentColor;
-				}
+				barColor = (this.Checked) ? inactiveBarColor : activeBarColor;
 			}
 
 			// Draw bar
-			graphics2D.Render(
-				new RoundedRect(
+			graphics2D.Render(backgroundBar, barColor);
+
+			// Draw toggle circle
+			BackBuffer.SetRecieveBlender(new BlenderBGRA());
+
+			graphics2D.Circle(
+				new Vector2(
+					(this.Checked) ? right - halfBarHeight : left + halfBarHeight,
+					centerY),
+				toggleRadius,
+				toggleColor);
+
+			BackBuffer.SetRecieveBlender(new BlenderPreMultBGRA());
+		}
+
+		public override void OnBoundsChanged(EventArgs e)
+		{
+			var center = this.LocalBounds.Center;
+			halfBarHeight = 14 / 2;
+			var halfBarWidth = 34 / 2;
+			centerY = center.Y;
+
+			left = center.X - halfBarWidth;
+			right = center.X + halfBarWidth;
+
+			backgroundBar = new RoundedRect(
 					new RectangleDouble(
 						left,
 						center.Y - halfBarHeight,
 						right,
 						center.Y + halfBarHeight),
-					halfBarHeight),
-				barColor);
+					halfBarHeight);
 
-			// Draw toggle circle
-			var toggleColor = (this.Checked) ? theme.Colors.PrimaryAccentColor : Color.Gray;
-			graphics2D.Circle(
-				new Vector2(
-					(this.Checked) ? right - halfBarHeight : left + halfBarHeight,
-					center.Y),
-				toggleRadius,
-				toggleColor);
+			base.OnBoundsChanged(e);
 		}
 	}
 }
