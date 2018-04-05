@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch,
 			};
 
-			selectedObjectContainer = new ResizeContainer(selectedObjectPanel)
+			modelViewSidePanel = new ResizeContainer(selectedObjectPanel)
 			{
 				Width = printer?.ViewState.SelectedObjectPanelWidth ?? 200,
 				VAnchor = VAnchor.Stretch,
@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SplitterWidth = theme.SplitterWidth,
 			};
 
-			selectedObjectContainer.AddChild(
+			modelViewSidePanel.AddChild(
 				new SectionWidget(
 					"Options".Localize(),
 					new ModelOptionsPanel(printer.Bed, meshViewerWidget, theme)
@@ -173,8 +173,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					VAnchor = VAnchor.Fit,
 				});
 
-			selectedObjectContainer.AddChild(selectedObjectPanel);
-			splitContainer.AddChild(selectedObjectContainer);
+			modelViewSidePanel.AddChild(selectedObjectPanel);
+			splitContainer.AddChild(modelViewSidePanel);
 
 			this.InteractionLayer.AddChild(new TumbleCubeControl(this.InteractionLayer)
 			{
@@ -1145,7 +1145,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private SelectedObjectPanel selectedObjectPanel;
 
-		internal GuiWidget selectedObjectContainer;
+		internal GuiWidget modelViewSidePanel;
 
 		public Vector2 DragSelectionStartPosition { get; private set; }
 		public bool DragSelectionInProgress { get; private set; }
