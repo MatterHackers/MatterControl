@@ -196,10 +196,10 @@ namespace MatterHackers.MatterControl
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				if(!string.IsNullOrEmpty(OemSettings.Instance.AffiliateCode)
+				if (!string.IsNullOrEmpty(OemSettings.Instance.AffiliateCode)
 					&& targetUri.Contains("matterhackers.com"))
 				{
-					if(targetUri.Contains("?"))
+					if (targetUri.Contains("?"))
 					{
 						targetUri += $"&aff={OemSettings.Instance.AffiliateCode}";
 					}
@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl
 
 		internal void QueueForGeneration(Func<Task> func)
 		{
-			lock(thumbsLock)
+			lock (thumbsLock)
 			{
 				if (thumbnailGenerator == null)
 				{
@@ -258,7 +258,7 @@ namespace MatterHackers.MatterControl
 		{
 			Thread.CurrentThread.Name = $"ThumbnailGeneration";
 
-			while(!this.ApplicationExiting)
+			while (!this.ApplicationExiting)
 			{
 				Thread.Sleep(100);
 
@@ -298,8 +298,8 @@ namespace MatterHackers.MatterControl
 			thumbnailGenerator = null;
 		}
 
-		public static Func<PrinterInfo,string, Task<PrinterSettings>> GetPrinterProfileAsync;
-		public static Func<string, IProgress<ProgressStatus>,Task> SyncPrinterProfiles;
+		public static Func<PrinterInfo, string, Task<PrinterSettings>> GetPrinterProfileAsync;
+		public static Func<string, IProgress<ProgressStatus>, Task> SyncPrinterProfiles;
 		public static Func<Task<OemProfileDictionary>> GetPublicProfileList;
 		public static Func<string, Task<PrinterSettings>> DownloadPublicProfileAsync;
 
@@ -735,34 +735,11 @@ namespace MatterHackers.MatterControl
 			PrinterConnection.HeatTurningOffSoon.RegisterEvent((s, e) =>
 			{
 				var printerConnection = ApplicationController.Instance.ActivePrinter.Connection;
-				bool anyHeatersAreOn = false;
-				for (int i=0; i<printerConnection.ExtruderCount; i++)
-				{
-					anyHeatersAreOn |= printerConnection.GetTargetHotendTemperature(i) != 0;
-				}
-				anyHeatersAreOn |= printerConnection.TargetBedTemperature != 0;
 
-				if (anyHeatersAreOn)
+				if (printerConnection.AnyHeatIsOn)
 				{
 					Tasks.Execute("Disable Heaters".Localize(), (reporter, cancellationToken) =>
 					{
-						EventHandler heatChanged = (s2, e2) =>
-						{
-							printerConnection.ContinuWaitingToTurnOffHeaters = false;
-						};
-						EventHandler stateChanged = (s2, e2) =>
-						{
-							if (printerConnection.CommunicationState == CommunicationStates.PreparingToPrint
-								|| printerConnection.PrinterIsPrinting)
-							{
-								printerConnection.ContinuWaitingToTurnOffHeaters = false;
-							};
-						};
-
-						printerConnection.BedTemperatureSet.RegisterEvent(heatChanged, ref unregisterEvent);
-						printerConnection.HotendTemperatureSet.RegisterEvent(heatChanged, ref unregisterEvent);
-						printerConnection.CommunicationStateChanged.RegisterEvent(stateChanged, ref unregisterEvent);
-
 						var progressStatus = new ProgressStatus();
 
 						while (printerConnection.SecondsUntilTurnOffHeaters > 0
@@ -780,14 +757,10 @@ namespace MatterHackers.MatterControl
 							printerConnection.TurnOffBedAndExtruders(TurnOff.Now);
 						}
 
-						if(cancellationToken.IsCancellationRequested)
+						if (cancellationToken.IsCancellationRequested)
 						{
 							printerConnection.ContinuWaitingToTurnOffHeaters = false;
 						}
-
-						printerConnection.BedTemperatureSet.UnregisterEvent(heatChanged, ref unregisterEvent);
-						printerConnection.HotendTemperatureSet.UnregisterEvent(heatChanged, ref unregisterEvent);
-						printerConnection.CommunicationStateChanged.UnregisterEvent(stateChanged, ref unregisterEvent);
 
 						return Task.CompletedTask;
 					});
@@ -816,12 +789,9 @@ namespace MatterHackers.MatterControl
 			{
 				// run the print leveling wizard if we need to for this printer
 				var printer = ApplicationController.Instance.ActivePrinters.Where(p => p.Connection == s).FirstOrDefault();
-				if (printer != null
-					&& (printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
-					|| printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled)))
+				if (printer != null)
 				{
-					PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
-					if (levelingData?.HasBeenRunAndEnabled(printer) != true)
+					if (PrintLevelingData.NeedsToBeRun(printer))
 					{
 						UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(printer));
 					}
@@ -1450,8 +1420,7 @@ namespace MatterHackers.MatterControl
 				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
 					|| ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
 				{
-					PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-					if (levelingData?.HasBeenRunAndEnabled(printer) != true)
+					if (PrintLevelingData.NeedsToBeRun(printer))
 					{
 						LevelWizardBase.ShowPrintLevelWizard(printer);
 						return;

@@ -90,7 +90,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (e is StringEventArgs stringEvent
 					&& (stringEvent.Data == SettingsKey.z_probe_z_offset
 						|| stringEvent.Data == SettingsKey.print_leveling_data
-						|| stringEvent.Data == SettingsKey.print_leveling_solution))
+						|| stringEvent.Data == SettingsKey.print_leveling_solution
+						|| stringEvent.Data == SettingsKey.bed_temperature
+						|| stringEvent.Data == SettingsKey.print_leveling_enabled
+						|| stringEvent.Data == SettingsKey.print_leveling_required_to_print))
 				{
 					SetButtonStates();
 				}
@@ -107,58 +110,44 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected void SetButtonStates()
 		{
-			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
+			// If we don't have leveling data and we need it
+			bool showSetupButton = PrintLevelingData.NeedsToBeRun(printer);
 
 			switch (printer.Connection.CommunicationState)
 			{
+				case CommunicationStates.FinishedPrint:
 				case CommunicationStates.Connected:
-					if (levelingData != null && printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
-						&& !levelingData.HasBeenRunAndEnabled(printer))
+					if(showSetupButton)
 					{
-						SetChildVisible(finishSetupButton, true);
+						finishSetupButton.Visible = true;
+						finishSetupButton.Enabled = true;
+						startPrintButton.Visible = false;
 					}
 					else
 					{
-						SetChildVisible(startPrintButton, true);
+						startPrintButton.Visible = true;
+						startPrintButton.Enabled = true;
+						finishSetupButton.Visible = false;
 					}
 					break;
 
 				case CommunicationStates.PrintingFromSd:
 				case CommunicationStates.Printing:
 				case CommunicationStates.Paused:
-					break;
-
-				case CommunicationStates.FinishedPrint:
-					SetChildVisible(startPrintButton, true);
-					break;
-
 				default:
-					if (levelingData != null && printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
-						&& !levelingData.HasBeenRunAndEnabled(printer))
+					if (showSetupButton)
 					{
-						SetChildVisible(finishSetupButton, false);
+						finishSetupButton.Visible = true;
+						finishSetupButton.Enabled = false;
+						startPrintButton.Visible = false;
 					}
 					else
 					{
-						SetChildVisible(startPrintButton, false);
+						startPrintButton.Visible = true;
+						startPrintButton.Enabled = false;
+						finishSetupButton.Visible = false;
 					}
 					break;
-			}
-		}
-
-		private void SetChildVisible(GuiWidget visibleChild, bool enabled)
-		{
-			foreach (var child in Children)
-			{
-				if (child == visibleChild)
-				{
-					child.Visible = true;
-					child.Enabled = enabled;
-				}
-				else
-				{
-					child.Visible = false;
-				}
 			}
 		}
 	}
