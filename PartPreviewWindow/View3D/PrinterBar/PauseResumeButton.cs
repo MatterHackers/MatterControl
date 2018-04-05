@@ -91,7 +91,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					&& (stringEvent.Data == SettingsKey.z_probe_z_offset
 						|| stringEvent.Data == SettingsKey.print_leveling_data
 						|| stringEvent.Data == SettingsKey.print_leveling_solution
-						|| stringEvent.Data == SettingsKey.bed_temperature))
+						|| stringEvent.Data == SettingsKey.bed_temperature
+						|| stringEvent.Data == SettingsKey.print_leveling_enabled
+						|| stringEvent.Data == SettingsKey.print_leveling_required_to_print))
 				{
 					SetButtonStates();
 				}
@@ -108,12 +110,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected void SetButtonStates()
 		{
-			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
-
 			// If we don't have leveling data and we need it
-			bool showSetupButton = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print) && levelingData != null;
-			// or we have leveling data but it needs to be recalculated
-			showSetupButton |= levelingData != null && !levelingData.HasBeenRunAndEnabled(printer);
+			bool showSetupButton = PrintLevelingData.NeedsToBeRun(printer);
 
 			switch (printer.Connection.CommunicationState)
 			{
