@@ -88,12 +88,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			this.AddChild(new RoundedToggleSwitch(theme)
-			{
-				Width = 100,
-				Height = 34
-			});
-
 			scrollableContent = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,

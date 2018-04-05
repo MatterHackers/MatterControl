@@ -1738,11 +1738,6 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private void RendererOptions_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			throw new NotImplementedException();
-		}
-
 		public class CloudSyncEventArgs : EventArgs
 		{
 			public bool IsAuthenticated { get; set; }
