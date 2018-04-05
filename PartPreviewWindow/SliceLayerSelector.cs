@@ -66,9 +66,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Fit | HAnchor.Right,
 				VAnchor = VAnchor.Fit,
-				Padding = new BorderDouble(2, 2, 10, 2),
+				Padding = new BorderDouble(6, 4, 10, 4),
 				Margin = new BorderDouble(right: layerScrollbar.Width + layerScrollbar.Margin.Width),
-				TagColor = theme.SlightShade
+				TagColor = theme.Shade
 			};
 
 			currentLayerInfo = new InlineEditControl("1000")
@@ -93,6 +93,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			layerSlider.ValueChanged += (s, e) =>
 			{
+				currentLayerInfo.StopEditing();
 				currentLayerInfo.Position = new Vector2(0, (double)(layerSlider.Position.Y + layerSlider.PositionPixelsFromFirstValue - layerInfoHalfHeight));
 			};
 
