@@ -763,8 +763,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			testRunner.SwitchToSliceSettings();
 
-			testRunner.ClickByName("Printer Overflow Menu");
-			testRunner.ClickByName("Configure Printer Menu Item");
+			if (!testRunner.NameExists("Printer Tab"))
+			{
+				testRunner.ClickByName("Printer Overflow Menu");
+				testRunner.ClickByName("Configure Printer Menu Item");
+			}
 			testRunner.ClickByName("Printer Tab");
 		}
 
