@@ -1119,6 +1119,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Scene_SelectionChanged(object sender, EventArgs e)
 		{
+			selectedObjectPanel.Enabled = scene.HasSelection;
+
 			if (!scene.HasSelection)
 			{
 				if (printer != null)
