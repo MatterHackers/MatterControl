@@ -98,26 +98,23 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public Func<bool> ForceHide { get; set; }
 
-		private Func<double, string> _GetDisplayString = (value) => "{0:0.0}".FormatWith(value);
+		private Func<double, string> _getDisplayString = (value) => "{0:0.0}".FormatWith(value);
 		public Func<double, string> GetDisplayString
 		{
-			get { return _GetDisplayString; }
+			get => _getDisplayString;
 			set
 			{
-				_GetDisplayString = value;
-				if (GetDisplayString != null)
+				_getDisplayString = value;
+				if (_getDisplayString != null)
 				{
-					numberDisplay.Text = GetDisplayString?.Invoke(Value);
+					numberDisplay.Text = _getDisplayString?.Invoke(Value);
 				}
 			}
 		}
 
 		public double Value
 		{
-			get
-			{
-				return numberEdit.Value;
-			}
+			get => numberEdit.Value;
 			set
 			{
 				if (!numberEdit.ContainsFocus
@@ -146,13 +143,19 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				if (base.Visible != value)
 				{
 					base.Visible = value;
-					numberEdit.Visible = false;
-					numberDisplay.Visible = true;
+					this.StopEditing();
 				}
 			}
 		}
 
+		public void StopEditing()
+		{
+			numberEdit.Visible = false;
+			numberDisplay.Visible = true;
+		}
+
 		protected double SecondsToShowNumberEdit { get; private set; } = 4;
+
 		protected Stopwatch timeSinceMouseUp { get; private set; } = new Stopwatch();
 
 		public override void OnDraw(Graphics2D graphics2D)
