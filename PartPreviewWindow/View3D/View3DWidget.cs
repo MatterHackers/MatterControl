@@ -146,7 +146,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			selectedObjectPanel = new SelectedObjectPanel(this, scene, theme, printer)
 			{
-				BackgroundColor = theme.InteractionLayerOverlayColor,
 				VAnchor = VAnchor.Stretch,
 			};
 
@@ -155,6 +154,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Width = printer?.ViewState.SelectedObjectPanelWidth ?? 200,
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Absolute,
+				BackgroundColor = theme.InteractionLayerOverlayColor,
 				SpliterBarColor = theme.SplitterBackground,
 				SplitterWidth = theme.SplitterWidth,
 			};
