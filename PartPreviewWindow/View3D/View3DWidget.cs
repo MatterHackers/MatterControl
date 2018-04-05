@@ -158,6 +158,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SpliterBarColor = theme.SplitterBackground,
 				SplitterWidth = theme.SplitterWidth,
 			};
+
+			selectedObjectContainer.AddChild(
+				new SectionWidget(
+					"Options".Localize(),
+					new ModelOptionsPanel(printer.Bed, meshViewerWidget, theme)
+					{
+						Padding = new BorderDouble(10, 10, 10, 0)
+					},
+					theme,
+					ApplicationController.Instance.GetViewOptionButtons(printer, theme))
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit,
+				});
+
 			selectedObjectContainer.AddChild(selectedObjectPanel);
 			splitContainer.AddChild(selectedObjectContainer);
 

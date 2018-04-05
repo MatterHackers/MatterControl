@@ -33,7 +33,6 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -79,20 +78,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.scene = scene;
 			this.printer = printer;
-
-			this.AddChild(
-				new SectionWidget(
-					"Options".Localize(),
-					new ModelOptionsPanel(printer.Bed, view3DWidget.meshViewerWidget, theme)
-					{
-						Padding = new BorderDouble(10, 10, 10, 0)
-					},
-					theme,
-					ApplicationController.Instance.GetViewOptionButtons(printer, theme))
-				{
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Fit,
-				});
 
 			this.AddChild(inlineTitleEdit = new InlineTitleEdit("", theme, "Object Name"));
 			inlineTitleEdit.TitleChanged += (s, e) =>
