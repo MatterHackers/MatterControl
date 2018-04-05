@@ -735,34 +735,11 @@ namespace MatterHackers.MatterControl
 			PrinterConnection.HeatTurningOffSoon.RegisterEvent((s, e) =>
 			{
 				var printerConnection = ApplicationController.Instance.ActivePrinter.Connection;
-				bool anyHeatersAreOn = false;
-				for (int i=0; i<printerConnection.ExtruderCount; i++)
-				{
-					anyHeatersAreOn |= printerConnection.GetTargetHotendTemperature(i) != 0;
-				}
-				anyHeatersAreOn |= printerConnection.TargetBedTemperature != 0;
 
-				if (anyHeatersAreOn)
+				if (printerConnection.AnyHeatIsOn)
 				{
 					Tasks.Execute("Disable Heaters".Localize(), (reporter, cancellationToken) =>
 					{
-						EventHandler heatChanged = (s2, e2) =>
-						{
-							printerConnection.ContinuWaitingToTurnOffHeaters = false;
-						};
-						EventHandler stateChanged = (s2, e2) =>
-						{
-							if (printerConnection.CommunicationState == CommunicationStates.PreparingToPrint
-								|| printerConnection.PrinterIsPrinting)
-							{
-								printerConnection.ContinuWaitingToTurnOffHeaters = false;
-							};
-						};
-
-						printerConnection.BedTemperatureSet.RegisterEvent(heatChanged, ref unregisterEvent);
-						printerConnection.HotendTemperatureSet.RegisterEvent(heatChanged, ref unregisterEvent);
-						printerConnection.CommunicationStateChanged.RegisterEvent(stateChanged, ref unregisterEvent);
-
 						var progressStatus = new ProgressStatus();
 
 						while (printerConnection.SecondsUntilTurnOffHeaters > 0
@@ -784,10 +761,6 @@ namespace MatterHackers.MatterControl
 						{
 							printerConnection.ContinuWaitingToTurnOffHeaters = false;
 						}
-
-						printerConnection.BedTemperatureSet.UnregisterEvent(heatChanged, ref unregisterEvent);
-						printerConnection.HotendTemperatureSet.UnregisterEvent(heatChanged, ref unregisterEvent);
-						printerConnection.CommunicationStateChanged.UnregisterEvent(stateChanged, ref unregisterEvent);
 
 						return Task.CompletedTask;
 					});

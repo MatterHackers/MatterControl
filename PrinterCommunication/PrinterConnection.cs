@@ -744,6 +744,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			get => _targetBedTemperature;
 			set
 			{
+				ContinuWaitingToTurnOffHeaters = false;
 				if (_targetBedTemperature != value)
 				{
 					_targetBedTemperature = value;
@@ -1845,6 +1846,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			if (targetHotendTemperature[hotendIndex0Based] != temperature
 				|| forceSend)
 			{
+				ContinuWaitingToTurnOffHeaters = false;
 				targetHotendTemperature[hotendIndex0Based] = temperature;
 				OnHotendTemperatureSet(new TemperatureEventArgs(hotendIndex0Based, temperature));
 				if (this.IsConnected)
@@ -2421,6 +2423,25 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public int TurnOffHeatDelay { get; set; } = 60;
 
+		public bool AnyHeatIsOn
+		{
+			get
+			{
+				bool anyHeatIsOn = false;
+				// check if any temps are set
+				for (int i = 0; i < this.ExtruderCount; i++)
+				{
+					if (GetTargetHotendTemperature(i) > 0)
+					{
+						anyHeatIsOn = true;
+						break;
+					}
+				}
+				anyHeatIsOn |= TargetBedTemperature > 0;
+				return anyHeatIsOn;
+			}
+		}
+
 		public void TurnOffBedAndExtruders(TurnOff turnOffTime)
 		{
 			if (turnOffTime == TurnOff.Now)
@@ -2446,21 +2467,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						while (TimeHaveBeenWaitingToTurnOffHeaters.Elapsed.TotalSeconds < TurnOffHeatDelay
 							&& ContinuWaitingToTurnOffHeaters)
 						{
-							bool anyHeatIsOn = false;
-							// check if any temps are set
-							for (int i = 0; i < this.ExtruderCount; i++)
-							{
-								if(GetTargetHotendTemperature(i) > 0)
-								{
-									anyHeatIsOn = true;
-									break;
-								}
-							}
-							anyHeatIsOn |= TargetBedTemperature > 0;
-							if(!anyHeatIsOn)
+							if (CommunicationState == CommunicationStates.PreparingToPrint
+								|| PrinterIsPrinting)
 							{
 								ContinuWaitingToTurnOffHeaters = false;
 							}
+
+							if (!AnyHeatIsOn)
+							{
+								ContinuWaitingToTurnOffHeaters = false;
+							}
+
 							SecondsUntilTurnOffHeaters = ContinuWaitingToTurnOffHeaters ? Math.Max(0, TurnOffHeatDelay - TimeHaveBeenWaitingToTurnOffHeaters.Elapsed.TotalSeconds) : 0;
 							Thread.Sleep(100);
 						}
