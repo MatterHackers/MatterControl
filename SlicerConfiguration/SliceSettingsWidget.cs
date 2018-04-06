@@ -628,14 +628,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			bool placeFieldInDedicatedRow = false;
 
 			bool fullRowSelect = settingData.DataEditType == SliceSettingData.DataEditTypes.CHECK_BOX;
-			var settingsRow = new SliceSettingsRow(printer, settingsContext, settingData, textColor, theme, fullRowSelect: fullRowSelect)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				MinimumSize = new Vector2(0, theme.ButtonHeight),
-				Border = new BorderDouble(bottom: 1),
-				BorderColor = theme.GetBorderColor((theme.Colors.IsDarkTheme) ? 3 : 5)
-			};
+			var settingsRow = new SliceSettingsRow(printer, settingsContext, settingData, textColor, theme, fullRowSelect: fullRowSelect);
 
 			{
 				switch (settingData.DataEditType)

@@ -53,8 +53,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public SettingsRow(string title, string helpText, Color textColor, ThemeConfig theme, ImageBuffer icon = null, bool enforceGutter = false, bool fullRowSelect = false)
 		{
 			this.theme = theme;
-			this.MinimumSize = new Vector2(0, 28);
 			this.fullRowSelect = fullRowSelect;
+
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Fit;
+			this.MinimumSize = new Vector2(0, theme.ButtonHeight);
+			this.Border = new BorderDouble(bottom: 1);
+			this.BorderColor = theme.GetBorderColor((theme.Colors.IsDarkTheme) ? 3 : 5);
 
 			hoverColor = theme.MinimalShade;
 
