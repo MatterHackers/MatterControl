@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private EditableNumberDisplay fanSpeedDisplay;
 
-		private CheckBox toggleSwitch;
+		private ICheckbox toggleSwitch;
 
 		private FanControls(PrinterConnection printerConnection, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -60,9 +60,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 			bool fanActive = printerConnection.FanSpeed0To255 != 0;
 
 			Stopwatch timeSinceLastManualSend = new Stopwatch();
-			toggleSwitch = ImageButtonFactory.CreateToggleSwitch(fanActive);
-			toggleSwitch.Margin = new BorderDouble(5, 0);
-			toggleSwitch.VAnchor = VAnchor.Center;
+
+			var toggleSwitch = new RoundedToggleSwitch(theme)
+			{
+				Margin = new BorderDouble(5, 0),
+				VAnchor = VAnchor.Center
+			};
 			toggleSwitch.CheckedStateChanged += (s, e) =>
 			{
 				if (!timeSinceLastManualSend.IsRunning

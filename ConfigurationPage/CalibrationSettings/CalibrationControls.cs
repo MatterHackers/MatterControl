@@ -67,9 +67,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 				autoLevelRow.AddChild(runWizardButton);
 
 				// put in the switch
-				CheckBox printLevelingSwitch = ImageButtonFactory.CreateToggleSwitch(printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled));
-				printLevelingSwitch.VAnchor = VAnchor.Center;
-				printLevelingSwitch.Margin = new BorderDouble(left: 16);
+				var printLevelingSwitch = new RoundedToggleSwitch(theme)
+				{
+					VAnchor = VAnchor.Center,
+					Margin = new BorderDouble(left: 16),
+					Checked = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled)
+				};
 				printLevelingSwitch.CheckedStateChanged += (sender, e) =>
 				{
 					printer.Settings.Helpers.DoPrintLeveling(printLevelingSwitch.Checked);

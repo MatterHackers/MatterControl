@@ -41,59 +41,6 @@ namespace MatterHackers.MatterControl
 	{
 		public bool InvertImageColor { get; set; } = true;
 
-		public static CheckBox CreateToggleSwitch(bool initialState)
-		{
-			return CreateToggleSwitch(initialState, ActiveTheme.Instance.PrimaryTextColor);
-		}
-
-		public static CheckBox CreateToggleSwitch(bool initialState, Color textColor, bool useStandardLabels = true)
-		{
-			return CreateToggleSwitch(
-				initialState, 
-				textColor, 
-				60 * GuiWidget.DeviceScale, 
-				24 * GuiWidget.DeviceScale, 
-				useStandardLabels);
-		}
-
-		public static CheckBox CreateToggleSwitch(bool initialState, Color textColor, double pixelWidth, double pixelHeight, bool useStandardLabels = true)
-		{
-			return CreateToggleSwitch(
-				initialState,
-				textColor,
-				new Color(textColor, 70),
-				pixelWidth,
-				pixelHeight,
-				useStandardLabels);
-		}
-
-		public static CheckBox CreateToggleSwitch(bool initialState, Color textColor, Color borderColor, double pixelWidth, double pixelHeight, bool useStandardLabels = true)
-		{
-			string on = "On".Localize();
-			string off = "Off".Localize();
-
-			if (!useStandardLabels)
-			{
-				on = "";
-				off = "";
-			}
-
-			return new CheckBox(
-				new ToggleSwitchView(
-					on,
-					off,
-					pixelWidth,
-					pixelHeight,
-					ActiveTheme.Instance.PrimaryBackgroundColor,
-					new Color(220, 220, 220),
-					ActiveTheme.Instance.PrimaryAccentColor,
-					textColor,
-					borderColor))
-			{
-				Checked = initialState,
-			};
-		}
-
 		public Button Generate(ImageBuffer normalImage, ImageBuffer hoverImage, ImageBuffer pressedImage = null, ImageBuffer disabledImage = null)
 		{
 			if(hoverImage == null)
