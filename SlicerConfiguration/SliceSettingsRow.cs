@@ -107,6 +107,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 
 				restoreArea.AddChild(restoreButton);
+
+				restoreArea.Selectable = true;
 			}
 		}
 
