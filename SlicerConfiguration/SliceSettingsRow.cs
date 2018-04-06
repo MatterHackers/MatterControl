@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private Button restoreButton = null;
 
 		public SliceSettingsRow(PrinterConfig printer, SettingsContext settingsContext, SliceSettingData settingData, Color textColor, ThemeConfig theme, bool fullRowSelect = false)
-			: base (theme, fullRowSelect: fullRowSelect)
+			: base (settingData.PresentationName.Localize(), settingData.HelpText, textColor, theme, fullRowSelect: fullRowSelect)
 		{
 			this.printer = printer;
 			this.settingData = settingData;
@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				restoreButton.ToolTipText = "Restore Default".Localize();
 				restoreButton.Click += (sender, e) =>
 				{
-					// Revert the user override 
+					// Revert the user override
 					settingsContext.ClearValue(settingData.SlicerConfigName);
 				};
 

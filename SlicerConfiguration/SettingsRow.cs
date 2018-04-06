@@ -40,17 +40,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class SettingsRow : FlowLayoutWidget
 	{
 		protected GuiWidget overrideIndicator;
-		public GuiWidget NameArea { get; }
 		protected const bool debugLayout = false;
 		protected ThemeConfig theme;
 
 		private bool mouseInBounds = false;
 		private Color hoverColor;
 		private bool fullRowSelect;
+		private GuiWidget settingsLabel;
 
 		public GuiWidget ActionWidget { get; set; }
 
-		public SettingsRow(ThemeConfig theme, ImageBuffer icon = null, bool enforceGutter = false, bool fullRowSelect = false)
+		public SettingsRow(string title, string helpText, Color textColor, ThemeConfig theme, ImageBuffer icon = null, bool enforceGutter = false, bool fullRowSelect = false)
 		{
 			this.theme = theme;
 			this.MinimumSize = new Vector2(0, 28);
@@ -85,13 +85,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Margin = new BorderDouble(right: 6)
 			});
 
-			this.AddChild(this.NameArea = new GuiWidget()
+			GuiWidget nameArea;
+			this.AddChild(nameArea = new GuiWidget()
 			{
 				MinimumSize = new Vector2(50, 0),
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit | VAnchor.Center,
 				DebugShowBounds = debugLayout
 			});
+			nameArea.AddChild(settingsLabel = SettingsRow.CreateSettingsLabel(title, helpText, textColor));
 
 			if (fullRowSelect)
 			{
@@ -109,13 +111,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 		}
 
-		// HACK: ******** Remove dynamic lookup in favor of a known label/title widget *************************************************
 		public override string ToolTipText
 		{
-			get => NameArea.Children.FirstOrDefault()?.ToolTipText;
-			set
-			{
-			}
+			get => settingsLabel.ToolTipText;
+			set => settingsLabel.ToolTipText = value;
 		}
 
 		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
