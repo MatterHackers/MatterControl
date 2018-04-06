@@ -82,14 +82,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Margin = new BorderDouble(0)
 				});
 			}
-
-			this.AddChild(overrideIndicator = new GuiWidget()
+			else
 			{
-				VAnchor = VAnchor.Stretch,
-				HAnchor = HAnchor.Absolute,
-				Width = 3,
-				Margin = new BorderDouble(right: 6)
-			});
+				this.AddChild(overrideIndicator = new GuiWidget()
+				{
+					VAnchor = VAnchor.Stretch,
+					HAnchor = HAnchor.Absolute,
+					Width = 3,
+					Margin = new BorderDouble(right: 6)
+				});
+			}
 
 			this.AddChild(settingsLabel = SettingsRow.CreateSettingsLabel(title, helpText, textColor));
 
