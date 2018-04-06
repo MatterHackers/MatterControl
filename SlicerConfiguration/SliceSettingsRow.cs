@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,22 +27,18 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class SliceSettingsRow : FlowLayoutWidget
+	public class SliceSettingsRow : SettingsRow
 	{
 		private static readonly Color materialSettingBackgroundColor = Color.Orange;
 		private static readonly Color qualitySettingBackgroundColor = Color.YellowGreen;
 		public static readonly Color userSettingBackgroundColor = new Color(68, 95, 220, 150);
-
-		public event EventHandler StyleChanged;
 
 		private SettingsContext settingsContext;
 		private PrinterConfig printer;
@@ -53,40 +49,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private GuiWidget restoreArea;
 		private Button restoreButton = null;
 
-		private const bool debugLayout = false;
-
-		public SliceSettingsRow(PrinterConfig printer, SettingsContext settingsContext, SliceSettingData settingData, Color textColor, bool fullRow = false)
+		public SliceSettingsRow(PrinterConfig printer, SettingsContext settingsContext, SliceSettingData settingData, Color textColor, ThemeConfig theme, bool fullRowSelect = false)
+			: base (theme, fullRowSelect: fullRowSelect)
 		{
 			this.printer = printer;
 			this.settingData = settingData;
 			this.settingsContext = settingsContext;
-			this.Border = new BorderDouble(left: 3);
-			this.MinimumSize = new Vector2(0, 28);
 
-			this.NameArea = new GuiWidget()
-			{
-				MinimumSize = new Vector2(50, 0),
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit | VAnchor.Center,
-				DebugShowBounds = debugLayout
-			};
-			this.AddChild(this.NameArea);
-
-			dataArea = new FlowLayoutWidget
+			this.AddChild(dataArea = new FlowLayoutWidget
 			{
 				VAnchor = VAnchor.Fit | VAnchor.Center,
 				DebugShowBounds = debugLayout
-			};
-			this.AddChild(dataArea);
+			});
 
-			unitsArea = new GuiWidget()
+			this.AddChild(unitsArea = new GuiWidget()
 			{
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit | VAnchor.Center,
 				Width = settingData.ShowAsOverride ? 50 * GuiWidget.DeviceScale : 5,
 				DebugShowBounds = debugLayout
-			};
-			this.AddChild(unitsArea);
+			});
 
 			// Populate unitsArea as appropriate
 			// List elements contain list values in the field which normally contains label details, skip generation of invalid labels
@@ -128,45 +110,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public GuiWidget NameArea { get; }
-
 		public Color HighlightColor
 		{
-			get => this.BorderColor;
+			get => overrideIndicator.BackgroundColor;
 			set
 			{
-				if (this.BorderColor != value)
+				if (overrideIndicator.BackgroundColor != value)
 				{
-					this.BorderColor = value;
-
-					this.StyleChanged?.Invoke(null, null);
+					overrideIndicator.BackgroundColor = value;
 				}
 			}
-		}
-
-		private Color hoverColor => ApplicationController.Instance.Theme.MinimalShade;
-
-		public override Color BackgroundColor
-		{
-			get => (mouseInBounds) ? hoverColor : base.BackgroundColor;
-			set => base.BackgroundColor = value;
-		}
-
-		private bool mouseInBounds = false;
-
-		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
-		{
-			mouseInBounds = true;
-			this.Invalidate();
-			base.OnMouseEnter(mouseEvent);
-		}
-
-		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
-		{
-			mouseInBounds = false;
-
-			this.Invalidate();
-			base.OnMouseLeaveBounds(mouseEvent);
 		}
 
 		public void UpdateStyle()

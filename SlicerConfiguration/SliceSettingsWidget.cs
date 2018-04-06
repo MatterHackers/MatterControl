@@ -534,11 +534,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					topToBottomSettings.AddChild(settingsRow);
 
-					topToBottomSettings.AddChild(lastLine = new HorizontalLine(20)
-					{
-						Margin = 0
-					});
-
 					if (ApplicationController.Instance.ShowHelpControls)
 					{
 						topToBottomSettings.AddChild(AddInHelpText(topToBottomSettings, settingData));
@@ -667,17 +662,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			bool useDefaultSavePattern = true;
 			bool placeFieldInDedicatedRow = false;
 
-			var settingsRow = new SliceSettingsRow(printer, settingsContext, settingData, textColor)
+			bool fullRowSelect = settingData.DataEditType == SliceSettingData.DataEditTypes.CHECK_BOX;
+			var settingsRow = new SliceSettingsRow(printer, settingsContext, settingData, textColor, theme, fullRowSelect: fullRowSelect)
 			{
-				Padding = new BorderDouble(left: 6),
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
+				VAnchor = VAnchor.Fit,
+				MinimumSize = new Vector2(0, theme.ButtonHeight),
+				Border = new BorderDouble(bottom: 1),
+				BorderColor = theme.GetBorderColor((theme.Colors.IsDarkTheme) ? 3 : 5)
 			};
 
 			if (!PrinterSettings.KnownSettings.Contains(settingData.SlicerConfigName))
 			{
 				// the setting we think we are adding is not in the known settings it may have been deprecated
-				TextWidget settingName = new TextWidget(String.Format("Setting '{0}' not found in known settings", settingData.SlicerConfigName));
+				TextWidget settingName = new TextWidget($"Setting '{settingData.SlicerConfigName}' not found in known settings");
 				settingName.TextColor = textColor;
 				settingsRow.NameArea.AddChild(settingName);
 				settingsRow.NameArea.BackgroundColor = Color.Red;
@@ -685,7 +683,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			else
 			{
 				settingsRow.NameArea.AddChild(
-					CreateSettingsLabel(settingData.PresentationName.Localize(), settingData.HelpText, textColor));
+					SettingsRow.CreateSettingsLabel(settingData.PresentationName.Localize(), settingData.HelpText, textColor));
 
 				switch (settingData.DataEditType)
 				{
@@ -806,7 +804,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					default:
 						// Missing Setting
-						settingsRow.AddContent(new TextWidget(String.Format("Missing the setting for '{0}'.", settingData.DataEditType.ToString()))
+						settingsRow.AddContent(new TextWidget($"Missing the setting for '{settingData.DataEditType}'.")
 						{
 							TextColor = textColor,
 							BackgroundColor = Color.Red
@@ -860,6 +858,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (!placeFieldInDedicatedRow)
 					{
 						settingsRow.AddContent(uiField.Content);
+						settingsRow.ActionWidget = uiField.Content;
 					}
 				}
 			}
@@ -906,12 +905,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					row.AddChild(contentWrapper);
 
-					settingsRow.StyleChanged += (s, e) =>
-					{
-						row.BackgroundColor = settingsRow.BackgroundColor;
-						row.BorderColor = settingsRow.HighlightColor;
-					};
-
 					return column;
 				}
 				else
@@ -924,16 +917,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				settingsRow.Enabled = false;
 				return settingsRow;
 			}
-		}
-
-		public static GuiWidget CreateSettingsLabel(string label, string helpText, Color textColor)
-		{
-			return new WrappedTextWidget(label, pointSize: 10, textColor: textColor)
-			{
-				VAnchor = VAnchor.Center | VAnchor.Fit,
-				ToolTipText = helpText.Localize(),
-				Margin = new BorderDouble(0, 5, 5, 5),
-			};
 		}
 
 		public void FilterToOverrides()
