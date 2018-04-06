@@ -50,7 +50,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private double left;
 		private double right;
 		private RoundedRect backgroundBar;
-		private int halfBarHeight;
+
+		private double toggleRadius = 10;
+		private double toggleRadiusPlusPadding = 11;
 
 		public bool Checked { get; set; }
 
@@ -122,10 +124,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			base.OnDraw(graphics2D);
 
-			var toggleRadius = 10;
-			var bubbleRadius = toggleRadius * 1.7;
-
-			var position = (this.Checked) ? right - halfBarHeight : left + halfBarHeight;
+			var position = (this.Checked) ? LocalBounds.Right - toggleRadiusPlusPadding: toggleRadiusPlusPadding;
 
 			Color barColor = (this.Checked) ? activeBarColor : inactiveBarColor;
 			Color toggleColor = (this.Checked) ? theme.Colors.PrimaryAccentColor : Color.Gray;
@@ -168,13 +167,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			centerY = this.LocalBounds.YCenter;
 
-			var width = 36;
-			var height = 14;
+			var barHeight = 14;
 
-			halfBarHeight = height / 2;
+			int halfBarHeight = barHeight / 2;
 
-			right = LocalBounds.Right - 3;
-			left = right - width;
+			var diff = toggleRadiusPlusPadding - halfBarHeight;
+
+			right = LocalBounds.Right - diff;
+			left = diff;
 
 			backgroundBar = new RoundedRect(
 					new RectangleDouble(
@@ -186,5 +186,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			base.OnBoundsChanged(e);
 		}
+
 	}
 }
