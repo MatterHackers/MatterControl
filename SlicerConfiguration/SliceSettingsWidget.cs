@@ -669,7 +669,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var settingsRow = new SliceSettingsRow(printer, settingsContext, settingData, textColor)
 			{
-				Padding = new BorderDouble(left: 6),
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
 				MinimumSize = new Vector2(0, theme.ButtonHeight),

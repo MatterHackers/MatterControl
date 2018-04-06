@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private GuiWidget dataArea;
 		private GuiWidget unitsArea;
 		private GuiWidget restoreArea;
+		private GuiWidget overrideIndicator;
 		private Button restoreButton = null;
 
 		private const bool debugLayout = false;
@@ -58,8 +59,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.printer = printer;
 			this.settingData = settingData;
 			this.settingsContext = settingsContext;
-			this.Border = new BorderDouble(left: 3);
 			this.MinimumSize = new Vector2(0, 28);
+
+			this.AddChild(overrideIndicator = new GuiWidget()
+			{
+				VAnchor = VAnchor.Stretch,
+				HAnchor = HAnchor.Absolute,
+				Width = 3,
+				Margin = new BorderDouble(right: 6)
+			});
 
 			this.AddChild(this.NameArea = new GuiWidget()
 			{
@@ -127,12 +135,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public Color HighlightColor
 		{
-			get => this.BorderColor;
+			get => overrideIndicator.BackgroundColor;
 			set
 			{
-				if (this.BorderColor != value)
+				if (overrideIndicator.BackgroundColor != value)
 				{
-					this.BorderColor = value;
+					overrideIndicator.BackgroundColor = value;
 				}
 			}
 		}
