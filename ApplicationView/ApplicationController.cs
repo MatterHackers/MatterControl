@@ -1667,7 +1667,7 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		internal GuiWidget GetViewOptionButtons(PrinterConfig printer, ThemeConfig theme)
+		internal GuiWidget GetViewOptionButtons(BedConfig sceneContext, PrinterConfig printer, ThemeConfig theme)
 		{
 			var container = new FlowLayoutWidget();
 
@@ -1675,7 +1675,7 @@ namespace MatterHackers.MatterControl
 			{
 				Name = "Bed Button",
 				ToolTipText = "Show Print Bed".Localize(),
-				Checked = printer.Bed.RendererOptions.RenderBed,
+				Checked = sceneContext.RendererOptions.RenderBed,
 				Margin = theme.ButtonSpacing,
 				ToggleButton = true,
 				Height = 24,
@@ -1683,20 +1683,20 @@ namespace MatterHackers.MatterControl
 			};
 			bedButton.CheckedStateChanged += (s, e) =>
 			{
-				printer.Bed.RendererOptions.RenderBed = bedButton.Checked;
+				sceneContext.RendererOptions.RenderBed = bedButton.Checked;
 			};
 			container.AddChild(bedButton);
 
 			RadioIconButton printAreaButton = null;
 
-			if (printer.Bed.BuildHeight > 0
+			if (sceneContext.BuildHeight > 0
 				&& printer?.ViewState.ViewMode != PartViewMode.Layers2D)
 			{
 				printAreaButton = new RadioIconButton(AggContext.StaticData.LoadIcon("print_area.png", IconColor.Theme), theme)
 				{
 					Name = "Bed Button",
 					ToolTipText = "Show Print Area".Localize(),
-					Checked = printer.Bed.RendererOptions.RenderBuildVolume,
+					Checked = sceneContext.RendererOptions.RenderBuildVolume,
 					Margin = theme.ButtonSpacing,
 					ToggleButton = true,
 					Height = 24,
@@ -1704,12 +1704,12 @@ namespace MatterHackers.MatterControl
 				};
 				printAreaButton.CheckedStateChanged += (s, e) =>
 				{
-					printer.Bed.RendererOptions.RenderBuildVolume = printAreaButton.Checked;
+					sceneContext.RendererOptions.RenderBuildVolume = printAreaButton.Checked;
 				};
 				container.AddChild(printAreaButton);
 			}
 
-			this. BindBedOptions(container, bedButton, printAreaButton, printer.Bed.RendererOptions);
+			this. BindBedOptions(container, bedButton, printAreaButton, sceneContext.RendererOptions);
 
 			return container;
 		}
