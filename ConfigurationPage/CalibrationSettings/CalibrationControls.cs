@@ -25,32 +25,17 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			// add in the controls for configuring auto leveling
 			{
-				var autoLevelRow = new FlowLayoutWidget()
-				{
-					Name = "AutoLevelRowItem",
-					HAnchor = HAnchor.Stretch,
-				};
+				SettingsRow settingsRow;
 
-				autoLevelRow.AddChild(
-					new ImageWidget(AggContext.StaticData.LoadIcon("leveling_32x32.png", 24, 24, IconColor.Theme))
-					{
-						Margin = new BorderDouble(right: 6),
-						VAnchor = VAnchor.Center
-					});
-
-				// label
-				autoLevelRow.AddChild(
-					new TextWidget("Print Leveling Plane".Localize(), textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
-					{
-						AutoExpandBoundsToText = true,
-						VAnchor = VAnchor.Center,
-					});
-
-				autoLevelRow.AddChild(new HorizontalSpacer());
+				this.AddChild(settingsRow = new SettingsRow(
+					"Print Leveling Plane".Localize(),
+					null,
+					theme.Colors.PrimaryTextColor,
+					theme,
+					AggContext.StaticData.LoadIcon("leveling_32x32.png", 24, 24, IconColor.Theme)));
 
 				// run leveling button
-				var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Theme);
-				var runWizardButton = new IconButton(configureIcon, theme)
+				var runWizardButton = new IconButton(AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Theme), theme)
 				{
 					VAnchor = VAnchor.Center,
 					Margin = theme.ButtonSpacing,
@@ -63,62 +48,43 @@ namespace MatterHackers.MatterControl.PrinterControls
 						LevelWizardBase.ShowPrintLevelWizard(printer);
 					});
 				};
-
-				autoLevelRow.AddChild(runWizardButton);
-
-				// put in the switch
-				var printLevelingSwitch = new RoundedToggleSwitch(theme)
-				{
-					VAnchor = VAnchor.Center,
-					Margin = new BorderDouble(left: 16),
-					Checked = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled)
-				};
-				printLevelingSwitch.CheckedStateChanged += (sender, e) =>
-				{
-					printer.Settings.Helpers.DoPrintLeveling(printLevelingSwitch.Checked);
-				};
-
-				printer.Settings.PrintLevelingEnabledChanged.RegisterEvent((sender, e) =>
-				{
-					printLevelingSwitch.Checked = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
-				}, ref unregisterEvents);
+				settingsRow.AddChild(runWizardButton);
 
 				// only show the switch if leveling can be turned off (it can't if it is required).
 				if (!printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
 				{
-					autoLevelRow.AddChild(printLevelingSwitch);
-				}
+					// put in the switch
+					var printLevelingSwitch = new RoundedToggleSwitch(theme)
+					{
+						VAnchor = VAnchor.Center,
+						Margin = new BorderDouble(left: 16),
+						Checked = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled)
+					};
+					printLevelingSwitch.CheckedStateChanged += (sender, e) =>
+					{
+						printer.Settings.Helpers.DoPrintLeveling(printLevelingSwitch.Checked);
+					};
 
-				this.AddChild(autoLevelRow);
+					printer.Settings.PrintLevelingEnabledChanged.RegisterEvent((sender, e) =>
+					{
+						printLevelingSwitch.Checked = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
+					}, ref unregisterEvents);
+
+					settingsRow.AddChild(printLevelingSwitch);
+				}
 
 				// add in the controls for configuring probe offset
 				if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
 					&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe))
 				{
-					var probeCalibrationRow = new FlowLayoutWidget()
-					{
-						Name = "probeCalibrationRowItem",
-						HAnchor = HAnchor.Stretch,
-					};
+					this.AddChild(settingsRow = new SettingsRow(
+						"Print Leveling Probe".Localize(),
+						null,
+						theme.Colors.PrimaryTextColor,
+						theme,
+						AggContext.StaticData.LoadIcon("probing_32x32.png", 24, 24, IconColor.Theme)));
 
-					probeCalibrationRow.AddChild(
-						new ImageWidget(AggContext.StaticData.LoadIcon("probing_32x32.png", 24, 24, IconColor.Theme))
-						{
-							Margin = new BorderDouble(right: 6),
-							VAnchor = VAnchor.Center
-						});
-
-					// label
-					probeCalibrationRow.AddChild(
-						new TextWidget("Print Leveling Probe".Localize(), textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
-						{
-							AutoExpandBoundsToText = true,
-							VAnchor = VAnchor.Center,
-						});
-
-					probeCalibrationRow.AddChild(new HorizontalSpacer());
-
-					var runCalibrateProbeButton = new IconButton(configureIcon, theme)
+					var runCalibrateProbeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Theme), theme)
 					{
 						VAnchor = VAnchor.Center,
 						Margin = theme.ButtonSpacing,
@@ -132,9 +98,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 						});
 					};
 
-					probeCalibrationRow.AddChild(runCalibrateProbeButton);
-
-					this.AddChild(probeCalibrationRow);
+					settingsRow.BorderColor = Color.Transparent;
+					settingsRow.AddChild(runCalibrateProbeButton);
 				}
 			}
 

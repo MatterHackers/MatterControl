@@ -34,6 +34,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
@@ -51,15 +52,49 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.HAnchor = HAnchor.Stretch;
 			this.HAnchor = HAnchor.Stretch;
 
-			var leftToRight = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Stretch
-			};
 
 			//Matt's test editing to add a on/off toggle switch
 			bool fanActive = printerConnection.FanSpeed0To255 != 0;
 
 			Stopwatch timeSinceLastManualSend = new Stopwatch();
+
+			var settingsRow = new SettingsRow(
+				"Part Cooling Fan".Localize(),
+				null,
+				theme.Colors.PrimaryTextColor,
+				theme,
+				fullRowSelect: true);
+
+			this.AddChild(settingsRow);
+
+			var container = new FlowLayoutWidget();
+			settingsRow.AddChild(container);
+			settingsRow.BorderColor = Color.Transparent;
+
+			fanSpeedDisplay = new EditableNumberDisplay(0, "100")
+			{
+				DisplayFormat = "{0:0}",
+				Value = printerConnection.FanSpeed0To255 * 100 / 255
+			};
+			fanSpeedDisplay.ValueChanged += (sender, e) =>
+			{
+				// limit the rate we can send this message to 2 per second so we don't get in a crazy toggle state.
+				if (!timeSinceLastManualSend.IsRunning
+					|| timeSinceLastManualSend.ElapsedMilliseconds > 500)
+				{
+					timeSinceLastManualSend.Restart();
+					printerConnection.FanSpeed0To255 = (int)(fanSpeedDisplay.Value * 255 / 100 + .5);
+				}
+			};
+			container.AddChild(fanSpeedDisplay);
+
+			fanSpeedDisplay.Selectable = true;
+
+			// put in %
+			container.AddChild(new TextWidget("%", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				VAnchor = VAnchor.Center
+			});
 
 			var toggleSwitch = new RoundedToggleSwitch(theme)
 			{
@@ -82,31 +117,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 					}
 				}
 			};
-			leftToRight.AddChild(toggleSwitch);
-
-			fanSpeedDisplay = new EditableNumberDisplay(0, "100");
-			fanSpeedDisplay.DisplayFormat = "{0:0}";
-			fanSpeedDisplay.Value = printerConnection.FanSpeed0To255 * 100 / 255;
-			fanSpeedDisplay.ValueChanged += (sender, e) =>
-			{
-				// limit the rate we can send this message to 2 per second so we don't get in a crazy toggle state.
-				if (!timeSinceLastManualSend.IsRunning
-					|| timeSinceLastManualSend.ElapsedMilliseconds > 500)
-				{
-					timeSinceLastManualSend.Restart();
-					printerConnection.FanSpeed0To255 = (int)(fanSpeedDisplay.Value * 255 / 100 + .5);
-				}
-			};
-
-			leftToRight.AddChild(fanSpeedDisplay);
-
-			// put in %
-			leftToRight.AddChild(new TextWidget("%", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				VAnchor = VAnchor.Center
-			});
-
-			this.AddChild(leftToRight);
+			container.AddChild(toggleSwitch);
+			settingsRow.ActionWidget = toggleSwitch;
 
 			// CreateFanControls
 			printerConnection.FanSpeedSet.RegisterEvent((s, e) =>
