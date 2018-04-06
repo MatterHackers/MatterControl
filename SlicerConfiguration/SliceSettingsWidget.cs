@@ -671,7 +671,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				Padding = new BorderDouble(left: 6),
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
+				VAnchor = VAnchor.Fit,
+				MinimumSize = new Vector2(0, theme.ButtonHeight),
 			};
 
 			if (!PrinterSettings.KnownSettings.Contains(settingData.SlicerConfigName))
@@ -905,12 +906,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					contentWrapper.AddChild(uiField.Content);
 
 					row.AddChild(contentWrapper);
-
-					settingsRow.StyleChanged += (s, e) =>
-					{
-						row.BackgroundColor = settingsRow.BackgroundColor;
-						row.BorderColor = settingsRow.HighlightColor;
-					};
 
 					return column;
 				}

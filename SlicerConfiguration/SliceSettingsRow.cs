@@ -42,8 +42,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static readonly Color qualitySettingBackgroundColor = Color.YellowGreen;
 		public static readonly Color userSettingBackgroundColor = new Color(68, 95, 220, 150);
 
-		public event EventHandler StyleChanged;
-
 		private SettingsContext settingsContext;
 		private PrinterConfig printer;
 		private SliceSettingData settingData;
@@ -138,8 +136,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (this.BorderColor != value)
 				{
 					this.BorderColor = value;
-
-					this.StyleChanged?.Invoke(null, null);
 				}
 			}
 		}
