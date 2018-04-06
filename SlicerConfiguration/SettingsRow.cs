@@ -33,6 +33,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -90,15 +91,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Margin = new BorderDouble(right: 6)
 			});
 
-			GuiWidget nameArea;
-			this.AddChild(nameArea = new GuiWidget()
-			{
-				MinimumSize = new Vector2(50, 0),
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit | VAnchor.Center,
-				DebugShowBounds = debugLayout
-			});
-			nameArea.AddChild(settingsLabel = SettingsRow.CreateSettingsLabel(title, helpText, textColor));
+			this.AddChild(settingsLabel = SettingsRow.CreateSettingsLabel(title, helpText, textColor));
+
+			this.AddChild(new HorizontalSpacer());
 
 			if (fullRowSelect)
 			{
@@ -108,11 +103,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static GuiWidget CreateSettingsLabel(string label, string helpText, Color textColor)
 		{
-			return  new WrappedTextWidget(label, pointSize: 10, textColor: textColor)
+			return new TextWidget(label, textColor: textColor, pointSize: 10)
 			{
-				VAnchor = VAnchor.Center | VAnchor.Fit,
+				AutoExpandBoundsToText = true,
+				VAnchor = VAnchor.Center,
 				ToolTipText = helpText.Localize(),
-				Margin = new BorderDouble(0, 5, 5, 5),
 			};
 		}
 
