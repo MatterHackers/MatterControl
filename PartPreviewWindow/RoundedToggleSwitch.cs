@@ -125,6 +125,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			var toggleRadius = 10;
 			var bubbleRadius = toggleRadius * 1.7;
 
+			var position = (this.Checked) ? right - halfBarHeight : left + halfBarHeight;
+
 			Color barColor = (this.Checked) ? activeBarColor : inactiveBarColor;
 			Color toggleColor = (this.Checked) ? theme.Colors.PrimaryAccentColor : Color.Gray;
 
@@ -133,38 +135,53 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				barColor = (this.Checked) ? inactiveBarColor : activeBarColor;
 			}
 
-			// Draw bar
-			graphics2D.Render(backgroundBar, barColor);
+			if (!Enabled)
+			{
+				graphics2D.Render(new Stroke(backgroundBar), inactiveBarColor);
+				graphics2D.Circle(
+					new Vector2(
+						position,
+						centerY),
+					toggleRadius,
+					inactiveBarColor);
+			}
+			else
+			{
+				// Draw bar
+				graphics2D.Render(backgroundBar, barColor);
 
-			// Draw toggle circle
-			BackBuffer.SetRecieveBlender(new BlenderBGRA());
+				// Draw toggle circle
+				BackBuffer.SetRecieveBlender(new BlenderBGRA());
 
-			graphics2D.Circle(
-				new Vector2(
-					(this.Checked) ? right - halfBarHeight : left + halfBarHeight,
-					centerY),
-				toggleRadius,
-				toggleColor);
+				graphics2D.Circle(
+					new Vector2(
+						position,
+						centerY),
+					toggleRadius,
+					toggleColor);
 
-			BackBuffer.SetRecieveBlender(new BlenderPreMultBGRA());
+				BackBuffer.SetRecieveBlender(new BlenderPreMultBGRA());
+			}
 		}
 
 		public override void OnBoundsChanged(EventArgs e)
 		{
-			var center = this.LocalBounds.Center;
-			halfBarHeight = 14 / 2;
-			var halfBarWidth = 34 / 2;
-			centerY = center.Y;
+			centerY = this.LocalBounds.YCenter;
 
-			left = center.X - halfBarWidth;
-			right = center.X + halfBarWidth;
+			var width = 36;
+			var height = 14;
+
+			halfBarHeight = height / 2;
+
+			right = LocalBounds.Right - 3;
+			left = right - width;
 
 			backgroundBar = new RoundedRect(
 					new RectangleDouble(
 						left,
-						center.Y - halfBarHeight,
+						centerY - halfBarHeight,
 						right,
-						center.Y + halfBarHeight),
+						centerY + halfBarHeight),
 					halfBarHeight);
 
 			base.OnBoundsChanged(e);
