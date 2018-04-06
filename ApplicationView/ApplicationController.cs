@@ -1717,7 +1717,7 @@ namespace MatterHackers.MatterControl
 				container.AddChild(printAreaButton);
 			}
 
-			this. BindBedOptions(container, bedButton, printAreaButton, sceneContext.RendererOptions);
+			this.BindBedOptions(container, bedButton, printAreaButton, sceneContext.RendererOptions);
 
 			return container;
 		}
