@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						LevelWizardBase.ShowPrintLevelWizard(printer, LevelWizardBase.RunningState.UserRequestedCalibration);
+						LevelWizardBase.ShowPrintLevelWizard(printer);
 					});
 				};
 
@@ -93,8 +93,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 				// add in the controls for configuring probe offset
 				if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
-					&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
-					&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
+					&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe))
 				{
 					var probeCalibrationRow = new FlowLayoutWidget()
 					{

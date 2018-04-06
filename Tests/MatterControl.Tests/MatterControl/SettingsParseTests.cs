@@ -20,7 +20,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-			LevelWizard3Point levelingSolution = new LevelWizard3Point(ActiveSliceSettings.Instance.printer, LevelWizardBase.RunningState.InitialStartupCalibration);
+			LevelWizard3Point levelingSolution = new LevelWizard3Point(ActiveSliceSettings.Instance.printer);
 			var printerSettings = ActiveSliceSettings.Instance;
 
 			{

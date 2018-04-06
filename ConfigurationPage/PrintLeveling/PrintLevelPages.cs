@@ -264,6 +264,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// make sure we don't have leveling data
 			double newProbeOffset = autoProbePositions[0].position.Z - manualProbePositions[0].position.Z;
 			printer.Settings.SetValue(SettingsKey.z_probe_z_offset, newProbeOffset.ToString("0.###"));
+			printer.Settings.SetValue(SettingsKey.probe_has_been_calibrated, "1");
 
 			if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
 			{
@@ -271,6 +272,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			container.backButton.Enabled = false;
+
+			Closed += (s, e) =>
+			{
+				// move from this wizard to the print leveling wizard if needed
+				ApplicationController.Instance.RunAnyRequiredCalibration(printer);
+			};
 
 			base.PageIsBecomingActive();
 		}

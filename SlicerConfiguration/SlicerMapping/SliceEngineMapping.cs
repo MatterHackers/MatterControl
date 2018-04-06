@@ -73,6 +73,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.z_servo_retracted_angle,
 			SettingsKey.pause_gcode,
 			SettingsKey.print_leveling_probe_start,
+			SettingsKey.probe_has_been_calibrated,
 			SettingsKey.print_leveling_required_to_print,
 			SettingsKey.print_leveling_solution,
 			SettingsKey.recover_first_layer_speed,

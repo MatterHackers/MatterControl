@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private static SystemWindow printLevelWizardWindow;
 		private LevelingStrings levelingStrings;
 
-		public LevelWizardBase(PrinterConfig printer, RunningState runningState)
+		public LevelWizardBase(PrinterConfig printer)
 			: base(500, 370)
 		{
 			levelingStrings = new LevelingStrings(printer.Settings);
@@ -65,10 +65,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizard = new WizardControl();
 			AddChild(printLevelWizard);
 
-			if (runningState == LevelWizardBase.RunningState.InitialStartupCalibration)
+			// If no leveling data has been calculated
+			bool showWelcomeScreen = printer.Settings.Helpers.GetPrintLevelingData().SampledPositions.Count == 0
+				&& !ProbeCalibrationWizard.UsingZProbe(printer);
+
+			if (showWelcomeScreen)
 			{
-				string part1 = "Congratulations on connecting to your new printer. Before starting your first print we need to run a simple calibration procedure.".Localize();
-				string part2 = "The next few screens will walk your through the print leveling wizard.".Localize();
+				string part1 = "Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize();
+				string part2 = "The next few screens will walk your through calibrating your printer.".Localize();
 				string requiredPageInstructions = $"{part1}\n\n{part2}";
 				printLevelWizard.AddPage(new FirstPageInstructions(printer, levelingStrings.initialPrinterSetupStepText, requiredPageInstructions));
 			}
@@ -138,32 +142,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizard.AddPage(new LastPagelInstructions(printer, printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions));
 		}
 
-		public enum RunningState { InitialStartupCalibration, UserRequestedCalibration }
-
 		public abstract int ProbeCount { get; }
 		public int TotalSteps => ProbeCount * 3;
 
 		public static void ShowPrintLevelWizard(PrinterConfig printer)
-		{
-			LevelWizardBase.RunningState runningState = LevelWizardBase.RunningState.UserRequestedCalibration;
-
-			if (printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
-			{
-				// run in the first run state
-				runningState = LevelWizardBase.RunningState.InitialStartupCalibration;
-			}
-
-			ShowPrintLevelWizard(printer, runningState);
-		}
-
-		public static void ShowPrintLevelWizard(PrinterConfig printer, LevelWizardBase.RunningState runningState)
 		{
 			if (printLevelWizardWindow == null)
 			{
 				// turn off print leveling
 				PrintLevelingStream.AllowLeveling = false;
 
-				printLevelWizardWindow = LevelWizardBase.CreateAndShowWizard(printer, runningState);
+				printLevelWizardWindow = LevelWizardBase.CreateAndShowWizard(printer);
 
 				printLevelWizardWindow.Closed += (sender, e) =>
 				{
@@ -191,7 +180,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public abstract IEnumerable<Vector2> GetPrintLevelPositionToSample();
 
-		private static LevelWizardBase CreateAndShowWizard(PrinterConfig printer, LevelWizardBase.RunningState runningState)
+		private static LevelWizardBase CreateAndShowWizard(PrinterConfig printer)
 		{
 			// clear any data that we are going to be acquiring (sampled positions, after z home offset)
 			PrintLevelingData levelingData = new PrintLevelingData()
@@ -205,23 +194,23 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			switch (levelingData.LevelingSystem)
 			{
 				case LevelingSystem.Probe3Points:
-					printLevelWizardWindow = new LevelWizard3Point(printer, runningState);
+					printLevelWizardWindow = new LevelWizard3Point(printer);
 					break;
 
 				case LevelingSystem.Probe7PointRadial:
-					printLevelWizardWindow = new LevelWizard7PointRadial(printer, runningState);
+					printLevelWizardWindow = new LevelWizard7PointRadial(printer);
 					break;
 
 				case LevelingSystem.Probe13PointRadial:
-					printLevelWizardWindow = new LevelWizard13PointRadial(printer, runningState);
+					printLevelWizardWindow = new LevelWizard13PointRadial(printer);
 					break;
 
 				case LevelingSystem.Probe3x3Mesh:
-					printLevelWizardWindow = new LevelWizard3x3Mesh(printer, runningState);
+					printLevelWizardWindow = new LevelWizard3x3Mesh(printer);
 					break;
 
 				case LevelingSystem.Probe5x5Mesh:
-					printLevelWizardWindow = new LevelWizard5x5Mesh(printer, runningState);
+					printLevelWizardWindow = new LevelWizard5x5Mesh(printer);
 					break;
 
 				default:
