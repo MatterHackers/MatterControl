@@ -61,30 +61,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.Border = new BorderDouble(left: 3);
 			this.MinimumSize = new Vector2(0, 28);
 
-			this.NameArea = new GuiWidget()
+			this.AddChild(this.NameArea = new GuiWidget()
 			{
 				MinimumSize = new Vector2(50, 0),
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit | VAnchor.Center,
 				DebugShowBounds = debugLayout
-			};
-			this.AddChild(this.NameArea);
+			});
 
-			dataArea = new FlowLayoutWidget
+			this.AddChild(dataArea = new FlowLayoutWidget
 			{
 				VAnchor = VAnchor.Fit | VAnchor.Center,
 				DebugShowBounds = debugLayout
-			};
-			this.AddChild(dataArea);
+			});
 
-			unitsArea = new GuiWidget()
+			this.AddChild(unitsArea = new GuiWidget()
 			{
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit | VAnchor.Center,
 				Width = settingData.ShowAsOverride ? 50 * GuiWidget.DeviceScale : 5,
 				DebugShowBounds = debugLayout
-			};
-			this.AddChild(unitsArea);
+			});
 
 			// Populate unitsArea as appropriate
 			// List elements contain list values in the field which normally contains label details, skip generation of invalid labels
