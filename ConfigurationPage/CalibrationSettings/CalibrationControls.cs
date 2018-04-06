@@ -53,8 +53,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 				var runWizardButton = new IconButton(configureIcon, theme)
 				{
 					VAnchor = VAnchor.Center,
-					BackgroundColor = theme.MinimalShade,
-					Margin = theme.ButtonSpacing
+					Margin = theme.ButtonSpacing,
+					ToolTipText = "Print Leveling Wizard".Localize()
 				};
 				runWizardButton.Click += (s, e) =>
 				{
@@ -121,8 +121,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 					var runCalibrateProbeButton = new IconButton(configureIcon, theme)
 					{
 						VAnchor = VAnchor.Center,
-						BackgroundColor = theme.MinimalShade,
-						Margin = theme.ButtonSpacing
+						Margin = theme.ButtonSpacing,
+						ToolTipText = "Probe Calibration Wizard".Localize()
 					};
 					runCalibrateProbeButton.Click += (s, e) =>
 					{
