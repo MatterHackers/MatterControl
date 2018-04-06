@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 				// label
 				autoLevelRow.AddChild(
-					new TextWidget("Software Print Leveling".Localize(), textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
+					new TextWidget("Print Leveling Plane".Localize(), textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
 					{
 						AutoExpandBoundsToText = true,
 						VAnchor = VAnchor.Center,
@@ -49,7 +49,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 				autoLevelRow.AddChild(new HorizontalSpacer());
 
 				// run leveling button
-				var runWizardButton = new TextButton("Run Leveling Wizard".Localize(), theme)
+				var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Raw);
+				var runWizardButton = new IconButton(configureIcon, theme)
 				{
 					VAnchor = VAnchor.Center,
 					BackgroundColor = theme.MinimalShade,
@@ -92,12 +93,34 @@ namespace MatterHackers.MatterControl.PrinterControls
 					&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
 					&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
 				{
-					var runCalibrateProbeButton = new TextButton("Recalibrate Probe".Localize(), theme)
+					var probeCalibrationRow = new FlowLayoutWidget()
 					{
-						VAnchor = VAnchor.Absolute,
-						HAnchor = HAnchor.Right,
+						Name = "probeCalibrationRowItem",
+						HAnchor = HAnchor.Stretch,
+					};
+
+					probeCalibrationRow.AddChild(
+						new IconButton(AggContext.StaticData.LoadIcon("probing_32x32.png", 24, 24, IconColor.Theme), theme)
+						{
+							Margin = new BorderDouble(right: 6),
+							VAnchor = VAnchor.Center
+						});
+
+					// label
+					probeCalibrationRow.AddChild(
+						new TextWidget("Print Leveling Probe".Localize(), textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
+						{
+							AutoExpandBoundsToText = true,
+							VAnchor = VAnchor.Center,
+						});
+
+					probeCalibrationRow.AddChild(new HorizontalSpacer());
+
+					var runCalibrateProbeButton = new IconButton(configureIcon, theme)
+					{
+						VAnchor = VAnchor.Center,
 						BackgroundColor = theme.MinimalShade,
-						Margin = new BorderDouble(5, 0, 5, 20)
+						Margin = theme.ButtonSpacing
 					};
 					runCalibrateProbeButton.Click += (s, e) =>
 					{
@@ -107,7 +130,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 						});
 					};
 
-					this.AddChild(runCalibrateProbeButton);
+					probeCalibrationRow.AddChild(runCalibrateProbeButton);
+
+					this.AddChild(probeCalibrationRow);
 				}
 			}
 
