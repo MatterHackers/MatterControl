@@ -455,13 +455,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				this.ForceExpansionMode(ExpansionMode.Collapsed);
 			};
 
-			popupMenu.CreateHorizontalLine();
-
-			popupMenu.CreateBoolMenuItem(
-				"Show Help".Localize(),
-				() => ApplicationController.Instance.ShowHelpControls,
-				(value) => ApplicationController.Instance.ShowHelpControls = value);
-
 			externalExtendMenu?.Invoke(popupMenu);
 		}
 
@@ -533,11 +526,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					this.settingsRows.Add((settingsRow, settingData));
 
 					topToBottomSettings.AddChild(settingsRow);
-
-					if (ApplicationController.Instance.ShowHelpControls)
-					{
-						topToBottomSettings.AddChild(AddInHelpText(topToBottomSettings, settingData));
-					}
 				}
 			}
 
@@ -558,29 +546,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return settingShouldBeShown;
-		}
-
-		private static GuiWidget AddInHelpText(FlowLayoutWidget topToBottomSettings, SliceSettingData settingData)
-		{
-			double textRegionWidth = 380 * GuiWidget.DeviceScale;
-			double helpPointSize = 10;
-
-			var allText = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-				Margin = new BorderDouble(0),
-				Padding = new BorderDouble(5),
-			};
-
-			allText.AddChild(
-				new WrappedTextWidget(settingData.HelpText, pointSize: helpPointSize, textColor: Color.White)
-				{
-					Width = textRegionWidth,
-					Margin = new BorderDouble(5, 0, 0, 0)
-				});
-
-			allText.MinimumSize = new Vector2(0, allText.MinimumSize.Y);
-			return allText;
 		}
 
 		// Creates an information row showing the base OEM profile and its create_date value
