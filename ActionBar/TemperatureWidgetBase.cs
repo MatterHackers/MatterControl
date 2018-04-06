@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.ActionBar
 {
 	internal abstract class TemperatureWidgetBase : PopupMenuButton
 	{
-		protected CheckBox heatToggle;
+		protected ICheckbox heatToggle;
 		protected TextWidget CurrentTempIndicator;
 		private TextWidget goalTempIndicator;
 		protected TextWidget DirectionIndicator;

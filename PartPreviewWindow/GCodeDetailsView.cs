@@ -28,7 +28,9 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -36,10 +38,11 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MeshVisualizer;
+using MatterHackers.RenderOpenGl;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-
 	public interface IToggleOption
 	{
 		string Title { get; }
@@ -56,7 +59,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public Func<bool> IsVisible { get; }
 
 		public Action<bool> SetValue { get; }
-
 
 		public BoolOption(string title, Func<bool> isChecked, Action<bool> setValue)
 			: this(title, isChecked, setValue, () => true)
@@ -197,15 +199,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					buttonPanel,
 					enforceGutter: false));
 
-			var viewOptions = new[]
+			gcodeOptions = sceneContext.RendererOptions;
+
+			var viewOptions = sceneContext.GetBaseViewOptions();
+
+			viewOptions.AddRange(new[]
 			{
-				new BoolOption(
-					"Show Print Bed".Localize(),
-					() => gcodeOptions.RenderBed,
-					(value) =>
-					{
-						gcodeOptions.RenderBed = value;
-					}),
 				new BoolOption(
 					"Moves".Localize(),
 					() => gcodeOptions.RenderMoves,
@@ -239,26 +238,55 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							//layerRenderRatioSlider.SecondValue = 1;
 						}
 					})
-			};
+			});
 
-			foreach(var option in viewOptions)
+			var optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				if (option.IsVisible())
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			};
+			this.AddChild(optionsContainer);
+
+			void BuildMenu()
+			{
+				foreach (var option in viewOptions)
 				{
-					this.AddChild(
-						new SettingsItem(
-							option.Title,
-							theme.Colors.PrimaryTextColor,
-							new SettingsItem.ToggleSwitchConfig()
-							{
-								Name = option.Title + " Toggle",
-								Checked = option.IsChecked(),
-								ToggleAction = option.SetValue
-							},
-							enforceGutter: false)
-					);
+					if (option.IsVisible())
+					{
+						optionsContainer.AddChild(
+							new SettingsItem(
+								option.Title,
+								theme.Colors.PrimaryTextColor,
+								new SettingsItem.ToggleSwitchConfig()
+								{
+									Name = option.Title + " Toggle",
+									Checked = option.IsChecked(),
+									ToggleAction = option.SetValue
+								},
+								enforceGutter: false)
+						);
+					}
 				}
 			}
+
+			BuildMenu();
+
+			PropertyChangedEventHandler syncProperties = (s, e) =>
+			{
+				if (e.PropertyName == nameof(gcodeOptions.RenderBed)
+					|| e.PropertyName == nameof(gcodeOptions.RenderBuildVolume))
+				{
+					optionsContainer.CloseAllChildren();
+					BuildMenu();
+				}
+			};
+
+			gcodeOptions.PropertyChanged += syncProperties;
+
+			optionsContainer.Closed += (s, e) =>
+			{
+				gcodeOptions.PropertyChanged -= syncProperties;
+			};
 		}
 
 		private void SwitchColorModes_Click(object sender, MouseEventArgs e)

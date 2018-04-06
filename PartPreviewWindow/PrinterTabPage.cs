@@ -254,9 +254,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.SetSliderVisibility();
 
-			view3DWidget.selectedObjectContainer.Visible = view3DWidget.meshViewerWidget.ModelView
-				&& sceneContext.Scene.HasSelection
-				&& printer?.ViewState.ViewMode != PartViewMode.Layers2D;
+			view3DWidget.modelViewSidePanel.Visible = printer?.ViewState.ViewMode == PartViewMode.Model;
 		}
 
 		private void BedPlate_LoadedGCodeChanged(object sender, EventArgs e)

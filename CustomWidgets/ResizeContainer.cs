@@ -42,6 +42,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private int splitterWidth = 10;
 
 		internal ResizeContainer(GuiWidget resizeTarget)
+			: base (FlowDirection.TopToBottom)
 		{
 			this.resizeTarget = resizeTarget;
 			this.HAnchor = HAnchor.Absolute;

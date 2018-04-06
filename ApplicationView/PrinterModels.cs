@@ -42,6 +42,7 @@ using Newtonsoft.Json;
 namespace MatterHackers.MatterControl
 {
 	using System.Collections.Generic;
+	using System.ComponentModel;
 	using System.Threading;
 	using MatterHackers.Agg;
 	using MatterHackers.DataConverters3D;
@@ -77,7 +78,7 @@ namespace MatterHackers.MatterControl
 
 		public async Task LoadContent(EditContext editContext)
 		{
-			// Make sure we don't have a selection 
+			// Make sure we don't have a selection
 			this.Scene.SelectedItem = null;
 
 			// Store
@@ -408,7 +409,7 @@ namespace MatterHackers.MatterControl
 				renderType |= RenderType.Retractions;
 			}
 
-			if (options.RenderSpeeds)
+			if (options.GCodeLineColorStyle == "Speeds")
 			{
 				renderType |= RenderType.SpeedColors;
 			}
@@ -531,6 +532,11 @@ namespace MatterHackers.MatterControl
 			}
 
 			return Task.CompletedTask;
+		}
+
+		public List<BoolOption> GetBaseViewOptions()
+		{
+			return new List<BoolOption>();
 		}
 	}
 
@@ -933,11 +939,11 @@ namespace MatterHackers.MatterControl
 		}
 	}
 
-	public class View3DConfig
+	public class View3DConfig : INotifyPropertyChanged
 	{
-		public bool IsDirty { get; internal set; }
+		public event PropertyChangedEventHandler PropertyChanged;
 
-		public event EventHandler GCodeOptionsChanged;
+		public bool IsDirty { get; internal set; }
 
 		public bool RenderBed
 		{
@@ -946,86 +952,102 @@ namespace MatterHackers.MatterControl
 				string value = UserSettings.Instance.get("GcodeViewerRenderGrid");
 				if (value == null)
 				{
-					RenderBed = true;
 					return true;
 				}
 				return (value == "True");
 			}
 			set
 			{
-				UserSettings.Instance.set("GcodeViewerRenderGrid", value.ToString());
-				this.IsDirty = true;
+				if (this.RenderBed != value)
+				{
+					UserSettings.Instance.set("GcodeViewerRenderGrid", value.ToString());
+					this.IsDirty = true;
+					this.OnPropertyChanged(nameof(RenderBed));
+				}
 			}
 		}
 
 		public bool RenderMoves
 		{
-			get { return (UserSettings.Instance.get("GcodeViewerRenderMoves") == "True"); }
+			get => UserSettings.Instance.get("GcodeViewerRenderMoves") == "True";
 			set
 			{
-				UserSettings.Instance.set("GcodeViewerRenderMoves", value.ToString());
-				this.IsDirty = true;
+				if (this.RenderMoves != value)
+				{
+					UserSettings.Instance.set("GcodeViewerRenderMoves", value.ToString());
+					this.IsDirty = true;
+					this.OnPropertyChanged(nameof(RenderMoves));
+				}
 			}
 		}
 
 		public bool RenderRetractions
 		{
-			get { return (UserSettings.Instance.get("GcodeViewerRenderRetractions") == "True"); }
+			get => UserSettings.Instance.get("GcodeViewerRenderRetractions") == "True";
 			set
 			{
-				UserSettings.Instance.set("GcodeViewerRenderRetractions", value.ToString());
-				this.IsDirty = true;
-			}
-		}
-
-		public bool RenderSpeeds
-		{
-			get => this.GCodeLineColorStyle == "Speeds";
-			set
-			{
-				this.GCodeLineColorStyle = "Speeds";
-				GCodeOptionsChanged?.Invoke(this, null);
+				if (this.RenderRetractions != value)
+				{
+					UserSettings.Instance.set("GcodeViewerRenderRetractions", value.ToString());
+					this.IsDirty = true;
+					this.OnPropertyChanged(nameof(RenderRetractions));
+				}
 			}
 		}
 
 		public string GCodeModelView
 		{
-			get { return UserSettings.Instance.get("GcodeModelView"); }
+			get => UserSettings.Instance.get("GcodeModelView");
 			set
 			{
-				UserSettings.Instance.set("GcodeModelView", value);
-				this.IsDirty = true;
+				if (this.GCodeModelView != value)
+				{
+					UserSettings.Instance.set("GcodeModelView", value);
+					this.IsDirty = true;
+					this.OnPropertyChanged(nameof(GCodeModelView));
+				}
 			}
 		}
 
 		public string GCodeLineColorStyle
 		{
-			get { return UserSettings.Instance.get("GCodeLineColorStyle"); }
+			get => UserSettings.Instance.get("GCodeLineColorStyle");
 			set
 			{
-				UserSettings.Instance.set("GCodeLineColorStyle", value);
-				GCodeOptionsChanged?.Invoke(this, null);
-				this.IsDirty = true;
+				if (this.GCodeLineColorStyle != value)
+				{
+					UserSettings.Instance.set("GCodeLineColorStyle", value);
+					this.IsDirty = true;
+					this.OnPropertyChanged(nameof(GCodeLineColorStyle));
+				}
 			}
 		}
 
 		public bool SimulateExtrusion
 		{
-			get { return (UserSettings.Instance.get("GcodeViewerSimulateExtrusion") == "True"); }
+			get => UserSettings.Instance.get("GcodeViewerSimulateExtrusion") == "True";
 			set
 			{
-				UserSettings.Instance.set("GcodeViewerSimulateExtrusion", value.ToString());
-				this.IsDirty = true;
+				if (this.SimulateExtrusion != value)
+				{
+					UserSettings.Instance.set("GcodeViewerSimulateExtrusion", value.ToString());
+					this.IsDirty = true;
+					this.OnPropertyChanged(nameof(SimulateExtrusion));
+				}
 			}
 		}
 
 		public bool TransparentExtrusion
 		{
-			get { return (UserSettings.Instance.get("GcodeViewerTransparentExtrusion") == "True"); }
+			get => UserSettings.Instance.get("GcodeViewerTransparentExtrusion") == "True";
 			set
 			{
-				UserSettings.Instance.set("GcodeViewerTransparentExtrusion", value.ToString());
-				this.IsDirty = true;
+				if (this.TransparentExtrusion != value)
+				{
+					UserSettings.Instance.set("GcodeViewerTransparentExtrusion", value.ToString());
+					this.IsDirty = true;
+					this.OnPropertyChanged(nameof(TransparentExtrusion));
+				}
 			}
 		}
 
@@ -1042,8 +1064,12 @@ namespace MatterHackers.MatterControl
 			}
 			set
 			{
-				UserSettings.Instance.set("GcodeViewerHideExtruderOffsets", value.ToString());
-				this.IsDirty = true;
+				if (this.HideExtruderOffsets != value)
+				{
+					UserSettings.Instance.set("GcodeViewerHideExtruderOffsets", value.ToString());
+					this.IsDirty = true;
+					this.OnPropertyChanged(nameof(HideExtruderOffsets));
+				}
 			}
 		}
 
@@ -1052,9 +1078,32 @@ namespace MatterHackers.MatterControl
 			get => UserSettings.Instance.get("LayerViewSyncToPrint") == "True";
 			set
 			{
-				UserSettings.Instance.set("LayerViewSyncToPrint", value.ToString());
-				this.IsDirty = true;
+				if (this.SyncToPrint != value)
+				{
+					UserSettings.Instance.set("LayerViewSyncToPrint", value.ToString());
+					this.IsDirty = true;
+					this.OnPropertyChanged(nameof(SyncToPrint));
+				}
 			}
+		}
+
+		private bool _renderBuildVolume;
+		public bool RenderBuildVolume
+		{
+			get => _renderBuildVolume;
+			set
+			{
+				if (_renderBuildVolume != value)
+				{
+					_renderBuildVolume = value;
+					this.OnPropertyChanged(nameof(RenderBuildVolume));
+				}
+			}
+		}
+
+		protected void OnPropertyChanged(string name)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 		}
 	}
 }

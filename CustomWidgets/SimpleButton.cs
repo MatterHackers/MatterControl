@@ -246,6 +246,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public event EventHandler CheckedStateChanged;
 
+		public bool ToggleButton { get; set; } = false;
+
 		public RadioIconButton(ImageBuffer icon, ThemeConfig theme)
 			: base(icon, theme)
 		{
@@ -254,7 +256,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public override void OnClick(MouseEventArgs mouseEvent)
 		{
 			base.OnClick(mouseEvent);
-			this.Checked = true;
+
+			bool newValue = (this.ToggleButton) ? !this.Checked : true;
+
+			bool checkStateChanged = (newValue != this.Checked);
+
+			this.Checked = newValue;
+
+			// After setting CheckedState, fire event if different
+			if (checkStateChanged)
+			{
+				OnCheckStateChanged();
+			}
 		}
 
 		private bool _checked;
@@ -273,7 +286,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 					this.BackgroundColor = (_checked) ? theme.MinimalShade : Color.Transparent;
 
-					OnCheckStateChanged();
 					Invalidate();
 				}
 			}

@@ -140,7 +140,9 @@
     <Compile Include="DesignTools\LithophaneObject3D.cs" />
     <Compile Include="PartPreviewWindow\LibraryBrowserPage.cs" />
     <Compile Include="PartPreviewWindow\MaterialControls.cs" />
+    <Compile Include="PartPreviewWindow\ModelOptionsPanel.cs" />
     <Compile Include="PartPreviewWindow\MoveItemPage.cs" />
+    <Compile Include="PartPreviewWindow\RoundedToggleSwitch.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\CombineEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\ImageEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\MeshWrapperObject3D.cs" />

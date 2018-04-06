@@ -46,6 +46,7 @@ using System.Collections.ObjectModel;
 
 namespace MatterHackers.MatterControl
 {
+	using System.ComponentModel;
 	using System.IO.Compression;
 	using System.Net;
 	using System.Reflection;
@@ -1664,6 +1665,77 @@ namespace MatterHackers.MatterControl
 
 				return Task.CompletedTask;
 			});
+		}
+
+		internal GuiWidget GetViewOptionButtons(BedConfig sceneContext, PrinterConfig printer, ThemeConfig theme)
+		{
+			var container = new FlowLayoutWidget();
+
+			var bedButton = new RadioIconButton(AggContext.StaticData.LoadIcon("bed.png", IconColor.Theme), theme)
+			{
+				Name = "Bed Button",
+				ToolTipText = "Show Print Bed".Localize(),
+				Checked = sceneContext.RendererOptions.RenderBed,
+				Margin = theme.ButtonSpacing,
+				ToggleButton = true,
+				Height = 24,
+				Width = 24
+			};
+			bedButton.CheckedStateChanged += (s, e) =>
+			{
+				sceneContext.RendererOptions.RenderBed = bedButton.Checked;
+			};
+			container.AddChild(bedButton);
+
+			RadioIconButton printAreaButton = null;
+
+			if (sceneContext.BuildHeight > 0
+				&& printer?.ViewState.ViewMode != PartViewMode.Layers2D)
+			{
+				printAreaButton = new RadioIconButton(AggContext.StaticData.LoadIcon("print_area.png", IconColor.Theme), theme)
+				{
+					Name = "Bed Button",
+					ToolTipText = "Show Print Area".Localize(),
+					Checked = sceneContext.RendererOptions.RenderBuildVolume,
+					Margin = theme.ButtonSpacing,
+					ToggleButton = true,
+					Height = 24,
+					Width = 24
+				};
+				printAreaButton.CheckedStateChanged += (s, e) =>
+				{
+					sceneContext.RendererOptions.RenderBuildVolume = printAreaButton.Checked;
+				};
+				container.AddChild(printAreaButton);
+			}
+
+			this. BindBedOptions(container, bedButton, printAreaButton, sceneContext.RendererOptions);
+
+			return container;
+		}
+
+		public void BindBedOptions(GuiWidget container, ICheckbox bedButton, ICheckbox printAreaButton, View3DConfig renderOptions)
+		{
+			PropertyChangedEventHandler syncProperties = (s, e) =>
+			{
+				switch (e.PropertyName)
+				{
+					case nameof(renderOptions.RenderBed):
+						bedButton.Checked = renderOptions.RenderBed;
+						break;
+
+					case nameof(renderOptions.RenderBuildVolume) when printAreaButton != null:
+						printAreaButton.Checked = renderOptions.RenderBuildVolume;
+						break;
+				}
+			};
+
+			renderOptions.PropertyChanged += syncProperties;
+
+			container.Closed += (s, e) =>
+			{
+				renderOptions.PropertyChanged -= syncProperties;
+			};
 		}
 
 		public class CloudSyncEventArgs : EventArgs

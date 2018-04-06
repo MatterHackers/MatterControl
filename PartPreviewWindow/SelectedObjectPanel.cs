@@ -269,8 +269,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var viewMode = printer?.ViewState.ViewMode;
 
-			this.Parent.Visible = viewMode == null || viewMode == PartViewMode.Model;
-
 			HashSet<IObject3DEditor> mappedEditors = ApplicationController.Instance.GetEditorsForType(selectedItemType);
 
 			var activeEditors = new List<(IObject3DEditor, IObject3D, string)>();
