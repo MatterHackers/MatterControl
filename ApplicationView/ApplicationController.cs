@@ -782,10 +782,7 @@ namespace MatterHackers.MatterControl
 				var printer = ApplicationController.Instance.ActivePrinters.Where(p => p.Connection == s).FirstOrDefault();
 				if (printer != null)
 				{
-					if (PrintLevelingData.NeedsToBeRun(printer))
-					{
-						UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(printer));
-					}
+					ApplicationController.Instance.RunAnyRequiredCalibration(printer);
 				}
 			}, ref unregisterEvents);
 
@@ -805,6 +802,31 @@ namespace MatterHackers.MatterControl
 					mappedEditors.Add(editor);
 				}
 			}
+		}
+
+		public bool RunAnyRequiredCalibration(PrinterConfig printer)
+		{
+			if (PrintLevelingData.NeedsToBeRun(printer))
+			{
+				// run probe calibration first if we need to
+				if (ProbeCalibrationWizard.NeedsToBeRun(printer))
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						ProbeCalibrationWizard.ShowProbeCalibrationWizard(printer);
+					});
+				}
+				else // run the leveling wizard
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						LevelWizardBase.ShowPrintLevelWizard(printer);
+					});
+				}
+				return true;
+			}
+
+			return false;
 		}
 
 		public HashSet<IObject3DEditor> GetEditorsForType(Type selectedItemType)
@@ -1408,14 +1430,10 @@ namespace MatterHackers.MatterControl
 			try
 			{
 				// If leveling is required or is currently on
-				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
-					|| ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
+				if(ApplicationController.Instance.RunAnyRequiredCalibration(printer))
 				{
-					if (PrintLevelingData.NeedsToBeRun(printer))
-					{
-						LevelWizardBase.ShowPrintLevelWizard(printer);
-						return;
-					}
+					// We need to calibrate. So, don't print this part.
+					return;
 				}
 
 				//if (!string.IsNullOrEmpty(partFilePath) && File.Exists(partFilePath))

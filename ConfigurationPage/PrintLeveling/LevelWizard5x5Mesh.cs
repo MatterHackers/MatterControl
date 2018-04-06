@@ -37,8 +37,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class LevelWizard5x5Mesh : LevelWizardBase
 	{
-		public LevelWizard5x5Mesh(PrinterConfig printer, LevelWizardBase.RunningState runningState)
-			: base(printer, runningState)
+		public LevelWizard5x5Mesh(PrinterConfig printer)
+			: base(printer)
 		{
 		}
 

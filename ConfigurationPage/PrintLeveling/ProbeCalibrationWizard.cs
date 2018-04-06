@@ -67,6 +67,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizard = new WizardControl();
 			AddChild(printLevelWizard);
 
+			if (printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated))
+			{
+				string part1 = "Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize();
+				string part2 = "The next few screens will walk your through calibrating your printer.".Localize();
+				string requiredPageInstructions = $"{part1}\n\n{part2}";
+				printLevelWizard.AddPage(new FirstPageInstructions(printer, levelingStrings.initialPrinterSetupStepText, requiredPageInstructions));
+			}
+
 			var CalibrateProbeWelcomText = "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}".FormatWith(
 				"Welcome to the probe calibration wizard. Here is a quick overview on what we are going to do.".Localize(),
 				"Home the printer".Localize(),
@@ -115,6 +123,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		}
 
 		private static SystemWindow probeCalibrationWizardWindow;
+
+		public static bool UsingZProbe(PrinterConfig printer)
+		{
+			// we have a probe that we are using and we have not done leveling yet
+			return printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
+				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe);
+		}
+
+		public static bool NeedsToBeRun(PrinterConfig printer)
+		{
+			// we have a probe that we are using and we have not done leveling yet
+			return UsingZProbe(printer) && !printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated);
+		}
 
 		public static void ShowProbeCalibrationWizard(PrinterConfig printer)
 		{

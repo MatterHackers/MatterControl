@@ -36,8 +36,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class LevelWizard13PointRadial : LevelWizardBase
 	{
-		public LevelWizard13PointRadial(PrinterConfig printer, LevelWizardBase.RunningState runningState)
-			: base(printer, runningState)
+		public LevelWizard13PointRadial(PrinterConfig printer)
+			: base(printer)
 		{
 		}
 

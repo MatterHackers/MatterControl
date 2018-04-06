@@ -800,6 +800,15 @@
     "RebuildGCodeOnChange": false
   },
   {
+    "SlicerConfigName": "probe_has_been_calibrated",
+    "PresentationName": "Probe Has Been Calibrated",
+    "HelpText": "Flag keeping track if probe calibration wizard has been run.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!has_hardware_leveling",
+    "DefaultValue": "0",
+    "RebuildGCodeOnChange": false
+  },
+  {
     "SlicerConfigName": "print_leveling_probe_start",
     "PresentationName": "Start Height",
     "HelpText": "The starting height (z) of the print head before probing each print level position.",
