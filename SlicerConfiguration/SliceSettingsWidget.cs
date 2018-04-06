@@ -637,19 +637,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				BorderColor = theme.GetBorderColor((theme.Colors.IsDarkTheme) ? 3 : 5)
 			};
 
-			if (!PrinterSettings.KnownSettings.Contains(settingData.SlicerConfigName))
 			{
-				// the setting we think we are adding is not in the known settings it may have been deprecated
-				TextWidget settingName = new TextWidget($"Setting '{settingData.SlicerConfigName}' not found in known settings");
-				settingName.TextColor = textColor;
-				settingsRow.NameArea.AddChild(settingName);
-				settingsRow.NameArea.BackgroundColor = Color.Red;
-			}
-			else
-			{
-				settingsRow.NameArea.AddChild(
-					SettingsRow.CreateSettingsLabel(settingData.PresentationName.Localize(), settingData.HelpText, textColor));
-
 				switch (settingData.DataEditType)
 				{
 					case SliceSettingData.DataEditTypes.INT:
@@ -810,7 +798,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 
 				// After initializing the field, wrap with dropmenu if applicable
-				if (settingData.QuickMenuSettings.Count > 0 
+				if (settingData.QuickMenuSettings.Count > 0
 					&& settingData.SlicerConfigName == "baud_rate")
 				{
 					var dropMenu = new DropMenuWrappedField(uiField, settingData, textColor);
@@ -898,7 +886,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				item.widget.Visible = layerName != "Oem" && layerName != "Base";
 
-				if(layerName == "User" 
+				if(layerName == "User"
 					&& currentValue == printer.Settings.GetValueAndLayerName(settingData.SlicerConfigName, baseAndOem).currentValue)
 				{
 					item.widget.Visible = false;
