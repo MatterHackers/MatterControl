@@ -79,14 +79,6 @@
     "DefaultValue": "100%"
   },
   {
-    "SlicerConfigName": "clean_nozzle_image",
-    "PresentationName": "Clean Nozzle Image",
-    "HelpText": "The image to show when explaining leveling and calibration.",
-    "DataEditType": "WIDE_STRING",
-    "ShowIfSet": "!sla_printer",
-    "DefaultValue": "clean_nozzle.png"
-  },
-  {
     "SlicerConfigName": "trim_image",
     "PresentationName": "Trim Image",
     "HelpText": "The image to show when explaining trimming.",
@@ -776,6 +768,14 @@
     "ShowIfSet": "!has_hardware_leveling",
     "DefaultValue": "3 Point Plane",
     "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "clean_nozzle_image",
+    "PresentationName": "Clean Nozzle Image",
+    "HelpText": "The image to show when explaining leveling and calibration.",
+    "DataEditType": "WIDE_STRING",
+    "ShowIfSet": "!has_hardware_leveling",
+    "DefaultValue": "clean_nozzle.png"
   },
   {
     "SlicerConfigName": "print_leveling_required_to_print",
