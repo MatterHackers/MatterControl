@@ -33,6 +33,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -53,8 +54,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public SettingsRow(string title, string helpText, Color textColor, ThemeConfig theme, ImageBuffer icon = null, bool enforceGutter = false, bool fullRowSelect = false)
 		{
 			this.theme = theme;
-			this.MinimumSize = new Vector2(0, 28);
 			this.fullRowSelect = fullRowSelect;
+
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Fit;
+			this.MinimumSize = new Vector2(0, theme.ButtonHeight);
+			this.Border = new BorderDouble(bottom: 1);
+			this.BorderColor = theme.GetBorderColor((theme.Colors.IsDarkTheme) ? 3 : 5);
 
 			hoverColor = theme.MinimalShade;
 
@@ -85,15 +91,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Margin = new BorderDouble(right: 6)
 			});
 
-			GuiWidget nameArea;
-			this.AddChild(nameArea = new GuiWidget()
-			{
-				MinimumSize = new Vector2(50, 0),
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit | VAnchor.Center,
-				DebugShowBounds = debugLayout
-			});
-			nameArea.AddChild(settingsLabel = SettingsRow.CreateSettingsLabel(title, helpText, textColor));
+			this.AddChild(settingsLabel = SettingsRow.CreateSettingsLabel(title, helpText, textColor));
+
+			this.AddChild(new HorizontalSpacer());
 
 			if (fullRowSelect)
 			{
@@ -103,11 +103,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static GuiWidget CreateSettingsLabel(string label, string helpText, Color textColor)
 		{
-			return  new WrappedTextWidget(label, pointSize: 10, textColor: textColor)
+			return new TextWidget(label, textColor: textColor, pointSize: 10)
 			{
-				VAnchor = VAnchor.Center | VAnchor.Fit,
-				ToolTipText = helpText.Localize(),
-				Margin = new BorderDouble(0, 5, 5, 5),
+				AutoExpandBoundsToText = true,
+				VAnchor = VAnchor.Center,
+				ToolTipText = string.IsNullOrWhiteSpace(helpText) ? null : helpText,
 			};
 		}
 

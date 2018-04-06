@@ -512,6 +512,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			HorizontalLine lastLine = null;
 
+			GuiWidget settingsRow = null;
+
 			foreach (SliceSettingData settingData in subGroup.Settings)
 			{
 				// Note: tab sections may disappear if / when they are empty, as controlled by:
@@ -521,12 +523,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName)
 					&& settingShouldBeShown)
 				{
-					var settingsRow = CreateItemRow(settingData);
+					settingsRow = CreateItemRow(settingData);
 
 					this.settingsRows.Add((settingsRow, settingData));
 
 					topToBottomSettings.AddChild(settingsRow);
 				}
+			}
+
+			// Hide border on last item in group
+			if (settingsRow != null)
+			{
+				settingsRow.BorderColor = Color.Transparent;
 			}
 
 			lastLine?.Close();
@@ -628,142 +636,133 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			bool placeFieldInDedicatedRow = false;
 
 			bool fullRowSelect = settingData.DataEditType == SliceSettingData.DataEditTypes.CHECK_BOX;
-			var settingsRow = new SliceSettingsRow(printer, settingsContext, settingData, textColor, theme, fullRowSelect: fullRowSelect)
+			var settingsRow = new SliceSettingsRow(printer, settingsContext, settingData, textColor, theme, fullRowSelect: fullRowSelect);
+
+			switch (settingData.DataEditType)
 			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				MinimumSize = new Vector2(0, theme.ButtonHeight),
-				Border = new BorderDouble(bottom: 1),
-				BorderColor = theme.GetBorderColor((theme.Colors.IsDarkTheme) ? 3 : 5)
-			};
+				case SliceSettingData.DataEditTypes.INT:
 
-			{
-				switch (settingData.DataEditType)
-				{
-					case SliceSettingData.DataEditTypes.INT:
+					var intField = new IntField();
+					uiField = intField;
 
-						var intField = new IntField();
-						uiField = intField;
+					if (settingData.SlicerConfigName == "extruder_count")
+					{
+						intField.MaxValue = 4;
+						intField.MinValue = 0;
+					}
 
-						if (settingData.SlicerConfigName == "extruder_count")
+					break;
+
+				case SliceSettingData.DataEditTypes.DOUBLE:
+				case SliceSettingData.DataEditTypes.OFFSET:
+					uiField = new DoubleField();
+					break;
+
+				case SliceSettingData.DataEditTypes.POSITIVE_DOUBLE:
+					if (settingData.SetSettingsOnChange.Count > 0)
+					{
+						uiField = new BoundDoubleField(settingsContext, settingData);
+					}
+					else
+					{
+						uiField = new PositiveDoubleField();
+					};
+					break;
+
+				case SliceSettingData.DataEditTypes.DOUBLE_OR_PERCENT:
+					uiField = new DoubleOrPercentField();
+					break;
+
+				case SliceSettingData.DataEditTypes.INT_OR_MM:
+					uiField = new IntOrMmField();
+					break;
+
+				case SliceSettingData.DataEditTypes.CHECK_BOX:
+					uiField = new ToggleboxField(textColor);
+					useDefaultSavePattern = false;
+					uiField.ValueChanged += (s, e) =>
+					{
+						if (e.UserInitiated)
 						{
-							intField.MaxValue = 4;
-							intField.MinValue = 0;
-						}
-
-						break;
-
-					case SliceSettingData.DataEditTypes.DOUBLE:
-					case SliceSettingData.DataEditTypes.OFFSET:
-						uiField = new DoubleField();
-						break;
-
-					case SliceSettingData.DataEditTypes.POSITIVE_DOUBLE:
-						if (settingData.SetSettingsOnChange.Count > 0)
-						{
-							uiField = new BoundDoubleField(settingsContext, settingData);
-						}
-						else
-						{
-							uiField = new PositiveDoubleField();
-						};
-						break;
-
-					case SliceSettingData.DataEditTypes.DOUBLE_OR_PERCENT:
-						uiField = new DoubleOrPercentField();
-						break;
-
-					case SliceSettingData.DataEditTypes.INT_OR_MM:
-						uiField = new IntOrMmField();
-						break;
-
-					case SliceSettingData.DataEditTypes.CHECK_BOX:
-						uiField = new ToggleboxField(textColor);
-						useDefaultSavePattern = false;
-						uiField.ValueChanged += (s, e) =>
-						{
-							if (e.UserInitiated)
+							// Linked settings should be updated in all cases (user clicked checkbox, user clicked clear)
+							foreach (var setSettingsData in settingData.SetSettingsOnChange)
 							{
-								// Linked settings should be updated in all cases (user clicked checkbox, user clicked clear)
-								foreach (var setSettingsData in settingData.SetSettingsOnChange)
-								{
-									string targetValue;
+								string targetValue;
 
-									if (uiField.Content is CheckBox checkbox)
+								if (uiField.Content is CheckBox checkbox)
+								{
+									if (setSettingsData.TryGetValue(checkbox.Checked ? "OnValue" : "OffValue", out targetValue))
 									{
-										if (setSettingsData.TryGetValue(checkbox.Checked ? "OnValue" : "OffValue", out targetValue))
-										{
-											settingsContext.SetValue(setSettingsData["TargetSetting"], targetValue);
-										}
+										settingsContext.SetValue(setSettingsData["TargetSetting"], targetValue);
 									}
 								}
-
-								// Store actual field value
-								settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
 							}
-						};
-						break;
 
-					case SliceSettingData.DataEditTypes.STRING:
-					case SliceSettingData.DataEditTypes.WIDE_STRING:
-						uiField = new TextField();
-						break;
+							// Store actual field value
+							settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
+						}
+					};
+					break;
 
-					case SliceSettingData.DataEditTypes.MULTI_LINE_TEXT:
-						uiField = new MultilineStringField();
-						placeFieldInDedicatedRow = true;
-						break;
+				case SliceSettingData.DataEditTypes.STRING:
+				case SliceSettingData.DataEditTypes.WIDE_STRING:
+					uiField = new TextField();
+					break;
 
-					case SliceSettingData.DataEditTypes.COM_PORT:
-						useDefaultSavePattern = false;
+				case SliceSettingData.DataEditTypes.MULTI_LINE_TEXT:
+					uiField = new MultilineStringField();
+					placeFieldInDedicatedRow = true;
+					break;
 
-						sliceSettingValue = printer.Settings.Helpers.ComPort();
+				case SliceSettingData.DataEditTypes.COM_PORT:
+					useDefaultSavePattern = false;
 
-						uiField = new ComPortField(printer, theme);
-						uiField.ValueChanged += (s, e) =>
+					sliceSettingValue = printer.Settings.Helpers.ComPort();
+
+					uiField = new ComPortField(printer, theme);
+					uiField.ValueChanged += (s, e) =>
+					{
+						if (e.UserInitiated)
 						{
-							if (e.UserInitiated)
-							{
-								printer.Settings.Helpers.SetComPort(uiField.Value);
-							}
-						};
+							printer.Settings.Helpers.SetComPort(uiField.Value);
+						}
+					};
 
-						break;
+					break;
 
-					case SliceSettingData.DataEditTypes.LIST:
-						uiField = new ListField()
-						{
-							ListItems = settingData.ListValues.Split(',').ToList()
-						};
-						break;
+				case SliceSettingData.DataEditTypes.LIST:
+					uiField = new ListField()
+					{
+						ListItems = settingData.ListValues.Split(',').ToList()
+					};
+					break;
 
-					case SliceSettingData.DataEditTypes.HARDWARE_PRESENT:
-						uiField = new ToggleboxField(textColor);
-						break;
+				case SliceSettingData.DataEditTypes.HARDWARE_PRESENT:
+					uiField = new ToggleboxField(textColor);
+					break;
 
-					case SliceSettingData.DataEditTypes.VECTOR2:
-						uiField = new Vector2Field();
-						break;
+				case SliceSettingData.DataEditTypes.VECTOR2:
+					uiField = new Vector2Field();
+					break;
 
-					case SliceSettingData.DataEditTypes.OFFSET2:
-						placeFieldInDedicatedRow = true;
-						uiField = new ExtruderOffsetField(settingsContext, settingData.SlicerConfigName, textColor);
-						break;
+				case SliceSettingData.DataEditTypes.OFFSET2:
+					placeFieldInDedicatedRow = true;
+					uiField = new ExtruderOffsetField(settingsContext, settingData.SlicerConfigName, textColor);
+					break;
 #if !__ANDROID__
-					case SliceSettingData.DataEditTypes.IP_LIST:
-						uiField = new IpAddessField(printer);
-						break;
+				case SliceSettingData.DataEditTypes.IP_LIST:
+					uiField = new IpAddessField(printer);
+					break;
 #endif
 
-					default:
-						// Missing Setting
-						settingsRow.AddContent(new TextWidget($"Missing the setting for '{settingData.DataEditType}'.")
-						{
-							TextColor = textColor,
-							BackgroundColor = Color.Red
-						});
-						break;
-				}
+				default:
+					// Missing Setting
+					settingsRow.AddContent(new TextWidget($"Missing the setting for '{settingData.DataEditType}'.")
+					{
+						TextColor = textColor,
+						BackgroundColor = Color.Red
+					});
+					break;
 			}
 
 			if (uiField != null)

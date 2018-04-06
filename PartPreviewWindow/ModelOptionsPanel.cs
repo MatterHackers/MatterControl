@@ -136,7 +136,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					buttonPanel,
 					enforceGutter: false)
 				{
-					Margin = new BorderDouble(bottom: 2)
+					Margin = new BorderDouble(bottom: 2),
+					Border = 0
 				});
 
 			foreach (var option in sceneContext.GetBaseViewOptions())

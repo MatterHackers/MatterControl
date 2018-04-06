@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -249,23 +250,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			void BuildMenu()
 			{
-				foreach (var option in viewOptions)
+				foreach (var option in viewOptions.Where(option => option.IsVisible()))
 				{
-					if (option.IsVisible())
-					{
-						optionsContainer.AddChild(
-							new SettingsItem(
-								option.Title,
-								theme.Colors.PrimaryTextColor,
-								new SettingsItem.ToggleSwitchConfig()
-								{
-									Name = option.Title + " Toggle",
-									Checked = option.IsChecked(),
-									ToggleAction = option.SetValue
-								},
-								enforceGutter: false)
-						);
-					}
+					var settingsItem = new SettingsItem(
+						option.Title,
+						theme.Colors.PrimaryTextColor,
+						new SettingsItem.ToggleSwitchConfig()
+						{
+							Name = option.Title + " Toggle",
+							Checked = option.IsChecked(),
+							ToggleAction = option.SetValue
+						},
+						enforceGutter: false);
+
+					settingsItem.Padding = settingsItem.Padding.Clone(right: 8);
+
+					optionsContainer.AddChild(settingsItem);
 				}
 			}
 

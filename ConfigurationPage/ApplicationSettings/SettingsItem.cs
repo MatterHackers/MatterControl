@@ -1,14 +1,13 @@
 ﻿using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.VectorMath;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
-	public class SettingsItem : FlowLayoutWidget
+	public class SettingsItem : SettingsRow
 	{
 		public class ToggleSwitchConfig
 		{
@@ -35,39 +34,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		}
 
 		public SettingsItem (string text, Color textColor, GuiWidget settingsControls, GuiWidget optionalControls = null, ImageBuffer imageBuffer = null, bool enforceGutter = true)
-			: base (FlowDirection.LeftToRight)
+			: base (text, "", textColor, ApplicationController.Instance.Theme)
 		{
 			var theme = ApplicationController.Instance.Theme;
 			this.SettingsControl = settingsControls;
-			this.HAnchor = HAnchor.Stretch;
-			this.MinimumSize = new Vector2(0, theme.ButtonHeight);
-
-			if (imageBuffer != null)
-			{
-				this.AddChild(new ImageWidget(imageBuffer)
-				{
-					Margin = new BorderDouble(right: 6, left: 6),
-					VAnchor = VAnchor.Center
-				});
-			}
-			else if (enforceGutter)
-			{
-				// Add an icon placeholder to get consistent label indenting on items lacking icons
-				this.AddChild(new GuiWidget()
-				{
-					Width = 24 + 12,
-					Height = 24,
-					Margin = new BorderDouble(0)
-				});
-			}
-
-			this.AddChild(new TextWidget(text, textColor: textColor, pointSize: theme.DefaultFontSize)
-			{
-				AutoExpandBoundsToText = true,
-				VAnchor = VAnchor.Center,
-			});
-
-			this.AddChild(new HorizontalSpacer());
 
 			if (optionalControls != null)
 			{

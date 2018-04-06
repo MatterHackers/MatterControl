@@ -59,7 +59,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.buttonFactory = buttonFactory;
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
-			this.Padding = new BorderDouble(right: 4);
 
 			// Camera Monitoring
 			bool hasCamera = true || ApplicationSettings.Instance.get(ApplicationSettingsKey.HardwareHasCamera) == "true";
@@ -358,10 +357,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private void AddSettingsRow(GuiWidget widget)
 		{
 			this.AddChild(widget);
-			this.AddChild(new HorizontalLine(70)
-			{
-				Margin = new BorderDouble(left: 30),
-			});
+
+			widget.BorderColor = ApplicationController.Instance.Theme.GetBorderColor(25);
+			widget.Padding = widget.Padding.Clone(right: 10);
 		}
 
 		private FlowLayoutWidget GetThemeControl(ThemeConfig theme)
