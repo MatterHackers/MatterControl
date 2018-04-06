@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private Button restoreButton = null;
 
 		public SliceSettingsRow(PrinterConfig printer, SettingsContext settingsContext, SliceSettingData settingData, Color textColor, ThemeConfig theme, bool fullRowSelect = false)
-			: base (settingData.PresentationName.Localize(), settingData.HelpText, textColor, theme, fullRowSelect: fullRowSelect)
+			: base (settingData.PresentationName.Localize(), settingData.HelpText.Localize(), textColor, theme, fullRowSelect: fullRowSelect)
 		{
 			this.printer = printer;
 			this.settingData = settingData;
