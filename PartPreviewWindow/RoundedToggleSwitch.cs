@@ -54,7 +54,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private double toggleRadius = 10;
 		private double toggleRadiusPlusPadding = 11;
 
-		public bool Checked { get; set; }
+		private bool _checked;
+		public bool Checked
+		{
+			get => _checked;
+			set
+			{
+				_checked = value;
+				this.Invalidate();
+			}
+		}
 
 		public event EventHandler CheckedStateChanged;
 

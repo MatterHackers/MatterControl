@@ -455,13 +455,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				this.ForceExpansionMode(ExpansionMode.Collapsed);
 			};
 
-			popupMenu.CreateHorizontalLine();
-
-			popupMenu.CreateBoolMenuItem(
-				"Show Help".Localize(),
-				() => ApplicationController.Instance.ShowHelpControls,
-				(value) => ApplicationController.Instance.ShowHelpControls = value);
-
 			externalExtendMenu?.Invoke(popupMenu);
 		}
 
@@ -533,11 +526,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					this.settingsRows.Add((settingsRow, settingData));
 
 					topToBottomSettings.AddChild(settingsRow);
-
-					if (ApplicationController.Instance.ShowHelpControls)
-					{
-						topToBottomSettings.AddChild(AddInHelpText(topToBottomSettings, settingData));
-					}
 				}
 			}
 
@@ -558,29 +546,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return settingShouldBeShown;
-		}
-
-		private static GuiWidget AddInHelpText(FlowLayoutWidget topToBottomSettings, SliceSettingData settingData)
-		{
-			double textRegionWidth = 380 * GuiWidget.DeviceScale;
-			double helpPointSize = 10;
-
-			var allText = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-				Margin = new BorderDouble(0),
-				Padding = new BorderDouble(5),
-			};
-
-			allText.AddChild(
-				new WrappedTextWidget(settingData.HelpText, pointSize: helpPointSize, textColor: Color.White)
-				{
-					Width = textRegionWidth,
-					Margin = new BorderDouble(5, 0, 0, 0)
-				});
-
-			allText.MinimumSize = new Vector2(0, allText.MinimumSize.Y);
-			return allText;
 		}
 
 		// Creates an information row showing the base OEM profile and its create_date value
@@ -672,19 +637,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				BorderColor = theme.GetBorderColor((theme.Colors.IsDarkTheme) ? 3 : 5)
 			};
 
-			if (!PrinterSettings.KnownSettings.Contains(settingData.SlicerConfigName))
 			{
-				// the setting we think we are adding is not in the known settings it may have been deprecated
-				TextWidget settingName = new TextWidget($"Setting '{settingData.SlicerConfigName}' not found in known settings");
-				settingName.TextColor = textColor;
-				settingsRow.NameArea.AddChild(settingName);
-				settingsRow.NameArea.BackgroundColor = Color.Red;
-			}
-			else
-			{
-				settingsRow.NameArea.AddChild(
-					SettingsRow.CreateSettingsLabel(settingData.PresentationName.Localize(), settingData.HelpText, textColor));
-
 				switch (settingData.DataEditType)
 				{
 					case SliceSettingData.DataEditTypes.INT:
@@ -845,7 +798,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 
 				// After initializing the field, wrap with dropmenu if applicable
-				if (settingData.QuickMenuSettings.Count > 0 
+				if (settingData.QuickMenuSettings.Count > 0
 					&& settingData.SlicerConfigName == "baud_rate")
 				{
 					var dropMenu = new DropMenuWrappedField(uiField, settingData, textColor);
@@ -933,7 +886,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				item.widget.Visible = layerName != "Oem" && layerName != "Base";
 
-				if(layerName == "User" 
+				if(layerName == "User"
 					&& currentValue == printer.Settings.GetValueAndLayerName(settingData.SlicerConfigName, baseAndOem).currentValue)
 				{
 					item.widget.Visible = false;
