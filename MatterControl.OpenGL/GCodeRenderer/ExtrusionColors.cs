@@ -47,9 +47,16 @@ namespace MatterHackers.GCodeVisualizer
 
 		public ExtrusionColors(HashSet<float> speeds)
 		{
-			min = speeds.Min();
-			max = speeds.Max();
-
+			if (speeds.Any())
+			{
+				min = speeds.Min();
+				max = speeds.Max();
+			}
+			else
+			{
+				min = 0;
+				max = 1;
+			}
 			range = max - min;
 			delta = startColor - endColor;
 

@@ -32,7 +32,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				};
 
 				autoLevelRow.AddChild(
-					new IconButton(AggContext.StaticData.LoadIcon("leveling_32x32.png", 24, 24, IconColor.Theme), theme)
+					new ImageWidget(AggContext.StaticData.LoadIcon("leveling_32x32.png", 24, 24, IconColor.Theme))
 					{
 						Margin = new BorderDouble(right: 6),
 						VAnchor = VAnchor.Center
@@ -53,8 +53,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 				var runWizardButton = new IconButton(configureIcon, theme)
 				{
 					VAnchor = VAnchor.Center,
-					BackgroundColor = theme.MinimalShade,
-					Margin = theme.ButtonSpacing
+					Margin = theme.ButtonSpacing,
+					ToolTipText = "Print Leveling Wizard".Localize()
 				};
 				runWizardButton.Click += (s, e) =>
 				{
@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					};
 
 					probeCalibrationRow.AddChild(
-						new IconButton(AggContext.StaticData.LoadIcon("probing_32x32.png", 24, 24, IconColor.Theme), theme)
+						new ImageWidget(AggContext.StaticData.LoadIcon("probing_32x32.png", 24, 24, IconColor.Theme))
 						{
 							Margin = new BorderDouble(right: 6),
 							VAnchor = VAnchor.Center
@@ -121,8 +121,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 					var runCalibrateProbeButton = new IconButton(configureIcon, theme)
 					{
 						VAnchor = VAnchor.Center,
-						BackgroundColor = theme.MinimalShade,
-						Margin = theme.ButtonSpacing
+						Margin = theme.ButtonSpacing,
+						ToolTipText = "Probe Calibration Wizard".Localize()
 					};
 					runCalibrateProbeButton.Click += (s, e) =>
 					{

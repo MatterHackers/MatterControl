@@ -212,16 +212,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.AddChild(imageWidget);
 		}
 
-		public override bool Enabled
-		{
-			get => base.Enabled;
-			set
-			{
-				base.Enabled = value;
-				imageWidget.Image = (value) ? image : this.DisabledImage;
-			}
-		}
-
 		public ImageBuffer IconImage => this.Enabled ? image : this.DisabledImage;
 
 		private ImageBuffer _disabledImage;
@@ -237,6 +227,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				return _disabledImage;
 			}
+		}
+
+		public override void OnEnabledChanged(EventArgs e)
+		{
+			imageWidget.Image = (this.Enabled) ? image : this.DisabledImage;
+			this.Invalidate();
+
+			base.OnEnabledChanged(e);
 		}
 	}
 
