@@ -512,6 +512,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			HorizontalLine lastLine = null;
 
+			GuiWidget settingsRow = null;
+
 			foreach (SliceSettingData settingData in subGroup.Settings)
 			{
 				// Note: tab sections may disappear if / when they are empty, as controlled by:
@@ -521,12 +523,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName)
 					&& settingShouldBeShown)
 				{
-					var settingsRow = CreateItemRow(settingData);
+					settingsRow = CreateItemRow(settingData);
 
 					this.settingsRows.Add((settingsRow, settingData));
 
 					topToBottomSettings.AddChild(settingsRow);
 				}
+			}
+
+			// Hide border on last item in group
+			if (settingsRow != null)
+			{
+				settingsRow.BorderColor = Color.Transparent;
 			}
 
 			lastLine?.Close();
