@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -68,19 +69,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class ToggleboxField : UIField
 	{
-		private CheckBox checkBoxWidget;
+		private ICheckbox checkBoxWidget;
 		private Color textColor;
 
 		public bool Checked
 		{
-			get
-			{
-				return checkBoxWidget.Checked;
-			}
-			set
-			{
-				checkBoxWidget.Checked = value;
-			}
+			get => checkBoxWidget.Checked;
+			set => checkBoxWidget.Checked = value;
 		}
 
 		public ToggleboxField(Color textColor)
@@ -92,20 +87,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var pixelWidth = this.ControlWidth + 6; // HACK: work around agg-bug where text fields are padding*2 bigger than ControlWidth
 
-			checkBoxWidget = ImageButtonFactory.CreateToggleSwitch(false, textColor, pixelWidth, pixelHeight: 24 * GuiWidget.DeviceScale, useStandardLabels: false);
-			checkBoxWidget.VAnchor = VAnchor.Center;
-			checkBoxWidget.Name = this.Name;
-			checkBoxWidget.Margin = 0;
-			checkBoxWidget.Click += (s, e) =>
+			var toggleSwitch = new RoundedToggleSwitch(ApplicationController.Instance.Theme); //  ImageButtonFactory.CreateToggleSwitch(false, textColor, pixelWidth, pixelHeight: 24 * GuiWidget.DeviceScale, useStandardLabels: false);
+			toggleSwitch.VAnchor = VAnchor.Center;
+			toggleSwitch.Name = this.Name;
+			toggleSwitch.Margin = 0;
+			toggleSwitch.CheckedStateChanged += (s, e) =>
 			{
-				Console.WriteLine("Checkbox Click Event: " + this.checkBoxWidget.Checked);
-
 				this.SetValue(
 					this.checkBoxWidget.Checked ? "1" : "0",
 					userInitiated: true);
 			};
 
-			this.Content = this.checkBoxWidget;
+			this.Content = toggleSwitch;
+			checkBoxWidget = toggleSwitch;
 		}
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
