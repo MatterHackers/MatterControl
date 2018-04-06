@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				AutoExpandBoundsToText = true,
 				VAnchor = VAnchor.Center,
-				ToolTipText = helpText.Localize(),
+				ToolTipText = string.IsNullOrWhiteSpace(helpText) ? null : helpText,
 			};
 		}
 
