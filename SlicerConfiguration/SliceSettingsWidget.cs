@@ -483,13 +483,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				nameSanitizer.Replace(group.Category.Name, ""),
 				nameSanitizer.Replace(group.Name, ""));
 
-			var isExpanded = UserSettings.Instance.get(userSettingsKey) == "1";
-
-			var sectionWidget = new SectionWidget(group.Name.Localize(), groupPanel, theme, expanded: isExpanded).ApplyBoxStyle();
-			sectionWidget.Checkbox.CheckedStateChanged += (s, e) =>
-			{
-				UserSettings.Instance.set(userSettingsKey, sectionWidget.Checkbox.Checked ? "1" : "0");
-			};
+			var sectionWidget = new SectionWidget(group.Name.Localize(), groupPanel, theme, serializationKey: userSettingsKey).ApplyBoxStyle();
 
 			foreach (var subGroup in group.SubGroups)
 			{

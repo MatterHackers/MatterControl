@@ -210,31 +210,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Padding = new BorderDouble(top: 10)
 			});
 
-			editorSection = new SectionWidget("Editor", editorColumn, theme);
+			editorSection = new SectionWidget("Editor", editorColumn, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true);
 			scrollableContent.AddChild(editorSection);
 
-			var colorSection = new SectionWidget("Color".Localize(), new ColorSwatchSelector(scene, theme, buttonSize: 16, buttonSpacing: new BorderDouble(1, 1, 0, 0))
-			{
-				Margin = new BorderDouble(left: 10)
-			}, theme, expanded: false)
+			var colorSection = new SectionWidget(
+				"Color".Localize(), 
+				new ColorSwatchSelector(scene, theme, buttonSize: 16, buttonSpacing: new BorderDouble(1, 1, 0, 0))
+				{
+					Margin = new BorderDouble(left: 10)
+				}, 
+				theme,
+				serializationKey: UserSettingsKey.ColorPanelExpanded)
 			{
 				Name = "Color Panel",
 			};
 			scrollableContent.AddChild(colorSection);
 
-			var mirrorSection = new SectionWidget("Mirror".Localize(), new MirrorControls(scene, theme), theme, expanded: false)
+			var mirrorSection = new SectionWidget("Mirror".Localize(), new MirrorControls(scene, theme), theme, serializationKey: UserSettingsKey.MirrorPanelExpanded)
 			{
 				Name = "Mirror Panel",
 			};
 			scrollableContent.AddChild(mirrorSection);
 
-			var scaleSection = new SectionWidget("Scale".Localize(), new ScaleControls(scene, theme), theme, expanded: false)
+			var scaleSection = new SectionWidget("Scale".Localize(), new ScaleControls(scene, theme), theme, serializationKey: UserSettingsKey.ScalePanelExpanded)
 			{
 				Name = "Scale Panel",
 			};
 			scrollableContent.AddChild(scaleSection);
 
-			var materialsSection = new SectionWidget("Materials".Localize(), new MaterialControls(scene, theme), theme, expanded: false)
+			var materialsSection = new SectionWidget("Materials".Localize(), new MaterialControls(scene, theme), theme, serializationKey: UserSettingsKey.MaterialsPanelExpanded)
 			{
 				Name = "Materials Panel",
 			};
