@@ -677,7 +677,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (!PrinterSettings.KnownSettings.Contains(settingData.SlicerConfigName))
 			{
 				// the setting we think we are adding is not in the known settings it may have been deprecated
-				TextWidget settingName = new TextWidget(String.Format("Setting '{0}' not found in known settings", settingData.SlicerConfigName));
+				TextWidget settingName = new TextWidget($"Setting '{settingData.SlicerConfigName}' not found in known settings");
 				settingName.TextColor = textColor;
 				settingsRow.NameArea.AddChild(settingName);
 				settingsRow.NameArea.BackgroundColor = Color.Red;
@@ -806,7 +806,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					default:
 						// Missing Setting
-						settingsRow.AddContent(new TextWidget(String.Format("Missing the setting for '{0}'.", settingData.DataEditType.ToString()))
+						settingsRow.AddContent(new TextWidget($"Missing the setting for '{settingData.DataEditType}'.")
 						{
 							TextColor = textColor,
 							BackgroundColor = Color.Red
