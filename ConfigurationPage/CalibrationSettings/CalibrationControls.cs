@@ -32,7 +32,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				};
 
 				autoLevelRow.AddChild(
-					new IconButton(AggContext.StaticData.LoadIcon("leveling_32x32.png", 24, 24, IconColor.Theme), theme)
+					new ImageWidget(AggContext.StaticData.LoadIcon("leveling_32x32.png", 24, 24, IconColor.Theme))
 					{
 						Margin = new BorderDouble(right: 6),
 						VAnchor = VAnchor.Center
@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					};
 
 					probeCalibrationRow.AddChild(
-						new IconButton(AggContext.StaticData.LoadIcon("probing_32x32.png", 24, 24, IconColor.Theme), theme)
+						new ImageWidget(AggContext.StaticData.LoadIcon("probing_32x32.png", 24, 24, IconColor.Theme))
 						{
 							Margin = new BorderDouble(right: 6),
 							VAnchor = VAnchor.Center
