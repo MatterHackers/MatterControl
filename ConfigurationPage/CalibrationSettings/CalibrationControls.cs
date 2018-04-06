@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				autoLevelRow.AddChild(new HorizontalSpacer());
 
 				// run leveling button
-				var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Raw);
+				var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Theme);
 				var runWizardButton = new IconButton(configureIcon, theme)
 				{
 					VAnchor = VAnchor.Center,
