@@ -5,13 +5,13 @@ using MatterHackers.Agg.VertexSource;
 namespace MatterHackers.MatterControl.CustomWidgets
 {
 	/// <summary>
-	/// A container control having a header and a content panel, with optional collapse behavior and right aligned widget
+	/// A container control having a header and a content panel, with optional collapse behavior and right aligned widget. Additionally support persistent expansion state via serializationKey
 	/// </summary>
 	public class SectionWidget : FlowLayoutWidget, IIgnoredPopupChild
 	{
 		private ExpandCheckboxButton checkbox;
 
-		public SectionWidget(string sectionTitle, GuiWidget sectionContent, ThemeConfig theme, GuiWidget rightAlignedContent = null, int headingPointSize = -1, bool expandingContent = true, bool expanded = true)
+		public SectionWidget(string sectionTitle, GuiWidget sectionContent, ThemeConfig theme, GuiWidget rightAlignedContent = null, int headingPointSize = -1, bool expandingContent = true, bool expanded = true, string serializationKey = null, bool defaultExpansion = false)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
@@ -23,6 +23,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				// Add heading
 				var pointSize = (headingPointSize) == -1 ? theme.DefaultFontSize : headingPointSize;
+
+				if (serializationKey != null)
+				{
+					string dbValue = UserSettings.Instance.get(serializationKey);
+					expanded = dbValue == "1" || (dbValue == null && defaultExpansion);
+				}
 
 				checkbox = new ExpandCheckboxButton(sectionTitle, pointSize: pointSize, expandable: expandingContent)
 				{
@@ -36,6 +42,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					// TODO: Remove this Height = 10 and figure out why the layout engine is not sizing these correctly without this.
 					ContentPanel.Height = 10;
 				};
+
+				if (serializationKey != null)
+				{
+					checkbox.CheckedStateChanged += (s, e) =>
+					{
+						UserSettings.Instance.set(serializationKey, checkbox.Checked ? "1" : "0");
+					};
+				}
 
 				if (rightAlignedContent == null)
 				{
