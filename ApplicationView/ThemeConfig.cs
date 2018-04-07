@@ -76,11 +76,6 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		public TextImageButtonFactory MenuButtonFactory { get; private set; }
 
-		/// <summary>
-		/// Used in the Update wizard to show high contrast, primary action buttons
-		/// </summary>
-		public TextImageButtonFactory GrayButtonFactory { get; private set; }
-
 		public Color TabBodyBackground { get; private set; }
 
 		public Color SplitterBackground { get; private set; } = new Color(0, 0, 0, 60);
@@ -212,12 +207,6 @@ namespace MatterHackers.MatterControl
 			this.MenuButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonGray)
 			{
 				Margin = new BorderDouble(8, 0)
-			});
-
-			this.GrayButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
-			{
-				NormalTextColor = colors.PrimaryTextColor,
-				NormalFillColor = Color.Gray
 			});
 
 			this.MicroButton = new TextImageButtonFactory(new ButtonFactoryOptions()

@@ -238,7 +238,7 @@ namespace MatterHackers.MatterControl
 					Button createdButton = null;
 					if (elementState.Classes.Contains("centeredButton"))
 					{
-						createdButton = ApplicationController.Instance.Theme.GrayButtonFactory.Generate(decodedHtml);
+						createdButton = ApplicationController.Instance.Theme.ButtonFactory.Generate(decodedHtml);
 						widgetToAdd = createdButton;
 					}
 					else if (elementState.Classes.Contains("linkButton"))
