@@ -817,6 +817,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 						ApplicationController.Instance.Library.ActiveContainer = container;
 					}
+				},
+				IsEnabled = (selectedListItems, listView) =>
+				{
+					return listView.SelectedItems.Count == 1
+					&& selectedListItems.FirstOrDefault()?.Model is ILibraryAsset;
 				}
 			});
 		}
