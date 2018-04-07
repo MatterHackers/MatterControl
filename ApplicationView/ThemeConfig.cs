@@ -68,7 +68,6 @@ namespace MatterHackers.MatterControl
 		public TextImageButtonFactory WhiteButtonFactory;
 
 		public TextImageButtonFactory ButtonFactory { get; private set; }
-		public TextImageButtonFactory SmallMarginButtonFactory { get; private set; }
 		public TextImageButtonFactory WizardButtons { get; private set; }
 
 		/// <summary>
@@ -161,9 +160,9 @@ namespace MatterHackers.MatterControl
 			commonOptions.FixedHeight = 32;
 
 			this.TabBodyBackground = this.ResolveColor(
-				colors.TertiaryBackgroundColor, 
+				colors.TertiaryBackgroundColor,
 				new Color(
-					Color.White, 
+					Color.White,
 					(colors.IsDarkTheme) ? 3 : 25));
 
 			this.ActiveTabColor = this.TabBodyBackground;
@@ -180,17 +179,11 @@ namespace MatterHackers.MatterControl
 
 			this.ButtonFactory = new TextImageButtonFactory(commonOptions);
 
-			this.SmallMarginButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
-			{
-				Margin = new BorderDouble(8, 0),
-				ImageSpacing = 6
-			});
-
 			this.WizardButtons = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
 			{
 #if __ANDROID__
 				FontSize = this.FontSize14,
-				FixedHeight = fizedHeightB,
+				FixedHeight = 34 * GuiWidget.DeviceScale,
 				Margin = commonOptions.Margin * 1.2
 #endif
 			});
@@ -229,7 +222,7 @@ namespace MatterHackers.MatterControl
 			});
 
 #region PartPreviewWidget
-			
+
 			sideBarButtonWidth = 138;
 			shortButtonHeight = 30;
 

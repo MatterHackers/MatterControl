@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(File.Exists(exportZipPath), "Queue was exported to zip file, file exists on disk at expected path");
 
 				// Import the exported zip file and confirm the Queue Count increases by 3 
-				testRunner.ClickByName("Library Add Button");
+				testRunner.InvokeLibraryAddDialog();
 				testRunner.Delay(1);
 				testRunner.Type(exportZipPath);
 				testRunner.Delay(1);

@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ChangeToQueueContainer();
 
 				// Click Add button and select files
-				testRunner.ClickByName("Library Add Button");
+				testRunner.InvokeLibraryAddDialog();
 
 				// Open Fennec_Fox
 				testRunner.CompleteDialog(
@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ChangeToQueueContainer();
 
 				// Click Add button and select files
-				testRunner.ClickByName("Library Add Button");
+				testRunner.InvokeLibraryAddDialog();
 
 				// Open Fennec_Fox, Batman files
 				testRunner.CompleteDialog(
@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ChangeToQueueContainer();
 
 				// Click Add button and select files
-				testRunner.ClickByName("Library Add Button");
+				testRunner.InvokeLibraryAddDialog();
 
 				// Open Rook
 				testRunner.CompleteDialog(
@@ -227,7 +227,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ChangeToQueueContainer();
 
 				// Click Add button and select files
-				testRunner.ClickByName("Library Add Button");
+				testRunner.InvokeLibraryAddDialog();
 
 				// Open Batman
 				testRunner.CompleteDialog(
@@ -257,7 +257,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ChangeToQueueContainer();
 
 				// Click Add button and select files
-				testRunner.ClickByName("Library Add Button");
+				testRunner.InvokeLibraryAddDialog();
 
 				// Open chichen-itza_pyramid
 				testRunner.CompleteDialog(

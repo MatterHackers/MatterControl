@@ -46,8 +46,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public class PrintLibraryWidget : GuiWidget
 	{
-		private Button addToLibraryButton;
-		private Button createFolderButton;
 		private FlowLayoutWidget buttonPanel;
 		private ListView libraryView;
 		private GuiWidget providerMessageContainer;
@@ -398,12 +396,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var activeContainer = this.libraryView.ActiveContainer;
 
-			var writableContainer = activeContainer as ILibraryWritableContainer;
-
 			bool containerSupportsEdits = activeContainer is ILibraryWritableContainer;
-
-			addToLibraryButton.Enabled = containerSupportsEdits;
-			createFolderButton.Enabled = containerSupportsEdits && writableContainer?.AllowAction(ContainerActions.AddContainers) == true;
 
 			searchInput.Text = activeContainer.KeywordFilter;
 			breadCrumbWidget.SetContainer(activeContainer);
@@ -433,60 +426,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			buttonPanel.RemoveAllChildren();
 
-			// the add button
-			addToLibraryButton = theme.SmallMarginButtonFactory.Generate("Add".Localize(), AggContext.StaticData.LoadIcon("cube.png", IconColor.Theme));
-			addToLibraryButton.Enabled = false; // The library selector (the first library selected) is protected so we can't add to it. 
-			addToLibraryButton.ToolTipText = "Add an .stl, .obj, .amf, .gcode or .zip file to the Library".Localize();
-			addToLibraryButton.Name = "Library Add Button";
-			addToLibraryButton.Margin = new BorderDouble(0, 0, 3, 0);
-			addToLibraryButton.Click += (sender, e) => UiThread.RunOnIdle(() =>
-			{
-				AggContext.FileDialogs.OpenFileDialog(
-					new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true),
-					(openParams) =>
-					{
-						if (openParams.FileNames != null)
-						{
-							var writableContainer = this.libraryView.ActiveContainer as ILibraryWritableContainer;
-							if (writableContainer != null
-								&& openParams.FileNames.Length > 0)
-							{
-								writableContainer.Add(openParams.FileNames.Select(f => new FileSystemFileItem(f)));
-							}
-						}
-					});
-			});
-			buttonPanel.AddChild(addToLibraryButton);
-
-			// the create folder button
-			createFolderButton = theme.SmallMarginButtonFactory.Generate("Create Folder".Localize());
-			createFolderButton.Enabled = false; // Disabled until changed by the ActiveContainer
-			createFolderButton.Name = "Create Folder From Library Button";
-			createFolderButton.Margin = new BorderDouble(0, 0, 3, 0);
-			createFolderButton.Click += (sender, e) =>
-			{
-				DialogWindow.Show(
-					new InputBoxPage(
-						"Create Folder".Localize(),
-						"Folder Name".Localize(),
-						"",
-						"Enter New Name Here".Localize(),
-						"Create".Localize(),
-						(newName) =>
-						{
-							if (!string.IsNullOrEmpty(newName)
-								&& this.libraryView.ActiveContainer is ILibraryWritableContainer writableContainer)
-							{
-								writableContainer.Add(new[]
-								{
-									new CreateFolderItem() { Name = newName }
-								});
-							}
-						}));
-
-			};
-			buttonPanel.AddChild(createFolderButton);
-
 			// add in the message widget
 			providerMessageContainer = new GuiWidget()
 			{
@@ -510,6 +449,63 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void CreateMenuActions()
 		{
+			menuActions.Add(new PrintItemAction()
+			{
+				Icon = AggContext.StaticData.LoadIcon("cube.png", IconColor.Raw),
+				Title = "Add".Localize(),
+				ToolTipText = "Add an.stl, .obj, .amf, .gcode or.zip file to the Library".Localize(),
+				Action = (selectedLibraryItems, listView) =>
+				{
+					AggContext.FileDialogs.OpenFileDialog(
+							new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true),
+							(openParams) =>
+							{
+								if (openParams.FileNames != null)
+								{
+									var writableContainer = this.libraryView.ActiveContainer as ILibraryWritableContainer;
+									if (writableContainer != null
+										&& openParams.FileNames.Length > 0)
+									{
+										writableContainer.Add(openParams.FileNames.Select(f => new FileSystemFileItem(f)));
+									}
+								}
+							});
+				},
+				IsEnabled = (s, l) => this.libraryView.ActiveContainer is ILibraryWritableContainer
+			});
+
+			menuActions.Add(new PrintItemAction()
+			{
+				Title = "Create Folder".Localize(),
+				Icon = AggContext.StaticData.LoadIcon("fa-folder-new_16.png", IconColor.Raw),
+				Action = (selectedLibraryItems, listView) =>
+				{
+					DialogWindow.Show(
+						new InputBoxPage(
+							"Create Folder".Localize(),
+							"Folder Name".Localize(),
+							"",
+							"Enter New Name Here".Localize(),
+							"Create".Localize(),
+							(newName) =>
+							{
+								if (!string.IsNullOrEmpty(newName)
+									&& this.libraryView.ActiveContainer is ILibraryWritableContainer writableContainer)
+								{
+									writableContainer.Add(new[]
+									{
+									new CreateFolderItem() { Name = newName }
+									});
+								}
+							}));
+				},
+				IsEnabled = (s, l) =>
+				{
+					return this.libraryView.ActiveContainer is ILibraryWritableContainer writableContainer
+						&& writableContainer?.AllowAction(ContainerActions.AddContainers) == true;
+				}
+			});
+
 			menuActions.Add(new PrintItemAction()
 			{
 
@@ -940,7 +936,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					}
 					else
 					{
-						var menuItem = popupMenu.CreateMenuItem(menuAction.Title);
+						var menuItem = popupMenu.CreateMenuItem(menuAction.Title, menuAction.Icon);
 						menuItem.Name = $"{menuAction.Title} Menu Item";
 
 						menuItem.Enabled = menuAction.Action != null;
