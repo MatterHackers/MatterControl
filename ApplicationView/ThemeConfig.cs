@@ -68,7 +68,6 @@ namespace MatterHackers.MatterControl
 		public TextImageButtonFactory WhiteButtonFactory;
 
 		public TextImageButtonFactory ButtonFactory { get; private set; }
-		public TextImageButtonFactory SmallMarginButtonFactory { get; private set; }
 		public TextImageButtonFactory WizardButtons { get; private set; }
 
 		/// <summary>
@@ -179,12 +178,6 @@ namespace MatterHackers.MatterControl
 			this.SplitterBackground = this.ActiveTabColor.AdjustLightness(0.87).ToColor();
 
 			this.ButtonFactory = new TextImageButtonFactory(commonOptions);
-
-			this.SmallMarginButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
-			{
-				Margin = new BorderDouble(8, 0),
-				ImageSpacing = 6
-			});
 
 			this.WizardButtons = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
 			{

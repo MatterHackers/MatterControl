@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public Action<IEnumerable<ILibraryItem>, ListView> Action { get; set; }
 
 		public Func<IEnumerable<ListViewItem>, ListView, bool> IsEnabled { get; set; }
-
+		public string ToolTipText { get; internal set; }
 		internal PopupMenu.MenuItem MenuItem { get; set; }
 	}
 
