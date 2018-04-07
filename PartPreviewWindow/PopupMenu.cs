@@ -34,6 +34,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
@@ -313,6 +314,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public ImageBuffer Image { get; set; }
 
+			private ImageBuffer _disabledImage;
+			public ImageBuffer DisabledImage
+			{
+				get
+				{
+					// Lazy construct on first access
+					if (this.Image != null &&
+						_disabledImage == null)
+					{
+						_disabledImage = this.Image.AjustAlpha(0.2);
+					}
+
+					return _disabledImage;
+				}
+			}
+
 			public override bool Enabled
 			{
 				get => base.Enabled;
@@ -334,7 +351,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var x = this.Image.Width / 2 - PopupMenu.GutterWidth + 2;
 					var y = this.Size.Y / 2 - this.Image.Height / 2;
 
-					graphics2D.Render(this.Image, x, y);
+					graphics2D.Render((this.Enabled) ? this.Image : this.DisabledImage, x, y);
 				}
 
 				base.OnDraw(graphics2D);

@@ -451,12 +451,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			menuActions.Add(new PrintItemAction()
 			{
+				Icon = AggContext.StaticData.LoadIcon("cube.png", IconColor.Raw),
 				Title = "Add".Localize(),
 				ToolTipText = "Add an.stl, .obj, .amf, .gcode or.zip file to the Library".Localize(),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					/*
-						AggContext.StaticData.LoadIcon("cube.png", IconColor.Theme)
+						
 						Name = "Library Add Button";
 					*/
 
@@ -481,6 +482,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Create Folder".Localize(),
+				Icon = AggContext.StaticData.LoadIcon("fa-folder-new_16.png", IconColor.Raw),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					/*
@@ -943,7 +945,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					}
 					else
 					{
-						var menuItem = popupMenu.CreateMenuItem(menuAction.Title);
+						var menuItem = popupMenu.CreateMenuItem(menuAction.Title, menuAction.Icon);
 						menuItem.Name = $"{menuAction.Title} Menu Item";
 
 						menuItem.Enabled = menuAction.Action != null;

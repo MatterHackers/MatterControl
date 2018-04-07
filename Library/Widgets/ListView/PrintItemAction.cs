@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
@@ -44,6 +45,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public Func<IEnumerable<ListViewItem>, ListView, bool> IsEnabled { get; set; }
 		public string ToolTipText { get; internal set; }
+		public ImageBuffer Icon { get; internal set; }
 		internal PopupMenu.MenuItem MenuItem { get; set; }
 	}
 
