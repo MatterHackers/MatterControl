@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl
 
 			if (object3D != null)
 			{
-				bool RenderOrthographic = UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode) == "orthographic";
+				bool RenderOrthographic = UserSettings.Instance.ThumbnailRenderingMode == "orthographic";
 
 				// if we are tracing and the file is too big
 				if(!RenderOrthographic

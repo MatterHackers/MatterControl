@@ -169,28 +169,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				thumbnailsModeDropList.AddItem("Flat".Localize(), "orthographic");
 				thumbnailsModeDropList.AddItem("3D".Localize(), "raytraced");
 
-				var acceptableUpdateFeedTypeValues = new List<string>() { "orthographic", "raytraced" };
-				string currentThumbnailRenderingMode = UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode);
-
-				if (acceptableUpdateFeedTypeValues.IndexOf(currentThumbnailRenderingMode) == -1)
-				{
-					if (!UserSettings.Instance.IsTouchScreen)
-					{
-						UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "orthographic");
-					}
-					else
-					{
-						UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "raytraced");
-					}
-				}
-
-				thumbnailsModeDropList.SelectedValue = UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode);
+				thumbnailsModeDropList.SelectedValue = UserSettings.Instance.ThumbnailRenderingMode;
 				thumbnailsModeDropList.SelectionChanged += (s, e) =>
 				{
 					string thumbnailRenderingMode = thumbnailsModeDropList.SelectedValue;
-					if (thumbnailRenderingMode != UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode))
+					if (thumbnailRenderingMode != UserSettings.Instance.ThumbnailRenderingMode)
 					{
-						UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, thumbnailRenderingMode);
+						UserSettings.Instance.ThumbnailRenderingMode = thumbnailRenderingMode;
 
 						UiThread.RunOnIdle(() =>
 						{
