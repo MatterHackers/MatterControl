@@ -88,20 +88,46 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GuiWidget MakeColorButton(InteractiveScene scene, Color color, int buttonSize, BorderDouble buttonSpacing)
 		{
-			var colorWidget = new GuiWidget()
+			return new ColorButton(color, scene)
 			{
-				BackgroundColor = color,
 				Width = buttonSize * GuiWidget.DeviceScale,
 				Height = buttonSize * GuiWidget.DeviceScale,
 				Margin = buttonSpacing
 			};
+		}
 
-			colorWidget.Click += (s, e) =>
+		public class ColorButton : GuiWidget
+		{
+			private Color grayScale;
+			private InteractiveScene scene;
+
+			public ColorButton(Color color, InteractiveScene scene)
 			{
-				scene.UndoBuffer.AddAndDo(new ChangeColor(scene.SelectedItem, colorWidget.BackgroundColor));
-			};
+				this.BackgroundColor = color;
 
-			return colorWidget;
+				// Calculate and store grayscale of current color
+				int y = (color.red * 77) + (color.green * 151) + (color.blue * 28);
+				int gray = (y >> 8);
+				grayScale = new Color(gray, gray, gray, 255);
+
+				this.scene = scene;
+			}
+
+			public override void OnClick(MouseEventArgs mouseEvent)
+			{
+				base.OnClick(mouseEvent);
+
+				UiThread.RunOnIdle(() =>
+				{
+					scene.UndoBuffer.AddAndDo(new ChangeColor(scene.SelectedItem, this.BackgroundColor));
+				});
+			}
+
+			public override Color BackgroundColor
+			{
+				get => (this.Enabled) ? base.BackgroundColor : this.grayScale;
+				set => base.BackgroundColor = value;
+			}
 		}
 	}
 }
