@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var theme = ApplicationController.Instance.Theme;
 
-			this.HAnchor = HAnchor.Stretch;
+			this.HAnchor = HAnchor.MaxFitOrStretch;
 
 			this.AddChild(new TextWidget("Snap Grid".Localize())
 			{
