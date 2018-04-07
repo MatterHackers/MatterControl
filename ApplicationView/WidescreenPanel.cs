@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Stretch;
 			this.Margin = 0;
-			this.PopupContent = new ApplicationSettingsWidget(theme.MenuButtonFactory, theme)
+			this.PopupContent = new ApplicationSettingsWidget(theme)
 			{
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,

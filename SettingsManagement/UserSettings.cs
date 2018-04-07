@@ -138,5 +138,27 @@ namespace MatterHackers.MatterControl
 		}
 
 		public bool IsTouchScreen => this.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen";
+
+		private List<string> acceptableRenderingModes = new List<string>() { "orthographic", "raytraced" };
+
+		public string ThumbnailRenderingMode
+		{
+			get
+			{
+				string renderingMode = this.get(UserSettingsKey.ThumbnailRenderingMode);
+
+				// If the current value is unset or invalid, use platform defaults
+				if (acceptableRenderingModes.IndexOf(renderingMode) == -1)
+				{
+					return UserSettings.Instance.IsTouchScreen ? "orthographic" : "raytraced";
+				}
+
+				return renderingMode;
+			}
+			set
+			{
+				this.set(UserSettingsKey.ThumbnailRenderingMode, value);
+			}
+		}
 	}
 }

@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private Color menuTextColor = Color.Black;
 
-		public ApplicationSettingsWidget(TextImageButtonFactory buttonFactory, ThemeConfig theme)
+		public ApplicationSettingsWidget(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
@@ -59,7 +59,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Raw);
 
-			var previewButton = buttonFactory.Generate("Preview".Localize().ToUpper());
+			var previewButton = new IconButton(configureIcon, theme)
+			{
+				ToolTipText = "Configure Camera View".Localize()
+			};
 			previewButton.Click += (s, e) =>
 			{
 				AppContext.Platform.OpenCameraPreview();
@@ -166,28 +169,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				thumbnailsModeDropList.AddItem("Flat".Localize(), "orthographic");
 				thumbnailsModeDropList.AddItem("3D".Localize(), "raytraced");
 
-				var acceptableUpdateFeedTypeValues = new List<string>() { "orthographic", "raytraced" };
-				string currentThumbnailRenderingMode = UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode);
-
-				if (acceptableUpdateFeedTypeValues.IndexOf(currentThumbnailRenderingMode) == -1)
-				{
-					if (!UserSettings.Instance.IsTouchScreen)
-					{
-						UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "orthographic");
-					}
-					else
-					{
-						UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "raytraced");
-					}
-				}
-
-				thumbnailsModeDropList.SelectedValue = UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode);
+				thumbnailsModeDropList.SelectedValue = UserSettings.Instance.ThumbnailRenderingMode;
 				thumbnailsModeDropList.SelectionChanged += (s, e) =>
 				{
 					string thumbnailRenderingMode = thumbnailsModeDropList.SelectedValue;
-					if (thumbnailRenderingMode != UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode))
+					if (thumbnailRenderingMode != UserSettings.Instance.ThumbnailRenderingMode)
 					{
-						UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, thumbnailRenderingMode);
+						UserSettings.Instance.ThumbnailRenderingMode = thumbnailRenderingMode;
 
 						UiThread.RunOnIdle(() =>
 						{
@@ -254,10 +242,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 				TextWidget sectionLabel = null;
 
-				var textSizeApplyButton = buttonFactory.Generate("Apply".Localize());
-				textSizeApplyButton.VAnchor = VAnchor.Center;
-				textSizeApplyButton.Visible = false;
-				textSizeApplyButton.Margin = new BorderDouble(right: 6);
+				var textSizeApplyButton = new TextButton("Apply".Localize(), theme, Color.Black)
+				{
+					VAnchor = VAnchor.Center,
+					BackgroundColor = theme.SlightShade,
+					Visible = false,
+					Margin = new BorderDouble(right: 6)
+				};
 				textSizeApplyButton.Click += (s, e) =>
 				{
 					GuiWidget.DeviceScale = textSizeSlider.Value;

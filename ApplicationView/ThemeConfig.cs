@@ -117,8 +117,6 @@ namespace MatterHackers.MatterControl
 
 		public Color ToolbarButtonDown => this.MinimalShade;
 
-		private EventHandler unregisterEvents;
-
 		static ThemeConfig()
 		{
 			// EnsureRestoreButtonImages
