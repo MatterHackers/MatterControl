@@ -96,6 +96,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			allControls.AddChild(navBar);
 
+			navBar.OverflowButton.BeforePopup += (s, e) =>
+			{
+				this.EnableMenus();
+			};
+
 			allControls.AddChild(new HorizontalLine(20), 1);
 
 			var toolbar = new OverflowBar(theme)
