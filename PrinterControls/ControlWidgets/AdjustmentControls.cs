@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -59,20 +60,17 @@ namespace MatterHackers.MatterControl.PrinterControls
 			double sliderWidth = 300 * GuiWidget.DeviceScale;
 			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
 
-			{
-				var row = new FlowLayoutWidget()
-				{
-					HAnchor = HAnchor.Stretch,
-					Margin = 0,
-					VAnchor = VAnchor.Fit
-				};
+			SettingsRow settingsRow;
 
-				var feedRateDescription = new TextWidget("Speed Multiplier".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
-				{
-					MinimumSize = new Vector2(140, 0) * GuiWidget.DeviceScale,
-					VAnchor = VAnchor.Center,
-				};
-				row.AddChild(feedRateDescription);
+			{
+				this.AddChild(settingsRow = new SettingsRow(
+					"Speed Multiplier".Localize(),
+					null,
+					theme.Colors.PrimaryTextColor,
+					theme));
+
+				// Remove the HorizontalSpacer
+				settingsRow.Children.Last().Close();
 
 				feedRateRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, minFeedRateRatio, maxFeedRateRatio)
 				{
@@ -80,6 +78,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					Margin = new BorderDouble(5, 0),
 					Value = FeedRateMultiplyerStream.FeedRateRatio,
 					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Center,
 					TotalWidthInPixels = sliderWidth,
 				};
 				feedRateRatioSlider.ValueChanged += (sender, e) =>
@@ -96,7 +95,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 						SettingsKey.feedrate_ratio,
 						FeedRateMultiplyerStream.FeedRateRatio.ToString());
 				};
-				row.AddChild(feedRateRatioSlider);
+				settingsRow.AddChild(feedRateRatioSlider);
 
 				feedRateValue = new MHNumberEdit(Math.Round(FeedRateMultiplyerStream.FeedRateRatio, 2), allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
 				{
@@ -118,31 +117,25 @@ namespace MatterHackers.MatterControl.PrinterControls
 						SettingsKey.feedrate_ratio,
 						FeedRateMultiplyerStream.FeedRateRatio.ToString());
 				};
-				row.AddChild(feedRateValue);
-
-				this.AddChild(row);
+				settingsRow.AddChild(feedRateValue);
 			}
 
 			{
-				var row = new FlowLayoutWidget()
-				{
-					HAnchor = HAnchor.Stretch,
-					Margin = new BorderDouble(top: 10),
-					VAnchor = VAnchor.Fit
-				};
+				this.AddChild(settingsRow = new SettingsRow(
+					"Extrusion Multiplier".Localize(),
+					null,
+					theme.Colors.PrimaryTextColor,
+					theme));
 
-				var extrusionDescription = new TextWidget("Extrusion Multiplier".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
-				{
-					MinimumSize = new Vector2(140, 0) * GuiWidget.DeviceScale,
-					VAnchor = VAnchor.Center
-				};
-				row.AddChild(extrusionDescription);
+				// Remove the HorizontalSpacer
+				settingsRow.Children.Last().Close();
 
 				extrusionRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, minExtrutionRatio, maxExtrusionRatio, Orientation.Horizontal)
 				{
 					Name = "Extrusion Multiplier Slider",
 					TotalWidthInPixels = sliderWidth,
 					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Center,
 					Margin = new BorderDouble(5, 0),
 					Value = ExtrusionMultiplyerStream.ExtrusionRatio
 				};
@@ -161,6 +154,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 						SettingsKey.extrusion_ratio,
 						ExtrusionMultiplyerStream.ExtrusionRatio.ToString());
 				};
+				settingsRow.AddChild(extrusionRatioSlider);
 
 				extrusionValue = new MHNumberEdit(Math.Round(ExtrusionMultiplyerStream.ExtrusionRatio, 2), allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
 				{
@@ -182,10 +176,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 						SettingsKey.extrusion_ratio,
 						ExtrusionMultiplyerStream.ExtrusionRatio.ToString());
 				};
-				row.AddChild(extrusionRatioSlider);
-				row.AddChild(extrusionValue);
-
-				this.AddChild(row);
+				settingsRow.AddChild(extrusionValue);
 			}
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>

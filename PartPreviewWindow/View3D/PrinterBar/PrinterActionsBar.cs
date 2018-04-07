@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var buttonGroupB = new ObservableCollection<GuiWidget>();
 
 			var iconPath = Path.Combine("ViewTransformControls", "model.png");
-			modelViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, IconColor.Theme), theme)
+			modelViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 16, 16, IconColor.Theme), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Model View Button",
@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AddChild(modelViewButton);
 
 			iconPath = Path.Combine("ViewTransformControls", "gcode_3d.png");
-			layers3DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, IconColor.Theme), theme)
+			layers3DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 16, 16, IconColor.Theme), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Layers3D Button",
@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			iconPath = Path.Combine("ViewTransformControls", "gcode_2d.png");
-			layers2DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, IconColor.Theme), theme)
+			layers2DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 16, 16, IconColor.Theme), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Layers2D Button",

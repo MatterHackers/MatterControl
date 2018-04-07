@@ -32,7 +32,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					null,
 					theme.Colors.PrimaryTextColor,
 					theme,
-					AggContext.StaticData.LoadIcon("leveling_32x32.png", 24, 24, IconColor.Theme)));
+					AggContext.StaticData.LoadIcon("leveling_32x32.png", 16, 16, IconColor.Theme)));
 
 				// run leveling button
 				var runWizardButton = new IconButton(AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Theme), theme)
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 						null,
 						theme.Colors.PrimaryTextColor,
 						theme,
-						AggContext.StaticData.LoadIcon("probing_32x32.png", 24, 24, IconColor.Theme)));
+						AggContext.StaticData.LoadIcon("probing_32x32.png", 16, 16, IconColor.Theme)));
 
 					var runCalibrateProbeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Theme), theme)
 					{
