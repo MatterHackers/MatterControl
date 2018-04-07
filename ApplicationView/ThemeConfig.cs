@@ -98,8 +98,6 @@ namespace MatterHackers.MatterControl
 		public Color InactiveTabColor { get; set; }
 		public Color ActiveTabBarBackground { get; set; }
 
-		public TextImageButtonFactory DisableableControlBase { get; private set; }
-
 		public TextImageButtonFactory MicroButton { get; private set; }
 		public TextImageButtonFactory MicroButtonMenu { get; private set; }
 
@@ -261,23 +259,6 @@ namespace MatterHackers.MatterControl
 
 				BorderWidth = 1,
 			});
-#endregion
-
-#region ImageConverter
-			// TODO: Need to remain based default ButtonFactionOptions constructor until reviewed for styling issues
-			var disableableControlOptions = new ButtonFactoryOptions()
-			{
-				NormalFillColor = Color.White,
-				NormalTextColor = Color.Black,
-				HoverTextColor = colors.PrimaryTextColor,
-				DisabledFillColor = Color.White,
-				DisabledTextColor = Color.DarkGray,
-				PressedTextColor = colors.PrimaryTextColor,
-				FixedHeight = 25 * GuiWidget.DeviceScale,
-				FontSize = 11
-			};
-
-			this.DisableableControlBase = new TextImageButtonFactory(disableableControlOptions);
 #endregion
 
 			this.LinkButtonFactory = new LinkButtonFactory()
