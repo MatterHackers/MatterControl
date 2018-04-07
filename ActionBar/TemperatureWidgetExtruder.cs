@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private int moveAmount = 1;
 		private PrinterConfig printer;
 
-		internal ControlContentExtruder(PrinterConfig printer, int extruderIndex, TextImageButtonFactory buttonFactory)
+		internal ControlContentExtruder(PrinterConfig printer, int extruderIndex, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			HAnchor = HAnchor.Stretch;
@@ -58,20 +58,18 @@ namespace MatterHackers.MatterControl.ActionBar
 			if (extruderIndex == 0)
 			{
 				// add in load and unload buttons
-				macroButtons = GetExtruderMacros(extruderIndex, buttonFactory);
+				macroButtons = GetExtruderMacros(extruderIndex, theme.MenuButtonFactory);
 				this.AddChild(new SettingsItem("Filament".Localize(), macroButtons, enforceGutter: false));
 			}
 
 			// Add the Extrude buttons
-			var moveButtonFactory = ApplicationController.Instance.Theme.MicroButtonMenu;
-
 			var buttonContainer = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit
 			};
 
-			var retractButton = buttonFactory.Generate("Retract".Localize());
+			var retractButton = theme.MenuButtonFactory.Generate("Retract".Localize());
 			retractButton.ToolTipText = "Retract filament".Localize();
 			retractButton.Margin = new BorderDouble(8, 0);
 			retractButton.Click += (s, e) =>
@@ -82,7 +80,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			int extruderButtonTopMargin = macroButtons == null ? 8 : 0;
 
-			var extrudeButton = buttonFactory.Generate("Extrude".Localize());
+			var extrudeButton = theme.MenuButtonFactory.Generate("Extrude".Localize());
 			extrudeButton.Name = "Extrude Button";
 			extrudeButton.ToolTipText = "Extrude filament".Localize();
 			extrudeButton.Margin = new BorderDouble(0, 0, 0, extruderButtonTopMargin);
@@ -104,7 +102,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				Margin = new BorderDouble(0, 3)
 			};
 
-			RadioButton oneButton = moveButtonFactory.GenerateRadioButton("1");
+			RadioButton oneButton = theme.MicroButtonMenu.GenerateRadioButton("1");
 			oneButton.VAnchor = VAnchor.Center;
 			oneButton.CheckedStateChanged += (s, e) =>
 			{
@@ -115,7 +113,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			moveButtonsContainer.AddChild(oneButton);
 
-			RadioButton tenButton = moveButtonFactory.GenerateRadioButton("10");
+			RadioButton tenButton = theme.MicroButtonMenu.GenerateRadioButton("10");
 			tenButton.VAnchor = VAnchor.Center;
 			tenButton.CheckedStateChanged += (s, e) =>
 			{
@@ -126,7 +124,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			moveButtonsContainer.AddChild(tenButton);
 
-			RadioButton oneHundredButton = moveButtonFactory.GenerateRadioButton("100");
+			RadioButton oneHundredButton = theme.MicroButtonMenu.GenerateRadioButton("100");
 			oneHundredButton.VAnchor = VAnchor.Center;
 			oneHundredButton.CheckedStateChanged += (s, e) =>
 			{
@@ -139,7 +137,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			tenButton.Checked = true;
 
-			moveButtonsContainer.AddChild(new TextWidget("mm", textColor: buttonFactory.Options.NormalTextColor, pointSize: 8)
+			moveButtonsContainer.AddChild(new TextWidget("mm", textColor: theme.MenuButtonFactory.Options.NormalTextColor, pointSize: 8)
 			{
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(3, 0)
@@ -171,20 +169,20 @@ namespace MatterHackers.MatterControl.ActionBar
 
 	internal class TemperatureWidgetHotend : TemperatureWidgetBase
 	{
-		private TextImageButtonFactory buttonFactory;
 		private int hotendIndex = -1;
 
 		private string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.".Localize();
 		private string waitingForExtruderToHeatMessage = "The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}".Localize();
+		private ThemeConfig theme;
 
-		public TemperatureWidgetHotend(PrinterConfig printer, int hotendIndex, TextImageButtonFactory buttonFactory)
+		public TemperatureWidgetHotend(PrinterConfig printer, int hotendIndex, ThemeConfig theme)
 			: base(printer, "150.3°")
 		{
 			this.Name = $"Hotend {hotendIndex}";
 			this.hotendIndex = hotendIndex;
-			this.buttonFactory = buttonFactory;
 			this.DisplayCurrentTemperature();
 			this.ToolTipText = "Current extruder temperature".Localize();
+			this.theme = theme;
 
 			printer.Connection.HotendTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
 		}
@@ -350,12 +348,12 @@ namespace MatterHackers.MatterControl.ActionBar
 						TextColor = Color.Black,
 						HAnchor = HAnchor.Left,
 					});
-					container.AddChild(new ControlContentExtruder(printer, extruderIndex, buttonFactory));
+					container.AddChild(new ControlContentExtruder(printer, extruderIndex, theme));
 				}
 			}
 			else
 			{
-				container.AddChild(new ControlContentExtruder(printer, hotendIndex, buttonFactory));
+				container.AddChild(new ControlContentExtruder(printer, hotendIndex, theme));
 			}
 
 			return widget;

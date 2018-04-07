@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private Color menuTextColor = Color.Black;
 
-		public ApplicationSettingsWidget(TextImageButtonFactory buttonFactory, ThemeConfig theme)
+		public ApplicationSettingsWidget(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;

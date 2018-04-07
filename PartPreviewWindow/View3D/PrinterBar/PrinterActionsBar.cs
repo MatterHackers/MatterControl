@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 				{
-					this.AddChild(new TemperatureWidgetHotend(printer, extruderIndex, theme.MenuButtonFactory)
+					this.AddChild(new TemperatureWidgetHotend(printer, extruderIndex, theme)
 					{
 						Margin = new BorderDouble(right: 10)
 					});
