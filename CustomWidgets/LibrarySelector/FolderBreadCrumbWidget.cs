@@ -66,7 +66,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public void SetContainer(ILibraryContainer currentContainer)
 		{
-			var buttonFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
 			var linkButtonFactory = ApplicationController.Instance.Theme.LinkButtonFactory;
 			var theme = ApplicationController.Instance.Theme;
 

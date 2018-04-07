@@ -96,6 +96,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			allControls.AddChild(navBar);
 
+			navBar.OverflowButton.BeforePopup += (s, e) =>
+			{
+				this.EnableMenus();
+			};
+
 			allControls.AddChild(new HorizontalLine(20), 1);
 
 			var toolbar = new OverflowBar(theme)
@@ -260,8 +265,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView);
 			navBar.AddChild(breadCrumbWidget);
-
-			var buttonFactory = theme.SmallMarginButtonFactory;
 
 			var searchPanel = new SearchInputBox()
 			{
@@ -428,12 +431,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void AddLibraryButtonElements()
 		{
-			var textImageButtonFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
-
 			buttonPanel.RemoveAllChildren();
 
 			// the add button
-			addToLibraryButton = textImageButtonFactory.Generate("Add".Localize(), AggContext.StaticData.LoadIcon("cube.png", IconColor.Theme));
+			addToLibraryButton = theme.SmallMarginButtonFactory.Generate("Add".Localize(), AggContext.StaticData.LoadIcon("cube.png", IconColor.Theme));
 			addToLibraryButton.Enabled = false; // The library selector (the first library selected) is protected so we can't add to it. 
 			addToLibraryButton.ToolTipText = "Add an .stl, .obj, .amf, .gcode or .zip file to the Library".Localize();
 			addToLibraryButton.Name = "Library Add Button";
@@ -458,7 +459,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			buttonPanel.AddChild(addToLibraryButton);
 
 			// the create folder button
-			createFolderButton = textImageButtonFactory.Generate("Create Folder".Localize());
+			createFolderButton = theme.SmallMarginButtonFactory.Generate("Create Folder".Localize());
 			createFolderButton.Enabled = false; // Disabled until changed by the ActiveContainer
 			createFolderButton.Name = "Create Folder From Library Button";
 			createFolderButton.Margin = new BorderDouble(0, 0, 3, 0);
@@ -816,6 +817,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 						ApplicationController.Instance.Library.ActiveContainer = container;
 					}
+				},
+				IsEnabled = (selectedListItems, listView) =>
+				{
+					return listView.SelectedItems.Count == 1
+					&& selectedListItems.FirstOrDefault()?.Model is ILibraryAsset;
 				}
 			});
 		}

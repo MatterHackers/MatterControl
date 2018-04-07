@@ -49,20 +49,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.Padding = theme.ToolbarPadding.Clone(left: 0);
 			this.theme = theme;
 
-			this.OverflowButton = this.OverflowMenu = new OverflowMenuButton(this, theme)
+			this.OverflowButton = new OverflowMenuButton(this, theme)
 			{
 				AlignToRightEdge = true,
 			};
 
-			this.ActionArea.Margin = new BorderDouble(right: this.OverflowMenu.Width);
-			this.SetRightAnchorItem(this.OverflowMenu);
+			this.ActionArea.Margin = new BorderDouble(right: this.OverflowButton.Width);
+			this.SetRightAnchorItem(this.OverflowButton);
 		}
 
 		private ThemeConfig theme;
 
-		public GuiWidget OverflowButton { get; }
-
-		protected OverflowMenuButton OverflowMenu { get; }
+		public OverflowMenuButton OverflowButton { get; }
 
 		public Action<PopupMenu> ExtendOverflowMenu { get; set; }
 

@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl
 
 			FlowLayoutWidget additionalInfoContainer = null;
 
-			Button whatsThisLink = theme.HelpLinkFactory.Generate("What's this?".Localize());
+			Button whatsThisLink = theme.LinkButtonFactory.Generate("What's this?".Localize());
 			whatsThisLink.VAnchor = VAnchor.Center;
 			whatsThisLink.Margin = new BorderDouble(left: 6);
 			whatsThisLink.Click += (sender, e) =>

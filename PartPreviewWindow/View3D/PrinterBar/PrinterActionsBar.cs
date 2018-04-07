@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(new TemperatureWidgetBed(printer));
 			}
 
-			this.OverflowMenu.Name = "Printer Overflow Menu";
+			this.OverflowButton.Name = "Printer Overflow Menu";
 			this.ExtendOverflowMenu = (popupMenu) =>
 			{
 				this.GeneratePrinterOverflowMenu(popupMenu, theme);

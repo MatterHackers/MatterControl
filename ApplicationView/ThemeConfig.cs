@@ -49,9 +49,6 @@ namespace MatterHackers.MatterControl
 		public static ImageBuffer RestoreHover { get; private set; }
 		private static ImageBuffer restorePressed;
 
-		private readonly int fizedHeightA = (int)(25 * GuiWidget.DeviceScale + .5);
-		private readonly double fizedHeightB = 34 * GuiWidget.DeviceScale;
-
 		public int FontSize7 { get; } = 7;
 		public int FontSize9 { get; } = 9;
 		public int FontSize10 { get; } = 10;
@@ -67,7 +64,6 @@ namespace MatterHackers.MatterControl
 		public int H1PointSize { get; set; } = 11;
 
 		public LinkButtonFactory LinkButtonFactory { get; private set; }
-		public LinkButtonFactory HelpLinkFactory { get; private set; }
 
 		public TextImageButtonFactory WhiteButtonFactory;
 
@@ -79,11 +75,6 @@ namespace MatterHackers.MatterControl
 		/// Used to make buttons in menu rows where the background color is consistently white
 		/// </summary>
 		public TextImageButtonFactory MenuButtonFactory { get; private set; }
-
-		/// <summary>
-		/// Used in the Update wizard to show high contrast, primary action buttons
-		/// </summary>
-		public TextImageButtonFactory GrayButtonFactory { get; private set; }
 
 		public Color TabBodyBackground { get; private set; }
 
@@ -101,8 +92,6 @@ namespace MatterHackers.MatterControl
 		public Color ActiveTabColor { get; set; }
 		public Color InactiveTabColor { get; set; }
 		public Color ActiveTabBarBackground { get; set; }
-
-		public TextImageButtonFactory DisableableControlBase { get; private set; }
 
 		public TextImageButtonFactory MicroButton { get; private set; }
 		public TextImageButtonFactory MicroButtonMenu { get; private set; }
@@ -125,10 +114,8 @@ namespace MatterHackers.MatterControl
 
 		public Color ToolbarButtonBackground { get; set; } = Color.Transparent;
 
-		//public Color ToolbarButtonHover { get; set; } = Color.Transparent;
 		public Color ToolbarButtonHover => this.SlightShade;
 
-		//public Color ToolbarButtonDown { get; set; } = Color.Transparent;
 		public Color ToolbarButtonDown => this.MinimalShade;
 
 		private EventHandler unregisterEvents;
@@ -222,12 +209,6 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(8, 0)
 			});
 
-			this.GrayButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
-			{
-				NormalTextColor = colors.PrimaryTextColor,
-				NormalFillColor = Color.Gray
-			});
-
 			this.MicroButton = new TextImageButtonFactory(new ButtonFactoryOptions()
 			{
 				FixedHeight = 20 * GuiWidget.DeviceScale,
@@ -269,33 +250,10 @@ namespace MatterHackers.MatterControl
 			});
 #endregion
 
-#region ImageConverter
-			// TODO: Need to remain based default ButtonFactionOptions constructor until reviewed for styling issues
-			var disableableControlOptions = new ButtonFactoryOptions()
-			{
-				NormalFillColor = Color.White,
-				NormalTextColor = Color.Black,
-				HoverTextColor = colors.PrimaryTextColor,
-				DisabledFillColor = Color.White,
-				DisabledTextColor = Color.DarkGray,
-				PressedTextColor = colors.PrimaryTextColor,
-				FixedHeight = 25 * GuiWidget.DeviceScale,
-				FontSize = 11
-			};
-
-			this.DisableableControlBase = new TextImageButtonFactory(disableableControlOptions);
-#endregion
-
 			this.LinkButtonFactory = new LinkButtonFactory()
 			{
 				fontSize = FontSize11,
 				textColor = colors.PrimaryTextColor
-			};
-
-			this.HelpLinkFactory = new LinkButtonFactory()
-			{
-				fontSize = FontSize10,
-				textColor = colors.PrimaryAccentColor
 			};
 		}
 
