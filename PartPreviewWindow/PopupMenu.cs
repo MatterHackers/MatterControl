@@ -308,6 +308,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.MinimumSize = new Vector2(150, 32);
 				this.content = content;
 
+				this.HoverColor = theme.Colors.PrimaryAccentColor;
+
 				content.VAnchor = VAnchor.Center;
 				this.AddChild(content);
 			}
