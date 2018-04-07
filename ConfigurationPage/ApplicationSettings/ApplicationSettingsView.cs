@@ -59,7 +59,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Raw);
 
-			var previewButton = buttonFactory.Generate("Preview".Localize().ToUpper());
+			var previewButton = new IconButton(configureIcon, theme)
+			{
+				ToolTipText = "Configure Camera View".Localize()
+			};
 			previewButton.Click += (s, e) =>
 			{
 				AppContext.Platform.OpenCameraPreview();
@@ -254,10 +257,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 				TextWidget sectionLabel = null;
 
-				var textSizeApplyButton = buttonFactory.Generate("Apply".Localize());
-				textSizeApplyButton.VAnchor = VAnchor.Center;
-				textSizeApplyButton.Visible = false;
-				textSizeApplyButton.Margin = new BorderDouble(right: 6);
+				var textSizeApplyButton = new TextButton("Apply".Localize(), theme, Color.Black)
+				{
+					VAnchor = VAnchor.Center,
+					BackgroundColor = theme.SlightShade,
+					Visible = false,
+					Margin = new BorderDouble(right: 6)
+				};
 				textSizeApplyButton.Click += (s, e) =>
 				{
 					GuiWidget.DeviceScale = textSizeSlider.Value;
