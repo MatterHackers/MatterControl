@@ -46,10 +46,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 	{
 		public static Action OpenPrintNotification = null;
 
-		private string cannotRestartWhilePrintIsActiveMessage = "Oops! You cannot restart while a print is active.".Localize();
-		private string cannotRestartWhileActive = "Unable to restart".Localize();
-
-
 		private Color menuTextColor = Color.Black;
 
 		public ApplicationSettingsWidget(TextImageButtonFactory buttonFactory, ThemeConfig theme)
