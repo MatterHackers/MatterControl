@@ -60,8 +60,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			get => _checked;
 			set
 			{
-				_checked = value;
-				this.Invalidate();
+				if (_checked != value)
+				{
+					_checked = value;
+					this.Invalidate();
+				}
 			}
 		}
 
