@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				string newFolderName = "New Folder";
 
-				testRunner.ClickByName("Create Folder From Library Button");
+				testRunner.InvokeLibraryCreateFolderDialog();
 				testRunner.WaitForName("InputBoxPage Action Button");
 				testRunner.Type(newFolderName);
 				testRunner.ClickByName("InputBoxPage Action Button");
