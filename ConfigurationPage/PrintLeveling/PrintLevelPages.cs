@@ -462,6 +462,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			base.PageIsBecomingActive();
 			this.Parents<SystemWindow>().First().KeyDown += TopWindowKeyDown;
+
+			container.nextButton.ToolTipText = "[Right Arrow]".Localize();
+			container.backButton.ToolTipText = "[Left Arrow]".Localize();
 		}
 
 		public override void PageIsBecomingInactive()
@@ -469,6 +472,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.Parents<SystemWindow>().First().KeyDown -= TopWindowKeyDown;
 			probePositions[probePositionsBeingEditedIndex].position = printer.Connection.LastReportedPosition;
 			base.PageIsBecomingInactive();
+
+			container.nextButton.ToolTipText = "";
+			container.backButton.ToolTipText = "";
 		}
 
 		private FlowLayoutWidget CreateZButtons()
@@ -476,8 +482,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			FlowLayoutWidget zButtons = JogControls.CreateZButtons(printer, Color.White, 4, out zPlusControl, out zMinusControl, true);
 			// set these to 0 so the button does not do any movements by default (we will handle the movement on our click callback)
 			zPlusControl.MoveAmount = 0;
-			zMinusControl.MoveAmount = 0;
+			zPlusControl.ToolTipText += " [Up Arrow]".Localize();
 			zPlusControl.Click += zPlusControl_Click;
+
+			zMinusControl.MoveAmount = 0;
+			zMinusControl.ToolTipText += " [Down Arrow]".Localize();
 			zMinusControl.Click += zMinusControl_Click;
 			return zButtons;
 		}
