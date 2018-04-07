@@ -49,9 +49,6 @@ namespace MatterHackers.MatterControl
 		public static ImageBuffer RestoreHover { get; private set; }
 		private static ImageBuffer restorePressed;
 
-		private readonly int fizedHeightA = (int)(25 * GuiWidget.DeviceScale + .5);
-		private readonly double fizedHeightB = 34 * GuiWidget.DeviceScale;
-
 		public int FontSize7 { get; } = 7;
 		public int FontSize9 { get; } = 9;
 		public int FontSize10 { get; } = 10;
@@ -67,7 +64,6 @@ namespace MatterHackers.MatterControl
 		public int H1PointSize { get; set; } = 11;
 
 		public LinkButtonFactory LinkButtonFactory { get; private set; }
-		public LinkButtonFactory HelpLinkFactory { get; private set; }
 
 		public TextImageButtonFactory WhiteButtonFactory;
 
@@ -125,10 +121,8 @@ namespace MatterHackers.MatterControl
 
 		public Color ToolbarButtonBackground { get; set; } = Color.Transparent;
 
-		//public Color ToolbarButtonHover { get; set; } = Color.Transparent;
 		public Color ToolbarButtonHover => this.SlightShade;
 
-		//public Color ToolbarButtonDown { get; set; } = Color.Transparent;
 		public Color ToolbarButtonDown => this.MinimalShade;
 
 		private EventHandler unregisterEvents;
@@ -290,12 +284,6 @@ namespace MatterHackers.MatterControl
 			{
 				fontSize = FontSize11,
 				textColor = colors.PrimaryTextColor
-			};
-
-			this.HelpLinkFactory = new LinkButtonFactory()
-			{
-				fontSize = FontSize10,
-				textColor = colors.PrimaryAccentColor
 			};
 		}
 
