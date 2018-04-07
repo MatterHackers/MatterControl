@@ -68,7 +68,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							Width = scaledButtonSize,
 							Height = scaledButtonSize,
-							Margin = buttonSpacing
+							Margin = buttonSpacing,
+							VAnchor = VAnchor.Absolute
 						};
 						resetButton.Click += (s, e) =>
 						{
