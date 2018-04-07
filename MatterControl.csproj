@@ -475,7 +475,6 @@
     <Compile Include="CustomWidgets\TwoSidedStack.cs" />
     <Compile Include="CustomWidgets\SplitButton.cs" />
     <Compile Include="ControlElements\DropDownMenuFactory.cs" />
-    <Compile Include="ControlElements\SplitButtonFactory.cs" />
     <Compile Include="PrinterCommunication\Io\SendProgressStream.cs" />
   </ItemGroup>
   <ItemGroup>
