@@ -160,9 +160,9 @@ namespace MatterHackers.MatterControl
 			commonOptions.FixedHeight = 32;
 
 			this.TabBodyBackground = this.ResolveColor(
-				colors.TertiaryBackgroundColor, 
+				colors.TertiaryBackgroundColor,
 				new Color(
-					Color.White, 
+					Color.White,
 					(colors.IsDarkTheme) ? 3 : 25));
 
 			this.ActiveTabColor = this.TabBodyBackground;
@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl
 			{
 #if __ANDROID__
 				FontSize = this.FontSize14,
-				FixedHeight = fizedHeightB,
+				FixedHeight = 34 * GuiWidget.DeviceScale,
 				Margin = commonOptions.Margin * 1.2
 #endif
 			});
@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl
 			});
 
 #region PartPreviewWidget
-			
+
 			sideBarButtonWidth = 138;
 			shortButtonHeight = 30;
 
