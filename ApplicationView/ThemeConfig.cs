@@ -252,7 +252,7 @@ namespace MatterHackers.MatterControl
 
 		public Color GetBorderColor(int alpha)
 		{
-			return new Color(ActiveTheme.Instance.SecondaryTextColor, alpha);
+			return new Color(this.Colors.SecondaryTextColor, alpha);
 		}
 
 		// Compute a fixed color from a source and a target alpha
