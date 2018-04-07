@@ -39,6 +39,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public ColorSwatchSelector(InteractiveScene scene, ThemeConfig theme, BorderDouble buttonSpacing, int buttonSize = 32)
 			: base(FlowDirection.TopToBottom)
 		{
+			var scaledButtonSize = buttonSize * GuiWidget.DeviceScale;
+
 			int colorCount = 9;
 
 			double[] lightness = new double[] { .7, .5, .3 };
@@ -53,19 +55,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (int colorIndex = 0; colorIndex < colorCount; colorIndex++)
 				{
 					var color = ColorF.FromHSL(colorIndex / (double)colorCount, 1, lightness[rowIndex]).ToColor();
-					colorRow.AddChild(MakeColorButton(scene, color, buttonSize, buttonSpacing));
+					colorRow.AddChild(MakeColorButton(scene, color, scaledButtonSize, buttonSpacing));
 				}
 
 				// put in white and black buttons
-				colorRow.AddChild(MakeColorButton(scene, grayLevel[rowIndex], buttonSize, buttonSpacing));
+				colorRow.AddChild(MakeColorButton(scene, grayLevel[rowIndex], scaledButtonSize, buttonSpacing));
 
 				switch(rowIndex)
 				{
 					case 0:
 						var resetButton = new IconButton(AggContext.StaticData.LoadIcon("transparent_grid.png"), theme)
 						{
-							Width = buttonSize,
-							Height = buttonSize,
+							Width = scaledButtonSize,
+							Height = scaledButtonSize,
 							Margin = buttonSpacing
 						};
 						resetButton.Click += (s, e) =>
@@ -76,22 +78,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						break;
 
 					case 1:
-						colorRow.AddChild(MakeColorButton(scene, new Color("#555"), buttonSize, buttonSpacing));
+						colorRow.AddChild(MakeColorButton(scene, new Color("#555"), scaledButtonSize, buttonSpacing));
 						break;
 
 					case 2:
-						colorRow.AddChild(MakeColorButton(scene, new Color("#222"), buttonSize, buttonSpacing));
+						colorRow.AddChild(MakeColorButton(scene, new Color("#222"), scaledButtonSize, buttonSpacing));
 						break;
 				}
 			}
 		}
 
-		private GuiWidget MakeColorButton(InteractiveScene scene, Color color, int buttonSize, BorderDouble buttonSpacing)
+		private GuiWidget MakeColorButton(InteractiveScene scene, Color color, double buttonSize, BorderDouble buttonSpacing)
 		{
 			return new ColorButton(color, scene)
 			{
-				Width = buttonSize * GuiWidget.DeviceScale,
-				Height = buttonSize * GuiWidget.DeviceScale,
+				Width = buttonSize,
+				Height = buttonSize,
 				Margin = buttonSpacing
 			};
 		}
