@@ -138,13 +138,11 @@ namespace MatterHackers.MatterControl
 
 		public ThemeConfig()
 		{
-			ActiveTheme.ThemeChanged.RegisterEvent((s, e) => RebuildTheme(), ref unregisterEvents);
-			RebuildTheme();
 		}
 
-		public void RebuildTheme()
+		public void RebuildTheme(IThemeColors colors)
 		{
-			var colors = this.Colors = ActiveTheme.Instance;
+			this.Colors = colors;
 
 			DefaultThumbView.ThumbColor = new Color(colors.PrimaryTextColor, 30);
 
@@ -252,7 +250,7 @@ namespace MatterHackers.MatterControl
 
 		public Color GetBorderColor(int alpha)
 		{
-			return new Color(ActiveTheme.Instance.SecondaryTextColor, alpha);
+			return new Color(this.Colors.SecondaryTextColor, alpha);
 		}
 
 		// Compute a fixed color from a source and a target alpha

@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl
 	{
 		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 
-		public ThemeConfig Theme { get; set; } = new ThemeConfig();
+		public ThemeConfig Theme { get; set; }
 
 		public RunningTasksConfig Tasks { get; set; } = new RunningTasksConfig();
 
@@ -689,6 +689,16 @@ namespace MatterHackers.MatterControl
 
 		public ApplicationController()
 		{
+			// Initialize the AppContext theme object which will sync its content with Agg ActiveTheme changes
+			this.Theme = new ThemeConfig();
+
+			ActiveTheme.ThemeChanged.RegisterEvent((s, e) => 
+			{
+				this.Theme.RebuildTheme(ActiveTheme.Instance);
+			}, ref unregisterEvents);
+
+			this.Theme.RebuildTheme(ActiveTheme.Instance);
+
 			Object3D.AssetsPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Assets");
 
 			ScrollBar.DefaultMargin = new BorderDouble(right: 1);
