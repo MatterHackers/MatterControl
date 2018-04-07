@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsFalse(testRunner.WaitForName("Row Item 2013-01-25 Mouthpiece V2", 1), "Mouthpiece part should not exist at test start");
 
 				// Add Library item
-				testRunner.ClickByName("Library Add Button");
+				testRunner.InvokeLibraryAddDialog();
 				testRunner.Delay(2);
 				testRunner.Type(MatterControlUtilities.GetTestItemPath("Batman.zip"));
 				testRunner.Delay(1);
@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				// Create New Folder
-				testRunner.ClickByName("Create Folder From Library Button");
+				testRunner.InvokeLibraryCreateFolderDialog();
 				testRunner.Delay(.5);
 
 				testRunner.Type("New Folder");

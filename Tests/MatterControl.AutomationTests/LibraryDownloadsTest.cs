@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.NavigateToFolder("-Temporary Row Item Collection");
 
 				// Add both files to the FileOpen dialog
-				testRunner.ClickByName("Library Add Button");
+				testRunner.InvokeLibraryAddDialog();
 				testRunner.CompleteDialog(
 					string.Format(
 						"\"{0}\" \"{1}\"",
@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.NavigateToFolder("-Temporary Row Item Collection");
 
 				// Add AMF part items to Downloads and then type paths into file dialog 
-				testRunner.ClickByName("Library Add Button");
+				testRunner.InvokeLibraryAddDialog();
 				testRunner.CompleteDialog(MatterControlUtilities.GetTestItemPath("Rook.amf"), 4);
 
 				Assert.IsTrue(testRunner.WaitForName("Row Item Rook.amf"), "Rook item exists");
@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
 				testRunner.NavigateToFolder("-Temporary Row Item Collection");
 
-				testRunner.ClickByName("Library Add Button");
+				testRunner.InvokeLibraryAddDialog();
 				testRunner.CompleteDialog(MatterControlUtilities.GetTestItemPath("Test.zip"), 4);
 
 				testRunner.DoubleClickByName("Test.zip Row Item Collection");
@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Navigate to Downloads Library Provider
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
 				testRunner.NavigateToFolder("-Temporary Row Item Collection");
-				testRunner.ClickByName("Library Add Button");
+				testRunner.InvokeLibraryAddDialog();
 
 				testRunner.CompleteDialog(MatterControlUtilities.GetTestItemPath("Batman.stl"), 2);
 

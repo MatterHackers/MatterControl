@@ -480,6 +480,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Delay(.5);
 		}
 
+		public static void InvokeLibraryAddDialog(this AutomationRunner testRunner)
+		{
+			testRunner.ClickByName("Print Library Overflow Menu");
+			testRunner.ClickByName("Add Menu Item");
+		}
+
+		public static void InvokeLibraryCreateFolderDialog(this AutomationRunner testRunner)
+		{
+			testRunner.ClickByName("Print Library Overflow Menu");
+			testRunner.ClickByName("Create Folder Menu Item");
+		}
+
 		/// <summary>
 		/// Types the specified text into the dialog and sends {Enter} to complete the interaction
 		/// </summary>
@@ -870,7 +882,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 
 			// Add Library item
-			testRunner.ClickByName("Library Add Button");
+			testRunner.InvokeLibraryAddDialog();
 
 			// Generate the full, quoted paths for the requested assets
 			string fullQuotedAssetPaths = string.Join(" ", assetNames.Select(name => $"\"{MatterControlUtilities.GetTestItemPath(name)}\""));

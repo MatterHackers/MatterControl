@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
-				testRunner.ClickByName("Create Folder From Library Button");
+				testRunner.InvokeLibraryCreateFolderDialog();
 
 				testRunner.Delay(.5);
 				testRunner.Type("Test Text");

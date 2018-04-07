@@ -456,11 +456,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				ToolTipText = "Add an.stl, .obj, .amf, .gcode or.zip file to the Library".Localize(),
 				Action = (selectedLibraryItems, listView) =>
 				{
-					/*
-						
-						Name = "Library Add Button";
-					*/
-
 					AggContext.FileDialogs.OpenFileDialog(
 							new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true),
 							(openParams) =>
@@ -485,10 +480,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Icon = AggContext.StaticData.LoadIcon("fa-folder-new_16.png", IconColor.Raw),
 				Action = (selectedLibraryItems, listView) =>
 				{
-					/*
-						Name = "Create Folder From Library Button";
-					*/
-
 					DialogWindow.Show(
 						new InputBoxPage(
 							"Create Folder".Localize(),

@@ -19,7 +19,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				//Navigate to Downloads Library Provider
 				testRunner.NavigateToFolder("Print Queue Row Item Collection");
-				testRunner.ClickByName("Library Add Button");
+				testRunner.InvokeLibraryAddDialog();
 
 				//Get parts to add
 				string rowItemPath = MatterControlUtilities.GetTestItemPath("Batman.stl");
