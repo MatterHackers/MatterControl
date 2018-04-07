@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			};
 			container.AddChild(fanSpeedDisplay);
 
-			fanSpeedDisplay.Selectable = true;
+			container.Selectable = true;
 
 			// put in %
 			container.AddChild(new TextWidget("%", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
