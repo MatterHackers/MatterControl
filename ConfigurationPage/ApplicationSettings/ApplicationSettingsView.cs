@@ -49,14 +49,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private string cannotRestartWhilePrintIsActiveMessage = "Oops! You cannot restart while a print is active.".Localize();
 		private string cannotRestartWhileActive = "Unable to restart".Localize();
 
-		private TextImageButtonFactory buttonFactory;
 
 		private Color menuTextColor = Color.Black;
 
 		public ApplicationSettingsWidget(TextImageButtonFactory buttonFactory, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
-			this.buttonFactory = buttonFactory;
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
 
