@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			AnchorAll();
 
 			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
-		
+
 			cancelButton = buttonFactory.Generate("Cancel".Localize());
 			submitButton = buttonFactory.Generate("Submit".Localize());
 			doneButton = buttonFactory.Generate("Done".Localize());

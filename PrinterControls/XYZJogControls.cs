@@ -501,7 +501,7 @@ namespace MatterHackers.MatterControl
 
 			{
 				var buttonFactory = ApplicationController.Instance.Theme.MicroButton;
-				
+
 				var moveRadioButtons = new FlowLayoutWidget();
 				RadioButton oneButton = buttonFactory.GenerateRadioButton("1");
 				oneButton.VAnchor = VAnchor.Center;

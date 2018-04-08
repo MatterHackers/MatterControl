@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			string imageFile = this.ControlIsPinned ? "Pushpin_16x.png" : "PushpinUnpin_16x.png";
 			var icon = AggContext.StaticData.LoadIcon(imageFile, 16, 16, IconColor.Theme);
 
-			var imageWidget = ApplicationController.Instance.Theme.ButtonFactory.GenerateIconButton(icon);
+			var imageWidget = theme.ButtonFactory.GenerateIconButton(icon);
 			imageWidget.Name = "Pin Settings Button";
 			imageWidget.Click += (s, e) =>
 			{
@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						VAnchor = VAnchor.Stretch,
 						HAnchor = HAnchor.Right,
 						SpliterBarColor = spliterColor,
-						SplitterWidth = ApplicationController.Instance.Theme.SplitterWidth,
+						SplitterWidth = theme.SplitterWidth,
 					};
 					resizeContainer.AddChild(new DockingWindowContent(this, kvp.Value, tabTitle)
 					{

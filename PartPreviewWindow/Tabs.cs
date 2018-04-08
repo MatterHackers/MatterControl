@@ -314,7 +314,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (hasClose)
 			{
-				var closeButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
+				var closeButton = theme.CreateSmallResetButton();
 				closeButton.HAnchor = HAnchor.Right;
 				closeButton.Margin = new BorderDouble(right: 7, top: 1);
 				closeButton.Name = "Close Tab Button";

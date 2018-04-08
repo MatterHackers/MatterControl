@@ -39,29 +39,31 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class ZAxisControls : FlowLayoutWidget
 	{
-		private MoveButtonFactory buttonFactory = new MoveButtonFactory()
-		{
-			FontSize = ApplicationController.Instance.Theme.DefaultFontSize,
-		};
+		private MoveButtonFactory buttonFactory;
 
 		public ZAxisControls(PrinterConfig printer, ThemeConfig theme, bool smallScreen) :
 			base(FlowDirection.TopToBottom)
 		{
-			buttonFactory.Colors.Fill.Normal = ActiveTheme.Instance.PrimaryAccentColor;
-			buttonFactory.Colors.Fill.Hover = ActiveTheme.Instance.PrimaryAccentColor;
-			buttonFactory.BorderWidth = 0;
+			buttonFactory = new MoveButtonFactory()
+			{
+				FontSize = theme.DefaultFontSize,
+				BorderWidth = 0
+			};
+
+			buttonFactory.Colors.Fill.Normal = theme.Colors.PrimaryAccentColor;
+			buttonFactory.Colors.Fill.Hover = theme.Colors.PrimaryAccentColor;
 			buttonFactory.Colors.Text.Normal = Color.White;
 
-			this.AddChild(new TextWidget("Z+", pointSize: smallScreen ? 12 : 15, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			this.AddChild(new TextWidget("Z+", pointSize: smallScreen ? 12 : 15, textColor: theme.Colors.PrimaryTextColor)
 			{
 				AutoExpandBoundsToText = true,
 				HAnchor = HAnchor.Center,
 				Margin = new BorderDouble(bottom: 8)
 			});
 
-			this.AddChild(CreateZMoveButton(printer, .1, smallScreen));
+			this.AddChild(CreateZMoveButton(printer, .1, smallScreen, theme));
 
-			this.AddChild(CreateZMoveButton(printer, .02, smallScreen));
+			this.AddChild(CreateZMoveButton(printer, .02, smallScreen, theme));
 
 			this.AddChild(new ZTuningWidget(printer.Settings, theme)
 			{
@@ -69,11 +71,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Margin = 10
 			});
 
-			this.AddChild(CreateZMoveButton(printer, -.02, smallScreen));
+			this.AddChild(CreateZMoveButton(printer, -.02, smallScreen, theme));
 
-			this.AddChild(CreateZMoveButton(printer, -.1, smallScreen));
+			this.AddChild(CreateZMoveButton(printer, -.1, smallScreen, theme));
 
-			this.AddChild(new TextWidget("Z-", pointSize: smallScreen ? 12 : 15, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			this.AddChild(new TextWidget("Z-", pointSize: smallScreen ? 12 : 15, textColor: theme.Colors.PrimaryTextColor)
 			{
 				AutoExpandBoundsToText = true,
 				HAnchor = HAnchor.Center,
@@ -88,7 +90,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.VAnchor = VAnchor.Fit | VAnchor.Top;
 		}
 
-		private Button CreateZMoveButton(PrinterConfig printer, double moveAmount, bool smallScreen)
+		private Button CreateZMoveButton(PrinterConfig printer, double moveAmount, bool smallScreen, ThemeConfig theme)
 		{
 			var button = buttonFactory.GenerateMoveButton(printer, $"{Math.Abs(moveAmount):0.00} mm", PrinterConnection.Axis.Z, printer.Settings.ZSpeed());
 			button.MoveAmount = moveAmount;
@@ -97,7 +99,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			button.Margin = new BorderDouble(0, 1);
 			button.Padding = new BorderDouble(15, 7);
 			if (smallScreen) button.Height = 45; else button.Height = 55;
-			button.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+			button.BackgroundColor = theme.Colors.PrimaryAccentColor;
 
 			return button;
 		}

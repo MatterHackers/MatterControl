@@ -45,21 +45,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class SliceSettingsWidget : FlowLayoutWidget
 	{
 		internal PresetsToolbar settingsControlBar;
-
 		internal SettingsContext settingsContext;
-		private PrinterConfig printer;
-		private Color textColor;
-		private SliceSettingsTabView sliceSettingsTabView;
 
-		private ThemeConfig theme;
+		private PrinterConfig printer;
 
 		public SliceSettingsWidget(PrinterConfig printer, SettingsContext settingsContext, ThemeConfig theme)
 			: base (FlowDirection.TopToBottom)
 		{
-			this.theme = theme;
 			this.printer = printer;
-			this.textColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
+			this.BackgroundColor = theme.TabBodyBackground;
 
 			this.settingsContext = settingsContext;
 
@@ -71,33 +65,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			this.AddChild(settingsControlBar);
 
-			this.RebuildSliceSettingsTabs();
-
-			ApplicationController.Instance.ShowHelpChanged += ShowHelp_Changed;
-
-			this.AnchorAll();
-		}
-
-		private void ShowHelp_Changed(object sender, EventArgs e)
-		{
-			this.RebuildSliceSettingsTabs();
-		}
-
-		private void RebuildSliceSettingsTabs()
-		{
-			// Close and remove children
-			sliceSettingsTabView?.Close();
-
 			this.AddChild(
-				sliceSettingsTabView = new SliceSettingsTabView(
+				new SliceSettingsTabView(
 					settingsContext,
 					"SliceSettings",
 					printer,
-					this.UserLevel,
+					"Advanced",
 					theme,
 					isPrimarySettingsView: true,
 					databaseMRUKey: UserSettingsKey.SliceSettingsWidget_CurrentTab,
 					extendPopupMenu: this.ExtendOverflowMenu));
+
+			this.AnchorAll();
 		}
 
 		private void ExtendOverflowMenu(PopupMenu popupMenu)
@@ -155,8 +134,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 		}
 
-		public string UserLevel { get; } = "Advanced";
-
 		// TODO: This should just proxy to settingsControlBar.Visible. Having local state and pushing values on event listeners seems off
 		private bool showControlBar = true;
 		public bool ShowControlBar
@@ -167,12 +144,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				settingsControlBar.Visible = value;
 				showControlBar = value;
 			}
-		}
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			ApplicationController.Instance.ShowHelpChanged -= ShowHelp_Changed;
-			base.OnClosed(e);
 		}
 	}
 
@@ -357,7 +328,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			this.TabBar.AddChild(new HorizontalSpacer());
 
-			var searchButton = ApplicationController.Instance.Theme.CreateSearchButton();
+			var searchButton = theme.CreateSearchButton();
 			searchButton.Click += (s, e) =>
 			{
 				filteredItemsHeading.Visible = false;
@@ -485,7 +456,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (showSubGroupHeadings)
 					{
-						var headingColor = theme.Colors.PrimaryTextColor.AdjustLightness(ActiveTheme.Instance.IsDarkTheme ? 0.5 : 2.8).ToColor();
+						var headingColor = theme.Colors.PrimaryTextColor.AdjustLightness(theme.Colors.IsDarkTheme ? 0.5 : 2.8).ToColor();
 
 						// Section heading
 						groupPanel.AddChild(new TextWidget("  " + subGroup.Name.Localize(), textColor: headingColor, pointSize: theme.FontSize10)
@@ -586,7 +557,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				var row = new FlowLayoutWidget()
 				{
-					BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
+					BackgroundColor = theme.Colors.TertiaryBackgroundColor,
 					Padding = new BorderDouble(5),
 					Margin = new BorderDouble(3, 20, 3, 0),
 					HAnchor = HAnchor.Stretch,
@@ -604,7 +575,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				row.AddChild(new TextWidget(title, pointSize: 9)
 				{
 					Margin = new BorderDouble(0, 4, 10, 4),
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+					TextColor = theme.Colors.PrimaryTextColor,
 				});
 
 				row.AddChild(new HorizontalSpacer());
@@ -612,7 +583,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				row.AddChild(new TextWidget(lastUpdateTime, pointSize: 9)
 				{
 					Margin = new BorderDouble(0, 4, 10, 4),
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+					TextColor = theme.Colors.PrimaryTextColor,
 				});
 
 				dataArea.AddChild(row);

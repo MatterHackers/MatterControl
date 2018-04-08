@@ -594,8 +594,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public event EventHandler ShowHelpChanged;
-
 		public LibraryConfig Library { get; }
 
 		public GraphConfig Graph { get; }
@@ -684,7 +682,7 @@ namespace MatterHackers.MatterControl
 				new DynamicContainerLink(
 					() => "Plating History".Localize(),
 					AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder.png")),
-					() => ApplicationController.Instance.Library.PlatingHistory));
+					() => this.Library.PlatingHistory));
 		}
 
 		public ApplicationController()
@@ -735,7 +733,7 @@ namespace MatterHackers.MatterControl
 
 			PrinterConnection.HeatTurningOffSoon.RegisterEvent((s, e) =>
 			{
-				var printerConnection = ApplicationController.Instance.ActivePrinter.Connection;
+				var printerConnection = this.ActivePrinter.Connection;
 
 				if (printerConnection.AnyHeatIsOn)
 				{

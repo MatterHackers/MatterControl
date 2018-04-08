@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (settingData.ShowAsOverride)
 			{
-				restoreButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
+				restoreButton = theme.CreateSmallResetButton();
 				restoreButton.HAnchor = HAnchor.Right;
 				restoreButton.Margin = 0;
 				restoreButton.Name = "Restore " + settingData.SlicerConfigName;

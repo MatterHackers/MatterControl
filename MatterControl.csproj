@@ -473,7 +473,6 @@
     <Compile Include="DataStorage\SQLiteAndroid.cs" />
     <Compile Include="CustomWidgets\DataViewGraph.cs" />
     <Compile Include="CustomWidgets\TwoSidedStack.cs" />
-    <Compile Include="CustomWidgets\SplitButton.cs" />
     <Compile Include="ControlElements\DropDownMenuFactory.cs" />
     <Compile Include="PrinterCommunication\Io\SendProgressStream.cs" />
   </ItemGroup>

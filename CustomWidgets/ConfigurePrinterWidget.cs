@@ -27,8 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Linq;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -37,27 +35,9 @@ namespace MatterHackers.MatterControl
 {
 	public class ConfigurePrinterWidget : FlowLayoutWidget
 	{
-		private SliceSettingsTabView sliceSettingsTabView;
-		private SettingsContext settingsContext;
-		private PrinterConfig printer;
-		private ThemeConfig theme;
-
 		public ConfigurePrinterWidget(SettingsContext settingsContext, PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
-			this.settingsContext = settingsContext;
-			this.printer = printer;
-			this.theme = theme;
-
-			this.RebuildTabView();
-
-			ApplicationController.Instance.ShowHelpChanged += ShowHelp_Changed;
-		}
-
-		private void RebuildTabView()
-		{
-			this.CloseAllChildren();
-
 			var inlineTitleEdit = new InlineTitleEdit(printer.Settings.GetValue(SettingsKey.printer_name), theme, "Printer Name", boldFont: true);
 			inlineTitleEdit.TitleChanged += (s, e) =>
 			{
@@ -66,7 +46,7 @@ namespace MatterHackers.MatterControl
 			this.AddChild(inlineTitleEdit);
 
 			this.AddChild(
-				sliceSettingsTabView = new SliceSettingsTabView(
+				new SliceSettingsTabView(
 					settingsContext,
 					"ConfigurePrinter",
 					printer,
@@ -74,17 +54,6 @@ namespace MatterHackers.MatterControl
 					theme,
 					isPrimarySettingsView: true,
 					databaseMRUKey: UserSettingsKey.ConfigurePrinter_CurrentTab));
-		}
-
-		private void ShowHelp_Changed(object sender, System.EventArgs e)
-		{
-			this.RebuildTabView();
-		}
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			ApplicationController.Instance.ShowHelpChanged -= ShowHelp_Changed;
-			base.OnClosed(e);
 		}
 	}
 }

@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Name = "Preset Pulldown Container"
 			};
 
-			editButton = ApplicationController.Instance.Theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, (whiteBackground) ? IconColor.Raw : IconColor.Theme));
+			editButton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, (whiteBackground) ? IconColor.Raw : IconColor.Theme));
 			editButton.ToolTipText = "Edit Selected Setting".Localize();
 			editButton.Enabled = DropDownList.SelectedIndex != -1;
 			editButton.VAnchor = VAnchor.Center;
