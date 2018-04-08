@@ -594,8 +594,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public event EventHandler ShowHelpChanged;
-
 		public LibraryConfig Library { get; }
 
 		public GraphConfig Graph { get; }

@@ -45,20 +45,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class SliceSettingsWidget : FlowLayoutWidget
 	{
 		internal PresetsToolbar settingsControlBar;
-
 		internal SettingsContext settingsContext;
-		private PrinterConfig printer;
-		private Color textColor;
-		private SliceSettingsTabView sliceSettingsTabView;
 
-		private ThemeConfig theme;
+		private PrinterConfig printer;
 
 		public SliceSettingsWidget(PrinterConfig printer, SettingsContext settingsContext, ThemeConfig theme)
 			: base (FlowDirection.TopToBottom)
 		{
-			this.theme = theme;
 			this.printer = printer;
-			this.textColor = ActiveTheme.Instance.PrimaryTextColor;
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 
 			this.settingsContext = settingsContext;
@@ -71,25 +65,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			this.AddChild(settingsControlBar);
 
-			this.RebuildSliceSettingsTabs();
-
-			ApplicationController.Instance.ShowHelpChanged += ShowHelp_Changed;
-
-			this.AnchorAll();
-		}
-
-		private void ShowHelp_Changed(object sender, EventArgs e)
-		{
-			this.RebuildSliceSettingsTabs();
-		}
-
-		private void RebuildSliceSettingsTabs()
-		{
-			// Close and remove children
-			sliceSettingsTabView?.Close();
-
 			this.AddChild(
-				sliceSettingsTabView = new SliceSettingsTabView(
+				new SliceSettingsTabView(
 					settingsContext,
 					"SliceSettings",
 					printer,
@@ -98,6 +75,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					isPrimarySettingsView: true,
 					databaseMRUKey: UserSettingsKey.SliceSettingsWidget_CurrentTab,
 					extendPopupMenu: this.ExtendOverflowMenu));
+
+			this.AnchorAll();
 		}
 
 		private void ExtendOverflowMenu(PopupMenu popupMenu)
@@ -167,12 +146,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				settingsControlBar.Visible = value;
 				showControlBar = value;
 			}
-		}
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			ApplicationController.Instance.ShowHelpChanged -= ShowHelp_Changed;
-			base.OnClosed(e);
 		}
 	}
 
