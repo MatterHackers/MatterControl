@@ -81,7 +81,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			widget.AddChild(container);
 
-
 			GuiWidget hotendRow;
 
 			container.AddChild(hotendRow = new SettingsItem(

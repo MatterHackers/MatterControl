@@ -23,7 +23,7 @@ namespace MatterHackers.MatterControl
 
 			// Update Status Widget
 			contentRow.AddChild(
-				new UpdateControlView(ApplicationController.Instance.Theme));
+				new UpdateControlView(theme));
 
 			var contentPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{

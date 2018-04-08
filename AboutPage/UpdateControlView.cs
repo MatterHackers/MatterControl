@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl
 			this.BackgroundColor = theme.MinimalShade;
 			this.Padding = theme.ToolbarPadding.Clone(left: 8);
 
-			this.AddChild(updateStatusText = new TextWidget(string.Format(""), textColor: ActiveTheme.Instance.PrimaryTextColor)
+			this.AddChild(updateStatusText = new TextWidget(string.Format(""), textColor: theme.Colors.PrimaryTextColor)
 			{
 				AutoExpandBoundsToText = true,
 				VAnchor = VAnchor.Center
@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl
 
 			this.AddChild(new HorizontalSpacer());
 
-			checkUpdateButton = new IconButton(AggContext.StaticData.LoadIcon("fa-refresh_14.png", IconColor.Theme), ApplicationController.Instance.Theme)
+			checkUpdateButton = new IconButton(AggContext.StaticData.LoadIcon("fa-refresh_14.png", IconColor.Theme), theme)
 			{
 				ToolTipText = "Check for Update".Localize(),
 				BackgroundColor = theme.MinimalShade,

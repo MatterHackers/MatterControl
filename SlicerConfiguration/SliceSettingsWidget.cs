@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			: base (FlowDirection.TopToBottom)
 		{
 			this.printer = printer;
-			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
+			this.BackgroundColor = theme.TabBodyBackground;
 
 			this.settingsContext = settingsContext;
 
@@ -328,7 +328,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			this.TabBar.AddChild(new HorizontalSpacer());
 
-			var searchButton = ApplicationController.Instance.Theme.CreateSearchButton();
+			var searchButton = theme.CreateSearchButton();
 			searchButton.Click += (s, e) =>
 			{
 				filteredItemsHeading.Visible = false;
@@ -456,7 +456,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (showSubGroupHeadings)
 					{
-						var headingColor = theme.Colors.PrimaryTextColor.AdjustLightness(ActiveTheme.Instance.IsDarkTheme ? 0.5 : 2.8).ToColor();
+						var headingColor = theme.Colors.PrimaryTextColor.AdjustLightness(theme.Colors.IsDarkTheme ? 0.5 : 2.8).ToColor();
 
 						// Section heading
 						groupPanel.AddChild(new TextWidget("  " + subGroup.Name.Localize(), textColor: headingColor, pointSize: theme.FontSize10)
@@ -557,7 +557,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				var row = new FlowLayoutWidget()
 				{
-					BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
+					BackgroundColor = theme.Colors.TertiaryBackgroundColor,
 					Padding = new BorderDouble(5),
 					Margin = new BorderDouble(3, 20, 3, 0),
 					HAnchor = HAnchor.Stretch,
@@ -575,7 +575,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				row.AddChild(new TextWidget(title, pointSize: 9)
 				{
 					Margin = new BorderDouble(0, 4, 10, 4),
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+					TextColor = theme.Colors.PrimaryTextColor,
 				});
 
 				row.AddChild(new HorizontalSpacer());
@@ -583,7 +583,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				row.AddChild(new TextWidget(lastUpdateTime, pointSize: 9)
 				{
 					Margin = new BorderDouble(0, 4, 10, 4),
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+					TextColor = theme.Colors.PrimaryTextColor,
 				});
 
 				dataArea.AddChild(row);

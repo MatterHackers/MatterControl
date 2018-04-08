@@ -30,7 +30,7 @@ namespace MatterHackers.MatterControl
 	public class WizardControl : GuiWidget
 	{
 		double extraTextScaling = 1;
-		
+
 		private FlowLayoutWidget bottomToTopLayout;
 		private List<WizardControlPage> pages = new List<WizardControlPage>();
 		private int pageIndex = 0;

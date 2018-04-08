@@ -159,7 +159,6 @@ namespace MatterHackers.MeshVisualizer
 		private double selectionHighlightWidth = 5;
 
 		private Color debugBorderColor = Color.Green;
-		private Color debugNotSelectedFillColor = new Color(Color.White, 120);
 
 		public MeshViewerWidget(BedConfig sceneContext, InteractionLayer interactionLayer, string startingTextMessage = "", EditorType editorType = EditorType.Part)
 		{

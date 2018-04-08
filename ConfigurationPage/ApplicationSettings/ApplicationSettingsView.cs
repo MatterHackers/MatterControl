@@ -47,12 +47,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		public static Action OpenPrintNotification = null;
 
 		private Color menuTextColor = Color.Black;
+		private ThemeConfig theme;
 
 		public ApplicationSettingsWidget(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
+			this.theme = theme;
 
 			// Camera Monitoring
 			bool hasCamera = true || ApplicationSettings.Instance.get(ApplicationSettingsKey.HardwareHasCamera) == "true";
@@ -343,7 +345,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		{
 			this.AddChild(widget);
 
-			widget.BorderColor = ApplicationController.Instance.Theme.GetBorderColor(25);
+			widget.BorderColor = theme.GetBorderColor(25);
 			widget.Padding = widget.Padding.Clone(right: 10);
 		}
 

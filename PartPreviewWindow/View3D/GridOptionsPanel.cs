@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{ 5, "5" },
 			};
 
-			var dropDownList = new DropDownList("Custom", ActiveTheme.Instance.PrimaryTextColor, Direction.Down, pointSize: ApplicationController.Instance.Theme.DefaultFontSize)
+			var dropDownList = new DropDownList("Custom", theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
 			{
 				TextColor = Color.Black,
 				Margin = new BorderDouble(35, 15, 35, 5),

@@ -288,7 +288,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			navBar.AddChild(searchPanel);
 
-			searchButton = ApplicationController.Instance.Theme.CreateSearchButton();
+			searchButton = theme.CreateSearchButton();
 			searchButton.Enabled = false;
 			searchButton.Name = "Search Library Button";
 			searchButton.Click += (s, e) =>
@@ -313,7 +313,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			buttonPanel = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch,
-				Padding = ApplicationController.Instance.Theme.ToolbarPadding,
+				Padding = theme.ToolbarPadding,
 			};
 			AddLibraryButtonElements();
 			allControls.AddChild(buttonPanel);
