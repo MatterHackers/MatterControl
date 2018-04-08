@@ -199,11 +199,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			printer.ViewState.ConfigurePrinterChanged += ConfigurePrinter_Changed;
 
+			printer.Bed.RendererOptions.PropertyChanged += RendererOptions_PropertyChanged;
+
 			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
 				this.SetSliderVisibility();
 			}, ref unregisterEvents);
 
+		}
+
+		private void RendererOptions_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(printer.Bed.RendererOptions.SyncToPrint))
+			{
+				this.SetSliderVisibility();
+			}
 		}
 
 		private void ViewState_ViewModeChanged(object sender, ViewModeChangedEventArgs e)
@@ -401,6 +411,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			sceneContext.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
 			printer.ViewState.ConfigurePrinterChanged -= ConfigurePrinter_Changed;
 			printer.ViewState.ViewModeChanged -= ViewState_ViewModeChanged;
+			printer.Bed.RendererOptions.PropertyChanged -= RendererOptions_PropertyChanged;
 
 			base.OnClosed(e);
 		}
