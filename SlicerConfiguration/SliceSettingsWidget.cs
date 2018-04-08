@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					settingsContext,
 					"SliceSettings",
 					printer,
-					this.UserLevel,
+					"Advanced",
 					theme,
 					isPrimarySettingsView: true,
 					databaseMRUKey: UserSettingsKey.SliceSettingsWidget_CurrentTab,
@@ -133,8 +133,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				});
 			};
 		}
-
-		public string UserLevel { get; } = "Advanced";
 
 		// TODO: This should just proxy to settingsControlBar.Visible. Having local state and pushing values on event listeners seems off
 		private bool showControlBar = true;
