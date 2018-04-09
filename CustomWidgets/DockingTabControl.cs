@@ -48,7 +48,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public int MinDockingWidth = 400 * (int)GuiWidget.DeviceScale;
 		protected GuiWidget widgetTodockTo;
 		private Dictionary<string, GuiWidget> allTabs = new Dictionary<string, GuiWidget>();
-		private List<PopupButton> settingsButtons = new List<PopupButton>();
 
 		private PrinterConfig printer;
 
@@ -153,8 +152,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private void Rebuild()
 		{
-			settingsButtons.Clear();
-
 			this.Focus();
 
 			foreach (var nameWidget in allTabs)
@@ -275,7 +272,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						Width = this.ConstrainedWidth
 					});
 
-					settingsButtons.Add(settingsButton);
 					settingsButton.PopupContent = resizeContainer;
 
 					settingsButton.Click += (s, e) =>
