@@ -229,39 +229,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 				else // control is floating
 				{
-					var printer = new TypeFacePrinter(tabTitle, theme.DefaultFontSize * GuiWidget.DeviceScale);
-					var rotatedLabel = new VertexSourceApplyTransform(
-						printer,
-						Affine.NewRotation(MathHelper.DegreesToRadians(-90)));
-
-					var textBounds = rotatedLabel.GetBounds();
-					var bounds = new RectangleDouble(printer.TypeFaceStyle.DescentInPixels, textBounds.Bottom, printer.TypeFaceStyle.AscentInPixels, textBounds.Top);
-					rotatedLabel.Transform = ((Affine)rotatedLabel.Transform)
-						* Affine.NewTranslation(new Vector2(-printer.TypeFaceStyle.DescentInPixels, -bounds.Bottom));
-
-					var grayBorder = theme.GetBorderColor(theme.Colors.IsDarkTheme ? 45 : 55);
-
-					var optionsText = new GuiWidget(bounds.Width, bounds.Height)
-					{
-						DoubleBuffer = true,
-						Margin = new BorderDouble(3, 1),
-					};
-					optionsText.AfterDraw += (s, e) =>
-					{
-						e.graphics2D.Render(rotatedLabel, ActiveTheme.Instance.PrimaryTextColor);
-					};
-
-					var settingsButton = new PopupButton(optionsText)
-					{
-						AlignToRightEdge = true,
-						Name = $"{tabTitle} Sidebar",
-						MakeScrollable = false,
-						Border = new BorderDouble(right: 6),
-						BorderColor = grayBorder,
-						Margin = new BorderDouble(2, 8, 0, 0),
-						HoverColor = Color.Transparent
-					};
-
 					var resizeContainer = new ResizeContainer(this)
 					{
 						Width = this.ConstrainedWidth,
@@ -276,23 +243,20 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						Width = this.ConstrainedWidth
 					});
 
-					settingsButton.PopupContent = resizeContainer;
+					int localTabIndex = tabIndex;
 
+					var settingsButton = new DockingTabButton(tabTitle, theme)
+					{
+						Name = $"{tabTitle} Sidebar",
+						PopupContent = resizeContainer,
+						PopupLayoutEngine = new UnpinnedLayoutEngine(resizeContainer, widgetTodockTo, DockSide)
+					};
 					settingsButton.Click += (s, e) =>
 					{
 						resizeContainer.Width = this.ConstrainedWidth;
-					};
-
-					settingsButton.PopupLayoutEngine = new UnpinnedLayoutEngine(settingsButton.PopupContent, widgetTodockTo, DockSide);
-					this.AddChild(settingsButton);
-
-					int localTabIndex = tabIndex;
-					settingsButton.Click += (s, e) =>
-					{
 						this.printer.ViewState.SliceSettingsTabIndex = localTabIndex;
 						this.printer.ViewState.DockWindowFloating = true;
 					};
-
 					settingsButton.PopupWindowClosed += (s, e) =>
 					{
 						if (!ApplicationController.Instance.IsReloading)
@@ -300,6 +264,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 							this.printer.ViewState.DockWindowFloating = false;
 						}
 					};
+					this.AddChild(settingsButton);
 
 					if (this.printer.ViewState.DockWindowFloating
 						&& localTabIndex == this.printer.ViewState.SliceSettingsTabIndex)
@@ -329,6 +294,44 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					tabControl.SelectedTabIndex = 0;
 				}
+			}
+		}
+
+		private class DockingTabButton : PopupButton
+		{
+			public DockingTabButton(string tabTitle, ThemeConfig theme)
+			{
+				var grayBorder = theme.GetBorderColor(theme.Colors.IsDarkTheme ? 45 : 55);
+
+				this.HAnchor = HAnchor.Fit;
+				this.VAnchor = VAnchor.Fit | VAnchor.Center;
+				this.AlignToRightEdge = true;
+				this.MakeScrollable = false;
+				this.Border = new BorderDouble(right: 6);
+				this.BorderColor = grayBorder;
+				this.Margin = new BorderDouble(2, 8, 0, 0);
+				this.HoverColor = Color.Transparent;
+
+				var printer = new TypeFacePrinter(tabTitle, theme.DefaultFontSize * GuiWidget.DeviceScale);
+				var rotatedLabel = new VertexSourceApplyTransform(
+					printer,
+					Affine.NewRotation(MathHelper.DegreesToRadians(-90)));
+
+				var textBounds = rotatedLabel.GetBounds();
+				var bounds = new RectangleDouble(printer.TypeFaceStyle.DescentInPixels, textBounds.Bottom, printer.TypeFaceStyle.AscentInPixels, textBounds.Top);
+				rotatedLabel.Transform = ((Affine)rotatedLabel.Transform)
+					* Affine.NewTranslation(new Vector2(-printer.TypeFaceStyle.DescentInPixels, -bounds.Bottom));
+
+				this.AddChild(buttonView = new GuiWidget(bounds.Width, bounds.Height)
+				{
+					DoubleBuffer = true,
+					Margin = new BorderDouble(3, 1),
+					Selectable = false
+				});
+				buttonView.AfterDraw += (s, e) =>
+				{
+					e.graphics2D.Render(rotatedLabel, ActiveTheme.Instance.PrimaryTextColor);
+				};
 			}
 		}
 
