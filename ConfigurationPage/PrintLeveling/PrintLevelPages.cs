@@ -46,16 +46,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class FirstPageInstructions : InstructionsPage
 	{
-		public FirstPageInstructions(PrinterConfig printer, string pageDescription, string instructionsText)
-			: base(printer, pageDescription, instructionsText)
+		public FirstPageInstructions(PrinterConfig printer, string pageDescription, string instructionsText, ThemeConfig theme)
+			: base(printer, pageDescription, instructionsText, theme)
 		{
 		}
 	}
 
 	public class CleanExtruderInstructionPage : InstructionsPage
 	{
-		public CleanExtruderInstructionPage(PrinterConfig printer, string title, string body)
-			: base(printer, title, body)
+		public CleanExtruderInstructionPage(PrinterConfig printer, string title, string body, ThemeConfig theme)
+			: base(printer, title, body, theme)
 		{
 			ImageBuffer imageBuffer = MacroProcessingStream.LoadImageAsset(printer.Settings.GetValue("clean_nozzle_image"));
 
@@ -69,14 +69,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				HAnchor = HAnchor.Center
 			});
 
-			AddTextField(levelingStrings.ClickNext, 10);
+			AddTextField(levelingStrings.ClickNext, 10, theme);
 		}
 	}
 
 	public class SelectMaterialPage : InstructionsPage
 	{
-		public SelectMaterialPage(PrinterConfig printer, string pageDescription, string instructionsText)
-			: base(printer, pageDescription, instructionsText)
+		public SelectMaterialPage(PrinterConfig printer, string pageDescription, string instructionsText, ThemeConfig theme)
+			: base(printer, pageDescription, instructionsText, theme)
 		{
 			var materialSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material);
 			materialSelector.BackgroundColor = Color.Transparent;
@@ -93,8 +93,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private TextWidget doneText;
 		private double startingTemp;
 
-		public WaitForTempPage(PrinterConfig printer, WizardControl container, LevelingStrings levelingStrings)
-			: base(printer, levelingStrings.WaitingForTempPageStepText, levelingStrings.WaitingForTempPageInstructions)
+		public WaitForTempPage(PrinterConfig printer, WizardControl container, LevelingStrings levelingStrings, ThemeConfig theme)
+			: base(printer, levelingStrings.WaitingForTempPageStepText, levelingStrings.WaitingForTempPageInstructions, theme)
 		{
 			this.container = container;
 			var holder = new FlowLayoutWidget()
@@ -200,8 +200,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		protected WizardControl container;
 		private List<ProbePosition> probePositions;
 
-		public LastPagelInstructions(PrinterConfig printer, WizardControl container, string pageDescription, string instructionsText, List<ProbePosition> probePositions)
-			: base(printer, pageDescription, instructionsText)
+		public LastPagelInstructions(PrinterConfig printer, WizardControl container, string pageDescription, string instructionsText, List<ProbePosition> probePositions, ThemeConfig theme)
+			: base(printer, pageDescription, instructionsText, theme)
 		{
 			this.probePositions = probePositions;
 			this.container = container;
@@ -248,12 +248,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		protected WizardControl container;
 		private List<ProbePosition> autoProbePositions;
 		private List<ProbePosition> manualProbePositions;
+		private ThemeConfig theme;
 
 		public CalibrateProbeLastPagelInstructions(PrinterConfig printer, WizardControl container, string pageDescription, string instructionsText, 
 			List<ProbePosition> autoProbePositions,
-			List<ProbePosition> manualProbePositions)
-			: base(printer, pageDescription, instructionsText)
+			List<ProbePosition> manualProbePositions, ThemeConfig theme)
+			: base(printer, pageDescription, instructionsText, theme)
 		{
+			this.theme = theme;
 			this.autoProbePositions = autoProbePositions;
 			this.manualProbePositions = manualProbePositions;
 			this.container = container;
@@ -276,7 +278,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			Closed += (s, e) =>
 			{
 				// move from this wizard to the print leveling wizard if needed
-				ApplicationController.Instance.RunAnyRequiredCalibration(printer);
+				ApplicationController.Instance.RunAnyRequiredCalibration(printer, theme);
 			};
 
 			base.PageIsBecomingActive();
@@ -289,8 +291,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private ProbePosition probePosition;
 		protected WizardControl container;
 
-		public GettingThirdPointFor2PointCalibration(PrinterConfig printer, WizardControl container, string pageDescription, Vector3 probeStartPosition, string instructionsText, ProbePosition probePosition)
-			: base(printer, pageDescription, instructionsText)
+		public GettingThirdPointFor2PointCalibration(PrinterConfig printer, WizardControl container, string pageDescription, Vector3 probeStartPosition, string instructionsText, 
+			ProbePosition probePosition, ThemeConfig theme)
+			: base(printer, pageDescription, instructionsText, theme)
 		{
 			this.probeStartPosition = probeStartPosition;
 			this.probePosition = probePosition;
@@ -350,8 +353,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private EventHandler unregisterEvents;
 		bool autoAdvance;
 
-		public HomePrinterPage(PrinterConfig printer, WizardControl container, string pageDescription, string instructionsText, bool autoAdvance)
-			: base(printer, pageDescription, instructionsText)
+		public HomePrinterPage(PrinterConfig printer, WizardControl container, string pageDescription, string instructionsText, bool autoAdvance, ThemeConfig theme)
+			: base(printer, pageDescription, instructionsText, theme)
 		{
 			this.autoAdvance = autoAdvance;
 			this.container = container;
@@ -416,8 +419,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		protected JogControls.MoveButton zMinusControl;
 		protected WizardControl container;
 
-		public FindBedHeight(PrinterConfig printer, WizardControl container, string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
-			: base(printer, pageDescription, setZHeightCoarseInstruction1)
+		public FindBedHeight(PrinterConfig printer, WizardControl container, string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance, 
+			List<ProbePosition> probePositions, int probePositionsBeingEditedIndex, ThemeConfig theme)
+			: base(printer, pageDescription, setZHeightCoarseInstruction1, theme)
 		{
 			this.container = container;
 			this.probePositions = probePositions;
@@ -452,7 +456,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			topToBottomControls.AddChild(zButtonsAndInfo);
 
-			AddTextField(setZHeightCoarseInstruction2, 10);
+			AddTextField(setZHeightCoarseInstruction2, 10, theme);
 		}
 
 		public override void PageIsBecomingActive()
@@ -546,8 +550,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		protected Vector3 probeStartPosition;
 		protected WizardControl container;
 
-		public AutoProbeFeedback(PrinterConfig printer, WizardControl container, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
-			: base(printer, pageDescription, pageDescription)
+		public AutoProbeFeedback(PrinterConfig printer, WizardControl container, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex, ThemeConfig theme)
+			: base(printer, pageDescription, pageDescription, theme)
 		{
 			this.container = container;
 			this.probeStartPosition = probeStartPosition;
@@ -672,9 +676,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		protected Vector3 probeStartPosition;
 
-		public GetCoarseBedHeight(PrinterConfig printer, WizardControl container, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
+		public GetCoarseBedHeight(PrinterConfig printer, WizardControl container, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions, 
+			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings, ThemeConfig theme)
 			: base(printer, container, pageDescription, "Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.".Localize(),
-				  levelingStrings.CoarseInstruction2, 1, probePositions, probePositionsBeingEditedIndex)
+				  levelingStrings.CoarseInstruction2, 1, probePositions, probePositionsBeingEditedIndex, theme)
 		{
 			this.probeStartPosition = probeStartPosition;
 		}
@@ -722,16 +727,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 	public class GetFineBedHeight : FindBedHeight
 	{
-		public GetFineBedHeight(PrinterConfig printer, WizardControl container, string pageDescription, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
-			: base(printer, container, pageDescription, levelingStrings.FineInstruction1, levelingStrings.FineInstruction2, .1, probePositions, probePositionsBeingEditedIndex)
+		public GetFineBedHeight(PrinterConfig printer, WizardControl container, string pageDescription, List<ProbePosition> probePositions, 
+			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings, ThemeConfig theme)
+			: base(printer, container, pageDescription, levelingStrings.FineInstruction1, levelingStrings.FineInstruction2, .1, probePositions, probePositionsBeingEditedIndex, theme)
 		{
 		}
 	}
 
 	public class GetUltraFineBedHeight : FindBedHeight
 	{
-		public GetUltraFineBedHeight(PrinterConfig printer, WizardControl container, string pageDescription, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
-			: base(printer, container, pageDescription, levelingStrings.UltraFineInstruction1, levelingStrings.FineInstruction2, .02, probePositions, probePositionsBeingEditedIndex)
+		public GetUltraFineBedHeight(PrinterConfig printer, WizardControl container, string pageDescription, List<ProbePosition> probePositions, 
+			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings, ThemeConfig theme)
+			: base(printer, container, pageDescription, levelingStrings.UltraFineInstruction1, levelingStrings.FineInstruction2, .02, probePositions, probePositionsBeingEditedIndex, theme)
 		{
 		}
 

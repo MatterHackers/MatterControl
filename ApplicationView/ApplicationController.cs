@@ -790,7 +790,7 @@ namespace MatterHackers.MatterControl
 				var printer = ApplicationController.Instance.ActivePrinters.Where(p => p.Connection == s).FirstOrDefault();
 				if (printer != null)
 				{
-					ApplicationController.Instance.RunAnyRequiredCalibration(printer);
+					ApplicationController.Instance.RunAnyRequiredCalibration(printer, this.Theme);
 				}
 			}, ref unregisterEvents);
 
@@ -812,7 +812,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public bool RunAnyRequiredCalibration(PrinterConfig printer)
+		public bool RunAnyRequiredCalibration(PrinterConfig printer, ThemeConfig theme)
 		{
 			if (PrintLevelingData.NeedsToBeRun(printer))
 			{
@@ -821,14 +821,14 @@ namespace MatterHackers.MatterControl
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						ProbeCalibrationWizard.ShowProbeCalibrationWizard(printer);
+						ProbeCalibrationWizard.ShowProbeCalibrationWizard(printer, theme);
 					});
 				}
 				else // run the leveling wizard
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						LevelWizardBase.ShowPrintLevelWizard(printer);
+						LevelWizardBase.ShowPrintLevelWizard(printer, theme);
 					});
 				}
 				return true;
@@ -1438,7 +1438,7 @@ namespace MatterHackers.MatterControl
 			try
 			{
 				// If leveling is required or is currently on
-				if(ApplicationController.Instance.RunAnyRequiredCalibration(printer))
+				if(ApplicationController.Instance.RunAnyRequiredCalibration(printer, this.Theme))
 				{
 					// We need to calibrate. So, don't print this part.
 					return;

@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using MatterControl.Printing;
 using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
@@ -40,8 +41,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class LevelWizard3Point : LevelWizardBase
 	{
-		public LevelWizard3Point(PrinterConfig printer)
-			: base(printer)
+		public LevelWizard3Point(PrinterConfig printer, ThemeConfig theme)
+			: base(printer, theme)
 		{
 		}
 

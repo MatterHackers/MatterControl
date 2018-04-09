@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private static SystemWindow printLevelWizardWindow;
 		private LevelingStrings levelingStrings;
 
-		public LevelWizardBase(PrinterConfig printer)
+		public LevelWizardBase(PrinterConfig printer, ThemeConfig theme)
 			: base(500, 370)
 		{
 			levelingStrings = new LevelingStrings(printer.Settings);
@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				string part1 = "Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize();
 				string part2 = "The next few screens will walk your through calibrating your printer.".Localize();
 				string requiredPageInstructions = $"{part1}\n\n{part2}";
-				printLevelWizard.AddPage(new FirstPageInstructions(printer, levelingStrings.initialPrinterSetupStepText, requiredPageInstructions));
+				printLevelWizard.AddPage(new FirstPageInstructions(printer, levelingStrings.initialPrinterSetupStepText, requiredPageInstructions, theme));
 			}
 
 			// To make sure the bed is at the correct temp, put in a filament selection page.
@@ -88,27 +88,27 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			secondsToCompleteWizard += (hasHeatedBed ? 60 * 3 : 0);
 			printLevelWizard.AddPage(new FirstPageInstructions(printer,
 				"Print Leveling Overview".Localize(),
-				levelingStrings.WelcomeText(ProbeCount, (int)Math.Round(secondsToCompleteWizard / 60.0))));
+				levelingStrings.WelcomeText(ProbeCount, (int)Math.Round(secondsToCompleteWizard / 60.0)), theme));
 
 			if (!useZProbe)
 			{
-				printLevelWizard.AddPage(new CleanExtruderInstructionPage(printer, "Check Nozzle".Localize(), levelingStrings.CleanExtruder));
+				printLevelWizard.AddPage(new CleanExtruderInstructionPage(printer, "Check Nozzle".Localize(), levelingStrings.CleanExtruder, theme));
 			}
 
 			if (hasHeatedBed)
 			{
 				string filamentSelectionPage = "{0}\n\n{1}".FormatWith(levelingStrings.materialPageInstructions1, levelingStrings.materialPageInstructions2);
-				printLevelWizard.AddPage(new SelectMaterialPage(printer, levelingStrings.materialStepText, filamentSelectionPage));
+				printLevelWizard.AddPage(new SelectMaterialPage(printer, levelingStrings.materialStepText, filamentSelectionPage, theme));
 			}
 
 			printLevelWizard.AddPage(new HomePrinterPage(printer, printLevelWizard,
 				levelingStrings.HomingPageStepText,
 				levelingStrings.HomingPageInstructions(useZProbe, hasHeatedBed),
-				useZProbe));
+				useZProbe, theme));
 
 			if (hasHeatedBed)
 			{
-				printLevelWizard.AddPage(new WaitForTempPage(printer, printLevelWizard, levelingStrings));
+				printLevelWizard.AddPage(new WaitForTempPage(printer, printLevelWizard, levelingStrings, theme));
 			}
 
 			string positionLabel = "Position".Localize();
@@ -128,31 +128,31 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				if (printer.Settings.Helpers.UseZProbe())
 				{
 					var stepString = $"{"Step".Localize()} {i + 1} {"of".Localize()} {ProbeCount}:";
-					printLevelWizard.AddPage(new AutoProbeFeedback(printer, printLevelWizard, new Vector3(validProbePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", stepString, positionLabel, i + 1, autoCalibrateLabel), probePositions, i));
+					printLevelWizard.AddPage(new AutoProbeFeedback(printer, printLevelWizard, new Vector3(validProbePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", stepString, positionLabel, i + 1, autoCalibrateLabel), probePositions, i, theme));
 				}
 				else
 				{
-					printLevelWizard.AddPage(new GetCoarseBedHeight(printer, printLevelWizard, new Vector3(validProbePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(TotalSteps), positionLabel, i + 1, lowPrecisionLabel), probePositions, i, levelingStrings));
-					printLevelWizard.AddPage(new GetFineBedHeight(printer, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(TotalSteps), positionLabel, i + 1, medPrecisionLabel), probePositions, i, levelingStrings));
-					printLevelWizard.AddPage(new GetUltraFineBedHeight(printer, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(TotalSteps), positionLabel, i + 1, highPrecisionLabel), probePositions, i, levelingStrings));
+					printLevelWizard.AddPage(new GetCoarseBedHeight(printer, printLevelWizard, new Vector3(validProbePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(TotalSteps), positionLabel, i + 1, lowPrecisionLabel), probePositions, i, levelingStrings, theme));
+					printLevelWizard.AddPage(new GetFineBedHeight(printer, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(TotalSteps), positionLabel, i + 1, medPrecisionLabel), probePositions, i, levelingStrings, theme));
+					printLevelWizard.AddPage(new GetUltraFineBedHeight(printer, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(TotalSteps), positionLabel, i + 1, highPrecisionLabel), probePositions, i, levelingStrings, theme));
 				}
 				i++;
 			}
 
-			printLevelWizard.AddPage(new LastPagelInstructions(printer, printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions));
+			printLevelWizard.AddPage(new LastPagelInstructions(printer, printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions, theme));
 		}
 
 		public abstract int ProbeCount { get; }
 		public int TotalSteps => ProbeCount * 3;
 
-		public static void ShowPrintLevelWizard(PrinterConfig printer)
+		public static void ShowPrintLevelWizard(PrinterConfig printer, ThemeConfig theme)
 		{
 			if (printLevelWizardWindow == null)
 			{
 				// turn off print leveling
 				PrintLevelingStream.AllowLeveling = false;
 
-				printLevelWizardWindow = LevelWizardBase.CreateAndShowWizard(printer);
+				printLevelWizardWindow = LevelWizardBase.CreateAndShowWizard(printer, theme);
 
 				printLevelWizardWindow.Closed += (sender, e) =>
 				{
@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public abstract IEnumerable<Vector2> GetPrintLevelPositionToSample();
 
-		private static LevelWizardBase CreateAndShowWizard(PrinterConfig printer)
+		private static LevelWizardBase CreateAndShowWizard(PrinterConfig printer, ThemeConfig theme)
 		{
 			// clear any data that we are going to be acquiring (sampled positions, after z home offset)
 			PrintLevelingData levelingData = new PrintLevelingData()
@@ -194,23 +194,23 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			switch (levelingData.LevelingSystem)
 			{
 				case LevelingSystem.Probe3Points:
-					printLevelWizardWindow = new LevelWizard3Point(printer);
+					printLevelWizardWindow = new LevelWizard3Point(printer, theme);
 					break;
 
 				case LevelingSystem.Probe7PointRadial:
-					printLevelWizardWindow = new LevelWizard7PointRadial(printer);
+					printLevelWizardWindow = new LevelWizard7PointRadial(printer, theme);
 					break;
 
 				case LevelingSystem.Probe13PointRadial:
-					printLevelWizardWindow = new LevelWizard13PointRadial(printer);
+					printLevelWizardWindow = new LevelWizard13PointRadial(printer, theme);
 					break;
 
 				case LevelingSystem.Probe3x3Mesh:
-					printLevelWizardWindow = new LevelWizard3x3Mesh(printer);
+					printLevelWizardWindow = new LevelWizard3x3Mesh(printer, theme);
 					break;
 
 				case LevelingSystem.Probe5x5Mesh:
-					printLevelWizardWindow = new LevelWizard5x5Mesh(printer);
+					printLevelWizardWindow = new LevelWizard5x5Mesh(printer, theme);
 					break;
 
 				default:
