@@ -371,7 +371,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// make sure we don't have anything left over
 			unregisterEvents?.Invoke(this, null);
 
-			printer.Connection.PrintingStateChanged.RegisterEvent(CheckHomeFinished, ref unregisterEvents);
+			printer.Connection.CommunicationStateChanged.RegisterEvent(CheckHomeFinished, ref unregisterEvents);
 
 			printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
 

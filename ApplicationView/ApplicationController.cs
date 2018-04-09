@@ -738,6 +738,85 @@ namespace MatterHackers.MatterControl
 				}
 			}, ref unregisterEvents);
 
+			bool waitingForBedHeat = false;
+			bool waitingForExtruderHeat = false;
+			double heatDistance = 0;
+			double heatStart = 0;
+
+			// show temperature heating for m109 and m190
+			PrinterConnection.AnyCommunicationStateChanged.RegisterEvent((s, e) =>
+			{
+				var printerConnection = this.ActivePrinter.Connection;
+
+				if (printerConnection.PrinterIsPrinting || printerConnection.PrinterIsPaused)
+				{
+					switch (printerConnection.DetailedPrintingState)
+					{
+						case DetailedPrintingState.HeatingBed:
+							Tasks.Execute("Heating Bed".Localize(), (reporter, cancellationToken) =>
+							{
+								waitingForBedHeat = true;
+								waitingForExtruderHeat = false;
+
+								var progressStatus = new ProgressStatus();
+								heatStart = printerConnection.ActualBedTemperature;
+								heatDistance = Math.Abs(printerConnection.TargetBedTemperature - heatStart);
+
+								while (heatDistance > 0 && waitingForBedHeat)
+								{
+									var remainingDistance = Math.Abs(printerConnection.TargetBedTemperature - printerConnection.ActualBedTemperature);
+									progressStatus.Status = $"Heating Bed ({printerConnection.ActualBedTemperature:0}/{printerConnection.TargetBedTemperature:0})";
+									progressStatus.Progress0To1 = (heatDistance - remainingDistance) / heatDistance;
+									reporter.Report(progressStatus);
+									Thread.Sleep(1000);
+								}
+
+								return Task.CompletedTask;
+							});
+							break;
+
+						case DetailedPrintingState.HeatingExtruder:
+							Tasks.Execute("Heaters Extruder".Localize(), (reporter, cancellationToken) =>
+							{
+								waitingForBedHeat = false;
+								waitingForExtruderHeat = true;
+
+								var progressStatus = new ProgressStatus();
+
+								heatStart = printerConnection.GetActualHotendTemperature(0);
+								heatDistance = Math.Abs(printerConnection.GetTargetHotendTemperature(0) - heatStart);
+
+								while (heatDistance > 0 && waitingForExtruderHeat)
+								{
+									var currentDistance = Math.Abs(printerConnection.GetTargetHotendTemperature(0) - printerConnection.GetActualHotendTemperature(0));
+									progressStatus.Progress0To1 = (heatDistance - currentDistance) / heatDistance;
+									progressStatus.Status = $"Heating Extruder ({printerConnection.ActualBedTemperature:0}/{printerConnection.TargetBedTemperature:0})";
+									reporter.Report(progressStatus);
+									Thread.Sleep(1000);
+								}
+
+								return Task.CompletedTask;
+							});
+							break;
+
+						case DetailedPrintingState.HomingAxis:
+						case DetailedPrintingState.Printing:
+						default:
+							// clear any existing waiting states
+							waitingForBedHeat = false;
+							waitingForExtruderHeat = false;
+							break;
+					}
+				}
+				else
+				{
+					// turn of any running temp feedback tasks
+					waitingForBedHeat = false;
+					waitingForExtruderHeat = false;
+				}
+			}, ref unregisterEvent);
+
+			// show countdown for turning off heat if required
 			PrinterConnection.HeatTurningOffSoon.RegisterEvent((s, e) =>
 			{
 				var printerConnection = this.ActivePrinter.Connection;
