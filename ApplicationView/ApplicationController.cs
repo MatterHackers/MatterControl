@@ -1881,9 +1881,6 @@ namespace MatterHackers.MatterControl
 		}
 
 		public string Title { get; set; }
-		public Action<Printer> PauseAction { get; internal set; }
-		public Action<Printer> ResumeAction { get; internal set; }
-		public Action<Printer> StopAction { get; internal set; }
 		public RunningTaskActions TaskActions { get; internal set; }
 
 		private CancellationTokenSource tokenSource;
