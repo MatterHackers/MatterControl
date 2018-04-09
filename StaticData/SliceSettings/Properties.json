@@ -820,7 +820,7 @@
   },
   {
     "SlicerConfigName": "z_probe_z_offset",
-    "PresentationName": "Z Offset",
+    "PresentationName": "Probe Z Offset",
     "HelpText": "The distance the z probe is from the extruder in z. For manual probing, this is thickness of the paper (or other calibration device).",
     "DataEditType": "DOUBLE",
     "Units": "mm",
@@ -842,7 +842,7 @@
   },
   {
     "SlicerConfigName": "z_probe_xy_offset",
-    "PresentationName": "XY Offset",
+    "PresentationName": "Probe XY Offset",
     "HelpText": "The distance the z probe is from the extruder in x and y.",
     "DataEditType": "VECTOR2",
     "Units": "mm",
