@@ -299,10 +299,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private class DockingTabButton : PopupButton
 		{
+			private Color grayBorder;
+			private ThemeConfig theme;
+
 			public DockingTabButton(string tabTitle, ThemeConfig theme)
 			{
-				var grayBorder = theme.GetBorderColor(theme.Colors.IsDarkTheme ? 45 : 55);
-
+				this.grayBorder = theme.GetBorderColor(theme.Colors.IsDarkTheme ? 45 : 55);
+				this.theme = theme;
 				this.HAnchor = HAnchor.Fit;
 				this.VAnchor = VAnchor.Fit | VAnchor.Center;
 				this.AlignToRightEdge = true;
@@ -332,6 +335,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					e.graphics2D.Render(rotatedLabel, ActiveTheme.Instance.PrimaryTextColor);
 				};
+			}
+
+			public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
+			{
+				base.OnMouseEnterBounds(mouseEvent);
+				this.BorderColor = theme.Colors.PrimaryAccentColor;
+			}
+
+			public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
+			{
+				base.OnMouseLeaveBounds(mouseEvent);
+				this.BorderColor = grayBorder;
 			}
 		}
 
