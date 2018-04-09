@@ -79,6 +79,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public static RootedObjectEventHandler HeatTurningOffSoon = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler ErrorReported = new RootedObjectEventHandler();
 
+		// this should be removed after we have better access to each running printer
 		public static RootedObjectEventHandler AnyCommunicationStateChanged = new RootedObjectEventHandler();
 
 		public static RootedObjectEventHandler AnyConnectionSucceeded = new RootedObjectEventHandler();
@@ -116,8 +117,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public RootedObjectEventHandler PauseOnLayer = new RootedObjectEventHandler();
 
 		public RootedObjectEventHandler FilamentRunout = new RootedObjectEventHandler();
-
-		public RootedObjectEventHandler PrintingStateChanged = new RootedObjectEventHandler();
 
 		public RootedObjectEventHandler LineReceived = new RootedObjectEventHandler();
 
@@ -205,7 +204,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public CommunicationStates PrePauseCommunicationState { get; private set; } = CommunicationStates.Printing;
 
-		private DetailedPrintingState printingStatePrivate;
+		private DetailedPrintingState _printingStatePrivate;
 
 		private FoundStringContainsCallbacks ReadLineContainsCallBacks = new FoundStringContainsCallbacks();
 
@@ -669,13 +668,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public DetailedPrintingState DetailedPrintingState
 		{
-			get => printingStatePrivate;
+			get => _printingStatePrivate;
 			set
 			{
-				if (printingStatePrivate != value)
+				if (_printingStatePrivate != value)
 				{
-					printingStatePrivate = value;
-					PrintingStateChanged.CallEvents(this, null);
+					_printingStatePrivate = value;
+					OnCommunicationStateChanged(null);
 				}
 			}
 		}
@@ -1214,7 +1213,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			// Call instance event
 			CommunicationStateChanged.CallEvents(this, e);
-			PrintingStateChanged.CallEvents(this, null);
 #if __ANDROID__
 
 			//Path to the printer output file
