@@ -61,9 +61,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						var ungroupItem = Scene.SelectedItem;
 						// clear the selection
 						Scene.SelectedItem = null;
+						var ungroupMesh = ungroupItem.Mesh;
+
+						if (!ungroupMesh.Vertices.IsSorted)
+						{
+							ungroupMesh.CleanAndMergeMesh(CancellationToken.None);
+						}
 
 						// try to cut it up into multiple meshes
-						var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(ungroupItem.Mesh, CancellationToken.None, (double progress0To1, string processingState) =>
+						var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(ungroupMesh, CancellationToken.None, (double progress0To1, string processingState) =>
 						{
 							//view3DWidget.ReportProgressChanged(progress0To1 * .5, processingState);
 						});
