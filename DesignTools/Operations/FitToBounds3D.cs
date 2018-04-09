@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 		}
 
-		public override void Bake()
+		public override void MakePermanent()
 		{
 			// push our matrix into our children
 			foreach (var child in this.Children)

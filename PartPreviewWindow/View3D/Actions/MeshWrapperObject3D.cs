@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			base.Remove();
 		}
 
-		public override void Bake()
+		public override void MakePermanent()
 		{
 			var meshWrappers = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
 
@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				}
 			}
 
-			base.Bake();
+			base.MakePermanent();
 		}
 
 		public static void WrapSelection(MeshWrapperObject3D meshWrapper, InteractiveScene scene)

@@ -173,17 +173,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			toolbar.AddChild(editButton);
 
-			// put in a bake button
-			var icon = AggContext.StaticData.LoadIcon("bake.png", 16, 16).SetPreMultiply();
+			// put in a make permanent button
+			var icon = AggContext.StaticData.LoadIcon("permanent.png", 16, 16).SetPreMultiply();
 			var bakeButton = new IconButton(icon, theme)
 			{
 				Margin = theme.ButtonSpacing,
-				ToolTipText = "Bake operation into parts".Localize()
+				ToolTipText = "Make operation permanent".Localize()
 			};
 			bakeButton.Click += (s, e) =>
 			{
 				scene.SelectedItem = null;
-				this.item.Bake();
+				this.item.MakePermanent();
 			};
 			scene.SelectionChanged += (s, e) => bakeButton.Enabled = scene.SelectedItem?.CanBake == true;
 			toolbar.AddChild(bakeButton);
