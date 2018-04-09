@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
@@ -20,7 +21,10 @@ namespace MatterControl.Tests.MatterControl
 		{
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-			LevelWizard3Point levelingSolution = new LevelWizard3Point(ActiveSliceSettings.Instance.printer);
+			LevelWizard3Point levelingSolution = new LevelWizard3Point(ActiveSliceSettings.Instance.printer, new MatterHackers.MatterControl.ThemeConfig()
+			{
+				Colors = ActiveTheme.Instance
+			});
 			var printerSettings = ActiveSliceSettings.Instance;
 
 			{

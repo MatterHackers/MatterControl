@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
@@ -37,8 +38,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class LevelWizard5x5Mesh : LevelWizardBase
 	{
-		public LevelWizard5x5Mesh(PrinterConfig printer)
-			: base(printer)
+		public LevelWizard5x5Mesh(PrinterConfig printer, ThemeConfig theme)
+			: base(printer, theme)
 		{
 		}
 

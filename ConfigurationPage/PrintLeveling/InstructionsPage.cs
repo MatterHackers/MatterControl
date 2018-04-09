@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 
 		protected PrinterConfig printer { get; }
 
-		public InstructionsPage(PrinterConfig printer, string pageDescription, string instructionsText)
+		public InstructionsPage(PrinterConfig printer, string pageDescription, string instructionsText, ThemeConfig theme)
 			: base(pageDescription)
 		{
 			this.printer = printer;
@@ -49,14 +49,14 @@ namespace MatterHackers.MatterControl
 			topToBottomControls.HAnchor = HAnchor.Stretch;
 			topToBottomControls.VAnchor |= VAnchor.Top;
 
-			AddTextField(instructionsText, 10);
+			AddTextField(instructionsText, 10, theme);
 
 			AddChild(topToBottomControls);
 
 			AnchorAll();
 		}
 
-		public void AddTextField(string instructionsText, int pixelsFromLast)
+		public void AddTextField(string instructionsText, int pixelsFromLast, ThemeConfig theme)
 		{
 			GuiWidget spacer = new GuiWidget(10, pixelsFromLast);
 			topToBottomControls.AddChild(spacer);
@@ -65,6 +65,7 @@ namespace MatterHackers.MatterControl
 
 			topToBottomControls.AddChild(new WrappedTextWidget(wrappedInstructionsTabsToSpaces)
 			{
+				TextColor = theme.Colors.PrimaryTextColor,
 				HAnchor = HAnchor.Stretch
 			});
 		}

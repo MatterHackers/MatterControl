@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		protected int totalSteps { get; private set; }
 		protected PrinterConfig printer;
 
-		public ProbeCalibrationWizard(PrinterConfig printer)
+		public ProbeCalibrationWizard(PrinterConfig printer, ThemeConfig theme)
 			: base(500, 370)
 		{
 			this.printer = printer;
@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				string part1 = "Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize();
 				string part2 = "The next few screens will walk your through calibrating your printer.".Localize();
 				string requiredPageInstructions = $"{part1}\n\n{part2}";
-				printLevelWizard.AddPage(new FirstPageInstructions(printer, levelingStrings.initialPrinterSetupStepText, requiredPageInstructions));
+				printLevelWizard.AddPage(new FirstPageInstructions(printer, levelingStrings.initialPrinterSetupStepText, requiredPageInstructions, theme));
 			}
 
 			var CalibrateProbeWelcomText = "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}".FormatWith(
@@ -84,15 +84,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				levelingStrings.ClickNext);
 
 			printLevelWizard.AddPage(new FirstPageInstructions(printer,
-				"Probe Calibration Overview".Localize(), CalibrateProbeWelcomText));
+				"Probe Calibration Overview".Localize(), CalibrateProbeWelcomText, theme));
 
-			printLevelWizard.AddPage(new CleanExtruderInstructionPage(printer, "Check Nozzle".Localize(), levelingStrings.CleanExtruder));
+			printLevelWizard.AddPage(new CleanExtruderInstructionPage(printer, "Check Nozzle".Localize(), levelingStrings.CleanExtruder, theme));
 
 			bool useZProbe = printer.Settings.Helpers.UseZProbe();
 			printLevelWizard.AddPage(new HomePrinterPage(printer, printLevelWizard, 
 				levelingStrings.HomingPageStepText, 
 				levelingStrings.HomingPageInstructions(useZProbe, false),
-				false));
+				false, theme));
 
 			string lowPrecisionLabel = "Low Precision".Localize();
 			string medPrecisionLabel = "Medium Precision".Localize();
@@ -107,19 +107,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizard.AddPage(new AutoProbeFeedback(printer, printLevelWizard, 
 				new Vector3(probePosition, startProbeHeight), 
 				$"{stepString} {"Position".Localize()} {i + 1} - {"Auto Calibrate".Localize()}", 
-				autoProbePositions, i));
+				autoProbePositions, i, theme));
 
 			// do the manual prob of the same position
 			printLevelWizard.AddPage(new GetCoarseBedHeight(printer, printLevelWizard, new Vector3(probePosition, startProbeHeight), 
-				string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), "Position".Localize(), i + 1, lowPrecisionLabel), manualProbePositions, i, levelingStrings));
-			printLevelWizard.AddPage(new GetFineBedHeight(printer, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), "Position".Localize(), i + 1, medPrecisionLabel), manualProbePositions, i, levelingStrings));
-			printLevelWizard.AddPage(new GetUltraFineBedHeight(printer, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), "Position".Localize(), i + 1, highPrecisionLabel), manualProbePositions, i, levelingStrings));
+				string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), "Position".Localize(), i + 1, lowPrecisionLabel), manualProbePositions, i, levelingStrings, theme));
+			printLevelWizard.AddPage(new GetFineBedHeight(printer, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), "Position".Localize(), i + 1, medPrecisionLabel), manualProbePositions, i, levelingStrings, theme));
+			printLevelWizard.AddPage(new GetUltraFineBedHeight(printer, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), "Position".Localize(), i + 1, highPrecisionLabel), manualProbePositions, i, levelingStrings, theme));
 
 			printLevelWizard.AddPage(new CalibrateProbeLastPagelInstructions(printer, printLevelWizard, 
 				"Done".Localize(),
 				"Your Probe is now calibrated.".Localize()  + "\n\n\t• " + "Remove the paper".Localize() + "\n\n" + "Click 'Done' to close this window.".Localize(), 
 				autoProbePositions, 
-				manualProbePositions));
+				manualProbePositions, theme));
 		}
 
 		private static SystemWindow probeCalibrationWizardWindow;
@@ -137,14 +137,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return UsingZProbe(printer) && !printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated);
 		}
 
-		public static void ShowProbeCalibrationWizard(PrinterConfig printer)
+		public static void ShowProbeCalibrationWizard(PrinterConfig printer, ThemeConfig theme)
 		{
 			if (probeCalibrationWizardWindow == null)
 			{
 				// turn off print leveling
 				PrintLevelingStream.AllowLeveling = false;
 
-				probeCalibrationWizardWindow = new ProbeCalibrationWizard(printer);
+				probeCalibrationWizardWindow = new ProbeCalibrationWizard(printer, theme);
 
 				probeCalibrationWizardWindow.ShowAsSystemWindow();
 
