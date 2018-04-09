@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 						};
 						moreButton.Click += (s, e1) =>
 						{
-							maxStuff += 10;
+							maxStuff += 25;
 							lastReflowWidth = -1;
 							columnCount = 0;
 

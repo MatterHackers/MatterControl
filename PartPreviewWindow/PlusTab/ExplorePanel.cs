@@ -29,8 +29,11 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -218,42 +221,54 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				});
 			};
 			toolBarA.AddChild(redeemShareCode);
+		}
 
-			WebClient client = new WebClient();
-			client.DownloadDataCompleted += (s, e) =>
-			{
-				try // if we get a bad result we can get a target invocation exception. In that case just don't show anything
-				{
-					// scale the loaded image to the size of the target image
-					byte[] raw = e.Result;
-					Stream stream = new MemoryStream(raw);
-					var jsonContent = new StreamReader(stream).ReadToEnd();
-					var content = JsonConvert.DeserializeObject<ExplorerFeed>(jsonContent);
-
-					// add a bunch of content
-					AddControlsForContent(content);
-
-					UiThread.RunOnIdle(() =>
-					{
-						// Force layout to change to get it working
-						var oldMargin = this.Margin;
-						this.Margin = new BorderDouble(20);
-						this.Margin = oldMargin;
-					});
-				}
-				catch
-				{
-				}
-			};
+		public async override void OnLoad(EventArgs args)
+		{
+			base.OnLoad(args);
 
 			try
 			{
-				var url = "http://www.matterhackers.com/feeds/explore?sk=2lhddgi3q67xoqa53pchpeddl6w1uf";
-				client.DownloadDataAsync(new Uri(url));
+				var explorerFeed = await LoadExploreFeed();
+
+				UiThread.RunOnIdle(() =>
+				{
+					// Add controls for content
+					AddControlsForContent(explorerFeed);
+
+					// Force layout to change to get it working
+					var oldMargin = this.Margin;
+					this.Margin = new BorderDouble(20);
+					this.Margin = oldMargin;
+				});
 			}
 			catch
 			{
 			}
+		}
+
+		public async Task<ExplorerFeed> LoadExploreFeed()
+		{
+			return await ApplicationController.LoadCacheableAsync<ExplorerFeed>(
+				"explore-feed.json",
+				"MatterHackers",
+				async () =>
+				{
+					try
+					{
+						var client = new HttpClient();
+						string json = await client.GetStringAsync("http://www.matterhackers.com/feeds/explore?sk=2lhddgi3q67xoqa53pchpeddl6w1uf");
+
+						return JsonConvert.DeserializeObject<ExplorerFeed>(json);
+					}
+					catch(Exception ex)
+					{
+						Trace.WriteLine("Error collecting or loading feed: " + ex.Message);
+					}
+
+					return null;
+				},
+				Path.Combine("OEMSettings", "ExploreFeed.json"));
 		}
 
 		public override void OnMouseWheel(MouseEventArgs mouseEvent)
