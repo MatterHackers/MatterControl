@@ -202,7 +202,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				if (this.ControlIsPinned)
 				{
-					var content = new DockingWindowContent(this, kvp.Value, tabTitle);
+					var content = new DockingWindowContent(this, kvp.Value, tabTitle, theme);
 
 					var tab = new ToolTab(
 							tabTitle,
@@ -229,7 +229,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 				else // control is floating
 				{
-					var printer = new TypeFacePrinter(tabTitle, 12 * GuiWidget.DeviceScale);
+					var printer = new TypeFacePrinter(tabTitle, theme.DefaultFontSize * GuiWidget.DeviceScale);
 					var rotatedLabel = new VertexSourceApplyTransform(
 						printer,
 						Affine.NewRotation(MathHelper.DegreesToRadians(-90)));
@@ -239,10 +239,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					rotatedLabel.Transform = ((Affine)rotatedLabel.Transform)
 						* Affine.NewTranslation(new Vector2(-printer.TypeFaceStyle.DescentInPixels, -bounds.Bottom));
 
+					var grayBorder = theme.GetBorderColor(theme.Colors.IsDarkTheme ? 45 : 55);
+
 					var optionsText = new GuiWidget(bounds.Width, bounds.Height)
 					{
 						DoubleBuffer = true,
-						Margin = new BorderDouble(3, 6, 3, 0)
+						Margin = new BorderDouble(3, 1),
 					};
 					optionsText.AfterDraw += (s, e) =>
 					{
@@ -254,21 +256,23 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						AlignToRightEdge = true,
 						Name = $"{tabTitle} Sidebar",
 						MakeScrollable = false,
+						Border = new BorderDouble(right: 6),
+						BorderColor = grayBorder,
+						Margin = new BorderDouble(2, 8, 0, 0),
+						HoverColor = Color.Transparent
 					};
-
-					var spliterColor = theme.SplitterBackground;
 
 					var resizeContainer = new ResizeContainer(this)
 					{
 						Width = this.ConstrainedWidth,
 						VAnchor = VAnchor.Stretch,
 						HAnchor = HAnchor.Right,
-						SpliterBarColor = spliterColor,
+						SpliterBarColor = theme.SplitterBackground,
 						SplitterWidth = theme.SplitterWidth,
 					};
-					resizeContainer.AddChild(new DockingWindowContent(this, kvp.Value, tabTitle)
+					resizeContainer.AddChild(new DockingWindowContent(this, kvp.Value, tabTitle, theme)
 					{
-						BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
+						BackgroundColor = theme.TabBodyBackground,
 						Width = this.ConstrainedWidth
 					});
 
@@ -328,10 +332,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-
 		private class DockingWindowContent : GuiWidget, IIgnoredPopupChild
 		{
-			internal DockingWindowContent(DockingTabControl dockingControl, GuiWidget child, string title)
+			internal DockingWindowContent(DockingTabControl dockingControl, GuiWidget child, string title, ThemeConfig theme)
 			{
 				var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
@@ -345,11 +348,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					{
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Fit,
+						BackgroundColor = theme.ActiveTabBarBackground,
 					};
 
 					titleBar.AddChild(new TextWidget(title, textColor: ActiveTheme.Instance.PrimaryTextColor)
 					{
-						Margin = new BorderDouble(left: 12)
+						Margin = new BorderDouble(left: 8),
+						VAnchor = VAnchor.Center
 					});
 
 					titleBar.AddChild(new HorizontalSpacer());
