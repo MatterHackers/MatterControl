@@ -136,18 +136,6 @@ namespace MatterHackers.MatterControl
 			return new FileSystemFileItem(mcxPath);
 		}
 
-		public Task<ILibraryItem> ToPersistedLibraryItem(string newName)
-		{
-			// Save the scene to disk
-			//await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), this.SaveChanges);
-			this.Scene.PersistAssets();
-
-			return Task.FromResult<ILibraryItem>(new InMemoryLibraryItem(this.Scene)
-			{
-				Name = newName
-			});
-		}
-
 		internal async Task ClearPlate()
 		{
 			// Clear existing
