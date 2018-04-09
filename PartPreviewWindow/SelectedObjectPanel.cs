@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			toolbar.AddChild(editButton);
 
 			// put in a make permanent button
-			var icon = AggContext.StaticData.LoadIcon("permanent.png", 16, 16).SetPreMultiply();
+			var icon = AggContext.StaticData.LoadIcon("permanent.png", 16, 16, IconColor.Theme).SetPreMultiply();
 			var bakeButton = new IconButton(icon, theme)
 			{
 				Margin = theme.ButtonSpacing,
@@ -214,11 +214,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			scrollableContent.AddChild(editorSection);
 
 			var colorSection = new SectionWidget(
-				"Color".Localize(), 
+				"Color".Localize(),
 				new ColorSwatchSelector(scene, theme, buttonSize: 16, buttonSpacing: new BorderDouble(1, 1, 0, 0))
 				{
 					Margin = new BorderDouble(left: 10)
-				}, 
+				},
 				theme,
 				serializationKey: UserSettingsKey.ColorPanelExpanded)
 			{
