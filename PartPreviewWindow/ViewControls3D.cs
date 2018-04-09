@@ -565,7 +565,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									if (destinationContainer is ILibraryWritableContainer writableContainer)
 									{
 										// Wrap stream with ReadOnlyStream library item and add to container
-										writableContainer.Add(new[] { await sceneContext.ToPersistedLibraryItem(newName) });
+										writableContainer.Add(new[] { new InMemoryLibraryItem(sceneContext.Scene) });
 										destinationContainer.Dispose();
 									}
 								}));
@@ -582,7 +582,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							DialogWindow.Show(
 								new ExportPrintItemPage(new[]
 								{
-									await sceneContext.ToPersistedLibraryItem(Path.GetFileName(sceneContext.EditContext.SourceFilePath)) 
+									new InMemoryLibraryItem(sceneContext.Scene)
 								}));
 						});
 					},

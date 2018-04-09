@@ -35,12 +35,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PopupButton : GuiWidget, IIgnoredPopupChild
 	{
-		private static readonly Color slightShade = new Color(0, 0, 0, 40);
+		public Color HoverColor { get; set; } = new Color(0, 0, 0, 40);
 
 		public event EventHandler PopupWindowClosed;
 		public event EventHandler BeforePopup;
 
-		private GuiWidget buttonView;
+		protected GuiWidget buttonView;
+
 		private bool menuVisibileAtMouseDown = false;
 		private bool menuVisible = false;
 		private PopupWidget popupWidget;
@@ -65,6 +66,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public Direction PopDirection { get; set; } = Direction.Down;
 		public bool MakeScrollable { get; set; } = true;
 		public virtual GuiWidget PopupContent { get; set; }
+
+		public Color PopupBorderColor { get; set; }
+
+		public override void OnLoad(EventArgs args)
+		{
+			base.OnLoad(args);
+			this.PopupBorderColor = this.BorderColor;
+		}
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
@@ -92,7 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (menuVisible)
 			{
-				graphics2D.FillRectangle(this.LocalBounds, slightShade);
+				graphics2D.FillRectangle(this.LocalBounds, HoverColor);
 			}
 
 			base.OnDraw(graphics2D);
@@ -125,7 +134,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupWidget = new PopupWidget(this.PopupContent, PopupLayoutEngine, MakeScrollable)
 			{
 				BorderWidth = 1,
-				BorderColor = this.BorderColor,
+				BorderColor = this.PopupBorderColor,
 			};
 
 			popupWidget.Closed += (s, e) =>
