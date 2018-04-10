@@ -162,6 +162,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				detailsPanel.AddChild(guiWidget);
 			}
 
+			if (taskDetails.TaskActions?.ReadOnlyReporting == true)
+			{
+				stopButton.Visible = false;
+				pauseButton.Visible = false;
+				resumeButton.Visible = false;
+
+				// Ensure the top row is as big as it would be with buttons
+				topRow.MinimumSize = new Vector2(0, resumeButton.Height);
+			}
+
 			taskDetails.ProgressChanged += TaskDetails_ProgressChanged;
 		}
 
@@ -173,7 +183,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void TaskDetails_ProgressChanged(object sender, ProgressStatus e)
 		{
-			if (expandButton.Text != e.Status 
+			if (expandButton.Text != e.Status
 				&& !string.IsNullOrEmpty(e.Status))
 			{
 				expandButton.Text = e.Status;
