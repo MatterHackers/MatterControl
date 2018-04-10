@@ -456,7 +456,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return presets;
 		}
 
-		public int NumberOfHotEnds()
+		public int NumberOfHotends()
 		{
 			if (printerSettings.GetValue<bool>(SettingsKey.extruders_share_temperature))
 			{

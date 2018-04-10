@@ -37,11 +37,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public class LevelingStrings
 	{
 		public string HomingPageStepText = "Homing The Printer".Localize();
-		public string WaitingForTempPageStepText = "Waiting For Bed To Heat".Localize();
 		public string initialPrinterSetupStepText = "Initial Printer Setup".Localize();
-		public string materialStepText = "Select Material".Localize();
-		public string materialPageInstructions1 = "The temperature of the bed can have a significant effect on the quality of leveling.";
-		public string materialPageInstructions2 = "Please select the material you will be printing, so we can adjust the temperature before calibrating.";
 		private string doneLine1 = "Congratulations!";
 		private string doneLine1b = "Auto Print Leveling is now configured and enabled.".Localize();
 		private string doneLine2 = "Remove the paper".Localize();
@@ -74,24 +70,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				else
 				{
 					return $"{doneLine1} {doneLine1b}\n\n\t• {doneLine2}\n\n{doneLine3}\n\n{doneLine3b}";
-				}
-			}
-		}
-
-		public string WaitingForTempPageInstructions
-		{
-			get
-			{
-				if (printerSettings.Helpers.UseZProbe())
-				{
-					return "Waiting for the bed to heat up.".Localize() + "\n"
-						+ "This will improve the accuracy of print leveling.".Localize();
-				}
-				else
-				{
-					return "Waiting for the bed to heat up.".Localize() + "\n"
-						+ "This will improve the accuracy of print leveling.".Localize() + "\n" + "\n"
-						+ "Click 'Next' when the bed reaches temp.";
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Kevin Pope, John Lewin
+Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,26 +28,15 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
 
-namespace MatterHackers.MatterControl.SlicerConfiguration
+namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class PresetsToolbar : FlowLayoutWidget
+	public class GetFineBedHeight : FindBedHeight
 	{
-		public PresetsToolbar(PrinterConfig printer)
+		public GetFineBedHeight(PrinterConfig printer, WizardControl container, string pageDescription, List<ProbePosition> probePositions, 
+			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings, ThemeConfig theme)
+			: base(printer, container, pageDescription, levelingStrings.FineInstruction1, levelingStrings.FineInstruction2, .1, probePositions, probePositionsBeingEditedIndex, theme)
 		{
-			this.HAnchor = HAnchor.Stretch;
-
-			int numberOfHeatedExtruders = printer.Settings.Helpers.NumberOfHotends();
-
-			this.AddChild(new PresetSelectorWidget(printer, "Quality".Localize(), Color.Yellow, NamedSettingsLayers.Quality));
-			this.AddChild(new GuiWidget(8, 0));
-			this.AddChild(new PresetSelectorWidget(printer, "Material".Localize(), Color.Orange, NamedSettingsLayers.Material));
-
-			this.Height = 60 * GuiWidget.DeviceScale;
 		}
 	}
 }
-	

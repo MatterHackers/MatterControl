@@ -67,7 +67,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizard = new WizardControl();
 			AddChild(printLevelWizard);
 
-			if (printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated))
+			// make a welocme page if this is the first time calibrating the probe
+			if (!printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated))
 			{
 				string part1 = "Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize();
 				string part2 = "The next few screens will walk your through calibrating your printer.".Localize();
@@ -75,6 +76,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printLevelWizard.AddPage(new FirstPageInstructions(printer, levelingStrings.initialPrinterSetupStepText, requiredPageInstructions, theme));
 			}
 
+			// show what steps will be taken
 			var CalibrateProbeWelcomText = "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}".FormatWith(
 				"Welcome to the probe calibration wizard. Here is a quick overview on what we are going to do.".Localize(),
 				"Home the printer".Localize(),
@@ -86,13 +88,31 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizard.AddPage(new FirstPageInstructions(printer,
 				"Probe Calibration Overview".Localize(), CalibrateProbeWelcomText, theme));
 
-			printLevelWizard.AddPage(new CleanExtruderInstructionPage(printer, "Check Nozzle".Localize(), levelingStrings.CleanExtruder, theme));
+			// add in the material select page
+			var instruction1 = "The hot end needs to be heated to ensure it is clean.".Localize();
+			var instruction2 = "Please select the material you will be printing, so we can heat the printer before calibrating.".Localize();
+			printLevelWizard.AddPage(new SelectMaterialPage(printer, "Select Material".Localize(), $"{instruction1}\n\n{instruction2}", theme));
 
-			bool useZProbe = printer.Settings.Helpers.UseZProbe();
+			// add in the homing printer page
 			printLevelWizard.AddPage(new HomePrinterPage(printer, printLevelWizard, 
 				levelingStrings.HomingPageStepText, 
-				levelingStrings.HomingPageInstructions(useZProbe, false),
+				levelingStrings.HomingPageInstructions(true, false),
 				false, theme));
+
+			string heatingInstructions = "";
+			double targetHotendTemp = 0;
+
+			targetHotendTemp = printer.Settings.Helpers.ExtruderTemperature(0);
+			heatingInstructions += $"Waiting for the hotend to heat to {targetHotendTemp}.".Localize() + "\n"
+				+ "This will ensure no filament is stuck to the tip.".Localize() + "\n"
+				+ "\n"
+				+ "Warning! The tip of the extrude will be HOT!".Localize() + "\n"
+				+ "Avoid contact with your skin.".Localize();
+
+			printLevelWizard.AddPage(new WaitForTempPage(printer, printLevelWizard,
+				"Waiting For Printer To Heat".Localize(), heatingInstructions,
+				0, targetHotendTemp,
+				theme));
 
 			string lowPrecisionLabel = "Low Precision".Localize();
 			string medPrecisionLabel = "Medium Precision".Localize();

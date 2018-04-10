@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Kevin Pope, John Lewin
+Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,27 +27,35 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
 using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
+using System.Collections.Generic;
 
-namespace MatterHackers.MatterControl.SlicerConfiguration
+namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class PresetsToolbar : FlowLayoutWidget
+	public class GetUltraFineBedHeight : FindBedHeight
 	{
-		public PresetsToolbar(PrinterConfig printer)
+		public GetUltraFineBedHeight(PrinterConfig printer, WizardControl container, string pageDescription, List<ProbePosition> probePositions, 
+			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings, ThemeConfig theme)
+			: base(printer, container, pageDescription, levelingStrings.UltraFineInstruction1, levelingStrings.FineInstruction2, .02, probePositions, probePositionsBeingEditedIndex, theme)
 		{
-			this.HAnchor = HAnchor.Stretch;
+		}
 
-			int numberOfHeatedExtruders = printer.Settings.Helpers.NumberOfHotends();
+		private bool haveDrawn = false;
 
-			this.AddChild(new PresetSelectorWidget(printer, "Quality".Localize(), Color.Yellow, NamedSettingsLayers.Quality));
-			this.AddChild(new GuiWidget(8, 0));
-			this.AddChild(new PresetSelectorWidget(printer, "Material".Localize(), Color.Orange, NamedSettingsLayers.Material));
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			haveDrawn = true;
+			base.OnDraw(graphics2D);
+		}
 
-			this.Height = 60 * GuiWidget.DeviceScale;
+		public override void PageIsBecomingInactive()
+		{
+			if (haveDrawn)
+			{
+				printer.Connection.MoveRelative(PrinterConnection.Axis.Z, 2, printer.Settings.Helpers.ManualMovementSpeeds().Z);
+			}
+			base.PageIsBecomingInactive();
 		}
 	}
 }
-	
