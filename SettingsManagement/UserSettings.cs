@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl
 			settingsDictionary = new Dictionary<string, UserSetting>();
 			foreach(var userSetting in Datastore.Instance.dbSQLite.Query<UserSetting>("SELECT * FROM UserSetting;"))
 			{
-				// LastValueWins - allow for duplicate entries in the database with the same .Name value 
+				// LastValueWins - allow for duplicate entries in the database with the same .Name value
 				settingsDictionary[userSetting.Name] = userSetting;
 			}
 
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public string Language { get; private set; } 
+		public string Language { get; private set; }
 
 		public UserSettingsFields Fields { get; private set; } = new UserSettingsFields();
 
@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl
 		{
 			UserSetting userSetting;
 			if (settingsDictionary.TryGetValue(key, out userSetting))
-			{ 
+			{
 				return userSetting.Value;
 			}
 
@@ -139,17 +139,14 @@ namespace MatterHackers.MatterControl
 
 		public bool IsTouchScreen => this.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen";
 
-		private List<string> acceptableRenderingModes = new List<string>() { "orthographic", "raytraced" };
-
 		public string ThumbnailRenderingMode
 		{
 			get
 			{
 				string renderingMode = this.get(UserSettingsKey.ThumbnailRenderingMode);
-
-				// If the current value is unset or invalid, use platform defaults
-				if (acceptableRenderingModes.IndexOf(renderingMode) == -1)
+				if (string.IsNullOrWhiteSpace(renderingMode))
 				{
+					// If the current value is unset or invalid, use platform defaults
 					return UserSettings.Instance.IsTouchScreen ? "orthographic" : "raytraced";
 				}
 
