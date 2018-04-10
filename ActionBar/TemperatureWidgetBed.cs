@@ -115,9 +115,10 @@ namespace MatterHackers.MatterControl.ActionBar
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 
 			var settingsData = SettingsOrganizer.Instance.GetSettingsData(SettingsKey.bed_temperature);
-			var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, Color.Black, ApplicationController.Instance.Theme, ref tabIndex);
+			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, Color.Black, ApplicationController.Instance.Theme, ref tabIndex);
+			container.AddChild(temperatureRow);
 
-			container.AddChild(row);
+			alwaysEnabled.Add(hotendRow);
 
 			// add in the temp graph
 			var graph = new DataViewGraph()
@@ -138,8 +139,8 @@ namespace MatterHackers.MatterControl.ActionBar
 				graph.AddData(this.ActualTemperature);
 			}, 1, () => !HasBeenClosed);
 
-			var valueField = row.Descendants<MHNumberEdit>().FirstOrDefault();
-			var settingsRow = row.DescendantsAndSelf<SliceSettingsRow>().FirstOrDefault();
+			var valueField = temperatureRow.Descendants<MHNumberEdit>().FirstOrDefault();
+			var settingsRow = temperatureRow.DescendantsAndSelf<SliceSettingsRow>().FirstOrDefault();
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if (e is StringEventArgs stringEvent)
