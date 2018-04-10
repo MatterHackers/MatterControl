@@ -1627,7 +1627,10 @@ namespace MatterHackers.MatterControl
 
 		public async Task MonitorPrintTask(PrinterConfig printer)
 		{
-			await ApplicationController.Instance.Tasks.Execute("Printing".Localize(),
+			string layerDetails = (printer.Bed.LoadedGCode.LayerCount > 0) ? $" of {printer.Bed.LoadedGCode.LayerCount}" : "";
+
+			await ApplicationController.Instance.Tasks.Execute(
+				"Printing".Localize(),
 				(reporterB, cancellationTokenB) =>
 				{
 					var progressStatus = new ProgressStatus();
@@ -1648,8 +1651,8 @@ namespace MatterHackers.MatterControl
 						while ((printer.Connection.PrinterIsPrinting || printer.Connection.PrinterIsPaused)
 							&& !cancellationTokenB.IsCancellationRequested)
 						{
-							//progressStatus.Status = $"{printing} Layer ({printer.Connection.CurrentlyPrintingLayer } of {totalLayers})";
-							progressStatus.Status = $"{printing} ({printer.Connection.CurrentlyPrintingLayer + 1})";
+							progressStatus.Status = $"{printing} ({printer.Connection.CurrentlyPrintingLayer + 1}{layerDetails}) - {printer.Connection.PercentComplete:0}%";
+
 							progressStatus.Progress0To1 = printer.Connection.PercentComplete / 100;
 							reporterB.Report(progressStatus);
 							Thread.Sleep(200);
