@@ -56,10 +56,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.VAnchor = VAnchor.Fit;
 			this.theme = theme;
 
+			var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Raw);
+
+#if __ANDROID__
 			// Camera Monitoring
 			bool hasCamera = true || ApplicationSettings.Instance.get(ApplicationSettingsKey.HardwareHasCamera) == "true";
-
-			var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Raw);
 
 			var previewButton = new IconButton(configureIcon, theme)
 			{
@@ -84,6 +85,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					previewButton,
 					AggContext.StaticData.LoadIcon("camera-24x24.png", 24, 24))
 			);
+#endif
 
 			// Print Notifications
 			var configureNotificationsButton = new IconButton(configureIcon, theme)
@@ -420,7 +422,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		[Conditional("DEBUG")]
 		private void GenerateLocalizationValidationFile()
 		{
-#if ! __ANDROID__
+#if !__ANDROID__
 			if (AggContext.StaticData is FileSystemStaticData fileSystemStaticData)
 			{
 				char currentChar = 'A';
