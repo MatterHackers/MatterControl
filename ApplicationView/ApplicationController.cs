@@ -1627,7 +1627,10 @@ namespace MatterHackers.MatterControl
 
 		public async Task MonitorPrintTask(PrinterConfig printer)
 		{
-			await ApplicationController.Instance.Tasks.Execute("Printing".Localize(),
+			string layerDetails = (printer.Bed.LoadedGCode.LayerCount > 0) ? $" of {printer.Bed.LoadedGCode.LayerCount}" : "";
+
+			await ApplicationController.Instance.Tasks.Execute(
+				"Printing".Localize(),
 				(reporterB, cancellationTokenB) =>
 				{
 					var progressStatus = new ProgressStatus();
@@ -1648,8 +1651,8 @@ namespace MatterHackers.MatterControl
 						while ((printer.Connection.PrinterIsPrinting || printer.Connection.PrinterIsPaused)
 							&& !cancellationTokenB.IsCancellationRequested)
 						{
-							//progressStatus.Status = $"{printing} Layer ({printer.Connection.CurrentlyPrintingLayer } of {totalLayers})";
-							progressStatus.Status = $"{printing} ({printer.Connection.CurrentlyPrintingLayer + 1})";
+							progressStatus.Status = $"{printing} ({printer.Connection.CurrentlyPrintingLayer + 1}{layerDetails}) - {printer.Connection.PercentComplete:0}%";
+
 							progressStatus.Progress0To1 = printer.Connection.PercentComplete / 100;
 							reporterB.Report(progressStatus);
 							Thread.Sleep(200);
@@ -1803,8 +1806,7 @@ namespace MatterHackers.MatterControl
 
 			RadioIconButton printAreaButton = null;
 
-			if (sceneContext.BuildHeight > 0
-				&& printer?.ViewState.ViewMode != PartViewMode.Layers2D)
+			if (sceneContext.BuildHeight > 0)
 			{
 				printAreaButton = new RadioIconButton(AggContext.StaticData.LoadIcon("print_area.png", IconColor.Theme), theme)
 				{
@@ -1813,6 +1815,7 @@ namespace MatterHackers.MatterControl
 					Checked = sceneContext.RendererOptions.RenderBuildVolume,
 					Margin = theme.ButtonSpacing,
 					ToggleButton = true,
+					Enabled = printer?.ViewState.ViewMode != PartViewMode.Layers2D,
 					Height = 24,
 					Width = 24
 				};
@@ -1824,6 +1827,22 @@ namespace MatterHackers.MatterControl
 			}
 
 			this.BindBedOptions(container, bedButton, printAreaButton, sceneContext.RendererOptions);
+
+			if (printer != null)
+			{
+				// Disable print area button in GCode2D view
+				EventHandler<ViewModeChangedEventArgs> viewModeChanged = (s, e) =>
+				{
+					printAreaButton.Enabled = printer.ViewState.ViewMode != PartViewMode.Layers2D;
+				};
+
+				printer.ViewState.ViewModeChanged += viewModeChanged;
+
+				container.Closed += (s, e) =>
+				{
+					printer.ViewState.ViewModeChanged -= viewModeChanged;
+				};
+			}
 
 			return container;
 		}
@@ -1843,6 +1862,8 @@ namespace MatterHackers.MatterControl
 						break;
 				}
 			};
+
+
 
 			renderOptions.PropertyChanged += syncProperties;
 
