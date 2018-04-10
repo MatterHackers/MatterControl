@@ -1803,8 +1803,7 @@ namespace MatterHackers.MatterControl
 
 			RadioIconButton printAreaButton = null;
 
-			if (sceneContext.BuildHeight > 0
-				&& printer?.ViewState.ViewMode != PartViewMode.Layers2D)
+			if (sceneContext.BuildHeight > 0)
 			{
 				printAreaButton = new RadioIconButton(AggContext.StaticData.LoadIcon("print_area.png", IconColor.Theme), theme)
 				{
@@ -1813,6 +1812,7 @@ namespace MatterHackers.MatterControl
 					Checked = sceneContext.RendererOptions.RenderBuildVolume,
 					Margin = theme.ButtonSpacing,
 					ToggleButton = true,
+					Enabled = printer?.ViewState.ViewMode != PartViewMode.Layers2D,
 					Height = 24,
 					Width = 24
 				};
@@ -1824,6 +1824,22 @@ namespace MatterHackers.MatterControl
 			}
 
 			this.BindBedOptions(container, bedButton, printAreaButton, sceneContext.RendererOptions);
+
+			if (printer != null)
+			{
+				// Disable print area button in GCode2D view
+				EventHandler<ViewModeChangedEventArgs> viewModeChanged = (s, e) =>
+				{
+					printAreaButton.Enabled = printer.ViewState.ViewMode != PartViewMode.Layers2D;
+				};
+
+				printer.ViewState.ViewModeChanged += viewModeChanged;
+
+				container.Closed += (s, e) =>
+				{
+					printer.ViewState.ViewModeChanged -= viewModeChanged;
+				};
+			}
 
 			return container;
 		}
@@ -1843,6 +1859,8 @@ namespace MatterHackers.MatterControl
 						break;
 				}
 			};
+
+
 
 			renderOptions.PropertyChanged += syncProperties;
 
