@@ -89,8 +89,6 @@ namespace MatterHackers.MatterControl.DataStorage
 			isSaved = false;
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
 		[PrimaryKey, AutoIncrement]
 		public int Id { get; set; }
 
@@ -145,16 +143,6 @@ namespace MatterHackers.MatterControl.DataStorage
 			}
 
 			return this.hashCode;
-		}
-
-		protected void OnPropertyChanged(string name)
-		{
-			PropertyChangedEventHandler handler = PropertyChanged;
-			this.hashCode = 0;
-			if (handler != null)
-			{
-				handler(this, new PropertyChangedEventArgs(name));
-			}
 		}
 
 		private void TryHandleInsert()
