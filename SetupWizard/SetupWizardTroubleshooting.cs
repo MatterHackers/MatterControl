@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 
 			RefreshStatus();
 
-			nextButton = textImageButtonFactory.Generate("Continue".Localize());
+			nextButton = theme.ButtonFactory.Generate("Continue".Localize());
 			nextButton.Click += (sender, e) => UiThread.RunOnIdle(this.WizardWindow.Close);
 			nextButton.Visible = false;
 

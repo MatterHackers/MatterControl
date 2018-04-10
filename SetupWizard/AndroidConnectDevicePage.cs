@@ -38,7 +38,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 namespace MatterHackers.MatterControl
 {
 	public class AndroidConnectDevicePage : DialogPage
-	{  
+	{
 		private EventHandler unregisterEvents;
 
 		private TextWidget generalError;
@@ -78,11 +78,11 @@ namespace MatterHackers.MatterControl
 			};
 
 			//Construct buttons
-			connectButton = whiteImageButtonFactory.Generate("Connect".Localize());
+			connectButton = theme.WhiteButtonFactory.Generate("Connect".Localize());
 			connectButton.Margin = new BorderDouble(0,0,10,0);
 			connectButton.Click += ConnectButton_Click;
 
-			skipButton = whiteImageButtonFactory.Generate("Skip".Localize());
+			skipButton = theme.WhiteButtonFactory.Generate("Skip".Localize());
 			skipButton.Click += NextButton_Click;
 
 			connectButtonContainer.AddChild(connectButton);
@@ -103,12 +103,12 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(generalError);
 
 			//Construct buttons
-			retryButton = whiteImageButtonFactory.Generate("Retry".Localize());
+			retryButton = theme.WhiteButtonFactory.Generate("Retry".Localize());
 			retryButton.Click += ConnectButton_Click;
 			retryButton.Margin = new BorderDouble(0,0,10,0);
 
 			//Construct buttons
-			troubleshootButton = whiteImageButtonFactory.Generate("Troubleshoot".Localize());
+			troubleshootButton = theme.WhiteButtonFactory.Generate("Troubleshoot".Localize());
 			troubleshootButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				WizardWindow.ChangeToPage<SetupWizardTroubleshooting>();
@@ -120,15 +120,15 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(0, 6),
 				Visible = false
 			};
-			
+
 			retryButtonContainer.AddChild(retryButton);
 			retryButtonContainer.AddChild(troubleshootButton);
 			retryButtonContainer.AddChild(new HorizontalSpacer());
-			
+
 			contentRow.AddChild(retryButtonContainer);
 
 			//Construct buttons
-			nextButton = textImageButtonFactory.Generate("Continue".Localize());
+			nextButton = theme.ButtonFactory.Generate("Continue".Localize());
 			nextButton.Click += NextButton_Click;
 			nextButton.Visible = false;
 

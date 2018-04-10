@@ -58,14 +58,14 @@ namespace MatterHackers.MatterControl
 			};
 
 			//Construct buttons
-			Button skipButton = whiteImageButtonFactory.Generate("Skip".Localize());
+			Button skipButton = theme.WhiteButtonFactory.Generate("Skip".Localize());
 			skipButton.Click += Continue_Click;
 
-			Button nextButton = textImageButtonFactory.Generate("Continue".Localize());
+			Button nextButton = theme.ButtonFactory.Generate("Continue".Localize());
 			nextButton.Click += Continue_Click;
 			nextButton.Visible = false;
 
-			Button configureButton = whiteImageButtonFactory.Generate("Configure".Localize());
+			Button configureButton = theme.WhiteButtonFactory.Generate("Configure".Localize());
 			configureButton.Margin = new BorderDouble(0, 0, 10, 0);
 			configureButton.Click += (s, e) =>
 			{

@@ -47,18 +47,23 @@ namespace MatterHackers.MatterControl
 
 		public Vector2 WindowSize { get; set; }
 
-		protected TextImageButtonFactory textImageButtonFactory { get; } = ApplicationController.Instance.Theme.WizardButtons;
-		protected TextImageButtonFactory whiteImageButtonFactory { get; } = ApplicationController.Instance.Theme.WhiteButtonFactory;
-		protected LinkButtonFactory linkButtonFactory = ApplicationController.Instance.Theme.LinkButtonFactory;
+		protected TextImageButtonFactory textImageButtonFactory { get; }
+		protected LinkButtonFactory linkButtonFactory { get; }
 
 		protected double labelFontSize = 12 * GuiWidget.DeviceScale;
 		protected double errorFontSize = 10 * GuiWidget.DeviceScale;
 
 		private GuiWidget mainContainer;
 
+		protected ThemeConfig theme;
+
 		public DialogPage(string cancelButtonText = null)
 		{
-			var theme = ApplicationController.Instance.Theme;
+			theme = ApplicationController.Instance.Theme;
+
+			textImageButtonFactory = theme.WizardButtons;
+			linkButtonFactory = theme.LinkButtonFactory;
+
 			if (cancelButtonText == null)
 			{
 				cancelButtonText = "Cancel".Localize();
