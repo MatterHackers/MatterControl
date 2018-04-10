@@ -88,8 +88,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			Color backgroundGridColor = Color.Gray;
 
-			graphics2D.Line(0, 0, Width, 0, backgroundGridColor);
-			graphics2D.Line(0, Height, Width, Height, backgroundGridColor);
 
 			double pixelSkip = Height;
 			for (int i = 0; i < Width / pixelSkip; i++)
