@@ -43,8 +43,6 @@ namespace MatterHackers.MatterControl
 
 	public class ThemeConfig
 	{
-		protected static readonly int DefaultScrollBarWidth = 120;
-
 		public static ImageBuffer RestoreNormal { get; private set; }
 		public static ImageBuffer RestoreHover { get; private set; }
 		private static ImageBuffer restorePressed;
@@ -56,28 +54,29 @@ namespace MatterHackers.MatterControl
 		public int FontSize12 { get; } = 12;
 		public int FontSize14 { get; } = 14;
 
+		internal readonly int shortButtonHeight = 30;
+		private readonly int defaultScrollBarWidth = 120;
+		private readonly int sideBarButtonWidth = 138;
+
 		public int DefaultFontSize { get; } = 11;
-
-		internal int shortButtonHeight = 25;
-		private int sideBarButtonWidth;
-
 		public int H1PointSize { get; set; } = 11;
+		public double ButtonHeight { get; internal set; } = 32;
+
+		public BorderDouble ButtonSpacing { get; set; } = new BorderDouble(3, 0, 0, 0);
+		public BorderDouble ToolbarPadding { get; set; } = 3;
 
 		public LinkButtonFactory LinkButtonFactory { get; private set; }
 
-		public TextImageButtonFactory WhiteButtonFactory;
-
+		public TextImageButtonFactory WhiteButtonFactory { get; private set; }
 		public TextImageButtonFactory ButtonFactory { get; private set; }
 		public TextImageButtonFactory WizardButtons { get; private set; }
+		public TextImageButtonFactory MicroButton { get; private set; }
+		public TextImageButtonFactory MicroButtonMenu { get; private set; }
 
 		/// <summary>
 		/// Used to make buttons in menu rows where the background color is consistently white
 		/// </summary>
 		public TextImageButtonFactory MenuButtonFactory { get; private set; }
-
-		public Color TabBodyBackground { get; private set; }
-
-		public Color SplitterBackground { get; private set; } = new Color(0, 0, 0, 60);
 
 		public int SplitterWidth => (int)(6 * (GuiWidget.DeviceScale <= 1 ? GuiWidget.DeviceScale : GuiWidget.DeviceScale * 1.4));
 
@@ -89,17 +88,14 @@ namespace MatterHackers.MatterControl
 		public Color DarkShade { get; } = new Color(0, 0, 0, 190);
 
 		public Color ActiveTabColor { get; set; }
-		public Color InactiveTabColor { get; set; }
 		public Color ActiveTabBarBackground { get; set; }
-
-		public TextImageButtonFactory MicroButton { get; private set; }
-		public TextImageButtonFactory MicroButtonMenu { get; private set; }
-
-		public BorderDouble ButtonSpacing { get; set; } = new BorderDouble(3, 0, 0, 0);
-		public BorderDouble ToolbarPadding { get; set; } = 3;
-		public double ButtonHeight { get; internal set; } = 32;
-
-		public int OverlayAlpha { get; set; } = 50;
+		public Color InactiveTabColor { get; set; }
+		public Color InteractionLayerOverlayColor { get; private set; }
+		public Color SplitterBackground { get; private set; } = new Color(0, 0, 0, 60);
+		public Color TabBodyBackground { get; private set; }
+		public Color ToolbarButtonBackground { get; set; } = Color.Transparent;
+		public Color ToolbarButtonHover => this.SlightShade;
+		public Color ToolbarButtonDown => this.MinimalShade;
 
 		public GuiWidget CreateSearchButton()
 		{
@@ -108,14 +104,6 @@ namespace MatterHackers.MatterControl
 				ToolTipText = "Search".Localize(),
 			};
 		}
-
-		public Color InteractionLayerOverlayColor { get; private set; }
-
-		public Color ToolbarButtonBackground { get; set; } = Color.Transparent;
-
-		public Color ToolbarButtonHover => this.SlightShade;
-
-		public Color ToolbarButtonDown => this.MinimalShade;
 
 		static ThemeConfig()
 		{
@@ -218,9 +206,6 @@ namespace MatterHackers.MatterControl
 			});
 
 #region PartPreviewWidget
-
-			sideBarButtonWidth = 138;
-			shortButtonHeight = 30;
 
 			WhiteButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
 			{
@@ -349,7 +334,7 @@ namespace MatterHackers.MatterControl
 
 			var namedSlider = new SolidSlider(new Vector2(), scrollBarWidth, 0, 1)
 			{
-				TotalWidthInPixels = DefaultScrollBarWidth,
+				TotalWidthInPixels = defaultScrollBarWidth,
 				Minimum = min,
 				Maximum = max,
 				Margin = new BorderDouble(12, 4),
