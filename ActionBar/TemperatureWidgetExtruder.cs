@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		internal ControlContentExtruder(PrinterConfig printer, int extruderIndex, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
-			HAnchor = HAnchor.Stretch;
+			this.HAnchor = HAnchor.Stretch;
 
 			this.printer = printer;
 
@@ -184,21 +184,20 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.ToolTipText = "Current extruder temperature".Localize();
 			this.theme = theme;
 
+			this.PopupContent = this.GetPopupContent();
+
 			printer.Connection.HotendTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
 		}
 
 		protected override int ActualTemperature => (int)printer.Connection.GetActualHotendTemperature(this.hotendIndex);
 		protected override int TargetTemperature => (int)printer.Connection.GetTargetHotendTemperature(this.hotendIndex);
 
-		string TemperatureKey
+		private string TemperatureKey
 		{
-			get
-			{
-				return "temperature" + ((this.hotendIndex > 0 && this.hotendIndex < 4) ? hotendIndex.ToString() : "");
-			}
+			get => "temperature" + ((this.hotendIndex > 0 && this.hotendIndex < 4) ? hotendIndex.ToString() : "");
 		}
 
-		protected override GuiWidget GetPopupContent()
+		private GuiWidget GetPopupContent()
 		{
 			var widget = new IgnoredPopupWidget()
 			{
@@ -248,9 +247,11 @@ namespace MatterHackers.MatterControl.ActionBar
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 			// TODO: make this be for the correct extruder
 			var settingsData = SettingsOrganizer.Instance.GetSettingsData(TemperatureKey);
-			var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, Color.Black, ApplicationController.Instance.Theme, ref tabIndex);
+			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, Color.Black, ApplicationController.Instance.Theme, ref tabIndex);
+			container.AddChild(temperatureRow);
 
-			container.AddChild(row);
+			// Add the temperature row to the always enabled list ensuring the field can be set when disconnected
+			alwaysEnabled.Add(temperatureRow);
 
 			// add in the temp graph
 			var graph = new DataViewGraph()
@@ -269,9 +270,9 @@ namespace MatterHackers.MatterControl.ActionBar
 				graph.AddData(this.ActualTemperature);
 			}, 1, () => !HasBeenClosed);
 
-			var valueField = row.Descendants<MHNumberEdit>().FirstOrDefault();
+			var valueField = temperatureRow.Descendants<MHNumberEdit>().FirstOrDefault();
 			valueField.Name = "Temperature Input";
-			var settingsRow = row.DescendantsAndSelf<SliceSettingsRow>().FirstOrDefault();
+			var settingsRow = temperatureRow.DescendantsAndSelf<SliceSettingsRow>().FirstOrDefault();
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if (e is StringEventArgs stringEvent)

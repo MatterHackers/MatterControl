@@ -28,11 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl.ActionBar
@@ -52,11 +52,10 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected EventHandler unregisterEvents;
 		protected PrinterConfig printer;
+		protected List<GuiWidget> alwaysEnabled;
 
 		protected virtual int ActualTemperature { get; }
 		protected virtual int TargetTemperature { get; }
-
-		private DisableablePanel disableablePanel;
 
 		public TemperatureWidgetBase(PrinterConfig printer, string textValue)
 		{
@@ -66,8 +65,10 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 			this.Cursor = Cursors.Hand;
-
+			this.MakeScrollable = false;
 			this.AlignToRightEdge = true;
+
+			alwaysEnabled = new List<GuiWidget>();
 
 			var container = new FlowLayoutWidget()
 			{
@@ -106,11 +107,23 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			container.AddChild(DirectionIndicator);
 
+
+			bool isEnabled = printer.Connection.IsConnected;
+
 			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
-				if (disableablePanel != null)
+				if (isEnabled != printer.Connection.IsConnected)
 				{
-					disableablePanel.Enabled = printer.Connection.IsConnected;
+					isEnabled = printer.Connection.IsConnected;
+
+					var flowLayout = this.PopupContent.Children.OfType<FlowLayoutWidget>().FirstOrDefault();
+					if (flowLayout != null)
+					{
+						foreach (var child in flowLayout.Children.Except(alwaysEnabled))
+						{
+							child.Enabled = isEnabled;
+						}
+					}
 				}
 
 			}, ref unregisterEvents);
@@ -139,19 +152,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		}
 
 		protected virtual void SetTargetTemperature(double targetTemp) { }
-
-		protected abstract GuiWidget GetPopupContent();
-
-		public override void OnLoad(EventArgs args)
-		{
-			// Wrap popup content in a DisableablePanel
-			disableablePanel = new DisableablePanel(this.GetPopupContent(), printer.Connection.IsConnected, alpha: 140);
-
-			// Set as popup
-			this.PopupContent = disableablePanel;
-
-			base.OnLoad(args);
-		}
 
 		public override void OnClosed(ClosedEventArgs e)
 		{

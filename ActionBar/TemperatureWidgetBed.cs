@@ -56,13 +56,15 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			this.ImageWidget.Image = AggContext.StaticData.LoadIcon("bed.png", IconColor.Theme);
 
+			this.PopupContent = this.GetPopupContent();
+
 			printer.Connection.BedTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
 		}
 
 		protected override int ActualTemperature => (int)printer.Connection.ActualBedTemperature;
 		protected override int TargetTemperature => (int)printer.Connection.TargetBedTemperature;
 
-		protected override GuiWidget GetPopupContent()
+		private GuiWidget GetPopupContent()
 		{
 			var widget = new IgnoredPopupWidget()
 			{
