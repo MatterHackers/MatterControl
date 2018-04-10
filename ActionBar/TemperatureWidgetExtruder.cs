@@ -50,7 +50,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			: base(FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
-
 			this.printer = printer;
 
 			GuiWidget macroButtons = null;
@@ -58,7 +57,33 @@ namespace MatterHackers.MatterControl.ActionBar
 			if (extruderIndex == 0)
 			{
 				// add in load and unload buttons
-				macroButtons = GetExtruderMacros(extruderIndex, theme.MenuButtonFactory);
+				macroButtons = new FlowLayoutWidget()
+				{
+					Padding = theme.ToolbarPadding,
+				};
+
+				var loadFilament = new GCodeMacro()
+				{
+					GCode = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "load_filament.txt"))
+				};
+
+				Button loadButton = theme.MenuButtonFactory.Generate("Load".Localize());
+				loadButton.Margin = theme.ButtonSpacing;
+				loadButton.ToolTipText = "Load filament".Localize();
+				loadButton.Click += (s, e) => loadFilament.Run(printer.Connection);
+				macroButtons.AddChild(loadButton);
+
+				var unloadFilament = new GCodeMacro()
+				{
+					GCode = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "unload_filament.txt"))
+				};
+
+				Button unloadButton = theme.MenuButtonFactory.Generate("Unload".Localize());
+				unloadButton.Margin = theme.ButtonSpacing;
+				loadButton.ToolTipText = "Unload filament".Localize();
+				unloadButton.Click += (s, e) => unloadFilament.Run(printer.Connection);
+				macroButtons.AddChild(unloadButton);
+
 				this.AddChild(new SettingsItem("Filament".Localize(), macroButtons, enforceGutter: false));
 			}
 
@@ -66,12 +91,13 @@ namespace MatterHackers.MatterControl.ActionBar
 			var buttonContainer = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Fit
+				VAnchor = VAnchor.Fit,
+				Padding = theme.ToolbarPadding,
 			};
 
 			var retractButton = theme.MenuButtonFactory.Generate("Retract".Localize());
+			retractButton.Margin = theme.ButtonSpacing;
 			retractButton.ToolTipText = "Retract filament".Localize();
-			retractButton.Margin = new BorderDouble(8, 0);
 			retractButton.Click += (s, e) =>
 			{
 				printer.Connection.MoveExtruderRelative(moveAmount * -1, printer.Settings.EFeedRate(extruderIndex), extruderIndex);
@@ -81,9 +107,9 @@ namespace MatterHackers.MatterControl.ActionBar
 			int extruderButtonTopMargin = macroButtons == null ? 8 : 0;
 
 			var extrudeButton = theme.MenuButtonFactory.Generate("Extrude".Localize());
+			extrudeButton.Margin = theme.ButtonSpacing;
 			extrudeButton.Name = "Extrude Button";
 			extrudeButton.ToolTipText = "Extrude filament".Localize();
-			extrudeButton.Margin = new BorderDouble(0, 0, 0, extruderButtonTopMargin);
 			extrudeButton.Click += (s, e) =>
 			{
 				printer.Connection.MoveExtruderRelative(moveAmount, printer.Settings.EFeedRate(extruderIndex), extruderIndex);
@@ -97,9 +123,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			var moveButtonsContainer = new FlowLayoutWidget()
 			{
-				VAnchor = VAnchor.Fit,
+				VAnchor = VAnchor.Fit | VAnchor.Center,
 				HAnchor = HAnchor.Fit,
-				Margin = new BorderDouble(0, 3)
+				Padding = theme.ToolbarPadding,
 			};
 
 			RadioButton oneButton = theme.MicroButtonMenu.GenerateRadioButton("1");
@@ -144,26 +170,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			});
 
 			this.AddChild(new SettingsItem("Distance".Localize(), moveButtonsContainer, enforceGutter: false));
-		}
-
-		private GuiWidget GetExtruderMacros(int extruderIndex, TextImageButtonFactory buttonFactory)
-		{
-			var row = new FlowLayoutWidget();
-
-			GCodeMacro loadFilament = new GCodeMacro();
-			loadFilament.GCode = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "load_filament.txt"));
-			Button loadButton = buttonFactory.Generate("Load".Localize());
-			loadButton.Margin = new BorderDouble(0, 8, 8, 4);
-			loadButton.Click += (s, e) => loadFilament.Run(printer.Connection);
-			row.AddChild(loadButton);
-
-			GCodeMacro unloadFilament = new GCodeMacro();
-			unloadFilament.GCode = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "unload_filament.txt"));
-			Button unloadButton = buttonFactory.Generate("Unload".Localize());
-			unloadButton.Click += (s, e) => unloadFilament.Run(printer.Connection);
-			row.AddChild(unloadButton);
-
-			return row;
 		}
 	}
 
@@ -296,35 +302,38 @@ namespace MatterHackers.MatterControl.ActionBar
 			if (hotendIndex == 0)
 			{
 				// put in the material selector
-				var presetsSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, true)
-				{
-					Margin = 0,
-					BackgroundColor = Color.Transparent,
-					HAnchor = HAnchor.Absolute,
-					Width = 150
-				};
-
+				var presetsSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, true);
 				presetsSelector.DropDownList.Name = "Hotend Preset Selector";
-
-				this.Width = 150;
-
-				// HACK: remove undesired item
-				var label = presetsSelector.Children<TextWidget>().FirstOrDefault();
-				label.Close();
 
 				var pulldownContainer = presetsSelector.FindNamedChildRecursive("Preset Pulldown Container");
 				if (pulldownContainer != null)
 				{
-					pulldownContainer.Padding = 0;
+					pulldownContainer.Padding = theme.ToolbarPadding;
+					pulldownContainer.HAnchor = HAnchor.Fit;
+					pulldownContainer.Margin = 0;
 				}
 
-				var dropList = presetsSelector.FindNamedChildRecursive("Material") as DropDownList;
+				var dropList = pulldownContainer.Children.OfType<DropDownList>().FirstOrDefault();
 				if (dropList != null)
 				{
+					dropList.Name = "Hotend Preset Selector";
+					dropList.HAnchor = HAnchor.Fit;
 					dropList.TextColor = Color.Black;
+					dropList.Margin = 0;
 				}
 
-				container.AddChild(new SettingsItem("Material".Localize(), presetsSelector, enforceGutter: false));
+				// Remove the pulldowncontainer from its parent and add it to our Material row
+				pulldownContainer.Parent.RemoveChild(pulldownContainer);
+				pulldownContainer.ClearRemovedFlag();
+				container.AddChild(
+					new SettingsItem("Material".Localize(), pulldownContainer, enforceGutter: false)
+					{
+						Border = new BorderDouble(0, 1)
+					});
+
+				// Close the presetsSelector
+				presetsSelector.Close();
+
 			}
 			else // put in a temperature selector for the correct material
 			{
