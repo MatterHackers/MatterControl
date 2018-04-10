@@ -1,5 +1,5 @@
-﻿/*
-Copyright (c) 2017, Kevin Pope, John Lewin
+/*
+Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,27 +27,20 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
-using MatterHackers.Agg;
+using MatterHackers.Agg.Font;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
+using MatterHackers.GCodeVisualizer;
+using MatterHackers.MatterControl.PrinterCommunication.Io;
+using System.Linq;
 
-namespace MatterHackers.MatterControl.SlicerConfiguration
+namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class PresetsToolbar : FlowLayoutWidget
+	public class FirstPageInstructions : InstructionsPage
 	{
-		public PresetsToolbar(PrinterConfig printer)
+		public FirstPageInstructions(PrinterConfig printer, string pageDescription, string instructionsText, ThemeConfig theme)
+			: base(printer, pageDescription, instructionsText, theme)
 		{
-			this.HAnchor = HAnchor.Stretch;
-
-			int numberOfHeatedExtruders = printer.Settings.Helpers.NumberOfHotends();
-
-			this.AddChild(new PresetSelectorWidget(printer, "Quality".Localize(), Color.Yellow, NamedSettingsLayers.Quality));
-			this.AddChild(new GuiWidget(8, 0));
-			this.AddChild(new PresetSelectorWidget(printer, "Material".Localize(), Color.Orange, NamedSettingsLayers.Material));
-
-			this.Height = 60 * GuiWidget.DeviceScale;
 		}
 	}
 }
-	

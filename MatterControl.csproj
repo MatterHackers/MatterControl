@@ -79,6 +79,18 @@
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard3x3Mesh.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard5x5Mesh.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\ProbeCalibrationWizard.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\AutoProbeFeedback.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\CalibrateProbeLastPagelInstructions.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\FindBedHeight.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\FirstPageInstructions.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\GetCoarseBedHeight.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\GetFineBedHeight.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\GettingThirdPointFor2PointCalibration.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\GetUltraFineBedHeight.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\HomePrinterPage.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\LastPagelInstructions.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\SelectMaterialPage.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\WaitForTempPage.cs" />
     <Compile Include="CustomWidgets\ConfigurePrinterWidget.cs" />
     <Compile Include="AboutPage\HTMLParser\HtmlWidget.cs" />
     <Compile Include="AboutPage\HTMLParser\ElementState.cs" />
@@ -412,7 +424,6 @@
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingSlic3r.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\MappingClasses.cs" />
     <Compile Include="ApplicationView\WidescreenPanel.cs" />
-    <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelPages.cs" />
     <Compile Include="AboutPage\ContactForm.cs" />
     <Compile Include="CustomWidgets\ClickWidget.cs">
       <DependentUpon>ExportPrintItemPage.cs</DependentUpon>

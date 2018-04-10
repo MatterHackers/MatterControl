@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private double extruderIndex;
 		private double ignoreRequestIfBelowTemp = 20;
 		private double sameTempRangeBed = 3;
-		private double sameTempRangeHotEnd = 1;
+		private double sameTempRangeHotend = 1;
 		private State state = State.passthrough;
 		private double targetTemp = 0;
 		private Stopwatch timeHaveBeenAtTemp = new Stopwatch();
@@ -143,8 +143,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				case State.waitingForExtruderTemp:
 					{
 						double extruderTemp = printerConnection.GetActualHotendTemperature((int)extruderIndex);
-						bool tempWithinRange = extruderTemp >= targetTemp - sameTempRangeHotEnd 
-							&& extruderTemp <= targetTemp + sameTempRangeHotEnd;
+						bool tempWithinRange = extruderTemp >= targetTemp - sameTempRangeHotend 
+							&& extruderTemp <= targetTemp + sameTempRangeHotend;
 						if (tempWithinRange && !timeHaveBeenAtTemp.IsRunning)
 						{
 							timeHaveBeenAtTemp.Start();

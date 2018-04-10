@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test]
-		public async Task DualExtrusionShowsCorrectHotEndData()
+		public async Task DualExtrusionShowsCorrectHotendData()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{

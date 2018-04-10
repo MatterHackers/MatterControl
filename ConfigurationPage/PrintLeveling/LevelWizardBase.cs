@@ -90,15 +90,41 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				"Print Leveling Overview".Localize(),
 				levelingStrings.WelcomeText(ProbeCount, (int)Math.Round(secondsToCompleteWizard / 60.0)), theme));
 
-			if (!useZProbe)
-			{
-				printLevelWizard.AddPage(new CleanExtruderInstructionPage(printer, "Check Nozzle".Localize(), levelingStrings.CleanExtruder, theme));
-			}
-
+			double targetBedTemp = 0;
+			double targetHotendTemp = 0;
 			if (hasHeatedBed)
 			{
-				string filamentSelectionPage = "{0}\n\n{1}".FormatWith(levelingStrings.materialPageInstructions1, levelingStrings.materialPageInstructions2);
-				printLevelWizard.AddPage(new SelectMaterialPage(printer, levelingStrings.materialStepText, filamentSelectionPage, theme));
+				targetBedTemp = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
+			}
+
+			if (!useZProbe)
+			{
+				targetHotendTemp = printer.Settings.Helpers.ExtruderTemperature(0);
+			}
+
+			// If we need to heat the bed or the extruder, select the current material
+			if (targetBedTemp > 0 || targetHotendTemp > 0)
+			{
+				var instruction1 = "";
+				if (targetBedTemp > 0 && targetHotendTemp > 0)
+				{
+					// heating both the bed and the hotend
+					instruction1 = "To ensure accurate calibration both the bed and the hotend need to be heated.".Localize();
+				}
+				else if (targetBedTemp > 0)
+				{
+					// only heating the bed
+					instruction1 = "The temperature of the bed can have a significant effect on the quality of leveling.".Localize();
+				}
+				else // targetHotendTemp > 0
+				{
+					// only heating the hotend
+					instruction1 += "The hot end needs to be heated to ensure it is clean.".Localize();
+				}
+
+				var instruction2 = "Please select the material you will be printing, so we can heat the printer before calibrating.".Localize();
+
+				printLevelWizard.AddPage(new SelectMaterialPage(printer, "Select Material".Localize(), $"{instruction1}\n\n{instruction2}", theme));
 			}
 
 			printLevelWizard.AddPage(new HomePrinterPage(printer, printLevelWizard,
@@ -106,9 +132,41 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				levelingStrings.HomingPageInstructions(useZProbe, hasHeatedBed),
 				useZProbe, theme));
 
-			if (hasHeatedBed)
+			if (targetBedTemp > 0 || targetHotendTemp > 0)
 			{
-				printLevelWizard.AddPage(new WaitForTempPage(printer, printLevelWizard, levelingStrings, theme));
+				string heatingInstructions = "";
+				if (targetBedTemp > 0 && targetHotendTemp > 0)
+				{
+					// heating both the bed and the hotend
+					heatingInstructions = $"Waiting for the bed to heat to {targetBedTemp}".Localize() + "\n"
+						+ $"and the hotend to heat to {targetHotendTemp}.".Localize() + "\n"
+						+ "\n"
+						+ "This will improve the accuracy of print leveling".Localize()
+						+ "and ensure no filament is stuck to the tip of the extruder.".Localize() + "\n"
+						+ "\n"
+						+ "Warning! The tip of the extrude will be HOT!".Localize() + "\n"
+						+ "Avoid contact with your skin.".Localize();
+				}
+				else if (targetBedTemp > 0)
+				{
+					// only heating the bed
+					heatingInstructions = $"Waiting for the bed to heat to {targetBedTemp}.".Localize() + "\n"
+						+ "This will improve the accuracy of print leveling.".Localize();
+				}
+				else // targetHotendTemp > 0
+				{
+					// only heating the hotend
+					heatingInstructions += $"Waiting for the hotend to heat to {targetHotendTemp}.".Localize() + "\n"
+						+ "This will ensure no filament is stuck to the tip.".Localize() + "\n"
+						+ "\n"
+						+ "Warning! The tip of the extrude will be HOT!".Localize() + "\n"
+						+ "Avoid contact with your skin.".Localize();
+				}
+
+				printLevelWizard.AddPage(new WaitForTempPage(printer, printLevelWizard,
+					"Waiting For Printer To Heat".Localize(), heatingInstructions,
+					targetBedTemp, targetHotendTemp,
+					theme));
 			}
 
 			string positionLabel = "Position".Localize();
