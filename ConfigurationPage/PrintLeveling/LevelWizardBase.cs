@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 							+ "This will improve the accuracy of print leveling".Localize()
 							+ "and ensure no filament is stuck to the tip of the extruder.".Localize() + "\n"
 							+ "\n"
-							+ "Warning! The tip of the extrude will be HOT!".Localize() + "\n"
+							+ "Warning! The tip of the nozzle will be HOT!".Localize() + "\n"
 							+ "Avoid contact with your skin.".Localize();
 					}
 					else if (targetBedTemp > 0)
@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						heatingInstructions += $"Waiting for the hotend to heat to {targetHotendTemp}.".Localize() + "\n"
 							+ "This will ensure no filament is stuck to the tip.".Localize() + "\n"
 							+ "\n"
-							+ "Warning! The tip of the extrude will be HOT!".Localize() + "\n"
+							+ "Warning! The tip of the nozzle will be HOT!".Localize() + "\n"
 							+ "Avoid contact with your skin.".Localize();
 					}
 

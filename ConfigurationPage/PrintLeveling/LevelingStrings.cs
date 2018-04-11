@@ -50,7 +50,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private string sampelAtPoints = "Sample the bed at {0} points".Localize();
 		private string turnOnLeveling = "Turn auto leveling on".Localize();
 		private string timeToDone = "We should be done in approximately {0} minutes.".Localize();
-		public string CleanExtruder => "Be sure the tip of the extruder is clean and the bed is clear.".Localize();
 		public string ClickNext => "Click 'Next' to continue.".Localize();
 
 		PrinterSettings printerSettings;

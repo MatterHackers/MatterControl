@@ -798,7 +798,7 @@ namespace MatterHackers.MatterControl
 									{
 										var currentDistance = Math.Abs(printerConnection.GetTargetHotendTemperature(0) - printerConnection.GetActualHotendTemperature(0));
 										progressStatus.Progress0To1 = (heatDistance - currentDistance) / heatDistance;
-										progressStatus.Status = $"Heating Extruder ({printerConnection.ActualBedTemperature:0}/{printerConnection.TargetBedTemperature:0})";
+										progressStatus.Status = $"Heating Extruder ({printerConnection.GetActualHotendTemperature(0):0}/{printerConnection.GetTargetHotendTemperature(0):0})";
 										reporter.Report(progressStatus);
 										Thread.Sleep(1000);
 									}
