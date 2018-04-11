@@ -75,8 +75,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
 			}
 
-			container.backButton.Enabled = false;
-
 			// Make sure when the wizard is done we turn off the bed heating
 			printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
 

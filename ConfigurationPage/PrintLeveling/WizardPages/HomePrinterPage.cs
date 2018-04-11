@@ -75,7 +75,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				unregisterEvents?.Invoke(this, null);
 				container.nextButton.Enabled = true;
-				container.backButton.Enabled = true;
 
 				if (printer.Settings.Helpers.UseZProbe())
 				{
@@ -88,7 +87,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			unregisterEvents?.Invoke(this, null);
 			container.nextButton.Enabled = true;
-			container.backButton.Enabled = true;
 
 			base.PageIsBecomingInactive();
 		}
