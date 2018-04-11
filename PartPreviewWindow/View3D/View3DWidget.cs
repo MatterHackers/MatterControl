@@ -643,7 +643,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (DragSelectionInProgress)
 			{
 				var selectionRectangle = new RectangleDouble(DragSelectionStartPosition, DragSelectionEndPosition);
-				e.graphics2D.Rectangle(selectionRectangle, Color.Red);
+				e.Graphics2D.Rectangle(selectionRectangle, Color.Red);
 			}
 		}
 

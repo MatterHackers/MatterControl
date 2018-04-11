@@ -55,7 +55,7 @@ namespace MatterHackers.MeshVisualizer
 		public bool ZBuffered { get; }
 
 		public DrawGlContentEventArgs(bool zBuffered, DrawEventArgs e)
-			: base(e.graphics2D)
+			: base(e.Graphics2D)
 		{
 			ZBuffered = zBuffered;
 		}
@@ -223,8 +223,8 @@ namespace MatterHackers.MeshVisualizer
 				{
 					foreach (var child in scene.Children)
 					{
-						this.World.RenderDebugAABB(e.graphics2D, child.TraceData().GetAxisAlignedBoundingBox());
-						this.World.RenderDebugAABB(e.graphics2D, child.GetAxisAlignedBoundingBox(Matrix4X4.Identity));
+						this.World.RenderDebugAABB(e.Graphics2D, child.TraceData().GetAxisAlignedBoundingBox());
+						this.World.RenderDebugAABB(e.Graphics2D, child.GetAxisAlignedBoundingBox(Matrix4X4.Identity));
 					}
 				};
 			}

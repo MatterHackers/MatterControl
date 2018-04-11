@@ -65,19 +65,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Vector3 renderPosition = bounds.GetBottomCorner(2);
 				Vector2 cornerScreenSpace = view3DWidget.InteractionLayer.World.GetScreenPosition(renderPosition) - new Vector2(20, 0);
 
-				e.graphics2D.PushTransform();
-				Affine currentGraphics2DTransform = e.graphics2D.GetTransform();
+				e.Graphics2D.PushTransform();
+				Affine currentGraphics2DTransform = e.Graphics2D.GetTransform();
 				Affine accumulatedTransform = currentGraphics2DTransform * Affine.NewTranslation(cornerScreenSpace.X, cornerScreenSpace.Y);
-				e.graphics2D.SetTransform(accumulatedTransform);
+				e.Graphics2D.SetTransform(accumulatedTransform);
 
-				progressBar.OnDraw(e.graphics2D);
+				progressBar.OnDraw(e.Graphics2D);
 
 				if (!string.IsNullOrEmpty(this.State))
 				{
-					e.graphics2D.DrawString(this.State, 0, -20, 11);
+					e.Graphics2D.DrawString(this.State, 0, -20, 11);
 				}
 
-				e.graphics2D.PopTransform();
+				e.Graphics2D.PopTransform();
 			}
 		}
 

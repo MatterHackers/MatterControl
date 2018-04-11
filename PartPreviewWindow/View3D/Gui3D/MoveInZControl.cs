@@ -298,12 +298,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					for (int i = 0; i < lines.Count; i += 2)
 					{
 						// draw the measure line
-						drawEvent.graphics2D.Line(lines[i], lines[i + 1], Color.Black);
+						drawEvent.Graphics2D.Line(lines[i], lines[i + 1], Color.Black);
 					}
 
 					for (int i = 0; i < lines.Count; i += 4)
 					{
-						DrawMeasureLine(drawEvent.graphics2D, (lines[i] + lines[i + 1]) / 2, (lines[i + 2] + lines[i + 3]) / 2, Color.Black, LineArrows.Both);
+						DrawMeasureLine(drawEvent.Graphics2D, (lines[i] + lines[i + 1]) / 2, (lines[i + 2] + lines[i + 3]) / 2, Color.Black, LineArrows.Both);
 					}
 
 					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);

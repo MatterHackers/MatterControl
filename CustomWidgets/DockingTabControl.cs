@@ -333,7 +333,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				});
 				buttonView.AfterDraw += (s, e) =>
 				{
-					e.graphics2D.Render(rotatedLabel, ActiveTheme.Instance.PrimaryTextColor);
+					e.Graphics2D.Render(rotatedLabel, ActiveTheme.Instance.PrimaryTextColor);
 				};
 			}
 
