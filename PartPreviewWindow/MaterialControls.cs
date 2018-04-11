@@ -77,10 +77,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 
-				row.AddChild(new GuiWidget(16, 16)
+				var scaledButtonSize = 16 * GuiWidget.DeviceScale;
+
+				row.AddChild(new ColorButton(MaterialRendering.Color(extruderIndex))
 				{
-					BackgroundColor = MaterialRendering.Color(extruderIndex),
-					Margin = new BorderDouble(5, 0, 0, 0)
+					Margin = new BorderDouble(5, 0, 0, 0),
+					Width = scaledButtonSize,
+					Height = scaledButtonSize
 				});
 			}
 
