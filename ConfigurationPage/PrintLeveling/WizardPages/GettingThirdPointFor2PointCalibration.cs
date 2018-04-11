@@ -74,7 +74,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			base.PageIsBecomingActive();
 
 			container.nextButton.Enabled = false;
-			container.backButton.Enabled = false;
 		}
 
 		private void FinishedProbe(object sender, EventArgs e)

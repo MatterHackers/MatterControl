@@ -41,11 +41,113 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
+	public class ProbeWizardControl : WizardControl
+	{
+		protected PrinterConfig printer;
+		ThemeConfig theme;
+		LevelWizardBase levelWizard;
+
+		public ProbeWizardControl(PrinterConfig printer, ThemeConfig theme)
+		{
+			this.levelWizard = levelWizard;
+			this.theme = theme;
+			this.printer = printer;
+		}
+
+		protected override IEnumerator<WizardControlPage> Pages
+		{
+			get
+			{
+				LevelingStrings levelingStrings = new LevelingStrings(printer.Settings);
+				List<ProbePosition> autoProbePositions = new List<ProbePosition>(3);
+				List<ProbePosition> manualProbePositions = new List<ProbePosition>(3);
+				autoProbePositions.Add(new ProbePosition());
+				manualProbePositions.Add(new ProbePosition());
+				int totalSteps = 3;
+
+				this.doneButton.Visible = false;
+
+				// make a welocme page if this is the first time calibrating the probe
+				if (!printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated))
+				{
+					string part1 = "Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize();
+					string part2 = "The next few screens will walk your through calibrating your printer.".Localize();
+					string requiredPageInstructions = $"{part1}\n\n{part2}";
+					yield return new FirstPageInstructions(printer, levelingStrings.initialPrinterSetupStepText, requiredPageInstructions, theme);
+				}
+
+				// show what steps will be taken
+				var CalibrateProbeWelcomText = "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}".FormatWith(
+					"Welcome to the probe calibration wizard. Here is a quick overview on what we are going to do.".Localize(),
+					"Home the printer".Localize(),
+					"Probe the bed at the center".Localize(),
+					"Manually measure the extruder at the center".Localize(),
+					"We should be done in less than 1 minute.".Localize(),
+					levelingStrings.ClickNext);
+
+				yield return new FirstPageInstructions(printer,
+					"Probe Calibration Overview".Localize(), CalibrateProbeWelcomText, theme);
+
+				// add in the material select page
+				var instruction1 = "The hot end needs to be heated to ensure it is clean.".Localize();
+				var instruction2 = "Please select the material you will be printing, so we can heat the printer before calibrating.".Localize();
+				yield return new SelectMaterialPage(printer, "Select Material".Localize(), $"{instruction1}\n\n{instruction2}", theme);
+
+				// add in the homing printer page
+				yield return new HomePrinterPage(printer, this,
+					levelingStrings.HomingPageStepText,
+					levelingStrings.HomingPageInstructions(true, false),
+					false, theme);
+
+				string heatingInstructions = "";
+				double targetHotendTemp = 0;
+
+				targetHotendTemp = printer.Settings.Helpers.ExtruderTemperature(0);
+				heatingInstructions += $"Waiting for the hotend to heat to {targetHotendTemp}.".Localize() + "\n"
+					+ "This will ensure no filament is stuck to the tip.".Localize() + "\n"
+					+ "\n"
+					+ "Warning! The tip of the extrude will be HOT!".Localize() + "\n"
+					+ "Avoid contact with your skin.".Localize();
+
+				yield return new WaitForTempPage(printer, this,
+					"Waiting For Printer To Heat".Localize(), heatingInstructions,
+					0, targetHotendTemp,
+					theme);
+
+				string lowPrecisionLabel = "Low Precision".Localize();
+				string medPrecisionLabel = "Medium Precision".Localize();
+				string highPrecisionLabel = "High Precision".Localize();
+
+				double startProbeHeight = printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start);
+				Vector2 probePosition = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
+
+				int i = 0;
+				// do the automatic probing of the center position
+				var stepString = $"{"Step".Localize()} {i + 1} {"of".Localize()} 3:";
+				yield return new AutoProbeFeedback(printer, this,
+					new Vector3(probePosition, startProbeHeight),
+					$"{stepString} {"Position".Localize()} {i + 1} - {"Auto Calibrate".Localize()}",
+					autoProbePositions, i, theme);
+
+				// do the manual prob of the same position
+				yield return new GetCoarseBedHeight(printer, this, new Vector3(probePosition, startProbeHeight),
+					string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), "Position".Localize(), i + 1, lowPrecisionLabel), manualProbePositions, i, levelingStrings, theme);
+				yield return new GetFineBedHeight(printer, this, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), "Position".Localize(), i + 1, medPrecisionLabel), manualProbePositions, i, levelingStrings, theme);
+				yield return new GetUltraFineBedHeight(printer, this, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), "Position".Localize(), i + 1, highPrecisionLabel), manualProbePositions, i, levelingStrings, theme);
+
+				this.cancelButton.Visible = false;
+				this.doneButton.Visible = true;
+				yield return new CalibrateProbeLastPagelInstructions(printer, this,
+					"Done".Localize(),
+					"Your Probe is now calibrated.".Localize() + "\n\n\t• " + "Remove the paper".Localize() + "\n\n" + "Click 'Done' to close this window.".Localize(),
+					autoProbePositions,
+					manualProbePositions, theme);
+			}
+		}
+	}
+
 	public class ProbeCalibrationWizard : SystemWindow
 	{
-		protected WizardControl printLevelWizard;
-
-		protected int totalSteps { get; private set; }
 		protected PrinterConfig printer;
 
 		public ProbeCalibrationWizard(PrinterConfig printer, ThemeConfig theme)
@@ -53,93 +155,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			this.printer = printer;
 			AlwaysOnTopOfMain = true;
-			this.totalSteps = 3;
 
-			LevelingStrings levelingStrings = new LevelingStrings(printer.Settings);
 			string printLevelWizardTitle = ApplicationController.Instance.ProductName;
 			string printLevelWizardTitleFull = "Probe Calibration Wizard".Localize();
 			Title = string.Format("{0} - {1}", printLevelWizardTitle, printLevelWizardTitleFull);
-			List<ProbePosition> autoProbePositions = new List<ProbePosition>(3);
-			List<ProbePosition> manualProbePositions = new List<ProbePosition>(3);
-			autoProbePositions.Add(new ProbePosition());
-			manualProbePositions.Add(new ProbePosition());
 
-			printLevelWizard = new WizardControl();
-			AddChild(printLevelWizard);
-
-			// make a welocme page if this is the first time calibrating the probe
-			if (!printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated))
-			{
-				string part1 = "Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize();
-				string part2 = "The next few screens will walk your through calibrating your printer.".Localize();
-				string requiredPageInstructions = $"{part1}\n\n{part2}";
-				printLevelWizard.AddPage(new FirstPageInstructions(printer, levelingStrings.initialPrinterSetupStepText, requiredPageInstructions, theme));
-			}
-
-			// show what steps will be taken
-			var CalibrateProbeWelcomText = "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}".FormatWith(
-				"Welcome to the probe calibration wizard. Here is a quick overview on what we are going to do.".Localize(),
-				"Home the printer".Localize(),
-				"Probe the bed at the center".Localize(),
-				"Manually measure the extruder at the center".Localize(),
-				"We should be done in less than 1 minute.".Localize(),
-				levelingStrings.ClickNext);
-
-			printLevelWizard.AddPage(new FirstPageInstructions(printer,
-				"Probe Calibration Overview".Localize(), CalibrateProbeWelcomText, theme));
-
-			// add in the material select page
-			var instruction1 = "The hot end needs to be heated to ensure it is clean.".Localize();
-			var instruction2 = "Please select the material you will be printing, so we can heat the printer before calibrating.".Localize();
-			printLevelWizard.AddPage(new SelectMaterialPage(printer, "Select Material".Localize(), $"{instruction1}\n\n{instruction2}", theme));
-
-			// add in the homing printer page
-			printLevelWizard.AddPage(new HomePrinterPage(printer, printLevelWizard, 
-				levelingStrings.HomingPageStepText, 
-				levelingStrings.HomingPageInstructions(true, false),
-				false, theme));
-
-			string heatingInstructions = "";
-			double targetHotendTemp = 0;
-
-			targetHotendTemp = printer.Settings.Helpers.ExtruderTemperature(0);
-			heatingInstructions += $"Waiting for the hotend to heat to {targetHotendTemp}.".Localize() + "\n"
-				+ "This will ensure no filament is stuck to the tip.".Localize() + "\n"
-				+ "\n"
-				+ "Warning! The tip of the extrude will be HOT!".Localize() + "\n"
-				+ "Avoid contact with your skin.".Localize();
-
-			printLevelWizard.AddPage(new WaitForTempPage(printer, printLevelWizard,
-				"Waiting For Printer To Heat".Localize(), heatingInstructions,
-				0, targetHotendTemp,
-				theme));
-
-			string lowPrecisionLabel = "Low Precision".Localize();
-			string medPrecisionLabel = "Medium Precision".Localize();
-			string highPrecisionLabel = "High Precision".Localize();
-
-			double startProbeHeight = printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start);
-			Vector2 probePosition = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
-
-			int i = 0;
-			// do the automatic probing of the center position
-			var stepString = $"{"Step".Localize()} {i + 1} {"of".Localize()} 3:";
-			printLevelWizard.AddPage(new AutoProbeFeedback(printer, printLevelWizard, 
-				new Vector3(probePosition, startProbeHeight), 
-				$"{stepString} {"Position".Localize()} {i + 1} - {"Auto Calibrate".Localize()}", 
-				autoProbePositions, i, theme));
-
-			// do the manual prob of the same position
-			printLevelWizard.AddPage(new GetCoarseBedHeight(printer, printLevelWizard, new Vector3(probePosition, startProbeHeight), 
-				string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), "Position".Localize(), i + 1, lowPrecisionLabel), manualProbePositions, i, levelingStrings, theme));
-			printLevelWizard.AddPage(new GetFineBedHeight(printer, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), "Position".Localize(), i + 1, medPrecisionLabel), manualProbePositions, i, levelingStrings, theme));
-			printLevelWizard.AddPage(new GetUltraFineBedHeight(printer, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), "Position".Localize(), i + 1, highPrecisionLabel), manualProbePositions, i, levelingStrings, theme));
-
-			printLevelWizard.AddPage(new CalibrateProbeLastPagelInstructions(printer, printLevelWizard, 
-				"Done".Localize(),
-				"Your Probe is now calibrated.".Localize()  + "\n\n\t• " + "Remove the paper".Localize() + "\n\n" + "Click 'Done' to close this window.".Localize(), 
-				autoProbePositions, 
-				manualProbePositions, theme));
+			AddChild(new ProbeWizardControl(printer, theme));
 		}
 
 		private static SystemWindow probeCalibrationWizardWindow;

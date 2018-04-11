@@ -182,7 +182,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
 			};
 
-			container.backButton.Enabled = false;
 			container.nextButton.Enabled = false;
 
 			// if we are trying to go to a temp of 0 than just move on to next window
@@ -198,7 +197,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingInactive()
 		{
 			container.nextButton.Enabled = true;
-			container.backButton.Enabled = true;
 
 			base.PageIsBecomingInactive();
 		}
@@ -221,7 +219,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					&& hotEndDoneText.Visible == false)
 				{
 					hotEndDoneText.Visible = true;
-					container.backButton.Enabled = true;
 					container.nextButton.Enabled = true;
 				}
 			}
@@ -242,7 +239,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					&& bedDoneText.Visible == false)
 				{
 					bedDoneText.Visible = true;
-					container.backButton.Enabled = true;
 					container.nextButton.Enabled = true;
 				}
 			}

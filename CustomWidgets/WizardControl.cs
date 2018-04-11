@@ -27,19 +27,18 @@ namespace MatterHackers.MatterControl
 		}
 	}
 
-	public class WizardControl : GuiWidget
+	public abstract class WizardControl : GuiWidget
 	{
 		double extraTextScaling = 1;
 
-		private FlowLayoutWidget bottomToTopLayout;
-		private List<WizardControlPage> pages = new List<WizardControlPage>();
-		private int pageIndex = 0;
-		public Button backButton;
+		private FlowLayoutWidget pageContent;
 		public Button nextButton;
-		private Button doneButton;
-		private Button cancelButton;
+		protected Button doneButton;
+		protected Button cancelButton;
 
 		private TextWidget stepDescriptionWidget;
+
+		protected abstract IEnumerator<WizardControlPage> Pages { get; }
 
 		public string StepDescription
 		{
@@ -75,20 +74,17 @@ namespace MatterHackers.MatterControl
 			AnchorAll();
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			bottomToTopLayout = new FlowLayoutWidget(FlowDirection.BottomToTop);
-			bottomToTopLayout.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			bottomToTopLayout.Padding = new BorderDouble(3);
+			pageContent = new FlowLayoutWidget();
+			pageContent.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+			pageContent.Padding = new BorderDouble(3);
 
-			topToBottom.AddChild(bottomToTopLayout);
+			topToBottom.AddChild(pageContent);
 			topToBottom.Margin = new BorderDouble(bottom: 3);
 
 			{
 				FlowLayoutWidget buttonBar = new FlowLayoutWidget();
 				buttonBar.HAnchor = Agg.UI.HAnchor.Stretch;
 				buttonBar.Padding = new BorderDouble(0, 3);
-
-				backButton = buttonFactory.Generate("Back".Localize());
-				backButton.Click += back_Click;
 
 				nextButton = buttonFactory.Generate("Next".Localize());
 				nextButton.Name = "Next Button";
@@ -102,7 +98,6 @@ namespace MatterHackers.MatterControl
 				cancelButton.Click += done_Click;
 				cancelButton.Name = "Cancel Button";
 
-				buttonBar.AddChild(backButton);
 				buttonBar.AddChild(nextButton);
 				buttonBar.AddChild(new HorizontalSpacer());
 				buttonBar.AddChild(doneButton);
@@ -111,9 +106,22 @@ namespace MatterHackers.MatterControl
 				topToBottom.AddChild(buttonBar);
 			}
 
-			bottomToTopLayout.AnchorAll();
+			pageContent.AnchorAll();
 
 			AddChild(topToBottom);
+		}
+
+		IEnumerator<WizardControlPage> pagesCache;
+		public override void Initialize()
+		{
+			if(pagesCache == null)
+			{
+				pagesCache = Pages;
+			}
+
+			next_Click(this, null);
+
+			base.Initialize();
 		}
 
 		private void done_Click(object sender, EventArgs mouseEvent)
@@ -133,73 +141,14 @@ namespace MatterHackers.MatterControl
 
 		private void next_Click(object sender, EventArgs mouseEvent)
 		{
-			pageIndex = Math.Min(pages.Count - 1, pageIndex + 1);
-			SetPageVisibility();
-		}
+			pagesCache.Current?.PageIsBecomingInactive();
 
-		private void back_Click(object sender, EventArgs mouseEvent)
-		{
-			pageIndex = Math.Max(0, pageIndex - 1);
-			SetPageVisibility();
-		}
+			pageContent.CloseAllChildren();
+			pagesCache.MoveNext();
 
-		private void SetPageVisibility()
-		{
-			// we set these before we call becoming active or inactive so that they can override these if needed.
-			{
-				// if the first page
-				if (pageIndex == 0)
-				{
-					backButton.Enabled = false;
-					nextButton.Enabled = true;
-
-					doneButton.Visible = false;
-					cancelButton.Visible = true;
-				}
-				// if the last page
-				else if (pageIndex >= pages.Count - 1)
-				{
-					backButton.Enabled = true;
-					nextButton.Enabled = false;
-
-					doneButton.Visible = true;
-					cancelButton.Visible = false;
-				}
-				else // in the middle
-				{
-					backButton.Enabled = true;
-					nextButton.Enabled = true;
-
-					doneButton.Visible = false;
-					cancelButton.Visible = true;
-				}
-			}
-
-			for (int i = 0; i < pages.Count; i++)
-			{
-				if (i == pageIndex)
-				{
-					pages[i].Visible = true;
-					pages[i].PageIsBecomingActive();
-					StepDescription = pages[i].StepDescription;
-				}
-				else
-				{
-					if (pages[i].Visible)
-					{
-						pages[i].Visible = false;
-						pages[i].PageIsBecomingInactive();
-					}
-				}
-			}
-		}
-
-		public void AddPage(WizardControlPage widgetForPage)
-		{
-			pages.Add(widgetForPage);
-			pages[pages.Count-1].Visible = false;
-			bottomToTopLayout.AddChild(widgetForPage);
-			SetPageVisibility();
+			StepDescription = pagesCache.Current.StepDescription;
+			pageContent.AddChild(pagesCache.Current);
+			pagesCache.Current?.PageIsBecomingActive();
 		}
 	}
 }

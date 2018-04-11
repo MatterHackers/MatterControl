@@ -154,7 +154,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.MoveAbsolute(adjustedProbePosition, feedRates.X);
 			}
 
-			container.backButton.Enabled = false;
 			container.nextButton.Enabled = false;
 
 			if (printer.Connection.IsConnected

@@ -68,7 +68,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printer.Connection.MoveAbsolute(probeStartPosition, feedRates.X);
 			printer.Connection.ReadPosition();
 
-			container.backButton.Enabled = false;
 			container.nextButton.Enabled = false;
 
 			zPlusControl.Click += zControl_Click;
@@ -82,7 +81,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void PageIsBecomingInactive()
 		{
-			container.backButton.Enabled = true;
 			container.nextButton.Enabled = true;
 
 			base.PageIsBecomingInactive();

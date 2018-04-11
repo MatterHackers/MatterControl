@@ -63,8 +63,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
 			}
 
-			container.backButton.Enabled = false;
-
 			Closed += (s, e) =>
 			{
 				// move from this wizard to the print leveling wizard if needed

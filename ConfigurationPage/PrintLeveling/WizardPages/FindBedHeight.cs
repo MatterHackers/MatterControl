@@ -99,7 +99,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.Parents<SystemWindow>().First().KeyDown += TopWindowKeyDown;
 
 			container.nextButton.ToolTipText = "[Right Arrow]".Localize();
-			container.backButton.ToolTipText = "[Left Arrow]".Localize();
 		}
 
 		public override void PageIsBecomingInactive()
@@ -109,7 +108,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			base.PageIsBecomingInactive();
 
 			container.nextButton.ToolTipText = "";
-			container.backButton.ToolTipText = "";
 		}
 
 		private FlowLayoutWidget CreateZButtons()
@@ -144,13 +142,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					if (container.nextButton.Enabled)
 					{
 						UiThread.RunOnIdle(() => container.nextButton.OnClick(null));
-					}
-					break;
-
-				case Keys.Left:
-					if (container.backButton.Enabled)
-					{
-						UiThread.RunOnIdle(() => container.backButton.OnClick(null));
 					}
 					break;
 			}
