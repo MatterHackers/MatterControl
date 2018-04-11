@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			leadingTabAdornment.AfterDraw += (s, e) =>
 			{
 				var firstItem = this.AllTabs.OfType<ChromeTab>().FirstOrDefault();
-				ChromeTab.DrawTabLowerRight(e.graphics2D, leadingTabAdornment.LocalBounds, (firstItem == this.ActiveTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
+				ChromeTab.DrawTabLowerRight(e.Graphics2D, leadingTabAdornment.LocalBounds, (firstItem == this.ActiveTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
 			};
 			this.TabBar.ActionArea.AddChild(leadingTabAdornment);
 

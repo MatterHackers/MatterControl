@@ -131,9 +131,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Vector3 topEndPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner((i + 1) % 4), x.TransformToWorld);
 					var topEndScreenPos = World.GetScreenPosition(topEndPosition);
 
-					e.graphics2D.Line(bottomStartScreenPos, bottomEndScreenPos, Color.Black);
-					e.graphics2D.Line(topStartScreenPos, topEndScreenPos, Color.Black);
-					e.graphics2D.Line(topStartScreenPos, bottomStartScreenPos, Color.Black);
+					e.Graphics2D.Line(bottomStartScreenPos, bottomEndScreenPos, Color.Black);
+					e.Graphics2D.Line(topStartScreenPos, topEndScreenPos, Color.Black);
+					e.Graphics2D.Line(topStartScreenPos, bottomStartScreenPos, Color.Black);
 				}
 
 				TriangleShape tri = x.Bvh as TriangleShape;
@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						var screenCenter = Vector3.Transform(vertexPos, x.TransformToWorld);
 						var screenPos = World.GetScreenPosition(screenCenter);
 
-						e.graphics2D.Circle(screenPos, 3, Color.Red);
+						e.Graphics2D.Circle(screenPos, 3, Color.Red);
 					}
 				}
 				else
@@ -153,8 +153,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var center = x.Bvh.GetCenter();
 					var worldCenter = Vector3.Transform(center, x.TransformToWorld);
 					var screenPos2 = World.GetScreenPosition(worldCenter);
-					e.graphics2D.Circle(screenPos2, 3, Color.Yellow);
-					e.graphics2D.DrawString($"{x.Depth},", screenPos2.X + 12 * x.Depth, screenPos2.Y);
+					e.Graphics2D.Circle(screenPos2, 3, Color.Yellow);
+					e.Graphics2D.DrawString($"{x.Depth},", screenPos2.X + 12 * x.Depth, screenPos2.Y);
 				}
 			}
 		}

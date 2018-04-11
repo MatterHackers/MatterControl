@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -45,11 +45,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		protected PrinterConfig printer;
 		ThemeConfig theme;
-		LevelWizardBase levelWizard;
 
 		public ProbeWizardControl(PrinterConfig printer, ThemeConfig theme)
 		{
-			this.levelWizard = levelWizard;
 			this.theme = theme;
 			this.printer = printer;
 		}

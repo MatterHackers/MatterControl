@@ -69,18 +69,11 @@ namespace MatterHackers.MatterControl
 
 			logoMesh.Transform(Matrix4X4.CreateScale(scale / aabb.XSize));
 
-			var loadTime = Stopwatch.StartNew();
 			var anglePerDraw = 1 / MathHelper.Tau * spinSpeed;
 			var angle = 0.0;
 
 			widget.BeforeDraw += (s, e) =>
 			{
-				if (this.SpinLogo)
-				{
-					var thisAngle = Math.Min(anglePerDraw, loadTime.Elapsed.TotalSeconds * MathHelper.Tau);
-					angle += thisAngle;
-					loadTime.Restart();
-				}
 				var screenSpaceBounds = widget.TransformToScreenSpace(widget.LocalBounds);
 				WorldView world = new WorldView(screenSpaceBounds.Width, screenSpaceBounds.Height);
 				world.Translate(new Vector3(0, yOffset, 0));
@@ -91,7 +84,14 @@ namespace MatterHackers.MatterControl
 				GLHelper.UnsetGlContext();
 			};
 
-			UiThread.SetInterval(widget.Invalidate, .05, () => !widget.HasBeenClosed);
+			Animation spinAnimation = new Animation(widget, (time) =>
+			{
+				if (this.SpinLogo)
+				{
+					angle += anglePerDraw;
+				}
+			},
+			.05);
 		}
 	}
 }
