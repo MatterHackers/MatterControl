@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				heatingInstructions += $"Waiting for the hotend to heat to {targetHotendTemp}.".Localize() + "\n"
 					+ "This will ensure no filament is stuck to the tip.".Localize() + "\n"
 					+ "\n"
-					+ "Warning! The tip of the extrude will be HOT!".Localize() + "\n"
+					+ "Warning! The tip of the nozzle will be HOT!".Localize() + "\n"
 					+ "Avoid contact with your skin.".Localize();
 
 				yield return new WaitForTempPage(printer, this,
