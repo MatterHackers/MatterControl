@@ -51,8 +51,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private double right;
 		private RoundedRect backgroundBar;
 
-		private double toggleRadius = 10;
-		private double toggleRadiusPlusPadding = 11;
+		private double minWidth = 45 * DeviceScale;
+		private double barHeight = 12.6 * DeviceScale;
+		private double toggleRadius = 9 * DeviceScale;
+		private double toggleRadiusPlusPadding = 10 * DeviceScale;
 
 		private bool _checked;
 		public bool Checked
@@ -77,7 +79,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			inactiveBarColor = theme.Colors.IsDarkTheme ? theme.Shade : theme.SlightShade;
 			activeBarColor = new Color(theme.Colors.PrimaryAccentColor, (theme.Colors.IsDarkTheme ? 100 : 70));
 
-			this.MinimumSize = new Vector2(50, theme.ButtonHeight);
+			this.MinimumSize = new Vector2(minWidth, theme.ButtonHeight);
 		}
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
@@ -179,9 +181,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			centerY = this.LocalBounds.YCenter;
 
-			var barHeight = 14;
-
-			int halfBarHeight = barHeight / 2;
+			var halfBarHeight = barHeight / 2;
 
 			var diff = toggleRadiusPlusPadding - halfBarHeight;
 
