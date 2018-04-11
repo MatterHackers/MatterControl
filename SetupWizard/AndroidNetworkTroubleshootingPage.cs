@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl
 					"MatterControl was unable to connect to the Internet. Please check your Wifi connection and try again".Localize() + "...",
 					textColor: ActiveTheme.Instance.PrimaryTextColor));
 
-			Button configureButton = whiteImageButtonFactory.Generate("Configure Wifi".Localize());
+			Button configureButton = theme.WhiteButtonFactory.Generate("Configure Wifi".Localize());
 			configureButton.Margin = new BorderDouble(0, 0, 10, 0);
 			configureButton.Click += (s, e) =>
 			{

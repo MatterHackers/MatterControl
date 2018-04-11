@@ -91,46 +91,52 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GuiWidget MakeColorButton(InteractiveScene scene, Color color, double buttonSize, BorderDouble buttonSpacing)
 		{
-			return new ColorButton(color, scene)
+			var button = new ColorButton(color)
 			{
 				Width = buttonSize,
 				Height = buttonSize,
 				Margin = buttonSpacing
 			};
-		}
 
-		public class ColorButton : GuiWidget
-		{
-			private Color grayScale;
-			private InteractiveScene scene;
-
-			public ColorButton(Color color, InteractiveScene scene)
+			button.Click += (s, e) =>
 			{
-				this.BackgroundColor = color;
-
-				// Calculate and store grayscale of current color
-				int y = (color.red * 77) + (color.green * 151) + (color.blue * 28);
-				int gray = (y >> 8);
-				grayScale = new Color(gray, gray, gray, 255);
-
-				this.scene = scene;
-			}
-
-			public override void OnClick(MouseEventArgs mouseEvent)
-			{
-				base.OnClick(mouseEvent);
-
 				UiThread.RunOnIdle(() =>
 				{
-					scene.UndoBuffer.AddAndDo(new ChangeColor(scene.SelectedItem, this.BackgroundColor));
+					scene.UndoBuffer.AddAndDo(new ChangeColor(scene.SelectedItem, button.BackgroundColor));
 				});
-			}
+			};
 
-			public override Color BackgroundColor
-			{
-				get => (this.Enabled) ? base.BackgroundColor : this.grayScale;
-				set => base.BackgroundColor = value;
-			}
+			return button;
+		}
+	}
+
+	public class ColorButton : GuiWidget
+	{
+		private Color grayScale;
+
+		public ColorButton(Color color)
+		{
+			this.BackgroundColor = color;
+
+			// Calculate and store grayscale of current color
+			grayScale = color.ToGrayscale();
+		}
+
+		public override Color BackgroundColor
+		{
+			get => (this.Enabled) ? base.BackgroundColor : this.grayScale;
+			set => base.BackgroundColor = value;
+		}
+	}
+
+	public static class ColorExtensions
+	{
+		public static Color ToGrayscale(this Color color)
+		{
+			int y = (color.red * 77) + (color.green * 151) + (color.blue * 28);
+			int gray = (y >> 8);
+
+			return new Color(gray, gray, gray, 255);
 		}
 	}
 }
