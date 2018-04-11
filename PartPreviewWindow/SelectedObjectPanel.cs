@@ -55,7 +55,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private IObject3D item = new Object3D();
 
-		private FlowLayoutWidget scrollableContent;
 		private ThemeConfig theme;
 		private View3DWidget view3DWidget;
 		private InteractiveScene scene;
@@ -88,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			scrollableContent = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			this.ContentPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
@@ -101,13 +100,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch,
 			};
 
-			scrollable.AddChild(scrollableContent);
+			scrollable.AddChild(this.ContentPanel);
 			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
 
 			this.AddChild(scrollable);
 
 			// Add heading separator
-			scrollableContent.AddChild(new HorizontalLine(25)
+			this.ContentPanel.AddChild(new HorizontalLine(25)
 			{
 				Margin = new BorderDouble(0)
 			});
@@ -211,7 +210,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 
 			editorSection = new SectionWidget("Editor", editorColumn, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true);
-			scrollableContent.AddChild(editorSection);
+			this.ContentPanel.AddChild(editorSection);
 
 			var colorSection = new SectionWidget(
 				"Color".Localize(),
@@ -224,32 +223,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Name = "Color Panel",
 			};
-			scrollableContent.AddChild(colorSection);
+			this.ContentPanel.AddChild(colorSection);
 
 			var mirrorSection = new SectionWidget("Mirror".Localize(), new MirrorControls(scene, theme), theme, serializationKey: UserSettingsKey.MirrorPanelExpanded)
 			{
 				Name = "Mirror Panel",
 			};
-			scrollableContent.AddChild(mirrorSection);
+			this.ContentPanel.AddChild(mirrorSection);
 
 			var scaleSection = new SectionWidget("Scale".Localize(), new ScaleControls(scene, theme), theme, serializationKey: UserSettingsKey.ScalePanelExpanded)
 			{
 				Name = "Scale Panel",
 			};
-			scrollableContent.AddChild(scaleSection);
+			this.ContentPanel.AddChild(scaleSection);
 
 			var materialsSection = new SectionWidget("Materials".Localize(), new MaterialControls(scene, theme), theme, serializationKey: UserSettingsKey.MaterialsPanelExpanded)
 			{
 				Name = "Materials Panel",
 			};
-			scrollableContent.AddChild(materialsSection);
+			this.ContentPanel.AddChild(materialsSection);
 
 			// Enforce panel padding in sidebar
-			foreach(var sectionWidget in scrollableContent.Children<SectionWidget>())
+			foreach(var sectionWidget in this.ContentPanel.Children<SectionWidget>())
 			{
 				sectionWidget.ContentPanel.Padding = new BorderDouble(10, 10, 10, 0);
+				sectionWidget.ExpandableWhenDisabled = true;
 			}
 		}
+
+		public GuiWidget ContentPanel { get; set; }
 
 		private static Type componentAttribute = typeof(IObject3DComponentAttribute);
 		private static Type componentType = typeof(IObject3DComponent);
