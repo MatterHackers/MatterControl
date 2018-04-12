@@ -134,10 +134,11 @@ namespace MatterHackers.MatterControl.ActionBar
 				Margin = new BorderDouble(0, 5, 0, 0),
 			};
 
-			UiThread.SetInterval(() =>
+			var runningInterval = UiThread.SetInterval(() =>
 			{
 				graph.AddData(this.ActualTemperature);
-			}, 1, () => !HasBeenClosed);
+			}, 1);
+			this.Closed += (s, e) => runningInterval.Continue = false;
 
 			var valueField = temperatureRow.Descendants<MHNumberEdit>().FirstOrDefault();
 			var settingsRow = temperatureRow.DescendantsAndSelf<SliceSettingsRow>().FirstOrDefault();

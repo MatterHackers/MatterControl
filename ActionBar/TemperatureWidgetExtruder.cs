@@ -271,10 +271,11 @@ namespace MatterHackers.MatterControl.ActionBar
 				Width = widget.Width - 20,
 				Height = 35, // this works better if it is a common multiple of the Width
 			};
-			UiThread.SetInterval(() =>
+			var runningInterval = UiThread.SetInterval(() =>
 			{
 				graph.AddData(this.ActualTemperature);
-			}, 1, () => !HasBeenClosed);
+			}, 1);
+			this.Closed += (s, e) => runningInterval.Continue = false;
 
 			var valueField = temperatureRow.Descendants<MHNumberEdit>().FirstOrDefault();
 			valueField.Name = "Temperature Input";

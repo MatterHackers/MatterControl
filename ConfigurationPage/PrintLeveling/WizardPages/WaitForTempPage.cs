@@ -161,7 +161,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			bedStartingTemp = printer.Connection.ActualBedTemperature;
 
-			UiThread.SetInterval(ShowTempChangeProgress, 1, () => !HasBeenClosed);
+			var runningInterval = UiThread.SetInterval(ShowTempChangeProgress, 1);
+			this.Closed += (s, e) => runningInterval.Continue = false;
 
 			if (bedTargetTemp > 0)
 			{
@@ -171,7 +172,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			if (hotEndTargetTemp > 0)
 			{
-				// start heating the bed and show our progress
+				// start heating the hot end and show our progress
 				printer.Connection.SetTargetHotendTemperature(0, hotEndTargetTemp);
 			}
 

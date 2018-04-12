@@ -81,7 +81,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			VAnchor = VAnchor.Fit;
 			HAnchor = HAnchor.Fit;
 
-			UiThread.SetInterval(HideIfApplicable, .1, () => !HasBeenClosed);
+			var runningInterval = UiThread.SetInterval(HideIfApplicable, .1);
+			this.Closed += (s, e) => runningInterval.Continue = false;
 		}
 
 		public Color TextColor { get; set; } = Color.Black;

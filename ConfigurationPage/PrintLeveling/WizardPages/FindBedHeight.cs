@@ -77,11 +77,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				Margin = new BorderDouble(10, 0),
 			};
 
-			UiThread.SetInterval(() =>
+			var runningInterval = UiThread.SetInterval(() =>
 			{
 				Vector3 destinationPosition = printer.Connection.CurrentDestination;
 				zPosition.Text = "Z: {0:0.00}".FormatWith(destinationPosition.Z);
-			}, .3, () => !HasBeenClosed);
+			}, .3);
+
+			this.Closed += (s, e) => runningInterval.Continue = false;
 
 			zButtonsAndInfo.AddChild(zPosition);
 
