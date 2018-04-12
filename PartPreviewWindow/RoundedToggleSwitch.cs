@@ -38,6 +38,26 @@ using static MatterHackers.Agg.Easing;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
+	internal class ToggleSwitchAnimation : Animation
+	{
+		internal double animationRatio = 0;
+		internal double finalRadius = 22 * GuiWidget.DeviceScale;
+
+		public override void OnUpdate(double secondsThisUpdate)
+		{
+			if (IsRunning)
+			{
+				animationRatio += 1.0 / 7.0;
+			}
+			if (animationRatio >= 1)
+			{
+				Stop();
+			}
+
+			base.OnUpdate(secondsThisUpdate);
+		}
+	}
+
 	public class RoundedToggleSwitch : GuiWidget, ICheckbox
 	{
 		private ThemeConfig theme;
@@ -57,6 +77,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private double barHeight = 12.6 * DeviceScale;
 		private double toggleRadius = 9 * DeviceScale;
 		private double toggleRadiusPlusPadding = 10 * DeviceScale;
+
+		private ToggleSwitchAnimation animation;
 
 		private bool _checked;
 		public bool Checked
@@ -84,34 +106,20 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.MinimumSize = new Vector2(minWidth, theme.ButtonHeight);
 		}
 
-		double animationRatio = 0;
-		double finalRadius = 22;
-		Animation animation;
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
 			mouseIsDown = true;
 			base.OnMouseDown(mouseEvent);
 
 			// animation up
-			animationRatio = 0;
-			animation = new Animation(this, (t) =>
+			animation = new ToggleSwitchAnimation()
 			{
-				if (animation.Continue)
-				{
-					animationRatio += 1.0 / 7.0;
-				}
-				if (animationRatio >= 1)
-				{
-					animation.Continue = false;
-				}				
-			}, 1.0 / 30.0);
+				DrawTarget = this,
+				FramesPerSecond = 30
+			};
+			animation.Start();
 
 			this.Parents<SystemWindow>().First().AfterDraw += RoundedToggleSwitch_AfterDraw;
-
-			Closed += (s, e) =>
-			{
-				animation.Continue = false;
-			};
 
 			this.Invalidate();
 		}
@@ -123,16 +131,21 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			Color toggleColor = (this.Checked) ? theme.Colors.PrimaryAccentColor : Color.Gray;
 
 			e.Graphics2D.Circle(position,
-				finalRadius * Quadratic.Out(animationRatio),
-				new Color(toggleColor, 100));
+				animation.finalRadius * Quadratic.Out(animation.animationRatio),
+				new Color(toggleColor, 50));
+
+			if (animation.IsRunning == false && animation.animationRatio == 0)
+			{
+				((GuiWidget)sender).AfterDraw -= RoundedToggleSwitch_AfterDraw;
+			}
 		}
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
 			this.Parents<SystemWindow>().First().AfterDraw -= RoundedToggleSwitch_AfterDraw;
 
-			animation.Continue = false;
-			animationRatio = 0;
+			animation.Stop();
+			animation.animationRatio = 0;
 			mouseIsDown = false;
 			base.OnMouseUp(mouseEvent);
 

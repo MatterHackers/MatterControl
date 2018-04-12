@@ -232,6 +232,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Children.Add(item.Clone());
 		}
 
+		public bool Advanced { get; set; } = false;
+
 		[DisplayName("X")]
 		[Icons(new string[] { "424.png", "align_left.png", "align_center_x.png", "align_right.png", "align_origin.png" })]
 		public Align XAlign { get; set; } = Align.None;
@@ -264,8 +266,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		[DisplayName("Offset Z")]
 		public double ZOffset { get; set; } = 0;
-
-		public bool Advanced { get; set; } = false;
 
 		public override bool CanBake => true;
 

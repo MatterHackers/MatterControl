@@ -84,14 +84,19 @@ namespace MatterHackers.MatterControl
 				GLHelper.UnsetGlContext();
 			};
 
-			Animation spinAnimation = new Animation(widget, (time) =>
+			Animation spinAnimation = new Animation()
+			{
+				DrawTarget = widget,
+				FramesPerSecond = 20
+			};
+			spinAnimation.Update += (s, time) =>
 			{
 				if (this.SpinLogo)
 				{
 					angle += anglePerDraw;
 				}
-			},
-			.05);
+			};
+			spinAnimation.Start();
 		}
 	}
 }
