@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 
 		double animationRatio = 0;
-		double finalRadius = 22;
+		double finalRadius = 22 * DeviceScale;
 		Animation animation;
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
@@ -124,7 +124,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			e.Graphics2D.Circle(position,
 				finalRadius * Quadratic.Out(animationRatio),
-				new Color(toggleColor, 100));
+				new Color(toggleColor, 50));
+
+			if (animation.Continue == false && animationRatio == 0)
+			{
+				((GuiWidget)sender).AfterDraw -= RoundedToggleSwitch_AfterDraw;
+			}
 		}
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
