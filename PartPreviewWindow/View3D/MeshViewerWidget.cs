@@ -45,6 +45,7 @@ using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
+using static MatterHackers.Agg.Easing;
 
 namespace MatterHackers.MeshVisualizer
 {
@@ -525,11 +526,11 @@ namespace MatterHackers.MeshVisualizer
 						var accentColor = Color.LightGray;
 						if (secondsSinceSelectionChanged < .25)
 						{
-							selectionColor = Color.White.Blend(accentColor, agg_basics.EaseInOutQuad(secondsSinceSelectionChanged * 4));
+							selectionColor = Color.White.Blend(accentColor, Quadratic.InOut(secondsSinceSelectionChanged * 4));
 						}
 						else
 						{
-							selectionColor = accentColor.Blend(Color.White, agg_basics.EaseInOutQuad((secondsSinceSelectionChanged - .25) * 4));
+							selectionColor = accentColor.Blend(Color.White, Quadratic.InOut((secondsSinceSelectionChanged - .25) * 4));
 						}
 						Invalidate();
 					}

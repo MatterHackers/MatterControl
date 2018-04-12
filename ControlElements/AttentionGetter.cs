@@ -37,6 +37,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using static MatterHackers.Agg.Easing;
 
 namespace MatterHackers.MatterControl
 {
@@ -96,7 +97,7 @@ namespace MatterHackers.MatterControl
 					time = 1 - (time - 1);
 				}
 
-				double lightnessMultiplier = agg_basics.EaseInOutQuad(time);
+				double lightnessMultiplier = Quadratic.InOut(time);
 
 				widgetToHighlight.BackgroundColor = startColor.AdjustLightness(1 + lightnessChange * lightnessMultiplier).ToColor();
 				if (widgetToHighlight.HasBeenClosed || timeSinceStart.Elapsed.TotalSeconds > cycles * pulseTime)
