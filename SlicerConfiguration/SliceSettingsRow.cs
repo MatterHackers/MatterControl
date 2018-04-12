@@ -50,8 +50,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private GuiWidget restoreArea;
 		private Button restoreButton = null;
 
-		public SliceSettingsRow(PrinterConfig printer, SettingsContext settingsContext, SliceSettingData settingData, Color textColor, ThemeConfig theme, bool fullRowSelect = false)
-			: base (settingData.PresentationName.Localize(), settingData.HelpText.Localize(), textColor, theme, fullRowSelect: fullRowSelect)
+		public SliceSettingsRow(PrinterConfig printer, SettingsContext settingsContext, SliceSettingData settingData, ThemeConfig theme, bool fullRowSelect = false)
+			: base (settingData.PresentationName.Localize(), settingData.HelpText.Localize(), theme, fullRowSelect: fullRowSelect)
 		{
 			this.printer = printer;
 			this.settingData = settingData;
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				&& settingData.DataEditType != SliceSettingData.DataEditTypes.HARDWARE_PRESENT)
 			{
 				unitsArea.AddChild(
-				new WrappedTextWidget(settingData.Units.Localize(), pointSize: 8, textColor: textColor)
+				new WrappedTextWidget(settingData.Units.Localize(), pointSize: 8, textColor: theme.Colors.PrimaryTextColor)
 				{
 					Margin = new BorderDouble(5, 0),
 				});

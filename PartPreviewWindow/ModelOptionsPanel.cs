@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var buttonGroup = new ObservableCollection<GuiWidget>();
 
-			shadedViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon("view_shaded.png", IconColor.Theme), theme)
+			shadedViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon("view_shaded.png", theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "Shaded Button",
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			buttonPanel.AddChild(shadedViewButton);
 
-			outlinesViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon("view_outlines.png", IconColor.Theme), theme)
+			outlinesViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon("view_outlines.png", theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "Outlines Button",
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			buttonPanel.AddChild(outlinesViewButton);
 
-			polygonsViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon("view_polygons.png", IconColor.Theme), theme)
+			polygonsViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon("view_polygons.png", theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "Polygons Button",
@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			buttonPanel.AddChild(polygonsViewButton);
 
-			materialsViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon("view_materials.png", IconColor.Raw), theme)
+			materialsViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon("view_materials.png"), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "Materials Button",
@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			buttonPanel.AddChild(materialsViewButton);
 
-			overhangViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon("view_overhang.png", IconColor.Raw), theme)
+			overhangViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon("view_overhang.png"), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "Overhang Button",
@@ -132,8 +132,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(
 				new SettingsItem(
 					"View Style".Localize(),
-					theme.Colors.PrimaryTextColor,
 					buttonPanel,
+					theme,
 					enforceGutter: false)
 				{
 					Margin = new BorderDouble(bottom: 2),
@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					this.AddChild(
 						new SettingsItem(
 							option.Title,
-							theme.Colors.PrimaryTextColor,
+							theme,
 							new SettingsItem.ToggleSwitchConfig()
 							{
 								Name = option.Title + " Toggle",

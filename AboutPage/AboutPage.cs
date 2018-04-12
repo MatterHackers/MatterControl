@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl
 
 			var data = JsonConvert.DeserializeObject<List<LibraryLicense>>(AggContext.StaticData.ReadAllText(Path.Combine("License", "license.json")));
 
-			var linkIcon = AggContext.StaticData.LoadIcon("fa-link_16.png", 16, 16, IconColor.Theme);
+			var linkIcon = AggContext.StaticData.LoadIcon("fa-link_16.png", 16, 16, theme.InvertIcons);
 
 			foreach (var item in data.OrderBy(i => i.Name))
 			{

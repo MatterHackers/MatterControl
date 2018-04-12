@@ -41,14 +41,10 @@ namespace MatterHackers.MatterControl.ActionBar
 	{
 		protected ICheckbox heatToggle;
 		protected TextWidget CurrentTempIndicator;
-		private TextWidget goalTempIndicator;
 		protected TextWidget DirectionIndicator;
+		private TextWidget goalTempIndicator;
 
-		protected ImageWidget ImageWidget = new ImageWidget(AggContext.StaticData.LoadIcon("hotend.png", IconColor.Theme))
-		{
-			VAnchor = VAnchor.Center,
-			Margin = new BorderDouble(right: 5)
-		};
+		protected ImageWidget ImageWidget;
 
 		protected EventHandler unregisterEvents;
 		protected PrinterConfig printer;
@@ -57,16 +53,23 @@ namespace MatterHackers.MatterControl.ActionBar
 		protected virtual int ActualTemperature { get; }
 		protected virtual int TargetTemperature { get; }
 
-		public TemperatureWidgetBase(PrinterConfig printer, string textValue)
+		public TemperatureWidgetBase(PrinterConfig printer, string textValue, ThemeConfig theme)
 		{
+			this.printer = printer;
+
 			this.AlignToRightEdge = true;
 			this.DrawArrow = true;
-			this.printer = printer;
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 			this.Cursor = Cursors.Hand;
 			this.MakeScrollable = false;
 			this.AlignToRightEdge = true;
+
+			ImageWidget = new ImageWidget(AggContext.StaticData.LoadIcon("hotend.png", theme.InvertIcons))
+			{
+				VAnchor = VAnchor.Center,
+				Margin = new BorderDouble(right: 5)
+			};
 
 			alwaysEnabled = new List<GuiWidget>();
 
@@ -82,17 +85,17 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			CurrentTempIndicator = new TextWidget(textValue, pointSize: 11)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.Colors.PrimaryTextColor,
 				VAnchor = VAnchor.Center,
 				AutoExpandBoundsToText = true
 			};
 			container.AddChild(CurrentTempIndicator);
 
-			container.AddChild(new TextWidget("/") { TextColor = ActiveTheme.Instance.PrimaryTextColor });
+			container.AddChild(new TextWidget("/") { TextColor = theme.Colors.PrimaryTextColor });
 
 			goalTempIndicator = new TextWidget(textValue, pointSize: 11)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.Colors.PrimaryTextColor,
 				VAnchor = VAnchor.Center,
 				AutoExpandBoundsToText = true
 			};
@@ -100,13 +103,12 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			DirectionIndicator = new TextWidget(textValue, pointSize: 11)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.Colors.PrimaryTextColor,
 				VAnchor = VAnchor.Center,
 				AutoExpandBoundsToText = true,
 				Margin = new BorderDouble(left: 5)
 			};
 			container.AddChild(DirectionIndicator);
-
 
 			bool isEnabled = printer.Connection.IsConnected;
 

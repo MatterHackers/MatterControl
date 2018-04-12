@@ -31,7 +31,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					expanded = dbValue == "1" || (dbValue == null && defaultExpansion);
 				}
 
-				checkbox = new ExpandCheckboxButton(sectionTitle, pointSize: pointSize, expandable: expandingContent)
+				checkbox = new ExpandCheckboxButton(sectionTitle, theme, pointSize: pointSize, expandable: expandingContent)
 				{
 					HAnchor = HAnchor.Stretch,
 					Checked = expanded,

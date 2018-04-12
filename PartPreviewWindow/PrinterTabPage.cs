@@ -65,6 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			: base(printer, printer.Bed, theme, tabTitle)
 		{
 			this.printer = printer;
+
 			view3DWidget.meshViewerWidget.EditorMode = MeshViewerWidget.EditorType.Printer;
 
 			gcodeOptions = sceneContext.RendererOptions;
@@ -486,7 +487,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public static GuiWidget PrintProgressWidget(PrinterConfig printer)
+		public static GuiWidget PrintProgressWidget(PrinterConfig printer, ThemeConfig theme)
 		{
 			var bodyRow = new GuiWidget()
 			{
@@ -527,7 +528,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			progressContainer.AddChild(timeContainer);
 
-			timeContainer.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon("fa-clock_24.png", IconColor.Theme))
+			timeContainer.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon("fa-clock_24.png", theme.InvertIcons))
 			{
 				VAnchor = VAnchor.Center
 			});

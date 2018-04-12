@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class ToggleboxField : UIField
 	{
 		private ICheckbox checkBoxWidget;
-		private Color textColor;
+		private ThemeConfig theme;
 
 		public bool Checked
 		{
@@ -78,16 +78,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			set => checkBoxWidget.Checked = value;
 		}
 
-		public ToggleboxField(Color textColor)
+		public ToggleboxField(ThemeConfig theme)
 		{
-			this.textColor = textColor;
+			this.theme = theme;
 		}
 
 		public override void Initialize(int tabIndex)
 		{
 			var pixelWidth = this.ControlWidth + 6; // HACK: work around agg-bug where text fields are padding*2 bigger than ControlWidth
 
-			var toggleSwitch = new RoundedToggleSwitch(ApplicationController.Instance.Theme); //  ImageButtonFactory.CreateToggleSwitch(false, textColor, pixelWidth, pixelHeight: 24 * GuiWidget.DeviceScale, useStandardLabels: false);
+			var toggleSwitch = new RoundedToggleSwitch(theme);
 			toggleSwitch.VAnchor = VAnchor.Center;
 			toggleSwitch.Name = this.Name;
 			toggleSwitch.Margin = 0;

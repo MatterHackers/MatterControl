@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			toolbar.AddChild(editButton);
 
 			// put in a make permanent button
-			var icon = AggContext.StaticData.LoadIcon("permanent.png", 16, 16, IconColor.Theme).SetPreMultiply();
+			var icon = AggContext.StaticData.LoadIcon("permanent.png", 16, 16, theme.InvertIcons).SetPreMultiply();
 			var bakeButton = new IconButton(icon, theme)
 			{
 				Margin = theme.ButtonSpacing,

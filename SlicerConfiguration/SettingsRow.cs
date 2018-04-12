@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public GuiWidget ActionWidget { get; set; }
 
-		public SettingsRow(string title, string helpText, Color textColor, ThemeConfig theme, ImageBuffer icon = null, bool enforceGutter = false, bool fullRowSelect = false)
+		public SettingsRow(string title, string helpText, ThemeConfig theme, ImageBuffer icon = null, bool enforceGutter = false, bool fullRowSelect = false)
 		{
 			this.theme = theme;
 			this.fullRowSelect = fullRowSelect;
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				});
 			}
 
-			this.AddChild(settingsLabel = SettingsRow.CreateSettingsLabel(title, helpText, textColor));
+			this.AddChild(settingsLabel = SettingsRow.CreateSettingsLabel(title, helpText, theme.Colors.PrimaryTextColor));
 
 			this.AddChild(new HorizontalSpacer());
 

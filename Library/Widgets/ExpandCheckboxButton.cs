@@ -43,15 +43,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private GuiWidget imageButton;
 
-		private ImageBuffer arrowRight = AggContext.StaticData.LoadIcon("fa-angle-right_12.png", IconColor.Theme);
+		private ImageBuffer arrowRight;
 
-		private ImageBuffer arrowDown = AggContext.StaticData.LoadIcon("fa-angle-down_12.png", IconColor.Theme);
+		private ImageBuffer arrowDown;
 
 		private TextWidget textWidget;
 
-		public ExpandCheckboxButton(string text, int pointSize = 11, bool expandable = true)
+		public ExpandCheckboxButton(string text, ThemeConfig theme, int pointSize = 11, bool expandable = true)
 		{
-			var theme = ApplicationController.Instance.Theme;
+			arrowRight = AggContext.StaticData.LoadIcon("fa-angle-right_12.png", theme.InvertIcons);
+			arrowDown = AggContext.StaticData.LoadIcon("fa-angle-down_12.png", theme.InvertIcons);
 
 			imageButton = new GuiWidget()
 			{
@@ -68,7 +69,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			_expandable = expandable;
 
-			this.AddChild(textWidget = new TextWidget(text, pointSize: pointSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			this.AddChild(textWidget = new TextWidget(text, pointSize: pointSize, textColor: theme.Colors.PrimaryTextColor)
 			{
 				VAnchor = VAnchor.Center,
 				AutoExpandBoundsToText = true

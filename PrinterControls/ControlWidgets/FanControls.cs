@@ -61,7 +61,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			var settingsRow = new SettingsRow(
 				"Part Cooling Fan".Localize(),
 				null,
-				theme.Colors.PrimaryTextColor,
 				theme,
 				fullRowSelect: true);
 

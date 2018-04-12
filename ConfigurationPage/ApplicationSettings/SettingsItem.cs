@@ -16,27 +16,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			public Action<bool> ToggleAction { get; set; }
 		}
 
-		private static Color menuTextColor = Color.Black;
-
-		public SettingsItem(string text, Color textColor, ToggleSwitchConfig toggleSwitchConfig = null, GuiWidget optionalControls = null, ImageBuffer iconImage = null, bool enforceGutter = true)
-			: this(text, textColor, CreateToggleSwitch(toggleSwitchConfig, textColor), optionalControls, iconImage, enforceGutter)
+		public SettingsItem(string text, ThemeConfig theme, ToggleSwitchConfig toggleSwitchConfig = null, GuiWidget optionalControls = null, ImageBuffer iconImage = null, bool enforceGutter = true)
+			: this(text, CreateToggleSwitch(toggleSwitchConfig, theme), theme, optionalControls, iconImage, enforceGutter)
 		{
 		}
 
-		public SettingsItem(string text, ToggleSwitchConfig toggleSwitchConfig = null, GuiWidget optionalControls = null, ImageBuffer iconImage = null, bool enforceGutter = true)
-			: this(text, CreateToggleSwitch(toggleSwitchConfig, menuTextColor), optionalControls, iconImage, enforceGutter)
+		public SettingsItem (string text, GuiWidget settingsControls, ThemeConfig theme, GuiWidget optionalControls = null, ImageBuffer imageBuffer = null, bool enforceGutter = true)
+			: base (text, "", theme)
 		{
-		}
-
-		public SettingsItem(string text, GuiWidget settingsControls, GuiWidget optionalControls = null, ImageBuffer imageBuffer = null, bool enforceGutter = true)
-			: this(text, menuTextColor, settingsControls, optionalControls, imageBuffer, enforceGutter)
-		{
-		}
-
-		public SettingsItem (string text, Color textColor, GuiWidget settingsControls, GuiWidget optionalControls = null, ImageBuffer imageBuffer = null, bool enforceGutter = true)
-			: base (text, "", textColor, ApplicationController.Instance.Theme)
-		{
-			var theme = ApplicationController.Instance.Theme;
 			this.SettingsControl = settingsControls;
 
 			if (optionalControls != null)
@@ -52,14 +39,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		public GuiWidget SettingsControl { get; }
 
-		private static GuiWidget CreateToggleSwitch(ToggleSwitchConfig toggleSwitchConfig, Color textColor)
+		private static GuiWidget CreateToggleSwitch(ToggleSwitchConfig toggleSwitchConfig, ThemeConfig theme)
 		{
 			if (toggleSwitchConfig == null)
 			{
 				return null;
 			}
 
-			var toggleSwitch = new RoundedToggleSwitch(ApplicationController.Instance.Theme)
+			var toggleSwitch = new RoundedToggleSwitch(theme)
 			{
 				VAnchor = VAnchor.Center,
 				Checked = toggleSwitchConfig.Checked,

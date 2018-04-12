@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var widget = new FlowLayoutWidget();
 			widget.AddChild(dropdownList);
-			refreshButton = new IconButton(AggContext.StaticData.LoadIcon("fa-refresh_14.png", IconColor.Theme), ApplicationController.Instance.Theme)
+			refreshButton = new IconButton(AggContext.StaticData.LoadIcon("fa-refresh_14.png", theme.InvertIcons), ApplicationController.Instance.Theme)
 			{
 				Margin = new BorderDouble(left: 5)
 			};

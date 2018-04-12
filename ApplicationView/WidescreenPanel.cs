@@ -119,12 +119,11 @@ namespace MatterHackers.MatterControl
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Stretch;
 			this.Margin = 0;
-			this.PopupContent = new ApplicationSettingsWidget(theme)
+			this.PopupContent = new ApplicationSettingsWidget(ApplicationController.Instance.MenuTheme)
 			{
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
 				Width = 500,
-				BackgroundColor = Color.White
 			};
 
 			var row = new FlowLayoutWidget()
@@ -134,7 +133,7 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(row);
 
-			row.AddChild(new IconButton(AggContext.StaticData.LoadIcon("mh-app-logo.png", IconColor.Theme), theme)
+			row.AddChild(new IconButton(AggContext.StaticData.LoadIcon("mh-app-logo.png", theme.InvertIcons), theme)
 			{
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(right: 4),

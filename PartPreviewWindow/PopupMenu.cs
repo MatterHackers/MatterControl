@@ -57,6 +57,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Fit;
+			this.BackgroundColor = theme.Colors.PrimaryBackgroundColor;
 		}
 
 		public HorizontalLine CreateHorizontalLine()

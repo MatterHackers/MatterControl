@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -37,7 +36,6 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
@@ -46,7 +44,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 	{
 		public static Action OpenPrintNotification = null;
 
-		private Color menuTextColor = Color.Black;
 		private ThemeConfig theme;
 
 		public ApplicationSettingsWidget(ThemeConfig theme)
@@ -54,9 +51,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		{
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
+			this.BackgroundColor = theme.Colors.PrimaryBackgroundColor;
 			this.theme = theme;
 
-			var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Raw);
+			var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png");
 
 #if __ANDROID__
 			// Camera Monitoring
@@ -106,6 +104,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.AddSettingsRow(
 				new SettingsItem(
 					"Notifications".Localize(),
+					theme,
 					new SettingsItem.ToggleSwitchConfig()
 					{
 						Checked = UserSettings.Instance.get("PrintNotificationsEnabled") == "true",
@@ -121,6 +120,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.AddSettingsRow(
 				new SettingsItem(
 					"Touch Screen Mode".Localize(),
+					theme,
 					new SettingsItem.ToggleSwitchConfig()
 					{
 						Checked = UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen",
@@ -136,10 +136,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					}));
 
 			// LanguageControl
-			var languageSelector = new LanguageSelector()
-			{
-				TextColor = menuTextColor
-			};
+			var languageSelector = new LanguageSelector(theme);
 			languageSelector.SelectionChanged += (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>
@@ -160,14 +157,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				});
 			};
 
-			this.AddSettingsRow(new SettingsItem("Language".Localize(), languageSelector));
+			this.AddSettingsRow(new SettingsItem("Language".Localize(), languageSelector, theme));
 
 #if !__ANDROID__
 			{
 				// ThumbnailRendering
 				var thumbnailsModeDropList = new DropDownList("", theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
 				{
-					TextColor = menuTextColor,
 					BorderColor = theme.GetBorderColor(75)
 				};
 				thumbnailsModeDropList.AddItem("Flat".Localize(), "orthographic");
@@ -218,7 +214,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				this.AddSettingsRow(
 					new SettingsItem(
 						"Thumbnails".Localize(),
-						thumbnailsModeDropList));
+						thumbnailsModeDropList,
+						theme));
 
 				// TextSize
 				if (!double.TryParse(UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize), out double currentTexSize))
@@ -246,7 +243,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 				TextWidget sectionLabel = null;
 
-				var textSizeApplyButton = new TextButton("Apply".Localize(), theme, Color.Black)
+				var textSizeApplyButton = new TextButton("Apply".Localize(), theme)
 				{
 					VAnchor = VAnchor.Center,
 					BackgroundColor = theme.SlightShade,
@@ -271,6 +268,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				var section = new SettingsItem(
 						"Text Size".Localize() + $" : {currentTexSize:0.0}",
 						textSizeSlider,
+						theme,
 						optionalContainer);
 
 				sectionLabel = section.Children<TextWidget>().FirstOrDefault();
@@ -285,7 +283,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			AddMenuItem("Release Notes".Localize(), () => ApplicationController.Instance.LaunchBrowser("http://wiki.mattercontrol.com/Release_Notes"));
 			AddMenuItem("Report a Bug".Localize(), () => ApplicationController.Instance.LaunchBrowser("https://github.com/MatterHackers/MatterControl/issues"));
 
-			var updateMatterControl = new SettingsItem("Check For Update".Localize());
+			var updateMatterControl = new SettingsItem("Check For Update".Localize(), theme);
 			updateMatterControl.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>
@@ -296,14 +294,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			};
 			this.AddSettingsRow(updateMatterControl);
 
-			this.AddChild(new SettingsItem("Theme".Localize(), new GuiWidget()));
+			this.AddChild(new SettingsItem("Theme".Localize(), new GuiWidget(), theme));
 			this.AddChild(this.GetThemeControl(theme));
-			this.AddChild(new HorizontalLine(70)
-			{
-				Margin = new BorderDouble(left: 30),
-			});
 
-			var aboutMatterControl = new SettingsItem("About".Localize() + " " + ApplicationController.Instance.ProductName);
+			var aboutMatterControl = new SettingsItem("About".Localize() + " " + ApplicationController.Instance.ProductName, theme);
 			if (IntPtr.Size == 8)
 			{
 				// Push right
@@ -331,7 +325,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void AddMenuItem(string title, Action callback)
 		{
-			var newItem = new SettingsItem(title);
+			var newItem = new SettingsItem(title, theme);
 			newItem.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>
@@ -346,8 +340,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private void AddSettingsRow(GuiWidget widget)
 		{
 			this.AddChild(widget);
-
-			widget.BorderColor = theme.GetBorderColor(25);
 			widget.Padding = widget.Padding.Clone(right: 10);
 		}
 
@@ -359,7 +351,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			};
 
 			// Determine if we should set the dark or light version of the theme
-			var activeThemeIndex = ActiveTheme.AvailableThemes.IndexOf(theme.Colors);
+			var activeThemeIndex = ActiveTheme.AvailableThemes.IndexOf(ApplicationController.Instance.Theme.Colors);
 
 			var midPoint = ActiveTheme.AvailableThemes.Count / 2;
 

@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = 4
 			});
 
-			var homeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", IconColor.Theme), theme)
+			var homeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", theme.InvertIcons), theme)
 			{
 				ToolTipText = "Reset View".Localize(),
 				Margin = commonMargin
@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			homeButton.Click += (s, e) => ResetView?.Invoke(this, null);
 			AddChild(homeButton);
 
-			var undoButton = new IconButton(AggContext.StaticData.LoadIcon("Undo_grey_16x.png", 16, 16, IconColor.Theme), theme)
+			var undoButton = new IconButton(AggContext.StaticData.LoadIcon("Undo_grey_16x.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "3D View Undo",
 				ToolTipText = "Undo",
@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.AddChild(undoButton);
 
-			var redoButton = new IconButton(AggContext.StaticData.LoadIcon("Redo_grey_16x.png", 16, 16, IconColor.Theme), theme)
+			var redoButton = new IconButton(AggContext.StaticData.LoadIcon("Redo_grey_16x.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "3D View Redo",
 				Margin = commonMargin,
@@ -229,7 +229,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (UserSettings.Instance.IsTouchScreen)
 			{
 				iconPath = Path.Combine("ViewTransformControls", "rotate.png");
-				rotateButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.Theme), theme)
+				rotateButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 32, 32, theme.InvertIcons), theme)
 				{
 					SiblingRadioButtonList = buttonGroupA,
 					ToolTipText = "Rotate (Alt + Left Mouse)".Localize(),
@@ -240,7 +240,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AddChild(rotateButton);
 
 				iconPath = Path.Combine("ViewTransformControls", "translate.png");
-				translateButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.Theme), theme)
+				translateButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 32, 32, theme.InvertIcons), theme)
 				{
 					SiblingRadioButtonList = buttonGroupA,
 					ToolTipText = "Move (Shift + Left Mouse)".Localize(),
@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AddChild(translateButton);
 
 				iconPath = Path.Combine("ViewTransformControls", "scale.png");
-				scaleButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.Theme), theme)
+				scaleButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 32, 32, theme.InvertIcons), theme)
 				{
 					SiblingRadioButtonList = buttonGroupA,
 					ToolTipText = "Zoom (Ctrl + Left Mouse)".Localize(),
@@ -270,7 +270,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				});
 
 				iconPath = Path.Combine("ViewTransformControls", "partSelect.png");
-				partSelectButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.Theme), theme)
+				partSelectButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 32, 32, theme.InvertIcons), theme)
 				{
 					SiblingRadioButtonList = buttonGroupA,
 					ToolTipText = "Select Part".Localize(),
@@ -358,13 +358,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var buttonView = new TextIconButton(
 				(IsPrinterMode) ? "Bed".Localize() : "Part".Localize(),
-				AggContext.StaticData.LoadIcon((IsPrinterMode) ? "bed.png" : "cube.png", IconColor.Theme),
+				AggContext.StaticData.LoadIcon((IsPrinterMode) ? "bed.png" : "cube.png", theme.InvertIcons),
 				theme);
 
 			// Remove right Padding for drop style
 			buttonView.Padding = buttonView.Padding.Clone(right: 0);
 
-			var popupMenu = new PopupMenu(theme)
+			var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme)
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
@@ -482,7 +482,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new NamedAction()
 				{
 					Title = "Insert".Localize(),
-					Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, IconColor.Raw),
+					Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16),
 					Action = () =>
 					{
 						var extensionsWithoutPeriod = new HashSet<string>(ApplicationSettings.OpenDesignFileParams.Split('|').First().Split(',').Select(s => s.Trim().Trim('.')));

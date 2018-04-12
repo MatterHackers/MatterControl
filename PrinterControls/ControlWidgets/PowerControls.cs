@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.AddChild(
 				settingsItem = new SettingsItem(
 				"ATX Power Control".Localize(),
-				theme.Colors.PrimaryTextColor,
+				theme,
 				new SettingsItem.ToggleSwitchConfig()
 				{
 					Checked = printer.Connection.AtxPowerEnabled,

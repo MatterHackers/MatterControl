@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.printer = printer;
 			this.theme = theme;
 
-			jogControls = new JogControls(printer, new XYZColors())
+			jogControls = new JogControls(printer, new XYZColors(), theme)
 			{
 				HAnchor = HAnchor.Left | HAnchor.Stretch,
 				Margin = 0
@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			var widget = new MovementControls(printer, theme);
 
-			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme), theme);
+			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme);
 			editButton.Click += (s, e) => widget.EditOptions();
 
 			return new SectionWidget(
@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				Margin = new BorderDouble(bottom: 10)
 			};
 
-			var homeIcon = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", IconColor.Theme), theme)
+			var homeIcon = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", theme.InvertIcons), theme)
 			{
 				ToolTipText = ToolTipText = "Home X, Y and Z".Localize(),
 				BackgroundColor = theme.MinimalShade,
