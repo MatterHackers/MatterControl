@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// TODO: add in the printers and designs that are currently open (or were open last run).
 			plusTabButton = new NewTabButton(
-				AggContext.StaticData.LoadIcon("fa-plus_12.png", IconColor.Theme),
+				AggContext.StaticData.LoadIcon("fa-plus_12.png", theme.InvertIcons),
 				this,
 				theme)
 			{

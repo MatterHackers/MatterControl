@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private long timeToWaitMs;
 		private PrinterConfig printer;
 
-		public RunningMacroPage(PrinterConfig printer, MacroCommandData macroData)
+		public RunningMacroPage(PrinterConfig printer, MacroCommandData macroData, ThemeConfig theme)
 			: base("Cancel")
 		{
 			this.printer = printer;
@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			if (macroData.showMaterialSelector)
 			{
-				var materialSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material);
+				var materialSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, theme);
 				materialSelector.BackgroundColor = Color.Transparent;
 				materialSelector.Margin = new BorderDouble(0, 0, 0, 15);
 				contentRow.AddChild(materialSelector);

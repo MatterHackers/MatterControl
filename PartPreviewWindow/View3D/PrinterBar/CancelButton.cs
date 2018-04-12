@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.printer = printer;
 
-			cancelPrintButton = theme.ButtonFactory.Generate("Cancel".Localize(), AggContext.StaticData.LoadIcon("icon_stop_32x32.png", 14, 14, IconColor.Theme));
+			cancelPrintButton = theme.ButtonFactory.Generate("Cancel".Localize(), AggContext.StaticData.LoadIcon("icon_stop_32x32.png", 14, 14, theme.InvertIcons));
 			cancelPrintButton.ToolTipText = "Stop the current print".Localize();
 			cancelPrintButton.Name = "Cancel Print Button";
 			cancelPrintButton.Margin = defaultMargin;

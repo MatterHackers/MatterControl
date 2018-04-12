@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 
 			this.RebuildList(printerSettings, linkButtonFactory);
 
-			Button addMacroButton = textImageButtonFactory.Generate("Add".Localize(), AggContext.StaticData.LoadIcon("fa-plus_16.png", IconColor.Theme));
+			Button addMacroButton = textImageButtonFactory.Generate("Add".Localize(), AggContext.StaticData.LoadIcon("fa-plus_16.png", theme.InvertIcons));
 			addMacroButton.ToolTipText = "Add a new Macro".Localize();
 			addMacroButton.Click += (s, e) =>
 			{

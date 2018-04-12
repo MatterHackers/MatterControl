@@ -47,16 +47,16 @@ namespace MatterHackers.MatterControl.ActionBar
 		private string waitingForBedToHeatMessage = "The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}".Localize();
 		private string waitingForBedToHeatTitle = "Waiting For Bed To Heat".Localize();
 
-		public TemperatureWidgetBed(PrinterConfig printer)
-			: base(printer, "150.3°")
+		public TemperatureWidgetBed(PrinterConfig printer, ThemeConfig theme)
+			: base(printer, "150.3°", theme)
 		{
 			this.Name = "Bed TemperatureWidget";
 			this.DisplayCurrentTemperature();
 			this.ToolTipText = "Current bed temperature".Localize();
 
-			this.ImageWidget.Image = AggContext.StaticData.LoadIcon("bed.png", IconColor.Theme);
+			this.ImageWidget.Image = AggContext.StaticData.LoadIcon("bed.png", theme.InvertIcons);
 
-			this.PopupContent = this.GetPopupContent();
+			this.PopupContent = this.GetPopupContent(ApplicationController.Instance.MenuTheme);
 
 			printer.Connection.BedTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
 		}
@@ -64,14 +64,14 @@ namespace MatterHackers.MatterControl.ActionBar
 		protected override int ActualTemperature => (int)printer.Connection.ActualBedTemperature;
 		protected override int TargetTemperature => (int)printer.Connection.TargetBedTemperature;
 
-		private GuiWidget GetPopupContent()
+		private GuiWidget GetPopupContent(ThemeConfig theme)
 		{
 			var widget = new IgnoredPopupWidget()
 			{
 				Width = 300,
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
-				BackgroundColor = Color.White,
+				BackgroundColor = theme.Colors.PrimaryBackgroundColor,
 				Padding = new BorderDouble(12, 0)
 			};
 
@@ -79,7 +79,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit | VAnchor.Top,
-				BackgroundColor = Color.White
 			};
 			widget.AddChild(container);
 
@@ -87,6 +86,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			container.AddChild(hotendRow = new SettingsItem(
 				"Heated Bed".Localize(),
+				theme,
 				new SettingsItem.ToggleSwitchConfig()
 				{
 					Checked = false,
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 
 			var settingsData = SettingsOrganizer.Instance.GetSettingsData(SettingsKey.bed_temperature);
-			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, Color.Black, ApplicationController.Instance.Theme, ref tabIndex);
+			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, theme, ref tabIndex);
 			container.AddChild(temperatureRow);
 
 			alwaysEnabled.Add(hotendRow);

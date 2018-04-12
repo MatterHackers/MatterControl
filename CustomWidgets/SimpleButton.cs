@@ -325,20 +325,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private TextWidget textWidget;
 
 		public TextButton(string text, ThemeConfig theme)
-			: this(text, theme, theme.ButtonFactory.Options.NormalTextColor)
-		{
-		}
-
-		public TextButton(string text, ThemeConfig theme, Color textColor)
 			: base(theme)
 		{
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Absolute | VAnchor.Center;
 			this.Height = theme.ButtonFactory.Options.FixedHeight;
 			this.Padding = theme.ButtonFactory.Options.Margin;
-			this.TextColor = textColor;
+			this.TextColor = theme.Colors.PrimaryTextColor;
 
-			this.AddChild(textWidget = new TextWidget(text, pointSize: theme.DefaultFontSize, textColor: textColor)
+			this.AddChild(textWidget = new TextWidget(text, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 			{
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Center

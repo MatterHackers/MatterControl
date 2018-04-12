@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					var boundsInParentSpace = widget.TransformToParentSpace(widget.Parent, bounds);
 					var intersects = boundsInParentSpace.IntersectRectangles(boundsInParentSpace, widget.Parent.LocalBounds);
 					if (!intersects
-						|| boundsInParentSpace.Width <= 0 
+						|| boundsInParentSpace.Width <= 0
 						|| boundsInParentSpace.Height <= 0
 						|| !WidgetOnScreen(widget.Parent, boundsInParentSpace))
 					{

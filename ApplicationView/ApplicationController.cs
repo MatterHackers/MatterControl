@@ -92,6 +92,8 @@ namespace MatterHackers.MatterControl
 
 		public ThemeConfig Theme { get; set; }
 
+		public ThemeConfig MenuTheme { get; set; }
+
 		public RunningTasksConfig Tasks { get; set; } = new RunningTasksConfig();
 
 		// A list of printers which are open (i.e. displaying a tab) on this instance of MatterControl
@@ -316,7 +318,7 @@ namespace MatterHackers.MatterControl
 
 		private List<SceneSelectionOperation> registeredSceneOperations;
 
-		private void RebuildSceneOperations()
+		private void RebuildSceneOperations(ThemeConfig theme)
 		{
 			registeredSceneOperations = new List<SceneSelectionOperation>()
 			{
@@ -396,7 +398,7 @@ namespace MatterHackers.MatterControl
 							arange.Rebuild(null);
 						}
 					},
-					Icon = AggContext.StaticData.LoadIcon("align_left.png", 16, 16, IconColor.Theme).SetPreMultiply(),
+					Icon = AggContext.StaticData.LoadIcon("align_left.png", 16, 16, theme.InvertIcons).SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 				},
 				new SceneSelectionOperation()
@@ -507,7 +509,7 @@ namespace MatterHackers.MatterControl
 						var pinch = new PinchObject3D();
 						MeshWrapperObject3D.WrapSelection(pinch, scene);
 					},
-					Icon = AggContext.StaticData.LoadIcon("pinch.png", 16, 16, IconColor.Theme),
+					Icon = AggContext.StaticData.LoadIcon("pinch.png", 16, 16, theme.InvertIcons),
 					IsEnabled = (scene) => scene.HasSelection,
 				},
 				new SceneSelectionOperation()
@@ -518,7 +520,7 @@ namespace MatterHackers.MatterControl
 						var curve = new CurveObject3D();
 						MeshWrapperObject3D.WrapSelection(curve, scene);
 					},
-					Icon = AggContext.StaticData.LoadIcon("curve.png", 16, 16, IconColor.Theme),
+					Icon = AggContext.StaticData.LoadIcon("curve.png", 16, 16, theme.InvertIcons),
 					IsEnabled = (scene) => scene.HasSelection,
 				},
 				new SceneSelectionOperation()
@@ -695,11 +697,27 @@ namespace MatterHackers.MatterControl
 		{
 			// Initialize the AppContext theme object which will sync its content with Agg ActiveTheme changes
 			this.Theme = new ThemeConfig();
+			this.MenuTheme = new ThemeConfig();
 
 			ActiveTheme.ThemeChanged.RegisterEvent((s, e) =>
 			{
-				this.Theme.RebuildTheme(ActiveTheme.Instance);
-				this.RebuildSceneOperations();
+				var themeColors = ActiveTheme.Instance;
+				this.Theme.RebuildTheme(themeColors);
+
+				var json = JsonConvert.SerializeObject(ActiveTheme.Instance);
+
+				var clonedColors = JsonConvert.DeserializeObject<ThemeColors>(json);
+				clonedColors.IsDarkTheme = false;
+				clonedColors.Name = "MenuColors";
+				clonedColors.PrimaryTextColor = new Color("#222");
+				clonedColors.SecondaryTextColor = new Color("#666");
+				clonedColors.PrimaryBackgroundColor = new Color("#fff");
+				clonedColors.SecondaryBackgroundColor = new Color("#ddd");
+				clonedColors.TertiaryBackgroundColor = new Color("#ccc");
+
+				this.MenuTheme.RebuildTheme(clonedColors);
+
+				this.RebuildSceneOperations(this.Theme);
 			}, ref unregisterEvents);
 
 			this.Theme.RebuildTheme(ActiveTheme.Instance);
@@ -1661,7 +1679,7 @@ namespace MatterHackers.MatterControl
 				},
 				taskActions: new RunningTaskActions()
 				{
-					RichProgressWidget = () => PrinterTabPage.PrintProgressWidget(printer),
+					RichProgressWidget = () => PrinterTabPage.PrintProgressWidget(printer, ApplicationController.Instance.Theme),
 					Pause = () => UiThread.RunOnIdle(() =>
 					{
 						printer.Connection.RequestPause();
@@ -1788,7 +1806,7 @@ namespace MatterHackers.MatterControl
 		{
 			var container = new FlowLayoutWidget();
 
-			var bedButton = new RadioIconButton(AggContext.StaticData.LoadIcon("bed.png", IconColor.Theme), theme)
+			var bedButton = new RadioIconButton(AggContext.StaticData.LoadIcon("bed.png", theme.InvertIcons), theme)
 			{
 				Name = "Bed Button",
 				ToolTipText = "Show Print Bed".Localize(),
@@ -1808,7 +1826,7 @@ namespace MatterHackers.MatterControl
 
 			if (sceneContext.BuildHeight > 0)
 			{
-				printAreaButton = new RadioIconButton(AggContext.StaticData.LoadIcon("print_area.png", IconColor.Theme), theme)
+				printAreaButton = new RadioIconButton(AggContext.StaticData.LoadIcon("print_area.png", theme.InvertIcons), theme)
 				{
 					Name = "Bed Button",
 					ToolTipText = "Show Print Area".Localize(),
@@ -2105,7 +2123,7 @@ namespace MatterHackers.MatterControl
 							progressPanel.AddChild(
 								new TextWidget(ex.Message, pointSize: theme.FontSize9, textColor: errorTextColor));
 
-							var closeButton = new TextButton("Close", theme, Color.White)
+							var closeButton = new TextButton("Close", theme)
 							{
 								BackgroundColor = theme.SlightShade,
 								HAnchor = HAnchor.Right,

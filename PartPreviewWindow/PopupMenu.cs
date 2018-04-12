@@ -57,6 +57,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Fit;
+			this.BackgroundColor = theme.Colors.PrimaryBackgroundColor;
 		}
 
 		public HorizontalLine CreateHorizontalLine()
@@ -75,7 +76,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			GuiWidget content;
 
-			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize)
+			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 			{
 				Padding = MenuPadding,
 			};
@@ -88,7 +89,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					VAnchor = VAnchor.Fit
 				};
 
-				content.AddChild(new TextWidget(shortCut, pointSize: theme.DefaultFontSize)
+				content.AddChild(new TextWidget(shortCut, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 				{
 					HAnchor = HAnchor.Right
 				});
@@ -113,19 +114,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return menuItem;
 		}
 
-		private static ImageBuffer faChecked = AggContext.StaticData.LoadIcon("fa-check_16.png");
-
-		private static ImageBuffer radioIconChecked;
-
-		private static ImageBuffer radioIconUnchecked;
-
 		public class CheckboxMenuItem : MenuItem, IIgnoredPopupChild, ICheckbox
 		{
 			private bool _checked;
 
+			private ImageBuffer faChecked;
+
 			public CheckboxMenuItem(GuiWidget widget, ThemeConfig theme)
 				: base(widget, theme)
 			{
+				faChecked = AggContext.StaticData.LoadIcon("fa-check_16.png", 16, 16, theme.InvertIcons);
 			}
 
 			public override void OnLoad(EventArgs args)
@@ -157,6 +155,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			private bool _checked;
 
+			private ImageBuffer radioIconChecked;
+
+			private ImageBuffer radioIconUnchecked;
+
 			public RadioMenuItem(GuiWidget widget, ThemeConfig theme)
 				: base (widget, theme)
 			{
@@ -175,14 +177,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					RadioImage.DrawCircle(
 						radioIconChecked.NewGraphics2D(),
 						rect.Center,
-						Color.Black,
+						theme.Colors.IsDarkTheme ? Color.White : Color.Black,
 						isChecked: true,
 						isActive: false);
 
 					RadioImage.DrawCircle(
 						radioIconUnchecked.NewGraphics2D(),
 						rect.Center,
-						Color.Gray,
+						theme.Colors.IsDarkTheme ? Color.White : Color.Black,
 						isChecked: false,
 						isActive: false);
 				}
@@ -229,7 +231,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public MenuItem CreateBoolMenuItem(string name, Func<bool> getter, Action<bool> setter, bool useRadioStyle = false, IList<GuiWidget> SiblingRadioButtonList = null)
 		{
-			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize)
+			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 			{
 				Padding = MenuPadding,
 			};
@@ -302,7 +304,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				: base (theme)
 			{
 				this.Padding = new BorderDouble(left: PopupMenu.GutterWidth, right: 15);
-				this.BackgroundColor = Color.White;
+				this.BackgroundColor = theme.Colors.PrimaryBackgroundColor;
 				this.HAnchor = HAnchor.MaxFitOrStretch;
 				this.VAnchor = VAnchor.Fit;
 				this.MinimumSize = new Vector2(150, 32);
@@ -339,7 +341,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (content is TextWidget textWidget)
 					{
-						textWidget.TextColor = (value) ? Color.Black : PopupMenu.DisabledTextColor;
+						textWidget.TextColor = (value) ? theme.Colors.PrimaryTextColor : PopupMenu.DisabledTextColor;
 					}
 
 					base.Enabled = value;

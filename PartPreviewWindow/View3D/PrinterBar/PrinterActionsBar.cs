@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var resetConnectionButton = new TextIconButton(
 					"Reset".Localize(),
-					AggContext.StaticData.LoadIcon("e_stop.png", 14, 14, IconColor.Theme),
+					AggContext.StaticData.LoadIcon("e_stop.png", 14, 14, theme.InvertIcons),
 					theme)
 				{
 					ToolTipText = "Reboots the firmware on the controller".Localize(),
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var buttonGroupB = new ObservableCollection<GuiWidget>();
 
 			var iconPath = Path.Combine("ViewTransformControls", "model.png");
-			modelViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 16, 16, IconColor.Theme), theme)
+			modelViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 16, 16, theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Model View Button",
@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AddChild(modelViewButton);
 
 			iconPath = Path.Combine("ViewTransformControls", "gcode_3d.png");
-			layers3DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 16, 16, IconColor.Theme), theme)
+			layers3DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 16, 16, theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Layers3D Button",
@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			iconPath = Path.Combine("ViewTransformControls", "gcode_2d.png");
-			layers2DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 16, 16, IconColor.Theme), theme)
+			layers2DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 16, 16, theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Layers2D Button",
@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))
 			{
-				this.AddChild(new TemperatureWidgetBed(printer));
+				this.AddChild(new TemperatureWidgetBed(printer, theme));
 			}
 
 			this.OverflowButton.Name = "Printer Overflow Menu";
@@ -265,7 +265,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				new NamedAction()
 				{
-					Icon = AggContext.StaticData.LoadIcon("memory_16x16.png", 16, 16),
+					Icon = AggContext.StaticData.LoadIcon("memory_16x16.png", 16, 16, theme.InvertIcons),
 					Title = "Configure EEProm".Localize(),
 					Action = configureEePromButton_Click
 				},

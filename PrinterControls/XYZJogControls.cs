@@ -62,10 +62,12 @@ namespace MatterHackers.MatterControl
 		{
 			FontSize = ApplicationController.Instance.Theme.DefaultFontSize
 		};
+		private ThemeConfig theme;
 		private PrinterConfig printer;
 
-		public JogControls(PrinterConfig printer, XYZColors colors)
+		public JogControls(PrinterConfig printer, XYZColors colors, ThemeConfig theme)
 		{
+			this.theme = theme;
 			this.printer = printer;
 			moveButtonFactory.Colors.Text.Normal = Color.Black;
 
@@ -282,7 +284,7 @@ namespace MatterHackers.MatterControl
 			keyFocusedContainer.ToolTipText = "Enable cursor keys for movement".Localize();
 			keyFocusedContainer.Margin = new BorderDouble(left: 10);
 
-			keyboardImage = new ImageWidget(AggContext.StaticData.LoadIcon("hot_key_small_white.png", 19, 12, IconColor.Theme))
+			keyboardImage = new ImageWidget(AggContext.StaticData.LoadIcon("hot_key_small_white.png", 19, 12, theme.InvertIcons))
 			{
 				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
 				VAnchor = VAnchor.Center,

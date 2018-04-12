@@ -66,7 +66,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 				this.AddChild(settingsRow = new SettingsRow(
 					"Speed Multiplier".Localize(),
 					null,
-					theme.Colors.PrimaryTextColor,
 					theme));
 
 				// Remove the HorizontalSpacer
@@ -124,7 +123,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 				this.AddChild(settingsRow = new SettingsRow(
 					"Extrusion Multiplier".Localize(),
 					null,
-					theme.Colors.PrimaryTextColor,
 					theme));
 
 				// Remove the HorizontalSpacer

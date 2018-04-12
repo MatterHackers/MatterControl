@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var buttonGroup = new ObservableCollection<GuiWidget>();
 
-			speedsButton = new RadioIconButton(AggContext.StaticData.LoadIcon("speeds.png", IconColor.Theme), theme)
+			speedsButton = new RadioIconButton(AggContext.StaticData.LoadIcon("speeds.png", theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "Speeds Button",
@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			buttonPanel.AddChild(speedsButton);
 
-			materialsButton = new RadioIconButton(AggContext.StaticData.LoadIcon("materials.png", IconColor.Theme), theme)
+			materialsButton = new RadioIconButton(AggContext.StaticData.LoadIcon("materials.png", theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "Materials Button",
@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			buttonPanel.AddChild(materialsButton);
 
-			noColorButton = new RadioIconButton(AggContext.StaticData.LoadIcon("no-color.png", IconColor.Theme), theme)
+			noColorButton = new RadioIconButton(AggContext.StaticData.LoadIcon("no-color.png", theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "No Color Button",
@@ -138,8 +138,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(
 				new SettingsItem(
 					"Color View".Localize(),
-					theme.Colors.PrimaryTextColor,
-					buttonPanel,
+					theme,
+					optionalControls: buttonPanel,
 					enforceGutter: false)
 				{
 					Margin = new BorderDouble(bottom: 2)
@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Reset to new button group
 			buttonGroup = new ObservableCollection<GuiWidget>();
 
-			solidButton = new RadioIconButton(AggContext.StaticData.LoadIcon("solid.png", IconColor.Theme), theme)
+			solidButton = new RadioIconButton(AggContext.StaticData.LoadIcon("solid.png", theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "Solid Button",
@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			buttonPanel.AddChild(solidButton);
 
-			materialsButton = new RadioIconButton(AggContext.StaticData.LoadIcon("wireframe.png", IconColor.Theme), theme)
+			materialsButton = new RadioIconButton(AggContext.StaticData.LoadIcon("wireframe.png", theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "Wireframe Button",
@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			buttonPanel.AddChild(materialsButton);
 
-			noColorButton = new RadioIconButton(AggContext.StaticData.LoadIcon("no-color.png", IconColor.Theme), theme)
+			noColorButton = new RadioIconButton(AggContext.StaticData.LoadIcon("no-color.png", theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "No Model Button",
@@ -196,8 +196,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(
 				new SettingsItem(
 					"Model View".Localize(),
-					theme.Colors.PrimaryTextColor,
 					buttonPanel,
+					theme,
 					enforceGutter: false));
 
 			gcodeOptions = sceneContext.RendererOptions;
@@ -254,7 +254,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					var settingsItem = new SettingsItem(
 						option.Title,
-						theme.Colors.PrimaryTextColor,
+						theme,
 						new SettingsItem.ToggleSwitchConfig()
 						{
 							Name = option.Title + " Toggle",

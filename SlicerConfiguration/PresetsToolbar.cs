@@ -36,18 +36,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class PresetsToolbar : FlowLayoutWidget
 	{
-		public PresetsToolbar(PrinterConfig printer)
+		public PresetsToolbar(PrinterConfig printer, ThemeConfig theme)
 		{
 			this.HAnchor = HAnchor.Stretch;
 
 			int numberOfHeatedExtruders = printer.Settings.Helpers.NumberOfHotends();
 
-			this.AddChild(new PresetSelectorWidget(printer, "Quality".Localize(), Color.Yellow, NamedSettingsLayers.Quality));
+			this.AddChild(new PresetSelectorWidget(printer, "Quality".Localize(), Color.Yellow, NamedSettingsLayers.Quality, theme));
 			this.AddChild(new GuiWidget(8, 0));
-			this.AddChild(new PresetSelectorWidget(printer, "Material".Localize(), Color.Orange, NamedSettingsLayers.Material));
+			this.AddChild(new PresetSelectorWidget(printer, "Material".Localize(), Color.Orange, NamedSettingsLayers.Material, theme));
 
 			this.Height = 60 * GuiWidget.DeviceScale;
 		}
 	}
 }
-	

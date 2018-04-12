@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			if (isActive)
 			{
-				this.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon("426.png", 16, 16, IconColor.White))
+				this.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon("426.png", 16, 16, invertImage: true))
 				{
 					HAnchor = HAnchor.Absolute,
 					VAnchor = VAnchor.Absolute,

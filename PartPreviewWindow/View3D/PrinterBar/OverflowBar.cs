@@ -107,11 +107,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public class OverflowMenuButton : PopupMenuButton
 		{
 			public OverflowMenuButton(OverflowBar overflowBar, ThemeConfig theme)
-				: base(CreateOverflowIcon(), theme)
+				: base(CreateOverflowIcon(theme), theme)
 			{
 				this.DynamicPopupContent = () =>
 				{
-					var popupMenu = new PopupMenu(theme);
+					var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
 					// Perform overflow
 					bool hasOverflowItems = false;
@@ -148,9 +148,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 
-			private static ImageWidget CreateOverflowIcon()
+			private static ImageWidget CreateOverflowIcon(ThemeConfig theme)
 			{
-				return new ImageWidget(AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, IconColor.Theme))
+				return new ImageWidget(AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, theme.InvertIcons))
 				{
 					HAnchor = HAnchor.Right,
 					VAnchor = VAnchor.Center

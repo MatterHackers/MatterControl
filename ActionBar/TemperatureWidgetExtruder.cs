@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				unloadButton.Click += (s, e) => unloadFilament.Run(printer.Connection);
 				macroButtons.AddChild(unloadButton);
 
-				this.AddChild(new SettingsItem("Filament".Localize(), macroButtons, enforceGutter: false));
+				this.AddChild(new SettingsItem("Filament".Localize(), macroButtons, theme, enforceGutter: false));
 			}
 
 			// Add the Extrude buttons
@@ -119,6 +119,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.AddChild(new SettingsItem(
 				macroButtons == null ? "Filament".Localize() : "", // Don't put the name if we put in a macro button (it hase the name)
 				buttonContainer,
+				theme,
 				enforceGutter: false));
 
 			var moveButtonsContainer = new FlowLayoutWidget()
@@ -169,7 +170,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				Margin = new BorderDouble(3, 0)
 			});
 
-			this.AddChild(new SettingsItem("Distance".Localize(), moveButtonsContainer, enforceGutter: false));
+			this.AddChild(new SettingsItem("Distance".Localize(), moveButtonsContainer, theme, enforceGutter: false));
 		}
 	}
 
@@ -179,18 +180,16 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.".Localize();
 		private string waitingForExtruderToHeatMessage = "The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}".Localize();
-		private ThemeConfig theme;
 
 		public TemperatureWidgetHotend(PrinterConfig printer, int hotendIndex, ThemeConfig theme)
-			: base(printer, "150.3°")
+			: base(printer, "150.3°", theme)
 		{
 			this.Name = $"Hotend {hotendIndex}";
 			this.hotendIndex = hotendIndex;
 			this.DisplayCurrentTemperature();
 			this.ToolTipText = "Current extruder temperature".Localize();
-			this.theme = theme;
 
-			this.PopupContent = this.GetPopupContent();
+			this.PopupContent = this.GetPopupContent(ApplicationController.Instance.MenuTheme);
 
 			printer.Connection.HotendTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
 		}
@@ -203,28 +202,28 @@ namespace MatterHackers.MatterControl.ActionBar
 			get => "temperature" + ((this.hotendIndex > 0 && this.hotendIndex < 4) ? hotendIndex.ToString() : "");
 		}
 
-		private GuiWidget GetPopupContent()
+		private GuiWidget GetPopupContent(ThemeConfig theme)
 		{
 			var widget = new IgnoredPopupWidget()
 			{
 				Width = 350,
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
-				BackgroundColor = Color.White,
-				Padding = new BorderDouble(12, 5, 12, 0)
+				BackgroundColor = theme.Colors.PrimaryBackgroundColor,
+				Padding = new BorderDouble(12, 0)
 			};
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
-				BackgroundColor = Color.White
 			};
 			widget.AddChild(container);
 
 			GuiWidget hotendRow;
 			container.AddChild(hotendRow = new SettingsItem(
 				string.Format("{0} {1}", "Hotend".Localize(), hotendIndex + 1),
+				theme,
 				new SettingsItem.ToggleSwitchConfig()
 				{
 					Checked = false,
@@ -253,7 +252,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 			// TODO: make this be for the correct extruder
 			var settingsData = SettingsOrganizer.Instance.GetSettingsData(TemperatureKey);
-			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, Color.Black, ApplicationController.Instance.Theme, ref tabIndex);
+			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, theme, ref tabIndex);
 			container.AddChild(temperatureRow);
 
 			// Add the temperature row to the always enabled list ensuring the field can be set when disconnected
@@ -303,7 +302,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			if (hotendIndex == 0)
 			{
 				// put in the material selector
-				var presetsSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, true);
+				var presetsSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, theme);
 				presetsSelector.DropDownList.Name = "Hotend Preset Selector";
 
 				var pulldownContainer = presetsSelector.FindNamedChildRecursive("Preset Pulldown Container");
@@ -319,7 +318,6 @@ namespace MatterHackers.MatterControl.ActionBar
 				{
 					dropList.Name = "Hotend Preset Selector";
 					dropList.HAnchor = HAnchor.Fit;
-					dropList.TextColor = Color.Black;
 					dropList.Margin = 0;
 				}
 
@@ -327,7 +325,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				pulldownContainer.Parent.RemoveChild(pulldownContainer);
 				pulldownContainer.ClearRemovedFlag();
 				container.AddChild(
-					new SettingsItem("Material".Localize(), pulldownContainer, enforceGutter: false)
+					new SettingsItem("Material".Localize(), pulldownContainer, theme, enforceGutter: false)
 					{
 						Border = new BorderDouble(0, 1)
 					});

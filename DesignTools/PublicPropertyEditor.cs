@@ -409,7 +409,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					rowContainer = CreateSettingsRow(property.DisplayName.Localize(), property.Description.Localize());
 
-					var field = new ToggleboxField(theme.Colors.PrimaryTextColor);
+					var field = new ToggleboxField(theme);
 					field.Initialize(0);
 					field.Checked = boolValue;
 					field.ValueChanged += (s, e) =>

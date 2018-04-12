@@ -49,17 +49,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private PrinterConfig printer;
 		private GuiWidget pullDownContainer;
 		private EventHandler unregisterEvents;
-		private bool whiteBackground;
 		//For multiple materials
 
-		public PresetSelectorWidget(PrinterConfig printer, string label, Color accentColor, NamedSettingsLayers layerType, bool whiteBackground = false)
+		public PresetSelectorWidget(PrinterConfig printer, string label, Color accentColor, NamedSettingsLayers layerType, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
-			theme = ApplicationController.Instance.Theme;
-
 			this.printer = printer;
-			this.whiteBackground = whiteBackground;
 			this.Name = label;
+			this.theme = theme;
 
 			ActiveSliceSettings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
 
@@ -86,9 +83,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			// Section Label
-			this.AddChild(new TextWidget(label, pointSize: theme.DefaultFontSize)
+			this.AddChild(new TextWidget(label, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 			{
-				TextColor = whiteBackground ? Color.Black : theme.Colors.PrimaryTextColor,
 				HAnchor = HAnchor.Left,
 				Margin = new BorderDouble(12, 3, 0, 6)
 			});
@@ -115,7 +111,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Name = "Preset Pulldown Container"
 			};
 
-			editButton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, (whiteBackground) ? IconColor.Raw : IconColor.Theme));
+			editButton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons));
 			editButton.ToolTipText = "Edit Selected Setting".Localize();
 			editButton.Enabled = DropDownList.SelectedIndex != -1;
 			editButton.VAnchor = VAnchor.Center;
@@ -234,7 +230,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				HAnchor = HAnchor.Stretch,
 				MenuItemsPadding = new BorderDouble(10, 7, 7, 7),
-				TextColor = whiteBackground ? Color.Black : theme.Colors.PrimaryTextColor,
 				BorderColor = theme.GetBorderColor(75)
 			};
 

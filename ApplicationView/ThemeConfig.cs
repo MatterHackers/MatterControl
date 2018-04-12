@@ -62,6 +62,11 @@ namespace MatterHackers.MatterControl
 		public int H1PointSize { get; set; } = 11;
 		public double ButtonHeight { get; internal set; } = 32;
 
+		/// <summary>
+		/// Indicates if icons should be inverted due to black source images on a dark theme
+		/// </summary>
+		public bool InvertIcons => this.Colors.IsDarkTheme;
+
 		public BorderDouble ButtonSpacing { get; set; } = new BorderDouble(3, 0, 0, 0);
 		public BorderDouble ToolbarPadding { get; set; } = 3;
 
@@ -99,7 +104,7 @@ namespace MatterHackers.MatterControl
 
 		public GuiWidget CreateSearchButton()
 		{
-			return new IconButton(AggContext.StaticData.LoadIcon("icon_search_24x24.png", 16, 16, IconColor.Theme), this)
+			return new IconButton(AggContext.StaticData.LoadIcon("icon_search_24x24.png", 16, 16, this.InvertIcons), this)
 			{
 				ToolTipText = "Search".Localize(),
 			};

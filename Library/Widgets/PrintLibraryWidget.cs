@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 
 			var firstChild = toolbar.OverflowButton.Children<ImageWidget>().FirstOrDefault();
-			firstChild.Image = AggContext.StaticData.LoadIcon("fa-sort_16.png", 32, 32, IconColor.Theme);
+			firstChild.Image = AggContext.StaticData.LoadIcon("fa-sort_16.png", 32, 32, theme.InvertIcons);
 
 			toolbar.OverflowButton.Name = "Print Library View Options";
 			toolbar.ExtendOverflowMenu = (popupMenu) =>
@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			toolbar.Padding = theme.ToolbarPadding;
 			allControls.AddChild(toolbar);
 
-			var showFolders = new ExpandCheckboxButton("Folders".Localize())
+			var showFolders = new ExpandCheckboxButton("Folders".Localize(), theme)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			toolbar.AddChild(
 				viewMenuButton = new PopupMenuButton(
-					new ImageWidget(AggContext.StaticData.LoadIcon("mi-view-list_10.png", 32, 32, IconColor.Theme))
+					new ImageWidget(AggContext.StaticData.LoadIcon("mi-view-list_10.png", 32, 32, theme.InvertIcons))
 					{
 						//VAnchor = VAnchor.Center
 					},
@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			viewMenuButton.DynamicPopupContent = () =>
 			{
-				var popupMenu = new PopupMenu(theme);
+				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
 				var listView = this.libraryView;
 
@@ -451,7 +451,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			menuActions.Add(new PrintItemAction()
 			{
-				Icon = AggContext.StaticData.LoadIcon("cube.png", IconColor.Raw),
+				Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, ApplicationController.Instance.MenuTheme.InvertIcons),
 				Title = "Add".Localize(),
 				ToolTipText = "Add an.stl, .obj, .amf, .gcode or.zip file to the Library".Localize(),
 				Action = (selectedLibraryItems, listView) =>
@@ -477,7 +477,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Create Folder".Localize(),
-				Icon = AggContext.StaticData.LoadIcon("fa-folder-new_16.png", IconColor.Raw),
+				Icon = AggContext.StaticData.LoadIcon("fa-folder-new_16.png", 16, 16, ApplicationController.Instance.MenuTheme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					DialogWindow.Show(
