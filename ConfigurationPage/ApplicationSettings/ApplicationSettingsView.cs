@@ -36,6 +36,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
@@ -72,6 +73,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.AddSettingsRow(
 				new SettingsItem(
 					"Camera Monitoring".Localize(),
+					theme,
 					new SettingsItem.ToggleSwitchConfig()
 					{
 						Checked = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.publish_bed_image),
