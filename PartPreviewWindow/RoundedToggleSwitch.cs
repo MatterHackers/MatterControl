@@ -34,6 +34,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.VectorMath;
+using static MatterHackers.Agg.Easing;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
@@ -122,7 +123,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			Color toggleColor = (this.Checked) ? theme.Colors.PrimaryAccentColor : Color.Gray;
 
 			e.Graphics2D.Circle(position,
-				finalRadius * agg_basics.EaseOutQuartic(animationRatio),
+				finalRadius * Quadratic.Out(animationRatio),
 				new Color(toggleColor, 100));
 		}
 
