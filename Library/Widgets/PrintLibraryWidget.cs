@@ -451,7 +451,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			menuActions.Add(new PrintItemAction()
 			{
-				Icon = AggContext.StaticData.LoadIcon("cube.png"),
+				Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, ApplicationController.Instance.MenuTheme.InvertIcons),
 				Title = "Add".Localize(),
 				ToolTipText = "Add an.stl, .obj, .amf, .gcode or.zip file to the Library".Localize(),
 				Action = (selectedLibraryItems, listView) =>
@@ -477,7 +477,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Create Folder".Localize(),
-				Icon = AggContext.StaticData.LoadIcon("fa-folder-new_16.png"),
+				Icon = AggContext.StaticData.LoadIcon("fa-folder-new_16.png", 16, 16, ApplicationController.Instance.MenuTheme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					DialogWindow.Show(

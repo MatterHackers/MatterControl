@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.BackgroundColor = theme.Colors.PrimaryBackgroundColor;
 			this.theme = theme;
 
-			var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png");
+			var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", 16, 16, theme.InvertIcons);
 
 #if __ANDROID__
 			// Camera Monitoring

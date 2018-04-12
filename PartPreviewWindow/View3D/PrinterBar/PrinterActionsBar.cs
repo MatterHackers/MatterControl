@@ -265,7 +265,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				new NamedAction()
 				{
-					Icon = AggContext.StaticData.LoadIcon("memory_16x16.png", 16, 16),
+					Icon = AggContext.StaticData.LoadIcon("memory_16x16.png", 16, 16, theme.InvertIcons),
 					Title = "Configure EEProm".Localize(),
 					Action = configureEePromButton_Click
 				},

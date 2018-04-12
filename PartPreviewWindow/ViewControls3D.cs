@@ -376,7 +376,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "Bed Options Menu",
 				DynamicPopupContent = () =>
 				{
-					var menuContent = theme.CreateMenuItems(popupMenu, this.BedMenuActions(sceneContext));
+					var menuContent = theme.CreateMenuItems(popupMenu, this.BedMenuActions(sceneContext, theme));
 					menuContent.MinimumSize = new Vector2(200, 0);
 
 					return menuContent;
@@ -475,14 +475,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private NamedAction[] BedMenuActions(BedConfig sceneContext)
+		private NamedAction[] BedMenuActions(BedConfig sceneContext, ThemeConfig theme)
 		{
 			return new[]
 			{
 				new NamedAction()
 				{
 					Title = "Insert".Localize(),
-					Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16),
+					Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons),
 					Action = () =>
 					{
 						var extensionsWithoutPeriod = new HashSet<string>(ApplicationSettings.OpenDesignFileParams.Split('|').First().Split(',').Select(s => s.Trim().Trim('.')));
