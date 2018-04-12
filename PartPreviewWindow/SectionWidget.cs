@@ -1,4 +1,5 @@
-﻿using MatterHackers.Agg;
+﻿using System;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 
@@ -108,6 +109,24 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 
 		public int BorderRadius { get; set; } = 0;
+
+		public bool ExpandableWhenDisabled { get; set; }
+
+		public override bool Enabled
+		{
+			get => (this.ExpandableWhenDisabled) ? true: base.Enabled;
+			set
+			{
+				if (this.ExpandableWhenDisabled)
+				{
+					this.ContentPanel.Enabled = value;
+				}
+				else
+				{
+					base.Enabled = value;
+				}
+			}
+		}
 
 		public override void OnDrawBackground(Graphics2D graphics2D)
 		{

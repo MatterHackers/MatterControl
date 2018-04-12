@@ -479,11 +479,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				HAnchor = HAnchor.Stretch,
 			};
 
-			topToBottomSettings.AddChild(new HorizontalLine(20));
-
-			HorizontalLine lastLine = null;
-
 			GuiWidget settingsRow = null;
+			bool firstRow = true;
 
 			foreach (SliceSettingData settingData in subGroup.Settings)
 			{
@@ -495,6 +492,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					&& settingShouldBeShown)
 				{
 					settingsRow = CreateItemRow(settingData);
+
+					if (firstRow)
+					{
+						// First row needs top and bottom border
+						settingsRow.Border = new BorderDouble(0, 1);
+
+						firstRow = false;
+					}
 
 					this.settingsRows.Add((settingsRow, settingData));
 
@@ -508,9 +513,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				settingsRow.BorderColor = Color.Transparent;
 			}
 
-			lastLine?.Close();
-
-			return (topToBottomSettings.Children.Count == 1) ? null : topToBottomSettings;
+			return (topToBottomSettings.Children.Any()) ? topToBottomSettings : null;
 		}
 
 		private static bool CheckIfShouldBeShown(SliceSettingData settingData, SettingsContext settingsContext)

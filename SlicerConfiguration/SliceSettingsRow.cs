@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit | VAnchor.Center,
-				Width = settingData.ShowAsOverride ? 50 * GuiWidget.DeviceScale : 5,
+				Width = 50 * GuiWidget.DeviceScale,
 				DebugShowBounds = debugLayout
 			});
 
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit | VAnchor.Center,
-				Width = settingData.ShowAsOverride ? 20 * GuiWidget.DeviceScale : 5,
+				Width = 20 * GuiWidget.DeviceScale,
 				DebugShowBounds = debugLayout
 			};
 			this.AddChild(restoreArea);
