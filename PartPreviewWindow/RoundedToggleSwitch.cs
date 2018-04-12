@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -82,16 +83,55 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.MinimumSize = new Vector2(minWidth, theme.ButtonHeight);
 		}
 
+		double animationRatio = 0;
+		double finalRadius = 22;
+		Animation animation;
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
 			mouseIsDown = true;
 			base.OnMouseDown(mouseEvent);
 
+			// animation up
+			animationRatio = 0;
+			animation = new Animation(this, (t) =>
+			{
+				if (animation.Continue)
+				{
+					animationRatio += 1.0 / 7.0;
+				}
+				if (animationRatio >= 1)
+				{
+					animation.Continue = false;
+				}				
+			}, 1.0 / 30.0);
+
+			this.Parents<SystemWindow>().First().AfterDraw += RoundedToggleSwitch_AfterDraw;
+
+			Closed += (s, e) =>
+			{
+				animation.Continue = false;
+			};
+
 			this.Invalidate();
+		}
+
+		private void RoundedToggleSwitch_AfterDraw(object sender, DrawEventArgs e)
+		{
+			var position = new Vector2((this.Checked) ? LocalBounds.Right - toggleRadiusPlusPadding : toggleRadiusPlusPadding, centerY);
+			position = this.TransformToScreenSpace(position);
+			Color toggleColor = (this.Checked) ? theme.Colors.PrimaryAccentColor : Color.Gray;
+
+			e.Graphics2D.Circle(position,
+				finalRadius * agg_basics.EaseOutQuartic(animationRatio),
+				new Color(toggleColor, 100));
 		}
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
+			this.Parents<SystemWindow>().First().AfterDraw -= RoundedToggleSwitch_AfterDraw;
+
+			animation.Continue = false;
+			animationRatio = 0;
 			mouseIsDown = false;
 			base.OnMouseUp(mouseEvent);
 

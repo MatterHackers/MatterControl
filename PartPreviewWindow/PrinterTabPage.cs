@@ -541,7 +541,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			timeContainer.AddChild(timeWidget);
 
-			UiThread.SetInterval(
+			var runningInterval = UiThread.SetInterval(
 				() =>
 				{
 					int secondsPrinted = printer.Connection.SecondsPrinted;
@@ -569,7 +569,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							bodyRow.Visible = false;
 							break;
 					}
-				}, 1, () => !bodyRow.HasBeenClosed);
+				}, 1);
+			bodyRow.Closed += (s, e) => runningInterval.Continue = false;
 
 			bodyRow.Visible = false;
 

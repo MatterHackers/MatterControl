@@ -36,13 +36,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class LevelingStrings
 	{
-		public string HomingPageStepText = "Homing The Printer".Localize();
 		public string initialPrinterSetupStepText = "Initial Printer Setup".Localize();
-		private string doneLine1 = "Congratulations!";
-		private string doneLine1b = "Auto Print Leveling is now configured and enabled.".Localize();
-		private string doneLine2 = "Remove the paper".Localize();
-		private string doneLine3 = "If you need to recalibrate the printer in the future, the print leveling controls can be found under: Controls, Calibration";
-		private string doneLine3b = "Click 'Done' to close this window.".Localize();
 		private int stepNumber = 1;
 		private string welcomeLine1 = "Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.".Localize();
 		private string selectMaterial = "Select the material you are printing".Localize();
@@ -56,21 +50,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public LevelingStrings(PrinterSettings printerSettings)
 		{
 			this.printerSettings = printerSettings;
-		}
-
-		public string DoneInstructions
-		{
-			get
-			{
-				if (printerSettings.Helpers.UseZProbe())
-				{
-					return $"{doneLine1} {doneLine1b}\n\n{doneLine3}\n\n{doneLine3b}";
-				}
-				else
-				{
-					return $"{doneLine1} {doneLine1b}\n\n\t• {doneLine2}\n\n{doneLine3}\n\n{doneLine3b}";
-				}
-			}
 		}
 
 		public string HomingPageInstructions(bool useZProbe, bool heatBed)

@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				}
 
 				yield return new HomePrinterPage(printer, this,
-					levelingStrings.HomingPageStepText,
+					"Homing The Printer".Localize(),
 					levelingStrings.HomingPageInstructions(useZProbe, hasHeatedBed),
 					useZProbe, theme);
 
@@ -181,9 +181,34 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					i++;
 				}
 
+				this.nextButton.Enabled = false;
 				this.cancelButton.Visible = false;
 				this.doneButton.Visible = true;
-				yield return new LastPagelInstructions(printer, this, "Done".Localize(), levelingStrings.DoneInstructions, probePositions, theme);
+				var done1 = "Print Leveling is now configured and enabled.".Localize();
+				string done2 = "If you need to recalibrate the printer in the future, the print leveling controls can be found under: Controls, Calibration";
+				string done3 = "Click 'Done' to close this window.".Localize();
+
+				var doneString = "";
+				if (useZProbe)
+				{
+					doneString = $"{"Congratulations!".Localize()} {done1}\n"
+						+ "\n"
+						+ $"{done2}\n"
+						+ "\n"
+						+ $"{done3}";
+				}
+				else
+				{
+					doneString = $"{"Congratulations!".Localize()} {done1}\n"
+						+ "\n"
+						+ $"\t• {"Remove the paper".Localize()}\n"
+						+ "\n"
+						+ $"{done2}\n"
+						+ "\n"
+						+ $"{done3}";
+				}
+
+				yield return new LastPagelInstructions(printer, this, "Done".Localize(), doneString, probePositions, theme);
 			}
 		}
 

@@ -525,11 +525,11 @@ namespace MatterHackers.MeshVisualizer
 						var accentColor = Color.LightGray;
 						if (secondsSinceSelectionChanged < .25)
 						{
-							selectionColor = Color.White.Blend(accentColor, EaseInOut(secondsSinceSelectionChanged * 4));
+							selectionColor = Color.White.Blend(accentColor, agg_basics.EaseInOutQuad(secondsSinceSelectionChanged * 4));
 						}
 						else
 						{
-							selectionColor = accentColor.Blend(Color.White, EaseInOut((secondsSinceSelectionChanged - .25) * 4));
+							selectionColor = accentColor.Blend(Color.White, agg_basics.EaseInOutQuad((secondsSinceSelectionChanged - .25) * 4));
 						}
 						Invalidate();
 					}
@@ -676,17 +676,6 @@ namespace MatterHackers.MeshVisualizer
 			{
 				World.RenderAabb(renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.WorldMatrix(), selectionColor, selectionHighlightWidth);
 			}
-		}
-
-		private double EaseInOut(double t)
-		{
-			if (t <= 0.5f)
-			{
-				return 2.0f * (t * t);
-			}
-
-			t -= 0.5f;
-			return 2.0f * t * (1.0f - t) + 0.5;
 		}
 
 		public enum EditorType { Printer, Part }

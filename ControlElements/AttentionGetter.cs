@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl
 					time = 1 - (time - 1);
 				}
 
-				double lightnessMultiplier = EaseInOutQuad(time);
+				double lightnessMultiplier = agg_basics.EaseInOutQuad(time);
 
 				widgetToHighlight.BackgroundColor = startColor.AdjustLightness(1 + lightnessChange * lightnessMultiplier).ToColor();
 				if (widgetToHighlight.HasBeenClosed || timeSinceStart.Elapsed.TotalSeconds > cycles * pulseTime)
@@ -110,17 +110,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private double EaseInOutQuad(double t)
-		{
-			if (t <= 0.5f)
-			{
-				return 2.0f * (t * t);
-			}
-
-			t -= 0.5f;
-			return 2.0f * t * (1.0f - t) + 0.5;
-		}
-
 		private void ConnectToWidget(object drawingWidget, DrawEventArgs e)
 		{
 			GuiWidget parent = drawingWidget as GuiWidget;
@@ -131,7 +120,8 @@ namespace MatterHackers.MatterControl
 			startColor = parent.BackgroundColor;
 			timeSinceStart = Stopwatch.StartNew();
 			widgetToHighlight.AfterDraw -= ConnectToWidget;
-			UiThread.SetInterval(ChangeBackgroundColor, animationDelay, () => parent.HasBeenClosed);
+			var runningInterval = UiThread.SetInterval(ChangeBackgroundColor, animationDelay);
+			parent.Closed += (s, e2) => runningInterval.Continue = false;
 		}
 	}
 }

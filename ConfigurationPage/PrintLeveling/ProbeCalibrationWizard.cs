@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				// add in the homing printer page
 				yield return new HomePrinterPage(printer, this,
-					levelingStrings.HomingPageStepText,
+					"Homing The Printer".Localize(),
 					levelingStrings.HomingPageInstructions(true, false),
 					false, theme);
 
@@ -135,6 +135,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				this.cancelButton.Visible = false;
 				this.doneButton.Visible = true;
+				this.nextButton.Enabled = false;
 				yield return new CalibrateProbeLastPagelInstructions(printer, this,
 					"Done".Localize(),
 					"Your Probe is now calibrated.".Localize() + "\n\n\t• " + "Remove the paper".Localize() + "\n\n" + "Click 'Done' to close this window.".Localize(),

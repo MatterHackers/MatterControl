@@ -2176,7 +2176,7 @@ namespace MatterHackers.MatterControl
 			UiThread.SetInterval(() =>
 			{
 				ApplicationController.Instance.ActivePrinter.Connection.OnIdle();
-			}, .1, () => true);
+			}, .1);
 
 			return ApplicationController.Instance.MainView;
 		}
