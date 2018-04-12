@@ -264,8 +264,15 @@ namespace MatterHackers.MatterControl
 		private DisableableWidget tooBigForBabyStepping;
 		private RadioButton movePointZeroTwoMmButton;
 		private RadioButton moveOneMmButton;
-		GuiWidget keyboardFocusBorder;
-		ImageWidget keyboardImage;
+		private GuiWidget keyboardFocusBorder;
+		private ImageWidget keyboardImage;
+		private EventHandler unregisterEvents;
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
+		}
 
 		private FlowLayoutWidget GetHotkeyControlContainer()
 		{
@@ -584,8 +591,37 @@ namespace MatterHackers.MatterControl
 			return zButtons;
 		}
 
+		private void Printer_SettingChanged(object sender, EventArgs e)
+		{
+			if (e is StringEventArgs stringEvent)
+			{
+				if (stringEvent.Data == SettingsKey.manual_movement_speeds)
+				{
+					xPlusControl.MovementFeedRate = printer.Settings.XSpeed();
+					xMinusControl.MovementFeedRate = printer.Settings.XSpeed();
+
+					yPlusControl.MovementFeedRate = printer.Settings.YSpeed();
+					yMinusControl.MovementFeedRate = printer.Settings.YSpeed();
+
+					zPlusControl.MovementFeedRate = printer.Settings.ZSpeed();
+					zMinusControl.MovementFeedRate = printer.Settings.ZSpeed();
+					foreach (ExtrudeButton extrudeButton in eMinusButtons)
+					{
+						extrudeButton.MovementFeedRate = printer.Settings.EFeedRate(0);
+					}
+
+					foreach (ExtrudeButton extrudeButton in ePlusButtons)
+					{
+						extrudeButton.MovementFeedRate = printer.Settings.EFeedRate(0);
+					}
+				}
+			}
+		}
+
 		private GuiWidget CreateXYGridControl(XYZColors colors, double distanceBetweenControls, double buttonSeparationDistance)
 		{
+			ActiveSliceSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
+
 			GuiWidget xyGrid = new GuiWidget();
 			{
 				FlowLayoutWidget xButtons = new FlowLayoutWidget();
@@ -647,7 +683,7 @@ namespace MatterHackers.MatterControl
 			//Amounts in millimeters
 			public double MoveAmount = 10;
 
-			private double movementFeedRate;
+			public double MovementFeedRate { get; set; }
 			private PrinterConfig printer;
 
 			public MoveButton(PrinterConfig printer, double x, double y, GuiWidget buttonView, PrinterConnection.Axis axis, double movementFeedRate)
@@ -655,7 +691,7 @@ namespace MatterHackers.MatterControl
 			{
 				this.printer = printer;
 				this.moveAxis = axis;
-				this.movementFeedRate = movementFeedRate;
+				this.MovementFeedRate = movementFeedRate;
 
 				this.Click += (s, e) =>
 				{
@@ -670,7 +706,7 @@ namespace MatterHackers.MatterControl
 					}
 					else
 					{
-						printer.Connection.MoveRelative(this.moveAxis, this.MoveAmount, movementFeedRate);
+						printer.Connection.MoveRelative(this.moveAxis, this.MoveAmount, MovementFeedRate);
 					}
 				};
 			}
@@ -681,7 +717,7 @@ namespace MatterHackers.MatterControl
 			//Amounts in millimeters
 			public double MoveAmount = 10;
 
-			private double movementFeedRate;
+			public double MovementFeedRate { get; set; }
 			public int ExtruderNumber;
 
 			private PrinterConfig printer;
@@ -691,7 +727,7 @@ namespace MatterHackers.MatterControl
 			{
 				this.printer = printer;
 				this.ExtruderNumber = extruderNumber;
-				this.movementFeedRate = movementFeedRate;
+				this.MovementFeedRate = movementFeedRate;
 			}
 
 			public override void OnClick(MouseEventArgs mouseEvent)
@@ -699,7 +735,7 @@ namespace MatterHackers.MatterControl
 				base.OnClick(mouseEvent);
 
 				//Add more fancy movement here
-				printer.Connection.MoveExtruderRelative(MoveAmount, movementFeedRate, ExtruderNumber);
+				printer.Connection.MoveExtruderRelative(MoveAmount, MovementFeedRate, ExtruderNumber);
 			}
 		}
 
