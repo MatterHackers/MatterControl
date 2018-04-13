@@ -337,8 +337,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(button);
 			}
 
-			//////////////////// maybe set default printer view mode?
-
 			sceneContext.Scene.SelectionChanged += Scene_SelectionChanged;
 
 			// Run on load
@@ -622,6 +620,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
+			sceneContext.Scene.SelectionChanged -= Scene_SelectionChanged;
 			base.OnClosed(e);
 		}
 	}
