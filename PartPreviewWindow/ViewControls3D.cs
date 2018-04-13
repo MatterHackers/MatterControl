@@ -562,7 +562,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									if (destinationContainer is ILibraryWritableContainer writableContainer)
 									{
 										// Wrap stream with ReadOnlyStream library item and add to container
-										writableContainer.Add(new[] { new InMemoryLibraryItem(sceneContext.Scene) });
+										writableContainer.Add(new[]
+										{
+											new InMemoryLibraryItem(sceneContext.Scene)
+											{
+												Name = newName
+											}
+										});
+
 										destinationContainer.Dispose();
 									}
 								}));
