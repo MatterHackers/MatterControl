@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			string iconPath;
 
-			var commonMargin = theme.ButtonSpacing; 
+			var commonMargin = theme.ButtonSpacing;
 
 			double height = theme.ButtonFactory.Options.FixedHeight;
 
@@ -375,7 +375,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "Bed Options Menu",
 				DynamicPopupContent = () =>
 				{
-					var menuContent = theme.CreateMenuItems(popupMenu, this.BedMenuActions(sceneContext, theme));
+					var menuContent = theme.CreateMenuItems(popupMenu, this.BedMenuActions(sceneContext, ApplicationController.Instance.MenuTheme));
 					menuContent.MinimumSize = new Vector2(200, 0);
 
 					return menuContent;
