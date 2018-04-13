@@ -130,13 +130,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				sectionWidget.ApplyBoxStyle();
+				sectionWidget.Margin = new BorderDouble(0, 10);
 
 				var button = new TextButton("Start Print".Localize(), menuTheme)
 				{
 					Name = "Start Print Button",
 					HAnchor = HAnchor.Right,
 					VAnchor = VAnchor.Absolute,
-					Margin = new BorderDouble(top: 10),
 					BackgroundColor = theme.MinimalShade
 				};
 				button.Click += (s, e) =>
