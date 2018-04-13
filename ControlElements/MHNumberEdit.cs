@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl
 			{
 				VAnchor = VAnchor.Bottom,
 			};
-			this.ActuallNumberEdit.InternalNumberEdit.MaxDecimalsPlaces = 3;
+			this.ActuallNumberEdit.InternalNumberEdit.MaxDecimalsPlaces = 5;
 			this.AddChild(this.ActuallNumberEdit);
 		}
 
