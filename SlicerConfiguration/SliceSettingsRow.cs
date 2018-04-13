@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -198,6 +199,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				this.HighlightColor = Color.Transparent;
 			}
 
+		}
+
+		internal static void AddBordersToEditFields(GuiWidget row)
+		{
+			foreach (var widget in row.Descendants().Where(d => d is MHNumberEdit || d is MHTextEditWidget))
+			{
+				widget.Border = 1;
+				widget.BorderColor = row.BorderColor;
+			}
 		}
 
 		public void AddContent(GuiWidget content)

@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.VAnchor = VAnchor.Fit;
 			this.MinimumSize = new Vector2(0, theme.ButtonHeight);
 			this.Border = new BorderDouble(bottom: 1);
-			this.BorderColor = theme.GetBorderColor((theme.Colors.IsDarkTheme) ? 3 : 5);
+			this.BorderColor = theme.GetBorderColor(theme.Colors.IsDarkTheme ? 20 : 35);
 
 			hoverColor = theme.MinimalShade;
 

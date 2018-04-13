@@ -64,7 +64,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var line = new HorizontalLine(40)
 			{
-				Margin = new BorderDouble(PopupMenu.GutterWidth - 8, 1, 8, 1)
+				Margin = new BorderDouble(PopupMenu.GutterWidth - 8, 1, 8, 1),
+				BackgroundColor = theme.GetBorderColor(40)
 			};
 
 			this.AddChild(line);

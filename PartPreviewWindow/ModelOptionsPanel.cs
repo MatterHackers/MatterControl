@@ -136,7 +136,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					theme,
 					enforceGutter: false)
 				{
-					Margin = new BorderDouble(bottom: 2),
 					Border = 0
 				});
 

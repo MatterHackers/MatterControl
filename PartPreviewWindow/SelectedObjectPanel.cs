@@ -78,7 +78,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.scene = scene;
 			this.printer = printer;
 
-			this.AddChild(inlineTitleEdit = new InlineTitleEdit("", theme, "Object Name"));
+			this.AddChild(inlineTitleEdit = new InlineTitleEdit("", theme, "Object Name")
+			{
+				Border = new BorderDouble(bottom: 1),
+				BorderColor = theme.GetBorderColor(50)
+			});
 			inlineTitleEdit.TitleChanged += (s, e) =>
 			{
 				if (item != null)
@@ -104,12 +108,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
 
 			this.AddChild(scrollable);
-
-			// Add heading separator
-			this.ContentPanel.AddChild(new HorizontalLine(25)
-			{
-				Margin = new BorderDouble(0)
-			});
 
 			var editorColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{

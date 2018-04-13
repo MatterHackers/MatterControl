@@ -124,8 +124,7 @@ namespace MatterHackers.GCodeVisualizer
 				}
 
 				// render the part using opengl
-				Graphics2DOpenGL graphics2DGl = graphics2D as Graphics2DOpenGL;
-				if (graphics2DGl != null)
+				if (graphics2D is Graphics2DOpenGL graphics2DGl)
 				{
 					graphics2DGl.DrawAACircle(position, radius, retractionColor);
 				}

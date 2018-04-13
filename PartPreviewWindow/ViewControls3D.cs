@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			string iconPath;
 
-			var commonMargin = theme.ButtonSpacing; 
+			var commonMargin = theme.ButtonSpacing;
 
 			double height = theme.ButtonFactory.Options.FixedHeight;
 
@@ -337,8 +337,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(button);
 			}
 
-			//////////////////// maybe set default printer view mode?
-
 			sceneContext.Scene.SelectionChanged += Scene_SelectionChanged;
 
 			// Run on load
@@ -368,7 +366,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
-				BackgroundColor = Color.White
 			};
 
 			return new PopupMenuButton(buttonView, theme)
@@ -376,7 +373,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "Bed Options Menu",
 				DynamicPopupContent = () =>
 				{
-					var menuContent = theme.CreateMenuItems(popupMenu, this.BedMenuActions(sceneContext, theme));
+					var menuContent = theme.CreateMenuItems(popupMenu, this.BedMenuActions(sceneContext, ApplicationController.Instance.MenuTheme));
 					menuContent.MinimumSize = new Vector2(200, 0);
 
 					return menuContent;
@@ -623,6 +620,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
+			sceneContext.Scene.SelectionChanged -= Scene_SelectionChanged;
 			base.OnClosed(e);
 		}
 	}

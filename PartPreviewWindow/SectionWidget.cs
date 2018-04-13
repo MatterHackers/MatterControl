@@ -18,7 +18,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
 			this.Border = new BorderDouble(bottom: 1);
-			this.SeperatorColor = new Color(theme.Colors.SecondaryTextColor, 50);
+			this.BorderColor = theme.GetBorderColor(50);
 
 			if (!string.IsNullOrEmpty(sectionTitle))
 			{
@@ -76,20 +76,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public ICheckbox Checkbox => checkbox;
 
-		private Color _seperatorColor;
-		public Color SeperatorColor
-		{
-			get => _seperatorColor;
-			set
-			{
-				if (value != _seperatorColor)
-				{
-					_seperatorColor = value;
-					this.BorderColor = _seperatorColor;
-				}
-			}
-		}
-
 		public GuiWidget ContentPanel { get; private set; }
 
 		public void SetContentWidget(GuiWidget guiWidget)
@@ -106,6 +92,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			// Store
 			this.ContentPanel = guiWidget;
+			this.ContentPanel.BorderColor = Color.Transparent;
 		}
 
 		public int BorderRadius { get; set; } = 0;

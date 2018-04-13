@@ -658,17 +658,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						if (e.UserInitiated)
 						{
+							ICheckbox checkbox = uiField.Content as ICheckbox;
+							string checkedKey = (checkbox.Checked) ? "OnValue" : "OffValue";
+
 							// Linked settings should be updated in all cases (user clicked checkbox, user clicked clear)
 							foreach (var setSettingsData in settingData.SetSettingsOnChange)
 							{
-								string targetValue;
-
-								if (uiField.Content is CheckBox checkbox)
+								if (setSettingsData.TryGetValue(checkedKey, out string targetValue))
 								{
-									if (setSettingsData.TryGetValue(checkbox.Checked ? "OnValue" : "OffValue", out targetValue))
-									{
-										settingsContext.SetValue(setSettingsData["TargetSetting"], targetValue);
-									}
+									settingsContext.SetValue(setSettingsData["TargetSetting"], targetValue);
 								}
 							}
 

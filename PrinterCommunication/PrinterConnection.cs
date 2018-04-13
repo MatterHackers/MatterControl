@@ -820,7 +820,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void Connect()
 		{
-
 			// TODO: Consider adding any conditions that would results in a connection failure to this initial test
 			// Start the process of requesting permission and exit if permission is not currently granted
 			if (!this.EnableNetworkPrinting

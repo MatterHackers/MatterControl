@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -53,8 +54,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.printer = printer;
 
+			SectionWidget sectionWidget;
+
 			this.AddChild(
-				new SectionWidget(
+				sectionWidget = new SectionWidget(
 					"Options".Localize(),
 					new GCodeOptionsPanel(sceneContext, printer, theme),
 					theme,
@@ -62,7 +65,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					HAnchor = HAnchor.Stretch,
 					VAnchor = VAnchor.Fit,
+					Padding = 0
 				});
+
+			sectionWidget.ContentPanel.Descendants<SettingsRow>().First().Border = 0;
 
 			this.AddChild(
 				loadedGCodeSection = new FlowLayoutWidget(FlowDirection.TopToBottom)

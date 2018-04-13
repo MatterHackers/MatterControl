@@ -136,12 +136,5 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			view3DWidget.ShowOverflowMenu(popupMenu);
 		}
-
-		public override void OnLoad(EventArgs args)
-		{
-			ApplicationController.Instance.ActiveView3DWidget = view3DWidget;
-
-			base.OnLoad(args);
-		}
 	}
 }

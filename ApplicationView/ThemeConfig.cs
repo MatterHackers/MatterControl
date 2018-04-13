@@ -384,7 +384,7 @@ namespace MatterHackers.MatterControl
 			// sectionWidget.ContentPanel.Padding = new BorderDouble(10, 0, 10, 2);
 			//sectionWidget.ContentPanel.Padding = 0;
 
-			sectionWidget.SeperatorColor = Color.Transparent;
+			sectionWidget.BorderColor = Color.Transparent;
 			sectionWidget.BorderRadius = 5;
 			sectionWidget.Margin = margin;
 			sectionWidget.BackgroundColor = backgroundColor;

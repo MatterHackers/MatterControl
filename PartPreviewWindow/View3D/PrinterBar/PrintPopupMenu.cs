@@ -95,17 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var settingsData = SettingsOrganizer.Instance.GetSettingsData(key);
 					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
 
-					foreach (var widget in row.Descendants<MHNumberEdit>())
-					{
-						widget.Border = 1;
-						widget.BorderColor = row.BorderColor;
-					}
-
-					foreach (var widget in row.Descendants<MHTextEditWidget>())
-					{
-						widget.Border = 1;
-						widget.BorderColor = row.BorderColor;
-					}
+					SliceSettingsRow.AddBordersToEditFields(row);
 
 					optionsPanel.AddChild(row);
 				}
@@ -134,29 +124,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var settingsData = SettingsOrganizer.Instance.GetSettingsData(key);
 					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
 
-					foreach (var widget in row.Descendants<MHNumberEdit>())
-					{
-						widget.Border = 1;
-						widget.BorderColor = row.BorderColor;
-					}
-
-					foreach (var widget in row.Descendants<MHTextEditWidget>())
-					{
-						widget.Border = 1;
-						widget.BorderColor = row.BorderColor;
-					}
+					SliceSettingsRow.AddBordersToEditFields(row);
 
 					subPanel.AddChild(row);
 				}
 
 				sectionWidget.ApplyBoxStyle();
+				sectionWidget.Margin = new BorderDouble(0, 10);
+				sectionWidget.ContentPanel.Children<SettingsRow>().First().Border = new BorderDouble(0, 1);
+				sectionWidget.ContentPanel.Children<SettingsRow>().Last().Border = 0;
 
 				var button = new TextButton("Start Print".Localize(), menuTheme)
 				{
 					Name = "Start Print Button",
 					HAnchor = HAnchor.Right,
 					VAnchor = VAnchor.Absolute,
-					Margin = new BorderDouble(top: 10),
 					BackgroundColor = theme.MinimalShade
 				};
 				button.Click += (s, e) =>
