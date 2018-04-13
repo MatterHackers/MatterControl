@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Fit,
 				Padding = new BorderDouble(6, 4, 10, 4),
 				Margin = new BorderDouble(right: layerScrollbar.Width + layerScrollbar.Margin.Width),
-				TagColor = theme.Shade
+				TagColor = (theme.Colors.IsDarkTheme) ? theme.Shade : theme.SlightShade
 			};
 
 			currentLayerInfo = new InlineEditControl("1000")
