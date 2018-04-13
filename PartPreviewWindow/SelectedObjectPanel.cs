@@ -290,7 +290,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								{
 									Type = propertyType,
 									Value = item.GetValue(selectedItem, null) as IObject3D,
-									DisplayName = PublicPropertyEditor.GetDisplayName(item)
+									DisplayName = EditableProperty.GetDisplayName(item)
 								};
 
 				// Shown known editors for any matching properties
@@ -311,7 +311,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							  {
 								  Type = item.PropertyType,
 								  Value = item.GetValue(selectedItem, null) as IObject3D,
-								  DisplayName = PublicPropertyEditor.GetDisplayName(item)
+								  DisplayName = EditableProperty.GetDisplayName(item)
 							  };
 
 				// Shown known editors for any matching properties
