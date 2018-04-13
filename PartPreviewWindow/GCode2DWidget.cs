@@ -110,8 +110,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							double gridLineWidths = 0.2 * layerScale;
 
-							Graphics2DOpenGL graphics2DGl = graphics2D as Graphics2DOpenGL;
-							if (graphics2DGl != null)
+							if (graphics2D is Graphics2DOpenGL graphics2DGl)
 							{
 								GlRenderGrid(graphics2DGl, transform, gridLineWidths);
 							}
