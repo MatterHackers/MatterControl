@@ -164,14 +164,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					"Options".Localize(),
 					new ModelOptionsPanel(sceneContext, meshViewerWidget, theme)
 					{
-						Padding = new BorderDouble(10, 10, 10, 0)
+						Margin = 0,
+						Padding = new BorderDouble(2, 2, 2, 0),
 					},
 					theme,
 					ApplicationController.Instance.GetViewOptionButtons(sceneContext, printer, theme))
 				{
 					HAnchor = HAnchor.Stretch,
 					VAnchor = VAnchor.Fit,
-					Margin = new BorderDouble(right: 5)
 				});
 
 			modelViewSidePanel.AddChild(selectedObjectPanel);
