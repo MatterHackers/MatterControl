@@ -456,7 +456,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				ToolTipText = "Add an.stl, .obj, .amf, .gcode or.zip file to the Library".Localize(),
 				Action = (selectedLibraryItems, listView) =>
 				{
-					AggContext.FileDialogs.OpenFileDialog(
+					UiThread.RunOnIdle(() =>
+					{
+						AggContext.FileDialogs.OpenFileDialog(
 							new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true),
 							(openParams) =>
 							{
@@ -470,6 +472,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 									}
 								}
 							});
+					});
 				},
 				IsEnabled = (s, l) => this.libraryView.ActiveContainer is ILibraryWritableContainer
 			});
