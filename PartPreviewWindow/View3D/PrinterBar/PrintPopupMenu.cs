@@ -95,17 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var settingsData = SettingsOrganizer.Instance.GetSettingsData(key);
 					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
 
-					foreach (var widget in row.Descendants<MHNumberEdit>())
-					{
-						widget.Border = 1;
-						widget.BorderColor = row.BorderColor;
-					}
-
-					foreach (var widget in row.Descendants<MHTextEditWidget>())
-					{
-						widget.Border = 1;
-						widget.BorderColor = row.BorderColor;
-					}
+					SliceSettingsRow.AddBordersToEditFields(row);
 
 					optionsPanel.AddChild(row);
 				}
@@ -134,17 +124,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var settingsData = SettingsOrganizer.Instance.GetSettingsData(key);
 					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
 
-					foreach (var widget in row.Descendants<MHNumberEdit>())
-					{
-						widget.Border = 1;
-						widget.BorderColor = row.BorderColor;
-					}
-
-					foreach (var widget in row.Descendants<MHTextEditWidget>())
-					{
-						widget.Border = 1;
-						widget.BorderColor = row.BorderColor;
-					}
+					SliceSettingsRow.AddBordersToEditFields(row);
 
 					subPanel.AddChild(row);
 				}

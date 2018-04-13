@@ -116,6 +116,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			var settingsData = SettingsOrganizer.Instance.GetSettingsData(SettingsKey.bed_temperature);
 			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, theme, ref tabIndex);
+			SliceSettingsRow.AddBordersToEditFields(temperatureRow);
 			container.AddChild(temperatureRow);
 
 			alwaysEnabled.Add(hotendRow);

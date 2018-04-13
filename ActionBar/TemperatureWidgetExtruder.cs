@@ -253,6 +253,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			// TODO: make this be for the correct extruder
 			var settingsData = SettingsOrganizer.Instance.GetSettingsData(TemperatureKey);
 			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, theme, ref tabIndex);
+			SliceSettingsRow.AddBordersToEditFields(temperatureRow);
 			container.AddChild(temperatureRow);
 
 			// Add the temperature row to the always enabled list ensuring the field can be set when disconnected
