@@ -18,7 +18,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
 			this.Border = new BorderDouble(bottom: 1);
-			this.BorderColor = new Color(theme.Colors.SecondaryTextColor, 50);
+			this.BorderColor = theme.GetBorderColor(50);
 
 			if (!string.IsNullOrEmpty(sectionTitle))
 			{
