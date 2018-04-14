@@ -177,6 +177,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.DragDropByName("Row Item Batman", "InteractionLayer");
 				Assert.AreEqual(1, scene.Children.Count, "The scene should have one item after drag/drop");
 
+				testRunner.Delay(.2);
+
 				testRunner.DragDropByName("Row Item Batman", "InteractionLayer");
 				Assert.AreEqual(2, scene.Children.Count, "The scene should have two items after drag/drop");
 

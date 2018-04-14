@@ -860,8 +860,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Slice Settings Sidebar");
 				testRunner.ClickByName("Pin Settings Button");
 			}
-
-
 		}
 
 		/// <summary>
