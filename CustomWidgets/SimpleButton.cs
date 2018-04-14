@@ -279,7 +279,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					_checked = value;
 					if (_checked)
 					{
-						UncheckAllOtherRadioButtons();
+						this.UncheckSiblings();
 					}
 
 					this.BackgroundColor = (_checked) ? theme.MinimalShade : Color.Transparent;
@@ -298,25 +298,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			if (this.Checked)
 			{
-				graphics2D.Rectangle(0, 0, LocalBounds.Right, 2, ActiveTheme.Instance.PrimaryAccentColor);
+				graphics2D.Rectangle(0, 0, LocalBounds.Right, 2, theme.Colors.PrimaryAccentColor);
 			}
 
 			base.OnDraw(graphics2D);
-		}
-
-		private void UncheckAllOtherRadioButtons()
-		{
-			if (SiblingRadioButtonList != null)
-			{
-				foreach (GuiWidget child in SiblingRadioButtonList.Distinct())
-				{
-					var radioButton = child as IRadioButton;
-					if (radioButton != null && radioButton != this)
-					{
-						radioButton.Checked = false;
-					}
-				}
-			}
 		}
 	}
 
