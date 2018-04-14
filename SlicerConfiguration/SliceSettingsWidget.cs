@@ -158,7 +158,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private PrinterConfig printer;
 		private SettingsContext settingsContext;
 		private bool isPrimarySettingsView;
-		private bool showSubGroupHeadings = false;
 
 		private SearchInputBox searchPanel;
 		private int groupPanelCount = 0;
@@ -454,17 +453,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				var subGroupPanel = this.AddSettingRowsForSubgroup(subGroup);
 				if (subGroupPanel != null)
 				{
-					if (showSubGroupHeadings)
-					{
-						var headingColor = theme.Colors.PrimaryTextColor.AdjustLightness(theme.Colors.IsDarkTheme ? 0.5 : 2.8).ToColor();
-
-						// Section heading
-						groupPanel.AddChild(new TextWidget("  " + subGroup.Name.Localize(), textColor: headingColor, pointSize: theme.FontSize10)
-						{
-							Margin = new BorderDouble(left: 8, top: 6, bottom: 4),
-						});
-					}
-
 					groupPanel.AddChild(subGroupPanel);
 				}
 			}
