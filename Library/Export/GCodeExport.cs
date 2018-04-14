@@ -67,6 +67,10 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public bool Enabled
 		{
+			// TODO: Someday we should show details on why we aren't enabled...
+			//if (!showExportGCodeButton)
+			//	var noGCodeMessage = "Note".Localize() + ": " + "To enable GCode export, select a printer profile.".Localize(),
+
 			get => printer.Settings.PrinterSelected
 				&& !printer.Settings.GetValue<bool>("enable_sailfish_communication");
 		}
