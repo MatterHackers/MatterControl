@@ -309,7 +309,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private TextWidget textWidget;
 
-		public TextButton(string text, ThemeConfig theme)
+		public TextButton(string text, ThemeConfig theme, double pointSize = -1)
 			: base(theme)
 		{
 			this.HAnchor = HAnchor.Fit;
@@ -318,7 +318,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Padding = theme.ButtonFactory.Options.Margin;
 			this.TextColor = theme.Colors.PrimaryTextColor;
 
-			this.AddChild(textWidget = new TextWidget(text, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			var textSize = (pointSize != -1) ? pointSize : theme.DefaultFontSize;
+
+			this.AddChild(textWidget = new TextWidget(text, pointSize: textSize, textColor: theme.Colors.PrimaryTextColor)
 			{
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Center
