@@ -120,15 +120,6 @@
     "DefaultValue": ""
   },
   {
-    "SlicerConfigName": "bridge_fan_speed",
-    "PresentationName": "Bridging Fan Speed",
-    "HelpText": "The speed at which the layer cooling fan will run when bridging, expressed as a percentage of full power.",
-    "DataEditType": "INT",
-    "Units": "%",
-    "ShowIfSet": "has_fan",
-    "DefaultValue": "100"
-  },
-  {
     "SlicerConfigName": "bridge_speed",
     "PresentationName": "Bridges",
     "HelpText": "The speed at which bridging between walls will print.",
@@ -217,16 +208,6 @@
     "DefaultValue": ".2"
   },
   {
-    "SlicerConfigName": "raft_fan_speed_percent",
-    "PresentationName": "Fan Speed",
-    "HelpText": "The speed at which the cooling fan(s) will run during the printing of the raft, expressed as a percentage of full power.",
-    "DataEditType": "POSITIVE_DOUBLE",
-    "Units": "%",
-    "EnableIfSet": "create_raft",
-    "ShowIfSet": "has_fan",
-    "DefaultValue": "100"
-  },
-  {
     "SlicerConfigName": "raft_print_speed",
     "PresentationName": "Raft",
     "HelpText": "The speed at which the layers of the raft (other than the first layer) will print. This can be set explicitly or as a percentage of the Infill speed.",
@@ -234,15 +215,6 @@
     "Units": "mm/s or %",
     "ShowIfSet": "!sla_printer",
     "DefaultValue": "100%"
-  },
-  {
-    "SlicerConfigName": "disable_fan_first_layers",
-    "PresentationName": "Disable Fan For The First",
-    "HelpText": "The number of layers for which the layer cooling fan will be forced off at the start of the print.",
-    "DataEditType": "INT",
-    "Units": "layers",
-    "ShowIfSet": "has_fan",
-    "DefaultValue": "1"
   },
   {
     "SlicerConfigName": "end_gcode",
@@ -344,23 +316,6 @@
     "DataEditType": "DOUBLE_OR_PERCENT",
     "Units": "mm or % leave 0 for auto",
     "DefaultValue": "0"
-  },
-  {
-    "SlicerConfigName": "fan_always_on",
-    "PresentationName": "Keep Fan Always On",
-    "HelpText": "This will force the fan to remain on throughout the print. In general you should have this off and just enable auto cooling.",
-    "DataEditType": "CHECK_BOX",
-    "ShowIfSet": "has_fan",
-    "DefaultValue": "0"
-  },
-  {
-    "SlicerConfigName": "fan_below_layer_time",
-    "PresentationName": "Enable Fan If Layer Print Time Is Below",
-    "HelpText": "If a layer is estimated to take less than this to print, the fan will be turned on.",
-    "DataEditType": "INT",
-    "Units": "seconds",
-    "ShowIfSet": "has_fan",
-    "DefaultValue": "60"
   },
   {
     "SlicerConfigName": "filament_cost",
@@ -581,15 +536,6 @@
     "DataEditType": "LIST",
     "ListValues": "REPRAP,ULTIGCODE,BFB,MACH3",
     "DefaultValue": "REPRAP"
-  },
-  {
-    "SlicerConfigName": "has_fan",
-    "PresentationName": "Has Fan",
-    "HelpText": "The printer has a layer-cooling fan.",
-    "DataEditType": "CHECK_BOX",
-    "ShowIfSet": "!sla_printer",
-    "DefaultValue": "1",
-    "ReloadUiWhenChanged": true
   },
   {
     "SlicerConfigName": "has_z_probe",
@@ -954,15 +900,6 @@
     "DefaultValue": "0"
   },
   {
-    "SlicerConfigName": "max_fan_speed",
-    "PresentationName": "Maximum Fan Speed",
-    "HelpText": "The maximum speed at which the layer cooling fan will run, expressed as a percentage of full power.",
-    "DataEditType": "INT",
-    "Units": "%",
-    "ShowIfSet": "has_fan",
-    "DefaultValue": "100"
-  },
-  {
     "SlicerConfigName": "min_extrusion_before_retract",
     "PresentationName": "Minimum Extrusion Requiring Retraction",
     "HelpText": "The minimum length of filament that must be extruded before a retraction can occur.",
@@ -974,13 +911,82 @@
     "DefaultValue": ".1"
   },
   {
+    "SlicerConfigName": "has_fan",
+    "PresentationName": "Has Fan",
+    "HelpText": "The printer has a layer-cooling fan.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "1",
+    "ReloadUiWhenChanged": true
+  },
+  {
+    "SlicerConfigName": "enable_fan",
+    "PresentationName": "Enable Fan",
+    "HelpText": "Turn the fan on and off regardless of settings.",
+    "DataEditType": "CHECK_BOX",
+    "ReloadUiWhenChanged": true,
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "min_fan_speed_layer_time",
+    "PresentationName": "Turn on if Below",
+    "HelpText": "If the time to print a layer is less than this, the fan will turn on on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.",
+    "DataEditType": "INT",
+    "Units": "seconds",
+    "ShowIfSet": "has_fan",
+    "EnableIfSet": "enable_fan",
+    "DefaultValue": "60"
+  },
+  {
+    "SlicerConfigName": "max_fan_speed_layer_time",
+    "PresentationName": "Run Max if Below",
+    "HelpText": "As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.",
+    "DataEditType": "INT",
+    "Units": "seconds",
+    "ShowIfSet": "has_fan",
+    "EnableIfSet": "enable_fan",
+    "DefaultValue": "30"
+  },
+  {
     "SlicerConfigName": "min_fan_speed",
-    "PresentationName": "Minimum Fan Speed",
+    "PresentationName": "Minimum Speed",
     "HelpText": "The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power.",
     "DataEditType": "INT",
     "Units": "%",
     "ShowIfSet": "has_fan",
+    "EnableIfSet": "enable_fan",
     "DefaultValue": "35"
+  },
+  {
+    "SlicerConfigName": "max_fan_speed",
+    "PresentationName": "Maximum Speed",
+    "HelpText": "The maximum speed at which the layer cooling fan will run, expressed as a percentage of full power.",
+    "DataEditType": "INT",
+    "Units": "%",
+    "ShowIfSet": "has_fan",
+    "EnableIfSet": "enable_fan",
+    "DefaultValue": "100"
+  },
+  {
+    "SlicerConfigName": "bridge_fan_speed",
+    "PresentationName": "Bridging Fan Speed",
+    "HelpText": "The speed at which the layer cooling fan will run when bridging, expressed as a percentage of full power.",
+    "DataEditType": "INT",
+    "Units": "%",
+    "ShowIfSet": "has_fan",
+    "EnableIfSet": "enable_fan",
+    "DefaultValue": "100"
+  },
+  {
+    "SlicerConfigName": "disable_fan_first_layers",
+    "PresentationName": "Disable Fan For The First",
+    "HelpText": "The number of layers for which the layer cooling fan will be forced off at the start of the print.",
+    "DataEditType": "INT",
+    "Units": "layers",
+    "ShowIfSet": "has_fan",
+    "EnableIfSet": "enable_fan",
+    "DefaultValue": "1"
   },
   {
     "SlicerConfigName": "min_print_speed",
@@ -1001,33 +1007,12 @@
     "DefaultValue": "0"
   },
   {
-    "SlicerConfigName": "notes",
-    "PresentationName": "notes",
-    "HelpText": "These notes will be added as comments in the header of the output G-Code.",
-    "DataEditType": "MULTI_LINE_TEXT",
-    "DefaultValue": ""
-  },
-  {
     "SlicerConfigName": "nozzle_diameter",
     "PresentationName": "Nozzle Diameter",
     "HelpText": "The diameter of the extruder's nozzle.",
     "DataEditType": "POSITIVE_DOUBLE",
     "Units": "mm",
     "DefaultValue": "0.5"
-  },
-  {
-    "SlicerConfigName": "ooze_prevention",
-    "PresentationName": "Enable",
-    "HelpText": "This will lower the temperature of the non-printing nozzle to help prevent oozing.",
-    "DataEditType": "CHECK_BOX",
-    "DefaultValue": "0"
-  },
-  {
-    "SlicerConfigName": "overhangs",
-    "PresentationName": "Optimize Overhangs",
-    "HelpText": "Experimental feature that attempts to improve overhangs using the fan and bridge settings.",
-    "DataEditType": "CHECK_BOX",
-    "DefaultValue": "1"
   },
   {
     "SlicerConfigName": "calibration_files",
@@ -1108,13 +1093,6 @@
     "DataEditType": "INT_OR_MM",
     "Units": "count or mm",
     "DefaultValue": "3"
-  },
-  {
-    "SlicerConfigName": "post_process",
-    "PresentationName": "Post-Processing Scripts",
-    "HelpText": "You can include additional programs to process the G-Code after slicer is finished. The complete path of the program to run should be included here.",
-    "DataEditType": "MULTI_LINE_TEXT",
-    "DefaultValue": ""
   },
   {
     "SlicerConfigName": "print_center",

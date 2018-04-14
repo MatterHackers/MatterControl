@@ -229,7 +229,6 @@
     <Compile Include="SetupWizard\DialogWindow.cs" />
     <Compile Include="SlicerConfiguration\SettingsOrganizer.cs" />
     <Compile Include="SlicerConfiguration\SettingsRow.cs" />
-    <Compile Include="SlicerConfiguration\SlicerMapping\SliceEngineMapping.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IpAddessField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\Vector3Field.cs" />
     <Compile Include="Utilities\InspectForm.cs" Condition="'$(Configuration)' == 'Debug'">
@@ -362,7 +361,6 @@
     <Compile Include="Library\Export\IExportPlugin.cs" />
     <Compile Include="SetupWizard\AndroidConnectDevicePage.cs" />
     <Compile Include="SetupWizard\ImportSettingsPage.cs" />
-    <Compile Include="SetupWizard\ExportSettingsPage.cs" />
     <Compile Include="SetupWizard\LicenseAgreementPage.cs" />
     <Compile Include="SetupWizard\PrinterProfileHistoryPage.cs" />
     <Compile Include="ConfigurationPage\RunningMacroPage.cs" />
@@ -419,8 +417,6 @@
     <Compile Include="PartPreviewWindow\PlatingHelper.cs" />
     <Compile Include="PrinterControls\ControlWidgets\MacroControls.cs" />
     <Compile Include="PrinterControls\EditManualMovementSpeedsWindow.cs" />
-    <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingCura.cs" />
-    <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingSlic3r.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\MappingClasses.cs" />
     <Compile Include="ApplicationView\WidescreenPanel.cs" />
     <Compile Include="AboutPage\ContactForm.cs" />

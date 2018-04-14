@@ -27,25 +27,106 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
+using MatterHackers.VectorMath;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using MatterHackers.Agg;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class EngineMappingsMatterSlice : SliceEngineMapping
+	public class EngineMappingsMatterSlice
 	{
 		public static readonly EngineMappingsMatterSlice Instance = new EngineMappingsMatterSlice();
 
-		private HashSet<string> matterSliceSettingNames;
+		/// <summary>
+		/// Application level settings control MatterControl behaviors but aren't used or passed through to the slice engine. Putting settings
+		/// in this list ensures they show up for all slice engines and the lack of a MappedSetting for the engine guarantees that it won't pass
+		/// through into the slicer config file
+		/// </summary>
+		protected HashSet<string> applicationLevelSettings = new HashSet<string>()
+		{
+			SettingsKey.bed_shape,
+			SettingsKey.bed_size,
+			SettingsKey.print_center,
+			SettingsKey.send_with_checksum,
+			SettingsKey.bed_temperature,
+			SettingsKey.build_height,
+			SettingsKey.cancel_gcode,
+			SettingsKey.connect_gcode,
+			SettingsKey.write_regex,
+			SettingsKey.read_regex,
+			SettingsKey.has_fan,
+			SettingsKey.has_hardware_leveling,
+			SettingsKey.has_heated_bed,
+			SettingsKey.has_power_control,
+			SettingsKey.has_sd_card_reader,
+			SettingsKey.printer_name,
+			SettingsKey.auto_connect,
+			SettingsKey.backup_firmware_before_update,
+			SettingsKey.baud_rate,
+			SettingsKey.com_port,
+			SettingsKey.filament_cost,
+			SettingsKey.filament_density,
+			SettingsKey.filament_runout_sensor,
+			SettingsKey.z_probe_z_offset,
+			SettingsKey.use_z_probe,
+			SettingsKey.z_probe_samples,
+			SettingsKey.has_z_probe,
+			SettingsKey.has_z_servo,
+			SettingsKey.z_probe_xy_offset,
+			SettingsKey.z_servo_depolyed_angle,
+			SettingsKey.z_servo_retracted_angle,
+			SettingsKey.pause_gcode,
+			SettingsKey.print_leveling_probe_start,
+			SettingsKey.probe_has_been_calibrated,
+			SettingsKey.print_leveling_required_to_print,
+			SettingsKey.print_leveling_solution,
+			SettingsKey.recover_first_layer_speed,
+			SettingsKey.number_of_first_layers,
+			SettingsKey.recover_is_enabled,
+			SettingsKey.recover_position_before_z_home,
+			SettingsKey.auto_release_motors,
+			SettingsKey.resume_gcode,
+			SettingsKey.temperature,
+			SettingsKey.enable_retractions,
+			"z_homes_to_max",
+
+			// TODO: merge the items below into the list above after some validation - setting that weren't previously mapped to Cura but probably should be.
+			SettingsKey.bed_remove_part_temperature,
+			"extruder_wipe_temperature",
+			SettingsKey.heat_extruder_before_homing,
+			SettingsKey.include_firmware_updater,
+			SettingsKey.sla_printer,
+			"layer_to_pause",
+			SettingsKey.show_reset_connection,
+			SettingsKey.validate_layer_height,
+			SettingsKey.make,
+			SettingsKey.model,
+			SettingsKey.enable_network_printing,
+			SettingsKey.enable_sailfish_communication,
+			SettingsKey.max_velocity,
+			SettingsKey.jerk_velocity,
+			SettingsKey.print_time_estimate_multiplier,
+			SettingsKey.max_acceleration,
+			SettingsKey.ip_address,
+			SettingsKey.ip_port,
+			SettingsKey.progress_reporting,
+			"load_filament_length",
+			"trim_image",
+			"clean_nozzle_image",
+			"insert_image",
+			"running_clean_image",
+			"unload_filament_length",
+			"load_filament_speed",
+		};
 
 		private MappedSetting[] mappedSettings;
+		private HashSet<string> matterSliceSettingNames;
 
 		// Singleton use only - prevent external construction
-		private EngineMappingsMatterSlice() : base("MatterSlice")
+		private EngineMappingsMatterSlice()
 		{
 			mappedSettings = new MappedSetting[]
 			{
@@ -74,21 +155,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MapFirstValue("retract_restart_extra", "unretractExtraExtrusion"),
 				new MapFirstValue("retract_restart_extra_time_to_apply", "retractRestartExtraTimeToApply"),
 				new MapFirstValue("retract_speed", "retractionSpeed"),
-				new MappedSetting("bridge_fan_speed", "bridgeFanSpeedPercent"),
 				new OverrideSpeedOnSlaPrinters("bridge_speed", "bridgeSpeed", "infill_speed"),
-				new MappedSetting("disable_fan_first_layers", "firstLayerToAllowFan"),
 				new MappedSetting("extrusion_multiplier", "extrusionMultiplier"),
 				new MappedSetting("fill_angle", "infillStartingAngle"),
 				new AsPercentOfReferenceOrDirect(SettingsKey.infill_overlap_perimeter, "infillExtendIntoPerimeter", SettingsKey.nozzle_diameter, change0ToReference: false),
 				new OverrideSpeedOnSlaPrinters("infill_speed", "infillSpeed", "infill_speed"),
 				new MappedSetting("infill_type", "infillType"),
-				new MappedSetting("max_fan_speed", "fanSpeedMaxPercent"),
 				new MappedSetting("min_extrusion_before_retract", "minimumExtrusionBeforeRetraction"),
-				new MappedSetting("min_fan_speed", "fanSpeedMinPercent"),
 				new MappedSetting("min_print_speed", "minimumPrintingSpeed"),
 				new OverrideSpeedOnSlaPrinters("perimeter_speed", "insidePerimetersSpeed", "infill_speed"),
 				new MappedSetting("raft_air_gap", "raftAirGap"),
-				new MappedSetting("raft_fan_speed_percent", "raftFanSpeedPercent"),
+				// fan settings
+				new VisibleButNotMappedToEngine("enable_fan"), // this is considred when sending fan speeds to slicing
+				new MappedFanSpeedSetting("min_fan_speed", "fanSpeedMinPercent"),
+				new MappedSetting("min_fan_speed_layer_time", "minFanSpeedLayerTime"),
+				new MappedFanSpeedSetting("max_fan_speed", "fanSpeedMaxPercent"),
+				new MappedSetting("max_fan_speed_layer_time", "maxFanSpeedLayerTime"),
+				new MappedFanSpeedSetting("bridge_fan_speed", "bridgeFanSpeedPercent"),
+				new MappedSetting("disable_fan_first_layers", "firstLayerToAllowFan"),
+				// end fan
 				new MappedSetting("retract_length_tool_change", "retractionOnExtruderSwitch"),
 				new MappedSetting("retract_restart_extra_toolchange", "unretractExtraOnExtruderSwitch"),
 				new MappedToBoolString("reset_long_extrusion", "resetLongExtrusion"),
@@ -137,10 +222,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new VisibleButNotMappedToEngine(SettingsKey.laser_speed_025),
 				new VisibleButNotMappedToEngine(SettingsKey.laser_speed_100),
 				new VisibleButNotMappedToEngine("selector_ip_address"),
+				new VisibleButNotMappedToEngine("selector_ip_address"),
 			};
 
 			matterSliceSettingNames = new HashSet<string>(mappedSettings.Select(m => m.CanonicalSettingsName));
 		}
+
+		public string Name => "MatterSlice";
 
 		public static void WriteSliceSettingsFile(string outputFilename)
 		{
@@ -156,10 +244,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public override bool MapContains(string canonicalSettingsName)
+		public bool MapContains(string canonicalSettingsName)
 		{
 			return matterSliceSettingNames.Contains(canonicalSettingsName)
-				|| base.applicationLevelSettings.Contains(canonicalSettingsName);
+				|| applicationLevelSettings.Contains(canonicalSettingsName);
 		}
 
 		public class ExtruderOffsets : MappedSetting
