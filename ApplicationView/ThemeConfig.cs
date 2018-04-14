@@ -78,11 +78,6 @@ namespace MatterHackers.MatterControl
 		public TextImageButtonFactory MicroButton { get; private set; }
 		public TextImageButtonFactory MicroButtonMenu { get; private set; }
 
-		/// <summary>
-		/// Used to make buttons in menu rows where the background color is consistently white
-		/// </summary>
-		public TextImageButtonFactory MenuButtonFactory { get; private set; }
-
 		public int SplitterWidth => (int)(6 * (GuiWidget.DeviceScale <= 1 ? GuiWidget.DeviceScale : GuiWidget.DeviceScale * 1.4));
 
 		public IThemeColors Colors { get; set; }
@@ -185,11 +180,6 @@ namespace MatterHackers.MatterControl
 				PressedTextColor = Color.Black,
 				PressedFillColor = Color.LightGray,
 			};
-
-			this.MenuButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonGray)
-			{
-				Margin = new BorderDouble(8, 0)
-			});
 
 			this.MicroButton = new TextImageButtonFactory(new ButtonFactoryOptions()
 			{

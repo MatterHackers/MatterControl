@@ -67,9 +67,12 @@ namespace MatterHackers.MatterControl.ActionBar
 					GCode = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "load_filament.txt"))
 				};
 
-				Button loadButton = theme.MenuButtonFactory.Generate("Load".Localize());
-				loadButton.Margin = theme.ButtonSpacing;
-				loadButton.ToolTipText = "Load filament".Localize();
+				var loadButton = new TextButton("Load".Localize(), theme)
+				{
+					BackgroundColor = theme.SlightShade,
+					Margin = theme.ButtonSpacing,
+					ToolTipText = "Load filament".Localize()
+				};
 				loadButton.Click += (s, e) => loadFilament.Run(printer.Connection);
 				macroButtons.AddChild(loadButton);
 
@@ -78,9 +81,12 @@ namespace MatterHackers.MatterControl.ActionBar
 					GCode = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "unload_filament.txt"))
 				};
 
-				Button unloadButton = theme.MenuButtonFactory.Generate("Unload".Localize());
-				unloadButton.Margin = theme.ButtonSpacing;
-				loadButton.ToolTipText = "Unload filament".Localize();
+				var unloadButton = new TextButton("Unload".Localize(), theme)
+				{
+					BackgroundColor = theme.SlightShade,
+					Margin = theme.ButtonSpacing,
+					ToolTipText = "Unload filament".Localize()
+				};
 				unloadButton.Click += (s, e) => unloadFilament.Run(printer.Connection);
 				macroButtons.AddChild(unloadButton);
 
@@ -95,9 +101,12 @@ namespace MatterHackers.MatterControl.ActionBar
 				Padding = theme.ToolbarPadding,
 			};
 
-			var retractButton = theme.MenuButtonFactory.Generate("Retract".Localize());
-			retractButton.Margin = theme.ButtonSpacing;
-			retractButton.ToolTipText = "Retract filament".Localize();
+			var retractButton = new TextButton("Retract".Localize(), theme)
+			{
+				BackgroundColor = theme.SlightShade,
+				Margin = theme.ButtonSpacing,
+				ToolTipText = "Retract filament".Localize()
+			};
 			retractButton.Click += (s, e) =>
 			{
 				printer.Connection.MoveExtruderRelative(moveAmount * -1, printer.Settings.EFeedRate(extruderIndex), extruderIndex);
@@ -106,10 +115,13 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			int extruderButtonTopMargin = macroButtons == null ? 8 : 0;
 
-			var extrudeButton = theme.MenuButtonFactory.Generate("Extrude".Localize());
-			extrudeButton.Margin = theme.ButtonSpacing;
-			extrudeButton.Name = "Extrude Button";
-			extrudeButton.ToolTipText = "Extrude filament".Localize();
+			var extrudeButton = new TextButton("Extrude".Localize(), theme)
+			{
+				BackgroundColor = theme.SlightShade,
+				Margin = theme.ButtonSpacing,
+				Name = "Extrude Button",
+				ToolTipText = "Extrude filament".Localize()
+			};
 			extrudeButton.Click += (s, e) =>
 			{
 				printer.Connection.MoveExtruderRelative(moveAmount, printer.Settings.EFeedRate(extruderIndex), extruderIndex);
@@ -164,7 +176,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			tenButton.Checked = true;
 
-			moveButtonsContainer.AddChild(new TextWidget("mm", textColor: theme.MenuButtonFactory.Options.NormalTextColor, pointSize: 8)
+			moveButtonsContainer.AddChild(new TextWidget("mm", textColor: theme.Colors.PrimaryTextColor, pointSize: 8)
 			{
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(3, 0)
