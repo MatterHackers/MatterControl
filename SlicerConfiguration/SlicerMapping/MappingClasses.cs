@@ -123,6 +123,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public virtual string Value => ActiveSliceSettings.Instance.GetValue(CanonicalSettingsName);
 	}
 
+	public class MappedFanSpeedSetting : MappedSetting
+	{
+		public MappedFanSpeedSetting(string canonicalSettingsName, string exportedName)
+			: base(canonicalSettingsName, exportedName)
+		{
+		}
+		public override string Value
+		{
+			get
+			{
+				if (ActiveSliceSettings.Instance.GetValue<bool>("enable_fan"))
+				{
+					return base.Value;
+				}
+
+				return "0";
+			}
+		}
+	}
+
 	public class Slice3rBedShape : MappedSetting
 	{
 		public Slice3rBedShape(string canonicalSettingsName)

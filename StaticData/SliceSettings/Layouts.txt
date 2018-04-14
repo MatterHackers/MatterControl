@@ -45,6 +45,9 @@ Advanced
         number_of_first_layers
     Fan
       Fan
+        enable_fan
+        min_fan_speed_layer_time
+        max_fan_speed_layer_time
         min_fan_speed
         max_fan_speed
         bridge_fan_speed
@@ -61,7 +64,6 @@ Advanced
       Raft
         raft_extra_distance_around_part
         raft_air_gap
-        raft_fan_speed_percent
         raft_extruder
     Skirt
       Skirt

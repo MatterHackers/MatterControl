@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						if (_checked)
 						{
-							this.UncheckAllOtherRadioButtons();
+							this.UncheckSiblings();
 						}
 
 						this.CheckedStateChanged?.Invoke(this, null);

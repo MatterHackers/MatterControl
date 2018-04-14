@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			menuItem = popupMenu.CreateMenuItem("Export".Localize());
 			menuItem.Click += (s, e) =>
 			{
-				DialogWindow.Show<ExportSettingsPage>();
+				ActiveSliceSettings.Instance.Helpers.ExportAsMatterControlConfig();
 			};
 
 			menuItem = popupMenu.CreateMenuItem("Restore Settings".Localize());

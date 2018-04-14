@@ -384,31 +384,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			});
 		}
 
-		public void ExportAsSlic3rConfig()
-		{
-			AggContext.FileDialogs.SaveFileDialog(
-				new SaveFileDialogParams("Save Slice Configuration".Localize() + "|*.ini")
-				{
-					FileName = printerSettings.GetValue(SettingsKey.printer_name)
-				},
-				(saveParams) =>
-				{
-					try
-					{
-						if (!string.IsNullOrWhiteSpace(saveParams.FileName))
-						{
-							Slic3rEngineMappings.WriteSliceSettingsFile(saveParams.FileName);
-						}
-					}
-					catch (Exception e)
-					{
-						UiThread.RunOnIdle (() => {
-							StyledMessageBox.ShowMessageBox(e.Message, "Couldn't save file".Localize());
-						});
-					}
-				});
-		}
-
 		public void ExportAsCuraConfig()
 		{
 			throw new NotImplementedException();
