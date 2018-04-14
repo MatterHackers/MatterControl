@@ -448,9 +448,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var sectionWidget = new SectionWidget(group.Name.Localize(), groupPanel, theme, serializationKey: userSettingsKey).ApplyBoxStyle();
 
+			bool firstRow = true;
+
 			foreach (var subGroup in group.SubGroups)
 			{
-				var subGroupPanel = this.AddSettingRowsForSubgroup(subGroup);
+				var subGroupPanel = this.AddSettingRowsForSubgroup(subGroup, ref firstRow);
 				if (subGroupPanel != null)
 				{
 					groupPanel.AddChild(subGroupPanel);
@@ -460,7 +462,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return sectionWidget;
 		}
 
-		private GuiWidget AddSettingRowsForSubgroup(SettingsOrganizer.SubGroup subGroup)
+		private GuiWidget AddSettingRowsForSubgroup(SettingsOrganizer.SubGroup subGroup, ref bool firstRow)
 		{
 			var topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -468,7 +470,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			GuiWidget settingsRow = null;
-			bool firstRow = true;
 
 			foreach (SliceSettingData settingData in subGroup.Settings)
 			{
