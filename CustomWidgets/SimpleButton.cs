@@ -305,6 +305,86 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 	}
 
+	public class RadioTextButton : TextButton, IRadioButton
+	{
+		public IList<GuiWidget> SiblingRadioButtonList { get; set; }
+
+		public event EventHandler CheckedStateChanged;
+
+		public RadioTextButton(string text, ThemeConfig theme, double pointSize = -1)
+			: base(text, theme, pointSize)
+		{
+			this.SelectedBackgroundColor = theme.SlightShade;
+		}
+
+		public override void OnClick(MouseEventArgs mouseEvent)
+		{
+			base.OnClick(mouseEvent);
+
+			bool newValue = true;
+
+			bool checkStateChanged = (newValue != this.Checked);
+
+			this.Checked = newValue;
+
+			// After setting CheckedState, fire event if different
+			if (checkStateChanged)
+			{
+				OnCheckStateChanged();
+			}
+		}
+
+		public Color SelectedBackgroundColor { get; set; }
+		public Color UnselectedBackgroundColor { get; set; }
+
+		private bool _checked;
+		public bool Checked
+		{
+			get => _checked;
+			set
+			{
+				if (_checked != value)
+				{
+					_checked = value;
+					if (_checked)
+					{
+						this.UncheckSiblings();
+					}
+
+				}
+
+				this.BackgroundColor = (_checked) ? this.SelectedBackgroundColor : this.UnselectedBackgroundColor;
+			}
+		}
+
+		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
+		{
+			base.OnMouseEnterBounds(mouseEvent);
+			this.Invalidate();
+		}
+
+		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
+		{
+			base.OnMouseLeaveBounds(mouseEvent);
+			this.Invalidate();
+		}
+
+		public virtual void OnCheckStateChanged()
+		{
+			CheckedStateChanged?.Invoke(this, null);
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			if (this.Checked)
+			{
+				graphics2D.Rectangle(LocalBounds.Left, 0, LocalBounds.Right, 2, theme.Colors.PrimaryAccentColor);
+			}
+
+			base.OnDraw(graphics2D);
+		}
+	}
+
 	public class TextButton : SimpleButton
 	{
 		private TextWidget textWidget;

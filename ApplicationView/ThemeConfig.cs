@@ -48,6 +48,7 @@ namespace MatterHackers.MatterControl
 		private static ImageBuffer restorePressed;
 
 		public int FontSize7 { get; } = 7;
+		public int FontSize8 { get; } = 8;
 		public int FontSize9 { get; } = 9;
 		public int FontSize10 { get; } = 10;
 		public int FontSize11 { get; } = 11;
@@ -61,6 +62,8 @@ namespace MatterHackers.MatterControl
 		public int DefaultFontSize { get; } = 11;
 		public int H1PointSize { get; set; } = 11;
 		public double ButtonHeight { get; internal set; } = 32;
+		public double MicroButtonHeight { get; internal set; } = 20 * GuiWidget.DeviceScale;
+		public double MicroButtonWidth { get; internal set; } = 30 * GuiWidget.DeviceScale;
 
 		/// <summary>
 		/// Indicates if icons should be inverted due to black source images on a dark theme
@@ -75,8 +78,6 @@ namespace MatterHackers.MatterControl
 		public TextImageButtonFactory WhiteButtonFactory { get; private set; }
 		public TextImageButtonFactory ButtonFactory { get; private set; }
 		public TextImageButtonFactory WizardButtons { get; private set; }
-		public TextImageButtonFactory MicroButton { get; private set; }
-		public TextImageButtonFactory MicroButtonMenu { get; private set; }
 
 		public int SplitterWidth => (int)(6 * (GuiWidget.DeviceScale <= 1 ? GuiWidget.DeviceScale : GuiWidget.DeviceScale * 1.4));
 
@@ -181,25 +182,6 @@ namespace MatterHackers.MatterControl
 				PressedFillColor = Color.LightGray,
 			};
 
-			this.MicroButton = new TextImageButtonFactory(new ButtonFactoryOptions()
-			{
-				FixedHeight = 20 * GuiWidget.DeviceScale,
-				FixedWidth = 30 * GuiWidget.DeviceScale,
-				FontSize = 8,
-				Margin = 0,
-				CheckedBorderColor = colors.PrimaryTextColor
-			});
-
-			this.MicroButtonMenu = new TextImageButtonFactory(new ButtonFactoryOptions(commonGray)
-			{
-				FixedHeight = 20 * GuiWidget.DeviceScale,
-				FixedWidth = 30 * GuiWidget.DeviceScale,
-				FontSize = 8,
-				Margin = 0,
-				BorderWidth = 1,
-				CheckedBorderColor = Color.Black
-			});
-
 #region PartPreviewWidget
 
 			WhiteButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
@@ -224,6 +206,27 @@ namespace MatterHackers.MatterControl
 				fontSize = FontSize11,
 				textColor = colors.PrimaryTextColor
 			};
+		}
+
+		public RadioTextButton CreateMicroRadioButton(string text, IList<GuiWidget> siblingRadioButtonList = null)
+		{
+			var radioButton = new RadioTextButton(text, this, this.FontSize8)
+			{
+				SiblingRadioButtonList = siblingRadioButtonList,
+				Padding = new BorderDouble(5, 0),
+				SelectedBackgroundColor = this.SlightShade,
+				UnselectedBackgroundColor = this.SlightShade,
+				HoverColor = new Color(this.Colors.PrimaryAccentColor, 50),
+				Margin = new BorderDouble(right: 1),
+				HAnchor = HAnchor.Absolute,
+				Height = this.MicroButtonHeight,
+				Width = this.MicroButtonWidth
+			};
+
+			// Add to sibling list if supplied
+			siblingRadioButtonList?.Add(radioButton);
+
+			return radioButton;
 		}
 
 		public Color GetBorderColor(int alpha)

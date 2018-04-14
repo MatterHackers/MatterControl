@@ -141,8 +141,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				Padding = theme.ToolbarPadding,
 			};
 
-			RadioButton oneButton = theme.MicroButtonMenu.GenerateRadioButton("1");
-			oneButton.VAnchor = VAnchor.Center;
+			var oneButton = theme.CreateMicroRadioButton("1");
 			oneButton.CheckedStateChanged += (s, e) =>
 			{
 				if (oneButton.Checked)
@@ -152,8 +151,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			moveButtonsContainer.AddChild(oneButton);
 
-			RadioButton tenButton = theme.MicroButtonMenu.GenerateRadioButton("10");
-			tenButton.VAnchor = VAnchor.Center;
+			var tenButton = theme.CreateMicroRadioButton("10");
 			tenButton.CheckedStateChanged += (s, e) =>
 			{
 				if (tenButton.Checked)
@@ -163,8 +161,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			moveButtonsContainer.AddChild(tenButton);
 
-			RadioButton oneHundredButton = theme.MicroButtonMenu.GenerateRadioButton("100");
-			oneHundredButton.VAnchor = VAnchor.Center;
+			var oneHundredButton = theme.CreateMicroRadioButton("100");
 			oneHundredButton.CheckedStateChanged += (s, e) =>
 			{
 				if (oneHundredButton.Checked)

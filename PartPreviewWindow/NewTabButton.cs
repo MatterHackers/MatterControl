@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -49,8 +48,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			IconButton = new IconButton(imageBuffer, theme)
 			{
 				HAnchor = HAnchor.Left,
-				Height = theme.MicroButton.Options.FixedHeight,
-				Width = theme.MicroButton.Options.FixedHeight,
+				Height = theme.MicroButtonHeight,
+				Width = theme.MicroButtonHeight,
 				Margin = new BorderDouble(left: 10),
 				Name = "Create New",
 			};
@@ -65,8 +64,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			ChromeTab.DrawTabLowerLeft(
-				graphics2D, 
-				this.LocalBounds, 
+				graphics2D,
+				this.LocalBounds,
 				(parentTabControl.ActiveTab == this.LastTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
 
 			base.OnDraw(graphics2D);
