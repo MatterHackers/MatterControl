@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// TODO: add in the printers and designs that are currently open (or were open last run).
 			var leadingTabAdornment = new GuiWidget()
 			{
-				MinimumSize = new Vector2(16, theme.shortButtonHeight),
+				MinimumSize = new Vector2(16, theme.TabButtonHeight),
 				VAnchor = VAnchor.Bottom
 			};
 			leadingTabAdornment.AfterDraw += (s, e) =>
@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				theme)
 			{
 				VAnchor = VAnchor.Bottom,
-				MinimumSize = new Vector2(16, theme.shortButtonHeight),
+				MinimumSize = new Vector2(16, theme.TabButtonHeight),
 				ToolTipText = "Create New".Localize()
 			};
 			plusTabButton.IconButton.Click += (s, e) =>
@@ -211,7 +211,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddTab(
 					new ChromeTab("New Tab".Localize(), this, this.NewTabPage(), theme)
 					{
-						MinimumSize = new Vector2(0, theme.shortButtonHeight)
+						MinimumSize = new Vector2(0, theme.TabButtonHeight)
 					});
 			};
 

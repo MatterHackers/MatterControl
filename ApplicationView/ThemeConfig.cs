@@ -55,7 +55,6 @@ namespace MatterHackers.MatterControl
 		public int FontSize12 { get; } = 12;
 		public int FontSize14 { get; } = 14;
 
-		internal readonly int shortButtonHeight = 30;
 		private readonly int defaultScrollBarWidth = 120;
 		private readonly int sideBarButtonWidth = 138;
 
@@ -64,6 +63,7 @@ namespace MatterHackers.MatterControl
 		public double ButtonHeight { get; internal set; } = 32;
 		public double MicroButtonHeight { get; internal set; } = 20 * GuiWidget.DeviceScale;
 		public double MicroButtonWidth { get; internal set; } = 30 * GuiWidget.DeviceScale;
+		public double TabButtonHeight { get; internal set; } = 30 * GuiWidget.DeviceScale;
 
 		/// <summary>
 		/// Indicates if icons should be inverted due to black source images on a dark theme
@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl
 			WhiteButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
 			{
 				FixedWidth = sideBarButtonWidth,
-				FixedHeight = shortButtonHeight,
+				FixedHeight = TabButtonHeight,
 
 				NormalTextColor = Color.Black,
 				NormalFillColor = Color.White,
