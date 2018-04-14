@@ -221,7 +221,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(0, (int)emulator.CurrentExtruder.TargetTemperature);
 
 					// and the heat toggle is showing on
-					CheckBox heatToggle = testRunner.GetWidgetByName("Toggle Heater", out _) as CheckBox;
+					ICheckbox heatToggle = testRunner.GetWidgetByName("Toggle Heater", out _) as ICheckbox;
 					Assert.IsFalse(heatToggle.Checked);
 
 					// turn it on

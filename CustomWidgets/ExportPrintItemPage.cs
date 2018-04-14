@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -40,7 +39,6 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.Library.Export;
-using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
@@ -60,11 +58,6 @@ namespace MatterHackers.MatterControl
 			this.libraryItems = libraryItems;
 			this.Name = "Export Item Window";
 
-			CreateWindowContent();
-		}
-
-		public void CreateWindowContent()
-		{
 			var commonMargin = new BorderDouble(4, 2);
 
 			bool isFirstItem = true;
@@ -73,51 +66,46 @@ namespace MatterHackers.MatterControl
 			var printer = ApplicationController.Instance.ActivePrinter;
 
 			// GCode export
-			bool showExportGCodeButton = printer.Settings.PrinterSelected;
-			if (showExportGCodeButton)
+			exportPluginButtons = new Dictionary<RadioButton, IExportPlugin>();
+
+			foreach (IExportPlugin plugin in PluginFinder.CreateInstancesOf<IExportPlugin>().OrderBy(p => p.ButtonText))
 			{
-				exportPluginButtons = new Dictionary<RadioButton, IExportPlugin>();
+				plugin.Initialize(printer);
 
-
-				foreach (IExportPlugin plugin in PluginFinder.CreateInstancesOf<IExportPlugin>().OrderBy(p => p.ButtonText))
+				// Skip plugins which are invalid for the current printer
+				if (!plugin.Enabled)
 				{
-					plugin.Initialize(printer);
-
-					// Skip plugins which are invalid for the current printer
-					if (!plugin.Enabled)
-					{
-						continue;
-					}
-
-					// Create export button for each plugin
-					var pluginButton = new RadioButton(new RadioImageWidget(plugin.ButtonText, plugin.Icon))
-					{
-						HAnchor = HAnchor.Left,
-						Margin = commonMargin,
-						Cursor = Cursors.Hand,
-						Name = plugin.ButtonText + " Button"
-					};
-					contentRow.AddChild(pluginButton);
-
-					if (isFirstItem)
-					{
-						pluginButton.Checked = true;
-						isFirstItem = false;
-					}
-
-					if (plugin is IExportWithOptions pluginWithOptions)
-					{
-						var optionPanel = pluginWithOptions.GetOptionsPanel();
-						if (optionPanel != null)
-						{
-							optionPanel.HAnchor = HAnchor.Stretch;
-							optionPanel.VAnchor = VAnchor.Fit;
-							contentRow.AddChild(optionPanel);
-						}
-					}
-
-					exportPluginButtons.Add(pluginButton, plugin);
+					continue;
 				}
+
+				// Create export button for each plugin
+				var pluginButton = new RadioButton(new RadioImageWidget(plugin.ButtonText, plugin.Icon))
+				{
+					HAnchor = HAnchor.Left,
+					Margin = commonMargin,
+					Cursor = Cursors.Hand,
+					Name = plugin.ButtonText + " Button"
+				};
+				contentRow.AddChild(pluginButton);
+
+				if (isFirstItem)
+				{
+					pluginButton.Checked = true;
+					isFirstItem = false;
+				}
+
+				if (plugin is IExportWithOptions pluginWithOptions)
+				{
+					var optionPanel = pluginWithOptions.GetOptionsPanel();
+					if (optionPanel != null)
+					{
+						optionPanel.HAnchor = HAnchor.Stretch;
+						optionPanel.VAnchor = VAnchor.Fit;
+						contentRow.AddChild(optionPanel);
+					}
+				}
+
+				exportPluginButtons.Add(pluginButton, plugin);
 			}
 
 			contentRow.AddChild(new VerticalSpacer());
@@ -132,16 +120,6 @@ namespace MatterHackers.MatterControl
 					Cursor = Cursors.Hand
 				};
 				contentRow.AddChild(showInFolderAfterSave);
-			}
-
-			if (!showExportGCodeButton)
-			{
-				var noGCodeMessage = new TextWidget(
-					"Note".Localize() + ": " + "To enable GCode export, select a printer profile.".Localize(), 
-					textColor: ActiveTheme.Instance.PrimaryTextColor, 
-					pointSize: 10);
-				noGCodeMessage.HAnchor = HAnchor.Left;
-				contentRow.AddChild(noGCodeMessage);
 			}
 
 			var exportButton = textImageButtonFactory.Generate("Export".Localize());
