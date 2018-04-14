@@ -1643,7 +1643,7 @@ namespace MatterHackers.MatterControl
 
 		public async Task MonitorPrintTask(PrinterConfig printer)
 		{
-			string layerDetails = (printer.Bed.LoadedGCode.LayerCount > 0) ? $" of {printer.Bed.LoadedGCode.LayerCount}" : "";
+			string layerDetails = (printer.Bed.LoadedGCode?.LayerCount > 0) ? $" of {printer.Bed.LoadedGCode.LayerCount}" : "";
 
 			await ApplicationController.Instance.Tasks.Execute(
 				"Printing".Localize(),
