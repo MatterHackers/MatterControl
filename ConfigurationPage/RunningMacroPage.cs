@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			if (macroData.waitOk | macroData.expireTime > 0)
 			{
-				Button okButton = textImageButtonFactory.Generate("Continue".Localize());
+				var okButton = theme.CreateDialogButton("Continue".Localize());
 				okButton.Click += (s, e) =>
 				{
 					printer.Connection.MacroContinue();

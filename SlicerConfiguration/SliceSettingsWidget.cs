@@ -158,7 +158,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private PrinterConfig printer;
 		private SettingsContext settingsContext;
 		private bool isPrimarySettingsView;
-		private bool showSubGroupHeadings = false;
 
 		private SearchInputBox searchPanel;
 		private int groupPanelCount = 0;
@@ -447,63 +446,38 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				nameSanitizer.Replace(group.Category.Name, ""),
 				nameSanitizer.Replace(group.Name, ""));
 
-			var sectionWidget = new SectionWidget(group.Name.Localize(), groupPanel, theme, serializationKey: userSettingsKey).ApplyBoxStyle();
+			var sectionWidget = new SectionWidget(group.Name.Localize(), groupPanel, theme, serializationKey: userSettingsKey);
+			theme.ApplyBoxStyle(sectionWidget);
+
+			bool firstRow = true;
+			GuiWidget settingsRow = null;
 
 			foreach (var subGroup in group.SubGroups)
 			{
-				var subGroupPanel = this.AddSettingRowsForSubgroup(subGroup);
-				if (subGroupPanel != null)
+				// Add SettingRows for subgroup
+				foreach (SliceSettingData settingData in subGroup.Settings)
 				{
-					if (showSubGroupHeadings)
-					{
-						var headingColor = theme.Colors.PrimaryTextColor.AdjustLightness(theme.Colors.IsDarkTheme ? 0.5 : 2.8).ToColor();
+					// Note: tab sections may disappear if / when they are empty, as controlled by:
+					// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
+					bool settingShouldBeShown = CheckIfShouldBeShown(settingData, settingsContext);
 
-						// Section heading
-						groupPanel.AddChild(new TextWidget("  " + subGroup.Name.Localize(), textColor: headingColor, pointSize: theme.FontSize10)
+					if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName)
+						&& settingShouldBeShown)
+					{
+						settingsRow = CreateItemRow(settingData);
+
+						if (firstRow)
 						{
-							Margin = new BorderDouble(left: 8, top: 6, bottom: 4),
-						});
+							// First row needs top and bottom border
+							settingsRow.Border = new BorderDouble(0, 1);
+
+							firstRow = false;
+						}
+
+						this.settingsRows.Add((settingsRow, settingData));
+
+						groupPanel.AddChild(settingsRow);
 					}
-
-					groupPanel.AddChild(subGroupPanel);
-				}
-			}
-
-			return sectionWidget;
-		}
-
-		private GuiWidget AddSettingRowsForSubgroup(SettingsOrganizer.SubGroup subGroup)
-		{
-			var topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-			};
-
-			GuiWidget settingsRow = null;
-			bool firstRow = true;
-
-			foreach (SliceSettingData settingData in subGroup.Settings)
-			{
-				// Note: tab sections may disappear if / when they are empty, as controlled by:
-				// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
-				bool settingShouldBeShown = CheckIfShouldBeShown(settingData, settingsContext);
-
-				if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName)
-					&& settingShouldBeShown)
-				{
-					settingsRow = CreateItemRow(settingData);
-
-					if (firstRow)
-					{
-						// First row needs top and bottom border
-						settingsRow.Border = new BorderDouble(0, 1);
-
-						firstRow = false;
-					}
-
-					this.settingsRows.Add((settingsRow, settingData));
-
-					topToBottomSettings.AddChild(settingsRow);
 				}
 			}
 
@@ -513,7 +487,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				settingsRow.BorderColor = Color.Transparent;
 			}
 
-			return (topToBottomSettings.Children.Any()) ? topToBottomSettings : null;
+			return sectionWidget;
 		}
 
 		private static bool CheckIfShouldBeShown(SliceSettingData settingData, SettingsContext settingsContext)

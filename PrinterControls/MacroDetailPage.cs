@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl
 
 			contentRow.AddChild(container);
 
-			Button addMacroButton = textImageButtonFactory.Generate("Save".Localize());
+			var addMacroButton = theme.CreateDialogButton("Save".Localize());
 			addMacroButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>

@@ -101,32 +101,37 @@ namespace MatterHackers.MatterControl
 					//setMoveDistanceControl.AddChild(buttonsLabel);
 
 					{
-						var buttonFactory = ApplicationController.Instance.Theme.MicroButton;
+						var moveRadioButtons = new FlowLayoutWidget();
+						var radioList = new List<GuiWidget>();
 
-						FlowLayoutWidget moveRadioButtons = new FlowLayoutWidget();
-
-						var radioList = new ObservableCollection<GuiWidget>();
-
-						movePointZeroTwoMmButton = buttonFactory.GenerateRadioButton("0.02");
-						movePointZeroTwoMmButton.VAnchor = VAnchor.Center;
-						movePointZeroTwoMmButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(.02); };
-						movePointZeroTwoMmButton.SiblingRadioButtonList = radioList;
-						radioList.Add(movePointZeroTwoMmButton);
+						movePointZeroTwoMmButton = theme.CreateMicroRadioButton("0.02", radioList);
+						movePointZeroTwoMmButton.CheckedStateChanged += (s, e) =>
+						{
+							if (movePointZeroTwoMmButton.Checked)
+							{
+								SetXYZMoveAmount(.02);
+							}
+						};
 						moveRadioButtons.AddChild(movePointZeroTwoMmButton);
 
-						RadioButton pointOneButton = buttonFactory.GenerateRadioButton("0.1");
-						pointOneButton.VAnchor = VAnchor.Center;
-						pointOneButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(.1); };
-						pointOneButton.SiblingRadioButtonList = radioList;
-						radioList.Add(pointOneButton);
+						var pointOneButton = theme.CreateMicroRadioButton("0.1", radioList);
+						pointOneButton.CheckedStateChanged += (s, e) =>
+						{
+							if (pointOneButton.Checked)
+							{
+								SetXYZMoveAmount(.1);
+							}
+						};
 						moveRadioButtons.AddChild(pointOneButton);
 
-						moveOneMmButton = buttonFactory.GenerateRadioButton("1");
-						moveOneMmButton.VAnchor = VAnchor.Center;
-						moveOneMmButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(1); };
-						moveOneMmButton.SiblingRadioButtonList = radioList;
-						radioList.Add(moveOneMmButton);
-
+						moveOneMmButton = theme.CreateMicroRadioButton("1", radioList);
+						moveOneMmButton.CheckedStateChanged += (s, e) =>
+						{
+							if (moveOneMmButton.Checked)
+							{
+								SetXYZMoveAmount(1);
+							}
+						};
 						moveRadioButtons.AddChild(moveOneMmButton);
 
 						tooBigForBabyStepping = new DisableableWidget()
@@ -138,20 +143,24 @@ namespace MatterHackers.MatterControl
 						var tooBigFlowLayout = new FlowLayoutWidget();
 						tooBigForBabyStepping.AddChild(tooBigFlowLayout);
 
-						tenButton = buttonFactory.GenerateRadioButton("10");
-						tenButton.VAnchor = VAnchor.Center;
-						tenButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(10); };
-						tenButton.SiblingRadioButtonList = radioList;
-						radioList.Add(tenButton);
-
+						tenButton = theme.CreateMicroRadioButton("10", radioList);
+						tenButton.CheckedStateChanged += (s, e) =>
+						{
+							if (tenButton.Checked)
+							{
+								SetXYZMoveAmount(10);
+							}
+						};
 						tooBigFlowLayout.AddChild(tenButton);
 
-						oneHundredButton = buttonFactory.GenerateRadioButton("100");
-						oneHundredButton.VAnchor = VAnchor.Center;
-						oneHundredButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(100); };
-						oneHundredButton.SiblingRadioButtonList = radioList;
-						radioList.Add(oneHundredButton);
-
+						oneHundredButton = theme.CreateMicroRadioButton("100", radioList);
+						oneHundredButton.CheckedStateChanged += (s, e) =>
+						{
+							if (oneHundredButton.Checked)
+							{
+								SetXYZMoveAmount(100);
+							}
+						};
 						tooBigFlowLayout.AddChild(oneHundredButton);
 
 						moveRadioButtons.AddChild(tooBigForBabyStepping);
@@ -260,12 +269,12 @@ namespace MatterHackers.MatterControl
 
 		private List<ExtrudeButton> eMinusButtons = new List<ExtrudeButton>();
 		private List<ExtrudeButton> ePlusButtons = new List<ExtrudeButton>();
-		private RadioButton oneHundredButton;
-		private RadioButton tenButton;
+		private RadioTextButton movePointZeroTwoMmButton;
+		private RadioTextButton moveOneMmButton;
+		private RadioTextButton oneHundredButton;
+		private RadioTextButton tenButton;
 		private DisableableWidget disableableEButtons;
 		private DisableableWidget tooBigForBabyStepping;
-		private RadioButton movePointZeroTwoMmButton;
-		private RadioButton moveOneMmButton;
 		private GuiWidget keyboardFocusBorder;
 		private ImageWidget keyboardImage;
 		private EventHandler unregisterEvents;
@@ -278,11 +287,13 @@ namespace MatterHackers.MatterControl
 
 		private FlowLayoutWidget GetHotkeyControlContainer()
 		{
-			FlowLayoutWidget keyFocusedContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			keyFocusedContainer.HAnchor = HAnchor.Fit;
-			keyFocusedContainer.VAnchor = VAnchor.Stretch;
-			keyFocusedContainer.ToolTipText = "Enable cursor keys for movement".Localize();
-			keyFocusedContainer.Margin = new BorderDouble(left: 10);
+			var keyFocusedContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Stretch,
+				ToolTipText = "Enable cursor keys for movement".Localize(),
+				Margin = new BorderDouble(left: 10)
+			};
 
 			keyboardImage = new ImageWidget(AggContext.StaticData.LoadIcon("hot_key_small_white.png", 19, 12, theme.InvertIcons))
 			{
@@ -503,37 +514,58 @@ namespace MatterHackers.MatterControl
 			eButtons.AddChild(new GuiWidget(10, 6));
 
 			// add in some movement radio buttons
-			FlowLayoutWidget setMoveDistanceControl = new FlowLayoutWidget();
-			TextWidget buttonsLabel = new TextWidget("Distance:", textColor: Color.White);
-			buttonsLabel.VAnchor = VAnchor.Center;
-			//setMoveDistanceControl.AddChild(buttonsLabel);
+			var setMoveDistanceControl = new FlowLayoutWidget
+			{
+				HAnchor = HAnchor.Fit
+			};
 
 			{
-				var buttonFactory = ApplicationController.Instance.Theme.MicroButton;
+				var moveRadioButtons = new FlowLayoutWidget
+				{
+					Margin = new BorderDouble(0, 3)
+				};
 
-				var moveRadioButtons = new FlowLayoutWidget();
-				RadioButton oneButton = buttonFactory.GenerateRadioButton("1");
-				oneButton.VAnchor = VAnchor.Center;
-				oneButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetEMoveAmount(1); };
+				var oneButton = theme.CreateMicroRadioButton("1");
+				oneButton.CheckedStateChanged += (s, e) =>
+				{
+					if (oneButton.Checked)
+					{
+						SetEMoveAmount(1);
+					}
+				};
 				moveRadioButtons.AddChild(oneButton);
-				RadioButton tenButton = buttonFactory.GenerateRadioButton("10");
-				tenButton.VAnchor = VAnchor.Center;
-				tenButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetEMoveAmount(10); };
+
+				var tenButton = theme.CreateMicroRadioButton("10");
+				tenButton.CheckedStateChanged += (s, e) =>
+				{
+					if (tenButton.Checked)
+					{
+						SetEMoveAmount(10);
+					}
+				};
 				moveRadioButtons.AddChild(tenButton);
-				RadioButton oneHundredButton = buttonFactory.GenerateRadioButton("100");
-				oneHundredButton.VAnchor = VAnchor.Center;
-				oneHundredButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetEMoveAmount(100); };
+
+				var oneHundredButton = theme.CreateMicroRadioButton("100");
+				oneHundredButton.CheckedStateChanged += (s, e) =>
+				{
+					if (oneHundredButton.Checked)
+					{
+						SetEMoveAmount(100);
+					}
+				};
 				moveRadioButtons.AddChild(oneHundredButton);
+
 				tenButton.Checked = true;
-				moveRadioButtons.Margin = new BorderDouble(0, 3);
 				setMoveDistanceControl.AddChild(moveRadioButtons);
 			}
 
-			var mmLabel = new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8);
-			mmLabel.VAnchor = VAnchor.Center;
-			mmLabel.Margin = new BorderDouble(left: 10);
-			setMoveDistanceControl.AddChild(mmLabel);
-			setMoveDistanceControl.HAnchor = HAnchor.Left;
+			setMoveDistanceControl.AddChild(
+				new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8)
+				{
+					VAnchor = VAnchor.Center,
+					Margin = new BorderDouble(left: 10)
+				});
+
 			eButtons.AddChild(setMoveDistanceControl);
 
 			eButtons.HAnchor = HAnchor.Fit;

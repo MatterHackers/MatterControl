@@ -48,19 +48,23 @@ namespace MatterHackers.MatterControl
 		private static ImageBuffer restorePressed;
 
 		public int FontSize7 { get; } = 7;
+		public int FontSize8 { get; } = 8;
 		public int FontSize9 { get; } = 9;
 		public int FontSize10 { get; } = 10;
 		public int FontSize11 { get; } = 11;
 		public int FontSize12 { get; } = 12;
 		public int FontSize14 { get; } = 14;
 
-		internal readonly int shortButtonHeight = 30;
 		private readonly int defaultScrollBarWidth = 120;
 		private readonly int sideBarButtonWidth = 138;
 
 		public int DefaultFontSize { get; } = 11;
+		public int DefaultContainerPadding { get; } = 10;
 		public int H1PointSize { get; set; } = 11;
 		public double ButtonHeight { get; internal set; } = 32;
+		public double MicroButtonHeight { get; internal set; } = 20 * GuiWidget.DeviceScale;
+		public double MicroButtonWidth { get; internal set; } = 30 * GuiWidget.DeviceScale;
+		public double TabButtonHeight { get; internal set; } = 30 * GuiWidget.DeviceScale;
 
 		/// <summary>
 		/// Indicates if icons should be inverted due to black source images on a dark theme
@@ -74,14 +78,6 @@ namespace MatterHackers.MatterControl
 
 		public TextImageButtonFactory WhiteButtonFactory { get; private set; }
 		public TextImageButtonFactory ButtonFactory { get; private set; }
-		public TextImageButtonFactory WizardButtons { get; private set; }
-		public TextImageButtonFactory MicroButton { get; private set; }
-		public TextImageButtonFactory MicroButtonMenu { get; private set; }
-
-		/// <summary>
-		/// Used to make buttons in menu rows where the background color is consistently white
-		/// </summary>
-		public TextImageButtonFactory MenuButtonFactory { get; private set; }
 
 		public int SplitterWidth => (int)(6 * (GuiWidget.DeviceScale <= 1 ? GuiWidget.DeviceScale : GuiWidget.DeviceScale * 1.4));
 
@@ -168,15 +164,6 @@ namespace MatterHackers.MatterControl
 
 			this.ButtonFactory = new TextImageButtonFactory(commonOptions);
 
-			this.WizardButtons = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
-			{
-#if __ANDROID__
-				FontSize = this.FontSize14,
-				FixedHeight = 34 * GuiWidget.DeviceScale,
-				Margin = commonOptions.Margin * 1.2
-#endif
-			});
-
 			var commonGray = new ButtonFactoryOptions(commonOptions)
 			{
 				NormalTextColor = Color.Black,
@@ -186,36 +173,12 @@ namespace MatterHackers.MatterControl
 				PressedFillColor = Color.LightGray,
 			};
 
-			this.MenuButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonGray)
-			{
-				Margin = new BorderDouble(8, 0)
-			});
-
-			this.MicroButton = new TextImageButtonFactory(new ButtonFactoryOptions()
-			{
-				FixedHeight = 20 * GuiWidget.DeviceScale,
-				FixedWidth = 30 * GuiWidget.DeviceScale,
-				FontSize = 8,
-				Margin = 0,
-				CheckedBorderColor = colors.PrimaryTextColor
-			});
-
-			this.MicroButtonMenu = new TextImageButtonFactory(new ButtonFactoryOptions(commonGray)
-			{
-				FixedHeight = 20 * GuiWidget.DeviceScale,
-				FixedWidth = 30 * GuiWidget.DeviceScale,
-				FontSize = 8,
-				Margin = 0,
-				BorderWidth = 1,
-				CheckedBorderColor = Color.Black
-			});
-
 #region PartPreviewWidget
 
 			WhiteButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
 			{
 				FixedWidth = sideBarButtonWidth,
-				FixedHeight = shortButtonHeight,
+				FixedHeight = TabButtonHeight,
 
 				NormalTextColor = Color.Black,
 				NormalFillColor = Color.White,
@@ -234,6 +197,48 @@ namespace MatterHackers.MatterControl
 				fontSize = FontSize11,
 				textColor = colors.PrimaryTextColor
 			};
+		}
+
+		public RadioTextButton CreateMicroRadioButton(string text, IList<GuiWidget> siblingRadioButtonList = null)
+		{
+			var radioButton = new RadioTextButton(text, this, this.FontSize8)
+			{
+				SiblingRadioButtonList = siblingRadioButtonList,
+				Padding = new BorderDouble(5, 0),
+				SelectedBackgroundColor = this.SlightShade,
+				UnselectedBackgroundColor = this.SlightShade,
+				HoverColor = new Color(this.Colors.PrimaryAccentColor, 50),
+				Margin = new BorderDouble(right: 1),
+				HAnchor = HAnchor.Absolute,
+				Height = this.MicroButtonHeight,
+				Width = this.MicroButtonWidth
+			};
+
+			// Add to sibling list if supplied
+			siblingRadioButtonList?.Add(radioButton);
+
+			return radioButton;
+		}
+
+		public TextButton CreateDialogButton(string text)
+		{
+			var textSize = -1;
+
+#if __ANDROID__
+				textSize = this.FontSize14,
+#endif
+
+			var button = new TextButton(text, this, textSize)
+			{
+				BackgroundColor = this.MinimalShade,
+#if __ANDROID__
+				// Enlarge button height and margin on Android
+				Height = 34 * GuiWidget.DeviceScale,
+				Margin = commonFactoryMargin * 1.2
+#endif
+			};
+
+			return button;
 		}
 
 		public Color GetBorderColor(int alpha)
@@ -364,21 +369,21 @@ namespace MatterHackers.MatterControl
 				Padding = padding,
 			};
 		}
-	}
 
-	public static class ThemeExtensionMethods
-	{
-		public static SectionWidget ApplyBoxStyle(this SectionWidget sectionWidget)
+		public SectionWidget ApplyBoxStyle(SectionWidget sectionWidget)
 		{
-			return ApplyBoxStyle(sectionWidget, ApplicationController.Instance.Theme.MinimalShade, margin: new BorderDouble(10, 0, 10, 10));
+			return ApplyBoxStyle(
+				sectionWidget,
+				this.MinimalShade,
+				margin: new BorderDouble(this.DefaultContainerPadding, 0, this.DefaultContainerPadding, this.DefaultContainerPadding));
 		}
 
-		public static SectionWidget ApplyBoxStyle(this SectionWidget sectionWidget, BorderDouble margin)
+		public SectionWidget ApplyBoxStyle(SectionWidget sectionWidget, BorderDouble margin)
 		{
-			return ApplyBoxStyle(sectionWidget, ApplicationController.Instance.Theme.MinimalShade, margin);
+			return ApplyBoxStyle(sectionWidget, this.MinimalShade, margin);
 		}
 
-		public static SectionWidget ApplyBoxStyle(this SectionWidget sectionWidget, Color backgroundColor, BorderDouble margin)
+		public SectionWidget ApplyBoxStyle(SectionWidget sectionWidget, Color backgroundColor, BorderDouble margin)
 		{
 			// Enforce panel padding
 			// sectionWidget.ContentPanel.Padding = new BorderDouble(10, 0, 10, 2);

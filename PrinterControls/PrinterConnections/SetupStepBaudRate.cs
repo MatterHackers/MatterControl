@@ -45,8 +45,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private GuiWidget baudRateWidget;
 		private RadioButton otherBaudRateRadioButton;
 		private MHTextEditWidget otherBaudRateInput;
-		private Button nextButton;
-		private Button printerBaudRateHelpLink;
+		private GuiWidget nextButton;
+		private GuiWidget printerBaudRateHelpLink;
 		private TextWidget printerBaudRateHelpMessage;
 
 		private PrinterConfig printer;
@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			printerBaudRateContainer = createPrinterBaudRateContainer();
 			contentRow.AddChild(printerBaudRateContainer);
 			{
-				nextButton = textImageButtonFactory.Generate("Continue".Localize());
+				nextButton = theme.CreateDialogButton("Continue".Localize());
 				nextButton.Click += (s, e) =>
 				{
 					bool canContinue = this.OnSave();

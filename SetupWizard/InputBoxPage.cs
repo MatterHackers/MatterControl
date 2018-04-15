@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 			this.HeaderText = windowTitle;
 			this.WindowSize = new Vector2(500, 200);
 
-			Button actionButton = null;
+			GuiWidget actionButton = null;
 
 			contentRow.AddChild(new TextWidget(label, pointSize: 12)
 			{
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl
 			};
 			contentRow.AddChild(textEditWidget);
 
-			actionButton = textImageButtonFactory.Generate(actionButtonTitle);
+			actionButton = theme.CreateDialogButton(actionButtonTitle);
 			actionButton.Name = "InputBoxPage Action Button";
 			actionButton.Cursor = Cursors.Hand;
 			actionButton.Click += (s, e) =>

@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				tabControl.AddTab(
 					new ChromeTab("New Tab".Localize(), tabControl, tabControl.NewTabPage(), theme)
 					{
-						MinimumSize = new Vector2(0, theme.shortButtonHeight),
+						MinimumSize = new Vector2(0, theme.TabButtonHeight),
 						Name = "Initial Plus Tab"
 					});
 			}
@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				"https://www.google.com/s2/favicons?domain=" + oemUrl ?? "www.matterhackers.com")
 			{
 				Name = "3D View Tab",
-				MinimumSize = new Vector2(120, theme.shortButtonHeight)
+				MinimumSize = new Vector2(120, theme.TabButtonHeight)
 			};
 		}
 
@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AggContext.StaticData.LoadIcon("part.png"))
 			{
 				Name = "newPart" + tabControl.AllTabs.Count(),
-				MinimumSize = new Vector2(120, theme.shortButtonHeight)
+				MinimumSize = new Vector2(120, theme.TabButtonHeight)
 			};
 
 			tabControl.AddTab(partTab);

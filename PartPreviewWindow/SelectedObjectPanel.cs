@@ -376,7 +376,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var sectionWidget = new SectionWidget(
 							scopeItem.displayName ?? "Unknown",
 							editorWidget,
-							theme).ApplyBoxStyle(margin: 0);
+							theme);
+
+					theme.ApplyBoxStyle(sectionWidget, margin: 0);
 
 					editorWidget = sectionWidget;
 				}

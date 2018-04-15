@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 			contentRow.FlowDirection = FlowDirection.TopToBottom;
 			contentRow.AddChild(scrollWindow);
 
-			var revertButton = textImageButtonFactory.Generate("Restore".Localize());
+			var revertButton = theme.CreateDialogButton("Restore".Localize());
 			revertButton.Click += async (s, e) =>
 			{
 				int index = radioButtonList.IndexOf(radioButtonList.Where(r => r.Checked).FirstOrDefault());
@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 						// Update active instance without calling ReloadAll
 						ApplicationController.Instance.RefreshActiveInstance(printerSettings);
 					}
-					
+
 					UiThread.RunOnIdle(WizardWindow.Close);
 				}
 			};

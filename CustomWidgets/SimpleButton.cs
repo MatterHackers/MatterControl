@@ -279,7 +279,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					_checked = value;
 					if (_checked)
 					{
-						UncheckAllOtherRadioButtons();
+						this.UncheckSiblings();
 					}
 
 					this.BackgroundColor = (_checked) ? theme.MinimalShade : Color.Transparent;
@@ -298,25 +298,90 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			if (this.Checked)
 			{
-				graphics2D.Rectangle(0, 0, LocalBounds.Right, 2, ActiveTheme.Instance.PrimaryAccentColor);
+				graphics2D.Rectangle(0, 0, LocalBounds.Right, 2, theme.Colors.PrimaryAccentColor);
 			}
 
 			base.OnDraw(graphics2D);
 		}
+	}
 
-		private void UncheckAllOtherRadioButtons()
+	public class RadioTextButton : TextButton, IRadioButton
+	{
+		public IList<GuiWidget> SiblingRadioButtonList { get; set; }
+
+		public event EventHandler CheckedStateChanged;
+
+		public RadioTextButton(string text, ThemeConfig theme, double pointSize = -1)
+			: base(text, theme, pointSize)
 		{
-			if (SiblingRadioButtonList != null)
+			this.SelectedBackgroundColor = theme.SlightShade;
+		}
+
+		public override void OnClick(MouseEventArgs mouseEvent)
+		{
+			base.OnClick(mouseEvent);
+
+			bool newValue = true;
+
+			bool checkStateChanged = (newValue != this.Checked);
+
+			this.Checked = newValue;
+
+			// After setting CheckedState, fire event if different
+			if (checkStateChanged)
 			{
-				foreach (GuiWidget child in SiblingRadioButtonList.Distinct())
-				{
-					var radioButton = child as IRadioButton;
-					if (radioButton != null && radioButton != this)
-					{
-						radioButton.Checked = false;
-					}
-				}
+				OnCheckStateChanged();
 			}
+		}
+
+		public Color SelectedBackgroundColor { get; set; }
+		public Color UnselectedBackgroundColor { get; set; }
+
+		private bool _checked;
+		public bool Checked
+		{
+			get => _checked;
+			set
+			{
+				if (_checked != value)
+				{
+					_checked = value;
+					if (_checked)
+					{
+						this.UncheckSiblings();
+					}
+
+				}
+
+				this.BackgroundColor = (_checked) ? this.SelectedBackgroundColor : this.UnselectedBackgroundColor;
+			}
+		}
+
+		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
+		{
+			base.OnMouseEnterBounds(mouseEvent);
+			this.Invalidate();
+		}
+
+		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
+		{
+			base.OnMouseLeaveBounds(mouseEvent);
+			this.Invalidate();
+		}
+
+		public virtual void OnCheckStateChanged()
+		{
+			CheckedStateChanged?.Invoke(this, null);
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			if (this.Checked)
+			{
+				graphics2D.Rectangle(LocalBounds.Left, 0, LocalBounds.Right, 2, theme.Colors.PrimaryAccentColor);
+			}
+
+			base.OnDraw(graphics2D);
 		}
 	}
 
@@ -324,7 +389,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private TextWidget textWidget;
 
-		public TextButton(string text, ThemeConfig theme)
+		public TextButton(string text, ThemeConfig theme, double pointSize = -1)
 			: base(theme)
 		{
 			this.HAnchor = HAnchor.Fit;
@@ -333,7 +398,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Padding = theme.ButtonFactory.Options.Margin;
 			this.TextColor = theme.Colors.PrimaryTextColor;
 
-			this.AddChild(textWidget = new TextWidget(text, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			var textSize = (pointSize != -1) ? pointSize : theme.DefaultFontSize;
+
+			this.AddChild(textWidget = new TextWidget(text, pointSize: textSize, textColor: theme.Colors.PrimaryTextColor)
 			{
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Center
