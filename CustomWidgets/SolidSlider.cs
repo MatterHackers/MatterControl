@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl
 			// now do the thumb
 			RectangleDouble thumbBounds = sliderAttachedTo.GetThumbHitBounds();
 			RoundedRect thumbOutside = new RoundedRect(thumbBounds, 0);
-			graphics2D.Render(thumbOutside, ColorF.GetTweenColor(ThumbColor.ToColorF(), ColorF.Black.ToColorF(), .2).ToColor());
+			graphics2D.Render(thumbOutside, this.ThumbColor); // ColorF.GetTweenColor(ThumbColor.ToColorF(), ColorF.Black.ToColorF(), .2).ToColor());
 		}
 	}
 
