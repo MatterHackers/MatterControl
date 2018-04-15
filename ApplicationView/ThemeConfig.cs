@@ -39,6 +39,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.Localizations;
 	using MatterHackers.MatterControl.PartPreviewWindow;
+	using MatterHackers.MatterControl.PrinterCommunication;
 	using MatterHackers.VectorMath;
 
 	public class ThemeConfig
@@ -196,6 +197,38 @@ namespace MatterHackers.MatterControl
 			{
 				fontSize = FontSize11,
 				textColor = colors.PrimaryTextColor
+			};
+		}
+
+		public JogControls.MoveButton CreateMoveButton(PrinterConfig printer, string label, PrinterConnection.Axis axis, double movementFeedRate, bool levelingButtons = false)
+		{
+			return new JogControls.MoveButton(label, printer, axis, movementFeedRate, this)
+			{
+				BackgroundColor = this.MinimalShade,
+				Border = 1,
+				BorderColor = this.GetBorderColor(40),
+				VAnchor = VAnchor.Absolute,
+				HAnchor = HAnchor.Absolute,
+				Margin = 0,
+				Padding = 0,
+				Height = (levelingButtons ? 45 : 40) * GuiWidget.DeviceScale,
+				Width = (levelingButtons ? 90 : 40) * GuiWidget.DeviceScale,
+			};
+		}
+
+		public JogControls.ExtrudeButton CreateExtrudeButton(PrinterConfig printer, string label, double movementFeedRate, int extruderNumber, bool levelingButtons = false)
+		{
+			return new JogControls.ExtrudeButton(printer, label, movementFeedRate, extruderNumber, this)
+			{
+				BackgroundColor = this.MinimalShade,
+				Border = 1,
+				BorderColor = this.GetBorderColor(40),
+				VAnchor = VAnchor.Absolute,
+				HAnchor = HAnchor.Absolute,
+				Margin = 0,
+				Padding = 0,
+				Height = (levelingButtons ? 45 : 40) * GuiWidget.DeviceScale,
+				Width = (levelingButtons ? 90 : 40) * GuiWidget.DeviceScale,
 			};
 		}
 

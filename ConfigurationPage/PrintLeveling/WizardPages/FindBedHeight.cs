@@ -48,12 +48,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		protected JogControls.MoveButton zPlusControl;
 		protected JogControls.MoveButton zMinusControl;
+		private ThemeConfig theme;
 		protected WizardControl container;
 
 		public FindBedHeight(PrinterConfig printer, WizardControl container, string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance, 
 			List<ProbePosition> probePositions, int probePositionsBeingEditedIndex, ThemeConfig theme)
 			: base(printer, pageDescription, setZHeightCoarseInstruction1, theme)
 		{
+			this.theme = theme;
 			this.container = container;
 			this.probePositions = probePositions;
 			this.moveAmount = moveDistance;
@@ -114,7 +116,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private FlowLayoutWidget CreateZButtons()
 		{
-			FlowLayoutWidget zButtons = JogControls.CreateZButtons(printer, Color.White, 4, out zPlusControl, out zMinusControl, true);
+			FlowLayoutWidget zButtons = JogControls.CreateZButtons(printer, 4, out zPlusControl, out zMinusControl, new PrinterControls.XYZColors(theme), theme, true);
+
 			// set these to 0 so the button does not do any movements by default (we will handle the movement on our click callback)
 			zPlusControl.MoveAmount = 0;
 			zPlusControl.ToolTipText += " [Up Arrow]".Localize();

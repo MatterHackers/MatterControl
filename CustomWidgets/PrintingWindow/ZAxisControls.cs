@@ -39,21 +39,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class ZAxisControls : FlowLayoutWidget
 	{
-		private MoveButtonFactory buttonFactory;
-
 		public ZAxisControls(PrinterConfig printer, ThemeConfig theme, bool smallScreen) :
 			base(FlowDirection.TopToBottom)
 		{
-			buttonFactory = new MoveButtonFactory()
-			{
-				FontSize = theme.DefaultFontSize,
-				BorderWidth = 0
-			};
-
-			buttonFactory.Colors.Fill.Normal = theme.Colors.PrimaryAccentColor;
-			buttonFactory.Colors.Fill.Hover = theme.Colors.PrimaryAccentColor;
-			buttonFactory.Colors.Text.Normal = Color.White;
-
 			this.AddChild(new TextWidget("Z+", pointSize: smallScreen ? 12 : 15, textColor: theme.Colors.PrimaryTextColor)
 			{
 				AutoExpandBoundsToText = true,
@@ -90,9 +78,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.VAnchor = VAnchor.Fit | VAnchor.Top;
 		}
 
-		private Button CreateZMoveButton(PrinterConfig printer, double moveAmount, bool smallScreen, ThemeConfig theme)
+		private MoveButton CreateZMoveButton(PrinterConfig printer, double moveAmount, bool smallScreen, ThemeConfig theme)
 		{
-			var button = buttonFactory.GenerateMoveButton(printer, $"{Math.Abs(moveAmount):0.00} mm", PrinterConnection.Axis.Z, printer.Settings.ZSpeed());
+			var button = theme.CreateMoveButton(printer, $"{Math.Abs(moveAmount):0.00} mm", PrinterConnection.Axis.Z, printer.Settings.ZSpeed());
 			button.MoveAmount = moveAmount;
 			button.HAnchor = HAnchor.MaxFitOrStretch;
 			button.VAnchor = VAnchor.Fit;
