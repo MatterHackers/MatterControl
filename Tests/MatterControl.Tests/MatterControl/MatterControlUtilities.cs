@@ -436,6 +436,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(queueItemData != null && queueItemData.ProjectFiles.Count > 0);
 		}
 
+		public static void OpenUserPopupMenu(this AutomationRunner testRunner)
+		{
+			testRunner.ClickByName("User Options Menu");
+		}
+
 		public static void NavigateToFolder(this AutomationRunner testRunner, string libraryRowItemName)
 		{
 			EnsureFoldersVisible(testRunner);

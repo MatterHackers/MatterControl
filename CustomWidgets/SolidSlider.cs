@@ -98,9 +98,11 @@ namespace MatterHackers.MatterControl
 			return totalBounds;
 		}
 
+		public double TrackRadius { get; set; } = 0;
+
 		public void DrawTrackAndThumb(Graphics2D graphics2D)
 		{
-			RoundedRect track = new RoundedRect(GetTrackBounds(), 0);
+			RoundedRect track = new RoundedRect(GetTrackBounds(), this.TrackRadius);
 			Vector2 ValuePrintPosition;
 			if (sliderAttachedTo.Orientation == Orientation.Horizontal)
 			{
@@ -117,7 +119,7 @@ namespace MatterHackers.MatterControl
 			// now do the thumb
 			RectangleDouble thumbBounds = sliderAttachedTo.GetThumbHitBounds();
 			RoundedRect thumbOutside = new RoundedRect(thumbBounds, 0);
-			graphics2D.Render(thumbOutside, ColorF.GetTweenColor(ThumbColor.ToColorF(), ColorF.Black.ToColorF(), .2).ToColor());
+			graphics2D.Render(thumbOutside, this.ThumbColor); // ColorF.GetTweenColor(ThumbColor.ToColorF(), ColorF.Black.ToColorF(), .2).ToColor());
 		}
 	}
 

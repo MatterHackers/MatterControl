@@ -246,6 +246,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				sectionWidget.ContentPanel.Padding = new BorderDouble(10, 10, 10, 0);
 				sectionWidget.ExpandableWhenDisabled = true;
+				sectionWidget.Enabled = false;
 			}
 		}
 

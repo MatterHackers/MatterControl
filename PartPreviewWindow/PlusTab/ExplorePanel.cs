@@ -186,41 +186,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				Margin = new BorderDouble(left: 15)
 			};
 			toolBarA.AddChild(printerSelector);
-
-			toolBarA.AddChild(new VerticalLine(50) { Margin = new BorderDouble(12, 0) });
-
-			var redeemDesignCode = new TextButton("Redeem Design Code".Localize(), theme)
-			{
-				Name = "Redeem Design Code Button",
-				Margin = theme.ButtonSpacing
-			};
-			redeemDesignCode.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					simpleTabs.RemoveTab(simpleTabs.ActiveTab);
-					// Implementation already does RunOnIdle
-					ApplicationController.Instance.RedeemDesignCode?.Invoke();
-				});
-			};
-			toolBarA.AddChild(redeemDesignCode);
-
-			var redeemShareCode = new TextButton("Enter Share Code".Localize(), theme)
-			{
-				Name = "Enter Share Code Button",
-				Margin = theme.ButtonSpacing
-			};
-			redeemShareCode.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					simpleTabs.RemoveTab(simpleTabs.ActiveTab);
-
-					// Implementation already does RunOnIdle
-					ApplicationController.Instance.EnterShareCode?.Invoke();
-				});
-			};
-			toolBarA.AddChild(redeemShareCode);
 		}
 
 		public async override void OnLoad(EventArgs args)
@@ -281,7 +246,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		{
 			foreach (var content in contentList.Content)
 			{
-				switch (content.content_type) 
+				switch (content.content_type)
 				{
 					case "banner_image":
 						{

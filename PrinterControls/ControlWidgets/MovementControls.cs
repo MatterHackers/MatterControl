@@ -56,13 +56,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private EventHandler unregisterEvents;
 
-		private MovementControls(PrinterConfig printer, ThemeConfig theme)
+		private MovementControls(PrinterConfig printer, XYZColors xyzColors, ThemeConfig theme)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.printer = printer;
 			this.theme = theme;
 
-			jogControls = new JogControls(printer, new XYZColors(), theme)
+			jogControls = new JogControls(printer, xyzColors, theme)
 			{
 				HAnchor = HAnchor.Left | HAnchor.Stretch,
 				Margin = 0
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
 		{
-			var widget = new MovementControls(printer, theme);
+			var widget = new MovementControls(printer, new XYZColors(theme), theme);
 
 			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme);
 			editButton.Click += (s, e) => widget.EditOptions();
@@ -256,13 +256,17 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 	public class XYZColors
 	{
-		public static Color eColor = new Color(180, 180, 180);
-		public static Color xColor = new Color(180, 180, 180);
-		public static Color yColor = new Color(255, 255, 255);
-		public static Color zColor = new Color(255, 255, 255);
+		public Color EColor { get; }
+		public Color XColor { get; }
+		public Color YColor { get; }
+		public Color ZColor { get; }
 
-		public XYZColors()
+		public XYZColors(ThemeConfig theme)
 		{
+			this.EColor = theme.GetBorderColor(40); // new Color(180, 180, 180);
+			this.XColor = theme.GetBorderColor(40); // new Color(180, 180, 180);
+			this.YColor = theme.GetBorderColor(40); //new Color(255, 255, 255);
+			this.ZColor = theme.GetBorderColor(40); //new Color(255, 255, 255);
 		}
 	}
 
