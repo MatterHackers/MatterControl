@@ -288,7 +288,7 @@ namespace MatterHackers.MatterControl
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Stretch,
-				ToolTipText = "Enable cursor keys for movement".Localize(),
+				ToolTipText = "Use cursor keys for axis movements".Localize(),
 				Margin = new BorderDouble(left: 10)
 			};
 
