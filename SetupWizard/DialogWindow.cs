@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 			this.AlwaysOnTopOfMain = true;
 			this.MinimumSize = new Vector2(200, 200);
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			this.Padding = new BorderDouble(8);
+			this.Padding = new BorderDouble(ApplicationController.Instance.Theme.DefaultContainerPadding);
 		}
 
 		public static void Close(Type type)

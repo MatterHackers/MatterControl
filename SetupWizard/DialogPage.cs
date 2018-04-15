@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl
 			// Create the footer (button) container
 			footerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
-				HAnchor = HAnchor.Left | HAnchor.Right,
+				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 6),
 				Padding = new BorderDouble(top: 4, bottom: 2)
 			};
@@ -124,15 +124,18 @@ namespace MatterHackers.MatterControl
 
 #if __ANDROID__
 			if (false)
-#endif 
+#endif
 			{
-				mainContainer.Padding = new BorderDouble(3, 5, 3, 5);
+				mainContainer.Padding = new BorderDouble(3, 5, 3, 0);
 				headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
 				headerLabel.TextWidget.PointSize = 14;
 				headerLabel.TextColor = theme.Colors.PrimaryTextColor;
 				contentRow.Padding = new BorderDouble(5);
-				footerRow.Margin = new BorderDouble(0, 3);
+
+				// TODO: current layout bugs prevent bottom margin from having an effect and bounds are simply clipped
+				footerRow.Margin = new BorderDouble(top: theme.DefaultContainerPadding, bottom: 4);
+				footerRow.Padding = 0;
 			}
 
 			this.AddChild(mainContainer);
@@ -152,8 +155,7 @@ namespace MatterHackers.MatterControl
 
 		public void AddPageAction(GuiWidget button)
 		{
-			button.Margin = new BorderDouble(right: ApplicationController.Instance.Theme.ButtonSpacing.Left);
-			button.Margin = new BorderDouble(right: footerRow.Margin.Top);
+			button.Margin = new BorderDouble(right: theme.ButtonSpacing.Left);
 			footerRow.AddChild(button);
 		}
 

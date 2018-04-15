@@ -59,6 +59,7 @@ namespace MatterHackers.MatterControl
 		private readonly int sideBarButtonWidth = 138;
 
 		public int DefaultFontSize { get; } = 11;
+		public int DefaultContainerPadding { get; } = 10;
 		public int H1PointSize { get; set; } = 11;
 		public double ButtonHeight { get; internal set; } = 32;
 		public double MicroButtonHeight { get; internal set; } = 20 * GuiWidget.DeviceScale;
@@ -231,7 +232,7 @@ namespace MatterHackers.MatterControl
 
 			var button = new TextButton(text, this, textSize)
 			{
-				BackgroundColor = this.SlightShade,
+				BackgroundColor = this.MinimalShade,
 #if __ANDROID__
 				// Enlarge button height and margin on Android
 				Height = 34 * GuiWidget.DeviceScale,
