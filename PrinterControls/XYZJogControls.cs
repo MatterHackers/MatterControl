@@ -273,7 +273,7 @@ namespace MatterHackers.MatterControl
 		private DisableableWidget disableableEButtons;
 		private DisableableWidget tooBigForBabyStepping;
 		private GuiWidget keyboardFocusBorder;
-		private ImageWidget keyboardImage;
+		private GuiWidget keyboardImage;
 		private EventHandler unregisterEvents;
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -292,13 +292,13 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(left: 10)
 			};
 
-			keyboardImage = new ImageWidget(AggContext.StaticData.LoadIcon("hot_key_small_white.png", 19, 12, theme.InvertIcons))
+			keyboardImage = new IconButton(AggContext.StaticData.LoadIcon("hot_key_small_white.png", 19, 12, theme.InvertIcons), theme)
 			{
-				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
-				VAnchor = VAnchor.Center,
 				HAnchor = HAnchor.Center,
 				Margin = new BorderDouble(5),
-				Visible = false,
+				Visible = !UserSettings.Instance.IsTouchScreen,
+				Enabled = false,
+				Selectable = false
 			};
 
 			keyboardFocusBorder = new GuiWidget(1, 1)
@@ -317,20 +317,17 @@ namespace MatterHackers.MatterControl
 #if !__ANDROID__
 		public override void OnLoad(EventArgs args)
 		{
-			var parents = keyboardFocusBorder.Parents<SectionWidget>();
+			var parent = keyboardFocusBorder.Parents<SectionWidget>().First();
 
-			parents.First().KeyDown += JogControls_KeyDown;
+			parent.KeyDown += JogControls_KeyDown;
 
-			parents.First().ContainsFocusChanged += (sender, e) =>
+			parent.ContainsFocusChanged += (sender, e) =>
 			{
-				if ((sender as GuiWidget).ContainsFocus
-					&& !UserSettings.Instance.IsTouchScreen)
+				bool hasFocus = (sender as GuiWidget).ContainsFocus;
+				if (keyboardImage.Enabled != hasFocus)
 				{
-					keyboardImage.Visible = true;
-				}
-				else
-				{
-					keyboardImage.Visible = false;
+					keyboardImage.Enabled = hasFocus;
+					//keyboardImage.BackgroundColor = (hasFocus) ? theme.SlightShade : Color.Transparent;
 				}
 			};
 
