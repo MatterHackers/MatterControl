@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -123,9 +124,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						var iconButton = widget as IconButton;
 
+						var iconImage = iconButton?.IconImage;
+
+						// Invert the menu icon if the application theme is dark
+						if (iconImage != null
+							&& theme.InvertIcons)
+						{
+							iconImage = iconImage.InvertLightness();
+						}
+
 						menuItem = popupMenu.CreateMenuItem(
 							widget.ToolTipText ?? widget.Text,
-							iconButton?.IconImage);
+							iconImage);
 
 						menuItem.Enabled = widget.Enabled;
 
