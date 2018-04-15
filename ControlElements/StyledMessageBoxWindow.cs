@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				Button affirmativeButton = textImageButtonFactory.Generate(yesOk);
+				var affirmativeButton = theme.CreateDialogButton(yesOk);
 				affirmativeButton.Click += (s, e) =>
 				{
 					UiThread.RunOnIdle(this.WizardWindow.Close);

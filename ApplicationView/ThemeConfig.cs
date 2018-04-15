@@ -77,7 +77,6 @@ namespace MatterHackers.MatterControl
 
 		public TextImageButtonFactory WhiteButtonFactory { get; private set; }
 		public TextImageButtonFactory ButtonFactory { get; private set; }
-		public TextImageButtonFactory WizardButtons { get; private set; }
 
 		public int SplitterWidth => (int)(6 * (GuiWidget.DeviceScale <= 1 ? GuiWidget.DeviceScale : GuiWidget.DeviceScale * 1.4));
 
@@ -127,6 +126,8 @@ namespace MatterHackers.MatterControl
 		{
 		}
 
+		private BorderDouble commonFactoryMargin = new BorderDouble(14, 0);
+
 		public void RebuildTheme(IThemeColors colors)
 		{
 			this.Colors = colors;
@@ -138,7 +139,7 @@ namespace MatterHackers.MatterControl
 			commonOptions.HoverTextColor = colors.PrimaryTextColor;
 			commonOptions.PressedTextColor = colors.PrimaryTextColor;
 			commonOptions.DisabledTextColor = colors.TertiaryBackgroundColor;
-			commonOptions.Margin = new BorderDouble(14, 0);
+			commonOptions.Margin = commonFactoryMargin;
 			commonOptions.FontSize = this.DefaultFontSize;
 			commonOptions.ImageSpacing = 8;
 			commonOptions.BorderWidth = 0;
@@ -163,15 +164,6 @@ namespace MatterHackers.MatterControl
 			this.SplitterBackground = this.ActiveTabColor.AdjustLightness(0.87).ToColor();
 
 			this.ButtonFactory = new TextImageButtonFactory(commonOptions);
-
-			this.WizardButtons = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
-			{
-#if __ANDROID__
-				FontSize = this.FontSize14,
-				FixedHeight = 34 * GuiWidget.DeviceScale,
-				Margin = commonOptions.Margin * 1.2
-#endif
-			});
 
 			var commonGray = new ButtonFactoryOptions(commonOptions)
 			{
@@ -227,6 +219,27 @@ namespace MatterHackers.MatterControl
 			siblingRadioButtonList?.Add(radioButton);
 
 			return radioButton;
+		}
+
+		public TextButton CreateDialogButton(string text)
+		{
+			var textSize = -1;
+
+#if __ANDROID__
+				textSize = this.FontSize14,
+#endif
+
+			var button = new TextButton(text, this, textSize)
+			{
+				BackgroundColor = this.SlightShade,
+#if __ANDROID__
+				// Enlarge button height and margin on Android
+				Height = 34 * GuiWidget.DeviceScale,
+				Margin = commonFactoryMargin * 1.2
+#endif
+			};
+
+			return button;
 		}
 
 		public Color GetBorderColor(int alpha)

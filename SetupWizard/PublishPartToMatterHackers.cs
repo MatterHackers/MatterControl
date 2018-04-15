@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(5, 0, 0, 0)
 			});
 
-			var publishButton = textImageButtonFactory.Generate("Publish".Localize());
+			var publishButton = theme.CreateDialogButton("Publish".Localize());
 			publishButton.Name = "PublishPartButton";
 			publishButton.Click += (s, e) =>
 			{

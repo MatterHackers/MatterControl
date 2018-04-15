@@ -42,8 +42,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	{
 		private string[] startingPortNames;
 
-		private Button nextButton;
-		private Button connectButton;
+		private GuiWidget nextButton;
+		private GuiWidget connectButton;
 		private TextWidget printerErrorMessage;
 
 		private EventHandler unregisterEvents;
@@ -57,11 +57,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			contentRow.AddChild(createPrinterConnectionMessageContainer());
 
 			//Construct buttons
-			nextButton = textImageButtonFactory.Generate("Done".Localize());
+			nextButton = theme.CreateDialogButton("Done".Localize());
 			nextButton.Click += (s, e) => UiThread.RunOnIdle(Parent.Close);
 			nextButton.Visible = false;
 
-			connectButton = textImageButtonFactory.Generate("Connect".Localize());
+			connectButton = theme.CreateDialogButton("Connect".Localize());
 			connectButton.Click += (s, e) =>
 			{
 				// Select the first port that's in GetPortNames() but not in startingPortNames

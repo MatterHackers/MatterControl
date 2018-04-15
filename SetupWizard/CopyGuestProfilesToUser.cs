@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			var syncButton = textImageButtonFactory.Generate("Copy".Localize());
+			var syncButton = theme.CreateDialogButton("Copy".Localize());
 			syncButton.Name = "CopyProfilesButton";
 			syncButton.Click += (s, e) =>
 			{

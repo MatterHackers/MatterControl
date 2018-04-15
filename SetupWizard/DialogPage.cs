@@ -43,11 +43,10 @@ namespace MatterHackers.MatterControl
 		private FlowLayoutWidget footerRow;
 
 		private WrappedTextWidget headerLabel;
-		private Button cancelButton;
+		private GuiWidget cancelButton;
 
 		public Vector2 WindowSize { get; set; }
 
-		protected TextImageButtonFactory textImageButtonFactory { get; }
 		protected LinkButtonFactory linkButtonFactory { get; }
 
 		protected double labelFontSize = 12 * GuiWidget.DeviceScale;
@@ -61,7 +60,6 @@ namespace MatterHackers.MatterControl
 		{
 			theme = ApplicationController.Instance.Theme;
 
-			textImageButtonFactory = theme.WizardButtons;
 			linkButtonFactory = theme.LinkButtonFactory;
 
 			if (cancelButtonText == null)
@@ -76,7 +74,8 @@ namespace MatterHackers.MatterControl
 
 			this.AnchorAll();
 
-			cancelButton = textImageButtonFactory.Generate(cancelButtonText);
+			cancelButton = theme.CreateDialogButton(cancelButtonText);
+			cancelButton.Margin = 0;
 			cancelButton.Name = "Cancel Wizard Button";
 
 			// Create the main container
@@ -154,6 +153,7 @@ namespace MatterHackers.MatterControl
 		public void AddPageAction(GuiWidget button)
 		{
 			button.Margin = new BorderDouble(right: ApplicationController.Instance.Theme.ButtonSpacing.Left);
+			button.Margin = new BorderDouble(right: footerRow.Margin.Top);
 			footerRow.AddChild(button);
 		}
 

@@ -40,10 +40,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
 	public class SetupStepComPortManual : DialogPage
 	{
-		private Button nextButton;
-		private Button connectButton;
-		private Button refreshButton;
-		private Button printerComPortHelpLink;
+		private GuiWidget nextButton;
+		private GuiWidget connectButton;
+		private GuiWidget refreshButton;
+		private GuiWidget printerComPortHelpLink;
 
 		private bool printerComPortIsAvailable = false;
 
@@ -62,11 +62,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			contentRow.AddChild(printerComPortContainer);
 
 			//Construct buttons
-			nextButton = textImageButtonFactory.Generate("Done".Localize());
+			nextButton = theme.CreateDialogButton("Done".Localize());
 			nextButton.Click += (s, e) => UiThread.RunOnIdle(Parent.Close);
 			nextButton.Visible = false;
 
-			connectButton = textImageButtonFactory.Generate("Connect".Localize());
+			connectButton = theme.CreateDialogButton("Connect".Localize());
 			connectButton.Click += (s, e) =>
 			{
 				try
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				}
 			};
 
-			refreshButton = textImageButtonFactory.Generate("Refresh".Localize());
+			refreshButton = theme.CreateDialogButton("Refresh".Localize());
 			refreshButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				WizardWindow.ChangeToPage(new SetupStepComPortManual(printer));

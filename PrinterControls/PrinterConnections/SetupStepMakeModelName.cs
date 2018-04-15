@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private TextWidget printerNameError;
 
-		private Button nextButton;
+		private GuiWidget nextButton;
 
 		private bool usingDefaultName;
 
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			contentRow.AddChild(createPrinterNameContainer());
 
 			//Construct buttons
-			nextButton = textImageButtonFactory.Generate("Save & Continue".Localize());
+			nextButton = theme.CreateDialogButton("Save & Continue".Localize());
 			nextButton.Name = "Save & Continue Button";
 			nextButton.Click += async (s, e) =>
 			{

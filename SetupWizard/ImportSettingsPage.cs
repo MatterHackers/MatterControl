@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			var importButtonTitle = "Import".Localize();
-			var mergeButton = textImageButtonFactory.Generate(importButtonTitle);
+			var mergeButton = theme.CreateDialogButton(importButtonTitle);
 			mergeButton.Name = "Merge Profile";
 			mergeButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{

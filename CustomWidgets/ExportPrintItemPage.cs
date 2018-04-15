@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl
 				contentRow.AddChild(showInFolderAfterSave);
 			}
 
-			var exportButton = textImageButtonFactory.Generate("Export".Localize());
+			var exportButton = theme.CreateDialogButton("Export".Localize());
 			exportButton.Name = "Export Button";
 			exportButton.Click += (s, e) =>
 			{

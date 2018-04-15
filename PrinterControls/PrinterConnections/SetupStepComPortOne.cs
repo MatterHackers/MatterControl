@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			contentRow.AddChild(container);
 
 			//Construct buttons
-			var nextButton = textImageButtonFactory.Generate("Continue".Localize());
+			var nextButton = theme.CreateDialogButton("Continue".Localize());
 			nextButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				WizardWindow.ChangeToPage(new SetupStepComPortTwo(printer));

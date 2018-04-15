@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			this.SetCancelButtonName("Connection Wizard Skip Sign In Button");
 
-			var createAccountButton = textImageButtonFactory.Generate("Create Account".Localize());
+			var createAccountButton = theme.CreateDialogButton("Create Account".Localize());
 			createAccountButton.Name = "Create Account From Connection Wizard Button";
 			createAccountButton.Margin = new Agg.BorderDouble(right: 5);
 			createAccountButton.Click += (s, e) =>
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				});
 			};
 
-			var signInButton = textImageButtonFactory.Generate("Sign In".Localize());
+			var signInButton = theme.CreateDialogButton("Sign In".Localize());
 			signInButton.Name = "Sign In From Connection Wizard Button";
 			signInButton.Click += (s, e) =>
 			{

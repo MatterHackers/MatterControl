@@ -54,7 +54,7 @@ public class LicenseAgreementPage : DialogPage
 			Name = "LicenseAgreementPage",
 		});
 
-		var acceptButton = textImageButtonFactory.Generate("Accept".Localize());
+		var acceptButton = theme.CreateDialogButton("Accept".Localize());
 		acceptButton.Click += (s, e) =>
 		{
 			UserSettings.Instance.set("SoftwareLicenseAccepted", "true");
