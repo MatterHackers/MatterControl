@@ -326,7 +326,7 @@ namespace MatterHackers.MatterControl
 
 			parents.First().ContainsFocusChanged += (sender, e) =>
 			{
-				if ((sender as GuiWidget).ContainsFocus 
+				if ((sender as GuiWidget).ContainsFocus
 					&& !UserSettings.Instance.IsTouchScreen)
 				{
 					keyboardImage.Visible = true;
@@ -712,37 +712,38 @@ namespace MatterHackers.MatterControl
 
 		public class MoveButton : Button
 		{
-			private PrinterConnection.Axis moveAxis;
-
 			//Amounts in millimeters
-			public double MoveAmount = 10;
+			public double MoveAmount { get; set; } = 10;
 
 			public double MovementFeedRate { get; set; }
 			private PrinterConfig printer;
 
+			private PrinterConnection.Axis moveAxis;
 			public MoveButton(PrinterConfig printer, double x, double y, GuiWidget buttonView, PrinterConnection.Axis axis, double movementFeedRate)
 				: base(x, y, buttonView)
 			{
 				this.printer = printer;
 				this.moveAxis = axis;
 				this.MovementFeedRate = movementFeedRate;
+			}
 
-				this.Click += (s, e) =>
+			public override void OnClick(MouseEventArgs mouseEvent)
+			{
+				base.OnClick(mouseEvent);
+
+				if (printer.Connection.CommunicationState == CommunicationStates.Printing)
 				{
-					if (printer.Connection.CommunicationState == CommunicationStates.Printing)
+					if (moveAxis == PrinterConnection.Axis.Z) // only works on z
 					{
-						if (moveAxis == PrinterConnection.Axis.Z) // only works on z
-						{
-							var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
-							currentZ += this.MoveAmount;
-							printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
-						}
+						var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
+						currentZ += this.MoveAmount;
+						printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
 					}
-					else
-					{
-						printer.Connection.MoveRelative(this.moveAxis, this.MoveAmount, MovementFeedRate);
-					}
-				};
+				}
+				else
+				{
+					printer.Connection.MoveRelative(this.moveAxis, this.MoveAmount, MovementFeedRate);
+				}
 			}
 		}
 
