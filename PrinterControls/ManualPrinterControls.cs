@@ -128,6 +128,12 @@ namespace MatterHackers.MatterControl
 
 			column.AddChild(sectionWidget);
 
+			// Disable borders on all SettingsRow children in control panels
+			foreach(var settingsRow in sectionWidget.ContentPanel.Descendants<SettingsRow>())
+			{
+				settingsRow.BorderColor = Color.Transparent;
+			}
+
 			// Return the panel widget rather than the source sectionWidget
 			return sectionWidget.ContentPanel;
 		}
