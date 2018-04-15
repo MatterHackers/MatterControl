@@ -127,8 +127,6 @@ namespace MatterHackers.MatterControl
 		{
 		}
 
-		private BorderDouble commonFactoryMargin = new BorderDouble(14, 0);
-
 		public void RebuildTheme(IThemeColors colors)
 		{
 			this.Colors = colors;
@@ -140,7 +138,7 @@ namespace MatterHackers.MatterControl
 			commonOptions.HoverTextColor = colors.PrimaryTextColor;
 			commonOptions.PressedTextColor = colors.PrimaryTextColor;
 			commonOptions.DisabledTextColor = colors.TertiaryBackgroundColor;
-			commonOptions.Margin = commonFactoryMargin;
+			commonOptions.Margin = new BorderDouble(14, 0);
 			commonOptions.FontSize = this.DefaultFontSize;
 			commonOptions.ImageSpacing = 8;
 			commonOptions.BorderWidth = 0;
