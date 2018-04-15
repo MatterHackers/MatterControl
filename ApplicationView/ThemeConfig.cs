@@ -222,23 +222,22 @@ namespace MatterHackers.MatterControl
 
 		public TextButton CreateDialogButton(string text)
 		{
-			var textSize = -1;
-
-#if __ANDROID__
-				textSize = this.FontSize14,
-#endif
-
-			var button = new TextButton(text, this, textSize)
+#if !__ANDROID__
+			return new TextButton(text, this)
+			{
+				BackgroundColor = this.MinimalShade
+			};
+#else
+			var button = new TextButton(text, this, this.FontSize14)
 			{
 				BackgroundColor = this.MinimalShade,
-#if __ANDROID__
 				// Enlarge button height and margin on Android
 				Height = 34 * GuiWidget.DeviceScale,
-				Margin = commonFactoryMargin * 1.2
-#endif
 			};
+			button.Padding = button.Padding * 1.2;
 
 			return button;
+#endif
 		}
 
 		public Color GetBorderColor(int alpha)
