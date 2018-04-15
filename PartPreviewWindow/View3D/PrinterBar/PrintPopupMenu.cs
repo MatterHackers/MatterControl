@@ -129,7 +129,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					subPanel.AddChild(row);
 				}
 
-				sectionWidget.ApplyBoxStyle();
+				theme.ApplyBoxStyle(sectionWidget);
+
 				sectionWidget.Margin = new BorderDouble(0, 10);
 				sectionWidget.ContentPanel.Children<SettingsRow>().First().Border = new BorderDouble(0, 1);
 				sectionWidget.ContentPanel.Children<SettingsRow>().Last().Border = 0;

@@ -65,7 +65,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			var imageSection = new SectionWidget(
 				"Image".Localize(),
 				new FlowLayoutWidget(FlowDirection.TopToBottom),
-				theme).ApplyBoxStyle(margin: 0);
+				theme);
+
+			theme.ApplyBoxStyle(imageSection, margin: 0);
 
 			column.AddChild(imageSection);
 

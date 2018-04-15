@@ -370,21 +370,21 @@ namespace MatterHackers.MatterControl
 				Padding = padding,
 			};
 		}
-	}
 
-	public static class ThemeExtensionMethods
-	{
-		public static SectionWidget ApplyBoxStyle(this SectionWidget sectionWidget)
+		public SectionWidget ApplyBoxStyle(SectionWidget sectionWidget)
 		{
-			return ApplyBoxStyle(sectionWidget, ApplicationController.Instance.Theme.MinimalShade, margin: new BorderDouble(10, 0, 10, 10));
+			return ApplyBoxStyle(
+				sectionWidget,
+				this.MinimalShade,
+				margin: new BorderDouble(this.DefaultContainerPadding, 0, this.DefaultContainerPadding, this.DefaultContainerPadding));
 		}
 
-		public static SectionWidget ApplyBoxStyle(this SectionWidget sectionWidget, BorderDouble margin)
+		public SectionWidget ApplyBoxStyle(SectionWidget sectionWidget, BorderDouble margin)
 		{
-			return ApplyBoxStyle(sectionWidget, ApplicationController.Instance.Theme.MinimalShade, margin);
+			return ApplyBoxStyle(sectionWidget, this.MinimalShade, margin);
 		}
 
-		public static SectionWidget ApplyBoxStyle(this SectionWidget sectionWidget, Color backgroundColor, BorderDouble margin)
+		public SectionWidget ApplyBoxStyle(SectionWidget sectionWidget, Color backgroundColor, BorderDouble margin)
 		{
 			// Enforce panel padding
 			// sectionWidget.ContentPanel.Padding = new BorderDouble(10, 0, 10, 2);

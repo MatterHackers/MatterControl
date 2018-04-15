@@ -446,14 +446,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				nameSanitizer.Replace(group.Category.Name, ""),
 				nameSanitizer.Replace(group.Name, ""));
 
-			var sectionWidget = new SectionWidget(group.Name.Localize(), groupPanel, theme, serializationKey: userSettingsKey).ApplyBoxStyle();
+			var sectionWidget = new SectionWidget(group.Name.Localize(), groupPanel, theme, serializationKey: userSettingsKey);
+			theme.ApplyBoxStyle(sectionWidget);
 
 			bool firstRow = true;
 			GuiWidget settingsRow = null;
 
 			foreach (var subGroup in group.SubGroups)
 			{
-
 				// Add SettingRows for subgroup
 				foreach (SliceSettingData settingData in subGroup.Settings)
 				{
