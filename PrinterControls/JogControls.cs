@@ -88,9 +88,6 @@ namespace MatterHackers.MatterControl
 
 				// add in some movement radio buttons
 				FlowLayoutWidget setMoveDistanceControl = new FlowLayoutWidget();
-				TextWidget buttonsLabel = new TextWidget("Distance:", textColor: Color.White);
-				buttonsLabel.VAnchor = VAnchor.Center;
-				//setMoveDistanceControl.AddChild(buttonsLabel);
 
 				{
 					var moveRadioButtons = new FlowLayoutWidget();
