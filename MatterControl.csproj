@@ -222,6 +222,7 @@
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\DeleteCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\TransformCommand.cs" />
     <Compile Include="PrinterControls\EditLevelingSettingsPage.cs" />
+    <Compile Include="PrinterControls\JogControls.cs" />
     <Compile Include="PrinterControls\MacroDetailPage.cs" />
     <Compile Include="PrinterControls\MacroListPage.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterSetup.cs" />
@@ -452,7 +453,6 @@
     <Compile Include="PrinterControls\ManualPrinterControls.cs" />
     <Compile Include="PrinterControls\PrinterConnections\BaseConnectionWidget.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterChooser.cs" />
-    <Compile Include="PrinterControls\XYZJogControls.cs" />
     <Compile Include="Library\Widgets\PrintLibraryWidget.cs" />
     <Compile Include="Queue\PrintItemWrapper.cs" />
     <Compile Include="MatterControlApplication.cs" />
