@@ -122,21 +122,18 @@ namespace MatterHackers.MatterControl
 			mainContainer.AddChild(contentRow);
 			mainContainer.AddChild(footerRow);
 
-#if __ANDROID__
-			if (false)
+#if !__ANDROID__
+			mainContainer.Padding = new BorderDouble(3, 5, 3, 0);
+			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
+
+			headerLabel.TextWidget.PointSize = 14;
+			headerLabel.TextColor = theme.Colors.PrimaryTextColor;
+			contentRow.Padding = new BorderDouble(5);
+
+			// TODO: current layout bugs prevent bottom margin from having an effect and bounds are simply clipped
+			footerRow.Margin = new BorderDouble(top: theme.DefaultContainerPadding, bottom: 4);
+			footerRow.Padding = 0;
 #endif
-			{
-				mainContainer.Padding = new BorderDouble(3, 5, 3, 0);
-				headerRow.Padding = new BorderDouble(0, 3, 0, 3);
-
-				headerLabel.TextWidget.PointSize = 14;
-				headerLabel.TextColor = theme.Colors.PrimaryTextColor;
-				contentRow.Padding = new BorderDouble(5);
-
-				// TODO: current layout bugs prevent bottom margin from having an effect and bounds are simply clipped
-				footerRow.Margin = new BorderDouble(top: theme.DefaultContainerPadding, bottom: 4);
-				footerRow.Padding = 0;
-			}
 
 			this.AddChild(mainContainer);
 		}
