@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2012, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,12 +29,10 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -73,134 +71,129 @@ namespace MatterHackers.MatterControl
 
 			allControlsTopToBottom.HAnchor |= HAnchor.Stretch;
 
+			FlowLayoutWidget allControlsLeftToRight = new FlowLayoutWidget();
+
+			FlowLayoutWidget xYZWithDistance = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{
-				FlowLayoutWidget allControlsLeftToRight = new FlowLayoutWidget();
-
-				FlowLayoutWidget xYZWithDistance = new FlowLayoutWidget(FlowDirection.TopToBottom);
+				FlowLayoutWidget xYZControls = new FlowLayoutWidget();
 				{
-					FlowLayoutWidget xYZControls = new FlowLayoutWidget();
-					{
-						GuiWidget xyGrid = CreateXYGridControl(colors, distanceBetweenControls, buttonSeparationDistance);
-						xYZControls.AddChild(xyGrid);
+					GuiWidget xyGrid = CreateXYGridControl(colors, distanceBetweenControls, buttonSeparationDistance);
+					xYZControls.AddChild(xyGrid);
 
-						FlowLayoutWidget zButtons = JogControls.CreateZButtons(printer, buttonSeparationDistance, out zPlusControl, out zMinusControl, colors, theme);
-						zButtons.VAnchor = VAnchor.Bottom;
-						xYZControls.AddChild(zButtons);
-						xYZWithDistance.AddChild(xYZControls);
-					}
-
-					// add in some movement radio buttons
-					FlowLayoutWidget setMoveDistanceControl = new FlowLayoutWidget();
-					TextWidget buttonsLabel = new TextWidget("Distance:", textColor: Color.White);
-					buttonsLabel.VAnchor = VAnchor.Center;
-					//setMoveDistanceControl.AddChild(buttonsLabel);
-
-					{
-						var moveRadioButtons = new FlowLayoutWidget();
-						var radioList = new List<GuiWidget>();
-
-						movePointZeroTwoMmButton = theme.CreateMicroRadioButton("0.02", radioList);
-						movePointZeroTwoMmButton.CheckedStateChanged += (s, e) =>
-						{
-							if (movePointZeroTwoMmButton.Checked)
-							{
-								SetXYZMoveAmount(.02);
-							}
-						};
-						moveRadioButtons.AddChild(movePointZeroTwoMmButton);
-
-						var pointOneButton = theme.CreateMicroRadioButton("0.1", radioList);
-						pointOneButton.CheckedStateChanged += (s, e) =>
-						{
-							if (pointOneButton.Checked)
-							{
-								SetXYZMoveAmount(.1);
-							}
-						};
-						moveRadioButtons.AddChild(pointOneButton);
-
-						moveOneMmButton = theme.CreateMicroRadioButton("1", radioList);
-						moveOneMmButton.CheckedStateChanged += (s, e) =>
-						{
-							if (moveOneMmButton.Checked)
-							{
-								SetXYZMoveAmount(1);
-							}
-						};
-						moveRadioButtons.AddChild(moveOneMmButton);
-
-						tooBigForBabyStepping = new DisableableWidget()
-						{
-							VAnchor = VAnchor.Fit,
-							HAnchor = HAnchor.Fit
-						};
-
-						var tooBigFlowLayout = new FlowLayoutWidget();
-						tooBigForBabyStepping.AddChild(tooBigFlowLayout);
-
-						tenButton = theme.CreateMicroRadioButton("10", radioList);
-						tenButton.CheckedStateChanged += (s, e) =>
-						{
-							if (tenButton.Checked)
-							{
-								SetXYZMoveAmount(10);
-							}
-						};
-						tooBigFlowLayout.AddChild(tenButton);
-
-						oneHundredButton = theme.CreateMicroRadioButton("100", radioList);
-						oneHundredButton.CheckedStateChanged += (s, e) =>
-						{
-							if (oneHundredButton.Checked)
-							{
-								SetXYZMoveAmount(100);
-							}
-						};
-						tooBigFlowLayout.AddChild(oneHundredButton);
-
-						moveRadioButtons.AddChild(tooBigForBabyStepping);
-
-						tenButton.Checked = true;
-						moveRadioButtons.Margin = new BorderDouble(0, 3);
-
-						setMoveDistanceControl.AddChild(moveRadioButtons);
-
-						tooBigFlowLayout.AddChild(new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8)
-						{
-							Margin = new BorderDouble(left: 10),
-							VAnchor = VAnchor.Center
-						});
-					}
-
-					setMoveDistanceControl.HAnchor = HAnchor.Left;
-					xYZWithDistance.AddChild(setMoveDistanceControl);
+					FlowLayoutWidget zButtons = JogControls.CreateZButtons(printer, buttonSeparationDistance, out zPlusControl, out zMinusControl, colors, theme);
+					zButtons.VAnchor = VAnchor.Bottom;
+					xYZControls.AddChild(zButtons);
+					xYZWithDistance.AddChild(xYZControls);
 				}
 
-				allControlsLeftToRight.AddChild(xYZWithDistance);
+				// add in some movement radio buttons
+				FlowLayoutWidget setMoveDistanceControl = new FlowLayoutWidget();
+
+				{
+					var moveRadioButtons = new FlowLayoutWidget();
+					var radioList = new List<GuiWidget>();
+
+					movePointZeroTwoMmButton = theme.CreateMicroRadioButton("0.02", radioList);
+					movePointZeroTwoMmButton.CheckedStateChanged += (s, e) =>
+					{
+						if (movePointZeroTwoMmButton.Checked)
+						{
+							SetXYZMoveAmount(.02);
+						}
+					};
+					moveRadioButtons.AddChild(movePointZeroTwoMmButton);
+
+					var pointOneButton = theme.CreateMicroRadioButton("0.1", radioList);
+					pointOneButton.CheckedStateChanged += (s, e) =>
+					{
+						if (pointOneButton.Checked)
+						{
+							SetXYZMoveAmount(.1);
+						}
+					};
+					moveRadioButtons.AddChild(pointOneButton);
+
+					moveOneMmButton = theme.CreateMicroRadioButton("1", radioList);
+					moveOneMmButton.CheckedStateChanged += (s, e) =>
+					{
+						if (moveOneMmButton.Checked)
+						{
+							SetXYZMoveAmount(1);
+						}
+					};
+					moveRadioButtons.AddChild(moveOneMmButton);
+
+					tooBigForBabyStepping = new DisableableWidget()
+					{
+						VAnchor = VAnchor.Fit,
+						HAnchor = HAnchor.Fit
+					};
+
+					var tooBigFlowLayout = new FlowLayoutWidget();
+					tooBigForBabyStepping.AddChild(tooBigFlowLayout);
+
+					tenButton = theme.CreateMicroRadioButton("10", radioList);
+					tenButton.CheckedStateChanged += (s, e) =>
+					{
+						if (tenButton.Checked)
+						{
+							SetXYZMoveAmount(10);
+						}
+					};
+					tooBigFlowLayout.AddChild(tenButton);
+
+					oneHundredButton = theme.CreateMicroRadioButton("100", radioList);
+					oneHundredButton.CheckedStateChanged += (s, e) =>
+					{
+						if (oneHundredButton.Checked)
+						{
+							SetXYZMoveAmount(100);
+						}
+					};
+					tooBigFlowLayout.AddChild(oneHundredButton);
+
+					moveRadioButtons.AddChild(tooBigForBabyStepping);
+
+					tenButton.Checked = true;
+					moveRadioButtons.Margin = new BorderDouble(0, 3);
+
+					setMoveDistanceControl.AddChild(moveRadioButtons);
+
+					tooBigFlowLayout.AddChild(new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8)
+					{
+						Margin = new BorderDouble(left: 10),
+						VAnchor = VAnchor.Center
+					});
+				}
+
+				setMoveDistanceControl.HAnchor = HAnchor.Left;
+				xYZWithDistance.AddChild(setMoveDistanceControl);
+			}
+
+			allControlsLeftToRight.AddChild(xYZWithDistance);
 
 #if !__ANDROID__
-				allControlsLeftToRight.AddChild(GetHotkeyControlContainer());
+			allControlsLeftToRight.AddChild(GetHotkeyControlContainer());
 #endif
-				var barBetweenZAndE = new GuiWidget(1, 1)
-				{
-					VAnchor = VAnchor.Stretch,
-					BackgroundColor = colors.ZColor,
-					Margin = new BorderDouble(distanceBetweenControls, 5)
-				};
-				allControlsLeftToRight.AddChild(barBetweenZAndE);
+			var barBetweenZAndE = new GuiWidget(1, 1)
+			{
+				VAnchor = VAnchor.Stretch,
+				BackgroundColor = colors.ZColor,
+				Margin = new BorderDouble(distanceBetweenControls, 5)
+			};
+			allControlsLeftToRight.AddChild(barBetweenZAndE);
 
-				FlowLayoutWidget eButtons = CreateEButtons(buttonSeparationDistance, colors);
-				disableableEButtons = new DisableableWidget()
-				{
-					Name = "disableableEButtons",
-					HAnchor = HAnchor.Fit,
-					VAnchor = VAnchor.Fit | VAnchor.Top,
-				};
-				disableableEButtons.AddChild(eButtons);
+			FlowLayoutWidget eButtons = CreateEButtons(buttonSeparationDistance, colors);
+			disableableEButtons = new DisableableWidget()
+			{
+				Name = "disableableEButtons",
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Fit | VAnchor.Top,
+			};
+			disableableEButtons.AddChild(eButtons);
 
-				allControlsLeftToRight.AddChild(disableableEButtons);
-				allControlsTopToBottom.AddChild(allControlsLeftToRight);
-			}
+			allControlsLeftToRight.AddChild(disableableEButtons);
+			allControlsTopToBottom.AddChild(allControlsLeftToRight);
 
 			this.AddChild(allControlsTopToBottom);
 			this.HAnchor = HAnchor.Fit;
