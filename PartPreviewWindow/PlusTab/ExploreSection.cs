@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			{
 				allIconViews.Add(new ExploreItem(item, theme)
 				{
-					BackgroundColor = theme.SlightShade,
+					BackgroundColor = theme.MinimalShade,
 					VAnchor = VAnchor.Top | VAnchor.Fit,
 				});
 			}
