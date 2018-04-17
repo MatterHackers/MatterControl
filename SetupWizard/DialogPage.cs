@@ -36,7 +36,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public class DialogPage : GuiWidget
+	public class DialogPage : FlowLayoutWidget
 	{
 		protected FlowLayoutWidget headerRow;
 		protected FlowLayoutWidget contentRow;
@@ -52,14 +52,16 @@ namespace MatterHackers.MatterControl
 		protected double labelFontSize = 12 * GuiWidget.DeviceScale;
 		protected double errorFontSize = 10 * GuiWidget.DeviceScale;
 
-		private GuiWidget mainContainer;
-
 		protected ThemeConfig theme;
 
 		public DialogPage(string cancelButtonText = null)
+			: base (FlowDirection.TopToBottom)
 		{
 			theme = ApplicationController.Instance.Theme;
 
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Stretch;
+			this.BackgroundColor = theme.Colors.PrimaryBackgroundColor;
 			linkButtonFactory = theme.LinkButtonFactory;
 
 			if (cancelButtonText == null)
@@ -67,24 +69,9 @@ namespace MatterHackers.MatterControl
 				cancelButtonText = "Cancel".Localize();
 			}
 
-			if (!UserSettings.Instance.IsTouchScreen)
-			{
-				this.Padding = new BorderDouble(0); //To be re-enabled once native borders are turned off
-			}
-
-			this.AnchorAll();
-
 			cancelButton = theme.CreateDialogButton(cancelButtonText);
 			cancelButton.Margin = 0;
 			cancelButton.Name = "Cancel Wizard Button";
-
-			// Create the main container
-			mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				Padding = new BorderDouble(12, 12, 12, 0),
-				BackgroundColor = theme.Colors.PrimaryBackgroundColor
-			};
-			mainContainer.AnchorAll();
 
 			// Create the header row for the widget
 			headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
@@ -92,8 +79,10 @@ namespace MatterHackers.MatterControl
 				Name = "HeaderRow",
 				Margin = new BorderDouble(0, 3, 0, 0),
 				Padding = new BorderDouble(0, 12),
-				HAnchor = HAnchor.Stretch
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
 			};
+			this.AddChild(headerRow);
 
 			headerLabel = new WrappedTextWidget("Setup Wizard".Localize(), pointSize: 24, textColor: theme.Colors.PrimaryAccentColor)
 			{
@@ -109,33 +98,28 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch
 			};
+			this.AddChild(contentRow);
 
 			// Create the footer (button) container
 			footerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
 				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
 				Margin = new BorderDouble(0, 6),
 				Padding = new BorderDouble(top: 4, bottom: 2)
 			};
-
-			mainContainer.AddChild(headerRow);
-			mainContainer.AddChild(contentRow);
-			mainContainer.AddChild(footerRow);
+			this.AddChild(footerRow);
 
 #if !__ANDROID__
-			mainContainer.Padding = new BorderDouble(3, 5, 3, 0);
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
 			headerLabel.TextWidget.PointSize = 14;
 			headerLabel.TextColor = theme.Colors.PrimaryTextColor;
 			contentRow.Padding = new BorderDouble(5);
 
-			// TODO: current layout bugs prevent bottom margin from having an effect and bounds are simply clipped
-			footerRow.Margin = new BorderDouble(top: theme.DefaultContainerPadding, bottom: 4);
 			footerRow.Padding = 0;
+			footerRow.Margin = new BorderDouble(top: theme.DefaultContainerPadding);
 #endif
-
-			this.AddChild(mainContainer);
 		}
 
 		public DialogWindow WizardWindow { get; set; }
