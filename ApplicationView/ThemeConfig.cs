@@ -83,6 +83,7 @@ namespace MatterHackers.MatterControl
 		public int SplitterWidth => (int)(6 * (GuiWidget.DeviceScale <= 1 ? GuiWidget.DeviceScale : GuiWidget.DeviceScale * 1.4));
 
 		public IThemeColors Colors { get; set; }
+		public PresetColors PresetColors { get; set; } = new PresetColors();
 
 		public Color SlightShade { get; } = new Color(0, 0, 0, 40);
 		public Color MinimalShade { get; } = new Color(0, 0, 0, 15);
@@ -428,5 +429,12 @@ namespace MatterHackers.MatterControl
 
 			return sectionWidget;
 		}
+	}
+
+	public class PresetColors
+	{
+		public Color MaterialPreset { get; set; } = Color.Orange;
+		public Color QualityPreset { get; set; } = Color.Yellow;
+		public Color UserOverride { get; set; } = new Color(68, 95, 220, 150);
 	}
 }
