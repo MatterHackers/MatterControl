@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Kevin Pope, John Lewin
+Copyright (c) 2018, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
 
@@ -49,17 +50,39 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private PrinterConfig printer;
 		private GuiWidget pullDownContainer;
 		private EventHandler unregisterEvents;
-		//For multiple materials
 
 		public PresetSelectorWidget(PrinterConfig printer, string label, Color accentColor, NamedSettingsLayers layerType, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
+			this.layerType = layerType;
 			this.printer = printer;
 			this.Name = label;
 			this.theme = theme;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Fit;
+			this.BackgroundColor = theme.MinimalShade;
+			this.Padding = theme.DefaultContainerPadding;
+
+			// Section Label
+			this.AddChild(new TextWidget(label, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			{
+				HAnchor = HAnchor.Left,
+				Margin = new BorderDouble(0)
+			});
+
+			pullDownContainer = new GuiWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+				Border = new BorderDouble(left: 3),
+				BorderColor = accentColor,
+				Margin = new BorderDouble(top: 6),
+				Padding = new BorderDouble(left: (accentColor != Color.Transparent) ? 6 : 0)
+			};
+			pullDownContainer.AddChild(GetPulldownContainer());
+			this.AddChild(pullDownContainer);
 
 			ActiveSliceSettings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
-
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if (e is StringEventArgs stringEvent
@@ -69,45 +92,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					RebuildDropDownList();
 				}
 			}, ref unregisterEvents);
-
-			this.layerType = layerType;
-
-			this.HAnchor = HAnchor.Stretch;
-			this.VAnchor = VAnchor.Fit;
-			this.BackgroundColor = theme.Colors.TertiaryBackgroundColor;
-
-			GuiWidget accentBar = new GuiWidget(7, 3)
-			{
-				BackgroundColor = accentColor,
-				HAnchor = HAnchor.Stretch
-			};
-
-			// Section Label
-			this.AddChild(new TextWidget(label, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
-			{
-				HAnchor = HAnchor.Left,
-				Margin = new BorderDouble(12, 3, 0, 6)
-			});
-
-			pullDownContainer = new GuiWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
-			};
-			pullDownContainer.AddChild(GetPulldownContainer());
-			this.AddChild(pullDownContainer);
-
-			this.AddChild(accentBar);
 		}
 
 		public FlowLayoutWidget GetPulldownContainer()
 		{
 			DropDownList = CreateDropdown();
 
-			FlowLayoutWidget container = new FlowLayoutWidget()
+			var container = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.MaxFitOrStretch,
-				Padding = new BorderDouble(12, 0),
 				Name = "Preset Pulldown Container"
 			};
 
@@ -211,6 +204,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return container;
 		}
 
+		public override void OnDrawBackground(Graphics2D graphics2D)
+		{
+			//base.OnDrawBackground(graphics2D);
+			graphics2D.Render(new RoundedRect(this.LocalBounds, 5), this.BackgroundColor);
+		}
+
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			ActiveSliceSettings.MaterialPresetChanged -= ActiveSliceSettings_MaterialPresetChanged;
@@ -229,12 +228,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var dropDownList = new DropDownList(defaultMenuItemText, theme.Colors.PrimaryTextColor, maxHeight: 300, useLeftIcons: true, pointSize: theme.DefaultFontSize)
 			{
 				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Center,
 				MenuItemsPadding = new BorderDouble(10, 7, 7, 7),
 				BorderColor = theme.GetBorderColor(75)
 			};
 
 			dropDownList.Name = layerType.ToString() + " DropDown List";
-			dropDownList.Margin = new BorderDouble(0, 3);
+			dropDownList.Margin = 0;
 			dropDownList.MinimumSize = new Vector2(dropDownList.LocalBounds.Width, dropDownList.LocalBounds.Height);
 
 			MenuItem defaultMenuItem = dropDownList.AddItem(defaultMenuItemText, "");

@@ -38,10 +38,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SliceSettingsRow : SettingsRow
 	{
-		private static readonly Color materialSettingBackgroundColor = Color.Orange;
-		private static readonly Color qualitySettingBackgroundColor = Color.YellowGreen;
-		public static readonly Color userSettingBackgroundColor = new Color(68, 95, 220, 150);
-
 		private SettingsContext settingsContext;
 		private PrinterConfig printer;
 		private SliceSettingData settingData;
@@ -143,11 +139,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								if (layerName.StartsWith("Material"))
 								{
-									this.HighlightColor = materialSettingBackgroundColor;
+									this.HighlightColor = theme.PresetColors.MaterialPreset;
 								}
 								else if (layerName.StartsWith("Quality"))
 								{
-									this.HighlightColor = qualitySettingBackgroundColor;
+									this.HighlightColor = theme.PresetColors.QualityPreset;
 								}
 								else
 								{
@@ -161,17 +157,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							}
 							else
 							{
-								this.HighlightColor = userSettingBackgroundColor;
+								this.HighlightColor = theme.PresetColors.UserOverride;
 								if (restoreButton != null) restoreButton.Visible = true;
 							}
 						}
 						break;
 					case NamedSettingsLayers.Material:
-						this.HighlightColor = materialSettingBackgroundColor;
+						this.HighlightColor = theme.PresetColors.MaterialPreset;
 						if (restoreButton != null) restoreButton.Visible = true;
 						break;
 					case NamedSettingsLayers.Quality:
-						this.HighlightColor = qualitySettingBackgroundColor;
+						this.HighlightColor = theme.PresetColors.QualityPreset;
 						if (restoreButton != null) restoreButton.Visible = true;
 						break;
 				}
@@ -180,11 +176,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (printer.Settings.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Material))
 				{
-					this.HighlightColor = materialSettingBackgroundColor;
+					this.HighlightColor =theme.PresetColors.MaterialPreset;
 				}
 				else if (printer.Settings.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Quality))
 				{
-					this.HighlightColor = qualitySettingBackgroundColor;
+					this.HighlightColor = theme.PresetColors.QualityPreset;
 				}
 				else
 				{
@@ -198,7 +194,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (restoreButton != null) restoreButton.Visible = false;
 				this.HighlightColor = Color.Transparent;
 			}
-
 		}
 
 		internal static void AddBordersToEditFields(GuiWidget row)

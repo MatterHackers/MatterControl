@@ -278,10 +278,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private EventHandler unregisterEvents;
 		private bool allowRemoveButton;
-		PrinterSettings printerSettings;
+		private ThemeConfig theme;
+		private PrinterSettings printerSettings;
 
 		public ZTuningWidget(PrinterSettings printerSettings, ThemeConfig theme, bool allowRemoveButton = true)
 		{
+			this.theme = theme;
 			this.printerSettings = printerSettings;
 			this.allowRemoveButton = allowRemoveButton;
 			this.HAnchor = HAnchor.Fit;
@@ -332,7 +334,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			double zoffset = printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset);
 			bool hasOverriddenZOffset = (zoffset != 0);
 
-			zOffsetStreamContainer.BackgroundColor = (allowRemoveButton && hasOverriddenZOffset) ? SliceSettingsRow.userSettingBackgroundColor : ActiveTheme.Instance.SecondaryBackgroundColor;
+			zOffsetStreamContainer.BackgroundColor = (allowRemoveButton && hasOverriddenZOffset) ? theme.PresetColors.UserOverride : ActiveTheme.Instance.SecondaryBackgroundColor;
 			clearZOffsetButton.Visible = allowRemoveButton && hasOverriddenZOffset;
 
 			zOffsetStreamDisplay.Text = zoffset.ToString("0.##");
