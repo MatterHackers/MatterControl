@@ -63,18 +63,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.BackgroundColor = theme.MinimalShade;
 			this.Padding = theme.DefaultContainerPadding;
 
-			ActiveSliceSettings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
-
-			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
-			{
-				if (e is StringEventArgs stringEvent
-					&& (stringEvent.Data == SettingsKey.default_material_presets
-						|| stringEvent.Data == SettingsKey.layer_name))
-				{
-					RebuildDropDownList();
-				}
-			}, ref unregisterEvents);
-
 			// Section Label
 			this.AddChild(new TextWidget(label, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 			{
@@ -93,6 +81,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 			pullDownContainer.AddChild(GetPulldownContainer());
 			this.AddChild(pullDownContainer);
+
+			ActiveSliceSettings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			{
+				if (e is StringEventArgs stringEvent
+					&& (stringEvent.Data == SettingsKey.default_material_presets
+						|| stringEvent.Data == SettingsKey.layer_name))
+				{
+					RebuildDropDownList();
+				}
+			}, ref unregisterEvents);
 		}
 
 		public FlowLayoutWidget GetPulldownContainer()
