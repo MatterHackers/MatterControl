@@ -94,24 +94,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
 				string tabTitle = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
-				printerTab = CreatePrinterTab(printer, theme, tabTitle);
-
-				tabControl.AddTab(printerTab);
+				this.CreatePrinterTab(printer, theme, tabTitle);
 			}
 			else
 			{
-				BedConfig bed;
-				this.CreatePartTab(
-					"New Part",
-					bed = new BedConfig(),
-					theme);
-
-				bed.LoadContent(
-					new EditContext()
-					{
-						ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-						SourceItem = BedConfig.NewPlatingItem()
-					}).ConfigureAwait(false);
 			}
 
 			// add in the update available button
@@ -164,22 +150,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private ChromeTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)
+		internal ChromeTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)
 		{
-			string oemName = printer.Settings.GetValue(SettingsKey.make);
-
-			OemSettings.Instance.OemUrls.TryGetValue(oemName, out string oemUrl);
-
-			return new ChromeTab(
+			printerTab = new ChromeTab(
 				tabTitle,
 				tabControl,
 				new PrinterTabPage(printer, theme, tabTitle.ToUpper()),
 				theme,
-				"https://www.google.com/s2/favicons?domain=" + oemUrl ?? "www.matterhackers.com")
+				tabImageUrl: ApplicationController.Instance.GetFavIconUrl(oemName: printer.Settings.GetValue(SettingsKey.make)))
 			{
 				Name = "3D View Tab",
 				MinimumSize = new Vector2(120, theme.TabButtonHeight)
 			};
+
+			tabControl.AddTab(printerTab);
+
+			return printerTab;
 		}
 
 		public ChromeTab CreatePartTab(string tabTitle, BedConfig sceneContext, ThemeConfig theme)

@@ -191,10 +191,17 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public string GetFavIconUrl(string oemName)
+		{
+			OemSettings.Instance.OemUrls.TryGetValue(oemName, out string oemUrl);
+			return "https://www.google.com/s2/favicons?domain=" + (string.IsNullOrWhiteSpace(oemUrl) ? "www.matterhackers.com" : oemUrl);
+		}
+
 		internal async Task ClearActivePrinter()
 		{
 			await this.SetActivePrinter(emptyPrinter);
 		}
+
 		public void LaunchBrowser(string targetUri)
 		{
 			UiThread.RunOnIdle(() =>
@@ -736,15 +743,6 @@ namespace MatterHackers.MatterControl
 			this.Graph = new GraphConfig();
 			this.Library.ContentProviders.Add(new[] { "stl", "obj", "amf", "mcx" }, new MeshContentProvider());
 			this.Library.ContentProviders.Add("gcode", new GCodeContentProvider());
-
-			// Name = "MainSlidePanel";
-			ActiveTheme.ThemeChanged.RegisterEvent((s, e) =>
-			{
-				if (!AppContext.IsLoading)
-				{
-					ReloadAll();
-				}
-			}, ref unregisterEvents);
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{

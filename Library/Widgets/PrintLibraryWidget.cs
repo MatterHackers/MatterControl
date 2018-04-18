@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					},
 					useRadioStyle: true,
 					SiblingRadioButtonList: siblingList);
-
+#if DEBUG
 				popupMenu.CreateBoolMenuItem(
 					"View XSmall Icons".Localize(),
 					() => activeMode == ListViewModes.IconListView18,
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					},
 					useRadioStyle: true,
 					SiblingRadioButtonList: siblingList);
-
+#endif
 				popupMenu.CreateBoolMenuItem(
 					"View Icons".Localize(),
 					() => activeMode == ListViewModes.IconListView,
@@ -587,7 +587,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 						var newTab = partPreviewContent.CreatePartTab(
 							firstItem.Name,
-							bed = new BedConfig(), 
+							bed = new BedConfig(),
 							theme);
 
 						// Load content after UI widgets to support progress notification during acquire/load

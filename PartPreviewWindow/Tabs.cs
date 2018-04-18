@@ -261,11 +261,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private async void ChromeTab_CloseClicked(object sender, EventArgs e)
 		{
-			if (sender is ITab tab
-				&& tab.TabContent is PrinterTabPage)
-			{
-				await ApplicationController.Instance.ClearActivePrinter();
-			}
 		}
 
 		public Func<GuiWidget> NewTabPage { get; set; }
@@ -453,7 +448,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class ChromeTab : SimpleTab
 	{
 		public ChromeTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null)
-			: base (tabLabel, parentTabControl, tabContent, theme, tabImageUrl)
+			: base(tabLabel, parentTabControl, tabContent, theme, tabImageUrl)
 		{
 		}
 
@@ -512,8 +507,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (drawLeftTabOverlap)
 			{
 				DrawTabLowerLeft(
-					graphics2D, 
-					rect, 
+					graphics2D,
+					rect,
 					(leftSiblingSelected || this == activeTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
 			}
 

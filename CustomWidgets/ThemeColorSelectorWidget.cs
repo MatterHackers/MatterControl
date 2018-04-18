@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl
 
 		private int hoveredThemeIndex = 0;
 		private int midPoint = ActiveTheme.AvailableThemes.Count / 2;
-			
+
 		public Button CreateThemeButton(IThemeColors darkTheme, int darkThemeIndex)
 		{
 			var normal = new GuiWidget(colorSelectSize, colorSelectSize);
@@ -129,11 +129,17 @@ namespace MatterHackers.MatterControl
 
 		public static void SetTheme(string themeName)
 		{
-			// save it for this printer
-			ActiveSliceSettings.Instance.SetValue(SettingsKey.active_theme_name, themeName);
+			UiThread.RunOnIdle(() =>
+			{
+				// save it for this printer
+				ActiveSliceSettings.Instance.SetValue(SettingsKey.active_theme_name, themeName);
 
-			//Set new user selected Default
-			ActiveTheme.Instance = ActiveTheme.GetThemeColors(themeName);
+				//Set new user selected Default
+				ActiveTheme.Instance = ActiveTheme.GetThemeColors(themeName);
+
+				// Explicitly fire ReloadAll in response to user interaction
+				ApplicationController.Instance.ReloadAll();
+			});
 		}
 	}
 }

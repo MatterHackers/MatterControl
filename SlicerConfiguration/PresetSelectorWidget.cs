@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Margin = new BorderDouble(top: 6),
 				Padding = new BorderDouble(left: (accentColor != Color.Transparent) ? 6 : 0)
 			};
-			pullDownContainer.AddChild(GetPulldownContainer());
+			pullDownContainer.AddChild(this.GetPulldownContainer());
 			this.AddChild(pullDownContainer);
 
 			ActiveSliceSettings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
@@ -367,7 +367,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private void RebuildDropDownList()
 		{
 			pullDownContainer.CloseAllChildren();
-			pullDownContainer.AddChild(GetPulldownContainer());
+			pullDownContainer.AddChild(this.GetPulldownContainer());
 		}
 
 		private void SettingsLayers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
