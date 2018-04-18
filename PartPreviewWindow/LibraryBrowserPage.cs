@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 				breadCrumbWidget.SetContainer(libraryNavContext.ActiveContainer);
 			};
 
-			librarySelectorWidget = new ListView(libraryNavContext, new IconListView(75))
+			librarySelectorWidget = new ListView(libraryNavContext, new IconListView(theme, 75), theme)
 			{
 				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
 				ShowItems = false,

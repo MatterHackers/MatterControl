@@ -46,6 +46,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		public event EventHandler ContentReloaded;
 
+		private ThemeConfig theme;
 		private ILibraryContext LibraryContext;
 
 		private int scrollAmount = -1;
@@ -55,13 +56,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private ILibraryContainerLink loadingContainerLink;
 
 		// Default constructor uses IconListView
-		public ListView(ILibraryContext context)
-			: this(context, new IconListView())
+		public ListView(ILibraryContext context, ThemeConfig theme)
+			: this(context, new IconListView(theme), theme)
 		{
 		}
 
-		public ListView(ILibraryContext context, GuiWidget libraryView)
+		public ListView(ILibraryContext context, GuiWidget libraryView, ThemeConfig theme)
 		{
+			contentView = new IconListView(theme);
+
+			this.theme = theme;
 			this.LibraryContext = context;
 
 			// Set Display Attributes
@@ -84,13 +88,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public ILibraryContainer ActiveContainer => this.LibraryContext.ActiveContainer;
 
-		public Color ThumbnailBackground { get; } = ApplicationController.Instance.Theme.ActiveTabColor.AdjustLightness(1.05).ToColor();
-
 		private async void ActiveContainer_Changed(object sender, ContainerChangedEventArgs e)
 		{
 			var activeContainer = e.ActiveContainer;
 
-			// Anytime the container changes, 
+			// Anytime the container changes,
 			Type targetType = activeContainer?.DefaultView;
 			if (targetType != null
 				&& targetType != this.ListContentView.GetType())
@@ -292,7 +294,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 
 		// Default to IconListView
-		private GuiWidget contentView = new IconListView();
+		private GuiWidget contentView ;
 
 		/// <summary>
 		/// The GuiWidget responsible for rendering ListViewItems
@@ -381,7 +383,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			var destImage = new ImageBuffer(width, height, 32, originalImage.GetRecieveBlender());
 
 			var renderGraphics = destImage.NewGraphics2D();
-			renderGraphics.Clear(this.ThumbnailBackground);
+			renderGraphics.Clear(Color.Transparent);
 
 			var x = width / 2 - originalImage.Width / 2;
 			var y = height / 2 - originalImage.Height / 2;

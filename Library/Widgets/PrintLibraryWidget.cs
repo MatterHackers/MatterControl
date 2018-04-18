@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			libraryView = new ListView(ApplicationController.Instance.Library)
+			libraryView = new ListView(ApplicationController.Instance.Library, theme)
 			{
 				Name = "LibraryView",
 				// Drop containers if ShowContainers != 1
@@ -215,7 +215,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					(isChecked) =>
 					{
 						activeMode = ListViewModes.IconListView18;
-						listView.ListContentView = new IconListView(18);
+						listView.ListContentView = new IconListView(theme, 18);
 						listView.Reload().ConfigureAwait(false);
 					},
 					useRadioStyle: true,
@@ -228,7 +228,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					(isChecked) =>
 					{
 						activeMode = ListViewModes.IconListView70;
-						listView.ListContentView = new IconListView(70);
+						listView.ListContentView = new IconListView(theme, 70);
 						listView.Reload().ConfigureAwait(false);
 					},
 					useRadioStyle: true,
@@ -240,7 +240,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					(isChecked) =>
 					{
 						activeMode = ListViewModes.IconListView;
-						listView.ListContentView = new IconListView();
+						listView.ListContentView = new IconListView(theme);
 						listView.Reload().ConfigureAwait(false);
 					},
 					useRadioStyle: true,
@@ -252,7 +252,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					(isChecked) =>
 					{
 						activeMode = ListViewModes.IconListView256;
-						listView.ListContentView = new IconListView(256);
+						listView.ListContentView = new IconListView(theme, 256);
 						listView.Reload().ConfigureAwait(false);
 					},
 					useRadioStyle: true,

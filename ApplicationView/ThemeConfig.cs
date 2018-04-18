@@ -100,6 +100,9 @@ namespace MatterHackers.MatterControl
 		public Color ToolbarButtonHover => this.SlightShade;
 		public Color ToolbarButtonDown => this.MinimalShade;
 
+		public Color ThumbnailBackground { get; set; }
+		public Color AccentMimimalOverlay { get; set; }
+
 		public GuiWidget CreateSearchButton()
 		{
 			return new IconButton(AggContext.StaticData.LoadIcon("icon_search_24x24.png", 16, 16, this.InvertIcons), this)
@@ -154,6 +157,8 @@ namespace MatterHackers.MatterControl
 
 			this.ActiveTabColor = this.TabBodyBackground;
 			this.ActiveTabBarBackground = this.ActiveTabColor.AdjustLightness(0.85).ToColor();
+			this.ThumbnailBackground = this.MinimalShade;
+			this.AccentMimimalOverlay = new Color(this.Colors.PrimaryAccentColor, 50);
 
 			// Active tab color with slight transparency
 			this.InteractionLayerOverlayColor = new Color(this.ActiveTabColor, 240);
@@ -241,7 +246,7 @@ namespace MatterHackers.MatterControl
 				Padding = new BorderDouble(5, 0),
 				SelectedBackgroundColor = this.SlightShade,
 				UnselectedBackgroundColor = this.SlightShade,
-				HoverColor = new Color(this.Colors.PrimaryAccentColor, 50),
+				HoverColor = this.AccentMimimalOverlay,
 				Margin = new BorderDouble(right: 1),
 				HAnchor = HAnchor.Absolute,
 				Height = this.MicroButtonHeight,

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -49,20 +49,22 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private int columnCount = 1;
 		private int leftRightMargin;
 		private int iconViewPadding = IconViewItem.ItemPadding;
+		private int reflownWidth = -1;
+		private ThemeConfig theme;
 
 		private List<IconViewItem> allIconViews = new List<IconViewItem>();
 
-		public IconListView(int thumbnailSize = -1)
+		public IconListView(ThemeConfig theme, int thumbnailSize = -1)
 			: base(FlowDirection.TopToBottom)
 		{
+			this.theme = theme;
+
 			if (thumbnailSize != -1)
 			{
 				this.ThumbHeight = thumbnailSize;
 				this.ThumbWidth = thumbnailSize;
 			}
 		}
-
-		private int reflownWidth = -1;
 
 		public override void OnBoundsChanged(EventArgs e)
 		{
@@ -137,7 +139,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public ListViewItemBase AddItem(ListViewItem item)
 		{
-			var iconView = new IconViewItem(item, this.ThumbWidth, this.ThumbHeight);
+			var iconView = new IconViewItem(item, this.ThumbWidth, this.ThumbHeight, theme);
 			iconView.Margin = new BorderDouble(leftRightMargin, 0);
 
 			allIconViews.Add(iconView);
@@ -194,10 +196,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		internal static int ItemPadding = 2;
 
 		private TextWidget text;
+		private ThemeConfig theme;
 
-		public IconViewItem(ListViewItem item, int thumbWidth, int thumbHeight)
+		public IconViewItem(ListViewItem item, int thumbWidth, int thumbHeight, ThemeConfig theme)
 			: base(item, thumbWidth, thumbHeight)
 		{
+			this.theme = theme;
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Fit;
 			this.Padding = IconViewItem.ItemPadding;
@@ -211,7 +215,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					AutoResize = false,
 					Name = "List Item Thumbnail",
-					BackgroundColor = item.ListView.ThumbnailBackground,
+					BackgroundColor = theme.ThumbnailBackground,
 					Margin = 0,
 				};
 				this.AddChild(imageWidget);
@@ -225,7 +229,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					AutoResize = false,
 					Name = "List Item Thumbnail",
-					BackgroundColor = item.ListView.ThumbnailBackground,
+					BackgroundColor = theme.ThumbnailBackground,
 					Margin = 0,
 				};
 				container.AddChild(imageWidget);
@@ -271,10 +275,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override Color BackgroundColor
 		{
-			get
-			{
-				return this.IsSelected ? ActiveTheme.Instance.PrimaryAccentColor : Color.Transparent;
-			}
+			get => this.IsSelected ? theme.AccentMimimalOverlay : Color.Transparent;
 			set { }
 		}
 	}
