@@ -30,8 +30,10 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
@@ -48,6 +50,7 @@ namespace MatterHackers.MatterControl
 
 			this.Name = "Printers... Menu";
 			this.BorderColor = Color.Transparent;
+			this.AutoScaleIcons = false;
 			this.BackgroundColor = theme.MinimalShade;
 			this.SelectionChanged += (s, e) =>
 			{
@@ -117,7 +120,7 @@ namespace MatterHackers.MatterControl
 			//Add the menu items to the menu itself
 			foreach (var printer in ProfileManager.Instance.ActiveProfiles.OrderBy(p => p.Name))
 			{
-				this.AddItem(printer.Name, printer.ID);
+				this.AddItem(this.GetOemIcon(printer.Make), printer.Name, printer.ID);
 			}
 
 			string lastProfileID = ProfileManager.Instance.LastProfileID;
@@ -128,6 +131,18 @@ namespace MatterHackers.MatterControl
 
 				//this.mainControlText.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
 			}
+		}
+
+		private ImageBuffer GetOemIcon(string oemName)
+		{
+			OemSettings.Instance.OemUrls.TryGetValue(oemName, out string oemUrl);
+
+			var imageBuffer = new ImageBuffer(16, 16);
+			string faviconUrl = "https://www.google.com/s2/favicons?domain=" + (oemUrl ?? "www.matterhackers.com");
+
+			ApplicationController.Instance.DownloadToImageAsync(imageBuffer, faviconUrl, false);
+
+			return imageBuffer;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
