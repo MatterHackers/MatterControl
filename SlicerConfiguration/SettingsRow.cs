@@ -107,14 +107,20 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				AutoExpandBoundsToText = true,
 				VAnchor = VAnchor.Center,
-				ToolTipText = string.IsNullOrWhiteSpace(helpText) ? null : helpText,
+				ToolTipText = helpText,
 			};
 		}
 
 		public override string ToolTipText
 		{
-			get => settingsLabel.ToolTipText;
-			set => settingsLabel.ToolTipText = value;
+			get => settingsLabel != null ? settingsLabel.ToolTipText : null;
+			set
+			{
+				if (settingsLabel != null)
+				{
+					settingsLabel.ToolTipText = value;
+				}
+			}
 		}
 
 		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
