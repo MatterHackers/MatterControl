@@ -128,19 +128,17 @@ namespace MatterHackers.MatterControl
 			{
 				this.SelectedValue = lastProfileID;
 				lastSelectedIndex = this.SelectedIndex;
-
-				//this.mainControlText.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
 			}
 		}
 
 		private ImageBuffer GetOemIcon(string oemName)
 		{
-			OemSettings.Instance.OemUrls.TryGetValue(oemName, out string oemUrl);
-
 			var imageBuffer = new ImageBuffer(16, 16);
-			string faviconUrl = "https://www.google.com/s2/favicons?domain=" + (oemUrl ?? "www.matterhackers.com");
 
-			ApplicationController.Instance.DownloadToImageAsync(imageBuffer, faviconUrl, false);
+			ApplicationController.Instance.DownloadToImageAsync(
+				imageBuffer,
+				ApplicationController.Instance.GetFavIconUrl(oemName),
+				scaleToImageX: false);
 
 			return imageBuffer;
 		}

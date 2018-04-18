@@ -152,16 +152,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal ChromeTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)
 		{
-			string oemName = printer.Settings.GetValue(SettingsKey.make);
-
-			OemSettings.Instance.OemUrls.TryGetValue(oemName, out string oemUrl);
-
 			printerTab = new ChromeTab(
 				tabTitle,
 				tabControl,
 				new PrinterTabPage(printer, theme, tabTitle.ToUpper()),
 				theme,
-				"https://www.google.com/s2/favicons?domain=" + oemUrl ?? "www.matterhackers.com")
+				tabImageUrl: ApplicationController.Instance.GetFavIconUrl(oemName: printer.Settings.GetValue(SettingsKey.make)))
 			{
 				Name = "3D View Tab",
 				MinimumSize = new Vector2(120, theme.TabButtonHeight)

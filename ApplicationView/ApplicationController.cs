@@ -191,10 +191,17 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public string GetFavIconUrl(string oemName)
+		{
+			OemSettings.Instance.OemUrls.TryGetValue(oemName, out string oemUrl);
+			return "https://www.google.com/s2/favicons?domain=" + (string.IsNullOrWhiteSpace(oemUrl) ? "www.matterhackers.com" : oemUrl);
+		}
+
 		internal async Task ClearActivePrinter()
 		{
 			await this.SetActivePrinter(emptyPrinter);
 		}
+
 		public void LaunchBrowser(string targetUri)
 		{
 			UiThread.RunOnIdle(() =>
