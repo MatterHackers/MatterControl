@@ -40,10 +40,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		protected WizardControl container;
 		private List<ProbePosition> probePositions;
+		private ThemeConfig theme;
 
 		public LastPagelInstructions(PrinterConfig printer, WizardControl container, string pageDescription, string instructionsText, List<ProbePosition> probePositions, ThemeConfig theme)
 			: base(printer, pageDescription, instructionsText, theme)
 		{
+			this.theme = theme;
 			this.probePositions = probePositions;
 			this.container = container;
 		}
@@ -77,6 +79,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// Make sure when the wizard is done we turn off the bed heating
 			printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
+
+			Closed += (s, e) =>
+			{
+				// give instruction about how to load filament if the user has not gotten them
+				ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, theme);
+			};
+
 
 			base.PageIsBecomingActive();
 		}

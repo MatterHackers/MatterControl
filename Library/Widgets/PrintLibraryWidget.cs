@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				Name = "LibraryView",
 				// Drop containers if ShowContainers != 1
-				ContainerFilter = (container) => UserSettings.Instance.get("ShowContainers") == "1",
+				ContainerFilter = (container) => UserSettings.Instance.get(UserSettingsKey.ShowContainers) == "1",
 				BackgroundColor = theme.ActiveTabColor,
 				//BorderColor = theme.MinimalShade,
 				Border = new BorderDouble(top: 1)
@@ -164,12 +164,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				VAnchor = VAnchor.Fit,
 				Padding = new BorderDouble(left: 2, bottom: 2, top: 6), // Same padding as toolbar above
 				Name = "Show Folders Toggle",
-				Checked = UserSettings.Instance.get("ShowContainers") == "1",
+				Checked = UserSettings.Instance.get(UserSettingsKey.ShowContainers) == "1",
 				MinimumSize = new Vector2(0, theme.ButtonHeight)
 			};
 			showFolders.CheckedStateChanged += async (s, e) =>
 			{
-				UserSettings.Instance.set("ShowContainers", showFolders.Checked ? "1" : "0");
+				UserSettings.Instance.set(UserSettingsKey.ShowContainers, showFolders.Checked ? "1" : "0");
 				await libraryView.Reload();
 			};
 			toolbar.AddChild(showFolders);

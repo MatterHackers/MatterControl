@@ -6,29 +6,52 @@ namespace MatterHackers.MatterControl
 {
 	public static class UserSettingsKey
 	{
-		public const string UpdateFeedType = nameof(UpdateFeedType);
+		public const string AfterPrintFinishedPlaySound = nameof(AfterPrintFinishedPlaySound);
+		public const string AfterPrintFinishedSendEmail = nameof(AfterPrintFinishedSendEmail);
+		public const string AfterPrintFinishedSendTextMessage = nameof(AfterPrintFinishedSendTextMessage);
 		public const string ApplicationDisplayMode = nameof(ApplicationDisplayMode);
 		public const string ApplicationTextSize = nameof(ApplicationTextSize);
-		public const string defaultRenderSetting = nameof(defaultRenderSetting);
-		public const string ThumbnailRenderingMode = nameof(ThumbnailRenderingMode);
-		public const string CredentialsInvalid = nameof(CredentialsInvalid);
-		public const string CredentialsInvalidReason = nameof(CredentialsInvalidReason);
-		public const string TerminalFilterOutput = nameof(TerminalFilterOutput);
-		public const string TerminalAutoUppercase = nameof(TerminalAutoUppercase);
-		public const string SliceSettingsTabPinned = nameof(SliceSettingsTabPinned);
-		public const string SliceSettingsTabIndex = nameof(SliceSettingsTabIndex);
-		public const string SliceSettingsWidth = nameof(SliceSettingsWidth);
-		public const string SliceSettingsWidget_CurrentTab = nameof(SliceSettingsWidget_CurrentTab);
-		public const string OpenScadPath = nameof(OpenScadPath);
-		public const string LibraryViewWidth = nameof(LibraryViewWidth);
-		public const string SelectedObjectPanelWidth = nameof(SelectedObjectPanelWidth);
+		public const string ColorPanelExpanded = nameof(ColorPanelExpanded);
 		public const string ConfigurePrinter_CurrentTab = nameof(ConfigurePrinter_CurrentTab);
 		public const string ConfigurePrinterTabVisible = nameof(ConfigurePrinterTabVisible);
-		public const string MirrorPanelExpanded = nameof(MirrorPanelExpanded);
-		public const string MaterialsPanelExpanded = nameof(MaterialsPanelExpanded);
-		public const string ColorPanelExpanded = nameof(ColorPanelExpanded);
-		public const string ScalePanelExpanded = nameof(ScalePanelExpanded);
+		public const string CredentialsInvalid = nameof(CredentialsInvalid);
+		public const string CredentialsInvalidReason = nameof(CredentialsInvalidReason);
+		public const string defaultRenderSetting = nameof(defaultRenderSetting);
+		public const string DisplayedTip_LoadFilament = nameof(DisplayedTip_LoadFilament);
 		public const string EditorPanelExpanded = nameof(EditorPanelExpanded);
+		public const string GCodeLineColorStyle = nameof(GCodeLineColorStyle);
+		public const string GcodeModelView = nameof(GcodeModelView);
+		public const string GcodeViewerHideExtruderOffsets = nameof(GcodeViewerHideExtruderOffsets);
+		public const string GcodeViewerRenderGrid = nameof(GcodeViewerRenderGrid);
+		public const string GcodeViewerRenderMoves = nameof(GcodeViewerRenderMoves);
+		public const string GcodeViewerRenderRetractions = nameof(GcodeViewerRenderRetractions);
+		public const string GcodeViewerSimulateExtrusion = nameof(GcodeViewerSimulateExtrusion);
+		public const string GcodeViewerTransparentExtrusion = nameof(GcodeViewerTransparentExtrusion);
+		public const string Language = nameof(Language);
+		public const string LayerViewDefault = nameof(LayerViewDefault);
+		public const string LayerViewSyncToPrint = nameof(LayerViewSyncToPrint);
+		public const string LibraryViewWidth = nameof(LibraryViewWidth);
+		public const string MaterialsPanelExpanded = nameof(MaterialsPanelExpanded);
+		public const string MirrorPanelExpanded = nameof(MirrorPanelExpanded);
+		public const string NotificationEmailAddress = nameof(NotificationEmailAddress);
+		public const string NotificationPhoneNumber = nameof(NotificationPhoneNumber);
+		public const string OpenScadPath = nameof(OpenScadPath);
+		public const string PrintHistoryFilterShowCompleted = nameof(PrintHistoryFilterShowCompleted);
+		public const string PrintNotificationsEnabled = nameof(PrintNotificationsEnabled);
+		public const string PrintNotificationsIncludeImage = nameof(PrintNotificationsIncludeImage);
+		public const string PublicProfilesSha = nameof(PublicProfilesSha);
+		public const string ScalePanelExpanded = nameof(ScalePanelExpanded);
+		public const string SelectedObjectPanelWidth = nameof(SelectedObjectPanelWidth);
+		public const string ShowContainers = nameof(ShowContainers);
+		public const string SliceSettingsTabIndex = nameof(SliceSettingsTabIndex);
+		public const string SliceSettingsTabPinned = nameof(SliceSettingsTabPinned);
+		public const string SliceSettingsWidget_CurrentTab = nameof(SliceSettingsWidget_CurrentTab);
+		public const string SliceSettingsWidth = nameof(SliceSettingsWidth);
+		public const string SoftwareLicenseAccepted = nameof(SoftwareLicenseAccepted);
+		public const string TerminalAutoUppercase = nameof(TerminalAutoUppercase);
+		public const string TerminalFilterOutput = nameof(TerminalFilterOutput);
+		public const string ThumbnailRenderingMode = nameof(ThumbnailRenderingMode);
+		public const string UpdateFeedType = nameof(UpdateFeedType);
 	}
 
 	public class UserSettings

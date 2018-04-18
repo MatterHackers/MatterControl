@@ -21,7 +21,7 @@ namespace MatterHackers.MatterControl
 				AddItem(entry.Key, entry.Value);
 			}
 
-			string languageCode = UserSettings.Instance.get("Language");
+			string languageCode = UserSettings.Instance.get(UserSettingsKey.Language);
 			foreach (KeyValuePair<string, string> entry in languageDict)
 			{
 				if (languageCode == entry.Value)

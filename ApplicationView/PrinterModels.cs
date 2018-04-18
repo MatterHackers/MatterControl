@@ -919,7 +919,7 @@ namespace MatterHackers.MatterControl
 		{
 			get
 			{
-				string value = UserSettings.Instance.get("GcodeViewerRenderGrid");
+				string value = UserSettings.Instance.get(UserSettingsKey.GcodeViewerRenderGrid);
 				if (value == null)
 				{
 					return true;
@@ -930,7 +930,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (this.RenderBed != value)
 				{
-					UserSettings.Instance.set("GcodeViewerRenderGrid", value.ToString());
+					UserSettings.Instance.set(UserSettingsKey.GcodeViewerRenderGrid, value.ToString());
 					this.IsDirty = true;
 					this.OnPropertyChanged(nameof(RenderBed));
 				}
@@ -939,12 +939,12 @@ namespace MatterHackers.MatterControl
 
 		public bool RenderMoves
 		{
-			get => UserSettings.Instance.get("GcodeViewerRenderMoves") == "True";
+			get => UserSettings.Instance.get(UserSettingsKey.GcodeViewerRenderMoves) == "True";
 			set
 			{
 				if (this.RenderMoves != value)
 				{
-					UserSettings.Instance.set("GcodeViewerRenderMoves", value.ToString());
+					UserSettings.Instance.set(UserSettingsKey.GcodeViewerRenderMoves, value.ToString());
 					this.IsDirty = true;
 					this.OnPropertyChanged(nameof(RenderMoves));
 				}
@@ -953,12 +953,12 @@ namespace MatterHackers.MatterControl
 
 		public bool RenderRetractions
 		{
-			get => UserSettings.Instance.get("GcodeViewerRenderRetractions") == "True";
+			get => UserSettings.Instance.get(UserSettingsKey.GcodeViewerRenderRetractions) == "True";
 			set
 			{
 				if (this.RenderRetractions != value)
 				{
-					UserSettings.Instance.set("GcodeViewerRenderRetractions", value.ToString());
+					UserSettings.Instance.set(UserSettingsKey.GcodeViewerRenderRetractions, value.ToString());
 					this.IsDirty = true;
 					this.OnPropertyChanged(nameof(RenderRetractions));
 				}
@@ -967,12 +967,12 @@ namespace MatterHackers.MatterControl
 
 		public string GCodeModelView
 		{
-			get => UserSettings.Instance.get("GcodeModelView");
+			get => UserSettings.Instance.get(UserSettingsKey.GcodeModelView);
 			set
 			{
 				if (this.GCodeModelView != value)
 				{
-					UserSettings.Instance.set("GcodeModelView", value);
+					UserSettings.Instance.set(UserSettingsKey.GcodeModelView, value);
 					this.IsDirty = true;
 					this.OnPropertyChanged(nameof(GCodeModelView));
 				}
@@ -981,12 +981,12 @@ namespace MatterHackers.MatterControl
 
 		public string GCodeLineColorStyle
 		{
-			get => UserSettings.Instance.get("GCodeLineColorStyle");
+			get => UserSettings.Instance.get(UserSettingsKey.GCodeLineColorStyle);
 			set
 			{
 				if (this.GCodeLineColorStyle != value)
 				{
-					UserSettings.Instance.set("GCodeLineColorStyle", value);
+					UserSettings.Instance.set(UserSettingsKey.GCodeLineColorStyle, value);
 					this.IsDirty = true;
 					this.OnPropertyChanged(nameof(GCodeLineColorStyle));
 				}
@@ -995,12 +995,12 @@ namespace MatterHackers.MatterControl
 
 		public bool SimulateExtrusion
 		{
-			get => UserSettings.Instance.get("GcodeViewerSimulateExtrusion") == "True";
+			get => UserSettings.Instance.get(UserSettingsKey.GcodeViewerSimulateExtrusion) == "True";
 			set
 			{
 				if (this.SimulateExtrusion != value)
 				{
-					UserSettings.Instance.set("GcodeViewerSimulateExtrusion", value.ToString());
+					UserSettings.Instance.set(UserSettingsKey.GcodeViewerSimulateExtrusion, value.ToString());
 					this.IsDirty = true;
 					this.OnPropertyChanged(nameof(SimulateExtrusion));
 				}
@@ -1009,12 +1009,12 @@ namespace MatterHackers.MatterControl
 
 		public bool TransparentExtrusion
 		{
-			get => UserSettings.Instance.get("GcodeViewerTransparentExtrusion") == "True";
+			get => UserSettings.Instance.get(UserSettingsKey.GcodeViewerTransparentExtrusion) == "True";
 			set
 			{
 				if (this.TransparentExtrusion != value)
 				{
-					UserSettings.Instance.set("GcodeViewerTransparentExtrusion", value.ToString());
+					UserSettings.Instance.set(UserSettingsKey.GcodeViewerTransparentExtrusion, value.ToString());
 					this.IsDirty = true;
 					this.OnPropertyChanged(nameof(TransparentExtrusion));
 				}
@@ -1025,7 +1025,7 @@ namespace MatterHackers.MatterControl
 		{
 			get
 			{
-				string value = UserSettings.Instance.get("GcodeViewerHideExtruderOffsets");
+				string value = UserSettings.Instance.get(UserSettingsKey.GcodeViewerHideExtruderOffsets);
 				if (value == null)
 				{
 					return true;
@@ -1036,7 +1036,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (this.HideExtruderOffsets != value)
 				{
-					UserSettings.Instance.set("GcodeViewerHideExtruderOffsets", value.ToString());
+					UserSettings.Instance.set(UserSettingsKey.GcodeViewerHideExtruderOffsets, value.ToString());
 					this.IsDirty = true;
 					this.OnPropertyChanged(nameof(HideExtruderOffsets));
 				}
@@ -1045,12 +1045,12 @@ namespace MatterHackers.MatterControl
 
 		public bool SyncToPrint
 		{
-			get => UserSettings.Instance.get("LayerViewSyncToPrint") == "True";
+			get => UserSettings.Instance.get(UserSettingsKey.LayerViewSyncToPrint) == "True";
 			set
 			{
 				if (this.SyncToPrint != value)
 				{
-					UserSettings.Instance.set("LayerViewSyncToPrint", value.ToString());
+					UserSettings.Instance.set(UserSettingsKey.LayerViewSyncToPrint, value.ToString());
 					this.IsDirty = true;
 					this.OnPropertyChanged(nameof(SyncToPrint));
 				}

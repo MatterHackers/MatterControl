@@ -65,6 +65,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 	using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
+	using MatterHackers.MatterControl.SetupWizard;
 	using MatterHackers.PolygonMesh;
 	using MatterHackers.RenderOpenGl;
 	using MatterHackers.SerialPortCommunication;
@@ -904,7 +905,7 @@ namespace MatterHackers.MatterControl
 				var printer = ApplicationController.Instance.ActivePrinters.Where(p => p.Connection == s).FirstOrDefault();
 				if (printer != null)
 				{
-					ApplicationController.Instance.RunAnyRequiredCalibration(printer, this.Theme);
+					ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, this.Theme);
 				}
 			}, ref unregisterEvents);
 
@@ -926,7 +927,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public bool RunAnyRequiredCalibration(PrinterConfig printer, ThemeConfig theme)
+		public bool RunAnyRequiredPrinterSetup(PrinterConfig printer, ThemeConfig theme)
 		{
 			if (PrintLevelingData.NeedsToBeRun(printer))
 			{
@@ -946,6 +947,19 @@ namespace MatterHackers.MatterControl
 					});
 				}
 				return true;
+			}
+
+			// tell the user about loading filament if they have not already been told
+			if(UserSettings.Instance.get(UserSettingsKey.DisplayedTip_LoadFilament) != "1")
+			{
+				var widgetName = "Hotend 0";
+
+				string extruder0TipMessage = "Extruder Controls can be fonud here.".Localize() + "\n"
+					+ "They include".Localize() + ":\n"
+					+ "\t• " + "Select Material".Localize() + "\n"
+					+ "\t• " + "Set Temperature".Localize() + "\n"
+					+ "\t• " + "Load and Unload Filament".Localize() + "\n";
+				UserTipManager.Instance.ShowTip(AppContext.RootSystemWindow, widgetName, extruder0TipMessage);
 			}
 
 			return false;
@@ -1267,7 +1281,7 @@ namespace MatterHackers.MatterControl
 			if (AggContext.OperatingSystem == OSType.Android)
 			{
 				// show this last so it is on top
-				if (UserSettings.Instance.get("SoftwareLicenseAccepted") != "true")
+				if (UserSettings.Instance.get(UserSettingsKey.SoftwareLicenseAccepted) != "true")
 				{
 					UiThread.RunOnIdle(() => DialogWindow.Show<LicenseAgreementPage>());
 				}
@@ -1550,7 +1564,7 @@ namespace MatterHackers.MatterControl
 			try
 			{
 				// If leveling is required or is currently on
-				if(ApplicationController.Instance.RunAnyRequiredCalibration(printer, this.Theme))
+				if(ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, this.Theme))
 				{
 					// We need to calibrate. So, don't print this part.
 					return;

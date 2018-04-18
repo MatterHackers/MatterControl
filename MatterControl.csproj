@@ -74,7 +74,8 @@
     <Compile Include="AboutPage\CacheDirectory.cs" />
     <Compile Include="AboutPage\CheckForUpdatesPage.cs" />
     <Compile Include="ApplicationView\LogoSpinner.cs" />
-    <Compile Include="ConfigurationPage\CalibrationSettings\CalibrationControls.cs" />
+    <Compile Include="SetupWizard\UserTipManager.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\CalibrationControls.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingFunctions.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard3x3Mesh.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard5x5Mesh.cs" />

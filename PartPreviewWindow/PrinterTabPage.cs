@@ -250,12 +250,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			switch (viewMode)
 			{
 				case PartViewMode.Layers2D:
-					UserSettings.Instance.set("LayerViewDefault", "2D Layer");
+					UserSettings.Instance.set(UserSettingsKey.LayerViewDefault, "2D Layer");
 					gcode2DWidget.Visible = true;
 					break;
 
 				case PartViewMode.Layers3D:
-					UserSettings.Instance.set("LayerViewDefault", "3D Layer");
+					UserSettings.Instance.set(UserSettingsKey.LayerViewDefault, "3D Layer");
 					break;
 
 				case PartViewMode.Model:

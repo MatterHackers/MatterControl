@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,50 +27,57 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
+using System;
+using System.Linq;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.CustomWidgets;
 
-public class LicenseAgreementPage : DialogPage
+namespace MatterHackers.MatterControl.SetupWizard
 {
-	public LicenseAgreementPage()
+	public class UserTipManager
 	{
-		this.WindowTitle = "Software License Agreement".Localize();
-
-		string eulaText = AggContext.StaticData.ReadAllText("MatterControl EULA.txt").Replace("\r\n", "\n");
-
-		var scrollable = new ScrollableWidget(true);
-		scrollable.AnchorAll();
-		scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
-		contentRow.AddChild(scrollable);
-
-		scrollable.ScrollArea.Margin = new BorderDouble(0, 0, 15, 0);
-		scrollable.AddChild(new WrappedTextWidget(eulaText, textColor: ActiveTheme.Instance.PrimaryTextColor, doubleBufferText: false)
+		private GuiWidget widgetToExplain;
+		private static UserTipManager _instance;
+		public static UserTipManager Instance
 		{
-			DrawFromHintedCache = true,
-			Name = "LicenseAgreementPage",
-		});
+			get
+			{
+				if (_instance == null)
+				{
+					_instance = new UserTipManager();
+				}
+				return _instance;
+			}
+		}
 
-		var acceptButton = theme.CreateDialogButton("Accept".Localize());
-		acceptButton.Click += (s, e) =>
+		private UserTipManager()
 		{
-			UserSettings.Instance.set(UserSettingsKey.SoftwareLicenseAccepted, "true");
-			UiThread.RunOnIdle(WizardWindow.Close);
-		};
 
-		acceptButton.Visible = true;
+		}
 
-		this.AddPageAction(acceptButton);
-	}
+		public void ShowTip(SystemWindow systemWindow, string widgetName, string extruder0TipMessage)
+		{
+			widgetToExplain = systemWindow.Descendants().Where((w) => w.Name == widgetName).FirstOrDefault();
+#if DEBUG
+			if(widgetToExplain == null)
+			{
+				throw new Exception("Can't find the named widget");
+			}
+#endif
+			if (widgetToExplain != null)
+			{
+				widgetToExplain.AfterDraw -= DoShowTip;
+			}
+			// hook the widget draw and wait for it to draw so that we know it is visible
+			widgetToExplain.AfterDraw += DoShowTip;
+			widgetToExplain.Invalidate();
+		}
 
-	protected override void OnCancel(out bool abortCancel)
-	{
-		// Exit if EULA is not accepted
-		UiThread.RunOnIdle(AppContext.RootSystemWindow.Close);
-
-		abortCancel = false;
+		private void DoShowTip(object sender, DrawEventArgs e)
+		{
+			if (widgetToExplain != null)
+			{
+				widgetToExplain.AfterDraw -= DoShowTip;
+			}
+		}
 	}
 }
