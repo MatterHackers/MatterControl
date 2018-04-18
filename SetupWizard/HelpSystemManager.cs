@@ -33,23 +33,23 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SetupWizard
 {
-	public class UserTipManager
+	public class HelpSystemManager
 	{
 		private GuiWidget widgetToExplain;
-		private static UserTipManager _instance;
-		public static UserTipManager Instance
+		private static HelpSystemManager _instance;
+		public static HelpSystemManager Instance
 		{
 			get
 			{
 				if (_instance == null)
 				{
-					_instance = new UserTipManager();
+					_instance = new HelpSystemManager();
 				}
 				return _instance;
 			}
 		}
 
-		private UserTipManager()
+		private HelpSystemManager()
 		{
 
 		}

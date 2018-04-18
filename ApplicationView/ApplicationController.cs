@@ -959,7 +959,7 @@ namespace MatterHackers.MatterControl
 					+ "\t• " + "Select Material".Localize() + "\n"
 					+ "\t• " + "Set Temperature".Localize() + "\n"
 					+ "\t• " + "Load and Unload Filament".Localize() + "\n";
-				UserTipManager.Instance.ShowTip(AppContext.RootSystemWindow, widgetName, extruder0TipMessage);
+				HelpSystemManager.Instance.ShowTip(AppContext.RootSystemWindow, widgetName, extruder0TipMessage);
 			}
 
 			return false;
