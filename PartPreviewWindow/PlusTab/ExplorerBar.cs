@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				HAnchor = HAnchor.Absolute,
 				Border = 0,
 				MinimumSize = Vector2.Zero,
-				Width = 175
+				Width = 200
 			});
 
 			this.printerInfo = printerInfo;
