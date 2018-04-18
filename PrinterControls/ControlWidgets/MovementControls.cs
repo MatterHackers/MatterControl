@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			var homeIcon = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", theme.InvertIcons), theme)
 			{
-				ToolTipText = ToolTipText = "Home X, Y and Z".Localize(),
+				ToolTipText = "Home X, Y and Z".Localize(),
 				BackgroundColor = theme.MinimalShade,
 				Margin = theme.ButtonSpacing
 			};
