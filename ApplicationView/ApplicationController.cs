@@ -737,15 +737,6 @@ namespace MatterHackers.MatterControl
 			this.Library.ContentProviders.Add(new[] { "stl", "obj", "amf", "mcx" }, new MeshContentProvider());
 			this.Library.ContentProviders.Add("gcode", new GCodeContentProvider());
 
-			// Name = "MainSlidePanel";
-			ActiveTheme.ThemeChanged.RegisterEvent((s, e) =>
-			{
-				if (!AppContext.IsLoading)
-				{
-					ReloadAll();
-				}
-			}, ref unregisterEvents);
-
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if (e is StringEventArgs stringArg
