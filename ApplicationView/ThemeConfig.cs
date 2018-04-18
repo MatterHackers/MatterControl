@@ -94,6 +94,15 @@ namespace MatterHackers.MatterControl
 		public Color ActiveTabBarBackground { get; set; }
 		public Color InactiveTabColor { get; set; }
 		public Color InteractionLayerOverlayColor { get; private set; }
+
+		public TextWidget CreateHeading(string text)
+		{
+			return new TextWidget(text, pointSize: this.H1PointSize, textColor: this.Colors.PrimaryTextColor, bold: true)
+			{
+				Margin = new BorderDouble(0, 5)
+			};
+		}
+
 		public Color SplitterBackground { get; private set; } = new Color(0, 0, 0, 60);
 		public Color TabBodyBackground { get; private set; }
 		public Color ToolbarButtonBackground { get; set; } = Color.Transparent;

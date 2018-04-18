@@ -153,6 +153,7 @@
     <Compile Include="PartPreviewWindow\MaterialControls.cs" />
     <Compile Include="PartPreviewWindow\ModelOptionsPanel.cs" />
     <Compile Include="PartPreviewWindow\MoveItemPage.cs" />
+    <Compile Include="PartPreviewWindow\PlusTab\ExplorerBar.cs" />
     <Compile Include="PartPreviewWindow\RoundedToggleSwitch.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\CombineEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\ImageEditor.cs" />

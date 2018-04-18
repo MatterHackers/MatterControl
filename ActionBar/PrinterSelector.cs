@@ -41,18 +41,19 @@ namespace MatterHackers.MatterControl
 		private EventHandler unregisterEvents;
 		int lastSelectedIndex = -1;
 
-		public PrinterSelector(ThemeConfig theme) 
+		public PrinterSelector(ThemeConfig theme)
 			: base("Printers".Localize() + "... ", theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
 		{
 			Rebuild();
 
 			this.Name = "Printers... Menu";
-			this.BorderColor = theme.GetBorderColor(75);
+			this.BorderColor = Color.Transparent;
+			this.BackgroundColor = theme.MinimalShade;
 			this.SelectionChanged += (s, e) =>
 			{
 				string printerID = this.SelectedValue;
-				if (printerID == "new" 
-					|| string.IsNullOrEmpty(printerID) 
+				if (printerID == "new"
+					|| string.IsNullOrEmpty(printerID)
 					|| printerID == ActiveSliceSettings.Instance.ID)
 				{
 					// do nothing
@@ -74,18 +75,35 @@ namespace MatterHackers.MatterControl
 					else
 					{
 						lastSelectedIndex = this.SelectedIndex;
-						UiThread.RunOnIdle(() =>
-						{
-							ProfileManager.SwitchToProfile(printerID).ConfigureAwait(false);
-						});
+
+						ProfileManager.Instance.LastProfileID = this.SelectedValue;
+
+						//UiThread.RunOnIdle(() =>
+						//{
+						//	ProfileManager.SwitchToProfile(printerID).ConfigureAwait(false);
+						//});
 					}
 				}
 			};
 
-			ActiveSliceSettings.SettingChanged.RegisterEvent(SettingChanged, ref unregisterEvents);
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			{
+				string settingsName = (e as StringEventArgs)?.Data;
+				if (settingsName != null && settingsName == SettingsKey.printer_name)
+				{
+					if (ProfileManager.Instance.ActiveProfile != null)
+					{
+						ProfileManager.Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
+						Rebuild();
+					}
+				}
+			}, ref unregisterEvents);
 
 			// Rebuild the droplist any time the Profiles list changes
-			ProfileManager.ProfilesListChanged.RegisterEvent((s, e) => Rebuild(), ref unregisterEvents);
+			ProfileManager.ProfilesListChanged.RegisterEvent((s, e) =>
+			{
+				this.Rebuild();
+			}, ref unregisterEvents);
 
 			HAnchor = HAnchor.Fit;
 			Cursor = Cursors.Hand;
@@ -99,27 +117,16 @@ namespace MatterHackers.MatterControl
 			//Add the menu items to the menu itself
 			foreach (var printer in ProfileManager.Instance.ActiveProfiles.OrderBy(p => p.Name))
 			{
-				this.AddItem(printer.Name, printer.ID.ToString());
+				this.AddItem(printer.Name, printer.ID);
 			}
 
-			if (ActiveSliceSettings.Instance.PrinterSelected)
+			string lastProfileID = ProfileManager.Instance.LastProfileID;
+			if (!string.IsNullOrEmpty(lastProfileID))
 			{
-				this.SelectedValue = ActiveSliceSettings.Instance.ID;
+				this.SelectedValue = lastProfileID;
 				lastSelectedIndex = this.SelectedIndex;
-				this.mainControlText.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
-			}
-		}
 
-		private void SettingChanged(object sender, EventArgs e)
-		{
-			string settingsName = (e as StringEventArgs)?.Data;
-			if (settingsName != null && settingsName == SettingsKey.printer_name)
-			{
-				if (ProfileManager.Instance.ActiveProfile != null)
-				{
-					ProfileManager.Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
-					Rebuild();
-				}
+				//this.mainControlText.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
 			}
 		}
 

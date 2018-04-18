@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -40,6 +41,8 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -51,8 +54,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 	{
 		private ThemeConfig theme;
 		private FlowLayoutWidget topToBottom;
-		private TextWidget headingA;
-		private Toolbar toolBarA;
 
 		public ExplorePanel(PartPreviewContent partPreviewContent, SimpleTabs simpleTabs, ThemeConfig theme)
 		{
@@ -72,120 +73,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			};
 			this.AddChild(topToBottom);
 
-			var columnA = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var lastProfileID = ProfileManager.Instance.LastProfileID;
+			var lastProfile = ProfileManager.Instance[lastProfileID];
+			if (lastProfile != null)
 			{
-				Margin = new BorderDouble(20, 10),
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
-			};
-			topToBottom.AddChild(columnA);
+				topToBottom.AddChild(
+					new PrinterBar(partPreviewContent, lastProfile, theme));
+			}
+			else
+			{
+				// TODO: implement panel for case of having no printer selected
+				//var explorerBar = new ExplorerBar("testing", theme);
+				//topToBottom.AddChild(explorerBar);
+			}
 
-			columnA.AddChild(headingA = new TextWidget("Create".Localize(), pointSize: theme.H1PointSize, textColor: ActiveTheme.Instance.PrimaryTextColor, bold: true)
+			topToBottom.AddChild(new PartsBar(partPreviewContent, theme)
 			{
-				HAnchor = HAnchor.Left,
-				Margin = new BorderDouble(20, 5)
+				Margin = new BorderDouble(30, 15)
 			});
-
-			columnA.AddChild(toolBarA = new Toolbar()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
-			});
-
-			var createPart = new TextButton("Create Part".Localize(), theme)
-			{
-				Margin = theme.ButtonSpacing
-			};
-			createPart.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					BedConfig bed;
-					simpleTabs.RemoveTab(simpleTabs.ActiveTab);
-					partPreviewContent.CreatePartTab(
-						"New Part",
-						bed = new BedConfig(),
-						theme);
-
-					bed.LoadContent(
-						new EditContext()
-						{
-							ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-							SourceItem = BedConfig.NewPlatingItem()
-						}).ConfigureAwait(false);
-				});
-			};
-			toolBarA.AddChild(createPart);
-
-			var createPrinter = new TextButton("Create Printer".Localize(), theme)
-			{
-				Name = "Create Printer",
-				Margin = theme.ButtonSpacing
-			};
-			createPrinter.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					simpleTabs.RemoveTab(simpleTabs.ActiveTab);
-
-					if (ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting
-					|| ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPaused)
-					{
-						StyledMessageBox.ShowMessageBox("Please wait until the print has finished and try again.".Localize(), "Can't add printers while printing".Localize());
-					}
-					else
-					{
-						DialogWindow.Show(PrinterSetup.GetBestStartPage(PrinterSetup.StartPageOptions.ShowMakeModel));
-					}
-				});
-			};
-			toolBarA.AddChild(createPrinter);
-
-			var importButton = new TextButton("Import Printer".Localize(), theme)
-			{
-				Margin = theme.ButtonSpacing
-			};
-			importButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					AggContext.FileDialogs.OpenFileDialog(
-						new OpenFileDialogParams(
-							"settings files|*.ini;*.printer;*.slice"),
-							(result) =>
-							{
-								if (!string.IsNullOrEmpty(result.FileName)
-									&& File.Exists(result.FileName))
-								{
-									simpleTabs.RemoveTab(simpleTabs.ActiveTab);
-									if (ProfileManager.ImportFromExisting(result.FileName))
-									{
-										string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
-										DialogWindow.Show(
-											new ImportSucceeded(importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(result.FileName))));
-									}
-									else
-									{
-										StyledMessageBox.ShowMessageBox("Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(result.FileName)), "Unable to Import".Localize());
-									}
-								}
-							});
-				});
-			};
-			toolBarA.AddChild(importButton);
-
-			toolBarA.AddChild(new VerticalLine(50) { Margin = new BorderDouble(12, 0) });
-
-			toolBarA.AddChild(new TextWidget("Open Existing".Localize() + ":", textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
-			{
-				VAnchor = VAnchor.Center
-			});
-
-			var printerSelector = new PrinterSelector(theme)
-			{
-				Margin = new BorderDouble(left: 15)
-			};
-			toolBarA.AddChild(printerSelector);
 		}
 
 		public async override void OnLoad(EventArgs args)
