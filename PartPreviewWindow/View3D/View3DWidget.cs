@@ -120,6 +120,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			trackballTumbleWidget.AnchorAll();
 
+			this.BoundsChanged += UpdateRenderView;
+
 			// TumbleWidget
 			this.InteractionLayer.AddChild(trackballTumbleWidget);
 
@@ -157,7 +159,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BackgroundColor = theme.InteractionLayerOverlayColor,
 				SpliterBarColor = theme.SplitterBackground,
 				SplitterWidth = theme.SplitterWidth,
+				MinimumSize = new Vector2(theme.SplitterWidth, 0)
 			};
+			modelViewSidePanel.BoundsChanged += UpdateRenderView;
 
 			modelViewSidePanel.AddChild(
 				new SectionWidget(
@@ -221,6 +225,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.InteractionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
 
 			this.sceneContext.SceneLoaded += SceneContext_SceneLoaded;
+		}
+
+		private void UpdateRenderView(object sender, EventArgs e)
+		{
+			trackballTumbleWidget.CenterOffsetX  = -modelViewSidePanel.Width;
 		}
 
 		private void SceneContext_SceneLoaded(object sender, EventArgs e)
@@ -422,7 +431,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (printer != null)
 			{
 				printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
-				printer.ViewState.GCodePanelWidth = printerTabPage.gcodeContainer.Width;
 			}
 
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;

@@ -162,9 +162,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BackgroundColor = theme.InteractionLayerOverlayColor,
 			};
 
+			var modelViewSidePanel = view3DWidget.Descendants<ResizeContainer>().FirstOrDefault();
+
 			gcodeContainer = new ResizeContainer(gcodePanel)
 			{
-				Width = printer?.ViewState.GCodePanelWidth ?? 200,
+				Width = printer?.ViewState.SelectedObjectPanelWidth ?? 200,
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Absolute,
 				SpliterBarColor = theme.SplitterBackground,
@@ -172,6 +174,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Visible = false,
 			};
 			gcodeContainer.AddChild(gcodePanel);
+
+			modelViewSidePanel.BoundsChanged += (s, e) =>
+			{
+				gcodeContainer.Width = modelViewSidePanel.Width;
+			};
+
+			gcodeContainer.BoundsChanged += (s, e) =>
+			{
+				modelViewSidePanel.Width = gcodeContainer.Width;
+			};
 
 			var splitContainer = view3DWidget.FindNamedChildRecursive("SplitContainer");
 

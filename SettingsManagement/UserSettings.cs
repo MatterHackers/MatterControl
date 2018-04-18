@@ -24,7 +24,6 @@ namespace MatterHackers.MatterControl
 		public const string SelectedObjectPanelWidth = nameof(SelectedObjectPanelWidth);
 		public const string ConfigurePrinter_CurrentTab = nameof(ConfigurePrinter_CurrentTab);
 		public const string ConfigurePrinterTabVisible = nameof(ConfigurePrinterTabVisible);
-		public const string GCodePanelWidth = nameof(GCodePanelWidth);
 		public const string MirrorPanelExpanded = nameof(MirrorPanelExpanded);
 		public const string MaterialsPanelExpanded = nameof(MaterialsPanelExpanded);
 		public const string ColorPanelExpanded = nameof(ColorPanelExpanded);

@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (MouseDownOnWidget)
 			{
 				var movePosition = mouseEvent.Position;
-				Quaternion activeRotationQuaternion = TrackBallController.GetRotationForMove(world, Width, lastMovePosition, movePosition, false);
+				Quaternion activeRotationQuaternion = TrackBallController.GetRotationForMove(new Vector2(Width/2, Height/2), world, Width, lastMovePosition, movePosition, false);
 
 				if (activeRotationQuaternion != Quaternion.Identity)
 				{
