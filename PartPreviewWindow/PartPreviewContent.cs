@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Border = new BorderDouble(left: 1),
 				NewTabPage = () =>
 				{
-					return new PlusTabPage(this, tabControl, theme);
+					return new PlusTabPage(this, theme);
 				}
 			};
 			tabControl.TabBar.BackgroundColor = theme.ActiveTabBarBackground;

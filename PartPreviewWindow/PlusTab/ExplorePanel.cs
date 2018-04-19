@@ -33,6 +33,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -42,51 +43,22 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
-	public class ExplorePanel : ScrollableWidget
+	public class ExplorePanel : FlowLayoutWidget
 	{
+		string sk;
+		string staticFile;
 		private ThemeConfig theme;
-		private FlowLayoutWidget topToBottom;
 
-		public ExplorePanel(PartPreviewContent partPreviewContent, SimpleTabs simpleTabs, ThemeConfig theme)
+		public ExplorePanel(ThemeConfig theme, string sk, string staticFile)
+			: base(FlowDirection.TopToBottom)
 		{
+			this.sk = sk;
+			this.staticFile = staticFile;
 			this.HAnchor = HAnchor.Stretch;
-			this.VAnchor = VAnchor.Stretch;
-			this.BackgroundColor = theme.TabBodyBackground;
-			this.MinimumSize = new Vector2(0, 200);
-			this.AnchorAll();
-			this.AutoScroll = true;
-			this.ScrollArea.Padding = new BorderDouble(3);
-			this.ScrollArea.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Fit;
+			this.MinimumSize = new Vector2(0, 1);
+
 			this.theme = theme;
-
-			topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch
-			};
-			this.AddChild(topToBottom);
-
-			var lastProfileID = ProfileManager.Instance.LastProfileID;
-			var lastProfile = ProfileManager.Instance[lastProfileID];
-			if (lastProfile != null)
-			{
-				topToBottom.AddChild(
-					new PrinterBar(partPreviewContent, lastProfile, theme));
-			}
-			else
-			{
-				// TODO: implement panel for case of having no printer selected
-				//var explorerBar = new ExplorerBar("testing", theme);
-				//topToBottom.AddChild(explorerBar);
-
-				// for now just show 
-				topToBottom.AddChild(
-					new PrinterBar(partPreviewContent, lastProfile, theme));
-			}
-
-			topToBottom.AddChild(new PartsBar(partPreviewContent, theme)
-			{
-				Margin = new BorderDouble(30, 15)
-			});
 		}
 
 		public async override void OnLoad(EventArgs args)
@@ -116,14 +88,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		public async Task<ExplorerFeed> LoadExploreFeed()
 		{
 			return await ApplicationController.LoadCacheableAsync<ExplorerFeed>(
-				"explore-feed.json",
+				staticFile,
 				"MatterHackers",
 				async () =>
 				{
 					try
 					{
 						var client = new HttpClient();
-						string json = await client.GetStringAsync("http://www.matterhackers.com/feeds/explore?sk=2lhddgi3q67xoqa53pchpeddl6w1uf");
+						string json = await client.GetStringAsync($"http://www.matterhackers.com/feeds/explore?sk={sk}");
 
 						return JsonConvert.DeserializeObject<ExplorerFeed>(json);
 					}
@@ -134,13 +106,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 					return null;
 				},
-				Path.Combine("OEMSettings", "ExploreFeed.json"));
-		}
-
-		public override void OnMouseWheel(MouseEventArgs mouseEvent)
-		{
-			int direction = (mouseEvent.WheelDelta > 0) ? -1 : 1;
-			this.ScrollPosition += new Vector2(0, (ExploreItem.IconSize + (ExploreItem.ItemSpacing * 2)) * direction);
+				Path.Combine("OEMSettings", staticFile));
 		}
 
 		private void AddControlsForContent(ExplorerFeed contentList)
@@ -151,10 +117,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				{
 					case "banner_image":
 						{
+							// Our banners seem to end with something like "=w1520-h170"
+							// if present use that to get the right width and height
+							int expectedWidth = 1520;
+							GCodeFile.GetFirstNumberAfter("=w", content.image_url, ref expectedWidth);
+							int expectedHeight = 170;
+							GCodeFile.GetFirstNumberAfter("-h", content.image_url, ref expectedHeight);
 							if ((content.theme_filter == "dark" && ActiveTheme.Instance.IsDarkTheme)
 								|| (content.theme_filter == "light" && !ActiveTheme.Instance.IsDarkTheme))
 							{
-								ImageBuffer image = new ImageBuffer(640, 480);
+								ImageBuffer image = new ImageBuffer(expectedWidth, expectedHeight);
 								ResponsiveImageWidget imageWidget = new ResponsiveImageWidget(image)
 								{
 									Margin = new BorderDouble(5),
@@ -170,14 +142,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 								}
 
 								imageWidget.Load += (s, e) => ApplicationController.Instance.DownloadToImageAsync(image, content.image_url, false, new BlenderPreMultBGRA());
-								topToBottom.AddChild(imageWidget);
+								this.AddChild(imageWidget);
 							}
 						}
 						break;
 
 					case "article_group":
 					case "product_group":
-						topToBottom.AddChild(new ExploreSection(content, theme));
+						this.AddChild(new ExploreSection(content, theme));
 						break;
 				}
 			}

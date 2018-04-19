@@ -34,22 +34,73 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
-	public class PlusTabPage : FlowLayoutWidget
+	public class PlusTabPage : ScrollableWidget
 	{
-		public PlusTabPage(PartPreviewContent partPreviewContent, SimpleTabs simpleTabs, ThemeConfig theme)
+		public PlusTabPage(PartPreviewContent partPreviewContent, ThemeConfig theme)
 		{
+			this.AutoScroll = true;
+			this.ScrollArea.Padding = new BorderDouble(3);
+			this.ScrollArea.HAnchor = HAnchor.Stretch;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Stretch;
+			this.MinimumSize = new Vector2(0, 200);
+			this.BackgroundColor = theme.TabBodyBackground;
+
 			this.Name = "PlusTabPage";
+
+			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch
+			};
+			this.AddChild(topToBottom);
 
 			if (OemSettings.Instance.ShowShopButton)
 			{
-				this.AddChild(new ExplorePanel(partPreviewContent, simpleTabs, theme));
+				topToBottom.AddChild(new ExplorePanel(theme, "2lhddgi3q67xoqa53pchpeddl6w1", "BannerFeed.json"));
 			}
 
-			this.HAnchor = HAnchor.Stretch;
-			this.VAnchor = VAnchor.Stretch;
+			var lastProfileID = ProfileManager.Instance.LastProfileID;
+			var lastProfile = ProfileManager.Instance[lastProfileID];
+			if (lastProfile != null)
+			{
+				topToBottom.AddChild(
+					new PrinterBar(partPreviewContent, lastProfile, theme));
+			}
+			else
+			{
+				// TODO: implement panel for case of having no printer selected
+				//var explorerBar = new ExplorerBar("testing", theme);
+				//topToBottom.AddChild(explorerBar);
+
+				// for now just show 
+				topToBottom.AddChild(
+					new PrinterBar(partPreviewContent, lastProfile, theme));
+			}
+
+			topToBottom.AddChild(new PartsBar(partPreviewContent, theme)
+			{
+				Margin = new BorderDouble(30, 15)
+			});
+
+			if (OemSettings.Instance.ShowShopButton)
+			{
+				// actual feed
+				//topToBottom.AddChild(new ExplorePanel(theme, "2lhddgi3q67xoqa53pchpeddl6w1uf", "ExploreFeed.json"));
+				// broken feed so we can see what we want it to be
+				topToBottom.AddChild(new ExplorePanel(theme, "2lhddgi3q67xoqa53pchpeddl6w1uf_bad", "ExploreFeed.json"));
+			}
+		}
+
+
+		public override void OnMouseWheel(MouseEventArgs mouseEvent)
+		{
+			int direction = (mouseEvent.WheelDelta > 0) ? -1 : 1;
+			this.ScrollPosition += new Vector2(0, (ExploreItem.IconSize + (ExploreItem.ItemSpacing * 2)) * direction);
 		}
 	}
 }
