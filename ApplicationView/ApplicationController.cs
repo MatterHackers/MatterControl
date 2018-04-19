@@ -1836,27 +1836,24 @@ namespace MatterHackers.MatterControl
 			};
 			container.AddChild(bedButton);
 
-			RadioIconButton printAreaButton = null;
+			Func<bool> buildHeightValid = () => sceneContext.BuildHeight > 0;
 
-			if (sceneContext.BuildHeight > 0)
+			var printAreaButton = new RadioIconButton(AggContext.StaticData.LoadIcon("print_area.png", theme.InvertIcons), theme)
 			{
-				printAreaButton = new RadioIconButton(AggContext.StaticData.LoadIcon("print_area.png", theme.InvertIcons), theme)
-				{
-					Name = "Bed Button",
-					ToolTipText = "Show Print Area".Localize(),
-					Checked = sceneContext.RendererOptions.RenderBuildVolume,
-					Margin = theme.ButtonSpacing,
-					ToggleButton = true,
-					Enabled = printer?.ViewState.ViewMode != PartViewMode.Layers2D,
-					Height = 24,
-					Width = 24
-				};
-				printAreaButton.CheckedStateChanged += (s, e) =>
-				{
-					sceneContext.RendererOptions.RenderBuildVolume = printAreaButton.Checked;
-				};
-				container.AddChild(printAreaButton);
-			}
+				Name = "Bed Button",
+				ToolTipText = (buildHeightValid()) ? "Show Print Area".Localize() : "Define printer build height to enable",
+				Checked = sceneContext.RendererOptions.RenderBuildVolume,
+				Margin = theme.ButtonSpacing,
+				ToggleButton = true,
+				Enabled = buildHeightValid() && printer?.ViewState.ViewMode != PartViewMode.Layers2D,
+				Height = 24,
+				Width = 24
+			};
+			printAreaButton.CheckedStateChanged += (s, e) =>
+			{
+				sceneContext.RendererOptions.RenderBuildVolume = printAreaButton.Checked;
+			};
+			container.AddChild(printAreaButton);
 
 			this.BindBedOptions(container, bedButton, printAreaButton, sceneContext.RendererOptions);
 
@@ -1865,7 +1862,8 @@ namespace MatterHackers.MatterControl
 				// Disable print area button in GCode2D view
 				EventHandler<ViewModeChangedEventArgs> viewModeChanged = (s, e) =>
 				{
-					printAreaButton.Enabled = printer.ViewState.ViewMode != PartViewMode.Layers2D;
+					// Button is conditionally created based on BuildHeight, only set enabled if created
+					printAreaButton.Enabled = buildHeightValid() && printer.ViewState.ViewMode != PartViewMode.Layers2D;
 				};
 
 				printer.ViewState.ViewModeChanged += viewModeChanged;
