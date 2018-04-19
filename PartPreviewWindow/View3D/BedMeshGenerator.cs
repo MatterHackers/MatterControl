@@ -40,21 +40,42 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public class BedMeshGenerator
+	public static class BedMeshGenerator
 	{
 		private static ImageBuffer watermarkImage = null;
 
-		private Color bedBaseColor = new Color(245, 245, 255);
-		private Color bedMarkingsColor = Color.Black;
+		private static Color bedBaseColor = new Color(245, 245, 255);
+		private static Color bedMarkingsColor = Color.Black;
 
-		public (Mesh bed, Mesh volume) CreatePrintBedAndVolume(PrinterConfig printer)
+		public static ImageBuffer CreatePrintBedImage(PrinterConfig printer)
+		{
+			ImageBuffer bedImage;
+
+			switch (printer.Bed.BedShape)
+			{
+				case BedShape.Rectangular:
+					bedImage = CreateRectangularBedGridImage(printer);
+					break;
+
+				case BedShape.Circular:
+					bedImage = CreateCircularBedGridImage(printer);
+					break;
+
+				default:
+					throw new NotImplementedException();
+			}
+
+			return bedImage;
+		}
+
+		public static (Mesh bed, Mesh volume) CreatePrintBedAndVolume(PrinterConfig printer)
 		{
 			Mesh printerBed = null;
 			Mesh buildVolume = null;
 
 			Vector3 displayVolumeToBuild = Vector3.ComponentMax(printer.Bed.ViewerVolume, new Vector3(1, 1, 1));
 
-			ImageBuffer bedplateImage;
+			ImageBuffer bedplateImage = CreatePrintBedImage(printer);
 
 			switch (printer.Bed.BedShape)
 			{
@@ -69,10 +90,6 @@ namespace MatterHackers.MatterControl
 						var bspTree = FaceBspTree.Create(buildVolume);
 						buildVolume.FaceBspTree = bspTree;
 					}
-
-					bedplateImage = CreateRectangularBedGridImage(printer);
-
-					ApplyOemBedImage(bedplateImage, printer);
 
 					printerBed = PlatonicSolids.CreateCube(displayVolumeToBuild.X, displayVolumeToBuild.Y, 1.8);
 					{
@@ -91,10 +108,6 @@ namespace MatterHackers.MatterControl
 								vertex.Position = vertex.Position + new Vector3(0, 0, .2);
 							}
 						}
-
-						bedplateImage = CreateCircularBedGridImage(printer);
-
-						ApplyOemBedImage(bedplateImage, printer);
 
 						printerBed = VertexSourceToMesh.Extrude(new Ellipse(new Vector2(), displayVolumeToBuild.X / 2, displayVolumeToBuild.Y / 2), 1.8);
 						{
@@ -135,7 +148,7 @@ namespace MatterHackers.MatterControl
 			return (printerBed, buildVolume);
 		}
 
-		private ImageBuffer CreateCircularBedGridImage(PrinterConfig printer)
+		private static ImageBuffer CreateCircularBedGridImage(PrinterConfig printer)
 		{
 			Vector3 displayVolumeToBuild = Vector3.ComponentMax(printer.Bed.ViewerVolume, new Vector3(1, 1, 1));
 
@@ -155,7 +168,6 @@ namespace MatterHackers.MatterControl
 
 			var bedplateImage = new ImageBuffer(1024, 1024);
 			Graphics2D graphics2D = bedplateImage.NewGraphics2D();
-			graphics2D.Clear(bedBaseColor);
 
 			var originPixels = new Vector2();
 			{
@@ -190,6 +202,10 @@ namespace MatterHackers.MatterControl
 					}
 				}
 			}
+
+			Ellipse bedCircle = new Ellipse(bedplateImage.Width/2, bedplateImage.Height/2, bedplateImage.Width/2, bedplateImage.Height/2);
+			graphics2D.Render(bedCircle, bedBaseColor);
+			//graphics2D.Clear(bedBaseColor);
 
 			{
 				double lineSpacePixels = bedplateImage.Width / (displayVolumeToBuild.X / cmPerLine);
@@ -239,10 +255,13 @@ namespace MatterHackers.MatterControl
 					graphics2D.DrawString((yPositionCmInt * skip).ToString(), originPixels.X + 4, linePos + 4, pointSize, color: bedMarkingsColor);
 				}
 			}
+
+			ApplyOemBedImage(bedplateImage, printer);
+
 			return bedplateImage;
 		}
 
-		private ImageBuffer CreateRectangularBedGridImage(PrinterConfig printer)
+		private static ImageBuffer CreateRectangularBedGridImage(PrinterConfig printer)
 		{
 			Vector3 displayVolumeToBuild = Vector3.ComponentMax(printer.Bed.ViewerVolume, new Vector3(1, 1, 1));
 			double sizeForMarking = Math.Max(displayVolumeToBuild.X, displayVolumeToBuild.Y);
@@ -307,10 +326,12 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
+			ApplyOemBedImage(bedplateImage, printer);
+
 			return bedplateImage;
 		}
 
-		private void ApplyOemBedImage(ImageBuffer bedImage, PrinterConfig printer)
+		private static void ApplyOemBedImage(ImageBuffer bedImage, PrinterConfig printer)
 		{
 			// Add an oem/watermark image to the bedplate grid
 			string imagePathAndFile = Path.Combine("OEMSettings", "bedimage.png");
