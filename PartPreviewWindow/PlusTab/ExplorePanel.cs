@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					try
 					{
 						var client = new HttpClient();
-						string json = await client.GetStringAsync($"http://www.matterhackers.com/feeds/explore?sk={sk}");
+						string json = await client.GetStringAsync($"http://www.matterhackers.com/feeds/{sk}");
 
 						return JsonConvert.DeserializeObject<ExplorerFeed>(json);
 					}
@@ -113,45 +113,56 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		{
 			foreach (var content in contentList.Content)
 			{
-				switch (content.content_type)
-				{
-					case "banner_image":
+				AddContentItem(content);
+			}
+		}
+
+		private void AddContentItem(ExploreFeedContent content)
+		{
+			switch (content.content_type)
+			{
+				case "banner_rotate":
+					// TODO: make this make a carousel rather than add the first item and rotate between all the items
+					AddContentItem(content.banner_list[0]);
+					break;
+
+				case "banner_image":
+					{
+						// Our banners seem to end with something like "=w1520-h170"
+						// if present use that to get the right width and height
+						int expectedWidth = 1520;
+						GCodeFile.GetFirstNumberAfter("=w", content.image_url, ref expectedWidth);
+						int expectedHeight = 170;
+						GCodeFile.GetFirstNumberAfter("-h", content.image_url, ref expectedHeight);
+						if ((content.theme_filter == "dark" && ActiveTheme.Instance.IsDarkTheme)
+							|| (content.theme_filter == "light" && !ActiveTheme.Instance.IsDarkTheme)
+							|| (content.theme_filter == "all"))
 						{
-							// Our banners seem to end with something like "=w1520-h170"
-							// if present use that to get the right width and height
-							int expectedWidth = 1520;
-							GCodeFile.GetFirstNumberAfter("=w", content.image_url, ref expectedWidth);
-							int expectedHeight = 170;
-							GCodeFile.GetFirstNumberAfter("-h", content.image_url, ref expectedHeight);
-							if ((content.theme_filter == "dark" && ActiveTheme.Instance.IsDarkTheme)
-								|| (content.theme_filter == "light" && !ActiveTheme.Instance.IsDarkTheme))
+							ImageBuffer image = new ImageBuffer(expectedWidth, expectedHeight);
+							ResponsiveImageWidget imageWidget = new ResponsiveImageWidget(image)
 							{
-								ImageBuffer image = new ImageBuffer(expectedWidth, expectedHeight);
-								ResponsiveImageWidget imageWidget = new ResponsiveImageWidget(image)
+								Margin = new BorderDouble(5),
+							};
+
+							if (content.link != null)
+							{
+								imageWidget.Cursor = Cursors.Hand;
+								imageWidget.Click += (s, e) =>
 								{
-									Margin = new BorderDouble(5),
+									ApplicationController.Instance.LaunchBrowser(content.link);
 								};
-
-								if (content.link != null)
-								{
-									imageWidget.Cursor = Cursors.Hand;
-									imageWidget.Click += (s, e) =>
-									{
-										ApplicationController.Instance.LaunchBrowser(content.link);
-									};
-								}
-
-								imageWidget.Load += (s, e) => ApplicationController.Instance.DownloadToImageAsync(image, content.image_url, false, new BlenderPreMultBGRA());
-								this.AddChild(imageWidget);
 							}
-						}
-						break;
 
-					case "article_group":
-					case "product_group":
-						this.AddChild(new ExploreSection(content, theme));
-						break;
-				}
+							imageWidget.Load += (s, e) => ApplicationController.Instance.DownloadToImageAsync(image, content.image_url, false, new BlenderPreMultBGRA());
+							this.AddChild(imageWidget);
+						}
+					}
+					break;
+
+				case "article_group":
+				case "product_group":
+					this.AddChild(new ExploreSection(content, theme));
+					break;
 			}
 		}
 	}
@@ -162,6 +173,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 	{
 		public string content_type;
 		public List<ExplorerFeedItem> group_items;
+		public List<ExploreFeedContent> banner_list;
 		public string group_link;
 		public string group_subtitle;
 		public string group_title;
