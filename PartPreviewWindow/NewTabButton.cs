@@ -34,6 +34,32 @@ using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+	public class TabTrailer : GuiWidget
+	{
+		private SimpleTabs parentTabControl;
+		private ThemeConfig theme;
+
+		public ITab LastTab { get; set; }
+
+		public IconButton IconButton { get; }
+
+		public TabTrailer(SimpleTabs parentTabControl, ThemeConfig theme)
+		{
+			this.parentTabControl = parentTabControl;
+			this.theme = theme;
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			ChromeTab.DrawTabLowerLeft(
+				graphics2D,
+				this.LocalBounds,
+				(parentTabControl.ActiveTab == this.LastTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
+
+			base.OnDraw(graphics2D);
+		}
+	}
+
 	public class NewTabButton : GuiWidget
 	{
 		private SimpleTabs parentTabControl;
