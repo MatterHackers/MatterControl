@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			Closed += (s, e) =>
 			{
 				// move from this wizard to the print leveling wizard if needed
-				ApplicationController.Instance.RunAnyRequiredCalibration(printer, theme);
+				ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, theme);
 			};
 
 			base.PageIsBecomingActive();

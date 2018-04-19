@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 		public IEnumerable<DataStorage.PrintTask> GetHistoryItems(int recordCount)
 		{
 			string query;
-			if (UserSettings.Instance.get("PrintHistoryFilterShowCompleted") == "true")
+			if (UserSettings.Instance.get(UserSettingsKey.PrintHistoryFilterShowCompleted) == "true")
 			{
 				query = string.Format("SELECT * FROM PrintTask WHERE PrintComplete = 1 ORDER BY PrintStart DESC LIMIT {0};", recordCount);
 			}

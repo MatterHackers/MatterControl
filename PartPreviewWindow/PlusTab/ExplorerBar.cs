@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		private PrinterInfo printerInfo;
 
 		public PrinterBar(PartPreviewContent partPreviewContent, PrinterInfo printerInfo, ThemeConfig theme)
-			: base(printerInfo.Name, theme)
+			: base(printerInfo?.Name ?? "", theme)
 		{
 			headingBar.CloseAllChildren();
 			headingBar.AddChild(new PrinterSelector(theme)

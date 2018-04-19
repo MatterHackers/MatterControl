@@ -109,10 +109,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					theme,
 					new SettingsItem.ToggleSwitchConfig()
 					{
-						Checked = UserSettings.Instance.get("PrintNotificationsEnabled") == "true",
+						Checked = UserSettings.Instance.get(UserSettingsKey.PrintNotificationsEnabled) == "true",
 						ToggleAction = (itemChecked) =>
 						{
-							UserSettings.Instance.set("PrintNotificationsEnabled", itemChecked ? "true" : "false");
+							UserSettings.Instance.set(UserSettingsKey.PrintNotificationsEnabled, itemChecked ? "true" : "false");
 						}
 					},
 					configureNotificationsButton,
@@ -144,9 +144,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				UiThread.RunOnIdle(() =>
 				{
 					string languageCode = languageSelector.SelectedValue;
-					if (languageCode != UserSettings.Instance.get("Language"))
+					if (languageCode != UserSettings.Instance.get(UserSettingsKey.Language))
 					{
-						UserSettings.Instance.set("Language", languageCode);
+						UserSettings.Instance.set(UserSettingsKey.Language, languageCode);
 
 						if (languageCode == "L10N")
 						{
