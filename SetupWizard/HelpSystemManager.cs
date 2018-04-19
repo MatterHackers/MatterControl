@@ -43,6 +43,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 		private bool DoneAnimating => animationRatio >= 1;
 		private GuiWidget target;
 		private string message;
+		bool addedDescription = false;
 		Animation showAnimation;
 
 		public HelpOverlay(GuiWidget target, string message)
@@ -111,18 +112,37 @@ namespace MatterHackers.MatterControl.SetupWizard
 
 			graphics2D.Render(dimRegion, backgroundColor);
 
-			BorderDouble margin = new BorderDouble(5);
+			BorderDouble margin = new BorderDouble(10);
 
-			if (ratio >= 1)
+			if (ratio >= 1
+				&& !addedDescription)
 			{
-				TypeFacePrinter stringPrinter = new TypeFacePrinter(message);
-				var textBounds = stringPrinter.GetBounds();
+				addedDescription = true;
+				UiThread.RunOnIdle(() =>
+				{
+					CloseAllChildren();
 
-				var translated = new VertexSourceApplyTransform(stringPrinter,
-					Affine.NewTranslation(childBounds.Right - textBounds.Width - margin.Right,
-						childBounds.Bottom - stringPrinter.TypeFaceStyle.AscentInPixels - margin.Top));// - textBounds.Height));
+					var text = new TextWidget(message)
+					{
+						HAnchor = HAnchor.Center,
+						VAnchor = VAnchor.Center,
+						TextColor = Color.White
+					};
 
-				graphics2D.Render(translated, Color.White);
+					var child = new GuiWidget(text.Width + margin.Width, text.Height + margin.Height);
+
+					child.AddChild(text);
+
+					child.Position = new VectorMath.Vector2(childBounds.Right - child.Width,
+						childBounds.Bottom - child.Height - margin.Top);
+
+					child.BeforeDraw += (s, e) =>
+					{
+						e.Graphics2D.Render(new RoundedRect(child.LocalBounds, 5), Color.Black);
+					};
+
+					AddChild(child);
+				});
 			}
 
 			base.OnDraw(graphics2D);

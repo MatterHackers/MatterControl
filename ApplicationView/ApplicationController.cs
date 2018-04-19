@@ -958,7 +958,7 @@ namespace MatterHackers.MatterControl
 					+ "    • " + "Select Material".Localize() + "\n"
 					+ "    • " + "Set Temperature".Localize() + "\n"
 					+ "    • " + "Move Print Head".Localize() + "\n"
-					+ "    • " + "Load and Unload Filament".Localize() + "\n";
+					+ "    • " + "Load and Unload Filament".Localize();
 				HelpSystemManager.Instance.ShowTip(AppContext.RootSystemWindow, widgetName, extruder0TipMessage);
 
 				UserSettings.Instance.set(UserSettingsKey.DisplayedTip_LoadFilament, "1");
