@@ -292,7 +292,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// Dismiss pause dialog
 					testRunner.WaitForName("No Button", 90); // the no button is 'Resume'
-					
+
 					// validate the current layer
 					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinter.Connection.CurrentlyPrintingLayer);
 					testRunner.ClickByName("No Button");
@@ -301,7 +301,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// close the pause dialog pop-up do not resume
 					ClickDialogButton(testRunner, "Yes Button", 3);
 
-					// Disconnect 
+					// Disconnect
 					testRunner.ClickByName("Disconnect from printer button");
 
 					// Reconnect
@@ -472,7 +472,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					scrollable.Width = width - 1;
 					scrollable.Width = width;
 
-					// Tuning values should match 
+					// Tuning values should match
 					ConfirmExpectedSpeeds(testRunner, initialExtrusionRate, initialFeedRate);
 
 					testRunner.Delay();
@@ -578,7 +578,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.AddItemToBedplate();
 
 					testRunner.StartPrint();
-					
+
 					int fanChangedCount = 0;
 					emulator.FanSpeedChanged += (s, e) =>
 					{
@@ -589,7 +589,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					emulator.WaitForLayer(printer.Settings, 2);
 					emulator.RunSlow = true;
-				
+
 					// Click close but cancel
 					testRunner.CloseMatterControl();
 					testRunner.ClickByName("No Button");
