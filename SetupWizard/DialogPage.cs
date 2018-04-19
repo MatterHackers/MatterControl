@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -162,6 +163,28 @@ namespace MatterHackers.MatterControl
 					UiThread.RunOnIdle(() => WizardWindow?.Close());
 				}
 			};
+
+			var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+			if(systemWindow != null)
+			{
+				EventHandler<KeyEventArgs> checkEscape = null;
+				checkEscape = (s, e) =>
+				{
+					if(e.KeyCode == Keys.Escape)
+					{
+						systemWindow.KeyDown -= checkEscape;
+
+						this.OnCancel(out bool abortCancel);
+
+						if (!abortCancel)
+						{
+							UiThread.RunOnIdle(() => WizardWindow?.Close());
+						}
+					}
+				};
+
+				systemWindow.KeyDown += checkEscape;
+			}
 
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);

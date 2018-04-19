@@ -105,6 +105,7 @@ namespace MatterHackers.MatterControl
 			if (allWindows.TryGetValue(type, out DialogWindow wizardWindow))
 			{
 				wizardWindow.BringToFront();
+				wizardWindow.Focus();
 			}
 			else
 			{
