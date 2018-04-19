@@ -27,16 +27,116 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
+using MatterHackers.Agg.Font;
+using MatterHackers.Agg.Transform;
+using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using System;
 using System.Linq;
-using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SetupWizard
 {
+	public class HelpOverlay : GuiWidget
+	{
+		private double animationRatio = 0;
+		private bool DoneAnimating => animationRatio >= 1;
+		private GuiWidget target;
+		private string message;
+		Animation showAnimation;
+
+		public HelpOverlay(GuiWidget target, string message)
+		{
+			this.target = target;
+			this.message = message;
+			HAnchor = HAnchor.Stretch;
+			VAnchor = VAnchor.Stretch;
+
+			showAnimation = new Animation()
+			{
+				DrawTarget = this,
+			};
+
+			showAnimation.Update += (s, timePassed) =>
+			{
+				animationRatio += timePassed;
+				if(animationRatio >= 1)
+				{
+					showAnimation?.Stop();
+					showAnimation = null;
+				}
+			};
+		}
+
+		public override void OnClick(MouseEventArgs mouseEvent)
+		{
+			if (DoneAnimating)
+			{
+				CloseOnIdle();
+			}
+			base.OnClick(mouseEvent);
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			if(showAnimation != null
+				&& !showAnimation.IsRunning)
+			{
+				showAnimation.Start();
+			}
+
+			var backgroundColor = new Color(Color.Black, 100);
+
+			BackgroundColor = Color.Transparent;
+
+			var childBounds = target.TransformToParentSpace(this, target.LocalBounds);
+
+			VertexStorage dimRegion = new VertexStorage();
+			dimRegion.MoveTo(LocalBounds.Left, LocalBounds.Bottom);
+			dimRegion.LineTo(LocalBounds.Right, LocalBounds.Bottom);
+			dimRegion.LineTo(LocalBounds.Right, LocalBounds.Top);
+			dimRegion.LineTo(LocalBounds.Left, LocalBounds.Top);
+
+			var ratio = Easing.Quadratic.InOut(Math.Min(animationRatio, 1));
+
+			double closingLeft = LocalBounds.Left + (childBounds.Left - LocalBounds.Left) * ratio;
+			double closingRight = LocalBounds.Right - (LocalBounds.Right - childBounds.Right) * ratio;
+			double closingBottom = LocalBounds.Bottom + (childBounds.Bottom - LocalBounds.Bottom) * ratio;
+			double closingTop = LocalBounds.Top - (LocalBounds.Top - childBounds.Top) * ratio;
+
+			dimRegion.MoveTo(closingRight, closingBottom);
+			dimRegion.LineTo(closingLeft, closingBottom);
+			dimRegion.LineTo(closingLeft, closingTop);
+			dimRegion.LineTo(closingRight, closingTop);
+
+			graphics2D.Render(dimRegion, backgroundColor);
+
+			BorderDouble margin = new BorderDouble(5);
+
+			if (ratio >= 1)
+			{
+				TypeFacePrinter stringPrinter = new TypeFacePrinter(message);
+				var textBounds = stringPrinter.GetBounds();
+
+				var translated = new VertexSourceApplyTransform(stringPrinter,
+					Affine.NewTranslation(childBounds.Right - textBounds.Width - margin.Right,
+						childBounds.Bottom - stringPrinter.TypeFaceStyle.AscentInPixels - margin.Top));// - textBounds.Height));
+
+				graphics2D.Render(translated, Color.White);
+			}
+
+			base.OnDraw(graphics2D);
+		}
+	}
+
 	public class HelpSystemManager
 	{
-		private GuiWidget widgetToExplain;
+		private SystemWindow SystemWindow { get; set; }
+
+		private string message;
+		private GuiWidget target;
 		private static HelpSystemManager _instance;
+
 		public static HelpSystemManager Instance
 		{
 			get
@@ -51,32 +151,30 @@ namespace MatterHackers.MatterControl.SetupWizard
 
 		private HelpSystemManager()
 		{
-
 		}
 
-		public void ShowTip(SystemWindow systemWindow, string widgetName, string extruder0TipMessage)
+		public void ShowTip(SystemWindow systemWindow, string widgetName, string message)
 		{
-			widgetToExplain = systemWindow.Descendants().Where((w) => w.Name == widgetName).FirstOrDefault();
-#if DEBUG
-			if(widgetToExplain == null)
+			this.SystemWindow = systemWindow;
+			this.message = message;
+			target = systemWindow.Descendants().Where((w) => w.Name == widgetName).FirstOrDefault();
+
+			if (target != null)
 			{
-				throw new Exception("Can't find the named widget");
-			}
-#endif
-			if (widgetToExplain != null)
-			{
-				widgetToExplain.AfterDraw -= DoShowTip;
+				target.AfterDraw -= DoShowTip;
 			}
 			// hook the widget draw and wait for it to draw so that we know it is visible
-			widgetToExplain.AfterDraw += DoShowTip;
-			widgetToExplain.Invalidate();
+			target.AfterDraw += DoShowTip;
+			target.Invalidate();
 		}
 
-		private void DoShowTip(object sender, DrawEventArgs e)
+		private void DoShowTip(object sender, DrawEventArgs drawEvent)
 		{
-			if (widgetToExplain != null)
+			if (target != null)
 			{
-				widgetToExplain.AfterDraw -= DoShowTip;
+				target.AfterDraw -= DoShowTip;
+
+				SystemWindow.AddChild(new HelpOverlay(target, message));
 			}
 		}
 	}

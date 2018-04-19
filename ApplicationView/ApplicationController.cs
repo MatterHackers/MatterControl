@@ -955,10 +955,10 @@ namespace MatterHackers.MatterControl
 				var widgetName = "Hotend 0";
 
 				string extruder0TipMessage = "Extruder Controls can be fonud here.".Localize() + "\n"
-					+ "They include".Localize() + ":\n"
-					+ "\t• " + "Select Material".Localize() + "\n"
-					+ "\t• " + "Set Temperature".Localize() + "\n"
-					+ "\t• " + "Load and Unload Filament".Localize() + "\n";
+					+ "    • " + "Select Material".Localize() + "\n"
+					+ "    • " + "Set Temperature".Localize() + "\n"
+					+ "    • " + "Move Print Head".Localize() + "\n"
+					+ "    • " + "Load and Unload Filament".Localize() + "\n";
 				HelpSystemManager.Instance.ShowTip(AppContext.RootSystemWindow, widgetName, extruder0TipMessage);
 			}
 
