@@ -123,7 +123,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			{
 				case "banner_rotate":
 					// TODO: make this make a carousel rather than add the first item and rotate between all the items
-					AddContentItem(content.banner_list[0]);
+					var rand = new Random();
+					AddContentItem(content.banner_list[rand.Next(content.banner_list.Count)]);
 					break;
 
 				case "banner_image":
