@@ -210,14 +210,14 @@ namespace MatterHackers.MatterControl
 			{
 				if (zPlusControl.MoveAmount >= 1)
 				{
-					movePointZeroTwoMmButton.Checked = true;
+					movePointZeroTwoMmButton.InvokeClick();
 				}
 			}
 			else
 			{
 				if (zPlusControl.MoveAmount < 1)
 				{
-					moveOneMmButton.Checked = true;
+					moveOneMmButton.InvokeClick();
 				}
 			}
 

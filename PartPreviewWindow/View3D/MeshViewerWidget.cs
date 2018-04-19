@@ -804,7 +804,9 @@ namespace MatterHackers.MeshVisualizer
 					{
 						bedColor = new Color(this.BedColor, this.BedColor.alpha / 4);
 					}
+
 					GLHelper.Render(sceneContext.Mesh, bedColor, RenderTypes.Shaded, World.ModelviewMatrix);
+
 					if (sceneContext.PrinterShape != null)
 					{
 						GLHelper.Render(sceneContext.PrinterShape, bedColor, RenderTypes.Shaded, World.ModelviewMatrix);

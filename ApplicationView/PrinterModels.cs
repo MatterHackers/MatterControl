@@ -311,7 +311,7 @@ namespace MatterHackers.MatterControl
 
 								BspNode bspTree = null;
 
-								// if there is a chached bsp tree load it
+								// if there is a cached bsp tree load it
 								var meshHashCode = mesh.GetLongHashCode();
 								string cachePath = ApplicationController.CacheablePath("MeshBspData", $"{meshHashCode}.bsp");
 								if (File.Exists(cachePath))
@@ -346,13 +346,7 @@ namespace MatterHackers.MatterControl
 
 		private Mesh _buildVolumeMesh;
 
-		public Mesh BuildVolumeMesh
-		{
-			get
-			{
-				return _buildVolumeMesh;
-			}
-		}
+		public Mesh BuildVolumeMesh => _buildVolumeMesh;
 
 		public bool EditableScene { get; private set; }
 
