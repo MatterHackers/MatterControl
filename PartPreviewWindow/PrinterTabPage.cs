@@ -189,8 +189,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			splitContainer.AddChild(gcodeContainer);
 
-			var viewerVolume = sceneContext.ViewerVolume;
-
 			view3DContainer.AddChild(new RunningTasksWidget(theme)
 			{
 				MinimumSize = new Vector2(100, 0),
@@ -200,7 +198,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 
 			// Create and append new widget
-			gcode2DWidget = new GCode2DWidget(new Vector2(viewerVolume.X, viewerVolume.Y), sceneContext.BedCenter)
+			gcode2DWidget = new GCode2DWidget(printer)
 			{
 				Visible = (printer.ViewState.ViewMode == PartViewMode.Layers2D)
 			};

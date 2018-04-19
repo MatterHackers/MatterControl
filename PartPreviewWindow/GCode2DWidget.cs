@@ -30,10 +30,12 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using MatterControl.Printing;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
@@ -57,30 +59,55 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private GCodeFile loadedGCode => printer.Bed.LoadedGCode;
 		private View3DConfig options;
 		private PrinterConfig printer;
-		private VertexStorage grid = new VertexStorage();
 
 		private static Color gridColor = new Color(190, 190, 190, 255);
+		private EventHandler unregisterEvents;
+		private ImageBuffer bedImage;
 
-		public GCode2DWidget(Vector2 gridSizeMm, Vector2 gridCenterMm)
+		public GCode2DWidget(PrinterConfig printer)
 		{
-			options = ApplicationController.Instance.ActivePrinter.Bed.RendererOptions;
-			printer = ApplicationController.Instance.ActivePrinter;
+			this.printer = printer;
+			options = printer.Bed.RendererOptions;
 
-			this.gridSizeMm = gridSizeMm;
-			this.gridCenterMm = gridCenterMm;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			this.LocalBounds = new RectangleDouble(0, 0, 100, 100);
 			this.AnchorAll();
 
-			printer.Bed.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
+			printer.Bed.LoadedGCodeChanged += LoadedGCodeChanged;
+
+			// make sure we have good settings
+
+			ActiveSliceSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
+			Printer_SettingChanged(this, null);
+
+			this.gridSizeMm = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size);
+			this.gridCenterMm = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
+
+			bedImage = BedMeshGenerator.CreatePrintBedImage(printer);
+		}
+
+		private void Printer_SettingChanged(object sender, EventArgs e)
+		{
+			if (e is StringEventArgs stringEvent)
+			{
+				if (stringEvent.Data == SettingsKey.bed_size
+					|| stringEvent.Data == SettingsKey.print_center
+					|| stringEvent.Data == SettingsKey.bed_shape)
+				{
+					this.gridSizeMm = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size);
+					this.gridCenterMm = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
+
+					bedImage = BedMeshGenerator.CreatePrintBedImage(printer);
+				}
+			}
 		}
 
 		private Affine scalingTransform => Affine.NewScaling(layerScale, layerScale);
 
 		private Affine totalTransform => Affine.NewTranslation(unscaledRenderOffset) * scalingTransform * Affine.NewTranslation(Width / 2, Height / 2);
 
-		private void BedPlate_LoadedGCodeChanged(object sender, EventArgs e)
+		private void LoadedGCodeChanged(object sender, EventArgs e)
 		{
 			if (loadedGCode == null)
 			{
@@ -110,17 +137,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							double gridLineWidths = 0.2 * layerScale;
 
-							if (graphics2D is Graphics2DOpenGL graphics2DGl)
-							{
-								GlRenderGrid(graphics2DGl, transform, gridLineWidths);
-							}
-							else
-							{
-								CreateGrid(transform);
-
-								Stroke stroke = new Stroke(grid, gridLineWidths);
-								graphics2D.Render(stroke, gridColor);
-							}
+							DrawBedImage(graphics2D, transform);
 						}
 					}
 
@@ -145,66 +162,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnDraw(graphics2D);
 		}
 
-		private void GlRenderGrid(Graphics2DOpenGL graphics2DGl, Affine transform, double width)
-		{
-			graphics2DGl.PreRender();
-			GL.Begin(BeginMode.Triangles);
-
-			Vector2 gridOffset = gridCenterMm - gridSizeMm / 2;
-			if (gridSizeMm.X > 0 && gridSizeMm.Y > 0)
-			{
-				grid.remove_all();
-				for (int y = 0; y <= gridSizeMm.Y; y += 10)
-				{
-					Vector2 start = new Vector2(0, y) + gridOffset;
-					Vector2 end = new Vector2(gridSizeMm.X, y) + gridOffset;
-					transform.transform(ref start);
-					transform.transform(ref end);
-
-					graphics2DGl.DrawAALine(start, end, width, gridColor);
-				}
-
-				for (int x = 0; x <= gridSizeMm.X; x += 10)
-				{
-					Vector2 start = new Vector2(x, 0) + gridOffset;
-					Vector2 end = new Vector2(x, gridSizeMm.Y) + gridOffset;
-					transform.transform(ref start);
-					transform.transform(ref end);
-
-					graphics2DGl.DrawAALine(start, end, width, gridColor);
-				}
-			}
-
-			GL.End();
-			graphics2DGl.PopOrthoProjection();
-		}
-
-		public void CreateGrid(Affine transform)
+		public void DrawBedImage(Graphics2D graphics2D, Affine transform)
 		{
 			Vector2 gridOffset = gridCenterMm - gridSizeMm / 2;
-			if (gridSizeMm.X > 0 && gridSizeMm.Y > 0)
-			{
-				grid.remove_all();
-				for (int y = 0; y <= gridSizeMm.Y; y += 10)
-				{
-					Vector2 start = new Vector2(0, y) + gridOffset;
-					Vector2 end = new Vector2(gridSizeMm.X, y) + gridOffset;
-					transform.transform(ref start);
-					transform.transform(ref end);
-					grid.MoveTo(Math.Round(start.X), Math.Round(start.Y));
-					grid.LineTo(Math.Round(end.X), Math.Round(end.Y));
-				}
 
-				for (int x = 0; x <= gridSizeMm.X; x += 10)
-				{
-					Vector2 start = new Vector2(x, 0) + gridOffset;
-					Vector2 end = new Vector2(x, gridSizeMm.Y) + gridOffset;
-					transform.transform(ref start);
-					transform.transform(ref end);
-					grid.MoveTo((int)(start.X + .5) + .5, (int)(start.Y + .5));
-					grid.LineTo((int)(end.X + .5) + .5, (int)(end.Y + .5));
-				}
-			}
+			Vector2 imageStart = Vector2.Zero + gridOffset;
+			transform.transform(ref imageStart);
+			Vector2 imageEnd = gridSizeMm + gridOffset;
+			transform.transform(ref imageEnd);
+			graphics2D.Render(bedImage, imageStart, imageEnd.X - imageStart.X, imageEnd.Y - imageStart.Y);
 		}
 
 		double startDistanceBetweenPoints = 1;
@@ -330,8 +296,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
+			unregisterEvents?.Invoke(this, null);
+
 			printer.Bed.GCodeRenderer?.Dispose();
-			printer.Bed.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
+			printer.Bed.LoadedGCodeChanged -= LoadedGCodeChanged;
 
 			base.OnClosed(e);
 		}

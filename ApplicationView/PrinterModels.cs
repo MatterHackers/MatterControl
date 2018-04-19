@@ -290,8 +290,7 @@ namespace MatterHackers.MatterControl
 				{
 
 					// Load bed and build volume meshes
-					var bedGenerator = new BedMeshGenerator();
-					(_bedMesh, _buildVolumeMesh) = bedGenerator.CreatePrintBedAndVolume(Printer);
+					(_bedMesh, _buildVolumeMesh) = BedMeshGenerator.CreatePrintBedAndVolume(Printer);
 
 					Task.Run(() =>
 					{
