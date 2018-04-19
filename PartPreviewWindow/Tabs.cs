@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public class ChromeTabs : SimpleTabs
 	{
-		private NewTabButton plusTabButton;
+		private TabTrailer tabTrailer;
 
 		public ChromeTabs(GuiWidget rightAnchorItem, ThemeConfig theme)
 			: base(theme, rightAnchorItem)
@@ -195,32 +195,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ChromeTab.DrawTabLowerRight(e.Graphics2D, leadingTabAdornment.LocalBounds, (firstItem == this.ActiveTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
 			};
 			this.TabBar.ActionArea.AddChild(leadingTabAdornment);
-
 			// TODO: add in the printers and designs that are currently open (or were open last run).
-			plusTabButton = new NewTabButton(
-				AggContext.StaticData.LoadIcon("fa-plus_12.png", theme.InvertIcons),
-				this,
-				theme)
+			tabTrailer = new TabTrailer(this, theme)
 			{
 				VAnchor = VAnchor.Bottom,
 				MinimumSize = new Vector2(16, theme.TabButtonHeight),
 				ToolTipText = "Create New".Localize()
 			};
-			plusTabButton.IconButton.Click += (s, e) =>
-			{
-				this.AddTab(
-					new ChromeTab("New Tab".Localize(), this, this.NewTabPage(), theme)
-					{
-						MinimumSize = new Vector2(0, theme.TabButtonHeight)
-					});
-			};
 
-			this.TabBar.ActionArea.AddChild(plusTabButton);
+			this.TabBar.ActionArea.AddChild(tabTrailer);
 		}
 
 		public void AddTab(GuiWidget tab)
 		{
-			var position = this.TabBar.ActionArea.GetChildIndex(plusTabButton);
+			var position = this.TabBar.ActionArea.GetChildIndex(tabTrailer);
 
 			if (tab is ChromeTab chromeTab)
 			{
@@ -232,7 +220,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				this.AddTab(tab, position);
 
-				chromeTab.CloseClicked += ChromeTab_CloseClicked;
 				this.ActiveTab = chromeTab;
 			}
 		}
@@ -259,15 +246,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private async void ChromeTab_CloseClicked(object sender, EventArgs e)
-		{
-		}
-
 		public Func<GuiWidget> NewTabPage { get; set; }
 
 		protected override void OnActiveTabChanged()
 		{
-			plusTabButton.LastTab = this.AllTabs.LastOrDefault();
+			tabTrailer.LastTab = this.AllTabs.LastOrDefault();
 			base.OnActiveTabChanged();
 		}
 	}
@@ -447,13 +430,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public class ChromeTab : SimpleTab
 	{
-		public ChromeTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null)
-			: base(tabLabel, parentTabControl, tabContent, theme, tabImageUrl)
+		public ChromeTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null, bool hasClose = true)
+			: base(tabLabel, parentTabControl, tabContent, theme, tabImageUrl, hasClose)
 		{
 		}
 
-		public ChromeTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, ImageBuffer imageBuffer)
-			: base(tabLabel, parentTabControl, tabContent, theme, iconImage: imageBuffer)
+		public ChromeTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, ImageBuffer imageBuffer, bool hasClose = true)
+			: base(tabLabel, parentTabControl, tabContent, theme, iconImage: imageBuffer, hasClose: hasClose)
 		{
 		}
 

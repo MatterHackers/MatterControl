@@ -33,6 +33,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
@@ -88,7 +89,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				HAnchor = HAnchor.Absolute,
 				Border = 0,
 				MinimumSize = Vector2.Zero,
-				Width = 200
+				Width = 200,
+				BackgroundColor = theme.MinimalShade
 			});
 
 			this.printerInfo = printerInfo;
@@ -97,6 +99,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			var recentFiles = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
 
 			var listView = new ListView(ApplicationController.Instance.Library, theme);
+
+			var emptyPlateButton = new ImageWidget(AggContext.StaticData.LoadIcon("empty-workspace.png", 70, 70))
+			{
+				Margin = new BorderDouble(right: 5),
+				Selectable = true,
+				BackgroundColor = theme.MinimalShade,
+				Name = "Open Empty Plate Button"
+			};
+			emptyPlateButton.Click += async (s, e) =>
+			{
+				await ProfileManager.Instance.LoadPrinterOpenItem(new InMemoryLibraryItem(new Object3D()));
+
+				string tabTitle = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
+
+				var printer = ApplicationController.Instance.ActivePrinter;
+
+				partPreviewContent.CreatePrinterTab(printer, theme, tabTitle);
+			};
+			toolbar.AddChild(emptyPlateButton);
 
 			foreach (var item in recentFiles.Take(10).Select(f => new SceneReplacementFileItem(f.FullName)).ToList<ILibraryItem>())
 			{
@@ -210,27 +231,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 			var listView = new ListView(ApplicationController.Instance.Library, theme);
 
-			foreach (var item in recentParts.Take(10).Select(f => new SceneReplacementFileItem(f.FullName)).ToList<ILibraryItem>())
+			var emptyPlateButton = new ImageWidget(AggContext.StaticData.LoadIcon("empty-workspace.png", 70, 70))
 			{
-				toolbar.AddChild(new IconViewItem(new ListViewItem(item, listView), 70, 70, theme)
-				{
-					Margin = new BorderDouble(right: 5)
-				});
-			}
-
-			var sideBar = new FlowLayoutWidget()
-			{
-				VAnchor = VAnchor.Center | VAnchor.Fit,
-				HAnchor = HAnchor.Fit
+				Margin = new BorderDouble(right: 5),
+				Selectable = true,
+				BackgroundColor = theme.MinimalShade,
+				Name = "Create Part"
 			};
-
-			var createPart = new TextButton("Create Part".Localize(), theme)
-			{
-				Name = "Create Part Button",
-				Margin = theme.ButtonSpacing,
-				BackgroundColor = theme.MinimalShade
-			};
-			createPart.Click += (s, e) =>
+			emptyPlateButton.Click += async (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>
 				{
@@ -249,9 +257,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 						}).ConfigureAwait(false);
 				});
 			};
-			sideBar.AddChild(createPart);
+			toolbar.AddChild(emptyPlateButton);
 
-			toolbar.SetRightAnchorItem(sideBar);
+
+			foreach (var item in recentParts.Take(10).Select(f => new SceneReplacementFileItem(f.FullName)).ToList<ILibraryItem>())
+			{
+				toolbar.AddChild(new IconViewItem(new ListViewItem(item, listView), 70, 70, theme)
+				{
+					Margin = new BorderDouble(right: 5)
+				});
+			}
+
 		}
 	}
 }

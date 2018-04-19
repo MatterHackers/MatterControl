@@ -90,16 +90,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			Color selectedTabColor = ActiveTheme.Instance.TabLabelSelected;
 
-			// Add a tab for the current printer
-			if (ActiveSliceSettings.Instance.PrinterSelected)
-			{
-				string tabTitle = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
-				this.CreatePrinterTab(printer, theme, tabTitle);
-			}
-			else
-			{
-			}
-
 			// add in the update available button
 			Button updateAvailableButton = theme.LinkButtonFactory.Generate("Update Available");
 			updateAvailableButton.Name = "Update Available Link";
@@ -139,15 +129,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.NotifyPrintersTabRightElement(extensionArea);
 
 			// Show start page during initial application startup
-			if (AppContext.IsLoading)
 			{
 				tabControl.AddTab(
-					new ChromeTab("New Tab".Localize(), tabControl, tabControl.NewTabPage(), theme)
+					new ChromeTab("Start".Localize(),  tabControl, tabControl.NewTabPage(), theme, hasClose: false)
 					{
 						MinimumSize = new Vector2(0, theme.TabButtonHeight),
-						Name = "Initial Plus Tab"
+						Name = "Initial Plus Tab",
+						Padding = new BorderDouble(15, 0)
 					});
 			}
+
+			// Add a tab for the current printer
+			if (ActiveSliceSettings.Instance.PrinterSelected)
+			{
+				string tabTitle = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
+				this.CreatePrinterTab(printer, theme, tabTitle);
+			}
+			else
+			{
+			}
+
+			// ************** Restore active tabs..... ******************
 		}
 
 		internal ChromeTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)

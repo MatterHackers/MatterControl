@@ -155,20 +155,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonGroupB.Add(layers2DButton);
 			this.AddChild(layers2DButton);
 
-			//// put in the detail message
-			//var printerConnectionDetail = new TextWidget("")
-			//{
-			//	Margin = new BorderDouble(5, 0),
-			//	TextColor = ActiveTheme.Instance.PrimaryTextColor,
-			//	AutoExpandBoundsToText = true,
-			//	PointSize = 8
-			//};
-			//printer.Connection.PrintingStateChanged.RegisterEvent((s, e) =>
-			//{
-			//	printerConnectionDetail.Text = printer.PrinterConnectionStatus;
-			//}, ref unregisterEvents);
-			//this.AddChild(printerConnectionDetail);
-
 			this.AddChild(new HorizontalSpacer());
 
 			bool shareTemp = printer.Settings.GetValue<bool>(SettingsKey.extruders_share_temperature);

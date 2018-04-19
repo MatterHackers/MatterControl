@@ -726,6 +726,14 @@ namespace MatterHackers.MatterControl
 				this.MenuTheme.RebuildTheme(clonedColors);
 
 				this.RebuildSceneOperations(this.Theme);
+
+#if DEBUG
+				if (AggContext.StaticData is FileSystemStaticData staticData)
+				{
+					staticData.PurgeCache();
+				}
+#endif
+
 			}, ref unregisterEvents);
 
 			this.Theme.RebuildTheme(ActiveTheme.Instance);
