@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.WaitforDraw(systemWindow);
 		}
 
-		public static void CloseSignInAndPrinterSelect(this AutomationRunner testRunner, bool closeInitialPlusTab = true)
+		public static void CloseSignInAndPrinterSelect(this AutomationRunner testRunner)
 		{
 			testRunner.WaitForFirstDraw();
 
@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
-		public static void OpenEmptyPartTab(this AutomationRunner testRunner, bool closeInitialPlusTab = true)
+		public static void OpenEmptyPartTab(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Create Part Button");
 		}
