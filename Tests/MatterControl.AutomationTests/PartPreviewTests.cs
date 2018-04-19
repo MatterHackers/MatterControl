@@ -26,6 +26,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
+				testRunner.OpenEmptyPartTab();
+
 				testRunner.AddItemToBedplate();
 
 				// Get View3DWidget
@@ -58,6 +60,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
+
+				testRunner.OpenEmptyPartTab();
 
 				testRunner.AddItemToBedplate();
 
@@ -106,6 +110,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
+				testRunner.OpenEmptyPartTab();
+
 				testRunner.AddItemToBedplate();
 
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
@@ -140,6 +146,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
+
+				testRunner.OpenEmptyPartTab();
 
 				testRunner.AddItemToBedplate();
 

@@ -167,6 +167,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
+				testRunner.OpenEmptyPartTab();
+
 				testRunner.AddTestAssetsToLibrary("Batman.stl");
 
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;

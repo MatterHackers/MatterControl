@@ -226,6 +226,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 			var createPart = new TextButton("Create Part".Localize(), theme)
 			{
+				Name = "Create Part Button",
 				Margin = theme.ButtonSpacing,
 				BackgroundColor = theme.MinimalShade
 			};

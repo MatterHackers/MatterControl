@@ -175,11 +175,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.WaitforDraw(systemWindow);
 		}
 
-		public static void CloseSignInAndPrinterSelect(this AutomationRunner testRunner, bool closeInitialPlusTab = true)
+		public static void CloseSignInAndPrinterSelect(this AutomationRunner testRunner)
 		{
 			testRunner.WaitForFirstDraw();
 
-			// If there is a auth pannel make sure we try and close it
+			// If there is an auth panel make sure we try and close it
 			// Non-MCCentral builds won't have the plugin. Reduce the wait time for these cases
 			if (testRunner.WaitForName("Connection Wizard Skip Sign In Button", 1))
 			{
@@ -190,14 +190,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.ClickByName("Cancel Wizard Button");
 			}
+		}
 
-			if (closeInitialPlusTab)
-			{
-				var plusTabRegion = testRunner.GetRegionByName("Initial Plus Tab");
-				testRunner.ClickByName("Close Tab Button", plusTabRegion);
-
-				testRunner.WaitForWidgetDisappear("Initial Plus Tab", 2);
-			}
+		public static void OpenEmptyPartTab(this AutomationRunner testRunner)
+		{
+			testRunner.ClickByName("Create Part Button");
 		}
 
 		public static void ChangeToQueueContainer(this AutomationRunner testRunner)
