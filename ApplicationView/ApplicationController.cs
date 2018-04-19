@@ -1865,7 +1865,11 @@ namespace MatterHackers.MatterControl
 				// Disable print area button in GCode2D view
 				EventHandler<ViewModeChangedEventArgs> viewModeChanged = (s, e) =>
 				{
-					printAreaButton.Enabled = printer.ViewState.ViewMode != PartViewMode.Layers2D;
+					// Button is conditionally created based on BuildHeight, only set enabled if created
+					if (printAreaButton != null)
+					{
+						printAreaButton.Enabled = printer.ViewState.ViewMode != PartViewMode.Layers2D;
+					}
 				};
 
 				printer.ViewState.ViewModeChanged += viewModeChanged;
