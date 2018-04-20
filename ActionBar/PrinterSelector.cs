@@ -33,7 +33,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
@@ -46,12 +45,16 @@ namespace MatterHackers.MatterControl
 		public PrinterSelector(ThemeConfig theme)
 			: base("Printers".Localize() + "... ", theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
 		{
-			Rebuild();
-
 			this.Name = "Printers... Menu";
 			this.BorderColor = Color.Transparent;
 			this.AutoScaleIcons = false;
 			this.BackgroundColor = theme.MinimalShade;
+			this.GutterWidth = 30;
+
+			this.MenuItemsTextHoverColor = new Color("#ddd");
+
+			this.Rebuild();
+
 			this.SelectionChanged += (s, e) =>
 			{
 				string printerID = this.SelectedValue;
@@ -80,11 +83,6 @@ namespace MatterHackers.MatterControl
 						lastSelectedIndex = this.SelectedIndex;
 
 						ProfileManager.Instance.LastProfileID = this.SelectedValue;
-
-						//UiThread.RunOnIdle(() =>
-						//{
-						//	ProfileManager.SwitchToProfile(printerID).ConfigureAwait(false);
-						//});
 					}
 				}
 			};
