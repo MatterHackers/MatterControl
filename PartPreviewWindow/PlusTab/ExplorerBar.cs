@@ -93,6 +93,70 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				BackgroundColor = theme.MinimalShade
 			});
 
+			// add in the create printer button
+			var createPrinter = new IconButton(AggContext.StaticData.LoadIcon("icon_circle_plus.png", 16, 16, theme.InvertIcons), theme)
+			{
+				Name = "Create Printer",
+				VAnchor = VAnchor.Center,
+				Margin = theme.ButtonSpacing,
+				ToolTipText = "Create Printer".Localize()
+			};
+
+			createPrinter.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					//simpleTabs.RemoveTab(simpleTabs.ActiveTab);
+
+					if (ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting
+					|| ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPaused)
+					{
+						StyledMessageBox.ShowMessageBox("Please wait until the print has finished and try again.".Localize(), "Can't add printers while printing".Localize());
+					}
+					else
+					{
+						DialogWindow.Show(PrinterSetup.GetBestStartPage(PrinterSetup.StartPageOptions.ShowMakeModel));
+					}
+				});
+			};
+			headingBar.AddChild(createPrinter);
+
+			// add in the import printer button
+			var importPrinter = new IconButton(AggContext.StaticData.LoadIcon("icon_import_white_full.png", 16, 16, theme.InvertIcons), theme)
+			{
+				VAnchor = VAnchor.Center,
+				Margin = theme.ButtonSpacing,
+				ToolTipText = "Import Printer".Localize()
+			};
+			importPrinter.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					AggContext.FileDialogs.OpenFileDialog(
+						new OpenFileDialogParams(
+							"settings files|*.ini;*.printer;*.slice"),
+							(result) =>
+							{
+								if (!string.IsNullOrEmpty(result.FileName)
+									&& File.Exists(result.FileName))
+								{
+									//simpleTabs.RemoveTab(simpleTabs.ActiveTab);
+									if (ProfileManager.ImportFromExisting(result.FileName))
+									{
+										string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
+										DialogWindow.Show(
+											new ImportSucceeded(importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(result.FileName))));
+									}
+									else
+									{
+										StyledMessageBox.ShowMessageBox("Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(result.FileName)), "Unable to Import".Localize());
+									}
+								}
+							});
+				});
+			};
+			headingBar.AddChild(importPrinter);
+
 			this.printerInfo = printerInfo;
 
 			// Select the 25 most recent files and project onto FileSystemItems
@@ -146,73 +210,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 				toolbar.AddChild(iconButton);
 			}
-
-			var sideBar = new FlowLayoutWidget()
-			{
-				VAnchor = VAnchor.Center | VAnchor.Fit,
-				HAnchor = HAnchor.Fit
-			};
-
-			var createPrinter = new TextButton("Create Printer".Localize(), theme)
-			{
-				Name = "Create Printer",
-				Margin = theme.ButtonSpacing,
-				BackgroundColor = theme.MinimalShade
-			};
-			createPrinter.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					//simpleTabs.RemoveTab(simpleTabs.ActiveTab);
-
-					if (ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting
-					|| ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPaused)
-					{
-						StyledMessageBox.ShowMessageBox("Please wait until the print has finished and try again.".Localize(), "Can't add printers while printing".Localize());
-					}
-					else
-					{
-						DialogWindow.Show(PrinterSetup.GetBestStartPage(PrinterSetup.StartPageOptions.ShowMakeModel));
-					}
-				});
-			};
-			sideBar.AddChild(createPrinter);
-
-			var importButton = new TextButton("Import Printer".Localize(), theme)
-			{
-				Margin = theme.ButtonSpacing,
-				BackgroundColor = theme.MinimalShade
-			};
-			importButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					AggContext.FileDialogs.OpenFileDialog(
-						new OpenFileDialogParams(
-							"settings files|*.ini;*.printer;*.slice"),
-							(result) =>
-							{
-								if (!string.IsNullOrEmpty(result.FileName)
-									&& File.Exists(result.FileName))
-								{
-									//simpleTabs.RemoveTab(simpleTabs.ActiveTab);
-									if (ProfileManager.ImportFromExisting(result.FileName))
-									{
-										string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
-										DialogWindow.Show(
-											new ImportSucceeded(importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(result.FileName))));
-									}
-									else
-									{
-										StyledMessageBox.ShowMessageBox("Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(result.FileName)), "Unable to Import".Localize());
-									}
-								}
-							});
-				});
-			};
-			sideBar.AddChild(importButton);
-
-			toolbar.SetRightAnchorItem(sideBar);
 		}
 
 		public bool Equals(PrinterBar other)
