@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
+using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
@@ -64,6 +65,9 @@ namespace MatterHackers.MatterControl
 				default:
 					throw new NotImplementedException();
 			}
+
+			// Preload GL texture for 2D bed image and use MipMaps
+			ImageGlPlugin.GetImageGlPlugin(bedImage, createAndUseMipMaps: true);
 
 			return bedImage;
 		}
