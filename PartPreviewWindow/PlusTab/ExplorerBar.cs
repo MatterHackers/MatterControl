@@ -175,6 +175,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			{
 				var printer = await ProfileManager.Instance.LoadPrinter();
 
+				printer.ViewState.ViewMode = PartViewMode.Model;
+
 				await printer.Bed.ClearPlate();
 
 				string printerName = printer.Settings.GetValue(SettingsKey.printer_name);
@@ -199,11 +201,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 						{
 							await ProfileManager.Instance.LoadPrinterOpenItem(item);
 
-							string tabTitle = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
-
 							var printer = ApplicationController.Instance.ActivePrinter;
 
-							partPreviewContent.CreatePrinterTab(printer, theme, tabTitle);
+							printer.ViewState.ViewMode = PartViewMode.Model;
+
+							partPreviewContent.CreatePrinterTab(
+								printer,
+								theme,
+								printer.Settings.GetValue(SettingsKey.printer_name));
 						});
 					}
 				};
