@@ -236,7 +236,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				Margin = new BorderDouble(right: 5),
 				Selectable = true,
 				BackgroundColor = theme.MinimalShade,
-				Name = "Create Part"
+				Name = "Create Part Button"
 			};
 			emptyPlateButton.Click += async (s, e) =>
 			{

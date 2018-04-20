@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					new ChromeTab("Start".Localize(),  tabControl, tabControl.NewTabPage(), theme, hasClose: false)
 					{
 						MinimumSize = new Vector2(0, theme.TabButtonHeight),
-						Name = "Initial Plus Tab",
+						Name = "Start Tab",
 						Padding = new BorderDouble(15, 0)
 					});
 			}
