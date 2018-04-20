@@ -109,13 +109,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			};
 			emptyPlateButton.Click += async (s, e) =>
 			{
-				await ProfileManager.Instance.LoadPrinterOpenItem(new InMemoryLibraryItem(new Object3D()));
+				var printer = await ProfileManager.Instance.LoadPrinter();
 
-				string tabTitle = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
+				await printer.Bed.ClearPlate();
 
-				var printer = ApplicationController.Instance.ActivePrinter;
+				string printerName = printer.Settings.GetValue(SettingsKey.printer_name);
 
-				partPreviewContent.CreatePrinterTab(printer, theme, tabTitle);
+				partPreviewContent.CreatePrinterTab(printer, theme, printerName);
 			};
 			toolbar.AddChild(emptyPlateButton);
 
