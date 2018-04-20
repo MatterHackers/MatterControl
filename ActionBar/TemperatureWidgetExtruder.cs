@@ -259,7 +259,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			int tabIndex = 0;
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
-			// TODO: make this be for the correct extruder
 			var settingsData = SettingsOrganizer.Instance.GetSettingsData(TemperatureKey);
 			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, theme, ref tabIndex);
 			SliceSettingsRow.AddBordersToEditFields(temperatureRow);
@@ -312,8 +311,16 @@ namespace MatterHackers.MatterControl.ActionBar
 			if (hotendIndex == 0)
 			{
 				// put in the material selector
-				var presetsSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, theme);
-				presetsSelector.DropDownList.Name = "Hotend Preset Selector";
+				var presetsSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, theme)
+				{
+					Margin = new BorderDouble(right: theme.ToolbarPadding.Right),
+					Padding = 0,
+					BackgroundColor = Color.Transparent,
+					VAnchor = VAnchor.Center | VAnchor.Fit
+				};
+
+				// Hide TextWidget
+				presetsSelector.Children.First().Visible = false;
 
 				var pulldownContainer = presetsSelector.FindNamedChildRecursive("Preset Pulldown Container");
 				if (pulldownContainer != null)
@@ -321,7 +328,10 @@ namespace MatterHackers.MatterControl.ActionBar
 					pulldownContainer.Padding = theme.ToolbarPadding;
 					pulldownContainer.HAnchor = HAnchor.Fit;
 					pulldownContainer.Margin = 0;
+					pulldownContainer.Padding = 0;
 				}
+
+				pulldownContainer.Parent.Margin = 0;
 
 				var dropList = pulldownContainer.Children.OfType<DropDownList>().FirstOrDefault();
 				if (dropList != null)
@@ -331,18 +341,11 @@ namespace MatterHackers.MatterControl.ActionBar
 					dropList.Margin = 0;
 				}
 
-				// Remove the pulldowncontainer from its parent and add it to our Material row
-				pulldownContainer.Parent.RemoveChild(pulldownContainer);
-				pulldownContainer.ClearRemovedFlag();
 				container.AddChild(
-					new SettingsItem("Material".Localize(), pulldownContainer, theme, enforceGutter: false)
+					new SettingsItem("Material".Localize(), presetsSelector, theme, enforceGutter: false)
 					{
 						Border = new BorderDouble(0, 1)
 					});
-
-				// Close the presetsSelector
-				presetsSelector.Close();
-
 			}
 			else // put in a temperature selector for the correct material
 			{
