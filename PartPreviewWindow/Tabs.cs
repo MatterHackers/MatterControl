@@ -200,7 +200,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				VAnchor = VAnchor.Bottom,
 				MinimumSize = new Vector2(16, theme.TabButtonHeight),
-				ToolTipText = "Create New".Localize()
 			};
 
 			this.TabBar.ActionArea.AddChild(tabTrailer);

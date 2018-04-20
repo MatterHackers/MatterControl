@@ -84,15 +84,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Cancel in this case is on the Leveling Wizard, results in ReloadAll and for consistency across devices, requires we wait till it completes
 					testRunner.WaitForReloadAll(() => testRunner.ClickByName("Cancel Button"));
 
-					// switch to controls so we can see the heights
-					testRunner.SwitchToControlsTab();
-
-					// run the leveling wizard (only 4 next as there is no heated bed
 					testRunner.ClickByName("Finish Setup Button");
-					testRunner.ClickByName("Next Button");
-					testRunner.ClickByName("Next Button");
-					testRunner.ClickByName("Next Button");
-					testRunner.ClickByName("Next Button");
+					int numNextButtons = 5;
+					for (int i = 0; i < numNextButtons; i++)
+					{
+						testRunner.ClickByName("Next Button");
+					}
+
 					for (int i = 0; i < 3; i++)
 					{
 						testRunner.ClickByName("Move Z positive");

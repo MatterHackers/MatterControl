@@ -47,6 +47,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PrinterEmulator;
 using Newtonsoft.Json;
@@ -170,7 +171,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void WaitForFirstDraw(this AutomationRunner testRunner)
 		{
 			SystemWindow systemWindow;
-			testRunner.GetWidgetByName("PlusTabPage", out systemWindow, 10);
+			testRunner.GetWidgetByName("Start Tab", out systemWindow, 10);
 			// make sure we wait for MC to be up and running
 			testRunner.WaitforDraw(systemWindow);
 		}
@@ -219,7 +220,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static Emulator LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD", bool runSlow = false)
 		{
 			SystemWindow systemWindow;
-			testRunner.GetWidgetByName("PlusTabPage", out systemWindow, 10);
+			testRunner.GetWidgetByName("Start Tab", out systemWindow, 10);
 			// make sure we wait for MC to be up and running
 			testRunner.WaitforDraw(systemWindow);
 
@@ -317,14 +318,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void AddAndSelectPrinter(this AutomationRunner testRunner, string make, string model)
 		{
+			SystemWindow systemWindow;
+			testRunner.GetWidgetByName("Start Tab", out systemWindow, 10);
+			// make sure we wait for MC to be up and running
+			testRunner.WaitforDraw(systemWindow);
+
 			// If SelectMake is not visible and the ConnectionWizard is, click Skip
 			if (!testRunner.NameExists("Select Make", 0.1))
 			{
-				// Go to the new tab screen
 				if (!testRunner.NameExists("Create Printer", 0.1))
 				{
-					testRunner.ClickByName("Create New");
+					// go to the start page
+					testRunner.ClickByName("Start Tab");
 				}
+
 				testRunner.ClickByName("Create Printer");
 			}
 
@@ -352,7 +359,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void OpenPrintersDropdown(this AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("Create New");
+			testRunner.ClickByName("Start Tab");
 			testRunner.ClickByName("Printers... Menu");
 		}
 
@@ -641,6 +648,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				overrideWidth == -1 ? width : overrideWidth,
 				overrideHeight == -1 ? height : overrideHeight);
 
+			OemSettings.Instance.ShowShopButton = false;
+
 			await AutomationRunner.ShowWindowAndExecuteTests(
 				rootSystemWindow,
 				testMethod,
@@ -777,7 +786,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			testRunner.SwitchToSliceSettings();
 
-			if (!testRunner.NameExists("Printer Tab"))
+			if (!testRunner.NameExists("Printer Tab", 0.1))
 			{
 				testRunner.ClickByName("Printer Overflow Menu");
 				testRunner.ClickByName("Configure Printer Menu Item");

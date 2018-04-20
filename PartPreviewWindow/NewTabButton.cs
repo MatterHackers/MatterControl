@@ -59,42 +59,4 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnDraw(graphics2D);
 		}
 	}
-
-	public class NewTabButton : GuiWidget
-	{
-		private SimpleTabs parentTabControl;
-		private ThemeConfig theme;
-
-		public NewTabButton(ImageBuffer imageBuffer, SimpleTabs parentTabControl, ThemeConfig theme)
-		{
-			this.parentTabControl = parentTabControl;
-			this.HAnchor = HAnchor.Fit;
-			this.theme = theme;
-
-			IconButton = new IconButton(imageBuffer, theme)
-			{
-				HAnchor = HAnchor.Left,
-				Height = theme.MicroButtonHeight,
-				Width = theme.MicroButtonHeight,
-				Margin = new BorderDouble(left: 10),
-				Name = "Create New",
-			};
-
-			this.AddChild(IconButton);
-		}
-
-		public ITab LastTab { get; set; }
-
-		public IconButton IconButton { get; }
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			ChromeTab.DrawTabLowerLeft(
-				graphics2D,
-				this.LocalBounds,
-				(parentTabControl.ActiveTab == this.LastTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
-
-			base.OnDraw(graphics2D);
-		}
-	}
 }
