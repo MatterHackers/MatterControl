@@ -225,8 +225,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 								if (!printer.Connection.PrinterIsPrinting
 									&& !printer.Connection.PrinterIsPaused)
 								{
-									// turn off the extruder
-									printer.Connection.SetTargetHotendTemperature(0, 0);
+									// turn off the temps
+									printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
 								}
 								break;
 
