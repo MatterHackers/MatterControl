@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,14 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls
@@ -60,10 +56,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			if (macroData.showMaterialSelector)
 			{
-				var materialSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, theme);
-				materialSelector.BackgroundColor = Color.Transparent;
-				materialSelector.Margin = new BorderDouble(0, 0, 0, 15);
-				contentRow.AddChild(materialSelector);
+				contentRow.AddChild(new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, theme)
+				{
+					BackgroundColor = Color.Transparent,
+					Margin = new BorderDouble(0, 0, 0, 15)
+				});
 			}
 
 			printer.Connection.LineSent.RegisterEvent(LookForTempRequest, ref unregisterEvents);
