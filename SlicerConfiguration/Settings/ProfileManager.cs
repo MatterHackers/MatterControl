@@ -83,6 +83,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public async Task LoadPrinterOpenItem(ILibraryItem libraryItem)
 		{
+			var printer = await LoadPrinter();
+
+			await printer?.Bed?.LoadContent(new EditContext()
+			{
+				ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+				SourceItem = libraryItem
+			});
+		}
+
+		public async Task<PrinterConfig> LoadPrinter()
+		{
 			var printer = ApplicationController.Instance.ActivePrinter;
 
 			// If a 'LastProfile' exists and it is missing from ActivePrinters, load it
@@ -99,11 +110,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			await printer?.Bed?.LoadContent(new EditContext()
-			{
-				ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-				SourceItem = libraryItem
-			});
+			return printer;
 		}
 
 		private static string GetProfilesDocPathForUser(string userName)
