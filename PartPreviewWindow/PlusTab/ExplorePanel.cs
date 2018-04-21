@@ -35,6 +35,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using MatterControl.Printing;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -121,6 +122,43 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		{
 			switch (content.content_type)
 			{
+				case "headline":
+					{
+						// use the Golden Ratio to calculate an atractive size relative to the banner
+						ImageBuffer image = new ImageBuffer(1520, (int)(170 / 1.618));
+						ResponsiveImageWidget imageWidget = new ResponsiveImageWidget(image)
+						{
+							Margin = new BorderDouble(5),
+						};
+
+						var graphics2D = image.NewGraphics2D();
+
+						// make text 105 (if possible)
+						graphics2D.Clear(theme.Colors.PrimaryAccentColor);
+
+						// use the Golden Ratio to calculate an atractive size for the text relative to the text banner
+						var pixelsPerPoint = 96.0 / 72.0;
+						var goalPointSize = image.Height / pixelsPerPoint / 1.618;
+
+						var printer = new TypeFacePrinter(content.text, goalPointSize);
+
+						graphics2D.DrawString(content.text, image.Width/2, image.Height/2 + printer.TypeFaceStyle.EmSizeInPixels / 2, goalPointSize, 
+							Agg.Font.Justification.Center, Baseline.BoundsTop,
+							Color.White);
+
+						if (content.link != null)
+						{
+							imageWidget.Cursor = Cursors.Hand;
+							imageWidget.Click += (s, e) =>
+							{
+								ApplicationController.Instance.LaunchBrowser(content.link);
+							};
+						}
+
+						this.AddChild(imageWidget);
+					}
+					break;
+
 				case "banner_rotate":
 					// TODO: make this make a carousel rather than add the first item and rotate between all the items
 					var rand = new Random();
@@ -181,6 +219,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		public string icon_url;
 		public string image_url;
 		public string link;
+		public string text;
 		public string theme_filter;
 	}
 

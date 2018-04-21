@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				scene.SelectedItem = null;
 				this.item.MakePermanent();
 			};
-			scene.SelectionChanged += (s, e) => bakeButton.Enabled = scene.SelectedItem?.CanBake == true;
+			scene.SelectionChanged += (s, e) => bakeButton.Enabled = scene.SelectedItem?.CanMakePermanent == true;
 			toolbar.AddChild(bakeButton);
 
 			// put in a remove button

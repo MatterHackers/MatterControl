@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Advanced Array".Localize();
 		}
 
-		public override bool CanBake => true;
+		public override bool CanMakePermanent => true;
 		public override bool CanRemove => true;
 
 		public int Count { get; set; } = 3;

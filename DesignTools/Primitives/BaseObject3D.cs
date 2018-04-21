@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	using Polygons = List<List<IntPoint>>;
 	public enum BaseTypes { None, Rectangle, Circle, /* Oval, Frame,*/ Outline, };
 
-	public class BaseObject3D : Object3D, IRebuildable
+	public class BaseObject3D : Object3D, IRebuildable, IPropertyGridModifier
 	{
 		readonly double scalingForClipper = 1000;
 
@@ -51,10 +51,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 		}
 
-		public double ExtrusionHeight { get; set; } = 5;
-		public int InfillAmount { get; internal set; }
 		public BaseTypes CurrentBaseType { get; set; }
-		public int BaseSize { get; set; }
+		public double BaseSize { get; set; } = 3;
+		public double InfillAmount { get; set; } = 3;
+		public double ExtrusionHeight { get; set; } = 5;
 
 		public IVertexSource VertexSource { get; set; }
 
@@ -223,6 +223,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			offseter.Execute(ref solution, distance);
 
 			return solution;
+		}
+
+		public void UpdateControls(PublicPropertyEditor editor)
+		{
+			//editor.GetEditRow((this.ID, nameof(InfillAmount))).Visible = CurrentBaseType == BaseTypes.Outline;
 		}
 	}
 }

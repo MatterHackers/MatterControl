@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[DisplayName("Offset Z")]
 		public double ZOffset { get; set; } = 0;
 
-		public override bool CanBake => true;
+		public override bool CanMakePermanent => true;
 
 		public override bool CanRemove => true;
 
