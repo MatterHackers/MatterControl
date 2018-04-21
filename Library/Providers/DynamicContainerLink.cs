@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public DynamicContainerLink(Func<string> nameResolver, ImageBuffer thumbnail, Func<ILibraryContainer> creator = null, Func<bool> visibilityResolver = null)
 		{
-			this.thumbnail = thumbnail.SetPreMultiply();
+			this.thumbnail = thumbnail?.SetPreMultiply();
 			this.nameResolver = nameResolver;
 			this.containerCreator = creator;
 			this.visibilityResolver = visibilityResolver ?? (() => true);

@@ -78,7 +78,27 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			List<List<IntPoint>> intersectedPolys = new List<List<IntPoint>>();
 			clipper.Execute(clipType, intersectedPolys);
 
+			Clipper.CleanPolygons(intersectedPolys);
+
 			VertexStorage output = VertexSourceToClipperPolygons.CreateVertexStorage(intersectedPolys);
+
+			output.Add(0, 0, ShapePath.FlagsAndCommand.CommandStop);
+
+			return output;
+		}
+
+		public static VertexStorage Offset(this IVertexSource a, double distance)
+		{
+			List<List<IntPoint>> aPolys = VertexSourceToClipperPolygons.CreatePolygons(a);
+
+			ClipperOffset offseter = new ClipperOffset();
+			offseter.AddPaths(aPolys, JoinType.jtMiter, EndType.etClosedPolygon);
+			var solution = new List<List<IntPoint>>();
+			offseter.Execute(ref solution, distance * 1000);
+
+			Clipper.CleanPolygons(solution);
+
+			VertexStorage output = VertexSourceToClipperPolygons.CreateVertexStorage(solution);
 
 			output.Add(0, 0, ShapePath.FlagsAndCommand.CommandStop);
 
