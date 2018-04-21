@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Linear Array".Localize();
 		}
 		
-		public override bool CanBake => true;
+		public override bool CanMakePermanent => true;
 		public override bool CanRemove => true;
 		public int Count { get; set; } = 3;
 		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };

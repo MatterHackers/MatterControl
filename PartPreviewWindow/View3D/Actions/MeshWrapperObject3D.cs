@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 		}
 
-		public override bool CanBake => true;
+		public override bool CanMakePermanent => true;
 		public override bool CanRemove => true;
 
 		public override void Remove()
