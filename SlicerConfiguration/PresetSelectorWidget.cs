@@ -207,7 +207,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public override void OnDrawBackground(Graphics2D graphics2D)
 		{
 			//base.OnDrawBackground(graphics2D);
-			graphics2D.Render(new RoundedRect(this.LocalBounds, 5), this.BackgroundColor);
+			if (this.BackgroundColor != Color.Transparent)
+			{
+				graphics2D.Render(new RoundedRect(this.LocalBounds, 5), this.BackgroundColor);
+			}
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
