@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Color[] SelectionColors = new Color[] { new Color(131, 4, 66), new Color(227, 31, 61), new Color(255, 148, 1), new Color(247, 224, 23), new Color(143, 212, 1) };
 		private Stopwatch timeSinceLastSpin = new Stopwatch();
 		private Stopwatch timeSinceReported = new Stopwatch();
-		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
+		public Matrix4X4 TransformOnMouseDown { get; private set; } = Matrix4X4.Identity;
 
 		private ThemeConfig theme;
 
@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private WorldView World => sceneContext.World;
 
-		private TrackballTumbleWidget trackballTumbleWidget;
+		public TrackballTumbleWidget TrackballTumbleWidget { get; private set;}
 
 		public InteractionLayer InteractionLayer { get; }
 
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.printerTabPage = printerTabBase as PrinterTabPage;
 			this.printer = printer;
 
-			this.InteractionLayer = new InteractionLayer(this.World, scene.UndoBuffer, scene)
+			this.InteractionLayer = new InteractionLayer(this.World, Scene.UndoBuffer, Scene)
 			{
 				Name = "InteractionLayer",
 			};
@@ -114,16 +114,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget.AnchorAll();
 			this.AddChild(meshViewerWidget);
 
-			trackballTumbleWidget = new TrackballTumbleWidget(sceneContext.World, meshViewerWidget)
+			TrackballTumbleWidget = new TrackballTumbleWidget(sceneContext.World, meshViewerWidget)
 			{
 				TransformState = TrackBallTransformType.Rotation
 			};
-			trackballTumbleWidget.AnchorAll();
+			TrackballTumbleWidget.AnchorAll();
 
 			this.BoundsChanged += UpdateRenderView;
 
 			// TumbleWidget
-			this.InteractionLayer.AddChild(trackballTumbleWidget);
+			this.InteractionLayer.AddChild(TrackballTumbleWidget);
 
 			this.InteractionLayer.SetRenderTarget(this.meshViewerWidget);
 
@@ -137,16 +137,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			splitContainer.AddChild(this.InteractionLayer);
 			this.AddChild(splitContainer);
 
-			scene.SelectionChanged += Scene_SelectionChanged;
+			Scene.SelectionChanged += Scene_SelectionChanged;
 
 			// if the scene is invalidated invalidate the widget
-			scene.Invalidated += (s, e) => Invalidate();
+			Scene.Invalidated += (s, e) => Invalidate();
 
 			this.AnchorAll();
 
-			trackballTumbleWidget.TransformState = TrackBallTransformType.Rotation;
+			TrackballTumbleWidget.TransformState = TrackBallTransformType.Rotation;
 
-			selectedObjectPanel = new SelectedObjectPanel(this, scene, theme, printer)
+			selectedObjectPanel = new SelectedObjectPanel(this, Scene, theme, printer)
 			{
 				VAnchor = VAnchor.Stretch,
 			};
@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			meshViewerWidget.AfterDraw += AfterDraw3DContent;
 
-			scene.SelectFirstChild();
+			Scene.SelectFirstChild();
 
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 
@@ -229,7 +229,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void UpdateRenderView(object sender, EventArgs e)
 		{
-			trackballTumbleWidget.CenterOffsetX  = -modelViewSidePanel.Width;
+			TrackballTumbleWidget.CenterOffsetX  = -modelViewSidePanel.Width;
 		}
 
 		private void SceneContext_SceneLoaded(object sender, EventArgs e)
@@ -252,40 +252,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			switch (e.TransformMode)
 			{
 				case ViewControls3DButtons.Rotate:
-					trackballTumbleWidget.TransformState = TrackBallTransformType.Rotation;
+					TrackballTumbleWidget.TransformState = TrackBallTransformType.Rotation;
 					break;
 
 				case ViewControls3DButtons.Translate:
-					trackballTumbleWidget.TransformState = TrackBallTransformType.Translation;
+					TrackballTumbleWidget.TransformState = TrackBallTransformType.Translation;
 					break;
 
 				case ViewControls3DButtons.Scale:
-					trackballTumbleWidget.TransformState = TrackBallTransformType.Scale;
+					TrackballTumbleWidget.TransformState = TrackBallTransformType.Scale;
 					break;
 
 				case ViewControls3DButtons.PartSelect:
-					trackballTumbleWidget.TransformState = TrackBallTransformType.None;
+					TrackballTumbleWidget.TransformState = TrackBallTransformType.None;
 					break;
 			}
 		}
 
 		public void SelectAll()
 		{
-			scene.ClearSelection();
-			foreach (var child in scene.Children.ToList())
+			Scene.ClearSelection();
+			foreach (var child in Scene.Children.ToList())
 			{
-				scene.AddToSelection(child);
+				Scene.AddToSelection(child);
 			}
 		}
 
 		private void Draw_GlOpaqueContent(object sender, DrawEventArgs e)
 		{
 			if (CurrentSelectInfo.DownOnPart
-				&& trackballTumbleWidget.TransformState == TrackBallTransformType.None
+				&& TrackballTumbleWidget.TransformState == TrackBallTransformType.None
 				&& Keyboard.IsKeyDown(Keys.ShiftKey))
 			{
 				// draw marks on the bed to show that the part is constrained to x and y
-				AxisAlignedBoundingBox selectedBounds = scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				AxisAlignedBoundingBox selectedBounds = Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 				var drawCenter = CurrentSelectInfo.PlaneDownHitPos;
 				var drawColor = new Color(Color.Red, 20);
@@ -319,107 +319,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			//Scene?.TraceData().RenderBvhRecursive(0, 3);
 		}
 
-		public override void OnKeyDown(KeyEventArgs keyEvent)
-		{
-			// this must be called first to ensure we get the correct Handled state
-			base.OnKeyDown(keyEvent);
-
-			if (!keyEvent.Handled)
-			{
-				switch (keyEvent.KeyCode)
-				{
-					case Keys.A:
-						if (keyEvent.Control)
-						{
-							SelectAll();
-							keyEvent.Handled = true;
-							keyEvent.SuppressKeyPress = true;
-						}
-						break;
-
-					case Keys.C:
-						if (keyEvent.Control)
-						{
-							scene.Copy();
-
-							keyEvent.Handled = true;
-							keyEvent.SuppressKeyPress = true;
-						}
-						break;
-
-					case Keys.S:
-						if (keyEvent.Control)
-						{
-							ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer.Bed.SaveChanges);
-
-							keyEvent.Handled = true;
-							keyEvent.SuppressKeyPress = true;
-						}
-						break;
-
-					case Keys.V:
-						if (keyEvent.Control)
-						{
-							scene.Paste();
-
-							keyEvent.Handled = true;
-							keyEvent.SuppressKeyPress = true;
-						}
-						break;
-
-					case Keys.X:
-						if (keyEvent.Control)
-						{
-							scene.Cut();
-
-							keyEvent.Handled = true;
-							keyEvent.SuppressKeyPress = true;
-						}
-						break;
-
-					case Keys.Y:
-						if (keyEvent.Control)
-						{
-							scene.UndoBuffer.Redo();
-							keyEvent.Handled = true;
-							keyEvent.SuppressKeyPress = true;
-						}
-						break;
-
-					case Keys.Z:
-						if (keyEvent.Control)
-						{
-							scene.UndoBuffer.Undo();
-							keyEvent.Handled = true;
-							keyEvent.SuppressKeyPress = true;
-						}
-						break;
-
-					case Keys.Delete:
-					case Keys.Back:
-						scene.DeleteSelection();
-						break;
-
-					case Keys.Escape:
-						if (CurrentSelectInfo.DownOnPart)
-						{
-							CurrentSelectInfo.DownOnPart = false;
-
-							scene.SelectedItem.Matrix = transformOnMouseDown;
-
-							scene.Invalidate();
-						}
-						break;
-					case Keys.Space:
-						scene.ClearSelection();
-						break;
-				}
-			}
-		}
-
 		public void AddUndoOperation(IUndoRedoCommand operation)
 		{
-			scene.UndoBuffer.Add(operation);
+			Scene.UndoBuffer.Add(operation);
 		}
 
 		public enum AutoRotate { Enabled, Disabled };
@@ -434,7 +336,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;
-			scene.SelectionChanged -= Scene_SelectionChanged;
+			Scene.SelectionChanged -= Scene_SelectionChanged;
 			this.InteractionLayer.DrawGlOpaqueContent -= Draw_GlOpaqueContent;
 			this.sceneContext.SceneLoaded -= SceneContext_SceneLoaded;
 
@@ -523,7 +425,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var insertionGroup = new InsertionGroup(
 				items,
 				this,
-				scene,
+				Scene,
 				sceneContext.BedCenter,
 				() => this.DragOperationActive,
 				trackSourceFiles);
@@ -542,11 +444,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.deferEditorTillMouseUp = true;
 
 			// Add item to scene and select it
-			scene.Children.Modify(list =>
+			Scene.Children.Modify(list =>
 			{
 				list.Add(insertionGroup);
 			});
-			scene.SelectedItem = insertionGroup;
+			Scene.SelectedItem = insertionGroup;
 
 			this.DragDropObject = insertionGroup;
 		}
@@ -598,8 +500,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					scene.Children.Modify(list => list.Remove(this.DragDropObject));
-					scene.ClearSelection();
+					Scene.Children.Modify(list => list.Remove(this.DragDropObject));
+					Scene.ClearSelection();
 				}
 
 				this.DragDropObject = null;
@@ -607,7 +509,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.deferEditorTillMouseUp = false;
 				Scene_SelectionChanged(null, null);
 
-				scene.Invalidate();
+				Scene.Invalidate();
 
 				// Set focus to View3DWidget after drag-drop
 				UiThread.RunOnIdle(this.Focus);
@@ -629,9 +531,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			var selectedItem = scene.SelectedItem;
+			var selectedItem = Scene.SelectedItem;
 
-			if (scene.HasSelection
+			if (Scene.HasSelection
 				&& selectedItem != null)
 			{
 
@@ -660,7 +562,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var allResults = new List<BvhIterator>();
 
-			var matchingSceneChildren = scene.Children.Where(item =>
+			var matchingSceneChildren = Scene.Children.Where(item =>
 			{
 				foundTriangleInSelectionBounds = false;
 
@@ -679,11 +581,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// If we are actually doing the selection rather than debugging the data
 				if (e == null)
 				{
-					scene.ClearSelection();
+					Scene.ClearSelection();
 
 					foreach (var sceneItem in matchingSceneChildren.ToList())
 					{
-						scene.AddToSelection(sceneItem);
+						Scene.AddToSelection(sceneItem);
 					}
 				}
 				else
@@ -801,14 +703,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			autoRotating = false;
 			base.OnMouseDown(mouseEvent);
 
-			if (trackballTumbleWidget.UnderMouseState == UnderMouseState.FirstUnderMouse)
+			if (TrackballTumbleWidget.UnderMouseState == UnderMouseState.FirstUnderMouse)
 			{
 				if (mouseEvent.Button == MouseButtons.Left
 					&& viewControls3D.ActiveButton == ViewControls3DButtons.PartSelect
 					&&
 					(ModifierKeys == Keys.Shift || ModifierKeys == Keys.Control)
 					|| (
-						trackballTumbleWidget.TransformState == TrackBallTransformType.None
+						TrackballTumbleWidget.TransformState == TrackBallTransformType.None
 						&& ModifierKeys != Keys.Control
 						&& ModifierKeys != Keys.Alt))
 				{
@@ -821,9 +723,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						IObject3D hitObject = FindHitObject3D(mouseEvent.Position, ref info);
 						if (hitObject == null)
 						{
-							if (scene.HasSelection)
+							if (Scene.HasSelection)
 							{
-								scene.ClearSelection();
+								Scene.ClearSelection();
 							}
 
 							// start a selection rect
@@ -835,36 +737,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							CurrentSelectInfo.HitPlane = new PlaneShape(Vector3.UnitZ, CurrentSelectInfo.PlaneDownHitPos.Z, null);
 
-							if (hitObject != scene.SelectedItem)
+							if (hitObject != Scene.SelectedItem)
 							{
-								if (scene.SelectedItem == null)
+								if (Scene.SelectedItem == null)
 								{
 									// No selection exists
-									scene.SelectedItem = hitObject;
+									Scene.SelectedItem = hitObject;
 								}
 								else if ((ModifierKeys == Keys.Shift || ModifierKeys == Keys.Control)
-									&& !scene.SelectedItem.Children.Contains(hitObject))
+									&& !Scene.SelectedItem.Children.Contains(hitObject))
 								{
-									scene.AddToSelection(hitObject);
+									Scene.AddToSelection(hitObject);
 								}
-								else if (scene.SelectedItem == hitObject || scene.SelectedItem.Children.Contains(hitObject))
+								else if (Scene.SelectedItem == hitObject || Scene.SelectedItem.Children.Contains(hitObject))
 								{
 									// Selection should not be cleared and drag should occur
 								}
 								else if (ModifierKeys != Keys.Shift)
 								{
-									scene.SelectedItem = hitObject;
+									Scene.SelectedItem = hitObject;
 								}
 
 								Invalidate();
 							}
 
-							transformOnMouseDown = scene.SelectedItem.Matrix;
+							TransformOnMouseDown = Scene.SelectedItem.Matrix;
 
 							Invalidate();
 							CurrentSelectInfo.DownOnPart = true;
 
-							AxisAlignedBoundingBox selectedBounds = scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+							AxisAlignedBoundingBox selectedBounds = Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 							if (info.HitPosition.X < selectedBounds.Center.X)
 							{
@@ -919,7 +821,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			if (CurrentSelectInfo.DownOnPart && trackballTumbleWidget.TransformState == TrackBallTransformType.None)
+			if (CurrentSelectInfo.DownOnPart && TrackballTumbleWidget.TransformState == TrackBallTransformType.None)
 			{
 				DragSelectedObject(new Vector2(mouseEvent.X, mouseEvent.Y));
 			}
@@ -958,16 +860,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (CurrentSelectInfo.LastMoveDelta == Vector3.PositiveInfinity)
 				{
-					CalculateDragStartPosition(scene.SelectedItem, info);
+					CalculateDragStartPosition(Scene.SelectedItem, info);
 				}
 
 				// move the mesh back to the start position
 				{
 					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-CurrentSelectInfo.LastMoveDelta));
-					scene.SelectedItem.Matrix *= totalTransform;
+					Scene.SelectedItem.Matrix *= totalTransform;
 
 					// Invalidate the item to account for the position change
-					scene.SelectedItem.Invalidate();
+					Scene.SelectedItem.Invalidate();
 				}
 
 				Vector3 delta = info.HitPosition - CurrentSelectInfo.PlaneDownHitPos;
@@ -976,7 +878,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (snapGridDistance > 0)
 				{
 					// snap this position to the grid
-					AxisAlignedBoundingBox selectedBounds = scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+					AxisAlignedBoundingBox selectedBounds = Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 					double xSnapOffset = selectedBounds.minXYZ.X;
 					// snap the x position
@@ -1022,7 +924,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(delta));
 
-					scene.SelectedItem.Matrix *= totalTransform;
+					Scene.SelectedItem.Matrix *= totalTransform;
 
 					CurrentSelectInfo.LastMoveDelta = delta;
 				}
@@ -1050,7 +952,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void ResetView()
 		{
-			trackballTumbleWidget.ZeroVelocity();
+			TrackballTumbleWidget.ZeroVelocity();
 
 			var world = this.World;
 
@@ -1059,6 +961,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			world.Translate(-new Vector3(sceneContext.BedCenter));
 			world.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, -MathHelper.Tau / 16)));
 			world.Rotate(Quaternion.FromEulerAngles(new Vector3(MathHelper.Tau * .19, 0, 0)));
+
+			Invalidate();
 		}
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
@@ -1068,13 +972,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.FinishDrop(mouseUpInBounds: true);
 			}
 
-			if (trackballTumbleWidget.TransformState == TrackBallTransformType.None)
+			if (TrackballTumbleWidget.TransformState == TrackBallTransformType.None)
 			{
-				if (scene.SelectedItem != null
+				if (Scene.SelectedItem != null
 					&& CurrentSelectInfo.DownOnPart
 					&& CurrentSelectInfo.LastMoveDelta != Vector3.Zero)
 				{
-					InteractionLayer.AddTransformSnapshot(transformOnMouseDown);
+					InteractionLayer.AddTransformSnapshot(TransformOnMouseDown);
 				}
 				else if (DragSelectionInProgress)
 				{
@@ -1130,10 +1034,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			foreach (var child in selectedObjectPanel.ContentPanel.Children)
 			{
-				child.Enabled = scene.HasSelection;
+				child.Enabled = Scene.HasSelection;
 			}
 
-			if (!scene.HasSelection)
+			if (!Scene.HasSelection)
 			{
 				if (printer != null)
 				{
@@ -1148,7 +1052,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			var selectedItem = scene.SelectedItem;
+			var selectedItem = Scene.SelectedItem;
 
 			selectedObjectPanel.SetActiveItem(selectedItem);
 		}
@@ -1183,7 +1087,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public MeshViewerWidget meshViewerWidget;
 
-		private InteractiveScene scene => sceneContext.Scene;
+		public InteractiveScene Scene => sceneContext.Scene;
 
 		protected ViewControls3D viewControls3D { get; }
 
@@ -1194,10 +1098,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition);
 			Ray ray = this.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
-			intersectionInfo = scene.TraceData().GetClosestIntersection(ray);
+			intersectionInfo = Scene.TraceData().GetClosestIntersection(ray);
 			if (intersectionInfo != null)
 			{
-				foreach (Object3D object3D in scene.Children)
+				foreach (Object3D object3D in Scene.Children)
 				{
 					if (object3D.TraceData().Contains(intersectionInfo.HitPosition))
 					{
@@ -1211,6 +1115,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return null;
 		}
 
+		public void Save()
+		{
+			ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer.Bed.SaveChanges);
+		}
 	}
 
 	public enum HitQuadrant { LB, LT, RB, RT }
