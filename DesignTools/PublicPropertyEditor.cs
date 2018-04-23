@@ -106,8 +106,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			typeof(ImageObject3D), typeof(SubProperties)
 		};
 
-		private static Type IObject3DType = typeof(IObject3D);
-
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
 		public GuiWidget Create(IObject3D item, View3DWidget view3DWidget, ThemeConfig theme)
