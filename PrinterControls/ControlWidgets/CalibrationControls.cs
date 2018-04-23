@@ -67,7 +67,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 				{
 					VAnchor = VAnchor.Center,
 					Margin = theme.ButtonSpacing,
-					ToolTipText = "Print Leveling Wizard".Localize()
+
+					ToolTipText = "Print Leveling Wizard - Can be re-calculated anytime there seems to be a problem with initial layer consistency".Localize()
 				};
 				runWizardButton.Click += (s, e) =>
 				{
@@ -115,7 +116,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					{
 						VAnchor = VAnchor.Center,
 						Margin = theme.ButtonSpacing,
-						ToolTipText = "Probe Calibration Wizard".Localize()
+						ToolTipText = "Probe Calibration Wizard - needed for initial setup - normally should remain calibrated unless there are changes to hardware.".Localize()
 					};
 					runCalibrateProbeButton.Click += (s, e) =>
 					{
