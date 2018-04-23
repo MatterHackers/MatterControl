@@ -58,6 +58,18 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return objectToTranslate;
 		}
 
+
+		public static IObject3D Scale(this IObject3D objectToTranslate, double x = 0, double y = 0, double z = 0, string name = "")
+		{
+			return objectToTranslate.Scale(new Vector3(x, y, z), name);
+		}
+
+		public static IObject3D Scale(this IObject3D objectToTranslate, Vector3 translation, string name = "")
+		{
+			objectToTranslate.Matrix *= Matrix4X4.CreateScale(translation);
+			return objectToTranslate;
+		}
+
 		public static IObject3D Minus(this IObject3D a, IObject3D b)
 		{
 			var resultsA = a.Clone();

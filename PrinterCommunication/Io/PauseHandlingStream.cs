@@ -94,6 +94,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		string pauseCaption = "Printer Paused".Localize();
 		string layerPauseMessage = "Your 3D print has been auto-paused.\nPause layer{0} reached.".Localize();
 		string filamentPauseMessage = "Out of filament detected\nYour 3D print has been paused.".Localize();
+		private long lastSendTimeMs;
 
 		public void DoPause(PauseReason pauseReason, string layerNumber = "")
 		{
@@ -169,10 +170,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							timeSinceLastEndstopRead.Restart();
 						}
 					}
+					lastSendTimeMs = UiThread.CurrentTimerMs;
 				}
 				else
 				{
 					lineToSend = "";
+					// If more than 10 seconds have passed send a movement command so the motors will stay locked
+					if(UiThread.CurrentTimerMs - lastSendTimeMs > 10000)
+					{
+						printer.Connection.MoveRelative(PrinterConnection.Axis.X, .1, printer.Settings.Helpers.ManualMovementSpeeds().X);
+						printer.Connection.MoveRelative(PrinterConnection.Axis.X, -.1, printer.Settings.Helpers.ManualMovementSpeeds().X);
+						lastSendTimeMs = UiThread.CurrentTimerMs;
+					}
 				}
 			}
 
@@ -235,6 +244,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			string resumeGCode = printer.Settings.GetValue(SettingsKey.resume_gcode);
 			InjectPauseGCode(resumeGCode);
 			InjectPauseGCode("M114"); // make sure we know where we are after this resume code
+
+			// make sure we are moving at a reasonable speed
+			var outerPerimeterSpeed = printer.Settings.GetValue<double>("perimeter_speed") * 60;
+			InjectPauseGCode("G91"); // move relative
+			InjectPauseGCode($"G1 X.1 F{outerPerimeterSpeed}"); // ensure good extrusion speed
+			InjectPauseGCode($"G1 -X.1 F{outerPerimeterSpeed}"); // move back
+			InjectPauseGCode("G90"); // move absolute
 		}
 
 		public override void SetPrinterPosition(PrinterMove position)

@@ -362,8 +362,6 @@ namespace MatterControl.Tests.MatterControl
 
 				// move some more
 				"G1 X13 Y10 Z10 E40",
-				"G1 X14 Y10 Z10 E50",
-				"G1 X15 Y10 Z10 E60",
 				null,
 			};
 
@@ -392,9 +390,16 @@ namespace MatterControl.Tests.MatterControl
 				"G1 Z0 E30.8 F12000",
 				"G90",
 				"M114",
+				"",
+				"G1 X12.1 F1800",
+				"G1 X12.2",
+				"G90",
+				"G1 X12.33 Z1.667 E32.333",
+				"G1 X12.47 Z3.333 E33.867",
+				"G1 X12.6 Z5 E35.4",
+				"G1 X12.73 Z6.667 E36.933",
+				"G1 X12.87 Z8.333 E38.467",
 				"G1 X13 Z10 E40",
-				"G1 X14 E50",
-				"G1 X15 E60",
 				null,
 			};
 
