@@ -70,6 +70,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.RenderOpenGl;
 	using MatterHackers.SerialPortCommunication;
 	using MatterHackers.VectorMath;
+	using MatterHackers.VectorMath.TrackBall;
 	using SettingsManagement;
 
 	public class AppContext
@@ -2076,7 +2077,7 @@ namespace MatterHackers.MatterControl
 
 			progressPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				Position = new Vector2(0, height*.25),
+				Position = new Vector2(0, height * .25),
 				HAnchor = HAnchor.Center | HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
 				MinimumSize = new Vector2(400, 100),
@@ -2102,6 +2103,156 @@ namespace MatterHackers.MatterControl
 			});
 
 			AppContext.RootSystemWindow = systemWindow;
+
+			// hook up a keyboard watcher to rout keys when not handled by children
+			systemWindow.KeyDown += (s, keyEvent) =>
+			{
+				var view3D = systemWindow.Visible3DView();
+				var offsetDist = 50;
+				var arrowKeyOpperation = keyEvent.Shift ? TrackBallTransformType.Translation : TrackBallTransformType.Rotation;
+
+				if (!keyEvent.Handled 
+					&& view3D != null)
+				{
+					switch (keyEvent.KeyCode)
+					{
+						case Keys.C:
+							if (keyEvent.Control)
+							{
+								view3D.Scene.Copy();
+
+								keyEvent.Handled = true;
+								keyEvent.SuppressKeyPress = true;
+							}
+							break;
+
+						case Keys.A:
+							if (keyEvent.Control)
+							{
+								view3D.SelectAll();
+								keyEvent.Handled = true;
+								keyEvent.SuppressKeyPress = true;
+							}
+							break;
+
+						case Keys.S:
+							if (keyEvent.Control)
+							{
+								view3D.Save();
+
+								keyEvent.Handled = true;
+								keyEvent.SuppressKeyPress = true;
+							}
+							break;
+
+						case Keys.V:
+							if (keyEvent.Control)
+							{
+								view3D.Scene.Paste();
+
+								keyEvent.Handled = true;
+								keyEvent.SuppressKeyPress = true;
+							}
+							break;
+
+						case Keys.W:
+							view3D.ResetView();
+							keyEvent.Handled = true;
+							keyEvent.SuppressKeyPress = true;
+							break;
+
+						case Keys.X:
+							if (keyEvent.Control)
+							{
+								view3D.Scene.Cut();
+
+								keyEvent.Handled = true;
+								keyEvent.SuppressKeyPress = true;
+							}
+							break;
+
+						case Keys.Y:
+							if (keyEvent.Control)
+							{
+								view3D.Scene.UndoBuffer.Redo();
+								keyEvent.Handled = true;
+								keyEvent.SuppressKeyPress = true;
+							}
+							break;
+
+						case Keys.Z:
+							if (keyEvent.Control)
+							{
+								// undo last opperation
+								view3D.Scene.UndoBuffer.Undo();
+							}
+							else if(keyEvent.Shift)
+							{
+								// Zoom in
+								Offset3DView(view3D, new Vector2(0, -offsetDist), TrackBallTransformType.Scale);
+							}
+							else
+							{
+								// Zoom out
+								Offset3DView(view3D, new Vector2(0, offsetDist), TrackBallTransformType.Scale);
+							}
+							keyEvent.Handled = true;
+							keyEvent.SuppressKeyPress = true;
+							break;
+
+						case Keys.Delete:
+						case Keys.Back:
+							view3D.Scene.DeleteSelection();
+							keyEvent.Handled = true;
+							keyEvent.SuppressKeyPress = true;
+							break;
+
+						case Keys.Escape:
+							if (view3D.CurrentSelectInfo.DownOnPart)
+							{
+								view3D.CurrentSelectInfo.DownOnPart = false;
+
+								view3D.Scene.SelectedItem.Matrix = view3D.TransformOnMouseDown;
+
+								view3D.Scene.Invalidate();
+								keyEvent.Handled = true;
+								keyEvent.SuppressKeyPress = true;
+							}
+							break;
+
+						case Keys.Space:
+							view3D.Scene.ClearSelection();
+							keyEvent.Handled = true;
+							keyEvent.SuppressKeyPress = true;
+							break;
+
+						case Keys.Left:
+							// move or rotate view left 
+							Offset3DView(view3D, new Vector2(-offsetDist, 0), arrowKeyOpperation);
+							keyEvent.Handled = true;
+							keyEvent.SuppressKeyPress = true;
+							break;
+
+						case Keys.Right:
+							Offset3DView(view3D, new Vector2(offsetDist, 0), arrowKeyOpperation);
+							keyEvent.Handled = true;
+							keyEvent.SuppressKeyPress = true;
+							break;
+
+						case Keys.Up:
+							Offset3DView(view3D, new Vector2(0, offsetDist), arrowKeyOpperation);
+							keyEvent.Handled = true;
+							keyEvent.SuppressKeyPress = true;
+							break;
+
+						case Keys.Down:
+							Offset3DView(view3D, new Vector2(0, -offsetDist), arrowKeyOpperation);
+							keyEvent.Handled = true;
+							keyEvent.SuppressKeyPress = true;
+							break;
+					}
+				}
+			};
 
 			// Hook SystemWindow load and spin up MatterControl once we've hit first draw
 			systemWindow.Load += (s, e) =>
@@ -2178,6 +2329,22 @@ namespace MatterHackers.MatterControl
 
 			return systemWindow;
 		}
+
+		private static void Offset3DView(View3DWidget view3D, Vector2 offset, TrackBallTransformType opperation)
+		{
+			var center = view3D.TrackballTumbleWidget.LocalBounds.Center;
+			
+			view3D.TrackballTumbleWidget.TrackBallController.OnMouseDown(center, Matrix4X4.Identity, opperation);
+			view3D.TrackballTumbleWidget.TrackBallController.OnMouseMove(center + offset);
+			view3D.TrackballTumbleWidget.TrackBallController.OnMouseUp();
+			view3D.TrackballTumbleWidget.Invalidate();
+		}
+
+		static View3DWidget Visible3DView(this SystemWindow systemWindow)
+		{
+			return systemWindow.Descendants<View3DWidget>().FirstOrDefault();
+		}
+
 
 		public static async Task<GuiWidget> Initialize(SystemWindow systemWindow, Action<double, string> reporter)
 		{
