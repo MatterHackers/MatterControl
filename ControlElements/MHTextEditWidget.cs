@@ -47,6 +47,7 @@ namespace MatterHackers.MatterControl
 			this.BackgroundColor = Color.White;
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
+			this.Border = 1;
 
 			this.ActualTextEditWidget = new TextEditWidget(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine, tabIndex: tabIndex, typeFace: typeFace)
 			{

@@ -42,6 +42,7 @@ namespace MatterHackers.MatterControl
 			this.BackgroundColor = Color.White;
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
+			this.Border = 1;
 
 			this.ActuallNumberEdit = new NumberEdit(startingValue, x, y, pointSize, pixelWidth, pixelHeight, allowNegatives, allowDecimals, minValue, maxValue, increment, tabIndex)
 			{
