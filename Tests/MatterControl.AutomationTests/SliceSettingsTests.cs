@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
-				// Navigate to Local Library 
+				// Navigate to Local Library
 				testRunner.SwitchToPrinterSettings();
 
 				testRunner.ClickByName("Features Tab");
@@ -319,7 +319,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
-				// Navigate to Local Library 
+				// Navigate to Local Library
 				testRunner.SwitchToSliceSettings();
 
 				// Navigate to General Tab -> Layers / Surface Tab
@@ -374,7 +374,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			//testRunner.ScrollIntoView(checkBoxName);
 			//testRunner.ClickByName(checkBoxName);
 			testRunner.SelectSliceSettingsField(printer ? "Printer" : "Advanced", settingToChange);
-			
+
 			// give some time for the ui to update if necessary
 			testRunner.Delay(2);
 
@@ -412,7 +412,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
-				// Navigate to Settings Tab and make sure Bed Temp Text box is visible 
+				// Navigate to Settings Tab and make sure Bed Temp Text box is visible
 				testRunner.SwitchToSliceSettings();
 
 				testRunner.SelectSliceSettingsField("Advanced", SettingsKey.bed_temperature);
@@ -467,13 +467,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.AddAndSelectPrinter("BCN", "Sigma");
 
-				// Check Guest printer count 
+				// Check Guest printer count
 				Assert.AreEqual(2, ProfileManager.Instance.ActiveProfiles.Count(), "ProfileManager has 2 Profiles");
 
 				// Check if Guest printer names exists in dropdown
 				testRunner.OpenPrintersDropdown();
 				testRunner.ClickByName("Airwolf 3D HD Menu Item");
-				testRunner.Delay(1000);
+				testRunner.Delay(0.2);
 				testRunner.ClickByName("Open Empty Plate Button");
 
 				printer = ApplicationController.Instance.ActivePrinter;

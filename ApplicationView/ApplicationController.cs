@@ -155,9 +155,15 @@ namespace MatterHackers.MatterControl
 					initialPrinter?.Connection?.Disable();
 				}
 
-				// ActivePrinters is IEnumerable to force us to use SetActivePrinter until it's ingrained in our pattern - cast to list since it is and we need to add
-				(this.ActivePrinters as List<PrinterConfig>).Add(printer);
-				this.ActivePrinter = printer;
+				// ActivePrinters is IEnumerable to force us to use SetActivePrinter until it's ingrained in our pattern
+				// Cast to list since it is one and we need to clear and add
+				if (this.ActivePrinters is List<PrinterConfig> activePrinterList)
+				{
+					activePrinterList.Clear();
+					activePrinterList.Add(printer);
+
+					this.ActivePrinter = printer;
+				}
 
 				// TODO: Decide if non-printer contexts should prompt for a printer, if we should have a default printer, or get "ActiveTab printer" working
 				// HACK: short term solution to resolve printer reference for non-printer related contexts
