@@ -261,6 +261,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			gcode2DWidget.Visible = viewMode == PartViewMode.Layers2D;
+			view3DWidget.meshViewerWidget.Visible = !gcode2DWidget.Visible;
 
 			view3DWidget.meshViewerWidget.ModelView = viewMode == PartViewMode.Model;
 

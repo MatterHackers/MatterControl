@@ -2342,7 +2342,7 @@ namespace MatterHackers.MatterControl
 
 		static View3DWidget Visible3DView(this SystemWindow systemWindow)
 		{
-			return systemWindow.Descendants<View3DWidget>().FirstOrDefault();
+			return systemWindow.Descendants<View3DWidget>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
 		}
 
 
