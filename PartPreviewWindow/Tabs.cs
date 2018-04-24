@@ -401,7 +401,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override Color BorderColor
 		{
-			get =>  (this.IsActiveTab) ? ActiveTheme.Instance.PrimaryAccentColor : base.BorderColor;
+			get =>  (this.IsActiveTab) ? theme.Colors.PrimaryAccentColor : base.BorderColor;
 			set => base.BorderColor = value;
 		}
 
