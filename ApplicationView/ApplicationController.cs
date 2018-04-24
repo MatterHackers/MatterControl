@@ -1151,38 +1151,41 @@ namespace MatterHackers.MatterControl
 
 		public void ReloadAll()
 		{
-			var reloadingOverlay = new GuiWidget
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch,
-				BackgroundColor = this.Theme.DarkShade
-			};
-
-			reloadingOverlay.AddChild(new TextWidget("Reloading".Localize() + "...", textColor: Color.White, pointSize: this.Theme.DefaultFontSize * 1.5)
-			{
-				HAnchor = HAnchor.Center,
-				VAnchor = VAnchor.Center
-			});
-
-			AppContext.RootSystemWindow.AddChild(reloadingOverlay);
-
-			this.IsReloading = true;
-
 			UiThread.RunOnIdle(() =>
 			{
-				using (new QuickTimer($"ReloadAll_{reloadCount++}:"))
+				var reloadingOverlay = new GuiWidget
 				{
-					MainView = new WidescreenPanel();
-					this.DoneReloadingAll?.CallEvents(null, null);
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Stretch,
+					BackgroundColor = this.Theme.DarkShade
+				};
 
-					using (new QuickTimer("Time to AddMainview: "))
+				reloadingOverlay.AddChild(new TextWidget("Reloading".Localize() + "...", textColor: Color.White, pointSize: this.Theme.DefaultFontSize * 1.5)
+				{
+					HAnchor = HAnchor.Center,
+					VAnchor = VAnchor.Center
+				});
+
+				AppContext.RootSystemWindow.AddChild(reloadingOverlay);
+
+				this.IsReloading = true;
+
+				UiThread.RunOnIdle(() =>
+				{
+					using (new QuickTimer($"ReloadAll_{reloadCount++}:"))
 					{
-						AppContext.RootSystemWindow.CloseAllChildren();
-						AppContext.RootSystemWindow.AddChild(MainView);
-					}
-				}
+						MainView = new WidescreenPanel();
+						this.DoneReloadingAll?.CallEvents(null, null);
 
-				this.IsReloading = false;
+						using (new QuickTimer("Time to AddMainview: "))
+						{
+							AppContext.RootSystemWindow.CloseAllChildren();
+							AppContext.RootSystemWindow.AddChild(MainView);
+						}
+					}
+
+					this.IsReloading = false;
+				});
 			});
 		}
 
