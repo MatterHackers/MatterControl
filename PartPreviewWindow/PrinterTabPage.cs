@@ -437,10 +437,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					case Keys.Up:
 						layerScrollbar.Value += 1;
+						keyEvent.Handled = true;
+						keyEvent.SuppressKeyPress = true;
 						break;
 
 					case Keys.Down:
 						layerScrollbar.Value -= 1;
+						keyEvent.Handled = true;
+						keyEvent.SuppressKeyPress = true;
 						break;
 				}
 			}
