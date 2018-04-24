@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public object Value => PropertyInfo.GetGetMethod().Invoke(Item, null);
 		public string DisplayName => GetDisplayName(PropertyInfo);
 		public string Description => GetDescription(PropertyInfo);
-		public Type ptype => PropertyInfo.PropertyType;
+		public Type PropertyType => PropertyInfo.PropertyType;
 	}
 
 	public class SubProperties
@@ -105,8 +105,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			typeof(DirectionVector), typeof(DirectionAxis),
 			typeof(ImageObject3D), typeof(SubProperties)
 		};
-
-		private static Type IObject3DType = typeof(IObject3D);
 
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
@@ -214,8 +212,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		private static void AddPropertyEditor(PublicPropertyEditor publicPropertyEditor,
-			View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme, 
-			UndoBuffer undoBuffer, IRebuildable rebuildable, IPropertyGridModifier propertyGridModifier, 
+			View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme,
+			UndoBuffer undoBuffer, IRebuildable rebuildable, IPropertyGridModifier propertyGridModifier,
 			EditableProperty property, Dictionary<(string id, string propertyName), GuiWidget> editRows)
 		{
 			GuiWidget rowContainer = null;
@@ -242,7 +240,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				foreach(var subProperty in subProperties.GetProperties())
 				{
-					AddPropertyEditor(publicPropertyEditor, view3DWidget, editControlsContainer, theme, undoBuffer, 
+					AddPropertyEditor(publicPropertyEditor, view3DWidget, editControlsContainer, theme, undoBuffer,
 						rebuildable, propertyGridModifier, subProperty, editRows);
 				}
 				// don't add a row, they were added for the individual properties
@@ -513,16 +511,16 @@ namespace MatterHackers.MatterControl.DesignTools
 				editControlsContainer.AddChild(rowContainer);
 			}
 			// create an enum editor
-			else if (property.ptype.IsEnum)
+			else if (property.PropertyType.IsEnum)
 			{
 				rowContainer = CreateEnumEditor(publicPropertyEditor, rebuildable,
-						property, property.ptype, property.Value, property.DisplayName,
+						property, property.PropertyType, property.Value, property.DisplayName,
 						theme, undoBuffer);
 				editControlsContainer.AddChild(rowContainer);
 			}
 			// Use known IObject3D editors
 			else if (property.Value is IObject3D object3D
-				&& ApplicationController.Instance.GetEditorsForType(property.ptype)?.FirstOrDefault() is IObject3DEditor editor)
+				&& ApplicationController.Instance.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor editor)
 			{
 				rowContainer = editor.Create(object3D, view3DWidget, theme);
 				editControlsContainer.AddChild(rowContainer);

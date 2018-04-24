@@ -246,9 +246,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			AlwaysOnTopOfMain = true;
 			this.printer = printer;
 
-			string printLevelWizardTitle = ApplicationController.Instance.ProductName;
-			string printLevelWizardTitleFull = "Print Leveling Wizard".Localize();
-			Title = string.Format("{0} - {1}", printLevelWizardTitle, printLevelWizardTitleFull);
+			this.Title = string.Format("{0} - {1}", ApplicationController.Instance.ProductName, "Print Leveling Wizard".Localize());
 
 			printLevelWizard = new PrintLevelWizardControl(printer, this, theme);
 			AddChild(printLevelWizard);
