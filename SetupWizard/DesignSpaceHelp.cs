@@ -29,6 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -169,6 +171,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch
 			};
+
 			tabControl.AddTab(new ToolTab("What's New".Localize(), tabControl, whatsNewContainer, theme, hasClose: false));
 
 			tabControl.SelectedTabIndex = 0;
@@ -178,7 +181,61 @@ namespace MatterHackers.MatterControl
 		{
 			var sequence = AggContext.StaticData.LoadSequence(@"C:\Users\jlewin\Desktop\editwidget-never-closes.gif");
 			sequence.FramePerSecond = 3;
-			tipsContainer.AddChild(new ImageSequenceWidget(sequence));
+
+			var rightPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			};
+
+			var imageSequenceWidget = new ImageSequenceWidget(300, 200)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+				ImageSequence = sequence
+			};
+			rightPanel.AddChild(imageSequenceWidget);
+
+			var title = new TextWidget("title", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			{
+				Margin = new BorderDouble(0, 4, 0, 10),
+				AutoExpandBoundsToText = true
+			};
+			rightPanel.AddChild(title);
+
+			var textWidget = new WrappedTextWidget("details", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			{
+				Margin = new BorderDouble(0, 4, 0, 10)
+			};
+			rightPanel.AddChild(textWidget);
+
+			var popupMenu = new PopupMenu(theme)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Top | VAnchor.Fit
+			};
+
+			foreach(var filePath in AggContext.StaticData.GetFiles("Tips").Where(f => f.Contains(".gif")))
+			{
+				var menuItem = popupMenu.CreateMenuItem(Path.GetFileNameWithoutExtension(filePath));
+				menuItem.Click += (s, e) =>
+				{
+					title.Text = "Title for " + Path.GetFileName(filePath);
+					textWidget.Text = "Details for " + Path.GetFileName(filePath);
+					imageSequenceWidget.ImageSequence = AggContext.StaticData.LoadSequence(filePath);
+				};
+			}
+
+			var splitter = new Splitter()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+				SplitterBackground = theme.SplitterBackground
+			};
+			splitter.Panel1.AddChild(popupMenu);
+			splitter.Panel1.BackgroundColor = theme.SlightShade;
+			splitter.Panel2.AddChild(rightPanel);
+			tipsContainer.AddChild(splitter);
 		}
 
 		public Color ChildBorderColor { get; private set; }
