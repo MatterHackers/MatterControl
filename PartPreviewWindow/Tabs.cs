@@ -401,7 +401,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override Color BorderColor
 		{
-			get =>  (this.IsActiveTab) ? ActiveTheme.Instance.PrimaryAccentColor : base.BorderColor;
+			get =>  (this.IsActiveTab) ? theme.Colors.PrimaryAccentColor : base.BorderColor;
 			set => base.BorderColor = value;
 		}
 
@@ -409,6 +409,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			: base(tabLabel, parentTabControl, tabContent, theme, tabImageUrl, hasClose, pointSize: (pointSize == -1) ? theme.FontSize10 : pointSize)
 		{
 			this.Border = new BorderDouble(top: 1);
+			this.InactiveTabColor = Color.Transparent;
+			this.ActiveTabColor = theme.ActiveTabColor;
 
 			tabPill.Padding = tabPill.Padding.Clone(top: 10, bottom: 10);
 		}
