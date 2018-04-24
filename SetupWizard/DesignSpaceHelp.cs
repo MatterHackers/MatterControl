@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -179,8 +180,12 @@ namespace MatterHackers.MatterControl
 
 		private void AddTips(FlowLayoutWidget tipsContainer)
 		{
-			var sequence = AggContext.StaticData.LoadSequence(@"C:\Users\jlewin\Desktop\editwidget-never-closes.gif");
-			sequence.FramePerSecond = 3;
+			var sequence = new ImageSequence()
+			{
+				FramePerSecond = 3,
+			};
+
+			sequence.AddImage(new ImageBuffer(1, 1));
 
 			var rightPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
