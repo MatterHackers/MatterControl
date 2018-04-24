@@ -271,7 +271,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 			var listView = new ListView(ApplicationController.Instance.Library, theme);
 
-			var emptyPlateButton = new ImageWidget(AggContext.StaticData.LoadIcon("empty-workspace.png", 70, 70))
+			var emptyPlateButton = new ImageWidget(AggContext.StaticData.LoadIcon("new-part.png", 70, 70))
 			{
 				Margin = new BorderDouble(right: 5),
 				Selectable = true,
