@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public BedConfig sceneContext;
 
-		private PrinterConfig printer;
+		public PrinterConfig Printer { get; private set; }
 
 		private PrinterTabPage printerTabPage;
 
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.sceneContext = sceneContext;
 			this.printerTabPage = printerTabBase as PrinterTabPage;
-			this.printer = printer;
+			this.Printer = printer;
 
 			this.InteractionLayer = new InteractionLayer(this.World, Scene.UndoBuffer, Scene)
 			{
@@ -330,9 +330,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (printer != null)
+			if (Printer != null)
 			{
-				printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
+				Printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
 			}
 
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;
@@ -1039,9 +1039,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (!Scene.HasSelection)
 			{
-				if (printer != null)
+				if (Printer != null)
 				{
-					printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
+					Printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
 				}
 
 				return;
@@ -1117,7 +1117,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Save()
 		{
-			ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer.Bed.SaveChanges);
+			ApplicationController.Instance.Tasks.Execute("Saving".Localize(), Printer.Bed.SaveChanges);
 		}
 	}
 
