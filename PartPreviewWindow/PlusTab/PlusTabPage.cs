@@ -82,7 +82,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			}
 		}
 
-
 		public override void OnMouseWheel(MouseEventArgs mouseEvent)
 		{
 			int direction = (mouseEvent.WheelDelta > 0) ? -1 : 1;
