@@ -162,6 +162,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			// Select the 25 most recent files and project onto FileSystemItems
 			var recentFiles = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
 
+
+			// HACK: Creating a listview just to generate part thumbnails is invalid. Rework thumbnail generation so we have a solution for this case
 			var listView = new ListView(ApplicationController.Instance.Library, theme);
 
 			var emptyPlateButton = new ImageWidget(AggContext.StaticData.LoadIcon("empty-workspace.png", 70, 70))

@@ -66,21 +66,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 			var lastProfileID = ProfileManager.Instance.LastProfileID;
 			var lastProfile = ProfileManager.Instance[lastProfileID];
-			if (lastProfile != null)
-			{
-				topToBottom.AddChild(
-					new PrinterBar(partPreviewContent, lastProfile, theme));
-			}
-			else
-			{
-				// TODO: implement panel for case of having no printer selected
-				//var explorerBar = new ExplorerBar("testing", theme);
-				//topToBottom.AddChild(explorerBar);
 
-				// for now just show 
-				topToBottom.AddChild(
-					new PrinterBar(partPreviewContent, lastProfile, theme));
-			}
+			topToBottom.AddChild(
+				new PrinterBar(partPreviewContent, lastProfile, theme));
 
 			topToBottom.AddChild(new PartsBar(partPreviewContent, theme)
 			{
