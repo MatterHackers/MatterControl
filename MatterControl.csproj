@@ -228,6 +228,7 @@
     <Compile Include="PrinterControls\MacroListPage.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterSetup.cs" />
     <Compile Include="RootSystemWindow.cs" />
+    <Compile Include="SetupWizard\DesignSpaceHelp.cs" />
     <Compile Include="SetupWizard\DialogWindow.cs" />
     <Compile Include="SetupWizard\HelpSystemManager.cs" />
     <Compile Include="SlicerConfiguration\SettingsOrganizer.cs" />
