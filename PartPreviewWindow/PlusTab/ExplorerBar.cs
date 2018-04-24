@@ -79,11 +79,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 	{
 		private PrinterInfo printerInfo;
 
+		private EventHandler unregisterEvents;
+		private PrinterSelector printerSelector;
+
 		public PrinterBar(PartPreviewContent partPreviewContent, PrinterInfo printerInfo, ThemeConfig theme)
 			: base(printerInfo?.Name ?? "", theme)
 		{
 			headingBar.CloseAllChildren();
-			headingBar.AddChild(new PrinterSelector(theme)
+			headingBar.AddChild(printerSelector = new PrinterSelector(theme)
 			{
 				VAnchor = VAnchor.Fit,
 				HAnchor = HAnchor.Absolute,
@@ -92,6 +95,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				Width = 200,
 				BackgroundColor = theme.MinimalShade
 			});
+
+			printerSelector.SelectionChanged += (s, e) =>
+			{
+				this.RebuildPlateOptions(partPreviewContent, theme);
+			};
 
 			// add in the create printer button
 			var createPrinter = new IconButton(AggContext.StaticData.LoadIcon("icon_circle_plus.png", 16, 16, theme.InvertIcons), theme)
@@ -159,67 +167,97 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 			this.printerInfo = printerInfo;
 
+			this.RebuildPlateOptions(partPreviewContent, theme);
+
+			// Rebuild on change
+			ProfileManager.ProfilesListChanged.RegisterEvent((s, e) =>
+			{
+				this.RebuildPlateOptions(partPreviewContent, theme);
+			}, ref unregisterEvents);
+		}
+
+		private void RebuildPlateOptions(PartPreviewContent partPreviewContent, ThemeConfig theme)
+		{
+			toolbar.ActionArea.CloseAllChildren();
+
 			// Select the 25 most recent files and project onto FileSystemItems
 			var recentFiles = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
 
+
+			// HACK: Creating a listview just to generate part thumbnails is invalid. Rework thumbnail generation so we have a solution for this case
 			var listView = new ListView(ApplicationController.Instance.Library, theme);
 
-			var emptyPlateButton = new ImageWidget(AggContext.StaticData.LoadIcon("empty-workspace.png", 70, 70))
+			var lastProfileID = ProfileManager.Instance.LastProfileID;
+			var lastProfile = ProfileManager.Instance[lastProfileID];
+
+			if (lastProfile == null)
 			{
-				Margin = new BorderDouble(right: 5),
-				Selectable = true,
-				BackgroundColor = theme.MinimalShade,
-				Name = "Open Empty Plate Button"
-			};
-			emptyPlateButton.Click += async (s, e) =>
+				toolbar.AddChild(new TextWidget("Select a printer to continue".Localize() + "...", pointSize: theme.DefaultFontSize)
+				{
+					Margin = 15
+				});
+			}
+			else
 			{
-				var printer = await ProfileManager.Instance.LoadPrinter();
-
-				printer.ViewState.ViewMode = PartViewMode.Model;
-
-				await printer.Bed.ClearPlate();
-
-				string printerName = printer.Settings.GetValue(SettingsKey.printer_name);
-
-				partPreviewContent.CreatePrinterTab(printer, theme, printerName);
-			};
-			toolbar.AddChild(emptyPlateButton);
-
-			foreach (var item in recentFiles.Take(10).Select(f => new SceneReplacementFileItem(f.FullName)).ToList<ILibraryItem>())
-			{
-				var iconButton = new IconViewItem(new ListViewItem(item, listView), 70, 70, theme)
+				var emptyPlateButton = new ImageWidget(AggContext.StaticData.LoadIcon("empty-workspace.png", 70, 70))
 				{
 					Margin = new BorderDouble(right: 5),
-					Selectable = true
+					Selectable = true,
+					BackgroundColor = theme.MinimalShade,
+					Name = "Open Empty Plate Button"
 				};
-
-				iconButton.Children.First().Click += (s, e) =>
+				emptyPlateButton.Click += async (s, e) =>
 				{
-					if (this.PositionWithinLocalBounds(e.X, e.Y))
-					{
-						UiThread.RunOnIdle(async () =>
-						{
-							await ProfileManager.Instance.LoadPrinterOpenItem(item);
+					var printer = await ProfileManager.Instance.LoadPrinter();
 
-							var printer = ApplicationController.Instance.ActivePrinter;
+					printer.ViewState.ViewMode = PartViewMode.Model;
 
-							printer.ViewState.ViewMode = PartViewMode.Model;
+					await printer.Bed.ClearPlate();
 
-							partPreviewContent.CreatePrinterTab(
-								printer,
-								theme,
-								printer.Settings.GetValue(SettingsKey.printer_name));
-						});
-					}
+					string printerName = printer.Settings.GetValue(SettingsKey.printer_name);
+
+					partPreviewContent.CreatePrinterTab(printer, theme, printerName);
 				};
+				toolbar.AddChild(emptyPlateButton);
 
-				toolbar.AddChild(iconButton);
+				foreach (var item in recentFiles.Take(10).Select(f => new SceneReplacementFileItem(f.FullName)).ToList<ILibraryItem>())
+				{
+					var iconButton = new IconViewItem(new ListViewItem(item, listView), 70, 70, theme)
+					{
+						Margin = new BorderDouble(right: 5),
+						Selectable = true
+					};
+
+					iconButton.Children.First().Click += (s, e) =>
+					{
+						if (this.PositionWithinLocalBounds(e.X, e.Y))
+						{
+							UiThread.RunOnIdle(async () =>
+							{
+								await ProfileManager.Instance.LoadPrinterOpenItem(item);
+
+								var printer = ApplicationController.Instance.ActivePrinter;
+
+								printer.ViewState.ViewMode = PartViewMode.Model;
+
+								partPreviewContent.CreatePrinterTab(
+									printer,
+									theme,
+									printer.Settings.GetValue(SettingsKey.printer_name));
+							});
+						}
+					};
+
+					toolbar.AddChild(iconButton);
+				}
 			}
 		}
 
-		public bool Equals(PrinterBar other)
+		public override void OnClosed(ClosedEventArgs e)
 		{
-			throw new NotImplementedException();
+			unregisterEvents?.Invoke(this, null);
+
+			base.OnClosed(e);
 		}
 	}
 
@@ -233,7 +271,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 			var listView = new ListView(ApplicationController.Instance.Library, theme);
 
-			var emptyPlateButton = new ImageWidget(AggContext.StaticData.LoadIcon("empty-workspace.png", 70, 70))
+			var emptyPlateButton = new ImageWidget(AggContext.StaticData.LoadIcon("new-part.png", 70, 70))
 			{
 				Margin = new BorderDouble(right: 5),
 				Selectable = true,

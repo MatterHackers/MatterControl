@@ -227,6 +227,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, thumbWidth, thumbHeight);
 				}
 
+				if (GuiWidget.DeviceScale != 1)
+				{
+					thumbnail = thumbnail.CreateScaledImage(GuiWidget.DeviceScale);
+				}
+
 				// TODO: Resolve and implement
 				// Allow the container to draw an overlay - use signal interface or add method to interface?
 				//var iconWithOverlay = ActiveContainer.DrawOverlay()

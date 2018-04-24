@@ -107,7 +107,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private int RecomputeFlowValues()
 		{
-			int itemWidth = ThumbWidth + (iconViewPadding * 2);
+			int scaledWidth = (int)(ThumbWidth * GuiWidget.DeviceScale);
+			int itemWidth = scaledWidth + (iconViewPadding * 2);
 
 			int newColumnCount = (int)Math.Floor(this.LocalBounds.Width / itemWidth);
 			int remainingSpace = (int)this.LocalBounds.Width - newColumnCount * itemWidth;
@@ -207,11 +208,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Padding = IconViewItem.ItemPadding;
 			this.Margin = new BorderDouble(6, 0, 0, 6);
 
-			int maxWidth = thumbWidth - 4;
+			int scaledWidth = (int)(thumbWidth * GuiWidget.DeviceScale);
+			int scaledHeight = (int)(thumbHeight * GuiWidget.DeviceScale);
+
+			int maxWidth = scaledWidth - 4;
 
 			if (thumbWidth < 75)
 			{
-				imageWidget = new ImageWidget(thumbWidth, thumbHeight)
+				imageWidget = new ImageWidget(scaledWidth, scaledHeight)
 				{
 					AutoResize = false,
 					Name = "List Item Thumbnail",
@@ -225,7 +229,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				var container = new FlowLayoutWidget(FlowDirection.TopToBottom);
 				this.AddChild(container);
 
-				imageWidget = new ImageWidget(thumbWidth, thumbHeight)
+				imageWidget = new ImageWidget(scaledWidth, scaledHeight)
 				{
 					AutoResize = false,
 					Name = "List Item Thumbnail",
