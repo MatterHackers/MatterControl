@@ -51,8 +51,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private View3DConfig gcodeOptions;
 		private DoubleSolidSlider layerRenderRatioSlider;
-		private SystemWindow parentSystemWindow;
-		private SliceLayerSelector layerScrollbar;
+		public SliceLayerSelector LayerScrollbar { get; private set; }
 		internal PrinterConfig printer;
 		private GCodePanel gcodePanel;
 		internal ResizeContainer gcodeContainer;
@@ -100,14 +99,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			printer.ViewState.ViewModeChanged += ViewState_ViewModeChanged;
 
-			layerScrollbar = new SliceLayerSelector(printer, sceneContext)
+			LayerScrollbar = new SliceLayerSelector(printer, sceneContext)
 			{
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Right | HAnchor.Fit,
 				Margin = new BorderDouble(0, 4, 4, 4),
 				Maximum = sceneContext.LoadedGCode?.LayerCount ?? 1
 			};
-			view3DWidget.InteractionLayer.AddChild(layerScrollbar);
+			view3DWidget.InteractionLayer.AddChild(LayerScrollbar);
 
 			layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), SliceLayerSelector.SliderWidth);
 			layerRenderRatioSlider.FirstValue = 0;
@@ -288,7 +287,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			layerScrollbar.Maximum = sceneContext.LoadedGCode.LayerCount;
+			LayerScrollbar.Maximum = sceneContext.LoadedGCode.LayerCount;
 		}
 
 		private void SetSliderVisibility()
@@ -299,7 +298,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				SetAnimationPosition();
 				layerRenderRatioSlider.Visible = false;
-				layerScrollbar.Visible = false;
+				LayerScrollbar.Visible = false;
 			}
 			else
 			{
@@ -312,7 +311,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				bool hasLayers = printer.Bed.LoadedGCode?.LayerCount > 0;
 
 				layerRenderRatioSlider.Visible = hasLayers && !view3DWidget.meshViewerWidget.ModelView;
-				layerScrollbar.Visible = hasLayers && !view3DWidget.meshViewerWidget.ModelView;
+				LayerScrollbar.Visible = hasLayers && !view3DWidget.meshViewerWidget.ModelView;
 			}
 		}
 
@@ -336,7 +335,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetSliderSizes()
 		{
-			if (layerScrollbar == null || view3DWidget == null)
+			if (LayerScrollbar == null || view3DWidget == null)
 			{
 				return;
 			}
@@ -350,7 +349,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private bool SetAnimationPosition()
 		{
-			layerScrollbar.Value = printer.Connection.CurrentlyPrintingLayer;
+			LayerScrollbar.Value = printer.Connection.CurrentlyPrintingLayer;
 
 			double currentPosition = printer.Connection.RatioIntoCurrentLayer;
 			layerRenderRatioSlider.FirstValue = 0;
@@ -398,26 +397,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public override void OnLoad(EventArgs args)
-		{
-			// Find and hook the parent system window KeyDown event
-			if (this.Parents<SystemWindow>().FirstOrDefault() is SystemWindow systemWindow)
-			{
-				systemWindow.KeyDown += Parent_KeyDown;
-				parentSystemWindow = systemWindow;
-			}
-
-			base.OnLoad(args);
-		}
-
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			// Find and unhook the parent system window KeyDown event
-			if (parentSystemWindow != null)
-			{
-				parentSystemWindow.KeyDown -= Parent_KeyDown;
-			}
-
 			unregisterEvents?.Invoke(null, null);
 
 			sceneContext.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
@@ -426,28 +407,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			printer.Bed.RendererOptions.PropertyChanged -= RendererOptions_PropertyChanged;
 
 			base.OnClosed(e);
-		}
-
-		private void Parent_KeyDown(object sender, KeyEventArgs keyEvent)
-		{
-			if (!keyEvent.Handled
-				&& printer.ViewState.ViewMode != PartViewMode.Model)
-			{
-				switch (keyEvent.KeyCode)
-				{
-					case Keys.Up:
-						layerScrollbar.Value += 1;
-						keyEvent.Handled = true;
-						keyEvent.SuppressKeyPress = true;
-						break;
-
-					case Keys.Down:
-						layerScrollbar.Value -= 1;
-						keyEvent.Handled = true;
-						keyEvent.SuppressKeyPress = true;
-						break;
-				}
-			}
 		}
 
 		private void AddSettingsTabBar(GuiWidget parent, GuiWidget widgetTodockTo)

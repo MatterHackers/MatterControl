@@ -621,6 +621,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							sceneContext.ClearPlate().ConfigureAwait(false);
 						});
 					}
+				},
+				new NamedAction() { Title = "----" },
+				new NamedAction()
+				{
+					Title = "Keyboard Shotcuts".Localize(),
+					Action = () =>
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							List<(string keys, string actoin)> keyAction = new List<(string keys, string actoin)>(new (string, string)[] 
+							{
+								("shift z","Zoom in"),
+								("z","Zoom out"),
+								("← → ↑ ↓","Rotate"),
+								("shift ← → ↑ ↓","Pan"),
+								("f","Zoom to fit"),
+								("w","Zoom to window"),
+								("ctrl / ⌘ z","Undo"),
+								("ctrl / ⌘ y","Redo"),
+								("delete","Delete selection"),
+								("space bar","Clear selection"),
+								("esc","Cancel command"),
+								("enter","Accept command")});
+
+							// ("Keys","Action");
+							DialogWindow.Show<CopyGuestProfilesToUser>();
+						});
+					}
 				}
 			};
 		}

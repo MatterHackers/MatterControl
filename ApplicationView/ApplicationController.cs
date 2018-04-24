@@ -2107,7 +2107,8 @@ namespace MatterHackers.MatterControl
 			// hook up a keyboard watcher to rout keys when not handled by children
 			systemWindow.KeyDown += (s, keyEvent) =>
 			{
-				var view3D = systemWindow.Visible3DView();
+				var view3D = systemWindow.Descendants<View3DWidget>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
+				var printerTabPage = systemWindow.Descendants<PrinterTabPage>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
 				var offsetDist = 50;
 				var arrowKeyOpperation = keyEvent.Shift ? TrackBallTransformType.Translation : TrackBallTransformType.Rotation;
 
@@ -2240,13 +2241,33 @@ namespace MatterHackers.MatterControl
 							break;
 
 						case Keys.Up:
-							Offset3DView(view3D, new Vector2(0, offsetDist), arrowKeyOpperation);
+							if (view3D.Printer != null
+								&& printerTabPage != null
+								&& view3D.Printer.ViewState.ViewMode != PartViewMode.Model)
+							{
+								printerTabPage.LayerScrollbar.Value += 1;
+							}
+							else
+							{
+								Offset3DView(view3D, new Vector2(0, offsetDist), arrowKeyOpperation);
+							}
+
 							keyEvent.Handled = true;
 							keyEvent.SuppressKeyPress = true;
 							break;
 
 						case Keys.Down:
-							Offset3DView(view3D, new Vector2(0, -offsetDist), arrowKeyOpperation);
+							if (view3D.Printer != null
+								&& printerTabPage != null
+								&& view3D.Printer.ViewState.ViewMode != PartViewMode.Model)
+							{
+								printerTabPage.LayerScrollbar.Value -= 1;
+							}
+							else
+							{
+								Offset3DView(view3D, new Vector2(0, -offsetDist), arrowKeyOpperation);
+							}
+
 							keyEvent.Handled = true;
 							keyEvent.SuppressKeyPress = true;
 							break;
@@ -2339,12 +2360,6 @@ namespace MatterHackers.MatterControl
 			view3D.TrackballTumbleWidget.TrackBallController.OnMouseUp();
 			view3D.TrackballTumbleWidget.Invalidate();
 		}
-
-		static View3DWidget Visible3DView(this SystemWindow systemWindow)
-		{
-			return systemWindow.Descendants<View3DWidget>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
-		}
-
 
 		public static async Task<GuiWidget> Initialize(SystemWindow systemWindow, Action<double, string> reporter)
 		{
