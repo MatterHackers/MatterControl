@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl
 			var row = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
 			};
 			this.AddChild(row);
 

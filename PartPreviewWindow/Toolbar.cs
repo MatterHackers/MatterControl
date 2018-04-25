@@ -40,7 +40,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.ActionArea = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.Stretch
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit | VAnchor.Center
 			};
 
 			base.AddChild(this.ActionArea, 0);

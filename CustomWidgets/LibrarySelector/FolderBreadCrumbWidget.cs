@@ -72,6 +72,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.CloseAllChildren();
 
 			var upbutton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "up_folder_20.png"), theme.InvertIcons));
+			upbutton.VAnchor = VAnchor.Fit | VAnchor.Center;
 			upbutton.Enabled = currentContainer.Parent != null;
 			upbutton.Name = "Library Up Button";
 			upbutton.Margin = new BorderDouble(right: 2);
