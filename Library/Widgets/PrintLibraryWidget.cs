@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			var showFolders = new ExpandCheckboxButton("Folders".Localize(), theme)
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
+				VAnchor = VAnchor.Fit | VAnchor.Center,
 				Padding = new BorderDouble(left: 2, bottom: 2, top: 6), // Same padding as toolbar above
 				Name = "Show Folders Toggle",
 				Checked = UserSettings.Instance.get(UserSettingsKey.ShowContainers) == "1",

@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl
 		public int DefaultFontSize { get; } = 11;
 		public int DefaultContainerPadding { get; } = 10;
 		public int H1PointSize { get; set; } = 11;
-		public double ButtonHeight { get; internal set; } = 32;
+		public double ButtonHeight { get; internal set; } = 32 * GuiWidget.DeviceScale;
 		public double MicroButtonHeight { get; internal set; } = 20 * GuiWidget.DeviceScale;
 		public double MicroButtonWidth { get; internal set; } = 30 * GuiWidget.DeviceScale;
 		public double TabButtonHeight { get; internal set; } = 30 * GuiWidget.DeviceScale;
