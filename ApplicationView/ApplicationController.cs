@@ -734,7 +734,7 @@ namespace MatterHackers.MatterControl
 
 				this.RebuildSceneOperations(this.Theme);
 
-#if DEBUG
+#if DEBUG && !__ANDROID__
 				if (AggContext.StaticData is FileSystemStaticData staticData)
 				{
 					staticData.PurgeCache();
