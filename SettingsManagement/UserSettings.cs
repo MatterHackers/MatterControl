@@ -52,6 +52,7 @@ namespace MatterHackers.MatterControl
 		public const string TerminalFilterOutput = nameof(TerminalFilterOutput);
 		public const string ThumbnailRenderingMode = nameof(ThumbnailRenderingMode);
 		public const string UpdateFeedType = nameof(UpdateFeedType);
+		public const string LastReadWhatsNew = nameof(LastReadWhatsNew);
 	}
 
 	public class UserSettings

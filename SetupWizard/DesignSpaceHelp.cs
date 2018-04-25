@@ -37,14 +37,49 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
+	public class TipAssets
+	{
+		/// <summary>
+		/// Where to find the gif or evertually movie file
+		/// </summary>
+		public string AnimationUri;
+		/// <summary>
+		/// The first level category this tip is part of
+		/// </summary>
+		public string Category;
+		/// <summary>
+		/// Second level category
+		/// </summary>
+		public string SubCategory;
+		/// <summary>
+		/// The name that is in the navigation list with categories
+		/// </summary>
+		public string Name;
+		/// <summary>
+		/// The long title that appears under the animation
+		/// </summary>
+		public string Title;
+		/// <summary>
+		/// The description that is under the title
+		/// </summary>
+		public string Description;
+
+	}
+
 	public class DesignSpaceHelp : DialogPage
 	{
+		List<TipAssets> whatsNewTips = new List<TipAssets>();
+		List<TipAssets> allAvailableTips = new List<TipAssets>();
+
 		public DesignSpaceHelp()
 		: base("Close".Localize())
 		{
+			MakeTestTips();
+
 			this.WindowTitle = "Design Space Help".Localize();
 			this.HeaderText = "Navigation Controls and Shortcut Keys".Localize();
 			this.ChildBorderColor = theme.GetBorderColor(75);
@@ -165,7 +200,7 @@ namespace MatterHackers.MatterControl
 			};
 			tabControl.AddTab(new ToolTab("Tips".Localize(), tabControl, tipsContainer, theme, hasClose: false));
 
-			AddTips(tipsContainer);
+			AddTips(tipsContainer, allAvailableTips);
 
 			var whatsNewContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -174,11 +209,42 @@ namespace MatterHackers.MatterControl
 			};
 
 			tabControl.AddTab(new ToolTab("What's New".Localize(), tabControl, whatsNewContainer, theme, hasClose: false));
+			// if the what's new tab becomes visible mark the time
+			whatsNewContainer.VisibleChanged += (s, e) =>
+			{
+				if (whatsNewContainer.Visible)
+				{
+					UserSettings.Instance.set(UserSettingsKey.LastReadWhatsNew, JsonConvert.SerializeObject(DateTime.Now));
+				}
+			};
 
 			tabControl.SelectedTabIndex = 0;
 		}
 
-		private void AddTips(FlowLayoutWidget tipsContainer)
+		private void MakeTestTips()
+		{
+			allAvailableTips.Add(new TipAssets()
+			{
+				AnimationUri = "https://www.matterhackers.com/r/sjMyWZ",
+				Category = "Design Tools",
+				SubCategory = "Printing",
+				Name = "User Generated Support",
+				Title = "Creating User Generated Support",
+				Description = "Any object can be turned into support. Simply select it in the 3D view and click the 'Make Support' button. Support will automatically make interface layers and avoid interescting the printing object."
+			});
+
+			allAvailableTips.Add(new TipAssets()
+			{
+				AnimationUri = "https://www.matterhackers.com/r/1oH3i1",
+				Category = "Design Tools",
+				SubCategory = "Arangement",
+				Name = "Rotate Controls",
+				Title = "Rotating Objects in the 3D view",
+				Description = "Click on any of the rotate corner contrors to rotate on the plane of that control. Moving the mouse over one of the arrow indicators locks the rotation to a 45° angle."
+			});
+		}
+
+		private void AddTips(FlowLayoutWidget tipsContainer, List<TipAssets> tipsList)
 		{
 			var sequence = new ImageSequence()
 			{
@@ -201,18 +267,17 @@ namespace MatterHackers.MatterControl
 			};
 			rightPanel.AddChild(imageSequenceWidget);
 
-			var title = new TextWidget("title", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
-			{
-				Margin = new BorderDouble(0, 4, 0, 10),
-				AutoExpandBoundsToText = true
-			};
-			rightPanel.AddChild(title);
-
-			var textWidget = new WrappedTextWidget("details", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			var title = new WrappedTextWidget("title", pointSize: 24, textColor: theme.Colors.PrimaryTextColor)
 			{
 				Margin = new BorderDouble(0, 4, 0, 10)
 			};
-			rightPanel.AddChild(textWidget);
+			rightPanel.AddChild(title);
+
+			var description = new WrappedTextWidget("details", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			{
+				Margin = new BorderDouble(0, 4, 0, 10),
+			};
+			rightPanel.AddChild(description);
 
 			var popupMenu = new PopupMenu(theme)
 			{
@@ -220,14 +285,15 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Top | VAnchor.Fit
 			};
 
-			foreach(var filePath in AggContext.StaticData.GetFiles("Tips").Where(f => f.Contains(".gif")))
+			foreach(var tip in tipsList)
 			{
-				var menuItem = popupMenu.CreateMenuItem(Path.GetFileNameWithoutExtension(filePath));
+				var menuItem = popupMenu.CreateMenuItem(tip.Name);
 				menuItem.Click += (s, e) =>
 				{
-					title.Text = "Title for " + Path.GetFileName(filePath);
-					textWidget.Text = "Details for " + Path.GetFileName(filePath);
-					imageSequenceWidget.ImageSequence = AggContext.StaticData.LoadSequence(filePath);
+					title.Text = tip.Title;
+					description.Text = tip.Description;
+					imageSequenceWidget.ImageSequence = AggContext.StaticData.LoadSequence(Path.Combine("Icons", "provider_loading.gif"));
+					ApplicationController.Instance.DownloadToImageSequenceAsync(imageSequenceWidget.ImageSequence, tip.AnimationUri);
 				};
 			}
 

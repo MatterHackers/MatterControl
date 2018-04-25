@@ -1429,7 +1429,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-
 		/// <summary>
 		/// Download an image from the web into the specified ImageBuffer
 		/// </summary>
@@ -1474,6 +1473,39 @@ namespace MatterHackers.MatterControl
 					}
 
 					imageToLoadInto.MarkImageChanged();
+				}
+				catch
+				{
+				}
+			};
+
+			try
+			{
+				client.DownloadDataAsync(new Uri(uriToLoad));
+			}
+			catch
+			{
+			}
+		}
+
+		/// <summary>
+		/// Download an image from the web into the specified ImageSequence
+		/// </summary>
+		/// <param name="uri"></param>
+		public void DownloadToImageSequenceAsync(ImageSequence imageSequenceToLoadInto, string uriToLoad)
+		{
+			WebClient client = new WebClient();
+			client.DownloadDataCompleted += (object sender, DownloadDataCompletedEventArgs e) =>
+			{
+				try // if we get a bad result we can get a target invocation exception. In that case just don't show anything
+				{
+					// scale the loaded image to the size of the target image
+					byte[] raw = e.Result;
+					Stream stream = new MemoryStream(raw);
+					ImageBuffer unScaledImage = new ImageBuffer(10, 10);
+					AggContext.StaticData.LoadImageSequenceData(stream, imageSequenceToLoadInto);
+
+					imageSequenceToLoadInto.Invalidate();
 				}
 				catch
 				{
