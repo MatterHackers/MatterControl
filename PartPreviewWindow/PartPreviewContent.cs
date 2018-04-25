@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -39,6 +40,7 @@ using MatterHackers.MatterControl.PartPreviewWindow.PlusTab;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -90,10 +92,55 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			Color selectedTabColor = ActiveTheme.Instance.TabLabelSelected;
 
+			// add in a what's new button
+			Button seeWhatsNewButton = theme.LinkButtonFactory.Generate("What's New...".Localize());
+			seeWhatsNewButton.Name = "What's New Link";
+			seeWhatsNewButton.ToolTipText = "See what's new in this version of MatterControl".Localize();
+			seeWhatsNewButton.VAnchor = VAnchor.Center;
+			seeWhatsNewButton.Margin = new Agg.BorderDouble(10, 0);
+			seeWhatsNewButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				DialogWindow.Show(new DesignSpaceHelp());
+			});
+
+			tabControl.TabBar.ActionArea.AddChild(seeWhatsNewButton);
+
 			// add in the update available button
-			Button updateAvailableButton = theme.LinkButtonFactory.Generate("Update Available");
+			Button updateAvailableButton = theme.LinkButtonFactory.Generate("Update Available".Localize());
+
+			// make the function inline so we don't have to create members for the buttons
+			EventHandler SetLinkButtonsVisability = (s, e) =>
+			{
+				// If the last time what's new link was clicked is older than the main application show the button
+				string filePath = Assembly.GetExecutingAssembly().Location;
+				DateTime installTime = new FileInfo(filePath).LastWriteTime;
+				var lastReadWhatsNew = UserSettings.Instance.get(UserSettingsKey.LastReadWhatsNew);
+				DateTime whatsNewReadTime = installTime;
+				if (lastReadWhatsNew != null)
+				{
+					whatsNewReadTime = JsonConvert.DeserializeObject<DateTime>(lastReadWhatsNew);
+				}
+
+				if (whatsNewReadTime > installTime)
+				{
+					// hide it
+					seeWhatsNewButton.Visible = false;
+				}
+
+				if (UpdateControlData.Instance.UpdateStatus == UpdateControlData.UpdateStatusStates.UpdateAvailable)
+				{
+					updateAvailableButton.Visible = true;
+					// if we are going to show the update link hide the whats new link no matter what
+					seeWhatsNewButton.Visible = false;
+				}
+				else
+				{
+					updateAvailableButton.Visible = false;
+				}
+			};
+
 			updateAvailableButton.Name = "Update Available Link";
-			updateAvailableButton.Visible = UpdateControlData.Instance.UpdateStatus == UpdateControlData.UpdateStatusStates.UpdateAvailable;
+			SetLinkButtonsVisability(this, null);
 			updateAvailableButton.ToolTipText = "There is a new update available for download".Localize();
 			updateAvailableButton.VAnchor = VAnchor.Center;
 			updateAvailableButton.Margin = new Agg.BorderDouble(10, 0);
@@ -108,10 +155,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.TabBar.ActionArea.AddChild(updateAvailableButton);
 
-			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent((s, e) =>
-			{
-				updateAvailableButton.Visible = UpdateControlData.Instance.UpdateStatus == UpdateControlData.UpdateStatusStates.UpdateAvailable;
-			}, ref unregisterEvents);
+			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(SetLinkButtonsVisability, ref unregisterEvents);
 
 			this.AddChild(tabControl);
 
