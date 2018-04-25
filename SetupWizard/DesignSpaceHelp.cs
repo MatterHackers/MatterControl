@@ -294,6 +294,16 @@ namespace MatterHackers.MatterControl
 				Description = "Click on any of the rotate corner contrors to rotate on the plane of that control. Moving the mouse over one of the arrow indicators locks the rotation to a 45° angle."
 			});
 
+			allAvailableTips.Add(new TipAssets()
+			{
+				AnimationUri = "https://www.matterhackers.com/r/yNqiNT",
+				Category = "Design Tools",
+				SubCategory = "Arangement",
+				Name = "Scale Controls",
+				Title = "Scaling Objects in the 3D view",
+				Description = "Click on any of the scale corner contrors to scale your part on the bed."
+			});
+
 			whatsNewTips = allAvailableTips;
 		}
 
