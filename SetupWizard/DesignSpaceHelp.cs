@@ -37,6 +37,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
@@ -67,7 +68,11 @@ namespace MatterHackers.MatterControl
 		/// The description that is under the title
 		/// </summary>
 		public string Description;
-
+		/// <summary>
+		/// This is the imutable key assigned to this tip. It can 
+		/// be used to navigate to this tip while opening the control
+		/// </summary>
+		public string Key;
 	}
 
 	public class DesignSpaceHelp : DialogPage
@@ -76,8 +81,15 @@ namespace MatterHackers.MatterControl
 		List<TipAssets> allAvailableTips = new List<TipAssets>();
 
 		public DesignSpaceHelp()
+			: this("", "")
+		{
+
+		}
+
+		public DesignSpaceHelp(string preSelectTabName, string tipKey)
 		: base("Close".Localize())
 		{
+			WindowSize = new Vector2(800, 600);
 			MakeTestTips();
 
 			this.WindowTitle = "Design Space Help".Localize();
@@ -107,7 +119,11 @@ namespace MatterHackers.MatterControl
 				Padding = theme.DefaultContainerPadding
 			};
 
-			var mouseTab = new ToolTab("Mouse".Localize(), tabControl, mouseControls, theme, hasClose: false);
+			var mouseTab = new ToolTab("Mouse".Localize(), tabControl, mouseControls, theme, hasClose: false)
+			{
+				// this can be used to navigate to this tab on construction
+				Name = "Mouse Tab"
+			};
 			tabControl.AddTab(mouseTab);
 
 			var mouseKeys = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -122,8 +138,10 @@ namespace MatterHackers.MatterControl
 
 			var mouseKeyActions = new List<(string key, string action)>(new(string, string)[]
 			{
-				("ctrl left, right","Rotate".Localize()),
-				("ctrl shift left, middle","Pan".Localize()),
+				("ctrl + left","Rotate".Localize()),
+				("right","Rotate".Localize()),
+				("ctrl + shift left","Pan".Localize()),
+				("middle","Pan".Localize()),
 				("wheel","Zoom".Localize())
 			});
 
@@ -148,7 +166,11 @@ namespace MatterHackers.MatterControl
 				Padding = theme.DefaultContainerPadding
 			};
 
-			var keyboardTab = new ToolTab("Keys".Localize(), tabControl, shortcutKeys, theme, hasClose: false);
+			var keyboardTab = new ToolTab("Keys".Localize(), tabControl, shortcutKeys, theme, hasClose: false)
+			{
+				// this can be used to navigate to this tab on construction
+				Name = "Keys Tab"
+			};
 			tabControl.AddTab(keyboardTab);
 
 			var keys = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -165,14 +187,14 @@ namespace MatterHackers.MatterControl
 
 			var keyActions = new List<(string key, string action)>(new(string, string)[]
 			{
-				("shift z","Zoom in".Localize()),
+				("shift + z","Zoom in".Localize()),
 				("z","Zoom out".Localize()),
 				("← → ↑ ↓","Rotate".Localize()),
-				("shift ← → ↑ ↓","Pan".Localize()),
+				("shift + ← → ↑ ↓","Pan".Localize()),
 				//("f","Zoom to fit".Localize()),
 				("w","Zoom to window".Localize()),
-				("ctrl / ⌘ z","Undo".Localize()),
-				("ctrl / ⌘ y","Redo".Localize()),
+				("ctrl + z","Undo".Localize()),
+				("ctrl + y","Redo".Localize()),
 				("delete","Delete selection".Localize()),
 				("space bar","Clear selection".Localize()),
 				("esc","Cancel command".Localize()),
@@ -198,7 +220,12 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch
 			};
-			tabControl.AddTab(new ToolTab("Tips".Localize(), tabControl, tipsContainer, theme, hasClose: false));
+			var tipsTab = new ToolTab("Tips".Localize(), tabControl, tipsContainer, theme, hasClose: false)
+			{
+				// this can be used to navigate to this tab on construction
+				Name = "Tips Tab"
+			};
+			tabControl.AddTab(tipsTab);
 
 			AddTips(tipsContainer, allAvailableTips);
 
@@ -208,7 +235,14 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Stretch
 			};
 
-			tabControl.AddTab(new ToolTab("What's New".Localize(), tabControl, whatsNewContainer, theme, hasClose: false));
+			var whatsNewTab = new ToolTab("What's New".Localize(), tabControl, whatsNewContainer, theme, hasClose: false)
+			{
+				// this can be used to navigate to this tab on construction
+				Name = "What's New Tab"
+			};
+			tabControl.AddTab(whatsNewTab);
+			AddTips(whatsNewContainer, whatsNewTips);
+
 			// if the what's new tab becomes visible mark the time
 			whatsNewContainer.VisibleChanged += (s, e) =>
 			{
@@ -219,6 +253,23 @@ namespace MatterHackers.MatterControl
 			};
 
 			tabControl.SelectedTabIndex = 0;
+			if(!string.IsNullOrWhiteSpace(preSelectTabName))
+			{
+				// try to find the named tab
+				int index = 0;
+				foreach(var tab in tabControl.AllTabs)
+				{
+					if (tab is GuiWidget widget)
+					{
+						if (widget.Name == preSelectTabName)
+						{
+							tabControl.SelectedTabIndex = index;
+							break;
+						}
+					}
+					index++;
+				}
+			}
 		}
 
 		private void MakeTestTips()
@@ -228,8 +279,8 @@ namespace MatterHackers.MatterControl
 				AnimationUri = "https://www.matterhackers.com/r/sjMyWZ",
 				Category = "Design Tools",
 				SubCategory = "Printing",
-				Name = "User Generated Support",
-				Title = "Creating User Generated Support",
+				Name = "Supports",
+				Title = "Custom Support Generation",
 				Description = "Any object can be turned into support. Simply select it in the 3D view and click the 'Make Support' button. Support will automatically make interface layers and avoid interescting the printing object."
 			});
 
@@ -242,6 +293,18 @@ namespace MatterHackers.MatterControl
 				Title = "Rotating Objects in the 3D view",
 				Description = "Click on any of the rotate corner contrors to rotate on the plane of that control. Moving the mouse over one of the arrow indicators locks the rotation to a 45° angle."
 			});
+
+			allAvailableTips.Add(new TipAssets()
+			{
+				AnimationUri = "https://www.matterhackers.com/r/yNqiNT",
+				Category = "Design Tools",
+				SubCategory = "Arangement",
+				Name = "Scale Controls",
+				Title = "Scaling Objects in the 3D view",
+				Description = "Click on any of the scale corner contrors to scale your part on the bed."
+			});
+
+			whatsNewTips = allAvailableTips;
 		}
 
 		private void AddTips(FlowLayoutWidget tipsContainer, List<TipAssets> tipsList)
@@ -263,19 +326,21 @@ namespace MatterHackers.MatterControl
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
-				ImageSequence = sequence
+				ImageSequence = sequence,
+				Border = new BorderDouble(1),
+				BorderColor = theme.Colors.PrimaryTextColor
 			};
 			rightPanel.AddChild(imageSequenceWidget);
 
 			var title = new WrappedTextWidget("title", pointSize: 24, textColor: theme.Colors.PrimaryTextColor)
 			{
-				Margin = new BorderDouble(0, 4, 0, 10)
+				Margin = new BorderDouble(10, 4, 10, 10)
 			};
 			rightPanel.AddChild(title);
 
 			var description = new WrappedTextWidget("details", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 			{
-				Margin = new BorderDouble(0, 4, 0, 10),
+				Margin = new BorderDouble(10, 4, 10, 10),
 			};
 			rightPanel.AddChild(description);
 
@@ -285,9 +350,13 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Top | VAnchor.Fit
 			};
 
+			double maxMenuItemWidth = 0;
+			PopupMenu.MenuItem firstItem = null;
 			foreach(var tip in tipsList)
 			{
 				var menuItem = popupMenu.CreateMenuItem(tip.Name);
+				firstItem = (firstItem == null) ? menuItem : firstItem;
+				maxMenuItemWidth = Math.Max(maxMenuItemWidth, menuItem.Width);
 				menuItem.Click += (s, e) =>
 				{
 					title.Text = tip.Title;
@@ -297,12 +366,18 @@ namespace MatterHackers.MatterControl
 				};
 			}
 
+			popupMenu.Load += (s, e) =>
+			{
+				firstItem.InvokeClick();
+			};
+
 			var splitter = new Splitter()
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
 				SplitterBackground = theme.SplitterBackground
 			};
+			splitter.SplitterDistance = maxMenuItemWidth;
 			splitter.Panel1.AddChild(popupMenu);
 			splitter.Panel1.BackgroundColor = theme.SlightShade;
 			splitter.Panel2.AddChild(rightPanel);

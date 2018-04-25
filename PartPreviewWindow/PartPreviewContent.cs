@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			seeWhatsNewButton.Margin = new Agg.BorderDouble(10, 0);
 			seeWhatsNewButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				DialogWindow.Show(new DesignSpaceHelp());
+				DialogWindow.Show(new DesignSpaceHelp("What's New Tab", ""));
 			});
 
 			tabControl.TabBar.ActionArea.AddChild(seeWhatsNewButton);
