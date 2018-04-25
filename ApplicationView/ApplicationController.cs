@@ -2225,12 +2225,12 @@ namespace MatterHackers.MatterControl
 							else if(keyEvent.Shift)
 							{
 								// Zoom in
-								Offset3DView(view3D, new Vector2(0, -offsetDist), TrackBallTransformType.Scale);
+								Offset3DView(view3D, new Vector2(0, offsetDist), TrackBallTransformType.Scale);
 							}
 							else
 							{
 								// Zoom out
-								Offset3DView(view3D, new Vector2(0, offsetDist), TrackBallTransformType.Scale);
+								Offset3DView(view3D, new Vector2(0, -offsetDist), TrackBallTransformType.Scale);
 							}
 							keyEvent.Handled = true;
 							keyEvent.SuppressKeyPress = true;
