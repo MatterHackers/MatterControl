@@ -42,14 +42,14 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
-	public class TipAssets
+	public class GuideAssets
 	{
 		/// <summary>
 		/// Where to find the gif or evertually movie file
 		/// </summary>
 		public string AnimationUri;
 		/// <summary>
-		/// The first level category this tip is part of
+		/// The first level category this guide is part of
 		/// </summary>
 		public string Category;
 		/// <summary>
@@ -69,31 +69,31 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		public string Description;
 		/// <summary>
-		/// This is the imutable key assigned to this tip. It can 
-		/// be used to navigate to this tip while opening the control
+		/// This is the imutable key assigned to this guide. It can 
+		/// be used to navigate to this guide while opening the control
 		/// </summary>
 		public string Key;
 	}
 
-	public class DesignSpaceHelp : DialogPage
+	public class DesignSpaceGuid : DialogPage
 	{
-		List<TipAssets> whatsNewTips = new List<TipAssets>();
-		List<TipAssets> allAvailableTips = new List<TipAssets>();
+		List<GuideAssets> whatsNewGuides = new List<GuideAssets>();
+		List<GuideAssets> allAvailableGuides = new List<GuideAssets>();
 
-		public DesignSpaceHelp()
+		public DesignSpaceGuid()
 			: this("", "")
 		{
 
 		}
 
-		public DesignSpaceHelp(string preSelectTabName, string tipKey)
+		public DesignSpaceGuid(string preSelectTabName, string guideKey)
 		: base("Close".Localize())
 		{
 			WindowSize = new Vector2(800, 600);
-			MakeTestTips();
+			MakeTestGuides();
 
-			this.WindowTitle = "Design Space Help".Localize();
-			this.HeaderText = "Navigation Controls and Shortcut Keys".Localize();
+			this.WindowTitle = "MatterControl " + "Help".Localize();
+			this.HeaderText = "How to succed with MatterControl".Localize();
 			this.ChildBorderColor = theme.GetBorderColor(75);
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -215,19 +215,19 @@ namespace MatterHackers.MatterControl
 			right = Math.Max(0, keys.Width - actions.Width);
 			shortcutKeys.Margin = new BorderDouble(left, 0, right, 0);
 
-			var tipsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var guideSectionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch
 			};
-			var tipsTab = new ToolTab("Tips".Localize(), tabControl, tipsContainer, theme, hasClose: false)
+			var guideTab = new ToolTab("Guides".Localize(), tabControl, guideSectionContainer, theme, hasClose: false)
 			{
 				// this can be used to navigate to this tab on construction
-				Name = "Tips Tab"
+				Name = "Guides Tab"
 			};
-			tabControl.AddTab(tipsTab);
+			tabControl.AddTab(guideTab);
 
-			AddTips(tipsContainer, allAvailableTips);
+			AddGuides(guideSectionContainer, allAvailableGuides);
 
 			var whatsNewContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl
 				Name = "What's New Tab"
 			};
 			tabControl.AddTab(whatsNewTab);
-			AddTips(whatsNewContainer, whatsNewTips);
+			AddGuides(whatsNewContainer, whatsNewGuides);
 
 			// if the what's new tab becomes visible mark the time
 			whatsNewContainer.VisibleChanged += (s, e) =>
@@ -272,9 +272,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void MakeTestTips()
+		private void MakeTestGuides()
 		{
-			allAvailableTips.Add(new TipAssets()
+			allAvailableGuides.Add(new GuideAssets()
 			{
 				AnimationUri = "https://www.matterhackers.com/r/sjMyWZ",
 				Category = "Design Tools",
@@ -284,7 +284,7 @@ namespace MatterHackers.MatterControl
 				Description = "Any object can be turned into support. Simply select it in the 3D view and click the 'Make Support' button. Support will automatically make interface layers and avoid interescting the printing object."
 			});
 
-			allAvailableTips.Add(new TipAssets()
+			allAvailableGuides.Add(new GuideAssets()
 			{
 				AnimationUri = "https://www.matterhackers.com/r/1oH3i1",
 				Category = "Design Tools",
@@ -294,7 +294,7 @@ namespace MatterHackers.MatterControl
 				Description = "Click on any of the rotate corner contrors to rotate on the plane of that control. Moving the mouse over one of the arrow indicators locks the rotation to a 45° angle."
 			});
 
-			allAvailableTips.Add(new TipAssets()
+			allAvailableGuides.Add(new GuideAssets()
 			{
 				AnimationUri = "https://www.matterhackers.com/r/yNqiNT",
 				Category = "Design Tools",
@@ -304,10 +304,10 @@ namespace MatterHackers.MatterControl
 				Description = "Click on any of the scale corner contrors to scale your part on the bed."
 			});
 
-			whatsNewTips = allAvailableTips;
+			whatsNewGuides = allAvailableGuides;
 		}
 
-		private void AddTips(FlowLayoutWidget tipsContainer, List<TipAssets> tipsList)
+		private void AddGuides(FlowLayoutWidget guideContainer, List<GuideAssets> guideList)
 		{
 			var sequence = new ImageSequence()
 			{
@@ -352,17 +352,17 @@ namespace MatterHackers.MatterControl
 
 			double maxMenuItemWidth = 0;
 			PopupMenu.MenuItem firstItem = null;
-			foreach(var tip in tipsList)
+			foreach(var guide in guideList)
 			{
-				var menuItem = popupMenu.CreateMenuItem(tip.Name);
+				var menuItem = popupMenu.CreateMenuItem(guide.Name);
 				firstItem = (firstItem == null) ? menuItem : firstItem;
 				maxMenuItemWidth = Math.Max(maxMenuItemWidth, menuItem.Width);
 				menuItem.Click += (s, e) =>
 				{
-					title.Text = tip.Title;
-					description.Text = tip.Description;
+					title.Text = guide.Title;
+					description.Text = guide.Description;
 					imageSequenceWidget.ImageSequence = AggContext.StaticData.LoadSequence(Path.Combine("Icons", "provider_loading.gif"));
-					ApplicationController.Instance.DownloadToImageSequenceAsync(imageSequenceWidget.ImageSequence, tip.AnimationUri);
+					ApplicationController.Instance.DownloadToImageSequenceAsync(imageSequenceWidget.ImageSequence, guide.AnimationUri);
 				};
 			}
 
@@ -381,7 +381,7 @@ namespace MatterHackers.MatterControl
 			splitter.Panel1.AddChild(popupMenu);
 			splitter.Panel1.BackgroundColor = theme.SlightShade;
 			splitter.Panel2.AddChild(rightPanel);
-			tipsContainer.AddChild(splitter);
+			guideContainer.AddChild(splitter);
 		}
 
 		public Color ChildBorderColor { get; private set; }

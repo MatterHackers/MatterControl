@@ -64,8 +64,8 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			{
 				double topHeight = 10;
 				int sides = 3;
-				IObject3D keep = CylinderAdvancedObject3D.Create(20, topHeight * 2, sides);
-				IObject3D subtract = CylinderAdvancedObject3D.Create(10, topHeight * 2, sides);
+				IObject3D keep = CylinderObject3D.Create2(20, topHeight * 2, sides);
+				IObject3D subtract = CylinderObject3D.Create2(10, topHeight * 2, sides);
 
 				var keepMesh = keep.Mesh;
 				var subtractMesh = subtract.Mesh;
@@ -109,8 +109,8 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			// check that we subtarct two 3 sideh cylinders
 			{
 				int sides = 3;
-				IObject3D keep = CylinderAdvancedObject3D.Create(20, 20, sides);
-				IObject3D subtract = CylinderAdvancedObject3D.Create(10, 22, sides);
+				IObject3D keep = CylinderObject3D.Create2(20, 20, sides);
+				IObject3D subtract = CylinderObject3D.Create2(10, 22, sides);
 
 				var keepMesh = keep.Mesh;
 				var subtractMesh = subtract.Mesh;

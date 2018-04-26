@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.ComponentModel;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
@@ -36,12 +37,11 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class SphereObject3D : Object3D, IRebuildable
+	public class SphereObject3D : Object3D, IRebuildable, IPropertyGridModifier
 	{
-		
-
 		public SphereObject3D()
 		{
+			Color = PrimitiveColors["Sphere"];
 		}
 
 		public SphereObject3D(double diameter, int sides)
@@ -62,28 +62,55 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public double Diameter { get; set; } = 20;
 		public int Sides { get; set; } = 30;
+		public bool Advanced { get; set; } = false;
+		public int LatitudeSides { get; set; } = 30;
+		public double StartingAngle { get; set; } = 0;
+		public double EndingAngle { get; set; } = 360;
 
 		public void Rebuild(UndoBuffer undoBuffer)
 		{
 			var aabb = this.GetAxisAlignedBoundingBox();
 
+			var startingAngle = StartingAngle;
+			var endingAngle = EndingAngle;
+			var latitudeSides = LatitudeSides;
+			if (!Advanced)
+			{
+				startingAngle = 0;
+				endingAngle = 360;
+				latitudeSides = Sides;
+			}
+
 			var path = new VertexStorage();
-			var angleDelta = MathHelper.Tau / 2 / Sides;
+			var angleDelta = MathHelper.Tau / 2 / latitudeSides;
 			var angle = -MathHelper.Tau / 4;
 			var radius = Diameter / 2;
 			path.MoveTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-			for (int i = 0; i < Sides; i++)
+			for (int i = 0; i < latitudeSides; i++)
 			{
 				angle += angleDelta;
 				path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
 			}
 
-			Mesh = VertexSourceToMesh.Revolve(path, Sides);
+			var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
+			var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
+			var steps = Math.Max(1, (int)(Sides * MathHelper.Tau / Math.Abs(MathHelper.GetDeltaAngle(startAngle, endAngle)) + .5));
+			Mesh = VertexSourceToMesh.Revolve(path,
+				steps,
+				startAngle,
+				endAngle);
 			if (aabb.ZSize > 0)
 			{
 				// If the part was already created and at a height, maintain the height.
 				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 			}
+		}
+
+		public void UpdateControls(PublicPropertyEditor editor)
+		{
+			editor.GetEditRow((this.ID, nameof(StartingAngle))).Visible = Advanced;
+			editor.GetEditRow((this.ID, nameof(EndingAngle))).Visible = Advanced;
+			editor.GetEditRow((this.ID, nameof(LatitudeSides))).Visible = Advanced;
 		}
 	}
 }

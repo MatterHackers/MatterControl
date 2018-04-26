@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
@@ -47,15 +48,16 @@ namespace MatterHackers.MatterControl.DesignTools
 			Rebuild(null);
 		}
 
-		
-
 		public double Width { get; set; } = 20;
 		public double Depth { get; set; } = 20;
 		public double Height { get; set; } = 20;
 
 		public static CubeObject3D Create()
 		{
-			var item = new CubeObject3D();
+			var item = new CubeObject3D()
+			{
+				Color = PrimitiveColors["Cube"]
+			};
 			item.Rebuild(null);
 			return item;
 		}

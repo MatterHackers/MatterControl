@@ -28,29 +28,77 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Threading;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CylinderObject3D : Object3D, IRebuildable
+	public class CylinderObject3D : Object3D, IRebuildable, IPropertyGridModifier
 	{
-		
-
 		public CylinderObject3D()
 		{
+			Color = PrimitiveColors["Cylinder"];
 		}
 
 		public CylinderObject3D(double diameter, double height, int sides)
+			: base()
 		{
 			Diameter = diameter;
 			Height = height;
 			Sides = sides;
 
 			Rebuild(null);
+		}
+
+		public static CylinderObject3D Create2(double diameter, double height, int sides, Alignment alignment = Alignment.Z)
+		{
+			if (alignment == Alignment.Z)
+			{
+				return new CylinderObject3D(diameter, height, sides);
+			}
+
+			return Create2(diameter, diameter, height, sides, alignment);
+		}
+
+		public static CylinderObject3D Create2(double diameterBottom, double diameterTop, double height, int sides, Alignment alignment = Alignment.Z)
+		{
+			var item = new CylinderObject3D()
+			{
+				Advanced = true,
+				Diameter = diameterBottom,
+				DiameterTop = diameterTop,
+				Height = height,
+				Sides = sides,
+			};
+
+			item.Rebuild(null);
+			switch (alignment)
+			{
+				case Alignment.X:
+					item.Matrix = Matrix4X4.CreateRotationY(MathHelper.Tau / 4);
+					break;
+				case Alignment.Y:
+					item.Matrix = Matrix4X4.CreateRotationX(MathHelper.Tau / 4);
+					break;
+				case Alignment.Z:
+					// This is the natural case (how it was modled)
+					break;
+				case Alignment.negX:
+					item.Matrix = Matrix4X4.CreateRotationY(-MathHelper.Tau / 4);
+					break;
+				case Alignment.negY:
+					item.Matrix = Matrix4X4.CreateRotationX(-MathHelper.Tau / 4);
+					break;
+				case Alignment.negZ:
+					item.Matrix = Matrix4X4.CreateRotationX(MathHelper.Tau / 2);
+					break;
+			}
+			return item;
 		}
 
 		public static CylinderObject3D Create()
@@ -64,24 +112,48 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double Diameter { get; set; } = 20;
 		public double Height { get; set; } = 20;
 		public int Sides { get; set; } = 30;
+		public bool Advanced { get; set; } = false;
+		public double DiameterTop { get; set; } = 20;
+		public double StartingAngle { get; set; } = 0;
+		public double EndingAngle { get; set; } = 360;
 
 		public void Rebuild(UndoBuffer undoBuffer)
 		{
 			var aabb = this.GetAxisAlignedBoundingBox();
 
-			var path = new VertexStorage();
-			path.MoveTo(0, -Height / 2);
-			path.LineTo(Diameter / 2, -Height / 2);
-			path.LineTo(Diameter / 2, Height / 2);
-			path.LineTo(0, Height / 2);
+			if (!Advanced)
+			{
+				var path = new VertexStorage();
+				path.MoveTo(0, -Height / 2);
+				path.LineTo(Diameter / 2, -Height / 2);
+				path.LineTo(Diameter / 2, Height / 2);
+				path.LineTo(0, Height / 2);
 
-			Mesh = VertexSourceToMesh.Revolve(path, Sides);
+				Mesh = VertexSourceToMesh.Revolve(path, Sides);
+			}
+			else
+			{
+				var path = new VertexStorage();
+				path.MoveTo(0, -Height / 2);
+				path.LineTo(Diameter / 2, -Height / 2);
+				path.LineTo(DiameterTop / 2, Height / 2);
+				path.LineTo(0, Height / 2);
+
+				Mesh = VertexSourceToMesh.Revolve(path, Sides, MathHelper.DegreesToRadians(StartingAngle), MathHelper.DegreesToRadians(EndingAngle));
+			}
 
 			if (aabb.ZSize > 0)
 			{
 				// If the part was already created and at a height, maintain the height.
 				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 			}
+		}
+
+		public void UpdateControls(PublicPropertyEditor editor)
+		{
+			editor.GetEditRow((this.ID, nameof(DiameterTop))).Visible = Advanced;
+			editor.GetEditRow((this.ID, nameof(StartingAngle))).Visible = Advanced;
+			editor.GetEditRow((this.ID, nameof(EndingAngle))).Visible = Advanced;
 		}
 	}
 }

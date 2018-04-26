@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.ComponentModel;
 using System.Threading;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
@@ -38,12 +39,11 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class RingObject3D : Object3D, IRebuildable
+	public class RingObject3D : Object3D, IRebuildable, IPropertyGridModifier
 	{
-		
-
 		public RingObject3D()
 		{
+			Color = PrimitiveColors["Ring"];
 		}
 
 		public RingObject3D(double outerDiameter, double innerDiameter, double height, int sides)
@@ -68,35 +68,46 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double InnerDiameter { get; set; } = 15;
 		public double Height { get; set; } = 5;
 		public int Sides { get; set; } = 30;
+		public bool Advanced { get; set; } = false;
+		public double StartingAngle { get; set; } = 0;
+		public double EndingAngle { get; set; } = 360;
 
 		public void Rebuild(UndoBuffer undoBuffer)
 		{
 			var aabb = this.GetAxisAlignedBoundingBox();
 
+			var startingAngle = StartingAngle;
+			var endingAngle = EndingAngle;
+			if (!Advanced)
+			{
+				startingAngle = 0;
+				endingAngle = 360;
+			}
+
+			var innerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
+
 			var path = new VertexStorage();
 			path.MoveTo(OuterDiameter / 2, 0);
+			path.LineTo(OuterDiameter / 2, Height);
+			path.LineTo(innerDiameter / 2, Height);
+			path.LineTo(innerDiameter / 2, 0);
 
-			for (int i = 1; i < Sides; i++)
-			{
-				var angle = MathHelper.Tau * i / (Sides - 1);
-				path.LineTo(Math.Cos(angle) * OuterDiameter / 2, Math.Sin(angle) * OuterDiameter / 2);
-			}
-
-			path.MoveTo(InnerDiameter / 2, 0);
-
-			for (int i = 1; i < Sides; i++)
-			{
-				var angle = -MathHelper.Tau * i / (Sides - 1);
-				path.LineTo(Math.Cos(angle) * InnerDiameter / 2, Math.Sin(angle) * InnerDiameter / 2);
-			}
-
-			Mesh = VertexSourceToMesh.Extrude(path, Height);
+			var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
+			var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
+			Mesh = VertexSourceToMesh.Revolve(path, Sides, startAngle, endAngle);
 
 			if (aabb.ZSize > 0)
 			{
 				// If the part was already created and at a height, maintain the height.
 				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 			}
+		}
+
+		public void UpdateControls(PublicPropertyEditor editor)
+		{
+			editor.GetEditRow((this.ID, nameof(StartingAngle))).Visible = Advanced;
+			editor.GetEditRow((this.ID, nameof(EndingAngle))).Visible = Advanced;
+			InnerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
 		}
 	}
 }
