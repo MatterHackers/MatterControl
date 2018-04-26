@@ -62,10 +62,12 @@ namespace MatterHackers.MatterControl
 		public int DefaultFontSize { get; } = 11;
 		public int DefaultContainerPadding { get; } = 10;
 		public int H1PointSize { get; set; } = 11;
-		public double ButtonHeight { get; internal set; } = 32 * GuiWidget.DeviceScale;
-		public double MicroButtonHeight { get; internal set; } = 20 * GuiWidget.DeviceScale;
-		public double MicroButtonWidth { get; internal set; } = 30 * GuiWidget.DeviceScale;
-		public double TabButtonHeight { get; internal set; } = 30 * GuiWidget.DeviceScale;
+
+		public double ButtonHeight => 32 * GuiWidget.DeviceScale;
+		public double MicroButtonHeight => 20 * GuiWidget.DeviceScale;
+		public double MicroButtonWidth => 30 * GuiWidget.DeviceScale;
+		public double TabButtonHeight => 30 * GuiWidget.DeviceScale;
+		public double MenuGutterWidth => 35 * GuiWidget.DeviceScale;
 
 		/// <summary>
 		/// Indicates if icons should be inverted due to black source images on a dark theme
@@ -120,9 +122,12 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		static ThemeConfig()
+		public ThemeConfig()
 		{
-			// EnsureRestoreButtonImages
+		}
+
+		public void RebuildTheme(IThemeColors colors)
+		{
 			int size = (int)(16 * GuiWidget.DeviceScale);
 
 			if (AggContext.OperatingSystem == OSType.Android)
@@ -133,16 +138,10 @@ namespace MatterHackers.MatterControl
 			{
 				RestoreNormal = ColorCircle(size, Color.Transparent);
 			}
+
 			RestoreHover = ColorCircle(size, new Color("#DB4437"));
 			restorePressed = ColorCircle(size, new Color(255, 0, 0));
-		}
 
-		public ThemeConfig()
-		{
-		}
-
-		public void RebuildTheme(IThemeColors colors)
-		{
 			this.Colors = colors;
 
 			DefaultThumbView.ThumbColor = new Color(colors.PrimaryTextColor, 30);

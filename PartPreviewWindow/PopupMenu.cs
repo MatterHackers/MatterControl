@@ -43,11 +43,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PopupMenu : FlowLayoutWidget
 	{
-		public static int GutterWidth { get; set; } = 35;
-
 		private ThemeConfig theme;
 
-		public static BorderDouble MenuPadding { get; set; } = new BorderDouble(40, 8, 20, 8);
+		public BorderDouble MenuPadding => new BorderDouble(40, 8, 20, 8);
 
 		public static Color DisabledTextColor { get; set; } = Color.Gray;
 
@@ -64,7 +62,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var line = new HorizontalLine(40)
 			{
-				Margin = new BorderDouble(PopupMenu.GutterWidth - 8, 1, 8, 1),
+				Margin = new BorderDouble(theme.MenuGutterWidth - 8, 1, 8, 1),
 				BackgroundColor = theme.GetBorderColor(40)
 			};
 
@@ -304,11 +302,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			public MenuItem(GuiWidget content, ThemeConfig theme)
 				: base (theme)
 			{
-				this.Padding = new BorderDouble(left: PopupMenu.GutterWidth, right: 15);
+				this.Padding = new BorderDouble(left: theme.MenuGutterWidth, right: 15);
 				this.BackgroundColor = theme.Colors.PrimaryBackgroundColor;
 				this.HAnchor = HAnchor.MaxFitOrStretch;
 				this.VAnchor = VAnchor.Fit;
-				this.MinimumSize = new Vector2(150, 32);
+				this.MinimumSize = new Vector2(150 * GuiWidget.DeviceScale, theme.ButtonHeight);
 				this.content = content;
 
 				this.HoverColor = theme.Colors.PrimaryAccentColor;
@@ -353,7 +351,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (this.Image != null)
 				{
-					var x = this.Image.Width / 2 - PopupMenu.GutterWidth + 2;
+					var x = this.LocalBounds.Left + (theme.MenuGutterWidth / 2 - this.Image.Width / 2);
 					var y = this.Size.Y / 2 - this.Image.Height / 2;
 
 					graphics2D.Render((this.Enabled) ? this.Image : this.DisabledImage, x, y);
