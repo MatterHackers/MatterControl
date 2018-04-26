@@ -276,12 +276,26 @@ namespace MatterHackers.MatterControl
 		{
 			allAvailableGuides.Add(new GuideAssets()
 			{
-				AnimationUri = "https://www.matterhackers.com/r/sjMyWZ",
+				AnimationUri = "https://www.matterhackers.com/r/3QLZVv",
 				Category = "Design Tools",
-				SubCategory = "Printing",
-				Name = "Supports",
-				Title = "Custom Support Generation",
-				Description = "Any object can be turned into support. Simply select it in the 3D view and click the 'Make Support' button. Support will automatically make interface layers and avoid interescting the printing object."
+				SubCategory = "Priting",
+				Name = "HotendControls",
+				Title = "Hotend and Extruder Controls",
+				Description = "From the hotend control, you can:\n".Localize()
+					+ "    • " + "Select Material".Localize() + "\n"
+					+ "    • " + "Set Temperature".Localize() + "\n"
+					+ "    • " + "Move Print Head".Localize() + "\n"
+					+ "    • " + "Load and Unload Filament".Localize()
+			});
+
+			allAvailableGuides.Add(new GuideAssets()
+			{
+				AnimationUri = "https://www.matterhackers.com/r/Ifooem",
+				Category = "Design Tools",
+				SubCategory = "Creating",
+				Name = "AddingParts",
+				Title = "Adding Parts to the Bed",
+				Description = "You can drag parts into the 3D view from the library side bar, or directly from the desktop."
 			});
 
 			allAvailableGuides.Add(new GuideAssets()
@@ -302,6 +316,16 @@ namespace MatterHackers.MatterControl
 				Name = "Scale Controls",
 				Title = "Scaling Objects in the 3D view",
 				Description = "Click on any of the scale corner contrors to scale your part on the bed."
+			});
+
+			allAvailableGuides.Add(new GuideAssets()
+			{
+				AnimationUri = "https://www.matterhackers.com/r/sjMyWZ",
+				Category = "Design Tools",
+				SubCategory = "Printing",
+				Name = "Supports",
+				Title = "Custom Support Generation",
+				Description = "Any object can be turned into support. Simply select it in the 3D view and click the 'Make Support' button. Support will automatically make interface layers and avoid interescting the printing object."
 			});
 
 			whatsNewGuides = allAvailableGuides;

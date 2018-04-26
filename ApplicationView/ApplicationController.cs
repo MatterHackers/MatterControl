@@ -964,22 +964,9 @@ namespace MatterHackers.MatterControl
 				return true;
 			}
 
-			// TODO: Disabled to get tests back to a passing grade. When this feature is re-enabled it will be easier to identify which tests fail due to this change
-			//
-			// tell the user about loading filament if they have not already been told
+			// TODO: tell the user about new features if applicable
 			if(false && UserSettings.Instance.get(UserSettingsKey.DisplayedTip_LoadFilament) != "1")
 			{
-				var widgetName = "Hotend 0";
-
-				string extruder0TipMessage = "Extruder Controls can be found here.".Localize() + "\n"
-					+ "    • " + "Select Material".Localize() + "\n"
-					+ "    • " + "Set Temperature".Localize() + "\n"
-					+ "    • " + "Move Print Head".Localize() + "\n"
-					+ "    • " + "Load and Unload Filament".Localize();
-				HelpSystemManager.Instance.ShowTip(AppContext.RootSystemWindow, widgetName, extruder0TipMessage);
-
-				UserSettings.Instance.set(UserSettingsKey.DisplayedTip_LoadFilament, "1");
-
 				return true;
 			}
 
