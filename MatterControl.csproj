@@ -177,7 +177,6 @@
     <Compile Include="CustomWidgets\PrintingWindow\ExtruderStatusWidget.cs" />
     <Compile Include="CustomWidgets\PrintingWindow\ProgressDial.cs" />
     <Compile Include="CustomWidgets\PrintingWindow\TemperatureStatusWidget.cs" />
-    <Compile Include="CustomWidgets\PrintingWindow\ZAxisControls.cs" />
     <Compile Include="CustomWidgets\ResizeContainer.cs" />
     <Compile Include="CustomWidgets\SimpleButton.cs" />
     <Compile Include="CustomWidgets\NamedAction.cs" />

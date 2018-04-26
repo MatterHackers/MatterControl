@@ -155,6 +155,7 @@ namespace MatterHackers.MatterControl
 					moveRadioButtons.AddChild(tooBigForBabyStepping);
 
 					tenButton.Checked = true;
+					SetXYZMoveAmount(10);
 					moveRadioButtons.Margin = new BorderDouble(0, 3);
 
 					setMoveDistanceControl.AddChild(moveRadioButtons);
