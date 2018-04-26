@@ -689,6 +689,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			testRunner.ClickByName("Print Library Overflow Menu");
 			testRunner.ClickByName("Remove Menu Item");
+			testRunner.ClickByName("Yes Button");
 		}
 
 		public static string ResolveProjectPath(this TestContext context, int stepsToProjectRoot, params string[] relativePathSteps)
