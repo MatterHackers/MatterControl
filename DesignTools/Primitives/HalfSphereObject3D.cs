@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.ComponentModel;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
@@ -38,12 +39,10 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class HalfSphereObject3D : Object3D, IRebuildable
 	{
-		
-
 		public HalfSphereObject3D()
 		{
+			Color = PrimitiveColors["HalfSphere"];
 		}
-
 
 		public HalfSphereObject3D(double diametar, int sides)
 		{

@@ -103,6 +103,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				}
 			};
 
+			AddMenuItem("Help".Localize(), () =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					DialogWindow.Show(new DesignSpaceGuid("Guides Tab", ""));
+				});
+			});
+
 			this.AddSettingsRow(
 				new SettingsItem(
 					"Notifications".Localize(),

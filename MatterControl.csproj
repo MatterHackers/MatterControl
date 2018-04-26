@@ -127,10 +127,8 @@
     <Compile Include="DesignTools\Primitives\RingObject3D.cs" />
     <Compile Include="DesignTools\Primitives\RoofObject3D.cs" />
     <Compile Include="DesignTools\Primitives\RoundRoofObject3D.cs" />
-    <Compile Include="DesignTools\Primitives\SphereAdvancedObject3D.cs" />
     <Compile Include="DesignTools\Primitives\WedgeObject3D.cs" />
     <Compile Include="DesignTools\Primitives\PyramidObject3D.cs" />
-    <Compile Include="DesignTools\Primitives\CylinderAdvancedObject3D.cs" />
     <Compile Include="DesignTools\Primitives\CylinderObject3D.cs" />
     <Compile Include="DesignTools\Primitives\HalfSphereObject3D.cs" />
     <Compile Include="DesignTools\Primitives\SphereObject3D.cs" />

@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.IO;
 using System.Threading;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
@@ -52,7 +53,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public ImageObject3D()
 		{
-			base.Mesh = null;
 		}
 
 		public override string AssetPath

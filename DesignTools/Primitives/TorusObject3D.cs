@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.ComponentModel;
 using System.Threading;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
@@ -38,12 +39,11 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class TorusObject3D : Object3D, IRebuildable
+	public class TorusObject3D : Object3D, IRebuildable, IPropertyGridModifier
 	{
-		
-
 		public TorusObject3D()
 		{
+			Color = PrimitiveColors["Torus"];
 		}
 
 		public static TorusObject3D Create()
@@ -55,24 +55,38 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public double InnerDiameter { get; set; } = 10;
 		public double OuterDiameter { get; set; } = 20;
-		public int ToroidSides { get; set; } = 20;
+		public int Sides { get; set; } = 30;
+
+		public bool Advanced { get; set; } = false;
 		[DisplayName("Ring Sides")]
-		public int PoleSides { get; set; } = 16;
+		public int RingSides { get; set; } = 15;
 		public double StartingAngle { get; set; } = 0;
 		public double EndingAngle { get; set; } = 360;
 
 		public void Rebuild(UndoBuffer undoBuffer)
 		{
+			var ringSides = RingSides;
+			var startingAngle = StartingAngle;
+			var endingAngle = EndingAngle;
+			if(!Advanced)
+			{
+				ringSides = Math.Max(3, (int)(Sides / 2));
+				startingAngle = 0;
+				endingAngle = 360;
+			}
+
+			var innerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
+
 			var aabb = this.GetAxisAlignedBoundingBox();
 
-			var poleRadius = (OuterDiameter / 2 - InnerDiameter / 2) / 2;
-			var toroidRadius = InnerDiameter / 2 + poleRadius;
+			var poleRadius = (OuterDiameter / 2 - innerDiameter / 2) / 2;
+			var toroidRadius = innerDiameter / 2 + poleRadius;
 			var path = new VertexStorage();
-			var angleDelta = MathHelper.Tau / PoleSides;
+			var angleDelta = MathHelper.Tau / ringSides;
 			var angle = 0.0;
 			var circleCenter = new Vector2(toroidRadius, 0);
 			path.MoveTo(circleCenter + new Vector2(poleRadius * Math.Cos(angle), poleRadius * Math.Sin(angle)));
-			for (int i = 0; i < PoleSides - 1; i++)
+			for (int i = 0; i < ringSides - 1; i++)
 			{
 				angle += angleDelta;
 				path.LineTo(circleCenter + new Vector2(poleRadius * Math.Cos(angle), poleRadius * Math.Sin(angle)));
@@ -80,14 +94,23 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			path.LineTo(circleCenter + new Vector2(poleRadius * Math.Cos(0), poleRadius * Math.Sin(0)));
 
-			var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(StartingAngle));
-			var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(EndingAngle));
-			Mesh = VertexSourceToMesh.Revolve(path, ToroidSides, startAngle, endAngle);
+			var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
+			var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
+			Mesh = VertexSourceToMesh.Revolve(path, Sides, startAngle, endAngle);
+
 			if (aabb.ZSize > 0)
 			{
 				// If the part was already created and at a height, maintain the height.
 				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 			}
+		}
+
+		public void UpdateControls(PublicPropertyEditor editor)
+		{
+			editor.GetEditRow((this.ID, nameof(RingSides))).Visible = Advanced;
+			editor.GetEditRow((this.ID, nameof(StartingAngle))).Visible = Advanced;
+			editor.GetEditRow((this.ID, nameof(EndingAngle))).Visible = Advanced;
+			InnerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
 		}
 	}
 }

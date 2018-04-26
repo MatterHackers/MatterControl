@@ -28,11 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Threading;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
-using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -41,6 +40,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public PyramidObject3D()
 		{
+			Color = PrimitiveColors["Pyramid"];
 		}
 
 		public static PyramidObject3D Create()

@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.ComponentModel;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
@@ -72,6 +73,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public TextObject3D()
 		{
+			Color = PrimitiveColors["Text"];
 		}
 
 		public static TextObject3D Create()
