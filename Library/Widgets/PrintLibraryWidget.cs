@@ -104,13 +104,17 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			var toolbar = new OverflowBar(theme)
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
+				VAnchor = VAnchor.Fit,
+				Name = "Folders Toolbar"
 			};
 
+			// Change the overflow button to a sort icon
 			var firstChild = toolbar.OverflowButton.Children<ImageWidget>().FirstOrDefault();
 			firstChild.Image = AggContext.StaticData.LoadIcon("fa-sort_16.png", 32, 32, theme.InvertIcons);
 
 			toolbar.OverflowButton.Name = "Print Library View Options";
+			toolbar.Padding = theme.ToolbarPadding;
+
 			toolbar.ExtendOverflowMenu = (popupMenu) =>
 			{
 				var siblingList = new List<GuiWidget>();
@@ -155,17 +159,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					SiblingRadioButtonList: siblingList);
 			};
 
-			toolbar.Padding = theme.ToolbarPadding;
 			allControls.AddChild(toolbar);
 
 			var showFolders = new ExpandCheckboxButton("Folders".Localize(), theme)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit | VAnchor.Center,
-				Padding = new BorderDouble(left: 2, bottom: 2, top: 6), // Same padding as toolbar above
 				Name = "Show Folders Toggle",
 				Checked = UserSettings.Instance.get(UserSettingsKey.ShowContainers) == "1",
-				MinimumSize = new Vector2(0, theme.ButtonHeight)
 			};
 			showFolders.CheckedStateChanged += async (s, e) =>
 			{
@@ -876,7 +877,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						"Remove Items?".Localize(),
 						StyledMessageBox.MessageType.YES_NO,
 						"Remove".Localize());
-					
+
 				}
 			}
 		}

@@ -77,14 +77,12 @@ namespace MatterHackers.MatterControl
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
-				MinimumSize = new Vector2(16, 16),
 				BackgroundColor = theme.ActiveTabBarBackground,
 				BorderColor = theme.ActiveTabColor,
 				Border = 0 //new BorderDouble(bottom: 2),
 			};
 			toolbar.ActionArea.AddChild(new BrandMenuButton(theme)
 			{
-				MinimumSize = new Vector2(0, 34),
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
 				Border = new BorderDouble(right: 1),

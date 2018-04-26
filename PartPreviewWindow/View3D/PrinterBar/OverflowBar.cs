@@ -55,7 +55,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AlignToRightEdge = true,
 			};
 
-			this.ActionArea.Margin = new BorderDouble(right: this.OverflowButton.Width);
+			// We want to set right margin to overflow button width but width is already scaled - need to inflate value by amount needed to hit width when rescaled in Margin setter
+			this.ActionArea.Margin = new BorderDouble(right: Math.Ceiling(this.OverflowButton.Width / GuiWidget.DeviceScale));
 			this.SetRightAnchorItem(this.OverflowButton);
 		}
 
@@ -72,12 +73,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnBoundsChanged(EventArgs e)
 		{
+			base.OnBoundsChanged(e);
+
 			if (this.RightAnchorItem == null)
 			{
 				return;
 			}
 
 			double maxRight = this.Width - RightAnchorItem.Width;
+			//double maxRight = this.Width - this.Padding.Width - RightAnchorItem.Width - RightAnchorItem.Margin.Width;
 
 			double accumulatedX = 0;
 
@@ -92,14 +96,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Widget is visible when no previous sibling has been rejected and its right edge is less than maxRight
 				widget.Visible = withinLimits; // widget.Position.X + widget.Width < maxRight;
 
-				// Ignore streched widgets
+				// Ignore stretched widgets
 				if (widget.HAnchor != HAnchor.Stretch)
 				{
 					accumulatedX += totalX;
 				}
 			}
-
-			base.OnBoundsChanged(e);
 		}
 
 		/// <summary>
