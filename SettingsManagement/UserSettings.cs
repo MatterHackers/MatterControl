@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
@@ -83,6 +87,8 @@ namespace MatterHackers.MatterControl
 			this.Language = this.get("Language");
 		}
 
+		public event EventHandler Changed;
+
 		public static UserSettings Instance
 		{
 			get
@@ -101,6 +107,21 @@ namespace MatterHackers.MatterControl
 
 				return globalInstance;
 			}
+		}
+
+		public bool HasLookedAtWhatsNew()
+		{
+			// If the last time what's new link was clicked is older than the main application show the button
+			string filePath = Assembly.GetExecutingAssembly().Location;
+			DateTime installTime = new FileInfo(filePath).LastWriteTime;
+			var lastReadWhatsNew = UserSettings.Instance.get(UserSettingsKey.LastReadWhatsNew);
+			DateTime whatsNewReadTime = installTime;
+			if (lastReadWhatsNew != null)
+			{
+				whatsNewReadTime = JsonConvert.DeserializeObject<DateTime>(lastReadWhatsNew);
+			}
+
+			return whatsNewReadTime > installTime;
 		}
 
 		public string Language { get; private set; }
@@ -140,6 +161,8 @@ namespace MatterHackers.MatterControl
 
 			setting.Value = value;
 			setting.Commit();
+
+			Changed?.Invoke(this, null);
 		}
 
 		public double LibraryViewWidth

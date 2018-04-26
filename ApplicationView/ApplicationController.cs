@@ -964,9 +964,11 @@ namespace MatterHackers.MatterControl
 				return true;
 			}
 
-			// TODO: tell the user about new features if applicable
-			if(false && UserSettings.Instance.get(UserSettingsKey.DisplayedTip_LoadFilament) != "1")
+			// Tell the user about new features if applicable
+			if (!UserSettings.Instance.HasLookedAtWhatsNew()
+				&& OemSettings.Instance.ShowShopButton) // this is a hack to make them not mess up the tests
 			{
+				UiThread.RunOnIdle(() => DialogWindow.Show(new DesignSpaceGuid("What's New Tab", "")));
 				return true;
 			}
 
