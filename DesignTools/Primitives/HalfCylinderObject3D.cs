@@ -37,16 +37,17 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class RoundRoofObject3D : Object3D, IRebuildable
+	[HideUpdateButtonAttribute]
+	public class HalfCylinderObject3D : Object3D, IRebuildable
 	{
-		public RoundRoofObject3D()
+		public HalfCylinderObject3D()
 		{
-			Color = PrimitiveColors["RoundRoof"];
+			Color = ApplicationController.Instance.PrimitiveColors["HalfCylinder"];
 		}
 
-		public static RoundRoofObject3D Create()
+		public static HalfCylinderObject3D Create()
 		{
-			var item = new RoundRoofObject3D();
+			var item = new HalfCylinderObject3D();
 
 			item.Rebuild(null);
 			return item;

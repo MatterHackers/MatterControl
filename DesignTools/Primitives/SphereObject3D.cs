@@ -37,11 +37,12 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
+	[HideUpdateButtonAttribute]
 	public class SphereObject3D : Object3D, IRebuildable, IPropertyGridModifier
 	{
 		public SphereObject3D()
 		{
-			Color = PrimitiveColors["Sphere"];
+			Color = ApplicationController.Instance.PrimitiveColors["Sphere"];
 		}
 
 		public SphereObject3D(double diameter, int sides)
@@ -62,10 +63,11 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public double Diameter { get; set; } = 20;
 		public int Sides { get; set; } = 30;
+
 		public bool Advanced { get; set; } = false;
-		public int LatitudeSides { get; set; } = 30;
 		public double StartingAngle { get; set; } = 0;
 		public double EndingAngle { get; set; } = 360;
+		public int LatitudeSides { get; set; } = 30;
 
 		public void Rebuild(UndoBuffer undoBuffer)
 		{

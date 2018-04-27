@@ -37,11 +37,12 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
+	[HideUpdateButtonAttribute]
 	public class HalfSphereObject3D : Object3D, IRebuildable
 	{
 		public HalfSphereObject3D()
 		{
-			Color = PrimitiveColors["HalfSphere"];
+			Color = ApplicationController.Instance.PrimitiveColors["HalfSphere"];
 		}
 
 		public HalfSphereObject3D(double diametar, int sides)

@@ -38,11 +38,12 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
+	[HideUpdateButtonAttribute]
 	public class ConeObject3D : Object3D, IRebuildable
 	{
 		public ConeObject3D()
 		{
-			Color = PrimitiveColors["Cone"];
+			Color = ApplicationController.Instance.PrimitiveColors["Cone"];
 		}
 
 		public static ConeObject3D Create()

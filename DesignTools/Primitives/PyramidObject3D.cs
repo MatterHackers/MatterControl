@@ -36,11 +36,12 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
+	[HideUpdateButtonAttribute]
 	public class PyramidObject3D : Object3D, IRebuildable
 	{
 		public PyramidObject3D()
 		{
-			Color = PrimitiveColors["Pyramid"];
+			Color = ApplicationController.Instance.PrimitiveColors["Pyramid"];
 		}
 
 		public static PyramidObject3D Create()

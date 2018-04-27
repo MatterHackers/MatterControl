@@ -39,11 +39,12 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
+	[HideUpdateButtonAttribute]
 	public class TorusObject3D : Object3D, IRebuildable, IPropertyGridModifier
 	{
 		public TorusObject3D()
 		{
-			Color = PrimitiveColors["Torus"];
+			Color = ApplicationController.Instance.PrimitiveColors["Torus"];
 		}
 
 		public static TorusObject3D Create()
@@ -53,26 +54,28 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
-		public double InnerDiameter { get; set; } = 10;
 		public double OuterDiameter { get; set; } = 20;
+		public double InnerDiameter { get; set; } = 10;
 		public int Sides { get; set; } = 30;
 
 		public bool Advanced { get; set; } = false;
-		[DisplayName("Ring Sides")]
-		public int RingSides { get; set; } = 15;
 		public double StartingAngle { get; set; } = 0;
 		public double EndingAngle { get; set; } = 360;
+		public int RingSides { get; set; } = 15;
+		public int RingPhaseAngle { get; set; } = 0;
 
 		public void Rebuild(UndoBuffer undoBuffer)
 		{
 			var ringSides = RingSides;
 			var startingAngle = StartingAngle;
 			var endingAngle = EndingAngle;
-			if(!Advanced)
+			var ringPhaseAngle = RingPhaseAngle;
+			if (!Advanced)
 			{
 				ringSides = Math.Max(3, (int)(Sides / 2));
 				startingAngle = 0;
 				endingAngle = 360;
+				ringPhaseAngle = 0;
 			}
 
 			var innerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
@@ -83,16 +86,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			var toroidRadius = innerDiameter / 2 + poleRadius;
 			var path = new VertexStorage();
 			var angleDelta = MathHelper.Tau / ringSides;
-			var angle = 0.0;
+			var ringStartAngle = MathHelper.DegreesToRadians(ringPhaseAngle);
+			var ringAngle = ringStartAngle;
 			var circleCenter = new Vector2(toroidRadius, 0);
-			path.MoveTo(circleCenter + new Vector2(poleRadius * Math.Cos(angle), poleRadius * Math.Sin(angle)));
+			path.MoveTo(circleCenter + new Vector2(poleRadius * Math.Cos(ringStartAngle), poleRadius * Math.Sin(ringStartAngle)));
 			for (int i = 0; i < ringSides - 1; i++)
 			{
-				angle += angleDelta;
-				path.LineTo(circleCenter + new Vector2(poleRadius * Math.Cos(angle), poleRadius * Math.Sin(angle)));
+				ringAngle += angleDelta;
+				path.LineTo(circleCenter + new Vector2(poleRadius * Math.Cos(ringAngle), poleRadius * Math.Sin(ringAngle)));
 			}
 
-			path.LineTo(circleCenter + new Vector2(poleRadius * Math.Cos(0), poleRadius * Math.Sin(0)));
+			path.LineTo(circleCenter + new Vector2(poleRadius * Math.Cos(ringStartAngle), poleRadius * Math.Sin(ringStartAngle)));
 
 			var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
 			var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
@@ -107,9 +111,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void UpdateControls(PublicPropertyEditor editor)
 		{
-			editor.GetEditRow((this.ID, nameof(RingSides))).Visible = Advanced;
 			editor.GetEditRow((this.ID, nameof(StartingAngle))).Visible = Advanced;
 			editor.GetEditRow((this.ID, nameof(EndingAngle))).Visible = Advanced;
+			editor.GetEditRow((this.ID, nameof(RingSides))).Visible = Advanced;
+			editor.GetEditRow((this.ID, nameof(RingPhaseAngle))).Visible = Advanced;
 			InnerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
 		}
 	}

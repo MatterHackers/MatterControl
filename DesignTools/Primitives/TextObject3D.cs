@@ -42,6 +42,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public enum NamedTypeFace { Liberation_Sans, Liberation_Sans_Bold, Liberation_Mono, Titillium, Damion };
 
+	[HideUpdateButtonAttribute]
 	public static class NamedTypeFaceCache
 	{
 		public static TypeFace GetTypeFace(NamedTypeFace Name)
@@ -73,7 +74,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public TextObject3D()
 		{
-			Color = PrimitiveColors["Text"];
+			Color = ApplicationController.Instance.PrimitiveColors["Text"];
 		}
 
 		public static TextObject3D Create()

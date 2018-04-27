@@ -37,16 +37,17 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class RoofObject3D : Object3D, IRebuildable
+	[HideUpdateButtonAttribute]
+	public class HalfWedgeObject3D : Object3D, IRebuildable
 	{
-		public RoofObject3D()
+		public HalfWedgeObject3D()
 		{
-			Color = PrimitiveColors["Roof"];
+			Color = ApplicationController.Instance.PrimitiveColors["HalfWedge"];
 		}
 
-		public static RoofObject3D Create()
+		public static HalfWedgeObject3D Create()
 		{
-			var item = new RoofObject3D();
+			var item = new HalfWedgeObject3D();
 
 			item.Rebuild(null);
 			return item;

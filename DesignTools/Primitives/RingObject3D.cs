@@ -39,11 +39,12 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
+	[HideUpdateButtonAttribute]
 	public class RingObject3D : Object3D, IRebuildable, IPropertyGridModifier
 	{
 		public RingObject3D()
 		{
-			Color = PrimitiveColors["Ring"];
+			Color = ApplicationController.Instance.PrimitiveColors["Ring"];
 		}
 
 		public RingObject3D(double outerDiameter, double innerDiameter, double height, int sides)
@@ -68,6 +69,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double InnerDiameter { get; set; } = 15;
 		public double Height { get; set; } = 5;
 		public int Sides { get; set; } = 30;
+
 		public bool Advanced { get; set; } = false;
 		public double StartingAngle { get; set; } = 0;
 		public double EndingAngle { get; set; } = 360;

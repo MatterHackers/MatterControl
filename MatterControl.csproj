@@ -74,6 +74,8 @@
     <Compile Include="AboutPage\CacheDirectory.cs" />
     <Compile Include="AboutPage\CheckForUpdatesPage.cs" />
     <Compile Include="ApplicationView\LogoSpinner.cs" />
+    <Compile Include="DesignTools\Primitives\HalfCylinderObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\HalfWedgeObject3D.cs" />
     <Compile Include="PrinterControls\ControlWidgets\CalibrationControls.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingFunctions.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard3x3Mesh.cs" />
@@ -125,8 +127,6 @@
     <Compile Include="DesignTools\Primitives\BaseObject3D.cs" />
     <Compile Include="DesignTools\Primitives\ImageObject3D.cs" />
     <Compile Include="DesignTools\Primitives\RingObject3D.cs" />
-    <Compile Include="DesignTools\Primitives\RoofObject3D.cs" />
-    <Compile Include="DesignTools\Primitives\RoundRoofObject3D.cs" />
     <Compile Include="DesignTools\Primitives\WedgeObject3D.cs" />
     <Compile Include="DesignTools\Primitives\PyramidObject3D.cs" />
     <Compile Include="DesignTools\Primitives\CylinderObject3D.cs" />
