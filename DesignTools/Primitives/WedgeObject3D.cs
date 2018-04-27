@@ -37,11 +37,12 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
+	[HideUpdateButtonAttribute]
 	public class WedgeObject3D : Object3D, IRebuildable
 	{
 		public WedgeObject3D()
 		{
-			Color = PrimitiveColors["Wedge"];
+			Color = ApplicationController.Instance.PrimitiveColors["Wedge"];
 		}
 
 		public static WedgeObject3D Create()

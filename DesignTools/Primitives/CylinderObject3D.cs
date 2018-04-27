@@ -38,11 +38,12 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
+	[HideUpdateButtonAttribute]
 	public class CylinderObject3D : Object3D, IRebuildable, IPropertyGridModifier
 	{
 		public CylinderObject3D()
 		{
-			Color = PrimitiveColors["Cylinder"];
+			Color = ApplicationController.Instance.PrimitiveColors["Cylinder"];
 		}
 
 		public CylinderObject3D(double diameter, double height, int sides)
@@ -112,10 +113,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double Diameter { get; set; } = 20;
 		public double Height { get; set; } = 20;
 		public int Sides { get; set; } = 30;
+
 		public bool Advanced { get; set; } = false;
-		public double DiameterTop { get; set; } = 20;
 		public double StartingAngle { get; set; } = 0;
 		public double EndingAngle { get; set; } = 360;
+		public double DiameterTop { get; set; } = 20;
 
 		public void Rebuild(UndoBuffer undoBuffer)
 		{

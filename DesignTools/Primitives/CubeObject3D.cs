@@ -34,6 +34,7 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
+	[HideUpdateButtonAttribute]
 	public class CubeObject3D : Object3D, IRebuildable
 	{
 		public CubeObject3D()
@@ -56,7 +57,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var item = new CubeObject3D()
 			{
-				Color = PrimitiveColors["Cube"]
+				Color = ApplicationController.Instance.PrimitiveColors["Cube"]
 			};
 			item.Rebuild(null);
 			return item;
