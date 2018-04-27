@@ -100,9 +100,9 @@ namespace MatterHackers.MatterControl.Library
 		public bool IsProtected { get; set; }
 		public bool IsVisible => true;
 
-		public DateTime DateCreated { get; } = DateTime.Now;
+		public DateTime DateCreated { get; set; } = DateTime.Now;
 
-		public DateTime DateModified { get; } = DateTime.Now;
+		public DateTime DateModified => DateCreated;
 
 		public Color Color { get; set; }
 
