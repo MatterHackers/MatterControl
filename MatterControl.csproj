@@ -227,7 +227,6 @@
     <Compile Include="RootSystemWindow.cs" />
     <Compile Include="SetupWizard\DesignSpaceHelp.cs" />
     <Compile Include="SetupWizard\DialogWindow.cs" />
-    <Compile Include="SetupWizard\HelpSystemManager.cs" />
     <Compile Include="SlicerConfiguration\SettingsOrganizer.cs" />
     <Compile Include="SlicerConfiguration\SettingsRow.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IpAddessField.cs" />

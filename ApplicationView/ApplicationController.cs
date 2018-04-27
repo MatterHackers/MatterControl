@@ -964,22 +964,11 @@ namespace MatterHackers.MatterControl
 				return true;
 			}
 
-			// TODO: Disabled to get tests back to a passing grade. When this feature is re-enabled it will be easier to identify which tests fail due to this change
-			//
-			// tell the user about loading filament if they have not already been told
-			if(false && UserSettings.Instance.get(UserSettingsKey.DisplayedTip_LoadFilament) != "1")
+			// Tell the user about new features if applicable
+			if (!UserSettings.Instance.HasLookedAtWhatsNew()
+				&& OemSettings.Instance.ShowShopButton) // this is a hack to make them not mess up the tests
 			{
-				var widgetName = "Hotend 0";
-
-				string extruder0TipMessage = "Extruder Controls can be found here.".Localize() + "\n"
-					+ "    • " + "Select Material".Localize() + "\n"
-					+ "    • " + "Set Temperature".Localize() + "\n"
-					+ "    • " + "Move Print Head".Localize() + "\n"
-					+ "    • " + "Load and Unload Filament".Localize();
-				HelpSystemManager.Instance.ShowTip(AppContext.RootSystemWindow, widgetName, extruder0TipMessage);
-
-				UserSettings.Instance.set(UserSettingsKey.DisplayedTip_LoadFilament, "1");
-
+				UiThread.RunOnIdle(() => DialogWindow.Show(new DesignSpaceGuid("What's New Tab", "")));
 				return true;
 			}
 

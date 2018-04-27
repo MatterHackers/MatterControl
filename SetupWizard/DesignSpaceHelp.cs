@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl
 		/// <summary>
 		/// The name that is in the navigation list with categories
 		/// </summary>
-		public string Name;
+		public string MenuName;
 		/// <summary>
 		/// The long title that appears under the animation
 		/// </summary>
@@ -276,12 +276,40 @@ namespace MatterHackers.MatterControl
 		{
 			allAvailableGuides.Add(new GuideAssets()
 			{
-				AnimationUri = "https://www.matterhackers.com/r/sjMyWZ",
+				AnimationUri = "https://www.matterhackers.com/r/3QLZVv",
+				Category = "Design Tools",
+				SubCategory = "Priting",
+				MenuName = "Hotend Controls",
+				Title = "Hotend and Extruder Controls",
+				Description = "From the hotend control, you can:\n".Localize()
+					+ "    • " + "Select Material".Localize() + "\n"
+					+ "    • " + "Set Temperature".Localize() + "\n"
+					+ "    • " + "Move Print Head".Localize() + "\n"
+					+ "    • " + "Load and Unload Filament".Localize()
+			});
+
+			allAvailableGuides.Add(new GuideAssets()
+			{
+				AnimationUri = "https://www.matterhackers.com/r/Ifooem",
+				Category = "Design Tools",
+				SubCategory = "Creating",
+				MenuName = "Adding Parts",
+				Title = "Adding Parts to the Bed",
+				Description = "You can drag parts into the 3D view from the library side bar, or directly from the desktop."
+			});
+
+			allAvailableGuides.Add(new GuideAssets()
+			{
+				AnimationUri = "https://www.matterhackers.com/r/AW0bcR",
 				Category = "Design Tools",
 				SubCategory = "Printing",
-				Name = "Supports",
-				Title = "Custom Support Generation",
-				Description = "Any object can be turned into support. Simply select it in the 3D view and click the 'Make Support' button. Support will automatically make interface layers and avoid interescting the printing object."
+				MenuName = "Starting a Print",
+				Title = "Starting a Print",
+				Description = "From the print control, you can:\n".Localize()
+					+ "    • " + "Set Layer Height".Localize() + "\n"
+					+ "    • " + "Set Fill Density".Localize() + "\n"
+					+ "    • " + "Turn on and off Support".Localize() + "\n"
+					+ "    • " + "Start Your Print".Localize()
 			});
 
 			allAvailableGuides.Add(new GuideAssets()
@@ -289,7 +317,7 @@ namespace MatterHackers.MatterControl
 				AnimationUri = "https://www.matterhackers.com/r/1oH3i1",
 				Category = "Design Tools",
 				SubCategory = "Arangement",
-				Name = "Rotate Controls",
+				MenuName = "Rotate Controls",
 				Title = "Rotating Objects in the 3D view",
 				Description = "Click on any of the rotate corner contrors to rotate on the plane of that control. Moving the mouse over one of the arrow indicators locks the rotation to a 45° angle."
 			});
@@ -299,9 +327,19 @@ namespace MatterHackers.MatterControl
 				AnimationUri = "https://www.matterhackers.com/r/yNqiNT",
 				Category = "Design Tools",
 				SubCategory = "Arangement",
-				Name = "Scale Controls",
+				MenuName = "Scale Controls",
 				Title = "Scaling Objects in the 3D view",
 				Description = "Click on any of the scale corner contrors to scale your part on the bed."
+			});
+
+			allAvailableGuides.Add(new GuideAssets()
+			{
+				AnimationUri = "https://www.matterhackers.com/r/sjMyWZ",
+				Category = "Design Tools",
+				SubCategory = "Printing",
+				MenuName = "Supports",
+				Title = "Custom Support Generation",
+				Description = "Any object can be turned into support. Simply select it in the 3D view and click the 'Make Support' button. Support will automatically make interface layers and avoid interescting the printing object."
 			});
 
 			whatsNewGuides = allAvailableGuides;
@@ -354,7 +392,7 @@ namespace MatterHackers.MatterControl
 			PopupMenu.MenuItem firstItem = null;
 			foreach(var guide in guideList)
 			{
-				var menuItem = popupMenu.CreateMenuItem(guide.Name);
+				var menuItem = popupMenu.CreateMenuItem(guide.MenuName);
 				firstItem = (firstItem == null) ? menuItem : firstItem;
 				maxMenuItemWidth = Math.Max(maxMenuItemWidth, menuItem.Width);
 				menuItem.Click += (s, e) =>

@@ -111,17 +111,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// make the function inline so we don't have to create members for the buttons
 			EventHandler SetLinkButtonsVisability = (s, e) =>
 			{
-				// If the last time what's new link was clicked is older than the main application show the button
-				string filePath = Assembly.GetExecutingAssembly().Location;
-				DateTime installTime = new FileInfo(filePath).LastWriteTime;
-				var lastReadWhatsNew = UserSettings.Instance.get(UserSettingsKey.LastReadWhatsNew);
-				DateTime whatsNewReadTime = installTime;
-				if (lastReadWhatsNew != null)
-				{
-					whatsNewReadTime = JsonConvert.DeserializeObject<DateTime>(lastReadWhatsNew);
-				}
-
-				if (whatsNewReadTime > installTime)
+				if(UserSettings.Instance.HasLookedAtWhatsNew())
 				{
 					// hide it
 					seeWhatsNewButton.Visible = false;
@@ -138,6 +128,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					updateAvailableButton.Visible = false;
 				}
 			};
+
+			UserSettings.Instance.Changed += SetLinkButtonsVisability;
+			Closed += (s, e) => UserSettings.Instance.Changed -= SetLinkButtonsVisability;
 
 			updateAvailableButton.Name = "Update Available Link";
 			SetLinkButtonsVisability(this, null);
