@@ -297,6 +297,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			// If mouseDown on us and we've moved past are drag determination threshold, notify view3DWidget
 			if (mouseDownInBounds && delta.Length > 40
+				&& view3DWidget != null
 				&& !(listViewItem.Model is MissingFileItem))
 			{
 				hitDragThreshold = true;
@@ -312,16 +313,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			this.OnItemSelect();
 
-			var dropData = ApplicationController.Instance.DragDropData;
-			if (dropData.View3DWidget?.DragOperationActive == true)
+			if (view3DWidget?.DragOperationActive == true)
 			{
 				// Mouse and widget positions
 				var screenSpaceMousePosition = this.TransformToScreenSpace(mouseEvent.Position);
-				var meshViewerPosition = this.view3DWidget.meshViewerWidget.TransformToScreenSpace(view3DWidget.meshViewerWidget.LocalBounds);
+				var meshViewerPosition = view3DWidget.meshViewerWidget.TransformToScreenSpace(view3DWidget.meshViewerWidget.LocalBounds);
 
 				// Notify of drag operation complete
 				view3DWidget.FinishDrop(mouseUpInBounds: meshViewerPosition.Contains(screenSpaceMousePosition));
 			}
+
+			view3DWidget = null;
 
 			mouseDownInBounds = false;
 			base.OnMouseUp(mouseEvent);
