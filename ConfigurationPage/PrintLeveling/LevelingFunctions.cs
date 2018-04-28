@@ -142,7 +142,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		Dictionary<(int, int), int> positonToRegion = new Dictionary<(int, int), int>();
 
-		int hits = 0;
 		private LevelingTriangle GetCorrectRegion(Vector3 currentDestination)
 		{
 			int xIndex = (int)Math.Round(currentDestination.X * 100 / bedSize.X);
@@ -166,12 +165,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				}
 
 				positonToRegion.Add((xIndex, yIndex), bestIndex);
-				hits = 0;
-			}
-			else
-			{
-				hits++;
-				int a = 0;
 			}
 
 			return Regions[bestIndex];
