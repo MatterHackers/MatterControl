@@ -51,6 +51,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 	}
 
+	[HideUpdateButtonAttribute]
 	public class SelectedObjectPanel : FlowLayoutWidget, IContentStore
 	{
 		private IObject3D item = new Object3D();
