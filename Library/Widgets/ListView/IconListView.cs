@@ -47,8 +47,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private int cellIndex = 0;
 		private int columnCount = 1;
-		private int leftRightMargin;
 		private int iconViewPadding = IconViewItem.ItemPadding;
+		private double leftRightMargin;
 		private int reflownWidth = -1;
 		private ThemeConfig theme;
 
@@ -130,9 +130,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			double spacePerColumn = (remainingSpace > 0) ? remainingSpace / (newColumnCount + 1) : 0;
 
 			// set the margin to be 1/2 the space (it will happen on each side of each icon)
-			leftRightMargin = (int)(remainingSpace > 0 ? spacePerColumn / 2 : 0);
 
 			// put in padding to get the "other" side of the outside icons
+			double leftRightMarginRaw = (remainingSpace > 0 ? spacePerColumn / 2 : 0);
+
+			// Inflate to account for scaling
+			leftRightMargin = Math.Ceiling(leftRightMarginRaw / GuiWidget.DeviceScale);
+
 			this.Padding = new BorderDouble(leftRightMargin, 0);
 
 			return newColumnCount;
