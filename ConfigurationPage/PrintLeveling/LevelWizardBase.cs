@@ -239,17 +239,24 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		protected PrintLevelWizardControl printLevelWizard;
 		private static SystemWindow printLevelWizardWindow;
 		protected PrinterConfig printer;
+		private ThemeConfig theme;
 
 		public LevelWizardBase(PrinterConfig printer, ThemeConfig theme)
 			: base(500, 370)
 		{
 			AlwaysOnTopOfMain = true;
-			this.printer = printer;
 
 			this.Title = string.Format("{0} - {1}", ApplicationController.Instance.ProductName, "Print Leveling Wizard".Localize());
 
+			this.theme = theme;
+			this.printer = printer;
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
 			printLevelWizard = new PrintLevelWizardControl(printer, this, theme);
 			AddChild(printLevelWizard);
+			base.OnLoad(args);
 		}
 
 		public abstract int ProbeCount { get; }
@@ -316,11 +323,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					break;
 
 				case LevelingSystem.Probe3x3Mesh:
-					printLevelWizardWindow = new LevelWizard3x3Mesh(printer, theme);
+					printLevelWizardWindow = new LevelWizardMesh(printer, 3, 3, theme);
 					break;
 
 				case LevelingSystem.Probe5x5Mesh:
-					printLevelWizardWindow = new LevelWizard5x5Mesh(printer, theme);
+					printLevelWizardWindow = new LevelWizardMesh(printer, 5, 5, theme);
+					break;
+
+				case LevelingSystem.Probe10x10Mesh:
+					printLevelWizardWindow = new LevelWizardMesh(printer, 10, 10, theme);
 					break;
 
 				default:
