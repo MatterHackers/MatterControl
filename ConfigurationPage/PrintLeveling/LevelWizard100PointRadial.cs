@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,14 +35,14 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class LevelWizard7PointRadial : LevelWizardBase
+	public class LevelWizard100PointRadial : LevelWizardBase
 	{
-		public LevelWizard7PointRadial(PrinterConfig printer, ThemeConfig theme)
+		public LevelWizard100PointRadial(PrinterConfig printer, ThemeConfig theme)
 			: base(printer, theme)
 		{
 		}
 
-		public override int ProbeCount => 7;
+		public override int ProbeCount => 100;
 
 		public override IEnumerable<Vector2> GetPrintLevelPositionToSample()
 		{
@@ -52,10 +52,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				yield return sample;
 			}
 
-			// around the outside
-			foreach (var sample in GetSampleRing(6, .9, 0))
+			int[] ringCounts = { 3, 6, 12, 26, 52 };
+			double[] ringPhase = { 0, MathHelper.Tau * 2 / 3, MathHelper.Tau / 2, 26, 52 };
+			double step = .9 / 5;
+			// and several rings
+			for (int i = 0; i < 5; i++)
 			{
-				yield return sample;
+				foreach (var sample in GetSampleRing(ringCounts[i], step + step * i, ringPhase[i]))
+				{
+					yield return sample;
+				}
 			}
 		}
 	}

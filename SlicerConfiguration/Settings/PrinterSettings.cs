@@ -776,6 +776,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						return (T)(object)(LevelingSystem.Probe7PointRadial);
 					case "13 Point Disk":
 						return (T)(object)(LevelingSystem.Probe13PointRadial);
+					case "100 Point Disk":
+						return (T)(object)(LevelingSystem.Probe100PointRadial);
 					case "3x3 Mesh":
 						return (T)(object)(LevelingSystem.Probe3x3Mesh);
 					case "5x5 Mesh":

@@ -10,7 +10,7 @@ using System.Linq;
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	[JsonConverter(typeof(StringEnumConverter))]
-	public enum LevelingSystem { Probe3Points, Probe7PointRadial, Probe13PointRadial, Probe3x3Mesh, Probe5x5Mesh, Probe10x10Mesh }
+	public enum LevelingSystem { Probe3Points, Probe7PointRadial, Probe13PointRadial, Probe100PointRadial, Probe3x3Mesh, Probe5x5Mesh, Probe10x10Mesh }
 
 	public class PrintLevelingData
 	{
@@ -100,6 +100,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				case LevelingSystem.Probe13PointRadial:
 					if (levelingData.SampledPositions.Count != 13) // different criteria for what is not initialized
+					{
+						return true;
+					}
+					break;
+
+				case LevelingSystem.Probe100PointRadial:
+					if (levelingData.SampledPositions.Count != 100) // different criteria for what is not initialized
 					{
 						return true;
 					}

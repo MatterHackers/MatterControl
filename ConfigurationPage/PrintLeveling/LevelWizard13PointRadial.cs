@@ -46,31 +46,22 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override IEnumerable<Vector2> GetPrintLevelPositionToSample()
 		{
-			double bedRadius = Math.Min(printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).X, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
-			Vector2 bedCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
-
 			// the center
-			yield return bedCenter;
+			foreach (var sample in GetSampleRing(1, 0, 0))
+			{
+				yield return sample;
+			}
 
 			// around an inner circle
-			int numberOfInnerSamples = 4;
-			for (int i = 0; i < numberOfInnerSamples; i++)
+			foreach (var sample in GetSampleRing(4, .45, 0))
 			{
-				Vector2 position = new Vector2(bedRadius * .45, 0);
-				position.Rotate(MathHelper.Tau / numberOfInnerSamples * i);
-				position += bedCenter;
-				yield return position;
+				yield return sample;
 			}
 
 			// around the outside
-			int numberOfOuterSamples = 8;
-			for (int i = 0; i < numberOfOuterSamples; i++)
+			foreach (var sample in GetSampleRing(8, .9, MathHelper.Tau * 3 / 4))
 			{
-				Vector2 position = new Vector2(bedRadius * .9, 0);
-				// the -MathHelper.Tau / 4 is to start out just under the last inner point
-				position.Rotate(MathHelper.Tau / numberOfOuterSamples * i - MathHelper.Tau / 4);
-				position += bedCenter;
-				yield return position;
+				yield return sample;
 			}
 		}
 	}
