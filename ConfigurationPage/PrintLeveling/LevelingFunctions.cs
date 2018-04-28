@@ -27,35 +27,36 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using MatterControl.Printing;
-using MatterHackers.Agg;
 using MatterHackers.Agg.VertexSource;
-using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using MIConvexHull;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class LevelingFunctions : IDisposable
+	public class LevelingFunctions
 	{
+		private Vector2 bedSize;
 		private Vector3 lastDestinationWithLevelingApplied = new Vector3();
 
-		PrinterSettings printerSettings;
+		private PrinterSettings printerSettings;
 
 		public LevelingFunctions(PrinterSettings printerSettings, PrintLevelingData levelingData)
 		{
 			this.printerSettings = printerSettings;
 			this.SampledPositions = new List<Vector3>(levelingData.SampledPositions);
 
+			bedSize = printerSettings.GetValue<Vector2>(SettingsKey.bed_size);
+
 			// get the delaunay triangulation
 			var zDictionary = new Dictionary<(double, double), double>();
 			var vertices = new List<DefaultVertex>();
-			foreach(var sample in SampledPositions)
+			foreach (var sample in SampledPositions)
 			{
 				vertices.Add(new DefaultVertex()
 				{
@@ -97,11 +98,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		// you can only set this on construction
 		public List<Vector3> SampledPositions { get; private set; }
 
-		public List<LevelingTriangle> Regions { get; private set; } = new List<LevelingTriangle>();
-
-		public void Dispose()
-		{
-		}
+		private List<LevelingTriangle> Regions { get; set; } = new List<LevelingTriangle>();
 
 		public string DoApplyLeveling(string lineBeingSent, Vector3 currentDestination)
 		{
@@ -143,63 +140,38 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return region.GetPositionWithZOffset(currentDestination);
 		}
 
-		public Vector2 GetPrintLevelPositionToSample(int index, int gridWidth, int gridHeight)
-		{
-			Vector2 bedSize = printerSettings.GetValue<Vector2>(SettingsKey.bed_size);
-			Vector2 printCenter = printerSettings.GetValue<Vector2>(SettingsKey.print_center);
+		Dictionary<(int, int), int> positonToRegion = new Dictionary<(int, int), int>();
 
-			switch (printerSettings.GetValue<BedShape>(SettingsKey.bed_shape))
-			{
-				case BedShape.Circular:
-					Vector2 firstPosition = new Vector2(printCenter.X, printCenter.Y + (bedSize.Y / 2) * .5);
-					switch (index)
-					{
-						case 0:
-							return firstPosition;
-
-						case 1:
-							return Vector2.Rotate(firstPosition, MathHelper.Tau / 3);
-
-						case 2:
-							return Vector2.Rotate(firstPosition, MathHelper.Tau * 2 / 3);
-
-						default:
-							throw new IndexOutOfRangeException();
-					}
-
-				case BedShape.Rectangular:
-				default:
-					switch (index)
-					{
-						case 0:
-							return new Vector2(printCenter.X, printCenter.Y + (bedSize.Y / 2) * .8);
-
-						case 1:
-							return new Vector2(printCenter.X - (bedSize.X / 2) * .8, printCenter.Y - (bedSize.Y / 2) * .8);
-
-						case 2:
-							return new Vector2(printCenter.X + (bedSize.X / 2) * .8, printCenter.Y - (bedSize.Y / 2) * .8);
-
-						default:
-							throw new IndexOutOfRangeException();
-					}
-			}
-		}
-
+		int hits = 0;
 		private LevelingTriangle GetCorrectRegion(Vector3 currentDestination)
 		{
-			int bestIndex = 0;
-			double bestDist = double.PositiveInfinity;
+			int xIndex = (int)Math.Round(currentDestination.X * 100 / bedSize.X);
+			int yIndex = (int)Math.Round(currentDestination.Y * 100 / bedSize.Y);
 
-			currentDestination.Z = 0;
-			for (int regionIndex = 0; regionIndex < Regions.Count; regionIndex++)
+			int bestIndex;
+			if (!positonToRegion.TryGetValue((xIndex, yIndex), out bestIndex))
 			{
-				var dist = (Regions[regionIndex].Center - currentDestination).LengthSquared;
-				if(dist < bestDist)
+				// else calculate the region and store it
+				double bestDist = double.PositiveInfinity;
+
+				currentDestination.Z = 0;
+				for (int regionIndex = 0; regionIndex < Regions.Count; regionIndex++)
 				{
-					bestIndex = regionIndex;
-					bestDist = dist;
+					var dist = (Regions[regionIndex].Center - currentDestination).LengthSquared;
+					if (dist < bestDist)
+					{
+						bestIndex = regionIndex;
+						bestDist = dist;
+					}
 				}
+
+				positonToRegion.Add((xIndex, yIndex), bestIndex);
+				hits = 0;
+			}
+			else
+			{
+				hits++;
+				int a = 0;
 			}
 
 			return Regions[bestIndex];
@@ -207,14 +179,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public class LevelingTriangle
 		{
-			VertexStorage triangle = new VertexStorage();
-
-			public Vector3 V0 { get; private set; }
-			public Vector3 V1 { get; private set; }
-			public Vector3 V2 { get; private set; }
-
-			public Vector3 Center { get; private set; }
-			public Plane plane { get; private set; }
+			private VertexStorage triangle = new VertexStorage();
 
 			public LevelingTriangle(Vector3 v0, Vector3 v1, Vector3 v2)
 			{
@@ -224,6 +189,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				Center = (V0 + V1 + V2) / 3;
 				plane = new Plane(V0, V1, V2);
 			}
+
+			public Vector3 Center { get; private set; }
+			public Plane plane { get; private set; }
+			public Vector3 V0 { get; private set; }
+			public Vector3 V1 { get; private set; }
+			public Vector3 V2 { get; private set; }
 
 			public Vector3 GetPositionWithZOffset(Vector3 currentDestination)
 			{

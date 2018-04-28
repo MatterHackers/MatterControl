@@ -122,11 +122,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					|| currentProbeOffset != printerSettings.GetValue<double>(SettingsKey.z_probe_z_offset)
 					|| !levelingData.SamplesAreSame(currentLevelingFunctions.SampledPositions))
 				{
-					if (currentLevelingFunctions != null)
-					{
-						currentLevelingFunctions.Dispose();
-					}
-
 					currentProbeOffset = printerSettings.GetValue<double>(SettingsKey.z_probe_z_offset);
 					currentLevelingFunctions = new LevelingFunctions(printerSettings, levelingData);
 				}
