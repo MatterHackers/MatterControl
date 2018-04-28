@@ -36,31 +36,28 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class LevelWizard3x3Mesh : LevelWizardBase
+	public class LevelWizardMesh : LevelWizardBase
 	{
-		public LevelWizard3x3Mesh(PrinterConfig printer, ThemeConfig theme)
+		int gridWidth;
+		int gridHeight;
+
+		private LevelWizardMesh()
+			: base(null, null)
+		{
+
+		}
+
+		public LevelWizardMesh(PrinterConfig printer,
+			int width, int height, ThemeConfig theme)
 			: base(printer, theme)
 		{
+			this.gridWidth = width;
+			this.gridHeight = height;
 		}
 
-		public override int ProbeCount => 9;
+		public override int ProbeCount => gridWidth * gridHeight;
 
 		public override IEnumerable<Vector2> GetPrintLevelPositionToSample()
-		{
-			yield return GetPosition(0, 0);
-			yield return GetPosition(1, 0);
-			yield return GetPosition(2, 0);
-
-			yield return GetPosition(2, 1);
-			yield return GetPosition(1, 1);
-			yield return GetPosition(0, 1);
-
-			yield return GetPosition(0, 2);
-			yield return GetPosition(1, 2);
-			yield return GetPosition(2, 2);
-		}
-
-		private Vector2 GetPosition(int xIndex, int yIndex)
 		{
 			Vector2 bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
 			Vector2 printCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
@@ -71,44 +68,27 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				bedSize *= 1.0 / Math.Sqrt(2);
 			}
 
-			Vector2 samplePosition = new Vector2();
-			switch (xIndex)
+			double halfXSize = (bedSize.X / 2) * .8;
+			double xStep = (halfXSize * 2) / (gridWidth - 1);
+			double halfYSize = (bedSize.Y / 2) * .8;
+			double yStep = (halfYSize * 2) / (gridHeight - 1);
+			for (int y = 0; y < gridHeight; y++)
 			{
-				case 0:
-					samplePosition.X = printCenter.X - (bedSize.X / 2) * .8;
-					break;
+				// make it such that every other line is printed from right to left
+				for (int x = 0; x < gridWidth; x++)
+				{
+					int dirX = x;
+					if ((y % 2) == 1)
+					{
+						dirX = (gridWidth - 1) - x;
+					}
+					Vector2 samplePosition = new Vector2();
+					samplePosition.X = printCenter.X - halfXSize + (dirX * xStep);
+					samplePosition.Y = printCenter.Y - halfYSize + (y * yStep);
 
-				case 1:
-					samplePosition.X = printCenter.X;
-					break;
-
-				case 2:
-					samplePosition.X = printCenter.X + (bedSize.X / 2) * .8;
-					break;
-
-				default:
-					throw new IndexOutOfRangeException();
+					yield return samplePosition;
+				}
 			}
-
-			switch (yIndex)
-			{
-				case 0:
-					samplePosition.Y = printCenter.Y - (bedSize.Y / 2) * .8;
-					break;
-
-				case 1:
-					samplePosition.Y = printCenter.Y;
-					break;
-
-				case 2:
-					samplePosition.Y = printCenter.Y + (bedSize.Y / 2) * .8;
-					break;
-
-				default:
-					throw new IndexOutOfRangeException();
-			}
-
-			return samplePosition;
 		}
 	}
 }

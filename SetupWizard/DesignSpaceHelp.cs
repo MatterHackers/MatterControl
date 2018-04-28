@@ -400,6 +400,7 @@ namespace MatterHackers.MatterControl
 					title.Text = guide.Title;
 					description.Text = guide.Description;
 					imageSequenceWidget.ImageSequence = AggContext.StaticData.LoadSequence(Path.Combine("Icons", "provider_loading.gif"));
+					
 					ApplicationController.Instance.DownloadToImageSequenceAsync(imageSequenceWidget.ImageSequence, guide.AnimationUri);
 				};
 			}
