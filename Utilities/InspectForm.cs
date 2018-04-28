@@ -448,7 +448,8 @@ namespace MatterHackers.MatterControl
 				widget.DebugShowBounds = false;
 			}
 
-			if (scene.DebugItem != null
+			if (scene != null
+				&& scene.DebugItem != null
 				&& tabControl1.SelectedIndex != 1)
 			{
 				scene.DebugItem = null;

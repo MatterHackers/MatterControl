@@ -302,7 +302,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			public MenuItem(GuiWidget content, ThemeConfig theme)
 				: base (theme)
 			{
-				this.Padding = new BorderDouble(left: theme.MenuGutterWidth, right: 15);
+				// Inflate padding to match the target (MenuGutterWidth) after scale operation in assignment
+				this.Padding = new BorderDouble(left: Math.Ceiling(theme.MenuGutterWidth / GuiWidget.DeviceScale) , right: 15);
 				this.BackgroundColor = theme.Colors.PrimaryBackgroundColor;
 				this.HAnchor = HAnchor.MaxFitOrStretch;
 				this.VAnchor = VAnchor.Fit;
