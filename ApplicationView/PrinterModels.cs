@@ -126,10 +126,10 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		internal static ILibraryItem NewPlatingItem()
+		internal static ILibraryItem NewPlatingItem(HistoryContainerBase historyContainer)
 		{
 			string now = "Workspace " + DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
-			string mcxPath = Path.Combine(ApplicationDataStorage.Instance.PlatingDirectory, now + ".mcx");
+			string mcxPath = Path.Combine(historyContainer.FullPath, now + ".mcx");
 
 			File.WriteAllText(mcxPath, new Object3D().ToJson());
 
@@ -142,11 +142,13 @@ namespace MatterHackers.MatterControl
 			this.LoadedGCode = null;
 			this.GCodeRenderer = null;
 
+			var historyContainer = this.EditContext.ContentStore as HistoryContainerBase;
+
 			// Load
 			await this.LoadContent(new EditContext()
 			{
-				ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-				SourceItem = BedConfig.NewPlatingItem()
+				ContentStore = historyContainer,
+				SourceItem = BedConfig.NewPlatingItem(historyContainer)
 			});
 		}
 
@@ -203,7 +205,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			// Otherwise generate a new plating item
-			return NewPlatingItem();
+			return NewPlatingItem(ApplicationController.Instance.Library.PlatingHistory);
 		}
 
 		private GCodeFile loadedGCode;
