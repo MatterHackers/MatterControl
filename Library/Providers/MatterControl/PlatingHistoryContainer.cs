@@ -32,20 +32,33 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class PlatingHistoryContainer : LibraryContainer, ILibraryWritableContainer
+	public class PlatingHistoryContainer : HistoryContainerBase
 	{
 		public PlatingHistoryContainer()
 		{
+			this.Name = "Plating History".Localize();
+			this.FullPath = ApplicationDataStorage.Instance.PlatingDirectory;
+		}
+	}
+
+	public class HistoryContainerBase : LibraryContainer, ILibraryWritableContainer
+	{
+		public HistoryContainerBase()
+		{
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
-			this.Name = "Plating History".Localize();
 		}
+
+		public string FullPath { get; protected set; }
+
+		public int PageSize { get; set; } = 25;
 
 		public event EventHandler<ItemChangedEventArgs> ItemContentChanged;
 
@@ -74,8 +87,8 @@ namespace MatterHackers.MatterControl.Library
 		public override void Load()
 		{
 			// Select the 25 most recent files and project onto FileSystemItems
-			var recentFiles = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
-			Items = recentFiles.Take(25).Select(f => new SceneReplacementFileItem(f.FullName)).ToList<ILibraryItem>();
+			var recentFiles = new DirectoryInfo(this.FullPath).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
+			Items = recentFiles.Take(this.PageSize).Select(f => new SceneReplacementFileItem(f.FullName)).ToList<ILibraryItem>();
 		}
 
 		public void Move(IEnumerable<ILibraryItem> items, ILibraryWritableContainer targetContainer)
