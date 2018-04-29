@@ -276,8 +276,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		public PartsBar(PartPreviewContent partPreviewContent, ThemeConfig theme)
 			: base("Parts".Localize(), theme)
 		{
-			// ** Mock recent parts **
-			var recentParts = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory).GetFiles("*.mcx").OrderBy(f => f.LastWriteTime);
+			var recentParts = new DirectoryInfo(ApplicationDataStorage.Instance.PartHistoryDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
 
 			var listView = new ListView(ApplicationController.Instance.Library, theme);
 
@@ -293,7 +292,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				UiThread.RunOnIdle(() =>
 				{
 					BedConfig bed;
-					//simpleTabs.RemoveTab(simpleTabs.ActiveTab);
 					partPreviewContent.CreatePartTab(
 						"New Part",
 						bed = new BedConfig(),
@@ -302,13 +300,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					bed.LoadContent(
 						new EditContext()
 						{
-							ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-							SourceItem = BedConfig.NewPlatingItem()
+							ContentStore = ApplicationController.Instance.Library.PartHistory,
+							SourceItem = BedConfig.NewPlatingItem(ApplicationController.Instance.Library.PartHistory)
 						}).ConfigureAwait(false);
 				});
 			};
 			toolbar.AddChild(emptyPlateButton);
-
 
 			foreach (var item in recentParts.Take(10).Select(f => new SceneReplacementFileItem(f.FullName)).ToList<ILibraryItem>())
 			{

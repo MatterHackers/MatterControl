@@ -72,6 +72,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		private static string _applicationLibraryDataPath => Path.Combine(_applicationUserDataPath, "Library");
 		private static string _libraryAssetPath => Path.Combine(_applicationLibraryDataPath, "Assets");
 		private static string _platingDirectory => Path.Combine(_applicationLibraryDataPath, "Plating");
+		private static string _partHistoryDirectory => Path.Combine(_applicationLibraryDataPath, "PartHistory");
 		private static string _applicationTempDataPath => Path.Combine(_applicationUserDataPath, "data", "temp");
 		private static string _gcodeOutputPath => Path.Combine(_applicationTempDataPath, "gcode");
 
@@ -84,6 +85,8 @@ namespace MatterHackers.MatterControl.DataStorage
 		public string ApplicationTempDataPath => EnsurePath(_applicationTempDataPath);
 
 		public string PlatingDirectory => EnsurePath(_platingDirectory);
+
+		public string PartHistoryDirectory => EnsurePath(_partHistoryDirectory);
 
 		public string GCodeOutputPath => EnsurePath(_gcodeOutputPath);
 

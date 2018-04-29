@@ -78,6 +78,8 @@
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardMesh.cs" />
     <Compile Include="DesignTools\Primitives\HalfCylinderObject3D.cs" />
     <Compile Include="DesignTools\Primitives\HalfWedgeObject3D.cs" />
+    <Compile Include="Library\Providers\MatterControl\PartHistoryContainer.cs" />
+    <Compile Include="Library\Providers\MatterControl\RootHistoryContainer.cs" />
     <Compile Include="PrinterControls\ControlWidgets\CalibrationControls.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingFunctions.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\ProbeCalibrationWizard.cs" />

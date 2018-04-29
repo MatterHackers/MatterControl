@@ -126,6 +126,8 @@ namespace MatterHackers.MatterControl.Library
 
 		public PlatingHistoryContainer PlatingHistory { get; internal set; }
 
+		public PartHistoryContainer PartHistory { get; internal set; }
+
 		public IContentProvider GetContentProvider(ILibraryItem item)
 		{
 			string contentType = (item as ILibraryAssetStream)?.ContentType ?? (item as ILibraryObject3D)?.ContentType;

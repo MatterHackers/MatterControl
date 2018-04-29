@@ -696,15 +696,6 @@ namespace MatterHackers.MatterControl
 						() => new SqliteLibraryContainer(rootLibraryCollection.Id)));
 			}
 
-			this.Library.RegisterContainer(
-				new DynamicContainerLink(
-					() => "Print History".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder.png")),
-					() => new PrintHistoryContainer())
-				{
-					IsReadOnly = true
-				});
-
 			if (File.Exists(ApplicationDataStorage.Instance.CustomLibraryFoldersPath))
 			{
 				// Add each path defined in the CustomLibraryFolders file as a new FileSystemContainerItem
@@ -737,11 +728,13 @@ namespace MatterHackers.MatterControl
 
 			this.Library.PlatingHistory = new PlatingHistoryContainer();
 
+			this.Library.PartHistory = new PartHistoryContainer();
+
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
-					() => "Plating History".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder.png")),
-					() => this.Library.PlatingHistory));
+					() => "History".Localize(),
+					AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "history_folder.png")),
+					() => new RootHistoryContainer()));
 		}
 
 		public ApplicationController()
@@ -2172,7 +2165,7 @@ namespace MatterHackers.MatterControl
 				var offsetDist = 50;
 				var arrowKeyOpperation = keyEvent.Shift ? TrackBallTransformType.Translation : TrackBallTransformType.Rotation;
 
-				if (!keyEvent.Handled 
+				if (!keyEvent.Handled
 					&& view3D != null)
 				{
 					switch (keyEvent.KeyCode)
@@ -2288,7 +2281,7 @@ namespace MatterHackers.MatterControl
 							break;
 
 						case Keys.Left:
-							// move or rotate view left 
+							// move or rotate view left
 							Offset3DView(view3D, new Vector2(-offsetDist, 0), arrowKeyOpperation);
 							keyEvent.Handled = true;
 							keyEvent.SuppressKeyPress = true;
@@ -2414,7 +2407,7 @@ namespace MatterHackers.MatterControl
 		private static void Offset3DView(View3DWidget view3D, Vector2 offset, TrackBallTransformType opperation)
 		{
 			var center = view3D.TrackballTumbleWidget.LocalBounds.Center;
-			
+
 			view3D.TrackballTumbleWidget.TrackBallController.OnMouseDown(center, Matrix4X4.Identity, opperation);
 			view3D.TrackballTumbleWidget.TrackBallController.OnMouseMove(center + offset);
 			view3D.TrackballTumbleWidget.TrackBallController.OnMouseUp();
