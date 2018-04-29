@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -49,9 +50,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Name = "FolderBreadCrumbWidget";
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
+			this.MinimumSize = new VectorMath.Vector2(0, 1); // Force some minimum bounds to ensure draw and thus onload (and our local init) are called on startup
 			this.Padding = new BorderDouble(left: 2);
-
-			UiThread.RunOnIdle(() => SetContainer(listView.ActiveContainer));
 		}
 
 		public static IEnumerable<ILibraryContainer> ItemAndParents(ILibraryContainer item)
@@ -144,6 +144,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					}
 				}
 			}
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			this.SetContainer(listView.ActiveContainer);
+			base.OnLoad(args);
 		}
 
 		private void CreateSeparator(ThemeConfig theme)
