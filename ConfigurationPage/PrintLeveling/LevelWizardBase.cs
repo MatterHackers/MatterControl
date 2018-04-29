@@ -295,6 +295,20 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
+		public IEnumerable<Vector2> GetSampleRing(int numberOfSamples, double ratio, double phase)
+		{
+			double bedRadius = Math.Min(printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).X, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
+			Vector2 bedCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
+
+			for (int i = 0; i < numberOfSamples; i++)
+			{
+				Vector2 position = new Vector2(bedRadius * ratio, 0);
+				position.Rotate(MathHelper.Tau / numberOfSamples * i + phase);
+				position += bedCenter;
+				yield return position;
+			}
+		}
+
 		public abstract IEnumerable<Vector2> GetPrintLevelPositionToSample();
 
 		private static LevelWizardBase CreateAndShowWizard(PrinterConfig printer, ThemeConfig theme)
@@ -320,6 +334,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				case LevelingSystem.Probe13PointRadial:
 					printLevelWizardWindow = new LevelWizard13PointRadial(printer, theme);
+					break;
+
+				case LevelingSystem.Probe100PointRadial:
+					printLevelWizardWindow = new LevelWizard100PointRadial(printer, theme);
 					break;
 
 				case LevelingSystem.Probe3x3Mesh:

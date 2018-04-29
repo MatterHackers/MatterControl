@@ -709,7 +709,7 @@
     "PresentationName": "Leveling Solution",
     "HelpText": "The print leveling algorithm to use.",
     "DataEditType": "LIST",
-    "ListValues": "3 Point Plane,7 Point Disk,13 Point Disk,3x3 Mesh,5x5 Mesh,10x10 Mesh",
+    "ListValues": "3 Point Plane,3x3 Mesh,5x5 Mesh,10x10 Mesh,7 Point Disk,13 Point Disk,100 Point Disk",
     "ShowAsOverride": true,
     "ShowIfSet": "!has_hardware_leveling",
     "DefaultValue": "3 Point Plane",
