@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -35,6 +36,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
@@ -49,9 +51,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Name = "FolderBreadCrumbWidget";
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
+			this.MinimumSize = new VectorMath.Vector2(0, 1); // Force some minimum bounds to ensure draw and thus onload (and our local init) are called on startup
 			this.Padding = new BorderDouble(left: 2);
-
-			UiThread.RunOnIdle(() => SetContainer(listView.ActiveContainer));
 		}
 
 		public static IEnumerable<ILibraryContainer> ItemAndParents(ILibraryContainer item)
@@ -71,11 +72,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			this.CloseAllChildren();
 
-			var upbutton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "up_folder_20.png"), theme.InvertIcons));
-			upbutton.VAnchor = VAnchor.Fit | VAnchor.Center;
-			upbutton.Enabled = currentContainer.Parent != null;
-			upbutton.Name = "Library Up Button";
-			upbutton.Margin = new BorderDouble(right: 2);
+			var upbutton = new IconButton(AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "up_folder_20.png"), theme.InvertIcons), theme)
+			{
+				VAnchor = VAnchor.Fit | VAnchor.Center,
+				Enabled = currentContainer.Parent != null,
+				Name = "Library Up Button",
+				Margin = theme.ButtonSpacing,
+				MinimumSize = new Vector2(theme.ButtonHeight, theme.ButtonHeight)
+			};
 			upbutton.Click += (s, e) =>
 			{
 				if (listView.ActiveContainer.Parent != null)
@@ -92,7 +96,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Button containerButton = linkButtonFactory.Generate(listView.ActiveContainer.Name == null ? "?" : listView.ActiveContainer.Name);
 				containerButton.Name = "Bread Crumb Button " + listView.ActiveContainer.Name;
 				containerButton.VAnchor = VAnchor.Center;
-				containerButton.Margin = new BorderDouble(right:  5);
+				containerButton.Margin = theme.ButtonSpacing;
 
 				this.AddChild(containerButton);
 			}
@@ -102,15 +106,22 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					if (!firstItem)
 					{
-						// Add separator
-						this.CreateSeparator(theme);
+
+						var extraSpacing = theme.ButtonSpacing * 2;
+
+						// Add path separator
+						this.AddChild(new TextWidget("/", pointSize: theme.FontSize11, textColor: ActiveTheme.Instance.PrimaryTextColor)
+						{
+							VAnchor = VAnchor.Center,
+							Margin = extraSpacing.Clone(right: theme.ButtonSpacing.Left)
+						});
 					}
 
 					// Create a button for each container
 					Button containerButton =  linkButtonFactory.Generate(container.Name);
 					containerButton.Name = "Bread Crumb Button " + container.Name;
 					containerButton.VAnchor = VAnchor.Center;
-					containerButton.Margin = new BorderDouble(right:  5);
+					containerButton.Margin = theme.ButtonSpacing;
 					containerButton.Click += (s, e) =>
 					{
 						UiThread.RunOnIdle(() => listView.SetActiveContainer(container));
@@ -146,13 +157,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		private void CreateSeparator(ThemeConfig theme)
+		public override void OnLoad(EventArgs args)
 		{
-			this.AddChild(new TextWidget("/", pointSize: theme.FontSize11, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				VAnchor = VAnchor.Center,
-				Margin = new BorderDouble(right: 5)
-			});
+			this.SetContainer(listView.ActiveContainer);
+			base.OnLoad(args);
 		}
 	}
 }
