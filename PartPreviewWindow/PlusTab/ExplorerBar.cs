@@ -222,7 +222,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 					printer.ViewState.ViewMode = PartViewMode.Model;
 
-					await printer.Bed.ClearPlate();
+					// Load empty plate
+					await printer.Bed.LoadContent(
+						new EditContext()
+						{
+							ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+							SourceItem = BedConfig.NewPlatingItem(ApplicationController.Instance.Library.PlatingHistory)
+						});
 
 					string printerName = printer.Settings.GetValue(SettingsKey.printer_name);
 
