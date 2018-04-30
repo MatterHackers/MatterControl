@@ -5,10 +5,10 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
+	[TestFixture, Category("Agg.UI.Automation"), Apartment(ApartmentState.STA), RunInApplicationDomain]
 	public class ExportGcodeFromExportWindow
 	{
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task ExportAsGcode()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>

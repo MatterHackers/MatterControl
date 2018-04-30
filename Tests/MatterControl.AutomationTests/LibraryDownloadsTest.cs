@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), Apartment(ApartmentState.STA), RunInApplicationDomain]
 	public class LibraryDownloadsTests
 	{
 		[SetUp]
@@ -22,7 +22,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			MatterControlUtilities.DeleteDownloadsSubFolder();
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task DownloadsAddButtonAddsMultipleFiles()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task DownloadsAddButtonAddsAMFFiles()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task DownloadsAddButtonAddsZipFiles()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task RenameDownloadsPrintItem()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task CreateFolder()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>

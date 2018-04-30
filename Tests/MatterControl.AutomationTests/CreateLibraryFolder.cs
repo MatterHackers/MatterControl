@@ -37,7 +37,7 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), Apartment(ApartmentState.STA), RunInApplicationDomain]
 	public class CreateLibraryFolder
 	{
 		[Test, Apartment(ApartmentState.STA)]
