@@ -39,27 +39,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Ignore("Product code still needs to be implemented"), Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class LibraryActionTests
 	{
-		[Test, Ignore("Not Finished")]
-		public async Task ClickOnBuyButton()
-		{
-			await MatterControlUtilities.RunTest(testRunner =>
-			{
-				testRunner.CloseSignInAndPrinterSelect();
-
-				//Make sure image does not exist before we click the buy button
-				testRunner.MatchLimit = 500000;
-				bool imageExists = testRunner.ImageExists("MatterHackersStoreImage.png");
-				Assert.IsTrue(imageExists == false, "Web page is not open");
-
-				//Click Buy button and test that the MatterHackers store web page is open
-				testRunner.ClickByName("Buy Materials Button");
-				bool imageExists2 = testRunner.ImageExists("MatterHackersStoreImage.png", 10);
-				Assert.IsTrue(imageExists2 == true, "Web page is open");
-
-				return Task.CompletedTask;
-			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
-		}
-
 		[Test]
 		public async Task ClickOnExportButton()
 		{
@@ -161,65 +140,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				return Task.CompletedTask;
 			});
-		}
-
-		/// <summary>
-		/// Tests that Queue Copy button increases the queue count by one and that a new queue item appears with the expected name
-		/// </summary>
-		/// <returns></returns>
-		[Test]
-		public async Task CopyButtonMakesACopyOfPartInTheQueue()
-		{
-			await MatterControlUtilities.RunTest(testRunner =>
-			{
-				int expectedQueueCount = QueueData.Instance.ItemCount + 1;
-
-				testRunner.CloseSignInAndPrinterSelect();
-
-				testRunner.ClickByName("Row Item Batman.stl");
-				testRunner.Delay(.2);
-
-				testRunner.ClickByName("Queue Copy Button");
-				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedQueueCount);
-
-				Assert.AreEqual(expectedQueueCount, QueueData.Instance.ItemCount, "Copy button increases queue count by one");
-				Assert.IsTrue(testRunner.WaitForName("Row Item Batman - copy"), "Copied Batman item exists with expected name");
-				testRunner.Delay(.3);
-
-				return Task.CompletedTask;
-			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
-		}
-
-		[Test]
-		public async Task SendMenuClickedWithoutCloudPlugins()
-		{
-			await MatterControlUtilities.RunTest(testRunner =>
-			{
-				SystemWindow parentWindow;
-
-				testRunner.CloseSignInAndPrinterSelect();
-
-				Assert.IsTrue(QueueData.Instance.ItemCount > 0, "Queue is not empty at test startup");
-
-				testRunner.ClickByName("More...  Menu");
-				testRunner.Delay(.2);
-
-				testRunner.ClickByName("Send Menu Item");
-				testRunner.Delay(.2);
-
-				// WaitFor Ok button and ensure parent window has expected title and named button
-				testRunner.WaitForName("Ok Button");
-				var widget = testRunner.GetWidgetByName("Ok Button", out parentWindow);
-				Assert.IsTrue(widget != null
-					&& parentWindow.Title == "MatterControl - Alert", "Send Disabled warning appears when no plugins exists to satisfy behavior");
-
-				testRunner.Delay(.2);
-
-				// Close dialog before exiting
-				testRunner.ClickByName("Ok Button");
-
-				return Task.CompletedTask;
-			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
 		[Test, Ignore("Not Finished")]

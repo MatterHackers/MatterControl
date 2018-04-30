@@ -947,9 +947,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// </summary>
 		public double TimeToMoveMouse { get; set; } = .5;
 
-		public bool UseAutomationDialogs { get; set; }
+		/// <summary>
+		/// Determins if we use actual sytem file dialogs or simulated file dialogs.
+		/// </summary>
+		public bool UseAutomationDialogs { get; set; } = true;
 
-		public bool UseAutomationMouse { get; set; }
+		public bool UseAutomationMouse { get; set; } = true;
 
 		public double MouseUpDelay { get; set; } = 0.2;
 
