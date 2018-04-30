@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			int[] ringCounts = { 3, 6, 12, 26, 52 };
-			double[] ringPhase = { 0, MathHelper.Tau * 2 / 3, MathHelper.Tau / 2, MathHelper.Tau * 3 / 4, MathHelper.Tau * 3 / 4 };
+			double[] ringPhase = { 0, MathHelper.Tau * 2 / 3, MathHelper.Tau / 2, MathHelper.Tau / 2, MathHelper.Tau / 2 };
 			double step = .9 / 5;
 			// and several rings
 			for (int i = 0; i < 5; i++)
