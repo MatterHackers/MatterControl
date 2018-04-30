@@ -15,7 +15,7 @@ using MatterHackers.MatterControl;
 
 namespace MatterControl.Tests
 {
-	[TestFixture]
+	[TestFixture, Apartment(ApartmentState.STA), RunInApplicationDomain]
 	public class ReleaseBuildTests
 	{
 		private static Type debuggableAttribute = typeof(DebuggableAttribute);
@@ -94,7 +94,7 @@ namespace MatterControl.Tests
 		}
 
 #if !__ANDROID__
-		[Test, Apartment(ApartmentState.STA), RunInApplicationDomain]
+		[Test]
 		public async Task MatterControlRuns()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

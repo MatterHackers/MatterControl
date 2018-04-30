@@ -76,6 +76,7 @@
     <Compile Include="ApplicationView\LogoSpinner.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard100PointRadial.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardMesh.cs" />
+    <Compile Include="DesignTools\Attributes\ShowSearchFieldAttribute.cs" />
     <Compile Include="DesignTools\Primitives\HalfCylinderObject3D.cs" />
     <Compile Include="DesignTools\Primitives\HalfWedgeObject3D.cs" />
     <Compile Include="Library\Providers\MatterControl\PartHistoryContainer.cs" />

@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static void Cut(this InteractiveScene scene, IObject3D sourceItem = null)
 		{
-			Clipboard.SetText("!--IObjectSelection--!");
+			Clipboard.Instance.SetText("!--IObjectSelection--!");
 			ApplicationController.ClipboardItem = scene.SelectedItem.Clone();
 
 			scene.DeleteSelection();
@@ -124,15 +124,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static void Copy(this InteractiveScene scene, IObject3D sourceItem = null)
 		{
-			Clipboard.SetText("!--IObjectSelection--!");
+			Clipboard.Instance.SetText("!--IObjectSelection--!");
 			ApplicationController.ClipboardItem = scene.SelectedItem.Clone();
 		}
 
 		public static void Paste(this InteractiveScene scene)
 		{
-			if (Clipboard.GetText() == "!--IObjectSelection--!")
+			if (Clipboard.Instance.ContainsText)
 			{
-				scene.DuplicateItem(ApplicationController.ClipboardItem);
+				if (Clipboard.Instance.GetText() == "!--IObjectSelection--!")
+				{
+					scene.DuplicateItem(ApplicationController.ClipboardItem);
+				}
 			}
 		}
 

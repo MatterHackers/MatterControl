@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,42 +28,14 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
-using MatterHackers.Agg.UI;
-using MatterHackers.Agg.UI.Tests;
-using MatterHackers.GuiAutomation;
-using NUnit.Framework;
 
-namespace MatterHackers.MatterControl.Tests.Automation
+namespace MatterHackers.MatterControl.DesignTools
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), Apartment(ApartmentState.STA), RunInApplicationDomain]
-	public class CreateLibraryFolder
+	[AttributeUsage(AttributeTargets.Property)]
+	public class ShowSearchFieldAttribute : Attribute
 	{
-		[Test, Apartment(ApartmentState.STA)]
-		public async Task CreateFolderStartsWithTextFieldFocusedAndEditable()
+		public ShowSearchFieldAttribute()
 		{
-			await MatterControlUtilities.RunTest((testRunner) =>
-			{
-				testRunner.CloseSignInAndPrinterSelect();
-
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-				testRunner.InvokeLibraryCreateFolderDialog();
-
-				testRunner.Delay(.5);
-				testRunner.Type("Test Text");
-				testRunner.Delay(.5);
-
-				var textWidgetMH = testRunner.GetWidgetByName("InputBoxPage TextEditWidget", out _) as MHTextEditWidget;
-
-				Assert.IsTrue(textWidgetMH != null, "Found Text Widget");
-				Assert.IsTrue(textWidgetMH.Text == "Test Text", "Had the right text");
-
-				testRunner.ClickByName("Cancel Wizard Button");
-				testRunner.Delay(.5);
-
-				return Task.CompletedTask;
-			});
 		}
 	}
 }

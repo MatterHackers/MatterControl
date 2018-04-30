@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl
 			this.Maximized = ApplicationSettings.Instance.get(ApplicationSettingsKey.MainWindowMaximized) == "true";
 
 #if IS_WINDOWS_FORMS
-			if (!Clipboard.IsInitialized)
+			if (Clipboard.Instance == null)
 			{
 				Clipboard.SetSystemClipboard(new WindowsFormsClipboard());
 			}
