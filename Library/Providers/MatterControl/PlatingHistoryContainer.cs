@@ -86,8 +86,11 @@ namespace MatterHackers.MatterControl.Library
 		public override void Load()
 		{
 			// Select the 25 most recent files and project onto FileSystemItems
-			var recentFiles = new DirectoryInfo(this.FullPath).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
-			Items = recentFiles.Take(this.PageSize).Select(f => new SceneReplacementFileItem(f.FullName)).ToList<ILibraryItem>();
+			if (Directory.Exists(this.FullPath))
+			{
+				var recentFiles = new DirectoryInfo(this.FullPath).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
+				Items = recentFiles.Take(this.PageSize).Select(f => new SceneReplacementFileItem(f.FullName)).ToList<ILibraryItem>();
+			}
 		}
 
 		public void Move(IEnumerable<ILibraryItem> items, ILibraryWritableContainer targetContainer)
