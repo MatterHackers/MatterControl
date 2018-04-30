@@ -216,18 +216,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					BackgroundColor = theme.MinimalShade,
 					Name = "Open Empty Plate Button"
 				};
-				emptyPlateButton.Click += async (s, e) =>
+				emptyPlateButton.Click += (s, e) =>
 				{
-					var printer = await ProfileManager.Instance.LoadPrinter();
+					UiThread.RunOnIdle(async () =>
+					{
+						var printer = await ProfileManager.Instance.LoadPrinter();
 
-					printer.ViewState.ViewMode = PartViewMode.Model;
+						printer.ViewState.ViewMode = PartViewMode.Model;
 
-					await printer.Bed.ClearPlate();
+						partPreviewContent.CreatePrinterTab(printer, theme, printer.Settings.GetValue(SettingsKey.printer_name));
 
-					string printerName = printer.Settings.GetValue(SettingsKey.printer_name);
-
-					partPreviewContent.CreatePrinterTab(printer, theme, printerName);
+						// Load empty plate
+						await printer.Bed.LoadContent(
+							new EditContext()
+							{
+								ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+								SourceItem = BedConfig.NewPlatingItem(ApplicationController.Instance.Library.PlatingHistory)
+							});
+					});
 				};
+
 				toolbar.AddChild(emptyPlateButton);
 
 				foreach (var item in recentFiles.Take(10).Select(f => new SceneReplacementFileItem(f.FullName)).ToList<ILibraryItem>())
@@ -287,9 +295,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				BackgroundColor = theme.MinimalShade,
 				Name = "Create Part Button"
 			};
-			emptyPlateButton.Click += async (s, e) =>
+			emptyPlateButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle(() =>
+				UiThread.RunOnIdle(async () =>
 				{
 					BedConfig bed;
 					partPreviewContent.CreatePartTab(
@@ -297,12 +305,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 						bed = new BedConfig(),
 						theme);
 
-					bed.LoadContent(
+					await bed.LoadContent(
 						new EditContext()
 						{
 							ContentStore = ApplicationController.Instance.Library.PartHistory,
 							SourceItem = BedConfig.NewPlatingItem(ApplicationController.Instance.Library.PartHistory)
-						}).ConfigureAwait(false);
+						});
 				});
 			};
 			toolbar.AddChild(emptyPlateButton);
