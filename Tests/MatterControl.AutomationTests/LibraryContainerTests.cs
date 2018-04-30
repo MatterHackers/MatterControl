@@ -225,6 +225,21 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Ignore("Not implemented")]
+		public async Task PartHistoryContainerTest()
+		{
+		}
+
+		[Test, Ignore("Not implemented")]
+		public async Task RootHistoryContainerTest()
+		{
+		}
+
+		[Test, Ignore("Not implemented")]
+		public async Task HistoryContainerBaseTest()
+		{
+		}
+
+		[Test, Ignore("Not implemented")]
 		public async Task McxContainerTest()
 		{
 		}
