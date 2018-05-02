@@ -636,7 +636,7 @@ namespace MatterHackers.MeshVisualizer
 				var transformed1 = Vector3.Transform(faceCenter, renderData.Matrix);
 				var normal = Vector3.TransformNormal(face.Normal, renderData.Matrix).GetNormal();
 
-				GLHelper.Render3DLineNoPrep(World, frustum, transformed1, transformed1 + normal, Color.Red, 2);
+				World.Render3DLineNoPrep(frustum, transformed1, transformed1 + normal, Color.Red, 2);
 			}
 		}
 
@@ -675,7 +675,7 @@ namespace MatterHackers.MeshVisualizer
 							var transformed1 = Vector3.Transform(meshEdge.VertexOnEnd[0].Position, renderData.WorldMatrix());
 							var transformed2 = Vector3.Transform(meshEdge.VertexOnEnd[1].Position, renderData.WorldMatrix());
 
-							GLHelper.Render3DLineNoPrep(World, frustum, transformed1, transformed2, selectionColor, selectionHighlightWidth);
+							World.Render3DLineNoPrep(frustum, transformed1, transformed2, selectionColor, selectionHighlightWidth);
 						}
 					}
 				}

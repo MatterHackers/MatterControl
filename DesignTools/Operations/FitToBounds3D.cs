@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					var bounds = new AxisAlignedBoundingBox(minXyz, maxXyz);
 					//var leftW = Vector3.Transform(, worldMatrix);
 					var right = Vector3.Transform(center + new Vector3(Width / 2, 0, 0), worldMatrix);
-					// GLHelper.Render3DLine(layer.World, left, right, Agg.Color.Red);
+					// layer.World.Render3DLine(left, right, Agg.Color.Red);
 					layer.World.RenderAabb(bounds, worldMatrix, Agg.Color.Red, 1, 1);
 				}
 				else
@@ -233,9 +233,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					GLHelper.ExtendLineEnds(ref sideTop, ref sideBottom, extendLineLength);
 				}
 
-				GLHelper.Render3DLineNoPrep(world, frustum, sideTop, sideBottom, color, lineWidth);
-				GLHelper.Render3DLineNoPrep(world, frustum, topStart, topEnd, color, lineWidth);
-				GLHelper.Render3DLineNoPrep(world, frustum, bottomStart, bottomEnd, color, lineWidth);
+				world.Render3DLineNoPrep(frustum, sideTop, sideBottom, color, lineWidth);
+				world.Render3DLineNoPrep(frustum, topStart, topEnd, color, lineWidth);
+				world.Render3DLineNoPrep(frustum, bottomStart, bottomEnd, color, lineWidth);
 			}
 		}
 
