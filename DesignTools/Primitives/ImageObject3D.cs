@@ -86,6 +86,14 @@ namespace MatterHackers.MatterControl.DesignTools
 
 						base.Mesh = this.InitMesh() ?? PlatonicSolids.CreateCube(100, 100, 0.2);
 					}
+					else // bad load
+					{
+						_image = new ImageBuffer(200, 200);
+						var graphics2D = _image.NewGraphics2D();
+						graphics2D.Clear(Color.White);
+						graphics2D.DrawString("Bad Load", 100, 100);
+
+					}
 				}
 
 				return _image;
