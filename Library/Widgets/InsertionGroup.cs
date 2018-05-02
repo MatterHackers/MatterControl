@@ -60,6 +60,11 @@ namespace MatterHackers.MatterControl.Library
 		// TODO: Figure out how best to collapse the InsertionGroup after the load task completes
 		public InsertionGroup(IEnumerable<ILibraryItem> items, View3DWidget view3DWidget, InteractiveScene scene, Vector2 bedCenter, Func<bool> dragOperationActive, bool trackSourceFiles = false)
 		{
+			if(items == null)
+			{
+				return;
+			}
+
 			// Add a temporary placeholder to give us some bounds
 			this.scene = scene;
 			this.view3DWidget = view3DWidget;
@@ -67,7 +72,8 @@ namespace MatterHackers.MatterControl.Library
 			this.LoadingItemsTask = Task.Run((Func<Task>)(async () =>
 			{
 				var newItemOffset = Vector2.Zero;
-				if (!dragOperationActive())
+				if (dragOperationActive != null
+					&& !dragOperationActive())
 				{
 					newItemOffset = bedCenter;
 				}
@@ -149,7 +155,8 @@ namespace MatterHackers.MatterControl.Library
 
 				ContentLoaded?.Invoke(this, null);
 
-				if (!dragOperationActive())
+				if (dragOperationActive != null
+					&& !dragOperationActive())
 				{
 					this.Collapse();
 				}

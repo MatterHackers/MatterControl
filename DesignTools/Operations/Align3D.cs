@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[DisplayName("Offset Z")]
 		public double ZOffset { get; set; } = 0;
 
-		public override bool CanMakePermanent => true;
+		public override bool CanApply => true;
 
 		public override bool CanRemove => true;
 
@@ -404,7 +404,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			});
 		}
 
-		public override void Remove()
+		public override void Remove(UndoBuffer undoBuffer)
 		{
 			// put everything back to where it was before the arrange started
 			if (OriginalChildrenBounds.Count == Children.Count)
@@ -418,7 +418,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 
-			base.Remove();
+			base.Remove(undoBuffer);
 		}
 
 		public void UpdateControls(PPEContext context)

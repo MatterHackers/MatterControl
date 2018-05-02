@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
 using System.ComponentModel;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
@@ -34,6 +35,7 @@ using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
@@ -97,6 +99,22 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Sortable]
 		[JsonConverter(typeof(StringEnumConverter))]
 		public NamedTypeFace Font { get; set; } = new NamedTypeFace();
+
+		public override bool CanRemove => false;
+
+		public override void Apply(UndoBuffer undoBuffer)
+		{
+			// change this from a text object to a group
+			var newContainer = new Object3D()
+			{
+				Matrix = this.Matrix
+			};
+			foreach (var child in this.Children)
+			{
+				newContainer.Children.Add(child.Clone());
+			}
+			undoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { this }, new List<IObject3D> { newContainer }));
+		}
 
 		public void Rebuild(UndoBuffer undoBuffer)
 		{
