@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[JsonConverter(typeof(StringEnumConverter))]
 		public NamedTypeFace Font { get; set; } = new NamedTypeFace();
 
-		public override bool CanRemove => false;
+		public override bool CanApply => true;
 
 		public override void Apply(UndoBuffer undoBuffer)
 		{
