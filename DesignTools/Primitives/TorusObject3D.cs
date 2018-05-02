@@ -34,6 +34,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
@@ -44,6 +45,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public TorusObject3D()
 		{
+			Name = "Torus".Localize();
 			Color = ApplicationController.Instance.PrimitiveColors["Torus"];
 		}
 
@@ -109,12 +111,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public void UpdateControls(PublicPropertyEditor editor)
+		public void UpdateControls(PPEContext context)
 		{
-			editor.GetEditRow((this.ID, nameof(StartingAngle))).Visible = Advanced;
-			editor.GetEditRow((this.ID, nameof(EndingAngle))).Visible = Advanced;
-			editor.GetEditRow((this.ID, nameof(RingSides))).Visible = Advanced;
-			editor.GetEditRow((this.ID, nameof(RingPhaseAngle))).Visible = Advanced;
+			context.GetEditRow(nameof(StartingAngle)).Visible = Advanced;
+			context.GetEditRow(nameof(EndingAngle)).Visible = Advanced;
+			context.GetEditRow(nameof(RingSides)).Visible = Advanced;
+			context.GetEditRow(nameof(RingPhaseAngle)).Visible = Advanced;
 			InnerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
 		}
 	}

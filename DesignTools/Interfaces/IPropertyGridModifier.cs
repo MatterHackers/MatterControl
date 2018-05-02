@@ -27,11 +27,33 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
+	public class PPEContext
+	{
+		public IObject3D item { get; set; }
+		public View3DWidget view3DWidget { get; set; }
+		public Dictionary<string, GuiWidget> editRows { get; private set; } = new Dictionary<string, GuiWidget>();
+
+		public GuiWidget GetEditRow(string propertyName)
+		{
+			GuiWidget value;
+			if (editRows.TryGetValue(propertyName, out value))
+			{
+				return value;
+			}
+
+			return null;
+		}
+	}
+
 	public interface IPropertyGridModifier
 	{
-		void UpdateControls(PublicPropertyEditor editor);
+		void UpdateControls(PPEContext editor);
 	}
 }

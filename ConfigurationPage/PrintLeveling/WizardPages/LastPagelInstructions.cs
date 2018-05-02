@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			levelingData.LevelingSystem = printer.Settings.GetValue<LevelingSystem>(SettingsKey.print_leveling_solution);
-			levelingData.CreationData = DateTime.Now;
+			levelingData.CreationDate = DateTime.Now;
 			// record the temp the bed was when we measured it (or 0 if no heated bed)
 			levelingData.BedTemperature = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?
 				printer.Settings.GetValue<double>(SettingsKey.bed_temperature)

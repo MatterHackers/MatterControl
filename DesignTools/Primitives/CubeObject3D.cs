@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -39,9 +40,12 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public CubeObject3D()
 		{
+			Name = "Cylinder".Localize();
+			Color = ApplicationController.Instance.PrimitiveColors["Cube"];
 		}
 
 		public CubeObject3D(double width, double depth, double height)
+			: this()
 		{
 			Width = width;
 			Depth = depth;
@@ -55,10 +59,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public static CubeObject3D Create()
 		{
-			var item = new CubeObject3D()
-			{
-				Color = ApplicationController.Instance.PrimitiveColors["Cube"]
-			};
+			var item = new CubeObject3D();
 			item.Rebuild(null);
 			return item;
 		}

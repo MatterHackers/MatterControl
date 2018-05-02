@@ -28,8 +28,9 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Drawing;
+using System.ComponentModel;
 using System.Linq;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -40,15 +41,22 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
+	public enum FitType { Box, Cylinder }
+
 	public enum MaintainRatio { None, X_Y, X_Y_Z }
 
-	public class FitToBounds3D : Object3D, IRebuildable, IEditorDraw
+	[HideUpdateButtonAttribute]
+	public class FitToBounds3D : Object3D, IRebuildable, IEditorDraw, IPropertyGridModifier
 	{
+		public FitType FitType { get; set; } = FitType.Box;
+
 		public double Width { get; set; }
+		public double Diameter { get; set ; }
 		public double Depth { get; set; }
 		public double Height { get; set; }
 
 		public MaintainRatio MaintainRatio { get; set; } = MaintainRatio.X_Y;
+		[Description("Allows you turn turn on and off applying the fit to the x axis.")]
 		public bool StretchX { get; set; } = true;
 		public bool StretchY { get; set; } = true;
 		public bool StretchZ { get; set; } = true;
@@ -110,6 +118,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			fitToBounds.Depth = aabb.YSize;
 			fitToBounds.Height = aabb.ZSize;
 
+			fitToBounds.Diameter = aabb.XSize;
+
 			var scaleItem = new Object3D();
 			fitToBounds.Children.Add(scaleItem);
 			scaleItem.Children.Add(itemToFit);
@@ -164,27 +174,80 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					scale.Z = minXyz;
 					break;
 			}
+
 			ScaleItem.Matrix = Object3DExtensions.ApplyAtPosition(ScaleItem.Matrix, Matrix4X4.CreateScale(scale), aabb.Center);
 		}
 
 		public void DrawEditor(object sender, DrawEventArgs e)
 		{
 			if (sender is InteractionLayer layer
-				&& layer.Scene.SelectedItem == this)
+				&& layer.Scene.SelectedItem != null
+				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
 			{
-				var aabb = ItemToScale.GetAxisAlignedBoundingBox();
-				var center = aabb.Center;
-				var worldMatrix = this.WorldMatrix();
-				var minXyz = center - new Vector3(Width / 2, Depth / 2, Height / 2);
-				var maxXyz = center + new Vector3(Width / 2, Depth / 2, Height / 2);
-				var bounds = new AxisAlignedBoundingBox(minXyz, maxXyz);
-				//var leftW = Vector3.Transform(, worldMatrix);
-				var right = Vector3.Transform(center + new Vector3(Width / 2, 0, 0), worldMatrix);
-				// GLHelper.Render3DLine(layer.World, left, right, Agg.Color.Red);
-				layer.World.RenderAabb(bounds, worldMatrix, Agg.Color.Red, 1);
+				if (FitType == FitType.Box)
+				{
+					var aabb = ItemToScale.GetAxisAlignedBoundingBox();
+					var center = aabb.Center;
+					var worldMatrix = this.WorldMatrix();
+
+					var minXyz = center - new Vector3(Width / 2, Depth / 2, Height / 2);
+					var maxXyz = center + new Vector3(Width / 2, Depth / 2, Height / 2);
+					var bounds = new AxisAlignedBoundingBox(minXyz, maxXyz);
+					//var leftW = Vector3.Transform(, worldMatrix);
+					var right = Vector3.Transform(center + new Vector3(Width / 2, 0, 0), worldMatrix);
+					// GLHelper.Render3DLine(layer.World, left, right, Agg.Color.Red);
+					layer.World.RenderAabb(bounds, worldMatrix, Agg.Color.Red, 1, 1);
+				}
+				else
+				{
+					RenderCylinderOutline(layer.World, Color.Red, 1, 1);
+				}
 				// turn the lighting back on
 				GL.Enable(EnableCap.Lighting);
 			}
+		}
+
+		public void RenderCylinderOutline(WorldView world, Color color, double lineWidth, double extendLineLength)
+		{
+			var aabb = ItemToScale.GetAxisAlignedBoundingBox();
+			var center = aabb.Center;
+			center.Z = 0;
+			var worldMatrix = this.WorldMatrix();
+
+			GLHelper.PrepareFor3DLineRender(true);
+			Frustum frustum = world.GetClippingFrustum();
+			int sides = 30;
+			for (int i=0; i<sides; i++)
+			{
+				var rotatedPoint = new Vector3(Math.Cos(MathHelper.Tau * i / sides), Math.Sin(MathHelper.Tau * i / sides), 0) * Diameter / 2;
+				var sideTop = Vector3.Transform(center + rotatedPoint + new Vector3(0, 0, aabb.minXYZ.Z + Height), worldMatrix);
+				var sideBottom = Vector3.Transform(center + rotatedPoint + new Vector3(0, 0, aabb.minXYZ.Z), worldMatrix);
+				var rotated2Point = new Vector3(Math.Cos(MathHelper.Tau * (i + 1) / sides), Math.Sin(MathHelper.Tau * (i + 1) / sides), 0) * Diameter / 2;
+				var topStart = sideTop;
+				var topEnd = Vector3.Transform(center + rotated2Point + new Vector3(0, 0, aabb.minXYZ.Z + Height), worldMatrix);
+				var bottomStart = sideBottom;
+				var bottomEnd = Vector3.Transform(center + rotated2Point + new Vector3(0, 0, aabb.minXYZ.Z), worldMatrix);
+
+				if (extendLineLength > 0)
+				{
+					GLHelper.ExtendLineEnds(ref sideTop, ref sideBottom, extendLineLength);
+				}
+
+				GLHelper.Render3DLineNoPrep(world, frustum, sideTop, sideBottom, color, lineWidth);
+				GLHelper.Render3DLineNoPrep(world, frustum, topStart, topEnd, color, lineWidth);
+				GLHelper.Render3DLineNoPrep(world, frustum, bottomStart, bottomEnd, color, lineWidth);
+			}
+		}
+
+		public void UpdateControls(PPEContext context)
+		{
+			context.GetEditRow(nameof(Diameter)).Visible = FitType != FitType.Box;
+
+			context.GetEditRow(nameof(Width)).Visible = FitType == FitType.Box;
+			context.GetEditRow(nameof(Depth)).Visible = FitType == FitType.Box;
+			context.GetEditRow(nameof(MaintainRatio)).Visible = FitType == FitType.Box;
+			context.GetEditRow(nameof(StretchX)).Visible = FitType == FitType.Box;
+			context.GetEditRow(nameof(StretchY)).Visible = FitType == FitType.Box;
 		}
 	}
 }

@@ -595,22 +595,6 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
 				{
-					TitleResolver = () => "Package".Localize(),
-					Action = (scene) =>
-					{
-						var selectedItem = scene.SelectedItem;
-						scene.SelectedItem = null;
-						var package = Package3D.Create(selectedItem.Clone());
-						package.MakeNameNonColliding();
-
-						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, new List<IObject3D> { package }));
-
-						scene.SelectedItem = package;
-					},
-					IsEnabled = (scene) => scene.HasSelection,
-				},
-				new SceneSelectionOperation()
-				{
 					TitleResolver = () => "Bend".Localize(),
 					Action = (scene) => new BendObject3D(scene.SelectedItem),
 					IsEnabled = (scene) => scene.HasSelection,

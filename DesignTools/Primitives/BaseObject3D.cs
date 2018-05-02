@@ -225,9 +225,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			return solution;
 		}
 
-		public void UpdateControls(PublicPropertyEditor editor)
+		public void UpdateControls(PPEContext context)
 		{
-			//editor.GetEditRow((this.ID, nameof(InfillAmount))).Visible = CurrentBaseType == BaseTypes.Outline;
+			//context.GetEditRow((this.ID, nameof(InfillAmount))).Visible = CurrentBaseType == BaseTypes.Outline;
 		}
 	}
 }

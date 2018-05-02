@@ -42,15 +42,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-	public class IObject3DComponentAttribute: Attribute
-	{
-	}
-
-	public interface IObject3DComponent
-	{
-	}
-
 	[HideUpdateButtonAttribute]
 	public class SelectedObjectPanel : FlowLayoutWidget, IContentStore
 	{
@@ -253,8 +244,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public GuiWidget ContentPanel { get; set; }
 
-		private static Type componentAttribute = typeof(IObject3DComponentAttribute);
-		private static Type componentType = typeof(IObject3DComponent);
 		private static Type iobject3DType = typeof(IObject3D);
 
 		public void SetActiveItem(IObject3D selectedItem)
@@ -279,55 +268,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var activeEditors = new List<(IObject3DEditor, IObject3D, string)>();
 
-			// If item is IObject3DComponent
-			if (componentType.IsAssignableFrom(selectedItemType))
+			foreach (var child in selectedItem.DescendantsAndSelf())
 			{
-				// Get all public, instance properties where property type is IObject3D
-				var members = from item in selectedItemType.GetProperties(PublicPropertyEditor.OwnedPropertiesOnly)
-								let propertyType = item.PropertyType
-								where iobject3DType.IsAssignableFrom(propertyType)
-								select new
-								{
-									Type = propertyType,
-									Value = item.GetValue(selectedItem, null) as IObject3D,
-									DisplayName = EditableProperty.GetDisplayName(item)
-								};
-
-				// Shown known editors for any matching properties
-				foreach (var member in members)
+				if (ApplicationController.Instance.GetEditorsForType(child.GetType())?.FirstOrDefault() is IObject3DEditor editor)
 				{
-					if (ApplicationController.Instance.GetEditorsForType(member.Type)?.FirstOrDefault() is IObject3DEditor editor)
-					{
-						activeEditors.Add((editor, member.Value, member.DisplayName));
-					}
+					activeEditors.Add((editor, child, child.Name));
 				}
-			}
-			else
-			{
-				// Get all public, instance properties where property type is marked with IObject3DComponentAttribute
-				var members = from item in selectedItemType.GetProperties(PublicPropertyEditor.OwnedPropertiesOnly)
-							  where Attribute.IsDefined(item, componentAttribute)
-							  select new
-							  {
-								  Type = item.PropertyType,
-								  Value = item.GetValue(selectedItem, null) as IObject3D,
-								  DisplayName = EditableProperty.GetDisplayName(item)
-							  };
-
-				// Shown known editors for any matching properties
-				foreach (var member in members.Where(m => m.Value != null))
-				{
-					if (ApplicationController.Instance.GetEditorsForType(member.Type)?.FirstOrDefault() is IObject3DEditor editor)
-					{
-						activeEditors.Add((editor, member.Value, member.DisplayName));
-					}
-				}
-			}
-
-			if (mappedEditors?.Any() == true)
-			{
-				// Use first filtered or fall back to unfiltered first
-				activeEditors.Add((mappedEditors.First(), selectedItem, null));
 			}
 
 			ShowObjectEditor(activeEditors, selectedItem);
