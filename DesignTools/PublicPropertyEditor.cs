@@ -74,44 +74,30 @@ namespace MatterHackers.MatterControl.DesignTools
 		public Type PropertyType => PropertyInfo.PropertyType;
 	}
 
-	public class SubProperties
-	{
-		public List<EditableProperty> Items = new List<EditableProperty>();
-		public virtual IEnumerable<EditableProperty> GetProperties()
-		{
-			foreach (var item in Items)
-			{
-				yield return item;
-			}
-		}
-	}
-
 	public class PublicPropertyEditor : IObject3DEditor
 	{
-		private IObject3D item;
-		private View3DWidget view3DWidget;
 		public string Name => "Property Editor";
 
 		public bool Unlocked { get; } = true;
 
 		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(IRebuildable) };
 
-		private Dictionary<(string id, string propertyName), GuiWidget> editRows = new Dictionary<(string id, string propertyName), GuiWidget>();
-
 		private static Type[] allowedTypes =
 		{
 			typeof(double), typeof(int), typeof(char), typeof(string), typeof(bool),
 			typeof(Vector2), typeof(Vector3),
-			typeof(DirectionVector), typeof(DirectionAxis),
-			typeof(ImageObject3D), typeof(SubProperties)
+			typeof(DirectionVector), typeof(DirectionAxis)
 		};
 
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
 		public GuiWidget Create(IObject3D item, View3DWidget view3DWidget, ThemeConfig theme)
 		{
-			this.view3DWidget = view3DWidget;
-			this.item = item;
+			var context = new PPEContext()
+			{
+				view3DWidget = view3DWidget,
+				item = item
+			};
 
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -127,23 +113,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 			}
 
-			if (this.item != null)
+			if (context.item != null)
 			{
-				this.CreateEditor(view3DWidget, mainContainer, theme);
+				this.CreateEditor(context, view3DWidget, mainContainer, theme);
 			}
 
 			return mainContainer;
-		}
-
-		public GuiWidget GetEditRow((string id, string propertyName) key)
-		{
-			GuiWidget value;
-			if (editRows.TryGetValue(key, out value))
-			{
-				return value;
-			}
-
-			return null;
 		}
 
 		private static FlowLayoutWidget CreateSettingsRow(string labelText, string toolTipText = null)
@@ -176,25 +151,24 @@ namespace MatterHackers.MatterControl.DesignTools
 				.Select(p => new EditableProperty(p, item));
 		}
 
-		private void CreateEditor(View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
+		private void CreateEditor(PPEContext context, View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
 		{
 			var undoBuffer = view3DWidget.sceneContext.Scene.UndoBuffer;
-			editRows.Clear();
 
-			var rebuildable = item as IRebuildable;
-			var propertyGridModifier = item as IPropertyGridModifier;
+			var rebuildable = context.item as IRebuildable;
+			var propertyGridModifier = context.item as IPropertyGridModifier;
 
-			var editableProperties = GetEditablePropreties(item);
+			var editableProperties = GetEditablePropreties(context.item);
 
-			AddWebPageLinkIfRequired(editControlsContainer, theme);
-			AddUnlockLinkIfRequired(editControlsContainer, theme);
+			AddWebPageLinkIfRequired(context, editControlsContainer, theme);
+			AddUnlockLinkIfRequired(context, editControlsContainer, theme);
 
 			foreach (var property in editableProperties)
 			{
-				AddPropertyEditor(this, view3DWidget, editControlsContainer, theme, undoBuffer, rebuildable, propertyGridModifier, property, editRows);
+				AddPropertyEditor(this, view3DWidget, editControlsContainer, theme, undoBuffer, rebuildable, propertyGridModifier, property, context);
 			}
 
-			var hideUpdate = item.GetType().GetCustomAttributes(typeof(HideUpdateButtonAttribute), true).FirstOrDefault() as HideUpdateButtonAttribute;
+			var hideUpdate = context.item.GetType().GetCustomAttributes(typeof(HideUpdateButtonAttribute), true).FirstOrDefault() as HideUpdateButtonAttribute;
 			if (hideUpdate == null)
 			{
 				var updateButton = theme.ButtonFactory.Generate("Update".Localize());
@@ -208,13 +182,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			// make sure the ui is set right to start
-			propertyGridModifier?.UpdateControls(this);
+			propertyGridModifier?.UpdateControls(context);
 		}
 
 		private static void AddPropertyEditor(PublicPropertyEditor publicPropertyEditor,
 			View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme,
 			UndoBuffer undoBuffer, IRebuildable rebuildable, IPropertyGridModifier propertyGridModifier,
-			EditableProperty property, Dictionary<(string id, string propertyName), GuiWidget> editRows)
+			EditableProperty property, PPEContext context)
 		{
 			GuiWidget rowContainer = null;
 
@@ -230,21 +204,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { field.DoubleValue });
 					rebuildable?.Rebuild(undoBuffer);
-					propertyGridModifier?.UpdateControls(publicPropertyEditor);
+					propertyGridModifier?.UpdateControls(context);
 				};
 
 				rowContainer.AddChild(field.Content);
 				editControlsContainer.AddChild(rowContainer);
-			}
-			else if (property.Value is SubProperties subProperties)
-			{
-				foreach(var subProperty in subProperties.GetProperties())
-				{
-					AddPropertyEditor(publicPropertyEditor, view3DWidget, editControlsContainer, theme, undoBuffer,
-						rebuildable, propertyGridModifier, subProperty, editRows);
-				}
-				// don't add a row, they were added for the individual properties
-				return;
 			}
 			else if (property.Value is Vector2 vector2)
 			{
@@ -257,7 +221,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { field.Vector2 });
 					rebuildable?.Rebuild(undoBuffer);
-					propertyGridModifier?.UpdateControls(publicPropertyEditor);
+					propertyGridModifier?.UpdateControls(context);
 				};
 
 				rowContainer.AddChild(field.Content);
@@ -274,7 +238,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { field.Vector3 });
 					rebuildable?.Rebuild(undoBuffer);
-					propertyGridModifier?.UpdateControls(publicPropertyEditor);
+					propertyGridModifier?.UpdateControls(context);
 				};
 
 				rowContainer.AddChild(field.Content);
@@ -315,7 +279,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							}
 
 							rebuildable?.Rebuild(undoBuffer);
-							propertyGridModifier?.UpdateControls(publicPropertyEditor);
+							propertyGridModifier?.UpdateControls(context);
 						};
 					}
 
@@ -334,7 +298,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { new DirectionVector() { Normal = field.Vector3 } });
 						rebuildable?.Rebuild(undoBuffer);
-						propertyGridModifier?.UpdateControls(publicPropertyEditor);
+						propertyGridModifier?.UpdateControls(context);
 					};
 
 					rowContainer.AddChild(field.Content);
@@ -365,7 +329,7 @@ namespace MatterHackers.MatterControl.DesignTools
 									}
 							});
 						rebuildable?.Rebuild(undoBuffer);
-						propertyGridModifier?.UpdateControls(publicPropertyEditor);
+						propertyGridModifier?.UpdateControls(context);
 					};
 
 					rowContainer.AddChild(field.Content);
@@ -399,7 +363,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { new DirectionAxis() { Origin = originField.Vector3, Normal = normalField.Vector3 } });
 						rebuildable?.Rebuild(undoBuffer);
-						propertyGridModifier?.UpdateControls(publicPropertyEditor);
+						propertyGridModifier?.UpdateControls(context);
 					};
 
 					originRowContainer.AddChild(originField.Content);
@@ -412,7 +376,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { new DirectionAxis() { Origin = originField.Vector3, Normal = normalField.Vector3 } });
 						rebuildable?.Rebuild(undoBuffer);
-						propertyGridModifier?.UpdateControls(publicPropertyEditor);
+						propertyGridModifier?.UpdateControls(context);
 					};
 
 					directionRowContainer.AddChild(normalField.Content);
@@ -442,7 +406,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { field.IntValue });
 					rebuildable?.Rebuild(undoBuffer);
-					propertyGridModifier?.UpdateControls(publicPropertyEditor);
+					propertyGridModifier?.UpdateControls(context);
 				};
 
 				rowContainer.AddChild(field.Content);
@@ -460,7 +424,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { field.Checked });
 					rebuildable?.Rebuild(undoBuffer);
-					propertyGridModifier?.UpdateControls(publicPropertyEditor);
+					propertyGridModifier?.UpdateControls(context);
 				};
 
 				rowContainer.AddChild(field.Content);
@@ -479,7 +443,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { textEditWidget.Text });
 					rebuildable?.Rebuild(undoBuffer);
-					propertyGridModifier?.UpdateControls(publicPropertyEditor);
+					propertyGridModifier?.UpdateControls(context);
 				};
 				rowContainer.AddChild(textEditWidget);
 				editControlsContainer.AddChild(rowContainer);
@@ -505,7 +469,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { textEditWidget.Text[0] });
 					rebuildable?.Rebuild(undoBuffer);
-					propertyGridModifier?.UpdateControls(publicPropertyEditor);
+					propertyGridModifier?.UpdateControls(context);
 				};
 				rowContainer.AddChild(textEditWidget);
 				editControlsContainer.AddChild(rowContainer);
@@ -513,7 +477,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			// create an enum editor
 			else if (property.PropertyType.IsEnum)
 			{
-				rowContainer = CreateEnumEditor(publicPropertyEditor, rebuildable,
+				rowContainer = CreateEnumEditor(context, rebuildable,
 						property, property.PropertyType, property.Value, property.DisplayName,
 						theme, undoBuffer);
 				editControlsContainer.AddChild(rowContainer);
@@ -527,17 +491,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			// remember the row name and widget
-			editRows.Add((property.Item.ID, property.PropertyInfo.Name), rowContainer);
+			context.editRows.Add(property.PropertyInfo.Name, rowContainer);
 		}
 
-		private void AddUnlockLinkIfRequired(FlowLayoutWidget editControlsContainer, ThemeConfig theme)
+		private void AddUnlockLinkIfRequired(PPEContext context, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
 		{
-			var unlockLink = item.GetType().GetCustomAttributes(typeof(UnlockLinkAttribute), true).FirstOrDefault() as UnlockLinkAttribute;
+			var unlockLink = context.item.GetType().GetCustomAttributes(typeof(UnlockLinkAttribute), true).FirstOrDefault() as UnlockLinkAttribute;
 			if (unlockLink != null
 				&& !string.IsNullOrEmpty(unlockLink.UnlockPageLink)
-				&& !item.Persistable)
+				&& !context.item.Persistable)
 			{
-				var row = CreateSettingsRow(item.Persistable ? "Registered".Localize() : "Demo Mode".Localize());
+				var row = CreateSettingsRow(context.item.Persistable ? "Registered".Localize() : "Demo Mode".Localize());
 
 				Button detailsLink = theme.ButtonFactory.Generate("Unlock".Localize(), AggContext.StaticData.LoadIcon("locked.png", 16, 16));
 				detailsLink.BackgroundColor = theme.Colors.PrimaryAccentColor.AdjustContrast(theme.Colors.PrimaryTextColor, 8).ToColor();
@@ -551,9 +515,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private void AddWebPageLinkIfRequired(FlowLayoutWidget editControlsContainer, ThemeConfig theme)
+		private void AddWebPageLinkIfRequired(PPEContext context, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
 		{
-			var unlockLink = item.GetType().GetCustomAttributes(typeof(WebPageLinkAttribute), true).FirstOrDefault() as WebPageLinkAttribute;
+			var unlockLink = context.item.GetType().GetCustomAttributes(typeof(WebPageLinkAttribute), true).FirstOrDefault() as WebPageLinkAttribute;
 			if (unlockLink != null)
 			{
 				var row = CreateSettingsRow(unlockLink.Name.Localize());
@@ -569,7 +533,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private static GuiWidget CreateEnumEditor(PublicPropertyEditor publicPropertyEditor, IRebuildable item,
+		private static GuiWidget CreateEnumEditor(PPEContext context, IRebuildable item,
 			EditableProperty property, Type propertyType, object value, string displayName,
 			ThemeConfig theme,
 			UndoBuffer undoBuffer)
@@ -631,7 +595,7 @@ namespace MatterHackers.MatterControl.DesignTools
 									property.Item,
 									new Object[] { Enum.Parse(propertyType, localItem.Key) });
 								item?.Rebuild(undoBuffer);
-								propertyGridModifier?.UpdateControls(publicPropertyEditor);
+								propertyGridModifier?.UpdateControls(context);
 								if (localIndex != 0
 									|| !iconsAttribute.Item0IsNone)
 								{
@@ -668,7 +632,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							property.Item,
 							new Object[] { Enum.Parse(propertyType, localOrderedItem.Key) });
 						item?.Rebuild(undoBuffer);
-						propertyGridModifier?.UpdateControls(publicPropertyEditor);
+						propertyGridModifier?.UpdateControls(context);
 					};
 				}
 

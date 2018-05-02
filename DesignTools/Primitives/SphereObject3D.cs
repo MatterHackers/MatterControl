@@ -33,6 +33,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -42,10 +43,12 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public SphereObject3D()
 		{
+			Name = "Sphere".Localize();
 			Color = ApplicationController.Instance.PrimitiveColors["Sphere"];
 		}
 
 		public SphereObject3D(double diameter, int sides)
+			: this()
 		{
 			Diameter = diameter;
 			Sides = sides;
@@ -108,11 +111,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public void UpdateControls(PublicPropertyEditor editor)
+		public void UpdateControls(PPEContext context)
 		{
-			editor.GetEditRow((this.ID, nameof(StartingAngle))).Visible = Advanced;
-			editor.GetEditRow((this.ID, nameof(EndingAngle))).Visible = Advanced;
-			editor.GetEditRow((this.ID, nameof(LatitudeSides))).Visible = Advanced;
+			context.GetEditRow(nameof(StartingAngle)).Visible = Advanced;
+			context.GetEditRow(nameof(EndingAngle)).Visible = Advanced;
+			context.GetEditRow(nameof(LatitudeSides)).Visible = Advanced;
 		}
 	}
 }

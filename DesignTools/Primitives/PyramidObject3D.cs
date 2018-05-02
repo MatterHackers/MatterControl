@@ -32,6 +32,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -41,6 +42,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public PyramidObject3D()
 		{
+			Name = "Pyriamid".Localize();
 			Color = ApplicationController.Instance.PrimitiveColors["Pyramid"];
 		}
 

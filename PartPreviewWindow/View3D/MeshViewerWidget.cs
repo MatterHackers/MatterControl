@@ -64,21 +64,33 @@ namespace MatterHackers.MeshVisualizer
 
 	public static class MaterialRendering
 	{
-		public static void RenderAabb(this WorldView world, AxisAlignedBoundingBox bounds, Matrix4X4 matrix, Color color, double width)
+		public static void RenderAabb(this WorldView world, AxisAlignedBoundingBox bounds, Matrix4X4 matrix, Color color, double width, double extendLineLength = 0)
 		{
 			GLHelper.PrepareFor3DLineRender(true);
 
 			Frustum frustum = world.GetClippingFrustum();
 			for (int i = 0; i < 4; i++)
 			{
-				Vector3 bottomStartPosition = Vector3.Transform(bounds.GetBottomCorner(i), matrix);
+				Vector3 sideStartPosition = Vector3.Transform(bounds.GetBottomCorner(i), matrix);
+				Vector3 sideEndPosition = Vector3.Transform(bounds.GetTopCorner(i), matrix);
+
+				Vector3 bottomStartPosition = sideStartPosition;
 				Vector3 bottomEndPosition = Vector3.Transform(bounds.GetBottomCorner((i + 1) % 4), matrix);
-				Vector3 topStartPosition = Vector3.Transform(bounds.GetTopCorner(i), matrix);
+
+				Vector3 topStartPosition = sideEndPosition;
 				Vector3 topEndPosition = Vector3.Transform(bounds.GetTopCorner((i + 1) % 4), matrix);
 
-				GLHelper.Render3DLineNoPrep(frustum, world, bottomStartPosition, bottomEndPosition, color, width);
-				GLHelper.Render3DLineNoPrep(frustum, world, topStartPosition, topEndPosition, color, width);
-				GLHelper.Render3DLineNoPrep(frustum, world, topStartPosition, bottomStartPosition, color, width);
+				if(extendLineLength > 0)
+				{
+					GLHelper.ExtendLineEnds(ref sideStartPosition, ref sideEndPosition, extendLineLength);
+					GLHelper.ExtendLineEnds(ref topStartPosition, ref topEndPosition, extendLineLength);
+					GLHelper.ExtendLineEnds(ref bottomStartPosition, ref bottomEndPosition, extendLineLength);
+				}
+
+				// draw each of the edge lines (4) and their touching top and bottom lines (2 each)
+				world.Render3DLineNoPrep(frustum, sideStartPosition, sideEndPosition, color, width);
+				world.Render3DLineNoPrep(frustum, topStartPosition, topEndPosition, color, width);
+				world.Render3DLineNoPrep(frustum, bottomStartPosition, bottomEndPosition, color, width);
 			}
 
 			GL.Enable(EnableCap.Lighting);
@@ -624,7 +636,7 @@ namespace MatterHackers.MeshVisualizer
 				var transformed1 = Vector3.Transform(faceCenter, renderData.Matrix);
 				var normal = Vector3.TransformNormal(face.Normal, renderData.Matrix).GetNormal();
 
-				GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed1 + normal, Color.Red, 2);
+				World.Render3DLineNoPrep(frustum, transformed1, transformed1 + normal, Color.Red, 2);
 			}
 		}
 
@@ -663,7 +675,7 @@ namespace MatterHackers.MeshVisualizer
 							var transformed1 = Vector3.Transform(meshEdge.VertexOnEnd[0].Position, renderData.WorldMatrix());
 							var transformed2 = Vector3.Transform(meshEdge.VertexOnEnd[1].Position, renderData.WorldMatrix());
 
-							GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed2, selectionColor, selectionHighlightWidth);
+							World.Render3DLineNoPrep(frustum, transformed1, transformed2, selectionColor, selectionHighlightWidth);
 						}
 					}
 				}

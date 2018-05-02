@@ -122,7 +122,6 @@
     <Compile Include="DesignTools\Operations\CurveObject3D.cs" />
     <Compile Include="DesignTools\Operations\FitToBounds3D.cs" />
     <Compile Include="DesignTools\Operations\Object3DExtensions.cs" />
-    <Compile Include="DesignTools\Operations\Package3D.cs" />
     <Compile Include="DesignTools\Operations\PinchEditor.cs" />
     <Compile Include="DesignTools\Operations\Rotate.cs" />
     <Compile Include="DesignTools\Operations\Scale.cs" />

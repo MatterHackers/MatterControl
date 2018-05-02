@@ -17,7 +17,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		#region JSON data
 		public List<Vector3> SampledPositions = new List<Vector3>();
 		public LevelingSystem LevelingSystem;
-		public DateTime CreationData;
+		public DateTime CreationDate;
 		public double BedTemperature;
 		#endregion
 

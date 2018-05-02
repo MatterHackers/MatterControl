@@ -421,14 +421,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			base.Remove();
 		}
 
-		public void UpdateControls(PublicPropertyEditor editor)
+		public void UpdateControls(PPEContext context)
 		{
-			editor.GetEditRow((this.ID, nameof(XAlignTo))).Visible = Advanced && XAlign != Align.Origin;
-			editor.GetEditRow((this.ID, nameof(XOffset))).Visible = Advanced;
-			editor.GetEditRow((this.ID, nameof(YAlignTo))).Visible = Advanced && YAlign != Align.Origin;
-			editor.GetEditRow((this.ID, nameof(YOffset))).Visible = Advanced;
-			editor.GetEditRow((this.ID, nameof(ZAlignTo))).Visible = Advanced && ZAlign != Align.Origin;
-			editor.GetEditRow((this.ID, nameof(ZOffset))).Visible = Advanced;
+			context.GetEditRow(nameof(XAlignTo)).Visible = Advanced && XAlign != Align.Origin;
+			context.GetEditRow(nameof(XOffset)).Visible = Advanced;
+			context.GetEditRow(nameof(YAlignTo)).Visible = Advanced && YAlign != Align.Origin;
+			context.GetEditRow(nameof(YOffset)).Visible = Advanced;
+			context.GetEditRow(nameof(ZAlignTo)).Visible = Advanced && ZAlign != Align.Origin;
+			context.GetEditRow(nameof(ZOffset)).Visible = Advanced;
 		}
 
 		private static bool IsSet(Face variableToCheck, Face faceToCheckFor, Face faceToAssertNot)

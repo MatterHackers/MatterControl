@@ -33,6 +33,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
@@ -43,6 +44,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public ConeObject3D()
 		{
+			Name = "Cone".Localize();
 			Color = ApplicationController.Instance.PrimitiveColors["Cone"];
 		}
 

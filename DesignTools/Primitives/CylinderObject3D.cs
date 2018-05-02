@@ -32,6 +32,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
@@ -43,11 +44,12 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public CylinderObject3D()
 		{
+			Name = "Cylinder".Localize();
 			Color = ApplicationController.Instance.PrimitiveColors["Cylinder"];
 		}
 
 		public CylinderObject3D(double diameter, double height, int sides)
-			: base()
+			: this()
 		{
 			Diameter = diameter;
 			Height = height;
@@ -151,11 +153,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public void UpdateControls(PublicPropertyEditor editor)
+		public void UpdateControls(PPEContext context)
 		{
-			editor.GetEditRow((this.ID, nameof(DiameterTop))).Visible = Advanced;
-			editor.GetEditRow((this.ID, nameof(StartingAngle))).Visible = Advanced;
-			editor.GetEditRow((this.ID, nameof(EndingAngle))).Visible = Advanced;
+			context.GetEditRow(nameof(DiameterTop)).Visible = Advanced;
+			context.GetEditRow(nameof(StartingAngle)).Visible = Advanced;
+			context.GetEditRow(nameof(EndingAngle)).Visible = Advanced;
 		}
 	}
 }

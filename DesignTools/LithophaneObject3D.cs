@@ -38,12 +38,13 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.Plugins.Lithophane
 {
 	public class LithophaneObject3D : Object3D, IRebuildable
 	{
-		[IObject3DComponent]
+		[JsonIgnore]
 		public ImageObject3D Image => this.Children.OfType<ImageObject3D>().FirstOrDefault();
 
 		[DisplayName("Pixels Per mm"), Range(0.5, 3, ErrorMessage = "Value for {0} must be between {1} and {2}.")]

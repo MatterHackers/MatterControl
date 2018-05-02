@@ -34,6 +34,7 @@ using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -74,6 +75,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public TextObject3D()
 		{
+			Name = "Text".Localize();
 			Color = ApplicationController.Instance.PrimitiveColors["Text"];
 		}
 

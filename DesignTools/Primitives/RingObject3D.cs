@@ -34,6 +34,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
@@ -44,10 +45,12 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public RingObject3D()
 		{
+			Name = "Ring".Localize();
 			Color = ApplicationController.Instance.PrimitiveColors["Ring"];
 		}
 
 		public RingObject3D(double outerDiameter, double innerDiameter, double height, int sides)
+			: this()
 		{
 			this.OuterDiameter = outerDiameter;
 			this.InnerDiameter = innerDiameter;
@@ -105,10 +108,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public void UpdateControls(PublicPropertyEditor editor)
+		public void UpdateControls(PPEContext context)
 		{
-			editor.GetEditRow((this.ID, nameof(StartingAngle))).Visible = Advanced;
-			editor.GetEditRow((this.ID, nameof(EndingAngle))).Visible = Advanced;
+			context.GetEditRow(nameof(StartingAngle)).Visible = Advanced;
+			context.GetEditRow(nameof(EndingAngle)).Visible = Advanced;
 			InnerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
 		}
 	}

@@ -293,11 +293,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				for (int i = 0; i < 2; i++)
 				{
-					GLHelper.Render3DLine(World,
+					World.Render3DLine(
 						drawCenter - new Vector3(-50, 0, 0),
 						drawCenter - new Vector3(50, 0, 0), drawColor, zBuffer, 2);
 
-					GLHelper.Render3DLine(World,
+					World.Render3DLine(
 						drawCenter - new Vector3(0, -50, 0),
 						drawCenter - new Vector3(0, 50, 0), drawColor, zBuffer, 2);
 
