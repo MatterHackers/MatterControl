@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Linear Array".Localize();
 		}
 		
-		public override bool CanMakePermanent => true;
+		public override bool CanApply => true;
 		public override bool CanRemove => true;
 		public int Count { get; set; } = 3;
 		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			});
 		}
 
-		public override void Remove()
+		public override void Remove(UndoBuffer undoBuffer)
 		{
 			this.Children.Modify(list =>
 			{
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				list.Add(firstChild);
 			});
 
-			base.Remove();
+			base.Remove(undoBuffer);
 		}
 	}
 }

@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Radial Array".Localize();
 		}
 
-		public override bool CanMakePermanent => true;
+		public override bool CanApply => true;
 		public override bool CanRemove => true;
 
 		public int Count { get; set; } = 3;
@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			this.Invalidate();
 		}
 
-		public override void Remove()
+		public override void Remove(UndoBuffer undoBuffer)
 		{
 			this.Children.Modify(list =>
 			{
@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				list.Add(firstChild);
 			});
 
-			base.Remove();
+			base.Remove(undoBuffer);
 		}
 	}
 }

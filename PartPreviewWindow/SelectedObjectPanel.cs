@@ -163,19 +163,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			toolbar.AddChild(editButton);
 
 			// put in a make permanent button
-			var icon = AggContext.StaticData.LoadIcon("permanent.png", 16, 16, theme.InvertIcons).SetPreMultiply();
-			var bakeButton = new IconButton(icon, theme)
+			var icon = AggContext.StaticData.LoadIcon("fa-check_16.png", 16, 16, theme.InvertIcons).SetPreMultiply();
+			var applyButton = new IconButton(icon, theme)
 			{
 				Margin = theme.ButtonSpacing,
-				ToolTipText = "Make operation permanent".Localize()
+				ToolTipText = "Apply operation and make permanent".Localize()
 			};
-			bakeButton.Click += (s, e) =>
+			applyButton.Click += (s, e) =>
 			{
 				scene.SelectedItem = null;
-				this.item.MakePermanent();
+				this.item.Apply(view3DWidget.Scene.UndoBuffer);
 			};
-			scene.SelectionChanged += (s, e) => bakeButton.Enabled = scene.SelectedItem?.CanMakePermanent == true;
-			toolbar.AddChild(bakeButton);
+			scene.SelectionChanged += (s, e) => applyButton.Enabled = scene.SelectedItem?.CanApply == true;
+			toolbar.AddChild(applyButton);
 
 			// put in a remove button
 			var removeButton = new IconButton(ThemeConfig.RestoreNormal, theme)
@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			removeButton.Click += (s, e) =>
 			{
 				scene.SelectedItem = null;
-				this.item.Remove();
+				this.item.Remove(view3DWidget.Scene.UndoBuffer);
 			};
 			scene.SelectionChanged += (s, e) => removeButton.Enabled = scene.SelectedItem?.CanRemove == true;
 			toolbar.AddChild(removeButton);

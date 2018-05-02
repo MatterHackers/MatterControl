@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 		}
 
-		public override void MakePermanent()
+		public override void Apply(UndoBuffer undoBuffer)
 		{
 			// push our matrix into our children
 			foreach (var child in this.Children)
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			});
 		}
 
-		public override void Remove()
+		public override void Remove(UndoBuffer undoBuffer)
 		{
 			// push our matrix into inner children
 			foreach (var child in ScaleItem.Children)

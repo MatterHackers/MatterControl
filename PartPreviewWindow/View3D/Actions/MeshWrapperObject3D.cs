@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.Linq;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.PolygonMesh;
@@ -41,26 +42,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 		}
 
-		public override bool CanMakePermanent => true;
+		public override bool CanApply => true;
 		public override bool CanRemove => true;
 
-		public override void Remove()
+		public override void Remove(UndoBuffer undoBuffer)
 		{
 			// remove all the mesh wrappers that we own
 			var meshWrappers = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
 			foreach(var meshWrapper in meshWrappers)
 			{
-				meshWrapper.Remove();
+				meshWrapper.Remove(undoBuffer);
 			}
 			foreach(var child in Children)
 			{
 				child.OutputType = PrintOutputTypes.Default;
 			}
 			// collapes our children into our parent
-			base.Remove();
+			base.Remove(undoBuffer);
 		}
 
-		public override void MakePermanent()
+		public override void Apply(UndoBuffer undoBuffer)
 		{
 			var meshWrappers = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
 
@@ -83,7 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				}
 			}
 
-			base.MakePermanent();
+			base.Apply(undoBuffer);
 		}
 
 		public static void WrapSelection(MeshWrapperObject3D meshWrapper, InteractiveScene scene)

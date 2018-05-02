@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			materialButtons.Clear();
 			int extruderCount = 4;
-			for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
+			for (int extruderIndex = -1; extruderIndex < extruderCount; extruderIndex++)
 			{
 				var row = new FlowLayoutWidget()
 				{
@@ -62,7 +62,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				this.AddChild(row);
 
-				var radioButton = new RadioButton(string.Format("{0} {1}", "Material".Localize(), extruderIndex + 1), textColor: theme.Colors.PrimaryTextColor, fontSize: theme.DefaultFontSize);
+				var name = $"{"Material".Localize()} {extruderIndex +1}";
+				if(extruderIndex == -1)
+				{
+					name = "Default".Localize();
+				}
+				var radioButton = new RadioButton(name, textColor: theme.Colors.PrimaryTextColor, fontSize: theme.DefaultFontSize);
 				materialButtons.Add(radioButton);
 				radioButton.SiblingRadioButtonList = materialButtons;
 				row.AddChild(radioButton);
@@ -79,7 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var scaledButtonSize = 16 * GuiWidget.DeviceScale;
 
-				row.AddChild(new ColorButton(MaterialRendering.Color(extruderIndex))
+				row.AddChild(new ColorButton(extruderIndex == -1 ? Color.Black : MaterialRendering.Color(extruderIndex))
 				{
 					Margin = new BorderDouble(5, 0, 0, 0),
 					Width = scaledButtonSize,
