@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.FieldValidation;
 using MatterHackers.MatterControl.VersionManagement;
 using MatterHackers.VectorMath;
@@ -40,14 +41,11 @@ namespace MatterHackers.MatterControl.ContactForm
 {
 	public class ContactFormWidget : DialogPage
 	{
-		private Button submitButton;
-		private Button cancelButton;
-		private Button doneButton;
-		private FlowLayoutWidget formContainer;
+		private TextButton submitButton;
+
 		private FlowLayoutWidget messageContainer;
 
 		private TextWidget submissionStatus;
-		private GuiWidget centerContainer;
 
 		internal MHTextEditWidget questionInput;
 		private TextWidget questionErrorMessage;
@@ -63,21 +61,21 @@ namespace MatterHackers.MatterControl.ContactForm
 
 		public ContactFormWidget()
 		{
+			var theme = ApplicationController.Instance.Theme;
+
 			AnchorAll();
 
 			this.WindowTitle = "MatterControl : " + "Submit Feedback".Localize();
 			this.HeaderText = "How can we improve?".Localize();
 
-			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
+			contentRow.Padding = theme.DefaultContainerPadding;
 
-			cancelButton = buttonFactory.Generate("Cancel".Localize());
-			submitButton = buttonFactory.Generate("Submit".Localize());
-			doneButton = buttonFactory.Generate("Done".Localize());
-			doneButton.Visible = false;
+			submitButton = theme.CreateDialogButton("Submit".Localize());
+			this.AddPageAction(submitButton);
+
+			submitButton.Click += SubmitContactForm;
 
 			DoLayout();
-
-			AddButtonHandlers();
 		}
 
 		private GuiWidget LabelGenerator(string labelText, int fontSize = 12, int height = 28)
@@ -111,30 +109,11 @@ namespace MatterHackers.MatterControl.ContactForm
 
 		private void DoLayout()
 		{
-			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			mainContainer.AnchorAll();
-
-			GuiWidget labelContainer = new GuiWidget();
-			labelContainer.HAnchor = HAnchor.Stretch;
-			labelContainer.Height = 30;
-
-			TextWidget formLabel = new TextWidget("How can we improve?".Localize(), pointSize: 16);
-			formLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			formLabel.VAnchor = VAnchor.Top;
-			formLabel.HAnchor = HAnchor.Left;
-			formLabel.Margin = new BorderDouble(6, 3, 6, 6);
-			labelContainer.AddChild(formLabel);
-			mainContainer.AddChild(labelContainer);
-
-			centerContainer = new GuiWidget();
-			centerContainer.AnchorAll();
-			centerContainer.Padding = new BorderDouble(3, 0, 3, 3);
-
-			messageContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			messageContainer.AnchorAll();
-			messageContainer.Visible = false;
-			messageContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			messageContainer.Padding = new BorderDouble(10);
+			messageContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			};
 
 			submissionStatus = new TextWidget("Submitting your information...".Localize(), pointSize: 13);
 			submissionStatus.AutoExpandBoundsToText = true;
@@ -144,59 +123,44 @@ namespace MatterHackers.MatterControl.ContactForm
 
 			messageContainer.AddChild(submissionStatus);
 
-			formContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			formContainer.AnchorAll();
-			formContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			formContainer.Padding = new BorderDouble(10);
-
-			formContainer.AddChild(LabelGenerator("Subject*".Localize()));
+			// Default sizing results in too much top whitespace, revise Subject row to only be as big as content
+			var subjectRow = LabelGenerator("Subject*".Localize());
+			subjectRow.VAnchor = VAnchor.Fit;
+			contentRow.AddChild(subjectRow);
 
 			questionInput = new MHTextEditWidget("");
 			questionInput.HAnchor = HAnchor.Stretch;
-			formContainer.AddChild(questionInput);
+			contentRow.AddChild(questionInput);
 
 			questionErrorMessage = ErrorMessageGenerator();
-			formContainer.AddChild(questionErrorMessage);
+			contentRow.AddChild(questionErrorMessage);
 
-			formContainer.AddChild(LabelGenerator("Message*".Localize()));
+			contentRow.AddChild(LabelGenerator("Message*".Localize()));
 
 			detailInput = new MHTextEditWidget("", pixelHeight: 120, multiLine: true);
 			detailInput.HAnchor = HAnchor.Stretch;
-			formContainer.AddChild(detailInput);
+			contentRow.AddChild(detailInput);
 
 			detailErrorMessage = ErrorMessageGenerator();
-			formContainer.AddChild(detailErrorMessage);
+			contentRow.AddChild(detailErrorMessage);
 
-			formContainer.AddChild(LabelGenerator("Email Address*".Localize()));
+			contentRow.AddChild(LabelGenerator("Email Address*".Localize()));
 
 			emailInput = new MHTextEditWidget();
 			emailInput.HAnchor = HAnchor.Stretch;
-			formContainer.AddChild(emailInput);
+			contentRow.AddChild(emailInput);
 
 			emailErrorMessage = ErrorMessageGenerator();
-			formContainer.AddChild(emailErrorMessage);
+			contentRow.AddChild(emailErrorMessage);
 
-			formContainer.AddChild(LabelGenerator("Name*".Localize()));
+			contentRow.AddChild(LabelGenerator("Name*".Localize()));
 
 			nameInput = new MHTextEditWidget();
 			nameInput.HAnchor = HAnchor.Stretch;
-			formContainer.AddChild(nameInput);
+			contentRow.AddChild(nameInput);
 
 			nameErrorMessage = ErrorMessageGenerator();
-			formContainer.AddChild(nameErrorMessage);
-
-			centerContainer.AddChild(formContainer);
-
-			mainContainer.AddChild(centerContainer);
-
-			FlowLayoutWidget buttonBottomPanel = GetButtonButtonPanel();
-			buttonBottomPanel.AddChild(submitButton);
-			buttonBottomPanel.AddChild(cancelButton);
-			buttonBottomPanel.AddChild(doneButton);
-
-			mainContainer.AddChild(buttonBottomPanel);
-
-			this.contentRow.AddChild(mainContainer);
+			contentRow.AddChild(nameErrorMessage);
 		}
 
 		private bool ValidateContactForm()
@@ -225,60 +189,29 @@ namespace MatterHackers.MatterControl.ContactForm
 			return formIsValid;
 		}
 
-		private void AddButtonHandlers()
-		{
-			cancelButton.Click += (sender, e) =>
-			{
-				UiThread.RunOnIdle(Close);
-			};
-			doneButton.Click += (sender, e) =>
-			{
-				UiThread.RunOnIdle(Close);
-			};
-			submitButton.Click += SubmitContactForm;
-		}
-
 		private void SubmitContactForm(object sender, EventArgs mouseEvent)
 		{
 			if (ValidateContactForm())
 			{
 				ContactFormRequest postRequest = new ContactFormRequest(questionInput.Text, detailInput.Text, emailInput.Text, nameInput.Text, "");
 
-				formContainer.Visible = false;
-				messageContainer.Visible = true;
+				contentRow.RemoveAllChildren();
 
-				centerContainer.RemoveAllChildren();
-				centerContainer.AddChild(messageContainer);
+				contentRow.AddChild(messageContainer);
 
-				cancelButton.Visible = false;
 				submitButton.Visible = false;
 
-				postRequest.RequestSucceeded += new EventHandler(onPostRequestSucceeded);
-				postRequest.RequestFailed += onPostRequestFailed;
+				postRequest.RequestSucceeded += (s, e) =>
+				{
+					submissionStatus.Text = "Thank you!  Your information has been submitted.".Localize();
+					this.SetCancelButtonText("Done".Localize());
+				};
+				postRequest.RequestFailed += (s, e) =>
+				{
+					submissionStatus.Text = "Sorry!  We weren't able to submit your request.".Localize();
+				};
 				postRequest.Request();
 			}
 		}
-
-		private void onPostRequestSucceeded(object sender, EventArgs e)
-		{
-			submissionStatus.Text = "Thank you!  Your information has been submitted.".Localize();
-			doneButton.Visible = true;
-		}
-
-		private void onPostRequestFailed(object sender, ResponseErrorEventArgs e)
-		{
-			submissionStatus.Text = "Sorry!  We weren't able to submit your request.".Localize();
-			doneButton.Visible = true;
-		}
-
-		private FlowLayoutWidget GetButtonButtonPanel()
-		{
-			FlowLayoutWidget buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			buttonBottomPanel.HAnchor = HAnchor.Stretch;
-			buttonBottomPanel.Padding = new BorderDouble(3, 3);
-			buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			return buttonBottomPanel;
-		}
 	}
-
 }
