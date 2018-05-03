@@ -70,9 +70,31 @@ namespace MatterHackers.MatterControl.ContactForm
 			contentRow.Padding = theme.DefaultContainerPadding;
 
 			submitButton = theme.CreateDialogButton("Submit".Localize());
-			this.AddPageAction(submitButton);
+			submitButton.Click += (sender, eventArgs) =>
+			{
+				if (ValidateContactForm())
+				{
+					ContactFormRequest postRequest = new ContactFormRequest(questionInput.Text, detailInput.Text, emailInput.Text, nameInput.Text, "");
 
-			submitButton.Click += SubmitContactForm;
+					contentRow.RemoveAllChildren();
+
+					contentRow.AddChild(messageContainer);
+
+					submitButton.Visible = false;
+
+					postRequest.RequestSucceeded += (s, e) =>
+					{
+						submissionStatus.Text = "Thank you!  Your information has been submitted.".Localize();
+						this.SetCancelButtonText("Done".Localize());
+					};
+					postRequest.RequestFailed += (s, e) =>
+					{
+						submissionStatus.Text = "Sorry!  We weren't able to submit your request.".Localize();
+					};
+					postRequest.Request();
+				}
+			};
+			this.AddPageAction(submitButton);
 
 			messageContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -178,31 +200,6 @@ namespace MatterHackers.MatterControl.ContactForm
 			}
 
 			return formIsValid;
-		}
-
-		private void SubmitContactForm(object sender, EventArgs mouseEvent)
-		{
-			if (ValidateContactForm())
-			{
-				ContactFormRequest postRequest = new ContactFormRequest(questionInput.Text, detailInput.Text, emailInput.Text, nameInput.Text, "");
-
-				contentRow.RemoveAllChildren();
-
-				contentRow.AddChild(messageContainer);
-
-				submitButton.Visible = false;
-
-				postRequest.RequestSucceeded += (s, e) =>
-				{
-					submissionStatus.Text = "Thank you!  Your information has been submitted.".Localize();
-					this.SetCancelButtonText("Done".Localize());
-				};
-				postRequest.RequestFailed += (s, e) =>
-				{
-					submissionStatus.Text = "Sorry!  We weren't able to submit your request.".Localize();
-				};
-				postRequest.Request();
-			}
 		}
 	}
 }
