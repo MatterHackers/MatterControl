@@ -1595,6 +1595,7 @@ namespace MatterHackers.MatterControl
 		public IEnumerable<SceneSelectionOperation> RegisteredSceneOperations => registeredSceneOperations;
 
 		public static IObject3D ClipboardItem { get; internal set; }
+		public Action<ILibraryItem> ShareLibraryItem { get; set; }
 
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 

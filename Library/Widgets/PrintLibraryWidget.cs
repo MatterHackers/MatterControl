@@ -740,6 +740,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					// Singleselect - disallow containers and protected items
 					return listView.SelectedItems.Count == 1
 						&& selectedListItems.FirstOrDefault()?.Model is ILibraryItem firstItem
+						&& listView.ActiveContainer.GetType().Name.IndexOf("Cloud", StringComparison.OrdinalIgnoreCase) >= 0
 						&& !(firstItem is ILibraryContainer)
 						&& !firstItem.IsProtected;
 				}
@@ -882,19 +883,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
+
+
+
 		private void shareFromLibraryButton_Click(object sender, EventArgs e)
 		{
 			// TODO: Should be rewritten to Register from cloudlibrary, include logic to add to library as needed
-			throw new NotImplementedException();
 
-			if (libraryView.SelectedItems.Count == 1)
-			{
-				var partItem = libraryView.SelectedItems.Select(i => i.Model).FirstOrDefault();
-				if (partItem != null)
-				{
-					//libraryView.ActiveContainer.ShareItem(partItem, "something");
-				}
-			}
+			ApplicationController.Instance.ShareLibraryItem(libraryView.SelectedItems.Select(i => i.Model).FirstOrDefault());
 		}
 
 		private void exportButton_Click(object sender, EventArgs e)
