@@ -38,7 +38,7 @@ using MatterHackers.MatterControl.VersionManagement;
 
 namespace MatterHackers.MatterControl.ContactForm
 {
-	public class ContactFormWidget : DialogPage
+	public class ContactFormPage : DialogPage
 	{
 		private TextButton submitButton;
 
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.ContactForm
 		private MHTextEditWidget nameInput;
 		private TextWidget nameErrorMessage;
 
-		public ContactFormWidget()
+		public ContactFormPage()
 		{
 			var theme = ApplicationController.Instance.Theme;
 

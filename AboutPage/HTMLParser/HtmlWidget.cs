@@ -262,7 +262,7 @@ namespace MatterHackers.MatterControl
 					{
 						if (elementState.Id == "sendFeedback")
 						{
-							createdButton.Click += (s, e) => DialogWindow.Show<ContactFormWidget>();
+							createdButton.Click += (s, e) => DialogWindow.Show<ContactFormPage>();
 						}
 						else if (elementState.Id == "clearCache")
 						{
