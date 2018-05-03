@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			DoLayout();
 		}
 
-		private GuiWidget LabelGenerator(string labelText, int fontSize = 12, int height = 28)
+		private GuiWidget CreateLabelRow(string labelText, int fontSize = 12, int height = 28)
 		{
 			var labelContainer = new GuiWidget
 			{
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			return labelContainer;
 		}
 
-		private TextWidget ErrorMessageGenerator()
+		private TextWidget CreateErrorRow()
 		{
 			return new TextWidget("", pointSize: 11)
 			{
@@ -116,52 +116,46 @@ namespace MatterHackers.MatterControl.ContactForm
 				VAnchor = VAnchor.Stretch
 			};
 
-			submissionStatus = new TextWidget("Submitting your information...".Localize(), pointSize: 13);
-			submissionStatus.AutoExpandBoundsToText = true;
-			submissionStatus.Margin = new BorderDouble(0, 5);
-			submissionStatus.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			submissionStatus.HAnchor = HAnchor.Left;
+			submissionStatus = new TextWidget("Submitting your information...".Localize(), pointSize: 13)
+			{
+				AutoExpandBoundsToText = true,
+				Margin = new BorderDouble(0, 5),
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.Left
+			};
 
 			messageContainer.AddChild(submissionStatus);
 
 			// Default sizing results in too much top whitespace, revise Subject row to only be as big as content
-			var subjectRow = LabelGenerator("Subject*".Localize());
+			var subjectRow = CreateLabelRow("Subject*".Localize());
 			subjectRow.VAnchor = VAnchor.Fit;
 			contentRow.AddChild(subjectRow);
+			contentRow.AddChild(questionInput = new MHTextEditWidget("")
+			{
+				HAnchor = HAnchor.Stretch
+			});
+			contentRow.AddChild(questionErrorMessage = CreateErrorRow());
 
-			questionInput = new MHTextEditWidget("");
-			questionInput.HAnchor = HAnchor.Stretch;
-			contentRow.AddChild(questionInput);
+			contentRow.AddChild(CreateLabelRow("Message*".Localize()));
+			contentRow.AddChild(detailInput = new MHTextEditWidget("", pixelHeight: 120, multiLine: true)
+			{
+				HAnchor = HAnchor.Stretch
+			});
+			contentRow.AddChild(detailErrorMessage = CreateErrorRow());
 
-			questionErrorMessage = ErrorMessageGenerator();
-			contentRow.AddChild(questionErrorMessage);
+			contentRow.AddChild(CreateLabelRow("Email Address*".Localize()));
+			contentRow.AddChild(emailInput = new MHTextEditWidget
+			{
+				HAnchor = HAnchor.Stretch
+			});
+			contentRow.AddChild(emailErrorMessage = CreateErrorRow());
 
-			contentRow.AddChild(LabelGenerator("Message*".Localize()));
-
-			detailInput = new MHTextEditWidget("", pixelHeight: 120, multiLine: true);
-			detailInput.HAnchor = HAnchor.Stretch;
-			contentRow.AddChild(detailInput);
-
-			detailErrorMessage = ErrorMessageGenerator();
-			contentRow.AddChild(detailErrorMessage);
-
-			contentRow.AddChild(LabelGenerator("Email Address*".Localize()));
-
-			emailInput = new MHTextEditWidget();
-			emailInput.HAnchor = HAnchor.Stretch;
-			contentRow.AddChild(emailInput);
-
-			emailErrorMessage = ErrorMessageGenerator();
-			contentRow.AddChild(emailErrorMessage);
-
-			contentRow.AddChild(LabelGenerator("Name*".Localize()));
-
-			nameInput = new MHTextEditWidget();
-			nameInput.HAnchor = HAnchor.Stretch;
-			contentRow.AddChild(nameInput);
-
-			nameErrorMessage = ErrorMessageGenerator();
-			contentRow.AddChild(nameErrorMessage);
+			contentRow.AddChild(CreateLabelRow("Name*".Localize()));
+			contentRow.AddChild(nameInput = new MHTextEditWidget
+			{
+				HAnchor = HAnchor.Stretch
+			});
+			contentRow.AddChild(nameErrorMessage = CreateErrorRow());
 		}
 
 		private bool ValidateContactForm()
