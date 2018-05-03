@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,15 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.FieldValidation;
 using MatterHackers.MatterControl.VersionManagement;
-using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.ContactForm
 {
@@ -80,31 +79,33 @@ namespace MatterHackers.MatterControl.ContactForm
 
 		private GuiWidget LabelGenerator(string labelText, int fontSize = 12, int height = 28)
 		{
-			GuiWidget labelContainer = new GuiWidget();
-			labelContainer.HAnchor = HAnchor.Stretch;
-			labelContainer.Height = height * GuiWidget.DeviceScale;
+			var labelContainer = new GuiWidget
+			{
+				HAnchor = HAnchor.Stretch,
+				Height = height * GuiWidget.DeviceScale
+			};
 
-			TextWidget formLabel = new TextWidget(labelText, pointSize: fontSize);
-			formLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			formLabel.VAnchor = VAnchor.Bottom;
-			formLabel.HAnchor = HAnchor.Left;
-			formLabel.Margin = new BorderDouble(bottom: 2);
-
-			labelContainer.AddChild(formLabel);
+			labelContainer.AddChild(new TextWidget(labelText, pointSize: fontSize)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				VAnchor = VAnchor.Bottom,
+				HAnchor = HAnchor.Left,
+				Margin = new BorderDouble(bottom: 2)
+			});
 
 			return labelContainer;
 		}
 
 		private TextWidget ErrorMessageGenerator()
 		{
-			TextWidget formLabel = new TextWidget("", pointSize: 11);
-			formLabel.AutoExpandBoundsToText = true;
-			formLabel.Margin = new BorderDouble(0, 5);
-			formLabel.TextColor = Color.Red;
-			formLabel.HAnchor = HAnchor.Left;
-			formLabel.Visible = false;
-
-			return formLabel;
+			return new TextWidget("", pointSize: 11)
+			{
+				AutoExpandBoundsToText = true,
+				Margin = new BorderDouble(0, 5),
+				TextColor = Color.Red,
+				HAnchor = HAnchor.Left,
+				Visible = false
+			};
 		}
 
 		private void DoLayout()
@@ -165,11 +166,11 @@ namespace MatterHackers.MatterControl.ContactForm
 
 		private bool ValidateContactForm()
 		{
-			ValidationMethods validationMethods = new ValidationMethods();
+			var validationMethods = new ValidationMethods();
 
-			List<FormField> formFields = new List<FormField> { };
-			FormField.ValidationHandler[] stringValidationHandlers = new FormField.ValidationHandler[] { validationMethods.StringIsNotEmpty };
-			FormField.ValidationHandler[] emailValidationHandlers = new FormField.ValidationHandler[] { validationMethods.StringIsNotEmpty, validationMethods.StringLooksLikeEmail };
+			var formFields = new List<FormField> { };
+			var stringValidationHandlers = new FormField.ValidationHandler[] { validationMethods.StringIsNotEmpty };
+			var emailValidationHandlers = new FormField.ValidationHandler[] { validationMethods.StringIsNotEmpty, validationMethods.StringLooksLikeEmail };
 
 			formFields.Add(new FormField(questionInput, questionErrorMessage, stringValidationHandlers));
 			formFields.Add(new FormField(detailInput, detailErrorMessage, stringValidationHandlers));
@@ -186,6 +187,7 @@ namespace MatterHackers.MatterControl.ContactForm
 					formIsValid = false;
 				}
 			}
+
 			return formIsValid;
 		}
 
