@@ -1101,7 +1101,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Debug.Print(e.Message);
 				GuiWidget.BreakInDebugger();
 				string stackTraceNoBackslashRs = e.StackTrace.Replace("\r", "");
-				ContactFormWindow.Open("Parse Error while slicing".Localize(), e.Message + stackTraceNoBackslashRs);
+
+				var widget = new ContactFormPage();
+				widget.questionInput.Text = "Parse Error while slicing".Localize();
+				widget.detailInput.Text = e.Message + stackTraceNoBackslashRs;
+
+				DialogWindow.Show(widget);
+
 				return false;
 			}
 
@@ -1221,3 +1227,4 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 }
+ 

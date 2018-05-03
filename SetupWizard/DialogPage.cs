@@ -146,6 +146,11 @@ namespace MatterHackers.MatterControl
 			cancelButton.Name = newName;
 		}
 
+		protected void SetCancelButtonText(string text)
+		{
+			cancelButton.Text = text;
+		}
+
 		protected void HideCancelButton()
 		{
 			cancelButton.Visible = false;
