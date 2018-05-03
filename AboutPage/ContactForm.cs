@@ -38,7 +38,7 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.ContactForm
 {
-	public class ContactFormWidget : GuiWidget
+	public class ContactFormWidget : DialogPage
 	{
 		private Button submitButton;
 		private Button cancelButton;
@@ -49,10 +49,10 @@ namespace MatterHackers.MatterControl.ContactForm
 		private TextWidget submissionStatus;
 		private GuiWidget centerContainer;
 
-		private MHTextEditWidget questionInput;
+		internal MHTextEditWidget questionInput;
 		private TextWidget questionErrorMessage;
 
-		private MHTextEditWidget detailInput;
+		internal MHTextEditWidget detailInput;
 		private TextWidget detailErrorMessage;
 
 		private MHTextEditWidget emailInput;
@@ -61,9 +61,12 @@ namespace MatterHackers.MatterControl.ContactForm
 		private MHTextEditWidget nameInput;
 		private TextWidget nameErrorMessage;
 
-		public ContactFormWidget(string subjectText, string bodyText)
+		public ContactFormWidget()
 		{
 			AnchorAll();
+
+			this.WindowTitle = "MatterControl : " + "Submit Feedback".Localize();
+			this.HeaderText = "How can we improve?".Localize();
 
 			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
@@ -72,7 +75,8 @@ namespace MatterHackers.MatterControl.ContactForm
 			doneButton = buttonFactory.Generate("Done".Localize());
 			doneButton.Visible = false;
 
-			DoLayout(subjectText, bodyText);
+			DoLayout();
+
 			AddButtonHandlers();
 		}
 
@@ -105,7 +109,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			return formLabel;
 		}
 
-		private void DoLayout(string subjectText, string bodyText)
+		private void DoLayout()
 		{
 			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			mainContainer.AnchorAll();
@@ -147,7 +151,7 @@ namespace MatterHackers.MatterControl.ContactForm
 
 			formContainer.AddChild(LabelGenerator("Subject*".Localize()));
 
-			questionInput = new MHTextEditWidget(subjectText);
+			questionInput = new MHTextEditWidget("");
 			questionInput.HAnchor = HAnchor.Stretch;
 			formContainer.AddChild(questionInput);
 
@@ -156,7 +160,7 @@ namespace MatterHackers.MatterControl.ContactForm
 
 			formContainer.AddChild(LabelGenerator("Message*".Localize()));
 
-			detailInput = new MHTextEditWidget(bodyText, pixelHeight: 120, multiLine: true);
+			detailInput = new MHTextEditWidget("", pixelHeight: 120, multiLine: true);
 			detailInput.HAnchor = HAnchor.Stretch;
 			formContainer.AddChild(detailInput);
 
@@ -192,7 +196,7 @@ namespace MatterHackers.MatterControl.ContactForm
 
 			mainContainer.AddChild(buttonBottomPanel);
 
-			this.AddChild(mainContainer);
+			this.contentRow.AddChild(mainContainer);
 		}
 
 		private bool ValidateContactForm()
@@ -277,58 +281,4 @@ namespace MatterHackers.MatterControl.ContactForm
 		}
 	}
 
-	public class ContactFormWindow : SystemWindow
-	{
-		private static ContactFormWindow contactFormWindow;
-		private static bool contactFormIsOpen;
-
-		static public void Open(string subject = "", string bodyText = "")
-		{
-			if (!contactFormIsOpen)
-			{
-				contactFormWindow = new ContactFormWindow(subject, bodyText);
-				contactFormIsOpen = true;
-				contactFormWindow.Closed += (sender, e) => { contactFormIsOpen = false; };
-			}
-			else
-			{
-				if (contactFormWindow != null)
-				{
-					contactFormWindow.BringToFront();
-				}
-			}
-		}
-
-		private ContactFormWidget contactFormWidget;
-
-		private ContactFormWindow(string subject = "", string bodyText = "")
-			: base(500, 550)
-		{
-			AlwaysOnTopOfMain = true;
-			Title = "MatterControl: Submit Feedback".Localize();
-
-			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-			contactFormWidget = new ContactFormWidget(subject, bodyText);
-
-			AddChild(contactFormWidget);
-
-			ActiveTheme.ThemeChanged.RegisterEvent((s, e) => this.Invalidate(), ref unregisterEvents);
-			contactFormWidget.Closed += (sender, e) => 
-			{
-				Close();
-			};
-
-			ShowAsSystemWindow();
-			MinimumSize = new Vector2(500, 550);
-		}
-
-		private EventHandler unregisterEvents;
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			unregisterEvents?.Invoke(this, null);
-			base.OnClosed(e);
-		}
-	}
 }
