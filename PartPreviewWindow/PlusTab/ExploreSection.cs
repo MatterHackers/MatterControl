@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				else
 				{
 					if (moreButton != null)
-					{ 
+					{
 						moreButton.Margin = new BorderDouble(right: leftRightMargin);
 					}
 
@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			int MinimumMargin = 8;
 			int itemWidth = (int)allIconViews[0].Width + MinimumMargin * 2;
 
-			int newColumnCount = (int)Math.Floor(this.LocalBounds.Width / itemWidth);
+			int newColumnCount = (int)Math.Round(this.LocalBounds.Width / itemWidth);
 			int remainingSpace = (int)this.LocalBounds.Width - newColumnCount * itemWidth;
 
 			// Reset position before reflow

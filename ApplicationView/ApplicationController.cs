@@ -1595,6 +1595,7 @@ namespace MatterHackers.MatterControl
 		public IEnumerable<SceneSelectionOperation> RegisteredSceneOperations => registeredSceneOperations;
 
 		public static IObject3D ClipboardItem { get; internal set; }
+		public Action<ILibraryItem> ShareLibraryItem { get; set; }
 
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 
@@ -2142,6 +2143,113 @@ namespace MatterHackers.MatterControl
 			AppContext.RootSystemWindow = systemWindow;
 
 			// hook up a keyboard watcher to rout keys when not handled by children
+
+			systemWindow.KeyPressed += (s, keyEvent) =>
+			{
+				var view3D = systemWindow.Descendants<View3DWidget>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
+				var printerTabPage = systemWindow.Descendants<PrinterTabPage>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
+				var offsetDist = 50;
+
+				if (!keyEvent.Handled
+					&& view3D != null)
+				{
+					bool controlKeyDown = Keyboard.IsKeyDown(Keys.Control);
+					bool shiftKeyDown = Keyboard.IsKeyDown(Keys.Shift);
+
+					switch (keyEvent.KeyChar)
+					{
+						case 'c':
+						case 'C':
+							if (controlKeyDown)
+							{
+								view3D.Scene.Copy();
+								keyEvent.Handled = true;
+							}
+							break;
+
+						case 'a':
+						case 'A':
+							if (controlKeyDown)
+							{
+								view3D.SelectAll();
+								keyEvent.Handled = true;
+							}
+							break;
+
+
+						case 's':
+						case 'S':
+							if (controlKeyDown)
+							{
+								view3D.Save();
+
+								keyEvent.Handled = true;
+							}
+							break;
+
+						case 'v':
+						case 'V':
+							if (controlKeyDown)
+							{
+								view3D.Scene.Paste();
+
+								keyEvent.Handled = true;
+							}
+							break;
+
+						case 'w':
+						case 'W':
+							view3D.ResetView();
+							keyEvent.Handled = true;
+							break;
+
+						case 'x':
+						case 'X':
+							if (controlKeyDown)
+							{
+								view3D.Scene.Cut();
+
+								keyEvent.Handled = true;
+							}
+							break;
+
+						case 'y':
+						case 'Y':
+							if (controlKeyDown)
+							{
+								view3D.Scene.UndoBuffer.Redo();
+								keyEvent.Handled = true;
+							}
+							break;
+
+						case 'z':
+						case 'Z':
+							if (controlKeyDown)
+							{
+								// undo last operation
+								view3D.Scene.UndoBuffer.Undo();
+							}
+							else if (shiftKeyDown)
+							{
+								// Zoom in
+								Offset3DView(view3D, new Vector2(0, offsetDist), TrackBallTransformType.Scale);
+							}
+							else
+							{
+								// Zoom out
+								Offset3DView(view3D, new Vector2(0, -offsetDist), TrackBallTransformType.Scale);
+							}
+							keyEvent.Handled = true;
+							break;
+
+						case ' ':
+							view3D.Scene.ClearSelection();
+							keyEvent.Handled = true;
+							break;
+					}
+				}
+			};
+
 			systemWindow.KeyDown += (s, keyEvent) =>
 			{
 				var view3D = systemWindow.Descendants<View3DWidget>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
@@ -2154,90 +2262,6 @@ namespace MatterHackers.MatterControl
 				{
 					switch (keyEvent.KeyCode)
 					{
-						case Keys.C:
-							if (keyEvent.Control)
-							{
-								view3D.Scene.Copy();
-
-								keyEvent.Handled = true;
-								keyEvent.SuppressKeyPress = true;
-							}
-							break;
-
-						case Keys.A:
-							if (keyEvent.Control)
-							{
-								view3D.SelectAll();
-								keyEvent.Handled = true;
-								keyEvent.SuppressKeyPress = true;
-							}
-							break;
-
-						case Keys.S:
-							if (keyEvent.Control)
-							{
-								view3D.Save();
-
-								keyEvent.Handled = true;
-								keyEvent.SuppressKeyPress = true;
-							}
-							break;
-
-						case Keys.V:
-							if (keyEvent.Control)
-							{
-								view3D.Scene.Paste();
-
-								keyEvent.Handled = true;
-								keyEvent.SuppressKeyPress = true;
-							}
-							break;
-
-						case Keys.W:
-							view3D.ResetView();
-							keyEvent.Handled = true;
-							keyEvent.SuppressKeyPress = true;
-							break;
-
-						case Keys.X:
-							if (keyEvent.Control)
-							{
-								view3D.Scene.Cut();
-
-								keyEvent.Handled = true;
-								keyEvent.SuppressKeyPress = true;
-							}
-							break;
-
-						case Keys.Y:
-							if (keyEvent.Control)
-							{
-								view3D.Scene.UndoBuffer.Redo();
-								keyEvent.Handled = true;
-								keyEvent.SuppressKeyPress = true;
-							}
-							break;
-
-						case Keys.Z:
-							if (keyEvent.Control)
-							{
-								// undo last opperation
-								view3D.Scene.UndoBuffer.Undo();
-							}
-							else if(keyEvent.Shift)
-							{
-								// Zoom in
-								Offset3DView(view3D, new Vector2(0, offsetDist), TrackBallTransformType.Scale);
-							}
-							else
-							{
-								// Zoom out
-								Offset3DView(view3D, new Vector2(0, -offsetDist), TrackBallTransformType.Scale);
-							}
-							keyEvent.Handled = true;
-							keyEvent.SuppressKeyPress = true;
-							break;
-
 						case Keys.Delete:
 						case Keys.Back:
 							view3D.Scene.DeleteSelection();
@@ -2256,12 +2280,6 @@ namespace MatterHackers.MatterControl
 								keyEvent.Handled = true;
 								keyEvent.SuppressKeyPress = true;
 							}
-							break;
-
-						case Keys.Space:
-							view3D.Scene.ClearSelection();
-							keyEvent.Handled = true;
-							keyEvent.SuppressKeyPress = true;
 							break;
 
 						case Keys.Left:

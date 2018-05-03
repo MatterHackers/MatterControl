@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			messageContainer.AddChild(submissionStatus);
 
 			// Default sizing results in too much top whitespace, revise Subject row to only be as big as content
-			var subjectRow = CreateLabelRow("Subject*".Localize());
+			var subjectRow = CreateLabelRow("Subject".Localize());
 			subjectRow.VAnchor = VAnchor.Fit;
 			contentRow.AddChild(subjectRow);
 			contentRow.AddChild(questionInput = new MHTextEditWidget("")
@@ -122,21 +122,21 @@ namespace MatterHackers.MatterControl.ContactForm
 			});
 			contentRow.AddChild(questionErrorMessage = CreateErrorRow());
 
-			contentRow.AddChild(CreateLabelRow("Message*".Localize()));
+			contentRow.AddChild(CreateLabelRow("Message".Localize()));
 			contentRow.AddChild(detailInput = new MHTextEditWidget("", pixelHeight: 120, multiLine: true)
 			{
 				HAnchor = HAnchor.Stretch
 			});
 			contentRow.AddChild(detailErrorMessage = CreateErrorRow());
 
-			contentRow.AddChild(CreateLabelRow("Email Address*".Localize()));
+			contentRow.AddChild(CreateLabelRow("Email Address".Localize()));
 			contentRow.AddChild(emailInput = new MHTextEditWidget
 			{
 				HAnchor = HAnchor.Stretch
 			});
 			contentRow.AddChild(emailErrorMessage = CreateErrorRow());
 
-			contentRow.AddChild(CreateLabelRow("Name*".Localize()));
+			contentRow.AddChild(CreateLabelRow("Name".Localize()));
 			contentRow.AddChild(nameInput = new MHTextEditWidget
 			{
 				HAnchor = HAnchor.Stretch
