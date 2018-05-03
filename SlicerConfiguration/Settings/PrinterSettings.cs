@@ -1102,7 +1102,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				GuiWidget.BreakInDebugger();
 				string stackTraceNoBackslashRs = e.StackTrace.Replace("\r", "");
 
-				var widget = new ContactFormWidget();
+				var widget = new ContactFormPage();
 				widget.questionInput.Text = "Parse Error while slicing".Localize();
 				widget.detailInput.Text = e.Message + stackTraceNoBackslashRs;
 
