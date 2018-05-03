@@ -74,42 +74,6 @@ namespace MatterHackers.MatterControl.ContactForm
 
 			submitButton.Click += SubmitContactForm;
 
-			DoLayout();
-		}
-
-		private GuiWidget CreateLabelRow(string labelText, int fontSize = 12, int height = 28)
-		{
-			var labelContainer = new GuiWidget
-			{
-				HAnchor = HAnchor.Stretch,
-				Height = height * GuiWidget.DeviceScale
-			};
-
-			labelContainer.AddChild(new TextWidget(labelText, pointSize: fontSize)
-			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				VAnchor = VAnchor.Bottom,
-				HAnchor = HAnchor.Left,
-				Margin = new BorderDouble(bottom: 2)
-			});
-
-			return labelContainer;
-		}
-
-		private TextWidget CreateErrorRow()
-		{
-			return new TextWidget("", pointSize: 11)
-			{
-				AutoExpandBoundsToText = true,
-				Margin = new BorderDouble(0, 5),
-				TextColor = Color.Red,
-				HAnchor = HAnchor.Left,
-				Visible = false
-			};
-		}
-
-		private void DoLayout()
-		{
 			messageContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
@@ -156,6 +120,37 @@ namespace MatterHackers.MatterControl.ContactForm
 				HAnchor = HAnchor.Stretch
 			});
 			contentRow.AddChild(nameErrorMessage = CreateErrorRow());
+		}
+
+		private GuiWidget CreateLabelRow(string labelText, int fontSize = 12, int height = 28)
+		{
+			var labelContainer = new GuiWidget
+			{
+				HAnchor = HAnchor.Stretch,
+				Height = height * GuiWidget.DeviceScale
+			};
+
+			labelContainer.AddChild(new TextWidget(labelText, pointSize: fontSize)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				VAnchor = VAnchor.Bottom,
+				HAnchor = HAnchor.Left,
+				Margin = new BorderDouble(bottom: 2)
+			});
+
+			return labelContainer;
+		}
+
+		private TextWidget CreateErrorRow()
+		{
+			return new TextWidget("", pointSize: 11)
+			{
+				AutoExpandBoundsToText = true,
+				Margin = new BorderDouble(0, 5),
+				TextColor = Color.Red,
+				HAnchor = HAnchor.Left,
+				Visible = false
+			};
 		}
 
 		private bool ValidateContactForm()
