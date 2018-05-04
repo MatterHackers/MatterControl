@@ -349,7 +349,7 @@ namespace MatterHackers.MatterControl
 		{
 			var sequence = new ImageSequence()
 			{
-				FramePerSecond = 3,
+				FramesPerSecond = 3,
 			};
 
 			sequence.AddImage(new ImageBuffer(1, 1));
@@ -399,7 +399,7 @@ namespace MatterHackers.MatterControl
 				{
 					title.Text = guide.Title;
 					description.Text = guide.Description;
-					imageSequenceWidget.ImageSequence = AggContext.StaticData.LoadSequence(Path.Combine("Icons", "provider_loading.gif"));
+					imageSequenceWidget.ImageSequence = ApplicationController.Instance.GetProcessingSequence(Color.Black);
 					
 					ApplicationController.Instance.DownloadToImageSequenceAsync(imageSequenceWidget.ImageSequence, guide.AnimationUri);
 				};
