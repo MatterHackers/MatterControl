@@ -1597,6 +1597,8 @@ namespace MatterHackers.MatterControl
 		public static IObject3D ClipboardItem { get; internal set; }
 		public Action<ILibraryItem> ShareLibraryItem { get; set; }
 
+		public List<BedConfig> Workspaces { get; } = new List<BedConfig>();
+
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 
 		public void NotifyPrintersTabRightElement(GuiWidget sourceExentionArea)
