@@ -127,6 +127,7 @@ namespace MatterHackers.MatterControl.Library
 		public PlatingHistoryContainer PlatingHistory { get; internal set; }
 
 		public PartHistoryContainer PartHistory { get; internal set; }
+		public LibraryCollectionContainer LibraryCollectionContainer { get; internal set; }
 
 		public IContentProvider GetContentProvider(ILibraryItem item)
 		{

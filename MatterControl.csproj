@@ -80,6 +80,7 @@
     <Compile Include="DesignTools\Attributes\ShowSearchFieldAttribute.cs" />
     <Compile Include="DesignTools\Primitives\HalfCylinderObject3D.cs" />
     <Compile Include="DesignTools\Primitives\HalfWedgeObject3D.cs" />
+    <Compile Include="Library\Providers\MatterControl\LibraryCollectionContainer.cs" />
     <Compile Include="Library\Providers\MatterControl\PartHistoryContainer.cs" />
     <Compile Include="Library\Providers\MatterControl\RootHistoryContainer.cs" />
     <Compile Include="PrinterControls\ControlWidgets\CalibrationControls.cs" />
