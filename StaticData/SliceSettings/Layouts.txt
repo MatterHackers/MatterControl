@@ -37,7 +37,7 @@ Advanced
       Speed for Perimeters
         perimeter_speed
         external_perimeter_speed
-      Other 
+      Other
         support_material_speed
         bridge_speed
         travel_speed
@@ -172,7 +172,6 @@ Printer
         z_probe_z_offset
         z_servo_depolyed_angle
         z_servo_retracted_angle
-        clean_nozzle_image
     Hardware
       Hardware
         has_fan
@@ -206,9 +205,13 @@ Printer
         load_filament_length
         unload_filament_length
         load_filament_speed
+    Oem
+      General
+        clean_nozzle_image
         trim_image
         insert_image
         running_clean_image
+
   G-Code
     G-Code
       G-Code

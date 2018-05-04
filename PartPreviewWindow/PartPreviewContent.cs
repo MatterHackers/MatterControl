@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,19 +28,14 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow.PlusTab;
-using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -165,28 +160,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ApplicationController.Instance.NotifyPrintersTabRightElement(extensionArea);
 
-			// Show start page during initial application startup
-			{
-				tabControl.AddTab(
-					new ChromeTab("Start".Localize(),  tabControl, tabControl.NewTabPage(), theme, hasClose: false)
-					{
-						MinimumSize = new Vector2(0, theme.TabButtonHeight),
-						Name = "Start Tab",
-						Padding = new BorderDouble(15, 0)
-					});
-			}
+			// Show fixed start page
+			tabControl.AddTab(
+				new ChromeTab("Start".Localize(),  tabControl, tabControl.NewTabPage(), theme, hasClose: false)
+				{
+					MinimumSize = new Vector2(0, theme.TabButtonHeight),
+					Name = "Start Tab",
+					Padding = new BorderDouble(15, 0)
+				});
 
 			// Add a tab for the current printer
 			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
-				string tabTitle = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
-				this.CreatePrinterTab(printer, theme, tabTitle);
-			}
-			else
-			{
+				this.CreatePrinterTab(printer, theme, printer.Settings.GetValue(SettingsKey.printer_name));
 			}
 
-			// ************** Restore active tabs..... ******************
+			// Restore active tabs
+			foreach (var bed in ApplicationController.Instance.Workspaces)
+			{
+				this.CreatePartTab("New Part", bed, theme);
+			}
 		}
 
 		internal ChromeTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)

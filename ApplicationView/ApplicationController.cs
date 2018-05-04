@@ -655,30 +655,13 @@ namespace MatterHackers.MatterControl
 						}));
 			}
 
-			this.Library.RegisterContainer(
-				new DynamicContainerLink(
-					() => "Calibration Parts".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder.png")),
-					() => new CalibrationPartsContainer())
-				{
-					IsReadOnly = true
-				});
+			this.Library.LibraryCollectionContainer = new LibraryCollectionContainer();
 
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
-					() => "Print Queue".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "queue_folder.png")),
-					() => new PrintQueueContainer()));
-
-			var rootLibraryCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
-			if (rootLibraryCollection != null)
-			{
-				this.Library.RegisterContainer(
-					new DynamicContainerLink(
-						() => "Local Library".Localize(),
-						AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "library_folder.png")),
-						() => new SqliteLibraryContainer(rootLibraryCollection.Id)));
-			}
+					() => "Library".Localize(),
+					AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "library_folder.png")),
+					() => this.Library.LibraryCollectionContainer));
 
 			if (File.Exists(ApplicationDataStorage.Instance.CustomLibraryFoldersPath))
 			{
@@ -1596,6 +1579,8 @@ namespace MatterHackers.MatterControl
 
 		public static IObject3D ClipboardItem { get; internal set; }
 		public Action<ILibraryItem> ShareLibraryItem { get; set; }
+
+		public List<BedConfig> Workspaces { get; } = new List<BedConfig>();
 
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 

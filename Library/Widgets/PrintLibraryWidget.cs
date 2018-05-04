@@ -702,20 +702,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 			});
 
-			menuActions.Add(new MenuSeparator("Classic Queue"));
-
-			// add to queue menu item
-			menuActions.Add(new PrintItemAction()
-			{
-				Title = "Add to Queue".Localize(),
-				Action = (selectedLibraryItems, listView) => addToQueueButton_Click(selectedLibraryItems, null),
-				IsEnabled = (selectedListItems, listView) =>
-				{
-					// Multiselect - disallow containers
-					return listView.SelectedItems.Any()
-						&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
-				},
-			});
+			menuActions.Add(new MenuSeparator("Export"));
 
 			// export menu item
 			menuActions.Add(new PrintItemAction()
