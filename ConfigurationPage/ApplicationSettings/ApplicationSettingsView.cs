@@ -320,7 +320,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					Padding = new BorderDouble(2),
 					Border = new BorderDouble(1),
 					BorderColor = theme.Colors.PrimaryAccentColor,
-					VAnchor = VAnchor.Center | VAnchor.Fit
+					VAnchor = VAnchor.Center | VAnchor.Fit,
 				};
 				blueBox.AddChild(new TextWidget("64", pointSize: 8, textColor: theme.Colors.PrimaryAccentColor));
 

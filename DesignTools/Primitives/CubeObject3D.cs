@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public CubeObject3D()
 		{
-			Name = "Cylinder".Localize();
+			Name = "Cube".Localize();
 			Color = ApplicationController.Instance.PrimitiveColors["Cube"];
 		}
 

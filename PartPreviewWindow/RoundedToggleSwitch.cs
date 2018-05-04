@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		internal double animationRatio = 0;
 		internal double finalRadius = 22 * GuiWidget.DeviceScale;
 
-		public override void OnUpdate(double secondsThisUpdate)
+		public override bool OnUpdate(UpdateEvent updateEvent)
 		{
 			if (IsRunning)
 			{
@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Stop();
 			}
 
-			base.OnUpdate(secondsThisUpdate);
+			return base.OnUpdate(updateEvent);
 		}
 	}
 
