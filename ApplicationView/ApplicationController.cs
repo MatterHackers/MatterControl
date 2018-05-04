@@ -56,6 +56,7 @@ namespace MatterHackers.MatterControl
 	using Agg.Image;
 	using CustomWidgets;
 	using MatterHackers.Agg.Platform;
+	using MatterHackers.Agg.VertexSource;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.DataConverters3D.UndoCommands;
 	using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
@@ -593,6 +594,27 @@ namespace MatterHackers.MatterControl
 				},
 			};
 
+		}
+
+		public ImageSequence GetProcessingSequence(Color color)
+		{
+			int size = (int)Math.Round(80 * GuiWidget.DeviceScale);
+			double radius = size / 8.0;
+			var workingAnimation = new ImageSequence();
+			var frameCount = 30.0;
+			var strokeWidth = 4 * GuiWidget.DeviceScale;
+			for(int i=0; i < frameCount; i++)
+			{
+				var frame = new ImageBuffer(size, size);
+				var graphics = frame.NewGraphics2D();
+				graphics.Render(new Stroke(new Arc(frame.Width / 2, frame.Height / 2,
+					size / 4 - strokeWidth / 2, size / 4 - strokeWidth / 2,
+					MathHelper.Tau / frameCount * i,
+					MathHelper.Tau / 4 + MathHelper.Tau / frameCount * i), strokeWidth), color);
+				workingAnimation.AddImage(frame);
+			}
+
+			return workingAnimation;
 		}
 
 		static int applicationInstanceCount = 0;
@@ -1475,13 +1497,22 @@ namespace MatterHackers.MatterControl
 			{
 				try // if we get a bad result we can get a target invocation exception. In that case just don't show anything
 				{
-					// scale the loaded image to the size of the target image
-					byte[] raw = e.Result;
-					Stream stream = new MemoryStream(raw);
-					ImageBuffer unScaledImage = new ImageBuffer(10, 10);
-					AggContext.StaticData.LoadImageSequenceData(stream, imageSequenceToLoadInto);
+					Task.Run(() =>
+					{
+						// scale the loaded image to the size of the target image
+						byte[] raw = e.Result;
+						Stream stream = new MemoryStream(raw);
 
-					imageSequenceToLoadInto.Invalidate();
+						var asyncImageSequence = new ImageSequence();
+
+						AggContext.StaticData.LoadImageSequenceData(stream, asyncImageSequence);
+
+						UiThread.RunOnIdle(() =>
+						{
+							imageSequenceToLoadInto.Copy(asyncImageSequence);
+							imageSequenceToLoadInto.Invalidate();
+						});
+					});
 				}
 				catch
 				{
