@@ -105,6 +105,7 @@ namespace MatterHackers.MatterControl
 			get => ActualTextEditWidget.InternalTextEditWidget.SelectAllOnFocus;
 			set => ActualTextEditWidget.InternalTextEditWidget.SelectAllOnFocus = value;
 		}
+		public bool ReadOnly { get => ActualTextEditWidget.ReadOnly; set => ActualTextEditWidget.ReadOnly = value; }
 
 		public void DrawFromHintedCache()
 		{
