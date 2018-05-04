@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				// Navigate to Local Library 
+				// Navigate to Local Library
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				// Make sure that Item does not exist before the test begins
