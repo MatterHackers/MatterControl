@@ -170,8 +170,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void WaitForFirstDraw(this AutomationRunner testRunner)
 		{
-			SystemWindow systemWindow;
-			testRunner.GetWidgetByName("Start Tab", out systemWindow, 10);
+			testRunner.GetWidgetByName("Start Tab", out SystemWindow systemWindow, 10);
 			// make sure we wait for MC to be up and running
 			testRunner.WaitforDraw(systemWindow);
 		}
@@ -447,7 +446,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void NavigateToFolder(this AutomationRunner testRunner, string libraryRowItemName)
 		{
-			EnsureFoldersVisible(testRunner);
+			testRunner.EnsureFoldersVisible();
+
+			switch (libraryRowItemName)
+			{
+				case "Calibration Parts Row Item Collection":
+				case "Cloud Library Row Item Collection":
+				case "Print Queue Row Item Collection":
+				case "Local Library Row Item Collection":
+					// If visible, navigate into Libraries container before opening target
+					if(testRunner.NameExists("Library Row Item Collection"))
+					{
+						testRunner.DoubleClickByName("Library Row Item Collection");
+					}
+
+					break;
+			}
+
 			testRunner.DoubleClickByName(libraryRowItemName);
 		}
 
