@@ -233,7 +233,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 				{
 					estimatedMemoryUse = MeshFileIo.GetEstimatedMemoryUse(item.FileLocation);
 
-					if (AggContext.OperatingSystem == OSType.Android)
+					// If we have less than 2 gigs memory, warn on smaller file size
+					if (AggContext.PhysicalMemory < 2000000000)
 					{
 						if (estimatedMemoryUse > 100000000)
 						{

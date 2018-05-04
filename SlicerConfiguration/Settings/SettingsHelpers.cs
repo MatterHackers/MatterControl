@@ -141,6 +141,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string temperature1 = nameof(temperature1);
 		public const string temperature2 = nameof(temperature2);
 		public const string temperature3 = nameof(temperature3);
+		public const string top_solid_infill_speed = nameof(top_solid_infill_speed);
 		public const string use_z_probe = nameof(use_z_probe);
 		public const string validate_layer_height = nameof(validate_layer_height);
 		public const string windows_driver = nameof(windows_driver);

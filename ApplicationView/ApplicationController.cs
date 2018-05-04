@@ -591,15 +591,6 @@ namespace MatterHackers.MatterControl
 					//Icon = AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
 				},
-	#if DEBUG // keep this work in progress to the editor for now
-				new SceneSelectionSeparator(),
-				new SceneSelectionOperation()
-				{
-					TitleResolver = () => "Bend".Localize(),
-					Action = (scene) => new BendObject3D(scene.SelectedItem),
-					IsEnabled = (scene) => scene.HasSelection,
-				},
-	#endif
 			};
 
 		}
