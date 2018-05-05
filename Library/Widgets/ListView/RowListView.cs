@@ -129,9 +129,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				};
 				leftColumn.AddChild(imageWidget);
 
-				partLabel = new TextWidget(listViewItem.Model.Name, pointSize: 14)
+				partLabel = new TextWidget(listViewItem.Model.Name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 				{
-					TextColor = Color.Black,
 					MinimumSize = new Vector2(1, 18),
 					VAnchor = VAnchor.Center
 				};
