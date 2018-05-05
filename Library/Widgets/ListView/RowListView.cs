@@ -74,15 +74,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	public class RowViewItem : ListViewItemBase
 	{
-		private CheckBox selectionCheckBox;
-
 		private ThemeConfig theme;
 
 		private TextWidget partLabel;
 
 		private GuiWidget middleColumn;
-
-		private GuiWidget selectionCheckBoxContainer;
 
 		private event EventHandler unregisterEvents;
 
@@ -101,22 +97,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			var topContentsFlowLayout = new FlowLayoutWidget(FlowDirection.LeftToRight) { HAnchor = HAnchor.Stretch };
 			{
-				selectionCheckBoxContainer = new GuiWidget()
-				{
-					VAnchor = VAnchor.Stretch,
-					Width = 40,
-					Visible = false,
-					Margin = new BorderDouble(left: 6)
-				};
-
-				selectionCheckBox = new CheckBox("")
-				{
-					Name = "List Item Checkbox",
-					VAnchor = VAnchor.Center,
-					HAnchor = HAnchor.Center
-				};
-				selectionCheckBoxContainer.AddChild(selectionCheckBox);
-
 				var leftColumn = new FlowLayoutWidget(FlowDirection.LeftToRight)
 				{
 					VAnchor = VAnchor.Top | VAnchor.Fit
@@ -194,24 +174,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
-		}
-
-		protected override void UpdateColors()
-		{
-			base.UpdateColors();
-
-			if (this.IsSelected)
-			{
-				this.selectionCheckBox.TextColor = Color.White;
-			}
-			else if (this.IsHoverItem)
-			{
-				this.selectionCheckBox.TextColor = Color.Black;
-			}
-			else
-			{
-				this.selectionCheckBox.TextColor = Color.Black;
-			}
 		}
 
 		public override Color BackgroundColor
