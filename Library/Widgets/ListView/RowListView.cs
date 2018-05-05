@@ -93,15 +93,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Margin = new BorderDouble(6, 0, 6, 6);
 			this.theme = theme;
 
-			var topToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom) { HAnchor = HAnchor.Stretch };
+			var column = new FlowLayoutWidget(FlowDirection.TopToBottom) { HAnchor = HAnchor.Stretch };
 
-			var topContentsFlowLayout = new FlowLayoutWidget(FlowDirection.LeftToRight) { HAnchor = HAnchor.Stretch };
+			var row = new FlowLayoutWidget(FlowDirection.LeftToRight) { HAnchor = HAnchor.Stretch };
 
 			var leftColumn = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
 				VAnchor = VAnchor.Top | VAnchor.Fit
 			};
-			topContentsFlowLayout.AddChild(leftColumn);
+			row.AddChild(leftColumn);
 
 			imageWidget = new ImageWidget(thumbWidth, thumbHeight)
 			{
@@ -142,10 +142,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			middleColumn.AddChild(partLabel);
 
-			topContentsFlowLayout.AddChild(middleColumn);
+			row.AddChild(middleColumn);
 
-			topToBottomLayout.AddChild(topContentsFlowLayout);
-			this.AddChild(topToBottomLayout);
+			column.AddChild(row);
+			this.AddChild(column);
 		}
 
 		public override async void OnLoad(EventArgs args)
