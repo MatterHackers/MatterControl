@@ -73,7 +73,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private CheckBox selectionCheckBox;
 
-		private SlideWidget actionButtonContainer;
 
 		private ConditionalClickWidget conditionalClickContainer;
 
@@ -81,13 +80,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private GuiWidget middleColumn;
 
-		//private TextWidget partStatus;
-
 		private GuiWidget selectionCheckBoxContainer;
-
-		private FatFlatClickWidget viewButton;
-
-		private TextWidget viewButtonLabel;
 
 		private event EventHandler unregisterEvents;
 
@@ -183,12 +176,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			topToBottomLayout.AddChild(topContentsFlowLayout);
 			this.AddChild(topToBottomLayout);
-
-			actionButtonContainer = getItemActionButtons();
-			actionButtonContainer.Visible = false;
-			this.AddChild(conditionalClickContainer);
-
-			this.AddChild(actionButtonContainer);
 		}
 
 		public override async void OnLoad(EventArgs args)
@@ -206,14 +193,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				if (this.isHoverItem != value)
 				{
 					this.isHoverItem = value;
-					if (value && !this.EditMode)
-					{
-						this.actionButtonContainer.SlideIn();
-					}
-					else
-					{
-						this.actionButtonContainer.SlideOut();
-					}
 
 					UpdateColors();
 				}
@@ -234,89 +213,25 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 				this.partLabel.TextColor = Color.White;
-				//this.partStatus.TextColor = Color.White;
-				this.viewButton.BackgroundColor = Color.White;
-				this.viewButtonLabel.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
 			}
 			else if (this.IsSelected)
 			{
 				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 				this.partLabel.TextColor = Color.White;
-				//this.partStatus.TextColor = Color.White;
 				this.selectionCheckBox.TextColor = Color.White;
-				this.viewButton.BackgroundColor = Color.White;
-				this.viewButtonLabel.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
 			}
 			else if (this.IsHoverItem)
 			{
 				this.BackgroundColor = Color.White;
 				this.partLabel.TextColor = Color.Black;
 				this.selectionCheckBox.TextColor = Color.Black;
-				//this.partStatus.TextColor = Color.Black;
-				this.viewButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-				this.viewButtonLabel.TextColor = Color.White;
 			}
 			else
 			{
 				this.BackgroundColor = new Color(255, 255, 255, 255);
 				this.partLabel.TextColor = Color.Black;
 				this.selectionCheckBox.TextColor = Color.Black;
-				//this.partStatus.TextColor = Color.Black;
-				this.viewButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-				this.viewButtonLabel.TextColor = Color.White;
 			}
-		}
-
-		private SlideWidget getItemActionButtons()
-		{
-			var removeLabel = new TextWidget("Remove".Localize())
-			{
-				Name = "Queue Item " + listViewItem.Model.Name + " Remove",
-				TextColor = Color.White,
-				VAnchor = VAnchor.Center,
-				HAnchor = HAnchor.Center
-			};
-
-			var removeButton = new FatFlatClickWidget(removeLabel)
-			{
-				VAnchor = VAnchor.Stretch,
-				BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor,
-				Width = 100
-			};
-			removeButton.Click += onRemovePartClick;
-
-			viewButtonLabel = new TextWidget("View".Localize())
-			{
-				Name = "Queue Item " + listViewItem.Model.Name + " View",
-				TextColor = Color.White,
-				VAnchor = VAnchor.Center,
-				HAnchor = HAnchor.Center,
-			};
-
-			viewButton = new FatFlatClickWidget(viewButtonLabel)
-			{
-				VAnchor = VAnchor.Stretch,
-				BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor,
-				Width = 100,
-			};
-			viewButton.Click += onViewPartClick;
-
-			var buttonFlowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
-			{
-				VAnchor = VAnchor.Stretch
-			};
-			buttonFlowContainer.AddChild(viewButton);
-			buttonFlowContainer.AddChild(removeButton);
-
-			var buttonContainer = new SlideWidget()
-			{
-				VAnchor = VAnchor.Stretch,
-				HAnchor = HAnchor.Right
-			};
-			buttonContainer.AddChild(buttonFlowContainer);
-			buttonContainer.Width = 200;
-
-			return buttonContainer;
 		}
 
 		protected override async void UpdateHoverState()
@@ -365,21 +280,5 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				this.selectionCheckBox.Checked = true;
 			}
 		}
-
-		private void onRemovePartClick(object sender, EventArgs e)
-		{
-			this.actionButtonContainer.SlideOut();
-			//UiThread.RunOnIdle(DeletePartFromQueue);
-		}
-
-		private void onViewPartClick(object sender, EventArgs e)
-		{
-			this.actionButtonContainer.SlideOut();
-			//UiThread.RunOnIdle(() =>
-			//{
-			//	OpenPartViewWindow(View3DWidget.OpenMode.Viewing);
-			//});
-		}
-
 	}
 }
