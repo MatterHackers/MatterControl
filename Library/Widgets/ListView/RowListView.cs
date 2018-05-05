@@ -40,17 +40,20 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class RowListView : FlowLayoutWidget, IListContentView
 	{
+		private ThemeConfig theme;
+
 		public int ThumbWidth { get; } = 50;
 		public int ThumbHeight { get; } = 50;
 
-		public RowListView()
+		public RowListView(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
+			this.theme = theme;
 		}
 
 		public ListViewItemBase AddItem(ListViewItem item)
 		{
-			var detailsView = new RowViewItem(item, this.ThumbWidth, this.ThumbHeight);
+			var detailsView = new RowViewItem(item, this.ThumbWidth, this.ThumbHeight, theme);
 			this.AddChild(detailsView);
 
 			return detailsView;
@@ -73,6 +76,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private CheckBox selectionCheckBox;
 
+		private ThemeConfig theme;
+
 		private TextWidget partLabel;
 
 		private GuiWidget middleColumn;
@@ -81,16 +86,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private event EventHandler unregisterEvents;
 
-		public RowViewItem(ListViewItem listViewItem, int thumbWidth, int thumbHeight)
+		public RowViewItem(ListViewItem listViewItem, int thumbWidth, int thumbHeight, ThemeConfig theme)
 			: base(listViewItem, thumbWidth, thumbHeight)
 		{
 			// Set Display Attributes
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Stretch | HAnchor.Fit;
 			this.Height = 50;
-			this.BackgroundColor = Color.White;
 			this.Padding = new BorderDouble(0);
 			this.Margin = new BorderDouble(6, 0, 6, 6);
+			this.theme = theme;
 
 			var topToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom) { HAnchor = HAnchor.Stretch };
 
@@ -118,11 +123,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				};
 				topContentsFlowLayout.AddChild(leftColumn);
 
-				// TODO: add in default thumbnail handling from parent or IListItem
 				imageWidget = new ImageWidget(thumbWidth, thumbHeight)
 				{
 					Name = "List Item Thumbnail",
-					BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor
 				};
 				leftColumn.AddChild(imageWidget);
 
@@ -200,22 +203,22 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			if (this.IsSelected)
 			{
-				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-				this.partLabel.TextColor = Color.White;
 				this.selectionCheckBox.TextColor = Color.White;
 			}
 			else if (this.IsHoverItem)
 			{
-				this.BackgroundColor = Color.White;
-				this.partLabel.TextColor = Color.Black;
 				this.selectionCheckBox.TextColor = Color.Black;
 			}
 			else
 			{
-				this.BackgroundColor = new Color(255, 255, 255, 255);
-				this.partLabel.TextColor = Color.Black;
 				this.selectionCheckBox.TextColor = Color.Black;
 			}
+		}
+
+		public override Color BackgroundColor
+		{
+			get => this.IsSelected ? theme.AccentMimimalOverlay : theme.ThumbnailBackground;
+			set { }
 		}
 
 		protected override async void UpdateHoverState()

@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					(isChecked) =>
 					{
 						activeMode = ListViewModes.RowListView;
-						listView.ListContentView = new RowListView();
+						listView.ListContentView = new RowListView(theme);
 						listView.Reload().ConfigureAwait(false);
 					},
 					useRadioStyle: true,
