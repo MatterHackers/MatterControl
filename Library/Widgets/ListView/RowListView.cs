@@ -76,8 +76,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private ThemeConfig theme;
 
-		private event EventHandler unregisterEvents;
-
 		public RowViewItem(ListViewItem listViewItem, int thumbWidth, int thumbHeight, ThemeConfig theme)
 			: base(listViewItem, thumbWidth, thumbHeight)
 		{
@@ -89,7 +87,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Margin = new BorderDouble(6, 0, 6, 6);
 			this.theme = theme;
 
-			var row = new FlowLayoutWidget(FlowDirection.LeftToRight) { HAnchor = HAnchor.Stretch };
+			var row = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				HAnchor = HAnchor.Stretch
+			};
 
 			row.AddChild(imageWidget = new ImageWidget(thumbWidth, thumbHeight)
 			{
@@ -125,12 +126,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					UpdateColors();
 				}
 			}
-		}
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			unregisterEvents?.Invoke(this, null);
-			base.OnClosed(e);
 		}
 
 		public override Color BackgroundColor
