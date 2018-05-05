@@ -96,54 +96,53 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			var topToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom) { HAnchor = HAnchor.Stretch };
 
 			var topContentsFlowLayout = new FlowLayoutWidget(FlowDirection.LeftToRight) { HAnchor = HAnchor.Stretch };
+
+			var leftColumn = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
-				var leftColumn = new FlowLayoutWidget(FlowDirection.LeftToRight)
+				VAnchor = VAnchor.Top | VAnchor.Fit
+			};
+			topContentsFlowLayout.AddChild(leftColumn);
+
+			imageWidget = new ImageWidget(thumbWidth, thumbHeight)
+			{
+				Name = "List Item Thumbnail",
+			};
+			leftColumn.AddChild(imageWidget);
+
+			partLabel = new TextWidget(listViewItem.Model.Name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			{
+				MinimumSize = new Vector2(1, 18),
+				VAnchor = VAnchor.Center
+			};
+
+			middleColumn = new GuiWidget(0.0, 0.0)
+			{
+				VAnchor = VAnchor.Stretch,
+				HAnchor = HAnchor.Stretch,
+				Padding = 0,
+				Margin = new BorderDouble(10, 3)
+			};
+
+			bool mouseDownOnMiddle = false;
+			middleColumn.MouseDown += (sender, e) =>
+			{
+				mouseDownOnMiddle = true;
+			};
+
+			middleColumn.MouseUp += (sender, e) =>
+			{
+				if (mouseDownOnMiddle
+					&& middleColumn.LocalBounds.Contains(e.Position))
 				{
-					VAnchor = VAnchor.Top | VAnchor.Fit
-				};
-				topContentsFlowLayout.AddChild(leftColumn);
+					this.OnItemSelect();
+				}
 
-				imageWidget = new ImageWidget(thumbWidth, thumbHeight)
-				{
-					Name = "List Item Thumbnail",
-				};
-				leftColumn.AddChild(imageWidget);
+				mouseDownOnMiddle = false;
+			};
 
-				partLabel = new TextWidget(listViewItem.Model.Name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
-				{
-					MinimumSize = new Vector2(1, 18),
-					VAnchor = VAnchor.Center
-				};
+			middleColumn.AddChild(partLabel);
 
-				middleColumn = new GuiWidget(0.0, 0.0)
-				{
-					VAnchor = VAnchor.Stretch,
-					HAnchor = HAnchor.Stretch,
-					Padding = 0,
-					Margin = new BorderDouble(10, 3)
-				};
-
-				bool mouseDownOnMiddle = false;
-				middleColumn.MouseDown += (sender, e) =>
-				{
-					mouseDownOnMiddle = true;
-				};
-
-				middleColumn.MouseUp += (sender, e) =>
-				{
-					if (mouseDownOnMiddle
-						&& middleColumn.LocalBounds.Contains(e.Position))
-					{
-						this.OnItemSelect();
-					}
-
-					mouseDownOnMiddle = false;
-				};
-
-				middleColumn.AddChild(partLabel);
-
-				topContentsFlowLayout.AddChild(middleColumn);
-			}
+			topContentsFlowLayout.AddChild(middleColumn);
 
 			topToBottomLayout.AddChild(topContentsFlowLayout);
 			this.AddChild(topToBottomLayout);
