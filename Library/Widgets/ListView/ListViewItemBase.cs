@@ -248,13 +248,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			var widgetBorder = new RoundedRect(LocalBounds, 0);
 
-			// Draw the hover border if the mouse is in bounds or if its the ActivePrint item
-			if (mouseInBounds || (this.IsActivePrint && !this.EditMode))
-			{
-				//Draw interior border
-				graphics2D.Render(new Stroke(widgetBorder, 3), ActiveTheme.Instance.PrimaryAccentColor);
-			}
-
 			if (this.IsHoverItem)
 			{
 				RectangleDouble Bounds = LocalBounds;
@@ -355,23 +348,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public virtual bool IsHoverItem { get; set; }
 		public virtual bool EditMode { get; set; }
-
-		private bool isActivePrint = false;
-		public bool IsActivePrint
-		{
-			get
-			{
-				return isActivePrint;
-			}
-			set
-			{
-				if (isActivePrint != value)
-				{
-					isActivePrint = value;
-					UpdateColors();
-				}
-			}
-		}
 
 		private bool isSelected = false;
 

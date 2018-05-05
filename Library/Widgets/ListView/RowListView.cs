@@ -209,12 +209,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			base.UpdateColors();
 
-			if (this.IsActivePrint && !this.EditMode)
-			{
-				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-				this.partLabel.TextColor = Color.White;
-			}
-			else if (this.IsSelected)
+			if (this.IsSelected)
 			{
 				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 				this.partLabel.TextColor = Color.White;
