@@ -73,9 +73,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private CheckBox selectionCheckBox;
 
-
-		private ConditionalClickWidget conditionalClickContainer;
-
 		private TextWidget partLabel;
 
 		private GuiWidget middleColumn;
@@ -166,14 +163,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				topContentsFlowLayout.AddChild(middleColumn);
 			}
 
-			// The ConditionalClickWidget supplies a user driven Enabled property based on a delegate of your choosing
-			conditionalClickContainer = new ConditionalClickWidget(() => this.EditMode)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
-			};
-			conditionalClickContainer.Click += onQueueItemClick;
-
 			topToBottomLayout.AddChild(topContentsFlowLayout);
 			this.AddChild(topToBottomLayout);
 		}
@@ -259,20 +248,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				case UnderMouseState.UnderMouseNotFirst:
 					IsHoverItem = ContainsFirstUnderMouseRecursive();
 					break;
-			}
-		}
-
-		private void onQueueItemClick(object sender, EventArgs e)
-		{
-			if (this.IsSelected)
-			{
-				this.IsSelected = false;
-				this.selectionCheckBox.Checked = false;
-			}
-			else
-			{
-				this.IsSelected = true;
-				this.selectionCheckBox.Checked = true;
 			}
 		}
 	}
