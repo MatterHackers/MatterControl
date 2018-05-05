@@ -81,8 +81,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			// Set Display Attributes
 			this.VAnchor = VAnchor.Fit;
-			this.HAnchor = HAnchor.Stretch | HAnchor.Fit;
-			this.Height = 50;
+			this.HAnchor = HAnchor.Stretch;
 			this.Padding = new BorderDouble(0);
 			this.Margin = new BorderDouble(6, 0, 6, 6);
 			this.theme = theme;
@@ -99,7 +98,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			row.AddChild(new TextWidget(listViewItem.Model.Name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 			{
-				MinimumSize = new Vector2(1, 18),
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(10, 0)
 			});
