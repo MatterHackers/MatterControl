@@ -78,8 +78,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private TextWidget partLabel;
 
-		private GuiWidget middleColumn;
-
 		private event EventHandler unregisterEvents;
 
 		public RowViewItem(ListViewItem listViewItem, int thumbWidth, int thumbHeight, ThemeConfig theme)
@@ -93,59 +91,23 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Margin = new BorderDouble(6, 0, 6, 6);
 			this.theme = theme;
 
-			var column = new FlowLayoutWidget(FlowDirection.TopToBottom) { HAnchor = HAnchor.Stretch };
-
 			var row = new FlowLayoutWidget(FlowDirection.LeftToRight) { HAnchor = HAnchor.Stretch };
-
-			var leftColumn = new FlowLayoutWidget(FlowDirection.LeftToRight)
-			{
-				VAnchor = VAnchor.Top | VAnchor.Fit
-			};
-			row.AddChild(leftColumn);
 
 			imageWidget = new ImageWidget(thumbWidth, thumbHeight)
 			{
 				Name = "List Item Thumbnail",
 			};
-			leftColumn.AddChild(imageWidget);
+			row.AddChild(imageWidget);
 
 			partLabel = new TextWidget(listViewItem.Model.Name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 			{
 				MinimumSize = new Vector2(1, 18),
-				VAnchor = VAnchor.Center
+				VAnchor = VAnchor.Center,
+				Margin = new BorderDouble(10, 0)
 			};
+			row.AddChild(partLabel);
 
-			middleColumn = new GuiWidget(0.0, 0.0)
-			{
-				VAnchor = VAnchor.Stretch,
-				HAnchor = HAnchor.Stretch,
-				Padding = 0,
-				Margin = new BorderDouble(10, 3)
-			};
-
-			bool mouseDownOnMiddle = false;
-			middleColumn.MouseDown += (sender, e) =>
-			{
-				mouseDownOnMiddle = true;
-			};
-
-			middleColumn.MouseUp += (sender, e) =>
-			{
-				if (mouseDownOnMiddle
-					&& middleColumn.LocalBounds.Contains(e.Position))
-				{
-					this.OnItemSelect();
-				}
-
-				mouseDownOnMiddle = false;
-			};
-
-			middleColumn.AddChild(partLabel);
-
-			row.AddChild(middleColumn);
-
-			column.AddChild(row);
-			this.AddChild(column);
+			this.AddChild(row);
 		}
 
 		public override async void OnLoad(EventArgs args)
