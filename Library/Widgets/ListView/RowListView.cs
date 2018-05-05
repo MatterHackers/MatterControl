@@ -76,8 +76,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private ThemeConfig theme;
 
-		private TextWidget partLabel;
-
 		private event EventHandler unregisterEvents;
 
 		public RowViewItem(ListViewItem listViewItem, int thumbWidth, int thumbHeight, ThemeConfig theme)
@@ -93,19 +91,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			var row = new FlowLayoutWidget(FlowDirection.LeftToRight) { HAnchor = HAnchor.Stretch };
 
-			imageWidget = new ImageWidget(thumbWidth, thumbHeight)
+			row.AddChild(imageWidget = new ImageWidget(thumbWidth, thumbHeight)
 			{
 				Name = "List Item Thumbnail",
-			};
-			row.AddChild(imageWidget);
+			});
 
-			partLabel = new TextWidget(listViewItem.Model.Name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			row.AddChild(new TextWidget(listViewItem.Model.Name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 			{
 				MinimumSize = new Vector2(1, 18),
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(10, 0)
-			};
-			row.AddChild(partLabel);
+			});
 
 			this.AddChild(row);
 		}
