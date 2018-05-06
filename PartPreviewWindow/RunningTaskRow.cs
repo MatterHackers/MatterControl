@@ -111,9 +111,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			IconButton resumeButton = null;
 
-			var pauseButton = new IconButton(AggContext.StaticData.LoadIcon("fa-pause_12.png", theme.InvertIcons), theme);
-			pauseButton.Margin = theme.ButtonSpacing;
-			pauseButton.Enabled = taskDetails.TaskActions?.Pause != null;
+			var pauseButton = new IconButton(AggContext.StaticData.LoadIcon("fa-pause_12.png", theme.InvertIcons), theme)
+			{
+				Margin = theme.ButtonSpacing,
+				Enabled = taskDetails.TaskActions?.Pause != null
+			};
 			pauseButton.Click += (s, e) =>
 			{
 				taskDetails.TaskActions?.Pause();
@@ -122,9 +124,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			topRow.AddChild(pauseButton);
 
-			resumeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-play_12.png", theme.InvertIcons), theme);
-			resumeButton.Visible = false;
-			resumeButton.Margin = theme.ButtonSpacing;
+			resumeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-play_12.png", theme.InvertIcons), theme)
+			{
+				Visible = false,
+				Margin = theme.ButtonSpacing
+			};
 			resumeButton.Click += (s, e) =>
 			{
 				taskDetails.TaskActions?.Resume();
@@ -133,9 +137,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			topRow.AddChild(resumeButton);
 
-			var stopButton = new IconButton(AggContext.StaticData.LoadIcon("fa-stop_12.png", theme.InvertIcons), theme);
-			stopButton.Margin = theme.ButtonSpacing;
-			stopButton.Name = "Stop Task Button";
+			var stopButton = new IconButton(AggContext.StaticData.LoadIcon("fa-stop_12.png", theme.InvertIcons), theme)
+			{
+				Margin = theme.ButtonSpacing,
+				Name = "Stop Task Button"
+			};
 			stopButton.Click += (s, e) =>
 			{
 				var stopAction = taskDetails.TaskActions?.Stop;
