@@ -2160,92 +2160,23 @@ namespace MatterHackers.MatterControl
 				if (!keyEvent.Handled
 					&& view3D != null)
 				{
-					bool controlKeyDown = Keyboard.IsKeyDown(Keys.Control);
-					bool shiftKeyDown = Keyboard.IsKeyDown(Keys.Shift);
-
 					switch (keyEvent.KeyChar)
 					{
-						case 'c':
-						case 'C':
-							if (controlKeyDown)
-							{
-								view3D.Scene.Copy();
-								keyEvent.Handled = true;
-							}
-							break;
-
-						case 'a':
-						case 'A':
-							if (controlKeyDown)
-							{
-								view3D.SelectAll();
-								keyEvent.Handled = true;
-							}
-							break;
-
-
-						case 's':
-						case 'S':
-							if (controlKeyDown)
-							{
-								view3D.Save();
-
-								keyEvent.Handled = true;
-							}
-							break;
-
-						case 'v':
-						case 'V':
-							if (controlKeyDown)
-							{
-								view3D.Scene.Paste();
-
-								keyEvent.Handled = true;
-							}
-							break;
-
 						case 'w':
 						case 'W':
 							view3D.ResetView();
 							keyEvent.Handled = true;
 							break;
 
-						case 'x':
-						case 'X':
-							if (controlKeyDown)
-							{
-								view3D.Scene.Cut();
-
-								keyEvent.Handled = true;
-							}
-							break;
-
-						case 'y':
-						case 'Y':
-							if (controlKeyDown)
-							{
-								view3D.Scene.UndoBuffer.Redo();
-								keyEvent.Handled = true;
-							}
-							break;
-
 						case 'z':
+							// Zoom out
+							Offset3DView(view3D, new Vector2(0, -offsetDist), TrackBallTransformType.Scale);
+							keyEvent.Handled = true;
+							break;
+
 						case 'Z':
-							if (controlKeyDown)
-							{
-								// undo last operation
-								view3D.Scene.UndoBuffer.Undo();
-							}
-							else if (shiftKeyDown)
-							{
-								// Zoom in
-								Offset3DView(view3D, new Vector2(0, offsetDist), TrackBallTransformType.Scale);
-							}
-							else
-							{
-								// Zoom out
-								Offset3DView(view3D, new Vector2(0, -offsetDist), TrackBallTransformType.Scale);
-							}
+							// Zoom in
+							Offset3DView(view3D, new Vector2(0, offsetDist), TrackBallTransformType.Scale);
 							keyEvent.Handled = true;
 							break;
 
@@ -2269,6 +2200,78 @@ namespace MatterHackers.MatterControl
 				{
 					switch (keyEvent.KeyCode)
 					{
+						case Keys.C:
+							if (keyEvent.Control)
+							{
+								view3D.Scene.Copy();
+								keyEvent.Handled = true;
+							}
+							break;
+
+						case Keys.X:
+							if (keyEvent.Control)
+							{
+								view3D.Scene.Cut();
+								keyEvent.Handled = true;
+							}
+							break;
+
+						case Keys.Y:
+							if (keyEvent.Control)
+							{
+								view3D.Scene.UndoBuffer.Redo();
+								keyEvent.Handled = true;
+							}
+							break;
+
+						case Keys.A:
+							if (keyEvent.Control)
+							{
+								view3D.SelectAll();
+								keyEvent.Handled = true;
+							}
+							break;
+
+						case Keys.S:
+							if (keyEvent.Control)
+							{
+								view3D.Save();
+								keyEvent.Handled = true;
+							}
+							break;
+
+						case Keys.V:
+							if (keyEvent.Control)
+							{
+								view3D.Scene.Paste();
+								keyEvent.Handled = true;
+							}
+							break;
+
+						case Keys.Z:
+							if (keyEvent.Control)
+							{
+								if (keyEvent.Shift)
+								{
+									view3D.Scene.UndoBuffer.Redo();
+								}
+								else
+								{
+									// undo last operation
+									view3D.Scene.UndoBuffer.Undo();
+								}
+								keyEvent.Handled = true;
+							}
+							break;
+
+						case Keys.Insert:
+							if(keyEvent.Shift)
+							{
+								view3D.Scene.Paste();
+								keyEvent.Handled = true;
+							}
+							break;
+
 						case Keys.Delete:
 						case Keys.Back:
 							view3D.Scene.DeleteSelection();
