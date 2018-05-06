@@ -159,8 +159,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(detailsPanel);
 
 			// Add rich progress controls
-			if (taskDetails.TaskActions?.RichProgressWidget != null
-					&& taskDetails.TaskActions?.RichProgressWidget?.Invoke() is GuiWidget guiWidget)
+			if (taskDetails.TaskActions?.RichProgressWidget?.Invoke() is GuiWidget guiWidget)
 			{
 				guiWidget.VAnchor = VAnchor.Absolute;
 				guiWidget.Visible = false;
