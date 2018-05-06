@@ -114,11 +114,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var pauseButton = new IconButton(AggContext.StaticData.LoadIcon("fa-pause_12.png", theme.InvertIcons), theme)
 			{
 				Margin = theme.ButtonSpacing,
-				Enabled = taskDetails.TaskActions?.Pause != null
+				Enabled = taskDetails.Options?.PauseAction != null
 			};
 			pauseButton.Click += (s, e) =>
 			{
-				taskDetails.TaskActions?.Pause();
+				taskDetails.Options?.PauseAction();
 				pauseButton.Visible = false;
 				resumeButton.Visible = true;
 			};
@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			resumeButton.Click += (s, e) =>
 			{
-				taskDetails.TaskActions?.Resume();
+				taskDetails.Options?.ResumeAction();
 				pauseButton.Visible = true;
 				resumeButton.Visible = false;
 			};
@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			stopButton.Click += (s, e) =>
 			{
-				var stopAction = taskDetails.TaskActions?.Stop;
+				var stopAction = taskDetails.Options?.StopAction;
 				if (stopAction == null)
 				{
 					taskDetails.CancelTask();
@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(detailsPanel);
 
 			// Add rich progress controls
-			if (taskDetails.TaskActions?.RichProgressWidget?.Invoke() is GuiWidget guiWidget)
+			if (taskDetails.Options?.RichProgressWidget?.Invoke() is GuiWidget guiWidget)
 			{
 				guiWidget.VAnchor = VAnchor.Absolute;
 				guiWidget.Visible = false;
@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				detailsPanel.AddChild(guiWidget);
 			}
 
-			if (taskDetails.TaskActions?.ReadOnlyReporting == true)
+			if (taskDetails.Options?.ReadOnlyReporting == true)
 			{
 				stopButton.Visible = false;
 				pauseButton.Visible = false;

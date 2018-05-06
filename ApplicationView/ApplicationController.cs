@@ -816,7 +816,7 @@ namespace MatterHackers.MatterControl
 
 									return Task.CompletedTask;
 								},
-								new RunningTaskActions()
+								new RunningTaskOptions()
 								{
 									ReadOnlyReporting = true
 								});
@@ -846,7 +846,7 @@ namespace MatterHackers.MatterControl
 
 									return Task.CompletedTask;
 								},
-								new RunningTaskActions()
+								new RunningTaskOptions()
 								{
 									ReadOnlyReporting = true
 								});
@@ -1753,18 +1753,18 @@ namespace MatterHackers.MatterControl
 						}
 					});
 				},
-				taskActions: new RunningTaskActions()
+				taskActions: new RunningTaskOptions()
 				{
 					RichProgressWidget = () => PrinterTabPage.PrintProgressWidget(printer, ApplicationController.Instance.Theme),
-					Pause = () => UiThread.RunOnIdle(() =>
+					PauseAction = () => UiThread.RunOnIdle(() =>
 					{
 						printer.Connection.RequestPause();
 					}),
-					Resume = () => UiThread.RunOnIdle(() =>
+					ResumeAction = () => UiThread.RunOnIdle(() =>
 					{
 						printer.Connection.Resume();
 					}),
-					Stop = () => UiThread.RunOnIdle(() =>
+					StopAction = () => UiThread.RunOnIdle(() =>
 					{
 						ApplicationController.Instance.ConditionalCancelPrint();
 					})
@@ -2007,7 +2007,7 @@ namespace MatterHackers.MatterControl
 
 		public string Title { get; set; }
 
-		public RunningTaskActions TaskActions { get; internal set; }
+		public RunningTaskOptions Options { get; internal set; }
 
 		private CancellationTokenSource tokenSource;
 
@@ -2022,12 +2022,12 @@ namespace MatterHackers.MatterControl
 		}
 	}
 
-	public class RunningTaskActions
+	public class RunningTaskOptions
 	{
 		public Func<GuiWidget> RichProgressWidget { get; set; }
-		public Action Pause { get; set; }
-		public Action Resume { get; set; }
-		public Action Stop { get; set; }
+		public Action PauseAction { get; set; }
+		public Action ResumeAction { get; set; }
+		public Action StopAction { get; set; }
 
 		/// <summary>
 		/// Indicates if the task should suppress pause/resume/stop operations
@@ -2051,13 +2051,13 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		public Task Execute(string taskTitle, Func<IProgress<ProgressStatus>, CancellationToken, Task> func, RunningTaskActions taskActions = null)
+		public Task Execute(string taskTitle, Func<IProgress<ProgressStatus>, CancellationToken, Task> func, RunningTaskOptions taskActions = null)
 		{
 			var tokenSource = new CancellationTokenSource();
 
 			var taskDetails = new RunningTaskDetails(tokenSource)
 			{
-				TaskActions = taskActions,
+				Options = taskActions,
 				Title = taskTitle
 			};
 
