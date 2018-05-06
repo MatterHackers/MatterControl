@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			topRow.AddChild(resumeButton);
 
-			var stopButton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("fa-stop_12.png", theme.InvertIcons));
+			var stopButton = new IconButton(AggContext.StaticData.LoadIcon("fa-stop_12.png", theme.InvertIcons), theme);
 			stopButton.Margin = theme.ButtonSpacing;
 			stopButton.Name = "Stop Task Button";
 			stopButton.Click += (s, e) =>
