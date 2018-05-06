@@ -362,7 +362,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						if (XAlign == Align.None)
 						{
 							// make sure it is where it started
-							AlignAxis(0, Align.Min, currentChildrenBounds[i].minXYZ.X, 0, child);
+							AlignAxis(0, Align.Min, OriginalChildrenBounds[i].minXYZ.X, 0, child);
 						}
 						else
 						{
@@ -380,7 +380,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						}
 						if (YAlign == Align.None)
 						{
-							AlignAxis(1, Align.Min, currentChildrenBounds[i].minXYZ.Y, 0, child);
+							AlignAxis(1, Align.Min, OriginalChildrenBounds[i].minXYZ.Y, 0, child);
 						}
 						else
 						{
@@ -398,7 +398,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						}
 						if (ZAlign == Align.None)
 						{
-							AlignAxis(2, Align.Min, currentChildrenBounds[i].minXYZ.Z, 0, child);
+							AlignAxis(2, Align.Min, OriginalChildrenBounds[i].minXYZ.Z, 0, child);
 						}
 						else
 						{
