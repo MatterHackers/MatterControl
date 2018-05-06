@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -40,8 +41,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class CurveObject3D : MeshWrapperObject3D, IRebuildable
 	{
-		[DisplayName("Angle")]
-		public double AngleDegrees { get; set; } = 0;
+		public double Diameter { get; set; } = 0;
 
 		[DisplayName("Bend Up")]
 		public bool BendCW { get; set; } = true;
@@ -72,61 +72,44 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var aabb = this.GetAxisAlignedBoundingBox();
 
-			foreach (var items in meshWrapper.Select((mw) => (Original: mw.Children.First(),
-				 Transformed: mw)))
+			if (Diameter > 0)
 			{
-				var transformedMesh = items.Transformed.Mesh;
-				var originalMesh = items.Original.Mesh;
-				var itemMatrix = items.Original.WorldMatrix(this);
-				var invItemMatrix = itemMatrix;
-				invItemMatrix.Invert();
-				// make sure we are working with a copy
-				if (transformedMesh == originalMesh)
+				var radius = Diameter / 2;
+				var circumference = MathHelper.Tau * radius;
+				var rotationCenter = new Vector2(aabb.minXYZ.X, aabb.maxXYZ.Y + radius);
+				foreach (var items in meshWrapper.Select((mw) => (Original: mw.Children.First(), Transformed: mw)))
 				{
-					// Make sure the mesh we are going to copy is in a good state to be copied (so we maintain vertex count)
-					originalMesh.CleanAndMergeMesh(CancellationToken.None);
-					transformedMesh = Mesh.Copy(originalMesh, CancellationToken.None);
-					items.Transformed.Mesh = transformedMesh;
-				}
-
-				if (AngleDegrees > 0)
-				{
-					// find the radius that will make the x-size sweep out the requested angle
-					// c = Tr ; r = c/T
-					var angleRadians = MathHelper.DegreesToRadians(AngleDegrees);
-					var circumference = aabb.XSize * MathHelper.Tau / angleRadians;
-					var radius = circumference / MathHelper.Tau;
-
-					var rotateXyPos = new Vector2(aabb.minXYZ.X, BendCW ? aabb.maxXYZ.Y : aabb.minXYZ.Y);
-					if (!BendCW)
+					var transformedMesh = items.Transformed.Mesh;
+					var originalMesh = items.Original.Mesh;
+					var itemMatrix = items.Original.WorldMatrix(this);
+					var invItemMatrix = itemMatrix;
+					invItemMatrix.Invert();
+					// make sure we are working with a copy
+					if (transformedMesh == originalMesh)
 					{
-						angleRadians = -angleRadians;
+						// Make sure the mesh we are going to copy is in a good state to be copied (so we maintain vertex count)
+						originalMesh.CleanAndMergeMesh(CancellationToken.None);
+						transformedMesh = Mesh.Copy(originalMesh, CancellationToken.None);
+						items.Transformed.Mesh = transformedMesh;
 					}
 
 					for (int i = 0; i < originalMesh.Vertices.Count; i++)
 					{
-						var pos = originalMesh.Vertices[i].Position;
-						pos = Vector3.Transform(pos, itemMatrix);
+						var matrix = items.Original.WorldMatrix(this);
+						var position = Vector3.Transform(originalMesh.Vertices[i].Position, matrix);
 
-						var pos2D = new Vector2(pos);
-						Vector2 rotateSpace = pos2D - rotateXyPos;
-						var rotateRatio = rotateSpace.X / aabb.XSize;
+						var angleToRotate = ((position.X - aabb.minXYZ.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
+						var distanceFromCenter = rotationCenter.Y - position.Y;
 
-						rotateSpace.X = 0;
-						rotateSpace.Y += BendCW ? -radius : radius;
-						rotateSpace.Rotate(angleRadians * rotateRatio);
-						rotateSpace.Y += BendCW ? radius : -radius; ;
-						rotateSpace += rotateXyPos;
-
-						var newPos = new Vector3(rotateSpace.X, rotateSpace.Y, pos.Z);
-						newPos = Vector3.Transform(newPos, invItemMatrix);
-
-						transformedMesh.Vertices[i].Position = newPos;
+						var rotatePosition = new Vector3(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
+						rotatePosition.Z = position.Z;
+						matrix.Invert();
+						transformedMesh.Vertices[i].Position = Vector3.Transform(rotatePosition, matrix) + new Vector3(aabb.minXYZ.X, radius + aabb.maxXYZ.Y, 0);
 					}
-				}
 
-				transformedMesh.MarkAsChanged();
-				transformedMesh.CalculateNormals();
+					transformedMesh.MarkAsChanged();
+					transformedMesh.CalculateNormals();
+				}
 			}
 		}
 	}
