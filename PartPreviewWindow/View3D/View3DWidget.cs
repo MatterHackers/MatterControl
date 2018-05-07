@@ -482,7 +482,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							{
 								SourceItem = this.SceneReplacement,
 								// No content store for GCode, otherwise PlatingHistory
-								ContentStore = (this.SceneReplacement.ContentType == "gcode") ? null : ApplicationController.Instance.Library.PlatingHistory
+								ContentStore = (this.SceneReplacement.ContentType == "gcode") ? null : sceneContext.EditContext.ContentStore
 							}).ConfigureAwait(false);
 
 						this.SceneReplacement = null;
