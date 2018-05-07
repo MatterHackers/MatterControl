@@ -1755,6 +1755,7 @@ namespace MatterHackers.MatterControl
 				},
 				taskActions: new RunningTaskOptions()
 				{
+					ExpansionSerializationKey = $"{nameof(MonitorPrintTask)}_expanded",
 					RichProgressWidget = () => PrinterTabPage.PrintProgressWidget(printer, ApplicationController.Instance.Theme),
 					PauseAction = () => UiThread.RunOnIdle(() =>
 					{
@@ -2000,6 +2001,10 @@ namespace MatterHackers.MatterControl
 
 		public Func<GuiWidget> DetailsItemAction { get; set; }
 
+		private CancellationTokenSource tokenSource;
+
+		private bool? _isExpanded = null;
+
 		public RunningTaskDetails(CancellationTokenSource tokenSource)
 		{
 			this.tokenSource = tokenSource;
@@ -2009,7 +2014,37 @@ namespace MatterHackers.MatterControl
 
 		public RunningTaskOptions Options { get; internal set; }
 
-		private CancellationTokenSource tokenSource;
+		public bool IsExpanded
+		{
+			get
+			{
+				if (_isExpanded == null)
+				{
+					if (this.Options is RunningTaskOptions options
+						&& !string.IsNullOrWhiteSpace(options.ExpansionSerializationKey))
+					{
+						string dbValue = UserSettings.Instance.get(options.ExpansionSerializationKey);
+						_isExpanded = dbValue != "0";
+					}
+					else
+					{
+						_isExpanded = false;
+					}
+				}
+
+				return _isExpanded ?? false;
+			}
+			set
+			{
+				_isExpanded = value;
+
+				if (this.Options?.ExpansionSerializationKey is string expansionKey
+					&& !string.IsNullOrWhiteSpace(expansionKey))
+				{
+					UserSettings.Instance.set(expansionKey, (_isExpanded ?? false) ? "1" : "0");
+				}
+			}
+		}
 
 		public void Report(ProgressStatus progressStatus)
 		{
@@ -2024,7 +2059,17 @@ namespace MatterHackers.MatterControl
 
 	public class RunningTaskOptions
 	{
+		/// <summary>
+		/// The Rich progress widget to be shown when expanded
+		/// </summary>
 		public Func<GuiWidget> RichProgressWidget { get; set; }
+
+		/// <summary>
+		/// The database key used to round trip expansion state
+		/// </summary>
+		public string ExpansionSerializationKey { get; set; }
+
+
 		public Action PauseAction { get; set; }
 		public Action ResumeAction { get; set; }
 		public Action StopAction { get; set; }
