@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double Diameter { get; set; } = 0;
 
 		[DisplayName("Bend Up")]
-		public bool BendCW { get; set; } = true;
+		public bool BendCcw { get; set; } = true;
 
 		public CurveObject3D()
 		{
@@ -96,15 +96,23 @@ namespace MatterHackers.MatterControl.DesignTools
 					for (int i = 0; i < originalMesh.Vertices.Count; i++)
 					{
 						var matrix = items.Original.WorldMatrix(this);
-						var position = Vector3.Transform(originalMesh.Vertices[i].Position, matrix);
+						if (!BendCcw)
+						{
+							// rotate around so it wil bend correctly
+							matrix *= Matrix4X4.CreateTranslation(0, -aabb.maxXYZ.Y, 0);
+							matrix *= Matrix4X4.CreateRotationX(MathHelper.Tau / 2);
+							matrix *= Matrix4X4.CreateTranslation(0, aabb.maxXYZ.Y - aabb.YSize, 0);
+						}
+						var worldPosition = Vector3.Transform(originalMesh.Vertices[i].Position, matrix);
 
-						var angleToRotate = ((position.X - aabb.minXYZ.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
-						var distanceFromCenter = rotationCenter.Y - position.Y;
+						var angleToRotate = ((worldPosition.X - aabb.minXYZ.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
+						var distanceFromCenter = rotationCenter.Y - worldPosition.Y;
 
 						var rotatePosition = new Vector3(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
-						rotatePosition.Z = position.Z;
+						rotatePosition.Z = worldPosition.Z;
 						matrix.Invert();
-						transformedMesh.Vertices[i].Position = Vector3.Transform(rotatePosition, matrix) + new Vector3(aabb.minXYZ.X, radius + aabb.maxXYZ.Y, 0);
+						var worldWithBend = rotatePosition + new Vector3(aabb.minXYZ.X, radius + aabb.maxXYZ.Y, 0);
+						transformedMesh.Vertices[i].Position = Vector3.Transform(worldWithBend, matrix);
 					}
 
 					transformedMesh.MarkAsChanged();
