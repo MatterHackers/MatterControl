@@ -1226,15 +1226,8 @@ namespace MatterHackers.MatterControl
 				if (globalInstance == null)
 				{
 					globalInstance = new ApplicationController();
-
-					ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) =>
-					{
-						if (!AppContext.IsLoading)
-						{
-							ApplicationController.Instance.ReloadAll();
-						}
-					}, ref globalInstance.unregisterEvents);
 				}
+
 				return globalInstance;
 			}
 		}
