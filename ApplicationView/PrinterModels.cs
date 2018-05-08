@@ -84,6 +84,12 @@ namespace MatterHackers.MatterControl
 			// Store
 			this.EditContext = editContext;
 
+			var contentInfo = editContext.SourceItem as ILibraryAsset;
+			if (contentInfo != null)
+			{
+				this.ContentType = contentInfo.ContentType;
+			}
+
 			// Load
 			if (editContext.SourceItem is ILibraryAssetStream contentStream
 				&& contentStream.ContentType == "gcode")
@@ -350,6 +356,8 @@ namespace MatterHackers.MatterControl
 		public Mesh BuildVolumeMesh => _buildVolumeMesh;
 
 		public bool EditableScene { get; private set; }
+
+		public string ContentType { get; private set; }
 
 		internal void RenderGCode3D(DrawEventArgs e)
 		{

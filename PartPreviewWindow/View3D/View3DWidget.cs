@@ -240,6 +240,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (printerTabPage?.printerActionsBar?.modelViewButton is GuiWidget button)
 			{
 				button.Enabled = sceneContext.EditableScene;
+
+				if (sceneContext.ContentType == "gcode"
+					&& printerTabPage?.printerActionsBar?.layers3DButton is GuiWidget gcodeButton)
+				{
+					gcodeButton.InvokeClick();
+				}
 			}
 
 			this.Invalidate();
