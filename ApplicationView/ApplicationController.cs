@@ -180,8 +180,6 @@ namespace MatterHackers.MatterControl
 					printer.Settings.GetValue(SettingsKey.make),
 					printer.Settings.GetValue(SettingsKey.model));
 
-				ActiveSliceSettings.SwitchToPrinterTheme();
-
 				if (allowChangedEvent)
 				{
 					ActiveSliceSettings.OnActivePrinterChanged(null);
@@ -1204,18 +1202,20 @@ namespace MatterHackers.MatterControl
 			ApplicationSettings.Instance.ReleaseClientToken();
 		}
 
-		internal static void LoadOemOrDefaultTheme()
+		internal static void LoadTheme()
 		{
-			// if not check for the oem color and use it if set
-			// else default to "Blue - Light"
-			string oemColor = OemSettings.Instance.ThemeColor;
-			if (string.IsNullOrEmpty(oemColor))
+			string activeThemeName = UserSettings.Instance.get(UserSettingsKey.ActiveThemeName);
+			if (!string.IsNullOrEmpty(activeThemeName))
 			{
-				ActiveTheme.Instance = ActiveTheme.GetThemeColors("Blue - Light");
+				ActiveTheme.Instance = ActiveTheme.GetThemeColors(activeThemeName);
+			}
+			else if (!string.IsNullOrEmpty(OemSettings.Instance.ThemeColor))
+			{
+				ActiveTheme.Instance = ActiveTheme.GetThemeColors(OemSettings.Instance.ThemeColor);
 			}
 			else
 			{
-				ActiveTheme.Instance = ActiveTheme.GetThemeColors(oemColor);
+				ActiveTheme.Instance = ActiveTheme.GetThemeColors("Blue - Light");
 			}
 		}
 
@@ -2480,7 +2480,7 @@ namespace MatterHackers.MatterControl
 
 			// Set the default theme colors
 			reporter?.Invoke(0.1, "LoadOemOrDefaultTheme");
-			ApplicationController.LoadOemOrDefaultTheme();
+			ApplicationController.LoadTheme();
 
 			// Accessing any property on ProfileManager will run the static constructor and spin up the ProfileManager instance
 			reporter?.Invoke(0.2, "ProfileManager");
