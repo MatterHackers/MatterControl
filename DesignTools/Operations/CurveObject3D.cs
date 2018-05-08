@@ -55,13 +55,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			var meshWrapper = this.Descendants()
 				.Where((obj) => obj.OwnerID == this.ID).ToList();
 
+			// reset the positions before we take the aabb
 			foreach (var items in meshWrapper.Select((mw) => (Original: mw.Children.First(),
 				 Transformed: mw)))
 			{
 				var transformedMesh = items.Transformed.Mesh;
 				var originalMesh = items.Original.Mesh;
 
-				// reset the positions before we take the aabb
 				for (int i = 0; i < transformedMesh.Vertices.Count; i++)
 				{
 					transformedMesh.Vertices[i].Position = originalMesh.Vertices[i].Position;
