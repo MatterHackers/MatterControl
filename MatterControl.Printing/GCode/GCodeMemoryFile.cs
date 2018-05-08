@@ -270,7 +270,7 @@ namespace MatterControl.Printing
 						case ';':
 							if (gcodeHasExplicitLayerChangeInfo && IsLayerChange(lineString))
 							{
-								// if we just found the start of the file and we have not added any layers yet
+								// If we just found the start of the file and we have not added any layers yet
 								// Make sure we start at the beginging
 								if (lineString.EndsWith("LAYER:0")
 									&& loadedGCodeFile.IndexOfChangeInZ.Count == 0)
@@ -930,7 +930,7 @@ namespace MatterControl.Printing
 		public override double GetLayerZOffset(int layerIndex)
 		{
 			double total = 0;
-			for (int i = 0; i <= layerIndex; i++)
+			for (int i = 0; i < layerIndex; i++)
 			{
 				total += GetLayerHeight(i);
 			}
