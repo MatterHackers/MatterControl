@@ -35,6 +35,7 @@ using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
@@ -69,6 +70,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.printer = printer;
 			options = printer.Bed.RendererOptions;
 
+			var theme = ApplicationController.Instance.Theme;
+
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			this.LocalBounds = new RectangleDouble(0, 0, 100, 100);
@@ -84,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.gridSizeMm = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size);
 			this.gridCenterMm = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
 
-			bedImage = BedMeshGenerator.CreatePrintBedImage(printer);
+			bedImage = BedMeshGenerator.CreatePrintBedImage(printer).Multiply(theme.TabBodyBackground);
 		}
 
 		private void Printer_SettingChanged(object sender, EventArgs e)
