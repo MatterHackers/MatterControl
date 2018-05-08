@@ -130,11 +130,7 @@ namespace MatterHackers.GCodeVisualizer
 				{
 					if (gCodeFileToDraw.IsExtruding(instructionIndex))
 					{
-						double layerThickness = gCodeFileToDraw.GetLayerHeight();
-						if (layerToCreate == 0)
-						{
-							layerThickness = gCodeFileToDraw.GetFirstLayerHeight();
-						}
+						double layerThickness = gCodeFileToDraw.GetLayerHeight(layerToCreate);
 
 						Color extrusionColor = ExtrusionColors.GetColorForSpeed((float)currentInstruction.FeedRate);
 						renderFeaturesForLayer.Add(new RenderFeatureExtrusion(previousInstruction.Position, currentInstruction.Position, currentInstruction.ExtruderIndex, currentInstruction.FeedRate, currentInstruction.EPosition - previousInstruction.EPosition, gCodeFileToDraw.GetFilamentDiameter(), layerThickness, extrusionColor));

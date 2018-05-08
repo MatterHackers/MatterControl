@@ -100,23 +100,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (sceneContext.LoadedGCode?.LineCount > 0)
 			{
-				loadedGCodeSection.AddChild(
-					new SectionWidget(
-						"Details".Localize(),
-						new GCodeDetailsView(new GCodeDetails(printer, printer.Bed.LoadedGCode), theme.FontSize12, theme.FontSize9)
-						{
-							HAnchor = HAnchor.Stretch,
-							Margin = new BorderDouble(bottom: 3),
-							Padding = new BorderDouble(15, 4)
-						},
-						theme)
-					{
-						HAnchor = HAnchor.Stretch,
-						VAnchor = VAnchor.Fit
-					});
-
 				bool renderSpeeds = printer.Bed.RendererOptions.GCodeLineColorStyle == "Speeds";
-
 				loadedGCodeSection.AddChild(
 					speedsWidget = new SectionWidget(
 						"Speeds".Localize(),
@@ -133,6 +117,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					});
 
 				speedsWidget.Visible = renderSpeeds;
+
+				loadedGCodeSection.AddChild(
+					new SectionWidget(
+						"Details".Localize(),
+						new GCodeDetailsView(new GCodeDetails(printer, printer.Bed.LoadedGCode), theme.FontSize12, theme.FontSize9)
+						{
+							HAnchor = HAnchor.Stretch,
+							Margin = new BorderDouble(bottom: 3),
+							Padding = new BorderDouble(15, 4)
+						},
+						theme)
+					{
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Fit
+					});
+
+				loadedGCodeSection.AddChild(
+					new SectionWidget(
+						"Layer".Localize(),
+						new GCodeLayerDetailsView(new GCodeDetails(printer, printer.Bed.LoadedGCode), sceneContext, theme.FontSize12, theme.FontSize9)
+						{
+							HAnchor = HAnchor.Stretch,
+							Margin = new BorderDouble(bottom: 3),
+							Padding = new BorderDouble(15, 4)
+						},
+						theme)
+					{
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Fit
+					});
 			}
 
 			// Enforce panel padding in sidebar

@@ -144,12 +144,12 @@ namespace MatterControl.Printing
 			throw new NotImplementedException();
 		}
 
-		public override double GetLayerHeight()
+		public override double GetLayerHeight(int layerIndex)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override double GetFirstLayerHeight()
+		public override double GetLayerZOffset(int layerIndex)
 		{
 			throw new NotImplementedException();
 		}

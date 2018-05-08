@@ -68,11 +68,11 @@ namespace MatterControl.Printing
 
 		public abstract double GetFilamentWeightGrams(double filamentDiameterMm, double density);
 
-		public abstract double GetFirstLayerHeight();
-
 		public abstract int GetInstructionIndexAtLayer(int layerIndex);
 
-		public abstract double GetLayerHeight();
+		public abstract double GetLayerHeight(int layerIndex);
+
+		public abstract double GetLayerZOffset(int layerIndex);
 
 		public abstract int GetLayerIndex(int instructionIndex);
 
@@ -142,7 +142,7 @@ namespace MatterControl.Printing
 			int stringPos = stringWithNumber.IndexOf(stringToCheckAfter, startIndex);
 			int stopPos = stringWithNumber.IndexOf(stopCheckingString);
 			if (stringPos != -1
-				&& (stopPos == -1 || stringPos < stopPos))
+				&& (stopPos == -1 || stringPos < stopPos || string.IsNullOrEmpty(stopCheckingString)))
 			{
 				stringPos += stringToCheckAfter.Length;
 				readValue = agg_basics.ParseDouble(stringWithNumber, ref stringPos, true);

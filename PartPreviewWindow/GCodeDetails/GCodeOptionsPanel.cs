@@ -27,8 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -39,42 +37,9 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.RenderOpenGl;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public interface IToggleOption
-	{
-		string Title { get; }
-		Func<bool> IsChecked { get; }
-		Action<bool> SetValue { get; }
-	}
-
-	public class BoolOption : IToggleOption
-	{
-		public string Title { get; }
-
-		public Func<bool> IsChecked { get; }
-
-		public Func<bool> IsVisible { get; }
-
-		public Action<bool> SetValue { get; }
-
-		public BoolOption(string title, Func<bool> isChecked, Action<bool> setValue)
-			: this(title, isChecked, setValue, () => true)
-		{
-		}
-
-		public BoolOption(string title, Func<bool> isChecked, Action<bool> setValue, Func<bool> isVisible)
-		{
-			this.Title = title;
-			this.IsChecked = isChecked;
-			this.SetValue = setValue;
-			this.IsVisible = isVisible;
-		}
-	}
-
 	public class GCodeOptionsPanel : FlowLayoutWidget
 	{
 		private RadioIconButton speedsButton;
@@ -322,85 +287,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					gcodeOptions.GCodeModelView = "None";
 				}
 			}
-		}
-	}
-
-	public class GCodeDetailsView : FlowLayoutWidget
-	{
-		private TextWidget massTextWidget;
-		private TextWidget costTextWidget;
-
-		private EventHandler unregisterEvents;
-
-		public GCodeDetailsView(GCodeDetails gcodeDetails, int dataPointSize, int headingPointSize)
-			: base(FlowDirection.TopToBottom)
-		{
-			var margin = new BorderDouble(0, 9, 0, 3);
-
-			TextWidget AddSetting(string title, string value, GuiWidget parentWidget)
-			{
-				parentWidget.AddChild(
-					new TextWidget(title + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: headingPointSize)
-					{
-						HAnchor = HAnchor.Left
-					});
-
-				var textWidget = new TextWidget(value, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: dataPointSize)
-				{
-					HAnchor = HAnchor.Left,
-					Margin = margin
-				};
-
-				parentWidget.AddChild(textWidget);
-
-				return textWidget;
-			}
-
-			// put in the print time
-			AddSetting("Print Time".Localize(), gcodeDetails.EstimatedPrintTime, this);
-
-			// show the filament used
-			AddSetting("Filament Length".Localize(), gcodeDetails.FilamentUsed, this);
-
-			AddSetting("Filament Volume".Localize(), gcodeDetails.FilamentVolume, this);
-
-			massTextWidget = AddSetting("Estimated Mass".Localize(), gcodeDetails.EstimatedMass, this);
-
-			// Cost info is only displayed when available - conditionalCostPanel is invisible when cost <= 0
-			var conditionalCostPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				Visible = gcodeDetails.TotalCost > 0
-			};
-			this.AddChild(conditionalCostPanel);
-
-			costTextWidget = AddSetting("Estimated Cost".Localize(), gcodeDetails.EstimatedCost, conditionalCostPanel);
-
-			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
-			{
-				if (e is StringEventArgs stringEvent)
-				{
-					if (stringEvent.Data == SettingsKey.filament_cost
-						|| stringEvent.Data == SettingsKey.filament_diameter
-						|| stringEvent.Data == SettingsKey.filament_density)
-					{
-						massTextWidget.Text = gcodeDetails.EstimatedMass;
-						conditionalCostPanel.Visible = gcodeDetails.TotalCost > 0;
-
-						if (gcodeDetails.TotalCost > 0)
-						{
-							costTextWidget.Text = gcodeDetails.EstimatedCost;
-						}
-					}
-				}
-			}, ref unregisterEvents);
-		}
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			unregisterEvents?.Invoke(this, null);
-			base.OnClosed(e);
 		}
 	}
 }
