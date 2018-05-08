@@ -1956,8 +1956,6 @@ namespace MatterHackers.MatterControl
 				}
 			};
 
-
-
 			renderOptions.PropertyChanged += syncProperties;
 
 			container.Closed += (s, e) =>
@@ -2068,7 +2066,6 @@ namespace MatterHackers.MatterControl
 		/// The database key used to round trip expansion state
 		/// </summary>
 		public string ExpansionSerializationKey { get; set; }
-
 
 		public Action PauseAction { get; set; }
 		public Action ResumeAction { get; set; }
