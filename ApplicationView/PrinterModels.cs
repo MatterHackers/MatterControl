@@ -100,14 +100,14 @@ namespace MatterHackers.MatterControl
 				}
 
 				this.Scene.Children.Modify(children => children.Clear());
-				this.EditableScene = false;
+
+				editContext.FreezeGCode = true;
 			}
 			else
 			{
 				// Load last item or fall back to empty if unsuccessful
 				editContext.Content = await editContext.SourceItem.CreateContent(null) ?? new Object3D();
 				this.Scene.Load(editContext.Content);
-				this.EditableScene = true;
 			}
 
 			// Notify
@@ -149,6 +149,12 @@ namespace MatterHackers.MatterControl
 			this.GCodeRenderer = null;
 
 			var historyContainer = this.EditContext.ContentStore as HistoryContainerBase;
+
+			// Switch back to Model view on ClearPlate
+			if (this.Printer != null)
+			{
+				this.Printer.ViewState.ViewMode = PartViewMode.Model;
+			}
 
 			// Load
 			await this.LoadContent(new EditContext()
@@ -355,7 +361,10 @@ namespace MatterHackers.MatterControl
 
 		public Mesh BuildVolumeMesh => _buildVolumeMesh;
 
-		public bool EditableScene { get; private set; }
+		public bool EditableScene
+		{
+			get => this.EditContext?.FreezeGCode != true;
+		}
 
 		public string ContentType { get; private set; }
 
@@ -560,6 +569,8 @@ namespace MatterHackers.MatterControl
 
 		public string SourceFilePath => printItem?.FileLocation;
 
+		public bool FreezeGCode { get; set; }
+
 		/// <summary>
 		/// Short term stop gap that should only be used until GCode path helpers, hash code and print recovery components can be extracted
 		/// </summary>
@@ -568,7 +579,7 @@ namespace MatterHackers.MatterControl
 
 		internal void Save()
 		{
-			if (this.ContentStore != null)
+			if (!this.FreezeGCode)
 			{
 				var thumbnailPath = ApplicationController.Instance.ThumbnailCachePath(this.SourceItem);
 				if (File.Exists(thumbnailPath))
