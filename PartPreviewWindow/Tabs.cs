@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
@@ -86,11 +85,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public int TabCount => _allTabs.Count;
 
-		public void AddTab(GuiWidget tabWidget, int position = -1)
+		public virtual void AddTab(GuiWidget tabWidget, int position = -1)
 		{
 			var iTab = tabWidget as ITab;
 
-			_allTabs.Add(tabWidget as ITab);
+			if (position == -1)
+			{
+				_allTabs.Add(iTab);
+			}
+			else
+			{
+				_allTabs.Insert(position - 1, iTab);
+			}
 
 			tabWidget.Click += TabWidget_Click;
 
@@ -205,11 +211,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.TabBar.ActionArea.AddChild(tabTrailer);
 		}
 
-		public new void AddTab(GuiWidget tab, int tabIndex = -1)
+		public override void AddTab(GuiWidget tabWidget, int tabIndex = -1)
 		{
 			var position = this.TabBar.ActionArea.GetChildIndex(tabTrailer);
 
-			if (tab is ChromeTab newTab)
+			if (tabWidget is ChromeTab newTab)
 			{
 				ChromeTab leftTab;
 
@@ -241,14 +247,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					leftTab.NextTab = newTab;
 				}
 
-				// Call AddTab(widget, int) in base explicitly
-
 				if (tabIndex != -1)
 				{
 					position = this.TabBar.ActionArea.GetChildIndex(leftTab) + 1;
 				}
 
-				base.AddTab(tab, position);
+				// Call AddTab(widget, int) in base explicitly
+				base.AddTab(tabWidget, position);
 
 				this.ActiveTab = newTab;
 			}
@@ -352,7 +357,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								"Cancel Print".Localize(),
 								"Continue Printing".Localize());
 						}
-						else // need to handle asking about saving a 
+						else // need to handle asking about saving a
 						{
 							UiThread.RunOnIdle(() =>
 							{
