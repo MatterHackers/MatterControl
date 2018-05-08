@@ -38,9 +38,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
-using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MeshVisualizer;
-using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
@@ -234,14 +232,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SceneContext_SceneLoaded(object sender, EventArgs e)
 		{
-			if (this.printerTabPage?.printerActionsBar?.sliceButton is GuiWidget sliceButton)
+			if (printerTabPage?.printerActionsBar?.sliceButton is GuiWidget sliceButton)
 			{
 				sliceButton.Enabled = sceneContext.EditableScene;
 			}
 
-			if (this.printerTabPage?.printerActionsBar?.modelViewButton is GuiWidget button)
+			if (printerTabPage?.printerActionsBar?.modelViewButton is GuiWidget button)
 			{
 				button.Enabled = sceneContext.EditableScene;
+
+				if (sceneContext.ContentType == "gcode"
+					&& printerTabPage?.printerActionsBar?.layers3DButton is GuiWidget gcodeButton)
+				{
+					gcodeButton.InvokeClick();
+				}
 			}
 
 			this.Invalidate();
@@ -484,7 +488,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							{
 								SourceItem = this.SceneReplacement,
 								// No content store for GCode, otherwise PlatingHistory
-								ContentStore = (this.SceneReplacement.ContentType == "gcode") ? null : ApplicationController.Instance.Library.PlatingHistory
+								ContentStore = sceneContext.EditContext.ContentStore
 							}).ConfigureAwait(false);
 
 						this.SceneReplacement = null;

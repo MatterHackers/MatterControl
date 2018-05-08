@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal GuiWidget sliceButton;
 
 		private RadioIconButton layers2DButton;
-		private RadioIconButton layers3DButton;
+		internal RadioIconButton layers3DButton;
 		internal RadioIconButton modelViewButton;
 
 		public PrinterActionsBar(PrinterConfig printer, PrinterTabPage printerTabPage, ThemeConfig theme)

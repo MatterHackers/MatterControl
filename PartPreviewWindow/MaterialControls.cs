@@ -55,22 +55,47 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			int extruderCount = 4;
 			for (int extruderIndex = -1; extruderIndex < extruderCount; extruderIndex++)
 			{
-				var row = new FlowLayoutWidget()
-				{
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Fit
-				};
-				this.AddChild(row);
-
 				var name = $"{"Material".Localize()} {extruderIndex +1}";
 				if(extruderIndex == -1)
 				{
 					name = "Default".Localize();
 				}
-				var radioButton = new RadioButton(name, textColor: theme.Colors.PrimaryTextColor, fontSize: theme.DefaultFontSize);
+
+				var buttonView = new FlowLayoutWidget()
+				{
+					HAnchor = HAnchor.Fit,
+					VAnchor = VAnchor.Fit
+				};
+
+				var scaledButtonSize = 16 * GuiWidget.DeviceScale;
+
+				buttonView.AddChild(new ColorButton(extruderIndex == -1 ? Color.Black : MaterialRendering.Color(extruderIndex))
+				{
+					Margin = new BorderDouble(right: 5),
+					Width = scaledButtonSize,
+					Height = scaledButtonSize,
+					VAnchor = VAnchor.Center,
+				});
+
+				buttonView.AddChild(new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+				{
+					VAnchor = VAnchor.Center
+				});
+
+				var radioButtonView = new RadioButtonView(buttonView)
+				{
+					TextColor = theme.Colors.PrimaryTextColor
+				};
+				radioButtonView.RadioCircle.Margin = radioButtonView.RadioCircle.Margin.Clone(right: 5);
+
+				var radioButton = new RadioButton(radioButtonView)
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit,
+					TextColor = theme.Colors.PrimaryTextColor
+				};
 				materialButtons.Add(radioButton);
-				radioButton.SiblingRadioButtonList = materialButtons;
-				row.AddChild(radioButton);
+				this.AddChild(radioButton);
 
 				int extruderIndexCanPassToClick = extruderIndex;
 				radioButton.Click += (sender, e) =>
@@ -81,15 +106,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						scene.Invalidate();
 					}
 				};
-
-				var scaledButtonSize = 16 * GuiWidget.DeviceScale;
-
-				row.AddChild(new ColorButton(extruderIndex == -1 ? Color.Black : MaterialRendering.Color(extruderIndex))
-				{
-					Margin = new BorderDouble(5, 0, 0, 0),
-					Width = scaledButtonSize,
-					Height = scaledButtonSize
-				});
 			}
 
 			scene.SelectionChanged += Scene_SelectionChanged;
