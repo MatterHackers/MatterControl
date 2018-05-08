@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterControl.Printing;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -43,6 +44,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.loadedGCode = loadedGCode;
 		}
 
+		public string SecondsToTime(double seconds)
+		{
+			int secondsRemaining = (int)seconds;
+			int hoursRemaining = (int)(secondsRemaining / (60 * 60));
+			int minutesRemaining = (int)((secondsRemaining + 30) / 60 - hoursRemaining * 60); // +30 for rounding
+
+			secondsRemaining = secondsRemaining % 60;
+
+			if (hoursRemaining > 0)
+			{
+				return $"{hoursRemaining} h, {minutesRemaining} min";
+			}
+			else if(minutesRemaining > 10)
+			{
+				return $"{minutesRemaining} min";
+			}
+			else
+			{
+				return $"{minutesRemaining} min {secondsRemaining} s";
+			}
+		}
+
 		public string EstimatedPrintTime
 		{
 			get
@@ -52,20 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return "---";
 				}
 
-				int secondsRemaining = (int)loadedGCode.Instruction(0).secondsToEndFromHere;
-				int hoursRemaining = (int)(secondsRemaining / (60 * 60));
-				int minutesRemaining = (int)((secondsRemaining + 30) / 60 - hoursRemaining * 60); // +30 for rounding
-
-				secondsRemaining = secondsRemaining % 60;
-
-				if (hoursRemaining > 0)
-				{
-					return $"{hoursRemaining} h, {minutesRemaining} min";
-				}
-				else
-				{
-					return $"{minutesRemaining} min";
-				}
+				return SecondsToTime(loadedGCode.Instruction(0).secondsToEndFromHere);
 			}
 		}
 
@@ -86,6 +96,68 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				return loadedGCode.GetFilamentWeightGrams(filamentDiameter, filamentDensity);
 			}
+		}
+
+		public double GetLayerHeight(int layerIndex)
+		{
+			return loadedGCode.GetLayerHeight(layerIndex);
+		}
+
+		internal object GetLayerZOffset(int layerIndex)
+		{
+			return loadedGCode.GetLayerZOffset(layerIndex);
+		}
+
+		public string LayerTime(int activeLayerIndex)
+		{
+			if (loadedGCode == null)
+			{
+				return "---";
+			}
+
+			int startInstruction = Math.Min(loadedGCode.LayerCount - 1, loadedGCode.GetInstructionIndexAtLayer(activeLayerIndex));
+			int endInstruction = loadedGCode.GetInstructionIndexAtLayer(activeLayerIndex + 1);
+			var secondsToEndFromStart = loadedGCode.Instruction(startInstruction).secondsToEndFromHere;
+			var secondsToEndFromEnd = loadedGCode.Instruction(endInstruction).secondsToEndFromHere;
+			return SecondsToTime(secondsToEndFromStart - secondsToEndFromEnd);
+		}
+
+		internal string GetLayerFanSpeeds(int activeLayerIndex)
+		{
+			if (loadedGCode == null)
+			{
+				return "---";
+			}
+
+			int startInstruction = loadedGCode.GetInstructionIndexAtLayer(activeLayerIndex);
+			if(activeLayerIndex == 0)
+			{
+				startInstruction = 0;
+			}
+			int endInstruction = loadedGCode.GetInstructionIndexAtLayer(activeLayerIndex + 1);
+
+			string separator = "";
+			string fanSpeeds = "";
+			for (int i = startInstruction; i < endInstruction; i++)
+			{
+				var line = loadedGCode.Instruction(i).Line;
+				if (line.StartsWith("M107")) // fan off
+				{
+					fanSpeeds += separator + "Off";
+					separator = ", ";
+				}
+				else if(line.StartsWith("M106")) // fan on
+				{
+					double speed = 0;
+					if (GCodeFile.GetFirstNumberAfter("M106", line, ref speed, 0, ""))
+					{
+						fanSpeeds += separator + $"{speed/255*100:0}%";
+						separator = ", ";
+					}
+				}
+			}
+
+			return fanSpeeds;
 		}
 
 		public double TotalCost

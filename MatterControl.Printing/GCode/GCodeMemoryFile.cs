@@ -42,16 +42,15 @@ namespace MatterControl.Printing
 	{
 		private double amountOfAccumulatedEWhileParsing = 0;
 
-		private List<int> indexOfChangeInZ = new List<int>();
-		private MatterHackers.VectorMath.Vector2 center = Vector2.Zero;
+		private Vector2 center = Vector2.Zero;
 		private double parsingLastZ;
 		private bool gcodeHasExplicitLayerChangeInfo = false;
-		private double firstLayerThickness;
-		private double layerThickness;
 
-        private double filamentUsedMmCache = 0;
-        private double diameterOfFilamentUsedMmCache = 0;
+		private double filamentUsedMmCache = 0;
+		private double diameterOfFilamentUsedMmCache = 0;
 
+		private List<double> layerZOffset = new List<double>();
+		private List<double> layerHeights = new List<double>();
 		private List<PrinterMachineInstruction> GCodeCommandQueue = new List<PrinterMachineInstruction>();
 
 		public GCodeMemoryFile(bool gcodeHasExplicitLayerChangeInfo = false)
@@ -76,7 +75,7 @@ namespace MatterControl.Printing
 				cancellationToken, null);
 			if (loadedFile != null)
 			{
-				this.indexOfChangeInZ = loadedFile.indexOfChangeInZ;
+				this.IndexOfChangeInZ = loadedFile.IndexOfChangeInZ;
 				this.center = loadedFile.center;
 				this.parsingLastZ = loadedFile.parsingLastZ;
 				this.GCodeCommandQueue = loadedFile.GCodeCommandQueue;
@@ -92,7 +91,7 @@ namespace MatterControl.Printing
 
 		public override void Clear()
 		{
-			indexOfChangeInZ.Clear();
+			IndexOfChangeInZ.Clear();
 			GCodeCommandQueue.Clear();
 		}
 
@@ -105,11 +104,11 @@ namespace MatterControl.Printing
 
 		public void Insert(int insertIndex, PrinterMachineInstruction printerMachineInstruction)
 		{
-			for (int i = 0; i < indexOfChangeInZ.Count; i++)
+			for (int i = 0; i < IndexOfChangeInZ.Count; i++)
 			{
-				if (insertIndex < indexOfChangeInZ[i])
+				if (insertIndex < IndexOfChangeInZ[i])
 				{
-					indexOfChangeInZ[i]++;
+					IndexOfChangeInZ[i]++;
 				}
 			}
 
@@ -271,7 +270,10 @@ namespace MatterControl.Printing
 						case ';':
 							if (gcodeHasExplicitLayerChangeInfo && IsLayerChange(lineString))
 							{
-								if (lineString.EndsWith("LAYER:0"))
+								// if we just found the start of the file and we have not added any layers yet
+								// Make sure we start at the beginging
+								if (lineString.EndsWith("LAYER:0")
+									&& loadedGCodeFile.IndexOfChangeInZ.Count == 0)
 								{
 									loadedGCodeFile.IndexOfChangeInZ.Add(0);
 									break;
@@ -279,13 +281,13 @@ namespace MatterControl.Printing
 
 								loadedGCodeFile.IndexOfChangeInZ.Add(loadedGCodeFile.GCodeCommandQueue.Count);
 							}
-							if (lineString.StartsWith("; layerThickness"))
+							else if (lineString.StartsWith("; LAYER_HEIGHT:"))
 							{
-								loadedGCodeFile.layerThickness = double.Parse(lineString.Split('=')[1]);
-							}
-							else if (lineString.StartsWith("; firstLayerThickness") && loadedGCodeFile.firstLayerThickness == 0)
-							{
-								loadedGCodeFile.firstLayerThickness = double.Parse(lineString.Split('=')[1]);
+								double layerWidth = 0;
+								if (GetFirstNumberAfter("LAYER_HEIGHT:", lineString, ref layerWidth, 0, ""))
+								{
+									loadedGCodeFile.layerHeights.Add(layerWidth);
+								}
 							}
 							break;
 
@@ -437,20 +439,22 @@ namespace MatterControl.Printing
 
 		public override int GetInstructionIndexAtLayer(int layerIndex)
 		{
-			return IndexOfChangeInZ[layerIndex];
-		}
+			if (layerIndex < IndexOfChangeInZ.Count - 1)
+			{
+				return IndexOfChangeInZ[layerIndex];
+			}
 
-		private List<int> IndexOfChangeInZ
-		{
-			get { return indexOfChangeInZ; }
+			// else return the last instruction
+			return GCodeCommandQueue.Count - 1;
 		}
 
 		public override int LayerCount
 		{
-			get { return indexOfChangeInZ.Count; }
+			get { return IndexOfChangeInZ.Count; }
 		}
 
 		public HashSet<float> Speeds { get; private set; }
+		public List<int> IndexOfChangeInZ { get; set; } = new List<int>();
 
 		private void ParseMLine(string lineString, PrinterMachineInstruction processingMachineState)
 		{
@@ -688,10 +692,10 @@ namespace MatterControl.Printing
 
 					if (!gcodeHasExplicitLayerChangeInfo)
 					{
-						if (processingMachineState.Z != parsingLastZ || indexOfChangeInZ.Count == 0)
+						if (processingMachineState.Z != parsingLastZ || IndexOfChangeInZ.Count == 0)
 						{
 							// if we changed z or there is a movement and we have never started a layer index
-							indexOfChangeInZ.Add(GCodeCommandQueue.Count);
+							IndexOfChangeInZ.Add(GCodeCommandQueue.Count);
 						}
 					}
 					parsingLastZ = processingMachineState.Position.Z;
@@ -903,14 +907,19 @@ namespace MatterControl.Printing
 			return filamentDiameterCache;
 		}
 
-		public override double GetLayerHeight()
+		public override double GetLayerHeight(int layerIndex)
 		{
-			if (layerThickness > 0)
+			if (layerHeights.Count > 0)
 			{
-				return layerThickness;
+				if (layerIndex < layerHeights.Count)
+				{
+					return layerHeights[layerIndex];
+				}
+
+				return 0;
 			}
 
-			if (indexOfChangeInZ.Count > 2)
+			if (IndexOfChangeInZ.Count > 2)
 			{
 				return GCodeCommandQueue[IndexOfChangeInZ[2]].Z - GCodeCommandQueue[IndexOfChangeInZ[1]].Z;
 			}
@@ -918,19 +927,14 @@ namespace MatterControl.Printing
 			return .5;
 		}
 
-		public override double GetFirstLayerHeight()
+		public override double GetLayerZOffset(int layerIndex)
 		{
-			if (firstLayerThickness > 0)
+			double total = 0;
+			for (int i = 0; i <= layerIndex; i++)
 			{
-				return firstLayerThickness;
+				total += GetLayerHeight(i);
 			}
-
-			if (indexOfChangeInZ.Count > 1)
-			{
-				return GCodeCommandQueue[IndexOfChangeInZ[1]].Z - GCodeCommandQueue[IndexOfChangeInZ[0]].Z;
-			}
-
-			return .5;
+			return total;
 		}
 
 		public override int GetLayerIndex(int instructionIndex)
@@ -940,7 +944,7 @@ namespace MatterControl.Printing
 			{
 				for(var i = IndexOfChangeInZ.Count - 1; i >=0; i--)
 				{
-					var lineStart = indexOfChangeInZ[i];
+					var lineStart = IndexOfChangeInZ[i];
 
 					if (instructionIndex >= lineStart)
 					{
