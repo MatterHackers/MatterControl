@@ -75,11 +75,6 @@ namespace MatterHackers.MatterControl
 		private double FixedHeight => Options.FixedHeight;
 		private double ImageSpacing => Options.ImageSpacing;
 
-		public GuiWidget GenerateIconButton(ImageBuffer icon)
-		{
-			return new IconButton(icon, ApplicationController.Instance.Theme);
-		}
-
 		public CheckBox GenerateCheckBoxButton(string label, ImageBuffer normalImage, ImageBuffer normalToPressedImage = null, ImageBuffer pressedImage = null, ImageBuffer pressedToNormalImage = null, string pressedLabel = null)
 		{
 			if (pressedImage == null) pressedImage = normalImage;

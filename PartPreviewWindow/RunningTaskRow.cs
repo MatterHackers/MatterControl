@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -102,8 +101,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			expandButton.CheckedStateChanged += (s, e) =>
 			{
-				progressBar.FillColor = expandButton.Checked ? theme.Shade : theme.Colors.PrimaryAccentColor;
-				detailsPanel.Visible = expandButton.Checked;
+				taskDetails.IsExpanded = expandButton.Checked;
+				SetExpansionMode(theme, detailsPanel, expandButton.Checked);
 			};
 			topRow.AddChild(expandButton);
 
@@ -111,34 +110,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			IconButton resumeButton = null;
 
-			var pauseButton = new IconButton(AggContext.StaticData.LoadIcon("fa-pause_12.png", theme.InvertIcons), theme);
-			pauseButton.Margin = theme.ButtonSpacing;
-			pauseButton.Enabled = taskDetails.TaskActions?.Pause != null;
+			var pauseButton = new IconButton(AggContext.StaticData.LoadIcon("fa-pause_12.png", theme.InvertIcons), theme)
+			{
+				Margin = theme.ButtonSpacing,
+				Enabled = taskDetails.Options?.PauseAction != null
+			};
 			pauseButton.Click += (s, e) =>
 			{
-				taskDetails.TaskActions?.Pause();
+				taskDetails.Options?.PauseAction();
 				pauseButton.Visible = false;
 				resumeButton.Visible = true;
 			};
 			topRow.AddChild(pauseButton);
 
-			resumeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-play_12.png", theme.InvertIcons), theme);
-			resumeButton.Visible = false;
-			resumeButton.Margin = theme.ButtonSpacing;
+			resumeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-play_12.png", theme.InvertIcons), theme)
+			{
+				Visible = false,
+				Margin = theme.ButtonSpacing
+			};
 			resumeButton.Click += (s, e) =>
 			{
-				taskDetails.TaskActions?.Resume();
+				taskDetails.Options?.ResumeAction();
 				pauseButton.Visible = true;
 				resumeButton.Visible = false;
 			};
 			topRow.AddChild(resumeButton);
 
-			var stopButton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("fa-stop_12.png", theme.InvertIcons));
-			stopButton.Margin = theme.ButtonSpacing;
-			stopButton.Name = "Stop Task Button";
+			var stopButton = new IconButton(AggContext.StaticData.LoadIcon("fa-stop_12.png", theme.InvertIcons), theme)
+			{
+				Margin = theme.ButtonSpacing,
+				Name = "Stop Task Button"
+			};
 			stopButton.Click += (s, e) =>
 			{
-				var stopAction = taskDetails.TaskActions?.Stop;
+				var stopAction = taskDetails.Options?.StopAction;
 				if (stopAction == null)
 				{
 					taskDetails.CancelTask();
@@ -152,17 +157,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(detailsPanel);
 
+			bool isExpanded = false;
+
 			// Add rich progress controls
-			if (taskDetails.TaskActions?.RichProgressWidget != null
-					&& taskDetails.TaskActions?.RichProgressWidget?.Invoke() is GuiWidget guiWidget)
+			if (taskDetails.Options?.RichProgressWidget?.Invoke() is GuiWidget guiWidget)
 			{
-				guiWidget.VAnchor = VAnchor.Absolute;
-				guiWidget.Visible = false;
-				expandButton.Checked = true;
 				detailsPanel.AddChild(guiWidget);
 			}
 
-			if (taskDetails.TaskActions?.ReadOnlyReporting == true)
+			if (taskDetails.Options?.ReadOnlyReporting == true)
 			{
 				stopButton.Visible = false;
 				pauseButton.Visible = false;
@@ -172,7 +175,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				topRow.MinimumSize = new Vector2(0, resumeButton.Height);
 			}
 
+			SetExpansionMode(theme, detailsPanel, taskDetails.IsExpanded);
+
 			taskDetails.ProgressChanged += TaskDetails_ProgressChanged;
+		}
+
+		private void SetExpansionMode(ThemeConfig theme, GuiWidget detailsPanel, bool isExpanded)
+		{
+			progressBar.FillColor = isExpanded ? theme.Shade : theme.Colors.PrimaryAccentColor;
+			detailsPanel.Visible = isExpanded;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

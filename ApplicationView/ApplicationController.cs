@@ -816,7 +816,7 @@ namespace MatterHackers.MatterControl
 
 									return Task.CompletedTask;
 								},
-								new RunningTaskActions()
+								new RunningTaskOptions()
 								{
 									ReadOnlyReporting = true
 								});
@@ -846,7 +846,7 @@ namespace MatterHackers.MatterControl
 
 									return Task.CompletedTask;
 								},
-								new RunningTaskActions()
+								new RunningTaskOptions()
 								{
 									ReadOnlyReporting = true
 								});
@@ -1753,18 +1753,19 @@ namespace MatterHackers.MatterControl
 						}
 					});
 				},
-				taskActions: new RunningTaskActions()
+				taskActions: new RunningTaskOptions()
 				{
+					ExpansionSerializationKey = $"{nameof(MonitorPrintTask)}_expanded",
 					RichProgressWidget = () => PrinterTabPage.PrintProgressWidget(printer, ApplicationController.Instance.Theme),
-					Pause = () => UiThread.RunOnIdle(() =>
+					PauseAction = () => UiThread.RunOnIdle(() =>
 					{
 						printer.Connection.RequestPause();
 					}),
-					Resume = () => UiThread.RunOnIdle(() =>
+					ResumeAction = () => UiThread.RunOnIdle(() =>
 					{
 						printer.Connection.Resume();
 					}),
-					Stop = () => UiThread.RunOnIdle(() =>
+					StopAction = () => UiThread.RunOnIdle(() =>
 					{
 						ApplicationController.Instance.ConditionalCancelPrint();
 					})
@@ -2000,6 +2001,10 @@ namespace MatterHackers.MatterControl
 
 		public Func<GuiWidget> DetailsItemAction { get; set; }
 
+		private CancellationTokenSource tokenSource;
+
+		private bool? _isExpanded = null;
+
 		public RunningTaskDetails(CancellationTokenSource tokenSource)
 		{
 			this.tokenSource = tokenSource;
@@ -2007,9 +2012,39 @@ namespace MatterHackers.MatterControl
 
 		public string Title { get; set; }
 
-		public RunningTaskActions TaskActions { get; internal set; }
+		public RunningTaskOptions Options { get; internal set; }
 
-		private CancellationTokenSource tokenSource;
+		public bool IsExpanded
+		{
+			get
+			{
+				if (_isExpanded == null)
+				{
+					if (this.Options is RunningTaskOptions options
+						&& !string.IsNullOrWhiteSpace(options.ExpansionSerializationKey))
+					{
+						string dbValue = UserSettings.Instance.get(options.ExpansionSerializationKey);
+						_isExpanded = dbValue != "0";
+					}
+					else
+					{
+						_isExpanded = false;
+					}
+				}
+
+				return _isExpanded ?? false;
+			}
+			set
+			{
+				_isExpanded = value;
+
+				if (this.Options?.ExpansionSerializationKey is string expansionKey
+					&& !string.IsNullOrWhiteSpace(expansionKey))
+				{
+					UserSettings.Instance.set(expansionKey, (_isExpanded ?? false) ? "1" : "0");
+				}
+			}
+		}
 
 		public void Report(ProgressStatus progressStatus)
 		{
@@ -2022,12 +2057,22 @@ namespace MatterHackers.MatterControl
 		}
 	}
 
-	public class RunningTaskActions
+	public class RunningTaskOptions
 	{
+		/// <summary>
+		/// The Rich progress widget to be shown when expanded
+		/// </summary>
 		public Func<GuiWidget> RichProgressWidget { get; set; }
-		public Action Pause { get; set; }
-		public Action Resume { get; set; }
-		public Action Stop { get; set; }
+
+		/// <summary>
+		/// The database key used to round trip expansion state
+		/// </summary>
+		public string ExpansionSerializationKey { get; set; }
+
+
+		public Action PauseAction { get; set; }
+		public Action ResumeAction { get; set; }
+		public Action StopAction { get; set; }
 
 		/// <summary>
 		/// Indicates if the task should suppress pause/resume/stop operations
@@ -2051,13 +2096,13 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		public Task Execute(string taskTitle, Func<IProgress<ProgressStatus>, CancellationToken, Task> func, RunningTaskActions taskActions = null)
+		public Task Execute(string taskTitle, Func<IProgress<ProgressStatus>, CancellationToken, Task> func, RunningTaskOptions taskActions = null)
 		{
 			var tokenSource = new CancellationTokenSource();
 
 			var taskDetails = new RunningTaskDetails(tokenSource)
 			{
-				TaskActions = taskActions,
+				Options = taskActions,
 				Title = taskTitle
 			};
 
