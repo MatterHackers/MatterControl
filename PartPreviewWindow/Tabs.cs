@@ -373,7 +373,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			private ImageWidget imageWidget;
 
 			public TabPill(string tabTitle, Color textColor, string imageUrl = null, double pointSize = 12)
-				: this (tabTitle, textColor, string.IsNullOrEmpty(imageUrl) ? null : new ImageBuffer(16, 16), pointSize)
+				: this (tabTitle, textColor, string.IsNullOrEmpty(imageUrl) ? null : new ImageBuffer(16, 16).CreateScaledImage(GuiWidget.DeviceScale), pointSize)
 			{
 				if (imageWidget != null
 					&& !string.IsNullOrEmpty(imageUrl))
@@ -382,7 +382,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						// TODO: Use caching
 						// Attempt to load image
-						ApplicationController.Instance.DownloadToImageAsync(imageWidget.Image, imageUrl, false);
+						ApplicationController.Instance.DownloadToImageAsync(imageWidget.Image, imageUrl, true);
 					}
 					catch { }
 				}
