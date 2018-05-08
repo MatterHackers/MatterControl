@@ -90,7 +90,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var iTab = tabWidget as ITab;
 
-			_allTabs.Add(tabWidget as ITab);
+			if (position == -1)
+			{
+				_allTabs.Add(iTab);
+			}
+			else
+			{
+				_allTabs.Insert(position - 1, iTab);
+			}
 
 			tabWidget.Click += TabWidget_Click;
 
@@ -241,13 +248,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					leftTab.NextTab = newTab;
 				}
 
-				// Call AddTab(widget, int) in base explicitly
-
 				if (tabIndex != -1)
 				{
 					position = this.TabBar.ActionArea.GetChildIndex(leftTab) + 1;
 				}
 
+				// Call AddTab(widget, int) in base explicitly
 				base.AddTab(tab, position);
 
 				this.ActiveTab = newTab;
@@ -352,7 +358,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								"Cancel Print".Localize(),
 								"Continue Printing".Localize());
 						}
-						else // need to handle asking about saving a 
+						else // need to handle asking about saving a
 						{
 							UiThread.RunOnIdle(() =>
 							{
