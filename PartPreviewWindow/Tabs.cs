@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
@@ -86,7 +85,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public int TabCount => _allTabs.Count;
 
-		public void AddTab(GuiWidget tabWidget, int position = -1)
+		public virtual void AddTab(GuiWidget tabWidget, int position = -1)
 		{
 			var iTab = tabWidget as ITab;
 
@@ -212,11 +211,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.TabBar.ActionArea.AddChild(tabTrailer);
 		}
 
-		public new void AddTab(GuiWidget tab, int tabIndex = -1)
+		public override void AddTab(GuiWidget tabWidget, int tabIndex = -1)
 		{
 			var position = this.TabBar.ActionArea.GetChildIndex(tabTrailer);
 
-			if (tab is ChromeTab newTab)
+			if (tabWidget is ChromeTab newTab)
 			{
 				ChromeTab leftTab;
 
@@ -254,7 +253,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				// Call AddTab(widget, int) in base explicitly
-				base.AddTab(tab, position);
+				base.AddTab(tabWidget, position);
 
 				this.ActiveTab = newTab;
 			}
