@@ -205,21 +205,52 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.TabBar.ActionArea.AddChild(tabTrailer);
 		}
 
-		public void AddTab(GuiWidget tab)
+		public new void AddTab(GuiWidget tab, int tabIndex = -1)
 		{
 			var position = this.TabBar.ActionArea.GetChildIndex(tabTrailer);
 
-			if (tab is ChromeTab chromeTab)
+			if (tab is ChromeTab newTab)
 			{
-				chromeTab.PreviousTab = this.AllTabs.OfType<ChromeTab>().LastOrDefault();
-				if (chromeTab.PreviousTab != null)
+				ChromeTab leftTab;
+
+				if (tabIndex == -1)
 				{
-					chromeTab.PreviousTab.NextTab = chromeTab;
+					leftTab = this.AllTabs.OfType<ChromeTab>().LastOrDefault();
+				}
+				else
+				{
+					leftTab = this.AllTabs.Skip(tabIndex - 1).FirstOrDefault() as ChromeTab;
+
+					var rightTab = leftTab.NextTab;
+					if (rightTab != null)
+					{
+						// Insert us in the middle
+						rightTab.PreviousTab = newTab;
+
+						// Set Next
+						newTab.NextTab = rightTab;
+					}
 				}
 
-				this.AddTab(tab, position);
+				// Set previous
+				newTab.PreviousTab = leftTab;
 
-				this.ActiveTab = chromeTab;
+				// Insert us as next
+				if (leftTab != null)
+				{
+					leftTab.NextTab = newTab;
+				}
+
+				// Call AddTab(widget, int) in base explicitly
+
+				if (tabIndex != -1)
+				{
+					position = this.TabBar.ActionArea.GetChildIndex(leftTab) + 1;
+				}
+
+				base.AddTab(tab, position);
+
+				this.ActiveTab = newTab;
 			}
 		}
 
@@ -342,7 +373,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			private ImageWidget imageWidget;
 
 			public TabPill(string tabTitle, Color textColor, string imageUrl = null, double pointSize = 12)
-				: this (tabTitle, textColor, string.IsNullOrEmpty(imageUrl) ? null : new ImageBuffer(16, 16), pointSize)
+				: this (tabTitle, textColor, string.IsNullOrEmpty(imageUrl) ? null : new ImageBuffer(16, 16).CreateScaledImage(GuiWidget.DeviceScale), pointSize)
 			{
 				if (imageWidget != null
 					&& !string.IsNullOrEmpty(imageUrl))
@@ -351,7 +382,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						// TODO: Use caching
 						// Attempt to load image
-						ApplicationController.Instance.DownloadToImageAsync(imageWidget.Image, imageUrl, false);
+						ApplicationController.Instance.DownloadToImageAsync(imageWidget.Image, imageUrl, true);
 					}
 					catch { }
 				}

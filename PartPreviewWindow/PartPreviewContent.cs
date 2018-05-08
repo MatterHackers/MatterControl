@@ -184,6 +184,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal ChromeTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)
 		{
+			// Printer page is in fixed position. If exists, save and close
+			var tab1 = tabControl.AllTabs.Skip(1).FirstOrDefault();
+			if (tab1?.TabContent is PrinterTabPage printerTabPage)
+			{
+				// TODO - call save before remove
+				// printerTabPage.sceneContext.SaveChanges();
+
+				tabControl.RemoveTab(tab1);
+			}
+
 			printerTab = new ChromeTab(
 				tabTitle,
 				tabControl,
@@ -195,7 +205,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				MinimumSize = new Vector2(120, theme.TabButtonHeight)
 			};
 
-			tabControl.AddTab(printerTab);
+			// Add printer into fixed position
+			tabControl.AddTab(printerTab, 1);
 
 			return printerTab;
 		}
