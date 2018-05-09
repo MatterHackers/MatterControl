@@ -121,6 +121,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			return mainContainer;
 		}
 
+		private static FlowLayoutWidget CreateSettingsRow(EditableProperty property)
+		{
+			return CreateSettingsRow(property.DisplayName.Localize(), property.Description.Localize());
+		}
+
 		private static FlowLayoutWidget CreateSettingsRow(string labelText, string toolTipText = null)
 		{
 			var rowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
@@ -195,7 +200,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			// create a double editor
 			if (property.Value is double doubleValue)
 			{
-				rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+				rowContainer = CreateSettingsRow(property);
 
 				var field = new DoubleField();
 				field.Initialize(0);
@@ -212,7 +217,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (property.Value is Vector2 vector2)
 			{
-				rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+				rowContainer = CreateSettingsRow(property);
 
 				var field = new Vector2Field();
 				field.Initialize(0);
@@ -229,7 +234,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (property.Value is Vector3 vector3)
 			{
-				rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+				rowContainer = CreateSettingsRow(property);
 
 				var field = new Vector3Field();
 				field.Initialize(0);
@@ -249,7 +254,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				bool simpleEdit = true;
 				if (simpleEdit)
 				{
-					rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+					rowContainer = CreateSettingsRow(property);
 
 					var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
 					{
@@ -289,7 +294,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 				else // edit the vector
 				{
-					rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+					rowContainer = CreateSettingsRow(property);
 
 					var field = new Vector3Field();
 					field.Initialize(0);
@@ -314,7 +319,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					// the direction axis
 					// the distance from the center of the part
 					// create a double editor
-					rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+					rowContainer = CreateSettingsRow(property);
 
 					var field = new DoubleField();
 					field.Initialize(0);
@@ -349,7 +354,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				else
 				{
 					// add in the position
-					FlowLayoutWidget originRowContainer = CreateSettingsRow(property.DisplayName.Localize());
+					FlowLayoutWidget originRowContainer = CreateSettingsRow(property);
 
 					var originField = new Vector3Field();
 					originField.Initialize(0);
@@ -370,7 +375,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					editControlsContainer.AddChild(originRowContainer);
 
 					// add in the direction
-					FlowLayoutWidget directionRowContainer = CreateSettingsRow(property.DisplayName.Localize());
+					FlowLayoutWidget directionRowContainer = CreateSettingsRow(property);
 
 					normalField.ValueChanged += (s, e) =>
 					{
@@ -397,7 +402,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			// create a int editor
 			else if (property.Value is int intValue)
 			{
-				rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+				rowContainer = CreateSettingsRow(property);
 
 				var field = new IntField();
 				field.Initialize(0);
@@ -415,7 +420,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			// create a bool editor
 			else if (property.Value is bool boolValue)
 			{
-				rowContainer = CreateSettingsRow(property.DisplayName.Localize(), property.Description.Localize());
+				rowContainer = CreateSettingsRow(property);
 
 				var field = new ToggleboxField(theme);
 				field.Initialize(0);
@@ -433,7 +438,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			// create a string editor
 			else if (property.Value is string stringValue)
 			{
-				rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+				rowContainer = CreateSettingsRow(property);
 				var textEditWidget = new MHTextEditWidget(stringValue, pixelWidth: 150 * GuiWidget.DeviceScale)
 				{
 					SelectAllOnFocus = true,
@@ -451,7 +456,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			// create a char editor
 			else if (property.Value is char charValue)
 			{
-				rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+				rowContainer = CreateSettingsRow(property);
 				var textEditWidget = new MHTextEditWidget(charValue.ToString(), pixelWidth: 150 * GuiWidget.DeviceScale)
 				{
 					SelectAllOnFocus = true,
