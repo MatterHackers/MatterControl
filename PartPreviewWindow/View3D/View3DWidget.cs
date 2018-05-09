@@ -805,7 +805,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// File system Drop validation
 			mouseEvent.AcceptDrop = this.AllowDragDrop()
 					&& mouseEvent.DragFiles?.Count > 0
-					&& mouseEvent.DragFiles.TrueForAll(filePath => ApplicationController.Instance.IsLoadableFile(filePath));
+					&& mouseEvent.DragFiles.TrueForAll(filePath =>
+					{
+						return ApplicationController.Instance.IsLoadableFile(filePath)
+							// Disallow GCode drop in part view
+							&& (this.Printer != null || string.Equals(System.IO.Path.GetExtension(filePath), ".gcode", StringComparison.OrdinalIgnoreCase));
+					});
 
 			// View3DWidgets Filesystem DropDrop handler
 			if (mouseEvent.AcceptDrop
