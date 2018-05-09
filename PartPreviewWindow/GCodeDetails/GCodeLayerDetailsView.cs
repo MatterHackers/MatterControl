@@ -81,14 +81,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			GuiWidget layerTime = AddSetting("Time".Localize(), "", this);
 			GuiWidget layerHeight = AddSetting("Height".Localize(), "", this);
-			GuiWidget layerWidth = AddSetting("Z Offset".Localize(), "", this);
+			GuiWidget layerWidth = AddSetting("Layer Top".Localize(), "", this);
 			GuiWidget layerFanSpeeds = AddSetting("Fan Speed".Localize(), "", this);
 
 			void UpdateLayerDisplay(object sender, EventArgs e)
 			{
 				layerTime.Text = gcodeDetails.LayerTime(sceneContext.ActiveLayerIndex);
 				layerHeight.Text = $"{gcodeDetails.GetLayerHeight(sceneContext.ActiveLayerIndex):0.###}";
-				layerWidth.Text = $"{gcodeDetails.GetLayerZOffset(sceneContext.ActiveLayerIndex):0.###}";
+				layerWidth.Text = $"{gcodeDetails.GetLayerTop(sceneContext.ActiveLayerIndex):0.###}";
 				var fanSpeed = gcodeDetails.GetLayerFanSpeeds(sceneContext.ActiveLayerIndex);
 				layerFanSpeeds.Text = string.IsNullOrWhiteSpace(fanSpeed) ? "Unchanged" : fanSpeed;
 			}
