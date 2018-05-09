@@ -2148,11 +2148,14 @@ namespace MatterHackers.MatterControl
 
 			var systemWindow = new RootSystemWindow(width, height);
 
+			// Load theme
+			ApplicationController.LoadTheme();
+
 			var theme = ApplicationController.Instance.Theme;
 
 			var overlay = new GuiWidget()
 			{
-				BackgroundColor = theme.TabBodyBackground
+				BackgroundColor = theme.ActiveTabBarBackground
 			};
 			overlay.AnchorAll();
 
@@ -2379,9 +2382,6 @@ namespace MatterHackers.MatterControl
 					}
 				}
 			};
-
-			// Load theme
-			ApplicationController.LoadTheme();
 
 			// Hook SystemWindow load and spin up MatterControl once we've hit first draw
 			systemWindow.Load += (s, e) =>
