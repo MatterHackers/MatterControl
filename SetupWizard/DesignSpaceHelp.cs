@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch
 			};
-			tabControl.TabBar.BackgroundColor = theme.ActiveTabBarBackground;
+			tabControl.TabBar.BackgroundColor = theme.TabBarBackground;
 
 			container.AddChild(tabControl);
 

@@ -2155,7 +2155,7 @@ namespace MatterHackers.MatterControl
 
 			var overlay = new GuiWidget()
 			{
-				BackgroundColor = theme.ActiveTabBarBackground
+				BackgroundColor = theme.TabBarBackground
 			};
 			overlay.AnchorAll();
 

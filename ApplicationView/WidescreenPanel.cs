@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
-				BackgroundColor = theme.ActiveTabBarBackground,
+				BackgroundColor = theme.TabBarBackground,
 				BorderColor = theme.ActiveTabColor,
 				Border = 0 //new BorderDouble(bottom: 2),
 			};
