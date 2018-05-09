@@ -809,7 +809,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						return ApplicationController.Instance.IsLoadableFile(filePath)
 							// Disallow GCode drop in part view
-							&& (this.Printer != null || string.Equals(System.IO.Path.GetExtension(filePath), ".gcode", StringComparison.OrdinalIgnoreCase));
+							&& (this.Printer != null || !string.Equals(System.IO.Path.GetExtension(filePath), ".gcode", StringComparison.OrdinalIgnoreCase));
 					});
 
 			// View3DWidgets Filesystem DropDrop handler

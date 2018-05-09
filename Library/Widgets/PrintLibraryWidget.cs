@@ -668,8 +668,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Title = "Move".Localize(),
 				Action = (selectedLibraryItems, listView) =>
 				{
-					var partItems = selectedLibraryItems.Where(item => item is ILibraryAssetStream
-					|| item is ILibraryContainerLink);
+					var partItems = selectedLibraryItems.Where(item => item is ILibraryAssetStream || item is ILibraryContainerLink);
 					if (partItems.Any()
 						&& libraryView.ActiveContainer is ILibraryWritableContainer sourceContainer)
 					{
