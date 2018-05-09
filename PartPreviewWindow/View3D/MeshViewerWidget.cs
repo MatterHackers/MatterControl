@@ -39,6 +39,7 @@ using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
@@ -493,19 +494,6 @@ namespace MatterHackers.MeshVisualizer
 
 				if (isSelected && scene.DrawSelection)
 				{
-					var totalVertices = 0;
-					int maxVerticesToRenderOutline = 1000;
-
-					foreach (var visibleMesh in object3D.VisibleMeshes())
-					{
-						totalVertices += visibleMesh.mesh.Vertices.Count;
-
-						if (totalVertices > maxVerticesToRenderOutline)
-						{
-							break;
-						}
-					}
-
 					var frustum = World.GetClippingFrustum();
 
 					var selectionColor = Color.White;
@@ -525,15 +513,7 @@ namespace MatterHackers.MeshVisualizer
 						Invalidate();
 					}
 
-					if (totalVertices > maxVerticesToRenderOutline
-						&& scene.DebugItem == null)
-					{
-						World.RenderAabb(object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity), Matrix4X4.Identity, selectionColor, selectionHighlightWidth);
-					}
-					else
-					{
-						RenderSelection(item.object3D, frustum, selectionColor);
-					}
+					RenderSelection(item.object3D, frustum, selectionColor);
 				}
 
 #if DEBUG
@@ -618,55 +598,44 @@ namespace MatterHackers.MeshVisualizer
 			}
 		}
 
-		private void RenderSelection(IObject3D renderData, Frustum frustum, Color selectionColor)
+		private void RenderSelection(IObject3D item, Frustum frustum, Color selectionColor)
 		{
-			if(renderData.Mesh == null)
+			if (item.Mesh == null)
 			{
 				return;
 			}
-			var screenPosition = new Vector3[3];
-			GLHelper.PrepareFor3DLineRender(true);
 
-			if (renderData.Mesh.Vertices.Count < 1000)
-			{
-				bool renderedAnything = false;
-				foreach (MeshEdge meshEdge in renderData.Mesh.MeshEdges)
-				{
-					if (meshEdge.GetNumFacesSharingEdge() == 2)
-					{
-						renderedAnything = true;
-						var meshToView = renderData.WorldMatrix() * World.ModelviewMatrix;
+			// Turn off lighting
+			GL.Disable(EnableCap.Lighting);
+			// Only render back faces
+			GL.CullFace(CullFaceMode.Front);
+			// Expand the object
+			var oldMatrix = item.Matrix;
 
-						FaceEdge firstFaceEdge = meshEdge.firstFaceEdge;
-						FaceEdge nextFaceEdge = meshEdge.firstFaceEdge.radialNextFaceEdge;
-						// find out if one face is facing the camera and one is facing away
-						var viewVertexPosition = Vector3.Transform(firstFaceEdge.FirstVertex.Position, meshToView);
-						var viewFirstNormal = Vector3.TransformNormal(firstFaceEdge.ContainingFace.Normal, meshToView).GetNormal();
-						var viewNextNormal = Vector3.TransformNormal(nextFaceEdge.ContainingFace.Normal, meshToView).GetNormal();
+			var meshBounds = item.Mesh.GetAxisAlignedBoundingBox();
+			var localCenter = meshBounds.Center;
+			var worldCenter = Vector3.Transform(localCenter, item.WorldMatrix());
+			double distBetweenPixelsWorldSpace = World.GetWorldUnitsPerScreenPixelAtPosition(worldCenter);
+			var pixelsAccross = item.GetAxisAlignedBoundingBox().Size / distBetweenPixelsWorldSpace;
+			var pixelsWant = pixelsAccross + Vector3.One * 4;
 
-						// Is the plane facing the camera (0, 0, 0). Finding the distance from the orign to the plane along the normal.
-						var firstTowards = Vector3.Dot(viewFirstNormal, viewVertexPosition) < 0;
-						var nextTowards = Vector3.Dot(viewNextNormal, viewVertexPosition) < 0;
+			var wantMm = pixelsWant * distBetweenPixelsWorldSpace;
 
-						if (firstTowards != nextTowards)
-						{
-							var transformed1 = Vector3.Transform(meshEdge.VertexOnEnd[0].Position, renderData.WorldMatrix());
-							var transformed2 = Vector3.Transform(meshEdge.VertexOnEnd[1].Position, renderData.WorldMatrix());
+			item.ApplyAtBoundsCenter(Matrix4X4.CreateScale(
+				wantMm.X / item.XSize(),
+				wantMm.Y / item.YSize(),
+				wantMm.Z / item.ZSize()));
 
-							World.Render3DLineNoPrep(frustum, transformed1, transformed2, selectionColor, selectionHighlightWidth);
-						}
-					}
-				}
+			GLHelper.Render(item.Mesh, 
+				selectionColor,
+				item.WorldMatrix(), RenderTypes.Shaded,
+				item.WorldMatrix() * World.ModelviewMatrix,
+				darkWireframe);
 
-				if(!renderedAnything)
-				{
-					World.RenderAabb(renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.WorldMatrix(), selectionColor, selectionHighlightWidth);
-				}
-			}
-			else // just render the bounding box
-			{
-				World.RenderAabb(renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.WorldMatrix(), selectionColor, selectionHighlightWidth);
-			}
+			// restore settings
+			GL.CullFace(CullFaceMode.Back);
+			item.Matrix = oldMatrix;
+			GL.Enable(EnableCap.Lighting);
 		}
 
 		public enum EditorType { Printer, Part }
