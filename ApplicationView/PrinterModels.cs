@@ -51,6 +51,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PrinterCommunication;
+	using MatterHackers.MatterControl.PrintLibrary;
 	using MatterHackers.MeshVisualizer;
 	using MatterHackers.PolygonMesh;
 	using MatterHackers.VectorMath;
@@ -597,6 +598,11 @@ namespace MatterHackers.MatterControl
 				this.ContentStore.Save(this.SourceItem, this.Content);
 			}
 		}
+	}
+
+	public class AppViewState
+	{
+		public PrintLibraryWidget.ListViewModes LibraryViewMode { get; set; } = PrintLibraryWidget.ListViewModes.IconListView;
 	}
 
 	public class PrinterViewState

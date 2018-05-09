@@ -1600,6 +1600,8 @@ namespace MatterHackers.MatterControl
 
 		public List<BedConfig> Workspaces { get; } = new List<BedConfig>();
 
+		public AppViewState ViewState { get; } = new AppViewState();
+
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 
 		public void NotifyPrintersTabRightElement(GuiWidget sourceExentionArea)
