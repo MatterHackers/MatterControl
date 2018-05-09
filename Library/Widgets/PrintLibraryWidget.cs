@@ -40,7 +40,6 @@ using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
@@ -196,14 +195,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				var siblingList = new List<GuiWidget>();
 
-				ListViewModes activeMode = ListViewModes.IconListView;
 
 				popupMenu.CreateBoolMenuItem(
 					"View List".Localize(),
-					() => activeMode == ListViewModes.RowListView,
+					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.RowListView,
 					(isChecked) =>
 					{
-						activeMode = ListViewModes.RowListView;
+						ApplicationController.Instance.ViewState.LibraryViewMode = ListViewModes.RowListView;
 						listView.ListContentView = new RowListView(theme);
 						listView.Reload().ConfigureAwait(false);
 					},
@@ -212,10 +210,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 #if DEBUG
 				popupMenu.CreateBoolMenuItem(
 					"View XSmall Icons".Localize(),
-					() => activeMode == ListViewModes.IconListView18,
+					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.IconListView18,
 					(isChecked) =>
 					{
-						activeMode = ListViewModes.IconListView18;
+						ApplicationController.Instance.ViewState.LibraryViewMode = ListViewModes.IconListView18;
 						listView.ListContentView = new IconListView(theme, 18);
 						listView.Reload().ConfigureAwait(false);
 					},
@@ -225,10 +223,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				popupMenu.CreateBoolMenuItem(
 					"View Small Icons".Localize(),
-					() => activeMode == ListViewModes.IconListView70,
+					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.IconListView70,
 					(isChecked) =>
 					{
-						activeMode = ListViewModes.IconListView70;
+						ApplicationController.Instance.ViewState.LibraryViewMode = ListViewModes.IconListView70;
 						listView.ListContentView = new IconListView(theme, 70);
 						listView.Reload().ConfigureAwait(false);
 					},
@@ -237,10 +235,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 #endif
 				popupMenu.CreateBoolMenuItem(
 					"View Icons".Localize(),
-					() => activeMode == ListViewModes.IconListView,
+					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.IconListView,
 					(isChecked) =>
 					{
-						activeMode = ListViewModes.IconListView;
+						ApplicationController.Instance.ViewState.LibraryViewMode = ListViewModes.IconListView;
 						listView.ListContentView = new IconListView(theme);
 						listView.Reload().ConfigureAwait(false);
 					},
@@ -249,10 +247,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				popupMenu.CreateBoolMenuItem(
 					"View Large Icons".Localize(),
-					() => activeMode == ListViewModes.IconListView256,
+					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.IconListView256,
 					(isChecked) =>
 					{
-						activeMode = ListViewModes.IconListView256;
+						ApplicationController.Instance.ViewState.LibraryViewMode = ListViewModes.IconListView256;
 						listView.ListContentView = new IconListView(theme, 256);
 						listView.Reload().ConfigureAwait(false);
 					},
@@ -322,15 +320,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			allControls.AnchorAll();
 
 			this.AddChild(allControls);
-		}
-
-		private enum ListViewModes
-		{
-			RowListView,
-			IconListView,
-			IconListView18,
-			IconListView70,
-			IconListView256
 		}
 
 		private void PerformSearch()
@@ -668,8 +657,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Title = "Move".Localize(),
 				Action = (selectedLibraryItems, listView) =>
 				{
-					var partItems = selectedLibraryItems.Where(item => item is ILibraryAssetStream
-					|| item is ILibraryContainerLink);
+					var partItems = selectedLibraryItems.Where(item => item is ILibraryAssetStream || item is ILibraryContainerLink);
 					if (partItems.Any()
 						&& libraryView.ActiveContainer is ILibraryWritableContainer sourceContainer)
 					{
@@ -871,9 +859,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-
-
-
 		private void shareFromLibraryButton_Click(object sender, EventArgs e)
 		{
 			// TODO: Should be rewritten to Register from cloudlibrary, include logic to add to library as needed
@@ -954,6 +939,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 
 			base.OnLoad(args);
+		}
+
+		public enum ListViewModes
+		{
+			RowListView,
+			IconListView,
+			IconListView18,
+			IconListView70,
+			IconListView256
 		}
 	}
 

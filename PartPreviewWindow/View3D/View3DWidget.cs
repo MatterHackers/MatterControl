@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			modelViewSidePanel.AddChild(
 				new SectionWidget(
 					"Options".Localize(),
-					new ModelOptionsPanel(sceneContext, meshViewerWidget, theme)
+					new ModelOptionsPanel(sceneContext, theme)
 					{
 						Margin = 0,
 						Padding = new BorderDouble(2, 2, 2, 0),
@@ -204,21 +204,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Scene.SelectFirstChild();
 
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
-
-			// Make sure the render mode is set correctly
-			string renderTypeString = UserSettings.Instance.get(UserSettingsKey.defaultRenderSetting);
-			if (renderTypeString == null)
-			{
-				renderTypeString = (UserSettings.Instance.IsTouchScreen) ? "Shaded" : "Outlines";
-				UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, renderTypeString);
-			}
-
-			RenderTypes renderType;
-			bool canParse = Enum.TryParse(renderTypeString, out renderType);
-			if (canParse)
-			{
-				meshViewerWidget.RenderType = renderType;
-			}
 
 			this.InteractionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
 
@@ -805,7 +790,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// File system Drop validation
 			mouseEvent.AcceptDrop = this.AllowDragDrop()
 					&& mouseEvent.DragFiles?.Count > 0
-					&& mouseEvent.DragFiles.TrueForAll(filePath => ApplicationController.Instance.IsLoadableFile(filePath));
+					&& mouseEvent.DragFiles.TrueForAll(filePath =>
+					{
+						return ApplicationController.Instance.IsLoadableFile(filePath)
+							// Disallow GCode drop in part view
+							&& (this.Printer != null || !string.Equals(System.IO.Path.GetExtension(filePath), ".gcode", StringComparison.OrdinalIgnoreCase));
+					});
 
 			// View3DWidgets Filesystem DropDrop handler
 			if (mouseEvent.AcceptDrop

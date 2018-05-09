@@ -262,7 +262,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			gcode2DWidget.Visible = viewMode == PartViewMode.Layers2D;
 			view3DWidget.meshViewerWidget.Visible = !gcode2DWidget.Visible;
 
-			view3DWidget.meshViewerWidget.ModelView = viewMode == PartViewMode.Model;
+			sceneContext.ViewState.ModelView = viewMode == PartViewMode.Model;
 
 			gcodeContainer.Visible = viewMode != PartViewMode.Model;
 
@@ -310,8 +310,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				bool hasLayers = printer.Bed.LoadedGCode?.LayerCount > 0;
 
-				layerRenderRatioSlider.Visible = hasLayers && !view3DWidget.meshViewerWidget.ModelView;
-				LayerScrollbar.Visible = hasLayers && !view3DWidget.meshViewerWidget.ModelView;
+				layerRenderRatioSlider.Visible = hasLayers && !sceneContext.ViewState.ModelView;
+				LayerScrollbar.Visible = hasLayers && !sceneContext.ViewState.ModelView;
 			}
 		}
 
