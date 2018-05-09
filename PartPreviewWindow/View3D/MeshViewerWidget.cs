@@ -163,8 +163,6 @@ namespace MatterHackers.MeshVisualizer
 		// TODO: Need to be instance based for multi-printer
 		public GuiWidget ParentSurface { get; set; }
 
-		private RenderTypes renderType = RenderTypes.Shaded;
-
 		private InteractionLayer interactionLayer;
 
 		private BedConfig sceneContext;
@@ -191,7 +189,6 @@ namespace MatterHackers.MeshVisualizer
 				lastSelectionChangedMs = UiThread.CurrentTimerMs;
 			};
 
-			RenderType = RenderTypes.Shaded;
 			BedColor = new ColorF(.8, .8, .8, .7).ToColor();
 			BuildVolumeColor = new ColorF(.2, .8, .3, .2).ToColor();
 
@@ -222,7 +219,6 @@ namespace MatterHackers.MeshVisualizer
 		public event EventHandler LoadDone;
 
 		public bool AllowBedRenderingWhenEmpty { get; set; }
-
 		public Color BedColor { get; set; }
 
 		public Color BuildVolumeColor { get; set; }
@@ -346,22 +342,6 @@ namespace MatterHackers.MeshVisualizer
 
 		protected InteractiveScene scene { get; }
 
-		public RenderTypes RenderType
-		{
-			get => this.ModelView ? renderType : RenderTypes.Wireframe;
-			set
-			{
-				if (renderType != value)
-				{
-					renderType = value;
-					foreach(var renderTransfrom in scene.VisibleMeshes())
-					{
-						renderTransfrom.mesh.MarkAsChanged();
-					}
-				}
-			}
-		}
-
 		public static void AssertDebugNotDefined()
 		{
 #if DEBUG
@@ -446,8 +426,6 @@ namespace MatterHackers.MeshVisualizer
 			base.OnClosed(e);
 		}
 
-		public bool ModelView { get; set; } = true;
-
 		private void DrawObject(IObject3D object3D, List<Object3DView> transparentMeshes, bool parentSelected, DrawEventArgs e)
 		{
 			foreach (var item in object3D.VisibleMeshes())
@@ -485,7 +463,7 @@ namespace MatterHackers.MeshVisualizer
 
 				bool isDebugItem = (item.object3D == scene.DebugItem);
 
-				if (!this.ModelView)
+				if (!sceneContext.ViewState.ModelView)
 				{
 					if (modelRenderStyle == ModelRenderStyle.WireframeAndSolid)
 					{
@@ -502,7 +480,7 @@ namespace MatterHackers.MeshVisualizer
 					|| isDebugItem)
 				{
 					// Render as solid
-					GLHelper.Render(item.mesh, drawColor, item.object3D.WorldMatrix(), this.RenderType, item.object3D.WorldMatrix() * World.ModelviewMatrix, darkWireframe);
+					GLHelper.Render(item.mesh, drawColor, item.object3D.WorldMatrix(), sceneContext.ViewState.RenderType, item.object3D.WorldMatrix() * World.ModelviewMatrix, darkWireframe);
 				}
 				else if (drawColor != Color.Transparent)
 				{
@@ -604,7 +582,7 @@ namespace MatterHackers.MeshVisualizer
 			}
 
 			// check if we should be rendering materials (this overrides the other colors)
-			if (this.RenderType == RenderTypes.Materials)
+			if (sceneContext.ViewState.RenderType == RenderTypes.Materials)
 			{
 				drawColor = MaterialRendering.Color(item.WorldMaterialIndex());
 			}

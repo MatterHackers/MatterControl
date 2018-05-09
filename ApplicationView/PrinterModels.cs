@@ -54,6 +54,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.PrintLibrary;
 	using MatterHackers.MeshVisualizer;
 	using MatterHackers.PolygonMesh;
+	using MatterHackers.RenderOpenGl;
 	using MatterHackers.VectorMath;
 
 	public class BedConfig
@@ -72,9 +73,12 @@ namespace MatterHackers.MatterControl
 
 		public Mesh PrinterShape { get; private set; }
 
+		public SceneContextViewState ViewState { get; }
+
 		public BedConfig(PrinterConfig printer = null)
 		{
 			this.Printer = printer;
+			this.ViewState = new SceneContextViewState(this);
 		}
 
 		public async Task LoadContent(EditContext editContext)
@@ -605,6 +609,52 @@ namespace MatterHackers.MatterControl
 		public PrintLibraryWidget.ListViewModes LibraryViewMode { get; set; } = PrintLibraryWidget.ListViewModes.IconListView;
 	}
 
+	public class SceneContextViewState
+	{
+		private BedConfig sceneContext;
+		private RenderTypes renderType = RenderTypes.Shaded;
+
+		public SceneContextViewState(BedConfig sceneContext)
+		{
+			this.sceneContext = sceneContext;
+
+			// Make sure the render mode is set correctly
+			string renderTypeString = UserSettings.Instance.get(UserSettingsKey.defaultRenderSetting);
+			if (renderTypeString == null)
+			{
+				renderTypeString = (UserSettings.Instance.IsTouchScreen) ? "Shaded" : "Outlines";
+				UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, renderTypeString);
+			}
+
+			if (Enum.TryParse(renderTypeString, out renderType))
+			{
+				this.RenderType = renderType;
+			}
+		}
+
+		public bool ModelView { get; set; } = true;
+
+		public RenderTypes RenderType
+		{
+			get => this.ModelView ? renderType : RenderTypes.Wireframe;
+			set
+			{
+				if (renderType != value)
+				{
+					renderType = value;
+
+					// Persist value
+					UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, renderType.ToString());
+
+					foreach (var renderTransfrom in sceneContext.Scene.VisibleMeshes())
+					{
+						renderTransfrom.mesh.MarkAsChanged();
+					}
+				}
+			}
+		}
+	}
+
 	public class PrinterViewState
 	{
 		public event EventHandler<ViewModeChangedEventArgs> ViewModeChanged;
@@ -760,7 +810,7 @@ namespace MatterHackers.MatterControl
 			this.Connection.ReadLineReplacementString = this.Settings.GetValue(SettingsKey.read_regex);
 		}
 
-		public PrinterViewState ViewState { get; } = new PrinterViewState();
+		public PrinterViewState ViewState { get; }
 
 		private PrinterSettings _settings;
 		public PrinterSettings Settings

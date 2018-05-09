@@ -28,34 +28,20 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.ObjectModel;
-using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.RenderOpenGl;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class ModelOptionsPanel : FlowLayoutWidget
 	{
-		private RadioIconButton shadedViewButton;
-		private RadioIconButton outlinesViewButton;
-		private RadioIconButton polygonsViewButton;
-		private RadioIconButton materialsViewButton;
-		private RadioIconButton overhangViewButton;
-
-		public ModelOptionsPanel(BedConfig sceneContext, MeshViewerWidget meshViewerWidget, ThemeConfig theme)
+		public ModelOptionsPanel(BedConfig sceneContext, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
-			void switchToRenderType(RenderTypes renderType)
-			{
-				meshViewerWidget.RenderType = renderType;
-				UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, renderType.ToString());
-			}
-
 			var buttonPanel = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Fit,
@@ -64,67 +50,68 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var buttonGroup = new ObservableCollection<GuiWidget>();
 
-			shadedViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon("view_shaded.png", theme.InvertIcons), theme)
+			var shadedViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon("view_shaded.png", theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "Shaded Button",
-				Checked = meshViewerWidget.RenderType == RenderTypes.Shaded,
+				Checked = sceneContext.ViewState.RenderType == RenderTypes.Shaded,
 				ToolTipText = "Shaded".Localize(),
 				Margin = theme.ButtonSpacing
 			};
-			shadedViewButton.Click += (s, e) => switchToRenderType(RenderTypes.Shaded);
+			shadedViewButton.Click += (s, e) => sceneContext.ViewState.RenderType = RenderTypes.Shaded;
 			buttonGroup.Add(shadedViewButton);
 
 			buttonPanel.AddChild(shadedViewButton);
 
-			outlinesViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon("view_outlines.png", theme.InvertIcons), theme)
+
+			var outlinesViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon("view_outlines.png", theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "Outlines Button",
-				Checked = meshViewerWidget.RenderType == RenderTypes.Outlines,
+				Checked = sceneContext.ViewState.RenderType == RenderTypes.Outlines,
 				ToolTipText = "Outlines".Localize(),
 				Margin = theme.ButtonSpacing
 			};
-			outlinesViewButton.Click += (s, e) => switchToRenderType(RenderTypes.Outlines);
+			outlinesViewButton.Click += (s, e) => sceneContext.ViewState.RenderType = RenderTypes.Outlines;
 			buttonGroup.Add(outlinesViewButton);
 
 			buttonPanel.AddChild(outlinesViewButton);
 
-			polygonsViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon("view_polygons.png", theme.InvertIcons), theme)
+			var polygonsViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon("view_polygons.png", theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "Polygons Button",
-				Checked = meshViewerWidget.RenderType == RenderTypes.Polygons,
+				Checked = sceneContext.ViewState.RenderType == RenderTypes.Polygons,
 				ToolTipText = "Polygons".Localize(),
 				Margin = theme.ButtonSpacing
 			};
-			polygonsViewButton.Click += (s, e) => switchToRenderType(RenderTypes.Polygons);
+			polygonsViewButton.Click += (s, e) => sceneContext.ViewState.RenderType = RenderTypes.Polygons;
 			buttonGroup.Add(polygonsViewButton);
 
 			buttonPanel.AddChild(polygonsViewButton);
 
-			materialsViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon("view_materials.png"), theme)
+			var materialsViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon("view_materials.png"), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "Materials Button",
-				Checked = meshViewerWidget.RenderType == RenderTypes.Materials,
+				Checked = sceneContext.ViewState.RenderType == RenderTypes.Materials,
 				ToolTipText = "Materials".Localize(),
 				Margin = theme.ButtonSpacing
 			};
-			materialsViewButton.Click += (s, e) => switchToRenderType(RenderTypes.Materials);
+			materialsViewButton.Click += (s, e) => sceneContext.ViewState.RenderType = RenderTypes.Materials;
 			buttonGroup.Add(materialsViewButton);
 
 			buttonPanel.AddChild(materialsViewButton);
 
-			overhangViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon("view_overhang.png"), theme)
+			var overhangViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon("view_overhang.png"), theme)
 			{
 				SiblingRadioButtonList = buttonGroup,
 				Name = "Overhang Button",
-				Checked = meshViewerWidget.RenderType == RenderTypes.Overhang,
+				Checked = sceneContext.ViewState.RenderType == RenderTypes.Overhang,
 				ToolTipText = "Overhang".Localize(),
 				Margin = theme.ButtonSpacing
 			};
-			overhangViewButton.Click += (s, e) => switchToRenderType(RenderTypes.Overhang);
+			overhangViewButton.Click += (s, e) => sceneContext.ViewState.RenderType = RenderTypes.Overhang;
 			buttonGroup.Add(overhangViewButton);
 
 			buttonPanel.AddChild(overhangViewButton);
