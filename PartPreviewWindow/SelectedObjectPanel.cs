@@ -274,6 +274,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					activeEditors.Add((editor, child, child.Name));
 				}
+
+				// If the object is not persistable than don't show its details.
+				if(!child.Persistable)
+				{
+					break;
+				}
 			}
 
 			ShowObjectEditor(activeEditors, selectedItem);
