@@ -70,6 +70,7 @@ namespace MatterHackers.MatterControl
 			// TODO: Needs review - doesn't seem like we want to scale on Touchscreen, rather we want device specific, configuration based scaling. Suggest remove
 			if (UserSettings.Instance.IsTouchScreen)
 			{
+				// TODO: This steps on user scaling
 				GuiWidget.DeviceScale = 1.3;
 				SystemWindow.ShareSingleOsWindow = true;
 			}
