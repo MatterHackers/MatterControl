@@ -92,10 +92,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			var innerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
 
 			var path = new VertexStorage();
-			path.MoveTo(OuterDiameter / 2, 0);
-			path.LineTo(OuterDiameter / 2, Height);
-			path.LineTo(innerDiameter / 2, Height);
-			path.LineTo(innerDiameter / 2, 0);
+			path.MoveTo(OuterDiameter / 2, -Height/2);
+			path.LineTo(OuterDiameter / 2, Height/2);
+			path.LineTo(innerDiameter / 2, Height/2);
+			path.LineTo(innerDiameter / 2, -Height/2);
+			path.LineTo(OuterDiameter / 2, -Height / 2);
 
 			var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
 			var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
