@@ -772,6 +772,7 @@ namespace MatterHackers.MatterControl
 		public PrinterConfig(PrinterSettings settings)
 		{
 			this.Bed = new BedConfig(this);
+			this.ViewState = new PrinterViewState();
 			this.Connection = new PrinterConnection(printer: this);
 			this.Settings = settings;
 			this.Settings.printer = this;
