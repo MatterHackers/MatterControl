@@ -103,9 +103,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return loadedGCode.GetLayerHeight(layerIndex);
 		}
 
-		internal object GetLayerZOffset(int layerIndex)
+		internal object GetLayerTop(int layerIndex)
 		{
-			return loadedGCode.GetLayerZOffset(layerIndex);
+			return loadedGCode.GetLayerTop(layerIndex);
 		}
 
 		public string LayerTime(int activeLayerIndex)

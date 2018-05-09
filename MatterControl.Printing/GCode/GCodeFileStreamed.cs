@@ -149,7 +149,7 @@ namespace MatterControl.Printing
 			throw new NotImplementedException();
 		}
 
-		public override double GetLayerZOffset(int layerIndex)
+		public override double GetLayerTop(int layerIndex)
 		{
 			throw new NotImplementedException();
 		}

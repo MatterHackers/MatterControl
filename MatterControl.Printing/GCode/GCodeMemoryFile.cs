@@ -927,10 +927,10 @@ namespace MatterControl.Printing
 			return .5;
 		}
 
-		public override double GetLayerZOffset(int layerIndex)
+		public override double GetLayerTop(int layerIndex)
 		{
 			double total = 0;
-			for (int i = 0; i < layerIndex; i++)
+			for (int i = 0; i <= layerIndex; i++)
 			{
 				total += GetLayerHeight(i);
 			}

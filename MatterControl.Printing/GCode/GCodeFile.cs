@@ -72,7 +72,7 @@ namespace MatterControl.Printing
 
 		public abstract double GetLayerHeight(int layerIndex);
 
-		public abstract double GetLayerZOffset(int layerIndex);
+		public abstract double GetLayerTop(int layerIndex);
 
 		public abstract int GetLayerIndex(int instructionIndex);
 
