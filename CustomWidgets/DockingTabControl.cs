@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					VAnchor = VAnchor.Stretch,
 					HAnchor = HAnchor.Stretch,
 				};
-				tabControl.TabBar.BackgroundColor = theme.ActiveTabBarBackground;
+				tabControl.TabBar.BackgroundColor = theme.TabBarBackground;
 
 				tabControl.ActiveTabChanged += (s, e) =>
 				{
@@ -367,7 +367,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					{
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Fit,
-						BackgroundColor = theme.ActiveTabBarBackground,
+						BackgroundColor = theme.TabBarBackground,
 					};
 
 					titleBar.AddChild(new TextWidget(title, textColor: ActiveTheme.Instance.PrimaryTextColor)

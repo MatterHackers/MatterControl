@@ -57,6 +57,7 @@ namespace MatterHackers.MatterControl
 		public const string ThumbnailRenderingMode = nameof(ThumbnailRenderingMode);
 		public const string UpdateFeedType = nameof(UpdateFeedType);
 		public const string LastReadWhatsNew = nameof(LastReadWhatsNew);
+		public const string ActiveThemeName = nameof(ActiveThemeName);
 	}
 
 	public class UserSettings

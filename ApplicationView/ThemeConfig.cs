@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl
 		public Color DarkShade { get; } = new Color(0, 0, 0, 190);
 
 		public Color ActiveTabColor { get; set; }
-		public Color ActiveTabBarBackground { get; set; }
+		public Color TabBarBackground { get; set; }
 		public Color InactiveTabColor { get; set; }
 		public Color InteractionLayerOverlayColor { get; private set; }
 
@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl
 					(colors.IsDarkTheme) ? 3 : 25));
 
 			this.ActiveTabColor = this.TabBodyBackground;
-			this.ActiveTabBarBackground = this.ActiveTabColor.AdjustLightness(0.85).ToColor();
+			this.TabBarBackground = this.ActiveTabColor.AdjustLightness(0.85).ToColor();
 			this.ThumbnailBackground = this.MinimalShade;
 			this.AccentMimimalOverlay = new Color(this.Colors.PrimaryAccentColor, 50);
 

@@ -50,24 +50,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingChanged.CallEvents(null, new StringEventArgs(slicerConfigName));
 		}
 
-		/// <summary>
-		/// Switches to the ActivePrinter theme without firing the ThemeChanged event. This is useful when changing printers and
-		/// allows the theme state to be updated before the ActivePrinterChanged event fires, resulting in a single ReloadAll
-		/// occurring rather than two
-		/// </summary>
-		public static void SwitchToPrinterTheme()
-		{
-			if (ActiveSliceSettings.Instance.PrinterSelected)
-			{
-				//Attempt to load userSetting theme as default
-				string activeThemeName = ActiveSliceSettings.Instance.GetValue(SettingsKey.active_theme_name);
-				if (!string.IsNullOrEmpty(activeThemeName))
-				{
-					ActiveTheme.Instance = ActiveTheme.GetThemeColors(activeThemeName);
-				}
-			}
-		}
-
 		public static void OnActivePrinterChanged(EventArgs e)
 		{
 			ActivePrinterChanged.CallEvents(null, e);

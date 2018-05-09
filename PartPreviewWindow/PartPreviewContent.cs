@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return new PlusTabPage(this, theme);
 				}
 			};
-			tabControl.TabBar.BackgroundColor = theme.ActiveTabBarBackground;
+			tabControl.TabBar.BackgroundColor = theme.TabBarBackground;
 
 			tabControl.ActiveTabChanged += (s, e) =>
 			{
@@ -184,31 +184,45 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal ChromeTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)
 		{
-			// Printer page is in fixed position. If exists, save and close
+			// Printer page is in fixed position
 			var tab1 = tabControl.AllTabs.Skip(1).FirstOrDefault();
-			if (tab1?.TabContent is PrinterTabPage printerTabPage)
+
+			PrinterTabPage printerTabPage = tab1?.TabContent as PrinterTabPage;
+
+			if (printerTabPage == null
+				|| printerTabPage.printer != printer)
 			{
 				// TODO - call save before remove
 				// printerTabPage.sceneContext.SaveChanges();
 
-				tabControl.RemoveTab(tab1);
+				if (printerTabPage != null)
+				{
+					tabControl.RemoveTab(tab1);
+				}
+
+				printerTab = new ChromeTab(
+					tabTitle,
+					tabControl,
+					new PrinterTabPage(printer, theme, tabTitle.ToUpper()),
+					theme,
+					tabImageUrl: ApplicationController.Instance.GetFavIconUrl(oemName: printer.Settings.GetValue(SettingsKey.make)))
+				{
+					Name = "3D View Tab",
+					MinimumSize = new Vector2(120, theme.TabButtonHeight)
+				};
+
+				// Add printer into fixed position
+				tabControl.AddTab(printerTab, 1);
+
+				return printerTab;
+			}
+			else if (printerTab != null)
+			{
+				tabControl.ActiveTab = tab1;
+				return tab1 as ChromeTab;
 			}
 
-			printerTab = new ChromeTab(
-				tabTitle,
-				tabControl,
-				new PrinterTabPage(printer, theme, tabTitle.ToUpper()),
-				theme,
-				tabImageUrl: ApplicationController.Instance.GetFavIconUrl(oemName: printer.Settings.GetValue(SettingsKey.make)))
-			{
-				Name = "3D View Tab",
-				MinimumSize = new Vector2(120, theme.TabButtonHeight)
-			};
-
-			// Add printer into fixed position
-			tabControl.AddTab(printerTab, 1);
-
-			return printerTab;
+			return null;
 		}
 
 		public ChromeTab CreatePartTab(string tabTitle, BedConfig sceneContext, ThemeConfig theme)

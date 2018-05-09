@@ -180,8 +180,6 @@ namespace MatterHackers.MatterControl
 					printer.Settings.GetValue(SettingsKey.make),
 					printer.Settings.GetValue(SettingsKey.model));
 
-				ActiveSliceSettings.SwitchToPrinterTheme();
-
 				if (allowChangedEvent)
 				{
 					ActiveSliceSettings.OnActivePrinterChanged(null);
@@ -725,34 +723,10 @@ namespace MatterHackers.MatterControl
 
 			ActiveTheme.ThemeChanged.RegisterEvent((s, e) =>
 			{
-				var themeColors = ActiveTheme.Instance;
-				this.Theme.RebuildTheme(themeColors);
-
-				var json = JsonConvert.SerializeObject(ActiveTheme.Instance);
-
-				var clonedColors = JsonConvert.DeserializeObject<ThemeColors>(json);
-				clonedColors.IsDarkTheme = false;
-				clonedColors.Name = "MenuColors";
-				clonedColors.PrimaryTextColor = new Color("#222");
-				clonedColors.SecondaryTextColor = new Color("#666");
-				clonedColors.PrimaryBackgroundColor = new Color("#fff");
-				clonedColors.SecondaryBackgroundColor = new Color("#ddd");
-				clonedColors.TertiaryBackgroundColor = new Color("#ccc");
-
-				this.MenuTheme.RebuildTheme(clonedColors);
-
-				this.RebuildSceneOperations(this.Theme);
-
-#if DEBUG && !__ANDROID__
-				if (AggContext.StaticData is FileSystemStaticData staticData)
-				{
-					staticData.PurgeCache();
-				}
-#endif
-
+				ChangeToTheme(ActiveTheme.Instance);
 			}, ref unregisterEvents);
 
-			this.Theme.RebuildTheme(ActiveTheme.Instance);
+			this.ChangeToTheme(ActiveTheme.Instance);
 
 			Object3D.AssetsPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Assets");
 
@@ -949,6 +923,33 @@ namespace MatterHackers.MatterControl
 					mappedEditors.Add(editor);
 				}
 			}
+		}
+
+		private void ChangeToTheme(IThemeColors themeColors)
+		{
+			this.Theme.RebuildTheme(themeColors);
+
+			var json = JsonConvert.SerializeObject(ActiveTheme.Instance);
+
+			var clonedColors = JsonConvert.DeserializeObject<ThemeColors>(json);
+			clonedColors.IsDarkTheme = false;
+			clonedColors.Name = "MenuColors";
+			clonedColors.PrimaryTextColor = new Color("#222");
+			clonedColors.SecondaryTextColor = new Color("#666");
+			clonedColors.PrimaryBackgroundColor = new Color("#fff");
+			clonedColors.SecondaryBackgroundColor = new Color("#ddd");
+			clonedColors.TertiaryBackgroundColor = new Color("#ccc");
+
+			this.MenuTheme.RebuildTheme(clonedColors);
+
+			this.RebuildSceneOperations(this.Theme);
+
+#if DEBUG && !__ANDROID__
+			if (AggContext.StaticData is FileSystemStaticData staticData)
+			{
+				staticData.PurgeCache();
+			}
+#endif
 		}
 
 		public bool RunAnyRequiredPrinterSetup(PrinterConfig printer, ThemeConfig theme)
@@ -1204,18 +1205,20 @@ namespace MatterHackers.MatterControl
 			ApplicationSettings.Instance.ReleaseClientToken();
 		}
 
-		internal static void LoadOemOrDefaultTheme()
+		internal static void LoadTheme()
 		{
-			// if not check for the oem color and use it if set
-			// else default to "Blue - Light"
-			string oemColor = OemSettings.Instance.ThemeColor;
-			if (string.IsNullOrEmpty(oemColor))
+			string activeThemeName = UserSettings.Instance.get(UserSettingsKey.ActiveThemeName);
+			if (!string.IsNullOrEmpty(activeThemeName))
 			{
-				ActiveTheme.Instance = ActiveTheme.GetThemeColors("Blue - Light");
+				ActiveTheme.Instance = ActiveTheme.GetThemeColors(activeThemeName);
+			}
+			else if (!string.IsNullOrEmpty(OemSettings.Instance.ThemeColor))
+			{
+				ActiveTheme.Instance = ActiveTheme.GetThemeColors(OemSettings.Instance.ThemeColor);
 			}
 			else
 			{
-				ActiveTheme.Instance = ActiveTheme.GetThemeColors(oemColor);
+				ActiveTheme.Instance = ActiveTheme.GetThemeColors("Blue - Light");
 			}
 		}
 
@@ -1226,15 +1229,8 @@ namespace MatterHackers.MatterControl
 				if (globalInstance == null)
 				{
 					globalInstance = new ApplicationController();
-
-					ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) =>
-					{
-						if (!AppContext.IsLoading)
-						{
-							ApplicationController.Instance.ReloadAll();
-						}
-					}, ref globalInstance.unregisterEvents);
 				}
+
 				return globalInstance;
 			}
 		}
@@ -2152,9 +2148,14 @@ namespace MatterHackers.MatterControl
 
 			var systemWindow = new RootSystemWindow(width, height);
 
+			// Load theme
+			ApplicationController.LoadTheme();
+
+			var theme = ApplicationController.Instance.Theme;
+
 			var overlay = new GuiWidget()
 			{
-				BackgroundColor = Color.DarkGray
+				BackgroundColor = theme.TabBarBackground
 			};
 			overlay.AnchorAll();
 
@@ -2172,7 +2173,7 @@ namespace MatterHackers.MatterControl
 			};
 			overlay.AddChild(progressPanel);
 
-			progressPanel.AddChild(statusText = new TextWidget("", textColor: new Color("#9ad5dd"))
+			progressPanel.AddChild(statusText = new TextWidget("", textColor: theme.Colors.PrimaryTextColor)
 			{
 				MinimumSize = new Vector2(200, 30),
 				HAnchor = HAnchor.Center,
@@ -2181,8 +2182,8 @@ namespace MatterHackers.MatterControl
 
 			progressPanel.AddChild(progressBar = new ProgressBar()
 			{
-				FillColor = new Color("#049eb6"),
-				BorderColor = new Color("#006f83"),
+				FillColor = theme.Colors.PrimaryAccentColor,
+				BorderColor = theme.GetBorderColor(75),
 				Height = 11,
 				Width = 230,
 				HAnchor = HAnchor.Center,
@@ -2411,8 +2412,6 @@ namespace MatterHackers.MatterControl
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							var theme = ApplicationController.Instance.Theme;
-
 							statusText.Visible = false;
 
 							var errorTextColor = Color.White;
@@ -2484,10 +2483,6 @@ namespace MatterHackers.MatterControl
 
 			reporter?.Invoke(0.05, "ApplicationController");
 			var na = ApplicationController.Instance;
-
-			// Set the default theme colors
-			reporter?.Invoke(0.1, "LoadOemOrDefaultTheme");
-			ApplicationController.LoadOemOrDefaultTheme();
 
 			// Accessing any property on ProfileManager will run the static constructor and spin up the ProfileManager instance
 			reporter?.Invoke(0.2, "ProfileManager");

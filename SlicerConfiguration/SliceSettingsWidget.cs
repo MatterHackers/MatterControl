@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			searchPanel = new SearchInputBox()
 			{
 				Visible = false,
-				BackgroundColor = theme.ActiveTabBarBackground,
+				BackgroundColor = theme.TabBarBackground,
 				MinimumSize = new Vector2(0, this.TabBar.Height)
 			};
 
@@ -253,7 +253,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.settingsContext = settingsContext;
 			this.isPrimarySettingsView = isPrimarySettingsView;
 
-			this.TabBar.BackgroundColor = theme.ActiveTabBarBackground;
+			this.TabBar.BackgroundColor = theme.TabBarBackground;
 
 			tabIndexForItem = 0;
 
