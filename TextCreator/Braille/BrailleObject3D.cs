@@ -65,22 +65,23 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
-		
-
-		[DisplayName("Name")]
+		[DisplayName("Text")]
 		public string TextToEncode { get; set; } = "Braille";
 
+		[Description("Sets the depth of the tile the Braille is printed on")]
+		[DisplayName("Backing Depth")]
 		public double BaseHeight { get; set; } = 3;
 
 		[Description("Use Braille grade 2 (contractions)")]
 		public bool UseGrade2 { get; set; }
 
+		[Description("Choose to render as Braille or standard text. This can help show how grade 2 works.")]
 		public bool RenderAsBraille { get; set; } = true;
 
+		[Description("Create a hook so the Braille can be hung from a necklace or keychain.")]
 		public bool AddHook { get; set; }
 
 		static TypeFace typeFace = TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(Path.Combine("Fonts", "Braille.svg")));
-
 
 		public void Rebuild(UndoBuffer undoBuffer)
 		{

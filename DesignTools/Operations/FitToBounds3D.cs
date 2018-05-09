@@ -48,6 +48,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	[HideUpdateButtonAttribute]
 	public class FitToBounds3D : Object3D, IRebuildable, IEditorDraw, IPropertyGridModifier
 	{
+		[Description("Set the shape the part will be fit into.")]
 		public FitType FitType { get; set; } = FitType.Box;
 
 		public double Width { get; set; }
@@ -55,10 +56,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public double Depth { get; set; }
 		public double Height { get; set; }
 
+		[Description("Set the rules for how to maintain the part while scaling.")]
 		public MaintainRatio MaintainRatio { get; set; } = MaintainRatio.X_Y;
 		[Description("Allows you turn turn on and off applying the fit to the x axis.")]
 		public bool StretchX { get; set; } = true;
+		[Description("Allows you turn turn on and off applying the fit to the y axis.")]
 		public bool StretchY { get; set; } = true;
+		[Description("Allows you turn turn on and off applying the fit to the z axis.")]
 		public bool StretchZ { get; set; } = true;
 
 		IObject3D ScaleItem => Children.First();
