@@ -41,6 +41,7 @@ using MatterHackers.MatterControl.Library;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
+using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 using MatterHackers.VectorMath.TrackBall;
 
@@ -294,6 +295,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					drawCenter.Z = 0;
 					zBuffer = true;
 				}
+
+				GL.Enable(EnableCap.Lighting);
 			}
 
 			// Render 3D GCode if applicable
@@ -655,8 +658,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private ViewControls3DButtons? activeButtonBeforeMouseOverride = null;
 
+		Matrix4X4 worldMatrixOnMouseDown;
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
+			worldMatrixOnMouseDown = World.GetTransform4X4();
 			// Show transform override
 			if (activeButtonBeforeMouseOverride == null
 				&& (mouseEvent.Button == MouseButtons.Right || Keyboard.IsKeyDown(Keys.Control)))
@@ -696,8 +701,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (mouseEvent.Button == MouseButtons.Left
 					&& viewControls3D.ActiveButton == ViewControls3DButtons.PartSelect
-					&&
-					(ModifierKeys == Keys.Shift || ModifierKeys == Keys.Control)
+					&& ModifierKeys == Keys.Shift
 					|| (
 						TrackballTumbleWidget.TransformState == TrackBallTransformType.None
 						&& ModifierKeys != Keys.Control
@@ -989,6 +993,61 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				viewControls3D.ActiveButton = (ViewControls3DButtons)activeButtonBeforeMouseOverride;
 				activeButtonBeforeMouseOverride = null;
+			}
+
+			// if we had a down and an up that did not move the view
+			if (worldMatrixOnMouseDown == World.GetTransform4X4())
+			{
+				// and we are the first under mouse
+				if (TrackballTumbleWidget.UnderMouseState == UnderMouseState.FirstUnderMouse)
+				{
+					// and the control key is pressed
+					if (ModifierKeys == Keys.Control)
+					{
+						// find the think we clicked on
+						IntersectInfo info = new IntersectInfo();
+						var hitObject = FindHitObject3D(mouseEvent.Position, ref info);
+						if (hitObject != null)
+						{
+							if (Scene.SelectedItem == hitObject
+								&& !(Scene.SelectedItem is SelectionGroup))
+							{
+								Scene.SelectedItem = null;
+							}
+							else
+							{
+								IObject3D selectedHitItem = null;
+								if (Scene.SelectedItem != null)
+								{
+									foreach (Object3D object3D in Scene.SelectedItem.Children)
+									{
+										if (object3D.TraceData().Contains(info.HitPosition))
+										{
+											CurrentSelectInfo.PlaneDownHitPos = info.HitPosition;
+											CurrentSelectInfo.LastMoveDelta = new Vector3();
+											selectedHitItem = object3D;
+											break;
+										}
+									}
+								}
+
+								if (selectedHitItem != null)
+								{
+									Scene.SelectedItem.Children.Remove(selectedHitItem);
+									if(Scene.SelectedItem.Children.Count == 0)
+									{
+										Scene.SelectedItem = null;
+									}
+									Scene.Children.Add(selectedHitItem);
+								}
+								else
+								{
+									Scene.AddToSelection(hitObject);
+								}
+							}
+						}
+					}
+				}
 			}
 
 			base.OnMouseUp(mouseEvent);
