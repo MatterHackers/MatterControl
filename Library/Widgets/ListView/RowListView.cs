@@ -30,10 +30,8 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
@@ -77,7 +75,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private ThemeConfig theme;
 
 		public RowViewItem(ListViewItem listViewItem, int thumbWidth, int thumbHeight, ThemeConfig theme)
-			: base(listViewItem, thumbWidth, thumbHeight)
+			: base(listViewItem, thumbWidth, thumbHeight, theme)
 		{
 			// Set Display Attributes
 			this.VAnchor = VAnchor.Fit;
