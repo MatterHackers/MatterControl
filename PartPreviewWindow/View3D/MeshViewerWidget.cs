@@ -609,8 +609,6 @@ namespace MatterHackers.MeshVisualizer
 			GL.Disable(EnableCap.Lighting);
 			// Only render back faces
 			GL.CullFace(CullFaceMode.Front);
-			// Expand the object
-			var oldMatrix = item.Matrix;
 
 			var meshBounds = item.Mesh.GetAxisAlignedBoundingBox();
 			var localCenter = meshBounds.Center;
@@ -621,20 +619,24 @@ namespace MatterHackers.MeshVisualizer
 
 			var wantMm = pixelsWant * distBetweenPixelsWorldSpace;
 
-			item.ApplyAtBoundsCenter(Matrix4X4.CreateScale(
+			// Create scaled transform for selection
+			var scaledMatrix = Matrix4X4.CreateScale(
 				wantMm.X / item.XSize(),
 				wantMm.Y / item.YSize(),
-				wantMm.Z / item.ZSize()));
+				wantMm.Z / item.ZSize());
+			scaledMatrix = MatterControl.DesignTools.Operations.Object3DExtensions.ApplyAtCenter(item.GetAxisAlignedBoundingBox(Matrix4X4.Identity), item.Matrix, scaledMatrix);
 
-			GLHelper.Render(item.Mesh, 
+			var totalSelectionMatrix = scaledMatrix * item.Parent.WorldMatrix();
+
+			// Render
+			GLHelper.Render(item.Mesh,
 				selectionColor,
-				item.WorldMatrix(), RenderTypes.Shaded,
-				item.WorldMatrix() * World.ModelviewMatrix,
+				totalSelectionMatrix, RenderTypes.Shaded,
+				totalSelectionMatrix * World.ModelviewMatrix,
 				darkWireframe);
 
 			// restore settings
 			GL.CullFace(CullFaceMode.Back);
-			item.Matrix = oldMatrix;
 			GL.Enable(EnableCap.Lighting);
 		}
 
