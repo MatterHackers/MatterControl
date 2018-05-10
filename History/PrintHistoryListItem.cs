@@ -43,18 +43,21 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 	public class HistoryListView : FlowLayoutWidget, IListContentView
 	{
+		private ThemeConfig theme;
+
 		public int ThumbWidth { get; } = 50;
 		public int ThumbHeight { get; } = 50;
 
-		public HistoryListView()
+		public HistoryListView(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
+			this.theme = theme;
 		}
 
 		public ListViewItemBase AddItem(ListViewItem item)
 		{
 			var historyRowItem = item.Model as PrintHistoryItem;
-			var detailsView = new PrintHistoryListItem(item, this.ThumbWidth, this.ThumbHeight, historyRowItem?.PrintTask, true);
+			var detailsView = new PrintHistoryListItem(item, this.ThumbWidth, this.ThumbHeight, historyRowItem?.PrintTask, true, theme);
 			this.AddChild(detailsView);
 
 			return detailsView;
@@ -96,8 +99,8 @@ namespace MatterHackers.MatterControl.PrintHistory
 		private int actionButtonSize = rightOverlayWidth/2;
 		private SlideWidget rightButtonOverlay;
 
-		public PrintHistoryListItem(ListViewItem listViewItem, int thumbWidth, int thumbHeight, PrintTask printTask, bool showTimestamp)
-			: base(listViewItem, thumbWidth, thumbHeight)
+		public PrintHistoryListItem(ListViewItem listViewItem, int thumbWidth, int thumbHeight, PrintTask printTask, bool showTimestamp, ThemeConfig theme)
+			: base(listViewItem, thumbWidth, thumbHeight, theme)
 		{
 			this.printTask = printTask;
 			this.showTimestamp = showTimestamp;

@@ -27,14 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.IO;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
@@ -47,6 +45,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private static ImageBuffer defaultItemIcon = AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "file.png"));
 		private static ImageBuffer generatingThumbnailIcon = AggContext.StaticData.LoadIcon(Path.Combine("building_thumbnail_40x40.png"));
 
+		protected ThemeConfig theme;
 		protected ListViewItem listViewItem;
 		protected View3DWidget view3DWidget;
 		protected bool mouseInBounds = false;
@@ -57,8 +56,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		protected int thumbWidth;
 		protected int thumbHeight;
 
-		public ListViewItemBase(ListViewItem listViewItem, int width, int height)
+		public ListViewItemBase(ListViewItem listViewItem, int width, int height, ThemeConfig theme)
 		{
+			this.theme = theme;
 			this.listViewItem = listViewItem;
 			this.thumbWidth = width;
 			this.thumbHeight = height;
@@ -242,21 +242,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		public override void OnDraw(Graphics2D graphics2D)
+		public override Color BorderColor
 		{
-			base.OnDraw(graphics2D);
-
-			var widgetBorder = new RoundedRect(LocalBounds, 0);
-
-			if (this.IsHoverItem)
-			{
-				RectangleDouble Bounds = LocalBounds;
-				RoundedRect rectBorder = new RoundedRect(Bounds, 0);
-
-				this.BackgroundColor = Color.White;
-
-				graphics2D.Render(new Stroke(rectBorder, 3), ActiveTheme.Instance.PrimaryAccentColor);
-			}
+			get => (this.IsSelected || mouseInBounds) ? theme.Colors.PrimaryAccentColor : base.BorderColor;
+			set => base.BorderColor = value;
 		}
 
 		private bool hitDragThreshold = false;
