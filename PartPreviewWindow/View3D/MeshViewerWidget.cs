@@ -135,7 +135,7 @@ namespace MatterHackers.MeshVisualizer
 					}
 					break;
 
-				case BedShape.Circular: 
+				case BedShape.Circular:
 					// This could be much better if it checked the actual vertext data of the mesh against the cylinder
 					// first check if any of it is outside the bed rect
 					if (aabb.minXYZ.X < bed.BedCenter.X - bed.ViewerVolume.X / 2
@@ -526,7 +526,7 @@ namespace MatterHackers.MeshVisualizer
 
 					if (item.mesh != null)
 					{
-						GLHelper.Render(item.mesh, debugBorderColor, item.object3D.WorldMatrix(), 
+						GLHelper.Render(item.mesh, debugBorderColor, item.object3D.WorldMatrix(),
 							RenderTypes.Wireframe, item.object3D.WorldMatrix() * World.ModelviewMatrix);
 					}
 				}
@@ -747,7 +747,7 @@ namespace MatterHackers.MeshVisualizer
 			if (scene.DebugItem?.Mesh != null)
 			{
 				var debugItem = scene.DebugItem;
-				GLHelper.Render(debugItem.Mesh, debugBorderColor, debugItem.WorldMatrix(), 
+				GLHelper.Render(debugItem.Mesh, debugBorderColor, debugItem.WorldMatrix(),
 					RenderTypes.Wireframe, debugItem.WorldMatrix() * World.ModelviewMatrix);
 			}
 		}
@@ -870,4 +870,3 @@ namespace MatterHackers.MeshVisualizer
 		}
 	}
 }
- 
