@@ -29,8 +29,10 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -45,26 +47,32 @@ namespace MatterHackers.MatterControl
 		/// Where to find the gif or eventually movie file
 		/// </summary>
 		public string AnimationUri;
+
 		/// <summary>
 		/// The first level category this guide is part of
 		/// </summary>
 		public string Category;
+
 		/// <summary>
 		/// Second level category
 		/// </summary>
 		public string SubCategory;
+
 		/// <summary>
 		/// The name that is in the navigation list with categories
 		/// </summary>
 		public string MenuName;
+
 		/// <summary>
 		/// The long title that appears under the animation
 		/// </summary>
 		public string Title;
+
 		/// <summary>
 		/// The description that is under the title
 		/// </summary>
 		public string Description;
+
 		/// <summary>
 		/// This is the immutable key assigned to this guide. It can
 		/// be used to navigate to this guide while opening the control
@@ -74,20 +82,23 @@ namespace MatterHackers.MatterControl
 
 	public class DesignSpaceGuid : DialogPage
 	{
-		List<GuideAssets> whatsNewGuides = new List<GuideAssets>();
-		List<GuideAssets> allAvailableGuides = new List<GuideAssets>();
+		private List<GuideAssets> whatsNewGuides = new List<GuideAssets>();
+		private List<GuideAssets> allAvailableGuides = new List<GuideAssets>();
 
 		public DesignSpaceGuid()
 			: this("", "")
 		{
-
 		}
 
 		public DesignSpaceGuid(string preSelectTabName, string guideKey)
 		: base("Close".Localize())
 		{
 			WindowSize = new Vector2(800, 600);
-			MakeTestGuides();
+
+			allAvailableGuides = JsonConvert.DeserializeObject<List<GuideAssets>>(AggContext.StaticData.ReadAllText(Path.Combine("OEMSettings", "HelpGuides.json")));
+
+			// TODO: Guides document should have separate properties for differing top level containers
+			whatsNewGuides = allAvailableGuides;
 
 			this.WindowTitle = "MatterControl " + "Help".Localize();
 			this.HeaderText = "How to succeed with MatterControl".Localize();
@@ -273,79 +284,6 @@ namespace MatterHackers.MatterControl
 					index++;
 				}
 			}
-		}
-
-		private void MakeTestGuides()
-		{
-			allAvailableGuides.Add(new GuideAssets()
-			{
-				AnimationUri = "https://www.matterhackers.com/r/3QLZVv",
-				Category = "Design Tools",
-				SubCategory = "Printing",
-				MenuName = "Hotend Controls",
-				Title = "Hotend and Extruder Controls",
-				Description = "From the hotend control, you can:\n".Localize()
-					+ "    • " + "Select Material".Localize() + "\n"
-					+ "    • " + "Set Temperature".Localize() + "\n"
-					+ "    • " + "Move Print Head".Localize() + "\n"
-					+ "    • " + "Load and Unload Filament".Localize()
-			});
-
-			allAvailableGuides.Add(new GuideAssets()
-			{
-				AnimationUri = "https://www.matterhackers.com/r/Ifooem",
-				Category = "Design Tools",
-				SubCategory = "Creating",
-				MenuName = "Adding Parts",
-				Title = "Adding Parts to the Bed",
-				Description = "You can drag parts into the 3D view from the library side bar, or directly from the desktop."
-			});
-
-			allAvailableGuides.Add(new GuideAssets()
-			{
-				AnimationUri = "https://www.matterhackers.com/r/AW0bcR",
-				Category = "Design Tools",
-				SubCategory = "Printing",
-				MenuName = "Starting a Print",
-				Title = "Starting a Print",
-				Description = "From the print control, you can:\n".Localize()
-					+ "    • " + "Set Layer Height".Localize() + "\n"
-					+ "    • " + "Set Fill Density".Localize() + "\n"
-					+ "    • " + "Turn on and off Support".Localize() + "\n"
-					+ "    • " + "Start Your Print".Localize()
-			});
-
-			allAvailableGuides.Add(new GuideAssets()
-			{
-				AnimationUri = "https://www.matterhackers.com/r/1oH3i1",
-				Category = "Design Tools",
-				SubCategory = "Arrangement",
-				MenuName = "Rotate Controls",
-				Title = "Rotating Objects in the 3D view",
-				Description = "Click on any of the rotate corner controls to rotate on the plane of that control. Moving the mouse over one of the arrow indicators locks the rotation to a 45° angle."
-			});
-
-			allAvailableGuides.Add(new GuideAssets()
-			{
-				AnimationUri = "https://www.matterhackers.com/r/yNqiNT",
-				Category = "Design Tools",
-				SubCategory = "Arrangement",
-				MenuName = "Scale Controls",
-				Title = "Scaling Objects in the 3D view",
-				Description = "Click on any of the scale corner controls to scale your part on the bed."
-			});
-
-			allAvailableGuides.Add(new GuideAssets()
-			{
-				AnimationUri = "https://www.matterhackers.com/r/sjMyWZ",
-				Category = "Design Tools",
-				SubCategory = "Printing",
-				MenuName = "Supports",
-				Title = "Custom Support Generation",
-				Description = "Any object can be turned into support. Simply select it in the 3D view and click the 'Make Support' button. Support will automatically make interface layers and avoid intersecting the printing object."
-			});
-
-			whatsNewGuides = allAvailableGuides;
 		}
 
 		private void AddGuides(FlowLayoutWidget guideContainer, List<GuideAssets> guideList)
