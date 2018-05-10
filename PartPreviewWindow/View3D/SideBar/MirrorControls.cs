@@ -103,15 +103,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			switch (axis)
 			{
 				case Axis.Z:
-					item.ApplyAtBoundsCenter(Matrix4X4.CreateScale(1, 1, -1));
+					item.Matrix = item.ApplyAtBoundsCenter(Matrix4X4.CreateScale(1, 1, -1));
 
 					break;
 				case Axis.X:
-					item.ApplyAtBoundsCenter(Matrix4X4.CreateScale(-1, 1, 1));
+					item.Matrix = item.ApplyAtBoundsCenter(Matrix4X4.CreateScale(-1, 1, 1));
 					break;
 
 				case Axis.Y:
-					item.ApplyAtBoundsCenter(Matrix4X4.CreateScale(1, -1, 1));
+					item.Matrix = item.ApplyAtBoundsCenter(Matrix4X4.CreateScale(1, -1, 1));
 					break;
 			}
 

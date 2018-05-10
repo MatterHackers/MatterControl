@@ -325,7 +325,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Matrix4X4 partLevelMatrix = Matrix4X4.CreateRotation(rotation);
 
 				// rotate it
-				objectToLayFlatGroup.ApplyAtBoundsCenter(partLevelMatrix);
+				objectToLayFlat.Matrix = objectToLayFlatGroup.ApplyAtBoundsCenter(partLevelMatrix);
 
 				scene.Invalidate();
 			}
