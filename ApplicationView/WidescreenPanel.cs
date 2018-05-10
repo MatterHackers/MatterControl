@@ -55,6 +55,9 @@ namespace MatterHackers.MatterControl
 
 			var theme = ApplicationController.Instance.Theme;
 
+			// Push TouchScreenMode into GuiWidget
+			GuiWidget.TouchScreenMode = UserSettings.Instance.IsTouchScreen;
+
 			var library3DViewSplitter = new Splitter()
 			{
 				SplitterDistance = UserSettings.Instance.LibraryViewWidth,

@@ -184,7 +184,17 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public bool IsTouchScreen => this.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen";
+		public bool IsTouchScreen
+		{
+			get
+			{
+#if __ANDROID__
+				return true;
+#else
+				return this.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen";
+#endif
+			}
+		}
 
 		public string ThumbnailRenderingMode
 		{
