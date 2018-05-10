@@ -29,11 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -45,7 +42,7 @@ namespace MatterHackers.MatterControl
 	public class GuideAssets
 	{
 		/// <summary>
-		/// Where to find the gif or evertually movie file
+		/// Where to find the gif or eventually movie file
 		/// </summary>
 		public string AnimationUri;
 		/// <summary>
@@ -69,7 +66,7 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		public string Description;
 		/// <summary>
-		/// This is the imutable key assigned to this guide. It can 
+		/// This is the immutable key assigned to this guide. It can
 		/// be used to navigate to this guide while opening the control
 		/// </summary>
 		public string Key;
@@ -93,7 +90,7 @@ namespace MatterHackers.MatterControl
 			MakeTestGuides();
 
 			this.WindowTitle = "MatterControl " + "Help".Localize();
-			this.HeaderText = "How to succed with MatterControl".Localize();
+			this.HeaderText = "How to succeed with MatterControl".Localize();
 			this.ChildBorderColor = theme.GetBorderColor(75);
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -141,7 +138,7 @@ namespace MatterHackers.MatterControl
 				("left click","Make Selection".Localize()),
 				("left click + shift","Add to Selection".Localize()),
 				("left click + control","Toggle Selection".Localize()),
-				("left drag","Ruber Band Selection".Localize()),
+				("left drag","Rubber Band Selection".Localize()),
 				("left drag","Move Part".Localize()),
 				("left drag + shift","Move Part Constrained".Localize()),
 				("left drag + shift + ctrl","Pan View".Localize()),
@@ -284,7 +281,7 @@ namespace MatterHackers.MatterControl
 			{
 				AnimationUri = "https://www.matterhackers.com/r/3QLZVv",
 				Category = "Design Tools",
-				SubCategory = "Priting",
+				SubCategory = "Printing",
 				MenuName = "Hotend Controls",
 				Title = "Hotend and Extruder Controls",
 				Description = "From the hotend control, you can:\n".Localize()
@@ -322,20 +319,20 @@ namespace MatterHackers.MatterControl
 			{
 				AnimationUri = "https://www.matterhackers.com/r/1oH3i1",
 				Category = "Design Tools",
-				SubCategory = "Arangement",
+				SubCategory = "Arrangement",
 				MenuName = "Rotate Controls",
 				Title = "Rotating Objects in the 3D view",
-				Description = "Click on any of the rotate corner contrors to rotate on the plane of that control. Moving the mouse over one of the arrow indicators locks the rotation to a 45° angle."
+				Description = "Click on any of the rotate corner controls to rotate on the plane of that control. Moving the mouse over one of the arrow indicators locks the rotation to a 45° angle."
 			});
 
 			allAvailableGuides.Add(new GuideAssets()
 			{
 				AnimationUri = "https://www.matterhackers.com/r/yNqiNT",
 				Category = "Design Tools",
-				SubCategory = "Arangement",
+				SubCategory = "Arrangement",
 				MenuName = "Scale Controls",
 				Title = "Scaling Objects in the 3D view",
-				Description = "Click on any of the scale corner contrors to scale your part on the bed."
+				Description = "Click on any of the scale corner controls to scale your part on the bed."
 			});
 
 			allAvailableGuides.Add(new GuideAssets()
@@ -345,7 +342,7 @@ namespace MatterHackers.MatterControl
 				SubCategory = "Printing",
 				MenuName = "Supports",
 				Title = "Custom Support Generation",
-				Description = "Any object can be turned into support. Simply select it in the 3D view and click the 'Make Support' button. Support will automatically make interface layers and avoid interescting the printing object."
+				Description = "Any object can be turned into support. Simply select it in the 3D view and click the 'Make Support' button. Support will automatically make interface layers and avoid intersecting the printing object."
 			});
 
 			whatsNewGuides = allAvailableGuides;
@@ -406,7 +403,7 @@ namespace MatterHackers.MatterControl
 					title.Text = guide.Title;
 					description.Text = guide.Description;
 					imageSequenceWidget.ImageSequence = ApplicationController.Instance.GetProcessingSequence(Color.Black);
-					
+
 					ApplicationController.Instance.DownloadToImageSequenceAsync(imageSequenceWidget.ImageSequence, guide.AnimationUri);
 				};
 			}
