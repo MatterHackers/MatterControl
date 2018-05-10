@@ -202,9 +202,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			scene.SelectedItem = wrapper;
 		}
 
-		public static void ApplyAtBoundsCenter(this IObject3D object3DToApplayTo, Matrix4X4 transformToApply)
+		public static void ApplyAtBoundsCenter(this IObject3D object3DToApplyTo, Matrix4X4 transformToApply)
 		{
-			object3DToApplayTo.Matrix = ApplyAtCenter(object3DToApplayTo.GetAxisAlignedBoundingBox(Matrix4X4.Identity), object3DToApplayTo.Matrix, transformToApply);
+			object3DToApplyTo.Matrix = ApplyAtCenter(object3DToApplyTo.GetAxisAlignedBoundingBox(Matrix4X4.Identity), object3DToApplyTo.Matrix, transformToApply);
 		}
 
 		public static Matrix4X4 ApplyAtCenter(AxisAlignedBoundingBox boundsToApplyTo, Matrix4X4 currentTransform, Matrix4X4 transformToApply)
