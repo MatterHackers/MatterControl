@@ -130,7 +130,14 @@ namespace MatterHackers.MatterControl
 		{
 			int size = (int)(16 * GuiWidget.DeviceScale);
 
-			RestoreNormal = ColorCircle(size, Color.Transparent);
+			if (AggContext.OperatingSystem == OSType.Android)
+			{
+				RestoreNormal = ColorCircle(size, new Color(200, 0, 0));
+			}
+			else
+			{
+				RestoreNormal = ColorCircle(size, Color.Transparent);
+			}
 
 			RestoreHover = ColorCircle(size, new Color("#DB4437"));
 			restorePressed = ColorCircle(size, new Color(255, 0, 0));

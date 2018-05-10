@@ -184,12 +184,26 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public bool IsTouchScreen => this.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen";
+		public bool IsTouchScreen
+		{
+			get
+			{
+#if __ANDROID__
+				return true;
+#else
+				return this.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen";
+#endif
+			}
+		}
 
 		public string ThumbnailRenderingMode
 		{
 			get
 			{
+#if __ANDROID__
+				// Always use flat thumbnails on Android - at least until alpha glitch is resolve and compute cost for thumbnails is reduced
+				return "orthographic";
+#else
 				string renderingMode = this.get(UserSettingsKey.ThumbnailRenderingMode);
 				if (string.IsNullOrWhiteSpace(renderingMode))
 				{
@@ -198,6 +212,7 @@ namespace MatterHackers.MatterControl
 				}
 
 				return renderingMode;
+#endif
 			}
 			set
 			{
