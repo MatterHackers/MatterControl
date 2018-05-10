@@ -79,10 +79,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 					if (RotatePart)
 					{
-						next.ApplyAtBoundsCenter(Matrix4X4.CreateRotationZ(rotateRadians));
+						next.Matrix = next.ApplyAtBoundsCenter(Matrix4X4.CreateRotationZ(rotateRadians));
 					}
 
-					next.ApplyAtBoundsCenter(Matrix4X4.CreateScale(Scale));
+					next.Matrix = next.ApplyAtBoundsCenter(Matrix4X4.CreateScale(Scale));
 					list.Add(next);
 					lastChild = next;
 				}

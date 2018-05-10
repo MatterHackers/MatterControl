@@ -202,17 +202,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			scene.SelectedItem = wrapper;
 		}
 
-		public static void ApplyAtBoundsCenter(this IObject3D object3DToApplyTo, Matrix4X4 transformToApply)
+		public static Matrix4X4 ApplyAtBoundsCenter(this IObject3D objectWithBounds, Matrix4X4 transformToApply)
 		{
-			object3DToApplyTo.Matrix = ApplyAtCenter(object3DToApplyTo.GetAxisAlignedBoundingBox(Matrix4X4.Identity), object3DToApplyTo.Matrix, transformToApply);
+			return ApplyAtCenter(objectWithBounds.Matrix, objectWithBounds.GetAxisAlignedBoundingBox(Matrix4X4.Identity), transformToApply);
 		}
 
-		public static Matrix4X4 ApplyAtCenter(AxisAlignedBoundingBox boundsToApplyTo, Matrix4X4 currentTransform, Matrix4X4 transformToApply)
+		public static Matrix4X4 ApplyAtCenter(this Matrix4X4 currentTransform, AxisAlignedBoundingBox boundsToApplyTo, Matrix4X4 transformToApply)
 		{
 			return ApplyAtPosition(currentTransform, transformToApply, boundsToApplyTo.Center);
 		}
 
-		public static Matrix4X4 ApplyAtPosition(Matrix4X4 currentTransform, Matrix4X4 transformToApply, Vector3 positionToApplyAt)
+		public static Matrix4X4 ApplyAtPosition(this Matrix4X4 currentTransform, Matrix4X4 transformToApply, Vector3 positionToApplyAt)
 		{
 			currentTransform *= Matrix4X4.CreateTranslation(-positionToApplyAt);
 			currentTransform *= transformToApply;

@@ -232,7 +232,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			newScale[axis] = scaleIn;
 			Matrix4X4 totalScale = Matrix4X4.CreateScale(newScale);
 
-			selectedItem.ApplyAtBoundsCenter(totalScale);
+			selectedItem.Matrix = selectedItem.ApplyAtBoundsCenter(totalScale);
 
 			// keep the bottom where it was
 			AxisAlignedBoundingBox scaledBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);

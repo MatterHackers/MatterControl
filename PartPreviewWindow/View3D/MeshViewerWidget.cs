@@ -135,7 +135,7 @@ namespace MatterHackers.MeshVisualizer
 					}
 					break;
 
-				case BedShape.Circular:
+				case BedShape.Circular: 
 					// This could be much better if it checked the actual vertext data of the mesh against the cylinder
 					// first check if any of it is outside the bed rect
 					if (aabb.minXYZ.X < bed.BedCenter.X - bed.ViewerVolume.X / 2
@@ -510,6 +510,7 @@ namespace MatterHackers.MeshVisualizer
 						{
 							selectionColor = accentColor.Blend(Color.White, Quadratic.InOut((secondsSinceSelectionChanged - .25) * 4));
 						}
+						Invalidate();
 					}
 
 					RenderSelection(item.object3D, frustum, selectionColor);
@@ -526,7 +527,7 @@ namespace MatterHackers.MeshVisualizer
 
 					if (item.mesh != null)
 					{
-						GLHelper.Render(item.mesh, debugBorderColor, item.object3D.WorldMatrix(),
+						GLHelper.Render(item.mesh, debugBorderColor, item.object3D.WorldMatrix(), 
 							RenderTypes.Wireframe, item.object3D.WorldMatrix() * World.ModelviewMatrix);
 					}
 				}
@@ -608,30 +609,25 @@ namespace MatterHackers.MeshVisualizer
 			GL.Disable(EnableCap.Lighting);
 			// Only render back faces
 			GL.CullFace(CullFaceMode.Front);
-
-			var meshBounds = item.Mesh.GetAxisAlignedBoundingBox();
-			var localCenter = meshBounds.Center;
-			var worldCenter = Vector3.Transform(localCenter, item.WorldMatrix());
+			// Expand the object
+			var worldMatrix = item.WorldMatrix();
+			var worldBounds = item.Mesh.GetAxisAlignedBoundingBox(worldMatrix);
+			var worldCenter = worldBounds.Center;
 			double distBetweenPixelsWorldSpace = World.GetWorldUnitsPerScreenPixelAtPosition(worldCenter);
-			var pixelsAccross = item.GetAxisAlignedBoundingBox().Size / distBetweenPixelsWorldSpace;
+			var pixelsAccross = worldBounds.Size / distBetweenPixelsWorldSpace;
 			var pixelsWant = pixelsAccross + Vector3.One * 4;
 
 			var wantMm = pixelsWant * distBetweenPixelsWorldSpace;
 
-			// Create scaled transform for selection
-			var scaledMatrix = Matrix4X4.CreateScale(
-				wantMm.X / item.XSize(),
-				wantMm.Y / item.YSize(),
-				wantMm.Z / item.ZSize());
-			scaledMatrix = MatterControl.DesignTools.Operations.Object3DExtensions.ApplyAtCenter(item.GetAxisAlignedBoundingBox(Matrix4X4.Identity), item.Matrix, scaledMatrix);
+			var scaleMatrix = worldMatrix.ApplyAtPosition(Matrix4X4.CreateScale(
+				wantMm.X / worldBounds.XSize,
+				wantMm.Y / worldBounds.YSize,
+				wantMm.Z / worldBounds.ZSize), worldCenter);
 
-			var totalSelectionMatrix = scaledMatrix * item.Parent.WorldMatrix();
-
-			// Render
-			GLHelper.Render(item.Mesh,
+			GLHelper.Render(item.Mesh, 
 				selectionColor,
-				totalSelectionMatrix, RenderTypes.Shaded,
-				totalSelectionMatrix * World.ModelviewMatrix,
+				scaleMatrix, RenderTypes.Shaded,
+				null,
 				darkWireframe);
 
 			// restore settings
@@ -747,7 +743,7 @@ namespace MatterHackers.MeshVisualizer
 			if (scene.DebugItem?.Mesh != null)
 			{
 				var debugItem = scene.DebugItem;
-				GLHelper.Render(debugItem.Mesh, debugBorderColor, debugItem.WorldMatrix(),
+				GLHelper.Render(debugItem.Mesh, debugBorderColor, debugItem.WorldMatrix(), 
 					RenderTypes.Wireframe, debugItem.WorldMatrix() * World.ModelviewMatrix);
 			}
 		}
@@ -870,3 +866,4 @@ namespace MatterHackers.MeshVisualizer
 		}
 	}
 }
+ 
