@@ -510,7 +510,6 @@ namespace MatterHackers.MeshVisualizer
 						{
 							selectionColor = accentColor.Blend(Color.White, Quadratic.InOut((secondsSinceSelectionChanged - .25) * 4));
 						}
-						Invalidate();
 					}
 
 					RenderSelection(item.object3D, frustum, selectionColor);
