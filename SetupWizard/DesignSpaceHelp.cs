@@ -138,10 +138,16 @@ namespace MatterHackers.MatterControl
 
 			var mouseKeyActions = new List<(string key, string action)>(new(string, string)[]
 			{
-				("ctrl + left","Rotate".Localize()),
-				("right","Rotate".Localize()),
-				("ctrl + shift left","Pan".Localize()),
-				("middle","Pan".Localize()),
+				("left click","Make Selection".Localize()),
+				("left click + shift","Add to Selection".Localize()),
+				("left click + control","Toggle Selection".Localize()),
+				("left drag","Ruber Band Selection".Localize()),
+				("left drag","Move Part".Localize()),
+				("left drag + shift","Move Part Constrained".Localize()),
+				("left drag + shift + ctrl","Pan View".Localize()),
+				("left drag + ctrl","Rotate View".Localize()),
+				("middle drag","Pan View".Localize()),
+				("right drag","Rotate View".Localize()),
 				("wheel","Zoom".Localize())
 			});
 
