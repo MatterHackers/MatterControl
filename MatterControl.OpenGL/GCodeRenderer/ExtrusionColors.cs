@@ -80,7 +80,7 @@ namespace MatterHackers.GCodeVisualizer
 		private Color ComputeColor(float speed)
 		{
 			var rangedValue = speed - min;
-			var factor = rangedValue / range;
+			var factor = range == 0 ? 1 : rangedValue / range;
 
 			double offset = factor * delta;
 			double fixedColor = startColor - offset;

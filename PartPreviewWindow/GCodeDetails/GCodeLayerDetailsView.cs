@@ -46,16 +46,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class GCodeLayerDetailsView : FlowLayoutWidget
 	{
-		private TextWidget massTextWidget;
-		private TextWidget costTextWidget;
-		private BedConfig sceneContext;
-
-		private EventHandler unregisterEvents;
-
 		public GCodeLayerDetailsView(GCodeDetails gcodeDetails, BedConfig sceneContext, int dataPointSize, int headingPointSize)
 			: base(FlowDirection.TopToBottom)
 		{
-			this.sceneContext = sceneContext;
 			var margin = new BorderDouble(0, 9, 0, 3);
 
 			// local function to add setting
@@ -102,12 +95,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			sceneContext.ActiveLayerChanged += UpdateLayerDisplay;
 			// and do the initial setting
 			UpdateLayerDisplay(this, null);
-		}
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			unregisterEvents?.Invoke(this, null);
-			base.OnClosed(e);
 		}
 	}
 }
