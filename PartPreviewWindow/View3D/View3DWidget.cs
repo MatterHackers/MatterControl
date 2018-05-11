@@ -697,7 +697,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			autoRotating = false;
 			base.OnMouseDown(mouseEvent);
 
-			if (TrackballTumbleWidget.UnderMouseState == UnderMouseState.FirstUnderMouse)
+			if (TrackballTumbleWidget.UnderMouseState == UnderMouseState.FirstUnderMouse
+				&& sceneContext.ViewState.ModelView)
 			{
 				if (mouseEvent.Button == MouseButtons.Left
 					&& viewControls3D.ActiveButton == ViewControls3DButtons.PartSelect

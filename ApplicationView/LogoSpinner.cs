@@ -27,8 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Diagnostics;
 using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -38,7 +36,6 @@ namespace MatterHackers.MatterControl
 	using System.Threading;
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.DataConverters3D;
-	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.PolygonMesh;
 	using MatterHackers.RenderOpenGl;
 	using MatterHackers.VectorMath;
@@ -46,8 +43,6 @@ namespace MatterHackers.MatterControl
 	public class LogoSpinner
 	{
 		public Color MeshColor { get; set; } = Color.White;
-
-		public float[] AmbientColor { get; set; } = new float[] { 0, 0, 0, 0 };
 
 		public bool SpinLogo { get; set; } = true;
 
