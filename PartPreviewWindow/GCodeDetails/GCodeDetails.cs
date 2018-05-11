@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			get
 			{
-				if (loadedGCode == null)
+				if (loadedGCode == null || loadedGCode.LayerCount == 0)
 				{
 					return "---";
 				}
@@ -100,31 +100,56 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public double GetLayerHeight(int layerIndex)
 		{
+			if (loadedGCode == null || loadedGCode.LayerCount == 0)
+			{
+				return 0;
+			}
+
 			return loadedGCode.GetLayerHeight(layerIndex);
 		}
 
 		internal object GetLayerTop(int layerIndex)
 		{
+			if (loadedGCode == null || loadedGCode.LayerCount == 0)
+			{
+				return 0;
+			}
+
 			return loadedGCode.GetLayerTop(layerIndex);
 		}
 
 		public string LayerTime(int activeLayerIndex)
 		{
-			if (loadedGCode == null)
+			return InstructionTime(activeLayerIndex, activeLayerIndex + 1);
+		}
+
+		public string LayerTimeToHere(int activeLayerIndex)
+		{
+			return InstructionTime(0, activeLayerIndex + 1);
+		}
+
+		public string LayerTimeFromeHere(int activeLayerIndex)
+		{
+			return InstructionTime(activeLayerIndex + 1, int.MaxValue);
+		}
+
+		private string InstructionTime(int startLayer, int endLayer)
+		{
+			if (loadedGCode == null || loadedGCode.LayerCount == 0)
 			{
 				return "---";
 			}
 
-			int startInstruction = Math.Min(loadedGCode.LayerCount - 1, loadedGCode.GetInstructionIndexAtLayer(activeLayerIndex));
-			int endInstruction = loadedGCode.GetInstructionIndexAtLayer(activeLayerIndex + 1);
+			int startInstruction = loadedGCode.GetInstructionIndexAtLayer(startLayer);
+			int endInstruction = loadedGCode.GetInstructionIndexAtLayer(endLayer);
 			var secondsToEndFromStart = loadedGCode.Instruction(startInstruction).secondsToEndFromHere;
 			var secondsToEndFromEnd = loadedGCode.Instruction(endInstruction).secondsToEndFromHere;
 			return SecondsToTime(secondsToEndFromStart - secondsToEndFromEnd);
 		}
 
-		internal string GetLayerFanSpeeds(int activeLayerIndex)
+		public string GetLayerFanSpeeds(int activeLayerIndex)
 		{
-			if (loadedGCode == null)
+			if (loadedGCode == null || loadedGCode.LayerCount == 0)
 			{
 				return "---";
 			}

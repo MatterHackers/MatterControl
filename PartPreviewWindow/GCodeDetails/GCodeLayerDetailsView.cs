@@ -79,14 +79,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return textWidget;
 			}
 
+			GuiWidget layerIndex = AddSetting("Number".Localize(), "", this);
 			GuiWidget layerTime = AddSetting("Time".Localize(), "", this);
+			GuiWidget layerTimeToHere = AddSetting("Time From Start".Localize(), "", this);
+			GuiWidget layerTimeFromHere = AddSetting("Time to End".Localize(), "", this);
 			GuiWidget layerHeight = AddSetting("Height".Localize(), "", this);
 			GuiWidget layerWidth = AddSetting("Layer Top".Localize(), "", this);
 			GuiWidget layerFanSpeeds = AddSetting("Fan Speed".Localize(), "", this);
 
 			void UpdateLayerDisplay(object sender, EventArgs e)
 			{
+				layerIndex.Text = $"{sceneContext.ActiveLayerIndex + 1}";
 				layerTime.Text = gcodeDetails.LayerTime(sceneContext.ActiveLayerIndex);
+				layerTimeToHere.Text = gcodeDetails.LayerTimeToHere(sceneContext.ActiveLayerIndex);
+				layerTimeFromHere.Text = gcodeDetails.LayerTimeFromeHere(sceneContext.ActiveLayerIndex);
 				layerHeight.Text = $"{gcodeDetails.GetLayerHeight(sceneContext.ActiveLayerIndex):0.###}";
 				layerWidth.Text = $"{gcodeDetails.GetLayerTop(sceneContext.ActiveLayerIndex):0.###}";
 				var fanSpeed = gcodeDetails.GetLayerFanSpeeds(sceneContext.ActiveLayerIndex);
