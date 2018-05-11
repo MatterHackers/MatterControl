@@ -347,6 +347,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public bool DragOperationActive { get; private set; }
 
 		public InsertionGroup DragDropObject { get; private set; }
+
 		public ILibraryAssetStream SceneReplacement { get; private set; }
 
 		/// <summary>
@@ -371,8 +372,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					// Otherwise begin an externally started DragDropOperation hard-coded to use LibraryView->SelectedItems
+					if (this.Printer != null
+						&& this.Printer.ViewState.ViewMode != PartViewMode.Model)
+					{
+						this.Printer.ViewState.ViewMode = PartViewMode.Model;
+					}
 
+					// Otherwise begin an externally started DragDropOperation hard-coded to use LibraryView->SelectedItems
 					this.StartDragDrop(
 						// Project from ListViewItem to ILibraryItem
 						ApplicationController.Instance.Library.ActiveViewWidget.SelectedItems.Select(l => l.Model),
