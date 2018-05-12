@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -64,6 +65,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.thumbHeight = height;
 		}
 
+		// TODO: Why is this static?
 		private static bool WidgetOnScreen(GuiWidget widget, RectangleDouble bounds)
 		{
 			if (!widget.Visible)
@@ -89,33 +91,42 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			return true;
 		}
 
-		public async Task LoadItemThumbnail(ILibraryContainer libraryContainer)
+		public Task LoadItemThumbnail()
 		{
-			var thumbnail = ListView.LoadCachedImage(listViewItem, thumbWidth, thumbHeight);
+			return LoadItemThumbnail(
+				listViewItem.Model,
+				listViewItem.Container,
+				this.thumbWidth,
+				this.thumbHeight,
+				this.SetItemThumbnail,
+				() => ListViewItemBase.WidgetOnScreen(this, this.LocalBounds));
+		}
+
+		private static async Task LoadItemThumbnail(ILibraryItem libraryItem, ILibraryContainer libraryContainer, int thumbWidth, int thumbHeight, Action<ImageBuffer, bool> thumbnailSetter, Func<bool> shouldGenerateThumbnail)
+		{
+			var thumbnail = ListView.LoadCachedImage(libraryItem, thumbWidth, thumbHeight);
 			if (thumbnail != null)
 			{
-				SetItemThumbnail(thumbnail);
+				thumbnailSetter(thumbnail, false);
 				return;
 			}
-
-			var itemModel = listViewItem.Model;
 
 			if (thumbnail == null)
 			{
 				// Ask the container - allows the container to provide its own interpretation of the item thumbnail
-				thumbnail = await libraryContainer.GetThumbnail(itemModel, thumbWidth, thumbHeight);
+				thumbnail = await libraryContainer.GetThumbnail(libraryItem, thumbWidth, thumbHeight);
 			}
 
-			if (thumbnail == null && itemModel is IThumbnail)
+			if (thumbnail == null && libraryItem is IThumbnail)
 			{
 				// If the item provides its own thumbnail, try to collect it
-				thumbnail = await (itemModel as IThumbnail).GetThumbnail(thumbWidth, thumbHeight);
+				thumbnail = await (libraryItem as IThumbnail).GetThumbnail(thumbWidth, thumbHeight);
 			}
 
 			if (thumbnail == null)
 			{
 				// Ask content provider - allows type specific thumbnail creation
-				var contentProvider = ApplicationController.Instance.Library.GetContentProvider(itemModel);
+				var contentProvider = ApplicationController.Instance.Library.GetContentProvider(libraryItem);
 				if (contentProvider is MeshContentProvider)
 				{
 					// Before we have a thumbnail set to the content specific thumbnail
@@ -124,19 +135,19 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					ApplicationController.Instance.QueueForGeneration(async () =>
 					{
 						// When this widget is dequeued for generation, validate before processing. Off-screen widgets should be skipped and will requeue next time they become visible
-						if (ListViewItemBase.WidgetOnScreen(this, this.LocalBounds))
+						if (shouldGenerateThumbnail?.Invoke() == true)
 						{
-							SetItemThumbnail(generatingThumbnailIcon);
+							thumbnailSetter(generatingThumbnailIcon, false);
 
 							// Then try to load a content specific thumbnail
 							await contentProvider.GetThumbnail(
-								itemModel,
+								libraryItem,
 								thumbWidth,
 								thumbHeight,
 								(image) =>
 								{
 									// Use the content providers default image if an image failed to load
-									SetItemThumbnail(image ?? contentProvider.DefaultImage, true);
+									thumbnailSetter(image ?? contentProvider.DefaultImage, true);
 								});
 						}
 					});
@@ -145,7 +156,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					// Then try to load a content specific thumbnail
 					await contentProvider.GetThumbnail(
-						itemModel,
+						libraryItem,
 						thumbWidth,
 						thumbHeight,
 						(image) => thumbnail = image);
@@ -155,10 +166,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			if (thumbnail == null)
 			{
 				// Use the listview defaults
-				thumbnail = ((itemModel is ILibraryContainerLink) ? defaultFolderIcon : defaultItemIcon).AlphaToPrimaryAccent();
+				thumbnail = ((libraryItem is ILibraryContainerLink) ? defaultFolderIcon : defaultItemIcon).AlphaToPrimaryAccent();
 			}
 
-			SetItemThumbnail(thumbnail);
+			thumbnailSetter(thumbnail, false);
 		}
 
 		internal void EnsureSelection()
@@ -168,13 +179,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				// Existing selection only survives with ctrl->click
 				if (!Keyboard.IsKeyDown(Keys.ControlKey))
 				{
-					listViewItem.ListView.SelectedItems.Clear();
+					listViewItem.ListView?.SelectedItems.Clear();
 				}
 
 				// Any mouse down ensures selection - mouse up will evaluate if DragDrop occurred and toggle selection if not
-				if (!listViewItem.ListView.SelectedItems.Contains(listViewItem))
+				if (!listViewItem.ListView?.SelectedItems.Contains(listViewItem) == true)
 				{
-					listViewItem.ListView.SelectedItems.Add(listViewItem);
+					listViewItem.ListView?.SelectedItems.Add(listViewItem);
 				}
 
 				Invalidate();
@@ -188,7 +199,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				if (wasSelected)
 				{
-					listViewItem.ListView.SelectedItems.Remove(listViewItem);
+					listViewItem.ListView?.SelectedItems.Remove(listViewItem);
 				}
 
 				Invalidate();
@@ -218,7 +229,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				// Resize canvas to target as fallback
 				if (thumbnail.Width < thumbWidth || thumbnail.Height < thumbHeight)
 				{
-					thumbnail = listViewItem.ListView.ResizeCanvas(thumbnail, thumbWidth, thumbHeight);
+					thumbnail = ListView.ResizeCanvas(thumbnail, thumbWidth, thumbHeight);
 				}
 				else if (thumbnail.Width > thumbWidth || thumbnail.Height > thumbHeight)
 				{

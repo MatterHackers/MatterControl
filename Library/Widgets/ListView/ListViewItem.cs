@@ -43,11 +43,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public ListViewItemBase ViewWidget { get; set; }
 
-		public ListViewItem(ILibraryItem libraryItem, ListView listView)
+		public ListViewItem(ILibraryItem libraryItem, ILibraryContainer container, ListView listView = null)
 		{
+			this.Container = container;
 			this.ListView = listView;
 			this.Model = libraryItem;
 		}
+
+		public ILibraryContainer Container { get; }
 
 		internal void OnDoubleClick()
 		{

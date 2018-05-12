@@ -184,9 +184,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			var recentFiles = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
 
 
-			// HACK: Creating a listview just to generate part thumbnails is invalid. Rework thumbnail generation so we have a solution for this case
-			var listView = new ListView(ApplicationController.Instance.Library, theme);
-
 			var lastProfileID = ProfileManager.Instance.LastProfileID;
 			var lastProfile = ProfileManager.Instance[lastProfileID];
 
@@ -240,7 +237,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 				foreach (var item in recentFiles.Take(10).Select(f => new SceneReplacementFileItem(f.FullName)).ToList<ILibraryItem>())
 				{
-					var iconButton = new IconViewItem(new ListViewItem(item, listView), 70, 70, theme)
+					var iconButton = new IconViewItem(new ListViewItem(item, ApplicationController.Instance.Library.PlatingHistory), 70, 70, theme)
 					{
 						Margin = new BorderDouble(right: 5),
 						Selectable = true
@@ -286,8 +283,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		{
 			var recentParts = new DirectoryInfo(ApplicationDataStorage.Instance.PartHistoryDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
 
-			var listView = new ListView(ApplicationController.Instance.Library, theme);
-
 			var emptyPlateButton = new ImageWidget(AggContext.StaticData.LoadIcon("new-part.png", 70, 70))
 			{
 				Margin = new BorderDouble(right: 5),
@@ -299,32 +294,49 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			{
 				UiThread.RunOnIdle(async () =>
 				{
-					var bed = new BedConfig();
-					await bed.LoadContent(
+					var workspace = new BedConfig();
+					await workspace.LoadContent(
 						new EditContext()
 						{
 							ContentStore = ApplicationController.Instance.Library.PartHistory,
 							SourceItem = BedConfig.NewPlatingItem(ApplicationController.Instance.Library.PartHistory)
 						});
 
-					ApplicationController.Instance.Workspaces.Add(bed);
+					ApplicationController.Instance.Workspaces.Add(workspace);
 
-					partPreviewContent.CreatePartTab(
-						"New Part",
-						bed,
-						theme);
+					partPreviewContent.CreatePartTab("New Part", workspace, theme);
 				});
 			};
 			toolbar.AddChild(emptyPlateButton);
 
 			foreach (var item in recentParts.Take(10).Select(f => new SceneReplacementFileItem(f.FullName)).ToList<ILibraryItem>())
 			{
-				toolbar.AddChild(new IconViewItem(new ListViewItem(item, listView), 70, 70, theme)
+				var iconButton = new IconViewItem(new ListViewItem(item, ApplicationController.Instance.Library.PlatingHistory), 70, 70, theme)
 				{
-					Margin = new BorderDouble(right: 5)
-				});
-			}
+					Margin = new BorderDouble(right: 5),
+					Selectable = true
+				};
 
+				iconButton.Children.First().Click += async (s, e) =>
+				{
+					if (this.PositionWithinLocalBounds(e.X, e.Y))
+					{
+						var workspace = new BedConfig();
+						await workspace.LoadContent(
+							new EditContext()
+							{
+								ContentStore = ApplicationController.Instance.Library.PartHistory,
+								SourceItem = item
+							});
+
+						ApplicationController.Instance.Workspaces.Add(workspace);
+
+						partPreviewContent.CreatePartTab(item.Name, workspace, theme);
+					}
+				};
+
+				toolbar.AddChild(iconButton);
+			}
 		}
 	}
 }

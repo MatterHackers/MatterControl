@@ -212,7 +212,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			// Folder items
 			foreach (var childContainer in this.SortItems(containerItems))
 			{
-				var listViewItem = new ListViewItem(childContainer, this);
+				var listViewItem = new ListViewItem(childContainer, this.ActiveContainer);
 				listViewItem.DoubleClick += listViewItem_DoubleClick;
 				items.Add(listViewItem);
 
@@ -231,7 +231,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				foreach (var item in this.SortItems(filteredResults))
 				{
-					var listViewItem = new ListViewItem(item, this);
+					var listViewItem = new ListViewItem(item, this.ActiveContainer, this);
 					listViewItem.DoubleClick += listViewItem_DoubleClick;
 					items.Add(listViewItem);
 
@@ -280,10 +280,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private void WritableContainer_ItemContentChanged(object sender, ItemChangedEventArgs e)
 		{
-			var firstItem = items.Where(i => i.Model.ID == e.LibraryItem.ID).FirstOrDefault();
-			if (firstItem != null)
+			if (items.Where(i => i.Model.ID == e.LibraryItem.ID).FirstOrDefault() is ListViewItem listViewItem)
 			{
-				firstItem.ViewWidget.LoadItemThumbnail(firstItem.ListView.ActiveContainer).ConfigureAwait(false);
+				listViewItem.ViewWidget.LoadItemThumbnail().ConfigureAwait(false);
 			}
 		}
 
@@ -326,16 +325,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		internal static ImageBuffer LoadCachedImage(ListViewItem listViewItem, int width, int height)
+		internal static ImageBuffer LoadCachedImage(ILibraryItem libraryItem, int width, int height)
 		{
-			ImageBuffer cachedItem = LoadImage(ApplicationController.Instance.ThumbnailCachePath(listViewItem.Model, width, height));
+			ImageBuffer cachedItem = LoadImage(ApplicationController.Instance.ThumbnailCachePath(libraryItem, width, height));
 			if (cachedItem != null)
 			{
 				return cachedItem;
 			}
 
 			// Check for big render, resize, cache and return
-			var bigRender = LoadImage(ApplicationController.Instance.ThumbnailCachePath(listViewItem.Model));
+			var bigRender = LoadImage(ApplicationController.Instance.ThumbnailCachePath(libraryItem));
 			if (bigRender != null)
 			{
 				try
@@ -344,7 +343,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 					// Cache at requested size
 					AggContext.ImageIO.SaveImageData(
-						ApplicationController.Instance.ThumbnailCachePath(listViewItem.Model, width, height), 
+						ApplicationController.Instance.ThumbnailCachePath(libraryItem, width, height),
 						thumbnail);
 
 					return thumbnail;
@@ -378,7 +377,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 
 		// TODO: ResizeCanvas is also colorizing thumbnails as a proof of concept
-		public ImageBuffer ResizeCanvas(ImageBuffer originalImage, int width, int height)
+		public static ImageBuffer ResizeCanvas(ImageBuffer originalImage, int width, int height)
 		{
 			var destImage = new ImageBuffer(width, height, 32, originalImage.GetRecieveBlender());
 
