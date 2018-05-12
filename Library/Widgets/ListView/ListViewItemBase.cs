@@ -89,11 +89,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			return true;
 		}
 
-		public async Task LoadItemThumbnail()
+		public async Task LoadItemThumbnail(ILibraryContainer libraryContainer)
 		{
-			var listView = listViewItem.ListView;
-
-			var thumbnail = listView.LoadCachedImage(listViewItem, thumbWidth, thumbHeight);
+			var thumbnail = ListView.LoadCachedImage(listViewItem, thumbWidth, thumbHeight);
 			if (thumbnail != null)
 			{
 				SetItemThumbnail(thumbnail);
@@ -105,7 +103,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			if (thumbnail == null)
 			{
 				// Ask the container - allows the container to provide its own interpretation of the item thumbnail
-				thumbnail = await listView.ActiveContainer.GetThumbnail(itemModel, thumbWidth, thumbHeight);
+				thumbnail = await libraryContainer.GetThumbnail(itemModel, thumbWidth, thumbHeight);
 			}
 
 			if (thumbnail == null && itemModel is IThumbnail)

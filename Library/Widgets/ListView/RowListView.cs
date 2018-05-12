@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public override async void OnLoad(EventArgs args)
 		{
 			base.OnLoad(args);
-			await this.LoadItemThumbnail();
+			await this.LoadItemThumbnail(listViewItem.ListView.ActiveContainer);
 		}
 
 		private bool isHoverItem = false;

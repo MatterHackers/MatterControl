@@ -283,7 +283,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			var firstItem = items.Where(i => i.Model.ID == e.LibraryItem.ID).FirstOrDefault();
 			if (firstItem != null)
 			{
-				firstItem.ViewWidget.LoadItemThumbnail().ConfigureAwait(false);
+				firstItem.ViewWidget.LoadItemThumbnail(firstItem.ListView.ActiveContainer).ConfigureAwait(false);
 			}
 		}
 
@@ -326,7 +326,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		internal ImageBuffer LoadCachedImage(ListViewItem listViewItem, int width, int height)
+		internal static ImageBuffer LoadCachedImage(ListViewItem listViewItem, int width, int height)
 		{
 			ImageBuffer cachedItem = LoadImage(ApplicationController.Instance.ThumbnailCachePath(listViewItem.Model, width, height));
 			if (cachedItem != null)
@@ -355,7 +355,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			return null;
 		}
 
-		private ImageBuffer LoadImage(string filePath)
+		private static ImageBuffer LoadImage(string filePath)
 		{
 			ImageBuffer thumbnail = null;
 
