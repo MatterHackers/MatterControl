@@ -72,8 +72,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	public class RowViewItem : ListViewItemBase
 	{
-		private ThemeConfig theme;
-
 		public RowViewItem(ListViewItem listViewItem, int thumbWidth, int thumbHeight, ThemeConfig theme)
 			: base(listViewItem, thumbWidth, thumbHeight, theme)
 		{
@@ -82,7 +80,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.HAnchor = HAnchor.Stretch;
 			this.Padding = new BorderDouble(0);
 			this.Margin = new BorderDouble(6, 0, 6, 6);
-			this.theme = theme;
 
 			var row = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
