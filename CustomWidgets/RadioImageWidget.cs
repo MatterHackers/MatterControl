@@ -35,8 +35,8 @@ namespace MatterHackers.MatterControl
 {
 	public class RadioImageWidget : RadioButtonViewText
 	{
-		public RadioImageWidget(string label, ImageBuffer image)
-			: base(label)
+		public RadioImageWidget(string label, Color textColor, ImageBuffer image)
+			: base(label, textColor)
 		{
 			var imageWidget = new ImageWidget(image);
 			this.AddChild(imageWidget, this.Children.IndexOf(labelTextWidget));

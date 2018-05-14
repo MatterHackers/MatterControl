@@ -191,14 +191,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			{
 				if(ProfileManager.Instance.Profiles.Count > 0)
 				{
-					toolbar.AddChild(new TextWidget("Select a printer to continue".Localize() + "...", pointSize: theme.DefaultFontSize)
+					toolbar.AddChild(new TextWidget("Select a printer to continue".Localize() + "...", textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
 					{
 						Margin = 15
 					});
 				}
 				else
 				{
-					toolbar.AddChild(new TextWidget("Create a printer to continue".Localize() + "...", pointSize: theme.DefaultFontSize)
+					toolbar.AddChild(new TextWidget("Create a printer to continue".Localize() + "...", textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
 					{
 						Margin = 15
 					});
