@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.Library
 		private string GetNonCollidingName(string fileName)
 		{
 			// Switching from .stl, .obj or similar to AMF. Save the file and update the
-			// the filename with an incremented (n) value to reflect the extension change in the UI 
+			// the filename with an incremented (n) value to reflect the extension change in the UI
 			var similarFileNames = Directory.GetFiles(this.fullPath, $"{Path.GetFileNameWithoutExtension(fileName)}.*");
 
 			// ;
@@ -281,7 +281,18 @@ namespace MatterHackers.MatterControl.Library
 		public override void Remove(IEnumerable<ILibraryItem> items)
 		{
 			// Removing content from the filesystem can have devastating effects - open a shell window allowing the customer make changes as they seem fit
-			Process.Start(this.fullPath);
+			if (AggContext.OperatingSystem == OSType.Windows)
+			{
+				if (items.Count() == 1
+					&& items.FirstOrDefault() is FileSystemFileItem fileItem)
+				{
+					Process.Start("explorer.exe", $"/select, \"{fileItem.Path}\"");
+				}
+				else
+				{
+					Process.Start(this.fullPath);
+				}
+			}
 		}
 
 		public override void Rename(ILibraryItem item, string revisedName)
