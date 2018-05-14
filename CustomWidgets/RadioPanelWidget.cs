@@ -35,8 +35,8 @@ namespace MatterHackers.MatterControl
 {
 	public class RadioPanelWidget : RadioButtonViewText
 	{
-		public RadioPanelWidget(string label, string info, ImageBuffer image)
-			: base(label)
+		public RadioPanelWidget(string label, Color textColor, string info, ImageBuffer image)
+			: base(label, textColor)
 		{
 			radioCircle.Margin = new BorderDouble(4);
 			radioCircle.VAnchor = VAnchor.Top;

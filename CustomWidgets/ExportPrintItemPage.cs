@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl
 				}
 
 				// Create export button for each plugin
-				var pluginButton = new RadioButton(new RadioImageWidget(plugin.ButtonText, plugin.Icon))
+				var pluginButton = new RadioButton(new RadioImageWidget(plugin.ButtonText, theme.Colors.PrimaryTextColor, plugin.Icon))
 				{
 					HAnchor = HAnchor.Left,
 					Margin = commonMargin,

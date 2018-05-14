@@ -22,18 +22,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			: base(label)
 		{
 			PortValue = value;
-			this.EnabledChanged += new EventHandler(onRadioButtonEnabledChanged);
-		}
-
-		private void onRadioButtonEnabledChanged(object sender, EventArgs e)
-		{
-			if (this.Enabled)
-			{
-				this.TextColor = Color.White;
-			}
-			{
-				this.TextColor = Color.Gray;
-			}
 		}
 	}
 
