@@ -2163,7 +2163,12 @@ namespace MatterHackers.MatterControl
 
 			systemWindow.AddChild(overlay);
 
-			var spinner = new LogoSpinner(overlay, rotateX: -0.05);
+			var mutedAccentColor = new Color(theme.Colors.PrimaryAccentColor, 185).OverlayOn(Color.White).ToColor();
+
+			var spinner = new LogoSpinner(overlay, rotateX: -0.05)
+			{
+				MeshColor = mutedAccentColor
+			};
 
 			progressPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -2184,7 +2189,7 @@ namespace MatterHackers.MatterControl
 
 			progressPanel.AddChild(progressBar = new ProgressBar()
 			{
-				FillColor = theme.Colors.PrimaryAccentColor,
+				FillColor = mutedAccentColor,
 				BorderColor = theme.GetBorderColor(75),
 				Height = 11,
 				Width = 230,
