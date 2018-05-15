@@ -117,14 +117,29 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
+		long lastTimeContentsChanged;
+		RunningInterval waitingForRefresh;
 		private void DirectoryContentsChanged(object sender, EventArgs e)
 		{
 			// Flag for reload
 			isDirty = true;
 
+			lastTimeContentsChanged = UiThread.CurrentTimerMs;
 			// Only refresh content if we're the active container
-			if (isActiveContainer)
+			if (isActiveContainer
+				&& waitingForRefresh == null)
 			{
+				waitingForRefresh = UiThread.SetInterval(WaitToRefresh, .5);
+			}
+		}
+
+		private void WaitToRefresh()
+		{
+			if (UiThread.CurrentTimerMs > lastTimeContentsChanged + 500
+				&& waitingForRefresh != null)
+			{
+				waitingForRefresh.Continue = false;
+				waitingForRefresh = null;
 				this.ReloadContent();
 			}
 		}
