@@ -72,7 +72,31 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.SerialPortCommunication;
 	using MatterHackers.VectorMath;
 	using MatterHackers.VectorMath.TrackBall;
+	using Newtonsoft.Json.Converters;
 	using SettingsManagement;
+
+	[JsonConverter(typeof(StringEnumConverter))]
+	public enum NamedTypeFace
+	{
+		Alfa_Slab,
+		Audiowide,
+		Bangers,
+		Courgette,
+		Damion,
+		Fredoka,
+		Great_Vibes,
+		Liberation_Mono,
+		Liberation_Sans,
+		Liberation_Sans_Bold,
+		Lobster,
+		Pacifico,
+		Poppins,
+		Questrial,
+		Righteous,
+		Russo,
+		Titan,
+		Titillium,
+	};
 
 	public class AppContext
 	{
@@ -601,7 +625,7 @@ namespace MatterHackers.MatterControl
 			var workingAnimation = new ImageSequence();
 			var frameCount = 30.0;
 			var strokeWidth = 4 * GuiWidget.DeviceScale;
-			for(int i=0; i < frameCount; i++)
+			for (int i = 0; i < frameCount; i++)
 			{
 				var frame = new ImageBuffer(size, size);
 				var graphics = frame.NewGraphics2D();
@@ -1015,25 +1039,53 @@ namespace MatterHackers.MatterControl
 			thumbGenResetEvent?.Set();
 
 			// Kill all long running tasks (this will release the silcing thread if running)
-			foreach(var task in Tasks.RunningTasks)
+			foreach (var task in Tasks.RunningTasks)
 			{
 				task.CancelTask();
 			}
 		}
 
-		private static TypeFace monoSpacedTypeFace = null;
-		public static TypeFace MonoSpacedTypeFace
+		static Dictionary<NamedTypeFace, TypeFace> TypeFaceCache { get; set; } = new Dictionary<NamedTypeFace, TypeFace>()
 		{
-			get
-			{
-				if (monoSpacedTypeFace == null)
-				{
-					monoSpacedTypeFace = TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg")));
-				}
+			[NamedTypeFace.Liberation_Sans] = LiberationSansFont.Instance,
+			[NamedTypeFace.Liberation_Sans_Bold] = LiberationSansBoldFont.Instance,
+			[NamedTypeFace.Liberation_Mono] = TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg")))
+		};
 
-				return monoSpacedTypeFace;
+		public static TypeFace GetTypeFace(NamedTypeFace Name)
+		{
+			if(!TypeFaceCache.ContainsKey(Name))
+			{
+				TypeFace typeFace = new TypeFace();
+				var file = Path.Combine("Fonts", $"{Name}.ttf");
+				var exists = AggContext.StaticData.FileExists(file);
+				var stream = exists ? AggContext.StaticData.OpenStream(file) : null;
+				if (stream != null 
+					&& typeFace.LoadTTF(stream))
+				{
+					TypeFaceCache.Add(Name, typeFace);
+				}
+				else
+				{
+					// try the svg
+					file = Path.Combine("Fonts", $"{Name}.svg");
+					exists = AggContext.StaticData.FileExists(file);
+					typeFace = exists ? TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(file)) : null;
+					if (typeFace != null)
+					{
+						TypeFaceCache.Add(Name, typeFace);
+					}
+					else
+					{
+						// assign it to the default
+						TypeFaceCache.Add(Name, TypeFaceCache[NamedTypeFace.Liberation_Sans]);
+					}
+				}
 			}
+
+			return TypeFaceCache[Name];
 		}
+
 
 		private static TypeFace titilliumTypeFace = null;
 		public static TypeFace TitilliumTypeFace
@@ -1046,20 +1098,6 @@ namespace MatterHackers.MatterControl
 				}
 
 				return titilliumTypeFace;
-			}
-		}
-
-		private static TypeFace damionTypeFace = null;
-		public static TypeFace DamionTypeFace
-		{
-			get
-			{
-				if (damionTypeFace == null)
-				{
-					damionTypeFace = TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(Path.Combine("Fonts", "Damion-Regular.svg")));
-				}
-
-				return damionTypeFace;
 			}
 		}
 

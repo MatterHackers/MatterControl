@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			VertexStorage output = VertexSourceToClipperPolygons.CreateVertexStorage(intersectedPolys);
 
-			output.Add(0, 0, ShapePath.FlagsAndCommand.CommandStop);
+			output.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
 
 			return output;
 		}
@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			VertexStorage output = VertexSourceToClipperPolygons.CreateVertexStorage(solution);
 
-			output.Add(0, 0, ShapePath.FlagsAndCommand.CommandStop);
+			output.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
 
 			return output;
 		}

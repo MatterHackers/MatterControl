@@ -53,18 +53,18 @@ namespace MatterHackers.MatterControl
 			{
 				if (first)
 				{
-					output.Add(point.X, point.Y, ShapePath.FlagsAndCommand.CommandMoveTo);
+					output.Add(point.X, point.Y, ShapePath.FlagsAndCommand.MoveTo);
 					first = false;
 				}
 				else
 				{
-					output.Add(point.X, point.Y, ShapePath.FlagsAndCommand.CommandLineTo);
+					output.Add(point.X, point.Y, ShapePath.FlagsAndCommand.LineTo);
 				}
 			}
 
 			output.ClosePolygon();
 
-			output.Add(0, 0, ShapePath.FlagsAndCommand.CommandStop);
+			output.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
 
 			return output;
 		}
@@ -80,18 +80,18 @@ namespace MatterHackers.MatterControl
 				{
 					if (first)
 					{
-						output.Add(point.X, point.Y, ShapePath.FlagsAndCommand.CommandMoveTo);
+						output.Add(point.X, point.Y, ShapePath.FlagsAndCommand.MoveTo);
 						first = false;
 					}
 					else
 					{
-						output.Add(point.X, point.Y, ShapePath.FlagsAndCommand.CommandLineTo);
+						output.Add(point.X, point.Y, ShapePath.FlagsAndCommand.LineTo);
 					}
 				}
 
 				output.ClosePolygon();
 			}
-			output.Add(0, 0, ShapePath.FlagsAndCommand.CommandStop);
+			output.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
 
 			return output;
 		}

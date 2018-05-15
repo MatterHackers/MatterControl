@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else
 			{
-				textPrinter = new TypeFacePrinter(brailleText, new StyledTypeFace(ApplicationController.MonoSpacedTypeFace, pointSize));
+				textPrinter = new TypeFacePrinter(brailleText, new StyledTypeFace(ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono), pointSize));
 			}
 
 			foreach (var letter in brailleText.ToCharArray())
@@ -133,10 +133,10 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						switch (vertex.command)
 						{
-							case Agg.ShapePath.FlagsAndCommand.CommandStop:
-							case Agg.ShapePath.FlagsAndCommand.CommandEndPoly:
+							case Agg.ShapePath.FlagsAndCommand.Stop:
+							case Agg.ShapePath.FlagsAndCommand.EndPoly:
 							case Agg.ShapePath.FlagsAndCommand.FlagClose:
-							case Agg.ShapePath.FlagsAndCommand.CommandMoveTo:
+							case Agg.ShapePath.FlagsAndCommand.MoveTo:
 								if (vertexCount > 0)
 								{
 									var center = positionSum / vertexCount;
@@ -151,9 +151,9 @@ namespace MatterHackers.MatterControl.DesignTools
 								vertexCount = 0;
 								positionSum = Vector2.Zero;
 								break;
-							case Agg.ShapePath.FlagsAndCommand.CommandCurve3:
-							case Agg.ShapePath.FlagsAndCommand.CommandCurve4:
-							case Agg.ShapePath.FlagsAndCommand.CommandLineTo:
+							case Agg.ShapePath.FlagsAndCommand.Curve3:
+							case Agg.ShapePath.FlagsAndCommand.Curve4:
+							case Agg.ShapePath.FlagsAndCommand.LineTo:
 								vertexCount++;
 								lastPosition = vertex.position;
 								positionSum += lastPosition;
@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 				else
 				{
-					letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.MonoSpacedTypeFace, pointSize));
+					letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono), pointSize));
 					var scalledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
 					letterObject = new Object3D()
 					{
