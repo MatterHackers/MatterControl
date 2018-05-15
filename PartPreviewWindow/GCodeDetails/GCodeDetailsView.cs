@@ -81,17 +81,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 			}, ref unregisterEvents);
-
-			CleanupBorders(this);
-		}
-
-		public static void CleanupBorders(GuiWidget guiWidget)
-		{
-			var firstItem = guiWidget.Children<SettingsItem>().First();
-			firstItem.Border = firstItem.Border.Clone(top: 1);
-
-			var lastItem = guiWidget.Children<SettingsItem>().Last();
-			lastItem.Border = lastItem.Border.Clone(bottom: 0);
 		}
 
 		TextWidget AddSetting(string title, string value)

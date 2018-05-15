@@ -67,8 +67,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// and do the initial setting
 			UpdateLayerDisplay(this, null);
-
-			GCodeDetailsView.CleanupBorders(this);
 		}
 
 		TextWidget AddSetting(string title, string value)

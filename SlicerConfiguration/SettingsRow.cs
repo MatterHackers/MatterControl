@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override string ToolTipText
 		{
-			get => settingsLabel != null ? settingsLabel.ToolTipText : null;
+			get => settingsLabel?.ToolTipText;
 			set
 			{
 				if (settingsLabel != null)

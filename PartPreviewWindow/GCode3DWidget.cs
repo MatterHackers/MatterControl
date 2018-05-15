@@ -28,10 +28,13 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -79,6 +82,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.RefreshGCodeDetails(printer);
 
+			this.EnsureSectionWidgetStyling(this.Children<SectionWidget>());
+
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if (e is StringEventArgs stringEvent)
@@ -104,7 +109,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				loadedGCodeSection.AddChild(
 					speedsWidget = new SectionWidget(
 						"Speeds".Localize(),
-						new SpeedsLegend(sceneContext.LoadedGCode, theme, pointSize: theme.FontSize12)
+						new SpeedsLegend(sceneContext.LoadedGCode, theme)
 						{
 							HAnchor = HAnchor.Stretch,
 							Visible = renderSpeeds,
@@ -153,12 +158,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// Enforce panel padding in sidebar
-			foreach (var sectionWidget in this.Children<SectionWidget>())
-			{
-				sectionWidget.ContentPanel.Padding = new BorderDouble(10, 10, 10, 0);
-			}
+			this.EnsureSectionWidgetStyling(loadedGCodeSection.Children<SectionWidget>());
 
 			this.Invalidate();
+		}
+
+		private void EnsureSectionWidgetStyling(IEnumerable<SectionWidget> sectionWidgets)
+		{
+			foreach (var sectionWidget in sectionWidgets)
+			{
+				var contentPanel = sectionWidget.ContentPanel;
+				var firstItem = contentPanel.Children<SettingsItem>().FirstOrDefault();
+				if (firstItem != null)
+				{
+					firstItem.Border = firstItem.Border.Clone(top: 1);
+					contentPanel.Padding = new BorderDouble(10, 0, 10, 0);
+					contentPanel.Margin = contentPanel.Margin.Clone(bottom: 4);
+				}
+				else
+				{
+					contentPanel.Padding = new BorderDouble(10, 10, 10, 0);
+				}
+
+				var lastItem = contentPanel.Children<SettingsItem>().LastOrDefault();
+				if (lastItem != null)
+				{
+					lastItem.Border = lastItem.Border.Clone(bottom: 0);
+				}
+			}
 		}
 
 		private void Bed_LoadedGCodeChanged(object sender, EventArgs e)
