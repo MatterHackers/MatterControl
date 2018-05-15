@@ -120,14 +120,14 @@ namespace MatterHackers.GCodeVisualizer
 					Vector3Float start = this.GetStart(renderInfo);
 					Vector3Float end = this.GetEnd(renderInfo);
 
-					pathStorage.Add(start.x, start.y, ShapePath.FlagsAndCommand.CommandMoveTo);
+					pathStorage.Add(start.x, start.y, ShapePath.FlagsAndCommand.MoveTo);
 					if (end.x != start.x || end.y != start.y)
 					{
-						pathStorage.Add(end.x, end.y, ShapePath.FlagsAndCommand.CommandLineTo);
+						pathStorage.Add(end.x, end.y, ShapePath.FlagsAndCommand.LineTo);
 					}
 					else
 					{
-						pathStorage.Add(end.x + .01, end.y, ShapePath.FlagsAndCommand.CommandLineTo);
+						pathStorage.Add(end.x + .01, end.y, ShapePath.FlagsAndCommand.LineTo);
 					}
 
 					graphics2D.Render(stroke, 0, movementColor);

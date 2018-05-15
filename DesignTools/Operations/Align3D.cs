@@ -36,15 +36,20 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	using Aabb = AxisAlignedBoundingBox;
 
+	[JsonConverter(typeof(StringEnumConverter))]
 	public enum Align { None, Min, Center, Max, Origin }
 
+	[JsonConverter(typeof(StringEnumConverter))]
 	public enum Alignment { X, Y, Z, negX, negY, negZ };
 
+	[JsonConverter(typeof(StringEnumConverter))]
 	[Flags]
 	public enum Edge
 	{
@@ -62,6 +67,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		BackTop = Face.Back | Face.Top
 	}
 
+	[JsonConverter(typeof(StringEnumConverter))]
 	[Flags]
 	public enum Face
 	{
@@ -73,6 +79,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		Top = 0x20,
 	};
 
+	[JsonConverter(typeof(StringEnumConverter))]
 	[Flags]
 	public enum Side2D
 	{

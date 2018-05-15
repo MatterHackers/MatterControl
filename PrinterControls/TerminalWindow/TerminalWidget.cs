@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(inputRow);
 
-			manualCommandTextEdit = new MHTextEditWidget("", typeFace: ApplicationController.MonoSpacedTypeFace)
+			manualCommandTextEdit = new MHTextEditWidget("", typeFace: ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono))
 			{
 				Margin = new BorderDouble(right: 3),
 				HAnchor = HAnchor.Stretch,

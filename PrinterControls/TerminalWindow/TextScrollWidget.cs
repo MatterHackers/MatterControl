@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl
 
 		public TextScrollWidget(PrinterConfig printer, List<string> sourceLines)
 		{
-			this.printer = new TypeFacePrinter("", new StyledTypeFace(ApplicationController.MonoSpacedTypeFace, 12));
+			this.printer = new TypeFacePrinter("", new StyledTypeFace(ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono), 12));
 			this.printer.DrawFromHintedCache = true;
 			this.allSourceLines = sourceLines;
 			this.visibleLines = sourceLines;

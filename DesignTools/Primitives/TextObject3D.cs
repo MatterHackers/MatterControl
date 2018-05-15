@@ -43,36 +43,6 @@ using Newtonsoft.Json.Converters;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public enum NamedTypeFace { Liberation_Sans, Liberation_Sans_Bold, Liberation_Mono, Titillium, Damion };
-
-	[HideUpdateButtonAttribute]
-	public static class NamedTypeFaceCache
-	{
-		public static TypeFace GetTypeFace(NamedTypeFace Name)
-		{
-			switch (Name)
-			{
-				case NamedTypeFace.Liberation_Sans:
-					return LiberationSansFont.Instance;
-
-				case NamedTypeFace.Liberation_Sans_Bold:
-					return LiberationSansBoldFont.Instance;
-
-				case NamedTypeFace.Liberation_Mono:
-					return ApplicationController.MonoSpacedTypeFace;
-
-				case NamedTypeFace.Titillium:
-					return ApplicationController.TitilliumTypeFace;
-
-				case NamedTypeFace.Damion:
-					return ApplicationController.DamionTypeFace;
-
-				default:
-					return LiberationSansFont.Instance;
-			}
-		}
-	}
-
 	public class TextObject3D : Object3D, IRebuildable
 	{
 		public TextObject3D()
@@ -129,7 +99,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			double pointsToMm = 0.352778;
 			foreach (var letter in NameToWrite.ToCharArray())
 			{
-				var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(NamedTypeFaceCache.GetTypeFace(Font), PointSize))
+				var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.GetTypeFace(Font), PointSize))
 				{
 					ResolutionScale = 10
 				};
