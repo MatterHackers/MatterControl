@@ -27,13 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
-using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 
@@ -43,9 +36,9 @@ namespace MatterHackers.MatterControl.Library
 	public class PartHistoryContainer : HistoryContainerBase
 	{
 		public PartHistoryContainer()
+			:base (ApplicationDataStorage.Instance.PartHistoryDirectory)
 		{
 			this.Name = "Part History".Localize();
-			this.FullPath = ApplicationDataStorage.Instance.PartHistoryDirectory;
 		}
 	}
 }

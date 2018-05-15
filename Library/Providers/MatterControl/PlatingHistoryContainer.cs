@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg.Image;
-using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 
@@ -40,31 +39,26 @@ namespace MatterHackers.MatterControl.Library
 {
 	public class PlatingHistoryContainer : HistoryContainerBase
 	{
-		public PlatingHistoryContainer()
+		public PlatingHistoryContainer():
+			base (ApplicationDataStorage.Instance.PlatingDirectory)
 		{
 			this.Name = "Plating History".Localize();
-			this.FullPath = ApplicationDataStorage.Instance.PlatingDirectory;
 		}
 	}
 
-	public class HistoryContainerBase : LibraryContainer, ILibraryWritableContainer
+	public class HistoryContainerBase : FileSystemContainer, ILibraryWritableContainer
 	{
-		public HistoryContainerBase()
+		public HistoryContainerBase(string fullPath)
+			: base(fullPath)
 		{
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
+			this.IsProtected = true;
 		}
-
-		public string FullPath { get; protected set; }
 
 		public int PageSize { get; set; } = 25;
 
 		public event EventHandler<ItemChangedEventArgs> ItemContentChanged;
-
-		public void Add(IEnumerable<ILibraryItem> items)
-		{
-			throw new NotImplementedException();
-		}
 
 		public bool AllowAction(ContainerActions containerActions)
 		{
@@ -90,31 +84,6 @@ namespace MatterHackers.MatterControl.Library
 			{
 				var recentFiles = new DirectoryInfo(this.FullPath).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
 				Items = recentFiles.Take(this.PageSize).Select(f => new SceneReplacementFileItem(f.FullName)).ToList<ILibraryItem>();
-			}
-		}
-
-		public void Move(IEnumerable<ILibraryItem> items, ILibraryWritableContainer targetContainer)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void Remove(IEnumerable<ILibraryItem> items)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void Rename(ILibraryItem item, string revisedName)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void Save(ILibraryItem item, IObject3D content)
-		{
-			if (item is FileSystemFileItem fileItem)
-			{
-				// Serialize the scene to disk using a modified Json.net pipeline with custom ContractResolvers and JsonConverters
-				File.WriteAllText(fileItem.Path, content.ToJson());
-				this.ItemContentChanged?.Invoke(this, new ItemChangedEventArgs(fileItem));
 			}
 		}
 

@@ -838,23 +838,29 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			var libraryItems = libraryView.SelectedItems.Select(p => p.Model);
 			if (libraryItems.Any())
 			{
-				var container = libraryView.ActiveContainer as ILibraryWritableContainer;
-				if (container != null)
+				if (libraryView.ActiveContainer is ILibraryWritableContainer container)
 				{
-					StyledMessageBox.ShowMessageBox(
-						(doDelete) =>
-						{
-							if (doDelete)
+					if (container is FileSystemContainer)
+					{
+						container.Remove(libraryItems);
+						libraryView.SelectedItems.Clear();
+					}
+					else
+					{
+						StyledMessageBox.ShowMessageBox(
+							(doDelete) =>
 							{
-								container.Remove(libraryItems);
-								libraryView.SelectedItems.Clear();
-							}
-						},
-						"Are you sure you want to remove the currently selected items?".Localize(),
-						"Remove Items?".Localize(),
-						StyledMessageBox.MessageType.YES_NO,
-						"Remove".Localize());
-
+								if (doDelete)
+								{
+									container.Remove(libraryItems);
+									libraryView.SelectedItems.Clear();
+								}
+							},
+							"Are you sure you want to remove the currently selected items?".Localize(),
+							"Remove Items?".Localize(),
+							StyledMessageBox.MessageType.YES_NO,
+							"Remove".Localize());
+					}
 				}
 			}
 		}
