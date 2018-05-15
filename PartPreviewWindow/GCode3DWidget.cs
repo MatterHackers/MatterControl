@@ -118,10 +118,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				speedsWidget.Visible = renderSpeeds;
 
+				// Single instance shared across widgets
+				var gcodeDetails = new GCodeDetails(printer, printer.Bed.LoadedGCode);
+
 				loadedGCodeSection.AddChild(
 					new SectionWidget(
 						"Details".Localize(),
-						new GCodeDetailsView(new GCodeDetails(printer, printer.Bed.LoadedGCode), theme)
+						new GCodeDetailsView(gcodeDetails, theme)
 						{
 							HAnchor = HAnchor.Stretch,
 							Margin = new BorderDouble(bottom: 3),
@@ -136,7 +139,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				loadedGCodeSection.AddChild(
 					new SectionWidget(
 						"Layer".Localize(),
-						new GCodeLayerDetailsView(new GCodeDetails(printer, printer.Bed.LoadedGCode), sceneContext, theme)
+						new GCodeLayerDetailsView(gcodeDetails, sceneContext, theme)
 						{
 							HAnchor = HAnchor.Stretch,
 							Margin = new BorderDouble(bottom: 3),
