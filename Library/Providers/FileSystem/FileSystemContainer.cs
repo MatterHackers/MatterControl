@@ -41,17 +41,15 @@ namespace MatterHackers.MatterControl.Library
 {
 	public class FileSystemContainer : WritableContainer
 	{
-		private string fullPath;
-
 		private FileSystemWatcher directoryWatcher;
 
 		private bool isActiveContainer;
 		private bool isDirty;
 
-		public FileSystemContainer(string path)
+		public FileSystemContainer(string fullPath)
 		{
-			this.fullPath = path;
-			this.Name = Path.GetFileName(path);
+			this.FullPath = fullPath;
+			this.Name = Path.GetFileName(fullPath);
 
 			this.IsProtected = false;
 
@@ -59,9 +57,9 @@ namespace MatterHackers.MatterControl.Library
 			this.Items = new List<ILibraryItem>();
 #if !__ANDROID__
 			if (AggContext.OperatingSystem == OSType.Windows
-				&& Directory.Exists(path))
+				&& Directory.Exists(fullPath))
 			{
-				directoryWatcher = new FileSystemWatcher(path);
+				directoryWatcher = new FileSystemWatcher(fullPath);
 				directoryWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
 				directoryWatcher.Changed += DirectoryContentsChanged;
 				directoryWatcher.Created += DirectoryContentsChanged;
@@ -74,6 +72,8 @@ namespace MatterHackers.MatterControl.Library
 			}
 #endif
 		}
+
+		public string FullPath { get; protected set; }
 
 		// Indicates if the new AMF file should use the original file name incremented until no name collision occurs
 		public bool UseIncrementedNameDuringTypeChange { get; internal set; }
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.Library
 			{
 				string filter = this.KeywordFilter.Trim();
 
-				var allFiles = Directory.GetFiles(fullPath, "*.*", searchDepth);
+				var allFiles = Directory.GetFiles(FullPath, "*.*", searchDepth);
 
 				var zipFiles = allFiles.Where(f => Path.GetExtension(f).IndexOf(".zip", StringComparison.OrdinalIgnoreCase) != -1);
 
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.Library
 				List<ILibraryContainerLink> containers;
 				if (filter == "")
 				{
-					var directories = Directory.GetDirectories(fullPath, "*.*", searchDepth).Select(p => new DirectoryContainerLink(p)).ToList<ILibraryContainerLink>();
+					var directories = Directory.GetDirectories(FullPath, "*.*", searchDepth).Select(p => new DirectoryContainerLink(p)).ToList<ILibraryContainerLink>();
 					containers = directories.Concat(zipFiles.Select(f => new LocalZipContainerLink(f))).OrderBy(d => d.Name).ToList();
 				}
 				else
@@ -205,7 +205,7 @@ namespace MatterHackers.MatterControl.Library
 		{
 			// Switching from .stl, .obj or similar to AMF. Save the file and update the
 			// the filename with an incremented (n) value to reflect the extension change in the UI
-			var similarFileNames = Directory.GetFiles(this.fullPath, $"{Path.GetFileNameWithoutExtension(fileName)}.*");
+			var similarFileNames = Directory.GetFiles(this.FullPath, $"{Path.GetFileNameWithoutExtension(fileName)}.*");
 
 			// ;
 			var validName = agg_basics.GetNonCollidingName(fileName, (testName) => !File.Exists(testName));
@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl.Library
 
 			directoryWatcher.EnableRaisingEvents = false;
 
-			Directory.CreateDirectory(this.fullPath);
+			Directory.CreateDirectory(this.FullPath);
 
 			await Task.Run(async () =>
 			{
@@ -231,7 +231,7 @@ namespace MatterHackers.MatterControl.Library
 					switch (item)
 					{
 						case CreateFolderItem newFolder:
-							string targetFolderPath = Path.Combine(this.fullPath, newFolder.Name);
+							string targetFolderPath = Path.Combine(this.FullPath, newFolder.Name);
 
 							// TODO: write adaption of GetNonCollidingName for directories
 							Directory.CreateDirectory(targetFolderPath);
@@ -240,7 +240,7 @@ namespace MatterHackers.MatterControl.Library
 							break;
 
 						case ILibraryAssetStream streamItem:
-							string targetPath = Path.Combine(this.fullPath, streamItem.FileName);
+							string targetPath = Path.Combine(this.FullPath, streamItem.FileName);
 
 							try
 							{
@@ -290,7 +290,7 @@ namespace MatterHackers.MatterControl.Library
 				}
 				else
 				{
-					Process.Start(this.fullPath);
+					Process.Start(this.FullPath);
 				}
 			}
 		}
@@ -301,7 +301,7 @@ namespace MatterHackers.MatterControl.Library
 			{
 				if (Directory.Exists(directoryLink.Path))
 				{
-					Process.Start(this.fullPath);
+					Process.Start(this.FullPath);
 				}
 			}
 			else if (item is FileSystemFileItem fileItem)
