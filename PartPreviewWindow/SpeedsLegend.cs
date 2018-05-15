@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class SpeedsLegend : FlowLayoutWidget
 	{
-		public SpeedsLegend(GCodeFile gcodeFileTest, ThemeConfig theme, int pointSize)
+		public SpeedsLegend(GCodeFile gcodeFileTest, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			GCodeMemoryFile memoryFile = gcodeFileTest as GCodeMemoryFile;
@@ -88,9 +88,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				int feedrate = rangeValues[i];
 
 				this.AddChild(
-					new SpeedLegendRow(speedColors[i], millimetersPerSecond: feedrate / 60, pointSize: pointSize)
+					new SpeedLegendRow(speedColors[i], millimetersPerSecond: feedrate / 60, pointSize: theme.FontSize10)
 					{
-						Margin = new BorderDouble(2),
+						Margin = new BorderDouble(5, 2, 2, 2),
 						HAnchor = HAnchor.Stretch
 					});
 			}
