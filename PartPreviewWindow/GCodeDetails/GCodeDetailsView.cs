@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,68 +28,40 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.RenderOpenGl;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class GCodeDetailsView : FlowLayoutWidget
 	{
-		private TextWidget massTextWidget;
-		private TextWidget costTextWidget;
-
 		private EventHandler unregisterEvents;
+		private ThemeConfig theme;
 
-		public GCodeDetailsView(GCodeDetails gcodeDetails, int dataPointSize, int headingPointSize)
+		public GCodeDetailsView(GCodeDetails gcodeDetails, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
-			var margin = new BorderDouble(0, 9, 0, 3);
-
-			TextWidget AddSetting(string title, string value, GuiWidget parentWidget)
-			{
-				parentWidget.AddChild(
-					new TextWidget(title + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: headingPointSize)
-					{
-						HAnchor = HAnchor.Left
-					});
-
-				var textWidget = new TextWidget(value, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: dataPointSize)
-				{
-					HAnchor = HAnchor.Left,
-					Margin = margin
-				};
-
-				parentWidget.AddChild(textWidget);
-
-				return textWidget;
-			}
+			this.theme = theme;
 
 			// put in the print time
-			AddSetting("Print Time".Localize(), gcodeDetails.EstimatedPrintTime, this);
+			AddSetting("Print Time".Localize(), gcodeDetails.EstimatedPrintTime);
 
 			// show the filament used
-			AddSetting("Filament Length".Localize(), gcodeDetails.FilamentUsed, this);
+			AddSetting("Filament Length".Localize(), gcodeDetails.FilamentUsed);
 
-			AddSetting("Filament Volume".Localize(), gcodeDetails.FilamentVolume, this);
-
-			massTextWidget = AddSetting("Estimated Mass".Localize(), gcodeDetails.EstimatedMass, this);
+			AddSetting("Filament Volume".Localize(), gcodeDetails.FilamentVolume);
 
 			// Cost info is only displayed when available - conditionalCostPanel is invisible when cost <= 0
-			var conditionalCostPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				Visible = gcodeDetails.TotalCost > 0
-			};
-			this.AddChild(conditionalCostPanel);
+			TextWidget costTextWidget = AddSetting("Estimated Cost".Localize(), gcodeDetails.EstimatedCost);
 
-			costTextWidget = AddSetting("Estimated Cost".Localize(), gcodeDetails.EstimatedCost, conditionalCostPanel);
+			TextWidget massTextWidget = AddSetting("Estimated Mass".Localize(), gcodeDetails.EstimatedMass);
+
+			var conditionalCostContainer = costTextWidget.Parent;
+			conditionalCostContainer.Visible = gcodeDetails.TotalCost > 0;
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
@@ -100,7 +72,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						|| stringEvent.Data == SettingsKey.filament_density)
 					{
 						massTextWidget.Text = gcodeDetails.EstimatedMass;
-						conditionalCostPanel.Visible = gcodeDetails.TotalCost > 0;
+						conditionalCostContainer.Visible = gcodeDetails.TotalCost > 0;
 
 						if (gcodeDetails.TotalCost > 0)
 						{
@@ -109,6 +81,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 			}, ref unregisterEvents);
+
+			CleanupBorders(this);
+		}
+
+		public static void CleanupBorders(GuiWidget guiWidget)
+		{
+			var firstItem = guiWidget.Children<SettingsItem>().First();
+			firstItem.Border = firstItem.Border.Clone(top: 1);
+
+			var lastItem = guiWidget.Children<SettingsItem>().Last();
+			lastItem.Border = lastItem.Border.Clone(bottom: 0);
+		}
+
+		TextWidget AddSetting(string title, string value)
+		{
+			var textWidget = new TextWidget(value, textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
+			{
+				AutoExpandBoundsToText = true,
+				VAnchor = VAnchor.Center
+			};
+
+			var settingsItem = new SettingsItem(
+				title,
+				textWidget,
+				theme,
+				enforceGutter: false);
+
+			this.AddChild(settingsItem);
+
+			return textWidget;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

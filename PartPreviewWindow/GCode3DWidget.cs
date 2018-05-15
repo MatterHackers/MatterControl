@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				loadedGCodeSection.AddChild(
 					new SectionWidget(
 						"Details".Localize(),
-						new GCodeDetailsView(new GCodeDetails(printer, printer.Bed.LoadedGCode), theme.FontSize12, theme.FontSize9)
+						new GCodeDetailsView(new GCodeDetails(printer, printer.Bed.LoadedGCode), theme)
 						{
 							HAnchor = HAnchor.Stretch,
 							Margin = new BorderDouble(bottom: 3),
@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				loadedGCodeSection.AddChild(
 					new SectionWidget(
 						"Layer".Localize(),
-						new GCodeLayerDetailsView(new GCodeDetails(printer, printer.Bed.LoadedGCode), sceneContext, theme.FontSize12, theme.FontSize9)
+						new GCodeLayerDetailsView(new GCodeDetails(printer, printer.Bed.LoadedGCode), sceneContext, theme)
 						{
 							HAnchor = HAnchor.Stretch,
 							Margin = new BorderDouble(bottom: 3),

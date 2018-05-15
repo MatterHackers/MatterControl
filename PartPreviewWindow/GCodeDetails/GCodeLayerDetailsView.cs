@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,57 +28,28 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.RenderOpenGl;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class GCodeLayerDetailsView : FlowLayoutWidget
 	{
-		public GCodeLayerDetailsView(GCodeDetails gcodeDetails, BedConfig sceneContext, int dataPointSize, int headingPointSize)
+		private ThemeConfig theme;
+
+		public GCodeLayerDetailsView(GCodeDetails gcodeDetails, BedConfig sceneContext, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
-			var margin = new BorderDouble(0, 9, 0, 3);
+			this.theme = theme;
 
-			// local function to add setting
-			TextWidget AddSetting(string title, string value, GuiWidget parentWidget)
-			{
-				parentWidget.AddChild(
-					new TextWidget(title + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: headingPointSize)
-					{
-						HAnchor = HAnchor.Left
-					});
-
-				var textWidget = new TextWidget(value, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: dataPointSize)
-				{
-					HAnchor = HAnchor.Left,
-					Margin = margin,
-					AutoExpandBoundsToText = true
-				};
-
-				parentWidget.AddChild(textWidget);
-
-				return textWidget;
-			}
-
-			GuiWidget layerIndex = AddSetting("Number".Localize(), "", this);
-			GuiWidget layerTime = AddSetting("Time".Localize(), "", this);
-			GuiWidget layerTimeToHere = AddSetting("Time From Start".Localize(), "", this);
-			GuiWidget layerTimeFromHere = AddSetting("Time to End".Localize(), "", this);
-			GuiWidget layerHeight = AddSetting("Height".Localize(), "", this);
-			GuiWidget layerWidth = AddSetting("Layer Top".Localize(), "", this);
-			GuiWidget layerFanSpeeds = AddSetting("Fan Speed".Localize(), "", this);
+			GuiWidget layerIndex = AddSetting("Number".Localize(), "");
+			GuiWidget layerTime = AddSetting("Time".Localize(), "");
+			GuiWidget layerTimeToHere = AddSetting("Time From Start".Localize(), "");
+			GuiWidget layerTimeFromHere = AddSetting("Time to End".Localize(), "");
+			GuiWidget layerHeight = AddSetting("Height".Localize(), "");
+			GuiWidget layerWidth = AddSetting("Layer Top".Localize(), "");
+			GuiWidget layerFanSpeeds = AddSetting("Fan Speed".Localize(), "");
 
 			void UpdateLayerDisplay(object sender, EventArgs e)
 			{
@@ -93,8 +64,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			sceneContext.ActiveLayerChanged += UpdateLayerDisplay;
+
 			// and do the initial setting
 			UpdateLayerDisplay(this, null);
+
+			GCodeDetailsView.CleanupBorders(this);
+		}
+
+		TextWidget AddSetting(string title, string value)
+		{
+			var textWidget = new TextWidget(value, textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
+			{
+				AutoExpandBoundsToText = true,
+				VAnchor = VAnchor.Center
+			};
+
+			var settingsItem = new SettingsItem(
+				title,
+				textWidget,
+				theme,
+				enforceGutter: false);
+
+			this.AddChild(settingsItem);
+
+			return textWidget;
 		}
 	}
 }
