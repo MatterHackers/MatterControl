@@ -33,6 +33,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.UI.TreeView;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -51,7 +52,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private View3DWidget view3DWidget;
 		private InteractiveScene scene;
 		private PrinterConfig printer;
-		private SectionWidget editorSection;
 		private TextButton editButton;
 
 		private GuiWidget editorPanel;
@@ -199,7 +199,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Padding = new BorderDouble(top: 10)
 			});
 
-			editorSection = new SectionWidget("Editor", editorColumn, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true);
+			var editorSection = new SectionWidget("Editor".Localize(), editorColumn, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true);
 			this.ContentPanel.AddChild(editorSection);
 
 			var colorSection = new SectionWidget(
@@ -312,6 +312,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
+			if (rootSelection.Children.Count > 0)
+			{
+				editorPanel.AddChild(GetPartTreeView(rootSelection));
+			}
+
 			foreach (var scopeItem in scope)
 			{
 				var selectedItem = scopeItem.item;
@@ -399,6 +404,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					editorWidget.Margin = editorWidget.Margin.Clone(bottom: 15);
 				}
 			}
+		}
+
+		private GuiWidget GetPartTreeView(IObject3D rootSelection)
+		{
+			var treeView = new TreeView(10, 250)
+			{
+				HAnchor = HAnchor.Stretch,
+			};
+
+			int count = 1;
+			treeView.SuspendLayout();
+			foreach (var child in rootSelection.Children)
+			{
+				treeView.Nodes.Add(new TreeNode()
+				{
+					Text = string.IsNullOrWhiteSpace(child.Name) ? $"Item {count++}" : child.Name,
+					Tag = child
+				});
+			}
+			treeView.ResumeLayout();
+
+			var partTreeContainer = new SectionWidget("Part Details".Localize(), treeView, theme, serializationKey: UserSettingsKey.EditorPanelPartTree, defaultExpansion: true);
+
+			return partTreeContainer;
 		}
 
 		public void Save(ILibraryItem item, IObject3D content)
