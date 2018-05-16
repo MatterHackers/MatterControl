@@ -211,6 +211,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			}, ref unregisterEvents);
 
+			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) =>
+			{
+				var activePrinter = ApplicationController.Instance.ActivePrinter;
+
+				// If ActivePrinter has been nulled and a printer tab is open, close it
+				var tab1 = tabControl.AllTabs.Skip(1).FirstOrDefault();
+				if ((activePrinter == null || !activePrinter.Settings.PrinterSelected)
+					&& tab1?.TabContent is PrinterTabPage)
+				{
+					tabControl.RemoveTab(tab1);
+				}
+				else
+				{
+					this.CreatePrinterTab(activePrinter, theme, activePrinter.Settings.GetValue(SettingsKey.printer_name));
+				}
+			}, ref unregisterEvents);
+
 			ApplicationController.Instance.NotifyPrintersTabRightElement(extensionArea);
 
 			// Show fixed start page
@@ -235,13 +252,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		internal ChromeTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)
+		private ChromeTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)
 		{
 			// Printer page is in fixed position
 			var tab1 = tabControl.AllTabs.Skip(1).FirstOrDefault();
 
-			PrinterTabPage printerTabPage = tab1?.TabContent as PrinterTabPage;
-
+			var printerTabPage = tab1?.TabContent as PrinterTabPage;
 			if (printerTabPage == null
 				|| printerTabPage.printer != printer)
 			{
