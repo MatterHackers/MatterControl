@@ -218,10 +218,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					UiThread.RunOnIdle(async () =>
 					{
 						var printer = await ProfileManager.Instance.LoadPrinter();
-
 						printer.ViewState.ViewMode = PartViewMode.Model;
-
-						partPreviewContent.CreatePrinterTab(printer, theme, printer.Settings.GetValue(SettingsKey.printer_name));
 
 						// Load empty plate
 						await printer.Bed.LoadContent(
@@ -252,13 +249,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 								await ProfileManager.Instance.LoadPrinterOpenItem(item);
 
 								var printer = ApplicationController.Instance.ActivePrinter;
-
 								printer.ViewState.ViewMode = PartViewMode.Model;
-
-								partPreviewContent.CreatePrinterTab(
-									printer,
-									theme,
-									printer.Settings.GetValue(SettingsKey.printer_name));
 							});
 						}
 					};
