@@ -82,21 +82,27 @@ namespace MatterHackers.MatterControl
 			return null;
 		}
 
+		public static double GetFadeInOutPulseRatio(double elapsedTime, double pulseTime)
+		{
+			double ratio = elapsedTime;
+			while (ratio > pulseTime)
+			{
+				ratio -= pulseTime;
+			}
+			ratio = ratio * 2 / pulseTime;
+			if (ratio > 1)
+			{
+				ratio = 1 - (ratio - 1);
+			}
+
+			return ratio;
+		}
+
 		private void ChangeBackgroundColor()
 		{
 			if (widgetToHighlight != null)
 			{
-				double time = timeSinceStart.Elapsed.TotalSeconds;
-				while (time > pulseTime)
-				{
-					time -= pulseTime;
-				}
-				time = time * 2 / pulseTime;
-				if (time > 1)
-				{
-					time = 1 - (time - 1);
-				}
-
+				double time = GetFadeInOutPulseRatio(timeSinceStart.Elapsed.TotalSeconds, pulseTime);
 				double lightnessMultiplier = Quadratic.InOut(time);
 
 				widgetToHighlight.BackgroundColor = startColor.AdjustLightness(1 + lightnessChange * lightnessMultiplier).ToColor();

@@ -184,17 +184,54 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			printer.ViewState.ViewModeChanged += (s, e) =>
 			{
+				RadioIconButton activeButton = null;
 				if (e.ViewMode == PartViewMode.Layers2D)
 				{
-					this.layers2DButton.Checked = true;
+					activeButton = layers2DButton;
 				}
 				else if (e.ViewMode == PartViewMode.Layers3D)
 				{
-					layers3DButton.Checked = true;
+					activeButton = layers3DButton;
 				}
 				else
 				{
-					modelViewButton.Checked = true;
+					activeButton = modelViewButton;
+				}
+
+				if(activeButton != null)
+				{
+					activeButton.Checked = true;
+
+					if (!buttonIsBeingClicked)
+					{
+						double displayTime = 2;
+						double pulseTime = .5;
+						double totalSeconds = 0;
+						Color backgroundColor = activeButton.BackgroundColor;
+						Color hightlightColor = theme.Colors.PrimaryAccentColor.AdjustContrast(theme.Colors.PrimaryTextColor, 6).ToColor();
+						// Show a highlite on the button as the user did not click it
+						Animation flashBackground = null;
+						flashBackground = new Animation()
+						{
+							DrawTarget = activeButton,
+							FramesPerSecond = 10,
+							Update = (s1, updateEvent) =>
+							{
+								totalSeconds += updateEvent.SecondsPassed;
+								if (totalSeconds < displayTime)
+								{
+									double blend = AttentionGetter.GetFadeInOutPulseRatio(totalSeconds, pulseTime);
+									activeButton.BackgroundColor = new Color(hightlightColor, (int)(blend * 255));
+								}
+								else
+								{
+									activeButton.BackgroundColor = backgroundColor;
+									flashBackground.Stop();
+								}
+							}
+						};
+						flashBackground.Start();
+					}
 				}
 			};
 
@@ -207,8 +244,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}, ref unregisterEvents);
 		}
 
+		bool buttonIsBeingClicked;
 		private void SwitchModes_Click(object sender, MouseEventArgs e)
 		{
+			buttonIsBeingClicked = true;
 			if (sender is GuiWidget widget)
 			{
 				if (widget.Name == "Layers2D Button")
@@ -226,6 +265,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					printer.ViewState.ViewMode = PartViewMode.Model;
 				}
 			}
+			buttonIsBeingClicked = false;
 		}
 
 		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
