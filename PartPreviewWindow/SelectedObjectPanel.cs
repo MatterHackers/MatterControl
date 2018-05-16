@@ -312,7 +312,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			if (rootSelection.Children.Count > 0)
+			if (scope.Count() > 1)
 			{
 				editorPanel.AddChild(GetPartTreeView(rootSelection));
 			}
