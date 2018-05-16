@@ -73,12 +73,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			sectionWidget.ContentPanel.Descendants<SettingsRow>().First().Border = 0;
 
-			this.AddChild(
-				loadedGCodeSection = new FlowLayoutWidget(FlowDirection.TopToBottom)
-				{
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Fit
-				});
+			var scrollable = new ScrollableWidget(true)
+			{
+				Name = "editorPanel",
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+			};
+
+			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
+
+			scrollable.AddChild(loadedGCodeSection = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			});
+
+			this.AddChild(scrollable);
 
 			this.RefreshGCodeDetails(printer);
 

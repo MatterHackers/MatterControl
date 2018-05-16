@@ -80,22 +80,18 @@ namespace MatterHackers.MatterControl
 		public string Key;
 	}
 
-	public class DesignSpaceGuid : DialogPage
+	public class DesignSpaceGuide : DialogPage
 	{
 		private List<GuideAssets> whatsNewGuides = new List<GuideAssets>();
 		private List<GuideAssets> allAvailableGuides = new List<GuideAssets>();
 
-		public DesignSpaceGuid()
-			: this("", "")
-		{
-		}
 
-		public DesignSpaceGuid(string preSelectTabName, string guideKey)
-		: base("Close".Localize())
+		public DesignSpaceGuide(string preSelectTabName, string guideKey)
+			: base("Close".Localize())
 		{
 			WindowSize = new Vector2(800, 600);
 
-			allAvailableGuides = JsonConvert.DeserializeObject<List<GuideAssets>>(AggContext.StaticData.ReadAllText(Path.Combine("OEMSettings", "HelpGuides.json")));
+			allAvailableGuides = ApplicationController.Instance.FeatureGuides;
 
 			// TODO: Guides document should have separate properties for differing top level containers
 			whatsNewGuides = allAvailableGuides;

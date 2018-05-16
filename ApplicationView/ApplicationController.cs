@@ -115,6 +115,8 @@ namespace MatterHackers.MatterControl
 
 	public class ApplicationController
 	{
+		public List<GuideAssets> FeatureGuides { get; set; } = JsonConvert.DeserializeObject<List<GuideAssets>>(AggContext.StaticData.ReadAllText(Path.Combine("OEMSettings", "HelpGuides.json")));
+
 		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 
 		public ThemeConfig Theme { get; set; }
@@ -1002,7 +1004,7 @@ namespace MatterHackers.MatterControl
 			if (!UserSettings.Instance.HasLookedAtWhatsNew()
 				&& OemSettings.Instance.ShowShopButton) // this is a hack to make them not mess up the tests
 			{
-				UiThread.RunOnIdle(() => DialogWindow.Show(new DesignSpaceGuid("What's New Tab", "")));
+				UiThread.RunOnIdle(() => DialogWindow.Show(new DesignSpaceGuide("What's New Tab", "")));
 				return true;
 			}
 
@@ -2198,17 +2200,15 @@ namespace MatterHackers.MatterControl
 			// Load theme
 			ApplicationController.LoadTheme();
 
-			var theme = ApplicationController.Instance.Theme;
-
 			var overlay = new GuiWidget()
 			{
-				BackgroundColor = theme.TabBarBackground
+				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
 			};
 			overlay.AnchorAll();
 
 			systemWindow.AddChild(overlay);
 
-			var mutedAccentColor = new Color(theme.Colors.PrimaryAccentColor, 185).OverlayOn(Color.White).ToColor();
+			var mutedAccentColor = new Color(ActiveTheme.Instance.PrimaryAccentColor, 185).OverlayOn(Color.White).ToColor();
 
 			var spinner = new LogoSpinner(overlay, rotateX: -0.05)
 			{
@@ -2225,7 +2225,7 @@ namespace MatterHackers.MatterControl
 			};
 			overlay.AddChild(progressPanel);
 
-			progressPanel.AddChild(statusText = new TextWidget("", textColor: theme.Colors.PrimaryTextColor)
+			progressPanel.AddChild(statusText = new TextWidget("", textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				MinimumSize = new Vector2(200, 30),
 				HAnchor = HAnchor.Center,
@@ -2235,7 +2235,7 @@ namespace MatterHackers.MatterControl
 			progressPanel.AddChild(progressBar = new ProgressBar()
 			{
 				FillColor = mutedAccentColor,
-				BorderColor = theme.GetBorderColor(75),
+				BorderColor = Color.Gray, // theme.GetBorderColor(75),
 				Height = 11,
 				Width = 230,
 				HAnchor = HAnchor.Center,
@@ -2475,6 +2475,8 @@ namespace MatterHackers.MatterControl
 							progressPanel.Border = 1;
 							progressPanel.BorderColor = Color.Red;
 
+							var theme = new ThemeConfig();
+
 							progressPanel.AddChild(
 								new TextWidget("Startup Failure".Localize() + ":", pointSize: theme.DefaultFontSize, textColor: errorTextColor));
 
@@ -2503,7 +2505,6 @@ namespace MatterHackers.MatterControl
 				});
 			};
 
-			// Block indefinitely
 			ReportStartupProgress(0, "ShowAsSystemWindow");
 
 			return systemWindow;
