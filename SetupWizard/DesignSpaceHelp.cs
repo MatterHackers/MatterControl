@@ -80,13 +80,13 @@ namespace MatterHackers.MatterControl
 		public string Key;
 	}
 
-	public class DesignSpaceGuid : DialogPage
+	public class DesignSpaceGuide : DialogPage
 	{
 		private List<GuideAssets> whatsNewGuides = new List<GuideAssets>();
 		private List<GuideAssets> allAvailableGuides = new List<GuideAssets>();
 
 
-		public DesignSpaceGuid(string preSelectTabName, string guideKey)
+		public DesignSpaceGuide(string preSelectTabName, string guideKey)
 			: base("Close".Localize())
 		{
 			WindowSize = new Vector2(800, 600);

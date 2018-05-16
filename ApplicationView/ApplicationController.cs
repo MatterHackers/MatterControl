@@ -1004,7 +1004,7 @@ namespace MatterHackers.MatterControl
 			if (!UserSettings.Instance.HasLookedAtWhatsNew()
 				&& OemSettings.Instance.ShowShopButton) // this is a hack to make them not mess up the tests
 			{
-				UiThread.RunOnIdle(() => DialogWindow.Show(new DesignSpaceGuid("What's New Tab", "")));
+				UiThread.RunOnIdle(() => DialogWindow.Show(new DesignSpaceGuide("What's New Tab", "")));
 				return true;
 			}
 
