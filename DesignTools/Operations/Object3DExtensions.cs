@@ -47,6 +47,16 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return object3D.Parent == null;
 		}
 
+		public static void CopyProperties(this IObject3D copyTo, IObject3D copyFrom)
+		{
+			copyTo.Matrix = copyFrom.Matrix;
+			copyTo.Color = copyFrom.Color;
+			copyTo.MaterialIndex = copyFrom.MaterialIndex;
+			copyTo.Name = copyFrom.Name;
+			copyTo.OutputType = copyFrom.OutputType;
+			copyTo.Visible = copyFrom.Visible;
+		}
+
 		public static IObject3D Translate(this IObject3D objectToTranslate, double x = 0, double y = 0, double z = 0, string name = "")
 		{
 			return objectToTranslate.Translate(new Vector3(x, y, z), name);

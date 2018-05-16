@@ -37,6 +37,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -75,10 +76,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override void Apply(UndoBuffer undoBuffer)
 		{
 			// change this from a text object to a group
-			var newContainer = new Object3D()
-			{
-				Matrix = this.Matrix
-			};
+			var newContainer = new Object3D();
+			newContainer.CopyProperties(this);
 			foreach (var child in this.Children)
 			{
 				newContainer.Children.Add(child.Clone());
