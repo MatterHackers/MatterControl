@@ -102,11 +102,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// add in the update available button
 			Button updateAvailableButton = theme.LinkButtonFactory.Generate("Update Available".Localize());
+			updateAvailableButton.Visible = false;
 
 			// make the function inline so we don't have to create members for the buttons
 			EventHandler SetLinkButtonsVisability = (s, e) =>
 			{
-				if(UserSettings.Instance.HasLookedAtWhatsNew())
+				if (UserSettings.Instance.HasLookedAtWhatsNew())
 				{
 					// hide it
 					seeWhatsNewButton.Visible = false;
@@ -126,6 +127,58 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			UserSettings.Instance.Changed += SetLinkButtonsVisability;
 			Closed += (s, e) => UserSettings.Instance.Changed -= SetLinkButtonsVisability;
+
+			RunningInterval showUpdateInterval = null;
+			updateAvailableButton.VisibleChanged += (s, e) =>
+			{
+				if (!updateAvailableButton.Visible)
+				{
+					if(showUpdateInterval != null)
+					{
+						showUpdateInterval.Continue = false;
+						showUpdateInterval = null;
+					}
+					return;
+				}
+
+				showUpdateInterval = UiThread.SetInterval(() =>
+				{
+					double displayTime = 1;
+					double pulseTime = 1;
+					double totalSeconds = 0;
+					var textWidgets = updateAvailableButton.Descendants<TextWidget>().Where((w) => w.Visible == true).ToArray();
+					Color startColor = theme.Colors.PrimaryTextColor;
+					// Show a highlite on the button as the user did not click it
+					Animation flashBackground = null;
+					flashBackground = new Animation()
+					{
+						DrawTarget = updateAvailableButton,
+						FramesPerSecond = 10,
+						Update = (s1, updateEvent) =>
+						{
+							totalSeconds += updateEvent.SecondsPassed;
+							if (totalSeconds < displayTime)
+							{
+								double blend = AttentionGetter.GetFadeInOutPulseRatio(totalSeconds, pulseTime);
+								var color = new Color(startColor, (int)((1 - blend) * 255));
+								foreach (var textWidget in textWidgets)
+								{
+									textWidget.TextColor = color;
+								}
+							}
+							else
+							{
+								foreach (var textWidget in textWidgets)
+								{
+									textWidget.TextColor = startColor;
+								}
+								flashBackground.Stop();
+							}
+						}
+					};
+					flashBackground.Start();
+				}, 120);
+			};
 
 			updateAvailableButton.Name = "Update Available Link";
 			SetLinkButtonsVisability(this, null);

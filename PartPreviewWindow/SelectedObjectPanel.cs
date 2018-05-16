@@ -406,23 +406,70 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		private void AddTree(TreeView treeView, IObject3D item, TreeNode parent)
+		{
+			var node = AddItem(treeView, item, parent);
+
+			foreach (var child in item.Children)
+			{
+				AddTree(treeView, child, node);
+			}
+		}
+
+		private Dictionary<IObject3D, TreeNode> selectionTreeNodes = new Dictionary<IObject3D, TreeNode>();
+
+		private string BuildDefaultName(IObject3D item)
+		{
+			string nameToWrite = "";
+			if (!string.IsNullOrEmpty(item.Name))
+			{
+				nameToWrite += $"{item.GetType().Name} - {item.Name}";
+			}
+			else
+			{
+				nameToWrite += $"{item.GetType().Name}";
+			}
+
+			return nameToWrite;
+		}
+
+		private TreeNode AddItem(TreeView treeView, IObject3D item, TreeNode parentNode)
+		{
+			var node = new TreeNode()
+			{
+				Text = BuildDefaultName(item),
+				Tag = item,
+				TextColor = theme.Colors.PrimaryTextColor,
+				PointSize = theme.DefaultFontSize
+			};
+			selectionTreeNodes.Add(item, node);
+
+			if (parentNode == null)
+			{
+				treeView.Nodes.Add(node);
+				node.Expand();
+			}
+			else
+			{
+				parentNode.Nodes.Add(node);
+				parentNode.Expand();
+			}
+
+			return node;
+		}
+
 		private GuiWidget GetPartTreeView(IObject3D rootSelection)
 		{
 			var treeView = new TreeView(10, 250)
 			{
 				HAnchor = HAnchor.Stretch,
+				TextColor = theme.Colors.PrimaryTextColor,
+				PointSize = theme.DefaultFontSize
 			};
 
-			int count = 1;
 			treeView.SuspendLayout();
-			foreach (var child in rootSelection.Children)
-			{
-				treeView.Nodes.Add(new TreeNode()
-				{
-					Text = string.IsNullOrWhiteSpace(child.Name) ? $"Item {count++}" : child.Name,
-					Tag = child
-				});
-			}
+			selectionTreeNodes.Clear();
+			AddTree(treeView, rootSelection, null);
 			treeView.ResumeLayout();
 
 			var partTreeContainer = new SectionWidget("Part Details".Localize(), treeView, theme, serializationKey: UserSettingsKey.EditorPanelPartTree, defaultExpansion: true);
