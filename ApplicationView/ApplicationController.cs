@@ -115,6 +115,8 @@ namespace MatterHackers.MatterControl
 
 	public class ApplicationController
 	{
+		public List<GuideAssets> FeatureGuides { get; set; } = new List<GuideAssets>();
+
 		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 
 		public ThemeConfig Theme { get; set; }
