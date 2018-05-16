@@ -22,6 +22,7 @@ namespace MatterHackers.MatterControl
 		public const string CredentialsInvalidReason = nameof(CredentialsInvalidReason);
 		public const string defaultRenderSetting = nameof(defaultRenderSetting);
 		public const string DisplayedTip_LoadFilament = nameof(DisplayedTip_LoadFilament);
+		public const string EditorPanelPartTree = nameof(EditorPanelPartTree);
 		public const string EditorPanelExpanded = nameof(EditorPanelExpanded);
 		public const string GCodeLineColorStyle = nameof(GCodeLineColorStyle);
 		public const string GcodeModelView = nameof(GcodeModelView);
