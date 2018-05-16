@@ -682,12 +682,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				});
 		}
 
-		public static void LibraryAddSelectionToQueue(AutomationRunner testRunner)
-		{
-			testRunner.ClickByName("Print Library Overflow Menu");
-			testRunner.ClickByName("Add to Queue Menu Item");
-		}
-
 		public static void LibraryEditSelectedItem(AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Edit Menu Item");
