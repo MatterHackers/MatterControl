@@ -111,11 +111,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return value;
 		}
 
-		public double ParseDoubleFromRawValue(string canonicalSettingsName, double valueOnError = 0)
-		{
-			return ParseDouble(ActiveSliceSettings.Instance.GetValue(canonicalSettingsName), valueOnError);
-		}
-
 		public string ExportedName { get; }
 
 		public string CanonicalSettingsName { get; }
@@ -542,12 +537,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-
+				// When the state is store in mm, determine and use the value in (counted) units i.e. round distance up to layer count
 				if (base.Value.Contains("mm"))
 				{
 					string withoutMm = base.Value.Replace("mm", "");
 					string distanceString = ActiveSliceSettings.Instance.GetValue(keyToUseAsDenominatorForCount);
 					double denominator = ParseDouble(distanceString, 1);
+
 					int layers = (int)(ParseDouble(withoutMm) / denominator + .5);
 					return layers.ToString();
 				}

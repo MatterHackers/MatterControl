@@ -103,9 +103,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(sliceButton);
 
 			// Add vertical separator
-			this.AddChild(new VerticalLine(50)
+			this.AddChild(new ToolbarSeparator(theme)
 			{
-				Margin = new BorderDouble(3, 0),
 				VAnchor = VAnchor.Absolute,
 				Height = theme.ButtonHeight,
 			});

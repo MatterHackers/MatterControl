@@ -74,7 +74,8 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		public bool InvertIcons => this.Colors.IsDarkTheme;
 
-		public BorderDouble ButtonSpacing { get; set; } = new BorderDouble(3, 0, 0, 0);
+		public BorderDouble ButtonSpacing { get; }
+
 		public BorderDouble ToolbarPadding { get; set; } = 3;
 
 		public LinkButtonFactory LinkButtonFactory { get; private set; }
@@ -113,6 +114,7 @@ namespace MatterHackers.MatterControl
 
 		public Color ThumbnailBackground { get; set; }
 		public Color AccentMimimalOverlay { get; set; }
+		public BorderDouble SeparatorMargin { get; }
 
 		public GuiWidget CreateSearchButton()
 		{
@@ -124,6 +126,8 @@ namespace MatterHackers.MatterControl
 
 		public ThemeConfig()
 		{
+			this.ButtonSpacing = new BorderDouble(right: 3);
+			this.SeparatorMargin = (this.ButtonSpacing * 2).Clone(left: this.ButtonSpacing.Right);
 		}
 
 		public void RebuildTheme(IThemeColors colors)

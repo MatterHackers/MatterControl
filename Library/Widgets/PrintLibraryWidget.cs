@@ -164,9 +164,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit | VAnchor.Center,
+				Margin = theme.ButtonSpacing,
 				Name = "Show Folders Toggle",
 				Checked = UserSettings.Instance.get(UserSettingsKey.ShowContainers) == "1",
 			};
+			showFolders.SetIconMargin(theme.ButtonSpacing);
 			showFolders.CheckedStateChanged += async (s, e) =>
 			{
 				UserSettings.Instance.set(UserSettingsKey.ShowContainers, showFolders.Checked ? "1" : "0");

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Greg Diaz
+Copyright (c) 2018, Greg Diaz, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -39,15 +39,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	public class ShowAuthPanel : DialogPage
 	{
 		public ShowAuthPanel()
-			: base ("Skip".Localize())
+			: base("Skip".Localize())
 		{
 			this.WindowTitle = "Setup Wizard".Localize();
 
-			WrappedTextWidget userSignInPromptLabel = new WrappedTextWidget("Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access".Localize() + ":")
+			contentRow.AddChild(new WrappedTextWidget("Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access".Localize() + ":")
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-			};
-			contentRow.AddChild(userSignInPromptLabel);
+			});
 
 			AddBulletPointAndDescription(contentRow,
 				"Cloud Library".Localize(),
@@ -61,7 +60,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			contentRow.AddChild(new VerticalSpacer());
 
-			CheckBox rememberChoice = new CheckBox("Don't remind me again".Localize(), ActiveTheme.Instance.PrimaryTextColor);
+			var rememberChoice = new CheckBox("Don't remind me again".Localize(), ActiveTheme.Instance.PrimaryTextColor);
 			contentRow.AddChild(rememberChoice);
 			rememberChoice.CheckedStateChanged += (s, e) =>
 			{
@@ -70,30 +69,35 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			this.SetCancelButtonName("Connection Wizard Skip Sign In Button");
 
-			var createAccountButton = theme.CreateDialogButton("Create Account".Localize());
-			createAccountButton.Name = "Create Account From Connection Wizard Button";
-			createAccountButton.Margin = new Agg.BorderDouble(right: 5);
+			var createAccountButton = new TextButton("Create Account".Localize(), theme)
+			{
+				Name = "Create Account From Connection Wizard Button",
+				Margin = new Agg.BorderDouble(right: 5),
+				BackgroundColor = theme.MinimalShade
+			};
 			createAccountButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle (() => 
-				{
-					WizardWindow.Close();
-					PrinterSetup.ChangeToAccountCreate();
-				});
+				UiThread.RunOnIdle(() =>
+			   {
+				   WizardWindow.Close();
+				   PrinterSetup.ChangeToAccountCreate();
+			   });
 			};
+			this.AddPageAction(createAccountButton);
 
-			var signInButton = theme.CreateDialogButton("Sign In".Localize());
-			signInButton.Name = "Sign In From Connection Wizard Button";
+			var signInButton = new TextButton("Sign In".Localize(), theme)
+			{
+				Name = "Sign In From Connection Wizard Button",
+				BackgroundColor = theme.MinimalShade
+			};
 			signInButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle (() => 
-				{
-					WizardWindow.Close();
-					PrinterSetup.ShowAuthDialog?.Invoke();
-				});
+				UiThread.RunOnIdle(() =>
+			   {
+				   WizardWindow.Close();
+				   PrinterSetup.ShowAuthDialog?.Invoke();
+			   });
 			};
-
-			this.AddPageAction(createAccountButton);
 			this.AddPageAction(signInButton);
 		}
 
@@ -128,4 +132,3 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		}
 	}
 }
- 

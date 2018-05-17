@@ -926,6 +926,7 @@
     "DataEditType": "CHECK_BOX",
     "ReloadUiWhenChanged": true,
     "ShowIfSet": "!sla_printer",
+    "ShowIfSet": "has_fan",
     "DefaultValue": "1"
   },
   {

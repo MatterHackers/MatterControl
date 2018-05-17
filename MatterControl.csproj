@@ -87,6 +87,7 @@
     <Compile Include="PartPreviewWindow\GCodeDetails\GCodeLayerDetailsView.cs" />
     <Compile Include="PartPreviewWindow\GCodeDetails\GCodeOptionsPanel.cs" />
     <Compile Include="PartPreviewWindow\GCodeDetails\IToggleOption.cs" />
+    <Compile Include="PartPreviewWindow\LeftClipFlowLayoutWidget.cs" />
     <Compile Include="PrinterControls\ControlWidgets\CalibrationControls.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingFunctions.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\ProbeCalibrationWizard.cs" />

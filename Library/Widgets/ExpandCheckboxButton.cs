@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -39,9 +40,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		public event EventHandler CheckedStateChanged;
 
-		private ImageWidget imageWidget;
-
-		private GuiWidget imageButton;
+		private IconButton imageButton;
 
 		private ImageBuffer arrowRight;
 
@@ -54,17 +53,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			arrowRight = AggContext.StaticData.LoadIcon("fa-angle-right_12.png", theme.InvertIcons);
 			arrowDown = AggContext.StaticData.LoadIcon("fa-angle-down_12.png", theme.InvertIcons);
 
-			imageButton = new GuiWidget()
+			imageButton = new IconButton(arrowRight, theme)
 			{
-				MinimumSize = new Vector2((expandable) ? theme.ButtonHeight : 10, 20),
+				MinimumSize = new Vector2((expandable) ? theme.ButtonHeight : 10, theme.ButtonHeight),
 				VAnchor = VAnchor.Center,
+				Selectable = false,
 			};
-			imageButton.AddChild(imageWidget = new ImageWidget(arrowRight)
-			{
-				VAnchor = VAnchor.Center,
-				HAnchor = HAnchor.Center,
-				Visible = expandable
-			});
 			this.AddChild(imageButton);
 
 			_expandable = expandable;
@@ -81,6 +75,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
+		internal void SetIconMargin(BorderDouble margin)
+		{
+			imageButton.Margin = margin;
+		}
+
 		private bool _expandable = true;
 		public bool Expandable
 		{
@@ -90,7 +89,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				if (_expandable != value)
 				{
 					_expandable = value;
-					imageWidget.Visible = _expandable;
+
+					imageButton.SetIcon(_expandable ? arrowRight : new ImageBuffer());
 					this.MinimumSize = new Vector2((double)((_expandable) ? this.MinimumSize.X : 10), (double)this.MinimumSize.Y);
 				}
 			}
@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					_checked = value;
 
-					imageWidget.Image = value ? arrowDown : arrowRight;
+					imageButton.SetIcon(value ? arrowDown : arrowRight);
 
 					Invalidate();
 

@@ -46,8 +46,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private static HashSet<Type> ignoredInMenuTypes = new HashSet<Type> { typeof(VerticalLine), typeof(HorizontalLine), typeof(SearchInputBox), typeof(HorizontalSpacer) };
 
 		public OverflowBar(ThemeConfig theme)
+			: base (theme)
 		{
-			this.Padding = theme.ToolbarPadding.Clone(left: 0);
 			this.theme = theme;
 
 			this.OverflowButton = new OverflowMenuButton(this, theme)
@@ -158,7 +158,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return popupMenu;
 				};
 			}
-
 
 			private static ImageWidget CreateOverflowIcon(ThemeConfig theme)
 			{

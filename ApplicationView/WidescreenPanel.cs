@@ -76,22 +76,15 @@ namespace MatterHackers.MatterControl
 			var leftNav = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			leftNav.AnchorAll();
 
-			var toolbar = new Toolbar()
+			leftNav.AddChild(new BrandMenuButton(theme)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
 				BackgroundColor = theme.TabBarBackground,
-				BorderColor = theme.ActiveTabColor,
-				Border = 0 //new BorderDouble(bottom: 2),
-			};
-			toolbar.ActionArea.AddChild(new BrandMenuButton(theme)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
 				Border = new BorderDouble(right: 1),
-				BorderColor = theme.MinimalShade
+				BorderColor = theme.MinimalShade,
+				Padding = theme.ToolbarPadding.Clone(right: 0)
 			});
-			leftNav.AddChild(toolbar);
 
 			var partPreviewContent = new PartPreviewContent()
 			{
@@ -137,7 +130,7 @@ namespace MatterHackers.MatterControl
 			row.AddChild(new IconButton(AggContext.StaticData.LoadIcon("mh-app-logo.png", theme.InvertIcons), theme)
 			{
 				VAnchor = VAnchor.Center,
-				Margin = new BorderDouble(right: 4),
+				Margin = theme.ButtonSpacing,
 				Selectable = false
 			});
 

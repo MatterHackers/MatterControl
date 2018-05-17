@@ -163,10 +163,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(CreateBedButton(sceneContext, theme));
 
-			this.AddChild(new VerticalLine(50)
-			{
-				Margin = 4
-			});
+			this.AddChild(new ToolbarSeparator(theme));
 
 			var homeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", theme.InvertIcons), theme)
 			{
@@ -209,10 +206,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.AddChild(redoButton);
 
-			this.AddChild(new VerticalLine(50)
-			{
-				Margin = 4
-			});
+			this.AddChild(new ToolbarSeparator(theme));
 
 			undoBuffer.Changed += (sender, e) =>
 			{
@@ -260,10 +254,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				rotateButton.Checked = true;
 
 				// Add vertical separator
-				this.AddChild(new VerticalLine(50)
-				{
-					Margin = 3
-				});
+				this.AddChild(new ToolbarSeparator(theme));
 
 				iconPath = Path.Combine("ViewTransformControls", "partSelect.png");
 				partSelectButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 32, 32, theme.InvertIcons), theme)
@@ -284,14 +275,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (namedAction is SceneSelectionSeparator)
 				{
-					var margin = new BorderDouble(3);
-					margin = margin.Clone(left: margin.Left + theme.ButtonSpacing.Left);
-
-					this.AddChild(new VerticalLine(50)
-					{
-						Margin = margin
-					});
-
+					this.AddChild(new ToolbarSeparator(theme));
 					continue;
 				}
 

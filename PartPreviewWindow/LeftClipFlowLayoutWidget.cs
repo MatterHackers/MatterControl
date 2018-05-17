@@ -27,57 +27,45 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	/// <summary>
-	/// A toolbar with an optional right anchored element and an ActionBar child to add actions to the bar
-	/// </summary>
-	public class Toolbar : GuiWidget
+	public class LeftClipFlowLayoutWidget : FlowLayoutWidget
 	{
-		public Toolbar(ThemeConfig theme, GuiWidget rightAnchorItem = null)
+		public int GradientDistance { get; set; } = 5;
+
+		private ImageBuffer gradientBackground;
+
+		public override void OnDrawBackground(Graphics2D graphics2D)
 		{
-			this.Padding = theme.ToolbarPadding;
-
-			this.ActionArea = new FlowLayoutWidget()
+			if (gradientBackground != null)
 			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit | VAnchor.Center
-			};
-
-			base.AddChild(this.ActionArea, 0);
-			this.SetRightAnchorItem(rightAnchorItem);
-		}
-
-		public FlowLayoutWidget ActionArea { get; }
-
-		public GuiWidget RightAnchorItem { get; private set; }
-
-		public void SetRightAnchorItem(GuiWidget rightAnchorItem)
-		{
-			if (rightAnchorItem != null)
-			{
-				rightAnchorItem.HAnchor |= HAnchor.Right;
-				base.AddChild(rightAnchorItem);
+				graphics2D.Render(gradientBackground, this.LocalBounds.Left, 0);
 			}
-
-			this.RightAnchorItem = rightAnchorItem;
+			else
+			{
+				base.OnDrawBackground(graphics2D);
+			}
 		}
 
-		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
+		public override void OnLoad(EventArgs args)
 		{
-			ActionArea.AddChild(childToAdd, indexInChildrenList);
-		}
-	}
+			base.OnLoad(args);
 
-	public class ToolbarSeparator : VerticalLine
-	{
-		public ToolbarSeparator(ThemeConfig theme)
-			: base(50)
-		{
-			Margin = theme.SeparatorMargin;
+			if (this.GradientDistance > 0)
+			{
+				gradientBackground = agg_basics.TrasparentToColorGradientX(
+						(int)this.LocalBounds.Width + this.GradientDistance,
+						(int)this.LocalBounds.Height,
+						this.BackgroundColor,
+						this.GradientDistance);
+
+				gradientBackground.SetRecieveBlender(new BlenderPreMultBGRA());
+			}
 		}
 	}
 }
