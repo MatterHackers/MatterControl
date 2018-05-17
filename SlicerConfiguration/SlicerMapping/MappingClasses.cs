@@ -143,6 +143,40 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
+	public class MappedBrimLoopsSetting : AsCountOrDistance
+	{
+		public MappedBrimLoopsSetting(string canonicalSettingsName, string exportedName, string keyToUseAsDenominatorForCount)
+			: base(canonicalSettingsName, exportedName, keyToUseAsDenominatorForCount)
+		{
+		}
+		public override string Value {
+			get {
+				if (ActiveSliceSettings.Instance.GetValue<bool>("create_brim")) {
+					return base.Value;
+				}
+
+				return "0";
+			}
+		}
+	}
+
+	public class MappedSkirtLoopsSetting : AsCountOrDistance
+	{
+		public MappedSkirtLoopsSetting(string canonicalSettingsName, string exportedName, string keyToUseAsDenominatorForCount)
+			: base(canonicalSettingsName, exportedName, keyToUseAsDenominatorForCount)
+		{
+		}
+		public override string Value {
+			get {
+				if (ActiveSliceSettings.Instance.GetValue<bool>("create_skirt")) {
+					return base.Value;
+				}
+
+				return "0";
+			}
+		}
+	}
+
 	public class Slice3rBedShape : MappedSetting
 	{
 		public Slice3rBedShape(string canonicalSettingsName)
