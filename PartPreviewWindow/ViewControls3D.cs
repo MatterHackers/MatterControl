@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new VerticalLine(50)
 			{
-				Margin = 4
+				Margin = theme.SeparatorMargin
 			});
 
 			var homeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", theme.InvertIcons), theme)
@@ -211,7 +211,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new VerticalLine(50)
 			{
-				Margin = 4
+				Margin = theme.SeparatorMargin
 			});
 
 			undoBuffer.Changed += (sender, e) =>
@@ -262,7 +262,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Add vertical separator
 				this.AddChild(new VerticalLine(50)
 				{
-					Margin = 3
+					Margin = theme.SeparatorMargin
 				});
 
 				iconPath = Path.Combine("ViewTransformControls", "partSelect.png");
@@ -289,7 +289,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					this.AddChild(new VerticalLine(50)
 					{
-						Margin = margin
+						Margin = theme.SeparatorMargin
 					});
 
 					continue;

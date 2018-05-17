@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Add vertical separator
 			this.AddChild(new VerticalLine(50)
 			{
-				Margin = new BorderDouble(3, 0),
+				Margin = theme.SeparatorMargin,
 				VAnchor = VAnchor.Absolute,
 				Height = theme.ButtonHeight,
 			});
