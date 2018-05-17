@@ -53,7 +53,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AnchorAll();
 
-			var extensionArea = new FlowLayoutWidget();
+			var extensionArea = new LeftClipFlowLayoutWidget()
+			{
+				BackgroundColor = theme.TabBarBackground,
+				Padding = new BorderDouble(left: 8, top: 6)
+			};
 
 			tabControl = new ChromeTabs(extensionArea, theme)
 			{

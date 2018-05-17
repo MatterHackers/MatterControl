@@ -159,7 +159,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 			}
 
-
 			private static ImageWidget CreateOverflowIcon(ThemeConfig theme)
 			{
 				return new ImageWidget(AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, theme.InvertIcons))
