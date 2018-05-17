@@ -563,7 +563,6 @@
     <Content Include="application.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="MIConvexHull.xml" />
     <Content Include="StaticData\OEMSettings\AboutPage.html" />
     <Content Include="StaticData\SliceSettings\Layouts.txt" />
     <Content Include="StaticData\SliceSettings\load_filament.txt" />
