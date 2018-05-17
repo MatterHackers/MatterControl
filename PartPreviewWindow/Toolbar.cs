@@ -36,8 +36,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	/// </summary>
 	public class Toolbar : GuiWidget
 	{
-		public Toolbar(GuiWidget rightAnchorItem = null)
+		public Toolbar(ThemeConfig theme, GuiWidget rightAnchorItem = null)
 		{
+			this.Padding = theme.ToolbarPadding;
+
 			this.ActionArea = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch,

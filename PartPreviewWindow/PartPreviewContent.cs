@@ -56,7 +56,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var extensionArea = new LeftClipFlowLayoutWidget()
 			{
 				BackgroundColor = theme.TabBarBackground,
-				Padding = new BorderDouble(left: 8, top: 6)
+				VAnchor = VAnchor.Stretch,
+				Padding = new BorderDouble(left: 8)
 			};
 
 			tabControl = new ChromeTabs(extensionArea, theme)
@@ -71,8 +72,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return new PlusTabPage(this, theme);
 				}
 			};
-			tabControl.TabBar.BackgroundColor = theme.TabBarBackground;
-
 			tabControl.ActiveTabChanged += (s, e) =>
 			{
 				if (this.tabControl.ActiveTab?.TabContent is PartTabPage tabPage)
@@ -85,9 +84,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
+
+			// Force the ActionArea to be as high as ButtonHeight
+			tabControl.TabBar.ActionArea.MinimumSize = new Vector2(0, theme.ButtonHeight);
+			tabControl.TabBar.BackgroundColor = theme.TabBarBackground;
 			tabControl.TabBar.BorderColor = theme.ActiveTabColor;
-			tabControl.TabBar.Padding = new BorderDouble(top: 4);
-			//tabControl.TabBar.Border = new BorderDouble(bottom: 2);
+
+			// Force common padding into top region
+			var padding = tabControl.TabBar.Padding;
+			tabControl.TabBar.Padding = padding.Clone(top: padding.Top * 2, bottom: 0);
+
+			//tabControl.TabBar.Padding = 0;
+			//tabControl.TabBar.ActionArea.Padding = padding.Clone(top: padding.Top * 2, bottom: 0);
+
 
 			Color selectedTabColor = ActiveTheme.Instance.TabLabelSelected;
 

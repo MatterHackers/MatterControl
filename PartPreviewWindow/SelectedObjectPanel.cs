@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Fit
 			};
 
-			var toolbar = new Toolbar()
+			var toolbar = new Toolbar(theme)
 			{
 				Padding = theme.ToolbarPadding,
 				HAnchor = HAnchor.Stretch,
@@ -375,7 +375,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (buttons.Any())
 				{
-					var toolbar = new Toolbar()
+					var toolbar = new Toolbar(theme)
 					{
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Fit,

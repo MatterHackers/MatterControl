@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				TabBar = new Toolbar(rightAnchorItem)
+				TabBar = new Toolbar(theme, rightAnchorItem)
 				{
 					HAnchor = HAnchor.Stretch,
 					VAnchor = VAnchor.Fit

@@ -164,6 +164,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit | VAnchor.Center,
+				Margin = theme.ButtonSpacing,
 				Name = "Show Folders Toggle",
 				Checked = UserSettings.Instance.get(UserSettingsKey.ShowContainers) == "1",
 			};

@@ -52,7 +52,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 			this.MinimumSize = new VectorMath.Vector2(0, 1); // Force some minimum bounds to ensure draw and thus onload (and our local init) are called on startup
-			this.Padding = new BorderDouble(left: 2);
 		}
 
 		public static IEnumerable<ILibraryContainer> ItemAndParents(ILibraryContainer item)

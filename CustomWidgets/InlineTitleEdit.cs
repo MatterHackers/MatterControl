@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private SearchInputBox searchPanel;
 
 		public InlineTitleEdit(string title, ThemeConfig theme, string automationName, bool boldFont = false)
-			: base(null)
+			: base(theme)
 		{
 			this.Padding = theme.ToolbarPadding;
 			this.HAnchor = HAnchor.Stretch;

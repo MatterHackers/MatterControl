@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl
 
 		public void AddPageAction(GuiWidget button)
 		{
-			button.Margin = new BorderDouble(right: theme.ButtonSpacing.Left);
+			button.Margin = theme.ButtonSpacing;
 			footerRow.AddChild(button);
 		}
 
