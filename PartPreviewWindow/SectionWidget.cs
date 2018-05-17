@@ -35,7 +35,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					HAnchor = HAnchor.Stretch,
 					Checked = expanded,
-					Padding = new BorderDouble(0, 5, 0, 6)
+					Padding = 0
 				};
 				checkbox.CheckedStateChanged += (s, e) =>
 				{
