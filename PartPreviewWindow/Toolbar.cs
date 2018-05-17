@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -68,6 +69,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 		{
 			ActionArea.AddChild(childToAdd, indexInChildrenList);
+		}
+	}
+
+	public class ToolbarSeparator : VerticalLine
+	{
+		public ToolbarSeparator(ThemeConfig theme)
+			: base(50)
+		{
+			Margin = theme.SeparatorMargin;
 		}
 	}
 }
