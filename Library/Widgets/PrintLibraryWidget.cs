@@ -168,6 +168,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Name = "Show Folders Toggle",
 				Checked = UserSettings.Instance.get(UserSettingsKey.ShowContainers) == "1",
 			};
+			showFolders.SetIconMargin(theme.ButtonSpacing);
 			showFolders.CheckedStateChanged += async (s, e) =>
 			{
 				UserSettings.Instance.set(UserSettingsKey.ShowContainers, showFolders.Checked ? "1" : "0");
