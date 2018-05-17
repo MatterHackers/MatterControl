@@ -346,7 +346,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					double infillRatio0To1 = ParseDouble(base.Value);
 					// 400 = solid (extruder width)
-					double nozzle_diameter = ParseDoubleFromRawValue(SettingsKey.nozzle_diameter);
+
+					double nozzle_diameter = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
 					double linespacing = 1000;
 					if (infillRatio0To1 > .01)
 					{
