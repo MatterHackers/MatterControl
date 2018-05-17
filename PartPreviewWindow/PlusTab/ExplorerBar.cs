@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 			headingBar.AddChild(theme.CreateHeading(text));
 
-			toolbar = new Toolbar(rightAnchorItem)
+			toolbar = new Toolbar(theme, rightAnchorItem)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
@@ -101,13 +101,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				this.RebuildPlateOptions(partPreviewContent, theme);
 			};
 
+			var forcedHeight = printerSelector.Height;
+
 			// add in the create printer button
 			var createPrinter = new IconButton(AggContext.StaticData.LoadIcon("icon_circle_plus.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "Create Printer",
 				VAnchor = VAnchor.Center,
-				Margin = theme.ButtonSpacing,
-				ToolTipText = "Create Printer".Localize()
+				Margin = theme.ButtonSpacing.Clone(left: theme.ButtonSpacing.Right),
+				ToolTipText = "Create Printer".Localize(),
+				Height = forcedHeight,
+				Width = forcedHeight
 			};
 
 			createPrinter.Click += (s, e) =>
@@ -134,7 +138,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			{
 				VAnchor = VAnchor.Center,
 				Margin = theme.ButtonSpacing,
-				ToolTipText = "Import Printer".Localize()
+				ToolTipText = "Import Printer".Localize(),
+				Height = forcedHeight,
+				Width = forcedHeight
 			};
 			importPrinter.Click += (s, e) =>
 			{
