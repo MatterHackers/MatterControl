@@ -1003,6 +1003,7 @@
     "HelpText": "The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ShowIfSet": "!sla_printer",
+    "EnableIfSet": "create_skirt",
     "Units": "mm",
     "DefaultValue": "0"
   },
@@ -1280,6 +1281,7 @@
     "HelpText": "The distance from the model at which the first skirt loop is drawn. Make this 0 to create an anchor for the part to the bed, also known as a brim.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ShowIfSet": "!sla_printer",
+    "EnableIfSet": "create_skirt",
     "Units": "mm",
     "DefaultValue": "6"
   },
@@ -1297,6 +1299,7 @@
     "HelpText": "The number of loops to draw around all the parts on the bed before starting on the parts. Used mostly to prime the nozzle so the flow is even when the actual print begins.",
     "DataEditType": "INT_OR_MM",
     "ShowIfSet": "!sla_printer",
+    "EnableIfSet": "create_skirt",
     "Units": "count or mm",
     "DefaultValue": "1"
   },
@@ -1305,6 +1308,7 @@
     "PresentationName": "Distance or Loops",
     "HelpText": "The number of loops to draw around parts. Used to provide additional bed adhesion",
     "DataEditType": "INT_OR_MM",
+    "EnableIfSet": "create_brim",
     "Units": "count or mm",
     "DefaultValue": "0"
   },
@@ -1911,5 +1915,21 @@
     "ListValues": "None,M73,M117",
     "DefaultValue": "M117",
     "RebuildGCodeOnChange": false
-  }
+  },
+  {
+    "SlicerConfigName": "create_brim",
+    "PresentationName": "Create Brim",
+    "HelpText": "Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.",
+    "DataEditType": "CHECK_BOX",
+    "DefaultValue": "0",
+    "ReloadUiWhenChanged": true
+  },
+  {
+    "SlicerConfigName": "create_skirt",
+    "PresentationName": "Create Skirt",
+    "HelpText": "Creates an outline around the print, but not attached to it. This is useful for priming the nozzle to ensure the plastic is flowing when the print starts.",
+    "DataEditType": "CHECK_BOX",
+    "DefaultValue": "1",
+    "ReloadUiWhenChanged": true
+  },
 ]

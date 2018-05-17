@@ -133,10 +133,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new AsCountOrDistance("bottom_solid_layers", "numberOfBottomLayers", SettingsKey.layer_height),
 				new AsCountOrDistance("perimeters", "numberOfPerimeters", SettingsKey.nozzle_diameter),
 				new AsCountOrDistance("raft_extra_distance_around_part", "raftExtraDistanceAroundPart", SettingsKey.nozzle_diameter),
-				new AsCountOrDistance("skirts", "numberOfSkirtLoops", SettingsKey.nozzle_diameter),
 				new AsCountOrDistance("support_material_interface_layers", "supportInterfaceLayers", SettingsKey.layer_height),
 				new AsCountOrDistance("top_solid_layers", "numberOfTopLayers", SettingsKey.layer_height),
-				new AsCountOrDistance("brims", "numberOfBrimLoops", SettingsKey.nozzle_diameter),
 				new AsPercentOfReferenceOrDirect(SettingsKey.external_perimeter_extrusion_width, "outsidePerimeterExtrusionWidth", SettingsKey.nozzle_diameter),
 				new OverrideSpeedOnSlaPrinters("external_perimeter_speed", "outsidePerimeterSpeed", "perimeter_speed"),
 				new AsPercentOfReferenceOrDirect(SettingsKey.first_layer_speed, "firstLayerSpeed", "infill_speed"),
@@ -177,7 +175,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedSetting("retract_length_tool_change", "retractionOnExtruderSwitch"),
 				new MappedSetting("retract_restart_extra_toolchange", "unretractExtraOnExtruderSwitch"),
 				new MappedToBoolString("reset_long_extrusion", "resetLongExtrusion"),
-				new MappedSetting("skirt_distance", "skirtDistanceFromObject"),
 				new MappedSetting("slowdown_below_layer_time", "minimumLayerTimeSeconds"),
 				new MappedSetting("support_air_gap", "supportAirGap"),
 				new MappedSetting("support_material_infill_angle", "supportInfillStartingAngle"),
@@ -210,7 +207,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MapLayerChangeGCode("layer_gcode", "layerChangeCode"),
 				new ScaledSingleNumber("fill_density", "infillPercent", 100),
 				new ScaledSingleNumber(SettingsKey.perimeter_start_end_overlap, "perimeterStartEndOverlapRatio", .01),
-				new SkirtLengthMapping("min_skirt_length", "skirtMinLength"),
 				new SupportExtrusionWidth("support_material_extrusion_width","supportExtrusionPercent"),
 				new ValuePlusConstant("raft_extruder", "raftExtruder", -1),
 				new ValuePlusConstant("support_material_extruder", "supportExtruder", -1),
@@ -223,6 +219,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new VisibleButNotMappedToEngine(SettingsKey.laser_speed_100),
 				new VisibleButNotMappedToEngine("selector_ip_address"),
 				new VisibleButNotMappedToEngine("selector_ip_address"),
+				// Skirt settings
+				new VisibleButNotMappedToEngine("create_skirt"),
+				new MappedSkirtLoopsSetting("skirts", "numberOfSkirtLoops", SettingsKey.nozzle_diameter),
+				new MappedSetting("skirt_distance", "skirtDistanceFromObject"),
+				new SkirtLengthMapping("min_skirt_length", "skirtMinLength"),
+				// Brim settings
+				new VisibleButNotMappedToEngine("create_brim"),
+				new MappedBrimLoopsSetting("brims", "numberOfBrimLoops", SettingsKey.nozzle_diameter),
 			};
 
 			matterSliceSettingNames = new HashSet<string>(mappedSettings.Select(m => m.CanonicalSettingsName));
