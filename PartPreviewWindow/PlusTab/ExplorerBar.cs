@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			var forcedHeight = printerSelector.Height;
 
 			// add in the create printer button
-			var createPrinter = new IconButton(AggContext.StaticData.LoadIcon("icon_circle_plus.png", 16, 16, theme.InvertIcons), theme)
+			var createPrinter = new IconButton(AggContext.StaticData.LoadIcon("md-add-circle_18.png", 18, 18, theme.InvertIcons), theme)
 			{
 				Name = "Create Printer",
 				VAnchor = VAnchor.Center,
@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			headingBar.AddChild(createPrinter);
 
 			// add in the import printer button
-			var importPrinter = new IconButton(AggContext.StaticData.LoadIcon("icon_import_white_full.png", 16, 16, theme.InvertIcons), theme)
+			var importPrinter = new IconButton(AggContext.StaticData.LoadIcon("md-import_18.png", 18, 18, theme.InvertIcons), theme)
 			{
 				VAnchor = VAnchor.Center,
 				Margin = theme.ButtonSpacing,
