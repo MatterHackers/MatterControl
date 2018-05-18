@@ -78,6 +78,8 @@ namespace MatterHackers.MatterControl
 
 		public BorderDouble ToolbarPadding { get; set; } = 3;
 
+		public BorderDouble TabbarPadding { get; set; } = new BorderDouble(3, 1);
+
 		public LinkButtonFactory LinkButtonFactory { get; private set; }
 
 		public TextImageButtonFactory WhiteButtonFactory { get; private set; }

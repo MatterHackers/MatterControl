@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl
 				BackgroundColor = theme.TabBarBackground,
 				Border = new BorderDouble(right: 1),
 				BorderColor = theme.MinimalShade,
-				Padding = theme.ToolbarPadding.Clone(right: 0)
+				Padding = theme.TabbarPadding.Clone(right: 0)
 			});
 
 			var partPreviewContent = new PartPreviewContent()
