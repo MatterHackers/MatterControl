@@ -220,12 +220,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new VisibleButNotMappedToEngine("selector_ip_address"),
 				new VisibleButNotMappedToEngine("selector_ip_address"),
 				// Skirt settings
-				new VisibleButNotMappedToEngine("create_skirt"),
 				new MappedSkirtLoopsSetting("skirts", "numberOfSkirtLoops", SettingsKey.nozzle_diameter),
 				new MappedSetting("skirt_distance", "skirtDistanceFromObject"),
 				new SkirtLengthMapping("min_skirt_length", "skirtMinLength"),
 				// Brim settings
-				new VisibleButNotMappedToEngine("create_brim"),
 				new MappedBrimLoopsSetting("brims", "numberOfBrimLoops", SettingsKey.nozzle_diameter),
 			};
 
