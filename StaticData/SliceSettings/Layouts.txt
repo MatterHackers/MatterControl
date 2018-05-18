@@ -57,18 +57,18 @@ Advanced
         slowdown_below_layer_time
         min_print_speed
   Adhesion
-    Raft
-      Raft
-        create_raft
-        raft_extra_distance_around_part
-        raft_air_gap
-        raft_extruder
     Skirt
       Skirt
         create_skirt
         skirts
         skirt_distance
         min_skirt_length
+    Raft
+      Raft
+        create_raft
+        raft_extra_distance_around_part
+        raft_air_gap
+        raft_extruder
     Brim
       Brim
         create_brim
