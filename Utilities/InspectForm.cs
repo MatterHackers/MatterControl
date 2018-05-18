@@ -256,8 +256,6 @@ namespace MatterHackers.MatterControl
 				parentNode.Expand();
 			}
 
-
-
 			return node;
 		}
 

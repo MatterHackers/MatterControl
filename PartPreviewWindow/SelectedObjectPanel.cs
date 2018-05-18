@@ -406,14 +406,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void AddTree(TreeView treeView, IObject3D item, TreeNode parent)
+		private void AddTree(IObject3D item, TreeNode parent)
 		{
-			var node = AddItem(treeView, item, parent);
+			var node = AddItem(item, parent);
 
 			foreach (var child in item.Children)
 			{
-				AddTree(treeView, child, node);
+				AddTree(child, node);
 			}
+		}
+
+		private TreeNode AddItem(IObject3D item, TreeNode parentNode)
+		{
+			var node = new TreeNode()
+			{
+				Text = BuildDefaultName(item),
+				Tag = item,
+				TextColor = theme.Colors.PrimaryTextColor,
+				PointSize = theme.DefaultFontSize,
+				//Expanded = true,
+			};
+			selectionTreeNodes.Add(item, node);
+
+			parentNode.Nodes.Add(node);
+			parentNode.Expanded = true;
+
+			return node;
 		}
 
 		private Dictionary<IObject3D, TreeNode> selectionTreeNodes = new Dictionary<IObject3D, TreeNode>();
@@ -433,46 +451,43 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return nameToWrite;
 		}
 
-		private TreeNode AddItem(TreeView treeView, IObject3D item, TreeNode parentNode)
-		{
-			var node = new TreeNode()
-			{
-				Text = BuildDefaultName(item),
-				Tag = item,
-				TextColor = theme.Colors.PrimaryTextColor,
-				PointSize = theme.DefaultFontSize
-			};
-			selectionTreeNodes.Add(item, node);
-
-			if (parentNode == null)
-			{
-				treeView.Nodes.Add(node);
-				node.Expand();
-			}
-			else
-			{
-				parentNode.Nodes.Add(node);
-				parentNode.Expand();
-			}
-
-			return node;
-		}
-
 		private GuiWidget GetPartTreeView(IObject3D rootSelection)
 		{
-			var treeView = new TreeView(10, 250)
+			var topNode = new TreeNode()
 			{
-				HAnchor = HAnchor.Stretch,
+				Text = BuildDefaultName(rootSelection),
+				Tag = rootSelection,
 				TextColor = theme.Colors.PrimaryTextColor,
 				PointSize = theme.DefaultFontSize
 			};
+
+			// eventually we may want to make this a stretch container of some type
+			var treeViewContainer = new GuiWidget();
+
+			var treeView = new TreeView(topNode)
+			{
+				TextColor = theme.Colors.PrimaryTextColor,
+				PointSize = theme.DefaultFontSize
+			};
+
+			treeViewContainer.AddChild(treeView);
 
 			treeView.SuspendLayout();
 			selectionTreeNodes.Clear();
-			AddTree(treeView, rootSelection, null);
+
+			selectionTreeNodes.Add(rootSelection, topNode);
+
+			// add the children to the root node
+			foreach (var child in item.Children)
+			{
+				AddTree(child, topNode);
+			}
+
 			treeView.ResumeLayout();
 
-			var partTreeContainer = new SectionWidget("Part Details".Localize(), treeView, theme, serializationKey: UserSettingsKey.EditorPanelPartTree, defaultExpansion: true);
+			var partTreeContainer = new SectionWidget("Part Details".Localize(), treeViewContainer, theme, serializationKey: UserSettingsKey.EditorPanelPartTree, defaultExpansion: true);
+			treeViewContainer.VAnchor = VAnchor.Absolute;
+			treeViewContainer.Height = 250;
 
 			return partTreeContainer;
 		}
