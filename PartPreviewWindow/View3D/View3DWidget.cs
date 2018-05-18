@@ -32,6 +32,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -389,12 +390,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void DragOver(Vector2 screenSpaceMousePosition)
 		{
+			IObject3D selectedItem = Scene.SelectedItem;
 			// Move the object being dragged
 			if (this.DragOperationActive
 				&& this.DragDropObject != null)
 			{
 				// Move the DropDropObject the target item
-				DragSelectedObject(localMousePosition: this.TransformFromParentSpace(topMostParent, screenSpaceMousePosition));
+				DragSelectedObject(selectedItem, localMousePosition: this.TransformFromParentSpace(topMostParent, screenSpaceMousePosition));
 			}
 		}
 
@@ -544,6 +546,70 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			hasDrawn = true;
 
 			base.OnDraw(graphics2D);
+
+			if (selectedItem != null)
+			{
+				//DrawTestToGl(graphics2D, selectedItem);
+			}
+		}
+
+		private void DrawTestToGl(Graphics2D graphics2D, IObject3D selectedItem)
+		{
+			ImageBuffer image = new ImageBuffer(256, 256);
+
+			// create gl stuff
+			int fbo, render_buf;
+			GL.GenFramebuffers(1, out fbo);
+			GL.GetError();
+			GL.GenRenderbuffers(1, out render_buf);
+			GL.GetError();
+			GL.BindRenderbuffer(render_buf);
+			GL.GetError();
+			GL.RenderbufferStorage(RenderbufferStorage.Rgba8, image.Width, image.Height);
+			GL.GetError();
+			GL.BindFramebuffer(fbo);
+			GL.GetError();
+			GL.FramebufferRenderbuffer(render_buf);
+			GL.GetError();
+
+			//Before drawing
+			GL.BindFramebuffer(fbo);
+
+			// draw to gl stuff
+			LightingData lighting = new LightingData();
+			var screenSpaceBounds = new RectangleDouble(0, 0, image.Width, image.Height);
+			WorldView world = new WorldView(screenSpaceBounds.Width, screenSpaceBounds.Height);
+			world.Translate(new Vector3(0, 0, 0));
+			world.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, 0)));
+
+			GLHelper.SetGlContext(world, screenSpaceBounds, lighting);
+			GL.GetError();
+			//GL.Clear(ClearBufferMask.ColorBufferBit);
+			foreach (var visibleStuff in selectedItem.VisibleMeshes())
+			{
+				var mesh = visibleStuff.mesh;
+				var obj3D = visibleStuff.object3D;
+				GLHelper.Render(mesh, obj3D.WorldColor(), obj3D.WorldMatrix(), RenderTypes.Shaded);
+			}
+			GLHelper.UnsetGlContext();
+			GL.GetError();
+
+			//after drawing
+			GL.ReadBuffer();
+			GL.GetError();
+			GL.ReadPixels((int)lastMouseMove.X, (int)lastMouseMove.Y, image.Width, image.Height, PixelFormat.Rgba, PixelType.UnsignedByte, image.GetBuffer());
+			GL.GetError();
+
+			// Return to onscreen rendering:
+			//GL.BindFramebuffer(0);
+
+			// Clean up gl stuff
+			GL.DeleteFramebuffers(1, ref fbo);
+			GL.GetError();
+			GL.DeleteRenderbuffers(1, ref render_buf);
+			GL.GetError();
+
+			graphics2D.Render(image, 50, 50);
 		}
 
 		private void AfterDraw3DContent(object sender, DrawEventArgs e)
@@ -664,6 +730,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private ViewControls3DButtons? activeButtonBeforeMouseOverride = null;
 
+		Vector2 lastMouseMove;
 		Matrix4X4 worldMatrixOnMouseDown;
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
@@ -798,6 +865,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
+			IObject3D selectedItem = Scene.SelectedItem;
+
+			lastMouseMove = mouseEvent.Position;
 			// File system Drop validation
 			mouseEvent.AcceptDrop = this.AllowDragDrop()
 					&& mouseEvent.DragFiles?.Count > 0
@@ -826,9 +896,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			if (CurrentSelectInfo.DownOnPart && TrackballTumbleWidget.TransformState == TrackBallTransformType.None)
+			if (CurrentSelectInfo.DownOnPart 
+				&& TrackballTumbleWidget.TransformState == TrackBallTransformType.None
+				&& selectedItem != null)
 			{
-				DragSelectedObject(new Vector2(mouseEvent.X, mouseEvent.Y));
+				DragSelectedObject(selectedItem, new Vector2(mouseEvent.X, mouseEvent.Y));
 			}
 
 			if (DragSelectionInProgress)
@@ -855,7 +927,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
 		}
 
-		public void DragSelectedObject(Vector2 localMousePosition)
+		public void DragSelectedObject(IObject3D selectedItem, Vector2 localMousePosition)
 		{
 			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, localMousePosition);
 			Ray ray = this.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
@@ -865,16 +937,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (CurrentSelectInfo.LastMoveDelta == Vector3.PositiveInfinity)
 				{
-					CalculateDragStartPosition(Scene.SelectedItem, info);
+					CalculateDragStartPosition(selectedItem, info);
 				}
 
 				// move the mesh back to the start position
 				{
 					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-CurrentSelectInfo.LastMoveDelta));
-					Scene.SelectedItem.Matrix *= totalTransform;
+					selectedItem.Matrix *= totalTransform;
 
 					// Invalidate the item to account for the position change
-					Scene.SelectedItem.Invalidate();
+					selectedItem.Invalidate();
 				}
 
 				Vector3 delta = info.HitPosition - CurrentSelectInfo.PlaneDownHitPos;
@@ -883,7 +955,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (snapGridDistance > 0)
 				{
 					// snap this position to the grid
-					AxisAlignedBoundingBox selectedBounds = Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 					double xSnapOffset = selectedBounds.minXYZ.X;
 					// snap the x position
@@ -929,7 +1001,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(delta));
 
-					Scene.SelectedItem.Matrix *= totalTransform;
+					selectedItem.Matrix *= totalTransform;
 
 					CurrentSelectInfo.LastMoveDelta = delta;
 				}
