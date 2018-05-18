@@ -224,6 +224,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					Name = "List Item Thumbnail",
 					BackgroundColor = theme.ThumbnailBackground,
 					Margin = 0,
+					Selectable = false
 				};
 				this.AddChild(imageWidget);
 			}
@@ -238,6 +239,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					Name = "List Item Thumbnail",
 					BackgroundColor = theme.ThumbnailBackground,
 					Margin = 0,
+					Selectable = false
 				};
 				container.AddChild(imageWidget);
 
@@ -247,6 +249,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					EllipsisIfClipped = true,
 					HAnchor = HAnchor.Center,
 					Margin = new BorderDouble(0, 0, 0, 3),
+					Selectable = false
 				};
 
 				text.MaximumSize = new Vector2(maxWidth, 20);
