@@ -418,6 +418,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private TreeNode AddItem(IObject3D item, TreeNode parentNode)
 		{
+			var inmemoryItem = new InMemoryLibraryItem(item.Clone());
+			var iconView = new IconViewItem(new ListViewItem(inmemoryItem, ApplicationController.Instance.Library.PlatingHistory), 16, 16, theme);
+
 			var node = new TreeNode()
 			{
 				Text = BuildDefaultName(item),
@@ -427,6 +430,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				//Expanded = true,
 			};
 			selectionTreeNodes.Add(item, node);
+
+			node.Load += (s, e) =>
+			{
+				iconView.OnLoad(e);
+
+				iconView.ImageSet += (s1, e1) =>
+				{
+					node.Image = iconView.imageWidget.Image;
+				};
+			};
 
 			parentNode.Nodes.Add(node);
 			parentNode.Expanded = true;

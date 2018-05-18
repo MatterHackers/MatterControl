@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private bool mouseDownInBounds = false;
 		private Vector2 mouseDownAt;
 
-		protected ImageWidget imageWidget;
+		public ImageWidget imageWidget;
 		protected int thumbWidth;
 		protected int thumbHeight;
 
@@ -222,6 +222,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
+		public event EventHandler ImageSet;
+
 		protected void SetItemThumbnail(ImageBuffer thumbnail, bool colorize = false)
 		{
 			if (thumbnail != null)
@@ -246,6 +248,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				//var iconWithOverlay = ActiveContainer.DrawOverlay()
 
 				this.imageWidget.Image = thumbnail;
+
+				this.ImageSet?.Invoke(this, null);
 
 				this.Invalidate();
 			}
