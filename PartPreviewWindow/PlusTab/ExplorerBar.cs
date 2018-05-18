@@ -221,19 +221,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				};
 				emptyPlateButton.Click += (s, e) =>
 				{
-					UiThread.RunOnIdle(async () =>
+					if (e.Button == MouseButtons.Left)
 					{
-						var printer = await ProfileManager.Instance.LoadPrinter();
-						printer.ViewState.ViewMode = PartViewMode.Model;
+						UiThread.RunOnIdle(async () =>
+						{
+							var printer = await ProfileManager.Instance.LoadPrinter();
+							printer.ViewState.ViewMode = PartViewMode.Model;
 
 						// Load empty plate
 						await printer.Bed.LoadContent(
-							new EditContext()
-							{
-								ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-								SourceItem = BedConfig.NewPlatingItem(ApplicationController.Instance.Library.PlatingHistory)
-							});
-					});
+								new EditContext()
+								{
+									ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+									SourceItem = BedConfig.NewPlatingItem(ApplicationController.Instance.Library.PlatingHistory)
+								});
+						});
+					}
 				};
 
 				toolbar.AddChild(emptyPlateButton);
@@ -248,7 +251,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 					iconButton.Children.First().Click += (s, e) =>
 					{
-						if (this.PositionWithinLocalBounds(e.X, e.Y))
+						if (this.PositionWithinLocalBounds(e.X, e.Y)
+							&& e.Button == MouseButtons.Left)
 						{
 							UiThread.RunOnIdle(async () =>
 							{
@@ -289,20 +293,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			};
 			emptyPlateButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle(async () =>
+				if (e.Button == MouseButtons.Left)
 				{
-					var workspace = new BedConfig();
-					await workspace.LoadContent(
-						new EditContext()
-						{
-							ContentStore = ApplicationController.Instance.Library.PartHistory,
-							SourceItem = BedConfig.NewPlatingItem(ApplicationController.Instance.Library.PartHistory)
-						});
+					UiThread.RunOnIdle(async () =>
+					{
+						var workspace = new BedConfig();
+						await workspace.LoadContent(
+							new EditContext()
+							{
+								ContentStore = ApplicationController.Instance.Library.PartHistory,
+								SourceItem = BedConfig.NewPlatingItem(ApplicationController.Instance.Library.PartHistory)
+							});
 
-					ApplicationController.Instance.Workspaces.Add(workspace);
+						ApplicationController.Instance.Workspaces.Add(workspace);
 
-					partPreviewContent.CreatePartTab("New Part", workspace, theme);
-				});
+						partPreviewContent.CreatePartTab("New Part", workspace, theme);
+					});
+				}
 			};
 			toolbar.AddChild(emptyPlateButton);
 
@@ -316,7 +323,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 				iconButton.Children.First().Click += async (s, e) =>
 				{
-					if (this.PositionWithinLocalBounds(e.X, e.Y))
+					if (this.PositionWithinLocalBounds(e.X, e.Y)
+						&& e.Button == MouseButtons.Left)
 					{
 						var workspace = new BedConfig();
 						await workspace.LoadContent(

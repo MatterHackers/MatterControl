@@ -150,7 +150,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 							imageWidget.Cursor = Cursors.Hand;
 							imageWidget.Click += (s, e) =>
 							{
-								ApplicationController.Instance.LaunchBrowser(content.link);
+								if (e.Button == MouseButtons.Left)
+								{
+									ApplicationController.Instance.LaunchBrowser(content.link);
+								}
 							};
 						}
 
@@ -187,7 +190,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 								imageWidget.Cursor = Cursors.Hand;
 								imageWidget.Click += (s, e) =>
 								{
-									ApplicationController.Instance.LaunchBrowser(content.link);
+									if (e.Button == MouseButtons.Left)
+									{
+										ApplicationController.Instance.LaunchBrowser(content.link);
+									}
 								};
 							}
 

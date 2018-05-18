@@ -81,13 +81,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 		public override void OnClick(MouseEventArgs mouseEvent)
 		{
-			if (item.url != null)
+			if (mouseEvent.Button == MouseButtons.Left)
 			{
-				ApplicationController.Instance.LaunchBrowser("http://www.matterhackers.com/" + item.url);
-			}
-			else if (item.link != null)
-			{
-				ApplicationController.Instance.LaunchBrowser(item.link);
+				if (item.url != null)
+				{
+					ApplicationController.Instance.LaunchBrowser("http://www.matterhackers.com/" + item.url);
+				}
+				else if (item.link != null)
+				{
+					ApplicationController.Instance.LaunchBrowser(item.link);
+				}
 			}
 
 			base.OnClick(mouseEvent);
