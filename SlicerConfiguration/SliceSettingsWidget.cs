@@ -430,6 +430,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public Dictionary<string, UIField> UIFields => allUiFields;
 
+		// Known sections which have toggle fields that enabled/disable said feature/section
+		private Dictionary<string, string> toggleSwitchSectionKeys = new Dictionary<string, string>
+		{
+			{ "Support", "support_material" },
+			{ "Skirt", "create_skirt" },
+			{ "Raft", "create_raft" },
+			{ "Brim", "create_brim" },
+		};
+
 		public SectionWidget CreateGroupSection(SettingsOrganizer.Group group)
 		{
 			var groupPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -446,7 +455,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				nameSanitizer.Replace(group.Category.Name, ""),
 				nameSanitizer.Replace(group.Name, ""));
 
-			var sectionWidget = new SectionWidget(group.Name.Localize(), groupPanel, theme, serializationKey: userSettingsKey);
+			UIField uiField = null;
+
+			if (toggleSwitchSectionKeys.TryGetValue(group.Name, out string toggleFieldKey))
+			{
+				var settingData = SettingsOrganizer.SettingsData[toggleFieldKey];
+				uiField = CreateToggleFieldForSection(settingData);
+			}
+
+			var sectionWidget = new SectionWidget(group.Name.Localize(), groupPanel, theme, serializationKey: userSettingsKey, rightAlignedContent: uiField?.Content);
 			theme.ApplyBoxStyle(sectionWidget);
 
 			bool firstRow = true;
@@ -488,6 +505,60 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return sectionWidget;
+		}
+
+		private UIField CreateToggleFieldForSection(SliceSettingData settingData)
+		{
+			// Create toggle field for key
+			UIField uiField = new ToggleboxField(theme);
+			bool useDefaultSavePattern = false;
+			uiField.ValueChanged += (s, e) =>
+			{
+				if (e.UserInitiated)
+				{
+					ICheckbox checkbox = uiField.Content as ICheckbox;
+					string checkedKey = (checkbox.Checked) ? "OnValue" : "OffValue";
+
+					// Linked settings should be updated in all cases (user clicked checkbox, user clicked clear)
+					foreach (var setSettingsData in settingData.SetSettingsOnChange)
+					{
+						if (setSettingsData.TryGetValue(checkedKey, out string targetValue))
+						{
+							settingsContext.SetValue(setSettingsData["TargetSetting"], targetValue);
+						}
+					}
+
+					// Store actual field value
+					settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
+				}
+			};
+
+			if (allUiFields != null)
+			{
+				allUiFields[settingData.SlicerConfigName] = uiField;
+			}
+
+			uiField.HelpText = settingData.HelpText;
+
+			uiField.Name = $"{settingData.PresentationName} Field";
+			uiField.Initialize(tabIndexForItem++);
+
+			string sliceSettingValue = settingsContext.GetValue(settingData.SlicerConfigName);
+
+			uiField.SetValue(sliceSettingValue, userInitiated: false);
+
+			uiField.ValueChanged += (s, e) =>
+			{
+				if (useDefaultSavePattern
+					&& e.UserInitiated)
+				{
+					settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
+				}
+			};
+
+			uiField.Content.Margin = uiField.Content.Margin.Clone(right: 15);
+			uiField.Content.ToolTipText = settingData.HelpText;
+			return uiField;
 		}
 
 		private static bool CheckIfShouldBeShown(SliceSettingData settingData, SettingsContext settingsContext)

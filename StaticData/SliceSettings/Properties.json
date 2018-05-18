@@ -183,7 +183,7 @@
     "PresentationName": "Create Raft",
     "HelpText": "Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.",
     "DataEditType": "CHECK_BOX",
-    "ShowIfSet": "!sla_printer",
+    "ShowIfSet": "NEVER_SHOW",
     "DefaultValue": "0",
     "ReloadUiWhenChanged": true
   },
@@ -1539,7 +1539,7 @@
     "PresentationName": "Generate Support Material",
     "HelpText": "Generates support material under areas of the part which may be too steep to support themselves.",
     "DataEditType": "CHECK_BOX",
-    "ShowIfSet": "!sla_printer",
+    "ShowIfSet": "NEVER_SHOW",
     "ReloadUiWhenChanged": true,
     "DefaultValue": "0"
   },
