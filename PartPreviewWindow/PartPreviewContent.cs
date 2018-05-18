@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabControl.TabBar.BorderColor = theme.ActiveTabColor;
 
 			// Force common padding into top region
-			var padding = tabControl.TabBar.Padding;
+			var padding = theme.TabbarPadding;
 			tabControl.TabBar.Padding = padding.Clone(top: padding.Top * 2, bottom: 0);
 
 			//tabControl.TabBar.Padding = 0;

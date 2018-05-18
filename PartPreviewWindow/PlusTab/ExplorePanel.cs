@@ -132,19 +132,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 						};
 
 						var graphics2D = image.NewGraphics2D();
+						image.SetRecieveBlender(new BlenderPreMultBGRA());
+						graphics2D.Clear(theme.AccentMimimalOverlay);
 
-						// make text 105 (if possible)
-						graphics2D.Clear(theme.Colors.PrimaryAccentColor);
-
-						// use the Golden Ratio to calculate an atractive size for the text relative to the text banner
+						// use the Golden Ratio to calculate an attractive size for the text relative to the text banner
 						var pixelsPerPoint = 96.0 / 72.0;
 						var goalPointSize = image.Height / pixelsPerPoint / 1.618;
 
 						var printer = new TypeFacePrinter(content.text, goalPointSize);
 
-						graphics2D.DrawString(content.text, image.Width/2, image.Height/2 + printer.TypeFaceStyle.EmSizeInPixels / 2, goalPointSize, 
-							Agg.Font.Justification.Center, Baseline.BoundsTop,
-							Color.White);
+						graphics2D.DrawString(content.text, image.Width/2, image.Height/2 + printer.TypeFaceStyle.EmSizeInPixels / 2, goalPointSize,
+							Justification.Center, Baseline.BoundsTop,
+							theme.Colors.PrimaryTextColor);
 
 						if (content.link != null)
 						{

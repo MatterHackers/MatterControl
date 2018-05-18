@@ -610,10 +610,9 @@ namespace MatterHackers.MatterControl
 						fit.MakeNameNonColliding();
 
 						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, new List<IObject3D> { fit }));
-
 						scene.SelectedItem = fit;
 					},
-					//Icon = AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
+					Icon = AggContext.StaticData.LoadIcon("fit.png", 16, 16, theme.InvertIcons),
 					IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
 				},
 			};
