@@ -217,7 +217,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					Margin = new BorderDouble(right: 5),
 					Selectable = true,
 					BackgroundColor = theme.MinimalShade,
-					Name = "Open Empty Plate Button"
+					Name = "Open Empty Plate Button",
+					Cursor = Cursors.Hand
 				};
 				emptyPlateButton.Click += (s, e) =>
 				{
@@ -246,10 +247,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					var iconButton = new IconViewItem(new ListViewItem(item, ApplicationController.Instance.Library.PlatingHistory), 70, 70, theme)
 					{
 						Margin = new BorderDouble(right: 5),
-						Selectable = true
+						Selectable = true,
+						Cursor = Cursors.Hand
 					};
 
-					iconButton.Children.First().Click += (s, e) =>
+					iconButton.Click += (s, e) =>
 					{
 						if (this.PositionWithinLocalBounds(e.X, e.Y)
 							&& e.Button == MouseButtons.Left)
@@ -289,6 +291,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				Margin = new BorderDouble(right: 5),
 				Selectable = true,
 				BackgroundColor = theme.MinimalShade,
+				Cursor = Cursors.Hand,
 				Name = "Create Part Button"
 			};
 			emptyPlateButton.Click += (s, e) =>
@@ -318,10 +321,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				var iconButton = new IconViewItem(new ListViewItem(item, ApplicationController.Instance.Library.PlatingHistory), 70, 70, theme)
 				{
 					Margin = new BorderDouble(right: 5),
-					Selectable = true
+					Selectable = true,
 				};
 
-				iconButton.Children.First().Click += async (s, e) =>
+				iconButton.Click += async (s, e) =>
 				{
 					if (this.PositionWithinLocalBounds(e.X, e.Y)
 						&& e.Button == MouseButtons.Left)

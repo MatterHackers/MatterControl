@@ -125,10 +125,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				case "headline":
 					{
 						// use the Golden Ratio to calculate an atractive size relative to the banner
-						ImageBuffer image = new ImageBuffer(1520, (int)(170 / 1.618));
-						ResponsiveImageWidget imageWidget = new ResponsiveImageWidget(image)
+						var image = new ImageBuffer(1520, (int)(170 / 1.618));
+						var imageWidget = new ResponsiveImageWidget(image)
 						{
 							Margin = new BorderDouble(5),
+							Cursor = Cursors.Hand
 						};
 
 						var graphics2D = image.NewGraphics2D();
@@ -179,10 +180,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 							|| (content.theme_filter == "light" && !ActiveTheme.Instance.IsDarkTheme)
 							|| (content.theme_filter == "all"))
 						{
-							ImageBuffer image = new ImageBuffer(expectedWidth, expectedHeight);
-							ResponsiveImageWidget imageWidget = new ResponsiveImageWidget(image)
+							var image = new ImageBuffer(expectedWidth, expectedHeight);
+							var imageWidget = new ResponsiveImageWidget(image)
 							{
 								Margin = new BorderDouble(5),
+								Cursor = Cursors.Hand
 							};
 
 							if (content.link != null)
