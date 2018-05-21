@@ -118,11 +118,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 								libraryItem,
 								thumbWidth,
 								thumbHeight,
-								(image) =>
-								{
-									// Use the content providers default image if an image failed to load
-									thumbnailSetter(image ?? contentProvider.DefaultImage, true);
-								});
+								thumbnailSetter);
 						}
 					});
 				}
