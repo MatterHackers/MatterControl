@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var modelViewSidePanel = view3DWidget.Descendants<LeftResizeContainer>().FirstOrDefault();
 
-			gcodeContainer = new LeftResizeContainer()
+			gcodeContainer = new LeftResizeContainer(theme)
 			{
 				Width = printer?.ViewState.SelectedObjectPanelWidth ?? 200,
 				VAnchor = VAnchor.Stretch,

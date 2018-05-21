@@ -290,7 +290,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			editorPanel.CloseAllChildren();
 
 			// Add the tree view container. eventually we may want to make this a stretch container of some type
-			var treeViewContainer = new BottomResizeContainer()
+			var treeViewContainer = new BottomResizeContainer(theme)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Absolute

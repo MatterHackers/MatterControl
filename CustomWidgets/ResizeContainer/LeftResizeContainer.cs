@@ -40,15 +40,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private int _splitterWidth;
 
-		internal LeftResizeContainer()
+		internal LeftResizeContainer(ThemeConfig theme)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Absolute;
 			this.Cursor = Cursors.VSplit;
-			SplitterWidth = 10;
+			this.SplitterWidth = theme.SplitterWidth;
+			this.SpliterBarColor = theme.SplitterBackground;
 		}
 
-		public Color SpliterBarColor { get; set; } = ActiveTheme.Instance.TertiaryBackgroundColor;
+		public Color SpliterBarColor { get; set; }
 
 		public int SplitterWidth
 		{
