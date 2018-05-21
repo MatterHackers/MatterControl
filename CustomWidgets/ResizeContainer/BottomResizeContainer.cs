@@ -38,26 +38,28 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private bool mouseDownOnBar = false;
 		private double mouseDownY;
 
-		private int splitterHeight = 10;
+		private int _splitterHeight;
 
 		internal BottomResizeContainer()
 			: base (FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Absolute;
 			this.Cursor = Cursors.HSplit;
+			SplitterHeigt = 10;
 		}
 
 		public Color SpliterBarColor { get; set; } = ActiveTheme.Instance.TertiaryBackgroundColor;
 
 		public int SplitterHeigt
 		{
-			get => splitterHeight;
+			get => _splitterHeight;
 			set
 			{
-				if (splitterHeight != value)
+				if (_splitterHeight != value)
 				{
-					splitterHeight = value;
-					this.Padding = new BorderDouble(0, splitterHeight, 0, 0);
+					_splitterHeight = value;
+					this.Padding = new BorderDouble(0, _splitterHeight, 0, 0);
+					this.MinimumSize = new VectorMath.Vector2(0, _splitterHeight);
 				}
 			}
 		}
