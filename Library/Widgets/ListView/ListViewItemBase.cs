@@ -65,32 +65,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.thumbHeight = height;
 		}
 
-		// TODO: Why is this static?
-		private static bool WidgetOnScreen(GuiWidget widget, RectangleDouble bounds)
-		{
-			if (!widget.Visible)
-			{
-				return false;
-			}
-			else
-			{
-				if (widget.Parent != null)
-				{
-					var boundsInParentSpace = widget.TransformToParentSpace(widget.Parent, bounds);
-					var intersects = boundsInParentSpace.IntersectRectangles(boundsInParentSpace, widget.Parent.LocalBounds);
-					if (!intersects
-						|| boundsInParentSpace.Width <= 0
-						|| boundsInParentSpace.Height <= 0
-						|| !WidgetOnScreen(widget.Parent, boundsInParentSpace))
-					{
-						return false;
-					}
-				}
-			}
-
-			return true;
-		}
-
 		public Task LoadItemThumbnail()
 		{
 			return LoadItemThumbnail(
@@ -99,7 +73,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				this.thumbWidth,
 				this.thumbHeight,
 				this.SetItemThumbnail,
-				() => ListViewItemBase.WidgetOnScreen(this, this.LocalBounds));
+				() => this.ActuallyVisibleOnScreen());
 		}
 
 		private static async Task LoadItemThumbnail(ILibraryItem libraryItem, ILibraryContainer libraryContainer, int thumbWidth, int thumbHeight, Action<ImageBuffer, bool> thumbnailSetter, Func<bool> shouldGenerateThumbnail)
