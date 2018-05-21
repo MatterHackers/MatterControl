@@ -466,7 +466,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GuiWidget GetPartTreeView(IObject3D rootSelection)
 		{
-			var topNode = new TreeNode()
+			var topNode = new TopNode()
 			{
 				Text = BuildDefaultName(rootSelection),
 				Tag = rootSelection,
