@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public SliceLayerSelector LayerScrollbar { get; private set; }
 		internal PrinterConfig printer;
 		private GCodePanel gcodePanel;
-		internal ResizeContainer gcodeContainer;
+		internal LeftResizeContainer gcodeContainer;
 		internal PrinterActionsBar printerActionsBar;
 		private DockingTabControl sideBar;
 		private SliceSettingsWidget sliceSettingsWidget;
@@ -161,9 +161,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BackgroundColor = theme.InteractionLayerOverlayColor,
 			};
 
-			var modelViewSidePanel = view3DWidget.Descendants<ResizeContainer>().FirstOrDefault();
+			var modelViewSidePanel = view3DWidget.Descendants<LeftResizeContainer>().FirstOrDefault();
 
-			gcodeContainer = new ResizeContainer(gcodePanel)
+			gcodeContainer = new LeftResizeContainer()
 			{
 				Width = printer?.ViewState.SelectedObjectPanelWidth ?? 200,
 				VAnchor = VAnchor.Stretch,
