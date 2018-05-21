@@ -73,7 +73,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				this.thumbWidth,
 				this.thumbHeight,
 				this.SetItemThumbnail,
-				() => this.ActuallyVisibleOnScreen());
+				() =>
+				{
+					bool isValid = this.ActuallyVisibleOnScreen();
+					if (!isValid)
+					{
+						raytraceSkipped = true;
+						raytracePending = false;
+					};
+
+					return isValid;
+				});
 		}
 
 		private async Task LoadItemThumbnail(ILibraryItem libraryItem, ILibraryContainer libraryContainer, int thumbWidth, int thumbHeight, ThumbnailSetter thumbnailSetter, Func<bool> shouldGenerateThumbnail)
@@ -105,6 +115,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					// Before we have a thumbnail set to the content specific thumbnail
 					thumbnail = contentProvider.DefaultImage;
+
+					this.useRaytracedMeshThumbnails = true;
 
 					ApplicationController.Instance.QueueForGeneration(async () =>
 					{
@@ -199,6 +211,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, thumbWidth, thumbHeight);
 				}
 
+				if (raytracedImage)
+				{
+					this.raytracePending = false;
+				}
+
 				if (GuiWidget.DeviceScale != 1)
 				{
 					thumbnail = thumbnail.CreateScaledImage(GuiWidget.DeviceScale);
@@ -251,6 +268,21 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			await this.LoadItemThumbnail();
 			base.OnLoad(args);
+		}
+
+		public async override void OnDraw(Graphics2D graphics2D)
+		{
+			if (useRaytracedMeshThumbnails
+				&& !raytracePending
+				&& this.raytraceSkipped)
+			{
+				raytracePending = true;
+
+				// Requeue thumbnail generation
+				await this.LoadItemThumbnail();
+			}
+
+			base.OnDraw(graphics2D);
 		}
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
@@ -319,6 +351,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public virtual bool EditMode { get; set; }
 
 		private bool isSelected = false;
+		private bool raytraceSkipped;
+		private bool useRaytracedMeshThumbnails;
+		private bool raytracePending;
 
 		public bool IsSelected
 		{
