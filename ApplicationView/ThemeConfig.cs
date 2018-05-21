@@ -85,7 +85,23 @@ namespace MatterHackers.MatterControl
 		public TextImageButtonFactory WhiteButtonFactory { get; private set; }
 		public TextImageButtonFactory ButtonFactory { get; private set; }
 
-		public int SplitterWidth => (int)(6 * (GuiWidget.DeviceScale <= 1 ? GuiWidget.DeviceScale : GuiWidget.DeviceScale * 1.4));
+		/// <summary>
+		/// The height or width of a given vertical or horizontal splitter bar
+		/// </summary>
+		public int SplitterWidth
+		{
+			get
+			{
+				double splitterSize = 6 * GuiWidget.DeviceScale;
+
+				if (GuiWidget.TouchScreenMode)
+				{
+					splitterSize *= 1.4;
+				}
+
+				return (int)splitterSize;
+			}
+		}
 
 		public IThemeColors Colors { get; set; }
 		public PresetColors PresetColors { get; set; } = new PresetColors();
