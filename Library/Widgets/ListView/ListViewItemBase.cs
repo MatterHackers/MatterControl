@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				// Ask content provider - allows type specific thumbnail creation
 				var contentProvider = ApplicationController.Instance.Library.GetContentProvider(libraryItem);
-				if (contentProvider is MeshContentProvider)
+				if (contentProvider != null)
 				{
 					// Before we have a thumbnail set to the content specific thumbnail
 					thumbnail = contentProvider.DefaultImage;
@@ -125,15 +125,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 								});
 						}
 					});
-				}
-				else if (contentProvider != null)
-				{
-					// Then try to load a content specific thumbnail
-					await contentProvider.GetThumbnail(
-						libraryItem,
-						thumbWidth,
-						thumbHeight,
-						(image) => thumbnail = image);
 				}
 			}
 
