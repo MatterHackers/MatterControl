@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			SimpleTabs tabControl = null;
 			if (this.ControlIsPinned)
 			{
-				var resizePage = new ResizeContainer(this)
+				var resizePage = new LeftResizeContainer()
 				{
 					Width = this.ConstrainedWidth,
 					VAnchor = VAnchor.Stretch,
@@ -230,7 +230,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 				else // control is floating
 				{
-					var resizeContainer = new ResizeContainer(this)
+					var resizeContainer = new LeftResizeContainer()
 					{
 						Width = this.ConstrainedWidth,
 						VAnchor = VAnchor.Stretch,

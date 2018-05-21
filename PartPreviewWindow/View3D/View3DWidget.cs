@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch,
 			};
 
-			modelViewSidePanel = new ResizeContainer(selectedObjectPanel)
+			modelViewSidePanel = new LeftResizeContainer()
 			{
 				Width = printer?.ViewState.SelectedObjectPanelWidth ?? 200,
 				VAnchor = VAnchor.Stretch,
