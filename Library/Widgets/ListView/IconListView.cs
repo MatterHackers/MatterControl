@@ -277,12 +277,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		public override async void OnLoad(EventArgs args)
-		{
-			base.OnLoad(args);
-			await this.LoadItemThumbnail();
-		}
-
 		public override Color BackgroundColor
 		{
 			get => this.IsSelected ? theme.AccentMimimalOverlay : Color.Transparent;

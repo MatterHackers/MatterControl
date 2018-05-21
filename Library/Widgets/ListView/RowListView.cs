@@ -100,12 +100,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.AddChild(row);
 		}
 
-		public override async void OnLoad(EventArgs args)
-		{
-			base.OnLoad(args);
-			await this.LoadItemThumbnail();
-		}
-
 		private bool isHoverItem = false;
 		public override bool IsHoverItem
 		{

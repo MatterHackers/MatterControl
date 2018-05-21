@@ -260,6 +260,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.OnMouseDown(mouseEvent);
 		}
 
+		public async override void OnLoad(EventArgs args)
+		{
+			await this.LoadItemThumbnail();
+			base.OnLoad(args);
+		}
+
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
 			var delta = mouseDownAt - mouseEvent.Position;
