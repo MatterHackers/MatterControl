@@ -76,12 +76,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				() => this.ActuallyVisibleOnScreen());
 		}
 
-		private static async Task LoadItemThumbnail(ILibraryItem libraryItem, ILibraryContainer libraryContainer, int thumbWidth, int thumbHeight, Action<ImageBuffer, bool> thumbnailSetter, Func<bool> shouldGenerateThumbnail)
+		private async Task LoadItemThumbnail(ILibraryItem libraryItem, ILibraryContainer libraryContainer, int thumbWidth, int thumbHeight, ThumbnailSetter thumbnailSetter, Func<bool> shouldGenerateThumbnail)
 		{
 			var thumbnail = ListView.LoadCachedImage(libraryItem, thumbWidth, thumbHeight);
 			if (thumbnail != null)
 			{
-				thumbnailSetter(thumbnail, false);
+				thumbnailSetter(thumbnail, raytracedImage: false);
 				return;
 			}
 
@@ -111,9 +111,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						// When this widget is dequeued for generation, validate before processing. Off-screen widgets should be skipped and will requeue next time they become visible
 						if (shouldGenerateThumbnail?.Invoke() == true)
 						{
-							thumbnailSetter(generatingThumbnailIcon, false);
+							thumbnailSetter(generatingThumbnailIcon, raytracedImage: false);
 
-							// Then try to load a content specific thumbnail
+							// Ask the provider for a content specific thumbnail
 							await contentProvider.GetThumbnail(
 								libraryItem,
 								thumbWidth,
@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				thumbnail = ((libraryItem is ILibraryContainerLink) ? defaultFolderIcon : defaultItemIcon).AlphaToPrimaryAccent();
 			}
 
-			thumbnailSetter(thumbnail, false);
+			thumbnailSetter(thumbnail, raytracedImage: false);
 		}
 
 		internal void EnsureSelection()
@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public event EventHandler ImageSet;
 
-		protected void SetItemThumbnail(ImageBuffer thumbnail, bool colorize = false)
+		protected void SetItemThumbnail(ImageBuffer thumbnail, bool raytracedImage)
 		{
 			if (thumbnail != null)
 			{

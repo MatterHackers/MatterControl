@@ -262,7 +262,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				container.AddChild(text);
 			}
 
-			this.SetItemThumbnail(loadingImage);
+			this.SetItemThumbnail(loadingImage, raytracedImage: false);
 		}
 
 		public override string ToolTipText

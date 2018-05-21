@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl
 		}
 
 
-		public async Task GetThumbnail(ILibraryItem item, int width, int height, Action<ImageBuffer> imageCallback)
+		public async Task GetThumbnail(ILibraryItem item, int width, int height, ThumbnailSetter imageCallback)
 		{
 			IObject3D object3D = null;
 
@@ -162,18 +162,18 @@ namespace MatterHackers.MatterControl
 						writableContainer.SetThumbnail(item, thumbnail.Width, thumbnail.Height, thumbnail);
 					}
 
-					imageCallback(thumbnail);
+					imageCallback(thumbnail, raytracedImage: true);
 				}
 				else
 				{
 					// If thumbnail generation was aborted or failed, return the default icon for this content type
-					imageCallback(DefaultImage);
+					imageCallback(DefaultImage, raytracedImage: true);
 				}
 			}
 			else
 			{
 				// If thumbnail generation was skipped, return the default icon for this content type
-				imageCallback(DefaultImage);
+				imageCallback(DefaultImage, raytracedImage: true);
 			}
 		}
 
