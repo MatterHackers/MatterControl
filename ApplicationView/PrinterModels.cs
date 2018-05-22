@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl
 			this.SceneLoaded?.Invoke(this, null);
 		}
 
-		private async Task LoadGCodeContent(Stream stream)
+		public async Task LoadGCodeContent(Stream stream)
 		{
 			await ApplicationController.Instance.Tasks.Execute("Loading G-Code".Localize(), (reporter, cancellationToken) =>
 			{
