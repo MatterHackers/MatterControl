@@ -86,10 +86,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(scrollable);
 
-			var editorColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var editorColumn = new BottomResizeContainer(theme)
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
+				VAnchor = VAnchor.Absolute,
+				Height = 250    //////////////////////// Load persisted user value
 			};
 
 			var toolbar = new Toolbar(theme)
@@ -199,6 +200,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (editorSection.Children.FirstOrDefault() is ExpandCheckboxButton checkbox)
 			{
 				checkbox.ReplaceChild(checkbox.Children[1], inlineTitleEdit);
+
+				// Override default constructor behavior - force back to Absolute after add
+				editorSection.ContentPanel.VAnchor = VAnchor.Absolute;
 			}
 
 			this.ContentPanel.AddChild(editorSection);

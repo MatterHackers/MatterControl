@@ -184,9 +184,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			treeSection = new BottomResizeContainer(theme)
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Absolute
+				VAnchor = VAnchor.Absolute,
+				Height = 250    //////////////////////// Load persisted user value
 			};
-			treeSection.Height = 250;    //////////////////////// Load persisted user value
 			modelViewSidePanel.AddChild(treeSection);
 
 			// add the tree view
