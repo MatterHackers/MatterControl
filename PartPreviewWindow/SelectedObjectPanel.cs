@@ -36,7 +36,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.CustomWidgets.TreeView;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
@@ -46,12 +45,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	[HideUpdateButtonAttribute]
 	public class SelectedObjectPanel : FlowLayoutWidget, IContentStore
 	{
-		private IObject3D rootSelectedItem = new Object3D();
+		private IObject3D item = new Object3D();
 
 		private ThemeConfig theme;
 		private View3DWidget view3DWidget;
 		private InteractiveScene scene;
 		private PrinterConfig printer;
+		private SectionWidget editorSection;
 		private TextButton editButton;
 
 		private GuiWidget editorPanel;
@@ -62,9 +62,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Top | VAnchor.Fit;
-			this.Padding = 0; // new BorderDouble(8, 10);
-							  //this.MinimumSize = new Vector2(220, 0);
-
+			this.Padding = 0;
 			this.view3DWidget = view3DWidget;
 			this.theme = theme;
 			this.scene = scene;
@@ -77,9 +75,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 			inlineTitleEdit.TitleChanged += (s, e) =>
 			{
-				if (rootSelectedItem != null)
+				if (item != null)
 				{
-					rootSelectedItem.Name = inlineTitleEdit.Text;
+					item.Name = inlineTitleEdit.Text;
 				}
 			};
 
@@ -131,7 +129,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					bed,
 					theme);
 
-				var clonedItem = this.rootSelectedItem.Clone();
+				var clonedItem = this.item.Clone();
 
 				// Edit in Identity transform
 				clonedItem.Matrix = Matrix4X4.Identity;
@@ -143,16 +141,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							var replacement = object3D.Clone();
 
-							this.rootSelectedItem.Parent.Children.Modify(list =>
+							this.item.Parent.Children.Modify(list =>
 							{
-								list.Remove(rootSelectedItem);
+								list.Remove(item);
 
 								// Restore matrix of item being replaced
-								replacement.Matrix = rootSelectedItem.Matrix;
+								replacement.Matrix = item.Matrix;
 
 								list.Add(replacement);
 
-								rootSelectedItem = replacement;
+								item = replacement;
 							});
 
 							scene.SelectedItem = replacement;
@@ -172,7 +170,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			applyButton.Click += (s, e) =>
 			{
 				scene.SelectedItem = null;
-				this.rootSelectedItem.Apply(view3DWidget.Scene.UndoBuffer);
+				this.item.Apply(view3DWidget.Scene.UndoBuffer);
 			};
 			scene.SelectionChanged += (s, e) => applyButton.Enabled = scene.SelectedItem?.CanApply == true;
 			toolbar.AddChild(applyButton);
@@ -186,7 +184,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			removeButton.Click += (s, e) =>
 			{
 				scene.SelectedItem = null;
-				this.rootSelectedItem.Remove(view3DWidget.Scene.UndoBuffer);
+				this.item.Remove(view3DWidget.Scene.UndoBuffer);
 			};
 			scene.SelectionChanged += (s, e) => removeButton.Enabled = scene.SelectedItem?.CanRemove == true;
 			toolbar.AddChild(removeButton);
@@ -199,7 +197,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Padding = new BorderDouble(top: 10)
 			});
 
-			var editorSection = new SectionWidget("Editor".Localize(), editorColumn, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true);
+			editorSection = new SectionWidget("Editor", editorColumn, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true);
 			this.ContentPanel.AddChild(editorSection);
 
 			var colorSection = new SectionWidget(
@@ -260,11 +258,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			inlineTitleEdit.Text = selectedItem.Name ?? selectedItemType.Name;
 
-			this.rootSelectedItem = selectedItem;
+			this.item = selectedItem;
 
 			var viewMode = printer?.ViewState.ViewMode;
 
-			ShowObjectEditor(selectedItem);
+			HashSet<IObject3DEditor> mappedEditors = ApplicationController.Instance.GetEditorsForType(selectedItemType);
+
+			var activeEditors = new List<(IObject3DEditor, IObject3D, string)>();
+
+			foreach (var child in selectedItem.DescendantsAndSelf())
+			{
+				if (ApplicationController.Instance.GetEditorsForType(child.GetType())?.FirstOrDefault() is IObject3DEditor editor)
+				{
+					activeEditors.Add((editor, child, child.Name));
+				}
+
+				// If the object is not persistable than don't show its details.
+				if(!child.Persistable)
+				{
+					break;
+				}
+			}
+
+			ShowObjectEditor(activeEditors, selectedItem);
 		}
 
 		private class OperationButton :TextButton
@@ -285,215 +301,109 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void ShowObjectEditor(IObject3D selectedItem)
+		private void ShowObjectEditor(IEnumerable<(IObject3DEditor editor, IObject3D item, string displayName)> scope, IObject3D rootSelection)
 		{
 			editorPanel.CloseAllChildren();
 
-			// Add the tree view container. eventually we may want to make this a stretch container of some type
-			var treeViewContainer = new BottomResizeContainer(theme)
+			if (scope == null)
 			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Absolute
-			};
-			treeViewContainer.Height = 250;
-			editorPanel.AddChild(treeViewContainer);
+				return;
+			}
 
-			// add the tree view
-			var treeView = GetPartTreeView(selectedItem);
-			treeViewContainer.AddChild(treeView);
-
-			// Add the selected item editor container. eventually we may want to make this a stretch container of some type
-			GuiWidget selectedItemContaner = new GuiWidget()
+			foreach (var scopeItem in scope)
 			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
-			};
-			treeViewContainer.Height = 250;
-			editorPanel.AddChild(selectedItemContaner);
+				var selectedItem = scopeItem.item;
+				var selectedItemType = selectedItem.GetType();
 
-			treeView.AfterSelect += (s, e) =>
-			{
-				selectedItemContaner.CloseAllChildren();
-				var selectedNodeItem = (IObject3D)treeView.SelectedNode.Tag;
-				var selectedNodeItemType = selectedNodeItem.GetType();
+				var editorWidget = scopeItem.editor.Create(selectedItem, view3DWidget, theme);
+				editorWidget.HAnchor = HAnchor.Stretch;
+				editorWidget.VAnchor = VAnchor.Fit;
 
-				HashSet<IObject3DEditor> mappedEditors = ApplicationController.Instance.GetEditorsForType(selectedNodeItemType);
-				if (ApplicationController.Instance.GetEditorsForType(selectedNodeItemType)?.FirstOrDefault() is IObject3DEditor editor)
+				if (scopeItem.item != rootSelection
+					&& scopeItem.editor is PublicPropertyEditor)
 				{
-					var editorWidget = editor.Create(selectedNodeItem, view3DWidget, theme);
-					editorWidget.HAnchor = HAnchor.Stretch;
-					editorWidget.VAnchor = VAnchor.Fit;
-
 					editorWidget.Padding = new BorderDouble(10, 10, 10, 0);
 
 					// EditOutline section
 					var sectionWidget = new SectionWidget(
-							string.IsNullOrWhiteSpace(selectedNodeItem.Name) ? "Unknown" : selectedNodeItem.Name,
+							scopeItem.displayName ?? "Unknown",
 							editorWidget,
 							theme);
 
 					theme.ApplyBoxStyle(sectionWidget, margin: 0);
 
 					editorWidget = sectionWidget;
+				}
+				else
+				{
+					editorWidget.Padding = 0;
+				}
 
-					selectedItemContaner.AddChild(editorWidget);
+				editorPanel.AddChild(editorWidget);
 
-					var buttons = new List<OperationButton>();
+				var buttons = new List<OperationButton>();
 
-					foreach (var nodeOperation in ApplicationController.Instance.Graph.Operations)
+				foreach (var nodeOperation in ApplicationController.Instance.Graph.Operations)
+				{
+					foreach (var type in nodeOperation.MappedTypes)
 					{
-						foreach (var type in nodeOperation.MappedTypes)
+						if (type.IsAssignableFrom(selectedItemType)
+							&& (nodeOperation.IsVisible == null || nodeOperation.IsVisible(selectedItem)))
 						{
-							if (type.IsAssignableFrom(selectedNodeItemType)
-								&& (nodeOperation.IsVisible == null || nodeOperation.IsVisible(selectedNodeItem)))
+							var button = new OperationButton(nodeOperation, selectedItem, theme)
 							{
-								var button = new OperationButton(nodeOperation, selectedNodeItem, theme)
-								{
-									BackgroundColor = theme.MinimalShade,
-									Margin = theme.ButtonSpacing
-								};
-								button.EnsureAvailablity();
-								button.Click += (s1, e1) =>
-								{
-									nodeOperation.Operation(selectedNodeItem, scene).ConfigureAwait(false);
-								};
-
-								buttons.Add(button);
-							}
-						}
-					}
-
-					if (buttons.Any())
-					{
-						var toolbar = new Toolbar(theme)
-						{
-							HAnchor = HAnchor.Stretch,
-							VAnchor = VAnchor.Fit,
-							Padding = theme.ToolbarPadding,
-							Margin = new BorderDouble(0, 8)
-						};
-						selectedItemContaner.AddChild(toolbar);
-
-						foreach (var button in buttons)
-						{
-							toolbar.AddChild(button);
-						}
-
-						// TODO: Fix likely leak
-						selectedNodeItem.Invalidated += (s2, e2) =>
-						{
-							foreach (var button in toolbar.ActionArea.Children.OfType<OperationButton>())
+								BackgroundColor = theme.MinimalShade,
+								Margin = theme.ButtonSpacing
+							};
+							button.EnsureAvailablity();
+							button.Click += (s, e) =>
 							{
-								button.EnsureAvailablity();
-							}
-						};
-					}
-					else
-					{
-						// If the button toolbar isn't added, ensure panel has bottom margin
-						editorWidget.Margin = editorWidget.Margin.Clone(bottom: 15);
+								nodeOperation.Operation(selectedItem, scene).ConfigureAwait(false);
+							};
+
+							buttons.Add(button);
+						}
 					}
 				}
-			};
 
-			treeView.SelectedNode = treeView.TopNode;
-		}
-
-		private void AddTree(IObject3D item, TreeNode parent)
-		{
-			var node = AddItem(item, parent);
-
-			foreach (var child in item.Children)
-			{
-				AddTree(child, node);
-			}
-		}
-
-		private TreeNode AddItem(IObject3D item, TreeNode parentNode)
-		{
-			var inmemoryItem = new InMemoryLibraryItem(item.Clone());
-			var iconView = new IconViewItem(new ListViewItem(inmemoryItem, ApplicationController.Instance.Library.PlatingHistory), 16, 16, theme);
-
-			var node = new TreeNode()
-			{
-				Text = BuildDefaultName(item),
-				Tag = item,
-				TextColor = theme.Colors.PrimaryTextColor,
-				PointSize = theme.DefaultFontSize,
-				//Expanded = true,
-			};
-			selectionTreeNodes.Add(item, node);
-
-			node.Load += (s, e) =>
-			{
-				iconView.OnLoad(e);
-
-				iconView.ImageSet += (s1, e1) =>
+				if (buttons.Any())
 				{
-					node.Image = iconView.imageWidget.Image;
-				};
-			};
+					var toolbar = new Toolbar(theme)
+					{
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Fit,
+						Padding = theme.ToolbarPadding,
+						Margin = new BorderDouble(0, 8)
+					};
+					editorPanel.AddChild(toolbar);
 
-			parentNode.Nodes.Add(node);
-			parentNode.Expanded = true;
+					foreach (var button in buttons)
+					{
+						toolbar.AddChild(button);
+					}
 
-			return node;
-		}
-
-		private Dictionary<IObject3D, TreeNode> selectionTreeNodes = new Dictionary<IObject3D, TreeNode>();
-
-		private string BuildDefaultName(IObject3D item)
-		{
-			string nameToWrite = "";
-			if (!string.IsNullOrEmpty(item.Name))
-			{
-				nameToWrite += $"{item.GetType().Name} - {item.Name}";
+					// TODO: Fix likely leak
+					selectedItem.Invalidated += (s, e) =>
+					{
+						foreach (var button in toolbar.ActionArea.Children.OfType<OperationButton>())
+						{
+							button.EnsureAvailablity();
+						}
+					};
+				}
+				else
+				{
+					// If the button toolbar isn't added, ensure panel has bottom margin
+					editorWidget.Margin = editorWidget.Margin.Clone(bottom: 15);
+				}
 			}
-			else
-			{
-				nameToWrite += $"{item.GetType().Name}";
-			}
-
-			return nameToWrite;
-		}
-
-		private TreeView GetPartTreeView(IObject3D rootSelection)
-		{
-			var topNode = new TopNode()
-			{
-				Text = BuildDefaultName(rootSelection),
-				Tag = rootSelection,
-				TextColor = theme.Colors.PrimaryTextColor,
-				PointSize = theme.DefaultFontSize
-			};
-
-			var treeView = new TreeView(topNode, theme)
-			{
-				TextColor = theme.Colors.PrimaryTextColor,
-				PointSize = theme.DefaultFontSize
-			};
-
-			treeView.SuspendLayout();
-			selectionTreeNodes.Clear();
-
-			selectionTreeNodes.Add(rootSelection, topNode);
-
-			// add the children to the root node
-			foreach (var child in rootSelectedItem.Children)
-			{
-				AddTree(child, topNode);
-			}
-
-			treeView.ResumeLayout();
-
-			return treeView;
 		}
 
 		public void Save(ILibraryItem item, IObject3D content)
 		{
-			this.rootSelectedItem.Parent.Children.Modify(children =>
+			this.item.Parent.Children.Modify(children =>
 			{
-				children.Remove(this.rootSelectedItem);
+				children.Remove(this.item);
 				children.Add(content);
 			});
 		}
