@@ -38,7 +38,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class PinchObject3D : MeshWrapperObject3D, IRebuildable
+	public class PinchObject3D : MeshWrapperObject3D, IPublicPropertyObject
 	{
 		[DisplayName("Back Ratio")]
 		public double PinchRatio { get; set; } = 1;

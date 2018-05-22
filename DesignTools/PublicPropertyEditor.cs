@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public bool Unlocked { get; } = true;
 
-		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(IRebuildable) };
+		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(IPublicPropertyObject) };
 
 		private static Type[] allowedTypes =
 		{
@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var undoBuffer = view3DWidget.sceneContext.Scene.UndoBuffer;
 
-			var rebuildable = context.item as IRebuildable;
+			var rebuildable = context.item as IPublicPropertyObject;
 			var propertyGridModifier = context.item as IPropertyGridModifier;
 
 			var editableProperties = GetEditablePropreties(context.item);
@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private static void AddPropertyEditor(PublicPropertyEditor publicPropertyEditor,
 			View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme,
-			UndoBuffer undoBuffer, IRebuildable rebuildable, IPropertyGridModifier propertyGridModifier,
+			UndoBuffer undoBuffer, IPublicPropertyObject rebuildable, IPropertyGridModifier propertyGridModifier,
 			EditableProperty property, PPEContext context)
 		{
 			GuiWidget rowContainer = null;
@@ -538,7 +538,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private static GuiWidget CreateEnumEditor(PPEContext context, IRebuildable item,
+		private static GuiWidget CreateEnumEditor(PPEContext context, IPublicPropertyObject item,
 			EditableProperty property, Type propertyType, object value, string displayName,
 			ThemeConfig theme,
 			UndoBuffer undoBuffer)

@@ -41,7 +41,7 @@ using MatterHackers.VectorMath;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideUpdateButtonAttribute]
-	public class RingObject3D : Object3D, IRebuildable, IPropertyGridModifier
+	public class RingObject3D : Object3D, IPublicPropertyObject, IPropertyGridModifier
 	{
 		public RingObject3D()
 		{

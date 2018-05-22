@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	using Polygon = List<IntPoint>;
 	using Polygons = List<List<IntPoint>>;
 
-	public class SmoothPath : Object3D, IRebuildable
+	public class SmoothPath : Object3D, IPublicPropertyObject
 	{
 		public Polygons PathData;
 

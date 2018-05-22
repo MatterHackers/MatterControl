@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	}
 
 	[HideUpdateButtonAttribute]
-	public class Align3D : Object3D, IRebuildable, IPropertyGridModifier
+	public class Align3D : Object3D, IPublicPropertyObject, IPropertyGridModifier
 	{
 		// We need to serialize this so we can remove the arrange and get back to the objects before arranging
 		public List<Aabb> OriginalChildrenBounds = new List<Aabb>();
