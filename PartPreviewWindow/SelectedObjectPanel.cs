@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,10 +36,10 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.CustomWidgets.TreeView;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
-using MatterHackers.MatterControl.CustomWidgets.TreeView;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -467,7 +467,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				PointSize = theme.DefaultFontSize
 			};
 
-			var treeView = new TreeView(topNode)
+			var treeView = new TreeView(topNode, theme)
 			{
 				TextColor = theme.Colors.PrimaryTextColor,
 				PointSize = theme.DefaultFontSize

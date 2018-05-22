@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,14 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.UI;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Font;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 {
@@ -186,9 +186,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 				TitleBar.AddChild(new ImageWidget(Image)
 				{
 					VAnchor = VAnchor.Center,
-					//BorderColor = new Color(ActiveTheme.Instance.PrimaryTextColor, 20),
 					BackgroundColor = new Color(ActiveTheme.Instance.PrimaryTextColor, 12),
-					Border = 1,
 					Margin = 2,
 				});
 			};

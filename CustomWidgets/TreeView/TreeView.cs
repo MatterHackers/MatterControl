@@ -44,22 +44,25 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 
 	public class TreeView : ScrollableWidget
 	{
-		public TreeView(TopNode topNode)
-			: this(topNode, 0, 0)
+		private ThemeConfig theme;
+
+		public TreeView(TopNode topNode, ThemeConfig theme)
+			: this(topNode, 0, 0, theme)
 		{
 		}
 
-		public TreeView(TopNode topNode, int width, int height)
+		public TreeView(TopNode topNode, int width, int height, ThemeConfig theme)
 			: base(width, height)
 		{
-			AutoScroll = true;
+			this.theme = theme;
+			this.AutoScroll = true;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Stretch;
+			this.TopNode = topNode;
 
 			topNode.treeView = this;
-			TopNode = topNode;
-			HAnchor = HAnchor.Stretch;
-			VAnchor = VAnchor.Stretch;
 
-			AddChild(TopNode);
+			this.AddChild(TopNode);
 		}
 
 		#region Events
@@ -200,7 +203,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 		// Returns:
 		//     The TreeNode that is currently selected in the tree view
 		//     control.
-		TreeNode _selectedNode;
+		private TreeNode _selectedNode;
+
 		public TreeNode SelectedNode
 		{
 			get => _selectedNode; set
@@ -208,12 +212,14 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 				if (value != _selectedNode)
 				{
 					OnBeforeSelect(null);
+
 					foreach (var node in this.Descendants<TreeNode>().Where((c) => c != value))
 					{
 						node.TitleBar.BackgroundColor = Color.Transparent;
 					}
+
 					_selectedNode = value;
-					_selectedNode.TitleBar.BackgroundColor = Color.Red;
+					_selectedNode.TitleBar.BackgroundColor = theme.AccentMimimalOverlay;
 					OnAfterSelect(null);
 				}
 			}
