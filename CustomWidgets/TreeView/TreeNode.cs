@@ -186,9 +186,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 				TitleBar.AddChild(new ImageWidget(Image)
 				{
 					VAnchor = VAnchor.Center,
-					//BorderColor = new Color(ActiveTheme.Instance.PrimaryTextColor, 20),
 					BackgroundColor = new Color(ActiveTheme.Instance.PrimaryTextColor, 12),
-					Border = 1,
 					Margin = 2,
 				});
 			};
