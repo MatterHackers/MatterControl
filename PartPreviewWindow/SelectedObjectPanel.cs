@@ -68,19 +68,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.scene = scene;
 			this.printer = printer;
 
-			this.AddChild(inlineTitleEdit = new InlineTitleEdit("", theme, "Object Name")
-			{
-				Border = new BorderDouble(bottom: 1),
-				BorderColor = theme.GetBorderColor(50)
-			});
-			inlineTitleEdit.TitleChanged += (s, e) =>
-			{
-				if (item != null)
-				{
-					item.Name = inlineTitleEdit.Text;
-				}
-			};
-
 			this.ContentPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
@@ -99,10 +86,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(scrollable);
 
-			var editorColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var editorColumn = new BottomResizeContainer(theme)
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
+				VAnchor = VAnchor.Absolute,
+				Height = 250    //////////////////////// Load persisted user value
 			};
 
 			var toolbar = new Toolbar(theme)
@@ -197,7 +185,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Padding = new BorderDouble(top: 10)
 			});
 
+			inlineTitleEdit = new InlineTitleEdit("", theme, "Object Name");
+			inlineTitleEdit.TitleChanged += (s, e) =>
+			{
+				if (item != null)
+				{
+					item.Name = inlineTitleEdit.Text;
+				}
+			};
+
 			editorSection = new SectionWidget("Editor", editorColumn, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true);
+
+			// TODO: Replace hackery with practical solution
+			if (editorSection.Children.FirstOrDefault() is ExpandCheckboxButton checkbox)
+			{
+				checkbox.ReplaceChild(checkbox.Children[1], inlineTitleEdit);
+
+				// Override default constructor behavior - force back to Absolute after add
+				editorSection.ContentPanel.VAnchor = VAnchor.Absolute;
+			}
+
 			this.ContentPanel.AddChild(editorSection);
 
 			var colorSection = new SectionWidget(

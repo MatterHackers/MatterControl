@@ -221,6 +221,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		internal void SetIcon(ImageBuffer icon)
 		{
 			image = icon;
+			imageWidget.Image = icon;
 		}
 
 		private ImageBuffer _disabledImage;
