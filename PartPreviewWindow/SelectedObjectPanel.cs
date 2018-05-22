@@ -303,17 +303,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			treeViewContainer.AddChild(treeView);
 
 			// Add the selected item editor container. eventually we may want to make this a stretch container of some type
-			GuiWidget selectedItemContaner = new GuiWidget()
+			var selectedItemContainer = new GuiWidget()
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit
 			};
 			treeViewContainer.Height = 250;
-			editorPanel.AddChild(selectedItemContaner);
+			editorPanel.AddChild(selectedItemContainer);
 
 			treeView.AfterSelect += (s, e) =>
 			{
-				selectedItemContaner.CloseAllChildren();
+				selectedItemContainer.CloseAllChildren();
 				var selectedNodeItem = (IObject3D)treeView.SelectedNode.Tag;
 				var selectedNodeItemType = selectedNodeItem.GetType();
 
@@ -336,7 +336,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					editorWidget = sectionWidget;
 
-					selectedItemContaner.AddChild(editorWidget);
+					selectedItemContainer.AddChild(editorWidget);
 
 					var buttons = new List<OperationButton>();
 
@@ -372,7 +372,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Padding = theme.ToolbarPadding,
 							Margin = new BorderDouble(0, 8)
 						};
-						selectedItemContaner.AddChild(toolbar);
+						selectedItemContainer.AddChild(toolbar);
 
 						foreach (var button in buttons)
 						{
