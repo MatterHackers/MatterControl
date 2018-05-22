@@ -239,6 +239,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (this.Parent != null)
 			{
+				treeView.TopNode.Padding = treeView.TopNode.Padding.Clone(left: 8, top: 8);
 				treeView.SelectedNode = treeView.TopNode;
 			}
 		}

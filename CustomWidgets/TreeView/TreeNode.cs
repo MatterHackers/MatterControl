@@ -34,7 +34,9 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 {
@@ -110,12 +112,16 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 				return this.Descendants<TreeNode>().Count();
 			}
 
-			return content.Children.Where((c) => c is TreeNode).Count();
+			return content?.Children.Where((c) => c is TreeNode).Count() ?? 0;
 		}
 
 		public override void OnTextChanged(EventArgs e)
 		{
-			RebuildTitleBar();
+			if (textWidget != null)
+			{
+				textWidget.Text = this.Text;
+			}
+
 			base.OnTextChanged(e);
 		}
 
@@ -132,6 +138,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 		private void Nodes_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			RebuildContentSection();
+
+			expandWidget.Expandable = this.GetNodeCount(false) != 0;
 		}
 
 		private void RebuildContentSection()
@@ -151,54 +159,67 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 			}
 
 			// If the node count is ending at 0 we removed content and need to rebuild the title bar so it will net have a + in it
-			needToRebuildTitleBar |= GetNodeCount(false) == 0;
-			if (needToRebuildTitleBar)
-			{
-				RebuildTitleBar();
-			}
+			expandWidget.Expandable = GetNodeCount(false) != 0;
 		}
 
 		private void RebuildTitleBar()
 		{
 			TitleBar.RemoveAllChildren();
-			if (content != null
-				&& GetNodeCount(false) > 0)
+
+			var theme = ApplicationController.Instance.Theme;
+			// add a check box
+			expandWidget = new TreeExpandWidget(theme)
 			{
-				// add a check box
-				var expandCheckBox = new CheckBox("")
-				{
-					Checked = Expanded,
-					VAnchor = VAnchor.Center
-				};
-				ExpandedChanged += (s, e) =>
-				{
-					expandCheckBox.Checked = Expanded;
-				};
-				expandCheckBox.CheckedStateChanged += (s, e) =>
-				{
-					Expanded = expandCheckBox.Checked;
-				};
-				TitleBar.AddChild(expandCheckBox);
-			}
+				Expandable = GetNodeCount(false) != 0,
+				VAnchor = VAnchor.Fit,
+				Height = 16,
+				Width = 16
+			};
+
+			var expandCheckBox = new CheckBox(expandWidget)
+			{
+				Checked = this.Expanded,
+				VAnchor = VAnchor.Center,
+			};
+
+			this.ExpandedChanged += (s, e) =>
+			{
+				expandWidget.Expanded = this.Expanded;
+				expandCheckBox.Checked = this.Expanded;
+			};
+
+			expandCheckBox.CheckedStateChanged += (s, e) =>
+			{
+				Expanded = expandCheckBox.Checked;
+			};
+
+			this.TitleBar.AddChild(expandCheckBox);
+
 			// add a check box
 			if (Image != null)
 			{
-				TitleBar.AddChild(new ImageWidget(Image)
+				this.TitleBar.AddChild(imageWidget = new ImageWidget(this.Image)
 				{
 					VAnchor = VAnchor.Center,
-					BackgroundColor = new Color(ActiveTheme.Instance.PrimaryTextColor, 12),
+					BackgroundColor = new Color(theme.Colors.PrimaryTextColor, 12),
 					Margin = 2,
+					Selectable = false
 				});
 			};
-			TitleBar.AddChild(new TextWidget(Text)
+			TitleBar.AddChild(textWidget = new TextWidget(this.Text)
 			{
-				Selectable = false
+				Selectable = false,
+				AutoExpandBoundsToText = true,
+				VAnchor = VAnchor.Center
 			});
 		}
 
 		#region Properties
 
 		private ImageBuffer _image = new ImageBuffer(16, 16);
+		private TextWidget textWidget;
+		private TreeExpandWidget expandWidget;
+		private ImageWidget imageWidget;
 
 		public bool Checked { get; set; }
 
@@ -206,10 +227,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 
 		public bool Expanded
 		{
-			get
-			{
-				return content.Visible;
-			}
+			get => content?.Visible == true;
 			set
 			{
 				if (content.Visible != value)
@@ -234,6 +252,12 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 				if (_image != value)
 				{
 					_image = value;
+
+					if(imageWidget != null)
+					{
+						imageWidget.Image = _image;
+					}
+
 					OnImageChanged(null);
 				}
 			}
@@ -359,19 +383,11 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 		//     A TreeView that represents the parent tree view that the
 		//     tree node is assigned to, or null if the node has not been assigned to a tree
 		//     view.
-		public virtual TreeView TreeView
-		{
-			get
-			{
-				return NodeParent.TreeView;
-			}
-		}
+		public virtual TreeView TreeView => NodeParent.TreeView;
 
 		private void OnImageChanged(EventArgs args)
 		{
 			ImageChanged?.Invoke(this, null);
-
-			RebuildTitleBar();
 		}
 
 		#endregion Properties
@@ -385,5 +401,78 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 		public event EventHandler ImageChanged;
 
 		#endregion Events
+
+		private class TreeExpandWidget : FlowLayoutWidget
+		{
+			private ImageBuffer arrowRight;
+			private ImageBuffer arrowDown;
+			private ImageBuffer placeholder;
+			private IconButton imageButton = null;
+
+			public TreeExpandWidget(ThemeConfig theme)
+			{
+				arrowRight = AggContext.StaticData.LoadIcon("fa-angle-right_12.png", theme.InvertIcons);
+				arrowDown = AggContext.StaticData.LoadIcon("fa-angle-down_12.png", theme.InvertIcons);
+				placeholder = new ImageBuffer(16, 16);
+
+				//this.VAnchor = VAnchor.Center;
+				this.Margin = new BorderDouble(right: 5);
+
+				imageButton = new IconButton(placeholder, theme)
+				{
+					MinimumSize = new Vector2(16, 16),
+					VAnchor = VAnchor.Center,
+					Selectable = false,
+					Width = 16,
+					Height = 16
+				};
+
+				this.AddChild(imageButton);
+			}
+
+			private bool? _expandable = null;
+			public bool Expandable
+			{
+				get => _expandable == true;
+				set
+				{
+					if (_expandable != value)
+					{
+						_expandable = value;
+
+						if (!value)
+						{
+							imageButton.SetIcon(placeholder);
+						}
+						else
+						{
+							imageButton.SetIcon((this.Expanded) ? arrowDown : arrowRight);
+						}
+					}
+				}
+			}
+
+			private bool _expanded;
+			public bool Expanded
+			{
+				get => _expanded;
+				set
+				{
+					if (_expanded != value)
+					{
+						_expanded = value;
+
+						if (!this.Expandable)
+						{
+							imageButton.SetIcon(placeholder);
+						}
+						else
+						{
+							imageButton.SetIcon((_expanded) ? arrowDown : arrowRight);
+						}
+					}
+				}
+			}
+		}
 	}
 }
