@@ -53,6 +53,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private InteractiveScene scene;
 		private PrinterConfig printer;
 		private TextButton editButton;
+		private GuiWidget selectedItemContainer;
+		private TreeView treeView;
 
 		private GuiWidget editorPanel;
 		private InlineTitleEdit inlineTitleEdit;
@@ -299,11 +301,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			editorPanel.AddChild(treeViewContainer);
 
 			// add the tree view
-			var treeView = GetPartTreeView(selectedItem);
+			treeView = GetPartTreeView(selectedItem);
 			treeViewContainer.AddChild(treeView);
 
 			// Add the selected item editor container. eventually we may want to make this a stretch container of some type
-			var selectedItemContainer = new GuiWidget()
+			selectedItemContainer = new GuiWidget()
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit
@@ -311,92 +313,94 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			treeViewContainer.Height = 250;
 			editorPanel.AddChild(selectedItemContainer);
 
-			treeView.AfterSelect += (s, e) =>
-			{
-				selectedItemContainer.CloseAllChildren();
-				var selectedNodeItem = (IObject3D)treeView.SelectedNode.Tag;
-				var selectedNodeItemType = selectedNodeItem.GetType();
-
-				HashSet<IObject3DEditor> mappedEditors = ApplicationController.Instance.GetEditorsForType(selectedNodeItemType);
-				if (ApplicationController.Instance.GetEditorsForType(selectedNodeItemType)?.FirstOrDefault() is IObject3DEditor editor)
-				{
-					var editorWidget = editor.Create(selectedNodeItem, view3DWidget, theme);
-					editorWidget.HAnchor = HAnchor.Stretch;
-					editorWidget.VAnchor = VAnchor.Fit;
-
-					editorWidget.Padding = new BorderDouble(10, 10, 10, 0);
-
-					// EditOutline section
-					var sectionWidget = new SectionWidget(
-							string.IsNullOrWhiteSpace(selectedNodeItem.Name) ? "Unknown" : selectedNodeItem.Name,
-							editorWidget,
-							theme);
-
-					theme.ApplyBoxStyle(sectionWidget, margin: 0);
-
-					editorWidget = sectionWidget;
-
-					selectedItemContainer.AddChild(editorWidget);
-
-					var buttons = new List<OperationButton>();
-
-					foreach (var nodeOperation in ApplicationController.Instance.Graph.Operations)
-					{
-						foreach (var type in nodeOperation.MappedTypes)
-						{
-							if (type.IsAssignableFrom(selectedNodeItemType)
-								&& (nodeOperation.IsVisible == null || nodeOperation.IsVisible(selectedNodeItem)))
-							{
-								var button = new OperationButton(nodeOperation, selectedNodeItem, theme)
-								{
-									BackgroundColor = theme.MinimalShade,
-									Margin = theme.ButtonSpacing
-								};
-								button.EnsureAvailablity();
-								button.Click += (s1, e1) =>
-								{
-									nodeOperation.Operation(selectedNodeItem, scene).ConfigureAwait(false);
-								};
-
-								buttons.Add(button);
-							}
-						}
-					}
-
-					if (buttons.Any())
-					{
-						var toolbar = new Toolbar(theme)
-						{
-							HAnchor = HAnchor.Stretch,
-							VAnchor = VAnchor.Fit,
-							Padding = theme.ToolbarPadding,
-							Margin = new BorderDouble(0, 8)
-						};
-						selectedItemContainer.AddChild(toolbar);
-
-						foreach (var button in buttons)
-						{
-							toolbar.AddChild(button);
-						}
-
-						// TODO: Fix likely leak
-						selectedNodeItem.Invalidated += (s2, e2) =>
-						{
-							foreach (var button in toolbar.ActionArea.Children.OfType<OperationButton>())
-							{
-								button.EnsureAvailablity();
-							}
-						};
-					}
-					else
-					{
-						// If the button toolbar isn't added, ensure panel has bottom margin
-						editorWidget.Margin = editorWidget.Margin.Clone(bottom: 15);
-					}
-				}
-			};
+			treeView.AfterSelect += TreeView_AfterSelect;
 
 			treeView.SelectedNode = treeView.TopNode;
+		}
+
+		private void TreeView_AfterSelect(object sender, TreeNode e)
+		{
+			selectedItemContainer.CloseAllChildren();
+			var selectedNodeItem = (IObject3D)treeView.SelectedNode.Tag;
+			var selectedNodeItemType = selectedNodeItem.GetType();
+
+			HashSet<IObject3DEditor> mappedEditors = ApplicationController.Instance.GetEditorsForType(selectedNodeItemType);
+			if (ApplicationController.Instance.GetEditorsForType(selectedNodeItemType)?.FirstOrDefault() is IObject3DEditor editor)
+			{
+				var editorWidget = editor.Create(selectedNodeItem, view3DWidget, theme);
+				editorWidget.HAnchor = HAnchor.Stretch;
+				editorWidget.VAnchor = VAnchor.Fit;
+
+				editorWidget.Padding = new BorderDouble(10, 10, 10, 0);
+
+				// EditOutline section
+				var sectionWidget = new SectionWidget(
+						string.IsNullOrWhiteSpace(selectedNodeItem.Name) ? "Unknown" : selectedNodeItem.Name,
+						editorWidget,
+						theme);
+
+				theme.ApplyBoxStyle(sectionWidget, margin: 0);
+
+				editorWidget = sectionWidget;
+
+				selectedItemContainer.AddChild(editorWidget);
+
+				var buttons = new List<OperationButton>();
+
+				foreach (var nodeOperation in ApplicationController.Instance.Graph.Operations)
+				{
+					foreach (var type in nodeOperation.MappedTypes)
+					{
+						if (type.IsAssignableFrom(selectedNodeItemType)
+							&& (nodeOperation.IsVisible == null || nodeOperation.IsVisible(selectedNodeItem)))
+						{
+							var button = new OperationButton(nodeOperation, selectedNodeItem, theme)
+							{
+								BackgroundColor = theme.MinimalShade,
+								Margin = theme.ButtonSpacing
+							};
+							button.EnsureAvailablity();
+							button.Click += (s1, e1) =>
+							{
+								nodeOperation.Operation(selectedNodeItem, scene).ConfigureAwait(false);
+							};
+
+							buttons.Add(button);
+						}
+					}
+				}
+
+				if (buttons.Any())
+				{
+					var toolbar = new Toolbar(theme)
+					{
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Fit,
+						Padding = theme.ToolbarPadding,
+						Margin = new BorderDouble(0, 8)
+					};
+					selectedItemContainer.AddChild(toolbar);
+
+					foreach (var button in buttons)
+					{
+						toolbar.AddChild(button);
+					}
+
+					// TODO: Fix likely leak
+					selectedNodeItem.Invalidated += (s2, e2) =>
+					{
+						foreach (var button in toolbar.ActionArea.Children.OfType<OperationButton>())
+						{
+							button.EnsureAvailablity();
+						}
+					};
+				}
+				else
+				{
+					// If the button toolbar isn't added, ensure panel has bottom margin
+					editorWidget.Margin = editorWidget.Margin.Clone(bottom: 15);
+				}
+			}
 		}
 
 		private void AddTree(IObject3D item, TreeNode parent)
