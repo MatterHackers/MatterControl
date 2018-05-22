@@ -131,8 +131,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return fitToBounds;
 		}
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		public override void Rebuild(UndoBuffer undoBuffer)
 		{
+			Rebuilding = true;
 			var aabb = this.GetAxisAlignedBoundingBox();
 
 			AdjustChildSize(null, null);
@@ -142,6 +143,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				// If the part was already created and at a height, maintain the height.
 				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 			}
+
+			Rebuilding = false;
+			base.Rebuild(undoBuffer);
 		}
 
 		private void AdjustChildSize(object sender, EventArgs e)

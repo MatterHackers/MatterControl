@@ -141,6 +141,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			// Wrap every first descendant that has a mesh
 			foreach (var child in this.VisibleMeshes().ToList())
 			{
+				// have to check that NO child of the visible mesh has us as the parent id
 				if (child.object3D.OwnerID != this.ID)
 				{
 					// wrap the child

@@ -52,6 +52,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
+			Rebuilding = true;
 			ResetMeshWrappers();
 
 			var meshWrapper = this.Descendants()
@@ -122,6 +123,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			}
 
+			Rebuilding = false;
 			// Let the base know it needs to rebuild
 			base.Rebuild(undoBuffer);
 		}

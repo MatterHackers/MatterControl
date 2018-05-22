@@ -326,19 +326,18 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return positionToAlignTo + extraOffset;
 		}
 
-		bool inRebuild;
 		protected override void OnInvalidate()
 		{
-			if (!inRebuild)
+			if (!Rebuilding)
 			{
 				Rebuild(null);
 			}
 			base.OnInvalidate();
 		}
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		public override void Rebuild(UndoBuffer undoBuffer)
 		{
-			inRebuild = true;
+			Rebuilding = true;
 			var aabb = this.GetAxisAlignedBoundingBox();
 
 			// TODO: check if the has code for the children
@@ -435,7 +434,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			});
 
-			inRebuild = false;
+			Rebuilding = false;
+
+			base.Rebuild(undoBuffer);
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)

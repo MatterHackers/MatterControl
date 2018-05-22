@@ -47,8 +47,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 		}
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		public override void Rebuild(UndoBuffer undoBuffer)
 		{
+			Rebuilding = true;
+			ResetMeshWrappers();
+
 			var meshWrapper = this.Descendants()
 				.Where((obj) => obj.OwnerID == this.ID).ToList();
 
@@ -107,6 +110,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				transformedMesh.MarkAsChanged();
 				transformedMesh.CalculateNormals();
+
+				Rebuilding = false;
+				base.Rebuild(undoBuffer);
 			}
 		}
 	}

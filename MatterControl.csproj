@@ -83,6 +83,7 @@
     <Compile Include="CustomWidgets\TreeView\TreeView.cs" />
     <Compile Include="DesignTools\Attributes\ShowSearchFieldAttribute.cs" />
     <Compile Include="DesignTools\Interfaces\IPublicPropertyObject.cs" />
+    <Compile Include="DesignTools\Operations\PinchObject3D.cs" />
     <Compile Include="DesignTools\Primitives\HalfCylinderObject3D.cs" />
     <Compile Include="DesignTools\Primitives\HalfWedgeObject3D.cs" />
     <Compile Include="Library\Providers\MatterControl\LibraryCollectionContainer.cs" />
@@ -133,7 +134,6 @@
     <Compile Include="DesignTools\Operations\CurveObject3D.cs" />
     <Compile Include="DesignTools\Operations\FitToBounds3D.cs" />
     <Compile Include="DesignTools\Operations\Object3DExtensions.cs" />
-    <Compile Include="DesignTools\Operations\PinchEditor.cs" />
     <Compile Include="DesignTools\Operations\Rotate.cs" />
     <Compile Include="DesignTools\Operations\Scale.cs" />
     <Compile Include="DesignTools\Operations\SmoothPath.cs" />

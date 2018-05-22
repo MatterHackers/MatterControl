@@ -47,6 +47,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			Name = "Subtract";
 		}
+		public override void Rebuild(UndoBuffer undoBuffer)
+		{
+		}
 	}
 
 	public class SubtractEditor : IObject3DEditor
