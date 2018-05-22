@@ -62,9 +62,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Top | VAnchor.Fit;
-			this.Padding = 0; // new BorderDouble(8, 10);
-							  //this.MinimumSize = new Vector2(220, 0);
-
+			this.Padding = 0;
 			this.view3DWidget = view3DWidget;
 			this.theme = theme;
 			this.scene = scene;

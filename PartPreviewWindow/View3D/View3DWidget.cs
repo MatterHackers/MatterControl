@@ -38,6 +38,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.CustomWidgets.TreeView;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.RayTracer;
@@ -60,6 +61,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Stopwatch timeSinceLastSpin = new Stopwatch();
 		private Stopwatch timeSinceReported = new Stopwatch();
 		public Matrix4X4 TransformOnMouseDown { get; private set; } = Matrix4X4.Identity;
+
+		private TreeView treeView;
 
 		private ThemeConfig theme;
 
@@ -178,6 +181,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					VAnchor = VAnchor.Fit,
 				});
 
+			treeSection = new BottomResizeContainer(theme)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Absolute
+			};
+			treeSection.Height = 250;    //////////////////////// Load persisted user value
+			modelViewSidePanel.AddChild(treeSection);
+
+			// add the tree view
+			this.RebuildTreeSection(new Object3D(), theme);
+
 			modelViewSidePanel.AddChild(selectedObjectPanel);
 			splitContainer.AddChild(modelViewSidePanel);
 
@@ -210,6 +224,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.InteractionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
 
 			this.sceneContext.SceneLoaded += SceneContext_SceneLoaded;
+		}
+
+		private void RebuildTreeSection(IObject3D selection, ThemeConfig theme)
+		{
+			treeSection.CloseAllChildren();
+
+			treeView = Object3DTreeBuilder.GetPartTreeView(selection, theme);
+			treeSection.AddChild(treeView);
+			treeView.AfterSelect += (s, e) =>
+			{
+				selectedObjectPanel.SetActiveItem((IObject3D)treeView.SelectedNode.Tag);
+			};
+
+			if (this.Parent != null)
+			{
+				treeView.SelectedNode = treeView.TopNode;
+			}
 		}
 
 		private void UpdateRenderView(object sender, EventArgs e)
@@ -896,7 +927,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			if (CurrentSelectInfo.DownOnPart 
+			if (CurrentSelectInfo.DownOnPart
 				&& TrackballTumbleWidget.TransformState == TrackBallTransformType.None
 				&& selectedItem != null)
 			{
@@ -1184,9 +1215,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			var selectedItem = Scene.SelectedItem;
-
-			selectedObjectPanel.SetActiveItem(selectedItem);
+			// Top level selection only - rebuild tree
+			if (Scene.Children.Contains(Scene.SelectedItem))
+			{
+				this.RebuildTreeSection(Scene.SelectedItem, theme);
+			}
 		}
 
 		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);
@@ -1218,6 +1251,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected bool allowAutoRotate = false;
 
 		public MeshViewerWidget meshViewerWidget;
+		private BottomResizeContainer treeSection;
 
 		public InteractiveScene Scene => sceneContext.Scene;
 
