@@ -68,19 +68,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.scene = scene;
 			this.printer = printer;
 
-			this.AddChild(inlineTitleEdit = new InlineTitleEdit("", theme, "Object Name")
-			{
-				Border = new BorderDouble(bottom: 1),
-				BorderColor = theme.GetBorderColor(50)
-			});
-			inlineTitleEdit.TitleChanged += (s, e) =>
-			{
-				if (item != null)
-				{
-					item.Name = inlineTitleEdit.Text;
-				}
-			};
-
 			this.ContentPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
@@ -197,7 +184,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Padding = new BorderDouble(top: 10)
 			});
 
+			inlineTitleEdit = new InlineTitleEdit("", theme, "Object Name");
+			inlineTitleEdit.TitleChanged += (s, e) =>
+			{
+				if (item != null)
+				{
+					item.Name = inlineTitleEdit.Text;
+				}
+			};
+
 			editorSection = new SectionWidget("Editor", editorColumn, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true);
+
+			// TODO: Replace hackery with practical solution
+			if (editorSection.Children.FirstOrDefault() is ExpandCheckboxButton checkbox)
+			{
+				checkbox.ReplaceChild(checkbox.Children[1], inlineTitleEdit);
+			}
+
 			this.ContentPanel.AddChild(editorSection);
 
 			var colorSection = new SectionWidget(
