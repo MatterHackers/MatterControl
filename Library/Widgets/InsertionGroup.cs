@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.Library
 					this.Collapse();
 				}
 
-				this.Invalidate();
+				this.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 			}));
 		}
 

@@ -326,13 +326,16 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return positionToAlignTo + extraOffset;
 		}
 
-		protected override void OnInvalidate()
+		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if (!Rebuilding)
+			if ((invalidateType.InvalidateType == InvalidateType.Content
+				|| invalidateType.InvalidateType == InvalidateType.Matrix)
+				&& invalidateType.Source != this
+				&& !Rebuilding)
 			{
 				Rebuild(null);
 			}
-			base.OnInvalidate();
+			base.OnInvalidate(invalidateType);
 		}
 
 		public override void Rebuild(UndoBuffer undoBuffer)
@@ -435,8 +438,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			});
 
 			Rebuilding = false;
-
-			base.Rebuild(undoBuffer);
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)

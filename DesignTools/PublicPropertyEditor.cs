@@ -341,7 +341,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					editControlsContainer.AddChild(rowContainer);
 
 					// update tihs when changed
-					EventHandler updateData = (object s, EventArgs e) =>
+					EventHandler< InvalidateArgs> updateData = (s, e) =>
 					{
 						field.DoubleValue = ((DirectionAxis)property.PropertyInfo.GetGetMethod().Invoke(property.Item, null)).Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
 					};
@@ -388,7 +388,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					editControlsContainer.AddChild(directionRowContainer);
 
 					// update tihs when changed
-					EventHandler updateData = (object s, EventArgs e) =>
+					EventHandler<InvalidateArgs> updateData = (s, e) =>
 					{
 						originField.Vector3 = ((DirectionAxis)property.PropertyInfo.GetGetMethod().Invoke(property.Item, null)).Origin;
 					};

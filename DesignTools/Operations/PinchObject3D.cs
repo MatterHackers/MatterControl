@@ -112,8 +112,19 @@ namespace MatterHackers.MatterControl.DesignTools
 				transformedMesh.CalculateNormals();
 
 				Rebuilding = false;
-				base.Rebuild(undoBuffer);
 			}
+		}
+
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if ((invalidateType.InvalidateType == InvalidateType.Content
+				|| invalidateType.InvalidateType == InvalidateType.Matrix)
+				&& invalidateType.Source != this
+				&& !Rebuilding)
+			{
+				Rebuild(null);
+			}
+			base.OnInvalidate(invalidateType);
 		}
 	}
 }

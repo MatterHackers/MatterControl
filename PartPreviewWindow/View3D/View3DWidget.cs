@@ -541,7 +541,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.deferEditorTillMouseUp = false;
 				Scene_SelectionChanged(null, null);
 
-				Scene.Invalidate();
+				Scene.Invalidate(new InvalidateArgs(null, InvalidateType.Content));
 
 				// Set focus to View3DWidget after drag-drop
 				UiThread.RunOnIdle(this.Focus);
@@ -976,9 +976,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-CurrentSelectInfo.LastMoveDelta));
 					selectedItem.Matrix *= totalTransform;
-
-					// Invalidate the item to account for the position change
-					selectedItem.Invalidate();
 				}
 
 				Vector3 delta = info.HitPosition - CurrentSelectInfo.PlaneDownHitPos;

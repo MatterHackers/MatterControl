@@ -2380,7 +2380,6 @@ namespace MatterHackers.MatterControl
 
 								view3D.Scene.SelectedItem.Matrix = view3D.TransformOnMouseDown;
 
-								view3D.Scene.Invalidate();
 								keyEvent.Handled = true;
 								keyEvent.SuppressKeyPress = true;
 							}

@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					_invert = value;
 					_image = null;
 
-					this.OnInvalidate();
+					this.OnInvalidate(new InvalidateArgs(this, InvalidateType.Content));
 				}
 			}
 		}

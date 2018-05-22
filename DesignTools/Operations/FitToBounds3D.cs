@@ -107,10 +107,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			});
 		}
 
-		protected override void OnInvalidate()
+		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
+			if ((invalidateType.InvalidateType == InvalidateType.Content
+				|| invalidateType.InvalidateType == InvalidateType.Matrix)
+				&& invalidateType.Source != this
+				&& !Rebuilding)
+			{
+				Rebuild(null);
+			}
 			// If the child bounds changed than adjust the scale control
-			base.OnInvalidate();
+			base.OnInvalidate(invalidateType);
 		}
 
 		public static FitToBounds3D Create(IObject3D itemToFit)
@@ -145,7 +152,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			Rebuilding = false;
-			base.Rebuild(undoBuffer);
 		}
 
 		private void AdjustChildSize(object sender, EventArgs e)

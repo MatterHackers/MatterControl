@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					list.Add(next);
 				}
 			});
-			this.Invalidate();
+			this.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)

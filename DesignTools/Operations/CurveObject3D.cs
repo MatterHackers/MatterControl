@@ -124,8 +124,18 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			Rebuilding = false;
-			// Let the base know it needs to rebuild
-			base.Rebuild(undoBuffer);
+		}
+
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if ((invalidateType.InvalidateType == InvalidateType.Content
+				|| invalidateType.InvalidateType == InvalidateType.Matrix)
+				&& invalidateType.Source != this
+				&& !Rebuilding)
+			{
+				Rebuild(null);
+			}
+			base.OnInvalidate(invalidateType);
 		}
 	}
 }

@@ -123,8 +123,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			Rebuilding = false;
-			// Let the base know it needs to rebuild
-			base.Rebuild(undoBuffer);
+
+			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
 	}
 }

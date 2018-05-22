@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (scene.HasSelection)
 					{
 						scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
-						scene.Invalidate();
+						scene.Invalidate(new InvalidateArgs(null, InvalidateType.Material));
 					}
 				};
 			}
