@@ -457,7 +457,7 @@ namespace MatterHackers.MatterControl
 
 		protected override void OnKeyUp(System.Windows.Forms.KeyEventArgs e)
 		{
-			if (e.KeyCode == System.Windows.Forms.Keys.F1)
+			if (e.KeyCode == System.Windows.Forms.Keys.F12)
 			{
 				this.Inspecting = !this.Inspecting;
 			}
