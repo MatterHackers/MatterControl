@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -32,15 +32,14 @@ using System.Threading.Tasks;
 namespace MatterHackers.MatterControl.Library
 {
 	using System;
-	using System.Collections.Generic;
-	using MatterHackers.Agg;
 	using MatterHackers.Agg.Image;
 	using MatterHackers.DataConverters3D;
-	using MatterHackers.MatterControl.Library;
+
+	public delegate void ThumbnailSetter(ImageBuffer imageBuffer, bool raytracedImage);
 
 	public interface IContentProvider
 	{
-		Task GetThumbnail(ILibraryItem item, int width, int height, Action<ImageBuffer> imageCallback);
+		Task GetThumbnail(ILibraryItem item, int width, int height, ThumbnailSetter imageCallback);
 		ImageBuffer DefaultImage { get; }
 	}
 

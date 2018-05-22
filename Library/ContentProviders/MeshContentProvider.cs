@@ -47,7 +47,6 @@ namespace MatterHackers.MatterControl
 	public class MeshContentProvider : ISceneContentProvider
 	{
 		private static readonly bool Is32Bit = IntPtr.Size == 4;
-		private static readonly Point2D BigRenderSize = new Point2D(460, 460);
 
 		// For 32 bit max size to ray trace is 8 MB mesh for 64 bit the max size is 40 MB.
 		private long MaxFileSizeForTracing => Is32Bit ? 8 * 1000 * 1000 : 40 * 1000 * 1000;
@@ -103,7 +102,7 @@ namespace MatterHackers.MatterControl
 		}
 
 
-		public async Task GetThumbnail(ILibraryItem item, int width, int height, Action<ImageBuffer> imageCallback)
+		public async Task GetThumbnail(ILibraryItem item, int width, int height, ThumbnailSetter imageCallback)
 		{
 			IObject3D object3D = null;
 
@@ -137,8 +136,8 @@ namespace MatterHackers.MatterControl
 				var thumbnail = ThumbnailEngine.Generate(
 					object3D,
 					RenderOrthographic ? RenderType.ORTHOGROPHIC : RenderType.RAY_TRACE,
-					BigRenderSize.x, 
-					BigRenderSize.y, 
+					width,
+					height,
 					allowMultiThreading: !ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting);
 
 				if (thumbnail != null)
@@ -149,7 +148,13 @@ namespace MatterHackers.MatterControl
 
 					// Cache at requested size
 					cachePath = ApplicationController.Instance.ThumbnailCachePath(item, width, height);
-					thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, width, height);
+
+					// TODO: Lookup best large image and downscale if required
+					if (false)
+					{
+						thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, width, height);
+					}
+
 					AggContext.ImageIO.SaveImageData(cachePath, thumbnail);
 
 					if (ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer writableContainer)
@@ -157,18 +162,18 @@ namespace MatterHackers.MatterControl
 						writableContainer.SetThumbnail(item, thumbnail.Width, thumbnail.Height, thumbnail);
 					}
 
-					imageCallback(thumbnail);
+					imageCallback(thumbnail, raytracedImage: true);
 				}
 				else
 				{
 					// If thumbnail generation was aborted or failed, return the default icon for this content type
-					imageCallback(DefaultImage);
+					imageCallback(DefaultImage, raytracedImage: true);
 				}
 			}
 			else
 			{
 				// If thumbnail generation was skipped, return the default icon for this content type
-				imageCallback(DefaultImage);
+				imageCallback(DefaultImage, raytracedImage: true);
 			}
 		}
 

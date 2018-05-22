@@ -73,15 +73,25 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				this.thumbWidth,
 				this.thumbHeight,
 				this.SetItemThumbnail,
-				() => this.ActuallyVisibleOnScreen());
+				() =>
+				{
+					bool isValid = this.ActuallyVisibleOnScreen();
+					if (!isValid)
+					{
+						raytraceSkipped = true;
+						raytracePending = false;
+					};
+
+					return isValid;
+				});
 		}
 
-		private static async Task LoadItemThumbnail(ILibraryItem libraryItem, ILibraryContainer libraryContainer, int thumbWidth, int thumbHeight, Action<ImageBuffer, bool> thumbnailSetter, Func<bool> shouldGenerateThumbnail)
+		private async Task LoadItemThumbnail(ILibraryItem libraryItem, ILibraryContainer libraryContainer, int thumbWidth, int thumbHeight, ThumbnailSetter thumbnailSetter, Func<bool> shouldGenerateThumbnail)
 		{
 			var thumbnail = ListView.LoadCachedImage(libraryItem, thumbWidth, thumbHeight);
 			if (thumbnail != null)
 			{
-				thumbnailSetter(thumbnail, false);
+				thumbnailSetter(thumbnail, raytracedImage: false);
 				return;
 			}
 
@@ -101,39 +111,28 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				// Ask content provider - allows type specific thumbnail creation
 				var contentProvider = ApplicationController.Instance.Library.GetContentProvider(libraryItem);
-				if (contentProvider is MeshContentProvider)
+				if (contentProvider != null)
 				{
 					// Before we have a thumbnail set to the content specific thumbnail
 					thumbnail = contentProvider.DefaultImage;
+
+					this.useRaytracedMeshThumbnails = true;
 
 					ApplicationController.Instance.QueueForGeneration(async () =>
 					{
 						// When this widget is dequeued for generation, validate before processing. Off-screen widgets should be skipped and will requeue next time they become visible
 						if (shouldGenerateThumbnail?.Invoke() == true)
 						{
-							thumbnailSetter(generatingThumbnailIcon, false);
+							thumbnailSetter(generatingThumbnailIcon, raytracedImage: false);
 
-							// Then try to load a content specific thumbnail
+							// Ask the provider for a content specific thumbnail
 							await contentProvider.GetThumbnail(
 								libraryItem,
 								thumbWidth,
 								thumbHeight,
-								(image) =>
-								{
-									// Use the content providers default image if an image failed to load
-									thumbnailSetter(image ?? contentProvider.DefaultImage, true);
-								});
+								thumbnailSetter);
 						}
 					});
-				}
-				else if (contentProvider != null)
-				{
-					// Then try to load a content specific thumbnail
-					await contentProvider.GetThumbnail(
-						libraryItem,
-						thumbWidth,
-						thumbHeight,
-						(image) => thumbnail = image);
 				}
 			}
 
@@ -143,7 +142,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				thumbnail = ((libraryItem is ILibraryContainerLink) ? defaultFolderIcon : defaultItemIcon).AlphaToPrimaryAccent();
 			}
 
-			thumbnailSetter(thumbnail, false);
+			thumbnailSetter(thumbnail, raytracedImage: false);
 		}
 
 		internal void EnsureSelection()
@@ -198,7 +197,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public event EventHandler ImageSet;
 
-		protected void SetItemThumbnail(ImageBuffer thumbnail, bool colorize = false)
+		protected void SetItemThumbnail(ImageBuffer thumbnail, bool raytracedImage)
 		{
 			if (thumbnail != null)
 			{
@@ -210,6 +209,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				else if (thumbnail.Width > thumbWidth || thumbnail.Height > thumbHeight)
 				{
 					thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, thumbWidth, thumbHeight);
+				}
+
+				if (raytracedImage)
+				{
+					this.raytracePending = false;
 				}
 
 				if (GuiWidget.DeviceScale != 1)
@@ -258,6 +262,27 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			view3DWidget = ApplicationController.Instance.DragDropData.View3DWidget;
 
 			base.OnMouseDown(mouseEvent);
+		}
+
+		public async override void OnLoad(EventArgs args)
+		{
+			await this.LoadItemThumbnail();
+			base.OnLoad(args);
+		}
+
+		public async override void OnDraw(Graphics2D graphics2D)
+		{
+			if (useRaytracedMeshThumbnails
+				&& !raytracePending
+				&& this.raytraceSkipped)
+			{
+				raytracePending = true;
+
+				// Requeue thumbnail generation
+				await this.LoadItemThumbnail();
+			}
+
+			base.OnDraw(graphics2D);
 		}
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
@@ -326,6 +351,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public virtual bool EditMode { get; set; }
 
 		private bool isSelected = false;
+		private bool raytraceSkipped;
+		private bool useRaytracedMeshThumbnails;
+		private bool raytracePending;
 
 		public bool IsSelected
 		{

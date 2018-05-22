@@ -262,7 +262,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				container.AddChild(text);
 			}
 
-			this.SetItemThumbnail(loadingImage);
+			this.SetItemThumbnail(loadingImage, raytracedImage: false);
 		}
 
 		public override string ToolTipText
@@ -275,12 +275,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					text.ToolTipText = value;
 				}
 			}
-		}
-
-		public override async void OnLoad(EventArgs args)
-		{
-			base.OnLoad(args);
-			await this.LoadItemThumbnail();
 		}
 
 		public override Color BackgroundColor

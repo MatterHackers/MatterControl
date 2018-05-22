@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -40,15 +40,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private int _splitterWidth;
 
-		internal LeftResizeContainer()
+		internal LeftResizeContainer(ThemeConfig theme)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Absolute;
 			this.Cursor = Cursors.VSplit;
-			SplitterWidth = 10;
+			this.SplitterWidth = theme.SplitterWidth;
+			this.SpliterBarColor = theme.SplitterBackground;
 		}
 
-		public Color SpliterBarColor { get; set; } = ActiveTheme.Instance.TertiaryBackgroundColor;
+		public Color SpliterBarColor { get; set; }
 
 		public int SplitterWidth
 		{

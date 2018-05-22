@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -40,17 +40,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private int _splitterHeight;
 
-		internal BottomResizeContainer()
+		internal BottomResizeContainer(ThemeConfig theme)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Absolute;
 			this.Cursor = Cursors.HSplit;
-			SplitterHeigt = 10;
+			this.SplitterHeight = theme.SplitterWidth;
+			this.SpliterBarColor = theme.SplitterBackground;
 		}
 
-		public Color SpliterBarColor { get; set; } = ActiveTheme.Instance.TertiaryBackgroundColor;
+		public Color SpliterBarColor { get; set; }
 
-		public int SplitterHeigt
+		public int SplitterHeight
 		{
 			get => _splitterHeight;
 			set
@@ -66,14 +67,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			graphics2D.FillRectangle(LocalBounds.Left, LocalBounds.Bottom, LocalBounds.Right, LocalBounds.Bottom + this.SplitterHeigt, this.SpliterBarColor);
-			graphics2D.FillRectangle(LocalBounds.Left, LocalBounds.Bottom, LocalBounds.Right, LocalBounds.Bottom + this.SplitterHeigt, Color.Black);
+			graphics2D.FillRectangle(LocalBounds.Left, LocalBounds.Bottom, LocalBounds.Right, LocalBounds.Bottom + this.SplitterHeight, this.SpliterBarColor);
 			base.OnDraw(graphics2D);
 		}
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			if (mouseEvent.Position.Y < this.SplitterHeigt)
+			if (mouseEvent.Position.Y < this.SplitterHeight)
 			{
 				mouseDownOnBar = true;
 				mouseDownY = TransformToScreenSpace(mouseEvent.Position).Y;
