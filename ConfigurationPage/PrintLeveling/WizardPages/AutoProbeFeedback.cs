@@ -40,7 +40,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class AutoProbeFeedback : InstructionsPage
+	public class AutoProbeFeedback : LevelingWizardPage
 	{
 		private Vector3 lastReportedPosition;
 		private List<ProbePosition> probePositions;

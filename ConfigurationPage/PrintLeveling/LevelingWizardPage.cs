@@ -32,13 +32,13 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
 {
-	public class InstructionsPage : GuiWidget
+	public class LevelingWizardPage : GuiWidget
 	{
 		protected FlowLayoutWidget topToBottomControls;
 
 		protected PrinterConfig printer { get; }
 
-		public InstructionsPage(PrinterConfig printer, string pageDescription, string instructionsText, ThemeConfig theme)
+		public LevelingWizardPage(PrinterConfig printer, string pageDescription, string instructionsText, ThemeConfig theme)
 		{
 			this.printer = printer;
 			this.StepDescription = pageDescription;

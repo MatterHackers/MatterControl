@@ -39,7 +39,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class FindBedHeight : InstructionsPage
+	public class FindBedHeight : LevelingWizardPage
 	{
 		private Vector3 lastReportedPosition;
 		private List<ProbePosition> probePositions;

@@ -33,7 +33,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class HomePrinterPage : InstructionsPage
+	public class HomePrinterPage : LevelingWizardPage
 	{
 		protected WizardControl container;
 		private EventHandler unregisterEvents;

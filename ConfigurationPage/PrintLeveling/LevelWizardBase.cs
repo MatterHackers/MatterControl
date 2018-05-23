@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.printer = printer;
 		}
 
-		protected override IEnumerator<InstructionsPage> Pages
+		protected override IEnumerator<LevelingWizardPage> Pages
 		{
 			get
 			{
@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				if (showWelcomeScreen)
 				{
-					yield return new InstructionsPage(
+					yield return new LevelingWizardPage(
 						printer,
 						levelingStrings.initialPrinterSetupStepText,
 						string.Format(
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				var secondsToCompleteWizard = levelWizard.ProbeCount * (useZProbe ? secondsPerAutomaticSpot : secondsPerManualSpot);
 				secondsToCompleteWizard += (hasHeatedBed ? 60 * 3 : 0);
 
-				yield return new InstructionsPage(
+				yield return new LevelingWizardPage(
 					printer,
 					"Print Leveling Overview".Localize(),
 					levelingStrings.WelcomeText(levelWizard.ProbeCount, (int)Math.Round(secondsToCompleteWizard / 60.0)),

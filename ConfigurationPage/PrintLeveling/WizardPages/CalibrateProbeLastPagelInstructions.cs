@@ -33,7 +33,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class CalibrateProbeLastPagelInstructions : InstructionsPage
+	public class CalibrateProbeLastPagelInstructions : LevelingWizardPage
 	{
 		protected WizardControl container;
 		private List<ProbePosition> autoProbePositions;

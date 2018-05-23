@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.printer = printer;
 		}
 
-		protected override IEnumerator<InstructionsPage> Pages
+		protected override IEnumerator<LevelingWizardPage> Pages
 		{
 			get
 			{
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				// make a welcome page if this is the first time calibrating the probe
 				if (!printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated))
 				{
-					yield return new InstructionsPage(
+					yield return new LevelingWizardPage(
 						printer,
 						levelingStrings.initialPrinterSetupStepText,
 						string.Format(
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				}
 
 				// show what steps will be taken
-				yield return new InstructionsPage(
+				yield return new LevelingWizardPage(
 					printer,
 					"Probe Calibration Overview".Localize(),
 					string.Format(

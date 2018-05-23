@@ -35,7 +35,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class LastPagelInstructions : InstructionsPage
+	public class LastPagelInstructions : LevelingWizardPage
 	{
 		protected WizardControl container;
 		private List<ProbePosition> probePositions;

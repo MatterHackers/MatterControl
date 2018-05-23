@@ -33,7 +33,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class SelectMaterialPage : InstructionsPage
+	public class SelectMaterialPage : LevelingWizardPage
 	{
 		public SelectMaterialPage(PrinterConfig printer, string pageDescription, string instructionsText, ThemeConfig theme)
 			: base(printer, pageDescription, instructionsText, theme)

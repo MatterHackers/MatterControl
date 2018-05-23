@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl
 
 		private TextWidget stepDescriptionWidget;
 
-		protected abstract IEnumerator<WizardControlPage> Pages { get; }
+		protected abstract IEnumerator<LevelingWizardPage> Pages { get; }
 
 		public WizardControl()
 		{
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl
 			AddChild(topToBottom);
 		}
 
-		private IEnumerator<WizardControlPage> pagesCache;
+		private IEnumerator<LevelingWizardPage> pagesCache;
 
 		public override void Initialize()
 		{

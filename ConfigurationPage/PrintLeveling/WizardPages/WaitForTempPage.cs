@@ -35,7 +35,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class WaitForTempPage : InstructionsPage
+	public class WaitForTempPage : LevelingWizardPage
 	{
 		protected WizardControl container;
 
