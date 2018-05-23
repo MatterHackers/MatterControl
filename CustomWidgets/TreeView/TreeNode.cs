@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 					Selectable = false
 				});
 			};
-			TitleBar.AddChild(textWidget = new TextWidget(this.Text)
+			TitleBar.AddChild(textWidget = new TextWidget(this.Text, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 			{
 				Selectable = false,
 				AutoExpandBoundsToText = true,
