@@ -1770,6 +1770,11 @@ namespace MatterHackers.MatterControl
 						{
 							this.ArchiveAndStartPrint(partFilePath, gcodeFilePath, printer);
 						}
+						else
+						{
+							// TODO: Need to reset printing state? This seems like I shouldn't own this indicator
+							this.ActivePrinter.Connection.CommunicationState = CommunicationStates.Connected;
+						}
 					}
 				}
 			}
