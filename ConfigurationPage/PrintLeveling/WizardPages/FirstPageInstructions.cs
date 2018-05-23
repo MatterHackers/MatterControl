@@ -27,13 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.Font;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.UI;
-using MatterHackers.GCodeVisualizer;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
-using System.Linq;
-
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class FirstPageInstructions : InstructionsPage

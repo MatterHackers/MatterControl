@@ -38,9 +38,7 @@ namespace MatterHackers.MatterControl
 {
 	public class WizardControlPage : GuiWidget
 	{
-		private string stepDescription = "";
-
-		public string StepDescription { get { return stepDescription; } set { stepDescription = value; } }
+		public string StepDescription { get; set; } = "";
 
 		public WizardControlPage(string stepDescription)
 		{
@@ -79,21 +77,29 @@ namespace MatterHackers.MatterControl
 		{
 			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
-			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			topToBottom.AnchorAll();
-			topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
+			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				VAnchor = VAnchor.Stretch,
+				HAnchor = HAnchor.Stretch,
+				Padding = new BorderDouble(3, 0, 3, 5)
+			};
 
-			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			headerRow.HAnchor = HAnchor.Stretch;
-			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
-			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
+			var headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(0, 3, 0, 0),
+				Padding = new BorderDouble(0, 3, 0, 3)
+			};
 
 			{
-				stepDescriptionWidget = new TextWidget("", pointSize: 14 * extraTextScaling);
-				stepDescriptionWidget.AutoExpandBoundsToText = true;
-				stepDescriptionWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				stepDescriptionWidget.HAnchor = HAnchor.Stretch;
-				stepDescriptionWidget.VAnchor = Agg.UI.VAnchor.Bottom;
+				stepDescriptionWidget = new TextWidget("", pointSize: 14 * extraTextScaling)
+				{
+					AutoExpandBoundsToText = true,
+					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Bottom,
+					Name = "stepDescriptionWidget"
+				};
 
 				headerRow.AddChild(stepDescriptionWidget);
 			}
@@ -111,9 +117,11 @@ namespace MatterHackers.MatterControl
 			topToBottom.Margin = new BorderDouble(bottom: 3);
 
 			{
-				FlowLayoutWidget buttonBar = new FlowLayoutWidget();
-				buttonBar.HAnchor = Agg.UI.HAnchor.Stretch;
-				buttonBar.Padding = new BorderDouble(0, 3);
+				var buttonBar = new FlowLayoutWidget
+				{
+					HAnchor = Agg.UI.HAnchor.Stretch,
+					Padding = new BorderDouble(0, 3)
+				};
 
 				nextButton = buttonFactory.Generate("Next".Localize());
 				nextButton.Name = "Next Button";
