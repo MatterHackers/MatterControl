@@ -1754,19 +1754,22 @@ namespace MatterHackers.MatterControl
 										hideGCodeWarningCheckBox
 								},
 								StyledMessageBox.MessageType.YES_NO);
-
 						});
 					}
 					else
 					{
 						this.ActivePrinter.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
 
-						await ApplicationController.Instance.SliceItemLoadOutput(
+						bool slicingSucceeded = await ApplicationController.Instance.SliceItemLoadOutput(
 							printer,
 							printer.Bed.Scene,
 							gcodeFilePath);
 
-						this.ArchiveAndStartPrint(partFilePath, gcodeFilePath);
+						// Only start print if slicing completed
+						if (slicingSucceeded)
+						{
+							this.ArchiveAndStartPrint(partFilePath, gcodeFilePath);
+						}
 					}
 
 					await MonitorPrintTask(printer);
@@ -1897,7 +1900,14 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public async Task SliceItemLoadOutput(PrinterConfig printer, IObject3D object3D, string gcodeFilePath)
+		/// <summary>
+		/// Slice the given IObject3D to the target GCode file using the referenced printer settings
+		/// </summary>
+		/// <param name="printer">The printer/settings to use</param>
+		/// <param name="object3D">The IObject3D to slice</param>
+		/// <param name="gcodeFilePath">The path to write the file to</param>
+		/// <returns>A boolean indicating if the slicing operation completed without aborting</returns>
+		public async Task<bool> SliceItemLoadOutput(PrinterConfig printer, IObject3D object3D, string gcodeFilePath)
 		{
 			// Slice
 			bool slicingSucceeded = false;
@@ -1915,7 +1925,7 @@ namespace MatterHackers.MatterControl
 			// Skip loading GCode output if slicing failed
 			if (!slicingSucceeded)
 			{
-				return;
+				return false;
 			}
 
 			await ApplicationController.Instance.Tasks.Execute("Loading GCode".Localize(), (innerProgress, token) =>
@@ -1937,6 +1947,8 @@ namespace MatterHackers.MatterControl
 
 				return Task.CompletedTask;
 			});
+
+			return slicingSucceeded;
 		}
 
 		internal GuiWidget GetViewOptionButtons(BedConfig sceneContext, PrinterConfig printer, ThemeConfig theme)
