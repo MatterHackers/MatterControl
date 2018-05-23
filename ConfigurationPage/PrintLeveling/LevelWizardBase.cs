@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			get
 			{
-				List<ProbePosition> probePositions = new List<ProbePosition>(levelWizard.ProbeCount);
+				var probePositions = new List<ProbePosition>(levelWizard.ProbeCount);
 				for (int j = 0; j < levelWizard.ProbeCount; j++)
 				{
 					probePositions.Add(new ProbePosition());
@@ -71,10 +71,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				if (showWelcomeScreen)
 				{
-					string part1 = "Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize();
-					string part2 = "The next few screens will walk your through calibrating your printer.".Localize();
-					string requiredPageInstructions = $"{part1}\n\n{part2}";
-					yield return new InstructionsPage(printer, levelingStrings.initialPrinterSetupStepText, requiredPageInstructions, theme);
+					yield return new InstructionsPage(
+						printer,
+						levelingStrings.initialPrinterSetupStepText,
+						string.Format(
+							"{0}\n\n{1}",
+							"Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize(),
+							"The next few screens will walk your through calibrating your printer.".Localize()),
+						theme);
 				}
 
 				// To make sure the bed is at the correct temp, put in a filament selection page.
@@ -86,22 +90,30 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				var secondsPerAutomaticSpot = 3 * zProbeSamples;
 				var secondsToCompleteWizard = levelWizard.ProbeCount * (useZProbe ? secondsPerAutomaticSpot : secondsPerManualSpot);
 				secondsToCompleteWizard += (hasHeatedBed ? 60 * 3 : 0);
-				yield return new InstructionsPage(printer,
+
+				yield return new InstructionsPage(
+					printer,
 					"Print Leveling Overview".Localize(),
-					levelingStrings.WelcomeText(levelWizard.ProbeCount, (int)Math.Round(secondsToCompleteWizard / 60.0)), theme);
+					levelingStrings.WelcomeText(levelWizard.ProbeCount, (int)Math.Round(secondsToCompleteWizard / 60.0)),
+					theme);
 
 				// If we need to heat the bed or the extruder, select the current material
 				if (hasHeatedBed || !useZProbe)
 				{
-					var instruction2 = "Please select the material you will be printing with, so we can accurately calibrate the printer.".Localize();
-
-					yield return new SelectMaterialPage(printer, "Select Material".Localize(), $"{instruction2}", theme);
+					yield return new SelectMaterialPage(
+						printer,
+						"Select Material".Localize(),
+						"Please select the material you will be printing with, so we can accurately calibrate the printer.".Localize(),
+						theme);
 				}
 
-				yield return new HomePrinterPage(printer, this,
+				yield return new HomePrinterPage(
+					printer,
+					this,
 					"Homing The Printer".Localize(),
 					levelingStrings.HomingPageInstructions(useZProbe, hasHeatedBed),
-					useZProbe, theme);
+					useZProbe,
+					theme);
 
 				// figure out the heating requirements
 				double targetBedTemp = 0;
@@ -169,14 +181,64 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 					if (printer.Settings.Helpers.UseZProbe())
 					{
-						var stepString = $"{"Step".Localize()} {i + 1} {"of".Localize()} {levelWizard.ProbeCount}:";
-						yield return new AutoProbeFeedback(printer, this, new Vector3(validProbePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", stepString, positionLabel, i + 1, autoCalibrateLabel), probePositions, i, theme);
+						yield return new AutoProbeFeedback(
+							printer,
+							this,
+							new Vector3(validProbePosition, startProbeHeight),
+							string.Format(
+								"{0} {1} {2} - {3}",
+								$"{"Step".Localize()} {i + 1} {"of".Localize()} {levelWizard.ProbeCount}:",
+								positionLabel,
+								i + 1,
+								autoCalibrateLabel),
+							probePositions,
+							i,
+							theme);
 					}
 					else
 					{
-						yield return new GetCoarseBedHeight(printer, this, new Vector3(validProbePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(levelWizard.TotalSteps), positionLabel, i + 1, lowPrecisionLabel), probePositions, i, levelingStrings, theme);
-						yield return new GetFineBedHeight(printer, this, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(levelWizard.TotalSteps), positionLabel, i + 1, medPrecisionLabel), probePositions, i, levelingStrings, theme);
-						yield return new GetUltraFineBedHeight(printer, this, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(levelWizard.TotalSteps), positionLabel, i + 1, highPrecisionLabel), probePositions, i, levelingStrings, theme);
+						yield return new GetCoarseBedHeight(
+							printer,
+							this,
+							new Vector3(validProbePosition, startProbeHeight),
+							string.Format(
+								"{0} {1} {2} - {3}",
+								levelingStrings.GetStepString(levelWizard.TotalSteps),
+								positionLabel,
+								i + 1,
+								lowPrecisionLabel),
+							probePositions,
+							i,
+							levelingStrings,
+							theme);
+
+						yield return new GetFineBedHeight(
+							printer,
+							this,
+							string.Format(
+								"{0} {1} {2} - {3}",
+								levelingStrings.GetStepString(levelWizard.TotalSteps),
+								positionLabel,
+								i + 1,
+								medPrecisionLabel),
+							probePositions,
+							i,
+							levelingStrings,
+							theme);
+
+						yield return new GetUltraFineBedHeight(
+							printer,
+							this,
+							string.Format(
+								"{0} {1} {2} - {3}",
+								levelingStrings.GetStepString(levelWizard.TotalSteps),
+								positionLabel,
+								i + 1,
+								highPrecisionLabel),
+							probePositions,
+							i,
+							levelingStrings,
+							theme);
 					}
 					i++;
 				}
@@ -184,6 +246,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				this.nextButton.Enabled = false;
 				this.cancelButton.Visible = false;
 				this.doneButton.Visible = true;
+
 				var done1 = "Print Leveling is now configured and enabled.".Localize();
 				string done2 = "If you need to recalibrate the printer in the future, the print leveling controls can be found under: Controls, Calibration";
 				string done3 = "Click 'Done' to close this window.".Localize();
@@ -208,7 +271,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						+ $"{done3}";
 				}
 
-				yield return new LastPagelInstructions(printer, this, "Done".Localize(), doneString, probePositions, theme);
+				yield return new LastPagelInstructions(
+					printer,
+					this,
+					"Done".Localize(),
+					doneString,
+					probePositions,
+					theme);
 			}
 		}
 
