@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl
 {
 	public class WizardControlPage : GuiWidget
 	{
-		public string StepDescription { get; set; } = "";
+		public string StepDescription { get; protected set; } = "";
 
 		public WizardControlPage(string stepDescription)
 		{
@@ -66,12 +66,6 @@ namespace MatterHackers.MatterControl
 		private TextWidget stepDescriptionWidget;
 
 		protected abstract IEnumerator<WizardControlPage> Pages { get; }
-
-		public string StepDescription
-		{
-			get { return stepDescriptionWidget.Text; }
-			set { stepDescriptionWidget.Text = value; }
-		}
 
 		public WizardControl()
 		{
@@ -183,7 +177,7 @@ namespace MatterHackers.MatterControl
 			pageContent.CloseAllChildren();
 			pagesCache.MoveNext();
 
-			StepDescription = pagesCache.Current.StepDescription;
+			stepDescriptionWidget.Text = pagesCache.Current.StepDescription;
 			pageContent.AddChild(pagesCache.Current);
 			pagesCache.Current?.PageIsBecomingActive();
 		}
