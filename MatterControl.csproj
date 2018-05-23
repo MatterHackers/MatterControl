@@ -101,7 +101,6 @@
     <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\AutoProbeFeedback.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\CalibrateProbeLastPagelInstructions.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\FindBedHeight.cs" />
-    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\FirstPageInstructions.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\GetCoarseBedHeight.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\GetFineBedHeight.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\GettingThirdPointFor2PointCalibration.cs" />

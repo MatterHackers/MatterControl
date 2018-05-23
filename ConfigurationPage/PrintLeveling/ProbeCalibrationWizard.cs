@@ -62,10 +62,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				this.doneButton.Visible = false;
 
-				// make a welocme page if this is the first time calibrating the probe
+				// make a welcome page if this is the first time calibrating the probe
 				if (!printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated))
 				{
-					yield return new FirstPageInstructions(
+					yield return new InstructionsPage(
 						printer,
 						levelingStrings.initialPrinterSetupStepText,
 						string.Format(
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				}
 
 				// show what steps will be taken
-				yield return new FirstPageInstructions(
+				yield return new InstructionsPage(
 					printer,
 					"Probe Calibration Overview".Localize(),
 					string.Format(

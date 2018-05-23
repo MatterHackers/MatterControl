@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					string part1 = "Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize();
 					string part2 = "The next few screens will walk your through calibrating your printer.".Localize();
 					string requiredPageInstructions = $"{part1}\n\n{part2}";
-					yield return new FirstPageInstructions(printer, levelingStrings.initialPrinterSetupStepText, requiredPageInstructions, theme);
+					yield return new InstructionsPage(printer, levelingStrings.initialPrinterSetupStepText, requiredPageInstructions, theme);
 				}
 
 				// To make sure the bed is at the correct temp, put in a filament selection page.
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				var secondsPerAutomaticSpot = 3 * zProbeSamples;
 				var secondsToCompleteWizard = levelWizard.ProbeCount * (useZProbe ? secondsPerAutomaticSpot : secondsPerManualSpot);
 				secondsToCompleteWizard += (hasHeatedBed ? 60 * 3 : 0);
-				yield return new FirstPageInstructions(printer,
+				yield return new InstructionsPage(printer,
 					"Print Leveling Overview".Localize(),
 					levelingStrings.WelcomeText(levelWizard.ProbeCount, (int)Math.Round(secondsToCompleteWizard / 60.0)), theme);
 
