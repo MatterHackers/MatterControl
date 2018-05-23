@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,24 +27,20 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterControl.Printing;
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class ProbeWizardControl : WizardControl
 	{
-		protected PrinterConfig printer;
-		ThemeConfig theme;
+		private PrinterConfig printer;
+		private ThemeConfig theme;
 
 		public ProbeWizardControl(PrinterConfig printer, ThemeConfig theme)
 		{
@@ -56,11 +52,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			get
 			{
-				LevelingStrings levelingStrings = new LevelingStrings(printer.Settings);
-				List<ProbePosition> autoProbePositions = new List<ProbePosition>(3);
-				List<ProbePosition> manualProbePositions = new List<ProbePosition>(3);
+				var levelingStrings = new LevelingStrings(printer.Settings);
+				var autoProbePositions = new List<ProbePosition>(3);
+				var manualProbePositions = new List<ProbePosition>(3);
+
 				autoProbePositions.Add(new ProbePosition());
 				manualProbePositions.Add(new ProbePosition());
+
 				int totalSteps = 3;
 
 				this.doneButton.Visible = false;
@@ -160,7 +158,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						"{0} {1} {2} - {3}",
 						levelingStrings.GetStepString(totalSteps),
 						"Position".Localize(),
-						i + 1, lowPrecisionLabel),
+						i + 1,
+						lowPrecisionLabel),
 					manualProbePositions,
 					i,
 					levelingStrings,
