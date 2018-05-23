@@ -273,17 +273,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var activeEditors = new List<(IObject3DEditor, IObject3D, string)>();
 
-			foreach (var child in selectedItem.DescendantsAndSelf())
+			foreach (var child in new[] { selectedItem })
 			{
 				if (ApplicationController.Instance.GetEditorsForType(child.GetType())?.FirstOrDefault() is IObject3DEditor editor)
 				{
 					activeEditors.Add((editor, child, child.Name));
-				}
-
-				// If the object is not persistable than don't show its details.
-				if(!child.Persistable)
-				{
-					break;
 				}
 			}
 
