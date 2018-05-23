@@ -1853,7 +1853,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private CancellationTokenSource printingCancellation;
 
-		public async void StartPrint(string gcodeFilename, PrintTask printTaskToUse = null)
+		public async Task StartPrint(string gcodeFilename, PrintTask printTaskToUse = null)
 		{
 			if (!this.IsConnected || PrinterIsPrinting)
 			{

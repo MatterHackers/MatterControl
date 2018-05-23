@@ -68,13 +68,13 @@ namespace MatterHackers.MatterControl.PrintHistory
 						{
 							if (messageBoxResponse)
 							{
-								UiThread.RunOnIdle(() =>
+								UiThread.RunOnIdle(async () =>
 								{
 									if (printer.Connection.CommunicationState == CommunicationStates.Connected)
 									{
 										printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-										printer.Connection.StartPrint(lastPrint.PrintingGCodeFileName, lastPrint);
-										ApplicationController.Instance.MonitorPrintTask(printer).ConfigureAwait(false);
+										await printer.Connection.StartPrint(lastPrint.PrintingGCodeFileName, lastPrint);
+										ApplicationController.Instance.MonitorPrintTask(printer);
 									}
 								});
 							}
