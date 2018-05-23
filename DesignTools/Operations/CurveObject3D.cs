@@ -39,7 +39,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CurveObject3D : MeshWrapperObject3D, IRebuildable
+	public class CurveObject3D : MeshWrapperObject3D, IPublicPropertyObject
 	{
 		public double Diameter { get; set; } = 0;
 
@@ -50,8 +50,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 		}
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		public override void Rebuild(UndoBuffer undoBuffer)
 		{
+			Rebuilding = true;
+			ResetMeshWrappers();
+
 			var meshWrapper = this.Descendants()
 				.Where((obj) => obj.OwnerID == this.ID).ToList();
 
@@ -119,6 +122,20 @@ namespace MatterHackers.MatterControl.DesignTools
 					transformedMesh.CalculateNormals();
 				}
 			}
+
+			Rebuilding = false;
+		}
+
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if ((invalidateType.InvalidateType == InvalidateType.Content
+				|| invalidateType.InvalidateType == InvalidateType.Matrix)
+				&& invalidateType.Source != this
+				&& !Rebuilding)
+			{
+				Rebuild(null);
+			}
+			base.OnInvalidate(invalidateType);
 		}
 	}
 }

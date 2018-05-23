@@ -41,7 +41,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class ImageObject3D : AssetObject3D, IRebuildable
+	public class ImageObject3D : AssetObject3D, IPublicPropertyObject
 	{
 		private const double DefaultSizeMm = 60;
 
@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					_invert = value;
 					_image = null;
 
-					this.OnInvalidate();
+					this.OnInvalidate(new InvalidateArgs(this, InvalidateType.Content));
 				}
 			}
 		}

@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 
 			scene.SelectLastChild();
-			scene.Invalidate();
+			scene.Invalidate(new InvalidateArgs(null, InvalidateType.Content));
 		}
 
 		public void Undo()
@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 
 			scene.SelectLastChild();
-			scene.Invalidate();
+			scene.Invalidate(new InvalidateArgs(null, InvalidateType.Content));
 		}
 	}
 }

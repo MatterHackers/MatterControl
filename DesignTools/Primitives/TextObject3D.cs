@@ -44,7 +44,7 @@ using Newtonsoft.Json.Converters;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class TextObject3D : Object3D, IRebuildable
+	public class TextObject3D : Object3D, IPublicPropertyObject
 	{
 		public TextObject3D()
 		{
@@ -85,8 +85,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			undoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { this }, new List<IObject3D> { newContainer }));
 		}
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		public override void Rebuild(UndoBuffer undoBuffer)
 		{
+			Rebuilding = true;
 			var aabb = this.GetAxisAlignedBoundingBox();
 
 			this.Children.Modify(list =>
@@ -120,6 +121,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				// If the part was already created and at a height, maintain the height.
 				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 			}
+
+			Rebuilding = false;
+
+			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
 	}
 }

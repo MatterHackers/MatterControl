@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								thumbnailWidget.Image = SetImage(theme, imageObject);
 
 								column.Invalidate();
-								imageObject.Invalidate();
+								imageObject.Invalidate(new InvalidateArgs(imageObject, InvalidateType.Content));
 							});
 				});
 			};

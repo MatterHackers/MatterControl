@@ -36,7 +36,7 @@ using MatterHackers.PolygonMesh;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideUpdateButtonAttribute]
-	public class CubeObject3D : Object3D, IRebuildable
+	public class CubeObject3D : Object3D, IPublicPropertyObject
 	{
 		public CubeObject3D()
 		{

@@ -27,11 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
@@ -57,7 +59,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			{
 				child.OutputType = PrintOutputTypes.Default;
 			}
-			// collapes our children into our parent
+
+			// collapse our children into our parent
 			base.Remove(undoBuffer);
 		}
 
@@ -89,9 +92,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public static void WrapSelection(MeshWrapperObject3D meshWrapper, InteractiveScene scene)
 		{
-			if (scene.HasSelection)
+			var selectedItem = scene.SelectedItem;
+			if (selectedItem != null)
 			{
-				var selectedItem = scene.SelectedItem;
 				scene.SelectedItem = null;
 
 				List<IObject3D> originalItems;
@@ -130,29 +133,41 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				}
 			});
 
+			AddMeshWrapperToAllChildren();
+		}
+
+		private void AddMeshWrapperToAllChildren()
+		{ 
 			// Wrap every first descendant that has a mesh
 			foreach (var child in this.VisibleMeshes().ToList())
 			{
-				// wrap the child
-				child.object3D.Parent.Children.Modify((list) =>
+				// have to check that NO child of the visible mesh has us as the parent id
+				if (child.object3D.OwnerID != this.ID)
 				{
-					list.Remove(child.object3D);
-					list.Add(new MeshWrapper(child.object3D, this.ID));
-				});
+					// wrap the child
+					child.object3D.Parent.Children.Modify((list) =>
+					{
+						list.Remove(child.object3D);
+						list.Add(new MeshWrapper(child.object3D, this.ID));
+					});
+				}
 			}
 		}
 
 		public void ResetMeshWrappers()
 		{
+			// if there are not already, wrap all meshes with our id (some inner object may have changed it's meshes)
+			AddMeshWrapperToAllChildren();
+
 			this.Mesh = null;
 			var participants = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
 			foreach (var item in participants)
 			{
-				item.Visible = true;
+				var firstChild = item.Children.First();
 				// set the mesh back to the child mesh
-				item.Mesh = item.Children.First().Mesh;
-				// and set the color back
-				item.Color = item.Children.First().Color;
+				item.Mesh = firstChild.Mesh;
+				// and reset the properties
+				firstChild.CopyProperties(firstChild);
 			}
 		}
 	}

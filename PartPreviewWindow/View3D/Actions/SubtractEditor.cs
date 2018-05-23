@@ -47,6 +47,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			Name = "Subtract";
 		}
+		public override void Rebuild(UndoBuffer undoBuffer)
+		{
+		}
 	}
 
 	public class SubtractEditor : IObject3DEditor
@@ -240,7 +243,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						transformedKeep.Transform(inverse);
 
 						keep.Mesh = transformedKeep;
-						keep.Invalidate();
+						// TODO: make this the subtract object when it is available
+						keep.Invalidate(new InvalidateArgs(keep, InvalidateType.Content));
 
 						percentCompleted += amountPerOperation;
 						progressStatus.Progress0To1 = percentCompleted;

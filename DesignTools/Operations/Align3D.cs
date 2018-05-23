@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	}
 
 	[HideUpdateButtonAttribute]
-	public class Align3D : Object3D, IRebuildable, IPropertyGridModifier
+	public class Align3D : Object3D, IPublicPropertyObject, IPropertyGridModifier
 	{
 		// We need to serialize this so we can remove the arrange and get back to the objects before arranging
 		public List<Aabb> OriginalChildrenBounds = new List<Aabb>();
@@ -326,19 +326,21 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return positionToAlignTo + extraOffset;
 		}
 
-		bool inRebuild;
-		protected override void OnInvalidate()
+		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if (!inRebuild)
+			if ((invalidateType.InvalidateType == InvalidateType.Content
+				|| invalidateType.InvalidateType == InvalidateType.Matrix)
+				&& invalidateType.Source != this
+				&& !Rebuilding)
 			{
 				Rebuild(null);
 			}
-			base.OnInvalidate();
+			base.OnInvalidate(invalidateType);
 		}
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		public override void Rebuild(UndoBuffer undoBuffer)
 		{
-			inRebuild = true;
+			Rebuilding = true;
 			var aabb = this.GetAxisAlignedBoundingBox();
 
 			// TODO: check if the has code for the children
@@ -435,7 +437,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			});
 
-			inRebuild = false;
+			Rebuilding = false;
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)

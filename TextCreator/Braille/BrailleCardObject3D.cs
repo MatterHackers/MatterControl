@@ -45,7 +45,7 @@ using Newtonsoft.Json.Converters;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[WebPageLink("About Braille", "https://en.wikipedia.org/wiki/Braille")]
-	public class BrailleCardObject3D : Object3D, IRebuildable
+	public class BrailleCardObject3D : Object3D, IPublicPropertyObject
 	{
 		public BrailleCardObject3D()
 		{

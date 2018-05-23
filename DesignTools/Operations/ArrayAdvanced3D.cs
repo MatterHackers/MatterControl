@@ -35,7 +35,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayAdvanced3D : Object3D, IRebuildable
+	public class ArrayAdvanced3D : Object3D, IPublicPropertyObject
 	{
 		public ArrayAdvanced3D()
 		{

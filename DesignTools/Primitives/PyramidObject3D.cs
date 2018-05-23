@@ -38,7 +38,7 @@ using MatterHackers.VectorMath;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideUpdateButtonAttribute]
-	public class PyramidObject3D : Object3D, IRebuildable
+	public class PyramidObject3D : Object3D, IPublicPropertyObject
 	{
 		public PyramidObject3D()
 		{

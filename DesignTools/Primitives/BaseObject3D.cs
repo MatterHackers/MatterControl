@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	using Polygons = List<List<IntPoint>>;
 	public enum BaseTypes { None, Rectangle, Circle, /* Oval, Frame,*/ Outline, };
 
-	public class BaseObject3D : Object3D, IRebuildable, IPropertyGridModifier
+	public class BaseObject3D : Object3D, IPublicPropertyObject, IPropertyGridModifier
 	{
 		readonly double scalingForClipper = 1000;
 

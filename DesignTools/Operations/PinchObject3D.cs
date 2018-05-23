@@ -38,7 +38,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class PinchObject3D : MeshWrapperObject3D, IRebuildable
+	public class PinchObject3D : MeshWrapperObject3D, IPublicPropertyObject
 	{
 		[DisplayName("Back Ratio")]
 		public double PinchRatio { get; set; } = 1;
@@ -47,8 +47,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 		}
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		public override void Rebuild(UndoBuffer undoBuffer)
 		{
+			Rebuilding = true;
+			ResetMeshWrappers();
+
 			var meshWrapper = this.Descendants()
 				.Where((obj) => obj.OwnerID == this.ID).ToList();
 
@@ -107,7 +110,21 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				transformedMesh.MarkAsChanged();
 				transformedMesh.CalculateNormals();
+
+				Rebuilding = false;
 			}
+		}
+
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if ((invalidateType.InvalidateType == InvalidateType.Content
+				|| invalidateType.InvalidateType == InvalidateType.Matrix)
+				&& invalidateType.Source != this
+				&& !Rebuilding)
+			{
+				Rebuild(null);
+			}
+			base.OnInvalidate(invalidateType);
 		}
 	}
 }

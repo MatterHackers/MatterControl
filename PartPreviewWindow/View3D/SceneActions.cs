@@ -326,8 +326,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// rotate it
 				objectToLayFlat.Matrix = objectToLayFlatGroup.ApplyAtBoundsCenter(partLevelMatrix);
-
-				scene.Invalidate();
 			}
 
 			PlatingHelper.PlaceOnBed(objectToLayFlatGroup);

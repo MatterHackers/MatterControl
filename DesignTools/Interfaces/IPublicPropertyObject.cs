@@ -31,7 +31,7 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public interface IRebuildable
+	public interface IPublicPropertyObject
 	{
 		void Rebuild(UndoBuffer undoBuffer);
 	}

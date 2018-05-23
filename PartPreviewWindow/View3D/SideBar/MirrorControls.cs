@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					break;
 			}
 
-			item.Invalidate();
+			item.Invalidate(new InvalidateArgs(item, InvalidateType.Content));
 			Invalidate();
 		}
 	}

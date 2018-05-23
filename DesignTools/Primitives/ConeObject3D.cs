@@ -40,7 +40,7 @@ using MatterHackers.VectorMath;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideUpdateButtonAttribute]
-	public class ConeObject3D : Object3D, IRebuildable
+	public class ConeObject3D : Object3D, IPublicPropertyObject
 	{
 		public ConeObject3D()
 		{

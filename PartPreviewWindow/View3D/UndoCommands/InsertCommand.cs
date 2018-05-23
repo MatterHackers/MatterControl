@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			scene.SelectedItem = item;
 
-			scene.Invalidate();
+			scene.Invalidate(new InvalidateArgs(null, InvalidateType.Content));
 		}
 
 		public void Undo()
@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				scene.SelectedItem = null;
 			}
 
-			scene.Invalidate();
+			scene.Invalidate(new InvalidateArgs(null, InvalidateType.Content));
 		}
 	}
 }

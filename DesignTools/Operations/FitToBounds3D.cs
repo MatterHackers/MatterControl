@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	public enum MaintainRatio { None, X_Y, X_Y_Z }
 
 	[HideUpdateButtonAttribute]
-	public class FitToBounds3D : Object3D, IRebuildable, IEditorDraw, IPropertyGridModifier
+	public class FitToBounds3D : Object3D, IPublicPropertyObject, IEditorDraw, IPropertyGridModifier
 	{
 		[Description("Set the shape the part will be fit into.")]
 		public FitType FitType { get; set; } = FitType.Box;
@@ -107,10 +107,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			});
 		}
 
-		protected override void OnInvalidate()
+		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
+			if ((invalidateType.InvalidateType == InvalidateType.Content
+				|| invalidateType.InvalidateType == InvalidateType.Matrix)
+				&& invalidateType.Source != this
+				&& !Rebuilding)
+			{
+				Rebuild(null);
+			}
 			// If the child bounds changed than adjust the scale control
-			base.OnInvalidate();
+			base.OnInvalidate(invalidateType);
 		}
 
 		public static FitToBounds3D Create(IObject3D itemToFit)
@@ -131,8 +138,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return fitToBounds;
 		}
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		public override void Rebuild(UndoBuffer undoBuffer)
 		{
+			Rebuilding = true;
 			var aabb = this.GetAxisAlignedBoundingBox();
 
 			AdjustChildSize(null, null);
@@ -142,6 +150,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				// If the part was already created and at a height, maintain the height.
 				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 			}
+
+			Rebuilding = false;
 		}
 
 		private void AdjustChildSize(object sender, EventArgs e)
