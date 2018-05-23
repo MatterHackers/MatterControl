@@ -1743,7 +1743,7 @@ namespace MatterHackers.MatterControl
 									if (messageBoxResponse)
 									{
 										this.ActivePrinter.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-										this.ArchiveAndStartPrint(partFilePath, gcodeFilePath);
+										this.ArchiveAndStartPrint(partFilePath, gcodeFilePath, printer);
 									}
 								},
 								"The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?".Localize(),
@@ -1768,11 +1768,9 @@ namespace MatterHackers.MatterControl
 						// Only start print if slicing completed
 						if (slicingSucceeded)
 						{
-							this.ArchiveAndStartPrint(partFilePath, gcodeFilePath);
+							this.ArchiveAndStartPrint(partFilePath, gcodeFilePath, printer);
 						}
 					}
-
-					await MonitorPrintTask(printer);
 				}
 			}
 			catch (Exception)
@@ -1843,7 +1841,7 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		/// <param name="sourcePath">The source file which originally caused the slice->print operation</param>
 		/// <param name="gcodeFilePath">The resulting GCode to print</param>
-		private void ArchiveAndStartPrint(string sourcePath, string gcodeFilePath)
+		private async void ArchiveAndStartPrint(string sourcePath, string gcodeFilePath, PrinterConfig printer)
 		{
 			if (File.Exists(sourcePath)
 				&& File.Exists(gcodeFilePath))
@@ -1872,7 +1870,10 @@ namespace MatterHackers.MatterControl
 
 					if (originalIsGCode)
 					{
-						this.ActivePrinter.Connection.StartPrint(gcodeFilePath);
+						await this.ActivePrinter.Connection.StartPrint(gcodeFilePath);
+
+						MonitorPrintTask(printer);
+
 						return;
 					}
 					else
@@ -1889,7 +1890,8 @@ namespace MatterHackers.MatterControl
 							string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
 							if (fileEnd.Contains("filament used"))
 							{
-								this.ActivePrinter.Connection.StartPrint(gcodeFilePath);
+								await this.ActivePrinter.Connection.StartPrint(gcodeFilePath);
+								MonitorPrintTask(printer);
 								return;
 							}
 						}
