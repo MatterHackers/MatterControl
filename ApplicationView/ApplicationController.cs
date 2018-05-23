@@ -1783,11 +1783,11 @@ namespace MatterHackers.MatterControl
 			TranslationMap.ActiveTranslationMap = new TranslationMap("Translations", UserSettings.Instance.Language);
 		}
 
-		public async Task MonitorPrintTask(PrinterConfig printer)
+		public void MonitorPrintTask(PrinterConfig printer)
 		{
 			string layerDetails = (printer.Bed.LoadedGCode?.LayerCount > 0) ? $" of {printer.Bed.LoadedGCode.LayerCount}" : "";
 
-			await ApplicationController.Instance.Tasks.Execute(
+			ApplicationController.Instance.Tasks.Execute(
 				"Printing".Localize(),
 				(reporterB, cancellationTokenB) =>
 				{
