@@ -1704,77 +1704,72 @@ namespace MatterHackers.MatterControl
 					return;
 				}
 
-				//if (!string.IsNullOrEmpty(partFilePath) && File.Exists(partFilePath))
+				this.PrintingItemName = printItemName;
+
+				if (ActiveSliceSettings.Instance.IsValid())
 				{
-					this.PrintingItemName = printItemName;
+					// clear the output cache prior to starting a print
+					this.ActivePrinter.Connection.TerminalLog.Clear();
 
-					if (ActiveSliceSettings.Instance.IsValid())
+					string hideGCodeWarning = ApplicationSettings.Instance.get(ApplicationSettingsKey.HideGCodeWarning);
+
+					if (Path.GetExtension(partFilePath).ToUpper() == ".GCODE"
+						&& hideGCodeWarning == null
+						&& !overrideAllowGCode)
 					{
+						var hideGCodeWarningCheckBox = new CheckBox(doNotAskAgainMessage)
 						{
-							// clear the output cache prior to starting a print
-							this.ActivePrinter.Connection.TerminalLog.Clear();
-
-							string hideGCodeWarning = ApplicationSettings.Instance.get(ApplicationSettingsKey.HideGCodeWarning);
-
-							if (Path.GetExtension(partFilePath).ToUpper() == ".GCODE"
-								&& hideGCodeWarning == null
-								&& !overrideAllowGCode)
+							TextColor = ActiveTheme.Instance.PrimaryTextColor,
+							Margin = new BorderDouble(top: 6, left: 6),
+							HAnchor = Agg.UI.HAnchor.Left
+						};
+						hideGCodeWarningCheckBox.Click += (sender, e) =>
+						{
+							if (hideGCodeWarningCheckBox.Checked)
 							{
-								var hideGCodeWarningCheckBox = new CheckBox(doNotAskAgainMessage)
-								{
-									TextColor = ActiveTheme.Instance.PrimaryTextColor,
-									Margin = new BorderDouble(top: 6, left: 6),
-									HAnchor = Agg.UI.HAnchor.Left
-								};
-								hideGCodeWarningCheckBox.Click += (sender, e) =>
-								{
-									if (hideGCodeWarningCheckBox.Checked)
-									{
-										ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, "true");
-									}
-									else
-									{
-										ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, null);
-									}
-								};
-
-								UiThread.RunOnIdle(() =>
-								{
-									StyledMessageBox.ShowMessageBox(
-										(messageBoxResponse) =>
-										{
-											if (messageBoxResponse)
-											{
-												this.ActivePrinter.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-												this.ArchiveAndStartPrint(partFilePath, gcodeFilePath);
-											}
-										},
-										"The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?".Localize(),
-										"Warning - GCode file".Localize(),
-										new GuiWidget[]
-										{
-											new VerticalSpacer(),
-											hideGCodeWarningCheckBox
-										},
-										StyledMessageBox.MessageType.YES_NO);
-
-								});
+								ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, "true");
 							}
 							else
 							{
-								this.ActivePrinter.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-
-								await ApplicationController.Instance.SliceItemLoadOutput(
-									printer,
-									printer.Bed.Scene,
-									gcodeFilePath);
-
-								this.ArchiveAndStartPrint(partFilePath, gcodeFilePath);
+								ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, null);
 							}
+						};
 
-							await MonitorPrintTask(printer);
-						}
+						UiThread.RunOnIdle(() =>
+						{
+							StyledMessageBox.ShowMessageBox(
+								(messageBoxResponse) =>
+								{
+									if (messageBoxResponse)
+									{
+										this.ActivePrinter.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
+										this.ArchiveAndStartPrint(partFilePath, gcodeFilePath);
+									}
+								},
+								"The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?".Localize(),
+								"Warning - GCode file".Localize(),
+								new GuiWidget[]
+								{
+										new VerticalSpacer(),
+										hideGCodeWarningCheckBox
+								},
+								StyledMessageBox.MessageType.YES_NO);
+
+						});
 					}
+					else
+					{
+						this.ActivePrinter.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
+
+						await ApplicationController.Instance.SliceItemLoadOutput(
+							printer,
+							printer.Bed.Scene,
+							gcodeFilePath);
+
+						this.ArchiveAndStartPrint(partFilePath, gcodeFilePath);
+					}
+
+					await MonitorPrintTask(printer);
 				}
 			}
 			catch (Exception)
@@ -1850,58 +1845,55 @@ namespace MatterHackers.MatterControl
 			if (File.Exists(sourcePath)
 				&& File.Exists(gcodeFilePath))
 			{
-				//if (gcodeFilePath != "")
+				bool originalIsGCode = Path.GetExtension(sourcePath).ToUpper() == ".GCODE";
+				if (File.Exists(gcodeFilePath))
 				{
-					bool originalIsGCode = Path.GetExtension(sourcePath).ToUpper() == ".GCODE";
-					if (File.Exists(gcodeFilePath))
+					// Create archive point for printing attempt
+					if (Path.GetExtension(sourcePath).ToUpper() == ".MCX")
 					{
-						// Create archive point for printing attempt
-						if (Path.GetExtension(sourcePath).ToUpper() == ".MCX")
+						// TODO: We should zip mcx and settings when starting a print
+						string platingDirectory = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "PrintHistory");
+						Directory.CreateDirectory(platingDirectory);
+
+						string now = "Workspace " + DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
+						string archivePath = Path.Combine(platingDirectory, now + ".zip");
+
+						using (var file = File.OpenWrite(archivePath))
+						using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
 						{
-							// TODO: We should zip mcx and settings when starting a print
-							string platingDirectory = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "PrintHistory");
-							Directory.CreateDirectory(platingDirectory);
-
-							string now = "Workspace " + DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
-							string archivePath = Path.Combine(platingDirectory, now + ".zip");
-
-							using (var file = File.OpenWrite(archivePath))
-							using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
-							{
-								zip.CreateEntryFromFile(sourcePath, "PrinterPlate.mcx");
-								zip.CreateEntryFromFile(ActiveSliceSettings.Instance.DocumentPath, ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name) + ".printer");
-								zip.CreateEntryFromFile(gcodeFilePath, "sliced.gcode");
-							}
-						}
-
-						if (originalIsGCode)
-						{
-							this.ActivePrinter.Connection.StartPrint(gcodeFilePath);
-							return;
-						}
-						else
-						{
-							// read the last few k of the file and see if it says "filament used". We use this marker to tell if the file finished writing
-							int bufferSize = 32000;
-							using (Stream fileStream = new FileStream(gcodeFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-							{
-								byte[] buffer = new byte[bufferSize];
-								fileStream.Seek(Math.Max(0, fileStream.Length - bufferSize), SeekOrigin.Begin);
-								int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
-								fileStream.Close();
-
-								string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
-								if (fileEnd.Contains("filament used"))
-								{
-									this.ActivePrinter.Connection.StartPrint(gcodeFilePath);
-									return;
-								}
-							}
+							zip.CreateEntryFromFile(sourcePath, "PrinterPlate.mcx");
+							zip.CreateEntryFromFile(ActiveSliceSettings.Instance.DocumentPath, ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name) + ".printer");
+							zip.CreateEntryFromFile(gcodeFilePath, "sliced.gcode");
 						}
 					}
 
-					this.ActivePrinter.Connection.CommunicationState = CommunicationStates.Connected;
+					if (originalIsGCode)
+					{
+						this.ActivePrinter.Connection.StartPrint(gcodeFilePath);
+						return;
+					}
+					else
+					{
+						// read the last few k of the file and see if it says "filament used". We use this marker to tell if the file finished writing
+						int bufferSize = 32000;
+						using (Stream fileStream = new FileStream(gcodeFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+						{
+							byte[] buffer = new byte[bufferSize];
+							fileStream.Seek(Math.Max(0, fileStream.Length - bufferSize), SeekOrigin.Begin);
+							int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
+							fileStream.Close();
+
+							string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
+							if (fileEnd.Contains("filament used"))
+							{
+								this.ActivePrinter.Connection.StartPrint(gcodeFilePath);
+								return;
+							}
+						}
+					}
 				}
+
+				this.ActivePrinter.Connection.CommunicationState = CommunicationStates.Connected;
 			}
 		}
 
