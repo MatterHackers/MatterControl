@@ -66,40 +66,40 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				// make a welocme page if this is the first time calibrating the probe
 				if (!printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated))
 				{
-					string part1 = "Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize();
-					string part2 = "The next few screens will walk your through calibrating your printer.".Localize();
-					string requiredPageInstructions = $"{part1}\n\n{part2}";
-
 					yield return new FirstPageInstructions(
 						printer,
 						levelingStrings.initialPrinterSetupStepText,
-						requiredPageInstructions,
+						string.Format(
+							"{0}\n\n{1}",
+							"Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize(),
+							"The next few screens will walk your through calibrating your printer.".Localize()),
 						theme);
 				}
 
 				// show what steps will be taken
-				var CalibrateProbeWelcomText = "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}".FormatWith(
-					"Welcome to the probe calibration wizard. Here is a quick overview on what we are going to do.".Localize(),
-					"Home the printer".Localize(),
-					"Probe the bed at the center".Localize(),
-					"Manually measure the extruder at the center".Localize(),
-					"We should be done in less than 1 minute.".Localize(),
-					levelingStrings.ClickNext);
-
 				yield return new FirstPageInstructions(
 					printer,
 					"Probe Calibration Overview".Localize(),
-					CalibrateProbeWelcomText,
+					string.Format(
+						"{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}",
+						"Welcome to the probe calibration wizard. Here is a quick overview on what we are going to do.".Localize(),
+						"Home the printer".Localize(),
+						"Probe the bed at the center".Localize(),
+						"Manually measure the extruder at the center".Localize(),
+						"We should be done in less than 1 minute.".Localize(),
+						levelingStrings.ClickNext),
 					theme);
 
 				// add in the material select page
-				var instruction1 = "The hot end needs to be heated to ensure it is clean.".Localize();
-				var instruction2 = "Please select the material you will be printing, so we can heat the printer before calibrating.".Localize();
 
 				yield return new SelectMaterialPage(
 					printer,
 					"Select Material".Localize(),
-					$"{instruction1}\n\n{instruction2}", theme);
+					string.Format(
+						"{0}\n\n{1}",
+						"The hot end needs to be heated to ensure it is clean.".Localize(),
+						"Please select the material you will be printing, so we can heat the printer before calibrating.".Localize()),
+					theme);
 
 				// add in the homing printer page
 				yield return new HomePrinterPage(
@@ -110,41 +110,34 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					false,
 					theme);
 
-				string heatingInstructions = "";
 				double targetHotendTemp = 0;
 
 				targetHotendTemp = printer.Settings.Helpers.ExtruderTemperature(0);
-				heatingInstructions += $"Waiting for the hotend to heat to {targetHotendTemp}.".Localize() + "\n"
-					+ "This will ensure no filament is stuck to the tip.".Localize() + "\n"
-					+ "\n"
-					+ "Warning! The tip of the nozzle will be HOT!".Localize() + "\n"
-					+ "Avoid contact with your skin.".Localize();
 
 				yield return new WaitForTempPage(
 					printer,
 					this,
 					"Waiting For Printer To Heat".Localize(),
-					heatingInstructions,
+					$"Waiting for the hotend to heat to {targetHotendTemp}.".Localize() + "\n"
+						+ "This will ensure no filament is stuck to the tip.".Localize() + "\n"
+						+ "\n"
+						+ "Warning! The tip of the nozzle will be HOT!".Localize() + "\n"
+						+ "Avoid contact with your skin.".Localize(),
 					0,
 					targetHotendTemp,
 					theme);
-
-				string lowPrecisionLabel = "Low Precision".Localize();
-				string medPrecisionLabel = "Medium Precision".Localize();
-				string highPrecisionLabel = "High Precision".Localize();
 
 				double startProbeHeight = printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start);
 				Vector2 probePosition = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
 
 				int i = 0;
-				// do the automatic probing of the center position
-				var stepString = $"{"Step".Localize()} {i + 1} {"of".Localize()} 3:";
 
+				// do the automatic probing of the center position
 				yield return new AutoProbeFeedback(
 					printer,
 					this,
 					new Vector3(probePosition, startProbeHeight),
-					$"{stepString} {"Position".Localize()} {i + 1} - {"Auto Calibrate".Localize()}",
+					$"{"Step".Localize()} {i + 1} {"of".Localize()} 3: {"Position".Localize()} {i + 1} - {"Auto Calibrate".Localize()}",
 					autoProbePositions,
 					i,
 					theme);
@@ -159,7 +152,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						levelingStrings.GetStepString(totalSteps),
 						"Position".Localize(),
 						i + 1,
-						lowPrecisionLabel),
+						"Low Precision".Localize()),
 					manualProbePositions,
 					i,
 					levelingStrings,
@@ -173,7 +166,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						levelingStrings.GetStepString(totalSteps),
 						"Position".Localize(),
 						i + 1,
-						medPrecisionLabel),
+						"Medium Precision".Localize()),
 					manualProbePositions,
 					i,
 					levelingStrings,
@@ -187,7 +180,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						levelingStrings.GetStepString(totalSteps),
 						"Position".Localize(),
 						i + 1,
-						highPrecisionLabel),
+						"High Precision".Localize()),
 					manualProbePositions,
 					i,
 					levelingStrings,
@@ -219,9 +212,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.printer = printer;
 			AlwaysOnTopOfMain = true;
 
-			string printLevelWizardTitle = ApplicationController.Instance.ProductName;
-			string printLevelWizardTitleFull = "Probe Calibration Wizard".Localize();
-			Title = string.Format("{0} - {1}", printLevelWizardTitle, printLevelWizardTitleFull);
+			Title = string.Format("{0} - {1}", ApplicationController.Instance.ProductName, "Probe Calibration Wizard".Localize());
 
 			AddChild(new ProbeWizardControl(printer, theme));
 		}
