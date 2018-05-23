@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,11 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.IO;
 using System.Linq;
-using MatterControl.Printing;
 using MatterHackers.Agg;
-using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -52,7 +49,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private View3DConfig gcodeOptions;
 		private DoubleSolidSlider layerRenderRatioSlider;
 		public SliceLayerSelector LayerScrollbar { get; private set; }
-		internal PrinterConfig printer;
 		private GCodePanel gcodePanel;
 		internal LeftResizeContainer gcodeContainer;
 		internal PrinterActionsBar printerActionsBar;
@@ -63,11 +59,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public PrinterTabPage(PrinterConfig printer, ThemeConfig theme, string tabTitle)
 			: base(printer, printer.Bed, theme, tabTitle)
 		{
-			this.printer = printer;
+			gcodeOptions = sceneContext.RendererOptions;
 
 			view3DWidget.meshViewerWidget.EditorMode = MeshViewerWidget.EditorType.Printer;
-
-			gcodeOptions = sceneContext.RendererOptions;
 
 			viewControls3D.TransformStateChanged += (s, e) =>
 			{

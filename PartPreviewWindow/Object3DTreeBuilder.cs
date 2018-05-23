@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.CustomWidgets.TreeView;
@@ -80,28 +81,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private static TreeNode AddItem(IObject3D item, TreeNode parentNode, ThemeConfig theme)
 		{
-			var inmemoryItem = new InMemoryLibraryItem(item.Clone());
-			var iconView = new IconViewItem(new ListViewItem(inmemoryItem, ApplicationController.Instance.Library.PlatingHistory), 16, 16, theme);
-
 			var node = new TreeNode()
 			{
 				Text = BuildDefaultName(item),
 				Tag = item,
 				TextColor = theme.Colors.PrimaryTextColor,
 				PointSize = theme.DefaultFontSize,
-				//Expanded = true,
 			};
-			//selectionTreeNodes.Add(item, node);
 
-			node.Load += (s, e) =>
+			// Check for operation resulting in the given type
+			if (ApplicationController.Instance.OperationsByType.TryGetValue(item.GetType(), out SceneSelectionOperation operation))
 			{
-				iconView.OnLoad(e);
+				// If exists, use the operation icon
+				node.Image = operation.Icon;
+			}
+			else
+			{
+				// Otherwise wire up icon generation
+				var inmemoryItem = new InMemoryLibraryItem(item.Clone());
+				var iconView = new IconViewItem(new ListViewItem(inmemoryItem, ApplicationController.Instance.Library.PlatingHistory), 16, 16, theme);
 
-				iconView.ImageSet += (s1, e1) =>
+				node.Load += (s, e) =>
 				{
-					node.Image = iconView.imageWidget.Image;
+					iconView.OnLoad(e);
+
+					iconView.ImageSet += (s1, e1) =>
+					{
+						node.Image = iconView.imageWidget.Image;
+					};
 				};
-			};
+			}
 
 			parentNode.Nodes.Add(node);
 			parentNode.Expanded = true;
