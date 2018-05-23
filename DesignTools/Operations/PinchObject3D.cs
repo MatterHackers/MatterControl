@@ -52,22 +52,26 @@ namespace MatterHackers.MatterControl.DesignTools
 			Rebuilding = true;
 			ResetMeshWrappers();
 
+			// remember the current matrix then clear it so the parts will rotate at the original wrapped position
+			var currentMatrix = Matrix;
+			Matrix = Matrix4X4.Identity;
+
 			var meshWrapper = this.Descendants()
 				.Where((obj) => obj.OwnerID == this.ID).ToList();
 
 			// reset the positions before we take the aabb
 			foreach (var items in meshWrapper.Select((mw) => (Original: mw.Children.First(),
-				 Transformed: mw)))
+				 Pinched: mw)))
 			{
-				var transformedMesh = items.Transformed.Mesh;
+				var pinchedMesh = items.Pinched.Mesh;
 				var originalMesh = items.Original.Mesh;
 
-				for (int i = 0; i < transformedMesh.Vertices.Count; i++)
+				for (int i = 0; i < pinchedMesh.Vertices.Count; i++)
 				{
-					transformedMesh.Vertices[i].Position = originalMesh.Vertices[i].Position;
+					pinchedMesh.Vertices[i].Position = originalMesh.Vertices[i].Position;
 				}
 
-				transformedMesh.MarkAsChanged();
+				pinchedMesh.MarkAsChanged();
 			}
 
 			var aabb = this.GetAxisAlignedBoundingBox();
@@ -110,6 +114,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				transformedMesh.MarkAsChanged();
 				transformedMesh.CalculateNormals();
+				
+				// set the matrix back
+				Matrix = currentMatrix;
 
 				Rebuilding = false;
 			}

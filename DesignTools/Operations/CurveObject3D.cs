@@ -55,6 +55,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			Rebuilding = true;
 			ResetMeshWrappers();
 
+			// remember the current matrix then clear it so the parts will rotate at the original wrapped position
+			var currentMatrix = Matrix;
+			Matrix = Matrix4X4.Identity;
+
 			var meshWrapper = this.Descendants()
 				.Where((obj) => obj.OwnerID == this.ID).ToList();
 
@@ -80,25 +84,53 @@ namespace MatterHackers.MatterControl.DesignTools
 				var radius = Diameter / 2;
 				var circumference = MathHelper.Tau * radius;
 				var rotationCenter = new Vector2(aabb.minXYZ.X, aabb.maxXYZ.Y + radius);
-				foreach (var items in meshWrapper.Select((mw) => (Original: mw.Children.First(), Transformed: mw)))
+				foreach (var object3Ds in meshWrapper.Select((mw) => (Original: mw.Children.First(), Curved: mw)))
 				{
-					var transformedMesh = items.Transformed.Mesh;
-					var originalMesh = items.Original.Mesh;
-					var itemMatrix = items.Original.WorldMatrix(this);
-					var invItemMatrix = itemMatrix;
-					invItemMatrix.Invert();
+					// split edges to make it curve better
+					/*if(false)
+					{
+						var maxXLength = aabb.XSize / AngleDegrees;
+						// chop any segment that is too short in x
+						for (int i = transformedMesh.MeshEdges.Count - 1; i >= 0; i--)
+						{
+							var edgeToSplit = transformedMesh.MeshEdges[i];
+							var start = edgeToSplit.VertexOnEnd[0].Position;
+							var end = edgeToSplit.VertexOnEnd[1].Position;
+							var edgeXLength = Math.Abs(end.X - start.X);
+							int numberOfDivides = (int)(edgeXLength / maxXLength);
+							if (numberOfDivides > 1)
+							{
+								for (int j = 1; j < numberOfDivides - 1; j++)
+								{
+									IVertex newVertex;
+									MeshEdge newMeshEdge;
+									transformedMesh.SplitMeshEdge(edgeToSplit, out newVertex, out newMeshEdge);
+									var otherIndex = newMeshEdge.GetVertexEndIndex(newVertex);
+									var ratio = (numberOfDivides - j) / (double)numberOfDivides;
+									newVertex.Position = start + (end - start) * ratio;
+									edgeToSplit = newMeshEdge;
+									start = edgeToSplit.VertexOnEnd[0].Position;
+									end = edgeToSplit.VertexOnEnd[1].Position;
+								}
+							}
+						}
+					}*/
+
+					var originalMatrix = object3Ds.Original.WorldMatrix(this);
+					var cuvedMesh = object3Ds.Curved.Mesh;
+					var originalMesh = object3Ds.Original.Mesh;
 					// make sure we are working with a copy
-					if (transformedMesh == originalMesh)
+					if (cuvedMesh == originalMesh)
 					{
 						// Make sure the mesh we are going to copy is in a good state to be copied (so we maintain vertex count)
 						originalMesh.CleanAndMergeMesh(CancellationToken.None);
-						transformedMesh = Mesh.Copy(originalMesh, CancellationToken.None);
-						items.Transformed.Mesh = transformedMesh;
+						cuvedMesh = Mesh.Copy(originalMesh, CancellationToken.None);
+						object3Ds.Curved.Mesh = cuvedMesh;
 					}
 
 					for (int i = 0; i < originalMesh.Vertices.Count; i++)
 					{
-						var matrix = items.Original.WorldMatrix(this);
+						var matrix = originalMatrix;
 						if (!BendCcw)
 						{
 							// rotate around so it wil bend correctly
@@ -115,13 +147,16 @@ namespace MatterHackers.MatterControl.DesignTools
 						rotatePosition.Z = worldPosition.Z;
 						matrix.Invert();
 						var worldWithBend = rotatePosition + new Vector3(aabb.minXYZ.X, radius + aabb.maxXYZ.Y, 0);
-						transformedMesh.Vertices[i].Position = Vector3.Transform(worldWithBend, matrix);
+						cuvedMesh.Vertices[i].Position = Vector3.Transform(worldWithBend, matrix);
 					}
 
-					transformedMesh.MarkAsChanged();
-					transformedMesh.CalculateNormals();
+					cuvedMesh.MarkAsChanged();
+					cuvedMesh.CalculateNormals();
 				}
 			}
+
+			// set the matrix back
+			Matrix = currentMatrix;
 
 			Rebuilding = false;
 		}
