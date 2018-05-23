@@ -394,6 +394,8 @@ namespace MatterHackers.MatterControl
 
 		private List<SceneSelectionOperation> registeredSceneOperations;
 
+		public Dictionary<Type, SceneSelectionOperation> OperationsByType { get; private set; }
+
 		private void RebuildSceneOperations(ThemeConfig theme)
 		{
 			registeredSceneOperations = new List<SceneSelectionOperation>()
@@ -465,6 +467,7 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
 				{
+					OperationType = typeof(Align3D),
 					TitleResolver = () => "Align".Localize(),
 					Action = (scene) =>
 					{
@@ -507,6 +510,7 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
 				{
+					OperationType = typeof(CombineObject3D),
 					TitleResolver = () => "Combine".Localize(),
 					Action = (scene) => MeshWrapperObject3D.WrapSelection(new CombineObject3D(), scene),
 					Icon = AggContext.StaticData.LoadIcon("combine.png").SetPreMultiply(),
@@ -514,6 +518,7 @@ namespace MatterHackers.MatterControl
 				},
 				new SceneSelectionOperation()
 				{
+					OperationType = typeof(SubtractObject3D),
 					TitleResolver = () => "Subtract".Localize(),
 					Action = (scene) => MeshWrapperObject3D.WrapSelection(new SubtractObject3D(), scene),
 					Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
@@ -521,6 +526,7 @@ namespace MatterHackers.MatterControl
 				},
 				new SceneSelectionOperation()
 				{
+					OperationType = typeof(IntersectionObject3D),
 					TitleResolver = () => "Intersect".Localize(),
 					Action = (scene) => MeshWrapperObject3D.WrapSelection(new IntersectionObject3D(), scene),
 					Icon = AggContext.StaticData.LoadIcon("intersect.png"),
@@ -528,6 +534,7 @@ namespace MatterHackers.MatterControl
 				},
 				new SceneSelectionOperation()
 				{
+					OperationType = typeof(SubtractAndReplaceObject3D),
 					TitleResolver = () => "Subtract & Replace".Localize(),
 					Action = (scene) => MeshWrapperObject3D.WrapSelection(new SubtractAndReplaceObject3D(), scene),
 					Icon = AggContext.StaticData.LoadIcon("subtract_and_replace.png").SetPreMultiply(),
@@ -536,6 +543,7 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
 				{
+					OperationType = typeof(ArrayLinear3D),
 					TitleResolver = () => "Linear Array".Localize(),
 					Action = (scene) =>
 					{
@@ -550,6 +558,7 @@ namespace MatterHackers.MatterControl
 				},
 				new SceneSelectionOperation()
 				{
+					OperationType = typeof(ArrayRadial3D),
 					TitleResolver = () => "Radial Array".Localize(),
 					Action = (scene) =>
 					{
@@ -564,6 +573,7 @@ namespace MatterHackers.MatterControl
 				},
 				new SceneSelectionOperation()
 				{
+					OperationType = typeof(ArrayAdvanced3D),
 					TitleResolver = () => "Advanced Array".Localize(),
 					Action = (scene) =>
 					{
@@ -579,6 +589,7 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
 				{
+					OperationType = typeof(PinchObject3D),
 					TitleResolver = () => "Pinch".Localize(),
 					Action = (scene) =>
 					{
@@ -590,6 +601,7 @@ namespace MatterHackers.MatterControl
 				},
 				new SceneSelectionOperation()
 				{
+					OperationType = typeof(CurveObject3D),
 					TitleResolver = () => "Curve".Localize(),
 					Action = (scene) =>
 					{
@@ -601,6 +613,7 @@ namespace MatterHackers.MatterControl
 				},
 				new SceneSelectionOperation()
 				{
+					OperationType = typeof(FitToBounds3D),
 					TitleResolver = () => "Fit to Bounds".Localize(),
 					Action = (scene) =>
 					{
@@ -617,6 +630,17 @@ namespace MatterHackers.MatterControl
 				},
 			};
 
+			var operationsByType = new Dictionary<Type, SceneSelectionOperation>();
+
+			foreach(var operation in registeredSceneOperations)
+			{
+				if (operation.OperationType != null)
+				{
+					operationsByType.Add(operation.OperationType, operation);
+				}
+			}
+
+			this.OperationsByType = operationsByType;
 		}
 
 		public ImageSequence GetProcessingSequence(Color color)
@@ -1061,7 +1085,7 @@ namespace MatterHackers.MatterControl
 				var file = Path.Combine("Fonts", $"{Name}.ttf");
 				var exists = AggContext.StaticData.FileExists(file);
 				var stream = exists ? AggContext.StaticData.OpenStream(file) : null;
-				if (stream != null 
+				if (stream != null
 					&& typeFace.LoadTTF(stream))
 				{
 					TypeFaceCache.Add(Name, typeFace);

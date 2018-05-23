@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,13 +36,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PartTabPage : TabPage
 	{
+		// TODO: Don't change casing... almost certainly none of these should be exposed
 		internal View3DWidget view3DWidget;
+		internal BedConfig sceneContext;
+		internal PrinterConfig printer;
 
 		protected ViewControls3D viewControls3D;
-
-		internal BedConfig sceneContext;
 		protected ThemeConfig theme;
-
 		protected GuiWidget view3DContainer;
 		protected FlowLayoutWidget topToBottom;
 		protected FlowLayoutWidget leftToRight;
@@ -54,6 +54,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.BackgroundColor = theme.ActiveTabColor;
 			this.Padding = 0;
+			this.printer = printer;
 
 			bool isPrinterType = this is PrinterTabPage;
 
