@@ -27,15 +27,15 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private ThemeConfig theme;
 		protected WizardControl container;
 
-		public FindBedHeight(PrinterConfig printer, WizardControl container, string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance, 
+		public FindBedHeight(PrinterConfig printer, WizardControl container, string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance,
 			List<ProbePosition> probePositions, int probePositionsBeingEditedIndex, ThemeConfig theme)
 			: base(printer, pageDescription, setZHeightCoarseInstruction1, theme)
 		{

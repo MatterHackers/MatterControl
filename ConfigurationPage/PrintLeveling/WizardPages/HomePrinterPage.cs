@@ -27,9 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PrinterCommunication;
-using System;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {

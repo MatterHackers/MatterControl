@@ -27,12 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using System;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -52,7 +51,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private TextWidget hotEndDoneText;
 		double hotEndTargetTemp;
 
-		public WaitForTempPage(PrinterConfig printer, WizardControl container, 
+		public WaitForTempPage(PrinterConfig printer, WizardControl container,
 			string step, string instructions,
 			double targetBedTemp, double targetHotendTemp,
 			ThemeConfig theme)

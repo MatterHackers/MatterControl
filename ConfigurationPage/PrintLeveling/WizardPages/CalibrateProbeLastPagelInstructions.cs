@@ -27,9 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private List<ProbePosition> manualProbePositions;
 		private ThemeConfig theme;
 
-		public CalibrateProbeLastPagelInstructions(PrinterConfig printer, WizardControl container, string pageDescription, string instructionsText, 
+		public CalibrateProbeLastPagelInstructions(PrinterConfig printer, WizardControl container, string pageDescription, string instructionsText,
 			List<ProbePosition> autoProbePositions,
 			List<ProbePosition> manualProbePositions, ThemeConfig theme)
 			: base(printer, pageDescription, instructionsText, theme)

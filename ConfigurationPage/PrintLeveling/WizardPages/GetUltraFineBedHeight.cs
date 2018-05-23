@@ -27,15 +27,15 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.MatterControl.PrinterCommunication;
-using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class GetUltraFineBedHeight : FindBedHeight
 	{
-		public GetUltraFineBedHeight(PrinterConfig printer, WizardControl container, string pageDescription, List<ProbePosition> probePositions, 
+		public GetUltraFineBedHeight(PrinterConfig printer, WizardControl container, string pageDescription, List<ProbePosition> probePositions,
 			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings, ThemeConfig theme)
 			: base(printer, container, pageDescription, levelingStrings.UltraFineInstruction1, levelingStrings.FineInstruction2, .02, probePositions, probePositionsBeingEditedIndex, theme)
 		{

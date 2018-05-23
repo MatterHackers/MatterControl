@@ -36,23 +36,6 @@ using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
-	public class WizardControlPage : GuiWidget
-	{
-		public string StepDescription { get; protected set; } = "";
-
-		public WizardControlPage(string stepDescription)
-		{
-			StepDescription = stepDescription;
-		}
-
-		public virtual void PageIsBecomingActive()
-		{
-		}
-
-		public virtual void PageIsBecomingInactive()
-		{
-		}
-	}
 
 	public abstract class WizardControl : GuiWidget
 	{

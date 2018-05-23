@@ -27,12 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		protected Vector3 probeStartPosition;
 
-		public GetCoarseBedHeight(PrinterConfig printer, WizardControl container, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions, 
+		public GetCoarseBedHeight(PrinterConfig printer, WizardControl container, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions,
 			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings, ThemeConfig theme)
 			: base(printer, container, pageDescription, "Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.".Localize(),
 				  levelingStrings.CoarseInstruction2, 1, probePositions, probePositionsBeingEditedIndex, theme)

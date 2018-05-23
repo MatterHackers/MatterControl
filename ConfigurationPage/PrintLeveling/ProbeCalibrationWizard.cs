@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.printer = printer;
 		}
 
-		protected override IEnumerator<WizardControlPage> Pages
+		protected override IEnumerator<InstructionsPage> Pages
 		{
 			get
 			{

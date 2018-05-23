@@ -28,21 +28,20 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
 {
-	public class InstructionsPage : WizardControlPage
+	public class InstructionsPage : GuiWidget
 	{
 		protected FlowLayoutWidget topToBottomControls;
 
 		protected PrinterConfig printer { get; }
 
 		public InstructionsPage(PrinterConfig printer, string pageDescription, string instructionsText, ThemeConfig theme)
-			: base(pageDescription)
 		{
 			this.printer = printer;
+			this.StepDescription = pageDescription;
 
 			topToBottomControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			topToBottomControls.Padding = new BorderDouble(3);
@@ -54,6 +53,17 @@ namespace MatterHackers.MatterControl
 			AddChild(topToBottomControls);
 
 			AnchorAll();
+		}
+
+		public string StepDescription { get; protected set; } = "";
+
+
+		public virtual void PageIsBecomingActive()
+		{
+		}
+
+		public virtual void PageIsBecomingInactive()
+		{
 		}
 
 		public void AddTextField(string instructionsText, int pixelsFromLast, ThemeConfig theme)
