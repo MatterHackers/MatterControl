@@ -71,7 +71,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					string part1 = "Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize();
 					string part2 = "The next few screens will walk your through calibrating your printer.".Localize();
 					string requiredPageInstructions = $"{part1}\n\n{part2}";
-					yield return new FirstPageInstructions(printer, levelingStrings.initialPrinterSetupStepText, requiredPageInstructions, theme);
+
+					yield return new FirstPageInstructions(
+						printer,
+						levelingStrings.initialPrinterSetupStepText,
+						requiredPageInstructions,
+						theme);
 				}
 
 				// show what steps will be taken
@@ -83,19 +88,29 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					"We should be done in less than 1 minute.".Localize(),
 					levelingStrings.ClickNext);
 
-				yield return new FirstPageInstructions(printer,
-					"Probe Calibration Overview".Localize(), CalibrateProbeWelcomText, theme);
+				yield return new FirstPageInstructions(
+					printer,
+					"Probe Calibration Overview".Localize(),
+					CalibrateProbeWelcomText,
+					theme);
 
 				// add in the material select page
 				var instruction1 = "The hot end needs to be heated to ensure it is clean.".Localize();
 				var instruction2 = "Please select the material you will be printing, so we can heat the printer before calibrating.".Localize();
-				yield return new SelectMaterialPage(printer, "Select Material".Localize(), $"{instruction1}\n\n{instruction2}", theme);
+
+				yield return new SelectMaterialPage(
+					printer,
+					"Select Material".Localize(),
+					$"{instruction1}\n\n{instruction2}", theme);
 
 				// add in the homing printer page
-				yield return new HomePrinterPage(printer, this,
+				yield return new HomePrinterPage(
+					printer,
+					this,
 					"Homing The Printer".Localize(),
 					levelingStrings.HomingPageInstructions(true, false),
-					false, theme);
+					false,
+					theme);
 
 				string heatingInstructions = "";
 				double targetHotendTemp = 0;
@@ -107,9 +122,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					+ "Warning! The tip of the nozzle will be HOT!".Localize() + "\n"
 					+ "Avoid contact with your skin.".Localize();
 
-				yield return new WaitForTempPage(printer, this,
-					"Waiting For Printer To Heat".Localize(), heatingInstructions,
-					0, targetHotendTemp,
+				yield return new WaitForTempPage(
+					printer,
+					this,
+					"Waiting For Printer To Heat".Localize(),
+					heatingInstructions,
+					0,
+					targetHotendTemp,
 					theme);
 
 				string lowPrecisionLabel = "Low Precision".Localize();
@@ -122,25 +141,71 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				int i = 0;
 				// do the automatic probing of the center position
 				var stepString = $"{"Step".Localize()} {i + 1} {"of".Localize()} 3:";
-				yield return new AutoProbeFeedback(printer, this,
+
+				yield return new AutoProbeFeedback(
+					printer,
+					this,
 					new Vector3(probePosition, startProbeHeight),
 					$"{stepString} {"Position".Localize()} {i + 1} - {"Auto Calibrate".Localize()}",
-					autoProbePositions, i, theme);
+					autoProbePositions,
+					i,
+					theme);
 
 				// do the manual prob of the same position
-				yield return new GetCoarseBedHeight(printer, this, new Vector3(probePosition, startProbeHeight),
-					string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), "Position".Localize(), i + 1, lowPrecisionLabel), manualProbePositions, i, levelingStrings, theme);
-				yield return new GetFineBedHeight(printer, this, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), "Position".Localize(), i + 1, medPrecisionLabel), manualProbePositions, i, levelingStrings, theme);
-				yield return new GetUltraFineBedHeight(printer, this, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), "Position".Localize(), i + 1, highPrecisionLabel), manualProbePositions, i, levelingStrings, theme);
+				yield return new GetCoarseBedHeight(
+					printer,
+					this,
+					new Vector3(probePosition, startProbeHeight),
+					string.Format(
+						"{0} {1} {2} - {3}",
+						levelingStrings.GetStepString(totalSteps),
+						"Position".Localize(),
+						i + 1, lowPrecisionLabel),
+					manualProbePositions,
+					i,
+					levelingStrings,
+					theme);
+
+				yield return new GetFineBedHeight(
+					printer,
+					this,
+					string.Format(
+						"{0} {1} {2} - {3}",
+						levelingStrings.GetStepString(totalSteps),
+						"Position".Localize(),
+						i + 1,
+						medPrecisionLabel),
+					manualProbePositions,
+					i,
+					levelingStrings,
+					theme);
+
+				yield return new GetUltraFineBedHeight(
+					printer,
+					this,
+					string.Format(
+						"{0} {1} {2} - {3}",
+						levelingStrings.GetStepString(totalSteps),
+						"Position".Localize(),
+						i + 1,
+						highPrecisionLabel),
+					manualProbePositions,
+					i,
+					levelingStrings,
+					theme);
 
 				this.cancelButton.Visible = false;
 				this.doneButton.Visible = true;
 				this.nextButton.Enabled = false;
-				yield return new CalibrateProbeLastPagelInstructions(printer, this,
+
+				yield return new CalibrateProbeLastPagelInstructions(
+					printer,
+					this,
 					"Done".Localize(),
 					"Your Probe is now calibrated.".Localize() + "\n\n\t• " + "Remove the paper".Localize() + "\n\n" + "Click 'Done' to close this window.".Localize(),
 					autoProbePositions,
-					manualProbePositions, theme);
+					manualProbePositions,
+					theme);
 			}
 		}
 	}
@@ -195,7 +260,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 					probeCalibrationWizardWindow = null;
 
-					// make sure we raise the probe on close 
+					// make sure we raise the probe on close
 					if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
 						&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
 						&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
