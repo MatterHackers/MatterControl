@@ -185,8 +185,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			view3DContainer.AddChild(new RunningTasksWidget(theme)
 			{
 				MinimumSize = new Vector2(100, 0),
-				Margin = new BorderDouble(left: 10, bottom: 90),
-				VAnchor = VAnchor.Bottom | VAnchor.Fit,
+				Margin = new BorderDouble(left: 10, top: 30),
+				VAnchor = VAnchor.Top | VAnchor.Fit,
 				HAnchor = HAnchor.Left | HAnchor.Fit,
 			});
 
