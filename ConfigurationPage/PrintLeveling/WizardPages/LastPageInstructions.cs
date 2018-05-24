@@ -35,11 +35,11 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class LastPagelInstructions : LevelingWizardPage
+	public class LastPageInstructions : LevelingWizardPage
 	{
 		private List<ProbePosition> probePositions;
 
-		public LastPagelInstructions(LevelingWizardContext context, string pageDescription, string instructionsText, List<ProbePosition> probePositions)
+		public LastPageInstructions(LevelingWizardContext context, string pageDescription, string instructionsText, List<ProbePosition> probePositions)
 			: base(context, pageDescription, instructionsText)
 		{
 			this.probePositions = probePositions;

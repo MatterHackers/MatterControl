@@ -266,7 +266,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					+ $"{done3}";
 			}
 
-			yield return new LastPagelInstructions(
+			yield return new LastPageInstructions(
 				this,
 				"Done".Localize(),
 				doneString,

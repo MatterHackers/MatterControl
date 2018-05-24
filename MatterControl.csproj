@@ -79,6 +79,7 @@
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingWizardPage.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard100PointRadial.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardMesh.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\LastPageInstructions.cs" />
     <Compile Include="CustomWidgets\ResizeContainer\BottomResizeContainer.cs" />
     <Compile Include="CustomWidgets\ResizeContainer\LeftResizeContainer.cs" />
     <Compile Include="CustomWidgets\TreeView\TreeNode.cs" />
@@ -108,7 +109,6 @@
     <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\GettingThirdPointFor2PointCalibration.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\GetUltraFineBedHeight.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\HomePrinterPage.cs" />
-    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\LastPagelInstructions.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\SelectMaterialPage.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\WaitForTempPage.cs" />
     <Compile Include="CustomWidgets\ConfigurePrinterWidget.cs" />
