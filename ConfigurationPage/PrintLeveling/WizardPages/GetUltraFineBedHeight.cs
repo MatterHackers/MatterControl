@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,13 +35,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class GetUltraFineBedHeight : FindBedHeight
 	{
-		public GetUltraFineBedHeight(PrinterConfig printer, WizardControl container, string pageDescription, List<ProbePosition> probePositions,
-			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings, ThemeConfig theme)
-			: base(printer, container, pageDescription, levelingStrings.UltraFineInstruction1, levelingStrings.FineInstruction2, .02, probePositions, probePositionsBeingEditedIndex, theme)
+		private bool haveDrawn = false;
+
+		public GetUltraFineBedHeight(PrinterConfig printer, LevelingWizardContext context, string pageDescription, List<ProbePosition> probePositions,
+			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
+			: base(printer, context, pageDescription, levelingStrings.UltraFineInstruction1, levelingStrings.FineInstruction2, .02, probePositions, probePositionsBeingEditedIndex)
 		{
 		}
-
-		private bool haveDrawn = false;
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
@@ -51,6 +51,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void PageIsBecomingInactive()
 		{
+			// TODO: Why conditional on haveDrawn?
 			if (haveDrawn)
 			{
 				printer.Connection.MoveRelative(PrinterConnection.Axis.Z, 2, printer.Settings.Helpers.ManualMovementSpeeds().Z);

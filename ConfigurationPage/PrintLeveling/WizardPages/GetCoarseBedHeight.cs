@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -40,10 +40,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		protected Vector3 probeStartPosition;
 
-		public GetCoarseBedHeight(PrinterConfig printer, WizardControl container, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions,
-			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings, ThemeConfig theme)
-			: base(printer, container, pageDescription, "Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.".Localize(),
-				  levelingStrings.CoarseInstruction2, 1, probePositions, probePositionsBeingEditedIndex, theme)
+		public GetCoarseBedHeight(PrinterConfig printer, LevelingWizardContext context, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions,
+			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
+			: base(printer, context, pageDescription, "Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.".Localize(),
+				  levelingStrings.CoarseInstruction2, 1, probePositions, probePositionsBeingEditedIndex)
 		{
 			this.probeStartPosition = probeStartPosition;
 		}
@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printer.Connection.MoveAbsolute(probeStartPosition, feedRates.X);
 			printer.Connection.ReadPosition();
 
-			container.nextButton.Enabled = false;
+			nextButton.Enabled = false;
 
 			zPlusControl.Click += zControl_Click;
 			zMinusControl.Click += zControl_Click;
@@ -76,12 +76,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		protected void zControl_Click(object sender, EventArgs mouseEvent)
 		{
-			container.nextButton.Enabled = true;
+			nextButton.Enabled = true;
 		}
 
 		public override void PageIsBecomingInactive()
 		{
-			container.nextButton.Enabled = true;
+			nextButton.Enabled = true;
 
 			base.PageIsBecomingInactive();
 		}

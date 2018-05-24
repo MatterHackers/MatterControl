@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,57 +27,67 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
-	public class LevelingWizardPage : GuiWidget
+	public class LevelingWizardPage : DialogPage
 	{
-		protected FlowLayoutWidget topToBottomControls;
+		protected TextButton nextButton;
 
-		protected PrinterConfig printer { get; }
+		protected PrinterConfig printer;
 
-		public LevelingWizardPage(PrinterConfig printer, string pageDescription, string instructionsText, ThemeConfig theme)
+		public LevelingWizardPage(PrinterConfig printer, LevelingWizardContext wizardContext, string headerText, string instructionsText)
 		{
 			this.printer = printer;
-			this.StepDescription = pageDescription;
+			this.WindowTitle = wizardContext.WindowTitle;
+			this.HeaderText = headerText;
 
-			topToBottomControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			topToBottomControls.Padding = new BorderDouble(3);
-			topToBottomControls.HAnchor = HAnchor.Stretch;
-			topToBottomControls.VAnchor |= VAnchor.Top;
+			contentRow.AddChild(
+				this.CreateTextField(instructionsText.Replace("\t", "    ")));
 
-			AddTextField(instructionsText, 10, theme);
-
-			AddChild(topToBottomControls);
-
-			AnchorAll();
-		}
-
-		public string StepDescription { get; protected set; } = "";
-
-
-		public virtual void PageIsBecomingActive()
-		{
-		}
-
-		public virtual void PageIsBecomingInactive()
-		{
-		}
-
-		public void AddTextField(string instructionsText, int pixelsFromLast, ThemeConfig theme)
-		{
-			GuiWidget spacer = new GuiWidget(10, pixelsFromLast);
-			topToBottomControls.AddChild(spacer);
-
-			string wrappedInstructionsTabsToSpaces = instructionsText.Replace("\t", "    ");
-
-			topToBottomControls.AddChild(new WrappedTextWidget(wrappedInstructionsTabsToSpaces)
+			nextButton = new TextButton("Next".Localize(), theme)
 			{
+				Name = "Next Button"
+			};
+			nextButton.Click += (s, e) =>
+			{
+				wizardContext.ShowNextPage(this.WizardWindow);
+			};
+
+			this.AddPageAction(nextButton);
+		}
+
+		protected GuiWidget CreateTextField(string text)
+		{
+			return new WrappedTextWidget(text)
+			{
+				Margin = new BorderDouble(left: 10, top: 10),
 				TextColor = theme.Colors.PrimaryTextColor,
 				HAnchor = HAnchor.Stretch
-			});
+			};
+		}
+
+		protected void ShowWizardFinished()
+		{
+			var doneButton = new TextButton("Done".Localize(), theme)
+			{
+				Name = "Done Button"
+			};
+
+			doneButton.Click += (s, e) =>
+			{
+				this.WizardWindow.CloseOnIdle();
+			};
+
+			this.AddPageAction(doneButton);
+
+			nextButton.Visible = false;
+			this.HideCancelButton();
 		}
 	}
 }

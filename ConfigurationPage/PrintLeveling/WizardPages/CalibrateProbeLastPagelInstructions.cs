@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,20 +35,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class CalibrateProbeLastPagelInstructions : LevelingWizardPage
 	{
-		protected WizardControl container;
 		private List<ProbePosition> autoProbePositions;
 		private List<ProbePosition> manualProbePositions;
-		private ThemeConfig theme;
 
-		public CalibrateProbeLastPagelInstructions(PrinterConfig printer, WizardControl container, string pageDescription, string instructionsText,
+		public CalibrateProbeLastPagelInstructions(PrinterConfig printer, LevelingWizardContext context, string headerText, string instructionsText,
 			List<ProbePosition> autoProbePositions,
-			List<ProbePosition> manualProbePositions, ThemeConfig theme)
-			: base(printer, pageDescription, instructionsText, theme)
+			List<ProbePosition> manualProbePositions)
+			: base(printer, context, headerText, instructionsText)
 		{
-			this.theme = theme;
 			this.autoProbePositions = autoProbePositions;
 			this.manualProbePositions = manualProbePositions;
-			this.container = container;
+
+			this.ShowWizardFinished();
 		}
 
 		public override void PageIsBecomingActive()
@@ -63,7 +61,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
 			}
 
-			Closed += (s, e) =>
+			// TODO: Why not use OnClosed?
+			this.Closed += (s, e) =>
 			{
 				// move from this wizard to the print leveling wizard if needed
 				ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, theme);

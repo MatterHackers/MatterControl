@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
 			SetSizeAndShow(wizardWindow, newPanel);
 		}
 
-		public static void Show(DialogPage wizardPage)
+		public static DialogWindow Show(DialogPage wizardPage)
 		{
 			DialogWindow wizardWindow = GetWindow(wizardPage.GetType());
 			wizardWindow.Title = wizardPage.WindowTitle;
@@ -77,6 +77,8 @@ namespace MatterHackers.MatterControl
 			SetSizeAndShow(wizardWindow, wizardPage);
 
 			wizardWindow.ChangeToPage(wizardPage);
+
+			return wizardWindow;
 		}
 
 		// Allow the WizardPage MinimumSize to override our MinimumSize

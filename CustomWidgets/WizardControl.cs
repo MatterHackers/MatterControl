@@ -27,143 +27,39 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
-
-	public abstract class WizardControl : GuiWidget
+	public abstract class LevelingWizardContext
 	{
-		double extraTextScaling = 1;
+		private IEnumerator<LevelingWizardPage> pages;
 
-		private FlowLayoutWidget pageContent;
-		public Button nextButton;
-		protected Button doneButton;
-		protected Button cancelButton;
+		protected abstract IEnumerator<LevelingWizardPage> GetWizardSteps();
 
-		private TextWidget stepDescriptionWidget;
+		public string WindowTitle { get; internal set; }
 
-		protected abstract IEnumerator<LevelingWizardPage> Pages { get; }
-
-		public WizardControl()
+		public LevelingWizardContext()
 		{
-			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
-
-			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				VAnchor = VAnchor.Stretch,
-				HAnchor = HAnchor.Stretch,
-				Padding = new BorderDouble(3, 0, 3, 5)
-			};
-
-			var headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
-			{
-				HAnchor = HAnchor.Stretch,
-				Margin = new BorderDouble(0, 3, 0, 0),
-				Padding = new BorderDouble(0, 3, 0, 3)
-			};
-
-			{
-				stepDescriptionWidget = new TextWidget("", pointSize: 14 * extraTextScaling)
-				{
-					AutoExpandBoundsToText = true,
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Bottom,
-					Name = "stepDescriptionWidget"
-				};
-
-				headerRow.AddChild(stepDescriptionWidget);
-			}
-
-			topToBottom.AddChild(headerRow);
-
-			AnchorAll();
-			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-			pageContent = new FlowLayoutWidget();
-			pageContent.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			pageContent.Padding = new BorderDouble(3);
-
-			topToBottom.AddChild(pageContent);
-			topToBottom.Margin = new BorderDouble(bottom: 3);
-
-			{
-				var buttonBar = new FlowLayoutWidget
-				{
-					HAnchor = Agg.UI.HAnchor.Stretch,
-					Padding = new BorderDouble(0, 3)
-				};
-
-				nextButton = buttonFactory.Generate("Next".Localize());
-				nextButton.Name = "Next Button";
-				nextButton.Click += next_Click;
-
-				doneButton = buttonFactory.Generate("Done".Localize());
-				doneButton.Name = "Done Button";
-				doneButton.Click += done_Click;
-
-				cancelButton = buttonFactory.Generate("Cancel".Localize());
-				cancelButton.Click += done_Click;
-				cancelButton.Name = "Cancel Button";
-
-				buttonBar.AddChild(nextButton);
-				buttonBar.AddChild(new HorizontalSpacer());
-				buttonBar.AddChild(doneButton);
-				buttonBar.AddChild(cancelButton);
-
-				topToBottom.AddChild(buttonBar);
-			}
-
-			pageContent.AnchorAll();
-
-			AddChild(topToBottom);
+			this.pages = this.GetWizardSteps();
 		}
 
-		private IEnumerator<LevelingWizardPage> pagesCache;
-
-		public override void Initialize()
+		public void ShowNextPage(DialogWindow dialogWindow)
 		{
-			if(pagesCache == null)
+			UiThread.RunOnIdle(() =>
 			{
-				pagesCache = Pages;
-			}
+				// Shutdown active page
+				pages.Current?.PageIsBecomingInactive();
+				pages.Current?.Close();
 
-			next_Click(this, null);
+				// Advance
+				pages.MoveNext();
 
-			base.Initialize();
-		}
+				pages.Current?.PageIsBecomingActive();
 
-		private void done_Click(object sender, EventArgs mouseEvent)
-		{
-			GuiWidget windowToClose = this;
-			while (windowToClose != null && windowToClose as SystemWindow == null)
-			{
-				windowToClose = windowToClose.Parent;
-			}
-
-			SystemWindow topSystemWindow = windowToClose as SystemWindow;
-			if (topSystemWindow != null)
-			{
-				topSystemWindow.CloseOnIdle();
-			}
-		}
-
-		private void next_Click(object sender, EventArgs mouseEvent)
-		{
-			pagesCache.Current?.PageIsBecomingInactive();
-
-			pageContent.CloseAllChildren();
-			pagesCache.MoveNext();
-
-			stepDescriptionWidget.Text = pagesCache.Current.StepDescription;
-			pageContent.AddChild(pagesCache.Current);
-			pagesCache.Current?.PageIsBecomingActive();
+				dialogWindow.ChangeToPage(pages.Current);
+			});
 		}
 	}
 }

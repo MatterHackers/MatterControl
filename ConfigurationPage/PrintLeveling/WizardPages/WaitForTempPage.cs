@@ -37,7 +37,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class WaitForTempPage : LevelingWizardPage
 	{
-		protected WizardControl container;
+		protected LevelingWizardContext container;
 
 		private ProgressBar bedProgressBar;
 		private TextWidget bedProgressBarText;
@@ -51,11 +51,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private TextWidget hotEndDoneText;
 		double hotEndTargetTemp;
 
-		public WaitForTempPage(PrinterConfig printer, WizardControl container,
+		public WaitForTempPage(PrinterConfig printer, LevelingWizardContext container,
 			string step, string instructions,
-			double targetBedTemp, double targetHotendTemp,
-			ThemeConfig theme)
-			: base(printer, step, instructions, theme)
+			double targetBedTemp, double targetHotendTemp)
+			: base(printer, container, step, instructions)
 		{
 			this.bedTargetTemp = targetBedTemp;
 			this.hotEndTargetTemp = targetHotendTemp;
@@ -69,12 +68,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				};
 
 				// put in bar name
-				var hoteEndText = new TextWidget("Hotend Temperature:".Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				contentRow.AddChild(new TextWidget("Hotend Temperature:".Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
 				{
 					AutoExpandBoundsToText = true,
 					Margin = new BorderDouble(5, 0, 5, 5),
-				};
-				topToBottomControls.AddChild(hoteEndText);
+				});
 
 				// put in the progress bar
 				hotEndProgressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))
@@ -105,7 +103,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				hotEndProgressHolder.AddChild(hotEndDoneText);
 
-				topToBottomControls.AddChild(hotEndProgressHolder);
+				contentRow.AddChild(hotEndProgressHolder);
 			}
 
 			if (bedTargetTemp > 0)
@@ -116,12 +114,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				};
 
 				// put in bar name
-				var hoteEndText = new TextWidget("Bed Temperature:".Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				contentRow.AddChild(new TextWidget("Bed Temperature:".Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
 				{
 					AutoExpandBoundsToText = true,
 					Margin = new BorderDouble(5, 0, 5, 5),
-				};
-				topToBottomControls.AddChild(hoteEndText);
+				});
 
 				// put in progress bar
 				bedProgressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))
@@ -152,8 +149,22 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				bedProgressHolder.AddChild(bedDoneText);
 
-				topToBottomControls.AddChild(bedProgressHolder);
+				contentRow.AddChild(bedProgressHolder);
 			}
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			// hook our parent so we can turn off the bed when we are done with leveling
+			this.WizardWindow.Closed += WizardWindow_Closed;
+			base.OnLoad(args);
+		}
+
+		private void WizardWindow_Closed(object sender, ClosedEventArgs e)
+		{
+			// Make sure when the wizard closes we turn off the bed heating
+			printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
+			this.WizardWindow.Closed -= WizardWindow_Closed;
 		}
 
 		public override void PageIsBecomingActive()
@@ -175,20 +186,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.SetTargetHotendTemperature(0, hotEndTargetTemp);
 			}
 
-			// hook our parent so we can turn off the bed when we are done with leveling
-			Parent.Closed += (s, e) =>
-			{
-				// Make sure when the wizard closes we turn off the bed heating
-				printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
-			};
-
-			container.nextButton.Enabled = false;
+			nextButton.Enabled = false;
 
 			// if we are trying to go to a temp of 0 than just move on to next window
 			if(bedTargetTemp == 0 && hotEndTargetTemp == 0)
 			{
 				// advance to the next page
-				UiThread.RunOnIdle(() => container.nextButton.OnClick(null));
+				UiThread.RunOnIdle(() => nextButton.InvokeClick());
 			}
 
 			base.PageIsBecomingActive();
@@ -196,7 +200,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void PageIsBecomingInactive()
 		{
-			container.nextButton.Enabled = true;
+			nextButton.Enabled = true;
 
 			base.PageIsBecomingInactive();
 		}
@@ -219,7 +223,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					&& hotEndDoneText.Visible == false)
 				{
 					hotEndDoneText.Visible = true;
-					container.nextButton.Enabled = true;
+					nextButton.Enabled = true;
 				}
 			}
 
@@ -239,7 +243,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					&& bedDoneText.Visible == false)
 				{
 					bedDoneText.Visible = true;
-					container.nextButton.Enabled = true;
+					nextButton.Enabled = true;
 				}
 			}
 
@@ -248,7 +252,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				&& !HasBeenClosed)
 			{
 				// advance to the next page
-				UiThread.RunOnIdle(() => container.nextButton.OnClick(null));
+				UiThread.RunOnIdle(() => nextButton.InvokeClick());
 			}
 		}
 	}

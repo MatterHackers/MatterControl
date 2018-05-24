@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						LevelWizardBase.ShowPrintLevelWizard(printer, theme);
+						LevelingWizardX.ShowPrintLevelWizard(printer, theme);
 					});
 				};
 				settingsRow.AddChild(runWizardButton);
@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							ProbeCalibrationWizard.ShowProbeCalibrationWizard(printer, theme);
+							LevelingWizardX.ShowProbeCalibrationWizard(printer, theme);
 						});
 					};
 

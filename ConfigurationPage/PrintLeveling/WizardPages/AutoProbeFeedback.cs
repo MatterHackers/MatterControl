@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -44,25 +44,23 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private Vector3 lastReportedPosition;
 		private List<ProbePosition> probePositions;
-		int probePositionsBeingEditedIndex;
+		private int probePositionsBeingEditedIndex;
 
 		private EventHandler unregisterEvents;
 		protected Vector3 probeStartPosition;
-		protected WizardControl container;
 
-		public AutoProbeFeedback(PrinterConfig printer, WizardControl container, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex, ThemeConfig theme)
-			: base(printer, pageDescription, pageDescription, theme)
+		public AutoProbeFeedback(PrinterConfig printer, LevelingWizardContext context, Vector3 probeStartPosition, string headerText, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
+			: base(printer, context, headerText, headerText)
 		{
-			this.container = container;
 			this.probeStartPosition = probeStartPosition;
-
+			this.printer = printer;
 			this.probePositions = probePositions;
 
 			this.lastReportedPosition = printer.Connection.LastReportedPosition;
 			this.probePositionsBeingEditedIndex = probePositionsBeingEditedIndex;
 
-			GuiWidget spacer = new GuiWidget(15, 15);
-			topToBottomControls.AddChild(spacer);
+			var spacer = new GuiWidget(15, 15);
+			contentRow.AddChild(spacer);
 
 			FlowLayoutWidget textFields = new FlowLayoutWidget(FlowDirection.TopToBottom);
 		}
@@ -105,7 +103,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						}
 
 						probePositions[probePositionsBeingEditedIndex].position.Z = Math.Round(samples.Average(), 2);
-						UiThread.RunOnIdle(() => container.nextButton.OnClick(null));
+
+						UiThread.RunOnIdle(() => nextButton.InvokeClick());
 					}
 				}
 			}
@@ -154,7 +153,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.MoveAbsolute(adjustedProbePosition, feedRates.X);
 			}
 
-			container.nextButton.Enabled = false;
+			nextButton.Enabled = false;
 
 			if (printer.Connection.IsConnected
 				&& !(printer.Connection.PrinterIsPrinting

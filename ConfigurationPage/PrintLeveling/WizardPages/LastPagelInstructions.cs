@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -37,16 +39,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class LastPagelInstructions : LevelingWizardPage
 	{
-		protected WizardControl container;
+		protected LevelingWizardContext container;
 		private List<ProbePosition> probePositions;
-		private ThemeConfig theme;
 
-		public LastPagelInstructions(PrinterConfig printer, WizardControl container, string pageDescription, string instructionsText, List<ProbePosition> probePositions, ThemeConfig theme)
-			: base(printer, pageDescription, instructionsText, theme)
+		public LastPagelInstructions(PrinterConfig printer, LevelingWizardContext container, string pageDescription, string instructionsText, List<ProbePosition> probePositions)
+			: base(printer, container, pageDescription, instructionsText)
 		{
-			this.theme = theme;
 			this.probePositions = probePositions;
 			this.container = container;
+
+			this.ShowWizardFinished();
 		}
 
 		public override void PageIsBecomingActive()

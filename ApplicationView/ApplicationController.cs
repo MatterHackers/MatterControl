@@ -1006,18 +1006,18 @@ namespace MatterHackers.MatterControl
 			if (PrintLevelingData.NeedsToBeRun(printer))
 			{
 				// run probe calibration first if we need to
-				if (ProbeCalibrationWizard.NeedsToBeRun(printer))
+				if (LevelingWizardX.NeedsToBeRun(printer))
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						ProbeCalibrationWizard.ShowProbeCalibrationWizard(printer, theme);
+						LevelingWizardX.ShowProbeCalibrationWizard(printer, theme);
 					});
 				}
 				else // run the leveling wizard
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						LevelWizardBase.ShowPrintLevelWizard(printer, theme);
+						LevelingWizardX.ShowPrintLevelWizard(printer, theme);
 					});
 				}
 				return true;

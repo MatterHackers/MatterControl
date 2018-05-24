@@ -27,22 +27,17 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
-using MatterControl.Printing;
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class LevelWizard3Point : LevelWizardBase
+	public class LevelWizard3Point : LevelingPlan
 	{
-		public LevelWizard3Point(PrinterConfig printer, ThemeConfig theme)
-			: base(printer, theme)
+		public LevelWizard3Point(PrinterConfig printer)
+			: base(printer)
 		{
 		}
 

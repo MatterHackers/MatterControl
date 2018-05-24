@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,27 +29,19 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class LevelWizardMesh : LevelWizardBase
+	public class LevelWizardMesh : LevelingPlan
 	{
-		int gridWidth;
-		int gridHeight;
+		private int gridWidth;
+		private int gridHeight;
 
-		private LevelWizardMesh()
-			: base(null, null)
-		{
-
-		}
-
-		public LevelWizardMesh(PrinterConfig printer,
-			int width, int height, ThemeConfig theme)
-			: base(printer, theme)
+		public LevelWizardMesh(PrinterConfig printer, int width, int height)
+			: base(printer)
 		{
 			this.gridWidth = width;
 			this.gridHeight = height;
@@ -64,7 +56,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			if (printer.Settings.GetValue<BedShape>(SettingsKey.bed_shape) == BedShape.Circular)
 			{
-				// reduce the bed size by the ratio of the radius (square root of 2) so that the sample positions will fit on a ciclular bed
+				// reduce the bed size by the ratio of the radius (square root of 2) so that the sample positions will fit on a circular bed
 				bedSize *= 1.0 / Math.Sqrt(2);
 			}
 
@@ -72,6 +64,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			double xStep = (halfXSize * 2) / (gridWidth - 1);
 			double halfYSize = (bedSize.Y / 2) * .8;
 			double yStep = (halfYSize * 2) / (gridHeight - 1);
+
 			for (int y = 0; y < gridHeight; y++)
 			{
 				// make it such that every other line is printed from right to left
@@ -82,7 +75,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					{
 						dirX = (gridWidth - 1) - x;
 					}
-					Vector2 samplePosition = new Vector2();
+
+					var samplePosition = new Vector2();
 					samplePosition.X = printCenter.X - halfXSize + (dirX * xStep);
 					samplePosition.Y = printCenter.Y - halfYSize + (y * yStep);
 
