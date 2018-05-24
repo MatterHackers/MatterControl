@@ -72,17 +72,10 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		//protected PrintLevelingContext printLevelWizard;
-		//private static SystemWindow printLevelWizardWindow;
-		//protected PrinterConfig printer;
-		//private ThemeConfig theme;
-
 		public static void ShowPrintLevelWizard(PrinterConfig printer, ThemeConfig theme)
 		{
 			// turn off print leveling
 			PrintLevelingStream.AllowLeveling = false;
-
-			// ************ CreateAndShowWizard ********************
 
 			// clear any data that we are going to be acquiring (sampled positions, after z home offset)
 			var levelingData = new PrintLevelingData()
@@ -157,19 +150,6 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		public static bool UsingZProbe(PrinterConfig printer)
-		{
-			// we have a probe that we are using and we have not done leveling yet
-			return printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
-				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe);
-		}
-
-		public static bool NeedsToBeRun(PrinterConfig printer)
-		{
-			// we have a probe that we are using and we have not done leveling yet
-			return UsingZProbe(printer) && !printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated);
-		}
-
 		public static void ShowProbeCalibrationWizard(PrinterConfig printer, ThemeConfig theme)
 		{
 			// turn off print leveling
@@ -202,6 +182,5 @@ namespace MatterHackers.MatterControl
 				}
 			};
 		}
-
 	}
 }

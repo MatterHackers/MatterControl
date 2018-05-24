@@ -1006,7 +1006,7 @@ namespace MatterHackers.MatterControl
 			if (PrintLevelingData.NeedsToBeRun(printer))
 			{
 				// run probe calibration first if we need to
-				if (LevelingWizard.NeedsToBeRun(printer))
+				if (ProbeCalibrationWizard.NeedsToBeRun(printer))
 				{
 					UiThread.RunOnIdle(() =>
 					{

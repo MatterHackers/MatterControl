@@ -42,6 +42,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 		}
 
+		public static bool UsingZProbe(PrinterConfig printer)
+		{
+			// we have a probe that we are using and we have not done leveling yet
+			return printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
+				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe);
+		}
+
+		public static bool NeedsToBeRun(PrinterConfig printer)
+		{
+			// we have a probe that we are using and we have not done leveling yet
+			return UsingZProbe(printer) && !printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated);
+		}
+
 		protected override IEnumerator<LevelingWizardPage> GetWizardSteps()
 		{
 			var levelingStrings = new LevelingStrings(printer.Settings);
@@ -100,7 +113,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			yield return new WaitForTempPage(
 				this,
-				"Waiting For this.Printer To Heat".Localize(),
+				"Waiting For Printer To Heat".Localize(),
 				$"Waiting for the hotend to heat to {targetHotendTemp}.".Localize() + "\n"
 					+ "This will ensure no filament is stuck to the tip.".Localize() + "\n"
 					+ "\n"
