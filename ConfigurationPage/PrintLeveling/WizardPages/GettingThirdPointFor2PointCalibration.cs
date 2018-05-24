@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,35 +27,31 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
-using System;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class GettingThirdPointFor2PointCalibration : InstructionsPage
+	public class GettingThirdPointFor2PointCalibration : LevelingWizardPage
 	{
 		protected Vector3 probeStartPosition;
 		private ProbePosition probePosition;
-		protected WizardControl container;
+		private EventHandler unregisterEvents;
 
-		public GettingThirdPointFor2PointCalibration(PrinterConfig printer, WizardControl container, string pageDescription, Vector3 probeStartPosition, string instructionsText, 
-			ProbePosition probePosition, ThemeConfig theme)
-			: base(printer, pageDescription, instructionsText, theme)
+		public GettingThirdPointFor2PointCalibration(LevelingWizard context, string pageDescription, Vector3 probeStartPosition, string instructionsText,
+			ProbePosition probePosition)
+			: base(context, pageDescription, instructionsText)
 		{
 			this.probeStartPosition = probeStartPosition;
 			this.probePosition = probePosition;
-			this.container = container;
 		}
-
-		private EventHandler unregisterEvents;
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
-
 			base.OnClosed(e);
 		}
 
@@ -73,7 +69,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			base.PageIsBecomingActive();
 
-			container.nextButton.Enabled = false;
+			nextButton.Enabled = false;
 		}
 
 		private void FinishedProbe(object sender, EventArgs e)
@@ -90,7 +86,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					printer.Connection.MoveAbsolute(probeStartPosition, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 					printer.Connection.ReadPosition();
 
-					UiThread.RunOnIdle(() => container.nextButton.OnClick(null));
+					UiThread.RunOnIdle(() => nextButton.InvokeClick());
 				}
 			}
 		}

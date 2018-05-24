@@ -27,33 +27,68 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
-using MatterHackers.VectorMath;
+using System;
+using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 
-namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
+namespace MatterHackers.MatterControl
 {
-	public class LevelWizard7PointRadial : LevelingPlan
+	public class LevelingWizardPage : DialogPage
 	{
-		public LevelWizard7PointRadial(PrinterConfig printer)
-			: base(printer)
+		protected TextButton nextButton;
+		protected PrinterConfig printer;
+
+		public LevelingWizardPage(LevelingWizard wizardContext, string headerText, string instructionsText)
 		{
+			this.printer = wizardContext.Printer;
+			this.WindowTitle = wizardContext.WindowTitle;
+			this.HeaderText = headerText;
+
+			contentRow.AddChild(
+				this.CreateTextField(instructionsText.Replace("\t", "    ")));
+
+			nextButton = new TextButton("Next".Localize(), theme)
+			{
+				Name = "Next Button",
+				BackgroundColor = theme.MinimalShade
+			};
+			nextButton.Click += (s, e) =>
+			{
+				wizardContext.ShowNextPage(this.WizardWindow);
+			};
+
+			this.AddPageAction(nextButton);
 		}
 
-		public override int ProbeCount => 7;
-
-		public override IEnumerable<Vector2> GetPrintLevelPositionToSample()
+		protected GuiWidget CreateTextField(string text)
 		{
-			// the center
-			foreach (var sample in GetSampleRing(1, 0, 0))
+			return new WrappedTextWidget(text)
 			{
-				yield return sample;
-			}
+				Margin = new BorderDouble(left: 10, top: 10),
+				TextColor = theme.Colors.PrimaryTextColor,
+				HAnchor = HAnchor.Stretch
+			};
+		}
 
-			// around the outside
-			foreach (var sample in GetSampleRing(6, .9, 0))
+		protected void ShowWizardFinished()
+		{
+			var doneButton = new TextButton("Done".Localize(), theme)
 			{
-				yield return sample;
-			}
+				Name = "Done Button",
+				BackgroundColor = theme.MinimalShade
+			};
+
+			doneButton.Click += (s, e) =>
+			{
+				this.WizardWindow.CloseOnIdle();
+			};
+
+			this.AddPageAction(doneButton);
+
+			nextButton.Visible = false;
+			this.HideCancelButton();
 		}
 	}
 }

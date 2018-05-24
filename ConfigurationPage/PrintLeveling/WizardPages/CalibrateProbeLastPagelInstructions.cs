@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,28 +27,26 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class CalibrateProbeLastPagelInstructions : InstructionsPage
+	public class CalibrateProbeLastPagelInstructions : LevelingWizardPage
 	{
-		protected WizardControl container;
 		private List<ProbePosition> autoProbePositions;
 		private List<ProbePosition> manualProbePositions;
-		private ThemeConfig theme;
 
-		public CalibrateProbeLastPagelInstructions(PrinterConfig printer, WizardControl container, string pageDescription, string instructionsText, 
+		public CalibrateProbeLastPagelInstructions(LevelingWizard context, string headerText, string instructionsText,
 			List<ProbePosition> autoProbePositions,
-			List<ProbePosition> manualProbePositions, ThemeConfig theme)
-			: base(printer, pageDescription, instructionsText, theme)
+			List<ProbePosition> manualProbePositions)
+			: base(context, headerText, instructionsText)
 		{
-			this.theme = theme;
 			this.autoProbePositions = autoProbePositions;
 			this.manualProbePositions = manualProbePositions;
-			this.container = container;
+
+			this.ShowWizardFinished();
 		}
 
 		public override void PageIsBecomingActive()
@@ -63,7 +61,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
 			}
 
-			Closed += (s, e) =>
+			// TODO: Why not use OnClosed?
+			this.Closed += (s, e) =>
 			{
 				// move from this wizard to the print leveling wizard if needed
 				ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, theme);

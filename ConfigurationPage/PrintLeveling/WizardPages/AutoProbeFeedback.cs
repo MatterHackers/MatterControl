@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -34,35 +37,29 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class AutoProbeFeedback : InstructionsPage
+	public class AutoProbeFeedback : LevelingWizardPage
 	{
 		private Vector3 lastReportedPosition;
 		private List<ProbePosition> probePositions;
-		int probePositionsBeingEditedIndex;
+		private int probePositionsBeingEditedIndex;
 
 		private EventHandler unregisterEvents;
 		protected Vector3 probeStartPosition;
-		protected WizardControl container;
 
-		public AutoProbeFeedback(PrinterConfig printer, WizardControl container, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex, ThemeConfig theme)
-			: base(printer, pageDescription, pageDescription, theme)
+		public AutoProbeFeedback(LevelingWizard context, Vector3 probeStartPosition, string headerText, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
+			: base(context, headerText, headerText)
 		{
-			this.container = container;
 			this.probeStartPosition = probeStartPosition;
-
 			this.probePositions = probePositions;
 
 			this.lastReportedPosition = printer.Connection.LastReportedPosition;
 			this.probePositionsBeingEditedIndex = probePositionsBeingEditedIndex;
 
-			GuiWidget spacer = new GuiWidget(15, 15);
-			topToBottomControls.AddChild(spacer);
+			var spacer = new GuiWidget(15, 15);
+			contentRow.AddChild(spacer);
 
 			FlowLayoutWidget textFields = new FlowLayoutWidget(FlowDirection.TopToBottom);
 		}
@@ -105,7 +102,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						}
 
 						probePositions[probePositionsBeingEditedIndex].position.Z = Math.Round(samples.Average(), 2);
-						UiThread.RunOnIdle(() => container.nextButton.OnClick(null));
+
+						UiThread.RunOnIdle(() => nextButton.InvokeClick());
 					}
 				}
 			}
@@ -154,7 +152,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.MoveAbsolute(adjustedProbePosition, feedRates.X);
 			}
 
-			container.nextButton.Enabled = false;
+			nextButton.Enabled = false;
 
 			if (printer.Connection.IsConnected
 				&& !(printer.Connection.PrinterIsPrinting

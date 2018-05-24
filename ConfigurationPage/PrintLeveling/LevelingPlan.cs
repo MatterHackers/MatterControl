@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,47 +27,40 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
-using MatterHackers.Agg.UI;
+using System;
+using System.Collections.Generic;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl
+namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class InstructionsPage : WizardControlPage
+	public abstract class LevelingPlan
 	{
-		protected FlowLayoutWidget topToBottomControls;
+		protected PrinterConfig printer;
 
-		protected PrinterConfig printer { get; }
+		public abstract IEnumerable<Vector2> GetPrintLevelPositionToSample();
 
-		public InstructionsPage(PrinterConfig printer, string pageDescription, string instructionsText, ThemeConfig theme)
-			: base(pageDescription)
+		public virtual int ProbeCount { get; }
+
+		public virtual int TotalSteps => this.ProbeCount * 3;
+
+		public LevelingPlan(PrinterConfig printer)
 		{
 			this.printer = printer;
-
-			topToBottomControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			topToBottomControls.Padding = new BorderDouble(3);
-			topToBottomControls.HAnchor = HAnchor.Stretch;
-			topToBottomControls.VAnchor |= VAnchor.Top;
-
-			AddTextField(instructionsText, 10, theme);
-
-			AddChild(topToBottomControls);
-
-			AnchorAll();
 		}
 
-		public void AddTextField(string instructionsText, int pixelsFromLast, ThemeConfig theme)
+		public IEnumerable<Vector2> GetSampleRing(int numberOfSamples, double ratio, double phase)
 		{
-			GuiWidget spacer = new GuiWidget(10, pixelsFromLast);
-			topToBottomControls.AddChild(spacer);
+			double bedRadius = Math.Min(printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).X, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
+			Vector2 bedCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
 
-			string wrappedInstructionsTabsToSpaces = instructionsText.Replace("\t", "    ");
-
-			topToBottomControls.AddChild(new WrappedTextWidget(wrappedInstructionsTabsToSpaces)
+			for (int i = 0; i < numberOfSamples; i++)
 			{
-				TextColor = theme.Colors.PrimaryTextColor,
-				HAnchor = HAnchor.Stretch
-			});
+				Vector2 position = new Vector2(bedRadius * ratio, 0);
+				position.Rotate(MathHelper.Tau / numberOfSamples * i + phase);
+				position += bedCenter;
+				yield return position;
+			}
 		}
 	}
 }

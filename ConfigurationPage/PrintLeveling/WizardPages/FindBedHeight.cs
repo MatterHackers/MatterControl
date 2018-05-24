@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,43 +27,39 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class FindBedHeight : InstructionsPage
+	public class FindBedHeight : LevelingWizardPage
 	{
 		private Vector3 lastReportedPosition;
 		private List<ProbePosition> probePositions;
-		int probePositionsBeingEditedIndex;
+		private int probePositionsBeingEditedIndex;
 		private double moveAmount;
 
 		protected JogControls.MoveButton zPlusControl;
 		protected JogControls.MoveButton zMinusControl;
-		private ThemeConfig theme;
-		protected WizardControl container;
 
-		public FindBedHeight(PrinterConfig printer, WizardControl container, string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance, 
-			List<ProbePosition> probePositions, int probePositionsBeingEditedIndex, ThemeConfig theme)
-			: base(printer, pageDescription, setZHeightCoarseInstruction1, theme)
+		public FindBedHeight(LevelingWizard context, string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance,
+			List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
+			: base(context, pageDescription, setZHeightCoarseInstruction1)
 		{
-			this.theme = theme;
-			this.container = container;
 			this.probePositions = probePositions;
 			this.moveAmount = moveDistance;
 			this.lastReportedPosition = printer.Connection.LastReportedPosition;
 			this.probePositionsBeingEditedIndex = probePositionsBeingEditedIndex;
 
 			GuiWidget spacer = new GuiWidget(15, 15);
-			topToBottomControls.AddChild(spacer);
+			contentRow.AddChild(spacer);
 
 			FlowLayoutWidget zButtonsAndInfo = new FlowLayoutWidget();
 			zButtonsAndInfo.HAnchor |= Agg.UI.HAnchor.Center;
@@ -89,20 +85,31 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			zButtonsAndInfo.AddChild(zPosition);
 
-			topToBottomControls.AddChild(zButtonsAndInfo);
+			contentRow.AddChild(zButtonsAndInfo);
 
-			AddTextField(setZHeightCoarseInstruction2, 10, theme);
+			contentRow.AddChild(
+				this.CreateTextField(setZHeightCoarseInstruction2));
 		}
 
 		public override void PageIsBecomingActive()
 		{
 			// always make sure we don't have print leveling turned on
 			PrintLevelingStream.AllowLeveling = false;
+			nextButton.ToolTipText = "[Right Arrow]".Localize();
 
 			base.PageIsBecomingActive();
-			this.Parents<SystemWindow>().First().KeyDown += TopWindowKeyDown;
+		}
 
-			container.nextButton.ToolTipText = "[Right Arrow]".Localize();
+		public override void OnLoad(EventArgs args)
+		{
+			this.WizardWindow.KeyDown += TopWindowKeyDown;
+			base.OnLoad(args);
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			this.WizardWindow.KeyDown -= TopWindowKeyDown;
+			base.OnClosed(e);
 		}
 
 		public override void PageIsBecomingInactive()
@@ -111,7 +118,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			probePositions[probePositionsBeingEditedIndex].position = printer.Connection.LastReportedPosition;
 			base.PageIsBecomingInactive();
 
-			container.nextButton.ToolTipText = "";
+			nextButton.ToolTipText = "";
 		}
 
 		private FlowLayoutWidget CreateZButtons()
@@ -135,18 +142,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				case Keys.Up:
 					zPlusControl_Click(null, null);
-					container.nextButton.Enabled = true;
+					nextButton.Enabled = true;
 					break;
 
 				case Keys.Down:
 					zMinusControl_Click(null, null);
-					container.nextButton.Enabled = true;
+					nextButton.Enabled = true;
 					break;
 
 				case Keys.Right:
-					if (container.nextButton.Enabled)
+					if (nextButton.Enabled)
 					{
-						UiThread.RunOnIdle(() => container.nextButton.OnClick(null));
+						UiThread.RunOnIdle(() => nextButton.InvokeClick());
 					}
 					break;
 			}

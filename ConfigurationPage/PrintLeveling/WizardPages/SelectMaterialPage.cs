@@ -33,16 +33,17 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class SelectMaterialPage : InstructionsPage
+	public class SelectMaterialPage : LevelingWizardPage
 	{
-		public SelectMaterialPage(PrinterConfig printer, string pageDescription, string instructionsText, ThemeConfig theme)
-			: base(printer, pageDescription, instructionsText, theme)
+		public SelectMaterialPage(LevelingWizard context, string headerText, string instructionsText)
+			: base(context, headerText, instructionsText)
 		{
-			topToBottomControls.AddChild(new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, theme)
-			{
-				BackgroundColor = Color.Transparent,
-				Margin = new BorderDouble(0, 0, 0, 15)
-			});
+			contentRow.AddChild(
+				new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, theme)
+				{
+					BackgroundColor = Color.Transparent,
+					Margin = new BorderDouble(0, 0, 0, 15)
+				});
 		}
 	}
 }

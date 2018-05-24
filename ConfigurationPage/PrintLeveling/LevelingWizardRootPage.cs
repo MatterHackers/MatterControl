@@ -1,5 +1,5 @@
-/*
-Copyright (c) 2018, Lars Brubaker
+﻿/*
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,20 +27,23 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.Font;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.UI;
-using MatterHackers.GCodeVisualizer;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
-using System.Linq;
+using System;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class FirstPageInstructions : InstructionsPage
+	public class LevelingWizardRootPage : DialogPage
 	{
-		public FirstPageInstructions(PrinterConfig printer, string pageDescription, string instructionsText, ThemeConfig theme)
-			: base(printer, pageDescription, instructionsText, theme)
+		private LevelingWizard levelingContext;
+
+		public LevelingWizardRootPage(LevelingWizard levelingContext)
 		{
+			this.levelingContext = levelingContext;
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			levelingContext.ShowNextPage(this.WizardWindow);
+			base.OnLoad(args);
 		}
 	}
 }

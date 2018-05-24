@@ -1010,14 +1010,14 @@ namespace MatterHackers.MatterControl
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						ProbeCalibrationWizard.ShowProbeCalibrationWizard(printer, theme);
+						LevelingWizard.ShowProbeCalibrationWizard(printer, theme);
 					});
 				}
 				else // run the leveling wizard
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						LevelWizardBase.ShowPrintLevelWizard(printer, theme);
+						LevelingWizard.ShowPrintLevelWizard(printer, theme);
 					});
 				}
 				return true;

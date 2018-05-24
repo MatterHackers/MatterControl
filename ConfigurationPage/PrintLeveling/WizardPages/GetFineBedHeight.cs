@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,9 +33,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class GetFineBedHeight : FindBedHeight
 	{
-		public GetFineBedHeight(PrinterConfig printer, WizardControl container, string pageDescription, List<ProbePosition> probePositions, 
-			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings, ThemeConfig theme)
-			: base(printer, container, pageDescription, levelingStrings.FineInstruction1, levelingStrings.FineInstruction2, .1, probePositions, probePositionsBeingEditedIndex, theme)
+		public GetFineBedHeight(LevelingWizard context, string pageDescription, List<ProbePosition> probePositions,
+			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
+			: base(context, pageDescription, levelingStrings.FineInstruction1, levelingStrings.FineInstruction2, .1, probePositions, probePositionsBeingEditedIndex)
 		{
 		}
 	}

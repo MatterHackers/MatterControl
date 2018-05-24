@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,23 +27,21 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PrinterCommunication;
-using System;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class HomePrinterPage : InstructionsPage
+	public class HomePrinterPage : LevelingWizardPage
 	{
-		protected WizardControl container;
 		private EventHandler unregisterEvents;
-		bool autoAdvance;
+		private bool autoAdvance;
 
-		public HomePrinterPage(PrinterConfig printer, WizardControl container, string pageDescription, string instructionsText, bool autoAdvance, ThemeConfig theme)
-			: base(printer, pageDescription, instructionsText, theme)
+		public HomePrinterPage(LevelingWizard context, string headerText, string instructionsText, bool autoAdvance)
+			: base(context, headerText, instructionsText)
 		{
 			this.autoAdvance = autoAdvance;
-			this.container = container;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -63,7 +61,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			if (autoAdvance)
 			{
-				container.nextButton.Enabled = false;
+				nextButton.Enabled = false;
 			}
 
 			base.PageIsBecomingActive();
@@ -74,11 +72,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			if(printer.Connection.DetailedPrintingState != DetailedPrintingState.HomingAxis)
 			{
 				unregisterEvents?.Invoke(this, null);
-				container.nextButton.Enabled = true;
+				nextButton.Enabled = true;
 
 				if (printer.Settings.Helpers.UseZProbe())
 				{
-					UiThread.RunOnIdle(() => container.nextButton.OnClick(null));
+					UiThread.RunOnIdle(() => nextButton.InvokeClick());
 				}
 			}
 		}
@@ -86,7 +84,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingInactive()
 		{
 			unregisterEvents?.Invoke(this, null);
-			container.nextButton.Enabled = true;
+			nextButton.Enabled = true;
 
 			base.PageIsBecomingInactive();
 		}

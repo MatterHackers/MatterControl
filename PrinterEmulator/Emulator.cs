@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015, Lars Brubaker
+﻿// Copyright (c) 2018, Lars Brubaker, John Lewin
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -61,12 +61,13 @@ namespace MatterHackers.PrinterEmulator
 
 			responses = new Dictionary<string, Func<string, string>>()
 			{
-				{ "A", Echo },
-				{ "G0", SetPosition },
-				{ "G1", SetPosition },
-				{ "G28", HomePosition },
-				{ "G4", Wait },
-				{ "G92", ResetPosition },
+				{ "A",    Echo },
+				{ "G0",   SetPosition },
+				{ "G1",   SetPosition },
+				{ "G28",  HomePosition },
+				{ "G30",  SimulateProbe },
+				{ "G4",   Wait },
+				{ "G92",  ResetPosition },
 				{ "M104", SetExtruderTemperature },
 				{ "M105", ReturnTemp },
 				{ "M106", SetFan },
@@ -76,10 +77,10 @@ namespace MatterHackers.PrinterEmulator
 				{ "M115", ReportMarlinFirmware },
 				{ "M140", SetBedTemperature },
 				{ "M190", SetBedTemperature },
-				{ "M20", ListSdCard },
-				{ "M21", InitSdCard },
-				{ "N", ParseChecksumLine },
-				{ "T", SetExtruderIndex },
+				{ "M20",  ListSdCard },
+				{ "M21",  InitSdCard },
+				{ "N",    ParseChecksumLine },
+				{ "T",    SetExtruderIndex },
 			};
 		}
 
@@ -286,6 +287,15 @@ namespace MatterHackers.PrinterEmulator
 			YPosition = 0;
 			ZPosition = 0;
 			return "ok\n";
+		}
+
+		private Random rand = new Random();
+
+		private string SimulateProbe(string command)
+		{
+			Thread.Sleep(500);
+			return "Bed Position X: 0 Y: 0 Z: { rand.NextDouble() }\n"
+				 + "ok\n";
 		}
 
 		private string InitSdCard(string arg)
