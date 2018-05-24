@@ -56,16 +56,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 	public class ProbeCalibrationWizard : LevelingWizardContext
 	{
-		private PrinterConfig printer;
-
 		public ProbeCalibrationWizard(PrinterConfig printer)
+			: base(printer)
 		{
-			this.printer = printer;
 		}
 
 		protected override IEnumerator<LevelingWizardPage> GetWizardSteps()
 		{
-			var levelingStrings = new LevelingStrings(printer.Settings);
+			var levelingStrings = new LevelingStrings(this.Printer.Settings);
 			var autoProbePositions = new List<ProbePosition>(3);
 			var manualProbePositions = new List<ProbePosition>(3);
 
@@ -75,10 +73,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			int totalSteps = 3;
 
 			// make a welcome page if this is the first time calibrating the probe
-			if (!printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated))
+			if (!this.Printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated))
 			{
 				yield return new LevelingWizardPage(
-					printer,
+					this.Printer,
 					this,
 					levelingStrings.initialPrinterSetupStepText,
 					string.Format(
@@ -89,7 +87,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// show what steps will be taken
 			yield return new LevelingWizardPage(
-				printer,
+				this.Printer,
 				this,
 				"Probe Calibration Overview".Localize(),
 				string.Format(
@@ -104,7 +102,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// add in the material select page
 
 			yield return new SelectMaterialPage(
-				printer,
+				this.Printer,
 				this,
 				"Select Material".Localize(),
 				string.Format(
@@ -114,20 +112,20 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// add in the homing printer page
 			yield return new HomePrinterPage(
-				printer,
+				this.Printer,
 				this,
-				"Homing The Printer".Localize(),
+				"Homing The this.Printer".Localize(),
 				levelingStrings.HomingPageInstructions(true, false),
 				false);
 
 			double targetHotendTemp = 0;
 
-			targetHotendTemp = printer.Settings.Helpers.ExtruderTemperature(0);
+			targetHotendTemp = this.Printer.Settings.Helpers.ExtruderTemperature(0);
 
 			yield return new WaitForTempPage(
-				printer,
+				this.Printer,
 				this,
-				"Waiting For Printer To Heat".Localize(),
+				"Waiting For this.Printer To Heat".Localize(),
 				$"Waiting for the hotend to heat to {targetHotendTemp}.".Localize() + "\n"
 					+ "This will ensure no filament is stuck to the tip.".Localize() + "\n"
 					+ "\n"
@@ -136,14 +134,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				0,
 				targetHotendTemp);
 
-			double startProbeHeight = printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start);
-			Vector2 probePosition = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
+			double startProbeHeight = this.Printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start);
+			Vector2 probePosition = this.Printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
 
 			int i = 0;
 
 			// do the automatic probing of the center position
 			yield return new AutoProbeFeedback(
-				printer,
+				this.Printer,
 				this,
 				new Vector3(probePosition, startProbeHeight),
 				$"{"Step".Localize()} {i + 1} {"of".Localize()} 3: {"Position".Localize()} {i + 1} - {"Auto Calibrate".Localize()}",
@@ -152,7 +150,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// do the manual prob of the same position
 			yield return new GetCoarseBedHeight(
-				printer,
+				this.Printer,
 				this,
 				new Vector3(probePosition, startProbeHeight),
 				string.Format(
@@ -166,7 +164,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				levelingStrings);
 
 			yield return new GetFineBedHeight(
-				printer,
+				this.Printer,
 				this,
 				string.Format(
 					"{0} {1} {2} - {3}",
@@ -179,7 +177,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				levelingStrings);
 
 			yield return new GetUltraFineBedHeight(
-				printer,
+				this.Printer,
 				this,
 				string.Format(
 					"{0} {1} {2} - {3}",
@@ -192,7 +190,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				levelingStrings);
 
 			yield return new CalibrateProbeLastPagelInstructions(
-				printer,
+				this.Printer,
 				this,
 				"Done".Localize(),
 				"Your Probe is now calibrated.".Localize() + "\n\n\t• " + "Remove the paper".Localize() + "\n\n" + "Click 'Done' to close this window.".Localize(),

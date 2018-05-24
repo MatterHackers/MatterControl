@@ -40,8 +40,11 @@ namespace MatterHackers.MatterControl
 
 		public string WindowTitle { get; internal set; }
 
-		public LevelingWizardContext()
+		public PrinterConfig Printer { get; }
+
+		public LevelingWizardContext(PrinterConfig printer)
 		{
+			this.Printer = printer;
 			this.pages = this.GetWizardSteps();
 		}
 
