@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -127,9 +128,16 @@ namespace MatterHackers.MatterControl
 					throw new NotImplementedException();
 			}
 
-			var levelingContext = new PrintLevelingWizard(levelingPlan, printer);
+			var levelingContext = new PrintLevelingWizard(levelingPlan, printer)
+			{
+				WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Print Leveling Wizard".Localize()
+			};
 
-			var printLevelWizardWindow = DialogWindow.Show(new LevelingWizardRootPage(levelingContext));
+			var printLevelWizardWindow = DialogWindow.Show(new LevelingWizardRootPage(levelingContext)
+			{
+				WindowTitle = levelingContext.WindowTitle
+			});
+
 			printLevelWizardWindow.Closed += (s, e) =>
 			{
 				// If leveling was on when we started, make sure it is on when we are done.
@@ -149,7 +157,6 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		// Title = string.Format("{0} - {1}", ApplicationController.Instance.ProductName, "Probe Calibration Wizard".Localize());
 		public static bool UsingZProbe(PrinterConfig printer)
 		{
 			// we have a probe that we are using and we have not done leveling yet
@@ -168,9 +175,15 @@ namespace MatterHackers.MatterControl
 			// turn off print leveling
 			PrintLevelingStream.AllowLeveling = false;
 
-			var levelingContext = new ProbeCalibrationWizard(printer);
+			var levelingContext = new ProbeCalibrationWizard(printer)
+			{
+				WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Probe Calibration Wizard".Localize()
+			};
 
-			var probeCalibrationWizardWindow = DialogWindow.Show(new LevelingWizardRootPage(levelingContext));
+			var probeCalibrationWizardWindow = DialogWindow.Show(new LevelingWizardRootPage(levelingContext)
+			{
+				WindowTitle = levelingContext.WindowTitle
+			});
 			probeCalibrationWizardWindow.Closed += (s, e) =>
 			{
 				// If leveling was on when we started, make sure it is on when we are done.

@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// add in the homing printer page
 			yield return new HomePrinterPage(
 				this,
-				"Homing The this.Printer".Localize(),
+				"Homing The Printer".Localize(),
 				levelingStrings.HomingPageInstructions(true, false),
 				false);
 

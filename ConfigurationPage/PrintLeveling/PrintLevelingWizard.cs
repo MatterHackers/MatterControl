@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			yield return new HomePrinterPage(
 				this,
-				"Homing The this.Printer".Localize(),
+				"Homing The Printer".Localize(),
 				levelingStrings.HomingPageInstructions(useZProbe, hasHeatedBed),
 				useZProbe);
 
