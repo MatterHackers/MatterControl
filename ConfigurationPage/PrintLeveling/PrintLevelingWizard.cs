@@ -222,34 +222,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				i++;
 			}
 
-			var done1 = "Print Leveling is now configured and enabled.".Localize();
-			string done2 = "If you need to recalibrate the printer in the future, the print leveling controls can be found under: Controls, Calibration";
-			string done3 = "Click 'Done' to close this window.".Localize();
-
-			var doneString = "";
-			if (useZProbe)
-			{
-				doneString = $"{"Congratulations!".Localize()} {done1}\n"
-					+ "\n"
-					+ $"{done2}\n"
-					+ "\n"
-					+ $"{done3}";
-			}
-			else
-			{
-				doneString = $"{"Congratulations!".Localize()} {done1}\n"
-					+ "\n"
-					+ $"\t• {"Remove the paper".Localize()}\n"
-					+ "\n"
-					+ $"{done2}\n"
-					+ "\n"
-					+ $"{done3}";
-			}
-
 			yield return new LastPageInstructions(
 				this,
 				"Done".Localize(),
-				doneString,
+				string.Format(
+					"{0} {1}\n\n{2}\n{3}\n\n{4}",
+					"Congratulations!".Localize(),
+					"Print Leveling is now configured and enabled.".Localize(),
+					useZProbe ? $"\t• {"Remove the paper".Localize()}\n" : "",
+					"If you need to recalibrate the printer in the future, the print leveling controls can be found under: Controls, Calibration".Localize(),
+					"Click 'Done' to close this window.".Localize()),
 				probePositions);
 		}
 
