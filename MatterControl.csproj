@@ -82,7 +82,7 @@
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardMesh.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelingWizard.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\LastPageInstructions.cs" />
-    <Compile Include="CustomWidgets\LevelingWizard.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\LevelingWizard.cs" />
     <Compile Include="CustomWidgets\ResizeContainer\BottomResizeContainer.cs" />
     <Compile Include="CustomWidgets\ResizeContainer\LeftResizeContainer.cs" />
     <Compile Include="CustomWidgets\TreeView\TreeNode.cs" />

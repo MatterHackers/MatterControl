@@ -79,7 +79,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					levelingStrings.ClickNext));
 
 			// add in the material select page
-
 			yield return new SelectMaterialPage(
 				this,
 				"Select Material".Localize(),
