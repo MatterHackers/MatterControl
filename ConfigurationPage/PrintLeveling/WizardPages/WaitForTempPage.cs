@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -37,8 +37,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class WaitForTempPage : LevelingWizardPage
 	{
-		protected LevelingWizardContext container;
-
 		private ProgressBar bedProgressBar;
 		private TextWidget bedProgressBarText;
 		private double bedStartingTemp;
@@ -51,14 +49,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private TextWidget hotEndDoneText;
 		double hotEndTargetTemp;
 
-		public WaitForTempPage(PrinterConfig printer, LevelingWizardContext container,
+		public WaitForTempPage(LevelingWizardContext context,
 			string step, string instructions,
 			double targetBedTemp, double targetHotendTemp)
-			: base(printer, container, step, instructions)
+			: base(context, step, instructions)
 		{
 			this.bedTargetTemp = targetBedTemp;
 			this.hotEndTargetTemp = targetHotendTemp;
-			this.container = container;
 
 			if (hotEndTargetTemp > 0)
 			{

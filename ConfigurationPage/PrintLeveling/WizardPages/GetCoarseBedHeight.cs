@@ -40,9 +40,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		protected Vector3 probeStartPosition;
 
-		public GetCoarseBedHeight(PrinterConfig printer, LevelingWizardContext context, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions,
+		public GetCoarseBedHeight(LevelingWizardContext context, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions,
 			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
-			: base(printer, context, pageDescription, "Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.".Localize(),
+			: base(context, pageDescription, "Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.".Localize(),
 				  levelingStrings.CoarseInstruction2, 1, probePositions, probePositionsBeingEditedIndex)
 		{
 			this.probeStartPosition = probeStartPosition;

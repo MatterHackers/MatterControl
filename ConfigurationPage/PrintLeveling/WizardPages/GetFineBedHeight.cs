@@ -33,9 +33,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class GetFineBedHeight : FindBedHeight
 	{
-		public GetFineBedHeight(PrinterConfig printer, LevelingWizardContext container, string pageDescription, List<ProbePosition> probePositions,
+		public GetFineBedHeight(LevelingWizardContext context, string pageDescription, List<ProbePosition> probePositions,
 			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
-			: base(printer, container, pageDescription, levelingStrings.FineInstruction1, levelingStrings.FineInstruction2, .1, probePositions, probePositionsBeingEditedIndex)
+			: base(context, pageDescription, levelingStrings.FineInstruction1, levelingStrings.FineInstruction2, .1, probePositions, probePositionsBeingEditedIndex)
 		{
 		}
 	}

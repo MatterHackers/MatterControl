@@ -38,10 +38,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private List<ProbePosition> autoProbePositions;
 		private List<ProbePosition> manualProbePositions;
 
-		public CalibrateProbeLastPagelInstructions(PrinterConfig printer, LevelingWizardContext context, string headerText, string instructionsText,
+		public CalibrateProbeLastPagelInstructions(LevelingWizardContext context, string headerText, string instructionsText,
 			List<ProbePosition> autoProbePositions,
 			List<ProbePosition> manualProbePositions)
-			: base(printer, context, headerText, instructionsText)
+			: base(context, headerText, instructionsText)
 		{
 			this.autoProbePositions = autoProbePositions;
 			this.manualProbePositions = manualProbePositions;

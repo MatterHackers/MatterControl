@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -40,11 +40,13 @@ namespace MatterHackers.MatterControl
 
 		public string WindowTitle { get; internal set; }
 
-		public PrinterConfig Printer { get; }
+		protected PrinterConfig printer;
+
+		public PrinterConfig Printer => printer;
 
 		public LevelingWizardContext(PrinterConfig printer)
 		{
-			this.Printer = printer;
+			this.printer = printer;
 			this.pages = this.GetWizardSteps();
 		}
 

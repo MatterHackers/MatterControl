@@ -38,12 +38,11 @@ namespace MatterHackers.MatterControl
 	public class LevelingWizardPage : DialogPage
 	{
 		protected TextButton nextButton;
-
 		protected PrinterConfig printer;
 
-		public LevelingWizardPage(PrinterConfig printer, LevelingWizardContext wizardContext, string headerText, string instructionsText)
+		public LevelingWizardPage(LevelingWizardContext wizardContext, string headerText, string instructionsText)
 		{
-			this.printer = printer;
+			this.printer = wizardContext.Printer;
 			this.WindowTitle = wizardContext.WindowTitle;
 			this.HeaderText = headerText;
 

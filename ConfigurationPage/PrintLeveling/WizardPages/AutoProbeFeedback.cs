@@ -49,11 +49,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private EventHandler unregisterEvents;
 		protected Vector3 probeStartPosition;
 
-		public AutoProbeFeedback(PrinterConfig printer, LevelingWizardContext context, Vector3 probeStartPosition, string headerText, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
-			: base(printer, context, headerText, headerText)
+		public AutoProbeFeedback(LevelingWizardContext context, Vector3 probeStartPosition, string headerText, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
+			: base(context, headerText, headerText)
 		{
 			this.probeStartPosition = probeStartPosition;
-			this.printer = printer;
 			this.probePositions = probePositions;
 
 			this.lastReportedPosition = printer.Connection.LastReportedPosition;

@@ -29,8 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -39,15 +37,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class LastPagelInstructions : LevelingWizardPage
 	{
-		protected LevelingWizardContext container;
 		private List<ProbePosition> probePositions;
 
-		public LastPagelInstructions(PrinterConfig printer, LevelingWizardContext container, string pageDescription, string instructionsText, List<ProbePosition> probePositions)
-			: base(printer, container, pageDescription, instructionsText)
+		public LastPagelInstructions(LevelingWizardContext context, string pageDescription, string instructionsText, List<ProbePosition> probePositions)
+			: base(context, pageDescription, instructionsText)
 		{
 			this.probePositions = probePositions;
-			this.container = container;
-
 			this.ShowWizardFinished();
 		}
 

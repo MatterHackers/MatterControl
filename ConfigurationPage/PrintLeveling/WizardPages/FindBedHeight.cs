@@ -48,13 +48,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		protected JogControls.MoveButton zPlusControl;
 		protected JogControls.MoveButton zMinusControl;
-		protected LevelingWizardContext container;
 
-		public FindBedHeight(PrinterConfig printer, LevelingWizardContext container, string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance,
+		public FindBedHeight(LevelingWizardContext context, string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance,
 			List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
-			: base(printer, container, pageDescription, setZHeightCoarseInstruction1)
+			: base(context, pageDescription, setZHeightCoarseInstruction1)
 		{
-			this.container = container;
 			this.probePositions = probePositions;
 			this.moveAmount = moveDistance;
 			this.lastReportedPosition = printer.Connection.LastReportedPosition;

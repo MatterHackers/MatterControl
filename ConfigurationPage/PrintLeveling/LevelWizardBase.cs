@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void OnLoad(EventArgs args)
 		{
 			var levelingContext = new PrintLevelingContext(levelingPlan, printer);
-			levelingContext.ShowNextPage(this.WizardWindow);
+			levelingContext.ShowNextPage(WizardWindow);
 			base.OnLoad(args);
 		}
 	}
@@ -74,16 +74,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				probePositions.Add(new ProbePosition());
 			}
 
-			var levelingStrings = new LevelingStrings(this.Printer.Settings);
+			var levelingStrings = new LevelingStrings(printer.Settings);
 
 			// If no leveling data has been calculated
-			bool showWelcomeScreen = this.Printer.Settings.Helpers.GetPrintLevelingData().SampledPositions.Count == 0
-				&& !LevelingWizardX.UsingZProbe(this.Printer);
+			bool showWelcomeScreen = printer.Settings.Helpers.GetPrintLevelingData().SampledPositions.Count == 0
+				&& !LevelingWizardX.UsingZProbe(printer);
 
 			if (showWelcomeScreen)
 			{
 				yield return new LevelingWizardPage(
-					this.Printer,
 					this,
 					levelingStrings.initialPrinterSetupStepText,
 					string.Format(
@@ -93,9 +92,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			// To make sure the bed is at the correct temp, put in a filament selection page.
-			bool hasHeatedBed = this.Printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed);
-			bool useZProbe = this.Printer.Settings.Helpers.UseZProbe();
-			int zProbeSamples = this.Printer.Settings.GetValue<int>(SettingsKey.z_probe_samples);
+			bool hasHeatedBed = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed);
+			bool useZProbe = printer.Settings.Helpers.UseZProbe();
+			int zProbeSamples = printer.Settings.GetValue<int>(SettingsKey.z_probe_samples);
 
 			var secondsPerManualSpot = 10 * 3;
 			var secondsPerAutomaticSpot = 3 * zProbeSamples;
@@ -103,7 +102,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			secondsToCompleteWizard += (hasHeatedBed ? 60 * 3 : 0);
 
 			yield return new LevelingWizardPage(
-				this.Printer,
 				this,
 				"Print Leveling Overview".Localize(),
 				levelingStrings.WelcomeText(levelingPlan.ProbeCount, (int)Math.Round(secondsToCompleteWizard / 60.0)));
@@ -112,14 +110,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			if (hasHeatedBed || !useZProbe)
 			{
 				yield return new SelectMaterialPage(
-					this.Printer,
 					this,
 					"Select Material".Localize(),
 					"Please select the material you will be printing with, so we can accurately calibrate the printer.".Localize());
 			}
 
 			yield return new HomePrinterPage(
-				this.Printer,
 				this,
 				"Homing The this.Printer".Localize(),
 				levelingStrings.HomingPageInstructions(useZProbe, hasHeatedBed),
@@ -130,12 +126,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			double targetHotendTemp = 0;
 			if (hasHeatedBed)
 			{
-				targetBedTemp = this.Printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
+				targetBedTemp = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
 			}
 
 			if (!useZProbe)
 			{
-				targetHotendTemp = this.Printer.Settings.Helpers.ExtruderTemperature(0);
+				targetHotendTemp = printer.Settings.Helpers.ExtruderTemperature(0);
 			}
 
 			if (targetBedTemp > 0 || targetHotendTemp > 0)
@@ -170,9 +166,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				}
 
 				yield return new WaitForTempPage(
-					this.Printer,
 					this,
-					"Waiting For this.Printer To Heat".Localize(),
+					"Waiting For Printer To Heat".Localize(),
 					heatingInstructions,
 					targetBedTemp, targetHotendTemp);
 			}
@@ -183,18 +178,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			string medPrecisionLabel = "Medium Precision".Localize();
 			string highPrecisionLabel = "High Precision".Localize();
 
-			double bedRadius = Math.Min(this.Printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).X, this.Printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
+			double bedRadius = Math.Min(printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).X, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
 
-			double startProbeHeight = this.Printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start);
+			double startProbeHeight = printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start);
 			int i = 0;
 			foreach (var goalProbePosition in levelingPlan.GetPrintLevelPositionToSample())
 			{
-				var validProbePosition = EnsureInPrintBounds(this.Printer.Settings, goalProbePosition);
+				var validProbePosition = EnsureInPrintBounds(printer.Settings, goalProbePosition);
 
-				if (this.Printer.Settings.Helpers.UseZProbe())
+				if (printer.Settings.Helpers.UseZProbe())
 				{
 					yield return new AutoProbeFeedback(
-						this.Printer,
 						this,
 						new Vector3(validProbePosition, startProbeHeight),
 						string.Format(
@@ -209,7 +203,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				else
 				{
 					yield return new GetCoarseBedHeight(
-						this.Printer,
 						this,
 						new Vector3(validProbePosition, startProbeHeight),
 						string.Format(
@@ -223,7 +216,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						levelingStrings);
 
 					yield return new GetFineBedHeight(
-						this.Printer,
 						this,
 						string.Format(
 							"{0} {1} {2} - {3}",
@@ -236,7 +228,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						levelingStrings);
 
 					yield return new GetUltraFineBedHeight(
-						this.Printer,
 						this,
 						string.Format(
 							"{0} {1} {2} - {3}",
@@ -276,7 +267,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			yield return new LastPagelInstructions(
-				this.Printer,
 				this,
 				"Done".Localize(),
 				doneString,
@@ -288,12 +278,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// check that the position is within the printing arrea and if not move it back in
 			if (printerSettings.Helpers.UseZProbe())
 			{
-				var probeOffset = this.Printer.Settings.GetValue<Vector2>(SettingsKey.z_probe_xy_offset);
+				var probeOffset = printer.Settings.GetValue<Vector2>(SettingsKey.z_probe_xy_offset);
 				var actualNozzlePosition = probePosition - probeOffset;
 
 				// clamp this to the bed bounds
-				Vector2 bedSize = this.Printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
-				Vector2 printCenter = this.Printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
+				Vector2 bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
+				Vector2 printCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
 				RectangleDouble bedBounds = new RectangleDouble(printCenter - bedSize / 2, printCenter + bedSize / 2);
 				Vector2 adjustedPosition = bedBounds.Clamp(actualNozzlePosition);
 
