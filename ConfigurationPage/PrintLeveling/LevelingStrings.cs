@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,24 +29,27 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class LevelingStrings
 	{
-		public string initialPrinterSetupStepText = "Initial Printer Setup".Localize();
 		private int stepNumber = 1;
+
+		// Private shared localized strings
 		private string welcomeLine1 = "Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.".Localize();
 		private string selectMaterial = "Select the material you are printing".Localize();
 		private string heatTheBed = "Heat the bed".Localize();
 		private string sampelAtPoints = "Sample the bed at {0} points".Localize();
 		private string turnOnLeveling = "Turn auto leveling on".Localize();
 		private string timeToDone = "We should be done in approximately {0} minutes.".Localize();
-		public string ClickNext => "Click 'Next' to continue.".Localize();
+		private string setZHeightLower = "Press [Z-] until there is resistance to moving the paper".Localize();
+		private string setZHeightRaise = "Press [Z+] once to release the paper".Localize();
+		private string setZHeightNext = "Finally click 'Next' to continue.".Localize();
 
-		PrinterSettings printerSettings;
+		private PrinterSettings printerSettings;
+
 		public LevelingStrings(PrinterSettings printerSettings)
 		{
 			this.printerSettings = printerSettings;
@@ -57,43 +60,40 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			string line1 = "The printer should now be 'homing'.".Localize();
 			if (heatBed)
 			{
-				line1 += " " + "Once it is finished homing we will heat the bed.".Localize();
+				line1 += " Once it is finished homing we will heat the bed.".Localize();
 			}
+
 			if (useZProbe)
 			{
 				return line1;
 			}
 			else
 			{
-				string line2 = "To complete the next few steps you will need".Localize();
-				string line3 = "A standard sheet of paper".Localize();
-				string line4 = "We will use this paper to measure the distance between the extruder and the bed.".Localize();
-				return $"{line1}\n\n{line2}:\n\n\t• {line3}\n\n{line4}\n\n{ClickNext}";
+				return string.Format(
+					"{0}\n\n{1}:\n\n\t• {2}\n\n{3}\n\n{4}",
+					line1,
+					"To complete the next few steps you will need".Localize(),
+					"A standard sheet of paper".Localize(),
+					"We will use this paper to measure the distance between the extruder and the bed.".Localize(),
+					this.ClickNext);
 			}
 		}
 
-		string setZHeightLower = "Press [Z-] until there is resistance to moving the paper".Localize();
-		string setZHeightRaise = "Press [Z+] once to release the paper".Localize();
-		string setZHeightNext = "Finally click 'Next' to continue.".Localize();
+		public string CoarseInstruction2 => string.Format(
+			"\t• {0}\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}",
+			"Place the paper under the extruder".Localize(),
+			"Using the above controls".Localize(),
+			setZHeightLower,
+			setZHeightRaise,
+			setZHeightNext);
 
-		public string CoarseInstruction2
-		{
-			get
-			{
-				string setZHeightCourseInstructTextOne = "Place the paper under the extruder".Localize();
-				string setZHeightCourseInstructTextTwo = "Using the above controls".Localize();
-				return string.Format("\t• {0}\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}", setZHeightCourseInstructTextOne, setZHeightCourseInstructTextTwo, setZHeightLower, setZHeightRaise, setZHeightNext);
-			}
-		}
+		public string InitialPrinterSetupStepText => "Initial Printer Setup".Localize();
 
 		public string FineInstruction1 => "We will now refine our measurement of the extruder height at this position.".Localize();
-		public string FineInstruction2
-		{
-			get
-			{
-				return string.Format("\t• {0}\n\t• {1}\n\n{2}", setZHeightLower, setZHeightRaise, setZHeightNext);
-			}
-		}
+
+		public string FineInstruction2 => $"\t• {setZHeightLower}\n\t• {setZHeightRaise}\n\n{setZHeightNext}";
+
+		public string ClickNext => "Click 'Next' to continue.".Localize();
 
 		public string UltraFineInstruction1 => "We will now finalize our measurement of the extruder height at this position.".Localize();
 

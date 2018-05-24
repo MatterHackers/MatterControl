@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				yield return new LevelingWizardPage(
 					this,
-					levelingStrings.initialPrinterSetupStepText,
+					levelingStrings.InitialPrinterSetupStepText,
 					string.Format(
 						"{0}\n\n{1}",
 						"Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize(),
