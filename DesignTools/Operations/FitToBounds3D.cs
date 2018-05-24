@@ -198,9 +198,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& layer.Scene.SelectedItem != null
 				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
 			{
+				var aabb = ItemToScale.GetAxisAlignedBoundingBox();
+
 				if (FitType == FitType.Box)
 				{
-					var aabb = ItemToScale.GetAxisAlignedBoundingBox();
 					var center = aabb.Center;
 					var worldMatrix = this.WorldMatrix();
 
@@ -214,42 +215,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 				else
 				{
-					RenderCylinderOutline(layer.World, Color.Red, 1, 1);
+					layer.World.RenderCylinderOutline(this.WorldMatrix(), aabb.Center, Diameter, Height, 30, Color.Red, 1, 1);
 				}
 				// turn the lighting back on
 				GL.Enable(EnableCap.Lighting);
-			}
-		}
-
-		public void RenderCylinderOutline(WorldView world, Color color, double lineWidth, double extendLineLength)
-		{
-			var aabb = ItemToScale.GetAxisAlignedBoundingBox();
-			var center = aabb.Center;
-			center.Z = 0;
-			var worldMatrix = this.WorldMatrix();
-
-			GLHelper.PrepareFor3DLineRender(true);
-			Frustum frustum = world.GetClippingFrustum();
-			int sides = 30;
-			for (int i=0; i<sides; i++)
-			{
-				var rotatedPoint = new Vector3(Math.Cos(MathHelper.Tau * i / sides), Math.Sin(MathHelper.Tau * i / sides), 0) * Diameter / 2;
-				var sideTop = Vector3.Transform(center + rotatedPoint + new Vector3(0, 0, aabb.minXYZ.Z + Height), worldMatrix);
-				var sideBottom = Vector3.Transform(center + rotatedPoint + new Vector3(0, 0, aabb.minXYZ.Z), worldMatrix);
-				var rotated2Point = new Vector3(Math.Cos(MathHelper.Tau * (i + 1) / sides), Math.Sin(MathHelper.Tau * (i + 1) / sides), 0) * Diameter / 2;
-				var topStart = sideTop;
-				var topEnd = Vector3.Transform(center + rotated2Point + new Vector3(0, 0, aabb.minXYZ.Z + Height), worldMatrix);
-				var bottomStart = sideBottom;
-				var bottomEnd = Vector3.Transform(center + rotated2Point + new Vector3(0, 0, aabb.minXYZ.Z), worldMatrix);
-
-				if (extendLineLength > 0)
-				{
-					GLHelper.ExtendLineEnds(ref sideTop, ref sideBottom, extendLineLength);
-				}
-
-				world.Render3DLineNoPrep(frustum, sideTop, sideBottom, color, lineWidth);
-				world.Render3DLineNoPrep(frustum, topStart, topEnd, color, lineWidth);
-				world.Render3DLineNoPrep(frustum, bottomStart, bottomEnd, color, lineWidth);
 			}
 		}
 

@@ -47,14 +47,32 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return object3D.Parent == null;
 		}
 
-		public static void CopyProperties(this IObject3D copyTo, IObject3D copyFrom)
+		public static void CopyProperties(this IObject3D copyTo, IObject3D copyFrom, Object3DPropertyFlags flags)
 		{
-			copyTo.Matrix = copyFrom.Matrix;
-			copyTo.Color = copyFrom.Color;
-			copyTo.MaterialIndex = copyFrom.MaterialIndex;
-			copyTo.Name = copyFrom.Name;
-			copyTo.OutputType = copyFrom.OutputType;
-			copyTo.Visible = copyFrom.Visible;
+			if (flags.HasFlag(Object3DPropertyFlags.Matrix))
+			{
+				copyTo.Matrix = copyFrom.Matrix;
+			}
+			if (flags.HasFlag(Object3DPropertyFlags.Color))
+			{
+				copyTo.Color = copyFrom.Color;
+			}
+			if (flags.HasFlag(Object3DPropertyFlags.MaterialIndex))
+			{
+				copyTo.MaterialIndex = copyFrom.MaterialIndex;
+			}
+			if (flags.HasFlag(Object3DPropertyFlags.Name))
+			{
+				copyTo.Name = copyFrom.Name;
+			}
+			if (flags.HasFlag(Object3DPropertyFlags.OutputType))
+			{
+				copyTo.OutputType = copyFrom.OutputType;
+			}
+			if (flags.HasFlag(Object3DPropertyFlags.Visible))
+			{
+				copyTo.Visible = copyFrom.Visible;
+			}
 		}
 
 		public static IObject3D Translate(this IObject3D objectToTranslate, double x = 0, double y = 0, double z = 0, string name = "")
@@ -83,7 +101,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public static IObject3D Minus(this IObject3D a, IObject3D b)
 		{
 			var resultsA = a.Clone();
-			SubtractEditor.Subtract(resultsA.VisibleMeshes().Select((i) => i.object3D).ToList(), b.VisibleMeshes().Select((i) => i.object3D).ToList());
+			SubtractObject3D.Subtract(resultsA.VisibleMeshes().Select((i) => i.object3D).ToList(), b.VisibleMeshes().Select((i) => i.object3D).ToList());
 			return resultsA;
 		}
 

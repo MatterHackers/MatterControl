@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
 			Rebuilding = true;
-			ResetMeshWrappers();
+			ResetMeshWrappers(Object3DPropertyFlags.All);
 
 			// remember the current matrix then clear it so the parts will rotate at the original wrapped position
 			var currentMatrix = Matrix;

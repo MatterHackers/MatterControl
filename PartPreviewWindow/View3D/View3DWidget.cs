@@ -197,9 +197,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.InteractionLayer.AddChild(new TumbleCubeControl(this.InteractionLayer)
 			{
-				Margin = new BorderDouble(50, 0, 0, 50),
+				Margin = new BorderDouble(0, 0, 30, 30),
 				VAnchor = VAnchor.Top,
-				HAnchor = HAnchor.Left,
+				HAnchor = HAnchor.Right,
 			});
 
 			UiThread.RunOnIdle(AutoSpin);

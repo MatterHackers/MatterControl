@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			updateButton.Click += (s, e) =>
 			{
 				// make sure the mesh on the group is not visible
-				group.ResetMeshWrappers();
+				//group.ResetMeshWrappers();
 				updateButton.Enabled = false;
 				ProcessBooleans(group);
 			};
@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				checkBox.CheckedStateChanged += (s, e) =>
 				{
 					// make sure the mesh on the group is not visible
-					group.ResetMeshWrappers();
+					//group.ResetMeshWrappers();
 
 					// and set the output type for this checkbox
 					item.OutputType = checkBox.Checked ? PrintOutputTypes.Hole : PrintOutputTypes.Solid;

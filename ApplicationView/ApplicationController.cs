@@ -512,7 +512,7 @@ namespace MatterHackers.MatterControl
 				{
 					OperationType = typeof(CombineObject3D),
 					TitleResolver = () => "Combine".Localize(),
-					Action = (scene) => MeshWrapperObject3D.WrapSelection(new CombineObject3D(), scene),
+					Action = (scene) => new CombineObject3D().DoInitialWrapping(scene),
 					Icon = AggContext.StaticData.LoadIcon("combine.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 				},
@@ -520,7 +520,7 @@ namespace MatterHackers.MatterControl
 				{
 					OperationType = typeof(SubtractObject3D),
 					TitleResolver = () => "Subtract".Localize(),
-					Action = (scene) => MeshWrapperObject3D.WrapSelection(new SubtractObject3D(), scene),
+					Action = (scene) => new SubtractObject3D().DoInitialWrapping(scene),
 					Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 				},
@@ -528,7 +528,7 @@ namespace MatterHackers.MatterControl
 				{
 					OperationType = typeof(IntersectionObject3D),
 					TitleResolver = () => "Intersect".Localize(),
-					Action = (scene) => MeshWrapperObject3D.WrapSelection(new IntersectionObject3D(), scene),
+					Action = (scene) => new IntersectionObject3D().DoInitialWrapping(scene),
 					Icon = AggContext.StaticData.LoadIcon("intersect.png"),
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 				},
@@ -536,7 +536,7 @@ namespace MatterHackers.MatterControl
 				{
 					OperationType = typeof(SubtractAndReplaceObject3D),
 					TitleResolver = () => "Subtract & Replace".Localize(),
-					Action = (scene) => MeshWrapperObject3D.WrapSelection(new SubtractAndReplaceObject3D(), scene),
+					Action = (scene) => new SubtractAndReplaceObject3D().DoInitialWrapping(scene),
 					Icon = AggContext.StaticData.LoadIcon("subtract_and_replace.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 				},
@@ -594,7 +594,7 @@ namespace MatterHackers.MatterControl
 					Action = (scene) =>
 					{
 						var pinch = new PinchObject3D();
-						MeshWrapperObject3D.WrapSelection(pinch, scene);
+						pinch.DoInitialWrapping(scene);
 					},
 					Icon = AggContext.StaticData.LoadIcon("pinch.png", 16, 16, theme.InvertIcons),
 					IsEnabled = (scene) => scene.HasSelection,
@@ -606,7 +606,7 @@ namespace MatterHackers.MatterControl
 					Action = (scene) =>
 					{
 						var curve = new CurveObject3D();
-						MeshWrapperObject3D.WrapSelection(curve, scene);
+						curve.DoInitialWrapping(scene);
 					},
 					Icon = AggContext.StaticData.LoadIcon("curve.png", 16, 16, theme.InvertIcons),
 					IsEnabled = (scene) => scene.HasSelection,
