@@ -51,7 +51,8 @@ namespace MatterHackers.MatterControl
 
 			nextButton = new TextButton("Next".Localize(), theme)
 			{
-				Name = "Next Button"
+				Name = "Next Button",
+				BackgroundColor = theme.MinimalShade
 			};
 			nextButton.Click += (s, e) =>
 			{
@@ -75,7 +76,8 @@ namespace MatterHackers.MatterControl
 		{
 			var doneButton = new TextButton("Done".Localize(), theme)
 			{
-				Name = "Done Button"
+				Name = "Done Button",
+				BackgroundColor = theme.MinimalShade
 			};
 
 			doneButton.Click += (s, e) =>

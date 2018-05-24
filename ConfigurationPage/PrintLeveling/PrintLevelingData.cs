@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				let count = g.Count()
 				orderby count descending
 				select new { Value = g.Key, Count = count };
-			
+
 			foreach (var x in positionCounts)
 			{
 				if(x.Count > 1)
@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				return true;
 			}
 
-			// check that the number of poins sampled is correct for the solution
+			// check that the number of points sampled is correct for the solution
 			switch (levelingData.LevelingSystem)
 			{
 				case LevelingSystem.Probe3Points:
