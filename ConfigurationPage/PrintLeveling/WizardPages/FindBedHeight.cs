@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		protected JogControls.MoveButton zPlusControl;
 		protected JogControls.MoveButton zMinusControl;
 
-		public FindBedHeight(LevelingWizardContext context, string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance,
+		public FindBedHeight(LevelingWizard context, string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance,
 			List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
 			: base(context, pageDescription, setZHeightCoarseInstruction1)
 		{

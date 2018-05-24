@@ -33,9 +33,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class LevelingWizardRootPage : DialogPage
 	{
-		private LevelingWizardContext levelingContext;
+		private LevelingWizard levelingContext;
 
-		public LevelingWizardRootPage(LevelingWizardContext levelingContext)
+		public LevelingWizardRootPage(LevelingWizard levelingContext)
 		{
 			this.levelingContext = levelingContext;
 		}

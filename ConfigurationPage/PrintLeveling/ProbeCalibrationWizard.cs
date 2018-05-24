@@ -35,7 +35,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class ProbeCalibrationWizard : LevelingWizardContext
+	public class ProbeCalibrationWizard : LevelingWizard
 	{
 		public ProbeCalibrationWizard(PrinterConfig printer)
 			: base(printer)

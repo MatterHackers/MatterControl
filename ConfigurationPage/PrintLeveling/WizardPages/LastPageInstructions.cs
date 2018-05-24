@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private List<ProbePosition> probePositions;
 
-		public LastPageInstructions(LevelingWizardContext context, string pageDescription, string instructionsText, List<ProbePosition> probePositions)
+		public LastPageInstructions(LevelingWizard context, string pageDescription, string instructionsText, List<ProbePosition> probePositions)
 			: base(context, pageDescription, instructionsText)
 		{
 			this.probePositions = probePositions;

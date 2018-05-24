@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private EventHandler unregisterEvents;
 		protected Vector3 probeStartPosition;
 
-		public AutoProbeFeedback(LevelingWizardContext context, Vector3 probeStartPosition, string headerText, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
+		public AutoProbeFeedback(LevelingWizard context, Vector3 probeStartPosition, string headerText, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
 			: base(context, headerText, headerText)
 		{
 			this.probeStartPosition = probeStartPosition;

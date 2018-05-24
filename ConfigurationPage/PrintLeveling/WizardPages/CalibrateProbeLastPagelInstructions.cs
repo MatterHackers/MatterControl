@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private List<ProbePosition> autoProbePositions;
 		private List<ProbePosition> manualProbePositions;
 
-		public CalibrateProbeLastPagelInstructions(LevelingWizardContext context, string headerText, string instructionsText,
+		public CalibrateProbeLastPagelInstructions(LevelingWizard context, string headerText, string instructionsText,
 			List<ProbePosition> autoProbePositions,
 			List<ProbePosition> manualProbePositions)
 			: base(context, headerText, instructionsText)

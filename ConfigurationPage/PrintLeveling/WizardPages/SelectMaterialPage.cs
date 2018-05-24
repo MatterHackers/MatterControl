@@ -35,7 +35,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class SelectMaterialPage : LevelingWizardPage
 	{
-		public SelectMaterialPage(LevelingWizardContext context, string headerText, string instructionsText)
+		public SelectMaterialPage(LevelingWizard context, string headerText, string instructionsText)
 			: base(context, headerText, instructionsText)
 		{
 			contentRow.AddChild(

@@ -37,7 +37,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class PrintLevelingWizard : LevelingWizardContext
+	public class PrintLevelingWizard : LevelingWizard
 	{
 		private LevelingPlan levelingPlan;
 
@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// If no leveling data has been calculated
 			bool showWelcomeScreen = printer.Settings.Helpers.GetPrintLevelingData().SampledPositions.Count == 0
-				&& !LevelingWizardX.UsingZProbe(printer);
+				&& !LevelingWizard.UsingZProbe(printer);
 
 			if (showWelcomeScreen)
 			{
@@ -273,128 +273,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			return probePosition;
-		}
-	}
-
-	public static class LevelingWizardX
-	{
-		//protected PrintLevelingContext printLevelWizard;
-		//private static SystemWindow printLevelWizardWindow;
-		//protected PrinterConfig printer;
-		//private ThemeConfig theme;
-
-		public static void ShowPrintLevelWizard(PrinterConfig printer, ThemeConfig theme)
-		{
-			// turn off print leveling
-			PrintLevelingStream.AllowLeveling = false;
-
-			// ************ CreateAndShowWizard ********************
-
-			// clear any data that we are going to be acquiring (sampled positions, after z home offset)
-			var levelingData = new PrintLevelingData()
-			{
-				LevelingSystem = printer.Settings.GetValue<LevelingSystem>(SettingsKey.print_leveling_solution)
-			};
-
-			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
-
-			LevelingPlan levelingPlan;
-
-			switch (levelingData.LevelingSystem)
-			{
-				case LevelingSystem.Probe3Points:
-					levelingPlan = new LevelWizard3Point(printer);
-					break;
-
-				case LevelingSystem.Probe7PointRadial:
-					levelingPlan = new LevelWizard7PointRadial(printer);
-					break;
-
-				case LevelingSystem.Probe13PointRadial:
-					levelingPlan = new LevelWizard13PointRadial(printer);
-					break;
-
-				case LevelingSystem.Probe100PointRadial:
-					levelingPlan = new LevelWizard100PointRadial(printer);
-					break;
-
-				case LevelingSystem.Probe3x3Mesh:
-					levelingPlan = new LevelWizardMesh(printer, 3, 3);
-					break;
-
-				case LevelingSystem.Probe5x5Mesh:
-					levelingPlan = new LevelWizardMesh(printer, 5, 5);
-					break;
-
-				case LevelingSystem.Probe10x10Mesh:
-					levelingPlan = new LevelWizardMesh(printer, 10, 10);
-					break;
-
-				default:
-					throw new NotImplementedException();
-			}
-
-			var levelingContext = new PrintLevelingWizard(levelingPlan, printer);
-
-			var printLevelWizardWindow = DialogWindow.Show(new LevelingWizardRootPage(levelingContext));
-			printLevelWizardWindow.Closed += (s, e) =>
-			{
-				// If leveling was on when we started, make sure it is on when we are done.
-				PrintLevelingStream.AllowLeveling = true;
-
-				printLevelWizardWindow = null;
-
-				// make sure we raise the probe on close
-				if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
-					&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
-					&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
-				{
-					// make sure the servo is retracted
-					var servoRetract = printer.Settings.GetValue<double>(SettingsKey.z_servo_retracted_angle);
-					printer.Connection.QueueLine($"M280 P0 S{servoRetract}");
-				}
-			};
-		}
-
-		// Title = string.Format("{0} - {1}", ApplicationController.Instance.ProductName, "Probe Calibration Wizard".Localize());
-		public static bool UsingZProbe(PrinterConfig printer)
-		{
-			// we have a probe that we are using and we have not done leveling yet
-			return printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
-				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe);
-		}
-
-		public static bool NeedsToBeRun(PrinterConfig printer)
-		{
-			// we have a probe that we are using and we have not done leveling yet
-			return UsingZProbe(printer) && !printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated);
-		}
-
-		public static void ShowProbeCalibrationWizard(PrinterConfig printer, ThemeConfig theme)
-		{
-			// turn off print leveling
-			PrintLevelingStream.AllowLeveling = false;
-
-			var levelingContext = new ProbeCalibrationWizard(printer);
-
-			var probeCalibrationWizardWindow = DialogWindow.Show(new LevelingWizardRootPage(levelingContext));
-			probeCalibrationWizardWindow.Closed += (s, e) =>
-			{
-				// If leveling was on when we started, make sure it is on when we are done.
-				PrintLevelingStream.AllowLeveling = true;
-
-				probeCalibrationWizardWindow = null;
-
-				// make sure we raise the probe on close
-				if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
-					&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
-					&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
-				{
-					// make sure the servo is retracted
-					var servoRetract = printer.Settings.GetValue<double>(SettingsKey.z_servo_retracted_angle);
-					printer.Connection.QueueLine($"M280 P0 S{servoRetract}");
-				}
-			};
 		}
 	}
 

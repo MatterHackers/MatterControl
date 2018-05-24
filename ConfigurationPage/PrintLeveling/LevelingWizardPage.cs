@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl
 		protected TextButton nextButton;
 		protected PrinterConfig printer;
 
-		public LevelingWizardPage(LevelingWizardContext wizardContext, string headerText, string instructionsText)
+		public LevelingWizardPage(LevelingWizard wizardContext, string headerText, string instructionsText)
 		{
 			this.printer = wizardContext.Printer;
 			this.WindowTitle = wizardContext.WindowTitle;

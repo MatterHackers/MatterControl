@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		protected Vector3 probeStartPosition;
 
-		public GetCoarseBedHeight(LevelingWizardContext context, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions,
+		public GetCoarseBedHeight(LevelingWizard context, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions,
 			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
 			: base(context, pageDescription, "Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.".Localize(),
 				  levelingStrings.CoarseInstruction2, 1, probePositions, probePositionsBeingEditedIndex)

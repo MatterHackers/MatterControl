@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private TextWidget hotEndDoneText;
 		double hotEndTargetTemp;
 
-		public WaitForTempPage(LevelingWizardContext context,
+		public WaitForTempPage(LevelingWizard context,
 			string step, string instructions,
 			double targetBedTemp, double targetHotendTemp)
 			: base(context, step, instructions)

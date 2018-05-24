@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private EventHandler unregisterEvents;
 		private bool autoAdvance;
 
-		public HomePrinterPage(LevelingWizardContext context, string headerText, string instructionsText, bool autoAdvance)
+		public HomePrinterPage(LevelingWizard context, string headerText, string instructionsText, bool autoAdvance)
 			: base(context, headerText, instructionsText)
 		{
 			this.autoAdvance = autoAdvance;
