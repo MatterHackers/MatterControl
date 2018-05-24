@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			// change this from a text object to a group
 			var newContainer = new Object3D();
-			newContainer.CopyProperties(this);
+			newContainer.CopyProperties(this, Object3DPropertyFlags.All);
 			foreach (var child in this.Children)
 			{
 				newContainer.Children.Add(child.Clone());

@@ -31,21 +31,28 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
+using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CurveObject3D : MeshWrapperObject3D, IPublicPropertyObject
+	public class CurveObject3D : MeshWrapperObject3D, IPublicPropertyObject, IEditorDraw
 	{
-		public double Diameter { get; set; } = 0;
+		public double Diameter { get; set; } = double.MinValue;
 
 		[DisplayName("Bend Up")]
 		public bool BendCcw { get; set; } = true;
 
+		// holds where we rotate the object
+		Vector2 rotationCenter;
+			
 		public CurveObject3D()
 		{
 		}
@@ -53,7 +60,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
 			Rebuilding = true;
-			ResetMeshWrappers();
+			ResetMeshWrappers(Object3DPropertyFlags.All);
 
 			// remember the current matrix then clear it so the parts will rotate at the original wrapped position
 			var currentMatrix = Matrix;
@@ -62,12 +69,20 @@ namespace MatterHackers.MatterControl.DesignTools
 			var meshWrapper = this.Descendants()
 				.Where((obj) => obj.OwnerID == this.ID).ToList();
 
+			var meshWrapperEnumerator = meshWrapper.Select((mw) => (Original: mw.Children.First(), Curved: mw));
+
+			bool allMeshesAreValid = true;
 			// reset the positions before we take the aabb
-			foreach (var items in meshWrapper.Select((mw) => (Original: mw.Children.First(),
-				 Transformed: mw)))
+			foreach (var items in meshWrapperEnumerator)
 			{
-				var transformedMesh = items.Transformed.Mesh;
+				var transformedMesh = items.Curved.Mesh;
 				var originalMesh = items.Original.Mesh;
+
+				if(transformedMesh == null || originalMesh == null)
+				{
+					allMeshesAreValid = false;
+					break;
+				}
 
 				for (int i = 0; i < transformedMesh.Vertices.Count; i++)
 				{
@@ -79,12 +94,19 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var aabb = this.GetAxisAlignedBoundingBox();
 
-			if (Diameter > 0)
+			if (Diameter == double.MinValue)
+			{
+				// uninitialized set to a reasonable value
+				Diameter = (int)aabb.XSize;
+			}
+
+			if (Diameter > 0
+				&& allMeshesAreValid)
 			{
 				var radius = Diameter / 2;
 				var circumference = MathHelper.Tau * radius;
-				var rotationCenter = new Vector2(aabb.minXYZ.X, aabb.maxXYZ.Y + radius);
-				foreach (var object3Ds in meshWrapper.Select((mw) => (Original: mw.Children.First(), Curved: mw)))
+				rotationCenter = new Vector2(aabb.minXYZ.X, aabb.maxXYZ.Y + radius);
+				foreach (var object3Ds in meshWrapperEnumerator)
 				{
 					// split edges to make it curve better
 					/*if(false)
@@ -153,6 +175,12 @@ namespace MatterHackers.MatterControl.DesignTools
 					cuvedMesh.MarkAsChanged();
 					cuvedMesh.CalculateNormals();
 				}
+
+				if (!BendCcw)
+				{
+					// fix the stored center so we draw correctly
+					rotationCenter = new Vector2(aabb.minXYZ.X, aabb.minXYZ.Y - radius);
+				}
 			}
 
 			// set the matrix back
@@ -171,6 +199,23 @@ namespace MatterHackers.MatterControl.DesignTools
 				Rebuild(null);
 			}
 			base.OnInvalidate(invalidateType);
+		}
+
+		public void DrawEditor(object sender, DrawEventArgs e)
+		{
+			if (sender is InteractionLayer layer
+				&& layer.Scene.SelectedItem != null
+				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
+			{
+				// we want to measure the 
+				var currentMatrixInv = Matrix.GetInverted();
+				var aabb = this.GetAxisAlignedBoundingBox(currentMatrixInv);
+
+				layer.World.RenderCylinderOutline(this.WorldMatrix(), new Vector3(rotationCenter, aabb.Center.Z), Diameter, aabb.ZSize, 30, Color.Red);
+			}
+
+			// turn the lighting back on
+			GL.Enable(EnableCap.Lighting);
 		}
 	}
 }

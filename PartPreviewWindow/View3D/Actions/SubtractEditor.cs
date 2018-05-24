@@ -36,25 +36,13 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public class SubtractObject3D : MeshWrapperObject3D
-	{
-		public SubtractObject3D()
-		{
-			Name = "Subtract";
-		}
-		public override void Rebuild(UndoBuffer undoBuffer)
-		{
-		}
-	}
 
 	public class SubtractEditor : IObject3DEditor
 	{
-		private SubtractObject3D group;
+		private SubtractObject3D subtractObject3D;
 		private View3DWidget view3DWidget;
 		public string Name => "Subtract";
 
@@ -63,7 +51,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		public GuiWidget Create(IObject3D group, View3DWidget view3DWidget, ThemeConfig theme)
 		{
 			this.view3DWidget = view3DWidget;
-			this.group = group as SubtractObject3D;
+			this.subtractObject3D = group as SubtractObject3D;
 
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
@@ -82,7 +70,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		private void AddSubtractSelector(View3DWidget view3DWidget, FlowLayoutWidget tabContainer, ThemeConfig theme)
 		{
-			var children = group.Children.ToList();
+			var children = subtractObject3D.Children.ToList();
 
 			tabContainer.AddChild(new TextWidget("Set Subtract")
 			{
@@ -91,6 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				AutoExpandBoundsToText = true,
 			});
 
+			Dictionary<IObject3D, ICheckbox> objectChecks = new Dictionary<IObject3D, ICheckbox>();
 			// create this early so we can use enable disable it on button changed state
 			var updateButton = theme.ButtonFactory.Generate("Update".Localize());
 			updateButton.Margin = new BorderDouble(5);
@@ -98,9 +87,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			updateButton.Click += (s, e) =>
 			{
 				// make sure the mesh on the group is not visible
-				group.ResetMeshWrappers();
+				updateButton.Enabled = PrepareForSubtract(objectChecks);
 				updateButton.Enabled = false;
-				ProcessBooleans(group);
+				subtractObject3D.Rebuild(null);
 			};
 
 			List<GuiWidget> radioSiblings = new List<GuiWidget>();
@@ -133,28 +122,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				rowContainer.AddChild(selectWidget);
 				ICheckbox checkBox = selectWidget as ICheckbox;
 
+				objectChecks.Add(item, checkBox);
+
 				checkBox.CheckedStateChanged += (s, e) =>
 				{
-					// make sure the mesh on the group is not visible
-					group.ResetMeshWrappers();
-
-					// and set the output type for this checkbox
-					item.OutputType = checkBox.Checked ? PrintOutputTypes.Hole : PrintOutputTypes.Solid;
-
-					int holeCount = children.Where((o) => o.OutputType == PrintOutputTypes.Hole).Count();
-					int solidCount = children.Where((o) => o.OutputType != PrintOutputTypes.Hole).Count();
-					updateButton.Enabled = children.Count != holeCount && children.Count != solidCount;
+					updateButton.Enabled = PrepareForSubtract(objectChecks);
 				};
 
 				tabContainer.AddChild(rowContainer);
 			}
 
-			bool operationApplied = group.Descendants()
-				.Where((obj) => obj.OwnerID == group.ID)
+			bool operationApplied = subtractObject3D.Descendants()
+				.Where((obj) => obj.OwnerID == subtractObject3D.ID)
 				.Where((objId) => objId.Mesh != objId.Children.First().Mesh).Any();
 
-			bool selectionHasBeenMade = group.Descendants()
-				.Where((obj) => obj.OwnerID == group.ID && obj.OutputType == PrintOutputTypes.Hole)
+			bool selectionHasBeenMade = subtractObject3D.Descendants()
+				.Where((obj) => obj.OwnerID == subtractObject3D.ID && obj.OutputType == PrintOutputTypes.Hole)
 				.Any();
 
 			if (!operationApplied && !selectionHasBeenMade)
@@ -174,86 +157,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			tabContainer.AddChild(updateButton);
 		}
 
-		private void ProcessBooleans(IObject3D group)
+		private bool PrepareForSubtract(Dictionary<IObject3D, ICheckbox> objectChecks)
 		{
-			// spin up a task to remove holes from the objects in the group
-			ApplicationController.Instance.Tasks.Execute(
-				"Subtract".Localize(),
-				(reporter, cancellationToken) =>
-				{
-					var progressStatus = new ProgressStatus();
-					reporter.Report(progressStatus);
+			subtractObject3D.Rebuilding = true;
+			// make sure the mesh on the group is not visible
+			subtractObject3D.ResetMeshWrappers(Object3DPropertyFlags.All);
 
-					var removeObjects = group.Children
-						.Where((i) => i.OutputType == PrintOutputTypes.Hole)
-						.SelectMany((h) => h.DescendantsAndSelf())
-						.Where((c) => c.OwnerID == group.ID).ToList();
-					var keepObjects = group.Children
-						.Where((i) => i.OutputType != PrintOutputTypes.Hole)
-						.SelectMany((h) => h.DescendantsAndSelf())
-						.Where((c) => c.OwnerID == group.ID).ToList();
-
-					Subtract(keepObjects, removeObjects, cancellationToken, reporter);
-					return Task.CompletedTask;
-				});
-		}
-
-		public static void Subtract(List<IObject3D> keepObjects, List<IObject3D> removeObjects)
-		{
-			Subtract(keepObjects, removeObjects, CancellationToken.None, null);
-		}
-
-		public static void Subtract(List<IObject3D> keepObjects, List<IObject3D> removeObjects, CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
-		{
-			if (removeObjects.Any()
-				&& keepObjects.Any())
+			foreach (var keyValue in objectChecks)
 			{
-				var totalOperations = removeObjects.Count * keepObjects.Count;
-				double amountPerOperation = 1.0 / totalOperations;
-				double percentCompleted = 0;
-
-				ProgressStatus progressStatus = new ProgressStatus();
- 				foreach (var remove in removeObjects)
-				{
-					foreach (var keep in keepObjects)
-					{
-						progressStatus.Status = "Copy Remove";
-						reporter?.Report(progressStatus);
-						var transformedRemove = Mesh.Copy(remove.Mesh, cancellationToken);
-						transformedRemove.Transform(remove.WorldMatrix());
-
-						progressStatus.Status = "Copy Keep";
-						reporter?.Report(progressStatus);
-						var transformedKeep = Mesh.Copy(keep.Mesh, cancellationToken);
-						transformedKeep.Transform(keep.WorldMatrix());
-
-						progressStatus.Status = "Do CSG";
-						reporter?.Report(progressStatus);
-						transformedKeep = PolygonMesh.Csg.CsgOperations.Subtract(transformedKeep, transformedRemove, (status, progress0To1) =>
-						{
-							// Abort if flagged
-							cancellationToken.ThrowIfCancellationRequested();
-
-							progressStatus.Status = status;
-							progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
-							reporter?.Report(progressStatus);
-						}, cancellationToken);
-						var inverse = keep.WorldMatrix();
-						inverse.Invert();
-						transformedKeep.Transform(inverse);
-
-						keep.Mesh = transformedKeep;
-						// TODO: make this the subtract object when it is available
-						keep.Invalidate(new InvalidateArgs(keep, InvalidateType.Content));
-
-						percentCompleted += amountPerOperation;
-						progressStatus.Progress0To1 = percentCompleted;
-						reporter?.Report(progressStatus);
-					}
-
-					remove.Visible = false;
-				}
+				// and set the output type for this checkbox
+				keyValue.Key.OutputType = keyValue.Value.Checked ? PrintOutputTypes.Hole : PrintOutputTypes.Solid;
 			}
+
+			int holeCount = objectChecks.Where((o) => o.Key.OutputType == PrintOutputTypes.Hole).Count();
+			int solidCount = objectChecks.Where((o) => o.Key.OutputType != PrintOutputTypes.Hole).Count();
+
+			subtractObject3D.Rebuilding = false;
+			return objectChecks.Count != holeCount && objectChecks.Count != solidCount;
 		}
 	}
 }

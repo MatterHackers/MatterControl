@@ -90,8 +90,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			base.Apply(undoBuffer);
 		}
 
-		public static void WrapSelection(MeshWrapperObject3D meshWrapper, InteractiveScene scene)
+		public void DoInitialWrapping(InteractiveScene scene)
 		{
+			MeshWrapperObject3D meshWrapper = this;
+
+			Rebuilding = true;
 			var selectedItem = scene.SelectedItem;
 			if (selectedItem != null)
 			{
@@ -119,6 +122,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				meshWrapper.MakeNameNonColliding();
 				scene.SelectedItem = meshWrapper;
 			}
+
+			Rebuilding = false;
+			Rebuild(null);
 		}
 
 		public void WrapAndAddAsChildren(List<IObject3D> children)
@@ -154,7 +160,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 		}
 
-		public void ResetMeshWrappers()
+		public void ResetMeshWrappers(Object3DPropertyFlags flags)
 		{
 			// if there are not already, wrap all meshes with our id (some inner object may have changed it's meshes)
 			AddMeshWrapperToAllChildren();
@@ -167,7 +173,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				// set the mesh back to the child mesh
 				item.Mesh = firstChild.Mesh;
 				// and reset the properties
-				firstChild.CopyProperties(firstChild);
+				var itemMatrix = item.Matrix;
+				item.CopyProperties(firstChild, flags);
+				item.Matrix = itemMatrix;
 			}
 		}
 	}

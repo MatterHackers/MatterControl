@@ -101,6 +101,7 @@
     <Compile Include="PartPreviewWindow\GCodeDetails\IToggleOption.cs" />
     <Compile Include="PartPreviewWindow\LeftClipFlowLayoutWidget.cs" />
     <Compile Include="PartPreviewWindow\Object3DTreeBuilder.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\SubtractObject3D.cs" />
     <Compile Include="PrinterControls\ControlWidgets\CalibrationControls.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingFunctions.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\ProbeCalibrationWizard.cs" />

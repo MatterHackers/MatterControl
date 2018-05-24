@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
@@ -46,14 +47,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			Children.Add(child);
 
-			this.Name = child.Name;
+			this.CopyProperties(child, Object3DPropertyFlags.All);
 			this.OwnerID = ownerId;
-			this.MaterialIndex = child.MaterialIndex;
-			this.OutputType = child.OutputType;
-			this.Color = child.Color;
 			this.Mesh = child.Mesh;
 
-			this.Matrix = child.Matrix;
 			child.Matrix = Matrix4X4.Identity;
 		}
 	}
