@@ -80,7 +80,9 @@
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingWizardRootPage.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard100PointRadial.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardMesh.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelingWizard.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\LastPageInstructions.cs" />
+    <Compile Include="CustomWidgets\LevelingWizard.cs" />
     <Compile Include="CustomWidgets\ResizeContainer\BottomResizeContainer.cs" />
     <Compile Include="CustomWidgets\ResizeContainer\LeftResizeContainer.cs" />
     <Compile Include="CustomWidgets\TreeView\TreeNode.cs" />
@@ -259,7 +261,6 @@
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard7PointRadial.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard13PointRadial.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard3Point.cs" />
-    <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardBase.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelingData.cs" />
     <Compile Include="ControlElements\AttentionGetter.cs" />
     <Compile Include="CustomWidgets\DoubleSolidSlider.cs" />
@@ -440,7 +441,6 @@
     <Compile Include="ControlElements\LinkButtonFactory.cs" />
     <Compile Include="CustomWidgets\SlidePanelWidget.cs" />
     <Compile Include="ControlElements\StyledMessageBoxWindow.cs" />
-    <Compile Include="CustomWidgets\WizardControl.cs" />
     <Compile Include="DataStorage\SQLiteCommon.cs" />
     <Compile Include="DataStorage\SQLiteWin32.cs" />
     <Compile Include="DataStorage\Datastore.cs" />

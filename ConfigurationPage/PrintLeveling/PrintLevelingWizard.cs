@@ -31,7 +31,6 @@ using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
