@@ -77,6 +77,7 @@
     <Compile Include="ApplicationView\LogoSpinner.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingPlan.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingWizardPage.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\LevelingWizardRootPage.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard100PointRadial.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardMesh.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\LastPageInstructions.cs" />

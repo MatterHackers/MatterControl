@@ -37,30 +37,11 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class PrintLevelingRootPage : DialogPage
-	{
-		private LevelingPlan levelingPlan;
-		private PrinterConfig printer;
-
-		public PrintLevelingRootPage(LevelingPlan levelingPlan, PrinterConfig printer)
-		{
-			this.levelingPlan = levelingPlan;
-			this.printer = printer;
-		}
-
-		public override void OnLoad(EventArgs args)
-		{
-			var levelingContext = new PrintLevelingContext(levelingPlan, printer);
-			levelingContext.ShowNextPage(WizardWindow);
-			base.OnLoad(args);
-		}
-	}
-
-	public class PrintLevelingContext : LevelingWizardContext
+	public class PrintLevelingWizard : LevelingWizardContext
 	{
 		private LevelingPlan levelingPlan;
 
-		public PrintLevelingContext(LevelingPlan levelingPlan, PrinterConfig printer)
+		public PrintLevelingWizard(LevelingPlan levelingPlan, PrinterConfig printer)
 			: base (printer)
 		{
 			this.levelingPlan = levelingPlan;
@@ -295,8 +276,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		}
 	}
 
-	// Title = string.Format("{0} - {1}", ApplicationController.Instance.ProductName, "Print Leveling Wizard".Localize());
-	// printLevelWizard = new PrintLevelingContext(DialogPage, printer, this, theme);
 	public static class LevelingWizardX
 	{
 		//protected PrintLevelingContext printLevelWizard;
@@ -355,7 +334,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					throw new NotImplementedException();
 			}
 
-			var printLevelWizardWindow = DialogWindow.Show(new PrintLevelingRootPage(levelingPlan, printer));
+			var levelingContext = new PrintLevelingWizard(levelingPlan, printer);
+
+			var printLevelWizardWindow = DialogWindow.Show(new LevelingWizardRootPage(levelingContext));
 			printLevelWizardWindow.Closed += (s, e) =>
 			{
 				// If leveling was on when we started, make sure it is on when we are done.
@@ -394,7 +375,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// turn off print leveling
 			PrintLevelingStream.AllowLeveling = false;
 
-			var probeCalibrationWizardWindow = DialogWindow.Show(new ProbeCalibrationRootPage(printer));
+			var levelingContext = new ProbeCalibrationWizard(printer);
+
+			var probeCalibrationWizardWindow = DialogWindow.Show(new LevelingWizardRootPage(levelingContext));
 			probeCalibrationWizardWindow.Closed += (s, e) =>
 			{
 				// If leveling was on when we started, make sure it is on when we are done.

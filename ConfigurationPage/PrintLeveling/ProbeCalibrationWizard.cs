@@ -35,25 +35,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class ProbeCalibrationRootPage : DialogPage
-	{
-		private PrinterConfig printer;
-
-		public ProbeCalibrationRootPage(PrinterConfig printer)
-		{
-			this.printer = printer;
-		}
-
-		public override void OnLoad(EventArgs args)
-		{
-			var wizard = new ProbeCalibrationWizard(printer);
-			wizard.ShowNextPage(WizardWindow);
-
-			base.OnLoad(args);
-		}
-	}
-
-
 	public class ProbeCalibrationWizard : LevelingWizardContext
 	{
 		public ProbeCalibrationWizard(PrinterConfig printer)
