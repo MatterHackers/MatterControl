@@ -144,6 +144,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				button.Click += (s, e) =>
 				{
+					if (!printer.Bed.Scene.Children.Any())
+					{
+						return;
+					}
+
 					UiThread.RunOnIdle(async () =>
 					{
 						// Save any pending changes before starting print operation

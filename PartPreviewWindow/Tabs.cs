@@ -42,6 +42,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public interface ITab
 	{
 		GuiWidget TabContent { get; }
+		string Text { get; }
 	}
 
 	/// <summary>
@@ -475,6 +476,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public ChromeTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, ImageBuffer imageBuffer, bool hasClose = true)
 			: base(tabLabel, parentTabControl, tabContent, theme, iconImage: imageBuffer, hasClose: hasClose)
 		{
+			this.Text = tabLabel;
 		}
 
 		private static int tabInsetDistance = 14 / 2;
