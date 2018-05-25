@@ -113,9 +113,9 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						var maxXLength = aabb.XSize / AngleDegrees;
 						// chop any segment that is too short in x
-						for (int i = cuvedMesh.MeshEdges.Count - 1; i >= 0; i--)
+						for (int i = curvedMesh.MeshEdges.Count - 1; i >= 0; i--)
 						{
-							var edgeToSplit = cuvedMesh.MeshEdges[i];
+							var edgeToSplit = curvedMesh.MeshEdges[i];
 							var start = edgeToSplit.VertexOnEnd[0].Position;
 							var end = edgeToSplit.VertexOnEnd[1].Position;
 							var edgeXLength = Math.Abs(end.X - start.X);
@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								{
 									IVertex newVertex;
 									MeshEdge newMeshEdge;
-									cuvedMesh.SplitMeshEdge(edgeToSplit, out newVertex, out newMeshEdge);
+									curvedMesh.SplitMeshEdge(edgeToSplit, out newVertex, out newMeshEdge);
 									var otherIndex = newMeshEdge.GetVertexEndIndex(newVertex);
 									var ratio = (numberOfDivides - j) / (double)numberOfDivides;
 									newVertex.Position = start + (end - start) * ratio;
@@ -139,15 +139,15 @@ namespace MatterHackers.MatterControl.DesignTools
 					}*/
 
 					var originalMatrix = object3Ds.Original.WorldMatrix(this);
-					var cuvedMesh = object3Ds.Curved.Mesh;
+					var curvedMesh = object3Ds.Curved.Mesh;
 					var originalMesh = object3Ds.Original.Mesh;
 					// make sure we are working with a copy
-					if (cuvedMesh == originalMesh)
+					if (curvedMesh == originalMesh)
 					{
 						// Make sure the mesh we are going to copy is in a good state to be copied (so we maintain vertex count)
 						originalMesh.CleanAndMergeMesh(CancellationToken.None);
-						cuvedMesh = Mesh.Copy(originalMesh, CancellationToken.None);
-						object3Ds.Curved.Mesh = cuvedMesh;
+						curvedMesh = Mesh.Copy(originalMesh, CancellationToken.None);
+						object3Ds.Curved.Mesh = curvedMesh;
 					}
 
 					for (int i = 0; i < originalMesh.Vertices.Count; i++)
@@ -169,11 +169,11 @@ namespace MatterHackers.MatterControl.DesignTools
 						rotatePosition.Z = worldPosition.Z;
 						matrix.Invert();
 						var worldWithBend = rotatePosition + new Vector3(aabb.minXYZ.X, radius + aabb.maxXYZ.Y, 0);
-						cuvedMesh.Vertices[i].Position = Vector3.Transform(worldWithBend, matrix);
+						curvedMesh.Vertices[i].Position = Vector3.Transform(worldWithBend, matrix);
 					}
 
-					cuvedMesh.MarkAsChanged();
-					cuvedMesh.CalculateNormals();
+					curvedMesh.MarkAsChanged();
+					curvedMesh.CalculateNormals();
 				}
 
 				if (!BendCcw)
