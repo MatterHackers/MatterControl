@@ -75,21 +75,21 @@ namespace MatterHackers.MatterControl.DesignTools
 			// reset the positions before we take the aabb
 			foreach (var items in meshWrapperEnumerator)
 			{
-				var transformedMesh = items.Curved.Mesh;
 				var originalMesh = items.Original.Mesh;
+				var curvedMesh = items.Curved.Mesh;
 
-				if(transformedMesh == null || originalMesh == null)
+				if(curvedMesh == null || originalMesh == null)
 				{
 					allMeshesAreValid = false;
 					break;
 				}
 
-				for (int i = 0; i < transformedMesh.Vertices.Count; i++)
+				for (int i = 0; i < curvedMesh.Vertices.Count; i++)
 				{
-					transformedMesh.Vertices[i].Position = originalMesh.Vertices[i].Position;
+					curvedMesh.Vertices[i].Position = originalMesh.Vertices[i].Position;
 				}
 
-				transformedMesh.MarkAsChanged();
+				curvedMesh.MarkAsChanged();
 			}
 
 			var aabb = this.GetAxisAlignedBoundingBox();
@@ -113,9 +113,9 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						var maxXLength = aabb.XSize / AngleDegrees;
 						// chop any segment that is too short in x
-						for (int i = transformedMesh.MeshEdges.Count - 1; i >= 0; i--)
+						for (int i = cuvedMesh.MeshEdges.Count - 1; i >= 0; i--)
 						{
-							var edgeToSplit = transformedMesh.MeshEdges[i];
+							var edgeToSplit = cuvedMesh.MeshEdges[i];
 							var start = edgeToSplit.VertexOnEnd[0].Position;
 							var end = edgeToSplit.VertexOnEnd[1].Position;
 							var edgeXLength = Math.Abs(end.X - start.X);
@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								{
 									IVertex newVertex;
 									MeshEdge newMeshEdge;
-									transformedMesh.SplitMeshEdge(edgeToSplit, out newVertex, out newMeshEdge);
+									cuvedMesh.SplitMeshEdge(edgeToSplit, out newVertex, out newMeshEdge);
 									var otherIndex = newMeshEdge.GetVertexEndIndex(newVertex);
 									var ratio = (numberOfDivides - j) / (double)numberOfDivides;
 									newVertex.Position = start + (end - start) * ratio;
