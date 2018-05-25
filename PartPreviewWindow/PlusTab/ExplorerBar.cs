@@ -326,20 +326,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 				iconButton.Click += async (s, e) =>
 				{
-					if (this.PositionWithinLocalBounds(e.X, e.Y)
-						&& e.Button == MouseButtons.Left)
+					// Activate selected item tab
+					if (partPreviewContent.TabControl.AllTabs.FirstOrDefault(t => t.Text == item.Name) is ChromeTab existingItemTab)
 					{
-						var workspace = new BedConfig();
-						await workspace.LoadContent(
-							new EditContext()
-							{
-								ContentStore = ApplicationController.Instance.Library.PartHistory,
-								SourceItem = item
-							});
+						partPreviewContent.TabControl.ActiveTab = existingItemTab;
+					}
+					else
+					{
+						// Create tab for selected item
+						if (this.PositionWithinLocalBounds(e.X, e.Y)
+							&& e.Button == MouseButtons.Left)
+						{
+							var workspace = new BedConfig();
+							await workspace.LoadContent(
+								new EditContext()
+								{
+									ContentStore = ApplicationController.Instance.Library.PartHistory,
+									SourceItem = item
+								});
 
-						ApplicationController.Instance.Workspaces.Add(workspace);
+							ApplicationController.Instance.Workspaces.Add(workspace);
 
-						partPreviewContent.CreatePartTab(item.Name, workspace, theme);
+							partPreviewContent.CreatePartTab(item.Name, workspace, theme);
+						}
 					}
 				};
 

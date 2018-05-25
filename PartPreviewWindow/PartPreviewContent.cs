@@ -265,6 +265,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public ChromeTabs TabControl => tabControl;
+
 		private ChromeTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)
 		{
 			// Printer page is in fixed position
