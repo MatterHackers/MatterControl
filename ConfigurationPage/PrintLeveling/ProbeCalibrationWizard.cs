@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					"Home the printer".Localize(),
 					"Probe the bed at the center".Localize(),
 					"Manually measure the extruder at the center".Localize(),
-					"We should be done in less than 1 minute.".Localize(),
+					"We should be done in less than five minutes.".Localize(),
 					levelingStrings.ClickNext));
 
 			// add in the material select page
