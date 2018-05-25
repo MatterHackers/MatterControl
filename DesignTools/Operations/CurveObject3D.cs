@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (curvedMesh == originalMesh)
 					{
 						// Make sure the mesh we are going to copy is in a good state to be copied (so we maintain vertex count)
-						originalMesh.CleanAndMergeMesh(CancellationToken.None);
+						//originalMesh.CleanAndMergeMesh(CancellationToken.None);
 						curvedMesh = Mesh.Copy(originalMesh, CancellationToken.None);
 						object3Ds.Curved.Mesh = curvedMesh;
 					}

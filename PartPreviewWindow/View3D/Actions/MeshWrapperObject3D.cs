@@ -90,56 +90,43 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			base.Apply(undoBuffer);
 		}
 
-		public void DoInitialWrapping(InteractiveScene scene)
+		public void WrapSelectedItemAndSelect(InteractiveScene scene)
 		{
-			MeshWrapperObject3D meshWrapper = this;
-
 			Rebuilding = true;
-			var selectedItem = scene.SelectedItem;
-			if (selectedItem != null)
-			{
+			var selectedItems = scene.GetSelectedItems();
+
+			if(selectedItems.Count > 0)
+			{ 
+				// cleare the selected item
 				scene.SelectedItem = null;
 
-				List<IObject3D> originalItems;
+				var clonedItemsToAdd = new List<IObject3D>(selectedItems.Select((i) => i.Clone()));
 
-				if (selectedItem is SelectionGroup)
+				Children.Modify((list) =>
 				{
-					originalItems = selectedItem.Children.ToList();
-				}
-				else
-				{
-					originalItems = new List<IObject3D> { selectedItem };
-				}
+					list.Clear();
 
-				var itemsToAdd = new List<IObject3D>(originalItems.Select((i) => i.Clone()));
-				meshWrapper.WrapAndAddAsChildren(itemsToAdd);
+					foreach (var child in clonedItemsToAdd)
+					{
+						list.Add(child);
+					}
+				});
+
+				AddMeshWrapperToAllChildren();
 
 				scene.UndoBuffer.AddAndDo(
 					new ReplaceCommand(
-						new List<IObject3D>(originalItems),
-						new List<IObject3D> { meshWrapper }));
+						new List<IObject3D>(selectedItems),
+						new List<IObject3D> { this }));
 
-				meshWrapper.MakeNameNonColliding();
-				scene.SelectedItem = meshWrapper;
+				this.MakeNameNonColliding();
+
+				// and select this
+				scene.SelectedItem = this;
 			}
 
 			Rebuilding = false;
 			Rebuild(null);
-		}
-
-		public void WrapAndAddAsChildren(List<IObject3D> children)
-		{
-			Children.Modify((list) =>
-			{
-				list.Clear();
-
-				foreach (var child in children)
-				{
-					list.Add(child);
-				}
-			});
-
-			AddMeshWrapperToAllChildren();
 		}
 
 		private void AddMeshWrapperToAllChildren()
@@ -173,9 +160,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				// set the mesh back to the child mesh
 				item.Mesh = firstChild.Mesh;
 				// and reset the properties
-				var itemMatrix = item.Matrix;
-				item.CopyProperties(firstChild, flags);
-				item.Matrix = itemMatrix;
+				item.CopyProperties(firstChild, flags & (~Object3DPropertyFlags.Matrix));
 			}
 		}
 	}

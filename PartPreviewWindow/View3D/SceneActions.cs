@@ -44,23 +44,42 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public static class SceneActions
 	{
-		public static async void UngroupSelection(this InteractiveScene Scene)
+		public static List<IObject3D> GetSelectedItems(this InteractiveScene scene)
 		{
-			if (Scene.HasSelection)
+			var selectedItem = scene.SelectedItem;
+			var selectedItems = new List<IObject3D>();
+			if (selectedItem != null)
+			{
+				if (selectedItem is SelectionGroup)
+				{
+					selectedItems = selectedItem.Children.ToList();
+				}
+				else
+				{
+					selectedItems = new List<IObject3D> { selectedItem };
+				}
+			}
+
+			return selectedItems;
+		}
+
+		public static async void UngroupSelection(this InteractiveScene scene)
+		{
+			if (scene.HasSelection)
 			{
 				await Task.Run(() =>
 				{
-					var selectedItem = Scene.SelectedItem;
-					bool isGroupItemType = Scene.HasSelection && selectedItem.Children.Count > 0;
+					var selectedItem = scene.SelectedItem;
+					bool isGroupItemType = scene.HasSelection && selectedItem.Children.Count > 0;
 
 					// If not a Group ItemType, look for mesh volumes and split into distinct objects if found
 					if (!isGroupItemType 
 						&& !selectedItem.HasChildren()
 						&& selectedItem.Mesh != null)
 					{
-						var ungroupItem = Scene.SelectedItem;
+						var ungroupItem = scene.SelectedItem;
 						// clear the selection
-						Scene.SelectedItem = null;
+						scene.SelectedItem = null;
 						var ungroupMesh = ungroupItem.Mesh;
 
 						if (!ungroupMesh.Vertices.IsSorted)
@@ -77,7 +96,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						if (discreetMeshes.Count == 1)
 						{
 							// restore the selection
-							Scene.SelectedItem = ungroupItem;
+							scene.SelectedItem = ungroupItem;
 							// No further processing needed, nothing to ungroup
 							return;
 						}
@@ -90,27 +109,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}));
 
 						// add and do the undo data
-						Scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { ungroupItem }, addItems));
+						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { ungroupItem }, addItems));
 					}
 
 					if (isGroupItemType)
 					{
 						// Create and perform the delete operation
 						// Store the operation for undo/redo
-						Scene.UndoBuffer.AddAndDo(new UngroupCommand(Scene, Scene.SelectedItem));
+						scene.UndoBuffer.AddAndDo(new UngroupCommand(scene, scene.SelectedItem));
 					}
 				});
 
 				// leave no selection
-				Scene.SelectedItem = null;
+				scene.SelectedItem = null;
 			}
 		}
 
-		public static async void AutoArrangeChildren(this InteractiveScene Scene, View3DWidget view3DWidget)
+		public static async void AutoArrangeChildren(this InteractiveScene scene, View3DWidget view3DWidget)
 		{
 			await Task.Run(() =>
 			{
-				PlatingHelper.ArrangeOnBed(Scene.Children.ToList(), Scene, view3DWidget.BedCenter);
+				PlatingHelper.ArrangeOnBed(scene.Children.ToList(), scene, view3DWidget.BedCenter);
 			});
 		}
 
@@ -139,13 +158,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public static async void DuplicateItem(this InteractiveScene Scene, IObject3D sourceItem = null)
+		public static async void DuplicateItem(this InteractiveScene scene, IObject3D sourceItem = null)
 		{
 			if (sourceItem == null)
 			{
-				if (Scene.HasSelection)
+				if (scene.HasSelection)
 				{
-					sourceItem = Scene.SelectedItem;
+					sourceItem = scene.SelectedItem;
 				}
 			}
 
@@ -160,17 +179,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							// the selection is a group of objects that need to be copied
 							var copyList = sourceItem.Children.ToList();
-							Scene.SelectedItem = null;
+							scene.SelectedItem = null;
 							foreach(var item in copyList)
 							{
 								var clonedItem = item.Clone();
 								// make the name unique
-								var newName = agg_basics.GetNonCollidingName(item.Name, Scene.DescendantsAndSelf().Select((d) => d.Name));
+								var newName = agg_basics.GetNonCollidingName(item.Name, scene.DescendantsAndSelf().Select((d) => d.Name));
 								clonedItem.Name = newName;
 								// add it to the scene
-								Scene.Children.Add(clonedItem);
+								scene.Children.Add(clonedItem);
 								// add it to the selection
-								Scene.AddToSelection(clonedItem);
+								scene.AddToSelection(clonedItem);
 							}
 						}
 						else // the selection can be cloned easily
@@ -178,7 +197,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							var clonedItem = sourceItem.Clone();
 
 							// make the name unique
-							var newName = agg_basics.GetNonCollidingName(sourceItem.Name, Scene.DescendantsAndSelf().Select((d) => d.Name));
+							var newName = agg_basics.GetNonCollidingName(sourceItem.Name, scene.DescendantsAndSelf().Select((d) => d.Name));
 							clonedItem.Name = newName;
 
 							// More useful if it creates the part in the exact position and then the user can move it.
@@ -195,15 +214,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// it might come back null due to threading
 				if (newItem != null)
 				{
-					Scene.InsertNewItem(newItem);
+					scene.InsertNewItem(newItem);
 				}
 			}
 		}
 
-		public static void InsertNewItem(this InteractiveScene Scene, IObject3D newItem)
+		public static void InsertNewItem(this InteractiveScene scene, IObject3D newItem)
 		{
 			// Reposition first item to bed center
-			if (Scene.Children.Count == 0)
+			if (scene.Children.Count == 0)
 			{
 				var printer = ApplicationController.Instance.ActivePrinter;
 				var aabb = newItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
@@ -216,24 +235,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// Create and perform a new insert operation
-			var insertOperation = new InsertCommand(Scene, newItem);
+			var insertOperation = new InsertCommand(scene, newItem);
 			insertOperation.Do();
 
 			// Store the operation for undo/redo
-			Scene.UndoBuffer.Add(insertOperation);
+			scene.UndoBuffer.Add(insertOperation);
 		}
 
-		public static void DeleteSelection(this InteractiveScene Scene)
+		public static void DeleteSelection(this InteractiveScene scene)
 		{
-			if (Scene.HasSelection)
+			if (scene.HasSelection)
 			{
 				// Create and perform the delete operation 
-				var deleteOperation = new DeleteCommand(Scene, Scene.SelectedItem);
+				var deleteOperation = new DeleteCommand(scene, scene.SelectedItem);
 
 				// Store the operation for undo/redo
-				Scene.UndoBuffer.AddAndDo(deleteOperation);
+				scene.UndoBuffer.AddAndDo(deleteOperation);
 
-				Scene.ClearSelection();
+				scene.ClearSelection();
 			}
 		}
 
