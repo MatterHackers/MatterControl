@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	public class PinchObject3D : MeshWrapperObject3D, IPublicPropertyObject
 	{
 		[DisplayName("Back Ratio")]
-		public double PinchRatio { get; set; } = 1;
+		public double PinchRatio { get; set; } = .5;
 
 		public PinchObject3D()
 		{
