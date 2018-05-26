@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			string nameToWrite = "";
 			if (!string.IsNullOrEmpty(item.Name))
 			{
-				nameToWrite += $"{item.GetType().Name} - {item.Name}";
+				nameToWrite += $"{item.Name}";
 			}
 			else
 			{

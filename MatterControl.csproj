@@ -89,7 +89,9 @@
     <Compile Include="CustomWidgets\TreeView\TreeView.cs" />
     <Compile Include="DesignTools\Attributes\ShowSearchFieldAttribute.cs" />
     <Compile Include="DesignTools\Interfaces\IPublicPropertyObject.cs" />
+    <Compile Include="DesignTools\Operations\Group3D.cs" />
     <Compile Include="DesignTools\Operations\PinchObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\CubeObject3D.cs" />
     <Compile Include="DesignTools\Primitives\HalfCylinderObject3D.cs" />
     <Compile Include="DesignTools\Primitives\HalfWedgeObject3D.cs" />
     <Compile Include="Library\Providers\MatterControl\LibraryCollectionContainer.cs" />
@@ -154,7 +156,6 @@
     <Compile Include="DesignTools\Primitives\TorusObject3D.cs" />
     <Compile Include="DesignTools\PublicPropertyEditor.cs" />
     <Compile Include="DesignTools\Primitives\ConeObject3D.cs" />
-    <Compile Include="DesignTools\Primitives\CubeObject3D.cs" />
     <Compile Include="DesignTools\Operations\SetCenter.cs" />
     <Compile Include="DesignTools\Operations\Translate.cs" />
     <Compile Include="DesignTools\Attributes\SortableAttribute.cs" />
