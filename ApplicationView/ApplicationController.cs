@@ -402,17 +402,15 @@ namespace MatterHackers.MatterControl
 			{
 				new SceneSelectionOperation()
 				{
+					OperationType = typeof(Group3D),
+
 					TitleResolver = () => "Group".Localize(),
 					Action = (scene) =>
 					{
 						var selectedItem = scene.SelectedItem;
 						scene.SelectedItem = null;
 
-						var newGroup = new Object3D()
-						{
-							Name = "Group".Localize()
-						};
-
+						var newGroup = new Group3D();
 						// When grouping items, move them to be centered on their bounding box
 						newGroup.Children.Modify((gChildren) =>
 						{
@@ -435,7 +433,6 @@ namespace MatterHackers.MatterControl
 						newGroup.MakeNameNonColliding();
 
 						scene.SelectedItem = newGroup;
-
 					},
 					IsEnabled = (scene) => scene.HasSelection
 						&& scene.SelectedItem is SelectionGroup
