@@ -36,6 +36,8 @@ namespace MatterControl.Printing
 {
 	public abstract class GCodeFile
 	{
+		public static string PostProcessedExtension = ".postprocessed.gcode";
+
 #if __ANDROID__
 		protected const int Max32BitFileSize = 10000000; // 10 megs
 #else

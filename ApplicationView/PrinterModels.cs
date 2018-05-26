@@ -570,7 +570,14 @@ namespace MatterHackers.MatterControl
 
 		public IObject3D Content { get; set; }
 
-		public string GCodeFilePath => printItem?.GetGCodePathAndFileName();
+		// Natural path
+		private string gcodePath => printItem?.GetGCodePathAndFileName();
+
+		// Override path
+		public string GCodeOverridePath => Path.ChangeExtension(gcodePath, GCodeFile.PostProcessedExtension);
+
+		// Override or natural path
+		public string GCodeFilePath => (File.Exists(this.GCodeOverridePath)) ? this.GCodeOverridePath : gcodePath;
 
 		public string SourceFilePath => printItem?.FileLocation;
 
