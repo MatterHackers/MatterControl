@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -84,11 +85,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			popupMenu.CreateHorizontalLine();
 			PopupMenu.MenuItem menuItem;
 
-			menuItem = popupMenu.CreateMenuItem("Export".Localize());
+			menuItem = popupMenu.CreateMenuItem("Import Presets".Localize());
 			menuItem.Click += (s, e) =>
 			{
-				ActiveSliceSettings.Instance.Helpers.ExportAsMatterControlConfig();
+				UiThread.RunOnIdle(() =>
+				{
+					AggContext.FileDialogs.OpenFileDialog(
+							new OpenFileDialogParams("settings files|*.printer"),
+							(dialogParams) =>
+							{
+								if (!string.IsNullOrEmpty(dialogParams.FileName))
+								{
+									DialogWindow.Show(new SelectPartsOfPrinterToImport(dialogParams.FileName));
+								}
+							});
+				});
 			};
+
+			popupMenu.CreateHorizontalLine();
 
 			menuItem = popupMenu.CreateMenuItem("Restore Settings".Localize());
 			menuItem.Click += (s, e) =>
@@ -131,6 +145,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						"Revert Settings".Localize(),
 						StyledMessageBox.MessageType.YES_NO);
 				});
+
+			};
+
+			menuItem = popupMenu.CreateMenuItem("Export".Localize());
+			menuItem.Click += (s, e) =>
+			{
+				ActiveSliceSettings.Instance.Helpers.ExportAsMatterControlConfig();
 			};
 		}
 
