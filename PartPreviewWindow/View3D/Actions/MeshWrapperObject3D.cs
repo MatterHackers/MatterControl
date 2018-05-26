@@ -49,19 +49,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public override void Remove(UndoBuffer undoBuffer)
 		{
+			if (Rebuilding)
+			{
+				int a = 0;
+			}
+
+			SetRebuilding(true);
 			// remove all the mesh wrappers that we own
 			var meshWrappers = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
-			foreach(var meshWrapper in meshWrappers)
+			foreach (var meshWrapper in meshWrappers)
 			{
-				meshWrapper.Remove(undoBuffer);
+				meshWrapper.Remove(null);
 			}
-			foreach(var child in Children)
+			foreach (var child in Children)
 			{
 				child.OutputType = PrintOutputTypes.Default;
 			}
 
 			// collapse our children into our parent
-			base.Remove(undoBuffer);
+			base.Remove(null);
+			SetRebuilding(false);
+
+			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+		}
+
+		private void SetRebuilding(bool rebuilding)
+		{
+			foreach (var item in this.DescendantsAndSelf())
+			{
+				if (item is Object3D object3D)
+				{
+					object3D.Rebuilding = rebuilding;
+				}
+			}
 		}
 
 		public override void Apply(UndoBuffer undoBuffer)
@@ -92,7 +112,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public void WrapSelectedItemAndSelect(InteractiveScene scene)
 		{
-			Rebuilding = true;
+			if (Rebuilding)
+			{
+				int a = 0;
+			}
+
+			SetRebuilding(true);
+
 			var selectedItems = scene.GetSelectedItems();
 
 			if(selectedItems.Count > 0)
@@ -125,7 +151,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				scene.SelectedItem = this;
 			}
 
-			Rebuilding = false;
+			SetRebuilding(false);
 			Rebuild(null);
 		}
 
