@@ -50,48 +50,23 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
 			Rebuilding = true;
-			ResetMeshWrappers(Object3DPropertyFlags.All);
+			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
 			// remember the current matrix then clear it so the parts will rotate at the original wrapped position
 			var currentMatrix = Matrix;
-			Matrix = Matrix4X4.Identity;
+			//Matrix = Matrix4X4.Identity;
 
-			var meshWrapper = this.Descendants()
-				.Where((obj) => obj.OwnerID == this.ID).ToList();
-
-			// reset the positions before we take the aabb
-			foreach (var items in meshWrapper.Select((mw) => (Original: mw.Children.First(),
-				 Pinched: mw)))
-			{
-				var pinchedMesh = items.Pinched.Mesh;
-				var originalMesh = items.Original.Mesh;
-
-				for (int i = 0; i < pinchedMesh.Vertices.Count; i++)
-				{
-					pinchedMesh.Vertices[i].Position = originalMesh.Vertices[i].Position;
-				}
-
-				pinchedMesh.MarkAsChanged();
-			}
+			var meshWrapper = this.MeshObjects();
 
 			var aabb = this.GetAxisAlignedBoundingBox();
 
-			foreach (var items in meshWrapper.Select((mw) => (Original: mw.Children.First(),
-				 Transformed: mw)))
+			foreach (var items in this.MeshObjects())
 			{
-				var transformedMesh = items.Transformed.Mesh;
-				var originalMesh = items.Original.Mesh;
-				var itemMatrix = items.Original.WorldMatrix(this);
-				var invItemMatrix = itemMatrix;
-				invItemMatrix.Invert();
-				// make sure we are working with a copy
-				if (transformedMesh == originalMesh)
-				{
-					// Make sure the mesh we are going to copy is in a good state to be copied (so we maintain vertex count)
-					originalMesh.CleanAndMergeMesh(CancellationToken.None);
-					transformedMesh = Mesh.Copy(originalMesh, CancellationToken.None);
-					items.Transformed.Mesh = transformedMesh;
-				}
+				var transformedMesh = items.meshCopy.Mesh;
+				var originalMesh = items.original.Mesh;
+				var itemMatrix = items.original.WorldMatrix(this);
+				var invItemMatrix = itemMatrix.Inverted;
+
 				for (int i = 0; i < originalMesh.Vertices.Count; i++)
 				{
 					var pos = originalMesh.Vertices[i].Position;
@@ -107,9 +82,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					var amountOfRatio = (pos.Y - aabb.minXYZ.Y) / aabb.YSize;
 
 					var newPos = new Vector3(pos.X + delta * amountOfRatio, pos.Y, pos.Z);
-					newPos = Vector3.Transform(newPos, invItemMatrix);
 
-					transformedMesh.Vertices[i].Position = newPos;
+					transformedMesh.Vertices[i].Position = Vector3.Transform(newPos, invItemMatrix);
 				}
 
 				transformedMesh.MarkAsChanged();
@@ -117,15 +91,18 @@ namespace MatterHackers.MatterControl.DesignTools
 				
 				// set the matrix back
 				Matrix = currentMatrix;
-
-				Rebuilding = false;
 			}
+
+			Rebuilding = false;
+
+			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix)
+				|| invalidateType.InvalidateType == InvalidateType.Matrix
+				|| invalidateType.InvalidateType == InvalidateType.Mesh)
 				&& invalidateType.Source != this
 				&& !Rebuilding)
 			{

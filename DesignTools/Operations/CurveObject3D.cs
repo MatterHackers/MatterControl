@@ -60,37 +60,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
 			Rebuilding = true;
-			ResetMeshWrappers(Object3DPropertyFlags.All);
+			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
 			// remember the current matrix then clear it so the parts will rotate at the original wrapped position
 			var currentMatrix = Matrix;
 			Matrix = Matrix4X4.Identity;
 
-			var meshWrapper = this.Descendants()
-				.Where((obj) => obj.OwnerID == this.ID).ToList();
-
-			var meshWrapperEnumerator = meshWrapper.Select((mw) => (Original: mw.Children.First(), Curved: mw));
-
-			bool allMeshesAreValid = true;
-			// reset the positions before we take the aabb
-			foreach (var items in meshWrapperEnumerator)
-			{
-				var originalMesh = items.Original.Mesh;
-				var curvedMesh = items.Curved.Mesh;
-
-				if(curvedMesh == null || originalMesh == null)
-				{
-					allMeshesAreValid = false;
-					break;
-				}
-
-				for (int i = 0; i < curvedMesh.Vertices.Count; i++)
-				{
-					curvedMesh.Vertices[i].Position = originalMesh.Vertices[i].Position;
-				}
-
-				curvedMesh.MarkAsChanged();
-			}
+			var meshWrapperEnumerator = MeshObjects();
 
 			var aabb = this.GetAxisAlignedBoundingBox();
 
@@ -98,16 +74,20 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				// uninitialized set to a reasonable value
 				Diameter = (int)aabb.XSize;
+				// TODO: ensure that the editor display value is updated
 			}
 
-			if (Diameter > 0
-				&& allMeshesAreValid)
+			if (Diameter > 0)
 			{
 				var radius = Diameter / 2;
 				var circumference = MathHelper.Tau * radius;
 				rotationCenter = new Vector2(aabb.minXYZ.X, aabb.maxXYZ.Y + radius);
 				foreach (var object3Ds in meshWrapperEnumerator)
 				{
+					var originalMatrix = object3Ds.original.WorldMatrix(this);
+					var curvedMesh = object3Ds.meshCopy.Mesh;
+					var originalMesh = object3Ds.original.Mesh;
+
 					// split edges to make it curve better
 					/*if(false)
 					{
@@ -138,18 +118,6 @@ namespace MatterHackers.MatterControl.DesignTools
 						}
 					}*/
 
-					var originalMatrix = object3Ds.Original.WorldMatrix(this);
-					var curvedMesh = object3Ds.Curved.Mesh;
-					var originalMesh = object3Ds.Original.Mesh;
-					// make sure we are working with a copy
-					if (curvedMesh == originalMesh)
-					{
-						// Make sure the mesh we are going to copy is in a good state to be copied (so we maintain vertex count)
-						//originalMesh.CleanAndMergeMesh(CancellationToken.None);
-						curvedMesh = Mesh.Copy(originalMesh, CancellationToken.None);
-						object3Ds.Curved.Mesh = curvedMesh;
-					}
-
 					for (int i = 0; i < originalMesh.Vertices.Count; i++)
 					{
 						var matrix = originalMatrix;
@@ -167,9 +135,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 						var rotatePosition = new Vector3(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
 						rotatePosition.Z = worldPosition.Z;
-						matrix.Invert();
 						var worldWithBend = rotatePosition + new Vector3(aabb.minXYZ.X, radius + aabb.maxXYZ.Y, 0);
-						curvedMesh.Vertices[i].Position = Vector3.Transform(worldWithBend, matrix);
+						curvedMesh.Vertices[i].Position = Vector3.Transform(worldWithBend, matrix.Inverted);
 					}
 
 					curvedMesh.MarkAsChanged();
@@ -192,7 +159,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix)
+				|| invalidateType.InvalidateType == InvalidateType.Matrix
+				|| invalidateType.InvalidateType == InvalidateType.Mesh)
 				&& invalidateType.Source != this
 				&& !Rebuilding)
 			{
@@ -208,7 +176,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
 			{
 				// we want to measure the 
-				var currentMatrixInv = Matrix.GetInverted();
+				var currentMatrixInv = Matrix.Inverted;
 				var aabb = this.GetAxisAlignedBoundingBox(currentMatrixInv);
 
 				layer.World.RenderCylinderOutline(this.WorldMatrix(), new Vector3(rotationCenter, aabb.Center.Z), Diameter, aabb.ZSize, 30, Color.Red);

@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			subtractObject3D.Rebuilding = true;
 			// make sure the mesh on the group is not visible
-			subtractObject3D.ResetMeshWrappers(Object3DPropertyFlags.All);
+			subtractObject3D.ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
 			foreach (var keyValue in objectChecks)
 			{
