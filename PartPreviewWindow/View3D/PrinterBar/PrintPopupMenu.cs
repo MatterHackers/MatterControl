@@ -102,9 +102,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var subPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-				// TODO: lookup settings values
-				bool anySettingOverridden = false;
-
 				var sectionWidget = new SectionWidget("Advanced", subPanel, menuTheme, expanded: true)
 				{
 					Name = "Advanced Section",
@@ -114,12 +111,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				column.AddChild(sectionWidget);
 
+				bool anySettingOverridden = false;
+				anySettingOverridden |= printer.Settings.GetValue<bool>(SettingsKey.spiral_vase);
+				anySettingOverridden |= !string.IsNullOrWhiteSpace(printer.Settings.GetValue(SettingsKey.layer_to_pause));
+
 				sectionWidget.Load += (s, e) =>
 				{
 					sectionWidget.Checkbox.Checked = anySettingOverridden;
 				};
 
-				foreach (var key in new[] { "spiral_vase", "layer_to_pause" })
+				foreach (var key in new[] { SettingsKey.spiral_vase, SettingsKey.layer_to_pause })
 				{
 					var settingsData = SettingsOrganizer.Instance.GetSettingsData(key);
 					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
