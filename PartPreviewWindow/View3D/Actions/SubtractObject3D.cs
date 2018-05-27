@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
 			Rebuilding = true;
-			ResetMeshWrappers(Object3DPropertyFlags.All & (~Object3DPropertyFlags.OutputType));
+			ResetMeshWrapperMeshes(Object3DPropertyFlags.All & (~Object3DPropertyFlags.OutputType), CancellationToken.None);
 
 			// spin up a task to remove holes from the objects in the group
 			ApplicationController.Instance.Tasks.Execute(

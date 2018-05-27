@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
@@ -173,7 +174,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 		}
 
-		public void ResetMeshWrappers(Object3DPropertyFlags flags)
+		public IEnumerable<(IObject3D original, IObject3D meshCopy)> MeshObjects()
+		{
+			return this.Descendants()
+				.Where((obj) => obj.OwnerID == this.ID)
+				.Select((mw) => (mw.Children.First(), mw));
+		}
+
+		public void ResetMeshWrapperMeshes(Object3DPropertyFlags flags, CancellationToken cancellationToken)
 		{
 			// if there are not already, wrap all meshes with our id (some inner object may have changed it's meshes)
 			AddMeshWrapperToAllChildren();
@@ -183,8 +191,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			foreach (var item in participants)
 			{
 				var firstChild = item.Children.First();
-				// set the mesh back to the child mesh
-				item.Mesh = firstChild.Mesh;
+				// set the mesh back to a copy of the child mesh
+				item.Mesh = Mesh.Copy(firstChild.Mesh, cancellationToken);
 				// and reset the properties
 				item.CopyProperties(firstChild, flags & (~Object3DPropertyFlags.Matrix));
 			}
