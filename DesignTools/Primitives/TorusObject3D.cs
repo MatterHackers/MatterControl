@@ -66,8 +66,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		public int RingSides { get; set; } = 15;
 		public int RingPhaseAngle { get; set; } = 0;
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		public override void Rebuild(UndoBuffer undoBuffer)
 		{
+			Rebuilding = true;
 			var ringSides = RingSides;
 			var startingAngle = StartingAngle;
 			var endingAngle = EndingAngle;
@@ -109,6 +110,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				// If the part was already created and at a height, maintain the height.
 				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 			}
+			Rebuilding = false;
+
+			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}
 
 		public void UpdateControls(PPEContext context)

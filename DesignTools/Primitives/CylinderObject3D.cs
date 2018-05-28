@@ -121,8 +121,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double EndingAngle { get; set; } = 360;
 		public double DiameterTop { get; set; } = 20;
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		public override void Rebuild(UndoBuffer undoBuffer)
 		{
+			Rebuilding = true;
 			var aabb = this.GetAxisAlignedBoundingBox();
 
 			if (!Advanced)
@@ -151,6 +152,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				// If the part was already created and at a height, maintain the height.
 				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 			}
+			Rebuilding = false;
+
+			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}
 
 		public void UpdateControls(PPEContext context)
