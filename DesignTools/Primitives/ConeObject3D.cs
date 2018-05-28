@@ -61,8 +61,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double Height { get; set; } = 20;
 		public int Sides { get; set; } = 30;
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		public override void Rebuild(UndoBuffer undoBuffer)
 		{
+			Rebuilding = true;
+
 			var aabb = this.GetAxisAlignedBoundingBox();
 
 			var path = new VertexStorage();
@@ -76,6 +78,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				// If the part was already created and at a height, maintain the height.
 				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 			}
+
+			Rebuilding = false;
+
+			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}
 	}
 }

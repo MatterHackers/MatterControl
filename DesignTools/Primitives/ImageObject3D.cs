@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return null;
 		}
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		public override void Rebuild(UndoBuffer undoBuffer)
 		{
 			//MeshHelper.PlaceTextureOnFace(Mesh.Faces[0], ImageAsset.Image);
 		}

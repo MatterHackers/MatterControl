@@ -89,9 +89,12 @@ namespace MatterHackers.MatterControl.DesignTools
 					var originalMesh = object3Ds.original.Mesh;
 
 					// split edges to make it curve better
-					/*if(false)
+					if(false)
 					{
-						var maxXLength = aabb.XSize / AngleDegrees;
+						int sidesPerRotation = 30;
+						double numRotations = aabb.XSize / circumference;
+						double numberOfCuts = numRotations * sidesPerRotation;
+						var maxXLength = aabb.XSize / numberOfCuts;
 						// chop any segment that is too short in x
 						for (int i = curvedMesh.MeshEdges.Count - 1; i >= 0; i--)
 						{
@@ -116,7 +119,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								}
 							}
 						}
-					}*/
+					}
 
 					for (int i = 0; i < originalMesh.Vertices.Count; i++)
 					{
