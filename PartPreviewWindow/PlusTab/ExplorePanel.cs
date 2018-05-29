@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
@@ -46,14 +45,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
 	public class ExplorePanel : FlowLayoutWidget
 	{
-		string sk;
+		string relativeUrl;
 		string staticFile;
 		private ThemeConfig theme;
 
-		public ExplorePanel(ThemeConfig theme, string sk, string staticFile)
+		public ExplorePanel(ThemeConfig theme, string relativeUrl, string staticFile)
 			: base(FlowDirection.TopToBottom)
 		{
-			this.sk = sk;
+			this.relativeUrl = relativeUrl;
 			this.staticFile = staticFile;
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
@@ -62,23 +61,49 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			this.theme = theme;
 		}
 
-		public async override void OnLoad(EventArgs args)
+		public override void OnLoad(EventArgs args)
 		{
 			base.OnLoad(args);
 
 			try
 			{
-				var explorerFeed = await LoadExploreFeed();
+				ExplorerFeed explorerFeed = null;
 
-				UiThread.RunOnIdle(() =>
+				var json = ApplicationController.Instance.LoadCachedFile(staticFile, "MatterHackers");
+				if (json != null)
 				{
+					// Construct directly from cache
+					explorerFeed = JsonConvert.DeserializeObject<ExplorerFeed>(json);
 					// Add controls for content
 					AddControlsForContent(explorerFeed);
 
-					// Force layout to change to get it working
-					var oldMargin = this.Margin;
-					this.Margin = new BorderDouble(20);
-					this.Margin = oldMargin;
+				}
+				// Force layout to change to get it working
+				var oldMargin = this.Margin;
+				this.Margin = new BorderDouble(20);
+				this.Margin = oldMargin;
+
+				Task.Run(async () =>
+				{
+					string cachePath = ApplicationController.CacheablePath("MatterHackers", staticFile);
+
+					// Construct directly from cache
+					explorerFeed = await LoadExploreFeed(json?.GetHashCode() ?? 0, cachePath);
+
+					if (explorerFeed != null)
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							this.CloseAllChildren();
+
+							// Add controls for content
+							AddControlsForContent(explorerFeed);
+
+							// Force layout to change to get it working
+							this.Margin = new BorderDouble(20);
+							this.Margin = oldMargin;
+						});
+					}
 				});
 			}
 			catch
@@ -86,28 +111,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			}
 		}
 
-		public async Task<ExplorerFeed> LoadExploreFeed()
+		public async Task<ExplorerFeed> LoadExploreFeed(int loadedID, string cachePath)
 		{
-			return await ApplicationController.LoadCacheableAsync<ExplorerFeed>(
-				staticFile,
-				"MatterHackers",
-				async () =>
+			try
+			{
+				var client = new HttpClient();
+				string json = await client.GetStringAsync($"http://www.matterhackers.com/feeds/{relativeUrl}");
+
+				var explorerFeed = JsonConvert.DeserializeObject<ExplorerFeed>(json);
+
+				var sanitizedJsonID = JsonConvert.SerializeObject(explorerFeed, Formatting.Indented).GetHashCode();
+				if (loadedID == sanitizedJsonID)
 				{
-					try
-					{
-						var client = new HttpClient();
-						string json = await client.GetStringAsync($"http://www.matterhackers.com/feeds/{sk}");
-
-						return JsonConvert.DeserializeObject<ExplorerFeed>(json);
-					}
-					catch(Exception ex)
-					{
-						Trace.WriteLine("Error collecting or loading feed: " + ex.Message);
-					}
-
 					return null;
-				},
-				Path.Combine("OEMSettings", staticFile));
+				}
+
+				// update cache on success
+				File.WriteAllText(cachePath, JsonConvert.SerializeObject(explorerFeed, Formatting.Indented));
+
+				return explorerFeed;
+
+			}
+			catch (Exception ex)
+			{
+				Trace.WriteLine("Error collecting or loading feed: " + ex.Message);
+			}
+
+			return null;
 		}
 
 		private void AddControlsForContent(ExplorerFeed contentList)

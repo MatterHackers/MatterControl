@@ -142,12 +142,8 @@ namespace MatterHackers.MatterControl
 
 				if (thumbnail != null)
 				{
-					// Cache big render
-					string cachePath = ApplicationController.Instance.ThumbnailCachePath(item);
-					AggContext.ImageIO.SaveImageData(cachePath, thumbnail);
-
 					// Cache at requested size
-					cachePath = ApplicationController.Instance.ThumbnailCachePath(item, width, height);
+					string cachePath = ApplicationController.Instance.ThumbnailCachePath(item, width, height);
 
 					// TODO: Lookup best large image and downscale if required
 					if (false)
