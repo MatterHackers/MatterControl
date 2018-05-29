@@ -137,7 +137,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					throw new NotImplementedException();
 			}
 
-			return false;
+			// All the above need to pass, as well as all rules defined in ProbeCalibrationWizard - any variance and we need to re-run
+			return ProbeCalibrationWizard.NeedsToBeRun(printer);
 		}
 
 		public bool SamplesAreSame(List<Vector3> sampledPositions)
