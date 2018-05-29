@@ -1124,23 +1124,22 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public static Task<T> LoadCacheableAsync<T>(string cacheKey, string cacheScope, string staticDataFallbackPath = null) where T : class
+		public string LoadCachedFile(string cacheKey, string cacheScope)
 		{
 			string cachePath = CacheablePath(cacheScope, cacheKey);
 
-			try
+			if (File.Exists(cachePath))
 			{
-				if (File.Exists(cachePath))
-				{
-					// Load from cache and deserialize
-					return Task.FromResult(
-						JsonConvert.DeserializeObject<T>(File.ReadAllText(cachePath)));
-				}
+				// Load from cache and deserialize
+				return File.ReadAllText(cachePath);
 			}
-			catch
-			{
-				// Fall back to StaticData
-			}
+
+			return null;
+		}
+
+		public static Task<T> LoadCacheableAsync<T>(string cacheKey, string cacheScope, string staticDataFallbackPath = null) where T : class
+		{
+			string cachePath = CacheablePath(cacheScope, cacheKey);
 
 			try
 			{
