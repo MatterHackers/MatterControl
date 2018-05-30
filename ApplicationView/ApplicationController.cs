@@ -1124,7 +1124,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public string LoadCachedFile(string cacheKey, string cacheScope)
+
+		public static string LoadCachedFile(string cacheKey, string cacheScope)
 		{
 			string cachePath = CacheablePath(cacheScope, cacheKey);
 
@@ -1139,7 +1140,12 @@ namespace MatterHackers.MatterControl
 
 		public static Task<T> LoadCacheableAsync<T>(string cacheKey, string cacheScope, string staticDataFallbackPath = null) where T : class
 		{
-			string cachePath = CacheablePath(cacheScope, cacheKey);
+			if (LoadCachedFile(cacheKey, cacheScope) is string cachedFile)
+			{
+				// Load from cache and deserialize
+					return Task.FromResult(
+						JsonConvert.DeserializeObject<T>(cachedFile));
+			}
 
 			try
 			{

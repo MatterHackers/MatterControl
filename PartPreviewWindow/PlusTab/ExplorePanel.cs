@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			{
 				ExplorerFeed explorerFeed = null;
 
-				var json = ApplicationController.Instance.LoadCachedFile(staticFile, "MatterHackers");
+				var json = ApplicationController.LoadCachedFile(staticFile, "MatterHackers");
 				if (json != null)
 				{
 					// Construct directly from cache
