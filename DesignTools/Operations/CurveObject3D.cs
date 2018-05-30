@@ -95,7 +95,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					var originalMesh = object3Ds.original.Mesh;
 
 					// split edges to make it curve better
-					if(false)
+					curvedMesh.Triangulate();
+					if (false)
 					{
 						int sidesPerRotation = 30;
 						double numRotations = aabb.XSize / circumference;
@@ -122,6 +123,16 @@ namespace MatterHackers.MatterControl.DesignTools
 									edgeToSplit = newMeshEdge;
 									start = edgeToSplit.VertexOnEnd[0].Position;
 									end = edgeToSplit.VertexOnEnd[1].Position;
+
+									foreach (var face in edgeToSplit.FacesSharingMeshEdge())
+									{
+										Face newFace;
+										curvedMesh.SplitFace(face,
+											edgeToSplit.VertexOnEnd[0],
+											edgeToSplit.VertexOnEnd[1],
+											out newMeshEdge,
+											out newFace);
+									}
 								}
 							}
 						}
