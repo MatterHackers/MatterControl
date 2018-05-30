@@ -224,7 +224,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			yield return new LastPageInstructions(
 				this,
-				"Done".Localize(),
+				"Print Leveling Wizard".Localize(),
 				string.Format(
 					"{0} {1}\n\n{2}\n{3}\n\n{4}",
 					"Congratulations!".Localize(),
