@@ -59,8 +59,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			var currentMatrix = Matrix;
 			Matrix = Matrix4X4.Identity;
 
-			var meshWrapper = this.WrappedObjects();
-
 			var aabb = this.GetAxisAlignedBoundingBox();
 
 			foreach (var items in this.WrappedObjects())
@@ -91,10 +89,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				transformedMesh.MarkAsChanged();
 				transformedMesh.CalculateNormals();
-				
-				// set the matrix back
-				Matrix = currentMatrix;
 			}
+
+			// set the matrix back
+			Matrix = currentMatrix;
 
 			ResumeRebuild();
 
@@ -103,9 +101,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Content)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
 				&& invalidateType.Source != this
 				&& !RebuildSuspended)
 			{

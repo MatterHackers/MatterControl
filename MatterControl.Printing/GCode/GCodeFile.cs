@@ -70,7 +70,7 @@ namespace MatterControl.Printing
 
 		public abstract double GetFilamentWeightGrams(double filamentDiameterMm, double density);
 
-		public abstract int GetInstructionIndexAtLayer(int layerIndex);
+		public abstract int GetFirstLayerInstruction(int layerIndex);
 
 		public abstract double GetLayerHeight(int layerIndex);
 

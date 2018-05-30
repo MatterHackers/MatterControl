@@ -29,11 +29,14 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using System;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class LeftResizeContainer : FlowLayoutWidget
 	{
+		public event EventHandler Resized;
+
 		private double downWidth = 0;
 		private bool mouseDownOnBar = false;
 		private double mouseDownX;
@@ -63,6 +66,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					this.MinimumSize = new VectorMath.Vector2(_splitterWidth, 0);
 				}
 			}
+		}
+
+		protected virtual void OnResized(EventArgs e)
+		{
+			this.Resized?.Invoke(this, e);
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -97,7 +105,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
+			var mouseUpX = TransformToScreenSpace(mouseEvent.Position).X;
+			if(mouseDownOnBar
+				&& mouseUpX != mouseDownX)
+			{
+				OnResized(null);
+			}
+
 			mouseDownOnBar = false;
+
 			base.OnMouseUp(mouseEvent);
 		}
 	}

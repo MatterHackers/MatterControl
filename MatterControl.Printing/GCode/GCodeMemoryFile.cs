@@ -53,6 +53,8 @@ namespace MatterControl.Printing
 		private List<double> layerHeights = new List<double>();
 		private List<PrinterMachineInstruction> GCodeCommandQueue = new List<PrinterMachineInstruction>();
 
+		private bool foundFirstLayerMarker;
+
 		public GCodeMemoryFile(bool gcodeHasExplicitLayerChangeInfo = false)
 		{
 			this.gcodeHasExplicitLayerChangeInfo = gcodeHasExplicitLayerChangeInfo;
@@ -75,7 +77,7 @@ namespace MatterControl.Printing
 				cancellationToken, null);
 			if (loadedFile != null)
 			{
-				this.IndexOfChangeInZ = loadedFile.IndexOfChangeInZ;
+				this.IndexOfLayerStart = loadedFile.IndexOfLayerStart;
 				this.center = loadedFile.center;
 				this.parsingLastZ = loadedFile.parsingLastZ;
 				this.GCodeCommandQueue = loadedFile.GCodeCommandQueue;
@@ -91,7 +93,7 @@ namespace MatterControl.Printing
 
 		public override void Clear()
 		{
-			IndexOfChangeInZ.Clear();
+			IndexOfLayerStart.Clear();
 			GCodeCommandQueue.Clear();
 		}
 
@@ -104,11 +106,11 @@ namespace MatterControl.Printing
 
 		public void Insert(int insertIndex, PrinterMachineInstruction printerMachineInstruction)
 		{
-			for (int i = 0; i < IndexOfChangeInZ.Count; i++)
+			for (int i = 0; i < IndexOfLayerStart.Count; i++)
 			{
-				if (insertIndex < IndexOfChangeInZ[i])
+				if (insertIndex < IndexOfLayerStart[i])
 				{
-					IndexOfChangeInZ[i]++;
+					IndexOfLayerStart[i]++;
 				}
 			}
 
@@ -240,6 +242,9 @@ namespace MatterControl.Printing
 
 			GCodeMemoryFile loadedGCodeFile = new GCodeMemoryFile(gcodeHasExplicitLayerChangeInfo);
 
+			// Add the first start index (of 0)
+			loadedGCodeFile.IndexOfLayerStart.Add(0);
+
 			int crCount = CountNumLines(gCodeString);
 			int lineIndex = 0;
 			foreach (string outputString in CustomSplit(gCodeString, '\n'))
@@ -270,16 +275,16 @@ namespace MatterControl.Printing
 						case ';':
 							if (gcodeHasExplicitLayerChangeInfo && IsLayerChange(lineString))
 							{
-								// If we just found the start of the file and we have not added any layers yet
-								// Make sure we start at the beginging
-								if (lineString.EndsWith("LAYER:0")
-									&& loadedGCodeFile.IndexOfChangeInZ.Count == 0)
+								// The first "layer" statement in the gcode file is after the start gcode and we ignore
+								// it because we already added a marker for the start of the file (before start gcode)
+								if (!loadedGCodeFile.foundFirstLayerMarker)
 								{
-									loadedGCodeFile.IndexOfChangeInZ.Add(0);
-									break;
+									loadedGCodeFile.foundFirstLayerMarker = true;
 								}
-
-								loadedGCodeFile.IndexOfChangeInZ.Add(loadedGCodeFile.GCodeCommandQueue.Count);
+								else
+								{
+									loadedGCodeFile.IndexOfLayerStart.Add(loadedGCodeFile.GCodeCommandQueue.Count);
+								}
 							}
 							else if (lineString.StartsWith("; LAYER_HEIGHT:"))
 							{
@@ -437,11 +442,11 @@ namespace MatterControl.Printing
 			return 100;
 		}
 
-		public override int GetInstructionIndexAtLayer(int layerIndex)
+		public override int GetFirstLayerInstruction(int layerIndex)
 		{
-			if (layerIndex < IndexOfChangeInZ.Count - 1)
+			if (layerIndex < IndexOfLayerStart.Count)
 			{
-				return IndexOfChangeInZ[layerIndex];
+				return IndexOfLayerStart[layerIndex];
 			}
 
 			// else return the last instruction
@@ -450,11 +455,11 @@ namespace MatterControl.Printing
 
 		public override int LayerCount
 		{
-			get { return IndexOfChangeInZ.Count; }
+			get { return IndexOfLayerStart.Count; }
 		}
 
 		public HashSet<float> Speeds { get; private set; }
-		public List<int> IndexOfChangeInZ { get; set; } = new List<int>();
+		public List<int> IndexOfLayerStart { get; set; } = new List<int>();
 
 		private void ParseMLine(string lineString, PrinterMachineInstruction processingMachineState)
 		{
@@ -692,10 +697,10 @@ namespace MatterControl.Printing
 
 					if (!gcodeHasExplicitLayerChangeInfo)
 					{
-						if (processingMachineState.Z != parsingLastZ || IndexOfChangeInZ.Count == 0)
+						if (processingMachineState.Z != parsingLastZ || IndexOfLayerStart.Count == 0)
 						{
 							// if we changed z or there is a movement and we have never started a layer index
-							IndexOfChangeInZ.Add(GCodeCommandQueue.Count);
+							IndexOfLayerStart.Add(GCodeCommandQueue.Count);
 						}
 					}
 					parsingLastZ = processingMachineState.Position.Z;
@@ -919,9 +924,9 @@ namespace MatterControl.Printing
 				return 0;
 			}
 
-			if (IndexOfChangeInZ.Count > 2)
+			if (IndexOfLayerStart.Count > 2)
 			{
-				return GCodeCommandQueue[IndexOfChangeInZ[2]].Z - GCodeCommandQueue[IndexOfChangeInZ[1]].Z;
+				return GCodeCommandQueue[IndexOfLayerStart[2]].Z - GCodeCommandQueue[IndexOfLayerStart[1]].Z;
 			}
 
 			return .5;
@@ -942,9 +947,9 @@ namespace MatterControl.Printing
 			if (instructionIndex >= 0
 				&& instructionIndex <= LineCount)
 			{
-				for(var i = IndexOfChangeInZ.Count - 1; i >=0; i--)
+				for(var i = IndexOfLayerStart.Count - 1; i >=0; i--)
 				{
-					var lineStart = IndexOfChangeInZ[i];
+					var lineStart = IndexOfLayerStart[i];
 
 					if (instructionIndex >= lineStart)
 					{
@@ -964,13 +969,13 @@ namespace MatterControl.Printing
 
 			if (currentLayer > -1)
 			{
-				int startIndex = IndexOfChangeInZ[currentLayer];
+				int startIndex = IndexOfLayerStart[currentLayer];
 
 				int endIndex = LineCount - 1;
 
 				if (currentLayer < LayerCount - 1)
 				{
-					endIndex = IndexOfChangeInZ[currentLayer + 1];
+					endIndex = IndexOfLayerStart[currentLayer + 1];
 				}
 				else
 				{

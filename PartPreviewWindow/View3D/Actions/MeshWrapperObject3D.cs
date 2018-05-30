@@ -151,29 +151,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			if (selectedItems.Count > 0)
 			{
-				// cleare the selected item
+				// clear the selected item
 				scene.SelectedItem = null;
 
-				var clonedItemsToAdd = new List<IObject3D>(selectedItems.Select((i) => i.Clone()));
-
-				Children.Modify((list) =>
-				{
-					list.Clear();
-
-					foreach (var child in clonedItemsToAdd)
-					{
-						list.Add(child);
-					}
-				});
-
-				AddMeshWrapperToAllChildren();
+				WrapItems(selectedItems);
 
 				scene.UndoBuffer.AddAndDo(
 					new ReplaceCommand(
 						new List<IObject3D>(selectedItems),
 						new List<IObject3D> { this }));
-
-				this.MakeNameNonColliding();
 
 				// and select this
 				scene.SelectedItem = this;
@@ -181,7 +167,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			ResumeRebuild();
 
-			Rebuild(null);
+			if (!RebuildSuspended)
+			{
+				Rebuild(null);
+			}
+		}
+
+		public void WrapItems(List<IObject3D> items)
+		{
+			SuspendRebuild();
+			var clonedItemsToAdd = new List<IObject3D>(items.Select((i) => i.Clone()));
+
+			Children.Modify((list) =>
+			{
+				list.Clear();
+
+				foreach (var child in clonedItemsToAdd)
+				{
+					list.Add(child);
+				}
+			});
+
+			AddMeshWrapperToAllChildren();
+
+			this.MakeNameNonColliding();
+
+			ResumeRebuild();
+
+			if (!RebuildSuspended)
+			{
+				Rebuild(null);
+			}
 		}
 
 		private void AddMeshWrapperToAllChildren()

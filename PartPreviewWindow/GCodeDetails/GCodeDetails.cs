@@ -140,8 +140,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return "---";
 			}
 
-			int startInstruction = loadedGCode.GetInstructionIndexAtLayer(startLayer);
-			int endInstruction = loadedGCode.GetInstructionIndexAtLayer(endLayer);
+			int startInstruction = loadedGCode.GetFirstLayerInstruction(startLayer);
+			int endInstruction = loadedGCode.GetFirstLayerInstruction(endLayer);
 			var secondsToEndFromStart = loadedGCode.Instruction(startInstruction).secondsToEndFromHere;
 			var secondsToEndFromEnd = loadedGCode.Instruction(endInstruction).secondsToEndFromHere;
 			return SecondsToTime(secondsToEndFromStart - secondsToEndFromEnd);
@@ -154,12 +154,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return "---";
 			}
 
-			int startInstruction = loadedGCode.GetInstructionIndexAtLayer(activeLayerIndex);
+			int startInstruction = loadedGCode.GetFirstLayerInstruction(activeLayerIndex);
 			if(activeLayerIndex == 0)
 			{
 				startInstruction = 0;
 			}
-			int endInstruction = loadedGCode.GetInstructionIndexAtLayer(activeLayerIndex + 1);
+			int endInstruction = loadedGCode.GetFirstLayerInstruction(activeLayerIndex + 1);
 
 			string separator = "";
 			string fanSpeeds = "";
