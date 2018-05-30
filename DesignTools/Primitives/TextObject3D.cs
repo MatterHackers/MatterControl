@@ -87,7 +87,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
-			Rebuilding = true;
+			this.DebugDepth("Rebuild");
+			SuspendRebuild();
 			var aabb = this.GetAxisAlignedBoundingBox();
 
 			this.Children.Modify(list =>
@@ -122,7 +123,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 			}
 
-			Rebuilding = false;
+			ResumeRebuild();
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Content | InvalidateType.Mesh));
 		}

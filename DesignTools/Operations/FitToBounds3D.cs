@@ -112,12 +112,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			if ((invalidateType.InvalidateType == InvalidateType.Content
 				|| invalidateType.InvalidateType == InvalidateType.Matrix)
 				&& invalidateType.Source != this
-				&& !Rebuilding)
+				&& !RebuildSuspended)
 			{
 				Rebuild(null);
 			}
-			// If the child bounds changed than adjust the scale control
-			base.OnInvalidate(invalidateType);
+			else
+			{
+				// If the child bounds changed than adjust the scale control
+				base.OnInvalidate(invalidateType);
+			}
 		}
 
 		public static FitToBounds3D Create(IObject3D itemToFit)
@@ -140,7 +143,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
-			Rebuilding = true;
+			this.DebugDepth("Rebuild");
+			SuspendRebuild();
 			var aabb = this.GetAxisAlignedBoundingBox();
 
 			AdjustChildSize(null, null);
@@ -151,7 +155,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 			}
 
-			Rebuilding = false;
+			ResumeRebuild();
+
+			base.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
 		}
 
 		private void AdjustChildSize(object sender, EventArgs e)

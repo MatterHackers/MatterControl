@@ -46,6 +46,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			Name = "Subtract and Replace";
 		}
+
+		public override void Rebuild(UndoBuffer undoBuffer)
+		{
+			this.DebugDepth("Rebuild");
+			throw new NotImplementedException();
+		}
 	}
 
 	public class SubtractAndReplaceEditor : IObject3DEditor

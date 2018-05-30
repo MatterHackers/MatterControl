@@ -48,6 +48,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void Rebuild(UndoBuffer undoBuffer)
 		{
+			this.DebugDepth("Rebuild");
 		}
 
 		public static  Polygons DoSmoothing(Polygons inputPolygons, long maxDist = 300, int interations = 3, bool closedPath = true)

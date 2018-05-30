@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		private bool PrepareForSubtract(Dictionary<IObject3D, ICheckbox> objectChecks)
 		{
-			subtractObject3D.Rebuilding = true;
+			subtractObject3D.SuspendRebuild();
 			// make sure the mesh on the group is not visible
 			subtractObject3D.ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			int holeCount = objectChecks.Where((o) => o.Key.OutputType == PrintOutputTypes.Hole).Count();
 			int solidCount = objectChecks.Where((o) => o.Key.OutputType != PrintOutputTypes.Hole).Count();
 
-			subtractObject3D.Rebuilding = false;
+			subtractObject3D.ResumeRebuild();
 			return objectChecks.Count != holeCount && objectChecks.Count != solidCount;
 		}
 	}

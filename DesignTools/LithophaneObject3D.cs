@@ -61,6 +61,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 
 		public void Rebuild(UndoBuffer undoBuffer)
 		{
+			this.DebugDepth("Rebuild");
 			var activeImage = AggContext.ImageIO.LoadImage(this.Image.AssetPath);
 
 			ApplicationController.Instance.Tasks.Execute("Generating Lithophane".Localize(), (reporter, cancellationToken) =>

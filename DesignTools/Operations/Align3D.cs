@@ -331,16 +331,21 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			if ((invalidateType.InvalidateType == InvalidateType.Content
 				|| invalidateType.InvalidateType == InvalidateType.Matrix)
 				&& invalidateType.Source != this
-				&& !Rebuilding)
+				&& !RebuildSuspended)
 			{
 				Rebuild(null);
 			}
-			base.OnInvalidate(invalidateType);
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
 		}
 
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
-			Rebuilding = true;
+			this.DebugDepth("Rebuild");
+
+			SuspendRebuild();
 			var aabb = this.GetAxisAlignedBoundingBox();
 
 			// TODO: check if the has code for the children
@@ -437,7 +442,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			});
 
-			Rebuilding = false;
+			ResumeRebuild();
+
+			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)

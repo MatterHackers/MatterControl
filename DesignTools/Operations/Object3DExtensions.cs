@@ -27,7 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using ClipperLib;
 using MatterHackers.Agg;
@@ -101,7 +103,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public static IObject3D Minus(this IObject3D a, IObject3D b)
 		{
 			var resultsA = a.Clone();
-			SubtractObject3D.Subtract(resultsA.VisibleMeshes().Select((i) => i.object3D).ToList(), b.VisibleMeshes().Select((i) => i.object3D).ToList());
+			SubtractObject3D.Subtract(resultsA.VisibleMeshes().Select((i) => i).ToList(), b.VisibleMeshes().Select((i) => i).ToList());
 			return resultsA;
 		}
 

@@ -459,18 +459,18 @@ namespace MatterHackers.MeshVisualizer
 			{
 				// check for correct persistable rendering
 				if(MeshViewerWidget.ViewOnlyTexture != null
-					&& item.mesh.Faces.Count > 0)
+					&& item.Mesh.Faces.Count > 0)
 				{
 					ImageBuffer faceTexture = null;
-					item.mesh.FaceTexture.TryGetValue((item.mesh.Faces[0], 0), out faceTexture);
+					item.Mesh.FaceTexture.TryGetValue((item.Mesh.Faces[0], 0), out faceTexture);
 					bool hasPersistableTexture = faceTexture == MeshViewerWidget.ViewOnlyTexture;
 
-					if (item.object3D.WorldPersistable())
+					if (item.WorldPersistable())
 					{
 						if (hasPersistableTexture)
 						{
 							// make sure it does not have the view only texture
-							item.mesh.RemoveTexture(ViewOnlyTexture, 0);
+							item.Mesh.RemoveTexture(ViewOnlyTexture, 0);
 						}
 					}
 					else
@@ -478,17 +478,17 @@ namespace MatterHackers.MeshVisualizer
 						if (!hasPersistableTexture)
 						{
 							// make sure it does have the view only texture
-							var aabb = item.mesh.GetAxisAlignedBoundingBox();
+							var aabb = item.Mesh.GetAxisAlignedBoundingBox();
 							var matrix = Matrix4X4.CreateScale(.5, .5, 1);
 							matrix *= Matrix4X4.CreateRotationZ(MathHelper.Tau / 8);
-							item.mesh.PlaceTexture(ViewOnlyTexture, matrix);
+							item.Mesh.PlaceTexture(ViewOnlyTexture, matrix);
 						}
 					}
 				}
 
-				Color drawColor = GetItemColor(item.object3D);
+				Color drawColor = GetItemColor(item);
 
-				bool isDebugItem = (item.object3D == scene.DebugItem);
+				bool isDebugItem = (item == scene.DebugItem);
 
 				if (!sceneContext.ViewState.ModelView)
 				{
@@ -503,16 +503,16 @@ namespace MatterHackers.MeshVisualizer
 				}
 
 				if ((drawColor.alpha == 255
-					&& !item.mesh.FaceTexture.Where((ft) => ft.Value.HasTransparency).Any())
+					&& !item.Mesh.FaceTexture.Where((ft) => ft.Value.HasTransparency).Any())
 					|| isDebugItem)
 				{
 					// Render as solid
-					GLHelper.Render(item.mesh, drawColor, item.object3D.WorldMatrix(), sceneContext.ViewState.RenderType, item.object3D.WorldMatrix() * World.ModelviewMatrix, darkWireframe);
+					GLHelper.Render(item.Mesh, drawColor, item.WorldMatrix(), sceneContext.ViewState.RenderType, item.WorldMatrix() * World.ModelviewMatrix, darkWireframe);
 				}
 				else if (drawColor != Color.Transparent)
 				{
 					// Queue for transparency
-					transparentMeshes.Add(new Object3DView(item.object3D, drawColor));
+					transparentMeshes.Add(new Object3DView(item, drawColor));
 				}
 
 				bool isSelected = parentSelected ||
@@ -539,7 +539,7 @@ namespace MatterHackers.MeshVisualizer
 						Invalidate();
 					}
 
-					RenderSelection(item.object3D, frustum, selectionColor);
+					RenderSelection(item, frustum, selectionColor);
 				}
 
 #if DEBUG
@@ -551,10 +551,10 @@ namespace MatterHackers.MeshVisualizer
 
 					World.RenderAabb(aabb, Matrix4X4.Identity, debugBorderColor, 1);
 
-					if (item.mesh != null)
+					if (item.Mesh != null)
 					{
-						GLHelper.Render(item.mesh, debugBorderColor, item.object3D.WorldMatrix(), 
-							RenderTypes.Wireframe, item.object3D.WorldMatrix() * World.ModelviewMatrix);
+						GLHelper.Render(item.Mesh, debugBorderColor, item.WorldMatrix(), 
+							RenderTypes.Wireframe, item.WorldMatrix() * World.ModelviewMatrix);
 					}
 				}
 #endif

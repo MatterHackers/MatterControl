@@ -32,6 +32,7 @@ using System.Linq;
 using System.Threading;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
@@ -49,18 +50,20 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
-			Rebuilding = true;
+			this.DebugDepth("Rebuild");
+
+			SuspendRebuild();
 			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
 			// remember the current matrix then clear it so the parts will rotate at the original wrapped position
 			var currentMatrix = Matrix;
-			//Matrix = Matrix4X4.Identity;
+			Matrix = Matrix4X4.Identity;
 
-			var meshWrapper = this.MeshObjects();
+			var meshWrapper = this.WrappedObjects();
 
 			var aabb = this.GetAxisAlignedBoundingBox();
 
-			foreach (var items in this.MeshObjects())
+			foreach (var items in this.WrappedObjects())
 			{
 				var transformedMesh = items.meshCopy.Mesh;
 				var originalMesh = items.original.Mesh;
@@ -93,9 +96,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				Matrix = currentMatrix;
 			}
 
-			Rebuilding = false;
+			ResumeRebuild();
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+			base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
@@ -104,11 +107,14 @@ namespace MatterHackers.MatterControl.DesignTools
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
 				|| invalidateType.InvalidateType == InvalidateType.Mesh)
 				&& invalidateType.Source != this
-				&& !Rebuilding)
+				&& !RebuildSuspended)
 			{
 				Rebuild(null);
 			}
-			base.OnInvalidate(invalidateType);
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
 		}
 	}
 }

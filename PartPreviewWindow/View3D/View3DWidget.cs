@@ -619,8 +619,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			//GL.Clear(ClearBufferMask.ColorBufferBit);
 			foreach (var visibleStuff in selectedItem.VisibleMeshes())
 			{
-				var mesh = visibleStuff.mesh;
-				var obj3D = visibleStuff.object3D;
+				var mesh = visibleStuff.Mesh;
+				var obj3D = visibleStuff;
 				GLHelper.Render(mesh, obj3D.WorldColor(), obj3D.WorldMatrix(), RenderTypes.Shaded);
 			}
 			GLHelper.UnsetGlContext();
