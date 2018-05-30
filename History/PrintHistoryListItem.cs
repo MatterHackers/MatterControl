@@ -50,6 +50,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 		public HistoryListView()
 			: base(FlowDirection.TopToBottom)
 		{
+			this.theme = ApplicationController.Instance.Theme;
 		}
 
 		public HistoryListView(ThemeConfig theme)
