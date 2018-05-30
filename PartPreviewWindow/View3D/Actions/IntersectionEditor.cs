@@ -46,6 +46,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			Name = "Intersection";
 		}
+
+		public override void Rebuild(UndoBuffer undoBuffer)
+		{
+			throw new NotImplementedException();
+		}
 	}
 
 	public class IntersectionEditor : IObject3DEditor

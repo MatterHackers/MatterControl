@@ -90,8 +90,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					meshPrintOutputSettings.Clear();
 
 					// Flatten the scene, filtering out items outside of the build volume
-					var meshItemsOnBuildPlate = reloadedItem.VisibleMeshes().Where((item) => item.object3D.InsideBuildVolume(printer)
-						&& item.object3D.WorldPersistable());
+					var meshItemsOnBuildPlate = reloadedItem.VisibleMeshes().Where((item) => item.InsideBuildVolume(printer)
+						&& item.WorldPersistable());
 
 					if (meshItemsOnBuildPlate.Any())
 					{
@@ -102,12 +102,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							var extruderIndex = extruderIndexIn;
 							var itemsThisExtruder = meshItemsOnBuildPlate.Where((item) =>
-								(item.object3D.WorldMaterialIndex() == extruderIndex 
+								(item.WorldMaterialIndex() == extruderIndex 
 									|| (extruderIndex == 0 
-										&& (item.object3D.WorldMaterialIndex() >= extruderCount || item.object3D.WorldMaterialIndex() == -1)))
-								&& (item.object3D.WorldOutputType() ==  PrintOutputTypes.Solid || item.object3D.WorldOutputType() == PrintOutputTypes.Default));
+										&& (item.WorldMaterialIndex() >= extruderCount || item.WorldMaterialIndex() == -1)))
+								&& (item.WorldOutputType() ==  PrintOutputTypes.Solid || item.WorldOutputType() == PrintOutputTypes.Default));
 
-							itemsByExtruder.Add(itemsThisExtruder.Select((i) => i.object3D));
+							itemsByExtruder.Add(itemsThisExtruder.Select((i) => i));
 							extrudersUsed[extruderIndex] |= itemsThisExtruder.Any();
 							if(extrudersUsed[extruderIndex])
 							{
@@ -131,14 +131,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 
 						var supportObjects = meshItemsOnBuildPlate.Where((item) =>
-								item.object3D.WorldOutputType() == PrintOutputTypes.Support);
+								item.WorldOutputType() == PrintOutputTypes.Support);
 
 
 						// if we added user generated support 
 						if (supportObjects.Any())
 						{
 							// add a flag to the merge rules to let us know there was support
-							mergeRules += "," + AddObjectsForExtruder(supportObjects.Select((i) => i.object3D), outputOptions, ref savedStlCount) + "S";
+							mergeRules += "," + AddObjectsForExtruder(supportObjects.Select((i) => i), outputOptions, ref savedStlCount) + "S";
 						}
 
 						mergeRules += " ";

@@ -59,6 +59,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void Rebuild(UndoBuffer undoBuffer)
 		{
+			this.DebugDepth("Rebuild");
 			this.Children.Modify(list =>
 			{
 				IObject3D lastChild = list.First();

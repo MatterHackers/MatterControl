@@ -29,11 +29,13 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.MeshVisualizer;
@@ -59,14 +61,16 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
-			Rebuilding = true;
+			this.DebugDepth("Rebuild");
+
+			SuspendRebuild();
 			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
 			// remember the current matrix then clear it so the parts will rotate at the original wrapped position
 			var currentMatrix = Matrix;
 			Matrix = Matrix4X4.Identity;
 
-			var meshWrapperEnumerator = MeshObjects();
+			var meshWrapperEnumerator = WrappedObjects();
 
 			var aabb = this.GetAxisAlignedBoundingBox();
 
@@ -156,7 +160,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			// set the matrix back
 			Matrix = currentMatrix;
 
-			Rebuilding = false;
+			ResumeRebuild();
+
+			base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
@@ -165,11 +171,14 @@ namespace MatterHackers.MatterControl.DesignTools
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
 				|| invalidateType.InvalidateType == InvalidateType.Mesh)
 				&& invalidateType.Source != this
-				&& !Rebuilding)
+				&& !RebuildSuspended)
 			{
 				Rebuild(null);
 			}
-			base.OnInvalidate(invalidateType);
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
 		}
 
 		public void DrawEditor(object sender, DrawEventArgs e)

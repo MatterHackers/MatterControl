@@ -64,6 +64,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void Rebuild(UndoBuffer undoBuffer)
 		{
+			this.DebugDepth("Rebuild");
 			if (Axis.Origin.X == double.NegativeInfinity)
 			{
 				// make it something reasonable (just to the left of the aabb of the object)

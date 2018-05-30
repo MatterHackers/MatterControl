@@ -655,7 +655,7 @@ namespace MatterHackers.MatterControl
 
 					foreach (var renderTransfrom in sceneContext.Scene.VisibleMeshes())
 					{
-						renderTransfrom.mesh.MarkAsChanged();
+						renderTransfrom.Mesh.MarkAsChanged();
 					}
 				}
 			}

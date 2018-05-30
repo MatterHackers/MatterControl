@@ -67,6 +67,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void Rebuild(UndoBuffer undoBuffer)
 		{
+			this.DebugDepth("Rebuild");
 			var aabb = this.GetAxisAlignedBoundingBox();
 
 			// Fall back to sibling content if VertexSource is unset

@@ -35,6 +35,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
@@ -68,7 +69,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
-			Rebuilding = true;
+			this.DebugDepth("Rebuild");
+			SuspendRebuild();
 			var ringSides = RingSides;
 			var startingAngle = StartingAngle;
 			var endingAngle = EndingAngle;
@@ -110,7 +112,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				// If the part was already created and at a height, maintain the height.
 				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 			}
-			Rebuilding = false;
+			ResumeRebuild();
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}

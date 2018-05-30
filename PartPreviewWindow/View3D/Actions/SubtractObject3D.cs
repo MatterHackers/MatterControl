@@ -50,18 +50,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix)
+				|| invalidateType.InvalidateType == InvalidateType.Matrix
+				|| invalidateType.InvalidateType == InvalidateType.Mesh)
 				&& invalidateType.Source != this
-				&& !Rebuilding)
+				&& !RebuildSuspended)
 			{
 				Rebuild(null);
 			}
-			base.OnInvalidate(invalidateType);
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
 		}
 
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
-			Rebuilding = true;
+			this.DebugDepth("Rebuild");
+			SuspendRebuild();
 			ResetMeshWrapperMeshes(Object3DPropertyFlags.All & (~Object3DPropertyFlags.OutputType), CancellationToken.None);
 
 			// spin up a task to remove holes from the objects in the group
@@ -83,9 +88,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 					Subtract(keepObjects, removeObjects, cancellationToken, reporter);
 
-					Rebuilding = false;
+					ResumeRebuild();
 
-					UiThread.RunOnIdle(() => base.Rebuild(undoBuffer));
+					UiThread.RunOnIdle(() => base.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh)));
 
 					return Task.CompletedTask;
 				});
