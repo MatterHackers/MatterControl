@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2018, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -40,13 +40,17 @@ using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.PrintHistory
 {
-
 	public class HistoryListView : FlowLayoutWidget, IListContentView
 	{
 		private ThemeConfig theme;
 
 		public int ThumbWidth { get; } = 50;
 		public int ThumbHeight { get; } = 50;
+
+		public HistoryListView()
+			: base(FlowDirection.TopToBottom)
+		{
+		}
 
 		public HistoryListView(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
