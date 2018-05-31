@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.Library
 				new DynamicContainerLink(
 					() => "Plating History".Localize(),
 					null,
-					() => ApplicationController.Instance.Library.PlatingHistory)
+					() => new PlatingHistoryContainer())
 				{
 					IsReadOnly = true
 				});
@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.Library
 				new DynamicContainerLink(
 					() => "Part History".Localize(),
 					null,
-					() => ApplicationController.Instance.Library.PartHistory)
+					() => new PartHistoryContainer())
 				{
 					IsReadOnly = true
 				});
