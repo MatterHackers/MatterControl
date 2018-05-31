@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl
 
 	public class GCodeContentProvider : ISceneContentProvider
 	{
-		public ImageBuffer DefaultImage => throw new NotImplementedException();
+		public ImageBuffer DefaultImage => null;
 
 		private ImageBuffer thumbnailImage;
 
