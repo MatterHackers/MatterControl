@@ -53,7 +53,10 @@ namespace MatterHackers.MatterControl.Library
 			try
 			{
 				this.ChildContainers = new List<ILibraryContainerLink>();
-				this.Items = sourceItem.Children.Select(m => new InMemoryLibraryItem(m)).ToList<ILibraryItem>();
+				if (sourceItem != null)
+				{
+					this.Items = sourceItem.Children.Select(m => new InMemoryLibraryItem(m)).ToList<ILibraryItem>();
+				}
 			}
 			catch (Exception ex)
 			{

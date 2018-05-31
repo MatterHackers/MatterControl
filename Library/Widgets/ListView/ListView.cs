@@ -212,7 +212,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			// Folder items
 			foreach (var childContainer in this.SortItems(containerItems))
 			{
-				var listViewItem = new ListViewItem(childContainer, this.ActiveContainer);
+				var listViewItem = new ListViewItem(childContainer, this.ActiveContainer, this);
 				listViewItem.DoubleClick += listViewItem_DoubleClick;
 				items.Add(listViewItem);
 
