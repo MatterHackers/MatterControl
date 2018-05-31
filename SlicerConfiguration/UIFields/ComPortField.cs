@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,9 +29,12 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -55,6 +58,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			EventHandler unregisterEvents = null;
 
 			bool canChangeComPort = !printer.Connection.IsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
+
+			var panel = new FlowLayoutWidget();
 
 			// The COM_PORT control is unique in its approach to the SlicerConfigName. It uses "com_port" settings name to
 			// bind to a context that will place it in the SliceSetting view but it binds its values to a machine
@@ -86,6 +91,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				canChangeComPort = !printer.Connection.IsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
 				dropdownList.Enabled = canChangeComPort;
 				dropdownList.TextColor = canChangeComPort ? ActiveTheme.Instance.PrimaryTextColor : new Color(ActiveTheme.Instance.PrimaryTextColor, 150);
+
+				if (printer.Connection.ComPort != dropdownList.SelectedLabel)
+				{
+					dropdownList.SelectedLabel = printer.Connection.ComPort;
+				}
 			}, ref unregisterEvents);
 
 			// Release event listener on close
@@ -94,7 +104,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				unregisterEvents?.Invoke(null, null);
 			};
 
-			this.Content = dropdownList;
+			var configureIcon = new IconButton(AggContext.StaticData.LoadIcon("fa-cog_16.png", theme.InvertIcons), theme)
+			{
+				VAnchor = VAnchor.Center,
+				Margin = theme.ButtonSpacing,
+				ToolTipText = "Port Wizard".Localize()
+			};
+			configureIcon.Click += (s, e) =>
+			{
+				DialogWindow.Show(new SetupStepComPortOne(printer));
+			};
+
+			panel.AddChild(configureIcon);
+
+			panel.AddChild(dropdownList);
+
+			this.Content = panel;
 		}
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
@@ -109,7 +134,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			foreach (string listItem in FrostedSerialPort.GetPortNames())
 			{
-				// Add each serial port to the dropdown list 
+				// Add each serial port to the dropdown list
 				MenuItem newItem = dropdownList.AddItem(listItem);
 
 				// When the given menu item is selected, save its value back into settings
