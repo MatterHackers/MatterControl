@@ -1233,13 +1233,6 @@ namespace MatterHackers.MatterControl
 
 				AppContext.RootSystemWindow.AddChild(reloadingOverlay);
 
-				var library = ApplicationController.Instance.Library;
-
-				if (library.ActiveContainer.GetType().Name.IndexOf("CloudLibrary", StringComparison.OrdinalIgnoreCase) != -1)
-				{
-					library.ActiveContainer = library.RootLibaryContainer;
-				}
-
 				this.IsReloading = true;
 
 				UiThread.RunOnIdle(() =>

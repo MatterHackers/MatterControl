@@ -289,7 +289,7 @@ namespace MatterControl.Tests.MatterControl
 
 			await ValidateAgainstValueMap(
 				field,
-				(f) => (f.Content as DropDownList).SelectedLabel,
+				(f) => (f.Content.Children<DropDownList>().FirstOrDefault() as DropDownList).SelectedLabel,
 				new List<ValueMap>()
 				{
 					{"COM-TestA", "COM-TestA"},
