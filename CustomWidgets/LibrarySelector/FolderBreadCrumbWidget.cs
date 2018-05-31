@@ -101,19 +101,22 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 			else
 			{
+				var extraSpacing = (theme.ButtonSpacing).Clone(left: theme.ButtonSpacing.Right * .4);
+
 				foreach (var container in ItemAndParents(currentContainer).Reverse())
 				{
 					if (!firstItem)
 					{
-
-						var extraSpacing = theme.ButtonSpacing * 2;
-
 						// Add path separator
-						this.AddChild(new TextWidget("/", pointSize: theme.FontSize11, textColor: ActiveTheme.Instance.PrimaryTextColor)
+						var textContainer = new GuiWidget() // HACK: Workaround for VAlign.Center failure in this specific case. Remove wrapper(with padding) once fixed and directly add TextWidget child
 						{
-							VAnchor = VAnchor.Center,
-							Margin = extraSpacing.Clone(right: theme.ButtonSpacing.Left)
-						});
+							HAnchor = HAnchor.Fit,
+							VAnchor = VAnchor.Fit | VAnchor.Center,
+							Padding = new BorderDouble(top: 4),
+							Margin = extraSpacing,
+						};
+						textContainer.AddChild(new TextWidget("/", pointSize: theme.DefaultFontSize + 2, textColor: ActiveTheme.Instance.PrimaryTextColor));
+						this.AddChild(textContainer);
 					}
 
 					// Create a button for each container
