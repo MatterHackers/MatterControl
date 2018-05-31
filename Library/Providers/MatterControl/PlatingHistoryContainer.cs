@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.Library
 		}
 	}
 
-	public class HistoryContainerBase : FileSystemContainer, ILibraryWritableContainer
+	public abstract class HistoryContainerBase : FileSystemContainer, ILibraryWritableContainer
 	{
 		public HistoryContainerBase(string fullPath)
 			: base(fullPath)
