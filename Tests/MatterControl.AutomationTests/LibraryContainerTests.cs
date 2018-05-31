@@ -288,5 +288,10 @@ namespace MatterControl.Tests.MatterControl
 		public async Task ZipMemoryContainerTest()
 		{
 		}
+
+		[Test, Ignore("Not implemented")]
+		public async Task LibraryCollectionContainerTest()
+		{
+		}
 	}
 }
