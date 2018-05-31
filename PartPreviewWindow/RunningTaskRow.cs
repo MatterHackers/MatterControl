@@ -182,6 +182,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetExpansionMode(ThemeConfig theme, GuiWidget detailsPanel, bool isExpanded)
 		{
+			expandButton.Checked = isExpanded;
 			progressBar.FillColor = isExpanded ? theme.Shade : theme.Colors.PrimaryAccentColor;
 			detailsPanel.Visible = isExpanded;
 		}
