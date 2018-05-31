@@ -31,6 +31,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
+using System;
 using System.ComponentModel;
 using System.Linq;
 
@@ -64,11 +65,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override void Apply(UndoBuffer undoBuffer)
 		{
-			this.Children.Modify(list =>
-			{
-				var sourceItem = list.First(c => c is OperationSource);
-				list.Remove(sourceItem);
-			});
+			OperationSource.Apply(this);
 
 			base.Apply(undoBuffer);
 		}
@@ -94,22 +91,27 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			this.SuspendRebuild();
 			this.DebugDepth("Rebuild");
 
+			// check if we have initialized the Axis
 			if (Axis.Origin.X == double.NegativeInfinity)
 			{
 				// make it something reasonable (just to the left of the aabb of the object)
 				var aabb = this.GetAxisAlignedBoundingBox();
 				Axis.Origin = aabb.Center - new Vector3(30, 0, 0);
 			}
+
+			var sourceContainer = OperationSource.GetOrCreateSourceContainer(this);
 			this.Children.Modify(list =>
 			{
-				IObject3D first = list.First();
-
 				list.Clear();
-				list.Add(first);
+				// add back in the sourceContainer
+				list.Add(sourceContainer);
+				// get the source item
+				var sourceItem = sourceContainer.Children.First();
+
 				var offset = Vector3.Zero;
-				for (int i = 1; i < Count; i++)
+				for (int i = 0; i < Math.Max(Count, 1); i++)
 				{
-					var next = first.Clone();
+					var next = sourceItem.Clone();
 
 					var normal = Axis.Normal.GetNormal();
 					var angleRadians = MathHelper.DegreesToRadians(Angle) / Count * i;
@@ -124,17 +126,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					list.Add(next);
 				}
 			});
+
+			this.ResumeRebuild();
+
 			this.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)
 		{
-			this.Children.Modify(list =>
-			{
-				IObject3D firstChild = list.First();
-				list.Clear();
-				list.Add(firstChild);
-			});
+			OperationSource.Remove(this);
 
 			base.Remove(undoBuffer);
 		}

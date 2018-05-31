@@ -27,11 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Linq;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -57,7 +57,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public bool ScaleOffset { get; set; } = true;
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		public override void Apply(UndoBuffer undoBuffer)
+		{
+			OperationSource.Apply(this);
+
+			base.Apply(undoBuffer);
+		}
+
+		public override void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
 			this.Children.Modify(list =>
@@ -92,12 +99,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override void Remove(UndoBuffer undoBuffer)
 		{
-			this.Children.Modify(list =>
-			{
-				IObject3D firstChild = list.First();
-				list.Clear();
-				list.Add(firstChild);
-			});
+			OperationSource.Remove(this);
 
 			base.Remove(undoBuffer);
 		}

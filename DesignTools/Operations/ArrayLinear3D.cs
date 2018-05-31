@@ -51,11 +51,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override void Apply(UndoBuffer undoBuffer)
 		{
-			this.Children.Modify(list =>
-			{
-				var sourceItem = list.First(c => c is OperationSource);
-				list.Remove(sourceItem);
-			});
+			OperationSource.Apply(this);
 
 			base.Apply(undoBuffer);
 		}
@@ -86,11 +82,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			this.Children.Modify(list =>
 			{
 				list.Clear();
-
-				var sourceItem = sourceContainer.Children.First();
-
 				// add back in the sourceContainer
 				list.Add(sourceContainer);
+				// get the source item
+				var sourceItem = sourceContainer.Children.First();
 
 				for (int i = 0; i < Math.Max(Count, 1); i++)
 				{
@@ -101,17 +96,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			});
 
 			this.ResumeRebuild();
+
+			this.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)
 		{
-			this.Children.Modify(list =>
-			{
-				var sourceItem = list.First(c => c is OperationSource).Children.First();
-				list.Clear();
-
-				list.Add(sourceItem);
-			});
+			OperationSource.Remove(this);
 
 			base.Remove(undoBuffer);
 		}

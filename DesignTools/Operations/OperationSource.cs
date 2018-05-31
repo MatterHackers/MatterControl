@@ -27,10 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Linq;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using System;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -54,6 +54,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		/// <returns>The existing or created OperationSource</returns>
 		public static IObject3D GetOrCreateSourceContainer(IObject3D parent)
 		{
+			parent.SuspendRebuild();
 			var sourceContainer = parent.Children.FirstOrDefault(c => c is OperationSource);
 			if (sourceContainer == null)
 			{
@@ -64,8 +65,51 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				parent.Children.Remove(firstChild);
 				sourceContainer.Children.Add(firstChild);
 			}
+			parent.ResumeRebuild();
 
 			return sourceContainer;
+		}
+
+		/// <summary>
+		/// Do the work of apply for a parent that has a source Operation in it
+		/// </summary>
+		/// <param name="parent"></param>
+		public static void Apply(IObject3D parent)
+		{
+			parent.SuspendRebuild();
+
+			// The idea is we leave everything but the source and that is the applied operation
+			parent.Children.Modify(list =>
+			{
+				var sourceItem = list.FirstOrDefault(c => c is OperationSource);
+				if (sourceItem != null)
+				{
+					list.Remove(sourceItem);
+				}
+			});
+
+			parent.ResumeRebuild();
+		}
+
+		internal static void Remove(IObject3D parent)
+		{
+			parent.SuspendRebuild();
+
+			parent.Children.Modify(list =>
+			{
+				var sourceItem = list.FirstOrDefault(c => c is OperationSource);
+				if (sourceItem != null)
+				{
+					IObject3D firstChild = sourceItem.Children.First();
+					if (firstChild != null)
+					{
+						list.Clear();
+						list.Add(firstChild);
+					}
+				}
+			});
+
+			parent.ResumeRebuild();
 		}
 	}
 }
