@@ -90,6 +90,7 @@
     <Compile Include="DesignTools\Attributes\ShowSearchFieldAttribute.cs" />
     <Compile Include="DesignTools\Interfaces\IPublicPropertyObject.cs" />
     <Compile Include="DesignTools\Operations\Group3D.cs" />
+    <Compile Include="DesignTools\Operations\OperationSource.cs" />
     <Compile Include="DesignTools\Operations\PinchObject3D.cs" />
     <Compile Include="DesignTools\Primitives\CubeObject3D.cs" />
     <Compile Include="DesignTools\Primitives\HalfCylinderObject3D.cs" />

@@ -27,36 +27,38 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Linq;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
+using System;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class OperationSource : Object3D
-	{
-		public OperationSource()
-		{
-			Name = "Source".Localize();
-			Visible = false;
-		}
-	}
-
 	public class ArrayLinear3D : Object3D, IPublicPropertyObject
 	{
 		public ArrayLinear3D()
 		{
 			Name = "Linear Array".Localize();
 		}
-		
+
 		public override bool CanApply => true;
 		public override bool CanRemove => true;
 		public int Count { get; set; } = 3;
 		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };
 		public double Distance { get; set; } = 30;
+
+		public override void Apply(UndoBuffer undoBuffer)
+		{
+			this.Children.Modify(list =>
+			{
+				var sourceItem = list.First(c => c is OperationSource);
+				list.Remove(sourceItem);
+			});
+
+			base.Apply(undoBuffer);
+		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -79,16 +81,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			this.SuspendRebuild();
 			this.DebugDepth("Rebuild");
 
-			var sourceContainer = this.Children.FirstOrDefault(c => c is OperationSource);
-			if (sourceContainer == null)
-			{
-				sourceContainer = new OperationSource();
-
-				// Move first child to sourceContainer
-				var firstChild = this.Children.First();
-				this.Children.Remove(firstChild);
-				sourceContainer.Children.Add(firstChild);
-			}
+			var sourceContainer = OperationSource.GetOrCreateSourceContainer(this);
 
 			this.Children.Modify(list =>
 			{
@@ -121,17 +114,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			});
 
 			base.Remove(undoBuffer);
-		}
-
-		public override void Apply(UndoBuffer undoBuffer)
-		{
-			this.Children.Modify(list =>
-			{
-				var sourceItem = list.First(c => c is OperationSource);
-				list.Remove(sourceItem);
-			});
-
-			base.Apply(undoBuffer);
 		}
 	}
 }

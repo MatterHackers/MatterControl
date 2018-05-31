@@ -27,12 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.ComponentModel;
-using System.Linq;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
+using System.ComponentModel;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -43,13 +43,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Radial Array".Localize();
 		}
 
+		[DisplayName("Rotate About")]
+		public DirectionAxis Axis { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
+
 		public override bool CanApply => true;
 		public override bool CanRemove => true;
 
 		public int Count { get; set; } = 3;
-
-		[DisplayName("Rotate About")]
-		public DirectionAxis Axis { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
 
 		[Description("Rotate the part to the same angle as the array.")]
 		public bool RotatePart { get; set; } = true;
@@ -62,9 +62,38 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[Description("Keep the entire extents of the part within the angle described.")]
 		private bool KeepInAngle { get; set; } = false;
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		public override void Apply(UndoBuffer undoBuffer)
 		{
+			this.Children.Modify(list =>
+			{
+				var sourceItem = list.First(c => c is OperationSource);
+				list.Remove(sourceItem);
+			});
+
+			base.Apply(undoBuffer);
+		}
+
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Content)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
+				&& invalidateType.Source != this
+				&& !RebuildSuspended)
+			{
+				Rebuild(null);
+			}
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
+		}
+
+		public override void Rebuild(UndoBuffer undoBuffer)
+		{
+			this.SuspendRebuild();
 			this.DebugDepth("Rebuild");
+
 			if (Axis.Origin.X == double.NegativeInfinity)
 			{
 				// make it something reasonable (just to the left of the aabb of the object)
