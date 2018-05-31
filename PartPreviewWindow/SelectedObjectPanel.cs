@@ -56,6 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GuiWidget editorPanel;
 		private InlineTitleEdit inlineTitleEdit;
+		private BottomResizeContainer editorColumn;
 
 		public SelectedObjectPanel(View3DWidget view3DWidget, InteractiveScene scene, ThemeConfig theme, PrinterConfig printer)
 			: base(FlowDirection.TopToBottom)
@@ -86,11 +87,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(scrollable);
 
-			var editorColumn = new BottomResizeContainer(theme)
+			editorColumn = new BottomResizeContainer(theme)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Absolute,
-				Height = 250    //////////////////////// Load persisted user value
+				Height = printer.ViewState.SelectedObjectEditorHeight
 			};
 
 			var toolbar = new Toolbar(theme)
@@ -194,15 +195,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			editorSection = new SectionWidget("Editor", editorColumn, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true);
+			editorSection = new SectionWidget("Editor", editorColumn, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true, setContentVAnchor: false)
+			{
+				VAnchor = VAnchor.Fit
+			};
 
 			// TODO: Replace hackery with practical solution
 			if (editorSection.Children.FirstOrDefault() is ExpandCheckboxButton checkbox)
 			{
 				checkbox.ReplaceChild(checkbox.Children[1], inlineTitleEdit);
-
-				// Override default constructor behavior - force back to Absolute after add
-				editorSection.ContentPanel.VAnchor = VAnchor.Absolute;
 			}
 
 			this.ContentPanel.AddChild(editorSection);
@@ -248,8 +249,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		public GuiWidget ContentPanel { get; set; }
-
-		private static Type iobject3DType = typeof(IObject3D);
 
 		public void SetActiveItem(IObject3D selectedItem)
 		{
@@ -407,6 +406,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				children.Remove(this.item);
 				children.Add(content);
 			});
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			printer.ViewState.SelectedObjectEditorHeight = editorColumn.Height;
+			base.OnClosed(e);
 		}
 	}
 }

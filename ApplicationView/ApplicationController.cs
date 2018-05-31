@@ -950,7 +950,10 @@ namespace MatterHackers.MatterControl
 				var printer = ApplicationController.Instance.ActivePrinters.Where(p => p.Connection == s).FirstOrDefault();
 				if (printer != null)
 				{
-					ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, this.Theme);
+					UiThread.RunOnIdle(() =>
+					{
+						ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, this.Theme);
+					});
 				}
 			}, ref unregisterEvents);
 

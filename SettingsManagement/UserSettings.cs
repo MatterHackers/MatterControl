@@ -58,6 +58,8 @@ namespace MatterHackers.MatterControl
 		public const string UpdateFeedType = nameof(UpdateFeedType);
 		public const string LastReadWhatsNew = nameof(LastReadWhatsNew);
 		public const string ActiveThemeName = nameof(ActiveThemeName);
+		public const string SceneTreeHeight = nameof(SceneTreeHeight);
+		public const string SelectedObjectEditorHeight = nameof(SelectedObjectEditorHeight);
 	}
 
 	public class UserSettings

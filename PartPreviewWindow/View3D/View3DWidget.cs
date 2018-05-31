@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Absolute,
-				Height = 250    //////////////////////// Load persisted user value
+				Height = Printer.ViewState.SceneTreeHeight
 			};
 			modelViewSidePanel.AddChild(treeSection);
 
@@ -365,6 +365,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
+			if (Printer != null)
+			{
+				Printer.ViewState.SceneTreeHeight = treeSection.Height;
+			}
+
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;
 			Scene.SelectionChanged -= Scene_SelectionChanged;
 			this.InteractionLayer.DrawGlOpaqueContent -= Draw_GlOpaqueContent;

@@ -11,14 +11,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	public class SectionWidget : FlowLayoutWidget, IIgnoredPopupChild
 	{
 		private ExpandCheckboxButton checkbox;
+		private bool setContentVAnchor;
 
-		public SectionWidget(string sectionTitle, GuiWidget sectionContent, ThemeConfig theme, GuiWidget rightAlignedContent = null, int headingPointSize = -1, bool expandingContent = true, bool expanded = true, string serializationKey = null, bool defaultExpansion = false)
+		public SectionWidget(string sectionTitle, GuiWidget sectionContent, ThemeConfig theme, GuiWidget rightAlignedContent = null, int headingPointSize = -1, bool expandingContent = true, bool expanded = true, string serializationKey = null, bool defaultExpansion = false, bool setContentVAnchor = true)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
 			this.Border = new BorderDouble(bottom: 1);
 			this.BorderColor = theme.GetBorderColor(50);
+
+			this.setContentVAnchor = setContentVAnchor;
 
 			if (!string.IsNullOrEmpty(sectionTitle))
 			{
@@ -85,7 +88,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			// Apply default rules for panel widget
 			guiWidget.HAnchor = HAnchor.Stretch;
-			guiWidget.VAnchor = VAnchor.Fit;
+
+			if (setContentVAnchor)
+			{
+				guiWidget.VAnchor = VAnchor.Fit;
+			}
 
 			// Set
 			this.AddChild(guiWidget);

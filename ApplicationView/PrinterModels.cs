@@ -768,6 +768,42 @@ namespace MatterHackers.MatterControl
 				UserSettings.Instance.set(UserSettingsKey.SelectedObjectPanelWidth, minimumValue.ToString());
 			}
 		}
+
+		public double SceneTreeHeight
+		{
+			get
+			{
+				if (double.TryParse(UserSettings.Instance.get(UserSettingsKey.SceneTreeHeight), out double controlHeight))
+				{
+					return Math.Max(controlHeight, 35);
+				}
+
+				return 35;
+			}
+			set
+			{
+				var minimumValue = Math.Max(value, 35);
+				UserSettings.Instance.set(UserSettingsKey.SceneTreeHeight, minimumValue.ToString());
+			}
+		}
+
+		public double SelectedObjectEditorHeight
+		{
+			get
+			{
+				if (double.TryParse(UserSettings.Instance.get(UserSettingsKey.SelectedObjectEditorHeight), out double controlHeight))
+				{
+					return Math.Max(controlHeight, 35);
+				}
+
+				return 120;
+			}
+			set
+			{
+				var minimumValue = Math.Max(value, 35);
+				UserSettings.Instance.set(UserSettingsKey.SelectedObjectEditorHeight, minimumValue.ToString());
+			}
+		}
 	}
 
 	public class PrinterConfig
