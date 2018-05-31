@@ -47,11 +47,13 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 		public TreeNode()
 			: base(FlowDirection.TopToBottom)
 		{
-			HAnchor = HAnchor.Fit | HAnchor.Left;
-			VAnchor = VAnchor.Fit;
+			var theme = ApplicationController.Instance.Theme;
 
-			TitleBar = new FlowLayoutWidget();
-			TitleBar.Click += (s, e) =>
+			this.HAnchor = HAnchor.Fit | HAnchor.Left;
+			this.VAnchor = VAnchor.Fit;
+
+			this.TitleBar = new FlowLayoutWidget();
+			this.TitleBar.Click += (s, e) =>
 			{
 				if (TreeView != null)
 				{
@@ -59,7 +61,52 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 				}
 			};
 			AddChild(TitleBar);
-			RebuildTitleBar();
+
+			// add a check box
+			expandWidget = new TreeExpandWidget(theme)
+			{
+				Expandable = GetNodeCount(false) != 0,
+				VAnchor = VAnchor.Fit,
+				Height = 16,
+				Width = 16
+			};
+
+			var expandCheckBox = new CheckBox(expandWidget)
+			{
+				Checked = this.Expanded,
+				VAnchor = VAnchor.Center,
+			};
+
+			this.ExpandedChanged += (s2, e2) =>
+			{
+				expandWidget.Expanded = this.Expanded;
+				expandCheckBox.Checked = this.Expanded;
+			};
+
+			expandCheckBox.CheckedStateChanged += (s3, e3) =>
+			{
+				Expanded = expandCheckBox.Checked;
+			};
+
+			this.TitleBar.AddChild(expandCheckBox);
+
+			// add a check box
+			if (Image != null)
+			{
+				this.TitleBar.AddChild(imageWidget = new ImageWidget(this.Image)
+				{
+					VAnchor = VAnchor.Center,
+					BackgroundColor = new Color(theme.Colors.PrimaryTextColor, 12),
+					Margin = 2,
+					Selectable = false
+				});
+			};
+			this.TitleBar.AddChild(textWidget = new TextWidget(this.Text, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			{
+				Selectable = false,
+				AutoExpandBoundsToText = true,
+				VAnchor = VAnchor.Center
+			});
 
 			content = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -160,58 +207,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 
 			// If the node count is ending at 0 we removed content and need to rebuild the title bar so it will net have a + in it
 			expandWidget.Expandable = GetNodeCount(false) != 0;
-		}
-
-		private void RebuildTitleBar()
-		{
-			TitleBar.RemoveAllChildren();
-
-			var theme = ApplicationController.Instance.Theme;
-			// add a check box
-			expandWidget = new TreeExpandWidget(theme)
-			{
-				Expandable = GetNodeCount(false) != 0,
-				VAnchor = VAnchor.Fit,
-				Height = 16,
-				Width = 16
-			};
-
-			var expandCheckBox = new CheckBox(expandWidget)
-			{
-				Checked = this.Expanded,
-				VAnchor = VAnchor.Center,
-			};
-
-			this.ExpandedChanged += (s, e) =>
-			{
-				expandWidget.Expanded = this.Expanded;
-				expandCheckBox.Checked = this.Expanded;
-			};
-
-			expandCheckBox.CheckedStateChanged += (s, e) =>
-			{
-				Expanded = expandCheckBox.Checked;
-			};
-
-			this.TitleBar.AddChild(expandCheckBox);
-
-			// add a check box
-			if (Image != null)
-			{
-				this.TitleBar.AddChild(imageWidget = new ImageWidget(this.Image)
-				{
-					VAnchor = VAnchor.Center,
-					BackgroundColor = new Color(theme.Colors.PrimaryTextColor, 12),
-					Margin = 2,
-					Selectable = false
-				});
-			};
-			TitleBar.AddChild(textWidget = new TextWidget(this.Text, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
-			{
-				Selectable = false,
-				AutoExpandBoundsToText = true,
-				VAnchor = VAnchor.Center
-			});
 		}
 
 		#region Properties

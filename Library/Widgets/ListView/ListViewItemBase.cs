@@ -224,8 +224,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				// TODO: Resolve and implement
 				// Allow the container to draw an overlay - use signal interface or add method to interface?
 				//var iconWithOverlay = ActiveContainer.DrawOverlay()
-
-				this.imageWidget.Image = thumbnail;
+				if (this.imageWidget != null)
+				{
+					this.imageWidget.Image = thumbnail;
+				}
 
 				this.ImageSet?.Invoke(this, null);
 
