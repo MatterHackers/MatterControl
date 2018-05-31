@@ -166,6 +166,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			modelViewSidePanel.BoundsChanged += UpdateRenderView;
 
+			modelViewSidePanel.Resized += ModelViewSidePanel_Resized;
+
 			modelViewSidePanel.AddChild(
 				new SectionWidget(
 					"Options".Localize(),
@@ -224,6 +226,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.InteractionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
 
 			this.sceneContext.SceneLoaded += SceneContext_SceneLoaded;
+		}
+
+		private void ModelViewSidePanel_Resized(object sender, EventArgs e)
+		{
+			if (this.Printer !=null)
+			{
+				this.Printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
+			}
 		}
 
 		private void RebuildTreeSection(IObject3D selection, ThemeConfig theme)
@@ -355,15 +365,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (Printer != null)
-			{
-				Printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
-			}
-
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;
 			Scene.SelectionChanged -= Scene_SelectionChanged;
 			this.InteractionLayer.DrawGlOpaqueContent -= Draw_GlOpaqueContent;
 			this.sceneContext.SceneLoaded -= SceneContext_SceneLoaded;
+			modelViewSidePanel.Resized -= ModelViewSidePanel_Resized;
 
 			if (meshViewerWidget != null)
 			{
@@ -1224,7 +1230,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private SelectedObjectPanel selectedObjectPanel;
 
-		internal GuiWidget modelViewSidePanel;
+		internal LeftResizeContainer modelViewSidePanel;
 
 		public Vector2 DragSelectionStartPosition { get; private set; }
 		public bool DragSelectionInProgress { get; private set; }

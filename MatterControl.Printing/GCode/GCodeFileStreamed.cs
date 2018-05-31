@@ -173,7 +173,7 @@ namespace MatterControl.Printing
 			return 100;
 		}
 
-		public override int GetInstructionIndexAtLayer(int layerIndex)
+		public override int GetFirstLayerInstruction(int layerIndex)
 		{
 			return 0;
 		}

@@ -166,7 +166,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SplitterWidth = theme.SplitterWidth,
 				Visible = false,
 			};
+
 			gcodeContainer.AddChild(gcodePanel);
+			gcodeContainer.Resized += (s, e) =>
+			{
+				if (printer != null)
+				{
+					printer.ViewState.SelectedObjectPanelWidth = gcodeContainer.Width;
+				}
+			};
 
 			modelViewSidePanel.BoundsChanged += (s, e) =>
 			{

@@ -94,11 +94,11 @@ namespace MatterHackers.GCodeVisualizer
 
 			List<RenderFeatureBase> renderFeaturesForLayer = renderFeatures[layerToCreate];
 
-			int startRenderIndex = gCodeFileToDraw.GetInstructionIndexAtLayer(layerToCreate);
+			int startRenderIndex = gCodeFileToDraw.GetFirstLayerInstruction(layerToCreate);
 			int endRenderIndex = gCodeFileToDraw.LineCount - 1;
 			if (layerToCreate < gCodeFileToDraw.LayerCount - 1)
 			{
-				endRenderIndex = gCodeFileToDraw.GetInstructionIndexAtLayer(layerToCreate + 1);
+				endRenderIndex = gCodeFileToDraw.GetFirstLayerInstruction(layerToCreate + 1);
 			}
 
 			for (int instructionIndex = startRenderIndex; instructionIndex < endRenderIndex; instructionIndex++)

@@ -35,6 +35,7 @@ using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
@@ -57,6 +58,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			
 		public CurveObject3D()
 		{
+			Name = "Curve".Localize();
 		}
 
 		public override void Rebuild(UndoBuffer undoBuffer)
@@ -167,9 +169,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Content)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
 				&& invalidateType.Source != this
 				&& !RebuildSuspended)
 			{
