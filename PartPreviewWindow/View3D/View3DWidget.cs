@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			TrackballTumbleWidget.TransformState = TrackBallTransformType.Rotation;
 
-			selectedObjectPanel = new SelectedObjectPanel(this, Scene, theme, printer)
+			selectedObjectPanel = new SelectedObjectPanel(this, sceneContext, theme)
 			{
 				VAnchor = VAnchor.Stretch,
 			};
@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Absolute,
-				Height = Printer.ViewState.SceneTreeHeight
+				Height = sceneContext.ViewState.SceneTreeHeight
 			};
 			modelViewSidePanel.AddChild(treeSection);
 
@@ -365,10 +365,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (Printer != null)
-			{
-				Printer.ViewState.SceneTreeHeight = treeSection.Height;
-			}
+			sceneContext.ViewState.SceneTreeHeight = treeSection.Height;
 
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;
 			Scene.SelectionChanged -= Scene_SelectionChanged;

@@ -250,7 +250,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			return currentTransform;
 		}
-
+		 
 		public static Vector3 GetCenter(this IObject3D item)
 		{
 			return item.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center;

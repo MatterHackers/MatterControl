@@ -48,9 +48,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private IObject3D item = new Object3D();
 
 		private ThemeConfig theme;
+		private BedConfig sceneContext;
 		private View3DWidget view3DWidget;
-		private InteractiveScene scene;
-		private PrinterConfig printer;
 		private SectionWidget editorSection;
 		private TextButton editButton;
 
@@ -58,7 +57,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private InlineTitleEdit inlineTitleEdit;
 		private BottomResizeContainer editorColumn;
 
-		public SelectedObjectPanel(View3DWidget view3DWidget, InteractiveScene scene, ThemeConfig theme, PrinterConfig printer)
+		public SelectedObjectPanel(View3DWidget view3DWidget, BedConfig sceneContext, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
@@ -66,8 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.Padding = 0;
 			this.view3DWidget = view3DWidget;
 			this.theme = theme;
-			this.scene = scene;
-			this.printer = printer;
+			this.sceneContext = sceneContext;
 
 			this.ContentPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -91,7 +89,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Absolute,
-				Height = printer.ViewState.SelectedObjectEditorHeight
+				Height = sceneContext.ViewState.SelectedObjectEditorHeight
 			};
 
 			var toolbar = new Toolbar(theme)
@@ -101,6 +99,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Fit
 			};
 			editorColumn.AddChild(toolbar);
+
+			var scene = sceneContext.Scene;
 
 			editButton = new TextButton("Edit".Localize(), theme)
 			{
@@ -252,11 +252,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void SetActiveItem(IObject3D selectedItem)
 		{
-			if (!scene.HasSelection)
-			{
-				this.Parent.Visible = false;
-				return;
-			}
 
 			var selectedItemType = selectedItem.GetType();
 
@@ -265,8 +260,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			inlineTitleEdit.Text = selectedItem.Name ?? selectedItemType.Name;
 
 			this.item = selectedItem;
-
-			var viewMode = printer?.ViewState.ViewMode;
 
 			HashSet<IObject3DEditor> mappedEditors = ApplicationController.Instance.GetEditorsForType(selectedItemType);
 
@@ -358,7 +351,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							button.EnsureAvailablity();
 							button.Click += (s, e) =>
 							{
-								nodeOperation.Operation(selectedItem, scene).ConfigureAwait(false);
+								nodeOperation.Operation(selectedItem, sceneContext.Scene).ConfigureAwait(false);
 							};
 
 							buttons.Add(button);
@@ -410,7 +403,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			printer.ViewState.SelectedObjectEditorHeight = editorColumn.Height;
+			sceneContext.ViewState.SelectedObjectEditorHeight = editorColumn.Height;
 			base.OnClosed(e);
 		}
 	}
