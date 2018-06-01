@@ -31,6 +31,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.CustomWidgets.TreeView;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 
@@ -38,39 +39,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public static class Object3DTreeBuilder
 	{
-		public static TreeView GetPartTreeView(IObject3D rootItem, ThemeConfig theme)
+		public static TreeNode BuildTree(IObject3D rootItem, ThemeConfig theme)
 		{
-			var topNode = new TopNode()
-			{
-				Text = BuildDefaultName(rootItem),
-				Tag = rootItem,
-				TextColor = theme.Colors.PrimaryTextColor,
-				PointSize = theme.DefaultFontSize
-			};
-
-			var treeView = new TreeView(topNode, theme)
-			{
-				TextColor = theme.Colors.PrimaryTextColor,
-				PointSize = theme.DefaultFontSize
-			};
-
-			treeView.SuspendLayout();
-
-			//selectionTreeNodes.Clear();
-			//selectionTreeNodes.Add(rootItem, topNode);
-
-			// add the children to the root node
-			foreach (var child in rootItem.Children)
-			{
-				AddTree(child, topNode, theme);
-			}
-
-			treeView.ResumeLayout();
-
-			return treeView;
+			return AddTree(rootItem, null, theme);
 		}
 
-		private static void AddTree(IObject3D item, TreeNode parent, ThemeConfig theme)
+		private static TreeNode AddTree(IObject3D item, TreeNode parent, ThemeConfig theme)
 		{
 			// Suppress MeshWrapper nodes in treeview - retain parent node as context reference
 			var contextNode = (item is MeshWrapper) ? parent : AddItem(item, parent, theme);
@@ -79,6 +53,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				AddTree(child, contextNode, theme);
 			}
+
+			return contextNode;
 		}
 
 		private static TreeNode AddItem(IObject3D item, TreeNode parentNode, ThemeConfig theme)
@@ -115,8 +91,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 			}
 
-			parentNode.Nodes.Add(node);
-			parentNode.Expanded = true;
+			if (parentNode != null)
+			{
+				parentNode.Nodes.Add(node);
+				parentNode.Expanded = true;
+			}
 
 			return node;
 		}

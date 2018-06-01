@@ -192,7 +192,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			modelViewSidePanel.AddChild(treeSection);
 
 			// add the tree view
-			this.RebuildTreeSection(new Object3D(), theme);
+			treeView = new TreeView(theme)
+			{
+				TextColor = theme.Colors.PrimaryTextColor,
+				PointSize = theme.DefaultFontSize,
+				HAnchor =HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			};
+			treeView.AfterSelect += (s, e) =>
+			{
+				selectedObjectPanel.SetActiveItem((IObject3D)treeView.SelectedNode.Tag);
+			};
+			treeSection.AddChild(treeView);
 
 			modelViewSidePanel.AddChild(selectedObjectPanel);
 			splitContainer.AddChild(modelViewSidePanel);
@@ -233,24 +244,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (this.Printer !=null)
 			{
 				this.Printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
-			}
-		}
-
-		private void RebuildTreeSection(IObject3D selection, ThemeConfig theme)
-		{
-			treeSection.CloseAllChildren();
-
-			treeView = Object3DTreeBuilder.GetPartTreeView(selection, theme);
-			treeSection.AddChild(treeView);
-			treeView.AfterSelect += (s, e) =>
-			{
-				selectedObjectPanel.SetActiveItem((IObject3D)treeView.SelectedNode.Tag);
-			};
-
-			if (this.Parent != null)
-			{
-				treeView.TopNode.Padding = treeView.TopNode.Padding.Clone(left: 8, top: 8);
-				treeView.SelectedNode = treeView.TopNode;
 			}
 		}
 
@@ -1222,9 +1215,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// Top level selection only - rebuild tree
-			if (Scene.Children.Contains(Scene.SelectedItem))
+			var selection = Scene.SelectedItem;
+			if (Scene.Children.Contains(selection))
 			{
-				this.RebuildTreeSection(Scene.SelectedItem, theme);
+				treeView.ScrollArea.CloseAllChildren();
+
+				var rootNode = Object3DTreeBuilder.BuildTree(selection, theme);
+				treeView.AddChild(rootNode);
+				rootNode.TreeView = treeView;
+
+				if (this.Parent != null)
+				{
+					rootNode.Padding = rootNode.Padding.Clone(left: 8, top: 8);
+					treeView.SelectedNode = rootNode;
+				}
 			}
 		}
 

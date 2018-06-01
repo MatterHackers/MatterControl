@@ -378,7 +378,14 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 		//     A TreeView that represents the parent tree view that the
 		//     tree node is assigned to, or null if the node has not been assigned to a tree
 		//     view.
-		public virtual TreeView TreeView => NodeParent.TreeView;
+
+		private TreeView _treeView;
+
+		public virtual TreeView TreeView
+		{
+			get => _treeView ?? NodeParent.TreeView;
+			set => _treeView = value;
+		}
 
 		private void OnImageChanged(EventArgs args)
 		{

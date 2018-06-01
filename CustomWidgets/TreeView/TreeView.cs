@@ -36,33 +36,22 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 {
-	public class TopNode : TreeNode
-	{
-		internal TreeView treeView;
-		public override TreeView TreeView => treeView;
-	}
-
 	public class TreeView : ScrollableWidget
 	{
 		private ThemeConfig theme;
 
-		public TreeView(TopNode topNode, ThemeConfig theme)
-			: this(topNode, 0, 0, theme)
+		public TreeView(ThemeConfig theme)
+			: this(0, 0, theme)
 		{
 		}
 
-		public TreeView(TopNode topNode, int width, int height, ThemeConfig theme)
+		public TreeView(int width, int height, ThemeConfig theme)
 			: base(width, height)
 		{
 			this.theme = theme;
 			this.AutoScroll = true;
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
-			this.TopNode = topNode;
-
-			topNode.treeView = this;
-
-			this.AddChild(TopNode);
 		}
 
 		#region Events
@@ -230,7 +219,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 		public bool ShowPlusMinus { get; set; }
 		public bool ShowRootLines { get; set; }
 		public bool Sorted { get; set; }
-		public TreeNode TopNode { get; }
 
 		public IComparer TreeViewNodeSorter { get; set; }
 
