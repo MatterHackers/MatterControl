@@ -90,10 +90,18 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 
 			this.TitleBar.AddChild(expandCheckBox);
 
+			this.SelectionBar = new FlowLayoutWidget()
+			{
+				VAnchor = VAnchor.Fit,
+				HAnchor = HAnchor.Fit,
+				Selectable = false
+			};
+			this.TitleBar.AddChild(this.SelectionBar);
+
 			// add a check box
 			if (Image != null)
 			{
-				this.TitleBar.AddChild(imageWidget = new ImageWidget(this.Image)
+				this.SelectionBar.AddChild(imageWidget = new ImageWidget(this.Image)
 				{
 					VAnchor = VAnchor.Center,
 					BackgroundColor = new Color(theme.Colors.PrimaryTextColor, 12),
@@ -101,7 +109,9 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 					Selectable = false
 				});
 			};
-			this.TitleBar.AddChild(textWidget = new TextWidget(this.Text, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+
+
+			this.SelectionBar.AddChild(textWidget = new TextWidget(this.Text, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 			{
 				Selectable = false,
 				AutoExpandBoundsToText = true,
@@ -121,6 +131,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 		}
 
 		public FlowLayoutWidget TitleBar { get; }
+
+		public FlowLayoutWidget SelectionBar { get; }
 
 		public void BeginEdit()
 		{

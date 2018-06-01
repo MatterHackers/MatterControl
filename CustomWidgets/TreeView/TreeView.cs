@@ -196,19 +196,20 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 
 		public TreeNode SelectedNode
 		{
-			get => _selectedNode; set
+			get => _selectedNode;
+			set
 			{
 				if (value != _selectedNode)
 				{
 					OnBeforeSelect(null);
 
-					foreach (var node in this.Descendants<TreeNode>().Where((c) => c != value))
+					if (_selectedNode != null)
 					{
-						node.TitleBar.BackgroundColor = Color.Transparent;
+						_selectedNode.SelectionBar.BackgroundColor = Color.Transparent;
 					}
 
 					_selectedNode = value;
-					_selectedNode.TitleBar.BackgroundColor = theme.AccentMimimalOverlay;
+					_selectedNode.SelectionBar.BackgroundColor = theme.AccentMimimalOverlay;
 					OnAfterSelect(null);
 				}
 			}
