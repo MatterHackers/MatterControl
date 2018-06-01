@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 				HAnchor = HAnchor.Fit | HAnchor.Left,
 				Visible = false, // content starts out not visible
 				Name = "content",
-				Margin = new BorderDouble(25, 3),
+				Margin = new BorderDouble(12, 3),
 			};
 			AddChild(content);
 
