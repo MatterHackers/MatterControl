@@ -32,6 +32,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.CustomWidgets.TreeView;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -71,11 +72,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private static void AddTree(IObject3D item, TreeNode parent, ThemeConfig theme)
 		{
-			var node = AddItem(item, parent, theme);
+			// Suppress MeshWrapper nodes in treeview - retain parent node as context reference
+			var contextNode = (item is MeshWrapper) ? parent : AddItem(item, parent, theme);
 
 			foreach (var child in item.Children)
 			{
-				AddTree(child, node, theme);
+				AddTree(child, contextNode, theme);
 			}
 		}
 
