@@ -679,11 +679,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (e == null)
 				{
 					Scene.ClearSelection();
-
-					foreach (var sceneItem in matchingSceneChildren.ToList())
-					{
-						Scene.AddToSelection(sceneItem);
-					}
+					Scene.SetSelection(matchingSceneChildren.ToList());
 				}
 				else
 				{
