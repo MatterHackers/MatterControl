@@ -37,6 +37,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets.TreeView;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
@@ -44,7 +45,7 @@ using Newtonsoft.Json.Converters;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class TextObject3D : Object3D, IPublicPropertyObject
+	public class TextObject3D : Object3D, IPublicPropertyObject, IVisualLeafNode
 	{
 		public TextObject3D()
 		{

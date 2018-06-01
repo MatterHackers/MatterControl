@@ -49,9 +49,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Suppress MeshWrapper nodes in treeview - retain parent node as context reference
 			var contextNode = (item is MeshWrapper) ? parent : AddItem(item, parent, theme);
 
-			foreach (var child in item.Children)
+			if (!(item is IVisualLeafNode))
 			{
-				AddTree(child, contextNode, theme);
+				foreach (var child in item.Children)
+				{
+					AddTree(child, contextNode, theme);
+				}
 			}
 
 			return contextNode;

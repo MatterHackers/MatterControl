@@ -29,13 +29,16 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections;
-using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 {
+	public interface IVisualLeafNode
+	{
+	}
+
 	public class TreeView : ScrollableWidget
 	{
 		private ThemeConfig theme;
