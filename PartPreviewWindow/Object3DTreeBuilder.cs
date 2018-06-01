@@ -110,6 +110,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					iconView.ImageSet += (s1, e1) =>
 					{
 						node.Image = iconView.imageWidget.Image;
+						node.Invalidate();
 					};
 				};
 			}
