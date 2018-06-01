@@ -90,10 +90,18 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 
 			this.TitleBar.AddChild(expandCheckBox);
 
+			this.SelectionBar = new FlowLayoutWidget()
+			{
+				VAnchor = VAnchor.Fit,
+				HAnchor = HAnchor.Fit,
+				Selectable = false
+			};
+			this.TitleBar.AddChild(this.SelectionBar);
+
 			// add a check box
 			if (Image != null)
 			{
-				this.TitleBar.AddChild(imageWidget = new ImageWidget(this.Image)
+				this.SelectionBar.AddChild(imageWidget = new ImageWidget(this.Image)
 				{
 					VAnchor = VAnchor.Center,
 					BackgroundColor = new Color(theme.Colors.PrimaryTextColor, 12),
@@ -101,7 +109,9 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 					Selectable = false
 				});
 			};
-			this.TitleBar.AddChild(textWidget = new TextWidget(this.Text, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+
+
+			this.SelectionBar.AddChild(textWidget = new TextWidget(this.Text, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 			{
 				Selectable = false,
 				AutoExpandBoundsToText = true,
@@ -113,7 +123,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 				HAnchor = HAnchor.Fit | HAnchor.Left,
 				Visible = false, // content starts out not visible
 				Name = "content",
-				Margin = new BorderDouble(25, 3),
+				Margin = new BorderDouble(12, 3),
 			};
 			AddChild(content);
 
@@ -121,6 +131,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 		}
 
 		public FlowLayoutWidget TitleBar { get; }
+
+		public FlowLayoutWidget SelectionBar { get; }
 
 		public void BeginEdit()
 		{
@@ -378,7 +390,14 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 		//     A TreeView that represents the parent tree view that the
 		//     tree node is assigned to, or null if the node has not been assigned to a tree
 		//     view.
-		public virtual TreeView TreeView => NodeParent.TreeView;
+
+		private TreeView _treeView;
+
+		public virtual TreeView TreeView
+		{
+			get => _treeView ?? NodeParent.TreeView;
+			set => _treeView = value;
+		}
 
 		private void OnImageChanged(EventArgs args)
 		{

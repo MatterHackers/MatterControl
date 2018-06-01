@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			TrackballTumbleWidget.TransformState = TrackBallTransformType.Rotation;
 
-			selectedObjectPanel = new SelectedObjectPanel(this, Scene, theme, printer)
+			selectedObjectPanel = new SelectedObjectPanel(this, sceneContext, theme)
 			{
 				VAnchor = VAnchor.Stretch,
 			};
@@ -187,12 +187,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Absolute,
-				Height = Printer.ViewState.SceneTreeHeight
+				Height = sceneContext.ViewState.SceneTreeHeight
 			};
 			modelViewSidePanel.AddChild(treeSection);
 
 			// add the tree view
-			this.RebuildTreeSection(new Object3D(), theme);
+			treeView = new TreeView(theme)
+			{
+				TextColor = theme.Colors.PrimaryTextColor,
+				PointSize = theme.DefaultFontSize,
+				HAnchor =HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			};
+			treeView.AfterSelect += (s, e) =>
+			{
+				selectedObjectPanel.SetActiveItem((IObject3D)treeView.SelectedNode.Tag);
+			};
+			treeSection.AddChild(treeView);
 
 			modelViewSidePanel.AddChild(selectedObjectPanel);
 			splitContainer.AddChild(modelViewSidePanel);
@@ -233,24 +244,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (this.Printer !=null)
 			{
 				this.Printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
-			}
-		}
-
-		private void RebuildTreeSection(IObject3D selection, ThemeConfig theme)
-		{
-			treeSection.CloseAllChildren();
-
-			treeView = Object3DTreeBuilder.GetPartTreeView(selection, theme);
-			treeSection.AddChild(treeView);
-			treeView.AfterSelect += (s, e) =>
-			{
-				selectedObjectPanel.SetActiveItem((IObject3D)treeView.SelectedNode.Tag);
-			};
-
-			if (this.Parent != null)
-			{
-				treeView.TopNode.Padding = treeView.TopNode.Padding.Clone(left: 8, top: 8);
-				treeView.SelectedNode = treeView.TopNode;
 			}
 		}
 
@@ -365,10 +358,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (Printer != null)
-			{
-				Printer.ViewState.SceneTreeHeight = treeSection.Height;
-			}
+			sceneContext.ViewState.SceneTreeHeight = treeSection.Height;
 
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;
 			Scene.SelectionChanged -= Scene_SelectionChanged;
@@ -689,11 +679,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (e == null)
 				{
 					Scene.ClearSelection();
-
-					foreach (var sceneItem in matchingSceneChildren.ToList())
-					{
-						Scene.AddToSelection(sceneItem);
-					}
+					Scene.SetSelection(matchingSceneChildren.ToList());
 				}
 				else
 				{
@@ -1225,9 +1211,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// Top level selection only - rebuild tree
-			if (Scene.Children.Contains(Scene.SelectedItem))
+			var selection = Scene.SelectedItem;
+			if (Scene.Children.Contains(selection))
 			{
-				this.RebuildTreeSection(Scene.SelectedItem, theme);
+				treeView.ScrollArea.CloseAllChildren();
+
+				var rootNode = Object3DTreeBuilder.BuildTree(selection, theme);
+				treeView.AddChild(rootNode);
+				rootNode.TreeView = treeView;
+
+				if (this.Parent != null)
+				{
+					rootNode.Padding = rootNode.Padding.Clone(left: 8, top: 8);
+					treeView.SelectedNode = rootNode;
+				}
 			}
 		}
 

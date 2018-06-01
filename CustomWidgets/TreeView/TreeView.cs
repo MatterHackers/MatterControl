@@ -29,40 +29,32 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections;
-using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 {
-	public class TopNode : TreeNode
+	public interface IVisualLeafNode
 	{
-		internal TreeView treeView;
-		public override TreeView TreeView => treeView;
 	}
 
 	public class TreeView : ScrollableWidget
 	{
 		private ThemeConfig theme;
 
-		public TreeView(TopNode topNode, ThemeConfig theme)
-			: this(topNode, 0, 0, theme)
+		public TreeView(ThemeConfig theme)
+			: this(0, 0, theme)
 		{
 		}
 
-		public TreeView(TopNode topNode, int width, int height, ThemeConfig theme)
+		public TreeView(int width, int height, ThemeConfig theme)
 			: base(width, height)
 		{
 			this.theme = theme;
 			this.AutoScroll = true;
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
-			this.TopNode = topNode;
-
-			topNode.treeView = this;
-
-			this.AddChild(TopNode);
 		}
 
 		#region Events
@@ -207,19 +199,20 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 
 		public TreeNode SelectedNode
 		{
-			get => _selectedNode; set
+			get => _selectedNode;
+			set
 			{
 				if (value != _selectedNode)
 				{
 					OnBeforeSelect(null);
 
-					foreach (var node in this.Descendants<TreeNode>().Where((c) => c != value))
+					if (_selectedNode != null)
 					{
-						node.TitleBar.BackgroundColor = Color.Transparent;
+						_selectedNode.SelectionBar.BackgroundColor = Color.Transparent;
 					}
 
 					_selectedNode = value;
-					_selectedNode.TitleBar.BackgroundColor = theme.AccentMimimalOverlay;
+					_selectedNode.SelectionBar.BackgroundColor = theme.AccentMimimalOverlay;
 					OnAfterSelect(null);
 				}
 			}
@@ -230,7 +223,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.TreeView
 		public bool ShowPlusMinus { get; set; }
 		public bool ShowRootLines { get; set; }
 		public bool Sorted { get; set; }
-		public TreeNode TopNode { get; }
 
 		public IComparer TreeViewNodeSorter { get; set; }
 
