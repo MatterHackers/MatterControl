@@ -298,10 +298,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void SelectAll()
 		{
 			Scene.ClearSelection();
-			foreach (var child in Scene.Children.ToList())
-			{
-				Scene.AddToSelection(child);
-			}
+
+			// Select All - set selection to all scene children
+			Scene.SetSelection(Scene.Children.ToList());
 		}
 
 		private void Draw_GlOpaqueContent(object sender, DrawEventArgs e)
