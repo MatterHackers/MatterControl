@@ -36,58 +36,50 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public class IntersectionObject3D : MeshWrapperObject3D
+	public class IntersectionObject3D : MeshWrapperObject3D, IPublicPropertyObject
 	{
 		public IntersectionObject3D()
 		{
 			Name = "Intersection";
 		}
 
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Content)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
+				&& invalidateType.Source != this
+				&& !RebuildSuspended)
+			{
+				Rebuild(null);
+			}
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
+		}
+
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
-			throw new NotImplementedException();
-		}
-	}
+			SuspendRebuild();
+			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
-	public class IntersectionEditor : IObject3DEditor
-	{
-		private IntersectionObject3D group;
-		private View3DWidget view3DWidget;
-		public string Name => "Intersection";
-
-		public bool Unlocked { get; } = true;
-
-		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(IntersectionObject3D) };
-
-		public GuiWidget Create(IObject3D group, View3DWidget view3DWidget, ThemeConfig theme)
-		{
-			this.view3DWidget = view3DWidget;
-			this.group = group as IntersectionObject3D;
-
-			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-
-			ProcessBooleans(group);
-
-			return mainContainer;
-		}
-
-		private void ProcessBooleans(IObject3D group)
-		{
 			ApplicationController.Instance.Tasks.Execute("Intersection".Localize(), (reporter, cancellationToken) =>
 			{
 				var progressStatus = new ProgressStatus();
 
-				var participants = group.DescendantsAndSelf().Where((obj) => obj.OwnerID == group.ID);
+				var participants = this.DescendantsAndSelf().Where((obj) => obj.OwnerID == this.ID);
 
 				if (participants.Count() > 1)
 				{
 					var first = participants.First();
 
-					var totalOperations = participants.Count()-1;
+					var totalOperations = participants.Count() - 1;
 					double amountPerOperation = 1.0 / totalOperations;
 					double percentCompleted = 0;
 
@@ -103,8 +95,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 							transformedKeep = PolygonMesh.Csg.CsgOperations.Intersect(transformedKeep, transformedRemove, (status, progress0To1) =>
 							{
-								// Abort if flagged
-								cancellationToken.ThrowIfCancellationRequested();
+									// Abort if flagged
+									cancellationToken.ThrowIfCancellationRequested();
 
 								progressStatus.Status = status;
 								progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
@@ -123,8 +115,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					}
 				}
 
+				UiThread.RunOnIdle(() =>
+				{
+					ResumeRebuild();
+					base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+				});
+
 				return Task.CompletedTask;
 			});
+
+			base.Rebuild(null);
 		}
 	}
 }

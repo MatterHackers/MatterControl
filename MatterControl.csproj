@@ -106,6 +106,9 @@
     <Compile Include="PartPreviewWindow\GCodeDetails\IToggleOption.cs" />
     <Compile Include="PartPreviewWindow\LeftClipFlowLayoutWidget.cs" />
     <Compile Include="PartPreviewWindow\Object3DTreeBuilder.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\CombineObject3D.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\IntersectionObject3D.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\SubtractAndReplaceObject3D.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\SubtractObject3D.cs" />
     <Compile Include="PrinterControls\ControlWidgets\CalibrationControls.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingFunctions.cs" />
@@ -175,10 +178,8 @@
     <Compile Include="PartPreviewWindow\MoveItemPage.cs" />
     <Compile Include="PartPreviewWindow\PlusTab\ExplorerBar.cs" />
     <Compile Include="PartPreviewWindow\RoundedToggleSwitch.cs" />
-    <Compile Include="PartPreviewWindow\View3D\Actions\CombineEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\ImageEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\MeshWrapperObject3D.cs" />
-    <Compile Include="PartPreviewWindow\View3D\Actions\SubtractAndReplace.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\OverflowBar.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\PrintPopupMenu.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\SliceButton.cs" />
@@ -227,7 +228,6 @@
     <Compile Include="PartPreviewWindow\SectionWidget.cs" />
     <Compile Include="PartPreviewWindow\SliceLayerSelector.cs" />
     <Compile Include="PartPreviewWindow\Toolbar.cs" />
-    <Compile Include="PartPreviewWindow\View3D\Actions\IntersectionEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\MeshWrapper.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\CancelButton.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\PauseResumeButton.cs" />

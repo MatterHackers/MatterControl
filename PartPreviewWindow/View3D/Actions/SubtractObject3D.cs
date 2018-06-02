@@ -32,7 +32,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.MatterControl.DesignTools.EditableTypes;
 using MatterHackers.PolygonMesh;
 using System;
 using System.Collections.Generic;
@@ -42,7 +41,6 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-
 	public class SubtractObject3D : MeshWrapperObject3D, IPublicPropertyObject
 	{
 		public SubtractObject3D()
@@ -50,12 +48,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			Name = "Subtract";
 		}
 
+		public ChildrenSelector ItemsToSubtract { get; set; } = new ChildrenSelector();
+
 		public static void Subtract(List<IObject3D> keepObjects, List<IObject3D> removeObjects)
 		{
 			Subtract(keepObjects, removeObjects, CancellationToken.None, null);
 		}
-
-		public ChildrenSelector ItemsToSubtract { get; set; } = new ChildrenSelector();
 
 		public static void Subtract(List<IObject3D> keepObjects, List<IObject3D> removeObjects, CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
 		{

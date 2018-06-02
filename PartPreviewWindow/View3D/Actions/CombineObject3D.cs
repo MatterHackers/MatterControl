@@ -36,51 +36,39 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public class CombineObject3D : MeshWrapperObject3D
+	public class CombineObject3D : MeshWrapperObject3D, IPublicPropertyObject
 	{
 		public CombineObject3D()
 		{
 			Name = "Combine";
 		}
 
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Content)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
+				&& invalidateType.Source != this
+				&& !RebuildSuspended)
+			{
+				Rebuild(null);
+			}
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
+		}
+
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
-			throw new NotImplementedException();
-		}
-	}
+			SuspendRebuild();
+			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
-	public class CombineEditor : IObject3DEditor
-	{
-		private CombineObject3D group;
-		private View3DWidget view3DWidget;
-		public string Name => "Combine";
-
-		public bool Unlocked { get; } = true;
-
-		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(CombineObject3D) };
-
-		public GuiWidget Create(IObject3D group, View3DWidget view3DWidget, ThemeConfig theme)
-		{
-			this.view3DWidget = view3DWidget;
-			this.group = group as CombineObject3D;
-
-			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-
-			if (group is CombineObject3D operationNode
-				&& operationNode.Descendants().Where((obj) => obj.OwnerID == group.ID).Any())
-			{
-				ProcessBooleans(group);
-			}
-
-			return mainContainer;
-		}
-
-		private void ProcessBooleans(IObject3D group)
-		{
 			// spin up a task to remove holes from the objects in the group
 			ApplicationController.Instance.Tasks.Execute(
 				"Combine".Localize(),
@@ -89,14 +77,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					var progressStatus = new ProgressStatus();
 					reporter.Report(progressStatus);
 
-					var participants = group.Descendants().Where(o => o.OwnerID == group.ID).ToList();
+					var participants = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
 
 					if (participants.Count() > 1)
 					{
 						Combine(participants, cancellationToken, reporter);
 					}
+
+					UiThread.RunOnIdle(() =>
+					{
+						ResumeRebuild();
+						base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+					});
+
 					return Task.CompletedTask;
 				});
+
+			base.Rebuild(null);
 		}
 
 		public static void Combine(List<IObject3D> participants)
