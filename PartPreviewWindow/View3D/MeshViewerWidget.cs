@@ -573,10 +573,6 @@ namespace MatterHackers.MeshVisualizer
 			{
 				drawColor = new Color(Color.Yellow, 120);
 			}
-			else if (item.WorldOutputType() == PrintOutputTypes.Hole)
-			{
-				drawColor = new Color(Color.Gray, 120);
-			}
 
 			// If there is a printer - check if the object is within the bed volume (has no AABB outside the bed volume)
 			if (sceneContext.Printer != null)

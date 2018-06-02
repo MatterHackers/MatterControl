@@ -137,7 +137,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				{
 					var radioButton = new RadioButton(string.IsNullOrWhiteSpace(item.Name) ? $"{itemIndex}" : $"{item.Name}")
 					{
-						Checked = item.OutputType == PrintOutputTypes.Hole,
 						TextColor = ActiveTheme.Instance.PrimaryTextColor
 					};
 					radioSiblings.Add(radioButton);
@@ -148,7 +147,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				{
 					selectWidget = new CheckBox(string.IsNullOrWhiteSpace(item.Name) ? $"{itemIndex}" : $"{item.Name}")
 					{
-						Checked = item.OutputType == PrintOutputTypes.Hole,
 						TextColor = ActiveTheme.Instance.PrimaryTextColor
 					};
 				}
@@ -161,11 +159,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					//group.ResetMeshWrappers();
 
 					// and set the output type for this checkbox
-					item.OutputType = checkBox.Checked ? PrintOutputTypes.Hole : PrintOutputTypes.Solid;
-
-					int holeCount = children.Where((o) => o.OutputType == PrintOutputTypes.Hole).Count();
-					int solidCount = children.Where((o) => o.OutputType != PrintOutputTypes.Hole).Count();
-					updateButton.Enabled = children.Count != holeCount && children.Count != solidCount;
 				};
 
 				tabContainer.AddChild(rowContainer);
@@ -175,29 +168,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				.Where((obj) => obj.OwnerID == group.ID)
 				.Where((objId) => objId.Mesh != objId.Children.First().Mesh).Any();
 
-			bool selectionHasBeenMade = group.DescendantsAndSelf()
-				.Where((obj) => obj.OwnerID == group.ID && obj.OutputType == PrintOutputTypes.Hole)
-				.Any();
-
-			if (!operationApplied && !selectionHasBeenMade)
-			{
-				// select the last item
-				if (tabContainer.Descendants().Where((d) => d is ICheckbox).Last() is ICheckbox lastCheckBox)
-				{ 
-					lastCheckBox.Checked = true;
-				}
-			}
-			else
-			{
-				updateButton.Enabled = !operationApplied;
-			}
-
 			// add this last so it is at the bottom
 			tabContainer.AddChild(updateButton);
 		}
 
 		private void ProcessBooleans(IObject3D group)
 		{
+			/*
 			// spin up a task to calculate the paint
 			ApplicationController.Instance.Tasks.Execute("Subtract".Localize(), (reporter, cancellationToken) =>
 			{
@@ -285,6 +262,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 				return Task.CompletedTask;
 			});
+			*/
 		}
 	}
 }

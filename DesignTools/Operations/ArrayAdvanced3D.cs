@@ -104,15 +104,4 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			base.Remove(undoBuffer);
 		}
 	}
-
-	public class DirectionAxis
-	{
-		public Vector3 Normal { get; set; }
-		public Vector3 Origin { get; set; }
-	}
-
-	public class DirectionVector
-	{
-		public Vector3 Normal { get; set; }
-	}
 }

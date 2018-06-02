@@ -444,12 +444,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			});
 
 			ResumeRebuild();
-
 			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)
 		{
+			SuspendRebuild();
+
 			// put everything back to where it was before the arrange started
 			if (OriginalChildrenBounds.Count == Children.Count)
 			{
@@ -463,6 +464,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			base.Remove(undoBuffer);
+
+			ResumeRebuild();
+			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
 
 		public void UpdateControls(PPEContext context)

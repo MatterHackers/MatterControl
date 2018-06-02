@@ -92,30 +92,30 @@ namespace MatterHackers.MatterControl.DesignTools
 			SuspendRebuild();
 			var aabb = this.GetAxisAlignedBoundingBox();
 
-			this.Children.Modify(list =>
+			this.Children.Modify((list) =>
 			{
 				list.Clear();
+
+				var offest = 0.0;
+				double pointsToMm = 0.352778;
+				foreach (var letter in NameToWrite.ToCharArray())
+				{
+					var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.GetTypeFace(Font), PointSize))
+					{
+						ResolutionScale = 10
+					};
+					var scalledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
+					IObject3D letterObject = new Object3D()
+					{
+						Mesh = VertexSourceToMesh.Extrude(scalledLetterPrinter, Height)
+					};
+
+					letterObject.Matrix = Matrix4X4.CreateTranslation(offest, 0, 0);
+					list.Add(letterObject);
+
+					offest += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
+				}
 			});
-
-			var offest = 0.0;
-			double pointsToMm = 0.352778;
-			foreach (var letter in NameToWrite.ToCharArray())
-			{
-				var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.GetTypeFace(Font), PointSize))
-				{
-					ResolutionScale = 10
-				};
-				var scalledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
-				IObject3D letterObject = new Object3D()
-				{
-					Mesh = VertexSourceToMesh.Extrude(scalledLetterPrinter, Height)
-				};
-
-				letterObject.Matrix = Matrix4X4.CreateTranslation(offest, 0, 0);
-				this.Children.Add(letterObject);
-
-				offest += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
-			}
 
 
 			if (aabb.ZSize > 0)

@@ -52,8 +52,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public FitType FitType { get; set; } = FitType.Box;
 
 		public double Width { get; set; }
-		public double Diameter { get; set ; }
 		public double Depth { get; set; }
+		public double Diameter { get; set; }
 		public double Height { get; set; }
 
 		[Description("Set the rules for how to maintain the part while scaling.")]
@@ -74,6 +74,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override void Apply(UndoBuffer undoBuffer)
 		{
+			SuspendRebuild();
+
 			// push our matrix into our children
 			foreach (var child in this.Children)
 			{
@@ -89,10 +91,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				list.Remove(this);
 				list.AddRange(ScaleItem.Children);
 			});
+
+			ResumeRebuild();
+			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)
 		{
+			SuspendRebuild();
+
 			// push our matrix into inner children
 			foreach (var child in ScaleItem.Children)
 			{
@@ -105,6 +112,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				list.Remove(this);
 				list.AddRange(ScaleItem.Children);
 			});
+
+			ResumeRebuild();
+			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)

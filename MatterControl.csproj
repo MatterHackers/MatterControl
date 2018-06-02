@@ -89,6 +89,8 @@
     <Compile Include="CustomWidgets\TreeView\TreeView.cs" />
     <Compile Include="DesignTools\Attributes\ShowSearchFieldAttribute.cs" />
     <Compile Include="DesignTools\Interfaces\IPublicPropertyObject.cs" />
+    <Compile Include="DesignTools\EditableTypes\DirectionAxis.cs" />
+    <Compile Include="DesignTools\EditableTypes\DirectionVector.cs" />
     <Compile Include="DesignTools\Operations\Group3D.cs" />
     <Compile Include="DesignTools\Operations\OperationSource.cs" />
     <Compile Include="DesignTools\Operations\PinchObject3D.cs" />
@@ -227,7 +229,6 @@
     <Compile Include="PartPreviewWindow\Toolbar.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\IntersectionEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\MeshWrapper.cs" />
-    <Compile Include="PartPreviewWindow\View3D\Actions\SubtractEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\CancelButton.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\PauseResumeButton.cs" />
     <Compile Include="Library\ReadOnlyStreamItem.cs" />
