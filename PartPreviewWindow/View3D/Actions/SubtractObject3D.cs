@@ -31,6 +31,8 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.DesignTools.EditableTypes;
 using MatterHackers.PolygonMesh;
 using System;
 using System.Collections.Generic;
@@ -40,68 +42,20 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public class SubtractObject3D : MeshWrapperObject3D
+
+	public class SubtractObject3D : MeshWrapperObject3D, IPublicPropertyObject
 	{
 		public SubtractObject3D()
 		{
 			Name = "Subtract";
 		}
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
-		{
-			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Content)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
-				&& invalidateType.Source != this
-				&& !RebuildSuspended)
-			{
-				Rebuild(null);
-			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
-		}
-
-		public override void Rebuild(UndoBuffer undoBuffer)
-		{
-			this.DebugDepth("Rebuild");
-			SuspendRebuild();
-			ResetMeshWrapperMeshes(Object3DPropertyFlags.All & (~Object3DPropertyFlags.OutputType), CancellationToken.None);
-
-			// spin up a task to remove holes from the objects in the group
-			ApplicationController.Instance.Tasks.Execute(
-				"Subtract".Localize(),
-				(reporter, cancellationToken) =>
-				{
-					var progressStatus = new ProgressStatus();
-					reporter.Report(progressStatus);
-
-					var removeObjects = this.Children
-						.Where((i) => i.WorldOutputType(this) == PrintOutputTypes.Hole)
-						.SelectMany((h) => h.DescendantsAndSelf())
-						.Where((c) => c.OwnerID == this.ID).ToList();
-					var keepObjects = this.Children
-						.Where((i) => i.WorldOutputType(this) != PrintOutputTypes.Hole)
-						.SelectMany((h) => h.DescendantsAndSelf())
-						.Where((c) => c.OwnerID == this.ID).ToList();
-
-					Subtract(keepObjects, removeObjects, cancellationToken, reporter);
-
-					ResumeRebuild();
-
-					UiThread.RunOnIdle(() => base.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh)));
-
-					return Task.CompletedTask;
-				});
-
-			base.Rebuild(null);
-		}
-
 		public static void Subtract(List<IObject3D> keepObjects, List<IObject3D> removeObjects)
 		{
 			Subtract(keepObjects, removeObjects, CancellationToken.None, null);
 		}
+
+		public ChildrenSelector ItemsToSubtract { get; set; } = new ChildrenSelector();
 
 		public static void Subtract(List<IObject3D> keepObjects, List<IObject3D> removeObjects, CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
 		{
@@ -142,9 +96,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						inverse.Invert();
 						transformedKeep.Transform(inverse);
 
+						keep.SuspendRebuild();
 						keep.Mesh = transformedKeep;
-						// TODO: make this the subtract object when it is available
-						keep.Invalidate(new InvalidateArgs(keep, InvalidateType.Content));
+						keep.ResumeRebuild();
 
 						percentCompleted += amountPerOperation;
 						progressStatus.Progress0To1 = percentCompleted;
@@ -154,6 +108,59 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					remove.Visible = false;
 				}
 			}
+		}
+
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Content)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
+				&& invalidateType.Source != this
+				&& !RebuildSuspended)
+			{
+				Rebuild(null);
+			}
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
+		}
+
+		public override void Rebuild(UndoBuffer undoBuffer)
+		{
+			this.DebugDepth("Rebuild");
+			SuspendRebuild();
+			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
+
+			// spin up a task to remove holes from the objects in the group
+			ApplicationController.Instance.Tasks.Execute(
+				"Subtract".Localize(),
+				(reporter, cancellationToken) =>
+				{
+					var progressStatus = new ProgressStatus();
+					reporter.Report(progressStatus);
+
+					var removeObjects = this.Children
+						.Where((i) => ItemsToSubtract.Contains(i.ID))
+						.SelectMany((h) => h.DescendantsAndSelf())
+						.Where((c) => c.OwnerID == this.ID).ToList();
+					var keepObjects = this.Children
+						.Where((i) => !ItemsToSubtract.Contains(i.ID))
+						.SelectMany((h) => h.DescendantsAndSelf())
+						.Where((c) => c.OwnerID == this.ID).ToList();
+
+					Subtract(keepObjects, removeObjects, cancellationToken, reporter);
+
+					UiThread.RunOnIdle(() =>
+					{
+						ResumeRebuild();
+						base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+					});
+
+					return Task.CompletedTask;
+				});
+
+			base.Rebuild(null);
 		}
 	}
 }

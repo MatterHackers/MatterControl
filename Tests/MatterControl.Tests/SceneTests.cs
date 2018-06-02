@@ -186,12 +186,12 @@ namespace MatterHackers.PolygonMesh.UnitTests
 		private readonly Matrix4X4 BlueMatrix = Matrix4X4.CreateTranslation(20, 0, 0);
 
 		private readonly PrintOutputTypes RootOutputType = PrintOutputTypes.Solid;
-		private readonly PrintOutputTypes SuperGroupOutputType = PrintOutputTypes.Hole;
+		private readonly PrintOutputTypes SuperGroupOutputType = PrintOutputTypes.Solid;
 		private readonly PrintOutputTypes GroupOutputType = PrintOutputTypes.Solid;
 
 		private readonly PrintOutputTypes RedOutputType = PrintOutputTypes.Support;
 		private readonly PrintOutputTypes GreenOutputType = PrintOutputTypes.Support;
-		private readonly PrintOutputTypes BlueOutputType = PrintOutputTypes.Hole;
+		private readonly PrintOutputTypes BlueOutputType = PrintOutputTypes.Solid;
 
 		public InteractiveScene SampleScene()
 		{

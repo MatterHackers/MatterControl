@@ -71,16 +71,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
 			if (group is CombineObject3D operationNode
-				&& operationNode.Descendants().Where((obj) => obj.OwnerID == group.ID).All(c => c.OutputType != PrintOutputTypes.Hole))
+				&& operationNode.Descendants().Where((obj) => obj.OwnerID == group.ID).Any())
 			{
-				bool first = true;
-				// set all but one mesh to look like holes
-				foreach (var item in group.DescendantsAndSelf().Where((obj) => obj.OwnerID == group.ID).ToList())
-				{
-					item.OutputType = first ? PrintOutputTypes.Solid : PrintOutputTypes.Hole;
-					first = false;
-				}
-
 				ProcessBooleans(group);
 			}
 

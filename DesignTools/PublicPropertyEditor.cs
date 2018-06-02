@@ -39,7 +39,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.MatterControl.DesignTools.EditableTypes;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -86,7 +86,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			typeof(double), typeof(int), typeof(char), typeof(string), typeof(bool),
 			typeof(Vector2), typeof(Vector3),
-			typeof(DirectionVector), typeof(DirectionAxis)
+			typeof(DirectionVector), typeof(DirectionAxis),
+			typeof(ChildrenSelector)
 		};
 
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -145,6 +146,30 @@ namespace MatterHackers.MatterControl.DesignTools
 			rowContainer.AddChild(new HorizontalSpacer());
 
 			return rowContainer;
+		}
+
+		private static FlowLayoutWidget CreateSettingsColumn(EditableProperty property)
+		{
+			return CreateSettingsColumn(property.DisplayName.Localize(), property.Description.Localize());
+		}
+
+		private static FlowLayoutWidget CreateSettingsColumn(string labelText, string toolTipText = null)
+		{
+			var columnContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+				Padding = new BorderDouble(5),
+				ToolTipText = toolTipText
+			};
+
+			var label = new TextWidget(labelText + ":", pointSize: 11, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				Margin = new BorderDouble(0, 3, 0, 0),
+				HAnchor = HAnchor.Left
+			};
+			columnContainer.AddChild(label);
+
+			return columnContainer;
 		}
 
 		public static IEnumerable<EditableProperty> GetEditablePropreties(IObject3D item)
@@ -399,6 +424,12 @@ namespace MatterHackers.MatterControl.DesignTools
 					};
 				}
 			}
+			else if (property.Value is ChildrenSelector childSelector)
+			{
+				rowContainer = CreateSettingsColumn(property);
+				rowContainer.AddChild(CreateSelector(childSelector, property.Item, theme));
+				editControlsContainer.AddChild(rowContainer);
+			}
 			// create a int editor
 			else if (property.Value is int intValue)
 			{
@@ -497,6 +528,97 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			// remember the row name and widget
 			context.editRows.Add(property.PropertyInfo.Name, rowContainer);
+		}
+
+		private static GuiWidget CreateSelector(ChildrenSelector childSelector, IObject3D parent, ThemeConfig theme)
+		{
+			GuiWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+
+			var children = parent.Children.ToList();
+
+			Dictionary<ICheckbox, IObject3D> objectChecks = new Dictionary<ICheckbox, IObject3D>();
+
+			List<GuiWidget> radioSiblings = new List<GuiWidget>();
+			for (int i = 0; i < children.Count; i++)
+			{
+				var itemIndex = i;
+				var child = children[itemIndex];
+				FlowLayoutWidget rowContainer = new FlowLayoutWidget();
+
+				GuiWidget selectWidget;
+				if (children.Count == 2)
+				{
+					var radioButton = new RadioButton(string.IsNullOrWhiteSpace(child.Name) ? $"{itemIndex}" : $"{child.Name}")
+					{
+						Checked = childSelector.Contains(child.ID),
+						TextColor = ActiveTheme.Instance.PrimaryTextColor
+					};
+					radioSiblings.Add(radioButton);
+					radioButton.SiblingRadioButtonList = radioSiblings;
+					selectWidget = radioButton;
+				}
+				else
+				{
+					selectWidget = new CheckBox(string.IsNullOrWhiteSpace(child.Name) ? $"{itemIndex}" : $"{child.Name}")
+					{
+						Checked = childSelector.Contains(child.ID),
+						TextColor = ActiveTheme.Instance.PrimaryTextColor
+					};
+				}
+
+				objectChecks.Add((ICheckbox)selectWidget, child);
+
+				rowContainer.AddChild(selectWidget);
+				ICheckbox checkBox = selectWidget as ICheckbox;
+
+				checkBox.CheckedStateChanged += (s, e) =>
+				{
+					if (s is ICheckbox checkbox)
+					{
+						if (checkBox.Checked)
+						{
+							if (!childSelector.Contains(objectChecks[checkbox].ID))
+							{
+								childSelector.Add(objectChecks[checkbox].ID);
+							}
+						}
+						else
+						{
+							if (childSelector.Contains(objectChecks[checkbox].ID))
+							{
+								childSelector.Remove(objectChecks[checkbox].ID);
+							}
+						}
+					}
+				};
+
+				tabContainer.AddChild(rowContainer);
+			}
+
+			/*
+			bool operationApplied = parent.Descendants()
+				.Where((obj) => obj.OwnerID == parent.ID)
+				.Where((objId) => objId.Mesh != objId.Children.First().Mesh).Any();
+
+			bool selectionHasBeenMade = parent.Descendants()
+				.Where((obj) => obj.OwnerID == parent.ID && obj.OutputType == PrintOutputTypes.Hole)
+				.Any();
+
+			if (!operationApplied && !selectionHasBeenMade)
+			{
+				// select the last item
+				if (tabContainer.Descendants().Where((d) => d is ICheckbox).Last() is ICheckbox lastCheckBox)
+				{
+					lastCheckBox.Checked = true;
+				}
+			}
+			else
+			{
+				updateButton.Enabled = !operationApplied;
+			}
+			*/
+
+			return tabContainer;
 		}
 
 		private void AddUnlockLinkIfRequired(PPEContext context, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
