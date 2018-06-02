@@ -30,164 +30,62 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public class SubtractAndReplaceObject3D : MeshWrapperObject3D
+	public class SubtractAndReplaceObject3D : MeshWrapperObject3D, IPublicPropertyObject
 	{
 		public SubtractAndReplaceObject3D()
 		{
 			Name = "Subtract and Replace";
 		}
 
+		public ChildrenSelector ItemsToSubtract { get; set; } = new ChildrenSelector();
+
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Content)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
+				&& invalidateType.Source != this
+				&& !RebuildSuspended)
+			{
+				Rebuild(null);
+			}
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
+		}
+
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
-			throw new NotImplementedException();
-		}
-	}
+			SuspendRebuild();
+			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
-	public class SubtractAndReplaceEditor : IObject3DEditor
-	{
-		private SubtractAndReplaceObject3D group;
-		private View3DWidget view3DWidget;
-		public string Name => "Subtract & Replace";
-
-		public bool Unlocked { get; } = true;
-
-		public GuiWidget Create(IObject3D group, View3DWidget view3DWidget, ThemeConfig theme)
-		{
-			this.view3DWidget = view3DWidget;
-			this.group = group as SubtractAndReplaceObject3D;
-
-			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-
-			if (group is SubtractAndReplaceObject3D)
-			{
-				AddPaintSelector(view3DWidget, mainContainer, theme);
-			}
-
-			return mainContainer;
-		}
-
-		public IEnumerable<Type> SupportedTypes() => new Type[]
-		{
-			typeof(SubtractAndReplaceObject3D),
-		};
-
-		private static FlowLayoutWidget CreateSettingsRow(string labelText)
-		{
-			var rowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
-			{
-				HAnchor = HAnchor.Stretch,
-				Padding = new BorderDouble(5)
-			};
-
-			var label = new TextWidget(labelText + ":", textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				Margin = new BorderDouble(0, 0, 3, 0),
-				VAnchor = VAnchor.Center
-			};
-			rowContainer.AddChild(label);
-
-			rowContainer.AddChild(new HorizontalSpacer());
-
-			return rowContainer;
-		}
-
-		private void AddPaintSelector(View3DWidget view3DWidget, FlowLayoutWidget tabContainer, ThemeConfig theme)
-		{
-			var children = group.Children.ToList();
-
-			tabContainer.AddChild(new TextWidget("Set Replace")
-			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.Left,
-				AutoExpandBoundsToText = true,
-			});
-
-			// create this early so we can use enable disable it on button changed state
-			var updateButton = theme.ButtonFactory.Generate("Update".Localize());
-			updateButton.Margin = new BorderDouble(5);
-			updateButton.HAnchor = HAnchor.Right;
-			updateButton.Click += (s, e) =>
-			{
-				// make sure the mesh on the group is not visible
-				//group.ResetMeshWrappers();
-				updateButton.Enabled = false;
-				ProcessBooleans(group);
-			};
-
-			List<GuiWidget> radioSiblings = new List<GuiWidget>();
-			for (int i = 0; i < children.Count; i++)
-			{
-				var itemIndex = i;
-				var item = children[itemIndex];
-				FlowLayoutWidget rowContainer = new FlowLayoutWidget();
-
-				GuiWidget selectWidget;
-				if (children.Count == 2)
-				{
-					var radioButton = new RadioButton(string.IsNullOrWhiteSpace(item.Name) ? $"{itemIndex}" : $"{item.Name}")
-					{
-						TextColor = ActiveTheme.Instance.PrimaryTextColor
-					};
-					radioSiblings.Add(radioButton);
-					radioButton.SiblingRadioButtonList = radioSiblings;
-					selectWidget = radioButton;
-				}
-				else
-				{
-					selectWidget = new CheckBox(string.IsNullOrWhiteSpace(item.Name) ? $"{itemIndex}" : $"{item.Name}")
-					{
-						TextColor = ActiveTheme.Instance.PrimaryTextColor
-					};
-				}
-				rowContainer.AddChild(selectWidget);
-				ICheckbox checkBox = selectWidget as ICheckbox;
-
-				checkBox.CheckedStateChanged += (s, e) =>
-				{
-					// make sure the mesh on the group is not visible
-					//group.ResetMeshWrappers();
-
-					// and set the output type for this checkbox
-				};
-
-				tabContainer.AddChild(rowContainer);
-			}
-
-			bool operationApplied = group.DescendantsAndSelf()
-				.Where((obj) => obj.OwnerID == group.ID)
-				.Where((objId) => objId.Mesh != objId.Children.First().Mesh).Any();
-
-			// add this last so it is at the bottom
-			tabContainer.AddChild(updateButton);
-		}
-
-		private void ProcessBooleans(IObject3D group)
-		{
-			/*
 			// spin up a task to calculate the paint
 			ApplicationController.Instance.Tasks.Execute("Subtract".Localize(), (reporter, cancellationToken) =>
 			{
 				var progressStatus = new ProgressStatus();
 
-				var paintObjects = group.Children
-					.Where((i) => i.OutputType == PrintOutputTypes.Hole)
+				var paintObjects = this.Children
+					.Where((i) => ItemsToSubtract.Contains(i.ID))
 					.SelectMany((h) => h.DescendantsAndSelf())
-					.Where((c) => c.OwnerID == group.ID).ToList();
-				var keepObjects = group.Children
-					.Where((i) => i.OutputType != PrintOutputTypes.Hole)
+					.Where((c) => c.OwnerID == this.ID).ToList();
+				var keepObjects = this.Children
+					.Where((i) => !ItemsToSubtract.Contains(i.ID))
 					.SelectMany((h) => h.DescendantsAndSelf())
-					.Where((c) => c.OwnerID == group.ID).ToList();
+					.Where((c) => c.OwnerID == this.ID).ToList();
 
 				if (paintObjects.Any()
 					&& keepObjects.Any())
@@ -225,7 +123,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							keep.Mesh = intersectAndSubtract.subtract;
 
 							// keep all the intersections together
-							if(paintMesh == null)
+							if (paintMesh == null)
 							{
 								paintMesh = intersectAndSubtract.intersect;
 							}
@@ -238,8 +136,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							{
 								break;
 							}
-
-							view3DWidget.Invalidate();
 						}
 
 						// move the paint mesh back to its original coordinates
@@ -254,15 +150,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					}
 				}
 
-				// and finally make sure all children are visible
-				foreach(var child in group.Children)
+				UiThread.RunOnIdle(() =>
 				{
-					child.OutputType = PrintOutputTypes.Default;
-				}
+					ResumeRebuild();
+					base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+				});
 
 				return Task.CompletedTask;
 			});
-			*/
 		}
 	}
 }
