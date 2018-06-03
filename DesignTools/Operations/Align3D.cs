@@ -53,23 +53,23 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	[Flags]
 	public enum Edge
 	{
-		LeftFront = Face.Left | Face.Front,
-		LeftBack = Face.Left | Face.Back,
-		LeftBottom = Face.Left | Face.Bottom,
-		LeftTop = Face.Left | Face.Top,
-		RightFront = Face.Right | Face.Front,
-		RightBack = Face.Right | Face.Back,
-		RightBottom = Face.Right | Face.Bottom,
-		RightTop = Face.Right | Face.Top,
-		FrontBottom = Face.Front | Face.Bottom,
-		FrontTop = Face.Front | Face.Top,
-		BackBottom = Face.Back | Face.Bottom,
-		BackTop = Face.Back | Face.Top
+		LeftFront = FaceAlign.Left | FaceAlign.Front,
+		LeftBack = FaceAlign.Left | FaceAlign.Back,
+		LeftBottom = FaceAlign.Left | FaceAlign.Bottom,
+		LeftTop = FaceAlign.Left | FaceAlign.Top,
+		RightFront = FaceAlign.Right | FaceAlign.Front,
+		RightBack = FaceAlign.Right | FaceAlign.Back,
+		RightBottom = FaceAlign.Right | FaceAlign.Bottom,
+		RightTop = FaceAlign.Right | FaceAlign.Top,
+		FrontBottom = FaceAlign.Front | FaceAlign.Bottom,
+		FrontTop = FaceAlign.Front | FaceAlign.Top,
+		BackBottom = FaceAlign.Back | FaceAlign.Bottom,
+		BackTop = FaceAlign.Back | FaceAlign.Top
 	}
 
 	[JsonConverter(typeof(StringEnumConverter))]
 	[Flags]
-	public enum Face
+	public enum FaceAlign
 	{
 		Left = 0x01,
 		Right = 0x02,
@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Align";
 		}
 
-		public Align3D(IObject3D objectToAlign, Face boundingFacesToAlign, IObject3D objectToAlignTo, Face boundingFacesToAlignTo, double offsetX = 0, double offsetY = 0, double offsetZ = 0, string name = "")
+		public Align3D(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, IObject3D objectToAlignTo, FaceAlign boundingFacesToAlignTo, double offsetX = 0, double offsetY = 0, double offsetZ = 0, string name = "")
 			: this(objectToAlign, boundingFacesToAlign, GetPositionToAlignTo(objectToAlignTo, boundingFacesToAlignTo, new Vector3(offsetX, offsetY, offsetZ)), name)
 		{
 			if (objectToAlign == objectToAlignTo)
@@ -197,41 +197,41 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public Align3D(IObject3D objectToAlign, Face boundingFacesToAlign, double positionToAlignToX = 0, double positionToAlignToY = 0, double positionToAlignToZ = 0, string name = "")
+		public Align3D(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, double positionToAlignToX = 0, double positionToAlignToY = 0, double positionToAlignToZ = 0, string name = "")
 			: this(objectToAlign, boundingFacesToAlign, new Vector3(positionToAlignToX, positionToAlignToY, positionToAlignToZ), name)
 		{
 		}
 
-		public Align3D(IObject3D objectToAlign, Face boundingFacesToAlign, Vector3 positionToAlignTo, double offsetX, double offsetY, double offsetZ, string name = "")
+		public Align3D(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, Vector3 positionToAlignTo, double offsetX, double offsetY, double offsetZ, string name = "")
 			: this(objectToAlign, boundingFacesToAlign, positionToAlignTo + new Vector3(offsetX, offsetY, offsetZ), name)
 		{
 		}
 
-		public Align3D(IObject3D item, Face boundingFacesToAlign, Vector3 positionToAlignTo, string name = "")
+		public Align3D(IObject3D item, FaceAlign boundingFacesToAlign, Vector3 positionToAlignTo, string name = "")
 		{
 			AxisAlignedBoundingBox bounds = item.GetAxisAlignedBoundingBox();
 
-			if (IsSet(boundingFacesToAlign, Face.Left, Face.Right))
+			if (IsSet(boundingFacesToAlign, FaceAlign.Left, FaceAlign.Right))
 			{
 				positionToAlignTo.X = positionToAlignTo.X - bounds.minXYZ.X;
 			}
-			if (IsSet(boundingFacesToAlign, Face.Right, Face.Left))
+			if (IsSet(boundingFacesToAlign, FaceAlign.Right, FaceAlign.Left))
 			{
 				positionToAlignTo.X = positionToAlignTo.X - bounds.minXYZ.X - (bounds.maxXYZ.X - bounds.minXYZ.X);
 			}
-			if (IsSet(boundingFacesToAlign, Face.Front, Face.Back))
+			if (IsSet(boundingFacesToAlign, FaceAlign.Front, FaceAlign.Back))
 			{
 				positionToAlignTo.Y = positionToAlignTo.Y - bounds.minXYZ.Y;
 			}
-			if (IsSet(boundingFacesToAlign, Face.Back, Face.Front))
+			if (IsSet(boundingFacesToAlign, FaceAlign.Back, FaceAlign.Front))
 			{
 				positionToAlignTo.Y = positionToAlignTo.Y - bounds.minXYZ.Y - (bounds.maxXYZ.Y - bounds.minXYZ.Y);
 			}
-			if (IsSet(boundingFacesToAlign, Face.Bottom, Face.Top))
+			if (IsSet(boundingFacesToAlign, FaceAlign.Bottom, FaceAlign.Top))
 			{
 				positionToAlignTo.Z = positionToAlignTo.Z - bounds.minXYZ.Z;
 			}
-			if (IsSet(boundingFacesToAlign, Face.Top, Face.Bottom))
+			if (IsSet(boundingFacesToAlign, FaceAlign.Top, FaceAlign.Bottom))
 			{
 				positionToAlignTo.Z = positionToAlignTo.Z - bounds.minXYZ.Z - (bounds.maxXYZ.Z - bounds.minXYZ.Z);
 			}
@@ -296,30 +296,30 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public static Vector3 GetPositionToAlignTo(IObject3D objectToAlignTo, Face boundingFacesToAlignTo, Vector3 extraOffset)
+		public static Vector3 GetPositionToAlignTo(IObject3D objectToAlignTo, FaceAlign boundingFacesToAlignTo, Vector3 extraOffset)
 		{
 			Vector3 positionToAlignTo = new Vector3();
-			if (IsSet(boundingFacesToAlignTo, Face.Left, Face.Right))
+			if (IsSet(boundingFacesToAlignTo, FaceAlign.Left, FaceAlign.Right))
 			{
 				positionToAlignTo.X = objectToAlignTo.GetAxisAlignedBoundingBox().minXYZ.X;
 			}
-			if (IsSet(boundingFacesToAlignTo, Face.Right, Face.Left))
+			if (IsSet(boundingFacesToAlignTo, FaceAlign.Right, FaceAlign.Left))
 			{
 				positionToAlignTo.X = objectToAlignTo.GetAxisAlignedBoundingBox().maxXYZ.X;
 			}
-			if (IsSet(boundingFacesToAlignTo, Face.Front, Face.Back))
+			if (IsSet(boundingFacesToAlignTo, FaceAlign.Front, FaceAlign.Back))
 			{
 				positionToAlignTo.Y = objectToAlignTo.GetAxisAlignedBoundingBox().minXYZ.Y;
 			}
-			if (IsSet(boundingFacesToAlignTo, Face.Back, Face.Front))
+			if (IsSet(boundingFacesToAlignTo, FaceAlign.Back, FaceAlign.Front))
 			{
 				positionToAlignTo.Y = objectToAlignTo.GetAxisAlignedBoundingBox().maxXYZ.Y;
 			}
-			if (IsSet(boundingFacesToAlignTo, Face.Bottom, Face.Top))
+			if (IsSet(boundingFacesToAlignTo, FaceAlign.Bottom, FaceAlign.Top))
 			{
 				positionToAlignTo.Z = objectToAlignTo.GetAxisAlignedBoundingBox().minXYZ.Z;
 			}
-			if (IsSet(boundingFacesToAlignTo, Face.Top, Face.Bottom))
+			if (IsSet(boundingFacesToAlignTo, FaceAlign.Top, FaceAlign.Bottom))
 			{
 				positionToAlignTo.Z = objectToAlignTo.GetAxisAlignedBoundingBox().maxXYZ.Z;
 			}
@@ -479,7 +479,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			context.GetEditRow(nameof(ZOffset)).Visible = Advanced;
 		}
 
-		private static bool IsSet(Face variableToCheck, Face faceToCheckFor, Face faceToAssertNot)
+		private static bool IsSet(FaceAlign variableToCheck, FaceAlign faceToCheckFor, FaceAlign faceToAssertNot)
 		{
 			if ((variableToCheck & faceToCheckFor) != 0)
 			{
