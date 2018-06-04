@@ -33,6 +33,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,19 +66,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				double percentCompleted = 0;
 
 				ProgressStatus progressStatus = new ProgressStatus();
-				foreach (var remove in removeObjects)
+				foreach (var remove in removeObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
 				{
-					foreach (var keep in keepObjects)
+					foreach (var keep in keepObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
 					{
 						progressStatus.Status = "Copy Remove";
 						reporter?.Report(progressStatus);
-						var transformedRemove = Mesh.Copy(remove.Mesh, cancellationToken);
-						transformedRemove.Transform(remove.WorldMatrix());
+						var transformedRemove = Mesh.Copy(remove.obj3D.Mesh, cancellationToken);
+						transformedRemove.Transform(remove.matrix);
 
 						progressStatus.Status = "Copy Keep";
 						reporter?.Report(progressStatus);
-						var transformedKeep = Mesh.Copy(keep.Mesh, cancellationToken);
-						transformedKeep.Transform(keep.WorldMatrix());
+						var transformedKeep = Mesh.Copy(keep.obj3D.Mesh, cancellationToken);
+						transformedKeep.Transform(keep.matrix);
 
 						progressStatus.Status = "Do CSG";
 						reporter?.Report(progressStatus);
@@ -90,20 +91,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
 							reporter?.Report(progressStatus);
 						}, cancellationToken);
-						var inverse = keep.WorldMatrix();
-						inverse.Invert();
+						var inverse = keep.matrix.Inverted;
 						transformedKeep.Transform(inverse);
 
-						keep.SuspendRebuild();
-						keep.Mesh = transformedKeep;
-						keep.ResumeRebuild();
+						keep.obj3D.SuspendRebuild();
+						keep.obj3D.Mesh = transformedKeep;
+						keep.obj3D.ResumeRebuild();
 
 						percentCompleted += amountPerOperation;
 						progressStatus.Progress0To1 = percentCompleted;
 						reporter?.Report(progressStatus);
 					}
 
-					remove.Visible = false;
+					remove.obj3D.Visible = false;
 				}
 			}
 		}

@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -41,6 +42,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools.EditableTypes;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -534,6 +536,31 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			GuiWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
+			void UpdateSelectColors(bool selectionChanged = false)
+			{
+				foreach (var child in parent.Children.ToList())
+				{
+					child.SuspendRebuild();
+					if (!childSelector.Contains(child.ID)
+						|| tabContainer.HasBeenClosed)
+					{
+						child.Color = new Color(child.WorldColor(), 255);
+					}
+					else
+					{
+						child.Color = new Color(child.WorldColor(), 200);
+					}
+
+					if (selectionChanged)
+					{
+						child.Visible = true;
+					}
+					child.ResumeRebuild();
+				}
+			}
+
+			tabContainer.Closed += (s, e) => UpdateSelectColors();
+
 			var children = parent.Children.ToList();
 
 			Dictionary<ICheckbox, IObject3D> objectChecks = new Dictionary<ICheckbox, IObject3D>();
@@ -589,10 +616,20 @@ namespace MatterHackers.MatterControl.DesignTools
 								childSelector.Remove(objectChecks[checkbox].ID);
 							}
 						}
+
+						if(parent is MeshWrapperObject3D meshWrapper)
+						{
+							meshWrapper.SuspendRebuild();
+							meshWrapper.ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
+							meshWrapper.ResumeRebuild();
+						}
+
+						UpdateSelectColors(true);
 					}
 				};
 
 				tabContainer.AddChild(rowContainer);
+				UpdateSelectColors();
 			}
 
 			/*

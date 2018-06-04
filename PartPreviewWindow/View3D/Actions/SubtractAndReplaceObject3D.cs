@@ -94,18 +94,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					double amountPerOperation = 1.0 / totalOperations;
 					double percentCompleted = 0;
 
-					foreach (var paint in paintObjects)
+					foreach (var paint in paintObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
 					{
-						var transformedPaint = Mesh.Copy(paint.Mesh, cancellationToken);
-						transformedPaint.Transform(paint.WorldMatrix());
-						var inverseRemove = paint.WorldMatrix();
-						inverseRemove.Invert();
+						var transformedPaint = Mesh.Copy(paint.obj3D.Mesh, cancellationToken);
+						transformedPaint.Transform(paint.matrix);
+						var inverseRemove = paint.matrix.Inverted;
 						Mesh paintMesh = null;
 
-						foreach (var keep in keepObjects)
+						foreach (var keep in keepObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
 						{
-							var transformedKeep = Mesh.Copy(keep.Mesh, cancellationToken);
-							transformedKeep.Transform(keep.WorldMatrix());
+							var transformedKeep = Mesh.Copy(keep.obj3D.Mesh, cancellationToken);
+							transformedKeep.Transform(keep.matrix);
 
 							// remove the paint from the original
 							var intersectAndSubtract = PolygonMesh.Csg.CsgOperations.IntersectAndSubtract(transformedKeep, transformedPaint, (status, progress0To1) =>
@@ -117,10 +116,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 								progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
 								reporter?.Report(progressStatus);
 							}, cancellationToken);
-							var inverseKeep = keep.WorldMatrix();
-							inverseKeep.Invert();
+							var inverseKeep = keep.matrix.Inverted;
 							intersectAndSubtract.subtract.Transform(inverseKeep);
-							keep.Mesh = intersectAndSubtract.subtract;
+							keep.obj3D.Mesh = intersectAndSubtract.subtract;
 
 							// keep all the intersections together
 							if (paintMesh == null)
@@ -141,12 +139,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						// move the paint mesh back to its original coordinates
 						paintMesh.Transform(inverseRemove);
 
-						paint.Mesh = paintMesh;
+						paint.obj3D.Mesh = paintMesh;
 
-						paint.Color = paint.WorldColor().AdjustContrast(keepObjects.First().WorldColor(), 2).ToColor();
-
-						// now set it to the new solid color
-						paint.OutputType = PrintOutputTypes.Solid;
+						paint.obj3D.Color = paint.obj3D.WorldColor().AdjustContrast(keepObjects.First().WorldColor(), 2).ToColor();
 					}
 				}
 
