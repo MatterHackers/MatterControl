@@ -204,6 +204,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public void Zoom(double scaleAmount)
+		{
+			ScalePartAndFixPosition(new MouseEventArgs(MouseButtons.None,0, Width/2, Height/2, 0), layerScale * scaleAmount);
+			Invalidate();
+		}
+
 		public override void OnMouseWheel(MouseEventArgs mouseEvent)
 		{
 			base.OnMouseWheel(mouseEvent);

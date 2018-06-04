@@ -197,8 +197,8 @@ namespace MatterHackers.MatterControl
 
 			var keyActions = new List<(string key, string action)>(new(string, string)[]
 			{
-				("shift + z","Zoom in".Localize()),
-				("z","Zoom out".Localize()),
+				("ctrl + +","Zoom in".Localize()),
+				("ctrl + -","Zoom out".Localize()),
 				("← → ↑ ↓","Rotate".Localize()),
 				("shift + ← → ↑ ↓","Pan".Localize()),
 				//("f","Zoom to fit".Localize()),
