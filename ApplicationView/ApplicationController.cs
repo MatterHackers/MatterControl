@@ -2324,18 +2324,6 @@ namespace MatterHackers.MatterControl
 							keyEvent.Handled = true;
 							break;
 
-						case 'z':
-							// Zoom out
-							Offset3DView(view3D, new Vector2(0, -offsetDist), TrackBallTransformType.Scale);
-							keyEvent.Handled = true;
-							break;
-
-						case 'Z':
-							// Zoom in
-							Offset3DView(view3D, new Vector2(0, offsetDist), TrackBallTransformType.Scale);
-							keyEvent.Handled = true;
-							break;
-
 						case ' ':
 							view3D.Scene.ClearSelection();
 							keyEvent.Handled = true;
@@ -2350,6 +2338,35 @@ namespace MatterHackers.MatterControl
 				var printerTabPage = systemWindow.Descendants<PrinterTabPage>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
 				var offsetDist = 50;
 				var arrowKeyOpperation = keyEvent.Shift ? TrackBallTransformType.Translation : TrackBallTransformType.Rotation;
+
+				var gcode2D = systemWindow.Descendants<GCode2DWidget>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
+
+				if(!keyEvent.Handled
+					&& gcode2D != null)
+				{
+					switch (keyEvent.KeyCode)
+					{
+						case Keys.Oemplus:
+						case Keys.Add:
+							if (keyEvent.Control)
+							{
+								// Zoom out
+								gcode2D.Zoom(1.2);
+								keyEvent.Handled = true;
+							}
+							break;
+
+						case Keys.OemMinus:
+						case Keys.Subtract:
+							if (keyEvent.Control)
+							{
+								// Zoom in
+								gcode2D.Zoom(.8);
+								keyEvent.Handled = true;
+							}
+							break;
+					}
+				}
 
 				if (!keyEvent.Handled
 					&& view3D != null)
@@ -2400,6 +2417,26 @@ namespace MatterHackers.MatterControl
 							if (keyEvent.Control)
 							{
 								view3D.Scene.Paste();
+								keyEvent.Handled = true;
+							}
+							break;
+
+						case Keys.Oemplus:
+						case Keys.Add:
+							if (keyEvent.Control)
+							{
+								// Zoom out
+								Offset3DView(view3D, new Vector2(0, offsetDist), TrackBallTransformType.Scale);
+								keyEvent.Handled = true;
+							}
+							break;
+
+						case Keys.OemMinus:
+						case Keys.Subtract:
+							if (keyEvent.Control)
+							{
+								// Zoom in
+								Offset3DView(view3D, new Vector2(0, -offsetDist), TrackBallTransformType.Scale);
 								keyEvent.Handled = true;
 							}
 							break;
