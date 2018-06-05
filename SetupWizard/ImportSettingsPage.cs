@@ -44,7 +44,6 @@ namespace MatterHackers.MatterControl
 		private string importMessage = "Select what you would like to merge into your current profile.".Localize();
 
 		private string settingsFilePath;
-		private PrinterSettings settingsToImport;
 		private int selectedMaterial = -1;
 		private int selectedQuality = -1;
 
@@ -54,7 +53,7 @@ namespace MatterHackers.MatterControl
 			this.HeaderText = "Select What to Import".Localize();
 
 			// TODO: Need to handle load failures for import attempts
-			settingsToImport = PrinterSettings.LoadFile(settingsFilePath);
+			var settingsToImport = PrinterSettings.LoadFile(settingsFilePath);
 
 			// if there are no settings to import
 			if (settingsToImport.QualityLayers.Count == 0 && settingsToImport.MaterialLayers.Count == 0)
@@ -95,7 +94,7 @@ namespace MatterHackers.MatterControl
 				int buttonIndex = 0;
 				foreach (var qualitySetting in settingsToImport.QualityLayers)
 				{
-					RadioButton qualityButton = new RadioButton(string.IsNullOrEmpty(qualitySetting.Name) ? "no name" : qualitySetting.Name)
+					var qualityButton = new RadioButton(string.IsNullOrEmpty(qualitySetting.Name) ? "no name" : qualitySetting.Name)
 					{
 						TextColor = ActiveTheme.Instance.PrimaryTextColor,
 						Margin = new BorderDouble(5, 0, 0, 0),
@@ -131,7 +130,7 @@ namespace MatterHackers.MatterControl
 				int buttonIndex = 0;
 				foreach (var materialSetting in settingsToImport.MaterialLayers)
 				{
-					RadioButton materialButton = new RadioButton(string.IsNullOrEmpty(materialSetting.Name) ? "no name" : materialSetting.Name)
+					var materialButton = new RadioButton(string.IsNullOrEmpty(materialSetting.Name) ? "no name" : materialSetting.Name)
 					{
 						TextColor = ActiveTheme.Instance.PrimaryTextColor,
 						Margin = new BorderDouble(5, 0),
