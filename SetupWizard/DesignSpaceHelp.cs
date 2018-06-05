@@ -227,7 +227,8 @@ namespace MatterHackers.MatterControl
 			var guideSectionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
+				VAnchor = VAnchor.Stretch,
+				Padding = theme.DefaultContainerPadding
 			};
 			var guideTab = new ToolTab("Guides".Localize(), tabControl, guideSectionContainer, theme, hasClose: false)
 			{
@@ -258,7 +259,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-        private void AddGuides(FlowLayoutWidget guideContainer, List<GuideAsset> guideList)
+		private void AddGuides(FlowLayoutWidget guideContainer, List<GuideAsset> guideList)
 		{
 			var sequence = new ImageSequence()
 			{
@@ -270,7 +271,8 @@ namespace MatterHackers.MatterControl
 			var rightPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
+				VAnchor = VAnchor.Stretch,
+				Padding = theme.DefaultContainerPadding
 			};
 
 			var imageSequenceWidget = new ImageSequenceWidget(300, 200)
@@ -318,7 +320,6 @@ namespace MatterHackers.MatterControl
 				TextColor = theme.Colors.PrimaryTextColor,
 				PointSize = theme.DefaultFontSize,
 				TreeView = treeView,
-				Padding = 20
 			};
 
 			treeView.Load += (s, e) =>
@@ -360,7 +361,6 @@ namespace MatterHackers.MatterControl
 			};
 			splitter.SplitterDistance = maxMenuItemWidth + 30;
 			splitter.Panel1.AddChild(treeView);
-			splitter.Panel1.BackgroundColor = theme.SlightShade;
 			splitter.Panel2.AddChild(rightPanel);
 			guideContainer.AddChild(splitter);
 		}
