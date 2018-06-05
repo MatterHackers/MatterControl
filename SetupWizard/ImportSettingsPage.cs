@@ -194,7 +194,33 @@ namespace MatterHackers.MatterControl
 					};
 				}
 
-				PrinterSettingsLayer printerSettingsLayer = ImportSettings(destIsMaterial, settingsFilePath);
+				PrinterSettingsLayer printerSettingsLayer = null;
+				if (!string.IsNullOrEmpty(settingsFilePath) && File.Exists(settingsFilePath))
+				{
+					string importType = Path.GetExtension(settingsFilePath).ToLower();
+					switch (importType)
+					{
+						case ProfileManager.ProfileExtension:
+							printerSettingsLayer = new PrinterSettingsLayer();
+							printerSettingsLayer[SettingsKey.layer_name] = Path.GetFileNameWithoutExtension(settingsFilePath);
+
+							if (destIsMaterial)
+							{
+								ActiveSliceSettings.Instance.MaterialLayers.Add(printerSettingsLayer);
+							}
+							else
+							{
+								ActiveSliceSettings.Instance.QualityLayers.Add(printerSettingsLayer);
+							}
+							break;
+
+						default:
+							// Did not figure out what this file is, let the user know we don't understand it
+							StyledMessageBox.ShowMessageBox("Oops! Unable to recognize settings file '{0}'.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
+							break;
+					}
+				}
+
 				if (printerSettingsLayer != null)
 				{
 					ActiveSliceSettings.Instance.Merge(printerSettingsLayer, settingsToImport, sourceFilter, copyName);
@@ -228,38 +254,6 @@ namespace MatterHackers.MatterControl
 		private static void DisplayFailedToImportMessage(string settingsFilePath)
 		{
 			StyledMessageBox.ShowMessageBox("Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
-		}
-
-		public PrinterSettingsLayer ImportSettings(bool destIsMaterial, string settingsFilePath)
-		{
-			PrinterSettingsLayer printerSettingsLayer = null;
-			if (!string.IsNullOrEmpty(settingsFilePath) && File.Exists(settingsFilePath))
-			{
-				string importType = Path.GetExtension(settingsFilePath).ToLower();
-				switch (importType)
-				{
-					case ProfileManager.ProfileExtension:
-						printerSettingsLayer = new PrinterSettingsLayer();
-						printerSettingsLayer[SettingsKey.layer_name] = Path.GetFileNameWithoutExtension(settingsFilePath);
-
-						if (destIsMaterial)
-						{
-							ActiveSliceSettings.Instance.MaterialLayers.Add(printerSettingsLayer);
-						}
-						else
-						{
-							ActiveSliceSettings.Instance.QualityLayers.Add(printerSettingsLayer);
-						}
-						break;
-
-					default:
-						// Did not figure out what this file is, let the user know we don't understand it
-						StyledMessageBox.ShowMessageBox("Oops! Unable to recognize settings file '{0}'.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
-						break;
-				}
-			}
-
-			return printerSettingsLayer;
 		}
 	}
 
