@@ -41,6 +41,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
@@ -515,8 +516,10 @@ namespace MatterHackers.MeshVisualizer
 					transparentMeshes.Add(new Object3DView(item, drawColor));
 				}
 
-				bool isSelected = parentSelected ||
-					scene.HasSelection && (object3D == scene.SelectedItem || scene.SelectedItem.Children.Contains(object3D));
+				var selectedItem = scene.SelectedItem;
+				bool isSelected = selectedItem != null 
+					&& (selectedItem.DescendantsAndSelf().Any((i) => i == item)
+						|| selectedItem.Parents<MeshWrapper>().Any((mw) => mw == item));
 
 				if (isSelected && scene.DrawSelection)
 				{

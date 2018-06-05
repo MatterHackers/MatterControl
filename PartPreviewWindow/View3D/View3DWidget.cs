@@ -201,6 +201,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			treeView.AfterSelect += (s, e) =>
 			{
 				selectedObjectPanel.SetActiveItem((IObject3D)treeView.SelectedNode.Tag);
+				Scene.SelectedItem = (IObject3D)treeView.SelectedNode.Tag;
 			};
 			treeSection.AddChild(treeView);
 

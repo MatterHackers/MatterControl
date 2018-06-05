@@ -291,7 +291,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					tabControl,
 					new PrinterTabPage(printer, theme, tabTitle.ToUpper()),
 					theme,
-					tabImageUrl: ApplicationController.Instance.GetFavIconUrl(oemName: printer.Settings.GetValue(SettingsKey.make)))
+					tabImageUrl: ApplicationController.Instance.GetFavIconUrl(oemName: printer.Settings.GetValue(SettingsKey.make)), 
+					hasClose: false)
 				{
 					Name = "3D View Tab",
 					MinimumSize = new Vector2(120, theme.TabButtonHeight)
