@@ -33,7 +33,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl.CustomWidgets.TreeView
+namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public interface IVisualLeafNode
 	{
