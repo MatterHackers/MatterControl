@@ -36,6 +36,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow.PlusTab;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -108,6 +109,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			seeWhatsNewButton.Margin = new Agg.BorderDouble(10, 0);
 			seeWhatsNewButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
+				UserSettings.Instance.set(UserSettingsKey.LastReadWhatsNew, JsonConvert.SerializeObject(DateTime.Now));
 				DialogWindow.Show(new DesignSpaceGuide("What's New Tab", ""));
 			});
 
