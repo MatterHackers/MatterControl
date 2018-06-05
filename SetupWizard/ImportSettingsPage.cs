@@ -83,8 +83,8 @@ namespace MatterHackers.MatterControl
 			{
 				container.AddChild(new TextWidget("Quality Presets:")
 				{
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
-					Margin = new BorderDouble(0, 3, 0, 15),
+					TextColor = theme.Colors.PrimaryTextColor,
+					Margin = new BorderDouble(0, 3),
 				});
 
 				int buttonIndex = 0;
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl
 				{
 					var qualityButton = new RadioButton(string.IsNullOrEmpty(qualitySetting.Name) ? "no name" : qualitySetting.Name)
 					{
-						TextColor = ActiveTheme.Instance.PrimaryTextColor,
+						TextColor = theme.Colors.PrimaryTextColor,
 						Margin = new BorderDouble(5, 0, 0, 0),
 						HAnchor = HAnchor.Left,
 					};
@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl
 			{
 				container.AddChild(new TextWidget("Material Presets:")
 				{
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+					TextColor = theme.Colors.PrimaryTextColor,
 					Margin = new BorderDouble(0, 3, 0, 15),
 				});
 
@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl
 				{
 					var materialButton = new RadioButton(string.IsNullOrEmpty(materialSetting.Name) ? "no name" : materialSetting.Name)
 					{
-						TextColor = ActiveTheme.Instance.PrimaryTextColor,
+						TextColor = theme.Colors.PrimaryTextColor,
 						Margin = new BorderDouble(5, 0),
 						HAnchor = HAnchor.Left,
 					};
@@ -244,7 +244,7 @@ namespace MatterHackers.MatterControl
 			this.WindowTitle = "Import Wizard".Localize();
 			this.HeaderText = "Import Successful".Localize();
 
-			contentRow.AddChild(new WrappedTextWidget(successMessage, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			contentRow.AddChild(new WrappedTextWidget(successMessage, textColor: theme.Colors.PrimaryTextColor));
 		}
 	}
 }
