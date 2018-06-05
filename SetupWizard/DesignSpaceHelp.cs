@@ -241,29 +241,6 @@ namespace MatterHackers.MatterControl
 
 			AddGuides(guideSectionContainer, allAvailableGuides);
 
-			var whatsNewContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
-			};
-
-			var whatsNewTab = new ToolTab("What's New".Localize(), tabControl, whatsNewContainer, theme, hasClose: false)
-			{
-				// this can be used to navigate to this tab on construction
-				Name = "What's New Tab"
-			};
-			tabControl.AddTab(whatsNewTab);
-			AddGuides(whatsNewContainer, whatsNewGuides);
-
-			// if the what's new tab becomes visible mark the time
-			whatsNewContainer.VisibleChanged += (s, e) =>
-			{
-				if (whatsNewContainer.Visible)
-				{
-					UserSettings.Instance.set(UserSettingsKey.LastReadWhatsNew, JsonConvert.SerializeObject(DateTime.Now));
-				}
-			};
-
 			tabControl.SelectedTabIndex = 0;
 			if(!string.IsNullOrWhiteSpace(preSelectTabName))
 			{
