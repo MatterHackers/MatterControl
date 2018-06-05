@@ -2341,7 +2341,15 @@ namespace MatterHackers.MatterControl
 
 				var gcode2D = systemWindow.Descendants<GCode2DWidget>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
 
-				if(!keyEvent.Handled
+				if (keyEvent.KeyCode == Keys.F1)
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						DialogWindow.Show(new DesignSpaceGuide("Guides Tab", ""));
+					});
+				}
+
+				if (!keyEvent.Handled
 					&& gcode2D != null)
 				{
 					switch (keyEvent.KeyCode)
