@@ -29,21 +29,18 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
-using System.Linq;
 
 namespace MatterHackers.MatterControl
 {
-	public class GuideAssets
+	public class GuideAsset
 	{
 		/// <summary>
 		/// Where to find the gif or eventually movie file
@@ -84,8 +81,8 @@ namespace MatterHackers.MatterControl
 
 	public class DesignSpaceGuide : DialogPage
 	{
-		private List<GuideAssets> whatsNewGuides = new List<GuideAssets>();
-		private List<GuideAssets> allAvailableGuides = new List<GuideAssets>();
+		private List<GuideAsset> whatsNewGuides = new List<GuideAsset>();
+		private List<GuideAsset> allAvailableGuides = new List<GuideAsset>();
 
 
 		public DesignSpaceGuide(string preSelectTabName, string guideKey)
@@ -261,7 +258,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-        private void AddGuides(FlowLayoutWidget guideContainer, List<GuideAssets> guideList)
+        private void AddGuides(FlowLayoutWidget guideContainer, List<GuideAsset> guideList)
 		{
 			var sequence = new ImageSequence()
 			{
@@ -305,7 +302,7 @@ namespace MatterHackers.MatterControl
 			};
 			treeView.AfterSelect += (s, e) =>
 			{
-				if (treeView.SelectedNode.Tag is GuideAssets guide)
+				if (treeView.SelectedNode.Tag is GuideAsset guide)
 				{
 					title.Text = guide.Title;
 					description.Text = guide.Description;

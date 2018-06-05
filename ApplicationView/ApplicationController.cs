@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl
 
 	public class ApplicationController
 	{
-		public List<GuideAssets> FeatureGuides { get; set; } = JsonConvert.DeserializeObject<List<GuideAssets>>(AggContext.StaticData.ReadAllText(Path.Combine("OEMSettings", "HelpGuides.json")));
+		public List<GuideAsset> FeatureGuides { get; set; } = JsonConvert.DeserializeObject<List<GuideAsset>>(AggContext.StaticData.ReadAllText(Path.Combine("OEMSettings", "HelpGuides.json")));
 
 		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 
