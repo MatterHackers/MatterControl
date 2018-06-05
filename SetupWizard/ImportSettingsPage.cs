@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,23 +31,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
-	public class SelectPartsOfPrinterToImport : DialogPage
+	public class ImportSettingsPage : DialogPage
 	{
-		private string importMessage = "Select what you would like to merge into your current profile.".Localize();
-
 		private string settingsFilePath;
 		private int selectedMaterial = -1;
 		private int selectedQuality = -1;
 
-		public SelectPartsOfPrinterToImport(string settingsFilePath, PrinterConfig printer)
+		public ImportSettingsPage(string settingsFilePath, PrinterConfig printer)
 		{
 			this.WindowTitle = "Import Wizard";
 			this.HeaderText = "Select What to Import".Localize();
@@ -156,8 +152,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			var importButtonTitle = "Import".Localize();
-			var mergeButton = theme.CreateDialogButton(importButtonTitle);
+			var mergeButton = theme.CreateDialogButton("Import".Localize());
 			mergeButton.Name = "Merge Profile";
 			mergeButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
