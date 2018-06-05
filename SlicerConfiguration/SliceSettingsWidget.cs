@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								if (!string.IsNullOrEmpty(dialogParams.FileName))
 								{
-									DialogWindow.Show(new SelectPartsOfPrinterToImport(dialogParams.FileName));
+								DialogWindow.Show(new SelectPartsOfPrinterToImport(dialogParams.FileName, printer));
 								}
 							});
 				});

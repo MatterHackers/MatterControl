@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl
 		private int selectedMaterial = -1;
 		private int selectedQuality = -1;
 
-		public SelectPartsOfPrinterToImport(string settingsFilePath)
+		public SelectPartsOfPrinterToImport(string settingsFilePath, PrinterConfig printer)
 		{
 			this.WindowTitle = "Import Wizard";
 			this.HeaderText = "Select What to Import".Localize();
@@ -202,18 +202,17 @@ namespace MatterHackers.MatterControl
 						case ProfileManager.ProfileExtension:
 							var printerSettingsLayer = new PrinterSettingsLayer();
 							printer.Settings.Merge(printerSettingsLayer, settingsToImport, sourceFilter, copyName);
-							ActiveSliceSettings.Instance.Merge(printerSettingsLayer, settingsToImport, sourceFilter, copyName);
 
 							var layerName = (printerSettingsLayer.ContainsKey(SettingsKey.layer_name)) ? printerSettingsLayer[SettingsKey.layer_name] : "none";
 							Success(settingsFilePath, layerName, destIsMaterial ? "Material".Localize() : "Quality".Localize());
 
 							if (destIsMaterial)
 							{
-								ActiveSliceSettings.Instance.MaterialLayers.Add(printerSettingsLayer);
+								printer.Settings.MaterialLayers.Add(printerSettingsLayer);
 							}
 							else
 							{
-								ActiveSliceSettings.Instance.QualityLayers.Add(printerSettingsLayer);
+								printer.Settings.QualityLayers.Add(printerSettingsLayer);
 							}
 							break;
 
