@@ -194,15 +194,18 @@ namespace MatterHackers.MatterControl
 					};
 				}
 
-				PrinterSettingsLayer printerSettingsLayer = null;
-				if (!string.IsNullOrEmpty(settingsFilePath) && File.Exists(settingsFilePath))
+				if (File.Exists(settingsFilePath))
 				{
 					string importType = Path.GetExtension(settingsFilePath).ToLower();
 					switch (importType)
 					{
 						case ProfileManager.ProfileExtension:
-							printerSettingsLayer = new PrinterSettingsLayer();
-							printerSettingsLayer[SettingsKey.layer_name] = Path.GetFileNameWithoutExtension(settingsFilePath);
+							var printerSettingsLayer = new PrinterSettingsLayer();
+							printer.Settings.Merge(printerSettingsLayer, settingsToImport, sourceFilter, copyName);
+							ActiveSliceSettings.Instance.Merge(printerSettingsLayer, settingsToImport, sourceFilter, copyName);
+
+							var layerName = (printerSettingsLayer.ContainsKey(SettingsKey.layer_name)) ? printerSettingsLayer[SettingsKey.layer_name] : "none";
+							Success(settingsFilePath, layerName, destIsMaterial ? "Material".Localize() : "Quality".Localize());
 
 							if (destIsMaterial)
 							{
@@ -219,22 +222,6 @@ namespace MatterHackers.MatterControl
 							StyledMessageBox.ShowMessageBox("Oops! Unable to recognize settings file '{0}'.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
 							break;
 					}
-				}
-
-				if (printerSettingsLayer != null)
-				{
-					ActiveSliceSettings.Instance.Merge(printerSettingsLayer, settingsToImport, sourceFilter, copyName);
-
-					var layerName = (printerSettingsLayer.ContainsKey(SettingsKey.layer_name)) ? printerSettingsLayer[SettingsKey.layer_name] : "none";
-					Success(settingsFilePath, layerName, destIsMaterial ? "Material".Localize() : "Quality".Localize());
-				}
-				else
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						DisplayFailedToImportMessage(settingsFilePath);
-						this.Parents<SystemWindow>().First().Close();
-					});
 				}
 			});
 
