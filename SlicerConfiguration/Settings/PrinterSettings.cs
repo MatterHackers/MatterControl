@@ -568,6 +568,41 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return "";
 		}
 
+		public bool IsOverride(string sliceSetting)
+		{
+			var values = new List<string>();
+
+			string firstBaseValue = null;
+
+			foreach (PrinterSettingsLayer layer in defaultLayerCascade)
+			{
+				if (layer.TryGetValue(sliceSetting, out string value))
+				{
+					if (layer == this.BaseLayer
+						|| layer == this.OemLayer)
+					{
+						firstBaseValue = value;
+						break;
+					}
+
+					values.Add(value);
+				}
+			}
+
+			string currentValue = values.FirstOrDefault();
+
+			string firstPresetValue = values.Skip(1).FirstOrDefault();
+
+			bool differsFromPreset = values.Count > 0
+				&& firstPresetValue != null 
+				&& firstPresetValue != currentValue;
+
+			bool differsFromBase = currentValue != firstBaseValue;
+
+			return currentValue != null 
+				&& (differsFromPreset || differsFromBase);
+		}
+
 		public (string currentValue, string layerName) GetValueAndLayerName(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
 		{
 			if (layerCascade == null)

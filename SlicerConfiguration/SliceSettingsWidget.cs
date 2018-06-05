@@ -911,25 +911,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void FilterToOverrides()
 		{
-			var defaultCascade = printer.Settings.defaultLayerCascade;
-
-			var baseAndOem = new List<PrinterSettingsLayer>() { printer.Settings.OemLayer, printer.Settings.BaseLayer };
-
 			foreach (var item in this.settingsRows)
 			{
 				var settingData = item.settingData;
 
-				var (currentValue, layerName) = printer.Settings.GetValueAndLayerName(settingData.SlicerConfigName, defaultCascade);
+				// var layerValues = printer.Settings.GetLayerValues(settingData.SlicerConfigName);
+				// var (currentValue, layerName) = printer.Settings.GetValueAndLayerName(settingData.SlicerConfigName, printer.Settings.defaultLayerCascade);
 
-				item.widget.Visible = layerName != "Oem" && layerName != "Base";
-
-				if(layerName == "User"
-					&& currentValue == printer.Settings.GetValueAndLayerName(settingData.SlicerConfigName, baseAndOem).currentValue)
-				{
-					item.widget.Visible = false;
-					item.widget.Visible = true;
-					item.widget.Visible = false;
-				}
+				item.widget.Visible = printer.Settings.IsOverride(settingData.SlicerConfigName);
 			}
 
 			filteredItemsHeading.Visible = true;

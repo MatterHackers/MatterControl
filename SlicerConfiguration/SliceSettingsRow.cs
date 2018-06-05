@@ -135,30 +135,38 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							var firstParentValue = printer.Settings.GetValueAndLayerName(settingData.SlicerConfigName, defaultCascade.Skip(1));
 							var (currentValue, layerName) = printer.Settings.GetValueAndLayerName(settingData.SlicerConfigName, defaultCascade);
 
-							if (firstParentValue.Item1 == currentValue)
+							if (printer.Settings.IsOverride(settingData.SlicerConfigName))
 							{
-								if (layerName.StartsWith("Material"))
+								if (firstParentValue.Item1 == currentValue)
 								{
-									this.HighlightColor = theme.PresetColors.MaterialPreset;
-								}
-								else if (layerName.StartsWith("Quality"))
-								{
-									this.HighlightColor = theme.PresetColors.QualityPreset;
+									if (layerName.StartsWith("Material"))
+									{
+										this.HighlightColor = theme.PresetColors.MaterialPreset;
+									}
+									else if (layerName.StartsWith("Quality"))
+									{
+										this.HighlightColor = theme.PresetColors.QualityPreset;
+									}
+									else
+									{
+										this.HighlightColor = Color.Transparent;
+									}
+
+									if (restoreButton != null)
+									{
+										restoreButton.Visible = false;
+									}
 								}
 								else
 								{
-									this.HighlightColor = Color.Transparent;
-								}
-
-								if (restoreButton != null)
-								{
-									restoreButton.Visible = false;
+									this.HighlightColor = theme.PresetColors.UserOverride;
+									if (restoreButton != null) restoreButton.Visible = true;
 								}
 							}
 							else
 							{
-								this.HighlightColor = theme.PresetColors.UserOverride;
-								if (restoreButton != null) restoreButton.Visible = true;
+								this.HighlightColor = Color.Transparent;
+								if (restoreButton != null) restoreButton.Visible = false;
 							}
 						}
 						break;
@@ -174,11 +182,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else if (settingsContext.IsPrimarySettingsView)
 			{
-				if (printer.Settings.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Material))
+				bool isOverride = printer.Settings.IsOverride(settingData.SlicerConfigName);
+
+				if (isOverride && printer.Settings.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Material))
 				{
 					this.HighlightColor =theme.PresetColors.MaterialPreset;
 				}
-				else if (printer.Settings.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Quality))
+				else if (isOverride && printer.Settings.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Quality))
 				{
 					this.HighlightColor = theme.PresetColors.QualityPreset;
 				}
