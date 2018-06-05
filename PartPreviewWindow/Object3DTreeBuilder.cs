@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.Library;
@@ -61,6 +62,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private static TreeNode AddItem(IObject3D item, TreeNode parentNode, ThemeConfig theme)
 		{
+			if(item is InsertionGroup insertionGroup)
+			{
+				return new TreeNode()
+				{
+					Text = "Loading".Localize(),
+					Tag = item,
+					TextColor = theme.Colors.PrimaryTextColor,
+					PointSize = theme.DefaultFontSize,
+				};
+			}
+
 			var node = new TreeNode()
 			{
 				Text = BuildDefaultName(item),

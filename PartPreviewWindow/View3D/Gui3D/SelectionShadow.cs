@@ -76,11 +76,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void DrawGlContent(DrawGlContentEventArgs e)
 		{
-			if (InteractionContext.Scene.HasSelection
+			var selectedItem = InteractionContext.Scene.RootSelectedItem;
+			if (selectedItem != null
 				&& InteractionContext.Scene.ShowSelectionShadow)
 			{
 				// draw the bounds on the bed
-				AxisAlignedBoundingBox selectedBounds = InteractionContext.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 				var withScale = Matrix4X4.CreateScale(selectedBounds.XSize, selectedBounds.YSize, 1) * TotalTransform;
 				GLHelper.Render(GetNormalShadowMesh(), new Color(shadowColor, shadowAlpha), withScale, RenderTypes.Shaded);

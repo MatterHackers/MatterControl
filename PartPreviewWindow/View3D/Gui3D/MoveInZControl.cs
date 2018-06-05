@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				ForceHide = () =>
 				{
-					var selectedItem = InteractionContext.Scene.SelectedItem;
+					var selectedItem = InteractionContext.Scene.RootSelectedItem;
 					// if the selection changes
 					if (selectedItem != ActiveSelectedItem)
 					{
@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			zHeightDisplayInfo.EditComplete += (s, e) =>
 			{
-				var selectedItem = InteractionContext.Scene.SelectedItem;
+				var selectedItem = InteractionContext.Scene.RootSelectedItem;
 
 				Matrix4X4 startingTransform = selectedItem.Matrix;
 
@@ -147,16 +147,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void DrawGlContent(DrawGlContentEventArgs e)
 		{
-			bool shouldDrawScaleControls = true;
+			bool shouldDrawMoveControls = true;
 			if (InteractionContext.SelectedInteractionVolume != null
 				&& InteractionContext.SelectedInteractionVolume as MoveInZControl == null)
 			{
-				shouldDrawScaleControls = false;
+				shouldDrawMoveControls = false;
 			}
 
-			if (InteractionContext.Scene.HasSelection)
+			var selectedItem = InteractionContext.Scene.RootSelectedItem;
+			if (selectedItem != null)
 			{
-				if (shouldDrawScaleControls)
+				if (shouldDrawMoveControls)
 				{
 					// don't draw if any other control is dragging
 					if (MouseOver)
@@ -186,7 +187,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
 		{
-			var selectedItem = InteractionContext.Scene.SelectedItem;
+			var selectedItem = InteractionContext.Scene.RootSelectedItem;
 
 			if (mouseEvent3D.info != null 
 				&& selectedItem != null)
@@ -209,7 +210,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseMove(MouseEvent3DArgs mouseEvent3D)
 		{
-			var selectedItem = InteractionContext.Scene.SelectedItem;
+			var selectedItem = InteractionContext.Scene.RootSelectedItem;
 			ActiveSelectedItem = selectedItem;
 			if (MouseOver)
 			{
@@ -288,7 +289,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void InteractionLayer_AfterDraw(object sender, DrawEventArgs drawEvent)
 		{
-			var selectedItem = InteractionContext.Scene.SelectedItem;
+			var selectedItem = InteractionContext.Scene.RootSelectedItem;
 
 			if (selectedItem != null
 				&& lines.Count > 2)
