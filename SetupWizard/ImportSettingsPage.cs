@@ -197,7 +197,16 @@ namespace MatterHackers.MatterControl
 						printer.Settings.Merge(printerSettingsLayer, settingsToImport, sourceFilter, copyName);
 
 						var layerName = (printerSettingsLayer.ContainsKey(SettingsKey.layer_name)) ? printerSettingsLayer[SettingsKey.layer_name] : "none";
-						Success(settingsFilePath, layerName, destIsMaterial ? "Material".Localize() : "Quality".Localize());
+
+						string sectionName = destIsMaterial ? "Material".Localize() : "Quality".Localize();
+
+						string importSettingSuccessMessage = $"You have successfully imported a new {sectionName} setting. You can find '{layerName}' in your list of {sectionName} settings.".Localize();
+
+						WizardWindow.ChangeToPage(
+							new ImportSucceeded(importSettingSuccessMessage)
+							{
+								WizardWindow = this.WizardWindow,
+							});
 
 						if (destIsMaterial)
 						{
@@ -219,17 +228,6 @@ namespace MatterHackers.MatterControl
 			});
 
 			this.AddPageAction(mergeButton);
-		}
-
-		private void Success(string settingsFilePath, string sourceName, string sectionName)
-		{
-			string importSettingSuccessMessage = $"You have successfully imported a new {sectionName} setting. You can find '{sourceName}' in your list of {sectionName} settings.".Localize();
-
-			WizardWindow.ChangeToPage(
-				new ImportSucceeded(importSettingSuccessMessage)
-				{
-					WizardWindow = this.WizardWindow,
-				});
 		}
 
 		private static void DisplayFailedToImportMessage(string settingsFilePath)
