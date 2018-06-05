@@ -603,6 +603,47 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				&& (differsFromPreset || differsFromBase);
 		}
 
+		// Helper method to debug settings layers per setting
+		public List<(string layerName, string currentValue)> GetLayerValues(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
+		{
+			if (layerCascade == null)
+			{
+				layerCascade = defaultLayerCascade;
+			}
+
+			var results = new List<(string layerName, string currentValue)>();
+
+
+			foreach (PrinterSettingsLayer layer in layerCascade)
+			{
+				if (layer.TryGetValue(sliceSetting, out string value))
+				{
+					string layerName = "User";
+
+					if (layer == this.BaseLayer)
+					{
+						layerName = "Base";
+					}
+					else if (layer == this.OemLayer)
+					{
+						layerName = "Oem";
+					}
+					else if (layer == this.MaterialLayer)
+					{
+						layerName = "Material";
+					}
+					else if (layer == this.QualityLayer)
+					{
+						layerName = "Quality";
+					}
+
+					results.Add((layerName, value));
+				}
+			}
+
+			return results;
+		}
+
 		public (string currentValue, string layerName) GetValueAndLayerName(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
 		{
 			if (layerCascade == null)
