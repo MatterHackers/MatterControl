@@ -191,30 +191,29 @@ namespace MatterHackers.MatterControl
 
 				if (File.Exists(settingsFilePath))
 				{
-					string importType = Path.GetExtension(settingsFilePath).ToLower();
-					switch (importType)
+					if (Path.GetExtension(settingsFilePath).ToLower() == ProfileManager.ProfileExtension)
 					{
-						case ProfileManager.ProfileExtension:
-							var printerSettingsLayer = new PrinterSettingsLayer();
-							printer.Settings.Merge(printerSettingsLayer, settingsToImport, sourceFilter, copyName);
+						var printerSettingsLayer = new PrinterSettingsLayer();
+						printer.Settings.Merge(printerSettingsLayer, settingsToImport, sourceFilter, copyName);
 
-							var layerName = (printerSettingsLayer.ContainsKey(SettingsKey.layer_name)) ? printerSettingsLayer[SettingsKey.layer_name] : "none";
-							Success(settingsFilePath, layerName, destIsMaterial ? "Material".Localize() : "Quality".Localize());
+						var layerName = (printerSettingsLayer.ContainsKey(SettingsKey.layer_name)) ? printerSettingsLayer[SettingsKey.layer_name] : "none";
+						Success(settingsFilePath, layerName, destIsMaterial ? "Material".Localize() : "Quality".Localize());
 
-							if (destIsMaterial)
-							{
-								printer.Settings.MaterialLayers.Add(printerSettingsLayer);
-							}
-							else
-							{
-								printer.Settings.QualityLayers.Add(printerSettingsLayer);
-							}
-							break;
-
-						default:
-							// Did not figure out what this file is, let the user know we don't understand it
-							StyledMessageBox.ShowMessageBox("Oops! Unable to recognize settings file '{0}'.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
-							break;
+						if (destIsMaterial)
+						{
+							printer.Settings.MaterialLayers.Add(printerSettingsLayer);
+						}
+						else
+						{
+							printer.Settings.QualityLayers.Add(printerSettingsLayer);
+						}
+					}
+					else
+					{
+						// Inform of unexpected extension type
+						StyledMessageBox.ShowMessageBox(
+							"Oops! Unable to recognize settings file '{0}'.".Localize().FormatWith(Path.GetFileName(settingsFilePath)),
+							"Unable to Import".Localize());
 					}
 				}
 			});
@@ -226,10 +225,11 @@ namespace MatterHackers.MatterControl
 		{
 			string importSettingSuccessMessage = $"You have successfully imported a new {sectionName} setting. You can find '{sourceName}' in your list of {sectionName} settings.".Localize();
 
-			WizardWindow.ChangeToPage(new ImportSucceeded(importSettingSuccessMessage)
-			{
-				WizardWindow = this.WizardWindow,
-			});
+			WizardWindow.ChangeToPage(
+				new ImportSucceeded(importSettingSuccessMessage)
+				{
+					WizardWindow = this.WizardWindow,
+				});
 		}
 
 		private static void DisplayFailedToImportMessage(string settingsFilePath)
