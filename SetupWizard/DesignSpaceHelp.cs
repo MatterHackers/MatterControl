@@ -36,8 +36,10 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace MatterHackers.MatterControl
 {
@@ -282,7 +284,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void AddGuides(FlowLayoutWidget guideContainer, List<GuideAssets> guideList)
+        private void AddGuides(FlowLayoutWidget guideContainer, List<GuideAssets> guideList)
 		{
 			var sequence = new ImageSequence()
 			{
@@ -319,33 +321,62 @@ namespace MatterHackers.MatterControl
 			};
 			rightPanel.AddChild(description);
 
-			var popupMenu = new PopupMenu(theme)
+			var treeView = new TreeView(theme)
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Top | VAnchor.Fit
+				VAnchor = VAnchor.Fit | VAnchor.Top,
 			};
-
-			double maxMenuItemWidth = 0;
-			PopupMenu.MenuItem firstItem = null;
-			foreach(var guide in guideList)
+			treeView.AfterSelect += (s, e) =>
 			{
-				var menuItem = popupMenu.CreateMenuItem(guide.MenuName);
-				firstItem = (firstItem == null) ? menuItem : firstItem;
-				maxMenuItemWidth = Math.Max(maxMenuItemWidth, menuItem.Width);
-				menuItem.Click += (s, e) =>
+				if (treeView.SelectedNode.Tag is GuideAssets guide)
 				{
 					title.Text = guide.Title;
 					description.Text = guide.Description;
 					imageSequenceWidget.ImageSequence = ApplicationController.Instance.GetProcessingSequence(Color.Black);
 
 					ApplicationController.Instance.DownloadToImageSequenceAsync(imageSequenceWidget.ImageSequence, guide.AnimationUri);
+				}
+			};
+
+			var rootNode = new TreeNode()
+			{
+				Text = "Help Guides",
+				TextColor = theme.Colors.PrimaryTextColor,
+				PointSize = theme.DefaultFontSize,
+				TreeView = treeView,
+				Padding = 20
+			};
+
+			treeView.Load += (s, e) =>
+			{
+				rootNode.Expanded = true;
+				treeView.SelectedNode = rootNode.Nodes.FirstOrDefault();
+			};
+
+			TreeNode firstNode = null;
+			double maxMenuItemWidth = 0;
+
+			foreach (var guide in guideList)
+			{
+				var treeNode = new TreeNode()
+				{
+					Text = guide.MenuName,
+					Tag = guide,
+					TextColor = theme.Colors.PrimaryTextColor,
+					PointSize = theme.DefaultFontSize,
 				};
+
+				maxMenuItemWidth = Math.Max(maxMenuItemWidth, treeNode.Width);
+
+				if (firstNode == null)
+				{
+					firstNode = treeNode;
+				}
+
+				rootNode.Nodes.Add(treeNode);
 			}
 
-			popupMenu.Load += (s, e) =>
-			{
-				firstItem.InvokeClick();
-			};
+			treeView.AddChild(rootNode);
 
 			var splitter = new Splitter()
 			{
@@ -353,8 +384,8 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Stretch,
 				SplitterBackground = theme.SplitterBackground
 			};
-			splitter.SplitterDistance = maxMenuItemWidth;
-			splitter.Panel1.AddChild(popupMenu);
+			splitter.SplitterDistance = maxMenuItemWidth + 30;
+			splitter.Panel1.AddChild(treeView);
 			splitter.Panel1.BackgroundColor = theme.SlightShade;
 			splitter.Panel2.AddChild(rightPanel);
 			guideContainer.AddChild(splitter);
