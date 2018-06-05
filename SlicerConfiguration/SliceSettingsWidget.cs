@@ -91,14 +91,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				UiThread.RunOnIdle(() =>
 				{
 					AggContext.FileDialogs.OpenFileDialog(
-							new OpenFileDialogParams("settings files|*.printer"),
-							(dialogParams) =>
+						new OpenFileDialogParams("settings files|*.printer"),
+						(dialogParams) =>
+						{
+							if (!string.IsNullOrEmpty(dialogParams.FileName))
 							{
-								if (!string.IsNullOrEmpty(dialogParams.FileName))
-								{
 								DialogWindow.Show(new ImportSettingsPage(dialogParams.FileName, printer));
-								}
-							});
+							}
+						});
 				});
 			};
 
