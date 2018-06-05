@@ -29,19 +29,18 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
-	public class GuideAssets
+	public class GuideAsset
 	{
 		/// <summary>
 		/// Where to find the gif or eventually movie file
@@ -82,8 +81,8 @@ namespace MatterHackers.MatterControl
 
 	public class DesignSpaceGuide : DialogPage
 	{
-		private List<GuideAssets> whatsNewGuides = new List<GuideAssets>();
-		private List<GuideAssets> allAvailableGuides = new List<GuideAssets>();
+		private List<GuideAsset> whatsNewGuides = new List<GuideAsset>();
+		private List<GuideAsset> allAvailableGuides = new List<GuideAsset>();
 
 
 		public DesignSpaceGuide(string preSelectTabName, string guideKey)
@@ -228,7 +227,8 @@ namespace MatterHackers.MatterControl
 			var guideSectionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
+				VAnchor = VAnchor.Stretch,
+				Padding = theme.DefaultContainerPadding
 			};
 			var guideTab = new ToolTab("Guides".Localize(), tabControl, guideSectionContainer, theme, hasClose: false)
 			{
@@ -238,29 +238,6 @@ namespace MatterHackers.MatterControl
 			tabControl.AddTab(guideTab);
 
 			AddGuides(guideSectionContainer, allAvailableGuides);
-
-			var whatsNewContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
-			};
-
-			var whatsNewTab = new ToolTab("What's New".Localize(), tabControl, whatsNewContainer, theme, hasClose: false)
-			{
-				// this can be used to navigate to this tab on construction
-				Name = "What's New Tab"
-			};
-			tabControl.AddTab(whatsNewTab);
-			AddGuides(whatsNewContainer, whatsNewGuides);
-
-			// if the what's new tab becomes visible mark the time
-			whatsNewContainer.VisibleChanged += (s, e) =>
-			{
-				if (whatsNewContainer.Visible)
-				{
-					UserSettings.Instance.set(UserSettingsKey.LastReadWhatsNew, JsonConvert.SerializeObject(DateTime.Now));
-				}
-			};
 
 			tabControl.SelectedTabIndex = 0;
 			if(!string.IsNullOrWhiteSpace(preSelectTabName))
@@ -282,7 +259,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void AddGuides(FlowLayoutWidget guideContainer, List<GuideAssets> guideList)
+		private void AddGuides(FlowLayoutWidget guideContainer, List<GuideAsset> guideList)
 		{
 			var sequence = new ImageSequence()
 			{
@@ -294,7 +271,8 @@ namespace MatterHackers.MatterControl
 			var rightPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
+				VAnchor = VAnchor.Stretch,
+				Padding = theme.DefaultContainerPadding
 			};
 
 			var imageSequenceWidget = new ImageSequenceWidget(300, 200)
@@ -302,8 +280,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
 				ImageSequence = sequence,
-				Border = new BorderDouble(1),
-				BorderColor = theme.Colors.PrimaryTextColor
+				BackgroundColor = theme.MinimalShade
 			};
 			rightPanel.AddChild(imageSequenceWidget);
 
@@ -319,33 +296,61 @@ namespace MatterHackers.MatterControl
 			};
 			rightPanel.AddChild(description);
 
-			var popupMenu = new PopupMenu(theme)
+			var treeView = new TreeView(theme)
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Top | VAnchor.Fit
+				VAnchor = VAnchor.Fit | VAnchor.Top,
 			};
-
-			double maxMenuItemWidth = 0;
-			PopupMenu.MenuItem firstItem = null;
-			foreach(var guide in guideList)
+			treeView.AfterSelect += (s, e) =>
 			{
-				var menuItem = popupMenu.CreateMenuItem(guide.MenuName);
-				firstItem = (firstItem == null) ? menuItem : firstItem;
-				maxMenuItemWidth = Math.Max(maxMenuItemWidth, menuItem.Width);
-				menuItem.Click += (s, e) =>
+				if (treeView.SelectedNode.Tag is GuideAsset guide)
 				{
 					title.Text = guide.Title;
 					description.Text = guide.Description;
 					imageSequenceWidget.ImageSequence = ApplicationController.Instance.GetProcessingSequence(Color.Black);
 
 					ApplicationController.Instance.DownloadToImageSequenceAsync(imageSequenceWidget.ImageSequence, guide.AnimationUri);
+				}
+			};
+
+			var rootNode = new TreeNode()
+			{
+				Text = "Help Guides",
+				TextColor = theme.Colors.PrimaryTextColor,
+				PointSize = theme.DefaultFontSize,
+				TreeView = treeView,
+			};
+
+			treeView.Load += (s, e) =>
+			{
+				rootNode.Expanded = true;
+				treeView.SelectedNode = rootNode.Nodes.FirstOrDefault();
+			};
+
+			TreeNode firstNode = null;
+			double maxMenuItemWidth = 0;
+
+			foreach (var guide in guideList)
+			{
+				var treeNode = new TreeNode()
+				{
+					Text = guide.MenuName,
+					Tag = guide,
+					TextColor = theme.Colors.PrimaryTextColor,
+					PointSize = theme.DefaultFontSize,
 				};
+
+				maxMenuItemWidth = Math.Max(maxMenuItemWidth, treeNode.Width);
+
+				if (firstNode == null)
+				{
+					firstNode = treeNode;
+				}
+
+				rootNode.Nodes.Add(treeNode);
 			}
 
-			popupMenu.Load += (s, e) =>
-			{
-				firstItem.InvokeClick();
-			};
+			treeView.AddChild(rootNode);
 
 			var splitter = new Splitter()
 			{
@@ -353,9 +358,8 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Stretch,
 				SplitterBackground = theme.SplitterBackground
 			};
-			splitter.SplitterDistance = maxMenuItemWidth;
-			splitter.Panel1.AddChild(popupMenu);
-			splitter.Panel1.BackgroundColor = theme.SlightShade;
+			splitter.SplitterDistance = maxMenuItemWidth + 30;
+			splitter.Panel1.AddChild(treeView);
 			splitter.Panel2.AddChild(rightPanel);
 			guideContainer.AddChild(splitter);
 		}
