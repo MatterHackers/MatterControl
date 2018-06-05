@@ -280,8 +280,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
 				ImageSequence = sequence,
-				Border = new BorderDouble(1),
-				BorderColor = theme.Colors.PrimaryTextColor
+				BackgroundColor = theme.MinimalShade
 			};
 			rightPanel.AddChild(imageSequenceWidget);
 
