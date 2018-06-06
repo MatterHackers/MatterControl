@@ -127,6 +127,10 @@ namespace MatterHackers.MatterControl
 				this.SelectedValue = lastProfileID;
 				lastSelectedIndex = this.SelectedIndex;
 			}
+			else
+			{
+				this.SelectedIndex = -1;
+			}
 		}
 
 		private ImageBuffer GetOemIcon(string oemName)
