@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,30 +31,25 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
-	public class SelectPartsOfPrinterToImport : DialogPage
+	public class ImportSettingsPage : DialogPage
 	{
-		private string importMessage = "Select what you would like to merge into your current profile.".Localize();
-
 		private string settingsFilePath;
-		private PrinterSettings settingsToImport;
 		private int selectedMaterial = -1;
 		private int selectedQuality = -1;
 
-		public SelectPartsOfPrinterToImport(string settingsFilePath)
+		public ImportSettingsPage(string settingsFilePath, PrinterConfig printer)
 		{
 			this.WindowTitle = "Import Wizard";
 			this.HeaderText = "Select What to Import".Localize();
 
 			// TODO: Need to handle load failures for import attempts
-			settingsToImport = PrinterSettings.LoadFile(settingsFilePath);
+			var settingsToImport = PrinterSettings.LoadFile(settingsFilePath);
 
 			// if there are no settings to import
 			if (settingsToImport.QualityLayers.Count == 0 && settingsToImport.MaterialLayers.Count == 0)
@@ -88,16 +83,16 @@ namespace MatterHackers.MatterControl
 			{
 				container.AddChild(new TextWidget("Quality Presets:")
 				{
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
-					Margin = new BorderDouble(0, 3, 0, 15),
+					TextColor = theme.Colors.PrimaryTextColor,
+					Margin = new BorderDouble(0, 3),
 				});
 
 				int buttonIndex = 0;
 				foreach (var qualitySetting in settingsToImport.QualityLayers)
 				{
-					RadioButton qualityButton = new RadioButton(string.IsNullOrEmpty(qualitySetting.Name) ? "no name" : qualitySetting.Name)
+					var qualityButton = new RadioButton(string.IsNullOrEmpty(qualitySetting.Name) ? "no name" : qualitySetting.Name)
 					{
-						TextColor = ActiveTheme.Instance.PrimaryTextColor,
+						TextColor = theme.Colors.PrimaryTextColor,
 						Margin = new BorderDouble(5, 0, 0, 0),
 						HAnchor = HAnchor.Left,
 					};
@@ -124,16 +119,16 @@ namespace MatterHackers.MatterControl
 			{
 				container.AddChild(new TextWidget("Material Presets:")
 				{
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+					TextColor = theme.Colors.PrimaryTextColor,
 					Margin = new BorderDouble(0, 3, 0, 15),
 				});
 
 				int buttonIndex = 0;
 				foreach (var materialSetting in settingsToImport.MaterialLayers)
 				{
-					RadioButton materialButton = new RadioButton(string.IsNullOrEmpty(materialSetting.Name) ? "no name" : materialSetting.Name)
+					var materialButton = new RadioButton(string.IsNullOrEmpty(materialSetting.Name) ? "no name" : materialSetting.Name)
 					{
-						TextColor = ActiveTheme.Instance.PrimaryTextColor,
+						TextColor = theme.Colors.PrimaryTextColor,
 						Margin = new BorderDouble(5, 0),
 						HAnchor = HAnchor.Left,
 					};
@@ -157,8 +152,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			var importButtonTitle = "Import".Localize();
-			var mergeButton = theme.CreateDialogButton(importButtonTitle);
+			var mergeButton = theme.CreateDialogButton("Import".Localize());
 			mergeButton.Name = "Merge Profile";
 			mergeButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
@@ -195,72 +189,50 @@ namespace MatterHackers.MatterControl
 					};
 				}
 
-				PrinterSettingsLayer printerSettingsLayer = ImportSettings(destIsMaterial, settingsFilePath);
-				if (printerSettingsLayer != null)
+				if (File.Exists(settingsFilePath))
 				{
-					ActiveSliceSettings.Instance.Merge(printerSettingsLayer, settingsToImport, sourceFilter, copyName);
-
-					var layerName = (printerSettingsLayer.ContainsKey(SettingsKey.layer_name)) ? printerSettingsLayer[SettingsKey.layer_name] : "none";
-					Success(settingsFilePath, layerName, destIsMaterial ? "Material".Localize() : "Quality".Localize());
-				}
-				else
-				{
-					UiThread.RunOnIdle(() =>
+					if (Path.GetExtension(settingsFilePath).ToLower() == ProfileManager.ProfileExtension)
 					{
-						DisplayFailedToImportMessage(settingsFilePath);
-						this.Parents<SystemWindow>().First().Close();
-					});
+						var printerSettingsLayer = new PrinterSettingsLayer();
+						printer.Settings.Merge(printerSettingsLayer, settingsToImport, sourceFilter, copyName);
+
+						var layerName = (printerSettingsLayer.ContainsKey(SettingsKey.layer_name)) ? printerSettingsLayer[SettingsKey.layer_name] : "none";
+
+						string sectionName = destIsMaterial ? "Material".Localize() : "Quality".Localize();
+
+						string importSettingSuccessMessage = $"You have successfully imported a new {sectionName} setting. You can find '{layerName}' in your list of {sectionName} settings.".Localize();
+
+						WizardWindow.ChangeToPage(
+							new ImportSucceeded(importSettingSuccessMessage)
+							{
+								WizardWindow = this.WizardWindow,
+							});
+
+						if (destIsMaterial)
+						{
+							printer.Settings.MaterialLayers.Add(printerSettingsLayer);
+						}
+						else
+						{
+							printer.Settings.QualityLayers.Add(printerSettingsLayer);
+						}
+					}
+					else
+					{
+						// Inform of unexpected extension type
+						StyledMessageBox.ShowMessageBox(
+							"Oops! Unable to recognize settings file '{0}'.".Localize().FormatWith(Path.GetFileName(settingsFilePath)),
+							"Unable to Import".Localize());
+					}
 				}
 			});
 
 			this.AddPageAction(mergeButton);
 		}
 
-		private void Success(string settingsFilePath, string sourceName, string sectionName)
-		{
-			string importSettingSuccessMessage = $"You have successfully imported a new {sectionName} setting. You can find '{sourceName}' in your list of {sectionName} settings.".Localize();
-
-			WizardWindow.ChangeToPage(new ImportSucceeded(importSettingSuccessMessage)
-			{
-				WizardWindow = this.WizardWindow,
-			});
-		}
-
 		private static void DisplayFailedToImportMessage(string settingsFilePath)
 		{
 			StyledMessageBox.ShowMessageBox("Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
-		}
-
-		public PrinterSettingsLayer ImportSettings(bool destIsMaterial, string settingsFilePath)
-		{
-			PrinterSettingsLayer printerSettingsLayer = null;
-			if (!string.IsNullOrEmpty(settingsFilePath) && File.Exists(settingsFilePath))
-			{
-				string importType = Path.GetExtension(settingsFilePath).ToLower();
-				switch (importType)
-				{
-					case ProfileManager.ProfileExtension:
-						printerSettingsLayer = new PrinterSettingsLayer();
-						printerSettingsLayer[SettingsKey.layer_name] = Path.GetFileNameWithoutExtension(settingsFilePath);
-
-						if (destIsMaterial)
-						{
-							ActiveSliceSettings.Instance.MaterialLayers.Add(printerSettingsLayer);
-						}
-						else
-						{
-							ActiveSliceSettings.Instance.QualityLayers.Add(printerSettingsLayer);
-						}
-						break;
-
-					default:
-						// Did not figure out what this file is, let the user know we don't understand it
-						StyledMessageBox.ShowMessageBox("Oops! Unable to recognize settings file '{0}'.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
-						break;
-				}
-			}
-
-			return printerSettingsLayer;
 		}
 	}
 
@@ -272,7 +244,7 @@ namespace MatterHackers.MatterControl
 			this.WindowTitle = "Import Wizard".Localize();
 			this.HeaderText = "Import Successful".Localize();
 
-			contentRow.AddChild(new WrappedTextWidget(successMessage, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			contentRow.AddChild(new WrappedTextWidget(successMessage, textColor: theme.Colors.PrimaryTextColor));
 		}
 	}
 }

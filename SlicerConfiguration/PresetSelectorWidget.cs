@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			defaultMenuItem.Selected += MenuItem_Selected;
 
 			var listSource = (layerType == NamedSettingsLayers.Material) ? printer.Settings.MaterialLayers : printer.Settings.QualityLayers;
-			foreach (var layer in listSource)
+			foreach (var layer in listSource.OrderBy(l => l.Name))
 			{
 				MenuItem menuItem = dropDownList.AddItem(layer.Name, layer.LayerID);
 				menuItem.Name = layer.Name + " Menu";
