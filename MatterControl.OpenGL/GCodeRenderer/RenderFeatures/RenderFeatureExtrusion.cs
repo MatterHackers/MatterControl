@@ -71,6 +71,13 @@ namespace MatterHackers.GCodeVisualizer
 					width = area / layerHeight;
 				}
 			}
+			else
+			{
+				// TODO: adjust line render to reduce the height of the line as well
+				//
+				// Force line width to 0.1 when SimulateExtrusion is disabled, to produce a visualization of the toolpath rather than the extrudate
+				width = 0.1;
+			}
 
 			return width;
 		}
