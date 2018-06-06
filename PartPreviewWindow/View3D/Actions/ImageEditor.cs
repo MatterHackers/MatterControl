@@ -106,11 +106,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			// add in the invert checkbox and change image button
-			var addButton = new TextButton("Change".Localize(), theme)
+			var changeButton = new TextButton("Change".Localize(), theme)
 			{
 				BackgroundColor = theme.MinimalShade
 			};
-			addButton.Click += (sender, e) =>
+			changeButton.Click += (sender, e) =>
 			{
 				UiThread.RunOnIdle(() =>
 				{
@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			row.AddChild(new HorizontalSpacer());
 
-			row.AddChild(addButton);
+			row.AddChild(changeButton);
 
 			imageObject.Invalidated += (s, e) =>
 			{

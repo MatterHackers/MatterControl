@@ -43,6 +43,7 @@ namespace MatterHackers.MatterControl.Library
 	{
 		public PrintQueueContainer()
 		{
+			this.IsProtected = false;
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
 			this.Name = "Print Queue".Localize();

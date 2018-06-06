@@ -68,7 +68,7 @@ namespace MatterHackers.GCodeVisualizer
 				if (moveLength > .1) // we get truncation errors from the slice engine when the length is very small, so don't do them
 				{
 					double area = extrusionVolumeMm3 / moveLength;
-					width = area / layerHeight;
+					width = area / layerHeight * 2;
 				}
 			}
 			else
