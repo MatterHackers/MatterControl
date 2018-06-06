@@ -99,13 +99,6 @@ namespace MatterHackers.MatterControl
 			this.HeaderText = "How to succeed with MatterControl".Localize();
 			this.ChildBorderColor = theme.GetBorderColor(75);
 
-			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
-			};
-			contentRow.AddChild(container);
-
 			var tabControl = new SimpleTabs(theme, new GuiWidget())
 			{
 				HAnchor = HAnchor.Stretch,
@@ -113,7 +106,8 @@ namespace MatterHackers.MatterControl
 			};
 			tabControl.TabBar.BackgroundColor = theme.TabBarBackground;
 
-			container.AddChild(tabControl);
+			contentRow.AddChild(tabControl);
+			contentRow.Padding = 0;
 
 			// add the mouse commands
 			var mouseControls = new FlowLayoutWidget()
