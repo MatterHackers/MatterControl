@@ -119,9 +119,14 @@ namespace MatterHackers.MatterControl
 			DateTime installTime = new FileInfo(filePath).LastWriteTime;
 			var lastReadWhatsNew = UserSettings.Instance.get(UserSettingsKey.LastReadWhatsNew);
 			DateTime whatsNewReadTime = installTime;
-			if (lastReadWhatsNew != null)
+
+			if (!string.IsNullOrWhiteSpace(lastReadWhatsNew))
 			{
-				whatsNewReadTime = JsonConvert.DeserializeObject<DateTime>(lastReadWhatsNew);
+				try
+				{
+					whatsNewReadTime = JsonConvert.DeserializeObject<DateTime>(lastReadWhatsNew);
+				}
+				catch { }
 			}
 
 			return whatsNewReadTime > installTime;
