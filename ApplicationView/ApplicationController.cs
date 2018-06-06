@@ -2337,7 +2337,7 @@ namespace MatterHackers.MatterControl
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						DialogWindow.Show(new DesignSpaceGuide("Guides Tab", ""));
+						DialogWindow.Show(new DesignSpaceGuide("AllGuides"));
 					});
 				}
 

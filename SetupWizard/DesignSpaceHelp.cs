@@ -81,30 +81,17 @@ namespace MatterHackers.MatterControl
 
 	public class DesignSpaceGuide : DialogPage
 	{
-		private List<GuideAsset> whatsNewGuides = new List<GuideAsset>();
-		private List<GuideAsset> allAvailableGuides = new List<GuideAsset>();
+		private Dictionary<string, TreeNode> nodesByID;
+		private TreeView treeView;
 
-
-		public DesignSpaceGuide(string preSelectTabName, string guideKey)
+		public DesignSpaceGuide(string guideKey = null)
 			: base("Close".Localize())
 		{
 			WindowSize = new Vector2(800, 600);
 
-			allAvailableGuides = ApplicationController.Instance.FeatureGuides;
-
-			// TODO: Guides document should have separate properties for differing top level containers
-			whatsNewGuides = allAvailableGuides;
-
 			this.WindowTitle = "MatterControl " + "Help".Localize();
 			this.HeaderText = "How to succeed with MatterControl".Localize();
 			this.ChildBorderColor = theme.GetBorderColor(75);
-
-			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
-			};
-			contentRow.AddChild(container);
 
 			var tabControl = new SimpleTabs(theme, new GuiWidget())
 			{
@@ -113,7 +100,8 @@ namespace MatterHackers.MatterControl
 			};
 			tabControl.TabBar.BackgroundColor = theme.TabBarBackground;
 
-			container.AddChild(tabControl);
+			contentRow.AddChild(tabControl);
+			contentRow.Padding = 0;
 
 			// add the mouse commands
 			var mouseControls = new FlowLayoutWidget()
@@ -231,6 +219,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Stretch,
 				Padding = theme.DefaultContainerPadding
 			};
+
 			var guideTab = new ToolTab("Guides".Localize(), tabControl, guideSectionContainer, theme, hasClose: false)
 			{
 				// this can be used to navigate to this tab on construction
@@ -238,30 +227,30 @@ namespace MatterHackers.MatterControl
 			};
 			tabControl.AddTab(guideTab);
 
-			AddGuides(guideSectionContainer, allAvailableGuides);
+			AddGuides(guideSectionContainer);
 
-			tabControl.SelectedTabIndex = 0;
-			if(!string.IsNullOrWhiteSpace(preSelectTabName))
+			// If guideKey is empty, switch to first tab
+			if (string.IsNullOrEmpty(guideKey))
 			{
-				// try to find the named tab
-				int index = 0;
-				foreach(var tab in tabControl.AllTabs)
+				tabControl.SelectedTabIndex = 0;
+			}
+			else
+			{
+				// Otherwise switch to guides tab and select the target item
+				tabControl.SelectedTabIndex = tabControl.GetTabIndex(guideTab);
+
+				// TODO: Find the target TreeNode by ID and select
+				if (nodesByID.TryGetValue(guideKey, out TreeNode guideNode))
 				{
-					if (tab is GuiWidget widget)
-					{
-						if (widget.Name == preSelectTabName)
-						{
-							tabControl.SelectedTabIndex = index;
-							break;
-						}
-					}
-					index++;
+					treeView.SelectedNode = guideNode;
 				}
 			}
 		}
 
-		private void AddGuides(FlowLayoutWidget guideContainer, List<GuideAsset> guideList)
+		private void AddGuides(FlowLayoutWidget guideContainer)
 		{
+			nodesByID = new Dictionary<string, TreeNode>();
+
 			var sequence = new ImageSequence()
 			{
 				FramesPerSecond = 3,
@@ -297,7 +286,7 @@ namespace MatterHackers.MatterControl
 			};
 			rightPanel.AddChild(description);
 
-			var treeView = new TreeView(theme)
+			treeView = new TreeView(theme)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit | VAnchor.Top,
@@ -325,13 +314,17 @@ namespace MatterHackers.MatterControl
 			treeView.Load += (s, e) =>
 			{
 				rootNode.Expanded = true;
-				treeView.SelectedNode = rootNode.Nodes.FirstOrDefault();
+
+				if (treeView.SelectedNode == null)
+				{
+					treeView.SelectedNode = rootNode.Nodes.FirstOrDefault();
+				}
 			};
 
 			TreeNode firstNode = null;
 			double maxMenuItemWidth = 0;
 
-			foreach (var guide in guideList)
+			foreach (var guide in ApplicationController.Instance.FeatureGuides.OrderBy(g => g.MenuName))
 			{
 				var treeNode = new TreeNode()
 				{
@@ -347,6 +340,8 @@ namespace MatterHackers.MatterControl
 				{
 					firstNode = treeNode;
 				}
+
+				nodesByID.Add(guide.MenuName, treeNode);
 
 				rootNode.Nodes.Add(treeNode);
 			}
