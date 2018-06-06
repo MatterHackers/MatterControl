@@ -303,7 +303,7 @@ namespace MatterHackers.MatterControl
 				}
 			};
 
-			var rootNode = new TreeNode()
+			var rootNode = new TreeNode(useIcon: false)
 			{
 				Text = "Help Guides",
 				TextColor = theme.Colors.PrimaryTextColor,
@@ -326,7 +326,7 @@ namespace MatterHackers.MatterControl
 
 			foreach (var guide in ApplicationController.Instance.FeatureGuides.OrderBy(g => g.MenuName))
 			{
-				var treeNode = new TreeNode()
+				var treeNode = new TreeNode(useIcon: false)
 				{
 					Text = guide.MenuName,
 					Tag = guide,
