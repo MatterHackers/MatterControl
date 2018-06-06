@@ -208,11 +208,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 					if (_selectedNode != null)
 					{
-						_selectedNode.SelectionBar.BackgroundColor = Color.Transparent;
+						_selectedNode.HighlightRegion.BackgroundColor = Color.Transparent;
 					}
 
 					_selectedNode = value;
-					_selectedNode.SelectionBar.BackgroundColor = theme.AccentMimimalOverlay;
+					_selectedNode.HighlightRegion.BackgroundColor = theme.AccentMimimalOverlay;
 					OnAfterSelect(null);
 				}
 			}

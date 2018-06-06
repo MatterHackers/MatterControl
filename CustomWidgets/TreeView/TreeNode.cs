@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private GuiWidget content;
 
-		public TreeNode()
+		public TreeNode(bool useIcon = true)
 			: base(FlowDirection.TopToBottom)
 		{
 			var theme = ApplicationController.Instance.Theme;
@@ -77,31 +77,34 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				VAnchor = VAnchor.Center,
 			};
 
-			this.ExpandedChanged += (s2, e2) =>
+			this.ExpandedChanged += (s, e) =>
 			{
 				expandWidget.Expanded = this.Expanded;
 				expandCheckBox.Checked = this.Expanded;
 			};
 
-			expandCheckBox.CheckedStateChanged += (s3, e3) =>
+			expandCheckBox.CheckedStateChanged += (s, e) =>
 			{
 				Expanded = expandCheckBox.Checked;
 			};
 
 			this.TitleBar.AddChild(expandCheckBox);
 
-			this.SelectionBar = new FlowLayoutWidget()
+			this.HighlightRegion = new FlowLayoutWidget()
 			{
 				VAnchor = VAnchor.Fit,
 				HAnchor = HAnchor.Fit,
+				Padding = useIcon ? 0 : new BorderDouble(4, 2),
 				Selectable = false
 			};
-			this.TitleBar.AddChild(this.SelectionBar);
+			this.TitleBar.AddChild(this.HighlightRegion);
 
 			// add a check box
-			if (Image != null)
+			if (useIcon)
 			{
-				this.SelectionBar.AddChild(imageWidget = new ImageWidget(this.Image)
+				_image = new ImageBuffer(16, 16);
+
+				this.HighlightRegion.AddChild(imageWidget = new ImageWidget(this.Image)
 				{
 					VAnchor = VAnchor.Center,
 					BackgroundColor = new Color(theme.Colors.PrimaryTextColor, 12),
@@ -110,8 +113,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				});
 			};
 
-
-			this.SelectionBar.AddChild(textWidget = new TextWidget(this.Text, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			this.HighlightRegion.AddChild(textWidget = new TextWidget(this.Text, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 			{
 				Selectable = false,
 				AutoExpandBoundsToText = true,
@@ -132,7 +134,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public FlowLayoutWidget TitleBar { get; }
 
-		public FlowLayoutWidget SelectionBar { get; }
+		public FlowLayoutWidget HighlightRegion { get; }
 
 		public void BeginEdit()
 		{
@@ -223,7 +225,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		#region Properties
 
-		private ImageBuffer _image = new ImageBuffer(16, 16);
+		private ImageBuffer _image = null;
 		private TextWidget textWidget;
 		private TreeExpandWidget expandWidget;
 		private ImageWidget imageWidget;
