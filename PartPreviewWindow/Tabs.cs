@@ -181,6 +181,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.ActiveTabChanged?.Invoke(this, null);
 		}
+
+		internal int GetTabIndex(SimpleTab tab)
+		{
+			return _allTabs.IndexOf(tab);
+		}
 	}
 
 	public class ChromeTabs : SimpleTabs

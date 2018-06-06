@@ -613,7 +613,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							DialogWindow.Show(new DesignSpaceGuide("", ""));
+							DialogWindow.Show(new DesignSpaceGuide());
 						});
 					}
 				}
