@@ -109,8 +109,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		private static VertexStorage CombinePaths(IVertexSource a, IVertexSource b, ClipType clipType)
 		{
-			List<List<IntPoint>> aPolys = VertexSourceToClipperPolygons.CreatePolygons(a);
-			List<List<IntPoint>> bPolys = VertexSourceToClipperPolygons.CreatePolygons(b);
+			List<List<IntPoint>> aPolys = a.CreatePolygons();
+			List<List<IntPoint>> bPolys = b.CreatePolygons();
 
 			Clipper clipper = new Clipper();
 
@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			Clipper.CleanPolygons(intersectedPolys);
 
-			VertexStorage output = VertexSourceToClipperPolygons.CreateVertexStorage(intersectedPolys);
+			VertexStorage output = intersectedPolys.CreateVertexStorage();
 
 			output.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
 
@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static VertexStorage Offset(this IVertexSource a, double distance)
 		{
-			List<List<IntPoint>> aPolys = VertexSourceToClipperPolygons.CreatePolygons(a);
+			List<List<IntPoint>> aPolys = a.CreatePolygons();
 
 			ClipperOffset offseter = new ClipperOffset();
 			offseter.AddPaths(aPolys, JoinType.jtMiter, EndType.etClosedPolygon);
@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			Clipper.CleanPolygons(solution);
 
-			VertexStorage output = VertexSourceToClipperPolygons.CreateVertexStorage(solution);
+			VertexStorage output = solution.CreateVertexStorage();
 
 			output.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
 
@@ -217,6 +217,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static void WrapWith(this IObject3D originalItem, IObject3D wrapper, InteractiveScene scene)
 		{
+			originalItem.SuspendRebuild();
 			originalItem.Parent.Children.Modify(list =>
 			{
 				list.Remove(originalItem);
@@ -230,6 +231,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			});
 
 			scene.SelectedItem = wrapper;
+			originalItem.ResumeRebuild();
 		}
 
 		public static Matrix4X4 ApplyAtBoundsCenter(this IObject3D objectWithBounds, Matrix4X4 transformToApply)

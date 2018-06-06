@@ -31,28 +31,75 @@ using System.Collections.Generic;
 using ClipperLib;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
+	using MatterHackers.Agg.VertexSource;
+	using MatterHackers.DataConverters2D;
+	using Newtonsoft.Json;
+	using System.Linq;
 	using Polygon = List<IntPoint>;
 	using Polygons = List<List<IntPoint>>;
 
-	public class SmoothPath : Object3D, IPublicPropertyObject
+	public class SmoothPath : Object3D, IPublicPropertyObject, IPathObject
 	{
 		public Polygons PathData;
 
+		[JsonIgnore]
+		public IVertexSource VertexSource
+		{
+			get
+			{
+				var vertexSourc = this.Children.OfType<IPathObject>().FirstOrDefault();
+				return vertexSourc?.VertexSource;
+			}
+			set
+			{
+				var vertexSourc = this.Children.OfType<IPathObject>().FirstOrDefault();
+				if(vertexSourc != null)
+				{
+					vertexSourc.VertexSource = value;
+				}
+			}
+		}
+
 		public SmoothPath()
 		{
+			Name = "Smooth Path".Localize();
 		}
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Content)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Path))
+				&& invalidateType.Source != this
+				&& !RebuildSuspended)
+			{
+				Rebuild(null);
+			}
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
+		}
+
+		public override void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
+			SuspendRebuild();
+			DoSmoothing();
+			ResumeRebuild();
+
+			Invalidate(new InvalidateArgs(this, InvalidateType.Path));
 		}
 
-		public static  Polygons DoSmoothing(Polygons inputPolygons, long maxDist = 300, int interations = 3, bool closedPath = true)
+		public void DoSmoothing(long maxDist = 300, int interations = 3, bool closedPath = true)
 		{
+			var inputPolygons = VertexSource.CreatePolygons();
+
 			Polygons outputPolygons = new Polygons();
 			foreach (Polygon inputPolygon in inputPolygons)
 			{
@@ -97,7 +144,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				outputPolygons.Add(smoothedPositions);
 			}
 
-			return outputPolygons;
+			VertexSource = outputPolygons.CreateVertexStorage();
 		}
 
 	}

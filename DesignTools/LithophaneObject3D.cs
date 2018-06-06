@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 
 		public Vector3 ImageOffset { get; private set; } = Vector3.Zero;
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		public override void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
 			var activeImage = AggContext.ImageIO.LoadImage(this.Image.AssetPath);

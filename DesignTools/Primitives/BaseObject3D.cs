@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var vertexSource = this.VertexSource ?? this.Parent.Children.OfType<IPathObject>().FirstOrDefault().VertexSource;
 
 			// Convert VertexSource into expected Polygons
-			Polygons polygonShape = (vertexSource == null) ? null : VertexSourceToClipperPolygons.CreatePolygons(vertexSource);
+			Polygons polygonShape = (vertexSource == null) ? null : vertexSource.CreatePolygons();
 
 			GenerateBase(polygonShape);
 

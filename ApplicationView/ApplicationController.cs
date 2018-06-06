@@ -789,6 +789,58 @@ namespace MatterHackers.MatterControl
 			this.Graph = new GraphConfig();
 			this.Library.ContentProviders.Add(new[] { "stl", "obj", "amf", "mcx" }, new MeshContentProvider());
 			this.Library.ContentProviders.Add("gcode", new GCodeContentProvider());
+			this.Library.ContentProviders.Add(new[] { "png", "gif", "jpg", "jpeg" }, new ImageContentProvider());
+
+			this.Graph.RegisterOperation(
+				typeof(ImageObject3D),
+				"Image to Path".Localize(),
+				(sceneItem, scene) =>
+				{
+					if (sceneItem is IObject3D imageObject)
+					{
+						var path = new ImageToPath();
+						sceneItem.WrapWith(path, scene);
+						path.Rebuild(null);
+					}
+
+					return Task.CompletedTask;
+				},
+				(sceneItem) => true,
+				(sceneItem) => true);
+
+			this.Graph.RegisterOperation(
+				typeof(IPathObject),
+				"Linear Extrude".Localize(),
+				(sceneItem, scene) =>
+				{
+					if (sceneItem is IPathObject imageObject)
+					{
+						var extrued = new LinearExtrude();
+						sceneItem.WrapWith(extrued, scene);
+						extrued.Rebuild(null);
+					}
+
+					return Task.CompletedTask;
+				},
+				(sceneItem) => true,
+				(sceneItem) => true);
+
+			this.Graph.RegisterOperation(
+				typeof(IPathObject),
+				"Smooth Path".Localize(),
+				(sceneItem, scene) =>
+				{
+					if (sceneItem is IPathObject imageObject)
+					{
+						var smoothPath = new SmoothPath();
+						sceneItem.WrapWith(smoothPath, scene);
+						smoothPath.Rebuild(null);
+					}
+
+					return Task.CompletedTask;
+				},
+				(sceneItem) => true,
+				(sceneItem) => true);
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{

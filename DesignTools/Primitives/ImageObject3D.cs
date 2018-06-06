@@ -83,8 +83,6 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							_image = InvertLightness.DoInvertLightness(_image);
 						}
-
-						base.Mesh = this.InitMesh() ?? PlatonicSolids.CreateCube(100, 100, 0.2);
 					}
 					else // bad load
 					{
@@ -94,6 +92,14 @@ namespace MatterHackers.MatterControl.DesignTools
 						graphics2D.DrawString("Bad Load", 100, 100);
 
 					}
+
+					// we don't want to invalidate on the mesh chage
+					SuspendRebuild();
+					base.Mesh = this.InitMesh() ?? PlatonicSolids.CreateCube(100, 100, 0.2);
+					ResumeRebuild();
+
+					// send the invalidate on image change
+					this.OnInvalidate(new InvalidateArgs(this, InvalidateType.Image));
 				}
 
 				return _image;
@@ -110,7 +116,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					_invert = value;
 					_image = null;
 
-					this.OnInvalidate(new InvalidateArgs(this, InvalidateType.Content));
+					this.OnInvalidate(new InvalidateArgs(this, InvalidateType.Image));
 				}
 			}
 		}
