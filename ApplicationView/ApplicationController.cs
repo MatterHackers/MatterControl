@@ -842,6 +842,23 @@ namespace MatterHackers.MatterControl
 				(sceneItem) => true,
 				(sceneItem) => true);
 
+			this.Graph.RegisterOperation(
+				typeof(IPathObject),
+				"Add Base".Localize(),
+				(sceneItem, scene) =>
+				{
+					if (sceneItem is IPathObject imageObject)
+					{
+						var baseMesh = new BaseObject3D();
+						sceneItem.WrapWith(baseMesh, scene);
+						baseMesh.Rebuild(null);
+					}
+
+					return Task.CompletedTask;
+				},
+				(sceneItem) => true,
+				(sceneItem) => true);
+
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if (e is StringEventArgs stringArg
