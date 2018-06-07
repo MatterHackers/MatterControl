@@ -205,9 +205,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private void RebuildContentSection()
 		{
-			// If the node count is starting at 0 we are adding content and need to rebuild the title bar so it will have a + in it
-			bool needToRebuildTitleBar = GetNodeCount(false) == 0;
-
 			// Remove but don't close all the current nodes
 			content.RemoveAllChildren();
 
