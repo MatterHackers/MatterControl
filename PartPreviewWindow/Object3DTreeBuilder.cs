@@ -75,8 +75,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var node = new TreeNode()
 			{
-				Text = BuildDefaultName(item),
 				Tag = item,
+				Text = GetName(item),
 				TextColor = theme.Colors.PrimaryTextColor,
 				PointSize = theme.DefaultFontSize,
 			};
@@ -114,20 +114,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return node;
 		}
 
-		private static string BuildDefaultName(IObject3D item)
+		private static string GetName(IObjectView item)
 		{
-			string nameToWrite = "";
-			if (!string.IsNullOrEmpty(item.Name))
-			{
-				nameToWrite += $"{item.Name}";
-			}
-			else
-			{
-				nameToWrite += $"{item.GetType().Name}";
-			}
-
-			return nameToWrite;
+			return !string.IsNullOrEmpty(item.Name) ? $"{item.Name}" : $"{item.GetType().Name}";
 		}
-
 	}
 }
