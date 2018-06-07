@@ -36,6 +36,8 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -49,6 +51,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public BaseObject3D()
 		{
+			Name = "Base".Localize();
 		}
 
 		public BaseTypes CurrentBaseType { get; set; }
@@ -56,7 +59,23 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double InfillAmount { get; set; } = 3;
 		public double ExtrusionHeight { get; set; } = 5;
 
-		public IVertexSource VertexSource { get; set; }
+		[JsonIgnore]
+		public IVertexSource VertexSource
+		{
+			get
+			{
+				var vertexSourc = this.Children.OfType<IPathObject>().FirstOrDefault();
+				return vertexSourc?.VertexSource;
+			}
+			set
+			{
+				var vertexSourc = this.Children.OfType<IPathObject>().FirstOrDefault();
+				if (vertexSourc != null)
+				{
+					vertexSourc.VertexSource = value;
+				}
+			}
+		}
 
 		public static BaseObject3D Create()
 		{
@@ -65,13 +84,31 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Content)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Path))
+				&& invalidateType.Source != this
+				&& !RebuildSuspended)
+			{
+				Rebuild(null);
+			}
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
+		}
+
+		public override void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
+
+			SuspendRebuild();
 			var aabb = this.GetAxisAlignedBoundingBox();
 
 			// Fall back to sibling content if VertexSource is unset
-			var vertexSource = this.VertexSource ?? this.Parent.Children.OfType<IPathObject>().FirstOrDefault().VertexSource;
+			var vertexSource = this.VertexSource;
 
 			// Convert VertexSource into expected Polygons
 			Polygons polygonShape = (vertexSource == null) ? null : vertexSource.CreatePolygons();
@@ -83,6 +120,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				// If the part was already created and at a height, maintain the height.
 				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 			}
+			ResumeRebuild();
+
+			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}
 
 		private static Polygon GetBoundingPolygon(Polygons basePolygons)
@@ -195,23 +235,31 @@ namespace MatterHackers.MatterControl.DesignTools
 						break;
 				}
 
-				Polygons basePolygons;
-
-				if (CurrentBaseType == BaseTypes.Outline
-					&& InfillAmount > 0)
+				if (polysToOffset.Count > 3)
 				{
-					basePolygons = Offset(polysToOffset, (BaseSize + InfillAmount) * scalingForClipper);
-					basePolygons = Offset(basePolygons, -InfillAmount * scalingForClipper);
+					Polygons basePolygons;
+
+					if (CurrentBaseType == BaseTypes.Outline
+						&& InfillAmount > 0)
+					{
+						basePolygons = Offset(polysToOffset, (BaseSize + InfillAmount) * scalingForClipper);
+						basePolygons = Offset(basePolygons, -InfillAmount * scalingForClipper);
+					}
+					else
+					{
+						basePolygons = Offset(polysToOffset, BaseSize * scalingForClipper);
+					}
+
+					VertexStorage rawVectorShape = basePolygons.PolygonToPathStorage();
+					var vectorShape = new VertexSourceApplyTransform(rawVectorShape, Affine.NewScaling(1.0 / scalingForClipper));
+
+					Mesh = VertexSourceToMesh.Extrude(vectorShape, zHeight: ExtrusionHeight);
 				}
 				else
 				{
-					basePolygons = Offset(polysToOffset, BaseSize * scalingForClipper);
+					// clear the mesh
+					Mesh = null;
 				}
-
-				VertexStorage rawVectorShape = PlatingHelper.PolygonToPathStorage(basePolygons);
-				var vectorShape = new VertexSourceApplyTransform(rawVectorShape, Affine.NewScaling(1.0 / scalingForClipper));
-
-				Mesh = VertexSourceToMesh.Extrude(vectorShape, zHeight: ExtrusionHeight);
 			}
 		}
 

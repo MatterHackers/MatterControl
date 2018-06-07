@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				progressReporter?.Invoke(.75, null);
 
-				VertexStorage rawVectorShape = PlatingHelper.PolygonToPathStorage(polygonShape);
+				VertexStorage rawVectorShape = polygonShape.PolygonToPathStorage();
 
 				var aabb = this.VisibleMeshes().FirstOrDefault().GetAxisAlignedBoundingBox();
 				var xScale = aabb.XSize / image.Width;
