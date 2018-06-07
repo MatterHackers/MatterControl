@@ -38,13 +38,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	public class OperationSource : Object3D
 	{
 		public OperationSource()
-			: this(null)
-		{
-		}
-		public OperationSource(IEnumerable<IObject3D> children)
-			: base(children)
 		{
 			Name = "Source".Localize();
+		}
+
+		public OperationSource(IEnumerable<IObject3D> children)
+			: this()
+		{
 			Visible = false;
 		}
 

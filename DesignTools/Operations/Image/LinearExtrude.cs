@@ -84,7 +84,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			ResumeRebuild();
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
-			base.Rebuild(undoBuffer);
 		}
 	}
 }
