@@ -187,10 +187,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		{
 			toolbar.ActionArea.CloseAllChildren();
 
-			// Select the 25 most recent files and project onto FileSystemItems
-			var recentFiles = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
-
-
 			var lastProfileID = ProfileManager.Instance.LastProfileID;
 			var lastProfile = ProfileManager.Instance[lastProfileID];
 
@@ -243,7 +239,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 				toolbar.AddChild(emptyPlateButton);
 
-				foreach (var item in recentFiles.Take(10).Select(f => new SceneReplacementFileItem(f.FullName)).ToList<ILibraryItem>())
+				// Select the 25 most recent files and project onto FileSystemItems
+				var recentFiles = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
+				foreach (var item in recentFiles.Where(f => f.Length > 500).Select(f => new SceneReplacementFileItem(f.FullName)).Take(10).ToList<ILibraryItem>())
 				{
 					var iconButton = new IconViewItem(new ListViewItem(item, ApplicationController.Instance.Library.PlatingHistory), 70, 70, theme)
 					{
@@ -285,7 +283,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		public PartsBar(PartPreviewContent partPreviewContent, ThemeConfig theme)
 			: base("Parts".Localize(), theme)
 		{
-			var recentParts = new DirectoryInfo(ApplicationDataStorage.Instance.PartHistoryDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
 
 			var emptyPlateButton = new ImageWidget(AggContext.StaticData.LoadIcon("new-part.png", 70, 70))
 			{
@@ -317,7 +314,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			};
 			toolbar.AddChild(emptyPlateButton);
 
-			foreach (var item in recentParts.Take(10).Select(f => new SceneReplacementFileItem(f.FullName)).ToList<ILibraryItem>())
+			var recentParts = new DirectoryInfo(ApplicationDataStorage.Instance.PartHistoryDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
+
+			foreach (var item in recentParts.Where(f => f.Length > 500).Select(f => new SceneReplacementFileItem(f.FullName)).Take(10).ToList<ILibraryItem>())
 			{
 				var iconButton = new IconViewItem(new ListViewItem(item, ApplicationController.Instance.Library.PlatingHistory), 70, 70, theme)
 				{
