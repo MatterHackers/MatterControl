@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
@@ -43,6 +42,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	public class TreeNode : FlowLayoutWidget, ICheckbox
 	{
 		private GuiWidget content;
+		private TreeView _treeView;
+		private ImageBuffer _image = null;
+		private TextWidget textWidget;
+		private TreeExpandWidget expandWidget;
+		private ImageWidget imageWidget;
 
 		public TreeNode(bool useIcon = true)
 			: base(FlowDirection.TopToBottom)
@@ -60,7 +64,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					TreeView.SelectedNode = this;
 				}
 			};
-			AddChild(TitleBar);
+			this.AddChild(this.TitleBar);
 
 			// add a check box
 			expandWidget = new TreeExpandWidget(theme)
@@ -136,35 +140,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public FlowLayoutWidget HighlightRegion { get; }
 
-		public void BeginEdit()
-		{
-			throw new NotImplementedException();
-		}
-
-		public void Collapse(bool collapseChildren)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void Collapse()
-		{
-			throw new NotImplementedException();
-		}
-
-		public void EndEdit(bool cancel)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void EnsureVisible()
-		{
-			throw new NotImplementedException();
-		}
-
-		public void ExpandAll()
-		{
-			throw new NotImplementedException();
-		}
+		// **** Not implemented ****
+		public void BeginEdit() => throw new NotImplementedException();
+		public void Collapse(bool collapseChildren) => throw new NotImplementedException();
+		public void Collapse() => throw new NotImplementedException();
+		public void EndEdit(bool cancel) => throw new NotImplementedException();
+		public void EnsureVisible() => throw new NotImplementedException();
+		public void ExpandAll() => throw new NotImplementedException();
+		public void Remove() => throw new NotImplementedException();
 
 		public int GetNodeCount(bool includeSubTrees)
 		{
@@ -184,11 +167,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 
 			base.OnTextChanged(e);
-		}
-
-		public void Remove()
-		{
-			throw new NotImplementedException();
 		}
 
 		public void Toggle()
@@ -221,11 +199,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 
 		#region Properties
-
-		private ImageBuffer _image = null;
-		private TextWidget textWidget;
-		private TreeExpandWidget expandWidget;
-		private ImageWidget imageWidget;
 
 		public bool Checked { get; set; }
 
@@ -389,8 +362,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		//     A TreeView that represents the parent tree view that the
 		//     tree node is assigned to, or null if the node has not been assigned to a tree
 		//     view.
-
-		private TreeView _treeView;
 
 		public virtual TreeView TreeView
 		{
