@@ -47,6 +47,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private TextWidget textWidget;
 		private TreeExpandWidget expandWidget;
 		private ImageWidget imageWidget;
+		private bool isDirty;
 
 		public TreeNode(bool useIcon = true)
 			: base(FlowDirection.TopToBottom)
@@ -133,7 +134,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			AddChild(content);
 
-			Nodes.CollectionChanged += Nodes_CollectionChanged;
+			Nodes.CollectionChanged += (s, e) => isDirty = true;
 		}
 
 		public FlowLayoutWidget TitleBar { get; }
@@ -159,6 +160,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			return content?.Children.Where((c) => c is TreeNode).Count() ?? 0;
 		}
 
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			if (this.layoutSuspendCount == 0
+				&& isDirty)
+			{
+				RebuildContentSection();
+			}
+
+			base.OnDraw(graphics2D);
+		}
+
 		public override void OnTextChanged(EventArgs e)
 		{
 			if (textWidget != null)
@@ -172,13 +184,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public void Toggle()
 		{
 			content.Visible = !content.Visible;
-		}
-
-		private void Nodes_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			RebuildContentSection();
-
-			expandWidget.Expandable = this.GetNodeCount(false) != 0;
 		}
 
 		private void RebuildContentSection()
@@ -196,6 +201,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			// If the node count is ending at 0 we removed content and need to rebuild the title bar so it will net have a + in it
 			expandWidget.Expandable = GetNodeCount(false) != 0;
+
+			isDirty = false;
+
 		}
 
 		#region Properties
