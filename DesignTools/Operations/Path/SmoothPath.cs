@@ -39,6 +39,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	using MatterHackers.Agg.VertexSource;
 	using MatterHackers.DataConverters2D;
 	using Newtonsoft.Json;
+	using System;
 	using System.Linq;
 	using Polygon = List<IntPoint>;
 	using Polygons = List<List<IntPoint>>;
@@ -52,6 +53,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			Name = "Smooth Path".Localize();
 		}
+
+		public double SmoothDistance { get; set; } = .3;
+		public int Iterations { get; set; } = 3;
 
 		public override bool CanRemove => true;
 
@@ -75,14 +79,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			this.DebugDepth("Rebuild");
 			SuspendRebuild();
-			DoSmoothing();
+			DoSmoothing((long)(SmoothDistance * 1000), Iterations);
 			ResumeRebuild();
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Path));
 		}
 
-		public void DoSmoothing(long maxDist = 300, int interations = 3, bool closedPath = true)
+		private void DoSmoothing(long maxDist, int interations)
 		{
+			bool closedPath = true;
 			var sourceVertices = this.Children.OfType<IPathObject>().FirstOrDefault().VertexSource;
 
 			var inputPolygons = sourceVertices.CreatePolygons();
@@ -129,6 +134,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 
 				outputPolygons.Add(smoothedPositions);
+
+				outputPolygons = ClipperLib.Clipper.CleanPolygons(outputPolygons, Math.Max(maxDist/10, 1.415));
 			}
 
 			VertexSource = outputPolygons.CreateVertexStorage();

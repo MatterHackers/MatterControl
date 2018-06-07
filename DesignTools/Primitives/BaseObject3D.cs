@@ -275,6 +275,8 @@ namespace MatterHackers.MatterControl.DesignTools
 						basePolygons = Offset(polysToOffset, BaseSize * scalingForClipper);
 					}
 
+					basePolygons = ClipperLib.Clipper.CleanPolygons(basePolygons, 10);
+
 					VertexStorage rawVectorShape = basePolygons.PolygonToPathStorage();
 					var vectorShape = new VertexSourceApplyTransform(rawVectorShape, Affine.NewScaling(1.0 / scalingForClipper));
 
