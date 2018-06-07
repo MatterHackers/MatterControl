@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public TextObject3D()
 		{
 			Name = "Text".Localize();
-			Color = ApplicationController.Instance.PrimitiveColors["Text"];
+			Color = Operations.Object3DExtensions.PrimitiveColors["Text"];
 		}
 
 		public static TextObject3D Create()

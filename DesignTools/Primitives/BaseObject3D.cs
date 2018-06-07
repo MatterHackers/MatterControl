@@ -37,6 +37,8 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -54,25 +56,42 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Base".Localize();
 		}
 
+		public override bool CanRemove => true;
+		public override bool CanApply => true;
+
 		public BaseTypes CurrentBaseType { get; set; }
 		public double BaseSize { get; set; } = 3;
 		public double InfillAmount { get; set; } = 3;
 		public double ExtrusionHeight { get; set; } = 5;
+
+		public override void Apply(UndoBuffer undoBuffer)
+		{
+			OperationSource.Apply(this);
+
+			base.Apply(undoBuffer);
+		}
+
+		public override void Remove(UndoBuffer undoBuffer)
+		{
+			OperationSource.Remove(this);
+
+			base.Remove(undoBuffer);
+		}
 
 		[JsonIgnore]
 		public IVertexSource VertexSource
 		{
 			get
 			{
-				var vertexSourc = this.Children.OfType<IPathObject>().FirstOrDefault();
-				return vertexSourc?.VertexSource;
+				var vertexSource = (IPathObject)this.Descendants<IObject3D>().FirstOrDefault((i) => i is IPathObject);
+				return vertexSource?.VertexSource;
 			}
 			set
 			{
-				var vertexSourc = this.Children.OfType<IPathObject>().FirstOrDefault();
-				if (vertexSourc != null)
+				var vertexSource = this.Children.OfType<IPathObject>().FirstOrDefault();
+				if (vertexSource != null)
 				{
-					vertexSourc.VertexSource = value;
+					vertexSource.VertexSource = value;
 				}
 			}
 		}
@@ -88,7 +107,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Content)
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Path))
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Path)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
 				&& invalidateType.Source != this
 				&& !RebuildSuspended)
 			{
@@ -105,7 +125,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.DebugDepth("Rebuild");
 
 			SuspendRebuild();
+
 			var aabb = this.GetAxisAlignedBoundingBox();
+
+			Children.Modify((list) =>
+			{
+				list.RemoveAll((i) => !(i is OperationSource));
+			});
 
 			// Fall back to sibling content if VertexSource is unset
 			var vertexSource = this.VertexSource;
@@ -211,8 +237,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void GenerateBase(Polygons polygonShape)
 		{
-			// Add/remove base mesh
-			if (polygonShape?.Count > 0)
+			if (polygonShape.Select(p => p.Count).Sum() > 3)
 			{
 				Polygons polysToOffset = new Polygons();
 
@@ -235,7 +260,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						break;
 				}
 
-				if (polysToOffset.Count > 3)
+				if (polysToOffset.Count > 0)
 				{
 					Polygons basePolygons;
 
@@ -250,10 +275,17 @@ namespace MatterHackers.MatterControl.DesignTools
 						basePolygons = Offset(polysToOffset, BaseSize * scalingForClipper);
 					}
 
+					basePolygons = ClipperLib.Clipper.CleanPolygons(basePolygons, 10);
+
 					VertexStorage rawVectorShape = basePolygons.PolygonToPathStorage();
 					var vectorShape = new VertexSourceApplyTransform(rawVectorShape, Affine.NewScaling(1.0 / scalingForClipper));
 
-					Mesh = VertexSourceToMesh.Extrude(vectorShape, zHeight: ExtrusionHeight);
+					var baseObject = new Object3D()
+					{
+						Mesh = VertexSourceToMesh.Extrude(vectorShape, zHeight: ExtrusionHeight)
+					};
+					Children.Add(baseObject);
+					baseObject.Mesh.Translate(new Vector3(0, 0, -ExtrusionHeight));
 				}
 				else
 				{

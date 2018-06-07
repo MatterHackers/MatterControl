@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public CubeObject3D()
 		{
 			Name = "Cube".Localize();
-			Color = ApplicationController.Instance.PrimitiveColors["Cube"];
+			Color = Operations.Object3DExtensions.PrimitiveColors["Cube"];
 		}
 
 		public CubeObject3D(double width, double depth, double height)

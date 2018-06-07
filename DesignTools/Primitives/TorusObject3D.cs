@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public TorusObject3D()
 		{
 			Name = "Torus".Localize();
-			Color = ApplicationController.Instance.PrimitiveColors["Torus"];
+			Color = Operations.Object3DExtensions.PrimitiveColors["Torus"];
 		}
 
 		public static TorusObject3D Create()

@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public WedgeObject3D()
 		{
 			Name = "Wedge".Localize();
-			Color = ApplicationController.Instance.PrimitiveColors["Wedge"];
+			Color = Operations.Object3DExtensions.PrimitiveColors["Wedge"];
 		}
 
 		public static WedgeObject3D Create()

@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
@@ -39,6 +40,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public OperationSource()
 		{
 			Name = "Source".Localize();
+		}
+
+		public OperationSource(IEnumerable<IObject3D> children)
+			: this()
+		{
 			Visible = false;
 		}
 

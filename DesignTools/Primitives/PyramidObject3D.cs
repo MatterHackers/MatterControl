@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public PyramidObject3D()
 		{
 			Name = "Pyriamid".Localize();
-			Color = ApplicationController.Instance.PrimitiveColors["Pyramid"];
+			Color = Operations.Object3DExtensions.PrimitiveColors["Pyramid"];
 		}
 
 		public static PyramidObject3D Create()

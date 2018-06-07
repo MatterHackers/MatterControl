@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public HalfCylinderObject3D()
 		{
 			Name = "Half Cylinder".Localize();
-			Color = ApplicationController.Instance.PrimitiveColors["HalfCylinder"];
+			Color = Operations.Object3DExtensions.PrimitiveColors["HalfCylinder"];
 		}
 
 		public static HalfCylinderObject3D Create()
