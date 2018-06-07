@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public RingObject3D()
 		{
 			Name = "Ring".Localize();
-			Color = ApplicationController.Instance.PrimitiveColors["Ring"];
+			Color = Operations.Object3DExtensions.PrimitiveColors["Ring"];
 		}
 
 		public RingObject3D(double outerDiameter, double innerDiameter, double height, int sides)

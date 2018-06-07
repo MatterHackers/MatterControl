@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public ConeObject3D()
 		{
 			Name = "Cone".Localize();
-			Color = ApplicationController.Instance.PrimitiveColors["Cone"];
+			Color = Operations.Object3DExtensions.PrimitiveColors["Cone"];
 		}
 
 		public static ConeObject3D Create()

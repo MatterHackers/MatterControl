@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public HalfSphereObject3D()
 		{
 			Name = "Half Sphere".Localize();
-			Color = ApplicationController.Instance.PrimitiveColors["HalfSphere"];
+			Color = Operations.Object3DExtensions.PrimitiveColors["HalfSphere"];
 		}
 
 		public HalfSphereObject3D(double diametar, int sides)

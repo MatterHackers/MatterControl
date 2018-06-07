@@ -108,41 +108,54 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void DrawEditor(object sender, DrawEventArgs e)
 		{
-			bool first = true;
-			Vector2 lastPosition = Vector2.Zero;
-			var aabb = this.VisibleMeshes().FirstOrDefault().GetAxisAlignedBoundingBox();
-			foreach (var vertex in VertexSource.Vertices())
+			ImageToPath.DrawPath(this);
+		}
+
+		public static void DrawPath(IObject3D item)
+		{
+			if (item is IPathObject pathObject)
 			{
-				var position = vertex.position;
-				if (first)
+				if (pathObject.VertexSource == null)
 				{
-					first = false;
-					GL.PushMatrix();
-					GL.PushAttrib(AttribMask.EnableBit);
-					GL.MultMatrix(this.WorldMatrix().GetAsFloatArray());
-
-					GL.Disable(EnableCap.Texture2D);
-					GL.Disable(EnableCap.Blend);
-
-					GL.Begin(BeginMode.Lines);
-					GL.Color4(255, 0, 0, 255);
+					return;
 				}
 
-				if (vertex.IsLineTo)
+				bool first = true;
+				Vector2 lastPosition = Vector2.Zero;
+				var aabb = item.VisibleMeshes().FirstOrDefault().GetAxisAlignedBoundingBox();
+				foreach (var vertex in pathObject.VertexSource.Vertices())
 				{
-					GL.Vertex3(lastPosition.X, lastPosition.Y, aabb.maxXYZ.Z + 0.002);
-					GL.Vertex3(position.X, position.Y, aabb.maxXYZ.Z + 0.002);
+					var position = vertex.position;
+					if (first)
+					{
+						first = false;
+						GL.PushMatrix();
+						GL.PushAttrib(AttribMask.EnableBit);
+						GL.MultMatrix(item.WorldMatrix().GetAsFloatArray());
+
+						GL.Disable(EnableCap.Texture2D);
+						GL.Disable(EnableCap.Blend);
+
+						GL.Begin(BeginMode.Lines);
+						GL.Color4(255, 0, 0, 255);
+					}
+
+					if (vertex.IsLineTo)
+					{
+						GL.Vertex3(lastPosition.X, lastPosition.Y, aabb.maxXYZ.Z + 0.002);
+						GL.Vertex3(position.X, position.Y, aabb.maxXYZ.Z + 0.002);
+					}
+
+					lastPosition = position;
 				}
 
-				lastPosition = position;
-			}
-
-			// if we drew anything
-			if (!first)
-			{
-				GL.End();
-				GL.PopAttrib();
-				GL.PopMatrix();
+				// if we drew anything
+				if (!first)
+				{
+					GL.End();
+					GL.PopAttrib();
+					GL.PopMatrix();
+				}
 			}
 		}
 

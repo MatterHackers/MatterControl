@@ -43,32 +43,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	using Polygon = List<IntPoint>;
 	using Polygons = List<List<IntPoint>>;
 
-	public class SmoothPath : Object3D, IPublicPropertyObject, IPathObject
+	public class SmoothPath : Object3D, IPublicPropertyObject, IPathObject, IEditorDraw
 	{
-		public Polygons PathData;
-
 		[JsonIgnore]
-		public IVertexSource VertexSource
-		{
-			get
-			{
-				var vertexSourc = this.Children.OfType<IPathObject>().FirstOrDefault();
-				return vertexSourc?.VertexSource;
-			}
-			set
-			{
-				var vertexSourc = this.Children.OfType<IPathObject>().FirstOrDefault();
-				if(vertexSourc != null)
-				{
-					vertexSourc.VertexSource = value;
-				}
-			}
-		}
+		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
 		public SmoothPath()
 		{
 			Name = "Smooth Path".Localize();
 		}
+
+		public override bool CanRemove => true;
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -98,7 +83,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void DoSmoothing(long maxDist = 300, int interations = 3, bool closedPath = true)
 		{
-			var inputPolygons = VertexSource.CreatePolygons();
+			var sourceVertices = this.Children.OfType<IPathObject>().FirstOrDefault().VertexSource;
+
+			var inputPolygons = sourceVertices.CreatePolygons();
 
 			Polygons outputPolygons = new Polygons();
 			foreach (Polygon inputPolygon in inputPolygons)
@@ -147,5 +134,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			VertexSource = outputPolygons.CreateVertexStorage();
 		}
 
+		public void DrawEditor(object sender, DrawEventArgs e)
+		{
+			ImageToPath.DrawPath(this);
+		}
 	}
 }

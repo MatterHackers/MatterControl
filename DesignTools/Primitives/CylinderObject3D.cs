@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public CylinderObject3D()
 		{
 			Name = "Cylinder".Localize();
-			Color = ApplicationController.Instance.PrimitiveColors["Cylinder"];
+			Color = Operations.Object3DExtensions.PrimitiveColors["Cylinder"];
 		}
 
 		public CylinderObject3D(double diameter, double height, int sides)

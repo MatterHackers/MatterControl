@@ -44,6 +44,43 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public static class Object3DExtensions
 	{
+
+		public static Color BlendHsl(string a, string b, int index, int count)
+		{
+			return PrimitiveColors[a].BlendHsl(PrimitiveColors[b], 1.0 / (count + 1.0) * index);
+		}
+
+		static Dictionary<string, Color> _primitiveColors;
+		public static Dictionary<string, Color> PrimitiveColors
+		{
+			get
+			{
+				if (_primitiveColors == null)
+				{
+					_primitiveColors = new Dictionary<string, Color>();
+					// put in all the constant things before blening them
+					_primitiveColors.Add("Cube", Color.FromHSL(.01, .98, .76)); // red
+					_primitiveColors.Add("Text", Color.FromHSL(.175, .98, .76)); // yellow
+					_primitiveColors.Add("HalfSphere", Color.FromHSL(.87, .98, .76)); // violet
+
+					// first color
+					_primitiveColors.Add("Pyramid", BlendHsl("Cube", "Text", 1, 3));
+					_primitiveColors.Add("Wedge", BlendHsl("Cube", "Text", 2, 3));
+					_primitiveColors.Add("HalfWedge", BlendHsl("Cube", "Text", 3, 3));
+					// mid color
+					_primitiveColors.Add("Cylinder", BlendHsl("Text", "HalfSphere", 1, 6));
+					_primitiveColors.Add("Cone", BlendHsl("Text", "HalfSphere", 2, 6));
+					_primitiveColors.Add("HalfCylinder", BlendHsl("Text", "HalfSphere", 3, 6));
+					_primitiveColors.Add("Torus", BlendHsl("Text", "HalfSphere", 4, 6));
+					_primitiveColors.Add("Ring", BlendHsl("Text", "HalfSphere", 5, 6));
+					_primitiveColors.Add("Sphere", BlendHsl("Text", "HalfSphere", 6, 6));
+					// end color
+				}
+
+				return _primitiveColors;
+			}
+		}
+
 		public static bool IsRoot(this IObject3D object3D)
 		{
 			return object3D.Parent == null;
@@ -230,7 +267,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				list.Add(wrapper);
 			});
 
-			scene.SelectedItem = wrapper;
+			if (scene != null)
+			{
+				scene.SelectedItem = wrapper;
+			}
+
 			originalItem.ResumeRebuild();
 		}
 

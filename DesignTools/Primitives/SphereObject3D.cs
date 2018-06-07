@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public SphereObject3D()
 		{
 			Name = "Sphere".Localize();
-			Color = ApplicationController.Instance.PrimitiveColors["Sphere"];
+			Color = Operations.Object3DExtensions.PrimitiveColors["Sphere"];
 		}
 
 		public SphereObject3D(double diameter, int sides)
