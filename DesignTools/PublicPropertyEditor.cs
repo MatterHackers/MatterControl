@@ -51,11 +51,14 @@ namespace MatterHackers.MatterControl.DesignTools
 	public class EditableProperty
 	{
 		public IObject3D Item { get; private set; }
+
+		public object source;
 		public PropertyInfo PropertyInfo { get; private set; }
 
-		public EditableProperty(PropertyInfo p, IObject3D item)
+		public EditableProperty(PropertyInfo p, object source)
 		{
-			this.Item = item;
+			this.source = source;
+			this.Item = source as IObject3D;
 			this.PropertyInfo = p;
 		}
 
@@ -71,7 +74,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return nameAttribute?.DisplayName ?? prop.Name.SplitCamelCase();
 		}
 
-		public object Value => PropertyInfo.GetGetMethod().Invoke(Item, null);
+		public object Value => PropertyInfo.GetGetMethod().Invoke(source, null);
 
 		/// <summary>
 		/// Use reflection to set property value
@@ -79,7 +82,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		/// <param name="value"></param>
 		public void SetValue(object value)
 		{
-			this.PropertyInfo.GetSetMethod().Invoke(this.Item, new Object[] { value });
+			this.PropertyInfo.GetSetMethod().Invoke(source, new Object[] { value });
 		}
 
 		public string DisplayName => GetDisplayName(PropertyInfo);
