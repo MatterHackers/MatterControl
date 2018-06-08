@@ -276,143 +276,73 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (property.Value is DirectionVector directionVector)
 			{
-				bool simpleEdit = true;
-				if (simpleEdit)
+				var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
 				{
-					var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
-					{
-						BorderColor = theme.GetBorderColor(75)
-					};
+					BorderColor = theme.GetBorderColor(75)
+				};
 
-					foreach (var orderItem in new string[] { "Right", "Back", "Up" })
-					{
-						MenuItem newItem = dropDownList.AddItem(orderItem);
+				foreach (var orderItem in new string[] { "Right", "Back", "Up" })
+				{
+					MenuItem newItem = dropDownList.AddItem(orderItem);
 
-						var localOredrItem = orderItem;
-						newItem.Selected += (sender, e) =>
+					var localOredrItem = orderItem;
+					newItem.Selected += (sender, e) =>
+					{
+						switch (dropDownList.SelectedValue)
 						{
-							switch (dropDownList.SelectedValue)
-							{
-								case "Right":
-									property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { new DirectionVector() { Normal = Vector3.UnitX } });
-									break;
-								case "Back":
-									property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { new DirectionVector() { Normal = Vector3.UnitY } });
-									break;
-								case "Up":
-									property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { new DirectionVector() { Normal = Vector3.UnitZ } });
-									break;
-							}
+							case "Right":
+								property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { new DirectionVector() { Normal = Vector3.UnitX } });
+								break;
+							case "Back":
+								property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { new DirectionVector() { Normal = Vector3.UnitY } });
+								break;
+							case "Up":
+								property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { new DirectionVector() { Normal = Vector3.UnitZ } });
+								break;
+						}
 
-							rebuildable?.Rebuild(undoBuffer);
-							propertyGridModifier?.UpdateControls(context);
-						};
-					}
-
-					dropDownList.SelectedLabel = "Right";
-
-					rowContainer = CreateSettingsRow(property, dropDownList);
-
-				}
-				else // edit the vector
-				{
-					var field = new Vector3Field();
-					field.Initialize(0);
-					field.Vector3 = directionVector.Normal;
-					field.ValueChanged += (s, e) =>
-					{
-						property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { new DirectionVector() { Normal = field.Vector3 } });
 						rebuildable?.Rebuild(undoBuffer);
 						propertyGridModifier?.UpdateControls(context);
 					};
-
-					rowContainer = CreateSettingsRow(property, field.Content);
 				}
+
+				dropDownList.SelectedLabel = "Right";
+
+				rowContainer = CreateSettingsRow(property, dropDownList);
 			}
 			else if (property.Value is DirectionAxis directionAxis)
 			{
-				bool simpleAxis = true;
-				if (simpleAxis)
+				// the direction axis
+				// the distance from the center of the part
+				// create a double editor
+				var field = new DoubleField();
+				field.Initialize(0);
+				field.DoubleValue = directionAxis.Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
+				field.ValueChanged += (s, e) =>
 				{
-					// the direction axis
-					// the distance from the center of the part
-					// create a double editor
-					var field = new DoubleField();
-					field.Initialize(0);
-					field.DoubleValue = directionAxis.Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
-					field.ValueChanged += (s, e) =>
+					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[]
 					{
-						property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[]
+						new DirectionAxis()
 						{
-							new DirectionAxis()
-							{
-								Normal = Vector3.UnitZ, Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + new Vector3(field.DoubleValue, 0, 0)
-							}
-						});
-						rebuildable?.Rebuild(undoBuffer);
-						propertyGridModifier?.UpdateControls(context);
-					};
+							Normal = Vector3.UnitZ, Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + new Vector3(field.DoubleValue, 0, 0)
+						}
+					});
+					rebuildable?.Rebuild(undoBuffer);
+					propertyGridModifier?.UpdateControls(context);
+				};
 
-					// update tihs when changed
-					EventHandler<InvalidateArgs> updateData = (s, e) =>
-					{
-						field.DoubleValue = ((DirectionAxis)property.PropertyInfo.GetGetMethod().Invoke(property.Item, null)).Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
-					};
-					property.Item.Invalidated += updateData;
-					editControlsContainer.Closed += (s, e) =>
-					{
-						property.Item.Invalidated -= updateData;
-					};
-
-					rowContainer = CreateSettingsRow(property, field.Content);
-				}
-				else
+				// update tihs when changed
+				EventHandler<InvalidateArgs> updateData = (s, e) =>
 				{
-					// add in the position
-					FlowLayoutWidget originRowContainer = CreateSettingsRow(property);
+					field.DoubleValue = ((DirectionAxis)property.PropertyInfo.GetGetMethod().Invoke(property.Item, null)).Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
+				};
+				property.Item.Invalidated += updateData;
+				editControlsContainer.Closed += (s, e) =>
+				{
+					property.Item.Invalidated -= updateData;
+				};
 
-					var originField = new Vector3Field();
-					originField.Initialize(0);
-					originField.Vector3 = directionAxis.Origin;
-
-					var normalField = new Vector3Field();
-					normalField.Initialize(0);
-					normalField.Vector3 = directionAxis.Normal;
-
-					originField.ValueChanged += (s, e) =>
-					{
-						property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { new DirectionAxis() { Origin = originField.Vector3, Normal = normalField.Vector3 } });
-						rebuildable?.Rebuild(undoBuffer);
-						propertyGridModifier?.UpdateControls(context);
-					};
-
-					originRowContainer.AddChild(originField.Content);
-					editControlsContainer.AddChild(originRowContainer);
-
-					// add in the direction
-					FlowLayoutWidget directionRowContainer = CreateSettingsRow(property);
-
-					normalField.ValueChanged += (s, e) =>
-					{
-						property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { new DirectionAxis() { Origin = originField.Vector3, Normal = normalField.Vector3 } });
-						rebuildable?.Rebuild(undoBuffer);
-						propertyGridModifier?.UpdateControls(context);
-					};
-
-					directionRowContainer.AddChild(normalField.Content);
-					editControlsContainer.AddChild(directionRowContainer);
-
-					// update tihs when changed
-					EventHandler<InvalidateArgs> updateData = (s, e) =>
-					{
-						originField.Vector3 = ((DirectionAxis)property.PropertyInfo.GetGetMethod().Invoke(property.Item, null)).Origin;
-					};
-					property.Item.Invalidated += updateData;
-					editControlsContainer.Closed += (s, e) =>
-					{
-						property.Item.Invalidated -= updateData;
-					};
-				}
+				rowContainer = CreateSettingsRow(property, field.Content);
 			}
 			else if (property.Value is ChildrenSelector childSelector)
 			{
