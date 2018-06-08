@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl
 
 						string sectionName = destIsMaterial ? "Material".Localize() : "Quality".Localize();
 
-						string importSettingSuccessMessage = $"You have successfully imported a new {sectionName} setting. You can find '{layerName}' in your list of {sectionName} settings.".Localize();
+						string importSettingSuccessMessage = string.Format("You have successfully imported a new {0} setting. You can find '{1}' in your list of {0} settings.".Localize(), sectionName, layerName);
 
 						WizardWindow.ChangeToPage(
 							new ImportSucceeded(importSettingSuccessMessage)

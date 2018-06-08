@@ -139,11 +139,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Source = item
 					};
 
+				// TODO: array operations should only expose OperationSource
 				case ArrayAdvanced3D arrayAdvanced3D:
 					return new ObjectView()
 					{
 						Children = item.Children.Take(1),
 						Name = $"{arrayAdvanced3D.Name} ({arrayAdvanced3D.Count})",
+						Source = item
+					};
+
+				// TODO: array operations should only expose OperationSource
+				case ArrayRadial3D arrayRadial3D:
+					return new ObjectView()
+					{
+						Children = item.Children.Take(1),
+						Name = $"{arrayRadial3D.Name} ({arrayRadial3D.Count})",
 						Source = item
 					};
 

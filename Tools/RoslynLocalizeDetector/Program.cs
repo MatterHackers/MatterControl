@@ -80,7 +80,8 @@ namespace RoslynLocalizeDetector
 				}
 			}
 
-			using (var outstream = new StreamWriter(Path.Combine(matterControlRoot, "StaticData", "Translations", "Master.txt")))
+			string outputPath = Path.Combine(matterControlRoot, "StaticData", "Translations", "Master.txt");
+			using (var outstream = new StreamWriter(outputPath))
 			{
 				foreach (var line in translationStrings.OrderBy(x => x).ToArray())
 				{
@@ -89,6 +90,8 @@ namespace RoslynLocalizeDetector
 					outstream.WriteLine("");
 				}
 			}
+
+			System.Diagnostics.Process.Start(outputPath);
 
 			//GenerateComparisonData();
 		}
