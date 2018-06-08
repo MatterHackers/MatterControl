@@ -237,7 +237,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void GenerateBase(Polygons polygonShape)
 		{
-			if (polygonShape.Select(p => p.Count).Sum() > 3)
+			if (polygonShape != null
+				&& polygonShape.Select(p => p.Count).Sum() > 3)
 			{
 				Polygons polysToOffset = new Polygons();
 

@@ -50,12 +50,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ThemeConfig theme;
 		private BedConfig sceneContext;
 		private View3DWidget view3DWidget;
-		private SectionWidget editorSection;
+		private SectionWidget selectedObjectEditorSection;
 		private TextButton editButton;
 
 		private GuiWidget editorPanel;
 		private InlineTitleEdit inlineTitleEdit;
-		private BottomResizeContainer editorColumn;
+		private BottomResizeContainer selectedObjectEditorColumn;
 
 		public SelectedObjectPanel(View3DWidget view3DWidget, BedConfig sceneContext, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(scrollable);
 
-			editorColumn = new BottomResizeContainer(theme)
+			selectedObjectEditorColumn = new BottomResizeContainer(theme)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Absolute,
@@ -98,7 +98,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit
 			};
-			editorColumn.AddChild(toolbar);
+			selectedObjectEditorColumn.AddChild(toolbar);
+
+			selectedObjectEditorColumn.Resized += (s, e) => 
+			{
+				sceneContext.ViewState.SelectedObjectEditorHeight = selectedObjectEditorColumn.Height;
+			};
 
 			var scene = sceneContext.Scene;
 
@@ -178,8 +183,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			scene.SelectionChanged += (s, e) => removeButton.Enabled = scene.SelectedItem?.CanRemove == true;
 			toolbar.AddChild(removeButton);
 
+
 			// Add container used to host the current specialized editor for the selection
-			editorColumn.AddChild(editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			selectedObjectEditorColumn.AddChild(editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
@@ -195,18 +201,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			editorSection = new SectionWidget("Editor", editorColumn, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true, setContentVAnchor: false)
+			var selectedObjectEditorColumnBody = new GuiWidget()
 			{
+				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit
 			};
 
+			selectedObjectEditorColumnBody.AddChild(selectedObjectEditorColumn);
+
+			selectedObjectEditorSection = new SectionWidget("Editor", selectedObjectEditorColumnBody, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true)
+			{
+				VAnchor = VAnchor.Fit,
+			};
+
 			// TODO: Replace hackery with practical solution
-			if (editorSection.Children.FirstOrDefault() is ExpandCheckboxButton checkbox)
+			if (selectedObjectEditorSection.Children.FirstOrDefault() is ExpandCheckboxButton checkbox)
 			{
 				checkbox.ReplaceChild(checkbox.Children[1], inlineTitleEdit);
 			}
 
-			this.ContentPanel.AddChild(editorSection);
+			this.ContentPanel.AddChild(selectedObjectEditorSection);
 
 			var colorSection = new SectionWidget(
 				"Color".Localize(),
@@ -399,12 +413,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				children.Remove(this.item);
 				children.Add(content);
 			});
-		}
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			sceneContext.ViewState.SelectedObjectEditorHeight = editorColumn.Height;
-			base.OnClosed(e);
 		}
 	}
 }

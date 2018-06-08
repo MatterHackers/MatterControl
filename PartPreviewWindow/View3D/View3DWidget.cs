@@ -203,9 +203,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Ignore AfterSelect events if they're being driven by a SelectionChanged event
 				if (!assigningTreeNode)
 				{
-					selectedObjectPanel.SetActiveItem((IObject3D)treeView.SelectedNode.Tag);
 					Scene.SelectedItem = (IObject3D)treeView.SelectedNode.Tag;
 				}
+				selectedObjectPanel.SetActiveItem((IObject3D)treeView.SelectedNode.Tag);
 			};
 			treeSection.AddChild(treeView);
 

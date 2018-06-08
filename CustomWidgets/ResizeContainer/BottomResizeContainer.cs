@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using System;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
@@ -49,6 +50,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.SpliterBarColor = theme.SplitterBackground;
 		}
 
+		public event EventHandler Resized;
 		public Color SpliterBarColor { get; set; }
 
 		public int SplitterHeight
@@ -63,6 +65,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					this.MinimumSize = new VectorMath.Vector2(0, _splitterHeight);
 				}
 			}
+		}
+
+		protected virtual void OnResized(EventArgs e)
+		{
+			this.Resized?.Invoke(this, e);
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -106,6 +113,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
+			var mouseUpY = TransformToScreenSpace(mouseEvent.Position).Y;
+			if (mouseDownOnBar
+				&& mouseUpY != mouseDownY)
+			{
+				OnResized(null);
+			}
+
 			mouseDownOnBar = false;
 			base.OnMouseUp(mouseEvent);
 		}
