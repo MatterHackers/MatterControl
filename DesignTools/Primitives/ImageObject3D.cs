@@ -36,6 +36,7 @@ using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.PolygonMesh;
 using Newtonsoft.Json;
 
@@ -53,6 +54,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public ImageObject3D()
 		{
+			Name = "Image".Localize();
 		}
 
 		public override string AssetPath
