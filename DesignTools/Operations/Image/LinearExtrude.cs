@@ -41,6 +41,9 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public double Height { get; set; } = 5;
 
+		public override bool CanApply => true;
+		public override bool CanRemove => true;
+
 		[JsonIgnore]
 		private IVertexSource VertexSource
 		{
@@ -63,9 +66,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Content)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Path))
+			if ((invalidateType.InvalidateType == InvalidateType.Content
+				|| invalidateType.InvalidateType == InvalidateType.Matrix
+				|| invalidateType.InvalidateType == InvalidateType.Path)
 				&& invalidateType.Source != this
 				&& !RebuildSuspended)
 			{

@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Image)
+			if (invalidateType.InvalidateType == InvalidateType.Image
 				&& invalidateType.Source != this
 				&& !RebuildSuspended)
 			{
