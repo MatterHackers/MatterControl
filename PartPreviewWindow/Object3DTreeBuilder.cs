@@ -27,11 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 
@@ -41,33 +44,38 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public static TreeNode BuildTree(IObject3D rootItem, ThemeConfig theme)
 		{
-			return AddTree(rootItem, null, theme);
+			return AddTree(BuildItemView(rootItem), null, theme);
 		}
 
-		private static TreeNode AddTree(IObject3D item, TreeNode parent, ThemeConfig theme)
+		private static TreeNode AddTree(ObjectView item, TreeNode parent, ThemeConfig theme)
 		{
-			// Suppress MeshWrapper nodes in treeview - retain parent node as context reference
-			var contextNode = (item is MeshWrapper) ? parent : AddItem(item, parent, theme);
+			// Suppress MeshWrapper and OperationSource nodes in tree
+			bool shouldCollapseToParent = item.Source is MeshWrapper || item.Source is OperationSource;
+			var contextNode = (shouldCollapseToParent) ? parent : AddItem(item, parent, theme);
 
-			if (!(item is IVisualLeafNode))
+			contextNode.SuspendLayout();
+
+			if (!(item.Source is IVisualLeafNode))
 			{
 				foreach (var child in item.Children)
 				{
-					AddTree(child, contextNode, theme);
+					AddTree(BuildItemView(child), contextNode, theme);
 				}
 			}
+
+			contextNode.ResumeLayout();
 
 			return contextNode;
 		}
 
-		private static TreeNode AddItem(IObject3D item, TreeNode parentNode, ThemeConfig theme)
+		private static TreeNode AddItem(ObjectView item, TreeNode parentNode, ThemeConfig theme)
 		{
-			if(item is InsertionGroup insertionGroup)
+			if(item.Source is InsertionGroup insertionGroup)
 			{
 				return new TreeNode()
 				{
 					Text = "Loading".Localize(),
-					Tag = item,
+					Tag = item.Source,
 					TextColor = theme.Colors.PrimaryTextColor,
 					PointSize = theme.DefaultFontSize,
 				};
@@ -75,26 +83,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var node = new TreeNode()
 			{
-				Text = BuildDefaultName(item),
-				Tag = item,
+				Text = GetName(item),
+				Tag = item.Source,
 				TextColor = theme.Colors.PrimaryTextColor,
 				PointSize = theme.DefaultFontSize,
 			};
 
 			// Check for operation resulting in the given type
-			if (ApplicationController.Instance.OperationsByType.TryGetValue(item.GetType(), out SceneSelectionOperation operation))
+			if (ApplicationController.Instance.OperationsByType.TryGetValue(item.Source.GetType(), out SceneSelectionOperation operation))
 			{
 				// If exists, use the operation icon
 				node.Image = operation.Icon;
 			}
 			else
 			{
-				// Otherwise wire up icon generation
-				var inmemoryItem = new InMemoryLibraryItem(item.Clone());
-				var iconView = new IconViewItem(new ListViewItem(inmemoryItem, ApplicationController.Instance.Library.PlatingHistory), 16, 16, theme);
-
 				node.Load += (s, e) =>
 				{
+					// Otherwise wire up icon generation
+					var inmemoryItem = new InMemoryLibraryItem(item.Source.Clone());
+					var iconView = new IconViewItem(new ListViewItem(inmemoryItem, ApplicationController.Instance.Library.PlatingHistory), 16, 16, theme);
+
 					iconView.OnLoad(e);
 
 					iconView.ImageSet += (s1, e1) =>
@@ -114,20 +122,54 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return node;
 		}
 
-		private static string BuildDefaultName(IObject3D item)
+		private static string GetName(ObjectView item)
 		{
-			string nameToWrite = "";
-			if (!string.IsNullOrEmpty(item.Name))
-			{
-				nameToWrite += $"{item.Name}";
-			}
-			else
-			{
-				nameToWrite += $"{item.GetType().Name}";
-			}
-
-			return nameToWrite;
+			return !string.IsNullOrEmpty(item.Name) ? $"{item.Name}" : $"{item.GetType().Name}";
 		}
 
+		private static ObjectView BuildItemView(IObject3D item)
+		{
+			switch (item)
+			{
+				case ArrayLinear3D arrayLinear3D:
+					return new ObjectView()
+					{
+						Children = item.Children.OfType<OperationSource>().ToList(),
+						Name = $"{arrayLinear3D.Name} ({arrayLinear3D.Count})",
+						Source = item
+					};
+
+				case ArrayAdvanced3D arrayAdvanced3D:
+					return new ObjectView()
+					{
+						Children = item.Children.Take(1),
+						Name = $"{arrayAdvanced3D.Name} ({arrayAdvanced3D.Count})",
+						Source = item
+					};
+
+				default:
+					return new ObjectView(item);
+			}
+		}
+
+		private class ObjectView
+		{
+			public ObjectView()
+			{
+			}
+
+			public ObjectView(IObject3D source)
+			{
+				this.Source = source;
+				this.Children = this.Source.Children;
+				this.Name = this.Source.Name;
+			}
+
+			public IEnumerable<IObject3D> Children { get; set; }
+
+			public string Name { get; set; }
+
+			public IObject3D Source { get; set; }
+		}
 	}
 }

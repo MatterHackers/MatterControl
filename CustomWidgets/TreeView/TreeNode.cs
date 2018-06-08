@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
@@ -43,6 +42,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	public class TreeNode : FlowLayoutWidget, ICheckbox
 	{
 		private GuiWidget content;
+		private TreeView _treeView;
+		private ImageBuffer _image = null;
+		private TextWidget textWidget;
+		private TreeExpandWidget expandWidget;
+		private ImageWidget imageWidget;
+		private bool isDirty;
 
 		public TreeNode(bool useIcon = true)
 			: base(FlowDirection.TopToBottom)
@@ -60,7 +65,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					TreeView.SelectedNode = this;
 				}
 			};
-			AddChild(TitleBar);
+			this.AddChild(this.TitleBar);
 
 			// add a check box
 			expandWidget = new TreeExpandWidget(theme)
@@ -129,42 +134,21 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			AddChild(content);
 
-			Nodes.CollectionChanged += Nodes_CollectionChanged;
+			Nodes.CollectionChanged += (s, e) => isDirty = true;
 		}
 
 		public FlowLayoutWidget TitleBar { get; }
 
 		public FlowLayoutWidget HighlightRegion { get; }
 
-		public void BeginEdit()
-		{
-			throw new NotImplementedException();
-		}
-
-		public void Collapse(bool collapseChildren)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void Collapse()
-		{
-			throw new NotImplementedException();
-		}
-
-		public void EndEdit(bool cancel)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void EnsureVisible()
-		{
-			throw new NotImplementedException();
-		}
-
-		public void ExpandAll()
-		{
-			throw new NotImplementedException();
-		}
+		// **** Not implemented ****
+		public void BeginEdit() => throw new NotImplementedException();
+		public void Collapse(bool collapseChildren) => throw new NotImplementedException();
+		public void Collapse() => throw new NotImplementedException();
+		public void EndEdit(bool cancel) => throw new NotImplementedException();
+		public void EnsureVisible() => throw new NotImplementedException();
+		public void ExpandAll() => throw new NotImplementedException();
+		public void Remove() => throw new NotImplementedException();
 
 		public int GetNodeCount(bool includeSubTrees)
 		{
@@ -174,6 +158,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 
 			return content?.Children.Where((c) => c is TreeNode).Count() ?? 0;
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			if (this.layoutSuspendCount == 0
+				&& isDirty)
+			{
+				RebuildContentSection();
+			}
+
+			base.OnDraw(graphics2D);
 		}
 
 		public override void OnTextChanged(EventArgs e)
@@ -186,28 +181,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.OnTextChanged(e);
 		}
 
-		public void Remove()
-		{
-			throw new NotImplementedException();
-		}
-
 		public void Toggle()
 		{
 			content.Visible = !content.Visible;
 		}
 
-		private void Nodes_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			RebuildContentSection();
-
-			expandWidget.Expandable = this.GetNodeCount(false) != 0;
-		}
-
 		private void RebuildContentSection()
 		{
-			// If the node count is starting at 0 we are adding content and need to rebuild the title bar so it will have a + in it
-			bool needToRebuildTitleBar = GetNodeCount(false) == 0;
-
 			// Remove but don't close all the current nodes
 			content.RemoveAllChildren();
 
@@ -221,14 +201,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			// If the node count is ending at 0 we removed content and need to rebuild the title bar so it will net have a + in it
 			expandWidget.Expandable = GetNodeCount(false) != 0;
+
+			isDirty = false;
+
 		}
 
 		#region Properties
-
-		private ImageBuffer _image = null;
-		private TextWidget textWidget;
-		private TreeExpandWidget expandWidget;
-		private ImageWidget imageWidget;
 
 		public bool Checked { get; set; }
 
@@ -392,8 +370,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		//     A TreeView that represents the parent tree view that the
 		//     tree node is assigned to, or null if the node has not been assigned to a tree
 		//     view.
-
-		private TreeView _treeView;
 
 		public virtual TreeView TreeView
 		{

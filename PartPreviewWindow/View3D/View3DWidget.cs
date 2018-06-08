@@ -200,8 +200,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			treeView.AfterSelect += (s, e) =>
 			{
-				selectedObjectPanel.SetActiveItem((IObject3D)treeView.SelectedNode.Tag);
-				Scene.SelectedItem = (IObject3D)treeView.SelectedNode.Tag;
+				// Ignore AfterSelect events if they're being driven by a SelectionChanged event
+				if (!assigningTreeNode)
+				{
+					selectedObjectPanel.SetActiveItem((IObject3D)treeView.SelectedNode.Tag);
+					Scene.SelectedItem = (IObject3D)treeView.SelectedNode.Tag;
+				}
 			};
 			treeSection.AddChild(treeView);
 
@@ -1222,7 +1226,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (this.Parent != null)
 				{
 					rootNode.Padding = rootNode.Padding.Clone(left: 8, top: 8);
+
+					assigningTreeNode = true;
 					treeView.SelectedNode = rootNode;
+					assigningTreeNode = false;
 				}
 			}
 		}
@@ -1257,6 +1264,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public MeshViewerWidget meshViewerWidget;
 		private BottomResizeContainer treeSection;
+		private bool assigningTreeNode;
 
 		public InteractiveScene Scene => sceneContext.Scene;
 
