@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			// always make sure we don't have print leveling turned on
 			PrintLevelingStream.AllowLeveling = false;
-			nextButton.ToolTipText = "[Right Arrow]".Localize();
+			nextButton.ToolTipText = string.Format("[{0}]", "Right Arrow".Localize());
 
 			base.PageIsBecomingActive();
 		}
@@ -127,11 +127,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// set these to 0 so the button does not do any movements by default (we will handle the movement on our click callback)
 			zPlusControl.MoveAmount = 0;
-			zPlusControl.ToolTipText += " [Up Arrow]".Localize();
+			zPlusControl.ToolTipText += string.Format(" [{0}]", "Up Arrow".Localize());
 			zPlusControl.Click += zPlusControl_Click;
 
 			zMinusControl.MoveAmount = 0;
-			zMinusControl.ToolTipText += " [Down Arrow]".Localize();
+			zMinusControl.ToolTipText += string.Format(" [{0}]", "Down Arrow".Localize());
 			zMinusControl.Click += zMinusControl_Click;
 			return zButtons;
 		}

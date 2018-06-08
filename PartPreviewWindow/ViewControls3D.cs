@@ -608,7 +608,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new NamedAction() { Title = "----" },
 				new NamedAction()
 				{
-					Title = "Help...".Localize(),
+					Title = "Help".Localize() + "...",
 					Action = () =>
 					{
 						UiThread.RunOnIdle(() =>

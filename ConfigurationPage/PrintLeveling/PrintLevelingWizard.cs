@@ -226,8 +226,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				this,
 				"Print Leveling Wizard".Localize(),
 				string.Format(
-					"{0} {1}\n\n{2}\n{3}\n\n{4}",
-					"Congratulations!".Localize(),
+					"{0}! {1}\n\n{2}\n{3}\n\n{4}",
+					"Congratulations".Localize(),
 					"Print Leveling is now configured and enabled.".Localize(),
 					useZProbe ? "" : $"\t• {"Remove the paper".Localize()}\n",
 					"If you need to recalibrate the printer in the future, the print leveling controls can be found under: Controls, Calibration".Localize(),
