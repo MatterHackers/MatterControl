@@ -96,14 +96,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 					foreach (var paint in paintObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
 					{
-						var transformedPaint = Mesh.Copy(paint.obj3D.Mesh, cancellationToken);
+						var transformedPaint = paint.obj3D.Mesh.Copy(cancellationToken);
 						transformedPaint.Transform(paint.matrix);
 						var inverseRemove = paint.matrix.Inverted;
 						Mesh paintMesh = null;
 
 						foreach (var keep in keepObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
 						{
-							var transformedKeep = Mesh.Copy(keep.obj3D.Mesh, cancellationToken);
+							var transformedKeep = keep.obj3D.Mesh.Copy(cancellationToken);
 							transformedKeep.Transform(keep.matrix);
 
 							// remove the paint from the original

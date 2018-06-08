@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				var firstChild = item.Children.First();
 				item.SuspendRebuild();
 				// set the mesh back to a copy of the child mesh
-				item.Mesh = Mesh.Copy(firstChild.Mesh, cancellationToken);
+				item.Mesh = firstChild.Mesh.Copy(cancellationToken);
 				// and reset the properties
 				item.CopyProperties(firstChild, flags & (~Object3DPropertyFlags.Matrix));
 				item.ResumeRebuild();

@@ -199,6 +199,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			selectedObjectEditorColumn.AddChild(scrollableEditor);
 
+			// Put the bottom resize container in a guiwidgt that is H:stretch V:fit so that the container can be hiden and shown and the resize container can keep it's size.
+			var selectedObjectEditorColumnContainer = new GuiWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			};
+
+			selectedObjectEditorColumnContainer.AddChild(selectedObjectEditorColumn);
+
 			inlineTitleEdit = new InlineTitleEdit("", theme, "Object Name");
 			inlineTitleEdit.TitleChanged += (s, e) =>
 			{
@@ -208,7 +217,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			selectedObjectEditorSection = new SectionWidget("Editor", selectedObjectEditorColumn, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true, setContentVAnchor: false)
+			selectedObjectEditorSection = new SectionWidget("Editor", selectedObjectEditorColumnContainer, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true)
 			{
 				VAnchor = VAnchor.Fit,
 			};
