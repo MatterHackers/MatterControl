@@ -124,9 +124,16 @@ namespace MatterHackers.MatterControl.DesignTools
 			return mainContainer;
 		}
 
-		private static FlowLayoutWidget CreateSettingsRow(EditableProperty property)
+		private static FlowLayoutWidget CreateSettingsRow(EditableProperty property, GuiWidget widget = null)
 		{
-			return CreateSettingsRow(property.DisplayName.Localize(), property.Description.Localize());
+			var row = CreateSettingsRow(property.DisplayName.Localize(), property.Description.Localize());
+
+			if (widget != null)
+			{ 
+				row.AddChild(widget);
+			}
+
+			return row;
 		}
 
 		private static FlowLayoutWidget CreateSettingsRow(string labelText, string toolTipText = null)
@@ -227,8 +234,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			// create a double editor
 			if (property.Value is double doubleValue)
 			{
-				rowContainer = CreateSettingsRow(property);
-
 				var field = new DoubleField();
 				field.Initialize(0);
 				field.DoubleValue = doubleValue;
@@ -239,13 +244,10 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer.AddChild(field.Content);
-				editControlsContainer.AddChild(rowContainer);
+				rowContainer = CreateSettingsRow(property, field.Content);
 			}
 			else if (property.Value is Vector2 vector2)
 			{
-				rowContainer = CreateSettingsRow(property);
-
 				var field = new Vector2Field();
 				field.Initialize(0);
 				field.Vector2 = vector2;
@@ -256,13 +258,10 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer.AddChild(field.Content);
-				editControlsContainer.AddChild(rowContainer);
+				rowContainer = CreateSettingsRow(property, field.Content);
 			}
 			else if (property.Value is Vector3 vector3)
 			{
-				rowContainer = CreateSettingsRow(property);
-
 				var field = new Vector3Field();
 				field.Initialize(0);
 				field.Vector3 = vector3;
@@ -273,24 +272,19 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer.AddChild(field.Content);
-				editControlsContainer.AddChild(rowContainer);
+				rowContainer = CreateSettingsRow(property, field.Content);
 			}
 			else if (property.Value is DirectionVector directionVector)
 			{
 				bool simpleEdit = true;
 				if (simpleEdit)
 				{
-					rowContainer = CreateSettingsRow(property);
-
 					var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
 					{
 						BorderColor = theme.GetBorderColor(75)
 					};
 
-					var orderedItems = new string[] { "Right", "Back", "Up" };
-
-					foreach (var orderItem in orderedItems)
+					foreach (var orderItem in new string[] { "Right", "Back", "Up" })
 					{
 						MenuItem newItem = dropDownList.AddItem(orderItem);
 
@@ -316,13 +310,12 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 
 					dropDownList.SelectedLabel = "Right";
-					rowContainer.AddChild(dropDownList);
-					editControlsContainer.AddChild(rowContainer);
+
+					rowContainer = CreateSettingsRow(property, dropDownList);
+
 				}
 				else // edit the vector
 				{
-					rowContainer = CreateSettingsRow(property);
-
 					var field = new Vector3Field();
 					field.Initialize(0);
 					field.Vector3 = directionVector.Normal;
@@ -333,42 +326,35 @@ namespace MatterHackers.MatterControl.DesignTools
 						propertyGridModifier?.UpdateControls(context);
 					};
 
-					rowContainer.AddChild(field.Content);
-					editControlsContainer.AddChild(rowContainer);
+					rowContainer = CreateSettingsRow(property, field.Content);
 				}
 			}
 			else if (property.Value is DirectionAxis directionAxis)
 			{
 				bool simpleAxis = true;
-
 				if (simpleAxis)
 				{
 					// the direction axis
 					// the distance from the center of the part
 					// create a double editor
-					rowContainer = CreateSettingsRow(property);
-
 					var field = new DoubleField();
 					field.Initialize(0);
 					field.DoubleValue = directionAxis.Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
 					field.ValueChanged += (s, e) =>
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[]
+						{
+							new DirectionAxis()
 							{
-									new DirectionAxis()
-									{
-										Normal = Vector3.UnitZ, Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + new Vector3(field.DoubleValue, 0, 0)
-									}
-							});
+								Normal = Vector3.UnitZ, Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + new Vector3(field.DoubleValue, 0, 0)
+							}
+						});
 						rebuildable?.Rebuild(undoBuffer);
 						propertyGridModifier?.UpdateControls(context);
 					};
 
-					rowContainer.AddChild(field.Content);
-					editControlsContainer.AddChild(rowContainer);
-
 					// update tihs when changed
-					EventHandler< InvalidateArgs> updateData = (s, e) =>
+					EventHandler<InvalidateArgs> updateData = (s, e) =>
 					{
 						field.DoubleValue = ((DirectionAxis)property.PropertyInfo.GetGetMethod().Invoke(property.Item, null)).Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
 					};
@@ -377,6 +363,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						property.Item.Invalidated -= updateData;
 					};
+
+					rowContainer = CreateSettingsRow(property, field.Content);
 				}
 				else
 				{
@@ -430,13 +418,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				rowContainer = CreateSettingsColumn(property);
 				rowContainer.AddChild(CreateSelector(childSelector, property.Item, theme));
-				editControlsContainer.AddChild(rowContainer);
 			}
 			// create a int editor
 			else if (property.Value is int intValue)
 			{
-				rowContainer = CreateSettingsRow(property);
-
 				var field = new IntField();
 				field.Initialize(0);
 				field.IntValue = intValue;
@@ -447,14 +432,11 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer.AddChild(field.Content);
-				editControlsContainer.AddChild(rowContainer);
+				rowContainer = CreateSettingsRow(property, field.Content);
 			}
 			// create a bool editor
 			else if (property.Value is bool boolValue)
 			{
-				rowContainer = CreateSettingsRow(property);
-
 				var field = new ToggleboxField(theme);
 				field.Initialize(0);
 				field.Checked = boolValue;
@@ -465,13 +447,11 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer.AddChild(field.Content);
-				editControlsContainer.AddChild(rowContainer);
+				rowContainer = CreateSettingsRow(property, field.Content);
 			}
 			// create a string editor
 			else if (property.Value is string stringValue)
 			{
-				rowContainer = CreateSettingsRow(property);
 				var textEditWidget = new MHTextEditWidget(stringValue, pixelWidth: 150 * GuiWidget.DeviceScale)
 				{
 					SelectAllOnFocus = true,
@@ -483,13 +463,12 @@ namespace MatterHackers.MatterControl.DesignTools
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
-				rowContainer.AddChild(textEditWidget);
-				editControlsContainer.AddChild(rowContainer);
+
+				rowContainer = CreateSettingsRow(property, textEditWidget);
 			}
 			// create a char editor
 			else if (property.Value is char charValue)
 			{
-				rowContainer = CreateSettingsRow(property);
 				var textEditWidget = new MHTextEditWidget(charValue.ToString(), pixelWidth: 150 * GuiWidget.DeviceScale)
 				{
 					SelectAllOnFocus = true,
@@ -509,8 +488,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
-				rowContainer.AddChild(textEditWidget);
-				editControlsContainer.AddChild(rowContainer);
+				rowContainer = CreateSettingsRow(property, textEditWidget);
 			}
 			// create an enum editor
 			else if (property.PropertyType.IsEnum)
@@ -518,15 +496,15 @@ namespace MatterHackers.MatterControl.DesignTools
 				rowContainer = CreateEnumEditor(context, rebuildable,
 						property, property.PropertyType, property.Value, property.DisplayName,
 						theme, undoBuffer);
-				editControlsContainer.AddChild(rowContainer);
 			}
 			// Use known IObject3D editors
 			else if (property.Value is IObject3D object3D
 				&& ApplicationController.Instance.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor editor)
 			{
 				rowContainer = editor.Create(object3D, view3DWidget, theme);
-				editControlsContainer.AddChild(rowContainer);
 			}
+
+			editControlsContainer.AddChild(rowContainer);
 
 			// remember the row name and widget
 			context.editRows.Add(property.PropertyInfo.Name, rowContainer);
