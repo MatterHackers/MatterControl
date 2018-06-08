@@ -183,14 +183,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			scene.SelectionChanged += (s, e) => removeButton.Enabled = scene.SelectedItem?.CanRemove == true;
 			toolbar.AddChild(removeButton);
 
-
 			// Add container used to host the current specialized editor for the selection
-			selectedObjectEditorColumn.AddChild(editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var scrollableEditor = new ScrollableWidget(true)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			};
+			scrollableEditor.AddChild(editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
 				Padding = new BorderDouble(top: 10)
 			});
+			scrollableEditor.ScrollArea.HAnchor = HAnchor.Stretch;
+
+			selectedObjectEditorColumn.AddChild(scrollableEditor);
 
 			inlineTitleEdit = new InlineTitleEdit("", theme, "Object Name");
 			inlineTitleEdit.TitleChanged += (s, e) =>
@@ -201,15 +208,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			var selectedObjectEditorColumnBody = new GuiWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
-			};
-
-			selectedObjectEditorColumnBody.AddChild(selectedObjectEditorColumn);
-
-			selectedObjectEditorSection = new SectionWidget("Editor", selectedObjectEditorColumnBody, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true)
+			selectedObjectEditorSection = new SectionWidget("Editor", selectedObjectEditorColumn, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true, setContentVAnchor: false)
 			{
 				VAnchor = VAnchor.Fit,
 			};
