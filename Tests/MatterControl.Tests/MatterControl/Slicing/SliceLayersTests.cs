@@ -33,6 +33,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.Tests.Automation;
 #endif
 using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Csg;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
