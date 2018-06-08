@@ -114,10 +114,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			{
 				if (remove != first)
 				{
-					var transformedRemove = Mesh.Copy(remove.Mesh, CancellationToken.None);
+					var transformedRemove = remove.Mesh.Copy(CancellationToken.None);
 					transformedRemove.Transform(remove.WorldMatrix());
 
-					var transformedKeep = Mesh.Copy(first.Mesh, CancellationToken.None);
+					var transformedKeep = first.Mesh.Copy(CancellationToken.None);
 					transformedKeep.Transform(first.WorldMatrix());
 
 					transformedKeep = PolygonMesh.Csg.CsgOperations.Union(transformedKeep, transformedRemove, (status, progress0To1) =>

@@ -35,7 +35,12 @@ using System.Linq;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	using MatterHackers.Agg.UI;
+	using MatterHackers.DataConverters3D.UndoCommands;
 	using MatterHackers.Localizations;
+	using MatterHackers.MatterControl.DesignTools.Operations;
+	using MatterHackers.PolygonMesh;
+	using System.Collections.Generic;
+	using System.Threading;
 
 	public class LinearExtrude : Object3D, IPublicPropertyObject
 	{
@@ -57,6 +62,26 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				return null;
 			}
+		}
+
+		public override void Apply(UndoBuffer undoBuffer)
+		{
+			// only keep the mesh and get rid of everything else
+			SuspendRebuild();
+
+			var meshOnlyItem = new Object3D()
+			{
+				Mesh = this.Mesh.Copy(CancellationToken.None)
+			};
+
+			meshOnlyItem.CopyProperties(this, Object3DPropertyFlags.All);
+
+			// and replace us with the children 
+			undoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { this }, new List<IObject3D> { meshOnlyItem }));
+
+			ResumeRebuild();
+
+			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
 
 		public LinearExtrude()
