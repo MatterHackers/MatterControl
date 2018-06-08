@@ -261,6 +261,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 								var printer = ApplicationController.Instance.ActivePrinter;
 								printer.ViewState.ViewMode = PartViewMode.Model;
+
+								// Always switch to printer tab after loading plate
+								partPreviewContent.TabControl.SelectedTabIndex = 1;
 							});
 						}
 					};
