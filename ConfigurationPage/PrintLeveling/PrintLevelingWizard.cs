@@ -120,8 +120,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				if (targetBedTemp > 0 && targetHotendTemp > 0)
 				{
 					// heating both the bed and the hotend
-					heatingInstructions = $"Waiting for the bed to heat to {targetBedTemp}".Localize() + "\n"
-						+ $"and the hotend to heat to {targetHotendTemp}.".Localize() + "\n"
+					heatingInstructions = "Waiting for the bed to heat to ".Localize() + targetBedTemp +"\n"
+						+ "and the hotend to heat to ".Localize() + targetHotendTemp + ".\n"
 						+ "\n"
 						+ "This will improve the accuracy of print leveling".Localize()
 						+ "and ensure no filament is stuck to the tip of the extruder.".Localize() + "\n"
@@ -132,13 +132,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				else if (targetBedTemp > 0)
 				{
 					// only heating the bed
-					heatingInstructions = $"Waiting for the bed to heat to {targetBedTemp}.".Localize() + "\n"
+					heatingInstructions = "Waiting for the bed to heat to ".Localize() + targetBedTemp + ".\n"
 						+ "This will improve the accuracy of print leveling.".Localize();
 				}
 				else // targetHotendTemp > 0
 				{
 					// only heating the hotend
-					heatingInstructions += $"Waiting for the hotend to heat to {targetHotendTemp}.".Localize() + "\n"
+					heatingInstructions += "Waiting for the hotend to heat to ".Localize() + targetHotendTemp + ".\n"
 						+ "This will ensure no filament is stuck to the tip.".Localize() + "\n"
 						+ "\n"
 						+ "Warning! The tip of the nozzle will be HOT!".Localize() + "\n"
