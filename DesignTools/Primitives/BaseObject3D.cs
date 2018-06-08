@@ -105,10 +105,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Content)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Path)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
+			if ((invalidateType.InvalidateType == InvalidateType.Content
+				|| invalidateType.InvalidateType == InvalidateType.Matrix
+				|| invalidateType.InvalidateType == InvalidateType.Path
+				|| invalidateType.InvalidateType == InvalidateType.Mesh)
 				&& invalidateType.Source != this
 				&& !RebuildSuspended)
 			{
