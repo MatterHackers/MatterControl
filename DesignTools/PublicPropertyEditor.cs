@@ -382,19 +382,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			// create a string editor
 			else if (property.Value is string stringValue)
 			{
-				var textEditWidget = new MHTextEditWidget(stringValue, pixelWidth: 150 * GuiWidget.DeviceScale)
+				var field = new TextField();
+				field.Initialize(0);
+				field.SetValue(stringValue, false);
+				field.ValueChanged += (s, e) =>
 				{
-					SelectAllOnFocus = true,
-					VAnchor = VAnchor.Center
-				};
-				textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
-				{
-					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { textEditWidget.Text });
+					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { field.Value });
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer = CreateSettingsRow(property, textEditWidget);
+				rowContainer = CreateSettingsRow(property, field.Content);
 			}
 			// create a char editor
 			else if (property.Value is char charValue)
