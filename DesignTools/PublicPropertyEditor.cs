@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				// Create a field editor for each editable property detected via reflection
 				foreach (var property in GetEditablePropreties(context.item))
 				{
-					var editor = CreatePropertyEditor(theme, undoBuffer, property, context);
+					var editor = CreatePropertyEditor(property, undoBuffer, context, theme);
 					mainContainer.AddChild(editor);
 				}
 
@@ -228,7 +228,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				.Select(p => new EditableProperty(p, item));
 		}
 
-		private static GuiWidget CreatePropertyEditor(ThemeConfig theme, UndoBuffer undoBuffer, EditableProperty property, PPEContext context)
+		public static GuiWidget CreatePropertyEditor(EditableProperty property, UndoBuffer undoBuffer, PPEContext context, ThemeConfig theme)
 		{
 			var rebuildable = property.Item as IPublicPropertyObject;
 			var propertyGridModifier = property.Item as IPropertyGridModifier;
