@@ -27,38 +27,67 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Linq;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools;
+
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class TextField : UIField
+	public class EnumField : UIField
 	{
-		protected MHTextEditWidget textEditWidget;
+		private EditableProperty property;
+		private DropDownList dropDownList;
+
+		public EnumField(EditableProperty property)
+		{
+			this.property = property;
+		}
 
 		public override void Initialize(int tabIndex)
 		{
-			textEditWidget = new MHTextEditWidget("", pixelWidth: ControlWidth, tabIndex: tabIndex)
+			var theme = ApplicationController.Instance.Theme;
+
+			// Enum keyed on name to friendly name
+			var enumItems = Enum.GetNames(property.PropertyType).Select(enumName =>
 			{
-				ToolTipText = this.HelpText,
-				SelectAllOnFocus = true,
-				Name = this.Name,
-			};
-			textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
-			{
-				if (this.Value != textEditWidget.Text)
+				return new
 				{
-					this.SetValue(
-						textEditWidget.Text,
-						userInitiated: true);
-				}
+					Key = enumName,
+					Value = enumName.Replace('_', ' ')
+				};
+			});
+
+			dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
+			{
+				BorderColor = theme.GetBorderColor(75)
 			};
 
-			this.Content = textEditWidget;
+			var sortableAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<SortableAttribute>().FirstOrDefault();
+			var orderedItems = sortableAttribute != null ? enumItems.OrderBy(n => n.Value) : enumItems;
+
+			foreach (var orderItem in orderedItems)
+			{
+				MenuItem newItem = dropDownList.AddItem(orderItem.Value);
+
+				var localOrderedItem = orderItem;
+				newItem.Selected += (sender, e) =>
+				{
+					this.SetValue(localOrderedItem.Key, true);
+				};
+			}
+
+			dropDownList.SelectedLabel = property.Value.ToString().Replace('_', ' ');
+
+			this.Content = dropDownList;
 		}
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
-			if (this.Value != textEditWidget.Text)
+			if (this.Value != dropDownList.SelectedLabel)
 			{
-				textEditWidget.Text = this.Value;
+				dropDownList.SelectedLabel = this.Value;
 			}
 
 			base.OnValueChanged(fieldChangedEventArgs);

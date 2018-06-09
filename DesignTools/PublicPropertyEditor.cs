@@ -52,6 +52,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public IObject3D Item { get; private set; }
 		public PropertyInfo PropertyInfo { get; private set; }
+
 		public EditableProperty(PropertyInfo p, IObject3D item)
 		{
 			this.Item = item;
@@ -71,6 +72,16 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public object Value => PropertyInfo.GetGetMethod().Invoke(Item, null);
+
+		/// <summary>
+		/// Use reflection to set property value
+		/// </summary>
+		/// <param name="value"></param>
+		public void SetValue(object value)
+		{
+			this.PropertyInfo.GetSetMethod().Invoke(this.Item, new Object[] { value });
+		}
+
 		public string DisplayName => GetDisplayName(PropertyInfo);
 		public string Description => GetDescription(PropertyInfo);
 		public Type PropertyType => PropertyInfo.PropertyType;
@@ -94,21 +105,21 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
-		public GuiWidget Create(IObject3D item, View3DWidget view3DWidget, ThemeConfig theme)
+		public GuiWidget Create(IObject3D item, ThemeConfig theme)
 		{
-			var context = new PPEContext()
-			{
-				view3DWidget = view3DWidget,
-				item = item
-			};
-
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch
 			};
 
-			if(item is IEditorDraw editorDraw)
+			// TODO: Long term we should have a solution where editors can extend Draw and Undo without this hack
+			var view3DWidget = ApplicationController.Instance.DragDropData.View3DWidget;
+			var undoBuffer = view3DWidget.sceneContext.Scene.UndoBuffer;
+
+			if (item is IEditorDraw editorDraw)
 			{
+				// TODO: Putting the drawing code in the IObject3D means almost certain bindings to MatterControl in IObject3D. If instead
+				// we had a UI layer object that used binding to register scene drawing hooks for specific types, we could avoid the bindings
 				view3DWidget.InteractionLayer.DrawGlOpaqueContent += editorDraw.DrawEditor;
 				mainContainer.Closed += (s, e) =>
 				{
@@ -116,22 +127,49 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 			}
 
-			if (context.item != null)
+			if (item != null)
 			{
-				this.CreateEditor(context, view3DWidget, mainContainer, theme);
+				var context = new PPEContext()
+				{
+					item = item
+				};
+
+				// CreateEditor
+				AddWebPageLinkIfRequired(context, mainContainer, theme);
+				AddUnlockLinkIfRequired(context, mainContainer, theme);
+
+				// Create a field editor for each editable property detected via reflection
+				foreach (var property in GetEditablePropreties(context.item))
+				{
+					var editor = CreatePropertyEditor(property, undoBuffer, context, theme);
+					mainContainer.AddChild(editor);
+				}
+
+				// add in an Update button if applicable
+				var hideUpdate = context.item.GetType().GetCustomAttributes(typeof(HideUpdateButtonAttribute), true).FirstOrDefault() as HideUpdateButtonAttribute;
+				if (hideUpdate == null)
+				{
+					var updateButton = theme.ButtonFactory.Generate("Update".Localize());
+					updateButton.Margin = new BorderDouble(5);
+					updateButton.HAnchor = HAnchor.Right;
+					updateButton.Click += (s, e) =>
+					{
+						(context.item as IPublicPropertyObject)?.Rebuild(undoBuffer);
+					};
+					mainContainer.AddChild(updateButton);
+				}
+
+				// Init with custom 'UpdateControls' hooks
+				(context.item as IPropertyGridModifier)?.UpdateControls(context);
 			}
 
 			return mainContainer;
 		}
 
-		private static FlowLayoutWidget CreateSettingsRow(EditableProperty property, GuiWidget widget = null)
+		private static FlowLayoutWidget CreateSettingsRow(EditableProperty property, UIField field)
 		{
 			var row = CreateSettingsRow(property.DisplayName.Localize(), property.Description.Localize());
-
-			if (widget != null)
-			{ 
-				row.AddChild(widget);
-			}
+			row.AddChild(field.Content);
 
 			return row;
 		}
@@ -190,45 +228,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				.Select(p => new EditableProperty(p, item));
 		}
 
-		private void CreateEditor(PPEContext context, View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
+		public static GuiWidget CreatePropertyEditor(EditableProperty property, UndoBuffer undoBuffer, PPEContext context, ThemeConfig theme)
 		{
-			var undoBuffer = view3DWidget.sceneContext.Scene.UndoBuffer;
+			var rebuildable = property.Item as IPublicPropertyObject;
+			var propertyGridModifier = property.Item as IPropertyGridModifier;
 
-			var rebuildable = context.item as IPublicPropertyObject;
-			var propertyGridModifier = context.item as IPropertyGridModifier;
-
-			var editableProperties = GetEditablePropreties(context.item);
-
-			AddWebPageLinkIfRequired(context, editControlsContainer, theme);
-			AddUnlockLinkIfRequired(context, editControlsContainer, theme);
-
-			foreach (var property in editableProperties)
-			{
-				AddPropertyEditor(this, view3DWidget, editControlsContainer, theme, undoBuffer, rebuildable, propertyGridModifier, property, context);
-			}
-
-			var hideUpdate = context.item.GetType().GetCustomAttributes(typeof(HideUpdateButtonAttribute), true).FirstOrDefault() as HideUpdateButtonAttribute;
-			if (hideUpdate == null)
-			{
-				var updateButton = theme.ButtonFactory.Generate("Update".Localize());
-				updateButton.Margin = new BorderDouble(5);
-				updateButton.HAnchor = HAnchor.Right;
-				updateButton.Click += (s, e) =>
-				{
-					rebuildable?.Rebuild(undoBuffer);
-				};
-				editControlsContainer.AddChild(updateButton);
-			}
-
-			// make sure the ui is set right to start
-			propertyGridModifier?.UpdateControls(context);
-		}
-
-		private static void AddPropertyEditor(PublicPropertyEditor publicPropertyEditor,
-			View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme,
-			UndoBuffer undoBuffer, IPublicPropertyObject rebuildable, IPropertyGridModifier propertyGridModifier,
-			EditableProperty property, PPEContext context)
-		{
 			GuiWidget rowContainer = null;
 
 			// create a double editor
@@ -239,12 +243,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.DoubleValue = doubleValue;
 				field.ValueChanged += (s, e) =>
 				{
-					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { field.DoubleValue });
+					property.SetValue(field.DoubleValue);
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer = CreateSettingsRow(property, field.Content);
+				rowContainer = CreateSettingsRow(property, field);
 			}
 			else if (property.Value is Vector2 vector2)
 			{
@@ -253,12 +257,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.Vector2 = vector2;
 				field.ValueChanged += (s, e) =>
 				{
-					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { field.Vector2 });
+					property.SetValue(field.Vector2);
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer = CreateSettingsRow(property, field.Content);
+				rowContainer = CreateSettingsRow(property, field);
 			}
 			else if (property.Value is Vector3 vector3)
 			{
@@ -267,48 +271,26 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.Vector3 = vector3;
 				field.ValueChanged += (s, e) =>
 				{
-					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { field.Vector3 });
+					property.SetValue(field.Vector3);
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer = CreateSettingsRow(property, field.Content);
+				rowContainer = CreateSettingsRow(property, field);
 			}
 			else if (property.Value is DirectionVector directionVector)
 			{
-				var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
+				var field = new DirectionVectorField();
+				field.Initialize(0);
+				field.SetValue(directionVector);
+				field.ValueChanged += (s, e) =>
 				{
-					BorderColor = theme.GetBorderColor(75)
+					property.SetValue(field.DirectionVector);
+					rebuildable?.Rebuild(undoBuffer);
+					propertyGridModifier?.UpdateControls(context);
 				};
 
-				foreach (var orderItem in new string[] { "Right", "Back", "Up" })
-				{
-					MenuItem newItem = dropDownList.AddItem(orderItem);
-
-					var localOredrItem = orderItem;
-					newItem.Selected += (sender, e) =>
-					{
-						switch (dropDownList.SelectedValue)
-						{
-							case "Right":
-								property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { new DirectionVector() { Normal = Vector3.UnitX } });
-								break;
-							case "Back":
-								property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { new DirectionVector() { Normal = Vector3.UnitY } });
-								break;
-							case "Up":
-								property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { new DirectionVector() { Normal = Vector3.UnitZ } });
-								break;
-						}
-
-						rebuildable?.Rebuild(undoBuffer);
-						propertyGridModifier?.UpdateControls(context);
-					};
-				}
-
-				dropDownList.SelectedLabel = "Right";
-
-				rowContainer = CreateSettingsRow(property, dropDownList);
+				rowContainer = CreateSettingsRow(property, field);
 			}
 			else if (property.Value is DirectionAxis directionAxis)
 			{
@@ -320,29 +302,27 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.DoubleValue = directionAxis.Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
 				field.ValueChanged += (s, e) =>
 				{
-					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[]
-					{
+					property.SetValue(
 						new DirectionAxis()
 						{
 							Normal = Vector3.UnitZ, Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + new Vector3(field.DoubleValue, 0, 0)
-						}
-					});
+						});
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				// update tihs when changed
+				// update this when changed
 				EventHandler<InvalidateArgs> updateData = (s, e) =>
 				{
-					field.DoubleValue = ((DirectionAxis)property.PropertyInfo.GetGetMethod().Invoke(property.Item, null)).Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
+					field.DoubleValue = ((DirectionAxis)property.Value).Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
 				};
 				property.Item.Invalidated += updateData;
-				editControlsContainer.Closed += (s, e) =>
+				field.Content.Closed += (s, e) =>
 				{
 					property.Item.Invalidated -= updateData;
 				};
 
-				rowContainer = CreateSettingsRow(property, field.Content);
+				rowContainer = CreateSettingsRow(property, field);
 			}
 			else if (property.Value is ChildrenSelector childSelector)
 			{
@@ -357,12 +337,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.IntValue = intValue;
 				field.ValueChanged += (s, e) =>
 				{
-					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { field.IntValue });
+					property.SetValue(field.IntValue);
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer = CreateSettingsRow(property, field.Content);
+				rowContainer = CreateSettingsRow(property, field);
 			}
 			// create a bool editor
 			else if (property.Value is bool boolValue)
@@ -372,12 +352,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.Checked = boolValue;
 				field.ValueChanged += (s, e) =>
 				{
-					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { field.Checked });
+					property.SetValue(field.Checked);
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer = CreateSettingsRow(property, field.Content);
+				rowContainer = CreateSettingsRow(property, field);
 			}
 			// create a string editor
 			else if (property.Value is string stringValue)
@@ -387,12 +367,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.SetValue(stringValue, false);
 				field.ValueChanged += (s, e) =>
 				{
-					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { field.Value });
+					property.SetValue(field.Value);
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer = CreateSettingsRow(property, field.Content);
+				rowContainer = CreateSettingsRow(property, field);
 			}
 			// create a char editor
 			else if (property.Value is char charValue)
@@ -402,31 +382,48 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.SetValue(charValue.ToString(), false);
 				field.ValueChanged += (s, e) =>
 				{
-					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { Convert.ToChar(field.Value) });
+					property.SetValue(Convert.ToChar(field.Value));
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer = CreateSettingsRow(property, field.Content);
+				rowContainer = CreateSettingsRow(property, field);
 			}
 			// create an enum editor
 			else if (property.PropertyType.IsEnum)
 			{
-				rowContainer = CreateEnumEditor(context, rebuildable,
-						property, property.PropertyType, property.Value, property.DisplayName,
-						theme, undoBuffer);
+				UIField field;
+				var iconsAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<IconsAttribute>().FirstOrDefault();
+				if (iconsAttribute != null)
+				{
+					field = new IconEnumField(property, iconsAttribute);
+				}
+				else
+				{
+					field = new EnumField(property);
+				}
+
+				field.Initialize(0);
+				field.ValueChanged += (s, e) =>
+				{
+					property.SetValue(Enum.Parse(property.PropertyType, field.Value));
+					rebuildable?.Rebuild(undoBuffer);
+					propertyGridModifier?.UpdateControls(context);
+				};
+
+				rowContainer = CreateSettingsRow(property, field);
 			}
 			// Use known IObject3D editors
 			else if (property.Value is IObject3D object3D
-				&& ApplicationController.Instance.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor editor)
+				&& ApplicationController.Instance.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor iObject3DEditor)
 			{
-				rowContainer = editor.Create(object3D, view3DWidget, theme);
+				rowContainer = iObject3DEditor.Create(object3D, theme);
 			}
-
-			editControlsContainer.AddChild(rowContainer);
 
 			// remember the row name and widget
 			context.editRows.Add(property.PropertyInfo.Name, rowContainer);
+
+			return rowContainer;
 		}
 
 		private static GuiWidget CreateSelector(ChildrenSelector childSelector, IObject3D parent, ThemeConfig theme)
@@ -592,116 +589,6 @@ namespace MatterHackers.MatterControl.DesignTools
 				row.AddChild(detailsLink);
 				editControlsContainer.AddChild(row);
 			}
-		}
-
-		private static GuiWidget CreateEnumEditor(PPEContext context, IPublicPropertyObject item,
-			EditableProperty property, Type propertyType, object value, string displayName,
-			ThemeConfig theme,
-			UndoBuffer undoBuffer)
-		{
-			var propertyGridModifier = item as IPropertyGridModifier;
-
-			// Enum keyed on name to friendly name
-			var enumItems = Enum.GetNames(propertyType).Select(enumName =>
-			{
-				return new
-				{
-					Key = enumName,
-					Value = enumName.Replace('_', ' ')
-				};
-			});
-
-			FlowLayoutWidget rowContainer = CreateSettingsRow(displayName);
-
-			var iconsAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<IconsAttribute>().FirstOrDefault();
-			if (iconsAttribute != null)
-			{
-				int index = 0;
-				foreach (var enumItem in enumItems)
-				{
-					var localIndex = index;
-					ImageBuffer iconImage = null;
-					var iconPath = iconsAttribute.IconPaths[localIndex];
-					if (!string.IsNullOrWhiteSpace(iconPath))
-					{
-						if (iconsAttribute.Width > 0)
-						{
-							iconImage = AggContext.StaticData.LoadIcon(iconPath, iconsAttribute.Width, iconsAttribute.Height);
-						}
-						else
-						{
-							iconImage = AggContext.StaticData.LoadIcon(iconPath);
-						}
-						var radioButton = new RadioButton(new ImageWidget(iconImage));
-						radioButton.ToolTipText = enumItem.Key;
-						// set it if checked
-						if (enumItem.Value == value.ToString())
-						{
-							radioButton.Checked = true;
-							if (localIndex != 0
-								|| !iconsAttribute.Item0IsNone)
-							{
-								radioButton.BackgroundColor = new Color(Color.Black, 100);
-							}
-						}
-
-						rowContainer.AddChild(radioButton);
-
-						var localItem = enumItem;
-						radioButton.CheckedStateChanged += (sender, e) =>
-						{
-							if (radioButton.Checked)
-							{
-								property.PropertyInfo.GetSetMethod().Invoke(
-									property.Item,
-									new Object[] { Enum.Parse(propertyType, localItem.Key) });
-								item?.Rebuild(undoBuffer);
-								propertyGridModifier?.UpdateControls(context);
-								if (localIndex != 0
-									|| !iconsAttribute.Item0IsNone)
-								{
-									radioButton.BackgroundColor = new Color(Color.Black, 100);
-								}
-							}
-							else
-							{
-								radioButton.BackgroundColor = Color.Transparent;
-							}
-						};
-						index++;
-					}
-				}
-			}
-			else
-			{
-				var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
-				{
-					BorderColor = theme.GetBorderColor(75)
-				};
-
-				var sortableAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<SortableAttribute>().FirstOrDefault();
-				var orderedItems = sortableAttribute != null ? enumItems.OrderBy(n => n.Value) : enumItems;
-
-				foreach (var orderItem in orderedItems)
-				{
-					MenuItem newItem = dropDownList.AddItem(orderItem.Value);
-
-					var localOrderedItem = orderItem;
-					newItem.Selected += (sender, e) =>
-					{
-						property.PropertyInfo.GetSetMethod().Invoke(
-							property.Item,
-							new Object[] { Enum.Parse(propertyType, localOrderedItem.Key) });
-						item?.Rebuild(undoBuffer);
-						propertyGridModifier?.UpdateControls(context);
-					};
-				}
-
-				dropDownList.SelectedLabel = value.ToString().Replace('_', ' ');
-				rowContainer.AddChild(dropDownList);
-			}
-
-			return rowContainer;
 		}
 	}
 }
