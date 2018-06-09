@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				HAnchor = HAnchor.Stretch
 			};
 
-			if(item is IEditorDraw editorDraw)
+			if (item is IEditorDraw editorDraw)
 			{
 				view3DWidget.InteractionLayer.DrawGlOpaqueContent += editorDraw.DrawEditor;
 				mainContainer.Closed += (s, e) =>
@@ -129,7 +129,34 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			if (context.item != null)
 			{
-				this.CreateEditor(context, view3DWidget, mainContainer, theme);
+				// CreateEditor(context, view3DWidget, mainContainer, theme);
+				var undoBuffer = view3DWidget.sceneContext.Scene.UndoBuffer;
+
+				AddWebPageLinkIfRequired(context, mainContainer, theme);
+				AddUnlockLinkIfRequired(context, mainContainer, theme);
+
+				// Create a field editor for each editable property detected via reflection
+				foreach (var property in GetEditablePropreties(context.item))
+				{
+					AddPropertyEditor(this, view3DWidget, mainContainer, theme, undoBuffer, property, context);
+				}
+
+				// add in an Update button if applicable
+				var hideUpdate = context.item.GetType().GetCustomAttributes(typeof(HideUpdateButtonAttribute), true).FirstOrDefault() as HideUpdateButtonAttribute;
+				if (hideUpdate == null)
+				{
+					var updateButton = theme.ButtonFactory.Generate("Update".Localize());
+					updateButton.Margin = new BorderDouble(5);
+					updateButton.HAnchor = HAnchor.Right;
+					updateButton.Click += (s, e) =>
+					{
+						(context.item as IPublicPropertyObject)?.Rebuild(undoBuffer);
+					};
+					mainContainer.AddChild(updateButton);
+				}
+
+				// Init with custom 'UpdateControls' hooks
+				(context.item as IPropertyGridModifier)?.UpdateControls(context);
 			}
 
 			return mainContainer;
@@ -195,35 +222,6 @@ namespace MatterHackers.MatterControl.DesignTools
 					&& pi.GetGetMethod() != null
 					&& pi.GetSetMethod() != null)
 				.Select(p => new EditableProperty(p, item));
-		}
-
-		private void CreateEditor(PPEContext context, View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
-		{
-			var undoBuffer = view3DWidget.sceneContext.Scene.UndoBuffer;
-
-			AddWebPageLinkIfRequired(context, editControlsContainer, theme);
-			AddUnlockLinkIfRequired(context, editControlsContainer, theme);
-
-			foreach (var property in GetEditablePropreties(context.item))
-			{
-				AddPropertyEditor(this, view3DWidget, editControlsContainer, theme, undoBuffer, property, context);
-			}
-
-			var hideUpdate = context.item.GetType().GetCustomAttributes(typeof(HideUpdateButtonAttribute), true).FirstOrDefault() as HideUpdateButtonAttribute;
-			if (hideUpdate == null)
-			{
-				var updateButton = theme.ButtonFactory.Generate("Update".Localize());
-				updateButton.Margin = new BorderDouble(5);
-				updateButton.HAnchor = HAnchor.Right;
-				updateButton.Click += (s, e) =>
-				{
-					(context.item as IPublicPropertyObject)?.Rebuild(undoBuffer);
-				};
-				editControlsContainer.AddChild(updateButton);
-			}
-
-			// make sure the ui is set right to start
-			(context.item as IPropertyGridModifier)?.UpdateControls(context);
 		}
 
 		private static void AddPropertyEditor(PublicPropertyEditor publicPropertyEditor,
