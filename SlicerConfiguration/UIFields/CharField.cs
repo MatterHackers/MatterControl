@@ -27,9 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Linq;
+using MatterHackers.Agg.UI;
+
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class TextField : UIField
+	public class CharField : UIField
 	{
 		protected MHTextEditWidget textEditWidget;
 
@@ -41,13 +44,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				SelectAllOnFocus = true,
 				Name = this.Name,
 			};
-			textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
+
+			textEditWidget.ActualTextEditWidget.InternalTextEditWidget.KeyPressed += (s, e) =>
 			{
-				if (this.Value != textEditWidget.Text)
+				string keyChar = e.KeyChar.ToString();
+				if (this.Value != keyChar)
 				{
 					this.SetValue(
-						textEditWidget.Text, 
+						keyChar,
 						userInitiated: true);
+				}
+
+				e.Handled = true;
+			};
+
+			textEditWidget.ActualTextEditWidget.KeyUp += (s, e) =>
+			{
+				switch(e.KeyCode)
+				{
+					case Keys.Back:
+						this.SetValue(" ", true);
+						break;
 				}
 			};
 
@@ -63,5 +80,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			base.OnValueChanged(fieldChangedEventArgs);
 		}
+
+		//protected override string ConvertValue(string newValue)
+		//{
+		//	var lastChar = newValue?.ToCharArray().LastOrDefault();
+		//	return lastChar.ToString();
+		//}
 	}
 }

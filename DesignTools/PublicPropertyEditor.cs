@@ -397,26 +397,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			// create a char editor
 			else if (property.Value is char charValue)
 			{
-				var textEditWidget = new MHTextEditWidget(charValue.ToString(), pixelWidth: 150 * GuiWidget.DeviceScale)
+				var field = new CharField();
+				field.Initialize(0);
+				field.SetValue(charValue.ToString(), false);
+				field.ValueChanged += (s, e) =>
 				{
-					SelectAllOnFocus = true,
-					VAnchor = VAnchor.Center
-				};
-				textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
-				{
-					if (textEditWidget.Text.Length < 1)
-					{
-						textEditWidget.Text = "a";
-					}
-					if (textEditWidget.Text.Length > 1)
-					{
-						textEditWidget.Text = textEditWidget.Text.Substring(0, 1);
-					}
-					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { textEditWidget.Text[0] });
+					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { Convert.ToChar(field.Value) });
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
-				rowContainer = CreateSettingsRow(property, textEditWidget);
+
+				rowContainer = CreateSettingsRow(property, field.Content);
 			}
 			// create an enum editor
 			else if (property.PropertyType.IsEnum)
