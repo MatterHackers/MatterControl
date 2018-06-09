@@ -124,14 +124,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			return mainContainer;
 		}
 
-		private static FlowLayoutWidget CreateSettingsRow(EditableProperty property, GuiWidget widget = null)
+		private static FlowLayoutWidget CreateSettingsRow(EditableProperty property, UIField field)
 		{
 			var row = CreateSettingsRow(property.DisplayName.Localize(), property.Description.Localize());
-
-			if (widget != null)
-			{
-				row.AddChild(widget);
-			}
+			row.AddChild(field.Content);
 
 			return row;
 		}
@@ -244,7 +240,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer = CreateSettingsRow(property, field.Content);
+				rowContainer = CreateSettingsRow(property, field);
 			}
 			else if (property.Value is Vector2 vector2)
 			{
@@ -258,7 +254,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer = CreateSettingsRow(property, field.Content);
+				rowContainer = CreateSettingsRow(property, field);
 			}
 			else if (property.Value is Vector3 vector3)
 			{
@@ -272,7 +268,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer = CreateSettingsRow(property, field.Content);
+				rowContainer = CreateSettingsRow(property, field);
 			}
 			else if (property.Value is DirectionVector directionVector)
 			{
@@ -286,7 +282,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer = CreateSettingsRow(property, field.Content);
+				rowContainer = CreateSettingsRow(property, field);
 			}
 			else if (property.Value is DirectionAxis directionAxis)
 			{
@@ -320,7 +316,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					property.Item.Invalidated -= updateData;
 				};
 
-				rowContainer = CreateSettingsRow(property, field.Content);
+				rowContainer = CreateSettingsRow(property, field);
 			}
 			else if (property.Value is ChildrenSelector childSelector)
 			{
@@ -340,7 +336,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer = CreateSettingsRow(property, field.Content);
+				rowContainer = CreateSettingsRow(property, field);
 			}
 			// create a bool editor
 			else if (property.Value is bool boolValue)
@@ -355,7 +351,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer = CreateSettingsRow(property, field.Content);
+				rowContainer = CreateSettingsRow(property, field);
 			}
 			// create a string editor
 			else if (property.Value is string stringValue)
@@ -370,7 +366,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer = CreateSettingsRow(property, field.Content);
+				rowContainer = CreateSettingsRow(property, field);
 			}
 			// create a char editor
 			else if (property.Value is char charValue)
@@ -385,7 +381,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer = CreateSettingsRow(property, field.Content);
+				rowContainer = CreateSettingsRow(property, field);
 			}
 			// create an enum editor
 			else if (property.PropertyType.IsEnum)
@@ -409,7 +405,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer = CreateSettingsRow(property, field.Content);
+				rowContainer = CreateSettingsRow(property, field);
 			}
 			// Use known IObject3D editors
 			else if (property.Value is IObject3D object3D
