@@ -337,6 +337,13 @@ namespace MatterControl.Tests.MatterControl
 			Assert.Fail();
 		}
 
+		[Test, Ignore("Not Implemented")]
+		public void CharFieldTest()
+		{
+			//var field = new BoundDoubleField();
+			Assert.Fail();
+		}
+
 		public class ValueMap
 		{
 			[DebuggerStepThrough]
