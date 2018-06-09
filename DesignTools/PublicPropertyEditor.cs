@@ -390,7 +390,19 @@ namespace MatterHackers.MatterControl.DesignTools
 			// create an enum editor
 			else if (property.PropertyType.IsEnum)
 			{
-				rowContainer = CreateEnumEditor(context, property, theme, undoBuffer);
+				var iconsAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<IconsAttribute>().FirstOrDefault();
+				var field = new IconEnumField(context, property, undoBuffer, iconsAttribute);
+				field.Initialize(0);
+				field.ValueChanged += (s, e) =>
+				{
+					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { Enum.Parse(property.PropertyType, field.Value) });
+					rebuildable?.Rebuild(undoBuffer);
+					propertyGridModifier?.UpdateControls(context);
+				};
+
+				field.Content.DebugShowBounds = true;
+
+				rowContainer = CreateSettingsRow(property, field.Content);
 			}
 			// Use known IObject3D editors
 			else if (property.Value is IObject3D object3D
@@ -568,115 +580,6 @@ namespace MatterHackers.MatterControl.DesignTools
 				row.AddChild(detailsLink);
 				editControlsContainer.AddChild(row);
 			}
-		}
-
-		private static GuiWidget CreateEnumEditor(PPEContext context, EditableProperty property, ThemeConfig theme, UndoBuffer undoBuffer)
-		{
-			// Cast to optional types
-			var item = property.Item as IPublicPropertyObject;
-			var propertyGridModifier = property.Item as IPropertyGridModifier;
-
-			// Enum keyed on name to friendly name
-			var enumItems = Enum.GetNames(property.PropertyType).Select(enumName =>
-			{
-				return new
-				{
-					Key = enumName,
-					Value = enumName.Replace('_', ' ')
-				};
-			});
-
-			FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName);
-
-			var iconsAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<IconsAttribute>().FirstOrDefault();
-			if (iconsAttribute != null)
-			{
-				int index = 0;
-				foreach (var enumItem in enumItems)
-				{
-					var localIndex = index;
-					ImageBuffer iconImage = null;
-					var iconPath = iconsAttribute.IconPaths[localIndex];
-					if (!string.IsNullOrWhiteSpace(iconPath))
-					{
-						if (iconsAttribute.Width > 0)
-						{
-							iconImage = AggContext.StaticData.LoadIcon(iconPath, iconsAttribute.Width, iconsAttribute.Height);
-						}
-						else
-						{
-							iconImage = AggContext.StaticData.LoadIcon(iconPath);
-						}
-						var radioButton = new RadioButton(new ImageWidget(iconImage));
-						radioButton.ToolTipText = enumItem.Key;
-						// set it if checked
-						if (enumItem.Value ==  property.DisplayName.ToString())
-						{
-							radioButton.Checked = true;
-							if (localIndex != 0
-								|| !iconsAttribute.Item0IsNone)
-							{
-								radioButton.BackgroundColor = new Color(Color.Black, 100);
-							}
-						}
-
-						rowContainer.AddChild(radioButton);
-
-						var localItem = enumItem;
-						radioButton.CheckedStateChanged += (sender, e) =>
-						{
-							if (radioButton.Checked)
-							{
-								property.PropertyInfo.GetSetMethod().Invoke(
-									property.Item,
-									new Object[] { Enum.Parse(property.PropertyType, localItem.Key) });
-								item?.Rebuild(undoBuffer);
-								propertyGridModifier?.UpdateControls(context);
-								if (localIndex != 0
-									|| !iconsAttribute.Item0IsNone)
-								{
-									radioButton.BackgroundColor = new Color(Color.Black, 100);
-								}
-							}
-							else
-							{
-								radioButton.BackgroundColor = Color.Transparent;
-							}
-						};
-						index++;
-					}
-				}
-			}
-			else
-			{
-				var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
-				{
-					BorderColor = theme.GetBorderColor(75)
-				};
-
-				var sortableAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<SortableAttribute>().FirstOrDefault();
-				var orderedItems = sortableAttribute != null ? enumItems.OrderBy(n => n.Value) : enumItems;
-
-				foreach (var orderItem in orderedItems)
-				{
-					MenuItem newItem = dropDownList.AddItem(orderItem.Value);
-
-					var localOrderedItem = orderItem;
-					newItem.Selected += (sender, e) =>
-					{
-						property.PropertyInfo.GetSetMethod().Invoke(
-							property.Item,
-							new Object[] { Enum.Parse(property.PropertyType, localOrderedItem.Key) });
-						item?.Rebuild(undoBuffer);
-						propertyGridModifier?.UpdateControls(context);
-					};
-				}
-
-				dropDownList.SelectedLabel = property.Value.ToString().Replace('_', ' ');
-				rowContainer.AddChild(dropDownList);
-			}
-
-			return rowContainer;
 		}
 	}
 }
