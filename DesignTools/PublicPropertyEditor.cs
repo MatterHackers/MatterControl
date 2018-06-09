@@ -137,7 +137,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				// Create a field editor for each editable property detected via reflection
 				foreach (var property in GetEditablePropreties(context.item))
 				{
-					AddPropertyEditor(view3DWidget, mainContainer, theme, undoBuffer, property, context);
+					var editor = CreatePropertyEditor(view3DWidget, theme, undoBuffer, property, context);
+					mainContainer.AddChild(editor);
 				}
 
 				// add in an Update button if applicable
@@ -223,7 +224,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				.Select(p => new EditableProperty(p, item));
 		}
 
-		private static void AddPropertyEditor(View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme,
+		private static GuiWidget CreatePropertyEditor(View3DWidget view3DWidget, ThemeConfig theme,
 			UndoBuffer undoBuffer, EditableProperty property, PPEContext context)
 		{
 			var rebuildable = property.Item as IPublicPropertyObject;
@@ -313,7 +314,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					field.DoubleValue = ((DirectionAxis)property.Value).Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
 				};
 				property.Item.Invalidated += updateData;
-				editControlsContainer.Closed += (s, e) =>
+				field.Content.Closed += (s, e) =>
 				{
 					property.Item.Invalidated -= updateData;
 				};
@@ -411,15 +412,15 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			// Use known IObject3D editors
 			else if (property.Value is IObject3D object3D
-				&& ApplicationController.Instance.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor editor)
+				&& ApplicationController.Instance.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor iObject3DEditor)
 			{
-				rowContainer = editor.Create(object3D, view3DWidget, theme);
+				rowContainer = iObject3DEditor.Create(object3D, view3DWidget, theme);
 			}
-
-			editControlsContainer.AddChild(rowContainer);
 
 			// remember the row name and widget
 			context.editRows.Add(property.PropertyInfo.Name, rowContainer);
+
+			return rowContainer;
 		}
 
 		private static GuiWidget CreateSelector(ChildrenSelector childSelector, IObject3D parent, ThemeConfig theme)
