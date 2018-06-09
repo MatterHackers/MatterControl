@@ -105,15 +105,21 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
-		public GuiWidget Create(IObject3D item, View3DWidget view3DWidget, ThemeConfig theme)
+		public GuiWidget Create(IObject3D item, ThemeConfig theme)
 		{
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch
 			};
 
+			// TODO: Long term we should have a solution where editors can extend Draw and Undo without this hack
+			var view3DWidget = ApplicationController.Instance.DragDropData.View3DWidget;
+			var undoBuffer = view3DWidget.sceneContext.Scene.UndoBuffer;
+
 			if (item is IEditorDraw editorDraw)
 			{
+				// TODO: Putting the drawing code in the IObject3D means almost certain bindings to MatterControl in IObject3D. If instead
+				// we had a UI layer object that used binding to register scene drawing hooks for specific types, we could avoid the bindings
 				view3DWidget.InteractionLayer.DrawGlOpaqueContent += editorDraw.DrawEditor;
 				mainContainer.Closed += (s, e) =>
 				{
@@ -129,8 +135,6 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 
 				// CreateEditor
-				var undoBuffer = view3DWidget.sceneContext.Scene.UndoBuffer;
-
 				AddWebPageLinkIfRequired(context, mainContainer, theme);
 				AddUnlockLinkIfRequired(context, mainContainer, theme);
 
@@ -414,7 +418,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			else if (property.Value is IObject3D object3D
 				&& ApplicationController.Instance.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor iObject3DEditor)
 			{
-				rowContainer = iObject3DEditor.Create(object3D, view3DWidget, theme);
+				rowContainer = iObject3DEditor.Create(object3D, theme);
 			}
 
 			// remember the row name and widget

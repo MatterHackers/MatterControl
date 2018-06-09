@@ -330,7 +330,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var selectedItem = scopeItem.item;
 				var selectedItemType = selectedItem.GetType();
 
-				var editorWidget = scopeItem.editor.Create(selectedItem, view3DWidget, theme);
+				var editorWidget = scopeItem.editor.Create(selectedItem, theme);
 				editorWidget.HAnchor = HAnchor.Stretch;
 				editorWidget.VAnchor = VAnchor.Fit;
 
