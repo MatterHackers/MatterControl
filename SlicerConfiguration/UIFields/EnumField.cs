@@ -29,23 +29,20 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Linq;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class IconEnumField : UIField
+	public class EnumField : UIField
 	{
 		private EditableProperty property;
-		private IconsAttribute iconsAttribute;
+		private DropDownList dropDownList;
 
-		public IconEnumField(EditableProperty property, IconsAttribute iconsAttribute)
+		public EnumField(EditableProperty property)
 		{
 			this.property = property;
-			this.iconsAttribute = iconsAttribute;
 		}
 
 		public override void Initialize(int tabIndex)
@@ -62,71 +59,37 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 			});
 
-			var iconsRow = new FlowLayoutWidget();
-
-			int index = 0;
-			foreach (var enumItem in enumItems)
+			dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
 			{
-				var localIndex = index;
-				ImageBuffer iconImage = null;
-				var iconPath = iconsAttribute.IconPaths[localIndex];
-				if (!string.IsNullOrWhiteSpace(iconPath))
+				BorderColor = theme.GetBorderColor(75)
+			};
+
+			var sortableAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<SortableAttribute>().FirstOrDefault();
+			var orderedItems = sortableAttribute != null ? enumItems.OrderBy(n => n.Value) : enumItems;
+
+			foreach (var orderItem in orderedItems)
+			{
+				MenuItem newItem = dropDownList.AddItem(orderItem.Value);
+
+				var localOrderedItem = orderItem;
+				newItem.Selected += (sender, e) =>
 				{
-					if (iconsAttribute.Width > 0)
-					{
-						iconImage = AggContext.StaticData.LoadIcon(iconPath, iconsAttribute.Width, iconsAttribute.Height);
-					}
-					else
-					{
-						iconImage = AggContext.StaticData.LoadIcon(iconPath);
-					}
-
-					var radioButton = new RadioButton(new ImageWidget(iconImage))
-					{
-						ToolTipText = enumItem.Key
-					};
-
-					// set it if checked
-					if (enumItem.Value == property.DisplayName)
-					{
-						radioButton.Checked = true;
-						if (localIndex != 0
-							|| !iconsAttribute.Item0IsNone)
-						{
-							radioButton.BackgroundColor = new Color(Color.Black, 100);
-						}
-					}
-
-					iconsRow.AddChild(radioButton);
-
-					var localItem = enumItem;
-					radioButton.CheckedStateChanged += (s, e) =>
-					{
-						if (radioButton.Checked)
-						{
-							this.SetValue(localItem.Key, true);
-
-							if (localIndex != 0
-								|| !iconsAttribute.Item0IsNone)
-							{
-								radioButton.BackgroundColor = new Color(Color.Black, 100);
-							}
-						}
-						else
-						{
-							radioButton.BackgroundColor = Color.Transparent;
-						}
-					};
-					index++;
-				}
+					this.SetValue(localOrderedItem.Key, true);
+				};
 			}
 
-			this.Content = iconsRow;
+			dropDownList.SelectedLabel = property.Value.ToString().Replace('_', ' ');
+
+			this.Content = dropDownList;
 		}
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
-			//dropdownList.SelectedLabel = this.Value;
+			if (this.Value != dropDownList.SelectedLabel)
+			{
+				dropDownList.SelectedLabel = this.Value;
+			}
+
 			base.OnValueChanged(fieldChangedEventArgs);
 		}
 	}

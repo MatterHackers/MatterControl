@@ -390,8 +390,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			// create an enum editor
 			else if (property.PropertyType.IsEnum)
 			{
+				UIField field;
 				var iconsAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<IconsAttribute>().FirstOrDefault();
-				var field = new IconEnumField(context, property, undoBuffer, iconsAttribute);
+				if (iconsAttribute != null)
+				{
+					field = new IconEnumField(property, iconsAttribute);
+				}
+				else
+				{
+					field = new EnumField(property);
+				}
+
 				field.Initialize(0);
 				field.ValueChanged += (s, e) =>
 				{
@@ -399,8 +408,6 @@ namespace MatterHackers.MatterControl.DesignTools
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
-
-				field.Content.DebugShowBounds = true;
 
 				rowContainer = CreateSettingsRow(property, field.Content);
 			}
