@@ -86,15 +86,10 @@ namespace MatterControl.Tests.MatterControl
 				Assert.AreEqual(
 					1,
 					thisClassMethods.Where(m => m.Name == expectedTestName).Count(),
-					"Test for UIField missing - not yet created or typo'd - Expected: " + expectedTestName);
+					"Required test missing: " + expectedTestName);
 			}
 
 			return Task.CompletedTask;
-		}
-
-		[Test]
-		public async Task Vector3FieldTest()
-		{
 		}
 
 		[Test]
@@ -257,24 +252,6 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, Ignore("Not Implemented")]
-		public void CheckboxFieldTest()
-		{
-			Assert.Fail();
-		}
-
-		[Test, Ignore("Not Implemented")]
-		public void ToggleboxFieldTest()
-		{
-			Assert.Fail();
-		}
-
-		[Test, Ignore("Not Implemented")]
-		public void MultilineStringFieldTest()
-		{
-			Assert.Fail();
-		}
-
 		[Test, RunInApplicationDomain]
 		public async Task ComPortFieldTest()
 		{
@@ -307,6 +284,30 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Ignore("Not Implemented")]
+		public void CheckboxFieldTest()
+		{
+			Assert.Fail();
+		}
+
+		[Test, Ignore("Not Implemented")]
+		public void ToggleboxFieldTest()
+		{
+			Assert.Fail();
+		}
+
+		[Test, Ignore("Not Implemented")]
+		public void MultilineStringFieldTest()
+		{
+			Assert.Fail();
+		}
+
+		[Test, Ignore("Not Implemented")]
+		public void Vector3FieldTest()
+		{
+			Assert.Fail();
+		}
+
+		[Test, Ignore("Not Implemented")]
 		public void ListFieldTest()
 		{
 			Assert.Fail();
@@ -333,21 +334,30 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Ignore("Not Implemented")]
 		public void BoundDoubleFieldTest()
 		{
-			//var field = new BoundDoubleField();
 			Assert.Fail();
 		}
 
 		[Test, Ignore("Not Implemented")]
 		public void CharFieldTest()
 		{
-			//var field = new BoundDoubleField();
 			Assert.Fail();
 		}
 
 		[Test, Ignore("Not Implemented")]
 		public void DirectionVectorFieldTest()
 		{
-			//var field = new BoundDoubleField();
+			Assert.Fail();
+		}
+
+		[Test, Ignore("Not Implemented")]
+		public void EnumFieldTest()
+		{
+			Assert.Fail();
+		}
+
+		[Test, Ignore("Not Implemented")]
+		public void IconEnumFieldTest()
+		{
 			Assert.Fail();
 		}
 
