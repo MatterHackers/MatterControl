@@ -52,6 +52,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public IObject3D Item { get; private set; }
 		public PropertyInfo PropertyInfo { get; private set; }
+
 		public EditableProperty(PropertyInfo p, IObject3D item)
 		{
 			this.Item = item;
@@ -71,6 +72,16 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public object Value => PropertyInfo.GetGetMethod().Invoke(Item, null);
+
+		/// <summary>
+		/// Use reflection to set property value
+		/// </summary>
+		/// <param name="value"></param>
+		public void SetValue(object value)
+		{
+			this.PropertyInfo.GetSetMethod().Invoke(this.Item, new Object[] { value });
+		}
+
 		public string DisplayName => GetDisplayName(PropertyInfo);
 		public string Description => GetDescription(PropertyInfo);
 		public Type PropertyType => PropertyInfo.PropertyType;
@@ -235,7 +246,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.DoubleValue = doubleValue;
 				field.ValueChanged += (s, e) =>
 				{
-					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { field.DoubleValue });
+					property.SetValue(field.DoubleValue);
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
@@ -249,7 +260,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.Vector2 = vector2;
 				field.ValueChanged += (s, e) =>
 				{
-					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { field.Vector2 });
+					property.SetValue(field.Vector2);
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
@@ -263,7 +274,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.Vector3 = vector3;
 				field.ValueChanged += (s, e) =>
 				{
-					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { field.Vector3 });
+					property.SetValue(field.Vector3);
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
@@ -277,7 +288,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.SetValue(directionVector);
 				field.ValueChanged += (s, e) =>
 				{
-					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { field.DirectionVector });
+					property.SetValue(field.DirectionVector);
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
@@ -294,13 +305,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.DoubleValue = directionAxis.Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
 				field.ValueChanged += (s, e) =>
 				{
-					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[]
-					{
+					property.SetValue(
 						new DirectionAxis()
 						{
 							Normal = Vector3.UnitZ, Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + new Vector3(field.DoubleValue, 0, 0)
-						}
-					});
+						});
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
@@ -331,7 +340,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.IntValue = intValue;
 				field.ValueChanged += (s, e) =>
 				{
-					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { field.IntValue });
+					property.SetValue(field.IntValue);
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
@@ -346,7 +355,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.Checked = boolValue;
 				field.ValueChanged += (s, e) =>
 				{
-					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { field.Checked });
+					property.SetValue(field.Checked);
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
@@ -361,7 +370,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.SetValue(stringValue, false);
 				field.ValueChanged += (s, e) =>
 				{
-					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { field.Value });
+					property.SetValue(field.Value);
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
@@ -376,7 +385,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.SetValue(charValue.ToString(), false);
 				field.ValueChanged += (s, e) =>
 				{
-					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { Convert.ToChar(field.Value) });
+					property.SetValue(Convert.ToChar(field.Value));
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
@@ -400,7 +409,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.Initialize(0);
 				field.ValueChanged += (s, e) =>
 				{
-					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { Enum.Parse(property.PropertyType, field.Value) });
+					property.SetValue(Enum.Parse(property.PropertyType, field.Value));
 					rebuildable?.Rebuild(undoBuffer);
 					propertyGridModifier?.UpdateControls(context);
 				};
