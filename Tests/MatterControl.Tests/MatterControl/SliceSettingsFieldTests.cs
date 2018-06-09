@@ -344,6 +344,13 @@ namespace MatterControl.Tests.MatterControl
 			Assert.Fail();
 		}
 
+		[Test, Ignore("Not Implemented")]
+		public void DirectionVectorFieldTest()
+		{
+			//var field = new BoundDoubleField();
+			Assert.Fail();
+		}
+
 		public class ValueMap
 		{
 			[DebuggerStepThrough]

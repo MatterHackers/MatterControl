@@ -27,38 +27,86 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.EditableTypes;
+using MatterHackers.VectorMath;
+using Newtonsoft.Json;
+
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class TextField : UIField
+	public class DirectionVectorField : UIField
 	{
-		protected MHTextEditWidget textEditWidget;
+		private DropDownList dropDownList;
 
 		public override void Initialize(int tabIndex)
 		{
-			textEditWidget = new MHTextEditWidget("", pixelWidth: ControlWidth, tabIndex: tabIndex)
+			var theme = ApplicationController.Instance.Theme;
+
+			dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
 			{
-				ToolTipText = this.HelpText,
-				SelectAllOnFocus = true,
-				Name = this.Name,
-			};
-			textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
-			{
-				if (this.Value != textEditWidget.Text)
-				{
-					this.SetValue(
-						textEditWidget.Text,
-						userInitiated: true);
-				}
+				BorderColor = theme.GetBorderColor(75)
 			};
 
-			this.Content = textEditWidget;
+			dropDownList.AddItem(
+				"Back".Localize(),
+				JsonConvert.SerializeObject(
+					new DirectionVector()
+					{
+						Normal = Vector3.UnitY
+					}));
+
+			dropDownList.AddItem(
+				"Up".Localize(),
+				JsonConvert.SerializeObject(
+					new DirectionVector()
+					{
+						Normal = Vector3.UnitZ
+					}));
+
+			dropDownList.AddItem(
+				"Right".Localize(),
+				JsonConvert.SerializeObject(
+					new DirectionVector()
+					{
+						Normal = Vector3.UnitX
+					}));
+
+			dropDownList.SelectedLabel = "Right";
+
+			dropDownList.SelectionChanged += (s, e) =>
+			{
+				if (this.Value != dropDownList.SelectedValue)
+				{
+					this.SetValue(
+						dropDownList.SelectedValue,
+						userInitiated: true);
+				};
+			};
+
+			this.Content = dropDownList;
+		}
+
+		public DirectionVector DirectionVector { get; private set; }
+
+		public void SetValue(DirectionVector directionVector)
+		{
+			this.SetValue(
+				JsonConvert.SerializeObject(directionVector),
+				false);
+		}
+
+		protected override string ConvertValue(string newValue)
+		{
+			this.DirectionVector = JsonConvert.DeserializeObject<DirectionVector>(newValue);
+			return base.ConvertValue(newValue);
 		}
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
-			if (this.Value != textEditWidget.Text)
+			if (this.Value != dropDownList.SelectedValue)
 			{
-				textEditWidget.Text = this.Value;
+				dropDownList.SelectedValue = this.Value;
 			}
 
 			base.OnValueChanged(fieldChangedEventArgs);

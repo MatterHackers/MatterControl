@@ -276,39 +276,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (property.Value is DirectionVector directionVector)
 			{
-				var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
+				var field = new DirectionVectorField();
+				field.Initialize(0);
+				field.SetValue(directionVector);
+				field.ValueChanged += (s, e) =>
 				{
-					BorderColor = theme.GetBorderColor(75)
+					property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { field.DirectionVector });
+					rebuildable?.Rebuild(undoBuffer);
+					propertyGridModifier?.UpdateControls(context);
 				};
 
-				foreach (var orderItem in new string[] { "Right", "Back", "Up" })
-				{
-					MenuItem newItem = dropDownList.AddItem(orderItem);
-
-					var localOredrItem = orderItem;
-					newItem.Selected += (sender, e) =>
-					{
-						switch (dropDownList.SelectedValue)
-						{
-							case "Right":
-								property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { new DirectionVector() { Normal = Vector3.UnitX } });
-								break;
-							case "Back":
-								property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { new DirectionVector() { Normal = Vector3.UnitY } });
-								break;
-							case "Up":
-								property.PropertyInfo.GetSetMethod().Invoke(property.Item, new Object[] { new DirectionVector() { Normal = Vector3.UnitZ } });
-								break;
-						}
-
-						rebuildable?.Rebuild(undoBuffer);
-						propertyGridModifier?.UpdateControls(context);
-					};
-				}
-
-				dropDownList.SelectedLabel = "Right";
-
-				rowContainer = CreateSettingsRow(property, dropDownList);
+				rowContainer = CreateSettingsRow(property, field.Content);
 			}
 			else if (property.Value is DirectionAxis directionAxis)
 			{
