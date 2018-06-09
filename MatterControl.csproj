@@ -255,6 +255,7 @@
     <Compile Include="SetupWizard\DialogWindow.cs" />
     <Compile Include="SlicerConfiguration\SettingsOrganizer.cs" />
     <Compile Include="SlicerConfiguration\SettingsRow.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\CharField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IpAddessField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\Vector3Field.cs" />
     <Compile Include="Utilities\IGCodePostProcessor.cs" />

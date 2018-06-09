@@ -27,20 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.ComponentModel;
-using System.IO;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
-using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools.Operations;
-using MatterHackers.MatterControl.Plugins.BrailleBuilder;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
