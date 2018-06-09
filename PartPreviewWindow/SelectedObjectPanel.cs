@@ -264,9 +264,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Enforce panel padding in sidebar
 			foreach(var sectionWidget in this.ContentPanel.Children<SectionWidget>())
 			{
-				// Special case for editorRootContainer due to ResizeContainer
+				// Special case for editorResizeWrapper due to ResizeContainer
 				if (sectionWidget.ContentPanel == editorResizeWrapper)
 				{
+					// Apply padding to ResizeContainer not wrapper
 					editorResizeContainer.Padding = new BorderDouble(10, 10, 10, 0);
 				}
 				else
