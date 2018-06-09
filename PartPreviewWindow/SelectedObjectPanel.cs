@@ -50,12 +50,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ThemeConfig theme;
 		private BedConfig sceneContext;
 		private View3DWidget view3DWidget;
-		private SectionWidget selectedObjectEditorSection;
+		private SectionWidget editorSectionWidget;
 		private TextButton editButton;
 
 		private GuiWidget editorPanel;
 		private InlineTitleEdit inlineTitleEdit;
-		private BottomResizeContainer selectedObjectEditorColumn;
+		private BottomResizeContainer editorResizeContainer;
 
 		public SelectedObjectPanel(View3DWidget view3DWidget, BedConfig sceneContext, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(scrollable);
 
-			selectedObjectEditorColumn = new BottomResizeContainer(theme)
+			editorResizeContainer = new BottomResizeContainer(theme)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Absolute,
@@ -98,11 +98,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit
 			};
-			selectedObjectEditorColumn.AddChild(toolbar);
+			editorResizeContainer.AddChild(toolbar);
 
-			selectedObjectEditorColumn.Resized += (s, e) => 
+			editorResizeContainer.Resized += (s, e) =>
 			{
-				sceneContext.ViewState.SelectedObjectEditorHeight = selectedObjectEditorColumn.Height;
+				sceneContext.ViewState.SelectedObjectEditorHeight = editorResizeContainer.Height;
 			};
 
 			var scene = sceneContext.Scene;
@@ -197,16 +197,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 			scrollableEditor.ScrollArea.HAnchor = HAnchor.Stretch;
 
-			selectedObjectEditorColumn.AddChild(scrollableEditor);
+			editorResizeContainer.AddChild(scrollableEditor);
 
-			// Put the bottom resize container in a guiwidgt that is H:stretch V:fit so that the container can be hiden and shown and the resize container can keep it's size.
-			var selectedObjectEditorColumnContainer = new GuiWidget()
+			// A wrapping container to fix resize quirks - GuiWidget with H:Stretch V:Fit that can be hidden and shown and allow the ResizeContainer can keep it's size
+			var editorResizeWrapper = new GuiWidget()
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
+				VAnchor = VAnchor.Fit,
+				Name = "editorRootContainer"
 			};
-
-			selectedObjectEditorColumnContainer.AddChild(selectedObjectEditorColumn);
+			editorResizeWrapper.AddChild(editorResizeContainer);
 
 			inlineTitleEdit = new InlineTitleEdit("", theme, "Object Name");
 			inlineTitleEdit.TitleChanged += (s, e) =>
@@ -217,18 +217,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			selectedObjectEditorSection = new SectionWidget("Editor", selectedObjectEditorColumnContainer, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true)
+			editorSectionWidget = new SectionWidget("Editor", editorResizeWrapper, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true)
 			{
 				VAnchor = VAnchor.Fit,
 			};
 
 			// TODO: Replace hackery with practical solution
-			if (selectedObjectEditorSection.Children.FirstOrDefault() is ExpandCheckboxButton checkbox)
+			if (editorSectionWidget.Children.FirstOrDefault() is ExpandCheckboxButton checkbox)
 			{
 				checkbox.ReplaceChild(checkbox.Children[1], inlineTitleEdit);
 			}
 
-			this.ContentPanel.AddChild(selectedObjectEditorSection);
+			this.ContentPanel.AddChild(editorSectionWidget);
 
 			var colorSection = new SectionWidget(
 				"Color".Localize(),
@@ -264,9 +264,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Enforce panel padding in sidebar
 			foreach(var sectionWidget in this.ContentPanel.Children<SectionWidget>())
 			{
-				sectionWidget.ContentPanel.Padding = new BorderDouble(10, 10, 10, 0);
-				sectionWidget.ExpandableWhenDisabled = true;
-				sectionWidget.Enabled = false;
+				// Special case for editorRootContainer due to ResizeContainer
+				if (sectionWidget.ContentPanel == editorResizeWrapper)
+				{
+					editorResizeContainer.Padding = new BorderDouble(10, 10, 10, 0);
+				}
+				else
+				{
+					sectionWidget.ContentPanel.Padding = new BorderDouble(10, 10, 10, 0);
+					sectionWidget.ExpandableWhenDisabled = true;
+					sectionWidget.Enabled = false;
+				}
 			}
 		}
 

@@ -2125,12 +2125,6 @@ namespace MatterHackers.MatterControl
 		public View3DWidget View3DWidget { get; set; }
 		public PrinterConfig Printer { get; internal set; }
 		public BedConfig SceneContext { get; set; }
-
-		public void Reset()
-		{
-			this.View3DWidget = null;
-			this.SceneContext = null;
-		}
 	}
 
 	public class RunningTaskDetails : IProgress<ProgressStatus>
