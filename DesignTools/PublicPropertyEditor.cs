@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var row = CreateSettingsRow(property.DisplayName.Localize(), property.Description.Localize());
 
 			if (widget != null)
-			{ 
+			{
 				row.AddChild(widget);
 			}
 
@@ -309,7 +309,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				// update tihs when changed
+				// update this when changed
 				EventHandler<InvalidateArgs> updateData = (s, e) =>
 				{
 					field.DoubleValue = ((DirectionAxis)property.PropertyInfo.GetGetMethod().Invoke(property.Item, null)).Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
@@ -390,9 +390,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			// create an enum editor
 			else if (property.PropertyType.IsEnum)
 			{
-				rowContainer = CreateEnumEditor(context, rebuildable,
-						property, property.PropertyType, property.Value, property.DisplayName,
-						theme, undoBuffer);
+				rowContainer = CreateEnumEditor(context, property, theme, undoBuffer);
 			}
 			// Use known IObject3D editors
 			else if (property.Value is IObject3D object3D
@@ -572,15 +570,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private static GuiWidget CreateEnumEditor(PPEContext context, IPublicPropertyObject item,
-			EditableProperty property, Type propertyType, object value, string displayName,
-			ThemeConfig theme,
-			UndoBuffer undoBuffer)
+		private static GuiWidget CreateEnumEditor(PPEContext context, EditableProperty property, ThemeConfig theme, UndoBuffer undoBuffer)
 		{
-			var propertyGridModifier = item as IPropertyGridModifier;
+			// Cast to optional types
+			var item = property.Item as IPublicPropertyObject;
+			var propertyGridModifier = property.Item as IPropertyGridModifier;
 
 			// Enum keyed on name to friendly name
-			var enumItems = Enum.GetNames(propertyType).Select(enumName =>
+			var enumItems = Enum.GetNames(property.PropertyType).Select(enumName =>
 			{
 				return new
 				{
@@ -589,7 +586,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 			});
 
-			FlowLayoutWidget rowContainer = CreateSettingsRow(displayName);
+			FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName);
 
 			var iconsAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<IconsAttribute>().FirstOrDefault();
 			if (iconsAttribute != null)
@@ -613,7 +610,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						var radioButton = new RadioButton(new ImageWidget(iconImage));
 						radioButton.ToolTipText = enumItem.Key;
 						// set it if checked
-						if (enumItem.Value == value.ToString())
+						if (enumItem.Value ==  property.DisplayName.ToString())
 						{
 							radioButton.Checked = true;
 							if (localIndex != 0
@@ -632,7 +629,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							{
 								property.PropertyInfo.GetSetMethod().Invoke(
 									property.Item,
-									new Object[] { Enum.Parse(propertyType, localItem.Key) });
+									new Object[] { Enum.Parse(property.PropertyType, localItem.Key) });
 								item?.Rebuild(undoBuffer);
 								propertyGridModifier?.UpdateControls(context);
 								if (localIndex != 0
@@ -669,13 +666,13 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(
 							property.Item,
-							new Object[] { Enum.Parse(propertyType, localOrderedItem.Key) });
+							new Object[] { Enum.Parse(property.PropertyType, localOrderedItem.Key) });
 						item?.Rebuild(undoBuffer);
 						propertyGridModifier?.UpdateControls(context);
 					};
 				}
 
-				dropDownList.SelectedLabel = value.ToString().Replace('_', ' ');
+				dropDownList.SelectedLabel = property.Value.ToString().Replace('_', ' ');
 				rowContainer.AddChild(dropDownList);
 			}
 
