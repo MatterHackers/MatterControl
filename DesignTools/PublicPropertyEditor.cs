@@ -201,17 +201,12 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var undoBuffer = view3DWidget.sceneContext.Scene.UndoBuffer;
 
-			var rebuildable = context.item as IPublicPropertyObject;
-			var propertyGridModifier = context.item as IPropertyGridModifier;
-
-			var editableProperties = GetEditablePropreties(context.item);
-
 			AddWebPageLinkIfRequired(context, editControlsContainer, theme);
 			AddUnlockLinkIfRequired(context, editControlsContainer, theme);
 
-			foreach (var property in editableProperties)
+			foreach (var property in GetEditablePropreties(context.item))
 			{
-				AddPropertyEditor(this, view3DWidget, editControlsContainer, theme, undoBuffer, rebuildable, propertyGridModifier, property, context);
+				AddPropertyEditor(this, view3DWidget, editControlsContainer, theme, undoBuffer, property, context);
 			}
 
 			var hideUpdate = context.item.GetType().GetCustomAttributes(typeof(HideUpdateButtonAttribute), true).FirstOrDefault() as HideUpdateButtonAttribute;
@@ -222,20 +217,23 @@ namespace MatterHackers.MatterControl.DesignTools
 				updateButton.HAnchor = HAnchor.Right;
 				updateButton.Click += (s, e) =>
 				{
-					rebuildable?.Rebuild(undoBuffer);
+					(context.item as IPublicPropertyObject)?.Rebuild(undoBuffer);
 				};
 				editControlsContainer.AddChild(updateButton);
 			}
 
 			// make sure the ui is set right to start
-			propertyGridModifier?.UpdateControls(context);
+			(context.item as IPropertyGridModifier)?.UpdateControls(context);
 		}
 
 		private static void AddPropertyEditor(PublicPropertyEditor publicPropertyEditor,
 			View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme,
-			UndoBuffer undoBuffer, IPublicPropertyObject rebuildable, IPropertyGridModifier propertyGridModifier,
+			UndoBuffer undoBuffer,
 			EditableProperty property, PPEContext context)
 		{
+			var rebuildable = property.Item as IPublicPropertyObject;
+			var propertyGridModifier = property.Item as IPropertyGridModifier;
+
 			GuiWidget rowContainer = null;
 
 			// create a double editor
