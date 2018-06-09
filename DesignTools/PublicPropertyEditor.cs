@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				// Create a field editor for each editable property detected via reflection
 				foreach (var property in GetEditablePropreties(context.item))
 				{
-					AddPropertyEditor(this, view3DWidget, mainContainer, theme, undoBuffer, property, context);
+					AddPropertyEditor(view3DWidget, mainContainer, theme, undoBuffer, property, context);
 				}
 
 				// add in an Update button if applicable
@@ -223,10 +223,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				.Select(p => new EditableProperty(p, item));
 		}
 
-		private static void AddPropertyEditor(PublicPropertyEditor publicPropertyEditor,
-			View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme,
-			UndoBuffer undoBuffer,
-			EditableProperty property, PPEContext context)
+		private static void AddPropertyEditor(View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme,
+			UndoBuffer undoBuffer, EditableProperty property, PPEContext context)
 		{
 			var rebuildable = property.Item as IPublicPropertyObject;
 			var propertyGridModifier = property.Item as IPropertyGridModifier;
