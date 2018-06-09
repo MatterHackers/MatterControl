@@ -308,7 +308,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				// update this when changed
 				EventHandler<InvalidateArgs> updateData = (s, e) =>
 				{
-					field.DoubleValue = ((DirectionAxis)property.PropertyInfo.GetGetMethod().Invoke(property.Item, null)).Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
+					field.DoubleValue = ((DirectionAxis)property.Value).Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
 				};
 				property.Item.Invalidated += updateData;
 				editControlsContainer.Closed += (s, e) =>
