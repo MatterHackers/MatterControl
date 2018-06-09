@@ -107,12 +107,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public GuiWidget Create(IObject3D item, View3DWidget view3DWidget, ThemeConfig theme)
 		{
-			var context = new PPEContext()
-			{
-				view3DWidget = view3DWidget,
-				item = item
-			};
-
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch
@@ -127,9 +121,14 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 			}
 
-			if (context.item != null)
+			if (item != null)
 			{
-				// CreateEditor(context, view3DWidget, mainContainer, theme);
+				var context = new PPEContext()
+				{
+					item = item
+				};
+
+				// CreateEditor
 				var undoBuffer = view3DWidget.sceneContext.Scene.UndoBuffer;
 
 				AddWebPageLinkIfRequired(context, mainContainer, theme);
