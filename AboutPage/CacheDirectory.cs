@@ -39,79 +39,53 @@ namespace MatterHackers.MatterControl
 {
 	public static class CacheDirectory
 	{
-		public static void DeleteCacheData(int daysOldToDelete)
+		public static void DeleteCacheData()
 		{
-			// TODO: Enable once the cache mechanism is scene graph aware
-			return;
+			var basePath = ApplicationDataStorage.ApplicationUserDataPath;
+			CleanDirectory(Path.Combine(basePath, "updates"), 30, new List<string>() { ".EXE" });
 
-			// delete everything in the GCodeOutputPath
-			//   AppData\Local\MatterControl\data\gcode
-			// delete everything in the temp data that is not in use
-			//   AppData\Local\MatterControl\data\temp
-			//     plateImages
-			//     project-assembly
-			//     project-extract
-			//     stl
-			// delete all unreferenced models in Library
-			//   AppData\Local\MatterControl\Library
-			// delete all old update downloads
-			//   AppData\updates
+			CleanDirectory(Path.Combine(basePath, "data", "temp", "gcode"), 30, new List<string>() { ".GCODE", ".INI" });
+			CleanDirectory(Path.Combine(basePath, "data", "gcode"), 30, new List<string>() { ".GCODE" });
 
-			// start cleaning out unused data
-			// MatterControl\data\gcode
-			HashSet<string> referencedFilePaths = new HashSet<string>();
-			CleanDirectory(ApplicationDataStorage.Instance.GCodeOutputPath, referencedFilePaths, daysOldToDelete);
-
-			string userDataPath = ApplicationDataStorage.ApplicationUserDataPath;
-			RemoveDirectory(Path.Combine(userDataPath, "updates"));
+			HashSet<string> filesToKeep = new HashSet<string>();
 
 			// Get a list of all the stl and amf files referenced in the queue.
 			foreach (PrintItemWrapper printItem in QueueData.Instance.PrintItems)
 			{
 				string fileLocation = printItem.FileLocation;
-				if (!referencedFilePaths.Contains(fileLocation))
+				if (!filesToKeep.Contains(fileLocation))
 				{
-					referencedFilePaths.Add(fileLocation);
-					referencedFilePaths.Add(GetImageFileName(printItem));
+					filesToKeep.Add(fileLocation);
 				}
 			}
 
-			// NOTE: Why exclude PrintItemCollectionID == 0 items from these results
-			var allPrintItems = Datastore.Instance.dbSQLite.Query<PrintItem>("SELECT * FROM PrintItem WHERE PrintItemCollectionID != 0;");
+			var allPrintItems = Datastore.Instance.dbSQLite.Query<PrintItem>("SELECT * FROM PrintItem;");
 
 			// Add in all the stl and amf files referenced in the library.
 			foreach (PrintItem printItem in allPrintItems)
 			{
 				var printItemWrapper = new PrintItemWrapper(printItem);
-				if (!referencedFilePaths.Contains(printItem.FileLocation))
+				if (!filesToKeep.Contains(printItem.FileLocation))
 				{
-					referencedFilePaths.Add(printItem.FileLocation);
-					referencedFilePaths.Add(GetImageFileName(printItemWrapper));
+					filesToKeep.Add(printItem.FileLocation);
 				}
 			}
 
 			// If the count is less than 0 then we have never run and we need to populate the library and queue still. So don't delete anything yet.
-			if (referencedFilePaths.Count > 0)
-			{
-				CleanDirectory(userDataPath, referencedFilePaths, daysOldToDelete);
-			}
+			CleanDirectory(Path.Combine(basePath, "data", "temp", "amf_to_stl"), 1, new List<string>() { ".STL" }, filesToKeep);
 		}
-
-		private static readonly Point2D BigRenderSize = new Point2D(460, 460);
-
-		private static readonly string ThumbnailsPath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "thumbnails");
 
 		private static HashSet<string> folderNamesToPreserve = new HashSet<string>()
 		{
 			"profiles",
 		};
 
-		private static int CleanDirectory(string path, HashSet<string> referencedFilePaths, int daysOldToDelete)
+		private static int CleanDirectory(string path, int daysOldToDelete, List<string> extensionsToDelete, HashSet<string> filesToKeep = null)
 		{
 			int contentCount = 0;
 			foreach (string directory in Directory.EnumerateDirectories(path))
 			{
-				int directoryContentCount = CleanDirectory(directory, referencedFilePaths, daysOldToDelete);
+				int directoryContentCount = CleanDirectory(directory, daysOldToDelete, extensionsToDelete, filesToKeep);
 				if (directoryContentCount == 0
 					&& !folderNamesToPreserve.Contains(Path.GetFileName(directory)))
 				{
@@ -134,79 +108,28 @@ namespace MatterHackers.MatterControl
 			foreach (string file in Directory.EnumerateFiles(path, "*.*"))
 			{
 				bool fileIsNew = new FileInfo(file).LastAccessTime > DateTime.Now.AddDays(-daysOldToDelete);
+				bool forceKeep = filesToKeep != null && filesToKeep.Contains(file);
 
-				switch (Path.GetExtension(file).ToUpper())
+				if (fileIsNew
+					|| forceKeep
+					|| !extensionsToDelete.Contains(Path.GetExtension(file).ToUpper()))
 				{
-					case ".STL":
-					case ".AMF":
-					case ".GCODE":
-					case ".PNG":
-					case ".TGA":
-						if (referencedFilePaths.Contains(file)
-							|| fileIsNew)
-						{
-							contentCount++;
-						}
-						else
-						{
-							try
-							{
-								File.Delete(file);
-							}
-							catch (Exception)
-							{
-								GuiWidget.BreakInDebugger();
-							}
-						}
-						break;
-
-					case ".JSON":
-						// may want to clean these up eventually
-						contentCount++; // if we delete these we should not increment this
-						break;
-
-					default:
-						// we have something in the directory that we are not going to delete
-						contentCount++;
-						break;
+					contentCount++;
+				}
+				else
+				{
+					try
+					{
+						File.Delete(file);
+					}
+					catch (Exception)
+					{
+						GuiWidget.BreakInDebugger();
+					}
 				}
 			}
 
 			return contentCount;
-		}
-
-		private static void RemoveDirectory(string directoryToRemove)
-		{
-			try
-			{
-				if (Directory.Exists(directoryToRemove))
-				{
-					Directory.Delete(directoryToRemove, true);
-				}
-			}
-			catch (Exception)
-			{
-				GuiWidget.BreakInDebugger();
-			}
-		}
-
-		private static string GetImageFileName(PrintItemWrapper item)
-		{
-			return GetImageFileName(item.FileHashCode);
-		}
-
-		private static string GetImageFileName(string stlHashCode)
-		{
-			string imageFileName = Path.Combine(ThumbnailsPath, "{0}_{1}x{2}.png".FormatWith(stlHashCode, BigRenderSize.x, BigRenderSize.y));
-
-			string folderToSavePrintsTo = Path.GetDirectoryName(imageFileName);
-
-			if (!Directory.Exists(folderToSavePrintsTo))
-			{
-				Directory.CreateDirectory(folderToSavePrintsTo);
-			}
-
-			return imageFileName;
 		}
 	}
 }
