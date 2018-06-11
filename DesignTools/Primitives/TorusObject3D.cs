@@ -36,7 +36,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[HideUpdateButtonAttribute]
 	public class TorusObject3D : Object3D, IPublicPropertyObject, IPropertyGridModifier
 	{
 		public TorusObject3D()
