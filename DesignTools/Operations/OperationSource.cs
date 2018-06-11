@@ -92,6 +92,19 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					list.Remove(sourceItem);
 				}
+
+				if (list.Count > 1)
+				{
+					// wrap the children in an object so they remain a group
+					var group = new Object3D();
+					group.Children.Modify((groupList) =>
+					{
+						groupList.AddRange(list);
+					});
+
+					list.Clear();
+					list.Add(group);
+				}
 			});
 
 			parent.ResumeRebuild();
