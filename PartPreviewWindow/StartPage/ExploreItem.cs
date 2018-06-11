@@ -35,12 +35,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
 	public class ExploreItem : FlowLayoutWidget
 	{
-		private ExplorerFeedItem item;
+		private FeedItemData item;
 
 		public static int IconSize => (int)(40 * GuiWidget.DeviceScale);
 		public static int ItemSpacing { get; } = 10;
 
-		public ExploreItem(ExplorerFeedItem item, ThemeConfig theme)
+		public ExploreItem(FeedItemData item, ThemeConfig theme)
 		{
 
 			this.HAnchor = HAnchor.Absolute;
@@ -62,6 +62,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 				imageWidget.Load += (s, e) => ApplicationController.Instance.DownloadToImageAsync(image, item.icon, true, new BlenderPreMultBGRA());
 				this.AddChild(imageWidget);
+			}
+			else if(item.widget_url != null)
+			{
+				ImageBuffer image = new ImageBuffer(IconSize, IconSize);
+
+				var whiteBackground = new GuiWidget(IconSize, IconSize)
+				{
+					// these images expect to be on white so change the background to white
+					BackgroundColor = Color.White,
+				};
+				this.AddChild(whiteBackground);
+
+				var imageWidget = new ImageWidget(image)
+				{
+					Selectable = false,
+					VAnchor = VAnchor.Center,
+					Margin = new BorderDouble(right: ItemSpacing)
+				};
+
+				imageWidget.Load += (s, e) => ApplicationController.Instance.DownloadToImageAsync(image, item.widget_url, true, new BlenderPreMultBGRA());
+				whiteBackground.AddChild(imageWidget);
 			}
 
 			var wrappedText = new WrappedTextWidget(item.title, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: theme.DefaultFontSize)

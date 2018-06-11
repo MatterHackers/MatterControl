@@ -48,6 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		string relativeUrl;
 		string staticFile;
 		private ThemeConfig theme;
+		FlowLeftRightWithWrapping currentContentContainer;
 
 		public ExplorePanel(ThemeConfig theme, string relativeUrl, string staticFile)
 			: base(FlowDirection.TopToBottom)
@@ -67,13 +68,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 			try
 			{
-				ExplorerFeed explorerFeed = null;
+				FeedData explorerFeed = null;
 
 				var json = ApplicationController.LoadCachedFile(staticFile, "MatterHackers");
 				if (json != null)
 				{
 					// Construct directly from cache
-					explorerFeed = JsonConvert.DeserializeObject<ExplorerFeed>(json);
+					explorerFeed = JsonConvert.DeserializeObject<FeedData>(json);
 					// Add controls for content
 					AddControlsForContent(explorerFeed);
 
@@ -111,14 +112,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			}
 		}
 
-		public async Task<ExplorerFeed> LoadExploreFeed(int loadedID, string cachePath)
+		public async Task<FeedData> LoadExploreFeed(int loadedID, string cachePath)
 		{
 			try
 			{
 				var client = new HttpClient();
 				string json = await client.GetStringAsync($"http://www.matterhackers.com/feeds/{relativeUrl}");
 
-				var explorerFeed = JsonConvert.DeserializeObject<ExplorerFeed>(json);
+				var explorerFeed = JsonConvert.DeserializeObject<FeedData>(json);
 
 				var sanitizedJsonID = JsonConvert.SerializeObject(explorerFeed, Formatting.Indented).GetHashCode();
 				if (loadedID == sanitizedJsonID)
@@ -140,7 +141,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			return null;
 		}
 
-		private void AddControlsForContent(ExplorerFeed contentList)
+		private void AddControlsForContent(FeedData contentList)
 		{
 			foreach (var content in contentList.Content)
 			{
@@ -148,12 +149,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			}
 		}
 
-		private void AddContentItem(ExploreFeedContent content)
+		private void AddContentItem(FeedSectionData content)
 		{
 			switch (content.content_type)
 			{
 				case "headline":
 					{
+						break;
+
 						// use the Golden Ratio to calculate an atractive size relative to the banner
 						var image = new ImageBuffer(1520, (int)(170 / 1.618));
 						var imageWidget = new ResponsiveImageWidget(image)
@@ -237,47 +240,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 				case "article_group":
 				case "product_group":
-					this.AddChild(new ExploreSection(content, theme));
+					if(currentContentContainer == null)
+					{
+						currentContentContainer = new FlowLeftRightWithWrapping();
+						this.AddChild(currentContentContainer);
+					}
+					currentContentContainer.AddChild(new ExploreSection(content, theme));
 					break;
 			}
 		}
 	}
-
-	#region json expand classes
-
-	public class ExploreFeedContent
-	{
-		public string content_type;
-		public List<ExplorerFeedItem> group_items;
-		public List<ExploreFeedContent> banner_list;
-		public string group_link;
-		public string group_subtitle;
-		public string group_title;
-		public string icon_url;
-		public string image_url;
-		public string link;
-		public string text;
-		public string theme_filter;
-	}
-
-	public class ExplorerFeed
-	{
-		public List<ExploreFeedContent> Content;
-		public string Status;
-	}
-
-	public class ExplorerFeedItem
-	{
-		public string author;
-		public string category;
-		public string date_published;
-		public string description;
-		public string hero;
-		public string icon;
-		public string link;
-		public string title;
-		public string url;
-	}
-
-	#endregion json expand classes
 }
