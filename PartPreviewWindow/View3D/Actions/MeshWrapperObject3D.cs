@@ -54,20 +54,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			// remove all the meshWrappers (collapse the children)
 			foreach (var meshWrapper in meshWrappers)
 			{
+				var parent = meshWrapper.Parent;
 				if (meshWrapper.Visible)
 				{
-					// clear the children
-					meshWrapper.Children.Modify(list =>
+					var newMesh = new Object3D()
 					{
-						list.Clear();
-					});
-					meshWrapper.OwnerID = null;
+						Mesh = meshWrapper.Mesh
+					};
+					newMesh.CopyProperties(meshWrapper, Object3DPropertyFlags.All);
+					newMesh.Name = this.Name;
+					parent.Children.Add(newMesh);
 				}
-				else
-				{
-					// remove it
-					meshWrapper.Parent.Children.Remove(meshWrapper);
-				}
+
+				// remove it
+				parent.Children.Remove(meshWrapper);
 			}
 
 			base.Apply(undoBuffer);

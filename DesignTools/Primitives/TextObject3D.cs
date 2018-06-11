@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			ResumeRebuild();
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content | InvalidateType.Mesh));
+			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
 	}
 }
