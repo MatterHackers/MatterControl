@@ -37,7 +37,6 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
@@ -66,15 +65,24 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void Apply(UndoBuffer undoBuffer)
 		{
-			OperationSource.Apply(this);
+			var visibleMeshes = this.VisibleMeshes().ToList();
+			this.Children.Modify((list) =>
+			{
+				list.Clear();
+				foreach(var child in visibleMeshes)
+				{
+					list.Add(new Object3D()
+					{
+						Mesh = child.Mesh
+					});
+				}
+			});
 
 			base.Apply(undoBuffer);
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)
 		{
-			OperationSource.Remove(this);
-
 			base.Remove(undoBuffer);
 		}
 
@@ -130,7 +138,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			Children.Modify((list) =>
 			{
-				list.RemoveAll((i) => !(i is OperationSource));
+				if (list.Count > 0)
+				{
+					var first = list[0];
+					list.Clear();
+					list.Add(first);
+				}
 			});
 
 			// Fall back to sibling content if VertexSource is unset
