@@ -27,21 +27,17 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.IO;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
-	public class PlusTabPage : ScrollableWidget
+	public class StartTabPage : ScrollableWidget
 	{
-		public PlusTabPage(PartPreviewContent partPreviewContent, ThemeConfig theme)
+		public StartTabPage(PartPreviewContent partPreviewContent, ThemeConfig theme)
 		{
 			this.AutoScroll = true;
 			this.ScrollArea.Padding = new BorderDouble(3);

@@ -112,6 +112,10 @@
     <Compile Include="PartPreviewWindow\GCodeDetails\IToggleOption.cs" />
     <Compile Include="PartPreviewWindow\LeftClipFlowLayoutWidget.cs" />
     <Compile Include="PartPreviewWindow\Object3DTreeBuilder.cs" />
+    <Compile Include="PartPreviewWindow\StartPage\FeedData.cs" />
+    <Compile Include="PartPreviewWindow\StartPage\FeedItemData.cs" />
+    <Compile Include="PartPreviewWindow\StartPage\FeedSectionData.cs" />
+    <Compile Include="PartPreviewWindow\StartPage\StartTabPage.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\CombineObject3D.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\IntersectionObject3D.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\SubtractAndReplaceObject3D.cs" />
@@ -179,7 +183,7 @@
     <Compile Include="PartPreviewWindow\MaterialControls.cs" />
     <Compile Include="PartPreviewWindow\ModelOptionsPanel.cs" />
     <Compile Include="PartPreviewWindow\MoveItemPage.cs" />
-    <Compile Include="PartPreviewWindow\PlusTab\ExplorerBar.cs" />
+    <Compile Include="PartPreviewWindow\StartPage\ExplorerBar.cs" />
     <Compile Include="PartPreviewWindow\RoundedToggleSwitch.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\ImageEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\MeshWrapperObject3D.cs" />
@@ -220,9 +224,9 @@
     <Compile Include="Library\Widgets\InsertionGroup.cs" />
     <Compile Include="PartPreviewWindow\NewTabButton.cs" />
     <Compile Include="PartPreviewWindow\PartTabPage.cs" />
-    <Compile Include="PartPreviewWindow\PlusTab\ExploreItem.cs" />
-    <Compile Include="PartPreviewWindow\PlusTab\ExplorePanel.cs" />
-    <Compile Include="PartPreviewWindow\PlusTab\ExploreSection.cs" />
+    <Compile Include="PartPreviewWindow\StartPage\ExploreItem.cs" />
+    <Compile Include="PartPreviewWindow\StartPage\ExplorePanel.cs" />
+    <Compile Include="PartPreviewWindow\StartPage\ExploreSection.cs" />
     <Compile Include="PartPreviewWindow\PopupMenu.cs" />
     <Compile Include="PartPreviewWindow\PopupMenuButton.cs" />
     <Compile Include="PartPreviewWindow\PopupButton.cs" />
@@ -319,7 +323,6 @@
     <Compile Include="Library\Providers\Zip\ZipMemoryContainer.cs" />
     <Compile Include="PartPreviewWindow\GCodeDetails\GCodeDetails.cs" />
     <Compile Include="PartPreviewWindow\GCodeDetails\GCodeDetailsView.cs" />
-    <Compile Include="PartPreviewWindow\PlusTab\PlusTabPage.cs" />
     <Compile Include="PartPreviewWindow\Tabs.cs" />
     <Compile Include="PartPreviewWindow\PrinterTabPage.cs" />
     <Compile Include="PartPreviewWindow\View3D\BedMeshGenerator.cs" />

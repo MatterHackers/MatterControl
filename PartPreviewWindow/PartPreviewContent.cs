@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Border = new BorderDouble(left: 1),
 				NewTabPage = () =>
 				{
-					return new PlusTabPage(this, theme);
+					return new StartTabPage(this, theme);
 				}
 			};
 			tabControl.ActiveTabChanged += (s, e) =>
