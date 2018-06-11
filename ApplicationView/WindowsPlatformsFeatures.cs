@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl
 						break;
 
 					case "CLEAR_CACHE":
-						CacheDirectory.DeleteCacheData(0);
+						CacheDirectory.DeleteCacheData();
 						break;
 
 					case "SHOW_MEMORY":

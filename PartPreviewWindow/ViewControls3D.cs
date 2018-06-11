@@ -577,15 +577,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				new NamedAction()
 				{
-					Title = "Publish".Localize(),
-					Action = () =>
-					{
-						UiThread.RunOnIdle(() => DialogWindow.Show<PublishPartToMatterHackers>());
-					},
-					IsEnabled = () => sceneContext.EditableScene
-				},
-				new NamedAction()
-				{
 					Title = "Arrange All Parts".Localize(),
 					Action = () =>
 					{

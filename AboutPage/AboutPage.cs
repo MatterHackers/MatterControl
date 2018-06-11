@@ -202,7 +202,7 @@ namespace MatterHackers.MatterControl
 			clearCacheLink.Cursor = Cursors.Hand;
 			clearCacheLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				CacheDirectory.DeleteCacheData(0);
+				CacheDirectory.DeleteCacheData();
 			});
 			contentRow.AddChild(clearCacheLink);
 
