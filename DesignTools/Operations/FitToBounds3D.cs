@@ -45,7 +45,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 	public enum MaintainRatio { None, X_Y, X_Y_Z }
 
-	[HideUpdateButtonAttribute]
 	public class FitToBounds3D : Object3D, IPublicPropertyObject, IEditorDraw, IPropertyGridModifier
 	{
 		[Description("Set the shape the part will be fit into.")]

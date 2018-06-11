@@ -38,7 +38,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[HideUpdateButtonAttribute]
 	public class HalfWedgeObject3D : Object3D, IPublicPropertyObject
 	{
 		public HalfWedgeObject3D()

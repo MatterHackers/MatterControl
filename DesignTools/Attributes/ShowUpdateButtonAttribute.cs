@@ -32,9 +32,9 @@ using System;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[AttributeUsage(AttributeTargets.Class)]
-	public class HideUpdateButtonAttribute : Attribute
+	public class ShowUpdateButtonAttribute : Attribute
 	{
-		public HideUpdateButtonAttribute()
+		public ShowUpdateButtonAttribute()
 		{
 		}
 	}

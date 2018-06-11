@@ -38,7 +38,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[HideUpdateButtonAttribute]
 	public class HalfCylinderObject3D : Object3D, IPublicPropertyObject
 	{
 		public HalfCylinderObject3D()

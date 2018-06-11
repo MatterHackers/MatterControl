@@ -88,6 +88,7 @@
     <Compile Include="CustomWidgets\TreeView\TreeNode.cs" />
     <Compile Include="CustomWidgets\TreeView\TreeView.cs" />
     <Compile Include="DesignTools\Attributes\ShowSearchFieldAttribute.cs" />
+    <Compile Include="DesignTools\Attributes\ShowUpdateButtonAttribute.cs" />
     <Compile Include="DesignTools\Interfaces\IPublicPropertyObject.cs" />
     <Compile Include="DesignTools\EditableTypes\DirectionAxis.cs" />
     <Compile Include="DesignTools\EditableTypes\DirectionVector.cs" />
@@ -141,7 +142,6 @@
     <Compile Include="ApplicationView\OemProfileDictionary.cs" />
     <Compile Include="ApplicationView\WindowsPlatformsFeatures.cs" />
     <Compile Include="DataStorage\ApplicationDataStorage.cs" />
-    <Compile Include="DesignTools\Attributes\HideUpdateButtonAttribute.cs" />
     <Compile Include="DesignTools\Attributes\IconsAttribute.cs" />
     <Compile Include="DesignTools\Attributes\WebPageLinkAttribute.cs" />
     <Compile Include="DesignTools\Interfaces\IEditorDraw.cs" />

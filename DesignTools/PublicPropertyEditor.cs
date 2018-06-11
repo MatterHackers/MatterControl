@@ -146,8 +146,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 
 				// add in an Update button if applicable
-				var hideUpdate = context.item.GetType().GetCustomAttributes(typeof(HideUpdateButtonAttribute), true).FirstOrDefault() as HideUpdateButtonAttribute;
-				if (hideUpdate == null)
+				var showUpdate = context.item.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() as ShowUpdateButtonAttribute;
+				if (showUpdate != null)
 				{
 					var updateButton = theme.ButtonFactory.Generate("Update".Localize());
 					updateButton.Margin = new BorderDouble(5);

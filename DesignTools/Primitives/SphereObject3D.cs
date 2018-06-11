@@ -38,7 +38,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[HideUpdateButtonAttribute]
 	public class SphereObject3D : Object3D, IPublicPropertyObject, IPropertyGridModifier
 	{
 		public SphereObject3D()
