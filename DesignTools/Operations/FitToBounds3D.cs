@@ -129,7 +129,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 			else
 			{
-				// If the child bounds changed than adjust the scale control
 				base.OnInvalidate(invalidateType);
 			}
 		}
