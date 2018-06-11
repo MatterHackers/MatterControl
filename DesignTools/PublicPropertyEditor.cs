@@ -399,7 +399,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				var iconsAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<IconsAttribute>().FirstOrDefault();
 				if (iconsAttribute != null)
 				{
-					field = new IconEnumField(property, iconsAttribute);
+					field = new IconEnumField(property, iconsAttribute)
+					{
+						InitialValue = propertyValue.ToString()
+					};
 				}
 				else
 				{

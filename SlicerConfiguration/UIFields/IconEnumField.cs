@@ -48,6 +48,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.iconsAttribute = iconsAttribute;
 		}
 
+		// TODO: Violates UIField norms but consistent with past behavior - state is only correct at construction time, often reconstructed
+		public string InitialValue { get; set; }
+
 		public override void Initialize(int tabIndex)
 		{
 			var theme = ApplicationController.Instance.Theme;
@@ -87,7 +90,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					};
 
 					// set it if checked
-					if (enumItem.Value == property.DisplayName)
+					if (enumItem.Value == this.InitialValue)
 					{
 						radioButton.Checked = true;
 						if (localIndex != 0
