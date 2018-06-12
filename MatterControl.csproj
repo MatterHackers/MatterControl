@@ -100,6 +100,7 @@
     <Compile Include="DesignTools\Operations\Image\MapOnMaxIntensity.cs" />
     <Compile Include="DesignTools\Operations\OperationSource.cs" />
     <Compile Include="DesignTools\Operations\PinchObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\ComponentObject3D.cs" />
     <Compile Include="DesignTools\Primitives\CubeObject3D.cs" />
     <Compile Include="DesignTools\Primitives\HalfCylinderObject3D.cs" />
     <Compile Include="DesignTools\Primitives\HalfWedgeObject3D.cs" />
@@ -425,6 +426,7 @@
     <Compile Include="SlicerConfiguration\Settings\PrinterSettings.cs" />
     <Compile Include="DataStorage\Classic\ClassicSqlitePrinterProfiles.cs" />
     <Compile Include="Utilities\AuthenticationData.cs" />
+    <Compile Include="Utilities\JsonPath.cs" />
     <Compile Include="Utilities\LimitCallFrequency.cs" />
     <Compile Include="Utilities\SelectedListItems.cs" />
     <Compile Include="EeProm\EePromMarlinSettings.cs" />

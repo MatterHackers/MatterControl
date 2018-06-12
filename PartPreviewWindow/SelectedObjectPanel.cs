@@ -30,6 +30,8 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using JsonPath;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -39,6 +41,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
+using static JsonPath.JsonPathContext.ReflectionValueSystem;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -280,9 +283,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public GuiWidget ContentPanel { get; set; }
 
+		JsonPathContext xpathLikeResolver = new JsonPathContext();
+
 		public void SetActiveItem(IObject3D selectedItem)
 		{
-
 			var selectedItemType = selectedItem.GetType();
 
 			editButton.Enabled = (selectedItem.Children.Count > 0);
@@ -295,7 +299,54 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var activeEditors = new List<(IObject3DEditor, IObject3D, string)>();
 
-			foreach (var child in new[] { selectedItem })
+			var editableItems = new List<IObject3D> { selectedItem };
+
+			var undoBuffer = sceneContext.Scene.UndoBuffer;
+
+			editorPanel.CloseAllChildren();
+
+			bool allowOperations = true;
+
+			if (selectedItem is ComponentObject3D componentObject)
+			{
+				allowOperations = false;
+
+				foreach (var selector in componentObject.SurfacedEditors)
+				{
+					// Get the named property via reflection
+					// Selector example:            '$.Children<CylinderObject3D>'
+					var match = xpathLikeResolver.Select(componentObject, selector).ToList();
+
+					//// TODO: Create editor row for each property
+					//// - Use the type of the property to find a matching editor (ideally all datatype -> editor functionality would resolve consistently)
+					//// - Add editor row for each
+
+					foreach (var instance in match)
+					{
+						if (instance is IObject3D object3D)
+						{
+							editableItems.Add(object3D);
+						}
+						else if (JsonPath.JsonPathContext.ReflectionValueSystem.LastMemberValue is ReflectionTarget reflectionTarget)
+						{
+							var context = new PPEContext()
+							{
+								item = item
+							};
+
+							var editableProperty = new EditableProperty(reflectionTarget.PropertyInfo, reflectionTarget.Source);
+
+							var editor = PublicPropertyEditor.CreatePropertyEditor(editableProperty, undoBuffer, context, theme);
+							if (editor != null)
+							{
+								editorPanel.AddChild(editor);
+							}
+						}
+					}
+				}
+			}
+
+			foreach (var child in editableItems)
 			{
 				if (ApplicationController.Instance.GetEditorsForType(child.GetType())?.FirstOrDefault() is IObject3DEditor editor)
 				{
@@ -303,7 +354,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			ShowObjectEditor(activeEditors, selectedItem);
+			ShowObjectEditor(activeEditors, selectedItem, allowOperations: allowOperations);
 		}
 
 		private class OperationButton :TextButton
@@ -324,10 +375,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void ShowObjectEditor(IEnumerable<(IObject3DEditor editor, IObject3D item, string displayName)> scope, IObject3D rootSelection)
+		private void ShowObjectEditor(IEnumerable<(IObject3DEditor editor, IObject3D item, string displayName)> scope, IObject3D rootSelection, bool allowOperations = true)
 		{
-			editorPanel.CloseAllChildren();
-
 			if (scope == null)
 			{
 				return;
@@ -366,25 +415,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var buttons = new List<OperationButton>();
 
-				foreach (var nodeOperation in ApplicationController.Instance.Graph.Operations)
+				if (allowOperations)
 				{
-					foreach (var type in nodeOperation.MappedTypes)
+					foreach (var nodeOperation in ApplicationController.Instance.Graph.Operations)
 					{
-						if (type.IsAssignableFrom(selectedItemType)
-							&& (nodeOperation.IsVisible == null || nodeOperation.IsVisible(selectedItem)))
+						foreach (var type in nodeOperation.MappedTypes)
 						{
-							var button = new OperationButton(nodeOperation, selectedItem, theme)
+							if (type.IsAssignableFrom(selectedItemType)
+								&& (nodeOperation.IsVisible == null || nodeOperation.IsVisible(selectedItem)))
 							{
-								BackgroundColor = theme.MinimalShade,
-								Margin = theme.ButtonSpacing
-							};
-							button.EnsureAvailablity();
-							button.Click += (s, e) =>
-							{
-								nodeOperation.Operation(selectedItem, sceneContext.Scene).ConfigureAwait(false);
-							};
+								var button = new OperationButton(nodeOperation, selectedItem, theme)
+								{
+									BackgroundColor = theme.MinimalShade,
+									Margin = theme.ButtonSpacing
+								};
+								button.EnsureAvailablity();
+								button.Click += (s, e) =>
+								{
+									nodeOperation.Operation(selectedItem, sceneContext.Scene).ConfigureAwait(false);
+								};
 
-							buttons.Add(button);
+								buttons.Add(button);
+							}
 						}
 					}
 				}
