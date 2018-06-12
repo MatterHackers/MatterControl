@@ -112,13 +112,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				};
 				moreButton.Click += (s, e1) =>
 				{
-					var scroll = this.Parents<ScrollableWidget>().FirstOrDefault();
-					var position = scroll.ScrollPositionFromTop;
+					// if we can go out to the site than do that
+					if (content.group_link != null)
+					{
+						ApplicationController.Instance.LaunchBrowser(content.group_link);
+					}
+					else // show more itmes in the list
+					{
+						var scroll = this.Parents<ScrollableWidget>().FirstOrDefault();
+						var position = scroll.ScrollPositionFromTop;
 
-					maxStuff += 6;
-					AddContent();
+						maxStuff += 6;
+						AddContent();
 
-					scroll.ScrollPositionFromTop = position;
+						scroll.ScrollPositionFromTop = position;
+					}
 				};
 				this.AddChild(moreButton);
 			}
