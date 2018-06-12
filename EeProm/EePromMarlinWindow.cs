@@ -56,12 +56,17 @@ namespace MatterHackers.MatterControl.EeProm
 		private MHNumberEdit maxAccelerationMmPerSSqrdZ;
 		private MHNumberEdit maxAccelerationMmPerSSqrdE;
 
-		private MHNumberEdit acceleration;
-		private MHNumberEdit retractAcceleration;
+		private MHNumberEdit accelerationPrintingMoves;
+		private MHNumberEdit accelerationRetraction;
+		private MHNumberEdit accelerationTravelMoves;
 
 		private MHNumberEdit pidP;
 		private MHNumberEdit pidI;
 		private MHNumberEdit pidD;
+
+		private MHNumberEdit bedPidP;
+		private MHNumberEdit bedPidI;
+		private MHNumberEdit bedPidD;
 
 		private MHNumberEdit homingOffsetX;
 		private MHNumberEdit homingOffsetY;
@@ -73,6 +78,7 @@ namespace MatterHackers.MatterControl.EeProm
 
 		private MHNumberEdit maxXYJerk;
 		private MHNumberEdit maxZJerk;
+		private MHNumberEdit maxEJerk;
 
 		private EventHandler unregisterEvents;
 
@@ -154,13 +160,19 @@ namespace MatterHackers.MatterControl.EeProm
 				"Z:", ref maxAccelerationMmPerSSqrdZ,
 				"E:", ref maxAccelerationMmPerSSqrdE));
 
-			conterContent.AddChild(CreateField("Acceleration".Localize() + ":", ref acceleration));
-			conterContent.AddChild(CreateField("Retract Acceleration".Localize() + ":", ref retractAcceleration));
+			conterContent.AddChild(CreateField("Acceleration Printing".Localize() + ":", ref accelerationPrintingMoves));
+			conterContent.AddChild(CreateField("Acceleration Travel".Localize() + ":", ref accelerationTravelMoves));
+			conterContent.AddChild(CreateField("Retract Acceleration".Localize() + ":", ref accelerationRetraction));
 
-			conterContent.AddChild(Create3FieldSet("PID settings".Localize() + ":",
+			conterContent.AddChild(Create3FieldSet("PID Settings".Localize() + ":",
 				"P:", ref pidP,
 				"I:", ref pidI,
 				"D:", ref pidD));
+
+			conterContent.AddChild(Create3FieldSet("Bed PID Settings".Localize() + ":",
+				"P:", ref bedPidP,
+				"I:", ref bedPidI,
+				"D:", ref bedPidD));
 
 			conterContent.AddChild(Create3FieldSet("Homing Offset".Localize() + ":",
 				"X:", ref homingOffsetX,
@@ -172,6 +184,7 @@ namespace MatterHackers.MatterControl.EeProm
 			conterContent.AddChild(CreateField("Minimum segment time [ms]".Localize() + ":", ref minSegmentTime));
 			conterContent.AddChild(CreateField("Maximum X-Y jerk [mm/s]".Localize() + ":", ref maxXYJerk));
 			conterContent.AddChild(CreateField("Maximum Z jerk [mm/s]".Localize() + ":", ref maxZJerk));
+			conterContent.AddChild(CreateField("Maximum E jerk [mm/s]".Localize() + ":", ref maxEJerk));
 
 			GuiWidget topBottomSpacer = new GuiWidget(1, 1);
 			topBottomSpacer.VAnchor = VAnchor.Stretch;
@@ -415,17 +428,23 @@ namespace MatterHackers.MatterControl.EeProm
 			maxAccelerationMmPerSSqrdY.Text = currentEePromSettings.AY;
 			maxAccelerationMmPerSSqrdZ.Text = currentEePromSettings.AZ;
 			maxAccelerationMmPerSSqrdE.Text = currentEePromSettings.AE;
-			acceleration.Text = currentEePromSettings.ACC;
-			retractAcceleration.Text = currentEePromSettings.RACC;
+			accelerationPrintingMoves.Text = currentEePromSettings.AccPrintingMoves;
+			accelerationTravelMoves.Text = currentEePromSettings.AccTravelMoves;
+			accelerationRetraction.Text = currentEePromSettings.AccRetraction;
 			minFeedrate.Text = currentEePromSettings.AVS;
 			minTravelFeedrate.Text = currentEePromSettings.AVT;
 			minSegmentTime.Text = currentEePromSettings.AVB;
 			maxXYJerk.Text = currentEePromSettings.AVX;
 			maxZJerk.Text = currentEePromSettings.AVZ;
+			maxEJerk.Text = currentEePromSettings.AVE;
 			pidP.Enabled = pidI.Enabled = pidD.Enabled = currentEePromSettings.hasPID;
 			pidP.Text = currentEePromSettings.PPID;
 			pidI.Text = currentEePromSettings.IPID;
 			pidD.Text = currentEePromSettings.DPID;
+			bedPidP.Enabled = bedPidI.Enabled = bedPidD.Enabled = currentEePromSettings.bed_HasPID;
+			bedPidP.Text = currentEePromSettings.BED_PPID;
+			bedPidI.Text = currentEePromSettings.BED_IPID;
+			pidD.Text = currentEePromSettings.BED_DPID;
 			homingOffsetX.Text = currentEePromSettings.hox;
 			homingOffsetY.Text = currentEePromSettings.hoy;
 			homingOffsetZ.Text = currentEePromSettings.hoz;
@@ -445,16 +464,21 @@ namespace MatterHackers.MatterControl.EeProm
 			currentEePromSettings.AY = maxAccelerationMmPerSSqrdY.Text;
 			currentEePromSettings.AZ = maxAccelerationMmPerSSqrdZ.Text;
 			currentEePromSettings.AE = maxAccelerationMmPerSSqrdE.Text;
-			currentEePromSettings.ACC = acceleration.Text;
-			currentEePromSettings.RACC = retractAcceleration.Text;
+			currentEePromSettings.AccPrintingMoves = accelerationPrintingMoves.Text;
+			currentEePromSettings.AccTravelMoves = accelerationTravelMoves.Text;
+			currentEePromSettings.AccRetraction = accelerationRetraction.Text;
 			currentEePromSettings.AVS = minFeedrate.Text;
 			currentEePromSettings.AVT = minTravelFeedrate.Text;
 			currentEePromSettings.AVB = minSegmentTime.Text;
 			currentEePromSettings.AVX = maxXYJerk.Text;
 			currentEePromSettings.AVZ = maxZJerk.Text;
+			currentEePromSettings.AVE = maxEJerk.Text;
 			currentEePromSettings.PPID = pidP.Text;
 			currentEePromSettings.IPID = pidI.Text;
 			currentEePromSettings.DPID = pidD.Text;
+			currentEePromSettings.BED_PPID = bedPidP.Text;
+			currentEePromSettings.BED_IPID = bedPidI.Text;
+			currentEePromSettings.BED_DPID = bedPidD.Text;
 			currentEePromSettings.HOX = homingOffsetX.Text;
 			currentEePromSettings.HOY = homingOffsetY.Text;
 			currentEePromSettings.HOZ = homingOffsetZ.Text;

@@ -53,20 +53,27 @@ namespace MatterHackers.MatterControl.EeProm
 		public string ay = "0";
 		public string az = "0";
 		public string ae = "0";
-		public string acc = "0";
-		public string racc = "0";
+		public string acc_printing_moves_legacy = "0";
+		public string acc_printing_moves = "0";
+		public string acc_retraction = "0";
+		public string acc_travel_moves = "0";
 		public string avs = "0";
 		public string avt = "0";
 		public string avb = "0";
 		public string avx = "0";
 		public string avz = "0";
+		public string ave = "0";
 		public string ppid = "0";
 		public string ipid = "0";
 		public string dpid = "0";
+		public string bed_ppid = "0";
+		public string bed_ipid = "0";
+		public string bed_dpid = "0";
 		public string hox = "0";
 		public string hoy = "0";
 		public string hoz = "0";
 		public bool hasPID = false;
+		public bool bed_HasPID = false;
 
 		private bool changed = false;
 		private PrinterConnection printerConnection;
@@ -162,13 +169,21 @@ namespace MatterHackers.MatterControl.EeProm
 				{
 					foundSetting = true;
 					mode = "M204";
-					if (token[0] == 'S')
+					if (token[0] == 'S') // legacy printing
 					{
-						acc = token.Substring(1);
+						acc_printing_moves_legacy = token.Substring(1);
 					}
-					if (token[0] == 'T')
+					if (token[0] == 'P') // printing 
 					{
-						racc = token.Substring(1);
+						acc_printing_moves = token.Substring(1);
+					}
+					if (token[0] == 'T') // travel
+					{
+						acc_travel_moves = token.Substring(1);
+					}
+					if (token[0] == 'R') // retraction
+					{
+						acc_retraction = token.Substring(1);
 					}
 				}
 				if (((token == "M205") || (mode == "M205")))
@@ -214,6 +229,24 @@ namespace MatterHackers.MatterControl.EeProm
 						dpid = token.Substring(1);
 					}
 				}
+				if (((token == "M304") || (mode == "M304")))
+				{
+					foundSetting = true;
+					mode = "M304";
+					bed_HasPID = true;
+					if (token[0] == 'P')
+					{
+						bed_ppid = token.Substring(1);
+					}
+					if (token[0] == 'I')
+					{
+						bed_ipid = token.Substring(1);
+					}
+					if (token[0] == 'D')
+					{
+						bed_dpid = token.Substring(1);
+					}
+				}
 				if (((token == "M206") || (mode == "M206")))
 				{
 					foundSetting = true;
@@ -244,10 +277,17 @@ namespace MatterHackers.MatterControl.EeProm
 			string cmdsteps = "M92 X" + sx + " Y" + sy + " Z" + sz + " E" + se;
 			string cmdfeed = "M203 X" + fx + " Y" + fy + " Z" + fz + " E" + fe;
 			string cmdmacc = "M201 X" + ax + " Y" + ay + " Z" + az + " E" + ae;
-			string cmdacc = "M204 S" + acc + " T" + racc;
+
+			string cmdacc = "M204";
+			if (acc_printing_moves_legacy != "0") cmdacc += $" S{acc_printing_moves_legacy}";
+			if (acc_printing_moves != "0") cmdacc += $" P{acc_printing_moves}";
+			if (acc_travel_moves != "0") cmdacc += $" T{acc_travel_moves}";
+			if (acc_retraction != "0") cmdacc += $" R{acc_retraction}";
+
 			string cmdav = "M205 S" + avs + " T" + avt + " B" + avb + " X" + avx + " Z" + avz;
 			string cmdho = "M206 X" + hox + " Y" + hoy + " Z" + hoz;
 			string cmdpid = "M301 P" + ppid + " I" + ipid + " D" + dpid;
+			string cmdbed_pid = "M304 P" + bed_ppid + " I" + bed_ipid + " D" + bed_dpid;
 
 			printerConnection.QueueLine(cmdsteps);
 			printerConnection.QueueLine(cmdfeed);
@@ -403,16 +443,67 @@ namespace MatterHackers.MatterControl.EeProm
 			set { if (ae.Equals(value)) return; ae = value; changed = true; }
 		}
 
-		public string ACC
+		public string AccPrintingMoves
 		{
-			get { return acc; }
-			set { if (acc.Equals(value)) return; acc = value; changed = true; }
+			get
+			{
+				if(acc_printing_moves_legacy != "0")
+				{
+					return acc_printing_moves_legacy;
+				}
+
+				return acc_printing_moves;
+			}
+
+			set
+			{
+				// prefer legacy
+				if (acc_printing_moves_legacy != "0"
+					&& acc_printing_moves_legacy != value)
+				{
+					acc_printing_moves_legacy = value;
+					changed = true;
+				}
+				else if (acc_printing_moves != value)
+				{
+					acc_printing_moves = value;
+					changed = true;
+				}
+			}
 		}
 
-		public string RACC
+		public string AccTravelMoves
 		{
-			get { return racc; }
-			set { if (racc.Equals(value)) return; racc = value; changed = true; }
+			get
+			{
+				return acc_travel_moves;
+			}
+
+			set
+			{
+				if (acc_travel_moves != value)
+				{
+					acc_travel_moves = value;
+					changed = true;
+				}
+			}
+		}
+
+		public string AccRetraction
+		{
+			get
+			{
+				return acc_travel_moves;
+			}
+
+			set
+			{
+				if (acc_retraction != value)
+				{
+					acc_retraction = value;
+					changed = true;
+				}
+			}
 		}
 
 		public string AVS
@@ -470,6 +561,12 @@ namespace MatterHackers.MatterControl.EeProm
 			set { if (avz.Equals(value)) return; avz = value; changed = true; }
 		}
 
+		public string AVE
+		{
+			get { return ave; }
+			set { if (ave.Equals(value)) return; ave = value; changed = true; }
+		}
+
 		public string PPID
 		{
 			get { return ppid; }
@@ -486,6 +583,24 @@ namespace MatterHackers.MatterControl.EeProm
 		{
 			get { return dpid; }
 			set { if (dpid.Equals(value)) return; dpid = value; changed = true; }
+		}
+
+		public string BED_PPID
+		{
+			get { return bed_ppid; }
+			set { if (bed_ppid.Equals(value)) return; bed_ppid = value; changed = true; }
+		}
+
+		public string BED_IPID
+		{
+			get { return bed_ipid; }
+			set { if (bed_ipid.Equals(value)) return; bed_ipid = value; changed = true; }
+		}
+
+		public string BED_DPID
+		{
+			get { return bed_dpid; }
+			set { if (bed_dpid.Equals(value)) return; bed_dpid = value; changed = true; }
 		}
 
 		public string HOX
