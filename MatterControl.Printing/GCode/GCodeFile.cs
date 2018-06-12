@@ -141,7 +141,7 @@ namespace MatterControl.Printing
 
 		public static bool GetFirstNumberAfter(string stringToCheckAfter, string stringWithNumber, ref double readValue, int startIndex = 0, string stopCheckingString = ";")
 		{
-			int stringPos = stringWithNumber.IndexOf(stringToCheckAfter, startIndex);
+			int stringPos = stringWithNumber.IndexOf(stringToCheckAfter, Math.Min(stringWithNumber.Length, startIndex));
 			int stopPos = stringWithNumber.IndexOf(stopCheckingString);
 			if (stringPos != -1
 				&& (stopPos == -1 || stringPos < stopPos || string.IsNullOrEmpty(stopCheckingString)))

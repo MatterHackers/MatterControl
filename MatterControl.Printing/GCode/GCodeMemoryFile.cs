@@ -882,22 +882,24 @@ namespace MatterControl.Printing
 		{
 			if (filamentDiameterCache == 0)
 			{
-				for (int i = 0; i < Math.Min(20, GCodeCommandQueue.Count); i++)
+				// check the beginning of the file for the filament diameter
+				for (int i = 0; i < Math.Min(100, GCodeCommandQueue.Count); i++)
 				{
-					if (GetFirstNumberAfter("filamentDiameter =", GCodeCommandQueue[i].Line, ref filamentDiameterCache))
+					if(FindDiameter(i, ref filamentDiameterCache))
 					{
 						break;
 					}
 				}
 
+				// check the end of the file for the filament diameter
 				if (filamentDiameterCache == 0)
 				{
 					// didn't find it, so look at the end of the file for filament_diameter =
-					string lookFor = "; filament_diameter =";// 2.85
 					for (int i = GCodeCommandQueue.Count - 1; i > Math.Max(0, GCodeCommandQueue.Count - 100); i--)
 					{
-						if (GetFirstNumberAfter(lookFor, GCodeCommandQueue[i].Line, ref filamentDiameterCache))
+						if (FindDiameter(i, ref filamentDiameterCache))
 						{
+							break;
 						}
 					}
 				}
@@ -910,6 +912,21 @@ namespace MatterControl.Printing
 			}
 
 			return filamentDiameterCache;
+		}
+
+		private bool FindDiameter(int lineIndex, ref double filamentDiameterCache)
+		{
+			if (GetFirstNumberAfter("filamentDiameter = ", GCodeCommandQueue[lineIndex].Line, ref filamentDiameterCache, 0, ""))
+			{
+				return true;
+			}
+
+			if (GetFirstNumberAfter("; filament_diameter = ", GCodeCommandQueue[lineIndex].Line, ref filamentDiameterCache, 0, ""))
+			{
+				return true;
+			}
+
+			return false;
 		}
 
 		public override double GetLayerHeight(int layerIndex)
