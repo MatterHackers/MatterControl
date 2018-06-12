@@ -135,16 +135,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static void Cut(this InteractiveScene scene, IObject3D sourceItem = null)
 		{
-			Clipboard.Instance.SetText("!--IObjectSelection--!");
-			ApplicationController.ClipboardItem = scene.SelectedItem.Clone();
+			var selectedItem = scene.SelectedItem;
+			if (selectedItem != null)
+			{
+				Clipboard.Instance.SetText("!--IObjectSelection--!");
+				ApplicationController.ClipboardItem = selectedItem.Clone();
 
-			scene.DeleteSelection();
+				scene.DeleteSelection();
+			}
 		}
 
 		public static void Copy(this InteractiveScene scene, IObject3D sourceItem = null)
 		{
-			Clipboard.Instance.SetText("!--IObjectSelection--!");
-			ApplicationController.ClipboardItem = scene.SelectedItem.Clone();
+			var selectedItem = scene.SelectedItem;
+			if (selectedItem != null)
+			{
+				Clipboard.Instance.SetText("!--IObjectSelection--!");
+				ApplicationController.ClipboardItem = selectedItem.Clone();
+			}
 		}
 
 		public static void Paste(this InteractiveScene scene)
