@@ -342,46 +342,53 @@ namespace MatterHackers.MatterControl
 			{
 				if (e.KeyCode == Keys.Z)
 				{
-					if (printer.Connection.CommunicationState != CommunicationStates.Printing)
-					{
-						printer.Connection.HomeAxis(PrinterConnection.Axis.Z);
-					}
+					printer.Connection.HomeAxis(PrinterConnection.Axis.Z);
+					e.Handled = true;
 				}
 				else if (e.KeyCode == Keys.Y)
 				{
 					printer.Connection.HomeAxis(PrinterConnection.Axis.Y);
+					e.Handled = true;
 				}
 				else if (e.KeyCode == Keys.X)
 				{
 					printer.Connection.HomeAxis(PrinterConnection.Axis.X);
+					e.Handled = true;
 				}
 				if (e.KeyCode == Keys.Home)
 				{
 					printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
+					e.Handled = true;
 				}
 				else if (e.KeyCode == Keys.Left)
 				{
 					printer.Connection.MoveRelative(PrinterConnection.Axis.X, moveAmountNegative, printer.Settings.XSpeed());
+					e.Handled = true;
 				}
 				else if (e.KeyCode == Keys.Right)
 				{
 					printer.Connection.MoveRelative(PrinterConnection.Axis.X, moveAmountPositive, printer.Settings.XSpeed());
+					e.Handled = true;
 				}
 				else if (e.KeyCode == Keys.Up)
 				{
 					printer.Connection.MoveRelative(PrinterConnection.Axis.Y, moveAmountPositive, printer.Settings.YSpeed());
+					e.Handled = true;
 				}
 				else if (e.KeyCode == Keys.Down)
 				{
 					printer.Connection.MoveRelative(PrinterConnection.Axis.Y, moveAmountNegative, printer.Settings.YSpeed());
+					e.Handled = true;
 				}
 				else if (e.KeyCode == Keys.E)
 				{
 					printer.Connection.MoveRelative(PrinterConnection.Axis.E, eMoveAmountPositive, printer.Settings.EFeedRate(0));
+					e.Handled = true;
 				}
 				else if (e.KeyCode == Keys.R)
 				{
 					printer.Connection.MoveRelative(PrinterConnection.Axis.E, eMoveAmountNegative, printer.Settings.EFeedRate(0));
+					e.Handled = true;
 				}
 			}
 
@@ -393,10 +400,12 @@ namespace MatterHackers.MatterControl
 					var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
 					currentZ += moveAmountPositive;
 					printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
+					e.Handled = true;
 				}
 				else
 				{
 					printer.Connection.MoveRelative(PrinterConnection.Axis.Z, moveAmountPositive, printer.Settings.ZSpeed());
+					e.Handled = true;
 				}
 			}
 			else if ((AggContext.OperatingSystem == OSType.Windows && e.KeyCode == Keys.PageDown)
@@ -407,10 +416,12 @@ namespace MatterHackers.MatterControl
 					var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
 					currentZ += moveAmountNegative;
 					printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
+					e.Handled = true;
 				}
 				else
 				{
 					printer.Connection.MoveRelative(PrinterConnection.Axis.Z, moveAmountNegative, printer.Settings.ZSpeed());
+					e.Handled = true;
 				}
 			}
 		}
