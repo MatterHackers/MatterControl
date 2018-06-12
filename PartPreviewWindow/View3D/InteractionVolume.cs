@@ -43,6 +43,11 @@ namespace MatterHackers.MeshVisualizer
 	[Flags]
 	public enum LineArrows { None = 0, Start = 1, End = 2, Both = 3 };
 
+	public interface IInteractionVolume
+	{
+
+	}
+
 	public class InteractionVolume
 	{
 		public bool MouseDownOnControl;
@@ -135,6 +140,11 @@ namespace MatterHackers.MeshVisualizer
 		public void Invalidate()
 		{
 			InteractionContext.GuiSurface.Invalidate();
+		}
+
+		public virtual void CancelOpperation()
+		{
+
 		}
 
 		public virtual void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
