@@ -261,6 +261,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseUp(mouseEvent3D);
 		}
 
+		public override void CancelOpperation()
+		{
+			IObject3D selectedItem = InteractionContext.Scene.RootSelectedItem;
+			if (selectedItem != null
+				&& MouseDownOnControl)
+			{
+				selectedItem.Matrix = transformOnMouseDown;
+				MouseDownOnControl = false;
+				MouseOver = false;
+
+				InteractionContext.Scene.DrawSelection = true;
+				InteractionContext.Scene.ShowSelectionShadow = true;
+			}
+
+			base.CancelOpperation();
+		}
+
 		public override void SetPosition(IObject3D selectedItem)
 		{
 			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);

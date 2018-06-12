@@ -2518,6 +2518,10 @@ namespace MatterHackers.MatterControl
 								keyEvent.Handled = true;
 								keyEvent.SuppressKeyPress = true;
 							}
+							foreach(var interactionVolume in view3D.InteractionLayer.InteractionVolumes)
+							{
+								interactionVolume.CancelOpperation();
+							}
 							break;
 
 						case Keys.Left:
