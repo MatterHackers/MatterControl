@@ -310,14 +310,6 @@
     "DefaultValue": "1"
   },
   {
-    "SlicerConfigName": "extrusion_width",
-    "PresentationName": "Default Extrusion Width",
-    "HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
-    "DataEditType": "DOUBLE_OR_PERCENT",
-    "Units": "mm or % leave 0 for auto",
-    "DefaultValue": "0"
-  },
-  {
     "SlicerConfigName": "filament_cost",
     "PresentationName": "Cost",
     "HelpText": "The price of one kilogram of filament. Used for estimating the cost of a print in the Layer View.",
@@ -636,14 +628,6 @@
     "DataEditType": "CHECK_BOX",
     "ShowIfSet": "!sla_printer",
     "ReloadUiWhenChanged": true,
-    "DefaultValue": "0"
-  },
-  {
-    "SlicerConfigName": "infill_extrusion_width",
-    "PresentationName": "Infill",
-    "HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
-    "DataEditType": "DOUBLE_OR_PERCENT",
-    "Units": "mm or %",
     "DefaultValue": "0"
   },
   {
