@@ -454,9 +454,11 @@ namespace MatterHackers.MatterControl
 				new Vector4(multiplier, multiplier, multiplier, multiplier),
 				cancellationToken, progressReporter);
 			this.GCodeRenderer = new GCodeRenderer(loadedGCode);
+
 			this.RenderInfo = new GCodeRenderInfo(
 					0,
-					Math.Max(1, this.ActiveLayerIndex),
+					// Renderer requires endLayerIndex to be desiredLayer+1: to render layer zero we set endLayerIndex to 1
+					Math.Max(1, this.ActiveLayerIndex + 1),
 					Agg.Transform.Affine.NewIdentity(),
 					1,
 					0,

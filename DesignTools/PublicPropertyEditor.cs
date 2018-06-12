@@ -235,8 +235,11 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			GuiWidget rowContainer = null;
 
+			// Get reflected property value once, then test for each case below
+			var propertyValue = property.Value;
+
 			// create a double editor
-			if (property.Value is double doubleValue)
+			if (propertyValue is double doubleValue)
 			{
 				var field = new DoubleField();
 				field.Initialize(0);
@@ -250,7 +253,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				rowContainer = CreateSettingsRow(property, field);
 			}
-			else if (property.Value is Vector2 vector2)
+			else if (propertyValue is Vector2 vector2)
 			{
 				var field = new Vector2Field();
 				field.Initialize(0);
@@ -264,7 +267,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				rowContainer = CreateSettingsRow(property, field);
 			}
-			else if (property.Value is Vector3 vector3)
+			else if (propertyValue is Vector3 vector3)
 			{
 				var field = new Vector3Field();
 				field.Initialize(0);
@@ -278,7 +281,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				rowContainer = CreateSettingsRow(property, field);
 			}
-			else if (property.Value is DirectionVector directionVector)
+			else if (propertyValue is DirectionVector directionVector)
 			{
 				var field = new DirectionVectorField();
 				field.Initialize(0);
@@ -292,7 +295,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				rowContainer = CreateSettingsRow(property, field);
 			}
-			else if (property.Value is DirectionAxis directionAxis)
+			else if (propertyValue is DirectionAxis directionAxis)
 			{
 				// the direction axis
 				// the distance from the center of the part
@@ -324,13 +327,13 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				rowContainer = CreateSettingsRow(property, field);
 			}
-			else if (property.Value is ChildrenSelector childSelector)
+			else if (propertyValue is ChildrenSelector childSelector)
 			{
 				rowContainer = CreateSettingsColumn(property);
 				rowContainer.AddChild(CreateSelector(childSelector, property.Item, theme));
 			}
 			// create a int editor
-			else if (property.Value is int intValue)
+			else if (propertyValue is int intValue)
 			{
 				var field = new IntField();
 				field.Initialize(0);
@@ -345,7 +348,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				rowContainer = CreateSettingsRow(property, field);
 			}
 			// create a bool editor
-			else if (property.Value is bool boolValue)
+			else if (propertyValue is bool boolValue)
 			{
 				var field = new ToggleboxField(theme);
 				field.Initialize(0);
@@ -360,7 +363,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				rowContainer = CreateSettingsRow(property, field);
 			}
 			// create a string editor
-			else if (property.Value is string stringValue)
+			else if (propertyValue is string stringValue)
 			{
 				var field = new TextField();
 				field.Initialize(0);
@@ -375,7 +378,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				rowContainer = CreateSettingsRow(property, field);
 			}
 			// create a char editor
-			else if (property.Value is char charValue)
+			else if (propertyValue is char charValue)
 			{
 				var field = new CharField();
 				field.Initialize(0);
@@ -396,7 +399,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				var iconsAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<IconsAttribute>().FirstOrDefault();
 				if (iconsAttribute != null)
 				{
-					field = new IconEnumField(property, iconsAttribute);
+					field = new IconEnumField(property, iconsAttribute)
+					{
+						InitialValue = propertyValue.ToString()
+					};
 				}
 				else
 				{
@@ -414,7 +420,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				rowContainer = CreateSettingsRow(property, field);
 			}
 			// Use known IObject3D editors
-			else if (property.Value is IObject3D object3D
+			else if (propertyValue is IObject3D object3D
 				&& ApplicationController.Instance.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor iObject3DEditor)
 			{
 				rowContainer = iObject3DEditor.Create(object3D, theme);

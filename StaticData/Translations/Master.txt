@@ -16,9 +16,6 @@ Translated:%
 English:(Press 'Skip' to setup connection later)
 Translated:(Press 'Skip' to setup connection later)
 
-English:\n\nThis copy will be made available under the terms of the 'Creative Commons Attribution 4.0 International Public License', click the link below for details.
-Translated:\n\nThis copy will be made available under the terms of the 'Creative Commons Attribution 4.0 International Public License', click the link below for details.
-
 English:{0} (Update Available)
 Translated:{0} (Update Available)
 
@@ -199,9 +196,6 @@ Translated:Attempting to connect
 English:ATX Power Control
 Translated:ATX Power Control
 
-English:Author
-Translated:Author
-
 English:Auto Calibrate
 Translated:Auto Calibrate
 
@@ -228,6 +222,9 @@ Translated:Axis movement speeds
 
 English:Baby Step Offset
 Translated:Baby Step Offset
+
+English:Back
+Translated:Back
 
 English:Backup Firmware Before Update
 Translated:Backup Firmware Before Update
@@ -1300,12 +1297,6 @@ Translated:How to succeed with MatterControl
 English:Hz
 Translated:Hz
 
-English:I agree to license these files under 
-Translated:I agree to license these files under 
-
-English:I have the right to license these files.
-Translated:I have the right to license these files.
-
 English:if currently connected
 Translated:if currently connected
 
@@ -1482,6 +1473,12 @@ Translated:layers or mm
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:Leave this as 0 to allow automatic calculation of extrusion width.
+
+English:left click
+Translated:left click
+
+English:left drag
+Translated:left drag
 
 English:Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).
 Translated:Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).
@@ -1695,6 +1692,9 @@ Translated:Merge Overlapping Lines
 
 English:Message
 Translated:Message
+
+English:middle drag
+Translated:middle drag
 
 English:Min feedrate [mm/s]
 Translated:Min feedrate [mm/s]
@@ -2023,9 +2023,6 @@ Translated:Part Cooling Fan
 English:Part History
 Translated:Part History
 
-English:Part Name
-Translated:Part Name
-
 English:Parts
 Translated:Parts
 
@@ -2266,18 +2263,6 @@ Translated:Progress Reporting
 English:Provide this code to grant someone read-only access.
 Translated:Provide this code to grant someone read-only access.
 
-English:Publish
-Translated:Publish
-
-English:Publish a copy of this part to MatterHackers.
-Translated:Publish a copy of this part to MatterHackers.
-
-English:Publish to the MatterHakers Part Community
-Translated:Publish to the MatterHakers Part Community
-
-English:Publish your part for everyone!
-Translated:Publish your part for everyone!
-
 English:Purchased
 Translated:Purchased
 
@@ -2482,8 +2467,14 @@ Translated:Revert Settings
 English:Reverting firmware to previous version...
 Translated:Reverting firmware to previous version...
 
+English:Right
+Translated:Right
+
 English:Right Arrow
 Translated:Right Arrow
+
+English:right drag
+Translated:right drag
 
 English:Ring
 Translated:Ring
@@ -3604,6 +3595,9 @@ Translated:Unlock
 English:Unsupported Baud Rate
 Translated:Unsupported Baud Rate
 
+English:Up
+Translated:Up
+
 English:Up Arrow
 Translated:Up Arrow
 
@@ -3783,6 +3777,9 @@ Translated:What's New...
 
 English:What's this?
 Translated:What's this?
+
+English:wheel
+Translated:wheel
 
 English:When this is checked MatterControl will attempt to recover a print in the event of a failure, such as lost connection or lost power.
 Translated:When this is checked MatterControl will attempt to recover a print in the event of a failure, such as lost connection or lost power.
