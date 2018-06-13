@@ -72,19 +72,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
 		[JsonIgnore]
-		private ImageBuffer Image
-		{
-			get
-			{
-				var item = this.Descendants().Where((d) => d is ImageObject3D).FirstOrDefault();
-				if (item is ImageObject3D imageItem)
-				{
-					return imageItem.Image;
-				}
-
-				return null;
-			}
-		}
+		private ImageBuffer Image => this.Descendants<ImageObject3D>().FirstOrDefault()?.Image;
 
 		private IThresholdFunction ThresholdFunction
 		{
