@@ -29,10 +29,11 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class ComponentObject3D : Object3D
+	public class ComponentObject3D : Object3D, IVisualLeafNode
 	{
 		public ComponentObject3D()
 		{

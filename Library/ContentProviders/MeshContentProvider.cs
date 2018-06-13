@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl
 
 			long fileSize = 0;
 			if (item is ILibraryAssetStream contentModel
-				// Only load the stream if it's available - prevents download of internet content simply for thumbnails
+				// Only load the stream if it's available - prevents download of Internet content simply for thumbnails
 				&& contentModel.LocalContentExists
 				&& contentModel.FileSize < MaxFileSizeForThumbnail)
 			{

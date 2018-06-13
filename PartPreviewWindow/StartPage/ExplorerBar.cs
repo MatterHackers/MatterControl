@@ -226,13 +226,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 							var printer = await ProfileManager.Instance.LoadPrinter();
 							printer.ViewState.ViewMode = PartViewMode.Model;
 
-						// Load empty plate
-						await printer.Bed.LoadContent(
+							// Load empty plate
+							await printer.Bed.LoadContent(
 								new EditContext()
 								{
 									ContentStore = ApplicationController.Instance.Library.PlatingHistory,
 									SourceItem = BedConfig.NewPlatingItem(ApplicationController.Instance.Library.PlatingHistory)
 								});
+
+							// Always switch to printer tab after changing plate
+							partPreviewContent.TabControl.SelectedTabIndex = 1;
 						});
 					}
 				};
@@ -262,7 +265,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 								var printer = ApplicationController.Instance.ActivePrinter;
 								printer.ViewState.ViewMode = PartViewMode.Model;
 
-								// Always switch to printer tab after loading plate
+								// Always switch to printer tab after changing plate
 								partPreviewContent.TabControl.SelectedTabIndex = 1;
 							});
 						}
