@@ -598,11 +598,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
-					// Singleselect, WritableContainer - disallow containers and protected items
+					// Singleselect, WritableContainer, mcx only - disallow containers and protected items
 					return listView.SelectedItems.Count == 1
 						&& selectedListItems.FirstOrDefault()?.Model is ILibraryItem firstItem
 						&& !(firstItem is ILibraryContainer)
 						&& !firstItem.IsProtected
+						&& firstItem is ILibraryAsset asset && asset.ContentType == "mcx"
 						&& ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer;
 				}
 			});
