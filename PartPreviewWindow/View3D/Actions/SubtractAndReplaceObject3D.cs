@@ -56,6 +56,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			if ((invalidateType.InvalidateType == InvalidateType.Content
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
+				|| invalidateType.InvalidateType == InvalidateType.Color
+				|| invalidateType.InvalidateType == InvalidateType.Material
 				|| invalidateType.InvalidateType == InvalidateType.Mesh)
 				&& invalidateType.Source != this
 				&& !RebuildSuspended)
