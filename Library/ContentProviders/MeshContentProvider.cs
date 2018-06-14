@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,6 @@ namespace MatterHackers.MatterControl
 	using System;
 	using System.IO;
 	using System.Threading;
-	using MatterHackers.Agg;
 	using MatterHackers.Agg.Image;
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.DataConverters3D;
@@ -121,58 +120,54 @@ namespace MatterHackers.MatterControl
 				object3D = await (item as ILibraryObject3D)?.GetObject3D(null);
 			}
 
-			if (object3D != null)
+			var thumbnail = GetThumbnail(object3D, width, height, forceOrthographic: fileSize > MaxFileSizeForTracing);
+
+			if (thumbnail != null)
 			{
-				bool RenderOrthographic = UserSettings.Instance.ThumbnailRenderingMode == "orthographic";
+				// Cache at requested size
+				string cachePath = ApplicationController.Instance.ThumbnailCachePath(item, width, height);
 
-				// if we are tracing and the file is too big
-				if(!RenderOrthographic
-					&& fileSize > MaxFileSizeForTracing)
+				// TODO: Lookup best large image and downscale if required
+				if (false)
 				{
-					// switch to orthographic
-					RenderOrthographic = true;
+					thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, width, height);
 				}
 
-				var thumbnail = ThumbnailEngine.Generate(
-					object3D,
-					RenderOrthographic ? RenderType.ORTHOGROPHIC : RenderType.RAY_TRACE,
-					width,
-					height,
-					allowMultiThreading: !ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting);
+				AggContext.ImageIO.SaveImageData(cachePath, thumbnail);
 
-				if (thumbnail != null)
+				if (ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer writableContainer)
 				{
-					// Cache at requested size
-					string cachePath = ApplicationController.Instance.ThumbnailCachePath(item, width, height);
-
-					// TODO: Lookup best large image and downscale if required
-					if (false)
-					{
-						thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, width, height);
-					}
-
-					AggContext.ImageIO.SaveImageData(cachePath, thumbnail);
-
-					if (ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer writableContainer)
-					{
-						writableContainer.SetThumbnail(item, thumbnail.Width, thumbnail.Height, thumbnail);
-					}
-
-					imageCallback(thumbnail, raytracedImage: true);
+					writableContainer.SetThumbnail(item, thumbnail.Width, thumbnail.Height, thumbnail);
 				}
-				else
-				{
-					// If thumbnail generation was aborted or failed, return the default icon for this content type
-					imageCallback(DefaultImage, raytracedImage: true);
-				}
+
+				imageCallback(thumbnail, raytracedImage: true);
 			}
 			else
 			{
-				// If thumbnail generation was skipped, return the default icon for this content type
+				// If thumbnail generation was aborted or failed, return the default icon for this content type
 				imageCallback(DefaultImage, raytracedImage: true);
 			}
 		}
 
+		public ImageBuffer GetThumbnail(IObject3D object3D, int width, int height, bool forceOrthographic)
+		{
+			if (object3D == null)
+			{
+				return DefaultImage;
+			}
+
+			bool RenderOrthographic = (forceOrthographic) ? true : UserSettings.Instance.ThumbnailRenderingMode == "orthographic";
+
+			var thumbnail = ThumbnailEngine.Generate(
+				object3D,
+				RenderOrthographic ? RenderType.ORTHOGROPHIC : RenderType.RAY_TRACE,
+				width,
+				height,
+				allowMultiThreading: !ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting);
+
+
+			return thumbnail ?? DefaultImage;
+		}
 		public ImageBuffer DefaultImage => AggContext.StaticData.LoadIcon("mesh.png");
 	}
 }

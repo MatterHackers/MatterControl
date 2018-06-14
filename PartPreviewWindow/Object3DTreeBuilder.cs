@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -99,17 +100,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				node.Load += (s, e) =>
 				{
-					// Otherwise wire up icon generation
-					var inmemoryItem = new InMemoryLibraryItem(item.Source.Clone());
-					var iconView = new IconViewItem(new ListViewItem(inmemoryItem, ApplicationController.Instance.Library.PlatingHistory), 16, 16, theme);
-
-					iconView.OnLoad(e);
-
-					iconView.ImageSet += (s1, e1) =>
+					ApplicationController.Instance.QueueForGeneration(() =>
 					{
-						node.Image = iconView.imageWidget.Image;
-						node.Invalidate();
-					};
+						// When this widget is dequeued for generation, validate before processing. Off-screen widgets should be skipped and will requeue next time they become visible
+						if (node.ActuallyVisibleOnScreen()
+							&& ApplicationController.Instance.Library.ContentProviders.TryGetValue("mcx", out IContentProvider contentProvider)
+							&& contentProvider is MeshContentProvider meshContentProvider)
+						{
+							node.Image = meshContentProvider.GetThumbnail(
+								item.Source,
+								16,
+								16,
+								forceOrthographic: false);
+						}
+
+						return Task.CompletedTask;
+					});
 				};
 			}
 
