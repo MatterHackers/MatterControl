@@ -444,7 +444,7 @@ namespace MatterHackers.MatterControl.EeProm
 			bedPidP.Enabled = bedPidI.Enabled = bedPidD.Enabled = currentEePromSettings.bed_HasPID;
 			bedPidP.Text = currentEePromSettings.BED_PPID;
 			bedPidI.Text = currentEePromSettings.BED_IPID;
-			pidD.Text = currentEePromSettings.BED_DPID;
+			bedPidD.Text = currentEePromSettings.BED_DPID;
 			homingOffsetX.Text = currentEePromSettings.hox;
 			homingOffsetY.Text = currentEePromSettings.hoy;
 			homingOffsetZ.Text = currentEePromSettings.hoz;
