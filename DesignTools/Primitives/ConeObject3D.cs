@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		//[DisplayName("Top")]
 		//public double TopDiameter { get; set; } = 0;
 		public double Height { get; set; } = 20;
-		public int Sides { get; set; } = 30;
+		public int Sides { get; set; } = 40;
 
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{

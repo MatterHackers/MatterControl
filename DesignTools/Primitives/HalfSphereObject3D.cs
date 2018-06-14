@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public double Diameter { get; set; } = 20;
-		public int LongitudeSides { get; set; } = 30;
+		public int LongitudeSides { get; set; } = 40;
 		public int LatitudeSides { get; set; } = 10;
 
 		public override void Rebuild(UndoBuffer undoBuffer)
