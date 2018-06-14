@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public double Width { get; set; } = 20;
 		public double Depth { get; set; } = 20;
-		public int Sides { get; set; } = 15;
+		public int Sides { get; set; } = 20;
 
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{

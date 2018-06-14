@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public double Diameter { get; set; } = 20;
 		public double Height { get; set; } = 20;
-		public int Sides { get; set; } = 30;
+		public int Sides { get; set; } = 40;
 
 		public bool Advanced { get; set; } = false;
 		public double StartingAngle { get; set; } = 0;
