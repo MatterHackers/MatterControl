@@ -287,29 +287,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Icon = AggContext.StaticData.LoadIcon("memory_16x16.png", 16, 16, theme.InvertIcons),
 					Title = "Configure EEProm".Localize(),
-					Action = configureEePromButton_Click
+					Action = configureEePromButton_Click,
+					IsEnabled = () => printer.Connection.IsConnected
 				},
-				//new NamedAction()
-				//{
-				//	Title = "Rename Printer".Localize(),
-				//	Action = () =>
-				//	{
-				//		DialogWindow.Show(
-				//			new InputBoxPage(
-				//				"Rename Printer".Localize(),
-				//				"Name".Localize(),
-				//				printer.Settings.GetValue(SettingsKey.printer_name),
-				//				"Enter New Name Here".Localize(),
-				//				"Rename".Localize(),
-				//				(newName) =>
-				//				{
-				//					if (!string.IsNullOrEmpty(newName))
-				//					{
-				//						printer.Settings.SetValue(SettingsKey.printer_name, newName);
-				//					}
-				//				}));
-				//	}
-				//},
 				new NamedBoolAction()
 				{
 					Title = "Configure Printer".Localize(),
