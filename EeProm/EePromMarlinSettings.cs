@@ -493,7 +493,7 @@ namespace MatterHackers.MatterControl.EeProm
 		{
 			get
 			{
-				return acc_travel_moves;
+				return acc_retraction;
 			}
 
 			set
