@@ -830,7 +830,7 @@ namespace MatterHackers.MatterControl
 					return Task.CompletedTask;
 				},
 				(sceneItem) => true,
-				(sceneItem) => true);
+				(sceneItem) => sceneItem.DescendantsAndSelf().Any((i) => i is IPathObject));
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
