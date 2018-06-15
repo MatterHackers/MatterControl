@@ -184,11 +184,10 @@
     "publish_bed_image": "0",
     "manual_movement_speeds": null,
     "active_quality_key": "e13c5d1b-4957-44a7-90db-2ae18aeea0c3",
-    "created_date": "2016-12-20T17:56:43.250Z"
+    "created_date": "2016-12-21T20:49:16.718Z"
   },
   "ActiveQualityKey": "e13c5d1b-4957-44a7-90db-2ae18aeea0c3",
   "MaterialSettingsKeys": [],
-  "UserLayer": {},
   "MaterialLayers": [
     {
       "temperature": "260",

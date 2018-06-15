@@ -1003,7 +1003,8 @@ namespace MatterControl.Printing
 						lastPrintLine = instructionIndex;
 						do
 						{
-							line = GCodeCommandQueue[lastPrintLine++].Line;
+							line = GCodeCommandQueue[Math.Min(GCodeCommandQueue.Count - 1, lastPrintLine)].Line;
+							lastPrintLine++;
 
 						} while (line != "; MatterSlice Completed Successfully" 
 							&& lastPrintLine < endIndex);
