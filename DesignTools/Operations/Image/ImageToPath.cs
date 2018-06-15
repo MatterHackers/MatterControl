@@ -53,8 +53,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 	public class ImageToPath : Object3D, IPublicPropertyObject, IPathObject, IEditorDraw
 	{
-		private static ImageBuffer generatingThumbnailIcon = AggContext.StaticData.LoadIcon(Path.Combine("building_thumbnail_40x40.png"));
-
 		public ImageToPath()
 		{
 			Name = "Path".Localize();
@@ -200,11 +198,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				var affine = Affine.NewScaling(1.0 / pixelsToIntPointsScale * xScale);
 				affine *= Affine.NewTranslation(-aabb.XSize / 2, -aabb.YSize / 2);
 
-				this.VertexSource = new VertexSourceApplyTransform(rawVectorShape, affine);
+				rawVectorShape.transform(affine);
+				this.VertexSource = rawVectorShape;
 
 				progressReporter?.Invoke(1, null);
-
-				Invalidate(new InvalidateArgs(this, InvalidateType.Path));
 			}
 		}
 
@@ -226,9 +223,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			SuspendRebuild();
 
-			// Make a fast simple path
-			this.GenerateMarchingSquaresAndLines(null, generatingThumbnailIcon, new MapOnMaxIntensity());
-
 			// now create a long running task to process the image
 			ApplicationController.Instance.Tasks.Execute(
 				"Extrude Image".Localize(),
@@ -245,12 +239,12 @@ namespace MatterHackers.MatterControl.DesignTools
 						Image,
 						ThresholdFunction);
 
+					ResumeRebuild();
+					Invalidate(new InvalidateArgs(this, InvalidateType.Path));
+
 					return Task.CompletedTask;
 				});
 
-			ResumeRebuild();
-
-			Invalidate(new InvalidateArgs(this, InvalidateType.Path));
 			base.Rebuild(undoBuffer);
 		}
 	}
