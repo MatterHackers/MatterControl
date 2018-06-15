@@ -148,7 +148,7 @@
     "z_offset": "0",
     "make": "SeeMeCNC",
     "model": "Eris",
-    "created_date": "2016-11-16T20:43:23.354Z",
+    "created_date": "2016-12-21T21:03:50.108Z",
     "baud_rate": "250000",
     "default_material_presets": "PLA",
     "manual_movement_speeds": "x,3000,y,3000,z,3000,e0,150",
@@ -171,7 +171,6 @@
   },
   "ActiveQualityKey": "",
   "MaterialSettingsKeys": [],
-  "UserLayer": {},
   "MaterialLayers": [
     {
       "layer_name": "Ninja-Flex",

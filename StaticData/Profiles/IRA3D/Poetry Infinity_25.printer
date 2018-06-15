@@ -173,8 +173,8 @@
     "z_can_be_negative": "0",
     "z_offset": "0",
     "make": "IRA3D",
-    "model": "Poetry Infinity",
-    "created_date": "7/19/2016 7:54:56 PM",
+    "model": "Poetry Infinity_25",
+    "created_date": "2016-12-21T20:54:05.549Z",
     "baud_rate": "250000",
     "default_material_presets": "IraPLA",
     "windows_driver": "MHSerial.inf",
@@ -182,7 +182,6 @@
   },
   "ActiveQualityKey": "",
   "MaterialSettingsKeys": [],
-  "UserLayer": {},
   "MaterialLayers": [
     {
       "layer_name": "ABS Super",

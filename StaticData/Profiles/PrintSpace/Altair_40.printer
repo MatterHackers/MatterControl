@@ -173,8 +173,8 @@
     "z_can_be_negative": "1",
     "z_offset": "0",
     "make": "PrintSpace",
-    "model": "Altair",
-    "created_date": "7/19/2016 7:56:27 PM",
+    "model": "Altair_40",
+    "created_date": "2016-12-21T21:01:59.924Z",
     "baud_rate": "250000",
     "default_material_presets": "PLA",
     "windows_driver": "MHSerial.inf",
@@ -182,7 +182,6 @@
   },
   "ActiveQualityKey": "",
   "MaterialSettingsKeys": [],
-  "UserLayer": {},
   "MaterialLayers": [
     {
       "layer_name": "618 Nylon (on Hot Glass or Blue Tape with PVA coating)",

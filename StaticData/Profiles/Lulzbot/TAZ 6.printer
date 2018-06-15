@@ -1,19 +1,20 @@
 {
   "DocumentVersion": 201606271,
-  "ID": null,
+  "ID": "TAZ 6-6230310919864320",
+  "StagedUserSettings": {},
   "Macros": [],
   "OemLayer": {
     "avoid_crossing_perimeters": "1",
     "bed_remove_part_temperature": "50",
     "bed_shape": "rectangular",
-    "bed_size": "298,275",
+    "bed_size": "280,280",
     "bed_temperature": "60",
     "before_toolchange_gcode": "",
     "bottom_clip_amount": "0.0",
     "bridge_fan_speed": "100",
     "bridge_speed": "40",
     "brims": "10",
-    "build_height": "240",
+    "build_height": "250",
     "center_part_on_bed": "1",
     "cool_extruder_lift": "0",
     "create_raft": "0",
@@ -54,7 +55,7 @@
     "nozzle_diameter": "0.5",
     "perimeter_speed": "45",
     "perimeters": "1.0mm",
-    "print_center": "149, 138",
+    "print_center": "140,140",
     "print_leveling_method": "Manual",
     "print_leveling_required_to_print": "0",
     "print_leveling_solution": "3 Point Plane",
@@ -107,15 +108,18 @@
     "z_offset": "0",
     "make": "Lulzbot",
     "model": "TAZ 6",
-    "created_date": "7/19/2016 7:55:16 PM",
+    "created_date": "2017-11-07T19:17:29.085Z",
     "baud_rate": "250000",
     "default_material_presets": "PLA",
     "windows_driver": "MHSerial.inf",
-    "calibration_files": "Calibration - Circle.stl"
+    "calibration_files": "Calibration - Circle.stl",
+    "active_theme_name": "Light Blue - Dark",
+    "active_quality_key": "3ac2f37b-66bb-457a-af28-06f4167feadd"
   },
-  "ActiveQualityKey": "",
-  "MaterialSettingsKeys": [],
-  "UserLayer": {},
+  "ActiveQualityKey": "3ac2f37b-66bb-457a-af28-06f4167feadd",
+  "MaterialSettingsKeys": [
+    "9c1de840-2eab-4c48-bdea-6eefc6a3a5a8"
+  ],
   "MaterialLayers": [
     {
       "layer_name": "618 Nylon (Taulman)",
@@ -151,7 +155,7 @@
     },
     {
       "layer_name": "ABS",
-      "filament_density":  "1.04",
+      "filament_density": "1.04",
       "layer_id": "7df362e5-db95-4f16-ad07-e3b4edd95f97",
       "bed_temperature": "110",
       "external_perimeter_speed": "45",
@@ -474,7 +478,7 @@
     },
     {
       "layer_name": "PLA",
-      "filament_density":  "1.24",
+      "filament_density": "1.24",
       "layer_id": "9c1de840-2eab-4c48-bdea-6eefc6a3a5a8",
       "bed_temperature": "60",
       "extruder_wipe_temperature": "150",

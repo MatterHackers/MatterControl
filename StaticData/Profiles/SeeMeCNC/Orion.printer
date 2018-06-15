@@ -1,7 +1,10 @@
 {
   "DocumentVersion": 201606271,
-  "ID": "Orion-5836118300295168",
-  "StagedUserSettings": {},
+  "ID": "Orion-5742328063459328",
+  "StagedUserSettings": {
+    "support_air_gap": "0.6",
+    "slowdown_below_layer_time": "30"
+  },
   "Macros": [],
   "OemLayer": {
     "avoid_crossing_perimeters": "1",
@@ -150,18 +153,18 @@
     "z_offset": "0",
     "make": "SeeMeCNC",
     "model": "Orion",
-    "created_date": "2016-12-08T02:31:45.831Z",
+    "created_date": "2017-01-19T02:06:46.414Z",
     "baud_rate": "250000",
     "default_material_presets": "PLA",
     "manual_movement_speeds": "x,3000,y,3000,z,3000,e0,150",
     "windows_driver": "MHSerial.inf",
     "calibration_files": "Calibration - Box.stl",
-    "oem_profile_token": "ag9zfm1hdHRlcmNvbnRyb2xyQwsSCUFmZmlsaWF0ZRiAgIDAkMGACAwLEgZEZXZpY2UYgICAgIDkkQoMCxINRGV2aWNlUHJvZmlsZRiAgICAoP2JCgw",
+    "oem_profile_token": "ag9zfm1hdHRlcmNvbnRyb2xyQwsSCUFmZmlsaWF0ZRiAgIDAkMGACAwLEgZEZXZpY2UYgICAgIDkkQoMCxINRGV2aWNlUHJvZmlsZRiAgICA4IuSCgw",
     "active_theme_name": "Blue - Dark",
     "bottom_solid_layers": "3",
     "raft_print_speed": "40",
     "heat_extruder_before_homing": "1",
-    "first_layer_extrusion_width": "180%",
+    "first_layer_extrusion_width": "130%",
     "has_hardware_leveling": "0",
     "include_firmware_updater": "Simple Arduino",
     "show_reset_connection": "1",
@@ -170,11 +173,13 @@
     "support_material_create_perimeter": "0",
     "auto_connect": "0",
     "active_quality_key": "5cd7cd15-76df-4a21-9e06-e28b189dd184",
-    "recover_is_enabled": "1"
+    "recover_is_enabled": "1",
+    "z_homes_to_max": "1"
   },
   "ActiveQualityKey": "5cd7cd15-76df-4a21-9e06-e28b189dd184",
-  "MaterialSettingsKeys": [],
-  "UserLayer": {},
+  "MaterialSettingsKeys": [
+    "dd2feff8-0a86-439d-8274-07d1e724241d"
+  ],
   "MaterialLayers": [
     {
       "layer_name": "ABS",
@@ -189,7 +194,9 @@
       "min_fan_speed": "0",
       "min_print_speed": "5",
       "temperature": "228",
-      "filament_cost": "29"
+      "filament_cost": "29",
+      "slowdown_below_layer_time": "15",
+      "support_air_gap": "0.4"
     },
     {
       "layer_name": "NinjaFlex",
@@ -201,15 +208,14 @@
       "external_perimeter_speed": "12",
       "extrusion_multiplier": "1",
       "filament_diameter": "1.75",
-      "first_layer_extrusion_width": "0.5",
       "first_layer_speed": "12",
       "infill_speed": "12",
-      "layer_height": "0.3",
+      "support_air_gap": "0.6",
       "max_fan_speed": "100",
       "min_fan_speed": "60",
       "min_print_speed": "5",
       "perimeter_speed": "12",
-      "slowdown_below_layer_time": "40",
+      "slowdown_below_layer_time": "30",
       "support_material_speed": "12",
       "temperature": "210",
       "filament_density": "1.2",
@@ -228,7 +234,9 @@
       "min_fan_speed": "60",
       "min_print_speed": "5",
       "temperature": "210",
-      "filament_cost": "29"
+      "filament_cost": "29",
+      "slowdown_below_layer_time": "30",
+      "support_air_gap": "0.6"
     }
   ],
   "QualityLayers": [

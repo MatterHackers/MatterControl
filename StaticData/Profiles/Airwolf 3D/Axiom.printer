@@ -188,7 +188,7 @@
     "z_offset": "0.15",
     "make": "Airwolf 3D",
     "model": "Axiom",
-    "created_date": "2016-12-08T20:28:54.999Z",
+    "created_date": "2016-12-21T20:52:32.868Z",
     "baud_rate": "250000",
     "default_material_presets": "ABS",
     "default_quality_preset": "Balanced",
@@ -199,7 +199,6 @@
   },
   "ActiveQualityKey": "",
   "MaterialSettingsKeys": [],
-  "UserLayer": {},
   "MaterialLayers": [
     {
       "layer_name": "ABS",

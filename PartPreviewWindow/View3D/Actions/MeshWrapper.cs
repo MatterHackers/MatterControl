@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
@@ -41,6 +42,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 	{
 		public MeshWrapper()
 		{
+		}
+
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			var firstChild = this.Children.FirstOrDefault();
+			if (firstChild != null)
+			{
+				if (invalidateType.InvalidateType == InvalidateType.Color)
+				{
+					this.Color = firstChild.Color;
+				}
+
+				if (invalidateType.InvalidateType == InvalidateType.Material)
+				{
+					this.MaterialIndex = firstChild.MaterialIndex;
+				}
+			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
 		public MeshWrapper(IObject3D child, string ownerId)
