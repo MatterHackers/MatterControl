@@ -93,6 +93,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			if ((invalidateType.InvalidateType == InvalidateType.Content
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
+				|| invalidateType.InvalidateType == InvalidateType.Mesh
 				|| invalidateType.InvalidateType == InvalidateType.Path)
 				&& invalidateType.Source != this
 				&& !RebuildSuspended)
@@ -108,7 +109,12 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
 			SuspendRebuild();
+			var vertexSource = this.VertexSource;
 			Mesh = VertexSourceToMesh.Extrude(this.VertexSource, Height);
+			if(Mesh.Vertices.Count == 0)
+			{
+				Mesh = null;
+			}
 			ResumeRebuild();
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));

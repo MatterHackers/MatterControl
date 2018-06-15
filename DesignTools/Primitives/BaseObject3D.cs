@@ -65,24 +65,33 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void Apply(UndoBuffer undoBuffer)
 		{
-			var visibleMeshes = this.VisibleMeshes().ToList();
-			this.Children.Modify((list) =>
-			{
-				list.Clear();
-				foreach(var child in visibleMeshes)
-				{
-					list.Add(new Object3D()
-					{
-						Mesh = child.Mesh
-					});
-				}
-			});
-
 			base.Apply(undoBuffer);
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)
 		{
+			SuspendRebuild();
+
+			var startingAabb = this.GetAxisAlignedBoundingBox();
+
+			var firstChild = this.Children.FirstOrDefault();
+
+			// only keep the first object
+			this.Children.Modify(list =>
+			{
+				list.Clear();
+				// add back in the sourceContainer
+				list.Add(firstChild);
+			});
+
+			if (startingAabb.ZSize > 0)
+			{
+				// If the part was already created and at a height, maintain the height.
+				PlatingHelper.PlaceMeshAtHeight(this, startingAabb.minXYZ.Z);
+			}
+
+			ResumeRebuild();
+
 			base.Remove(undoBuffer);
 		}
 
@@ -134,30 +143,29 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			SuspendRebuild();
 
-			var aabb = this.GetAxisAlignedBoundingBox();
+			var startingAabb = this.GetAxisAlignedBoundingBox();
 
-			Children.Modify((list) =>
+			var firstChild = this.Children.FirstOrDefault();
+
+			// remove the base besh we added
+			this.Children.Modify(list =>
 			{
-				if (list.Count > 0)
-				{
-					var first = list[0];
-					list.Clear();
-					list.Add(first);
-				}
+				list.Clear();
+				// add back in the sourceContainer
+				list.Add(firstChild);
 			});
 
-			// Fall back to sibling content if VertexSource is unset
+			// and create the base
 			var vertexSource = this.VertexSource;
 
 			// Convert VertexSource into expected Polygons
 			Polygons polygonShape = (vertexSource == null) ? null : vertexSource.CreatePolygons();
+			GenerateBase(polygonShape, firstChild.GetAxisAlignedBoundingBox().minXYZ.Z);
 
-			GenerateBase(polygonShape);
-
-			if (aabb.ZSize > 0)
+			if (startingAabb.ZSize > 0)
 			{
 				// If the part was already created and at a height, maintain the height.
-				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+				PlatingHelper.PlaceMeshAtHeight(this, startingAabb.minXYZ.Z);
 			}
 			ResumeRebuild();
 
@@ -248,7 +256,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return polyTreeForTrace;
 		}
 
-		public void GenerateBase(Polygons polygonShape)
+		public void GenerateBase(Polygons polygonShape, double bottomWithoutBase)
 		{
 			if (polygonShape != null
 				&& polygonShape.Select(p => p.Count).Sum() > 3)
@@ -299,7 +307,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						Mesh = VertexSourceToMesh.Extrude(vectorShape, zHeight: ExtrusionHeight)
 					};
 					Children.Add(baseObject);
-					baseObject.Mesh.Translate(new Vector3(0, 0, -ExtrusionHeight));
+					baseObject.Mesh.Translate(new Vector3(0, 0, -ExtrusionHeight + bottomWithoutBase));
 				}
 				else
 				{

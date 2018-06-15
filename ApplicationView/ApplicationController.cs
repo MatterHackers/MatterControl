@@ -811,20 +811,25 @@ namespace MatterHackers.MatterControl
 				"Add Base".Localize(),
 				(item, scene) =>
 				{
-					if (item is IObject3D imageObject)
+					bool wasSelected = scene.SelectedItem == item;
+
+					var newChild = item.Clone();
+					var baseMesh = new BaseObject3D()
 					{
+						Matrix = newChild.Matrix
+					};
+					newChild.Matrix = Matrix4X4.Identity;
+					baseMesh.Children.Add(newChild);
+					baseMesh.Rebuild(null);
 
+					scene.UndoBuffer.AddAndDo(
+						new ReplaceCommand(
+							new List<IObject3D> { item },
+							new List<IObject3D> { baseMesh }));
 
-						var operationSource = new OperationSource()
-						{
-							Visible = true
-						};
-						item.WrapWith(operationSource, null);
-
-						var baseMesh = new BaseObject3D();
-						operationSource.WrapWith(baseMesh, scene);
-
-						baseMesh.Rebuild(null);
+					if(wasSelected)
+					{
+						scene.SelectedItem = baseMesh;
 					}
 
 					return Task.CompletedTask;
