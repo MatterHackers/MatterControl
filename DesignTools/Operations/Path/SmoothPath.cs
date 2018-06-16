@@ -46,7 +46,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 	public class SmoothPath : Object3D, IPublicPropertyObject, IPathObject, IEditorDraw
 	{
-		[JsonIgnore]
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
 		public SmoothPath()

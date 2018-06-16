@@ -66,7 +66,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		public int EndThreshold { get; internal set; } = 255;
 		public int StartThreshold { get; internal set; } = 120;
 
-		[JsonIgnore]
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
 		[JsonIgnore]
