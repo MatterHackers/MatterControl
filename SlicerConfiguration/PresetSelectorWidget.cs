@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (layerType == NamedSettingsLayers.Material)
 				{
-					if (ApplicationController.Instance.EditMaterialPresetsWindow == null)
+					if (ApplicationController.Instance.EditMaterialPresetsPage == null)
 					{
 						string presetsID = printer.Settings.ActiveMaterialKey;
 						if (string.IsNullOrEmpty(presetsID))
@@ -150,16 +150,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							}
 						};
 
-						ApplicationController.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(printer, presetsContext);
-						ApplicationController.Instance.EditMaterialPresetsWindow.Closed += (s, e2) =>
+						var editMaterialPresetsPage = new SlicePresetsPage(printer, presetsContext);
+						editMaterialPresetsPage.Closed += (s, e2) =>
 						{
-							ApplicationController.Instance.EditMaterialPresetsWindow = null;
+							ApplicationController.Instance.EditMaterialPresetsPage = null;
 						};
-						ApplicationController.Instance.EditMaterialPresetsWindow.ShowAsSystemWindow();
+
+						ApplicationController.Instance.EditMaterialPresetsPage = editMaterialPresetsPage;
+						DialogWindow.Show(editMaterialPresetsPage);
 					}
 					else
 					{
-						ApplicationController.Instance.EditMaterialPresetsWindow.BringToFront();
+						ApplicationController.Instance.EditMaterialPresetsPage.WizardWindow.BringToFront();
 					}
 				}
 
@@ -187,16 +189,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							}
 						};
 
-						ApplicationController.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(printer, presetsContext);
-						ApplicationController.Instance.EditQualityPresetsWindow.Closed += (s, e2) =>
+						var editQualityPresetsWindow = new SlicePresetsPage(printer, presetsContext);
+						editQualityPresetsWindow.Closed += (s, e2) =>
 						{
 							ApplicationController.Instance.EditQualityPresetsWindow = null;
 						};
-						ApplicationController.Instance.EditQualityPresetsWindow.ShowAsSystemWindow();
+
+						ApplicationController.Instance.EditQualityPresetsWindow = editQualityPresetsWindow;
+						DialogWindow.Show(editQualityPresetsWindow);
 					}
 					else
 					{
-						ApplicationController.Instance.EditQualityPresetsWindow.BringToFront();
+						ApplicationController.Instance.EditQualityPresetsWindow.WizardWindow.BringToFront();
 					}
 				}
 			};

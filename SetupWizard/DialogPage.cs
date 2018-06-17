@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl
 	{
 		protected FlowLayoutWidget headerRow;
 		protected FlowLayoutWidget contentRow;
-		private FlowLayoutWidget footerRow;
+		protected FlowLayoutWidget footerRow;
 
 		private WrappedTextWidget headerLabel;
 		private GuiWidget cancelButton;

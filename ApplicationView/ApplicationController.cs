@@ -347,9 +347,9 @@ namespace MatterHackers.MatterControl
 		public static Func<Task<OemProfileDictionary>> GetPublicProfileList;
 		public static Func<string, Task<PrinterSettings>> DownloadPublicProfileAsync;
 
-		public SlicePresetsWindow EditMaterialPresetsWindow { get; set; }
+		public SlicePresetsPage EditMaterialPresetsPage { get; set; }
 
-		public SlicePresetsWindow EditQualityPresetsWindow { get; set; }
+		public SlicePresetsPage EditQualityPresetsWindow { get; set; }
 
 		public GuiWidget MainView;
 
