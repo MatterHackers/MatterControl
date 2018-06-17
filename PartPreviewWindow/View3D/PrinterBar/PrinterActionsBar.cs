@@ -50,8 +50,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private PrinterConfig printer;
 		private EventHandler unregisterEvents;
-		private static EePromMarlinWindow openEePromMarlinWidget = null;
-		private static EePromRepetierWindow openEePromRepetierWidget = null;
+		private static MarlinEEPromPage marlinEEPromPage = null;
+		private static RepetierEEPromPage repetierEEPromPage = null;
 		private string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize() + "\n\n" + "You may need to wait a minute for your printer to finish initializing.".Localize();
 		private string noEepromMappingTitle = "Warning - No EEProm Mapping".Localize();
 
@@ -332,32 +332,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				switch (printer.Connection.FirmwareType)
 				{
 					case FirmwareTypes.Repetier:
-						if (openEePromRepetierWidget != null)
+						if (repetierEEPromPage != null)
 						{
-							openEePromRepetierWidget.BringToFront();
+							repetierEEPromPage.WizardWindow.BringToFront();
 						}
 						else
 						{
-							openEePromRepetierWidget = new EePromRepetierWindow(printer.Connection);
-							openEePromRepetierWidget.Closed += (RepetierWidget, RepetierEvent) =>
+							repetierEEPromPage = new RepetierEEPromPage(printer.Connection);
+							repetierEEPromPage.Closed += (s, e) =>
 							{
-								openEePromRepetierWidget = null;
+								repetierEEPromPage = null;
 							};
+
+							DialogWindow.Show(repetierEEPromPage);
 						}
 						break;
 
 					case FirmwareTypes.Marlin:
-						if (openEePromMarlinWidget != null)
+						if (marlinEEPromPage != null)
 						{
-							openEePromMarlinWidget.BringToFront();
+							marlinEEPromPage.WizardWindow.BringToFront();
 						}
 						else
 						{
-							openEePromMarlinWidget = new EePromMarlinWindow(printer.Connection);
-							openEePromMarlinWidget.Closed += (marlinWidget, marlinEvent) =>
+							marlinEEPromPage = new MarlinEEPromPage(printer.Connection);
+							marlinEEPromPage.Closed += (s, e) =>
 							{
-								openEePromMarlinWidget = null;
+								marlinEEPromPage = null;
 							};
+
+							DialogWindow.Show(marlinEEPromPage);
 						}
 						break;
 

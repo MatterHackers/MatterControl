@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -38,33 +38,34 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.EeProm
 {
-	public class CloseOnDisconnectWindow : SystemWindow
+	public class EEPromPage : DialogPage
 	{
 		private EventHandler unregisterEvents;
 
-		public CloseOnDisconnectWindow(PrinterConnection printerConnection, double width, double height)
-			: base(width, height)
+		public EEPromPage(PrinterConnection printerConnection)
 		{
+			this.WindowSize = new VectorMath.Vector2(650, 480);
+
+			headerRow.Visible = false;
+
+			// Close window if printer is disconnected
 			printerConnection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
 				if(!printerConnection.IsConnected)
 				{
-					this.CloseOnIdle();
+					this.WizardWindow.CloseOnIdle();
 				}
 			}, ref unregisterEvents);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 	}
 
-	public class EePromRepetierWindow : CloseOnDisconnectWindow
+	public class RepetierEEPromPage : EEPromPage
 	{
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
@@ -73,11 +74,13 @@ namespace MatterHackers.MatterControl.EeProm
 
 		private EventHandler unregisterEvents;
 
-		public EePromRepetierWindow(PrinterConnection printerConnection)
-			: base(printerConnection, 650 * GuiWidget.DeviceScale, 480 * GuiWidget.DeviceScale)
+		public RepetierEEPromPage(PrinterConnection printerConnection)
+			: base(printerConnection)
 		{
 			AlwaysOnTopOfMain = true;
 			BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+
+			this.WindowTitle = "Firmware EEPROM Settings".Localize();
 
 			currentEePromSettings = new EePromRepetierStorage();
 
@@ -159,7 +162,7 @@ namespace MatterHackers.MatterControl.EeProm
 									{
 										currentEePromSettings.Import(openParams.FileName);
 										RebuildUi();
-                                    }
+									}
 								});
 					});
 				};
@@ -179,15 +182,15 @@ namespace MatterHackers.MatterControl.EeProm
 							{
 								ActionButtonLabel = "Export EEPROM Settings".Localize(),
 								Title = "Export EEPROM".Localize(),
-                                FileName = "eeprom_settings.ini"
+								FileName = "eeprom_settings.ini"
 							},
-								(saveParams) =>
+							(saveParams) =>
+							{
+								if (!string.IsNullOrEmpty(saveParams.FileName))
 								{
-									if (!string.IsNullOrEmpty(saveParams.FileName))
-									{
-										currentEePromSettings.Export(saveParams.FileName);
-									}
-								});
+									currentEePromSettings.Export(saveParams.FileName);
+								}
+							});
 					});
 				};
 				buttonBar.AddChild(buttonExport);
@@ -212,10 +215,6 @@ namespace MatterHackers.MatterControl.EeProm
 			topToBottom.AddChild(buttonBar);
 
 			this.AddChild(topToBottom);
-
-			Title = "Firmware EEPROM Settings".Localize();
-
-			ShowAsSystemWindow();
 
 			currentEePromSettings.Clear();
 			printerConnection.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
@@ -250,10 +249,7 @@ namespace MatterHackers.MatterControl.EeProm
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 

@@ -37,7 +37,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.EeProm
 {
-	public partial class EePromMarlinWindow : CloseOnDisconnectWindow
+	public class MarlinEEPromPage : EEPromPage
 	{
 		private EePromMarlinSettings currentEePromSettings;
 
@@ -88,11 +88,11 @@ namespace MatterHackers.MatterControl.EeProm
 
 		private int currentTabIndex = 0;
 
-		public EePromMarlinWindow(PrinterConnection printerConnection)
-			: base(printerConnection, 650 * GuiWidget.DeviceScale, 480 * GuiWidget.DeviceScale)
+		public MarlinEEPromPage(PrinterConnection printerConnection)
+			: base(printerConnection)
 		{
 			AlwaysOnTopOfMain = true;
-			Title = "Marlin Firmware EEPROM Settings".Localize();
+			this.WindowTitle = "Marlin Firmware EEPROM Settings".Localize();
 
 			currentEePromSettings = new EePromMarlinSettings(printerConnection);
 			currentEePromSettings.eventAdded += SetUiToPrinterSettings;
@@ -282,8 +282,6 @@ namespace MatterHackers.MatterControl.EeProm
 
 			AddChild(mainContainer);
 
-			ShowAsSystemWindow();
-
 			// and ask the printer to send the settings
 			currentEePromSettings.Update();
 
@@ -410,7 +408,7 @@ namespace MatterHackers.MatterControl.EeProm
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
-			
+
 			base.OnClosed(e);
 		}
 
