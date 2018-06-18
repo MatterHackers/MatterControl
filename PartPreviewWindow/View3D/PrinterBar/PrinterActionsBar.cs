@@ -326,10 +326,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			UiThread.RunOnIdle(() =>
 			{
-#if false // This is to force the creation of the repetier window for testing when we don't have repetier firmware.
-                        new MatterHackers.MatterControl.EeProm.EePromRepetierWidget();
-#else
-				switch (printer.Connection.FirmwareType)
+				var firmwareType = printer.Connection.FirmwareType;
+
+				// Force Repetier firmware for testing when we don't have repetier firmware
+				if (false)
+				{
+					firmwareType = FirmwareTypes.Repetier;
+				}
+
+				switch (firmwareType)
 				{
 					case FirmwareTypes.Repetier:
 						if (repetierEEPromPage != null)
@@ -370,7 +375,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						StyledMessageBox.ShowMessageBox(noEepromMappingMessage, noEepromMappingTitle, StyledMessageBox.MessageType.OK);
 						break;
 				}
-#endif
 			});
 		}
 	}
