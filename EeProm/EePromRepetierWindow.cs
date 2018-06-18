@@ -30,30 +30,37 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.EeProm
 {
 	public class EEPromPage : DialogPage
 	{
-		private EventHandler unregisterEvents;
+		private static Regex nameSanitizer = new Regex("[^_a-zA-Z0-9-]", RegexOptions.Compiled);
 
-		public EEPromPage(PrinterConnection printerConnection)
+		private EventHandler unregisterEvents;
+		protected PrinterConfig printer;
+
+		public EEPromPage(PrinterConfig printer)
 			: base(useOverflowBar: true)
 		{
 			this.HeaderText = "EEProm Settings".Localize();
 			this.WindowSize = new VectorMath.Vector2(663, 575);
 			headerRow.Margin = this.headerRow.Margin.Clone(bottom: 0);
 
+
+			this.printer = printer;
+
 			// Close window if printer is disconnected
-			printerConnection.CommunicationStateChanged.RegisterEvent((s, e) =>
+			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
-				if(!printerConnection.IsConnected)
+				if(!printer.Connection.IsConnected)
 				{
 					this.WizardWindow.CloseOnIdle();
 				}
@@ -65,6 +72,13 @@ namespace MatterHackers.MatterControl.EeProm
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
+
+		protected string GetSanitizedPrinterName()
+		{
+			// TODO: Determine best file name sanitization implementation: this, MakeValidFileName, something else?
+			string printerName = printer.Settings.GetValue(SettingsKey.printer_name).Replace(" ", "_");
+			return nameSanitizer.Replace(printerName, "");
+		}
 	}
 
 	public class RepetierEEPromPage : EEPromPage
@@ -74,8 +88,8 @@ namespace MatterHackers.MatterControl.EeProm
 
 		private EventHandler unregisterEvents;
 
-		public RepetierEEPromPage(PrinterConnection printerConnection)
-			: base(printerConnection)
+		public RepetierEEPromPage(PrinterConfig printer)
+			: base(printer)
 		{
 			AlwaysOnTopOfMain = true;
 
@@ -161,7 +175,7 @@ namespace MatterHackers.MatterControl.EeProm
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					currentEePromSettings.Save(printerConnection);
+					currentEePromSettings.Save(printer.Connection);
 					currentEePromSettings.Clear();
 					this.WizardWindow.Close();
 				});
@@ -176,9 +190,9 @@ namespace MatterHackers.MatterControl.EeProm
 			this.AddPageAction(exportButton);
 
 			currentEePromSettings.Clear();
-			printerConnection.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
+			printer.Connection.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
 			currentEePromSettings.eventAdded += NewSettingReadFromPrinter;
-			currentEePromSettings.AskPrinterForSettings(printerConnection);
+			currentEePromSettings.AskPrinterForSettings(printer.Connection);
 
 #if SIMULATE_CONNECTION
             UiThread.RunOnIdle(AddSimulatedItems);
@@ -187,12 +201,14 @@ namespace MatterHackers.MatterControl.EeProm
 
 		private void ExportSettings()
 		{
+			string defaultFileName = $"eeprom_settings_{base.GetSanitizedPrinterName()}.ini";
+
 			AggContext.FileDialogs.SaveFileDialog(
 				new SaveFileDialogParams("EEPROM Settings|*.ini")
 				{
 					ActionButtonLabel = "Export EEPROM Settings".Localize(),
 					Title = "Export EEPROM".Localize(),
-					FileName = "eeprom_settings.ini"
+					FileName = defaultFileName
 				},
 				(saveParams) =>
 				{

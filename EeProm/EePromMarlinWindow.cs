@@ -35,6 +35,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.EeProm
 {
@@ -88,13 +89,13 @@ namespace MatterHackers.MatterControl.EeProm
 
 		private int currentTabIndex = 0;
 
-		public MarlinEEPromPage(PrinterConnection printerConnection)
-			: base(printerConnection)
+		public MarlinEEPromPage(PrinterConfig printer)
+			: base(printer)
 		{
 			AlwaysOnTopOfMain = true;
 			this.WindowTitle = "Marlin Firmware EEPROM Settings".Localize();
 
-			currentEePromSettings = new EePromMarlinSettings(printerConnection);
+			currentEePromSettings = new EePromMarlinSettings(printer.Connection);
 			currentEePromSettings.eventAdded += SetUiToPrinterSettings;
 
 			var mainContainer = contentRow;
@@ -174,7 +175,7 @@ namespace MatterHackers.MatterControl.EeProm
 				this.AddPageAction(exportButton);
 			}
 
-			printerConnection.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
+			printer.Connection.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
 
 			// and ask the printer to send the settings
 			currentEePromSettings.Update();
@@ -233,22 +234,22 @@ namespace MatterHackers.MatterControl.EeProm
 
 		private void ExportSettings()
 		{
-			string defaultFileNameNoPath = "eeprom_settings.ini";
+			string defaultFileName = $"eeprom_settings_{base.GetSanitizedPrinterName()}.ini";
 			AggContext.FileDialogs.SaveFileDialog(
 				new SaveFileDialogParams("EEPROM Settings|*.ini")
 				{
 					ActionButtonLabel = "Export EEPROM Settings".Localize(),
 					Title = "Export EEPROM".Localize(),
-					FileName = defaultFileNameNoPath
+					FileName = defaultFileName
 				},
-					(saveParams) =>
+				(saveParams) =>
+				{
+					if (!string.IsNullOrEmpty(saveParams.FileName)
+					&& saveParams.FileName != defaultFileName)
 					{
-						if (!string.IsNullOrEmpty(saveParams.FileName)
-						&& saveParams.FileName != defaultFileNameNoPath)
-						{
-							currentEePromSettings.Export(saveParams.FileName);
-						}
-					});
+						currentEePromSettings.Export(saveParams.FileName);
+					}
+				});
 		}
 
 		private GuiWidget CreateMHNumEdit(ref MHNumberEdit numberEditToCreate)

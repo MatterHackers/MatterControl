@@ -341,7 +341,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						else
 						{
-							repetierEEPromPage = new RepetierEEPromPage(printer.Connection);
+							repetierEEPromPage = new RepetierEEPromPage(printer);
 							repetierEEPromPage.Closed += (s, e) =>
 							{
 								repetierEEPromPage = null;
@@ -358,7 +358,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						else
 						{
-							marlinEEPromPage = new MarlinEEPromPage(printer.Connection);
+							marlinEEPromPage = new MarlinEEPromPage(printer);
 							marlinEEPromPage.Closed += (s, e) =>
 							{
 								marlinEEPromPage = null;
