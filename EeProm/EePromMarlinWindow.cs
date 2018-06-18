@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -165,6 +165,13 @@ namespace MatterHackers.MatterControl.EeProm
 					});
 				};
 				this.AddPageAction(buttonSave);
+
+				var exportButton = theme.CreateDialogButton("Export".Localize());
+				exportButton.Click += (s, e) =>
+				{
+					UiThread.RunOnIdle(this.ExportSettings, .1);
+				};
+				this.AddPageAction(exportButton);
 			}
 
 			printerConnection.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
@@ -188,15 +195,15 @@ namespace MatterHackers.MatterControl.EeProm
 									ActionButtonLabel = "Import EEPROM Settings".Localize(),
 									Title = "Import EEPROM".Localize(),
 								},
-									(openParams) =>
+								(openParams) =>
+								{
+									if (!string.IsNullOrEmpty(openParams.FileName))
 									{
-										if (!string.IsNullOrEmpty(openParams.FileName))
-										{
-											currentEePromSettings.Import(openParams.FileName);
-											SetUiToPrinterSettings(null, null);
-										}
-									});
-						});
+										currentEePromSettings.Import(openParams.FileName);
+										SetUiToPrinterSettings(null, null);
+									}
+								});
+						}, .1);
 					};
 
 					// put in the export button
@@ -204,25 +211,7 @@ namespace MatterHackers.MatterControl.EeProm
 					menuItem.Name = "Export Menu Item";
 					menuItem.Click += (s, e) =>
 					{
-						UiThread.RunOnIdle(() =>
-						{
-							string defaultFileNameNoPath = "eeprom_settings.ini";
-							AggContext.FileDialogs.SaveFileDialog(
-								new SaveFileDialogParams("EEPROM Settings|*.ini")
-								{
-									ActionButtonLabel = "Export EEPROM Settings".Localize(),
-									Title = "Export EEPROM".Localize(),
-									FileName = defaultFileNameNoPath
-								},
-									(saveParams) =>
-									{
-										if (!string.IsNullOrEmpty(saveParams.FileName)
-										&& saveParams.FileName != defaultFileNameNoPath)
-										{
-											currentEePromSettings.Export(saveParams.FileName);
-										}
-									});
-						});
+						UiThread.RunOnIdle(this.ExportSettings, .1);
 					};
 
 					popupMenu.CreateHorizontalLine();
@@ -240,6 +229,26 @@ namespace MatterHackers.MatterControl.EeProm
 			{
 				widget.Width = maxWidthOfLeftStuff;
 			}
+		}
+
+		private void ExportSettings()
+		{
+			string defaultFileNameNoPath = "eeprom_settings.ini";
+			AggContext.FileDialogs.SaveFileDialog(
+				new SaveFileDialogParams("EEPROM Settings|*.ini")
+				{
+					ActionButtonLabel = "Export EEPROM Settings".Localize(),
+					Title = "Export EEPROM".Localize(),
+					FileName = defaultFileNameNoPath
+				},
+					(saveParams) =>
+					{
+						if (!string.IsNullOrEmpty(saveParams.FileName)
+						&& saveParams.FileName != defaultFileNameNoPath)
+						{
+							currentEePromSettings.Export(saveParams.FileName);
+						}
+					});
 		}
 
 		private GuiWidget CreateMHNumEdit(ref MHNumberEdit numberEditToCreate)

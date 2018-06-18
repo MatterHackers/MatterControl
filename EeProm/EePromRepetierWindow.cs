@@ -143,37 +143,20 @@ namespace MatterHackers.MatterControl.EeProm
 										RebuildUi();
 									}
 								});
-						});
+						}, .1);
 					};
 
 					menuItem = popupMenu.CreateMenuItem("Export".Localize());
 					menuItem.Name = "Export Menu Item";
 					menuItem.Click += (s, e) =>
 					{
-						UiThread.RunOnIdle(() =>
-						{
-							AggContext.FileDialogs.SaveFileDialog(
-								new SaveFileDialogParams("EEPROM Settings|*.ini")
-								{
-									ActionButtonLabel = "Export EEPROM Settings".Localize(),
-									Title = "Export EEPROM".Localize(),
-									FileName = "eeprom_settings.ini"
-								},
-								(saveParams) =>
-								{
-									if (!string.IsNullOrEmpty(saveParams.FileName))
-									{
-										currentEePromSettings.Export(saveParams.FileName);
-									}
-								});
-						});
+						UiThread.RunOnIdle(this.ExportSettings, .1);
 					};
 				};
 			}
 
 			// put in the save button
 			var buttonSave = theme.CreateDialogButton("Save To EEPROM".Localize());
-			buttonSave.Margin = new BorderDouble(0, 3);
 			buttonSave.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>
@@ -185,6 +168,13 @@ namespace MatterHackers.MatterControl.EeProm
 			};
 			this.AddPageAction(buttonSave);
 
+			var exportButton = theme.CreateDialogButton("Export".Localize());
+			exportButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(this.ExportSettings, .1);
+			};
+			this.AddPageAction(exportButton);
+
 			currentEePromSettings.Clear();
 			printerConnection.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
 			currentEePromSettings.eventAdded += NewSettingReadFromPrinter;
@@ -193,6 +183,24 @@ namespace MatterHackers.MatterControl.EeProm
 #if SIMULATE_CONNECTION
             UiThread.RunOnIdle(AddSimulatedItems);
 #endif
+		}
+
+		private void ExportSettings()
+		{
+			AggContext.FileDialogs.SaveFileDialog(
+				new SaveFileDialogParams("EEPROM Settings|*.ini")
+				{
+					ActionButtonLabel = "Export EEPROM Settings".Localize(),
+					Title = "Export EEPROM".Localize(),
+					FileName = "eeprom_settings.ini"
+				},
+				(saveParams) =>
+				{
+					if (!string.IsNullOrEmpty(saveParams.FileName))
+					{
+						currentEePromSettings.Export(saveParams.FileName);
+					}
+				});
 		}
 
 #if SIMULATE_CONNECTION
@@ -296,7 +304,7 @@ namespace MatterHackers.MatterControl.EeProm
 		private GuiWidget AddDescription(string description)
 		{
 			var holder = new GuiWidget(340, 40);
-			holder.AddChild(new TextWidget(description, pointSize: theme.FontSize10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			holder.AddChild(new TextWidget(description, pointSize: theme.DefaultFontSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				VAnchor = VAnchor.Center
 			});
