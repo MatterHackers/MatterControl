@@ -33,17 +33,18 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
 	public class DialogPage : FlowLayoutWidget
 	{
-		protected FlowLayoutWidget headerRow;
+		protected GuiWidget headerRow;
 		protected FlowLayoutWidget contentRow;
 		protected FlowLayoutWidget footerRow;
 
-		private WrappedTextWidget headerLabel;
+		private TextWidget headerLabel;
 		private GuiWidget cancelButton;
 
 		public Vector2 WindowSize { get; set; }
@@ -55,7 +56,7 @@ namespace MatterHackers.MatterControl
 
 		protected ThemeConfig theme;
 
-		public DialogPage(string cancelButtonText = null)
+		public DialogPage(string cancelButtonText = null, bool useOverflowBar = false)
 			: base (FlowDirection.TopToBottom)
 		{
 			theme = ApplicationController.Instance.Theme;
@@ -75,17 +76,32 @@ namespace MatterHackers.MatterControl
 			cancelButton.Name = "Cancel Wizard Button";
 
 			// Create the header row for the widget
-			headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			if (useOverflowBar)
 			{
-				Name = "HeaderRow",
-				Margin = new BorderDouble(0, 3, 0, 0),
-				Padding = new BorderDouble(0, 12),
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
-			};
+				headerRow = new OverflowBar(theme)
+				{
+					Name = "HeaderRow",
+					Margin = new BorderDouble(0, 3, 0, 0),
+					Padding = new BorderDouble(0, 12),
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit
+				};
+			}
+			else
+			{
+				headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
+				{
+					Name = "HeaderRow",
+					Margin = new BorderDouble(0, 3, 0, 0),
+					Padding = new BorderDouble(0, 12),
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit
+				};
+			}
+
 			this.AddChild(headerRow);
 
-			headerLabel = new WrappedTextWidget("Setup Wizard".Localize(), pointSize: 24, textColor: theme.Colors.PrimaryAccentColor)
+			headerLabel = new TextWidget("Setup Wizard".Localize(), pointSize: 24, textColor: theme.Colors.PrimaryAccentColor)
 			{
 				HAnchor = HAnchor.Stretch
 			};
@@ -114,7 +130,7 @@ namespace MatterHackers.MatterControl
 #if !__ANDROID__
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
-			headerLabel.TextWidget.PointSize = 14;
+			headerLabel.PointSize = 14;
 			headerLabel.TextColor = theme.Colors.PrimaryTextColor;
 			contentRow.Padding = new BorderDouble(5);
 

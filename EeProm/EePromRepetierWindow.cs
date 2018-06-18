@@ -43,10 +43,11 @@ namespace MatterHackers.MatterControl.EeProm
 		private EventHandler unregisterEvents;
 
 		public EEPromPage(PrinterConnection printerConnection)
+			: base(useOverflowBar: true)
 		{
+			this.HeaderText = "EEProm Settings".Localize();
 			this.WindowSize = new VectorMath.Vector2(650, 480);
-
-			headerRow.Visible = false;
+			headerRow.Margin = this.headerRow.Margin.Clone(bottom: 0);
 
 			// Close window if printer is disconnected
 			printerConnection.CommunicationStateChanged.RegisterEvent((s, e) =>
