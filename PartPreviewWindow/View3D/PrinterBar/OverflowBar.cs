@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var totalX = widget.Width + widget.Margin.Width;
 
-				withinLimits &= (accumulatedX + totalX) < maxRight;
+				withinLimits &= (accumulatedX + totalX) <= maxRight;
 
 				// Widget is visible when no previous sibling has been rejected and its right edge is less than maxRight
 				widget.Visible = withinLimits; // widget.Position.X + widget.Width < maxRight;
