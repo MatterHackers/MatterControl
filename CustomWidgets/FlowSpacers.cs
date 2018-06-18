@@ -50,10 +50,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	public class HorizontalLine : GuiWidget
 	{
-		public HorizontalLine(int alpha = 255, int height = 1)
+		public HorizontalLine(int alpha = 255, int height = 1, ThemeConfig theme = null)
 			: base(1, height)
 		{
-			BackgroundColor = ApplicationController.Instance.Theme.GetBorderColor(alpha);
+			BackgroundColor = (theme ?? ApplicationController.Instance.Theme).GetBorderColor(alpha);
 			HAnchor = HAnchor.Stretch;
 		}
 	}
