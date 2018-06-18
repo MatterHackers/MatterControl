@@ -94,6 +94,7 @@
     <Compile Include="DesignTools\EditableTypes\DirectionVector.cs" />
     <Compile Include="DesignTools\Operations\Group3D.cs" />
     <Compile Include="DesignTools\Operations\Image\AlphaThresholdFunction.cs" />
+    <Compile Include="DesignTools\Operations\Image\HueThresholdFunction.cs" />
     <Compile Include="DesignTools\Operations\Image\ImageToPath.cs" />
     <Compile Include="DesignTools\Operations\Image\IThresholdFunction.cs" />
     <Compile Include="DesignTools\Operations\Image\LinearExtrude.cs" />

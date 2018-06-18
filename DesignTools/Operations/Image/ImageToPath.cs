@@ -62,7 +62,24 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override bool CanRemove => true;
 
-		public ThresholdFunctions FeatureDetector { get; set; } = ThresholdFunctions.Intensity;
+		ThresholdFunctions _featureDetector = ThresholdFunctions.Intensity;
+		public ThresholdFunctions FeatureDetector
+		{
+			get { return _featureDetector; }
+			set
+			{
+				if (value != _featureDetector)
+				{
+					_histogramCache = null;
+					_featureDetector = value;
+				}
+			}
+		}
+
+		private Color GetRGBA(byte[] buffer, int offset)
+		{
+			return new Color(buffer[offset + 2], buffer[offset + 1], buffer[offset + 0], buffer[offset + 3]);
+		}
 
 		ImageBuffer _histogramCache = null;
 		[JsonIgnore]
@@ -75,16 +92,24 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					_histogramCache = new ImageBuffer(256, 100);
 					var image = Image;
-					var counts = new int[256];
+					var counts = new int[_histogramCache.Width];
 					var function = ThresholdFunction;
-					for (int y=0; y< image.Height; y++)
+
+					byte[] buffer = image.GetBuffer();
+					int strideInBytes = image.StrideInBytes();
+					for (int y = 0; y < image.Height; y++)
 					{
-						for(int x=0; x< image.Width; x++)
+						int imageBufferOffset = image.GetBufferOffsetY(y);
+						int thresholdBufferOffset = y * image.Width;
+
+						for (int x = 0; x < image.Width; x++)
 						{
-							var color = image.GetPixel(x, y);
-							counts[(int)(function.ThresholdSpace0to255(color))]++;
+							int imageBufferOffsetWithX = imageBufferOffset + x * 4;
+							var color = GetRGBA(buffer, imageBufferOffsetWithX);
+							counts[(int)(function.Transform(color) * (_histogramCache.Width - 1))]++;
 						}
 					}
+
 					double max = counts.Select((value, index) => new { value, index })
 						.OrderByDescending(vi => vi.value)
 						.First().value;
@@ -94,10 +119,10 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						graphics2D.Line(i, 0, i, Easing.Exponential.Out(counts[i] / max) * _histogramCache.Height, Color.Black);
 					}
-					graphics2D.FillRectangle(0, 0, ClampLessTo0, _histogramCache.Height, new Color(Color.LightGray, 100));
-					graphics2D.FillRectangle(ClampMoreTo255, 0, 255, _histogramCache.Height, new Color(Color.LightGray, 100));
-					graphics2D.Line(ClampLessTo0, 0, ClampLessTo0, _histogramCache.Height, new Color(Color.LightGray, 200));
-					graphics2D.Line(ClampMoreTo255, 0, ClampMoreTo255, _histogramCache.Height, new Color(Color.LightGray, 200));
+					graphics2D.FillRectangle(0, 0, RangeStart * _histogramCache.Width, _histogramCache.Height, new Color(Color.Red, 100));
+					graphics2D.FillRectangle(RangeEnd * _histogramCache.Width, 0, 255, _histogramCache.Height, new Color(Color.Red, 100));
+					graphics2D.Line(RangeStart * _histogramCache.Width, 0, RangeStart * _histogramCache.Width, _histogramCache.Height, new Color(Color.LightGray, 200));
+					graphics2D.Line(RangeEnd * _histogramCache.Width, 0, RangeEnd * _histogramCache.Width, _histogramCache.Height, new Color(Color.LightGray, 200));
 				}
 				return _histogramCache;
 			}
@@ -107,8 +132,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public int ClampLessTo0 { get; set; } = 120;
-		public int ClampMoreTo255 { get; set; } = 255;
+		public double RangeStart { get; set; } = .1;
+		public double RangeEnd { get; set; } = 1;
 
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
@@ -122,16 +147,16 @@ namespace MatterHackers.MatterControl.DesignTools
 				switch (FeatureDetector)
 				{
 					case ThresholdFunctions.Intensity:
-						return new MapOnMaxIntensity(ClampLessTo0, ClampMoreTo255);
+						return new MapOnMaxIntensity(RangeStart, RangeEnd);
 
 					case ThresholdFunctions.Alpha:
-						return new AlphaThresholdFunction(ClampLessTo0, ClampMoreTo255);
+						return new AlphaThresholdFunction(RangeStart, RangeEnd);
 
 					case ThresholdFunctions.Hue:
-						break;
+						return new HueThresholdFunction(RangeStart, RangeEnd);
 				}
 
-				return new MapOnMaxIntensity(ClampLessTo0, ClampMoreTo255);
+				return new MapOnMaxIntensity(RangeStart, RangeEnd);
 			}
 		}
 
@@ -150,14 +175,14 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 
 				bool first = true;
-				Vector2 lastPosition = Vector2.Zero;
+				var lastPosition = Vector2.Zero;
 				var aabb = item.VisibleMeshes().FirstOrDefault().GetAxisAlignedBoundingBox();
+				var firstMove = Vector2.Zero;
 				foreach (var vertex in pathObject.VertexSource.Vertices())
 				{
 					var position = vertex.position;
 					if (first)
 					{
-						first = false;
 						GL.PushMatrix();
 						GL.PushAttrib(AttribMask.EnableBit);
 						GL.MultMatrix(item.WorldMatrix().GetAsFloatArray());
@@ -169,13 +194,24 @@ namespace MatterHackers.MatterControl.DesignTools
 						GL.Color4(255, 0, 0, 255);
 					}
 
-					if (vertex.IsLineTo)
+					if(vertex.IsMoveTo)
+					{
+						firstMove = position;
+					}
+					else if (vertex.IsLineTo)
 					{
 						GL.Vertex3(lastPosition.X, lastPosition.Y, aabb.maxXYZ.Z + 0.002);
 						GL.Vertex3(position.X, position.Y, aabb.maxXYZ.Z + 0.002);
 					}
+					else if(vertex.IsClose)
+					{
+						GL.Vertex3(firstMove.X, firstMove.Y, aabb.maxXYZ.Z + 0.002);
+						GL.Vertex3(lastPosition.X, lastPosition.Y, aabb.maxXYZ.Z + 0.002);
+						int a = 0;
+					}
 
 					lastPosition = position;
+					first = false;
 				}
 
 				// if we drew anything
@@ -195,7 +231,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				// Regenerate outline
 				var marchingSquaresData = new MarchingSquaresByte(
 					image,
-					thresholdFunction.Threshold0To1,
+					thresholdFunction.Threshold,
 					0);
 
 				progressReporter?.Invoke(0, "Creating Outline");

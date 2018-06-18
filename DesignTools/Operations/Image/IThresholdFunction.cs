@@ -34,12 +34,18 @@ namespace MatterHackers.MatterControl.DesignTools
 	public interface IThresholdFunction
 	{
 		/// <summary>
-		/// Convert the color into the intensity space used by the threshold function
+		/// Convert the color into the coordinate space used by the threshold function
+		/// </summary>
+		/// <param name="color"></param>
+		/// <returns>A double ranged 0 to 1</returns>
+		double Transform(Color color);
+
+		/// <summary>
+		/// Do the actual thresholding of the color. This will convert it inte tho coordinate space
+		/// and also apply any clamping to the values.
 		/// </summary>
 		/// <param name="color"></param>
 		/// <returns></returns>
-		int ThresholdSpace0to255(Color color);
-
-		double Threshold0To1(Color color);
+		double Threshold(Color color);
 	}
 }
