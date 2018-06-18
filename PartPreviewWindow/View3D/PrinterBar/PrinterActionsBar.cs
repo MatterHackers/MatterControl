@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.OverflowButton.Name = "Printer Overflow Menu";
 			this.ExtendOverflowMenu = (popupMenu) =>
 			{
-				this.GeneratePrinterOverflowMenu(popupMenu, theme);
+				this.GeneratePrinterOverflowMenu(popupMenu, ApplicationController.Instance.MenuTheme);
 			};
 
 			printer.ViewState.ViewModeChanged += (s, e) =>
