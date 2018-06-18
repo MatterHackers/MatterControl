@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.EeProm
 			: base(useOverflowBar: true)
 		{
 			this.HeaderText = "EEProm Settings".Localize();
-			this.WindowSize = new VectorMath.Vector2(650, 480);
+			this.WindowSize = new VectorMath.Vector2(663, 575);
 			headerRow.Margin = this.headerRow.Margin.Clone(bottom: 0);
 
 			// Close window if printer is disconnected

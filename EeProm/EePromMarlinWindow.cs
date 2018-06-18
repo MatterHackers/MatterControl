@@ -282,7 +282,7 @@ namespace MatterHackers.MatterControl.EeProm
 
 		private GuiWidget CreateTextField(string label)
 		{
-			var textWidget = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			var textWidget = new TextWidget(label, pointSize: theme.FontSize10, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				VAnchor = VAnchor.Center,
 				HAnchor = HAnchor.Right
@@ -306,7 +306,7 @@ namespace MatterHackers.MatterControl.EeProm
 				HAnchor = HAnchor.Stretch
 			};
 
-			var labelWidget = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			var labelWidget = new TextWidget(label, pointSize: theme.FontSize10, textColor: ActiveTheme.Instance.PrimaryTextColor);
 			maxWidthOfLeftStuff = Math.Max(maxWidthOfLeftStuff, labelWidget.Width);
 
 			var holder = new GuiWidget(labelWidget.Width, labelWidget.Height)
