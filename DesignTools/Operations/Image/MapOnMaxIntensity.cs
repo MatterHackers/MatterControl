@@ -47,13 +47,20 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.end0To255 = end;
 		}
 
+		public int ThresholdSpace0to255(Color color)
+		{
+			var simpleIntensity = (color.red + color.blue + color.green) / 3;
+			if(simpleIntensity > 0)
+			{
+				int a = 0;
+			}
+			return simpleIntensity;
+		}
+
 		public double Threshold0To1(Color color)
 		{
 			// this is on I from HSI
-			return GetThresholded0To1((color.red + color.blue + color.green) / 3);
-
-			// this is on L from HSL
-			//return GetThresholded0To1(Math.Max(color.red, Math.Max(color.blue, color.green)));
+			return GetThresholded0To1(ThresholdSpace0to255(color));
 		}
 
 		protected double GetThresholded0To1(int inValue0To255)

@@ -103,7 +103,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			typeof(double), typeof(int), typeof(char), typeof(string), typeof(bool),
 			typeof(Vector2), typeof(Vector3),
 			typeof(DirectionVector), typeof(DirectionAxis),
-			typeof(ChildrenSelector)
+			typeof(ChildrenSelector),
+			typeof(ImageBuffer),
 		};
 
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -335,6 +336,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				rowContainer = CreateSettingsColumn(property);
 				rowContainer.AddChild(CreateSelector(childSelector, property.Item, theme));
 			}
+			else if (propertyValue is ImageBuffer imageBuffer)
+			{
+				rowContainer = CreateSettingsColumn(property);
+				rowContainer.AddChild(CreateImageDisplay(imageBuffer, property.Item, theme));
+			}
 			// create a int editor
 			else if (propertyValue is int intValue)
 			{
@@ -433,6 +439,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			context.editRows.Add(property.PropertyInfo.Name, rowContainer);
 
 			return rowContainer;
+		}
+
+		private static GuiWidget CreateImageDisplay(ImageBuffer imageBuffer, IObject3D parent, ThemeConfig theme)
+		{
+			return new ImageWidget(imageBuffer);
 		}
 
 		private static GuiWidget CreateSelector(ChildrenSelector childSelector, IObject3D parent, ThemeConfig theme)

@@ -63,8 +63,52 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override bool CanRemove => true;
 
 		public ThresholdFunctions FeatureDetector { get; set; } = ThresholdFunctions.Intensity;
-		public int EndThreshold { get; internal set; } = 255;
-		public int StartThreshold { get; internal set; } = 120;
+
+		ImageBuffer _histogramCache = null;
+		[JsonIgnore]
+		public ImageBuffer Histogram
+		{
+			get
+			{
+				_histogramCache = null;
+				if (_histogramCache == null)
+				{
+					_histogramCache = new ImageBuffer(256, 100);
+					var image = Image;
+					var counts = new int[256];
+					var function = ThresholdFunction;
+					for (int y=0; y< image.Height; y++)
+					{
+						for(int x=0; x< image.Width; x++)
+						{
+							var color = image.GetPixel(x, y);
+							counts[(int)(function.ThresholdSpace0to255(color))]++;
+						}
+					}
+					double max = counts.Select((value, index) => new { value, index })
+						.OrderByDescending(vi => vi.value)
+						.First().value;
+					var graphics2D = _histogramCache.NewGraphics2D();
+					graphics2D.Clear(Color.White);
+					for(int i=0; i<256; i++)
+					{
+						graphics2D.Line(i, 0, i, Easing.Exponential.Out(counts[i] / max) * _histogramCache.Height, Color.Black);
+					}
+					graphics2D.FillRectangle(0, 0, ClampLessTo0, _histogramCache.Height, new Color(Color.LightGray, 100));
+					graphics2D.FillRectangle(ClampMoreTo255, 0, 255, _histogramCache.Height, new Color(Color.LightGray, 100));
+					graphics2D.Line(ClampLessTo0, 0, ClampLessTo0, _histogramCache.Height, new Color(Color.LightGray, 200));
+					graphics2D.Line(ClampMoreTo255, 0, ClampMoreTo255, _histogramCache.Height, new Color(Color.LightGray, 200));
+				}
+				return _histogramCache;
+			}
+
+			set
+			{
+			}
+		}
+
+		public int ClampLessTo0 { get; set; } = 120;
+		public int ClampMoreTo255 { get; set; } = 255;
 
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
@@ -78,16 +122,16 @@ namespace MatterHackers.MatterControl.DesignTools
 				switch (FeatureDetector)
 				{
 					case ThresholdFunctions.Intensity:
-						return new MapOnMaxIntensity(StartThreshold, EndThreshold);
+						return new MapOnMaxIntensity(ClampLessTo0, ClampMoreTo255);
 
 					case ThresholdFunctions.Alpha:
-						return new AlphaThresholdFunction(StartThreshold, EndThreshold);
+						return new AlphaThresholdFunction(ClampLessTo0, ClampMoreTo255);
 
 					case ThresholdFunctions.Hue:
 						break;
 				}
 
-				return new MapOnMaxIntensity(StartThreshold, EndThreshold);
+				return new MapOnMaxIntensity(ClampLessTo0, ClampMoreTo255);
 			}
 		}
 
@@ -224,7 +268,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			// now create a long running task to process the image
 			ApplicationController.Instance.Tasks.Execute(
-				"Extrude Image".Localize(),
+				"Calculate Path".Localize(),
 				(reporter, cancellationToken) =>
 				{
 					var progressStatus = new ProgressStatus();

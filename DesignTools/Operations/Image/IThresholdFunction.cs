@@ -33,6 +33,13 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public interface IThresholdFunction
 	{
+		/// <summary>
+		/// Convert the color into the intensity space used by the threshold function
+		/// </summary>
+		/// <param name="color"></param>
+		/// <returns></returns>
+		int ThresholdSpace0to255(Color color);
+
 		double Threshold0To1(Color color);
 	}
 }

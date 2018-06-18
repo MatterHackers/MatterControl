@@ -47,9 +47,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.end0To255 = end;
 		}
 
+		public int ThresholdSpace0to255(Color color)
+		{
+			return color.Alpha0To255;
+		}
+
 		public double Threshold0To1(Color color)
 		{
-			return GetThresholded0To1(color.Alpha0To255);
+			return GetThresholded0To1(ThresholdSpace0to255(color));
 		}
 
 		protected double GetThresholded0To1(int inValue0To255)
