@@ -83,7 +83,6 @@ namespace MatterHackers.MatterControl.EeProm
 
 		private EventHandler unregisterEvents;
 
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private double maxWidthOfLeftStuff = 0;
 		private List<GuiWidget> leftStuffToSize = new List<GuiWidget>();
 
@@ -245,10 +244,14 @@ namespace MatterHackers.MatterControl.EeProm
 
 		private GuiWidget CreateMHNumEdit(ref MHNumberEdit numberEditToCreate)
 		{
-			numberEditToCreate = new MHNumberEdit(0, pixelWidth: 80, allowNegatives: true, allowDecimals: true);
-			numberEditToCreate.SelectAllOnFocus = true;
-			numberEditToCreate.VAnchor = Agg.UI.VAnchor.Center;
-			numberEditToCreate.Margin = new BorderDouble(3, 0);
+			numberEditToCreate = new MHNumberEdit(0, pixelWidth: 80, allowNegatives: true, allowDecimals: true)
+			{
+				SelectAllOnFocus = true,
+				VAnchor = VAnchor.Center,
+				Margin = new BorderDouble(3, 0),
+				TabIndex = GetNextTabIndex()
+			};
+
 			return numberEditToCreate;
 		}
 
@@ -279,11 +282,15 @@ namespace MatterHackers.MatterControl.EeProm
 
 		private GuiWidget CreateTextField(string label)
 		{
-			GuiWidget textWidget = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			textWidget.VAnchor = VAnchor.Center;
-			textWidget.HAnchor = HAnchor.Right;
-			GuiWidget container = new GuiWidget(textWidget.Height, 24);
+			var textWidget = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			{
+				VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Right
+			};
+
+			var container = new GuiWidget(textWidget.Height, 24);
 			container.AddChild(textWidget);
+
 			return container;
 		}
 
@@ -293,48 +300,43 @@ namespace MatterHackers.MatterControl.EeProm
 			string field3Label, ref MHNumberEdit field3,
 			string field4Label, ref MHNumberEdit field4)
 		{
-			FlowLayoutWidget row = new FlowLayoutWidget();
-			row.Margin = new BorderDouble(3);
-			row.HAnchor = Agg.UI.HAnchor.Stretch;
+			var row = new FlowLayoutWidget
+			{
+				Margin = 3,
+				HAnchor = HAnchor.Stretch
+			};
 
-			TextWidget labelWidget = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			labelWidget.VAnchor = VAnchor.Center;
+			var labelWidget = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor);
 			maxWidthOfLeftStuff = Math.Max(maxWidthOfLeftStuff, labelWidget.Width);
-			GuiWidget holder = new GuiWidget(labelWidget.Width, labelWidget.Height);
-			holder.Margin = new BorderDouble(3, 0);
+
+			var holder = new GuiWidget(labelWidget.Width, labelWidget.Height)
+			{
+				Margin = new BorderDouble(3, 0),
+				VAnchor = VAnchor.Fit | VAnchor.Center
+			};
 			holder.AddChild(labelWidget);
 			leftStuffToSize.Add(holder);
 			row.AddChild(holder);
 
-			{
-				row.AddChild(CreateTextField(field1Label));
-				GuiWidget nextTabIndex = CreateMHNumEdit(ref field1);
-				nextTabIndex.TabIndex = GetNextTabIndex();
-				row.AddChild(nextTabIndex);
-			}
+			row.AddChild(CreateTextField(field1Label));
+			row.AddChild(CreateMHNumEdit(ref field1));
 
 			if (field2Label != null)
 			{
 				row.AddChild(CreateTextField(field2Label));
-				GuiWidget nextTabIndex = CreateMHNumEdit(ref field2);
-				nextTabIndex.TabIndex = GetNextTabIndex();
-				row.AddChild(nextTabIndex);
+				row.AddChild(CreateMHNumEdit(ref field2));
 			}
 
 			if (field3Label != null)
 			{
 				row.AddChild(CreateTextField(field3Label));
-				GuiWidget nextTabIndex = CreateMHNumEdit(ref field3);
-				nextTabIndex.TabIndex = GetNextTabIndex();
-				row.AddChild(nextTabIndex);
+				row.AddChild(CreateMHNumEdit(ref field3));
 			}
 
 			if (field4Label != null)
 			{
 				row.AddChild(CreateTextField(field4Label));
-				GuiWidget nextTabIndex = CreateMHNumEdit(ref field4);
-				nextTabIndex.TabIndex = GetNextTabIndex();
-				row.AddChild(nextTabIndex);
+				row.AddChild(CreateMHNumEdit(ref field4));
 			}
 
 			return row;
@@ -348,7 +350,6 @@ namespace MatterHackers.MatterControl.EeProm
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
-
 			base.OnClosed(e);
 		}
 
