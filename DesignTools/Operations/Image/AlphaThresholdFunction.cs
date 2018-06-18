@@ -34,43 +34,48 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class AlphaThresholdFunction : IThresholdFunction
 	{
-		protected int start0To255 = 120;
-		protected int end0To255 = 255;
+		protected double rangeStart = .1;
+		protected double rangeEnd = 1.0;
 
 		public AlphaThresholdFunction()
 		{
 		}
 
-		public AlphaThresholdFunction(int start, int end)
+		/// <summary>
+		/// Create a new AlphaThresholdFunction
+		/// </summary>
+		/// <param name="rangeStart">Any returned value less than this will be set to 0</param>
+		/// <param name="rangeEnd">Any returned value greater than this will be set to 0</param>
+		public AlphaThresholdFunction(double rangeStart, double rangeEnd)
 		{
-			this.start0To255 = start;
-			this.end0To255 = end;
+			this.rangeStart = Math.Max(0, Math.Min(1, rangeStart));
+			this.rangeEnd = Math.Max(0, Math.Min(1, rangeEnd));
 		}
 
-		public double Threshold0To1(Color color)
+		public double Transform(Color color)
 		{
-			return GetThresholded0To1(color.Alpha0To255);
+			return color.Alpha0To255 / 255.0;
 		}
 
-		protected double GetThresholded0To1(int inValue0To255)
+		public double Threshold(Color color)
+		{
+			return GetThresholded0To1(Transform(color));
+		}
+
+		private double GetThresholded0To1(double rawValue)
 		{
 			double outValue = 0;
-			if (inValue0To255 < start0To255)
+			if (rawValue < rangeStart)
 			{
 				outValue = 0;
 			}
-			else if (inValue0To255 > end0To255)
+			else if (rawValue > rangeEnd)
 			{
-				outValue = 1;
+				outValue = 0;
 			}
 			else
 			{
-				outValue = (double)(inValue0To255 - start0To255) / (double)(end0To255 - start0To255);
-
-				if (outValue < 0 || outValue > 255)
-				{
-					throw new ArgumentOutOfRangeException();
-				}
+				outValue = (double)(rawValue - rangeStart) / (double)(rangeEnd - rangeStart);
 			}
 
 			return outValue;

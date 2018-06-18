@@ -32,16 +32,21 @@ using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class MapOnMaxIntensity : IThresholdFunction
+	public class HueThresholdFunction : IThresholdFunction
 	{
-		protected double rangeStart = .1;
-		protected double rangeEnd = 1.0;
+		protected double rangeStart = 255.0 / 120.0;
+		protected double rangeEnd = 255.0;
 
-		public MapOnMaxIntensity()
+		public HueThresholdFunction()
 		{
 		}
 
-		public MapOnMaxIntensity(double rangeStart, double rangeEnd)
+		/// <summary>
+		/// Create a new AlphaThresholdFunction
+		/// </summary>
+		/// <param name="rangeStart">Any returned value less than this will be set to 0</param>
+		/// <param name="rangeEnd">Any returned value greater than this will be set to 0</param>
+		public HueThresholdFunction(double rangeStart, double rangeEnd)
 		{
 			this.rangeStart = Math.Max(0, Math.Min(1, rangeStart));
 			this.rangeEnd = Math.Max(0, Math.Min(1, rangeEnd));
@@ -49,16 +54,17 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public double Transform(Color color)
 		{
-			return (color.Red0To1 * 0.2989) + (color.Blue0To1 * 0.5870) + (color.Green0To1 * 0.1140);
+			double h, s, l;
+			color.ToColorF().GetHSL(out h, out s, out l);
+			return h;
 		}
 
 		public double Threshold(Color color)
 		{
-			// this is on I from HSI
 			return GetThresholded0To1(Transform(color));
 		}
 
-		protected double GetThresholded0To1(double rawValue)
+		private double GetThresholded0To1(double rawValue)
 		{
 			double outValue = 0;
 			if (rawValue < rangeStart)
