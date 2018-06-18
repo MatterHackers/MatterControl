@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.EeProm
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
 		private EePromRepetierStorage currentEePromSettings;
-		private FlowLayoutWidget settingsColmun;
+		private FlowLayoutWidget settingsColumn;
 
 		private EventHandler unregisterEvents;
 
@@ -79,7 +79,6 @@ namespace MatterHackers.MatterControl.EeProm
 			: base(printerConnection)
 		{
 			AlwaysOnTopOfMain = true;
-			BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 
 			this.WindowTitle = "Firmware EEPROM Settings".Localize();
 
@@ -113,12 +112,12 @@ namespace MatterHackers.MatterControl.EeProm
 				settingsAreaScrollBox.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 				topToBottom.AddChild(settingsAreaScrollBox);
 
-				settingsColmun = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				settingsColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
 					HAnchor = HAnchor.MaxFitOrStretch
 				};
 
-				settingsAreaScrollBox.AddChild(settingsColmun);
+				settingsAreaScrollBox.AddChild(settingsColumn);
 			}
 
 			var buttonBar = new FlowLayoutWidget()
@@ -283,7 +282,7 @@ namespace MatterHackers.MatterControl.EeProm
 				}
 			}
 
-			settingsColmun.CloseAllChildren();
+			settingsColumn.CloseAllChildren();
 
 			foreach (EePromRepetierParameter newSetting in tempList)
 			{
@@ -296,7 +295,7 @@ namespace MatterHackers.MatterControl.EeProm
 					};
 					row.AddChild(AddDescription(newSetting.Description));
 
-					if ((settingsColmun.Children.Count % 2) == 1)
+					if ((settingsColumn.Children.Count % 2) == 1)
 					{
 						row.BackgroundColor = new Color(0, 0, 0, 30);
 					}
@@ -316,7 +315,7 @@ namespace MatterHackers.MatterControl.EeProm
 					};
 					row.AddChild(valueEdit);
 
-					settingsColmun.AddChild(row);
+					settingsColumn.AddChild(row);
 				}
 			}
 			waitingForUiUpdate = false;
