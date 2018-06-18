@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -42,7 +41,6 @@ using MatterHackers.MatterControl.EeProm;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintHistory;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -50,8 +48,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private PrinterConfig printer;
 		private EventHandler unregisterEvents;
-		private static EePromMarlinWindow openEePromMarlinWidget = null;
-		private static EePromRepetierWindow openEePromRepetierWidget = null;
+		private static MarlinEEPromPage marlinEEPromPage = null;
+		private static RepetierEEPromPage repetierEEPromPage = null;
 		private string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize() + "\n\n" + "You may need to wait a minute for your printer to finish initializing.".Localize();
 		private string noEepromMappingTitle = "Warning - No EEProm Mapping".Localize();
 
@@ -178,7 +176,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.OverflowButton.Name = "Printer Overflow Menu";
 			this.ExtendOverflowMenu = (popupMenu) =>
 			{
-				this.GeneratePrinterOverflowMenu(popupMenu, theme);
+				this.GeneratePrinterOverflowMenu(popupMenu, ApplicationController.Instance.MenuTheme);
 			};
 
 			printer.ViewState.ViewModeChanged += (s, e) =>
@@ -326,38 +324,47 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			UiThread.RunOnIdle(() =>
 			{
-#if false // This is to force the creation of the repetier window for testing when we don't have repetier firmware.
-                        new MatterHackers.MatterControl.EeProm.EePromRepetierWidget();
-#else
-				switch (printer.Connection.FirmwareType)
+				var firmwareType = printer.Connection.FirmwareType;
+
+				// Force Repetier firmware for testing when we don't have repetier firmware
+				if (false)
+				{
+					firmwareType = FirmwareTypes.Repetier;
+				}
+
+				switch (firmwareType)
 				{
 					case FirmwareTypes.Repetier:
-						if (openEePromRepetierWidget != null)
+						if (repetierEEPromPage != null)
 						{
-							openEePromRepetierWidget.BringToFront();
+							repetierEEPromPage.WizardWindow.BringToFront();
 						}
 						else
 						{
-							openEePromRepetierWidget = new EePromRepetierWindow(printer.Connection);
-							openEePromRepetierWidget.Closed += (RepetierWidget, RepetierEvent) =>
+							repetierEEPromPage = new RepetierEEPromPage(printer);
+							repetierEEPromPage.Closed += (s, e) =>
 							{
-								openEePromRepetierWidget = null;
+								repetierEEPromPage = null;
 							};
+
+							DialogWindow.Show(repetierEEPromPage);
 						}
 						break;
 
 					case FirmwareTypes.Marlin:
-						if (openEePromMarlinWidget != null)
+						if (marlinEEPromPage != null)
 						{
-							openEePromMarlinWidget.BringToFront();
+							marlinEEPromPage.WizardWindow.BringToFront();
 						}
 						else
 						{
-							openEePromMarlinWidget = new EePromMarlinWindow(printer.Connection);
-							openEePromMarlinWidget.Closed += (marlinWidget, marlinEvent) =>
+							marlinEEPromPage = new MarlinEEPromPage(printer);
+							marlinEEPromPage.Closed += (s, e) =>
 							{
-								openEePromMarlinWidget = null;
+								marlinEEPromPage = null;
 							};
+
+							DialogWindow.Show(marlinEEPromPage);
 						}
 						break;
 
@@ -366,7 +373,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						StyledMessageBox.ShowMessageBox(noEepromMappingMessage, noEepromMappingTitle, StyledMessageBox.MessageType.OK);
 						break;
 				}
-#endif
 			});
 		}
 	}

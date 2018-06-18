@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,11 +33,13 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.EeProm
 {
-	public partial class EePromMarlinWindow : CloseOnDisconnectWindow
+	public class MarlinEEPromPage : EEPromPage
 	{
 		private EePromMarlinSettings currentEePromSettings;
 
@@ -82,65 +84,28 @@ namespace MatterHackers.MatterControl.EeProm
 
 		private EventHandler unregisterEvents;
 
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private double maxWidthOfLeftStuff = 0;
 		private List<GuiWidget> leftStuffToSize = new List<GuiWidget>();
 
 		private int currentTabIndex = 0;
 
-		public EePromMarlinWindow(PrinterConnection printerConnection)
-			: base(printerConnection, 650 * GuiWidget.DeviceScale, 480 * GuiWidget.DeviceScale)
+		public MarlinEEPromPage(PrinterConfig printer)
+			: base(printer)
 		{
 			AlwaysOnTopOfMain = true;
-			Title = "Marlin Firmware EEPROM Settings".Localize();
+			this.WindowTitle = "Marlin Firmware EEPROM Settings".Localize();
 
-			currentEePromSettings = new EePromMarlinSettings(printerConnection);
+			currentEePromSettings = new EePromMarlinSettings(printer.Connection);
 			currentEePromSettings.eventAdded += SetUiToPrinterSettings;
 
-			GuiWidget mainContainer = new GuiWidget();
-			mainContainer.AnchorAll();
-			mainContainer.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			mainContainer.Padding = new BorderDouble(3, 0);
-
-			// space filling color
-			GuiWidget spaceFiller = new GuiWidget(0, 500);
-			spaceFiller.VAnchor = VAnchor.Bottom;
-			spaceFiller.HAnchor = HAnchor.Stretch;
-			spaceFiller.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			spaceFiller.Padding = new BorderDouble(top: 3);
-			mainContainer.AddChild(spaceFiller);
-
-			double topBarHeight = 0;
-			// the top button bar
-			{
-				FlowLayoutWidget topButtonBar = new FlowLayoutWidget();
-				topButtonBar.HAnchor = HAnchor.Stretch;
-				topButtonBar.VAnchor = VAnchor.Fit | VAnchor.Top;
-				topButtonBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-				topButtonBar.Margin = new BorderDouble(0, 3);
-
-				Button buttonSetToFactorySettings = textImageButtonFactory.Generate("Reset to Factory Defaults".Localize());
-				topButtonBar.AddChild(buttonSetToFactorySettings);
-
-				buttonSetToFactorySettings.Click += (sender, e) =>
-				{
-					currentEePromSettings.SetPrinterToFactorySettings();
-					currentEePromSettings.Update();
-				};
-
-				mainContainer.AddChild(topButtonBar);
-
-				topBarHeight = topButtonBar.Height;
-			}
+			var mainContainer = contentRow;
 
 			// the center content
-			FlowLayoutWidget conterContent = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			conterContent.VAnchor = VAnchor.Fit | VAnchor.Top;
-			conterContent.HAnchor = HAnchor.Stretch;
-			conterContent.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			conterContent.Padding = new BorderDouble(top: 3);
-			conterContent.Margin = new BorderDouble(top: topBarHeight);
+			var conterContent = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				VAnchor = VAnchor.Fit | VAnchor.Top,
+				HAnchor = HAnchor.Stretch
+			};
 
 			conterContent.AddChild(Create4FieldSet("Steps per mm".Localize() + ":",
 				"X:", ref stepsPerMmX,
@@ -186,22 +151,12 @@ namespace MatterHackers.MatterControl.EeProm
 			conterContent.AddChild(CreateField("Maximum Z jerk [mm/s]".Localize() + ":", ref maxZJerk));
 			conterContent.AddChild(CreateField("Maximum E jerk [mm/s]".Localize() + ":", ref maxEJerk));
 
-			GuiWidget topBottomSpacer = new GuiWidget(1, 1);
-			topBottomSpacer.VAnchor = VAnchor.Stretch;
-			conterContent.AddChild(topBottomSpacer);
-
 			mainContainer.AddChild(conterContent);
 
 			// the bottom button bar
 			{
-				FlowLayoutWidget bottomButtonBar = new FlowLayoutWidget();
-				bottomButtonBar.HAnchor = Agg.UI.HAnchor.MaxFitOrStretch;
-				bottomButtonBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-				bottomButtonBar.Margin = new BorderDouble(0, 3);
-
-				Button buttonSave = textImageButtonFactory.Generate("Save to EEProm".Localize());
-				bottomButtonBar.AddChild(buttonSave);
-				buttonSave.Click += (sender, e) =>
+				var buttonSave = theme.CreateDialogButton("Save to EEProm".Localize());
+				buttonSave.Click += (s, e) =>
 				{
 					UiThread.RunOnIdle(() =>
 					{
@@ -210,15 +165,28 @@ namespace MatterHackers.MatterControl.EeProm
 						Close();
 					});
 				};
+				this.AddPageAction(buttonSave);
 
-				CreateSpacer(bottomButtonBar);
-
-				// put in the import button
-#if true
+				var exportButton = theme.CreateDialogButton("Export".Localize());
+				exportButton.Click += (s, e) =>
 				{
-					Button buttonImport = textImageButtonFactory.Generate("Import".Localize() + "...");
-					buttonImport.Margin = new BorderDouble(0, 3);
-					buttonImport.Click += (sender, e) =>
+					UiThread.RunOnIdle(this.ExportSettings, .1);
+				};
+				this.AddPageAction(exportButton);
+			}
+
+			printer.Connection.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
+
+			// and ask the printer to send the settings
+			currentEePromSettings.Update();
+
+			if (headerRow is OverflowBar overflowBar)
+			{
+				overflowBar.ExtendOverflowMenu = (popupMenu) =>
+				{
+					var menuItem = popupMenu.CreateMenuItem("Import".Localize());
+					menuItem.Name = "Import Menu Item";
+					menuItem.Click += (s, e) =>
 					{
 						UiThread.RunOnIdle(() =>
 						{
@@ -228,64 +196,35 @@ namespace MatterHackers.MatterControl.EeProm
 									ActionButtonLabel = "Import EEPROM Settings".Localize(),
 									Title = "Import EEPROM".Localize(),
 								},
-									(openParams) =>
-									{
-										if (!string.IsNullOrEmpty(openParams.FileName))
-										{
-											currentEePromSettings.Import(openParams.FileName);
-											SetUiToPrinterSettings(null, null);
-                                        }
-									});
-						});
-					};
-					bottomButtonBar.AddChild(buttonImport);
-				}
-
-				// put in the export button
-				{
-					Button buttonExport = textImageButtonFactory.Generate("Export".Localize() + "...");
-					buttonExport.Margin = new BorderDouble(0, 3);
-					buttonExport.Click += (sender, e) =>
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							string defaultFileNameNoPath = "eeprom_settings.ini";
-							AggContext.FileDialogs.SaveFileDialog(
-								new SaveFileDialogParams("EEPROM Settings|*.ini")
+								(openParams) =>
 								{
-									ActionButtonLabel = "Export EEPROM Settings".Localize(),
-									Title = "Export EEPROM".Localize(),
-									FileName = defaultFileNameNoPath
-								},
-									(saveParams) =>
+									if (!string.IsNullOrEmpty(openParams.FileName))
 									{
-										if (!string.IsNullOrEmpty(saveParams.FileName)
-										&& saveParams.FileName != defaultFileNameNoPath)
-										{
-											currentEePromSettings.Export(saveParams.FileName);
-										}
-									});
-						});
+										currentEePromSettings.Import(openParams.FileName);
+										SetUiToPrinterSettings(null, null);
+									}
+								});
+						}, .1);
 					};
-					bottomButtonBar.AddChild(buttonExport);
-				}
-#endif
 
-				Button buttonAbort = textImageButtonFactory.Generate("Close".Localize());
-				bottomButtonBar.AddChild(buttonAbort);
-				buttonAbort.Click += buttonAbort_Click;
+					// put in the export button
+					menuItem = popupMenu.CreateMenuItem("Export".Localize());
+					menuItem.Name = "Export Menu Item";
+					menuItem.Click += (s, e) =>
+					{
+						UiThread.RunOnIdle(this.ExportSettings, .1);
+					};
 
-				mainContainer.AddChild(bottomButtonBar);
+					popupMenu.CreateHorizontalLine();
+
+					menuItem = popupMenu.CreateMenuItem("Reset to Factory Defaults".Localize());
+					menuItem.Click += (s, e) =>
+					{
+						currentEePromSettings.SetPrinterToFactorySettings();
+						currentEePromSettings.Update();
+					};
+				};
 			}
-
-			printerConnection.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
-
-			AddChild(mainContainer);
-
-			ShowAsSystemWindow();
-
-			// and ask the printer to send the settings
-			currentEePromSettings.Update();
 
 			foreach (GuiWidget widget in leftStuffToSize)
 			{
@@ -293,12 +232,36 @@ namespace MatterHackers.MatterControl.EeProm
 			}
 		}
 
+		private void ExportSettings()
+		{
+			string defaultFileName = $"eeprom_settings_{base.GetSanitizedPrinterName()}.ini";
+			AggContext.FileDialogs.SaveFileDialog(
+				new SaveFileDialogParams("EEPROM Settings|*.ini")
+				{
+					ActionButtonLabel = "Export EEPROM Settings".Localize(),
+					Title = "Export EEPROM".Localize(),
+					FileName = defaultFileName
+				},
+				(saveParams) =>
+				{
+					if (!string.IsNullOrEmpty(saveParams.FileName)
+					&& saveParams.FileName != defaultFileName)
+					{
+						currentEePromSettings.Export(saveParams.FileName);
+					}
+				});
+		}
+
 		private GuiWidget CreateMHNumEdit(ref MHNumberEdit numberEditToCreate)
 		{
-			numberEditToCreate = new MHNumberEdit(0, pixelWidth: 80, allowNegatives: true, allowDecimals: true);
-			numberEditToCreate.SelectAllOnFocus = true;
-			numberEditToCreate.VAnchor = Agg.UI.VAnchor.Center;
-			numberEditToCreate.Margin = new BorderDouble(3, 0);
+			numberEditToCreate = new MHNumberEdit(0, pixelWidth: 80, allowNegatives: true, allowDecimals: true)
+			{
+				SelectAllOnFocus = true,
+				VAnchor = VAnchor.Center,
+				Margin = new BorderDouble(3, 0),
+				TabIndex = GetNextTabIndex()
+			};
+
 			return numberEditToCreate;
 		}
 
@@ -329,11 +292,15 @@ namespace MatterHackers.MatterControl.EeProm
 
 		private GuiWidget CreateTextField(string label)
 		{
-			GuiWidget textWidget = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			textWidget.VAnchor = VAnchor.Center;
-			textWidget.HAnchor = HAnchor.Right;
-			GuiWidget container = new GuiWidget(textWidget.Height, 24);
+			var textWidget = new TextWidget(label, pointSize: theme.FontSize10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Right
+			};
+
+			var container = new GuiWidget(textWidget.Height, 24);
 			container.AddChild(textWidget);
+
 			return container;
 		}
 
@@ -343,48 +310,43 @@ namespace MatterHackers.MatterControl.EeProm
 			string field3Label, ref MHNumberEdit field3,
 			string field4Label, ref MHNumberEdit field4)
 		{
-			FlowLayoutWidget row = new FlowLayoutWidget();
-			row.Margin = new BorderDouble(3);
-			row.HAnchor = Agg.UI.HAnchor.Stretch;
+			var row = new FlowLayoutWidget
+			{
+				Margin = 3,
+				HAnchor = HAnchor.Stretch
+			};
 
-			TextWidget labelWidget = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			labelWidget.VAnchor = VAnchor.Center;
+			var labelWidget = new TextWidget(label, pointSize: theme.FontSize10, textColor: ActiveTheme.Instance.PrimaryTextColor);
 			maxWidthOfLeftStuff = Math.Max(maxWidthOfLeftStuff, labelWidget.Width);
-			GuiWidget holder = new GuiWidget(labelWidget.Width, labelWidget.Height);
-			holder.Margin = new BorderDouble(3, 0);
+
+			var holder = new GuiWidget(labelWidget.Width, labelWidget.Height)
+			{
+				Margin = new BorderDouble(3, 0),
+				VAnchor = VAnchor.Fit | VAnchor.Center
+			};
 			holder.AddChild(labelWidget);
 			leftStuffToSize.Add(holder);
 			row.AddChild(holder);
 
-			{
-				row.AddChild(CreateTextField(field1Label));
-				GuiWidget nextTabIndex = CreateMHNumEdit(ref field1);
-				nextTabIndex.TabIndex = GetNextTabIndex();
-				row.AddChild(nextTabIndex);
-			}
+			row.AddChild(CreateTextField(field1Label));
+			row.AddChild(CreateMHNumEdit(ref field1));
 
 			if (field2Label != null)
 			{
 				row.AddChild(CreateTextField(field2Label));
-				GuiWidget nextTabIndex = CreateMHNumEdit(ref field2);
-				nextTabIndex.TabIndex = GetNextTabIndex();
-				row.AddChild(nextTabIndex);
+				row.AddChild(CreateMHNumEdit(ref field2));
 			}
 
 			if (field3Label != null)
 			{
 				row.AddChild(CreateTextField(field3Label));
-				GuiWidget nextTabIndex = CreateMHNumEdit(ref field3);
-				nextTabIndex.TabIndex = GetNextTabIndex();
-				row.AddChild(nextTabIndex);
+				row.AddChild(CreateMHNumEdit(ref field3));
 			}
 
 			if (field4Label != null)
 			{
 				row.AddChild(CreateTextField(field4Label));
-				GuiWidget nextTabIndex = CreateMHNumEdit(ref field4);
-				nextTabIndex.TabIndex = GetNextTabIndex();
-				row.AddChild(nextTabIndex);
+				row.AddChild(CreateMHNumEdit(ref field4));
 			}
 
 			return row;
@@ -395,22 +357,9 @@ namespace MatterHackers.MatterControl.EeProm
 			return currentTabIndex++;
 		}
 
-		private static void CreateSpacer(FlowLayoutWidget buttonBar)
-		{
-			GuiWidget spacer = new GuiWidget(1, 1);
-			spacer.HAnchor = Agg.UI.HAnchor.Stretch;
-			buttonBar.AddChild(spacer);
-		}
-
-		private void buttonAbort_Click(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(Close);
-		}
-
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
-			
 			base.OnClosed(e);
 		}
 
