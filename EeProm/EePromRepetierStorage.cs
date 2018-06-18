@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,22 +27,19 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.PrinterCommunication;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using MatterHackers.Agg;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.EeProm
 {
-	public delegate void OnEePromRepetierAdded(EePromRepetierParameter param);
-
 	public class EePromRepetierStorage
 	{
 		public Dictionary<int, EePromRepetierParameter> eePromSettingsList;
 
-		public event EventHandler eventAdded = null;
+		public event EventHandler SettingAdded = null;
 
 		public EePromRepetierStorage()
 		{
@@ -84,7 +81,7 @@ namespace MatterHackers.MatterControl.EeProm
 				return;
 			}
 
-			EePromRepetierParameter parameter = new EePromRepetierParameter(line);
+			var parameter = new EePromRepetierParameter(line);
 			lock (eePromSettingsList)
 			{
 				if (eePromSettingsList.ContainsKey(parameter.position))
@@ -95,7 +92,7 @@ namespace MatterHackers.MatterControl.EeProm
 				eePromSettingsList.Add(parameter.position, parameter);
 			}
 
-			eventAdded(this, parameter);
+			this.SettingAdded?.Invoke(this, parameter);
 		}
 
 		public void AskPrinterForSettings(PrinterConnection printerConnection)
@@ -111,8 +108,7 @@ namespace MatterHackers.MatterControl.EeProm
 				{
 					foreach (EePromRepetierParameter p in eePromSettingsList.Values)
 					{
-						string data = "{0}|{1}".FormatWith(p.description, p.value);
-						sw.WriteLine(data);
+						sw.WriteLine("{0}|{1}", p.description, p.value);
 					}
 				}
 			}
@@ -120,10 +116,8 @@ namespace MatterHackers.MatterControl.EeProm
 
 		internal void Import(string fileName)
 		{
-			// read all the lines 
-			string[] allLines = File.ReadAllLines(fileName);
 			// find all the descriptions we can
-			foreach (string line in allLines)
+			foreach (string line in File.ReadAllLines(fileName))
 			{
 				if (line.Contains("|"))
 				{
@@ -134,13 +128,13 @@ namespace MatterHackers.MatterControl.EeProm
 						{
 							if (keyValue.Value.Description == descriptionValue[0])
 							{
-								if(keyValue.Value.Value != descriptionValue[1])
+								if (keyValue.Value.Value != descriptionValue[1])
 								{
 									// push in the value
 									keyValue.Value.Value = descriptionValue[1];
 									keyValue.Value.MarkChanged();
 									break;
-                                }
+								}
 							}
 						}
 					}

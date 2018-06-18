@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.EeProm
 
 			currentEePromSettings.Clear();
 			printer.Connection.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
-			currentEePromSettings.eventAdded += NewSettingReadFromPrinter;
+			currentEePromSettings.SettingAdded += NewSettingReadFromPrinter;
 			currentEePromSettings.AskPrinterForSettings(printer.Connection);
 
 #if SIMULATE_CONNECTION
@@ -245,7 +245,7 @@ namespace MatterHackers.MatterControl.EeProm
 		{
 			if (currentEePromSettings != null)
 			{
-				currentEePromSettings.eventAdded -= NewSettingReadFromPrinter;
+				currentEePromSettings.SettingAdded -= NewSettingReadFromPrinter;
 			}
 
 			unregisterEvents?.Invoke(this, null);
