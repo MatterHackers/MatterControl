@@ -31,7 +31,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+
+#if !__ANDROID__
 using Markdig.Wpf;
+#endif
+
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -567,6 +571,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 			});
 
+#if !__ANDROID__
 			// edit menu item
 			menuActions.Add(new PrintItemAction()
 			{
@@ -577,6 +582,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				},
 				IsEnabled = (selectedListItems, listView) => true
 			});
+#endif
 
 			// edit menu item
 			menuActions.Add(new PrintItemAction()
