@@ -264,6 +264,21 @@
     <Compile Include="SlicerConfiguration\UIFields\IconEnumField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IpAddessField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\Vector3Field.cs" />
+    <Compile Include="Utilities\MarkdigAgg\AggCodeBlockRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\AggHeadingRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\AggListRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\AggObjectRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\AggQuoteBlockRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\AggRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\AggThematicBreakRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\Inlines\AggAutolinkInlineRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\Inlines\AggCodeInlineRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\Inlines\AggDelimiterInlineRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\Inlines\AggEmphasisInlineRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\Inlines\AggLineBreakInlineRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\Inlines\AggLinkInlineRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\Inlines\AggLiteralInlineRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\AggParagraphRenderer.cs" />
     <Compile Include="Utilities\IGCodePostProcessor.cs" />
     <Compile Include="Utilities\InspectForm.cs" Condition="'$(Configuration)' == 'Debug'">
       <SubType>Form</SubType>
@@ -429,6 +444,8 @@
     <Compile Include="Utilities\AuthenticationData.cs" />
     <Compile Include="Utilities\JsonPath.cs" />
     <Compile Include="Utilities\LimitCallFrequency.cs" />
+    <Compile Include="Utilities\MarkdigAgg\MarkdownExtensions.cs" />
+    <Compile Include="Utilities\MarkdigAgg\MarkdownPage.cs" />
     <Compile Include="Utilities\SelectedListItems.cs" />
     <Compile Include="EeProm\EePromMarlinSettings.cs" />
     <Compile Include="History\PrintHistoryListItem.cs" />
@@ -509,6 +526,9 @@
     <Compile Include="PrinterCommunication\Io\SendProgressStream.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Markdig, Version=0.15.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Markdig.0.15.0\lib\net40\Markdig.dll</HintPath>
+    </Reference>
     <Reference Include="MIConvexHull, Version=1.0.17.1019, Culture=neutral, PublicKeyToken=bdc96d69606221fd, processorArchitecture=MSIL">
       <HintPath>packages\MIConvexHull.1.1.17.1019\lib\netstandard1.0\MIConvexHull.dll</HintPath>
     </Reference>

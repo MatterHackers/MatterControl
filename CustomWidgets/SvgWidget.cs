@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.IO;
 using System.Xml.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
@@ -49,8 +50,13 @@ namespace MatterHackers.MatterControl
 		public double Scale { get; set; } = 0.7;
 
 		public SvgWidget(string filePath, double scale, int width = -1, int height = -1)
+			: this (File.OpenRead(filePath), scale, width, height)
 		{
-			var root = XElement.Load(filePath);
+		}
+
+		public SvgWidget(Stream stream, double scale, int width = -1, int height = -1)
+		{
+			var root = XElement.Load(stream);
 
 			this.Scale = scale;
 
@@ -92,6 +98,7 @@ namespace MatterHackers.MatterControl
 
 			imageBuffer.FlipY();
 
+			stream.Dispose();
 			//this.source = new PathStorage(svgDString);
 		}
 
@@ -104,7 +111,7 @@ namespace MatterHackers.MatterControl
 					case "path":
 					case "polygon":
 
-						string htmlColor = ((string)elem.Attribute("style")).Replace("fill:", "").Replace(";", "");
+						string htmlColor = ((string)elem.Attribute("style"))?.Replace("fill:", "").Replace(";", "") ?? "#999";
 
 						if (elem.Name.LocalName == "polygon")
 						{
