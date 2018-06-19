@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			printerMakeContainer = CreateSelectionContainer(
 				"Make".Localize() + ":",
-				"Select the printer manufacturer".Localize(), 
+				"Select the printer manufacturer".Localize(),
 				printerManufacturerSelector);
 
 			printerModelSelector = new BoundDropList(string.Format("- {0} -", "Select Model".Localize()), maxHeight: 200)
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					LoadCalibrationPrints();
 
 #if __ANDROID__
-					UiThread.RunOnIdle(() => WizardWindow.ChangeToPage<AndroidConnectDevicePage>());
+					UiThread.RunOnIdle(() => DialogWindow.ChangeToPage<AndroidConnectDevicePage>());
 #else
 					UiThread.RunOnIdle(() =>
 					{
