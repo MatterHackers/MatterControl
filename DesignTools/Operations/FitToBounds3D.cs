@@ -169,6 +169,28 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			base.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
 		}
 
+		public override AxisAlignedBoundingBox GetAxisAlignedBoundingBox(Matrix4X4 matrix)
+		{
+			var aabb = base.GetAxisAlignedBoundingBox(matrix);
+			var size = aabb.Size;
+
+			if (StretchX)
+			{
+				size.X = Width;
+			}
+			if (StretchY)
+			{
+				size.Y = Depth;
+			}
+			if (StretchZ)
+			{
+				size.Z = Height;
+			}
+
+			var half = size / 2;
+			return new AxisAlignedBoundingBox(aabb.Center - half, aabb.Center + half);
+		}
+
 		private void AdjustChildSize(object sender, EventArgs e)
 		{
 			var aabb = ItemToScale.GetAxisAlignedBoundingBox();
