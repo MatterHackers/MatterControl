@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl
 		{
 			activePage = pageToChangeTo;
 
-			pageToChangeTo.WizardWindow = this;
+			pageToChangeTo.DialogWindow = this;
 			this.CloseAllChildren();
 			this.AddChild(pageToChangeTo);
 			this.Invalidate();
@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl
 		public DialogPage ChangeToPage<PanelType>() where PanelType : DialogPage, new()
 		{
 			PanelType panel = new PanelType();
-			panel.WizardWindow = this;
+			panel.DialogWindow = this;
 			ChangeToPage(panel);
 
 			// in the event of a reload all make sure we rebuild the contents correctly
@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl
 
 				// make new content with the possibly changed theme
 				PanelType newPanel = new PanelType();
-				newPanel.WizardWindow = this;
+				newPanel.DialogWindow = this;
 				AddChild(newPanel, thisIndex);
 				panel.CloseOnIdle();
 

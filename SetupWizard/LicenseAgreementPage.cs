@@ -58,7 +58,7 @@ public class LicenseAgreementPage : DialogPage
 		acceptButton.Click += (s, e) =>
 		{
 			UserSettings.Instance.set(UserSettingsKey.SoftwareLicenseAccepted, "true");
-			UiThread.RunOnIdle(WizardWindow.Close);
+			UiThread.RunOnIdle(DialogWindow.Close);
 		};
 
 		acceptButton.Visible = true;

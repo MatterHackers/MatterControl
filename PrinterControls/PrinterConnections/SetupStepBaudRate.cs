@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							this.WizardWindow.ChangeToPage(new SetupStepComPortOne(printer));
+							this.DialogWindow.ChangeToPage(new SetupStepComPortOne(printer));
 						});
 					}
 				};

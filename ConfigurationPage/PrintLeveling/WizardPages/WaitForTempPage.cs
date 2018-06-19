@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void OnLoad(EventArgs args)
 		{
 			// hook our parent so we can turn off the bed when we are done with leveling
-			this.WizardWindow.Closed += WizardWindow_Closed;
+			this.DialogWindow.Closed += WizardWindow_Closed;
 			base.OnLoad(args);
 		}
 
@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			// Make sure when the wizard closes we turn off the bed heating
 			printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
-			this.WizardWindow.Closed -= WizardWindow_Closed;
+			this.DialogWindow.Closed -= WizardWindow_Closed;
 		}
 
 		public override void PageIsBecomingActive()

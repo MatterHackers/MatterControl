@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl
 #endif
 		}
 
-		public DialogWindow WizardWindow { get; set; }
+		public DialogWindow DialogWindow { get; set; }
 
 		public string WindowTitle { get; set; }
 
@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl
 
 				if (!abortCancel)
 				{
-					UiThread.RunOnIdle(() => WizardWindow?.Close());
+					this.DialogWindow?.CloseOnIdle();
 				}
 			};
 
@@ -199,7 +199,7 @@ namespace MatterHackers.MatterControl
 
 						if (!abortCancel)
 						{
-							UiThread.RunOnIdle(() => WizardWindow?.Close());
+							this.DialogWindow?.CloseOnIdle();
 						}
 					}
 				};

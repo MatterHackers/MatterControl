@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				UiThread.RunOnIdle(() =>
 				{
 					presetsContext.DeleteLayer();
-					this.WizardWindow.Close();
+					this.DialogWindow.Close();
 				});
 			};
 			this.AddPageAction(deleteButton);
@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void OnLoad(EventArgs args)
 		{
-			this.WizardWindow.Padding = 0;
+			this.DialogWindow.Padding = 0;
 			footerRow.Padding = theme.DefaultContainerPadding;
 			footerRow.Margin = 0;
 			footerRow.Border = new BorderDouble(top: 1);

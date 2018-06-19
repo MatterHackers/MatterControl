@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 					// Switch to setup wizard if no profiles exist
 					UiThread.RunOnIdle(() =>
 					{
-						this.WizardWindow.ChangeToPage(PrinterSetup.GetBestStartPage());
+						this.DialogWindow.ChangeToPage(PrinterSetup.GetBestStartPage());
 					});
 				}
 				else if (ProfileManager.Instance.ActiveProfiles.Count() == 1)
@@ -46,11 +46,11 @@ namespace MatterHackers.MatterControl.SetupWizard
 					ProfileManager.SwitchToProfile(ProfileManager.Instance.ActiveProfiles.First().ID).ConfigureAwait(false);
 
 					// only close the window if we are not switching to the setup printer form
-					UiThread.RunOnIdle(WizardWindow.Close);
+					UiThread.RunOnIdle(DialogWindow.Close);
 				}
 				else // multiple printers - close the window
 				{
-					UiThread.RunOnIdle(WizardWindow.Close);
+					UiThread.RunOnIdle(DialogWindow.Close);
 				}
 			});
 		}

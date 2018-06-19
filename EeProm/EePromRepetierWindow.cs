@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.EeProm
 			{
 				if(!printer.Connection.IsConnected)
 				{
-					this.WizardWindow.CloseOnIdle();
+					this.DialogWindow.CloseOnIdle();
 				}
 			}, ref unregisterEvents);
 		}
@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.EeProm
 				{
 					currentEePromSettings.Save(printer.Connection);
 					currentEePromSettings.Clear();
-					this.WizardWindow.Close();
+					this.DialogWindow.Close();
 				});
 			};
 			this.AddPageAction(buttonSave);

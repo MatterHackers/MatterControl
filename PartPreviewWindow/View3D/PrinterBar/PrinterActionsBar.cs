@@ -337,7 +337,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					case FirmwareTypes.Repetier:
 						if (repetierEEPromPage != null)
 						{
-							repetierEEPromPage.WizardWindow.BringToFront();
+							repetierEEPromPage.DialogWindow.BringToFront();
 						}
 						else
 						{
@@ -354,7 +354,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					case FirmwareTypes.Marlin:
 						if (marlinEEPromPage != null)
 						{
-							marlinEEPromPage.WizardWindow.BringToFront();
+							marlinEEPromPage.DialogWindow.BringToFront();
 						}
 						else
 						{

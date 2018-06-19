@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			manualLink.Margin = new BorderDouble(0, 5);
 			manualLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				WizardWindow.ChangeToPage(new SetupStepComPortManual(printer));
+				DialogWindow.ChangeToPage(new SetupStepComPortManual(printer));
 			});
 
 			printerErrorMessage = new TextWidget("", 0, 0, 10)

@@ -102,13 +102,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void OnLoad(EventArgs args)
 		{
-			this.WizardWindow.KeyDown += TopWindowKeyDown;
+			this.DialogWindow.KeyDown += TopWindowKeyDown;
 			base.OnLoad(args);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			this.WizardWindow.KeyDown -= TopWindowKeyDown;
+			this.DialogWindow.KeyDown -= TopWindowKeyDown;
 			base.OnClosed(e);
 		}
 
