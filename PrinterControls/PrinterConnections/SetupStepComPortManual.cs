@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			refreshButton = theme.CreateDialogButton("Refresh".Localize());
 			refreshButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				WizardWindow.ChangeToPage(new SetupStepComPortManual(printer));
+				DialogWindow.ChangeToPage(new SetupStepComPortManual(printer));
 			});
 
 			this.AddPageAction(nextButton);

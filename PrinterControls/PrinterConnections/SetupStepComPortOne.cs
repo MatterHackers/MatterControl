@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			manualLink.Margin = new BorderDouble(0, 5);
 			manualLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				WizardWindow.ChangeToPage(new SetupStepComPortManual(printer));
+				DialogWindow.ChangeToPage(new SetupStepComPortManual(printer));
 			});
 			container.AddChild(manualLink);
 
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			var nextButton = theme.CreateDialogButton("Continue".Localize());
 			nextButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				WizardWindow.ChangeToPage(new SetupStepComPortTwo(printer));
+				DialogWindow.ChangeToPage(new SetupStepComPortTwo(printer));
 			});
 
 			this.AddPageAction(nextButton);

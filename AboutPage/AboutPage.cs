@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl
 			};
 			feedbackButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				this.WizardWindow.ChangeToPage<ContactFormPage>();
+				this.DialogWindow.ChangeToPage<ContactFormPage>();
 			});
 
 			this.AddPageAction(feedbackButton);

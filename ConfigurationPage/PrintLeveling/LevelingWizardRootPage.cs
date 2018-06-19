@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void OnLoad(EventArgs args)
 		{
-			levelingContext.ShowNextPage(this.WizardWindow);
+			levelingContext.ShowNextPage(this.DialogWindow);
 			base.OnLoad(args);
 		}
 	}

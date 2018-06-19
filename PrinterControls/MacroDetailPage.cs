@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl
 							printerSettings.Save();
 						}
 
-						this.WizardWindow.ChangeToPage(new MacroListPage(printerSettings));
+						this.DialogWindow.ChangeToPage(new MacroListPage(printerSettings));
 					}
 				});
 			};
@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl
 		protected override void OnCancel(out bool abortCancel)
 		{
 			abortCancel = true;
-			this.WizardWindow.ChangeToPage(new MacroListPage(printerSettings));
+			this.DialogWindow.ChangeToPage(new MacroListPage(printerSettings));
 		}
 
 		private bool ValidateMacroForm()

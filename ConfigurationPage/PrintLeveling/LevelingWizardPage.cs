@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl
 			};
 			nextButton.Click += (s, e) =>
 			{
-				wizardContext.ShowNextPage(this.WizardWindow);
+				wizardContext.ShowNextPage(this.DialogWindow);
 			};
 
 			this.AddPageAction(nextButton);
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl
 
 			doneButton.Click += (s, e) =>
 			{
-				this.WizardWindow.CloseOnIdle();
+				this.DialogWindow.CloseOnIdle();
 			};
 
 			this.AddPageAction(doneButton);

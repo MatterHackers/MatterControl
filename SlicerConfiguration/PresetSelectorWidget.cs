@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 					else
 					{
-						ApplicationController.Instance.EditMaterialPresetsPage.WizardWindow.BringToFront();
+						ApplicationController.Instance.EditMaterialPresetsPage.DialogWindow.BringToFront();
 					}
 				}
 
@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 					else
 					{
-						ApplicationController.Instance.EditQualityPresetsWindow.WizardWindow.BringToFront();
+						ApplicationController.Instance.EditQualityPresetsWindow.DialogWindow.BringToFront();
 					}
 				}
 			};

@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 						ApplicationController.Instance.RefreshActiveInstance(printerSettings);
 					}
 
-					UiThread.RunOnIdle(WizardWindow.Close);
+					UiThread.RunOnIdle(DialogWindow.Close);
 				}
 			};
 			this.AddPageAction(revertButton);

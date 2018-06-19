@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl
 			troubleshootButton = theme.WhiteButtonFactory.Generate("Troubleshoot".Localize());
 			troubleshootButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				WizardWindow.ChangeToPage<SetupWizardTroubleshooting>();
+				DialogWindow.ChangeToPage<SetupWizardTroubleshooting>();
 			});
 
 			retryButtonContainer = new FlowLayoutWidget()
@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl
 			this.generalError.Text = "Please wait...";
 			this.generalError.Visible = true;
 			nextButton.Visible = false;
-			UiThread.RunOnIdle(this.WizardWindow.Close);
+			UiThread.RunOnIdle(this.DialogWindow.Close);
 		}
 
 		private void communicationStateChanged(object sender, EventArgs args)

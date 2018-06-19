@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl
 				var affirmativeButton = theme.CreateDialogButton(yesOk);
 				affirmativeButton.Click += (s, e) =>
 				{
-					UiThread.RunOnIdle(this.WizardWindow.Close);
+					UiThread.RunOnIdle(this.DialogWindow.Close);
 
 					// If applicable, invoke the callback
 					responseCallback?.Invoke(true);

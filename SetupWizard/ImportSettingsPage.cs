@@ -202,10 +202,10 @@ namespace MatterHackers.MatterControl
 
 						string importSettingSuccessMessage = string.Format("You have successfully imported a new {0} setting. You can find '{1}' in your list of {0} settings.".Localize(), sectionName, layerName);
 
-						WizardWindow.ChangeToPage(
+						DialogWindow.ChangeToPage(
 							new ImportSucceeded(importSettingSuccessMessage)
 							{
-								WizardWindow = this.WizardWindow,
+								DialogWindow = this.DialogWindow,
 							});
 
 						if (destIsMaterial)

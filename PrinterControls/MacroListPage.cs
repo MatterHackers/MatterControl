@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
 			addMacroButton.ToolTipText = "Add a new Macro".Localize();
 			addMacroButton.Click += (s, e) =>
 			{
-				this.WizardWindow.ChangeToPage(
+				this.DialogWindow.ChangeToPage(
 					new MacroDetailPage(
 						new GCodeMacro()
 						{
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl
 					editLink.Margin = new BorderDouble(right: 5);
 					editLink.Click += (s, e) =>
 					{
-						this.WizardWindow.ChangeToPage(
+						this.DialogWindow.ChangeToPage(
 							new MacroDetailPage(localMacroReference, printerSettings));
 					};
 					macroRow.AddChild(editLink);

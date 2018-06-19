@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl
 				// Close the window and update the PrintersImported flag
 				UiThread.RunOnIdle(() =>
 				{
-					WizardWindow.Close();
+					DialogWindow.Close();
 
 					ProfileManager.Instance.PrintersImported = true;
 					ProfileManager.Instance.Save();

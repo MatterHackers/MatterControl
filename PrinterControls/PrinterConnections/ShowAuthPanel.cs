@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			{
 				UiThread.RunOnIdle(() =>
 			   {
-				   WizardWindow.Close();
+				   DialogWindow.Close();
 				   PrinterSetup.ChangeToAccountCreate();
 			   });
 			};
@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			{
 				UiThread.RunOnIdle(() =>
 			   {
-				   WizardWindow.Close();
+				   DialogWindow.Close();
 				   PrinterSetup.ShowAuthDialog?.Invoke();
 			   });
 			};
@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 				UiThread.RunOnIdle(() =>
 				{
-					WizardWindow.ChangeToPage<SetupStepMakeModelName>();
+					DialogWindow.ChangeToPage<SetupStepMakeModelName>();
 				});
 			}
 

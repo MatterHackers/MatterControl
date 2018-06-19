@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl
 			RefreshStatus();
 
 			nextButton = theme.ButtonFactory.Generate("Continue".Localize());
-			nextButton.Click += (sender, e) => UiThread.RunOnIdle(this.WizardWindow.Close);
+			nextButton.Click += (sender, e) => UiThread.RunOnIdle(this.DialogWindow.Close);
 			nextButton.Visible = false;
 
 			this.AddPageAction(nextButton);
@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
 
 			UiThread.RunOnIdle(() =>
 			{
-				this.WizardWindow.ChangeToPage<AndroidConnectDevicePage>();
+				this.DialogWindow.ChangeToPage<AndroidConnectDevicePage>();
 			});
 		}
 

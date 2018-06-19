@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl
 						writableContainer);
 				}
 
-				this.WizardWindow.CloseOnIdle();
+				this.DialogWindow.CloseOnIdle();
 			};
 
 			this.AddPageAction(acceptButton);

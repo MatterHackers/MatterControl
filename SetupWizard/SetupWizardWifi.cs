@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				this.WizardWindow.ChangeToPage(PrinterSetup.GetBestStartPage());
+				this.DialogWindow.ChangeToPage(PrinterSetup.GetBestStartPage());
 			});
 		}
 	}
