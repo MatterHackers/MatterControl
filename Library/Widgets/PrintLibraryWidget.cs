@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Markdig.Wpf;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -564,6 +565,17 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					return listView.SelectedItems.Any()
 						&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
 				}
+			});
+
+			// edit menu item
+			menuActions.Add(new PrintItemAction()
+			{
+				Title = "MarkDown".Localize(),
+				Action = (selectedLibraryItems, listView) =>
+				{
+					DialogWindow.Show<MarkdownPage>();
+				},
+				IsEnabled = (selectedListItems, listView) => true
 			});
 
 			// edit menu item
