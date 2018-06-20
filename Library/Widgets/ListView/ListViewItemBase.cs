@@ -112,6 +112,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						// Schedule work
 						this.ScheduleRaytraceOperation();
 					}
+					else
+					{
+						// Show processing image
+						this.SetItemThumbnail(generatingThumbnailIcon, raytracedImage: false);
+
+						// Ask the provider for a content specific thumbnail
+						await contentProvider.GetThumbnail(
+							libraryItem,
+							thumbWidth,
+							thumbHeight,
+							this.SetItemThumbnail);
+					}
 				}
 			}
 
