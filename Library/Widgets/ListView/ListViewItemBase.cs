@@ -104,30 +104,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					// Before we have a thumbnail set to the content specific thumbnail
 					thumbnail = contentProvider.DefaultImage;
 
-					ApplicationController.Instance.QueueForGeneration(async () =>
+					if (contentProvider is MeshContentProvider meshContentProvider)
 					{
-						// When this widget is dequeued for generation, validate before processing. Off-screen widgets should be skipped and will requeue next time they become visible
-						if (this.ActuallyVisibleOnScreen())
-						{
-							raytraceSkipped = false;
-							requeueRaytraceOnDraw = false;
+						// Store meshContentProvider reference
+						this.meshContentProvider = meshContentProvider;
 
-							this.SetItemThumbnail(generatingThumbnailIcon, raytracedImage: false);
-
-							// Ask the provider for a content specific thumbnail
-							await contentProvider.GetThumbnail(
-								libraryItem,
-								thumbWidth,
-								thumbHeight,
-								this.SetItemThumbnail);
-						}
-						else
-						{
-							raytraceSkipped = true;
-							raytracePending = false;
-							requeueRaytraceOnDraw = true;
-						}
-					});
+						// Schedule work
+						this.ScheduleRaytraceOperation();
+					}
 				}
 			}
 
@@ -138,6 +122,41 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 
 			this.SetItemThumbnail(thumbnail, raytracedImage: false);
+		}
+
+		private void ScheduleRaytraceOperation()
+		{
+			if (meshContentProvider == null)
+			{
+				return;
+			}
+
+			ApplicationController.Instance.QueueForGeneration(async () =>
+			{
+				// When this widget is dequeued for generation, validate before processing. Off-screen widgets should be skipped and will requeue next time they become visible
+				if (!this.ActuallyVisibleOnScreen())
+				{
+					// Skip raytracing operation, requeue on next draw
+					raytraceSkipped = true;
+					raytracePending = false;
+					requeueRaytraceOnDraw = true;
+				}
+				else
+				{
+					raytraceSkipped = false;
+					requeueRaytraceOnDraw = false;
+
+					// Show processing image
+					this.SetItemThumbnail(generatingThumbnailIcon, raytracedImage: false);
+
+					// Ask the MeshContentProvider to RayTrace the image
+					await meshContentProvider.GetThumbnail(
+						listViewItem.Model,
+						thumbWidth,
+						thumbHeight,
+						this.SetItemThumbnail);
+				}
+			});
 		}
 
 		internal void EnsureSelection()
@@ -354,6 +373,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private bool raytraceSkipped;
 		private bool requeueRaytraceOnDraw;
 		private bool raytracePending;
+		private MeshContentProvider meshContentProvider;
 
 		public bool IsSelected
 		{
