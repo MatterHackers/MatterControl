@@ -48,12 +48,11 @@ namespace MatterHackers.MatterControl.EeProm
 		protected PrinterConfig printer;
 
 		public EEPromPage(PrinterConfig printer)
-			: base(useOverflowBar: true)
+			: base("Close".Localize(), useOverflowBar: true)
 		{
 			this.HeaderText = "EEProm Settings".Localize();
 			this.WindowSize = new VectorMath.Vector2(663, 575);
 			headerRow.Margin = this.headerRow.Margin.Clone(bottom: 0);
-
 
 			this.printer = printer;
 
