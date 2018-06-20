@@ -65,28 +65,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.thumbHeight = height;
 		}
 
-		public Task LoadItemThumbnail()
+		public async Task LoadItemThumbnail()
 		{
-			return LoadItemThumbnail(
-				listViewItem.Model,
-				listViewItem.Container,
-				this.thumbWidth,
-				this.thumbHeight,
-				() =>
-				{
-					bool isValid = this.ActuallyVisibleOnScreen();
-					if (!isValid)
-					{
-						raytraceSkipped = true;
-						raytracePending = false;
-					};
+			ILibraryItem libraryItem = listViewItem.Model;
+			ILibraryContainer libraryContainer = listViewItem.Container;
 
-					return isValid;
-				});
-		}
-
-		private async Task LoadItemThumbnail(ILibraryItem libraryItem, ILibraryContainer libraryContainer, int thumbWidth, int thumbHeight, Func<bool> shouldGenerateThumbnail)
-		{
 			string thumbnailId = libraryItem.ID;
 			if(libraryItem is IThumbnail thumbnailKey)
 			{
@@ -121,13 +104,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					// Before we have a thumbnail set to the content specific thumbnail
 					thumbnail = contentProvider.DefaultImage;
 
-					this.requeueRaytraceOnDraw = true;
-
 					ApplicationController.Instance.QueueForGeneration(async () =>
 					{
 						// When this widget is dequeued for generation, validate before processing. Off-screen widgets should be skipped and will requeue next time they become visible
-						if (shouldGenerateThumbnail?.Invoke() == true)
+						if (this.ActuallyVisibleOnScreen())
 						{
+							raytraceSkipped = false;
+							requeueRaytraceOnDraw = false;
+
 							this.SetItemThumbnail(generatingThumbnailIcon, raytracedImage: false);
 
 							// Ask the provider for a content specific thumbnail
@@ -136,6 +120,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 								thumbWidth,
 								thumbHeight,
 								this.SetItemThumbnail);
+						}
+						else
+						{
+							raytraceSkipped = true;
+							raytracePending = false;
+							requeueRaytraceOnDraw = true;
 						}
 					});
 				}
