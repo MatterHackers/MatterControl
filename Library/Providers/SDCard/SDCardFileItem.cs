@@ -37,8 +37,6 @@ namespace MatterHackers.MatterControl.Library
 
 		public string Name { get; set; }
 
-		public string ThumbnailKey { get; } = null;
-
 		public bool IsProtected { get; } = true;
 
 		public bool IsVisible { get; } = true;

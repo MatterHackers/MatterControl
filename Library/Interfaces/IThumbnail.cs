@@ -34,7 +34,6 @@ namespace MatterHackers.MatterControl.Library
 {
 	public interface IThumbnail
 	{
-		string ThumbnailKey { get; }
 		Task<ImageBuffer> GetThumbnail(int width, int height);
 	}
 }

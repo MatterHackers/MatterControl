@@ -54,8 +54,6 @@ namespace MatterHackers.MatterControl.Library
 		public LocalZipContainerLink(string filePath, string nameOverride = null)
 			: base(filePath)
 		{
-			this.ThumbnailKey = null;
-
 			if (nameOverride != null)
 			{
 				this.Name = nameOverride;

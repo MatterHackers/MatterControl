@@ -93,7 +93,6 @@ namespace MatterHackers.MatterControl.Library
 		public string ID => $"MatterHackers/ItemGenerator/{Name}".GetHashCode().ToString();
 		public string Category { get; set; }
 		public string Name => nameResolver?.Invoke();
-		public string ThumbnailKey { get; } = "";
 
 		public string ContentType { get; set; } = "mcx";
 

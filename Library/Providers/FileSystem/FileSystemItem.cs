@@ -41,7 +41,6 @@ namespace MatterHackers.MatterControl.Library
 
 		public string Path { get; set; }
 		public string Category { get; set; }
-		public string ThumbnailKey { get; set; } = "";
 		public virtual bool IsProtected => false;
 		public virtual bool IsVisible => true;
 		public virtual bool LocalContentExists => true;

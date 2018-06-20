@@ -121,10 +121,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			string thumbnailId = libraryItem.ID;
-			if (libraryItem is IThumbnail thumbnailKey)
-			{
-				thumbnailId = thumbnailKey.ThumbnailKey;
-			}
 
 			var thumbnail = GetThumbnail(object3D, thumbnailId, width, height, false);
 			imageCallback?.Invoke(thumbnail, true);
