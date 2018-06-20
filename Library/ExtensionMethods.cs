@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.Library
 	public static class ExtensionMethods
 	{
 		// Container ExtensionMethods
-		public static IEnumerable<ILibraryContainer> Parents(this ILibraryContainer item)
+		public static IEnumerable<ILibraryContainer> Ancestors(this ILibraryContainer item)
 		{
 			var context = item.Parent;
 			while (context != null)

@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.Library
 					activeContainer.KeywordFilter = "";
 
 					// If the new container is an ancestor of the active container we need to Dispose everyone up to that point
-					if (activeContainer.Parents().Where(p => p == newContainer).Any())
+					if (activeContainer.Ancestors().Where(p => p == newContainer).Any())
 					{
 						var context = activeContainer;
 						while (context != newContainer)
