@@ -72,7 +72,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				listViewItem.Container,
 				this.thumbWidth,
 				this.thumbHeight,
-				this.SetItemThumbnail,
 				() =>
 				{
 					bool isValid = this.ActuallyVisibleOnScreen();
@@ -86,7 +85,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				});
 		}
 
-		private async Task LoadItemThumbnail(ILibraryItem libraryItem, ILibraryContainer libraryContainer, int thumbWidth, int thumbHeight, ThumbnailSetter thumbnailSetter, Func<bool> shouldGenerateThumbnail)
+		private async Task LoadItemThumbnail(ILibraryItem libraryItem, ILibraryContainer libraryContainer, int thumbWidth, int thumbHeight, Func<bool> shouldGenerateThumbnail)
 		{
 			string thumbnailId = libraryItem.ID;
 			if(libraryItem is IThumbnail thumbnailKey)
@@ -97,7 +96,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			var thumbnail = MeshContentProvider.LoadCachedImage(thumbnailId, thumbWidth, thumbHeight);
 			if (thumbnail != null)
 			{
-				thumbnailSetter(thumbnail, raytracedImage: false);
+				this.SetItemThumbnail(thumbnail, raytracedImage: false);
 				return;
 			}
 
@@ -129,14 +128,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						// When this widget is dequeued for generation, validate before processing. Off-screen widgets should be skipped and will requeue next time they become visible
 						if (shouldGenerateThumbnail?.Invoke() == true)
 						{
-							thumbnailSetter(generatingThumbnailIcon, raytracedImage: false);
+							this.SetItemThumbnail(generatingThumbnailIcon, raytracedImage: false);
 
 							// Ask the provider for a content specific thumbnail
 							await contentProvider.GetThumbnail(
 								libraryItem,
 								thumbWidth,
 								thumbHeight,
-								thumbnailSetter);
+								this.SetItemThumbnail);
 						}
 					});
 				}
@@ -148,7 +147,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				thumbnail = ((libraryItem is ILibraryContainerLink) ? defaultFolderIcon : defaultItemIcon).AlphaToPrimaryAccent();
 			}
 
-			thumbnailSetter(thumbnail, raytracedImage: false);
+			this.SetItemThumbnail(thumbnail, raytracedImage: false);
 		}
 
 		internal void EnsureSelection()
