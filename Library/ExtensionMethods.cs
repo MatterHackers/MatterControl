@@ -50,6 +50,16 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
+		public static IEnumerable<ILibraryContainer> AncestorsAndSelf(this ILibraryContainer item)
+		{
+			var container = item;
+			while (container != null)
+			{
+				yield return container;
+				container = container.Parent;
+			}
+		}
+
 		public static void Add(this Dictionary<string, IContentProvider> list, IEnumerable<string> extensions, IContentProvider provider)
 		{
 			foreach (var extension in extensions)
