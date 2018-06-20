@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					// Before we have a thumbnail set to the content specific thumbnail
 					thumbnail = contentProvider.DefaultImage;
 
-					this.useRaytracedMeshThumbnails = true;
+					this.requeueRaytraceOnDraw = true;
 
 					ApplicationController.Instance.QueueForGeneration(async () =>
 					{
@@ -280,9 +280,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public async override void OnDraw(Graphics2D graphics2D)
 		{
-			if (useRaytracedMeshThumbnails
+			if (requeueRaytraceOnDraw
 				&& !raytracePending
-				&& this.raytraceSkipped)
+				&& raytraceSkipped)
 			{
 				raytracePending = true;
 
@@ -360,7 +360,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private bool isSelected = false;
 		private bool raytraceSkipped;
-		private bool useRaytracedMeshThumbnails;
+		private bool requeueRaytraceOnDraw;
 		private bool raytracePending;
 
 		public bool IsSelected
