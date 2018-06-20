@@ -298,7 +298,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				raytracePending = true;
 
 				// Requeue thumbnail generation
-				await this.LoadItemThumbnail();
+				this.ScheduleRaytraceOperation();
 			}
 
 			base.OnDraw(graphics2D);
