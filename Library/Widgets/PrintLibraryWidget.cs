@@ -571,7 +571,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 			});
 
-#if !__ANDROID__
+
+#if !__ANDROID__ && DEBUG
 			// edit menu item
 			menuActions.Add(new PrintItemAction()
 			{

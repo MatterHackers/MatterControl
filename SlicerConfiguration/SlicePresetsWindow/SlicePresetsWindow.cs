@@ -67,6 +67,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private PrinterConfig printer;
 
 		public SlicePresetsPage(PrinterConfig printer, PresetsContext presetsContext)
+			: base("Close".Localize())
 		{
 			this.presetsContext = presetsContext;
 			this.printer = printer;
