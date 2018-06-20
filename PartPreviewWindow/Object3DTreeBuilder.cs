@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			// Suppress MeshWrapper and OperationSource nodes in tree
 			bool shouldCollapseToParent = item.Source is MeshWrapper || item.Source is OperationSource;
-			var contextNode = (shouldCollapseToParent) ? parent : AddItem(item, parent, theme);
+			var contextNode = (shouldCollapseToParent && parent != null) ? parent : AddItem(item, parent, theme);
 
 			contextNode.SuspendLayout();
 
@@ -109,9 +109,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							node.Image = meshContentProvider.GetThumbnail(
 								item.Source,
+								item.Source.MeshRenderId().ToString(),
 								16,
 								16,
-								forceOrthographic: false);
+								true);
 						}
 
 						return Task.CompletedTask;
