@@ -325,57 +325,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		internal static ImageBuffer LoadCachedImage(ILibraryItem libraryItem, int width, int height)
-		{
-			ImageBuffer cachedItem = LoadImage(ApplicationController.Instance.ThumbnailCachePath(libraryItem, width, height));
-			if (cachedItem != null)
-			{
-				return cachedItem;
-			}
-
-			// Check for big render, resize, cache and return
-			var bigRender = LoadImage(ApplicationController.Instance.ThumbnailCachePath(libraryItem));
-			if (bigRender != null)
-			{
-				try
-				{
-					var thumbnail = LibraryProviderHelpers.ResizeImage(bigRender, width, height);
-
-					// Cache at requested size
-					AggContext.ImageIO.SaveImageData(
-						ApplicationController.Instance.ThumbnailCachePath(libraryItem, width, height),
-						thumbnail);
-
-					return thumbnail;
-				}
-				catch { } // suppress and return null on errors
-			}
-
-			return null;
-		}
-
-		private static ImageBuffer LoadImage(string filePath)
-		{
-			ImageBuffer thumbnail = null;
-
-			try
-			{
-				if (File.Exists(filePath))
-				{
-					var temp = new ImageBuffer();
-					AggContext.ImageIO.LoadImageData(filePath, temp);
-					temp.SetRecieveBlender(new BlenderPreMultBGRA());
-
-					thumbnail = temp;
-				}
-
-				return thumbnail;
-			}
-			catch { } // Suppress exceptions, return null on any errors
-
-			return thumbnail;
-		}
-
 		// TODO: ResizeCanvas is also colorizing thumbnails as a proof of concept
 		public static ImageBuffer ResizeCanvas(ImageBuffer originalImage, int width, int height)
 		{

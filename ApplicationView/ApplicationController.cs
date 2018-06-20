@@ -1350,16 +1350,15 @@ namespace MatterHackers.MatterControl
 		public string ShortProductName => "MatterControl";
 		public string ProductName => "MatterHackers: MatterControl";
 
-		public string ThumbnailCachePath(ILibraryItem libraryItem)
+		public string ThumbnailCachePath(string cacheId)
 		{
 			// TODO: Use content SHA
-			return string.IsNullOrEmpty(libraryItem.ID) ? null : ApplicationController.CacheablePath("ItemThumbnails", $"{libraryItem.ID}.png");
+			return ApplicationController.CacheablePath("ItemThumbnails", $"{cacheId}.png");
 		}
 
-		public string ThumbnailCachePath(ILibraryItem libraryItem, int width, int height)
+		public string ThumbnailCachePath(string id, int width, int height)
 		{
-			// TODO: Use content SHA
-			return string.IsNullOrEmpty(libraryItem.ID) ? null : ApplicationController.CacheablePath("ItemThumbnails", $"{libraryItem.ID}-{width}x{height}.png");
+			return ApplicationController.CacheablePath("ItemThumbnails", $"{id}-{width}x{height}.png");
 		}
 
 		public void SwitchToPurchasedLibrary()

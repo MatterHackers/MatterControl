@@ -88,7 +88,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private async Task LoadItemThumbnail(ILibraryItem libraryItem, ILibraryContainer libraryContainer, int thumbWidth, int thumbHeight, ThumbnailSetter thumbnailSetter, Func<bool> shouldGenerateThumbnail)
 		{
-			var thumbnail = ListView.LoadCachedImage(libraryItem, thumbWidth, thumbHeight);
+			string thumbnailId = libraryItem.ID;
+			if(libraryItem is IThumbnail thumbnailKey)
+			{
+				thumbnailId = thumbnailKey.ThumbnailKey;
+			}
+
+			var thumbnail = MeshContentProvider.LoadCachedImage(thumbnailId, thumbWidth, thumbHeight);
 			if (thumbnail != null)
 			{
 				thumbnailSetter(thumbnail, raytracedImage: false);
