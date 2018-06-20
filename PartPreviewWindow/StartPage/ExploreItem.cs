@@ -71,6 +71,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				{
 					// these images expect to be on white so change the background to white
 					BackgroundColor = Color.White,
+					Margin = new BorderDouble(right: ItemSpacing)
 				};
 				this.AddChild(whiteBackground);
 
@@ -78,7 +79,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				{
 					Selectable = false,
 					VAnchor = VAnchor.Center,
-					Margin = new BorderDouble(right: ItemSpacing)
 				};
 
 				imageWidget.Load += (s, e) => ApplicationController.Instance.DownloadToImageAsync(image, item.widget_url, true, new BlenderPreMultBGRA());
