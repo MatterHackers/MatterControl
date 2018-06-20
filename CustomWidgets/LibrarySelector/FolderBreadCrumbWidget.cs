@@ -54,16 +54,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.MinimumSize = new VectorMath.Vector2(0, 1); // Force some minimum bounds to ensure draw and thus onload (and our local init) are called on startup
 		}
 
-		public static IEnumerable<ILibraryContainer> ItemAndParents(ILibraryContainer item)
-		{
-			var container = item;
-			while (container != null)
-			{
-				yield return container;
-				container = container.Parent;
-			}
-		}
-
 		public void SetContainer(ILibraryContainer currentContainer)
 		{
 			var linkButtonFactory = ApplicationController.Instance.Theme.LinkButtonFactory;
@@ -103,7 +93,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				var extraSpacing = (theme.ButtonSpacing).Clone(left: theme.ButtonSpacing.Right * .4);
 
-				foreach (var container in ItemAndParents(currentContainer).Reverse())
+				foreach (var container in currentContainer.AncestorsAndSelf().Reverse())
 				{
 					if (!firstItem)
 					{
