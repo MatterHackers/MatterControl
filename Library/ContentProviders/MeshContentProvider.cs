@@ -139,6 +139,12 @@ namespace MatterHackers.MatterControl
 
 			var image = LoadCachedImage(thumbnailId, width, height);
 
+			if(image == null)
+			{
+				// check the mesh cache
+				image = LoadCachedImage(item.MeshRenderId().ToString(), width, height);
+			}
+
 			if(image != null)
 			{
 				return image;
