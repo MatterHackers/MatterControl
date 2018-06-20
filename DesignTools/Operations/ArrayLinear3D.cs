@@ -37,7 +37,7 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayLinear3D : Object3D, IPublicPropertyObject
+	public class ArrayLinear3D : Object3D
 	{
 		public ArrayLinear3D()
 		{
@@ -75,28 +75,28 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
-			this.SuspendRebuild();
-			this.DebugDepth("Rebuild");
-
-			var sourceContainer = OperationSource.GetOrCreateSourceContainer(this);
-
-			this.Children.Modify(list =>
+			using (this.RebuildLock())
 			{
-				list.Clear();
+				this.DebugDepth("Rebuild");
+
+				var sourceContainer = OperationSource.GetOrCreateSourceContainer(this);
+
+				this.Children.Modify(list =>
+				{
+					list.Clear();
 				// add back in the sourceContainer
 				list.Add(sourceContainer);
 				// get the source item
 				var sourceItem = sourceContainer.Children.First();
 
-				for (int i = 0; i < Math.Max(Count, 1); i++)
-				{
-					var next = sourceItem.Clone();
-					next.Matrix = sourceItem.Matrix * Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance * i);
-					list.Add(next);
-				}
-			});
-
-			this.ResumeRebuild();
+					for (int i = 0; i < Math.Max(Count, 1); i++)
+					{
+						var next = sourceItem.Clone();
+						next.Matrix = sourceItem.Matrix * Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance * i);
+						list.Add(next);
+					}
+				});
+			}
 
 			this.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}

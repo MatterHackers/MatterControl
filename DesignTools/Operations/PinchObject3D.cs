@@ -39,7 +39,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class PinchObject3D : MeshWrapperObject3D, IPublicPropertyObject
+	public class PinchObject3D : MeshWrapperObject3D
 	{
 		[DisplayName("Back Ratio")]
 		public double PinchRatio { get; set; } = .5;
@@ -52,49 +52,49 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			this.DebugDepth("Rebuild");
 
-			SuspendRebuild();
-			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
-
-			// remember the current matrix then clear it so the parts will rotate at the original wrapped position
-			var currentMatrix = Matrix;
-			Matrix = Matrix4X4.Identity;
-
-			var aabb = this.GetAxisAlignedBoundingBox();
-
-			foreach (var items in this.WrappedObjects())
+			using (RebuildLock())
 			{
-				var transformedMesh = items.meshCopy.Mesh;
-				var originalMesh = items.original.Mesh;
-				var itemMatrix = items.original.WorldMatrix(this);
-				var invItemMatrix = itemMatrix.Inverted;
+				ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
-				for (int i = 0; i < originalMesh.Vertices.Count; i++)
+				// remember the current matrix then clear it so the parts will rotate at the original wrapped position
+				var currentMatrix = Matrix;
+				Matrix = Matrix4X4.Identity;
+
+				var aabb = this.GetAxisAlignedBoundingBox();
+
+				foreach (var items in this.WrappedObjects())
 				{
-					var pos = originalMesh.Vertices[i].Position;
-					pos = Vector3.Transform(pos, itemMatrix);
+					var transformedMesh = items.meshCopy.Mesh;
+					var originalMesh = items.original.Mesh;
+					var itemMatrix = items.original.WorldMatrix(this);
+					var invItemMatrix = itemMatrix.Inverted;
 
-					var ratioToApply = PinchRatio;
+					for (int i = 0; i < originalMesh.Vertices.Count; i++)
+					{
+						var pos = originalMesh.Vertices[i].Position;
+						pos = Vector3.Transform(pos, itemMatrix);
 
-					var distFromCenter = pos.X - aabb.Center.X;
-					var distanceToPinch = distFromCenter * (1 - PinchRatio);
-					var delta = (aabb.Center.X + distFromCenter * ratioToApply) - pos.X;
+						var ratioToApply = PinchRatio;
 
-					// find out how much to pinch based on y position
-					var amountOfRatio = (pos.Y - aabb.minXYZ.Y) / aabb.YSize;
+						var distFromCenter = pos.X - aabb.Center.X;
+						var distanceToPinch = distFromCenter * (1 - PinchRatio);
+						var delta = (aabb.Center.X + distFromCenter * ratioToApply) - pos.X;
 
-					var newPos = new Vector3(pos.X + delta * amountOfRatio, pos.Y, pos.Z);
+						// find out how much to pinch based on y position
+						var amountOfRatio = (pos.Y - aabb.minXYZ.Y) / aabb.YSize;
 
-					transformedMesh.Vertices[i].Position = Vector3.Transform(newPos, invItemMatrix);
+						var newPos = new Vector3(pos.X + delta * amountOfRatio, pos.Y, pos.Z);
+
+						transformedMesh.Vertices[i].Position = Vector3.Transform(newPos, invItemMatrix);
+					}
+
+					transformedMesh.MarkAsChanged();
+					transformedMesh.CalculateNormals();
 				}
 
-				transformedMesh.MarkAsChanged();
-				transformedMesh.CalculateNormals();
+				// set the matrix back
+				Matrix = currentMatrix;
 			}
-
-			// set the matrix back
-			Matrix = currentMatrix;
-
-			ResumeRebuild();
 
 			base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}

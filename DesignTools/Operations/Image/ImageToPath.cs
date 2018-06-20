@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	using Polygon = List<IntPoint>;
 	using Polygons = List<List<IntPoint>>;
 
-	public class ImageToPath : Object3D, IPublicPropertyObject, IPathObject, IEditorDraw
+	public class ImageToPath : Object3D, IPathObject, IEditorDraw
 	{
 		public ImageToPath()
 		{
@@ -300,10 +300,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
-			SuspendRebuild();
-
-			// now create a long running task to process the image
-			ApplicationController.Instance.Tasks.Execute(
+			var rebuildLock = RebuildLock();
+				// now create a long running task to process the image
+				ApplicationController.Instance.Tasks.Execute(
 				"Calculate Path".Localize(),
 				(reporter, cancellationToken) =>
 				{
@@ -318,8 +317,8 @@ namespace MatterHackers.MatterControl.DesignTools
 						Image,
 						ThresholdFunction);
 
-					ResumeRebuild();
-					Invalidate(new InvalidateArgs(this, InvalidateType.Path));
+					rebuildLock.Dispose();
+					Invalidate(new InvalidateArgs(this, InvalidateType.Path, null));
 
 					return Task.CompletedTask;
 				});

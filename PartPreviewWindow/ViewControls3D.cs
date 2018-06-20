@@ -391,7 +391,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 
-				scene.Invalidate(new InvalidateArgs(null, InvalidateType.Content));
+				scene.Invalidate(new InvalidateArgs(null, InvalidateType.Content, null));
 				this.Invalidate();
 			}
 		}

@@ -38,7 +38,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class HalfWedgeObject3D : Object3D, IPublicPropertyObject
+	public class HalfWedgeObject3D : Object3D
 	{
 		public HalfWedgeObject3D()
 		{
@@ -61,23 +61,24 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
-			SuspendRebuild();
-			var aabb = this.GetAxisAlignedBoundingBox();
-
-			var path = new VertexStorage();
-			path.MoveTo(0, 0);
-			path.LineTo(Width, 0);
-			path.LineTo(Width/2, Height);
-
-			var mesh = VertexSourceToMesh.Extrude(path, Depth);
-			mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
-			Mesh = mesh;
-			if (aabb.ZSize > 0)
+			using (RebuildLock())
 			{
-				// If the part was already created and at a height, maintain the height.
-				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+				var aabb = this.GetAxisAlignedBoundingBox();
+
+				var path = new VertexStorage();
+				path.MoveTo(0, 0);
+				path.LineTo(Width, 0);
+				path.LineTo(Width / 2, Height);
+
+				var mesh = VertexSourceToMesh.Extrude(path, Depth);
+				mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
+				Mesh = mesh;
+				if (aabb.ZSize > 0)
+				{
+					// If the part was already created and at a height, maintain the height.
+					PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+				}
 			}
-			ResumeRebuild();
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}

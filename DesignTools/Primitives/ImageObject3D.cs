@@ -42,7 +42,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class ImageObject3D : AssetObject3D, IPublicPropertyObject
+	public class ImageObject3D : AssetObject3D
 	{
 		private const double DefaultSizeMm = 60;
 
@@ -96,9 +96,10 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 
 					// we don't want to invalidate on the mesh chage
-					SuspendRebuild();
-					base.Mesh = this.InitMesh() ?? PlatonicSolids.CreateCube(100, 100, 0.2);
-					ResumeRebuild();
+					using (RebuildLock())
+					{
+						base.Mesh = this.InitMesh() ?? PlatonicSolids.CreateCube(100, 100, 0.2);
+					}
 
 					// send the invalidate on image change
 					this.OnInvalidate(new InvalidateArgs(this, InvalidateType.Image));

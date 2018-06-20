@@ -38,7 +38,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class SphereObject3D : Object3D, IPublicPropertyObject, IPropertyGridModifier
+	public class SphereObject3D : Object3D, IPropertyGridModifier
 	{
 		public SphereObject3D()
 		{
@@ -74,43 +74,44 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
-			SuspendRebuild();
-			var aabb = this.GetAxisAlignedBoundingBox();
-
-			var startingAngle = StartingAngle;
-			var endingAngle = EndingAngle;
-			var latitudeSides = LatitudeSides;
-			if (!Advanced)
+			using (RebuildLock())
 			{
-				startingAngle = 0;
-				endingAngle = 360;
-				latitudeSides = Sides;
-			}
+				var aabb = this.GetAxisAlignedBoundingBox();
 
-			var path = new VertexStorage();
-			var angleDelta = MathHelper.Tau / 2 / latitudeSides;
-			var angle = -MathHelper.Tau / 4;
-			var radius = Diameter / 2;
-			path.MoveTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-			for (int i = 0; i < latitudeSides; i++)
-			{
-				angle += angleDelta;
-				path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-			}
+				var startingAngle = StartingAngle;
+				var endingAngle = EndingAngle;
+				var latitudeSides = LatitudeSides;
+				if (!Advanced)
+				{
+					startingAngle = 0;
+					endingAngle = 360;
+					latitudeSides = Sides;
+				}
 
-			var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
-			var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
-			var steps = Math.Max(1, (int)(Sides * MathHelper.Tau / Math.Abs(MathHelper.GetDeltaAngle(startAngle, endAngle)) + .5));
-			Mesh = VertexSourceToMesh.Revolve(path,
-				steps,
-				startAngle,
-				endAngle);
-			if (aabb.ZSize > 0)
-			{
-				// If the part was already created and at a height, maintain the height.
-				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+				var path = new VertexStorage();
+				var angleDelta = MathHelper.Tau / 2 / latitudeSides;
+				var angle = -MathHelper.Tau / 4;
+				var radius = Diameter / 2;
+				path.MoveTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
+				for (int i = 0; i < latitudeSides; i++)
+				{
+					angle += angleDelta;
+					path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
+				}
+
+				var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
+				var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
+				var steps = Math.Max(1, (int)(Sides * MathHelper.Tau / Math.Abs(MathHelper.GetDeltaAngle(startAngle, endAngle)) + .5));
+				Mesh = VertexSourceToMesh.Revolve(path,
+					steps,
+					startAngle,
+					endAngle);
+				if (aabb.ZSize > 0)
+				{
+					// If the part was already created and at a height, maintain the height.
+					PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+				}
 			}
-			ResumeRebuild();
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}

@@ -39,7 +39,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class ConeObject3D : Object3D, IPublicPropertyObject
+	public class ConeObject3D : Object3D
 	{
 		public ConeObject3D()
 		{
@@ -63,23 +63,22 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
-			SuspendRebuild();
-
-			var aabb = this.GetAxisAlignedBoundingBox();
-
-			var path = new VertexStorage();
-			path.MoveTo(0, 0);
-			path.LineTo(Diameter / 2, 0);
-			path.LineTo(0, Height);
-
-			Mesh = VertexSourceToMesh.Revolve(path, Sides);
-			if (aabb.ZSize > 0)
+			using (RebuildLock())
 			{
-				// If the part was already created and at a height, maintain the height.
-				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
-			}
+				var aabb = this.GetAxisAlignedBoundingBox();
 
-			ResumeRebuild();
+				var path = new VertexStorage();
+				path.MoveTo(0, 0);
+				path.LineTo(Diameter / 2, 0);
+				path.LineTo(0, Height);
+
+				Mesh = VertexSourceToMesh.Revolve(path, Sides);
+				if (aabb.ZSize > 0)
+				{
+					// If the part was already created and at a height, maintain the height.
+					PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+				}
+			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}

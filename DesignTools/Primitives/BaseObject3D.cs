@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	using Polygons = List<List<IntPoint>>;
 	public enum BaseTypes { None, Rectangle, Circle, /* Oval, Frame,*/ Outline, };
 
-	public class BaseObject3D : Object3D, IPublicPropertyObject, IPropertyGridModifier
+	public class BaseObject3D : Object3D, IPropertyGridModifier
 	{
 		readonly double scalingForClipper = 1000;
 
@@ -70,27 +70,26 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void Remove(UndoBuffer undoBuffer)
 		{
-			SuspendRebuild();
-
-			var startingAabb = this.GetAxisAlignedBoundingBox();
-
-			var firstChild = this.Children.FirstOrDefault();
-
-			// only keep the first object
-			this.Children.Modify(list =>
+			using (RebuildLock())
 			{
-				list.Clear();
+				var startingAabb = this.GetAxisAlignedBoundingBox();
+
+				var firstChild = this.Children.FirstOrDefault();
+
+				// only keep the first object
+				this.Children.Modify(list =>
+				{
+					list.Clear();
 				// add back in the sourceContainer
 				list.Add(firstChild);
-			});
+				});
 
-			if (startingAabb.ZSize > 0)
-			{
-				// If the part was already created and at a height, maintain the height.
-				PlatingHelper.PlaceMeshAtHeight(this, startingAabb.minXYZ.Z);
+				if (startingAabb.ZSize > 0)
+				{
+					// If the part was already created and at a height, maintain the height.
+					PlatingHelper.PlaceMeshAtHeight(this, startingAabb.minXYZ.Z);
+				}
 			}
-
-			ResumeRebuild();
 
 			base.Remove(undoBuffer);
 		}
@@ -141,33 +140,33 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			this.DebugDepth("Rebuild");
 
-			SuspendRebuild();
-
-			var startingAabb = this.GetAxisAlignedBoundingBox();
-
-			var firstChild = this.Children.FirstOrDefault();
-
-			// remove the base besh we added
-			this.Children.Modify(list =>
+			using (RebuildLock())
 			{
-				list.Clear();
+				var startingAabb = this.GetAxisAlignedBoundingBox();
+
+				var firstChild = this.Children.FirstOrDefault();
+
+				// remove the base besh we added
+				this.Children.Modify(list =>
+				{
+					list.Clear();
 				// add back in the sourceContainer
 				list.Add(firstChild);
-			});
+				});
 
-			// and create the base
-			var vertexSource = this.VertexSource;
+				// and create the base
+				var vertexSource = this.VertexSource;
 
-			// Convert VertexSource into expected Polygons
-			Polygons polygonShape = (vertexSource == null) ? null : vertexSource.CreatePolygons();
-			GenerateBase(polygonShape, firstChild.GetAxisAlignedBoundingBox().minXYZ.Z);
+				// Convert VertexSource into expected Polygons
+				Polygons polygonShape = (vertexSource == null) ? null : vertexSource.CreatePolygons();
+				GenerateBase(polygonShape, firstChild.GetAxisAlignedBoundingBox().minXYZ.Z);
 
-			if (startingAabb.ZSize > 0)
-			{
-				// If the part was already created and at a height, maintain the height.
-				PlatingHelper.PlaceMeshAtHeight(this, startingAabb.minXYZ.Z);
+				if (startingAabb.ZSize > 0)
+				{
+					// If the part was already created and at a height, maintain the height.
+					PlatingHelper.PlaceMeshAtHeight(this, startingAabb.minXYZ.Z);
+				}
 			}
-			ResumeRebuild();
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}

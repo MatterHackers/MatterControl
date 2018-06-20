@@ -35,7 +35,7 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayAdvanced3D : Object3D, IPublicPropertyObject
+	public class ArrayAdvanced3D : Object3D
 	{
 		public ArrayAdvanced3D()
 		{

@@ -46,7 +46,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CurveObject3D : MeshWrapperObject3D, IPublicPropertyObject, IEditorDraw
+	public class CurveObject3D : MeshWrapperObject3D, IEditorDraw
 	{
 		public double Diameter { get; set; } = double.MinValue;
 
@@ -65,115 +65,115 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			this.DebugDepth("Rebuild");
 
-			SuspendRebuild();
-			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
-
-			// remember the current matrix then clear it so the parts will rotate at the original wrapped position
-			var currentMatrix = Matrix;
-			Matrix = Matrix4X4.Identity;
-
-			var meshWrapperEnumerator = WrappedObjects();
-
-			var aabb = this.GetAxisAlignedBoundingBox();
-
-			if (Diameter == double.MinValue)
+			using (RebuildLock())
 			{
-				// uninitialized set to a reasonable value
-				Diameter = (int)aabb.XSize;
-				// TODO: ensure that the editor display value is updated
-			}
+				ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
-			if (Diameter > 0)
-			{
-				var radius = Diameter / 2;
-				var circumference = MathHelper.Tau * radius;
-				rotationCenter = new Vector2(aabb.minXYZ.X, aabb.maxXYZ.Y + radius);
-				foreach (var object3Ds in meshWrapperEnumerator)
+				// remember the current matrix then clear it so the parts will rotate at the original wrapped position
+				var currentMatrix = Matrix;
+				Matrix = Matrix4X4.Identity;
+
+				var meshWrapperEnumerator = WrappedObjects();
+
+				var aabb = this.GetAxisAlignedBoundingBox();
+
+				if (Diameter == double.MinValue)
 				{
-					var originalMatrix = object3Ds.original.WorldMatrix(this);
-					var curvedMesh = object3Ds.meshCopy.Mesh;
-					var originalMesh = object3Ds.original.Mesh;
+					// uninitialized set to a reasonable value
+					Diameter = (int)aabb.XSize;
+					// TODO: ensure that the editor display value is updated
+				}
 
-					// split edges to make it curve better
-					curvedMesh.Triangulate();
-					if (false)
+				if (Diameter > 0)
+				{
+					var radius = Diameter / 2;
+					var circumference = MathHelper.Tau * radius;
+					rotationCenter = new Vector2(aabb.minXYZ.X, aabb.maxXYZ.Y + radius);
+					foreach (var object3Ds in meshWrapperEnumerator)
 					{
-						int sidesPerRotation = 30;
-						double numRotations = aabb.XSize / circumference;
-						double numberOfCuts = numRotations * sidesPerRotation;
-						var maxXLength = aabb.XSize / numberOfCuts;
-						// chop any segment that is too short in x
-						for (int i = curvedMesh.MeshEdges.Count - 1; i >= 0; i--)
-						{
-							var edgeToSplit = curvedMesh.MeshEdges[i];
-							var start = edgeToSplit.VertexOnEnd[0].Position;
-							var end = edgeToSplit.VertexOnEnd[1].Position;
-							var edgeXLength = Math.Abs(end.X - start.X);
-							int numberOfDivides = (int)(edgeXLength / maxXLength);
-							if (numberOfDivides > 1)
-							{
-								for (int j = 1; j < numberOfDivides - 1; j++)
-								{
-									IVertex newVertex;
-									MeshEdge newMeshEdge;
-									curvedMesh.SplitMeshEdge(edgeToSplit, out newVertex, out newMeshEdge);
-									var otherIndex = newMeshEdge.GetVertexEndIndex(newVertex);
-									var ratio = (numberOfDivides - j) / (double)numberOfDivides;
-									newVertex.Position = start + (end - start) * ratio;
-									edgeToSplit = newMeshEdge;
-									start = edgeToSplit.VertexOnEnd[0].Position;
-									end = edgeToSplit.VertexOnEnd[1].Position;
+						var originalMatrix = object3Ds.original.WorldMatrix(this);
+						var curvedMesh = object3Ds.meshCopy.Mesh;
+						var originalMesh = object3Ds.original.Mesh;
 
-									foreach (var face in edgeToSplit.FacesSharingMeshEdge())
+						// split edges to make it curve better
+						curvedMesh.Triangulate();
+						if (false)
+						{
+							int sidesPerRotation = 30;
+							double numRotations = aabb.XSize / circumference;
+							double numberOfCuts = numRotations * sidesPerRotation;
+							var maxXLength = aabb.XSize / numberOfCuts;
+							// chop any segment that is too short in x
+							for (int i = curvedMesh.MeshEdges.Count - 1; i >= 0; i--)
+							{
+								var edgeToSplit = curvedMesh.MeshEdges[i];
+								var start = edgeToSplit.VertexOnEnd[0].Position;
+								var end = edgeToSplit.VertexOnEnd[1].Position;
+								var edgeXLength = Math.Abs(end.X - start.X);
+								int numberOfDivides = (int)(edgeXLength / maxXLength);
+								if (numberOfDivides > 1)
+								{
+									for (int j = 1; j < numberOfDivides - 1; j++)
 									{
-										Face newFace;
-										curvedMesh.SplitFace(face,
-											edgeToSplit.VertexOnEnd[0],
-											edgeToSplit.VertexOnEnd[1],
-											out newMeshEdge,
-											out newFace);
+										IVertex newVertex;
+										MeshEdge newMeshEdge;
+										curvedMesh.SplitMeshEdge(edgeToSplit, out newVertex, out newMeshEdge);
+										var otherIndex = newMeshEdge.GetVertexEndIndex(newVertex);
+										var ratio = (numberOfDivides - j) / (double)numberOfDivides;
+										newVertex.Position = start + (end - start) * ratio;
+										edgeToSplit = newMeshEdge;
+										start = edgeToSplit.VertexOnEnd[0].Position;
+										end = edgeToSplit.VertexOnEnd[1].Position;
+
+										foreach (var face in edgeToSplit.FacesSharingMeshEdge())
+										{
+											Face newFace;
+											curvedMesh.SplitFace(face,
+												edgeToSplit.VertexOnEnd[0],
+												edgeToSplit.VertexOnEnd[1],
+												out newMeshEdge,
+												out newFace);
+										}
 									}
 								}
 							}
 						}
-					}
 
-					for (int i = 0; i < originalMesh.Vertices.Count; i++)
-					{
-						var matrix = originalMatrix;
-						if (!BendCcw)
+						for (int i = 0; i < originalMesh.Vertices.Count; i++)
 						{
-							// rotate around so it wil bend correctly
-							matrix *= Matrix4X4.CreateTranslation(0, -aabb.maxXYZ.Y, 0);
-							matrix *= Matrix4X4.CreateRotationX(MathHelper.Tau / 2);
-							matrix *= Matrix4X4.CreateTranslation(0, aabb.maxXYZ.Y - aabb.YSize, 0);
+							var matrix = originalMatrix;
+							if (!BendCcw)
+							{
+								// rotate around so it wil bend correctly
+								matrix *= Matrix4X4.CreateTranslation(0, -aabb.maxXYZ.Y, 0);
+								matrix *= Matrix4X4.CreateRotationX(MathHelper.Tau / 2);
+								matrix *= Matrix4X4.CreateTranslation(0, aabb.maxXYZ.Y - aabb.YSize, 0);
+							}
+							var worldPosition = Vector3.Transform(originalMesh.Vertices[i].Position, matrix);
+
+							var angleToRotate = ((worldPosition.X - aabb.minXYZ.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
+							var distanceFromCenter = rotationCenter.Y - worldPosition.Y;
+
+							var rotatePosition = new Vector3(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
+							rotatePosition.Z = worldPosition.Z;
+							var worldWithBend = rotatePosition + new Vector3(aabb.minXYZ.X, radius + aabb.maxXYZ.Y, 0);
+							curvedMesh.Vertices[i].Position = Vector3.Transform(worldWithBend, matrix.Inverted);
 						}
-						var worldPosition = Vector3.Transform(originalMesh.Vertices[i].Position, matrix);
 
-						var angleToRotate = ((worldPosition.X - aabb.minXYZ.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
-						var distanceFromCenter = rotationCenter.Y - worldPosition.Y;
-
-						var rotatePosition = new Vector3(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
-						rotatePosition.Z = worldPosition.Z;
-						var worldWithBend = rotatePosition + new Vector3(aabb.minXYZ.X, radius + aabb.maxXYZ.Y, 0);
-						curvedMesh.Vertices[i].Position = Vector3.Transform(worldWithBend, matrix.Inverted);
+						curvedMesh.MarkAsChanged();
+						curvedMesh.CalculateNormals();
 					}
 
-					curvedMesh.MarkAsChanged();
-					curvedMesh.CalculateNormals();
+					if (!BendCcw)
+					{
+						// fix the stored center so we draw correctly
+						rotationCenter = new Vector2(aabb.minXYZ.X, aabb.minXYZ.Y - radius);
+					}
 				}
 
-				if (!BendCcw)
-				{
-					// fix the stored center so we draw correctly
-					rotationCenter = new Vector2(aabb.minXYZ.X, aabb.minXYZ.Y - radius);
-				}
+				// set the matrix back
+				Matrix = currentMatrix;
 			}
-
-			// set the matrix back
-			Matrix = currentMatrix;
-
-			ResumeRebuild();
 
 			base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}

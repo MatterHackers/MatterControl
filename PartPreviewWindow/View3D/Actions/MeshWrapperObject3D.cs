@@ -82,90 +82,89 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public override void Remove(UndoBuffer undoBuffer)
 		{
-			SuspendRebuild();
-
-			// remove all the mesh wrappers that we own
-			var meshWrappers = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
-			foreach (var meshWrapper in meshWrappers)
+			using (RebuildLock())
 			{
-				meshWrapper.Remove(null);
-			}
-			foreach (var child in Children)
-			{
-				child.OutputType = PrintOutputTypes.Default;
-			}
+				// remove all the mesh wrappers that we own
+				var meshWrappers = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
+				foreach (var meshWrapper in meshWrappers)
+				{
+					meshWrapper.Remove(null);
+				}
+				foreach (var child in Children)
+				{
+					child.OutputType = PrintOutputTypes.Default;
+				}
 
-			// collapse our children into our parent
-			base.Remove(null);
-			ResumeRebuild();
+				// collapse our children into our parent
+				base.Remove(null);
+			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
 
 		public void ResetMeshWrapperMeshes(Object3DPropertyFlags flags, CancellationToken cancellationToken)
 		{
-			SuspendRebuild();
-
-			this.DebugDepth("Reset MWM");
-
-			// Remove evrything above the objects that have the meshes we are wrapping that are mesh wrappers
-			var wrappers = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
-			foreach (var wrapper in wrappers)
+			using (RebuildLock())
 			{
-				wrapper.SuspendRebuild();
+				this.DebugDepth("Reset MWM");
 
-				var remove = wrapper.Parent;
-				while (remove is MeshWrapper)
+				// Remove evrything above the objects that have the meshes we are wrapping that are mesh wrappers
+				var wrappers = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
+				foreach (var wrapper in wrappers)
 				{
-					var hold = remove;
-					remove.Remove(null);
-					remove = hold.Parent;
+					using (wrapper.RebuildLock())
+					{
+						var remove = wrapper.Parent;
+						while (remove is MeshWrapper)
+						{
+							var hold = remove;
+							remove.Remove(null);
+							remove = hold.Parent;
+						}
+					}
 				}
 
-				wrapper.ResumeRebuild();
+				// if there are not already, wrap all meshes with our id (some inner object may have changed it's meshes)
+				AddMeshWrapperToAllChildren();
+
+				this.Mesh = null;
+				var participants = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
+				foreach (var item in participants)
+				{
+					var firstChild = item.Children.First();
+					using (item.RebuildLock())
+					{
+						// set the mesh back to a copy of the child mesh
+						item.Mesh = firstChild.Mesh.Copy(cancellationToken);
+						// and reset the properties
+						item.CopyProperties(firstChild, flags & (~Object3DPropertyFlags.Matrix));
+					}
+				}
 			}
-
-			// if there are not already, wrap all meshes with our id (some inner object may have changed it's meshes)
-			AddMeshWrapperToAllChildren();
-
-			this.Mesh = null;
-			var participants = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
-			foreach (var item in participants)
-			{
-				var firstChild = item.Children.First();
-				item.SuspendRebuild();
-				// set the mesh back to a copy of the child mesh
-				item.Mesh = firstChild.Mesh.Copy(cancellationToken);
-				// and reset the properties
-				item.CopyProperties(firstChild, flags & (~Object3DPropertyFlags.Matrix));
-				item.ResumeRebuild();
-			}
-
-			ResumeRebuild();
 		}
 
 		public void WrapSelectedItemAndSelect(InteractiveScene scene)
 		{
-			SuspendRebuild();
-			var selectedItems = scene.GetSelectedItems();
-
-			if (selectedItems.Count > 0)
+			using (RebuildLock())
 			{
-				// clear the selected item
-				scene.SelectedItem = null;
+				var selectedItems = scene.GetSelectedItems();
 
-				WrapItems(selectedItems);
+				if (selectedItems.Count > 0)
+				{
+					// clear the selected item
+					scene.SelectedItem = null;
 
-				scene.UndoBuffer.AddAndDo(
-					new ReplaceCommand(
-						new List<IObject3D>(selectedItems),
-						new List<IObject3D> { this }));
+					WrapItems(selectedItems);
 
-				// and select this
-				scene.SelectedItem = this;
+					scene.UndoBuffer.AddAndDo(
+						new ReplaceCommand(
+							new List<IObject3D>(selectedItems),
+							new List<IObject3D> { this }));
+
+					// and select this
+					scene.SelectedItem = this;
+				}
 			}
-
-			ResumeRebuild();
 
 			if (!RebuildSuspended)
 			{
@@ -175,24 +174,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public void WrapItems(List<IObject3D> items)
 		{
-			SuspendRebuild();
-			var clonedItemsToAdd = new List<IObject3D>(items.Select((i) => i.Clone()));
-
-			Children.Modify((list) =>
+			using (RebuildLock())
 			{
-				list.Clear();
+				var clonedItemsToAdd = new List<IObject3D>(items.Select((i) => i.Clone()));
 
-				foreach (var child in clonedItemsToAdd)
+				Children.Modify((list) =>
 				{
-					list.Add(child);
-				}
-			});
+					list.Clear();
 
-			AddMeshWrapperToAllChildren();
+					foreach (var child in clonedItemsToAdd)
+					{
+						list.Add(child);
+					}
+				});
 
-			this.MakeNameNonColliding();
+				AddMeshWrapperToAllChildren();
 
-			ResumeRebuild();
+				this.MakeNameNonColliding();
+			}
 
 			if (!RebuildSuspended)
 			{

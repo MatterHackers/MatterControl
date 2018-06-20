@@ -41,7 +41,7 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public class CombineObject3D : MeshWrapperObject3D, IPublicPropertyObject
+	public class CombineObject3D : MeshWrapperObject3D
 	{
 		public CombineObject3D()
 		{
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
-			SuspendRebuild();
+			var suspendLock = RebuildLock();
 			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
 			// spin up a task to remove holes from the objects in the group
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 					UiThread.RunOnIdle(() =>
 					{
-						ResumeRebuild();
+						suspendLock.Dispose();
 						base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 					});
 

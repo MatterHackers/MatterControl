@@ -36,7 +36,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class TorusObject3D : Object3D, IPublicPropertyObject, IPropertyGridModifier
+	public class TorusObject3D : Object3D, IPropertyGridModifier
 	{
 		public TorusObject3D()
 		{
@@ -64,49 +64,50 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
-			SuspendRebuild();
-			var ringSides = RingSides;
-			var startingAngle = StartingAngle;
-			var endingAngle = EndingAngle;
-			var ringPhaseAngle = RingPhaseAngle;
-			if (!Advanced)
+			using (RebuildLock())
 			{
-				ringSides = Math.Max(3, (int)(Sides / 2));
-				startingAngle = 0;
-				endingAngle = 360;
-				ringPhaseAngle = 0;
+				var ringSides = RingSides;
+				var startingAngle = StartingAngle;
+				var endingAngle = EndingAngle;
+				var ringPhaseAngle = RingPhaseAngle;
+				if (!Advanced)
+				{
+					ringSides = Math.Max(3, (int)(Sides / 2));
+					startingAngle = 0;
+					endingAngle = 360;
+					ringPhaseAngle = 0;
+				}
+
+				var innerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
+
+				var aabb = this.GetAxisAlignedBoundingBox();
+
+				var poleRadius = (OuterDiameter / 2 - innerDiameter / 2) / 2;
+				var toroidRadius = innerDiameter / 2 + poleRadius;
+				var path = new VertexStorage();
+				var angleDelta = MathHelper.Tau / ringSides;
+				var ringStartAngle = MathHelper.DegreesToRadians(ringPhaseAngle);
+				var ringAngle = ringStartAngle;
+				var circleCenter = new Vector2(toroidRadius, 0);
+				path.MoveTo(circleCenter + new Vector2(poleRadius * Math.Cos(ringStartAngle), poleRadius * Math.Sin(ringStartAngle)));
+				for (int i = 0; i < ringSides - 1; i++)
+				{
+					ringAngle += angleDelta;
+					path.LineTo(circleCenter + new Vector2(poleRadius * Math.Cos(ringAngle), poleRadius * Math.Sin(ringAngle)));
+				}
+
+				path.LineTo(circleCenter + new Vector2(poleRadius * Math.Cos(ringStartAngle), poleRadius * Math.Sin(ringStartAngle)));
+
+				var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
+				var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
+				Mesh = VertexSourceToMesh.Revolve(path, Sides, startAngle, endAngle);
+
+				if (aabb.ZSize > 0)
+				{
+					// If the part was already created and at a height, maintain the height.
+					PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+				}
 			}
-
-			var innerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
-
-			var aabb = this.GetAxisAlignedBoundingBox();
-
-			var poleRadius = (OuterDiameter / 2 - innerDiameter / 2) / 2;
-			var toroidRadius = innerDiameter / 2 + poleRadius;
-			var path = new VertexStorage();
-			var angleDelta = MathHelper.Tau / ringSides;
-			var ringStartAngle = MathHelper.DegreesToRadians(ringPhaseAngle);
-			var ringAngle = ringStartAngle;
-			var circleCenter = new Vector2(toroidRadius, 0);
-			path.MoveTo(circleCenter + new Vector2(poleRadius * Math.Cos(ringStartAngle), poleRadius * Math.Sin(ringStartAngle)));
-			for (int i = 0; i < ringSides - 1; i++)
-			{
-				ringAngle += angleDelta;
-				path.LineTo(circleCenter + new Vector2(poleRadius * Math.Cos(ringAngle), poleRadius * Math.Sin(ringAngle)));
-			}
-
-			path.LineTo(circleCenter + new Vector2(poleRadius * Math.Cos(ringStartAngle), poleRadius * Math.Sin(ringStartAngle)));
-
-			var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
-			var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
-			Mesh = VertexSourceToMesh.Revolve(path, Sides, startAngle, endAngle);
-
-			if (aabb.ZSize > 0)
-			{
-				// If the part was already created and at a height, maintain the height.
-				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
-			}
-			ResumeRebuild();
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}

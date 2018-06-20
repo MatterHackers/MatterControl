@@ -42,7 +42,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.Plugins.Lithophane
 {
-	public class LithophaneObject3D : Object3D, IPublicPropertyObject
+	public class LithophaneObject3D : Object3D
 	{
 		[JsonIgnore]
 		public ImageObject3D Image => this.Children.OfType<ImageObject3D>().FirstOrDefault();

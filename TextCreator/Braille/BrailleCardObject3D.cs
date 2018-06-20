@@ -37,7 +37,7 @@ using MatterHackers.VectorMath;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[WebPageLink("About Braille", "https://en.wikipedia.org/wiki/Braille")]
-	public class BrailleCardObject3D : Object3D, IPublicPropertyObject
+	public class BrailleCardObject3D : Object3D
 	{
 		public BrailleCardObject3D()
 		{

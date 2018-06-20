@@ -41,7 +41,7 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public class IntersectionObject3D : MeshWrapperObject3D, IPublicPropertyObject
+	public class IntersectionObject3D : MeshWrapperObject3D
 	{
 		public IntersectionObject3D()
 		{
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
-			SuspendRebuild();
+			var suspendLock = RebuildLock();
 			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
 			ApplicationController.Instance.Tasks.Execute("Intersection".Localize(), (reporter, cancellationToken) =>
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 				UiThread.RunOnIdle(() =>
 				{
-					ResumeRebuild();
+					suspendLock.Dispose();
 					base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 				});
 

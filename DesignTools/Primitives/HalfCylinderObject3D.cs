@@ -38,7 +38,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class HalfCylinderObject3D : Object3D, IPublicPropertyObject
+	public class HalfCylinderObject3D : Object3D
 	{
 		public HalfCylinderObject3D()
 		{
@@ -61,28 +61,29 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
-			SuspendRebuild();
-			var aabb = this.GetAxisAlignedBoundingBox();
-
-			var path = new VertexStorage();
-			path.MoveTo(Width / 2, 0);
-
-			for (int i = 1; i < Sides; i++)
+			using (RebuildLock())
 			{
-				var angle = MathHelper.Tau * i / 2 / (Sides-1);
-				path.LineTo(Math.Cos(angle) * Width / 2, Math.Sin(angle) * Width / 2);
-			}
+				var aabb = this.GetAxisAlignedBoundingBox();
 
-			var mesh = VertexSourceToMesh.Extrude(path, Depth);
-			mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
-			Mesh = mesh;
+				var path = new VertexStorage();
+				path.MoveTo(Width / 2, 0);
 
-			if (aabb.ZSize > 0)
-			{
-				// If the part was already created and at a height, maintain the height.
-				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+				for (int i = 1; i < Sides; i++)
+				{
+					var angle = MathHelper.Tau * i / 2 / (Sides - 1);
+					path.LineTo(Math.Cos(angle) * Width / 2, Math.Sin(angle) * Width / 2);
+				}
+
+				var mesh = VertexSourceToMesh.Extrude(path, Depth);
+				mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
+				Mesh = mesh;
+
+				if (aabb.ZSize > 0)
+				{
+					// If the part was already created and at a height, maintain the height.
+					PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+				}
 			}
-			ResumeRebuild();
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}

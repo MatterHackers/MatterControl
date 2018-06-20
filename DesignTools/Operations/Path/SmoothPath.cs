@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	using Polygon = List<IntPoint>;
 	using Polygons = List<List<IntPoint>>;
 
-	public class SmoothPath : Object3D, IPublicPropertyObject, IPathObject, IEditorDraw
+	public class SmoothPath : Object3D, IPathObject, IEditorDraw
 	{
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
@@ -77,9 +77,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
-			SuspendRebuild();
-			DoSmoothing((long)(SmoothDistance * 1000), Iterations);
-			ResumeRebuild();
+			using (RebuildLock())
+			{
+				DoSmoothing((long)(SmoothDistance * 1000), Iterations);
+			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Path));
 		}

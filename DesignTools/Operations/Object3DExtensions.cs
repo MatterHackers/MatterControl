@@ -254,25 +254,25 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static void WrapWith(this IObject3D originalItem, IObject3D wrapper, InteractiveScene scene)
 		{
-			originalItem.SuspendRebuild();
-			originalItem.Parent.Children.Modify(list =>
+			using (originalItem.RebuildLock())
 			{
-				list.Remove(originalItem);
+				originalItem.Parent.Children.Modify(list =>
+				{
+					list.Remove(originalItem);
 
-				wrapper.Matrix = originalItem.Matrix;
+					wrapper.Matrix = originalItem.Matrix;
 
-				originalItem.Matrix = Matrix4X4.Identity;
-				wrapper.Children.Add(originalItem);
+					originalItem.Matrix = Matrix4X4.Identity;
+					wrapper.Children.Add(originalItem);
 
-				list.Add(wrapper);
-			});
+					list.Add(wrapper);
+				});
 
-			if (scene != null)
-			{
-				scene.SelectedItem = wrapper;
+				if (scene != null)
+				{
+					scene.SelectedItem = wrapper;
+				}
 			}
-
-			originalItem.ResumeRebuild();
 		}
 
 		public static Matrix4X4 ApplyAtBoundsCenter(this IObject3D objectWithBounds, Matrix4X4 transformToApply)

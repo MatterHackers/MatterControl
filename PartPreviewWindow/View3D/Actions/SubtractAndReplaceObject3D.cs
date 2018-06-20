@@ -43,7 +43,7 @@ using MatterHackers.PolygonMesh;
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
 	[ShowUpdateButtonAttribute]
-	public class SubtractAndReplaceObject3D : MeshWrapperObject3D, IPublicPropertyObject
+	public class SubtractAndReplaceObject3D : MeshWrapperObject3D
 	{
 		public SubtractAndReplaceObject3D()
 		{
@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		public override void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
-			SuspendRebuild();
+			var suspendLock = RebuildLock();
 			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
 			// spin up a task to calculate the paint
@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 				UiThread.RunOnIdle(() =>
 				{
-					ResumeRebuild();
+					suspendLock.Dispose();
 					base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 				});
 
