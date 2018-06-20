@@ -262,13 +262,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.OnMouseDown(mouseEvent);
 		}
 
-		public async override void OnLoad(EventArgs args)
+		public override void OnLoad(EventArgs args)
 		{
-			await this.LoadItemThumbnail();
+			// On first draw, lookup and set best thumbnail
+			this.LoadItemThumbnail().ConfigureAwait(false);
+
 			base.OnLoad(args);
 		}
 
-		public async override void OnDraw(Graphics2D graphics2D)
+		public override void OnDraw(Graphics2D graphics2D)
 		{
 			if (requeueRaytraceOnDraw
 				&& !raytracePending
