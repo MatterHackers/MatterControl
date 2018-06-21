@@ -433,11 +433,10 @@ namespace MatterHackers.MatterControl
 					TitleResolver = () => "Align".Localize(),
 					Action = (scene) =>
 					{
-						scene.AddSelectionAsChildren(new Align3D());
-						if(scene.SelectedItem is Align3D arange)
-						{
-							arange.Rebuild(null);
-						}
+						var selectedItem = scene.SelectedItem;
+						var align = new Align3D();
+						align.AddSelectionAsChildren(scene, selectedItem);
+						align.Invalidate(new InvalidateArgs(align, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("align_left.png", 16, 16, theme.InvertIcons).SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
@@ -509,11 +508,9 @@ namespace MatterHackers.MatterControl
 					TitleResolver = () => "Linear Array".Localize(),
 					Action = (scene) =>
 					{
-						scene.AddSelectionAsChildren(new ArrayLinear3D());
-						if(scene.SelectedItem is ArrayLinear3D array)
-						{
-							array.Rebuild(null);
-						}
+						var array = new ArrayLinear3D();
+						array.AddSelectionAsChildren(scene, scene.SelectedItem);
+						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
@@ -524,11 +521,9 @@ namespace MatterHackers.MatterControl
 					TitleResolver = () => "Radial Array".Localize(),
 					Action = (scene) =>
 					{
-						scene.AddSelectionAsChildren(new ArrayRadial3D());
-						if(scene.SelectedItem is ArrayRadial3D array)
-						{
-							array.Rebuild(null);
-						}
+						var array = new ArrayRadial3D();
+						array.AddSelectionAsChildren(scene, scene.SelectedItem);
+						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_radial.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
@@ -539,11 +534,9 @@ namespace MatterHackers.MatterControl
 					TitleResolver = () => "Advanced Array".Localize(),
 					Action = (scene) =>
 					{
-						scene.AddSelectionAsChildren(new ArrayAdvanced3D());
-						if(scene.SelectedItem is ArrayAdvanced3D array)
-						{
-							array.Rebuild(null);
-						}
+						var array = new ArrayAdvanced3D();
+						array.AddSelectionAsChildren(scene, scene.SelectedItem);
+						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_advanced.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
@@ -764,7 +757,7 @@ namespace MatterHackers.MatterControl
 					{
 						var path = new ImageToPath();
 						sceneItem.WrapWith(path, scene);
-						path.Rebuild(null);
+						path.Invalidate(new InvalidateArgs(path, InvalidateType.Properties, null));
 					}
 
 					return Task.CompletedTask;
@@ -779,9 +772,9 @@ namespace MatterHackers.MatterControl
 				{
 					if (sceneItem is IPathObject imageObject)
 					{
-						var extrued = new LinearExtrude();
-						sceneItem.WrapWith(extrued, scene);
-						extrued.Rebuild(null);
+						var extrude = new LinearExtrude();
+						sceneItem.WrapWith(extrude, scene);
+						extrude.Invalidate(new InvalidateArgs(extrude, InvalidateType.Properties, null));
 					}
 
 					return Task.CompletedTask;
@@ -798,7 +791,7 @@ namespace MatterHackers.MatterControl
 					{
 						var smoothPath = new SmoothPath();
 						sceneItem.WrapWith(smoothPath, scene);
-						smoothPath.Rebuild(null);
+						smoothPath.Invalidate(new InvalidateArgs(smoothPath, InvalidateType.Properties, null));
 					}
 
 					return Task.CompletedTask;
@@ -820,7 +813,7 @@ namespace MatterHackers.MatterControl
 					};
 					newChild.Matrix = Matrix4X4.Identity;
 					baseMesh.Children.Add(newChild);
-					baseMesh.Rebuild(null);
+					baseMesh.Invalidate(new InvalidateArgs(baseMesh, InvalidateType.Properties, null));
 
 					scene.UndoBuffer.AddAndDo(
 						new ReplaceCommand(
@@ -1085,7 +1078,8 @@ namespace MatterHackers.MatterControl
 				{
 					var editorType = kvp.Key;
 
-					if (editorType.IsAssignableFrom(selectedItemType))
+					if (editorType.IsAssignableFrom(selectedItemType)
+						&& selectedItemType != typeof(Object3D))
 					{
 						mappedEditors = kvp.Value;
 						break;

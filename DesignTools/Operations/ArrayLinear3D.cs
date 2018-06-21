@@ -63,7 +63,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
 				|| invalidateType.InvalidateType == InvalidateType.Mesh)
 				&& invalidateType.Source != this
-				&& !RebuildSuspended)
+				&& !RebuildLocked)
+			{
+				Rebuild(null);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
 			{
 				Rebuild(null);
 			}
@@ -73,7 +78,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			using (this.RebuildLock())
 			{
@@ -84,10 +89,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				this.Children.Modify(list =>
 				{
 					list.Clear();
-				// add back in the sourceContainer
-				list.Add(sourceContainer);
-				// get the source item
-				var sourceItem = sourceContainer.Children.First();
+					// add back in the sourceContainer
+					list.Add(sourceContainer);
+					// get the source item
+					var sourceItem = sourceContainer.Children.First();
 
 					for (int i = 0; i < Math.Max(Count, 1); i++)
 					{

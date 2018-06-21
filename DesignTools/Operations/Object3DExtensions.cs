@@ -219,15 +219,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return item.GetAxisAlignedBoundingBox().ZSize;
 		}
 
-		public static void AddSelectionAsChildren(this InteractiveScene scene, IObject3D newParent)
+		public static void AddSelectionAsChildren(this IObject3D newParent, InteractiveScene scene, IObject3D selectedItem)
 		{
-			if (scene.HasSelection)
+			if (selectedItem != null)
 			{
 				List<IObject3D> itemsToReplace;
 
-				if (scene.SelectedItem is SelectionGroup)
+				if (selectedItem is SelectionGroup)
 				{
-					itemsToReplace = scene.SelectedItem.Children.ToList();
+					itemsToReplace = selectedItem.Children.ToList();
 					foreach (var child in itemsToReplace)
 					{
 						newParent.Children.Add(child.Clone());
@@ -235,8 +235,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 				else
 				{
-					itemsToReplace = new List<IObject3D> { scene.SelectedItem };
-					newParent.Children.Add(scene.SelectedItem.Clone());
+					itemsToReplace = new List<IObject3D> { selectedItem };
+					newParent.Children.Add(selectedItem.Clone());
 				}
 
 				scene.SelectedItem = null;

@@ -82,7 +82,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			var root = new Object3D();
 			var text = new TextObject3D();
 			root.Children.Add(text);
-			text.Rebuild(null);
+			text.Invalidate(new InvalidateArgs(text, InvalidateType.Properties, null));
 			Assert.AreEqual(5, root.Descendants().Count());
 
 			// now add a pinch

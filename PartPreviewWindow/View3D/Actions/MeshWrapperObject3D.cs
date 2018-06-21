@@ -166,10 +166,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				}
 			}
 
-			if (!RebuildSuspended)
-			{
-				Rebuild(null);
-			}
+			Invalidate(new InvalidateArgs(this, InvalidateType.Properties, null));
 		}
 
 		public void WrapItems(List<IObject3D> items)
@@ -193,10 +190,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				this.MakeNameNonColliding();
 			}
 
-			if (!RebuildSuspended)
-			{
-				Rebuild(null);
-			}
+			Invalidate(new InvalidateArgs(this, InvalidateType.Properties, null));
 		}
 
 		private void AddMeshWrapperToAllChildren()

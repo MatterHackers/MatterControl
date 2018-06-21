@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using ClipperLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
@@ -39,7 +38,6 @@ using MatterHackers.MarchingSquares;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -53,16 +51,20 @@ namespace MatterHackers.MatterControl.DesignTools
 
 	public class ImageToPath : Object3D, IPathObject, IEditorDraw
 	{
+		private ThresholdFunctions _featureDetector = ThresholdFunctions.Silhouette;
+
+		private ImageBuffer _histogramRawCache = null;
+		private ImageBuffer _histogramDisplayCache = null;
+
 		public ImageToPath()
 		{
-			Name = "Path".Localize();
+			Name = "Image to Path".Localize();
 		}
 
-		public enum ThresholdFunctions { Intensity, Alpha, Hue }
+		public enum ThresholdFunctions { Silhouette, Intensity, Alpha, Hue }
 
 		public override bool CanRemove => true;
 
-		ThresholdFunctions _featureDetector = ThresholdFunctions.Intensity;
 		public ThresholdFunctions FeatureDetector
 		{
 			get { return _featureDetector; }
@@ -70,29 +72,22 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				if (value != _featureDetector)
 				{
-					_histogramCache = null;
+					_histogramRawCache = null;
 					_featureDetector = value;
 				}
 			}
 		}
 
-		private Color GetRGBA(byte[] buffer, int offset)
-		{
-			return new Color(buffer[offset + 2], buffer[offset + 1], buffer[offset + 0], buffer[offset + 3]);
-		}
-
-		ImageBuffer _histogramCache = null;
 		[JsonIgnore]
 		public ImageBuffer Histogram
 		{
 			get
 			{
-				_histogramCache = null;
-				if (_histogramCache == null)
+				if (_histogramRawCache == null)
 				{
-					_histogramCache = new ImageBuffer(256, 100);
+					_histogramRawCache = new ImageBuffer(256, 100);
 					var image = Image;
-					var counts = new int[_histogramCache.Width];
+					var counts = new int[_histogramRawCache.Width];
 					var function = ThresholdFunction;
 
 					byte[] buffer = image.GetBuffer();
@@ -106,25 +101,25 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							int imageBufferOffsetWithX = imageBufferOffset + x * 4;
 							var color = GetRGBA(buffer, imageBufferOffsetWithX);
-							counts[(int)(function.Transform(color) * (_histogramCache.Width - 1))]++;
+							counts[(int)(function.Transform(color) * (_histogramRawCache.Width - 1))]++;
 						}
 					}
 
 					double max = counts.Select((value, index) => new { value, index })
 						.OrderByDescending(vi => vi.value)
 						.First().value;
-					var graphics2D = _histogramCache.NewGraphics2D();
-					graphics2D.Clear(Color.White);
-					for(int i=0; i<256; i++)
+					var graphics2D2 = _histogramRawCache.NewGraphics2D();
+					graphics2D2.Clear(Color.White);
+					for (int i = 0; i < 256; i++)
 					{
-						graphics2D.Line(i, 0, i, Easing.Exponential.Out(counts[i] / max) * _histogramCache.Height, Color.Black);
+						graphics2D2.Line(i, 0, i, Easing.Exponential.Out(counts[i] / max) * _histogramRawCache.Height, Color.Black);
 					}
-					graphics2D.FillRectangle(0, 0, RangeStart * _histogramCache.Width, _histogramCache.Height, new Color(Color.Red, 100));
-					graphics2D.FillRectangle(RangeEnd * _histogramCache.Width, 0, 255, _histogramCache.Height, new Color(Color.Red, 100));
-					graphics2D.Line(RangeStart * _histogramCache.Width, 0, RangeStart * _histogramCache.Width, _histogramCache.Height, new Color(Color.LightGray, 200));
-					graphics2D.Line(RangeEnd * _histogramCache.Width, 0, RangeEnd * _histogramCache.Width, _histogramCache.Height, new Color(Color.LightGray, 200));
 				}
-				return _histogramCache;
+
+				_histogramDisplayCache = new ImageBuffer(_histogramRawCache);
+				UpdateHistogramDisplay();
+
+				return _histogramDisplayCache;
 			}
 
 			set
@@ -132,13 +127,27 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+		private void UpdateHistogramDisplay()
+		{
+			if (_histogramRawCache != null)
+			{
+				var graphics2D = _histogramDisplayCache.NewGraphics2D();
+				graphics2D.Clear(Color.Transparent);
+				_histogramDisplayCache.CopyFrom(_histogramRawCache);
+				graphics2D.FillRectangle(0, 0, RangeStart * _histogramDisplayCache.Width, _histogramDisplayCache.Height, new Color(Color.Red, 100));
+				graphics2D.FillRectangle(RangeEnd * _histogramDisplayCache.Width, 0, 255, _histogramDisplayCache.Height, new Color(Color.Red, 100));
+				graphics2D.Line(RangeStart * _histogramDisplayCache.Width, 0, RangeStart * _histogramDisplayCache.Width, _histogramDisplayCache.Height, new Color(Color.LightGray, 200));
+				graphics2D.Line(RangeEnd * _histogramDisplayCache.Width, 0, RangeEnd * _histogramDisplayCache.Width, _histogramDisplayCache.Height, new Color(Color.LightGray, 200));
+			}
+		}
+
+		[JsonIgnore]
+		private ImageBuffer Image => this.Descendants<ImageObject3D>().FirstOrDefault()?.Image;
+
 		public double RangeStart { get; set; } = .1;
 		public double RangeEnd { get; set; } = 1;
 
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
-
-		[JsonIgnore]
-		private ImageBuffer Image => this.Descendants<ImageObject3D>().FirstOrDefault()?.Image;
 
 		private IThresholdFunction ThresholdFunction
 		{
@@ -146,6 +155,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				switch (FeatureDetector)
 				{
+					case ThresholdFunctions.Silhouette:
+						return new SilhouetteThresholdFunction(RangeStart, RangeEnd);
+
 					case ThresholdFunctions.Intensity:
 						return new MapOnMaxIntensity(RangeStart, RangeEnd);
 
@@ -158,11 +170,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				return new MapOnMaxIntensity(RangeStart, RangeEnd);
 			}
-		}
-
-		public void DrawEditor(object sender, DrawEventArgs e)
-		{
-			ImageToPath.DrawPath(this);
 		}
 
 		public static void DrawPath(IObject3D item)
@@ -194,7 +201,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						GL.Color4(255, 0, 0, 255);
 					}
 
-					if(vertex.IsMoveTo)
+					if (vertex.IsMoveTo)
 					{
 						firstMove = position;
 					}
@@ -203,7 +210,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						GL.Vertex3(lastPosition.X, lastPosition.Y, aabb.maxXYZ.Z + 0.002);
 						GL.Vertex3(position.X, position.Y, aabb.maxXYZ.Z + 0.002);
 					}
-					else if(vertex.IsClose)
+					else if (vertex.IsClose)
 					{
 						GL.Vertex3(firstMove.X, firstMove.Y, aabb.maxXYZ.Z + 0.002);
 						GL.Vertex3(lastPosition.X, lastPosition.Y, aabb.maxXYZ.Z + 0.002);
@@ -224,6 +231,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+		public void DrawEditor(object sender, DrawEventArgs e)
+		{
+			ImageToPath.DrawPath(this);
+		}
+
 		public void GenerateMarchingSquaresAndLines(Action<double, string> progressReporter, ImageBuffer image, IThresholdFunction thresholdFunction)
 		{
 			if (image != null)
@@ -231,6 +243,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				// Regenerate outline
 				var marchingSquaresData = new MarchingSquaresByte(
 					image,
+					thresholdFunction.ZeroColor,
 					thresholdFunction.Threshold,
 					0);
 
@@ -288,8 +301,14 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			if (invalidateType.InvalidateType == InvalidateType.Image
 				&& invalidateType.Source != this
-				&& !RebuildSuspended)
+				&& !RebuildLocked)
 			{
+				Rebuild(null);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
+			{
+				UpdateHistogramDisplay();
 				Rebuild(null);
 			}
 			else
@@ -298,32 +317,35 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		private Color GetRGBA(byte[] buffer, int offset)
+		{
+			return new Color(buffer[offset + 2], buffer[offset + 1], buffer[offset + 0], buffer[offset + 3]);
+		}
+
+		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			var rebuildLock = RebuildLock();
-				// now create a long running task to process the image
-				ApplicationController.Instance.Tasks.Execute(
-				"Calculate Path".Localize(),
-				(reporter, cancellationToken) =>
-				{
-					var progressStatus = new ProgressStatus();
-					this.GenerateMarchingSquaresAndLines(
-						(progress0to1, status) =>
-						{
-							progressStatus.Progress0To1 = progress0to1;
-							progressStatus.Status = status;
-							reporter.Report(progressStatus);
-						},
-						Image,
-						ThresholdFunction);
+			// now create a long running task to process the image
+			ApplicationController.Instance.Tasks.Execute(
+			"Calculate Path".Localize(),
+			(reporter, cancellationToken) =>
+			{
+				var progressStatus = new ProgressStatus();
+				this.GenerateMarchingSquaresAndLines(
+					(progress0to1, status) =>
+					{
+						progressStatus.Progress0To1 = progress0to1;
+						progressStatus.Status = status;
+						reporter.Report(progressStatus);
+					},
+					Image,
+					ThresholdFunction);
 
-					rebuildLock.Dispose();
-					Invalidate(new InvalidateArgs(this, InvalidateType.Path, null));
+				rebuildLock.Dispose();
+				Invalidate(new InvalidateArgs(this, InvalidateType.Path, null));
 
-					return Task.CompletedTask;
-				});
-
-			base.Rebuild(undoBuffer);
+				return Task.CompletedTask;
+			});
 		}
 	}
 }

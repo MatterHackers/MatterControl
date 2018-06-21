@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public double Transform(Color color)
 		{
+			// we invert the gray value so we have black being the color we are finding
 			return (color.Red0To1 * 0.2989) + (color.Blue0To1 * 0.5870) + (color.Green0To1 * 0.1140);
 		}
 
@@ -57,6 +58,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			// this is on I from HSI
 			return GetThresholded0To1(Transform(color));
 		}
+
+		public Color ZeroColor => Color.Black;
 
 		protected double GetThresholded0To1(double rawValue)
 		{

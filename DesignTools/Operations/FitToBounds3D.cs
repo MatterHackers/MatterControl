@@ -38,6 +38,7 @@ using MatterHackers.MeshVisualizer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -65,7 +66,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public bool StretchZ { get; set; } = true;
 
 		IObject3D ScaleItem => Children.First();
-		IObject3D ItemToScale => Children.First().Children.First();
+		[JsonIgnore]
+		public IObject3D ItemToScale => Children.First().Children.First();
 
 		public FitToBounds3D()
 		{
@@ -121,7 +123,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
 				|| invalidateType.InvalidateType == InvalidateType.Mesh)
 				&& invalidateType.Source != this
-				&& !RebuildSuspended)
+				&& !RebuildLocked)
+			{
+				Rebuild(null);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
 			{
 				Rebuild(null);
 			}
@@ -149,7 +156,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return fitToBounds;
 		}
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		public void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())

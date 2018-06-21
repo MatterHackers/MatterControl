@@ -42,6 +42,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.Plugins.Lithophane
 {
+	[ShowUpdateButton]
 	public class LithophaneObject3D : Object3D
 	{
 		[JsonIgnore]
@@ -59,7 +60,28 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 
 		public Vector3 ImageOffset { get; private set; } = Vector3.Zero;
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if ((invalidateType.InvalidateType == InvalidateType.Content
+				|| invalidateType.InvalidateType == InvalidateType.Matrix
+				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+				&& invalidateType.Source != this
+				&& !RebuildLocked)
+			{
+				Rebuild(null);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
+			{
+				Rebuild(null);
+			}
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
+		}
+
+		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
 			var activeImage = AggContext.ImageIO.LoadImage(this.Image.AssetPath);

@@ -20,7 +20,7 @@ namespace Markdig.Renderers.Agg.Inlines
 		{
 			if (childToAdd is TextWidget textWidget)
 			{
-				textWidget.TextColor = Color.Red;
+				textWidget.Bold = true;
 			}
 
 			base.AddChild(childToAdd, indexInChildrenList);

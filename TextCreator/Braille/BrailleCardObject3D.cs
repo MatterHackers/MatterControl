@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				NameToWrite = Letter.ToString(),
 				Height = BaseHeight
 			};
-			textObject.Rebuild(null);
+			textObject.Invalidate(new InvalidateArgs(textObject, InvalidateType.Properties, null));
 			IObject3D letterObject = new Rotate(textObject, -MathHelper.Tau / 4);
 			letterObject = new Align3D(letterObject, FaceAlign.Bottom | FaceAlign.Front, brailleLetter, FaceAlign.Top | FaceAlign.Front, 0, 0, 3.5);
 			letterObject = new SetCenter(letterObject, brailleLetter.GetCenter(), true, false, false);

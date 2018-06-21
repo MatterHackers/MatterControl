@@ -95,7 +95,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				|| invalidateType.InvalidateType == InvalidateType.Mesh
 				|| invalidateType.InvalidateType == InvalidateType.Path)
 				&& invalidateType.Source != this
-				&& !RebuildSuspended)
+				&& !RebuildLocked)
+			{
+				Rebuild(null);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
 			{
 				Rebuild(null);
 			}
@@ -105,7 +110,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			using (RebuildLock())
 			{

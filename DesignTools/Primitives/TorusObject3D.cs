@@ -61,7 +61,16 @@ namespace MatterHackers.MatterControl.DesignTools
 		public int RingSides { get; set; } = 15;
 		public int RingPhaseAngle { get; set; } = 0;
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
+			{
+				Rebuild(null);
+			}
+		}
+
+		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())

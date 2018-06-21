@@ -117,7 +117,16 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double EndingAngle { get; set; } = 360;
 		public double DiameterTop { get; set; } = 20;
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
+			{
+				Rebuild(null);
+			}
+		}
+
+		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())

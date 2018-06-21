@@ -36,6 +36,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.MarchingSquares;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
@@ -142,7 +143,8 @@ namespace MatterHackers.MatterControl
 
 		static public PolyTree FindDistictObjectBounds(ImageBuffer image)
 		{
-			MarchingSquaresByte marchingSquaresData = new MarchingSquaresByte(image, 5, 0);
+			var intensity = new MapOnMaxIntensity();
+			MarchingSquaresByte marchingSquaresData = new MarchingSquaresByte(image, intensity.ZeroColor, intensity.Threshold, 0);
 			marchingSquaresData.CreateLineSegments();
 			Polygons lineLoops = marchingSquaresData.CreateLineLoops(1);
 

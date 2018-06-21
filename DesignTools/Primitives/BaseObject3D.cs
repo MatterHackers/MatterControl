@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override bool CanRemove => true;
 		public override bool CanApply => true;
 
-		public BaseTypes CurrentBaseType { get; set; }
+		public BaseTypes BaseType { get; set; } = BaseTypes.Circle;
 		public double BaseSize { get; set; } = 3;
 		public double InfillAmount { get; set; } = 3;
 		public double ExtrusionHeight { get; set; } = 5;
@@ -126,7 +126,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				|| invalidateType.InvalidateType == InvalidateType.Path
 				|| invalidateType.InvalidateType == InvalidateType.Mesh)
 				&& invalidateType.Source != this
-				&& !RebuildSuspended)
+				&& !RebuildLocked)
+			{
+				Rebuild(null);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
 			{
 				Rebuild(null);
 			}
@@ -136,7 +141,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
 
@@ -262,7 +267,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				Polygons polysToOffset = new Polygons();
 
-				switch (CurrentBaseType)
+				switch (BaseType)
 				{
 					case BaseTypes.Rectangle:
 						polysToOffset.Add(GetBoundingPolygon(polygonShape));
@@ -285,7 +290,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					Polygons basePolygons;
 
-					if (CurrentBaseType == BaseTypes.Outline
+					if (BaseType == BaseTypes.Outline
 						&& InfillAmount > 0)
 					{
 						basePolygons = Offset(polysToOffset, (BaseSize + InfillAmount) * scalingForClipper);

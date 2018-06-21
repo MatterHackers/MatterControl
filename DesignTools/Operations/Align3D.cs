@@ -331,7 +331,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
 				|| invalidateType.InvalidateType == InvalidateType.Mesh)
 				&& invalidateType.Source != this
-				&& !RebuildSuspended)
+				&& !RebuildLocked)
+			{
+				Rebuild(null);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
 			{
 				Rebuild(null);
 			}
@@ -341,7 +346,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
 
@@ -378,16 +383,16 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							{
 								if (i < OriginalChildrenBounds.Count)
 								{
-								// make sure it is where it started
-								AlignAxis(0, Align.Min, OriginalChildrenBounds[i].minXYZ.X, 0, child);
+									// make sure it is where it started
+									AlignAxis(0, Align.Min, OriginalChildrenBounds[i].minXYZ.X, 0, child);
 								}
 							}
 							else
 							{
 								if (XAlign == Align.Origin)
 								{
-								// find the origin in world space of the child
-								var firstOrigin = Vector3.Transform(Vector3.Zero, this.Children.First().WorldMatrix());
+									// find the origin in world space of the child
+									var firstOrigin = Vector3.Transform(Vector3.Zero, this.Children.First().WorldMatrix());
 									var childOrigin = Vector3.Transform(Vector3.Zero, child.WorldMatrix());
 									child.Translate(new Vector3(-(childOrigin - firstOrigin).X + (Advanced ? XOffset : 0), 0, 0));
 								}
@@ -407,8 +412,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							{
 								if (YAlign == Align.Origin)
 								{
-								// find the origin in world space of the child
-								var firstOrigin = Vector3.Transform(Vector3.Zero, this.Children.First().WorldMatrix());
+									// find the origin in world space of the child
+									var firstOrigin = Vector3.Transform(Vector3.Zero, this.Children.First().WorldMatrix());
 									var childOrigin = Vector3.Transform(Vector3.Zero, child.WorldMatrix());
 									child.Translate(new Vector3(0, -(childOrigin - firstOrigin).Y + (Advanced ? YOffset : 0), 0));
 								}
@@ -428,8 +433,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							{
 								if (ZAlign == Align.Origin)
 								{
-								// find the origin in world space of the child
-								var firstOrigin = Vector3.Transform(Vector3.Zero, this.Children.First().WorldMatrix());
+									// find the origin in world space of the child
+									var firstOrigin = Vector3.Transform(Vector3.Zero, this.Children.First().WorldMatrix());
 									var childOrigin = Vector3.Transform(Vector3.Zero, child.WorldMatrix());
 									child.Translate(new Vector3(0, 0, -(childOrigin - firstOrigin).Z + (Advanced ? ZOffset : 0)));
 								}

@@ -138,6 +138,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			switch (item)
 			{
+				case FitToBounds3D fitToBounds3D:
+					return new ObjectView()
+					{
+						Children = new IObject3D[] { fitToBounds3D.ItemToScale },
+						Name = item.Name,
+						Source = item
+					};
+
 				case ArrayLinear3D arrayLinear3D:
 					return new ObjectView()
 					{
@@ -146,11 +154,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Source = item
 					};
 
-				// TODO: array operations should only expose OperationSource
 				case ArrayAdvanced3D arrayAdvanced3D:
 					return new ObjectView()
 					{
-						Children = item.Children.Take(1),
+						Children = item.Children.OfType<OperationSource>().ToList(),
 						Name = $"{arrayAdvanced3D.Name} ({arrayAdvanced3D.Count})",
 						Source = item
 					};
@@ -159,7 +166,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				case ArrayRadial3D arrayRadial3D:
 					return new ObjectView()
 					{
-						Children = item.Children.Take(1),
+						Children = item.Children.OfType<OperationSource>().ToList(),
 						Name = $"{arrayRadial3D.Name} ({arrayRadial3D.Count})",
 						Source = item
 					};

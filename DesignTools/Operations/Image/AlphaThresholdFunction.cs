@@ -57,6 +57,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			return color.Alpha0To255 / 255.0;
 		}
 
+		public Color ZeroColor => Color.Transparent;
+
 		public double Threshold(Color color)
 		{
 			return GetThresholded0To1(Transform(color));

@@ -146,7 +146,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				foreach (var property in GetEditablePropreties(context.item))
 				{
 					var editor = CreatePropertyEditor(property, undoBuffer, context, theme);
-					mainContainer.AddChild(editor);
+					if (editor != null)
+					{
+						mainContainer.AddChild(editor);
+					}
 				}
 
 				// add in an Update button if applicable
@@ -158,7 +161,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					updateButton.HAnchor = HAnchor.Right;
 					updateButton.Click += (s, e) =>
 					{
-						context.item.Invalidate(new InvalidateArgs(context.item, InvalidateType.Content, undoBuffer));
+						context.item.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
 					};
 					mainContainer.AddChild(updateButton);
 				}
@@ -251,7 +254,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(field.DoubleValue);
-					rebuildable?.Invalidate(new InvalidateArgs(rebuildable, InvalidateType.Content, undoBuffer));
+					rebuildable?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
 					propertyGridModifier?.UpdateControls(context);
 				};
 
@@ -265,7 +268,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(field.Vector2);
-					rebuildable?.Invalidate(new InvalidateArgs(rebuildable, InvalidateType.Content, undoBuffer));
+					rebuildable?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
 					propertyGridModifier?.UpdateControls(context);
 				};
 
@@ -279,7 +282,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(field.Vector3);
-					rebuildable?.Invalidate(new InvalidateArgs(rebuildable, InvalidateType.Content, undoBuffer));
+					rebuildable?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
 					propertyGridModifier?.UpdateControls(context);
 				};
 
@@ -293,7 +296,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(field.DirectionVector);
-					rebuildable?.Invalidate(new InvalidateArgs(rebuildable, InvalidateType.Content, undoBuffer));
+					rebuildable?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
 					propertyGridModifier?.UpdateControls(context);
 				};
 
@@ -314,7 +317,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							Normal = Vector3.UnitZ, Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + new Vector3(field.DoubleValue, 0, 0)
 						});
-					rebuildable?.Invalidate(new InvalidateArgs(rebuildable, InvalidateType.Content, undoBuffer));
+					rebuildable?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
 					propertyGridModifier?.UpdateControls(context);
 				};
 
@@ -350,7 +353,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(field.IntValue);
-					rebuildable?.Invalidate(new InvalidateArgs(rebuildable, InvalidateType.Content, undoBuffer));
+					rebuildable?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
 					propertyGridModifier?.UpdateControls(context);
 				};
 
@@ -365,7 +368,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(field.Checked);
-					rebuildable?.Invalidate(new InvalidateArgs(rebuildable, InvalidateType.Content, undoBuffer));
+					rebuildable?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
 					propertyGridModifier?.UpdateControls(context);
 				};
 
@@ -380,7 +383,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(field.Value);
-					rebuildable?.Invalidate(new InvalidateArgs(rebuildable, InvalidateType.Content, undoBuffer));
+					rebuildable?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
 					propertyGridModifier?.UpdateControls(context);
 				};
 
@@ -395,7 +398,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(Convert.ToChar(field.Value));
-					rebuildable?.Invalidate(new InvalidateArgs(rebuildable, InvalidateType.Content, undoBuffer));
+					rebuildable?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
 					propertyGridModifier?.UpdateControls(context);
 				};
 
@@ -422,7 +425,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(Enum.Parse(property.PropertyType, field.Value));
-					rebuildable?.Invalidate(new InvalidateArgs(rebuildable, InvalidateType.Content, undoBuffer));
+					rebuildable?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
 					propertyGridModifier?.UpdateControls(context);
 				};
 

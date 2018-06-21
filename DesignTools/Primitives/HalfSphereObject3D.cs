@@ -66,7 +66,16 @@ namespace MatterHackers.MatterControl.DesignTools
 		public int LongitudeSides { get; set; } = 40;
 		public int LatitudeSides { get; set; } = 10;
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
+			{
+				Rebuild(null);
+			}
+		}
+
+		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())

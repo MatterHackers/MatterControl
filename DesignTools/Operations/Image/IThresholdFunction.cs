@@ -47,5 +47,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		/// <param name="color"></param>
 		/// <returns></returns>
 		double Threshold(Color color);
+
+		/// <summary>
+		/// The color that represents 0 for this Threshold function
+		/// </summary>
+		Color ZeroColor { get; }
 	}
 }
