@@ -124,6 +124,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				Rebuild(null);
 			}
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
 		}
 
 		private void Rebuild(UndoBuffer undoBuffer)
