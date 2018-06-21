@@ -75,6 +75,7 @@
     <Compile Include="AboutPage\CheckForUpdatesPage.cs" />
     <Compile Include="AboutPage\ContactFormPage.cs" />
     <Compile Include="ApplicationView\LogoSpinner.cs" />
+    <Compile Include="ApplicationView\ThumbnailsConfig.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingPlan.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingWizardPage.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingWizardRootPage.cs" />
@@ -106,7 +107,6 @@
     <Compile Include="DesignTools\Primitives\HalfCylinderObject3D.cs" />
     <Compile Include="DesignTools\Primitives\HalfWedgeObject3D.cs" />
     <Compile Include="Library\ContentProviders\ImageContentProvider.cs" />
-    <Compile Include="ApplicationView\ThumbnailCache.cs" />
     <Compile Include="Library\Providers\MatterControl\LibraryCollectionContainer.cs" />
     <Compile Include="Library\Providers\MatterControl\PartHistoryContainer.cs" />
     <Compile Include="Library\Providers\MatterControl\RootHistoryContainer.cs" />

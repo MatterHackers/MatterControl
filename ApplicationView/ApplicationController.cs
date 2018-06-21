@@ -292,7 +292,7 @@ namespace MatterHackers.MatterControl
 
 		private List<SceneSelectionOperation> registeredSceneOperations;
 
-		public ThumbnailCache Thumbnails { get; } = new ThumbnailCache();
+		public ThumbnailsConfig Thumbnails { get; } = new ThumbnailsConfig();
 
 		private void RebuildSceneOperations(ThemeConfig theme)
 		{
