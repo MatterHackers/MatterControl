@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl
 								loadedItem = Object3D.Load(contentStream.Stream, Path.GetExtension(streamInterface.FileName), CancellationToken.None, null /*itemCache*/, progressReporter);
 
 								// Set MeshPath for non-mcx content. Avoid on mcx to ensure serialization of children
-								if (item is FileSystemFileItem fileItem 
+								if (item is FileSystemFileItem fileItem
 									&& !string.Equals(Path.GetExtension(fileItem.FileName), ".mcx", StringComparison.OrdinalIgnoreCase))
 								{
 									loadedItem.MeshPath = fileItem.Path;
@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl
 			if (thumbnail != null)
 			{
 				// Cache at requested size
-				string cachePath = ApplicationController.Instance.ThumbnailCachePath(thumbnailId, width, height);
+				string cachePath = ApplicationController.Instance.ThumbnailCachePath(item.MeshRenderId().ToString(), width, height);
 
 				// TODO: Lookup best large image and downscale if required
 				if (false)
@@ -183,12 +183,6 @@ namespace MatterHackers.MatterControl
 				}
 
 				AggContext.ImageIO.SaveImageData(cachePath, thumbnail);
-				var meshCachePath = ApplicationController.Instance.ThumbnailCachePath(item.MeshRenderId().ToString(), width, height);
-				if (meshCachePath != cachePath)
-				{
-					// also save it to the mesh cache
-					AggContext.ImageIO.SaveImageData(meshCachePath, thumbnail);
-				}
 			}
 
 			return thumbnail ?? DefaultImage.CreateScaledImage(width, height);
@@ -205,7 +199,7 @@ namespace MatterHackers.MatterControl
 			if (width < 100
 				&& height < 100)
 			{
-				// check for a 100x100 image 
+				// check for a 100x100 image
 				var cachedAt100x100 = LoadImage(ApplicationController.Instance.ThumbnailCachePath(cacheId, 100, 100));
 				if (cachedAt100x100 != null)
 				{
