@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (item == null)
 			{
-				return DefaultImage.CreateScaledImage(width, height);
+				return DefaultImage;
 			}
 
 			var image = LoadCachedImage(thumbnailId, width, height);
@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl
 
 			if(onlyUseCache)
 			{
-				return DefaultImage.CreateScaledImage(width, height);
+				return DefaultImage;
 			}
 
 			int estimatedMemorySize = item.EstimatedMemory();
@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl
 				AggContext.ImageIO.SaveImageData(cachePath, thumbnail);
 			}
 
-			return thumbnail ?? DefaultImage.CreateScaledImage(width, height);
+			return thumbnail ?? DefaultImage;
 		}
 
 		internal static ImageBuffer LoadCachedImage(string cacheId, int width, int height)
