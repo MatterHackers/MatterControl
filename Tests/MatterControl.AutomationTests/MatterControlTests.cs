@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Generate thumbnail
 				var stopWatch = Stopwatch.StartNew();
-				await provider.GetThumbnail(item, 400, 400, (imageBuffer, _) => { });
+				await provider.GetThumbnail(item, 400, 400);
 
 				Assert.Less(stopWatch.ElapsedMilliseconds, 2000, "Elapsed thumbnail generation for Rook.amf should be less than 2 seconds for expected orthographic mode");
 			});

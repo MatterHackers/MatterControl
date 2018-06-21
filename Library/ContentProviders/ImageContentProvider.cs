@@ -96,10 +96,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			return null;
 		}
 
-		public async Task GetThumbnail(ILibraryItem item, int width, int height, ThumbnailSetter imageCallback)
+		public async Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
 		{
-			var imageBuffer = await LoadImage(item);
-			imageCallback(imageBuffer, raytracedImage: true);
+			return await LoadImage(item);
 		}
 
 		public ImageBuffer DefaultImage => AggContext.StaticData.LoadIcon("140.png");

@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			var thumbnail = MeshContentProvider.LoadCachedImage(thumbnailId, thumbWidth, thumbHeight);
 			if (thumbnail != null)
 			{
-				this.SetItemThumbnail(thumbnail, raytracedImage: false);
+				this.SetItemThumbnail(thumbnail);
 				return;
 			}
 
@@ -111,14 +111,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					else
 					{
 						// Show processing image
-						this.SetItemThumbnail(generatingThumbnailIcon, raytracedImage: false);
+						this.SetItemThumbnail(generatingThumbnailIcon);
 
 						// Ask the provider for a content specific thumbnail
-						await contentProvider.GetThumbnail(
-							libraryItem,
-							thumbWidth,
-							thumbHeight,
-							this.SetItemThumbnail);
+						thumbnail = await contentProvider.GetThumbnail(libraryItem, thumbWidth, thumbHeight);
 					}
 				}
 			}
@@ -129,7 +125,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				thumbnail = ((libraryItem is ILibraryContainerLink) ? defaultFolderIcon : defaultItemIcon).AlphaToPrimaryAccent();
 			}
 
-			this.SetItemThumbnail(thumbnail, raytracedImage: false);
+			this.SetItemThumbnail(thumbnail);
 		}
 
 		private void ScheduleRaytraceOperation()
@@ -141,7 +137,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			ApplicationController.Instance.QueueForGeneration(async () =>
 			{
-				// When this widget is dequeued for generation, validate before processing. Off-screen widgets should be skipped and will requeue next time they become visible
+				// When dequeued for generation, ensure visible before raytracing. Off-screen widgets are dequeue and will reschedule if redrawn
 				if (!this.ActuallyVisibleOnScreen())
 				{
 					// Skip raytracing operation, requeue on next draw
@@ -155,14 +151,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					requeueRaytraceOnDraw = false;
 
 					// Show processing image
-					this.SetItemThumbnail(generatingThumbnailIcon, raytracedImage: false);
+					this.SetItemThumbnail(generatingThumbnailIcon);
 
 					// Ask the MeshContentProvider to RayTrace the image
-					await meshContentProvider.GetThumbnail(
-						listViewItem.Model,
-						thumbWidth,
-						thumbHeight,
-						this.SetItemThumbnail);
+					var thumbnail = await meshContentProvider.GetThumbnail(listViewItem.Model, thumbWidth, thumbHeight);
+					if (thumbnail != null)
+					{
+						requeueRaytraceOnDraw = false;
+						raytracePending = false;
+
+						this.SetItemThumbnail(thumbnail);
+					}
 				}
 			});
 		}
@@ -219,7 +218,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public event EventHandler ImageSet;
 
-		protected void SetItemThumbnail(ImageBuffer thumbnail, bool raytracedImage)
+		protected void SetItemThumbnail(ImageBuffer thumbnail)
 		{
 			if (thumbnail != null)
 			{
@@ -231,11 +230,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				else if (thumbnail.Width > thumbWidth || thumbnail.Height > thumbHeight)
 				{
 					thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, thumbWidth, thumbHeight);
-				}
-
-				if (raytracedImage)
-				{
-					this.raytracePending = false;
 				}
 
 				if (GuiWidget.DeviceScale != 1)

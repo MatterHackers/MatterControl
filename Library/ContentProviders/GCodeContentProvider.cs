@@ -70,10 +70,9 @@ namespace MatterHackers.MatterControl
 			return null;
 		}
 
-		public Task GetThumbnail(ILibraryItem item, int width, int height, ThumbnailSetter imageCallback)
+		public Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
 		{
-			imageCallback(thumbnailImage, false);
-			return Task.CompletedTask;
+			return Task.FromResult(thumbnailImage);
 		}
 	}
 }
