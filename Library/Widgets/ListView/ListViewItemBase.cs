@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			var thumbnail = MeshContentProvider.LoadCachedImage(thumbnailId, thumbWidth, thumbHeight);
 			if (thumbnail != null)
 			{
-				this.SetItemThumbnail(thumbnail, raytracedImage: false);
+				this.SetItemThumbnail(thumbnail);
 				return;
 			}
 
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					else
 					{
 						// Show processing image
-						this.SetItemThumbnail(generatingThumbnailIcon, raytracedImage: false);
+						this.SetItemThumbnail(generatingThumbnailIcon);
 
 						// Ask the provider for a content specific thumbnail
 						thumbnail = await contentProvider.GetThumbnail(libraryItem, thumbWidth, thumbHeight);
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				thumbnail = ((libraryItem is ILibraryContainerLink) ? defaultFolderIcon : defaultItemIcon).AlphaToPrimaryAccent();
 			}
 
-			this.SetItemThumbnail(thumbnail, raytracedImage: false);
+			this.SetItemThumbnail(thumbnail);
 		}
 
 		private void ScheduleRaytraceOperation()
@@ -151,13 +151,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					requeueRaytraceOnDraw = false;
 
 					// Show processing image
-					this.SetItemThumbnail(generatingThumbnailIcon, raytracedImage: false);
+					this.SetItemThumbnail(generatingThumbnailIcon);
 
 					// Ask the MeshContentProvider to RayTrace the image
 					var thumbnail = await meshContentProvider.GetThumbnail(listViewItem.Model, thumbWidth, thumbHeight);
 					if (thumbnail != null)
 					{
-						this.SetItemThumbnail(thumbnail, raytracedImage: true);
+						requeueRaytraceOnDraw = false;
+						raytracePending = false;
+
+						this.SetItemThumbnail(thumbnail);
 					}
 				}
 			});
@@ -215,7 +218,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public event EventHandler ImageSet;
 
-		protected void SetItemThumbnail(ImageBuffer thumbnail, bool raytracedImage)
+		protected void SetItemThumbnail(ImageBuffer thumbnail)
 		{
 			if (thumbnail != null)
 			{
@@ -227,11 +230,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				else if (thumbnail.Width > thumbWidth || thumbnail.Height > thumbHeight)
 				{
 					thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, thumbWidth, thumbHeight);
-				}
-
-				if (raytracedImage)
-				{
-					this.raytracePending = false;
 				}
 
 				if (GuiWidget.DeviceScale != 1)
