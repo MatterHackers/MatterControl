@@ -313,6 +313,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				UpdateHistogramDisplay();
 				Rebuild(null);
+				base.OnInvalidate(invalidateType);
 			}
 			else
 			{
@@ -327,6 +328,33 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private void Rebuild(UndoBuffer undoBuffer)
 		{
+			bool propertyUpdated = false;
+			var minSeparation = .01;
+			if (RangeStart < 0
+				|| RangeStart > 1
+				|| RangeEnd < 0
+				|| RangeEnd > 1
+				|| RangeStart > RangeEnd - minSeparation)
+			{
+				RangeStart = Math.Max(0, Math.Min(1 - minSeparation, RangeStart));
+				RangeEnd = Math.Max(0, Math.Min(1, RangeEnd));
+				if (RangeStart > RangeEnd - minSeparation)
+				{
+					// values are overlaped or too close together
+					if (RangeEnd < 1 - minSeparation)
+					{
+						// move the end up whever possible
+						RangeEnd = RangeStart + minSeparation;
+					}
+					else
+					{
+						// move the end to the end and the start up
+						RangeEnd = 1;
+						RangeStart = 1 - minSeparation;
+					}
+				}
+				propertyUpdated = true;
+			}
 			var rebuildLock = RebuildLock();
 			// now create a long running task to process the image
 			ApplicationController.Instance.Tasks.Execute(
@@ -349,6 +377,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				return Task.CompletedTask;
 			});
+
+			if (propertyUpdated)
+			{
+				UpdateHistogramDisplay();
+				Invalidate(new InvalidateArgs(this, InvalidateType.Properties, null));
+			}
 		}
 	}
 }
