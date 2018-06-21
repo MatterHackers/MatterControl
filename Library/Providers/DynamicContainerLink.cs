@@ -37,7 +37,6 @@ namespace MatterHackers.MatterControl.Library
 	{
 		public string ID { get; set; }
 		public string Category { get; set; }
-		public string ThumbnailKey => thumbnail.GetHashCode().ToString();
 		public bool IsProtected { get; set; } = true;
 
 		public bool IsReadOnly { get; set; } = false;

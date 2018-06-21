@@ -71,10 +71,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			ILibraryContainer libraryContainer = listViewItem.Container;
 
 			string thumbnailId = libraryItem.ID;
-			if(libraryItem is IThumbnail thumbnailKey)
-			{
-				thumbnailId = thumbnailKey.ThumbnailKey;
-			}
 
 			var thumbnail = MeshContentProvider.LoadCachedImage(thumbnailId, thumbWidth, thumbHeight);
 			if (thumbnail != null)

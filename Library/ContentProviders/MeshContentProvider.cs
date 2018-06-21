@@ -121,10 +121,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			string thumbnailId = libraryItem.ID;
-			if (libraryItem is IThumbnail thumbnailKey)
-			{
-				thumbnailId = thumbnailKey.ThumbnailKey;
-			}
 
 			var thumbnail = GetThumbnail(object3D, thumbnailId, width, height, false);
 			imageCallback?.Invoke(thumbnail, true);
@@ -223,24 +219,16 @@ namespace MatterHackers.MatterControl
 
 		private static ImageBuffer LoadImage(string filePath)
 		{
-			ImageBuffer thumbnail = null;
-
 			try
 			{
 				if (File.Exists(filePath))
 				{
-					var temp = new ImageBuffer();
-					AggContext.ImageIO.LoadImageData(filePath, temp);
-					temp.SetRecieveBlender(new BlenderPreMultBGRA());
-
-					thumbnail = temp;
+					return AggContext.ImageIO.LoadImage(filePath).SetPreMultiply();
 				}
-
-				return thumbnail;
 			}
 			catch { } // Suppress exceptions, return null on any errors
 
-			return thumbnail;
+			return null;
 		}
 
 		public ImageBuffer DefaultImage => AggContext.StaticData.LoadIcon("mesh.png");
