@@ -359,8 +359,6 @@ namespace MatterHackers.MatterControl
 
 		private List<SceneSelectionOperation> registeredSceneOperations;
 
-		public Dictionary<Type, SceneSelectionOperation> OperationsByType { get; private set; }
-
 		public ThumbnailCache Thumbnails { get; } = new ThumbnailCache();
 
 		private void RebuildSceneOperations(ThemeConfig theme)
@@ -587,17 +585,25 @@ namespace MatterHackers.MatterControl
 				},
 			};
 
-			var operationsByType = new Dictionary<Type, SceneSelectionOperation>();
+			var operationIconsByType = new Dictionary<Type, ImageBuffer>();
 
-			foreach(var operation in registeredSceneOperations)
+			foreach (var operation in registeredSceneOperations)
 			{
 				if (operation.OperationType != null)
 				{
-					operationsByType.Add(operation.OperationType, operation);
+					operationIconsByType.Add(operation.OperationType, operation.Icon);
 				}
 			}
 
-			this.OperationsByType = operationsByType;
+			// TODO: Use custom selection group icon if reusing group icon seems incorrect
+			//
+			// Explicitly register SelectionGroup icon
+			if (operationIconsByType.TryGetValue(typeof(Group3D), out ImageBuffer groupIcon))
+			{
+				operationIconsByType.Add(typeof(SelectionGroup), groupIcon);
+			}
+
+			this.Thumbnails.OperationIcons = operationIconsByType;
 		}
 
 		public ImageSequence GetProcessingSequence(Color color)

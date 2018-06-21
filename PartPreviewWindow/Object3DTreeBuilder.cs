@@ -91,10 +91,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			// Check for operation resulting in the given type
-			if (ApplicationController.Instance.OperationsByType.TryGetValue(item.Source.GetType(), out SceneSelectionOperation operation))
+			if (ApplicationController.Instance.Thumbnails.OperationIcons.TryGetValue(item.Source.GetType(), out ImageBuffer icon))
 			{
 				// If exists, use the operation icon
-				node.Image = operation.Icon;
+				node.Image = icon;
 			}
 			else
 			{
