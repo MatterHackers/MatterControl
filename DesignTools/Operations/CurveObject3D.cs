@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -50,6 +51,10 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public double Diameter { get; set; } = double.MinValue;
 
+		[Range(0, 100, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+		[Description("Where to starte the bend as a percent of the width of the part")]
+		public double StartPercent { get; set; } = 50;
+
 		[DisplayName("Bend Up")]
 		public bool BendCcw { get; set; } = true;
 
@@ -64,7 +69,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
-			bool updateDiameter = Diameter == double.MinValue;
+			bool propertyUpdated = Diameter == double.MinValue;
+			if (StartPercent < 0
+				|| StartPercent > 100)
+			{
+				StartPercent = Math.Min(100, Math.Max(0, StartPercent));
+				propertyUpdated = true;
+			}
 
 			using (RebuildLock())
 			{
@@ -78,7 +89,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				var aabb = this.GetAxisAlignedBoundingBox();
 
-				if (updateDiameter)
+				if (Diameter == double.MinValue)
 				{
 					// uninitialized set to a reasonable value
 					Diameter = (int)aabb.XSize;
@@ -89,7 +100,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					var radius = Diameter / 2;
 					var circumference = MathHelper.Tau * radius;
-					rotationCenter = new Vector2(aabb.minXYZ.X, aabb.maxXYZ.Y + radius);
+					rotationCenter = new Vector2(aabb.minXYZ.X + (aabb.maxXYZ.X - aabb.minXYZ.X) * (StartPercent / 100), aabb.maxXYZ.Y + radius);
 					foreach (var object3Ds in meshWrapperEnumerator)
 					{
 						var originalMatrix = object3Ds.original.WorldMatrix(this);
@@ -152,12 +163,12 @@ namespace MatterHackers.MatterControl.DesignTools
 							}
 							var worldPosition = Vector3.Transform(originalMesh.Vertices[i].Position, matrix);
 
-							var angleToRotate = ((worldPosition.X - aabb.minXYZ.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
+							var angleToRotate = ((worldPosition.X - rotationCenter.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
 							var distanceFromCenter = rotationCenter.Y - worldPosition.Y;
 
 							var rotatePosition = new Vector3(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
 							rotatePosition.Z = worldPosition.Z;
-							var worldWithBend = rotatePosition + new Vector3(aabb.minXYZ.X, radius + aabb.maxXYZ.Y, 0);
+							var worldWithBend = rotatePosition + new Vector3(rotationCenter.X, radius + aabb.maxXYZ.Y, 0);
 							curvedMesh.Vertices[i].Position = Vector3.Transform(worldWithBend, matrix.Inverted);
 						}
 
@@ -168,7 +179,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (!BendCcw)
 					{
 						// fix the stored center so we draw correctly
-						rotationCenter = new Vector2(aabb.minXYZ.X, aabb.minXYZ.Y - radius);
+						rotationCenter = new Vector2(rotationCenter.X, aabb.minXYZ.Y - radius);
 					}
 				}
 
@@ -177,7 +188,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Mesh));
-			if(updateDiameter)
+			if(propertyUpdated)
 			{
 				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
 			}
