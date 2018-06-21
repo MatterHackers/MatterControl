@@ -46,6 +46,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	using MatterHackers.Agg.UI;
 	using MatterHackers.RenderOpenGl.OpenGl;
 	using MatterHackers.VectorMath;
+	using System.ComponentModel.DataAnnotations;
 	using Polygon = List<IntPoint>;
 	using Polygons = List<List<IntPoint>>;
 
@@ -144,7 +145,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		[JsonIgnore]
 		private ImageBuffer Image => this.Descendants<ImageObject3D>().FirstOrDefault()?.Image;
 
+		[Range(0, 1, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		public double RangeStart { get; set; } = .1;
+		[Range(0, 1, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		public double RangeEnd { get; set; } = 1;
 
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();

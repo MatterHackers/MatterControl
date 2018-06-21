@@ -64,6 +64,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
+			bool updateDiameter = Diameter == double.MinValue;
 
 			using (RebuildLock())
 			{
@@ -77,7 +78,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				var aabb = this.GetAxisAlignedBoundingBox();
 
-				if (Diameter == double.MinValue)
+				if (updateDiameter)
 				{
 					// uninitialized set to a reasonable value
 					Diameter = (int)aabb.XSize;
@@ -176,6 +177,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+			if(updateDiameter)
+			{
+				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
+			}
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
