@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl
 			{
 				// TODO: Consider and resolve who should own populating the cache
 				// Cache at requested size
-				string cachePath = ApplicationController.Instance.Thumbnails.ThumbnailCachePath(item.MeshRenderId().ToString(), width, height);
+				string cachePath = ApplicationController.Instance.Thumbnails.CachePath(item.MeshRenderId().ToString(), width, height);
 
 				AggContext.ImageIO.SaveImageData(cachePath, thumbnail);
 			}
