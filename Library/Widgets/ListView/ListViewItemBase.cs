@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			string thumbnailId = libraryItem.ID;
 
-			var thumbnail = MeshContentProvider.LoadCachedImage(thumbnailId, thumbWidth, thumbHeight);
+			var thumbnail = ApplicationController.Instance.Thumbnails.LoadCachedImage(thumbnailId, thumbWidth, thumbHeight);
 			if (thumbnail != null)
 			{
 				this.SetItemThumbnail(thumbnail);
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				return;
 			}
 
-			ApplicationController.Instance.QueueForGeneration(async () =>
+			ApplicationController.Instance.Thumbnails.QueueForGeneration(async () =>
 			{
 				// When dequeued for generation, ensure visible before raytracing. Off-screen widgets are dequeue and will reschedule if redrawn
 				if (!this.ActuallyVisibleOnScreen())

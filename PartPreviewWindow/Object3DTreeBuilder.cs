@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -91,32 +92,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			// Check for operation resulting in the given type
-			if (ApplicationController.Instance.OperationsByType.TryGetValue(item.Source.GetType(), out SceneSelectionOperation operation))
+			if (ApplicationController.Instance.Thumbnails.OperationIcons.TryGetValue(item.Source.GetType(), out ImageBuffer icon))
 			{
 				// If exists, use the operation icon
-				node.Image = operation.Icon;
+				node.Image = icon;
 			}
 			else
 			{
 				node.Load += (s, e) =>
 				{
-					ApplicationController.Instance.QueueForGeneration(() =>
-					{
-						// When this widget is dequeued for generation, validate before processing. Off-screen widgets should be skipped and will requeue next time they become visible
-						if (node.ActuallyVisibleOnScreen()
-							&& ApplicationController.Instance.Library.ContentProviders.TryGetValue("mcx", out IContentProvider contentProvider)
-							&& contentProvider is MeshContentProvider meshContentProvider)
-						{
-							node.Image = meshContentProvider.GetThumbnail(
-								item.Source,
-								item.Source.MeshRenderId().ToString(),
-								16,
-								16,
-								true);
-						}
-
-						return Task.CompletedTask;
-					});
+					string contentID = item.Source.MeshRenderId().ToString();
+					var thumbnail = ApplicationController.Instance.Thumbnails.LoadCachedImage(contentID, 16, 16);
+					node.Image = thumbnail ?? ApplicationController.Instance.Thumbnails.DefaultThumbnail;
 				};
 			}
 

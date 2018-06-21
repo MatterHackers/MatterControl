@@ -163,10 +163,6 @@ namespace MatterHackers.MatterControl
 
 		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
 
-		private readonly static object thumbsLock = new object();
-
-		private Queue<Func<Task>> queuedThumbCallbacks = new Queue<Func<Task>>();
-
 		public async Task SetActivePrinter(PrinterConfig printer, bool allowChangedEvent = true)
 		{
 			var initialPrinter = this.ActivePrinter;
@@ -279,69 +275,6 @@ namespace MatterHackers.MatterControl
 			}*/
 		}
 
-		private AutoResetEvent thumbGenResetEvent = new AutoResetEvent(false);
-
-		Task thumbnailGenerator = null;
-
-		internal void QueueForGeneration(Func<Task> func)
-		{
-			lock (thumbsLock)
-			{
-				if (thumbnailGenerator == null)
-				{
-					// Spin up a new thread once needed
-					thumbnailGenerator = Task.Run((Action)ThumbGeneration);
-				}
-
-				queuedThumbCallbacks.Enqueue(func);
-				thumbGenResetEvent.Set();
-			}
-		}
-
-		private async void ThumbGeneration()
-		{
-			Thread.CurrentThread.Name = $"ThumbnailGeneration";
-
-			while (!this.ApplicationExiting)
-			{
-				Thread.Sleep(100);
-
-				try
-				{
-					if (queuedThumbCallbacks.Count > 0)
-					{
-						Func<Task> callback;
-						lock (thumbsLock)
-						{
-							callback = queuedThumbCallbacks.Dequeue();
-						}
-
-						await callback();
-					}
-					else
-					{
-						// Process until queuedThumbCallbacks is empty then wait for new tasks via QueueForGeneration
-						thumbGenResetEvent.WaitOne();
-					}
-				}
-				catch (AppDomainUnloadedException)
-				{
-					return;
-				}
-				catch (ThreadAbortException)
-				{
-					return;
-				}
-				catch (Exception ex)
-				{
-					Console.WriteLine("Error generating thumbnail: " + ex.Message);
-				}
-			}
-
-			// Null task reference on exit
-			thumbnailGenerator = null;
-		}
-
 		public static Func<PrinterInfo, string, Task<PrinterSettings>> GetPrinterProfileAsync;
 		public static Func<string, IProgress<ProgressStatus>, Task> SyncPrinterProfiles;
 		public static Func<Task<OemProfileDictionary>> GetPublicProfileList;
@@ -359,7 +292,7 @@ namespace MatterHackers.MatterControl
 
 		private List<SceneSelectionOperation> registeredSceneOperations;
 
-		public Dictionary<Type, SceneSelectionOperation> OperationsByType { get; private set; }
+		public ThumbnailsConfig Thumbnails { get; } = new ThumbnailsConfig();
 
 		private void RebuildSceneOperations(ThemeConfig theme)
 		{
@@ -585,17 +518,25 @@ namespace MatterHackers.MatterControl
 				},
 			};
 
-			var operationsByType = new Dictionary<Type, SceneSelectionOperation>();
+			var operationIconsByType = new Dictionary<Type, ImageBuffer>();
 
-			foreach(var operation in registeredSceneOperations)
+			foreach (var operation in registeredSceneOperations)
 			{
 				if (operation.OperationType != null)
 				{
-					operationsByType.Add(operation.OperationType, operation);
+					operationIconsByType.Add(operation.OperationType, operation.Icon);
 				}
 			}
 
-			this.OperationsByType = operationsByType;
+			// TODO: Use custom selection group icon if reusing group icon seems incorrect
+			//
+			// Explicitly register SelectionGroup icon
+			if (operationIconsByType.TryGetValue(typeof(Group3D), out ImageBuffer groupIcon))
+			{
+				operationIconsByType.Add(typeof(SelectionGroup), groupIcon);
+			}
+
+			this.Thumbnails.OperationIcons = operationIconsByType;
 		}
 
 		public ImageSequence GetProcessingSequence(Color color)
@@ -1095,7 +1036,7 @@ namespace MatterHackers.MatterControl
 			// Ensure all threads shutdown gracefully on close
 
 			// Release any waiting generator threads
-			thumbGenResetEvent?.Set();
+			this.Thumbnails.Shutdown();
 
 			// Kill all long running tasks (this will release the silcing thread if running)
 			foreach (var task in Tasks.RunningTasks)
@@ -1294,8 +1235,7 @@ namespace MatterHackers.MatterControl
 
 		public async void OnApplicationClosed()
 		{
-			// Release the waiting ThumbnailGeneration task so it can shutdown gracefully
-			thumbGenResetEvent?.Set();
+			this.Thumbnails.Shutdown();
 
 			// Save changes before close
 			if (this.ActivePrinter != null
@@ -1343,17 +1283,6 @@ namespace MatterHackers.MatterControl
 
 		public string ShortProductName => "MatterControl";
 		public string ProductName => "MatterHackers: MatterControl";
-
-		public string ThumbnailCachePath(string cacheId)
-		{
-			// TODO: Use content SHA
-			return ApplicationController.CacheablePath("ItemThumbnails", $"{cacheId}.png");
-		}
-
-		public string ThumbnailCachePath(string id, int width, int height)
-		{
-			return ApplicationController.CacheablePath("ItemThumbnails", $"{id}-{width}x{height}.png");
-		}
 
 		public void SwitchToPurchasedLibrary()
 		{

@@ -75,6 +75,7 @@
     <Compile Include="AboutPage\CheckForUpdatesPage.cs" />
     <Compile Include="AboutPage\ContactFormPage.cs" />
     <Compile Include="ApplicationView\LogoSpinner.cs" />
+    <Compile Include="ApplicationView\ThumbnailsConfig.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingPlan.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingWizardPage.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingWizardRootPage.cs" />
