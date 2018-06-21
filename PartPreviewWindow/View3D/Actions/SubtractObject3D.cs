@@ -43,7 +43,7 @@ using System.Threading.Tasks;
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
 	[ShowUpdateButtonAttribute]
-	public class SubtractObject3D : MeshWrapperObject3D, IPublicPropertyObject
+	public class SubtractObject3D : MeshWrapperObject3D
 	{
 		public SubtractObject3D()
 		{
@@ -95,9 +95,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						var inverse = keep.matrix.Inverted;
 						transformedKeep.Transform(inverse);
 
-						keep.obj3D.SuspendRebuild();
-						keep.obj3D.Mesh = transformedKeep;
-						keep.obj3D.ResumeRebuild();
+						using (keep.obj3D.RebuildLock())
+						{
+							keep.obj3D.Mesh = transformedKeep;
+						}
 
 						percentCompleted += amountPerOperation;
 						progressStatus.Progress0To1 = percentCompleted;
@@ -115,7 +116,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
 				|| invalidateType.InvalidateType == InvalidateType.Mesh)
 				&& invalidateType.Source != this
-				&& !RebuildSuspended)
+				&& !RebuildLocked)
+			{
+				Rebuild(null);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
 			{
 				Rebuild(null);
 			}
@@ -125,10 +131,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 		}
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
-			SuspendRebuild();
+			var rebuildLock = RebuildLock();
 			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
 			// spin up a task to remove holes from the objects in the group
@@ -152,14 +158,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 					UiThread.RunOnIdle(() =>
 					{
-						ResumeRebuild();
+						rebuildLock.Dispose();
 						base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 					});
 
 					return Task.CompletedTask;
 				});
-
-			base.Rebuild(null);
 		}
 	}
 }

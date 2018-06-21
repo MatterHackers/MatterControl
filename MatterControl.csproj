@@ -89,7 +89,6 @@
     <Compile Include="CustomWidgets\TreeView\TreeView.cs" />
     <Compile Include="DesignTools\Attributes\ShowSearchFieldAttribute.cs" />
     <Compile Include="DesignTools\Attributes\ShowUpdateButtonAttribute.cs" />
-    <Compile Include="DesignTools\Interfaces\IPublicPropertyObject.cs" />
     <Compile Include="DesignTools\EditableTypes\DirectionAxis.cs" />
     <Compile Include="DesignTools\EditableTypes\DirectionVector.cs" />
     <Compile Include="DesignTools\Operations\Group3D.cs" />
@@ -99,6 +98,7 @@
     <Compile Include="DesignTools\Operations\Image\IThresholdFunction.cs" />
     <Compile Include="DesignTools\Operations\Image\LinearExtrude.cs" />
     <Compile Include="DesignTools\Operations\Image\MapOnMaxIntensity.cs" />
+    <Compile Include="DesignTools\Operations\Image\SilhouetteThresholdFunction.cs" />
     <Compile Include="DesignTools\Operations\OperationSource.cs" />
     <Compile Include="DesignTools\Operations\PinchObject3D.cs" />
     <Compile Include="DesignTools\Primitives\ComponentObject3D.cs" />

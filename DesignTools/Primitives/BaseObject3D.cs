@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	using Polygons = List<List<IntPoint>>;
 	public enum BaseTypes { None, Rectangle, Circle, /* Oval, Frame,*/ Outline, };
 
-	public class BaseObject3D : Object3D, IPublicPropertyObject, IPropertyGridModifier
+	public class BaseObject3D : Object3D, IPropertyGridModifier
 	{
 		readonly double scalingForClipper = 1000;
 
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override bool CanRemove => true;
 		public override bool CanApply => true;
 
-		public BaseTypes CurrentBaseType { get; set; }
+		public BaseTypes BaseType { get; set; } = BaseTypes.Circle;
 		public double BaseSize { get; set; } = 3;
 		public double InfillAmount { get; set; } = 3;
 		public double ExtrusionHeight { get; set; } = 5;
@@ -70,27 +70,26 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void Remove(UndoBuffer undoBuffer)
 		{
-			SuspendRebuild();
-
-			var startingAabb = this.GetAxisAlignedBoundingBox();
-
-			var firstChild = this.Children.FirstOrDefault();
-
-			// only keep the first object
-			this.Children.Modify(list =>
+			using (RebuildLock())
 			{
-				list.Clear();
+				var startingAabb = this.GetAxisAlignedBoundingBox();
+
+				var firstChild = this.Children.FirstOrDefault();
+
+				// only keep the first object
+				this.Children.Modify(list =>
+				{
+					list.Clear();
 				// add back in the sourceContainer
 				list.Add(firstChild);
-			});
+				});
 
-			if (startingAabb.ZSize > 0)
-			{
-				// If the part was already created and at a height, maintain the height.
-				PlatingHelper.PlaceMeshAtHeight(this, startingAabb.minXYZ.Z);
+				if (startingAabb.ZSize > 0)
+				{
+					// If the part was already created and at a height, maintain the height.
+					PlatingHelper.PlaceMeshAtHeight(this, startingAabb.minXYZ.Z);
+				}
 			}
-
-			ResumeRebuild();
 
 			base.Remove(undoBuffer);
 		}
@@ -127,7 +126,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				|| invalidateType.InvalidateType == InvalidateType.Path
 				|| invalidateType.InvalidateType == InvalidateType.Mesh)
 				&& invalidateType.Source != this
-				&& !RebuildSuspended)
+				&& !RebuildLocked)
+			{
+				Rebuild(null);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
 			{
 				Rebuild(null);
 			}
@@ -137,37 +141,37 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
 
-			SuspendRebuild();
-
-			var startingAabb = this.GetAxisAlignedBoundingBox();
-
-			var firstChild = this.Children.FirstOrDefault();
-
-			// remove the base besh we added
-			this.Children.Modify(list =>
+			using (RebuildLock())
 			{
-				list.Clear();
+				var startingAabb = this.GetAxisAlignedBoundingBox();
+
+				var firstChild = this.Children.FirstOrDefault();
+
+				// remove the base besh we added
+				this.Children.Modify(list =>
+				{
+					list.Clear();
 				// add back in the sourceContainer
 				list.Add(firstChild);
-			});
+				});
 
-			// and create the base
-			var vertexSource = this.VertexSource;
+				// and create the base
+				var vertexSource = this.VertexSource;
 
-			// Convert VertexSource into expected Polygons
-			Polygons polygonShape = (vertexSource == null) ? null : vertexSource.CreatePolygons();
-			GenerateBase(polygonShape, firstChild.GetAxisAlignedBoundingBox().minXYZ.Z);
+				// Convert VertexSource into expected Polygons
+				Polygons polygonShape = (vertexSource == null) ? null : vertexSource.CreatePolygons();
+				GenerateBase(polygonShape, firstChild.GetAxisAlignedBoundingBox().minXYZ.Z);
 
-			if (startingAabb.ZSize > 0)
-			{
-				// If the part was already created and at a height, maintain the height.
-				PlatingHelper.PlaceMeshAtHeight(this, startingAabb.minXYZ.Z);
+				if (startingAabb.ZSize > 0)
+				{
+					// If the part was already created and at a height, maintain the height.
+					PlatingHelper.PlaceMeshAtHeight(this, startingAabb.minXYZ.Z);
+				}
 			}
-			ResumeRebuild();
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}
@@ -263,7 +267,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				Polygons polysToOffset = new Polygons();
 
-				switch (CurrentBaseType)
+				switch (BaseType)
 				{
 					case BaseTypes.Rectangle:
 						polysToOffset.Add(GetBoundingPolygon(polygonShape));
@@ -286,7 +290,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					Polygons basePolygons;
 
-					if (CurrentBaseType == BaseTypes.Outline
+					if (BaseType == BaseTypes.Outline
 						&& InfillAmount > 0)
 					{
 						basePolygons = Offset(polysToOffset, (BaseSize + InfillAmount) * scalingForClipper);

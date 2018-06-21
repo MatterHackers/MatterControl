@@ -545,7 +545,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.deferEditorTillMouseUp = false;
 				Scene_SelectionChanged(null, null);
 
-				Scene.Invalidate(new InvalidateArgs(null, InvalidateType.Content));
+				Scene.Invalidate(new InvalidateArgs(null, InvalidateType.Content, null));
 
 				// Set focus to View3DWidget after drag-drop
 				UiThread.RunOnIdle(this.Focus);

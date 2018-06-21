@@ -40,7 +40,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class RingObject3D : Object3D, IPublicPropertyObject, IPropertyGridModifier
+	public class RingObject3D : Object3D, IPropertyGridModifier
 	{
 		public RingObject3D()
 		{
@@ -76,39 +76,49 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double StartingAngle { get; set; } = 0;
 		public double EndingAngle { get; set; } = 360;
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
+			{
+				Rebuild(null);
+			}
+		}
+
+		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
-			SuspendRebuild();
-			var aabb = this.GetAxisAlignedBoundingBox();
-
-			var startingAngle = StartingAngle;
-			var endingAngle = EndingAngle;
-			if (!Advanced)
+			using (RebuildLock())
 			{
-				startingAngle = 0;
-				endingAngle = 360;
+				var aabb = this.GetAxisAlignedBoundingBox();
+
+				var startingAngle = StartingAngle;
+				var endingAngle = EndingAngle;
+				if (!Advanced)
+				{
+					startingAngle = 0;
+					endingAngle = 360;
+				}
+
+				var innerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
+
+				var path = new VertexStorage();
+				path.MoveTo(OuterDiameter / 2, -Height / 2);
+				path.LineTo(OuterDiameter / 2, Height / 2);
+				path.LineTo(innerDiameter / 2, Height / 2);
+				path.LineTo(innerDiameter / 2, -Height / 2);
+				path.LineTo(OuterDiameter / 2, -Height / 2);
+
+				var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
+				var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
+				Mesh = VertexSourceToMesh.Revolve(path, Sides, startAngle, endAngle);
+
+				if (aabb.ZSize > 0)
+				{
+					// If the part was already created and at a height, maintain the height.
+					PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+				}
 			}
-
-			var innerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
-
-			var path = new VertexStorage();
-			path.MoveTo(OuterDiameter / 2, -Height/2);
-			path.LineTo(OuterDiameter / 2, Height/2);
-			path.LineTo(innerDiameter / 2, Height/2);
-			path.LineTo(innerDiameter / 2, -Height/2);
-			path.LineTo(OuterDiameter / 2, -Height / 2);
-
-			var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
-			var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
-			Mesh = VertexSourceToMesh.Revolve(path, Sides, startAngle, endAngle);
-
-			if (aabb.ZSize > 0)
-			{
-				// If the part was already created and at a height, maintain the height.
-				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
-			}
-			ResumeRebuild();
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}

@@ -35,7 +35,7 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CubeObject3D : Object3D, IPublicPropertyObject
+	public class CubeObject3D : Object3D
 	{
 		public CubeObject3D()
 		{
@@ -76,20 +76,30 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
+			{
+				Rebuild(null);
+			}
+		}
+
+		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
-			SuspendRebuild();
-			var aabb = this.GetAxisAlignedBoundingBox();
-
-			Mesh = PlatonicSolids.CreateCube(Width, Depth, Height);
-
-			if (aabb.ZSize > 0)
+			using (RebuildLock())
 			{
-				// If the part was already created and at a height, maintain the height.
-				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+				var aabb = this.GetAxisAlignedBoundingBox();
+
+				Mesh = PlatonicSolids.CreateCube(Width, Depth, Height);
+
+				if (aabb.ZSize > 0)
+				{
+					// If the part was already created and at a height, maintain the height.
+					PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+				}
 			}
-			ResumeRebuild();
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}

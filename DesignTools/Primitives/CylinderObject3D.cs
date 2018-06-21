@@ -36,7 +36,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CylinderObject3D : Object3D, IPublicPropertyObject, IPropertyGridModifier
+	public class CylinderObject3D : Object3D, IPropertyGridModifier
 	{
 		public CylinderObject3D()
 		{
@@ -117,39 +117,49 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double EndingAngle { get; set; } = 360;
 		public double DiameterTop { get; set; } = 20;
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
+			{
+				Rebuild(null);
+			}
+		}
+
+		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
-			SuspendRebuild();
-			var aabb = this.GetAxisAlignedBoundingBox();
-
-			if (!Advanced)
+			using (RebuildLock())
 			{
-				var path = new VertexStorage();
-				path.MoveTo(0, -Height / 2);
-				path.LineTo(Diameter / 2, -Height / 2);
-				path.LineTo(Diameter / 2, Height / 2);
-				path.LineTo(0, Height / 2);
+				var aabb = this.GetAxisAlignedBoundingBox();
 
-				Mesh = VertexSourceToMesh.Revolve(path, Sides);
-			}
-			else
-			{
-				var path = new VertexStorage();
-				path.MoveTo(0, -Height / 2);
-				path.LineTo(Diameter / 2, -Height / 2);
-				path.LineTo(DiameterTop / 2, Height / 2);
-				path.LineTo(0, Height / 2);
+				if (!Advanced)
+				{
+					var path = new VertexStorage();
+					path.MoveTo(0, -Height / 2);
+					path.LineTo(Diameter / 2, -Height / 2);
+					path.LineTo(Diameter / 2, Height / 2);
+					path.LineTo(0, Height / 2);
 
-				Mesh = VertexSourceToMesh.Revolve(path, Sides, MathHelper.DegreesToRadians(StartingAngle), MathHelper.DegreesToRadians(EndingAngle));
-			}
+					Mesh = VertexSourceToMesh.Revolve(path, Sides);
+				}
+				else
+				{
+					var path = new VertexStorage();
+					path.MoveTo(0, -Height / 2);
+					path.LineTo(Diameter / 2, -Height / 2);
+					path.LineTo(DiameterTop / 2, Height / 2);
+					path.LineTo(0, Height / 2);
 
-			if (aabb.ZSize > 0)
-			{
-				// If the part was already created and at a height, maintain the height.
-				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+					Mesh = VertexSourceToMesh.Revolve(path, Sides, MathHelper.DegreesToRadians(StartingAngle), MathHelper.DegreesToRadians(EndingAngle));
+				}
+
+				if (aabb.ZSize > 0)
+				{
+					// If the part was already created and at a height, maintain the height.
+					PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+				}
 			}
-			ResumeRebuild();
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}

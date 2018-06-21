@@ -219,15 +219,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return item.GetAxisAlignedBoundingBox().ZSize;
 		}
 
-		public static void AddSelectionAsChildren(this InteractiveScene scene, IObject3D newParent)
+		public static void AddSelectionAsChildren(this IObject3D newParent, InteractiveScene scene, IObject3D selectedItem)
 		{
-			if (scene.HasSelection)
+			if (selectedItem != null)
 			{
 				List<IObject3D> itemsToReplace;
 
-				if (scene.SelectedItem is SelectionGroup)
+				if (selectedItem is SelectionGroup)
 				{
-					itemsToReplace = scene.SelectedItem.Children.ToList();
+					itemsToReplace = selectedItem.Children.ToList();
 					foreach (var child in itemsToReplace)
 					{
 						newParent.Children.Add(child.Clone());
@@ -235,8 +235,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 				else
 				{
-					itemsToReplace = new List<IObject3D> { scene.SelectedItem };
-					newParent.Children.Add(scene.SelectedItem.Clone());
+					itemsToReplace = new List<IObject3D> { selectedItem };
+					newParent.Children.Add(selectedItem.Clone());
 				}
 
 				scene.SelectedItem = null;
@@ -254,25 +254,25 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static void WrapWith(this IObject3D originalItem, IObject3D wrapper, InteractiveScene scene)
 		{
-			originalItem.SuspendRebuild();
-			originalItem.Parent.Children.Modify(list =>
+			using (originalItem.RebuildLock())
 			{
-				list.Remove(originalItem);
+				originalItem.Parent.Children.Modify(list =>
+				{
+					list.Remove(originalItem);
 
-				wrapper.Matrix = originalItem.Matrix;
+					wrapper.Matrix = originalItem.Matrix;
 
-				originalItem.Matrix = Matrix4X4.Identity;
-				wrapper.Children.Add(originalItem);
+					originalItem.Matrix = Matrix4X4.Identity;
+					wrapper.Children.Add(originalItem);
 
-				list.Add(wrapper);
-			});
+					list.Add(wrapper);
+				});
 
-			if (scene != null)
-			{
-				scene.SelectedItem = wrapper;
+				if (scene != null)
+				{
+					scene.SelectedItem = wrapper;
+				}
 			}
-
-			originalItem.ResumeRebuild();
 		}
 
 		public static Matrix4X4 ApplyAtBoundsCenter(this IObject3D objectWithBounds, Matrix4X4 transformToApply)

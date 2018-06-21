@@ -37,7 +37,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class PyramidObject3D : Object3D, IPublicPropertyObject
+	public class PyramidObject3D : Object3D
 	{
 		public PyramidObject3D()
 		{
@@ -58,27 +58,37 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double Depth { get; set; } = 20;
 		public double Height { get; set; } = 20;
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
+			{
+				Rebuild(null);
+			}
+		}
+
+		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
-			SuspendRebuild();
-			var aabb = this.GetAxisAlignedBoundingBox();
-
-			var path = new VertexStorage();
-			path.MoveTo(0, 0);
-			path.LineTo(Math.Sqrt(2), 0);
-			path.LineTo(0, Height);
-
-			var mesh = VertexSourceToMesh.Revolve(path, 4);
-			mesh.Transform(Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(45)) * Matrix4X4.CreateScale(Width / 2, Depth / 2, 1));
-			Mesh = mesh;
-
-			if (aabb.ZSize > 0)
+			using (RebuildLock())
 			{
-				// If the part was already created and at a height, maintain the height.
-				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+				var aabb = this.GetAxisAlignedBoundingBox();
+
+				var path = new VertexStorage();
+				path.MoveTo(0, 0);
+				path.LineTo(Math.Sqrt(2), 0);
+				path.LineTo(0, Height);
+
+				var mesh = VertexSourceToMesh.Revolve(path, 4);
+				mesh.Transform(Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(45)) * Matrix4X4.CreateScale(Width / 2, Depth / 2, 1));
+				Mesh = mesh;
+
+				if (aabb.ZSize > 0)
+				{
+					// If the part was already created and at a height, maintain the height.
+					PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+				}
 			}
-			ResumeRebuild();
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}

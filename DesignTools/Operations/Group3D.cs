@@ -35,7 +35,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class Group3D : Object3D, IPublicPropertyObject
+	public class Group3D : Object3D
 	{
 		public Group3D()
 		{

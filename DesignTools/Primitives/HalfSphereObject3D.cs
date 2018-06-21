@@ -38,7 +38,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class HalfSphereObject3D : Object3D, IPublicPropertyObject
+	public class HalfSphereObject3D : Object3D
 	{
 		public HalfSphereObject3D()
 		{
@@ -66,31 +66,41 @@ namespace MatterHackers.MatterControl.DesignTools
 		public int LongitudeSides { get; set; } = 40;
 		public int LatitudeSides { get; set; } = 10;
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
+			{
+				Rebuild(null);
+			}
+		}
+
+		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
-			SuspendRebuild();
-			var aabb = this.GetAxisAlignedBoundingBox();
-
-			var radius = Diameter / 2;
-			var angleDelta = MathHelper.Tau / 4 / LatitudeSides;
-			var angle = 0.0;
-			var path = new VertexStorage();
-			path.MoveTo(0, 0);
-			path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-			for (int i = 0; i < LatitudeSides; i++)
+			using (RebuildLock())
 			{
-				angle += angleDelta;
+				var aabb = this.GetAxisAlignedBoundingBox();
+
+				var radius = Diameter / 2;
+				var angleDelta = MathHelper.Tau / 4 / LatitudeSides;
+				var angle = 0.0;
+				var path = new VertexStorage();
+				path.MoveTo(0, 0);
 				path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-			}
+				for (int i = 0; i < LatitudeSides; i++)
+				{
+					angle += angleDelta;
+					path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
+				}
 
-			Mesh = VertexSourceToMesh.Revolve(path, LongitudeSides);
-			if (aabb.ZSize > 0)
-			{
-				// If the part was already created and at a height, maintain the height.
-				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+				Mesh = VertexSourceToMesh.Revolve(path, LongitudeSides);
+				if (aabb.ZSize > 0)
+				{
+					// If the part was already created and at a height, maintain the height.
+					PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+				}
 			}
-			ResumeRebuild();
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}

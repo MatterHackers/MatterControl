@@ -38,6 +38,7 @@ using MatterHackers.MeshVisualizer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -45,7 +46,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 	public enum MaintainRatio { None, X_Y, X_Y_Z }
 
-	public class FitToBounds3D : Object3D, IPublicPropertyObject, IEditorDraw, IPropertyGridModifier
+	public class FitToBounds3D : Object3D, IEditorDraw, IPropertyGridModifier
 	{
 		[Description("Set the shape the part will be fit into.")]
 		public FitType FitType { get; set; } = FitType.Box;
@@ -65,7 +66,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public bool StretchZ { get; set; } = true;
 
 		IObject3D ScaleItem => Children.First();
-		IObject3D ItemToScale => Children.First().Children.First();
+		[JsonIgnore]
+		public IObject3D ItemToScale => Children.First().Children.First();
 
 		public FitToBounds3D()
 		{
@@ -73,46 +75,45 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override void Apply(UndoBuffer undoBuffer)
 		{
-			SuspendRebuild();
-
-			// push our matrix into our children
-			foreach (var child in this.Children)
+			using (RebuildLock())
 			{
-				child.Matrix *= this.Matrix;
+				// push our matrix into our children
+				foreach (var child in this.Children)
+				{
+					child.Matrix *= this.Matrix;
+				}
+
+				// push child into children
+				ItemToScale.Matrix *= ScaleItem.Matrix;
+
+				// add our children to our parent and remove from parent
+				this.Parent.Children.Modify(list =>
+				{
+					list.Remove(this);
+					list.AddRange(ScaleItem.Children);
+				});
 			}
-
-			// push child into children
-			ItemToScale.Matrix *= ScaleItem.Matrix;
-
-			// add our children to our parent and remove from parent
-			this.Parent.Children.Modify(list =>
-			{
-				list.Remove(this);
-				list.AddRange(ScaleItem.Children);
-			});
-
-			ResumeRebuild();
 			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)
 		{
-			SuspendRebuild();
-
-			// push our matrix into inner children
-			foreach (var child in ScaleItem.Children)
+			using (RebuildLock())
 			{
-				child.Matrix *= this.Matrix;
+				// push our matrix into inner children
+				foreach (var child in ScaleItem.Children)
+				{
+					child.Matrix *= this.Matrix;
+				}
+
+				// add inner children to our parent and remove from parent
+				this.Parent.Children.Modify(list =>
+				{
+					list.Remove(this);
+					list.AddRange(ScaleItem.Children);
+				});
 			}
 
-			// add inner children to our parent and remove from parent
-			this.Parent.Children.Modify(list =>
-			{
-				list.Remove(this);
-				list.AddRange(ScaleItem.Children);
-			});
-
-			ResumeRebuild();
 			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
 
@@ -122,7 +123,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
 				|| invalidateType.InvalidateType == InvalidateType.Mesh)
 				&& invalidateType.Source != this
-				&& !RebuildSuspended)
+				&& !RebuildLocked)
+			{
+				Rebuild(null);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
 			{
 				Rebuild(null);
 			}
@@ -150,21 +156,21 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return fitToBounds;
 		}
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		public void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
-			SuspendRebuild();
-			var aabb = this.GetAxisAlignedBoundingBox();
-
-			AdjustChildSize(null, null);
-
-			if (aabb.ZSize > 0)
+			using (RebuildLock())
 			{
-				// If the part was already created and at a height, maintain the height.
-				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
-			}
+				var aabb = this.GetAxisAlignedBoundingBox();
 
-			ResumeRebuild();
+				AdjustChildSize(null, null);
+
+				if (aabb.ZSize > 0)
+				{
+					// If the part was already created and at a height, maintain the height.
+					PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+				}
+			}
 
 			base.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
 		}

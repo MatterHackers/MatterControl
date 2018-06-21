@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	using System.Collections.Generic;
 	using System.Threading;
 
-	public class LinearExtrude : Object3D, IPublicPropertyObject
+	public class LinearExtrude : Object3D
 	{
 		public double Height { get; set; } = 5;
 
@@ -67,19 +67,18 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override void Apply(UndoBuffer undoBuffer)
 		{
 			// only keep the mesh and get rid of everything else
-			SuspendRebuild();
-
-			var meshOnlyItem = new Object3D()
+			using (RebuildLock())
 			{
-				Mesh = this.Mesh.Copy(CancellationToken.None)
-			};
+				var meshOnlyItem = new Object3D()
+				{
+					Mesh = this.Mesh.Copy(CancellationToken.None)
+				};
 
-			meshOnlyItem.CopyProperties(this, Object3DPropertyFlags.All);
+				meshOnlyItem.CopyProperties(this, Object3DPropertyFlags.All);
 
-			// and replace us with the children 
-			undoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { this }, new List<IObject3D> { meshOnlyItem }));
-
-			ResumeRebuild();
+				// and replace us with the children 
+				undoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { this }, new List<IObject3D> { meshOnlyItem }));
+			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
@@ -96,7 +95,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				|| invalidateType.InvalidateType == InvalidateType.Mesh
 				|| invalidateType.InvalidateType == InvalidateType.Path)
 				&& invalidateType.Source != this
-				&& !RebuildSuspended)
+				&& !RebuildLocked)
+			{
+				Rebuild(null);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
 			{
 				Rebuild(null);
 			}
@@ -106,16 +110,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		private void Rebuild(UndoBuffer undoBuffer)
 		{
-			SuspendRebuild();
-			var vertexSource = this.VertexSource;
-			Mesh = VertexSourceToMesh.Extrude(this.VertexSource, Height);
-			if(Mesh.Vertices.Count == 0)
+			using (RebuildLock())
 			{
-				Mesh = null;
+				var vertexSource = this.VertexSource;
+				Mesh = VertexSourceToMesh.Extrude(this.VertexSource, Height);
+				if (Mesh.Vertices.Count == 0)
+				{
+					Mesh = null;
+				}
 			}
-			ResumeRebuild();
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}

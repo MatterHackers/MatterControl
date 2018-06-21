@@ -38,7 +38,7 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayRadial3D : Object3D, IPublicPropertyObject
+	public class ArrayRadial3D : Object3D
 	{
 		public ArrayRadial3D()
 		{
@@ -77,7 +77,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
 				|| invalidateType.InvalidateType == InvalidateType.Mesh)
 				&& invalidateType.Source != this
-				&& !RebuildSuspended)
+				&& !RebuildLocked)
+			{
+				Rebuild(null);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
 			{
 				Rebuild(null);
 			}
@@ -87,48 +92,48 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		private void Rebuild(UndoBuffer undoBuffer)
 		{
-			this.SuspendRebuild();
-			this.DebugDepth("Rebuild");
-
-			// check if we have initialized the Axis
-			if (Axis.Origin.X == double.NegativeInfinity)
+			using (this.RebuildLock())
 			{
-				// make it something reasonable (just to the left of the aabb of the object)
-				var aabb = this.GetAxisAlignedBoundingBox();
-				Axis.Origin = aabb.Center - new Vector3(30, 0, 0);
-			}
+				this.DebugDepth("Rebuild");
 
-			var sourceContainer = OperationSource.GetOrCreateSourceContainer(this);
-			this.Children.Modify(list =>
-			{
-				list.Clear();
+				// check if we have initialized the Axis
+				if (Axis.Origin.X == double.NegativeInfinity)
+				{
+					// make it something reasonable (just to the left of the aabb of the object)
+					var aabb = this.GetAxisAlignedBoundingBox();
+					Axis.Origin = aabb.Center - new Vector3(30, 0, 0);
+				}
+
+				var sourceContainer = OperationSource.GetOrCreateSourceContainer(this);
+				this.Children.Modify(list =>
+				{
+					list.Clear();
 				// add back in the sourceContainer
 				list.Add(sourceContainer);
 				// get the source item
 				var sourceItem = sourceContainer.Children.First();
 
-				var offset = Vector3.Zero;
-				for (int i = 0; i < Math.Max(Count, 1); i++)
-				{
-					var next = sourceItem.Clone();
-
-					var normal = Axis.Normal.GetNormal();
-					var angleRadians = MathHelper.DegreesToRadians(Angle) / Count * i;
-					next.Rotate(Axis.Origin, normal, angleRadians);
-
-					if (!RotatePart)
+					var offset = Vector3.Zero;
+					for (int i = 0; i < Math.Max(Count, 1); i++)
 					{
-						var aabb = next.GetAxisAlignedBoundingBox();
-						next.Rotate(aabb.Center, normal, -angleRadians);
+						var next = sourceItem.Clone();
+
+						var normal = Axis.Normal.GetNormal();
+						var angleRadians = MathHelper.DegreesToRadians(Angle) / Count * i;
+						next.Rotate(Axis.Origin, normal, angleRadians);
+
+						if (!RotatePart)
+						{
+							var aabb = next.GetAxisAlignedBoundingBox();
+							next.Rotate(aabb.Center, normal, -angleRadians);
+						}
+
+						list.Add(next);
 					}
-
-					list.Add(next);
-				}
-			});
-
-			this.ResumeRebuild();
+				});
+			}
 
 			this.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}

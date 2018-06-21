@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,12 +27,57 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
+using System;
+using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public interface IPublicPropertyObject
+	public class SilhouetteThresholdFunction : IThresholdFunction
 	{
-		void Rebuild(UndoBuffer undoBuffer);
+		protected double rangeStart = .1;
+		protected double rangeEnd = 1.0;
+
+		public SilhouetteThresholdFunction()
+		{
+		}
+
+		public SilhouetteThresholdFunction(double rangeStart, double rangeEnd)
+		{
+			this.rangeStart = Math.Max(0, Math.Min(1, rangeStart));
+			this.rangeEnd = Math.Max(0, Math.Min(1, rangeEnd));
+		}
+
+		public double Transform(Color color)
+		{
+			// we invert the gray value so we have black being the color we are finding
+			return 1 - ((color.Red0To1 * 0.2989) + (color.Blue0To1 * 0.5870) + (color.Green0To1 * 0.1140));
+		}
+
+		public double Threshold(Color color)
+		{
+			// this is on I from HSI
+			return GetThresholded0To1(Transform(color));
+		}
+
+		public Color ZeroColor => Color.White;
+
+		protected double GetThresholded0To1(double rawValue)
+		{
+			double outValue = 0;
+			if (rawValue < rangeStart)
+			{
+				outValue = 0;
+			}
+			else if (rawValue > rangeEnd)
+			{
+				outValue = 0;
+			}
+			else
+			{
+				outValue = (double)(rawValue - rangeStart) / (double)(rangeEnd - rangeStart);
+			}
+
+			return outValue;
+		}
 	}
 }

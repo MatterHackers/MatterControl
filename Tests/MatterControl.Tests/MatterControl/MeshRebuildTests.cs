@@ -58,9 +58,9 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var root = new Object3D();
-			IObject3D cube = new CubeObject3D();
+			var cube = new CubeObject3D();
 			root.Children.Add(cube);
-			cube.Rebuild(null);
+			cube.Invalidate(new InvalidateArgs(cube, InvalidateType.Properties));
 			Assert.AreEqual(1, root.Descendants().Count());
 
 			// now add a pinch
@@ -69,8 +69,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			root.Children.Remove(cube);
 			root.Children.Add(pinch1);
 			Assert.AreEqual(3, root.Descendants().Count());
-
-
 		}
 
 		[Test]
@@ -80,9 +78,9 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var root = new Object3D();
-			IObject3D text = new TextObject3D();
+			var text = new TextObject3D();
 			root.Children.Add(text);
-			text.Rebuild(null);
+			text.Invalidate(new InvalidateArgs(text, InvalidateType.Properties, null));
 			Assert.AreEqual(5, root.Descendants().Count());
 
 			// now add a pinch
@@ -98,11 +96,11 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			Assert.AreEqual(1, root.Children.Count());
 
 			// now add it again
-			text = root.Children.First(); // the wrap made a copy so set text to be the current text
-			Assert.IsTrue(text is TextObject3D);
+			var first = root.Children.First(); // the wrap made a copy so set text to be the current text
+			Assert.IsTrue(first is TextObject3D);
 			pinch1 = new PinchObject3D();
-			pinch1.WrapItems(new List<IObject3D>() { text });
-			root.Children.Remove(text);
+			pinch1.WrapItems(new List<IObject3D>() { first });
+			root.Children.Remove(first);
 			root.Children.Add(pinch1);
 			Assert.AreEqual(10, root.Descendants().Count());
 		}

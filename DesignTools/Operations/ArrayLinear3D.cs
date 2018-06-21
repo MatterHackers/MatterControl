@@ -37,7 +37,7 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayLinear3D : Object3D, IPublicPropertyObject
+	public class ArrayLinear3D : Object3D
 	{
 		public ArrayLinear3D()
 		{
@@ -63,7 +63,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
 				|| invalidateType.InvalidateType == InvalidateType.Mesh)
 				&& invalidateType.Source != this
-				&& !RebuildSuspended)
+				&& !RebuildLocked)
+			{
+				Rebuild(null);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
 			{
 				Rebuild(null);
 			}
@@ -73,30 +78,30 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public override void Rebuild(UndoBuffer undoBuffer)
+		private void Rebuild(UndoBuffer undoBuffer)
 		{
-			this.SuspendRebuild();
-			this.DebugDepth("Rebuild");
-
-			var sourceContainer = OperationSource.GetOrCreateSourceContainer(this);
-
-			this.Children.Modify(list =>
+			using (this.RebuildLock())
 			{
-				list.Clear();
-				// add back in the sourceContainer
-				list.Add(sourceContainer);
-				// get the source item
-				var sourceItem = sourceContainer.Children.First();
+				this.DebugDepth("Rebuild");
 
-				for (int i = 0; i < Math.Max(Count, 1); i++)
+				var sourceContainer = OperationSource.GetOrCreateSourceContainer(this);
+
+				this.Children.Modify(list =>
 				{
-					var next = sourceItem.Clone();
-					next.Matrix = sourceItem.Matrix * Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance * i);
-					list.Add(next);
-				}
-			});
+					list.Clear();
+					// add back in the sourceContainer
+					list.Add(sourceContainer);
+					// get the source item
+					var sourceItem = sourceContainer.Children.First();
 
-			this.ResumeRebuild();
+					for (int i = 0; i < Math.Max(Count, 1); i++)
+					{
+						var next = sourceItem.Clone();
+						next.Matrix = sourceItem.Matrix * Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance * i);
+						list.Add(next);
+					}
+				});
+			}
 
 			this.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}

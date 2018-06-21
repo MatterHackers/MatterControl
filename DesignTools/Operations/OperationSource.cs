@@ -60,18 +60,20 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		/// <returns>The existing or created OperationSource</returns>
 		public static IObject3D GetOrCreateSourceContainer(IObject3D parent)
 		{
-			parent.SuspendRebuild();
-			var sourceContainer = parent.Children.FirstOrDefault(c => c is OperationSource);
-			if (sourceContainer == null)
+			IObject3D sourceContainer;
+			using (parent.RebuildLock())
 			{
-				sourceContainer = new OperationSource();
+				sourceContainer = parent.Children.FirstOrDefault(c => c is OperationSource);
+				if (sourceContainer == null)
+				{
+					sourceContainer = new OperationSource();
 
-				// Move first child to sourceContainer
-				var firstChild = parent.Children.First();
-				parent.Children.Remove(firstChild);
-				sourceContainer.Children.Add(firstChild);
+					// Move first child to sourceContainer
+					var firstChild = parent.Children.First();
+					parent.Children.Remove(firstChild);
+					sourceContainer.Children.Add(firstChild);
+				}
 			}
-			parent.ResumeRebuild();
 
 			return sourceContainer;
 		}
@@ -82,53 +84,51 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		/// <param name="parent"></param>
 		public static void Apply(IObject3D parent)
 		{
-			parent.SuspendRebuild();
-
-			// The idea is we leave everything but the source and that is the applied operation
-			parent.Children.Modify(list =>
+			using (parent.RebuildLock())
 			{
-				var sourceItem = list.FirstOrDefault(c => c is OperationSource);
-				if (sourceItem != null)
+				// The idea is we leave everything but the source and that is the applied operation
+				parent.Children.Modify(list =>
 				{
-					list.Remove(sourceItem);
-				}
-
-				if (list.Count > 1)
-				{
-					// wrap the children in an object so they remain a group
-					var group = new Object3D();
-					group.Children.Modify((groupList) =>
+					var sourceItem = list.FirstOrDefault(c => c is OperationSource);
+					if (sourceItem != null)
 					{
-						groupList.AddRange(list);
-					});
+						list.Remove(sourceItem);
+					}
 
-					list.Clear();
-					list.Add(group);
-				}
-			});
+					if (list.Count > 1)
+					{
+						// wrap the children in an object so they remain a group
+						var group = new Object3D();
+						group.Children.Modify((groupList) =>
+						{
+							groupList.AddRange(list);
+						});
 
-			parent.ResumeRebuild();
+						list.Clear();
+						list.Add(group);
+					}
+				});
+			}
 		}
 
 		internal static void Remove(IObject3D parent)
 		{
-			parent.SuspendRebuild();
-
-			parent.Children.Modify(list =>
+			using (parent.RebuildLock())
 			{
-				var sourceItem = list.FirstOrDefault(c => c is OperationSource);
-				if (sourceItem != null)
+				parent.Children.Modify(list =>
 				{
-					IObject3D firstChild = sourceItem.Children.First();
-					if (firstChild != null)
+					var sourceItem = list.FirstOrDefault(c => c is OperationSource);
+					if (sourceItem != null)
 					{
-						list.Clear();
-						list.Add(firstChild);
+						IObject3D firstChild = sourceItem.Children.First();
+						if (firstChild != null)
+						{
+							list.Clear();
+							list.Add(firstChild);
+						}
 					}
-				}
-			});
-
-			parent.ResumeRebuild();
+				});
+			}
 		}
 	}
 }
