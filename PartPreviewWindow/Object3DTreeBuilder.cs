@@ -107,12 +107,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							&& ApplicationController.Instance.Library.ContentProviders.TryGetValue("mcx", out IContentProvider contentProvider)
 							&& contentProvider is MeshContentProvider meshContentProvider)
 						{
-							node.Image = meshContentProvider.GetThumbnail(
-								item.Source,
+							node.Image = ApplicationController.Instance.Thumbnails.LoadCachedImage(
 								item.Source.MeshRenderId().ToString(),
 								16,
-								16,
-								true);
+								16);
 						}
 
 						return Task.CompletedTask;

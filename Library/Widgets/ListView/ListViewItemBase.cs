@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			string thumbnailId = libraryItem.ID;
 
-			var thumbnail = MeshContentProvider.LoadCachedImage(thumbnailId, thumbWidth, thumbHeight);
+			var thumbnail = ApplicationController.Instance.Thumbnails.LoadCachedImage(thumbnailId, thumbWidth, thumbHeight);
 			if (thumbnail != null)
 			{
 				this.SetItemThumbnail(thumbnail);

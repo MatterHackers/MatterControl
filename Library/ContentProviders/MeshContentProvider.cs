@@ -122,30 +122,12 @@ namespace MatterHackers.MatterControl
 
 			string thumbnailId = libraryItem.ID;
 
-			return GetThumbnail(object3D, thumbnailId, width, height, false);
+			return GetThumbnail(object3D, thumbnailId, width, height);
 		}
 
-		public ImageBuffer GetThumbnail(IObject3D item, string thumbnailId, int width, int height, bool onlyUseCache)
+		public ImageBuffer GetThumbnail(IObject3D item, string thumbnailId, int width, int height)
 		{
 			if (item == null)
-			{
-				return DefaultImage;
-			}
-
-			var image = LoadCachedImage(thumbnailId, width, height);
-
-			if(image == null)
-			{
-				// check the mesh cache
-				image = LoadCachedImage(item.MeshRenderId().ToString(), width, height);
-			}
-
-			if(image != null)
-			{
-				return image;
-			}
-
-			if(onlyUseCache)
 			{
 				return DefaultImage;
 			}
@@ -153,7 +135,7 @@ namespace MatterHackers.MatterControl
 			int estimatedMemorySize = item.EstimatedMemory();
 			if (estimatedMemorySize > MaxFileSizeForThumbnail)
 			{
-				return null;
+				return DefaultImage;
 			}
 
 			bool forceOrthographic = false;
@@ -173,55 +155,14 @@ namespace MatterHackers.MatterControl
 
 			if (thumbnail != null)
 			{
+				// TODO: Consider and resolve who should own populating the cache
 				// Cache at requested size
-				string cachePath = ApplicationController.Instance.ThumbnailCachePath(item.MeshRenderId().ToString(), width, height);
-
-				// TODO: Lookup best large image and downscale if required
-				if (false)
-				{
-					thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, width, height);
-				}
+				string cachePath = ApplicationController.Instance.Thumbnails.ThumbnailCachePath(item.MeshRenderId().ToString(), width, height);
 
 				AggContext.ImageIO.SaveImageData(cachePath, thumbnail);
 			}
 
 			return thumbnail ?? DefaultImage;
-		}
-
-		internal static ImageBuffer LoadCachedImage(string cacheId, int width, int height)
-		{
-			ImageBuffer cachedItem = LoadImage(ApplicationController.Instance.ThumbnailCachePath(cacheId, width, height));
-			if (cachedItem != null)
-			{
-				return cachedItem;
-			}
-
-			if (width < 100
-				&& height < 100)
-			{
-				// check for a 100x100 image
-				var cachedAt100x100 = LoadImage(ApplicationController.Instance.ThumbnailCachePath(cacheId, 100, 100));
-				if (cachedAt100x100 != null)
-				{
-					return cachedAt100x100.CreateScaledImage(width, height);
-				}
-			}
-
-			return null;
-		}
-
-		private static ImageBuffer LoadImage(string filePath)
-		{
-			try
-			{
-				if (File.Exists(filePath))
-				{
-					return AggContext.ImageIO.LoadImage(filePath).SetPreMultiply();
-				}
-			}
-			catch { } // Suppress exceptions, return null on any errors
-
-			return null;
 		}
 
 		public ImageBuffer DefaultImage => AggContext.StaticData.LoadIcon("mesh.png");

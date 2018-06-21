@@ -595,7 +595,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (!this.FreezeGCode)
 			{
-				var thumbnailPath = ApplicationController.Instance.ThumbnailCachePath(this.SourceItem.ID);
+				var thumbnailPath = ApplicationController.Instance.Thumbnails.ThumbnailCachePath(this.SourceItem.ID);
 				if (File.Exists(thumbnailPath))
 				{
 					File.Delete(thumbnailPath);

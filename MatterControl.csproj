@@ -106,6 +106,7 @@
     <Compile Include="DesignTools\Primitives\HalfCylinderObject3D.cs" />
     <Compile Include="DesignTools\Primitives\HalfWedgeObject3D.cs" />
     <Compile Include="Library\ContentProviders\ImageContentProvider.cs" />
+    <Compile Include="ApplicationView\ThumbnailCache.cs" />
     <Compile Include="Library\Providers\MatterControl\LibraryCollectionContainer.cs" />
     <Compile Include="Library\Providers\MatterControl\PartHistoryContainer.cs" />
     <Compile Include="Library\Providers\MatterControl\RootHistoryContainer.cs" />

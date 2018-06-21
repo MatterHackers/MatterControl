@@ -361,6 +361,8 @@ namespace MatterHackers.MatterControl
 
 		public Dictionary<Type, SceneSelectionOperation> OperationsByType { get; private set; }
 
+		public ThumbnailCache Thumbnails { get; } = new ThumbnailCache();
+
 		private void RebuildSceneOperations(ThemeConfig theme)
 		{
 			registeredSceneOperations = new List<SceneSelectionOperation>()
@@ -1343,17 +1345,6 @@ namespace MatterHackers.MatterControl
 
 		public string ShortProductName => "MatterControl";
 		public string ProductName => "MatterHackers: MatterControl";
-
-		public string ThumbnailCachePath(string cacheId)
-		{
-			// TODO: Use content SHA
-			return ApplicationController.CacheablePath("ItemThumbnails", $"{cacheId}.png");
-		}
-
-		public string ThumbnailCachePath(string id, int width, int height)
-		{
-			return ApplicationController.CacheablePath("ItemThumbnails", $"{id}-{width}x{height}.png");
-		}
 
 		public void SwitchToPurchasedLibrary()
 		{
