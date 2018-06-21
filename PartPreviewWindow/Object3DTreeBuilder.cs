@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -100,21 +101,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				node.Load += (s, e) =>
 				{
-					ApplicationController.Instance.QueueForGeneration(() =>
-					{
-						// When this widget is dequeued for generation, validate before processing. Off-screen widgets should be skipped and will requeue next time they become visible
-						if (node.ActuallyVisibleOnScreen()
-							&& ApplicationController.Instance.Library.ContentProviders.TryGetValue("mcx", out IContentProvider contentProvider)
-							&& contentProvider is MeshContentProvider meshContentProvider)
-						{
-							node.Image = ApplicationController.Instance.Thumbnails.LoadCachedImage(
-								item.Source.MeshRenderId().ToString(),
-								16,
-								16);
-						}
-
-						return Task.CompletedTask;
-					});
+					string contentID = item.Source.MeshRenderId().ToString();
+					var thumbnail = ApplicationController.Instance.Thumbnails.LoadCachedImage(contentID, 16, 16);
+					node.Image = thumbnail ?? ApplicationController.Instance.Thumbnails.DefaultThumbnail;
 				};
 			}
 
