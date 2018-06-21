@@ -60,7 +60,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			var root = new Object3D();
 			var cube = new CubeObject3D();
 			root.Children.Add(cube);
-			cube.Invalidate(null);
+			cube.Invalidate(new InvalidateArgs(cube, InvalidateType.Properties));
 			Assert.AreEqual(1, root.Descendants().Count());
 
 			// now add a pinch
@@ -69,8 +69,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			root.Children.Remove(cube);
 			root.Children.Add(pinch1);
 			Assert.AreEqual(3, root.Descendants().Count());
-
-
 		}
 
 		[Test]
