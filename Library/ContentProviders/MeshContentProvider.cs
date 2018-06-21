@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl
 		}
 
 
-		public async Task GetThumbnail(ILibraryItem libraryItem, int width, int height, ThumbnailSetter imageCallback)
+		public async Task<ImageBuffer> GetThumbnail(ILibraryItem libraryItem, int width, int height)
 		{
 			IObject3D object3D = null;
 
@@ -122,8 +122,7 @@ namespace MatterHackers.MatterControl
 
 			string thumbnailId = libraryItem.ID;
 
-			var thumbnail = GetThumbnail(object3D, thumbnailId, width, height, false);
-			imageCallback?.Invoke(thumbnail, true);
+			return GetThumbnail(object3D, thumbnailId, width, height, false);
 		}
 
 		public ImageBuffer GetThumbnail(IObject3D item, string thumbnailId, int width, int height, bool onlyUseCache)

@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.Library
 
 	public interface IContentProvider
 	{
-		Task GetThumbnail(ILibraryItem item, int width, int height, ThumbnailSetter imageCallback);
+		Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height);
 		ImageBuffer DefaultImage { get; }
 	}
 

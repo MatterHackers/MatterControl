@@ -114,11 +114,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						this.SetItemThumbnail(generatingThumbnailIcon, raytracedImage: false);
 
 						// Ask the provider for a content specific thumbnail
-						await contentProvider.GetThumbnail(
-							libraryItem,
-							thumbWidth,
-							thumbHeight,
-							this.SetItemThumbnail);
+						thumbnail = await contentProvider.GetThumbnail(libraryItem, thumbWidth, thumbHeight);
 					}
 				}
 			}
@@ -141,7 +137,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			ApplicationController.Instance.QueueForGeneration(async () =>
 			{
-				// When this widget is dequeued for generation, validate before processing. Off-screen widgets should be skipped and will requeue next time they become visible
+				// When dequeued for generation, ensure visible before raytracing. Off-screen widgets are dequeue and will reschedule if redrawn
 				if (!this.ActuallyVisibleOnScreen())
 				{
 					// Skip raytracing operation, requeue on next draw
@@ -158,11 +154,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					this.SetItemThumbnail(generatingThumbnailIcon, raytracedImage: false);
 
 					// Ask the MeshContentProvider to RayTrace the image
-					await meshContentProvider.GetThumbnail(
-						listViewItem.Model,
-						thumbWidth,
-						thumbHeight,
-						this.SetItemThumbnail);
+					var thumbnail = await meshContentProvider.GetThumbnail(listViewItem.Model, thumbWidth, thumbHeight);
+					if (thumbnail != null)
+					{
+						this.SetItemThumbnail(thumbnail, raytracedImage: true);
+					}
 				}
 			});
 		}
