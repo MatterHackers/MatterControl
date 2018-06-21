@@ -219,24 +219,16 @@ namespace MatterHackers.MatterControl
 
 		private static ImageBuffer LoadImage(string filePath)
 		{
-			ImageBuffer thumbnail = null;
-
 			try
 			{
 				if (File.Exists(filePath))
 				{
-					var temp = new ImageBuffer();
-					AggContext.ImageIO.LoadImageData(filePath, temp);
-					temp.SetRecieveBlender(new BlenderPreMultBGRA());
-
-					thumbnail = temp;
+					return AggContext.ImageIO.LoadImage(filePath).SetPreMultiply();
 				}
-
-				return thumbnail;
 			}
 			catch { } // Suppress exceptions, return null on any errors
 
-			return thumbnail;
+			return null;
 		}
 
 		public ImageBuffer DefaultImage => AggContext.StaticData.LoadIcon("mesh.png");
