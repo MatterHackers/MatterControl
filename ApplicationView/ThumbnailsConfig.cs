@@ -94,13 +94,23 @@ namespace MatterHackers.MatterControl
 
 		public string CachePath(string cacheId)
 		{
-			// TODO: Use content SHA
-			return ApplicationController.CacheablePath("ItemThumbnails", $"{cacheId}.png");
+			return ApplicationController.CacheablePath(
+				Path.Combine("Thumbnails", "Content"), 
+				$"{cacheId}.png");
 		}
 
-		public string CachePath(string id, int width, int height)
+		public string CachePath(string cacheId, int width, int height)
 		{
-			return ApplicationController.CacheablePath("ItemThumbnails", $"{id}-{width}x{height}.png");
+			return ApplicationController.CacheablePath(
+				Path.Combine("Thumbnails", "Content"),
+				$"{cacheId}-{width}x{height}.png");
+		}
+
+		public string CachePath(ILibraryItem libraryItem, int width, int height)
+		{
+			return ApplicationController.CacheablePath(
+				Path.Combine("Thumbnails", "Library"),
+				$"{libraryItem.ID}-{width}x{height}.png");
 		}
 
 		private AutoResetEvent thumbGenResetEvent = new AutoResetEvent(false);
