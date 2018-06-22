@@ -152,23 +152,12 @@ namespace MatterHackers.MatterControl
 
 			bool RenderOrthographic = (forceOrthographic) ? true : UserSettings.Instance.ThumbnailRenderingMode == "orthographic";
 
-			var thumbnail = ThumbnailEngine.Generate(
+			return ThumbnailEngine.Generate(
 				item,
 				RenderOrthographic ? RenderType.ORTHOGROPHIC : RenderType.RAY_TRACE,
 				width,
 				height,
 				allowMultiThreading: !ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting);
-
-			if (thumbnail != null)
-			{
-				// TODO: Consider and resolve who should own populating the cache
-				// Cache at requested size
-				string cachePath = ApplicationController.Instance.Thumbnails.CachePath(item.MeshRenderId().ToString(), width, height);
-
-				AggContext.ImageIO.SaveImageData(cachePath, thumbnail);
-			}
-
-			return thumbnail ?? DefaultImage;
 		}
 
 		public ImageBuffer DefaultImage => AggContext.StaticData.LoadIcon("mesh.png");
