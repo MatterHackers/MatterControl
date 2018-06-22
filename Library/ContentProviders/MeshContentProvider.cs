@@ -127,7 +127,21 @@ namespace MatterHackers.MatterControl
 
 			string thumbnailId = libraryItem.ID;
 
-			return GetThumbnail(object3D, thumbnailId, width, height);
+			var thumbnail = GetThumbnail(object3D, thumbnailId, width, height);
+			if (thumbnail != null)
+			{
+				// Cache content thumbnail
+				AggContext.ImageIO.SaveImageData(
+					ApplicationController.Instance.Thumbnails.CachePath(object3D.MeshRenderId().ToString(), width, height),
+					thumbnail);
+
+				// Cache library thumbnail
+				AggContext.ImageIO.SaveImageData(
+					ApplicationController.Instance.Thumbnails.CachePath(libraryItem, width, height),
+					thumbnail);
+			}
+
+			return thumbnail ?? DefaultImage;
 		}
 
 		// Limit to private scope until need returns
