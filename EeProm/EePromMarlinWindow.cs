@@ -154,26 +154,21 @@ namespace MatterHackers.MatterControl.EeProm
 			mainContainer.AddChild(conterContent);
 
 			// the bottom button bar
+			var buttonSave = theme.CreateDialogButton("Save to EEProm".Localize());
+			buttonSave.Click += (s, e) =>UiThread.RunOnIdle(() =>
 			{
-				var buttonSave = theme.CreateDialogButton("Save to EEProm".Localize());
-				buttonSave.Click += (s, e) =>
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						SaveSettingsToActive();
-						currentEePromSettings.SaveToEeProm();
-						this.DialogWindow.Close();
-					});
-				};
-				this.AddPageAction(buttonSave);
+				SaveSettingsToActive();
+				currentEePromSettings.SaveToEeProm();
+				this.DialogWindow.Close();
+			});
+			this.AddPageAction(buttonSave);
 
-				var exportButton = theme.CreateDialogButton("Export".Localize());
-				exportButton.Click += (s, e) =>
-				{
-					UiThread.RunOnIdle(this.ExportSettings, .1);
-				};
-				this.AddPageAction(exportButton);
-			}
+			var exportButton = theme.CreateDialogButton("Export".Localize());
+			exportButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(this.ExportSettings, .1);
+			};
+			this.AddPageAction(exportButton);
 
 			printer.Connection.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
 
