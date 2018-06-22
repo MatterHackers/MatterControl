@@ -44,11 +44,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	using Polygon = List<IntPoint>;
 	using Polygons = List<List<IntPoint>>;
 
-	public class SmoothPath : Object3D, IPathObject, IEditorDraw
+	public class SmoothPathObject3D : Object3D, IPathObject, IEditorDraw
 	{
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
-		public SmoothPath()
+		public SmoothPathObject3D()
 		{
 			Name = "Smooth Path".Localize();
 		}
@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void DrawEditor(object sender, DrawEventArgs e)
 		{
-			ImageToPath.DrawPath(this);
+			ImageToPathObject3D.DrawPath(this);
 		}
 	}
 }

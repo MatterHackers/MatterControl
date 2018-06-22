@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,73 +27,41 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.VertexSource;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
-using Newtonsoft.Json;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.EditableTypes;
+using MatterHackers.VectorMath;
+using System;
 using System.Linq;
 
-namespace MatterHackers.MatterControl.DesignTools
+namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	using MatterHackers.Agg.UI;
-	using MatterHackers.DataConverters3D.UndoCommands;
-	using MatterHackers.Localizations;
-	using MatterHackers.MatterControl.DesignTools.Operations;
-	using MatterHackers.PolygonMesh;
-	using System.Collections.Generic;
-	using System.Threading;
-
-	public class LinearExtrude : Object3D
+	public class ArrayLinearObject3D : Object3D
 	{
-		public double Height { get; set; } = 5;
+		public ArrayLinearObject3D()
+		{
+			Name = "Linear Array".Localize();
+		}
 
 		public override bool CanApply => true;
 		public override bool CanRemove => true;
-
-		[JsonIgnore]
-		private IVertexSource VertexSource
-		{
-			get
-			{
-				var item = this.Descendants().Where((d) => d is IPathObject).FirstOrDefault();
-				if (item is IPathObject pathItem)
-				{
-					return pathItem.VertexSource;
-				}
-
-				return null;
-			}
-		}
+		public int Count { get; set; } = 3;
+		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };
+		public double Distance { get; set; } = 30;
 
 		public override void Apply(UndoBuffer undoBuffer)
 		{
-			// only keep the mesh and get rid of everything else
-			using (RebuildLock())
-			{
-				var meshOnlyItem = new Object3D()
-				{
-					Mesh = this.Mesh.Copy(CancellationToken.None)
-				};
+			OperationSourceObject3D.Apply(this);
 
-				meshOnlyItem.CopyProperties(this, Object3DPropertyFlags.All);
-
-				// and replace us with the children 
-				undoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { this }, new List<IObject3D> { meshOnlyItem }));
-			}
-
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
-		}
-
-		public LinearExtrude()
-		{
-			Name = "Linear Extrude".Localize();
+			base.Apply(undoBuffer);
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if ((invalidateType.InvalidateType == InvalidateType.Content
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh
-				|| invalidateType.InvalidateType == InvalidateType.Path)
+				|| invalidateType.InvalidateType == InvalidateType.Mesh)
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
@@ -112,17 +80,37 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private void Rebuild(UndoBuffer undoBuffer)
 		{
-			using (RebuildLock())
+			using (this.RebuildLock())
 			{
-				var vertexSource = this.VertexSource;
-				Mesh = VertexSourceToMesh.Extrude(this.VertexSource, Height);
-				if (Mesh.Vertices.Count == 0)
+				this.DebugDepth("Rebuild");
+
+				var sourceContainer = OperationSourceObject3D.GetOrCreateSourceContainer(this);
+
+				this.Children.Modify(list =>
 				{
-					Mesh = null;
-				}
+					list.Clear();
+					// add back in the sourceContainer
+					list.Add(sourceContainer);
+					// get the source item
+					var sourceItem = sourceContainer.Children.First();
+
+					for (int i = 0; i < Math.Max(Count, 1); i++)
+					{
+						var next = sourceItem.Clone();
+						next.Matrix = sourceItem.Matrix * Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance * i);
+						list.Add(next);
+					}
+				});
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+			this.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+		}
+
+		public override void Remove(UndoBuffer undoBuffer)
+		{
+			OperationSourceObject3D.Remove(this);
+
+			base.Remove(undoBuffer);
 		}
 	}
 }

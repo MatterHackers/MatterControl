@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public MakeSupport(IObject3D selectedItem)
 		{
-			if (selectedItem is SelectionGroup)
+			if (selectedItem is SelectionGroupObject3D)
 			{
 				SetData(selectedItem.Children.ToList());
 			}

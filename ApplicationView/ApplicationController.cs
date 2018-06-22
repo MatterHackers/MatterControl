@@ -300,7 +300,7 @@ namespace MatterHackers.MatterControl
 			{
 				new SceneSelectionOperation()
 				{
-					OperationType = typeof(Group3D),
+					OperationType = typeof(GroupObject3D),
 
 					TitleResolver = () => "Group".Localize(),
 					Action = (scene) =>
@@ -308,7 +308,7 @@ namespace MatterHackers.MatterControl
 						var selectedItem = scene.SelectedItem;
 						scene.SelectedItem = null;
 
-						var newGroup = new Group3D();
+						var newGroup = new GroupObject3D();
 						// When grouping items, move them to be centered on their bounding box
 						newGroup.Children.Modify((gChildren) =>
 						{
@@ -333,7 +333,7 @@ namespace MatterHackers.MatterControl
 						scene.SelectedItem = newGroup;
 					},
 					IsEnabled = (scene) => scene.HasSelection
-						&& scene.SelectedItem is SelectionGroup
+						&& scene.SelectedItem is SelectionGroupObject3D
 						&& scene.SelectedItem.Children.Count > 1,
 					Icon = AggContext.StaticData.LoadIcon("group.png", 16, 16).SetPreMultiply(),
 				},
@@ -362,17 +362,17 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
 				{
-					OperationType = typeof(Align3D),
+					OperationType = typeof(AlignObject3D),
 					TitleResolver = () => "Align".Localize(),
 					Action = (scene) =>
 					{
 						var selectedItem = scene.SelectedItem;
-						var align = new Align3D();
+						var align = new AlignObject3D();
 						align.AddSelectionAsChildren(scene, selectedItem);
 						align.Invalidate(new InvalidateArgs(align, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("align_left.png", 16, 16, theme.InvertIcons).SetPreMultiply(),
-					IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
+					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
 				},
 				new SceneSelectionOperation()
 				{
@@ -408,7 +408,7 @@ namespace MatterHackers.MatterControl
 					TitleResolver = () => "Combine".Localize(),
 					Action = (scene) => new CombineObject3D().WrapSelectedItemAndSelect(scene),
 					Icon = AggContext.StaticData.LoadIcon("combine.png").SetPreMultiply(),
-					IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
+					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
 				},
 				new SceneSelectionOperation()
 				{
@@ -416,7 +416,7 @@ namespace MatterHackers.MatterControl
 					TitleResolver = () => "Subtract".Localize(),
 					Action = (scene) => new SubtractObject3D().WrapSelectedItemAndSelect(scene),
 					Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
-					IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
+					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
 				},
 				new SceneSelectionOperation()
 				{
@@ -424,7 +424,7 @@ namespace MatterHackers.MatterControl
 					TitleResolver = () => "Intersect".Localize(),
 					Action = (scene) => new IntersectionObject3D().WrapSelectedItemAndSelect(scene),
 					Icon = AggContext.StaticData.LoadIcon("intersect.png"),
-					IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
+					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
 				},
 				new SceneSelectionOperation()
 				{
@@ -432,47 +432,47 @@ namespace MatterHackers.MatterControl
 					TitleResolver = () => "Subtract & Replace".Localize(),
 					Action = (scene) => new SubtractAndReplaceObject3D().WrapSelectedItemAndSelect(scene),
 					Icon = AggContext.StaticData.LoadIcon("subtract_and_replace.png").SetPreMultiply(),
-					IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
+					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
 				},
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
 				{
-					OperationType = typeof(ArrayLinear3D),
+					OperationType = typeof(ArrayLinearObject3D),
 					TitleResolver = () => "Linear Array".Localize(),
 					Action = (scene) =>
 					{
-						var array = new ArrayLinear3D();
+						var array = new ArrayLinearObject3D();
 						array.AddSelectionAsChildren(scene, scene.SelectedItem);
 						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
-					IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
+					IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroupObject3D),
 				},
 				new SceneSelectionOperation()
 				{
-					OperationType = typeof(ArrayRadial3D),
+					OperationType = typeof(ArrayRadialObject3D),
 					TitleResolver = () => "Radial Array".Localize(),
 					Action = (scene) =>
 					{
-						var array = new ArrayRadial3D();
+						var array = new ArrayRadialObject3D();
 						array.AddSelectionAsChildren(scene, scene.SelectedItem);
 						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_radial.png").SetPreMultiply(),
-					IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
+					IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroupObject3D),
 				},
 				new SceneSelectionOperation()
 				{
-					OperationType = typeof(ArrayAdvanced3D),
+					OperationType = typeof(ArrayAdvancedObject3D),
 					TitleResolver = () => "Advanced Array".Localize(),
 					Action = (scene) =>
 					{
-						var array = new ArrayAdvanced3D();
+						var array = new ArrayAdvancedObject3D();
 						array.AddSelectionAsChildren(scene, scene.SelectedItem);
 						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_advanced.png").SetPreMultiply(),
-					IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
+					IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroupObject3D),
 				},
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
@@ -501,20 +501,20 @@ namespace MatterHackers.MatterControl
 				},
 				new SceneSelectionOperation()
 				{
-					OperationType = typeof(FitToBounds3D),
+					OperationType = typeof(FitToBoundsObject3D),
 					TitleResolver = () => "Fit to Bounds".Localize(),
 					Action = (scene) =>
 					{
 						var selectedItem = scene.SelectedItem;
 						scene.SelectedItem = null;
-						var fit = FitToBounds3D.Create(selectedItem.Clone());
+						var fit = FitToBoundsObject3D.Create(selectedItem.Clone());
 						fit.MakeNameNonColliding();
 
 						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, new List<IObject3D> { fit }));
 						scene.SelectedItem = fit;
 					},
 					Icon = AggContext.StaticData.LoadIcon("fit.png", 16, 16, theme.InvertIcons),
-					IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
+					IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroupObject3D),
 				},
 			};
 
@@ -531,9 +531,9 @@ namespace MatterHackers.MatterControl
 			// TODO: Use custom selection group icon if reusing group icon seems incorrect
 			//
 			// Explicitly register SelectionGroup icon
-			if (operationIconsByType.TryGetValue(typeof(Group3D), out ImageBuffer groupIcon))
+			if (operationIconsByType.TryGetValue(typeof(GroupObject3D), out ImageBuffer groupIcon))
 			{
-				operationIconsByType.Add(typeof(SelectionGroup), groupIcon);
+				operationIconsByType.Add(typeof(SelectionGroupObject3D), groupIcon);
 			}
 
 			this.Thumbnails.OperationIcons = operationIconsByType;
@@ -696,7 +696,7 @@ namespace MatterHackers.MatterControl
 				{
 					if (sceneItem is IObject3D imageObject)
 					{
-						var path = new ImageToPath();
+						var path = new ImageToPathObject3D();
 						sceneItem.WrapWith(path, scene);
 						path.Invalidate(new InvalidateArgs(path, InvalidateType.Properties, null));
 					}
@@ -713,7 +713,7 @@ namespace MatterHackers.MatterControl
 				{
 					if (sceneItem is IPathObject imageObject)
 					{
-						var extrude = new LinearExtrude();
+						var extrude = new LinearExtrudeObject3D();
 						sceneItem.WrapWith(extrude, scene);
 						extrude.Invalidate(new InvalidateArgs(extrude, InvalidateType.Properties, null));
 					}
@@ -730,7 +730,7 @@ namespace MatterHackers.MatterControl
 				{
 					if (sceneItem is IPathObject imageObject)
 					{
-						var smoothPath = new SmoothPath();
+						var smoothPath = new SmoothPathObject3D();
 						sceneItem.WrapWith(smoothPath, scene);
 						smoothPath.Invalidate(new InvalidateArgs(smoothPath, InvalidateType.Properties, null));
 					}

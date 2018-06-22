@@ -383,7 +383,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public bool DragOperationActive { get; private set; }
 
-		public InsertionGroup DragDropObject { get; private set; }
+		public InsertionGroupObject3D DragDropObject { get; private set; }
 
 		public ILibraryAssetStream SceneReplacement { get; private set; }
 
@@ -458,7 +458,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Set the hitplane to the bed plane
 			CurrentSelectInfo.HitPlane = bedPlane;
 
-			var insertionGroup = new InsertionGroup(
+			var insertionGroup = new InsertionGroupObject3D(
 				items,
 				this,
 				Scene,
@@ -1118,7 +1118,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						if (hitObject != null)
 						{
 							if (Scene.SelectedItem == hitObject
-								&& !(Scene.SelectedItem is SelectionGroup))
+								&& !(Scene.SelectedItem is SelectionGroupObject3D))
 							{
 								Scene.SelectedItem = null;
 							}

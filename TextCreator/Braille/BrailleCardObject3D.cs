@@ -82,9 +82,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				Height = BaseHeight
 			};
 			textObject.Invalidate(new InvalidateArgs(textObject, InvalidateType.Properties, null));
-			IObject3D letterObject = new Rotate(textObject, -MathHelper.Tau / 4);
-			letterObject = new Align3D(letterObject, FaceAlign.Bottom | FaceAlign.Front, brailleLetter, FaceAlign.Top | FaceAlign.Front, 0, 0, 3.5);
-			letterObject = new SetCenter(letterObject, brailleLetter.GetCenter(), true, false, false);
+			IObject3D letterObject = new RotateObject3D(textObject, -MathHelper.Tau / 4);
+			letterObject = new AlignObject3D(letterObject, FaceAlign.Bottom | FaceAlign.Front, brailleLetter, FaceAlign.Top | FaceAlign.Front, 0, 0, 3.5);
+			letterObject = new SetCenterObject3D(letterObject, brailleLetter.GetCenter(), true, false, false);
 			this.Children.Add(letterObject);
 
 			var basePath = new RoundedRect(0, 0, 22, 34, 3)
@@ -98,13 +98,13 @@ namespace MatterHackers.MatterControl.DesignTools
 				Matrix = Matrix4X4.CreateRotationX(MathHelper.Tau / 4)
 			};
 
-			basePlate = new Align3D(basePlate, FaceAlign.Bottom | FaceAlign.Back, brailleLetter, FaceAlign.Bottom | FaceAlign.Back);
-			basePlate = new SetCenter(basePlate, brailleLetter.GetCenter(), true, false, false);
+			basePlate = new AlignObject3D(basePlate, FaceAlign.Bottom | FaceAlign.Back, brailleLetter, FaceAlign.Bottom | FaceAlign.Back);
+			basePlate = new SetCenterObject3D(basePlate, brailleLetter.GetCenter(), true, false, false);
 			this.Children.Add(basePlate);
 
 			IObject3D underline = new CubeObject3D(basePlate.XSize(), .2, 1);
-			underline = new Align3D(underline, FaceAlign.Bottom, brailleLetter, FaceAlign.Top);
-			underline = new Align3D(underline, FaceAlign.Back | FaceAlign.Left, basePlate, FaceAlign.Front | FaceAlign.Left, 0, .01);
+			underline = new AlignObject3D(underline, FaceAlign.Bottom, brailleLetter, FaceAlign.Top);
+			underline = new AlignObject3D(underline, FaceAlign.Back | FaceAlign.Left, basePlate, FaceAlign.Front | FaceAlign.Left, 0, .01);
 			this.Children.Add(underline);
 
 			if (aabb.ZSize > 0)

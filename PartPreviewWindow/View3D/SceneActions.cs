@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var selectedItems = new List<IObject3D>();
 			if (selectedItem != null)
 			{
-				if (selectedItem is SelectionGroup)
+				if (selectedItem is SelectionGroupObject3D)
 				{
 					selectedItems = selectedItem.Children.ToList();
 				}
@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (sourceItem != null)
 					{
-						if (sourceItem is SelectionGroup)
+						if (sourceItem is SelectionGroupObject3D)
 						{
 							// the selection is a group of objects that need to be copied
 							var copyList = sourceItem.Children.ToList();

@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				List<IObject3D> itemsToReplace;
 
-				if (selectedItem is SelectionGroup)
+				if (selectedItem is SelectionGroupObject3D)
 				{
 					itemsToReplace = selectedItem.Children.ToList();
 					foreach (var child in itemsToReplace)

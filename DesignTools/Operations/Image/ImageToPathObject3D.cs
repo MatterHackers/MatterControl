@@ -50,14 +50,14 @@ namespace MatterHackers.MatterControl.DesignTools
 	using Polygon = List<IntPoint>;
 	using Polygons = List<List<IntPoint>>;
 
-	public class ImageToPath : Object3D, IPathObject, IEditorDraw
+	public class ImageToPathObject3D : Object3D, IPathObject, IEditorDraw
 	{
 		private ThresholdFunctions _featureDetector = ThresholdFunctions.Silhouette;
 
 		private ImageBuffer _histogramRawCache = null;
 		private ImageBuffer _histogramDisplayCache = null;
 
-		public ImageToPath()
+		public ImageToPathObject3D()
 		{
 			Name = "Image to Path".Localize();
 		}
@@ -236,7 +236,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void DrawEditor(object sender, DrawEventArgs e)
 		{
-			ImageToPath.DrawPath(this);
+			ImageToPathObject3D.DrawPath(this);
 		}
 
 		public void GenerateMarchingSquaresAndLines(Action<double, string> progressReporter, ImageBuffer image, IThresholdFunction thresholdFunction)

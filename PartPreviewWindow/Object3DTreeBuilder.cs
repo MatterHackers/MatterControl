@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private static TreeNode AddTree(ObjectView item, TreeNode parent, ThemeConfig theme)
 		{
 			// Suppress MeshWrapper and OperationSource nodes in tree
-			bool shouldCollapseToParent = item.Source is MeshWrapper || item.Source is OperationSource;
+			bool shouldCollapseToParent = item.Source is ModifiedMeshObject3D || item.Source is OperationSourceObject3D;
 			var contextNode = (shouldCollapseToParent && parent != null) ? parent : AddItem(item, parent, theme);
 
 			contextNode.SuspendLayout();
@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private static TreeNode AddItem(ObjectView item, TreeNode parentNode, ThemeConfig theme)
 		{
-			if(item.Source is InsertionGroup insertionGroup)
+			if(item.Source is InsertionGroupObject3D insertionGroup)
 			{
 				return new TreeNode()
 				{
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			switch (item)
 			{
-				case FitToBounds3D fitToBounds3D:
+				case FitToBoundsObject3D fitToBounds3D:
 					return new ObjectView()
 					{
 						Children = new IObject3D[] { fitToBounds3D.ItemToScale },
@@ -133,27 +133,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Source = item
 					};
 
-				case ArrayLinear3D arrayLinear3D:
+				case ArrayLinearObject3D arrayLinear3D:
 					return new ObjectView()
 					{
-						Children = item.Children.OfType<OperationSource>().ToList(),
+						Children = item.Children.OfType<OperationSourceObject3D>().ToList(),
 						Name = $"{arrayLinear3D.Name} ({arrayLinear3D.Count})",
 						Source = item
 					};
 
-				case ArrayAdvanced3D arrayAdvanced3D:
+				case ArrayAdvancedObject3D arrayAdvanced3D:
 					return new ObjectView()
 					{
-						Children = item.Children.OfType<OperationSource>().ToList(),
+						Children = item.Children.OfType<OperationSourceObject3D>().ToList(),
 						Name = $"{arrayAdvanced3D.Name} ({arrayAdvanced3D.Count})",
 						Source = item
 					};
 
 				// TODO: array operations should only expose OperationSource
-				case ArrayRadial3D arrayRadial3D:
+				case ArrayRadialObject3D arrayRadial3D:
 					return new ObjectView()
 					{
-						Children = item.Children.OfType<OperationSource>().ToList(),
+						Children = item.Children.OfType<OperationSourceObject3D>().ToList(),
 						Name = $"{arrayRadial3D.Name} ({arrayRadial3D.Count})",
 						Source = item
 					};
