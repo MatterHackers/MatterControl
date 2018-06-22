@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.EeProm
 					{
 						SaveSettingsToActive();
 						currentEePromSettings.SaveToEeProm();
-						Close();
+						this.DialogWindow.Close();
 					});
 				};
 				this.AddPageAction(buttonSave);
