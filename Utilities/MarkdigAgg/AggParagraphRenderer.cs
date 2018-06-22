@@ -16,7 +16,7 @@ namespace Markdig.Renderers.Agg
 		}
 	}
 
-	public class ParagraphX : FlowLayoutWidget
+	public class ParagraphX : FlowLeftRightWithWrapping
 	{
 		public ParagraphX()
 		{

@@ -9,7 +9,7 @@ using MatterHackers.MatterControl;
 
 namespace Markdig.Renderers.Agg
 {
-	public class HeadingRowX : FlowLayoutWidget
+	public class HeadingRowX : FlowLeftRightWithWrapping
 	{
 		public HeadingRowX()
 		{
@@ -24,8 +24,8 @@ namespace Markdig.Renderers.Agg
 		{
 			if (childToAdd is TextWidget textWidget)
 			{
-				textWidget.TextColor = new Color("#036ac3");
-				textWidget.PointSize = 11;
+				//textWidget.TextColor = new Color("#036ac3");
+				textWidget.PointSize = 14;
 			}
 
 			base.AddChild(childToAdd, indexInChildrenList);

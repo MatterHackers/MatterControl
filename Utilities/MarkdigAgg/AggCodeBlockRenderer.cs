@@ -9,7 +9,7 @@ using MatterHackers.MatterControl;
 
 namespace Markdig.Renderers.Agg
 {
-	public class CodeBlockX : FlowLayoutWidget
+	public class CodeBlockX : FlowLeftRightWithWrapping
 	{
 		public CodeBlockX()
 		{

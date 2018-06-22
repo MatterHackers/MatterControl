@@ -21,7 +21,7 @@ namespace Markdig.Renderers.Agg
 
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Stretch;
-			this.Margin = new BorderDouble(0, 4, 0, 12);
+			//this.Margin = new BorderDouble(0, 4, 0, 12);
 		}
 
 		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
@@ -39,17 +39,24 @@ namespace Markdig.Renderers.Agg
 	public class ListItemX : FlowLayoutWidget
 	{
 		private ImageBuffer icon = AggContext.StaticData.LoadIcon("dot.png");
+		private FlowLayoutWidget content;
 		public ListItemX()
 		{
 			var theme = ApplicationController.Instance.Theme;
 
 			this.VAnchor = VAnchor.Fit;
-			this.HAnchor = HAnchor.Fit | HAnchor.Left;
-			this.Margin = new BorderDouble(0, 4, 0, 12);
+			this.HAnchor = HAnchor.Stretch;
+			//this.Margin = new BorderDouble(0, 4, 0, 12);
 
-			this.AddChild(new ImageWidget(icon)
+			base.AddChild(new ImageWidget(icon)
 			{
-				Margin = 3
+				Margin = 3,
+				VAnchor = VAnchor.Top,
+			});
+
+			base.AddChild(content = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch
 			});
 		}
 
@@ -57,7 +64,7 @@ namespace Markdig.Renderers.Agg
 		{
 			// Anything required...?
 
-			base.AddChild(childToAdd, indexInChildrenList);
+			content.AddChild(childToAdd, indexInChildrenList);
 		}
 	}
 
