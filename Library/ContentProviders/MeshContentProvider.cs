@@ -120,6 +120,11 @@ namespace MatterHackers.MatterControl
 				object3D = await (libraryItem as ILibraryObject3D)?.GetObject3D(null);
 			}
 
+			if (object3D == null)
+			{
+				return DefaultImage;
+			}
+
 			string thumbnailId = libraryItem.ID;
 
 			return GetThumbnail(object3D, thumbnailId, width, height);
