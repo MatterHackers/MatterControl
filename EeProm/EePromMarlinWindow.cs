@@ -34,8 +34,6 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.EeProm
 {
@@ -154,26 +152,21 @@ namespace MatterHackers.MatterControl.EeProm
 			mainContainer.AddChild(conterContent);
 
 			// the bottom button bar
+			var buttonSave = theme.CreateDialogButton("Save to EEProm".Localize());
+			buttonSave.Click += (s, e) =>UiThread.RunOnIdle(() =>
 			{
-				var buttonSave = theme.CreateDialogButton("Save to EEProm".Localize());
-				buttonSave.Click += (s, e) =>
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						SaveSettingsToActive();
-						currentEePromSettings.SaveToEeProm();
-						Close();
-					});
-				};
-				this.AddPageAction(buttonSave);
+				SaveSettingsToActive();
+				currentEePromSettings.SaveToEeProm();
+				this.DialogWindow.Close();
+			});
+			this.AddPageAction(buttonSave);
 
-				var exportButton = theme.CreateDialogButton("Export".Localize());
-				exportButton.Click += (s, e) =>
-				{
-					UiThread.RunOnIdle(this.ExportSettings, .1);
-				};
-				this.AddPageAction(exportButton);
-			}
+			var exportButton = theme.CreateDialogButton("Export".Localize());
+			exportButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(this.ExportSettings, .1);
+			};
+			this.AddPageAction(exportButton);
 
 			printer.Connection.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
 
@@ -234,18 +227,16 @@ namespace MatterHackers.MatterControl.EeProm
 
 		private void ExportSettings()
 		{
-			string defaultFileName = $"eeprom_settings_{base.GetSanitizedPrinterName()}.ini";
 			AggContext.FileDialogs.SaveFileDialog(
 				new SaveFileDialogParams("EEPROM Settings|*.ini")
 				{
 					ActionButtonLabel = "Export EEPROM Settings".Localize(),
 					Title = "Export EEPROM".Localize(),
-					FileName = defaultFileName
+					FileName = $"eeprom_settings_{base.GetSanitizedPrinterName()}.ini"
 				},
 				(saveParams) =>
 				{
-					if (!string.IsNullOrEmpty(saveParams.FileName)
-					&& saveParams.FileName != defaultFileName)
+					if (!string.IsNullOrEmpty(saveParams.FileName))
 					{
 						currentEePromSettings.Export(saveParams.FileName);
 					}
