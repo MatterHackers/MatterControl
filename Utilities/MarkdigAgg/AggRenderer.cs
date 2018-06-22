@@ -25,14 +25,10 @@ namespace Markdig.Renderers
 		}
 	}
 
-	public class LineBreakX : ImageWidget
+	public class LineBreakX : GuiWidget, IHardBreak
 	{
-		private static ImageBuffer icon = AggContext.StaticData.LoadIcon("Paragraph_16x.png");
-
 		public LineBreakX()
-			: base(icon)
 		{
-			Margin = new BorderDouble(4, 0);
 		}
 	}
 
