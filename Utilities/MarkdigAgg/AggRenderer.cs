@@ -16,9 +16,18 @@ using MatterHackers.Agg.UI;
 
 namespace Markdig.Renderers
 {
-	public class TextRunX : TextWidget
+	public class TextWordX : TextWidget
 	{
-		public TextRunX()
+		public TextWordX()
+			: base("", pointSize: 10, textColor: Color.Black)
+		{
+			this.AutoExpandBoundsToText = true;
+		}
+	}
+
+	public class TextSpaceX : TextWidget, ISkipIfFirst
+	{
+		public TextSpaceX()
 			: base("", pointSize: 10, textColor: Color.Black)
 		{
 			this.AutoExpandBoundsToText = true;
@@ -165,7 +174,17 @@ namespace Markdig.Renderers
 		internal void WriteText(string text)
 		{
 			// TODO: Is this debugging? Debug.WriteLine()?
-			WriteInline(new TextRunX { Text = text });
+			var words = text.Split(' ');
+			bool first = true;
+			foreach (var word in words)
+			{
+				if(!first)
+				{
+					WriteInline(new TextSpaceX { Text = " " });
+				}
+				WriteInline(new TextWordX { Text = word });
+				first = false;
+			}
 		}
 
 		internal void WriteText(string text, int offset, int length)

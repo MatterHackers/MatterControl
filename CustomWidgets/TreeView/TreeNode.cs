@@ -162,8 +162,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			if (this.layoutSuspendCount == 0
-				&& isDirty)
+			if (isDirty)
 			{
 				RebuildContentSection();
 			}

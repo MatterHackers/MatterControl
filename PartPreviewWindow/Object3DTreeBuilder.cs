@@ -55,17 +55,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			bool shouldCollapseToParent = item.Source is ModifiedMeshObject3D || item.Source is OperationSourceObject3D;
 			var contextNode = (shouldCollapseToParent && parent != null) ? parent : AddItem(item, parent, theme);
 
-			contextNode.SuspendLayout();
-
-			if (!(item.Source is IVisualLeafNode))
+			using (contextNode.LayoutLock())
 			{
-				foreach (var child in item.Children)
+				if (!(item.Source is IVisualLeafNode))
 				{
-					AddTree(BuildItemView(child), contextNode, theme);
+					foreach (var child in item.Children)
+					{
+						AddTree(BuildItemView(child), contextNode, theme);
+					}
 				}
 			}
-
-			contextNode.ResumeLayout();
 
 			return contextNode;
 		}
