@@ -287,13 +287,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void SetActiveItem(IObject3D selectedItem)
 		{
+			this.item = selectedItem;
+			editorPanel.CloseAllChildren();
+
+			// Allow caller to clean up with passing null for selectedItem
+			if (item == null)
+			{
+				return;
+			}
+
 			var selectedItemType = selectedItem.GetType();
 
 			editButton.Enabled = (selectedItem.Children.Count > 0);
 
 			inlineTitleEdit.Text = selectedItem.Name ?? selectedItemType.Name;
-
-			this.item = selectedItem;
 
 			HashSet<IObject3DEditor> mappedEditors = ApplicationController.Instance.GetEditorsForType(selectedItemType);
 
@@ -302,8 +309,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var editableItems = new List<IObject3D> { selectedItem };
 
 			var undoBuffer = sceneContext.Scene.UndoBuffer;
-
-			editorPanel.CloseAllChildren();
 
 			bool allowOperations = true;
 

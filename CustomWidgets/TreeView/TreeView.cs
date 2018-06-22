@@ -197,6 +197,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		//     control.
 		private TreeNode _selectedNode;
 
+		public void Clear()
+		{
+			this.ScrollArea.CloseAllChildren();
+
+			// Release held reference
+			_selectedNode = null;
+		}
+
 		public TreeNode SelectedNode
 		{
 			get => _selectedNode;

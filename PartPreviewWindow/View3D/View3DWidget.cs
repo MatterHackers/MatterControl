@@ -1200,11 +1200,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (!Scene.HasSelection)
 			{
-				if (Printer != null)
-				{
-					Printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
-				}
+				this.Scene.ClearSelection();
 
+				// Clear the TreeView and release node references when no item is selected
+				selectedObjectPanel.SetActiveItem(null);
+				treeView.Clear();
 				return;
 			}
 
@@ -1232,6 +1232,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					assigningTreeNode = false;
 				}
 			}
+		}
+
+		public void ClearPlate()
+		{
+			selectedObjectPanel.SetActiveItem(null);
+			sceneContext.ClearPlate().ContinueWith(t =>
+			{
+				sceneContext.Scene.UndoBuffer.ClearHistory();
+
+				GC.Collect();
+
+				UiThread.RunOnIdle(() =>
+				{
+					GC.Collect();
+					this.Invalidate();
+				}, 1);
+			});
 		}
 
 		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);
