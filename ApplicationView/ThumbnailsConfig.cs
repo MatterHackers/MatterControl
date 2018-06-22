@@ -70,15 +70,47 @@ namespace MatterHackers.MatterControl
 			return null;
 		}
 
-		public string CachePath(string cacheId)
+		public ImageBuffer LoadCachedImage(ILibraryItem libraryItem, int width, int height)
 		{
-			// TODO: Use content SHA
-			return ApplicationController.CacheablePath("ItemThumbnails", $"{cacheId}.png");
+			ImageBuffer cachedItem = LoadImage(this.CachePath(libraryItem, width, height));
+			if (cachedItem != null)
+			{
+				return cachedItem;
+			}
+
+			if (width < 100
+				&& height < 100)
+			{
+				// check for a 100x100 image
+				var cachedAt100x100 = LoadImage(this.CachePath(libraryItem, 100, 100));
+				if (cachedAt100x100 != null)
+				{
+					return cachedAt100x100.CreateScaledImage(width, height);
+				}
+			}
+
+			return null;
 		}
 
-		public string CachePath(string id, int width, int height)
+		public string CachePath(string cacheId)
 		{
-			return ApplicationController.CacheablePath("ItemThumbnails", $"{id}-{width}x{height}.png");
+			return ApplicationController.CacheablePath(
+				Path.Combine("Thumbnails", "Content"), 
+				$"{cacheId}.png");
+		}
+
+		public string CachePath(string cacheId, int width, int height)
+		{
+			return ApplicationController.CacheablePath(
+				Path.Combine("Thumbnails", "Content"),
+				$"{cacheId}-{width}x{height}.png");
+		}
+
+		public string CachePath(ILibraryItem libraryItem, int width, int height)
+		{
+			return ApplicationController.CacheablePath(
+				Path.Combine("Thumbnails", "Library"),
+				$"{libraryItem.ID}-{width}x{height}.png");
 		}
 
 		private AutoResetEvent thumbGenResetEvent = new AutoResetEvent(false);

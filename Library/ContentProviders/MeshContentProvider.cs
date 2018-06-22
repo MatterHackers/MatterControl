@@ -120,12 +120,32 @@ namespace MatterHackers.MatterControl
 				object3D = await (libraryItem as ILibraryObject3D)?.GetObject3D(null);
 			}
 
+			if (object3D == null)
+			{
+				return DefaultImage;
+			}
+
 			string thumbnailId = libraryItem.ID;
 
-			return GetThumbnail(object3D, thumbnailId, width, height);
+			var thumbnail = GetThumbnail(object3D, thumbnailId, width, height);
+			if (thumbnail != null)
+			{
+				// Cache content thumbnail
+				AggContext.ImageIO.SaveImageData(
+					ApplicationController.Instance.Thumbnails.CachePath(object3D.MeshRenderId().ToString(), width, height),
+					thumbnail);
+
+				// Cache library thumbnail
+				AggContext.ImageIO.SaveImageData(
+					ApplicationController.Instance.Thumbnails.CachePath(libraryItem, width, height),
+					thumbnail);
+			}
+
+			return thumbnail ?? DefaultImage;
 		}
 
-		public ImageBuffer GetThumbnail(IObject3D item, string thumbnailId, int width, int height)
+		// Limit to private scope until need returns
+		private ImageBuffer GetThumbnail(IObject3D item, string thumbnailId, int width, int height)
 		{
 			if (item == null)
 			{
@@ -146,23 +166,12 @@ namespace MatterHackers.MatterControl
 
 			bool RenderOrthographic = (forceOrthographic) ? true : UserSettings.Instance.ThumbnailRenderingMode == "orthographic";
 
-			var thumbnail = ThumbnailEngine.Generate(
+			return ThumbnailEngine.Generate(
 				item,
 				RenderOrthographic ? RenderType.ORTHOGROPHIC : RenderType.RAY_TRACE,
 				width,
 				height,
 				allowMultiThreading: !ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting);
-
-			if (thumbnail != null)
-			{
-				// TODO: Consider and resolve who should own populating the cache
-				// Cache at requested size
-				string cachePath = ApplicationController.Instance.Thumbnails.CachePath(item.MeshRenderId().ToString(), width, height);
-
-				AggContext.ImageIO.SaveImageData(cachePath, thumbnail);
-			}
-
-			return thumbnail ?? DefaultImage;
 		}
 
 		public ImageBuffer DefaultImage => AggContext.StaticData.LoadIcon("mesh.png");

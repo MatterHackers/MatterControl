@@ -70,9 +70,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			ILibraryItem libraryItem = listViewItem.Model;
 			ILibraryContainer libraryContainer = listViewItem.Container;
 
-			string thumbnailId = libraryItem.ID;
-
-			var thumbnail = ApplicationController.Instance.Thumbnails.LoadCachedImage(thumbnailId, thumbWidth, thumbHeight);
+			// Load from cache via LibraryID
+			var thumbnail = ApplicationController.Instance.Thumbnails.LoadCachedImage(libraryItem, thumbWidth, thumbHeight);
 			if (thumbnail != null)
 			{
 				this.SetItemThumbnail(thumbnail);

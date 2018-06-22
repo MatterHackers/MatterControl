@@ -592,7 +592,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							sceneContext.ClearPlate().ConfigureAwait(false);
+							view3DWidget.ClearPlate();
 						});
 					}
 				},
