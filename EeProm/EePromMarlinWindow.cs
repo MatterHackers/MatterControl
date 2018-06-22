@@ -34,8 +34,6 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.EeProm
 {
@@ -229,18 +227,16 @@ namespace MatterHackers.MatterControl.EeProm
 
 		private void ExportSettings()
 		{
-			string defaultFileName = $"eeprom_settings_{base.GetSanitizedPrinterName()}.ini";
 			AggContext.FileDialogs.SaveFileDialog(
 				new SaveFileDialogParams("EEPROM Settings|*.ini")
 				{
 					ActionButtonLabel = "Export EEPROM Settings".Localize(),
 					Title = "Export EEPROM".Localize(),
-					FileName = defaultFileName
+					FileName = $"eeprom_settings_{base.GetSanitizedPrinterName()}.ini"
 				},
 				(saveParams) =>
 				{
-					if (!string.IsNullOrEmpty(saveParams.FileName)
-					&& saveParams.FileName != defaultFileName)
+					if (!string.IsNullOrEmpty(saveParams.FileName))
 					{
 						currentEePromSettings.Export(saveParams.FileName);
 					}
