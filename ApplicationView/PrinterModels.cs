@@ -169,16 +169,16 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		public InsertionGroup AddToPlate(IEnumerable<ILibraryItem> selectedLibraryItems)
+		public InsertionGroupObject3D AddToPlate(IEnumerable<ILibraryItem> selectedLibraryItems)
 		{
-			InsertionGroup insertionGroup = null;
+			InsertionGroupObject3D insertionGroup = null;
 
 			var context = ApplicationController.Instance.DragDropData;
 			var scene = context.SceneContext.Scene;
 			scene.Children.Modify(list =>
 			{
 				list.Add(
-					insertionGroup = new InsertionGroup(
+					insertionGroup = new InsertionGroupObject3D(
 						selectedLibraryItems,
 						context.View3DWidget,
 						scene,

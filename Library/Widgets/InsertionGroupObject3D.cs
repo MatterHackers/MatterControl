@@ -39,7 +39,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class InsertionGroup : Object3D
+	public class InsertionGroupObject3D : Object3D
 	{
 		public event EventHandler ContentLoaded;
 
@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public Task LoadingItemsTask { get; }
 
-		static InsertionGroup()
+		static InsertionGroupObject3D()
 		{
 			// Create the placeholder mesh and position it at z0
 			placeHolderMesh = PlatonicSolids.CreateCube(20, 20, 20);
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.Library
 		}
 
 		// TODO: Figure out how best to collapse the InsertionGroup after the load task completes
-		public InsertionGroup(IEnumerable<ILibraryItem> items, View3DWidget view3DWidget, InteractiveScene scene, Vector2 bedCenter, Func<bool> dragOperationActive, bool trackSourceFiles = false)
+		public InsertionGroupObject3D(IEnumerable<ILibraryItem> items, View3DWidget view3DWidget, InteractiveScene scene, Vector2 bedCenter, Func<bool> dragOperationActive, bool trackSourceFiles = false)
 		{
 			if(items == null)
 			{

@@ -563,10 +563,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// wait for the object to be added
 			testRunner.WaitFor(() => scene.Children.Count == preAddCount + 1);
 			// wait for the object to be done loading
-			var insertionGroup = scene.Children.LastOrDefault() as InsertionGroup;
+			var insertionGroup = scene.Children.LastOrDefault() as InsertionGroupObject3D;
 			if (insertionGroup != null)
 			{
-				testRunner.WaitFor(() => scene.Children.LastOrDefault() as InsertionGroup != null, 10);
+				testRunner.WaitFor(() => scene.Children.LastOrDefault() as InsertionGroupObject3D != null, 10);
 			}
 		}
 

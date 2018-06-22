@@ -401,7 +401,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 							var sceneChildren = scene.Children.ToList();
 
-							var injector = new InsertionGroup(new[] { itemModel }, activeContext.View3DWidget, scene, bedCenter, () => false);
+							var injector = new InsertionGroupObject3D(new[] { itemModel }, activeContext.View3DWidget, scene, bedCenter, () => false);
 							injector.ContentLoaded += (s, args) =>
 							{
 								// Get the bounds of the loaded InsertionGroup with all of its content

@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 	public enum MaintainRatio { None, X_Y, X_Y_Z }
 
-	public class FitToBounds3D : Object3D, IEditorDraw, IPropertyGridModifier
+	public class FitToBoundsObject3D : Object3D, IEditorDraw, IPropertyGridModifier
 	{
 		[Description("Set the shape the part will be fit into.")]
 		public FitType FitType { get; set; } = FitType.Box;
@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[JsonIgnore]
 		public IObject3D ItemToScale => Children.First().Children.First();
 
-		public FitToBounds3D()
+		public FitToBoundsObject3D()
 		{
 		}
 
@@ -138,9 +138,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public static FitToBounds3D Create(IObject3D itemToFit)
+		public static FitToBoundsObject3D Create(IObject3D itemToFit)
 		{
-			FitToBounds3D fitToBounds = new FitToBounds3D();
+			FitToBoundsObject3D fitToBounds = new FitToBoundsObject3D();
 			var aabb = itemToFit.GetAxisAlignedBoundingBox();
 
 			fitToBounds.Width = aabb.XSize;

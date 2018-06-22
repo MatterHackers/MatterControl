@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.scene = scene;
 
-			if (deletingItem is SelectionGroup)
+			if (deletingItem is SelectionGroupObject3D)
 			{
 				var childrenToAdd = deletingItem.Children;
 				// push whatever happened to the selection into the objects before saving them

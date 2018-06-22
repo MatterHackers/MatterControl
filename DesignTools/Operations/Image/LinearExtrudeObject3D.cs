@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,41 +27,73 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DesignTools.EditableTypes;
-using MatterHackers.VectorMath;
-using System;
+using Newtonsoft.Json;
 using System.Linq;
 
-namespace MatterHackers.MatterControl.DesignTools.Operations
+namespace MatterHackers.MatterControl.DesignTools
 {
-	public class ArrayLinear3D : Object3D
+	using MatterHackers.Agg.UI;
+	using MatterHackers.DataConverters3D.UndoCommands;
+	using MatterHackers.Localizations;
+	using MatterHackers.MatterControl.DesignTools.Operations;
+	using MatterHackers.PolygonMesh;
+	using System.Collections.Generic;
+	using System.Threading;
+
+	public class LinearExtrudeObject3D : Object3D
 	{
-		public ArrayLinear3D()
-		{
-			Name = "Linear Array".Localize();
-		}
+		public double Height { get; set; } = 5;
 
 		public override bool CanApply => true;
 		public override bool CanRemove => true;
-		public int Count { get; set; } = 3;
-		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };
-		public double Distance { get; set; } = 30;
+
+		[JsonIgnore]
+		private IVertexSource VertexSource
+		{
+			get
+			{
+				var item = this.Descendants().Where((d) => d is IPathObject).FirstOrDefault();
+				if (item is IPathObject pathItem)
+				{
+					return pathItem.VertexSource;
+				}
+
+				return null;
+			}
+		}
 
 		public override void Apply(UndoBuffer undoBuffer)
 		{
-			OperationSource.Apply(this);
+			// only keep the mesh and get rid of everything else
+			using (RebuildLock())
+			{
+				var meshOnlyItem = new Object3D()
+				{
+					Mesh = this.Mesh.Copy(CancellationToken.None)
+				};
 
-			base.Apply(undoBuffer);
+				meshOnlyItem.CopyProperties(this, Object3DPropertyFlags.All);
+
+				// and replace us with the children 
+				undoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { this }, new List<IObject3D> { meshOnlyItem }));
+			}
+
+			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+		}
+
+		public LinearExtrudeObject3D()
+		{
+			Name = "Linear Extrude".Localize();
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if ((invalidateType.InvalidateType == InvalidateType.Content
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+				|| invalidateType.InvalidateType == InvalidateType.Mesh
+				|| invalidateType.InvalidateType == InvalidateType.Path)
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
@@ -80,37 +112,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		private void Rebuild(UndoBuffer undoBuffer)
 		{
-			using (this.RebuildLock())
+			using (RebuildLock())
 			{
-				this.DebugDepth("Rebuild");
-
-				var sourceContainer = OperationSource.GetOrCreateSourceContainer(this);
-
-				this.Children.Modify(list =>
+				var vertexSource = this.VertexSource;
+				Mesh = VertexSourceToMesh.Extrude(this.VertexSource, Height);
+				if (Mesh.Vertices.Count == 0)
 				{
-					list.Clear();
-					// add back in the sourceContainer
-					list.Add(sourceContainer);
-					// get the source item
-					var sourceItem = sourceContainer.Children.First();
-
-					for (int i = 0; i < Math.Max(Count, 1); i++)
-					{
-						var next = sourceItem.Clone();
-						next.Matrix = sourceItem.Matrix * Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance * i);
-						list.Add(next);
-					}
-				});
+					Mesh = null;
+				}
 			}
 
-			this.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
-		}
-
-		public override void Remove(UndoBuffer undoBuffer)
-		{
-			OperationSource.Remove(this);
-
-			base.Remove(undoBuffer);
+			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}
 	}
 }

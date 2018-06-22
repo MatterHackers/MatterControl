@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,50 +28,25 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.DataConverters3D;
-using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
-using System.Linq;
 
-namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
+namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	/// <summary>
-	/// The goal of MeshWrapper is to provide a mutated version of a source item by some operation. To do so we wrap and clone all
-	/// properties of the source item and reset the source matrix to Identity, given that it now exists on the wrapping parent.
-	/// </summary>
-	public class MeshWrapper : Object3D
+	public class RotateObject3D : Object3D
 	{
-		public MeshWrapper()
+		public RotateObject3D()
 		{
 		}
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public RotateObject3D(IObject3D item, double x = 0, double y = 0, double z = 0, string name = "")
+			: this(item, new Vector3(x, y, z), name)
 		{
-			var firstChild = this.Children.FirstOrDefault();
-			if (firstChild != null)
-			{
-				if (invalidateType.InvalidateType == InvalidateType.Color)
-				{
-					this.Color = firstChild.Color;
-				}
-
-				if (invalidateType.InvalidateType == InvalidateType.Material)
-				{
-					this.MaterialIndex = firstChild.MaterialIndex;
-				}
-			}
-
-			base.OnInvalidate(invalidateType);
 		}
 
-		public MeshWrapper(IObject3D child, string ownerId)
+		public RotateObject3D(IObject3D item, Vector3 translation, string name = "")
 		{
-			Children.Add(child);
-
-			this.CopyProperties(child, Object3DPropertyFlags.All);
-			this.OwnerID = ownerId;
-			this.Mesh = child.Mesh;
-
-			child.Matrix = Matrix4X4.Identity;
+			Matrix *= Matrix4X4.CreateRotation(translation);
+			Children.Add(item.Clone());
 		}
 	}
 }

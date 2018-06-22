@@ -195,8 +195,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				Mesh = VertexSourceToMesh.Extrude(basePath, BaseHeight)
 			};
 
-			basePlate = new Align3D(basePlate, FaceAlign.Top, textObject, FaceAlign.Bottom, 0, 0, .01);
-			basePlate = new Align3D(basePlate, FaceAlign.Left | FaceAlign.Front,
+			basePlate = new AlignObject3D(basePlate, FaceAlign.Top, textObject, FaceAlign.Bottom, 0, 0, .01);
+			basePlate = new AlignObject3D(basePlate, FaceAlign.Left | FaceAlign.Front,
 				size.Left - padding/2,
 				size.Bottom - padding/2);
 			this.Children.Add(basePlate);
@@ -235,7 +235,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					Matrix = Matrix4X4.CreateRotationX(MathHelper.Tau / 4)
 				};
 
-				chainHook = new Align3D(chainHook, FaceAlign.Left | FaceAlign.Bottom | FaceAlign.Back, basePlate, FaceAlign.Right | FaceAlign.Bottom | FaceAlign.Back, -.01);
+				chainHook = new AlignObject3D(chainHook, FaceAlign.Left | FaceAlign.Bottom | FaceAlign.Back, basePlate, FaceAlign.Right | FaceAlign.Bottom | FaceAlign.Back, -.01);
 
 				this.Children.Add(chainHook);
 			}

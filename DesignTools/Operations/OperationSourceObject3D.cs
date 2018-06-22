@@ -35,14 +35,14 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class OperationSource : Object3D
+	public class OperationSourceObject3D : Object3D
 	{
-		public OperationSource()
+		public OperationSourceObject3D()
 		{
 			Name = "Source".Localize();
 		}
 
-		public OperationSource(IEnumerable<IObject3D> children)
+		public OperationSourceObject3D(IEnumerable<IObject3D> children)
 			: this()
 		{
 			Visible = false;
@@ -63,10 +63,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			IObject3D sourceContainer;
 			using (parent.RebuildLock())
 			{
-				sourceContainer = parent.Children.FirstOrDefault(c => c is OperationSource);
+				sourceContainer = parent.Children.FirstOrDefault(c => c is OperationSourceObject3D);
 				if (sourceContainer == null)
 				{
-					sourceContainer = new OperationSource();
+					sourceContainer = new OperationSourceObject3D();
 
 					// Move first child to sourceContainer
 					var firstChild = parent.Children.First();
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				// The idea is we leave everything but the source and that is the applied operation
 				parent.Children.Modify(list =>
 				{
-					var sourceItem = list.FirstOrDefault(c => c is OperationSource);
+					var sourceItem = list.FirstOrDefault(c => c is OperationSourceObject3D);
 					if (sourceItem != null)
 					{
 						list.Remove(sourceItem);
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				parent.Children.Modify(list =>
 				{
-					var sourceItem = list.FirstOrDefault(c => c is OperationSource);
+					var sourceItem = list.FirstOrDefault(c => c is OperationSourceObject3D);
 					if (sourceItem != null)
 					{
 						IObject3D firstChild = sourceItem.Children.First();

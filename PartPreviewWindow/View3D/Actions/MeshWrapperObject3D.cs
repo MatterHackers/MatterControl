@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					using (wrapper.RebuildLock())
 					{
 						var remove = wrapper.Parent;
-						while (remove is MeshWrapper)
+						while (remove is ModifiedMeshObject3D)
 						{
 							var hold = remove;
 							remove.Remove(null);
@@ -202,11 +202,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				if (!child.DescendantsAndSelf().Where((c) => c.OwnerID == this.ID).Any())
 				{
 					// wrap the child
-					child.Parent.Children.Modify((list) =>
+					child.Parent.Children.Modify((System.Action<List<IObject3D>>)((List<IObject3D> list) =>
 					{
 						list.Remove(child);
-						list.Add(new MeshWrapper(child, this.ID));
-					});
+						list.Add((IObject3D)new ModifiedMeshObject3D(child, this.ID));
+					}));
 				}
 			}
 		}

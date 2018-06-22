@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public ChangeColor(IObject3D selectedItem, Color color)
 		{
 			this.color = color;
-			if (selectedItem is SelectionGroup)
+			if (selectedItem is SelectionGroupObject3D)
 			{
 				SetData(selectedItem.Children.ToList());
 			}

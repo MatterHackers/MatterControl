@@ -32,6 +32,7 @@ using System.Linq;
 using System.Threading;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.PolygonMesh;
@@ -46,6 +47,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public PinchObject3D()
 		{
+			Name = "Pinch".Localize();
 		}
 
 		private void Rebuild(UndoBuffer undoBuffer)

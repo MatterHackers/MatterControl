@@ -31,9 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
@@ -89,105 +87,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		Top = 0x20,
 	};
 
-	public class Align2D : VertexSourceApplyTransform
-	{
-		public Align2D()
-		{
-		}
-
-		public Align2D(IVertexSource objectToAlign, Side2D boundingFacesToAlign, IVertexSource objectToAlignTo, Side2D boundingFacesToAlignTo, double offsetX = 0, double offsetY = 0, string name = "")
-			: this(objectToAlign, boundingFacesToAlign, GetPositionToAlignTo(objectToAlignTo, boundingFacesToAlignTo, new Vector2(offsetX, offsetY)), name)
-		{
-			if (objectToAlign == objectToAlignTo)
-			{
-				throw new Exception("You cannot align an object to itself.");
-			}
-		}
-
-		public Align2D(IVertexSource objectToAlign, Side2D boundingFacesToAlign, double positionToAlignToX = 0, double positionToAlignToY = 0, string name = "")
-			: this(objectToAlign, boundingFacesToAlign, new Vector2(positionToAlignToX, positionToAlignToY), name)
-		{
-		}
-
-		public Align2D(IVertexSource objectToAlign, Side2D boundingFacesToAlign, Vector2 positionToAlignTo, double offsetX, double offsetY, string name = "")
-			: this(objectToAlign, boundingFacesToAlign, positionToAlignTo + new Vector2(offsetX, offsetY), name)
-		{
-		}
-
-		public Align2D(IVertexSource item, Side2D boundingFacesToAlign, Vector2 positionToAlignTo, string name = "")
-		{
-			var bounds = item.GetBounds();
-
-			if (IsSet(boundingFacesToAlign, Side2D.Left, Side2D.Right))
-			{
-				positionToAlignTo.X = positionToAlignTo.X - bounds.Left;
-			}
-			if (IsSet(boundingFacesToAlign, Side2D.Right, Side2D.Left))
-			{
-				positionToAlignTo.X = positionToAlignTo.X - bounds.Left - (bounds.Right - bounds.Left);
-			}
-			if (IsSet(boundingFacesToAlign, Side2D.Bottom, Side2D.Top))
-			{
-				positionToAlignTo.Y = positionToAlignTo.Y - bounds.Bottom;
-			}
-			if (IsSet(boundingFacesToAlign, Side2D.Top, Side2D.Bottom))
-			{
-				positionToAlignTo.Y = positionToAlignTo.Y - bounds.Bottom - (bounds.Top - bounds.Bottom);
-			}
-
-			Transform = Affine.NewTranslation(positionToAlignTo);
-			VertexSource = item;
-		}
-
-		public static Vector2 GetPositionToAlignTo(IVertexSource objectToAlignTo, Side2D boundingFacesToAlignTo, Vector2 extraOffset)
-		{
-			Vector2 positionToAlignTo = new Vector2();
-			if (IsSet(boundingFacesToAlignTo, Side2D.Left, Side2D.Right))
-			{
-				positionToAlignTo.X = objectToAlignTo.GetBounds().Left;
-			}
-			if (IsSet(boundingFacesToAlignTo, Side2D.Right, Side2D.Left))
-			{
-				positionToAlignTo.X = objectToAlignTo.GetBounds().Right;
-			}
-			if (IsSet(boundingFacesToAlignTo, Side2D.Bottom, Side2D.Top))
-			{
-				positionToAlignTo.Y = objectToAlignTo.GetBounds().Bottom;
-			}
-			if (IsSet(boundingFacesToAlignTo, Side2D.Top, Side2D.Bottom))
-			{
-				positionToAlignTo.Y = objectToAlignTo.GetBounds().Top;
-			}
-
-			return positionToAlignTo + extraOffset;
-		}
-
-		private static bool IsSet(Side2D variableToCheck, Side2D faceToCheckFor, Side2D faceToAssertNot)
-		{
-			if ((variableToCheck & faceToCheckFor) != 0)
-			{
-				if ((variableToCheck & faceToAssertNot) != 0)
-				{
-					throw new Exception("You cannot have both " + faceToCheckFor.ToString() + " and " + faceToAssertNot.ToString() + " set when calling Align.  The are mutually exclusive.");
-				}
-				return true;
-			}
-
-			return false;
-		}
-	}
-
-	public class Align3D : Object3D, IPropertyGridModifier
+	public class AlignObject3D : Object3D, IPropertyGridModifier
 	{
 		// We need to serialize this so we can remove the arrange and get back to the objects before arranging
 		public List<Aabb> OriginalChildrenBounds = new List<Aabb>();
 
-		public Align3D()
+		public AlignObject3D()
 		{
 			Name = "Align";
 		}
 
-		public Align3D(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, IObject3D objectToAlignTo, FaceAlign boundingFacesToAlignTo, double offsetX = 0, double offsetY = 0, double offsetZ = 0, string name = "")
+		public AlignObject3D(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, IObject3D objectToAlignTo, FaceAlign boundingFacesToAlignTo, double offsetX = 0, double offsetY = 0, double offsetZ = 0, string name = "")
 			: this(objectToAlign, boundingFacesToAlign, GetPositionToAlignTo(objectToAlignTo, boundingFacesToAlignTo, new Vector3(offsetX, offsetY, offsetZ)), name)
 		{
 			if (objectToAlign == objectToAlignTo)
@@ -196,17 +106,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public Align3D(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, double positionToAlignToX = 0, double positionToAlignToY = 0, double positionToAlignToZ = 0, string name = "")
+		public AlignObject3D(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, double positionToAlignToX = 0, double positionToAlignToY = 0, double positionToAlignToZ = 0, string name = "")
 			: this(objectToAlign, boundingFacesToAlign, new Vector3(positionToAlignToX, positionToAlignToY, positionToAlignToZ), name)
 		{
 		}
 
-		public Align3D(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, Vector3 positionToAlignTo, double offsetX, double offsetY, double offsetZ, string name = "")
+		public AlignObject3D(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, Vector3 positionToAlignTo, double offsetX, double offsetY, double offsetZ, string name = "")
 			: this(objectToAlign, boundingFacesToAlign, positionToAlignTo + new Vector3(offsetX, offsetY, offsetZ), name)
 		{
 		}
 
-		public Align3D(IObject3D item, FaceAlign boundingFacesToAlign, Vector3 positionToAlignTo, string name = "")
+		public AlignObject3D(IObject3D item, FaceAlign boundingFacesToAlign, Vector3 positionToAlignTo, string name = "")
 		{
 			AxisAlignedBoundingBox bounds = item.GetAxisAlignedBoundingBox();
 

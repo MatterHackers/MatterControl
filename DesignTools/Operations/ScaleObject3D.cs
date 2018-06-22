@@ -32,20 +32,20 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class Rotate : Object3D
+	public class ScaleObject3D : Object3D
 	{
-		public Rotate()
+		public ScaleObject3D()
 		{
 		}
 
-		public Rotate(IObject3D item, double x = 0, double y = 0, double z = 0, string name = "")
+		public ScaleObject3D(IObject3D item, double x = 0, double y = 0, double z = 0, string name = "")
 			: this(item, new Vector3(x, y, z), name)
 		{
 		}
 
-		public Rotate(IObject3D item, Vector3 translation, string name = "")
+		public ScaleObject3D(IObject3D item, Vector3 translation, string name = "")
 		{
-			Matrix *= Matrix4X4.CreateRotation(translation);
+			Matrix *= Matrix4X4.CreateScale(translation);
 			Children.Add(item.Clone());
 		}
 	}

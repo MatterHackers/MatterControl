@@ -28,25 +28,17 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.DataConverters3D;
-using MatterHackers.VectorMath;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class Translate : Object3D
+	public class GroupObject3D : Object3D
 	{
-		public Translate()
+		public GroupObject3D()
 		{
+			Name = "Group".Localize();
 		}
 
-		public Translate(IObject3D item, double x = 0, double y = 0, double z = 0)
-			: this(item, new Vector3(x, y, z))
-		{
-		}
-
-		public Translate(IObject3D item, Vector3 translation)
-		{
-			Matrix *= Matrix4X4.CreateTranslation(translation);
-			Children.Add(item.Clone());
-		}
+		public override bool CanRemove => true;
 	}
 }

@@ -30,43 +30,36 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DesignTools.EditableTypes;
 using MatterHackers.VectorMath;
-using System;
-using System.ComponentModel;
 using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayRadial3D : Object3D
+	public class ArrayAdvancedObject3D : Object3D
 	{
-		public ArrayRadial3D()
+		public ArrayAdvancedObject3D()
 		{
-			Name = "Radial Array".Localize();
+			Name = "Advanced Array".Localize();
 		}
-
-		[DisplayName("Rotate About")]
-		public DirectionAxis Axis { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
 
 		public override bool CanApply => true;
 		public override bool CanRemove => true;
 
 		public int Count { get; set; } = 3;
 
-		[Description("Rotate the part to the same angle as the array.")]
+		public Vector3 Offset { get; set; } = new Vector3(30, 0, 0);
+
+		public double Rotate { get; set; } = 0;
+
 		public bool RotatePart { get; set; } = true;
 
-		// make this public when within angle works
-		private double Angle { get; set; } = 360;
+		public double Scale { get; set; } = 1;
 
-		// make this public when it works
-		[DisplayName("Keep Within Angle")]
-		[Description("Keep the entire extents of the part within the angle described.")]
-		private bool KeepInAngle { get; set; } = false;
+		public bool ScaleOffset { get; set; } = true;
 
 		public override void Apply(UndoBuffer undoBuffer)
 		{
-			OperationSource.Apply(this);
+			OperationSourceObject3D.Apply(this);
 
 			base.Apply(undoBuffer);
 		}
@@ -94,53 +87,40 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		private void Rebuild(UndoBuffer undoBuffer)
 		{
-			using (this.RebuildLock())
+			this.DebugDepth("Rebuild");
+			this.Children.Modify(list =>
 			{
-				this.DebugDepth("Rebuild");
-
-				// check if we have initialized the Axis
-				if (Axis.Origin.X == double.NegativeInfinity)
+				IObject3D lastChild = list.First();
+				list.Clear();
+				list.Add(lastChild);
+				var offset = Offset;
+				for (int i = 1; i < Count; i++)
 				{
-					// make it something reasonable (just to the left of the aabb of the object)
-					var aabb = this.GetAxisAlignedBoundingBox();
-					Axis.Origin = aabb.Center - new Vector3(30, 0, 0);
-				}
-
-				var sourceContainer = OperationSource.GetOrCreateSourceContainer(this);
-				this.Children.Modify(list =>
-				{
-					list.Clear();
-				// add back in the sourceContainer
-				list.Add(sourceContainer);
-				// get the source item
-				var sourceItem = sourceContainer.Children.First();
-
-					var offset = Vector3.Zero;
-					for (int i = 0; i < Math.Max(Count, 1); i++)
+					var rotateRadians = MathHelper.DegreesToRadians(Rotate);
+					if (ScaleOffset)
 					{
-						var next = sourceItem.Clone();
-
-						var normal = Axis.Normal.GetNormal();
-						var angleRadians = MathHelper.DegreesToRadians(Angle) / Count * i;
-						next.Rotate(Axis.Origin, normal, angleRadians);
-
-						if (!RotatePart)
-						{
-							var aabb = next.GetAxisAlignedBoundingBox();
-							next.Rotate(aabb.Center, normal, -angleRadians);
-						}
-
-						list.Add(next);
+						offset *= Scale;
 					}
-				});
-			}
 
-			this.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+					var next = lastChild.Clone();
+					offset = Vector3.Transform(offset, Matrix4X4.CreateRotationZ(rotateRadians));
+					next.Matrix *= Matrix4X4.CreateTranslation(offset);
+
+					if (RotatePart)
+					{
+						next.Matrix = next.ApplyAtBoundsCenter(Matrix4X4.CreateRotationZ(rotateRadians));
+					}
+
+					next.Matrix = next.ApplyAtBoundsCenter(Matrix4X4.CreateScale(Scale));
+					list.Add(next);
+					lastChild = next;
+				}
+			});
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)
 		{
-			OperationSource.Remove(this);
+			OperationSourceObject3D.Remove(this);
 
 			base.Remove(undoBuffer);
 		}

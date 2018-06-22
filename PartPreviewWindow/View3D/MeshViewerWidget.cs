@@ -519,7 +519,7 @@ namespace MatterHackers.MeshVisualizer
 				var selectedItem = scene.SelectedItem;
 				bool isSelected = selectedItem != null 
 					&& (selectedItem.DescendantsAndSelf().Any((i) => i == item)
-						|| selectedItem.Parents<MeshWrapper>().Any((mw) => mw == item));
+						|| selectedItem.Parents<ModifiedMeshObject3D>().Any((mw) => mw == item));
 
 				if (isSelected && scene.DrawSelection)
 				{

@@ -34,24 +34,24 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class SetCenter : Object3D
+	public class SetCenterObject3D : Object3D
 	{
-		public SetCenter()
+		public SetCenterObject3D()
 		{
 		}
 
-		public SetCenter(IObject3D item, Vector3 position)
+		public SetCenterObject3D(IObject3D item, Vector3 position)
 		{
 			Matrix = Matrix4X4.CreateTranslation(position - item.GetCenter());
 			Children.Add(item.Clone());
 		}
 
-		public SetCenter(IObject3D item, double x, double y, double z)
+		public SetCenterObject3D(IObject3D item, double x, double y, double z)
 			: this(item, new Vector3(x, y, z))
 		{
 		}
 
-		public SetCenter(IObject3D item, Vector3 offset, bool onX = true, bool onY = true, bool onZ = true)
+		public SetCenterObject3D(IObject3D item, Vector3 offset, bool onX = true, bool onY = true, bool onZ = true)
 		{
 			var center = item.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center;
 
