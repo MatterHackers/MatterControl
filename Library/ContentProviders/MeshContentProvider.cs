@@ -130,7 +130,8 @@ namespace MatterHackers.MatterControl
 			return GetThumbnail(object3D, thumbnailId, width, height);
 		}
 
-		public ImageBuffer GetThumbnail(IObject3D item, string thumbnailId, int width, int height)
+		// Limit to private scope until need returns
+		private ImageBuffer GetThumbnail(IObject3D item, string thumbnailId, int width, int height)
 		{
 			if (item == null)
 			{
