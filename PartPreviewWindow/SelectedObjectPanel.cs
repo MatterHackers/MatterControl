@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using JsonPath;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -55,7 +56,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ResizableSectionWidget editorSectionWidget;
 
 		private GuiWidget editorPanel;
-		private InlineTitleEdit inlineTitleEdit;
 
 		public SelectedObjectPanel(View3DWidget view3DWidget, BedConfig sceneContext, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -85,10 +85,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(scrollable);
 
-			var toolbar = new Toolbar(theme)
+			var toolbar = new LeftClipFlowLayoutWidget()
 			{
+				BackgroundColor = theme.TabBodyBackground,
 				Padding = theme.ToolbarPadding,
-				HAnchor = HAnchor.Stretch,
+				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit
 			};
 
@@ -123,20 +124,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			scene.SelectionChanged += (s, e) => removeButton.Enabled = scene.SelectedItem?.CanRemove == true;
 			toolbar.AddChild(removeButton);
 
+			var overflowButton = new OverflowBar.OverflowMenuButton(theme);
+			overflowButton.DynamicPopupContent = () =>
+			{
+				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+				popupMenu.CreateMenuItem("Rename");
+
+				return popupMenu;
+			};
+			toolbar.AddChild(overflowButton);
+
 			editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
 				Padding = new BorderDouble(top: 10)
 			};
-			inlineTitleEdit = new InlineTitleEdit("", theme, "Object Name");
-			inlineTitleEdit.TitleChanged += (s, e) =>
-			{
-				if (item != null)
-				{
-					item.Name = inlineTitleEdit.Text;
-				}
-			};
+
+			//inlineTitleEdit = new InlineTitleEdit("", theme, "Object Name");
+			//inlineTitleEdit.TitleChanged += (s, e) =>
+			//{
+			//	if (item != null)
+			//	{
+			//		item.Name = inlineTitleEdit.Text;
+			//	}
+			//};
 
 			// Wrap editorPanel with scrollable container
 			var scrollableWidget = new ScrollableWidget(true)
@@ -147,7 +159,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			scrollableWidget.AddChild(editorPanel);
 			scrollableWidget.ScrollArea.HAnchor = HAnchor.Stretch;
 
-			editorSectionWidget = new ResizableSectionWidget("Editor", sceneContext.ViewState.SelectedObjectEditorHeight, scrollableWidget, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true)
+			editorSectionWidget = new ResizableSectionWidget("Editor", sceneContext.ViewState.SelectedObjectEditorHeight, scrollableWidget, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, rightAlignedContent: toolbar, defaultExpansion: true)
 			{
 				VAnchor = VAnchor.Fit,
 			};
@@ -155,14 +167,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				sceneContext.ViewState.SelectedObjectEditorHeight = editorSectionWidget.ResizeContainer.Height;
 			};
-
-			editorSectionWidget.ResizeContainer.AddChild(toolbar, 0);
-
-			// TODO: Replace hackery with practical solution
-			if (editorSectionWidget.Children.FirstOrDefault() is ExpandCheckboxButton checkbox)
-			{
-				checkbox.ReplaceChild(checkbox.Children[1], inlineTitleEdit);
-			}
 
 			this.ContentPanel.AddChild(editorSectionWidget);
 
@@ -276,7 +280,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var selectedItemType = selectedItem.GetType();
 
-			inlineTitleEdit.Text = selectedItem.Name ?? selectedItemType.Name;
+			editorSectionWidget.Text = selectedItem.Name ?? selectedItemType.Name;
 
 			HashSet<IObject3DEditor> mappedEditors = ApplicationController.Instance.GetEditorsForType(selectedItemType);
 
