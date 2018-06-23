@@ -108,6 +108,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public bool ExpandableWhenDisabled { get; set; }
 
+		public override string Text
+		{
+			get => checkbox?.Text;
+			set
+			{
+				if (checkbox != null)
+				{
+					checkbox.Text = value;
+				}
+			}
+		}
+
 		public override bool Enabled
 		{
 			get => (this.ExpandableWhenDisabled) ? true: base.Enabled;
