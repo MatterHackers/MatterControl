@@ -128,6 +128,7 @@
     <Compile Include="PartPreviewWindow\GCodeDetails\IToggleOption.cs" />
     <Compile Include="PartPreviewWindow\LeftClipFlowLayoutWidget.cs" />
     <Compile Include="PartPreviewWindow\Object3DTreeBuilder.cs" />
+    <Compile Include="PartPreviewWindow\ResizableSectionWidget.cs" />
     <Compile Include="PartPreviewWindow\StartPage\FeedData.cs" />
     <Compile Include="PartPreviewWindow\StartPage\FeedItemData.cs" />
     <Compile Include="PartPreviewWindow\StartPage\FeedSectionData.cs" />

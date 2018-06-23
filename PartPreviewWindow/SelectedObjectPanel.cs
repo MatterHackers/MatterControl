@@ -52,12 +52,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ThemeConfig theme;
 		private BedConfig sceneContext;
 		private View3DWidget view3DWidget;
-		private SectionWidget editorSectionWidget;
+		private ResizableSectionWidget editorSectionWidget;
 		private TextButton editButton;
 
 		private GuiWidget editorPanel;
 		private InlineTitleEdit inlineTitleEdit;
-		private BottomResizeContainer editorResizeContainer;
 
 		public SelectedObjectPanel(View3DWidget view3DWidget, BedConfig sceneContext, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -87,24 +86,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(scrollable);
 
-			editorResizeContainer = new BottomResizeContainer(theme)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Absolute,
-				Height = sceneContext.ViewState.SelectedObjectEditorHeight
-			};
-
 			var toolbar = new Toolbar(theme)
 			{
 				Padding = theme.ToolbarPadding,
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit
-			};
-			editorResizeContainer.AddChild(toolbar);
-
-			editorResizeContainer.Resized += (s, e) =>
-			{
-				sceneContext.ViewState.SelectedObjectEditorHeight = editorResizeContainer.Height;
 			};
 
 			var scene = sceneContext.Scene;
@@ -185,31 +171,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			scene.SelectionChanged += (s, e) => removeButton.Enabled = scene.SelectedItem?.CanRemove == true;
 			toolbar.AddChild(removeButton);
 
-			// Add container used to host the current specialized editor for the selection
-			var scrollableEditor = new ScrollableWidget(true)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
-			};
-			scrollableEditor.AddChild(editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
 				Padding = new BorderDouble(top: 10)
-			});
-			scrollableEditor.ScrollArea.HAnchor = HAnchor.Stretch;
-
-			editorResizeContainer.AddChild(scrollableEditor);
-
-			// A wrapping container to fix resize quirks - GuiWidget with H:Stretch V:Fit that can be hidden and shown and allow the ResizeContainer can keep it's size
-			var editorResizeWrapper = new GuiWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				Name = "editorRootContainer"
 			};
-			editorResizeWrapper.AddChild(editorResizeContainer);
-
 			inlineTitleEdit = new InlineTitleEdit("", theme, "Object Name");
 			inlineTitleEdit.TitleChanged += (s, e) =>
 			{
@@ -219,10 +186,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			editorSectionWidget = new SectionWidget("Editor", editorResizeWrapper, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true)
+			editorSectionWidget = new ResizableSectionWidget("Editor", sceneContext.ViewState.SelectedObjectEditorHeight, editorPanel, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true)
 			{
 				VAnchor = VAnchor.Fit,
 			};
+			editorSectionWidget.Resized += (s, e) =>
+			{
+				sceneContext.ViewState.SelectedObjectEditorHeight = editorSectionWidget.ResizeContainer.Height;
+			};
+
+			editorSectionWidget.ResizeContainer.AddChild(toolbar, 0);
 
 			// TODO: Replace hackery with practical solution
 			if (editorSectionWidget.Children.FirstOrDefault() is ExpandCheckboxButton checkbox)
@@ -267,10 +240,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			foreach(var sectionWidget in this.ContentPanel.Children<SectionWidget>())
 			{
 				// Special case for editorResizeWrapper due to ResizeContainer
-				if (sectionWidget.ContentPanel == editorResizeWrapper)
+				if (sectionWidget is ResizableSectionWidget resizableSectionWidget)
 				{
 					// Apply padding to ResizeContainer not wrapper
-					editorResizeContainer.Padding = new BorderDouble(10, 10, 10, 0);
+					resizableSectionWidget.ResizeContainer.Padding = new BorderDouble(10, 10, 10, 0);
 				}
 				else
 				{

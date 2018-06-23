@@ -596,6 +596,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						});
 					}
 				},
+#if DEBUG
+				new NamedAction()
+				{
+					Title = "GC.Collect".Localize(),
+					Action = () =>
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							GC.Collect();
+						});
+					}
+				},
+#endif
 				new NamedAction() { Title = "----" },
 				new NamedAction()
 				{

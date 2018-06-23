@@ -530,9 +530,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private UIField CreateToggleFieldForSection(SliceSettingData settingData)
 		{
-			// Create toggle field for key
-			UIField uiField = new ToggleboxField(theme);
 			bool useDefaultSavePattern = false;
+
+			string sliceSettingValue = settingsContext.GetValue(settingData.SlicerConfigName);
+
+			// Create toggle field for key
+			UIField uiField = new ToggleboxField(theme)
+			{
+				HelpText = settingData.HelpText,
+				Name = $"{settingData.PresentationName} Field"
+			};
+			uiField.Initialize(tabIndexForItem++);
+
 			uiField.ValueChanged += (s, e) =>
 			{
 				if (e.UserInitiated)
@@ -559,15 +568,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				allUiFields[settingData.SlicerConfigName] = uiField;
 			}
 
-			uiField.HelpText = settingData.HelpText;
-
-			uiField.Name = $"{settingData.PresentationName} Field";
-			uiField.Initialize(tabIndexForItem++);
-
-			string sliceSettingValue = settingsContext.GetValue(settingData.SlicerConfigName);
-
 			uiField.SetValue(sliceSettingValue, userInitiated: false);
 
+			// Second ValueChanged listener defined after SetValue to ensure it's unaffected by initial change
 			uiField.ValueChanged += (s, e) =>
 			{
 				if (useDefaultSavePattern
