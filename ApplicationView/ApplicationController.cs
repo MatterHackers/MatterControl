@@ -717,8 +717,7 @@ namespace MatterHackers.MatterControl
 
 					return Task.CompletedTask;
 				},
-				(sceneItem) => true,
-				(sceneItem) => true);
+				iconCollector: () => AggContext.StaticData.LoadIcon("noun_479927.png", ApplicationController.Instance.MenuTheme.InvertIcons));
 
 			this.Graph.RegisterOperation(
 				typeof(IPathObject),
@@ -734,8 +733,7 @@ namespace MatterHackers.MatterControl
 
 					return Task.CompletedTask;
 				},
-				(sceneItem) => true,
-				(sceneItem) => true);
+				iconCollector: () => AggContext.StaticData.LoadIcon("noun_84751.png", ApplicationController.Instance.MenuTheme.InvertIcons));
 
 			this.Graph.RegisterOperation(
 				typeof(IPathObject),
@@ -751,8 +749,7 @@ namespace MatterHackers.MatterControl
 
 					return Task.CompletedTask;
 				},
-				(sceneItem) => true,
-				(sceneItem) => true);
+				iconCollector: () => AggContext.StaticData.LoadIcon("noun_479927.png", ApplicationController.Instance.MenuTheme.InvertIcons));
 
 			this.Graph.RegisterOperation(
 				typeof(IObject3D),
@@ -782,8 +779,9 @@ namespace MatterHackers.MatterControl
 
 					return Task.CompletedTask;
 				},
-				(sceneItem) => true,
-				(sceneItem) => sceneItem.Children.Any((i) => i is IPathObject));
+				isVisible: (sceneItem) => sceneItem.Children.Any((i) => i is IPathObject),
+				iconCollector: () => AggContext.StaticData.LoadIcon("noun_55060.png", ApplicationController.Instance.MenuTheme.InvertIcons));
+
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
