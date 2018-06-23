@@ -10,17 +10,36 @@ namespace Markdig.Renderers.Agg.Inlines
 {
 	public class EmphasisInlineX : FlowLayoutWidget
 	{
-		public EmphasisInlineX()
+		private char delimiter;
+
+		public EmphasisInlineX(char delimiter)
 		{
-			HAnchor = HAnchor.Fit;
-			VAnchor = VAnchor.Fit;
+			this.HAnchor = HAnchor.Fit;
+			this.VAnchor = VAnchor.Fit;
+
+			this.delimiter = delimiter;
 		}
 
 		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 		{
 			if (childToAdd is TextWidget textWidget)
 			{
-				textWidget.Bold = true;
+
+				switch (delimiter)
+				{
+					case '~':
+						textWidget.StrikeThrough = true;
+						break;
+					case '*':
+					default:
+						textWidget.Bold = true;
+						break;
+
+					//	case '_': Italic();
+					//	case '^': Styles.SuperscriptStyleKey
+					//	case '+': Styles.InsertedStyleKey
+					//	case '=': Styles.MarkedStyleKey
+				}
 			}
 
 			base.AddChild(childToAdd, indexInChildrenList);
@@ -63,7 +82,7 @@ namespace Markdig.Renderers.Agg.Inlines
 
 			if (true) //span != null)
 			{
-				renderer.Push(new EmphasisInlineX());
+				renderer.Push(new EmphasisInlineX(obj.DelimiterChar));
 				renderer.WriteChildren(obj);
 				renderer.Pop();
 			}

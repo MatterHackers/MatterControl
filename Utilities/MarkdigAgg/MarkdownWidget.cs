@@ -53,7 +53,7 @@ namespace Markdig.Agg
 			: this(baseUri, scrollContent)
 		{
 			var webClient = new WebClient();
-			this.Markdown = webClient.DownloadString(contentUri);
+			this.Markdown = "~~Strike-through test text~~ \r\n" + webClient.DownloadString(contentUri);
 		}
 
 		/// <summary>
