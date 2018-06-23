@@ -182,21 +182,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					VAnchor = VAnchor.Fit,
 				});
 
-			treeSection = new BottomResizeContainer(theme)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Absolute,
-				Height = sceneContext.ViewState.SceneTreeHeight
-			};
-			modelViewSidePanel.AddChild(treeSection);
-
 			// add the tree view
 			treeView = new TreeView(theme)
 			{
-				TextColor = theme.Colors.PrimaryTextColor,
-				PointSize = theme.DefaultFontSize,
-				HAnchor =HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
+				HAnchor = HAnchor.Left | HAnchor.Fit,
+				VAnchor = VAnchor.Top | VAnchor.Fit,
+				Margin = new BorderDouble(left: 30, top: 2)
 			};
 			treeView.AfterSelect += (s, e) =>
 			{
@@ -207,7 +198,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				selectedObjectPanel.SetActiveItem((IObject3D)treeView.SelectedNode.Tag);
 			};
-			treeSection.AddChild(treeView);
+
+			var treeSection = new ResizableSectionWidget("Design History".Localize(), sceneContext.ViewState.SceneTreeHeight, treeView, theme, expanded: false);
+			treeSection.Resized += (s, e) =>
+			{
+				sceneContext.ViewState.SceneTreeHeight = treeSection.ResizeContainer.Height;
+			};
+			modelViewSidePanel.AddChild(treeSection);
 
 			modelViewSidePanel.AddChild(selectedObjectPanel);
 			splitContainer.AddChild(modelViewSidePanel);
@@ -361,8 +358,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			sceneContext.ViewState.SceneTreeHeight = treeSection.Height;
-
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;
 			Scene.SelectionChanged -= Scene_SelectionChanged;
 			this.InteractionLayer.DrawGlOpaqueContent -= Draw_GlOpaqueContent;
@@ -1280,7 +1275,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected bool allowAutoRotate = false;
 
 		public MeshViewerWidget meshViewerWidget;
-		private BottomResizeContainer treeSection;
 		private bool assigningTreeNode;
 
 		public InteractiveScene Scene => sceneContext.Scene;
