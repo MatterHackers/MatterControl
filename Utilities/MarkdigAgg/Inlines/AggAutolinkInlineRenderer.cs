@@ -11,9 +11,9 @@ namespace Markdig.Renderers.Agg.Inlines
 	public class AutoLinkInlineX : AutoFit{ }
 
 	/// <summary>
-	/// A WPF renderer for a <see cref="AutolinkInline"/>.
+	/// A Agg renderer for a <see cref="AutolinkInline"/>.
 	/// </summary>
-	/// <seealso cref="Markdig.Renderers.Agg.WpfObjectRenderer{Markdig.Syntax.Inlines.AutolinkInline}" />
+	/// <seealso cref="Markdig.Renderers.Agg.AggObjectRenderer{Markdig.Syntax.Inlines.AutolinkInline}" />
 	public class AggAutolinkInlineRenderer : AggObjectRenderer<AutolinkInline>
 	{
 		/// <inheritdoc/>

@@ -10,9 +10,9 @@ namespace Markdig.Renderers.Agg.Inlines
 	public class DelimiterInlineX : AutoFit{ }
 
 	/// <summary>
-	/// A WPF renderer for a <see cref="DelimiterInline"/>.
+	/// A Agg renderer for a <see cref="DelimiterInline"/>.
 	/// </summary>
-	/// <seealso cref="Markdig.Renderers.Agg.WpfObjectRenderer{Markdig.Syntax.Inlines.DelimiterInline}" />
+	/// <seealso cref="Markdig.Renderers.Agg.AggObjectRenderer{Markdig.Syntax.Inlines.DelimiterInline}" />
 	public class AggDelimiterInlineRenderer : AggObjectRenderer<DelimiterInline>
 	{
 		/// <inheritdoc/>

@@ -28,7 +28,7 @@ namespace Markdig.Renderers.Agg.Inlines
 	}
 
 	/// <summary>
-	/// A WPF renderer for an <see cref="EmphasisInline"/>.
+	/// A Agg renderer for an <see cref="EmphasisInline"/>.
 	/// </summary>
 	/// <seealso cref="EmphasisInline" />
 	public class AggEmphasisInlineRenderer : AggObjectRenderer<EmphasisInline>

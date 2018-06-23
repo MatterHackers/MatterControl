@@ -151,8 +151,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			applyButton.Click += (s, e) =>
 			{
-				scene.SelectedItem = null;
 				this.item.Apply(view3DWidget.Scene.UndoBuffer);
+				scene.SelectedItem = null;
 			};
 			scene.SelectionChanged += (s, e) => applyButton.Enabled = scene.SelectedItem?.CanApply == true;
 			toolbar.AddChild(applyButton);
@@ -165,8 +165,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			removeButton.Click += (s, e) =>
 			{
-				scene.SelectedItem = null;
 				this.item.Remove(view3DWidget.Scene.UndoBuffer);
+				scene.SelectedItem = null;
 			};
 			scene.SelectionChanged += (s, e) => removeButton.Enabled = scene.SelectedItem?.CanRemove == true;
 			toolbar.AddChild(removeButton);
