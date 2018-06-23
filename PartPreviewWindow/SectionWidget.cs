@@ -61,12 +61,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 				else
 				{
-					var headingRow = new FlowLayoutWidget()
+					rightAlignedContent.HAnchor = HAnchor.Right;
+
+					var headingRow = new GuiWidget()
 					{
+						VAnchor = VAnchor.Fit,
 						HAnchor = HAnchor.Stretch
 					};
 					headingRow.AddChild(checkbox);
-					headingRow.AddChild(new HorizontalSpacer());
 					headingRow.AddChild(rightAlignedContent);
 					this.AddChild(headingRow);
 				}
