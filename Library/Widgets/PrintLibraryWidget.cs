@@ -576,10 +576,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// edit menu item
 			menuActions.Add(new PrintItemAction()
 			{
-				Title = "MarkDown".Localize(),
+				Title = "Markdown".Localize(),
 				Action = (selectedLibraryItems, listView) =>
 				{
-					DialogWindow.Show<MarkdownPage>();
+					UiThread.RunOnIdle(() =>
+					{
+						DialogWindow.Show<MarkdownPage>();
+					});
 				},
 				IsEnabled = (selectedListItems, listView) => true
 			});
