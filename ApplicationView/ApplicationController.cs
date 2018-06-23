@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl
 
 	public class ApplicationController
 	{
-		public List<GuideAsset> FeatureGuides { get; set; } = JsonConvert.DeserializeObject<List<GuideAsset>>(AggContext.StaticData.ReadAllText(Path.Combine("OEMSettings", "HelpGuides.json")));
+		public List<GuideAsset> FeatureGuides { get; set; }
 
 		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 
@@ -665,6 +665,20 @@ namespace MatterHackers.MatterControl
 			// Initialize the AppContext theme object which will sync its content with Agg ActiveTheme changes
 			this.Theme = new ThemeConfig();
 			this.MenuTheme = new ThemeConfig();
+
+			List<GuideAsset> helpGuides = null;
+
+			string helpGuidesPath = Path.Combine("OEMSettings", "HelpGuides.json");
+			if (AggContext.StaticData.FileExists(helpGuidesPath))
+			{
+				try
+				{
+					helpGuides = JsonConvert.DeserializeObject<List<GuideAsset>>(AggContext.StaticData.ReadAllText(helpGuidesPath));
+				}
+				catch { }
+			}
+
+			this.FeatureGuides = helpGuides ?? new List<GuideAsset>();
 
 			ActiveTheme.ThemeChanged.RegisterEvent((s, e) =>
 			{
