@@ -186,7 +186,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			editorSectionWidget = new ResizableSectionWidget("Editor", sceneContext.ViewState.SelectedObjectEditorHeight, editorPanel, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true)
+			// Wrap editorPanel with scrollable container
+			var scrollableWidget = new ScrollableWidget(true)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			};
+			scrollableWidget.AddChild(editorPanel);
+			scrollableWidget.ScrollArea.HAnchor = HAnchor.Stretch;
+
+			editorSectionWidget = new ResizableSectionWidget("Editor", sceneContext.ViewState.SelectedObjectEditorHeight, scrollableWidget, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true)
 			{
 				VAnchor = VAnchor.Fit,
 			};

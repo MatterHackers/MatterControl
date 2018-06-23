@@ -51,29 +51,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Absolute,
 				Height = initialHeight
 			};
-
 			this.ResizeContainer.Resized += (s, e) =>
 			{
 				this.Resized?.Invoke(this, null);
 			};
-
-			// Add container used to host the current specialized editor for the selection
-			var scrollableWidget = new ScrollableWidget(true)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
-			};
-			scrollableWidget.AddChild(sectionContent);
-			scrollableWidget.ScrollArea.HAnchor = HAnchor.Stretch;
-
-			this.ResizeContainer.AddChild(scrollableWidget);
+			this.ResizeContainer.AddChild(sectionContent);
 
 			// A wrapping container to fix resize quirks - GuiWidget with H:Stretch V:Fit that can be hidden and shown and allow the ResizeContainer can keep it's size
 			var resizeWrapper = new GuiWidget()
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
-				Name = "editorRootContainer"
+				Name = "editorRootContainer",
+				Visible = expanded
 			};
 			resizeWrapper.AddChild(this.ResizeContainer);
 
