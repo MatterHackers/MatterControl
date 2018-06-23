@@ -10,16 +10,15 @@ using Markdig.Renderers.Agg;
 using Markdig.Renderers.Agg.Inlines;
 using Markdig.Syntax;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl;
 
 namespace Markdig.Renderers
 {
 	public class TextWordX : TextWidget
 	{
 		public TextWordX()
-			: base("", pointSize: 10, textColor: Color.Black)
+			: base("", pointSize: 10, textColor: ApplicationController.Instance.Theme.Colors.PrimaryTextColor)
 		{
 			this.AutoExpandBoundsToText = true;
 		}
