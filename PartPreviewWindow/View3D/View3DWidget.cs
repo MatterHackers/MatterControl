@@ -198,6 +198,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				selectedObjectPanel.SetActiveItem((IObject3D)treeView.SelectedNode.Tag);
 			};
+			treeView.ScrollArea.ChildAdded += (s, e) =>
+			{
+				if (e is GuiWidgetEventArgs childEventArgs
+					&& childEventArgs.Child is TreeNode treeNode)
+				{
+					treeNode.AlwaysExpandable = true;
+				}
+			};
 
 			var treeSection = new ResizableSectionWidget("Design History".Localize(), sceneContext.ViewState.SceneTreeHeight, treeView, theme, expanded: false);
 			treeSection.Resized += (s, e) =>
