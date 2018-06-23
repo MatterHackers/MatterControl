@@ -18,14 +18,43 @@ namespace Markdig.Renderers.Agg.Inlines
 {
 	public class TextLinkX : FlowLayoutWidget
 	{
-		public TextLinkX()
+		private LinkInline linkInline;
+
+		public TextLinkX(LinkInline linkInline)
 		{
-			HAnchor = HAnchor.Fit;
-			VAnchor = VAnchor.Fit;
+			this.HAnchor = HAnchor.Fit;
+			this.VAnchor = VAnchor.Fit;
+			this.Cursor = Cursors.Hand;
+			this.linkInline = linkInline;
+
+		}
+
+		public override void OnClick(MouseEventArgs mouseEvent)
+		{
+			if (linkInline.Url.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+			{
+				ApplicationController.Instance.LaunchBrowser(linkInline.Url);
+			}
+			else
+			{
+				// Inline link?
+				Debugger.Break();
+			}
+
+			base.OnClick(mouseEvent);
 		}
 
 		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 		{
+			if (childToAdd is TextWidget textWidget)
+			{
+				// Mark with underline if any character data exists
+				textWidget.Underline = textWidget.Text.Trim().Length > 0;
+			}
+
+			// Allow link parent to own mouse events
+			childToAdd.Selectable = false;
+
 			base.AddChild(childToAdd, indexInChildrenList);
 		}
 	}
@@ -36,8 +65,9 @@ namespace Markdig.Renderers.Agg.Inlines
 
 		public ImageLinkSimpleX(string url)
 		{
-			HAnchor = HAnchor.Fit;
-			VAnchor = VAnchor.Fit;
+			this.HAnchor = HAnchor.Fit;
+			this.VAnchor = VAnchor.Fit;
+			this.Selectable = false;
 
 			var imageBuffer = new ImageBuffer(icon);
 			var imageWidget = new ImageWidget(imageBuffer);
@@ -154,7 +184,7 @@ namespace Markdig.Renderers.Agg.Inlines
 			}
 			else
 			{
-				renderer.Push(new TextLinkX()); // hyperlink);
+				renderer.Push(new TextLinkX(link)); // hyperlink);
 				renderer.WriteChildren(link);
 				renderer.Pop();
 			}
