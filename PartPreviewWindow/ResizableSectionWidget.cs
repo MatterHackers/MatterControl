@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public event EventHandler Resized;
 
 		public ResizableSectionWidget(string sectionTitle, double initialHeight, GuiWidget sectionContent, ThemeConfig theme, GuiWidget rightAlignedContent = null, int headingPointSize = -1, bool expandingContent = true, bool expanded = true, string serializationKey = null, bool defaultExpansion = false, bool setContentVAnchor = true)
-			: base(sectionTitle, new GuiWidget(), theme, rightAlignedContent, headingPointSize, expanded, expanded, serializationKey, defaultExpansion, setContentVAnchor)
+			: base(sectionTitle, new GuiWidget(), theme, rightAlignedContent, headingPointSize, expandingContent, expanded, serializationKey, defaultExpansion, setContentVAnchor)
 		{
 			this.VAnchor = VAnchor.Fit;
 
@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
 				Name = "editorRootContainer",
-				Visible = expanded
+				Visible = checkbox.Checked
 			};
 			resizeWrapper.AddChild(this.ResizeContainer);
 

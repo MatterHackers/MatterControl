@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			var treeSection = new ResizableSectionWidget("Design History".Localize(), sceneContext.ViewState.SceneTreeHeight, treeView, theme, expanded: false);
+			var treeSection = new ResizableSectionWidget("Design History".Localize(), sceneContext.ViewState.SceneTreeHeight, treeView, theme, serializationKey: UserSettingsKey.SelectionTreeViewPanelExpanded);
 			treeSection.Resized += (s, e) =>
 			{
 				sceneContext.ViewState.SceneTreeHeight = treeSection.ResizeContainer.Height;
