@@ -10,7 +10,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	/// </summary>
 	public class SectionWidget : FlowLayoutWidget, IIgnoredPopupChild
 	{
-		private ExpandCheckboxButton checkbox;
+		protected ExpandCheckboxButton checkbox;
 		private bool setContentVAnchor;
 
 		public SectionWidget(string sectionTitle, GuiWidget sectionContent, ThemeConfig theme, GuiWidget rightAlignedContent = null, int headingPointSize = -1, bool expandingContent = true, bool expanded = true, string serializationKey = null, bool defaultExpansion = false, bool setContentVAnchor = true)

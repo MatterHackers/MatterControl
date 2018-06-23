@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Left | HAnchor.Fit,
 				VAnchor = VAnchor.Top | VAnchor.Fit,
-				Margin = new BorderDouble(left: 30, top: 2)
+				Margin = new BorderDouble(left: 18),
 			};
 			treeView.AfterSelect += (s, e) =>
 			{
@@ -198,8 +198,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				selectedObjectPanel.SetActiveItem((IObject3D)treeView.SelectedNode.Tag);
 			};
+			treeView.ScrollArea.ChildAdded += (s, e) =>
+			{
+				if (e is GuiWidgetEventArgs childEventArgs
+					&& childEventArgs.Child is TreeNode treeNode)
+				{
+					treeNode.AlwaysExpandable = true;
+				}
+			};
 
-			var treeSection = new ResizableSectionWidget("Design History".Localize(), sceneContext.ViewState.SceneTreeHeight, treeView, theme, expanded: false);
+			var treeSection = new ResizableSectionWidget("Design History".Localize(), sceneContext.ViewState.SceneTreeHeight, treeView, theme, serializationKey: UserSettingsKey.SelectionTreeViewPanelExpanded);
 			treeSection.Resized += (s, e) =>
 			{
 				sceneContext.ViewState.SceneTreeHeight = treeSection.ResizeContainer.Height;
@@ -1220,7 +1228,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (this.Parent != null)
 				{
-					rootNode.Padding = rootNode.Padding.Clone(left: 8, top: 8);
 
 					assigningTreeNode = true;
 					treeView.SelectedNode = rootNode;

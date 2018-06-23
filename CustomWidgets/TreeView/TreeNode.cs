@@ -35,6 +35,7 @@ using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
@@ -158,6 +159,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 
 			return content?.Children.Where((c) => c is TreeNode).Count() ?? 0;
+		}
+
+		public bool AlwaysExpandable
+		{
+			get => expandWidget.AlwaysExpandable;
+			set => expandWidget.AlwaysExpandable = value;
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -421,10 +428,21 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				this.AddChild(imageButton);
 			}
 
+			private bool _alwaysExpandable;
+			public bool AlwaysExpandable
+			{
+				get => _alwaysExpandable;
+				set
+				{
+					imageButton.SetIcon((_expanded) ? arrowDown : arrowRight);
+					_alwaysExpandable = value;
+				}
+			}
+
 			private bool? _expandable = null;
 			public bool Expandable
 			{
-				get => _expandable == true;
+				get => _expandable == true || this.AlwaysExpandable;
 				set
 				{
 					if (_expandable != value)
