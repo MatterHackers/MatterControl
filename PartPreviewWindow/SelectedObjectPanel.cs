@@ -53,7 +53,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private BedConfig sceneContext;
 		private View3DWidget view3DWidget;
 		private ResizableSectionWidget editorSectionWidget;
-		private TextButton editButton;
 
 		private GuiWidget editorPanel;
 		private InlineTitleEdit inlineTitleEdit;
@@ -94,53 +93,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			var scene = sceneContext.Scene;
-
-			editButton = new TextButton("Edit".Localize(), theme)
-			{
-				BackgroundColor = theme.MinimalShade,
-				Margin = theme.ButtonSpacing
-			};
-			scene.SelectionChanged += (s, e) => editButton.Enabled = scene.SelectedItem?.CanEdit == true;
-			editButton.Click += async (s, e) =>
-			{
-				var bed = new BedConfig();
-
-				var partPreviewContent = this.Parents<PartPreviewContent>().FirstOrDefault();
-				partPreviewContent.CreatePartTab(
-					"New Part",
-					bed,
-					theme);
-
-				var clonedItem = this.item.Clone();
-
-				// Edit in Identity transform
-				clonedItem.Matrix = Matrix4X4.Identity;
-
-				await bed.LoadContent(
-					new EditContext()
-					{
-						ContentStore = new DynamicContentStore((libraryItem, object3D) =>
-						{
-							var replacement = object3D.Clone();
-
-							this.item.Parent.Children.Modify(list =>
-							{
-								list.Remove(item);
-
-								// Restore matrix of item being replaced
-								replacement.Matrix = item.Matrix;
-
-								list.Add(replacement);
-
-								item = replacement;
-							});
-
-							scene.SelectedItem = replacement;
-						}),
-						SourceItem = new InMemoryLibraryItem(clonedItem),
-					});
-			};
-			toolbar.AddChild(editButton);
 
 			// put in a make permanent button
 			var icon = AggContext.StaticData.LoadIcon("fa-check_16.png", 16, 16, theme.InvertIcons).SetPreMultiply();
@@ -263,6 +215,50 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		/// <summary>
+		/// Behavior from removed Edit button - keeping around for reuse as an advanced feature in the future
+		/// </summary>
+		/// <returns></returns>
+		private async Task EditChildInIsolatedContext()
+		{
+			var bed = new BedConfig();
+
+			var partPreviewContent = this.Parents<PartPreviewContent>().FirstOrDefault();
+			partPreviewContent.CreatePartTab(
+				"New Part",
+				bed,
+				theme);
+
+			var clonedItem = this.item.Clone();
+
+			// Edit in Identity transform
+			clonedItem.Matrix = Matrix4X4.Identity;
+
+			await bed.LoadContent(
+				new EditContext()
+				{
+					ContentStore = new DynamicContentStore((libraryItem, object3D) =>
+					{
+						var replacement = object3D.Clone();
+
+						this.item.Parent.Children.Modify(list =>
+						{
+							list.Remove(item);
+
+								// Restore matrix of item being replaced
+								replacement.Matrix = item.Matrix;
+
+							list.Add(replacement);
+
+							item = replacement;
+						});
+
+						sceneContext.Scene.SelectedItem = replacement;
+					}),
+					SourceItem = new InMemoryLibraryItem(clonedItem),
+				});
+		}
+
 		public GuiWidget ContentPanel { get; set; }
 
 		JsonPathContext xpathLikeResolver = new JsonPathContext();
@@ -279,8 +275,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			var selectedItemType = selectedItem.GetType();
-
-			editButton.Enabled = (selectedItem.Children.Count > 0);
 
 			inlineTitleEdit.Text = selectedItem.Name ?? selectedItemType.Name;
 
