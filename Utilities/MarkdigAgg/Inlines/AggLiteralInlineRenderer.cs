@@ -11,9 +11,9 @@ namespace Markdig.Renderers.Agg.Inlines
 	public class LiteralInlineX : AutoFit{ }
 
 	/// <summary>
-	/// A WPF renderer for a <see cref="LiteralInline"/>.
+	/// A Agg renderer for a <see cref="LiteralInline"/>.
 	/// </summary>
-	/// <seealso cref="Markdig.Renderers.Agg.WpfObjectRenderer{Markdig.Syntax.Inlines.LiteralInline}" />
+	/// <seealso cref="Markdig.Renderers.Agg.AggObjectRenderer{Markdig.Syntax.Inlines.LiteralInline}" />
 	public class AggLiteralInlineRenderer : AggObjectRenderer<LiteralInline>
 	{
 		/// <inheritdoc/>

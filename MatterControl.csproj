@@ -449,6 +449,7 @@
     <Compile Include="Utilities\LimitCallFrequency.cs" />
     <Compile Include="Utilities\MarkdigAgg\MarkdownExtensions.cs" />
     <Compile Include="Utilities\MarkdigAgg\MarkdownPage.cs" />
+    <Compile Include="Utilities\MarkdigAgg\MarkdownWidget.cs" />
     <Compile Include="Utilities\SelectedListItems.cs" />
     <Compile Include="EeProm\EePromMarlinSettings.cs" />
     <Compile Include="History\PrintHistoryListItem.cs" />

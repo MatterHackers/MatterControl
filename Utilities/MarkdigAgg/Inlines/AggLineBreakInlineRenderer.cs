@@ -11,9 +11,9 @@ namespace Markdig.Renderers.Agg.Inlines
 	public class LineBreakSoftX : AutoFit{ }
 
 	/// <summary>
-	/// A WPF renderer for a <see cref="LineBreakInline"/>.
+	/// A Agg renderer for a <see cref="LineBreakInline"/>.
 	/// </summary>
-	/// <seealso cref="Markdig.Renderers.Agg.WpfObjectRenderer{Markdig.Syntax.Inlines.LineBreakInline}" />
+	/// <seealso cref="Markdig.Renderers.Agg.AggObjectRenderer{Markdig.Syntax.Inlines.LineBreakInline}" />
 	public class AggLineBreakInlineRenderer : AggObjectRenderer<LineBreakInline>
 	{
 		/// <inheritdoc/>

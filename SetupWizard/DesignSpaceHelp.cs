@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -265,22 +266,7 @@ namespace MatterHackers.MatterControl
 				Padding = theme.DefaultContainerPadding
 			};
 
-			var imageSequenceWidget = new ImageSequenceWidget(300, 200)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch,
-				ImageSequence = sequence,
-				BackgroundColor = theme.MinimalShade
-			};
-			rightPanel.AddChild(imageSequenceWidget);
-
-			var title = new WrappedTextWidget("title", pointSize: 24, textColor: theme.Colors.PrimaryTextColor)
-			{
-				Margin = new BorderDouble(10, 4, 10, 10)
-			};
-			rightPanel.AddChild(title);
-
-			var description = new WrappedTextWidget("details", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			var description = new MarkdownWidget(new Uri("https://raw.githubusercontent.com/lunet-io/markdig/master/"))
 			{
 				Margin = new BorderDouble(10, 4, 10, 10),
 			};
@@ -295,11 +281,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (treeView.SelectedNode.Tag is GuideAsset guide)
 				{
-					title.Text = guide.Title;
-					description.Text = guide.Description;
-					imageSequenceWidget.ImageSequence = ApplicationController.Instance.GetProcessingSequence(Color.Black);
-
-					ApplicationController.Instance.DownloadToImageSequenceAsync(imageSequenceWidget.ImageSequence, guide.AnimationUri);
+					description.Markdown = guide.Description;
 				}
 			};
 

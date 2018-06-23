@@ -128,9 +128,9 @@ namespace Markdig.Renderers.Agg.Inlines
 	}
 
 	/// <summary>
-	/// A WPF renderer for a <see cref="LinkInline"/>.
+	/// A Agg renderer for a <see cref="LinkInline"/>.
 	/// </summary>
-	/// <seealso cref="Markdig.Renderers.Agg.WpfObjectRenderer{Markdig.Syntax.Inlines.LinkInline}" />
+	/// <seealso cref="Markdig.Renderers.Agg.AggObjectRenderer{Markdig.Syntax.Inlines.LinkInline}" />
 	public class AggLinkInlineRenderer : AggObjectRenderer<LinkInline>
 	{
 		/// <inheritdoc/>

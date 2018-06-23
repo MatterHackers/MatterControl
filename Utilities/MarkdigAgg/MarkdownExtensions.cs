@@ -5,7 +5,7 @@
 using System;
 
 // ReSharper disable once CheckNamespace
-namespace Markdig.Wpf
+namespace Markdig.Agg
 {
 	/// <summary>
 	/// Provides extension methods for <see cref="MarkdownPipeline"/> to enable several Markdown extensions.
@@ -13,7 +13,7 @@ namespace Markdig.Wpf
 	public static class MarkdownExtensions
     {
         /// <summary>
-        /// Uses all extensions supported by <c>Markdig.Wpf</c>.
+        /// Uses all extensions supported by <c>Markdig.Agg</c>.
         /// </summary>
         /// <param name="pipeline">The pipeline.</param>
         /// <returns>The modified pipeline</returns>
