@@ -34,6 +34,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using JsonPath;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -125,10 +126,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			toolbar.AddChild(removeButton);
 
 			var overflowButton = new OverflowBar.OverflowMenuButton(theme);
+
+			overflowButton.PopupBorderColor = ApplicationController.Instance.MenuTheme.GetBorderColor(120);
 			overflowButton.DynamicPopupContent = () =>
 			{
 				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 				popupMenu.CreateMenuItem("Rename");
+
+				popupMenu.CreateHorizontalLine();
+
+				if (true) //allowOperations)
+				{
+					var selectedItemType = item.GetType();
+					var selectedItem = item;
+
+					foreach (var nodeOperation in ApplicationController.Instance.Graph.Operations)
+					{
+						foreach (var type in nodeOperation.MappedTypes)
+						{
+							if (type.IsAssignableFrom(selectedItemType)
+								&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
+								&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
+							{
+								var button = popupMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke()?.CreateScaledImage(16, 16));
+								button.Click += (s, e) =>
+								{
+									nodeOperation.Operation(selectedItem, sceneContext.Scene).ConfigureAwait(false);
+								};
+							}
+						}
+					}
+				}
 
 				return popupMenu;
 			};
@@ -356,7 +384,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public void EnsureAvailablity()
 			{
-				this.Enabled = graphOperation.IsEnabled(sceneItem);
+				this.Enabled = graphOperation.IsEnabled?.Invoke(sceneItem) != false;
 			}
 		}
 
@@ -397,65 +425,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				editorPanel.AddChild(editorWidget);
-
-				var buttons = new List<OperationButton>();
-
-				if (allowOperations)
-				{
-					foreach (var nodeOperation in ApplicationController.Instance.Graph.Operations)
-					{
-						foreach (var type in nodeOperation.MappedTypes)
-						{
-							if (type.IsAssignableFrom(selectedItemType)
-								&& (nodeOperation.IsVisible == null || nodeOperation.IsVisible(selectedItem)))
-							{
-								var button = new OperationButton(nodeOperation, selectedItem, theme)
-								{
-									BackgroundColor = theme.MinimalShade,
-									Margin = theme.ButtonSpacing
-								};
-								button.EnsureAvailablity();
-								button.Click += (s, e) =>
-								{
-									nodeOperation.Operation(selectedItem, sceneContext.Scene).ConfigureAwait(false);
-								};
-
-								buttons.Add(button);
-							}
-						}
-					}
-				}
-
-				if (buttons.Any())
-				{
-					var toolbar = new Toolbar(theme)
-					{
-						HAnchor = HAnchor.Stretch,
-						VAnchor = VAnchor.Fit,
-						Padding = theme.ToolbarPadding,
-						Margin = new BorderDouble(0, 8)
-					};
-					editorPanel.AddChild(toolbar);
-
-					foreach (var button in buttons)
-					{
-						toolbar.AddChild(button);
-					}
-
-					// TODO: Fix likely leak
-					selectedItem.Invalidated += (s, e) =>
-					{
-						foreach (var button in toolbar.ActionArea.Children.OfType<OperationButton>())
-						{
-							button.EnsureAvailablity();
-						}
-					};
-				}
-				else
-				{
-					// If the button toolbar isn't added, ensure panel has bottom margin
-					editorWidget.Margin = editorWidget.Margin.Clone(bottom: 15);
-				}
 			}
 		}
 
