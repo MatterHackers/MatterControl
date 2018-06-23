@@ -67,13 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public bool MakeScrollable { get; set; } = true;
 		public virtual GuiWidget PopupContent { get; set; }
 
-		public Color PopupBorderColor { get; set; }
-
-		public override void OnLoad(EventArgs args)
-		{
-			base.OnLoad(args);
-			this.PopupBorderColor = this.BorderColor;
-		}
+		public Color PopupBorderColor { get; set; } = Color.Transparent;
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
