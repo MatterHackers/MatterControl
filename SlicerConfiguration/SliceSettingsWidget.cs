@@ -570,6 +570,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			uiField.SetValue(sliceSettingValue, userInitiated: false);
 
+			// Second ValueChanged listener defined after SetValue to ensure it's unaffected by initial change
 			uiField.ValueChanged += (s, e) =>
 			{
 				if (useDefaultSavePattern
