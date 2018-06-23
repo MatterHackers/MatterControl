@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
 
@@ -62,7 +61,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
-				Name = "editorRootContainer",
 				Visible = checkbox.Checked
 			};
 			resizeWrapper.AddChild(this.ResizeContainer);
