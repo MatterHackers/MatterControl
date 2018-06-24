@@ -76,16 +76,36 @@ namespace MatterHackers.MatterControl
 
 		internal void ApplyPrimaryActionStyle(GuiWidget guiWidget)
 		{
-
 			guiWidget.BackgroundColor = this.AccentMimimalOverlay;
 
 			switch(guiWidget)
 			{
+				case PopupMenuButton menuButton:
+					menuButton.HoverColor = new Color(this.AccentMimimalOverlay, 60);
+					break;
 				case SimpleFlowButton flowButton:
 					flowButton.HoverColor = new Color(this.AccentMimimalOverlay, 60);
 					break;
 				case SimpleButton button:
 					button.HoverColor = new Color(this.AccentMimimalOverlay, 60);
+					break;
+			}
+		}
+
+		internal void RemovePrimaryActionStyle(GuiWidget guiWidget)
+		{
+			guiWidget.BackgroundColor = Color.Transparent;
+
+			switch (guiWidget)
+			{
+				case PopupMenuButton menuButton:
+					menuButton.HoverColor = Color.Transparent;
+					break;
+				case SimpleFlowButton flowButton:
+					flowButton.HoverColor = Color.Transparent;
+					break;
+				case SimpleButton button:
+					button.HoverColor = Color.Transparent;
 					break;
 			}
 		}
