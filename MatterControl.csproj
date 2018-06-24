@@ -473,7 +473,6 @@
       <DependentUpon>ExportPrintItemPage.cs</DependentUpon>
     </Compile>
     <Compile Include="CustomWidgets\SavePartsSheetFeedbackWindow.cs" />
-    <Compile Include="CustomWidgets\DropDownMenuWidget.cs" />
     <Compile Include="ControlElements\ImageButtonFactory.cs" />
     <Compile Include="ControlElements\LinkButtonFactory.cs" />
     <Compile Include="CustomWidgets\SlidePanelWidget.cs" />
@@ -526,7 +525,6 @@
     <Compile Include="DataStorage\SQLiteAndroid.cs" />
     <Compile Include="CustomWidgets\DataViewGraph.cs" />
     <Compile Include="CustomWidgets\TwoSidedStack.cs" />
-    <Compile Include="ControlElements\DropDownMenuFactory.cs" />
     <Compile Include="PrinterCommunication\Io\SendProgressStream.cs" />
   </ItemGroup>
   <ItemGroup>
