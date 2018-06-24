@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private EventHandler unregisterEvents;
 		private PrinterConfig printer;
 
-		public PrintButton(PrinterTabPage printerTabPage, PrinterConfig printer, ThemeConfig theme)
+		public PrintButton(PrinterConfig printer, ThemeConfig theme)
 		{
 			this.printer = printer;
 

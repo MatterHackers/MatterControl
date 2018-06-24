@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			this.AddChild(new PrinterConnectButton(printer, theme));
-			this.AddChild(new PrintButton(printerTabPage, printer, theme));
+			this.AddChild(new PrintButton(printer, theme));
 
 			this.AddChild(new SliceButton(printer, printerTabPage, theme)
 			{
