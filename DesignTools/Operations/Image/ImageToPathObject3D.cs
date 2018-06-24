@@ -75,6 +75,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					_histogramRawCache = null;
 					_featureDetector = value;
+					var recreate = this.Histogram;
 				}
 			}
 		}
@@ -117,7 +118,10 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 				}
 
-				_histogramDisplayCache = new ImageBuffer(_histogramRawCache);
+				if (_histogramDisplayCache == null)
+				{
+					_histogramDisplayCache = new ImageBuffer(_histogramRawCache);
+				}
 				UpdateHistogramDisplay();
 
 				return _histogramDisplayCache;

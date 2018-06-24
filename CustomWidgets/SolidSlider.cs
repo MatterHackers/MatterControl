@@ -257,16 +257,6 @@ namespace MatterHackers.MatterControl
 			MinimumSize = new Vector2(ThumbHeight, ThumbHeight);
 		}
 
-		public SolidSlider(Vector2 lowerLeft, Vector2 upperRight)
-			: this(new Vector2(lowerLeft.X, lowerLeft.Y + (upperRight.Y - lowerLeft.Y) / 2), upperRight.X - lowerLeft.X)
-		{
-		}
-
-		public SolidSlider(double lowerLeftX, double lowerLeftY, double upperRightX, double upperRightY)
-			: this(new Vector2(lowerLeftX, lowerLeftY + (upperRightY - lowerLeftY) / 2), upperRightX - lowerLeftX)
-		{
-		}
-
 		public override RectangleDouble LocalBounds
 		{
 			get
