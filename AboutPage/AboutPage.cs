@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
@@ -172,7 +171,7 @@ namespace MatterHackers.MatterControl
 
 			var feedbackButton = new TextButton("Send Feedback", theme)
 			{
-				BackgroundColor = theme.SlightShade,
+				BackgroundColor = theme.MinimalShade,
 				HAnchor = HAnchor.Absolute,
 			};
 			feedbackButton.Click += (s, e) => UiThread.RunOnIdle(() =>
@@ -180,7 +179,7 @@ namespace MatterHackers.MatterControl
 				this.DialogWindow.ChangeToPage<ContactFormPage>();
 			});
 
-			this.AddPageAction(feedbackButton);
+			this.AddPageAction(feedbackButton, highlightFirstAction: false);
 
 			var siteLink = theme.LinkButtonFactory.Generate("www.matterhackers.com");
 			siteLink.HAnchor = HAnchor.Center;

@@ -55,6 +55,7 @@ namespace MatterHackers.MatterControl
 		protected double errorFontSize = 10 * GuiWidget.DeviceScale;
 
 		protected ThemeConfig theme;
+		private int actionCount = 0;
 
 		public DialogPage(string cancelButtonText = null, bool useOverflowBar = false)
 			: base (FlowDirection.TopToBottom)
@@ -151,8 +152,14 @@ namespace MatterHackers.MatterControl
 			set => headerLabel.Text = value;
 		}
 
-		public void AddPageAction(GuiWidget button)
+		public void AddPageAction(GuiWidget button, bool highlightFirstAction = true)
 		{
+			if (highlightFirstAction
+				&& actionCount++ == 0)
+			{
+				theme.ApplyPrimaryActionStyle(button);
+			}
+
 			button.Margin = theme.ButtonSpacing;
 			footerRow.AddChild(button);
 		}
