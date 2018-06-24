@@ -73,35 +73,38 @@ namespace MatterHackers.MatterControl
 
 			this.AddChild(library3DViewSplitter);
 
-			var leftNav = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			leftNav.AnchorAll();
-
-			leftNav.AddChild(new BrandMenuButton(theme)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				BackgroundColor = theme.TabBarBackground,
-				Border = new BorderDouble(right: 1),
-				BorderColor = theme.MinimalShade,
-				Padding = theme.TabbarPadding.Clone(right: 0)
-			});
-
+			// put in the right column
 			var partPreviewContent = new PartPreviewContent()
 			{
 				VAnchor = VAnchor.Bottom | VAnchor.Top,
 				HAnchor = HAnchor.Left | HAnchor.Right
 			};
 
-			leftNav.AddChild(new PrintLibraryWidget(partPreviewContent, theme)
-			{
-				BackgroundColor = theme.ActiveTabColor
-			});
+			library3DViewSplitter.Panel2.AddChild(partPreviewContent);
 
 			// put in the left column
-			library3DViewSplitter.Panel1.AddChild(leftNav);
+			var leftNav = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			using (leftNav.LayoutLock())
+			{
+				leftNav.AddChild(new BrandMenuButton(theme)
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit,
+					BackgroundColor = theme.TabBarBackground,
+					Border = new BorderDouble(right: 1),
+					BorderColor = theme.MinimalShade,
+					Padding = theme.TabbarPadding.Clone(right: 0)
+				});
 
-			// put in the right column
-			library3DViewSplitter.Panel2.AddChild(partPreviewContent);
+				leftNav.AddChild(new PrintLibraryWidget(partPreviewContent, theme)
+				{
+					BackgroundColor = theme.ActiveTabColor
+				});
+			}
+
+			leftNav.AnchorAll();
+
+			library3DViewSplitter.Panel1.AddChild(leftNav);
 		}
 	}
 

@@ -93,7 +93,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		private void DoSmoothing(long maxDist, int interations)
 		{
 			bool closedPath = true;
-			var sourceVertices = this.Children.OfType<IPathObject>().FirstOrDefault().VertexSource;
+			var path = this.Children.OfType<IPathObject>().FirstOrDefault();
+			if(path == null)
+			{
+				return;
+			}
+			var sourceVertices = path.VertexSource;
 
 			var inputPolygons = sourceVertices.CreatePolygons();
 
