@@ -31,8 +31,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using JsonPath;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -53,10 +55,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private BedConfig sceneContext;
 		private View3DWidget view3DWidget;
 		private ResizableSectionWidget editorSectionWidget;
-		private TextButton editButton;
 
 		private GuiWidget editorPanel;
-		private InlineTitleEdit inlineTitleEdit;
 
 		public SelectedObjectPanel(View3DWidget view3DWidget, BedConfig sceneContext, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -86,61 +86,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(scrollable);
 
-			var toolbar = new Toolbar(theme)
+			var toolbar = new LeftClipFlowLayoutWidget()
 			{
+				BackgroundColor = theme.TabBodyBackground,
 				Padding = theme.ToolbarPadding,
-				HAnchor = HAnchor.Stretch,
+				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit
 			};
 
 			var scene = sceneContext.Scene;
-
-			editButton = new TextButton("Edit".Localize(), theme)
-			{
-				BackgroundColor = theme.MinimalShade,
-				Margin = theme.ButtonSpacing
-			};
-			scene.SelectionChanged += (s, e) => editButton.Enabled = scene.SelectedItem?.CanEdit == true;
-			editButton.Click += async (s, e) =>
-			{
-				var bed = new BedConfig();
-
-				var partPreviewContent = this.Parents<PartPreviewContent>().FirstOrDefault();
-				partPreviewContent.CreatePartTab(
-					"New Part",
-					bed,
-					theme);
-
-				var clonedItem = this.item.Clone();
-
-				// Edit in Identity transform
-				clonedItem.Matrix = Matrix4X4.Identity;
-
-				await bed.LoadContent(
-					new EditContext()
-					{
-						ContentStore = new DynamicContentStore((libraryItem, object3D) =>
-						{
-							var replacement = object3D.Clone();
-
-							this.item.Parent.Children.Modify(list =>
-							{
-								list.Remove(item);
-
-								// Restore matrix of item being replaced
-								replacement.Matrix = item.Matrix;
-
-								list.Add(replacement);
-
-								item = replacement;
-							});
-
-							scene.SelectedItem = replacement;
-						}),
-						SourceItem = new InMemoryLibraryItem(clonedItem),
-					});
-			};
-			toolbar.AddChild(editButton);
 
 			// put in a make permanent button
 			var icon = AggContext.StaticData.LoadIcon("fa-check_16.png", 16, 16, theme.InvertIcons).SetPreMultiply();
@@ -165,11 +119,64 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			removeButton.Click += (s, e) =>
 			{
-				this.item.Remove(view3DWidget.Scene.UndoBuffer);
+				item.Remove(view3DWidget.Scene.UndoBuffer);
 				scene.SelectedItem = null;
 			};
 			scene.SelectionChanged += (s, e) => removeButton.Enabled = scene.SelectedItem?.CanRemove == true;
 			toolbar.AddChild(removeButton);
+
+			var overflowButton = new OverflowBar.OverflowMenuButton(theme);
+
+			overflowButton.PopupBorderColor = ApplicationController.Instance.MenuTheme.GetBorderColor(120);
+			overflowButton.DynamicPopupContent = () =>
+			{
+				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+
+				var menuItem = popupMenu.CreateMenuItem("Rename");
+				menuItem.Click += (s, e) =>
+				{
+					DialogWindow.Show(
+						new InputBoxPage(
+							"Rename Item".Localize(),
+							"Name".Localize(),
+							item.Name,
+							"Enter New Name Here".Localize(),
+							"Rename".Localize(),
+							(newName) =>
+							{
+								item.Name = newName;
+								editorSectionWidget.Text = newName;
+							}));
+				};
+
+				popupMenu.CreateHorizontalLine();
+
+				if (true) //allowOperations)
+				{
+					var selectedItemType = item.GetType();
+					var selectedItem = item;
+
+					foreach (var nodeOperation in ApplicationController.Instance.Graph.Operations)
+					{
+						foreach (var type in nodeOperation.MappedTypes)
+						{
+							if (type.IsAssignableFrom(selectedItemType)
+								&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
+								&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
+							{
+								var button = popupMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke()?.CreateScaledImage(16, 16));
+								button.Click += (s, e) =>
+								{
+									nodeOperation.Operation(selectedItem, sceneContext.Scene).ConfigureAwait(false);
+								};
+							}
+						}
+					}
+				}
+
+				return popupMenu;
+			};
+			toolbar.AddChild(overflowButton);
 
 			editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -177,14 +184,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Fit,
 				Padding = new BorderDouble(top: 10)
 			};
-			inlineTitleEdit = new InlineTitleEdit("", theme, "Object Name");
-			inlineTitleEdit.TitleChanged += (s, e) =>
-			{
-				if (item != null)
-				{
-					item.Name = inlineTitleEdit.Text;
-				}
-			};
+
+			//inlineTitleEdit = new InlineTitleEdit("", theme, "Object Name");
+			//inlineTitleEdit.TitleChanged += (s, e) =>
+			//{
+			//	if (item != null)
+			//	{
+			//		item.Name = inlineTitleEdit.Text;
+			//	}
+			//};
 
 			// Wrap editorPanel with scrollable container
 			var scrollableWidget = new ScrollableWidget(true)
@@ -195,7 +203,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			scrollableWidget.AddChild(editorPanel);
 			scrollableWidget.ScrollArea.HAnchor = HAnchor.Stretch;
 
-			editorSectionWidget = new ResizableSectionWidget("Editor", sceneContext.ViewState.SelectedObjectEditorHeight, scrollableWidget, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true)
+			editorSectionWidget = new ResizableSectionWidget("Editor", sceneContext.ViewState.SelectedObjectEditorHeight, scrollableWidget, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, rightAlignedContent: toolbar, defaultExpansion: true)
 			{
 				VAnchor = VAnchor.Fit,
 			};
@@ -203,14 +211,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				sceneContext.ViewState.SelectedObjectEditorHeight = editorSectionWidget.ResizeContainer.Height;
 			};
-
-			editorSectionWidget.ResizeContainer.AddChild(toolbar, 0);
-
-			// TODO: Replace hackery with practical solution
-			if (editorSectionWidget.Children.FirstOrDefault() is ExpandCheckboxButton checkbox)
-			{
-				checkbox.ReplaceChild(checkbox.Children[1], inlineTitleEdit);
-			}
 
 			this.ContentPanel.AddChild(editorSectionWidget);
 
@@ -263,6 +263,50 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		/// <summary>
+		/// Behavior from removed Edit button - keeping around for reuse as an advanced feature in the future
+		/// </summary>
+		/// <returns></returns>
+		private async Task EditChildInIsolatedContext()
+		{
+			var bed = new BedConfig();
+
+			var partPreviewContent = this.Parents<PartPreviewContent>().FirstOrDefault();
+			partPreviewContent.CreatePartTab(
+				"New Part",
+				bed,
+				theme);
+
+			var clonedItem = this.item.Clone();
+
+			// Edit in Identity transform
+			clonedItem.Matrix = Matrix4X4.Identity;
+
+			await bed.LoadContent(
+				new EditContext()
+				{
+					ContentStore = new DynamicContentStore((libraryItem, object3D) =>
+					{
+						var replacement = object3D.Clone();
+
+						this.item.Parent.Children.Modify(list =>
+						{
+							list.Remove(item);
+
+								// Restore matrix of item being replaced
+								replacement.Matrix = item.Matrix;
+
+							list.Add(replacement);
+
+							item = replacement;
+						});
+
+						sceneContext.Scene.SelectedItem = replacement;
+					}),
+					SourceItem = new InMemoryLibraryItem(clonedItem),
+				});
+		}
+
 		public GuiWidget ContentPanel { get; set; }
 
 		JsonPathContext xpathLikeResolver = new JsonPathContext();
@@ -280,9 +324,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var selectedItemType = selectedItem.GetType();
 
-			editButton.Enabled = (selectedItem.Children.Count > 0);
-
-			inlineTitleEdit.Text = selectedItem.Name ?? selectedItemType.Name;
+			editorSectionWidget.Text = selectedItem.Name ?? selectedItemType.Name;
 
 			HashSet<IObject3DEditor> mappedEditors = ApplicationController.Instance.GetEditorsForType(selectedItemType);
 
@@ -358,7 +400,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public void EnsureAvailablity()
 			{
-				this.Enabled = graphOperation.IsEnabled(sceneItem);
+				this.Enabled = graphOperation.IsEnabled?.Invoke(sceneItem) != false;
 			}
 		}
 
@@ -399,65 +441,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				editorPanel.AddChild(editorWidget);
-
-				var buttons = new List<OperationButton>();
-
-				if (allowOperations)
-				{
-					foreach (var nodeOperation in ApplicationController.Instance.Graph.Operations)
-					{
-						foreach (var type in nodeOperation.MappedTypes)
-						{
-							if (type.IsAssignableFrom(selectedItemType)
-								&& (nodeOperation.IsVisible == null || nodeOperation.IsVisible(selectedItem)))
-							{
-								var button = new OperationButton(nodeOperation, selectedItem, theme)
-								{
-									BackgroundColor = theme.MinimalShade,
-									Margin = theme.ButtonSpacing
-								};
-								button.EnsureAvailablity();
-								button.Click += (s, e) =>
-								{
-									nodeOperation.Operation(selectedItem, sceneContext.Scene).ConfigureAwait(false);
-								};
-
-								buttons.Add(button);
-							}
-						}
-					}
-				}
-
-				if (buttons.Any())
-				{
-					var toolbar = new Toolbar(theme)
-					{
-						HAnchor = HAnchor.Stretch,
-						VAnchor = VAnchor.Fit,
-						Padding = theme.ToolbarPadding,
-						Margin = new BorderDouble(0, 8)
-					};
-					editorPanel.AddChild(toolbar);
-
-					foreach (var button in buttons)
-					{
-						toolbar.AddChild(button);
-					}
-
-					// TODO: Fix likely leak
-					selectedItem.Invalidated += (s, e) =>
-					{
-						foreach (var button in toolbar.ActionArea.Children.OfType<OperationButton>())
-						{
-							button.EnsureAvailablity();
-						}
-					};
-				}
-				else
-				{
-					// If the button toolbar isn't added, ensure panel has bottom margin
-					editorWidget.Margin = editorWidget.Margin.Clone(bottom: 15);
-				}
 			}
 		}
 

@@ -61,12 +61,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 				else
 				{
-					var headingRow = new FlowLayoutWidget()
+					rightAlignedContent.HAnchor = HAnchor.Right;
+
+					var headingRow = new GuiWidget()
 					{
+						VAnchor = VAnchor.Fit,
 						HAnchor = HAnchor.Stretch
 					};
 					headingRow.AddChild(checkbox);
-					headingRow.AddChild(new HorizontalSpacer());
 					headingRow.AddChild(rightAlignedContent);
 					this.AddChild(headingRow);
 				}
@@ -105,6 +107,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public int BorderRadius { get; set; } = 0;
 
 		public bool ExpandableWhenDisabled { get; set; }
+
+		public override string Text
+		{
+			get => checkbox?.Text;
+			set
+			{
+				if (checkbox != null)
+				{
+					checkbox.Text = value;
+				}
+			}
+		}
 
 		public override bool Enabled
 		{

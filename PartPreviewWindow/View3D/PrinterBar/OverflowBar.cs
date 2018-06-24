@@ -109,6 +109,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		/// </summary>
 		public class OverflowMenuButton : PopupMenuButton
 		{
+			public OverflowMenuButton(ThemeConfig theme)
+				: base (CreateOverflowIcon(theme), theme)
+			{
+			}
+
 			public OverflowMenuButton(OverflowBar overflowBar, ThemeConfig theme)
 				: base(CreateOverflowIcon(theme), theme)
 			{

@@ -31,6 +31,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MatterHackers.Agg.Image;
 using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
@@ -42,6 +43,7 @@ namespace MatterHackers.MatterControl.Library
 		public Func<IObject3D, InteractiveScene, Task> Operation { get; set; }
 		public Func<IObject3D, bool> IsEnabled { get; set; }
 		public Func<IObject3D, bool> IsVisible { get; set; }
+		public Func<ImageBuffer> IconCollector { get; set; }
 	}
 
 	public class GraphConfig
@@ -50,7 +52,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public IEnumerable<NodeOperation> Operations => _operations;
 
-		public void RegisterOperation(Type type, string title, Func<IObject3D, InteractiveScene, Task> operation, Func<IObject3D, bool> isEnabled, Func<IObject3D, bool> isVisible = null)
+		public void RegisterOperation(Type type, string title, Func<IObject3D, InteractiveScene, Task> operation, Func<IObject3D, bool> isEnabled = null, Func<IObject3D, bool> isVisible = null, Func<ImageBuffer> iconCollector = null)
 		{
 			_operations.Add(new NodeOperation()
 			{
@@ -58,7 +60,8 @@ namespace MatterHackers.MatterControl.Library
 				Title = title,
 				Operation = operation,
 				IsEnabled = isEnabled,
-				IsVisible = isVisible
+				IsVisible = isVisible,
+				IconCollector = iconCollector
 			});
 		}
 	}

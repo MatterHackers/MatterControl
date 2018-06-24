@@ -340,7 +340,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (content is TextWidget textWidget)
 					{
-						textWidget.TextColor = (value) ? theme.Colors.PrimaryTextColor : PopupMenu.DisabledTextColor;
+						textWidget.Enabled = value;
 					}
 
 					base.Enabled = value;

@@ -317,9 +317,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var partTab = new ChromeTab(
 				tabTitle,
 				tabControl,
-				new PartTabPage(null, sceneContext, theme, "xxxxx"),
+				new PartTabPage(null, sceneContext, theme, ""),
 				theme,
-				AggContext.StaticData.LoadIcon("part.png"))
+				AggContext.StaticData.LoadIcon("cube.png"))
 			{
 				Name = "newPart" + tabControl.AllTabs.Count(),
 				MinimumSize = new Vector2(120, theme.TabButtonHeight)
