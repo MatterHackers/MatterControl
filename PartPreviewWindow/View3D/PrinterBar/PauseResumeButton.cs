@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Threading;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
@@ -47,10 +46,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private EventHandler unregisterEvents;
 		private PrinterConfig printer;
+		private ThemeConfig theme;
 
 		public PrintButton(PrinterConfig printer, ThemeConfig theme)
 		{
 			this.printer = printer;
+			this.theme = theme;
 
 			// add the finish setup button
 			finishSetupButton = new TextButton("Setup...".Localize(), theme)
@@ -58,10 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "Finish Setup Button",
 				ToolTipText = "Run setup configuration for printer.".Localize(),
 				Margin = theme.ButtonSpacing,
-				BackgroundColor = theme.ButtonFactory.Options.NormalFillColor,
-				HoverColor = theme.ButtonFactory.Options.HoverFillColor,
 			};
-
 			finishSetupButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(async () =>
@@ -123,12 +121,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						startPrintButton.Visible = false;
 						finishSetupButton.Visible = true;
 						finishSetupButton.Enabled = true;
+						theme.ApplyPrimaryActionStyle(finishSetupButton);
 					}
 					else
 					{
 						startPrintButton.Visible = true;
 						startPrintButton.Enabled = true;
 						finishSetupButton.Visible = false;
+						theme.ApplyPrimaryActionStyle(startPrintButton);
 					}
 					break;
 
@@ -141,12 +141,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						startPrintButton.Visible = false;
 						finishSetupButton.Visible = true;
 						finishSetupButton.Enabled = false;
+						theme.RemovePrimaryActionStyle(finishSetupButton);
 					}
 					else
 					{
 						startPrintButton.Visible = true;
 						startPrintButton.Enabled = false;
 						finishSetupButton.Visible = false;
+						theme.RemovePrimaryActionStyle(startPrintButton);
 					}
 					break;
 			}
