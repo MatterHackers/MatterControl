@@ -10,7 +10,6 @@ using MatterHackers.MatterControl;
 
 namespace Markdig.Renderers.Agg
 {
-
 	public class ListX : FlowLayoutWidget
 	{
 		public ListX()

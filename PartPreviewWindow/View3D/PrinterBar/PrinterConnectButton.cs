@@ -66,10 +66,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				Name = "Connect to printer button",
 				ToolTipText = "Connect to the currently selected printer".Localize(),
-				BackgroundColor = theme.ToolbarButtonBackground,
-				HoverColor = theme.ToolbarButtonHover,
 				MouseDownColor = theme.ToolbarButtonDown,
-
 			};
 			connectButton.Click += (s, e) =>
 			{
@@ -82,6 +79,8 @@ namespace MatterHackers.MatterControl.ActionBar
 				}
 			};
 			this.AddChild(connectButton);
+
+			theme.ApplyPrimaryActionStyle(connectButton);
 
 			// add the cancel stop button
 			cancelConnectButton = new TextIconButton(

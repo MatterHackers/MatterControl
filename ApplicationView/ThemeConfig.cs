@@ -74,6 +74,22 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		public bool InvertIcons => this.Colors.IsDarkTheme;
 
+		internal void ApplyPrimaryActionStyle(GuiWidget guiWidget)
+		{
+
+			guiWidget.BackgroundColor = this.AccentMimimalOverlay;
+
+			switch(guiWidget)
+			{
+				case SimpleFlowButton flowButton:
+					flowButton.HoverColor = new Color(this.AccentMimimalOverlay, 60);
+					break;
+				case SimpleButton button:
+					button.HoverColor = new Color(this.AccentMimimalOverlay, 60);
+					break;
+			}
+		}
+
 		public BorderDouble ButtonSpacing { get; }
 
 		public BorderDouble ToolbarPadding { get; set; } = 3;
