@@ -54,60 +54,65 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.settingData = settingData;
 			this.settingsContext = settingsContext;
 
-			this.AddChild(dataArea = new FlowLayoutWidget
+			using (this.LayoutLock())
 			{
-				VAnchor = VAnchor.Fit | VAnchor.Center,
-				DebugShowBounds = debugLayout
-			});
-
-			this.AddChild(unitsArea = new GuiWidget()
-			{
-				HAnchor = HAnchor.Absolute,
-				VAnchor = VAnchor.Fit | VAnchor.Center,
-				Width = 50 * GuiWidget.DeviceScale,
-				DebugShowBounds = debugLayout
-			});
-
-			// Populate unitsArea as appropriate
-			// List elements contain list values in the field which normally contains label details, skip generation of invalid labels
-			if (settingData.DataEditType != SliceSettingData.DataEditTypes.LIST
-				&& settingData.DataEditType != SliceSettingData.DataEditTypes.HARDWARE_PRESENT)
-			{
-				unitsArea.AddChild(
-				new WrappedTextWidget(settingData.Units.Localize(), pointSize: 8, textColor: theme.Colors.PrimaryTextColor)
+				this.AddChild(dataArea = new FlowLayoutWidget
 				{
-					Margin = new BorderDouble(5, 0),
+					VAnchor = VAnchor.Fit | VAnchor.Center,
+					DebugShowBounds = debugLayout
 				});
-			}
 
-			restoreArea = new GuiWidget()
-			{
-				HAnchor = HAnchor.Absolute,
-				VAnchor = VAnchor.Fit | VAnchor.Center,
-				Width = 20 * GuiWidget.DeviceScale,
-				DebugShowBounds = debugLayout
-			};
-			this.AddChild(restoreArea);
-
-			this.Name = settingData.SlicerConfigName + " Row";
-
-			if (settingData.ShowAsOverride)
-			{
-				restoreButton = theme.CreateSmallResetButton();
-				restoreButton.HAnchor = HAnchor.Right;
-				restoreButton.Margin = 0;
-				restoreButton.Name = "Restore " + settingData.SlicerConfigName;
-				restoreButton.ToolTipText = "Restore Default".Localize();
-				restoreButton.Click += (sender, e) =>
+				this.AddChild(unitsArea = new GuiWidget()
 				{
+					HAnchor = HAnchor.Absolute,
+					VAnchor = VAnchor.Fit | VAnchor.Center,
+					Width = 50 * GuiWidget.DeviceScale,
+					DebugShowBounds = debugLayout
+				});
+
+				// Populate unitsArea as appropriate
+				// List elements contain list values in the field which normally contains label details, skip generation of invalid labels
+				if (settingData.DataEditType != SliceSettingData.DataEditTypes.LIST
+					&& settingData.DataEditType != SliceSettingData.DataEditTypes.HARDWARE_PRESENT)
+				{
+					unitsArea.AddChild(
+					new WrappedTextWidget(settingData.Units.Localize(), pointSize: 8, textColor: theme.Colors.PrimaryTextColor)
+					{
+						Margin = new BorderDouble(5, 0),
+					});
+				}
+
+				restoreArea = new GuiWidget()
+				{
+					HAnchor = HAnchor.Absolute,
+					VAnchor = VAnchor.Fit | VAnchor.Center,
+					Width = 20 * GuiWidget.DeviceScale,
+					DebugShowBounds = debugLayout
+				};
+				this.AddChild(restoreArea);
+
+				this.Name = settingData.SlicerConfigName + " Row";
+
+				if (settingData.ShowAsOverride)
+				{
+					restoreButton = theme.CreateSmallResetButton();
+					restoreButton.HAnchor = HAnchor.Right;
+					restoreButton.Margin = 0;
+					restoreButton.Name = "Restore " + settingData.SlicerConfigName;
+					restoreButton.ToolTipText = "Restore Default".Localize();
+					restoreButton.Click += (sender, e) =>
+					{
 					// Revert the user override
 					settingsContext.ClearValue(settingData.SlicerConfigName);
-				};
+					};
 
-				restoreArea.AddChild(restoreButton);
+					restoreArea.AddChild(restoreButton);
 
-				restoreArea.Selectable = true;
+					restoreArea.Selectable = true;
+				}
 			}
+
+			this.PerformLayout();
 		}
 
 		public Color HighlightColor

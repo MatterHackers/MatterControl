@@ -38,18 +38,23 @@ namespace MatterHackers.MatterControl
 
 		public MHNumberEdit(double startingValue, double x = 0, double y = 0, double pointSize = 12, double pixelWidth = 0, double pixelHeight = 0, bool allowNegatives = false, bool allowDecimals = false, double minValue = int.MinValue, double maxValue = int.MaxValue, double increment = 1, int tabIndex = 0)
 		{
-			this.Padding = new BorderDouble(3);
-			this.BackgroundColor = Color.White;
-			this.HAnchor = HAnchor.Fit;
-			this.VAnchor = VAnchor.Fit;
-			this.Border = 1;
-
-			this.ActuallNumberEdit = new NumberEdit(startingValue, x, y, pointSize, pixelWidth, pixelHeight, allowNegatives, allowDecimals, minValue, maxValue, increment, tabIndex)
+			using (this.LayoutLock())
 			{
-				VAnchor = VAnchor.Bottom,
-			};
-			this.ActuallNumberEdit.InternalNumberEdit.MaxDecimalsPlaces = 5;
-			this.AddChild(this.ActuallNumberEdit);
+				this.Padding = new BorderDouble(3);
+				this.BackgroundColor = Color.White;
+				this.HAnchor = HAnchor.Fit;
+				this.VAnchor = VAnchor.Fit;
+				this.Border = 1;
+
+				this.ActuallNumberEdit = new NumberEdit(startingValue, x, y, pointSize, pixelWidth, pixelHeight, allowNegatives, allowDecimals, minValue, maxValue, increment, tabIndex)
+				{
+					VAnchor = VAnchor.Bottom,
+				};
+				this.ActuallNumberEdit.InternalNumberEdit.MaxDecimalsPlaces = 5;
+				this.AddChild(this.ActuallNumberEdit);
+			}
+
+			this.PerformLayout();
 		}
 
 		public override int TabIndex

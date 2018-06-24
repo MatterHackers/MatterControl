@@ -51,49 +51,54 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public SettingsRow(string title, string helpText, ThemeConfig theme, ImageBuffer icon = null, bool enforceGutter = false, bool fullRowSelect = false)
 		{
-			this.theme = theme;
-			this.fullRowSelect = fullRowSelect;
-
-			this.HAnchor = HAnchor.Stretch;
-			this.VAnchor = VAnchor.Fit;
-			this.MinimumSize = new Vector2(0, theme.ButtonHeight);
-			this.Border = new BorderDouble(bottom: 1);
-			this.BorderColor = theme.GetBorderColor(theme.Colors.IsDarkTheme ? 20 : 35);
-
-			hoverColor = theme.MinimalShade;
-
-			if (icon != null)
+			using (this.LayoutLock())
 			{
-				this.AddChild(new ImageWidget(icon)
+				this.theme = theme;
+				this.fullRowSelect = fullRowSelect;
+
+				this.HAnchor = HAnchor.Stretch;
+				this.VAnchor = VAnchor.Fit;
+				this.MinimumSize = new Vector2(0, theme.ButtonHeight);
+				this.Border = new BorderDouble(bottom: 1);
+				this.BorderColor = theme.GetBorderColor(theme.Colors.IsDarkTheme ? 20 : 35);
+
+				hoverColor = theme.MinimalShade;
+
+				if (icon != null)
 				{
-					Margin = new BorderDouble(right: 6, left: 6),
-					VAnchor = VAnchor.Center
-				});
-			}
-			else if (enforceGutter)
-			{
-				// Add an icon placeholder to get consistent label indenting on items lacking icons
-				this.AddChild(new GuiWidget()
+					this.AddChild(new ImageWidget(icon)
+					{
+						Margin = new BorderDouble(right: 6, left: 6),
+						VAnchor = VAnchor.Center
+					});
+				}
+				else if (enforceGutter)
 				{
-					Width = 24 + 12,
-					Height = 24,
-					Margin = new BorderDouble(0)
-				});
-			}
-			else
-			{
-				this.AddChild(overrideIndicator = new GuiWidget()
+					// Add an icon placeholder to get consistent label indenting on items lacking icons
+					this.AddChild(new GuiWidget()
+					{
+						Width = 24 + 12,
+						Height = 24,
+						Margin = new BorderDouble(0)
+					});
+				}
+				else
 				{
-					VAnchor = VAnchor.Stretch,
-					HAnchor = HAnchor.Absolute,
-					Width = 3,
-					Margin = new BorderDouble(right: 6)
-				});
+					this.AddChild(overrideIndicator = new GuiWidget()
+					{
+						VAnchor = VAnchor.Stretch,
+						HAnchor = HAnchor.Absolute,
+						Width = 3,
+						Margin = new BorderDouble(right: 6)
+					});
+				}
+
+				this.AddChild(settingsLabel = SettingsRow.CreateSettingsLabel(title, helpText, theme.Colors.PrimaryTextColor));
+
+				this.AddChild(new HorizontalSpacer());
 			}
 
-			this.AddChild(settingsLabel = SettingsRow.CreateSettingsLabel(title, helpText, theme.Colors.PrimaryTextColor));
-
-			this.AddChild(new HorizontalSpacer());
+			this.PerformLayout();
 
 			if (fullRowSelect)
 			{

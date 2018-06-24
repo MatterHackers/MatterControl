@@ -189,10 +189,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						if (commandCount > 100)
 						{
 							boundsOfSkippedLayers.ExpandToInclude(lastDestination.position.Xy);
-							//if (boundsOfSkippedLayers.Bottom < 10)
-							//{
-							//	int a = 0;
-							//}
 						}
 
 						// check if the line is something we want to send to the printer (like a temp)

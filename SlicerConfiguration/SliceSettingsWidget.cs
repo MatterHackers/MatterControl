@@ -64,18 +64,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Padding = new BorderDouble(8, 12, 8, 8)
 			};
 
-			this.AddChild(settingsControlBar);
+			using (this.LayoutLock())
+			{
+				this.AddChild(settingsControlBar);
 
-			this.AddChild(
-				new SliceSettingsTabView(
-					settingsContext,
-					"SliceSettings",
-					printer,
-					"Advanced",
-					theme,
-					isPrimarySettingsView: true,
-					databaseMRUKey: UserSettingsKey.SliceSettingsWidget_CurrentTab,
-					extendPopupMenu: this.ExtendOverflowMenu));
+				this.AddChild(
+					new SliceSettingsTabView(
+						settingsContext,
+						"SliceSettings",
+						printer,
+						"Advanced",
+						theme,
+						isPrimarySettingsView: true,
+						databaseMRUKey: UserSettingsKey.SliceSettingsWidget_CurrentTab,
+						extendPopupMenu: this.ExtendOverflowMenu));
+			}
 
 			this.AnchorAll();
 		}
@@ -191,221 +194,231 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public SliceSettingsTabView(SettingsContext settingsContext, string scopeName, PrinterConfig printer, string UserLevel, ThemeConfig theme, bool isPrimarySettingsView, string databaseMRUKey, Action<PopupMenu> extendPopupMenu = null)
 			: base (theme)
 		{
-			this.VAnchor = VAnchor.Stretch;
-			this.HAnchor = HAnchor.Stretch;
-			this.externalExtendMenu = extendPopupMenu;
-			this.scopeName = scopeName;
-
-			var overflowBar = this.TabBar as OverflowBar;
-			overflowBar.ExtendOverflowMenu = this.ExtendOverflowMenu;
-
-			var overflowButton = this.TabBar.RightAnchorItem;
-			overflowButton.Name = "Slice Settings Overflow Menu";
-
-			this.TabBar.Padding = this.TabBar.Margin.Clone(right: theme.ToolbarPadding.Right);
-
-			searchPanel = new SearchInputBox()
+			using (this.LayoutLock())
 			{
-				Visible = false,
-				BackgroundColor = theme.TabBarBackground,
-				MinimumSize = new Vector2(0, this.TabBar.Height)
-			};
+				this.VAnchor = VAnchor.Stretch;
+				this.HAnchor = HAnchor.Stretch;
+				this.externalExtendMenu = extendPopupMenu;
+				this.scopeName = scopeName;
 
-			searchPanel.searchInput.Margin = new BorderDouble(3, 0);
-			searchPanel.searchInput.ActualTextEditWidget.EnterPressed += (s, e) =>
-			{
-				var filter = searchPanel.searchInput.Text.Trim();
+				var overflowBar = this.TabBar as OverflowBar;
+				overflowBar.ExtendOverflowMenu = this.ExtendOverflowMenu;
 
-				foreach (var item in this.settingsRows)
+				var overflowButton = this.TabBar.RightAnchorItem;
+				overflowButton.Name = "Slice Settings Overflow Menu";
+
+				this.TabBar.Padding = this.TabBar.Margin.Clone(right: theme.ToolbarPadding.Right);
+
+				searchPanel = new SearchInputBox()
 				{
-					var metaData = item.settingData;
+					Visible = false,
+					BackgroundColor = theme.TabBarBackground,
+					MinimumSize = new Vector2(0, this.TabBar.Height)
+				};
+
+				searchPanel.searchInput.Margin = new BorderDouble(3, 0);
+				searchPanel.searchInput.ActualTextEditWidget.EnterPressed += (s, e) =>
+				{
+					var filter = searchPanel.searchInput.Text.Trim();
+
+					foreach (var item in this.settingsRows)
+					{
+						var metaData = item.settingData;
 
 					// Show matching items
 					item.widget.Visible = metaData.SlicerConfigName.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0
-						|| metaData.HelpText.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0;
-				}
+							|| metaData.HelpText.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0;
+					}
 
-				this.ShowFilteredView();
-			};
-			searchPanel.ResetButton.Click += (s, e) =>
-			{
-				searchPanel.Visible = false;
-				searchPanel.searchInput.Text = "";
-
-				this.ClearFilter();
-			};
-
-			// Add heading for My Settings view
-			searchPanel.AddChild(filteredItemsHeading = new TextWidget("My Modified Settings", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
-			{
-				Margin = new BorderDouble(left: 10),
-				HAnchor = HAnchor.Left,
-				VAnchor = VAnchor.Center,
-				Visible = false
-			}, 0);
-
-			this.AddChild(searchPanel, 0);
-
-			var scrollable = new ScrollableWidget(true)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch,
-			};
-			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
-			//scrollable.ScrollArea.VAnchor = VAnchor.Fit;
-
-			var tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				VAnchor = VAnchor.Fit,
-				HAnchor = HAnchor.Stretch,
-				//DebugShowBounds = true,
-				//MinimumSize = new Vector2(200, 200)
-			};
-
-			scrollable.AddChild(tabContainer);
-
-			this.AddChild(scrollable);
-
-			// Force TopToBottom flowlayout contained in scrollable as AddChild target
-			this.TabContainer = tabContainer;
-
-			this.theme = theme;
-			this.printer = printer;
-			this.settingsContext = settingsContext;
-			this.isPrimarySettingsView = isPrimarySettingsView;
-
-			this.TabBar.BackgroundColor = theme.TabBarBackground;
-
-			tabIndexForItem = 0;
-
-			var userLevel = SettingsOrganizer.Instance.UserLevels[UserLevel];
-
-			this.settingsRows = new List<(GuiWidget, SliceSettingData)>();
-
-			allUiFields = new Dictionary<string, UIField>();
-
-			// Loop over categories creating a tab for each
-			foreach (var category in userLevel.Categories)
-			{
-				if (category.Name == "Printer"
-					&& (settingsContext.ViewFilter == NamedSettingsLayers.Material || settingsContext.ViewFilter == NamedSettingsLayers.Quality))
+					this.ShowFilteredView();
+				};
+				searchPanel.ResetButton.Click += (s, e) =>
 				{
-					continue;
-				}
+					searchPanel.Visible = false;
+					searchPanel.searchInput.Text = "";
 
-				var categoryPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+					this.ClearFilter();
+				};
+
+				// Add heading for My Settings view
+				searchPanel.AddChild(filteredItemsHeading = new TextWidget("My Modified Settings", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+				{
+					Margin = new BorderDouble(left: 10),
+					HAnchor = HAnchor.Left,
+					VAnchor = VAnchor.Center,
+					Visible = false
+				}, 0);
+
+				this.AddChild(searchPanel, 0);
+
+				var scrollable = new ScrollableWidget(true)
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Stretch,
+				};
+				scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
+				//scrollable.ScrollArea.VAnchor = VAnchor.Fit;
+
+				var tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
 					VAnchor = VAnchor.Fit,
 					HAnchor = HAnchor.Stretch,
+					//DebugShowBounds = true,
+					//MinimumSize = new Vector2(200, 200)
 				};
 
-				// Loop over all groups in this tab and add their content
-				bool hasVisibleSection = false;
+				scrollable.AddChild(tabContainer);
 
-				foreach (var group in category.Groups)
+				this.AddChild(scrollable);
+
+				// Force TopToBottom flowlayout contained in scrollable as AddChild target
+				this.TabContainer = tabContainer;
+
+				this.theme = theme;
+				this.printer = printer;
+				this.settingsContext = settingsContext;
+				this.isPrimarySettingsView = isPrimarySettingsView;
+
+				this.TabBar.BackgroundColor = theme.TabBarBackground;
+
+				tabIndexForItem = 0;
+
+				var userLevel = SettingsOrganizer.Instance.UserLevels[UserLevel];
+
+				this.settingsRows = new List<(GuiWidget, SliceSettingData)>();
+
+				allUiFields = new Dictionary<string, UIField>();
+
+				// Loop over categories creating a tab for each
+				foreach (var category in userLevel.Categories)
 				{
-					if (group.Name == "Connection")
+					if (category.Name == "Printer"
+						&& (settingsContext.ViewFilter == NamedSettingsLayers.Material || settingsContext.ViewFilter == NamedSettingsLayers.Quality))
 					{
-						categoryPanel.AddChild(
-							this.CreateOemProfileInfoRow());
+						continue;
 					}
 
-					var groupSection = this.CreateGroupSection(group);
-
-					groupSection.Name = group.Name + " Panel";
-
-					if (groupSection.Descendants<SliceSettingsRow>().Any())
+					var categoryPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 					{
-						categoryPanel.AddChild(groupSection);
-					}
+						VAnchor = VAnchor.Fit,
+						HAnchor = HAnchor.Stretch,
+					};
 
-					hasVisibleSection = hasVisibleSection || groupSection.Checkbox.Checked;
-				}
-
-				if (!hasVisibleSection
-					&& categoryPanel.Children.OfType<SectionWidget>().FirstOrDefault() is SectionWidget sectionWidget)
-				{
-					sectionWidget.Checkbox.Checked = true;
-				}
-
-				if (categoryPanel.Descendants<SliceSettingsRow>().Any())
-				{
-					this.AddTab(
-						new ToolTab(
-							category.Name.Localize(),
-							this,
-							categoryPanel,
-							theme,
-							hasClose: false,
-							pointSize: theme.DefaultFontSize)
-						{
-							Name = category.Name + " Tab",
-							InactiveTabColor = Color.Transparent,
-							ActiveTabColor = theme.ActiveTabColor
-						});
-				}
-			}
-
-			this.TabBar.AddChild(new HorizontalSpacer());
-
-			var searchButton = theme.CreateSearchButton();
-			searchButton.Click += (s, e) =>
-			{
-				filteredItemsHeading.Visible = false;
-				searchPanel.searchInput.Visible = true;
-
-				searchPanel.Visible = true;
-				searchPanel.searchInput.Focus();
-				this.TabBar.Visible = false;
-			};
-
-			this.TabBar.AddChild(searchButton);
-
-			searchButton.VAnchor = VAnchor.Center;
-
-			searchButton.VAnchorChanged += (s, e) => Console.WriteLine();
-
-			// Restore the last selected tab
-			if (int.TryParse(UserSettings.Instance.get(databaseMRUKey), out int tabIndex)
-				&& tabIndex >= 0
-				&& tabIndex < this.TabCount)
-			{
-				this.SelectedTabIndex = tabIndex;
-			}
-			else
-			{
-				this.SelectedTabIndex = 0;
-			}
-
-			// Store the last selected tab on change
-			this.ActiveTabChanged += (s, e) =>
-			{
-				if (settingsContext.IsPrimarySettingsView)
-				{
-					UserSettings.Instance.set(databaseMRUKey, this.SelectedTabIndex.ToString());
-				}
-			};
-
-			ActiveSliceSettings.SettingChanged.RegisterEvent(
-				(s, e) =>
-				{
-					if (e is StringEventArgs stringEvent)
+					using (categoryPanel.LayoutLock())
 					{
-						string settingsKey = stringEvent.Data;
-						if (this.allUiFields.TryGetValue(settingsKey, out UIField uifield))
+						// Loop over all groups in this tab and add their content
+						bool hasVisibleSection = false;
+
+						foreach (var group in category.Groups)
 						{
-							string currentValue = settingsContext.GetValue(settingsKey);
-							if (uifield.Value != currentValue
-								|| settingsKey == "com_port")
+							if (group.Name == "Connection")
 							{
-								uifield.SetValue(
-									currentValue,
-									userInitiated: false);
+								categoryPanel.AddChild(
+									this.CreateOemProfileInfoRow());
 							}
+
+							var groupSection = this.CreateGroupSection(group);
+
+							groupSection.Name = group.Name + " Panel";
+
+							if (groupSection.Descendants<SliceSettingsRow>().Any())
+							{
+								categoryPanel.AddChild(groupSection);
+							}
+
+							hasVisibleSection = hasVisibleSection || groupSection.Checkbox.Checked;
+						}
+
+						if (!hasVisibleSection
+							&& categoryPanel.Children.OfType<SectionWidget>().FirstOrDefault() is SectionWidget sectionWidget)
+						{
+							sectionWidget.Checkbox.Checked = true;
+						}
+
+						if (categoryPanel.Descendants<SliceSettingsRow>().Any())
+						{
+							this.AddTab(
+								new ToolTab(
+									category.Name.Localize(),
+									this,
+									categoryPanel,
+									theme,
+									hasClose: false,
+									pointSize: theme.DefaultFontSize)
+								{
+									Name = category.Name + " Tab",
+									InactiveTabColor = Color.Transparent,
+									ActiveTabColor = theme.ActiveTabColor
+								});
 						}
 					}
-				},
-				ref unregisterEvents);
+
+					categoryPanel.PerformLayout();
+				}
+
+				this.TabBar.AddChild(new HorizontalSpacer());
+
+				var searchButton = theme.CreateSearchButton();
+				searchButton.Click += (s, e) =>
+				{
+					filteredItemsHeading.Visible = false;
+					searchPanel.searchInput.Visible = true;
+
+					searchPanel.Visible = true;
+					searchPanel.searchInput.Focus();
+					this.TabBar.Visible = false;
+				};
+
+				this.TabBar.AddChild(searchButton);
+
+				searchButton.VAnchor = VAnchor.Center;
+
+				searchButton.VAnchorChanged += (s, e) => Console.WriteLine();
+
+				// Restore the last selected tab
+				if (int.TryParse(UserSettings.Instance.get(databaseMRUKey), out int tabIndex)
+					&& tabIndex >= 0
+					&& tabIndex < this.TabCount)
+				{
+					this.SelectedTabIndex = tabIndex;
+				}
+				else
+				{
+					this.SelectedTabIndex = 0;
+				}
+
+				// Store the last selected tab on change
+				this.ActiveTabChanged += (s, e) =>
+				{
+					if (settingsContext.IsPrimarySettingsView)
+					{
+						UserSettings.Instance.set(databaseMRUKey, this.SelectedTabIndex.ToString());
+					}
+				};
+
+				ActiveSliceSettings.SettingChanged.RegisterEvent(
+					(s, e) =>
+					{
+						if (e is StringEventArgs stringEvent)
+						{
+							string settingsKey = stringEvent.Data;
+							if (this.allUiFields.TryGetValue(settingsKey, out UIField uifield))
+							{
+								string currentValue = settingsContext.GetValue(settingsKey);
+								if (uifield.Value != currentValue
+									|| settingsKey == "com_port")
+								{
+									uifield.SetValue(
+										currentValue,
+										userInitiated: false);
+								}
+							}
+						}
+					},
+					ref unregisterEvents);
+			}
+
+			this.PerformLayout();
 		}
 
 		public enum ExpansionMode { Expanded, Collapsed }
@@ -490,34 +503,39 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			bool firstRow = true;
 			GuiWidget settingsRow = null;
 
-			foreach (var subGroup in group.SubGroups)
+			using (groupPanel.LayoutLock())
 			{
-				// Add SettingRows for subgroup
-				foreach (SliceSettingData settingData in subGroup.Settings)
+				foreach (var subGroup in group.SubGroups)
 				{
-					// Note: tab sections may disappear if / when they are empty, as controlled by:
-					// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
-					bool settingShouldBeShown = CheckIfShouldBeShown(settingData, settingsContext);
-
-					if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName)
-						&& settingShouldBeShown)
+					// Add SettingRows for subgroup
+					foreach (SliceSettingData settingData in subGroup.Settings)
 					{
-						settingsRow = CreateItemRow(settingData);
+						// Note: tab sections may disappear if / when they are empty, as controlled by:
+						// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
+						bool settingShouldBeShown = CheckIfShouldBeShown(settingData, settingsContext);
 
-						if (firstRow)
+						if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName)
+							&& settingShouldBeShown)
 						{
-							// First row needs top and bottom border
-							settingsRow.Border = new BorderDouble(0, 1);
+							settingsRow = CreateItemRow(settingData);
 
-							firstRow = false;
+							if (firstRow)
+							{
+								// First row needs top and bottom border
+								settingsRow.Border = new BorderDouble(0, 1);
+
+								firstRow = false;
+							}
+
+							this.settingsRows.Add((settingsRow, settingData));
+
+							groupPanel.AddChild(settingsRow);
 						}
-
-						this.settingsRows.Add((settingsRow, settingData));
-
-						groupPanel.AddChild(settingsRow);
 					}
 				}
 			}
+
+			groupPanel.PerformLayout();
 
 			// Hide border on last item in group
 			if (settingsRow != null)
@@ -644,19 +662,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					title = "Custom Profile".Localize();
 				}
 
-				row.AddChild(new TextWidget(title, pointSize: 9)
+				using (row.LayoutLock())
 				{
-					Margin = new BorderDouble(0, 4, 10, 4),
-					TextColor = theme.Colors.PrimaryTextColor,
-				});
+					row.AddChild(new TextWidget(title, pointSize: 9)
+					{
+						Margin = new BorderDouble(0, 4, 10, 4),
+						TextColor = theme.Colors.PrimaryTextColor,
+					});
 
-				row.AddChild(new HorizontalSpacer());
+					row.AddChild(new HorizontalSpacer());
 
-				row.AddChild(new TextWidget(lastUpdateTime, pointSize: 9)
-				{
-					Margin = new BorderDouble(0, 4, 10, 4),
-					TextColor = theme.Colors.PrimaryTextColor,
-				});
+					row.AddChild(new TextWidget(lastUpdateTime, pointSize: 9)
+					{
+						Margin = new BorderDouble(0, 4, 10, 4),
+						TextColor = theme.Colors.PrimaryTextColor,
+					});
+				}
+
+				row.PerformLayout();
 
 				dataArea.AddChild(row);
 			}

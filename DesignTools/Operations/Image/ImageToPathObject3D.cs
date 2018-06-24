@@ -89,32 +89,35 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					_histogramRawCache = new ImageBuffer(256, 100);
 					var image = Image;
-					var counts = new int[_histogramRawCache.Width];
-					var function = ThresholdFunction;
-
-					byte[] buffer = image.GetBuffer();
-					int strideInBytes = image.StrideInBytes();
-					for (int y = 0; y < image.Height; y++)
+					if (image != null)
 					{
-						int imageBufferOffset = image.GetBufferOffsetY(y);
-						int thresholdBufferOffset = y * image.Width;
+						var counts = new int[_histogramRawCache.Width];
+						var function = ThresholdFunction;
 
-						for (int x = 0; x < image.Width; x++)
+						byte[] buffer = image.GetBuffer();
+						int strideInBytes = image.StrideInBytes();
+						for (int y = 0; y < image.Height; y++)
 						{
-							int imageBufferOffsetWithX = imageBufferOffset + x * 4;
-							var color = GetRGBA(buffer, imageBufferOffsetWithX);
-							counts[(int)(function.Transform(color) * (_histogramRawCache.Width - 1))]++;
-						}
-					}
+							int imageBufferOffset = image.GetBufferOffsetY(y);
+							int thresholdBufferOffset = y * image.Width;
 
-					double max = counts.Select((value, index) => new { value, index })
-						.OrderByDescending(vi => vi.value)
-						.First().value;
-					var graphics2D2 = _histogramRawCache.NewGraphics2D();
-					graphics2D2.Clear(Color.White);
-					for (int i = 0; i < 256; i++)
-					{
-						graphics2D2.Line(i, 0, i, Easing.Exponential.Out(counts[i] / max) * _histogramRawCache.Height, Color.Black);
+							for (int x = 0; x < image.Width; x++)
+							{
+								int imageBufferOffsetWithX = imageBufferOffset + x * 4;
+								var color = GetRGBA(buffer, imageBufferOffsetWithX);
+								counts[(int)(function.Transform(color) * (_histogramRawCache.Width - 1))]++;
+							}
+						}
+
+						double max = counts.Select((value, index) => new { value, index })
+							.OrderByDescending(vi => vi.value)
+							.First().value;
+						var graphics2D2 = _histogramRawCache.NewGraphics2D();
+						graphics2D2.Clear(Color.White);
+						for (int i = 0; i < 256; i++)
+						{
+							graphics2D2.Line(i, 0, i, Easing.Exponential.Out(counts[i] / max) * _histogramRawCache.Height, Color.Black);
+						}
 					}
 				}
 
@@ -221,7 +224,6 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						GL.Vertex3(firstMove.X, firstMove.Y, aabb.maxXYZ.Z + 0.002);
 						GL.Vertex3(lastPosition.X, lastPosition.Y, aabb.maxXYZ.Z + 0.002);
-						int a = 0;
 					}
 
 					lastPosition = position;

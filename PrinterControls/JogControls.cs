@@ -73,135 +73,142 @@ namespace MatterHackers.MatterControl
 
 			FlowLayoutWidget allControlsLeftToRight = new FlowLayoutWidget();
 
-			FlowLayoutWidget xYZWithDistance = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			using (allControlsLeftToRight.LayoutLock())
 			{
-				FlowLayoutWidget xYZControls = new FlowLayoutWidget();
+				FlowLayoutWidget xYZWithDistance = new FlowLayoutWidget(FlowDirection.TopToBottom);
 				{
-					GuiWidget xyGrid = CreateXYGridControl(colors, distanceBetweenControls, buttonSeparationDistance);
-					xYZControls.AddChild(xyGrid);
+					FlowLayoutWidget xYZControls = new FlowLayoutWidget();
+					{
+						GuiWidget xyGrid = CreateXYGridControl(colors, distanceBetweenControls, buttonSeparationDistance);
+						xYZControls.AddChild(xyGrid);
 
-					FlowLayoutWidget zButtons = JogControls.CreateZButtons(printer, buttonSeparationDistance, out zPlusControl, out zMinusControl, colors, theme);
-					zButtons.VAnchor = VAnchor.Bottom;
-					xYZControls.AddChild(zButtons);
-					xYZWithDistance.AddChild(xYZControls);
+						FlowLayoutWidget zButtons = JogControls.CreateZButtons(printer, buttonSeparationDistance, out zPlusControl, out zMinusControl, colors, theme);
+						zButtons.VAnchor = VAnchor.Bottom;
+						xYZControls.AddChild(zButtons);
+						xYZWithDistance.AddChild(xYZControls);
+					}
+
+					// add in some movement radio buttons
+					FlowLayoutWidget setMoveDistanceControl = new FlowLayoutWidget();
+
+					{
+						var moveRadioButtons = new FlowLayoutWidget();
+						var radioList = new List<GuiWidget>();
+
+						movePointZeroTwoMmButton = theme.CreateMicroRadioButton("0.02", radioList);
+						movePointZeroTwoMmButton.CheckedStateChanged += (s, e) =>
+						{
+							if (movePointZeroTwoMmButton.Checked)
+							{
+								SetXYZMoveAmount(.02);
+							}
+						};
+						moveRadioButtons.AddChild(movePointZeroTwoMmButton);
+
+						var pointOneButton = theme.CreateMicroRadioButton("0.1", radioList);
+						pointOneButton.CheckedStateChanged += (s, e) =>
+						{
+							if (pointOneButton.Checked)
+							{
+								SetXYZMoveAmount(.1);
+							}
+						};
+						moveRadioButtons.AddChild(pointOneButton);
+
+						moveOneMmButton = theme.CreateMicroRadioButton("1", radioList);
+						moveOneMmButton.CheckedStateChanged += (s, e) =>
+						{
+							if (moveOneMmButton.Checked)
+							{
+								SetXYZMoveAmount(1);
+							}
+						};
+						moveRadioButtons.AddChild(moveOneMmButton);
+
+						tooBigForBabyStepping = new DisableableWidget()
+						{
+							VAnchor = VAnchor.Fit,
+							HAnchor = HAnchor.Fit
+						};
+
+						var tooBigFlowLayout = new FlowLayoutWidget();
+						tooBigForBabyStepping.AddChild(tooBigFlowLayout);
+
+						tenButton = theme.CreateMicroRadioButton("10", radioList);
+						tenButton.CheckedStateChanged += (s, e) =>
+						{
+							if (tenButton.Checked)
+							{
+								SetXYZMoveAmount(10);
+							}
+						};
+						tooBigFlowLayout.AddChild(tenButton);
+
+						oneHundredButton = theme.CreateMicroRadioButton("100", radioList);
+						oneHundredButton.CheckedStateChanged += (s, e) =>
+						{
+							if (oneHundredButton.Checked)
+							{
+								SetXYZMoveAmount(100);
+							}
+						};
+						tooBigFlowLayout.AddChild(oneHundredButton);
+
+						moveRadioButtons.AddChild(tooBigForBabyStepping);
+
+						tenButton.Checked = true;
+						SetXYZMoveAmount(10);
+						moveRadioButtons.Margin = new BorderDouble(0, 3);
+
+						setMoveDistanceControl.AddChild(moveRadioButtons);
+
+						tooBigFlowLayout.AddChild(new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8)
+						{
+							Margin = new BorderDouble(left: 10),
+							VAnchor = VAnchor.Center
+						});
+					}
+
+					setMoveDistanceControl.HAnchor = HAnchor.Left;
+					xYZWithDistance.AddChild(setMoveDistanceControl);
 				}
 
-				// add in some movement radio buttons
-				FlowLayoutWidget setMoveDistanceControl = new FlowLayoutWidget();
-
-				{
-					var moveRadioButtons = new FlowLayoutWidget();
-					var radioList = new List<GuiWidget>();
-
-					movePointZeroTwoMmButton = theme.CreateMicroRadioButton("0.02", radioList);
-					movePointZeroTwoMmButton.CheckedStateChanged += (s, e) =>
-					{
-						if (movePointZeroTwoMmButton.Checked)
-						{
-							SetXYZMoveAmount(.02);
-						}
-					};
-					moveRadioButtons.AddChild(movePointZeroTwoMmButton);
-
-					var pointOneButton = theme.CreateMicroRadioButton("0.1", radioList);
-					pointOneButton.CheckedStateChanged += (s, e) =>
-					{
-						if (pointOneButton.Checked)
-						{
-							SetXYZMoveAmount(.1);
-						}
-					};
-					moveRadioButtons.AddChild(pointOneButton);
-
-					moveOneMmButton = theme.CreateMicroRadioButton("1", radioList);
-					moveOneMmButton.CheckedStateChanged += (s, e) =>
-					{
-						if (moveOneMmButton.Checked)
-						{
-							SetXYZMoveAmount(1);
-						}
-					};
-					moveRadioButtons.AddChild(moveOneMmButton);
-
-					tooBigForBabyStepping = new DisableableWidget()
-					{
-						VAnchor = VAnchor.Fit,
-						HAnchor = HAnchor.Fit
-					};
-
-					var tooBigFlowLayout = new FlowLayoutWidget();
-					tooBigForBabyStepping.AddChild(tooBigFlowLayout);
-
-					tenButton = theme.CreateMicroRadioButton("10", radioList);
-					tenButton.CheckedStateChanged += (s, e) =>
-					{
-						if (tenButton.Checked)
-						{
-							SetXYZMoveAmount(10);
-						}
-					};
-					tooBigFlowLayout.AddChild(tenButton);
-
-					oneHundredButton = theme.CreateMicroRadioButton("100", radioList);
-					oneHundredButton.CheckedStateChanged += (s, e) =>
-					{
-						if (oneHundredButton.Checked)
-						{
-							SetXYZMoveAmount(100);
-						}
-					};
-					tooBigFlowLayout.AddChild(oneHundredButton);
-
-					moveRadioButtons.AddChild(tooBigForBabyStepping);
-
-					tenButton.Checked = true;
-					SetXYZMoveAmount(10);
-					moveRadioButtons.Margin = new BorderDouble(0, 3);
-
-					setMoveDistanceControl.AddChild(moveRadioButtons);
-
-					tooBigFlowLayout.AddChild(new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8)
-					{
-						Margin = new BorderDouble(left: 10),
-						VAnchor = VAnchor.Center
-					});
-				}
-
-				setMoveDistanceControl.HAnchor = HAnchor.Left;
-				xYZWithDistance.AddChild(setMoveDistanceControl);
-			}
-
-			allControlsLeftToRight.AddChild(xYZWithDistance);
+				allControlsLeftToRight.AddChild(xYZWithDistance);
 
 #if !__ANDROID__
-			allControlsLeftToRight.AddChild(GetHotkeyControlContainer());
+				allControlsLeftToRight.AddChild(GetHotkeyControlContainer());
 #endif
-			var barBetweenZAndE = new GuiWidget(1, 1)
+				var barBetweenZAndE = new GuiWidget(1, 1)
+				{
+					VAnchor = VAnchor.Stretch,
+					BackgroundColor = colors.ZColor,
+					Margin = new BorderDouble(distanceBetweenControls, 5)
+				};
+				allControlsLeftToRight.AddChild(barBetweenZAndE);
+
+				FlowLayoutWidget eButtons = CreateEButtons(buttonSeparationDistance, colors);
+				disableableEButtons = new DisableableWidget()
+				{
+					Name = "disableableEButtons",
+					HAnchor = HAnchor.Fit,
+					VAnchor = VAnchor.Fit | VAnchor.Top,
+				};
+				disableableEButtons.AddChild(eButtons);
+
+				allControlsLeftToRight.AddChild(disableableEButtons);
+				allControlsTopToBottom.AddChild(allControlsLeftToRight);
+			}
+			allControlsLeftToRight.PerformLayout();
+
+			using (this.LayoutLock())
 			{
-				VAnchor = VAnchor.Stretch,
-				BackgroundColor = colors.ZColor,
-				Margin = new BorderDouble(distanceBetweenControls, 5)
-			};
-			allControlsLeftToRight.AddChild(barBetweenZAndE);
+				this.AddChild(allControlsTopToBottom);
+				this.HAnchor = HAnchor.Fit;
+				this.VAnchor = VAnchor.Fit;
+				Margin = new BorderDouble(3);
+			}
 
-			FlowLayoutWidget eButtons = CreateEButtons(buttonSeparationDistance, colors);
-			disableableEButtons = new DisableableWidget()
-			{
-				Name = "disableableEButtons",
-				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Fit | VAnchor.Top,
-			};
-			disableableEButtons.AddChild(eButtons);
-
-			allControlsLeftToRight.AddChild(disableableEButtons);
-			allControlsTopToBottom.AddChild(allControlsLeftToRight);
-
-			this.AddChild(allControlsTopToBottom);
-			this.HAnchor = HAnchor.Fit;
-			this.VAnchor = VAnchor.Fit;
-
-			Margin = new BorderDouble(3);
-
+			this.PerformLayout();
 			// this.HAnchor |= HAnchor.Stretch;
 		}
 
