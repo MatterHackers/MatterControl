@@ -120,9 +120,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				case CommunicationStates.Connected:
 					if(showSetupButton)
 					{
+						startPrintButton.Visible = false;
 						finishSetupButton.Visible = true;
 						finishSetupButton.Enabled = true;
-						startPrintButton.Visible = false;
 					}
 					else
 					{
@@ -138,9 +138,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				default:
 					if (showSetupButton)
 					{
+						startPrintButton.Visible = false;
 						finishSetupButton.Visible = true;
 						finishSetupButton.Enabled = false;
-						startPrintButton.Visible = false;
 					}
 					else
 					{
