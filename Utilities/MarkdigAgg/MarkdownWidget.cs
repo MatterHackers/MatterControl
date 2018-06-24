@@ -40,6 +40,18 @@ namespace Markdig.Agg
 				this.ScrollArea.VAnchor = VAnchor.Fit;
 			}
 
+			var lastScroll = this.TopLeftOffset;
+			this.ScrollPositionChanged += (s, e) =>
+			{
+				lastScroll = TopLeftOffset;
+			};
+
+			// make sure as the scrolling area changes height we maintain our current scroll position
+			this.ScrollArea.BoundsChanged += (s, e) =>
+			{
+				TopLeftOffset = lastScroll;
+			};
+
 			contentPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,

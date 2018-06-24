@@ -44,11 +44,6 @@ namespace MatterHackers.MatterControl
 	public class GuideAsset
 	{
 		/// <summary>
-		/// Where to find the gif or eventually movie file
-		/// </summary>
-		public string AnimationUri;
-
-		/// <summary>
 		/// The first level category this guide is part of
 		/// </summary>
 		public string Category;
@@ -64,12 +59,7 @@ namespace MatterHackers.MatterControl
 		public string MenuName;
 
 		/// <summary>
-		/// The long title that appears under the animation
-		/// </summary>
-		public string Title;
-
-		/// <summary>
-		/// The description that is under the title
+		/// The markdown to show
 		/// </summary>
 		public string Description;
 
