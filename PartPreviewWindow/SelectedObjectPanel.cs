@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			removeButton.Click += (s, e) =>
 			{
-				this.item.Remove(view3DWidget.Scene.UndoBuffer);
+				item.Remove(view3DWidget.Scene.UndoBuffer);
 				scene.SelectedItem = null;
 			};
 			scene.SelectionChanged += (s, e) => removeButton.Enabled = scene.SelectedItem?.CanRemove == true;
@@ -131,7 +131,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			overflowButton.DynamicPopupContent = () =>
 			{
 				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
-				popupMenu.CreateMenuItem("Rename");
+
+				var menuItem = popupMenu.CreateMenuItem("Rename");
+				menuItem.Click += (s, e) =>
+				{
+					DialogWindow.Show(
+						new InputBoxPage(
+							"Rename Item".Localize(),
+							"Name".Localize(),
+							item.Name,
+							"Enter New Name Here".Localize(),
+							"Rename".Localize(),
+							(newName) =>
+							{
+								item.Name = newName;
+								editorSectionWidget.Text = newName;
+							}));
+				};
 
 				popupMenu.CreateHorizontalLine();
 
