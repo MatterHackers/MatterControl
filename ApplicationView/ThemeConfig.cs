@@ -78,16 +78,18 @@ namespace MatterHackers.MatterControl
 		{
 			guiWidget.BackgroundColor = this.AccentMimimalOverlay;
 
-			switch(guiWidget)
+			Color hoverColor = new Color(this.AccentMimimalOverlay, 90);
+
+			switch (guiWidget)
 			{
 				case PopupMenuButton menuButton:
-					menuButton.HoverColor = new Color(this.AccentMimimalOverlay, 60);
+					menuButton.HoverColor = hoverColor;
 					break;
 				case SimpleFlowButton flowButton:
-					flowButton.HoverColor = new Color(this.AccentMimimalOverlay, 60);
+					flowButton.HoverColor = hoverColor;
 					break;
 				case SimpleButton button:
-					button.HoverColor = new Color(this.AccentMimimalOverlay, 60);
+					button.HoverColor = hoverColor;
 					break;
 			}
 		}
