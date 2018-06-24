@@ -91,12 +91,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(new PrinterConnectButton(printer, theme));
 			this.AddChild(new PrintButton(printerTabPage, printer, theme));
 
-			var sliceButton = new SliceButton(printer, printerTabPage, theme)
+			this.AddChild(new SliceButton(printer, printerTabPage, theme)
 			{
 				Name = "Generate Gcode Button",
 				Margin = theme.ButtonSpacing,
-			};
-			this.AddChild(sliceButton);
+			});
 
 			// Add vertical separator
 			this.AddChild(new ToolbarSeparator(theme)
