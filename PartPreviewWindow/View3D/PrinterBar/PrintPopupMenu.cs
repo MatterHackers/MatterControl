@@ -141,7 +141,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Name = "Start Print Button",
 					HAnchor = HAnchor.Right,
 					VAnchor = VAnchor.Absolute,
-					BackgroundColor = theme.MinimalShade
 				};
 				button.Click += (s, e) =>
 				{
@@ -163,6 +162,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					});
 				};
 				column.AddChild(button);
+
+				theme.ApplyPrimaryActionStyle(button);
 
 				return column;
 			};
