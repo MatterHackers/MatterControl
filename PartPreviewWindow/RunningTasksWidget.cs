@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -26,14 +26,10 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-//#define WITH_WRAPPER
 
 using System.Collections.Generic;
 using System.Linq;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -41,39 +37,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class RunningTasksWidget : GuiWidget
 	{
 		private FlowLayoutWidget pendingTasksList;
-		private ThemeConfig theme;
 
 		public RunningTasksWidget(ThemeConfig theme)
 		{
-			this.theme = theme;
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Fit;
 
-#if WITH_WRAPPER
-			pendingTasksList = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch
-			};
-
-			var pendingTasksContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				Margin = new BorderDouble(top: 100, left: 5),
-				Padding = new BorderDouble(4),
-				BackgroundColor = new Color(0, 0, 0, theme.OverlayAlpha),
-				HAnchor = HAnchor.Absolute | HAnchor.Left,
-				VAnchor = VAnchor.Top | VAnchor.Fit,
-				MinimumSize = new Vector2(250, 0)
-			};
-			this.AddChild(pendingTasksContainer);
-
-			var pendingTasksPanel = new SectionWidget("Running".Localize() + "...", pendingTasksList, theme, expandingContent: false)
-			{
-				HAnchor = HAnchor.Stretch,
-			};
-			pendingTasksContainer.AddChild(pendingTasksPanel);
-
-			pendingTasksList.Padding = new BorderDouble(0, 6);
-#else
 			pendingTasksList = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				BackgroundColor = theme.InteractionLayerOverlayColor,
@@ -82,7 +51,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				MinimumSize = new Vector2(325, 0)
 			};
 			this.AddChild(pendingTasksList);
-#endif
 
 			var tasks = ApplicationController.Instance.Tasks;
 
@@ -114,7 +82,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var taskRow = new RunningTaskRow("", taskItem, theme)
 				{
-					HAnchor = HAnchor.Stretch
+					HAnchor = HAnchor.Stretch,
+					BackgroundColor = theme.AccentMimimalOverlay
 				};
 
 				pendingTasksList.AddChild(taskRow);
