@@ -156,9 +156,13 @@ namespace MatterHackers.MatterControl.DesignTools
 				var showUpdate = context.item.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() as ShowUpdateButtonAttribute;
 				if (showUpdate != null)
 				{
-					var updateButton = theme.ButtonFactory.Generate("Update".Localize());
-					updateButton.Margin = new BorderDouble(5);
-					updateButton.HAnchor = HAnchor.Right;
+					var updateButton = new TextButton("Update".Localize(), theme)
+					{
+						Margin = 5,
+						BackgroundColor = theme.MinimalShade,
+						HAnchor = HAnchor.Right,
+						VAnchor = VAnchor.Absolute
+					};
 					updateButton.Click += (s, e) =>
 					{
 						context.item.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
