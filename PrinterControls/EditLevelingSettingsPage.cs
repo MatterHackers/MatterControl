@@ -116,22 +116,19 @@ namespace MatterHackers.MatterControl
 				scrollArrea.AddChild(leftRightEdit);
 			}
 
-			Button savePresetsButton = textImageButtonFactory.Generate("Save".Localize());
-			savePresetsButton.Click += (s, e) =>
+			var savePresetsButton = theme.CreateDialogButton("Save".Localize());
+			savePresetsButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				UiThread.RunOnIdle(() =>
+				PrintLevelingData newLevelingData = printer.Settings.Helpers.GetPrintLevelingData();
+
+				for (int i = 0; i < newLevelingData.SampledPositions.Count; i++)
 				{
-					PrintLevelingData newLevelingData = printer.Settings.Helpers.GetPrintLevelingData();
+					newLevelingData.SampledPositions[i] = positions[i];
+				}
 
-					for (int i = 0; i < newLevelingData.SampledPositions.Count; i++)
-					{
-						newLevelingData.SampledPositions[i] = positions[i];
-					}
-
-					printer.Settings.Helpers.SetPrintLevelingData(newLevelingData, false);
-					this.DialogWindow.Close();
-				});
-			};
+				printer.Settings.Helpers.SetPrintLevelingData(newLevelingData, false);
+				this.DialogWindow.Close();
+			});
 
 			this.AddPageAction(savePresetsButton);
 		}
