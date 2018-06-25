@@ -230,7 +230,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 			else
 			{
-				var container = new FlowLayoutWidget(FlowDirection.TopToBottom);
+				var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				{
+					Selectable = false
+				};
 				this.AddChild(container);
 
 				imageWidget = new ImageWidget(scaledWidth, scaledHeight)
