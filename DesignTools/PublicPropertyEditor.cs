@@ -601,14 +601,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				var row = CreateSettingsRow(context.item.Persistable ? "Registered".Localize() : "Demo Mode".Localize());
 
-				Button detailsLink = theme.ButtonFactory.Generate("Unlock".Localize(), AggContext.StaticData.LoadIcon("locked.png", 16, 16));
-				detailsLink.BackgroundColor = theme.Colors.PrimaryAccentColor.AdjustContrast(theme.Colors.PrimaryTextColor, 10).ToColor();
-				detailsLink.Margin = new BorderDouble(5);
+				var detailsLink = new TextIconButton("Unlock".Localize(), AggContext.StaticData.LoadIcon("locked.png", 16, 16, theme.InvertIcons), theme)
+				{
+					Margin = 5
+				};
 				detailsLink.Click += (s, e) =>
 				{
 					ApplicationController.Instance.LaunchBrowser(UnlockLinkAttribute.UnlockPageBaseUrl + unlockLink.UnlockPageLink);
 				};
 				row.AddChild(detailsLink);
+				theme.ApplyPrimaryActionStyle(detailsLink);
+
 				editControlsContainer.AddChild(row);
 			}
 		}
