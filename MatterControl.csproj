@@ -254,6 +254,7 @@
     <Compile Include="PrinterControls\JogControls.cs" />
     <Compile Include="PrinterControls\MacroDetailPage.cs" />
     <Compile Include="PrinterControls\MacroListPage.cs" />
+    <Compile Include="PrinterControls\MovementSpeedsPage.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterSetup.cs" />
     <Compile Include="RootSystemWindow.cs" />
     <Compile Include="SetupWizard\DesignSpaceHelp.cs" />
@@ -465,7 +466,6 @@
     <Compile Include="CustomWidgets\EditableNumberDisplay.cs" />
     <Compile Include="PartPreviewWindow\PlatingHelper.cs" />
     <Compile Include="PrinterControls\ControlWidgets\MacroControls.cs" />
-    <Compile Include="PrinterControls\EditManualMovementSpeedsWindow.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\MappingClasses.cs" />
     <Compile Include="ApplicationView\WidescreenPanel.cs" />
     <Compile Include="CustomWidgets\ClickWidget.cs">

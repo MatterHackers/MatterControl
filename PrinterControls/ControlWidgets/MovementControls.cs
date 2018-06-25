@@ -46,7 +46,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private PrinterConfig printer;
 		private ThemeConfig theme;
 		public FlowLayoutWidget manualControlsLayout;
-		private EditManualMovementSpeedsWindow editManualMovementSettingsWindow;
 		internal JogControls jogControls;
 
 		// Provides a list of DisableableWidgets controls that can be toggled on/off at runtime
@@ -97,18 +96,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private void EditOptions()
 		{
-			if (editManualMovementSettingsWindow == null)
-			{
-				editManualMovementSettingsWindow = new EditManualMovementSpeedsWindow("Movement Speeds".Localize(), printer.Settings.Helpers.GetMovementSpeedsString(), SetMovementSpeeds);
-				editManualMovementSettingsWindow.Closed += (s, e) =>
-				{
-					editManualMovementSettingsWindow = null;
-				};
-			}
-			else
-			{
-				editManualMovementSettingsWindow.BringToFront();
-			}
+			DialogWindow.Show(new MovementSpeedsPage(printer));
 		}
 
 		/// <summary>
@@ -126,15 +114,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			DisableableWidgets.Add(container);
 
 			return container;
-		}
-
-		private void SetMovementSpeeds(string speedString)
-		{
-			if (!string.IsNullOrEmpty(speedString))
-			{
-				printer.Settings.SetValue(SettingsKey.manual_movement_speeds, speedString);
-				printer.Bed.GCodeRenderer?.Clear3DGCode();
-			}
 		}
 
 		private FlowLayoutWidget GetHomeButtonBar()
