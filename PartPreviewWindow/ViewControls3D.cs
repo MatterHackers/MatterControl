@@ -157,10 +157,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			string iconPath;
 
-			var commonMargin = theme.ButtonSpacing;
-
-			double height = theme.ButtonFactory.Options.FixedHeight;
-
 			this.AddChild(CreateBedButton(sceneContext, theme));
 
 			this.AddChild(new ToolbarSeparator(theme));
@@ -168,7 +164,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var homeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", theme.InvertIcons), theme)
 			{
 				ToolTipText = "Reset View".Localize(),
-				Margin = commonMargin
+				Margin = theme.ButtonSpacing
 			};
 			homeButton.Click += (s, e) => ResetView?.Invoke(this, null);
 			AddChild(homeButton);
@@ -178,8 +174,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "3D View Undo",
 				ToolTipText = "Undo",
 				Enabled = false,
-				MinimumSize = new Vector2(height, height),
-				Margin = commonMargin,
+				Margin = theme.ButtonSpacing,
 				VAnchor = VAnchor.Center
 			};
 			undoButton.Click += (sender, e) =>
@@ -193,8 +188,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var redoButton = new IconButton(AggContext.StaticData.LoadIcon("Redo_grey_16x.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "3D View Redo",
-				Margin = commonMargin,
-				MinimumSize = new Vector2(height, height),
+				Margin = theme.ButtonSpacing,
 				ToolTipText = "Redo",
 				Enabled = false,
 				VAnchor = VAnchor.Center
@@ -223,7 +217,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					SiblingRadioButtonList = buttonGroupA,
 					ToolTipText = "Rotate (Alt + Left Mouse)".Localize(),
-					Margin = commonMargin
+					Margin = theme.ButtonSpacing
 				};
 				rotateButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Rotate;
 				buttonGroupA.Add(rotateButton);
@@ -234,7 +228,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					SiblingRadioButtonList = buttonGroupA,
 					ToolTipText = "Move (Shift + Left Mouse)".Localize(),
-					Margin = commonMargin
+					Margin = theme.ButtonSpacing
 				};
 				translateButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Translate;
 				buttonGroupA.Add(translateButton);
@@ -245,7 +239,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					SiblingRadioButtonList = buttonGroupA,
 					ToolTipText = "Zoom (Ctrl + Left Mouse)".Localize(),
-					Margin = commonMargin
+					Margin = theme.ButtonSpacing
 				};
 				scaleButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Scale;
 				buttonGroupA.Add(scaleButton);
@@ -261,7 +255,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					SiblingRadioButtonList = buttonGroupA,
 					ToolTipText = "Select Part".Localize(),
-					Margin = commonMargin
+					Margin = theme.ButtonSpacing
 				};
 				partSelectButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.PartSelect;
 				buttonGroupA.Add(partSelectButton);

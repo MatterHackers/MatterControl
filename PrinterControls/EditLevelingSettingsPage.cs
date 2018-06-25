@@ -33,7 +33,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
@@ -43,7 +42,6 @@ namespace MatterHackers.MatterControl
 		public EditLevelingSettingsPage(PrinterConfig printer)
 		{
 			var theme = ApplicationController.Instance.Theme;
-			var textImageButtonFactory = theme.ButtonFactory;
 
 			this.WindowTitle = "Leveling Settings".Localize();
 			this.HeaderText = "Sampled Positions".Localize();
@@ -116,22 +114,19 @@ namespace MatterHackers.MatterControl
 				scrollArrea.AddChild(leftRightEdit);
 			}
 
-			Button savePresetsButton = textImageButtonFactory.Generate("Save".Localize());
-			savePresetsButton.Click += (s, e) =>
+			var savePresetsButton = theme.CreateDialogButton("Save".Localize());
+			savePresetsButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				UiThread.RunOnIdle(() =>
+				PrintLevelingData newLevelingData = printer.Settings.Helpers.GetPrintLevelingData();
+
+				for (int i = 0; i < newLevelingData.SampledPositions.Count; i++)
 				{
-					PrintLevelingData newLevelingData = printer.Settings.Helpers.GetPrintLevelingData();
+					newLevelingData.SampledPositions[i] = positions[i];
+				}
 
-					for (int i = 0; i < newLevelingData.SampledPositions.Count; i++)
-					{
-						newLevelingData.SampledPositions[i] = positions[i];
-					}
-
-					printer.Settings.Helpers.SetPrintLevelingData(newLevelingData, false);
-					this.DialogWindow.Close();
-				});
-			};
+				printer.Settings.Helpers.SetPrintLevelingData(newLevelingData, false);
+				this.DialogWindow.Close();
+			});
 
 			this.AddPageAction(savePresetsButton);
 		}

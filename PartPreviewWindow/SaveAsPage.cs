@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl
 				};
 				itemNameWidget.ActualTextEditWidget.EnterPressed += (s, e) =>
 				{
-					acceptButton.OnClick(new MouseEventArgs(MouseButtons.Left, 1, 1, 1, -1));
+					acceptButton.InvokeClick();
 				};
 				contentRow.AddChild(itemNameWidget);
 			}

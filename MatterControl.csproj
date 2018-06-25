@@ -241,7 +241,6 @@
     <Compile Include="PartPreviewWindow\SectionWidget.cs" />
     <Compile Include="PartPreviewWindow\SliceLayerSelector.cs" />
     <Compile Include="PartPreviewWindow\Toolbar.cs" />
-    <Compile Include="PartPreviewWindow\View3D\PrinterBar\CancelButton.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\PauseResumeButton.cs" />
     <Compile Include="Library\ReadOnlyStreamItem.cs" />
     <Compile Include="PartPreviewWindow\View3D\SideBar\ScaleControl.cs" />

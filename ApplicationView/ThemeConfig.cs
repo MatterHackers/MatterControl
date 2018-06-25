@@ -112,6 +112,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public BorderDouble TextButtonPadding { get; } = new BorderDouble(14, 0);
+
 		public BorderDouble ButtonSpacing { get; }
 
 		public BorderDouble ToolbarPadding { get; set; } = 3;
@@ -211,11 +213,11 @@ namespace MatterHackers.MatterControl
 			commonOptions.HoverTextColor = colors.PrimaryTextColor;
 			commonOptions.PressedTextColor = colors.PrimaryTextColor;
 			commonOptions.DisabledTextColor = colors.TertiaryBackgroundColor;
-			commonOptions.Margin = new BorderDouble(14, 0);
+			commonOptions.Margin = this.TextButtonPadding;
 			commonOptions.FontSize = this.DefaultFontSize;
 			commonOptions.ImageSpacing = 8;
 			commonOptions.BorderWidth = 0;
-			commonOptions.FixedHeight = 32;
+			commonOptions.FixedHeight = this.ButtonHeight;
 
 			this.TabBodyBackground = this.ResolveColor(
 				colors.TertiaryBackgroundColor,

@@ -179,7 +179,7 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(footerRow);
 
-			var sendButton = theme.ButtonFactory.Generate("Send".Localize());
+			var sendButton = theme.CreateDialogButton("Send".Localize());
 			sendButton.Margin = 0;
 			sendButton.Click += (s, e) =>
 			{
@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl
 			};
 			footerRow.AddChild(sendButton);
 
-			Button clearButton = theme.ButtonFactory.Generate("Clear".Localize());
+			var clearButton = theme.CreateDialogButton("Clear".Localize());
 			clearButton.Margin = theme.ButtonSpacing;
 			clearButton.Click += (s, e) =>
 			{
@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl
 			};
 			footerRow.AddChild(clearButton);
 
-			Button exportButton = theme.ButtonFactory.Generate("Export".Localize());
+			var exportButton = theme.CreateDialogButton("Export".Localize());
 			exportButton.Margin = theme.ButtonSpacing;
 			exportButton.Click += (s, e) =>
 			{

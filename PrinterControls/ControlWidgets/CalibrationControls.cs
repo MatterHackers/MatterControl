@@ -42,14 +42,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 	{
 		private EventHandler unregisterEvents;
 
-		private TextImageButtonFactory buttonFactory;
 		private PrinterConfig printer;
 
 		private CalibrationControls(PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.printer = printer;
-			this.buttonFactory = theme.ButtonFactory;
 
 			// add in the controls for configuring auto leveling
 			{
