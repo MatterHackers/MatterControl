@@ -319,7 +319,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				tabControl,
 				new PartTabPage(null, sceneContext, theme, ""),
 				theme,
-				AggContext.StaticData.LoadIcon("cube.png"))
+				AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons))
 			{
 				Name = "newPart" + tabControl.AllTabs.Count(),
 				MinimumSize = new Vector2(120, theme.TabButtonHeight)
