@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			: this (new TextButton(text, theme)
 			{
 				Selectable = false,
-				Padding = theme.ButtonFactory.Options.Margin.Clone(right: 5)
+				Padding = theme.TextButtonPadding.Clone(right: 5)
 			}, theme)
 		{
 			this.DrawArrow = true;

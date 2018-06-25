@@ -171,7 +171,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(new TextButton("Print".Localize(), theme)
 			{
 				Selectable = false,
-				Padding = theme.ButtonFactory.Options.Margin.Clone(right: 5)
+				Padding = theme.TextButtonPadding.Clone(right: 5)
 			});
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
