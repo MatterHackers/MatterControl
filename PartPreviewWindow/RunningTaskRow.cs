@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				FillColor = ActiveTheme.Instance.PrimaryAccentColor,
 				BorderColor = Color.Transparent,
 				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
-				Margin = new BorderDouble(32, 4, theme.ButtonHeight * 2 + 5, 0),
+				Margin = new BorderDouble(32, 7, theme.ButtonHeight * 2 + 14, 0),
 			};
 			rowContainer.AddChild(progressBar);
 
