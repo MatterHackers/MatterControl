@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			var progressBackgroundColor = borderColor.AdjustAlpha(35);
+			var progressBackgroundColor = new Color(borderColor, 35);
 
 			// Add new items
 			foreach (var taskItem in tasks.RunningTasks.Where(t => !displayedTasks.Contains(t)))
