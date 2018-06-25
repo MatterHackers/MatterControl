@@ -355,7 +355,7 @@ namespace MatterHackers.MatterControl
 		// Compute a fixed color from a source and a target alpha
 		public Color ResolveColor(Color background, Color overlay)
 		{
-			return new BlenderRGBA().Blend(background, overlay);
+			return new BlenderBGRA().Blend(background, overlay);
 		}
 
 		public FlowLayoutWidget CreateMenuItems(PopupMenu popupMenu, IEnumerable<NamedAction> menuActions)
