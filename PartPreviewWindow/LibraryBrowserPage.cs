@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl
 {
 	public class LibraryBrowserPage : DialogPage
 	{
-		protected Button acceptButton = null;
+		protected GuiWidget acceptButton = null;
 		protected MHTextEditWidget itemNameWidget;
 		private ILibraryContext libraryNavContext;
 		protected ListView librarySelectorWidget;
@@ -46,7 +46,6 @@ namespace MatterHackers.MatterControl
 		public LibraryBrowserPage(Action<string, ILibraryWritableContainer> acceptCallback, string acceptButtonText)
 		{
 			FolderBreadCrumbWidget breadCrumbWidget = null;
-			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
 			this.WindowSize = new Vector2(480, 500);
 
@@ -78,7 +77,7 @@ namespace MatterHackers.MatterControl
 
 			contentRow.AddChild(librarySelectorWidget);
 
-			acceptButton = buttonFactory.Generate(acceptButtonText);
+			acceptButton = theme.CreateDialogButton(acceptButtonText);
 			acceptButton.Name = "Accept Button";
 			// Disable the save as button until the user actually selects a provider
 			acceptButton.Enabled = false;

@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
@@ -51,9 +52,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			FlowLayoutWidget buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			buttonContainer.HAnchor = HAnchor.Fit;
 
-			Button mirrorXButton = theme.ButtonFactory.Generate("X");
-			mirrorXButton.Name = "Mirror Button X";
-			mirrorXButton.Margin = theme.ButtonSpacing;
+			var mirrorXButton = new TextButton("X", theme)
+			{
+				Name = "Mirror Button X",
+				Margin = theme.ButtonSpacing,
+				BackgroundColor = theme.MinimalShade
+			};
 			mirrorXButton.Click += (s, e) =>
 			{
 				if (scene.HasSelection)
@@ -64,9 +68,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			buttonContainer.AddChild(mirrorXButton);
 
-			Button mirrorYButton = theme.ButtonFactory.Generate("Y");
-			mirrorYButton.Name = "Mirror Button Y";
-			mirrorYButton.Margin = theme.ButtonSpacing;
+			var mirrorYButton = new TextButton("Y", theme)
+			{
+				Name = "Mirror Button Y",
+				Margin = theme.ButtonSpacing,
+				BackgroundColor = theme.MinimalShade
+			};
 			mirrorYButton.Click += (s, e) =>
 			{
 				if (scene.HasSelection)
@@ -77,9 +84,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			buttonContainer.AddChild(mirrorYButton);
 
-			Button mirrorZButton = theme.ButtonFactory.Generate("Z");
-			mirrorZButton.Name = "Mirror Button Z";
-			mirrorZButton.Margin = theme.ButtonSpacing;
+			var mirrorZButton = new TextButton("Z", theme)
+			{
+				Name = "Mirror Button Z",
+				Margin = theme.ButtonSpacing,
+				BackgroundColor = theme.MinimalShade
+			};
 			mirrorZButton.Click += (s, e) =>
 			{
 				if (scene.HasSelection)

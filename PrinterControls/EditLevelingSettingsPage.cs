@@ -33,7 +33,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
@@ -43,7 +42,6 @@ namespace MatterHackers.MatterControl
 		public EditLevelingSettingsPage(PrinterConfig printer)
 		{
 			var theme = ApplicationController.Instance.Theme;
-			var textImageButtonFactory = theme.ButtonFactory;
 
 			this.WindowTitle = "Leveling Settings".Localize();
 			this.HeaderText = "Sampled Positions".Localize();

@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl
 			commonOptions.FontSize = this.DefaultFontSize;
 			commonOptions.ImageSpacing = 8;
 			commonOptions.BorderWidth = 0;
-			commonOptions.FixedHeight = 32;
+			commonOptions.FixedHeight = this.ButtonHeight;
 
 			this.TabBodyBackground = this.ResolveColor(
 				colors.TertiaryBackgroundColor,

@@ -48,8 +48,6 @@ namespace MatterHackers.MatterControl
 		public EditManualMovementSpeedsWindow(string windowTitle, string movementSpeedsString, Action<string> functionToCallOnSave)
 			: base(260, 300)
 		{
-			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
-
 			AlwaysOnTopOfMain = true;
 			Title = windowTitle;
 
@@ -156,11 +154,14 @@ namespace MatterHackers.MatterControl
 			ShowAsSystemWindow();
 			MinimumSize = new Vector2(260, 300);
 
-			Button savePresetsButton = buttonFactory.Generate("Save".Localize());
-			savePresetsButton.Click += save_Click;
+			var theme = ApplicationController.Instance.Theme;
 
-			Button cancelPresetsButton = buttonFactory.Generate("Cancel".Localize());
-			cancelPresetsButton.Click += (sender, e) =>
+			var savePresetsButton = theme.CreateDialogButton("Save".Localize());
+			savePresetsButton.Click += save_Click;
+			theme.ApplyPrimaryActionStyle(savePresetsButton);
+
+			var cancelPresetsButton = theme.CreateDialogButton("Cancel".Localize());
+			cancelPresetsButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(Close);
 			};

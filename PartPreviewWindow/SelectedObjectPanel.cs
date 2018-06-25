@@ -185,15 +185,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Padding = new BorderDouble(top: 10)
 			};
 
-			//inlineTitleEdit = new InlineTitleEdit("", theme, "Object Name");
-			//inlineTitleEdit.TitleChanged += (s, e) =>
-			//{
-			//	if (item != null)
-			//	{
-			//		item.Name = inlineTitleEdit.Text;
-			//	}
-			//};
-
 			// Wrap editorPanel with scrollable container
 			var scrollableWidget = new ScrollableWidget(true)
 			{

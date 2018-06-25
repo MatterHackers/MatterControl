@@ -448,7 +448,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Absolute | VAnchor.Center;
-			this.Height = theme.ButtonFactory.Options.FixedHeight;
+			this.Height = theme.ButtonHeight;
 			this.Padding = theme.TextButtonPadding;
 
 			this.AddChild(ImageWidget = new ImageWidget(icon)
