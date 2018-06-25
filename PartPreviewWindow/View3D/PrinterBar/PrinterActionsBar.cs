@@ -50,8 +50,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private EventHandler unregisterEvents;
 		private static MarlinEEPromPage marlinEEPromPage = null;
 		private static RepetierEEPromPage repetierEEPromPage = null;
-		private string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize() + "\n\n" + "You may need to wait a minute for your printer to finish initializing.".Localize();
-		private string noEepromMappingTitle = "Warning - No EEProm Mapping".Localize();
 
 		private PrinterTabPage printerTabPage;
 
@@ -91,14 +89,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			this.AddChild(new PrinterConnectButton(printer, theme));
-			this.AddChild(new PrintButton(printerTabPage, printer, theme));
+			this.AddChild(new PrintButton(printer, theme));
 
-			var sliceButton = new SliceButton(printer, printerTabPage, theme)
+			this.AddChild(new SliceButton(printer, printerTabPage, theme)
 			{
 				Name = "Generate Gcode Button",
 				Margin = theme.ButtonSpacing,
-			};
-			this.AddChild(sliceButton);
+			});
 
 			// Add vertical separator
 			this.AddChild(new ToolbarSeparator(theme)
@@ -370,7 +367,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					default:
 						printer.Connection.QueueLine("M115");
-						StyledMessageBox.ShowMessageBox(noEepromMappingMessage, noEepromMappingTitle, StyledMessageBox.MessageType.OK);
+						StyledMessageBox.ShowMessageBox(
+							"Oops! There is no eeprom mapping for your printer's firmware.".Localize() + "\n\n" + "You may need to wait a minute for your printer to finish initializing.".Localize(),
+							"Warning - No EEProm Mapping".Localize(),
+							StyledMessageBox.MessageType.OK);
 						break;
 				}
 			});

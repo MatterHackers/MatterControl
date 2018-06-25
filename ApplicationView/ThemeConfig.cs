@@ -74,6 +74,44 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		public bool InvertIcons => this.Colors.IsDarkTheme;
 
+		internal void ApplyPrimaryActionStyle(GuiWidget guiWidget)
+		{
+			guiWidget.BackgroundColor = this.AccentMimimalOverlay;
+
+			Color hoverColor = new Color(this.AccentMimimalOverlay, 90);
+
+			switch (guiWidget)
+			{
+				case PopupMenuButton menuButton:
+					menuButton.HoverColor = hoverColor;
+					break;
+				case SimpleFlowButton flowButton:
+					flowButton.HoverColor = hoverColor;
+					break;
+				case SimpleButton button:
+					button.HoverColor = hoverColor;
+					break;
+			}
+		}
+
+		internal void RemovePrimaryActionStyle(GuiWidget guiWidget)
+		{
+			guiWidget.BackgroundColor = Color.Transparent;
+
+			switch (guiWidget)
+			{
+				case PopupMenuButton menuButton:
+					menuButton.HoverColor = Color.Transparent;
+					break;
+				case SimpleFlowButton flowButton:
+					flowButton.HoverColor = Color.Transparent;
+					break;
+				case SimpleButton button:
+					button.HoverColor = Color.Transparent;
+					break;
+			}
+		}
+
 		public BorderDouble ButtonSpacing { get; }
 
 		public BorderDouble ToolbarPadding { get; set; } = 3;
@@ -317,7 +355,7 @@ namespace MatterHackers.MatterControl
 		// Compute a fixed color from a source and a target alpha
 		public Color ResolveColor(Color background, Color overlay)
 		{
-			return new BlenderRGBA().Blend(background, overlay);
+			return new BlenderBGRA().Blend(background, overlay);
 		}
 
 		public FlowLayoutWidget CreateMenuItems(PopupMenu popupMenu, IEnumerable<NamedAction> menuActions)

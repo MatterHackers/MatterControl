@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Threading;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
@@ -47,10 +46,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private EventHandler unregisterEvents;
 		private PrinterConfig printer;
+		private ThemeConfig theme;
 
-		public PrintButton(PrinterTabPage printerTabPage, PrinterConfig printer, ThemeConfig theme)
+		public PrintButton(PrinterConfig printer, ThemeConfig theme)
 		{
 			this.printer = printer;
+			this.theme = theme;
 
 			// add the finish setup button
 			finishSetupButton = new TextButton("Setup...".Localize(), theme)
@@ -58,10 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "Finish Setup Button",
 				ToolTipText = "Run setup configuration for printer.".Localize(),
 				Margin = theme.ButtonSpacing,
-				BackgroundColor = theme.ButtonFactory.Options.NormalFillColor,
-				HoverColor = theme.ButtonFactory.Options.HoverFillColor,
 			};
-
 			finishSetupButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(async () =>
@@ -76,9 +74,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(finishSetupButton);
 
 			// add the start print button
-			startPrintButton = new PrintPopupMenu(printer, theme);
-			startPrintButton.Margin = theme.ButtonSpacing;
-			this.AddChild(startPrintButton);
+			this.AddChild(startPrintButton = new PrintPopupMenu(printer, theme)
+			{
+				Margin = theme.ButtonSpacing
+			});
 
 			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
@@ -119,15 +118,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				case CommunicationStates.Connected:
 					if(showSetupButton)
 					{
+						startPrintButton.Visible = false;
 						finishSetupButton.Visible = true;
 						finishSetupButton.Enabled = true;
-						startPrintButton.Visible = false;
+						theme.ApplyPrimaryActionStyle(finishSetupButton);
 					}
 					else
 					{
 						startPrintButton.Visible = true;
 						startPrintButton.Enabled = true;
 						finishSetupButton.Visible = false;
+						theme.ApplyPrimaryActionStyle(startPrintButton);
 					}
 					break;
 
@@ -137,15 +138,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				default:
 					if (showSetupButton)
 					{
+						startPrintButton.Visible = false;
 						finishSetupButton.Visible = true;
 						finishSetupButton.Enabled = false;
-						startPrintButton.Visible = false;
+						theme.RemovePrimaryActionStyle(finishSetupButton);
 					}
 					else
 					{
 						startPrintButton.Visible = true;
 						startPrintButton.Enabled = false;
 						finishSetupButton.Visible = false;
+						theme.RemovePrimaryActionStyle(startPrintButton);
 					}
 					break;
 			}

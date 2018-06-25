@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -26,63 +26,44 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-//#define WITH_WRAPPER
 
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class RunningTasksWidget : GuiWidget
 	{
-		private FlowLayoutWidget pendingTasksList;
 		private ThemeConfig theme;
+		private Color borderColor;
+		private FlowLayoutWidget pendingTasksList;
 
 		public RunningTasksWidget(ThemeConfig theme)
 		{
 			this.theme = theme;
-			this.VAnchor = VAnchor.Fit;
-			this.HAnchor = HAnchor.Fit;
 
-#if WITH_WRAPPER
-			pendingTasksList = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			if (theme.Colors.IsDarkTheme)
 			{
-				HAnchor = HAnchor.Stretch
-			};
-
-			var pendingTasksContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				borderColor = theme.AccentMimimalOverlay.Blend(Color.White, 0.2);
+			}
+			else
 			{
-				Margin = new BorderDouble(top: 100, left: 5),
-				Padding = new BorderDouble(4),
-				BackgroundColor = new Color(0, 0, 0, theme.OverlayAlpha),
-				HAnchor = HAnchor.Absolute | HAnchor.Left,
-				VAnchor = VAnchor.Top | VAnchor.Fit,
-				MinimumSize = new Vector2(250, 0)
-			};
-			this.AddChild(pendingTasksContainer);
+				borderColor = theme.AccentMimimalOverlay.Blend(Color.Black, 0.16);
+			}
 
-			var pendingTasksPanel = new SectionWidget("Running".Localize() + "...", pendingTasksList, theme, expandingContent: false)
-			{
-				HAnchor = HAnchor.Stretch,
-			};
-			pendingTasksContainer.AddChild(pendingTasksPanel);
-
-			pendingTasksList.Padding = new BorderDouble(0, 6);
-#else
 			pendingTasksList = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				BackgroundColor = theme.InteractionLayerOverlayColor,
-				HAnchor = HAnchor.Absolute | HAnchor.Left,
+				HAnchor = HAnchor.Fit | HAnchor.Left,
 				VAnchor = VAnchor.Fit,
-				MinimumSize = new Vector2(325, 0)
+				MinimumSize = new Vector2(325, 0),
+				Border = new BorderDouble(top: 1),
+				BorderColor = borderColor,
 			};
 			this.AddChild(pendingTasksList);
-#endif
 
 			var tasks = ApplicationController.Instance.Tasks;
 
@@ -109,16 +90,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
+			var progressBackgroundColor = new Color(borderColor, 35);
+
 			// Add new items
 			foreach (var taskItem in tasks.RunningTasks.Where(t => !displayedTasks.Contains(t)))
 			{
 				var taskRow = new RunningTaskRow("", taskItem, theme)
 				{
-					HAnchor = HAnchor.Stretch
+					HAnchor = HAnchor.Stretch,
+					BackgroundColor = theme.AccentMimimalOverlay,
+					Border = new BorderDouble(1, 1, 1, 0),
+					BorderColor = borderColor,
+					ProgressBackgroundColor = progressBackgroundColor
 				};
 
 				pendingTasksList.AddChild(taskRow);
 			}
+
+			this.Visible = pendingTasksList.Children.Count > 0;
 
 			pendingTasksList.Invalidate();
 		}

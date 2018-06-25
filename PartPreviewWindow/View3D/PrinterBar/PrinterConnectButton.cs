@@ -41,9 +41,6 @@ namespace MatterHackers.MatterControl.ActionBar
 {
 	public class PrinterConnectButton : FlowLayoutWidget
 	{
-		private readonly string disconnectAndCancelTitle = "Disconnect and stop the current print?".Localize();
-		private readonly string disconnectAndCancelMessage = "WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?".Localize();
-
 		private GuiWidget cancelConnectButton;
 		private GuiWidget connectButton;
 		private GuiWidget disconnectButton;
@@ -69,10 +66,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				Name = "Connect to printer button",
 				ToolTipText = "Connect to the currently selected printer".Localize(),
-				BackgroundColor = theme.ToolbarButtonBackground,
-				HoverColor = theme.ToolbarButtonHover,
 				MouseDownColor = theme.ToolbarButtonDown,
-
 			};
 			connectButton.Click += (s, e) =>
 			{
@@ -85,6 +79,8 @@ namespace MatterHackers.MatterControl.ActionBar
 				}
 			};
 			this.AddChild(connectButton);
+
+			theme.ApplyPrimaryActionStyle(connectButton);
 
 			// add the cancel stop button
 			cancelConnectButton = new TextIconButton(
@@ -130,8 +126,8 @@ namespace MatterHackers.MatterControl.ActionBar
 								printer.Connection.Disable();
 							}
 						},
-						disconnectAndCancelMessage,
-						disconnectAndCancelTitle,
+						"WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?".Localize(),
+						"Disconnect and stop the current print?".Localize(),
 						StyledMessageBox.MessageType.YES_NO,
 						"Disconnect".Localize(),
 						"Stay Connected".Localize());

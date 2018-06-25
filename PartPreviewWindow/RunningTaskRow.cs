@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -37,16 +38,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class RunningTaskRow : FlowLayoutWidget
 	{
-		private ProgressBar progressBar;
-
-		private ExpandCheckboxButton expandButton;
-
 		internal RunningTaskDetails taskDetails;
+
+		private ProgressBar progressBar;
+		private ExpandCheckboxButton expandButton;
+		private ThemeConfig theme;
 
 		public RunningTaskRow(string title, RunningTaskDetails taskDetails, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.taskDetails = taskDetails;
+			this.theme = theme;
 
 			this.MinimumSize = new Vector2(100, 20);
 
@@ -79,18 +81,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				FillColor = ActiveTheme.Instance.PrimaryAccentColor,
 				BorderColor = Color.Transparent,
 				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
-				Margin = new BorderDouble(32, 4, theme.ButtonHeight * 2 + 5, 0),
+				Margin = new BorderDouble(32, 7, theme.ButtonHeight * 2 + 14, 0),
 			};
 			rowContainer.AddChild(progressBar);
-
-			var mainTitle = new TextWidget(taskDetails.Title, pointSize: 7, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				HAnchor = HAnchor.Center,
-				VAnchor = VAnchor.Fit | VAnchor.Top,
-				Margin = new BorderDouble(0, 25, 0, 3),
-				AutoExpandBoundsToText = true
-			};
-			rowContainer.AddChild(mainTitle);
 
 			expandButton = new ExpandCheckboxButton(!string.IsNullOrWhiteSpace(title) ? title : taskDetails.Title, theme, 10)
 			{
@@ -180,6 +173,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			taskDetails.ProgressChanged += TaskDetails_ProgressChanged;
 		}
 
+		public Color ProgressBackgroundColor
+		{
+			get => progressBar.BackgroundColor = this.BorderColor;
+			set => progressBar.BackgroundColor = value;
+		}
+
 		private void SetExpansionMode(ThemeConfig theme, GuiWidget detailsPanel, bool isExpanded)
 		{
 			expandButton.Checked = isExpanded;
@@ -196,13 +195,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void TaskDetails_ProgressChanged(object sender, ProgressStatus e)
 		{
 			if (expandButton.Text != e.Status
-				&& !string.IsNullOrEmpty(e.Status))
+				&& !string.IsNullOrEmpty(e.Status)
+				&& !expandButton.Text.Contains(e.Status, StringComparison.OrdinalIgnoreCase))
 			{
-				expandButton.Text = e.Status;
+				expandButton.Text = e.Status.Contains(taskDetails.Title, StringComparison.OrdinalIgnoreCase) ? e.Status : $"{taskDetails.Title} - {e.Status}";
 			}
 
 			progressBar.RatioComplete = e.Progress0To1;
 			this.Invalidate();
+		}
+	}
+
+	public static class StringExtensions
+	{
+		public static bool Contains(this string text, string value, StringComparison stringComparison)
+		{
+			return text.IndexOf(value, stringComparison) >= 0;
 		}
 	}
 }
