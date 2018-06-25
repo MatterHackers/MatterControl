@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.Linq;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 
@@ -36,19 +37,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class RunningTasksWidget : GuiWidget
 	{
+		private ThemeConfig theme;
+		private Color borderColor;
 		private FlowLayoutWidget pendingTasksList;
 
 		public RunningTasksWidget(ThemeConfig theme)
 		{
-			this.VAnchor = VAnchor.Fit;
-			this.HAnchor = HAnchor.Fit;
+			this.theme = theme;
+
+			if (theme.Colors.IsDarkTheme)
+			{
+				borderColor = theme.AccentMimimalOverlay.Blend(Color.White, 0.2);
+			}
+			else
+			{
+				borderColor = theme.AccentMimimalOverlay.Blend(Color.Black, 0.16);
+			}
 
 			pendingTasksList = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				BackgroundColor = theme.InteractionLayerOverlayColor,
-				HAnchor = HAnchor.Absolute | HAnchor.Left,
+				HAnchor = HAnchor.Fit | HAnchor.Left,
 				VAnchor = VAnchor.Fit,
-				MinimumSize = new Vector2(325, 0)
+				MinimumSize = new Vector2(325, 0),
+				Border = new BorderDouble(top: 1),
+				BorderColor = borderColor,
 			};
 			this.AddChild(pendingTasksList);
 
@@ -83,11 +96,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var taskRow = new RunningTaskRow("", taskItem, theme)
 				{
 					HAnchor = HAnchor.Stretch,
-					BackgroundColor = theme.AccentMimimalOverlay
+					BackgroundColor = theme.AccentMimimalOverlay,
+					Border = new BorderDouble(1, 1, 1, 0),
+					BorderColor = borderColor,
 				};
 
 				pendingTasksList.AddChild(taskRow);
 			}
+
+			this.Visible = pendingTasksList.Children.Count > 0;
 
 			pendingTasksList.Invalidate();
 		}
