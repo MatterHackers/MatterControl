@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl
 
 		public Dictionary<Type, ImageBuffer> OperationIcons { get; internal set; }
 
-		public ImageBuffer DefaultThumbnail { get; } = AggContext.StaticData.LoadIcon("cube.png");
+		public ImageBuffer DefaultThumbnail() => AggContext.StaticData.LoadIcon("cube.png", 16, 16, ApplicationController.Instance.Theme.InvertIcons);
 
 		public ImageBuffer LoadCachedImage(string cacheId, int width, int height)
 		{
