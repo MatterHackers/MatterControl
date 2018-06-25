@@ -38,16 +38,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class RunningTaskRow : FlowLayoutWidget
 	{
-		private ProgressBar progressBar;
-
-		private ExpandCheckboxButton expandButton;
-
 		internal RunningTaskDetails taskDetails;
+
+		private ProgressBar progressBar;
+		private ExpandCheckboxButton expandButton;
+		private ThemeConfig theme;
 
 		public RunningTaskRow(string title, RunningTaskDetails taskDetails, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.taskDetails = taskDetails;
+			this.theme = theme;
 
 			this.MinimumSize = new Vector2(100, 20);
 
@@ -170,6 +171,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			SetExpansionMode(theme, detailsPanel, taskDetails.IsExpanded);
 
 			taskDetails.ProgressChanged += TaskDetails_ProgressChanged;
+		}
+
+		public Color ProgressBackgroundColor
+		{
+			get => progressBar.BackgroundColor = this.BorderColor;
+			set => progressBar.BackgroundColor = value;
 		}
 
 		private void SetExpansionMode(ThemeConfig theme, GuiWidget detailsPanel, bool isExpanded)

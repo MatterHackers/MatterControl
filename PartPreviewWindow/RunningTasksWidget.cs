@@ -90,6 +90,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
+			var progressBackgroundColor = borderColor.AdjustAlpha(35);
+
 			// Add new items
 			foreach (var taskItem in tasks.RunningTasks.Where(t => !displayedTasks.Contains(t)))
 			{
@@ -99,6 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					BackgroundColor = theme.AccentMimimalOverlay,
 					Border = new BorderDouble(1, 1, 1, 0),
 					BorderColor = borderColor,
+					ProgressBackgroundColor = progressBackgroundColor
 				};
 
 				pendingTasksList.AddChild(taskRow);
