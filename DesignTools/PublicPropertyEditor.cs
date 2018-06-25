@@ -627,8 +627,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				var row = CreateSettingsRow(unlockLink.Name.Localize());
 
-				Button detailsLink = theme.ButtonFactory.Generate("Open", AggContext.StaticData.LoadIcon("internet.png", 16, 16));
-				detailsLink.Margin = new BorderDouble(5);
+				var detailsLink = new TextIconButton("Open".Localize(), AggContext.StaticData.LoadIcon("internet.png", 16, 16, theme.InvertIcons), theme)
+				{
+					BackgroundColor = theme.MinimalShade
+				};
 				detailsLink.Click += (s, e) =>
 				{
 					ApplicationController.Instance.LaunchBrowser(unlockLink.Url);
