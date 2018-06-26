@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						scene.SelectedItem = null;
 						var ungroupMesh = ungroupItem.Mesh;
 
-						if (!ungroupMesh.Vertices.IsSorted)
+						if (!ungroupMesh.Vertices.Sorted)
 						{
 							ungroupMesh.CleanAndMergeMesh(CancellationToken.None);
 						}
