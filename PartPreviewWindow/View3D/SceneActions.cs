@@ -279,6 +279,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var meshToCheck = itemToCheck.Mesh.GetConvexHull(false);
 
+				if(meshToCheck == null
+					&& meshToCheck.Vertices.Count < 3)
+				{
+					continue;
+				}
+
 				// find the lowest point on the model
 				for (int testIndex = 0; testIndex < meshToCheck.Vertices.Count; testIndex++)
 				{
