@@ -240,6 +240,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				//var iconWithOverlay = ActiveContainer.DrawOverlay()
 
 				if (thumbnail != null
+					&& this.imageWidget != null
 					&& (this.imageWidget.Image == null
 					|| !thumbnail.Equals(this.imageWidget.Image, 5)))
 				{
