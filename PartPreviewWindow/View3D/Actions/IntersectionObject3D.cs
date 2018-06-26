@@ -110,7 +110,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							var inverse = first.WorldMatrix();
 							inverse.Invert();
 							transformedKeep.Transform(inverse);
-							first.Mesh = transformedKeep;
+							using (first.RebuildLock())
+							{
+								first.Mesh = transformedKeep;
+							}
 							remove.Visible = false;
 
 							percentCompleted += amountPerOperation;

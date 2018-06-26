@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
 					// Cancel in this case is on the Leveling Wizard, results in ReloadAll and for consistency across devices, requires we wait till it completes
-					testRunner.WaitForReloadAll(() => testRunner.ClickByName("Cancel Button"));
+					testRunner.WaitForReloadAll(() => testRunner.ClickByName("Cancel Wizard Button"));
 
 					testRunner.ClickByName("Finish Setup Button");
 					int numNextButtons = 5;
