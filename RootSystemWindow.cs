@@ -314,7 +314,7 @@ namespace MatterHackers.MatterControl
 						},
 						message,
 						caption,
-						StyledMessageBox.MessageType.YES_NO);
+						StyledMessageBox.MessageType.YES_NO_WITHOUT_HIGHLIGHT);
 				});
 			}
 			else
