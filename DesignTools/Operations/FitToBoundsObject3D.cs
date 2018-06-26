@@ -33,6 +33,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.RenderOpenGl;
@@ -71,6 +72,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public FitToBoundsObject3D()
 		{
+			Name = "Fit to Bounds".Localize();
 		}
 
 		public override void Apply(UndoBuffer undoBuffer)

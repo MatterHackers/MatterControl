@@ -33,6 +33,7 @@ using System.Diagnostics;
 using System.Linq;
 using ClipperLib;
 using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
@@ -248,12 +249,18 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						itemsToReplace,
 						new List<IObject3D> { newParent }));
 
-				scene.SelectedItem = newParent;
+				SelectModifiedItem(selectedItem, newParent, scene);
 			}
 		}
 
 		public static void WrapWith(this IObject3D originalItem, IObject3D wrapper, InteractiveScene scene)
 		{
+			// make sure we walk to the top of a mesh wrapper stack before we wrap the item (all mesh wrappers should be under the add)
+			while(originalItem.Parent is ModifiedMeshObject3D modifiedMesh)
+			{
+				originalItem = modifiedMesh;
+			}
+
 			using (originalItem.RebuildLock())
 			{
 				originalItem.Parent.Children.Modify(list =>
@@ -268,10 +275,26 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					list.Add(wrapper);
 				});
 
-				if (scene != null)
+				SelectModifiedItem(originalItem, wrapper, scene);
+			}
+		}
+
+		private static void SelectModifiedItem(IObject3D originalItem, IObject3D wrapper, InteractiveScene scene)
+		{
+			if (scene != null)
+			{
+				var topParent = wrapper.Parents<IObject3D>().LastOrDefault((i) => i.Parent != null);
+				UiThread.RunOnIdle(() =>
 				{
-					scene.SelectedItem = wrapper;
-				}
+					var sceneSelection = topParent != null ? topParent : wrapper;
+					scene.SelectedItem = sceneSelection;
+
+					if (sceneSelection != originalItem)
+					{
+						// select the sub item in the tree view
+						//scene.SelectedItem =  originalItem;
+					}
+				});
 			}
 		}
 
