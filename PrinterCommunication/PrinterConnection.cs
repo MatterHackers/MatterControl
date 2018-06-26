@@ -1705,32 +1705,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void QueueLines(string[] linesToWrite)
-		{
-			if (PrinterIsPrinting && CommunicationState != CommunicationStates.PrintingFromSd)
-			{
-				for (int i = linesToWrite.Length - 1; i >= 0; i--)
-				{
-					string line = linesToWrite[i].Trim();
-					if (line.Length > 0)
-					{
-						QueueLine(line);
-					}
-				}
-			}
-			else
-			{
-				for (int i = 0; i < linesToWrite.Length; i++)
-				{
-					string line = linesToWrite[i].Trim();
-					if (line.Length > 0)
-					{
-						QueueLine(line);
-					}
-				}
-			}
-		}
-
 		public void QueueLine(string lineToWrite, bool forceTopOfQueue = false)
 		{
 			lock (locker)
@@ -1744,7 +1718,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (lineToWrite.Contains("\n"))
 				{
 					string[] linesToWrite = lineToWrite.Split(new string[] { "\n" }, StringSplitOptions.None);
-					QueueLines(linesToWrite);
+					for (int i = 0; i < linesToWrite.Length; i++)
+					{
+						string line = linesToWrite[i].Trim();
+						if (line.Length > 0)
+						{
+							QueueLine(line);
+						}
+					}
 					return;
 				}
 
