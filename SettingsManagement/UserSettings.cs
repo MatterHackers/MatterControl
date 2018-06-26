@@ -227,5 +227,14 @@ namespace MatterHackers.MatterControl
 				this.set(UserSettingsKey.ThumbnailRenderingMode, value);
 			}
 		}
+
+		public bool ShowContainers
+		{
+			get
+			{
+				var showContainers = this.get(UserSettingsKey.ShowContainers);
+				return string.IsNullOrWhiteSpace(showContainers) || showContainers == "1";
+			}
+		}
 	}
 }

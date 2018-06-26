@@ -625,11 +625,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			var unlockLink = context.item.GetType().GetCustomAttributes(typeof(WebPageLinkAttribute), true).FirstOrDefault() as WebPageLinkAttribute;
 			if (unlockLink != null)
 			{
-				var row = CreateSettingsRow(unlockLink.Name.Localize());
+				var row = CreateSettingsRow("Website".Localize());
 
-				var detailsLink = new TextIconButton("Open".Localize(), AggContext.StaticData.LoadIcon("internet.png", 16, 16, theme.InvertIcons), theme)
+				var detailsLink = new TextIconButton(unlockLink.Name.Localize(), AggContext.StaticData.LoadIcon("internet.png", 16, 16, theme.InvertIcons), theme)
 				{
-					BackgroundColor = theme.MinimalShade
+					BackgroundColor = theme.MinimalShade,
+					ToolTipText = unlockLink.Url,
 				};
 				detailsLink.Click += (s, e) =>
 				{

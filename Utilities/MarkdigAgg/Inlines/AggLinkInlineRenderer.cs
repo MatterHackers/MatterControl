@@ -69,16 +69,29 @@ namespace Markdig.Renderers.Agg.Inlines
 			this.VAnchor = VAnchor.Fit;
 			this.Selectable = false;
 
-			var imageBuffer = new ImageBuffer(icon);
-			var imageWidget = new ImageWidget(imageBuffer);
-
 			this.Url = url;
 
-			this.AddChild(imageWidget);
-
-			if (url.StartsWith("http"))
+			if (true)
 			{
-				ApplicationController.Instance.DownloadToImageAsync(imageBuffer, url, false);
+				var imageSequence = new ImageSequence(icon);
+				var sequenceWidget = new ImageSequenceWidget(imageSequence);
+				this.AddChild(sequenceWidget);
+
+				if (url.StartsWith("http"))
+				{
+					ApplicationController.Instance.DownloadToImageSequenceAsync(imageSequence, url);
+				}
+			}
+			else
+			{
+				var imageBuffer = new ImageBuffer(icon);
+				var imageWidget = new ImageWidget(imageBuffer);
+				this.AddChild(imageWidget);
+
+				if (url.StartsWith("http"))
+				{
+					ApplicationController.Instance.DownloadToImageAsync(imageBuffer, url, false);
+				}
 			}
 		}
 
