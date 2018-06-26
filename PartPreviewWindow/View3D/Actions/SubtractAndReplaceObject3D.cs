@@ -124,7 +124,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							}, cancellationToken);
 							var inverseKeep = keep.matrix.Inverted;
 							intersectAndSubtract.subtract.Transform(inverseKeep);
-							keep.obj3D.Mesh = intersectAndSubtract.subtract;
+							using (keep.obj3D.RebuildLock())
+							{
+								keep.obj3D.Mesh = intersectAndSubtract.subtract;
+							}
 
 							// keep all the intersections together
 							if (paintMesh == null)
@@ -145,7 +148,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						// move the paint mesh back to its original coordinates
 						paintMesh.Transform(inverseRemove);
 
-						paint.obj3D.Mesh = paintMesh;
+						using (paint.obj3D.RebuildLock())
+						{
+							paint.obj3D.Mesh = paintMesh;
+						}
 
 						paint.obj3D.Color = paint.obj3D.WorldColor().AdjustContrast(keepObjects.First().WorldColor(), 2).ToColor();
 					}
