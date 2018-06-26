@@ -54,17 +54,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			Rebuild(null);
 		}
 
-		public static CylinderObject3D Create2(double diameter, double height, int sides, Alignment alignment = Alignment.Z)
+		public static CylinderObject3D Create(double diameter, double height, int sides, Alignment alignment = Alignment.Z)
 		{
 			if (alignment == Alignment.Z)
 			{
 				return new CylinderObject3D(diameter, height, sides);
 			}
 
-			return Create2(diameter, diameter, height, sides, alignment);
+			return Create(diameter, diameter, height, sides, alignment);
 		}
 
-		public static CylinderObject3D Create2(double diameterBottom, double diameterTop, double height, int sides, Alignment alignment = Alignment.Z)
+		public static CylinderObject3D Create(double diameterBottom, double diameterTop, double height, int sides, Alignment alignment = Alignment.Z)
 		{
 			var item = new CylinderObject3D()
 			{

@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				Name = "LibraryView",
 				// Drop containers if ShowContainers != 1
-				ContainerFilter = (container) => UserSettings.Instance.get(UserSettingsKey.ShowContainers) == "1",
+				ContainerFilter = (container) => UserSettings.Instance.ShowContainers,
 				BackgroundColor = theme.ActiveTabColor,
 				//BorderColor = theme.MinimalShade,
 				Border = new BorderDouble(top: 1)
@@ -171,7 +171,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				VAnchor = VAnchor.Fit | VAnchor.Center,
 				Margin = theme.ButtonSpacing,
 				Name = "Show Folders Toggle",
-				Checked = UserSettings.Instance.get(UserSettingsKey.ShowContainers) == "1",
+				Checked = UserSettings.Instance.ShowContainers,
 			};
 			showFolders.SetIconMargin(theme.ButtonSpacing);
 			showFolders.CheckedStateChanged += async (s, e) =>
