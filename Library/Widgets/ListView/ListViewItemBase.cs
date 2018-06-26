@@ -44,7 +44,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private static ImageBuffer defaultFolderIcon = AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder.png")).SetPreMultiply();
 		private static ImageBuffer defaultItemIcon = AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "file.png"));
-		private static ImageBuffer generatingThumbnailIcon = AggContext.StaticData.LoadIcon(Path.Combine("building_thumbnail_40x40.png"));
 
 		protected ThemeConfig theme;
 		protected ListViewItem listViewItem;
@@ -110,7 +109,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					else
 					{
 						// Show processing image
-						this.SetItemThumbnail(generatingThumbnailIcon);
+						this.SetItemThumbnail(theme.GeneratingThumbnailIcon);
 
 						// Ask the provider for a content specific thumbnail
 						thumbnail = await contentProvider.GetThumbnail(libraryItem, thumbWidth, thumbHeight);
@@ -150,7 +149,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					requeueRaytraceOnDraw = false;
 
 					// Show processing image
-					this.SetItemThumbnail(generatingThumbnailIcon);
+					this.SetItemThumbnail(theme.GeneratingThumbnailIcon);
 
 					// Ask the MeshContentProvider to RayTrace the image
 					var thumbnail = await meshContentProvider.GetThumbnail(listViewItem.Model, thumbWidth, thumbHeight);

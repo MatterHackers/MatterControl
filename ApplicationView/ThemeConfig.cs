@@ -174,6 +174,8 @@ namespace MatterHackers.MatterControl
 		public Color AccentMimimalOverlay { get; set; }
 		public BorderDouble SeparatorMargin { get; }
 
+		public ImageBuffer GeneratingThumbnailIcon { get; private set; }
+
 		public GuiWidget CreateSearchButton()
 		{
 			return new IconButton(AggContext.StaticData.LoadIcon("icon_search_24x24.png", 16, 16, this.InvertIcons), this)
@@ -205,6 +207,8 @@ namespace MatterHackers.MatterControl
 			restorePressed = ColorCircle(size, new Color(255, 0, 0));
 
 			this.Colors = colors;
+
+			this.GeneratingThumbnailIcon = AggContext.StaticData.LoadIcon("building_thumbnail_40x40.png", 40, 40, this.InvertIcons);
 
 			DefaultThumbView.ThumbColor = new Color(colors.PrimaryTextColor, 30);
 
