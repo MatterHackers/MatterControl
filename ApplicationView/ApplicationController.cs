@@ -724,6 +724,22 @@ namespace MatterHackers.MatterControl
 				iconCollector: () => AggContext.StaticData.LoadIcon("noun_479927.png", ApplicationController.Instance.MenuTheme.InvertIcons));
 
 			this.Graph.RegisterOperation(
+				typeof(IObject3D),
+				"Rotate".Localize(),
+				(sceneItem, scene) =>
+				{
+					if (sceneItem is IObject3D imageObject)
+					{
+						var path = new RotateObject3D();
+						sceneItem.WrapWith(path, scene);
+						path.Invalidate(new InvalidateArgs(path, InvalidateType.Properties, null));
+					}
+
+					return Task.CompletedTask;
+				},
+				iconCollector: () => AggContext.StaticData.LoadIcon("icon_rotate_32x32.png", ApplicationController.Instance.MenuTheme.InvertIcons));
+
+			this.Graph.RegisterOperation(
 				typeof(IPathObject),
 				"Linear Extrude".Localize(),
 				(sceneItem, scene) =>

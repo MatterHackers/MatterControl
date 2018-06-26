@@ -27,26 +27,97 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
+using System.ComponentModel;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public class RotateObject3D : Object3D
 	{
+		// we do want this to persist
+		Vector3 lastRotation = Vector3.Zero;
+
+		[DisplayName("X")]
+		[Description("Rotate about the X axis")]
+		public double RotationX { get; set; }
+		[DisplayName("Y")]
+		[Description("Rotate about the Y axis")]
+		public double RotationY { get; set; }
+		[DisplayName("Z")]
+		[Description("Rotate about the Z axis")]
+		public double RotationZ { get; set; }
+
 		public RotateObject3D()
 		{
+			Name = "Rotate".Localize();
 		}
 
 		public RotateObject3D(IObject3D item, double x = 0, double y = 0, double z = 0, string name = "")
-			: this(item, new Vector3(x, y, z), name)
 		{
+			RotationX = x;
+			RotationY = y;
+			RotationZ = z;
+			Children.Add(item.Clone());
 		}
 
 		public RotateObject3D(IObject3D item, Vector3 translation, string name = "")
+			: this(item, translation.X, translation.Y, translation.Z, name)
 		{
-			Matrix *= Matrix4X4.CreateRotation(translation);
-			Children.Add(item.Clone());
+		}
+
+		private void Rebuild(UndoBuffer undoBuffer)
+		{
+			this.DebugDepth("Rebuild");
+
+			using (RebuildLock())
+			{
+				var startingAabb = this.GetAxisAlignedBoundingBox();
+
+				// remove whatever rotation has been applied (they go in reverse order)
+				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(-lastRotation.Z)));
+				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(-lastRotation.Y)));
+				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationX(MathHelper.DegreesToRadians(-lastRotation.X)));
+
+				// add the current rotation
+				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationX(MathHelper.DegreesToRadians(RotationX)));
+				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(RotationY)));
+				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(RotationZ)));
+
+				lastRotation = new Vector3(RotationX, RotationY, RotationZ);
+
+				if (startingAabb.ZSize > 0)
+				{
+					// If the part was already created and at a height, maintain the height.
+					PlatingHelper.PlaceMeshAtHeight(this, startingAabb.minXYZ.Z);
+				}
+			}
+
+			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix, null));
+		}
+
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if ((invalidateType.InvalidateType == InvalidateType.Content
+				|| invalidateType.InvalidateType == InvalidateType.Matrix
+				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+				&& invalidateType.Source != this
+				&& !RebuildLocked)
+			{
+				Rebuild(null);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
+			{
+				Rebuild(null);
+			}
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
 		}
 	}
 }

@@ -49,11 +49,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public Vector3 Offset { get; set; } = new Vector3(30, 0, 0);
 
-		public double Rotate { get; set; } = 0;
+		public double Rotate { get; set; } = -15;
 
 		public bool RotatePart { get; set; } = true;
 
-		public double Scale { get; set; } = 1;
+		public double Scale { get; set; } = .9;
 
 		public bool ScaleOffset { get; set; } = true;
 
@@ -73,6 +73,19 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& !RebuildLocked)
 			{
 				Rebuild(null);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Color)
+			{
+				var sourceItem = OperationSourceObject3D.GetOrCreateSourceContainer(this).Children.FirstOrDefault();
+				foreach (var item in Children)
+				{
+					if (item != sourceItem)
+					{
+						item.Color = sourceItem.Color;
+					}
+				}
+
+				base.OnInvalidate(invalidateType);
 			}
 			else if (invalidateType.InvalidateType == InvalidateType.Properties
 				&& invalidateType.Source == this)

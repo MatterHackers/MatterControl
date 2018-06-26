@@ -39,14 +39,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	{
 		public OperationSourceObject3D()
 		{
+			Visible = false;
 			Name = "Source".Localize();
 		}
 
-		public OperationSourceObject3D(IEnumerable<IObject3D> children)
-			: this()
-		{
-			Visible = false;
-		}
+		public override bool Visible { get => base.Visible; set => base.Visible = value; }
 
 		/// <summary>
 		/// This function will return the source container and if it does not find one will:
