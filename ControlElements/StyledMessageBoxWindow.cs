@@ -37,7 +37,7 @@ namespace MatterHackers.MatterControl
 {
 	public static class StyledMessageBox
 	{
-		public enum MessageType { OK, YES_NO };
+		public enum MessageType { OK, YES_NO, YES_NO_WITHOUT_HIGHLIGHT };
 
 		public static void ShowMessageBox(string message, string caption, MessageType messageType = MessageType.OK, string yesOk = "", string noCancel = "")
 		{
@@ -100,10 +100,11 @@ namespace MatterHackers.MatterControl
 					responseCallback?.Invoke(true);
 				};
 
-				this.AddPageAction(affirmativeButton);
+				this.AddPageAction(affirmativeButton, messageType != MessageType.YES_NO_WITHOUT_HIGHLIGHT);
 
 				switch (messageType)
 				{
+					case MessageType.YES_NO_WITHOUT_HIGHLIGHT:
 					case MessageType.YES_NO:
 						this.WindowTitle = "MatterControl - " + "Please Confirm".Localize();
 						affirmativeButton.Name = "Yes Button";
