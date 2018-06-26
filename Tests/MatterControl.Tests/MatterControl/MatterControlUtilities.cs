@@ -455,7 +455,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				case "Print Queue Row Item Collection":
 				case "Local Library Row Item Collection":
 					// If visible, navigate into Libraries container before opening target
-					if(testRunner.NameExists("Library Row Item Collection"))
+					if (testRunner.NameExists("Library Row Item Collection"))
 					{
 						testRunner.DoubleClickByName("Library Row Item Collection");
 					}

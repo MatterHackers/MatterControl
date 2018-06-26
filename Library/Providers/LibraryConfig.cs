@@ -59,9 +59,6 @@ namespace MatterHackers.MatterControl.Library
 		public event EventHandler<ContainerChangedEventArgs> ContainerChanged;
 		public event EventHandler<ContainerChangedEventArgs> ContentChanged;
 
-		// TODO: Needed?
-		public event EventHandler LibraryItemsChanged;
-
 		private List<ILibraryContainerLink> libraryProviders;
 
 		private ILibraryContainer activeContainer;
@@ -152,7 +149,6 @@ namespace MatterHackers.MatterControl.Library
 		{
 			libraryProviders.Add(containerItem);
 			libraryProviders.Sort(SortOnName);
-			OnLibraryItemsChanged();
 		}
 
 		private int SortOnName(ILibraryContainerLink x, ILibraryContainerLink y)
@@ -169,18 +165,11 @@ namespace MatterHackers.MatterControl.Library
 		public void RegisterCreator(ILibraryObject3D libraryItem)
 		{
 			this.RootLibaryContainer.Items.Add(libraryItem);
-			OnLibraryItemsChanged();
 		}
 
 		public void RegisterCreator(ILibraryAssetStream libraryItem)
 		{
 			this.RootLibaryContainer.Items.Add(libraryItem);
-			OnLibraryItemsChanged();
-		}
-
-		protected void OnLibraryItemsChanged()
-		{
-			LibraryItemsChanged?.Invoke(this, null);
 		}
 
 		private void ActiveContainer_ContentChanged(object sender, EventArgs args)

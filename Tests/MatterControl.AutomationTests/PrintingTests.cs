@@ -526,7 +526,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.WaitForName("SD Card Row Item Collection");
 					testRunner.NavigateToFolder("SD Card Row Item Collection");
 
 					testRunner.ClickByName("Row Item Item 1.gcode");
@@ -557,7 +556,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.CompletedTask;
-			}, overrideHeight: 900, maxTimeToRun: 90);
+			}, maxTimeToRun: 90);
 		}
 
 		[Test, Category("Emulator")]
