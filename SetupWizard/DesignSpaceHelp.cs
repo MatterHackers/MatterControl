@@ -30,7 +30,9 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+#if !__ANDROID__
 using Markdig.Agg;
+#endif
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -256,10 +258,14 @@ namespace MatterHackers.MatterControl
 				Padding = theme.DefaultContainerPadding
 			};
 
+#if __ANDROID__
+			var description = new GuiWidget();
+#else
 			var description = new MarkdownWidget(new Uri("https://raw.githubusercontent.com/lunet-io/markdig/master/"))
 			{
 				Margin = new BorderDouble(10, 4, 10, 10),
 			};
+#endif
 			rightPanel.AddChild(description);
 
 			treeView = new TreeView(theme)
@@ -271,7 +277,9 @@ namespace MatterHackers.MatterControl
 			{
 				if (treeView.SelectedNode.Tag is GuideAsset guide)
 				{
+#if !__ANDROID__
 					description.Markdown = guide.Description;
+#endif
 				}
 			};
 
