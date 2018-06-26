@@ -218,6 +218,10 @@ namespace MatterHackers.MatterControl
 					}, 2);
 				}
 
+				if (this.Library != null)
+				{
+					this.Library.NotifyContainerChanged();
+				}
 			}
 		}
 
