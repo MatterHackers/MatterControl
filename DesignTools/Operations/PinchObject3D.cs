@@ -90,6 +90,9 @@ namespace MatterHackers.MatterControl.DesignTools
 						transformedMesh.Vertices[i].Position = Vector3.Transform(newPos, invItemMatrix);
 					}
 
+					// the vertices need to be resorted as they have moved relative to eachother
+					transformedMesh.Vertices.Sort();
+
 					transformedMesh.MarkAsChanged();
 					transformedMesh.CalculateNormals();
 				}

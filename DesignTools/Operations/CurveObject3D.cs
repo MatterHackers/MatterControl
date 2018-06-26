@@ -172,6 +172,9 @@ namespace MatterHackers.MatterControl.DesignTools
 							curvedMesh.Vertices[i].Position = Vector3.Transform(worldWithBend, matrix.Inverted);
 						}
 
+						// the vertices need to be resorted as they have moved relative to eachother
+						curvedMesh.Vertices.Sort();
+
 						curvedMesh.MarkAsChanged();
 						curvedMesh.CalculateNormals();
 					}
