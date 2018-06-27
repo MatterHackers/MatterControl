@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.Library
 				var first = loadedItems.First();
 				if (first.GetType() == typeof(Object3D)
 					&& first.Mesh == null
-					&& first.Children.Count > 0)
+					&& first.Children.Count == 1)
 				{
 					// collapse our first child into this
 					this.Children.Modify(list =>
