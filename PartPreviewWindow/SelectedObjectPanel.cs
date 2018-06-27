@@ -350,7 +350,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							var context = new PPEContext();
 
-							if(reflectionTarget.Source is IObject3D editedChild)
+							if (reflectionTarget.Source is IObject3D editedChild)
 							{
 								context.item = editedChild;
 							}
@@ -368,6 +368,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}
 						}
 					}
+				}
+			}
+			else
+			{
+				if (ApplicationController.Instance.GetEditorsForType(item.GetType())?.FirstOrDefault() is IObject3DEditor editor)
+				{
+					ShowObjectEditor((editor, item, item.Name), selectedItem, allowOperations: allowOperations);
 				}
 			}
 		}
