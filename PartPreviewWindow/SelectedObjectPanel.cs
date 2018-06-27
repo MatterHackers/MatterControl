@@ -319,10 +319,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			HashSet<IObject3DEditor> mappedEditors = ApplicationController.Instance.GetEditorsForType(selectedItemType);
 
-			var activeEditors = new List<(IObject3DEditor, IObject3D, string)>();
-
-			var editableItems = new List<IObject3D> { selectedItem };
-
 			var undoBuffer = sceneContext.Scene.UndoBuffer;
 
 			bool allowOperations = true;
@@ -345,14 +341,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						if (instance is IObject3D object3D)
 						{
-							editableItems.Add(object3D);
+							if (ApplicationController.Instance.GetEditorsForType(object3D.GetType())?.FirstOrDefault() is IObject3DEditor editor)
+							{
+								ShowObjectEditor((editor, object3D, object3D.Name), selectedItem, allowOperations: allowOperations);
+							}
 						}
 						else if (JsonPath.JsonPathContext.ReflectionValueSystem.LastMemberValue is ReflectionTarget reflectionTarget)
 						{
-							var context = new PPEContext()
+							var context = new PPEContext();
+
+							if(reflectionTarget.Source is IObject3D editedChild)
 							{
-								item = item
-							};
+								context.item = editedChild;
+							}
+							else
+							{
+								context.item = item;
+							}
 
 							var editableProperty = new EditableProperty(reflectionTarget.PropertyInfo, reflectionTarget.Source);
 
@@ -365,16 +370,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 			}
-
-			foreach (var child in editableItems)
-			{
-				if (ApplicationController.Instance.GetEditorsForType(child.GetType())?.FirstOrDefault() is IObject3DEditor editor)
-				{
-					activeEditors.Add((editor, child, child.Name));
-				}
-			}
-
-			ShowObjectEditor(activeEditors, selectedItem, allowOperations: allowOperations);
 		}
 
 		private class OperationButton :TextButton
@@ -395,44 +390,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void ShowObjectEditor(IEnumerable<(IObject3DEditor editor, IObject3D item, string displayName)> scope, IObject3D rootSelection, bool allowOperations = true)
+		private void ShowObjectEditor((IObject3DEditor editor, IObject3D item, string displayName) scopeItem, IObject3D rootSelection, bool allowOperations = true)
 		{
-			if (scope == null)
+			var selectedItem = scopeItem.item;
+			var selectedItemType = selectedItem.GetType();
+
+			var editorWidget = scopeItem.editor.Create(selectedItem, theme);
+			editorWidget.HAnchor = HAnchor.Stretch;
+			editorWidget.VAnchor = VAnchor.Fit;
+
+			if (scopeItem.item != rootSelection
+				&& scopeItem.editor is PublicPropertyEditor)
 			{
-				return;
+				editorWidget.Padding = new BorderDouble(10, 10, 10, 0);
+
+				// EditOutline section
+				var sectionWidget = new SectionWidget(
+						scopeItem.displayName ?? "Unknown",
+						editorWidget,
+						theme);
+
+				theme.ApplyBoxStyle(sectionWidget, margin: 0);
+
+				editorWidget = sectionWidget;
+			}
+			else
+			{
+				editorWidget.Padding = 0;
 			}
 
-			foreach (var scopeItem in scope)
-			{
-				var selectedItem = scopeItem.item;
-				var selectedItemType = selectedItem.GetType();
-
-				var editorWidget = scopeItem.editor.Create(selectedItem, theme);
-				editorWidget.HAnchor = HAnchor.Stretch;
-				editorWidget.VAnchor = VAnchor.Fit;
-
-				if (scopeItem.item != rootSelection
-					&& scopeItem.editor is PublicPropertyEditor)
-				{
-					editorWidget.Padding = new BorderDouble(10, 10, 10, 0);
-
-					// EditOutline section
-					var sectionWidget = new SectionWidget(
-							scopeItem.displayName ?? "Unknown",
-							editorWidget,
-							theme);
-
-					theme.ApplyBoxStyle(sectionWidget, margin: 0);
-
-					editorWidget = sectionWidget;
-				}
-				else
-				{
-					editorWidget.Padding = 0;
-				}
-
-				editorPanel.AddChild(editorWidget);
-			}
+			editorPanel.AddChild(editorWidget);
 		}
 
 		public void Save(ILibraryItem item, IObject3D content)
