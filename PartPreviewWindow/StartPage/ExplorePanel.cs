@@ -58,6 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
 			this.MinimumSize = new Vector2(0, 1);
+			this.Margin = new BorderDouble(30 - 11, 0);
 
 			this.theme = theme;
 		}

@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 
 					// send the invalidate on image change
-					this.OnInvalidate(new InvalidateArgs(this, InvalidateType.Image));
+					this.OnInvalidate(new InvalidateArgs(this, InvalidateType.Redraw));
 				}
 
 				return _image;
@@ -160,8 +160,11 @@ namespace MatterHackers.MatterControl.DesignTools
 					// TODO: Remove this hack needed to work around Persistable = false
 					&& (base.Mesh == null || base.Mesh.FaceTexture.Count <= 0))
 				{
-					// TODO: Revise fallback mesh
-					base.Mesh = this.InitMesh() ?? PlatonicSolids.CreateCube(100, 100, 0.2);
+					using (this.RebuildLock())
+					{
+						// TODO: Revise fallback mesh
+						base.Mesh = this.InitMesh() ?? PlatonicSolids.CreateCube(100, 100, 0.2);
+					}
 				}
 
 				return base.Mesh;

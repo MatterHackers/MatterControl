@@ -33,7 +33,9 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -68,6 +70,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var iconsRow = new FlowLayoutWidget();
 
 			int index = 0;
+			var radioButtonSize = new Vector2(iconsAttribute.Width, iconsAttribute.Height);
 			foreach (var enumItem in enumItems)
 			{
 				var localIndex = index;
@@ -84,20 +87,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						iconImage = AggContext.StaticData.LoadIcon(iconPath);
 					}
 
-					var radioButton = new RadioButton(new ImageWidget(iconImage))
+					var radioButton = new RadioIconButton(iconImage, theme)
 					{
 						ToolTipText = enumItem.Key
 					};
+
+					radioButtonSize = new Vector2(radioButton.Width, radioButton.Height);
 
 					// set it if checked
 					if (enumItem.Value == this.InitialValue)
 					{
 						radioButton.Checked = true;
-						if (localIndex != 0
-							|| !iconsAttribute.Item0IsNone)
-						{
-							radioButton.BackgroundColor = new Color(Color.Black, 100);
-						}
 					}
 
 					iconsRow.AddChild(radioButton);
@@ -108,20 +108,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						if (radioButton.Checked)
 						{
 							this.SetValue(localItem.Key, true);
-
-							if (localIndex != 0
-								|| !iconsAttribute.Item0IsNone)
-							{
-								radioButton.BackgroundColor = new Color(Color.Black, 100);
-							}
-						}
-						else
-						{
-							radioButton.BackgroundColor = Color.Transparent;
 						}
 					};
-					index++;
 				}
+				else if(iconsAttribute.Width > 0)
+				{
+					// hold the space of the empty icon
+					iconsRow.AddChild(new GuiWidget(radioButtonSize.X, radioButtonSize.Y));
+				}
+
+				index++;
 			}
 
 			this.Content = iconsRow;
