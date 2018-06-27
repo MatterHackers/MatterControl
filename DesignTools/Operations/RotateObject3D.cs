@@ -39,29 +39,31 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	public class RotateObject3D : Object3D
 	{
 		// we do want this to persist
-		Vector3 lastRotation = Vector3.Zero;
+		Vector3 lastRotationDegrees = Vector3.Zero;
 
 		[DisplayName("X")]
 		[Description("Rotate about the X axis")]
-		public double RotationX { get; set; }
+		public double RotationXDegrees { get; set; }
 		[DisplayName("Y")]
 		[Description("Rotate about the Y axis")]
-		public double RotationY { get; set; }
+		public double RotationYDegrees { get; set; }
 		[DisplayName("Z")]
 		[Description("Rotate about the Z axis")]
-		public double RotationZ { get; set; }
+		public double RotationZDegrees { get; set; }
 
 		public RotateObject3D()
 		{
 			Name = "Rotate".Localize();
 		}
 
-		public RotateObject3D(IObject3D item, double x = 0, double y = 0, double z = 0, string name = "")
+		public RotateObject3D(IObject3D item, double xRadians = 0, double yRadians = 0, double zRadians = 0, string name = "")
 		{
-			RotationX = x;
-			RotationY = y;
-			RotationZ = z;
+			RotationXDegrees = MathHelper.RadiansToDegrees(xRadians);
+			RotationYDegrees = MathHelper.RadiansToDegrees(yRadians);
+			RotationZDegrees = MathHelper.RadiansToDegrees(zRadians);
 			Children.Add(item.Clone());
+
+			Rebuild(null);
 		}
 
 		public RotateObject3D(IObject3D item, Vector3 translation, string name = "")
@@ -78,16 +80,16 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				var startingAabb = this.GetAxisAlignedBoundingBox();
 
 				// remove whatever rotation has been applied (they go in reverse order)
-				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(-lastRotation.Z)));
-				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(-lastRotation.Y)));
-				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationX(MathHelper.DegreesToRadians(-lastRotation.X)));
+				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(-lastRotationDegrees.Z)));
+				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(-lastRotationDegrees.Y)));
+				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationX(MathHelper.DegreesToRadians(-lastRotationDegrees.X)));
 
 				// add the current rotation
-				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationX(MathHelper.DegreesToRadians(RotationX)));
-				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(RotationY)));
-				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(RotationZ)));
+				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationX(MathHelper.DegreesToRadians(RotationXDegrees)));
+				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(RotationYDegrees)));
+				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(RotationZDegrees)));
 
-				lastRotation = new Vector3(RotationX, RotationY, RotationZ);
+				lastRotationDegrees = new Vector3(RotationXDegrees, RotationYDegrees, RotationZDegrees);
 
 				if (startingAabb.ZSize > 0)
 				{
