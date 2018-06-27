@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 
 				textObject.Invalidate(new InvalidateArgs(textObject, InvalidateType.Properties, null));
-				IObject3D letterObject = new RotateObject3D(textObject, -MathHelper.Tau / 4);
+				IObject3D letterObject = new RotateObject3D(textObject, MathHelper.Tau / 4);
 				letterObject = new AlignObject3D(letterObject, FaceAlign.Bottom | FaceAlign.Front, brailleLetter, FaceAlign.Top | FaceAlign.Front, 0, 0, 3.5);
 				letterObject = new SetCenterObject3D(letterObject, brailleLetter.GetCenter(), true, false, false);
 				this.Children.Add(letterObject);
