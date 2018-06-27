@@ -107,8 +107,6 @@ namespace MatterHackers.MatterControl.DesignTools
 						var curvedMesh = object3Ds.meshCopy.Mesh;
 						var originalMesh = object3Ds.original.Mesh;
 
-						// split edges to make it curve better
-						curvedMesh.Triangulate();
 						if (false)
 						{
 							int sidesPerRotation = 30;
