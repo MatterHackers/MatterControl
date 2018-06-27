@@ -178,6 +178,21 @@ namespace MatterHackers.MatterControl.Library
 			// Drag operation has finished, we need to perform the collapse
 			var loadedItems = this.Children;
 
+			if(loadedItems.Count == 1)
+			{
+				var first = loadedItems.First();
+				if (first.GetType() == typeof(Object3D)
+					&& first.Mesh == null
+					&& first.Children.Count == 1)
+				{
+					// collapse our first child into this
+					this.Children.Modify(list =>
+					{
+						first.CollapseInto(list, false);
+					});
+				}
+			}
+
 			// Collapse our contents into the root of the scene
 			// of the scene when it loses focus
 			scene.Children.Modify(list =>
