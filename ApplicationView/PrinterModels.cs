@@ -631,7 +631,7 @@ namespace MatterHackers.MatterControl
 			string renderTypeString = UserSettings.Instance.get(UserSettingsKey.defaultRenderSetting);
 			if (renderTypeString == null)
 			{
-				renderTypeString = (UserSettings.Instance.IsTouchScreen) ? "Shaded" : "Outlines";
+				renderTypeString = "Shaded";
 				UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, renderTypeString);
 			}
 
