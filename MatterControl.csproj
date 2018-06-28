@@ -270,6 +270,7 @@
     <Compile Include="Utilities\MarkdigAgg\AggCodeBlockRenderer.cs" />
     <Compile Include="Utilities\MarkdigAgg\AggHeadingRenderer.cs" />
     <Compile Include="Utilities\MarkdigAgg\AggListRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\AggMarkdownDocument.cs" />
     <Compile Include="Utilities\MarkdigAgg\AggObjectRenderer.cs" />
     <Compile Include="Utilities\MarkdigAgg\AggQuoteBlockRenderer.cs" />
     <Compile Include="Utilities\MarkdigAgg\AggRenderer.cs" />
@@ -446,7 +447,6 @@
     <Compile Include="Utilities\AuthenticationData.cs" />
     <Compile Include="Utilities\JsonPath.cs" />
     <Compile Include="Utilities\LimitCallFrequency.cs" />
-    <Compile Include="Utilities\MarkdigAgg\MarkdownDocument.cs" />
     <Compile Include="Utilities\MarkdigAgg\MarkdownExtensions.cs" />
     <Compile Include="Utilities\MarkdigAgg\MarkdownPage.cs" />
     <Compile Include="Utilities\MarkdigAgg\MarkdownWidget.cs" />

@@ -43,17 +43,17 @@ namespace Markdig.Agg
 		public string PageID { get; internal set; }
 	}
 
-	public class MarkdownDocument
+	public class AggMarkdownDocument
 	{
 		private string _markDownText = null;
 		private MarkdownPipeline _pipeLine = null;
 		private static readonly MarkdownPipeline DefaultPipeline = new MarkdownPipelineBuilder().UseSupportedExtensions().Build();
 
-		public MarkdownDocument()
+		public AggMarkdownDocument()
 		{
 		}
 
-		public MarkdownDocument(Uri baseUri)
+		public AggMarkdownDocument(Uri baseUri)
 		{
 			this.BaseUri = baseUri;
 		}
@@ -62,13 +62,13 @@ namespace Markdig.Agg
 
 		public List<MarkdownDocumentLink> Children { get; private set; } = new List<MarkdownDocumentLink>();
 
-		public static MarkdownDocument Load(Uri uri)
+		public static AggMarkdownDocument Load(Uri uri)
 		{
 			var webClient = new WebClient();
 
 			string rawText = webClient.DownloadString(uri);
 
-			return new MarkdownDocument(uri)
+			return new AggMarkdownDocument(uri)
 			{
 				Markdown = rawText,
 			};

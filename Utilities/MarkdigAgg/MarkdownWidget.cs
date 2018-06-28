@@ -42,7 +42,7 @@ namespace Markdig.Agg
 		private string _markDownText = null;
 		private FlowLayoutWidget contentPanel;
 
-		private MarkdownDocument markdownDocument;
+		private AggMarkdownDocument markdownDocument;
 
 		public MarkdownWidget(Uri contentUri, bool scrollContent = true)
 			: this(scrollContent)
@@ -55,7 +55,7 @@ namespace Markdig.Agg
 		public MarkdownWidget(bool scrollContent = true)
 			: base(scrollContent)
 		{
-			markdownDocument = new MarkdownDocument();
+			markdownDocument = new AggMarkdownDocument();
 
 			this.HAnchor = HAnchor.Stretch;
 			this.ScrollArea.HAnchor = HAnchor.Stretch;
