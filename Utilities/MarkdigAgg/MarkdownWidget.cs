@@ -57,16 +57,8 @@ namespace Markdig.Agg
 			this.HAnchor = HAnchor.Stretch;
 			this.ScrollArea.HAnchor = HAnchor.Stretch;
 
-			if (scrollContent)
-			{
-				this.VAnchor = VAnchor.Stretch;
-				this.ScrollArea.VAnchor = VAnchor.Fit;
-			}
-			else
-			{
-				this.VAnchor = VAnchor.Fit;
-				this.ScrollArea.VAnchor = VAnchor.Fit;
-			}
+			this.VAnchor = (scrollContent) ? VAnchor.Stretch : VAnchor.Fit;
+			this.ScrollArea.VAnchor = (scrollContent) ? VAnchor.Fit : VAnchor.Fit;
 
 			var lastScroll = this.TopLeftOffset;
 			this.ScrollPositionChanged += (s, e) =>
