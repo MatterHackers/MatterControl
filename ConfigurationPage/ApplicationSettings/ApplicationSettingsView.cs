@@ -213,8 +213,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 										ApplicationController.Instance.Library.NotifyContainerChanged();
 									}
 								},
-								rebuildThumbnailsMessage,
-								rebuildThumbnailsTitle,
+								"You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?".Localize(),
+								"Rebuild Thumbnails Now".Localize(),
 								StyledMessageBox.MessageType.YES_NO,
 								"Rebuild".Localize());
 						});
@@ -417,9 +417,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			return container;
 		}
-
-		private string rebuildThumbnailsMessage = "You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?".Localize();
-		private string rebuildThumbnailsTitle = "Rebuild Thumbnails Now".Localize();
 
 		[Conditional("DEBUG")]
 		private void GenerateLocalizationValidationFile()
