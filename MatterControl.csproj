@@ -447,6 +447,7 @@
     <Compile Include="Utilities\AuthenticationData.cs" />
     <Compile Include="Utilities\JsonPath.cs" />
     <Compile Include="Utilities\LimitCallFrequency.cs" />
+    <Compile Include="Utilities\MarkdigAgg\MarkdownDocument.cs" />
     <Compile Include="Utilities\MarkdigAgg\MarkdownExtensions.cs" />
     <Compile Include="Utilities\MarkdigAgg\MarkdownPage.cs" />
     <Compile Include="Utilities\MarkdigAgg\MarkdownWidget.cs" />
