@@ -36,7 +36,6 @@ using MatterHackers.Agg.UI;
 
 namespace Markdig.Agg
 {
-
 	public class MarkdownDocumentLink
 	{
 		public Uri Uri { get; internal set; }
@@ -48,13 +47,18 @@ namespace Markdig.Agg
 	{
 		private string _markDownText = null;
 		private MarkdownPipeline _pipeLine = null;
-		private Uri baseUri;
 		private static readonly MarkdownPipeline DefaultPipeline = new MarkdownPipelineBuilder().UseSupportedExtensions().Build();
+
+		public MarkdownDocument()
+		{
+		}
 
 		public MarkdownDocument(Uri baseUri)
 		{
-			this.baseUri = baseUri;
+			this.BaseUri = baseUri;
 		}
+
+		public Uri BaseUri { get; set; }
 
 		public List<MarkdownDocumentLink> Children { get; private set; } = new List<MarkdownDocumentLink>();
 
@@ -100,7 +104,7 @@ namespace Markdig.Agg
 			}
 		}
 
-		public void Parse()
+		public void Parse(GuiWidget guiWidget = null)
 		{
 			if (!string.IsNullOrEmpty(this.Markdown))
 			{
@@ -109,11 +113,11 @@ namespace Markdig.Agg
 				// why do we check the pipeline here?
 				pipeline = pipeline ?? new MarkdownPipelineBuilder().Build();
 
-				var rootWidget = new GuiWidget();
+				var rootWidget = guiWidget ?? new GuiWidget();
 
 				var renderer = new AggRenderer(rootWidget)
 				{
-					BaseUri = baseUri,
+					BaseUri = this.BaseUri,
 					ChildLinks = new List<MarkdownDocumentLink>()
 				};
 

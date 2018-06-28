@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl
 #if __ANDROID__
 			var description = new GuiWidget();
 #else
-			var description = new MarkdownWidget(new Uri("https://raw.githubusercontent.com/lunet-io/markdig/master/"))
+			var description = new MarkdownWidget()
 			{
 				Margin = new BorderDouble(10, 4, 10, 10),
 			};

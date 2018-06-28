@@ -40,14 +40,23 @@ namespace Markdig.Agg
 		private static readonly MarkdownPipeline DefaultPipeline = new MarkdownPipelineBuilder().UseSupportedExtensions().Build();
 
 		private string _markDownText = null;
-		private MarkdownPipeline _pipeLine = null;
-		private Uri baseUri;
 		private FlowLayoutWidget contentPanel;
 
-		public MarkdownWidget(Uri baseUri, bool scrollContent = true)
+		private MarkdownDocument markdownDocument;
+
+		public MarkdownWidget(Uri contentUri, bool scrollContent = true)
+			: this(scrollContent)
+		{
+			markdownDocument.BaseUri = contentUri;
+
+			var webClient = new WebClient();
+			this.Markdown = webClient.DownloadString(contentUri);
+		}
+
+		public MarkdownWidget(bool scrollContent = true)
 			: base(scrollContent)
 		{
-			this.baseUri = baseUri;
+			markdownDocument = new MarkdownDocument();
 
 			this.HAnchor = HAnchor.Stretch;
 			this.ScrollArea.HAnchor = HAnchor.Stretch;
@@ -84,13 +93,6 @@ namespace Markdig.Agg
 			this.AddChild(contentPanel);
 		}
 
-		public MarkdownWidget(Uri baseUri, Uri contentUri, bool scrollContent = true)
-			: this(baseUri, scrollContent)
-		{
-			var webClient = new WebClient();
-			this.Markdown = webClient.DownloadString(contentUri);
-		}
-
 		/// <summary>
 		/// Gets or sets the markdown to display.
 		/// </summary>
@@ -102,48 +104,17 @@ namespace Markdig.Agg
 				if (_markDownText != value)
 				{
 					_markDownText = value;
-					this.RefreshDocument();
+
+					// Empty self
+					contentPanel.CloseAllChildren();
+
 					this.Width = 10;
 					this.ScrollPositionFromTop = Vector2.Zero;
+
+					// Parse and reconstruct
+					markdownDocument.Markdown = value;
+					markdownDocument.Parse(contentPanel);
 				}
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the markdown pipeline to use.
-		/// </summary>
-		public MarkdownPipeline Pipeline
-		{
-			get => _pipeLine ?? DefaultPipeline;
-			set
-			{
-				if (_pipeLine != value)
-				{
-					_pipeLine = value;
-				}
-			}
-		}
-
-		private void RefreshDocument()
-		{
-			if (!string.IsNullOrEmpty(this.Markdown))
-			{
-				var pipeline = Pipeline;
-
-				contentPanel.CloseAllChildren();
-
-				// why do we check the pipeline here?
-				pipeline = pipeline ?? new MarkdownPipelineBuilder().Build();
-
-				var renderer = new AggRenderer(contentPanel)
-				{
-					BaseUri = baseUri
-				};
-
-				pipeline.Setup(renderer);
-
-				var document = Markdig.Markdown.Parse(this.Markdown, pipeline);
-				renderer.Render(document);
 			}
 		}
 	}
