@@ -85,21 +85,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-
 			// Force the ActionArea to be as high as ButtonHeight
 			tabControl.TabBar.ActionArea.MinimumSize = new Vector2(0, theme.ButtonHeight);
 			tabControl.TabBar.BackgroundColor = theme.TabBarBackground;
 			tabControl.TabBar.BorderColor = theme.ActiveTabColor;
 
 			// Force common padding into top region
-			var padding = theme.TabbarPadding;
-			tabControl.TabBar.Padding = padding.Clone(top: padding.Top * 2, bottom: 0);
-
-			//tabControl.TabBar.Padding = 0;
-			//tabControl.TabBar.ActionArea.Padding = padding.Clone(top: padding.Top * 2, bottom: 0);
-
-
-			Color selectedTabColor = ActiveTheme.Instance.TabLabelSelected;
+			tabControl.TabBar.Padding = theme.TabbarPadding.Clone(top: theme.TabbarPadding.Top * 2, bottom: 0);
 
 			// add in a what's new button
 			Button seeWhatsNewButton = theme.LinkButtonFactory.Generate("What's New...".Localize());

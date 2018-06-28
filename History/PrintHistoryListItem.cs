@@ -102,7 +102,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 		private static int rightOverlayWidth  = 200;
 #endif
 		private int actionButtonSize = rightOverlayWidth/2;
-		private SlideWidget rightButtonOverlay;
 
 		public PrintHistoryListItem(ListViewItem listViewItem, int thumbWidth, int thumbHeight, PrintTask printTask, bool showTimestamp, ThemeConfig theme)
 			: base(listViewItem, thumbWidth, thumbHeight, theme)
@@ -215,50 +214,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 				primaryContainer.AddChild(primaryFlow);
 
-				rightButtonOverlay = new SlideWidget();
-				rightButtonOverlay.VAnchor = VAnchor.Stretch;
-				rightButtonOverlay.HAnchor = Agg.UI.HAnchor.Right;
-				rightButtonOverlay.Width = rightOverlayWidth;
-				rightButtonOverlay.Visible = false;
-
-				FlowLayoutWidget rightMiddleColumnContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-				rightMiddleColumnContainer.VAnchor = VAnchor.Stretch;
-				{
-					TextWidget viewLabel = new TextWidget("View".Localize());
-					viewLabel.TextColor = Color.White;
-					viewLabel.VAnchor = VAnchor.Center;
-					viewLabel.HAnchor = HAnchor.Center;
-
-					TextWidget printLabel = new TextWidget("Print".Localize());
-					printLabel.TextColor = Color.White;
-					printLabel.VAnchor = VAnchor.Center;
-					printLabel.HAnchor = HAnchor.Center;
-
-					FatFlatClickWidget printButton = new FatFlatClickWidget(printLabel);
-					printButton.VAnchor = VAnchor.Stretch;
-					printButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-					printButton.Width = actionButtonSize;
-					printButton.Click += (sender, e) =>
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							if (!ApplicationController.Instance.ActivePrinter.Connection.PrintIsActive)
-							{
-								// TODO: More work needed here. We need to stash the bedplate, switch to a new context, then invoke print as normal
-								//ApplicationController.Instance.PrintActivePartIfPossible(new PrintItemWrapper(printTask.PrintItemId));
-							}
-							else
-							{
-								// TODO: Queue is somewhat deprecated. Consider disabling this feature/button while printing
-								QueueData.Instance.AddItem(new PrintItemWrapper(printTask.PrintItemId));
-							}
-							rightButtonOverlay.SlideOut();
-						});
-					};
-					rightMiddleColumnContainer.AddChild(printButton);
-				}
-				rightButtonOverlay.AddChild(rightMiddleColumnContainer);
-
 				if (showTimestamp)
 				{
 					FlowLayoutWidget timestampColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -321,7 +276,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 				}
 
 				mainContainer.AddChild(primaryContainer);
-				mainContainer.AddChild(rightButtonOverlay);
 
 				this.AddChild(mainContainer);
 			}
