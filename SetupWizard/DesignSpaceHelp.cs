@@ -73,14 +73,15 @@ namespace MatterHackers.MatterControl
 
 	public class DesignSpaceGuide : DialogPage
 	{
-		private Dictionary<string, TreeNode> nodesByID;
 		private TreeView treeView;
+		private string guideKey = null;
 
 		public DesignSpaceGuide(string guideKey = null)
 			: base("Close".Localize())
 		{
-			WindowSize = new Vector2(800, 600);
+			WindowSize = new Vector2(940, 700);
 
+			this.guideKey = guideKey;
 			this.WindowTitle = "MatterControl " + "Help".Localize();
 			this.HeaderText = "How to succeed with MatterControl".Localize();
 			this.ChildBorderColor = theme.GetBorderColor(75);
@@ -230,19 +231,11 @@ namespace MatterHackers.MatterControl
 			{
 				// Otherwise switch to guides tab and select the target item
 				tabControl.SelectedTabIndex = tabControl.GetTabIndex(guideTab);
-
-				// TODO: Find the target TreeNode by ID and select
-				if (nodesByID.TryGetValue(guideKey, out TreeNode guideNode))
-				{
-					treeView.SelectedNode = guideNode;
-				}
 			}
 		}
 
 		private void AddGuides(FlowLayoutWidget guideContainer)
 		{
-			nodesByID = new Dictionary<string, TreeNode>();
-
 			var sequence = new ImageSequence()
 			{
 				FramesPerSecond = 3,
@@ -296,7 +289,21 @@ namespace MatterHackers.MatterControl
 
 				if (treeView.SelectedNode == null)
 				{
-					treeView.SelectedNode = rootNode.Nodes.FirstOrDefault();
+					if (string.IsNullOrEmpty(guideKey))
+					{
+						treeView.SelectedNode = rootNode.Nodes.FirstOrDefault();
+					}
+					else
+					{
+						// Find the target TreeNode by ID and select
+						foreach (var node in rootNode.Nodes)
+						{
+							if (node.Text == guideKey)
+							{
+								treeView.SelectedNode = node;
+							}
+						}
+					}
 				}
 			};
 
