@@ -264,8 +264,8 @@ namespace MatterHackers.MatterControl
 			{
 				Margin = new BorderDouble(10, 4, 10, 10),
 			};
-#endif
 			rightPanel.AddChild(markdownWidget);
+#endif
 
 			treeView = new TreeView(theme)
 			{
@@ -274,11 +274,10 @@ namespace MatterHackers.MatterControl
 			};
 			treeView.AfterSelect += (s, e) =>
 			{
+#if !__ANDROID__
 				if (treeView.SelectedNode.Tag is GuideAsset guide)
 				{
-#if !__ANDROID__
 					markdownWidget.Markdown = guide.Description;
-#endif
 				}
 				else if (treeView.SelectedNode.Tag is string key)
 				{
@@ -286,6 +285,7 @@ namespace MatterHackers.MatterControl
 					string filterHack = key.Replace("/docs", "");
 					markdownWidget.Load(new Uri($"https://matterhackers.github.io/MatterControl-Help{filterHack}"));
 				}
+#endif
 			};
 
 			TreeNode rootNode = null;
