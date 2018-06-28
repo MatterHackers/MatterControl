@@ -49,8 +49,7 @@ namespace Markdig.Agg
 		{
 			markdownDocument.BaseUri = contentUri;
 
-			var webClient = new WebClient();
-			this.Markdown = webClient.DownloadString(contentUri);
+			this.Load(contentUri);
 		}
 
 		public MarkdownWidget(bool scrollContent = true)
@@ -91,6 +90,12 @@ namespace Markdig.Agg
 			};
 
 			this.AddChild(contentPanel);
+		}
+
+		public void Load(Uri uri)
+		{
+			var webClient = new WebClient();
+			this.Markdown = webClient.DownloadString(uri);
 		}
 
 		/// <summary>

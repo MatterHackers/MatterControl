@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 #if !__ANDROID__
 using Markdig.Agg;
@@ -40,6 +41,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
@@ -60,6 +62,13 @@ namespace MatterHackers.MatterControl
 		/// be used to navigate to this guide while opening the control
 		/// </summary>
 		public string Key;
+	}
+
+	public class HelpContainer
+	{
+		public List<HelpContainer> Containers { get; set; } = new List<HelpContainer>();
+		public List<GuideAsset> Items { get; set; } = new List<GuideAsset>();
+		public string Name { get; set; }
 	}
 
 	public class DesignSpaceGuide : DialogPage
@@ -251,12 +260,12 @@ namespace MatterHackers.MatterControl
 #if __ANDROID__
 			var description = new GuiWidget();
 #else
-			var description = new MarkdownWidget()
+			var markdownWidget = new MarkdownWidget()
 			{
 				Margin = new BorderDouble(10, 4, 10, 10),
 			};
 #endif
-			rightPanel.AddChild(description);
+			rightPanel.AddChild(markdownWidget);
 
 			treeView = new TreeView(theme)
 			{
@@ -268,18 +277,18 @@ namespace MatterHackers.MatterControl
 				if (treeView.SelectedNode.Tag is GuideAsset guide)
 				{
 #if !__ANDROID__
-					description.Markdown = guide.Description;
+					markdownWidget.Markdown = guide.Description;
 #endif
+				}
+				else if (treeView.SelectedNode.Tag is string key)
+				{
+					// TODO: Fix in generation when time permits
+					string filterHack = key.Replace("/docs", "");
+					markdownWidget.Load(new Uri($"https://matterhackers.github.io/MatterControl-Help{filterHack}"));
 				}
 			};
 
-			var rootNode = new TreeNode(useIcon: false)
-			{
-				Text = "Help Guides",
-				TextColor = theme.Colors.PrimaryTextColor,
-				PointSize = theme.DefaultFontSize,
-				TreeView = treeView,
-			};
+			TreeNode rootNode = null;
 
 			treeView.Load += (s, e) =>
 			{
@@ -291,32 +300,14 @@ namespace MatterHackers.MatterControl
 				}
 			};
 
-			TreeNode firstNode = null;
 			double maxMenuItemWidth = 0;
 
-			foreach (var guide in ApplicationController.Instance.FeatureGuides.OrderBy(g => g.MenuName))
-			{
-				var treeNode = new TreeNode(useIcon: false)
-				{
-					Text = guide.MenuName,
-					Tag = guide,
-					TextColor = theme.Colors.PrimaryTextColor,
-					PointSize = theme.DefaultFontSize,
-				};
-
-				maxMenuItemWidth = Math.Max(maxMenuItemWidth, treeNode.Width);
-
-				if (firstNode == null)
-				{
-					firstNode = treeNode;
-				}
-
-				nodesByID.Add(guide.MenuName, treeNode);
-
-				rootNode.Nodes.Add(treeNode);
-			}
-
+			rootNode = ProcessTree(ApplicationController.Instance.FeatureGuides);
+			rootNode.Text = "Help";
+			rootNode.TreeView = treeView;
 			treeView.AddChild(rootNode);
+
+			maxMenuItemWidth = Math.Max(maxMenuItemWidth, rootNode.Width);
 
 			var splitter = new Splitter()
 			{
@@ -324,10 +315,34 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Stretch,
 				SplitterBackground = theme.SplitterBackground
 			};
-			splitter.SplitterDistance = maxMenuItemWidth + 30;
+			splitter.SplitterDistance = maxMenuItemWidth + 130;
 			splitter.Panel1.AddChild(treeView);
 			splitter.Panel2.AddChild(rightPanel);
 			guideContainer.AddChild(splitter);
+		}
+
+		private TreeNode ProcessTree(HelpContainer container)
+		{
+			var treeNode = new TreeNode(false)
+			{
+				Text = container.Name,
+			};
+
+			foreach(var child in container.Containers)
+			{
+				treeNode.Nodes.Add(ProcessTree(child));
+			}
+
+			foreach (var item in container.Items)
+			{
+				treeNode.Nodes.Add(new TreeNode()
+				{
+					Text = item.MenuName,
+					Tag = item.Key
+				});
+			}
+
+			return treeNode;
 		}
 
 		public Color ChildBorderColor { get; private set; }
