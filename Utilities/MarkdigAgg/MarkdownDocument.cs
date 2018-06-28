@@ -28,78 +28,54 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Net;
 using Markdig.Renderers;
+using Markdig.Syntax.Inlines;
 using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
 
 namespace Markdig.Agg
 {
-	public class MarkdownWidget : ScrollableWidget
+	public class MarkdownDocumentLink
 	{
+		public Uri Uri { get; internal set; }
+		public LinkInline LinkInline { get; internal set; }
+		public string PageID { get; internal set; }
+	}
+
+	public class MarkdownDocument
+	{
+		private string _markDownText = null;
+		private MarkdownPipeline _pipeLine = null;
 		private static readonly MarkdownPipeline DefaultPipeline = new MarkdownPipelineBuilder().UseSupportedExtensions().Build();
 
-		private string _markDownText = null;
-		private FlowLayoutWidget contentPanel;
-
-		private MarkdownDocument markdownDocument;
-
-		public MarkdownWidget(Uri contentUri, bool scrollContent = true)
-			: this(scrollContent)
+		public MarkdownDocument()
 		{
-			markdownDocument.BaseUri = contentUri;
-
-			this.Load(contentUri);
 		}
 
-		public MarkdownWidget(bool scrollContent = true)
-			: base(scrollContent)
+		public MarkdownDocument(Uri baseUri)
 		{
-			markdownDocument = new MarkdownDocument();
-
-			this.HAnchor = HAnchor.Stretch;
-			this.ScrollArea.HAnchor = HAnchor.Stretch;
-
-			if (scrollContent)
-			{
-				this.VAnchor = VAnchor.Stretch;
-				this.ScrollArea.VAnchor = VAnchor.Fit;
-			}
-			else
-			{
-				this.VAnchor = VAnchor.Fit;
-				this.ScrollArea.VAnchor = VAnchor.Fit;
-			}
-
-			var lastScroll = this.TopLeftOffset;
-			this.ScrollPositionChanged += (s, e) =>
-			{
-				lastScroll = TopLeftOffset;
-			};
-
-			// make sure as the scrolling area changes height we maintain our current scroll position
-			this.ScrollArea.BoundsChanged += (s, e) =>
-			{
-				TopLeftOffset = lastScroll;
-			};
-
-			contentPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
-			};
-
-			this.AddChild(contentPanel);
+			this.BaseUri = baseUri;
 		}
 
-		public void Load(Uri uri)
+		public Uri BaseUri { get; set; }
+
+		public List<MarkdownDocumentLink> Children { get; private set; } = new List<MarkdownDocumentLink>();
+
+		public static MarkdownDocument Load(Uri uri)
 		{
 			var webClient = new WebClient();
-			this.Markdown = webClient.DownloadString(uri);
+
+			string rawText = webClient.DownloadString(uri);
+
+			return new MarkdownDocument(uri)
+			{
+				Markdown = rawText,
+			};
 		}
 
 		/// <summary>
-		/// Gets or sets the markdown to display.
+		/// Gets or sets the Markdown to display.
 		/// </summary>
 		public string Markdown
 		{
@@ -109,17 +85,49 @@ namespace Markdig.Agg
 				if (_markDownText != value)
 				{
 					_markDownText = value;
-
-					// Empty self
-					contentPanel.CloseAllChildren();
-
-					this.Width = 10;
-					this.ScrollPositionFromTop = Vector2.Zero;
-
-					// Parse and reconstruct
-					markdownDocument.Markdown = value;
-					markdownDocument.Parse(contentPanel);
 				}
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the Markdown pipeline to use.
+		/// </summary>
+		public MarkdownPipeline Pipeline
+		{
+			get => _pipeLine ?? DefaultPipeline;
+			set
+			{
+				if (_pipeLine != value)
+				{
+					_pipeLine = value;
+				}
+			}
+		}
+
+		public void Parse(GuiWidget guiWidget = null)
+		{
+			if (!string.IsNullOrEmpty(this.Markdown))
+			{
+				var pipeline = Pipeline;
+
+				// why do we check the pipeline here?
+				pipeline = pipeline ?? new MarkdownPipelineBuilder().Build();
+
+				var rootWidget = guiWidget ?? new GuiWidget();
+
+				var renderer = new AggRenderer(rootWidget)
+				{
+					BaseUri = this.BaseUri,
+					ChildLinks = new List<MarkdownDocumentLink>()
+				};
+
+				pipeline.Setup(renderer);
+
+				var document = Markdig.Markdown.Parse(this.Markdown, pipeline);
+
+				renderer.Render(document);
+
+				this.Children = renderer.ChildLinks;
 			}
 		}
 	}

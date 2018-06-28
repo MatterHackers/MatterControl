@@ -1,56 +1,41 @@
-[
-  {
-    "AnimationUri": "https://www.matterhackers.com/r/3QLZVv",
-    "Category": "Design Tools",
-    "SubCategory": "Printing",
-    "MenuName": "Hotend Controls",
-    "Title": "Hotend and Extruder Controls",
-    "Description": "From the hotend control, you can:\n    • Select Material\n    • Set Temperature\n    • Move Print Head\n    • Load and Unload Filament",
-    "Key": null
-  },
-  {
-    "AnimationUri": "https://www.matterhackers.com/r/Ifooem",
-    "Category": "Design Tools",
-    "SubCategory": "Creating",
-    "MenuName": "Adding Parts",
-    "Title": "Adding Parts to the Bed",
-    "Description": "You can drag parts into the 3D view from the library side bar, or directly from the desktop.",
-    "Key": null
-  },
-  {
-    "AnimationUri": "https://www.matterhackers.com/r/AW0bcR",
-    "Category": "Design Tools",
-    "SubCategory": "Printing",
-    "MenuName": "Starting a Print",
-    "Title": "Starting a Print",
-    "Description": "From the print control, you can:\n    • Set Layer Height\n    • Set Fill Density\n    • Turn on and off Support\n    • Start Your Print",
-    "Key": null
-  },
-  {
-    "AnimationUri": "https://www.matterhackers.com/r/1oH3i1",
-    "Category": "Design Tools",
-    "SubCategory": "Arrangement",
-    "MenuName": "Rotate Controls",
-    "Title": "Rotating Objects in the 3D view",
-    "Description": "Click on any of the rotate corner controls to rotate on the plane of that control. Moving the mouse over one of the arrow indicators locks the rotation to a 45° angle.",
-    "Key": null
-  },
-  {
-    "AnimationUri": "https://www.matterhackers.com/r/yNqiNT",
-    "Category": "Design Tools",
-    "SubCategory": "Arrangement",
-    "MenuName": "Scale Controls",
-    "Title": "Scaling Objects in the 3D view",
-    "Description": "Click on any of the scale corner controls to scale your part on the bed.",
-    "Key": null
-  },
-  {
-    "AnimationUri": "https://www.matterhackers.com/r/sjMyWZ",
-    "Category": "Design Tools",
-    "SubCategory": "Printing",
-    "MenuName": "Supports",
-    "Title": "Custom Support Generation",
-    "Description": "Any object can be turned into support. Simply select it in the 3D view and click the 'Make Support' button. Support will automatically make interface layers and avoid intersecting the printing object.",
-    "Key": null
-  }
-]
+{
+  "Containers": [],
+  "Items": [
+    {
+      "MenuName": "Adding Parts",
+      "Description": null,
+      "Key": "/docs/adding-parts.md"
+    },
+    {
+      "MenuName": "Hotend Controls",
+      "Description": null,
+      "Key": "/docs/hotend-controls.md"
+    },
+    {
+      "MenuName": "Rotate Controls",
+      "Description": null,
+      "Key": "/docs/rotate-controls.md"
+    },
+    {
+      "MenuName": "Scale Controls",
+      "Description": null,
+      "Key": "/docs/scale-controls.md"
+    },
+    {
+      "MenuName": "Starting A Print",
+      "Description": null,
+      "Key": "/docs/starting-a-print.md"
+    },
+    {
+      "MenuName": "Support",
+      "Description": null,
+      "Key": "/docs/support.md"
+    },
+    {
+      "MenuName": "Whats New",
+      "Description": null,
+      "Key": "/docs/whats-new.md"
+    }
+  ],
+  "Name": "docs"
+}

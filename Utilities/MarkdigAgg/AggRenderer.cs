@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Markdig.Agg;
 using Markdig.Helpers;
 using Markdig.Renderers.Agg;
 using Markdig.Renderers.Agg.Inlines;
@@ -52,6 +53,7 @@ namespace Markdig.Renderers
 		public GuiWidget Document { get; }
 
 		public Uri BaseUri { get; set; }
+		public List<MarkdownDocumentLink> ChildLinks { get; internal set; }
 
 		public AggRenderer(GuiWidget document)
 		{

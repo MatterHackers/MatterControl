@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using Markdig.Agg;
 using Markdig.Syntax.Inlines;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
@@ -188,7 +189,16 @@ namespace Markdig.Renderers.Agg.Inlines
 
 			if (!url.StartsWith("http"))
 			{
+				var pageID = url;
+
 				url = new Uri(renderer.BaseUri, url).AbsoluteUri;
+
+				renderer.ChildLinks.Add(new MarkdownDocumentLink()
+				{
+					Uri = new Uri(url),
+					LinkInline = link,
+					PageID = pageID
+				});
 			}
 
 			if (link.IsImage) //link.IsImage)
