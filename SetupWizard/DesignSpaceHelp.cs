@@ -46,16 +46,6 @@ namespace MatterHackers.MatterControl
 	public class GuideAsset
 	{
 		/// <summary>
-		/// The first level category this guide is part of
-		/// </summary>
-		public string Category;
-
-		/// <summary>
-		/// Second level category
-		/// </summary>
-		public string SubCategory;
-
-		/// <summary>
 		/// The name that is in the navigation list with categories
 		/// </summary>
 		public string MenuName;
