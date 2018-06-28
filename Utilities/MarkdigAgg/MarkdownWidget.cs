@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Net;
-using Markdig.Renderers;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 
@@ -37,8 +36,6 @@ namespace Markdig.Agg
 {
 	public class MarkdownWidget : ScrollableWidget
 	{
-		private static readonly MarkdownPipeline DefaultPipeline = new MarkdownPipelineBuilder().UseSupportedExtensions().Build();
-
 		private string _markDownText = null;
 		private FlowLayoutWidget contentPanel;
 
