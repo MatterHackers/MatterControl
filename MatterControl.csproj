@@ -218,7 +218,6 @@
     <Compile Include="CustomWidgets\NamedAction.cs" />
     <Compile Include="CustomWidgets\RadioImageWidget.cs" />
     <Compile Include="CustomWidgets\RadioPanelWidget.cs" />
-    <Compile Include="CustomWidgets\DisableablePanel.cs" />
     <Compile Include="CustomWidgets\SvgWidget.cs" />
     <Compile Include="Library\Interfaces\LibraryExtensionMethods.cs" />
     <Compile Include="Library\Providers\CreateFolderItem.cs" />
@@ -378,7 +377,6 @@
     <Compile Include="PartPreviewWindow\SelectedObjectPanel.cs" />
     <Compile Include="PartPreviewWindow\ViewControls3D.cs" />
     <Compile Include="PartPreviewWindow\GCode2DWidget.cs" />
-    <Compile Include="CustomWidgets\DisableableWidget.cs" />
     <Compile Include="CustomWidgets\ExportPrintItemPage.cs" />
     <Compile Include="PrinterCommunication\Io\FeedRateMultiplyerStream.cs" />
     <Compile Include="PrinterCommunication\Io\ExtrusionMultiplyerStream.cs" />

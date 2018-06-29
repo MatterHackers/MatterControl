@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		internal JogControls jogControls;
 
 		// Provides a list of DisableableWidgets controls that can be toggled on/off at runtime
-		internal List<DisableableWidget> DisableableWidgets = new List<DisableableWidget>();
+		internal List<GuiWidget> DisableableWidgets = new List<GuiWidget>();
 
 		private LimitCallingFrequency reportDestinationChanged = null;
 
@@ -67,11 +67,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 				Margin = 0
 			};
 
-			this.AddChild(CreateDisableableContainer(GetHomeButtonBar()));
+			this.AddChild(AddToDisableableList(GetHomeButtonBar()));
 
 			this.AddChild(jogControls);
 
-			this.AddChild(CreateDisableableContainer(GetHWDestinationBar()));
+			this.AddChild(AddToDisableableList(GetHWDestinationBar()));
 		}
 
 		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
@@ -100,20 +100,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 		}
 
 		/// <summary>
-		/// Helper method to create DisableableWidget containers and populate the DisableableWidgets local property.
+		/// Helper method to populate the DisableableWidgets local property.
 		/// </summary>
-		/// <param name="widget">The widget to wrap.</param>
-		private DisableableWidget CreateDisableableContainer(GuiWidget widget)
+		/// <param name="widget">The widget to add and return.</param>
+		private GuiWidget AddToDisableableList(GuiWidget widget)
 		{
-			var container = new DisableableWidget()
-			{
-				HAnchor = HAnchor.Left | HAnchor.Stretch
-			};
-			container.AddChild(widget);
-
-			DisableableWidgets.Add(container);
-
-			return container;
+			this.DisableableWidgets.Add(widget);
+			return widget;
 		}
 
 		private FlowLayoutWidget GetHomeButtonBar()
