@@ -42,7 +42,7 @@ namespace Markdig.Renderers
 	}
 
 	/// <summary>
-	/// Agg renderer for a Markdown <see cref="MarkdownDocument"/> object.
+	/// Agg renderer for a Markdown <see cref="AggMarkdownDocument"/> object.
 	/// </summary>
 	/// <seealso cref="RendererBase" />
 	public class AggRenderer : RendererBase

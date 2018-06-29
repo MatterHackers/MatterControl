@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Net;
-using Markdig.Renderers;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 
@@ -37,12 +36,10 @@ namespace Markdig.Agg
 {
 	public class MarkdownWidget : ScrollableWidget
 	{
-		private static readonly MarkdownPipeline DefaultPipeline = new MarkdownPipelineBuilder().UseSupportedExtensions().Build();
-
 		private string _markDownText = null;
 		private FlowLayoutWidget contentPanel;
 
-		private MarkdownDocument markdownDocument;
+		private AggMarkdownDocument markdownDocument;
 
 		public MarkdownWidget(Uri contentUri, bool scrollContent = true)
 			: this(scrollContent)
@@ -55,21 +52,13 @@ namespace Markdig.Agg
 		public MarkdownWidget(bool scrollContent = true)
 			: base(scrollContent)
 		{
-			markdownDocument = new MarkdownDocument();
+			markdownDocument = new AggMarkdownDocument();
 
 			this.HAnchor = HAnchor.Stretch;
 			this.ScrollArea.HAnchor = HAnchor.Stretch;
 
-			if (scrollContent)
-			{
-				this.VAnchor = VAnchor.Stretch;
-				this.ScrollArea.VAnchor = VAnchor.Fit;
-			}
-			else
-			{
-				this.VAnchor = VAnchor.Fit;
-				this.ScrollArea.VAnchor = VAnchor.Fit;
-			}
+			this.VAnchor = (scrollContent) ? VAnchor.Stretch : VAnchor.Fit;
+			this.ScrollArea.VAnchor = (scrollContent) ? VAnchor.Fit : VAnchor.Fit;
 
 			var lastScroll = this.TopLeftOffset;
 			this.ScrollPositionChanged += (s, e) =>
