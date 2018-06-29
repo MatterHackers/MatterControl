@@ -50,17 +50,17 @@ namespace Markdig.Renderers
 		private readonly Stack<GuiWidget> stack = new Stack<GuiWidget>();
 		private char[] buffer;
 
-		public GuiWidget Document { get; }
+		public GuiWidget RootWidget { get; }
 
 		public Uri BaseUri { get; set; }
 		public List<MarkdownDocumentLink> ChildLinks { get; internal set; }
 
-		public AggRenderer(GuiWidget document)
+		public AggRenderer(GuiWidget rootWidget)
 		{
 			buffer = new char[1024];
-			Document = document;
+			RootWidget = rootWidget;
 
-			stack.Push(document);
+			stack.Push(rootWidget);
 
 			// Default block renderers
 			ObjectRenderers.Add(new AggCodeBlockRenderer());
@@ -90,7 +90,7 @@ namespace Markdig.Renderers
 		public override object Render(MarkdownObject markdownObject)
 		{
 			Write(markdownObject);
-			return Document;
+			return RootWidget;
 		}
 
 		/// <summary>
