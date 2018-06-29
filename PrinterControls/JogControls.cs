@@ -125,15 +125,6 @@ namespace MatterHackers.MatterControl
 						};
 						moveRadioButtons.AddChild(moveOneMmButton);
 
-						tooBigForBabyStepping = new DisableableWidget()
-						{
-							VAnchor = VAnchor.Fit,
-							HAnchor = HAnchor.Fit
-						};
-
-						var tooBigFlowLayout = new FlowLayoutWidget();
-						tooBigForBabyStepping.AddChild(tooBigFlowLayout);
-
 						tenButton = theme.CreateMicroRadioButton("10", radioList);
 						tenButton.CheckedStateChanged += (s, e) =>
 						{
@@ -142,7 +133,7 @@ namespace MatterHackers.MatterControl
 								SetXYZMoveAmount(10);
 							}
 						};
-						tooBigFlowLayout.AddChild(tenButton);
+						moveRadioButtons.AddChild(tenButton);
 
 						oneHundredButton = theme.CreateMicroRadioButton("100", radioList);
 						oneHundredButton.CheckedStateChanged += (s, e) =>
@@ -152,17 +143,14 @@ namespace MatterHackers.MatterControl
 								SetXYZMoveAmount(100);
 							}
 						};
-						tooBigFlowLayout.AddChild(oneHundredButton);
-
-						moveRadioButtons.AddChild(tooBigForBabyStepping);
+						moveRadioButtons.AddChild(oneHundredButton);
 
 						tenButton.Checked = true;
 						SetXYZMoveAmount(10);
 						moveRadioButtons.Margin = new BorderDouble(0, 3);
-
 						setMoveDistanceControl.AddChild(moveRadioButtons);
 
-						tooBigFlowLayout.AddChild(new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8)
+						moveRadioButtons.AddChild(new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8)
 						{
 							Margin = new BorderDouble(left: 10),
 							VAnchor = VAnchor.Center
@@ -178,22 +166,19 @@ namespace MatterHackers.MatterControl
 #if !__ANDROID__
 				allControlsLeftToRight.AddChild(GetHotkeyControlContainer());
 #endif
-				var barBetweenZAndE = new GuiWidget(1, 1)
+				// Bar between Z And E
+				allControlsLeftToRight.AddChild(new GuiWidget(1, 1)
 				{
 					VAnchor = VAnchor.Stretch,
 					BackgroundColor = colors.ZColor,
 					Margin = new BorderDouble(distanceBetweenControls, 5)
-				};
-				allControlsLeftToRight.AddChild(barBetweenZAndE);
+				});
 
-				FlowLayoutWidget eButtons = CreateEButtons(buttonSeparationDistance, colors);
-				disableableEButtons = new DisableableWidget()
-				{
-					Name = "disableableEButtons",
-					HAnchor = HAnchor.Fit,
-					VAnchor = VAnchor.Fit | VAnchor.Top,
-				};
-				disableableEButtons.AddChild(eButtons);
+				// EButtons
+				disableableEButtons = CreateEButtons(buttonSeparationDistance, colors);
+				disableableEButtons.Name = "disableableEButtons";
+				disableableEButtons.HAnchor = HAnchor.Fit;
+				disableableEButtons.VAnchor = VAnchor.Fit | VAnchor.Top;
 
 				allControlsLeftToRight.AddChild(disableableEButtons);
 				allControlsTopToBottom.AddChild(allControlsLeftToRight);
@@ -209,9 +194,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			this.PerformLayout();
-			// this.HAnchor |= HAnchor.Stretch;
 		}
-
 		internal void SetEnabledLevels(bool enableBabysteppingMode, bool enableEControls)
 		{
 			if (enableBabysteppingMode)
@@ -232,10 +215,8 @@ namespace MatterHackers.MatterControl
 			tenButton.Enabled = !enableBabysteppingMode;
 			oneHundredButton.Enabled = !enableBabysteppingMode;
 
-			disableableEButtons.SetEnableLevel(enableEControls ? DisableableWidget.EnableLevel.Enabled : DisableableWidget.EnableLevel.Disabled);
-			tooBigForBabyStepping.SetEnableLevel(enableBabysteppingMode ? DisableableWidget.EnableLevel.Disabled : DisableableWidget.EnableLevel.Enabled);
+			disableableEButtons.Enabled = enableEControls;
 		}
-
 		private void SetEMoveAmount(int moveAmount)
 		{
 			foreach (ExtrudeButton extrudeButton in eMinusButtons)
@@ -271,8 +252,7 @@ namespace MatterHackers.MatterControl
 		private RadioTextButton moveOneMmButton;
 		private RadioTextButton oneHundredButton;
 		private RadioTextButton tenButton;
-		private DisableableWidget disableableEButtons;
-		private DisableableWidget tooBigForBabyStepping;
+		private GuiWidget disableableEButtons;
 		private GuiWidget keyboardFocusBorder;
 		private GuiWidget keyboardImage;
 		private EventHandler unregisterEvents;
@@ -462,9 +442,11 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				TextWidget eMinusControlLabel = new TextWidget("Retract".Localize(), pointSize: 11);
-				eMinusControlLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				eMinusControlLabel.VAnchor = VAnchor.Center;
+				TextWidget eMinusControlLabel = new TextWidget("Retract".Localize(), pointSize: 11)
+				{
+					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+					VAnchor = VAnchor.Center
+				};
 				eMinusButtonAndText.AddChild(eMinusControlLabel);
 				eButtons.AddChild(eMinusButtonAndText);
 
