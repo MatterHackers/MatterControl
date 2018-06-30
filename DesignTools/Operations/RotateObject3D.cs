@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public double RotationZDegrees { get; set; }
 
 		// this needs to serialize
-		Matrix4X4 appliedRotation = Matrix4X4.Identity;
+		public Matrix4X4 inverseRotation = Matrix4X4.Identity;
 
 		public RotateObject3D()
 		{
@@ -79,20 +79,21 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				var final = value;
 				using (RebuildLock())
 				{
-					var a = Matrix;
-					var c = value;
+					var a = Matrix * inverseRotation;
+					var c = value * inverseRotation;
 					// assuming ab = c and we have a and are recieving a new c, what was b
 					// (the matrix that is being applied)? 
 					// b = (a^-1)c.
 					var b = a.Inverted * c;
 					// new we can re-apply the transform being attempted and the rotation after
-					final = (appliedRotation.Inverted * a) * b * RotationMatrix;
+					final = a * b * RotationMatrix;
 				}
 
 				base.Matrix = final;
 			}
 		}
 
+		[JsonIgnore]
 		public Matrix4X4 RotationMatrix
 		{
 			get
@@ -120,17 +121,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 				var rotationMatrix = RotationMatrix;
 				// remove whatever rotation has been applied (they go in reverse order)
-				base.Matrix = appliedRotation.Inverted * Matrix;
+				base.Matrix = inverseRotation * Matrix;
 
 				// add the current rotation
 				base.Matrix = this.ApplyAtPosition(startingAabb.Center, rotationMatrix);
 
-				appliedRotation = rotationMatrix;
+				inverseRotation = rotationMatrix.Inverted;
 
 				if (startingAabb.ZSize > 0)
 				{
 					// If the part was already created and at a height, maintain the height.
-					//PlatingHelper.PlaceMeshAtHeight(this, startingAabb.minXYZ.Z);
+					PlatingHelper.PlaceMeshAtHeight(this, startingAabb.minXYZ.Z);
 				}
 			}
 
