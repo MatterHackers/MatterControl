@@ -38,9 +38,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public class RotateObject3D : Object3D
 	{
-		// we do want this to persist
-		Vector3 lastRotationDegrees = Vector3.Zero;
-
 		[DisplayName("X")]
 		[Description("Rotate about the X axis")]
 		public double RotationXDegrees { get; set; }
@@ -50,6 +47,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[DisplayName("Z")]
 		[Description("Rotate about the Z axis")]
 		public double RotationZDegrees { get; set; }
+
+		// this needs to serialize
+		public Matrix4X4 inverseRotation = Matrix4X4.Identity;
 
 		public RotateObject3D()
 		{
@@ -71,6 +71,46 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 		}
 
+		public override Matrix4X4 Matrix
+		{
+			get => base.Matrix;
+			set
+			{
+				var final = value;
+				using (RebuildLock())
+				{
+					var a = Matrix * inverseRotation;
+					var c = value * inverseRotation;
+					// assuming ab = c and we have a and are recieving a new c, what was b
+					// (the matrix that is being applied)? 
+					// b = (a^-1)c.
+					var b = a.Inverted * c;
+					// new we can re-apply the transform being attempted and the rotation after
+					final = a * b * RotationMatrix;
+				}
+
+				base.Matrix = final;
+			}
+		}
+
+		[JsonIgnore]
+		public Matrix4X4 RotationMatrix
+		{
+			get
+			{
+				var a = Matrix4X4.CreateRotation(new Vector3(
+					MathHelper.DegreesToRadians(RotationXDegrees),
+					MathHelper.DegreesToRadians(RotationYDegrees),
+					MathHelper.DegreesToRadians(RotationZDegrees)));
+
+				var b = Matrix4X4.CreateRotationX(MathHelper.DegreesToRadians(RotationXDegrees))
+					* Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(RotationYDegrees))
+					* Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(RotationZDegrees));
+
+				return b;
+			}
+		}
+
 		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
@@ -79,17 +119,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				var startingAabb = this.GetAxisAlignedBoundingBox();
 
+				var rotationMatrix = RotationMatrix;
 				// remove whatever rotation has been applied (they go in reverse order)
-				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(-lastRotationDegrees.Z)));
-				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(-lastRotationDegrees.Y)));
-				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationX(MathHelper.DegreesToRadians(-lastRotationDegrees.X)));
+				base.Matrix = inverseRotation * Matrix;
 
 				// add the current rotation
-				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationX(MathHelper.DegreesToRadians(RotationXDegrees)));
-				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(RotationYDegrees)));
-				Matrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(RotationZDegrees)));
+				base.Matrix = this.ApplyAtPosition(startingAabb.Center, rotationMatrix);
 
-				lastRotationDegrees = new Vector3(RotationXDegrees, RotationYDegrees, RotationZDegrees);
+				inverseRotation = rotationMatrix.Inverted;
 
 				if (startingAabb.ZSize > 0)
 				{

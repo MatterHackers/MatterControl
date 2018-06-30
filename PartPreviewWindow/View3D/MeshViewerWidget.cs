@@ -644,10 +644,10 @@ namespace MatterHackers.MeshVisualizer
 
 			var wantMm = pixelsWant * distBetweenPixelsWorldSpace;
 
-			var scaleMatrix = worldMatrix.ApplyAtPosition(Matrix4X4.CreateScale(
+			var scaleMatrix = worldMatrix.ApplyAtPosition(worldCenter, Matrix4X4.CreateScale(
 				wantMm.X / worldBounds.XSize,
 				wantMm.Y / worldBounds.YSize,
-				wantMm.Z / worldBounds.ZSize), worldCenter);
+				wantMm.Z / worldBounds.ZSize));
 
 			GLHelper.Render(item.Mesh, 
 				selectionColor,

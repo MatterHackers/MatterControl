@@ -305,10 +305,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static Matrix4X4 ApplyAtCenter(this Matrix4X4 currentTransform, AxisAlignedBoundingBox boundsToApplyTo, Matrix4X4 transformToApply)
 		{
-			return ApplyAtPosition(currentTransform, transformToApply, boundsToApplyTo.Center);
+			return ApplyAtPosition(currentTransform, boundsToApplyTo.Center, transformToApply);
 		}
 
-		public static Matrix4X4 ApplyAtPosition(this Matrix4X4 currentTransform, Matrix4X4 transformToApply, Vector3 positionToApplyAt)
+		public static Matrix4X4 ApplyAtPosition(this IObject3D item, Vector3 positionToApplyAt, Matrix4X4 transformToApply)
+		{
+			return item.Matrix.ApplyAtPosition(positionToApplyAt, transformToApply);
+		}
+
+		public static Matrix4X4 ApplyAtPosition(this Matrix4X4 currentTransform, Vector3 positionToApplyAt, Matrix4X4 transformToApply)
 		{
 			currentTransform *= Matrix4X4.CreateTranslation(-positionToApplyAt);
 			currentTransform *= transformToApply;
