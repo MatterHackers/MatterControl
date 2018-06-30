@@ -48,6 +48,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[Description("Rotate about the Z axis")]
 		public double RotationZDegrees { get; set; }
 
+		// this needs to serialize
+		Matrix4X4 appliedRotation = Matrix4X4.Identity;
+
 		public RotateObject3D()
 		{
 			Name = "Rotate".Localize();
@@ -68,6 +71,45 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 		}
 
+		public override Matrix4X4 Matrix
+		{
+			get => base.Matrix;
+			set
+			{
+				var final = value;
+				using (RebuildLock())
+				{
+					var a = Matrix;
+					var c = value;
+					// assuming ab = c and we have a and are recieving a new c, what was b
+					// (the matrix that is being applied)? 
+					// b = (a^-1)c.
+					var b = a.Inverted * c;
+					// new we can re-apply the transform being attempted and the rotation after
+					final = (appliedRotation.Inverted * a) * b * RotationMatrix;
+				}
+
+				base.Matrix = final;
+			}
+		}
+
+		public Matrix4X4 RotationMatrix
+		{
+			get
+			{
+				var a = Matrix4X4.CreateRotation(new Vector3(
+					MathHelper.DegreesToRadians(RotationXDegrees),
+					MathHelper.DegreesToRadians(RotationYDegrees),
+					MathHelper.DegreesToRadians(RotationZDegrees)));
+
+				var b = Matrix4X4.CreateRotationX(MathHelper.DegreesToRadians(RotationXDegrees))
+					* Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(RotationYDegrees))
+					* Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(RotationZDegrees));
+
+				return b;
+			}
+		}
+
 		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
@@ -76,18 +118,19 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				var startingAabb = this.GetAxisAlignedBoundingBox();
 
+				var rotationMatrix = RotationMatrix;
 				// remove whatever rotation has been applied (they go in reverse order)
-				Matrix = Matrix4X4.Identity;
+				base.Matrix = appliedRotation.Inverted * Matrix;
 
 				// add the current rotation
-				Matrix = this.ApplyAtPosition(startingAabb.Center, Matrix4X4.CreateRotationX(MathHelper.DegreesToRadians(RotationXDegrees)));
-				Matrix = this.ApplyAtPosition(startingAabb.Center, Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(RotationYDegrees)));
-				Matrix = this.ApplyAtPosition(startingAabb.Center, Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(RotationZDegrees)));
+				base.Matrix = this.ApplyAtPosition(startingAabb.Center, rotationMatrix);
+
+				appliedRotation = rotationMatrix;
 
 				if (startingAabb.ZSize > 0)
 				{
 					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, startingAabb.minXYZ.Z);
+					//PlatingHelper.PlaceMeshAtHeight(this, startingAabb.minXYZ.Z);
 				}
 			}
 

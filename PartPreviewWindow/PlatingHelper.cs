@@ -134,7 +134,10 @@ namespace MatterHackers.MatterControl
 		{
 			AxisAlignedBoundingBox bounds = objectToMove.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
-			objectToMove.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, zHeight - bounds.minXYZ.Z));
+			if (bounds.minXYZ.Z != zHeight)
+			{
+				objectToMove.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, zHeight - bounds.minXYZ.Z));
+			}
 		}
 
 		/// <summary>
