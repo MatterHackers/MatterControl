@@ -234,7 +234,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					break;
 			}
 
-			ScaleItem.Matrix = Object3DExtensions.ApplyAtPosition(ScaleItem.Matrix, Matrix4X4.CreateScale(scale), aabb.Center);
+			ScaleItem.Matrix = Object3DExtensions.ApplyAtPosition(ScaleItem.Matrix, aabb.Center, Matrix4X4.CreateScale(scale));
 		}
 
 		public void DrawEditor(object sender, DrawEventArgs e)
