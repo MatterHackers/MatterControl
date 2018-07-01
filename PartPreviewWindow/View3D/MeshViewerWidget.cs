@@ -43,7 +43,6 @@ using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.PolygonMesh;
-using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
@@ -108,7 +107,7 @@ namespace MatterHackers.MeshVisualizer
 				Vector3 topStartPosition = sideEndPosition;
 				Vector3 topEndPosition = Vector3.Transform(bounds.GetTopCorner((i + 1) % 4), matrix);
 
-				if(extendLineLength > 0)
+				if (extendLineLength > 0)
 				{
 					GLHelper.ExtendLineEnds(ref sideStartPosition, ref sideEndPosition, extendLineLength);
 					GLHelper.ExtendLineEnds(ref topStartPosition, ref topEndPosition, extendLineLength);
@@ -119,6 +118,41 @@ namespace MatterHackers.MeshVisualizer
 				world.Render3DLineNoPrep(frustum, sideStartPosition, sideEndPosition, color, width);
 				world.Render3DLineNoPrep(frustum, topStartPosition, topEndPosition, color, width);
 				world.Render3DLineNoPrep(frustum, bottomStartPosition, bottomEndPosition, color, width);
+			}
+
+			GL.Enable(EnableCap.Lighting);
+		}
+
+		public static void RenderAxis(this WorldView world, Vector3 position, Matrix4X4 matrix, double size, double lineWidth)
+		{
+			GLHelper.PrepareFor3DLineRender(true);
+
+			Frustum frustum = world.GetClippingFrustum();
+			Vector3 length = Vector3.One * size;
+			for (int i = 0; i < 3; i++)
+			{
+				var min = position;
+				min[i] -= length[i];
+				Vector3 start = Vector3.Transform(min, matrix);
+
+				var max = position;
+				max[i] += length[i];
+				Vector3 end = Vector3.Transform(max, matrix);
+
+				var color = Agg.Color.Red;
+				switch (i)
+				{
+					case 1:
+						color = Agg.Color.Green;
+						break;
+
+					case 2:
+						color = Agg.Color.Blue;
+						break;
+				}
+
+				// draw each of the edge lines (4) and their touching top and bottom lines (2 each)
+				world.Render3DLineNoPrep(frustum, start, end, color, lineWidth);
 			}
 
 			GL.Enable(EnableCap.Lighting);

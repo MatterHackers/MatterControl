@@ -28,16 +28,26 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MeshVisualizer;
+using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using System.ComponentModel;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class RotateObject3D : Object3D
+	public enum RotationCenter { ObjectCenter, ObjectOrigin };
+
+	public class RotateObject3D : Object3D, IEditorDraw
 	{
+		//public RotationCenter RotationCenter { get; set; } = RotationCenter.ObjectCenter;
+		//public Vector3 OffsetFromOrigin { get; set; } = Vector3.Zero;
+
 		[DisplayName("X")]
 		[Description("Rotate about the X axis")]
 		public double RotationXDegrees { get; set; }
@@ -126,6 +136,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				// add the current rotation
 				base.Matrix = this.ApplyAtPosition(startingAabb.Center, rotationMatrix);
 
+				var currentAabb = this.GetAxisAlignedBoundingBox();
+
+				// now offset so that the center has not moved
+				base.Matrix = Matrix4X4.CreateTranslation(startingAabb.Center - currentAabb.Center);
+
 				inverseRotation = rotationMatrix.Inverted;
 
 				if (startingAabb.ZSize > 0)
@@ -157,6 +172,27 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				base.OnInvalidate(invalidateType);
 			}
+		}
+
+		public void DrawEditor(object sender, DrawEventArgs e)
+		{
+			if (sender is InteractionLayer layer
+				&& layer.Scene.SelectedItem != null
+				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
+			{
+				var aabb = this.GetAxisAlignedBoundingBox();
+
+				using (this.RebuildLock())
+				{
+					var old = this.Matrix;
+					this.Matrix = Matrix4X4.Identity;
+					layer.World.RenderAxis(aabb.Center, this.WorldMatrix(), 30, 1);
+					this.Matrix = old;
+				}
+			}
+
+			// turn the lighting back on
+			GL.Enable(EnableCap.Lighting);
 		}
 	}
 }
