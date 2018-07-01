@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			seeWhatsNewButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				UserSettings.Instance.set(UserSettingsKey.LastReadWhatsNew, JsonConvert.SerializeObject(DateTime.Now));
-				DialogWindow.Show(new DesignSpaceGuide("What's New"));
+				DialogWindow.Show(new HelpPage("What's New"));
 			});
 
 			tabControl.TabBar.ActionArea.AddChild(seeWhatsNewButton);

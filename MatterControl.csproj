@@ -259,8 +259,8 @@
     <Compile Include="PrinterControls\MovementSpeedsPage.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterSetup.cs" />
     <Compile Include="RootSystemWindow.cs" />
-    <Compile Include="SetupWizard\DesignSpaceHelp.cs" />
     <Compile Include="SetupWizard\DialogWindow.cs" />
+    <Compile Include="SetupWizard\HelpPage.cs" />
     <Compile Include="SlicerConfiguration\SettingsOrganizer.cs" />
     <Compile Include="SlicerConfiguration\SettingsRow.cs" />
     <Compile Include="SlicerConfiguration\UIFields\CharField.cs" />
