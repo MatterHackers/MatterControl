@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public class RotateObject3D_2 : TransformWrapperObject3D, IEditorDraw
 	{
-		public DirectionAxis Axis { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
+		public DirectionAxis RotateAbout { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
 		[DisplayName("Angle")]
 		public double AngleDegrees { get; set; } = 0;
 
@@ -71,9 +71,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			get
 			{
 				var angleRadians = MathHelper.DegreesToRadians(AngleDegrees);
-				var rotation = Matrix4X4.CreateTranslation(-Axis.Origin)
-					* Matrix4X4.CreateRotation(Axis.Normal, angleRadians)
-					* Matrix4X4.CreateTranslation(Axis.Origin);
+				var rotation = Matrix4X4.CreateTranslation(-RotateAbout.Origin)
+					* Matrix4X4.CreateRotation(RotateAbout.Normal, angleRadians)
+					* Matrix4X4.CreateTranslation(RotateAbout.Origin);
 
 				return rotation;
 			}
@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& layer.Scene.SelectedItem != null
 				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
 			{
-				layer.World.RenderDirectionAxis(Axis, this.WorldMatrix(), 30);
+				layer.World.RenderDirectionAxis(RotateAbout, this.WorldMatrix(), 30);
 			}
 		}
 
@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			var rotate = new RotateObject3D_2();
 			var aabb = itemToRotate.GetAxisAlignedBoundingBox();
 
-			rotate.Axis.Origin = aabb.Center;
+			rotate.RotateAbout.Origin = aabb.Center;
 
 			var rotateItem = new Object3D();
 			rotate.Children.Add(rotateItem);

@@ -112,13 +112,25 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			using (this.RebuildLock())
 			{
 				this.DebugDepth("Rebuild");
+				var aabb = this.GetAxisAlignedBoundingBox();
 
 				// check if we have initialized the Axis
 				if (Axis.Origin.X == double.NegativeInfinity)
 				{
 					// make it something reasonable (just to the left of the aabb of the object)
-					var aabb = this.GetAxisAlignedBoundingBox();
-					Axis.Origin = aabb.Center - new Vector3(30, 0, 0);
+					Axis.Origin = aabb.Center - new Vector3(-30, 0, 0);
+				}
+
+				// make sure our length is in the right axis
+				for (int i = 0; i < 3; i++)
+				{
+					if (Axis.Normal[i] != 0 && Axis.Origin[i] == 0)
+					{
+						var newOrigin = Vector3.Zero;
+						newOrigin[i] = Math.Max(aabb.Center[0] - Axis.Origin[0],
+							Math.Max(aabb.Center[1] - Axis.Origin[1],
+							aabb.Center[2] - Axis.Origin[2]));
+					}
 				}
 
 				var sourceContainer = OperationSourceObject3D.GetOrCreateSourceContainer(this);
@@ -141,8 +153,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 						if (!RotatePart)
 						{
-							var aabb = next.GetAxisAlignedBoundingBox();
-							next.Rotate(aabb.Center, normal, -angleRadians);
+							var nextAabb = next.GetAxisAlignedBoundingBox();
+							next.Rotate(nextAabb.Center, normal, -angleRadians);
 						}
 
 						list.Add(next);
