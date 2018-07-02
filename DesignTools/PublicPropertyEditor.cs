@@ -206,9 +206,27 @@ namespace MatterHackers.MatterControl.DesignTools
 			return rowContainer;
 		}
 
+		private static FlowLayoutWidget CreateSettingsColumn(EditableProperty property, UIField field)
+		{
+			return CreateSettingsColumn(property.DisplayName.Localize(), field, property.Description.Localize());
+		}
+
 		private static FlowLayoutWidget CreateSettingsColumn(EditableProperty property)
 		{
 			return CreateSettingsColumn(property.DisplayName.Localize(), property.Description.Localize());
+		}
+
+		private static FlowLayoutWidget CreateSettingsColumn(string labelText, UIField field, string toolTipText = null)
+		{
+			var column = CreateSettingsColumn(labelText, toolTipText);
+			var row = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch
+			};
+			row.AddChild(new HorizontalSpacer());
+			row.AddChild(field.Content);
+			column.AddChild(row);
+			return column;
 		}
 
 		private static FlowLayoutWidget CreateSettingsColumn(string labelText, string toolTipText = null)
@@ -291,7 +309,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer = CreateSettingsRow(property, field);
+				rowContainer = CreateSettingsColumn(property, field);
 			}
 			else if (propertyValue is Vector3 vector3)
 			{
@@ -305,7 +323,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				rowContainer = CreateSettingsRow(property, field);
+				rowContainer = CreateSettingsColumn(property, field);
 			}
 			else if (propertyValue is DirectionVector directionVector)
 			{
@@ -339,15 +357,15 @@ namespace MatterHackers.MatterControl.DesignTools
 				// the direction axis
 				// the distance from the center of the part
 				// create a double editor
-				var field2 = new DoubleField();
-				var row2 = CreateSettingsRow("Offset");
+				var field2 = new Vector3Field();
 				field2.Initialize(0);
-				field2.DoubleValue = directionAxis.Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
+				field2.Vector3 = directionAxis.Origin - property.Item.Children.First().GetAxisAlignedBoundingBox().Center;
+				var row2 = CreateSettingsColumn("Offset", field2);
 
 				// update this when changed
 				EventHandler<InvalidateArgs> updateData = (s, e) =>
 				{
-					field2.DoubleValue = ((DirectionAxis)property.Value).Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
+					field2.Vector3 = ((DirectionAxis)property.Value).Origin - property.Item.Children.First().GetAxisAlignedBoundingBox().Center;
 				};
 				property.Item.Invalidated += updateData;
 				field2.Content.Closed += (s, e) =>
@@ -361,7 +379,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					property.SetValue(new DirectionAxis()
 					{
 						Normal = field1.DirectionVector.Normal,
-						Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + new Vector3(field2.DoubleValue, 0, 0)
+						Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + field2.Vector3
 					});
 					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
 					propertyGridModifier?.UpdateControls(context);
@@ -371,13 +389,12 @@ namespace MatterHackers.MatterControl.DesignTools
 					property.SetValue(new DirectionAxis()
 					{
 						Normal = field1.DirectionVector.Normal,
-						Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + new Vector3(field2.DoubleValue, 0, 0)
+						Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + field2.Vector3
 					});
 					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				row2.AddChild(field2.Content);
 				rowContainer.AddChild(row2);
 			}
 			else if (propertyValue is ChildrenSelector childSelector)
