@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -38,68 +37,32 @@ using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Linq;
+using MatterHackers.MatterControl.DesignTools.EditableTypes;
 using System;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public enum RotationCenter { ObjectCenter, ObjectOrigin };
-
-	//[Obsolete("Not used anymore. Replaced with RotedObject3D_2", true)]
-	public class RotateObject3D : Object3D, IEditorDraw
+	public class RotateObject3D_2 : TransformWrapperObject3D, IEditorDraw
 	{
-		[DisplayName("X")]
-		[Description("Rotate about the X axis")]
-		public double RotationXDegrees { get; set; }
-		[DisplayName("Y")]
-		[Description("Rotate about the Y axis")]
-		public double RotationYDegrees { get; set; }
-		[DisplayName("Z")]
-		[Description("Rotate about the Z axis")]
-		public double RotationZDegrees { get; set; }
+		public DirectionAxis Axis { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
+		[DisplayName("Angle")]
+		public double AngleDegrees { get; set; } = 0;
 
-		// this needs to serialize
-		public Matrix4X4 inverseRotation = Matrix4X4.Identity;
-
-		public RotateObject3D()
+		public RotateObject3D_2()
 		{
 			Name = "Rotate".Localize();
 		}
 
-		public RotateObject3D(IObject3D item, double xRadians = 0, double yRadians = 0, double zRadians = 0, string name = "")
+		public RotateObject3D_2(IObject3D item, double xRadians = 0, double yRadians = 0, double zRadians = 0, string name = "")
 		{
-			RotationXDegrees = MathHelper.RadiansToDegrees(xRadians);
-			RotationYDegrees = MathHelper.RadiansToDegrees(yRadians);
-			RotationZDegrees = MathHelper.RadiansToDegrees(zRadians);
 			Children.Add(item.Clone());
 
 			Rebuild(null);
 		}
 
-		public RotateObject3D(IObject3D item, Vector3 translation, string name = "")
+		public RotateObject3D_2(IObject3D item, Vector3 translation, string name = "")
 			: this(item, translation.X, translation.Y, translation.Z, name)
 		{
-		}
-
-		public override Matrix4X4 Matrix
-		{
-			get => base.Matrix;
-			set
-			{
-				var final = value;
-				using (RebuildLock())
-				{
-					var a = Matrix * inverseRotation;
-					var c = value * inverseRotation;
-					// assuming ab = c and we have a and are recieving a new c, what was b
-					// (the matrix that is being applied)? 
-					// b = (a^-1)c.
-					var b = a.Inverted * c;
-					// new we can re-apply the transform being attempted and the rotation after
-					final = a * b * RotationMatrix;
-				}
-
-				base.Matrix = final;
-			}
 		}
 
 		[JsonIgnore]
@@ -107,16 +70,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			get
 			{
-				var a = Matrix4X4.CreateRotation(new Vector3(
-					MathHelper.DegreesToRadians(RotationXDegrees),
-					MathHelper.DegreesToRadians(RotationYDegrees),
-					MathHelper.DegreesToRadians(RotationZDegrees)));
+				var angleRadians = MathHelper.DegreesToRadians(AngleDegrees);
+				var rotation = Matrix4X4.CreateTranslation(-Axis.Origin)
+					* Matrix4X4.CreateRotation(Axis.Normal, angleRadians)
+					* Matrix4X4.CreateTranslation(Axis.Origin);
 
-				var b = Matrix4X4.CreateRotationX(MathHelper.DegreesToRadians(RotationXDegrees))
-					* Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(RotationYDegrees))
-					* Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(RotationZDegrees));
-
-				return b;
+				return rotation;
 			}
 		}
 
@@ -128,19 +87,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				var startingAabb = this.GetAxisAlignedBoundingBox();
 
-				var rotationMatrix = RotationMatrix;
-				// remove whatever rotation has been applied (they go in reverse order)
-				base.Matrix = inverseRotation * Matrix;
-
-				// add the current rotation
-				base.Matrix = this.ApplyAtPosition(startingAabb.Center, rotationMatrix);
-
-				var currentAabb = this.GetAxisAlignedBoundingBox();
-
-				// now offset so that the center has not moved
-				base.Matrix = Matrix4X4.CreateTranslation(startingAabb.Center - currentAabb.Center);
-
-				inverseRotation = rotationMatrix.Inverted;
+				// remove the current rotation
+				TransformItem.Matrix = RotationMatrix;
 
 				if (startingAabb.ZSize > 0)
 				{
@@ -162,6 +110,19 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				Rebuild(null);
 			}
+			else if (invalidateType.InvalidateType == InvalidateType.Color)
+			{
+				var sourceItem = OperationSourceObject3D.GetOrCreateSourceContainer(this).Children.FirstOrDefault();
+				foreach (var item in Children)
+				{
+					if (item != sourceItem)
+					{
+						item.Color = sourceItem.Color;
+					}
+				}
+
+				base.OnInvalidate(invalidateType);
+			}
 			else if (invalidateType.InvalidateType == InvalidateType.Properties
 				&& invalidateType.Source == this)
 			{
@@ -179,19 +140,22 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& layer.Scene.SelectedItem != null
 				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
 			{
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				using (this.RebuildLock())
-				{
-					var old = this.Matrix;
-					this.Matrix = Matrix4X4.Identity;
-					layer.World.RenderAxis(aabb.Center, this.WorldMatrix(), 30, 1);
-					this.Matrix = old;
-				}
+				layer.World.RenderDirectionAxis(Axis, this.WorldMatrix(), 30);
 			}
+		}
 
-			// turn the lighting back on
-			GL.Enable(EnableCap.Lighting);
+		public static RotateObject3D_2 Create(IObject3D itemToRotate)
+		{
+			var rotate = new RotateObject3D_2();
+			var aabb = itemToRotate.GetAxisAlignedBoundingBox();
+
+			rotate.Axis.Origin = aabb.Center;
+
+			var rotateItem = new Object3D();
+			rotate.Children.Add(rotateItem);
+			rotateItem.Children.Add(itemToRotate);
+
+			return rotate;
 		}
 	}
 }

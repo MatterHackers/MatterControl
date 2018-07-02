@@ -31,6 +31,8 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.EditableTypes;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using System;
 using System.ComponentModel;
@@ -38,7 +40,7 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayRadialObject3D : Object3D
+	public class ArrayRadialObject3D : Object3D, IEditorDraw
 	{
 		public ArrayRadialObject3D()
 		{
@@ -123,10 +125,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				this.Children.Modify(list =>
 				{
 					list.Clear();
-				// add back in the sourceContainer
-				list.Add(sourceContainer);
-				// get the source item
-				var sourceItem = sourceContainer.Children.First();
+					// add back in the sourceContainer
+					list.Add(sourceContainer);
+					// get the source item
+					var sourceItem = sourceContainer.Children.First();
 
 					var offset = Vector3.Zero;
 					for (int i = 0; i < Math.Max(Count, 1); i++)
@@ -156,6 +158,16 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			OperationSourceObject3D.Remove(this);
 
 			base.Remove(undoBuffer);
+		}
+
+		public void DrawEditor(object sender, DrawEventArgs e)
+		{
+			if (sender is InteractionLayer layer
+				&& layer.Scene.SelectedItem != null
+				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
+			{
+				layer.World.RenderDirectionAxis(Axis, this.WorldMatrix(), 30);
+			}
 		}
 	}
 }

@@ -27,37 +27,76 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.ComponentModel;
+using System.Linq;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using System.Collections.Generic;
+using MatterHackers.MeshVisualizer;
+using MatterHackers.RenderOpenGl;
+using MatterHackers.RenderOpenGl.OpenGl;
+using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 
-namespace MatterHackers.MatterControl.DesignTools
+namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class PPEContext
+	public abstract class TransformWrapperObject3D : Object3D
 	{
-		public IObject3D item { get; set; }
-		public Dictionary<string, GuiWidget> editRows { get; private set; } = new Dictionary<string, GuiWidget>();
+		protected IObject3D TransformItem => Children.First();
 
-		public GuiWidget GetEditRow(string propertyName)
+		[JsonIgnore]
+		public IObject3D SourceItem => Children.First().Children.First();
+
+		public TransformWrapperObject3D()
 		{
-			GuiWidget value;
-			if (editRows.TryGetValue(propertyName, out value))
+			Name = "Transform Wrapper".Localize();
+		}
+
+		public override void Apply(UndoBuffer undoBuffer)
+		{
+			using (RebuildLock())
 			{
-				return value;
+				// push our matrix into our children
+				foreach (var child in this.Children)
+				{
+					child.Matrix *= this.Matrix;
+				}
+
+				// push child into children
+				SourceItem.Matrix *= TransformItem.Matrix;
+
+				// add our children to our parent and remove from parent
+				this.Parent.Children.Modify(list =>
+				{
+					list.Remove(this);
+					list.AddRange(TransformItem.Children);
+				});
+			}
+			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+		}
+
+		public override void Remove(UndoBuffer undoBuffer)
+		{
+			using (RebuildLock())
+			{
+				// push our matrix into inner children
+				foreach (var child in TransformItem.Children)
+				{
+					child.Matrix *= this.Matrix;
+				}
+
+				// add inner children to our parent and remove from parent
+				this.Parent.Children.Modify(list =>
+				{
+					list.Remove(this);
+					list.AddRange(TransformItem.Children);
+				});
 			}
 
-			return null;
+			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
-	}
-
-	public interface ITransformWarpperObject3D
-	{
-		IObject3D TransformWarpper { get; }
-	}
-
-	public interface IPropertyGridModifier
-	{
-		void UpdateControls(PPEContext editor);
 	}
 }
