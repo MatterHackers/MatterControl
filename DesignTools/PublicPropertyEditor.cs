@@ -323,35 +323,62 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (propertyValue is DirectionAxis directionAxis)
 			{
+				rowContainer = CreateSettingsColumn(property);
+				var newDirectionVector = new DirectionVector()
+				{
+					Normal = directionAxis.Normal
+				};
+				var row1 = CreateSettingsRow("Axis".Localize());
+				var field1 = new DirectionVectorField();
+				field1.Initialize(0);
+				field1.SetValue(newDirectionVector);
+				row1.AddChild(field1.Content);
+
+				rowContainer.AddChild(row1);
+
 				// the direction axis
 				// the distance from the center of the part
 				// create a double editor
-				var field = new DoubleField();
-				field.Initialize(0);
-				field.DoubleValue = directionAxis.Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
-				field.ValueChanged += (s, e) =>
-				{
-					property.SetValue(
-						new DirectionAxis()
-						{
-							Normal = Vector3.UnitZ, Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + new Vector3(field.DoubleValue, 0, 0)
-						});
-					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-					propertyGridModifier?.UpdateControls(context);
-				};
+				var field2 = new DoubleField();
+				var row2 = CreateSettingsRow("Offset");
+				field2.Initialize(0);
+				field2.DoubleValue = directionAxis.Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
 
 				// update this when changed
 				EventHandler<InvalidateArgs> updateData = (s, e) =>
 				{
-					field.DoubleValue = ((DirectionAxis)property.Value).Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
+					field2.DoubleValue = ((DirectionAxis)property.Value).Origin.X - property.Item.Children.First().GetAxisAlignedBoundingBox().Center.X;
 				};
 				property.Item.Invalidated += updateData;
-				field.Content.Closed += (s, e) =>
+				field2.Content.Closed += (s, e) =>
 				{
 					property.Item.Invalidated -= updateData;
 				};
 
-				rowContainer = CreateSettingsRow(property, field);
+				// update functions
+				field1.ValueChanged += (s, e) =>
+				{
+					property.SetValue(new DirectionAxis()
+					{
+						Normal = field1.DirectionVector.Normal,
+						Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + new Vector3(field2.DoubleValue, 0, 0)
+					});
+					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
+					propertyGridModifier?.UpdateControls(context);
+				};
+				field2.ValueChanged += (s, e) =>
+				{
+					property.SetValue(new DirectionAxis()
+					{
+						Normal = field1.DirectionVector.Normal,
+						Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + new Vector3(field2.DoubleValue, 0, 0)
+					});
+					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
+					propertyGridModifier?.UpdateControls(context);
+				};
+
+				row2.AddChild(field2.Content);
+				rowContainer.AddChild(row2);
 			}
 			else if (propertyValue is ChildrenSelector childSelector)
 			{

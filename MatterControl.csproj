@@ -97,6 +97,7 @@
     <Compile Include="DesignTools\Operations\ArrayAdvancedObject3D.cs" />
     <Compile Include="DesignTools\Operations\ArrayLinearObject3D.cs" />
     <Compile Include="DesignTools\Operations\ArrayRadialObject3D.cs" />
+    <Compile Include="DesignTools\Operations\TransformWrapperObject3D.cs" />
     <Compile Include="DesignTools\Operations\FitToBoundsObject3D.cs" />
     <Compile Include="DesignTools\Operations\GroupObject3D.cs" />
     <Compile Include="DesignTools\Operations\Image\AlphaThresholdFunction.cs" />
@@ -110,6 +111,7 @@
     <Compile Include="DesignTools\Operations\Path\SmoothPathObject3D.cs" />
     <Compile Include="DesignTools\Operations\PinchObject3D.cs" />
     <Compile Include="DesignTools\Operations\RotateObject3D.cs" />
+    <Compile Include="DesignTools\Operations\RotateObject3D_2.cs" />
     <Compile Include="DesignTools\Operations\ScaleObject3D.cs" />
     <Compile Include="DesignTools\Operations\SetCenterObject3D.cs" />
     <Compile Include="DesignTools\Operations\TranslateObject3D.cs" />

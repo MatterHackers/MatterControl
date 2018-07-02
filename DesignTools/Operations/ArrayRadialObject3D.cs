@@ -31,6 +31,8 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.EditableTypes;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using System;
 using System.ComponentModel;
@@ -38,7 +40,7 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayRadialObject3D : Object3D
+	public class ArrayRadialObject3D : Object3D, IEditorDraw
 	{
 		public ArrayRadialObject3D()
 		{
@@ -110,23 +112,35 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			using (this.RebuildLock())
 			{
 				this.DebugDepth("Rebuild");
+				var aabb = this.GetAxisAlignedBoundingBox();
 
 				// check if we have initialized the Axis
 				if (Axis.Origin.X == double.NegativeInfinity)
 				{
 					// make it something reasonable (just to the left of the aabb of the object)
-					var aabb = this.GetAxisAlignedBoundingBox();
-					Axis.Origin = aabb.Center - new Vector3(30, 0, 0);
+					Axis.Origin = aabb.Center - new Vector3(-30, 0, 0);
+				}
+
+				// make sure our length is in the right axis
+				for (int i = 0; i < 3; i++)
+				{
+					if (Axis.Normal[i] != 0 && Axis.Origin[i] == 0)
+					{
+						var newOrigin = Vector3.Zero;
+						newOrigin[i] = Math.Max(aabb.Center[0] - Axis.Origin[0],
+							Math.Max(aabb.Center[1] - Axis.Origin[1],
+							aabb.Center[2] - Axis.Origin[2]));
+					}
 				}
 
 				var sourceContainer = OperationSourceObject3D.GetOrCreateSourceContainer(this);
 				this.Children.Modify(list =>
 				{
 					list.Clear();
-				// add back in the sourceContainer
-				list.Add(sourceContainer);
-				// get the source item
-				var sourceItem = sourceContainer.Children.First();
+					// add back in the sourceContainer
+					list.Add(sourceContainer);
+					// get the source item
+					var sourceItem = sourceContainer.Children.First();
 
 					var offset = Vector3.Zero;
 					for (int i = 0; i < Math.Max(Count, 1); i++)
@@ -139,8 +153,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 						if (!RotatePart)
 						{
-							var aabb = next.GetAxisAlignedBoundingBox();
-							next.Rotate(aabb.Center, normal, -angleRadians);
+							var nextAabb = next.GetAxisAlignedBoundingBox();
+							next.Rotate(nextAabb.Center, normal, -angleRadians);
 						}
 
 						list.Add(next);
@@ -156,6 +170,16 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			OperationSourceObject3D.Remove(this);
 
 			base.Remove(undoBuffer);
+		}
+
+		public void DrawEditor(object sender, DrawEventArgs e)
+		{
+			if (sender is InteractionLayer layer
+				&& layer.Scene.SelectedItem != null
+				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
+			{
+				layer.World.RenderDirectionAxis(Axis, this.WorldMatrix(), 30);
+			}
 		}
 	}
 }

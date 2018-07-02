@@ -728,12 +728,13 @@ namespace MatterHackers.MatterControl
 				"Rotate".Localize(),
 				(sceneItem, scene) =>
 				{
-					if (sceneItem is IObject3D imageObject)
-					{
-						var path = new RotateObject3D();
-						sceneItem.WrapWith(path, scene);
-						path.Invalidate(new InvalidateArgs(path, InvalidateType.Properties, null));
-					}
+					var selectedItem = scene.SelectedItem;
+					scene.SelectedItem = null;
+					var rotate = RotateObject3D_2.Create(selectedItem.Clone());
+					rotate.MakeNameNonColliding();
+
+					scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, new List<IObject3D> { rotate }));
+					scene.SelectedItem = rotate;
 
 					return Task.CompletedTask;
 				},

@@ -39,11 +39,11 @@ using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
+using MatterHackers.MatterControl.DesignTools.EditableTypes;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.PolygonMesh;
-using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
@@ -90,6 +90,9 @@ namespace MatterHackers.MeshVisualizer
 				world.Render3DLineNoPrep(frustum, topStart, topEnd, color, lineWidth);
 				world.Render3DLineNoPrep(frustum, bottomStart, bottomEnd, color, lineWidth);
 			}
+
+			// turn the lighting back on
+			GL.Enable(EnableCap.Lighting);
 		}
 
 		public static void RenderAabb(this WorldView world, AxisAlignedBoundingBox bounds, Matrix4X4 matrix, Color color, double width, double extendLineLength = 0)
@@ -108,7 +111,7 @@ namespace MatterHackers.MeshVisualizer
 				Vector3 topStartPosition = sideEndPosition;
 				Vector3 topEndPosition = Vector3.Transform(bounds.GetTopCorner((i + 1) % 4), matrix);
 
-				if(extendLineLength > 0)
+				if (extendLineLength > 0)
 				{
 					GLHelper.ExtendLineEnds(ref sideStartPosition, ref sideEndPosition, extendLineLength);
 					GLHelper.ExtendLineEnds(ref topStartPosition, ref topEndPosition, extendLineLength);
@@ -120,6 +123,91 @@ namespace MatterHackers.MeshVisualizer
 				world.Render3DLineNoPrep(frustum, topStartPosition, topEndPosition, color, width);
 				world.Render3DLineNoPrep(frustum, bottomStartPosition, bottomEndPosition, color, width);
 			}
+
+			GL.Enable(EnableCap.Lighting);
+		}
+
+		public static void RenderAxis(this WorldView world, Vector3 position, Matrix4X4 matrix, double size, double lineWidth)
+		{
+			GLHelper.PrepareFor3DLineRender(true);
+
+			Frustum frustum = world.GetClippingFrustum();
+			Vector3 length = Vector3.One * size;
+			for (int i = 0; i < 3; i++)
+			{
+				var min = position;
+				min[i] -= length[i];
+				Vector3 start = Vector3.Transform(min, matrix);
+
+				var max = position;
+				max[i] += length[i];
+				Vector3 end = Vector3.Transform(max, matrix);
+
+				var color = Agg.Color.Red;
+				switch (i)
+				{
+					case 1:
+						color = Agg.Color.Green;
+						break;
+
+					case 2:
+						color = Agg.Color.Blue;
+						break;
+				}
+
+				// draw each of the edge lines (4) and their touching top and bottom lines (2 each)
+				world.Render3DLineNoPrep(frustum, start, end, color, lineWidth);
+			}
+
+			GL.Enable(EnableCap.Lighting);
+		}
+
+		public static void RenderDirectionAxis(this WorldView world, DirectionAxis axis, Matrix4X4 matrix, double size)
+		{
+			GLHelper.PrepareFor3DLineRender(true);
+
+			Frustum frustum = world.GetClippingFrustum();
+			Vector3 length = axis.Normal * size;
+			var color = Agg.Color.Red;
+
+			// draw center line
+			{
+				var min = axis.Origin - length;
+				Vector3 start = Vector3.Transform(min, matrix);
+
+				var max = axis.Origin + length;
+				Vector3 end = Vector3.Transform(max, matrix);
+
+				world.Render3DLineNoPrep(frustum, start, end, color, 1);
+			}
+
+			var perpendicular = Vector3.GetPerpendicular(axis.Normal, Vector3.Zero).GetNormal();
+			// draw some lines to mark the rotation plane
+			int count = 20;
+			bool first = true;
+			var firstEnd = Vector3.Zero;
+			var lastEnd = Vector3.Zero;
+			var center = Vector3.Transform(axis.Origin, matrix);
+			for (int i = 0; i < count; i++)
+			{
+				var rotation = size/4 * Vector3.Transform(perpendicular, Matrix4X4.CreateRotation(axis.Normal, MathHelper.Tau * i / count));
+				// draw center line
+				var max = axis.Origin + rotation;
+				Vector3 end = Vector3.Transform(max, matrix);
+
+				world.Render3DLineNoPrep(frustum, center, end, color, 1);
+				if (!first)
+				{
+					world.Render3DLineNoPrep(frustum, end, lastEnd, color, 1);
+				}
+				else
+				{
+					firstEnd = end;
+				}
+				lastEnd = end;
+				first = false;
+			}
+			world.Render3DLineNoPrep(frustum, firstEnd, lastEnd, color, 1);
 
 			GL.Enable(EnableCap.Lighting);
 		}
