@@ -208,14 +208,25 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private static FlowLayoutWidget CreateSettingsColumn(EditableProperty property, UIField field)
 		{
-			var column = CreateSettingsColumn(property.DisplayName.Localize(), property.Description.Localize());
-			column.AddChild(field.Content);
-			return column;
+			return CreateSettingsColumn(property.DisplayName.Localize(), field, property.Description.Localize());
 		}
 
 		private static FlowLayoutWidget CreateSettingsColumn(EditableProperty property)
 		{
 			return CreateSettingsColumn(property.DisplayName.Localize(), property.Description.Localize());
+		}
+
+		private static FlowLayoutWidget CreateSettingsColumn(string labelText, UIField field, string toolTipText = null)
+		{
+			var column = CreateSettingsColumn(labelText, toolTipText);
+			var row = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch
+			};
+			row.AddChild(new HorizontalSpacer());
+			row.AddChild(field.Content);
+			column.AddChild(row);
+			return column;
 		}
 
 		private static FlowLayoutWidget CreateSettingsColumn(string labelText, string toolTipText = null)
@@ -346,10 +357,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				// the direction axis
 				// the distance from the center of the part
 				// create a double editor
-				var row2 = CreateSettingsColumn("Offset");
 				var field2 = new Vector3Field();
 				field2.Initialize(0);
 				field2.Vector3 = directionAxis.Origin - property.Item.Children.First().GetAxisAlignedBoundingBox().Center;
+				var row2 = CreateSettingsColumn("Offset", field2);
 
 				// update this when changed
 				EventHandler<InvalidateArgs> updateData = (s, e) =>
@@ -384,7 +395,6 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(context);
 				};
 
-				row2.AddChild(field2.Content);
 				rowContainer.AddChild(row2);
 			}
 			else if (propertyValue is ChildrenSelector childSelector)
