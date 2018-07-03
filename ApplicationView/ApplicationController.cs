@@ -505,13 +505,13 @@ namespace MatterHackers.MatterControl
 				},
 				new SceneSelectionOperation()
 				{
-					OperationType = typeof(FitToBoundsObject3D),
+					OperationType = typeof(FitToBoundsObject3D_2),
 					TitleResolver = () => "Fit to Bounds".Localize(),
 					Action = (scene) =>
 					{
 						var selectedItem = scene.SelectedItem;
 						scene.SelectedItem = null;
-						var fit = FitToBoundsObject3D.Create(selectedItem.Clone());
+						var fit = FitToBoundsObject3D_2.Create(selectedItem.Clone());
 						fit.MakeNameNonColliding();
 
 						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, new List<IObject3D> { fit }));

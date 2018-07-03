@@ -28,24 +28,15 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using System.ComponentModel;
-using System.Linq;
-using System;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public enum RotationCenter { ObjectCenter, ObjectOrigin };
-
-	//[Obsolete("Not used anymore. Replaced with RotedObject3D_2", true)]
-	public class RotateObject3D : Object3D, IEditorDraw
+	public class RotateObject3D : Object3D
 	{
 		[DisplayName("X")]
 		[Description("Rotate about the X axis")]
@@ -56,9 +47,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[DisplayName("Z")]
 		[Description("Rotate about the Z axis")]
 		public double RotationZDegrees { get; set; }
-
-		// this needs to serialize
-		public Matrix4X4 inverseRotation = Matrix4X4.Identity;
 
 		public RotateObject3D()
 		{
@@ -80,46 +68,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 		}
 
-		public override Matrix4X4 Matrix
-		{
-			get => base.Matrix;
-			set
-			{
-				var final = value;
-				using (RebuildLock())
-				{
-					var a = Matrix * inverseRotation;
-					var c = value * inverseRotation;
-					// assuming ab = c and we have a and are recieving a new c, what was b
-					// (the matrix that is being applied)? 
-					// b = (a^-1)c.
-					var b = a.Inverted * c;
-					// new we can re-apply the transform being attempted and the rotation after
-					final = a * b * RotationMatrix;
-				}
-
-				base.Matrix = final;
-			}
-		}
-
-		[JsonIgnore]
-		public Matrix4X4 RotationMatrix
-		{
-			get
-			{
-				var a = Matrix4X4.CreateRotation(new Vector3(
-					MathHelper.DegreesToRadians(RotationXDegrees),
-					MathHelper.DegreesToRadians(RotationYDegrees),
-					MathHelper.DegreesToRadians(RotationZDegrees)));
-
-				var b = Matrix4X4.CreateRotationX(MathHelper.DegreesToRadians(RotationXDegrees))
-					* Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(RotationYDegrees))
-					* Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(RotationZDegrees));
-
-				return b;
-			}
-		}
-
 		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
@@ -128,19 +76,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				var startingAabb = this.GetAxisAlignedBoundingBox();
 
-				var rotationMatrix = RotationMatrix;
 				// remove whatever rotation has been applied (they go in reverse order)
-				base.Matrix = inverseRotation * Matrix;
+				Matrix = Matrix4X4.Identity;
 
 				// add the current rotation
-				base.Matrix = this.ApplyAtPosition(startingAabb.Center, rotationMatrix);
-
-				var currentAabb = this.GetAxisAlignedBoundingBox();
-
-				// now offset so that the center has not moved
-				base.Matrix = Matrix4X4.CreateTranslation(startingAabb.Center - currentAabb.Center);
-
-				inverseRotation = rotationMatrix.Inverted;
+				Matrix = this.ApplyAtPosition(startingAabb.Center, Matrix4X4.CreateRotationX(MathHelper.DegreesToRadians(RotationXDegrees)));
+				Matrix = this.ApplyAtPosition(startingAabb.Center, Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(RotationYDegrees)));
+				Matrix = this.ApplyAtPosition(startingAabb.Center, Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(RotationZDegrees)));
 
 				if (startingAabb.ZSize > 0)
 				{
@@ -171,27 +113,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				base.OnInvalidate(invalidateType);
 			}
-		}
-
-		public void DrawEditor(object sender, DrawEventArgs e)
-		{
-			if (sender is InteractionLayer layer
-				&& layer.Scene.SelectedItem != null
-				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
-			{
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				using (this.RebuildLock())
-				{
-					var old = this.Matrix;
-					this.Matrix = Matrix4X4.Identity;
-					layer.World.RenderAxis(aabb.Center, this.WorldMatrix(), 30, 1);
-					this.Matrix = old;
-				}
-			}
-
-			// turn the lighting back on
-			GL.Enable(EnableCap.Lighting);
 		}
 	}
 }
