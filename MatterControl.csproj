@@ -97,8 +97,9 @@
     <Compile Include="DesignTools\Operations\ArrayAdvancedObject3D.cs" />
     <Compile Include="DesignTools\Operations\ArrayLinearObject3D.cs" />
     <Compile Include="DesignTools\Operations\ArrayRadialObject3D.cs" />
-    <Compile Include="DesignTools\Operations\TransformWrapperObject3D.cs" />
     <Compile Include="DesignTools\Operations\FitToBoundsObject3D.cs" />
+    <Compile Include="DesignTools\Operations\FitToBoundsObject3D_2.cs" />
+    <Compile Include="DesignTools\Operations\TransformWrapperObject3D.cs" />
     <Compile Include="DesignTools\Operations\GroupObject3D.cs" />
     <Compile Include="DesignTools\Operations\Image\AlphaThresholdFunction.cs" />
     <Compile Include="DesignTools\Operations\Image\HueThresholdFunction.cs" />

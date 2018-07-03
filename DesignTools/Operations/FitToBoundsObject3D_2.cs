@@ -36,27 +36,51 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
-using MatterHackers.RenderOpenGl;
-using MatterHackers.RenderOpenGl.OpenGl;
+using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public enum FitType { Box, Cylinder }
-
-	public enum MaintainRatio { None, X_Y, X_Y_Z }
-
-	[Obsolete("Not used anymore. Replaced with FitToBoundsObject3D_2", true)]
-	public class FitToBoundsObject3D : Object3D, IEditorDraw, IPropertyGridModifier
+	public class FitToBoundsObject3D_2 : TransformWrapperObject3D, IEditorDraw
 	{
-		[Description("Set the shape the part will be fit into.")]
-		public FitType FitType { get; set; } = FitType.Box;
+		public double Width
+		{
+			get => FitBounds.GetAxisAlignedBoundingBox().XSize;
+			set
+			{
+				var xSize = FitBounds.GetAxisAlignedBoundingBox().XSize;
+				FitBounds.Matrix *= Matrix4X4.CreateScale(value / xSize, 1, 1);
+				FitBounds.Matrix *= Matrix4X4.CreateTranslation(
+					TransformItem.GetAxisAlignedBoundingBox().Center
+					- FitBounds.GetAxisAlignedBoundingBox().Center);
+			}
+		}
+		public double Depth
+		{
+			get => FitBounds.GetAxisAlignedBoundingBox().YSize;
+			set
+			{
+				var ySize = FitBounds.GetAxisAlignedBoundingBox().YSize;
+				FitBounds.Matrix *= Matrix4X4.CreateScale(1, value / ySize, 1);
+				FitBounds.Matrix *= Matrix4X4.CreateTranslation(
+					TransformItem.GetAxisAlignedBoundingBox().Center
+					- FitBounds.GetAxisAlignedBoundingBox().Center);
+			}
+		}
+		public double Height
+		{
+			get => FitBounds.GetAxisAlignedBoundingBox().ZSize;
+			set
+			{
+				var zSize = FitBounds.GetAxisAlignedBoundingBox().ZSize;
+				FitBounds.Matrix *= Matrix4X4.CreateScale(1, 1, value / zSize);
+				FitBounds.Matrix *= Matrix4X4.CreateTranslation(
+					TransformItem.GetAxisAlignedBoundingBox().Center
+					- FitBounds.GetAxisAlignedBoundingBox().Center);
+			}
+		}
 
-		public double Width { get; set; }
-		public double Depth { get; set; }
-		public double Diameter { get; set; }
-		public double Height { get; set; }
+		private IObject3D FitBounds => Children.Last();
 
 		[Description("Set the rules for how to maintain the part while scaling.")]
 		public MaintainRatio MaintainRatio { get; set; } = MaintainRatio.X_Y;
@@ -67,57 +91,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[Description("Allows you turn turn on and off applying the fit to the z axis.")]
 		public bool StretchZ { get; set; } = true;
 
-		IObject3D ScaleItem => Children.First();
-		[JsonIgnore]
-		public IObject3D ItemToScale => Children.First().Children.First();
-
-		public FitToBoundsObject3D()
+		public FitToBoundsObject3D_2()
 		{
 			Name = "Fit to Bounds".Localize();
-		}
-
-		public override void Apply(UndoBuffer undoBuffer)
-		{
-			using (RebuildLock())
-			{
-				// push our matrix into our children
-				foreach (var child in this.Children)
-				{
-					child.Matrix *= this.Matrix;
-				}
-
-				// push child into children
-				ItemToScale.Matrix *= ScaleItem.Matrix;
-
-				// add our children to our parent and remove from parent
-				this.Parent.Children.Modify(list =>
-				{
-					list.Remove(this);
-					list.AddRange(ScaleItem.Children);
-				});
-			}
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
-		}
-
-		public override void Remove(UndoBuffer undoBuffer)
-		{
-			using (RebuildLock())
-			{
-				// push our matrix into inner children
-				foreach (var child in ScaleItem.Children)
-				{
-					child.Matrix *= this.Matrix;
-				}
-
-				// add inner children to our parent and remove from parent
-				this.Parent.Children.Modify(list =>
-				{
-					list.Remove(this);
-					list.AddRange(ScaleItem.Children);
-				});
-			}
-
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
@@ -141,20 +117,27 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public static FitToBoundsObject3D Create(IObject3D itemToFit)
+		public static FitToBoundsObject3D_2 Create(IObject3D itemToFit)
 		{
-			FitToBoundsObject3D fitToBounds = new FitToBoundsObject3D();
+			var fitToBounds = new FitToBoundsObject3D_2();
 			var aabb = itemToFit.GetAxisAlignedBoundingBox();
+
+			var bounds = new Object3D()
+			{
+				Visible = true,
+				Color = new Color(Color.Red, 100),
+				Mesh = PlatonicSolids.CreateCube()
+			};
+
+			// add all the children
+			var scaleItem = new Object3D();
+			fitToBounds.Children.Add(scaleItem);
+			scaleItem.Children.Add(itemToFit);
+			fitToBounds.Children.Add(bounds);
 
 			fitToBounds.Width = aabb.XSize;
 			fitToBounds.Depth = aabb.YSize;
 			fitToBounds.Height = aabb.ZSize;
-
-			fitToBounds.Diameter = aabb.XSize;
-
-			var scaleItem = new Object3D();
-			fitToBounds.Children.Add(scaleItem);
-			scaleItem.Children.Add(itemToFit);
 
 			return fitToBounds;
 		}
@@ -202,8 +185,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		private void AdjustChildSize(object sender, EventArgs e)
 		{
-			var aabb = ItemToScale.GetAxisAlignedBoundingBox();
-			ScaleItem.Matrix = Matrix4X4.Identity;
+			var aabb = SourceItem.GetAxisAlignedBoundingBox();
+			TransformItem.Matrix = Matrix4X4.Identity;
 			var scale = Vector3.One;
 			if (StretchX)
 			{
@@ -235,7 +218,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					break;
 			}
 
-			ScaleItem.Matrix = Object3DExtensions.ApplyAtPosition(ScaleItem.Matrix, aabb.Center, Matrix4X4.CreateScale(scale));
+			TransformItem.Matrix = Object3DExtensions.ApplyAtPosition(TransformItem.Matrix, aabb.Center, Matrix4X4.CreateScale(scale));
 		}
 
 		public void DrawEditor(object sender, DrawEventArgs e)
@@ -244,39 +227,19 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& layer.Scene.SelectedItem != null
 				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
 			{
-				var aabb = ItemToScale.GetAxisAlignedBoundingBox();
+				var aabb = SourceItem.GetAxisAlignedBoundingBox();
 
-				if (FitType == FitType.Box)
-				{
-					var center = aabb.Center;
-					var worldMatrix = this.WorldMatrix();
+				var center = aabb.Center;
+				var worldMatrix = this.WorldMatrix();
 
-					var minXyz = center - new Vector3(Width / 2, Depth / 2, Height / 2);
-					var maxXyz = center + new Vector3(Width / 2, Depth / 2, Height / 2);
-					var bounds = new AxisAlignedBoundingBox(minXyz, maxXyz);
-					//var leftW = Vector3.Transform(, worldMatrix);
-					var right = Vector3.Transform(center + new Vector3(Width / 2, 0, 0), worldMatrix);
-					// layer.World.Render3DLine(left, right, Agg.Color.Red);
-					layer.World.RenderAabb(bounds, worldMatrix, Agg.Color.Red, 1, 1);
-				}
-				else
-				{
-					layer.World.RenderCylinderOutline(this.WorldMatrix(), aabb.Center, Diameter, Height, 30, Color.Red, 1, 1);
-				}
-				// turn the lighting back on
-				GL.Enable(EnableCap.Lighting);
+				var minXyz = center - new Vector3(Width / 2, Depth / 2, Height / 2);
+				var maxXyz = center + new Vector3(Width / 2, Depth / 2, Height / 2);
+				var bounds = new AxisAlignedBoundingBox(minXyz, maxXyz);
+				//var leftW = Vector3.Transform(, worldMatrix);
+				var right = Vector3.Transform(center + new Vector3(Width / 2, 0, 0), worldMatrix);
+				// layer.World.Render3DLine(left, right, Agg.Color.Red);
+				layer.World.RenderAabb(bounds, worldMatrix, Agg.Color.Red, 1, 1);
 			}
-		}
-
-		public void UpdateControls(PPEContext context)
-		{
-			context.GetEditRow(nameof(Diameter)).Visible = FitType != FitType.Box;
-
-			context.GetEditRow(nameof(Width)).Visible = FitType == FitType.Box;
-			context.GetEditRow(nameof(Depth)).Visible = FitType == FitType.Box;
-			context.GetEditRow(nameof(MaintainRatio)).Visible = FitType == FitType.Box;
-			context.GetEditRow(nameof(StretchX)).Visible = FitType == FitType.Box;
-			context.GetEditRow(nameof(StretchY)).Visible = FitType == FitType.Box;
 		}
 	}
 }
