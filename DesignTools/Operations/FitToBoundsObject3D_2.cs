@@ -43,40 +43,55 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public class FitToBoundsObject3D_2 : TransformWrapperObject3D, IEditorDraw
 	{
+		Vector3 boundsSize;
 		public double Width
 		{
-			get => FitBounds.GetAxisAlignedBoundingBox().XSize;
+			get => boundsSize.X;
 			set
 			{
-				var xSize = FitBounds.GetAxisAlignedBoundingBox().XSize;
-				FitBounds.Matrix *= Matrix4X4.CreateScale(value / xSize, 1, 1);
-				FitBounds.Matrix *= Matrix4X4.CreateTranslation(
-					TransformItem.GetAxisAlignedBoundingBox().Center
-					- FitBounds.GetAxisAlignedBoundingBox().Center);
+				boundsSize.X = value;
+				UpdateBoundsItem();
 			}
 		}
+
+		private void UpdateBoundsItem()
+		{
+			if (Children.Count == 2)
+			{
+				var transformAabb = TransformItem.GetAxisAlignedBoundingBox();
+				var fitAabb = FitBounds.GetAxisAlignedBoundingBox();
+				var fitSize = fitAabb.Size;
+				if (boundsSize.X != 0 && boundsSize.Y != 0 && boundsSize.Z != 0
+					&& (fitSize != boundsSize
+					|| fitAabb.Center != transformAabb.Center))
+				{
+					FitBounds.Matrix *= Matrix4X4.CreateScale(
+						boundsSize.X / fitSize.X,
+						boundsSize.Y / fitSize.Y,
+						boundsSize.Z / fitSize.Z);
+					FitBounds.Matrix *= Matrix4X4.CreateTranslation(
+						transformAabb.Center
+						- FitBounds.GetAxisAlignedBoundingBox().Center);
+				}
+			}
+		}
+
 		public double Depth
 		{
-			get => FitBounds.GetAxisAlignedBoundingBox().YSize;
+			get => boundsSize.Y;
 			set
 			{
-				var ySize = FitBounds.GetAxisAlignedBoundingBox().YSize;
-				FitBounds.Matrix *= Matrix4X4.CreateScale(1, value / ySize, 1);
-				FitBounds.Matrix *= Matrix4X4.CreateTranslation(
-					TransformItem.GetAxisAlignedBoundingBox().Center
-					- FitBounds.GetAxisAlignedBoundingBox().Center);
+				boundsSize.Y = value;
+				UpdateBoundsItem();
 			}
 		}
 		public double Height
 		{
-			get => FitBounds.GetAxisAlignedBoundingBox().ZSize;
+			get => boundsSize.Z;
 			set
 			{
-				var zSize = FitBounds.GetAxisAlignedBoundingBox().ZSize;
-				FitBounds.Matrix *= Matrix4X4.CreateScale(1, 1, value / zSize);
-				FitBounds.Matrix *= Matrix4X4.CreateTranslation(
-					TransformItem.GetAxisAlignedBoundingBox().Center
-					- FitBounds.GetAxisAlignedBoundingBox().Center);
+				boundsSize.Z = value;
+				UpdateBoundsItem();
 			}
 		}
 
@@ -124,7 +139,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			var bounds = new Object3D()
 			{
-				Visible = true,
+				Visible = false,
 				Color = new Color(Color.Red, 100),
 				Mesh = PlatonicSolids.CreateCube()
 			};
@@ -147,6 +162,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())
 			{
+				UpdateBoundsItem();
+
 				var aabb = this.GetAxisAlignedBoundingBox();
 
 				AdjustChildSize(null, null);
@@ -161,26 +178,30 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			base.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
 		}
 
+		Matrix4X4 cacheMatrix;
+		Vector3 cacheBounds;
+		AxisAlignedBoundingBox cacheAabb;
 		public override AxisAlignedBoundingBox GetAxisAlignedBoundingBox(Matrix4X4 matrix)
 		{
-			var aabb = base.GetAxisAlignedBoundingBox(matrix);
-			var size = aabb.Size;
+			if (Children.Count == 2)
+			{
+				if (cacheMatrix != matrix
+					|| cacheBounds != boundsSize)
+				{
+					using (FitBounds.RebuildLock())
+					{
+						FitBounds.Visible = true;
+						cacheAabb = base.GetAxisAlignedBoundingBox(matrix);
+						FitBounds.Visible = false;
+					}
+					cacheMatrix = matrix;
+					cacheBounds = boundsSize;
+				}
 
-			if (StretchX)
-			{
-				size.X = Width;
-			}
-			if (StretchY)
-			{
-				size.Y = Depth;
-			}
-			if (StretchZ)
-			{
-				size.Z = Height;
+				return cacheAabb;
 			}
 
-			var half = size / 2;
-			return new AxisAlignedBoundingBox(aabb.Center - half, aabb.Center + half);
+			return base.GetAxisAlignedBoundingBox(matrix);
 		}
 
 		private void AdjustChildSize(object sender, EventArgs e)
