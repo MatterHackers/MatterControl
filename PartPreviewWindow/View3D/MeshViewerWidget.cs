@@ -250,7 +250,7 @@ namespace MatterHackers.MeshVisualizer
 					}
 					break;
 
-				case BedShape.Circular: 
+				case BedShape.Circular:
 					// This could be much better if it checked the actual vertext data of the mesh against the cylinder
 					// first check if any of it is outside the bed rect
 					if (aabb.minXYZ.X < bed.BedCenter.X - bed.ViewerVolume.X / 2
@@ -274,6 +274,7 @@ namespace MatterHackers.MeshVisualizer
 
 		private Color lightWireframe = new Color("#aaa4");
 		private Color darkWireframe = new Color("#3334");
+		private GridColors gridColors;
 		private Color gCodeMeshColor;
 
 		// TODO: Need to be instance based for multi-printer
@@ -296,6 +297,14 @@ namespace MatterHackers.MeshVisualizer
 			this.World = interactionLayer.World;
 
 			var theme = ApplicationController.Instance.Theme;
+
+			gridColors = new GridColors()
+			{
+				Gray = theme.ResolveColor(theme.ActiveTabColor, theme.GetBorderColor((theme.Colors.IsDarkTheme ? 35 : 55))),
+				Red = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.Red, (theme.Colors.IsDarkTheme ? 105 : 170))),
+				Green = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.Green, (theme.Colors.IsDarkTheme ? 105 : 170))),
+				Blue = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.Blue, 195))
+			};
 
 			gCodeMeshColor = new Color(theme.Colors.PrimaryAccentColor, 35);
 
@@ -331,6 +340,14 @@ namespace MatterHackers.MeshVisualizer
 		}
 
 		public WorldView World { get; }
+
+		private class GridColors
+		{
+			public Color Red { get; set; }
+			public Color Green { get; set; }
+			public Color Blue { get; set; }
+			public Color Gray { get; set; }
+		}
 
 		public event EventHandler LoadDone;
 
@@ -605,7 +622,7 @@ namespace MatterHackers.MeshVisualizer
 				}
 
 				var selectedItem = scene.SelectedItem;
-				bool isSelected = selectedItem != null 
+				bool isSelected = selectedItem != null
 					&& (selectedItem.DescendantsAndSelf().Any((i) => i == item)
 						|| selectedItem.Parents<ModifiedMeshObject3D>().Any((mw) => mw == item));
 
@@ -644,7 +661,7 @@ namespace MatterHackers.MeshVisualizer
 
 					if (item.Mesh != null)
 					{
-						GLHelper.Render(item.Mesh, debugBorderColor, item.WorldMatrix(), 
+						GLHelper.Render(item.Mesh, debugBorderColor, item.WorldMatrix(),
 							RenderTypes.Wireframe, item.WorldMatrix() * World.ModelviewMatrix);
 					}
 				}
@@ -737,7 +754,7 @@ namespace MatterHackers.MeshVisualizer
 				wantMm.Y / worldBounds.YSize,
 				wantMm.Z / worldBounds.ZSize));
 
-			GLHelper.Render(item.Mesh, 
+			GLHelper.Render(item.Mesh,
 				selectionColor,
 				scaleMatrix, RenderTypes.Shaded,
 				null,
@@ -856,7 +873,7 @@ namespace MatterHackers.MeshVisualizer
 			if (scene.DebugItem?.Mesh != null)
 			{
 				var debugItem = scene.DebugItem;
-				GLHelper.Render(debugItem.Mesh, debugBorderColor, debugItem.WorldMatrix(), 
+				GLHelper.Render(debugItem.Mesh, debugBorderColor, debugItem.WorldMatrix(),
 					RenderTypes.Wireframe, debugItem.WorldMatrix() * World.ModelviewMatrix);
 			}
 		}
@@ -891,6 +908,7 @@ namespace MatterHackers.MeshVisualizer
 			{
 				GL.Disable(EnableCap.Texture2D);
 				GL.Disable(EnableCap.Blend);
+				GL.Disable(EnableCap.Lighting);
 
 				int width = 600;
 
@@ -898,7 +916,7 @@ namespace MatterHackers.MeshVisualizer
 				{
 					for (int i = -width; i <= width; i += 50)
 					{
-						GL.Color4(240, 240, 240, 255);
+						GL.Color4(gridColors.Gray);
 						GL.Vertex3(i, width, 0);
 						GL.Vertex3(i, -width, 0);
 
@@ -906,15 +924,18 @@ namespace MatterHackers.MeshVisualizer
 						GL.Vertex3(-width, i, 0);
 					}
 
-					GL.Color4(255, 0, 0, 255);
+					// X axis
+					GL.Color4(gridColors.Red);
 					GL.Vertex3(width, 0, 0);
 					GL.Vertex3(-width, 0, 0);
 
-					GL.Color4(0, 255, 0, 255);
+					// Y axis
+					GL.Color4(gridColors.Green);
 					GL.Vertex3(0, width, 0);
 					GL.Vertex3(0, -width, 0);
 
-					GL.Color4(0, 0, 255, 255);
+					// Z axis
+					GL.Color4(gridColors.Blue);
 					GL.Vertex3(0, 0, 10);
 					GL.Vertex3(0, 0, -10);
 				}
@@ -979,4 +1000,3 @@ namespace MatterHackers.MeshVisualizer
 		}
 	}
 }
- 
