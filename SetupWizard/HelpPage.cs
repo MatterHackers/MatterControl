@@ -310,7 +310,7 @@ namespace MatterHackers.MatterControl
 				Text = container.Name,
 			};
 
-			foreach (var item in container.Children)
+			foreach (var item in container.Children.OrderBy(i => i.Children.Count == 0).ThenBy(i => i.Name))
 			{
 				if (item.Children.Count > 0)
 				{
