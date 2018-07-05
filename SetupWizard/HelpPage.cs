@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 #if !__ANDROID__
 using Markdig.Agg;
@@ -41,42 +40,24 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
-	public class GuideAsset
+	public class HelpArticle
 	{
-		/// <summary>
-		/// The name that is in the navigation list with categories
-		/// </summary>
-		public string MenuName;
+		public string Name;
 
-		/// <summary>
-		/// The markdown to show
-		/// </summary>
-		public string Description;
+		public string Path;
 
-		/// <summary>
-		/// This is the immutable key assigned to this guide. It can
-		/// be used to navigate to this guide while opening the control
-		/// </summary>
-		public string Key;
+		public List<HelpArticle> Children { get; set; } = new List<HelpArticle>();
 	}
 
-	public class HelpContainer
-	{
-		public List<HelpContainer> Containers { get; set; } = new List<HelpContainer>();
-		public List<GuideAsset> Items { get; set; } = new List<GuideAsset>();
-		public string Name { get; set; }
-	}
-
-	public class DesignSpaceGuide : DialogPage
+	public class HelpPage : DialogPage
 	{
 		private TreeView treeView;
 		private string guideKey = null;
 
-		public DesignSpaceGuide(string guideKey = null)
+		public HelpPage(string guideKey = null)
 			: base("Close".Localize())
 		{
 			WindowSize = new Vector2(940, 700);
@@ -268,15 +249,9 @@ namespace MatterHackers.MatterControl
 			treeView.AfterSelect += (s, e) =>
 			{
 #if !__ANDROID__
-				if (treeView.SelectedNode.Tag is GuideAsset guide)
+				if (treeView.SelectedNode.Tag is string path)
 				{
-					markdownWidget.Markdown = guide.Description;
-				}
-				else if (treeView.SelectedNode.Tag is string key)
-				{
-					// TODO: Fix in generation when time permits
-					string filterHack = key.Replace("/docs", "");
-					markdownWidget.Load(new Uri($"https://matterhackers.github.io/MatterControl-Help{filterHack}"));
+					markdownWidget.Load(new Uri($"https://matterhackers.github.io/MatterControl-Help/{path}"));
 				}
 #endif
 			};
@@ -309,7 +284,7 @@ namespace MatterHackers.MatterControl
 
 			double maxMenuItemWidth = 0;
 
-			rootNode = ProcessTree(ApplicationController.Instance.FeatureGuides);
+			rootNode = ProcessTree(ApplicationController.Instance.HelpArticles);
 			rootNode.Text = "Help";
 			rootNode.TreeView = treeView;
 			treeView.AddChild(rootNode);
@@ -328,25 +303,27 @@ namespace MatterHackers.MatterControl
 			guideContainer.AddChild(splitter);
 		}
 
-		private TreeNode ProcessTree(HelpContainer container)
+		private TreeNode ProcessTree(HelpArticle container)
 		{
 			var treeNode = new TreeNode(false)
 			{
 				Text = container.Name,
 			};
 
-			foreach(var child in container.Containers)
+			foreach (var item in container.Children.OrderBy(i => i.Children.Count == 0).ThenBy(i => i.Name))
 			{
-				treeNode.Nodes.Add(ProcessTree(child));
-			}
-
-			foreach (var item in container.Items)
-			{
-				treeNode.Nodes.Add(new TreeNode()
+				if (item.Children.Count > 0)
 				{
-					Text = item.MenuName,
-					Tag = item.Key
-				});
+					treeNode.Nodes.Add(ProcessTree(item));
+				}
+				else
+				{
+					treeNode.Nodes.Add(new TreeNode(false)
+					{
+						Text = item.Name,
+						Tag = item.Path
+					});
+				}
 			}
 
 			return treeNode;

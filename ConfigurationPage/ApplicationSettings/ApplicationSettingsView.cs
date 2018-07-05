@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					DialogWindow.Show(new DesignSpaceGuide("AllGuides"));
+					DialogWindow.Show(new HelpPage("AllGuides"));
 				});
 			});
 

@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl
 
 	public class ApplicationController
 	{
-		public HelpContainer FeatureGuides { get; set; }
+		public HelpArticle HelpArticles { get; set; }
 
 		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 
@@ -670,19 +670,19 @@ namespace MatterHackers.MatterControl
 			this.Theme = new ThemeConfig();
 			this.MenuTheme = new ThemeConfig();
 
-			HelpContainer helpGuides = null;
+			HelpArticle helpArticle = null;
 
-			string helpGuidesPath = Path.Combine("OEMSettings", "HelpGuides.json");
-			if (AggContext.StaticData.FileExists(helpGuidesPath))
+			string helpPath = Path.Combine("OEMSettings", "toc.json");
+			if (AggContext.StaticData.FileExists(helpPath))
 			{
 				try
 				{
-					helpGuides = JsonConvert.DeserializeObject<HelpContainer>(AggContext.StaticData.ReadAllText(helpGuidesPath));
+					helpArticle = JsonConvert.DeserializeObject<HelpArticle>(AggContext.StaticData.ReadAllText(helpPath));
 				}
 				catch { }
 			}
 
-			this.FeatureGuides = helpGuides ?? new HelpContainer();
+			this.HelpArticles = helpArticle ?? new HelpArticle();
 
 			ActiveTheme.ThemeChanged.RegisterEvent((s, e) =>
 			{
@@ -2335,7 +2335,7 @@ namespace MatterHackers.MatterControl
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						DialogWindow.Show(new DesignSpaceGuide("AllGuides"));
+						DialogWindow.Show(new HelpPage("AllGuides"));
 					});
 				}
 
