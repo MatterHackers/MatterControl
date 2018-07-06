@@ -27,15 +27,19 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class TranslateObject3D : Object3D
+	public class TranslateObject3D : TransformWrapperObject3D
 	{
 		public TranslateObject3D()
 		{
+			Name = "Translate".Localize();
 		}
 
 		public TranslateObject3D(IObject3D item, double x = 0, double y = 0, double z = 0)
@@ -43,10 +47,84 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 		}
 
-		public TranslateObject3D(IObject3D item, Vector3 translation)
+		public TranslateObject3D(IObject3D itemToTranslate, Vector3 translation)
+			: this()
 		{
-			Matrix *= Matrix4X4.CreateTranslation(translation);
-			Children.Add(item.Clone());
+			var translate = this;
+			var aabb = itemToTranslate.GetAxisAlignedBoundingBox();
+
+			var translateItem = new Object3D();
+			translate.Children.Add(translateItem);
+			translateItem.Children.Add(itemToTranslate);
+		}
+
+		public override bool CanApply => true;
+
+		public override bool CanRemove => true;
+
+		public static TranslateObject3D Create(IObject3D itemToTranslate)
+		{
+			var translate = new TranslateObject3D();
+			var aabb = itemToTranslate.GetAxisAlignedBoundingBox();
+
+			var translateItem = new Object3D();
+			translate.Children.Add(translateItem);
+			translateItem.Children.Add(itemToTranslate);
+
+			return translate;
+		}
+
+		#region // editable properties
+
+		public Vector3 Translation { get; set; } = Vector3.Zero;
+
+		#endregion // editable properties
+
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if ((invalidateType.InvalidateType == InvalidateType.Content
+				|| invalidateType.InvalidateType == InvalidateType.Matrix
+				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+				&& invalidateType.Source != this
+				&& !RebuildLocked)
+			{
+				Rebuild(null);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Color)
+			{
+				var sourceItem = OperationSourceObject3D.GetOrCreateSourceContainer(this).Children.FirstOrDefault();
+				foreach (var item in Children)
+				{
+					if (item != sourceItem)
+					{
+						item.Color = sourceItem.Color;
+					}
+				}
+
+				base.OnInvalidate(invalidateType);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
+			{
+				Rebuild(null);
+			}
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
+		}
+
+		private void Rebuild(UndoBuffer undoBuffer)
+		{
+			this.DebugDepth("Rebuild");
+
+			using (RebuildLock())
+			{
+				// set the matrix for the inner object
+				TransformItem.Matrix = Matrix4X4.CreateTranslation(Translation);
+			}
+
+			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix, null));
 		}
 	}
 }

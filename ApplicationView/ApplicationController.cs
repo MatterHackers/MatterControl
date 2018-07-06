@@ -725,6 +725,23 @@ namespace MatterHackers.MatterControl
 
 			this.Graph.RegisterOperation(
 				typeof(IObject3D),
+				"Translate".Localize(),
+				(sceneItem, scene) =>
+				{
+					var selectedItem = scene.SelectedItem;
+					scene.SelectedItem = null;
+					var translate = TranslateObject3D.Create(selectedItem.Clone());
+					translate.MakeNameNonColliding();
+
+					scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, new List<IObject3D> { translate }));
+					scene.SelectedItem = translate;
+
+					return Task.CompletedTask;
+				},
+				iconCollector: () => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), ApplicationController.Instance.MenuTheme.InvertIcons));
+
+			this.Graph.RegisterOperation(
+				typeof(IObject3D),
 				"Rotate".Localize(),
 				(sceneItem, scene) =>
 				{
@@ -738,7 +755,7 @@ namespace MatterHackers.MatterControl
 
 					return Task.CompletedTask;
 				},
-				iconCollector: () => AggContext.StaticData.LoadIcon("icon_rotate_32x32.png", ApplicationController.Instance.MenuTheme.InvertIcons));
+				iconCollector: () => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), ApplicationController.Instance.MenuTheme.InvertIcons));
 
 			this.Graph.RegisterOperation(
 				typeof(IPathObject),

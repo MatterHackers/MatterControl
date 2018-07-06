@@ -27,9 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.ComponentModel;
-using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -38,20 +35,180 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
+using System;
+using System.ComponentModel;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public class FitToBoundsObject3D_2 : TransformWrapperObject3D, IEditorDraw
 	{
-		Vector3 boundsSize;
-		public double Width
+		private Vector3 boundsSize;
+
+		private AxisAlignedBoundingBox cacheAabb;
+
+		private Vector3 cacheBounds;
+
+		private Matrix4X4 cacheMatrix;
+
+		public FitToBoundsObject3D_2()
 		{
-			get => boundsSize.X;
-			set
+			Name = "Fit to Bounds".Localize();
+		}
+
+		public override bool CanApply => true;
+		public override bool CanRemove => true;
+		private IObject3D FitBounds => Children.Last();
+
+		public static FitToBoundsObject3D_2 Create(IObject3D itemToFit)
+		{
+			var fitToBounds = new FitToBoundsObject3D_2();
+			var aabb = itemToFit.GetAxisAlignedBoundingBox();
+
+			var bounds = new Object3D()
 			{
-				boundsSize.X = value;
-				UpdateBoundsItem();
+				Visible = false,
+				Color = new Color(Color.Red, 100),
+				Mesh = PlatonicSolids.CreateCube()
+			};
+
+			// add all the children
+			var scaleItem = new Object3D();
+			fitToBounds.Children.Add(scaleItem);
+			scaleItem.Children.Add(itemToFit);
+			fitToBounds.Children.Add(bounds);
+
+			fitToBounds.SizeX = aabb.XSize;
+			fitToBounds.SizeY = aabb.YSize;
+			fitToBounds.SizeZ = aabb.ZSize;
+
+			return fitToBounds;
+		}
+
+		public void DrawEditor(object sender, DrawEventArgs e)
+		{
+			if (sender is InteractionLayer layer
+				&& layer.Scene.SelectedItem != null
+				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
+			{
+				var aabb = SourceItem.GetAxisAlignedBoundingBox();
+
+				var center = aabb.Center;
+				var worldMatrix = this.WorldMatrix();
+
+				var minXyz = center - new Vector3(SizeX / 2, SizeY / 2, SizeZ / 2);
+				var maxXyz = center + new Vector3(SizeX / 2, SizeY / 2, SizeZ / 2);
+				var bounds = new AxisAlignedBoundingBox(minXyz, maxXyz);
+				//var leftW = Vector3.Transform(, worldMatrix);
+				var right = Vector3.Transform(center + new Vector3(SizeX / 2, 0, 0), worldMatrix);
+				// layer.World.Render3DLine(left, right, Agg.Color.Red);
+				layer.World.RenderAabb(bounds, worldMatrix, Agg.Color.Red, 1, 1);
 			}
+		}
+
+		public override AxisAlignedBoundingBox GetAxisAlignedBoundingBox(Matrix4X4 matrix)
+		{
+			if (Children.Count == 2)
+			{
+				if (cacheMatrix != matrix
+					|| cacheBounds != boundsSize)
+				{
+					using (FitBounds.RebuildLock())
+					{
+						FitBounds.Visible = true;
+						cacheAabb = base.GetAxisAlignedBoundingBox(matrix);
+						FitBounds.Visible = false;
+					}
+					cacheMatrix = matrix;
+					cacheBounds = boundsSize;
+				}
+
+				return cacheAabb;
+			}
+
+			return base.GetAxisAlignedBoundingBox(matrix);
+		}
+
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if ((invalidateType.InvalidateType == InvalidateType.Content
+				|| invalidateType.InvalidateType == InvalidateType.Matrix
+				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+				&& invalidateType.Source != this
+				&& !RebuildLocked)
+			{
+				Rebuild(null);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
+			{
+				Rebuild(null);
+			}
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
+		}
+
+		public void Rebuild(UndoBuffer undoBuffer)
+		{
+			this.DebugDepth("Rebuild");
+			using (RebuildLock())
+			{
+				UpdateBoundsItem();
+
+				var aabb = this.GetAxisAlignedBoundingBox();
+
+				AdjustChildSize(null, null);
+
+				if (aabb.ZSize > 0)
+				{
+					// If the part was already created and at a height, maintain the height.
+					PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+				}
+			}
+
+			base.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
+		}
+
+		private void AdjustChildSize(object sender, EventArgs e)
+		{
+			var aabb = SourceItem.GetAxisAlignedBoundingBox();
+			TransformItem.Matrix = Matrix4X4.Identity;
+			var scale = Vector3.One;
+			if (StretchX)
+			{
+				scale.X = SizeX / aabb.XSize;
+			}
+			if (StretchY)
+			{
+				scale.Y = SizeY / aabb.YSize;
+			}
+			if (StretchZ)
+			{
+				scale.Z = SizeZ / aabb.ZSize;
+			}
+
+			switch (MaintainRatio)
+			{
+				case MaintainRatio.None:
+					break;
+
+				case MaintainRatio.X_Y:
+					var minXy = Math.Min(scale.X, scale.Y);
+					scale.X = minXy;
+					scale.Y = minXy;
+					break;
+
+				case MaintainRatio.X_Y_Z:
+					var minXyz = Math.Min(Math.Min(scale.X, scale.Y), scale.Z);
+					scale.X = minXyz;
+					scale.Y = minXyz;
+					scale.Z = minXyz;
+					break;
+			}
+
+			TransformItem.Matrix = Object3DExtensions.ApplyAtPosition(TransformItem.Matrix, aabb.Center, Matrix4X4.CreateScale(scale));
 		}
 
 		private void UpdateBoundsItem()
@@ -76,7 +233,24 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public double Depth
+		#region // editable properties
+
+		[Description("Set the rules for how to maintain the part while scaling.")]
+		public MaintainRatio MaintainRatio { get; set; } = MaintainRatio.X_Y;
+
+		[DisplayName("Width")]
+		public double SizeX
+		{
+			get => boundsSize.X;
+			set
+			{
+				boundsSize.X = value;
+				UpdateBoundsItem();
+			}
+		}
+
+		[DisplayName("Depth")]
+		public double SizeY
 		{
 			get => boundsSize.Y;
 			set
@@ -85,7 +259,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				UpdateBoundsItem();
 			}
 		}
-		public double Height
+
+		[DisplayName("Height")]
+		public double SizeZ
 		{
 			get => boundsSize.Z;
 			set
@@ -95,172 +271,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		private IObject3D FitBounds => Children.Last();
-
-		[Description("Set the rules for how to maintain the part while scaling.")]
-		public MaintainRatio MaintainRatio { get; set; } = MaintainRatio.X_Y;
 		[Description("Allows you turn turn on and off applying the fit to the x axis.")]
 		public bool StretchX { get; set; } = true;
+
 		[Description("Allows you turn turn on and off applying the fit to the y axis.")]
 		public bool StretchY { get; set; } = true;
+
 		[Description("Allows you turn turn on and off applying the fit to the z axis.")]
 		public bool StretchZ { get; set; } = true;
 
-		public FitToBoundsObject3D_2()
-		{
-			Name = "Fit to Bounds".Localize();
-		}
-
-		public override void OnInvalidate(InvalidateArgs invalidateType)
-		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
-				&& invalidateType.Source != this
-				&& !RebuildLocked)
-			{
-				Rebuild(null);
-			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
-				&& invalidateType.Source == this)
-			{
-				Rebuild(null);
-			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
-		}
-
-		public static FitToBoundsObject3D_2 Create(IObject3D itemToFit)
-		{
-			var fitToBounds = new FitToBoundsObject3D_2();
-			var aabb = itemToFit.GetAxisAlignedBoundingBox();
-
-			var bounds = new Object3D()
-			{
-				Visible = false,
-				Color = new Color(Color.Red, 100),
-				Mesh = PlatonicSolids.CreateCube()
-			};
-
-			// add all the children
-			var scaleItem = new Object3D();
-			fitToBounds.Children.Add(scaleItem);
-			scaleItem.Children.Add(itemToFit);
-			fitToBounds.Children.Add(bounds);
-
-			fitToBounds.Width = aabb.XSize;
-			fitToBounds.Depth = aabb.YSize;
-			fitToBounds.Height = aabb.ZSize;
-
-			return fitToBounds;
-		}
-
-		public void Rebuild(UndoBuffer undoBuffer)
-		{
-			this.DebugDepth("Rebuild");
-			using (RebuildLock())
-			{
-				UpdateBoundsItem();
-
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				AdjustChildSize(null, null);
-
-				if (aabb.ZSize > 0)
-				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
-				}
-			}
-
-			base.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
-		}
-
-		Matrix4X4 cacheMatrix;
-		Vector3 cacheBounds;
-		AxisAlignedBoundingBox cacheAabb;
-		public override AxisAlignedBoundingBox GetAxisAlignedBoundingBox(Matrix4X4 matrix)
-		{
-			if (Children.Count == 2)
-			{
-				if (cacheMatrix != matrix
-					|| cacheBounds != boundsSize)
-				{
-					using (FitBounds.RebuildLock())
-					{
-						FitBounds.Visible = true;
-						cacheAabb = base.GetAxisAlignedBoundingBox(matrix);
-						FitBounds.Visible = false;
-					}
-					cacheMatrix = matrix;
-					cacheBounds = boundsSize;
-				}
-
-				return cacheAabb;
-			}
-
-			return base.GetAxisAlignedBoundingBox(matrix);
-		}
-
-		private void AdjustChildSize(object sender, EventArgs e)
-		{
-			var aabb = SourceItem.GetAxisAlignedBoundingBox();
-			TransformItem.Matrix = Matrix4X4.Identity;
-			var scale = Vector3.One;
-			if (StretchX)
-			{
-				scale.X = Width / aabb.XSize;
-			}
-			if (StretchY)
-			{
-				scale.Y = Depth / aabb.YSize;
-			}
-			if (StretchZ)
-			{
-				scale.Z = Height / aabb.ZSize;
-			}
-
-			switch (MaintainRatio)
-			{
-				case MaintainRatio.None:
-					break;
-				case MaintainRatio.X_Y:
-					var minXy = Math.Min(scale.X, scale.Y);
-					scale.X = minXy;
-					scale.Y = minXy;
-					break;
-				case MaintainRatio.X_Y_Z:
-					var minXyz = Math.Min(Math.Min(scale.X, scale.Y), scale.Z);
-					scale.X = minXyz;
-					scale.Y = minXyz;
-					scale.Z = minXyz;
-					break;
-			}
-
-			TransformItem.Matrix = Object3DExtensions.ApplyAtPosition(TransformItem.Matrix, aabb.Center, Matrix4X4.CreateScale(scale));
-		}
-
-		public void DrawEditor(object sender, DrawEventArgs e)
-		{
-			if (sender is InteractionLayer layer
-				&& layer.Scene.SelectedItem != null
-				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
-			{
-				var aabb = SourceItem.GetAxisAlignedBoundingBox();
-
-				var center = aabb.Center;
-				var worldMatrix = this.WorldMatrix();
-
-				var minXyz = center - new Vector3(Width / 2, Depth / 2, Height / 2);
-				var maxXyz = center + new Vector3(Width / 2, Depth / 2, Height / 2);
-				var bounds = new AxisAlignedBoundingBox(minXyz, maxXyz);
-				//var leftW = Vector3.Transform(, worldMatrix);
-				var right = Vector3.Transform(center + new Vector3(Width / 2, 0, 0), worldMatrix);
-				// layer.World.Render3DLine(left, right, Agg.Color.Red);
-				layer.World.RenderAabb(bounds, worldMatrix, Agg.Color.Red, 1, 1);
-			}
-		}
+		#endregion // editable properties
 	}
 }

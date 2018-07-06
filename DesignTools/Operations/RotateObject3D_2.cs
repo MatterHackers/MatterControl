@@ -30,30 +30,25 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.EditableTypes;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
-using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Linq;
-using MatterHackers.MatterControl.DesignTools.EditableTypes;
-using System;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public class RotateObject3D_2 : TransformWrapperObject3D, IEditorDraw
 	{
-		public DirectionAxis RotateAbout { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
-		[DisplayName("Angle")]
-		public double AngleDegrees { get; set; } = 0;
-
 		public RotateObject3D_2()
 		{
 			Name = "Rotate".Localize();
 		}
 
 		public RotateObject3D_2(IObject3D item, double xRadians = 0, double yRadians = 0, double zRadians = 0, string name = "")
+			: this()
 		{
 			Children.Add(item.Clone());
 
@@ -64,6 +59,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			: this(item, translation.X, translation.Y, translation.Z, name)
 		{
 		}
+
+		public override bool CanApply => true;
+		public override bool CanRemove => true;
+
+		#region // editable properties
+		public DirectionAxis RotateAbout { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
+		[DisplayName("Angle")]
+		public double AngleDegrees { get; set; } = 0;
+		#endregion
 
 		[JsonIgnore]
 		public Matrix4X4 RotationMatrix
@@ -79,17 +83,28 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		public static RotateObject3D_2 Create(IObject3D itemToRotate)
 		{
-			this.DebugDepth("Rebuild");
+			var rotate = new RotateObject3D_2();
+			var aabb = itemToRotate.GetAxisAlignedBoundingBox();
 
-			using (RebuildLock())
+			rotate.RotateAbout.Origin = aabb.Center;
+
+			var rotateItem = new Object3D();
+			rotate.Children.Add(rotateItem);
+			rotateItem.Children.Add(itemToRotate);
+
+			return rotate;
+		}
+
+		public void DrawEditor(object sender, DrawEventArgs e)
+		{
+			if (sender is InteractionLayer layer
+				&& layer.Scene.SelectedItem != null
+				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
 			{
-				// set the matrix for the inner object
-				TransformItem.Matrix = RotationMatrix;
+				layer.World.RenderDirectionAxis(RotateAbout, this.WorldMatrix(), 30);
 			}
-
-			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix, null));
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
@@ -126,28 +141,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public void DrawEditor(object sender, DrawEventArgs e)
+		private void Rebuild(UndoBuffer undoBuffer)
 		{
-			if (sender is InteractionLayer layer
-				&& layer.Scene.SelectedItem != null
-				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
+			this.DebugDepth("Rebuild");
+
+			using (RebuildLock())
 			{
-				layer.World.RenderDirectionAxis(RotateAbout, this.WorldMatrix(), 30);
+				// set the matrix for the inner object
+				TransformItem.Matrix = RotationMatrix;
 			}
-		}
 
-		public static RotateObject3D_2 Create(IObject3D itemToRotate)
-		{
-			var rotate = new RotateObject3D_2();
-			var aabb = itemToRotate.GetAxisAlignedBoundingBox();
-
-			rotate.RotateAbout.Origin = aabb.Center;
-
-			var rotateItem = new Object3D();
-			rotate.Children.Add(rotateItem);
-			rotateItem.Children.Add(itemToRotate);
-
-			return rotate;
+			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix, null));
 		}
 	}
 }
