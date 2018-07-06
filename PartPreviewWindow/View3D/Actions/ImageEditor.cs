@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				HAnchor = HAnchor.Center
 			});
 
-			bool addImageSearch = false;
+			bool addImageSearch = true;
 			if(addImageSearch)
 			{
 				// add a search Google box
