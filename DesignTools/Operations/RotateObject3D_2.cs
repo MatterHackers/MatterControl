@@ -85,16 +85,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			using (RebuildLock())
 			{
-				var startingAabb = this.GetAxisAlignedBoundingBox();
-
-				// remove the current rotation
+				// set the matrix for the inner object
 				TransformItem.Matrix = RotationMatrix;
-
-				if (startingAabb.ZSize > 0)
-				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, startingAabb.minXYZ.Z);
-				}
 			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix, null));
