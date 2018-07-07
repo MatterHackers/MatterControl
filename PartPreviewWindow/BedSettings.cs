@@ -28,7 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using System.IO;
 
 namespace MatterHackers.MatterControl.SettingsManagement
@@ -53,9 +53,9 @@ namespace MatterHackers.MatterControl.SettingsManagement
 		public static void SetMakeAndModel(string make, string model)
 		{
 			string pathToBedSettings = Path.Combine("PrinterSettings", make, model, "BedSettings.json");
-			if (StaticData.Instance.FileExists(pathToBedSettings))
+			if (AggContext.StaticData.FileExists(pathToBedSettings))
 			{
-				string content = StaticData.Instance.ReadAllText(pathToBedSettings);
+				string content = AggContext.StaticData.ReadAllText(pathToBedSettings);
 				instance = (BedSettings)Newtonsoft.Json.JsonConvert.DeserializeObject<BedSettings>(content);
 			}
 			else

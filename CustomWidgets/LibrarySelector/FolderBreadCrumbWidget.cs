@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2017, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,131 +27,132 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.MatterControl.PrintLibrary.Provider;
-using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Threading.Tasks;
+using System.IO;
+using System.Linq;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.Library;
+using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
+namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class FolderBreadCrumbWidget : FlowLayoutWidget
 	{
-		private static TextImageButtonFactory navigationButtonFactory = new TextImageButtonFactory();
+		private ListView listView;
 
-		private Action<LibraryProvider> SwitchToLibraryProvider;
-
-		public FolderBreadCrumbWidget(Action<LibraryProvider> SwitchToLibraryProvider, LibraryProvider currentLibraryProvider)
+		public FolderBreadCrumbWidget(ListView listView)
 		{
+			this.listView = listView;
+
 			this.Name = "FolderBreadCrumbWidget";
-			this.SwitchToLibraryProvider = SwitchToLibraryProvider;
-			UiThread.RunOnIdle(() => SetBreadCrumbs(null, currentLibraryProvider));
-
-			navigationButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			navigationButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			navigationButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			navigationButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			navigationButtonFactory.disabledFillColor = navigationButtonFactory.normalFillColor;
-			navigationButtonFactory.Margin = new BorderDouble(10, 0);
-			navigationButtonFactory.borderWidth = 0;
-
-			HAnchor = HAnchor.ParentLeftRight;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Fit | VAnchor.Center;
+			this.MinimumSize = new VectorMath.Vector2(0, 1); // Force some minimum bounds to ensure draw and thus onload (and our local init) are called on startup
 		}
 
-		public void SetBreadCrumbs(LibraryProvider previousLibraryProvider, LibraryProvider currentLibraryProvider)
+		public void SetContainer(ILibraryContainer currentContainer)
 		{
-			LibraryProvider displayingProvider = currentLibraryProvider;
+			var linkButtonFactory = ApplicationController.Instance.Theme.LinkButtonFactory;
+			var theme = ApplicationController.Instance.Theme;
 
 			this.CloseAllChildren();
 
-			List<LibraryProvider> parentProviderList = new List<LibraryProvider>();
-			while (currentLibraryProvider != null)
+			var upbutton = new IconButton(AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "up_folder_20.png"), theme.InvertIcons), theme)
 			{
-				parentProviderList.Add(currentLibraryProvider);
-				currentLibraryProvider = currentLibraryProvider.ParentLibraryProvider;
+				VAnchor = VAnchor.Fit | VAnchor.Center,
+				Enabled = currentContainer.Parent != null,
+				Name = "Library Up Button",
+				Margin = theme.ButtonSpacing,
+				MinimumSize = new Vector2(theme.ButtonHeight, theme.ButtonHeight)
+			};
+			upbutton.Click += (s, e) =>
+			{
+				if (listView.ActiveContainer.Parent != null)
+				{
+					UiThread.RunOnIdle(() => listView.SetActiveContainer(listView.ActiveContainer.Parent));
+				}
+			};
+			this.AddChild(upbutton);
+
+			bool firstItem = true;
+
+			if (this.Width < 250)
+			{
+				Button containerButton = linkButtonFactory.Generate(listView.ActiveContainer.Name == null ? "?" : listView.ActiveContainer.Name);
+				containerButton.Name = "Bread Crumb Button " + listView.ActiveContainer.Name;
+				containerButton.VAnchor = VAnchor.Center;
+				containerButton.Margin = theme.ButtonSpacing;
+
+				this.AddChild(containerButton);
 			}
-
-			bool haveFilterRunning = !string.IsNullOrEmpty(displayingProvider.KeywordFilter);
-
-			bool first = true;
-			for (int i = parentProviderList.Count - 1; i >= 0; i--)
+			else
 			{
-				LibraryProvider parentLibraryProvider = parentProviderList[i];
-				if (!first)
-				{
-					GuiWidget separator = new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor);
-					separator.VAnchor = VAnchor.ParentCenter;
-					separator.Margin = new BorderDouble(0);
-					this.AddChild(separator);
-				}
+				var extraSpacing = (theme.ButtonSpacing).Clone(left: theme.ButtonSpacing.Right * .4);
 
-				Button gotoProviderButton = navigationButtonFactory.Generate(parentLibraryProvider.Name);
-				gotoProviderButton.Name = "Bread Crumb Button " + parentLibraryProvider.Name;
-				if (first)
+				foreach (var container in currentContainer.AncestorsAndSelf().Reverse())
 				{
-					gotoProviderButton.Margin = new BorderDouble(0, 0, 3, 0);
-				}
-				else
-				{
-					gotoProviderButton.Margin = new BorderDouble(3, 0);
-				}
-				gotoProviderButton.Click += (sender2, e2) =>
-				{
-					UiThread.RunOnIdle(() =>
+					if (!firstItem)
 					{
-						SwitchToLibraryProvider(parentLibraryProvider);
-					});
-				};
-				this.AddChild(gotoProviderButton);
-				first = false;
-			}
+						// Add path separator
+						var textContainer = new GuiWidget() // HACK: Workaround for VAlign.Center failure in this specific case. Remove wrapper(with padding) once fixed and directly add TextWidget child
+						{
+							HAnchor = HAnchor.Fit,
+							VAnchor = VAnchor.Fit | VAnchor.Center,
+							Padding = new BorderDouble(top: 4),
+							Margin = extraSpacing,
+						};
+						textContainer.AddChild(new TextWidget("/", pointSize: theme.DefaultFontSize + 2, textColor: ActiveTheme.Instance.PrimaryTextColor));
+						this.AddChild(textContainer);
+					}
 
-			if (haveFilterRunning)
-			{
-				GuiWidget separator = new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor);
-				separator.VAnchor = VAnchor.ParentCenter;
-				separator.Margin = new BorderDouble(0);
-				this.AddChild(separator);
+					// Create a button for each container
+					Button containerButton =  linkButtonFactory.Generate(container.Name);
+					containerButton.Name = "Bread Crumb Button " + container.Name;
+					containerButton.VAnchor = VAnchor.Center;
+					containerButton.Margin = theme.ButtonSpacing;
+					containerButton.Click += (s, e) =>
+					{
+						UiThread.RunOnIdle(() => listView.SetActiveContainer(container));
+					};
+					this.AddChild(containerButton);
 
-				Button searchResultsButton = null;
-				if (UserSettings.Instance.IsTouchScreen)
-				{
-					searchResultsButton = navigationButtonFactory.Generate("Search Results".Localize(), "icon_search_32x32.png");
+					firstItem = false;
 				}
-				else
-				{
-					searchResultsButton = navigationButtonFactory.Generate("Search Results".Localize(), "icon_search_24x24.png");
-				}
-				searchResultsButton.Name = "Bread Crumb Button " + "Search Results";
-				searchResultsButton.Margin = new BorderDouble(3, 0);
-				this.AddChild(searchResultsButton);
-			}
 
-			// while all the buttons don't fit in the control
-			if (this.Parent != null
-				&& this.Width > 0
-				&& this.Children.Count > 4
-				&& this.GetChildrenBoundsIncludingMargins().Width > (this.Width - 20))
-			{
-				// lets take out the > and put in a ...
-				this.RemoveChild(1);
-				GuiWidget separator = new TextWidget("...", textColor: ActiveTheme.Instance.PrimaryTextColor);
-				separator.VAnchor = VAnchor.ParentCenter;
-				separator.Margin = new BorderDouble(3, 0);
-				this.AddChild(separator, 1);
-
-				while (this.GetChildrenBoundsIncludingMargins().Width > this.Width - 20
-					&& this.Children.Count > 4)
+				// while all the buttons don't fit in the control
+				if (this.Parent != null
+					&& this.Width > 0
+					&& this.Children.Count > 4
+					&& this.GetChildrenBoundsIncludingMargins().Width > (this.Width - 20))
 				{
-					this.RemoveChild(3);
-					this.RemoveChild(2);
+					// lets take out the > and put in a ...
+					this.RemoveChild(1);
+
+					var separator = new TextWidget("...", textColor: ActiveTheme.Instance.PrimaryTextColor)
+					{
+						VAnchor = VAnchor.Center,
+						Margin = new BorderDouble(right:  5)
+					};
+					this.AddChild(separator, 1);
+
+					while (this.GetChildrenBoundsIncludingMargins().Width > this.Width - 20
+						&& this.Children.Count > 4)
+					{
+						this.RemoveChild(3);
+						this.RemoveChild(2);
+					}
 				}
 			}
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			this.SetContainer(listView.ActiveContainer);
+			base.OnLoad(args);
 		}
 	}
 }

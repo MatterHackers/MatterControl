@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Csg;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
@@ -38,12 +39,34 @@ namespace MatterHackers.MatterControl.Slicing
 {
 	public class SliceLayers
 	{
-		private List<SliceLayer> allLayers = new List<SliceLayer>();
-
-		public List<SliceLayer> AllLayers { get { return allLayers; } }
-
 		public SliceLayers()
 		{
+		}
+
+		public List<SliceLayer> AllLayers { get; } = new List<SliceLayer>();
+
+		public void DumpSegmentsToGcode(string filename)
+		{
+			StreamWriter stream = new StreamWriter(filename);
+			stream.Write("; some gcode to look at the layer segments");
+			int extrudeAmount = 0;
+			for (int layerIndex = 0; layerIndex < AllLayers.Count; layerIndex++)
+			{
+				stream.Write("; LAYER:{0}\n".FormatWith(layerIndex));
+				List<Segment> unorderedSegments = AllLayers[layerIndex].UnorderedSegments;
+				for (int segmentIndex = 0; segmentIndex < unorderedSegments.Count; segmentIndex++)
+				{
+					Segment segment = unorderedSegments[segmentIndex];
+					stream.Write("G1 X{0}Y{1}\n", segment.Start.X, segment.Start.Y);
+					stream.Write("G1 X{0}Y{1}E{2}\n", segment.End.X, segment.End.Y, extrudeAmount++);
+				}
+			}
+			stream.Close();
+		}
+
+		public SliceLayer GetPerimetersAtHeight(Mesh meshToSlice, double zHeight)
+		{
+			throw new NotImplementedException();
 		}
 
 		public void GetPerimetersForAllLayers(Mesh meshToSlice, double firstLayerHeight, double otherLayerHeights)
@@ -61,7 +84,7 @@ namespace MatterHackers.MatterControl.Slicing
 
 			for (int i = 0; i < layerCount; i++)
 			{
-				allLayers.Add(new SliceLayer(currentZ));
+				AllLayers.Add(new SliceLayer(new Plane(Vector3.UnitZ, i)));
 				currentZ += otherLayerHeights;
 			}
 
@@ -71,14 +94,14 @@ namespace MatterHackers.MatterControl.Slicing
 				double maxZ = double.MinValue;
 				foreach (FaceEdge faceEdge in face.FaceEdges())
 				{
-					minZ = Math.Min(minZ, faceEdge.firstVertex.Position.z);
-					maxZ = Math.Max(maxZ, faceEdge.firstVertex.Position.z);
+					minZ = Math.Min(minZ, faceEdge.FirstVertex.Position.Z);
+					maxZ = Math.Max(maxZ, faceEdge.FirstVertex.Position.Z);
 				}
 
 				for (int layerIndex = 0; layerIndex < layerCount; layerIndex++)
 				{
-					SliceLayer layer = allLayers[layerIndex];
-					double zHeight = layer.ZHeight;
+					SliceLayer layer = AllLayers[layerIndex];
+					double zHeight = layer.SlicePlane.DistanceToPlaneFromOrigin;
 					if (zHeight < minZ)
 					{
 						// not up to the start of the face yet
@@ -91,38 +114,14 @@ namespace MatterHackers.MatterControl.Slicing
 					}
 					Plane cutPlane = new Plane(Vector3.UnitZ, zHeight);
 
-					Vector3 start;
-					Vector3 end;
-					if (face.GetCutLine(cutPlane, out start, out end))
+					var start = Vector3.Zero;
+					var end = Vector3.Zero;
+					if (face.GetCutLine(cutPlane, ref start, ref end))
 					{
-						layer.UnorderedSegments.Add(new SliceLayer.Segment(new Vector2(start.x, start.y), new Vector2(end.x, end.y)));
+						layer.UnorderedSegments.Add(new Segment(new Vector2(start.X, start.Y), new Vector2(end.X, end.Y)));
 					}
 				}
 			}
-		}
-
-		public SliceLayer GetPerimetersAtHeight(Mesh meshToSlice, double zHeight)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void DumpSegmentsToGcode(string filename)
-		{
-			StreamWriter stream = new StreamWriter(filename);
-			stream.Write("; some gcode to look at the layer segments");
-			int extrudeAmount = 0;
-			for (int layerIndex = 0; layerIndex < allLayers.Count; layerIndex++)
-			{
-				stream.Write("; LAYER:{0}\n".FormatWith(layerIndex));
-				List<SliceLayer.Segment> unorderedSegments = allLayers[layerIndex].UnorderedSegments;
-				for (int segmentIndex = 0; segmentIndex < unorderedSegments.Count; segmentIndex++)
-				{
-					SliceLayer.Segment segment = unorderedSegments[segmentIndex];
-					stream.Write("G1 X{0}Y{1}\n", segment.start.x, segment.start.y);
-					stream.Write("G1 X{0}Y{1}E{2}\n", segment.end.x, segment.end.y, extrudeAmount++);
-				}
-			}
-			stream.Close();
 		}
 	}
 }

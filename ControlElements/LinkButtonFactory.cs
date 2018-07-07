@@ -7,9 +7,9 @@ namespace MatterHackers.MatterControl
 {
 	public class ChangeTextColorEventArgs : EventArgs
 	{
-		public RGBA_Bytes color;
+		public Color color;
 
-		public ChangeTextColorEventArgs(RGBA_Bytes color)
+		public ChangeTextColorEventArgs(Color color)
 		{
 			this.color = color;
 		}
@@ -18,21 +18,21 @@ namespace MatterHackers.MatterControl
 	//Base widget for use in ButtonStatesViewWidget
 	public class LinkButtonViewBase : GuiWidget
 	{
-		protected RGBA_Bytes fillColor = new RGBA_Bytes(0, 0, 0, 0);
-		protected RGBA_Bytes borderColor = new RGBA_Bytes(0, 0, 0, 0);
+		protected Color fillColor = new Color(0, 0, 0, 0);
+		protected Color borderColor = new Color(0, 0, 0, 0);
 		protected double borderWidth = 0;
 		protected double borderRadius;
 		protected double padding;
 		protected bool isUnderlined = false;
 
-		public RGBA_Bytes TextColor { get; set; }
+		public Color TextColor { get; set; }
 
 		private TextWidget buttonText;
 
 		public LinkButtonViewBase(string label,
 									 double textHeight,
 									 double padding,
-									 RGBA_Bytes textColor,
+									 Color textColor,
 									 bool isUnderlined = false)
 			: base()
 		{
@@ -41,27 +41,27 @@ namespace MatterHackers.MatterControl
 			this.isUnderlined = isUnderlined;
 
 			buttonText = new TextWidget(label, pointSize: textHeight);
-			buttonText.VAnchor = VAnchor.ParentCenter;
-			buttonText.HAnchor = HAnchor.ParentCenter;
+			buttonText.VAnchor = VAnchor.Center;
+			buttonText.HAnchor = HAnchor.Center;
 			buttonText.TextColor = this.TextColor;
 
 			//this.AnchorAll();
 			this.AddChild(buttonText);
-			HAnchor = HAnchor.FitToChildren;
-			VAnchor = VAnchor.FitToChildren;
+			HAnchor = HAnchor.Fit;
+			VAnchor = VAnchor.Fit;
 		}
 
-		public override void SendToChildren(object objectToRout)
+		public override void SendToChildren(object objectToRoute)
 		{
-			ChangeTextColorEventArgs changeColorEvent = objectToRout as ChangeTextColorEventArgs;
+			var changeColorEvent = objectToRoute as ChangeTextColorEventArgs;
 			if (changeColorEvent != null)
 			{
 				buttonText.TextColor = changeColorEvent.color;
 			}
-			base.SendToChildren(objectToRout);
+			base.SendToChildren(objectToRoute);
 		}
 
-		public override void OnDraw(Agg.Graphics2D graphics2D)
+		public override void OnDraw(Graphics2D graphics2D)
 		{
 			RectangleDouble Bounds = LocalBounds;
 			RoundedRect rectBorder = new RoundedRect(Bounds, this.borderRadius);
@@ -89,9 +89,9 @@ namespace MatterHackers.MatterControl
 	{
 		public double fontSize = 14;
 		public double padding = 3;
-		public RGBA_Bytes fillColor = new RGBA_Bytes(63, 63, 70, 0);
-		public RGBA_Bytes borderColor = new RGBA_Bytes(37, 37, 38, 0);
-		public RGBA_Bytes textColor = ActiveTheme.Instance.PrimaryAccentColor;
+		public Color fillColor = new Color(63, 63, 70, 0);
+		public Color borderColor = new Color(37, 37, 38, 0);
+		public Color textColor = ActiveTheme.Instance.PrimaryAccentColor;
 		public BorderDouble margin = new BorderDouble(0, 3);
 
 		public Button Generate(string buttonText)
@@ -106,11 +106,11 @@ namespace MatterHackers.MatterControl
 			ButtonViewStates buttonViewWidget = new ButtonViewStates(buttonWidgetNormal, buttonWidgetHover, buttonWidgetPressed, buttonWidgetDisabled);
 
 			//Create button based on view container widget
-			Button controlButton = new Button(0, 0, buttonViewWidget);
-			controlButton.Margin = margin;
-			controlButton.Cursor = Cursors.Hand;
-
-			return controlButton;
+			return new Button(0, 0, buttonViewWidget)
+			{
+				Margin = margin,
+				Cursor = Cursors.Hand,
+			};
 		}
 
 		private LinkButtonViewBase getButtonWidgetPressed(string buttonText)

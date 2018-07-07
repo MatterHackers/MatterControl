@@ -30,24 +30,33 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Diagnostics;
 using System.Threading;
-using MatterHackers.GCodeVisualizer;
+using MatterControl.Printing;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class WaitForTempStream : GCodeStreamProxy
 	{
+		/// <summary>
+		/// The number of seconds to wait after reaching the target temp before continuing. Analogous to 
+		/// firmware dwell time for temperature stabilization
+		/// </summary>
+		public static double WaitAfterReachTempTime { get; set; } = 3;
+
 		private double extruderIndex;
 		private double ignoreRequestIfBelowTemp = 20;
-		private double sameTempRange = 1;
+		private double sameTempRangeBed = 3;
+		private double sameTempRangeHotend = 1;
 		private State state = State.passthrough;
 		private double targetTemp = 0;
 		private Stopwatch timeHaveBeenAtTemp = new Stopwatch();
-		private double waitAfterReachTempTime = 3;
-		private bool waitWhenCooling = false;
 
-		public WaitForTempStream(GCodeStream internalStream)
+		private bool waitWhenCooling = false;
+		PrinterConnection printerConnection;
+
+		public WaitForTempStream(PrinterConnection printerConnection, GCodeStream internalStream)
 			: base(internalStream)
 		{
+			this.printerConnection = printerConnection;
 			state = State.passthrough;
 		}
 
@@ -133,15 +142,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				case State.waitingForExtruderTemp:
 					{
-						double extruderTemp = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature((int)extruderIndex);
-						bool tempWithinRange = extruderTemp >= targetTemp - sameTempRange && extruderTemp <= targetTemp + sameTempRange;
+						double extruderTemp = printerConnection.GetActualHotendTemperature((int)extruderIndex);
+						bool tempWithinRange = extruderTemp >= targetTemp - sameTempRangeHotend 
+							&& extruderTemp <= targetTemp + sameTempRangeHotend;
 						if (tempWithinRange && !timeHaveBeenAtTemp.IsRunning)
 						{
 							timeHaveBeenAtTemp.Start();
 						}
 
-						if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > waitAfterReachTempTime
-							|| PrinterConnectionAndCommunication.Instance.PrintWasCanceled)
+						if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > WaitAfterReachTempTime
+							|| printerConnection.PrintWasCanceled)
 						{
 							// switch to pass through and continue
 							state = State.passthrough;
@@ -157,15 +167,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				case State.waitingForBedTemp:
 					{
-						double bedTemp = PrinterConnectionAndCommunication.Instance.ActualBedTemperature;
+						double bedTemp = printerConnection.ActualBedTemperature;
 						bool tempWithinRange;
 						if (waitWhenCooling)
 						{
-							tempWithinRange = bedTemp >= targetTemp - sameTempRange && bedTemp <= targetTemp + sameTempRange;
+							tempWithinRange = bedTemp >= targetTemp - sameTempRangeBed 
+								&& bedTemp <= targetTemp + sameTempRangeBed;
 						}
 						else
 						{
-							tempWithinRange = bedTemp >= targetTemp - sameTempRange;
+							tempWithinRange = bedTemp >= targetTemp - sameTempRangeBed;
 						}
 
 						// Added R code for M190
@@ -174,8 +185,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							timeHaveBeenAtTemp.Start();
 						}
 
-						if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > waitAfterReachTempTime
-							|| PrinterConnectionAndCommunication.Instance.PrintWasCanceled)
+						if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > WaitAfterReachTempTime
+							|| printerConnection.PrintWasCanceled)
 						{
 							// switch to pass through and continue
 							state = State.passthrough;

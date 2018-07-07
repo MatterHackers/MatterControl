@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,66 +27,39 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.GCodeVisualizer;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
-using System;
 using System.Collections.Generic;
-using System.Text;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class LevelWizard13PointRadial : LevelWizardRadialBase
-    {
-		static readonly int numberOfRadialSamples = 12;
-
-		public LevelWizard13PointRadial(LevelWizardBase.RuningState runningState)
-			: base(runningState, 500, 370, (numberOfRadialSamples + 1)*3, numberOfRadialSamples)
+	public class LevelWizard13PointRadial : LevelingPlan
+	{
+		public LevelWizard13PointRadial(PrinterConfig printer)
+			: base(printer)
 		{
 		}
 
-        public static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode)
-        {
-			var settings = ActiveSliceSettings.Instance;
-            if (settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
-                && (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 "))
-                && lineBeingSent.Length > 2
-                && lineBeingSent[2] == ' ')
-            {
-                return GetLevelingFunctions(numberOfRadialSamples, settings.Helpers.GetPrintLevelingData(), ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center))
-                    .DoApplyLeveling(lineBeingSent, currentDestination, movementMode);
-            }
+		public override int ProbeCount => 13;
 
-            return lineBeingSent;
-        }
-
-        public override Vector2 GetPrintLevelPositionToSample(int index, double radius)
-        {
-            PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-            return GetLevelingFunctions(numberOfRadialSamples, levelingData, ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center))
-                .GetPrintLevelPositionToSample(index, radius);
-        }
-
-        public static List<string> ProcessCommand(string lineBeingSent)
-        {
-            int commentIndex = lineBeingSent.IndexOf(';');
-            if (commentIndex > 0) // there is content in front of the ;
-            {
-                lineBeingSent = lineBeingSent.Substring(0, commentIndex).Trim();
-            }
-            List<string> lines = new List<string>();
-            lines.Add(lineBeingSent);
-            if (lineBeingSent.StartsWith("G28")
-				|| lineBeingSent.StartsWith("G29"))
+		public override IEnumerable<Vector2> GetPrintLevelPositionToSample()
+		{
+			// the center
+			foreach (var sample in GetSampleRing(1, 0, 0))
 			{
-                lines.Add("M114");
-            }
+				yield return sample;
+			}
 
-            return lines;
-        }
-    }
+			// around an inner circle
+			foreach (var sample in GetSampleRing(4, .45, 0))
+			{
+				yield return sample;
+			}
+
+			// around the outside
+			foreach (var sample in GetSampleRing(8, .9, MathHelper.Tau * 3 / 4))
+			{
+				yield return sample;
+			}
+		}
+	}
 }

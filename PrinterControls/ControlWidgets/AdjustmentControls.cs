@@ -28,16 +28,18 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
-	public class AdjustmentControls : ControlWidgetBase
+	public class AdjustmentControls : FlowLayoutWidget
 	{
 		private MHNumberEdit feedRateValue;
 		private MHNumberEdit extrusionValue;
@@ -52,58 +54,36 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private EventHandler unregisterEvents;
 
-		public AdjustmentControls()
+		private AdjustmentControls(PrinterConfig printer, ThemeConfig theme)
+			: base (FlowDirection.TopToBottom)
 		{
-			var adjustmentControlsGroupBox = new AltGroupBox(new TextWidget("Tuning Adjustment".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor))
-			{
-				Margin = 0,
-				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.ParentLeftRight
-			};
-
-			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				Margin = new BorderDouble(0, 0, 0, 0),
-				HAnchor = HAnchor.ParentLeftRight,
-				Padding = new BorderDouble(3, 0, 3, 0)
-			};
-
 			double sliderWidth = 300 * GuiWidget.DeviceScale;
 			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
-			if (UserSettings.Instance.IsTouchScreen)
-			{
-				sliderThumbWidth = 15 * GuiWidget.DeviceScale;
-			}
 
-			var subheader = new TextWidget("", pointSize: 4, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			subheader.Margin = new BorderDouble(bottom: 6);
-			topToBottom.AddChild(subheader);
+			Color sliderTrackColor = theme.Colors.IsDarkTheme ? new Color(theme.Shade, 65) : theme.SlightShade;
+
+			SettingsRow settingsRow;
 
 			{
-				var row = new FlowLayoutWidget()
-				{
-					HAnchor = HAnchor.ParentLeftRight,
-					Margin = 0,
-					VAnchor = VAnchor.FitToChildren
-				};
+				this.AddChild(settingsRow = new SettingsRow(
+					"Speed Multiplier".Localize(),
+					null,
+					theme));
 
-				var feedRateDescription = new TextWidget("Speed Multiplier".Localize())
-				{
-					MinimumSize = new Vector2(140, 0) * GuiWidget.DeviceScale,
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
-					VAnchor = VAnchor.ParentCenter,
-				};
-				row.AddChild(feedRateDescription);
+				// Remove the HorizontalSpacer
+				settingsRow.Children.Last().Close();
 
 				feedRateRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, minFeedRateRatio, maxFeedRateRatio)
 				{
 					Name = "Feed Rate Slider",
 					Margin = new BorderDouble(5, 0),
 					Value = FeedRateMultiplyerStream.FeedRateRatio,
-					HAnchor = HAnchor.ParentLeftRight,
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Center,
 					TotalWidthInPixels = sliderWidth,
 				};
-				feedRateRatioSlider.View.BackgroundColor = new RGBA_Bytes();
+				feedRateRatioSlider.View.TrackColor = sliderTrackColor;
+				feedRateRatioSlider.View.TrackRadius = 4;
 				feedRateRatioSlider.ValueChanged += (sender, e) =>
 				{
 					feedRateValue.ActuallNumberEdit.Value = Math.Round(feedRateRatioSlider.Value, 2);
@@ -114,18 +94,18 @@ namespace MatterHackers.MatterControl.PrinterControls
 					FeedRateMultiplyerStream.FeedRateRatio = Math.Round(feedRateRatioSlider.Value, 2);
 
 					// Persist data for future use
-					ActiveSliceSettings.Instance.SetValue(
+					printer.Settings.SetValue(
 						SettingsKey.feedrate_ratio,
 						FeedRateMultiplyerStream.FeedRateRatio.ToString());
 				};
-				row.AddChild(feedRateRatioSlider);
+				settingsRow.AddChild(feedRateRatioSlider);
 
 				feedRateValue = new MHNumberEdit(Math.Round(FeedRateMultiplyerStream.FeedRateRatio, 2), allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
 				{
 					Name = "Feed Rate NumberEdit",
 					SelectAllOnFocus = true,
 					Margin = new BorderDouble(0, 0, 5, 0),
-					VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren,
+					VAnchor = VAnchor.Center | VAnchor.Fit,
 					Padding = 0
 				};
 				feedRateValue.ActuallNumberEdit.EditComplete += (sender, e) =>
@@ -136,49 +116,33 @@ namespace MatterHackers.MatterControl.PrinterControls
 					FeedRateMultiplyerStream.FeedRateRatio = Math.Round(feedRateRatioSlider.Value, 2);
 
 					// Persist data for future use
-					ActiveSliceSettings.Instance.SetValue(
+					printer.Settings.SetValue(
 						SettingsKey.feedrate_ratio,
 						FeedRateMultiplyerStream.FeedRateRatio.ToString());
 				};
-				row.AddChild(feedRateValue);
-
-				topToBottom.AddChild(row);
-
-				textImageButtonFactory.FixedHeight = (int)feedRateValue.Height + 1;
-				textImageButtonFactory.borderWidth = 1;
-				textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-				textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-
-				Button setButton = textImageButtonFactory.Generate("Set".Localize());
-				setButton.VAnchor = VAnchor.ParentCenter;
-				row.AddChild(setButton);
+				settingsRow.AddChild(feedRateValue);
 			}
 
 			{
-				var row = new FlowLayoutWidget()
-				{
-					HAnchor = HAnchor.ParentLeftRight,
-					Margin = new BorderDouble(top: 10),
-					VAnchor = VAnchor.FitToChildren
-				};
+				this.AddChild(settingsRow = new SettingsRow(
+					"Extrusion Multiplier".Localize(),
+					null,
+					theme));
 
-				var extrusionDescription = new TextWidget("Extrusion Multiplier".Localize())
-				{
-					MinimumSize = new Vector2(140, 0) * GuiWidget.DeviceScale,
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
-					VAnchor = VAnchor.ParentCenter
-				};
-				row.AddChild(extrusionDescription);
+				// Remove the HorizontalSpacer
+				settingsRow.Children.Last().Close();
 
 				extrusionRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, minExtrutionRatio, maxExtrusionRatio, Orientation.Horizontal)
 				{
 					Name = "Extrusion Multiplier Slider",
 					TotalWidthInPixels = sliderWidth,
-					HAnchor = HAnchor.ParentLeftRight,
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Center,
 					Margin = new BorderDouble(5, 0),
 					Value = ExtrusionMultiplyerStream.ExtrusionRatio
 				};
-				extrusionRatioSlider.View.BackgroundColor = new RGBA_Bytes();
+				extrusionRatioSlider.View.TrackColor = sliderTrackColor;
+				extrusionRatioSlider.View.TrackRadius = 4;
 				extrusionRatioSlider.ValueChanged += (sender, e) =>
 				{
 					extrusionValue.ActuallNumberEdit.Value = Math.Round(extrusionRatioSlider.Value, 2);
@@ -189,17 +153,18 @@ namespace MatterHackers.MatterControl.PrinterControls
 					ExtrusionMultiplyerStream.ExtrusionRatio = Math.Round(extrusionRatioSlider.Value, 2);
 
 					// Persist data for future use
-					ActiveSliceSettings.Instance.SetValue(
+					printer.Settings.SetValue(
 						SettingsKey.extrusion_ratio,
 						ExtrusionMultiplyerStream.ExtrusionRatio.ToString());
 				};
+				settingsRow.AddChild(extrusionRatioSlider);
 
 				extrusionValue = new MHNumberEdit(Math.Round(ExtrusionMultiplyerStream.ExtrusionRatio, 2), allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
 				{
 					Name = "Extrusion Multiplier NumberEdit",
 					SelectAllOnFocus = true,
 					Margin = new BorderDouble(0, 0, 5, 0),
-					VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren,
+					VAnchor = VAnchor.Center | VAnchor.Fit,
 					Padding = 0
 				};
 				extrusionValue.ActuallNumberEdit.EditComplete += (sender, e) =>
@@ -210,42 +175,44 @@ namespace MatterHackers.MatterControl.PrinterControls
 					ExtrusionMultiplyerStream.ExtrusionRatio = Math.Round(extrusionRatioSlider.Value, 2);
 
 					// Persist data for future use
-					ActiveSliceSettings.Instance.SetValue(
+					printer.Settings.SetValue(
 						SettingsKey.extrusion_ratio,
 						ExtrusionMultiplyerStream.ExtrusionRatio.ToString());
 				};
-				row.AddChild(extrusionRatioSlider);
-				row.AddChild(extrusionValue);
-
-				topToBottom.AddChild(row);
-				
-				textImageButtonFactory.FixedHeight = (int)extrusionValue.Height + 1;
-
-				Button setButton = textImageButtonFactory.Generate("Set".Localize());
-				setButton.VAnchor = VAnchor.ParentCenter;
-				row.AddChild(setButton);
+				settingsRow.AddChild(extrusionValue);
 			}
-
-			adjustmentControlsGroupBox.AddChild(topToBottom);
-
-			this.AddChild(adjustmentControlsGroupBox);
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				var eventArgs = e as StringEventArgs;
 				if (eventArgs?.Data == SettingsKey.extrusion_ratio)
 				{
-					double extrusionRatio = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.extrusion_ratio);
+					double extrusionRatio = printer.Settings.GetValue<double>(SettingsKey.extrusion_ratio);
 					extrusionRatioSlider.Value = extrusionRatio;
 					extrusionValue.ActuallNumberEdit.Value = Math.Round(extrusionRatio, 2);
 				}
 				else if (eventArgs?.Data == SettingsKey.feedrate_ratio)
 				{
-					double feedrateRatio = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.feedrate_ratio);
+					double feedrateRatio = printer.Settings.GetValue<double>(SettingsKey.feedrate_ratio);
 					feedRateRatioSlider.Value = feedrateRatio;
 					feedRateValue.ActuallNumberEdit.Value = Math.Round(feedrateRatio, 2);
 				}
 			}, ref unregisterEvents);
+		}
+
+		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
+		{
+			return new SectionWidget(
+				"Tuning Adjustment".Localize(),
+				new AdjustmentControls(printer, theme),
+				theme);
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			// This is a hack to fix the layout issue this control is having.
+			Width = Width + 1;
+			base.OnLoad(args);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

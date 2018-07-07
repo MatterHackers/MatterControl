@@ -1,25 +1,49 @@
-﻿using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+﻿/*
+Copyright (c) 2017, Lars Brubaker, John Lewin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using System;
+using System.Collections.Generic;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepComPortManual : ConnectionWizardPage
+	public class SetupStepComPortManual : DialogPage
 	{
-		private Button nextButton;
-		private Button connectButton;
-		private Button refreshButton;
-		private Button printerComPortHelpLink;
+		private GuiWidget nextButton;
+		private GuiWidget connectButton;
+		private GuiWidget refreshButton;
+		private GuiWidget printerComPortHelpLink;
 
 		private bool printerComPortIsAvailable = false;
 
@@ -28,31 +52,62 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private EventHandler unregisterEvents;
 		protected List<SerialPortIndexRadioButton> SerialPortButtonsList = new List<SerialPortIndexRadioButton>();
+		private PrinterConfig printer;
 
-		public SetupStepComPortManual()
+		public SetupStepComPortManual(PrinterConfig printer)
 		{
+			this.printer = printer;
+
 			FlowLayoutWidget printerComPortContainer = createComPortContainer();
 			contentRow.AddChild(printerComPortContainer);
 
 			//Construct buttons
-			nextButton = textImageButtonFactory.Generate("Done".Localize());
+			nextButton = theme.CreateDialogButton("Done".Localize());
 			nextButton.Click += (s, e) => UiThread.RunOnIdle(Parent.Close);
 			nextButton.Visible = false;
 
-			connectButton = textImageButtonFactory.Generate("Connect".Localize());
-			connectButton.Click += ConnectButton_Click;
+			connectButton = theme.CreateDialogButton("Connect".Localize());
+			connectButton.Click += (s, e) =>
+			{
+				try
+				{
+					printerComPortHelpLink.Visible = false;
+					printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-			refreshButton = textImageButtonFactory.Generate("Refresh".Localize());
-			refreshButton.Click += (s, e) => UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupStepComPortManual>);
+					printerComPortError.Text = "Attempting to connect".Localize() + "...";
+					printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-			//Add buttons to buttonContainer
-			footerRow.AddChild(nextButton);
-			footerRow.AddChild(connectButton);
-			footerRow.AddChild(refreshButton);
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
+					ActiveSliceSettings.Instance.Helpers.SetComPort(GetSelectedSerialPort());
+					printer.Connection.Connect();
 
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+					connectButton.Visible = false;
+					refreshButton.Visible = false;
+				}
+				catch
+				{
+					printerComPortHelpLink.Visible = false;
+					printerComPortError.TextColor = Color.Red;
+					printerComPortError.Text = "Oops! Please select a serial port.".Localize();
+				}
+			};
+
+			refreshButton = theme.CreateDialogButton("Refresh".Localize());
+			refreshButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				DialogWindow.ChangeToPage(new SetupStepComPortManual(printer));
+			});
+
+			this.AddPageAction(nextButton);
+			this.AddPageAction(connectButton);
+			this.AddPageAction(refreshButton);
+
+			printer.Connection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+		}
+
+		protected override void OnCancel(out bool abortCancel)
+		{
+			printer.Connection.HaltConnectionThread();
+			abortCancel = false;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -63,39 +118,47 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private FlowLayoutWidget createComPortContainer()
 		{
-			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			container.Margin = new BorderDouble(0);
-			container.VAnchor = VAnchor.ParentBottomTop;
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Margin = new BorderDouble(0),
+				VAnchor = VAnchor.Stretch
+			};
+
 			BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			string serialPortLabel = "Serial Port".Localize();
-			string serialPortLabelFull = string.Format("{0}:", serialPortLabel);
+			var comPortLabel = new TextWidget("Serial Port".Localize() + ":", 0, 0, 12)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				Margin = new BorderDouble(0, 0, 0, 10),
+				HAnchor = HAnchor.Stretch
+			};
 
-			TextWidget comPortLabel = new TextWidget(serialPortLabelFull, 0, 0, 12);
-			comPortLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			comPortLabel.Margin = new BorderDouble(0, 0, 0, 10);
-			comPortLabel.HAnchor = HAnchor.ParentLeftRight;
-
-			FlowLayoutWidget serialPortContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			var serialPortContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			CreateSerialPortControls(serialPortContainer, null);
 
-			FlowLayoutWidget comPortMessageContainer = new FlowLayoutWidget();
-			comPortMessageContainer.Margin = elementMargin;
-			comPortMessageContainer.HAnchor = HAnchor.ParentLeftRight;
+			var comPortMessageContainer = new FlowLayoutWidget
+			{
+				Margin = elementMargin,
+				HAnchor = HAnchor.Stretch
+			};
 
-			printerComPortError = new TextWidget("Currently available serial ports.".Localize(), 0, 0, 10);
-			printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerComPortError.AutoExpandBoundsToText = true;
+			printerComPortError = new TextWidget("Currently available serial ports.".Localize(), 0, 0, 10)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				AutoExpandBoundsToText = true
+			};
 
 			printerComPortHelpLink = linkButtonFactory.Generate("What's this?".Localize());
 			printerComPortHelpLink.Margin = new BorderDouble(left: 5);
-			printerComPortHelpLink.VAnchor = VAnchor.ParentBottom;
+			printerComPortHelpLink.VAnchor = VAnchor.Bottom;
 			printerComPortHelpLink.Click += (s, e) => printerComPortHelpMessage.Visible = !printerComPortHelpMessage.Visible;
 
-			printerComPortHelpMessage = new TextWidget("The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.".Localize(), 0, 0, 10);
-			printerComPortHelpMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerComPortHelpMessage.Margin = new BorderDouble(top: 10);
-			printerComPortHelpMessage.Visible = false;
+			printerComPortHelpMessage = new TextWidget("The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.".Localize(), 0, 0, 10)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				Margin = new BorderDouble(top: 10),
+				Visible = false
+			};
 
 			comPortMessageContainer.AddChild(printerComPortError);
 			comPortMessageContainer.AddChild(printerComPortHelpLink);
@@ -105,13 +168,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			container.AddChild(comPortMessageContainer);
 			container.AddChild(printerComPortHelpMessage);
 
-			container.HAnchor = HAnchor.ParentLeftRight;
+			container.HAnchor = HAnchor.Stretch;
+
 			return container;
 		}
 
 		private void onPrinterStatusChanged(object sender, EventArgs e)
 		{
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
+			if (printer.Connection.IsConnected)
 			{
 				printerComPortHelpLink.Visible = false;
 				printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -120,52 +184,22 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				connectButton.Visible = false;
 				UiThread.RunOnIdle(() => this?.Parent?.Close());
 			}
-			else if (PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect)
+			else if (printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect)
 			{
 				printerComPortHelpLink.Visible = false;
-				printerComPortError.TextColor = RGBA_Bytes.Red;
+				printerComPortError.TextColor = Color.Red;
 				printerComPortError.Text = "Uh-oh! Could not connect to printer.".Localize();
 				connectButton.Visible = true;
 				nextButton.Visible = false;
 			}
 		}
 
-		private void MoveToNextWidget(object state)
-		{
-			WizardWindow.ChangeToInstallDriverOrComPortOne();
-		}
-
-		private void ConnectButton_Click(object sender, EventArgs mouseEvent)
-		{
-			try
-			{
-				printerComPortHelpLink.Visible = false;
-				printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-				printerComPortError.Text = "Attempting to connect".Localize() + "...";
-				printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-				ActiveSliceSettings.Instance.Helpers.SetComPort(GetSelectedSerialPort());
-				PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
-
-				connectButton.Visible = false;
-				refreshButton.Visible = false;
-			}
-			catch
-			{
-				printerComPortHelpLink.Visible = false;
-				printerComPortError.TextColor = RGBA_Bytes.Red;
-				printerComPortError.Text = "Oops! Please select a serial port.".Localize();
-			}
-		}
-
 		protected void CreateSerialPortControls(FlowLayoutWidget comPortContainer, string activePrinterSerialPort)
 		{
 			int portIndex = 0;
-			string[] portsToCreate = FrostedSerialPort.GetPortNames();
 
 			// Add a radio button for each filtered port
-			foreach (string portName in portsToCreate)
+			foreach (string portName in FrostedSerialPort.GetPortNames())
 			{
 				SerialPortIndexRadioButton comPortOption = createComPortOption(portName, activePrinterSerialPort == portName);
 				if (comPortOption.Checked)
@@ -193,23 +227,24 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			//If there are still no com ports show a message to that effect
 			if (portIndex == 0)
 			{
-				TextWidget comPortOption = new TextWidget("No COM ports available".Localize());
-				comPortOption.Margin = new BorderDouble(3, 6, 5, 6);
-				comPortOption.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+				var comPortOption = new TextWidget("No COM ports available".Localize())
+				{
+					Margin = new BorderDouble(3, 6, 5, 6),
+					TextColor = ActiveTheme.Instance.PrimaryTextColor
+				};
 				comPortContainer.AddChild(comPortOption);
 			}
 		}
 
 		private SerialPortIndexRadioButton createComPortOption(string portName, bool isActivePrinterPort)
 		{
-			SerialPortIndexRadioButton comPortOption = new SerialPortIndexRadioButton(portName, portName)
+			return new SerialPortIndexRadioButton(portName, portName)
 			{
-				HAnchor = HAnchor.ParentLeft,
+				HAnchor = HAnchor.Left,
 				Margin = new BorderDouble(3, 3, 5, 3),
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				Checked = isActivePrinterPort
 			};
-			return comPortOption;
 		}
 
 		private string GetSelectedSerialPort()

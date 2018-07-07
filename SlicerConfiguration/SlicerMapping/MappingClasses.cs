@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public static class GCodeProcessing
 	{
 		private static MappedSetting[] replaceWithSettingsStrings = new MappedSetting[]
-        {
+		{
 			// Have a mapping so that MatterSlice while always use a setting that can be set. (the user cannot set first_layer_bedTemperature in MatterSlice)
 			new AsPercentOfReferenceOrDirect(SettingsKey.first_layer_speed, "first_layer_speed", "infill_speed", 60),
 			new AsPercentOfReferenceOrDirect("external_perimeter_speed","external_perimeter_speed", "perimeter_speed", 60),
@@ -63,6 +63,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			new ScaledSingleNumber("retract_speed","retract_speed", 60),
 			new ScaledSingleNumber("support_material_speed","support_material_speed", 60),
 			new ScaledSingleNumber("travel_speed", "travel_speed", 60),
+			new AsPercentOfReferenceOrDirect("load_filament_length_over_six", "", "load_filament_length", 1.0/6.0, false),
+			new AsPercentOfReferenceOrDirect("unload_filament_length_over_six", "", "unload_filament_length", 1.0/6.0, false),
+			new ScaledSingleNumber("load_filament_speed", "load_filament_speed", 60),
+			new MappedSetting("trim_image", "trim_image"),
+			new MappedSetting("clean_nozzle_image", "clean_nozzle_image"),
+			new MappedSetting("insert_image", "insert_image"),
+			new MappedSetting("running_clean_image", "running_clean_image"),
 		};
 
 		public static string ReplaceMacroValues(string gcodeWithMacros)
@@ -98,16 +105,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			double value;
 			if (!double.TryParse(textValue, out value))
 			{
-				MatterControlApplication.BreakInDebugger("Slicing value is not a double.");
 				return valueOnError;
 			}
 
 			return value;
-		}
-
-		public double ParseDoubleFromRawValue(string canonicalSettingsName, double valueOnError = 0)
-		{
-			return ParseDouble(ActiveSliceSettings.Instance.GetValue(canonicalSettingsName), valueOnError);
 		}
 
 		public string ExportedName { get; }
@@ -115,6 +116,60 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public string CanonicalSettingsName { get; }
 
 		public virtual string Value => ActiveSliceSettings.Instance.GetValue(CanonicalSettingsName);
+	}
+
+	public class MappedFanSpeedSetting : MappedSetting
+	{
+		public MappedFanSpeedSetting(string canonicalSettingsName, string exportedName)
+			: base(canonicalSettingsName, exportedName)
+		{
+		}
+		public override string Value
+		{
+			get
+			{
+				if (ActiveSliceSettings.Instance.GetValue<bool>("enable_fan"))
+				{
+					return base.Value;
+				}
+
+				return "0";
+			}
+		}
+	}
+
+	public class MappedBrimLoopsSetting : AsCountOrDistance
+	{
+		public MappedBrimLoopsSetting(string canonicalSettingsName, string exportedName, string keyToUseAsDenominatorForCount)
+			: base(canonicalSettingsName, exportedName, keyToUseAsDenominatorForCount)
+		{
+		}
+		public override string Value {
+			get {
+				if (ActiveSliceSettings.Instance.GetValue<bool>("create_brim")) {
+					return base.Value;
+				}
+
+				return "0";
+			}
+		}
+	}
+
+	public class MappedSkirtLoopsSetting : AsCountOrDistance
+	{
+		public MappedSkirtLoopsSetting(string canonicalSettingsName, string exportedName, string keyToUseAsDenominatorForCount)
+			: base(canonicalSettingsName, exportedName, keyToUseAsDenominatorForCount)
+		{
+		}
+		public override string Value {
+			get {
+				if (ActiveSliceSettings.Instance.GetValue<bool>("create_skirt")) {
+					return base.Value;
+				}
+
+				return "0";
+			}
+		}
 	}
 
 	public class Slice3rBedShape : MappedSetting
@@ -146,7 +201,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								}
 								double x = Math.Cos(angle*i);
 								double y = Math.Sin(angle*i);
-								bedString += $"{printCenter.x + x * bedSize.x / 2:0.####}x{printCenter.y + y * bedSize.y / 2:0.####}";
+								bedString += $"{printCenter.X + x * bedSize.X / 2:0.####}x{printCenter.Y + y * bedSize.Y / 2:0.####}";
 								first = false;
 							}
 							return bedString;
@@ -157,10 +212,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					default:
 						{
 							//bed_shape = 0x0,200x0,200x200,0x200
-							string bedString = $"{printCenter.x - bedSize.x / 2}x{printCenter.y - bedSize.y / 2}";
-							bedString += $",{printCenter.x + bedSize.x / 2}x{printCenter.y - bedSize.y / 2}";
-							bedString += $",{printCenter.x + bedSize.x / 2}x{printCenter.y + bedSize.y / 2}";
-							bedString += $",{printCenter.x - bedSize.x / 2}x{printCenter.y + bedSize.y / 2}";
+							string bedString = $"{printCenter.X - bedSize.X / 2}x{printCenter.Y - bedSize.Y / 2}";
+							bedString += $",{printCenter.X + bedSize.X / 2}x{printCenter.Y - bedSize.Y / 2}";
+							bedString += $",{printCenter.X + bedSize.X / 2}x{printCenter.Y + bedSize.Y / 2}";
+							bedString += $",{printCenter.X - bedSize.X / 2}x{printCenter.Y + bedSize.Y / 2}";
 							return bedString;
 						}
 				}
@@ -204,6 +259,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public override string Value => null;
 	}
 
+	public class MapLayerChangeGCode : InjectGCodeCommands
+	{
+		public MapLayerChangeGCode(string canonicalSettingsName, string exportedName)
+			: base(canonicalSettingsName, exportedName)
+		{
+		}
+
+		public override string Value
+		{
+			get
+			{
+				string macroReplaced = base.Value;
+				if (!macroReplaced.Contains("; LAYER:") 
+					&& !macroReplaced.Contains(";LAYER:"))
+				{
+					macroReplaced += "; LAYER:[layer_num]\n";
+				}
+
+				macroReplaced = GCodeProcessing.ReplaceMacroValues(macroReplaced.Replace("\n", "\\n"));
+
+				return macroReplaced;
+			}
+		}
+	}
+
 	public class MapStartGCode : InjectGCodeCommands
 	{
 		private bool escapeNewlineCharacters;
@@ -219,14 +299,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			get
 			{
 				StringBuilder newStartGCode = new StringBuilder();
-				foreach (string line in PreStartGCode(SlicingQueue.extrudersUsed))
+				foreach (string line in PreStartGCode(Slicer.extrudersUsed))
 				{
 					newStartGCode.Append(line + "\n");
 				}
 
 				newStartGCode.Append(GCodeProcessing.ReplaceMacroValues(base.Value));
 
-				foreach (string line in PostStartGCode(SlicingQueue.extrudersUsed))
+				foreach (string line in PostStartGCode(Slicer.extrudersUsed))
 				{
 					newStartGCode.Append("\n");
 					newStartGCode.Append(line);
@@ -243,7 +323,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<string> PreStartGCode(List<bool> extrudersUsed)
 		{
-			string startGCode = ActiveSliceSettings.Instance.GetValue("start_gcode");
+			string startGCode = ActiveSliceSettings.Instance.GetValue(SettingsKey.start_gcode);
 			string[] preStartGCodeLines = startGCode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries);
 
 			List<string> preStartGCode = new List<string>();
@@ -257,7 +337,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				AddDefaultIfNotPresent(preStartGCode, setBedTempString, preStartGCodeLines, "wait for bed temperature to be reached");
 			}
 
-			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.Helpers.NumberOfHotEnds();
+			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.Helpers.NumberOfHotends();
 
 			// Start heating all the extruder that we are going to use.
 			for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
@@ -314,7 +394,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<string> PostStartGCode(List<bool> extrudersUsed)
 		{
-			string startGCode = ActiveSliceSettings.Instance.GetValue("start_gcode");
+			string startGCode = ActiveSliceSettings.Instance.GetValue(SettingsKey.start_gcode);
 			string[] postStartGCodeLines = startGCode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries);
 
 			List<string> postStartGCode = new List<string>();
@@ -457,12 +537,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-
+				// When the state is store in mm, determine and use the value in (counted) units i.e. round distance up to layer count
 				if (base.Value.Contains("mm"))
 				{
 					string withoutMm = base.Value.Replace("mm", "");
 					string distanceString = ActiveSliceSettings.Instance.GetValue(keyToUseAsDenominatorForCount);
 					double denominator = ParseDouble(distanceString, 1);
+
 					int layers = (int)(ParseDouble(withoutMm) / denominator + .5);
 					return layers.ToString();
 				}
@@ -472,14 +553,71 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
+	public class RetractionLength : MappedSetting
+	{
+		public RetractionLength(string canonicalSettingsName, string exportedName)
+			: base(canonicalSettingsName, exportedName)
+		{
+		}
+
+		public override string Value
+		{
+			get
+			{
+				if(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.enable_retractions))
+				{
+					return base.Value;
+				}
+				else
+				{
+					return 0.ToString();
+				}
+			}
+		}
+	}
+
+	public class OverrideSpeedOnSlaPrinters : AsPercentOfReferenceOrDirect
+	{
+		public OverrideSpeedOnSlaPrinters(string canonicalSettingsName, string exportedName, string originalReference, double scale = 1)
+			: base(canonicalSettingsName, exportedName, originalReference, scale)
+		{
+		}
+
+		public override string Value
+		{
+			get
+			{
+				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.sla_printer))
+				{
+					// return the speed based on the layer height
+					var speedAt025 = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.laser_speed_025);
+					var speedAt100 = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.laser_speed_100);
+					var deltaSpeed = speedAt100 - speedAt025;
+
+					var layerHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height);
+					var deltaHeight = .1 - .025;
+					var heightRatio = (layerHeight - .025) / deltaHeight;
+					var ajustedSpeed = speedAt025 + deltaSpeed * heightRatio;
+					return ajustedSpeed.ToString();
+				}
+				else
+				{
+					return base.Value;
+				}
+			}
+		}
+	}
+
 	public class AsPercentOfReferenceOrDirect : MappedSetting
 	{
+		bool change0ToReference;
 		string originalReference;
 		double scale;
 
-		public AsPercentOfReferenceOrDirect(string canonicalSettingsName, string exportedName, string originalReference, double scale = 1)
+		public AsPercentOfReferenceOrDirect(string canonicalSettingsName, string exportedName, string originalReference, double scale = 1, bool change0ToReference = true)
 			: base(canonicalSettingsName, exportedName)
 		{
+			this.change0ToReference = change0ToReference;
 			this.scale = scale;
 			this.originalReference = originalReference;
 		}
@@ -502,7 +640,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					finalValue = ParseDouble(base.Value);
 				}
 
-				if (finalValue == 0)
+				if (change0ToReference
+					&& finalValue == 0)
 				{
 					finalValue = ParseDouble(ActiveSliceSettings.Instance.GetValue(originalReference));
 				}

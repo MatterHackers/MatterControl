@@ -37,36 +37,33 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), Apartment(ApartmentState.STA), RunInApplicationDomain]
 	public class CreateLibraryFolder
 	{
 		[Test, Apartment(ApartmentState.STA)]
-		public async Task CreateFolderStarsOutWithTextFiledFocusedAndEditable()
+		public async Task CreateFolderStartsWithTextFieldFocusedAndEditable()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
-				testRunner.ClickByName("Create Folder From Library Button");
+				testRunner.InvokeLibraryCreateFolderDialog();
 
 				testRunner.Delay(.5);
 				testRunner.Type("Test Text");
 				testRunner.Delay(.5);
 
-				SystemWindow containingWindow;
-				GuiWidget textInputWidget = testRunner.GetWidgetByName("Create Folder - Text Input", out containingWindow);
-				MHTextEditWidget textWidgetMH = textInputWidget as MHTextEditWidget;
+				var textWidgetMH = testRunner.GetWidgetByName("InputBoxPage TextEditWidget", out _) as MHTextEditWidget;
+
 				Assert.IsTrue(textWidgetMH != null, "Found Text Widget");
 				Assert.IsTrue(textWidgetMH.Text == "Test Text", "Had the right text");
-				containingWindow.CloseOnIdle();
+
+				testRunner.ClickByName("Cancel Wizard Button");
 				testRunner.Delay(.5);
 
-				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+				return Task.CompletedTask;
+			});
 		}
 	}
 }

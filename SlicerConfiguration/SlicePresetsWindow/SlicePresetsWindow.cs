@@ -39,6 +39,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -58,145 +59,46 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
-	public class SlicePresetsWindow : SystemWindow
+	public class SlicePresetsPage : DialogPage
 	{
 		private static Regex numberMatch = new Regex("\\s*\\(\\d+\\)", RegexOptions.Compiled);
 
 		private PresetsContext presetsContext;
-		private MHTextEditWidget presetNameInput;
+		private PrinterConfig printer;
 
-		private string initialPresetName = null;
-
-		private GuiWidget middleRow;
-
-		public SlicePresetsWindow(PresetsContext presetsContext)
-				: base(641, 481)
+		public SlicePresetsPage(PrinterConfig printer, PresetsContext presetsContext)
+			: base("Close".Localize())
 		{
 			this.presetsContext = presetsContext;
+			this.printer = printer;
 			this.AlwaysOnTopOfMain = true;
-			this.Title = "Slice Presets Editor".Localize();
-			this.MinimumSize = new Vector2(640, 480);
+
+			this.WindowTitle = "Slice Presets Editor".Localize();
+			this.WindowSize = new Vector2(640, 480);
 			this.AnchorAll();
 
-			var linkButtonFactory = new LinkButtonFactory()
+			this.headerRow.Visible = false;
+			this.contentRow.Padding = 0;
+
+			contentRow.BackgroundColor = Color.Transparent;
+
+			var inlineTitleEdit = new InlineTitleEdit(presetsContext.PersistenceLayer.Name, theme, presetsContext.LayerType.ToString() + " Name", boldFont: true);
+			inlineTitleEdit.TitleChanged += (s, e) =>
 			{
-				fontSize = 8,
-				textColor = ActiveTheme.Instance.SecondaryAccentColor
+				printer.Settings.SetValue(SettingsKey.layer_name, inlineTitleEdit.Text, presetsContext.PersistenceLayer);
 			};
+			contentRow.AddChild(inlineTitleEdit);
 
-			var buttonFactory = new TextImageButtonFactory()
-			{
-				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				borderWidth = 0
-			};
+			var sliceSettingsWidget = CreateSliceSettingsWidget(printer, presetsContext.PersistenceLayer);
+			contentRow.AddChild(sliceSettingsWidget);
 
-			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				Padding = new BorderDouble(3)
-			};
-			mainContainer.AnchorAll();
-
-			middleRow = new GuiWidget();
-			middleRow.AnchorAll();
-			middleRow.AddChild(CreateSliceSettingsWidget(presetsContext.PersistenceLayer));
-
-			mainContainer.AddChild(GetTopRow());
-			mainContainer.AddChild(middleRow);
-			mainContainer.AddChild(GetBottomRow(buttonFactory));
-
-			this.AddChild(mainContainer);
-
-			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-		}
-
-		private FlowLayoutWidget GetTopRow()
-		{
-			var topRow = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.ParentLeftRight,
-				Padding = new BorderDouble(0, 3)
-			};
-
-			// Add label
-			topRow.AddChild(new TextWidget("Preset Name:".Localize(), pointSize: 14)
-			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				VAnchor = VAnchor.ParentCenter,
-				Margin = new BorderDouble(right: 4)
-			});
-
-			// Add textbox
-			initialPresetName = presetsContext.PersistenceLayer.Name;
-			presetNameInput = new MHTextEditWidget(initialPresetName)
-			{
-				HAnchor = HAnchor.ParentLeftRight
-			};
-
-			presetNameInput.ActualTextEditWidget.EditComplete += (s, e) =>
-			{
-				ActiveSliceSettings.Instance.SetValue(SettingsKey.layer_name, presetNameInput.Text, presetsContext.PersistenceLayer);
-				ActiveSliceSettings.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.layer_name));
-			};
-
-			topRow.AddChild(presetNameInput);
-
-			// Return container
-			return topRow;
-		}
-
-		private GuiWidget CreateSliceSettingsWidget(PrinterSettingsLayer persistenceLayer)
-		{
-			var layerCascade = new List<PrinterSettingsLayer>
-			{
-				persistenceLayer,
-				ActiveSliceSettings.Instance.OemLayer,
-				ActiveSliceSettings.Instance.BaseLayer
-			};
-
-			return new SliceSettingsWidget(layerCascade, presetsContext.LayerType)
-			{
-				ShowControlBar = false
-			};
-		}
-
-		private string GetNonCollidingName(string profileName, IEnumerable<string> existingNames)
-		{
-			if (!existingNames.Contains(profileName))
-			{
-				return profileName;
-			}
-			else
-			{
-				int currentIndex = 1;
-				string possiblePrinterName;
-
-				do
-				{
-					possiblePrinterName = String.Format("{0} ({1})", profileName, currentIndex++);
-				} while (existingNames.Contains(possiblePrinterName));
-
-				return possiblePrinterName;
-			}
-		}
-
-		private FlowLayoutWidget GetBottomRow(TextImageButtonFactory buttonFactory)
-		{
-			var container = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.ParentLeftRight,
-				Margin = new BorderDouble(top: 3)
-			};
-
-			Button duplicateButton = buttonFactory.Generate("Duplicate".Localize());
+			var duplicateButton = theme.CreateDialogButton("Duplicate".Localize());
 			duplicateButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					string sanitizedName = numberMatch.Replace(presetNameInput.Text, "").Trim();
-					string newProfileName = GetNonCollidingName(sanitizedName, presetsContext.PresetLayers.Select(preset => preset.ValueOrDefault(SettingsKey.layer_name)));
+					string sanitizedName = numberMatch.Replace(inlineTitleEdit.Text, "").Trim();
+					string newProfileName = agg_basics.GetNonCollidingName(sanitizedName, presetsContext.PresetLayers.Select(preset => preset.ValueOrDefault(SettingsKey.layer_name)));
 
 					var clonedLayer = presetsContext.PersistenceLayer.Clone();
 					clonedLayer.Name = newProfileName;
@@ -205,35 +107,53 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					presetsContext.SetAsActive(clonedLayer.LayerID);
 					presetsContext.PersistenceLayer = clonedLayer;
 
-					middleRow.CloseAllChildren();
-					middleRow.AddChild(CreateSliceSettingsWidget(clonedLayer));
+					sliceSettingsWidget.Close();
+					sliceSettingsWidget = CreateSliceSettingsWidget(printer, clonedLayer);
+					contentRow.AddChild(sliceSettingsWidget);
 
-					presetNameInput.Text = newProfileName;
+					inlineTitleEdit.Text = newProfileName;
 				});
 			};
+			this.AddPageAction(duplicateButton);
 
-			Button deleteButton = buttonFactory.Generate("Delete".Localize());
+			var deleteButton = theme.CreateDialogButton("Delete".Localize());
 			deleteButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>
 				{
 					presetsContext.DeleteLayer();
-					this.Close();
+					this.DialogWindow.Close();
 				});
 			};
+			this.AddPageAction(deleteButton);
+		}
 
-			Button closeButton = buttonFactory.Generate("Close".Localize());
-			closeButton.Click += (sender, e) =>
+		private GuiWidget CreateSliceSettingsWidget(PrinterConfig printer, PrinterSettingsLayer persistenceLayer)
+		{
+			var settingsContext = new SettingsContext(
+				printer,
+				new List<PrinterSettingsLayer>
+				{
+					persistenceLayer,
+					ActiveSliceSettings.Instance.OemLayer,
+					ActiveSliceSettings.Instance.BaseLayer
+				},
+				presetsContext.LayerType);
+
+			return new SliceSettingsWidget(printer, settingsContext, ApplicationController.Instance.Theme)
 			{
-				this.CloseOnIdle();
+				ShowControlBar = false
 			};
+		}
 
-			container.AddChild(duplicateButton);
-			container.AddChild(deleteButton);
-			container.AddChild(new HorizontalSpacer());
-			container.AddChild(closeButton);
-
-			return container;
+		public override void OnLoad(EventArgs args)
+		{
+			this.DialogWindow.Padding = 0;
+			footerRow.Padding = theme.DefaultContainerPadding;
+			footerRow.Margin = 0;
+			footerRow.Border = new BorderDouble(top: 1);
+			footerRow.BorderColor = theme.TabBarBackground;
+			base.OnLoad(args);
 		}
 	}
 }

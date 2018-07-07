@@ -16,6 +16,8 @@ StaticData/Translations/L10N/
 *.user
 *.sln.docstates
 
+node_modules/
+
 # Build results
 [Dd]ebug/
 [Rr]elease/

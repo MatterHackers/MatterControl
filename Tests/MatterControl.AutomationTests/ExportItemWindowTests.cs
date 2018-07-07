@@ -1,30 +1,25 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.Agg.UI.Tests;
-using MatterHackers.GuiAutomation;
 using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
+	[TestFixture, Category("Agg.UI.Automation"), Apartment(ApartmentState.STA), RunInApplicationDomain]
 	public class ExportGcodeFromExportWindow
 	{
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task ExportAsGcode()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest(testRunner =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.WaitForFirstDraw();
 
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
-				string firstItemName = "Queue Item Batman";
 				//Navigate to Downloads Library Provider
-				testRunner.ClickByName("Queue Tab");
-				testRunner.ClickByName("Queue Add Button", 2);
+				testRunner.NavigateToFolder("Print Queue Row Item Collection");
+				testRunner.InvokeLibraryAddDialog();
 
 				//Get parts to add
 				string rowItemPath = MatterControlUtilities.GetTestItemPath("Batman.stl");
@@ -36,13 +31,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Type("{Enter}");
 
 				//Get test results 
-				Assert.IsTrue(testRunner.WaitForName(firstItemName, 2) == true);
+				testRunner.ClickByName("Row Item Batman.stl");
 
-				testRunner.ClickByName("Queue Export Button");
+				testRunner.ClickByName("Print Library Overflow Menu");
+				testRunner.ClickByName("Export Menu Item");
 				testRunner.Delay(2);
 
-				testRunner.WaitForName("Export Item Window", 2);
-				testRunner.ClickByName("Export as GCode Button", 2);
+				testRunner.WaitForName("Export Item Window");
+				testRunner.ClickByName("Machine File (G-Code) Button");
+				testRunner.ClickByName("Export Button");
 				testRunner.Delay(2);
 
 				string gcodeOutputPath = MatterControlUtilities.PathToExportGcodeFolder;
@@ -52,16 +49,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				string fullPathToGcodeFile = Path.Combine(gcodeOutputPath, "Batman");
 				testRunner.Type(fullPathToGcodeFile);
 				testRunner.Type("{Enter}");
-				testRunner.Delay(2);
 
-				Console.WriteLine(gcodeOutputPath);
+				testRunner.WaitFor(() => File.Exists(fullPathToGcodeFile + ".gcode"), 10);
 
 				Assert.IsTrue(File.Exists(fullPathToGcodeFile + ".gcode") == true);
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,138 +27,299 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.PartPreviewWindow.PlusTab;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
-using System;
-using System.IO;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class PartPreviewContent : GuiWidget
+	public class PartPreviewContent : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
+		private ChromeTab printerTab = null;
+		private ChromeTabs tabControl;
 
-		private View3DWidget partPreviewView;
-		private ViewGcodeBasic viewGcodeBasic;
-		private TabControl tabControl;
-		private Tab layerViewTab;
-		private View3DWidget.AutoRotate autoRotate3DView;
-		private View3DWidget.OpenMode openMode;
-		private View3DWidget.WindowMode windowMode;
-
-		public PartPreviewContent(PrintItemWrapper printItem, View3DWidget.WindowMode windowMode, View3DWidget.AutoRotate autoRotate3DView, View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
+		public PartPreviewContent()
+			: base(FlowDirection.TopToBottom)
 		{
-			this.openMode = openMode;
-			this.autoRotate3DView = autoRotate3DView;
-			this.windowMode = windowMode;
+			var printer = ApplicationController.Instance.ActivePrinter;
+			var theme = ApplicationController.Instance.Theme;
 
-			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.AnchorAll();
-			this.Load(printItem);
 
-			// We do this after showing the system window so that when we try and take focus of the parent window (the system window)
-			// it exists and can give the focus to its child the gcode window.
-			if (printItem != null
-				&& Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
+			var extensionArea = new LeftClipFlowLayoutWidget()
 			{
-				SwitchToGcodeView();
+				BackgroundColor = theme.TabBarBackground,
+				VAnchor = VAnchor.Stretch,
+				Padding = new BorderDouble(left: 8)
+			};
+
+			tabControl = new ChromeTabs(extensionArea, theme)
+			{
+				VAnchor = VAnchor.Stretch,
+				HAnchor = HAnchor.Stretch,
+				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
+				BorderColor = theme.MinimalShade,
+				Border = new BorderDouble(left: 1),
+				NewTabPage = () =>
+				{
+					return new StartTabPage(this, theme);
+				}
+			};
+			tabControl.ActiveTabChanged += (s, e) =>
+			{
+				if (this.tabControl.ActiveTab?.TabContent is PartTabPage tabPage)
+				{
+					var dragDropData = ApplicationController.Instance.DragDropData;
+
+					// Set reference on tab change
+					dragDropData.View3DWidget = tabPage.view3DWidget;
+					dragDropData.SceneContext = tabPage.sceneContext;
+				}
+			};
+
+			// Force the ActionArea to be as high as ButtonHeight
+			tabControl.TabBar.ActionArea.MinimumSize = new Vector2(0, theme.ButtonHeight);
+			tabControl.TabBar.BackgroundColor = theme.TabBarBackground;
+			tabControl.TabBar.BorderColor = theme.ActiveTabColor;
+
+			// Force common padding into top region
+			tabControl.TabBar.Padding = theme.TabbarPadding.Clone(top: theme.TabbarPadding.Top * 2, bottom: 0);
+
+			// add in a what's new button
+			Button seeWhatsNewButton = theme.LinkButtonFactory.Generate("What's New...".Localize());
+			seeWhatsNewButton.Name = "What's New Link";
+			seeWhatsNewButton.ToolTipText = "See what's new in this version of MatterControl".Localize();
+			seeWhatsNewButton.VAnchor = VAnchor.Center;
+			seeWhatsNewButton.Margin = new Agg.BorderDouble(10, 0);
+			seeWhatsNewButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				UserSettings.Instance.set(UserSettingsKey.LastReadWhatsNew, JsonConvert.SerializeObject(DateTime.Now));
+				DialogWindow.Show(new HelpPage("What's New"));
+			});
+
+			tabControl.TabBar.ActionArea.AddChild(seeWhatsNewButton);
+
+			// add in the update available button
+			Button updateAvailableButton = theme.LinkButtonFactory.Generate("Update Available".Localize());
+			updateAvailableButton.Visible = false;
+
+			// make the function inline so we don't have to create members for the buttons
+			EventHandler SetLinkButtonsVisability = (s, e) =>
+			{
+				if (UserSettings.Instance.HasLookedAtWhatsNew())
+				{
+					// hide it
+					seeWhatsNewButton.Visible = false;
+				}
+
+				if (UpdateControlData.Instance.UpdateStatus == UpdateControlData.UpdateStatusStates.UpdateAvailable)
+				{
+					updateAvailableButton.Visible = true;
+					// if we are going to show the update link hide the whats new link no matter what
+					seeWhatsNewButton.Visible = false;
+				}
+				else
+				{
+					updateAvailableButton.Visible = false;
+				}
+			};
+
+			UserSettings.Instance.Changed += SetLinkButtonsVisability;
+			Closed += (s, e) => UserSettings.Instance.Changed -= SetLinkButtonsVisability;
+
+			RunningInterval showUpdateInterval = null;
+			updateAvailableButton.VisibleChanged += (s, e) =>
+			{
+				if (!updateAvailableButton.Visible)
+				{
+					if(showUpdateInterval != null)
+					{
+						showUpdateInterval.Continue = false;
+						showUpdateInterval = null;
+					}
+					return;
+				}
+
+				showUpdateInterval = UiThread.SetInterval(() =>
+				{
+					double displayTime = 1;
+					double pulseTime = 1;
+					double totalSeconds = 0;
+					var textWidgets = updateAvailableButton.Descendants<TextWidget>().Where((w) => w.Visible == true).ToArray();
+					Color startColor = theme.Colors.PrimaryTextColor;
+					// Show a highlite on the button as the user did not click it
+					Animation flashBackground = null;
+					flashBackground = new Animation()
+					{
+						DrawTarget = updateAvailableButton,
+						FramesPerSecond = 10,
+						Update = (s1, updateEvent) =>
+						{
+							totalSeconds += updateEvent.SecondsPassed;
+							if (totalSeconds < displayTime)
+							{
+								double blend = AttentionGetter.GetFadeInOutPulseRatio(totalSeconds, pulseTime);
+								var color = new Color(startColor, (int)((1 - blend) * 255));
+								foreach (var textWidget in textWidgets)
+								{
+									textWidget.TextColor = color;
+								}
+							}
+							else
+							{
+								foreach (var textWidget in textWidgets)
+								{
+									textWidget.TextColor = startColor;
+								}
+								flashBackground.Stop();
+							}
+						}
+					};
+					flashBackground.Start();
+				}, 120);
+			};
+
+			updateAvailableButton.Name = "Update Available Link";
+			SetLinkButtonsVisability(this, null);
+			updateAvailableButton.ToolTipText = "There is a new update available for download".Localize();
+			updateAvailableButton.VAnchor = VAnchor.Center;
+			updateAvailableButton.Margin = new Agg.BorderDouble(10, 0);
+			updateAvailableButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					UpdateControlData.Instance.CheckForUpdate();
+					DialogWindow.Show<CheckForUpdatesPage>();
+				});
+			});
+
+			tabControl.TabBar.ActionArea.AddChild(updateAvailableButton);
+
+			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(SetLinkButtonsVisability, ref unregisterEvents);
+
+			this.AddChild(tabControl);
+
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			{
+				if (e is StringEventArgs stringEvent
+					&& stringEvent.Data == SettingsKey.printer_name
+					&& printerTab != null)
+				{
+					printerTab.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
+				}
+
+			}, ref unregisterEvents);
+
+			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) =>
+			{
+				var activePrinter = ApplicationController.Instance.ActivePrinter;
+
+				// If ActivePrinter has been nulled and a printer tab is open, close it
+				var tab1 = tabControl.AllTabs.Skip(1).FirstOrDefault();
+				if ((activePrinter == null || !activePrinter.Settings.PrinterSelected)
+					&& tab1?.TabContent is PrinterTabPage)
+				{
+					tabControl.RemoveTab(tab1);
+				}
+				else
+				{
+					this.CreatePrinterTab(activePrinter, theme, activePrinter.Settings.GetValue(SettingsKey.printer_name));
+				}
+			}, ref unregisterEvents);
+
+			ApplicationController.Instance.NotifyPrintersTabRightElement(extensionArea);
+
+			// Show fixed start page
+			tabControl.AddTab(
+				new ChromeTab("Start".Localize(),  tabControl, tabControl.NewTabPage(), theme, hasClose: false)
+				{
+					MinimumSize = new Vector2(0, theme.TabButtonHeight),
+					Name = "Start Tab",
+					Padding = new BorderDouble(15, 0)
+				});
+
+			// Add a tab for the current printer
+			if (ActiveSliceSettings.Instance.PrinterSelected)
+			{
+				this.CreatePrinterTab(printer, theme, printer.Settings.GetValue(SettingsKey.printer_name));
+			}
+
+			// Restore active tabs
+			foreach (var bed in ApplicationController.Instance.Workspaces)
+			{
+				this.CreatePartTab("New Part", bed, theme);
 			}
 		}
 
-		public void Reload(PrintItemWrapper printItem)
+		public ChromeTabs TabControl => tabControl;
+
+		private ChromeTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)
 		{
-			this.CloseAllChildren();
-			this.Load(printItem);
+			// Printer page is in fixed position
+			var tab1 = tabControl.AllTabs.Skip(1).FirstOrDefault();
+
+			var printerTabPage = tab1?.TabContent as PrinterTabPage;
+			if (printerTabPage == null
+				|| printerTabPage.printer != printer)
+			{
+				// TODO - call save before remove
+				// printerTabPage.sceneContext.SaveChanges();
+
+				if (printerTabPage != null)
+				{
+					tabControl.RemoveTab(tab1);
+				}
+
+				printerTab = new ChromeTab(
+					tabTitle,
+					tabControl,
+					new PrinterTabPage(printer, theme, tabTitle.ToUpper()),
+					theme,
+					tabImageUrl: ApplicationController.Instance.GetFavIconUrl(oemName: printer.Settings.GetValue(SettingsKey.make)), 
+					hasClose: false)
+				{
+					Name = "3D View Tab",
+					MinimumSize = new Vector2(120, theme.TabButtonHeight)
+				};
+
+				// Add printer into fixed position
+				tabControl.AddTab(printerTab, 1);
+
+				return printerTab;
+			}
+			else if (printerTab != null)
+			{
+				tabControl.ActiveTab = tab1;
+				return tab1 as ChromeTab;
+			}
+
+			return null;
 		}
 
-		private void Load(PrintItemWrapper printItem)
+		public ChromeTab CreatePartTab(string tabTitle, BedConfig sceneContext, ThemeConfig theme)
 		{
-			tabControl = new TabControl();
-			tabControl.TabBar.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
-
-			tabControl.TabBar.Padding = new BorderDouble(top: 6);
-
-			RGBA_Bytes selectedTabColor;
-			if (!UserSettings.Instance.IsTouchScreen)
+			var partTab = new ChromeTab(
+				tabTitle,
+				tabControl,
+				new PartTabPage(null, sceneContext, theme, ""),
+				theme,
+				AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons))
 			{
-				tabControl.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-				selectedTabColor = ActiveTheme.Instance.TabLabelSelected;
-			}
-			else
-			{
-				tabControl.TabBar.BackgroundColor = ActiveTheme.Instance.TransparentLightOverlay;
-				selectedTabColor = ActiveTheme.Instance.SecondaryAccentColor;
-			}
+				Name = "newPart" + tabControl.AllTabs.Count(),
+				MinimumSize = new Vector2(120, theme.TabButtonHeight)
+			};
 
-			double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
+			tabControl.AddTab(partTab);
 
-			// put in the 3D view
-			partPreviewView = new View3DWidget(printItem,
-				new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
-				ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center),
-				ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape),
-				windowMode,
-				autoRotate3DView,
-				openMode);
-
-			TabPage partPreview3DView = new TabPage(partPreviewView, string.Format("3D {0} ", "View".Localize()).ToUpper());
-
-			// put in the gcode view
-			ViewGcodeBasic.WindowMode gcodeWindowMode = ViewGcodeBasic.WindowMode.Embeded;
-			if (windowMode == View3DWidget.WindowMode.StandAlone)
-			{
-				gcodeWindowMode = ViewGcodeBasic.WindowMode.StandAlone;
-			}
-
-			viewGcodeBasic = new ViewGcodeBasic(printItem,
-				new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
-				ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center),
-				ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape), gcodeWindowMode);
-
-			if (windowMode == View3DWidget.WindowMode.StandAlone)
-			{
-				partPreviewView.Closed += (s, e) => Close();
-				viewGcodeBasic.Closed += (s, e) => Close();
-			}
-
-			TabPage layerView = new TabPage(viewGcodeBasic, "Layer View".Localize().ToUpper());
-
-			int tabPointSize = 16;
-            // add the correct tabs based on whether we are stand alone or embedded
-            Tab threeDViewTab;
-            if (windowMode == View3DWidget.WindowMode.StandAlone || UserSettings.Instance.IsTouchScreen)
-			{
-                threeDViewTab = new SimpleTextTabWidget(partPreview3DView, "3D View Tab", tabPointSize,
-                    selectedTabColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
-                tabControl.AddTab(threeDViewTab);
-                layerViewTab = new SimpleTextTabWidget(layerView, "Layer View Tab", tabPointSize,
-                    selectedTabColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
-                tabControl.AddTab(layerViewTab);
-			}
-			else
-			{
-                threeDViewTab = new PopOutTextTabWidget(partPreview3DView, "3D View Tab", new Vector2(590, 400), tabPointSize);
-                tabControl.AddTab(threeDViewTab);
-				layerViewTab = new PopOutTextTabWidget(layerView, "Layer View Tab", new Vector2(590, 400), tabPointSize);
-				tabControl.AddTab(layerViewTab);
-			}
-
-            threeDViewTab.ToolTipText = "Preview 3D Design".Localize();
-            layerViewTab.ToolTipText = "Preview layer Tool Paths".Localize();
-
-            this.AddChild(tabControl);
-		}
-
-		public void SwitchToGcodeView()
-		{
-			tabControl.TabBar.SelectTab(layerViewTab);
-			viewGcodeBasic.Focus();
+			return partTab;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

@@ -8,20 +8,20 @@ namespace MatterHackers.MatterControl
 	{
 		private Dictionary<string, string> languageDict;
 
-		public LanguageSelector()
-			: base("Default")
+		public LanguageSelector(ThemeConfig theme)
+			: base("Default", theme.Colors.PrimaryTextColor)
 		{
 			this.MinimumSize = new Vector2(this.LocalBounds.Width, this.LocalBounds.Height);
-
+			this.BorderColor = theme.GetBorderColor(75);
 			CreateLanguageDict();
 
-			string languageCode = UserSettings.Instance.get("Language");
 
 			foreach (KeyValuePair<string, string> entry in languageDict)
 			{
 				AddItem(entry.Key, entry.Value);
 			}
 
+			string languageCode = UserSettings.Instance.get(UserSettingsKey.Language);
 			foreach (KeyValuePair<string, string> entry in languageDict)
 			{
 				if (languageCode == entry.Value)
@@ -39,14 +39,15 @@ namespace MatterHackers.MatterControl
 				["Default"] = "EN",
 				["English"] = "EN",
 				["Čeština"] = "CS",
-				["Deutsch"] = "DE",
 				["Dansk"] = "DA",
+				["Deutsch"] = "DE",
 				["Español"] = "ES",
+				["ελληνικά"] = "EL",
 				["Français"] = "FR",
 				["Italiano"] = "IT",
-				["ελληνικά"] = "EL",
 				["Norsk"] = "NO",
 				["Polski"] = "PL",
+				["Português"] = "CR",
 				["Русский"] = "RU",
 				["Română"] = "RO",
 				["Türkçe"] = "TR",

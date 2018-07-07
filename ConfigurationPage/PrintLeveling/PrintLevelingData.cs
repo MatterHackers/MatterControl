@@ -9,137 +9,127 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
+	[JsonConverter(typeof(StringEnumConverter))]
+	public enum LevelingSystem { Probe3Points, Probe7PointRadial, Probe13PointRadial, Probe100PointRadial, Probe3x3Mesh, Probe5x5Mesh, Probe10x10Mesh }
+
 	public class PrintLevelingData
 	{
-		private PrinterSettings printerProfile;
+		#region JSON data
+		public List<Vector3> SampledPositions = new List<Vector3>();
+		public LevelingSystem LevelingSystem;
+		public DateTime CreationDate;
+		public double BedTemperature;
+		#endregion
 
-		public List<Vector3> SampledPositions = new List<Vector3>()
+		public PrintLevelingData()
 		{
-			new Vector3(),new Vector3(),new Vector3()
-		};
-
-		[JsonConverter(typeof(StringEnumConverter))]
-		public enum LevelingSystem { Probe3Points, Probe7PointRadial, Probe13PointRadial }
-
-		public PrintLevelingData(PrinterSettings printerProfile)
-		{
-			this.printerProfile = printerProfile;
 		}
 
-		public LevelingSystem CurrentPrinterLevelingSystem
+		public static bool NeedsToBeRun(PrinterConfig printer)
 		{
-			get
+			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
+
+			var required = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print);
+			if (required && levelingData == null)
 			{
-				switch (printerProfile.GetValue("print_leveling_solution"))
-				{
-					case "7 Point Disk":
-						return LevelingSystem.Probe7PointRadial;
-
-					case "13 Point Disk":
-						return LevelingSystem.Probe13PointRadial;
-
-					case "3 Point Plane":
-					default:
-						return LevelingSystem.Probe3Points;
-				}
+				// need but don't have data
+				return true;
 			}
-		}
 
-		internal static PrintLevelingData Create(PrinterSettings printerProfile, string jsonData, string depricatedPositionsCsv3ByXYZ = "")
-		{
-			if (!string.IsNullOrEmpty(jsonData))
+			var enabled = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled);
+			// check if leveling is turned on
+			if (required && !enabled)
 			{
-				var deserialized = JsonConvert.DeserializeObject<PrintLevelingData>(jsonData);
-				deserialized.printerProfile = printerProfile;
-
-				return deserialized;
+				// need but not turned on
+				return true;
 			}
-			else if (!string.IsNullOrEmpty(depricatedPositionsCsv3ByXYZ))
-			{
-				var item = new PrintLevelingData(ActiveSliceSettings.Instance);
-				item.printerProfile = printerProfile;
-				item.ParseDepricatedPrintLevelingMeasuredPositions(depricatedPositionsCsv3ByXYZ);
 
-				return item;
-			}
-			else
-			{
-				return new PrintLevelingData(ActiveSliceSettings.Instance)
-				{
-					printerProfile = printerProfile
-				};
-			}
-		}
-
-		/// <summary>
-		/// Gets the 9 {3 * (x, y, z)} positions that were probed during the print leveling setup.
-		/// </summary>
-		/// <returns></returns>
-		private void ParseDepricatedPrintLevelingMeasuredPositions(string depricatedPositionsCsv3ByXYZ)
-		{
-			SampledPositions = new List<Vector3>(3);
-
-			if (depricatedPositionsCsv3ByXYZ != null)
-			{
-				string[] lines = depricatedPositionsCsv3ByXYZ.Split(',');
-				if (lines.Length == 9)
-				{
-					for (int i = 0; i < 3; i++)
-					{
-						Vector3 position = new Vector3();
-
-						position.x = double.Parse(lines[0 * 3 + i]);
-						position.y = double.Parse(lines[1 * 3 + i]);
-						position.z = double.Parse(lines[2 * 3 + i]);
-
-						SampledPositions.Add(position);
-					}
-				}
-			}
-		}
-
-		public bool HasBeenRunAndEnabled()
-		{
-			if(!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
+			if(!required && !enabled)
 			{
 				return false;
 			}
 
-			var positionCounts = from x in SampledPositions
+			// check that there are no duplicate points
+			var positionCounts = from x in levelingData.SampledPositions
 				group x by x into g
 				let count = g.Count()
 				orderby count descending
 				select new { Value = g.Key, Count = count };
-			
+
 			foreach (var x in positionCounts)
 			{
 				if(x.Count > 1)
 				{
-					return false;
+					return true;
 				}
 			}
 
-
-			switch (CurrentPrinterLevelingSystem)
+			// check that the solution last measured is the currently selected solution
+			if(printer.Settings.GetValue<LevelingSystem>(SettingsKey.print_leveling_solution) != levelingData.LevelingSystem)
 			{
-				case PrintLevelingData.LevelingSystem.Probe3Points:
-					if (SampledPositions.Count != 3) // different criteria for what is not initialized
+				return true;
+			}
+
+			// check that the bed temperature at probe time was close enough to the current print bed temp
+			double requiredLevelingTemp = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?
+				printer.Settings.GetValue<double>(SettingsKey.bed_temperature)
+				: 0;
+
+			// check that it is within 10 degrees
+			if(Math.Abs(requiredLevelingTemp - levelingData.BedTemperature) > 10)
+			{
+				return true;
+			}
+
+			// check that the number of points sampled is correct for the solution
+			switch (levelingData.LevelingSystem)
+			{
+				case LevelingSystem.Probe3Points:
+					if (levelingData.SampledPositions.Count != 3) // different criteria for what is not initialized
 					{
-						return false;
+						return true;
 					}
 					break;
 
-				case PrintLevelingData.LevelingSystem.Probe7PointRadial:
-					if (SampledPositions.Count != 7) // different criteria for what is not initialized
+				case LevelingSystem.Probe7PointRadial:
+					if (levelingData.SampledPositions.Count != 7) // different criteria for what is not initialized
 					{
-						return false;
+						return true;
 					}
 					break;
 
-				case PrintLevelingData.LevelingSystem.Probe13PointRadial:
-					if (SampledPositions.Count != 13) // different criteria for what is not initialized
+				case LevelingSystem.Probe13PointRadial:
+					if (levelingData.SampledPositions.Count != 13) // different criteria for what is not initialized
 					{
-						return false;
+						return true;
+					}
+					break;
+
+				case LevelingSystem.Probe100PointRadial:
+					if (levelingData.SampledPositions.Count != 100) // different criteria for what is not initialized
+					{
+						return true;
+					}
+					break;
+
+				case LevelingSystem.Probe3x3Mesh:
+					if (levelingData.SampledPositions.Count != 9) // different criteria for what is not initialized
+					{
+						return true;
+					}
+					break;
+
+				case LevelingSystem.Probe5x5Mesh:
+					if (levelingData.SampledPositions.Count != 25) // different criteria for what is not initialized
+					{
+						return true;
+					}
+					break;
+
+				case LevelingSystem.Probe10x10Mesh:
+					if (levelingData.SampledPositions.Count != 100) // different criteria for what is not initialized
+					{
+						return true;
 					}
 					break;
 
@@ -147,7 +137,26 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					throw new NotImplementedException();
 			}
 
-			return true;
+			// All the above need to pass, as well as all rules defined in ProbeCalibrationWizard - any variance and we need to re-run
+			return ProbeCalibrationWizard.NeedsToBeRun(printer);
+		}
+
+		public bool SamplesAreSame(List<Vector3> sampledPositions)
+		{
+			if (sampledPositions.Count == SampledPositions.Count)
+			{
+				for (int i = 0; i < sampledPositions.Count; i++)
+				{
+					if (sampledPositions[i] != SampledPositions[i])
+					{
+						return false;
+					}
+				}
+
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

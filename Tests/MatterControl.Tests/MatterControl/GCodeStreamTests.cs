@@ -29,9 +29,10 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using MatterControl.Printing;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.GCodeVisualizer;
+using MatterHackers.Agg.Platform;
+using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
@@ -72,7 +73,7 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			MaxLengthStream maxLengthStream = new MaxLengthStream(new TestGCodeStream(lines), 6);
@@ -94,13 +95,15 @@ namespace MatterControl.Tests.MatterControl
 
 		public static GCodeStream CreateTestGCodeStream(string[] inputLines, out List<GCodeStream> streamList)
 		{
+			var printer = ApplicationController.Instance.ActivePrinter;
+
 			streamList = new List<GCodeStream>();
 			streamList.Add(new TestGCodeStream(inputLines));
-			streamList.Add(new PauseHandlingStream(streamList[streamList.Count - 1]));
+			streamList.Add(new PauseHandlingStream(printer, streamList[streamList.Count - 1]));
 			streamList.Add(new QueuedCommandsStream(streamList[streamList.Count - 1]));
 			streamList.Add(new RelativeToAbsoluteStream(streamList[streamList.Count - 1]));
-			streamList.Add(new WaitForTempStream(streamList[streamList.Count - 1]));
-			streamList.Add(new BabyStepsStream(streamList[streamList.Count - 1]));
+			streamList.Add(new WaitForTempStream(printer.Connection, streamList[streamList.Count - 1]));
+			streamList.Add(new BabyStepsStream(printer.Settings, streamList[streamList.Count - 1]));
 			streamList.Add(new ExtrusionMultiplyerStream(streamList[streamList.Count - 1]));
 			streamList.Add(new FeedRateMultiplyerStream(streamList[streamList.Count - 1]));
 			GCodeStream totalGCodeStream = streamList[streamList.Count - 1];
@@ -176,7 +179,7 @@ namespace MatterControl.Tests.MatterControl
 			 null,
 			};
 
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			List<GCodeStream> streamList;
@@ -232,7 +235,7 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			List<GCodeStream> streamList;
@@ -261,7 +264,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("GCodeStream")]
 		public void PauseHandlingStreamTests()
 		{
-			double readX = 50;
+			int readX = 50;
 			// Validate that the number parsing code is working as expected, specifically ignoring data that appears in comments
 			// This is a regression that we saw in the Lulzbot Mini profile after adding macro processing.
 			GCodeFile.GetFirstNumberAfter("X", "G1 Z10 E - 10 F12000 ; suck up XXmm of filament", ref readX);
@@ -321,7 +324,7 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			List<GCodeStream> streamList;
@@ -359,8 +362,6 @@ namespace MatterControl.Tests.MatterControl
 
 				// move some more
 				"G1 X13 Y10 Z10 E40",
-				"G1 X14 Y10 Z10 E50",
-				"G1 X15 Y10 Z10 E60",
 				null,
 			};
 
@@ -389,13 +390,20 @@ namespace MatterControl.Tests.MatterControl
 				"G1 Z0 E30.8 F12000",
 				"G90",
 				"M114",
+				"",
+				"G1 X12.1 F1800",
+				"G1 X12.2",
+				"G90",
+				"G1 X12.33 Z1.667 E32.333",
+				"G1 X12.47 Z3.333 E33.867",
+				"G1 X12.6 Z5 E35.4",
+				"G1 X12.73 Z6.667 E36.933",
+				"G1 X12.87 Z8.333 E38.467",
 				"G1 X13 Z10 E40",
-				"G1 X14 E50",
-				"G1 X15 E60",
 				null,
 			};
 
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			// this is the pause and resume from the Eris
@@ -436,13 +444,68 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Category("GCodeStream")]
+		public void WriteReplaceStreamTests()
+		{
+			string[] inputLines = new string[]
+			{
+				"; the printer is moving normally",
+				"G1 X10 Y10 Z10 E0",
+				"M114",
+				"G29",
+				"G28",
+				"G28 X0",
+				"M107",
+				"M107 ; extra stuff",
+				null,
+			};
+
+			string[] expected = new string[]
+			{
+				"; the printer is moving normally",
+				"G1 X10 Y10 Z10 E0",
+				"M114",
+				"G29",
+				"G28",
+				"M115",
+				"G28 X0",
+				"M115",
+				"; none",
+				"; none ; extra stuff",
+				null,
+			};
+
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			PrinterSettings printerSettings = ActiveSliceSettings.Instance;
+			printerSettings.SetValue(SettingsKey.write_regex, "\"^(G28)\",\"G28,M115\"\\n\"^(M107)\",\"; none\"");
+
+			var inputLinesStream = new TestGCodeStream(inputLines);
+			var queueStream = new QueuedCommandsStream(inputLinesStream);
+			ProcessWriteRegexStream writeStream = new ProcessWriteRegexStream(printerSettings, queueStream, queueStream);
+
+			int expectedIndex = 0;
+			string actualLine = writeStream.ReadLine();
+			string expectedLine = expected[expectedIndex++];
+
+			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from ProcessWriteRegexStream");
+
+			while (actualLine != null)
+			{
+				expectedLine = expected[expectedIndex++];
+				actualLine = writeStream.ReadLine();
+				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from ProcessWriteRegexStream");
+			}
+		}
+
+		[Test, Category("GCodeStream")]
 		public void FeedRateRatioChangesFeedRate()
 		{
 			string line;
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			Assert.AreEqual(1, FeedRateMultiplyerStream.FeedRateRatio, "FeedRateRatio should default to 1");
+			Assert.AreEqual(1, (int) FeedRateMultiplyerStream.FeedRateRatio, "FeedRateRatio should default to 1");
 
 			var gcodeStream = new FeedRateMultiplyerStream(new TestGCodeStream(new string[] { "G1 X10 F1000", "G1 Y5 F1000" }));
 
@@ -460,10 +523,10 @@ namespace MatterControl.Tests.MatterControl
 		public void ExtrusionRatioChangesExtrusionAmount()
 		{
 			string line;
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			Assert.AreEqual(1, ExtrusionMultiplyerStream.ExtrusionRatio, "ExtrusionRatio should default to 1");
+			Assert.AreEqual(1, (int) ExtrusionMultiplyerStream.ExtrusionRatio, "ExtrusionRatio should default to 1");
 
 			var gcodeStream = new ExtrusionMultiplyerStream(new TestGCodeStream(new string[] { "G1 E10", "G1 E0 ; Move back to 0", "G1 E12" }));
 

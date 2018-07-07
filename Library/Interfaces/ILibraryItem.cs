@@ -1,0 +1,70 @@
+﻿/*
+Copyright (c) 2017, John Lewin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using System;
+using System.Threading.Tasks;
+using MatterHackers.DataConverters3D;
+
+namespace MatterHackers.MatterControl.Library
+{
+	public interface ILibraryItem
+	{
+		string ID { get; }
+		string Name { get; }
+		bool IsProtected { get; }
+		bool IsVisible { get; }
+		DateTime DateModified { get; }
+		DateTime DateCreated { get; }
+	}
+
+	public interface ILibraryObject3D : ILibraryAsset
+	{
+		Task<IObject3D> GetObject3D(Action<double, string> reportProgress);
+	}
+
+	public interface ILibraryAssetStream : ILibraryAsset
+	{
+		/// <summary>
+		// Gets the size, in bytes, of the current file.
+		/// </summary>
+		long FileSize { get; }
+
+		bool LocalContentExists { get; }
+
+		Task<StreamAndLength> GetStream(Action<double, string> progress);
+	}
+
+	public interface ILibraryAsset : ILibraryItem
+	{
+		string ContentType { get; }
+		string Category { get; }
+		string FileName { get; }
+		string AssetPath { get; }
+	}
+}

@@ -1,72 +1,103 @@
-﻿using MatterHackers.Agg;
+﻿using System;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using System;
-using MatterHackers.Localizations;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
 	public class EditableNumberDisplay : FlowLayoutWidget
 	{
 		protected ClickWidget clickableValueContainer;
-		protected Button setButton;
 		protected MHNumberEdit numberInputField;
 		protected TextWidget valueDisplay;
+		public string DisplayFormat { get; set; } = "{0}";
+		public event EventHandler ValueChanged;
+		public Color TextColor
+		{
+			get
+			{
+				return valueDisplay.TextColor;
+			}
+			set
+			{
+				valueDisplay.TextColor = value;
+			}
+		}
 
-		public event EventHandler EditComplete;
+		Color _borderColor = Color.White;
+		public override Color BorderColor
+		{
+			get { return _borderColor; }
+			set
+			{
+				_borderColor = value;
+				clickableValueContainer.BorderColor = new Color(BorderColor, 140);
+			}
+		}
 
-		public event EventHandler EditEnabled;
+		public EditableNumberDisplay(double startingValue, string largestPossibleValue)
+			: this(startingValue, largestPossibleValue, ActiveTheme.Instance.PrimaryTextColor)
+		{
+		}
 
-		public EditableNumberDisplay(TextImageButtonFactory textImageButtonFactory, string startingValue, string largestPossibleValue)
-			: base(Agg.UI.FlowDirection.LeftToRight)
+		public EditableNumberDisplay(double startingValue, string largestPossibleValue, Color textColor)
+			: base(FlowDirection.LeftToRight)
 		{
 			this.Margin = new BorderDouble(3, 0);
-			this.VAnchor = VAnchor.ParentCenter;
+			this.VAnchor = VAnchor.Center;
 
-			clickableValueContainer = new ClickWidget();
-			clickableValueContainer.VAnchor = VAnchor.ParentBottomTop;
-			clickableValueContainer.Cursor = Cursors.Hand;
-			clickableValueContainer.BorderWidth = 1;
-			clickableValueContainer.BorderColor = new RGBA_Bytes(255, 255, 255, 140);
+			clickableValueContainer = new ClickWidget
+			{
+				VAnchor = VAnchor.Stretch,
+				Cursor = Cursors.Hand,
+				BorderWidth = 1,
+				BorderColor = BorderColor
+			};
 
 			clickableValueContainer.MouseEnterBounds += (sender, e) =>
 			{
 				clickableValueContainer.BorderWidth = 2;
-				clickableValueContainer.BorderColor = new RGBA_Bytes(255, 255, 255, 255);
+				clickableValueContainer.BorderColor = new Color(BorderColor, 255);
 			};
 
 			clickableValueContainer.MouseLeaveBounds += (sender, e) =>
 			{
 				clickableValueContainer.BorderWidth = 1;
-				clickableValueContainer.BorderColor = new RGBA_Bytes(255, 255, 255, 140);
+				clickableValueContainer.BorderColor = new Color(BorderColor, 140);
 			};
 
-			valueDisplay = new TextWidget(largestPossibleValue, pointSize: 12);
-			valueDisplay.VAnchor = VAnchor.ParentCenter;
-			valueDisplay.HAnchor = HAnchor.ParentLeft;
-			valueDisplay.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			valueDisplay.Margin = new BorderDouble(6);
+			valueDisplay = new TextWidget(largestPossibleValue, pointSize: 12)
+			{
+				TextColor = textColor,
+				VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Left,
+				Margin = new BorderDouble(6),
+			};
 
 			clickableValueContainer.Click += editField_Click;
 
 			clickableValueContainer.AddChild(valueDisplay);
 			clickableValueContainer.SetBoundsToEncloseChildren();
-			valueDisplay.Text = startingValue;
 
-			numberInputField = new MHNumberEdit(0, pixelWidth: 40, allowDecimals: true);
-			numberInputField.VAnchor = VAnchor.ParentCenter;
-			numberInputField.Margin = new BorderDouble(left: 6);
-			numberInputField.Visible = false;
+			numberInputField = new MHNumberEdit(0, pixelWidth: 40, allowDecimals: true)
+			{
+				VAnchor = VAnchor.Center,
+				Margin = new BorderDouble(left: 6),
+				Visible = false
+			};
 
 			// This is a hack to make sure the control is tall enough.
 			// TODO: This hack needs a unit test and then pass and then remove this line.
-			this.MinimumSize = new VectorMath.Vector2(0, numberInputField.Height);
+			this.MinimumSize = new Vector2(0, numberInputField.Height);
 
-			setButton = textImageButtonFactory.Generate("SET".Localize());
-			setButton.VAnchor = VAnchor.ParentCenter;
-			setButton.Margin = new BorderDouble(left: 6);
-			setButton.Visible = false;
-
-			numberInputField.ActuallNumberEdit.EnterPressed += new KeyEventHandler(ActuallNumberEdit_EnterPressed);
+			numberInputField.ActuallNumberEdit.EnterPressed += (s, e) => UpdateDisplayString();
+			numberInputField.ContainsFocusChanged += (s1, e1) =>
+			{
+				if (!numberInputField.ContainsFocus)
+				{
+					UpdateDisplayString();
+				}
+			};
 
 			numberInputField.KeyDown += (sender, e) =>
 			{
@@ -74,15 +105,15 @@ namespace MatterHackers.MatterControl
 				{
 					clickableValueContainer.Visible = true;
 					numberInputField.Visible = false;
-					setButton.Visible = false;
 				}
 			};
 
-			setButton.Click += setButton_Click;
-
 			this.AddChild(clickableValueContainer);
 			this.AddChild(numberInputField);
-			this.AddChild(setButton);
+
+			Value = startingValue + 1;
+			Value = startingValue;
+			BorderColor = TextColor;
 		}
 
 		private void editField_Click(object sender, EventArgs mouseEvent)
@@ -102,48 +133,50 @@ namespace MatterHackers.MatterControl
 
 			numberInputField.ActuallNumberEdit.InternalNumberEdit.Focus();
 			numberInputField.ActuallNumberEdit.InternalNumberEdit.SelectAll();
-			setButton.Visible = true;
-			OnEditEnabled();
 		}
 
-		public void OnEditEnabled()
+		private void UpdateDisplayString(bool callValueChanged = true)
 		{
-			if (EditEnabled != null)
-			{
-				EditEnabled(this, null);
-			}
-		}
-
-		public void OnEditComplete()
-		{
-			if (EditComplete != null)
-			{
-				EditComplete(this, null);
-			}
-		}
-
-		private void setButton_Click(object sender, EventArgs mouseEvent)
-		{
-			OnEditComplete();
-		}
-
-		private void ActuallNumberEdit_EnterPressed(object sender, KeyEventArgs keyEvent)
-		{
-			OnEditComplete();
-		}
-
-		public void SetDisplayString(string displayString)
-		{
-			valueDisplay.Text = displayString;
 			clickableValueContainer.Visible = true;
 			numberInputField.Visible = false;
-			setButton.Visible = false;
+			valueDisplay.Text = string.Format(DisplayFormat, numberInputField.Value);
+			if (callValueChanged)
+			{
+				ValueChanged?.Invoke(this, null);
+			}
 		}
 
-		public double GetValue()
+		public double ValueDirect
 		{
-			double targetTemp = numberInputField.ActuallNumberEdit.Value;
-			return targetTemp;
+			set
+			{
+				double sameError = .00001;
+				if (value < numberInputField.Value - sameError
+					|| value > numberInputField.Value + sameError)
+				{
+					numberInputField.Value = value;
+					UpdateDisplayString(false);
+				}
+			}
+		}
+
+		public double Value
+		{
+			get
+			{
+				return numberInputField.ActuallNumberEdit.Value;
+			}
+
+			set
+			{
+				double sameError = .00001;
+				if (value < numberInputField.Value - sameError
+					|| value > numberInputField.Value + sameError)
+				{
+					numberInputField.Value = value;
+					UpdateDisplayString();
+				}
+			}
 		}
 	}
 }

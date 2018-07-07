@@ -22,6 +22,7 @@ using System.Runtime.InteropServices;
 
 [assembly: InternalsVisibleTo("MatterControl.Tests")]
 [assembly: InternalsVisibleTo("MatterControl.AutomationTests")]
+[assembly: InternalsVisibleTo("CloudServices.Tests")]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("1558c103-dff3-49bd-854b-97d57339d662")]

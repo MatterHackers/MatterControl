@@ -27,22 +27,20 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-#if !__ANDROID__
-using MatterHackers.MatterControl.AboutPage;
-#endif
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.SettingsManagement;
-using MatterHackers.MatterControl.VersionManagement;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
+using System.Timers;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.MatterControl.VersionManagement;
 
 namespace MatterHackers.MatterControl
 {
@@ -54,10 +52,6 @@ namespace MatterHackers.MatterControl
 		private int downloadSize;
 
 		public int DownloadPercent { get { return downloadPercent; } }
-
-		public enum UpdateRequestType { UserRequested, Automatic, FirstTimeEver };
-
-		private UpdateRequestType updateRequestType;
 
 		public enum UpdateStatusStates { MayBeAvailable, CheckingForUpdate, UpdateAvailable, UpdateDownloading, ReadyToInstall, UpToDate, UnableToConnectToServer, UpdateRequired };
 
@@ -114,7 +108,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		static bool haveShowUpdateRequired = false;
+		private static bool haveShowUpdateRequired = false;
+
 		private void SetUpdateStatus(UpdateStatusStates updateStatus)
 		{
 			if (this.updateStatus != updateStatus)
@@ -128,7 +123,7 @@ namespace MatterHackers.MatterControl
 					if (!UserSettings.Instance.IsTouchScreen)
 					{
 #if !__ANDROID__
-						UiThread.RunOnIdle(CheckForUpdateWindow.Show);
+						UiThread.RunOnIdle(() => DialogWindow.Show<CheckForUpdatesPage>());
 #endif
 					}
 				}
@@ -139,15 +134,15 @@ namespace MatterHackers.MatterControl
 		{
 			get
 			{
-				if (OsInformation.OperatingSystem == OSType.Mac)
+				if (AggContext.OperatingSystem == OSType.Mac)
 				{
 					return "pkg";
 				}
-				else if (OsInformation.OperatingSystem == OSType.X11)
+				else if (AggContext.OperatingSystem == OSType.X11)
 				{
 					return "tar.gz";
 				}
-				else if (OsInformation.OperatingSystem == OSType.Android)
+				else if (AggContext.OperatingSystem == OSType.Android)
 				{
 					return "apk";
 				}
@@ -180,16 +175,10 @@ namespace MatterHackers.MatterControl
 				return updateStatus == UpdateStatusStates.UpdateAvailable && ApplicationSettings.Instance.get(LatestVersionRequest.VersionKey.UpdateRequired) == "True";
 			}
 
-			private set {}
+			private set { }
 		}
 
-		public void CheckForUpdateUserRequested()
-		{
-			updateRequestType = UpdateRequestType.UserRequested;
-			CheckForUpdate();
-		}
-
-		private void CheckForUpdate()
+		public void CheckForUpdate()
 		{
 			if (!WaitingToCompleteTransaction())
 			{
@@ -224,7 +213,8 @@ namespace MatterHackers.MatterControl
 			else
 			{
 				SetUpdateStatus(UpdateStatusStates.UpdateAvailable);
-				if (updateRequestType == UpdateRequestType.FirstTimeEver)
+				bool firstUpdateRequest = ApplicationSettings.Instance.GetClientToken() == null;
+				if (firstUpdateRequest)
 				{
 					UiThread.RunOnIdle(() =>
 					{
@@ -241,32 +231,13 @@ namespace MatterHackers.MatterControl
 			{
 				InitiateUpdateDownload();
 				// Switch to the about page so we can see the download progress.
-				GuiWidget aboutTabWidget = FindNamedWidgetRecursive(ApplicationController.Instance.MainView, "About Tab");
-				Tab aboutTab = aboutTabWidget as Tab;
-				if (aboutTab != null)
+				GuiWidget aboutTabWidget = ApplicationController.Instance.MainView.FindNamedChildRecursive("About Tab");
+
+				if (aboutTabWidget is Tab aboutTab)
 				{
 					aboutTab.TabBarContaningTab.SelectTab(aboutTab);
 				}
 			}
-		}
-
-		private static GuiWidget FindNamedWidgetRecursive(GuiWidget root, string name)
-		{
-			foreach (GuiWidget child in root.Children)
-			{
-				if (child.Name == name)
-				{
-					return child;
-				}
-
-				GuiWidget foundWidget = FindNamedWidgetRecursive(child, name);
-				if (foundWidget != null)
-				{
-					return foundWidget;
-				}
-			}
-
-			return null;
 		}
 
 		private void onVersionRequestFailed(object sender, ResponseErrorEventArgs e)
@@ -350,7 +321,7 @@ namespace MatterHackers.MatterControl
 			{
 				this.downloadPercent = (int)(e.BytesReceived * 100 / downloadSize);
 			}
-			UiThread.RunOnIdle(() => UpdateStatusChanged.CallEvents(this, e) );
+			UiThread.RunOnIdle(() => UpdateStatusChanged.CallEvents(this, e));
 		}
 
 		private void DownloadCompleted(object sender, AsyncCompletedEventArgs e)
@@ -387,14 +358,6 @@ namespace MatterHackers.MatterControl
 			if (ApplicationSettings.Instance.GetClientToken() != null
 				|| OemSettings.Instance.CheckForUpdatesOnFirstRun)
 			{
-				if (ApplicationSettings.Instance.GetClientToken() == null)
-				{
-					updateRequestType = UpdateRequestType.FirstTimeEver;
-				}
-				else
-				{
-					updateRequestType = UpdateRequestType.Automatic;
-				}
 				//If we have already requested an update once, check on load
 				CheckForUpdate();
 			}
@@ -408,6 +371,16 @@ namespace MatterHackers.MatterControl
 					SetUpdateStatus(UpdateStatusStates.UpdateAvailable);
 				}
 			}
+
+			// Now that we are running, check for an update every 24 hours.
+			var aTimer = new System.Timers.Timer(24 * 60 * 60 * 1000); //one day in milliseconds
+			aTimer.Elapsed += new ElapsedEventHandler(CheckForUpdateDaily);
+			aTimer.Start();
+		}
+
+		private void CheckForUpdateDaily(object source, ElapsedEventArgs e)
+		{
+			CheckForUpdate();
 		}
 
 		public void OnUpdateStatusChanged(EventArgs e)
@@ -457,7 +430,7 @@ namespace MatterHackers.MatterControl
 				installUpdate.Start();
 
 				//Attempt to close current application
-				SystemWindow topSystemWindow = MatterControlApplication.Instance as SystemWindow;
+				SystemWindow topSystemWindow = AppContext.RootSystemWindow;
 				if (topSystemWindow != null)
 				{
 					topSystemWindow.CloseOnIdle();

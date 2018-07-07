@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, John Lewin
+Copyright (c) 2017, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,59 +27,50 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.Agg;
-using System.Threading.Tasks;
 
-public class LicenseAgreementPage : WizardPage
+public class LicenseAgreementPage : DialogPage
 {
 	public LicenseAgreementPage()
 	{
-		string eulaText = StaticData.Instance.ReadAllText("MatterControl EULA.txt").Replace("\r\n", "\n");
+		this.WindowTitle = "Software License Agreement".Localize();
+
+		string eulaText = AggContext.StaticData.ReadAllText("MatterControl EULA.txt").Replace("\r\n", "\n");
 
 		var scrollable = new ScrollableWidget(true);
 		scrollable.AnchorAll();
-		scrollable.ScrollArea.HAnchor = HAnchor.ParentLeftRight;
+		scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
 		contentRow.AddChild(scrollable);
 
-		var textBox = new WrappedTextWidget(eulaText, textColor: ActiveTheme.Instance.PrimaryTextColor, doubleBufferText: false)
+		scrollable.ScrollArea.Margin = new BorderDouble(0, 0, 15, 0);
+		scrollable.AddChild(new WrappedTextWidget(eulaText, textColor: ActiveTheme.Instance.PrimaryTextColor, doubleBufferText: false)
 		{
 			DrawFromHintedCache = true,
 			Name = "LicenseAgreementPage",
-		};
-		scrollable.ScrollArea.Margin = new BorderDouble(0, 0, 15, 0);
-		scrollable.AddChild(textBox);
+		});
 
-		var acceptButton = textImageButtonFactory.Generate("Accept".Localize());
+		var acceptButton = theme.CreateDialogButton("Accept".Localize());
 		acceptButton.Click += (s, e) =>
 		{
-			UserSettings.Instance.set("SoftwareLicenseAccepted", "true");
-			UiThread.RunOnIdle(WizardWindow.Close);
+			UserSettings.Instance.set(UserSettingsKey.SoftwareLicenseAccepted, "true");
+			UiThread.RunOnIdle(DialogWindow.Close);
 		};
 
 		acceptButton.Visible = true;
-		cancelButton.Visible = true;
 
-		// Exit if EULA is not accepted
-		cancelButton.Click += (s, e) => UiThread.RunOnIdle(MatterControlApplication.Instance.Close);
-
-		//Add buttons to buttonContainer
-		footerRow.AddChild(acceptButton);
-		footerRow.AddChild(new HorizontalSpacer());
-		footerRow.AddChild(cancelButton);
-
-		footerRow.Visible = true;
-
-		UiThread.RunOnIdle(MakeFrontWindow, .2);
+		this.AddPageAction(acceptButton);
 	}
 
-	private void MakeFrontWindow()
+	protected override void OnCancel(out bool abortCancel)
 	{
-		this.WizardWindow.BringToFront();
+		// Exit if EULA is not accepted
+		UiThread.RunOnIdle(AppContext.RootSystemWindow.Close);
+
+		abortCancel = false;
 	}
 }

@@ -37,8 +37,8 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
-	public class AndroidConnectDevicePage : WizardPage
-	{  
+	public class AndroidConnectDevicePage : DialogPage
+	{
 		private EventHandler unregisterEvents;
 
 		private TextWidget generalError;
@@ -63,26 +63,26 @@ namespace MatterHackers.MatterControl
 			};
 			contentRow.AddChild(printerNameLabel);
 
-			contentRow.AddChild(new TextWidget("Instructions:".Localize(), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
+			contentRow.AddChild(new TextWidget("Instructions".Localize() + ":", 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
 			contentRow.AddChild(new TextWidget("1. Power on your 3D Printer.".Localize(), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
 			contentRow.AddChild(new TextWidget("2. Attach your 3D Printer via USB.".Localize(), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
 			contentRow.AddChild(new TextWidget("3. Press 'Connect'.".Localize(), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
 
 			//Add inputs to main container
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(communicationStateChanged, ref unregisterEvents);
+			ApplicationController.Instance.ActivePrinter.Connection.CommunicationStateChanged.RegisterEvent(communicationStateChanged, ref unregisterEvents);
 
 			connectButtonContainer = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 6)
 			};
 
 			//Construct buttons
-			connectButton = whiteImageButtonFactory.Generate("Connect".Localize(),centerText:true);
+			connectButton = theme.WhiteButtonFactory.Generate("Connect".Localize());
 			connectButton.Margin = new BorderDouble(0,0,10,0);
 			connectButton.Click += ConnectButton_Click;
 
-			skipButton = whiteImageButtonFactory.Generate("Skip".Localize(), centerText:true);
+			skipButton = theme.WhiteButtonFactory.Generate("Skip".Localize());
 			skipButton.Click += NextButton_Click;
 
 			connectButtonContainer.AddChild(connectButton);
@@ -95,54 +95,54 @@ namespace MatterHackers.MatterControl
 
 			generalError = new TextWidget("", 0, 0, errorFontSize)
 			{
-				TextColor = ActiveTheme.Instance.SecondaryAccentColor,
-				HAnchor = HAnchor.ParentLeftRight,
+				TextColor = ActiveTheme.Instance.PrimaryAccentColor,
+				HAnchor = HAnchor.Stretch,
 				Visible = false,
 				Margin = new BorderDouble(top: 20),
 			};
 			contentRow.AddChild(generalError);
 
 			//Construct buttons
-			retryButton = whiteImageButtonFactory.Generate("Retry".Localize(), centerText:true);
+			retryButton = theme.WhiteButtonFactory.Generate("Retry".Localize());
 			retryButton.Click += ConnectButton_Click;
 			retryButton.Margin = new BorderDouble(0,0,10,0);
 
 			//Construct buttons
-			troubleshootButton = whiteImageButtonFactory.Generate("Troubleshoot".Localize(), centerText:true);
-			troubleshootButton.Click += (s, e) => UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupWizardTroubleshooting>);
+			troubleshootButton = theme.WhiteButtonFactory.Generate("Troubleshoot".Localize());
+			troubleshootButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				DialogWindow.ChangeToPage<SetupWizardTroubleshooting>();
+			});
 
 			retryButtonContainer = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 6),
 				Visible = false
 			};
-			
+
 			retryButtonContainer.AddChild(retryButton);
 			retryButtonContainer.AddChild(troubleshootButton);
 			retryButtonContainer.AddChild(new HorizontalSpacer());
-			
+
 			contentRow.AddChild(retryButtonContainer);
 
 			//Construct buttons
-			nextButton = textImageButtonFactory.Generate("Continue".Localize());
+			nextButton = theme.ButtonFactory.Generate("Continue".Localize());
 			nextButton.Click += NextButton_Click;
 			nextButton.Visible = false;
 
 			GuiWidget hSpacer = new GuiWidget();
-			hSpacer.HAnchor = HAnchor.ParentLeftRight;
+			hSpacer.HAnchor = HAnchor.Stretch;
 
-			//Add buttons to buttonContainer
-			footerRow.AddChild(nextButton);
-			footerRow.AddChild(hSpacer);
-			footerRow.AddChild(cancelButton);
+			this.AddPageAction(nextButton);
 
 			updateControls(true);
 		}
-			
+
 		void ConnectButton_Click(object sender, EventArgs mouseEvent)
 		{
-			PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter(true);
+			ApplicationController.Instance.ActivePrinter.Connection.Connect();
 		}
 
 		void NextButton_Click(object sender, EventArgs mouseEvent)
@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl
 			this.generalError.Text = "Please wait...";
 			this.generalError.Visible = true;
 			nextButton.Visible = false;
-			UiThread.RunOnIdle(this.WizardWindow.Close);
+			UiThread.RunOnIdle(this.DialogWindow.Close);
 		}
 
 		private void communicationStateChanged(object sender, EventArgs args)
@@ -168,19 +168,19 @@ namespace MatterHackers.MatterControl
 			connectButtonContainer.Visible = false;
 			retryButtonContainer.Visible = false;
 
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
+			if (ApplicationController.Instance.ActivePrinter.Connection.IsConnected)
 			{
 				generalError.Text = "{0}!".FormatWith ("Connection succeeded".Localize ());
 				generalError.Visible = true;
 				nextButton.Visible = true;
 			}
-			else if (firstLoad || PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Disconnected)
+			else if (firstLoad || ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Disconnected)
 			{
 				generalError.Text = "";
 				connectButton.Visible = true;
 				connectButtonContainer.Visible = true;
 			}
-			else if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect)
+			else if (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.AttemptingToConnect)
 			{
 				generalError.Text = "{0}...".FormatWith("Attempting to connect".Localize());
 				generalError.Visible = true;

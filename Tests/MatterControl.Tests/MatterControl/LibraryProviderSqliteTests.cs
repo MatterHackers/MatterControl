@@ -27,14 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.IO;
-using System.Threading;
-using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintLibrary.Provider;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.Tests.Automation;
 using NUnit.Framework;
 
@@ -83,7 +76,9 @@ namespace MatterHackers.MatterControl.Tests
 			Assert.IsTrue(!NamedItemExists(collectionName));
 			Assert.IsTrue(dataReloaded == false);
 
-			testProvider.AddFilesToLibrary(new string[] { meshPathAndFileName });
+			//testProvider.AddFilesToLibrary(new string[] { meshPathAndFileName });
+			throw new NotImplementedException("testProvider.AddFilesToLibrary(new string[] { meshPathAndFileName });");
+
 			Thread.Sleep(3000); // wait for the add to finish
 			UiThread.InvokePendingActions();
 

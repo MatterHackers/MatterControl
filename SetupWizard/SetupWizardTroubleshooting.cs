@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
@@ -19,8 +19,8 @@ using Android.Content;
 #endif
 
 namespace MatterHackers.MatterControl
-{   
-	public class SetupWizardTroubleshooting : WizardPage
+{
+	public class SetupWizardTroubleshooting : DialogPage
 	{
 		private Button nextButton;
 
@@ -40,33 +40,37 @@ namespace MatterHackers.MatterControl
 
 		public SetupWizardTroubleshooting()
 		{
+			this.WindowTitle = "Troubleshooting".Localize();
+
 			RefreshStatus();
 
-			//Construct buttons
-			cancelButton = whiteImageButtonFactory.Generate("Cancel".Localize(), centerText:true);
-			cancelButton.Click += (s, e) => UiThread.RunOnIdle(this.WizardWindow.ChangeToPage<AndroidConnectDevicePage>);
-			
-			//Construct buttons
-			nextButton = textImageButtonFactory.Generate("Continue".Localize());
-			nextButton.Click += (sender, e) => UiThread.RunOnIdle(this.WizardWindow.Close);
+			nextButton = theme.ButtonFactory.Generate("Continue".Localize());
+			nextButton.Click += (sender, e) => UiThread.RunOnIdle(this.DialogWindow.Close);
 			nextButton.Visible = false;
 
-			//Add buttons to buttonContainer
-			footerRow.AddChild(nextButton);
-			footerRow.AddChild(new GuiWidget() { HAnchor = HAnchor.ParentLeftRight });
-			footerRow.AddChild(cancelButton);
+			this.AddPageAction(nextButton);
 
 			// Register for connection notifications
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(ConnectionStatusChanged, ref unregisterEvents);
+			ApplicationController.Instance.ActivePrinter.Connection.CommunicationStateChanged.RegisterEvent(ConnectionStatusChanged, ref unregisterEvents);
 		}
 
 		public void ConnectionStatusChanged(object test, EventArgs args)
 		{
-			if(PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Connected && connectToPrinterRow != null)
+			if(ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Connected && connectToPrinterRow != null)
 			{
 				connectToPrinterRow.SetSuccessful();
 				nextButton.Visible = true;
 			}
+		}
+
+		protected override void OnCancel(out bool abortCancel)
+		{
+			abortCancel = true;
+
+			UiThread.RunOnIdle(() =>
+			{
+				this.DialogWindow.ChangeToPage<AndroidConnectDevicePage>();
+			});
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -173,11 +177,11 @@ namespace MatterHackers.MatterControl
 
 #endif
 			connectToPrinterRow = new CriteriaRow(
-				"Connect to Printer",
-				"Connect",
-				"Click the 'Connect' button to retry the original connection attempt",
+				"Connect to Printer".Localize(),
+				"Connect".Localize(),
+				"Click the 'Connect' button to retry the original connection attempt".Localize(),
 				false,
-				() => PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter());
+				() => ApplicationController.Instance.ActivePrinter.Connection.Connect());
 
 			contentRow.AddChild(connectToPrinterRow);
 
@@ -205,15 +209,15 @@ namespace MatterHackers.MatterControl
 
 			private static int criteriaCount = 0;
 
-			private static RGBA_Bytes disabledTextColor = new RGBA_Bytes(0.35, 0.35, 0.35);
-			private static RGBA_Bytes disabledBackColor = new RGBA_Bytes(0.22, 0.22, 0.22);
-			private static RGBA_Bytes toggleColor = new RGBA_Bytes(RGBA_Bytes.Gray.red + 2, RGBA_Bytes.Gray.green + 2, RGBA_Bytes.Gray.blue + 2);
+			private static Color disabledTextColor = new Color(0.35, 0.35, 0.35);
+			private static Color disabledBackColor = new Color(0.22, 0.22, 0.22);
+			private static Color toggleColor = new Color(Color.Gray.red + 2, Color.Gray.green + 2, Color.Gray.blue + 2);
 
-			public CriteriaRow (string itemText, string fixitText, string errorText, bool succeeded, Action fixAction) 
+			public CriteriaRow (string itemText, string fixitText, string errorText, bool succeeded, Action fixAction)
 				: base(FlowDirection.LeftToRight)
 			{
-				HAnchor = HAnchor.ParentLeftRight;
-				VAnchor = VAnchor.AbsolutePosition;
+				HAnchor = HAnchor.Stretch;
+				VAnchor = VAnchor.Absolute;
 				TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
 
 				ErrorText = errorText;
@@ -221,8 +225,8 @@ namespace MatterHackers.MatterControl
 				base.Height = 40;
 
 				base.AddChild(new TextWidget (string.Format("  {0}. {1}", criteriaCount + 1, itemText)){
-					TextColor = stillSuccessful ? RGBA_Bytes.White : disabledTextColor,
-					VAnchor = VAnchor.ParentCenter
+					TextColor = stillSuccessful ? Color.White : disabledTextColor,
+					VAnchor = VAnchor.Center
 				});
 
 				if(stillSuccessful && !succeeded)
@@ -239,17 +243,17 @@ namespace MatterHackers.MatterControl
 						AddSuccessIcon();
 					} else {
 						// Add Fix button
-						Button button  = buttonFactory.Generate(LocalizedString.Get(fixitText),centerText:true);
-						button.VAnchor = VAnchor.ParentCenter;
+						Button button  = buttonFactory.Generate(fixitText);
+						button.VAnchor = VAnchor.Center;
 						button.Padding = new BorderDouble(3, 8);
-						button.Click += (sender, e) => fixAction();
+						button.Click += (sender, e) => fixAction?.Invoke();
 						base.AddChild(button);
 					}
 				}
 
-				if(stillSuccessful) 
+				if(stillSuccessful)
 				{
-					this.BackgroundColor = (criteriaCount % 2 == 0) ? RGBA_Bytes.Gray : toggleColor;
+					this.BackgroundColor = (criteriaCount % 2 == 0) ? Color.Gray : toggleColor;
 				}
 				else
 				{
@@ -277,8 +281,8 @@ namespace MatterHackers.MatterControl
 
 			private void AddSuccessIcon()
 			{
-				base.AddChild (new ImageWidget (StaticData.Instance.LoadImage (Path.Combine ("Icons", "426.png"))) {
-					VAnchor = VAnchor.ParentCenter
+				base.AddChild (new ImageWidget (AggContext.StaticData.LoadImage (Path.Combine ("Icons", "426.png"))) {
+					VAnchor = VAnchor.Center
 				});
 			}
 

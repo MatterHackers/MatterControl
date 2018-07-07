@@ -1,14 +1,43 @@
-﻿using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.SlicerConfiguration;
+﻿/*
+Copyright (c) 2017, Lars Brubaker, John Lewin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
 using System;
 using System.Collections.Generic;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepBaudRate : ConnectionWizardPage
+	public class SetupStepBaudRate : DialogPage
 	{
 		private List<RadioButton> BaudRateButtonsList = new List<RadioButton>();
 		private FlowLayoutWidget printerBaudRateContainer;
@@ -16,22 +45,32 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private GuiWidget baudRateWidget;
 		private RadioButton otherBaudRateRadioButton;
 		private MHTextEditWidget otherBaudRateInput;
-		private Button nextButton;
-		private Button printerBaudRateHelpLink;
+		private GuiWidget nextButton;
+		private GuiWidget printerBaudRateHelpLink;
 		private TextWidget printerBaudRateHelpMessage;
 
-		public SetupStepBaudRate()
+		private PrinterConfig printer;
+
+		public SetupStepBaudRate(PrinterConfig printer)
 		{
+			this.printer = printer;
 			printerBaudRateContainer = createPrinterBaudRateContainer();
 			contentRow.AddChild(printerBaudRateContainer);
 			{
-				nextButton = textImageButtonFactory.Generate("Continue".Localize());
-				nextButton.Click += NextButton_Click;
+				nextButton = theme.CreateDialogButton("Continue".Localize());
+				nextButton.Click += (s, e) =>
+				{
+					bool canContinue = this.OnSave();
+					if (canContinue)
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							this.DialogWindow.ChangeToPage(new SetupStepComPortOne(printer));
+						});
+					}
+				};
 
-				//Add buttons to buttonContainer
-				footerRow.AddChild(nextButton);
-				footerRow.AddChild(new HorizontalSpacer());
-				footerRow.AddChild(cancelButton);
+				this.AddPageAction(nextButton);
 			}
 			BindBaudRateHandlers();
 		}
@@ -40,7 +79,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			container.Margin = new BorderDouble(0);
-			container.VAnchor = VAnchor.ParentBottomTop;
+			container.VAnchor = VAnchor.Stretch;
 			BorderDouble elementMargin = new BorderDouble(top: 3);
 
 			string baudRateLabelText = "Baud Rate".Localize();
@@ -49,14 +88,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			TextWidget baudRateLabel = new TextWidget(baudRateLabelTextFull, 0, 0, 12);
 			baudRateLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			baudRateLabel.Margin = new BorderDouble(0, 0, 0, 10);
-			baudRateLabel.HAnchor = HAnchor.ParentLeftRight;
+			baudRateLabel.HAnchor = HAnchor.Stretch;
 
 			baudRateWidget = GetBaudRateWidget();
-			baudRateWidget.HAnchor = HAnchor.ParentLeftRight;
+			baudRateWidget.HAnchor = HAnchor.Stretch;
 
 			FlowLayoutWidget baudRateMessageContainer = new FlowLayoutWidget();
 			baudRateMessageContainer.Margin = elementMargin;
-			baudRateMessageContainer.HAnchor = HAnchor.ParentLeftRight;
+			baudRateMessageContainer.HAnchor = HAnchor.Stretch;
 
 			printerBaudRateError = new TextWidget("Select the baud rate.".Localize(), 0, 0, 10);
 			printerBaudRateError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -64,7 +103,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			printerBaudRateHelpLink = linkButtonFactory.Generate("What's this?".Localize());
 			printerBaudRateHelpLink.Margin = new BorderDouble(left: 5);
-			printerBaudRateHelpLink.VAnchor = VAnchor.ParentBottom;
+			printerBaudRateHelpLink.VAnchor = VAnchor.Bottom;
 			printerBaudRateHelpLink.Click += printerBaudRateHelp_Click;
 
 			printerBaudRateHelpMessage = new TextWidget("The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.".Localize(), 0, 0, 10);
@@ -80,7 +119,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			container.AddChild(baudRateMessageContainer);
 			container.AddChild(printerBaudRateHelpMessage);
 
-			container.HAnchor = HAnchor.ParentLeftRight;
+			container.HAnchor = HAnchor.Stretch;
 			return container;
 		}
 
@@ -120,7 +159,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			//flag the 'other' option if it is not and prefill the rate.
 			otherBaudRateInput = new MHTextEditWidget("");
 			otherBaudRateInput.Visible = false;
-			otherBaudRateInput.HAnchor = HAnchor.ParentLeftRight;
+			otherBaudRateInput.HAnchor = HAnchor.Stretch;
 
 			string currentBaudRate = ActiveSliceSettings.Instance.GetValue(SettingsKey.baud_rate);
 			if (currentBaudRate != null)
@@ -159,20 +198,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			}
 		}
 
-		private void MoveToNextWidget()
-		{
-			WizardWindow.ChangeToInstallDriverOrComPortOne();
-		}
-
-		private void NextButton_Click(object sender, EventArgs mouseEvent)
-		{
-			bool canContinue = this.OnSave();
-			if (canContinue)
-			{
-				UiThread.RunOnIdle(MoveToNextWidget);
-			}
-		}
-
 		private bool OnSave()
 		{
 			string baudRate = null;
@@ -183,7 +208,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			catch
 			{
 				printerBaudRateHelpLink.Visible = false;
-				printerBaudRateError.TextColor = RGBA_Bytes.Red;
+				printerBaudRateError.TextColor = Color.Red;
 				printerBaudRateError.Text = "Oops! Please select a baud rate.".Localize();
 			}
 
@@ -197,7 +222,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				catch
 				{
 					printerBaudRateHelpLink.Visible = false;
-					printerBaudRateError.TextColor = RGBA_Bytes.Red;
+					printerBaudRateError.TextColor = Color.Red;
 					printerBaudRateError.Text = "Oops! Baud Rate must be an integer.".Localize();
 					return false;
 				}

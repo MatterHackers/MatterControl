@@ -30,7 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.IO;
 
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl
 
 		private static VersionInfo DeserializeFromDisk()
 		{
-			string content = StaticData.Instance.ReadAllText("BuildInfo.txt");
+			string content = AggContext.StaticData.ReadAllText("BuildInfo.txt");
 			return JsonConvert.DeserializeObject<VersionInfo>(content);
 		}
 	}

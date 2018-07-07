@@ -27,33 +27,34 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.GCodeVisualizer;
+using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-	internal class PrintRecoveryStream : GCodeStream
+	public enum RecoveryState { RemoveHeating, Raising, Homing, FindingRecoveryLayer, SkippingGCode, PrimingAndMovingToStart, PrintingSlow, PrintingToEnd }
+
+	public class PrintRecoveryStream : GCodeStream
 	{
-		enum RecoveryState {  RemoveHeating, Raising, Homing, FindingRecoveryLayer, SkippingGCode, PrimingAndMovingToStart, PrintingSlow, PrintingToEnd }
 		private GCodeFileStream internalStream;
 		private double percentDone;
 		double recoverFeedRate;
 		PrinterMove lastDestination;
-        QueuedCommandsStream queuedCommands;
+		QueuedCommandsStream queuedCommands;
 		RectangleDouble boundsOfSkippedLayers = RectangleDouble.ZeroIntersection;
 
-		RecoveryState recoveryState = RecoveryState.RemoveHeating;
+		public RecoveryState RecoveryState { get; private set; } = RecoveryState.RemoveHeating;
+		private PrinterConfig printer;
 
-		public PrintRecoveryStream(GCodeFileStream internalStream, double percentDone)
+		public PrintRecoveryStream(PrinterConfig printer, GCodeFileStream internalStream, double percentDone)
 		{
+			this.printer = printer;
 			this.internalStream = internalStream;
 			this.percentDone = percentDone;
 
-			recoverFeedRate = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.recover_first_layer_speed);
+			recoverFeedRate = printer.Settings.GetValue<double>(SettingsKey.recover_first_layer_speed);
 			if (recoverFeedRate == 0)
 			{
 				recoverFeedRate = 10;
@@ -82,7 +83,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				return nextCommand;
 			}
 			
-			switch (recoveryState)
+			switch (RecoveryState)
 			{
 				// heat the extrude to remove it from the part
 				case RecoveryState.RemoveHeating:
@@ -94,8 +95,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					queuedCommands.Add("G92 E0; reset the expected extruder position");
 					queuedCommands.Add("M82; use absolute distance for extrusion");
 					
-					bool hasHeatedBed = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed);
-					double bedTemp = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.bed_temperature);
+					bool hasHeatedBed = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed);
+					double bedTemp = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
 					if (hasHeatedBed && bedTemp > 0)
 					{
 						// start heating the bed
@@ -103,7 +104,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					}
 
 					// heat up the extruder
-					queuedCommands.Add("M109 S{0}".FormatWith(ActiveSliceSettings.Instance.Helpers.ExtruderTemperature(0)));
+					queuedCommands.Add("M109 S{0}".FormatWith(printer.Settings.Helpers.ExtruderTemperature(0)));
 
 					if (hasHeatedBed && bedTemp > 0)
 					{
@@ -111,23 +112,23 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						queuedCommands.Add($"M190 S{bedTemp}");
 					}
 
-					recoveryState = RecoveryState.Raising;
+					RecoveryState = RecoveryState.Raising;
 					return "";
 
 				// remove it from the part
 				case RecoveryState.Raising:
 					// We don't know where the printer is for sure (it make have been turned off). Disable leveling until we know where it is.
-					PrintLevelingStream.Enabled = false;
+					PrintLevelingStream.AllowLeveling = false;
 					queuedCommands.Add("M114 ; get current position");
 					queuedCommands.Add("G91 ; move relative");
-					queuedCommands.Add("G1 Z10 F{0}".FormatWith(MovementControls.ZSpeed));
+					queuedCommands.Add("G1 Z10 F{0}".FormatWith(printer.Settings.ZSpeed()));
 					queuedCommands.Add("G90 ; move absolute");
-					recoveryState = RecoveryState.Homing;
+					RecoveryState = RecoveryState.Homing;
 					return "";
 
 				// if top homing, home the extruder
 				case RecoveryState.Homing:
-					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.z_homes_to_max))
+					if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
 					{
 						queuedCommands.Add("G28");
 					}
@@ -138,14 +139,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						// home y
 						queuedCommands.Add("G28 Y0");
 						// move to the place we can home z from
-						Vector2 recoveryPositionXy = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.recover_position_before_z_home);
-						queuedCommands.Add("G1 X{0:0.###}Y{1:0.###}F{2}".FormatWith(recoveryPositionXy.x, recoveryPositionXy.y, MovementControls.XSpeed));
+						Vector2 recoveryPositionXy = printer.Settings.GetValue<Vector2>(SettingsKey.recover_position_before_z_home);
+						queuedCommands.Add("G1 X{0:0.###}Y{1:0.###}F{2}".FormatWith(recoveryPositionXy.X, recoveryPositionXy.Y, printer.Settings.XSpeed()));
 						// home z
 						queuedCommands.Add("G28 Z0");
 					}
 					// We now know where the printer is re-enable print leveling
-					PrintLevelingStream.Enabled = true;
-					recoveryState = RecoveryState.FindingRecoveryLayer;
+					PrintLevelingStream.AllowLeveling = true;
+					RecoveryState = RecoveryState.FindingRecoveryLayer;
 					return "";
 					
 				// This is to recover printing if an out a filament occurs. 
@@ -160,7 +161,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					}
 					else // we are resuming because of disconnect or reset, skip this
 					{
-						recoveryState = RecoveryState.SkippingGCode;
+						RecoveryState = RecoveryState.SkippingGCode;
 						goto case RecoveryState.SkippingGCode;
 					}
 
@@ -169,7 +170,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					// and skip everything else until we get to the point we left off last time
 					int commandCount = 0;
 					boundsOfSkippedLayers = RectangleDouble.ZeroIntersection;
-					while (internalStream.FileStreaming.PercentComplete(internalStream.LineIndex) < percentDone)
+					while (internalStream.GCodeFile.PercentComplete(internalStream.LineIndex) < percentDone)
 					{
 						string line = internalStream.ReadLine();
 						if(line == null)
@@ -188,10 +189,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						if (commandCount > 100)
 						{
 							boundsOfSkippedLayers.ExpandToInclude(lastDestination.position.Xy);
-							if (boundsOfSkippedLayers.Bottom < 10)
-							{
-								int a = 0;
-							}
 						}
 
 						// check if the line is something we want to send to the printer (like a temp)
@@ -208,7 +205,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						}
 					}
 					
-					recoveryState = RecoveryState.PrimingAndMovingToStart;
+					RecoveryState = RecoveryState.PrimingAndMovingToStart;
 
 					// make sure we always- pick up the last movement
 					boundsOfSkippedLayers.ExpandToInclude(lastDestination.position.Xy);
@@ -217,29 +214,29 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				case RecoveryState.PrimingAndMovingToStart:
 					{
 
-						if (ActiveSliceSettings.Instance.GetValue("z_homes_to_max") == "0") // we are homed to the bed
+						if (printer.Settings.GetValue("z_homes_to_max") == "0") // we are homed to the bed
 						{
 							// move to the height we can recover printing from
-							Vector2 recoverPositionXy = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.recover_position_before_z_home);
-							queuedCommands.Add(CreateMovementLine(new PrinterMove(new VectorMath.Vector3(recoverPositionXy.x, recoverPositionXy.y, lastDestination.position.z), 0, MovementControls.ZSpeed)));
+							Vector2 recoverPositionXy = printer.Settings.GetValue<Vector2>(SettingsKey.recover_position_before_z_home);
+							queuedCommands.Add(CreateMovementLine(new PrinterMove(new VectorMath.Vector3(recoverPositionXy.X, recoverPositionXy.Y, lastDestination.position.Z), 0, printer.Settings.ZSpeed())));
 						}
 
-						double extruderWidth = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
+						double extruderWidth = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
 						// move to a position outside the printed bounds
 						queuedCommands.Add(CreateMovementLine(new PrinterMove(
-							new Vector3(boundsOfSkippedLayers.Left - extruderWidth*2, boundsOfSkippedLayers.Bottom + boundsOfSkippedLayers.Height / 2, lastDestination.position.z),
-							0, MovementControls.XSpeed)));
+							new Vector3(boundsOfSkippedLayers.Left - extruderWidth*2, boundsOfSkippedLayers.Bottom + boundsOfSkippedLayers.Height / 2, lastDestination.position.Z),
+							0, printer.Settings.XSpeed())));
 						
 						// let's prime the extruder
-						queuedCommands.Add("G1 E10 F{0}".FormatWith(MovementControls.EFeedRate(0))); // extrude 10
+						queuedCommands.Add("G1 E10 F{0}".FormatWith(printer.Settings.EFeedRate(0))); // extrude 10
 						queuedCommands.Add("G1 E9"); // and retract a bit
 
 						// move to the actual print position
-						queuedCommands.Add(CreateMovementLine(new PrinterMove(lastDestination.position, 0, MovementControls.XSpeed)));
+						queuedCommands.Add(CreateMovementLine(new PrinterMove(lastDestination.position, 0, printer.Settings.XSpeed())));
 
 						/// reset the printer to know where the filament should be
 						queuedCommands.Add("G92 E{0}".FormatWith(lastDestination.extrusion));
-						recoveryState = RecoveryState.PrintingSlow;
+						RecoveryState = RecoveryState.PrintingSlow;
 					}
 					return "";
 
@@ -271,7 +268,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					}
 
 					// we only fall through to here after seeing the next "; Layer:"
-					recoveryState = RecoveryState.PrintingToEnd;
+					RecoveryState = RecoveryState.PrintingToEnd;
 					return "";
 
 				case RecoveryState.PrintingToEnd:

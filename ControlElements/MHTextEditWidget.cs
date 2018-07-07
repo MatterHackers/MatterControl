@@ -1,53 +1,85 @@
-﻿using MatterHackers.Agg;
+﻿/*
+Copyright (c) 2017, Lars Brubaker, John Lewin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using System;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
-using System;
-using System.Diagnostics;
 
 namespace MatterHackers.MatterControl
 {
 	public class MHTextEditWidget : GuiWidget
 	{
-		protected TextEditWidget actuallTextEditWidget;
 		protected TextWidget noContentFieldDescription = null;
 
-		public TextEditWidget ActualTextEditWidget
-		{
-			get { return actuallTextEditWidget; }
-		}
+		public TextEditWidget ActualTextEditWidget { get; }
 
 		public MHTextEditWidget(string text = "", double x = 0, double y = 0, double pointSize = 12, double pixelWidth = 0, double pixelHeight = 0, bool multiLine = false, int tabIndex = 0, string messageWhenEmptyAndNotSelected = "", TypeFace typeFace = null)
 		{
-			Padding = new BorderDouble(3);
-			actuallTextEditWidget = new TextEditWidget(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine, tabIndex: tabIndex, typeFace: typeFace);
-			actuallTextEditWidget.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			actuallTextEditWidget.MinimumSize = new Vector2(Math.Max(actuallTextEditWidget.MinimumSize.x, pixelWidth), Math.Max(actuallTextEditWidget.MinimumSize.y, pixelHeight));
-			actuallTextEditWidget.VAnchor = Agg.UI.VAnchor.ParentBottom;
-			AddChild(actuallTextEditWidget);
-			BackgroundColor = RGBA_Bytes.White;
-			HAnchor = HAnchor.FitToChildren;
-			VAnchor = VAnchor.FitToChildren;
+			this.Padding = new BorderDouble(3);
+			this.BackgroundColor = Color.White;
+			this.HAnchor = HAnchor.Fit;
+			this.VAnchor = VAnchor.Fit;
+			this.Border = 1;
 
-			noContentFieldDescription = new TextWidget(messageWhenEmptyAndNotSelected, textColor: RGBA_Bytes.Gray);
-			noContentFieldDescription.VAnchor = VAnchor.ParentBottom;
-			noContentFieldDescription.AutoExpandBoundsToText = true;
-			AddChild(noContentFieldDescription);
+			this.ActualTextEditWidget = new TextEditWidget(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine, tabIndex: tabIndex, typeFace: typeFace)
+			{
+				VAnchor = VAnchor.Bottom
+			};
+			this.ActualTextEditWidget.MinimumSize = new Vector2(Math.Max(ActualTextEditWidget.MinimumSize.X, pixelWidth), Math.Max(ActualTextEditWidget.MinimumSize.Y, pixelHeight));
+			this.AddChild(this.ActualTextEditWidget);
+
+			this.AddChild(noContentFieldDescription = new TextWidget(messageWhenEmptyAndNotSelected, textColor: Color.Gray)
+			{
+				VAnchor = VAnchor.Top,
+				AutoExpandBoundsToText = true
+			});
+
 			SetNoContentFieldDescriptionVisibility();
+		}
+
+		public override HAnchor HAnchor
+		{
+			get => base.HAnchor;
+			set
+			{
+				base.HAnchor = value;
+				if(ActualTextEditWidget != null) ActualTextEditWidget.HAnchor = value;
+			}
 		}
 
 		private void SetNoContentFieldDescriptionVisibility()
 		{
 			if (noContentFieldDescription != null)
 			{
-				if (Text == "")
-				{
-					noContentFieldDescription.Visible = true;
-				}
-				else
-				{
-					noContentFieldDescription.Visible = false;
-				}
+				noContentFieldDescription.Visible = (Text == "");
 			}
 		}
 
@@ -58,139 +90,32 @@ namespace MatterHackers.MatterControl
 
 			if (ContainsFocus)
 			{
-				graphics2D.Rectangle(LocalBounds, RGBA_Bytes.Orange);
+				graphics2D.Rectangle(LocalBounds, Color.Orange);
 			}
 		}
 
 		public override string Text
 		{
-			get
-			{
-				return actuallTextEditWidget.Text;
-			}
-			set
-			{
-				actuallTextEditWidget.Text = value;
-			}
-		}
-
-		public override void Focus()
-		{
-			actuallTextEditWidget.Focus();
+			get => ActualTextEditWidget.Text;
+			set => ActualTextEditWidget.Text = value;
 		}
 
 		public bool SelectAllOnFocus
 		{
-			get { return actuallTextEditWidget.InternalTextEditWidget.SelectAllOnFocus; }
-			set { actuallTextEditWidget.InternalTextEditWidget.SelectAllOnFocus = value; }
+			get => ActualTextEditWidget.InternalTextEditWidget.SelectAllOnFocus;
+			set => ActualTextEditWidget.InternalTextEditWidget.SelectAllOnFocus = value;
 		}
+		public bool ReadOnly { get => ActualTextEditWidget.ReadOnly; set => ActualTextEditWidget.ReadOnly = value; }
 
 		public void DrawFromHintedCache()
 		{
 			ActualTextEditWidget.Printer.DrawFromHintedCache = true;
 			ActualTextEditWidget.DoubleBuffer = false;
 		}
-	}
 
-	public class MHPasswordTextEditWidget : MHTextEditWidget
-	{
-		private TextEditWidget passwordCoverText;
-
-		public MHPasswordTextEditWidget(string text = "", double x = 0, double y = 0, double pointSize = 12, double pixelWidth = 0, double pixelHeight = 0, bool multiLine = false, int tabIndex = 0, string messageWhenEmptyAndNotSelected = "")
-			: base(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine, tabIndex, messageWhenEmptyAndNotSelected)
+		public override void Focus()
 		{
-			// remove this so that we can have other content first (the hiden letters)
-			RemoveChild(noContentFieldDescription);
-
-			passwordCoverText = new TextEditWidget(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine);
-			passwordCoverText.Selectable = false;
-			passwordCoverText.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			passwordCoverText.MinimumSize = new Vector2(Math.Max(passwordCoverText.MinimumSize.x, pixelWidth), Math.Max(passwordCoverText.MinimumSize.y, pixelHeight));
-			passwordCoverText.VAnchor = Agg.UI.VAnchor.ParentBottom;
-			AddChild(passwordCoverText);
-
-			actuallTextEditWidget.TextChanged += (sender, e) =>
-			{
-				passwordCoverText.Text = new string('●', actuallTextEditWidget.Text.Length);
-			};
-
-			// put in back in after the hidden text
-			noContentFieldDescription.ClearRemovedFlag();
-			AddChild(noContentFieldDescription);
-		}
-
-		public bool Hidden
-		{
-			get { return !passwordCoverText.Visible; }
-			set { passwordCoverText.Visible = !value; }
-		}
-	}
-
-	public class MHNumberEdit : GuiWidget
-	{
-		private NumberEdit actuallNumberEdit;
-
-		public NumberEdit ActuallNumberEdit
-		{
-			get { return actuallNumberEdit; }
-		}
-
-		public MHNumberEdit(double startingValue,
-			double x = 0, double y = 0, double pointSize = 12,
-			double pixelWidth = 0, double pixelHeight = 0,
-			bool allowNegatives = false, bool allowDecimals = false,
-			double minValue = int.MinValue,
-			double maxValue = int.MaxValue,
-			double increment = 1,
-			int tabIndex = 0)
-		{
-			Padding = new BorderDouble(3);
-			actuallNumberEdit = new NumberEdit(startingValue, x, y, pointSize, pixelWidth, pixelHeight,
-				allowNegatives, allowDecimals, minValue, maxValue, increment, tabIndex);
-			actuallNumberEdit.VAnchor = Agg.UI.VAnchor.ParentBottom;
-			AddChild(actuallNumberEdit);
-			BackgroundColor = RGBA_Bytes.White;
-			HAnchor = HAnchor.FitToChildren;
-			VAnchor = VAnchor.FitToChildren;
-		}
-
-		public override int TabIndex
-		{
-			get
-			{
-				return base.TabIndex;
-			}
-			set
-			{
-				actuallNumberEdit.TabIndex = value;
-			}
-		}
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			base.OnDraw(graphics2D);
-			if (ContainsFocus)
-			{
-				graphics2D.Rectangle(LocalBounds, RGBA_Bytes.Orange);
-			}
-		}
-
-		public override string Text
-		{
-			get
-			{
-				return actuallNumberEdit.Text;
-			}
-			set
-			{
-				actuallNumberEdit.Text = value;
-			}
-		}
-
-		public bool SelectAllOnFocus
-		{
-			get { return ActuallNumberEdit.InternalNumberEdit.SelectAllOnFocus; }
-			set { ActuallNumberEdit.InternalNumberEdit.SelectAllOnFocus = value; }
+			ActualTextEditWidget.Focus();
 		}
 	}
 }

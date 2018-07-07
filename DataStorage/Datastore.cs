@@ -27,165 +27,15 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.UI;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.DataStorage
 {
-	public class ApplicationDataStorage
-	{
-		public bool FirstRun = false;
-
-		//Describes the location for storing all local application data
-		private static ApplicationDataStorage globalInstance;
-		private static readonly string applicationDataFolderName = "MatterControl";
-		private readonly string datastoreName = "MatterControl.db";
-		private string applicationPath;
-		private static string applicationUserDataPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName);
-
-		public ApplicationDataStorage()
-		//Constructor - validates that local storage folder exists, creates if necessary
-		{
-			DirectoryInfo dir = new DirectoryInfo(ApplicationUserDataPath);
-			if (!dir.Exists)
-			{
-				dir.Create();
-			}
-		}
-
-		/// <summary>
-		/// Creates a global instance of ApplicationDataStorage
-		/// </summary>
-		public static ApplicationDataStorage Instance
-		{
-			get
-			{
-				if (globalInstance == null)
-				{
-					globalInstance = new ApplicationDataStorage();
-				}
-				return globalInstance;
-			}
-		}
-
-		public string GetTempFileName(string fileExtension = null)
-		{
-			string tempFileName = string.IsNullOrEmpty(fileExtension) ?
-				Path.GetRandomFileName() :
-				Path.ChangeExtension(Path.GetRandomFileName(), "." + fileExtension.TrimStart('.'));
-
-			return Path.Combine(this.ApplicationTempDataPath, tempFileName);
-		}
-
-		public string ApplicationLibraryDataPath
-		{
-			get
-			{
-				string libraryPath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "Library");
-
-				//Create library path if it doesn't exist
-				DirectoryInfo dir = new DirectoryInfo(libraryPath);
-				if (!dir.Exists)
-				{
-					dir.Create();
-				}
-				return libraryPath;
-			}
-		}
-
-		/// <summary>
-		/// Overrides the AppData location.
-		/// </summary>
-		/// <param name="path">The new AppData path.</param>
-		internal void OverrideAppDataLocation(string path)
-		{
-			Console.WriteLine("   Overriding ApplicationUserDataPath: " + path);
-
-			// Ensure the target directory exists
-			Directory.CreateDirectory(path);
-
-			applicationUserDataPath = path;
-
-			// Initialize a fresh datastore instance after overriding the AppData path
-			Datastore.Instance = new Datastore();
-			Datastore.Instance.Initialize();
-		}
-
-		public string ApplicationPath
-		{
-			get
-			{
-				if (this.applicationPath == null)
-				{
-					applicationPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-				}
-				return applicationPath;
-			}
-		}
-
-		/// <summary>
-		/// Returns the application temp data folder
-		/// </summary>
-		/// <returns></returns>
-		public string ApplicationTempDataPath
-		{
-			get
-			{
-				return Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName, "data", "temp");
-			}
-		}
-
-		/// <summary>
-		/// Returns the application user data folder
-		/// </summary>
-		/// <returns></returns>
-		public static string ApplicationUserDataPath
-		{
-			get
-			{
-				return applicationUserDataPath;
-			}
-		}
-
-		/// <summary>
-		/// Returns the path to the sqlite database
-		/// </summary>
-		/// <returns></returns>
-		public string DatastorePath
-		{
-			get { return Path.Combine(ApplicationUserDataPath, datastoreName); }
-		}
-
-		/// <summary>
-		/// Returns the gcode output folder
-		/// </summary>
-		/// <returns></returns>
-		public string GCodeOutputPath
-		{
-			get
-			{
-				string gcodeOutputPath = Path.Combine(ApplicationUserDataPath, "data", "gcode");
-				if (!Directory.Exists(gcodeOutputPath))
-				{
-					Directory.CreateDirectory(gcodeOutputPath);
-				}
-				return gcodeOutputPath;
-			}
-		}
-
-#if __ANDROID__
-		/// <summary>
-		/// Returns the public storage folder (ex. download folder on Android)
-		/// </summary>
-		public string PublicDataStoragePath { get; } = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath;
-#endif
-	}
-
 	public class Datastore
 	{
 		bool wasExited = false;
@@ -194,7 +44,6 @@ namespace MatterHackers.MatterControl.DataStorage
 		private string datastoreLocation = ApplicationDataStorage.Instance.DatastorePath;
 		private static Datastore globalInstance;
 		private ApplicationSession activeSession;
-		private bool TEST_FLAG = false;
 
 		private List<Type> dataStoreTables = new List<Type>
 		{
@@ -218,7 +67,7 @@ namespace MatterHackers.MatterControl.DataStorage
 				ApplicationDataStorage.Instance.FirstRun = true;
 			}
 
-			OSType osType = OsInformation.OperatingSystem;
+			OSType osType = AggContext.OperatingSystem;
 			switch (osType)
 			{
 				case OSType.Windows:
@@ -239,22 +88,6 @@ namespace MatterHackers.MatterControl.DataStorage
 
 				default:
 					throw new NotImplementedException();
-			}
-
-			if (TEST_FLAG)
-			{
-				//In test mode - attempt to drop all tables (in case db was locked when we tried to delete it)
-				foreach (Type table in dataStoreTables)
-				{
-					try
-					{
-						this.dbSQLite.DropTable(table);
-					}
-					catch
-					{
-						GuiWidget.BreakInDebugger();
-					}
-				}
 			}
 		}
 
@@ -315,15 +148,17 @@ namespace MatterHackers.MatterControl.DataStorage
 		//Run initial checks and operations on sqlite datastore
 		public void Initialize()
 		{
-			if (TEST_FLAG)
+			ValidateSchema();
+
+			// Construct the root library collection if missing
+			var rootLibraryCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
+			if (rootLibraryCollection == null)
 			{
-				ValidateSchema();
-				GenerateSampleData();
+				rootLibraryCollection = new PrintItemCollection();
+				rootLibraryCollection.Name = "_library";
+				rootLibraryCollection.Commit();
 			}
-			else
-			{
-				ValidateSchema();
-			}
+
 			StartSession();
 		}
 

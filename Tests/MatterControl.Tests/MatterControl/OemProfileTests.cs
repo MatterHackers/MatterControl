@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
 using NUnit.Framework;
@@ -13,16 +13,16 @@ namespace MatterControl.Tests.MatterControl
 	[TestFixture, Category("OemProfiles")]
 	public class OemProfileTests
 	{
-		private static List<PrinterConfig> allPrinters;
+		private static List<PrinterTestDetails> allPrinters;
 		private static string printerSettingsDirectory = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData", "Profiles");
 
 		static OemProfileTests()
 		{
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			allPrinters = (from printerFile in new DirectoryInfo(printerSettingsDirectory).GetFiles("*.printer", SearchOption.AllDirectories)
-						   select new PrinterConfig
+						   select new PrinterTestDetails
 						   {
 							   PrinterName = printerFile.Name,
 							   Oem = printerFile.Directory.Name,
@@ -268,7 +268,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateOnAllPrinters((printer, settings) =>
 			{
 				// TODO: Why aren't we testing all gcode sections?
-				string[] keysToTest = { "start_gcode", "end_gcode" };
+				string[] keysToTest = { SettingsKey.start_gcode, SettingsKey.end_gcode };
 				foreach (string gcodeKey in keysToTest)
 				{
 					string gcode = settings.GetValue(gcodeKey);
@@ -304,7 +304,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				string startGcode = settings.GetValue("start_gcode");
+				string startGcode = settings.GetValue(SettingsKey.start_gcode);
 				Assert.False(startGcode.Contains("first_layer_bed_temperature"), "[start_gcode] should not contain [first_layer_bed_temperature]" + printer.RelativeFilePath);
 			});
 		}
@@ -453,7 +453,7 @@ namespace MatterControl.Tests.MatterControl
 		/// printer settings loaded into a SettingsLayer as well as state about the printer
 		/// </summary>
 		/// <param name="action">The action to invoke for each printer</param>
-		private void ValidateOnAllPrinters(Action<PrinterConfig, PrinterSettings> action)
+		private void ValidateOnAllPrinters(Action<PrinterTestDetails, PrinterSettings> action)
 		{
 			var ruleViolations = new List<string>();
 
@@ -465,7 +465,7 @@ namespace MatterControl.Tests.MatterControl
 				printerSettings.AutoSave = false;
 
 				// Disable active material/quality overrides
-				printerSettings.SetMaterialPreset(0, "");
+				printerSettings.ActiveMaterialKey = "";
 				printerSettings.ActiveQualityKey = "";
 
 				// Validate just the OemLayer
@@ -481,7 +481,7 @@ namespace MatterControl.Tests.MatterControl
 				{
 					printer.RuleViolated = false;
 
-					printerSettings.SetMaterialPreset(0, layer.LayerID);
+					printerSettings.ActiveMaterialKey = layer.LayerID;
 
 					// Validate the settings with this material layer active
 					action(printer, printerSettings);
@@ -492,7 +492,7 @@ namespace MatterControl.Tests.MatterControl
 					}
 				}
 
-				printerSettings.SetMaterialPreset(0, "");
+				printerSettings.ActiveMaterialKey = "";
 
 				// Validate quality layers
 				foreach (var layer in printer.PrinterSettings.QualityLayers)
@@ -516,7 +516,7 @@ namespace MatterControl.Tests.MatterControl
 				string.Format("One or more printers violate this rule: \r\n\r\n{0}\r\n", string.Join("\r\n", ruleViolations.ToArray())));
 		}
 
-		private class PrinterConfig
+		private class PrinterTestDetails
 		{
 			public string PrinterName { get; set; }
 			public string Oem { get; set; }

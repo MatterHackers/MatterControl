@@ -31,14 +31,17 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 
 namespace MatterHackers.MatterControl
 {
-	//Normally step one of the setup process
-	public class SetupWizardWifi : WizardPage
+	// Normally step one of the setup process
+	public class SetupWizardWifi : DialogPage
 	{
 		public SetupWizardWifi()
 		{
+			this.WindowTitle = "Setup Wizard".Localize();
+
 			contentRow.AddChild(new TextWidget("Wifi Setup".Localize() + ":", 0, 0, labelFontSize)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
@@ -50,26 +53,29 @@ namespace MatterHackers.MatterControl
 
 			var connectButtonContainer = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 6)
 			};
 
 			//Construct buttons
-			Button skipButton = whiteImageButtonFactory.Generate("Skip".Localize(), centerText: true);
-			skipButton.Click += (s, e) => this.WizardWindow.ChangeToSetupPrinterForm();
+			Button skipButton = theme.WhiteButtonFactory.Generate("Skip".Localize());
+			skipButton.Click += Continue_Click;
 
-			Button nextButton = textImageButtonFactory.Generate("Continue".Localize());
-			nextButton.Click += (s, e) => this.WizardWindow.ChangeToSetupPrinterForm();
+			Button nextButton = theme.ButtonFactory.Generate("Continue".Localize());
+			nextButton.Click += Continue_Click;
 			nextButton.Visible = false;
 
-			Button configureButton = whiteImageButtonFactory.Generate("Configure".Localize(), centerText: true);
+			Button configureButton = theme.WhiteButtonFactory.Generate("Configure".Localize());
 			configureButton.Margin = new BorderDouble(0, 0, 10, 0);
 			configureButton.Click += (s, e) =>
 			{
-				nextButton.Visible = true;
-				skipButton.Visible = false;
-				configureButton.Visible = false;
-				MatterControlApplication.Instance.ConfigureWifi();
+				UiThread.RunOnIdle(() =>
+				{
+					nextButton.Visible = true;
+					skipButton.Visible = false;
+					configureButton.Visible = false;
+					AppContext.Platform.ConfigureWifi();
+				});
 			};
 
 			connectButtonContainer.AddChild(configureButton);
@@ -78,10 +84,15 @@ namespace MatterHackers.MatterControl
 
 			contentRow.AddChild(connectButtonContainer);
 
-			//Add buttons to buttonContainer
-			footerRow.AddChild(nextButton);
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
+			this.AddPageAction(nextButton);
+		}
+
+		private void Continue_Click(object sender, MouseEventArgs e)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				this.DialogWindow.ChangeToPage(PrinterSetup.GetBestStartPage());
+			});
 		}
 	}
 }

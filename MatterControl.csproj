@@ -38,9 +38,8 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <TargetFrameworkProfile />
-    <ReleaseVersion>1.2.0</ReleaseVersion>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">.\</SolutionDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -51,7 +50,7 @@
     <DefineConstants>TRACE;DEBUG;USE_OPENGL;IS_WINDOWS;IS_WINDOWS_FORMS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <Commandlineparameters>SHOW_MEMORY</Commandlineparameters>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -62,151 +61,325 @@
     <DefineConstants>TRACE;USE_OPENGL;IS_WINDOWS;IS_WINDOWS_FORMS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>application.ico</ApplicationIcon>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release64|AnyCPU'">
-    <OutputPath>bin\Release64\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <PlatformTarget>x64</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Release\MatterControl.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;USE_OPENGL;IS_WINDOWS;IS_WINDOWS_FORMS</DefineConstants>
-    <FileAlignment>4096</FileAlignment>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE;USE_OPENGL;IS_WINDOWS;IS_WINDOWS_FORMS</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <FileAlignment>4096</FileAlignment>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release64|x64'">
-    <OutputPath>bin\x64\Release64\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <FileAlignment>4096</FileAlignment>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="AboutPage\AboutWindow.cs" />
-    <Compile Include="AboutPage\CheckForUpdateWindow.cs" />
-    <Compile Include="AboutPage\HTMLParser\HtmlWidget.cs" />
-    <Compile Include="AboutPage\HTMLParser\ElementState.cs" />
+    <Compile Include="AboutPage\AboutPage.cs" />
+    <Compile Include="AboutPage\CacheDirectory.cs" />
+    <Compile Include="AboutPage\CheckForUpdatesPage.cs" />
+    <Compile Include="AboutPage\ContactFormPage.cs" />
+    <Compile Include="ApplicationView\LogoSpinner.cs" />
+    <Compile Include="ApplicationView\ThumbnailsConfig.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\LevelingPlan.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\LevelingWizardPage.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\LevelingWizardRootPage.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard100PointRadial.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardMesh.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelingWizard.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\LastPageInstructions.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\LevelingWizard.cs" />
+    <Compile Include="CustomWidgets\ResizeContainer\BottomResizeContainer.cs" />
+    <Compile Include="CustomWidgets\ResizeContainer\LeftResizeContainer.cs" />
+    <Compile Include="CustomWidgets\TreeView\TreeNode.cs" />
+    <Compile Include="CustomWidgets\TreeView\TreeView.cs" />
+    <Compile Include="DesignTools\Attributes\ShowSearchFieldAttribute.cs" />
+    <Compile Include="DesignTools\Attributes\ShowUpdateButtonAttribute.cs" />
+    <Compile Include="DesignTools\EditableTypes\DirectionAxis.cs" />
+    <Compile Include="DesignTools\EditableTypes\DirectionVector.cs" />
+    <Compile Include="DesignTools\Operations\Align2D.cs" />
+    <Compile Include="DesignTools\Operations\AlignObject3D.cs" />
+    <Compile Include="DesignTools\Operations\ArrayAdvancedObject3D.cs" />
+    <Compile Include="DesignTools\Operations\ArrayLinearObject3D.cs" />
+    <Compile Include="DesignTools\Operations\ArrayRadialObject3D.cs" />
+    <Compile Include="DesignTools\Obsolete\FitToBoundsObject3D.cs" />
+    <Compile Include="DesignTools\Operations\FitToBoundsObject3D_2.cs" />
+    <Compile Include="DesignTools\Operations\MirrorObject3D.cs" />
+    <Compile Include="DesignTools\Operations\TransformWrapperObject3D.cs" />
+    <Compile Include="DesignTools\Operations\GroupObject3D.cs" />
+    <Compile Include="DesignTools\Operations\Image\AlphaThresholdFunction.cs" />
+    <Compile Include="DesignTools\Operations\Image\HueThresholdFunction.cs" />
+    <Compile Include="DesignTools\Operations\Image\ImageToPathObject3D.cs" />
+    <Compile Include="DesignTools\Operations\Image\IThresholdFunction.cs" />
+    <Compile Include="DesignTools\Operations\Image\LinearExtrudeObject3D.cs" />
+    <Compile Include="DesignTools\Operations\Image\MapOnMaxIntensity.cs" />
+    <Compile Include="DesignTools\Operations\Image\SilhouetteThresholdFunction.cs" />
+    <Compile Include="DesignTools\Operations\OperationSourceObject3D.cs" />
+    <Compile Include="DesignTools\Operations\Path\SmoothPathObject3D.cs" />
+    <Compile Include="DesignTools\Operations\PinchObject3D.cs" />
+    <Compile Include="DesignTools\Obsolete\RotateObject3D.cs" />
+    <Compile Include="DesignTools\Operations\RotateObject3D_2.cs" />
+    <Compile Include="DesignTools\Operations\ScaleObject3D.cs" />
+    <Compile Include="DesignTools\Operations\SetCenterObject3D.cs" />
+    <Compile Include="DesignTools\Operations\TranslateObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\ComponentObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\CubeObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\HalfCylinderObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\HalfWedgeObject3D.cs" />
+    <Compile Include="Library\ContentProviders\ImageContentProvider.cs" />
+    <Compile Include="Library\Providers\MatterControl\LibraryCollectionContainer.cs" />
+    <Compile Include="Library\Providers\MatterControl\PartHistoryContainer.cs" />
+    <Compile Include="Library\Providers\MatterControl\RootHistoryContainer.cs" />
+    <Compile Include="Library\Widgets\InsertionGroupObject3D.cs" />
+    <Compile Include="PartPreviewWindow\GCodeDetails\BoolOption.cs" />
+    <Compile Include="PartPreviewWindow\GCodeDetails\GCodeLayerDetailsView.cs" />
+    <Compile Include="PartPreviewWindow\GCodeDetails\GCodeOptionsPanel.cs" />
+    <Compile Include="PartPreviewWindow\GCodeDetails\IToggleOption.cs" />
+    <Compile Include="PartPreviewWindow\LeftClipFlowLayoutWidget.cs" />
+    <Compile Include="PartPreviewWindow\Object3DTreeBuilder.cs" />
+    <Compile Include="PartPreviewWindow\ResizableSectionWidget.cs" />
+    <Compile Include="PartPreviewWindow\StartPage\FeedData.cs" />
+    <Compile Include="PartPreviewWindow\StartPage\FeedItemData.cs" />
+    <Compile Include="PartPreviewWindow\StartPage\FeedSectionData.cs" />
+    <Compile Include="PartPreviewWindow\StartPage\StartTabPage.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\CombineObject3D.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\IntersectionObject3D.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\ModifiedMeshObject3D.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\SubtractAndReplaceObject3D.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\SubtractObject3D.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\CalibrationControls.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\LevelingFunctions.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\ProbeCalibrationWizard.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\AutoProbeFeedback.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\CalibrateProbeLastPagelInstructions.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\FindBedHeight.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\GetCoarseBedHeight.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\GetFineBedHeight.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\GettingThirdPointFor2PointCalibration.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\GetUltraFineBedHeight.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\HomePrinterPage.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\SelectMaterialPage.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\WaitForTempPage.cs" />
+    <Compile Include="CustomWidgets\ConfigurePrinterWidget.cs" />
     <Compile Include="AboutPage\UpdateControlData.cs" />
     <Compile Include="AboutPage\UpdateControlView.cs" />
-    <Compile Include="AboutPage\HTMLParser\HtmlParser.cs" />
-    <Compile Include="ActionBar\ActionBarPlus.cs" />
     <Compile Include="ActionBar\PrinterSelector.cs" />
-    <Compile Include="ActionBar\TouchScreenPrintStatusRow.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
-    <Compile Include="ActionBar\PrintActionRow.cs" />
-    <Compile Include="ActionBar\PrinterConnectAndSelectControl.cs" />
-    <Compile Include="ActionBar\PrintStatusRow.cs" />
+    <Compile Include="ApplicationView\OemProfileDictionary.cs" />
+    <Compile Include="ApplicationView\WindowsPlatformsFeatures.cs" />
+    <Compile Include="DataStorage\ApplicationDataStorage.cs" />
+    <Compile Include="DesignTools\Attributes\IconsAttribute.cs" />
+    <Compile Include="DesignTools\Attributes\WebPageLinkAttribute.cs" />
+    <Compile Include="DesignTools\Interfaces\IEditorDraw.cs" />
+    <Compile Include="DesignTools\Interfaces\IPropertyGridModifier.cs" />
+    <Compile Include="DesignTools\Lithophane.cs" />
+    <Compile Include="DesignTools\Operations\CurveObject3D.cs" />
+    <Compile Include="DesignTools\Operations\Object3DExtensions.cs" />
+    <Compile Include="DesignTools\Primitives\BaseObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\ImageObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\RingObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\WedgeObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\PyramidObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\CylinderObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\HalfSphereObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\SphereObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\TextObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\TorusObject3D.cs" />
+    <Compile Include="DesignTools\PublicPropertyEditor.cs" />
+    <Compile Include="DesignTools\Primitives\ConeObject3D.cs" />
+    <Compile Include="DesignTools\Attributes\SortableAttribute.cs" />
+    <Compile Include="DesignTools\Attributes\UnlockLinkAttribute.cs" />
+    <Compile Include="Library\Providers\FileSystem\McxContainer.cs" />
+    <Compile Include="Library\Providers\GraphConfig.cs" />
+    <Compile Include="CustomWidgets\InlineTitleEdit.cs" />
+    <Compile Include="Library\DynamicContentStore.cs" />
+    <Compile Include="Library\InMemoryLibraryItem.cs" />
+    <Compile Include="DesignTools\LithophaneObject3D.cs" />
+    <Compile Include="PartPreviewWindow\LibraryBrowserPage.cs" />
+    <Compile Include="PartPreviewWindow\MaterialControls.cs" />
+    <Compile Include="PartPreviewWindow\ModelOptionsPanel.cs" />
+    <Compile Include="PartPreviewWindow\MoveItemPage.cs" />
+    <Compile Include="PartPreviewWindow\StartPage\ExplorerBar.cs" />
+    <Compile Include="PartPreviewWindow\RoundedToggleSwitch.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\ImageEditor.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\MeshWrapperObject3D.cs" />
+    <Compile Include="PartPreviewWindow\View3D\PrinterBar\OverflowBar.cs" />
+    <Compile Include="PartPreviewWindow\View3D\PrinterBar\PrintPopupMenu.cs" />
+    <Compile Include="PartPreviewWindow\View3D\PrinterBar\SliceButton.cs" />
+    <Compile Include="PartPreviewWindow\View3D\PrinterBar\PrinterConnectButton.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBase.cs" />
     <Compile Include="ActionBar\TemperatureWidgetExtruder.cs" />
-    <Compile Include="ApplicationView\MenuRow\MenuOptionAction.cs" />
-    <Compile Include="ApplicationView\MenuRow\MenuOptionHelp.cs" />
-    <Compile Include="ApplicationView\MenuRow\MenuOptionSettings.cs" />
-    <Compile Include="ApplicationView\MenuRow\MenuOptionFile.cs" />
-    <Compile Include="ApplicationView\MenuRow\MenuBase.cs" />
-    <Compile Include="ApplicationView\MenuRow\ApplicationMenuRow.cs" />
-    <Compile Include="ApplicationView\CompactSlidePanel.cs" />
-    <Compile Include="ApplicationView\TouchscreenTabView.cs" />
-    <Compile Include="ApplicationView\AdvancedControlsPanel.cs" />
-    <Compile Include="ApplicationView\FirstPanelTabView.cs" />
+    <Compile Include="ApplicationView\ApplicationController.cs" />
+    <Compile Include="ApplicationView\PrinterModels.cs" />
+    <Compile Include="ApplicationView\ThemeConfig.cs" />
+    <Compile Include="ConfigurationPage\ApplicationSettings\SettingsItem.cs" />
+    <Compile Include="ConfigurationPage\ApplicationSettings\ThemePreviewButton.cs" />
+    <Compile Include="ControlElements\MHNumberEdit.cs" />
+    <Compile Include="ControlElements\MHPasswordTextEditWidget.cs" />
+    <Compile Include="ControlElements\TextImageWidget.cs" />
+    <Compile Include="CustomWidgets\DockingTabControl.cs" />
+    <Compile Include="CustomWidgets\InlineEditControl.cs" />
+    <Compile Include="CustomWidgets\PrintingWindow\BedStatusWidget.cs" />
+    <Compile Include="CustomWidgets\PrintingWindow\ExtruderStatusWidget.cs" />
+    <Compile Include="CustomWidgets\PrintingWindow\ProgressDial.cs" />
+    <Compile Include="CustomWidgets\PrintingWindow\TemperatureStatusWidget.cs" />
+    <Compile Include="CustomWidgets\SimpleButton.cs" />
+    <Compile Include="CustomWidgets\NamedAction.cs" />
+    <Compile Include="CustomWidgets\RadioImageWidget.cs" />
+    <Compile Include="CustomWidgets\RadioPanelWidget.cs" />
+    <Compile Include="CustomWidgets\SvgWidget.cs" />
+    <Compile Include="Library\Interfaces\LibraryExtensionMethods.cs" />
+    <Compile Include="Library\Providers\CreateFolderItem.cs" />
+    <Compile Include="Library\Providers\FileSystem\SceneReplacementFileItem.cs" />
+    <Compile Include="Library\Providers\MatterControl\PlatingHistoryContainer.cs" />
+    <Compile Include="Library\Providers\MatterControl\PrintHistoryContainer.cs" />
+    <Compile Include="Library\Providers\MatterControl\PrintHistoryItem.cs" />
+    <Compile Include="Library\Providers\WritableContainer.cs" />
+    <Compile Include="Library\Widgets\ExpandCheckboxButton.cs" />
+    <Compile Include="PartPreviewWindow\NewTabButton.cs" />
+    <Compile Include="PartPreviewWindow\PartTabPage.cs" />
+    <Compile Include="PartPreviewWindow\StartPage\ExploreItem.cs" />
+    <Compile Include="PartPreviewWindow\StartPage\ExplorePanel.cs" />
+    <Compile Include="PartPreviewWindow\StartPage\ExploreSection.cs" />
+    <Compile Include="PartPreviewWindow\PopupMenu.cs" />
+    <Compile Include="PartPreviewWindow\PopupMenuButton.cs" />
+    <Compile Include="PartPreviewWindow\PopupButton.cs" />
+    <Compile Include="PartPreviewWindow\RunningTaskRow.cs" />
+    <Compile Include="PartPreviewWindow\RunningTasksWidget.cs" />
+    <Compile Include="PartPreviewWindow\SectionWidget.cs" />
+    <Compile Include="PartPreviewWindow\SliceLayerSelector.cs" />
+    <Compile Include="PartPreviewWindow\Toolbar.cs" />
+    <Compile Include="PartPreviewWindow\View3D\PrinterBar\PauseResumeButton.cs" />
+    <Compile Include="Library\ReadOnlyStreamItem.cs" />
+    <Compile Include="PartPreviewWindow\View3D\SliceProgressReporter.cs" />
+    <Compile Include="PartPreviewWindow\View3D\UndoCommands\ChangeColor.cs" />
+    <Compile Include="PartPreviewWindow\View3D\UndoCommands\MakeSupport.cs" />
+    <Compile Include="PartPreviewWindow\View3D\TumbleCubeControl.cs" />
+    <Compile Include="PartPreviewWindow\View3D\UndoCommands\DeleteCommand.cs" />
+    <Compile Include="PartPreviewWindow\View3D\UndoCommands\TransformCommand.cs" />
+    <Compile Include="PrinterControls\EditLevelingSettingsPage.cs" />
+    <Compile Include="PrinterControls\JogControls.cs" />
+    <Compile Include="PrinterControls\MacroDetailPage.cs" />
+    <Compile Include="PrinterControls\MacroListPage.cs" />
+    <Compile Include="PrinterControls\MovementSpeedsPage.cs" />
+    <Compile Include="PrinterControls\PrinterConnections\PrinterSetup.cs" />
+    <Compile Include="RootSystemWindow.cs" />
+    <Compile Include="SetupWizard\DialogWindow.cs" />
+    <Compile Include="SetupWizard\HelpPage.cs" />
+    <Compile Include="SlicerConfiguration\SettingsOrganizer.cs" />
+    <Compile Include="SlicerConfiguration\SettingsRow.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\CharField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\DirectionVectorField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\EnumField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\IconEnumField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\IpAddessField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\Vector3Field.cs" />
+    <Compile Include="Utilities\MarkdigAgg\AggCodeBlockRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\AggHeadingRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\AggListRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\AggMarkdownDocument.cs" />
+    <Compile Include="Utilities\MarkdigAgg\AggObjectRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\AggQuoteBlockRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\AggRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\AggThematicBreakRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\Inlines\AggAutolinkInlineRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\Inlines\AggCodeInlineRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\Inlines\AggDelimiterInlineRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\Inlines\AggEmphasisInlineRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\Inlines\AggLineBreakInlineRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\Inlines\AggLinkInlineRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\Inlines\AggLiteralInlineRenderer.cs" />
+    <Compile Include="Utilities\MarkdigAgg\AggParagraphRenderer.cs" />
+    <Compile Include="Utilities\IGCodePostProcessor.cs" />
+    <Compile Include="Utilities\InspectForm.cs" Condition="'$(Configuration)' == 'Debug'">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Utilities\InspectForm.Designer.cs" Condition="'$(Configuration)' == 'Debug'">
+      <DependentUpon>InspectForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Library\ContentProviders\GCodeContentProvider.cs" />
+    <Compile Include="Library\ContentProviders\IContentProvider.cs" />
     <Compile Include="ConfigurationPage\ApplicationSettings\ApplicationSettingsView.cs" />
-    <Compile Include="ConfigurationPage\CloudSettings\CloudSettingsView.cs" />
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
-    <Compile Include="ConfigurationPage\CalibrationSettings\CalibrationSettingsView.cs" />
-    <Compile Include="ConfigurationPage\PrinterSettings\PrinterSettingsView.cs" />
-    <Compile Include="ConfigurationPage\PrintLeveling\InstructionsPage.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\LevelingStrings.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard7PointRadial.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard13PointRadial.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard3Point.cs" />
-    <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardBase.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelingData.cs" />
-    <Compile Include="ConfigurationPage\SettingsViewBase.cs" />
-    <Compile Include="ControlElements\ConditionalClickWidget.cs" />
     <Compile Include="ControlElements\AttentionGetter.cs" />
-    <Compile Include="ControlElements\PopOutManager.cs" />
-    <Compile Include="CustomWidgets\AltGroupBox.cs" />
     <Compile Include="CustomWidgets\DoubleSolidSlider.cs" />
-    <Compile Include="CustomWidgets\FatFlatClickWidget.cs" />
     <Compile Include="CustomWidgets\FlowSpacers.cs" />
-    <Compile Include="CustomWidgets\LibrarySelector\LibrarySelectorRowItem.cs" />
     <Compile Include="CustomWidgets\LibrarySelector\FolderBreadCrumbWidget.cs" />
-    <Compile Include="CustomWidgets\LibrarySelector\LibrarySelectorRowItemCollection.cs" />
-    <Compile Include="CustomWidgets\LibrarySelector\LibrarySelectorWidget.cs" />
-    <Compile Include="CustomWidgets\PopOutTextTab.cs" />
-    <Compile Include="CustomWidgets\PrintingWindow.cs" />
     <Compile Include="CustomWidgets\SlideWidget.cs" />
     <Compile Include="CustomWidgets\SolidSlider.cs" />
-    <Compile Include="CustomWidgets\ThumbnailTracer.cs" />
     <Compile Include="DataStorage\Models.cs" />
+    <Compile Include="Library\ContentProviders\MeshContentProvider.cs" />
+    <Compile Include="Library\Export\FolderExport.cs" />
+    <Compile Include="Library\Export\ZipExport.cs" />
+    <Compile Include="Library\Export\GCodeExport.cs" />
+    <Compile Include="Library\Export\StlExport.cs" />
+    <Compile Include="Library\Export\MeshExport.cs" />
+    <Compile Include="Library\ExtensionMethods.cs" />
+    <Compile Include="Library\Interfaces\ILibraryContainer.cs" />
+    <Compile Include="Library\Interfaces\ILibraryContainerLink.cs" />
+    <Compile Include="Library\Interfaces\IThumbnail.cs" />
+    <Compile Include="Library\Interfaces\ILibraryItem.cs" />
+    <Compile Include="Library\Interfaces\KnownLengthStream.cs" />
+    <Compile Include="Library\Providers\LibraryConfig.cs" />
+    <Compile Include="Library\Providers\MatterControl\CalibrationPartsContainer.cs" />
+    <Compile Include="Library\Widgets\ListView\IconListView.cs" />
+    <Compile Include="Library\Widgets\ListView\IListContentView.cs" />
+    <Compile Include="Library\Widgets\ListView\ListViewItemBase.cs" />
+    <Compile Include="Library\Providers\MessageItem.cs" />
+    <Compile Include="Library\Providers\GeneratorItem.cs" />
+    <Compile Include="Library\Widgets\ListView\RowListView.cs" />
+    <Compile Include="Library\Providers\MatterControl\SqliteLibraryContainer.cs" />
+    <Compile Include="Library\Providers\MatterControl\PrintQueueContainer.cs" />
+    <Compile Include="Library\Providers\SDCard\SDCardContainer.cs" />
+    <Compile Include="Library\Providers\SDCard\SDCardFileItem.cs" />
+    <Compile Include="Library\Providers\LibraryContainer.cs" />
+    <Compile Include="Library\Providers\LibraryProviderHelpers.cs" />
+    <Compile Include="Library\Widgets\ListView\PrintItemAction.cs" />
+    <Compile Include="Library\Providers\DynamicContainerLink.cs" />
+    <Compile Include="Library\Providers\FileSystem\FileSystemContainer.cs" />
+    <Compile Include="Library\Providers\FileSystem\FileSystemItem.cs" />
+    <Compile Include="Library\Providers\FileSystem\FileSystemFileItem.cs" />
+    <Compile Include="Library\Providers\RootLibraryContainer.cs" />
+    <Compile Include="Library\Providers\Zip\LocalZipContainerLink.cs" />
+    <Compile Include="Library\Providers\Zip\ZipMemoryItem.cs" />
+    <Compile Include="Library\Providers\Zip\ZipMemoryContainer.cs" />
+    <Compile Include="PartPreviewWindow\GCodeDetails\GCodeDetails.cs" />
+    <Compile Include="PartPreviewWindow\GCodeDetails\GCodeDetailsView.cs" />
+    <Compile Include="PartPreviewWindow\Tabs.cs" />
+    <Compile Include="PartPreviewWindow\PrinterTabPage.cs" />
+    <Compile Include="PartPreviewWindow\View3D\BedMeshGenerator.cs" />
+    <Compile Include="PartPreviewWindow\View3D\ColorSwatchSelector.cs" />
+    <Compile Include="PartPreviewWindow\View3D\DragDropLoadProgress.cs" />
+    <Compile Include="PartPreviewWindow\View3D\GridOptionsPanel.cs" />
+    <Compile Include="PartPreviewWindow\View3D\InteractionLayer.cs" />
+    <Compile Include="PartPreviewWindow\View3D\InteractionVolume.cs" />
+    <Compile Include="PartPreviewWindow\View3D\MeshViewerWidget.cs" />
+    <Compile Include="PartPreviewWindow\View3D\MouseEvent3DArgs.cs" />
+    <Compile Include="PartPreviewWindow\View3D\PrinterBar\PrinterActionsBar.cs" />
     <Compile Include="PrinterCommunication\Io\NotPrintingStream.cs" />
+    <Compile Include="Library\Widgets\ListView\ListView.cs" />
+    <Compile Include="Library\Widgets\ListView\ListViewItem.cs" />
+    <Compile Include="PrinterCommunication\Io\MacroProcessingStream.cs" />
+    <Compile Include="PrinterCommunication\Io\RequestTemperaturesStream.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="SetupWizard\CopyGuestProfilesToUser.cs" />
-    <Compile Include="Library\RenameItemWindow.cs" />
-    <Compile Include="Library\Provider\LibraryProviderHistory.cs" />
-    <Compile Include="Library\Provider\LibraryProviderQueue.cs" />
-    <Compile Include="LocalizedString.cs" />
+    <Compile Include="SetupWizard\InputBoxPage.cs" />
     <Compile Include="PartPreviewWindow\BedSettings.cs" />
-    <Compile Include="PartPreviewWindow\ColorGradientWidget.cs" />
+    <Compile Include="PartPreviewWindow\SpeedsLegend.cs" />
     <Compile Include="PartPreviewWindow\PartPreviewContent.cs" />
     <Compile Include="PartPreviewWindow\View3D\DebugBvh.cs" />
-    <Compile Include="PartPreviewWindow\View3D\SideBar\ScaleControls.cs" />
-    <Compile Include="PartPreviewWindow\View3D\UndoCommands\DeleteUndoCommand.cs" />
-    <Compile Include="PartPreviewWindow\View3D\UndoCommands\CopyUndoCommand.cs" />
-    <Compile Include="PartPreviewWindow\View3D\Gui3D\HeightValueDisplay.cs" />
+    <Compile Include="PartPreviewWindow\View3D\UndoCommands\UngroupCommand.cs" />
+    <Compile Include="PartPreviewWindow\View3D\UndoCommands\InsertCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\SnapingIndicator.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\SelectionShadow.cs" />
-    <Compile Include="PartPreviewWindow\View3D\Gui3D\UpArrow3D.cs" />
-    <Compile Include="PartPreviewWindow\View3D\UndoCommands\TransformUndoCommand.cs" />
-    <Compile Include="PartPreviewWindow\View3D\View3DCreateSelectionData.cs" />
-    <Compile Include="PartPreviewWindow\View3D\View3DAlign.cs" />
-    <Compile Include="PartPreviewWindow\View3D\View3DAutoArange.cs" />
-    <Compile Include="PartPreviewWindow\View3D\View3DCopyGroup.cs" />
-    <Compile Include="PartPreviewWindow\View3D\View3DGroup.cs" />
-    <Compile Include="PartPreviewWindow\View3D\View3DUngroup.cs" />
-    <Compile Include="PartPreviewWindow\View3D\SideBar\MirrorControls.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Gui3D\MoveInZControl.cs" />
+    <Compile Include="PartPreviewWindow\View3D\SceneActions.cs" />
+    <Compile Include="PartPreviewWindow\View3D\IObject3DEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DWidget.cs" />
+    <Compile Include="PartPreviewWindow\SelectedObjectPanel.cs" />
     <Compile Include="PartPreviewWindow\ViewControls3D.cs" />
-    <Compile Include="PartPreviewWindow\ViewControls2D.cs" />
-    <Compile Include="PartPreviewWindow\BaseClasses\PartPreview3DWidget.cs" />
-    <Compile Include="PartPreviewWindow\ViewGcodeWidget.cs" />
-    <Compile Include="ConfigurationPage\PrinterConfigurationPage.cs" />
-    <Compile Include="CustomWidgets\DisableableWidget.cs" />
-    <Compile Include="CustomWidgets\ExportPrintItemWindow.cs" />
+    <Compile Include="PartPreviewWindow\GCode2DWidget.cs" />
+    <Compile Include="CustomWidgets\ExportPrintItemPage.cs" />
     <Compile Include="PrinterCommunication\Io\FeedRateMultiplyerStream.cs" />
     <Compile Include="PrinterCommunication\Io\ExtrusionMultiplyerStream.cs" />
     <Compile Include="PrinterCommunication\Io\PauseHandlingStream.cs" />
@@ -218,190 +391,154 @@
     <Compile Include="PrinterCommunication\Io\GCodeFileStream.cs" />
     <Compile Include="PrinterCommunication\Io\GCodeStream.cs" />
     <Compile Include="PrinterCommunication\Io\PrinterMove.cs" />
-    <Compile Include="PrinterCommunication\Io\RequestTemperaturesStream.cs" />
+    <Compile Include="PrinterCommunication\Io\ProcessWriteRegExStream.cs" />
     <Compile Include="PrinterCommunication\Io\QueuedCommandsStream.cs" />
     <Compile Include="PrinterCommunication\Io\PrintLevelingStream.cs" />
     <Compile Include="PrinterCommunication\Io\BabyStepsStream.cs" />
     <Compile Include="PrinterCommunication\Io\PrintRecoveryStream.cs" />
     <Compile Include="PrinterControls\ControlWidgets\AdjustmentControls.cs" />
-    <Compile Include="PrinterControls\ControlWidgets\ControlWidgetBase.cs" />
     <Compile Include="PrinterControls\ControlWidgets\FanControls.cs" />
     <Compile Include="PrinterControls\ControlWidgets\MovementControls.cs" />
     <Compile Include="PrinterControls\ControlWidgets\PowerControls.cs" />
-    <Compile Include="PrinterControls\ControlWidgets\TemperatureControls.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="PrinterControls\PrinterConnections\ShowAuthPanel.cs" />
-    <Compile Include="PrinterControls\TerminalWindow\PrinterOutputCache.cs" />
+    <Compile Include="PrinterControls\TerminalWindow\TerminalLog.cs" />
     <Compile Include="PrinterControls\TerminalWindow\TextScrolBar.cs" />
     <Compile Include="PrinterControls\TerminalWindow\TextScrollWidget.cs" />
     <Compile Include="PrinterControls\TerminalWindow\TerminalWidget.cs" />
     <Compile Include="History\PrintHistoryData.cs" />
-    <Compile Include="Library\CreateFolderWindow.cs" />
-    <Compile Include="Library\LibraryRowItemCollection.cs" />
-    <Compile Include="Library\LibraryRowItemPart.cs" />
-    <Compile Include="Library\Provider\LibraryProviderPlugin.cs" />
-    <Compile Include="Library\Provider\LibraryProviderSelector.cs" />
-    <Compile Include="Library\Provider\LibraryProviderFileSystem.cs" />
-    <Compile Include="Library\Provider\LibraryProviderSqlite.cs" />
-    <Compile Include="Library\Provider\LibraryProvider.cs" />
-    <Compile Include="Queue\OptionsMenu\ExportGcodePlugin.cs" />
-    <Compile Include="Queue\OptionsMenu\MergeQueueItems.cs" />
+    <Compile Include="Library\Export\IExportPlugin.cs" />
     <Compile Include="SetupWizard\AndroidConnectDevicePage.cs" />
-    <Compile Include="SetupWizard\EditPrinterSettingsPage.cs" />
     <Compile Include="SetupWizard\ImportSettingsPage.cs" />
-    <Compile Include="SetupWizard\ExportSettingsPage.cs" />
     <Compile Include="SetupWizard\LicenseAgreementPage.cs" />
     <Compile Include="SetupWizard\PrinterProfileHistoryPage.cs" />
     <Compile Include="ConfigurationPage\RunningMacroPage.cs" />
     <Compile Include="SetupWizard\SyncingPrintersPage.cs" />
-    <Compile Include="SetupWizard\WizardPage.cs" />
-    <Compile Include="SetupWizard\AndroidSetupOptionsPage.cs" />
+    <Compile Include="SetupWizard\DialogPage.cs" />
     <Compile Include="SetupWizard\SetupWizardTroubleshooting.cs" />
     <Compile Include="SetupWizard\SetupWizardWifi.cs" />
-    <Compile Include="SetupWizard\WizardWindow.cs" />
+    <Compile Include="SlicerConfiguration\SliceSettingsRow.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\BoundDoubleField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\UIField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\DoubleField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\DoubleOrPercentField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\DropMenuWrappedField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\FieldChangedEventArgs.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\IntField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\IntOrMmField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\CheckboxField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\MultilineStringField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\ComPortField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\ListField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\ExtruderOffsetField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\NumberField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\TextField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\ValueOrUnitsField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\Vector2Field.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\PositiveDoubleField.cs" />
+    <Compile Include="SlicerConfiguration\SettingsContext.cs" />
     <Compile Include="SlicerConfiguration\Settings\GCodeMacro.cs" />
     <Compile Include="SlicerConfiguration\Settings\ProfileMigrations.cs" />
     <Compile Include="SlicerConfiguration\Settings\ProfileManager.cs" />
     <Compile Include="SlicerConfiguration\Settings\PrinterSettingsLayer.cs" />
     <Compile Include="SlicerConfiguration\Settings\SettingsHelpers.cs" />
-    <Compile Include="SlicerConfiguration\SliceSettingsDetailControl.cs" />
     <Compile Include="SlicerConfiguration\Settings\ActiveSliceSettings.cs" />
     <Compile Include="SlicerConfiguration\Settings\PrinterSettings.cs" />
     <Compile Include="DataStorage\Classic\ClassicSqlitePrinterProfiles.cs" />
     <Compile Include="Utilities\AuthenticationData.cs" />
+    <Compile Include="Utilities\JsonPath.cs" />
     <Compile Include="Utilities\LimitCallFrequency.cs" />
+    <Compile Include="Utilities\MarkdigAgg\MarkdownExtensions.cs" />
+    <Compile Include="Utilities\MarkdigAgg\MarkdownPage.cs" />
+    <Compile Include="Utilities\MarkdigAgg\MarkdownWidget.cs" />
     <Compile Include="Utilities\SelectedListItems.cs" />
-    <Compile Include="Queue\OptionsMenu\ExportToFolderFeedbackWindow.cs" />
     <Compile Include="EeProm\EePromMarlinSettings.cs" />
-    <Compile Include="PrinterControls\EditLevelingSettingsWindow.cs" />
-    <Compile Include="History\PrintHistoryDataView.cs" />
     <Compile Include="History\PrintHistoryListItem.cs" />
-    <Compile Include="History\PrintHistoryWidget.cs" />
     <Compile Include="Queue\QueueData.cs" />
     <Compile Include="SettingsManagement\OemSettings.cs" />
     <Compile Include="SettingsManagement\UserSettingsFields.cs" />
-    <Compile Include="SlicerConfiguration\CuraEngineInfo.cs" />
     <Compile Include="SlicerConfiguration\MatterSliceInfo.cs" />
-    <Compile Include="SlicerConfiguration\Slic3rInfo.cs" />
-    <Compile Include="SlicerConfiguration\SliceEngineInfo.cs" />
-    <Compile Include="SlicerConfiguration\SettingsControlSelectors.cs" />
+    <Compile Include="SlicerConfiguration\PresetSelectorWidget.cs" />
     <Compile Include="SlicerConfiguration\SlicePresetsWindow\SlicePresetsWindow.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingMatterSlice.cs" />
-    <Compile Include="SlicerConfiguration\Slicing\SliceLayer.cs" />
     <Compile Include="SlicerConfiguration\Slicing\SliceLayers.cs" />
     <Compile Include="Utilities\FieldValidation.cs" />
     <Compile Include="PartPreviewWindow\CreateDiscreteMeshes.cs" />
     <Compile Include="CustomWidgets\EditableNumberDisplay.cs" />
-    <Compile Include="PartPreviewWindow\BaseClasses\PartPreviewWidget.cs" />
     <Compile Include="PartPreviewWindow\PlatingHelper.cs" />
-    <Compile Include="PrinterControls\EditTemperaturePresetsWindow.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="PrinterControls\ControlWidgets\MacroControls.cs" />
-    <Compile Include="PrinterControls\EditManualMovementSpeedsWindow.cs" />
-    <Compile Include="PrinterControls\EditMacrosWindow.cs" />
-    <Compile Include="CustomWidgets\PluginChooserWindow.cs" />
-    <Compile Include="ControlElements\RegisteredCreators.cs" />
-    <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingCura.cs" />
-    <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingSlic3r.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\MappingClasses.cs" />
-    <Compile Include="SlicerConfiguration\SlicerMapping\EngineMapingBase.cs" />
     <Compile Include="ApplicationView\WidescreenPanel.cs" />
-    <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelPages.cs" />
-    <Compile Include="AboutPage\ContactForm.cs" />
     <Compile Include="CustomWidgets\ClickWidget.cs">
-      <DependentUpon>ExportPrintItemWindow.cs</DependentUpon>
+      <DependentUpon>ExportPrintItemPage.cs</DependentUpon>
     </Compile>
     <Compile Include="CustomWidgets\SavePartsSheetFeedbackWindow.cs" />
-    <Compile Include="CustomWidgets\DropDownMenuWidget.cs" />
     <Compile Include="ControlElements\ImageButtonFactory.cs" />
     <Compile Include="ControlElements\LinkButtonFactory.cs" />
-    <Compile Include="CustomWidgets\PrintProgressBarWidget.cs" />
-    <Compile Include="Queue\OptionsMenu\ExportToSdCardFeedbackWindow.cs" />
     <Compile Include="CustomWidgets\SlidePanelWidget.cs" />
     <Compile Include="ControlElements\StyledMessageBoxWindow.cs" />
-    <Compile Include="CustomWidgets\WizardControl.cs" />
     <Compile Include="DataStorage\SQLiteCommon.cs" />
     <Compile Include="DataStorage\SQLiteWin32.cs" />
     <Compile Include="DataStorage\Datastore.cs" />
     <Compile Include="DataStorage\SQLiteUnix.cs" />
     <Compile Include="DataStorage\SQLiteAsync.cs" />
-    <Compile Include="ApplicationView\MainApplicationWidget.cs" />
     <Compile Include="Utilities\ManifestFileHandler.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ControlElements\MHTextEditWidget.cs" />
-    <Compile Include="PartPreviewWindow\ViewGcodeBasic.cs" />
-    <Compile Include="PartPreviewWindow\PartPreviewMainWindow.cs" />
+    <Compile Include="PartPreviewWindow\GCode3DWidget.cs" />
     <Compile Include="Queue\OptionsMenu\PartsSheetCreator.cs" />
     <Compile Include="Utilities\WebUtilities\JsonResponseDictionary.cs" />
-    <Compile Include="PrinterCommunication\PrinterConnectionAndCommunication.cs" />
+    <Compile Include="PrinterCommunication\PrinterConnection.cs" />
     <Compile Include="PrinterControls\PrintLevelingPlane.cs" />
-    <Compile Include="PrinterControls\TerminalWindow\TerminalWindow.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortManual.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortTwo.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortOne.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepMakeModelName.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepBaudRate.cs" />
-    <Compile Include="PrinterControls\PrinterConnections\SetupStepInstallDriver.cs" />
     <Compile Include="PrinterControls\ManualPrinterControls.cs" />
     <Compile Include="PrinterControls\PrinterConnections\BaseConnectionWidget.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterChooser.cs" />
-    <Compile Include="PrinterControls\PrinterConnections\ConnectionWizardPage.cs" />
-    <Compile Include="PrinterControls\TemperatureIndicator.cs" />
-    <Compile Include="PrinterControls\XYZJogControls.cs" />
-    <Compile Include="Library\LibraryDataView.cs" />
-    <Compile Include="Library\LibraryRowItem.cs" />
-    <Compile Include="Library\PrintLibraryWidget.cs" />
-    <Compile Include="Queue\OptionsMenu\ExportToFolderProcess.cs" />
-    <Compile Include="CustomWidgets\PartThumbnailWidget.cs" />
+    <Compile Include="Library\Widgets\PrintLibraryWidget.cs" />
     <Compile Include="Queue\PrintItemWrapper.cs" />
-    <Compile Include="Queue\QueueRowItem.cs" />
     <Compile Include="MatterControlApplication.cs" />
-    <Compile Include="Queue\QueueDataView.cs" />
-    <Compile Include="Queue\OptionsMenu\QueueOptionsMenu.cs" />
     <Compile Include="Utilities\ProjectFileHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\WebUtilities\RequestManager.cs" />
-    <Compile Include="Queue\QueueDataWidget.cs" />
     <Compile Include="SettingsManagement\ApplicationSettings.cs" />
     <Compile Include="SettingsManagement\UserSettings.cs" />
-    <Compile Include="SlicerConfiguration\SettingsControlBar.cs" />
+    <Compile Include="SlicerConfiguration\PresetsToolbar.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsWidget.cs" />
-    <Compile Include="SlicerConfiguration\SliceSettingsOrganizer.cs" />
-    <Compile Include="SlicerConfiguration\SlicingQueue.cs" />
-    <Compile Include="Utilities\TupleList.cs" />
+    <Compile Include="SlicerConfiguration\Slicer.cs" />
     <Compile Include="VersionManagement\ContactFormRequest.cs" />
     <Compile Include="VersionManagement\LatestVersionRequest.cs" />
     <Compile Include="VersionManagement\ClientTokenRequest.cs" />
     <Compile Include="VersionManagement\WebRequestHandler.cs" />
     <Compile Include="VersionManagement\VersionFileHandler.cs" />
-    <Compile Include="AboutPage\AboutWidget.cs" />
     <Compile Include="CustomWidgets\ThemeColorSelectorWidget.cs" />
     <Compile Include="ControlElements\TextImageButtonFactory.cs" />
     <Compile Include="EeProm\EePromMarlinWindow.cs" />
     <Compile Include="EeProm\EePromRepetierParameter.cs" />
     <Compile Include="EeProm\EePromRepetierWindow.cs" />
     <Compile Include="EeProm\EePromRepetierStorage.cs" />
-    <Compile Include="PartPreviewWindow\SaveAsWindow.cs" />
+    <Compile Include="PartPreviewWindow\SaveAsPage.cs" />
     <Compile Include="DataStorage\SQLiteAndroid.cs" />
     <Compile Include="CustomWidgets\DataViewGraph.cs" />
     <Compile Include="CustomWidgets\TwoSidedStack.cs" />
-    <Compile Include="CustomWidgets\SplitButton.cs" />
-    <Compile Include="CustomWidgets\DynamicDropDownMenu.cs" />
-    <Compile Include="ControlElements\DropDownMenuFactory.cs" />
-    <Compile Include="ControlElements\SplitButtonFactory.cs" />
+    <Compile Include="PrinterCommunication\Io\SendProgressStream.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Mindscape.Raygun4Net, Version=5.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Mindscape.Raygun4Net.5.4.1\lib\net40\Mindscape.Raygun4Net.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Markdig, Version=0.15.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Markdig.0.15.0\lib\net40\Markdig.dll</HintPath>
     </Reference>
-    <Reference Include="Mindscape.Raygun4Net4, Version=5.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Mindscape.Raygun4Net.5.4.1\lib\net40\Mindscape.Raygun4Net4.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="MIConvexHull, Version=1.0.17.1019, Culture=neutral, PublicKeyToken=bdc96d69606221fd, processorArchitecture=MSIL">
+      <HintPath>packages\MIConvexHull.1.1.17.1019\lib\netstandard1.0\MIConvexHull.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Mindscape.Raygun4Net, Version=5.5.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Mindscape.Raygun4Net.5.5.2\lib\net40\Mindscape.Raygun4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Mindscape.Raygun4Net4, Version=5.5.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Mindscape.Raygun4Net.5.5.2\lib\net40\Mindscape.Raygun4Net4.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -412,10 +549,27 @@
     </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Reactive.Core, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>packages\System.Reactive.Core.3.1.1\lib\net46\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>packages\System.Reactive.Interfaces.3.1.1\lib\net45\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>packages\System.Reactive.Linq.3.1.1\lib\net46\System.Reactive.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.PlatformServices, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>packages\System.Reactive.PlatformServices.3.1.1\lib\net46\System.Reactive.PlatformServices.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Windows.Threading, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>packages\System.Reactive.Windows.Threading.3.1.1\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -425,6 +579,11 @@
     </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="Zeroconf, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Zeroconf.2.9.0\lib\net45\Zeroconf.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -449,9 +608,19 @@
     </Content>
     <Content Include="StaticData\OEMSettings\AboutPage.html" />
     <Content Include="StaticData\SliceSettings\Layouts.txt" />
+    <Content Include="StaticData\SliceSettings\load_filament.txt" />
+    <Content Include="StaticData\SliceSettings\unload_filament.txt" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="config.json">
+      <LogicalName>config.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Utilities\InspectForm.resx" Condition="'$(Configuration)' == 'Debug'">
+      <DependentUpon>InspectForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="App.config" />
+    <None Include="Library\LibraryProviders.cd" />
+    <None Include="Library\Widgets\ListView\ListView.cd" />
     <None Include="SlicerConfiguration\Settings\SettingsDiagram.cd" />
     <None Include="packages.config" />
     <None Include="StaticData\OEMSettings\Settings.json" />
@@ -461,13 +630,25 @@
     <Folder Include="SlicerConfiguration\SettingsEditors\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="MatterControl.OpenGL\MatterControl.OpenGL.csproj">
+      <Project>{CBDEEC31-D688-417B-9BF2-F0DB2E4FB268}</Project>
+      <Name>MatterControl.OpenGL</Name>
+    </ProjectReference>
+    <ProjectReference Include="MatterControl.Printing\MatterControl.Printing.csproj">
+      <Project>{97D5ADE3-C1B4-4B46-8A3E-718A4F7F079F}</Project>
+      <Name>MatterControl.Printing</Name>
+    </ProjectReference>
+    <ProjectReference Include="PrinterEmulator\PrinterEmulator.csproj" Condition="'$(Configuration)'=='Debug'">
+      <Project>{bb58ca42-991b-41b7-bde7-dcd2911df8b9}</Project>
+      <Name>PrinterEmulator</Name>
+    </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\clipper_library\clipper_library.csproj">
       <Project>{9B062971-A88E-4A3D-B3C9-12B78D15FA66}</Project>
       <Name>clipper_library</Name>
     </ProjectReference>
-    <ProjectReference Include="Submodules\agg-sharp\Csg\Csg.csproj">
-      <Project>{7E61A5BD-E78F-4B80-88C9-3821B4FA062E}</Project>
-      <Name>Csg</Name>
+    <ProjectReference Include="Submodules\agg-sharp\DataConverters2D\DataConverters2D.csproj">
+      <Project>{94838988-523c-4b11-ad82-8b9b76f23a31}</Project>
+      <Name>DataConverters2D</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj">
       <Project>{04667764-DC7B-4B95-AEF6-B4E6C87A54E9}</Project>
@@ -489,9 +670,9 @@
       <Project>{DF6845CD-64C6-4263-8357-DA8066855739}</Project>
       <Name>MarchingSquares</Name>
     </ProjectReference>
-    <ProjectReference Include="Submodules\agg-sharp\PlatformAbstract\PlatformAbstract.csproj">
-      <Project>{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}</Project>
-      <Name>PlatformAbstract</Name>
+    <ProjectReference Include="Submodules\agg-sharp\MeshThumbnails\MeshThumbnails\MeshThumbnails.csproj">
+      <Project>{1a901129-c885-425f-8d4b-86698f98a2b4}</Project>
+      <Name>MeshThumbnails</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\RayTracer\RayTracer.csproj">
       <Project>{1E01ABE0-B494-4FE4-B0D6-540133286887}</Project>
@@ -501,25 +682,9 @@
       <Project>{D3E41B4E-BFBB-44CA-94C8-95C00F754FDD}</Project>
       <Name>VectorMath</Name>
     </ProjectReference>
-    <ProjectReference Include="Submodules\agg-sharp\examples\GCodeVisualizer\GCodeVisualizer.csproj">
-      <Project>{F67AE800-B0C7-42A8-836F-597B4E74591C}</Project>
-      <Name>GCodeVisualizer</Name>
-    </ProjectReference>
-    <ProjectReference Include="Submodules\agg-sharp\SerialPortCommunication\SerialPortCommunication.csproj">
-      <Project>{D3ABF72C-64C2-4E51-A119-E077210FA990}</Project>
-      <Name>SerialPortCommunication</Name>
-    </ProjectReference>
-    <ProjectReference Include="Submodules\agg-sharp\WindowsFileDialogs\WindowsFileDialogs.csproj">
-      <Project>{A526DC5D-65F3-461B-805F-D3AC9665F5C9}</Project>
-      <Name>WindowsFileDialogs</Name>
-    </ProjectReference>
     <ProjectReference Include="Submodules\MatterSlice\MatterSlice.csproj">
       <Project>{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}</Project>
       <Name>MatterSlice</Name>
-    </ProjectReference>
-    <ProjectReference Include="Submodules\agg-sharp\examples\MeshViewer\MeshViewer.csproj">
-      <Project>{A737BC76-165B-46C6-82B7-8871C7C92942}</Project>
-      <Name>MeshViewer</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\Tesselate\Tesselate.csproj">
       <Project>{AE37DE1F-22F7-49EE-8732-FC6BC8DC58D9}</Project>
@@ -578,4 +743,8 @@
       <Name>QuadTree</Name>
     </ProjectReference>
   </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>

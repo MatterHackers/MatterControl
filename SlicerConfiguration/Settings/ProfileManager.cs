@@ -36,6 +36,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.SettingsManagement;
 using Newtonsoft.Json;
 
@@ -45,38 +46,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public static RootedObjectEventHandler ProfilesListChanged = new RootedObjectEventHandler();
 
-		private static ProfileManager activeInstance = null;
-		public static ProfileManager Instance
-		{
-			get
-			{
-				return activeInstance;
-			}
-			private set
-			{
-				activeInstance = value;
-
-				// If the loaded slice settings do not match the last active settings for this profile, change to the last active
-				if (ActiveSliceSettings.Instance?.ID != activeInstance.LastProfileID)
-				{
-					// Load or download on a background thread
-					var lastProfile = LoadProfileAsync(activeInstance.LastProfileID).Result;
-
-					if (MatterControlApplication.IsLoading)
-					{
-						ActiveSliceSettings.Instance = lastProfile ?? PrinterSettings.Empty;
-					}
-					else
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							// Assign on the UI thread
-							ActiveSliceSettings.Instance = lastProfile ?? PrinterSettings.Empty;
-						});
-					}
-				}
-			}
-		}
+		public static ProfileManager Instance { get; private set; }
 
 		private static EventHandler unregisterEvents;
 
@@ -92,6 +62,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ReloadActiveUser();
 		}
 
+		public Task Initialize()
+		{
+			return Task.CompletedTask;
+		}
+
 		public string UserName { get; set; }
 
 		/// <summary>
@@ -105,6 +80,38 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// </summary>
 		[JsonIgnore]
 		public string ProfilesDocPath => GetProfilesDocPathForUser(this.UserName);
+
+		public async Task LoadPrinterOpenItem(ILibraryItem libraryItem)
+		{
+			var printer = await LoadPrinter();
+
+			await printer?.Bed?.LoadContent(new EditContext()
+			{
+				ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+				SourceItem = libraryItem
+			});
+		}
+
+		public async Task<PrinterConfig> LoadPrinter()
+		{
+			var printer = ApplicationController.Instance.ActivePrinter;
+
+			// If a 'LastProfile' exists and it is missing from ActivePrinters, load it
+			var lastProfile = this[this.LastProfileID];
+			if (lastProfile != null
+				&& !ApplicationController.Instance.ActivePrinters.Where(p => p.Settings.ID == lastProfile.ID).Any())
+			{
+				if (printer.Settings.ID != this.LastProfileID)
+				{
+					var printerConfig = new PrinterConfig(await LoadProfileAsync(this.LastProfileID));
+					await ApplicationController.Instance.SetActivePrinter(printerConfig);
+
+					printer = ApplicationController.Instance.ActivePrinter;
+				}
+			}
+
+			return printer;
+		}
 
 		private static string GetProfilesDocPathForUser(string userName)
 		{
@@ -147,6 +154,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			// Wire up the CollectionChanged event
 			Instance.Profiles.CollectionChanged += Profiles_CollectionChanged;
+		}
+
+		public static async Task SwitchToProfile(string printerID)
+		{
+			ProfileManager.Instance.LastProfileID = printerID;
+
+			var printer = new PrinterConfig(await ProfileManager.LoadProfileAsync(printerID));
+
+			await printer.LoadPlateFromHistory();
+
+			await ApplicationController.Instance.SetActivePrinter(printer);
 		}
 
 		/// <summary>
@@ -245,7 +263,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// <summary>
 		/// Indicates if given import has been run for the current user. For the guest profile, this means the
 		/// Sqlite import has been run and all db printers are now in the guest profile. For normal users
-		/// this means the CopyGuestProfilesToUser wizard has been completed and one or more printers were 
+		/// this means the CopyGuestProfilesToUser wizard has been completed and one or more printers were
 		/// imported or the "Don't ask me again" option was selected
 		/// </summary>
 		public bool PrintersImported { get; set; } = false;
@@ -265,7 +283,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var printerInfo = Instance[profileID];
 
 			string profilePath = printerInfo?.ProfilePath;
-			if (profilePath != null 
+			if (profilePath != null
 				&& File.Exists(profilePath)
 				&& !printerInfo.MarkedForDelete)
 			{
@@ -306,6 +324,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			PrinterSettings printerSettings = Instance.LoadWithoutRecovery(profileID);
 			if (printerSettings != null)
 			{
+				// Make sure we have the name set
+				if (printerSettings.GetValue(SettingsKey.printer_name) == "")
+				{
+					// This can happen when a profile is pushed to a user account from the web.
+					printerSettings.SetValue(SettingsKey.printer_name, printerInfo.Name);
+				}
 				return printerSettings;
 			}
 			else if (ApplicationController.GetPrinterProfileAsync != null)
@@ -336,7 +360,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var printerInfo = new PrinterInfo
 			{
-				Name = agg_basics.GetNonCollidingName(existingPrinterNames, fileName),
+				Name = agg_basics.GetNonCollidingName(fileName, existingPrinterNames),
 				ID = Guid.NewGuid().ToString(),
 				Make = "Other",
 				Model = "Other",
@@ -428,20 +452,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return importSuccessful;
 		}
 
-		internal static async Task<bool> CreateProfileAsync(string make, string model, string printerName)
+		internal static async Task<PrinterConfig> CreateProfileAsync(string make, string model, string printerName)
 		{
 			string guid = Guid.NewGuid().ToString();
 
 			var publicDevice = OemSettings.Instance.OemProfiles[make][model];
 			if (publicDevice == null)
 			{
-				return false;
+				return null;
 			}
 
 			var printerSettings = await LoadOemProfileAsync(publicDevice, make, model);
 			if (printerSettings == null)
 			{
-				return false;
+				return null;
 			}
 
 			printerSettings.ID = guid;
@@ -467,9 +491,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Set as active profile
 			ProfileManager.Instance.LastProfileID = guid;
 
-			ActiveSliceSettings.Instance = printerSettings;
+			var printer = new PrinterConfig(printerSettings);
+			await printer.LoadPlateFromHistory();
 
-			return true;
+			await ApplicationController.Instance.SetActivePrinter(printer);
+
+			return printer;
 		}
 
 		public static List<string> ThemeIndexNameMapping = new List<string>()
@@ -511,7 +538,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// The collector specifically returns null to ensure LoadCacheable skips writing the
 					// result to the cache. After this result is returned, it will attempt to load from
 					// the local cache if the collector yielded no result
-					if(File.Exists(cachePath) 
+					if(File.Exists(cachePath)
 						|| ApplicationController.DownloadPublicProfileAsync == null)
 					{
 						return null;

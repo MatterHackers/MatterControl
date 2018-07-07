@@ -27,18 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.PrintLibrary.Provider;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using MatterHackers.VectorMath;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.DataStorage
 {
@@ -92,8 +88,6 @@ namespace MatterHackers.MatterControl.DataStorage
 		{
 			isSaved = false;
 		}
-
-		public event PropertyChangedEventHandler PropertyChanged;
 
 		[PrimaryKey, AutoIncrement]
 		public int Id { get; set; }
@@ -149,16 +143,6 @@ namespace MatterHackers.MatterControl.DataStorage
 			}
 
 			return this.hashCode;
-		}
-
-		protected void OnPropertyChanged(string name)
-		{
-			PropertyChangedEventHandler handler = PropertyChanged;
-			this.hashCode = 0;
-			if (handler != null)
-			{
-				handler(this, new PropertyChangedEventArgs(name));
-			}
 		}
 
 		private void TryHandleInsert()

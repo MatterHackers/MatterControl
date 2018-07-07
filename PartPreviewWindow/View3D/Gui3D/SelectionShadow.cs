@@ -28,46 +28,63 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Font;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Transform;
+using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
+using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 using System;
-using System.Collections.Generic;
-using System.IO;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class SelectionShadow : InteractionVolume
 	{
-		private View3DWidget view3DWidget;
+		static Mesh normalShadowMesh;
+		static Color shadowColor = new Color(22, 80, 220);
+		readonly int shadowAlpha = 40;
 
-		public SelectionShadow(View3DWidget view3DWidget)
-			: base(null, view3DWidget.meshViewerWidget)
+
+		public SelectionShadow(IInteractionVolumeContext context)
+			: base(context)
 		{
-			this.view3DWidget = view3DWidget;
 		}
 
-		public override void SetPosition()
+		public override void SetPosition(IObject3D selectedItem)
 		{
-			AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
+			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 			Vector3 boundsCenter = selectedBounds.Center;
 
-			TotalTransform = Matrix4X4.CreateTranslation(new Vector3(boundsCenter.x, boundsCenter.y, 0.1));
+			TotalTransform = Matrix4X4.CreateTranslation(new Vector3(boundsCenter.X, boundsCenter.Y, 0.1));
 		}
 
-		public override void DrawGlContent(EventArgs e)
+		Mesh GetNormalShadowMesh()
 		{
-			if (MeshViewerToDrawWith.SelectedMeshGroup != null)
+			if(normalShadowMesh == null)
+			{
+				normalShadowMesh = PlatonicSolids.CreateCube(1, 1, .1);
+			}
+
+			return normalShadowMesh;
+		}
+
+		public override void DrawGlContent(DrawGlContentEventArgs e)
+		{
+			var selectedItem = InteractionContext.Scene.RootSelectedItem;
+			if (selectedItem != null
+				&& InteractionContext.Scene.ShowSelectionShadow)
 			{
 				// draw the bounds on the bed
-				AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
+				AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
-				Mesh bottomBounds = PlatonicSolids.CreateCube(selectedBounds.XSize, selectedBounds.YSize, .1);
-				RenderMeshToGl.Render(bottomBounds, new RGBA_Bytes(22, 80, 220, 30), TotalTransform, RenderTypes.Shaded);
+				var withScale = Matrix4X4.CreateScale(selectedBounds.XSize, selectedBounds.YSize, 1) * TotalTransform;
+				GLHelper.Render(GetNormalShadowMesh(), new Color(shadowColor, shadowAlpha), withScale, RenderTypes.Shaded);
 			}
 
 			base.DrawGlContent(e);

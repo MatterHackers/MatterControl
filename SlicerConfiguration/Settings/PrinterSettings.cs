@@ -37,9 +37,11 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MeshVisualizer;
@@ -55,7 +57,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		// Year|month|day|versionForDay (to support multiple revisions on a given day)
 		public static int LatestVersion { get; } = 201606271;
 
-		public static RootedObjectEventHandler PrintLevelingEnabledChanged = new RootedObjectEventHandler();
+		[JsonIgnore]
+		public RootedObjectEventHandler PrintLevelingEnabledChanged = new RootedObjectEventHandler();
 
 		public static PrinterSettings Empty { get; }
 
@@ -75,6 +78,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public PrinterSettingsLayer StagedUserSettings { get; set; } = new PrinterSettingsLayer();
 
+		internal PrinterConfig printer { get; set; }
+
 		static PrinterSettings()
 		{
 			Empty = new PrinterSettings() { ID = "EmptyProfile" };
@@ -87,9 +92,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		public List<GCodeMacro> Macros { get; set; } = new List<GCodeMacro>();
-
-		public IEnumerable<GCodeMacro> UserMacros() => Macros.Where(m => !m.ActionGroup);
-		public IEnumerable<GCodeMacro> ActionMacros() => Macros.Where(m => m.ActionGroup);
 
 		/// <summary>
 		/// Restore deactivated user overrides by iterating the active preset and removing/restoring matching items
@@ -134,6 +136,61 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		/// <summary>
+		/// Order of precedence &, |, !, =
+		/// </summary>
+		/// <param name="unsplitSettings"></param>
+		/// <param name="layerCascade"></param>
+		/// <returns></returns>
+		public bool ParseShowString(string unsplitSettings, IEnumerable<PrinterSettingsLayer> layerCascade)
+		{
+			if (!string.IsNullOrEmpty(unsplitSettings))
+			{
+				string[] splitOnAnd = unsplitSettings.Split('&');
+				foreach (var andGroup in splitOnAnd)
+				{
+					bool orResult = false;
+					string[] splitOnOr = andGroup.Split('|');
+					foreach (var orGroup in splitOnOr)
+					{
+						var matchString = "1";
+						var orItem = orGroup;
+						bool negate = orItem.StartsWith("!");
+						if (negate)
+						{
+							orItem = orItem.Substring(1);
+						}
+
+						string sliceSettingValue = "";
+						if (orItem.Contains("="))
+						{
+							string[] splitOnEquals = orItem.Split('=');
+
+							sliceSettingValue = this.GetValue(splitOnEquals[0], layerCascade);
+							matchString = splitOnEquals[1];
+						}
+						else
+						{
+							sliceSettingValue = this.GetValue(orItem, layerCascade);
+						}
+
+						if ((!negate && sliceSettingValue == matchString)
+							|| (negate && sliceSettingValue != matchString))
+						{
+							orResult = true;
+						}
+					}
+
+					if(orResult == false)
+					{
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+		/// <summary>
 		/// Move conflicting user overrides to the temporary staging area, allowing presets values to take effect
 		/// </summary>
 		private void StashUserOverride(PrinterSettingsLayer settingsLayer, string settingsKey)
@@ -151,10 +208,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			QualityLayer = GetQualityLayer(ActiveQualityKey);
 
-			string materialSettingsKey = GetMaterialPresetKey(0);
-			if (!string.IsNullOrEmpty(materialSettingsKey))
+			if (!string.IsNullOrEmpty(ActiveMaterialKey))
 			{
-				MaterialLayer = GetMaterialLayer(materialSettingsKey);
+				MaterialLayer = GetMaterialLayer(ActiveMaterialKey);
 			}
 		}
 
@@ -204,8 +260,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			this.Save();
-
-			ApplicationController.Instance.ReloadAdvancedControlsPanel();
 		}
 
 		internal PrinterSettingsLayer GetMaterialLayer(string layerID)
@@ -237,19 +291,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public string GetMaterialPresetKey(int extruderIndex)
+		public string ActiveMaterialKey
 		{
-			if (extruderIndex >= MaterialSettingsKeys.Count)
+			get
 			{
+				if (MaterialSettingsKeys.Count > 0)
+				{
+					return MaterialSettingsKeys[0];
+				}
+
 				return null;
 			}
-
-			return MaterialSettingsKeys[extruderIndex];
+			internal set
+			{
+				SetMaterialPreset(0, value);
+			}
 		}
 
-		public void SetMaterialPreset(int extruderIndex, string materialKey)
+		private void SetMaterialPreset(int extruderIndex, string materialKey)
 		{
-			if (extruderIndex >= PrinterCommunication.PrinterConnectionAndCommunication.MAX_EXTRUDERS)
+			if (extruderIndex >= PrinterCommunication.PrinterConnection.MAX_EXTRUDERS)
 			{
 				throw new ArgumentOutOfRangeException("Requested extruder index is outside of bounds: " + extruderIndex);
 			}
@@ -267,7 +328,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (extruderIndex == 0)
 			{
 				MaterialLayer = GetMaterialLayer(materialKey);
-				ApplicationController.Instance.ReloadAdvancedControlsPanel();
+
+				ActiveSliceSettings.OnMaterialPresetChanged();
 			}
 
 			Save();
@@ -275,30 +337,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<string> MaterialSettingsKeys { get; set; } = new List<string>();
 
-		private string GenerateSha1()
-		{
-			// Maybe be UTF8 encoded, may not...
-			using (var fileStream = new FileStream(DocumentPath, FileMode.Open))
-			using (var bufferedStream = new BufferedStream(fileStream, 1200000))
-			{
-				return GenerateSha1(bufferedStream);
-			}
-		}
-
-		private string GenerateSha1(Stream stream)
-		{
-			// var timer = Stopwatch.StartNew();
-			using (var sha1 = System.Security.Cryptography.SHA1.Create())
-			{
-				byte[] hash = sha1.ComputeHash(stream);
-				string SHA1 = BitConverter.ToString(hash).Replace("-", String.Empty);
-
-				// Console.WriteLine("{0} {1} {2}", SHA1, timer.ElapsedMilliseconds, filePath);
-				return SHA1;
-			}
-		}
-
-		private string DocumentPath => ProfileManager.Instance.ProfilePath(this.ID);
+		[JsonIgnore]
+		public string DocumentPath => ProfileManager.Instance.ProfilePath(this.ID);
 
 		[JsonIgnore]
 		public bool AutoSave { get; set; } = true;
@@ -323,7 +363,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				var printerInfo = ProfileManager.Instance[this.ID];
 				if (printerInfo != null)
 				{
-					printerInfo.ContentSHA1 = this.ComputeSha1(json);
+					printerInfo.ContentSHA1 = this.ComputeSHA1(json);
 					ProfileManager.Instance.Save();
 				}
 
@@ -336,17 +376,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public string ComputeSha1()
+		internal string ComputeSHA1()
 		{
-			return ComputeSha1(this.ToJson());
+			return ComputeSHA1(this.ToJson());
 		}
 
-		private string ComputeSha1(string json)
+		private string ComputeSHA1(string json)
 		{
 			// SHA1 value is based on UTF8 encoded file contents
 			using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
 			{
-				return GenerateSha1(memoryStream);
+				return Object3D.ComputeSHA1(memoryStream);
 			}
 		}
 
@@ -421,9 +461,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// Persist any profile recovered above as the current
 					printerSettings.Save();
 
-					// Update active instance without calling ReloadAll
-					ActiveSliceSettings.RefreshActiveInstance(printerSettings);
-
 					WarnAboutRevert(printerInfo);
 				}
 
@@ -436,13 +473,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static bool warningWindowOpen = false;
 
 		public static void WarnAboutRevert(PrinterInfo profile)
-		{ 
+		{
 			if (!warningWindowOpen)
 			{
 				warningWindowOpen = true;
 				UiThread.RunOnIdle(() =>
 				{
-					StyledMessageBox.ShowMessageBox((clicedOk) => 
+					StyledMessageBox.ShowMessageBox((clicedOk) =>
 					{
 						warningWindowOpen = false;
 					}, String.Format("The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.".Localize(), profile.Make, profile.Model), "Recovered printer profile".Localize(), messageType: StyledMessageBox.MessageType.OK);
@@ -531,7 +568,83 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return "";
 		}
 
-		public Tuple<string, string> GetValueAndLayerName(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
+		public bool IsOverride(string sliceSetting)
+		{
+			var values = new List<string>();
+
+			string firstBaseValue = null;
+
+			foreach (PrinterSettingsLayer layer in defaultLayerCascade)
+			{
+				if (layer.TryGetValue(sliceSetting, out string value))
+				{
+					if (layer == this.BaseLayer
+						|| layer == this.OemLayer)
+					{
+						firstBaseValue = value;
+						break;
+					}
+
+					values.Add(value);
+				}
+			}
+
+			string currentValue = values.FirstOrDefault();
+
+			string firstPresetValue = values.Skip(1).FirstOrDefault();
+
+			bool differsFromPreset = values.Count > 0
+				&& firstPresetValue != null 
+				&& firstPresetValue != currentValue;
+
+			bool differsFromBase = currentValue != firstBaseValue;
+
+			return currentValue != null 
+				&& (differsFromPreset || differsFromBase);
+		}
+
+		// Helper method to debug settings layers per setting
+		public List<(string layerName, string currentValue)> GetLayerValues(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
+		{
+			if (layerCascade == null)
+			{
+				layerCascade = defaultLayerCascade;
+			}
+
+			var results = new List<(string layerName, string currentValue)>();
+
+
+			foreach (PrinterSettingsLayer layer in layerCascade)
+			{
+				if (layer.TryGetValue(sliceSetting, out string value))
+				{
+					string layerName = "User";
+
+					if (layer == this.BaseLayer)
+					{
+						layerName = "Base";
+					}
+					else if (layer == this.OemLayer)
+					{
+						layerName = "Oem";
+					}
+					else if (layer == this.MaterialLayer)
+					{
+						layerName = "Material";
+					}
+					else if (layer == this.QualityLayer)
+					{
+						layerName = "Quality";
+					}
+
+					results.Add((layerName, value));
+				}
+			}
+
+			return results;
+		}
+
+		public (string currentValue, string layerName) GetValueAndLayerName(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
 		{
 			if (layerCascade == null)
 			{
@@ -562,11 +675,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						layerName = "Quality";
 					}
 
-					return new Tuple<string, string>(value, layerName);
+					return (value, layerName);
 				}
 			}
 
-			return new Tuple<string, string>("", "");
+			return ("", "");
 		}
 
 		public bool Contains(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
@@ -586,7 +699,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		[JsonIgnore]
-		public PrinterSettingsLayer BaseLayer { get; set; } = SliceSettingsOrganizer.Instance.GetDefaultSettings();
+		PrinterSettingsLayer _baseLayer;
+		public PrinterSettingsLayer BaseLayer
+		{
+			get
+			{
+				if (_baseLayer == null)
+				{
+					string propertiesFileContents = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
+
+					var settingsLayer = new PrinterSettingsLayer();
+					foreach (var settingsData in JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents))
+					{
+						settingsLayer[settingsData.SlicerConfigName] = settingsData.DefaultValue;
+					}
+
+					_baseLayer = settingsLayer;
+				}
+
+				return _baseLayer;
+			}
+		}
 
 		internal IEnumerable<PrinterSettingsLayer> defaultLayerCascade
 		{
@@ -641,7 +774,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			keysToRetain.Remove(SettingsKey.print_leveling_enabled);
 
 			// Iterate all items that have .ShowAsOverride = false and conditionally add to the retention list
-			foreach (var item in ActiveSliceSettings.SettingsData.Where(settingsItem => settingsItem.ShowAsOverride == false))
+			foreach (var item in SettingsOrganizer.SettingsData.Values.Where(settingsItem => settingsItem.ShowAsOverride == false))
 			{
 				switch (item.SlicerConfigName)
 				{
@@ -666,7 +799,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		#region Migrate to LayeredProfile 
+		#region Migrate to LayeredProfile
 
 		static Dictionary<string, Type> expectedMappingTypes = new Dictionary<string, Type>()
 		{
@@ -704,7 +837,40 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 #if DEBUG
 			ValidateType<T>(settingsKey);
 #endif
-			if (typeof(T) == typeof(bool))
+			if (typeof(T) == typeof(string))
+			{
+				// this way we can use the common pattern without errer
+				return (T)(object)this.GetValue(settingsKey);
+			}
+			else if(typeof(T) == typeof(LevelingSystem))
+			{
+				switch(this.GetValue(settingsKey))
+				{
+					case "3 Point Plane":
+						return (T)(object)(LevelingSystem.Probe3Points);
+					case "7 Point Disk":
+						return (T)(object)(LevelingSystem.Probe7PointRadial);
+					case "13 Point Disk":
+						return (T)(object)(LevelingSystem.Probe13PointRadial);
+					case "100 Point Disk":
+						return (T)(object)(LevelingSystem.Probe100PointRadial);
+					case "3x3 Mesh":
+						return (T)(object)(LevelingSystem.Probe3x3Mesh);
+					case "5x5 Mesh":
+						return (T)(object)(LevelingSystem.Probe5x5Mesh);
+					case "10x10 Mesh":
+						return (T)(object)(LevelingSystem.Probe10x10Mesh);
+					default:
+#if DEBUG
+						throw new NotImplementedException();
+#else
+						break;
+#endif
+				}
+
+				return (T)(object)(LevelingSystem.Probe3Points);
+			}
+			else if (typeof(T) == typeof(bool))
 			{
 				return (T)(object)(this.GetValue(settingsKey) == "1");
 			}
@@ -722,8 +888,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					throw new Exception(string.Format("Not parsing {0} as a Vector2", settingsKey));
 				}
 				Vector2 valueAsVector2 = new Vector2();
-				valueAsVector2.x = Helpers.ParseDouble(twoValues[0]);
-				valueAsVector2.y = Helpers.ParseDouble(twoValues[1]);
+				valueAsVector2.X = Helpers.ParseDouble(twoValues[0]);
+				valueAsVector2.Y = Helpers.ParseDouble(twoValues[1]);
 				return (T)(object)(valueAsVector2);
 			}
 			else if (typeof(T) == typeof(double))
@@ -738,7 +904,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						return (T)(object)(GetValue<double>(SettingsKey.layer_height) * ratio);
 					}
-					else if (settingsKey == SettingsKey.first_layer_extrusion_width 
+					else if (settingsKey == SettingsKey.first_layer_extrusion_width
 						|| settingsKey == SettingsKey.external_perimeter_extrusion_width)
 					{
 						return (T)(object)(GetValue<double>(SettingsKey.nozzle_diameter) * ratio);
@@ -811,16 +977,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			foreach (var keyValue in this.BaseLayer)
 			{
-				SliceSettingData data = SliceSettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
-				if (data.RebuildGCodeOnChange)
+				// Add key/value to accumulating string for hash
+				SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
+				if (data?.RebuildGCodeOnChange == true)
 				{
-					string activeValue = GetValue(keyValue.Key);
 					bigStringForHashCode.Append(keyValue.Key);
-					bigStringForHashCode.Append(activeValue);
+					bigStringForHashCode.Append(this.GetValue(keyValue.Key));
 				}
 			}
-
-			string value = bigStringForHashCode.ToString();
 
 			return agg_basics.ComputeHash(bigStringForHashCode.ToString());
 		}
@@ -829,35 +993,38 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			try
 			{
-				if (GetValue<double>(SettingsKey.layer_height) > GetValue<double>(SettingsKey.nozzle_diameter))
+				if (GetValue<bool>(SettingsKey.validate_layer_height))
 				{
-					string error = "'Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
-					string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>(SettingsKey.layer_height), GetValue<double>(SettingsKey.nozzle_diameter));
-					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
-					return false;
-				}
-				else if (GetValue<double>(SettingsKey.first_layer_height) > GetValue<double>(SettingsKey.nozzle_diameter))
-				{
-					string error = "'First Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
-					string details = string.Format("First Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>(SettingsKey.first_layer_height), GetValue<double>(SettingsKey.nozzle_diameter));
-					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
-					return false;
+					if (GetValue<double>(SettingsKey.layer_height) > GetValue<double>(SettingsKey.nozzle_diameter))
+					{
+						string error = "'Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
+						string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>(SettingsKey.layer_height), GetValue<double>(SettingsKey.nozzle_diameter));
+						string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'".Localize();
+						StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+						return false;
+					}
+					else if (GetValue<double>(SettingsKey.first_layer_height) > GetValue<double>(SettingsKey.nozzle_diameter))
+					{
+						string error = "'First Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
+						string details = string.Format("First Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>(SettingsKey.first_layer_height), GetValue<double>(SettingsKey.nozzle_diameter));
+						string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'".Localize();
+						StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+						return false;
+					}
 				}
 
 				// Print recovery can only work with a manually leveled or software leveled bed. Hardware leveling does not work.
 				if (GetValue<bool>(SettingsKey.recover_is_enabled))
 				{
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Print Recovery' -> 'Enable Recovery'".Localize();
-					string[] startGCode = GetValue("start_gcode").Replace("\\n", "\n").Split('\n');
+					string[] startGCode = GetValue(SettingsKey.start_gcode).Replace("\\n", "\n").Split('\n');
 					foreach (string startGCodeLine in startGCode)
 					{
 						if (startGCodeLine.StartsWith("G29"))
 						{
 							string error = "Start G-Code cannot contain G29 if Print Recovery is enabled.".Localize();
 							string details = "Your Start G-Code should not contain a G29 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery".Localize();
-							StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+							StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 							return false;
 						}
 
@@ -865,7 +1032,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							string error = "Start G-Code cannot contain G30 if Print Leveling is enabled.".Localize();
 							string details = "Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery".Localize();
-							StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+							StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 							return false;
 						}
 					}
@@ -875,14 +1042,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (GetValue<bool>(SettingsKey.print_leveling_enabled))
 				{
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom G-Code' -> 'Start G-Code'".Localize();
-					string[] startGCode = GetValue("start_gcode").Replace("\\n", "\n").Split('\n');
+					string[] startGCode = GetValue(SettingsKey.start_gcode).Replace("\\n", "\n").Split('\n');
 					foreach (string startGCodeLine in startGCode)
 					{
 						if (startGCodeLine.StartsWith("G29"))
 						{
 							string error = "Start G-Code cannot contain G29 if Print Leveling is enabled.".Localize();
 							string details = "Your Start G-Code should not contain a G29 if you are planning on using print leveling. Change your start G-Code or turn off print leveling".Localize();
-							StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+							StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 							return false;
 						}
 
@@ -890,10 +1057,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							string error = "Start G-Code cannot contain G30 if Print Leveling is enabled.".Localize();
 							string details = "Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling".Localize();
-							StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+							StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 							return false;
 						}
 					}
+				}
+
+				// If we have print leveling turned on then make sure we don't have any leveling commands in the start gcode.
+				if (Math.Abs(GetValue<double>(SettingsKey.baby_step_z_offset)) > 2)
+				{
+					string location = "Location: 'Controls' -> 'Movement' -> 'Z Offset'".Localize();
+					string error = "Z Offset is too large.".Localize();
+					string details = "The Z Offset for your printer, sometimes called Babby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.".Localize();
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Calibration Error".Localize());
+					return false;
 				}
 
 				if (GetValue<double>(SettingsKey.first_layer_extrusion_width) > GetValue<double>(SettingsKey.nozzle_diameter) * 4)
@@ -901,7 +1078,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string error = "'First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.".Localize();
 					string details = string.Format("First Layer Extrusion Width = {0}\nNozzle Diameter = {1}".Localize(), GetValue(SettingsKey.first_layer_extrusion_width), GetValue<double>(SettingsKey.nozzle_diameter));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
@@ -910,7 +1087,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string error = "'First Layer Extrusion Width' must be greater than 0.".Localize();
 					string details = string.Format("First Layer Extrusion Width = {0}".Localize(), GetValue(SettingsKey.first_layer_extrusion_width));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
@@ -919,7 +1096,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string error = "'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.".Localize();
 					string details = string.Format("External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}".Localize(), GetValue(SettingsKey.external_perimeter_extrusion_width), GetValue<double>(SettingsKey.nozzle_diameter));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
@@ -928,7 +1105,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string error = "'External Perimeter Extrusion Width' must be greater than 0.".Localize();
 					string details = string.Format("External Perimeter Extrusion Width = {0}".Localize(), GetValue(SettingsKey.external_perimeter_extrusion_width));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
@@ -937,7 +1114,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string error = "The Minimum Fan Speed can only go as high as 100%.".Localize();
 					string details = string.Format("It is currently set to {0}.".Localize(), GetValue<double>(SettingsKey.min_fan_speed));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Cooling'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
@@ -946,7 +1123,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string error = "The Maximum Fan Speed can only go as high as 100%.".Localize();
 					string details = string.Format("It is currently set to {0}.".Localize(), GetValue<double>("max_fan_speed"));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Cooling'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
@@ -955,7 +1132,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string error = "The Extruder Count must be at least 1.".Localize();
 					string details = string.Format("It is currently set to {0}.".Localize(), GetValue<int>(SettingsKey.extruder_count));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Features'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
@@ -964,7 +1141,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string error = "The Fill Density must be between 0 and 1.".Localize();
 					string details = string.Format("It is currently set to {0}.".Localize(), GetValue<double>(SettingsKey.fill_density));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
@@ -974,7 +1151,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string error = "Solid Infill works best when set to LINES.".Localize();
 					string details = string.Format("It is currently set to {0}.".Localize(), GetValue("infill_type"));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill Type'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return true;
 				}
 
@@ -984,13 +1161,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (!ValidateGoodSpeedSettingGreaterThan0("bridge_speed", normalSpeedLocation)) return false;
 				if (!ValidateGoodSpeedSettingGreaterThan0("external_perimeter_speed", normalSpeedLocation)) return false;
 				if (!ValidateGoodSpeedSettingGreaterThan0(SettingsKey.first_layer_speed, normalSpeedLocation)) return false;
-				if (!ValidateGoodSpeedSettingGreaterThan0("gap_fill_speed", normalSpeedLocation)) return false;
 				if (!ValidateGoodSpeedSettingGreaterThan0("infill_speed", normalSpeedLocation)) return false;
 				if (!ValidateGoodSpeedSettingGreaterThan0("perimeter_speed", normalSpeedLocation)) return false;
 				if (!ValidateGoodSpeedSettingGreaterThan0("small_perimeter_speed", normalSpeedLocation)) return false;
 				if (!ValidateGoodSpeedSettingGreaterThan0("solid_infill_speed", normalSpeedLocation)) return false;
 				if (!ValidateGoodSpeedSettingGreaterThan0("support_material_speed", normalSpeedLocation)) return false;
-				if (!ValidateGoodSpeedSettingGreaterThan0("top_solid_infill_speed", normalSpeedLocation)) return false;
+				if (!ValidateGoodSpeedSettingGreaterThan0(SettingsKey.top_solid_infill_speed, normalSpeedLocation)) return false;
 				if (!ValidateGoodSpeedSettingGreaterThan0("travel_speed", normalSpeedLocation)) return false;
 
 				string retractSpeedLocation = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Filament' -> 'Retraction'".Localize();
@@ -1001,7 +1177,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Debug.Print(e.Message);
 				GuiWidget.BreakInDebugger();
 				string stackTraceNoBackslashRs = e.StackTrace.Replace("\r", "");
-				ContactFormWindow.Open("Parse Error while slicing".Localize(), e.Message + stackTraceNoBackslashRs);
+
+				var widget = new ContactFormPage();
+				widget.questionInput.Text = "Parse Error while slicing".Localize();
+				widget.detailInput.Text = e.Message + stackTraceNoBackslashRs;
+
+				DialogWindow.Show(widget);
+
 				return false;
 			}
 
@@ -1024,15 +1206,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			if (!valueWasNumber
-				|| (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngine().MapContains(speedSetting)
+				|| (EngineMappingsMatterSlice.Instance.MapContains(speedSetting)
 				&& speedToCheck <= 0))
 			{
-				SliceSettingData data = SliceSettingsOrganizer.Instance.GetSettingsData(speedSetting);
+				SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(speedSetting);
 				if (data != null)
 				{
 					string error = string.Format("The '{0}' must be greater than 0.".Localize(), data.PresentationName);
 					string details = string.Format("It is currently set to {0}.".Localize(), actualSpeedValueString);
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2} -> '{3}'", error, details, speedLocation, data.PresentationName), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2} -> '{3}'", error, details, speedLocation, data.PresentationName), "Slice Error".Localize());
 				}
 				return false;
 			}
@@ -1058,7 +1240,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static HashSet<string> LoadSettingsNamesFromPropertiesJson()
 		{
-			string propertiesJson = StaticData.Instance.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
+			string propertiesJson = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
 			var settingsData = JArray.Parse(propertiesJson);
 
 			return new HashSet<string>(settingsData.Select(s => s["SlicerConfigName"].Value<string>()));
@@ -1096,9 +1278,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ActiveSliceSettings.OnSettingChanged(settingsKey);
 		}
 
-		public string ToJson(Formatting formatting = Formatting.Indented)
+		public string ToJson()
 		{
-			return JsonConvert.SerializeObject(this, formatting);
+			return JsonConvert.SerializeObject(this, Formatting.Indented);
 		}
 
 		internal void ClearValue(string settingsKey, PrinterSettingsLayer layer = null)
@@ -1121,3 +1303,4 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 }
+ 

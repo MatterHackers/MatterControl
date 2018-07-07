@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl
 				}
 				catch (Exception e)
 				{
-					MatterControlApplication.Instance.ReportException(e);
+                    System.Diagnostics.Trace.WriteLine(e.Message);
 				}
 			}
 			return request;

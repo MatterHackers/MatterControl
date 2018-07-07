@@ -12,7 +12,7 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.SetupWizard
 {
-	class PrinterProfileHistoryPage : WizardPage
+	class PrinterProfileHistoryPage : DialogPage
 	{
 		List<RadioButton> radioButtonList = new List<RadioButton>();
 		Dictionary<string, string> printerProfileData = new Dictionary<string, string>();
@@ -20,22 +20,21 @@ namespace MatterHackers.MatterControl.SetupWizard
 		ScrollableWidget scrollWindow;
 
 		public PrinterProfileHistoryPage()
-			: base(unlocalizedTextForTitle: "Restore Settings")
 		{
+			this.WindowTitle = "Restore Settings".Localize();
+			this.HeaderText = "Restore Settings".Localize();
+
 			scrollWindow = new ScrollableWidget()
 			{
 				AutoScroll = true,
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.ParentBottomTop,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
 			};
-			scrollWindow.ScrollArea.HAnchor = HAnchor.ParentLeftRight;
+			scrollWindow.ScrollArea.HAnchor = HAnchor.Stretch;
 			contentRow.FlowDirection = FlowDirection.TopToBottom;
 			contentRow.AddChild(scrollWindow);
 
-			var revertButton = textImageButtonFactory.Generate("Restore".Localize());
-			footerRow.AddChild(revertButton);
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
+			var revertButton = theme.CreateDialogButton("Restore".Localize());
 			revertButton.Click += async (s, e) =>
 			{
 				int index = radioButtonList.IndexOf(radioButtonList.Where(r => r.Checked).FirstOrDefault());
@@ -47,19 +46,20 @@ namespace MatterHackers.MatterControl.SetupWizard
 					var activeProfile = ProfileManager.Instance.ActiveProfile;
 
 					// Download the specified json profile
-					var jsonProfile = await ApplicationController.GetPrinterProfileAsync(activeProfile, profileToken);
-					if (jsonProfile != null)
+					var printerSettings = await ApplicationController.GetPrinterProfileAsync(activeProfile, profileToken);
+					if (printerSettings != null)
 					{
 						// Persist downloaded profile
-						jsonProfile.Save();
+						printerSettings.Save();
 
 						// Update active instance without calling ReloadAll
-						ActiveSliceSettings.RefreshActiveInstance(jsonProfile);
+						ApplicationController.Instance.RefreshActiveInstance(printerSettings);
 					}
-					
-					UiThread.RunOnIdle(WizardWindow.Close);
+
+					UiThread.RunOnIdle(DialogWindow.Close);
 				}
 			};
+			this.AddPageAction(revertButton);
 
 			LoadHistoryItems();
 		}
@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 			else
 			{
 				loadingText.Text = "Failed To Download History!";
-				loadingText.TextColor = RGBA_Bytes.Red;
+				loadingText.TextColor = Color.Red;
 			}
 			
 			//remove loading profile text/icon

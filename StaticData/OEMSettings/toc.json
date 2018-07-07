@@ -1,0 +1,50 @@
+{
+  "Name": "Docs",
+  "Children": [
+    {
+      "Name": "User Interface",
+      "Children": [
+        {
+          "Name": "Gcode 3D",
+          "Path": "user-interface/gcode-3d.md",
+          "Children": []
+        }
+      ]
+    },
+    {
+      "Name": "Adding Parts",
+      "Path": "adding-parts.md",
+      "Children": []
+    },
+    {
+      "Name": "Hotend Controls",
+      "Path": "hotend-controls.md",
+      "Children": []
+    },
+    {
+      "Name": "Rotate Controls",
+      "Path": "rotate-controls.md",
+      "Children": []
+    },
+    {
+      "Name": "Scale Controls",
+      "Path": "scale-controls.md",
+      "Children": []
+    },
+    {
+      "Name": "Starting A Print",
+      "Path": "starting-a-print.md",
+      "Children": []
+    },
+    {
+      "Name": "Support",
+      "Path": "support.md",
+      "Children": []
+    },
+    {
+      "Name": "Whats New",
+      "Path": "whats-new.md",
+      "Children": []
+    }
+  ]
+}

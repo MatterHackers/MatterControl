@@ -28,198 +28,82 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
-	public class ActionControls : ControlWidgetBase
+	public class MacroControls : FlowLeftRightWithWrapping
 	{
-		public ActionControls()
+		private EventHandler unregisterEvents;
+		PrinterConfig printer;
+		ThemeConfig theme;
+
+		private MacroControls(PrinterConfig printer, ThemeConfig theme)
 		{
-			if (!ActiveSliceSettings.Instance.ActionMacros().Any())
+			this.printer = printer;
+			this.theme = theme;
+			Rebuild();
+
+			ActiveSliceSettings.ActiveProfileModified.RegisterEvent((s, e) =>
 			{
-				Margin = new BorderDouble();
-				return;
-			}
-			this.AddChild(new ActionControlsWidget());
-		}
-	}
-
-	public class TerminalControls : ControlWidgetBase
-	{
-		public TerminalControls()
-		{
-			this.AddChild(new TerminalWidget(false));
-		}
-	}
-
-	public class ActionControlsWidget : FlowLayoutWidget
-	{
-		protected string editWindowLabel;
-		protected string label;
-		protected FlowLayoutWidget presetButtonsContainer;
-		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-
-		public ActionControlsWidget()
-			: base(FlowDirection.TopToBottom)
-		{
-			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
-			this.textImageButtonFactory.FixedHeight = 24 * GuiWidget.DeviceScale;
-			this.textImageButtonFactory.fontSize = 12;
-			this.textImageButtonFactory.borderWidth = 1;
-			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-
-			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
-			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
-			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-			this.HAnchor = HAnchor.ParentLeftRight;
-
-			// add the widgets to this window
-			FlowLayoutWidget groupBox = new FlowLayoutWidget()
-			{
-				Padding = new BorderDouble(5),
-				HAnchor = HAnchor.ParentLeftRight,
-				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
-			};
-
-			groupBox.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-			// make sure the client area will get smaller when the contents get smaller
-			groupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
-
-			FlowLayoutWidget controlRow = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
-			controlRow.Margin = new BorderDouble(top: 5);
-			controlRow.HAnchor |= HAnchor.ParentLeftRight;
-			{
-				this.presetButtonsContainer = GetMacroButtonContainer();
-				controlRow.AddChild(this.presetButtonsContainer);
-			}
-
-			groupBox.AddChild(controlRow);
-			this.AddChild(groupBox);
+				UiThread.RunOnIdle(() => Rebuild());
+			}, ref unregisterEvents);
 		}
 
-		private FlowLayoutWidget GetMacroButtonContainer()
+		public override void OnClosed(ClosedEventArgs e)
 		{
-			FlowLayoutWidget macroButtonContainer = new FlowLayoutWidget();
-			macroButtonContainer.Margin = new BorderDouble(0, 0, 3, 0);
-			macroButtonContainer.Padding = new BorderDouble(0, 3, 3, 3);
-
-			if (ActiveSliceSettings.Instance?.ActionMacros().Any() != true)
-			{
-				return macroButtonContainer;
-			}
-
-			foreach (GCodeMacro macro in ActiveSliceSettings.Instance.ActionMacros())
-			{
-				Button macroButton = textImageButtonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
-				macroButton.Margin = new BorderDouble(right: 5);
-				macroButton.Click += (s, e) => macro.Run();
-
-				macroButtonContainer.AddChild(macroButton);
-			}
-
-			return macroButtonContainer;
-		}
-	}
-
-	public class MacroControls : ControlWidgetBase
-	{
-		public MacroControls()
-		{
-			this.AddChild(new MacroControlsWidget());
-		}
-	}
-
-	public class MacroControlsWidget : FlowLayoutWidget
-	{
-		protected string editWindowLabel;
-		protected string label;
-		protected FlowLayoutWidget presetButtonsContainer;
-		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-
-		public MacroControlsWidget()
-					: base(FlowDirection.TopToBottom)
-		{
-			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
-			this.textImageButtonFactory.FixedHeight = 24 * GuiWidget.DeviceScale;
-			this.textImageButtonFactory.fontSize = 12;
-			this.textImageButtonFactory.borderWidth = 1;
-			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-
-			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
-			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
-			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-			this.HAnchor = HAnchor.ParentLeftRight;
-
-			// add the widgets to this window
-			Button editButton;
-			AltGroupBox groupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Macros".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton));
-			editButton.Click += (sender, e) =>
-			{
-				EditMacrosWindow.Show();
-			};
-
-			groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-			groupBox.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-			// make sure the client area will get smaller when the contents get smaller
-			groupBox.ClientArea.VAnchor = Agg.UI.VAnchor.FitToChildren;
-
-			FlowLayoutWidget controlRow = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
-			controlRow.Margin = new BorderDouble(top: 5);
-			controlRow.HAnchor = HAnchor.ParentLeftRight;
-			{
-				this.presetButtonsContainer = GetMacroButtonContainer();
-				controlRow.AddChild(this.presetButtonsContainer);
-			}
-
-			groupBox.AddChild(controlRow);
-			this.AddChild(groupBox);
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
 		}
 
-		private FlowLayoutWidget GetMacroButtonContainer()
+		void Rebuild()
 		{
-			FLowLeftRightWithWrapping macroContainer = new FLowLeftRightWithWrapping();
+			addedChildren.Clear();
 
-			TextWidget noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10);
-			noMacrosFound.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			macroContainer.AddChild(noMacrosFound);
-			noMacrosFound.Visible = false;
-
-			if (ActiveSliceSettings.Instance?.UserMacros().Any() != true)
+			if (!printer.Settings.Macros.Any())
 			{
-				noMacrosFound.Visible = true;
-				return macroContainer;
+				var noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10, textColor: theme.Colors.PrimaryTextColor);
+				this.AddChild(noMacrosFound);
 			}
-
-			foreach (GCodeMacro macro in ActiveSliceSettings.Instance.UserMacros())
+			else
 			{
-				Button macroButton = textImageButtonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
-				macroButton.Margin = new BorderDouble(right: 5);
-				macroButton.Click += (s, e) => macro.Run();
-
-				macroContainer.AddChild(macroButton);
-			}
-
-			macroContainer.Children.CollectionChanged += (s, e) =>
-			{
-				if (!this.HasBeenClosed)
+				foreach (GCodeMacro macro in printer.Settings.Macros)
 				{
-					noMacrosFound.Visible = macroContainer.Children.Count == 0;
+					var macroButton = new TextButton(GCodeMacro.FixMacroName(macro.Name), theme)
+					{
+						BackgroundColor = theme.MinimalShade,
+						Margin = new BorderDouble(right: 5)
+					};
+					macroButton.Click += (s, e) => macro.Run(printer.Connection);
+
+					addedChildren.Add(macroButton);
 				}
+			}
+
+			DoWrappingLayout();
+		}
+
+		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
+		{
+			var widget = new MacroControls(printer, theme);
+
+			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme);
+			editButton.Click += (s, e) =>
+			{
+				DialogWindow.Show(new MacroListPage(printer.Settings));
 			};
-			
-			return macroContainer;
+
+			return new SectionWidget(
+				"Macros".Localize(),
+				widget,
+				theme,
+				editButton);
 		}
 	}
 }

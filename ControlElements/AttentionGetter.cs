@@ -37,39 +37,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using static MatterHackers.Agg.Easing;
 
 namespace MatterHackers.MatterControl
 {
 	public static class UiNavigation
 	{
-		public static void OpenEditPrinterWizard_Click(object sender, EventArgs e)
-		{
-			Button editButton = sender as Button;
-			editButton.ToolTipText = "Edit Current Printer Settings".Localize();
-			if (editButton != null)
-			{
-				editButton.Closed += (s, e2) =>
-				{
-					editButton.Click -= OpenEditPrinterWizard_Click;
-				};
-
-				UiNavigation.OpenEditPrinterWizard("baud_rate Edit Field,auto_connect Edit Field,com_port Edit Field");
-			}
-		}
-
-		public static void OpenEditPrinterWizard(string widgetNameToHighlight)
-		{
-			if (PrinterConnectionAndCommunication.Instance?.ActivePrinter?.ID != null
-				&& ActiveSliceSettings.Instance.PrinterSelected
-				&& !WizardWindow.IsOpen("PrinterSetup"))
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					WizardWindow.Show<EditPrinterSettingsPage>("EditSettings", "Edit Printer Settings");
-				});
-			}
-		}
-
 		private static void HighlightWidget(AutomationRunner testRunner, string widgetNameToHighlight)
 		{
 			SystemWindow containingWindow;
@@ -88,7 +61,7 @@ namespace MatterHackers.MatterControl
 		private int cycles = 1;
 		private double lightnessChange = 1;
 		private double pulseTime = 1.38;
-		private RGBA_Bytes startColor;
+		private Color startColor;
 		private Stopwatch timeSinceStart = null;
 		private GuiWidget widgetToHighlight;
 
@@ -109,24 +82,30 @@ namespace MatterHackers.MatterControl
 			return null;
 		}
 
+		public static double GetFadeInOutPulseRatio(double elapsedTime, double pulseTime)
+		{
+			double ratio = elapsedTime;
+			while (ratio > pulseTime)
+			{
+				ratio -= pulseTime;
+			}
+			ratio = ratio * 2 / pulseTime;
+			if (ratio > 1)
+			{
+				ratio = 1 - (ratio - 1);
+			}
+
+			return ratio;
+		}
+
 		private void ChangeBackgroundColor()
 		{
 			if (widgetToHighlight != null)
 			{
-				double time = timeSinceStart.Elapsed.TotalSeconds;
-				while (time > pulseTime)
-				{
-					time -= pulseTime;
-				}
-				time = time * 2 / pulseTime;
-				if (time > 1)
-				{
-					time = 1 - (time - 1);
-				}
+				double time = GetFadeInOutPulseRatio(timeSinceStart.Elapsed.TotalSeconds, pulseTime);
+				double lightnessMultiplier = Quadratic.InOut(time);
 
-				double lightnessMultiplier = EaseInOutQuad(time);
-
-				widgetToHighlight.BackgroundColor = startColor.AdjustLightness(1 + lightnessChange * lightnessMultiplier).GetAsRGBA_Bytes();
+				widgetToHighlight.BackgroundColor = startColor.AdjustLightness(1 + lightnessChange * lightnessMultiplier).ToColor();
 				if (widgetToHighlight.HasBeenClosed || timeSinceStart.Elapsed.TotalSeconds > cycles * pulseTime)
 				{
 					widgetToHighlight.BackgroundColor = startColor;
@@ -135,19 +114,7 @@ namespace MatterHackers.MatterControl
 					widgetToHighlight = null;
 					return;
 				}
-				UiThread.RunOnIdle(ChangeBackgroundColor, animationDelay);
 			}
-		}
-
-		private double EaseInOutQuad(double t)
-		{
-			if (t <= 0.5f)
-			{
-				return 2.0f * (t * t);
-			}
-
-			t -= 0.5f;
-			return 2.0f * t * (1.0f - t) + 0.5;
 		}
 
 		private void ConnectToWidget(object drawingWidget, DrawEventArgs e)
@@ -160,7 +127,8 @@ namespace MatterHackers.MatterControl
 			startColor = parent.BackgroundColor;
 			timeSinceStart = Stopwatch.StartNew();
 			widgetToHighlight.AfterDraw -= ConnectToWidget;
-			UiThread.RunOnIdle(ChangeBackgroundColor, animationDelay);
+			var runningInterval = UiThread.SetInterval(ChangeBackgroundColor, animationDelay);
+			parent.Closed += (s, e2) => runningInterval.Continue = false;
 		}
 	}
 }

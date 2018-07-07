@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+//#define TRACEREQUESTS
+
 using MatterHackers.Localizations;
 using Newtonsoft.Json;
 using System;
@@ -138,7 +140,9 @@ namespace MatterHackers.MatterControl.VersionManagement
 #endif
 			string jsonToSend = JsonConvert.SerializeObject(requestValues);
 
+#if TRACEREQUESTS
 			System.Diagnostics.Trace.Write(string.Format("ServiceRequest: {0}\r\n  {1}\r\n", uri, string.Join("\r\n\t", jsonToSend.Split(','))));
+#endif
 
 			requestManager.SendPOSTRequest(uri, jsonToSend, "", "", false);
 
@@ -301,7 +305,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 			}
 			else
 			{
-				// Don't do anything, there was no respones.
+				// Don't do anything, there was no response.
 			}
 		}
 
@@ -313,7 +317,9 @@ namespace MatterHackers.MatterControl.VersionManagement
 
 			string jsonToSend = getJsonToSend();
 
+#if TRACEREQUESTS
 			System.Diagnostics.Trace.Write(string.Format("ServiceRequest: {0}\r\n  {1}\r\n", uri, string.Join("\r\n\t", jsonToSend.Split(','))));
+#endif
 
 			requestManager.SendPOSTRequest(uri, jsonToSend, "", "", false);
 			if (requestManager.LastResponse == null)

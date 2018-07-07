@@ -27,14 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Font;
+using MatterHackers.Agg.UI;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -51,7 +49,7 @@ namespace MatterHackers.MatterControl
 
 		private TypeFacePrinter printer = null;
 
-			public RGBA_Bytes TextColor = new RGBA_Bytes(102, 102, 102);
+			public Color TextColor = new Color(102, 102, 102);
 		private int forceStartLine = -1;
 
 		public double Position0To1
@@ -89,13 +87,13 @@ namespace MatterHackers.MatterControl
 			get { return (int)Math.Ceiling(Height / printer.TypeFaceStyle.EmSizeInPixels); }
 		}
 
-		public TextScrollWidget(List<string> sourceLines)
+		public TextScrollWidget(PrinterConfig printer, List<string> sourceLines)
 		{
-			printer = new TypeFacePrinter("", new StyledTypeFace(ApplicationController.MonoSpacedTypeFace, 12));
-			printer.DrawFromHintedCache = true;
+			this.printer = new TypeFacePrinter("", new StyledTypeFace(ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono), 12));
+			this.printer.DrawFromHintedCache = true;
 			this.allSourceLines = sourceLines;
 			this.visibleLines = sourceLines;
-			PrinterOutputCache.Instance.HasChanged.RegisterEvent(RecievedNewLine, ref unregisterEvents);
+			printer.Connection.TerminalLog.HasChanged.RegisterEvent(RecievedNewLine, ref unregisterEvents);
 		}
 
 		private void ConditionalyAddToVisible(string line)
@@ -178,10 +176,7 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 

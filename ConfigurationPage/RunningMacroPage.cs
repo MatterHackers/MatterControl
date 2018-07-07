@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,67 +28,59 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
-	public class RunningMacroPage : WizardPage
+	public class RunningMacroPage : DialogPage
 	{
 		private long startTimeMs;
 		private ProgressBar progressBar;
+		private RunningInterval runningInterval;
 
 		private TextWidget progressBarText;
 
 		private long timeToWaitMs;
+		private PrinterConfig printer;
 
-		public RunningMacroPage(MacroCommandData macroData)
-					: base("Cancel", macroData.title)
+		public RunningMacroPage(PrinterConfig printer, MacroCommandData macroData, ThemeConfig theme)
+			: base("Cancel")
 		{
-			//TextWidget syncingText = new TextWidget(message, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			//contentRow.AddChild(syncingText);
-
-			cancelButton.Click += (s, e) =>
-			{
-				PrinterConnectionAndCommunication.Instance.MacroCancel();
-			};
+			this.printer = printer;
+			this.WindowTitle = "Running Macro".Localize();
+			this.HeaderText = macroData.title;
 
 			if (macroData.showMaterialSelector)
 			{
-				int extruderIndex = 0;
-				var materialSelector = new PresetSelectorWidget(string.Format($"{"Material".Localize()} {extruderIndex + 1}"), RGBA_Bytes.Transparent, NamedSettingsLayers.Material, extruderIndex);
-				materialSelector.BackgroundColor = RGBA_Bytes.Transparent;
-				materialSelector.Margin = new BorderDouble(0, 0, 0, 15);
-				contentRow.AddChild(materialSelector);
+				contentRow.AddChild(new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, theme)
+				{
+					BackgroundColor = Color.Transparent,
+					Margin = new BorderDouble(0, 0, 0, 15)
+				});
 			}
 
-			PrinterConnectionAndCommunication.Instance.WroteLine.RegisterEvent(LookForTempRequest, ref unregisterEvents);
+			printer.Connection.LineSent.RegisterEvent(LookForTempRequest, ref unregisterEvents);
 
 			if (macroData.waitOk | macroData.expireTime > 0)
 			{
-				Button okButton = textImageButtonFactory.Generate("Continue".Localize());
-
+				var okButton = theme.CreateDialogButton("Continue".Localize());
 				okButton.Click += (s, e) =>
 				{
-					PrinterConnectionAndCommunication.Instance.MacroContinue();
-					UiThread.RunOnIdle(() => WizardWindow?.Close());
+					printer.Connection.MacroContinue();
 				};
 
-				footerRow.AddChild(okButton);
+				this.AddPageAction(okButton);
 			}
 
 			if (macroData.image != null)
 			{
 				var imageWidget = new ImageWidget(macroData.image)
 				{
-					HAnchor = HAnchor.ParentCenter,
+					HAnchor = HAnchor.Center,
 					Margin = new BorderDouble(5,15),
 				};
 
@@ -100,7 +92,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				FillColor = ActiveTheme.Instance.PrimaryAccentColor,
 				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
-				BackgroundColor = RGBA_Bytes.White,
+				BackgroundColor = Color.White,
 				Margin = new BorderDouble(3, 0, 0, 10),
 			};
 			progressBarText = new TextWidget("", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
@@ -117,11 +109,14 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				timeToWaitMs = (long)(macroData.countDown * 1000);
 				startTimeMs = UiThread.CurrentTimerMs;
-				UiThread.RunOnIdle(CountDownTime);
+				runningInterval = UiThread.SetInterval(CountDownTime, .2);
 			}
+		}
 
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
+		protected override void OnCancel(out bool abortCancel)
+		{
+			printer.Connection.MacroCancel();
+			abortCancel = false;
 		}
 
 		private EventHandler unregisterEvents;
@@ -137,16 +132,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 			public ImageBuffer image = null;
 		}
 
-		public static void Show(MacroCommandData macroData)
-		{
-			WizardWindow.Show("Macro", "Running Macro", new RunningMacroPage(macroData));
-		}
-
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			if(e.OsEvent)
 			{
-				PrinterConnectionAndCommunication.Instance.MacroCancel();
+				printer.Connection.MacroCancel();
 			}
 			unregisterEvents?.Invoke(this, null);
 
@@ -155,15 +145,15 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private void CountDownTime()
 		{
+			if(runningInterval != null)
+			{
+				runningInterval.Continue = !HasBeenClosed && progressBar.RatioComplete < 1;
+			}
 			progressBar.Visible = true;
 			long timeSinceStartMs = UiThread.CurrentTimerMs - startTimeMs;
 			progressBar.RatioComplete = timeToWaitMs == 0 ? 1 : Math.Max(0, Math.Min(1, ((double)timeSinceStartMs / (double)timeToWaitMs)));
 			int seconds = (int)((timeToWaitMs - (timeToWaitMs * (progressBar.RatioComplete))) / 1000);
 			progressBarText.Text = $"Time Remaining: {seconds / 60:#0}:{seconds % 60:00}";
-			if (!HasBeenClosed && progressBar.RatioComplete < 1)
-			{
-				UiThread.RunOnIdle(CountDownTime, .2);
-			}
 		}
 
 		double startingTemp;
@@ -173,24 +163,20 @@ namespace MatterHackers.MatterControl.PrinterControls
 			if(stringEvent != null
 				&& stringEvent.Data.Contains("M104"))
 			{
-				startingTemp = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0);
-				UiThread.RunOnIdle(ShowTempChangeProgress);
-			}
-		}
-
-		private void ShowTempChangeProgress()
-		{
-			progressBar.Visible = true;
-			double targetTemp = PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(0);
-			double actualTemp = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0);
-			double totalDelta = targetTemp - startingTemp;
-			double currentDelta = actualTemp - startingTemp;
-			double ratioDone = totalDelta != 0 ? (currentDelta / totalDelta) : 1;
-			progressBar.RatioComplete = Math.Min(Math.Max(0, ratioDone), 1);
-			progressBarText.Text = $"Temperature: {actualTemp:0} / {targetTemp:0}";
-			if (!HasBeenClosed && ratioDone < 1)
-			{
-				UiThread.RunOnIdle(ShowTempChangeProgress, 1);
+				startingTemp = printer.Connection.GetActualHotendTemperature(0);
+				RunningInterval runningInterval = null;
+				runningInterval = UiThread.SetInterval(() =>
+				{
+					runningInterval.Continue = !HasBeenClosed && progressBar.RatioComplete < 1;
+					progressBar.Visible = true;
+					double targetTemp = printer.Connection.GetTargetHotendTemperature(0);
+					double actualTemp = printer.Connection.GetActualHotendTemperature(0);
+					double totalDelta = targetTemp - startingTemp;
+					double currentDelta = actualTemp - startingTemp;
+					double ratioDone = totalDelta != 0 ? (currentDelta / totalDelta) : 1;
+					progressBar.RatioComplete = Math.Min(Math.Max(0, ratioDone), 1);
+					progressBarText.Text = $"Temperature: {actualTemp:0} / {targetTemp:0}";
+				}, 1);
 			}
 		}
 	}

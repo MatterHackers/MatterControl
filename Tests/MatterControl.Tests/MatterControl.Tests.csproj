@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\NUnit3TestAdapter.3.9.0\build\net35\NUnit3TestAdapter.props" Condition="Exists('..\..\packages\NUnit3TestAdapter.3.9.0\build\net35\NUnit3TestAdapter.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,10 +10,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MatterControl.Tests</RootNamespace>
     <AssemblyName>MatterControl.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,7 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,36 +34,37 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NUnit.ApplicationDomain, Version=10.0.0.0, Culture=neutral, PublicKeyToken=afbd8211e0c40e2c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NUnit.ApplicationDomain.10.2.0\lib\net40\NUnit.ApplicationDomain.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="NUnit.ApplicationDomain, Version=11.0.0.0, Culture=neutral, PublicKeyToken=afbd8211e0c40e2c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NUnit.ApplicationDomain.11.0.0\lib\net40\NUnit.ApplicationDomain.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework, Version=3.5.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NUnit.3.5.0\lib\net45\nunit.framework.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="nunit.framework, Version=3.9.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.XML" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MatterControl\ApplicationControllerTests.cs" />
     <Compile Include="MatterControl\BrailleGrade2Tests.cs" />
-    <Compile Include="MatterControl\PerformanceTests.cs" />
+    <Compile Include="MatterControl\InteractiveSceneTests.cs" />
     <Compile Include="MatterControl\ImportSettingsTests.cs" />
+    <Compile Include="MatterControl\AssetManagerTests.cs" />
+    <Compile Include="MatterControl\MeshRebuildTests.cs" />
+    <Compile Include="MatterControl\MeshCsgTests.cs" />
+    <Compile Include="MatterControl\SliceSettingsFieldTests.cs" />
     <Compile Include="MatterControl\SettingsParseTests.cs" />
     <Compile Include="MatterControl\GCodeProcessingTests.cs" />
-    <Compile Include="MatterControl\LibraryProviderSqliteTests.cs" />
     <Compile Include="MatterControl\MatterControlUiFeatures.cs" />
     <Compile Include="MatterControl\MatterControlUtilities.cs" />
-    <Compile Include="MatterControl\HtmlParser.cs" />
-    <Compile Include="MatterControl\LibraryProviderTests.cs" />
     <Compile Include="MatterControl\OemProfileTests.cs" />
     <Compile Include="MatterControl\PrinterChooserUnitTests.cs" />
     <Compile Include="MatterControl\PrinterConfigurationTests.cs" />
@@ -70,7 +74,9 @@
     <Compile Include="MatterControl\LevelingTests.cs" />
     <Compile Include="MatterControl\GCodeStreamTests.cs" />
     <Compile Include="MatterControl\TranslationsTests.cs" />
+    <Compile Include="MatterControl\UIFieldTestWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SceneTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
@@ -80,13 +86,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\BrailleBuilder\BrailleBuilder.csproj">
-      <Project>{70FBB82C-558D-4B5F-BE75-A922D392E650}</Project>
-      <Name>BrailleBuilder</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\MatterControl.csproj">
       <Project>{0B8D6F56-BD7F-4426-B858-D9292B084656}</Project>
       <Name>MatterControl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MatterControl.Printing\MatterControl.Printing.csproj">
+      <Project>{97d5ade3-c1b4-4b46-8a3e-718a4f7f079f}</Project>
+      <Name>MatterControl.Printing</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\PrinterEmulator\PrinterEmulator.csproj">
       <Project>{bb58ca42-991b-41b7-bde7-dcd2911df8b9}</Project>
@@ -96,9 +102,9 @@
       <Project>{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}</Project>
       <Name>Agg</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\examples\GCodeVisualizer\GCodeVisualizer.csproj">
-      <Project>{F67AE800-B0C7-42A8-836F-597B4E74591C}</Project>
-      <Name>GCodeVisualizer</Name>
+    <ProjectReference Include="..\..\Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj">
+      <Project>{04667764-dc7b-4b95-aef6-b4e6c87a54e9}</Project>
+      <Name>DataConverters3D</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\GuiAutomation\GuiAutomation.csproj">
       <Project>{E9102310-0029-4D8F-B1E9-88FBA6147D45}</Project>
@@ -108,13 +114,21 @@
       <Project>{74F6BB6C-9D02-4512-A59A-21940E35C532}</Project>
       <Name>Gui</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\PlatformAbstract\PlatformAbstract.csproj">
-      <Project>{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}</Project>
-      <Name>PlatformAbstract</Name>
+    <ProjectReference Include="..\..\Submodules\agg-sharp\Localizations\Localizations.csproj">
+      <Project>{ca96058c-1a37-465d-a357-d6d695b13d25}</Project>
+      <Name>Localizations</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Submodules\agg-sharp\OpenGlGui\OpenGlGui.csproj">
+      <Project>{C958F745-156E-4BDC-A24A-3721C7BE7B8A}</Project>
+      <Name>OpenGlGui</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\PlatformWin32\PlatformWin32.csproj">
       <Project>{670BDDFF-927B-425D-9DD1-22ACB14356EB}</Project>
       <Name>PlatformWin32</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Submodules\agg-sharp\PolygonMesh\Net3dBool\Net3dBool.csproj">
+      <Project>{7ee4636d-8a92-4015-9562-7fcd6add0645}</Project>
+      <Name>Net3dBool</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj">
       <Project>{86F6AAF2-9B50-40B8-A427-1897D76471C5}</Project>
@@ -132,6 +146,16 @@
       <Project>{D3E41B4E-BFBB-44CA-94C8-95C00F754FDD}</Project>
       <Name>VectorMath</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\TextCreator\TextCreator.csproj">
+      <Project>{F49EC1DD-D645-4709-8667-B57318AF67B0}</Project>
+      <Name>TextCreator</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\NUnit3TestAdapter.3.9.0\build\net35\NUnit3TestAdapter.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\NUnit3TestAdapter.3.9.0\build\net35\NUnit3TestAdapter.props'))" />
+  </Target>
 </Project>

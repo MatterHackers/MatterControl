@@ -28,7 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
@@ -122,19 +122,11 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 
 			printerSettings.UserLayer[SettingsKey.publish_bed_image] = publishBedImage?.Value == "true" ? "1" : "0";
 
-			// Print leveling
-			var printLevelingData = PrintLevelingData.Create(
-				printerSettings, 
-				printer.PrintLevelingJsonData, 
-				printer.PrintLevelingProbePositions);
-
-			printerSettings.UserLayer[SettingsKey.print_leveling_data] = JsonConvert.SerializeObject(printLevelingData);
 			printerSettings.UserLayer[SettingsKey.print_leveling_enabled] = printer.DoPrintLeveling ? "true" : "false";
 			printerSettings.UserLayer[SettingsKey.manual_movement_speeds] = printer.ManualMovementSpeeds;
 
 			// make sure we clear the one time settings
 			printerSettings.OemLayer[SettingsKey.spiral_vase] = "";
-			printerSettings.OemLayer[SettingsKey.bottom_clip_amount] = "";
 			printerSettings.OemLayer[SettingsKey.layer_to_pause] = "";
 
 			// TODO: Where can we find CalibrationFiiles in the current model?

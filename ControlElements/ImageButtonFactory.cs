@@ -30,7 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
@@ -40,51 +40,6 @@ namespace MatterHackers.MatterControl
 	public class ImageButtonFactory
 	{
 		public bool InvertImageColor { get; set; } = true;
-
-		public static CheckBox CreateToggleSwitch(bool initialState)
-		{
-			string on = "On";
-			string off = "Off";
-			if (StaticData.Instance != null)
-			{
-				on = on.Localize();
-				off = off.Localize();
-			}
-			ToggleSwitchView toggleView = new ToggleSwitchView(on, off,
-				60 * GuiWidget.DeviceScale, 24 * GuiWidget.DeviceScale,
-				ActiveTheme.Instance.PrimaryBackgroundColor,
-				new RGBA_Bytes(220, 220, 220),
-				ActiveTheme.Instance.PrimaryAccentColor,
-				ActiveTheme.Instance.PrimaryTextColor);
-			CheckBox toggleBox = new CheckBox(toggleView);
-			toggleBox.Checked = initialState;
-			return toggleBox;
-		}
-
-		public Button Generate(string normalImageName, string hoverImageName, string pressedImageName = null, string disabledImageName = null)
-		{
-			if (hoverImageName == null)
-			{
-				hoverImageName = normalImageName;
-			}
-
-			if (pressedImageName == null)
-			{
-				pressedImageName = hoverImageName;
-			}
-
-			if (disabledImageName == null)
-			{
-				disabledImageName = normalImageName;
-			}
-
-			ImageBuffer normalImage = StaticData.Instance.LoadIcon(normalImageName);
-			ImageBuffer pressedImage = StaticData.Instance.LoadIcon(pressedImageName);
-			ImageBuffer hoverImage = StaticData.Instance.LoadIcon(hoverImageName);
-			ImageBuffer disabledImage = StaticData.Instance.LoadIcon(disabledImageName);
-
-			return Generate(normalImage, pressedImage, hoverImage, disabledImage);
-		}
 
 		public Button Generate(ImageBuffer normalImage, ImageBuffer hoverImage, ImageBuffer pressedImage = null, ImageBuffer disabledImage = null)
 		{
@@ -103,15 +58,7 @@ namespace MatterHackers.MatterControl
 				disabledImage = normalImage;
 			}
 
-			if (!ActiveTheme.Instance.IsDarkTheme && InvertImageColor)
-			{
-				normalImage.InvertLightness();
-				pressedImage.InvertLightness();
-				hoverImage.InvertLightness();
-				disabledImage.InvertLightness();
-			}
-
-			ButtonViewStates buttonViewWidget = new ButtonViewStates(
+			var buttonViewWidget = new ButtonViewStates(
 				new ImageWidget(normalImage),
 				new ImageWidget(hoverImage),
 				new ImageWidget(pressedImage),
@@ -119,10 +66,11 @@ namespace MatterHackers.MatterControl
 			);
 
 			//Create button based on view container widget
-			Button imageButton = new Button(0, 0, buttonViewWidget);
-			imageButton.Margin = new BorderDouble(0);
-			imageButton.Padding = new BorderDouble(0);
-			return imageButton;
+			return new Button(0, 0, buttonViewWidget)
+			{
+				Margin = new BorderDouble(0),
+				Padding = new BorderDouble(0)
+			};
 		}
 	}
 }

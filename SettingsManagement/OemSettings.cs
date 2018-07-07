@@ -33,7 +33,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using Newtonsoft.Json;
 
@@ -49,7 +50,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			{
 				if (instance == null)
 				{
-					string oemSettings = StaticData.Instance.ReadAllText(Path.Combine("OEMSettings", "Settings.json"));
+					string oemSettings = AggContext.StaticData.ReadAllText(Path.Combine("OEMSettings", "Settings.json"));
 					instance = JsonConvert.DeserializeObject<OemSettings>(oemSettings) as OemSettings;
 				}
 
@@ -137,6 +138,8 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 		public OemProfileDictionary OemProfiles { get; set; }
 
+		public Dictionary<string, string> OemUrls { get; }
+
 		[OnDeserialized]
 		private void Deserialized(StreamingContext context)
 		{
@@ -152,12 +155,12 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			string cachePath = ApplicationController.CacheablePath("public-profiles", "oemprofiles.json");
 
 			// Load data from cache or fall back to stale StaticData content
-			string json = File.Exists(cachePath) ? File.ReadAllText(cachePath) : StaticData.Instance.ReadAllText(Path.Combine("Profiles", "oemprofiles.json"));
+			string json = File.Exists(cachePath) ? File.ReadAllText(cachePath) : AggContext.StaticData.ReadAllText(Path.Combine("Profiles", "oemprofiles.json"));
 
 			return JsonConvert.DeserializeObject<OemProfileDictionary>(json);
 		}
 
-		public async Task ReloadOemProfiles(IProgress<SyncReportType> syncReport = null)
+		public async Task ReloadOemProfiles(IProgress<ProgressStatus> syncReport = null)
 		{
 			// In public builds this won't be assigned to and we should exit
 			if (ApplicationController.GetPublicProfileList == null)
@@ -185,9 +188,9 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			await DownloadMissingProfiles(syncReport);
 		}
 
-		private async Task DownloadMissingProfiles(IProgress<SyncReportType> syncReport)
+		private async Task DownloadMissingProfiles(IProgress<ProgressStatus> syncReport)
 		{
-			SyncReportType reportValue = new SyncReportType();
+			ProgressStatus reportValue = new ProgressStatus();
 			int index = 0;
 			foreach (string oem in OemProfiles.Keys)
 			{
@@ -203,10 +206,15 @@ namespace MatterHackers.MatterControl.SettingsManagement
 						await Task.Delay(20000);
 						await ProfileManager.LoadOemProfileAsync(publicDevice, oem, model);
 
+						if (ApplicationController.Instance.ApplicationExiting)
+						{
+							return;
+						}
+
 						if (syncReport != null)
 						{
-							reportValue.actionLabel = string.Format("Downloading public profiles for {0}...", oem);
-							reportValue.percComplete = (double)index / OemProfiles.Count;
+							reportValue.Status = string.Format("Downloading public profiles for {0}...", oem);
+							reportValue.Progress0To1 = (double)index / OemProfiles.Count;
 							syncReport.Report(reportValue);
 						}
 					}
@@ -217,6 +225,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 		private OemSettings()
 		{
 			this.ManufacturerNameMappings = new List<ManufacturerNameMapping>();
+			this.OemUrls = JsonConvert.DeserializeObject<Dictionary<string, string>>(AggContext.StaticData.ReadAllText(Path.Combine("OEMSettings", "OEMUrls.json")));
 		}
 	}
 

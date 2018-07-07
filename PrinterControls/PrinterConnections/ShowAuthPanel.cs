@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Greg Diaz
+Copyright (c) 2018, Greg Diaz, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,23 +28,25 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using System.Linq;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class ShowAuthPanel : ConnectionWizardPage
+	public class ShowAuthPanel : DialogPage
 	{
 		public ShowAuthPanel()
+			: base("Skip".Localize())
 		{
-			WrappedTextWidget userSignInPromptLabel = new WrappedTextWidget("Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access:".Localize())
+			this.WindowTitle = "Setup Wizard".Localize();
+
+			contentRow.AddChild(new WrappedTextWidget("Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access".Localize() + ":")
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-			};
-			contentRow.AddChild(userSignInPromptLabel);
+			});
 
 			AddBulletPointAndDescription(contentRow,
 				"Cloud Library".Localize(),
@@ -58,61 +60,67 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			contentRow.AddChild(new VerticalSpacer());
 
-			CheckBox rememberChoice = new CheckBox("Don't remind me again".Localize(), ActiveTheme.Instance.PrimaryTextColor);
+			var rememberChoice = new CheckBox("Don't remind me again".Localize(), ActiveTheme.Instance.PrimaryTextColor);
 			contentRow.AddChild(rememberChoice);
 			rememberChoice.CheckedStateChanged += (s, e) =>
 			{
 				ApplicationSettings.Instance.set(ApplicationSettingsKey.SuppressAuthPanel, rememberChoice.Checked.ToString());
 			};
 
-			var skipButton = textImageButtonFactory.Generate("Skip".Localize());
-			skipButton.Name = "Connection Wizard Skip Sign In Button";
-			skipButton.Click += (sender, e) =>
-			{
-				if (!ProfileManager.Instance.ActiveProfiles.Any())
-				{
-					UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupStepMakeModelName>);
-				}
-				else
-				{
-					UiThread.RunOnIdle(WizardWindow.Close);
-				}
-			};
+			this.SetCancelButtonName("Connection Wizard Skip Sign In Button");
 
-			var createAccountButton = textImageButtonFactory.Generate("Create Account".Localize());
-			createAccountButton.Name = "Create Account From Connection Wizard Button";
-			createAccountButton.Margin = new Agg.BorderDouble(right: 5);
+			var createAccountButton = new TextButton("Create Account".Localize(), theme)
+			{
+				Name = "Create Account From Connection Wizard Button",
+				Margin = new Agg.BorderDouble(right: 5),
+				BackgroundColor = theme.MinimalShade
+			};
 			createAccountButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle (() => 
-				{
-					WizardWindow.Close();
-					WizardWindow.ChangeToAccountCreate();
-				});
+				UiThread.RunOnIdle(() =>
+			   {
+				   DialogWindow.Close();
+				   PrinterSetup.ChangeToAccountCreate();
+			   });
 			};
+			this.AddPageAction(createAccountButton);
 
-			var signInButton = textImageButtonFactory.Generate("Sign In".Localize());
-			signInButton.Name = "Sign In From Connection Wizard Button";
+			var signInButton = new TextButton("Sign In".Localize(), theme)
+			{
+				Name = "Sign In From Connection Wizard Button",
+				BackgroundColor = theme.MinimalShade
+			};
 			signInButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle (() => 
-				{
-					WizardWindow.Close();
-					WizardWindow.ShowAuthDialog?.Invoke();
-				});
+				UiThread.RunOnIdle(() =>
+			   {
+				   DialogWindow.Close();
+				   PrinterSetup.ShowAuthDialog?.Invoke();
+			   });
 			};
+			this.AddPageAction(signInButton);
+		}
 
-			footerRow.AddChild(skipButton);
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(createAccountButton);
-			footerRow.AddChild(signInButton);
+		protected override void OnCancel(out bool abortCancel)
+		{
+			if (!ProfileManager.Instance.ActiveProfiles.Any())
+			{
+				abortCancel = true;
+
+				UiThread.RunOnIdle(() =>
+				{
+					DialogWindow.ChangeToPage<SetupStepMakeModelName>();
+				});
+			}
+
+			abortCancel = false;
 		}
 
 		private void AddBulletPointAndDescription(FlowLayoutWidget contentRow, string v1, string v2)
 		{
 			contentRow.AddChild(new TextWidget("• " + v1)
 			{
-				HAnchor = HAnchor.ParentLeft,
+				HAnchor = HAnchor.Left,
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				Margin = new Agg.BorderDouble(0, 0, 0, 10),
 			});

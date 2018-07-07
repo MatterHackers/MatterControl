@@ -1,0 +1,28 @@
+{
+    "Content": [
+        {
+            "banner_list": [
+                {
+                    "content_type": "banner_image", 
+                    "image_url": "https://lh3.googleusercontent.com/2yEiigWrAXQpvjBGhQllSItRTUA8s4ScTmn1dY20KO6jgxsrifoZ3L6MLy54yoAaKvleXjpdNfwKnJcK4yf210jQiJQ=w1520-h170", 
+                    "link": "https://www.matterhackers.com/store/c/mh-build-series", 
+                    "theme_filter": "all"
+                }, 
+                {
+                    "content_type": "banner_image", 
+                    "image_url": "https://lh3.googleusercontent.com/LS-CkJVjvmctT1w7MBIarRKYeyjIyBJXcyMXkcVpSbbrVhhO0m8ELo7AU8RDuIudviqZw-EAbUK5u5J8TiGXbN_GlQ=w1520-h170", 
+                    "link": "https://www.matterhackers.com/3d-printer-filament-compare", 
+                    "theme_filter": "all"
+                },
+              {
+                "content_type": "banner_image",
+                "image_url": "https://lh3.googleusercontent.com/Gax2F8Eaxfp_xrVECCmanlhVSWzQ34sUI0M7ImmUwNMWdGHZqsXw3lbF84uGv3dOnXuAtzoNTkapcxuv5RKA9Wwj5A=w1520-h170",
+                "link": "https://www.matterhackers.com/articles/anatomy-of-a-3d-printer",
+                "theme_filter": "all"
+              }
+            ], 
+            "content_type": "banner_rotate"
+        }
+    ], 
+    "Status": "success"
+}

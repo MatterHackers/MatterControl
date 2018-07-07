@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2017, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,10 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -38,55 +38,54 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Utilities;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
-	public class MovementControls : ControlWidgetBase
+	public class MovementControls : FlowLayoutWidget
 	{
-		public bool hotKeysEnabled = false;
+		private PrinterConfig printer;
+		private ThemeConfig theme;
 		public FlowLayoutWidget manualControlsLayout;
-		private Button disableMotors;
-		private EditManualMovementSpeedsWindow editManualMovementSettingsWindow;
-		private Button homeAllButton;
-		private Button homeXButton;
-		private Button homeYButton;
-		private Button homeZButton;
-		private TextImageButtonFactory hotKeyButtonFactory = new TextImageButtonFactory();
 		internal JogControls jogControls;
-		private AltGroupBox movementControlsGroupBox;
 
 		// Provides a list of DisableableWidgets controls that can be toggled on/off at runtime
-		internal List<DisableableWidget> DisableableWidgets = new List<DisableableWidget>();
-
-		// Displays the current baby step offset stream values
-		private TextWidget offsetStreamLabel;
+		internal List<GuiWidget> DisableableWidgets = new List<GuiWidget>();
 
 		private LimitCallingFrequency reportDestinationChanged = null;
 
 		private EventHandler unregisterEvents;
 
-		public static double XSpeed => ActiveSliceSettings.Instance.Helpers.GetMovementSpeeds()["x"];
-
-		public static double YSpeed => ActiveSliceSettings.Instance.Helpers.GetMovementSpeeds()["y"];
-
-		public static double ZSpeed => ActiveSliceSettings.Instance.Helpers.GetMovementSpeeds()["z"];
-
-		public static double EFeedRate(int extruderIndex)
+		private MovementControls(PrinterConfig printer, XYZColors xyzColors, ThemeConfig theme)
+			: base (FlowDirection.TopToBottom)
 		{
-			var movementSpeeds = ActiveSliceSettings.Instance.Helpers.GetMovementSpeeds();
+			this.printer = printer;
+			this.theme = theme;
 
-			string extruderIndexKey = "e" + extruderIndex.ToString();
-			if (movementSpeeds.ContainsKey(extruderIndexKey))
+			jogControls = new JogControls(printer, xyzColors, theme)
 			{
-				return movementSpeeds[extruderIndexKey];
-			}
+				HAnchor = HAnchor.Left | HAnchor.Stretch,
+				Margin = 0
+			};
 
-			return movementSpeeds["e0"];
+			this.AddChild(AddToDisableableList(GetHomeButtonBar()));
+
+			this.AddChild(jogControls);
+
+			this.AddChild(AddToDisableableList(GetHWDestinationBar()));
+		}
+
+		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
+		{
+			var widget = new MovementControls(printer, new XYZColors(theme), theme);
+
+			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme);
+			editButton.Click += (s, e) => widget.EditOptions();
+
+			return new SectionWidget(
+				"Movement".Localize(),
+				widget,
+				theme,
+				editButton);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -95,170 +94,106 @@ namespace MatterHackers.MatterControl.PrinterControls
 			base.OnClosed(e);
 		}
 
+		private void EditOptions()
+		{
+			DialogWindow.Show(new MovementSpeedsPage(printer));
+		}
+
 		/// <summary>
-		/// Helper method to create DisableableWidget containers and populate the DisableableWidgets local property.
+		/// Helper method to populate the DisableableWidgets local property.
 		/// </summary>
-		/// <param name="widget">The widget to wrap.</param>
-		private DisableableWidget CreateDisableableContainer(GuiWidget widget)
+		/// <param name="widget">The widget to add and return.</param>
+		private GuiWidget AddToDisableableList(GuiWidget widget)
 		{
-			var container = new DisableableWidget();
-			container.AddChild(widget);
-			DisableableWidgets.Add(container);
-
-			return container;
-		}
-
-		public MovementControls()
-		{
-			Button editButton;
-			movementControlsGroupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Movement".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton));
-			editButton.Click += (sender, e) =>
-			{
-				if (editManualMovementSettingsWindow == null)
-				{
-					editManualMovementSettingsWindow = new EditManualMovementSpeedsWindow("Movement Speeds".Localize(), ActiveSliceSettings.Instance.Helpers.GetMovementSpeedsString(), SetMovementSpeeds);
-					editManualMovementSettingsWindow.Closed += (s, e2) =>
-					{
-						editManualMovementSettingsWindow = null;
-					};
-				}
-				else
-				{
-					editManualMovementSettingsWindow.BringToFront();
-				}
-			};
-
-			movementControlsGroupBox.Margin = new BorderDouble(0);
-			movementControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			movementControlsGroupBox.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-			movementControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
-
-			jogControls = new JogControls(new XYZColors());
-			jogControls.Margin = new BorderDouble(0);
-			{
-				manualControlsLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				manualControlsLayout.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-				manualControlsLayout.VAnchor = Agg.UI.VAnchor.FitToChildren;
-				manualControlsLayout.Padding = new BorderDouble(3, 5, 3, 0);
-				{
-					FlowLayoutWidget leftToRightContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-
-					manualControlsLayout.AddChild(CreateDisableableContainer(GetHomeButtonBar()));
-					manualControlsLayout.AddChild(CreateDisableableContainer(CreateSeparatorLine()));
-					manualControlsLayout.AddChild(jogControls);
-					////manualControlsLayout.AddChild(leftToRightContainer);
-					manualControlsLayout.AddChild(CreateDisableableContainer(CreateSeparatorLine()));
-					manualControlsLayout.AddChild(CreateDisableableContainer(GetHWDestinationBar()));
-					manualControlsLayout.AddChild(CreateDisableableContainer(CreateSeparatorLine()));
-				}
-
-				movementControlsGroupBox.AddChild(manualControlsLayout);
-			}
-
-			this.AddChild(movementControlsGroupBox);
-		}
-
-		private static void SetMovementSpeeds(string speedString)
-		{
-			if (!string.IsNullOrEmpty(speedString))
-			{
-				ActiveSliceSettings.Instance.SetValue(SettingsKey.manual_movement_speeds, speedString);
-				ApplicationController.Instance.ReloadAdvancedControlsPanel();
-			}
+			this.DisableableWidgets.Add(widget);
+			return widget;
 		}
 
 		private FlowLayoutWidget GetHomeButtonBar()
 		{
-			FlowLayoutWidget homeButtonBar = new FlowLayoutWidget();
-			homeButtonBar.HAnchor = HAnchor.ParentLeftRight;
-			homeButtonBar.Margin = new BorderDouble(3, 0, 3, 6);
-			homeButtonBar.Padding = new BorderDouble(0);
-
-			textImageButtonFactory.borderWidth = 1;
-			textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-
-			ImageBuffer helpIconImage = StaticData.Instance.LoadIcon("icon_home_white_24x24.png", 24, 24);
-			if (ActiveTheme.Instance.IsDarkTheme)
+			var toolbar = new FlowLayoutWidget
 			{
-				helpIconImage.InvertLightness();
-			}
-			ImageWidget homeIconImageWidget = new ImageWidget(helpIconImage);
-
-			homeIconImageWidget.Margin = new BorderDouble(0, 0, 6, 0);
-			homeIconImageWidget.OriginRelativeParent += new Vector2(0, 2) * GuiWidget.DeviceScale;
-			RGBA_Bytes oldColor = this.textImageButtonFactory.normalFillColor;
-			textImageButtonFactory.normalFillColor = new RGBA_Bytes(180, 180, 180);
-			homeAllButton = textImageButtonFactory.Generate("ALL".Localize());
-			this.textImageButtonFactory.normalFillColor = oldColor;
-			homeAllButton.ToolTipText = "Home X, Y and Z".Localize();
-			homeAllButton.Margin = new BorderDouble(0, 0, 6, 0);
-			homeAllButton.Click += homeAll_Click;
-
-			textImageButtonFactory.FixedWidth = (int)homeAllButton.Width * GuiWidget.DeviceScale;
-			homeXButton = textImageButtonFactory.Generate("X", centerText: true);
-			homeXButton.ToolTipText = "Home X".Localize();
-			homeXButton.Margin = new BorderDouble(0, 0, 6, 0);
-			homeXButton.Click += homeXButton_Click;
-
-			homeYButton = textImageButtonFactory.Generate("Y", centerText: true);
-			homeYButton.ToolTipText = "Home Y".Localize();
-			homeYButton.Margin = new BorderDouble(0, 0, 6, 0);
-			homeYButton.Click += homeYButton_Click;
-
-			homeZButton = textImageButtonFactory.Generate("Z", centerText: true);
-			homeZButton.ToolTipText = "Home Z".Localize();
-			homeZButton.Margin = new BorderDouble(0, 0, 6, 0);
-			homeZButton.Click += homeZButton_Click;
-
-			textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
-			textImageButtonFactory.FixedWidth = 0;
-
-			disableMotors = textImageButtonFactory.Generate("Release".Localize().ToUpper());
-			disableMotors.Margin = new BorderDouble(0);
-			disableMotors.Click += (s, e) =>
-			{
-				PrinterConnectionAndCommunication.Instance.ReleaseMotors();
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(bottom: 10)
 			};
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			GuiWidget spacerReleaseShow = new GuiWidget(10 * GuiWidget.DeviceScale, 0);
+			var homeIcon = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", theme.InvertIcons), theme)
+			{
+				ToolTipText = "Home X, Y and Z".Localize(),
+				BackgroundColor = theme.MinimalShade,
+				Margin = theme.ButtonSpacing
+			};
+			homeIcon.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
+			toolbar.AddChild(homeIcon);
 
-			homeButtonBar.AddChild(homeIconImageWidget);
-			homeButtonBar.AddChild(homeAllButton);
-			homeButtonBar.AddChild(homeXButton);
-			homeButtonBar.AddChild(homeYButton);
-			homeButtonBar.AddChild(homeZButton);
+			var homeXButton = new TextButton("X", theme)
+			{
+				ToolTipText = "Home X".Localize(),
+				BackgroundColor = theme.MinimalShade,
+				Margin = theme.ButtonSpacing
+			};
+			homeXButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.X);
+			toolbar.AddChild(homeXButton);
 
-			offsetStreamLabel = new TextWidget("Z Offset".Localize() + ":", pointSize: 8)
+			var homeYButton = new TextButton("Y", theme)
+			{
+				ToolTipText = "Home Y".Localize(),
+				BackgroundColor = theme.MinimalShade,
+				Margin = theme.ButtonSpacing
+			};
+			homeYButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.Y);
+			toolbar.AddChild(homeYButton);
+
+			var homeZButton = new TextButton("Z", theme)
+			{
+				ToolTipText = "Home Z".Localize(),
+				BackgroundColor = theme.MinimalShade,
+				Margin = theme.ButtonSpacing
+			};
+			homeZButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.Z);
+			toolbar.AddChild(homeZButton);
+
+			// Display the current baby step offset stream values
+			var offsetStreamLabel = new TextWidget("Z Offset".Localize() + ":", pointSize: 8)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				Margin = new BorderDouble(left: 10),
 				AutoExpandBoundsToText = true,
-				VAnchor = VAnchor.ParentCenter
+				VAnchor = VAnchor.Center
 			};
-			homeButtonBar.AddChild(offsetStreamLabel);
+			toolbar.AddChild(offsetStreamLabel);
 
-			var ztuningWidget = new ZTuningWidget();
-			homeButtonBar.AddChild(ztuningWidget);
-			
-			homeButtonBar.AddChild(new HorizontalSpacer());
-			homeButtonBar.AddChild(disableMotors);
-			homeButtonBar.AddChild(spacerReleaseShow);
+			var ztuningWidget = new ZTuningWidget(printer.Settings, theme);
+			toolbar.AddChild(ztuningWidget);
 
-			return homeButtonBar;
+			toolbar.AddChild(new HorizontalSpacer());
+
+			// Create 'Release' button
+			var disableMotors = new TextButton("Release".Localize(), theme)
+			{
+				BackgroundColor = theme.MinimalShade,
+			};
+			disableMotors.Click += (s, e) =>
+			{
+				printer.Connection.ReleaseMotors(true);
+			};
+			toolbar.AddChild(disableMotors);
+
+			return toolbar;
 		}
 
 		private FlowLayoutWidget GetHWDestinationBar()
 		{
-			FlowLayoutWidget hwDestinationBar = new FlowLayoutWidget();
-			hwDestinationBar.HAnchor = HAnchor.ParentLeftRight;
-			hwDestinationBar.Margin = new BorderDouble(3, 0, 3, 6);
-			hwDestinationBar.Padding = new BorderDouble(0);
+			var hwDestinationBar = new FlowLayoutWidget
+			{
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(top: 8),
+				Padding = 0
+			};
 
-			TextWidget xPosition = new TextWidget("X: 0.0           ", pointSize: 12, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			TextWidget yPosition = new TextWidget("Y: 0.0           ", pointSize: 12, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			TextWidget zPosition = new TextWidget("Z: 0.0           ", pointSize: 12, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			var xPosition = new TextWidget("X: 0.0           ", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor);
+			var yPosition = new TextWidget("Y: 0.0           ", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor);
+			var zPosition = new TextWidget("Z: 0.0           ", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor);
 
 			hwDestinationBar.AddChild(xPosition);
 			hwDestinationBar.AddChild(yPosition);
@@ -274,7 +209,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				});
 			});
 
-			PrinterConnectionAndCommunication.Instance.DestinationChanged.RegisterEvent((object sender, EventArgs e) =>
+			printer.Connection.DestinationChanged.RegisterEvent((object sender, EventArgs e) =>
 			{
 				reportDestinationChanged.CallEvent();
 			}, ref unregisterEvents);
@@ -282,44 +217,28 @@ namespace MatterHackers.MatterControl.PrinterControls
 			return hwDestinationBar;
 		}
 
-		private static void SetDestinationPositionText(TextWidget xPosition, TextWidget yPosition, TextWidget zPosition)
+		private void SetDestinationPositionText(TextWidget xPosition, TextWidget yPosition, TextWidget zPosition)
 		{
-			Vector3 destinationPosition = PrinterConnectionAndCommunication.Instance.CurrentDestination;
-			xPosition.Text = "X: {0:0.00}".FormatWith(destinationPosition.x);
-			yPosition.Text = "Y: {0:0.00}".FormatWith(destinationPosition.y);
-			zPosition.Text = "Z: {0:0.00}".FormatWith(destinationPosition.z);
-		}
-
-		private void homeAll_Click(object sender, EventArgs mouseEvent)
-		{
-			PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
-		}
-
-		private void homeXButton_Click(object sender, EventArgs mouseEvent)
-		{
-			PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.X);
-		}
-
-		private void homeYButton_Click(object sender, EventArgs mouseEvent)
-		{
-			PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Y);
-		}
-
-		private void homeZButton_Click(object sender, EventArgs mouseEvent)
-		{
-			PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Z);
+			Vector3 destinationPosition = printer.Connection.CurrentDestination;
+			xPosition.Text = "X: {0:0.00}".FormatWith(destinationPosition.X);
+			yPosition.Text = "Y: {0:0.00}".FormatWith(destinationPosition.Y);
+			zPosition.Text = "Z: {0:0.00}".FormatWith(destinationPosition.Z);
 		}
 	}
 
 	public class XYZColors
 	{
-		public static RGBA_Bytes eColor = new RGBA_Bytes(180, 180, 180);
-		public static RGBA_Bytes xColor = new RGBA_Bytes(180, 180, 180);
-		public static RGBA_Bytes yColor = new RGBA_Bytes(255, 255, 255);
-		public static RGBA_Bytes zColor = new RGBA_Bytes(255, 255, 255);
+		public Color EColor { get; }
+		public Color XColor { get; }
+		public Color YColor { get; }
+		public Color ZColor { get; }
 
-		public XYZColors()
+		public XYZColors(ThemeConfig theme)
 		{
+			this.EColor = theme.GetBorderColor(40); // new Color(180, 180, 180);
+			this.XColor = theme.GetBorderColor(40); // new Color(180, 180, 180);
+			this.YColor = theme.GetBorderColor(40); //new Color(255, 255, 255);
+			this.ZColor = theme.GetBorderColor(40); //new Color(255, 255, 255);
 		}
 	}
 
@@ -331,12 +250,16 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private EventHandler unregisterEvents;
 		private bool allowRemoveButton;
+		private ThemeConfig theme;
+		private PrinterSettings printerSettings;
 
-		public ZTuningWidget(bool allowRemoveButton = true)
+		public ZTuningWidget(PrinterSettings printerSettings, ThemeConfig theme, bool allowRemoveButton = true)
 		{
+			this.theme = theme;
+			this.printerSettings = printerSettings;
 			this.allowRemoveButton = allowRemoveButton;
-			this.HAnchor = HAnchor.FitToChildren;
-			this.VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter;
+			this.HAnchor = HAnchor.Fit;
+			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
@@ -350,49 +273,40 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				Margin = new BorderDouble(3, 0),
 				Padding = new BorderDouble(3),
-				HAnchor = HAnchor.FitToChildren,
-				VAnchor = VAnchor.ParentCenter,
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Center,
 				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
 				Height = 20
 			};
 			this.AddChild(zOffsetStreamContainer);
 
-			double zoffset = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
-			zOffsetStreamDisplay = new TextWidget(zoffset.ToString("0.##"))
+			double zoffset = printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset);
+			zOffsetStreamDisplay = new TextWidget(zoffset.ToString("0.##"), pointSize: theme.DefaultFontSize)
 			{
 				AutoExpandBoundsToText = true,
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				Margin = new BorderDouble(5, 0, 8, 0),
-				VAnchor = VAnchor.ParentCenter
+				VAnchor = VAnchor.Center
 			};
 			zOffsetStreamContainer.AddChild(zOffsetStreamDisplay);
 
-			clearZOffsetButton = new Button(
-				new ButtonViewStates(
-					new ImageWidget(SliceSettingsWidget.restoreNormal),
-					new ImageWidget(SliceSettingsWidget.restoreHover),
-					new ImageWidget(SliceSettingsWidget.restorePressed),
-					new ImageWidget(SliceSettingsWidget.restoreNormal)))
-			{
-				Name = "Clear ZOffset button",
-				VAnchor = VAnchor.ParentCenter,
-				Margin = new BorderDouble(0, 0, 5, 0),
-				ToolTipText = "Clear ZOffset".Localize(),
-				Visible = allowRemoveButton && zoffset != 0
-			};
+			clearZOffsetButton = theme.CreateSmallResetButton();
+			clearZOffsetButton.Name = "Clear ZOffset button";
+			clearZOffsetButton.ToolTipText = "Clear ZOffset".Localize();
+			clearZOffsetButton.Visible = allowRemoveButton && zoffset != 0;
 			clearZOffsetButton.Click += (sender, e) =>
 			{
-				ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, "0");
+				printerSettings.SetValue(SettingsKey.baby_step_z_offset, "0");
 			};
 			zOffsetStreamContainer.AddChild(clearZOffsetButton);
 		}
 
 		internal void OffsetStreamChanged(object sender, EventArgs e)
 		{
-			double zoffset = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
+			double zoffset = printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset);
 			bool hasOverriddenZOffset = (zoffset != 0);
 
-			zOffsetStreamContainer.BackgroundColor = (allowRemoveButton && hasOverriddenZOffset) ? SliceSettingsWidget.userSettingBackgroundColor : ActiveTheme.Instance.SecondaryBackgroundColor;
+			zOffsetStreamContainer.BackgroundColor = (allowRemoveButton && hasOverriddenZOffset) ? theme.PresetColors.UserOverride : ActiveTheme.Instance.SecondaryBackgroundColor;
 			clearZOffsetButton.Visible = allowRemoveButton && hasOverriddenZOffset;
 
 			zOffsetStreamDisplay.Text = zoffset.ToString("0.##");
@@ -404,5 +318,4 @@ namespace MatterHackers.MatterControl.PrinterControls
 			base.OnClosed(e);
 		}
 	}
-
 }

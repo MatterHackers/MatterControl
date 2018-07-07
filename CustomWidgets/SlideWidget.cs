@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl
 			}
 			else if (this.TargetWidth != this.Width)
 			{
-				double maxOffsetPerDraw = timeHasBeenChanging.ElapsedMilliseconds;
+				double maxOffsetPerDraw = timeHasBeenChanging.ElapsedMilliseconds * 3;
 
 				double currentWidth = this.Width;
 				double delta = TargetWidth - currentWidth;

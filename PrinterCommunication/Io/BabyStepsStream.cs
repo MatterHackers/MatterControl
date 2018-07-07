@@ -28,8 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterHackers.Agg.UI;
-using MatterHackers.GCodeVisualizer;
+using MatterControl.Printing;
+using MatterHackers.Agg;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -41,10 +41,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private MaxLengthStream maxLengthStream;
 		private OffsetStream offsetStream;
 		private EventHandler unregisterEvents;
+		PrinterSettings printerSettings;
 
-		public BabyStepsStream(GCodeStream internalStream)
+		public BabyStepsStream(PrinterSettings printerSettings, GCodeStream internalStream, double startingMaxLength = 1)
 			: base(null)
 		{
+			this.printerSettings = printerSettings;
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if ((e as StringEventArgs)?.Data == SettingsKey.baby_step_z_offset)
@@ -54,8 +56,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			}, ref unregisterEvents);
 
-			maxLengthStream = new MaxLengthStream(internalStream, 1);
-			offsetStream = new OffsetStream(maxLengthStream, new Vector3(0, 0, ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset)));
+			maxLengthStream = new MaxLengthStream(internalStream, startingMaxLength);
+			offsetStream = new OffsetStream(maxLengthStream, new Vector3(0, 0, printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset)));
 			base.internalStream = offsetStream;
 		}
 
@@ -86,7 +88,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		private void OffsetChanged()
 		{
-			offsetStream.Offset = new Vector3(0, 0, ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset));
+			offsetStream.Offset = new Vector3(0, 0, printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset));
 		}
 
 		public void CancelMoves()

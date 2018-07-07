@@ -28,183 +28,119 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.ConfigurationPage;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
 	public class WidescreenPanel : FlowLayoutWidget
 	{
-		private static readonly int ColumnOneFixedWidth = 590;
-		private int lastNumberOfVisiblePanels = 0;
-
-		private TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
-		private RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
-
-		private FlowLayoutWidget ColumnOne;
-		private FlowLayoutWidget ColumnTwo;
-		private double Force1PanelWidth = 990 * GuiWidget.DeviceScale;
-		private double Force2PanelWidth = 1590 * GuiWidget.DeviceScale;
-
-		private GuiWidget leftBorderLine;
-
-		private EventHandler unregisterEvents;
-
-		public static RootedObjectEventHandler PreChangePanels = new RootedObjectEventHandler();
-
-		private QueueDataView queueDataView = null;
-
 		public WidescreenPanel()
-			: base(FlowDirection.LeftToRight)
 		{
-			Name = "WidescreenPanel";
-			AnchorAll();
-			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			Padding = new BorderDouble(4);
-
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
-			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => UiThread.RunOnIdle(ReloadAdvancedControlsPanel), ref unregisterEvents);
 		}
 
-		public override void OnBoundsChanged(EventArgs e)
+		public override void Initialize()
 		{
-			if (this.VisiblePanelCount != lastNumberOfVisiblePanels)
+			base.Initialize();
+
+			this.AnchorAll();
+			this.Name = "WidescreenPanel";
+			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+
+			var theme = ApplicationController.Instance.Theme;
+
+			// Push TouchScreenMode into GuiWidget
+			GuiWidget.TouchScreenMode = UserSettings.Instance.IsTouchScreen;
+
+			var library3DViewSplitter = new Splitter()
 			{
-				RecreateAllPanels();
-			}
-
-			base.OnBoundsChanged(e);
-		}
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			unregisterEvents?.Invoke(this, null);
-			base.OnClosed(e);
-		}
-
-		private void onActivePrintItemChanged(object sender, EventArgs e)
-		{
-			if (this.VisiblePanelCount > 1)
-			{
-				UiThread.RunOnIdle(LoadColumnTwo);
-			}
-		}
-
-		private CompactSlidePanel compactSlidePanel;
-
-		private void LoadCompactView()
-		{
-			queueDataView = new QueueDataView();
-
-			ColumnOne.RemoveAllChildren();
-			ColumnOne.AddChild(new ActionBarPlus(queueDataView));
-			compactSlidePanel = new CompactSlidePanel(queueDataView);
-			ColumnOne.AddChild(compactSlidePanel);
-			ColumnOne.AnchorAll();
-		}
-
-		private void LoadColumnTwo()
-		{
-			PopOutManager.SaveIfClosed = false;
-			ColumnTwo.CloseAllChildren();
-			PopOutManager.SaveIfClosed = true;
-
-			PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Enabled);
-			partViewContent.AnchorAll();
-
-			ColumnTwo.AddChild(partViewContent);
-
-			ColumnTwo.AnchorAll();
-		}
-
-		private int VisiblePanelCount => (this.Width < Force1PanelWidth) ? 1 : 2;
-
-		public void RecreateAllPanels(object state = null)
-		{
-			if (Width == 0)
-			{
-				return;
-			}
-
-			int numberOfPanels = this.VisiblePanelCount;
-
-			PreChangePanels.CallEvents(this, null);
-			RemovePanelsAndCreateEmpties();
-
-			LoadCompactView();
-
-			// Load ColumnTwo if applicable - i.e. widescreen view
-			if (numberOfPanels == 2)
-			{
-				LoadColumnTwo();
-			}
-
-			SetColumnVisibility();
-
-			lastNumberOfVisiblePanels = numberOfPanels;
-		}
-
-		private void SetColumnVisibility(object state = null)
-		{
-			int numberOfPanels = this.VisiblePanelCount;
-
-			switch (numberOfPanels)
-			{
-				case 1:
-					{
-						ColumnTwo.Visible = false;
-						ColumnOne.Visible = true;
-
-						Padding = new BorderDouble(0);
-
-						leftBorderLine.Visible = false;
-					}
-					break;
-
-				case 2:
-					Padding = new BorderDouble(4);
-					ColumnOne.Visible = true;
-					ColumnTwo.Visible = true;
-					ColumnOne.HAnchor = HAnchor.AbsolutePosition;
-					ColumnOne.Width = ColumnOneFixedWidth; // it can hold the slice settings so it needs to be bigger.
-					ColumnOne.MinimumSize = new Vector2(Math.Max(compactSlidePanel.TabBarWidth, ColumnOneFixedWidth), 0); //Ordering here matters - must go after children are added
-					break;
-			}
-		}
-
-		private void RemovePanelsAndCreateEmpties()
-		{
-			CloseAllChildren();
-
-			ColumnOne = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			ColumnTwo = new FlowLayoutWidget(FlowDirection.TopToBottom);
-
-			AddChild(ColumnOne);
-			leftBorderLine = new GuiWidget()
-			{
-				VAnchor = VAnchor.ParentBottomTop
+				SplitterDistance = UserSettings.Instance.LibraryViewWidth,
+				SplitterWidth = theme.SplitterWidth,
+				SplitterBackground = theme.SplitterBackground
 			};
-			leftBorderLine.Width = 15;
-			leftBorderLine.BeforeDraw += (widget, graphics2D) =>
-			{
-				RectangleDouble bounds = ((GuiWidget)widget).LocalBounds;
-				bounds.Left += 3;
-				bounds.Right -= 8;
-				graphics2D.graphics2D.FillRectangle(bounds, new RGBA_Bytes(160, 160, 160));
-			};
-			AddChild(leftBorderLine);
-			AddChild(ColumnTwo);
-		}
+			library3DViewSplitter.AnchorAll();
 
-		public void ReloadAdvancedControlsPanel()
+			library3DViewSplitter.DistanceChanged += (s, e) =>
+			{
+				UserSettings.Instance.LibraryViewWidth = library3DViewSplitter.SplitterDistance;
+			};
+
+			this.AddChild(library3DViewSplitter);
+
+			// put in the right column
+			var partPreviewContent = new PartPreviewContent()
+			{
+				VAnchor = VAnchor.Bottom | VAnchor.Top,
+				HAnchor = HAnchor.Left | HAnchor.Right
+			};
+
+			library3DViewSplitter.Panel2.AddChild(partPreviewContent);
+
+			// put in the left column
+			var leftNav = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			using (leftNav.LayoutLock())
+			{
+				leftNav.AddChild(new BrandMenuButton(theme)
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit,
+					BackgroundColor = theme.TabBarBackground,
+					Border = new BorderDouble(right: 1),
+					BorderColor = theme.MinimalShade,
+					Padding = theme.TabbarPadding.Clone(right: 0)
+				});
+
+				leftNav.AddChild(new PrintLibraryWidget(partPreviewContent, theme)
+				{
+					BackgroundColor = theme.ActiveTabColor
+				});
+			}
+
+			leftNav.AnchorAll();
+
+			library3DViewSplitter.Panel1.AddChild(leftNav);
+		}
+	}
+
+	public class BrandMenuButton : PopupButton
+	{
+		public BrandMenuButton(ThemeConfig theme)
 		{
-			PreChangePanels.CallEvents(this, null);
+			this.Name = "MatterControl BrandMenuButton";
+			this.VAnchor = VAnchor.Fit;
+			this.HAnchor = HAnchor.Stretch;
+			this.Margin = 0;
+			this.PopupContent = new ApplicationSettingsWidget(ApplicationController.Instance.MenuTheme)
+			{
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Fit,
+				Width = 500,
+			};
+
+			var row = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+			};
+			this.AddChild(row);
+
+			row.AddChild(new IconButton(AggContext.StaticData.LoadIcon("mh-app-logo.png", theme.InvertIcons), theme)
+			{
+				VAnchor = VAnchor.Center,
+				Margin = theme.ButtonSpacing,
+				Selectable = false
+			});
+
+			row.AddChild(new TextWidget(ApplicationController.Instance.ShortProductName, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				VAnchor = VAnchor.Center
+			});
 		}
 	}
 
@@ -217,9 +153,9 @@ namespace MatterHackers.MatterControl
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			graphics2D.Circle(Width / 2, Height / 2, Width / 2, RGBA_Bytes.White);
-			graphics2D.Circle(Width / 2, Height / 2, Width / 2 - 1, RGBA_Bytes.Red);
-			graphics2D.FillRectangle(Width / 2 - 1, Height / 2 - 3, Width / 2 + 1, Height / 2 + 3, RGBA_Bytes.White);
+			graphics2D.Circle(Width / 2, Height / 2, Width / 2, Color.White);
+			graphics2D.Circle(Width / 2, Height / 2, Width / 2 - 1, Color.Red);
+			graphics2D.FillRectangle(Width / 2 - 1, Height / 2 - 3, Width / 2 + 1, Height / 2 + 3, Color.White);
 			base.OnDraw(graphics2D);
 		}
 	}

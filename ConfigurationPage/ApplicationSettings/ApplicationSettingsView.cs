@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2017, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,593 +27,440 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrintHistory;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
-	public class ApplicationSettingsWidget : SettingsViewBase
+	public class ApplicationSettingsWidget : FlowLayoutWidget, IIgnoredPopupChild
 	{
-		private Button languageRestartButton;
-		private Button configureUpdateFeedButton;
-		public DropDownList releaseOptionsDropList;
-		private string cannotRestartWhilePrintIsActiveMessage;
-		private string cannotRestartWhileActive;
+		public static Action OpenPrintNotification = null;
 
-		public ApplicationSettingsWidget()
-			: base("Application".Localize())
+		private ThemeConfig theme;
+
+		public ApplicationSettingsWidget(ThemeConfig theme)
+			: base(FlowDirection.TopToBottom)
 		{
-			cannotRestartWhilePrintIsActiveMessage = "Oops! You cannot restart while a print is active.".Localize();
-			cannotRestartWhileActive = "Unable to restart".Localize();
-			if (UserSettings.Instance.IsTouchScreen)
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Fit;
+			this.BackgroundColor = theme.Colors.PrimaryBackgroundColor;
+			this.theme = theme;
+
+			var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", 16, 16, theme.InvertIcons);
+
+#if __ANDROID__
+			// Camera Monitoring
+			bool hasCamera = true || ApplicationSettings.Instance.get(ApplicationSettingsKey.HardwareHasCamera) == "true";
+
+			var previewButton = new IconButton(configureIcon, theme)
 			{
-				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
-			}
-
-			if (UserSettings.Instance.IsTouchScreen)
+				ToolTipText = "Configure Camera View".Localize()
+			};
+			previewButton.Click += (s, e) =>
 			{
-				mainContainer.AddChild(GetUpdateControl());
-				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
-			}
-			
-			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
-			mainContainer.AddChild(GetLanguageControl());
-			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
-			GuiWidget sliceEngineControl = GetSliceEngineControl();
-			if (ActiveSliceSettings.Instance.PrinterSelected)
-			{
-				mainContainer.AddChild(sliceEngineControl);
-				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
-			}
-
-
-			#if !__ANDROID__
-			{
-				mainContainer.AddChild(GetThumbnailRenderingControl());
-				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
-
-				mainContainer.AddChild(GetDisplayControl());
-				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
-			}
-			#endif
-			
-			if (UserSettings.Instance.IsTouchScreen)
-			{
-				mainContainer.AddChild(GetModeControl());
-				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
-			}
-
-			mainContainer.AddChild(GetClearHistoryControl());
-			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
-
-			mainContainer.AddChild(GetThemeControl());
-
-			AddChild(mainContainer);
-
-			AddHandlers();
-		}
-
-		private FlowLayoutWidget GetClearHistoryControl()
-		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(3, 4);
-
-			TextWidget clearHistoryLabel = new TextWidget("Clear Print History".Localize());
-			clearHistoryLabel.AutoExpandBoundsToText = true;
-			clearHistoryLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			clearHistoryLabel.VAnchor = VAnchor.ParentCenter;
-
-			Button clearHistoryButton = textImageButtonFactory.Generate("Remove All".Localize().ToUpper());
-			clearHistoryButton.Click += clearHistoryButton_Click;
-
-			//buttonRow.AddChild(eePromIcon);
-			buttonRow.AddChild(clearHistoryLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(clearHistoryButton);
-
-			return buttonRow;
-		}
-
-		private void clearHistoryButton_Click(object sender, EventArgs e)
-		{
-			PrintHistoryData.Instance.ClearHistory();
-		}
-
-		private void SetDisplayAttributes()
-		{
-			//this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			this.Margin = new BorderDouble(2, 4, 2, 0);
-			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
-			this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.White;
-
-			this.textImageButtonFactory.FixedHeight = TallButtonHeight;
-			this.textImageButtonFactory.fontSize = 11;
-
-			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.DarkGray;
-			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
-			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-			this.linkButtonFactory.fontSize = 11;
-		}
-
-		private FlowLayoutWidget GetThemeControl()
-		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(0, 6);
-
-			TextWidget settingLabel = new TextWidget("Theme".Localize());
-			settingLabel.AutoExpandBoundsToText = true;
-			settingLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			settingLabel.HAnchor = Agg.UI.HAnchor.ParentLeft;
-
-			FlowLayoutWidget colorSelectorContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			colorSelectorContainer.HAnchor = HAnchor.ParentLeftRight;
-			colorSelectorContainer.Margin = new BorderDouble(top: 4);
-
-			GuiWidget currentColorThemeBorder = new GuiWidget();
-
-			currentColorThemeBorder.VAnchor = VAnchor.ParentBottomTop;
-			currentColorThemeBorder.Padding = new BorderDouble(5);
-			currentColorThemeBorder.Width = 80;
-			currentColorThemeBorder.BackgroundColor = RGBA_Bytes.White;
-
-			GuiWidget currentColorTheme = new GuiWidget();
-			currentColorTheme.HAnchor = HAnchor.ParentLeftRight;
-			currentColorTheme.VAnchor = VAnchor.ParentBottomTop;
-			currentColorTheme.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-
-			currentColorThemeBorder.AddChild(currentColorTheme);
-
-			ThemeColorSelectorWidget themeSelector = new ThemeColorSelectorWidget(colorToChangeTo: currentColorTheme);
-			themeSelector.Margin = new BorderDouble(right: 5);
-
-			colorSelectorContainer.AddChild(themeSelector);
-			colorSelectorContainer.AddChild(currentColorThemeBorder);
-
-			buttonRow.AddChild(settingLabel);
-			buttonRow.AddChild(colorSelectorContainer);
-
-			return buttonRow;
-		}
-
-		private FlowLayoutWidget GetDisplayControl()
-		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(top: 4);
-
-			TextWidget settingsLabel = new TextWidget("Display Mode".Localize());
-			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			settingsLabel.VAnchor = VAnchor.ParentTop;
-
-			Button displayControlRestartButton = textImageButtonFactory.Generate("Restart".Localize());
-			displayControlRestartButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
-			displayControlRestartButton.Visible = false;
-			displayControlRestartButton.Margin = new BorderDouble(right: 6);
-			displayControlRestartButton.Click += (sender, e) =>
-			{
-				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
-				{
-					StyledMessageBox.ShowMessageBox(null, cannotRestartWhilePrintIsActiveMessage, cannotRestartWhileActive);
-				}
-				else
-				{
-					RestartApplication();
-				}
+				AppContext.Platform.OpenCameraPreview();
 			};
 
-			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			optionsContainer.Margin = new BorderDouble(bottom: 6);
-
-			DropDownList interfaceOptionsDropList = new DropDownList("Development", maxHeight: 200);
-			interfaceOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
-
-			optionsContainer.AddChild(interfaceOptionsDropList);
-			optionsContainer.Width = 200;
-
-			interfaceOptionsDropList.AddItem("Normal".Localize(), "responsive");
-			interfaceOptionsDropList.AddItem("Touchscreen".Localize(), "touchscreen");
-
-			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "responsive", "touchscreen" };
-			string currentDisplayModeType = UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode);
-
-			if (acceptableUpdateFeedTypeValues.IndexOf(currentDisplayModeType) == -1)
-			{
-				UserSettings.Instance.set(UserSettingsKey.ApplicationDisplayMode, "responsive");
-			}
-
-			interfaceOptionsDropList.SelectedValue = UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode);
-			interfaceOptionsDropList.SelectionChanged += (sender, e) =>
-			{
-				string displayMode = ((DropDownList)sender).SelectedValue;
-				if (displayMode != UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode))
-				{
-					UserSettings.Instance.set(UserSettingsKey.ApplicationDisplayMode, displayMode);
-					displayControlRestartButton.Visible = true;
-				}
-			};
-
-			buttonRow.AddChild(settingsLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(displayControlRestartButton);
-			buttonRow.AddChild(optionsContainer);
-			return buttonRow;
-		}
-
-		private FlowLayoutWidget GetModeControl()
-		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(top: 4);
-
-			TextWidget settingsLabel = new TextWidget("Interface Mode".Localize());
-			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			settingsLabel.VAnchor = VAnchor.ParentTop;
-
-			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			optionsContainer.Margin = new BorderDouble(bottom: 6);
-
-			DropDownList interfaceModeDropList = new DropDownList("Standard", maxHeight: 200);
-			interfaceModeDropList.HAnchor = HAnchor.ParentLeftRight;
-
-			optionsContainer.AddChild(interfaceModeDropList);
-			optionsContainer.Width = 200;
-
-			MenuItem standardModeDropDownItem = interfaceModeDropList.AddItem("Standard".Localize(), "True");
-			MenuItem advancedModeDropDownItem = interfaceModeDropList.AddItem("Advanced".Localize(), "False");
-
-			interfaceModeDropList.SelectedValue = UserSettings.Instance.Fields.IsSimpleMode.ToString();
-			interfaceModeDropList.SelectionChanged += new EventHandler(InterfaceModeDropList_SelectionChanged);
-
-			buttonRow.AddChild(settingsLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(optionsContainer);
-			return buttonRow;
-		}
-
-		private FlowLayoutWidget GetUpdateControl()
-		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(top: 4);
-
-			configureUpdateFeedButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
-			configureUpdateFeedButton.Margin = new BorderDouble(left: 6);
-			configureUpdateFeedButton.VAnchor = VAnchor.ParentCenter;
-
-			TextWidget settingsLabel = new TextWidget("Update Notification Feed".Localize());
-			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			settingsLabel.VAnchor = VAnchor.ParentTop;
-
-			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			optionsContainer.Margin = new BorderDouble(bottom: 6);
-
-			releaseOptionsDropList = new DropDownList("Development", maxHeight: 200);
-			releaseOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
-
-			optionsContainer.AddChild(releaseOptionsDropList);
-			optionsContainer.Width = 200;
-
-			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem("Stable".Localize(), "release");
-			releaseOptionsDropDownItem.Selected += new EventHandler(FixTabDot);
-
-			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem("Beta".Localize(), "pre-release");
-			preReleaseDropDownItem.Selected += new EventHandler(FixTabDot);
-
-			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem("Alpha".Localize(), "development");
-			developmentDropDownItem.Selected += new EventHandler(FixTabDot);
-
-			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "release", "pre-release", "development" };
-			string currentUpdateFeedType = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
-
-			if (acceptableUpdateFeedTypeValues.IndexOf(currentUpdateFeedType) == -1)
-			{
-				UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, "release");
-			}
-
-			releaseOptionsDropList.SelectedValue = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
-			releaseOptionsDropList.SelectionChanged += new EventHandler(ReleaseOptionsDropList_SelectionChanged);
-
-			buttonRow.AddChild(settingsLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(optionsContainer);
-			return buttonRow;
-		}
-		
-		private FlowLayoutWidget GetLanguageControl()
-		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(top: 4);
-
-			TextWidget settingsLabel = new TextWidget("Language".Localize());
-			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			settingsLabel.VAnchor = VAnchor.ParentTop;
-
-			FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
-			controlsContainer.HAnchor = HAnchor.ParentLeftRight;
-
-			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			optionsContainer.Margin = new BorderDouble(bottom: 6);
-
-			LanguageSelector languageSelector = new LanguageSelector();
-			languageSelector.SelectionChanged += new EventHandler(LanguageDropList_SelectionChanged);
-			languageSelector.HAnchor = HAnchor.ParentLeftRight;
-
-			optionsContainer.AddChild(languageSelector);
-			optionsContainer.Width = 200;
-
-			languageRestartButton = textImageButtonFactory.Generate("Restart".Localize());
-			languageRestartButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
-			languageRestartButton.Visible = false;
-			languageRestartButton.Margin = new BorderDouble(right: 6);
-
-			languageRestartButton.Click += (sender, e) =>
-			{
-				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
-				{
-					StyledMessageBox.ShowMessageBox(null, cannotRestartWhilePrintIsActiveMessage, cannotRestartWhileActive);
-				}
-				else
-				{
-					RestartApplication();
-				}
-			};
-
-			buttonRow.AddChild(settingsLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(languageRestartButton);
-			buttonRow.AddChild(optionsContainer);
-			return buttonRow;
-		}
-
-		private FlowLayoutWidget GetSliceEngineControl()
-		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(top: 4);
-
-			TextWidget settingsLabel = new TextWidget("Slice Engine".Localize());
-			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			settingsLabel.VAnchor = VAnchor.ParentTop;
-
-			FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
-			controlsContainer.HAnchor = HAnchor.ParentLeftRight;
-
-			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			optionsContainer.Margin = new BorderDouble(bottom: 6);
-
-			var settings = ActiveSliceSettings.Instance;
-
-			// Reset active slicer to MatterSlice when multi-extruder is detected and MatterSlice is not already set
-			if (settings?.GetValue<int>(SettingsKey.extruder_count) > 1 
-				&& settings.Helpers.ActiveSliceEngineType() != SlicingEngineTypes.MatterSlice)
-			{
-				settings.Helpers.ActiveSliceEngineType(SlicingEngineTypes.MatterSlice);
-				ApplicationController.Instance.ReloadAll();
-			} 
-
-			optionsContainer.AddChild(new SliceEngineSelector("Slice Engine".Localize()));
-			optionsContainer.Width = 200;
-
-			buttonRow.AddChild(settingsLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(optionsContainer);
-			return buttonRow;
-		}
-
-		private FlowLayoutWidget GetThumbnailRenderingControl()
-		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(top: 4);
-
-			TextWidget settingsLabel = new TextWidget("Thumbnail Rendering".Localize());
-			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			settingsLabel.VAnchor = VAnchor.ParentTop;
-
-			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			optionsContainer.Margin = new BorderDouble(bottom: 6);
-
-			DropDownList interfaceOptionsDropList = new DropDownList("Development", maxHeight: 200);
-			interfaceOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
-
-			optionsContainer.AddChild(interfaceOptionsDropList);
-			optionsContainer.Width = 200;
-
-			interfaceOptionsDropList.AddItem("Flat".Localize(), "orthographic");
-			interfaceOptionsDropList.AddItem("3D".Localize(), "raytraced");
-
-			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "orthographic", "raytraced" };
-			string currentThumbnailRenderingMode = UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode);
-
-			if (acceptableUpdateFeedTypeValues.IndexOf(currentThumbnailRenderingMode) == -1)
-			{
-				if (!UserSettings.Instance.IsTouchScreen)
-				{
-					UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "orthographic");
-				}
-				else
-				{
-					UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "raytraced");
-				}
-			}
-
-			interfaceOptionsDropList.SelectedValue = UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode);
-			interfaceOptionsDropList.SelectionChanged += (sender, e) =>
-			{
-				string thumbnailRenderingMode = ((DropDownList)sender).SelectedValue;
-				if (thumbnailRenderingMode != UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode))
-				{
-					UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, thumbnailRenderingMode);
-
-					// Ask if the user would like to rebuild all their thumbnails
-					Action<bool> removeThumbnails = (bool shouldRebuildThumbnails) =>
+			this.AddSettingsRow(
+				new SettingsItem(
+					"Camera Monitoring".Localize(),
+					theme,
+					new SettingsItem.ToggleSwitchConfig()
 					{
-						if (shouldRebuildThumbnails)
+						Checked = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.publish_bed_image),
+						ToggleAction = (itemChecked) =>
 						{
-							string directoryToRemove = PartThumbnailWidget.ThumbnailPath();
-							try
+							ActiveSliceSettings.Instance.SetValue(SettingsKey.publish_bed_image, itemChecked ? "1" : "0");
+						}
+					},
+					previewButton,
+					AggContext.StaticData.LoadIcon("camera-24x24.png", 24, 24))
+			);
+#endif
+
+			// Print Notifications
+			var configureNotificationsButton = new IconButton(configureIcon, theme)
+			{
+				Name = "Configure Notification Settings Button",
+				ToolTipText = "Configure Notifications".Localize(),
+				Margin = new BorderDouble(left: 6),
+				VAnchor = VAnchor.Center
+			};
+			configureNotificationsButton.Click += (s, e) =>
+			{
+				if (OpenPrintNotification != null)
+				{
+					UiThread.RunOnIdle(OpenPrintNotification);
+				}
+			};
+
+			AddMenuItem("Help".Localize(), () =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					DialogWindow.Show(new HelpPage("AllGuides"));
+				});
+			});
+
+			this.AddSettingsRow(
+				new SettingsItem(
+					"Notifications".Localize(),
+					theme,
+					new SettingsItem.ToggleSwitchConfig()
+					{
+						Checked = UserSettings.Instance.get(UserSettingsKey.PrintNotificationsEnabled) == "true",
+						ToggleAction = (itemChecked) =>
+						{
+							UserSettings.Instance.set(UserSettingsKey.PrintNotificationsEnabled, itemChecked ? "true" : "false");
+						}
+					},
+					configureNotificationsButton,
+					AggContext.StaticData.LoadIcon("notify-24x24.png")));
+
+			// Touch Screen Mode
+			this.AddSettingsRow(
+				new SettingsItem(
+					"Touch Screen Mode".Localize(),
+					theme,
+					new SettingsItem.ToggleSwitchConfig()
+					{
+						Checked = UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen",
+						ToggleAction = (itemChecked) =>
+						{
+							string displayMode = itemChecked ? "touchscreen" : "responsive";
+							if (displayMode != UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode))
 							{
-								if (Directory.Exists(directoryToRemove))
-								{
-									Directory.Delete(directoryToRemove, true);
-								}
-							}
-							catch (Exception)
-							{
-								GuiWidget.BreakInDebugger();
+								UserSettings.Instance.set(UserSettingsKey.ApplicationDisplayMode, displayMode);
+								ApplicationController.Instance.ReloadAll();
 							}
 						}
+					}));
 
-						ApplicationController.Instance.ReloadAll();
-					};
-
-					UiThread.RunOnIdle(() =>
+			// LanguageControl
+			var languageSelector = new LanguageSelector(theme);
+			languageSelector.SelectionChanged += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					string languageCode = languageSelector.SelectedValue;
+					if (languageCode != UserSettings.Instance.get(UserSettingsKey.Language))
 					{
-						StyledMessageBox.ShowMessageBox(removeThumbnails, rebuildThumbnailsMessage, rebuildThumbnailsTitle, StyledMessageBox.MessageType.YES_NO, "Rebuild".Localize());
-					});
-				}
+						UserSettings.Instance.set(UserSettingsKey.Language, languageCode);
+
+						if (languageCode == "L10N")
+						{
+							GenerateLocalizationValidationFile();
+						}
+
+						ApplicationController.Instance.ResetTranslationMap();
+						ApplicationController.Instance.ReloadAll();
+					}
+				});
 			};
 
-			buttonRow.AddChild(settingsLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(optionsContainer);
-			return buttonRow;
-		}
+			this.AddSettingsRow(new SettingsItem("Language".Localize(), languageSelector, theme));
 
-		private string rebuildThumbnailsMessage = "You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?".Localize();
-		private string rebuildThumbnailsTitle = "Rebuild Thumbnails Now".Localize();
-
-		private void AddHandlers()
-		{
-		}
-
-		private void RestartApplication()
-		{
-			UiThread.RunOnIdle(() =>
+#if !__ANDROID__
 			{
-				// Iterate to the top SystemWindow
-				GuiWidget parent = this;
-				while (parent.Parent != null)
+				// ThumbnailRendering
+				var thumbnailsModeDropList = new DropDownList("", theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
 				{
-					parent = parent.Parent;
+					BorderColor = theme.GetBorderColor(75)
+				};
+				thumbnailsModeDropList.AddItem("Flat".Localize(), "orthographic");
+				thumbnailsModeDropList.AddItem("3D".Localize(), "raytraced");
+
+				thumbnailsModeDropList.SelectedValue = UserSettings.Instance.ThumbnailRenderingMode;
+				thumbnailsModeDropList.SelectionChanged += (s, e) =>
+				{
+					string thumbnailRenderingMode = thumbnailsModeDropList.SelectedValue;
+					if (thumbnailRenderingMode != UserSettings.Instance.ThumbnailRenderingMode)
+					{
+						UserSettings.Instance.ThumbnailRenderingMode = thumbnailRenderingMode;
+
+						UiThread.RunOnIdle(() =>
+						{
+							// Ask if the user they would like to rebuild their thumbnails
+							StyledMessageBox.ShowMessageBox(
+								(bool rebuildThumbnails) =>
+								{
+									if (rebuildThumbnails)
+									{
+										string directoryToRemove = ApplicationController.CacheablePath("ItemThumbnails", "");
+										try
+										{
+											if (Directory.Exists(directoryToRemove))
+											{
+												Directory.Delete(directoryToRemove, true);
+											}
+										}
+										catch (Exception)
+										{
+											GuiWidget.BreakInDebugger();
+										}
+
+										Directory.CreateDirectory(directoryToRemove);
+
+										ApplicationController.Instance.Library.NotifyContainerChanged();
+									}
+								},
+								"You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?".Localize(),
+								"Rebuild Thumbnails Now".Localize(),
+								StyledMessageBox.MessageType.YES_NO,
+								"Rebuild".Localize());
+						});
+					}
+				};
+
+				this.AddSettingsRow(
+					new SettingsItem(
+						"Thumbnails".Localize(),
+						thumbnailsModeDropList,
+						theme));
+
+				// TextSize
+				if (!double.TryParse(UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize), out double currentTexSize))
+				{
+					currentTexSize = 1.0;
 				}
 
-				// MatterControlApplication is the root child on the SystemWindow object
-				MatterControlApplication app = parent.Children[0] as MatterControlApplication;
-#if !__ANDROID__
-				app.RestartOnClose = true;
-				app.Close();
-#else
-                // Re-initialize and load
-                LocalizedString.ResetTranslationMap();
-                ApplicationController.Instance.MainView = new TouchscreenView();
-                app.RemoveAllChildren();
-                app.AnchorAll();
+				double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
+				double sliderWidth = 100 * GuiWidget.DeviceScale;
+				var textSizeSlider = new SolidSlider(new Vector2(), sliderThumbWidth, .7, 1.4)
+				{
+					Name = "Text Size Slider",
+					Margin = new BorderDouble(5, 0),
+					Value = currentTexSize,
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Center,
+					TotalWidthInPixels = sliderWidth,
+				};
+
+				var optionalContainer = new FlowLayoutWidget()
+				{
+					VAnchor = VAnchor.Center | VAnchor.Fit,
+					HAnchor = HAnchor.Fit
+				};
+
+				TextWidget sectionLabel = null;
+
+				var textSizeApplyButton = new TextButton("Apply".Localize(), theme)
+				{
+					VAnchor = VAnchor.Center,
+					BackgroundColor = theme.SlightShade,
+					Visible = false,
+					Margin = new BorderDouble(right: 6)
+				};
+				textSizeApplyButton.Click += (s, e) =>
+				{
+					GuiWidget.DeviceScale = textSizeSlider.Value;
+					ApplicationController.Instance.ReloadAll();
+				};
+				optionalContainer.AddChild(textSizeApplyButton);
+
+				textSizeSlider.ValueChanged += (s, e) =>
+				{
+					double textSizeNew = textSizeSlider.Value;
+					UserSettings.Instance.set(UserSettingsKey.ApplicationTextSize, textSizeNew.ToString("0.0"));
+					sectionLabel.Text = "Text Size".Localize() + $" : {textSizeNew:0.0}";
+					textSizeApplyButton.Visible = textSizeNew != currentTexSize;
+				};
+
+				var section = new SettingsItem(
+						"Text Size".Localize() + $" : {currentTexSize:0.0}",
+						textSizeSlider,
+						theme,
+						optionalContainer);
+
+				sectionLabel = section.Children<TextWidget>().FirstOrDefault();
+
+				this.AddSettingsRow(section);
+			}
 #endif
-			});
-		}
 
-		private void FixTabDot(object sender, EventArgs e)
-		{
-			UpdateControlData.Instance.CheckForUpdateUserRequested();
-		}
+			AddMenuItem("Forums".Localize(), () => ApplicationController.Instance.LaunchBrowser("https://forums.matterhackers.com/category/20/mattercontrol"));
+			AddMenuItem("Wiki".Localize(), () => ApplicationController.Instance.LaunchBrowser("http://wiki.mattercontrol.com"));
+			AddMenuItem("Guides and Articles".Localize(), () => ApplicationController.Instance.LaunchBrowser("http://www.matterhackers.com/topic/mattercontrol"));
+			AddMenuItem("Release Notes".Localize(), () => ApplicationController.Instance.LaunchBrowser("http://wiki.mattercontrol.com/Release_Notes"));
+			AddMenuItem("Report a Bug".Localize(), () => ApplicationController.Instance.LaunchBrowser("https://github.com/MatterHackers/MatterControl/issues"));
 
-		private void InterfaceModeDropList_SelectionChanged(object sender, EventArgs e)
-		{
-			string isSimpleMode = ((DropDownList)sender).SelectedValue;
-			if (isSimpleMode == "True")
+			var updateMatterControl = new SettingsItem("Check For Update".Localize(), theme);
+			updateMatterControl.Click += (s, e) =>
 			{
-				UserSettings.Instance.Fields.IsSimpleMode = true;
+				UiThread.RunOnIdle(() =>
+				{
+					UpdateControlData.Instance.CheckForUpdate();
+					DialogWindow.Show<CheckForUpdatesPage>();
+				});
+			};
+			this.AddSettingsRow(updateMatterControl);
+
+			this.AddChild(new SettingsItem("Theme".Localize(), new GuiWidget(), theme));
+			this.AddChild(this.GetThemeControl(theme));
+
+			var aboutMatterControl = new SettingsItem("About".Localize() + " " + ApplicationController.Instance.ProductName, theme);
+			if (IntPtr.Size == 8)
+			{
+				// Push right
+				aboutMatterControl.AddChild(new HorizontalSpacer());
+
+				// Add x64 adornment
+				var blueBox = new FlowLayoutWidget()
+				{
+					Margin = new BorderDouble(10, 0),
+					Padding = new BorderDouble(2),
+					Border = new BorderDouble(1),
+					BorderColor = theme.Colors.PrimaryAccentColor,
+					VAnchor = VAnchor.Center | VAnchor.Fit,
+				};
+				blueBox.AddChild(new TextWidget("64", pointSize: 8, textColor: theme.Colors.PrimaryAccentColor));
+
+				aboutMatterControl.AddChild(blueBox);
+			}
+			aboutMatterControl.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() => DialogWindow.Show<AboutPage>());
+			};
+			this.AddSettingsRow(aboutMatterControl);
+		}
+
+		private void AddMenuItem(string title, Action callback)
+		{
+			var newItem = new SettingsItem(title, theme);
+			newItem.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					callback?.Invoke();
+				});
+			};
+
+			this.AddSettingsRow(newItem);
+		}
+
+		private void AddSettingsRow(GuiWidget widget)
+		{
+			this.AddChild(widget);
+			widget.Padding = widget.Padding.Clone(right: 10);
+		}
+
+		private FlowLayoutWidget GetThemeControl(ThemeConfig theme)
+		{
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Margin = new BorderDouble(left: 30)
+			};
+
+			// Determine if we should set the dark or light version of the theme
+			var activeThemeIndex = ActiveTheme.AvailableThemes.IndexOf(ApplicationController.Instance.Theme.Colors);
+
+			var midPoint = ActiveTheme.AvailableThemes.Count / 2;
+
+			int darkThemeIndex;
+			int lightThemeIndex;
+
+			bool isLightTheme = activeThemeIndex >= midPoint;
+			if (isLightTheme)
+			{
+				lightThemeIndex = activeThemeIndex;
+				darkThemeIndex = activeThemeIndex - midPoint;
 			}
 			else
 			{
-				UserSettings.Instance.Fields.IsSimpleMode = false;
+				darkThemeIndex = activeThemeIndex;
+				lightThemeIndex = activeThemeIndex + midPoint;
 			}
-			ApplicationController.Instance.ReloadAll();
-		}
 
-		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)
-		{
-			string releaseCode = ((DropDownList)sender).SelectedValue;
-			if (releaseCode != UserSettings.Instance.get(UserSettingsKey.UpdateFeedType))
+			var darkPreview = new ThemePreviewButton(ActiveTheme.AvailableThemes[darkThemeIndex], !isLightTheme)
 			{
-				UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, releaseCode);
-			}
-		}
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Absolute,
+				Width = 80,
+				Height = 65,
+				Margin = new BorderDouble(5, 15, 10, 10)
+			};
 
-		private void LanguageDropList_SelectionChanged(object sender, EventArgs e)
-		{
-			string languageCode = ((Agg.UI.DropDownList)sender).SelectedValue;
-			if (languageCode != UserSettings.Instance.get("Language"))
+			var lightPreview = new ThemePreviewButton(ActiveTheme.AvailableThemes[lightThemeIndex], isLightTheme)
 			{
-				UserSettings.Instance.set("Language", languageCode);
-				languageRestartButton.Visible = true;
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Absolute,
+				Width = 80,
+				Height = 65,
+				Margin = new BorderDouble(5, 15, 10, 10)
+			};
 
-				if(languageCode == "L10N")
-				{
-					GenerateLocalizationValidationFile();
-				}
-			}
+			// Add color selector
+			container.AddChild(new ThemeColorSelectorWidget(darkPreview, lightPreview)
+			{
+				Margin = new BorderDouble(right: 5)
+			});
+
+			var themePreviews = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			};
+
+			themePreviews.AddChild(darkPreview);
+			themePreviews.AddChild(lightPreview);
+
+			container.AddChild(themePreviews);
+
+			return container;
 		}
 
 		[Conditional("DEBUG")]
 		private void GenerateLocalizationValidationFile()
 		{
-			char currentChar = 'A';
-
-			string outputPath = StaticData.Instance.MapPath(Path.Combine("Translations", "L10N", "Translation.txt"));
-
-			// Ensure the output directory exists
-			Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
-
-			using (var outstream = new StreamWriter(outputPath))
+#if !__ANDROID__
+			if (AggContext.StaticData is FileSystemStaticData fileSystemStaticData)
 			{
-				foreach (var line in File.ReadAllLines(StaticData.Instance.MapPath(Path.Combine("Translations", "Master.txt"))))
+				char currentChar = 'A';
+
+				// Note: Functionality only expected to work on Desktop/Debug builds and as such, is coupled to FileSystemStaticData
+				string outputPath = fileSystemStaticData.MapPath(Path.Combine("Translations", "L10N", "Translation.txt"));
+				string sourceFilePath = fileSystemStaticData.MapPath(Path.Combine("Translations", "Master.txt"));
+
+				// Ensure the output directory exists
+				Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
+
+				using (var outstream = new StreamWriter(outputPath))
 				{
-					if (line.StartsWith("Translated:"))
+					foreach (var line in File.ReadAllLines(sourceFilePath))
 					{
-						var pos = line.IndexOf(':');
-						var segments = new string[]
+						if (line.StartsWith("Translated:"))
 						{
+							var pos = line.IndexOf(':');
+							var segments = new string[]
+							{
 							line.Substring(0, pos),
 							line.Substring(pos + 1),
-						};
+							};
 
-						outstream.WriteLine("{0}:{1}", segments[0], new string(segments[1].ToCharArray().Select(c => c == ' ' ? ' ' : currentChar).ToArray()));
+							outstream.WriteLine("{0}:{1}", segments[0], new string(segments[1].ToCharArray().Select(c => c == ' ' ? ' ' : currentChar).ToArray()));
 
-						if (currentChar++ == 'Z')
-						{
-							currentChar = 'A';
+							if (currentChar++ == 'Z')
+							{
+								currentChar = 'A';
+							}
 						}
-					}
-					else
-					{
-						outstream.WriteLine(line);
+						else
+						{
+							outstream.WriteLine(line);
+						}
 					}
 				}
 			}
+#endif
 		}
 	}
 }

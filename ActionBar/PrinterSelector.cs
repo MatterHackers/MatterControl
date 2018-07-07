@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, John Lewin
+Copyright (c) 2017, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,52 +27,53 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
 using System;
 using System.Linq;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
-	public class PrinterSelector : DropDownList
+	public class PrinterSelector : DropDownList, IIgnoredPopupChild
 	{
-		public event EventHandler AddPrinter;
-
 		private EventHandler unregisterEvents;
 		int lastSelectedIndex = -1;
 
-		public PrinterSelector() : base("Printers".Localize() + "... ")
+		public PrinterSelector(ThemeConfig theme)
+			: base("Printers".Localize() + "... ", theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
 		{
-			Rebuild();
-
 			this.Name = "Printers... Menu";
+			this.BorderColor = Color.Transparent;
+			this.AutoScaleIcons = false;
+			this.BackgroundColor = theme.MinimalShade;
+			this.GutterWidth = 30;
+
+			this.MenuItemsTextHoverColor = new Color("#ddd");
+
+			this.Rebuild();
 
 			this.SelectionChanged += (s, e) =>
 			{
 				string printerID = this.SelectedValue;
-				if (printerID == "new" 
-					|| string.IsNullOrEmpty(printerID) 
+				if (printerID == "new"
+					|| string.IsNullOrEmpty(printerID)
 					|| printerID == ActiveSliceSettings.Instance.ID)
 				{
 					// do nothing
 				}
 				else
 				{
-					if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
-						|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+					// TODO: when this opens a new tab we will not need to check any printer
+					if (ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting
+						|| ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPaused)
 					{
 						if (this.SelectedIndex != lastSelectedIndex)
 						{
 							UiThread.RunOnIdle(() =>
-							StyledMessageBox.ShowMessageBox(null, "Please wait until the print has finished and try again.".Localize(), "Can't switch printers while printing".Localize())
+							StyledMessageBox.ShowMessageBox("Please wait until the print has finished and try again.".Localize(), "Can't switch printers while printing".Localize())
 							);
 							this.SelectedIndex = lastSelectedIndex;
 						}
@@ -80,15 +81,34 @@ namespace MatterHackers.MatterControl
 					else
 					{
 						lastSelectedIndex = this.SelectedIndex;
-						UiThread.RunOnIdle(() => ActiveSliceSettings.SwitchToProfile(printerID));
+
+						ProfileManager.Instance.LastProfileID = this.SelectedValue;
 					}
 				}
 			};
 
-			ActiveSliceSettings.SettingChanged.RegisterEvent(SettingChanged, ref unregisterEvents);
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			{
+				string settingsName = (e as StringEventArgs)?.Data;
+				if (settingsName != null && settingsName == SettingsKey.printer_name)
+				{
+					if (ProfileManager.Instance.ActiveProfile != null)
+					{
+						ProfileManager.Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
+						Rebuild();
+					}
+				}
+			}, ref unregisterEvents);
 
 			// Rebuild the droplist any time the Profiles list changes
-			ProfileManager.ProfilesListChanged.RegisterEvent((s, e) => Rebuild(), ref unregisterEvents);
+			ProfileManager.ProfilesListChanged.RegisterEvent((s, e) =>
+			{
+				this.Rebuild();
+			}, ref unregisterEvents);
+
+			HAnchor = HAnchor.Fit;
+			Cursor = Cursors.Hand;
+			Margin = 0;
 		}
 
 		public void Rebuild()
@@ -98,48 +118,31 @@ namespace MatterHackers.MatterControl
 			//Add the menu items to the menu itself
 			foreach (var printer in ProfileManager.Instance.ActiveProfiles.OrderBy(p => p.Name))
 			{
-				this.AddItem(printer.Name, printer.ID.ToString());
+				this.AddItem(this.GetOemIcon(printer.Make), printer.Name, printer.ID);
 			}
 
-			if (ActiveSliceSettings.Instance.PrinterSelected)
+			string lastProfileID = ProfileManager.Instance.LastProfileID;
+			if (!string.IsNullOrEmpty(lastProfileID))
 			{
-				this.SelectedValue = ActiveSliceSettings.Instance.ID;
+				this.SelectedValue = lastProfileID;
 				lastSelectedIndex = this.SelectedIndex;
-				this.mainControlText.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
 			}
-
-			var menuItem = this.AddItem(StaticData.Instance.LoadIcon("icon_plus.png", 32, 32), "Add New Printer".Localize() + "...", "new");
-			menuItem.CanHeldSelection = false;
-			menuItem.Click += (s, e) =>
+			else
 			{
-				if (AddPrinter != null)
-				{
-					if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
-						|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
-					{
-						UiThread.RunOnIdle(() =>
-							StyledMessageBox.ShowMessageBox(null, "Please wait until the print has finished and try again.".Localize(), "Can't add printers while printing".Localize())
-						);
-					}
-					else
-					{
-						UiThread.RunOnIdle(() => AddPrinter(this, null));
-					}
-				}
-			};
+				this.SelectedIndex = -1;
+			}
 		}
 
-		private void SettingChanged(object sender, EventArgs e)
+		private ImageBuffer GetOemIcon(string oemName)
 		{
-			string settingsName = (e as StringEventArgs)?.Data;
-			if (settingsName != null && settingsName == SettingsKey.printer_name)
-			{
-				if (ProfileManager.Instance.ActiveProfile != null)
-				{
-					ProfileManager.Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
-					Rebuild();
-				}
-			}
+			var imageBuffer = new ImageBuffer(16, 16);
+
+			ApplicationController.Instance.DownloadToImageAsync(
+				imageBuffer,
+				ApplicationController.Instance.GetFavIconUrl(oemName),
+				scaleToImageX: false);
+
+			return imageBuffer;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

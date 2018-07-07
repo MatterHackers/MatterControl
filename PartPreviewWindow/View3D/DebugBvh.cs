@@ -36,6 +36,7 @@ using MatterHackers.RenderOpenGl;
 using MatterHackers.Agg;
 using System.Collections.Generic;
 using MatterHackers.RayTracer.Traceable;
+using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -59,30 +60,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		Mesh lineMesh = PlatonicSolids.CreateCube(1, 1, 1);
-		private void RenderLine(Matrix4X4 transform, Vector3 start, Vector3 end, RGBA_Bytes color, bool zBuffered = true)
+		private void RenderLine(Matrix4X4 transform, Vector3 start, Vector3 end, Color color, bool zBuffered = true)
 		{
 			Vector3 lineCenter = (start + end) / 2;
 
 			Vector3 delta = start - end;
-			Matrix4X4 rotateTransform = Matrix4X4.CreateRotation(new Quaternion(Vector3.UnitX + new Vector3(.0001, -.00001, .00002), delta.GetNormal()));
+			Matrix4X4 rotateTransform = Matrix4X4.CreateRotation(new Quaternion(delta.GetNormal(), Vector3.UnitX + new Vector3(.0001, -.00001, .00002)));
 			Matrix4X4 scaleTransform = Matrix4X4.CreateScale((end - start).Length, 1, 1);
 			Matrix4X4 lineTransform = scaleTransform * rotateTransform * Matrix4X4.CreateTranslation(lineCenter) * transform;
 
 			if (zBuffered)
 			{
-				RenderMeshToGl.Render(lineMesh, RGBA_Bytes.Black, lineTransform, RenderTypes.Shaded);
-				//drawEvent.graphics2D.Line(cornerPositionScreen, cornerPositionCcwScreen, RGBA_Bytes.Gray);
+				GLHelper.Render(lineMesh, Color.Black, lineTransform, RenderTypes.Shaded);
+				//drawEvent.graphics2D.Line(cornerPositionScreen, cornerPositionCcwScreen, Color.Gray);
 			}
 			else
 			{
 				// render on top of everything very lightly
-				RenderMeshToGl.Render(lineMesh, new RGBA_Bytes(RGBA_Bytes.Black, 5), lineTransform, RenderTypes.Shaded);
+				GLHelper.Render(lineMesh, new Color(Color.Black, 5), lineTransform, RenderTypes.Shaded);
 			}
 		}
 
 		private void RenderBounds(AxisAlignedBoundingBox aabb)
 		{
-			RGBA_Bytes color = RGBA_Bytes.Red;
+			Color color = Color.Red;
 
 			// the bottom
 			RenderLine(transform.Peek(), aabb.GetBottomCorner(0), aabb.GetBottomCorner(1), color);
@@ -98,20 +99,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// the sides
 			RenderLine(transform.Peek(),
-				new Vector3(aabb.minXYZ.x, aabb.minXYZ.y, aabb.minXYZ.z),
-				new Vector3(aabb.minXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.z),
+				new Vector3(aabb.minXYZ.X, aabb.minXYZ.Y, aabb.minXYZ.Z),
+				new Vector3(aabb.minXYZ.X, aabb.minXYZ.Y, aabb.maxXYZ.Z),
 				color);
 			RenderLine(transform.Peek(),
-				new Vector3(aabb.maxXYZ.x, aabb.minXYZ.y, aabb.minXYZ.z),
-				new Vector3(aabb.maxXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.z),
+				new Vector3(aabb.maxXYZ.X, aabb.minXYZ.Y, aabb.minXYZ.Z),
+				new Vector3(aabb.maxXYZ.X, aabb.minXYZ.Y, aabb.maxXYZ.Z),
 				color);
 			RenderLine(transform.Peek(),
-				new Vector3(aabb.minXYZ.x, aabb.maxXYZ.y, aabb.minXYZ.z),
-				new Vector3(aabb.minXYZ.x, aabb.maxXYZ.y, aabb.maxXYZ.z),
+				new Vector3(aabb.minXYZ.X, aabb.maxXYZ.Y, aabb.minXYZ.Z),
+				new Vector3(aabb.minXYZ.X, aabb.maxXYZ.Y, aabb.maxXYZ.Z),
 				color);
 			RenderLine(transform.Peek(),
-				new Vector3(aabb.maxXYZ.x, aabb.maxXYZ.y, aabb.minXYZ.z),
-				new Vector3(aabb.maxXYZ.x, aabb.maxXYZ.y, aabb.maxXYZ.z),
+				new Vector3(aabb.maxXYZ.X, aabb.maxXYZ.Y, aabb.minXYZ.Z),
+				new Vector3(aabb.maxXYZ.X, aabb.maxXYZ.Y, aabb.maxXYZ.Z),
 				color);
 		}
 

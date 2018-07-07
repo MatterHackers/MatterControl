@@ -32,26 +32,29 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class RequestTemperaturesStream : GCodeStreamProxy
-    {
-        private long nextReadTimeMs = 0;
+	public class RequestTemperaturesStream : GCodeStreamProxy
+	{
+		private long nextReadTimeMs = 0;
+		PrinterConnection printerConnection;
 
-        public RequestTemperaturesStream(GCodeStream internalStream)
-            : base(internalStream)
-        {
-            nextReadTimeMs = UiThread.CurrentTimerMs + 1000;
-        }
+		public RequestTemperaturesStream(PrinterConnection printerConnection, GCodeStream internalStream)
+			: base(internalStream)
+		{
+			this.printerConnection = printerConnection;
+			nextReadTimeMs = UiThread.CurrentTimerMs + 1000;
+		}
 
-        public override string ReadLine()
-        {
-            if (nextReadTimeMs < UiThread.CurrentTimerMs
-				&& PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
-            {
-                nextReadTimeMs = UiThread.CurrentTimerMs + 1000;
-                return "M105";
-            }
+		public override string ReadLine()
+		{
+			if (!printerConnection.WaitingForPositionRead
+				&& nextReadTimeMs < UiThread.CurrentTimerMs
+				&& printerConnection.IsConnected)
+			{
+				nextReadTimeMs = UiThread.CurrentTimerMs + 1000;
+				return "M105";
+			}
 
-            return base.ReadLine();
-        }
-    }
+			return base.ReadLine();
+		}
+	}
 }

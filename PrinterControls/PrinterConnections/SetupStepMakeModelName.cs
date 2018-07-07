@@ -1,23 +1,46 @@
-﻿using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DataStorage;
+﻿/*
+Copyright (c) 2017, Lars Brubaker, John Lewin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
 using System;
-using MatterHackers.MatterControl.SettingsManagement;
 using System.Collections.Generic;
 using System.Linq;
-using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.Agg.PlatformAbstract;
-using System.IO;
-using MatterHackers.MatterControl.PrintLibrary.Provider;
-using MatterHackers.MatterControl.PrintQueue;
-using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
 	//Normally step one of the setup process
-	public class SetupStepMakeModelName : ConnectionWizardPage
+	public class SetupStepMakeModelName : DialogPage
 	{
 		private FlowLayoutWidget printerModelContainer;
 		private FlowLayoutWidget printerMakeContainer;
@@ -26,7 +49,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private TextWidget printerNameError;
 
-		private Button nextButton;
+		private GuiWidget nextButton;
 
 		private bool usingDefaultName;
 
@@ -41,9 +64,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		public SetupStepMakeModelName()
 		{
+			this.WindowTitle = "Setup Wizard".Localize();
+
 			printerManufacturerSelector = new BoundDropList(string.Format("- {0} -", "Select Make".Localize()), maxHeight: 200)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin,
 				Name = "Select Make",
 				ListSource = OemSettings.Instance.AllOems,
@@ -54,13 +79,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			printerMakeContainer = CreateSelectionContainer(
 				"Make".Localize() + ":",
-				"Select the printer manufacturer".Localize(), 
+				"Select the printer manufacturer".Localize(),
 				printerManufacturerSelector);
 
 			printerModelSelector = new BoundDropList(string.Format("- {0} -", "Select Model".Localize()), maxHeight: 200)
 			{
 				Name = "Select Model",
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin,
 				TabStop = true
 			};
@@ -74,15 +99,15 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			contentRow.AddChild(createPrinterNameContainer());
 
 			//Construct buttons
-			nextButton = textImageButtonFactory.Generate("Save & Continue".Localize());
+			nextButton = theme.CreateDialogButton("Save & Continue".Localize());
 			nextButton.Name = "Save & Continue Button";
 			nextButton.Click += async (s, e) =>
 			{
 				bool controlsValid = this.ValidateControls();
 				if (controlsValid)
 				{
-					bool profileCreated = await ProfileManager.CreateProfileAsync(activeMake, activeModel, activeName);
-					if(!profileCreated)
+					var printer = await ProfileManager.CreateProfileAsync(activeMake, activeModel, activeName);
+					if (printer == null)
 					{
 						this.printerNameError.Text = "Error creating profile".Localize();
 						this.printerNameError.Visible = true;
@@ -92,24 +117,17 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					LoadCalibrationPrints();
 
 #if __ANDROID__
-					UiThread.RunOnIdle(WizardWindow.ChangeToPage<AndroidConnectDevicePage>);
+					UiThread.RunOnIdle(() => DialogWindow.ChangeToPage<AndroidConnectDevicePage>());
 #else
-					if (OsInformation.OperatingSystem == OSType.Windows)
+					UiThread.RunOnIdle(() =>
 					{
-						UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupStepInstallDriver>);
-					}
-					else
-					{
-						UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupStepComPortOne>);
-					}
+						DialogWindow.ChangeToPage(new SetupStepComPortOne(printer));
+					});
 #endif
 				}
 			};
 
-			//Add buttons to buttonContainer
-			footerRow.AddChild(nextButton);
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
+			this.AddPageAction(nextButton);
 
 			usingDefaultName = true;
 
@@ -131,20 +149,20 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			TextWidget printerNameLabel = new TextWidget("Name".Localize() + ":", 0, 0, 12)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 4, 0, 1)
 			};
 
 			printerNameInput = new MHTextEditWidget("")
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 			};
 			printerNameInput.KeyPressed += (s, e) => this.usingDefaultName = false;
 
 			printerNameError = new TextWidget("", 0, 0, 10)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(top: 3)
 			};
 
@@ -153,7 +171,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			container.AddChild(printerNameLabel);
 			container.AddChild(printerNameInput);
 			container.AddChild(printerNameError);
-			container.HAnchor = HAnchor.ParentLeftRight;
+			container.HAnchor = HAnchor.Stretch;
 
 			return container;
 		}
@@ -163,14 +181,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			var sectionLabel = new TextWidget(labelText, 0, 0, 12)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			};
 
 			var validationTextWidget = new TextWidget(validationMessage, 0, 0, 10)
 			{
-				TextColor = ActiveTheme.Instance.SecondaryAccentColor,
-				HAnchor = HAnchor.ParentLeftRight,
+				TextColor = ActiveTheme.Instance.PrimaryAccentColor,
+				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			};
 
@@ -182,7 +200,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				Margin = new BorderDouble(0, 5),
-				HAnchor = HAnchor.ParentLeftRight
+				HAnchor = HAnchor.Stretch
 			};
 
 			container.AddChild(sectionLabel);
@@ -231,13 +249,15 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					string mappedMakeText = printerManufacturerSelector.SelectedLabel;
 
 					var existingPrinterNames = ProfileManager.Instance.ActiveProfiles.Select(p => p.Name);
-					printerNameInput.Text = agg_basics.GetNonCollidingName(existingPrinterNames, $"{mappedMakeText} {activeModel}");
+					printerNameInput.Text = agg_basics.GetNonCollidingName($"{mappedMakeText} {activeModel}", existingPrinterNames);
 				}
 			});
 		}
 
+		// TODO: Do we still want to do this - constantly adding items to the queue as printers are added? What about a LibraryContainer for '[PrinterName] Calibration Files' - much cleaner to implement, never an extra files on disk or one-time processing that remain becomes inconsistent over time
 		public void LoadCalibrationPrints()
 		{
+			/*
 			// Load the calibration file names
 			string calibrationFiles = ActiveSliceSettings.Instance.GetValue("calibration_files");
 			if(string.IsNullOrEmpty(calibrationFiles))
@@ -250,9 +270,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			{
 				return;
 			}
-
-			var libraryProvider = new LibraryProviderSQLite(null, null, null, "Local Library");
-			libraryProvider.EnsureSamplePartsExist(calibrationPrintFileNames);
 
 			var queueItems = QueueData.Instance.GetItemNames();
 
@@ -274,6 +291,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			}
 
 			libraryProvider.Dispose();
+			*/
 		}
 
 		private bool ValidateControls()
@@ -293,7 +311,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			}
 			else
 			{
-				this.printerNameError.TextColor = RGBA_Bytes.Red;
+				this.printerNameError.TextColor = Color.Red;
 				this.printerNameError.Text = "Printer name cannot be blank".Localize();
 				this.printerNameError.Visible = true;
 

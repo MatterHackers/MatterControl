@@ -1,12 +1,12 @@
 {
   "DocumentVersion": 201606271,
-  "ID": "6a55890e-d954-4d53-8256-594ddc5e9b2e",
+  "ID": "Me2-4506587185545216",
   "StagedUserSettings": {},
   "Macros": [
     {
       "Name": "Z Offset",
       "GCode": "G1 Z10;\nG28;\nG29;\nG1 Z10;\nG1 X5 Y5 F4000;\nM117;",
-      "OemPreset": false,
+      "ActionGroup": false,
       "LastModified": "0001-01-01T00:00:00"
     }
   ],
@@ -33,7 +33,7 @@
     "default_acceleration": "0",
     "disable_fan_first_layers": "1",
     "end_gcode": "G91; Set to Relative position\\nG1 Z3 E-3; move z axis up\\nG28  ; home axis\\nG1 F250 E-16; Retract filament from barrel\\nG92 E0; zero the extruded length\\nG90; Set to Absolute position\\nM104 S0 ; turn off temperature\\nM140 S0 ; turn off heated bed\\nM106 S0 ; Turn off fan\\nM18;\\nM117 All Done!!!",
-    "external_perimeter_extrusion_width": "0",
+    "external_perimeter_extrusion_width": "0.39",
     "external_perimeter_speed": "80%",
     "external_perimeters_first": "0",
     "extra_perimeters": "1",
@@ -54,7 +54,7 @@
     "fill_pattern": "rectilinear",
     "first_layer_acceleration": "0",
     "first_layer_bed_temperature": "0",
-    "first_layer_extrusion_width": "200%",
+    "first_layer_extrusion_width": "0.6",
     "first_layer_height": "0.3",
     "first_layer_speed": "15",
     "first_layer_temperature": "220",
@@ -181,18 +181,19 @@
     "z_offset": "0",
     "make": "Me3D",
     "model": "Me2",
-    "created_date": "2016-12-08T20:30:34.231Z",
+    "created_date": "2017-08-03T00:34:54.705Z",
     "baud_rate": "250000",
     "default_material_presets": "PLA",
     "windows_driver": "MHSerial.inf",
     "calibration_files": "Calibration - Circle.stl",
-    "oem_profile_token": "ag9zfm1hdHRlcmNvbnRyb2xyQwsSCUFmZmlsaWF0ZRiAgICQz9mJCwwLEgZEZXZpY2UYgICAgICAgAoMCxINRGV2aWNlUHJvZmlsZRiAgICAgMOVCgw",
     "active_theme_name": "Blue - Light",
     "bottom_solid_layers": "4",
     "include_firmware_updater": "Simple Arduino"
   },
   "ActiveQualityKey": "",
-  "MaterialSettingsKeys": [],
+  "MaterialSettingsKeys": [
+    "0091fb8e-232b-46f1-a4e4-6369d293903b"
+  ],
   "MaterialLayers": [
     {
       "layer_name": "PLA",

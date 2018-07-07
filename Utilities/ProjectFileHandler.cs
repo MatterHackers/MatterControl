@@ -27,16 +27,17 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.PolygonMesh.Processors;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using MatterHackers.Agg.UI;
+using MatterHackers.Agg.Platform;
+using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.Library;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
@@ -47,55 +48,17 @@ namespace MatterHackers.MatterControl
 		public string Name { get; set; }
 
 		public string FileName { get; set; }
+
+		internal ILibraryAssetStream PrintItem { get; set; }
 	}
 
 	internal class Project
 	{
-		private List<ManifestItem> projectFiles;
-		private string projectName = "Test Project";
-		private string projectDateCreated;
+		public List<ManifestItem> ProjectFiles { get; set; }
 
-		public Project()
-		{
-			DateTime now = DateTime.Now;
-			projectDateCreated = now.ToString("s");
-		}
+		public string ProjectName { get; set; } = "Test Project";
 
-		public List<ManifestItem> ProjectFiles
-		{
-			get
-			{
-				return projectFiles;
-			}
-			set
-			{
-				projectFiles = value;
-			}
-		}
-
-		public string ProjectName
-		{
-			get
-			{
-				return projectName;
-			}
-			set
-			{
-				projectName = value;
-			}
-		}
-
-		public string ProjectDateCreated
-		{
-			get
-			{
-				return projectDateCreated;
-			}
-			set
-			{
-				projectDateCreated = value;
-			}
-		}
+		public string ProjectDateCreated { get; set; } = DateTime.Now.ToString("s");
 	}
 
 	internal class ProjectFileHandler
@@ -104,56 +67,57 @@ namespace MatterHackers.MatterControl
 		private Dictionary<string, ManifestItem> sourceFiles = new Dictionary<string, ManifestItem>();
 		private HashSet<string> addedFileNames = new HashSet<string>();
 
-		public ProjectFileHandler(List<PrintItem> projectFiles)
+		public ProjectFileHandler(IEnumerable<ILibraryAssetStream> sourceItems)
 		{
-			if (projectFiles != null)
+			if (sourceItems != null)
 			{
 				project = new Project();
 
-				foreach (PrintItem item in projectFiles)
+				foreach (var item in sourceItems)
 				{
-					if (sourceFiles.ContainsKey(item.FileLocation))
+					if (sourceFiles.ContainsKey(item.ID))
 					{
-						sourceFiles[item.FileLocation].ItemQuantity = sourceFiles[item.FileLocation].ItemQuantity + 1;
+						sourceFiles[item.ID].ItemQuantity += 1;
 					}
 					else
 					{
-						string fileNameOnly = Path.GetFileName(item.FileLocation);
-						if (addedFileNames.Contains(fileNameOnly))
+						if (addedFileNames.Contains(item.ID))
 						{
-							StyledMessageBox.ShowMessageBox(null, string.Format("Duplicate file name found but in a different folder '{0}'. This part will not be added to the collection.\n\n{1}", fileNameOnly, item.FileLocation), "Duplicate File");
+							StyledMessageBox.ShowMessageBox(
+								string.Format("Duplicate file name found but in a different folder '{0}'. This part will not be added to the collection.\n\n{1}", item.Name, item.ID),
+								"Duplicate File");
 							continue;
 						}
 
-						addedFileNames.Add(fileNameOnly);
+						addedFileNames.Add(item.ID);
 
-						ManifestItem manifestItem = new ManifestItem();
-						manifestItem.ItemQuantity = 1;
-						manifestItem.Name = item.Name;
-						manifestItem.FileName = Path.GetFileName(item.FileLocation);
-
-						sourceFiles.Add(item.FileLocation, manifestItem);
+						var manifestItem = new ManifestItem()
+						{
+							ItemQuantity = 1,
+							Name = item.Name,
+							FileName = item.Name,
+							PrintItem = item
+						};
+						sourceFiles.Add(item.ID, manifestItem);
 					}
 				}
-				List<ManifestItem> manifestFiles = sourceFiles.Values.ToList();
-				project.ProjectFiles = manifestFiles;
+
+				project.ProjectFiles = sourceFiles.Values.ToList();
 			}
 		}
 
 		//Opens Save file dialog and outputs current queue as a project
 		public void SaveAs()
 		{
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Project|*.zip");
-
-			FileDialog.SaveFileDialog(saveParams, onSaveFileSelected);
-		}
-
-		private void onSaveFileSelected(SaveFileDialogParams saveParams)
-		{
-			if (!string.IsNullOrEmpty(saveParams.FileName))
-			{
-				ExportToProjectArchive(saveParams.FileName);
-			}
+			AggContext.FileDialogs.SaveFileDialog(
+				new SaveFileDialogParams("Save Project|*.zip"),
+				(saveParams) =>
+				{
+					if (!string.IsNullOrEmpty(saveParams.FileName))
+					{
+						ExportToProjectArchive(saveParams.FileName);
+					}
+				});
 		}
 
 		private static string applicationDataPath = ApplicationDataStorage.ApplicationUserDataPath;
@@ -188,9 +152,9 @@ namespace MatterHackers.MatterControl
 			//Create and save the project manifest file into the temp directory
 			File.WriteAllText(defaultManifestPathAndFileName, JsonConvert.SerializeObject(this.project, Newtonsoft.Json.Formatting.Indented));
 
-			foreach (KeyValuePair<string, ManifestItem> item in this.sourceFiles)
+			foreach (var manifestItem in this.sourceFiles.Values)
 			{
-				CopyFileToTempFolder(item.Key, item.Value.FileName);
+				CopyFileToTempFolder(manifestItem);
 			}
 
 			// Delete or move existing file out of the way as CreateFromDirectory will not overwrite and throws an exception
@@ -200,16 +164,15 @@ namespace MatterHackers.MatterControl
 				{
 					File.Delete(savedFileName);
 				}
-				catch (Exception ex)
+				catch
 				{
 					string directory = Path.GetDirectoryName(savedFileName);
 					string fileName = Path.GetFileNameWithoutExtension(savedFileName);
 					string extension = Path.GetExtension(savedFileName);
-					string candidatePath;
 
 					for (int i = 1; i < 20; i++)
 					{
-						candidatePath = Path.Combine(directory, string.Format("{0}({1}){2}", fileName, i, extension));
+						string candidatePath = Path.Combine(directory, $"{fileName}({i}){extension}");
 						if (!File.Exists(candidatePath))
 						{
 							File.Move(savedFileName, candidatePath);
@@ -222,25 +185,26 @@ namespace MatterHackers.MatterControl
 			ZipFile.CreateFromDirectory(archiveStagingFolder, savedFileName, CompressionLevel.Optimal, true);
 		}
 
-		private static void CopyFileToTempFolder(string sourceFile, string fileName)
+		private static async void CopyFileToTempFolder(ManifestItem item)
 		{
-			if (File.Exists(sourceFile))
+			try
 			{
-				try
+				var streamInterface = item.PrintItem as ILibraryAssetStream;
+				using (var streamAndLength = await streamInterface.GetStream(null))
 				{
-					// Will not overwrite if the destination file already exists.
-					File.Copy(sourceFile, Path.Combine(archiveStagingFolder, fileName));
+					using (var outputStream = File.OpenWrite(Path.Combine(archiveStagingFolder, item.FileName)))
+					{
+						streamAndLength.Stream.CopyTo(outputStream);
+					}
 				}
-
-				// Catch exception if the file was already copied.
-				catch (IOException copyError)
-				{
-					Console.WriteLine(copyError.Message);
-				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
 			}
 		}
 
-		public List<PrintItem> ImportFromProjectArchive(string loadedFileName = null)
+		public static List<PrintItem> ImportFromProjectArchive(string loadedFileName = null)
 		{
 			if (loadedFileName == null)
 			{
@@ -287,7 +251,7 @@ namespace MatterHackers.MatterControl
 						//     - are named manifest.json
 						if (!string.IsNullOrWhiteSpace(zipEntry.Name) &&
 							(zipEntry.Name == "manifest.json"
-							|| MeshFileIo.ValidFileExtensions().Contains(sourceExtension)
+							|| ApplicationSettings.ValidFileExtensions.Contains(sourceExtension)
 							|| sourceExtension == ".GCODE"))
 						{
 							string extractedFileName = Path.Combine(stagingFolder, zipEntry.Name);
@@ -320,7 +284,11 @@ namespace MatterHackers.MatterControl
 						{
 							for (int i = 1; i <= item.ItemQuantity; i++)
 							{
-								printItemList.Add(this.GetPrintItemFromFile(Path.Combine(stagingFolder, item.FileName), item.Name));
+								printItemList.Add(new PrintItem()
+								{
+									FileLocation = Path.Combine(stagingFolder, item.FileName),
+									Name = item.Name
+								});
 							}
 						}
 					}
@@ -329,7 +297,11 @@ namespace MatterHackers.MatterControl
 						string[] files = Directory.GetFiles(stagingFolder, "*.*", SearchOption.AllDirectories);
 						foreach (string fileName in files)
 						{
-							printItemList.Add(this.GetPrintItemFromFile(fileName, Path.GetFileNameWithoutExtension(fileName)));
+							printItemList.Add(new PrintItem()
+							{
+								FileLocation = fileName,
+								Name = Path.GetFileNameWithoutExtension(fileName)
+							});
 						}
 					}
 
@@ -340,14 +312,6 @@ namespace MatterHackers.MatterControl
 			{
 				return null;
 			}
-		}
-
-		private PrintItem GetPrintItemFromFile(string fileName, string displayName)
-		{
-			PrintItem item = new PrintItem();
-			item.FileLocation = fileName;
-			item.Name = displayName;
-			return item;
 		}
 	}
 }

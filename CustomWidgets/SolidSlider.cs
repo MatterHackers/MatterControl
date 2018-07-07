@@ -27,12 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.VectorMath;
-using System;
 
 namespace MatterHackers.MatterControl
 {
@@ -40,25 +40,23 @@ namespace MatterHackers.MatterControl
 	{
 		private SolidSlider sliderAttachedTo;
 
-		public RGBA_Bytes BackgroundColor { get; set; }
+		public Color FillColor { get; set; }
 
-		public RGBA_Bytes FillColor { get; set; }
-
-		public RGBA_Bytes TrackColor { get; set; }
+		public Color TrackColor { get; set; }
 
 		public double TrackHeight { get; set; }
 
 		public TickPlacement TextPlacement { get; set; }
 
-		public RGBA_Bytes TextColor { get; set; }
+		public Color TextColor { get; set; }
 
 		public StyledTypeFace TextStyle { get; set; }
 
-		public RGBA_Bytes ThumbColor { get; set; }
+		public Color ThumbColor { get; set; }
 
 		public TickPlacement TickPlacement { get; set; }
 
-		public RGBA_Bytes TickColor { get; set; }
+		public Color TickColor { get; set; }
 
 		public SolidSlideView(SolidSlider sliderWidget)
 		{
@@ -66,29 +64,31 @@ namespace MatterHackers.MatterControl
 
 			TrackHeight = 10;
 
-			TextColor = RGBA_Bytes.Black;
-			TrackColor = new RGBA_Bytes(220, 220, 220);
-			ThumbColor = ActiveTheme.Instance.SecondaryAccentColor;
+			TextColor = Color.Black;
+			TrackColor = new Color(220, 220, 220);
+			ThumbColor = ActiveTheme.Instance.PrimaryAccentColor;
 		}
 
 		private RectangleDouble GetTrackBounds()
 		{
 			RectangleDouble trackBounds;
+			var sliderBounds = sliderAttachedTo.LocalBounds;
 			if (sliderAttachedTo.Orientation == Orientation.Horizontal)
 			{
-				trackBounds = new RectangleDouble(0, -TrackHeight / 2, sliderAttachedTo.TotalWidthInPixels, TrackHeight / 2);
+				var yCenter = sliderBounds.YCenter;
+				trackBounds = new RectangleDouble(sliderBounds.Left, (int)(yCenter - TrackHeight / 2 + .5), sliderBounds.Right, (int)(yCenter + TrackHeight / 2 + .5));
 			}
 			else
 			{
-				trackBounds = new RectangleDouble(-TrackHeight / 2, 0, TrackHeight / 2, sliderAttachedTo.TotalWidthInPixels);
+				var xCenter = sliderBounds.XCenter;
+				trackBounds = new RectangleDouble((int)(xCenter - TrackHeight / 2 + .5), sliderBounds.Bottom, (int)(xCenter + TrackHeight / 2 + .5), sliderBounds.Top);
 			}
 			return trackBounds;
 		}
 
 		private RectangleDouble GetThumbBounds()
 		{
-			RectangleDouble thumbBounds = sliderAttachedTo.GetThumbHitBounds();
-			return thumbBounds;
+			return sliderAttachedTo.GetThumbHitBounds();
 		}
 
 		public RectangleDouble GetTotalBounds()
@@ -98,15 +98,11 @@ namespace MatterHackers.MatterControl
 			return totalBounds;
 		}
 
-		public void DoDrawBeforeChildren(Graphics2D graphics2D)
-		{
-			// erase to the background color
-			graphics2D.FillRectangle(GetTotalBounds(), BackgroundColor);
-		}
+		public double TrackRadius { get; set; } = 0;
 
-		public void DoDrawAfterChildren(Graphics2D graphics2D)
+		public void DrawTrackAndThumb(Graphics2D graphics2D)
 		{
-			RoundedRect track = new RoundedRect(GetTrackBounds(), 0);
+			RoundedRect track = new RoundedRect(GetTrackBounds(), this.TrackRadius);
 			Vector2 ValuePrintPosition;
 			if (sliderAttachedTo.Orientation == Orientation.Horizontal)
 			{
@@ -123,7 +119,7 @@ namespace MatterHackers.MatterControl
 			// now do the thumb
 			RectangleDouble thumbBounds = sliderAttachedTo.GetThumbHitBounds();
 			RoundedRect thumbOutside = new RoundedRect(thumbBounds, 0);
-			graphics2D.Render(thumbOutside, RGBA_Floats.GetTweenColor(ThumbColor.GetAsRGBA_Floats(), RGBA_Floats.Black.GetAsRGBA_Floats(), .2).GetAsRGBA_Bytes());
+			graphics2D.Render(thumbOutside, this.ThumbColor); // ColorF.GetTweenColor(ThumbColor.ToColorF(), ColorF.Black.ToColorF(), .2).ToColor());
 		}
 	}
 
@@ -171,10 +167,7 @@ namespace MatterHackers.MatterControl
 				if (newPosition0To1 != Position0To1)
 				{
 					Position0To1 = newPosition0To1;
-					if (ValueChanged != null)
-					{
-						ValueChanged(this, null);
-					}
+					ValueChanged?.Invoke(this, null);
 					Invalidate();
 				}
 			}
@@ -253,40 +246,31 @@ namespace MatterHackers.MatterControl
 			View = new SolidSlideView(this);
 			View.TrackHeight = thumbWidth;
 			OriginRelativeParent = positionOfTrackFirstValue;
-			//TotalWidthInPixels = widthInPixels;
 			Orientation = orientation;
 			Minimum = minimum;
 			Maximum = maximum;
 			ThumbWidth = thumbWidth;
 			ThumbHeight = thumbWidth * 1.4;
+			//VAnchor = VAnchor.Stretch;
+			//HAnchor = HAnchor.Stretch;
 
-			MinimumSize = new Vector2(Width, Height);
-		}
-
-		public SolidSlider(Vector2 lowerLeft, Vector2 upperRight)
-			: this(new Vector2(lowerLeft.x, lowerLeft.y + (upperRight.y - lowerLeft.y) / 2), upperRight.x - lowerLeft.x)
-		{
-		}
-
-		public SolidSlider(double lowerLeftX, double lowerLeftY, double upperRightX, double upperRightY)
-			: this(new Vector2(lowerLeftX, lowerLeftY + (upperRightY - lowerLeftY) / 2), upperRightX - lowerLeftX)
-		{
+			MinimumSize = new Vector2(ThumbHeight, ThumbHeight);
 		}
 
 		public override RectangleDouble LocalBounds
 		{
 			get
 			{
-				return View.GetTotalBounds();
+				return base.LocalBounds;
 			}
 			set
 			{
-				//OriginRelativeParent = new Vector2(value.Left, value.Bottom - View.GetTotalBounds().Bottom);
-				//throw new Exception("Figure out what this should do.");
-				if (HAnchor == HAnchor.ParentLeftRight)
+				if (HAnchor == HAnchor.Stretch)
 				{
 					TotalWidthInPixels = value.Right - value.Left;
 				}
+
+				base.LocalBounds = value;
 			}
 		}
 
@@ -298,22 +282,25 @@ namespace MatterHackers.MatterControl
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			View.DoDrawBeforeChildren(graphics2D);
+			View.DrawTrackAndThumb(graphics2D);
 			base.OnDraw(graphics2D);
-			View.DoDrawAfterChildren(graphics2D);
 		}
 
 		public RectangleDouble GetThumbHitBounds()
 		{
 			if (Orientation == Orientation.Horizontal)
 			{
-				return new RectangleDouble(-ThumbWidth / 2 + PositionPixelsFromFirstValue, -ThumbHeight / 2,
-					ThumbWidth / 2 + PositionPixelsFromFirstValue, ThumbHeight / 2);
+				return new RectangleDouble(LocalBounds.Left - ThumbWidth / 2 + PositionPixelsFromFirstValue,
+					(int)(LocalBounds.YCenter - ThumbHeight / 2 + .5),
+					LocalBounds.Left + ThumbWidth / 2 + PositionPixelsFromFirstValue,
+					(int)(LocalBounds.YCenter + ThumbHeight / 2 + .5));
 			}
 			else
 			{
-				return new RectangleDouble(-ThumbHeight / 2, -ThumbWidth / 2 + PositionPixelsFromFirstValue,
-					ThumbHeight / 2, ThumbWidth / 2 + PositionPixelsFromFirstValue);
+				return new RectangleDouble((int)(LocalBounds.XCenter - ThumbHeight / 2 + .5),
+					LocalBounds.Bottom - ThumbWidth / 2 + PositionPixelsFromFirstValue,
+					(int)(LocalBounds.XCenter + ThumbHeight / 2 + .5),
+					LocalBounds.Bottom + ThumbWidth / 2 + PositionPixelsFromFirstValue);
 			}
 		}
 
@@ -352,11 +339,11 @@ namespace MatterHackers.MatterControl
 			{
 				if (Orientation == Orientation.Horizontal)
 				{
-					mouseDownOffsetFromThumbCenter = mousePos.x - PositionPixelsFromFirstValue;
+					mouseDownOffsetFromThumbCenter = mousePos.X - PositionPixelsFromFirstValue;
 				}
 				else
 				{
-					mouseDownOffsetFromThumbCenter = mousePos.y - PositionPixelsFromFirstValue;
+					mouseDownOffsetFromThumbCenter = mousePos.Y - PositionPixelsFromFirstValue;
 				}
 				downOnThumb = true;
 			}
@@ -367,11 +354,11 @@ namespace MatterHackers.MatterControl
 				{
 					if (Orientation == Orientation.Horizontal)
 					{
-						PositionPixelsFromFirstValue = mousePos.x;
+						PositionPixelsFromFirstValue = mousePos.X;
 					}
 					else
 					{
-						PositionPixelsFromFirstValue = mousePos.y;
+						PositionPixelsFromFirstValue = mousePos.Y;
 					}
 				}
 			}
@@ -393,18 +380,15 @@ namespace MatterHackers.MatterControl
 				double oldValue = Value;
 				if (Orientation == Orientation.Horizontal)
 				{
-					PositionPixelsFromFirstValue = mousePos.x - mouseDownOffsetFromThumbCenter;
+					PositionPixelsFromFirstValue = mousePos.X - mouseDownOffsetFromThumbCenter;
 				}
 				else
 				{
-					PositionPixelsFromFirstValue = mousePos.y - mouseDownOffsetFromThumbCenter;
+					PositionPixelsFromFirstValue = mousePos.Y - mouseDownOffsetFromThumbCenter;
 				}
 				if (oldValue != Value)
 				{
-					if (ValueChanged != null)
-					{
-						ValueChanged(this, mouseEvent);
-					}
+					ValueChanged?.Invoke(this, mouseEvent);
 					Invalidate();
 				}
 			}

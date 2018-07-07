@@ -27,41 +27,50 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintLibrary.Provider;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
+	public static class PrintItemWrapperExtensionMethods
+	{
+		private static TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+
+		public static string GetFriendlyName(this PrintItemWrapper printItemWrapper)
+		{
+			if (printItemWrapper?.Name == null)
+			{
+				return "";
+			}
+
+			return textInfo?.ToTitleCase(printItemWrapper.Name.Replace('_', ' '));
+		}
+
+		public static string GetFriendlyName(string fileName)
+		{
+			if (fileName == null)
+			{
+				return "";
+			}
+
+			return textInfo?.ToTitleCase(fileName.Replace('_', ' '));
+		}
+	}
+
 	public class PrintItemWrapper
 	{
-		public static RootedObjectEventHandler FileHasChanged = new RootedObjectEventHandler();
+		private string fileType;
 
-		public event EventHandler SlicingDone;
-		public event EventHandler<StringEventArgs> SlicingOutputMessage;
-
-		private string fileNotFound = "File Not Found\n'{0}'".Localize();
-		private string readyToPrint = "Ready to Print".Localize();
-		private string slicingError = "Slicing Error".Localize();
-
-		private bool doneSlicing;
-
-		private long fileHashCode;
-
-		private String fileType;
-
-		private bool slicingHadError = false;
-
-		private long writeTime = 0;
-
-		public PrintItemWrapper(PrintItem printItem, List<ProviderLocatorNode> sourceLibraryProviderLocator = null)
+		public PrintItemWrapper(PrintItem printItem, ILibraryContainer sourceLibraryProviderLocator = null)
 		{
 			this.PrintItem = printItem;
 
@@ -88,165 +97,37 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		public bool CurrentlySlicing { get; set; }
-
-		public bool DoneSlicing
+		public string FileHashCode
 		{
 			get
 			{
-				return doneSlicing;
-			}
-
-			set
-			{
-				if (value != doneSlicing)
+				if (File.Exists(this.FileLocation))
 				{
-					doneSlicing = value;
-					if (doneSlicing)
-					{
-						string message = slicingError;
-						slicingHadError = true;
-						if (File.Exists(FileLocation))
-						{
-							string gcodePathAndFileName = GetGCodePathAndFileName();
-							if (gcodePathAndFileName != "" && File.Exists(gcodePathAndFileName))
-							{
-								FileInfo info = new FileInfo(gcodePathAndFileName);
-								// This is really just to make sure it is bigger than nothing.
-								if (info.Length > 10)
-								{
-									message = readyToPrint;
-									slicingHadError = false;
-								}
-							}
-						}
-						else
-						{
-							message = string.Format(fileNotFound, FileLocation);
-						}
-
-						OnSlicingOutputMessage(new StringEventArgs(message));
-
-						if (SlicingDone != null)
-						{
-							SlicingDone(this, null);
-						}
-					}
-				}
-			}
-		}
-
-		public long FileHashCode
-		{
-			get
-			{
-				bool fileExists = System.IO.File.Exists(this.FileLocation);
-				if (fileExists)
-				{
-					long currentWriteTime = File.GetLastWriteTime(this.FileLocation).ToBinary();
-
-					if (this.fileHashCode == 0 || writeTime != currentWriteTime)
-					{
-						writeTime = currentWriteTime;
-						try
-						{
-							using (FileStream fileStream = new FileStream(this.FileLocation, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-							{
-								long sizeOfFile = fileStream.Length;
-								int sizeOfRead = 1 << 16;
-								byte[] readData = new byte[Math.Max(64, sizeOfRead * 3)];
-
-								// get a chuck from the begining
-								fileStream.Read(readData, sizeOfRead, sizeOfRead);
-
-								// the middle
-								fileStream.Seek(sizeOfFile / 2, SeekOrigin.Begin);
-								fileStream.Read(readData, sizeOfRead * 1, sizeOfRead);
-
-								// and the end
-								fileStream.Seek(Math.Max(0, sizeOfFile - sizeOfRead), SeekOrigin.Begin);
-								fileStream.Read(readData, sizeOfRead * 2, sizeOfRead);
-
-								// push the file size into the first bytes
-								byte[] fileSizeAsBytes = BitConverter.GetBytes(sizeOfFile);
-								for (int i = 0; i < fileSizeAsBytes.Length; i++)
-								{
-									readData[i] = fileSizeAsBytes[i];
-								}
-
-								// push the write time
-								byte[] writeTimeAsBytes = BitConverter.GetBytes(currentWriteTime);
-								for (int i = 0; i < writeTimeAsBytes.Length; i++)
-								{
-									readData[fileSizeAsBytes.Length + i] = fileSizeAsBytes[i];
-								}
-
-								this.fileHashCode = agg_basics.ComputeHash(readData);
-							}
-						}
-						catch(Exception e)
-						{
-							Debug.Print(e.Message);
-							GuiWidget.BreakInDebugger();
-							this.fileHashCode = 0;
-						}
-					}
-				}
-				else
-				{
-					this.fileHashCode = 0;
+					return Object3D.ComputeFileSHA1(this.FileLocation);
 				}
 
-				return this.fileHashCode;
+				return "file-missing";
 			}
 		}
 
 		public string FileLocation
 		{
-			get { return this.PrintItem.FileLocation; }
-			set
-			{
-				this.PrintItem.FileLocation = value;
-			}
-		}
-
-		public string GetFileExtension()
-		{
-			return Path.GetExtension(this.PrintItem.FileLocation);
-		}
-
-		public string GetFileNameWithoutExtension()
-		{
-			return Path.GetFileNameWithoutExtension(this.PrintItem.FileLocation);
+			get  => this.PrintItem.FileLocation;
+			set => this.PrintItem.FileLocation = value;
 		}
 
 		public string Name
 		{
-			get { return this.PrintItem.Name; }
-			set
-			{
-				this.PrintItem.Name = value;
-			}
+			get => this.PrintItem.Name;
+			set => this.PrintItem.Name = value;
 		}
 
-		public void ReportFileChange()
-		{
-			FileHasChanged.CallEvents(this, null);
-		}
+		public PrintItem PrintItem { get; set; }
 
-		PrintItem printItem;
-		public PrintItem PrintItem 
-		{
-			get { return printItem; }
-			set
-			{
-				printItem = value;
-			}
-		}
+		public bool SlicingHadError { get; private set; } = false;
 
-		public bool SlicingHadError { get { return slicingHadError; } }
+		public ILibraryContainer SourceLibraryProviderLocator { get; private set; }
 
-		public List<ProviderLocatorNode> SourceLibraryProviderLocator { get; private set; }
 		public bool UseIncrementedNameDuringTypeChange { get; internal set; }
 
 		public void Delete()
@@ -267,11 +148,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					return FileLocation;
 				}
 
-				string engineString = ((int)ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType()).ToString();
-
-				string gcodeFileName = this.FileHashCode.ToString() + "_" + engineString + "_" + ActiveSliceSettings.Instance.GetLongHashCode().ToString();
-				string gcodePathAndFileName = Path.Combine(ApplicationDataStorage.Instance.GCodeOutputPath, gcodeFileName + ".gcode");
-				return gcodePathAndFileName;
+				return GCodePath(this.FileHashCode);
 			}
 			else
 			{
@@ -279,52 +156,13 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		public bool IsGCodeFileComplete(string gcodePathAndFileName)
+		public static string GCodePath(string fileHashCode)
 		{
-			if (Path.GetExtension(FileLocation).ToUpper() == ".GCODE")
-			{
-				return true;
-			}
+			long settingsHashCode = ActiveSliceSettings.Instance.GetLongHashCode();
 
-			bool gCodeFileIsComplete = false;
-			if (File.Exists(gcodePathAndFileName))
-			{
-				string gcodeFileContents = "";
-				using (FileStream fileStream = new FileStream(gcodePathAndFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-				{
-					using (StreamReader gcodeStreamReader = new StreamReader(fileStream))
-					{
-						gcodeFileContents = gcodeStreamReader.ReadToEnd();
-					}
-				}
-
-				// check if there is a known line at the end of the file (this will let us know if slicer finished building the file).
-				switch (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType())
-				{
-					case SlicingEngineTypes.CuraEngine:
-					case SlicingEngineTypes.MatterSlice:
-					case SlicingEngineTypes.Slic3r:
-						if (gcodeFileContents.Contains("filament used ="))
-						{
-							gCodeFileIsComplete = true;
-						}
-						break;
-
-					default:
-						throw new NotImplementedException();
-				}
-			}
-
-			return gCodeFileIsComplete;
-		}
-
-		public void OnSlicingOutputMessage(EventArgs e)
-		{
-			StringEventArgs message = e as StringEventArgs;
-			if (SlicingOutputMessage != null)
-			{
-				SlicingOutputMessage(this, message);
-			}
+			return Path.Combine(
+				ApplicationDataStorage.Instance.GCodeOutputPath, 
+				$"{fileHashCode}_{ settingsHashCode}.gcode");
 		}
 	}
 }

@@ -1,5 +1,5 @@
 ﻿using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
@@ -22,18 +22,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			: base(label)
 		{
 			PortValue = value;
-			this.EnabledChanged += new EventHandler(onRadioButtonEnabledChanged);
-		}
-
-		private void onRadioButtonEnabledChanged(object sender, EventArgs e)
-		{
-			if (this.Enabled)
-			{
-				this.TextColor = RGBA_Bytes.White;
-			}
-			{
-				this.TextColor = RGBA_Bytes.Gray;
-			}
 		}
 	}
 
@@ -50,8 +38,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 	public class OptionContainer : GuiWidget
 	{
-		private RGBA_Bytes borderColor = new RGBA_Bytes(63, 63, 70);
-		private RGBA_Bytes backgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+		private Color borderColor = new Color(63, 63, 70);
+		private Color backgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 		public OptionContainer()
 			: base()
@@ -89,7 +77,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			this.Selectable = true;
 			this.Margin = new BorderDouble(3, 0, 3, 0);
-			this.VAnchor = VAnchor.ParentBottomTop;
+			this.VAnchor = VAnchor.Stretch;
 			this.MouseEnter += new EventHandler(onMouse_Enter);
 			this.MouseLeave += new EventHandler(onMouse_Leave);
 			this.Cursor = Cursors.Hand;
@@ -162,7 +150,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 	public class LabelContainer : GuiWidget
 	{
-		private RGBA_Bytes backgroundColor = new RGBA_Bytes(0, 140, 158);
+		private Color backgroundColor = new Color(0, 140, 158);
 
 		public LabelContainer()
 			: base()
@@ -181,8 +169,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	//Base widget for use in ButtonStatesViewWidget
 	public class ControlButtonViewBase : GuiWidget
 	{
-		protected RGBA_Bytes fillColor;
-		protected RGBA_Bytes borderColor;
+		protected Color fillColor;
+		protected Color borderColor;
 		protected double borderWidth;
 		protected double borderRadius;
 		protected double padding;
@@ -194,9 +182,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 									 double borderWidth,
 									 double borderRadius,
 									 double padding,
-									 RGBA_Bytes textColor,
-									 RGBA_Bytes fillColor,
-									 RGBA_Bytes borderColor)
+									 Color textColor,
+									 Color fillColor,
+									 Color borderColor)
 			: base(width, height)
 		{
 			this.borderRadius = borderRadius;
@@ -206,8 +194,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			this.padding = padding;
 
 			TextWidget buttonText = new TextWidget(label, textHeight);
-			buttonText.VAnchor = VAnchor.ParentCenter;
-			buttonText.HAnchor = HAnchor.ParentCenter;
+			buttonText.VAnchor = VAnchor.Center;
+			buttonText.HAnchor = HAnchor.Center;
 			buttonText.TextColor = textColor;
 
 			//this.AnchorAll();

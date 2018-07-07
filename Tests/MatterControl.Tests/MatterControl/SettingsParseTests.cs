@@ -1,17 +1,15 @@
-﻿using MatterHackers.MatterControl;
-using NUnit.Framework;
-using System;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Globalization;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
+using MatterHackers.VectorMath;
+using Newtonsoft.Json;
+using NUnit.Framework;
 
 namespace MatterControl.Tests.MatterControl
 {
@@ -19,72 +17,108 @@ namespace MatterControl.Tests.MatterControl
 	public class SettingsParseTests
 	{
 		[Test]
+		public void Check3PointLevelingPositions()
+		{
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			var levelingSolution = new LevelWizard3Point(ActiveSliceSettings.Instance.printer);
+			var printerSettings = ActiveSliceSettings.Instance;
+
+			{
+				var samples = levelingSolution.GetPrintLevelPositionToSample().ToList();
+				Assert.AreEqual("200,200", ActiveSliceSettings.Instance.GetValue(SettingsKey.bed_size));
+				Assert.AreEqual("100,100", ActiveSliceSettings.Instance.GetValue(SettingsKey.print_center));
+				Assert.AreEqual("rectangular", ActiveSliceSettings.Instance.GetValue(SettingsKey.bed_shape));
+				Assert.AreEqual(new Vector2(20, 20), samples[0]);
+				Assert.AreEqual(new Vector2(180, 20), samples[1]);
+				Assert.AreEqual(new Vector2(100, 180), samples[2]);
+			}
+		}
+
+		[Test]
 		public void CheckIfShouldBeShownParseTests()
 		{
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "0" };
 				var profile = GetProfile(settings);
-				Assert.IsFalse(SliceSettingsWidget.ParseShowString("has_heated_bed", profile, null));
-				Assert.IsTrue(SliceSettingsWidget.ParseShowString("!has_heated_bed", profile, null));
+				Assert.IsFalse(profile.ParseShowString("has_heated_bed", null));
+				Assert.IsTrue(profile.ParseShowString("!has_heated_bed", null));
 			}
 
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "1" };
 				var profile = GetProfile(settings);
-				Assert.IsTrue(SliceSettingsWidget.ParseShowString("has_heated_bed", profile, null));
-				Assert.IsFalse(SliceSettingsWidget.ParseShowString("!has_heated_bed", profile, null));
+				Assert.IsTrue(profile.ParseShowString("has_heated_bed", null));
+				Assert.IsFalse(profile.ParseShowString("!has_heated_bed", null));
 			}
 
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "0", SettingsKey.auto_connect, "0" };
 				var profile = GetProfile(settings);
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&auto_connect", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&!auto_connect", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&auto_connect", profile, null));
-				Assert.IsTrue(SliceSettingsWidget.ParseShowString("!has_heated_bed&!auto_connect", profile, null));
+				Assert.IsFalse(profile.ParseShowString("has_heated_bed&auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("has_heated_bed&!auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("!has_heated_bed&auto_connect", null));
+				Assert.IsTrue(profile.ParseShowString("!has_heated_bed&!auto_connect", null));
 			}
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "0", SettingsKey.auto_connect, "1" };
 				var profile = GetProfile(settings);
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&auto_connect", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&!auto_connect", profile, null));
-				Assert.IsTrue(SliceSettingsWidget.ParseShowString("!has_heated_bed&auto_connect", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&!auto_connect", profile, null));
+				Assert.IsFalse(profile.ParseShowString("has_heated_bed&auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("has_heated_bed&!auto_connect", null));
+				Assert.IsTrue(profile.ParseShowString("!has_heated_bed&auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("!has_heated_bed&!auto_connect", null));
 			}
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "1", SettingsKey.auto_connect, "0" };
 				var profile = GetProfile(settings);
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&auto_connect", profile, null));
-				Assert.IsTrue(SliceSettingsWidget.ParseShowString("has_heated_bed&!auto_connect", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&auto_connect", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&!auto_connect", profile, null));
+				Assert.IsFalse(profile.ParseShowString("has_heated_bed&auto_connect", null));
+				Assert.IsTrue(profile.ParseShowString("has_heated_bed&!auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("!has_heated_bed&auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("!has_heated_bed&!auto_connect", null));
 			}
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "1", SettingsKey.auto_connect, "1" };
 				var profile = GetProfile(settings);
-				Assert.IsTrue(SliceSettingsWidget.ParseShowString("has_heated_bed&auto_connect", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&!auto_connect", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&auto_connect", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&!auto_connect", profile, null));
+				Assert.IsTrue(profile.ParseShowString("has_heated_bed&auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("has_heated_bed&!auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("!has_heated_bed&auto_connect", null));
+				Assert.IsFalse(profile.ParseShowString("!has_heated_bed&!auto_connect", null));
 			}
 
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "1", SettingsKey.auto_connect, "1", SettingsKey.has_fan, "1" };
 				var profile = GetProfile(settings);
-				Assert.IsTrue(SliceSettingsWidget.ParseShowString("has_heated_bed&auto_connect&has_fan", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&auto_connect&!has_fan", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("has_heated_bed&!auto_connect&has_fan", profile, null));
-				Assert.IsTrue(!SliceSettingsWidget.ParseShowString("!has_heated_bed&auto_connect&has_fan", profile, null));
+				Assert.IsTrue(profile.ParseShowString("has_heated_bed&auto_connect&has_fan", null));
+				Assert.IsTrue(profile.ParseShowString("has_heated_bed&auto_connect&has_fan|!has_sdcard", null));
+				Assert.IsTrue(profile.ParseShowString("has_heated_bed&auto_connect&!has_sdcard|has_fan", null));
+				Assert.IsTrue(profile.ParseShowString("has_heated_bed&auto_connect&has_sdcard|has_fan", null));
+				Assert.IsFalse(profile.ParseShowString("has_heated_bed&auto_connect&!has_fan", null));
+				Assert.IsFalse(profile.ParseShowString("has_heated_bed&!auto_connect&has_fan", null));
+				Assert.IsFalse(profile.ParseShowString("!has_heated_bed&auto_connect&has_fan", null));
+			}
+
+			// test list setting value
+			{
+				string[] settings = new string[] { SettingsKey.has_hardware_leveling, "0", SettingsKey.print_leveling_solution, "3 Point Plane" };
+				var profile = GetProfile(settings);
+				Assert.IsTrue(profile.ParseShowString("!has_hardware_leveling&print_leveling_solution=3 Point Plane", null));
+				Assert.IsTrue(profile.ParseShowString("!has_hardware_leveling&print_leveling_solution=3 Point Plane|print_leveling_solution=3x3 Mesh", null));
+				Assert.IsTrue(profile.ParseShowString("!has_hardware_leveling&print_leveling_solution=3x3 Mesh|print_leveling_solution=3 Point Plane", null));
+				Assert.IsTrue(profile.ParseShowString("!has_hardware_leveling&!print_leveling_solution=7 Point Disk", null));
+				Assert.IsFalse(profile.ParseShowString("has_hardware_leveling&print_leveling_solution=3 Point Plane", null));
+				Assert.IsFalse(profile.ParseShowString("!has_hardware_leveling&!print_leveling_solution=3 Point Plane", null));
+				Assert.IsFalse(profile.ParseShowString("!has_hardware_leveling&print_leveling_solution=7 Point Disk", null));
 			}
 		}
 
 		[Test]
 		public void SupportInterfaceMaterialAssignedToExtruderOne()
 		{
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 
 			// first_layer_extrusion_width
 			{
@@ -124,8 +158,53 @@ namespace MatterControl.Tests.MatterControl
 				// shared temp
 				{
 					string[] settings = new string[] { SettingsKey.extruder_count, "2", SettingsKey.extruders_share_temperature, "1" };
-					Assert.AreEqual(GetProfile(settings).Helpers.NumberOfHotEnds(), 1);
+					Assert.AreEqual(GetProfile(settings).Helpers.NumberOfHotends(), 1);
 				}
+			}
+		}
+
+		[Test]
+		// Validates that all SetSettingsOnChange linked fields exist and have their required TargetSetting and Value definitions
+		public void LinkedSettingsExist()
+		{
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			string propertiesFileContents = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
+			var allSettings = JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents);
+
+			var settingsByName = new Dictionary<string, SliceSettingData>();
+			foreach (var settingsData in allSettings)
+			{
+				settingsByName.Add(settingsData.SlicerConfigName, settingsData);
+			}
+
+			foreach(var boundSetting in allSettings.Where(s => s.SetSettingsOnChange.Count > 0))
+			{
+				foreach(var linkedSetting in boundSetting.SetSettingsOnChange)
+				{
+					// TargetSetting definition must exist
+					Assert.IsTrue(linkedSetting.TryGetValue("TargetSetting", out string targetSettingSource), "TargetSetting field should exist");
+
+					// TargetSetting source field must be defined/known
+					Assert.IsTrue(settingsByName.ContainsKey(targetSettingSource), "Linked field should exist: " + targetSettingSource);
+				}
+			}
+		}
+
+		[Test]
+		public void PresentationNamesLackColon()
+		{
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			string propertiesFileContents = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
+			var allSettings = JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents);
+
+			foreach (var setting in allSettings)
+			{
+				// TargetSetting source field must be defined/known
+				Assert.IsFalse(setting.PresentationName.Trim().EndsWith(":"), $"Presentation name should not end with trailing colon: '{setting.PresentationName}'");
 			}
 		}
 

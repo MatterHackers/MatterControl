@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="MatterHackers.MatterControl.Library.CloudLibaryContainerLink" BaseTypeListCollapsed="true">
+    <Position X="19" Y="0.5" Width="4.75" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MatterHackers.MatterControl.Library.CloudLibraryItem" BaseTypeListCollapsed="true">
+    <Position X="19" Y="2.5" Width="4.75" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="MatterHackers.MatterControl.Library.CloudLibraryItem.StreamAndLength" Collapsed="true">
+        <TypeIdentifier />
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier />
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MatterHackers.MatterControl.Library.CloudLibraryContainer" BaseTypeListCollapsed="true">
+    <Position X="19" Y="1.5" Width="4.75" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MatterHackers.MatterControl.Library.DynamicContainerItem">
+    <Position X="16.25" Y="5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AACQCAAAEAAgkAAIAAAAAAQAAAAAAAAAACAAAAAACAA=</HashCode>
+      <FileName>LibraryProviders\Providers\DynamicContainer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MatterHackers.MatterControl.Library.RootLibraryContainer">
+    <Position X="19.5" Y="5" Width="2.75" />
+    <NestedTypes>
+      <Class Name="MatterHackers.MatterControl.Library.RootLibraryContainer.CreatorsContainer" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>LibraryProviders\Providers\RootLibraryContainer.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>ACCQAAAIAiBAiEBABCAEQAXAAAAIABAAAAACBICAVAQ=</HashCode>
+      <FileName>LibraryProviders\Providers\RootLibraryContainer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MatterHackers.MatterControl.Library.FileSystemFileItem">
+    <Position X="8.5" Y="11.5" Width="2.25" />
+    <InheritanceLine Type="MatterHackers.MatterControl.Library.FileSystemItem" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="10.75" Y="2.431" />
+        <Point X="11.125" Y="2.431" />
+        <Point X="11.125" Y="12.312" />
+        <Point X="10.75" Y="12.312" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAABEAAIAAABAAAAAAAAAAAAAAAAAACAQAABAAAA=</HashCode>
+      <FileName>LibraryProviders\Providers\FileSystem\FileSystemFileItem.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MatterHackers.MatterControl.Library.FileSystemContainer">
+    <Position X="8.5" Y="5" Width="2.25" />
+    <InheritanceLine Type="MatterHackers.MatterControl.Library.LibraryContainer" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="7.75" Y="5.875" />
+        <Point X="8.125" Y="5.875" />
+        <Point X="8.125" Y="6.11" />
+        <Point X="8.5" Y="6.11" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>BCAAAAIAECDAAABAAAAEAACAAgAgAAEAAEASAAiAFAA=</HashCode>
+      <FileName>LibraryProviders\Providers\FileSystem\FileSystemContainer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MatterHackers.MatterControl.Library.FileSystemItem">
+    <Position X="8.5" Y="0.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAgkAIAAAAAAAQAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>LibraryProviders\Providers\FileSystem\FileSystemItem.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MatterHackers.MatterControl.Library.ZipMemoryContainer">
+    <Position X="13.25" Y="5" Width="2.25" />
+    <InheritanceLine Type="MatterHackers.MatterControl.Library.LibraryContainer" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="7.75" Y="6.875" />
+        <Point X="8.125" Y="6.875" />
+        <Point X="8.125" Y="4.75" />
+        <Point X="11.042" Y="4.75" Type="JumpStart" />
+        <Point X="11.208" Y="4.75" Type="JumpEnd" />
+        <Point X="12.307" Y="4.75" Type="JumpStart" />
+        <Point X="12.473" Y="4.75" Type="JumpEnd" />
+        <Point X="12.875" Y="4.75" />
+        <Point X="12.875" Y="5.688" />
+        <Point X="13.25" Y="5.688" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LibraryProviders\Providers\Zip\ZipMemoryContainer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MatterHackers.MatterControl.Library.ZipMemoryItem">
+    <Position X="13.25" Y="11.5" Width="2.25" />
+    <InheritanceLine Type="MatterHackers.MatterControl.Library.FileSystemItem" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="10.75" Y="3.172" />
+        <Point X="11.042" Y="3.172" Type="JumpStart" />
+        <Point X="11.208" Y="3.172" Type="JumpEnd" />
+        <Point X="12.39" Y="3.172" />
+        <Point X="12.39" Y="11.75" />
+        <Point X="13.25" Y="11.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAABEAAAAAABAAAAAAAAAAABAAAAAAAAQAABAAAA=</HashCode>
+      <FileName>LibraryProviders\Providers\Zip\ZipMemoryItem.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MatterHackers.MatterControl.Library.LocalZipContainerItem">
+    <Position X="13.25" Y="0.75" Width="2.25" />
+    <InheritanceLine Type="MatterHackers.MatterControl.Library.FileSystemItem" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="10.75" Y="1.557" />
+        <Point X="11.125" Y="1.557" />
+        <Point X="11.125" Y="1.5" />
+        <Point X="13.25" Y="1.5" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAAMAAAAAEAAAAAAAAAAQCAAAAAAAAA=</HashCode>
+      <FileName>LibraryProviders\Providers\Zip\LocalZipContainerItem.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MatterHackers.MatterControl.Library.LibraryContainer">
+    <Position X="6" Y="5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>ACCQAAAIAiBAiABAACAEQATAAAAIAAAAAAACAoCAVAA=</HashCode>
+      <FileName>LibraryProviders\Providers\LibraryContainer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="MatterHackers.MatterControl.Library.ILibraryContainer">
+    <Position X="3.5" Y="5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>ACCQAAAIAgBAiABAACAEQATAAAAIAAAAAAACAICAVAA=</HashCode>
+      <FileName>LibraryProviders\Interfaces\ILibraryContainer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MatterHackers.MatterControl.Library.ILibraryContainerItem">
+    <Position X="0.75" Y="4.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAA=</HashCode>
+      <FileName>LibraryProviders\Interfaces\ILibraryContainerItem.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MatterHackers.MatterControl.Library.IThumbnail">
+    <Position X="0.75" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LibraryProviders\Interfaces\IThumbnail.cs</FileName>
+      <NewMemberFileName>LibraryProviders\Interfaces\ILibraryItem.cs</NewMemberFileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MatterHackers.MatterControl.Library.ILibraryItem">
+    <Position X="0.75" Y="2.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAkAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LibraryProviders\Interfaces\ILibraryItem.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MatterHackers.MatterControl.Library.ILibraryContentItem">
+    <Position X="0.75" Y="8.5" Width="2" />
+    <InheritanceLine Type="MatterHackers.MatterControl.Library.ILibraryItem" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="2.5" Y="3.062" />
+        <Point X="3.125" Y="3.062" />
+        <Point X="3.125" Y="9.375" />
+        <Point X="2.75" Y="9.375" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAACAQAAAACAA=</HashCode>
+      <FileName>LibraryProviders\Interfaces\ILibraryItem.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MatterHackers.MatterControl.Library.ILibraryContentStream">
+    <Position X="0.75" Y="6" Width="2" />
+    <InheritanceLine Type="MatterHackers.MatterControl.Library.ILibraryItem" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="2.5" Y="3.438" />
+        <Point X="3.125" Y="3.438" />
+        <Point X="3.125" Y="7.375" />
+        <Point X="2.75" Y="7.375" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAABEAAAAAABAAAAAAAAAAAAAAAAAAAAQAABAAAA=</HashCode>
+      <FileName>LibraryProviders\Interfaces\ILibraryItem.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

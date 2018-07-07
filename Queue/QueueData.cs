@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2017, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,43 +27,28 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.PolygonMesh.Processors;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
-	public class IndexArgs : EventArgs
+	public class ItemChangedArgs : EventArgs
 	{
-		internal int index;
+		public int Index { get; private set; }
 
-		public int Index { get { return index; } }
-
-		internal IndexArgs(int index)
+		internal ItemChangedArgs(int index)
 		{
-			this.index = index;
-		}
-	}
-
-	public class SwapIndexArgs : EventArgs
-	{
-		internal int indexA;
-		internal int indexB;
-
-		internal SwapIndexArgs(int indexA, int indexB)
-		{
-			this.indexA = indexA;
-			this.indexB = indexB;
+			this.Index = index;
 		}
 	}
 
@@ -78,48 +63,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 			get { return printItems; }
 		}
 
-		private List<int> selectedIndices = new List<int>();
-
-		public IEnumerable<int> SelectedIndexes
-		{
-			get
-			{
-				return selectedIndices.ToArray();
-			}
-		}
-
-		public int SelectedIndex
-		{
-			get
-			{
-				if (ItemCount > 0)
-				{
-					if (selectedIndices.Count == 0)
-					{
-						// always have a selection if we have items
-						selectedIndices.Add(0);
-					}
-					return selectedIndices[0];
-				}
-
-				return -1;
-			}
-			set
-			{
-				if (!selectedIndices.Contains(value)
-					|| selectedIndices.Count > 1)
-				{
-					selectedIndices.Clear();
-					selectedIndices.Add(value);
-					OnSelectedIndexChanged(null);
-				}
-			}
-		}
-
 		public RootedObjectEventHandler ItemAdded = new RootedObjectEventHandler();
 		public RootedObjectEventHandler ItemRemoved = new RootedObjectEventHandler();
-		public RootedObjectEventHandler OrderChanged = new RootedObjectEventHandler();
-		public RootedObjectEventHandler SelectedIndexChanged = new RootedObjectEventHandler();
 
 		private static QueueData instance;
 		public static QueueData Instance
@@ -135,123 +80,20 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		public void MoveToNext()
-		{
-			if (SelectedIndex >= 0 && SelectedIndex < ItemCount)
-			{
-				if (this.SelectedIndex == ItemCount - 1)
-				{
-					this.SelectedIndex = 0;
-				}
-				else
-				{
-					this.SelectedIndex++;
-				}
-			}
-		}
-
-		public PrintItemWrapper SelectedPrintItem
-		{
-			get
-			{
-				if (SelectedIndex >= 0)
-				{
-					return GetPrintItemWrapper(SelectedIndex);
-				}
-				else
-				{
-					return null;
-				}
-			}
-
-			set
-			{
-				if (SelectedPrintItem != value)
-				{
-					for (int index = 0; index < PrintItems.Count; index++)
-					{
-						if (PrintItems[index] == value)
-						{
-							SelectedIndex = index;
-							return;
-						}
-					}
-
-					throw new Exception("Item not in queue.");
-				}
-			}
-		}
-
-		public void SwapItemsOnIdle(int indexA, int indexB)
-		{
-			UiThread.RunOnIdle(SwapItems, new SwapIndexArgs(indexA, indexB));
-		}
-
-		private void SwapItems(object state)
-		{
-			int indexA = ((SwapIndexArgs)state).indexA;
-			int indexB = ((SwapIndexArgs)state).indexB;
-
-			if (indexA >= 0 && indexA < ItemCount
-				&& indexB >= 0 && indexB < ItemCount
-				&& indexA != indexB)
-			{
-				PrintItemWrapper hold = PrintItems[indexA];
-				PrintItems[indexA] = PrintItems[indexB];
-				PrintItems[indexB] = hold;
-
-				OnOrderChanged(null);
-				OnSelectedIndexChanged(null);
-
-				SaveDefaultQueue();
-			}
-		}
-
-		public void OnOrderChanged(EventArgs e)
-		{
-			OrderChanged.CallEvents(this, e);
-		}
-
-		public void RemoveIndexOnIdle(int index)
-		{
-			UiThread.RunOnIdle(RemoveIndex, new IndexArgs(index));
-		}
-
-		private void RemoveIndex(object state)
-		{
-			IndexArgs removeArgs = state as IndexArgs;
-			if (removeArgs != null)
-			{
-				RemoveAt(removeArgs.index);
-			}
-		}
-
 		public void RemoveAt(int index)
 		{
 			if (index >= 0 && index < ItemCount)
 			{
-				bool ActiveItemMustStayInQueue = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
-				bool PartMustStayInQueue = ActiveItemMustStayInQueue && PrintItems[index] == PrinterConnectionAndCommunication.Instance.ActivePrintItem;
-				if (!PartMustStayInQueue)
-				{
-					PrintItems.RemoveAt(index);
+				PrintItems.RemoveAt(index);
 
-					OnItemRemoved(new IndexArgs(index));
-					OnSelectedIndexChanged(null);
-
-					SaveDefaultQueue();
-				}
+				OnItemRemoved(new ItemChangedArgs(index));
+				SaveDefaultQueue();
 			}
 		}
 
 		public void OnItemRemoved(EventArgs e)
 		{
 			ItemRemoved.CallEvents(this, e);
-		}
-
-		public void OnSelectedIndexChanged(EventArgs e)
-		{
-			SelectedIndexChanged.CallEvents(this, e);
 		}
 
 		public PrintItemWrapper GetPrintItemWrapper(int index)
@@ -291,16 +133,16 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public void LoadFilesFromSD()
 		{
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected
-				&& !(PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
-				|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused))
+			if (ApplicationController.Instance.ActivePrinter.Connection.IsConnected
+				&& !(ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting
+				|| ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPaused))
 			{
 				gotBeginFileList = false;
-				PrinterConnectionAndCommunication.Instance.ReadLine.RegisterEvent(GetSdCardList, ref unregisterEvents);
+				ApplicationController.Instance.ActivePrinter.Connection.LineReceived.RegisterEvent(GetSdCardList, ref unregisterEvents);
 				StringBuilder commands = new StringBuilder();
 				commands.AppendLine("M21"); // Init SD card
 				commands.AppendLine("M20"); // List SD card
-				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(commands.ToString());
+				ApplicationController.Instance.ActivePrinter.Connection.QueueLine(commands.ToString());
 			}
 		}
 
@@ -350,7 +192,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 							break;
 
 						case "End file list":
-							PrinterConnectionAndCommunication.Instance.ReadLine.UnregisterEvent(GetSdCardList, ref unregisterEvents);
+							ApplicationController.Instance.ActivePrinter.Connection.LineReceived.UnregisterEvent(GetSdCardList, ref unregisterEvents);
 							break;
 					}
 				}
@@ -363,7 +205,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			for (int i = 0; i < ItemCount; i++)
 			{
 				var printItem = GetPrintItemWrapper(i).PrintItem;
-				if (includeProtectedItems
+				if (includeProtectedItems 
 					|| !printItem.Protected)
 				{
 					listToReturn.Add(printItem);
@@ -372,15 +214,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			return listToReturn;
 		}
 
-		private static bool Is32Bit()
-		{
-			if (IntPtr.Size == 4)
-			{
-				return true;
-			}
-
-			return false;
-		}
+		private static readonly bool Is32Bit = IntPtr.Size == 4;
 
 		private PrintItemWrapper partUnderConsideration = null;
 
@@ -388,7 +222,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public void AddItem(PrintItemWrapper item, int indexToInsert = -1, ValidateSizeOn32BitSystems checkSize = ValidateSizeOn32BitSystems.Required)
 		{
-			if (Is32Bit())
+			if (Is32Bit)
 			{
 				// Check if the part we are adding is BIG. If it is warn the user and
 				// possibly don't add it
@@ -399,7 +233,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 				{
 					estimatedMemoryUse = MeshFileIo.GetEstimatedMemoryUse(item.FileLocation);
 
-					if (OsInformation.OperatingSystem == OSType.Android)
+					// If we have less than 2 gigs memory, warn on smaller file size
+					if (AggContext.PhysicalMemory < 2000000000)
 					{
 						if (estimatedMemoryUse > 100000000)
 						{
@@ -446,16 +281,15 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-
-		private void DoAddItem(PrintItemWrapper item, int indexToInsert)
+		private void DoAddItem(PrintItemWrapper item, int insertAt)
 		{
-			if (indexToInsert == -1)
+			if (insertAt == -1)
 			{
-				indexToInsert = PrintItems.Count;
+				insertAt = PrintItems.Count; 
 			}
-			PrintItems.Insert(indexToInsert, item);
-			OnItemAdded(new IndexArgs(indexToInsert));
-			OnSelectedIndexChanged(null);
+
+			PrintItems.Insert(insertAt, item);
+			OnItemAdded(new ItemChangedArgs(insertAt));
 			SaveDefaultQueue();
 		}
 
@@ -506,102 +340,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		public int SelectedCount
-		{
-			get
-			{
-				if (ItemCount > 0)
-				{
-					if (selectedIndices.Count > 0)
-					{
-						return selectedIndices.Count;
-					}
-
-					return 1;
-				}
-
-				return 0;
-			}
-		}
-
 		public void RemoveAll()
 		{
 			for (int i = PrintItems.Count - 1; i >= 0; i--)
 			{
 				RemoveAt(i);
-			}
-		}
-
-		public void RemoveSelected()
-		{
-			if (ItemCount > 0 && SelectedCount > 0)
-			{
-				// Sort by index in the QueueData list to prevent positions shifting due to removes
-				var sortedByValue = SelectedIndexes.OrderByDescending(rowItem => rowItem);
-
-				// Once sorted, remove each selected item
-				foreach (var index in sortedByValue)
-				{
-					RemoveAt(index);
-				}
-
-				selectedIndices.Clear();
-				OnSelectedIndexChanged(null);
-			}
-		}
-
-		public void ToggleSelect(int index)
-		{
-			if (selectedIndices.Contains(index))
-			{
-				Unselect(index);
-			}
-			else
-			{
-				Select(index);
-			}
-		}
-
-		public void MakeSingleSelection()
-		{
-			if (ItemCount > 0
-				&& SelectedCount > 1)
-			{
-				SelectedIndex = selectedIndices[selectedIndices.Count - 1];
-			}
-
-			if(ItemCount > 0
-				&& SelectedIndex < 0)
-			{
-				SelectedIndex = 0;
-			}
-			else if(ItemCount > 0
-				&& SelectedIndex >= ItemCount)
-			{
-				SelectedIndex = ItemCount - 1;
-			}
-		}
-
-		public void Select(int index)
-		{
-			if (!selectedIndices.Contains(index)
-				&& index >= 0
-				&& index < ItemCount)
-			{
-				selectedIndices.Add(index);
-				OnSelectedIndexChanged(null);
-			}
-		}
-	
-
-		public void Unselect(int index)
-		{
-			if (selectedIndices.Contains(index)
-				&& index >= 0
-				&& index < ItemCount)
-			{
-				selectedIndices.Remove(index);
-				OnSelectedIndexChanged(null);
 			}
 		}
 	}

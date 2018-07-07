@@ -111,7 +111,9 @@ namespace MatterControl.Tests
 			Assert.AreEqual(0, dataReloadedCount, "Reload should *not* have occurred");
 
 			// WIP: saving the name incorrectly for this location (does not need to be changed).
-			subProvider.AddFilesToLibrary(new string[] { meshPathAndFileName });
+			//subProvider.AddFilesToLibrary(new string[] { meshPathAndFileName });
+			throw new NotImplementedException("subProvider.AddFilesToLibrary(new string[] { meshPathAndFileName });");
+
 			AutomationRunner.StaticDelay(() => { return subProvider.ItemCount == 1; }, 1);
 
 			PrintItemWrapper itemAtRoot = subProvider.GetPrintItemWrapperAsync(0).Result;

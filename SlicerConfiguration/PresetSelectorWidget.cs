@@ -1,0 +1,388 @@
+﻿/*
+Copyright (c) 2018, Kevin Pope, John Lewin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+//#define DO_IN_PLACE_EDIT
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.VectorMath;
+
+namespace MatterHackers.MatterControl.SlicerConfiguration
+{
+	public class PresetSelectorWidget : FlowLayoutWidget
+	{
+		public DropDownList DropDownList;
+		private string defaultMenuItemText = "- none -".Localize();
+		private GuiWidget editButton;
+		private NamedSettingsLayers layerType;
+		private ThemeConfig theme;
+		private PrinterConfig printer;
+		private GuiWidget pullDownContainer;
+		private EventHandler unregisterEvents;
+
+		public PresetSelectorWidget(PrinterConfig printer, string label, Color accentColor, NamedSettingsLayers layerType, ThemeConfig theme)
+			: base(FlowDirection.TopToBottom)
+		{
+			this.layerType = layerType;
+			this.printer = printer;
+			this.Name = label;
+			this.theme = theme;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Fit;
+			this.BackgroundColor = theme.MinimalShade;
+			this.Padding = theme.DefaultContainerPadding;
+
+			// Section Label
+			this.AddChild(new TextWidget(label, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			{
+				HAnchor = HAnchor.Left,
+				Margin = new BorderDouble(0)
+			});
+
+			pullDownContainer = new GuiWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+				Border = new BorderDouble(left: 3),
+				BorderColor = accentColor,
+				Margin = new BorderDouble(top: 6),
+				Padding = new BorderDouble(left: (accentColor != Color.Transparent) ? 6 : 0)
+			};
+			pullDownContainer.AddChild(this.GetPulldownContainer());
+			this.AddChild(pullDownContainer);
+
+			ActiveSliceSettings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			{
+				if (e is StringEventArgs stringEvent
+					&& (stringEvent.Data == SettingsKey.default_material_presets
+						|| stringEvent.Data == SettingsKey.layer_name))
+				{
+					RebuildDropDownList();
+				}
+			}, ref unregisterEvents);
+		}
+
+		public FlowLayoutWidget GetPulldownContainer()
+		{
+			DropDownList = CreateDropdown();
+
+			var container = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.MaxFitOrStretch,
+				Name = "Preset Pulldown Container"
+			};
+
+			editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
+			{
+				ToolTipText = "Edit Selected Setting".Localize(),
+				Enabled = DropDownList.SelectedIndex != -1,
+				VAnchor = VAnchor.Center,
+				Margin = new BorderDouble(left: 6)
+			};
+			editButton.Click += (sender, e) =>
+			{
+				if (layerType == NamedSettingsLayers.Material)
+				{
+					if (ApplicationController.Instance.EditMaterialPresetsPage == null)
+					{
+						string presetsID = printer.Settings.ActiveMaterialKey;
+						if (string.IsNullOrEmpty(presetsID))
+						{
+							return;
+						}
+
+						var layerToEdit = printer.Settings.MaterialLayers.Where(layer => layer.LayerID == presetsID).FirstOrDefault();
+
+						var presetsContext = new PresetsContext(printer.Settings.MaterialLayers, layerToEdit)
+						{
+							LayerType = NamedSettingsLayers.Material,
+							SetAsActive = (materialKey) =>
+							{
+								printer.Settings.ActiveMaterialKey = materialKey;
+							},
+							DeleteLayer = () =>
+							{
+								var materialKeys = printer.Settings.MaterialSettingsKeys;
+								for (var i = 0; i < materialKeys.Count; i++)
+								{
+									if (materialKeys[i] == presetsID)
+									{
+										materialKeys[i] = "";
+									}
+								}
+
+								printer.Settings.ActiveMaterialKey = "";
+								printer.Settings.MaterialLayers.Remove(layerToEdit);
+								printer.Settings.Save();
+							}
+						};
+
+						var editMaterialPresetsPage = new SlicePresetsPage(printer, presetsContext);
+						editMaterialPresetsPage.Closed += (s, e2) =>
+						{
+							ApplicationController.Instance.EditMaterialPresetsPage = null;
+						};
+
+						ApplicationController.Instance.EditMaterialPresetsPage = editMaterialPresetsPage;
+						DialogWindow.Show(editMaterialPresetsPage);
+					}
+					else
+					{
+						ApplicationController.Instance.EditMaterialPresetsPage.DialogWindow.BringToFront();
+					}
+				}
+
+				if (layerType == NamedSettingsLayers.Quality)
+				{
+					if (ApplicationController.Instance.EditQualityPresetsWindow == null)
+					{
+						string presetsID = printer.Settings.ActiveQualityKey;
+						if (string.IsNullOrEmpty(presetsID))
+						{
+							return;
+						}
+
+						var layerToEdit = printer.Settings.QualityLayers.Where(layer => layer.LayerID == presetsID).FirstOrDefault();
+
+						var presetsContext = new PresetsContext(printer.Settings.QualityLayers, layerToEdit)
+						{
+							LayerType = NamedSettingsLayers.Quality,
+							SetAsActive = (qualityKey) => printer.Settings.ActiveQualityKey = qualityKey,
+							DeleteLayer = () =>
+							{
+								printer.Settings.ActiveQualityKey = "";
+								printer.Settings.QualityLayers.Remove(layerToEdit);
+								printer.Settings.Save();
+							}
+						};
+
+						var editQualityPresetsWindow = new SlicePresetsPage(printer, presetsContext);
+						editQualityPresetsWindow.Closed += (s, e2) =>
+						{
+							ApplicationController.Instance.EditQualityPresetsWindow = null;
+						};
+
+						ApplicationController.Instance.EditQualityPresetsWindow = editQualityPresetsWindow;
+						DialogWindow.Show(editQualityPresetsWindow);
+					}
+					else
+					{
+						ApplicationController.Instance.EditQualityPresetsWindow.DialogWindow.BringToFront();
+					}
+				}
+			};
+
+			container.AddChild(DropDownList);
+			container.AddChild(editButton);
+
+			return container;
+		}
+
+		public override void OnDrawBackground(Graphics2D graphics2D)
+		{
+			//base.OnDrawBackground(graphics2D);
+			if (this.BackgroundColor != Color.Transparent)
+			{
+				graphics2D.Render(new RoundedRect(this.LocalBounds, 5), this.BackgroundColor);
+			}
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			ActiveSliceSettings.MaterialPresetChanged -= ActiveSliceSettings_MaterialPresetChanged;
+			unregisterEvents?.Invoke(this, null);
+
+			base.OnClosed(e);
+		}
+
+		private void ActiveSliceSettings_MaterialPresetChanged(object sender, EventArgs e)
+		{
+			RebuildDropDownList();
+		}
+
+		private DropDownList CreateDropdown()
+		{
+			var dropDownList = new DropDownList(defaultMenuItemText, theme.Colors.PrimaryTextColor, maxHeight: 300, useLeftIcons: true, pointSize: theme.DefaultFontSize)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Center,
+				MenuItemsPadding = new BorderDouble(10, 7, 7, 7),
+				BorderColor = theme.GetBorderColor(75)
+			};
+
+			dropDownList.Name = layerType.ToString() + " DropDown List";
+			dropDownList.Margin = 0;
+			dropDownList.MinimumSize = new Vector2(dropDownList.LocalBounds.Width, dropDownList.LocalBounds.Height);
+
+			MenuItem defaultMenuItem = dropDownList.AddItem(defaultMenuItemText, "");
+			defaultMenuItem.Selected += MenuItem_Selected;
+
+			var listSource = (layerType == NamedSettingsLayers.Material) ? printer.Settings.MaterialLayers : printer.Settings.QualityLayers;
+			foreach (var layer in listSource.OrderBy(l => l.Name))
+			{
+				MenuItem menuItem = dropDownList.AddItem(layer.Name, layer.LayerID);
+				menuItem.Name = layer.Name + " Menu";
+				menuItem.Selected += MenuItem_Selected;
+			}
+
+			MenuItem addNewPreset = dropDownList.AddItem(AggContext.StaticData.LoadIcon("icon_plus.png", 16, 16), "Add New Setting".Localize() + "...", "new");
+			addNewPreset.Selected += (s, e) =>
+			{
+				var newLayer = new PrinterSettingsLayer();
+				if (layerType == NamedSettingsLayers.Quality)
+				{
+					newLayer.Name = "Quality" + printer.Settings.QualityLayers.Count;
+					printer.Settings.QualityLayers.Add(newLayer);
+					printer.Settings.ActiveQualityKey = newLayer.LayerID;
+				}
+				else
+				{
+					newLayer.Name = "Material" + printer.Settings.MaterialLayers.Count;
+					printer.Settings.MaterialLayers.Add(newLayer);
+					printer.Settings.ActiveMaterialKey = newLayer.LayerID;
+				}
+
+				RebuildDropDownList();
+
+				editButton.OnClick(new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0));
+			};
+
+			try
+			{
+				string settingsKey;
+
+				if (layerType == NamedSettingsLayers.Material)
+				{
+					settingsKey = printer.Settings.ActiveMaterialKey;
+
+					printer.Settings.MaterialLayers.CollectionChanged += SettingsLayers_CollectionChanged;
+					dropDownList.Closed += (s1, e1) =>
+					{
+						printer.Settings.MaterialLayers.CollectionChanged -= SettingsLayers_CollectionChanged;
+					};
+				}
+				else
+				{
+					settingsKey = printer.Settings.ActiveQualityKey;
+
+					printer.Settings.QualityLayers.CollectionChanged += SettingsLayers_CollectionChanged;
+					dropDownList.Closed += (s1, e1) =>
+					{
+						printer.Settings.QualityLayers.CollectionChanged -= SettingsLayers_CollectionChanged;
+					};
+				}
+
+				if (!string.IsNullOrEmpty(settingsKey))
+				{
+					dropDownList.SelectedValue = settingsKey;
+				}
+			}
+			catch (Exception ex)
+			{
+				GuiWidget.BreakInDebugger(ex.Message);
+			}
+
+			return dropDownList;
+		}
+
+		private void MenuItem_Selected(object sender, EventArgs e)
+		{
+			// When a preset is selected store the current values of all known settings to compare against after applying the preset
+			Dictionary<string, string> settingBeforeChange = new Dictionary<string, string>();
+			foreach (var keyName in PrinterSettings.KnownSettings)
+			{
+				settingBeforeChange.Add(keyName, printer.Settings.GetValue(keyName));
+			}
+
+			var activeSettings = printer.Settings;
+			MenuItem item = (MenuItem)sender;
+
+			if (layerType == NamedSettingsLayers.Material)
+			{
+				if (activeSettings.ActiveMaterialKey != item.Value)
+				{
+					// Restore deactivated user overrides by iterating the Material preset we're coming off of
+					activeSettings.RestoreConflictingUserOverrides(activeSettings.MaterialLayer);
+
+					activeSettings.ActiveMaterialKey = item.Value;
+
+					// Deactivate conflicting user overrides by iterating the Material preset we've just switched to
+					activeSettings.DeactivateConflictingUserOverrides(activeSettings.MaterialLayer);
+				}
+			}
+			else if (layerType == NamedSettingsLayers.Quality)
+			{
+				if (activeSettings.ActiveQualityKey != item.Value)
+				{
+					// Restore deactivated user overrides by iterating the Quality preset we're coming off of
+					activeSettings.RestoreConflictingUserOverrides(activeSettings.QualityLayer);
+
+					activeSettings.ActiveQualityKey = item.Value;
+
+					// Deactivate conflicting user overrides by iterating the Quality preset we've just switched to
+					activeSettings.DeactivateConflictingUserOverrides(activeSettings.QualityLayer);
+				}
+			}
+
+			// Ensure that activated or deactivated user overrides are always persisted to disk
+			activeSettings.Save();
+
+			UiThread.RunOnIdle(() =>
+			{
+				foreach (var keyName in PrinterSettings.KnownSettings)
+				{
+					if (settingBeforeChange[keyName] != printer.Settings.GetValue(keyName))
+					{
+						ActiveSliceSettings.OnSettingChanged(keyName);
+					}
+				}
+			});
+
+			editButton.Enabled = item.Text != defaultMenuItemText;
+		}
+
+		private void RebuildDropDownList()
+		{
+			pullDownContainer.CloseAllChildren();
+			pullDownContainer.AddChild(this.GetPulldownContainer());
+		}
+
+		private void SettingsLayers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		{
+			RebuildDropDownList();
+		}
+	}
+}

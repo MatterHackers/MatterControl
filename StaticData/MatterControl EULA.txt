@@ -1,7 +1,7 @@
 End-User License Agreement for MatterControl Software
 
 IMPORTANT: read the following terms carefully before installing, using and copying the Software Product. By installing, using and copying the Software Product you agree to accept all of the following terms. If you do not agree with the terms of this EULA, you must not use the Software Product.
-This End-User License Agreement ("EULA"), effective as of the date you accept the terms hereof (unless returned as specified above, the Effective Date), is a legal agreement entered into between MatterHackers, Inc. with an address at 21098 Bake Parkway, Ste 106, Lake Forest, CA 92630, USA ("MatterHackers") and you, the end user of Software Product. The parties agree as follows:
+This End-User License Agreement ("EULA"), effective as of the date you accept the terms hereof (unless returned as specified above, the Effective Date), is a legal agreement entered into between MatterHackers, Inc. with an address at 27156 Burbank, Foothill Ranch, CA 92610, USA ("MatterHackers") and you, the end user of Software Product. The parties agree as follows:
 
 1. SCOPE
 

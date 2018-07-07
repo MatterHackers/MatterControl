@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker, John Lewin
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,17 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
 using System;
-using System.IO;
-using Newtonsoft.Json.Linq;
-using System.Text;
+using System.Text.RegularExpressions;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
-using System.Text.RegularExpressions;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -45,7 +38,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public string Name { get; set; }
 		public string GCode { get; set; }
-		public bool ActionGroup { get; set; }
 		public DateTime LastModified { get; set; }
 
 		public static string FixMacroName(string input)
@@ -62,22 +54,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return result;
 		}
 
-		public void Run()
+		public void Run(PrinterConnection printerConnection)
 		{
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
+			if (printerConnection.IsConnected)
 			{
-				PrinterConnectionAndCommunication.Instance.MacroStart();
-				SendCommandToPrinter(GCode);
-				if (GCode.Contains(QueuedCommandsStream.MacroPrefix))
+				printerConnection.MacroStart();
+				printerConnection.QueueLine(GCode);
+				if (GCode.Contains(MacroProcessingStream.MacroPrefix))
 				{
-					SendCommandToPrinter("\n" + QueuedCommandsStream.MacroPrefix + "close()");
+					printerConnection.QueueLine("\n" + MacroProcessingStream.MacroPrefix + "close()");
 				}
 			}
-		}
-
-		protected void SendCommandToPrinter(string command)
-		{
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(command);
 		}
 	}
 }

@@ -40,25 +40,25 @@ namespace MatterHackers.MatterControl
 	{
 		private DoubleSolidSlider sliderAttachedTo;
 
-		public RGBA_Bytes BackgroundColor { get; set; }
+		public Color BackgroundColor { get; set; }
 
-		public RGBA_Bytes FillColor { get; set; }
+		public Color FillColor { get; set; }
 
-		public RGBA_Bytes TrackColor { get; set; }
+		public Color TrackColor { get; set; }
 
 		public double TrackHeight { get; set; }
 
 		public TickPlacement TextPlacement { get; set; }
 
-		public RGBA_Bytes TextColor { get; set; }
+		public Color TextColor { get; set; }
 
 		public StyledTypeFace TextStyle { get; set; }
 
-		public RGBA_Bytes ThumbColor { get; set; }
+		public Color ThumbColor { get; set; }
 
 		public TickPlacement TickPlacement { get; set; }
 
-		public RGBA_Bytes TickColor { get; set; }
+		public Color TickColor { get; set; }
 
 		public DoubleSolidSlideView(DoubleSolidSlider sliderWidget)
 		{
@@ -66,9 +66,9 @@ namespace MatterHackers.MatterControl
 
 			TrackHeight = 10;
 
-			TextColor = RGBA_Bytes.Black;
-			TrackColor = new RGBA_Bytes(220, 220, 220);
-			ThumbColor = ActiveTheme.Instance.SecondaryAccentColor;
+			TextColor = Color.Black;
+			TrackColor = new Color(220, 220, 220);
+			ThumbColor = ActiveTheme.Instance.PrimaryAccentColor;
 
 			sliderWidget.FirstValueChanged += new EventHandler(sliderWidget_ValueChanged);
 			sliderWidget.SecondValueChanged += new EventHandler(sliderWidget_ValueChanged);
@@ -130,12 +130,12 @@ namespace MatterHackers.MatterControl
 			// draw the first thumb
 			RectangleDouble firstThumbBounds = sliderAttachedTo.GetFirstThumbHitBounds();
 			RoundedRect firstThumbOutside = new RoundedRect(firstThumbBounds, 0);
-			graphics2D.Render(firstThumbOutside, RGBA_Floats.GetTweenColor(ThumbColor.GetAsRGBA_Floats(), RGBA_Floats.Black.GetAsRGBA_Floats(), .2).GetAsRGBA_Bytes());
+			graphics2D.Render(firstThumbOutside, ColorF.GetTweenColor(ThumbColor.ToColorF(), ColorF.Black.ToColorF(), .2).ToColor());
 
 			// draw the second thumb
 			RectangleDouble secondThumbBounds = sliderAttachedTo.GetSecondThumbHitBounds();
 			RoundedRect secondThumbOutside = new RoundedRect(secondThumbBounds, 0);
-			graphics2D.Render(secondThumbOutside, RGBA_Floats.GetTweenColor(ThumbColor.GetAsRGBA_Floats(), RGBA_Floats.Black.GetAsRGBA_Floats(), .2).GetAsRGBA_Bytes());
+			graphics2D.Render(secondThumbOutside, ColorF.GetTweenColor(ThumbColor.ToColorF(), ColorF.Black.ToColorF(), .2).ToColor());
 		}
 	}
 
@@ -325,7 +325,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		public DoubleSolidSlider(Vector2 lowerLeft, Vector2 upperRight)
-			: this(new Vector2(lowerLeft.x, lowerLeft.y + (upperRight.y - lowerLeft.y) / 2), upperRight.x - lowerLeft.x)
+			: this(new Vector2(lowerLeft.X, lowerLeft.Y + (upperRight.Y - lowerLeft.Y) / 2), upperRight.X - lowerLeft.X)
 		{
 		}
 
@@ -425,11 +425,11 @@ namespace MatterHackers.MatterControl
 			{
 				if (Orientation == Orientation.Horizontal)
 				{
-					mouseDownOffsetFromFirstThumbCenter = mousePos.x - PositionPixelsFromFirstValue;
+					mouseDownOffsetFromFirstThumbCenter = mousePos.X - PositionPixelsFromFirstValue;
 				}
 				else
 				{
-					mouseDownOffsetFromFirstThumbCenter = mousePos.y - PositionPixelsFromFirstValue;
+					mouseDownOffsetFromFirstThumbCenter = mousePos.Y - PositionPixelsFromFirstValue;
 				}
 				downOnFirstThumb = true;
 			}
@@ -437,11 +437,11 @@ namespace MatterHackers.MatterControl
 			{
 				if (Orientation == Orientation.Horizontal)
 				{
-					mouseDownOffsetFromSecondThumbCenter = mousePos.x - PositionPixelsFromSecondValue;
+					mouseDownOffsetFromSecondThumbCenter = mousePos.X - PositionPixelsFromSecondValue;
 				}
 				else
 				{
-					mouseDownOffsetFromSecondThumbCenter = mousePos.y - PositionPixelsFromSecondValue;
+					mouseDownOffsetFromSecondThumbCenter = mousePos.Y - PositionPixelsFromSecondValue;
 				}
 				downOnSecondThumb = true;
 			}
@@ -461,11 +461,11 @@ namespace MatterHackers.MatterControl
 				double oldValue = FirstValue;
 				if (Orientation == Orientation.Horizontal)
 				{
-					PositionPixelsFromFirstValue = Math.Min(mousePos.x - mouseDownOffsetFromFirstThumbCenter, PositionPixelsFromSecondValue - ThumbWidth - 2);
+					PositionPixelsFromFirstValue = Math.Min(mousePos.X - mouseDownOffsetFromFirstThumbCenter, PositionPixelsFromSecondValue - ThumbWidth - 2);
 				}
 				else
 				{
-					PositionPixelsFromFirstValue = Math.Min(mousePos.y - mouseDownOffsetFromFirstThumbCenter, PositionPixelsFromSecondValue - ThumbWidth - 2);
+					PositionPixelsFromFirstValue = Math.Min(mousePos.Y - mouseDownOffsetFromFirstThumbCenter, PositionPixelsFromSecondValue - ThumbWidth - 2);
 				}
 				if (oldValue != FirstValue)
 				{
@@ -481,11 +481,11 @@ namespace MatterHackers.MatterControl
 				double oldValue = SecondValue;
 				if (Orientation == Orientation.Horizontal)
 				{
-					PositionPixelsFromSecondValue = Math.Max(mousePos.x - mouseDownOffsetFromSecondThumbCenter, PositionPixelsFromFirstValue + ThumbWidth + 2);
+					PositionPixelsFromSecondValue = Math.Max(mousePos.X - mouseDownOffsetFromSecondThumbCenter, PositionPixelsFromFirstValue + ThumbWidth + 2);
 				}
 				else
 				{
-					PositionPixelsFromSecondValue = Math.Max(mousePos.y - mouseDownOffsetFromSecondThumbCenter, PositionPixelsFromFirstValue + ThumbWidth + 2);
+					PositionPixelsFromSecondValue = Math.Max(mousePos.Y - mouseDownOffsetFromSecondThumbCenter, PositionPixelsFromFirstValue + ThumbWidth + 2);
 				}
 				if (oldValue != SecondValue)
 				{

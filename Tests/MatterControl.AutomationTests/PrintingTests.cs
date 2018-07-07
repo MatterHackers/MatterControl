@@ -13,133 +13,359 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class PrintingTests
 	{
-		[Test, Apartment(ApartmentState.STA)]
+		[Test, Category("Emulator")]
 		public async Task CompletingPrintTurnsoffHeat()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+					testRunner.SelectSliceSettingsField("Printer", "end_gcode");
 
-					testRunner.ClickByName("Printer Tab", 1);
-					testRunner.ClickByName("Custom G-Code Tab", 1);
-					testRunner.ClickByName("end_gcode Edit Field");
 					testRunner.Type("^a");
 					testRunner.Type("{BACKSPACE}");
 					testRunner.Type("G28");
 
-					testRunner.ClickByName("Start Print Button", 1);
+					testRunner.AddItemToBedplate();
 
-					testRunner.WaitForName("Done Button", 120);
-					Assert.True(testRunner.NameExists("Done Button"), "The print has completed");
-					testRunner.WaitForName("Print Again Button", 1);
+					// Sorten the delay so the test runs in a reasonable time
+					ApplicationController.Instance.ActivePrinter.Connection.TurnOffHeatDelay = 5;
 
-					testRunner.Delay(5);
+					testRunner.StartPrint();
 
-					Assert.Less(PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0), 30);
-					Assert.Less(PrinterConnectionAndCommunication.Instance.ActualBedTemperature, 10);
+					// Wait for print to finish
+					testRunner.WaitForPrintFinished();
+
+					// Wait for expected temp
+					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.GetActualHotendTemperature(0) <= 0, 10);
+					Assert.Less(ApplicationController.Instance.ActivePrinter.Connection.GetActualHotendTemperature(0), 30);
+
+					// Wait for expected temp
+					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature <= 10);
+					Assert.Less(ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature, 10);
+
+					// Make sure we can run this whole thing again
+					testRunner.StartPrint();
+
+					// Wait for print to finish
+					testRunner.WaitForPrintFinished();
+
+					// Wait for expected temp
+					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.GetActualHotendTemperature(0) <= 0, 10);
+					Assert.Less(ApplicationController.Instance.ActivePrinter.Connection.GetActualHotendTemperature(0), 30);
+
+					// Wait for expected temp
+					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature <= 10);
+					Assert.Less(ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature, 10);
 				}
 
-				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 200);
+				return Task.CompletedTask;
+			}, maxTimeToRun: 95);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test, Category("Emulator")]
 		public async Task PulseRequiresLevelingAndLevelingWorks()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator("Pulse", "A-134"))
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator("Pulse", "A-134"))
 				{
-					var emulator = emulatorDisposable as Emulator;
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					// close the finish setup window
-					testRunner.ClickByName("Cancel Button");
+					// Cancel in this case is on the Leveling Wizard, results in ReloadAll and for consistency across devices, requires we wait till it completes
+					testRunner.WaitForReloadAll(() => testRunner.ClickByName("Cancel Wizard Button"));
 
-					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
-
-					testRunner.ClickByName("General Tab", 1);
-					testRunner.ClickByName("Single Print Tab", 1);
-					testRunner.ClickByName("Layer(s) To Pause: Edit");
-					testRunner.Type("2");
-
-					// switch to controls so we can see the heights
-					testRunner.ClickByName("Controls Tab");
-
-					// run the leveling wizard
 					testRunner.ClickByName("Finish Setup Button");
-					testRunner.ClickByName("Next Button");
-					testRunner.ClickByName("Next Button");
-					testRunner.ClickByName("Next Button");
-					testRunner.ClickByName("Next Button");
+					int numNextButtons = 5;
+					for (int i = 0; i < numNextButtons; i++)
+					{
+						testRunner.ClickByName("Next Button");
+					}
+
 					for (int i = 0; i < 3; i++)
 					{
-						testRunner.ClickByName("Move Z positive", .5);
-						testRunner.ClickByName("Next Button", .5);
-						testRunner.ClickByName("Next Button", .5);
-						testRunner.ClickByName("Next Button", .5);
+						testRunner.ClickByName("Move Z positive");
+						testRunner.ClickByName("Next Button");
+						testRunner.ClickByName("Next Button");
+						testRunner.ClickByName("Next Button");
 					}
-					testRunner.ClickByName("Done Button");
 
-					testRunner.Delay(1);
+					testRunner.WaitForReloadAll(() => testRunner.ClickByName("Done Button"));
 
 					// print a part
-					testRunner.ClickByName("Start Print Button", 1);
-					// assert the leveling is working
-					testRunner.WaitForName("Resume Button", 200);
+					testRunner.AddItemToBedplate();
+					testRunner.StartPrint();
 
+					emulator.WaitForLayer(ActiveSliceSettings.Instance.printer.Settings, 2);
+
+					testRunner.WaitFor(() => emulator.ZPosition > 5);
+
+					// assert the leveling is working
 					Assert.Greater(emulator.ZPosition, 5);
 
-					testRunner.ClickByName("Cancel Print Button", 1);
+					testRunner.CancelPrint();
 				}
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
+			}, maxTimeToRun: 90);
+		}
+
+		[Test, Category("Emulator")]
+		public void ExpectedEmulatorResponses()
+		{
+			// TODO: Emulator behavior should emulate actual printer firmware and use configuration rather than M104/M109 sends to set extruder count
+			//
+			// Quirky emulator returns single extruder M105 responses until after the first M104, at which point it extends its extruder count to match
+			string M105ResponseBeforeM104 = "ok T:27.0 / 0.0";
+			string M105ResponseAfterM104 = "ok T0:27.0 / 0.0 T1:27.0 / 0.0";
+
+			string[] test1 = new string[]
+			{
+				"N1 M110 N1 * 125",
+				"ok",
+				"N2 M114 * 37",
+				"X:0.00 Y: 0.00 Z: 0.00 E: 0.00 Count X: 0.00 Y: 0.00 Z: 0.00",
+				"ok",
+				"N3 M105 * 36",
+				M105ResponseBeforeM104,
+				"N1 M110 N1*125",
+				"ok",
+				"N2 M115 * 36",
+				"FIRMWARE_NAME:Marlin V1; Sprinter/grbl mashup for gen6 FIRMWARE_URL:https://github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Framelis v1 EXTRUDER_COUNT:1 UUID:155f84b5-d4d7-46f4-9432-667e6876f37a",
+				"ok",
+				"N3 M104 T0 S0 * 34",
+				"ok",
+				"N4 M104 T1 S0 * 36",
+				"ok",
+				"N5 M105 * 34",
+				M105ResponseAfterM104,
+				"N6 M105 * 45",
+				"Error:checksum mismatch, Last Line: 5",
+				"Resend: 6",
+				"ok",
+				"N6 M105 * 33",
+				M105ResponseAfterM104,
+				"N7 M105 * 32",
+				M105ResponseAfterM104,
+				"N8 M105 * 47",
+				M105ResponseAfterM104,
+				"N9 M105 * 46",
+				M105ResponseAfterM104,
+				"N10 M105 * 22",
+				M105ResponseAfterM104,
+				"N11 M105 * 23",
+				M105ResponseAfterM104,
+				"N12 M105 * 20",
+				M105ResponseAfterM104,
+				"N13 M105 * 21",
+				M105ResponseAfterM104,
+				"N14 M105 * 18",
+				M105ResponseAfterM104,
+				"N15 M105 * 19",
+				M105ResponseAfterM104,
+				"N16 M105 * 16",
+				M105ResponseAfterM104,
+				"N17 M105 * 40",
+				"Error:checksum mismatch, Last Line: 16",
+				"Resend: 17",
+				"ok",
+				"N17 M105 * 17",
+				M105ResponseAfterM104,
 			};
 
-			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 300);
+			string[] test2 = new string[]
+			{
+				"N1 M110 N1*125",
+				"ok",
+				"N1 M110 N1*125",
+				"ok",
+				"N1 M110 N1*125",
+				"ok",
+				"N2 M114*37",
+				"X:0.00 Y: 0.00 Z: 0.00 E: 0.00 Count X: 0.00 Y: 0.00 Z: 0.00",
+				 "ok",
+			};
+
+			SimulatePrint(test1);
+			SimulatePrint(test2);
+		}
+
+		private static void SimulatePrint(string[] sendRecieveLog)
+		{
+			using (var emulator = new Emulator())
+			{
+				emulator.HasHeatedBed = false;
+
+				int lineIndex = 0;
+				while (lineIndex < sendRecieveLog.Length)
+				{
+					var sentCommand = sendRecieveLog[lineIndex];
+					string response = emulator.GetCorrectResponse(sentCommand);
+					lineIndex++;
+					var lines = response.Split('\n');
+					for (int i = 0; i < lines.Length; i++)
+					{
+						if (!string.IsNullOrEmpty(lines[i]))
+						{
+							Assert.AreEqual(sendRecieveLog[lineIndex], lines[i]);
+							lineIndex++;
+						}
+					}
+				}
+			}
+		}
+
+		[Test, Category("Emulator")]
+		public async Task PrinterRequestsResumeWorkingAsExpected()
+		{
+			await MatterControlUtilities.RunTest((testRunner) =>
+			{
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
+				{
+					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
+
+					testRunner.OpenPrintPopupMenu();
+					testRunner.ClickByName("Layer(s) To Pause Field");
+					testRunner.Type("2;6");
+
+					// print a part
+					testRunner.AddItemToBedplate();
+
+					testRunner.StartPrint();
+
+					// turn on line error simulation
+					emulator.SimulateLineErrors = true;
+
+					// close the pause dialog pop-up (resume)
+					testRunner.WaitForName("No Button", 90);// the no button is 'Resume'
+					testRunner.ClickByName("No Button");
+
+					// simulate board reboot
+					emulator.SimulateReboot();
+
+					// close the pause dialog pop-up (resume)
+					testRunner.Delay(3);
+					testRunner.WaitForName("No Button", 90);
+					testRunner.ClickByName("No Button");
+
+					// Wait for done
+					testRunner.WaitForPrintFinished();
+				}
+
+				return Task.CompletedTask;
+			}, maxTimeToRun: 90);
+		}
+
+		[Test, Category("Emulator")]
+		public async Task PrinterRecoveryTest()
+		{
+			await MatterControlUtilities.RunTest((testRunner) =>
+			{
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
+				{
+					ActiveSliceSettings.Instance.SetValue(SettingsKey.recover_is_enabled, "1");
+					ActiveSliceSettings.Instance.SetValue(SettingsKey.has_hardware_leveling, "0");
+
+					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
+
+					// TODO: Delay needed to work around timing issue in MatterHackers/MCCentral#2415
+					testRunner.Delay(1);
+
+					testRunner.OpenPrintPopupMenu();
+					testRunner.ClickByName("Layer(s) To Pause Field");
+					testRunner.Type("2;4;6");
+
+					// print a part
+					testRunner.AddItemToBedplate();
+					testRunner.StartPrint();
+
+					// Dismiss pause dialog
+					testRunner.WaitForName("No Button", 90); // the no button is 'Resume'
+
+					// validate the current layer
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinter.Connection.CurrentlyPrintingLayer);
+					testRunner.ClickByName("No Button");
+
+					// the printer is now paused
+					// close the pause dialog pop-up do not resume
+					ClickDialogButton(testRunner, "Yes Button", 3);
+
+					// Disconnect
+					testRunner.ClickByName("Disconnect from printer button");
+
+					// Reconnect
+					testRunner.WaitForName("Connect to printer button", 10);
+					testRunner.ClickByName("Connect to printer button");
+
+					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Connected);
+
+					// Assert that recovery happens
+
+					// Recover the print
+					ClickDialogButton(testRunner, "Yes Button", -1);
+
+					// The first pause that we get after recovery should be layer 6.
+					// wait for the pause and continue
+					ClickDialogButton(testRunner, "No Button", 5);
+
+					// Wait for done
+					testRunner.WaitForPrintFinished();
+				}
+
+				return Task.CompletedTask;
+			}, maxTimeToRun: 180);
+		}
+
+		private static void ClickDialogButton(AutomationRunner testRunner, string buttonName, int expectedLayer)
+		{
+			testRunner.WaitForName(buttonName, 90);
+			Assert.AreEqual(expectedLayer, ApplicationController.Instance.ActivePrinter.Connection.CurrentlyPrintingLayer);
+			testRunner.ClickByName(buttonName);
+			testRunner.WaitFor(() => !testRunner.NameExists(buttonName), 1);
 		}
 
 		private EventHandler unregisterEvents;
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test, Category("Emulator")]
 		public async Task TuningAdjustmentsDefaultToOneAndPersists()
 		{
 			double targetExtrusionRate = 1.5;
 			double targetFeedRate = 2;
 
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				SystemWindow systemWindow;
+				testRunner.WaitForName("Cancel Wizard Button");
 
-				testRunner.WaitForName("Cancel Wizard Button", 1);
-
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.SwitchToSettingsAndControls();
+					testRunner.AddItemToBedplate();
 
-					testRunner.ClickByName("Controls Tab", 1);
+					testRunner.SwitchToControlsTab();
 
-					testRunner.ClickByName("Start Print Button", 1);
+					// Wait for printing to complete
+					var printFinishedResetEvent = new AutoResetEvent(false);
+					ApplicationController.Instance.ActivePrinter.Connection.PrintFinished.RegisterEvent((s, e) =>
+					{
+						printFinishedResetEvent.Set();
+					}, ref unregisterEvents);
 
-					var container = testRunner.GetWidgetByName("ManualPrinterControls.ControlsContainer", out systemWindow, 5);
+					testRunner.StartPrint();
+
+					var container = testRunner.GetWidgetByName("ManualPrinterControls.ControlsContainer", out _, 5);
 
 					// Scroll the widget into view
-					var scrollable = container.Parents<ManualPrinterControls>().First().Children<ScrollableWidget>().First();
+					var scrollable = container.Parents<ManualPrinterControls>().First() as ScrollableWidget;
 					var width = scrollable.Width;
 
 					// Workaround needed to scroll to the bottom of the Controls panel
@@ -161,30 +387,26 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type(targetFeedRate.ToString());
 
 					// Force focus away from the feed rate field, causing an persisted update
-					testRunner.ClickByName("Controls Tab", 1);
-					testRunner.Delay();
+					testRunner.ClickByName("Extrusion Multiplier NumberEdit");
 
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
 					// Wait for slicing to complete before setting target values
-					testRunner.Delay(() => PrinterConnectionAndCommunication.Instance.PrintingState == PrinterConnectionAndCommunication.DetailedPrintingState.Printing, 8);
+					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.DetailedPrintingState == DetailedPrintingState.Printing, 8);
 					testRunner.Delay();
 
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
-					// Wait for printing to complete
-					var resetEvent = new AutoResetEvent(false);
-					PrinterConnectionAndCommunication.Instance.PrintFinished.RegisterEvent((s, e) => resetEvent.Set(), ref unregisterEvents);
-					resetEvent.WaitOne();
-
-					testRunner.WaitForName("Done Button", 30);
-					testRunner.WaitForName("Print Again Button", 1);
+					// Wait up to 60 seconds for the print to finish
+					printFinishedResetEvent.WaitOne(60 * 1000);
 
 					// Values should match entered values
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
+					testRunner.WaitForPrintFinished();
+
 					// Restart the print
-					testRunner.ClickByName("Print Again Button", 1);
+					testRunner.StartPrint();
 					testRunner.Delay(2);
 
 					// Values should match entered values
@@ -197,47 +419,47 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 				}
 
-				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideHeight:900, maxTimeToRun: 990);
+				return Task.CompletedTask;
+			}, overrideHeight:900, maxTimeToRun: 120);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test, Category("Emulator")]
 		public async Task TuningAdjustmentControlsBoundToStreamValues()
 		{
-
 			double targetExtrusionRate = 1.5;
 			double targetFeedRate = 2;
 
 			double initialExtrusionRate = 0.6;
 			double initialFeedRate = 0.7;
 
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				SystemWindow systemWindow;
-
-				testRunner.WaitForName("Cancel Wizard Button", 1);
+				testRunner.WaitForName("Cancel Wizard Button");
 
 				// Set custom adjustment values
 				FeedRateMultiplyerStream.FeedRateRatio = initialFeedRate;
 				ExtrusionMultiplyerStream.ExtrusionRatio = initialExtrusionRate;
 
 				// Then validate that they are picked up
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.SwitchToSettingsAndControls();
+					testRunner.AddItemToBedplate();
 
-					testRunner.ClickByName("Controls Tab", 1);
+					testRunner.SwitchToControlsTab();
 
-					testRunner.ClickByName("Start Print Button", 1);
+					var printer = ApplicationController.Instance.ActivePrinter;
 
-					var container = testRunner.GetWidgetByName("ManualPrinterControls.ControlsContainer", out systemWindow, 5);
+					var printFinishedResetEvent = new AutoResetEvent(false);
+					printer.Connection.PrintFinished.RegisterEvent((s, e) => printFinishedResetEvent.Set(), ref unregisterEvents);
+
+					testRunner.StartPrint();
+
+					var container = testRunner.GetWidgetByName("ManualPrinterControls.ControlsContainer", out _, 5);
 
 					// Scroll the widget into view
-					var scrollable = container.Parents<ManualPrinterControls>().First().Children<ScrollableWidget>().First();
+					var scrollable = container.Parents<ManualPrinterControls>().FirstOrDefault() as ScrollableWidget;
 					var width = scrollable.Width;
 
 					// Workaround needed to scroll to the bottom of the Controls panel
@@ -248,7 +470,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					scrollable.Width = width - 1;
 					scrollable.Width = width;
 
-					// Tuning values should match 
+					// Tuning values should match
 					ConfirmExpectedSpeeds(testRunner, initialExtrusionRate, initialFeedRate);
 
 					testRunner.Delay();
@@ -259,66 +481,58 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type(targetFeedRate.ToString());
 
 					// Force focus away from the feed rate field, causing an persisted update
-					testRunner.ClickByName("Controls Tab", 1);
-					testRunner.Delay();
+					testRunner.SwitchToControlsTab();
 
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
 					// Wait for slicing to complete before setting target values
-					testRunner.Delay(() => PrinterConnectionAndCommunication.Instance.PrintingState == PrinterConnectionAndCommunication.DetailedPrintingState.Printing, 8);
+					testRunner.WaitFor(() => printer.Connection.DetailedPrintingState == DetailedPrintingState.Printing, 8);
 					testRunner.Delay();
 
 					// Values should remain after print completes
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
 					// Wait for printing to complete
-					var resetEvent = new AutoResetEvent(false);
-					PrinterConnectionAndCommunication.Instance.PrintFinished.RegisterEvent((s, e) => resetEvent.Set(), ref unregisterEvents);
-					resetEvent.WaitOne();
+					printFinishedResetEvent.WaitOne();
 
-					testRunner.WaitForName("Done Button", 30);
-					testRunner.WaitForName("Print Again Button", 1);
+					testRunner.WaitForPrintFinished();
 
 					// Values should match entered values
-					testRunner.ClickByName("Print Again Button", 1);
-					testRunner.Delay(2);
+					testRunner.StartPrint();
+					testRunner.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Printing, 15);
 
 					// Values should match entered values
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
 					testRunner.CancelPrint();
-					testRunner.Delay(1);
+					testRunner.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Connected, 15);
 
 					// Values should match entered values
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 				}
 
-				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideHeight: 900, maxTimeToRun: 990);
+				return Task.CompletedTask;
+			}, overrideHeight: 900, maxTimeToRun: 120);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
-		public async Task CancelingSdCardPrintLeavesHeatAndFanOn()
+		[Test, Category("Emulator")]
+		public async Task CloseShouldNotStopSDPrint()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.WaitForName("Cancel Wizard Button", 1);
+				testRunner.WaitForName("Cancel Wizard Button");
 
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator(runSlow: true))
 				{
-					Emulator emulator = (Emulator)emulatorDisposable;
-
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.ClickByName("Queue... Menu", 2);
-					testRunner.ClickByName(" Remove All Menu Item", 2);
-					testRunner.ClickByName("Queue... Menu", 2);
-					testRunner.ClickByName(" Load Files Menu Item", 2);
-					testRunner.Delay(2);
+					testRunner.NavigateToFolder("SD Card Row Item Collection");
 
-					testRunner.ClickByName("Start Print Button", 1);
+					testRunner.ClickByName("Row Item Item 1.gcode");
+
+					testRunner.ClickByName("Print Library Overflow Menu");
+					testRunner.ClickByName("Print Menu Item");
+
 					testRunner.Delay(2);
 
 					int tempChangedCount = 0;
@@ -332,7 +546,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						fanChangedCount++;
 					};
 
-					testRunner.CloseMatterControlViaMenu();
+					testRunner.CloseMatterControl();
 
 					testRunner.ClickByName("Yes Button");
 
@@ -341,52 +555,74 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(0, fanChangedCount, "We should not change this while exiting an sd card print.");
 				}
 
-				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideHeight: 900, maxTimeToRun: 990);
+				return Task.CompletedTask;
+			}, maxTimeToRun: 90);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
-		public async Task CancelingNormalPrintTurnsHeatAndFanOff()
+		[Test, Category("Emulator")]
+		public async Task CancelingPrintTurnsHeatAndFanOff()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.WaitForName("Cancel Wizard Button", 1);
+				testRunner.WaitForName("Cancel Wizard Button");
 
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					Emulator emulator = (Emulator)emulatorDisposable;
+					var resetEvent = new AutoResetEvent(false);
 
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.ClickByName("Start Print Button", 1);
-					testRunner.Delay(5);
+					testRunner.AddItemToBedplate();
 
-					int tempChangedCount = 0;
+					testRunner.StartPrint();
+
 					int fanChangedCount = 0;
-					emulator.ExtruderTemperatureChanged += (s, e) =>
-					{
-						tempChangedCount++;
-					};
 					emulator.FanSpeedChanged += (s, e) =>
 					{
 						fanChangedCount++;
 					};
 
-					testRunner.CloseMatterControlViaMenu();
+					var printer = ApplicationController.Instance.ActivePrinter;
 
+					emulator.WaitForLayer(printer.Settings, 2);
+					emulator.RunSlow = true;
+
+					// Click close but cancel
+					testRunner.CloseMatterControl();
+					testRunner.ClickByName("No Button");
+
+					// Wait for close
+					testRunner.WaitForWidgetDisappear("Yes Button", 4);
+					testRunner.Delay(2);
+
+					// Confirm abort
+					Assert.IsFalse(AppContext.RootSystemWindow.HasBeenClosed, "Canceling Close dialog should *not* close MatterControl");
+
+					// Close MatterControl and cancel print
+					testRunner.CloseMatterControl();
 					testRunner.ClickByName("Yes Button");
 
-					testRunner.Delay(5);
-					Assert.AreEqual(1, tempChangedCount, "We should change this while exiting a print.");
-					Assert.AreEqual(1, fanChangedCount, "We should change this while exiting a print.");
+					// Wait for Disconnected CommunicationState which occurs after PrinterConnection.Disable()
+					testRunner.WaitForCommunicationStateDisconnected(maxSeconds: 30);
+
+					// Wait for close
+					testRunner.WaitForWidgetDisappear("Yes Button", 4);
+					testRunner.Delay(2);
+
+					// Confirm close
+					Assert.IsTrue(AppContext.RootSystemWindow.HasBeenClosed, "Confirming Close dialog *should* close MatterControl");
+
+					// Wait for M106 change
+					testRunner.WaitFor(() => fanChangedCount > 0, 15, 500);
+
+					// Assert expected temp targets and fan transitions
+					Assert.AreEqual(0, (int) emulator.CurrentExtruder.TargetTemperature, "Unexpected target temperature - MC close should call Connection.Disable->TurnOffBedAndExtruders to shutdown heaters");
+					Assert.AreEqual(0, (int) emulator.HeatedBed.TargetTemperature, "Unexpected target temperature - MC close should call Connection.Disable->TurnOffBedAndExtruders to shutdown heaters");
+					Assert.AreEqual(1, fanChangedCount, "Unexpected fan speed change count - MC close should call Connection.Disable which shuts down fans via M106");
 				}
 
-				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideHeight: 900, maxTimeToRun: 990);
+				return Task.CompletedTask;
+			}, overrideHeight: 900, maxTimeToRun: 90);
 		}
 
 		private static void ConfirmExpectedSpeeds(AutomationRunner testRunner, double targetExtrusionRate, double targetFeedRate)
@@ -396,16 +632,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			// Assert the UI has the expected values
 			slider = testRunner.GetWidgetByName("Extrusion Multiplier Slider", out systemWindow, 5) as SolidSlider;
-			Assert.AreEqual(targetExtrusionRate, slider.Value);
+			Assert.IsTrue(targetExtrusionRate == slider.Value);
 
 			slider = testRunner.GetWidgetByName("Feed Rate Slider", out systemWindow, 5) as SolidSlider;
-			Assert.AreEqual(targetFeedRate, slider.Value);
+			Assert.IsTrue(targetFeedRate == slider.Value);
 
 			testRunner.Delay(.2);
 
 			// Assert the changes took effect on the model
-			Assert.AreEqual(targetExtrusionRate, ExtrusionMultiplyerStream.ExtrusionRatio);
-			Assert.AreEqual(targetFeedRate, FeedRateMultiplyerStream.FeedRateRatio);
+			Assert.IsTrue(targetExtrusionRate == ExtrusionMultiplyerStream.ExtrusionRatio);
+			Assert.IsTrue(targetFeedRate == FeedRateMultiplyerStream.FeedRateRatio);
 		}
 	}
 }

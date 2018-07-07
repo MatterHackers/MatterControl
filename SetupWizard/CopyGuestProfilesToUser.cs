@@ -27,40 +27,41 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg.PlatformAbstract;
+using System.Collections.Generic;
+using System.IO;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.Agg;
-using System.Collections.Generic;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using System.IO;
 
 namespace MatterHackers.MatterControl
 {
-	public class CopyGuestProfilesToUser : WizardPage
+	public class CopyGuestProfilesToUser : DialogPage
 	{
-		string importMessage = "It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.".Localize();
+		private string importMessage = "It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.".Localize();
 
-		List<CheckBox> checkBoxes = new List<CheckBox>();
+		private CheckBox rememberChoice;
+
+		private List<CheckBox> checkBoxes = new List<CheckBox>();
 
 		public CopyGuestProfilesToUser()
-		: base("Close", "Copy Printers to Account")
+		: base("Close".Localize())
 		{
+			this.WindowTitle = "Copy Printers".Localize();
+			this.HeaderText = "Copy Printers to Account".Localize();
+
 			var scrollWindow = new ScrollableWidget()
 			{
 				AutoScroll = true,
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.ParentBottomTop,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
 			};
-			scrollWindow.ScrollArea.HAnchor = HAnchor.ParentLeftRight;
+			scrollWindow.ScrollArea.HAnchor = HAnchor.Stretch;
 			contentRow.AddChild(scrollWindow);
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 			};
 			scrollWindow.AddChild(container);
 
@@ -71,7 +72,7 @@ namespace MatterHackers.MatterControl
 			var guest = ProfileManager.Load("guest");
 			if (guest?.Profiles.Count > 0)
 			{
-				container.AddChild(new TextWidget("Printers to Copy:".Localize())
+				container.AddChild(new TextWidget("Printers to Copy".Localize() + ":")
 				{
 					TextColor = ActiveTheme.Instance.PrimaryTextColor,
 					Margin = new BorderDouble(0, 3, 0, 15),
@@ -83,7 +84,7 @@ namespace MatterHackers.MatterControl
 					{
 						TextColor = ActiveTheme.Instance.PrimaryTextColor,
 						Margin = new BorderDouble(5, 0, 0, 0),
-						HAnchor = HAnchor.ParentLeft,
+						HAnchor = HAnchor.Left,
 						Checked = true,
 					};
 					checkBoxes.Add(checkBox);
@@ -93,7 +94,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			var syncButton = textImageButtonFactory.Generate("Copy".Localize());
+			var syncButton = theme.CreateDialogButton("Copy".Localize());
 			syncButton.Name = "CopyProfilesButton";
 			syncButton.Click += (s, e) =>
 			{
@@ -123,36 +124,31 @@ namespace MatterHackers.MatterControl
 				// Close the window and update the PrintersImported flag
 				UiThread.RunOnIdle(() =>
 				{
-					WizardWindow.Close();
+					DialogWindow.Close();
 
 					ProfileManager.Instance.PrintersImported = true;
 					ProfileManager.Instance.Save();
 				});
 			};
 
-			CheckBox rememberChoice = new CheckBox("Don't remind me again".Localize(), ActiveTheme.Instance.PrimaryTextColor);
+			rememberChoice = new CheckBox("Don't remind me again".Localize(), ActiveTheme.Instance.PrimaryTextColor);
 			contentRow.AddChild(rememberChoice);
 
 			syncButton.Visible = true;
-			cancelButton.Visible = true;
 
-			// Close the window and update the PrintersImported flag
-			cancelButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			this.AddPageAction(syncButton);
+		}
+
+		protected override void OnCancel(out bool abortCancel)
+		{
+			// If "Don't remind me" checked, update the PrintersImported flag on close
+			if (rememberChoice.Checked)
 			{
-				WizardWindow.Close();
-				if (rememberChoice.Checked)
-				{
-					ProfileManager.Instance.PrintersImported = true;
-					ProfileManager.Instance.Save();
-				}
-			});
+				ProfileManager.Instance.PrintersImported = true;
+				ProfileManager.Instance.Save();
+			}
 
-			//Add buttons to buttonContainer
-			footerRow.AddChild(syncButton);
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
-
-			footerRow.Visible = true;
+			abortCancel = false;
 		}
 	}
 }

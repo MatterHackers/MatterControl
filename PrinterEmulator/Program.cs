@@ -59,7 +59,7 @@ namespace MatterHackers.PrinterEmulator
 				}
 			}
 
-			emulator.Startup();
+			emulator.Open();
 
 			while(true)
 			{
