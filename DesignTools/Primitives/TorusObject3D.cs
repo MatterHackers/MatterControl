@@ -125,12 +125,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}
 
-		public void UpdateControls(PPEContext context)
+		public void UpdateControls(PublicPropertyChange change)
 		{
-			context.GetEditRow(nameof(StartingAngle)).Visible = Advanced;
-			context.GetEditRow(nameof(EndingAngle)).Visible = Advanced;
-			context.GetEditRow(nameof(RingSides)).Visible = Advanced;
-			context.GetEditRow(nameof(RingPhaseAngle)).Visible = Advanced;
+			change.Context.GetEditRow(nameof(StartingAngle)).Visible = Advanced;
+			change.Context.GetEditRow(nameof(EndingAngle)).Visible = Advanced;
+			change.Context.GetEditRow(nameof(RingSides)).Visible = Advanced;
+			change.Context.GetEditRow(nameof(RingPhaseAngle)).Visible = Advanced;
 			InnerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
 		}
 	}

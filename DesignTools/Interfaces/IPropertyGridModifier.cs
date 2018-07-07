@@ -51,6 +51,18 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 	}
 
+	public class PublicPropertyChange
+	{
+		public PPEContext Context { get; }
+		public string Changed { get; }
+
+		public PublicPropertyChange(PPEContext pPEContext, string propertyChanged)
+		{
+			this.Context = pPEContext;
+			this.Changed = propertyChanged;
+		}
+	}
+
 	public interface ITransformWarpperObject3D
 	{
 		IObject3D TransformWarpper { get; }
@@ -58,6 +70,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 	public interface IPropertyGridModifier
 	{
-		void UpdateControls(PPEContext editor);
+		void UpdateControls(PublicPropertyChange change);
 	}
 }

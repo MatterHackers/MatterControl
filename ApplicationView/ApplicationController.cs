@@ -758,6 +758,35 @@ namespace MatterHackers.MatterControl
 				iconCollector: () => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), ApplicationController.Instance.MenuTheme.InvertIcons));
 
 			this.Graph.RegisterOperation(
+				typeof(IObject3D),
+				"Scale".Localize(),
+				(sceneItem, scene) =>
+				{
+					var selectedItem = scene.SelectedItem;
+					scene.SelectedItem = null;
+					var scale = ScaleObject3D.Create(selectedItem.Clone());
+					scale.MakeNameNonColliding();
+
+					scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, new List<IObject3D> { scale }));
+					scene.SelectedItem = scale;
+
+					return Task.CompletedTask;
+				},
+				iconCollector: () => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, ApplicationController.Instance.MenuTheme.InvertIcons));
+
+			this.Graph.RegisterOperation(
+				typeof(IObject3D),
+				"Mirror".Localize(),
+				(sceneItem, scene) =>
+				{
+					var mirror = new MirrorObject3D();
+					mirror.WrapSelectedItemAndSelect(scene);
+
+					return Task.CompletedTask;
+				},
+				iconCollector: () => AggContext.StaticData.LoadIcon("mirror_32x32.png", ApplicationController.Instance.MenuTheme.InvertIcons));
+
+			this.Graph.RegisterOperation(
 				typeof(IPathObject),
 				"Linear Extrude".Localize(),
 				(sceneItem, scene) =>

@@ -99,6 +99,7 @@
     <Compile Include="DesignTools\Operations\ArrayRadialObject3D.cs" />
     <Compile Include="DesignTools\Obsolete\FitToBoundsObject3D.cs" />
     <Compile Include="DesignTools\Operations\FitToBoundsObject3D_2.cs" />
+    <Compile Include="DesignTools\Operations\MirrorObject3D.cs" />
     <Compile Include="DesignTools\Operations\TransformWrapperObject3D.cs" />
     <Compile Include="DesignTools\Operations\GroupObject3D.cs" />
     <Compile Include="DesignTools\Operations\Image\AlphaThresholdFunction.cs" />
@@ -245,7 +246,6 @@
     <Compile Include="PartPreviewWindow\Toolbar.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\PauseResumeButton.cs" />
     <Compile Include="Library\ReadOnlyStreamItem.cs" />
-    <Compile Include="PartPreviewWindow\View3D\SideBar\ScaleControl.cs" />
     <Compile Include="PartPreviewWindow\View3D\SliceProgressReporter.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\ChangeColor.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\MakeSupport.cs" />
@@ -374,7 +374,6 @@
     <Compile Include="PartPreviewWindow\View3D\Gui3D\SelectionShadow.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\MoveInZControl.cs" />
     <Compile Include="PartPreviewWindow\View3D\SceneActions.cs" />
-    <Compile Include="PartPreviewWindow\View3D\SideBar\MirrorControls.cs" />
     <Compile Include="PartPreviewWindow\View3D\IObject3DEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DWidget.cs" />
     <Compile Include="PartPreviewWindow\SelectedObjectPanel.cs" />

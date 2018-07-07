@@ -171,7 +171,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 
 				// Init with custom 'UpdateControls' hooks
-				(context.item as IPropertyGridModifier)?.UpdateControls(context);
+				(context.item as IPropertyGridModifier)?.UpdateControls(new PublicPropertyChange(context, "Update_Button"));
 			}
 
 			return mainContainer;
@@ -277,7 +277,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					property.SetValue(field.DoubleValue);
 					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-					propertyGridModifier?.UpdateControls(context);
+					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
 				void RefreshField(object s, InvalidateArgs e)
@@ -306,7 +306,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					property.SetValue(field.Vector2);
 					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-					propertyGridModifier?.UpdateControls(context);
+					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
 				rowContainer = CreateSettingsColumn(property, field);
@@ -320,7 +320,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					property.SetValue(field.Vector3);
 					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-					propertyGridModifier?.UpdateControls(context);
+					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
 				rowContainer = CreateSettingsColumn(property, field);
@@ -334,7 +334,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					property.SetValue(field.DirectionVector);
 					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-					propertyGridModifier?.UpdateControls(context);
+					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
 				rowContainer = CreateSettingsRow(property, field);
@@ -382,7 +382,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + field2.Vector3
 					});
 					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-					propertyGridModifier?.UpdateControls(context);
+					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 				field2.ValueChanged += (s, e) =>
 				{
@@ -392,7 +392,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						Origin = property.Item.Children.First().GetAxisAlignedBoundingBox().Center + field2.Vector3
 					});
 					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-					propertyGridModifier?.UpdateControls(context);
+					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
 				rowContainer.AddChild(row2);
@@ -417,7 +417,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					property.SetValue(field.IntValue);
 					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-					propertyGridModifier?.UpdateControls(context);
+					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
 				rowContainer = CreateSettingsRow(property, field);
@@ -432,7 +432,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					property.SetValue(field.Checked);
 					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-					propertyGridModifier?.UpdateControls(context);
+					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
 				rowContainer = CreateSettingsRow(property, field);
@@ -447,7 +447,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					property.SetValue(field.Value);
 					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-					propertyGridModifier?.UpdateControls(context);
+					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
 				rowContainer = CreateSettingsRow(property, field);
@@ -462,7 +462,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					property.SetValue(Convert.ToChar(field.Value));
 					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-					propertyGridModifier?.UpdateControls(context);
+					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
 				rowContainer = CreateSettingsRow(property, field);
@@ -489,7 +489,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					property.SetValue(Enum.Parse(property.PropertyType, field.Value));
 					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-					propertyGridModifier?.UpdateControls(context);
+					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
 				rowContainer = CreateSettingsRow(property, field);

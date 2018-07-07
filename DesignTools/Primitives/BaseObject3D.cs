@@ -332,7 +332,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return solution;
 		}
 
-		public void UpdateControls(PPEContext context)
+		public void UpdateControls(PublicPropertyChange change)
 		{
 			//context.GetEditRow((this.ID, nameof(InfillAmount))).Visible = CurrentBaseType == BaseTypes.Outline;
 		}

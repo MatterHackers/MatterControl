@@ -218,18 +218,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.ContentPanel.AddChild(colorSection);
 
-			var mirrorSection = new SectionWidget("Mirror".Localize(), new MirrorControls(scene, theme), theme, serializationKey: UserSettingsKey.MirrorPanelExpanded)
-			{
-				Name = "Mirror Panel",
-			};
-			this.ContentPanel.AddChild(mirrorSection);
-
-			var scaleSection = new SectionWidget("Scale".Localize(), new ScaleControls(scene, theme), theme, serializationKey: UserSettingsKey.ScalePanelExpanded)
-			{
-				Name = "Scale Panel",
-			};
-			this.ContentPanel.AddChild(scaleSection);
-
 			var materialsSection = new SectionWidget("Materials".Localize(), new MaterialControls(scene, theme), theme, serializationKey: UserSettingsKey.MaterialsPanelExpanded)
 			{
 				Name = "Materials Panel",

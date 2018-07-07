@@ -47,16 +47,22 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Rotate".Localize();
 		}
 
-		public RotateObject3D_2(IObject3D item, double xRadians = 0, double yRadians = 0, double zRadians = 0, string name = "")
+		public RotateObject3D_2(IObject3D itemToRotate, double xRadians = 0, double yRadians = 0, double zRadians = 0, string name = "")
 			: this()
 		{
-			Children.Add(item.Clone());
+			var aabb = itemToRotate.GetAxisAlignedBoundingBox();
+
+			this.RotateAbout.Origin = aabb.Center;
+
+			var rotateItem = new Object3D();
+			this.Children.Add(rotateItem);
+			rotateItem.Children.Add(itemToRotate);
 
 			Rebuild(null);
 		}
 
-		public RotateObject3D_2(IObject3D item, Vector3 translation, string name = "")
-			: this(item, translation.X, translation.Y, translation.Z, name)
+		public RotateObject3D_2(IObject3D itemToRotate, Vector3 translation, string name = "")
+			: this(itemToRotate, translation.X, translation.Y, translation.Z, name)
 		{
 		}
 
@@ -85,16 +91,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static RotateObject3D_2 Create(IObject3D itemToRotate)
 		{
-			var rotate = new RotateObject3D_2();
-			var aabb = itemToRotate.GetAxisAlignedBoundingBox();
-
-			rotate.RotateAbout.Origin = aabb.Center;
-
-			var rotateItem = new Object3D();
-			rotate.Children.Add(rotateItem);
-			rotateItem.Children.Add(itemToRotate);
-
-			return rotate;
+			return new RotateObject3D_2(itemToRotate);
 		}
 
 		public void DrawEditor(object sender, DrawEventArgs e)

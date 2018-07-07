@@ -268,15 +268,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public void UpdateControls(PPEContext context)
+		public void UpdateControls(PublicPropertyChange change)
 		{
-			context.GetEditRow(nameof(Diameter)).Visible = FitType != FitType.Box;
+			change.Context.GetEditRow(nameof(Diameter)).Visible = FitType != FitType.Box;
 
-			context.GetEditRow(nameof(Width)).Visible = FitType == FitType.Box;
-			context.GetEditRow(nameof(Depth)).Visible = FitType == FitType.Box;
-			context.GetEditRow(nameof(MaintainRatio)).Visible = FitType == FitType.Box;
-			context.GetEditRow(nameof(StretchX)).Visible = FitType == FitType.Box;
-			context.GetEditRow(nameof(StretchY)).Visible = FitType == FitType.Box;
+			change.Context.GetEditRow(nameof(Width)).Visible = FitType == FitType.Box;
+			change.Context.GetEditRow(nameof(Depth)).Visible = FitType == FitType.Box;
+			change.Context.GetEditRow(nameof(MaintainRatio)).Visible = FitType == FitType.Box;
+			change.Context.GetEditRow(nameof(StretchX)).Visible = FitType == FitType.Box;
+			change.Context.GetEditRow(nameof(StretchY)).Visible = FitType == FitType.Box;
 		}
 	}
 }

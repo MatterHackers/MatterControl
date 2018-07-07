@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			foreach (var orderItem in orderedItems)
 			{
-				MenuItem newItem = dropDownList.AddItem(orderItem.Value);
+				MenuItem newItem = dropDownList.AddItem(orderItem.Value, orderItem.Key);
 
 				var localOrderedItem = orderItem;
 				newItem.Selected += (sender, e) =>
@@ -85,9 +85,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
-			if (this.Value != dropDownList.SelectedLabel)
+			if (this.Value != dropDownList.SelectedValue)
 			{
-				dropDownList.SelectedLabel = this.Value;
+				dropDownList.SelectedValue = this.Value;
 			}
 
 			base.OnValueChanged(fieldChangedEventArgs);
