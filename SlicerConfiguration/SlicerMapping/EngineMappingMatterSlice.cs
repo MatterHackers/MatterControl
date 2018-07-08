@@ -132,6 +132,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				new AsCountOrDistance("bottom_solid_layers", "numberOfBottomLayers", SettingsKey.layer_height),
 				new MappedSetting("boolean_operations", "booleanOperations"),
+				new MappedSetting("additional_args_to_process", "AdditionalArgsToProcess"),
 				new AsCountOrDistance("perimeters", "numberOfPerimeters", SettingsKey.nozzle_diameter),
 				new AsCountOrDistance("raft_extra_distance_around_part", "raftExtraDistanceAroundPart", SettingsKey.nozzle_diameter),
 				new AsCountOrDistance("support_material_interface_layers", "supportInterfaceLayers", SettingsKey.layer_height),

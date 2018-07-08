@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -86,65 +87,65 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			{
-					// TODO: Once graph parsing is added to MatterSlice we can remove and avoid this flattening
-					meshPrintOutputSettings.Clear();
+				// TODO: Once graph parsing is added to MatterSlice we can remove and avoid this flattening
+				meshPrintOutputSettings.Clear();
 
-					// Flatten the scene, filtering out items outside of the build volume
-					var meshItemsOnBuildPlate = reloadedItem.VisibleMeshes().Where((item) => item.InsideBuildVolume(printer)
-						&& item.WorldPersistable());
+				// Flatten the scene, filtering out items outside of the build volume
+				var meshItemsOnBuildPlate = reloadedItem.VisibleMeshes().Where((item) => item.InsideBuildVolume(printer)
+					&& item.WorldPersistable());
 
-					if (meshItemsOnBuildPlate.Any())
+				if (meshItemsOnBuildPlate.Any())
+				{
+					int maxExtruderIndex = 0;
+
+					var itemsByExtruder = new List<IEnumerable<IObject3D>>();
+					for (int extruderIndexIn = 0; extruderIndexIn < extruderCount; extruderIndexIn++)
 					{
-						int maxExtruderIndex = 0;
+						var extruderIndex = extruderIndexIn;
+						var itemsThisExtruder = meshItemsOnBuildPlate.Where((item) =>
+							(item.WorldMaterialIndex() == extruderIndex
+								|| (extruderIndex == 0
+									&& (item.WorldMaterialIndex() >= extruderCount || item.WorldMaterialIndex() == -1)))
+							&& (item.WorldOutputType() == PrintOutputTypes.Solid || item.WorldOutputType() == PrintOutputTypes.Default));
 
-						var itemsByExtruder = new List<IEnumerable<IObject3D>>();
-						for (int extruderIndexIn = 0; extruderIndexIn < extruderCount; extruderIndexIn++)
+						itemsByExtruder.Add(itemsThisExtruder.Select((i) => i));
+						extrudersUsed[extruderIndex] |= itemsThisExtruder.Any();
+						if (extrudersUsed[extruderIndex])
 						{
-							var extruderIndex = extruderIndexIn;
-							var itemsThisExtruder = meshItemsOnBuildPlate.Where((item) =>
-								(item.WorldMaterialIndex() == extruderIndex 
-									|| (extruderIndex == 0 
-										&& (item.WorldMaterialIndex() >= extruderCount || item.WorldMaterialIndex() == -1)))
-								&& (item.WorldOutputType() ==  PrintOutputTypes.Solid || item.WorldOutputType() == PrintOutputTypes.Default));
-
-							itemsByExtruder.Add(itemsThisExtruder.Select((i) => i));
-							extrudersUsed[extruderIndex] |= itemsThisExtruder.Any();
-							if(extrudersUsed[extruderIndex])
-							{
-								maxExtruderIndex = extruderIndex;
-							}
+							maxExtruderIndex = extruderIndex;
 						}
-
-						var outputOptions = new List<(Matrix4X4 matrix, string fileName)>();
-
-						int savedStlCount = 0;
-						bool first = true;
-						for (int extruderIndex = 0; extruderIndex < itemsByExtruder.Count; extruderIndex++)
-						{
-							if (!first)
-							{
-								mergeRules += ",";
-							}
-							var itemsThisExtruder = itemsByExtruder[extruderIndex];
-							mergeRules += AddObjectsForExtruder(itemsThisExtruder, outputOptions, ref savedStlCount);
-							first = false;
-						}
-
-						var supportObjects = meshItemsOnBuildPlate.Where((item) =>
-								item.WorldOutputType() == PrintOutputTypes.Support);
-
-
-						// if we added user generated support 
-						if (supportObjects.Any())
-						{
-							// add a flag to the merge rules to let us know there was support
-							mergeRules += "," + AddObjectsForExtruder(supportObjects.Select((i) => i), outputOptions, ref savedStlCount) + "S";
-						}
-
-						mergeRules += " ";
-
-						return outputOptions;
 					}
+
+					var outputOptions = new List<(Matrix4X4 matrix, string fileName)>();
+
+					int savedStlCount = 0;
+					bool first = true;
+					for (int extruderIndex = 0; extruderIndex < itemsByExtruder.Count; extruderIndex++)
+					{
+						if (!first)
+						{
+							mergeRules += ",";
+						}
+						var itemsThisExtruder = itemsByExtruder[extruderIndex];
+						mergeRules += AddObjectsForExtruder(itemsThisExtruder, outputOptions, ref savedStlCount);
+						first = false;
+					}
+
+					var supportObjects = meshItemsOnBuildPlate.Where((item) =>
+							item.WorldOutputType() == PrintOutputTypes.Support);
+
+
+					// if we added user generated support 
+					if (supportObjects.Any())
+					{
+						// add a flag to the merge rules to let us know there was support
+						mergeRules += "," + AddObjectsForExtruder(supportObjects.Select((i) => i), outputOptions, ref savedStlCount) + "S";
+					}
+
+					mergeRules += " ";
+
+					return outputOptions;
+				}
 			}
 
 			return new List<(Matrix4X4 matrix, string fileName)>();
@@ -259,11 +260,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string commandArgs;
 
 					ActiveSliceSettings.Instance.SetValue("boolean_operations", mergeRules);
+					ActiveSliceSettings.Instance.SetValue("stls_to_load", mergeRules);
 
-					EngineMappingsMatterSlice.WriteSliceSettingsFile(configFilePath);
-
-					commandArgs = $"-v -o \"{gcodeFilePath}\" -c \"{configFilePath}\"";
-
+					var matrixAndMeshArgs = new StringBuilder(); ;
 					foreach (var matrixAndFile in stlFileLocations)
 					{
 						var matrixString = "";
@@ -272,7 +271,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							for (int j = 0; j < 4; j++)
 							{
-								if(!first)
+								if (!first)
 								{
 									matrixString += ",";
 								}
@@ -281,9 +280,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							}
 						}
 
-						commandArgs += $" -m \"{matrixString}\"";
-						commandArgs += $" \"{matrixAndFile.fileName}\" ";
+						matrixAndMeshArgs.Append($" -m \"{matrixString}\"");
+						matrixAndMeshArgs.Append($" \"{matrixAndFile.fileName}\" ");
 					}
+
+					ActiveSliceSettings.Instance.SetValue("additional_args_to_process", matrixAndMeshArgs.ToString());
+
+					EngineMappingsMatterSlice.WriteSliceSettingsFile(configFilePath);
+
+					commandArgs = $"-v -o \"{gcodeFilePath}\" -c \"{configFilePath}\"";
 
 					if (AggContext.OperatingSystem == OSType.Android
 						|| AggContext.OperatingSystem == OSType.Mac
