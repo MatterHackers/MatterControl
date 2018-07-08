@@ -92,8 +92,12 @@ namespace MatterHackers.MatterControl.DesignTools
 		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
+			bool changed = false;
 			using (RebuildLock())
 			{
+				InnerDiameter = agg_basics.Clamp(InnerDiameter, 0, OuterDiameter - .1, ref changed);
+				Sides = agg_basics.Clamp(Sides, 3, 360, ref changed);
+
 				var aabb = this.GetAxisAlignedBoundingBox();
 
 				var startingAngle = StartingAngle;
@@ -125,13 +129,16 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+			if (changed)
+			{
+				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
+			}
 		}
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
 			change.Context.GetEditRow(nameof(StartingAngle)).Visible = Advanced;
 			change.Context.GetEditRow(nameof(EndingAngle)).Visible = Advanced;
-			InnerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
 		}
 	}
 }

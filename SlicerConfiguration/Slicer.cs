@@ -258,16 +258,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					string commandArgs;
 
+					ActiveSliceSettings.Instance.SetValue("boolean_operations", mergeRules);
+
 					EngineMappingsMatterSlice.WriteSliceSettingsFile(configFilePath);
 
-					if (mergeRules == "")
-					{
-						commandArgs = $"-v -o \"{gcodeFilePath}\" -c \"{configFilePath}\"";
-					}
-					else
-					{
-						commandArgs = $"-b {mergeRules} -v -o \"{gcodeFilePath}\" -c \"{configFilePath}\"";
-					}
+					commandArgs = $"-v -o \"{gcodeFilePath}\" -c \"{configFilePath}\"";
 
 					foreach (var matrixAndFile in stlFileLocations)
 					{

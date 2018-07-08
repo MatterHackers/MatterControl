@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
@@ -77,8 +78,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
+			bool changed = false;
 			using (RebuildLock())
 			{
+				InnerDiameter = agg_basics.Clamp(InnerDiameter, 0, OuterDiameter - .1, ref changed);
+				Sides = agg_basics.Clamp(Sides, 3, 360, ref changed);
+				RingSides = agg_basics.Clamp(RingSides, 3, 360, ref changed);
+
 				var ringSides = RingSides;
 				var startingAngle = StartingAngle;
 				var endingAngle = EndingAngle;
@@ -123,6 +129,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+			if (changed)
+			{
+				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
+			}
 		}
 
 		public void UpdateControls(PublicPropertyChange change)
@@ -131,7 +141,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			change.Context.GetEditRow(nameof(EndingAngle)).Visible = Advanced;
 			change.Context.GetEditRow(nameof(RingSides)).Visible = Advanced;
 			change.Context.GetEditRow(nameof(RingPhaseAngle)).Visible = Advanced;
-			InnerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
 		}
 	}
 }

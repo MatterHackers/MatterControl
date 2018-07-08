@@ -27,12 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
+using System;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -133,8 +135,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
+			bool changed = false;
 			using (RebuildLock())
 			{
+				Sides = agg_basics.Clamp(Sides, 3, 360, ref changed);
+
 				var aabb = this.GetAxisAlignedBoundingBox();
 
 				if (!Advanced)
@@ -166,6 +171,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+			if (changed)
+			{
+				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
+			}
 		}
 
 		public void UpdateControls(PublicPropertyChange change)

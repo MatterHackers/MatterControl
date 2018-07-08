@@ -420,6 +420,21 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
+				void RefreshField(object s, InvalidateArgs e)
+				{
+					if (e.InvalidateType == InvalidateType.Properties)
+					{
+						int newValue = (int)property.Value;
+						if (newValue != field.IntValue)
+						{
+							field.IntValue = newValue;
+						}
+					}
+				}
+
+				object3D.Invalidated += RefreshField;
+				field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
+
 				rowContainer = CreateSettingsRow(property, field);
 			}
 			// create a bool editor

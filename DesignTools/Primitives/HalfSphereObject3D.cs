@@ -82,8 +82,12 @@ namespace MatterHackers.MatterControl.DesignTools
 		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
+			bool changed = false;
 			using (RebuildLock())
 			{
+				LatitudeSides = agg_basics.Clamp(LatitudeSides, 3, 180, ref changed);
+				LongitudeSides = agg_basics.Clamp(LongitudeSides, 3, 360, ref changed);
+
 				var aabb = this.GetAxisAlignedBoundingBox();
 
 				var radius = Diameter / 2;
@@ -107,6 +111,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+			if (changed)
+			{
+				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
+			}
 		}
 	}
 }
