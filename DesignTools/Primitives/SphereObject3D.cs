@@ -87,8 +87,12 @@ namespace MatterHackers.MatterControl.DesignTools
 		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
+			bool changed = false;
 			using (RebuildLock())
 			{
+				Sides = agg_basics.Clamp(Sides, 3, 360, ref changed);
+				LatitudeSides = agg_basics.Clamp(LatitudeSides, 3, 360, ref changed);
+
 				var aabb = this.GetAxisAlignedBoundingBox();
 
 				var startingAngle = StartingAngle;
@@ -127,6 +131,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+
+			if (changed)
+			{
+				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
+			}
 		}
 
 		public void UpdateControls(PublicPropertyChange change)

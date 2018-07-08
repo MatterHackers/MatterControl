@@ -74,8 +74,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
+			bool changed = false;
 			using (RebuildLock())
 			{
+				Sides = agg_basics.Clamp(Sides, 3, 180, ref changed);
 				var aabb = this.GetAxisAlignedBoundingBox();
 
 				var path = new VertexStorage();
@@ -99,6 +101,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+			if (changed)
+			{
+				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
+			}
 		}
 	}
 }
