@@ -36,6 +36,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
@@ -67,58 +68,80 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (scene.HasSelection)
 			{
-				await Task.Run(() =>
+				var selectedItem = scene.SelectedItem;
+				bool isGroupItemType = scene.HasSelection && selectedItem.Children.Count > 0;
+
+				// If not a Group ItemType, look for mesh volumes and split into distinct objects if found
+				if (isGroupItemType)
 				{
-					var selectedItem = scene.SelectedItem;
-					bool isGroupItemType = scene.HasSelection && selectedItem.Children.Count > 0;
-
-					// If not a Group ItemType, look for mesh volumes and split into distinct objects if found
-					if (!isGroupItemType 
-						&& !selectedItem.HasChildren()
-						&& selectedItem.Mesh != null)
-					{
-						var ungroupItem = scene.SelectedItem;
-						// clear the selection
-						scene.SelectedItem = null;
-						var ungroupMesh = ungroupItem.Mesh;
-
-						if (!ungroupMesh.Vertices.Sorted)
+					// Create and perform the delete operation
+					// Store the operation for undo/redo
+					scene.UndoBuffer.AddAndDo(new UngroupCommand(scene, selectedItem));
+				}
+				else if (!selectedItem.HasChildren()
+					&& selectedItem.Mesh != null)
+				{
+					await ApplicationController.Instance.Tasks.Execute(
+						"Ungroup".Localize(),
+						(reporter, cancellationToken) =>
 						{
-							ungroupMesh.CleanAndMergeMesh(CancellationToken.None);
-						}
+							var progressStatus = new ProgressStatus();
+							reporter.Report(progressStatus);
+							// clear the selection
+							scene.SelectedItem = null;
+							progressStatus.Status = "Copy".Localize();
+							reporter.Report(progressStatus);
+							var ungroupMesh = selectedItem.Mesh.Copy(cancellationToken, (progress0To1, processingState) =>
+							{
+								progressStatus.Progress0To1 = progress0To1 * .2;
+								progressStatus.Status = processingState;
+								reporter.Report(progressStatus);
+							});
+							progressStatus.Status = "Clean".Localize();
+							reporter.Report(progressStatus);
+							ungroupMesh.CleanAndMergeMesh(cancellationToken, 0, (progress0To1, processingState) =>
+							{
+								progressStatus.Progress0To1 = .2 + progress0To1 * .3;
+								progressStatus.Status = processingState;
+								reporter.Report(progressStatus);
+							});
+							using (selectedItem.RebuildLock())
+							{
+								selectedItem.Mesh = ungroupMesh;
+							}
 
-						// try to cut it up into multiple meshes
-						var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(ungroupMesh, CancellationToken.None, (double progress0To1, string processingState) =>
-						{
-							//view3DWidget.ReportProgressChanged(progress0To1 * .5, processingState);
+							// try to cut it up into multiple meshes
+							progressStatus.Status = "Split".Localize();
+							var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(ungroupMesh, cancellationToken, (double progress0To1, string processingState) =>
+							{
+								progressStatus.Progress0To1 = .5 + progress0To1 * .5;
+								progressStatus.Status = processingState;
+								reporter.Report(progressStatus);
+							});
+
+							if (discreetMeshes.Count == 1)
+							{
+								// restore the selection
+								scene.SelectedItem = selectedItem;
+								// No further processing needed, nothing to ungroup
+								return Task.CompletedTask;
+
+							}
+
+							// build the ungroup list
+							List<IObject3D> addItems = new List<IObject3D>(discreetMeshes.Select(mesh => new Object3D()
+							{
+								Mesh = mesh,
+								Matrix = selectedItem.Matrix,
+							}));
+
+							// add and do the undo data
+							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, addItems));
+
+							return Task.CompletedTask;
 						});
+				}
 
-						if (discreetMeshes.Count == 1)
-						{
-							// restore the selection
-							scene.SelectedItem = ungroupItem;
-							// No further processing needed, nothing to ungroup
-							return;
-						}
-
-						// build the ungroup list
-						List<IObject3D> addItems = new List<IObject3D>(discreetMeshes.Select(mesh => new Object3D()
-						{
-							Mesh = mesh,
-							Matrix = ungroupItem.Matrix,
-						}));
-
-						// add and do the undo data
-						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { ungroupItem }, addItems));
-					}
-
-					if (isGroupItemType)
-					{
-						// Create and perform the delete operation
-						// Store the operation for undo/redo
-						scene.UndoBuffer.AddAndDo(new UngroupCommand(scene, scene.SelectedItem));
-					}
-				});
 
 				// leave no selection
 				scene.SelectedItem = null;

@@ -150,8 +150,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(detailsPanel);
 
-			bool isExpanded = false;
-
 			// Add rich progress controls
 			if (taskDetails.Options?.RichProgressWidget?.Invoke() is GuiWidget guiWidget)
 			{
@@ -171,6 +169,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			SetExpansionMode(theme, detailsPanel, taskDetails.IsExpanded);
 
 			taskDetails.ProgressChanged += TaskDetails_ProgressChanged;
+			taskDetails.ReadyToReport = true;
 		}
 
 		public Color ProgressBackgroundColor
