@@ -66,16 +66,18 @@ namespace Markdig.Renderers.Agg.Inlines
 
 		public ImageLinkSimpleX(string url)
 		{
-			this.HAnchor = HAnchor.Fit;
+			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
 			this.Selectable = false;
 
 			this.Url = url;
 
-			if (true)
+			bool showAnimations = true;
+			if (showAnimations)
 			{
 				var imageSequence = new ImageSequence(icon);
-				var sequenceWidget = new ImageSequenceWidget(imageSequence);
+				//var sequenceWidget = new ImageSequenceWidget(imageSequence);
+				var sequenceWidget = new ImageSequenceWidgetResponsive(imageSequence);
 				this.AddChild(sequenceWidget);
 
 				if (url.StartsWith("http"))
@@ -86,7 +88,8 @@ namespace Markdig.Renderers.Agg.Inlines
 			else
 			{
 				var imageBuffer = new ImageBuffer(icon);
-				var imageWidget = new ImageWidget(imageBuffer);
+				//var imageWidget = new ImageWidget(imageBuffer);
+				var imageWidget = new ImageWidgetResponsive(imageBuffer);
 				this.AddChild(imageWidget);
 
 				if (url.StartsWith("http"))
