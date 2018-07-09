@@ -18,11 +18,6 @@ namespace Markdig.Renderers.Agg
 
 	public class ParagraphX : FlowLeftRightWithWrapping
 	{
-		public ParagraphX()
-		{
-			HAnchor = HAnchor.Fit;
-			VAnchor = VAnchor.Fit;
-		}
 	}
 
 	//public class ParagraphRenderer : 

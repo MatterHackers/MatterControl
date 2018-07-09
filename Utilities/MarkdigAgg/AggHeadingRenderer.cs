@@ -11,12 +11,13 @@ namespace Markdig.Renderers.Agg
 {
 	public class HeadingRowX : FlowLeftRightWithWrapping
 	{
+		public override HAnchor HAnchor { get => base.HAnchor; set => base.HAnchor = value; }
 		public HeadingRowX()
 		{
 			var theme = ApplicationController.Instance.Theme;
 
 			this.VAnchor = VAnchor.Fit;
-			this.HAnchor = HAnchor.Fit | HAnchor.Left;
+			this.HAnchor = HAnchor.Stretch;
 			this.Margin = new BorderDouble(0, 4, 0, 12);
 		}
 
