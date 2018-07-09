@@ -7,7 +7,7 @@ using MatterHackers.Agg.UI;
 
 namespace Markdig.Renderers.Agg.Inlines
 {
-	public class LineBreakX : AutoFit{ }
+	public class LineBreakX : AutoFit, IHardBreak { }
 	public class LineBreakSoftX : AutoFit{ }
 
 	/// <summary>
