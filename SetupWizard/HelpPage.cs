@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl
 #if !__ANDROID__
 				if (treeView.SelectedNode.Tag is string path)
 				{
-					markdownWidget.Load(new Uri($"https://matterhackers.github.io/MatterControl-Help/{path}"));
+					markdownWidget.LoadUri(new Uri($"https://matterhackers.github.io/MatterControl-Help/{path}"));
 				}
 #endif
 			};
