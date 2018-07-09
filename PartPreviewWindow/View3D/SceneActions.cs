@@ -97,6 +97,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								progressStatus.Status = processingState;
 								reporter.Report(progressStatus);
 							});
+							if(cancellationToken.IsCancellationRequested)
+							{
+								return Task.CompletedTask;
+							}
 							progressStatus.Status = "Clean".Localize();
 							reporter.Report(progressStatus);
 							ungroupMesh.CleanAndMergeMesh(cancellationToken, 0, (progress0To1, processingState) =>
@@ -105,6 +109,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								progressStatus.Status = processingState;
 								reporter.Report(progressStatus);
 							});
+							if (cancellationToken.IsCancellationRequested)
+							{
+								return Task.CompletedTask;
+							}
 							using (selectedItem.RebuildLock())
 							{
 								selectedItem.Mesh = ungroupMesh;
@@ -118,6 +126,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								progressStatus.Status = processingState;
 								reporter.Report(progressStatus);
 							});
+							if (cancellationToken.IsCancellationRequested)
+							{
+								return Task.CompletedTask;
+							}
 
 							if (discreetMeshes.Count == 1)
 							{
