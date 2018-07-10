@@ -260,7 +260,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string commandArgs;
 
 					ActiveSliceSettings.Instance.SetValue("boolean_operations", mergeRules);
-					ActiveSliceSettings.Instance.SetValue("stls_to_load", mergeRules);
 
 					var matrixAndMeshArgs = new StringBuilder(); ;
 					foreach (var matrixAndFile in stlFileLocations)
