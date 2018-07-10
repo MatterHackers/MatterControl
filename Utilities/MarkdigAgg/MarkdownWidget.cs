@@ -84,6 +84,7 @@ namespace Markdig.Agg
 		public void LoadUri(Uri uri)
 		{
 			var webClient = new WebClient();
+			markdownDocument.BaseUri = uri;
 			this.Markdown = webClient.DownloadString(uri);
 		}
 
