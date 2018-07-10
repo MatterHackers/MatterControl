@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using Markdig.Agg;
@@ -20,16 +21,18 @@ namespace Markdig.Renderers.Agg.Inlines
 	public class TextLinkX : FlowLayoutWidget
 	{
 		private LinkInline linkInline;
+		private string url;
+		private AggRenderer aggRenderer;
 
-		public TextLinkX(LinkInline linkInline)
+		public TextLinkX(AggRenderer renderer, string url, LinkInline linkInline)
 		{
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
 			this.Cursor = Cursors.Hand;
 			this.linkInline = linkInline;
-
+			this.url = url;
+			this.aggRenderer = renderer;
 		}
-
 		public override void OnClick(MouseEventArgs mouseEvent)
 		{
 			if (linkInline.Url.StartsWith("http", StringComparison.OrdinalIgnoreCase))
@@ -38,8 +41,10 @@ namespace Markdig.Renderers.Agg.Inlines
 			}
 			else
 			{
-				// Inline link?
-				Debugger.Break();
+				if (aggRenderer.RootWidget.Parents<MarkdownWidget>().FirstOrDefault() is MarkdownWidget markdownWidget)
+				{
+					markdownWidget.LoadUri(new Uri(url));
+				}
 			}
 
 			base.OnClick(mouseEvent);
@@ -204,13 +209,14 @@ namespace Markdig.Renderers.Agg.Inlines
 				});
 			}
 
-			if (link.IsImage) //link.IsImage)
+			if (link.IsImage)
 			{
-				renderer.WriteInline(new ImageLinkSimpleX(url)); // new ImageLinkAdvancedX(url)); //new InlineUIContainer(image));
+				renderer.WriteInline(new ImageLinkSimpleX(url));
 			}
 			else
 			{
-				renderer.Push(new TextLinkX(link)); // hyperlink);
+
+				renderer.Push(new TextLinkX(renderer, url, link));
 				renderer.WriteChildren(link);
 				renderer.Pop();
 			}
