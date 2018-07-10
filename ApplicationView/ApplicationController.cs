@@ -1712,6 +1712,7 @@ namespace MatterHackers.MatterControl
 		public List<BedConfig> Workspaces { get; } = new List<BedConfig>();
 
 		public AppViewState ViewState { get; } = new AppViewState();
+		public Uri HelpArticleSource { get; set; }
 
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 

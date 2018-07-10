@@ -228,7 +228,7 @@ namespace MatterHackers.MatterControl
 			var markdownWidget = new MarkdownWidget()
 			{
 				BackgroundColor = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.White, 20)),
-				Padding = new BorderDouble(left: theme.DefaultContainerPadding)
+				Padding = new BorderDouble(left: theme.DefaultContainerPadding / 2)
 			};
 
 			treeView = new TreeView(theme)
@@ -238,9 +238,9 @@ namespace MatterHackers.MatterControl
 			};
 			treeView.AfterSelect += (s, e) =>
 			{
-				if (treeView.SelectedNode.Tag is string path)
+				if (treeView.SelectedNode.Tag is HelpArticle article)
 				{
-					markdownWidget.LoadUri(new Uri($"https://matterhackers.github.io/MatterControl-Help/{path}"));
+					markdownWidget.LoadUri(new Uri(ApplicationController.Instance.HelpArticleSource, article.Path), sourceArticle: article);
 				}
 			};
 
@@ -305,7 +305,7 @@ namespace MatterHackers.MatterControl
 			var treeNode = new TreeNode(false)
 			{
 				Text = container.Name,
-				Tag = container.Path
+				Tag = container
 			};
 
 			foreach (var item in container.Children.OrderBy(i => i.Children.Count == 0).ThenBy(i => i.Name))
@@ -319,7 +319,7 @@ namespace MatterHackers.MatterControl
 					treeNode.Nodes.Add(new TreeNode(false)
 					{
 						Text = item.Name,
-						Tag = item.Path
+						Tag = item
 					});
 				}
 			}
