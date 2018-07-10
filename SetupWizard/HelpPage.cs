@@ -299,6 +299,7 @@ namespace MatterHackers.MatterControl
 			var treeNode = new TreeNode(false)
 			{
 				Text = container.Name,
+				Tag = container.Path
 			};
 
 			foreach (var item in container.Children.OrderBy(i => i.Children.Count == 0).ThenBy(i => i.Name))
