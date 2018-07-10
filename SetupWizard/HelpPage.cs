@@ -228,7 +228,8 @@ namespace MatterHackers.MatterControl
 #else
 			var markdownWidget = new MarkdownWidget()
 			{
-				BackgroundColor = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.White, 20))
+				BackgroundColor = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.White, 20)),
+				Padding = new BorderDouble(left: theme.DefaultContainerPadding)
 			};
 #endif
 
@@ -271,6 +272,12 @@ namespace MatterHackers.MatterControl
 						}
 					}
 				}
+
+
+				if (treeView.SelectedNode == null)
+				{
+					treeView.SelectedNode = rootNode;
+				}
 			};
 
 			double maxMenuItemWidth = 0;
@@ -289,6 +296,8 @@ namespace MatterHackers.MatterControl
 				SplitterBackground = theme.SplitterBackground
 			};
 			splitter.SplitterDistance = maxMenuItemWidth + 130;
+
+			splitter.Panel1.Padding = new BorderDouble(theme.DefaultContainerPadding).Clone(right: 2);
 			splitter.Panel1.AddChild(treeView);
 			splitter.Panel2.AddChild(markdownWidget);
 			guideContainer.AddChild(splitter);
@@ -299,6 +308,7 @@ namespace MatterHackers.MatterControl
 			var treeNode = new TreeNode(false)
 			{
 				Text = container.Name,
+				Tag = container.Path
 			};
 
 			foreach (var item in container.Children.OrderBy(i => i.Children.Count == 0).ThenBy(i => i.Name))
