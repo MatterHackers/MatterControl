@@ -156,6 +156,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var selectedItemType = item.GetType();
 					var selectedItem = item;
 
+					var menuTheme = ApplicationController.Instance.MenuTheme;
+
 					foreach (var nodeOperation in ApplicationController.Instance.Graph.Operations)
 					{
 						foreach (var type in nodeOperation.MappedTypes)
@@ -164,7 +166,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
 								&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
 							{
-								var button = popupMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke()?.CreateScaledImage(16, 16));
+								var button = popupMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme));
 								button.Click += (s, e) =>
 								{
 									nodeOperation.Operation(selectedItem, sceneContext.Scene).ConfigureAwait(false);

@@ -43,20 +43,35 @@ namespace MatterHackers.MatterControl.Library
 		public Func<IObject3D, InteractiveScene, Task> Operation { get; set; }
 		public Func<IObject3D, bool> IsEnabled { get; set; }
 		public Func<IObject3D, bool> IsVisible { get; set; }
-		public Func<ImageBuffer> IconCollector { get; set; }
+		public Func<ThemeConfig, ImageBuffer> IconCollector { get; set; }
+		public Type ResultType { get; internal set; }
 	}
 
 	public class GraphConfig
 	{
 		private List<NodeOperation> _operations = new List<NodeOperation>();
+		private ApplicationController applicationController;
 
 		public IEnumerable<NodeOperation> Operations => _operations;
 
-		public void RegisterOperation(Type type, string title, Func<IObject3D, InteractiveScene, Task> operation, Func<IObject3D, bool> isEnabled = null, Func<IObject3D, bool> isVisible = null, Func<ImageBuffer> iconCollector = null)
+		public GraphConfig(ApplicationController applicationController)
 		{
+			this.applicationController = applicationController;
+		}
+
+		public void RegisterOperation(Type type, Type resultType, string title, Func<IObject3D, InteractiveScene, Task> operation, Func<IObject3D, bool> isEnabled = null, Func<IObject3D, bool> isVisible = null, Func<ThemeConfig, ImageBuffer> iconCollector = null)
+		{
+			var thumbnails = applicationController.Thumbnails;
+
+			if (!thumbnails.OperationIcons.ContainsKey(resultType))
+			{
+				thumbnails.OperationIcons.Add(resultType, iconCollector(applicationController.Theme));
+			}
+
 			_operations.Add(new NodeOperation()
 			{
 				MappedTypes = new List<Type> { type },
+				ResultType = resultType,
 				Title = title,
 				Operation = operation,
 				IsEnabled = isEnabled,

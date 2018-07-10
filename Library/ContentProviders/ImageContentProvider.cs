@@ -101,6 +101,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			return await LoadImage(item);
 		}
 
-		public ImageBuffer DefaultImage => AggContext.StaticData.LoadIcon("140.png");
+		public ImageBuffer DefaultImage => AggContext.StaticData.LoadIcon("140.png", 16, 16);
 	}
 }
