@@ -191,7 +191,6 @@ namespace MatterHackers.MatterControl
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
-				Padding = theme.DefaultContainerPadding
 			};
 
 			var guideTab = new ToolTab("Guides".Localize(), tabControl, guideSectionContainer, theme, hasClose: false)
@@ -224,21 +223,13 @@ namespace MatterHackers.MatterControl
 
 			sequence.AddImage(new ImageBuffer(1, 1));
 
-			var rightPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch,
-				Padding = theme.DefaultContainerPadding
-			};
-
 #if __ANDROID__
 			var description = new GuiWidget();
 #else
 			var markdownWidget = new MarkdownWidget()
 			{
-				Margin = new BorderDouble(10, 4, 10, 10),
+				BackgroundColor = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.White, 20))
 			};
-			rightPanel.AddChild(markdownWidget);
 #endif
 
 			treeView = new TreeView(theme)
@@ -299,7 +290,7 @@ namespace MatterHackers.MatterControl
 			};
 			splitter.SplitterDistance = maxMenuItemWidth + 130;
 			splitter.Panel1.AddChild(treeView);
-			splitter.Panel2.AddChild(rightPanel);
+			splitter.Panel2.AddChild(markdownWidget);
 			guideContainer.AddChild(splitter);
 		}
 
