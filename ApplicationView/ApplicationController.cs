@@ -2254,7 +2254,9 @@ namespace MatterHackers.MatterControl
 			{
 				try
 				{
-					while (!taskDetails.ReadyToReport)
+					int waitMs = 0;
+					while (!taskDetails.ReadyToReport
+					 && waitMs++ < 100)
 					{
 						Thread.Sleep(1);
 					}
