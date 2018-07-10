@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -38,44 +38,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
-	public class HeaderEdit : Toolbar
-	{
-		public event EventHandler EditClicked;
-
-		public HeaderEdit(string title, ThemeConfig theme, string automationName, bool boldFont = false, int pointSize = -1, string editToolTipText = null)
-			: base(theme)
-		{
-			this.Padding = theme.ToolbarPadding;
-			this.HAnchor = HAnchor.Stretch;
-			this.VAnchor = VAnchor.Fit;
-
-			var titleText = new TextWidget(title, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: pointSize > 0 ? pointSize : theme.DefaultFontSize, bold: boldFont)
-			{
-				VAnchor = VAnchor.Center,
-				AutoExpandBoundsToText = true,
-				EllipsisIfClipped = true,
-				Margin = new BorderDouble(left: 5)
-			};
-			this.AddChild(titleText);
-
-			this.ActionArea.VAnchor = VAnchor.Stretch;
-			this.ActionArea.MinimumSize = new Vector2(0, titleText.Height);
-
-			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
-			{
-				ToolTipText = editToolTipText ?? "Edit".Localize(),
-				Name = automationName + " Edit"
-			};
-			editButton.Click += (s, e) =>
-			{
-				this.EditClicked?.Invoke(this, null);
-			};
-			this.SetRightAnchorItem(editButton);
-
-			this.ActionArea.Margin = this.ActionArea.Margin.Clone(right: editButton.Width + 5);
-		}
-	}
-
 	public class InlineTitleEdit : Toolbar
 	{
 		public event EventHandler TitleChanged;
