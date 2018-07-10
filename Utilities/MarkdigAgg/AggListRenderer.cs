@@ -45,7 +45,7 @@ namespace Markdig.Renderers.Agg
 
 			base.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon("bullet.png", theme.InvertIcons))
 			{
-				Margin = new BorderDouble(top: 1), //3,
+				Margin = new BorderDouble(top: 1, left: 10),
 				VAnchor = VAnchor.Top,
 			});
 

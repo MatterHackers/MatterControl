@@ -30,6 +30,9 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Net;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 
 namespace Markdig.Agg
@@ -81,12 +84,17 @@ namespace Markdig.Agg
 			this.AddChild(contentPanel);
 		}
 
-		public void LoadUri(Uri uri)
+		public void LoadUri(Uri uri, HelpArticle sourceArticle = null)
 		{
 			var webClient = new WebClient();
 			markdownDocument.BaseUri = uri;
+
+			this.sourceArticle = sourceArticle;
+
 			this.Markdown = webClient.DownloadString(uri);
 		}
+
+		private HelpArticle sourceArticle;
 
 		/// <summary>
 		/// Gets or sets the markdown to display.
@@ -105,6 +113,19 @@ namespace Markdig.Agg
 
 					this.Width = 10;
 					this.ScrollPositionFromTop = Vector2.Zero;
+
+					var theme = ApplicationController.Instance.Theme;
+
+					// Add automatic header bar and edit button for HelpArticle pages
+					if (sourceArticle != null)
+					{
+						var pageHeaderEdit = new HeaderEdit(sourceArticle.Name, theme, sourceArticle.Name, boldFont: true, pointSize: theme.FontSize14, editToolTipText: "Edit Page".Localize());
+						pageHeaderEdit.EditClicked += (s, e) =>
+						{
+							ApplicationController.Instance.LaunchBrowser($"https://github.com/MatterHackers/MatterControl-Help/blob/master/input/{sourceArticle.Path}");
+						};
+						contentPanel.AddChild(pageHeaderEdit);
+					}
 
 					// Parse and reconstruct
 					markdownDocument.Markdown = value;
