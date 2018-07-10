@@ -216,6 +216,7 @@ namespace MatterHackers.MatterControl
 
 		private void AddGuides(FlowLayoutWidget guideContainer)
 		{
+#if !__ANDROID__
 			var sequence = new ImageSequence()
 			{
 				FramesPerSecond = 3,
@@ -223,15 +224,12 @@ namespace MatterHackers.MatterControl
 
 			sequence.AddImage(new ImageBuffer(1, 1));
 
-#if __ANDROID__
 			var description = new GuiWidget();
-#else
 			var markdownWidget = new MarkdownWidget()
 			{
 				BackgroundColor = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.White, 20)),
 				Padding = new BorderDouble(left: theme.DefaultContainerPadding)
 			};
-#endif
 
 			treeView = new TreeView(theme)
 			{
@@ -240,12 +238,10 @@ namespace MatterHackers.MatterControl
 			};
 			treeView.AfterSelect += (s, e) =>
 			{
-#if !__ANDROID__
 				if (treeView.SelectedNode.Tag is string path)
 				{
 					markdownWidget.LoadUri(new Uri($"https://matterhackers.github.io/MatterControl-Help/{path}"));
 				}
-#endif
 			};
 
 			TreeNode rootNode = null;
@@ -301,6 +297,7 @@ namespace MatterHackers.MatterControl
 			splitter.Panel1.AddChild(treeView);
 			splitter.Panel2.AddChild(markdownWidget);
 			guideContainer.AddChild(splitter);
+#endif
 		}
 
 		private TreeNode ProcessTree(HelpArticle container)
