@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using ClipperLib;
@@ -50,12 +51,27 @@ namespace MatterHackers.MatterControl
 	{
 		public static List<Mesh> SplitVolumesIntoMeshes(Mesh meshToSplit, CancellationToken cancellationToken, Action<double, string> reportProgress)
 		{
+			Stopwatch maxProgressReport = Stopwatch.StartNew();
 			List<Mesh> discreetVolumes = new List<Mesh>();
 			HashSet<Face> facesThatHaveBeenAdded = new HashSet<Face>();
 			Mesh meshFromCurrentVolume = null;
 			Stack<Face> attachedFaces = new Stack<Face>();
-			for (int faceIndex = 0; faceIndex < meshToSplit.Faces.Count; faceIndex++)
+			int faceCount = meshToSplit.Faces.Count;
+			for (int faceIndex = 0; faceIndex < faceCount; faceIndex++)
 			{
+				if (reportProgress != null)
+				{
+					if (maxProgressReport.ElapsedMilliseconds > 200)
+					{
+						reportProgress(faceIndex / (double)faceCount, "Merging Mesh Edges");
+						maxProgressReport.Restart();
+						if (cancellationToken.IsCancellationRequested)
+						{
+							return null;
+						}
+					}
+				}
+
 				Face currentFace = meshToSplit.Faces[faceIndex];
 				// If this face as not been added to any volume, create a new volume and add all of the attached faces.
 				if (!facesThatHaveBeenAdded.Contains(currentFace))
