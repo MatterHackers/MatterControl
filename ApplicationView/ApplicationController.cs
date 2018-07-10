@@ -541,6 +541,8 @@ namespace MatterHackers.MatterControl
 			}
 
 			this.Thumbnails.OperationIcons = operationIconsByType;
+
+			operationIconsByType.Add(typeof(ImageObject3D), AggContext.StaticData.LoadIcon("140.png", 16, 16, theme.InvertIcons));
 		}
 
 		public ImageSequence GetProcessingSequence(Color color)
@@ -702,13 +704,14 @@ namespace MatterHackers.MatterControl
 			Object3D.AssetsPath = ApplicationDataStorage.Instance.LibraryAssetsPath;
 
 			this.Library = new LibraryConfig();
-			this.Graph = new GraphConfig();
+			this.Graph = new GraphConfig(this);
 			this.Library.ContentProviders.Add(new[] { "stl", "obj", "amf", "mcx" }, new MeshContentProvider());
 			this.Library.ContentProviders.Add("gcode", new GCodeContentProvider());
 			this.Library.ContentProviders.Add(new[] { "png", "gif", "jpg", "jpeg" }, new ImageContentProvider());
 
 			this.Graph.RegisterOperation(
 				typeof(ImageObject3D),
+				typeof(ImageToPathObject3D),
 				"Image to Path".Localize(),
 				(sceneItem, scene) =>
 				{
@@ -721,10 +724,11 @@ namespace MatterHackers.MatterControl
 
 					return Task.CompletedTask;
 				},
-				iconCollector: () => AggContext.StaticData.LoadIcon("noun_479927.png", ApplicationController.Instance.MenuTheme.InvertIcons));
+				iconCollector: (theme) => AggContext.StaticData.LoadIcon("noun_479927.png", theme.InvertIcons));
 
 			this.Graph.RegisterOperation(
 				typeof(IObject3D),
+				typeof(TranslateObject3D),
 				"Translate".Localize(),
 				(sceneItem, scene) =>
 				{
@@ -738,10 +742,11 @@ namespace MatterHackers.MatterControl
 
 					return Task.CompletedTask;
 				},
-				iconCollector: () => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), ApplicationController.Instance.MenuTheme.InvertIcons));
+				iconCollector: (theme) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16, theme.InvertIcons));
 
 			this.Graph.RegisterOperation(
 				typeof(IObject3D),
+				typeof(RotateObject3D_2),
 				"Rotate".Localize(),
 				(sceneItem, scene) =>
 				{
@@ -755,10 +760,11 @@ namespace MatterHackers.MatterControl
 
 					return Task.CompletedTask;
 				},
-				iconCollector: () => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), ApplicationController.Instance.MenuTheme.InvertIcons));
+				iconCollector: (theme) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16, theme.InvertIcons));
 
 			this.Graph.RegisterOperation(
 				typeof(IObject3D),
+				typeof(ScaleObject3D),
 				"Scale".Localize(),
 				(sceneItem, scene) =>
 				{
@@ -772,10 +778,11 @@ namespace MatterHackers.MatterControl
 
 					return Task.CompletedTask;
 				},
-				iconCollector: () => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, ApplicationController.Instance.MenuTheme.InvertIcons));
+				iconCollector: (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons));
 
 			this.Graph.RegisterOperation(
 				typeof(IObject3D),
+				typeof(MirrorObject3D),
 				"Mirror".Localize(),
 				(sceneItem, scene) =>
 				{
@@ -784,10 +791,11 @@ namespace MatterHackers.MatterControl
 
 					return Task.CompletedTask;
 				},
-				iconCollector: () => AggContext.StaticData.LoadIcon("mirror_32x32.png", ApplicationController.Instance.MenuTheme.InvertIcons));
+				iconCollector: (theme) => AggContext.StaticData.LoadIcon("mirror_32x32.png", 16, 16, theme.InvertIcons));
 
 			this.Graph.RegisterOperation(
 				typeof(IPathObject),
+				typeof(LinearExtrudeObject3D),
 				"Linear Extrude".Localize(),
 				(sceneItem, scene) =>
 				{
@@ -800,10 +808,11 @@ namespace MatterHackers.MatterControl
 
 					return Task.CompletedTask;
 				},
-				iconCollector: () => AggContext.StaticData.LoadIcon("noun_84751.png", ApplicationController.Instance.MenuTheme.InvertIcons));
+				iconCollector: (theme) => AggContext.StaticData.LoadIcon("noun_84751.png", theme.InvertIcons));
 
 			this.Graph.RegisterOperation(
 				typeof(IPathObject),
+				typeof(SmoothPathObject3D),
 				"Smooth Path".Localize(),
 				(sceneItem, scene) =>
 				{
@@ -816,10 +825,11 @@ namespace MatterHackers.MatterControl
 
 					return Task.CompletedTask;
 				},
-				iconCollector: () => AggContext.StaticData.LoadIcon("noun_479927.png", ApplicationController.Instance.MenuTheme.InvertIcons));
+				iconCollector: (theme) => AggContext.StaticData.LoadIcon("noun_479927.png", theme.InvertIcons));
 
 			this.Graph.RegisterOperation(
 				typeof(IObject3D),
+				typeof(BaseObject3D),
 				"Add Base".Localize(),
 				(item, scene) =>
 				{
@@ -847,7 +857,7 @@ namespace MatterHackers.MatterControl
 					return Task.CompletedTask;
 				},
 				isVisible: (sceneItem) => sceneItem.Children.Any((i) => i is IPathObject),
-				iconCollector: () => AggContext.StaticData.LoadIcon("noun_55060.png", ApplicationController.Instance.MenuTheme.InvertIcons));
+				iconCollector: (theme) => AggContext.StaticData.LoadIcon("noun_55060.png", theme.InvertIcons));
 
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
@@ -1007,12 +1017,12 @@ namespace MatterHackers.MatterControl
 			PrinterConnection.AnyConnectionSucceeded.RegisterEvent((s, e) =>
 			{
 				// run the print leveling wizard if we need to for this printer
-				var printer = ApplicationController.Instance.ActivePrinters.Where(p => p.Connection == s).FirstOrDefault();
+				var printer = this.ActivePrinters.Where(p => p.Connection == s).FirstOrDefault();
 				if (printer != null)
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, this.Theme);
+						this.RunAnyRequiredPrinterSetup(printer, this.Theme);
 					});
 				}
 			}, ref unregisterEvents);
@@ -1416,7 +1426,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			if (ApplicationController.Instance.ActivePrinter is PrinterConfig printer
+			if (this.ActivePrinter is PrinterConfig printer
 				&& printer.Settings.PrinterSelected
 				&& printer.Settings.GetValue<bool>(SettingsKey.auto_connect))
 			{
@@ -1740,7 +1750,7 @@ namespace MatterHackers.MatterControl
 			try
 			{
 				// If leveling is required or is currently on
-				if(ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, this.Theme))
+				if(this.RunAnyRequiredPrinterSetup(printer, this.Theme))
 				{
 					// We need to calibrate. So, don't print this part.
 					return;
@@ -1802,7 +1812,7 @@ namespace MatterHackers.MatterControl
 					{
 						this.ActivePrinter.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
 
-						(bool slicingSucceeded, string finalPath) = await ApplicationController.Instance.SliceItemLoadOutput(
+						(bool slicingSucceeded, string finalPath) = await this.SliceItemLoadOutput(
 							printer,
 							printer.Bed.Scene,
 							gcodeFilePath);
@@ -1834,7 +1844,7 @@ namespace MatterHackers.MatterControl
 		{
 			string layerDetails = (printer.Bed.LoadedGCode?.LayerCount > 0) ? $" of {printer.Bed.LoadedGCode.LayerCount}" : "";
 
-			ApplicationController.Instance.Tasks.Execute(
+			this.Tasks.Execute(
 				"Printing".Localize(),
 				(reporterB, cancellationTokenB) =>
 				{
@@ -1867,7 +1877,7 @@ namespace MatterHackers.MatterControl
 				taskActions: new RunningTaskOptions()
 				{
 					ExpansionSerializationKey = $"{nameof(MonitorPrintTask)}_expanded",
-					RichProgressWidget = () => PrinterTabPage.PrintProgressWidget(printer, ApplicationController.Instance.Theme),
+					RichProgressWidget = () => PrinterTabPage.PrintProgressWidget(printer, this.Theme),
 					PauseAction = () => UiThread.RunOnIdle(() =>
 					{
 						printer.Connection.RequestPause();
@@ -1878,7 +1888,7 @@ namespace MatterHackers.MatterControl
 					}),
 					StopAction = () => UiThread.RunOnIdle(() =>
 					{
-						ApplicationController.Instance.ConditionalCancelPrint();
+						this.ConditionalCancelPrint();
 					})
 				});
 		}
@@ -1961,7 +1971,7 @@ namespace MatterHackers.MatterControl
 			// Slice
 			bool slicingSucceeded = false;
 
-			await ApplicationController.Instance.Tasks.Execute("Slicing".Localize(), async (reporter, cancellationToken) =>
+			await this.Tasks.Execute("Slicing".Localize(), async (reporter, cancellationToken) =>
 			{
 				slicingSucceeded = await Slicer.SliceItem(
 					object3D,
@@ -2005,7 +2015,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			await ApplicationController.Instance.Tasks.Execute("Loading GCode".Localize(), (innerProgress, token) =>
+			await this.Tasks.Execute("Loading GCode".Localize(), (innerProgress, token) =>
 			{
 				var status = new ProgressStatus();
 

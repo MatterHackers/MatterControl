@@ -45,6 +45,11 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 	[ShowUpdateButton]
 	public class LithophaneObject3D : Object3D
 	{
+		public LithophaneObject3D()
+		{
+			this.Name = "Lithophane".Localize();
+		}
+
 		[JsonIgnore]
 		public ImageObject3D Image => this.Children.OfType<ImageObject3D>().FirstOrDefault();
 
