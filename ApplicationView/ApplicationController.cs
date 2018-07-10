@@ -2187,8 +2187,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public bool ReadyToReport { get; internal set; }
-
 		public void Report(ProgressStatus progressStatus)
 		{
 			this.ProgressChanged?.Invoke(this, progressStatus);
@@ -2254,13 +2252,6 @@ namespace MatterHackers.MatterControl
 			{
 				try
 				{
-					int waitMs = 0;
-					while (!taskDetails.ReadyToReport
-					 && waitMs++ < 100)
-					{
-						Thread.Sleep(1);
-					}
-
 					await func?.Invoke(taskDetails, tokenSource.Token);
 				}
 				catch

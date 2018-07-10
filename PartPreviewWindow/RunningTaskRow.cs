@@ -169,7 +169,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			SetExpansionMode(theme, detailsPanel, taskDetails.IsExpanded);
 
 			taskDetails.ProgressChanged += TaskDetails_ProgressChanged;
-			taskDetails.ReadyToReport = true;
 		}
 
 		public Color ProgressBackgroundColor
