@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -38,18 +38,18 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
-	public class HeaderEdit : Toolbar
+	public class HelpArticleHeader : Toolbar
 	{
 		public event EventHandler EditClicked;
 
-		public HeaderEdit(string title, ThemeConfig theme, string automationName, bool boldFont = false, int pointSize = -1, string editToolTipText = null)
+		public HelpArticleHeader(HelpArticle helpArticle, ThemeConfig theme, bool boldFont = false, int pointSize = -1, string editToolTipText = null)
 			: base(theme)
 		{
 			this.Padding = theme.ToolbarPadding;
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
 
-			var titleText = new TextWidget(title, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: pointSize > 0 ? pointSize : theme.DefaultFontSize, bold: boldFont)
+			var titleText = new TextWidget(helpArticle.Name, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: pointSize > 0 ? pointSize : theme.DefaultFontSize, bold: boldFont)
 			{
 				VAnchor = VAnchor.Center,
 				AutoExpandBoundsToText = true,
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
 			{
 				ToolTipText = editToolTipText ?? "Edit".Localize(),
-				Name = automationName + " Edit"
+				Name = helpArticle.Name + " Edit"
 			};
 			editButton.Click += (s, e) =>
 			{

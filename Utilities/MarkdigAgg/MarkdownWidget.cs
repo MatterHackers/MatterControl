@@ -116,15 +116,15 @@ namespace Markdig.Agg
 
 					var theme = ApplicationController.Instance.Theme;
 
-					// Add automatic header bar and edit button for HelpArticle pages
+					// Add header/edit button for HelpArticle pages
 					if (sourceArticle != null)
 					{
-						var pageHeaderEdit = new HeaderEdit(sourceArticle.Name, theme, sourceArticle.Name, boldFont: true, pointSize: theme.FontSize14, editToolTipText: "Edit Page".Localize());
-						pageHeaderEdit.EditClicked += (s, e) =>
+						var helpArticleHeader = new HelpArticleHeader(sourceArticle, theme, boldFont: true, pointSize: theme.FontSize14, editToolTipText: "Edit Page".Localize());
+						helpArticleHeader.EditClicked += (s, e) =>
 						{
 							ApplicationController.Instance.LaunchBrowser($"https://github.com/MatterHackers/MatterControl-Help/blob/master/input/{sourceArticle.Path}");
 						};
-						contentPanel.AddChild(pageHeaderEdit);
+						contentPanel.AddChild(helpArticleHeader);
 					}
 
 					// Parse and reconstruct
