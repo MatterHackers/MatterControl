@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			contentRow.AddChild(createPrinterNameContainer());
 
 			//Construct buttons
-			nextButton = theme.CreateDialogButton("Save & Continue".Localize());
+			nextButton = theme.CreateDialogButton("Next".Localize());
 			nextButton.Name = "Save & Continue Button";
 			nextButton.Click += async (s, e) =>
 			{
