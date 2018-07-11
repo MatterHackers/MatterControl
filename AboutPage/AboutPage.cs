@@ -177,9 +177,16 @@ namespace MatterHackers.MatterControl
 
 			this.AddPageAction(feedbackButton, highlightFirstAction: false);
 
+			contentRow.AddChild(
+				new TextWidget("Copyright © 2018 MatterHackers, Inc.", textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
+				{
+					HAnchor = HAnchor.Center,
+				});
+
 			var siteLink = new LinkLabel("www.matterhackers.com", theme)
 			{
 				HAnchor = HAnchor.Center,
+				TextColor = theme.Colors.PrimaryTextColor
 			};
 			siteLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
@@ -187,22 +194,13 @@ namespace MatterHackers.MatterControl
 			});
 			contentRow.AddChild(siteLink);
 
-			contentRow.AddChild(
-				new TextWidget("Copyright © 2018 MatterHackers, Inc.", textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
-				{
-					HAnchor = HAnchor.Center,
-				});
-
-			// theme.LinkButtonFactory.fontSize = theme.DefaultFontSize;
-			var clearCacheLink = new LinkLabel("Clear Cache".Localize(), theme)
-			{
-				HAnchor = HAnchor.Center,
-			};
+			var clearCacheLink = theme.CreateDialogButton("Clear Cache".Localize());
 			clearCacheLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				CacheDirectory.DeleteCacheData();
 			});
-			contentRow.AddChild(clearCacheLink);
+
+			this.AddPageAction(clearCacheLink, highlightFirstAction: false);
 		}
 
 		private class LazyLicenseText : GuiWidget
