@@ -49,7 +49,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public PartPreviewContent()
 			: base(FlowDirection.TopToBottom)
 		{
-			var printer = ApplicationController.Instance.ActivePrinter;
 			var theme = ApplicationController.Instance.Theme;
 
 			this.AnchorAll();
@@ -254,7 +253,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Add a tab for the current printer
 			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
-				this.CreatePrinterTab(printer, theme);
+				this.CreatePrinterTab(ApplicationController.Instance.ActivePrinter, theme);
 			}
 
 			// Restore active tabs
