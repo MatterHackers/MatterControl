@@ -3,6 +3,7 @@
 // See the LICENSE.md file in the project root for more information.
 
 using Markdig.Syntax;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 
 namespace Markdig.Renderers.Agg
@@ -26,7 +27,11 @@ namespace Markdig.Renderers.Agg
 		/// <inheritdoc/>
 		protected override void Write(AggRenderer renderer, ParagraphBlock obj)
 		{
-			var paragraph = new ParagraphX();
+			var paragraph = new ParagraphX()
+			{
+				RowMargin = 0,
+				RowPadding = 3
+			};
 
 			renderer.Push(paragraph);
 			renderer.WriteLeafInline(obj);

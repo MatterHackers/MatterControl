@@ -7,9 +7,6 @@ using MatterHackers.Agg.UI;
 
 namespace Markdig.Renderers.Agg.Inlines
 {
-	// TODO: Placeholder only - figure out how to use WriteText
-	public class LiteralInlineX : AutoFit{ }
-
 	/// <summary>
 	/// A Agg renderer for a <see cref="LiteralInline"/>.
 	/// </summary>
