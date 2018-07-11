@@ -213,7 +213,6 @@
     <Compile Include="ConfigurationPage\ApplicationSettings\ThemePreviewButton.cs" />
     <Compile Include="ControlElements\MHNumberEdit.cs" />
     <Compile Include="ControlElements\MHPasswordTextEditWidget.cs" />
-    <Compile Include="ControlElements\TextImageWidget.cs" />
     <Compile Include="CustomWidgets\DockingTabControl.cs" />
     <Compile Include="CustomWidgets\InlineEditControl.cs" />
     <Compile Include="CustomWidgets\PrintingWindow\BedStatusWidget.cs" />
@@ -474,7 +473,6 @@
       <DependentUpon>ExportPrintItemPage.cs</DependentUpon>
     </Compile>
     <Compile Include="CustomWidgets\SavePartsSheetFeedbackWindow.cs" />
-    <Compile Include="ControlElements\ImageButtonFactory.cs" />
     <Compile Include="CustomWidgets\SlidePanelWidget.cs" />
     <Compile Include="ControlElements\StyledMessageBoxWindow.cs" />
     <Compile Include="DataStorage\SQLiteCommon.cs" />
@@ -515,7 +513,6 @@
     <Compile Include="VersionManagement\WebRequestHandler.cs" />
     <Compile Include="VersionManagement\VersionFileHandler.cs" />
     <Compile Include="CustomWidgets\ThemeColorSelectorWidget.cs" />
-    <Compile Include="ControlElements\TextImageButtonFactory.cs" />
     <Compile Include="EeProm\EePromMarlinWindow.cs" />
     <Compile Include="EeProm\EePromRepetierParameter.cs" />
     <Compile Include="EeProm\EePromRepetierWindow.cs" />

@@ -120,8 +120,6 @@ namespace MatterHackers.MatterControl
 
 		public BorderDouble TabbarPadding { get; set; } = new BorderDouble(3, 1);
 
-		public TextImageButtonFactory ButtonFactory { get; private set; }
-
 		/// <summary>
 		/// The height or width of a given vertical or horizontal splitter bar
 		/// </summary>
@@ -209,17 +207,6 @@ namespace MatterHackers.MatterControl
 
 			DefaultThumbView.ThumbColor = new Color(colors.PrimaryTextColor, 30);
 
-			var commonOptions = new ButtonFactoryOptions();
-			commonOptions.NormalTextColor = colors.PrimaryTextColor;
-			commonOptions.HoverTextColor = colors.PrimaryTextColor;
-			commonOptions.PressedTextColor = colors.PrimaryTextColor;
-			commonOptions.DisabledTextColor = colors.TertiaryBackgroundColor;
-			commonOptions.Margin = this.TextButtonPadding;
-			commonOptions.FontSize = this.DefaultFontSize;
-			commonOptions.ImageSpacing = 8;
-			commonOptions.BorderWidth = 0;
-			commonOptions.FixedHeight = this.ButtonHeight;
-
 			this.TabBodyBackground = this.ResolveColor(
 				colors.TertiaryBackgroundColor,
 				new Color(
@@ -239,17 +226,6 @@ namespace MatterHackers.MatterControl
 			this.InactiveTabColor = ResolveColor(colors.PrimaryBackgroundColor, new Color(Color.White, this.SlightShade.alpha));
 
 			this.SplitterBackground = this.ActiveTabColor.AdjustLightness(0.87).ToColor();
-
-			this.ButtonFactory = new TextImageButtonFactory(commonOptions);
-
-			var commonGray = new ButtonFactoryOptions(commonOptions)
-			{
-				NormalTextColor = Color.Black,
-				NormalFillColor = Color.LightGray,
-				HoverTextColor = Color.Black,
-				PressedTextColor = Color.Black,
-				PressedFillColor = Color.LightGray,
-			};
 		}
 
 		public JogControls.MoveButton CreateMoveButton(PrinterConfig printer, string label, PrinterConnection.Axis axis, double movementFeedRate, bool levelingButtons = false)
