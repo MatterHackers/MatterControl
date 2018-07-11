@@ -90,6 +90,7 @@ namespace MatterHackers.MatterControl
 					var editLink = new LinkLabel("edit".Localize(), theme)
 					{
 						Margin = new BorderDouble(right: 5),
+						TextColor = theme.Colors.PrimaryTextColor
 					};
 					editLink.Click += (s, e) =>
 					{
@@ -98,7 +99,10 @@ namespace MatterHackers.MatterControl
 					};
 					macroRow.AddChild(editLink);
 
-					var removeLink = new LinkLabel("remove".Localize(), theme);
+					var removeLink = new LinkLabel("remove".Localize(), theme)
+					{
+						TextColor = theme.Colors.PrimaryTextColor
+					};
 					removeLink.Click += (sender, e) =>
 					{
 						printerSettings.Macros.Remove(localMacroReference);

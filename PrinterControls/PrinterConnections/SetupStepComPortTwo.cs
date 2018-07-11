@@ -134,7 +134,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			var manualLink = new LinkLabel("Manual Configuration".Localize(), theme)
 			{
-				Margin = new BorderDouble(0, 5)
+				Margin = new BorderDouble(0, 5),
+				TextColor =  theme.Colors.PrimaryTextColor
 			};
 			manualLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{

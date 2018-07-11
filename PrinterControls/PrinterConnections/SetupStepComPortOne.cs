@@ -87,6 +87,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			var manualLink = new LinkLabel("Manually Configure Connection".Localize(), theme)
 			{
 				Margin = new BorderDouble(0, 5),
+				TextColor = theme.Colors.PrimaryTextColor
 			};
 			manualLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
@@ -105,6 +106,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			var skipConnectionLink = new LinkLabel("Skip Connection Setup".Localize(), theme)
 			{
 				Margin = new BorderDouble(0, 8),
+				TextColor = theme.Colors.PrimaryTextColor
 			};
 			skipConnectionLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
