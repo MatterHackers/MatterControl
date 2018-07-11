@@ -82,7 +82,7 @@ namespace Markdig.Renderers.Agg.Inlines
 			{
 				var imageSequence = new ImageSequence(icon);
 				//var sequenceWidget = new ImageSequenceWidget(imageSequence);
-				var sequenceWidget = new ImageSequenceWidgetResponsive(imageSequence);
+				var sequenceWidget = new ResponsiveImageSequenceWidget(imageSequence);
 				this.AddChild(sequenceWidget);
 
 				if (url.StartsWith("http"))
@@ -94,7 +94,7 @@ namespace Markdig.Renderers.Agg.Inlines
 			{
 				var imageBuffer = new ImageBuffer(icon);
 				//var imageWidget = new ImageWidget(imageBuffer);
-				var imageWidget = new ImageWidgetResponsive(imageBuffer);
+				var imageWidget = new ResponsiveImageWidget(imageBuffer);
 				this.AddChild(imageWidget);
 
 				if (url.StartsWith("http"))
