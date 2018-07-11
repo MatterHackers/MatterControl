@@ -54,8 +54,8 @@ namespace Markdig.Renderers.Agg.Inlines
 		{
 			if (childToAdd is TextWidget textWidget)
 			{
-				// Mark with underline if any character data exists
-				textWidget.Underline = textWidget.Text.Trim().Length > 0;
+				// Underline TextWidget children of TextLink nodes
+				textWidget.Underline = true;
 			}
 
 			// Allow link parent to own mouse events
