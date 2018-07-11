@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,17 @@ using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
+	public class SerialPortIndexRadioButton : RadioButton
+	{
+		public string PortValue;
+
+		public SerialPortIndexRadioButton(string label, string value)
+			: base(label)
+		{
+			PortValue = value;
+		}
+	}
+
 	public class SetupStepComPortManual : DialogPage
 	{
 		private GuiWidget nextButton;
