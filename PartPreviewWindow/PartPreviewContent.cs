@@ -236,7 +236,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					this.CreatePrinterTab(activePrinter, theme, activePrinter.Settings.GetValue(SettingsKey.printer_name));
+					this.CreatePrinterTab(activePrinter, theme);
 				}
 			}, ref unregisterEvents);
 
@@ -254,7 +254,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Add a tab for the current printer
 			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
-				this.CreatePrinterTab(printer, theme, printer.Settings.GetValue(SettingsKey.printer_name));
+				this.CreatePrinterTab(printer, theme);
 			}
 
 			// Restore active tabs
@@ -266,10 +266,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public ChromeTabs TabControl => tabControl;
 
-		private ChromeTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)
+		private ChromeTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme)
 		{
 			// Printer page is in fixed position
 			var tab1 = tabControl.AllTabs.Skip(1).FirstOrDefault();
+
+			string tabTitle = printer.Settings.GetValue(SettingsKey.printer_name);
 
 			var printerTabPage = tab1?.TabContent as PrinterTabPage;
 			if (printerTabPage == null
