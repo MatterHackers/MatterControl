@@ -84,6 +84,12 @@ namespace MatterHackers.MatterControl
 		private static int CleanDirectory(string path, int daysOldToDelete, List<string> extensionsToDelete, HashSet<string> filesToKeep = null)
 		{
 			int contentCount = 0;
+
+			if (!Directory.Exists(path))
+			{
+				return 0;
+			}
+
 			foreach (string directory in Directory.EnumerateDirectories(path).ToArray())
 			{
 				int directoryContentCount = CleanDirectory(directory, daysOldToDelete, extensionsToDelete, filesToKeep);
