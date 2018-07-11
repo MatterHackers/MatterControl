@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				return popupMenu;
 			};
 
-			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView);
+			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView, theme);
 			navBar.AddChild(breadCrumbWidget);
 
 			var searchPanel = new SearchInputBox()

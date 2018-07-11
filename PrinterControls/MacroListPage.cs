@@ -44,10 +44,7 @@ namespace MatterHackers.MatterControl
 			this.WindowTitle = "Macro Editor".Localize();
 			this.HeaderText = "Macro Presets".Localize() + ":";
 
-			var theme = ApplicationController.Instance.Theme;
-			var linkButtonFactory = theme.LinkButtonFactory;
-
-			this.RebuildList(printerSettings, linkButtonFactory);
+			this.RebuildList(printerSettings);
 
 			var addMacroButton = theme.CreateDialogButton("Add".Localize());
 			addMacroButton.ToolTipText = "Add a new Macro".Localize();
@@ -66,7 +63,7 @@ namespace MatterHackers.MatterControl
 			this.AddPageAction(addMacroButton);
 		}
 
-		private void RebuildList(PrinterSettings printerSettings, LinkButtonFactory linkButtonFactory)
+		private void RebuildList(PrinterSettings printerSettings)
 		{
 			this.contentRow.CloseAllChildren();
 
@@ -90,10 +87,11 @@ namespace MatterHackers.MatterControl
 					// We make a local variable to create a closure around it to ensure we get the correct instance
 					var localMacroReference = macro;
 
-					var oldColor = linkButtonFactory.textColor;
-					linkButtonFactory.textColor = Color.Black;
-					Button editLink = linkButtonFactory.Generate("edit".Localize());
-					editLink.Margin = new BorderDouble(right: 5);
+					var editLink = new LinkLabel("edit".Localize(), theme)
+					{
+						Margin = new BorderDouble(right: 5),
+						TextColor = theme.Colors.PrimaryTextColor
+					};
 					editLink.Click += (s, e) =>
 					{
 						this.DialogWindow.ChangeToPage(
@@ -101,15 +99,17 @@ namespace MatterHackers.MatterControl
 					};
 					macroRow.AddChild(editLink);
 
-					Button removeLink = linkButtonFactory.Generate("remove".Localize());
+					var removeLink = new LinkLabel("remove".Localize(), theme)
+					{
+						TextColor = theme.Colors.PrimaryTextColor
+					};
 					removeLink.Click += (sender, e) =>
 					{
 						printerSettings.Macros.Remove(localMacroReference);
 						printerSettings.Save();
-						this.RebuildList(printerSettings, linkButtonFactory);
+						this.RebuildList(printerSettings);
 					};
 					macroRow.AddChild(removeLink);
-					linkButtonFactory.textColor = oldColor;
 
 					contentRow.AddChild(macroRow);
 				}

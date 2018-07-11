@@ -159,9 +159,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				AutoExpandBoundsToText = true
 			};
 
-			printerComPortHelpLink = linkButtonFactory.Generate("What's this?".Localize());
-			printerComPortHelpLink.Margin = new BorderDouble(left: 5);
-			printerComPortHelpLink.VAnchor = VAnchor.Bottom;
+			printerComPortHelpLink = new LinkLabel("What's this?".Localize(), theme)
+			{
+				Margin = new BorderDouble(left: 5),
+				VAnchor = VAnchor.Bottom
+			};
 			printerComPortHelpLink.Click += (s, e) => printerComPortHelpMessage.Visible = !printerComPortHelpMessage.Visible;
 
 			printerComPortHelpMessage = new TextWidget("The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.".Localize(), 0, 0, 10)

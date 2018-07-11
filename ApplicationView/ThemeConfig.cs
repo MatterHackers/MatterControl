@@ -120,8 +120,6 @@ namespace MatterHackers.MatterControl
 
 		public BorderDouble TabbarPadding { get; set; } = new BorderDouble(3, 1);
 
-		public LinkButtonFactory LinkButtonFactory { get; private set; }
-
 		public TextImageButtonFactory WhiteButtonFactory { get; private set; }
 		public TextImageButtonFactory ButtonFactory { get; private set; }
 
@@ -272,12 +270,6 @@ namespace MatterHackers.MatterControl
 				BorderWidth = 1,
 			});
 #endregion
-
-			this.LinkButtonFactory = new LinkButtonFactory()
-			{
-				fontSize = FontSize11,
-				textColor = colors.PrimaryTextColor
-			};
 		}
 
 		public JogControls.MoveButton CreateMoveButton(PrinterConfig printer, string label, PrinterConnection.Axis axis, double movementFeedRate, bool levelingButtons = false)

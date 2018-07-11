@@ -127,10 +127,6 @@ namespace MatterHackers.MatterControl
 					Margin = new BorderDouble(0, 15)
 				});
 
-			var originalFontSize = theme.LinkButtonFactory.fontSize;
-
-			theme.LinkButtonFactory.fontSize = theme.DefaultFontSize;
-
 			var licensePanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
@@ -181,31 +177,30 @@ namespace MatterHackers.MatterControl
 
 			this.AddPageAction(feedbackButton, highlightFirstAction: false);
 
-			var siteLink = theme.LinkButtonFactory.Generate("www.matterhackers.com");
-			siteLink.HAnchor = HAnchor.Center;
-			siteLink.Cursor = Cursors.Hand;
-			siteLink.Click += (s, e) => UiThread.RunOnIdle(() =>
-			{
-				ApplicationController.Instance.LaunchBrowser("http://www.matterhackers.com");
-			});
-			contentRow.AddChild(siteLink);
-
 			contentRow.AddChild(
 				new TextWidget("Copyright © 2018 MatterHackers, Inc.", textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
 				{
 					HAnchor = HAnchor.Center,
 				});
 
-			var clearCacheLink = theme.LinkButtonFactory.Generate("Clear Cache".Localize());
-			clearCacheLink.HAnchor = HAnchor.Center;
-			clearCacheLink.Cursor = Cursors.Hand;
+			var siteLink = new LinkLabel("www.matterhackers.com", theme)
+			{
+				HAnchor = HAnchor.Center,
+				TextColor = theme.Colors.PrimaryTextColor
+			};
+			siteLink.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				ApplicationController.Instance.LaunchBrowser("http://www.matterhackers.com");
+			});
+			contentRow.AddChild(siteLink);
+
+			var clearCacheLink = theme.CreateDialogButton("Clear Cache".Localize());
 			clearCacheLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				CacheDirectory.DeleteCacheData();
 			});
-			contentRow.AddChild(clearCacheLink);
 
-			theme.LinkButtonFactory.fontSize = originalFontSize;
+			this.AddPageAction(clearCacheLink, highlightFirstAction: false);
 		}
 
 		private class LazyLicenseText : GuiWidget

@@ -84,8 +84,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			};
 			container.AddChild(setupManualConfigurationOrSkipConnectionWidget);
 
-			Button manualLink = linkButtonFactory.Generate("Manually Configure Connection".Localize());
-			manualLink.Margin = new BorderDouble(0, 5);
+			var manualLink = new LinkLabel("Manually Configure Connection".Localize(), theme)
+			{
+				Margin = new BorderDouble(0, 5),
+				TextColor = theme.Colors.PrimaryTextColor
+			};
 			manualLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				DialogWindow.ChangeToPage(new SetupStepComPortManual(printer));
@@ -100,8 +103,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			};
 			container.AddChild(printerMessageFour);
 
-			Button skipConnectionLink = linkButtonFactory.Generate("Skip Connection Setup".Localize());
-			skipConnectionLink.Margin = new BorderDouble(0, 8);
+			var skipConnectionLink = new LinkLabel("Skip Connection Setup".Localize(), theme)
+			{
+				Margin = new BorderDouble(0, 8),
+				TextColor = theme.Colors.PrimaryTextColor
+			};
 			skipConnectionLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				printer.Connection.HaltConnectionThread();

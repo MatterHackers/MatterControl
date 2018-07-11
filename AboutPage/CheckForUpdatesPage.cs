@@ -18,7 +18,7 @@ namespace MatterHackers.MatterControl
 			this.Padding = 0;
 			this.AnchorAll();
 
-			// Clear padding so UpdateControlView toolbar appears like toolbar 
+			// Clear padding so UpdateControlView toolbar appears like toolbar
 			contentRow.Padding = 0;
 
 			// Update Status Widget
@@ -58,9 +58,11 @@ namespace MatterHackers.MatterControl
 
 			FlowLayoutWidget additionalInfoContainer = null;
 
-			Button whatsThisLink = theme.LinkButtonFactory.Generate("What's this?".Localize());
-			whatsThisLink.VAnchor = VAnchor.Center;
-			whatsThisLink.Margin = new BorderDouble(left: 6);
+			var whatsThisLink = new LinkLabel("What's this?".Localize(), theme)
+			{
+				VAnchor = VAnchor.Center,
+				Margin = new BorderDouble(left: 6),
+			};
 			whatsThisLink.Click += (sender, e) =>
 			{
 				UiThread.RunOnIdle(() =>

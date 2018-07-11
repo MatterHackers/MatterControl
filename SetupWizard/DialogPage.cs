@@ -49,8 +49,6 @@ namespace MatterHackers.MatterControl
 
 		public Vector2 WindowSize { get; set; }
 
-		protected LinkButtonFactory linkButtonFactory { get; }
-
 		protected double labelFontSize = 12 * GuiWidget.DeviceScale;
 		protected double errorFontSize = 10 * GuiWidget.DeviceScale;
 
@@ -65,7 +63,6 @@ namespace MatterHackers.MatterControl
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
 			this.BackgroundColor = theme.Colors.PrimaryBackgroundColor;
-			linkButtonFactory = theme.LinkButtonFactory;
 
 			if (cancelButtonText == null)
 			{
