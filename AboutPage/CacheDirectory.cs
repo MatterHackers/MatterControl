@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
@@ -83,7 +84,7 @@ namespace MatterHackers.MatterControl
 		private static int CleanDirectory(string path, int daysOldToDelete, List<string> extensionsToDelete, HashSet<string> filesToKeep = null)
 		{
 			int contentCount = 0;
-			foreach (string directory in Directory.EnumerateDirectories(path))
+			foreach (string directory in Directory.EnumerateDirectories(path).ToArray())
 			{
 				int directoryContentCount = CleanDirectory(directory, daysOldToDelete, extensionsToDelete, filesToKeep);
 				if (directoryContentCount == 0
