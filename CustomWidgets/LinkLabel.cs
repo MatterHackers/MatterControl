@@ -44,10 +44,23 @@ namespace MatterHackers.MatterControl
 
 			this.AddChild(innerText = new TextWidget(text, pointSize: (pointSize == double.MinValue) ? theme.DefaultFontSize : pointSize, textColor: theme.Colors.PrimaryAccentColor)
 			{
-				Underline = true
+				Underline = true,
+				Selectable = false
 			});
 		}
 
 		public Color TextColor { get => innerText.TextColor; set => innerText.TextColor = value; }
+
+		public override void OnMouseEnter(MouseEventArgs mouseEvent)
+		{
+			innerText.Underline = false;
+			base.OnMouseEnter(mouseEvent);
+		}
+
+		public override void OnMouseLeave(MouseEventArgs mouseEvent)
+		{
+			innerText.Underline = true;
+			base.OnMouseLeave(mouseEvent);
+		}
 	}
 }
