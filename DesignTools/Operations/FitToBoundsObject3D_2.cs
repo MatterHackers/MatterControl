@@ -49,7 +49,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		private Vector3 cacheBounds;
 
-		private Matrix4X4 cacheMatrix;
+		private Matrix4X4 cacheParentMatrix;
+		private Matrix4X4 cacheThisMatrix;
 
 		public FitToBoundsObject3D_2()
 		{
@@ -110,7 +111,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			if (Children.Count == 2)
 			{
-				if (cacheMatrix != matrix
+				if (cacheParentMatrix != matrix
+					|| cacheThisMatrix != Matrix
 					|| cacheBounds != boundsSize)
 				{
 					using (FitBounds.RebuildLock())
@@ -119,7 +121,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						cacheAabb = base.GetAxisAlignedBoundingBox(matrix);
 						FitBounds.Visible = false;
 					}
-					cacheMatrix = matrix;
+					cacheParentMatrix = matrix;
+					cacheThisMatrix = Matrix;
 					cacheBounds = boundsSize;
 				}
 
@@ -143,6 +146,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& invalidateType.Source == this)
 			{
 				Rebuild(null);
+			}
+			else if(invalidateType.InvalidateType == InvalidateType.Matrix)
+			{
+				cacheThisMatrix = Matrix4X4.Identity;
 			}
 			else
 			{

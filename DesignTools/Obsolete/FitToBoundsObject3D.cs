@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public double Width { get; set; }
 		public double Depth { get; set; }
 		public double Diameter { get; set; }
-		public double Height { get; set; }
+		public double Height { get; set; } 
 
 		[Description("Set the rules for how to maintain the part while scaling.")]
 		public MaintainRatio MaintainRatio { get; set; } = MaintainRatio.X_Y;
