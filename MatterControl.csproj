@@ -497,7 +497,6 @@
     <Compile Include="PrinterControls\PrinterConnections\SetupStepMakeModelName.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepBaudRate.cs" />
     <Compile Include="PrinterControls\ManualPrinterControls.cs" />
-    <Compile Include="PrinterControls\PrinterConnections\BaseConnectionWidget.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterChooser.cs" />
     <Compile Include="Library\Widgets\PrintLibraryWidget.cs" />
     <Compile Include="Queue\PrintItemWrapper.cs" />
