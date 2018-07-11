@@ -99,15 +99,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					if (!firstItem)
 					{
 						// Add path separator
-						var textContainer = new GuiWidget() // HACK: Workaround for VAlign.Center failure in this specific case. Remove wrapper(with padding) once fixed and directly add TextWidget child
+						this.AddChild(new TextWidget("/", pointSize: theme.DefaultFontSize + 1, textColor: ActiveTheme.Instance.PrimaryTextColor)
 						{
-							HAnchor = HAnchor.Fit,
-							VAnchor = VAnchor.Fit | VAnchor.Center,
-							Padding = new BorderDouble(top: 4),
-							Margin = extraSpacing,
-						};
-						textContainer.AddChild(new TextWidget("/", pointSize: theme.DefaultFontSize + 2, textColor: ActiveTheme.Instance.PrimaryTextColor));
-						this.AddChild(textContainer);
+							VAnchor = VAnchor.Center,
+							Margin = extraSpacing.Clone(top: 2)
+						});
 					}
 
 					// Create a button for each container
@@ -115,7 +111,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					{
 						Name = "Bread Crumb Button " + container.Name,
 						VAnchor = VAnchor.Center,
-						Margin = theme.ButtonSpacing,
+						Margin = theme.ButtonSpacing.Clone(top: 1),
 						TextColor = theme.Colors.PrimaryTextColor
 					};
 					containerButton.Click += (s, e) =>
