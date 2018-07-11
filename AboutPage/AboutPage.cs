@@ -127,10 +127,6 @@ namespace MatterHackers.MatterControl
 					Margin = new BorderDouble(0, 15)
 				});
 
-			var originalFontSize = theme.LinkButtonFactory.fontSize;
-
-			theme.LinkButtonFactory.fontSize = theme.DefaultFontSize;
-
 			var licensePanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
@@ -181,9 +177,10 @@ namespace MatterHackers.MatterControl
 
 			this.AddPageAction(feedbackButton, highlightFirstAction: false);
 
-			var siteLink = theme.LinkButtonFactory.Generate("www.matterhackers.com");
-			siteLink.HAnchor = HAnchor.Center;
-			siteLink.Cursor = Cursors.Hand;
+			var siteLink = new LinkLabel("www.matterhackers.com", theme)
+			{
+				HAnchor = HAnchor.Center,
+			};
 			siteLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				ApplicationController.Instance.LaunchBrowser("http://www.matterhackers.com");
@@ -196,16 +193,16 @@ namespace MatterHackers.MatterControl
 					HAnchor = HAnchor.Center,
 				});
 
-			var clearCacheLink = theme.LinkButtonFactory.Generate("Clear Cache".Localize());
-			clearCacheLink.HAnchor = HAnchor.Center;
-			clearCacheLink.Cursor = Cursors.Hand;
+			// theme.LinkButtonFactory.fontSize = theme.DefaultFontSize;
+			var clearCacheLink = new LinkLabel("Clear Cache".Localize(), theme)
+			{
+				HAnchor = HAnchor.Center,
+			};
 			clearCacheLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				CacheDirectory.DeleteCacheData();
 			});
 			contentRow.AddChild(clearCacheLink);
-
-			theme.LinkButtonFactory.fontSize = originalFontSize;
 		}
 
 		private class LazyLicenseText : GuiWidget

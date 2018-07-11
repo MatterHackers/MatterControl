@@ -85,6 +85,7 @@
     <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\LastPageInstructions.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingWizard.cs" />
     <Compile Include="CustomWidgets\HelpArticleHeader.cs" />
+    <Compile Include="CustomWidgets\LinkLabel.cs" />
     <Compile Include="CustomWidgets\ResizeContainer\BottomResizeContainer.cs" />
     <Compile Include="CustomWidgets\ResizeContainer\LeftResizeContainer.cs" />
     <Compile Include="CustomWidgets\TreeView\TreeNode.cs" />
@@ -474,7 +475,6 @@
     </Compile>
     <Compile Include="CustomWidgets\SavePartsSheetFeedbackWindow.cs" />
     <Compile Include="ControlElements\ImageButtonFactory.cs" />
-    <Compile Include="ControlElements\LinkButtonFactory.cs" />
     <Compile Include="CustomWidgets\SlidePanelWidget.cs" />
     <Compile Include="ControlElements\StyledMessageBoxWindow.cs" />
     <Compile Include="DataStorage\SQLiteCommon.cs" />

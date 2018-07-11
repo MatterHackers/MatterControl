@@ -43,8 +43,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	public class FolderBreadCrumbWidget : FlowLayoutWidget
 	{
 		private ListView listView;
+		private ThemeConfig theme;
 
-		public FolderBreadCrumbWidget(ListView listView)
+		public FolderBreadCrumbWidget(ListView listView, ThemeConfig theme)
 		{
 			this.listView = listView;
 
@@ -52,13 +53,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 			this.MinimumSize = new VectorMath.Vector2(0, 1); // Force some minimum bounds to ensure draw and thus onload (and our local init) are called on startup
+			this.theme = theme;
 		}
 
 		public void SetContainer(ILibraryContainer currentContainer)
 		{
-			var linkButtonFactory = ApplicationController.Instance.Theme.LinkButtonFactory;
-			var theme = ApplicationController.Instance.Theme;
-
 			this.CloseAllChildren();
 
 			var upbutton = new IconButton(AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "up_folder_20.png"), theme.InvertIcons), theme)
@@ -82,11 +81,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			if (this.Width < 250)
 			{
-				Button containerButton = linkButtonFactory.Generate(listView.ActiveContainer.Name == null ? "?" : listView.ActiveContainer.Name);
-				containerButton.Name = "Bread Crumb Button " + listView.ActiveContainer.Name;
-				containerButton.VAnchor = VAnchor.Center;
-				containerButton.Margin = theme.ButtonSpacing;
-
+				var containerButton = new LinkLabel((listView.ActiveContainer.Name == null ? "?" : listView.ActiveContainer.Name), theme)
+				{
+					Name = "Bread Crumb Button " + listView.ActiveContainer.Name,
+					VAnchor = VAnchor.Center,
+					Margin = theme.ButtonSpacing,
+					TextColor = theme.Colors.PrimaryTextColor
+				};
 				this.AddChild(containerButton);
 			}
 			else
@@ -110,10 +111,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					}
 
 					// Create a button for each container
-					Button containerButton =  linkButtonFactory.Generate(container.Name);
-					containerButton.Name = "Bread Crumb Button " + container.Name;
-					containerButton.VAnchor = VAnchor.Center;
-					containerButton.Margin = theme.ButtonSpacing;
+					var containerButton = new LinkLabel(container.Name, theme)
+					{
+						Name = "Bread Crumb Button " + container.Name,
+						VAnchor = VAnchor.Center,
+						Margin = theme.ButtonSpacing,
+						TextColor = theme.Colors.PrimaryTextColor
+					};
 					containerButton.Click += (s, e) =>
 					{
 						UiThread.RunOnIdle(() => listView.SetActiveContainer(container));

@@ -94,11 +94,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabControl.TabBar.Padding = theme.TabbarPadding.Clone(top: theme.TabbarPadding.Top * 2, bottom: 0);
 
 			// add in a what's new button
-			Button seeWhatsNewButton = theme.LinkButtonFactory.Generate("What's New...".Localize());
-			seeWhatsNewButton.Name = "What's New Link";
-			seeWhatsNewButton.ToolTipText = "See what's new in this version of MatterControl".Localize();
-			seeWhatsNewButton.VAnchor = VAnchor.Center;
-			seeWhatsNewButton.Margin = new Agg.BorderDouble(10, 0);
+			var seeWhatsNewButton = new LinkLabel("What's New...".Localize(), theme)
+			{
+				Name = "What's New Link",
+				ToolTipText = "See what's new in this version of MatterControl".Localize(),
+				VAnchor = VAnchor.Center,
+				Margin = new BorderDouble(10, 0),
+				TextColor = theme.Colors.PrimaryTextColor
+			};
 			seeWhatsNewButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				UserSettings.Instance.set(UserSettingsKey.LastReadWhatsNew, JsonConvert.SerializeObject(DateTime.Now));
@@ -108,11 +111,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabControl.TabBar.ActionArea.AddChild(seeWhatsNewButton);
 
 			// add in the update available button
-			Button updateAvailableButton = theme.LinkButtonFactory.Generate("Update Available".Localize());
-			updateAvailableButton.Visible = false;
+			var updateAvailableButton = new LinkLabel("Update Available".Localize(), theme)
+			{
+				Visible = false,
+			};
 
 			// make the function inline so we don't have to create members for the buttons
-			EventHandler SetLinkButtonsVisability = (s, e) =>
+			EventHandler SetLinkButtonsVisibility = (s, e) =>
 			{
 				if (UserSettings.Instance.HasLookedAtWhatsNew())
 				{
@@ -132,8 +137,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			UserSettings.Instance.Changed += SetLinkButtonsVisability;
-			Closed += (s, e) => UserSettings.Instance.Changed -= SetLinkButtonsVisability;
+			UserSettings.Instance.Changed += SetLinkButtonsVisibility;
+			Closed += (s, e) => UserSettings.Instance.Changed -= SetLinkButtonsVisibility;
 
 			RunningInterval showUpdateInterval = null;
 			updateAvailableButton.VisibleChanged += (s, e) =>
@@ -188,10 +193,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			updateAvailableButton.Name = "Update Available Link";
-			SetLinkButtonsVisability(this, null);
+			SetLinkButtonsVisibility(this, null);
 			updateAvailableButton.ToolTipText = "There is a new update available for download".Localize();
 			updateAvailableButton.VAnchor = VAnchor.Center;
-			updateAvailableButton.Margin = new Agg.BorderDouble(10, 0);
+			updateAvailableButton.Margin = new BorderDouble(10, 0);
 			updateAvailableButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				UiThread.RunOnIdle(() =>
@@ -203,7 +208,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.TabBar.ActionArea.AddChild(updateAvailableButton);
 
-			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(SetLinkButtonsVisability, ref unregisterEvents);
+			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(SetLinkButtonsVisibility, ref unregisterEvents);
 
 			this.AddChild(tabControl);
 
@@ -283,7 +288,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					tabControl,
 					new PrinterTabPage(printer, theme, tabTitle.ToUpper()),
 					theme,
-					tabImageUrl: ApplicationController.Instance.GetFavIconUrl(oemName: printer.Settings.GetValue(SettingsKey.make)), 
+					tabImageUrl: ApplicationController.Instance.GetFavIconUrl(oemName: printer.Settings.GetValue(SettingsKey.make)),
 					hasClose: false)
 				{
 					Name = "3D View Tab",

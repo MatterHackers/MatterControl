@@ -132,8 +132,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			GuiWidget vSpacer = new GuiWidget();
 			vSpacer.VAnchor = VAnchor.Stretch;
 
-			Button manualLink = linkButtonFactory.Generate("Manual Configuration".Localize());
-			manualLink.Margin = new BorderDouble(0, 5);
+			var manualLink = new LinkLabel("Manual Configuration".Localize(), theme)
+			{
+				Margin = new BorderDouble(0, 5)
+			};
 			manualLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				DialogWindow.ChangeToPage(new SetupStepComPortManual(printer));

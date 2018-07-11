@@ -101,9 +101,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			printerBaudRateError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			printerBaudRateError.AutoExpandBoundsToText = true;
 
-			printerBaudRateHelpLink = linkButtonFactory.Generate("What's this?".Localize());
-			printerBaudRateHelpLink.Margin = new BorderDouble(left: 5);
-			printerBaudRateHelpLink.VAnchor = VAnchor.Bottom;
+			printerBaudRateHelpLink = new LinkLabel("What's this?".Localize(), theme)
+			{
+				Margin = new BorderDouble(left: 5),
+				VAnchor = VAnchor.Bottom
+			};
 			printerBaudRateHelpLink.Click += printerBaudRateHelp_Click;
 
 			printerBaudRateHelpMessage = new TextWidget("The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.".Localize(), 0, 0, 10);
