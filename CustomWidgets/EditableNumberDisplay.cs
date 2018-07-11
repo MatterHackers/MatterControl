@@ -7,21 +7,16 @@ namespace MatterHackers.MatterControl
 {
 	public class EditableNumberDisplay : FlowLayoutWidget
 	{
-		protected ClickWidget clickableValueContainer;
+		protected GuiWidget clickableValueContainer;
 		protected MHNumberEdit numberInputField;
 		protected TextWidget valueDisplay;
 		public string DisplayFormat { get; set; } = "{0}";
 		public event EventHandler ValueChanged;
+
 		public Color TextColor
 		{
-			get
-			{
-				return valueDisplay.TextColor;
-			}
-			set
-			{
-				valueDisplay.TextColor = value;
-			}
+			get => valueDisplay.TextColor;
+			set => valueDisplay.TextColor = value;
 		}
 
 		Color _borderColor = Color.White;
@@ -46,23 +41,21 @@ namespace MatterHackers.MatterControl
 			this.Margin = new BorderDouble(3, 0);
 			this.VAnchor = VAnchor.Center;
 
-			clickableValueContainer = new ClickWidget
+			clickableValueContainer = new GuiWidget()
 			{
 				VAnchor = VAnchor.Stretch,
 				Cursor = Cursors.Hand,
-				BorderWidth = 1,
-				BorderColor = BorderColor
+				Border = 1,
+				BorderColor = BorderColor,
 			};
 
 			clickableValueContainer.MouseEnterBounds += (sender, e) =>
 			{
-				clickableValueContainer.BorderWidth = 2;
 				clickableValueContainer.BorderColor = new Color(BorderColor, 255);
 			};
 
 			clickableValueContainer.MouseLeaveBounds += (sender, e) =>
 			{
-				clickableValueContainer.BorderWidth = 1;
 				clickableValueContainer.BorderColor = new Color(BorderColor, 140);
 			};
 

@@ -469,9 +469,6 @@
     <Compile Include="PrinterControls\ControlWidgets\MacroControls.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\MappingClasses.cs" />
     <Compile Include="ApplicationView\WidescreenPanel.cs" />
-    <Compile Include="CustomWidgets\ClickWidget.cs">
-      <DependentUpon>ExportPrintItemPage.cs</DependentUpon>
-    </Compile>
     <Compile Include="CustomWidgets\SavePartsSheetFeedbackWindow.cs" />
     <Compile Include="CustomWidgets\SlidePanelWidget.cs" />
     <Compile Include="ControlElements\StyledMessageBoxWindow.cs" />
