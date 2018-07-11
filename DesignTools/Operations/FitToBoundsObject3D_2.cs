@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		private Vector3 cacheBounds;
 
-		private Matrix4X4 cacheParentMatrix;
+		private Matrix4X4 cacheRequestedMatrix = new Matrix4X4();
 		private Matrix4X4 cacheThisMatrix;
 
 		public FitToBoundsObject3D_2()
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			if (Children.Count == 2)
 			{
-				if (cacheParentMatrix != matrix
+				if (cacheRequestedMatrix != matrix
 					|| cacheThisMatrix != Matrix
 					|| cacheBounds != boundsSize)
 				{
@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						cacheAabb = base.GetAxisAlignedBoundingBox(matrix);
 						FitBounds.Visible = false;
 					}
-					cacheParentMatrix = matrix;
+					cacheRequestedMatrix = matrix;
 					cacheThisMatrix = Matrix;
 					cacheBounds = boundsSize;
 				}
@@ -147,9 +147,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				Rebuild(null);
 			}
-			else if(invalidateType.InvalidateType == InvalidateType.Matrix)
+			else if ((invalidateType.InvalidateType == InvalidateType.Properties
+				|| invalidateType.InvalidateType == InvalidateType.Matrix
+				|| invalidateType.InvalidateType == InvalidateType.Mesh
+				|| invalidateType.InvalidateType == InvalidateType.Content))
 			{
 				cacheThisMatrix = Matrix4X4.Identity;
+				base.OnInvalidate(invalidateType);
 			}
 			else
 			{
@@ -162,11 +166,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())
 			{
-				UpdateBoundsItem();
-
 				var aabb = this.GetAxisAlignedBoundingBox();
 
 				AdjustChildSize(null, null);
+
+				UpdateBoundsItem();
+
+				cacheRequestedMatrix = new Matrix4X4();
+				var after = this.GetAxisAlignedBoundingBox();
 
 				if (aabb.ZSize > 0)
 				{
@@ -180,42 +187,45 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		private void AdjustChildSize(object sender, EventArgs e)
 		{
-			var aabb = SourceItem.GetAxisAlignedBoundingBox();
-			TransformItem.Matrix = Matrix4X4.Identity;
-			var scale = Vector3.One;
-			if (StretchX)
+			if (Children.Count > 0)
 			{
-				scale.X = SizeX / aabb.XSize;
-			}
-			if (StretchY)
-			{
-				scale.Y = SizeY / aabb.YSize;
-			}
-			if (StretchZ)
-			{
-				scale.Z = SizeZ / aabb.ZSize;
-			}
+				var aabb = SourceItem.GetAxisAlignedBoundingBox();
+				TransformItem.Matrix = Matrix4X4.Identity;
+				var scale = Vector3.One;
+				if (StretchX)
+				{
+					scale.X = SizeX / aabb.XSize;
+				}
+				if (StretchY)
+				{
+					scale.Y = SizeY / aabb.YSize;
+				}
+				if (StretchZ)
+				{
+					scale.Z = SizeZ / aabb.ZSize;
+				}
 
-			switch (MaintainRatio)
-			{
-				case MaintainRatio.None:
-					break;
+				switch (MaintainRatio)
+				{
+					case MaintainRatio.None:
+						break;
 
-				case MaintainRatio.X_Y:
-					var minXy = Math.Min(scale.X, scale.Y);
-					scale.X = minXy;
-					scale.Y = minXy;
-					break;
+					case MaintainRatio.X_Y:
+						var minXy = Math.Min(scale.X, scale.Y);
+						scale.X = minXy;
+						scale.Y = minXy;
+						break;
 
-				case MaintainRatio.X_Y_Z:
-					var minXyz = Math.Min(Math.Min(scale.X, scale.Y), scale.Z);
-					scale.X = minXyz;
-					scale.Y = minXyz;
-					scale.Z = minXyz;
-					break;
+					case MaintainRatio.X_Y_Z:
+						var minXyz = Math.Min(Math.Min(scale.X, scale.Y), scale.Z);
+						scale.X = minXyz;
+						scale.Y = minXyz;
+						scale.Z = minXyz;
+						break;
+				}
+
+				TransformItem.Matrix = Object3DExtensions.ApplyAtPosition(TransformItem.Matrix, aabb.Center, Matrix4X4.CreateScale(scale));
 			}
-
-			TransformItem.Matrix = Object3DExtensions.ApplyAtPosition(TransformItem.Matrix, aabb.Center, Matrix4X4.CreateScale(scale));
 		}
 
 		private void UpdateBoundsItem()
@@ -252,7 +262,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			set
 			{
 				boundsSize.X = value;
-				UpdateBoundsItem();
+				Rebuild(null);
 			}
 		}
 
@@ -263,7 +273,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			set
 			{
 				boundsSize.Y = value;
-				UpdateBoundsItem();
+				Rebuild(null);
 			}
 		}
 
@@ -274,7 +284,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			set
 			{
 				boundsSize.Z = value;
-				UpdateBoundsItem();
+				Rebuild(null);
 			}
 		}
 
