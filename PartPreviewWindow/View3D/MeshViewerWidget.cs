@@ -251,7 +251,7 @@ namespace MatterHackers.MeshVisualizer
 					break;
 
 				case BedShape.Circular:
-					// This could be much better if it checked the actual vertext data of the mesh against the cylinder
+					// This could be much better if it checked the actual vertex data of the mesh against the cylinder
 					// first check if any of it is outside the bed rect
 					if (aabb.minXYZ.X < bed.BedCenter.X - bed.ViewerVolume.X / 2
 						|| aabb.maxXYZ.X > bed.BedCenter.X + bed.ViewerVolume.X / 2

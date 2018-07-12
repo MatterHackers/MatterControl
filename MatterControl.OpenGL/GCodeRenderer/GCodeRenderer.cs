@@ -265,8 +265,7 @@ namespace MatterHackers.GCodeVisualizer
 
 			if (layerVertexBuffer == null)
 			{
-				layerVertexBuffer = new List<GCodeVertexBuffer>();
-				layerVertexBuffer.Capacity = gCodeFileToDraw.LayerCount;
+				layerVertexBuffer = new List<GCodeVertexBuffer>(gCodeFileToDraw.LayerCount);
 				for (int layerIndex = 0; layerIndex < gCodeFileToDraw.LayerCount; layerIndex++)
 				{
 					layerVertexBuffer.Add(null);
