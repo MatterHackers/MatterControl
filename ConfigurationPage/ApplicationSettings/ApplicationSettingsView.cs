@@ -228,9 +228,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 #endif
 
 			// TextSize
-			if (!double.TryParse(UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize), out double currentTexSize))
+			if (!double.TryParse(UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize), out double currentTextSize))
 			{
-				currentTexSize = 1.0;
+				currentTextSize = 1.0;
 			}
 
 			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
@@ -239,7 +239,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				Name = "Text Size Slider",
 				Margin = new BorderDouble(5, 0),
-				Value = currentTexSize,
+				Value = currentTextSize,
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Center,
 				TotalWidthInPixels = sliderWidth,
@@ -272,11 +272,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				double textSizeNew = textSizeSlider.Value;
 				UserSettings.Instance.set(UserSettingsKey.ApplicationTextSize, textSizeNew.ToString("0.0"));
 				sectionLabel.Text = "Text Size".Localize() + $" : {textSizeNew:0.0}";
-				textSizeApplyButton.Visible = textSizeNew != currentTexSize;
+				textSizeApplyButton.Visible = textSizeNew != currentTextSize;
 			};
 
 			var section = new SettingsItem(
-					"Text Size".Localize() + $" : {currentTexSize:0.0}",
+					"Text Size".Localize() + $" : {currentTextSize:0.0}",
 					textSizeSlider,
 					theme,
 					optionalContainer);
