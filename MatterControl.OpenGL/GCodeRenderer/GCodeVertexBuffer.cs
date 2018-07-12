@@ -70,28 +70,6 @@ namespace MatterHackers.GCodeVisualizer
 			}
 		}
 
-		public void Dispose()
-		{
-			if (myVertexId != -1)
-			{
-				int holdVertexId = myVertexId;
-				int holdIndexId = myIndexId;
-
-				UiThread.RunOnIdle(() =>
-				{
-					GL.DeleteBuffers(1, ref holdVertexId);
-					GL.DeleteBuffers(1, ref holdIndexId);
-				});
-
-				myVertexId = -1;
-			}
-		}
-
-		~GCodeVertexBuffer()
-		{
-			Dispose();
-		}
-
 		public void renderRange(int offset, int count)
 		{
 			GL.EnableClientState(ArrayCap.ColorArray);
@@ -126,6 +104,28 @@ namespace MatterHackers.GCodeVisualizer
 			GL.DisableClientState(ArrayCap.VertexArray);
 			GL.DisableClientState(ArrayCap.NormalArray);
 			GL.DisableClientState(ArrayCap.ColorArray);
+		}
+
+		public void Dispose()
+		{
+			if (myVertexId != -1)
+			{
+				int holdVertexId = myVertexId;
+				int holdIndexId = myIndexId;
+
+				UiThread.RunOnIdle(() =>
+				{
+					GL.DeleteBuffers(1, ref holdVertexId);
+					GL.DeleteBuffers(1, ref holdIndexId);
+				});
+
+				myVertexId = -1;
+			}
+		}
+
+		~GCodeVertexBuffer()
+		{
+			Dispose();
 		}
 	}
 }
