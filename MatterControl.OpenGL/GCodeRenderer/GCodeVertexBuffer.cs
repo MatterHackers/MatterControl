@@ -35,24 +35,24 @@ namespace MatterHackers.GCodeVisualizer
 {
 	public class GCodeVertexBuffer : IDisposable
 	{
-		private int myIndexId;
-		private int myIndexLength;
+		private int indexID;
+		private int indexLength;
 		private BeginMode pointMode = BeginMode.Triangles;
 		private bool disposed = false;
 
-		private int myVertexId;
-		private int myVertexLength;
+		private int vertexID;
+		private int vertexLength;
 
 		public GCodeVertexBuffer(int[] indexData, ColorVertexData[] colorData)
 		{
-			GL.GenBuffers(1, out myVertexId);
-			GL.GenBuffers(1, out myIndexId);
+			GL.GenBuffers(1, out vertexID);
+			GL.GenBuffers(1, out indexID);
 
 			// Set vertex data
-			myVertexLength = colorData.Length;
-			if (myVertexLength > 0)
+			vertexLength = colorData.Length;
+			if (vertexLength > 0)
 			{
-				GL.BindBuffer(BufferTarget.ArrayBuffer, myVertexId);
+				GL.BindBuffer(BufferTarget.ArrayBuffer, vertexID);
 				unsafe
 				{
 					fixed (ColorVertexData* dataPointer = colorData)
@@ -63,10 +63,10 @@ namespace MatterHackers.GCodeVisualizer
 			}
 
 			// Set index data
-			myIndexLength = indexData.Length;
-			if (myIndexLength > 0)
+			indexLength = indexData.Length;
+			if (indexLength > 0)
 			{
-				GL.BindBuffer(BufferTarget.ElementArrayBuffer, myIndexId);
+				GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexID);
 				unsafe
 				{
 					fixed (int* dataPointer = indexData)
@@ -77,7 +77,7 @@ namespace MatterHackers.GCodeVisualizer
 			}
 		}
 
-		public void renderRange(int offset, int count)
+		public void RenderRange(int offset, int count)
 		{
 			GL.EnableClientState(ArrayCap.ColorArray);
 			GL.EnableClientState(ArrayCap.NormalArray);
@@ -87,8 +87,8 @@ namespace MatterHackers.GCodeVisualizer
 
 			GL.EnableClientState(ArrayCap.IndexArray);
 
-			GL.BindBuffer(BufferTarget.ArrayBuffer, myVertexId);
-			GL.BindBuffer(BufferTarget.ElementArrayBuffer, myIndexId);
+			GL.BindBuffer(BufferTarget.ArrayBuffer, vertexID);
+			GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexID);
 
 			GL.ColorPointer(4, ColorPointerType.UnsignedByte, ColorVertexData.Stride, new IntPtr(0));
 			GL.NormalPointer(NormalPointerType.Float, ColorVertexData.Stride, new IntPtr(4));
@@ -98,7 +98,7 @@ namespace MatterHackers.GCodeVisualizer
 			GL.DrawRangeElements(
 				pointMode,
 				0,
-				myIndexLength,
+				indexLength,
 				count,
 				DrawElementsType.UnsignedInt,
 				new IntPtr(offset * 4));
@@ -120,8 +120,8 @@ namespace MatterHackers.GCodeVisualizer
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					GL.DeleteBuffers(1, ref myVertexId);
-					GL.DeleteBuffers(1, ref myIndexId);
+					GL.DeleteBuffers(1, ref vertexID);
+					GL.DeleteBuffers(1, ref indexID);
 				});
 
 				disposed = true;

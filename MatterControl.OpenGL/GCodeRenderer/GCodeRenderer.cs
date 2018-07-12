@@ -345,7 +345,7 @@ namespace MatterHackers.GCodeVisualizer
 						int featuresOnLayer = renderFeatures[i].Count;
 						if (featuresOnLayer > 1)
 						{
-							layerVertexBuffer[i].renderRange(0, featureEndIndex[i][featuresOnLayer - 1]);
+							layerVertexBuffer[i].RenderRange(0, featureEndIndex[i][featuresOnLayer - 1]);
 						}
 					}
 				}
@@ -376,7 +376,7 @@ namespace MatterHackers.GCodeVisualizer
 					{
 						int ellementCount = featureEndIndex[layerIndex][endFeature - 1] - featureStartIndex[layerIndex][startFeature];
 
-						layerVertexBuffer[layerIndex].renderRange(featureStartIndex[layerIndex][startFeature], ellementCount);
+						layerVertexBuffer[layerIndex].RenderRange(featureStartIndex[layerIndex][startFeature], ellementCount);
 					}
 				}
 				GL.PopAttrib();
