@@ -751,7 +751,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.ClickByName("PrintPopupMenu");
 
-			testRunner.ClickByName("Advanced Section");
+			if (!testRunner.NameExists("Layer(s) To Pause Field", .2))
+			{
+				testRunner.ClickByName("Advanced Section");
+			}
 		}
 
 		/// <summary>
@@ -761,7 +764,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void StartPrint(this AutomationRunner testRunner)
 		{
 			testRunner.OpenPrintPopupMenu();
-			testRunner.ScrollIntoView("Start Print Button");
 			testRunner.ClickByName("Start Print Button");
 		}
 

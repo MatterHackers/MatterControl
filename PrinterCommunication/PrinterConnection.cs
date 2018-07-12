@@ -1882,7 +1882,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								PrinterId = this.printer.Settings.ID.GetHashCode(),
 								PrintName = activePrintItem.PrintItem.Name,
 								PrintItemId = activePrintItem.PrintItem.Id,
-								PrintingGCodeFileName = activePrintItem.GetGCodePathAndFileName(),
+								PrintingGCodeFileName = gcodeFilename,
 								PrintComplete = false
 							};
 
