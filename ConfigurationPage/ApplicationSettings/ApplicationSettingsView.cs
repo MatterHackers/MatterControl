@@ -225,6 +225,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					"Thumbnails".Localize(),
 					thumbnailsModeDropList,
 					theme));
+#endif
 
 			// TextSize
 			if (!double.TryParse(UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize), out double currentTexSize))
@@ -283,7 +284,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			sectionLabel = section.Children<TextWidget>().FirstOrDefault();
 
 			this.AddSettingsRow(section);
-#endif
 
 			AddMenuItem("Forums".Localize(), () => ApplicationController.Instance.LaunchBrowser("https://forums.matterhackers.com/category/20/mattercontrol"));
 			AddMenuItem("Wiki".Localize(), () => ApplicationController.Instance.LaunchBrowser("http://wiki.mattercontrol.com"));
