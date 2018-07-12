@@ -23,8 +23,9 @@ namespace MatterControl.Tests.MatterControl
 
 			BoundDropList dropList;
 
+			var theme = new ThemeConfig();
 			// Whitelist on non-OEM builds should contain all printers
-			dropList = new BoundDropList("Test");
+			dropList = new BoundDropList("Test", theme);
 			dropList.ListSource = allManufacturers;
 			Assert.Greater(dropList.MenuItems.Count, 20);
 
@@ -32,14 +33,14 @@ namespace MatterControl.Tests.MatterControl
 
 			OemSettings.Instance.SetManufacturers(allManufacturers, whitelist);
 
-			dropList = new BoundDropList("Test");
+			dropList = new BoundDropList("Test", theme);
 			dropList.ListSource = OemSettings.Instance.AllOems;
 			Assert.AreEqual(1, dropList.MenuItems.Count);
 
 			whitelist.Add("Airwolf 3D");
 			OemSettings.Instance.SetManufacturers(allManufacturers, whitelist);
 
-			dropList = new BoundDropList("Test");
+			dropList = new BoundDropList("Test", theme);
 			dropList.ListSource = OemSettings.Instance.AllOems;
 			Assert.AreEqual(2, dropList.MenuItems.Count);
 

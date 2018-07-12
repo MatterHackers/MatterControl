@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2018, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -41,8 +41,11 @@ namespace MatterHackers.MatterControl
 {
 	public class WidescreenPanel : FlowLayoutWidget
 	{
-		public WidescreenPanel()
+		private ThemeConfig theme;
+
+		public WidescreenPanel(ThemeConfig theme)
 		{
+			this.theme = theme;
 		}
 
 		public override void Initialize()
@@ -51,9 +54,7 @@ namespace MatterHackers.MatterControl
 
 			this.AnchorAll();
 			this.Name = "WidescreenPanel";
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-			var theme = ApplicationController.Instance.Theme;
+			this.BackgroundColor = theme.Colors.PrimaryBackgroundColor;
 
 			// Push TouchScreenMode into GuiWidget
 			GuiWidget.TouchScreenMode = UserSettings.Instance.IsTouchScreen;
@@ -74,7 +75,7 @@ namespace MatterHackers.MatterControl
 			this.AddChild(library3DViewSplitter);
 
 			// put in the right column
-			var partPreviewContent = new PartPreviewContent()
+			var partPreviewContent = new PartPreviewContent(theme)
 			{
 				VAnchor = VAnchor.Bottom | VAnchor.Top,
 				HAnchor = HAnchor.Left | HAnchor.Right
@@ -137,26 +138,10 @@ namespace MatterHackers.MatterControl
 				Selectable = false
 			});
 
-			row.AddChild(new TextWidget(ApplicationController.Instance.ShortProductName, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			row.AddChild(new TextWidget(ApplicationController.Instance.ShortProductName, textColor: theme.Colors.PrimaryTextColor)
 			{
 				VAnchor = VAnchor.Center
 			});
-		}
-	}
-
-	public class UpdateNotificationMark : GuiWidget
-	{
-		public UpdateNotificationMark()
-			: base(12, 12)
-		{
-		}
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			graphics2D.Circle(Width / 2, Height / 2, Width / 2, Color.White);
-			graphics2D.Circle(Width / 2, Height / 2, Width / 2 - 1, Color.Red);
-			graphics2D.FillRectangle(Width / 2 - 1, Height / 2 - 3, Width / 2 + 1, Height / 2 + 3, Color.White);
-			base.OnDraw(graphics2D);
 		}
 	}
 }

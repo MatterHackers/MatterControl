@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Name = automationName + " Save",
 			};
 
-			searchPanel = new SearchInputBox()
+			searchPanel = new SearchInputBox(theme)
 			{
 				Visible = false,
 				Margin = new BorderDouble(left: 4)

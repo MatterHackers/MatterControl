@@ -44,8 +44,6 @@ namespace MatterHackers.MatterControl
 
 		public MacroDetailPage(GCodeMacro gcodeMacro, PrinterSettings printerSettings)
 		{
-			var theme = ApplicationController.Instance.Theme;
-
 			// Form validation fields
 			MHTextEditWidget macroNameInput;
 			MHTextEditWidget macroCommandInput;

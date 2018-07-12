@@ -269,7 +269,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView, theme);
 			navBar.AddChild(breadCrumbWidget);
 
-			var searchPanel = new SearchInputBox()
+			var searchPanel = new SearchInputBox(theme)
 			{
 				Visible = false,
 				Margin = new BorderDouble(10, 0, 5, 0),
@@ -986,7 +986,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		internal MHTextEditWidget searchInput;
 		public Button ResetButton { get; }
 
-		public SearchInputBox()
+		public SearchInputBox(ThemeConfig theme)
 		{
 			this.VAnchor = VAnchor.Center | VAnchor.Fit;
 			this.HAnchor = HAnchor.Stretch;
@@ -999,7 +999,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			this.AddChild(searchInput);
 
-			var resetButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
+			var resetButton = theme.CreateSmallResetButton();
 			resetButton.HAnchor = HAnchor.Right | HAnchor.Fit;
 			resetButton.VAnchor = VAnchor.Center | VAnchor.Fit;
 			resetButton.Name = "Close Search";

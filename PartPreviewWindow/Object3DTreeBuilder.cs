@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if(item.Source is InsertionGroupObject3D insertionGroup)
 			{
-				return new TreeNode()
+				return new TreeNode(theme)
 				{
 					Text = "Loading".Localize(),
 					Tag = item.Source,
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 			}
 
-			var node = new TreeNode()
+			var node = new TreeNode(theme)
 			{
 				Text = GetName(item),
 				Tag = item.Source,

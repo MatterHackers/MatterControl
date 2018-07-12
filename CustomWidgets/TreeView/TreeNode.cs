@@ -50,11 +50,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private ImageWidget imageWidget;
 		private bool isDirty;
 
-		public TreeNode(bool useIcon = true)
+		public TreeNode(ThemeConfig theme, bool useIcon = true)
 			: base(FlowDirection.TopToBottom)
 		{
-			var theme = ApplicationController.Instance.Theme;
-
 			this.HAnchor = HAnchor.Fit | HAnchor.Left;
 			this.VAnchor = VAnchor.Fit;
 

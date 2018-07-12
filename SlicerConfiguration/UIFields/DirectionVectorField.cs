@@ -38,11 +38,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class DirectionVectorField : UIField
 	{
 		private DropDownList dropDownList;
+		private ThemeConfig theme;
+
+		public DirectionVectorField(ThemeConfig theme)
+		{
+			this.theme = theme;
+		}
 
 		public override void Initialize(int tabIndex)
 		{
-			var theme = ApplicationController.Instance.Theme;
-
 			dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
 			{
 				BorderColor = theme.GetBorderColor(75)

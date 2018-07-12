@@ -30,6 +30,7 @@ namespace MatterHackers.MatterControl
 
 		// Used in Android
 		private System.Threading.Timer checkForPermissionTimer;
+		private PrinterConfig printer;
 
 #if __ANDROID__
 		private static UsbManager usbManager
@@ -38,9 +39,10 @@ namespace MatterHackers.MatterControl
 		}
 #endif
 
-		public SetupWizardTroubleshooting()
+		public SetupWizardTroubleshooting(PrinterConfig printer)
 		{
 			this.WindowTitle = "Troubleshooting".Localize();
+			this.printer = printer;
 
 			RefreshStatus();
 
@@ -51,12 +53,12 @@ namespace MatterHackers.MatterControl
 			this.AddPageAction(nextButton);
 
 			// Register for connection notifications
-			ApplicationController.Instance.ActivePrinter.Connection.CommunicationStateChanged.RegisterEvent(ConnectionStatusChanged, ref unregisterEvents);
+			printer.Connection.CommunicationStateChanged.RegisterEvent(ConnectionStatusChanged, ref unregisterEvents);
 		}
 
 		public void ConnectionStatusChanged(object test, EventArgs args)
 		{
-			if(ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Connected && connectToPrinterRow != null)
+			if(printer.Connection.CommunicationState == CommunicationStates.Connected && connectToPrinterRow != null)
 			{
 				connectToPrinterRow.SetSuccessful();
 				nextButton.Visible = true;
@@ -92,9 +94,11 @@ namespace MatterHackers.MatterControl
 			contentRow.CloseAllChildren();
 
 			// Regen and refresh the troubleshooting criteria
-			TextWidget printerNameLabel = new TextWidget(string.Format ("{0}:", "Connection Troubleshooting".Localize()), 0, 0, labelFontSize);
-			printerNameLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerNameLabel.Margin = new BorderDouble(bottom: 10);
+			var printerNameLabel = new TextWidget(string.Format("{0}:", "Connection Troubleshooting".Localize()), 0, 0, labelFontSize)
+			{
+				TextColor = theme.Colors.PrimaryTextColor,
+				Margin = new BorderDouble(bottom: 10)
+			};
 
 #if __ANDROID__
 			IUsbSerialPort serialPort = FrostedSerialPort.LoadSerialDriver(null);
@@ -181,19 +185,22 @@ namespace MatterHackers.MatterControl
 				"Connect".Localize(),
 				"Click the 'Connect' button to retry the original connection attempt".Localize(),
 				false,
-				() => ApplicationController.Instance.ActivePrinter.Connection.Connect());
+				() => printer.Connection.Connect(),
+				theme);
 
 			contentRow.AddChild(connectToPrinterRow);
 
 			if (CriteriaRow.ActiveErrorItem != null) {
 
-				FlowLayoutWidget errorText = new FlowLayoutWidget () {
+				var errorText = new FlowLayoutWidget () {
 					Padding = new BorderDouble (0, 15)
 				};
 
-				errorText.AddChild(new TextWidget(CriteriaRow.ActiveErrorItem.ErrorText) {
-					TextColor = ActiveTheme.Instance.PrimaryAccentColor
-				});
+				errorText.AddChild(
+					new TextWidget(CriteriaRow.ActiveErrorItem.ErrorText)
+					{
+						TextColor = theme.Colors.PrimaryAccentColor
+					});
 
 				contentRow.AddChild(errorText);
 			}
@@ -213,7 +220,7 @@ namespace MatterHackers.MatterControl
 			private static Color disabledBackColor = new Color(0.22, 0.22, 0.22);
 			private static Color toggleColor = new Color(Color.Gray.red + 2, Color.Gray.green + 2, Color.Gray.blue + 2);
 
-			public CriteriaRow (string itemText, string fixitText, string errorText, bool succeeded, Action fixAction)
+			public CriteriaRow (string itemText, string fixitText, string errorText, bool succeeded, Action fixAction, ThemeConfig theme)
 				: base(FlowDirection.LeftToRight)
 			{
 				HAnchor = HAnchor.Stretch;
@@ -242,7 +249,7 @@ namespace MatterHackers.MatterControl
 						AddSuccessIcon();
 					} else {
 						// Add Fix button
-						var button  = ApplicationController.Instance.Theme.CreateDialogButton(fixitText);
+						var button  = theme.CreateDialogButton(fixitText);
 						button.VAnchor = VAnchor.Center;
 						button.Padding = new BorderDouble(3, 8);
 						button.Click += (s, e) => fixAction?.Invoke();

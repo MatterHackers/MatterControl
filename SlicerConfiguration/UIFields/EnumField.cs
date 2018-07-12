@@ -38,17 +38,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class EnumField : UIField
 	{
 		private EditableProperty property;
+		private ThemeConfig theme;
 		private DropDownList dropDownList;
 
-		public EnumField(EditableProperty property)
+		public EnumField(EditableProperty property, ThemeConfig theme)
 		{
 			this.property = property;
+			this.theme = theme;
 		}
 
 		public override void Initialize(int tabIndex)
 		{
-			var theme = ApplicationController.Instance.Theme;
-
 			// Enum keyed on name to friendly name
 			var enumItems = Enum.GetNames(property.PropertyType).Select(enumName =>
 			{

@@ -284,19 +284,15 @@ namespace MatterHackers.MeshVisualizer
 
 		private BedConfig sceneContext;
 
-		private double selectionHighlightWidth = 5;
-
 		private Color debugBorderColor = Color.Green;
 
-		public MeshViewerWidget(BedConfig sceneContext, InteractionLayer interactionLayer, string startingTextMessage = "", EditorType editorType = EditorType.Part)
+		public MeshViewerWidget(BedConfig sceneContext, InteractionLayer interactionLayer, ThemeConfig theme, EditorType editorType = EditorType.Part)
 		{
 			this.EditorMode = editorType;
 			this.scene = sceneContext.Scene;
 			this.sceneContext = sceneContext;
 			this.interactionLayer = interactionLayer;
 			this.World = interactionLayer.World;
-
-			var theme = ApplicationController.Instance.Theme;
 
 			gridColors = new GridColors()
 			{
@@ -634,7 +630,6 @@ namespace MatterHackers.MeshVisualizer
 					double secondsSinceSelectionChanged = (UiThread.CurrentTimerMs - lastSelectionChangedMs) / 1000.0;
 					if (secondsSinceSelectionChanged < .5)
 					{
-						//var accentColor = ApplicationController.Instance.Theme.Colors.PrimaryAccentColor;
 						var accentColor = Color.LightGray;
 						if (secondsSinceSelectionChanged < .25)
 						{

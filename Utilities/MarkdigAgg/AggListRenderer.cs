@@ -15,8 +15,6 @@ namespace Markdig.Renderers.Agg
 		public ListX()
 			: base(FlowDirection.TopToBottom)
 		{
-			var theme = ApplicationController.Instance.Theme;
-
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Stretch;
 		}
@@ -36,10 +34,8 @@ namespace Markdig.Renderers.Agg
 	public class ListItemX : FlowLayoutWidget
 	{
 		private FlowLayoutWidget content;
-		public ListItemX()
+		public ListItemX(ThemeConfig theme)
 		{
-			var theme = ApplicationController.Instance.Theme;
-
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Stretch;
 
@@ -64,6 +60,13 @@ namespace Markdig.Renderers.Agg
 
 	public class AggListRenderer : AggObjectRenderer<ListBlock>
 	{
+		private ThemeConfig theme;
+
+		public AggListRenderer(ThemeConfig theme)
+		{
+			this.theme = theme;
+		}
+
 		protected override void Write(AggRenderer renderer, ListBlock listBlock)
 		{
 			//var list = new List();
@@ -86,7 +89,7 @@ namespace Markdig.Renderers.Agg
 
 			foreach (var item in listBlock)
 			{
-				renderer.Push(new ListItemX());
+				renderer.Push(new ListItemX(theme));
 				renderer.WriteChildren(item as ListItemBlock);
 				renderer.Pop();
 			}

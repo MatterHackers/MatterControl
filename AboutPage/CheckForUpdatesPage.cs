@@ -12,8 +12,6 @@ namespace MatterHackers.MatterControl
 		public CheckForUpdatesPage()
 		: base("Close".Localize())
 		{
-			var theme = ApplicationController.Instance.Theme;
-
 			this.WindowTitle = this.HeaderText = "Check for Update".Localize();
 			this.Padding = 0;
 			this.AnchorAll();
@@ -113,7 +111,7 @@ namespace MatterHackers.MatterControl
 
 			additionalInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
+				BackgroundColor = theme.Colors.SecondaryBackgroundColor,
 				HAnchor = HAnchor.Stretch,
 				Padding = new BorderDouble(left: 6, top: 6),
 				Visible = false

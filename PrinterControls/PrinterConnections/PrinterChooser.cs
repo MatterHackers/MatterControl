@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2015, Kevin Pope
+Copyright (c) 2018, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -37,18 +37,15 @@ namespace MatterHackers.MatterControl
 	{
 		private List<KeyValuePair<string, string>> listSource;
 
-		public BoundDropList(string noSelectionString, int maxHeight = 0)
-			: base(noSelectionString, ActiveTheme.Instance.PrimaryTextColor, maxHeight: maxHeight, pointSize: ApplicationController.Instance.Theme.DefaultFontSize)
+		public BoundDropList(string noSelectionString, ThemeConfig theme, int maxHeight = 0)
+			: base(noSelectionString, theme.Colors.PrimaryTextColor, maxHeight: maxHeight, pointSize: theme.DefaultFontSize)
 		{
-			this.BorderColor = ApplicationController.Instance.Theme.GetBorderColor(75);
+			this.BorderColor = theme.GetBorderColor(75);
 		}
 
 		public List<KeyValuePair<string, string>> ListSource
 		{
-			get
-			{
-				return listSource;
-			}
+			get => listSource;
 			set
 			{
 				if (listSource == value)
@@ -81,4 +78,3 @@ namespace MatterHackers.MatterControl
 		}
 	}
 }
- 

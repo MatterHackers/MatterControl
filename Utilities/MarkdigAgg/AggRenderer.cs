@@ -18,8 +18,8 @@ namespace Markdig.Renderers
 {
 	public class TextWordX : TextWidget
 	{
-		public TextWordX()
-			: base("", pointSize: 10, textColor: ApplicationController.Instance.Theme.Colors.PrimaryTextColor)
+		public TextWordX(ThemeConfig theme)
+			: base("", pointSize: 10, textColor: theme.Colors.PrimaryTextColor)
 		{
 			this.AutoExpandBoundsToText = true;
 		}
@@ -49,11 +49,17 @@ namespace Markdig.Renderers
 	{
 		private readonly Stack<GuiWidget> stack = new Stack<GuiWidget>();
 		private char[] buffer;
+		private ThemeConfig theme;
 
 		public GuiWidget RootWidget { get; }
 
 		public Uri BaseUri { get; set; }
 		public List<MarkdownDocumentLink> ChildLinks { get; internal set; }
+
+		public AggRenderer(ThemeConfig theme)
+		{
+			this.theme = theme;
+		}
 
 		public AggRenderer(GuiWidget rootWidget)
 		{
@@ -63,8 +69,8 @@ namespace Markdig.Renderers
 			stack.Push(rootWidget);
 
 			// Default block renderers
-			ObjectRenderers.Add(new AggCodeBlockRenderer());
-			ObjectRenderers.Add(new AggListRenderer());
+			ObjectRenderers.Add(new AggCodeBlockRenderer(theme));
+			ObjectRenderers.Add(new AggListRenderer(theme));
 			ObjectRenderers.Add(new AggHeadingRenderer());
 			ObjectRenderers.Add(new AggParagraphRenderer());
 			ObjectRenderers.Add(new AggQuoteBlockRenderer());
@@ -174,16 +180,21 @@ namespace Markdig.Renderers
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal void WriteText(string text)
 		{
-			// TODO: Is this debugging? Debug.WriteLine()?
 			var words = text.Split(' ');
 			bool first = true;
+
 			foreach (var word in words)
 			{
 				if(!first)
 				{
 					WriteInline(new TextSpaceX { Text = " " });
 				}
-				WriteInline(new TextWordX { Text = word });
+
+				WriteInline(new TextWordX (theme)
+				{
+					Text = word
+				});
+
 				first = false;
 			}
 		}
@@ -191,7 +202,9 @@ namespace Markdig.Renderers
 		internal void WriteText(string text, int offset, int length)
 		{
 			if (text == null)
+			{
 				return;
+			}
 
 			if (offset == 0 && text.Length == length)
 			{

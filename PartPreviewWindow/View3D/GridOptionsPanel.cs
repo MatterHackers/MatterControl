@@ -35,10 +35,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class GridOptionsPanel : FlowLayoutWidget, IIgnoredPopupChild
 	{
-		public GridOptionsPanel(InteractionLayer interactionLayer) : base(FlowDirection.TopToBottom)
+		public GridOptionsPanel(InteractionLayer interactionLayer, ThemeConfig theme)
+			: base(FlowDirection.TopToBottom)
 		{
-			var theme = ApplicationController.Instance.Theme;
-
 			this.HAnchor = HAnchor.MaxFitOrStretch;
 
 			this.AddChild(new TextWidget("Snap Grid".Localize())

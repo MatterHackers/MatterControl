@@ -327,7 +327,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (propertyValue is DirectionVector directionVector)
 			{
-				var field = new DirectionVectorField();
+				var field = new DirectionVectorField(theme);
 				field.Initialize(0);
 				field.SetValue(directionVector);
 				field.ValueChanged += (s, e) =>
@@ -347,7 +347,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					Normal = directionAxis.Normal
 				};
 				var row1 = CreateSettingsRow("Axis".Localize());
-				var field1 = new DirectionVectorField();
+				var field1 = new DirectionVectorField(theme);
 				field1.Initialize(0);
 				field1.SetValue(newDirectionVector);
 				row1.AddChild(field1.Content);
@@ -489,14 +489,14 @@ namespace MatterHackers.MatterControl.DesignTools
 				var iconsAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<IconsAttribute>().FirstOrDefault();
 				if (iconsAttribute != null)
 				{
-					field = new IconEnumField(property, iconsAttribute)
+					field = new IconEnumField(property, iconsAttribute, theme)
 					{
 						InitialValue = propertyValue.ToString()
 					};
 				}
 				else
 				{
-					field = new EnumField(property);
+					field = new EnumField(property, theme);
 				}
 
 				field.Initialize(0);

@@ -37,13 +37,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private UIField uiField;
 		private Color textColor;
+		private ThemeConfig theme;
 		private SliceSettingData settingData;
 
-		public DropMenuWrappedField(UIField uiField, SliceSettingData settingData, Color textColor)
+		public DropMenuWrappedField(UIField uiField, SliceSettingData settingData, Color textColor, ThemeConfig theme)
 		{
 			this.settingData = settingData;
 			this.uiField = uiField;
 			this.textColor = textColor;
+			this.theme = theme;
 		}
 
 		public void SetValue(string newValue, bool userInitiated)
@@ -60,7 +62,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public void Initialize(int tabIndex)
 		{
 			var totalContent = new FlowLayoutWidget();
-			var theme = ApplicationController.Instance.Theme;
 
 			var selectableOptions = new DropDownList("Custom", textColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
 			{

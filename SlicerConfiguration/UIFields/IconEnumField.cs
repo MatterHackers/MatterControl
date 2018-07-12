@@ -43,11 +43,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private EditableProperty property;
 		private IconsAttribute iconsAttribute;
+		private ThemeConfig theme;
 
-		public IconEnumField(EditableProperty property, IconsAttribute iconsAttribute)
+		public IconEnumField(EditableProperty property, IconsAttribute iconsAttribute, ThemeConfig theme)
 		{
 			this.property = property;
 			this.iconsAttribute = iconsAttribute;
+			this.theme = theme;
 		}
 
 		// TODO: Violates UIField norms but consistent with past behavior - state is only correct at construction time, often reconstructed
@@ -55,8 +57,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void Initialize(int tabIndex)
 		{
-			var theme = ApplicationController.Instance.Theme;
-
 			// Enum keyed on name to friendly name
 			var enumItems = Enum.GetNames(property.PropertyType).Select(enumName =>
 			{

@@ -61,10 +61,9 @@ namespace MatterHackers.MatterControl
 		private PrinterConfig printer;
 		private FlowLayoutWidget column;
 
-		public ManualPrinterControls(PrinterConfig printer)
+		public ManualPrinterControls(PrinterConfig printer, ThemeConfig theme)
 		{
-			this.theme = ApplicationController.Instance.Theme;
-
+			this.theme = theme;
 			this.printer = printer;
 			this.ScrollArea.HAnchor |= HAnchor.Stretch;
 			this.AnchorAll();

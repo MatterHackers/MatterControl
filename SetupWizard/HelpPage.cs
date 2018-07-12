@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl
 			sequence.AddImage(new ImageBuffer(1, 1));
 
 			var description = new GuiWidget();
-			var markdownWidget = new MarkdownWidget()
+			var markdownWidget = new MarkdownWidget(theme)
 			{
 				BackgroundColor = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.White, 20)),
 				Padding = new BorderDouble(left: theme.DefaultContainerPadding / 2)
@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl
 
 		private TreeNode ProcessTree(HelpArticle container)
 		{
-			var treeNode = new TreeNode(false)
+			var treeNode = new TreeNode(theme, false)
 			{
 				Text = container.Name,
 				Tag = container
@@ -316,7 +316,7 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
-					treeNode.Nodes.Add(new TreeNode(false)
+					treeNode.Nodes.Add(new TreeNode(theme, false)
 					{
 						Text = item.Name,
 						Tag = item

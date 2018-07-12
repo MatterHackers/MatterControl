@@ -46,11 +46,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ChromeTab printerTab = null;
 		private ChromeTabs tabControl;
 
-		public PartPreviewContent()
+		public PartPreviewContent(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
-			var theme = ApplicationController.Instance.Theme;
-
 			this.AnchorAll();
 
 			var extensionArea = new LeftClipFlowLayoutWidget()

@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.Library
 		{
 			return Task.FromResult(
 				AggContext.StaticData.LoadIcon(
-					Path.Combine((width > 50 || height > 50) ? "icon_sd_card_115x115.png" : "icon_sd_card_50x50.png"), 
+					Path.Combine((width > 50 || height > 50) ? "icon_sd_card_115x115.png" : "icon_sd_card_50x50.png"),
 					ApplicationController.Instance.Theme.InvertIcons));
 		}
 

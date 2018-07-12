@@ -46,11 +46,13 @@ namespace MatterHackers.MatterControl
 		private DialogWindow()
 			: base(500 * GuiWidget.DeviceScale, 500 * GuiWidget.DeviceScale)
 		{
+			var theme = ApplicationController.Instance.Theme;
+
 			this.AlwaysOnTopOfMain = true;
 			this.MinimumSize = new Vector2(200, 200);
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			this.BackgroundColor = theme.Colors.PrimaryBackgroundColor;
 
-			var defaultPadding = ApplicationController.Instance.Theme.DefaultContainerPadding;
+			var defaultPadding = theme.DefaultContainerPadding;
 			this.Padding = new BorderDouble(defaultPadding, defaultPadding, defaultPadding, 2);
 		}
 

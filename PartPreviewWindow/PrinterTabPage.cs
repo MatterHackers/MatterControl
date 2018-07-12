@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			printer.ViewState.ViewModeChanged += ViewState_ViewModeChanged;
 
-			LayerScrollbar = new SliceLayerSelector(printer, sceneContext)
+			LayerScrollbar = new SliceLayerSelector(printer, sceneContext, theme)
 			{
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Right | HAnchor.Fit,
@@ -199,7 +199,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 
 			// Create and append new widget
-			gcode2DWidget = new GCode2DWidget(printer)
+			gcode2DWidget = new GCode2DWidget(printer, theme)
 			{
 				Visible = (printer.ViewState.ViewMode == PartViewMode.Layers2D)
 			};
@@ -395,14 +395,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void AddSettingsTabBar(GuiWidget parent, GuiWidget widgetTodockTo)
 		{
-			sideBar = new DockingTabControl(widgetTodockTo, DockSide.Right, ApplicationController.Instance.ActivePrinter)
+			sideBar = new DockingTabControl(widgetTodockTo, DockSide.Right, printer, theme)
 			{
 				Name = "DockingTabControl",
-				ControlIsPinned = ApplicationController.Instance.ActivePrinter.ViewState.SliceSettingsTabPinned
+				ControlIsPinned = printer.ViewState.SliceSettingsTabPinned
 			};
 			sideBar.PinStatusChanged += (s, e) =>
 			{
-				ApplicationController.Instance.ActivePrinter.ViewState.SliceSettingsTabPinned = sideBar.ControlIsPinned;
+				printer.ViewState.SliceSettingsTabPinned = sideBar.ControlIsPinned;
 			};
 			parent.AddChild(sideBar);
 
@@ -416,9 +416,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						NamedSettingsLayers.All),
 					theme));
 
-			sideBar.AddPage("Controls".Localize(), new ManualPrinterControls(printer));
+			sideBar.AddPage("Controls".Localize(), new ManualPrinterControls(printer, theme));
 
-			sideBar.AddPage("Terminal".Localize(), new TerminalWidget(printer)
+			sideBar.AddPage("Terminal".Localize(), new TerminalWidget(printer, theme)
 			{
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Stretch
@@ -429,7 +429,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ProcessOptionalTab()
 		{
-			if (ApplicationController.Instance.ActivePrinter.ViewState.ConfigurePrinterVisible)
+			if (printer.ViewState.ConfigurePrinterVisible)
 			{
 				sideBar.AddPage(
 					"Printer".Localize(),
@@ -451,7 +451,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Fit | HAnchor.Center,
 				VAnchor = VAnchor.Top | VAnchor.Fit,
-				//BackgroundColor = new Color(ActiveTheme.Instance.PrimaryBackgroundColor, 128),
+				//BackgroundColor = new Color(theme.Colors.PrimaryBackgroundColor, 128),
 				MinimumSize = new Vector2(275, 140),
 				Selectable = false
 			};
@@ -491,7 +491,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Center
 			});
 
-			var timeWidget = new TextWidget("", pointSize: 22, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			var timeWidget = new TextWidget("", pointSize: 22, textColor: theme.Colors.PrimaryTextColor)
 			{
 				AutoExpandBoundsToText = true,
 				Margin = new BorderDouble(10, 0, 0, 0),

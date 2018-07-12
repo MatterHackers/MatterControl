@@ -44,9 +44,20 @@ namespace MatterHackers.MatterControl
 
 		private Queue<Func<Task>> queuedThumbCallbacks = new Queue<Func<Task>>();
 
+		private AutoResetEvent thumbGenResetEvent = new AutoResetEvent(false);
+
+		private Task thumbnailGenerator = null;
+
+		private ThemeConfig theme;
+
+		public ThumbnailsConfig(ThemeConfig theme)
+		{
+			this.theme = theme;
+		}
+
 		public Dictionary<Type, ImageBuffer> OperationIcons { get; internal set; }
 
-		public ImageBuffer DefaultThumbnail() => AggContext.StaticData.LoadIcon("cube.png", 16, 16, ApplicationController.Instance.Theme.InvertIcons);
+		public ImageBuffer DefaultThumbnail() => AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons);
 
 		public ImageBuffer LoadCachedImage(string cacheId, int width, int height)
 		{
@@ -95,7 +106,7 @@ namespace MatterHackers.MatterControl
 		public string CachePath(string cacheId)
 		{
 			return ApplicationController.CacheablePath(
-				Path.Combine("Thumbnails", "Content"), 
+				Path.Combine("Thumbnails", "Content"),
 				$"{cacheId}.png");
 		}
 
@@ -112,10 +123,6 @@ namespace MatterHackers.MatterControl
 				Path.Combine("Thumbnails", "Library"),
 				$"{libraryItem.ID}-{width}x{height}.png");
 		}
-
-		private AutoResetEvent thumbGenResetEvent = new AutoResetEvent(false);
-
-		private Task thumbnailGenerator = null;
 
 		internal void QueueForGeneration(Func<Task> func)
 		{
@@ -175,7 +182,6 @@ namespace MatterHackers.MatterControl
 			// Null task reference on exit
 			thumbnailGenerator = null;
 		}
-
 
 		private static ImageBuffer LoadImage(string filePath)
 		{
