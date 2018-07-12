@@ -113,7 +113,7 @@ namespace MatterHackers.GCodeVisualizer
 			GL.DisableClientState(ArrayCap.ColorArray);
 		}
 
-		public void Dispose()
+		protected virtual void Dispose(bool disposing)
 		{
 			// release unmanaged resources
 			if (!disposed)
@@ -126,11 +126,23 @@ namespace MatterHackers.GCodeVisualizer
 
 				disposed = true;
 			}
+
+			if (disposing)
+			{
+				// release other Managed objects
+				// if (resource!= null) resource.Dispose();
+			}
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		~GCodeVertexBuffer()
 		{
-			Dispose();
+			Dispose(false);
 		}
 	}
 }
