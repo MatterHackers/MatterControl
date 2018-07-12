@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme);
 			editButton.Click += (s, e) =>
 			{
-				DialogWindow.Show(new EditLevelingSettingsPage(printer));
+				DialogWindow.Show(new EditLevelingSettingsPage(printer, theme));
 			};
 
 			return new SectionWidget(

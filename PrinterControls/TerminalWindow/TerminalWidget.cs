@@ -46,15 +46,11 @@ namespace MatterHackers.MatterControl
 		private TextScrollWidget textScrollWidget;
 		private PrinterConfig printer;
 
-		public TerminalWidget(PrinterConfig printer)
+		public TerminalWidget(PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.printer = printer;
-
-			var theme = ApplicationController.Instance.Theme;
-
 			this.Name = "TerminalWidget";
-			this.BackgroundColor = theme.TabBodyBackground;
 			this.Padding = new BorderDouble(5, 0);
 
 			// Header
@@ -67,7 +63,7 @@ namespace MatterHackers.MatterControl
 
 			filterOutput = new CheckBox("Filter Output".Localize(), textSize: theme.DefaultFontSize)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.Colors.PrimaryTextColor,
 				VAnchor = VAnchor.Bottom,
 			};
 			filterOutput.CheckedStateChanged += (s, e) =>
@@ -89,7 +85,7 @@ namespace MatterHackers.MatterControl
 			{
 				Margin = new BorderDouble(left: 25),
 				Checked = UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalAutoUppercase, true),
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.Colors.PrimaryTextColor,
 				VAnchor = VAnchor.Bottom
 			};
 			autoUppercase.CheckedStateChanged += (s, e) =>
@@ -105,8 +101,8 @@ namespace MatterHackers.MatterControl
 
 			textScrollWidget = new TextScrollWidget(printer, printer.Connection.TerminalLog.PrinterLines)
 			{
-				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				BackgroundColor = theme.Colors.SecondaryBackgroundColor,
+				TextColor = theme.Colors.PrimaryTextColor,
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
 				Margin = 0,

@@ -38,12 +38,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class ListField : UIField
 	{
 		private DropDownList dropdownList;
+		private ThemeConfig theme;
 
 		public List<string> ListItems { get; set; }
 
+		public ListField(ThemeConfig theme)
+		{
+			this.theme = theme;
+		}
+
 		public override void Initialize(int tabIndex)
 		{
-			var theme = ApplicationController.Instance.Theme;
 			dropdownList = new DropDownList("None".Localize(), theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
 			{
 				ToolTipText = this.HelpText,

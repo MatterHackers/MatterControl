@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewControls3D.TransformStateChanged += ViewControls3D_TransformStateChanged;
 
 			// MeshViewer
-			meshViewerWidget = new MeshViewerWidget(sceneContext, this.InteractionLayer, editorType: editorType);
+			meshViewerWidget = new MeshViewerWidget(sceneContext, this.InteractionLayer, theme, editorType: editorType);
 			meshViewerWidget.AnchorAll();
 			this.AddChild(meshViewerWidget);
 
@@ -1265,7 +1265,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.ShowBedViewOptions(popupMenu);
 
-			popupMenu.AddChild(new GridOptionsPanel(this.InteractionLayer));
+			popupMenu.AddChild(new GridOptionsPanel(this.InteractionLayer, theme));
 
 			return popupMenu;
 		}

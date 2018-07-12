@@ -305,7 +305,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.AddSettingsRow(updateMatterControl);
 
 			this.AddChild(new SettingsItem("Theme".Localize(), new GuiWidget(), theme));
-			this.AddChild(this.GetThemeControl(theme));
+			this.AddChild(this.GetThemeControl());
 
 			var aboutMatterControl = new SettingsItem("About".Localize() + " " + ApplicationController.Instance.ProductName, theme);
 			if (IntPtr.Size == 8)
@@ -353,7 +353,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			widget.Padding = widget.Padding.Clone(right: 10);
 		}
 
-		private FlowLayoutWidget GetThemeControl(ThemeConfig theme)
+		private FlowLayoutWidget GetThemeControl()
 		{
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{

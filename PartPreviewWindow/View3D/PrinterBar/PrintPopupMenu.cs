@@ -48,6 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private SettingsContext settingsContext;
 
 		public PrintPopupMenu(PrinterConfig printer, ThemeConfig theme)
+			: base(theme)
 		{
 			this.printer = printer;
 			this.DrawArrow = true;

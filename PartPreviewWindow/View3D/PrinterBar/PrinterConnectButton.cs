@@ -201,7 +201,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private static void RunTroubleShooting()
 		{
-			DialogWindow.Show<SetupWizardTroubleshooting>();
+			DialogWindow.Show(
+				new SetupWizardTroubleshooting(ApplicationController.Instance.ActivePrinter));
 		}
 
 		private void SetChildVisible(GuiWidget visibleChild, bool enabled)

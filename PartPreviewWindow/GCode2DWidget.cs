@@ -65,12 +65,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private EventHandler unregisterEvents;
 		private ImageBuffer bedImage;
 
-		public GCode2DWidget(PrinterConfig printer)
+		public GCode2DWidget(PrinterConfig printer, ThemeConfig theme)
 		{
 			this.printer = printer;
 			options = printer.Bed.RendererOptions;
-
-			var theme = ApplicationController.Instance.Theme;
 
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -41,11 +41,12 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PrinterCommunication;
 	using MatterHackers.VectorMath;
+	using Newtonsoft.Json;
 
 	public class ThemeConfig
 	{
-		public static ImageBuffer RestoreNormal { get; private set; }
-		public static ImageBuffer RestoreHover { get; private set; }
+		private static ImageBuffer restoreNormal;
+		private static ImageBuffer restoreHover;
 		private static ImageBuffer restorePressed;
 
 		public int FontSize7 { get; } = 7;
@@ -56,18 +57,17 @@ namespace MatterHackers.MatterControl
 		public int FontSize12 { get; } = 12;
 		public int FontSize14 { get; } = 14;
 
-		private readonly int defaultScrollBarWidth = 120;
-		private readonly int sideBarButtonWidth = 138;
-
-		public int DefaultFontSize { get; } = 11;
+		public int DefaultFontSize { get; set; } = 11;
 		public int DefaultContainerPadding { get; } = 10;
-		public int H1PointSize { get; set; } = 11;
+		public int H1PointSize { get; } = 11;
 
 		public double ButtonHeight => 32 * GuiWidget.DeviceScale;
-		public double MicroButtonHeight => 20 * GuiWidget.DeviceScale;
-		public double MicroButtonWidth => 30 * GuiWidget.DeviceScale;
 		public double TabButtonHeight => 30 * GuiWidget.DeviceScale;
 		public double MenuGutterWidth => 35 * GuiWidget.DeviceScale;
+
+		private double microButtonHeight => 20 * GuiWidget.DeviceScale;
+		private double microButtonWidth => 30 * GuiWidget.DeviceScale;
+		private readonly int defaultScrollBarWidth = 120;
 
 		/// <summary>
 		/// Indicates if icons should be inverted due to black source images on a dark theme
@@ -114,11 +114,11 @@ namespace MatterHackers.MatterControl
 
 		public BorderDouble TextButtonPadding { get; } = new BorderDouble(14, 0);
 
-		public BorderDouble ButtonSpacing { get; }
+		public BorderDouble ButtonSpacing { get; } = new BorderDouble(right: 3);
 
-		public BorderDouble ToolbarPadding { get; set; } = 3;
+		public BorderDouble ToolbarPadding { get; } = 3;
 
-		public BorderDouble TabbarPadding { get; set; } = new BorderDouble(3, 1);
+		public BorderDouble TabbarPadding { get; } = new BorderDouble(3, 1);
 
 		/// <summary>
 		/// The height or width of a given vertical or horizontal splitter bar
@@ -181,7 +181,6 @@ namespace MatterHackers.MatterControl
 
 		public ThemeConfig()
 		{
-			this.ButtonSpacing = new BorderDouble(right: 3);
 			this.SeparatorMargin = (this.ButtonSpacing * 2).Clone(left: this.ButtonSpacing.Right);
 		}
 
@@ -191,14 +190,14 @@ namespace MatterHackers.MatterControl
 
 			if (AggContext.OperatingSystem == OSType.Android)
 			{
-				RestoreNormal = ColorCircle(size, new Color(200, 0, 0));
+				restoreNormal = ColorCircle(size, new Color(200, 0, 0));
 			}
 			else
 			{
-				RestoreNormal = ColorCircle(size, Color.Transparent);
+				restoreNormal = ColorCircle(size, Color.Transparent);
 			}
 
-			RestoreHover = ColorCircle(size, new Color("#DB4437"));
+			restoreHover = ColorCircle(size, new Color("#DB4437"));
 			restorePressed = ColorCircle(size, new Color(255, 0, 0));
 
 			this.Colors = colors;
@@ -271,8 +270,8 @@ namespace MatterHackers.MatterControl
 				HoverColor = this.AccentMimimalOverlay,
 				Margin = new BorderDouble(right: 1),
 				HAnchor = HAnchor.Absolute,
-				Height = this.MicroButtonHeight,
-				Width = this.MicroButtonWidth
+				Height = this.microButtonHeight,
+				Width = this.microButtonWidth
 			};
 
 			// Add to sibling list if supplied
@@ -394,10 +393,10 @@ namespace MatterHackers.MatterControl
 		{
 			return new Button(
 				new ButtonViewStates(
-					new ImageWidget(RestoreNormal),
-					new ImageWidget(RestoreHover),
+					new ImageWidget(restoreNormal),
+					new ImageWidget(restoreHover),
 					new ImageWidget(restorePressed),
-					new ImageWidget(RestoreNormal)))
+					new ImageWidget(restoreNormal)))
 			{
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(0, 0, 5, 0)

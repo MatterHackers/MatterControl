@@ -20,17 +20,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private IconButton refreshButton;
 
 		private PrinterConfig printer;
+		private ThemeConfig theme;
 
-		public IpAddessField(PrinterConfig printer)
+		public IpAddessField(PrinterConfig printer, ThemeConfig theme)
 		{
 			this.printer = printer;
+			this.theme = theme;
 		}
 
 		public override void Initialize(int tabIndex)
 		{
 			EventHandler unregisterEvents = null;
-
-			var theme = ApplicationController.Instance.Theme;
 
 			base.Initialize(tabIndex);
 			bool canChangeComPort = !printer.Connection.IsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var widget = new FlowLayoutWidget();
 			widget.AddChild(dropdownList);
-			refreshButton = new IconButton(AggContext.StaticData.LoadIcon("fa-refresh_14.png", theme.InvertIcons), ApplicationController.Instance.Theme)
+			refreshButton = new IconButton(AggContext.StaticData.LoadIcon("fa-refresh_14.png", theme.InvertIcons), theme)
 			{
 				Margin = new BorderDouble(left: 5)
 			};

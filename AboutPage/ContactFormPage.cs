@@ -60,10 +60,6 @@ namespace MatterHackers.MatterControl.ContactForm
 
 		public ContactFormPage()
 		{
-			var theme = ApplicationController.Instance.Theme;
-
-			AnchorAll();
-
 			this.WindowTitle = "MatterControl : " + "Submit Feedback".Localize();
 			this.HeaderText = "How can we improve?".Localize();
 
@@ -106,7 +102,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			{
 				AutoExpandBoundsToText = true,
 				Margin = new BorderDouble(0, 5),
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.Colors.PrimaryTextColor,
 				HAnchor = HAnchor.Left
 			};
 
@@ -154,7 +150,7 @@ namespace MatterHackers.MatterControl.ContactForm
 
 			labelContainer.AddChild(new TextWidget(labelText, pointSize: fontSize)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.Colors.PrimaryTextColor,
 				VAnchor = VAnchor.Bottom,
 				HAnchor = HAnchor.Left,
 				Margin = new BorderDouble(bottom: 2)

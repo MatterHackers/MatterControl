@@ -43,20 +43,22 @@ namespace Markdig.Agg
 		private FlowLayoutWidget contentPanel;
 
 		private AggMarkdownDocument markdownDocument;
+		private ThemeConfig theme;
 
-		public MarkdownWidget(Uri contentUri, bool scrollContent = true)
-			: this(scrollContent)
+		public MarkdownWidget(ThemeConfig theme, Uri contentUri, bool scrollContent = true)
+			: this(theme, scrollContent)
 		{
 			markdownDocument.BaseUri = contentUri;
 
 			this.LoadUri(contentUri);
 		}
 
-		public MarkdownWidget(bool scrollContent = true)
+		public MarkdownWidget(ThemeConfig theme, bool scrollContent = true)
 			: base(scrollContent)
 		{
 			markdownDocument = new AggMarkdownDocument();
 
+			this.theme = theme;
 			this.HAnchor = HAnchor.Stretch;
 			this.ScrollArea.HAnchor = HAnchor.Stretch;
 
@@ -113,8 +115,6 @@ namespace Markdig.Agg
 
 					this.Width = 10;
 					this.ScrollPositionFromTop = Vector2.Zero;
-
-					var theme = ApplicationController.Instance.Theme;
 
 					// Add header/edit button for HelpArticle pages
 					if (sourceArticle != null)

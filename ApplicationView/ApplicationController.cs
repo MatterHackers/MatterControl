@@ -296,7 +296,7 @@ namespace MatterHackers.MatterControl
 
 		private List<SceneSelectionOperation> registeredSceneOperations;
 
-		public ThumbnailsConfig Thumbnails { get; } = new ThumbnailsConfig();
+		public ThumbnailsConfig Thumbnails { get; }
 
 		private void RebuildSceneOperations(ThemeConfig theme)
 		{
@@ -670,6 +670,7 @@ namespace MatterHackers.MatterControl
 		{
 			// Initialize the AppContext theme object which will sync its content with Agg ActiveTheme changes
 			this.Theme = new ThemeConfig();
+			this.Thumbnails = new ThumbnailsConfig(this.Theme);
 			this.MenuTheme = new ThemeConfig();
 
 			HelpArticle helpArticle = null;
@@ -1306,7 +1307,7 @@ namespace MatterHackers.MatterControl
 					GuiWidget.LayoutCount = 0;
 					using (new QuickTimer($"ReloadAll_{reloadCount++}:"))
 					{
-						MainView = new WidescreenPanel();
+						MainView = new WidescreenPanel(ApplicationController.Instance.Theme);
 						this.DoneReloadingAll?.CallEvents(null, null);
 
 						using (new QuickTimer("Time to AddMainview: "))
@@ -2691,7 +2692,7 @@ namespace MatterHackers.MatterControl
 			UserSettings.Instance.Fields.StartCount = UserSettings.Instance.Fields.StartCount + 1;
 
 			reporter?.Invoke(0.05, "ApplicationController");
-			var na = ApplicationController.Instance;
+			var applicationController = ApplicationController.Instance;
 
 			// Accessing any property on ProfileManager will run the static constructor and spin up the ProfileManager instance
 			reporter?.Invoke(0.2, "ProfileManager");
@@ -2700,7 +2701,7 @@ namespace MatterHackers.MatterControl
 			await ProfileManager.Instance.Initialize();
 
 			reporter?.Invoke(0.3, "MainView");
-			ApplicationController.Instance.MainView = new WidescreenPanel();
+			applicationController.MainView = new WidescreenPanel(applicationController.Theme);
 
 			// now that we are all set up lets load our plugins and allow them their chance to set things up
 			reporter?.Invoke(0.8, "Plugins");
@@ -2710,14 +2711,14 @@ namespace MatterHackers.MatterControl
 			AppContext.Platform.ProcessCommandline();
 
 			reporter?.Invoke(0.91, "OnLoadActions");
-			ApplicationController.Instance.OnLoadActions();
+			applicationController.OnLoadActions();
 
 			UiThread.SetInterval(() =>
 			{
-				ApplicationController.Instance.ActivePrinter.Connection.OnIdle();
+				applicationController.ActivePrinter.Connection.OnIdle();
 			}, .1);
 
-			return ApplicationController.Instance.MainView;
+			return applicationController.MainView;
 		}
 
 		private static void ReportStartupProgress(double progress0To1, string section)

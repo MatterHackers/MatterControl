@@ -202,7 +202,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				this.TabBar.Padding = this.TabBar.Margin.Clone(right: theme.ToolbarPadding.Right);
 
-				searchPanel = new SearchInputBox()
+				searchPanel = new SearchInputBox(theme)
 				{
 					Visible = false,
 					BackgroundColor = theme.TabBarBackground,
@@ -788,7 +788,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					break;
 
 				case SliceSettingData.DataEditTypes.LIST:
-					uiField = new ListField()
+					uiField = new ListField(theme)
 					{
 						ListItems = settingData.ListValues.Split(',').ToList()
 					};
@@ -808,7 +808,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					break;
 #if !__ANDROID__
 				case SliceSettingData.DataEditTypes.IP_LIST:
-					uiField = new IpAddessField(printer);
+					uiField = new IpAddessField(printer, theme);
 					break;
 #endif
 
@@ -857,7 +857,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (settingData.QuickMenuSettings.Count > 0
 					&& settingData.SlicerConfigName == "baud_rate")
 				{
-					var dropMenu = new DropMenuWrappedField(uiField, settingData, theme.Colors.PrimaryTextColor);
+					var dropMenu = new DropMenuWrappedField(uiField, settingData, theme.Colors.PrimaryTextColor, theme);
 					dropMenu.Initialize(tabIndexForItem);
 
 					settingsRow.AddContent(dropMenu.Content);

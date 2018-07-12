@@ -39,10 +39,8 @@ namespace MatterHackers.MatterControl
 {
 	public class EditLevelingSettingsPage : DialogPage
 	{
-		public EditLevelingSettingsPage(PrinterConfig printer)
+		public EditLevelingSettingsPage(PrinterConfig printer, ThemeConfig theme)
 		{
-			var theme = ApplicationController.Instance.Theme;
-
 			this.WindowTitle = "Leveling Settings".Localize();
 			this.HeaderText = "Sampled Positions".Localize();
 

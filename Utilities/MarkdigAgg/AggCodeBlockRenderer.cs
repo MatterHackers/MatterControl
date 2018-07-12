@@ -11,25 +11,34 @@ namespace Markdig.Renderers.Agg
 {
 	public class CodeBlockX : FlowLeftRightWithWrapping
 	{
-		public CodeBlockX()
+		private ThemeConfig theme;
+
+		public CodeBlockX(ThemeConfig theme)
 		{
-			var theme = ApplicationController.Instance.Theme;
-			HAnchor = HAnchor.Stretch;
-			VAnchor = VAnchor.Fit;
-			Margin = 12;
-			Padding = 6;
-			BackgroundColor = theme.MinimalShade;
+			this.theme = theme;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Fit;
+			this.Margin = 12;
+			this.Padding = 6;
+			this.BackgroundColor = theme.MinimalShade;
 		}
 	}
 
 	public class AggCodeBlockRenderer : AggObjectRenderer<CodeBlock>
     {
+		private ThemeConfig theme;
+
+		public AggCodeBlockRenderer(ThemeConfig theme)
+		{
+			this.theme = theme;
+		}
+
         protected override void Write(AggRenderer renderer, CodeBlock obj)
         {
             //var paragraph = new Paragraph();
             //paragraph.SetResourceReference(FrameworkContentElement.StyleProperty, Styles.CodeBlockStyleKey);
 
-            renderer.Push(new CodeBlockX());
+            renderer.Push(new CodeBlockX(theme));
             renderer.WriteLeafRawLines(obj);
             renderer.Pop();
         }

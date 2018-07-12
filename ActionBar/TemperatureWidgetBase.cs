@@ -54,6 +54,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		protected virtual int TargetTemperature { get; }
 
 		public TemperatureWidgetBase(PrinterConfig printer, string textValue, ThemeConfig theme)
+			: base(theme)
 		{
 			this.printer = printer;
 

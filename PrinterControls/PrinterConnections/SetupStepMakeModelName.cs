@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			this.WindowTitle = "Setup Wizard".Localize();
 
-			printerManufacturerSelector = new BoundDropList(string.Format("- {0} -", "Select Make".Localize()), maxHeight: 200)
+			printerManufacturerSelector = new BoundDropList(string.Format("- {0} -", "Select Make".Localize()), theme, maxHeight: 200)
 			{
 				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin,
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				"Select the printer manufacturer".Localize(),
 				printerManufacturerSelector);
 
-			printerModelSelector = new BoundDropList(string.Format("- {0} -", "Select Model".Localize()), maxHeight: 200)
+			printerModelSelector = new BoundDropList(string.Format("- {0} -", "Select Model".Localize()), theme, maxHeight: 200)
 			{
 				Name = "Select Model",
 				HAnchor = HAnchor.Stretch,
@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			TextWidget printerNameLabel = new TextWidget("Name".Localize() + ":", 0, 0, 12)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.Colors.PrimaryTextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 4, 0, 1)
 			};
@@ -161,33 +161,35 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			printerNameError = new TextWidget("", 0, 0, 10)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.Colors.PrimaryTextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(top: 3)
 			};
 
-			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			container.Margin = new BorderDouble(0, 5);
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Margin = new BorderDouble(0, 5),
+				HAnchor = HAnchor.Stretch
+			};
 			container.AddChild(printerNameLabel);
 			container.AddChild(printerNameInput);
 			container.AddChild(printerNameError);
-			container.HAnchor = HAnchor.Stretch;
 
 			return container;
 		}
 
-		private FlowLayoutWidget CreateSelectionContainer(string labelText, string validationMessage, Agg.UI.DropDownList selector)
+		private FlowLayoutWidget CreateSelectionContainer(string labelText, string validationMessage, DropDownList selector)
 		{
 			var sectionLabel = new TextWidget(labelText, 0, 0, 12)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.Colors.PrimaryTextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			};
 
 			var validationTextWidget = new TextWidget(validationMessage, 0, 0, 10)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryAccentColor,
+				TextColor = theme.Colors.PrimaryAccentColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			};

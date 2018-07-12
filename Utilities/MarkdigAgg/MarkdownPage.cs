@@ -39,6 +39,7 @@ namespace Markdig.Agg
 			this.WindowTitle = this.HeaderText = "Markdown Tests";
 			contentRow.AddChild(
 				new MarkdownWidget(
+					theme,
 					new Uri("https://raw.githubusercontent.com/lunet-io/markdig/master/readme.md")));
 		}
 	}

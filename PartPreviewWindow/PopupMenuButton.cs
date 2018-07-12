@@ -36,9 +36,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PopupMenuButton : PopupButton
 	{
-		public PopupMenuButton()
+		private ThemeConfig theme;
+
+		public PopupMenuButton(ThemeConfig theme)
 		{
-			var theme = ApplicationController.Instance.Theme;
+			this.theme = theme;
 			this.DisabledColor = new Color(theme.Colors.SecondaryTextColor, 50);
 			this.HoverColor = theme.MinimalShade;
 		}
@@ -49,7 +51,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewWidget.Selectable = false;
 			viewWidget.BackgroundColor = Color.Transparent;
 
-			this.DisabledColor = new Color(ActiveTheme.Instance.SecondaryTextColor, 50);
+			this.theme = theme;
+			this.DisabledColor = new Color(theme.Colors.SecondaryTextColor, 50);
 
 			this.HoverColor = theme.ToolbarButtonHover;
 			this.BackgroundColor = theme.ToolbarButtonBackground;
@@ -70,8 +73,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		public Color DisabledColor { get; set; }
-
-		public Color HoverColor { get; set; } = Color.Transparent;
 
 		public Color MouseDownColor { get; set;} = Color.Transparent;
 
@@ -103,10 +104,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				// Draw directional arrow
 				graphics2D.Render(
-					dropArrow, 
+					dropArrow,
 					LocalBounds.Right - DropArrow.ArrowHeight * 2 - 2,
 					LocalBounds.Center.Y + DropArrow.ArrowHeight / 2,
-					this.Enabled ? ActiveTheme.Instance.SecondaryTextColor : this.DisabledColor);
+					this.Enabled ? theme.Colors.SecondaryTextColor : this.DisabledColor);
 			}
 		}
 

@@ -48,10 +48,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private SolidSlider layerSlider;
 		private double layerInfoHalfHeight;
 
-		public SliceLayerSelector(PrinterConfig printer, BedConfig sceneContext)
+		public SliceLayerSelector(PrinterConfig printer, BedConfig sceneContext, ThemeConfig theme)
 		{
-			var theme = ApplicationController.Instance.Theme;
-
 			this.sceneContext = sceneContext;
 
 			this.AddChild(layerScrollbar = new LayerScrollbar(printer, sceneContext)

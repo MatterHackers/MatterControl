@@ -53,10 +53,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private ThemeConfig theme;
 
-		public DockingTabControl(GuiWidget widgetTodockTo, DockSide dockSide, PrinterConfig printer)
+		public DockingTabControl(GuiWidget widgetTodockTo, DockSide dockSide, PrinterConfig printer, ThemeConfig theme)
 			: base (FlowDirection.TopToBottom)
 		{
-			this.theme = ApplicationController.Instance.Theme;
+			this.theme = theme;
 			this.printer = printer;
 			this.widgetTodockTo = widgetTodockTo;
 			this.DockSide = dockSide;
@@ -334,7 +334,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				});
 				buttonView.AfterDraw += (s, e) =>
 				{
-					e.Graphics2D.Render(rotatedLabel, ActiveTheme.Instance.PrimaryTextColor);
+					e.Graphics2D.Render(rotatedLabel, theme.Colors.PrimaryTextColor);
 				};
 			}
 
@@ -370,7 +370,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						BackgroundColor = theme.TabBarBackground,
 					};
 
-					titleBar.AddChild(new TextWidget(title, textColor: ActiveTheme.Instance.PrimaryTextColor)
+					titleBar.AddChild(new TextWidget(title, textColor: theme.Colors.PrimaryTextColor)
 					{
 						Margin = new BorderDouble(left: 8),
 						VAnchor = VAnchor.Center

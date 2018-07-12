@@ -48,9 +48,6 @@ namespace MatterHackers.MatterControl
 			: base("Close".Localize())
 		{
 			this.WindowTitle = "About".Localize() + " " + ApplicationController.Instance.ProductName;
-
-			var theme = ApplicationController.Instance.Theme;
-
 			this.MinimumSize = new Vector2(480 * GuiWidget.DeviceScale, 520 * GuiWidget.DeviceScale);
 			this.WindowSize = new Vector2(500 * GuiWidget.DeviceScale, 550 * GuiWidget.DeviceScale);
 

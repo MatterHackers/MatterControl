@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl
 
 		public AndroidConnectDevicePage()
 		{
-			TextWidget printerNameLabel = new TextWidget("Connect Your Device".Localize() + ":", 0, 0, labelFontSize)
+			var printerNameLabel = new TextWidget("Connect Your Device".Localize() + ":", 0, 0, labelFontSize)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				Margin = new BorderDouble(bottom: 10)
@@ -110,7 +110,8 @@ namespace MatterHackers.MatterControl
 			troubleshootButton = theme.CreateLightDialogButton("Troubleshoot".Localize());
 			troubleshootButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				DialogWindow.ChangeToPage<SetupWizardTroubleshooting>();
+				DialogWindow.ChangeToPage(
+					new SetupWizardTroubleshooting(ApplicationController.Instance.ActivePrinter));
 			});
 
 			retryButtonContainer = new FlowLayoutWidget()

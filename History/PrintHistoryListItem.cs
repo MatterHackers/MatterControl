@@ -47,12 +47,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 		public int ThumbWidth { get; } = 50;
 		public int ThumbHeight { get; } = 50;
 
-		public HistoryListView()
-			: base(FlowDirection.TopToBottom)
-		{
-			this.theme = ApplicationController.Instance.Theme;
-		}
-
 		public HistoryListView(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
