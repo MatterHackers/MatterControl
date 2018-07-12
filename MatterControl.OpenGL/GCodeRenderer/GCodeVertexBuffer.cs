@@ -49,23 +49,29 @@ namespace MatterHackers.GCodeVisualizer
 
 			// Set vertex data
 			myVertexLength = colorData.Length;
-			GL.BindBuffer(BufferTarget.ArrayBuffer, myVertexId);
-			unsafe
+			if (myVertexLength > 0)
 			{
-				fixed (ColorVertexData* dataPointer = colorData)
+				GL.BindBuffer(BufferTarget.ArrayBuffer, myVertexId);
+				unsafe
 				{
-					GL.BufferData(BufferTarget.ArrayBuffer, colorData.Length * ColorVertexData.Stride, (IntPtr)dataPointer, BufferUsageHint.StaticDraw);
+					fixed (ColorVertexData* dataPointer = colorData)
+					{
+						GL.BufferData(BufferTarget.ArrayBuffer, colorData.Length * ColorVertexData.Stride, (IntPtr)dataPointer, BufferUsageHint.StaticDraw);
+					}
 				}
 			}
 
 			// Set index data
 			myIndexLength = indexData.Length;
-			GL.BindBuffer(BufferTarget.ElementArrayBuffer, myIndexId);
-			unsafe
+			if (myIndexLength > 0)
 			{
-				fixed (int* dataPointer = indexData)
+				GL.BindBuffer(BufferTarget.ElementArrayBuffer, myIndexId);
+				unsafe
 				{
-					GL.BufferData(BufferTarget.ElementArrayBuffer, indexData.Length * sizeof(int), (IntPtr)dataPointer, BufferUsageHint.StaticDraw);
+					fixed (int* dataPointer = indexData)
+					{
+						GL.BufferData(BufferTarget.ElementArrayBuffer, indexData.Length * sizeof(int), (IntPtr)dataPointer, BufferUsageHint.StaticDraw);
+					}
 				}
 			}
 		}
