@@ -43,11 +43,11 @@ namespace MatterHackers.MatterControl
 
 		private TextWidget generalError;
 
-		private Button connectButton;
-		private Button skipButton;
-		private Button nextButton;
-		private Button retryButton;
-		private Button troubleshootButton;
+		private GuiWidget connectButton;
+		private GuiWidget skipButton;
+		private GuiWidget nextButton;
+		private GuiWidget retryButton;
+		private GuiWidget troubleshootButton;
 
 		private TextWidget skipMessage;
 
@@ -77,12 +77,11 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(0, 6)
 			};
 
-			//Construct buttons
-			connectButton = theme.WhiteButtonFactory.Generate("Connect".Localize());
+			connectButton = theme.CreateLightDialogButton("Connect".Localize());
 			connectButton.Margin = new BorderDouble(0,0,10,0);
 			connectButton.Click += ConnectButton_Click;
 
-			skipButton = theme.WhiteButtonFactory.Generate("Skip".Localize());
+			skipButton = theme.CreateLightDialogButton("Skip".Localize());
 			skipButton.Click += NextButton_Click;
 
 			connectButtonContainer.AddChild(connectButton);
@@ -103,12 +102,12 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(generalError);
 
 			//Construct buttons
-			retryButton = theme.WhiteButtonFactory.Generate("Retry".Localize());
+			retryButton = theme.CreateLightDialogButton("Retry".Localize());
 			retryButton.Click += ConnectButton_Click;
 			retryButton.Margin = new BorderDouble(0,0,10,0);
 
 			//Construct buttons
-			troubleshootButton = theme.WhiteButtonFactory.Generate("Troubleshoot".Localize());
+			troubleshootButton = theme.CreateLightDialogButton("Troubleshoot".Localize());
 			troubleshootButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				DialogWindow.ChangeToPage<SetupWizardTroubleshooting>();
@@ -128,7 +127,7 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(retryButtonContainer);
 
 			//Construct buttons
-			nextButton = theme.ButtonFactory.Generate("Continue".Localize());
+			nextButton = theme.CreateDialogButton("Continue".Localize());
 			nextButton.Click += NextButton_Click;
 			nextButton.Visible = false;
 

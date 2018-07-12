@@ -120,9 +120,6 @@ namespace MatterHackers.MatterControl
 
 		public BorderDouble TabbarPadding { get; set; } = new BorderDouble(3, 1);
 
-		public TextImageButtonFactory WhiteButtonFactory { get; private set; }
-		public TextImageButtonFactory ButtonFactory { get; private set; }
-
 		/// <summary>
 		/// The height or width of a given vertical or horizontal splitter bar
 		/// </summary>
@@ -210,17 +207,6 @@ namespace MatterHackers.MatterControl
 
 			DefaultThumbView.ThumbColor = new Color(colors.PrimaryTextColor, 30);
 
-			var commonOptions = new ButtonFactoryOptions();
-			commonOptions.NormalTextColor = colors.PrimaryTextColor;
-			commonOptions.HoverTextColor = colors.PrimaryTextColor;
-			commonOptions.PressedTextColor = colors.PrimaryTextColor;
-			commonOptions.DisabledTextColor = colors.TertiaryBackgroundColor;
-			commonOptions.Margin = this.TextButtonPadding;
-			commonOptions.FontSize = this.DefaultFontSize;
-			commonOptions.ImageSpacing = 8;
-			commonOptions.BorderWidth = 0;
-			commonOptions.FixedHeight = this.ButtonHeight;
-
 			this.TabBodyBackground = this.ResolveColor(
 				colors.TertiaryBackgroundColor,
 				new Color(
@@ -240,36 +226,6 @@ namespace MatterHackers.MatterControl
 			this.InactiveTabColor = ResolveColor(colors.PrimaryBackgroundColor, new Color(Color.White, this.SlightShade.alpha));
 
 			this.SplitterBackground = this.ActiveTabColor.AdjustLightness(0.87).ToColor();
-
-			this.ButtonFactory = new TextImageButtonFactory(commonOptions);
-
-			var commonGray = new ButtonFactoryOptions(commonOptions)
-			{
-				NormalTextColor = Color.Black,
-				NormalFillColor = Color.LightGray,
-				HoverTextColor = Color.Black,
-				PressedTextColor = Color.Black,
-				PressedFillColor = Color.LightGray,
-			};
-
-#region PartPreviewWidget
-
-			WhiteButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
-			{
-				FixedWidth = sideBarButtonWidth,
-				FixedHeight = TabButtonHeight,
-
-				NormalTextColor = Color.Black,
-				NormalFillColor = Color.White,
-				NormalBorderColor = new Color(colors.PrimaryTextColor, 200),
-
-				HoverTextColor = Color.Black,
-				HoverFillColor = new Color(255, 255, 255, 200),
-				HoverBorderColor = new Color(colors.PrimaryTextColor, 200),
-
-				BorderWidth = 1,
-			});
-#endregion
 		}
 
 		public JogControls.MoveButton CreateMoveButton(PrinterConfig printer, string label, PrinterConnection.Axis axis, double movementFeedRate, bool levelingButtons = false)
@@ -325,17 +281,29 @@ namespace MatterHackers.MatterControl
 			return radioButton;
 		}
 
+		public TextButton CreateLightDialogButton(string text)
+		{
+			return CreateDialogButton(text, new Color(Color.White, 15), new Color(Color.White, 25));
+		}
+
 		public TextButton CreateDialogButton(string text)
+		{
+			return CreateDialogButton(text, this.MinimalShade, this.SlightShade);
+		}
+
+		public TextButton CreateDialogButton(string text, Color backgroundColor, Color hoverColor)
 		{
 #if !__ANDROID__
 			return new TextButton(text, this)
 			{
-				BackgroundColor = this.MinimalShade
+				BackgroundColor = backgroundColor,
+				HoverColor = hoverColor
 			};
 #else
 			var button = new TextButton(text, this, this.FontSize14)
 			{
-				BackgroundColor = this.MinimalShade,
+				BackgroundColor = backgroundColor,
+				HoverColor = hoverColor,
 				// Enlarge button height and margin on Android
 				Height = 34 * GuiWidget.DeviceScale,
 			};

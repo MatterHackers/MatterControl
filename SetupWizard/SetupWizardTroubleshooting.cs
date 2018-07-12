@@ -22,7 +22,7 @@ namespace MatterHackers.MatterControl
 {
 	public class SetupWizardTroubleshooting : DialogPage
 	{
-		private Button nextButton;
+		private GuiWidget nextButton;
 
 		private EventHandler unregisterEvents;
 
@@ -44,8 +44,8 @@ namespace MatterHackers.MatterControl
 
 			RefreshStatus();
 
-			nextButton = theme.ButtonFactory.Generate("Continue".Localize());
-			nextButton.Click += (sender, e) => UiThread.RunOnIdle(this.DialogWindow.Close);
+			nextButton = theme.CreateDialogButton("Continue".Localize());
+			nextButton.Click += (s, e) => UiThread.RunOnIdle(this.DialogWindow.Close);
 			nextButton.Visible = false;
 
 			this.AddPageAction(nextButton);
@@ -218,7 +218,6 @@ namespace MatterHackers.MatterControl
 			{
 				HAnchor = HAnchor.Stretch;
 				VAnchor = VAnchor.Absolute;
-				TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
 
 				ErrorText = errorText;
 
@@ -243,10 +242,10 @@ namespace MatterHackers.MatterControl
 						AddSuccessIcon();
 					} else {
 						// Add Fix button
-						Button button  = buttonFactory.Generate(fixitText);
+						var button  = ApplicationController.Instance.Theme.CreateDialogButton(fixitText);
 						button.VAnchor = VAnchor.Center;
 						button.Padding = new BorderDouble(3, 8);
-						button.Click += (sender, e) => fixAction?.Invoke();
+						button.Click += (s, e) => fixAction?.Invoke();
 						base.AddChild(button);
 					}
 				}
