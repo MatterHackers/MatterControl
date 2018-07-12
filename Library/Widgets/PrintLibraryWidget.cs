@@ -81,7 +81,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				// Drop containers if ShowContainers != 1
 				ContainerFilter = (container) => UserSettings.Instance.ShowContainers,
 				BackgroundColor = theme.ActiveTabColor,
-				//BorderColor = theme.MinimalShade,
 				Border = new BorderDouble(top: 1)
 			};
 
