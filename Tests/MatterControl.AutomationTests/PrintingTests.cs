@@ -284,6 +284,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Layer(s) To Pause Field");
 					testRunner.Type("2;4;6");
 
+					Assert.IsTrue(ApplicationController.Instance.ActivePrinter.Connection.RecoveryIsEnabled);
+
 					// print a part
 					testRunner.AddItemToBedplate();
 					testRunner.StartPrint();
