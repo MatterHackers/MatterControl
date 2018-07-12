@@ -204,26 +204,31 @@ namespace MatterHackers.GCodeVisualizer
 			}
 		}
 
-		private void Create3DDataForLayer(int layerIndex,
-			VectorPOD<ColorVertexData> colorVertexData,
-			VectorPOD<int> vertexIndexArray,
-			GCodeRenderInfo renderInfo)
+		private GCodeVertexBuffer Create3DDataForLayer(int layerIndex, GCodeRenderInfo renderInfo)
 		{
-			colorVertexData.Clear();
-			vertexIndexArray.Clear();
+			var colorVertexData = new VectorPOD<ColorVertexData>();
+			var vertexIndexArray = new VectorPOD<int>();
+
 			featureStartIndex[layerIndex].Clear();
 			featureEndIndex[layerIndex].Clear();
 
 			for (int i = 0; i < renderFeatures[layerIndex].Count; i++)
 			{
 				featureStartIndex[layerIndex].Add(vertexIndexArray.Count);
+
 				RenderFeatureBase feature = renderFeatures[layerIndex][i];
+
 				if (feature != null)
 				{
+					// Build the color and index data for the feature
 					feature.CreateRender3DData(colorVertexData, vertexIndexArray, renderInfo);
 				}
+
 				featureEndIndex[layerIndex].Add(vertexIndexArray.Count);
 			}
+
+			// Construct and return the new VertexBuffer object with all color/index data
+			return new GCodeVertexBuffer(vertexIndexArray.Array, colorVertexData.Array);
 		}
 
 		public void Dispose()
@@ -325,14 +330,7 @@ namespace MatterHackers.GCodeVisualizer
 					// If its the first render or we change what we are trying to render then create vertex data.
 					if (layerVertexBuffer[i] == null)
 					{
-						VectorPOD<ColorVertexData> colorVertexData = new VectorPOD<ColorVertexData>();
-						VectorPOD<int> vertexIndexArray = new VectorPOD<int>();
-
-						Create3DDataForLayer(i, colorVertexData, vertexIndexArray, renderInfo);
-
-						layerVertexBuffer[i] = new GCodeVertexBuffer();
-						layerVertexBuffer[i].SetVertexData(colorVertexData.Array);
-						layerVertexBuffer[i].SetIndexData(vertexIndexArray.Array);
+						layerVertexBuffer[i] = Create3DDataForLayer(i, renderInfo);
 					}
 				}
 
