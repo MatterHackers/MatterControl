@@ -1,8 +1,5 @@
-﻿using MatterHackers.Agg.UI;
-using MatterHackers.RenderOpenGl.OpenGl;
-
-/*
-Copyright (c) 2014, Lars Brubaker
+﻿/*
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,44 +28,56 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterHackers.Agg.UI;
+using MatterHackers.RenderOpenGl.OpenGl;
 
 namespace MatterHackers.GCodeVisualizer
 {
 	public class GCodeVertexBuffer : IDisposable
 	{
-		public int myIndexId;
-		public int myIndexLength;
-		public BeginMode myMode = BeginMode.Triangles;
-		public int myVertexId;
-		public int myVertexLength;
-		public GCodeVertexBuffer()
-		{
-			GL.GenBuffers(1, out myVertexId);
-			GL.GenBuffers(1, out myIndexId);
-		}
+		private int indexID;
+		private int indexLength;
+		private BeginMode pointMode = BeginMode.Triangles;
+		private bool disposed = false;
 
-		public void Dispose()
+		private int vertexID;
+		private int vertexLength;
+
+		public GCodeVertexBuffer(int[] indexData, ColorVertexData[] colorData)
 		{
-			if (myVertexId != -1)
+			GL.GenBuffers(1, out vertexID);
+			GL.GenBuffers(1, out indexID);
+
+			// Set vertex data
+			vertexLength = colorData.Length;
+			if (vertexLength > 0)
 			{
-				int holdVertexId = myVertexId;
-				int holdIndexId = myIndexId;
-				UiThread.RunOnIdle(() =>
+				GL.BindBuffer(BufferTarget.ArrayBuffer, vertexID);
+				unsafe
 				{
-					GL.DeleteBuffers(1, ref holdVertexId);
-					GL.DeleteBuffers(1, ref holdIndexId);
-				});
+					fixed (ColorVertexData* dataPointer = colorData)
+					{
+						GL.BufferData(BufferTarget.ArrayBuffer, colorData.Length * ColorVertexData.Stride, (IntPtr)dataPointer, BufferUsageHint.StaticDraw);
+					}
+				}
+			}
 
-				myVertexId = -1;
+			// Set index data
+			indexLength = indexData.Length;
+			if (indexLength > 0)
+			{
+				GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexID);
+				unsafe
+				{
+					fixed (int* dataPointer = indexData)
+					{
+						GL.BufferData(BufferTarget.ElementArrayBuffer, indexData.Length * sizeof(int), (IntPtr)dataPointer, BufferUsageHint.StaticDraw);
+					}
+				}
 			}
 		}
 
-		~GCodeVertexBuffer()
-		{
-			Dispose();
-		}
-
-		public void renderRange(int offset, int count)
+		public void RenderRange(int offset, int count)
 		{
 			GL.EnableClientState(ArrayCap.ColorArray);
 			GL.EnableClientState(ArrayCap.NormalArray);
@@ -78,14 +87,21 @@ namespace MatterHackers.GCodeVisualizer
 
 			GL.EnableClientState(ArrayCap.IndexArray);
 
-			GL.BindBuffer(BufferTarget.ArrayBuffer, myVertexId);
-			GL.BindBuffer(BufferTarget.ElementArrayBuffer, myIndexId);
+			GL.BindBuffer(BufferTarget.ArrayBuffer, vertexID);
+			GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexID);
 
 			GL.ColorPointer(4, ColorPointerType.UnsignedByte, ColorVertexData.Stride, new IntPtr(0));
 			GL.NormalPointer(NormalPointerType.Float, ColorVertexData.Stride, new IntPtr(4));
 			GL.VertexPointer(3, VertexPointerType.Float, ColorVertexData.Stride, new IntPtr(4 + 3 * 4));
 
-			GL.DrawRangeElements(myMode, 0, myIndexLength, count, DrawElementsType.UnsignedInt, new IntPtr(offset * 4));
+			// ** Draw **
+			GL.DrawRangeElements(
+				pointMode,
+				0,
+				indexLength,
+				count,
+				DrawElementsType.UnsignedInt,
+				new IntPtr(offset * 4));
 
 			GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 			GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
@@ -97,40 +113,36 @@ namespace MatterHackers.GCodeVisualizer
 			GL.DisableClientState(ArrayCap.ColorArray);
 		}
 
-		public void SetIndexData(int[] data)
+		protected virtual void Dispose(bool disposing)
 		{
-			SetIndexData(data, data.Length);
-		}
-
-		public void SetIndexData(int[] data, int count)
-		{
-			myIndexLength = count;
-			GL.BindBuffer(BufferTarget.ElementArrayBuffer, myIndexId);
-			unsafe
+			// release unmanaged resources
+			if (!disposed)
 			{
-				fixed (int* dataPointer = data)
+				UiThread.RunOnIdle(() =>
 				{
-					GL.BufferData(BufferTarget.ElementArrayBuffer, data.Length * sizeof(int), (IntPtr)dataPointer, BufferUsageHint.StaticDraw);
-				}
+					GL.DeleteBuffers(1, ref vertexID);
+					GL.DeleteBuffers(1, ref indexID);
+				});
+
+				disposed = true;
+			}
+
+			if (disposing)
+			{
+				// release other Managed objects
+				// if (resource!= null) resource.Dispose();
 			}
 		}
 
-		public void SetVertexData(ColorVertexData[] data)
+		public void Dispose()
 		{
-			SetVertexData(data, data.Length);
+			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
-		public void SetVertexData(ColorVertexData[] data, int count)
+		~GCodeVertexBuffer()
 		{
-			myVertexLength = count;
-			GL.BindBuffer(BufferTarget.ArrayBuffer, myVertexId);
-			unsafe
-			{
-				fixed (ColorVertexData* dataPointer = data)
-				{
-					GL.BufferData(BufferTarget.ArrayBuffer, data.Length * ColorVertexData.Stride, (IntPtr)dataPointer, BufferUsageHint.StaticDraw);
-				}
-			}
+			Dispose(false);
 		}
 	}
 }
