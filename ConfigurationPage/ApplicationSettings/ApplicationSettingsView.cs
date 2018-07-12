@@ -170,121 +170,119 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.AddSettingsRow(new SettingsItem("Language".Localize(), languageSelector, theme));
 
 #if !__ANDROID__
+			// ThumbnailRendering
+			var thumbnailsModeDropList = new DropDownList("", theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
 			{
-				// ThumbnailRendering
-				var thumbnailsModeDropList = new DropDownList("", theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
-				{
-					BorderColor = theme.GetBorderColor(75)
-				};
-				thumbnailsModeDropList.AddItem("Flat".Localize(), "orthographic");
-				thumbnailsModeDropList.AddItem("3D".Localize(), "raytraced");
+				BorderColor = theme.GetBorderColor(75)
+			};
+			thumbnailsModeDropList.AddItem("Flat".Localize(), "orthographic");
+			thumbnailsModeDropList.AddItem("3D".Localize(), "raytraced");
 
-				thumbnailsModeDropList.SelectedValue = UserSettings.Instance.ThumbnailRenderingMode;
-				thumbnailsModeDropList.SelectionChanged += (s, e) =>
+			thumbnailsModeDropList.SelectedValue = UserSettings.Instance.ThumbnailRenderingMode;
+			thumbnailsModeDropList.SelectionChanged += (s, e) =>
+			{
+				string thumbnailRenderingMode = thumbnailsModeDropList.SelectedValue;
+				if (thumbnailRenderingMode != UserSettings.Instance.ThumbnailRenderingMode)
 				{
-					string thumbnailRenderingMode = thumbnailsModeDropList.SelectedValue;
-					if (thumbnailRenderingMode != UserSettings.Instance.ThumbnailRenderingMode)
+					UserSettings.Instance.ThumbnailRenderingMode = thumbnailRenderingMode;
+
+					UiThread.RunOnIdle(() =>
 					{
-						UserSettings.Instance.ThumbnailRenderingMode = thumbnailRenderingMode;
-
-						UiThread.RunOnIdle(() =>
-						{
-							// Ask if the user they would like to rebuild their thumbnails
-							StyledMessageBox.ShowMessageBox(
-								(bool rebuildThumbnails) =>
+						// Ask if the user they would like to rebuild their thumbnails
+						StyledMessageBox.ShowMessageBox(
+							(bool rebuildThumbnails) =>
+							{
+								if (rebuildThumbnails)
 								{
-									if (rebuildThumbnails)
+									string directoryToRemove = ApplicationController.CacheablePath("ItemThumbnails", "");
+									try
 									{
-										string directoryToRemove = ApplicationController.CacheablePath("ItemThumbnails", "");
-										try
+										if (Directory.Exists(directoryToRemove))
 										{
-											if (Directory.Exists(directoryToRemove))
-											{
-												Directory.Delete(directoryToRemove, true);
-											}
+											Directory.Delete(directoryToRemove, true);
 										}
-										catch (Exception)
-										{
-											GuiWidget.BreakInDebugger();
-										}
-
-										Directory.CreateDirectory(directoryToRemove);
-
-										ApplicationController.Instance.Library.NotifyContainerChanged();
 									}
-								},
-								"You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?".Localize(),
-								"Rebuild Thumbnails Now".Localize(),
-								StyledMessageBox.MessageType.YES_NO,
-								"Rebuild".Localize());
-						});
-					}
-				};
+									catch (Exception)
+									{
+										GuiWidget.BreakInDebugger();
+									}
 
-				this.AddSettingsRow(
-					new SettingsItem(
-						"Thumbnails".Localize(),
-						thumbnailsModeDropList,
-						theme));
+									Directory.CreateDirectory(directoryToRemove);
 
-				// TextSize
-				if (!double.TryParse(UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize), out double currentTexSize))
-				{
-					currentTexSize = 1.0;
+									ApplicationController.Instance.Library.NotifyContainerChanged();
+								}
+							},
+							"You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?".Localize(),
+							"Rebuild Thumbnails Now".Localize(),
+							StyledMessageBox.MessageType.YES_NO,
+							"Rebuild".Localize());
+					});
 				}
+			};
 
-				double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
-				double sliderWidth = 100 * GuiWidget.DeviceScale;
-				var textSizeSlider = new SolidSlider(new Vector2(), sliderThumbWidth, .7, 1.4)
-				{
-					Name = "Text Size Slider",
-					Margin = new BorderDouble(5, 0),
-					Value = currentTexSize,
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Center,
-					TotalWidthInPixels = sliderWidth,
-				};
+			this.AddSettingsRow(
+				new SettingsItem(
+					"Thumbnails".Localize(),
+					thumbnailsModeDropList,
+					theme));
 
-				var optionalContainer = new FlowLayoutWidget()
-				{
-					VAnchor = VAnchor.Center | VAnchor.Fit,
-					HAnchor = HAnchor.Fit
-				};
-
-				TextWidget sectionLabel = null;
-
-				var textSizeApplyButton = new TextButton("Apply".Localize(), theme)
-				{
-					VAnchor = VAnchor.Center,
-					BackgroundColor = theme.SlightShade,
-					Visible = false,
-					Margin = new BorderDouble(right: 6)
-				};
-				textSizeApplyButton.Click += (s, e) =>
-				{
-					GuiWidget.DeviceScale = textSizeSlider.Value;
-					ApplicationController.Instance.ReloadAll();
-				};
-				optionalContainer.AddChild(textSizeApplyButton);
-
-				textSizeSlider.ValueChanged += (s, e) =>
-				{
-					double textSizeNew = textSizeSlider.Value;
-					UserSettings.Instance.set(UserSettingsKey.ApplicationTextSize, textSizeNew.ToString("0.0"));
-					sectionLabel.Text = "Text Size".Localize() + $" : {textSizeNew:0.0}";
-					textSizeApplyButton.Visible = textSizeNew != currentTexSize;
-				};
-
-				var section = new SettingsItem(
-						"Text Size".Localize() + $" : {currentTexSize:0.0}",
-						textSizeSlider,
-						theme,
-						optionalContainer);
-
-				sectionLabel = section.Children<TextWidget>().FirstOrDefault();
-
-				this.AddSettingsRow(section);
+			// TextSize
+			if (!double.TryParse(UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize), out double currentTexSize))
+			{
+				currentTexSize = 1.0;
 			}
+
+			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
+			double sliderWidth = 100 * GuiWidget.DeviceScale;
+			var textSizeSlider = new SolidSlider(new Vector2(), sliderThumbWidth, .7, 1.4)
+			{
+				Name = "Text Size Slider",
+				Margin = new BorderDouble(5, 0),
+				Value = currentTexSize,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Center,
+				TotalWidthInPixels = sliderWidth,
+			};
+
+			var optionalContainer = new FlowLayoutWidget()
+			{
+				VAnchor = VAnchor.Center | VAnchor.Fit,
+				HAnchor = HAnchor.Fit
+			};
+
+			TextWidget sectionLabel = null;
+
+			var textSizeApplyButton = new TextButton("Apply".Localize(), theme)
+			{
+				VAnchor = VAnchor.Center,
+				BackgroundColor = theme.SlightShade,
+				Visible = false,
+				Margin = new BorderDouble(right: 6)
+			};
+			textSizeApplyButton.Click += (s, e) =>
+			{
+				GuiWidget.DeviceScale = textSizeSlider.Value;
+				ApplicationController.Instance.ReloadAll();
+			};
+			optionalContainer.AddChild(textSizeApplyButton);
+
+			textSizeSlider.ValueChanged += (s, e) =>
+			{
+				double textSizeNew = textSizeSlider.Value;
+				UserSettings.Instance.set(UserSettingsKey.ApplicationTextSize, textSizeNew.ToString("0.0"));
+				sectionLabel.Text = "Text Size".Localize() + $" : {textSizeNew:0.0}";
+				textSizeApplyButton.Visible = textSizeNew != currentTexSize;
+			};
+
+			var section = new SettingsItem(
+					"Text Size".Localize() + $" : {currentTexSize:0.0}",
+					textSizeSlider,
+					theme,
+					optionalContainer);
+
+			sectionLabel = section.Children<TextWidget>().FirstOrDefault();
+
+			this.AddSettingsRow(section);
 #endif
 
 			AddMenuItem("Forums".Localize(), () => ApplicationController.Instance.LaunchBrowser("https://forums.matterhackers.com/category/20/mattercontrol"));
