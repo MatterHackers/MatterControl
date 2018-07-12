@@ -37,7 +37,7 @@ using System.ComponentModel;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	[Obsolete("Not used anymore. Replaced with FitToBoundsObject3D_2", false)]
+	[Obsolete("Not used anymore. Replaced with RotateObject3D_2", false)]
 	public class RotateObject3D : Object3D
 	{
 		[DisplayName("X")]
