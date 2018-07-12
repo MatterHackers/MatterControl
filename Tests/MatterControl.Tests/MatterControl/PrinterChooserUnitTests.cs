@@ -2,6 +2,7 @@
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.Tests.Automation;
@@ -23,7 +24,10 @@ namespace MatterControl.Tests.MatterControl
 
 			BoundDropList dropList;
 
-			var theme = new ThemeConfig();
+			var theme = new ThemeConfig()
+			{
+				Colors = ActiveTheme.Instance 
+			};
 			// Whitelist on non-OEM builds should contain all printers
 			dropList = new BoundDropList("Test", theme);
 			dropList.ListSource = allManufacturers;
