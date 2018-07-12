@@ -38,6 +38,7 @@ namespace MatterHackers.GCodeVisualizer
 		private int myIndexId;
 		private int myIndexLength;
 		private BeginMode pointMode = BeginMode.Triangles;
+		private bool disposed = false;
 
 		private int myVertexId;
 		private int myVertexLength;
@@ -114,18 +115,16 @@ namespace MatterHackers.GCodeVisualizer
 
 		public void Dispose()
 		{
-			if (myVertexId != -1)
+			// release unmanaged resources
+			if (!disposed)
 			{
-				int holdVertexId = myVertexId;
-				int holdIndexId = myIndexId;
-
 				UiThread.RunOnIdle(() =>
 				{
-					GL.DeleteBuffers(1, ref holdVertexId);
-					GL.DeleteBuffers(1, ref holdIndexId);
+					GL.DeleteBuffers(1, ref myVertexId);
+					GL.DeleteBuffers(1, ref myIndexId);
 				});
 
-				myVertexId = -1;
+				disposed = true;
 			}
 		}
 
