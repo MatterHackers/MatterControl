@@ -2269,7 +2269,10 @@ namespace MatterHackers.MatterControl
 				{
 				}
 
-				executingTasks.Remove(taskDetails);
+				UiThread.RunOnIdle(() =>
+				{
+					executingTasks.Remove(taskDetails);
+				});
 			});
 		}
 	}
