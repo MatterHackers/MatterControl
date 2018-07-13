@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void InteractionLayer_AfterDraw(object drawingWidget, DrawEventArgs drawEvent)
 		{
-			if (InteractionContext.Scene.HasSelection
+			if (InteractionContext.Scene.SelectedItem != null
 				&& InteractionContext.SnapGridDistance > 0
 				&& meshSelectInfo.DownOnPart)
 			{

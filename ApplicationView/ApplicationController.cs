@@ -336,7 +336,7 @@ namespace MatterHackers.MatterControl
 
 						scene.SelectedItem = newGroup;
 					},
-					IsEnabled = (scene) => scene.HasSelection
+					IsEnabled = (scene) => scene.SelectedItem != null
 						&& scene.SelectedItem is SelectionGroupObject3D
 						&& scene.SelectedItem.Children.Count > 1,
 					Icon = AggContext.StaticData.LoadIcon("group.png", 16, 16).SetPreMultiply(),
@@ -345,7 +345,7 @@ namespace MatterHackers.MatterControl
 				{
 					TitleResolver = () => "Ungroup".Localize(),
 					Action = (scene) => scene.UngroupSelection(),
-					IsEnabled = (scene) => scene.HasSelection,
+					IsEnabled = (scene) => scene.SelectedItem != null,
 					Icon = AggContext.StaticData.LoadIcon("ungroup.png", 16, 16).SetPreMultiply(),
 				},
 				new SceneSelectionSeparator(),
@@ -353,14 +353,14 @@ namespace MatterHackers.MatterControl
 				{
 					TitleResolver = () => "Duplicate".Localize(),
 					Action = (scene) => scene.DuplicateItem(),
-					IsEnabled = (scene) => scene.HasSelection,
+					IsEnabled = (scene) => scene.SelectedItem != null,
 					Icon = AggContext.StaticData.LoadIcon("duplicate.png").SetPreMultiply(),
 				},
 				new SceneSelectionOperation()
 				{
 					TitleResolver = () => "Remove".Localize(),
 					Action = (scene) => scene.DeleteSelection(),
-					IsEnabled = (scene) => scene.HasSelection,
+					IsEnabled = (scene) => scene.SelectedItem != null,
 					Icon = AggContext.StaticData.LoadIcon("remove.png").SetPreMultiply(),
 				},
 				new SceneSelectionSeparator(),
@@ -383,12 +383,13 @@ namespace MatterHackers.MatterControl
 					TitleResolver = () => "Lay Flat".Localize(),
 					Action = (scene) =>
 					{
-						if (scene.HasSelection)
+						var selectedItem = scene.SelectedItem;
+						if (selectedItem != null)
 						{
-							scene.MakeLowestFaceFlat(scene.SelectedItem);
+							scene.MakeLowestFaceFlat(selectedItem);
 						}
 					},
-					IsEnabled = (scene) => scene.HasSelection,
+					IsEnabled = (scene) => scene.SelectedItem != null,
 					Icon = AggContext.StaticData.LoadIcon("lay_flat.png", 16, 16).SetPreMultiply(),
 				},
 				new SceneSelectionOperation()
@@ -403,7 +404,7 @@ namespace MatterHackers.MatterControl
 						}
 					},
 					Icon = AggContext.StaticData.LoadIcon("support.png").SetPreMultiply(),
-					IsEnabled = (scene) => scene.HasSelection,
+					IsEnabled = (scene) => scene.SelectedItem != null,
 				},
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
@@ -450,7 +451,7 @@ namespace MatterHackers.MatterControl
 						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
-					IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroupObject3D),
+					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
 				},
 				new SceneSelectionOperation()
 				{
@@ -463,7 +464,7 @@ namespace MatterHackers.MatterControl
 						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_radial.png").SetPreMultiply(),
-					IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroupObject3D),
+					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
 				},
 				new SceneSelectionOperation()
 				{
@@ -476,7 +477,7 @@ namespace MatterHackers.MatterControl
 						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_advanced.png").SetPreMultiply(),
-					IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroupObject3D),
+					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
 				},
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
@@ -489,7 +490,7 @@ namespace MatterHackers.MatterControl
 						pinch.WrapSelectedItemAndSelect(scene);
 					},
 					Icon = AggContext.StaticData.LoadIcon("pinch.png", 16, 16, theme.InvertIcons),
-					IsEnabled = (scene) => scene.HasSelection,
+					IsEnabled = (scene) => scene.SelectedItem != null,
 				},
 				new SceneSelectionOperation()
 				{
@@ -501,7 +502,7 @@ namespace MatterHackers.MatterControl
 						curve.WrapSelectedItemAndSelect(scene);
 					},
 					Icon = AggContext.StaticData.LoadIcon("curve.png", 16, 16, theme.InvertIcons),
-					IsEnabled = (scene) => scene.HasSelection,
+					IsEnabled = (scene) => scene.SelectedItem != null,
 				},
 				new SceneSelectionOperation()
 				{
@@ -518,7 +519,7 @@ namespace MatterHackers.MatterControl
 						scene.SelectedItem = fit;
 					},
 					Icon = AggContext.StaticData.LoadIcon("fit.png", 16, 16, theme.InvertIcons),
-					IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroupObject3D),
+					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
 				},
 			};
 

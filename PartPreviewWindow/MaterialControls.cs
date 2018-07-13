@@ -100,9 +100,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				int extruderIndexCanPassToClick = extruderIndex;
 				radioButton.Click += (sender, e) =>
 				{
-					if (scene.HasSelection)
+					var selectedItem = scene.SelectedItem;
+					if (selectedItem != null)
 					{
-						scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
+						selectedItem.MaterialIndex = extruderIndexCanPassToClick;
 						scene.Invalidate(new InvalidateArgs(null, InvalidateType.Material));
 					}
 				};
