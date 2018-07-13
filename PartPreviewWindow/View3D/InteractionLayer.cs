@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			int volumeHitIndex;
 			Ray ray = this.World.GetRayForLocalBounds(mouseEvent.Position);
 			IntersectInfo info;
-			if (this.Scene.HasSelection
+			if (this.Scene.SelectedItem != null
 				&& !SuppressUiVolumes
 				&& FindInteractionVolumeHit(ray, out volumeHitIndex, out info))
 			{
@@ -306,9 +306,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void AddTransformSnapshot(Matrix4X4 originalTransform)
 		{
-			if (this.Scene.HasSelection && this.Scene.SelectedItem.Matrix != originalTransform)
+			var selectedItem = Scene.SelectedItem;
+			if (selectedItem != null && selectedItem.Matrix != originalTransform)
 			{
-				this.undoBuffer.Add(new TransformCommand(Scene.SelectedItem, originalTransform, Scene.SelectedItem.Matrix));
+				this.undoBuffer.Add(new TransformCommand(selectedItem, originalTransform, Scene.SelectedItem.Matrix));
 			}
 		}
 

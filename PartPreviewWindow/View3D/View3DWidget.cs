@@ -570,8 +570,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var selectedItem = Scene.SelectedItem;
 
-			if (Scene.HasSelection
-				&& selectedItem != null)
+			if (selectedItem != null)
 			{
 
 				foreach (InteractionVolume volume in this.InteractionLayer.InteractionVolumes)
@@ -823,7 +822,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						IObject3D hitObject = FindHitObject3D(mouseEvent.Position, ref info);
 						if (hitObject == null)
 						{
-							if (Scene.HasSelection)
+							if (Scene.SelectedItem != null)
 							{
 								Scene.ClearSelection();
 							}
@@ -1194,12 +1193,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Scene_SelectionChanged(object sender, EventArgs e)
 		{
+			var selectedItem = Scene.SelectedItem;
 			foreach (var child in selectedObjectPanel.ContentPanel.Children)
 			{
-				child.Enabled = Scene.HasSelection;
+				child.Enabled = selectedItem != null;
 			}
 
-			if (!Scene.HasSelection)
+			if (selectedItem == null)
 			{
 				this.Scene.ClearSelection();
 
@@ -1215,18 +1215,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// Top level selection only - rebuild tree
-			var selection = Scene.SelectedItem;
-			if (Scene.Children.Contains(selection))
+			if (Scene.Children.Contains(selectedItem))
 			{
 				treeView.ScrollArea.CloseAllChildren();
 
-				var rootNode = Object3DTreeBuilder.BuildTree(selection, theme);
+				var rootNode = Object3DTreeBuilder.BuildTree(selectedItem, theme);
 				treeView.AddChild(rootNode);
 				rootNode.TreeView = treeView;
 
 				if (this.Parent != null)
 				{
-
 					assigningTreeNode = true;
 					treeView.SelectedNode = rootNode;
 					assigningTreeNode = false;

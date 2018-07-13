@@ -22,10 +22,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
 				var scene = view3D.InteractionLayer.Scene;
 
-				Assert.IsFalse(scene.HasSelection);
+				Assert.IsFalse(scene.SelectedItem != null);
 
 				testRunner.Select3DPart("Calibration - Box.stl");
-				Assert.IsTrue(scene.HasSelection);
+				Assert.IsTrue(scene.SelectedItem != null);
 
 				testRunner.ClickByName("Duplicate Button");
 

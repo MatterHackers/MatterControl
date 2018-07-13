@@ -66,10 +66,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static async void UngroupSelection(this InteractiveScene scene)
 		{
-			if (scene.HasSelection)
+			var selectedItem = scene.SelectedItem;
+			if (selectedItem != null)
 			{
-				var selectedItem = scene.SelectedItem;
-				bool isGroupItemType = scene.HasSelection && selectedItem.Children.Count > 0;
+				bool isGroupItemType = selectedItem.Children.Count > 0;
 
 				// If not a Group ItemType, look for mesh volumes and split into distinct objects if found
 				if (isGroupItemType)
@@ -205,9 +205,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (sourceItem == null)
 			{
-				if (scene.HasSelection)
+				var selectedItem = scene.SelectedItem;
+				if (selectedItem != null)
 				{
-					sourceItem = scene.SelectedItem;
+					sourceItem = selectedItem;
 				}
 			}
 
@@ -287,10 +288,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static void DeleteSelection(this InteractiveScene scene)
 		{
-			if (scene.HasSelection)
+			var selectedItem = scene.SelectedItem;
+			if (selectedItem != null)
 			{
 				// Create and perform the delete operation 
-				var deleteOperation = new DeleteCommand(scene, scene.SelectedItem);
+				var deleteOperation = new DeleteCommand(scene, selectedItem);
 
 				// Store the operation for undo/redo
 				scene.UndoBuffer.AddAndDo(deleteOperation);
