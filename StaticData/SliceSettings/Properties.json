@@ -916,7 +916,7 @@
   {
     "SlicerConfigName": "min_fan_speed_layer_time",
     "PresentationName": "Turn on if Below",
-    "HelpText": "If the time to print a layer is less than this, the fan will turn on on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.",
+    "HelpText": "If the time to print a layer is less than this, the fan will turn on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.",
     "DataEditType": "INT",
     "Units": "seconds",
     "ShowIfSet": "has_fan",
@@ -1630,7 +1630,7 @@
   },
   {
     "SlicerConfigName": "additional_args_to_process",
-    "PresentationName": "usefull to pass lots of files to slicer",
+    "PresentationName": "useful to pass lots of files to slicer",
     "DataEditType": "MULTI_LINE_TEXT",
     "ShowIfSet": "!sla_printer",
     "DefaultValue": ""

@@ -62,7 +62,11 @@ namespace RoslynLocalizeDetector
 			string json = File.ReadAllText(Path.Combine(matterControlRoot, "StaticData", "SliceSettings", "Properties.json"));
 			foreach (var setting in JsonConvert.DeserializeObject<List<SettingItem>>(json))
 			{
-				translationStrings.AddLocalization(setting.HelpText);
+				// Guard for null reference errors when properties.json definitions lack HelpText
+				if (setting.HelpText != null)
+				{
+					translationStrings.AddLocalization(setting.HelpText);
+				}
 				translationStrings.AddLocalization(setting.PresentationName);
 				if (!string.IsNullOrWhiteSpace(setting.Units))
 				{
