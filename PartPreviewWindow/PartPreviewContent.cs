@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					double totalSeconds = 0;
 					var textWidgets = updateAvailableButton.Descendants<TextWidget>().Where((w) => w.Visible == true).ToArray();
 					Color startColor = theme.Colors.PrimaryTextColor;
-					// Show a highlite on the button as the user did not click it
+					// Show a highlight on the button as the user did not click it
 					Animation flashBackground = null;
 					flashBackground = new Animation()
 					{

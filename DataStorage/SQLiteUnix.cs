@@ -459,7 +459,7 @@ namespace SQLiteUnix
 		/// The fully escaped SQL.
 		/// </param>
 		/// <param name="args">
-		/// Arguments to substitute for the occurences of '?' in the command text.
+		/// Arguments to substitute for the occurrences of '?' in the command text.
 		/// </param>
 		/// <returns>
 		/// A <see cref="SQLiteCommand"/>
@@ -494,7 +494,7 @@ namespace SQLiteUnix
 		/// The fully escaped SQL.
 		/// </param>
 		/// <param name="args">
-		/// Arguments to substitute for the occurences of '?' in the query.
+		/// Arguments to substitute for the occurrences of '?' in the query.
 		/// </param>
 		/// <returns>
 		/// The number of rows modified in the database as a result of this execution.
@@ -564,7 +564,7 @@ namespace SQLiteUnix
 		/// The fully escaped SQL.
 		/// </param>
 		/// <param name="args">
-		/// Arguments to substitute for the occurences of '?' in the query.
+		/// Arguments to substitute for the occurrences of '?' in the query.
 		/// </param>
 		/// <returns>
 		/// An enumerable with one result for each row returned by the query.
@@ -590,7 +590,7 @@ namespace SQLiteUnix
 		/// The fully escaped SQL.
 		/// </param>
 		/// <param name="args">
-		/// Arguments to substitute for the occurences of '?' in the query.
+		/// Arguments to substitute for the occurrences of '?' in the query.
 		/// </param>
 		/// <returns>
 		/// An enumerable with one result for each row returned by the query.
@@ -618,7 +618,7 @@ namespace SQLiteUnix
 		/// The fully escaped SQL.
 		/// </param>
 		/// <param name="args">
-		/// Arguments to substitute for the occurences of '?' in the query.
+		/// Arguments to substitute for the occurrences of '?' in the query.
 		/// </param>
 		/// <returns>
 		/// An enumerable with one result for each row returned by the query.
@@ -644,7 +644,7 @@ namespace SQLiteUnix
 		/// The fully escaped SQL.
 		/// </param>
 		/// <param name="args">
-		/// Arguments to substitute for the occurences of '?' in the query.
+		/// Arguments to substitute for the occurrences of '?' in the query.
 		/// </param>
 		/// <returns>
 		/// An enumerable with one result for each row returned by the query.
@@ -1715,7 +1715,7 @@ namespace SQLiteUnix
 
 				_prop = prop;
 				Name = colAttr == null ? prop.Name : colAttr.Name;
-				//If this type is Nullable<T> then Nullable.GetUnderlyingType returns the T, otherwise it returns null, so get the the actual type instead
+				//If this type is Nullable<T> then Nullable.GetUnderlyingType returns the T, otherwise it returns null, so get the actual type instead
 				ColumnType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
 				Collation = Orm.Collation(prop);
 				IsAutoInc = Orm.IsAutoInc(prop);

@@ -637,7 +637,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			GL.ReadPixels((int)lastMouseMove.X, (int)lastMouseMove.Y, image.Width, image.Height, PixelFormat.Rgba, PixelType.UnsignedByte, image.GetBuffer());
 			GL.GetError();
 
-			// Return to onscreen rendering:
+			// Return to on-screen rendering:
 			//GL.BindFramebuffer(0);
 
 			// Clean up gl stuff

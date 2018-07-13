@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public PyramidObject3D()
 		{
-			Name = "Pyriamid".Localize();
+			Name = "Pyramid".Localize();
 			Color = Operations.Object3DExtensions.PrimitiveColors["Pyramid"];
 		}
 
@@ -53,7 +53,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
-		
 		public double Width { get; set; } = 20;
 		public double Depth { get; set; } = 20;
 		public double Height { get; set; } = 20;

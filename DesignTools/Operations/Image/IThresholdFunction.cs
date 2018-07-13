@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		double Transform(Color color);
 
 		/// <summary>
-		/// Do the actual thresholding of the color. This will convert it inte tho coordinate space
+		/// Do the actual thresholding of the color. This will convert it into the coordinate space
 		/// and also apply any clamping to the values.
 		/// </summary>
 		/// <param name="color"></param>

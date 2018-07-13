@@ -839,7 +839,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 #endif
 			if (typeof(T) == typeof(string))
 			{
-				// this way we can use the common pattern without errer
+				// this way we can use the common pattern without error
 				return (T)(object)this.GetValue(settingsKey);
 			}
 			else if(typeof(T) == typeof(LevelingSystem))
@@ -1068,7 +1068,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					string location = "Location: 'Controls' -> 'Movement' -> 'Z Offset'".Localize();
 					string error = "Z Offset is too large.".Localize();
-					string details = "The Z Offset for your printer, sometimes called Babby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.".Localize();
+					string details = "The Z Offset for your printer, sometimes called Baby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.".Localize();
 					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Calibration Error".Localize());
 					return false;
 				}

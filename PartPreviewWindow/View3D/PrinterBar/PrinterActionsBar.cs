@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						double totalSeconds = 0;
 						Color backgroundColor = activeButton.BackgroundColor;
 						Color hightlightColor = theme.Colors.PrimaryAccentColor.AdjustContrast(theme.Colors.PrimaryTextColor, 6).ToColor();
-						// Show a highlite on the button as the user did not click it
+						// Show a highlight on the button as the user did not click it
 						Animation flashBackground = null;
 						flashBackground = new Animation()
 						{

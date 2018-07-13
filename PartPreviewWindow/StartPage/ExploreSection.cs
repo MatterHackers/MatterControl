@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					{
 						ApplicationController.Instance.LaunchBrowser(content.group_link);
 					}
-					else // show more itmes in the list
+					else // show more items in the list
 					{
 						var scroll = this.Parents<ScrollableWidget>().FirstOrDefault();
 						var position = scroll.ScrollPositionFromTop;

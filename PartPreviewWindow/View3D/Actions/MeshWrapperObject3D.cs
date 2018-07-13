@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			{
 				this.DebugDepth("Reset MWM");
 
-				// Remove evrything above the objects that have the meshes we are wrapping that are mesh wrappers
+				// Remove everything above the objects that have the meshes we are wrapping that are mesh wrappers
 				var wrappers = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
 				foreach (var wrapper in wrappers)
 				{

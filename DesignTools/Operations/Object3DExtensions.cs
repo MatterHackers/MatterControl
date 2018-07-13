@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				if (_primitiveColors == null)
 				{
 					_primitiveColors = new Dictionary<string, Color>();
-					// put in all the constant things before blening them
+					// put in all the constant things before blending them
 					_primitiveColors.Add("Cube", Color.FromHSL(.01, .98, .76)); // red
 					_primitiveColors.Add("Text", Color.FromHSL(.175, .98, .76)); // yellow
 					_primitiveColors.Add("HalfSphere", Color.FromHSL(.87, .98, .76)); // violet

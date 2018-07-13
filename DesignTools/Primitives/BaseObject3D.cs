@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				var firstChild = this.Children.FirstOrDefault();
 
-				// remove the base besh we added
+				// remove the base mesh we added
 				this.Children.Modify(list =>
 				{
 					list.Clear();

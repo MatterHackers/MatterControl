@@ -60,7 +60,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(5));
 
-			// check that we subtarct two 3 sideh cylinders
+			// check that we subtract two 3 sided cylinders
 			{
 				double topHeight = 10;
 				int sides = 3;
@@ -87,7 +87,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 				var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None);
 
-				// this is for debuging the opperation
+				// this is for debugging the operation
 				//split1.FinishOutput();
 				//resultMesh.Save("c:/temp/mesh1.stl", CancellationToken.None);
 
@@ -106,7 +106,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 				}
 			}
 
-			// check that we subtarct two 3 sideh cylinders
+			// check that we subtract two 3 side cylinders
 			{
 				int sides = 3;
 				IObject3D keep = CylinderObject3D.Create(20, 20, sides);
@@ -129,7 +129,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 				var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None);
 
-				// this is for debuging the opperation
+				// this is for debugging the operation
 				//split1.FinishOutput();
 				//resultMesh.Save("c:/temp/mesh2.stl", CancellationToken.None);
 

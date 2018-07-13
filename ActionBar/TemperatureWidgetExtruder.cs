@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			buttonContainer.AddChild(extrudeButton);
 
 			this.AddChild(new SettingsItem(
-				macroButtons == null ? "Filament".Localize() : "", // Don't put the name if we put in a macro button (it hase the name)
+				macroButtons == null ? "Filament".Localize() : "", // Don't put the name if we put in a macro button (it has the name)
 				buttonContainer,
 				theme,
 				enforceGutter: false));

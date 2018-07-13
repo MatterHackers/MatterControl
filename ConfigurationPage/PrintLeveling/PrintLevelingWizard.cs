@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private Vector2 EnsureInPrintBounds(PrinterSettings printerSettings, Vector2 probePosition)
 		{
-			// check that the position is within the printing arrea and if not move it back in
+			// check that the position is within the printing area and if not move it back in
 			if (printerSettings.Helpers.UseZProbe())
 			{
 				var probeOffset = printer.Settings.GetValue<Vector2>(SettingsKey.z_probe_xy_offset);

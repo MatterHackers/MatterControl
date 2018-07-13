@@ -70,7 +70,7 @@ namespace MatterControl.Tests.MatterControl
 				AssertMeshLevelPoint(new Vector3(10, 10, 0), new Vector3(10, 10, 10), levelingFunctionsMesh2x2);
 				AssertMeshLevelPoint(new Vector3(0, 10, 0), new Vector3(0, 10, 0), levelingFunctionsMesh2x2);
 
-				// check raised on ponits
+				// check raised on points
 				AssertMeshLevelPoint(new Vector3(0, 0, 5), new Vector3(0, 0, 5), levelingFunctionsMesh2x2);
 				AssertMeshLevelPoint(new Vector3(10, 0, 5), new Vector3(10, 0, 15), levelingFunctionsMesh2x2);
 				AssertMeshLevelPoint(new Vector3(10, 10, 5), new Vector3(10, 10, 15), levelingFunctionsMesh2x2);
@@ -111,7 +111,7 @@ namespace MatterControl.Tests.MatterControl
 				AssertMeshLevelPoint(new Vector3(10, 10, 0), new Vector3(10, 10, 10), levelingFunctionsMesh2x2);
 				AssertMeshLevelPoint(new Vector3(0, 10, 0), new Vector3(0, 10, 0), levelingFunctionsMesh2x2);
 
-				// check raised on ponits
+				// check raised on points
 				AssertMeshLevelPoint(new Vector3(0, 0, 5), new Vector3(0, 0, 5), levelingFunctionsMesh2x2);
 				AssertMeshLevelPoint(new Vector3(10, 0, 5), new Vector3(10, 0, 15), levelingFunctionsMesh2x2);
 				AssertMeshLevelPoint(new Vector3(10, 10, 5), new Vector3(10, 10, 15), levelingFunctionsMesh2x2);

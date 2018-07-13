@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		/// <summary>
 		/// This function will return the source container and if it does not find one will:
 		/// <para>find the first child of the parent widget</para>
-		/// <para>remove it from paret</item>
+		/// <para>remove it from parent</item>
 		/// <para>create a new OperationSource</para>
 		/// <para>add the first child to the OperationSource</para>
 		/// <para>add the OperationSource to the parent</para>
