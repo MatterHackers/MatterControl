@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					}
 
-					// we don't want to invalidate on the mesh chage
+					// we don't want to invalidate on the mesh change
 					using (RebuildLock())
 					{
 						base.Mesh = this.InitMesh() ?? PlatonicSolids.CreateCube(100, 100, 0.2);

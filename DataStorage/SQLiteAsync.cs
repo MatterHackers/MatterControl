@@ -255,7 +255,7 @@ namespace SQLite
 		{
 			//
 			// This isn't async as the underlying connection doesn't go out to the database
-			// until the query is performed. The Async methods are on the query iteself.
+			// until the query is performed. The Async methods are on the query itself.
 			//
 			var conn = GetConnection ();
 			return new AsyncTableQuery<T> (conn.Table<T> ());

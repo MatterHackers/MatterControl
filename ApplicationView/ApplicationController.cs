@@ -1128,7 +1128,7 @@ namespace MatterHackers.MatterControl
 			// Release any waiting generator threads
 			this.Thumbnails.Shutdown();
 
-			// Kill all long running tasks (this will release the silcing thread if running)
+			// Kill all long running tasks (this will release the slicing thread if running)
 			foreach (var task in Tasks.RunningTasks)
 			{
 				task.CancelTask();

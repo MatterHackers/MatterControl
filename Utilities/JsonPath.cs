@@ -238,7 +238,7 @@ namespace JsonPath
                                 stack.Push(Args(m + ";" + x, v, p));
                         });
                     }
-                    else if (RegExp.IsMatch(atom, @"^(-?[0-9]*):(-?[0-9]*):?([0-9]*)$")) // [start:end:step] Phyton slice syntax
+                    else if (RegExp.IsMatch(atom, @"^(-?[0-9]*):(-?[0-9]*):?([0-9]*)$")) // [start:end:step] Python slice syntax
                     {
                         foreach (var a in Slice(atom, tail, value, path).Reverse())
                             stack.Push(a);

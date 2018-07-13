@@ -486,7 +486,7 @@ namespace MatterControl.Printing
 					break;
 
 				case "18":
-					// turn off stepers
+					// turn off steppers
 					break;
 
 				case "42":
@@ -526,7 +526,7 @@ namespace MatterControl.Printing
 					break;
 
 				case "104":
-					// set extruder tempreature
+					// set extruder temperature
 					break;
 
 				case "105":
@@ -655,7 +655,7 @@ namespace MatterControl.Printing
 
 				case "4":
 				case "04":
-					// wait a given number of miliseconds
+					// wait a given number of milliseconds
 					break;
 
 				case "1":

@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl
 		public string LastResponse { protected set; get; }
 
 		/// <summary>
-		/// Gets or sets the time-out value in milliseconds 
+		/// Gets or sets the time-out value in milliseconds
 		/// </summary>
 		/// <value>The timeout.</value>
 		public int Timeout { get; internal set; } = 100000;
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl
 			// Set cookie container to maintain cookies
 			request.CookieContainer = cookies;
 			request.AllowAutoRedirect = false;
-			// If sign in is empty use defaul credentials
+			// If sign in is empty use default credentials
 			if (string.IsNullOrEmpty(signIn))
 			{
 				request.Credentials = CredentialCache.DefaultNetworkCredentials;

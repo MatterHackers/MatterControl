@@ -104,7 +104,7 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			}
 
 			newtio.c_cflag |= (uint)(e_c_oflag.CLOCAL | e_c_oflag.CREAD);
-			// there is no defenition for e_c_lflag.ECHOL that I can find. It was in the list of or'ed flags below
+			// there is no definition for e_c_lflag.ECHOL that I can find. It was in the list of or'ed flags below
 			unchecked
 			{
 				newtio.c_lflag &= (uint)-(int)(e_c_lflag.ICANON | e_c_lflag.ECHO | e_c_lflag.ECHOE | e_c_lflag.ECHOK | e_c_lflag.ECHONL | e_c_lflag.ISIG | e_c_lflag.IEXTEN);

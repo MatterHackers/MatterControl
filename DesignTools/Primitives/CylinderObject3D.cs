@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					item.Matrix = Matrix4X4.CreateRotationX(MathHelper.Tau / 4);
 					break;
 				case Alignment.Z:
-					// This is the natural case (how it was modled)
+					// This is the natural case (how it was modeled)
 					break;
 				case Alignment.negX:
 					item.Matrix = Matrix4X4.CreateRotationY(-MathHelper.Tau / 4);

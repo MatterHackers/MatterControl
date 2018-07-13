@@ -346,10 +346,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				RangeEnd = Math.Max(0, Math.Min(1, RangeEnd));
 				if (RangeStart > RangeEnd - minSeparation)
 				{
-					// values are overlaped or too close together
+					// values are overlapped or too close together
 					if (RangeEnd < 1 - minSeparation)
 					{
-						// move the end up whever possible
+						// move the end up whenever possible
 						RangeEnd = RangeStart + minSeparation;
 					}
 					else

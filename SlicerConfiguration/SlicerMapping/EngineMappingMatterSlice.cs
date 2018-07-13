@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new OverrideSpeedOnSlaPrinters("perimeter_speed", "insidePerimetersSpeed", "infill_speed"),
 				new MappedSetting("raft_air_gap", "raftAirGap"),
 				// fan settings
-				new VisibleButNotMappedToEngine("enable_fan"), // this is considred when sending fan speeds to slicing
+				new VisibleButNotMappedToEngine("enable_fan"), // this is considered when sending fan speeds to slicing
 				new MappedFanSpeedSetting("min_fan_speed", "fanSpeedMinPercent"),
 				new MappedSetting("min_fan_speed_layer_time", "minFanSpeedLayerTime"),
 				new MappedFanSpeedSetting("max_fan_speed", "fanSpeedMaxPercent"),

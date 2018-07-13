@@ -229,7 +229,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Override the heat up time
 			Emulator.DefaultHeatUpTime = config.HeatupTime;
 
-			// Override the temp stablization time
+			// Override the temp stabilization time
 			WaitForTempStream.WaitAfterReachTempTime = config.TempStabilizationTime;
 
 			// Create the printer
@@ -959,7 +959,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public double TimeToMoveMouse { get; set; } = .5;
 
 		/// <summary>
-		/// Determins if we use actual sytem file dialogs or simulated file dialogs.
+		/// Determines if we use actual system file dialogs or simulated file dialogs.
 		/// </summary>
 		public bool UseAutomationDialogs { get; set; } = true;
 

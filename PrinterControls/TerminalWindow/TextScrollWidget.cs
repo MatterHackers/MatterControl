@@ -235,11 +235,11 @@ namespace MatterHackers.MatterControl
             base.OnMouseWheel(mouseEvent);
             double scrollDelta = (mouseEvent.WheelDelta / ((visibleLines.Count) * 60.0));
 
-            if (scrollDelta < 0)//Rounding seems to favor scrolling up, compinsating scroll down to feel as smooth
+            if (scrollDelta < 0)//Rounding seems to favor scrolling up, compensating scroll down to feel as smooth
             {
                 scrollDelta *= 2;
             }
-            else if (Position0To1 == 0)//IF we scroll up at the bottum get pop out from the "on screen" chunck
+            else if (Position0To1 == 0)//IF we scroll up at the bottom get pop out from the "on screen" chunk
             {
                 scrollDelta = (NumVisibleLines/(double)visibleLines.Count);
             }

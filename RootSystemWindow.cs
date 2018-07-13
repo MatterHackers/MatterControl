@@ -320,7 +320,7 @@ namespace MatterHackers.MatterControl
 			else
 			{
 				ApplicationController.Instance.ApplicationExiting = true;
-				// Make sure we tell the Application Conroller to shut down. This will release the silcing thread if running.
+				// Make sure we tell the Application Controller to shut down. This will release the slicing thread if running.
 				ApplicationController.Instance.Shutdown();
 			}
 		}

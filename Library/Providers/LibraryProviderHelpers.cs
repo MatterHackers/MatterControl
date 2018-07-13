@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,11 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 
@@ -58,7 +55,7 @@ namespace MatterHackers.MatterControl.Library
 		/// <param name="imageBuffer">The ImageBuffer to resize</param>
 		/// <param name="targetWidth">The target width</param>
 		/// <param name="targetHeight">The target height</param>
-		/// <returns>A resized ImageBuffer contrained to the given bounds and centered on the new surface</returns>
+		/// <returns>A resized ImageBuffer constrained to the given bounds and centered on the new surface</returns>
 		public static ImageBuffer ResizeImage(ImageBuffer imageBuffer, int targetWidth, int targetHeight)
 		{
 			var expectedSize = new Vector2((int)(targetWidth * GuiWidget.DeviceScale), (int)(targetHeight * GuiWidget.DeviceScale));

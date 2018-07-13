@@ -288,13 +288,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		[Description("Allows you turn turn on and off applying the fit to the x axis.")]
+		[Description("Allows you turn on and off applying the fit to the x axis.")]
 		public bool StretchX { get; set; } = true;
 
-		[Description("Allows you turn turn on and off applying the fit to the y axis.")]
+		[Description("Allows you turn on and off applying the fit to the y axis.")]
 		public bool StretchY { get; set; } = true;
 
-		[Description("Allows you turn turn on and off applying the fit to the z axis.")]
+		[Description("Allows you turn on and off applying the fit to the z axis.")]
 		public bool StretchZ { get; set; } = true;
 
 		#endregion // editable properties

@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 								if (!sdCardItemInQueue && validSdCardItem)
 								{
-									// If there is not alread an sd card item in the queue with this name then add it.
+									// If there is not already an sd card item in the queue with this name then add it.
 									AddItem(new PrintItemWrapper(new PrintItem(currentEvent.Data, QueueData.SdCardFileName)));
 								}
 							}

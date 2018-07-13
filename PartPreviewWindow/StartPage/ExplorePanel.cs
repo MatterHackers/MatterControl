@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					{
 						break;
 
-						// use the Golden Ratio to calculate an atractive size relative to the banner
+						// use the Golden Ratio to calculate an attractive size relative to the banner
 						var image = new ImageBuffer(1520, (int)(170 / 1.618));
 						var imageWidget = new ResponsiveImageWidget(image)
 						{

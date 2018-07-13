@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			EnsureInitialized();
 			string converted = text;
 
-			//Convert numbers and punctuation, skip words startign with # in the contractions
+			//Convert numbers and punctuation, skip words starting with # in the contractions
 			if (IsNumeric(converted))
 			{
 				string numConversion = ("#" + converted);

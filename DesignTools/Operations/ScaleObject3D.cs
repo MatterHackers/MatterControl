@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[Description("Toggle between specifying the size or the percentage to scale.")]
 		public bool UsePercentage { get; set; }
 
-		[Description("This is the positon to perform the scale about.")]
+		[Description("This is the position to perform the scale about.")]
 		public Vector3 ScaleAbout { get; set; }
 
 		#endregion // editable properties
@@ -274,7 +274,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 			else if(change.Changed == nameof(UsePercentage))
 			{
-				// make sure we update the controls on screen to reflect the differnt data type
+				// make sure we update the controls on screen to reflect the different data type
 				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
 			}
 			else if (change.Changed == nameof(MaitainProportions))

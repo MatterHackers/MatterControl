@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					{
 						percentCompleteWidget.Text = $"{percentComplete:0}%";
 					}
-					else // let's show the extra decimal during the last perecent
+					else // let's show the extra decimal during the last percent
 					{
 						percentCompleteWidget.Text = $"{Math.Min(99.9, percentComplete):0.0}%";
 					}

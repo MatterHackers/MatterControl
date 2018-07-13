@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double Diameter { get; set; } = double.MinValue;
 
 		[Range(0, 100, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
-		[Description("Where to starte the bend as a percent of the width of the part")]
+		[Description("Where to start the bend as a percent of the width of the part")]
 		public double StartPercent { get; set; } = 50;
 
 		[DisplayName("Bend Up")]
@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							var matrix = originalMatrix;
 							if (!BendCcw)
 							{
-								// rotate around so it wil bend correctly
+								// rotate around so it will bend correctly
 								matrix *= Matrix4X4.CreateTranslation(0, -aabb.maxXYZ.Y, 0);
 								matrix *= Matrix4X4.CreateRotationX(MathHelper.Tau / 2);
 								matrix *= Matrix4X4.CreateTranslation(0, aabb.maxXYZ.Y - aabb.YSize, 0);
@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							curvedMesh.Vertices[i].Position = Vector3.Transform(worldWithBend, matrix.Inverted);
 						}
 
-						// the vertices need to be resorted as they have moved relative to eachother
+						// the vertices need to be resorted as they have moved relative to each other
 						curvedMesh.Vertices.Sort();
 
 						curvedMesh.MarkAsChanged();

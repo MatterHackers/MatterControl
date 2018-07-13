@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 	public static class BrailleGrade2Mapping
 	{
 		public static string mappingTable =
-			// + means needs one or more lettes before or after
+			// + means needs one or more letters before or after
 			// * means needs one or more words before or after
 			// all caps means needs to be exact match
 @"
@@ -256,7 +256,7 @@ under ""u
 upon ~u
 US u
 
-// v's 
+// v's
 VERY v
 
 // w's
@@ -287,7 +287,7 @@ yourselves yrvs
 3 c
 4 d
 5 e
-6 f 
+6 f
 7 g
 8 h
 9 i
