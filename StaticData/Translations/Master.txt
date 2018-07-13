@@ -1321,8 +1321,8 @@ Translated:If set, the printer will automatically attempt to connect when select
 English:If the extruder has been running for a long time, it may be reporting values that are too large, this will periodically reset it.
 Translated:If the extruder has been running for a long time, it may be reporting values that are too large, this will periodically reset it.
 
-English:If the time to print a layer is less than this, the fan will turn on on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.
-Translated:If the time to print a layer is less than this, the fan will turn on on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.
+English:If the time to print a layer is less than this, the fan will turn on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.
+Translated:If the time to print a layer is less than this, the fan will turn on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.
 
 English:If you need to recalibrate the printer in the future, the print leveling controls can be found under: Controls, Calibration
 Translated:If you need to recalibrate the printer in the future, the print leveling controls can be found under: Controls, Calibration
@@ -3637,8 +3637,8 @@ Translated:Used for small perimeters (usually holes). This can be set explicitly
 English:Used to specify if more than one extruder share a common heater cartridge.
 Translated:Used to specify if more than one extruder share a common heater cartridge.
 
-English:usefull to pass lots of files to slicer
-Translated:usefull to pass lots of files to slicer
+English:useful to pass lots of files to slicer
+Translated:useful to pass lots of files to slicer
 
 English:Username
 Translated:Username
