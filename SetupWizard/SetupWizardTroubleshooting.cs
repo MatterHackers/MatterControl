@@ -138,37 +138,42 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(printerNameLabel);
 
 			contentRow.AddChild(new CriteriaRow(
-				"USB Connection", 
+				"USB Connection",
 				"Retry",
 				"No USB device found. Check and reseat cables and try again",
-				usbStatus.AnyUsbDeviceExists, 
-				() => UiThread.RunOnIdle(RefreshStatus)));
+				usbStatus.AnyUsbDeviceExists,
+				() => UiThread.RunOnIdle(RefreshStatus),
+				theme));
 
 			contentRow.AddChild(new CriteriaRow(
-				"USB Driver", 
+				"USB Driver",
 				"Fix",
 				usbStatus.Summary,
-				usbStatus.IsDriverLoadable, 
-				() => { 
+				usbStatus.IsDriverLoadable,
+				() =>
+				{
 					string overridePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "usboverride.local");
 					UsbDeviceDetails usbDetails = usbStatus.UsbDetails;
 					File.AppendAllText(overridePath, string.Format("{0},{1},{2}\r\n", usbDetails.VendorID, usbDetails.ProductID, usbDetails.DriverClass));
 
 					UiThread.RunOnIdle(() => RefreshStatus());
-				}));
+				},
+				theme));
 
 			contentRow.AddChild(new CriteriaRow(
-				"USB Permission", 
+				"USB Permission",
 				"Request Permission",
 				"Click the 'Request Permission' button to gain Android access rights",
-				usbStatus.HasUsbPermission , 
-				() => { 
+				usbStatus.HasUsbPermission,
+				() =>
+				{
 
-					if(checkForPermissionTimer == null)
+					if (checkForPermissionTimer == null)
 					{
-						checkForPermissionTimer = new System.Threading.Timer((state) => {
+						checkForPermissionTimer = new System.Threading.Timer((state) =>
+						{
 
-							if(FrostedSerialPort.HasPermissionToDevice(serialPort))
+							if (FrostedSerialPort.HasPermissionToDevice(serialPort))
 							{
 								UiThread.RunOnIdle(this.RefreshStatus);
 								checkForPermissionTimer.Dispose();
@@ -177,7 +182,8 @@ namespace MatterHackers.MatterControl
 					}
 
 					FrostedSerialPort.RequestPermissionToDevice(serialPort);
-				}));
+				},
+				theme));
 
 #endif
 			connectToPrinterRow = new CriteriaRow(
