@@ -590,10 +590,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						});
 					}
 				},
-#if DEBUG
+#if DEBUG && false
 				new NamedAction()
 				{
-					Title = "GC.Collect".Localize(),
+					Title = "GC.Collect"/* Don't localize debug tool */,
 					Action = () =>
 					{
 						UiThread.RunOnIdle(() =>

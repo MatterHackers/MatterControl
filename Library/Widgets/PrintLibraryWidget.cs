@@ -575,7 +575,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// edit menu item
 			menuActions.Add(new PrintItemAction()
 			{
-				Title = "Markdown".Localize(),
+				Title = "Markdown Tests"/* Don't localize debug tool */,
 				Action = (selectedLibraryItems, listView) =>
 				{
 					UiThread.RunOnIdle(() =>
