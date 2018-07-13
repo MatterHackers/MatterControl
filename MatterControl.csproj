@@ -104,13 +104,8 @@
     <Compile Include="DesignTools\Operations\MirrorObject3D.cs" />
     <Compile Include="DesignTools\Operations\TransformWrapperObject3D.cs" />
     <Compile Include="DesignTools\Operations\GroupObject3D.cs" />
-    <Compile Include="DesignTools\Operations\Image\AlphaThresholdFunction.cs" />
-    <Compile Include="DesignTools\Operations\Image\HueThresholdFunction.cs" />
     <Compile Include="DesignTools\Operations\Image\ImageToPathObject3D.cs" />
-    <Compile Include="DesignTools\Operations\Image\IThresholdFunction.cs" />
     <Compile Include="DesignTools\Operations\Image\LinearExtrudeObject3D.cs" />
-    <Compile Include="DesignTools\Operations\Image\MapOnMaxIntensity.cs" />
-    <Compile Include="DesignTools\Operations\Image\SilhouetteThresholdFunction.cs" />
     <Compile Include="DesignTools\Operations\OperationSourceObject3D.cs" />
     <Compile Include="DesignTools\Operations\Path\SmoothPathObject3D.cs" />
     <Compile Include="DesignTools\Operations\PinchObject3D.cs" />

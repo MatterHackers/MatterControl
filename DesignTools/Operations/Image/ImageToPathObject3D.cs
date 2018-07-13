@@ -43,6 +43,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
+	using MatterHackers.Agg.Image.ThresholdFunctions;
 	using MatterHackers.Agg.UI;
 	using MatterHackers.RenderOpenGl.OpenGl;
 	using MatterHackers.VectorMath;
