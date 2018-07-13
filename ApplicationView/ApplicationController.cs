@@ -553,6 +553,7 @@ namespace MatterHackers.MatterControl
 			var workingAnimation = new ImageSequence();
 			var frameCount = 30.0;
 			var strokeWidth = 4 * GuiWidget.DeviceScale;
+
 			for (int i = 0; i < frameCount; i++)
 			{
 				var frame = new ImageBuffer(size, size);

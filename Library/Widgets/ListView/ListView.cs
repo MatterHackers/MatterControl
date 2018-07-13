@@ -55,6 +55,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private ILibraryContainerLink loadingContainerLink;
 
+		// Default to IconListView
+		private GuiWidget contentView;
+		private Color loadingBackgroundColor;
+		private ImageSequenceWidget loadingIndicator;
+
 		// Default constructor uses IconListView
 		public ListView(ILibraryContext context, ThemeConfig theme)
 			: this(context, new IconListView(theme), theme)
@@ -64,6 +69,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public ListView(ILibraryContext context, GuiWidget libraryView, ThemeConfig theme)
 		{
 			contentView = new IconListView(theme);
+
+			loadingBackgroundColor = new Color(theme.Colors.PrimaryAccentColor, 10);
 
 			this.theme = theme;
 			this.LibraryContext = context;
@@ -292,9 +299,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			List
 		}
 
-		// Default to IconListView
-		private GuiWidget contentView ;
-
 		/// <summary>
 		/// The GuiWidget responsible for rendering ListViewItems
 		/// </summary>
@@ -312,10 +316,19 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					{
 						this.ScrollArea.CloseAllChildren();
 
-						this.contentView = value;
-						this.contentView.HAnchor = HAnchor.Stretch;
-						this.contentView.Name = "Library ListView";
+						contentView = value;
+						contentView.HAnchor = HAnchor.Stretch;
+						contentView.VAnchor = VAnchor.Fit | VAnchor.Top;
+						contentView.Name = "Library ListContentView";
 						this.AddChild(this.contentView);
+
+						this.ScrollArea.AddChild(
+							loadingIndicator = new ImageSequenceWidget(ApplicationController.Instance.GetProcessingSequence(theme.Colors.PrimaryAccentColor))
+							{
+								VAnchor = VAnchor.Top,
+								HAnchor = HAnchor.Center,
+								Visible = false
+							});
 					}
 				}
 				else
@@ -359,7 +372,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				if (itemModel is ILibraryContainerLink containerLink)
 				{
-					// Prevent invalid assignment of container.Parent due to overlapping load attempts that 
+					// Prevent invalid assignment of container.Parent due to overlapping load attempts that
 					// would otherwise result in containers with self referencing parent properties
 					if (loadingContainerLink != containerLink)
 					{
@@ -371,10 +384,20 @@ namespace MatterHackers.MatterControl.CustomWidgets
 							var container = await containerLink.GetContainer(null);
 							if (container != null)
 							{
+								(contentView as IListContentView)?.ClearItems();
+
+								this.BackgroundColor = loadingBackgroundColor;
+								contentView.Visible = false;
+								loadingIndicator.Visible = true;
+
 								await Task.Run(() =>
 								{
 									container.Load();
 								});
+
+								loadingIndicator.Visible = false;
+								this.BackgroundColor = Color.Transparent;
+								contentView.Visible = true;
 
 								container.Parent = ActiveContainer;
 								SetActiveContainer(container);
