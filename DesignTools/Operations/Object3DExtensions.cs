@@ -33,6 +33,7 @@ using System.Diagnostics;
 using System.Linq;
 using ClipperLib;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
@@ -165,6 +166,65 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			output.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
 
 			return output;
+		}
+
+		public static Affine GetCenteringTransformExpandedToRadius(this IVertexSource vertexSource, double radius)
+		{
+			var circle = SmallestEnclosingCircle.MakeCircle(vertexSource.Vertices().Select((v) => new Vector2(v.position.X, v.position.Y)));
+
+			// move the circle center to the origin
+			var centering = Affine.NewTranslation(-circle.Center);
+			// scale to the fit size in x y
+			double scale = radius / circle.Radius;
+			var scalling = Affine.NewScaling(scale);
+
+			return centering * scalling;
+		}
+
+		public static Affine GetCenteringTransformVisualCenter(this IVertexSource vertexSource, double goalRadius)
+		{
+			var outsidePolygons = new List<List<IntPoint>>();
+			// remove all holes from the polygons so we only center the major outlines
+			var polygons = vertexSource.CreatePolygons();
+			foreach (var polygon in polygons)
+			{
+				if (polygon.GetWindingDirection() == 1)
+				{
+					outsidePolygons.Add(polygon);
+				}
+			}
+
+			IVertexSource outsideSource = outsidePolygons.CreateVertexStorage();
+
+			Vector2 center = outsideSource.GetWeightedCenter();
+
+			outsideSource = new VertexSourceApplyTransform(outsideSource, Affine.NewTranslation(-center));
+
+			double radius = MaxXyDistFromCenter(outsideSource);
+
+			double scale = goalRadius / radius;
+			var scalling = Affine.NewScaling(scale);
+
+			var centering = Affine.NewTranslation(-center);
+
+			return centering * scalling;
+		}
+
+		private static double MaxXyDistFromCenter(IVertexSource vertexSource)
+		{
+			double maxDistSqrd = 0.000001;
+			var center = vertexSource.GetBounds().Center;
+			foreach (var vertex in vertexSource.Vertices())
+			{
+				var position = vertex.position;
+				var distSqrd = (new Vector2(position.X, position.Y) - new Vector2(center.X, center.Y)).LengthSquared;
+				if (distSqrd > maxDistSqrd)
+				{
+					maxDistSqrd = distSqrd;
+				}
+			}
+
+			return Math.Sqrt(maxDistSqrd);
 		}
 
 		public static VertexStorage Offset(this IVertexSource a, double distance)

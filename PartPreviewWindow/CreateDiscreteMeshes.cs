@@ -35,6 +35,7 @@ using System.Threading;
 using ClipperLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Image.ThresholdFunctions;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.MarchingSquares;
 using MatterHackers.MatterControl.DesignTools;
