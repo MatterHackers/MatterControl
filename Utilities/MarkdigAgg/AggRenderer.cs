@@ -63,6 +63,8 @@ namespace Markdig.Renderers
 
 		public AggRenderer(GuiWidget rootWidget)
 		{
+			this.theme = ApplicationController.Instance.Theme;
+
 			buffer = new char[1024];
 			RootWidget = rootWidget;
 
