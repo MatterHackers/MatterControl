@@ -101,8 +101,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.Name = "View3DWidget";
 			this.BackgroundColor = theme.ActiveTabColor;
-			this.Border = new BorderDouble(top: 1);
-			this.BorderColor = theme.MinimalShade;
 			this.HAnchor = HAnchor.Stretch; //	HAnchor.MaxFitOrStretch,
 			this.VAnchor = VAnchor.Stretch; //  VAnchor.MaxFitOrStretch
 
@@ -180,7 +178,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					HAnchor = HAnchor.Stretch,
 					VAnchor = VAnchor.Fit,
-				});
+					BorderColor = Color.Transparent // Disable top border to produce a more flat, dark top edge
+			});
 
 			// add the tree view
 			treeView = new TreeView(theme)

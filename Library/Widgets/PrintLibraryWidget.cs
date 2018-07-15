@@ -96,13 +96,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				VAnchor = VAnchor.Fit,
 			};
 			allControls.AddChild(navBar);
+			theme.ApplyBottomBorder(navBar);
 
 			navBar.OverflowButton.BeforePopup += (s, e) =>
 			{
 				this.EnableMenus();
 			};
-
-			allControls.AddChild(new HorizontalLine(20), 1);
 
 			var toolbar = new OverflowBar(theme)
 			{
@@ -110,6 +109,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				VAnchor = VAnchor.Fit,
 				Name = "Folders Toolbar"
 			};
+
+			theme.ApplyBottomBorder(toolbar, shadedBorder: true);
 
 			// Change the overflow button to a sort icon
 			var firstChild = toolbar.OverflowButton.Children<ImageWidget>().FirstOrDefault();

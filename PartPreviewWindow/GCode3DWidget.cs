@@ -94,6 +94,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.EnsureSectionWidgetStyling(this.Children<SectionWidget>());
 
+			var firstSection = this.Children<SectionWidget>().First();
+			firstSection.BorderColor = Color.Transparent; // Disable top border on first item to produce a more flat, dark top edge
+
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if (e is StringEventArgs stringEvent)

@@ -359,12 +359,12 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 				{
-					container.AddChild(new HorizontalLine()
+					container.AddChild(new HorizontalLine(20)
 					{
 						Margin = new BorderDouble(0, 5, 0, 0)
 					});
 
-					container.AddChild(new TextWidget("Extruder".Localize() + " " + (extruderIndex + 1).ToString())
+					container.AddChild(new TextWidget("Extruder".Localize() + " " + (extruderIndex + 1).ToString(), pointSize: theme.DefaultFontSize)
 					{
 						AutoExpandBoundsToText = true,
 						TextColor = Color.Black,

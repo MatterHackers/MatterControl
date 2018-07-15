@@ -18,8 +18,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
-			this.Border = new BorderDouble(bottom: 1);
-			this.BorderColor = theme.GetBorderColor(50);
+
+			theme.ApplyBorder(this, new BorderDouble(top: 1));
 
 			this.setContentVAnchor = setContentVAnchor;
 

@@ -134,12 +134,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			printerActionsBar = new PrinterActionsBar(printer, this, theme);
+			theme.ApplyBottomBorder(printerActionsBar);
 			printerActionsBar.modelViewButton.Enabled = sceneContext.EditableScene;
 
 			// Must come after we have an instance of View3DWidget an its undo buffer
 			topToBottom.AddChild(printerActionsBar, 0);
-
-			topToBottom.AddChild(new HorizontalLine(20), 1);
 
 			var trackball = view3DWidget.InteractionLayer.Children<TrackballTumbleWidget>().FirstOrDefault();
 
