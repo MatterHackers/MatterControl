@@ -2043,7 +2043,10 @@ namespace MatterHackers.MatterControl
 
 		internal GuiWidget GetViewOptionButtons(BedConfig sceneContext, PrinterConfig printer, ThemeConfig theme)
 		{
-			var container = new FlowLayoutWidget();
+			var container = new FlowLayoutWidget()
+			{
+				VAnchor = VAnchor.Fit | VAnchor.Center
+			};
 
 			var bedButton = new RadioIconButton(AggContext.StaticData.LoadIcon("bed.png", theme.InvertIcons), theme)
 			{

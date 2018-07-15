@@ -60,11 +60,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewControls3D = new ViewControls3D(sceneContext, theme, sceneContext.Scene.UndoBuffer, isPrinterType)
 			{
-				//BackgroundColor = new Color(0, 0, 0, theme.OverlayAlpha),
 				VAnchor = VAnchor.Top | VAnchor.Fit,
 				HAnchor = HAnchor.Left | HAnchor.Stretch,
 				Visible = true,
 			};
+			theme.ApplyBottomBorder(viewControls3D, shadedBorder: (this is PrinterTabPage)); // Shade border if toolbar is secondary rather than primary
+
 			viewControls3D.ResetView += (sender, e) =>
 			{
 				if (view3DWidget.Visible)

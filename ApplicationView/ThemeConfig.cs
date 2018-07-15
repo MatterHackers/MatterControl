@@ -441,6 +441,19 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
+		public void ApplyBottomBorder(GuiWidget widget, bool shadedBorder = false)
+		{
+			widget.BorderColor = shadedBorder ? this.MinimalShade : this.GetBorderColor(20);
+
+			this.ApplyBorder(widget, new BorderDouble(bottom: 1), shadedBorder);
+		}
+
+		public void ApplyBorder(GuiWidget widget, BorderDouble border, bool shadedBorder = false)
+		{
+			widget.BorderColor = shadedBorder ? this.MinimalShade : this.GetBorderColor(20);
+			widget.Border = border;
+		}
+
 		public SectionWidget ApplyBoxStyle(SectionWidget sectionWidget)
 		{
 			return ApplyBoxStyle(
