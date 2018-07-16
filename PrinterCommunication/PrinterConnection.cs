@@ -2266,18 +2266,29 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			if (lineBeingSetToPrinter.StartsWith("G28"))
 			{
+				// don't time the homing opperation
+				timeSinceStartedPrint.Stop();
 				DetailedPrintingState = DetailedPrintingState.HomingAxis;
 			}
 			else if (waitForTempStream8?.HeatingBed ?? false)
 			{
+				// don't time the heating bed opperation opperation
+				timeSinceStartedPrint.Stop();
 				DetailedPrintingState = DetailedPrintingState.HeatingBed;
 			}
 			else if (waitForTempStream8?.HeatingExtruder ?? false)
 			{
+				// don't time the heating extruder opperation opperation
+				timeSinceStartedPrint.Stop();
 				DetailedPrintingState = DetailedPrintingState.HeatingExtruder;
 			}
 			else
 			{
+				// make sure we time all of the printing that we are doing
+				if (this.PrinterIsPrinting && !this.PrinterIsPaused)
+				{
+					timeSinceStartedPrint.Start();
+				}
 				DetailedPrintingState = DetailedPrintingState.Printing;
 			}
 		}
