@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			cancelButton = theme.CreateDialogButton(cancelButtonText);
-			cancelButton.Margin = 0;
+			cancelButton.Margin = new BorderDouble(left: 3);
 			cancelButton.Name = "Cancel Wizard Button";
 
 			// Create the header row for the widget
@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl
 			// Create the footer (button) container
 			footerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
-				HAnchor = HAnchor.Stretch,
+				HAnchor = HAnchor.Fit | HAnchor.Right,
 				VAnchor = VAnchor.Fit,
 				Margin = new BorderDouble(0, 6),
 				Padding = new BorderDouble(top: 4, bottom: 2)
@@ -211,7 +211,6 @@ namespace MatterHackers.MatterControl
 				systemWindow.KeyDown += checkEscape;
 			}
 
-			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);
 
 			base.OnLoad(args);
