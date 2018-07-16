@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			double sliderWidth = 300 * GuiWidget.DeviceScale;
 			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
 
-			Color sliderTrackColor = theme.Colors.IsDarkTheme ? new Color(theme.Shade, 65) : theme.SlightShade;
+			Color sliderTrackColor = theme.SlightShade;
 
 			SettingsRow settingsRow;
 
