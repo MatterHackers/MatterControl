@@ -45,7 +45,6 @@ Advanced
         number_of_first_layers
     Fan
       Fan
-        enable_fan
         min_fan_speed_layer_time
         max_fan_speed_layer_time
         min_fan_speed
@@ -111,7 +110,6 @@ Advanced
         support_material_extrusion_width
     Retraction
       After Move
-        enable_retractions
         retract_length
         retract_restart_extra
         retract_restart_extra_time_to_apply

@@ -464,6 +464,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{ "Skirt", "create_skirt" },
 			{ "Raft", "create_raft" },
 			{ "Brim", "create_brim" },
+			{ "Retraction", "enable_retractions" },
+			{ "Fan", "enable_fan" },
 		};
 
 		public SectionWidget CreateGroupSection(SettingsOrganizer.Group group)
