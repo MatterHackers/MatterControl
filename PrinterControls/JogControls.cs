@@ -59,6 +59,18 @@ namespace MatterHackers.MatterControl
 		private ThemeConfig theme;
 		private PrinterConfig printer;
 
+		private List<ExtrudeButton> eMinusButtons = new List<ExtrudeButton>();
+		private List<ExtrudeButton> ePlusButtons = new List<ExtrudeButton>();
+		private RadioTextButton movePointZeroTwoMmButton;
+		private RadioTextButton moveOneMmButton;
+		private RadioTextButton oneHundredButton;
+		private RadioTextButton tenButton;
+		private GuiWidget disableableEButtons;
+		private GuiWidget keyboardFocusBorder;
+		private GuiWidget keyboardImage;
+		private EventHandler unregisterEvents;
+		private GuiWidget xyGrid = null;
+
 		public JogControls(PrinterConfig printer, XYZColors colors, ThemeConfig theme)
 		{
 			this.theme = theme;
@@ -67,29 +79,31 @@ namespace MatterHackers.MatterControl
 			double distanceBetweenControls = 12;
 			double buttonSeparationDistance = 10;
 
-			FlowLayoutWidget allControlsTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			var allControlsTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch
+			};
 
-			allControlsTopToBottom.HAnchor |= HAnchor.Stretch;
-
-			FlowLayoutWidget allControlsLeftToRight = new FlowLayoutWidget();
+			var allControlsLeftToRight = new FlowLayoutWidget();
 
 			using (allControlsLeftToRight.LayoutLock())
 			{
-				FlowLayoutWidget xYZWithDistance = new FlowLayoutWidget(FlowDirection.TopToBottom);
+				var xYZWithDistance = new FlowLayoutWidget(FlowDirection.TopToBottom);
 				{
-					FlowLayoutWidget xYZControls = new FlowLayoutWidget();
-					{
-						GuiWidget xyGrid = CreateXYGridControl(colors, distanceBetweenControls, buttonSeparationDistance);
-						xYZControls.AddChild(xyGrid);
+					var xYZControls = new FlowLayoutWidget();
+					xYZControls.AddChild(this.CreateXYGridControl(colors, distanceBetweenControls, buttonSeparationDistance));
 
-						FlowLayoutWidget zButtons = JogControls.CreateZButtons(printer, buttonSeparationDistance, out zPlusControl, out zMinusControl, colors, theme);
-						zButtons.VAnchor = VAnchor.Bottom;
-						xYZControls.AddChild(zButtons);
-						xYZWithDistance.AddChild(xYZControls);
-					}
+					FlowLayoutWidget zButtons = JogControls.CreateZButtons(printer, buttonSeparationDistance, out zPlusControl, out zMinusControl, colors, theme);
+					zButtons.VAnchor = VAnchor.Bottom;
+					xYZControls.AddChild(zButtons);
+					xYZWithDistance.AddChild(xYZControls);
 
 					// add in some movement radio buttons
-					FlowLayoutWidget setMoveDistanceControl = new FlowLayoutWidget();
+					var setMoveDistanceControl = new FlowLayoutWidget
+					{
+						HAnchor = HAnchor.Left | HAnchor.Fit,
+						VAnchor = VAnchor.Fit
+					};
 
 					{
 						var moveRadioButtons = new FlowLayoutWidget();
@@ -157,7 +171,6 @@ namespace MatterHackers.MatterControl
 						});
 					}
 
-					setMoveDistanceControl.HAnchor = HAnchor.Left;
 					xYZWithDistance.AddChild(setMoveDistanceControl);
 				}
 
@@ -194,7 +207,10 @@ namespace MatterHackers.MatterControl
 			}
 
 			this.PerformLayout();
+
+			ActiveSliceSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
 		}
+
 		internal void SetEnabledLevels(bool enableBabysteppingMode, bool enableEControls)
 		{
 			if (enableBabysteppingMode)
@@ -215,8 +231,14 @@ namespace MatterHackers.MatterControl
 			tenButton.Enabled = !enableBabysteppingMode;
 			oneHundredButton.Enabled = !enableBabysteppingMode;
 
+			if (xyGrid != null)
+			{
+				xyGrid.Enabled = !enableBabysteppingMode;
+			}
+
 			disableableEButtons.Enabled = enableEControls;
 		}
+
 		private void SetEMoveAmount(int moveAmount)
 		{
 			foreach (ExtrudeButton extrudeButton in eMinusButtons)
@@ -245,17 +267,6 @@ namespace MatterHackers.MatterControl
 
 			AxisMoveAmount = moveAmount;
 		}
-
-		private List<ExtrudeButton> eMinusButtons = new List<ExtrudeButton>();
-		private List<ExtrudeButton> ePlusButtons = new List<ExtrudeButton>();
-		private RadioTextButton movePointZeroTwoMmButton;
-		private RadioTextButton moveOneMmButton;
-		private RadioTextButton oneHundredButton;
-		private RadioTextButton tenButton;
-		private GuiWidget disableableEButtons;
-		private GuiWidget keyboardFocusBorder;
-		private GuiWidget keyboardImage;
-		private EventHandler unregisterEvents;
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
@@ -619,57 +630,54 @@ namespace MatterHackers.MatterControl
 
 		private GuiWidget CreateXYGridControl(XYZColors colors, double distanceBetweenControls, double buttonSeparationDistance)
 		{
-			ActiveSliceSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
-
-			GuiWidget xyGrid = new GuiWidget();
+			xyGrid = new GuiWidget
 			{
-				FlowLayoutWidget xButtons = new FlowLayoutWidget();
-				{
-					xButtons.HAnchor |= HAnchor.Center;
-					xButtons.VAnchor |= VAnchor.Center;
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Fit | VAnchor.Bottom,
+				Margin = new BorderDouble(0, 5, distanceBetweenControls, 5)
+			};
 
-					xMinusControl = theme.CreateMoveButton(printer, "X-", PrinterConnection.Axis.X, printer.Settings.XSpeed());
-					xMinusControl.ToolTipText = "Move X negative".Localize();
-					xButtons.AddChild(xMinusControl);
+			var xButtons = new FlowLayoutWidget();
+			xButtons.HAnchor = HAnchor.Fit | HAnchor.Center;
+			xButtons.VAnchor = VAnchor.Fit | VAnchor.Center;
+			xyGrid.AddChild(xButtons);
 
-					// spacer
-					xButtons.AddChild(new GuiWidget(xMinusControl.Width + buttonSeparationDistance * 2, 1)
-					{
-						VAnchor = VAnchor.Center,
-						BackgroundColor = colors.XColor
-					});
+			xMinusControl = theme.CreateMoveButton(printer, "X-", PrinterConnection.Axis.X, printer.Settings.XSpeed());
+			xMinusControl.ToolTipText = "Move X negative".Localize();
+			xButtons.AddChild(xMinusControl);
 
-					xPlusControl = theme.CreateMoveButton(printer, "X+", PrinterConnection.Axis.X, printer.Settings.XSpeed());
-					xPlusControl.ToolTipText = "Move X positive".Localize();
-					xButtons.AddChild(xPlusControl);
-				}
-				xyGrid.AddChild(xButtons);
+			// spacer
+			xButtons.AddChild(new GuiWidget(xMinusControl.Width + buttonSeparationDistance * 2, 1)
+			{
+				VAnchor = VAnchor.Center,
+				BackgroundColor = colors.XColor
+			});
 
-				FlowLayoutWidget yButtons = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				{
-					yButtons.HAnchor |= HAnchor.Center;
-					yButtons.VAnchor |= VAnchor.Center;
-					yPlusControl = theme.CreateMoveButton(printer, "Y+", PrinterConnection.Axis.Y, printer.Settings.YSpeed());
-					yPlusControl.ToolTipText = "Move Y positive".Localize();
-					yButtons.AddChild(yPlusControl);
+			xPlusControl = theme.CreateMoveButton(printer, "X+", PrinterConnection.Axis.X, printer.Settings.XSpeed());
+			xPlusControl.ToolTipText = "Move X positive".Localize();
+			xButtons.AddChild(xPlusControl);
 
-					// spacer
-					yButtons.AddChild(new GuiWidget(1, buttonSeparationDistance)
-					{
-						HAnchor = HAnchor.Center,
-						BackgroundColor = colors.YColor
-					});
+			var yButtons = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Fit | HAnchor.Center,
+				VAnchor = VAnchor.Fit | VAnchor.Center
+			};
+			xyGrid.AddChild(yButtons);
 
-					yMinusControl = theme.CreateMoveButton(printer, "Y-", PrinterConnection.Axis.Y, printer.Settings.YSpeed());
-					yMinusControl.ToolTipText = "Move Y negative".Localize();
-					yButtons.AddChild(yMinusControl);
-				}
-				xyGrid.AddChild(yButtons);
-			}
-			xyGrid.HAnchor = HAnchor.Fit;
-			xyGrid.VAnchor = VAnchor.Fit;
-			xyGrid.VAnchor = VAnchor.Bottom;
-			xyGrid.Margin = new BorderDouble(0, 5, distanceBetweenControls, 5);
+			yPlusControl = theme.CreateMoveButton(printer, "Y+", PrinterConnection.Axis.Y, printer.Settings.YSpeed());
+			yPlusControl.ToolTipText = "Move Y positive".Localize();
+			yButtons.AddChild(yPlusControl);
+
+			// spacer
+			yButtons.AddChild(new GuiWidget(1, buttonSeparationDistance)
+			{
+				HAnchor = HAnchor.Center,
+				BackgroundColor = colors.YColor
+			});
+
+			yMinusControl = theme.CreateMoveButton(printer, "Y-", PrinterConnection.Axis.Y, printer.Settings.YSpeed());
+			yMinusControl.ToolTipText = "Move Y negative".Localize();
+			yButtons.AddChild(yMinusControl);
 
 			return xyGrid;
 		}
