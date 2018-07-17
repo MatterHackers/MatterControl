@@ -1148,6 +1148,7 @@
     "DataEditType": "POSITIVE_DOUBLE",
     "ShowIfSet": "!sla_printer",
     "Units": "mm",
+    "EnableIfSet": "enable_retractions",
     "DefaultValue": "10"
   },
   {
@@ -1175,6 +1176,7 @@
     "HelpText": "Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).",
     "DataEditType": "POSITIVE_DOUBLE",
     "ShowIfSet": "!sla_printer",
+    "EnableIfSet": "enable_retractions",
     "Units": "mm zero to disable",
     "DefaultValue": "0"
   },
