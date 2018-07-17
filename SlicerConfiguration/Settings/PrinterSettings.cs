@@ -1296,6 +1296,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					RestoreUserOverride(layer, settingsKey);
 				}
 
+				if (SettingsOrganizer.SettingsData.TryGetValue(settingsKey, out SliceSettingData settingData))
+				{
+					if (settingData.DataEditType == SliceSettingData.DataEditTypes.CHECK_BOX)
+					{
+						string checkedKey = this.GetValue<bool>(settingsKey) ? "OnValue" : "OffValue";
+
+						// Linked settings should be updated in all cases (user clicked checkbox, user clicked clear)
+						foreach (var setSettingsData in settingData.SetSettingsOnChange)
+						{
+							if (setSettingsData.TryGetValue(checkedKey, out string targetValue))
+							{
+								if (this.GetValue(setSettingsData["TargetSetting"]) != targetValue)
+								{
+									this.SetValue(setSettingsData["TargetSetting"], targetValue);
+								}
+							}
+						}
+					}
+				}
+
 				Save();
 
 				ActiveSliceSettings.OnSettingChanged(settingsKey);
