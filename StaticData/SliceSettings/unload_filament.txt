@@ -6,7 +6,7 @@ G4 S1               ; wait message to display
 M109 S[temperature] ; heat up the extruder
 
 M302 S0  ; Allow extrusion at any temperature
-; host.show_message(title:"Unloading filament..." count_down:28)
+; host.show_message(title:"Unloading filament..." count_down:"[unload_filament_time]")
 G92 E0              ; reset the extruder position to 0
 G91                 ; Relative positioning
 G1 E15 F600         ; push some out first
