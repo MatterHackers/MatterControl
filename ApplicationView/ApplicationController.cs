@@ -964,37 +964,41 @@ namespace MatterHackers.MatterControl
 			}, ref unregisterEvent);
 
 			// show countdown for turning off heat if required
-			PrinterConnection.HeatTurningOffSoon.RegisterEvent((s, e) =>
+			PrinterConnection.TemporarilyHoldingTemp.RegisterEvent((s, e) =>
 			{
 				var printerConnection = this.ActivePrinter.Connection;
 
 				if (printerConnection.AnyHeatIsOn)
 				{
-					Tasks.Execute("Disable Heaters".Localize(), (reporter, cancellationToken) =>
+					Tasks.Execute("Holding Temp".Localize(), (reporter, cancellationToken) =>
 					{
 						var progressStatus = new ProgressStatus();
 
-						while (printerConnection.SecondsUntilTurnOffHeaters > 0
+						while (printerConnection.SecondsToHoldTemperature > 0
 							&& !cancellationToken.IsCancellationRequested
-							&& printerConnection.ContinuWaitingToTurnOffHeaters)
+							&& printerConnection.ContinuHoldingTemperature)
 						{
 							reporter.Report(progressStatus);
-							progressStatus.Status = "Turn Off Heat in".Localize() + " " + printerConnection.SecondsUntilTurnOffHeaters.ToString("0");
+							progressStatus.Status = "Holding Temperature for ".Localize() + " " + printerConnection.SecondsToHoldTemperature.ToString("0");
 							Thread.Sleep(100);
 						}
 
-						if (!cancellationToken.IsCancellationRequested
-							&& printerConnection.ContinuWaitingToTurnOffHeaters)
+						return Task.CompletedTask;
+					},
+					taskActions: new RunningTaskOptions()
+					{
+						PauseAction = () => UiThread.RunOnIdle(() =>
+						{
+							printerConnection.TimeHaveBeenHoldingTemperature.Stop();
+						}),
+						ResumeAction = () => UiThread.RunOnIdle(() =>
+						{
+							printerConnection.TimeHaveBeenHoldingTemperature.Start();
+						}),
+						StopAction = () => UiThread.RunOnIdle(() =>
 						{
 							printerConnection.TurnOffBedAndExtruders(TurnOff.Now);
-						}
-
-						if (cancellationToken.IsCancellationRequested)
-						{
-							printerConnection.ContinuWaitingToTurnOffHeaters = false;
-						}
-
-						return Task.CompletedTask;
+						})
 					});
 				}
 			}, ref unregisterEvents);

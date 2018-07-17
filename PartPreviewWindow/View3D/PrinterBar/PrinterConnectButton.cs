@@ -34,6 +34,8 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.MatterControl.ActionBar
 {

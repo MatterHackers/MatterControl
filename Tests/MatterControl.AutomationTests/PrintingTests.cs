@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.AddItemToBedplate();
 
 					// Shorten the delay so the test runs in a reasonable time
-					ApplicationController.Instance.ActivePrinter.Connection.TurnOffHeatDelay = 5;
+					ApplicationController.Instance.ActivePrinter.Connection.TimeToHoldTemperature = 5;
 
 					testRunner.StartPrint();
 

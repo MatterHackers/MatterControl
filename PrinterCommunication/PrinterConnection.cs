@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 	/// </summary>
 	public class PrinterConnection
 	{
-		public static RootedObjectEventHandler HeatTurningOffSoon = new RootedObjectEventHandler();
+		public static RootedObjectEventHandler TemporarilyHoldingTemp = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler ErrorReported = new RootedObjectEventHandler();
 
 		// this should be removed after we have better access to each running printer
@@ -137,8 +137,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public bool ContinuWaitingToTurnOffHeaters { get; set; }
-		public double SecondsUntilTurnOffHeaters { get; private set; }
+		public bool ContinuHoldingTemperature { get; set; }
+		public double SecondsToHoldTemperature { get; private set; }
 
 		public TerminalLog TerminalLog { get; }
 
@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private string lastLineRead = "";
 
-		private Stopwatch TimeHaveBeenWaitingToTurnOffHeaters { get; set; }
+		public Stopwatch TimeHaveBeenHoldingTemperature { get; set; }
 
 		private PrinterMove lastReportedPosition;
 
@@ -741,7 +741,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			get => _targetBedTemperature;
 			set
 			{
-				ContinuWaitingToTurnOffHeaters = false;
+				ContinuHoldingTemperature = false;
 				if (_targetBedTemperature != value)
 				{
 					_targetBedTemperature = value;
@@ -1822,7 +1822,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			if (targetHotendTemperature[hotendIndex0Based] != temperature
 				|| forceSend)
 			{
-				ContinuWaitingToTurnOffHeaters = false;
+				ContinuHoldingTemperature = false;
 				targetHotendTemperature[hotendIndex0Based] = temperature;
 				OnHotendTemperatureSet(new TemperatureEventArgs(hotendIndex0Based, temperature));
 				if (this.IsConnected)
@@ -2408,7 +2408,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public int TurnOffHeatDelay { get; set; } = 60;
+		public int TimeToHoldTemperature { get; set; } = 60;
 
 		public bool AnyHeatIsOn
 		{
@@ -2441,36 +2441,36 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 			else
 			{
-				bool currentlyWaiting = ContinuWaitingToTurnOffHeaters && TimeHaveBeenWaitingToTurnOffHeaters.IsRunning && TimeHaveBeenWaitingToTurnOffHeaters.Elapsed.TotalSeconds < TurnOffHeatDelay;
-				SecondsUntilTurnOffHeaters = TurnOffHeatDelay;
-				ContinuWaitingToTurnOffHeaters = true;
-				TimeHaveBeenWaitingToTurnOffHeaters = Stopwatch.StartNew();
+				bool currentlyWaiting = ContinuHoldingTemperature && TimeHaveBeenHoldingTemperature.IsRunning && TimeHaveBeenHoldingTemperature.Elapsed.TotalSeconds < TimeToHoldTemperature;
+				SecondsToHoldTemperature = TimeToHoldTemperature;
+				ContinuHoldingTemperature = true;
+				TimeHaveBeenHoldingTemperature = Stopwatch.StartNew();
 				if (!currentlyWaiting)
 				{
-					HeatTurningOffSoon.CallEvents(this, null);
+					TemporarilyHoldingTemp.CallEvents(this, null);
 					// wait secondsToWait and turn off the heaters
 					Task.Run(() =>
 					{
-						while (TimeHaveBeenWaitingToTurnOffHeaters.Elapsed.TotalSeconds < TurnOffHeatDelay
-							&& ContinuWaitingToTurnOffHeaters)
+						while (TimeHaveBeenHoldingTemperature.Elapsed.TotalSeconds < TimeToHoldTemperature
+							&& ContinuHoldingTemperature)
 						{
 							if (CommunicationState == CommunicationStates.PreparingToPrint
 								|| PrinterIsPrinting)
 							{
-								ContinuWaitingToTurnOffHeaters = false;
+								ContinuHoldingTemperature = false;
 							}
 
 							if (!AnyHeatIsOn)
 							{
-								ContinuWaitingToTurnOffHeaters = false;
+								ContinuHoldingTemperature = false;
 							}
 
-							SecondsUntilTurnOffHeaters = ContinuWaitingToTurnOffHeaters ? Math.Max(0, TurnOffHeatDelay - TimeHaveBeenWaitingToTurnOffHeaters.Elapsed.TotalSeconds) : 0;
+							SecondsToHoldTemperature = ContinuHoldingTemperature ? Math.Max(0, TimeToHoldTemperature - TimeHaveBeenHoldingTemperature.Elapsed.TotalSeconds) : 0;
 							Thread.Sleep(100);
 						}
 
 						// times up turn off heaters
-						if (ContinuWaitingToTurnOffHeaters
+						if (ContinuHoldingTemperature
 							&& !PrinterIsPrinting
 							&& !PrinterIsPaused)
 						{
