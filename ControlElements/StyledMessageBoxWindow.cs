@@ -60,6 +60,7 @@ namespace MatterHackers.MatterControl
 			private string unwrappedMessage;
 			private TextWidget messageContainer;
 			private Action<bool> responseCallback;
+			bool haveResponded = false;
 
 			public MessageBoxPage(Action<bool> callback, string message, string caption, MessageType messageType, GuiWidget[] extraWidgetsToAdd, double width, double height, string yesOk, string noCancel, ThemeConfig theme)
 				: base((noCancel == "") ? "No".Localize() : noCancel)
@@ -98,6 +99,7 @@ namespace MatterHackers.MatterControl
 
 					// If applicable, invoke the callback
 					responseCallback?.Invoke(true);
+					haveResponded = true;
 				};
 
 				this.AddPageAction(affirmativeButton, messageType != MessageType.YES_NO_WITHOUT_HIGHLIGHT);
@@ -143,9 +145,19 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
+			public override void OnClosed(ClosedEventArgs e)
+			{
+				if (!haveResponded)
+				{
+					responseCallback?.Invoke(false);
+				}
+				base.OnClosed(e);
+			}
+
 			protected override void OnCancel(out bool abortCancel)
 			{
 				responseCallback?.Invoke(false);
+				haveResponded = true;
 				base.OnCancel(out abortCancel);
 			}
 		}
