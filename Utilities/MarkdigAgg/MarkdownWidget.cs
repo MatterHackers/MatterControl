@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Net;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
@@ -61,6 +62,7 @@ namespace Markdig.Agg
 			this.theme = theme;
 			this.HAnchor = HAnchor.Stretch;
 			this.ScrollArea.HAnchor = HAnchor.Stretch;
+			this.ScrollArea.Margin = new BorderDouble(0, 0, 15, 0);
 
 			this.VAnchor = (scrollContent) ? VAnchor.Stretch : VAnchor.Fit;
 			this.ScrollArea.VAnchor = (scrollContent) ? VAnchor.Fit : VAnchor.Fit;

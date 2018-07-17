@@ -205,10 +205,9 @@ Printer
         load_filament_speed
     Oem
       General
-        clean_nozzle_image
-        trim_image
-        insert_image
-        running_clean_image
+        trim_filament_markdown
+        insert_filament_markdown
+        running_clean_markdown
 
   G-Code
     G-Code
