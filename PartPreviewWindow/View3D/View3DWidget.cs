@@ -963,6 +963,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, localMousePosition);
 			Ray ray = this.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
+			if (!PositionWithinLocalBounds(localMousePosition.X, localMousePosition.Y))
+			{
+				Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-CurrentSelectInfo.LastMoveDelta));
+				selectedItem.Matrix *= totalTransform;
+				CurrentSelectInfo.LastMoveDelta = Vector3.Zero;
+				Invalidate();
+				return;
+			}
+
 			IntersectInfo info = CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
 			if (info != null)
 			{
