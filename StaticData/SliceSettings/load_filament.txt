@@ -7,9 +7,9 @@ M104 S[temperature] ; start heating up the extruder
 
 M302 S0  ; Allow extrusion at any temperature
 G91                 ; Relative positioning
-; host.show_message(title:"Put filament into extruder until you feel it start to feed and then click Continue.", repeat_gcode:"G1 E.1 F150|G4 P10", expire:"90", image:"[insert_image]")
+; host.show_message(title:"Put filament into extruder until you feel it start to feed and then click Continue.", repeat_gcode:"G1 E.1 F150|G4 P10", expire:"300", image:"[insert_image]")
 G90                 ; Absolute positioning
-; host.show_message(title:"Loading filament...", count_down:"28")
+; host.show_message(title:"Loading filament...", count_down:"[load_filament_time]")
 G92 E0              ; reset the extruder position to 0
 G91                 ; Relative positioning
 G1 E[load_filament_length_over_six] F[load_filament_speed]       ; extrude the filament (pulse was 598)

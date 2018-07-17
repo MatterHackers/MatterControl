@@ -61,6 +61,24 @@
     "DefaultValue": "100%"
   },
   {
+    "SlicerConfigName": "load_filament_time",
+    "PresentationName": "Load Filament Time",
+    "HelpText": "The time it will take to load the filament",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "s",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "5"
+  },
+  {
+    "SlicerConfigName": "unload_filament_time",
+    "PresentationName": "Unload Filament Time",
+    "HelpText": "The time it will take to unload the filament",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "s",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "5"
+  },
+  {
     "SlicerConfigName": "unload_filament_length",
     "PresentationName": "Unload Filament Length",
     "HelpText": "The amount of filament to remove from the printer while unloading.",

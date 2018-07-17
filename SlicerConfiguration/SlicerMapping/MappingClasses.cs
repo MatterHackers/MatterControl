@@ -54,6 +54,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			new MappedSetting("max_fan_speed","max_fan_speed"),
 			new MappedSetting("min_fan_speed","min_fan_speed"),
 			new MappedSetting("retract_length","retract_length"),
+			new LoadTimeFromSpeedAndLength("load_filament_time", "load_filament_length", "load_filament_speed"),
+			new LoadTimeFromSpeedAndLength("unload_filament_time", "unload_filament_length", "load_filament_speed"),
 			new MappedSetting(SettingsKey.temperature,SettingsKey.temperature),
 			new MappedSetting("z_offset","z_offset"),
 			new MappedSetting(SettingsKey.bed_temperature,SettingsKey.bed_temperature),
@@ -76,15 +78,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			foreach (MappedSetting mappedSetting in replaceWithSettingsStrings)
 			{
-				// do the replacement with {} (curly brackets)
+				// first check if this setting is anywhere in the line
+				if (gcodeWithMacros.Contains(mappedSetting.CanonicalSettingsName))
 				{
-					string thingToReplace = "{" + "{0}".FormatWith(mappedSetting.CanonicalSettingsName) + "}";
-					gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, mappedSetting.Value);
-				}
-				// do the replacement with [] (square brackets) Slic3r uses only square brackets
-				{
-					string thingToReplace = "[" + "{0}".FormatWith(mappedSetting.CanonicalSettingsName) + "]";
-					gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, mappedSetting.Value);
+					{
+						// do the replacement with {} (curly brackets)
+						string thingToReplace = "{" + "{0}".FormatWith(mappedSetting.CanonicalSettingsName) + "}";
+						gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, mappedSetting.Value);
+					}
+					// do the replacement with [] (square brackets) Slic3r uses only square brackets
+					{
+						string thingToReplace = "[" + "{0}".FormatWith(mappedSetting.CanonicalSettingsName) + "]";
+						gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, mappedSetting.Value);
+					}
 				}
 			}
 
@@ -144,9 +150,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			: base(canonicalSettingsName, exportedName, keyToUseAsDenominatorForCount)
 		{
 		}
-		public override string Value {
-			get {
-				if (ActiveSliceSettings.Instance.GetValue<bool>("create_brim")) {
+		public override string Value
+		{
+			get
+			{
+				if (ActiveSliceSettings.Instance.GetValue<bool>("create_brim"))
+				{
 					return base.Value;
 				}
 
@@ -161,9 +170,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			: base(canonicalSettingsName, exportedName, keyToUseAsDenominatorForCount)
 		{
 		}
-		public override string Value {
-			get {
-				if (ActiveSliceSettings.Instance.GetValue<bool>("create_skirt")) {
+		public override string Value
+		{
+			get
+			{
+				if (ActiveSliceSettings.Instance.GetValue<bool>("create_skirt"))
+				{
 					return base.Value;
 				}
 
@@ -195,18 +207,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							bool first = true;
 							for (int i = 0; i < numPoints; i++)
 							{
-								if(!first)
+								if (!first)
 								{
 									bedString += ",";
 								}
-								double x = Math.Cos(angle*i);
-								double y = Math.Sin(angle*i);
+								double x = Math.Cos(angle * i);
+								double y = Math.Sin(angle * i);
 								bedString += $"{printCenter.X + x * bedSize.X / 2:0.####}x{printCenter.Y + y * bedSize.Y / 2:0.####}";
 								first = false;
 							}
 							return bedString;
 						}
-//bed_shape = 99.4522x10.4528,97.8148x20.7912,95.1057x30.9017,91.3545x40.6737,86.6025x50,80.9017x58.7785,74.3145x66.9131,66.9131x74.3145,58.7785x80.9017,50x86.6025,40.6737x91.3545,30.9017x95.1057,20.7912x97.8148,10.4528x99.4522,0x100,-10.4528x99.4522,-20.7912x97.8148,-30.9017x95.1057,-40.6737x91.3545,-50x86.6025,-58.7785x80.9017,-66.9131x74.3145,-74.3145x66.9131,-80.9017x58.7785,-86.6025x50,-91.3545x40.6737,-95.1057x30.9017,-97.8148x20.7912,-99.4522x10.4528,-100x0,-99.4522x - 10.4528,-97.8148x - 20.7912,-95.1057x - 30.9017,-91.3545x - 40.6737,-86.6025x - 50,-80.9017x - 58.7785,-74.3145x - 66.9131,-66.9131x - 74.3145,-58.7785x - 80.9017,-50x - 86.6025,-40.6737x - 91.3545,-30.9017x - 95.1057,-20.7912x - 97.8148,-10.4528x - 99.4522,0x - 100,10.4528x - 99.4522,20.7912x - 97.8148,30.9017x - 95.1057,40.6737x - 91.3545,50x - 86.6025,58.7785x - 80.9017,66.9131x - 74.3145,74.3145x - 66.9131,80.9017x - 58.7785,86.6025x - 50,91.3545x - 40.6737,95.1057x - 30.9017,97.8148x - 20.7912,99.4522x - 10.4528,100x0
+					//bed_shape = 99.4522x10.4528,97.8148x20.7912,95.1057x30.9017,91.3545x40.6737,86.6025x50,80.9017x58.7785,74.3145x66.9131,66.9131x74.3145,58.7785x80.9017,50x86.6025,40.6737x91.3545,30.9017x95.1057,20.7912x97.8148,10.4528x99.4522,0x100,-10.4528x99.4522,-20.7912x97.8148,-30.9017x95.1057,-40.6737x91.3545,-50x86.6025,-58.7785x80.9017,-66.9131x74.3145,-74.3145x66.9131,-80.9017x58.7785,-86.6025x50,-91.3545x40.6737,-95.1057x30.9017,-97.8148x20.7912,-99.4522x10.4528,-100x0,-99.4522x - 10.4528,-97.8148x - 20.7912,-95.1057x - 30.9017,-91.3545x - 40.6737,-86.6025x - 50,-80.9017x - 58.7785,-74.3145x - 66.9131,-66.9131x - 74.3145,-58.7785x - 80.9017,-50x - 86.6025,-40.6737x - 91.3545,-30.9017x - 95.1057,-20.7912x - 97.8148,-10.4528x - 99.4522,0x - 100,10.4528x - 99.4522,20.7912x - 97.8148,30.9017x - 95.1057,40.6737x - 91.3545,50x - 86.6025,58.7785x - 80.9017,66.9131x - 74.3145,74.3145x - 66.9131,80.9017x - 58.7785,86.6025x - 50,91.3545x - 40.6737,95.1057x - 30.9017,97.8148x - 20.7912,99.4522x - 10.4528,100x0
 
 					case BedShape.Rectangular:
 					default:
@@ -271,7 +283,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			get
 			{
 				string macroReplaced = base.Value;
-				if (!macroReplaced.Contains("; LAYER:") 
+				if (!macroReplaced.Contains("; LAYER:")
 					&& !macroReplaced.Contains(";LAYER:"))
 				{
 					macroReplaced += "; LAYER:[layer_num]\n";
@@ -428,7 +440,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						if (materialTemperature != 0)
 						{
 							// always heat the extruders that are used beyond extruder 0
-							postStartGCode.Add($"M104 T{extruderIndex0Based} S{materialTemperature} ; Start heating extruder{extruderIndex0Based+1}");
+							postStartGCode.Add($"M104 T{extruderIndex0Based} S{materialTemperature} ; Start heating extruder{extruderIndex0Based + 1}");
 						}
 					}
 				}
@@ -464,7 +476,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 		}
 
-		public override string Value => (base.Value == "1") ?  "True" : "False";
+		public override string Value => (base.Value == "1") ? "True" : "False";
 	}
 
 	public class ScaledSingleNumber : MapFirstValue
@@ -564,7 +576,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				if(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.enable_retractions))
+				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.enable_retractions))
 				{
 					return base.Value;
 				}
@@ -649,6 +661,33 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				finalValue *= scale;
 
 				return finalValue.ToString();
+			}
+		}
+	}
+
+	public class LoadTimeFromSpeedAndLength : MappedSetting
+	{
+		string lengthSettingName;
+		string speedSettingName;
+
+		public LoadTimeFromSpeedAndLength(string canonicalSettingsName, string lengthSettingName, string speedSettingName)
+			: base(canonicalSettingsName, "")
+		{
+			this.lengthSettingName = lengthSettingName;
+			this.speedSettingName = speedSettingName;
+		}
+
+		public override string Value
+		{
+			get
+			{
+				string lengthString = ActiveSliceSettings.Instance.GetValue(lengthSettingName);
+				double length = ParseDouble(lengthString);
+
+				string speedString = ActiveSliceSettings.Instance.GetValue(speedSettingName);
+				double speed = ParseDouble(speedString);
+
+				return (length / speed).ToString();
 			}
 		}
 	}
