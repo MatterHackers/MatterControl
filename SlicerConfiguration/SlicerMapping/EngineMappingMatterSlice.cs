@@ -114,10 +114,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.ip_port,
 			SettingsKey.progress_reporting,
 			"load_filament_length",
-			"trim_image",
-			"clean_nozzle_image",
-			"insert_image",
-			"running_clean_image",
+			"trim_filament_markdown",
+			"insert_filament_markdown",
+			"running_clean_markdown",
 			"unload_filament_length",
 			"load_filament_speed",
 		};

@@ -183,9 +183,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						{
 							double.TryParse(value, out macroData.countDown);
 						}
-						if (TryGetAfterString(lineToSend, "image", out value))
+						if (TryGetAfterString(lineToSend, "markdown", out value))
 						{
-							macroData.image = LoadImageAsset(value);
+							macroData.markdown = value.Replace("\\n", "\n");
 						}
 						if (TryGetAfterString(lineToSend, "wait_ok", out value))
 						{

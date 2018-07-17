@@ -769,6 +769,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					break;
 
 				case SliceSettingData.DataEditTypes.MULTI_LINE_TEXT:
+				case SliceSettingData.DataEditTypes.MARKDOWN_TEXT:
 					uiField = new MultilineStringField();
 					placeFieldInDedicatedRow = true;
 					break;

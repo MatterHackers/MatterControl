@@ -68,10 +68,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			new AsPercentOfReferenceOrDirect("load_filament_length_over_six", "", "load_filament_length", 1.0/6.0, false),
 			new AsPercentOfReferenceOrDirect("unload_filament_length_over_six", "", "unload_filament_length", 1.0/6.0, false),
 			new ScaledSingleNumber("load_filament_speed", "load_filament_speed", 60),
-			new MappedSetting("trim_image", "trim_image"),
-			new MappedSetting("clean_nozzle_image", "clean_nozzle_image"),
-			new MappedSetting("insert_image", "insert_image"),
-			new MappedSetting("running_clean_image", "running_clean_image"),
+			new MappedSetting("trim_filament_markdown", "trim_filament_markdown"),
+			new MappedSetting("insert_filament_markdown", "insert_filament_markdown"),
+			new MappedSetting("running_clean_markdown", "running_clean_markdown"),
 		};
 
 		public static string ReplaceMacroValues(string gcodeWithMacros)

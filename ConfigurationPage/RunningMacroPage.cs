@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -76,15 +77,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 				this.AddPageAction(okButton);
 			}
 
-			if (macroData.image != null)
+			if (!string.IsNullOrEmpty(macroData.markdown))
 			{
-				var imageWidget = new ImageWidget(macroData.image)
-				{
-					HAnchor = HAnchor.Center,
-					Margin = new BorderDouble(5,15),
-				};
+				var markdown = new MarkdownWidget(theme);
 
-				contentRow.AddChild(imageWidget);
+				markdown.Markdown = macroData.markdown;
+
+				contentRow.AddChild(markdown);
 			}
 
 			var holder = new FlowLayoutWidget();
@@ -129,7 +128,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			public double countDown = 0;
 			public double expireTime = 0;
 			public double expectedTemperature = 0;
-			public ImageBuffer image = null;
+			public string markdown = "";
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
