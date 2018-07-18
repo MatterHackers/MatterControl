@@ -139,7 +139,6 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 
 				// CreateEditor
-				AddWebPageLinkIfRequired(context, mainContainer, theme);
 				AddUnlockLinkIfRequired(context, mainContainer, theme);
 
 				// Create a field editor for each editable property detected via reflection
@@ -151,6 +150,8 @@ namespace MatterHackers.MatterControl.DesignTools
 						mainContainer.AddChild(editor);
 					}
 				}
+
+				AddWebPageLinkIfRequired(context, mainContainer, theme);
 
 				// add in an Update button if applicable
 				var showUpdate = context.item.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() as ShowUpdateButtonAttribute;

@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			item.Rebuild(null);
 			return item;
-		}		
+		}
 
 		public char Letter { get; set; } = 'a';
 
