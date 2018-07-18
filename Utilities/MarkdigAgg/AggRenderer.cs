@@ -53,7 +53,7 @@ namespace Markdig.Renderers
 
 		public GuiWidget RootWidget { get; }
 
-		public Uri BaseUri { get; set; }
+		public Uri BaseUri { get; set; } = new Uri("https://www.matterhackers.com/");
 		public List<MarkdownDocumentLink> ChildLinks { get; internal set; }
 
 		public AggRenderer(ThemeConfig theme)
@@ -98,6 +98,16 @@ namespace Markdig.Renderers
 		public override object Render(MarkdownObject markdownObject)
 		{
 			Write(markdownObject);
+			UiThread.RunOnIdle(() =>
+			{
+				// TODO: investigate why this is required, layout should have already done this
+				// but it didn't. markdown that looks like the following will not laout correctly without this
+				// string badLayoutMarkdown = "I [s]()\n\nT";
+				if (RootWidget?.Parent?.Parent != null)
+				{
+					RootWidget.Parent.Parent.Width = RootWidget.Parent.Parent.Width - 1;
+				}
+			});
 			return RootWidget;
 		}
 

@@ -326,6 +326,12 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Ignore("Not Implemented")]
+		public void ReadOnlyTextFieldTest()
+		{
+			Assert.Fail();
+		}
+
+		[Test, Ignore("Not Implemented")]
 		public void Vector2FieldTest()
 		{
 			Assert.Fail();

@@ -34,13 +34,25 @@ namespace Markdig.Agg
 {
 	public class MarkdownPage : DialogPage
 	{
+		string debugMarkdown = null;
+		//string debugMarkdown = "I [s]()\n\nT";
+
 		public MarkdownPage()
 		{
 			this.WindowTitle = this.HeaderText = "Markdown Tests";
-			contentRow.AddChild(
-				new MarkdownWidget(
+			MarkdownWidget widget;
+			if (debugMarkdown != null)
+			{
+				widget = new MarkdownWidget(theme);
+				widget.Markdown = debugMarkdown;
+			}
+			else
+			{
+				widget = new MarkdownWidget(
 					theme,
-					new Uri("https://raw.githubusercontent.com/lunet-io/markdig/master/readme.md")));
+					new Uri("https://raw.githubusercontent.com/lunet-io/markdig/master/readme.md"));
+			}
+			contentRow.AddChild(widget);
 		}
 	}
 }

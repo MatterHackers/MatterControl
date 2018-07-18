@@ -763,6 +763,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					};
 					break;
 
+				case SliceSettingData.DataEditTypes.READONLY_STRING:
+					uiField = new ReadOnlyTextField();
+					break;
+
 				case SliceSettingData.DataEditTypes.STRING:
 				case SliceSettingData.DataEditTypes.WIDE_STRING:
 					uiField = new TextField();
