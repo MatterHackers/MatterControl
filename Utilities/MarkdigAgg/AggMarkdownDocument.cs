@@ -58,7 +58,7 @@ namespace Markdig.Agg
 			this.BaseUri = baseUri;
 		}
 
-		public Uri BaseUri { get; set; }
+		public Uri BaseUri { get; set; } = new Uri("https://www.matterhackers.com/");
 
 		public List<MarkdownDocumentLink> Children { get; private set; } = new List<MarkdownDocumentLink>();
 
