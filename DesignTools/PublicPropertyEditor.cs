@@ -139,7 +139,6 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 
 				// CreateEditor
-				AddWebPageLinkIfRequired(context, mainContainer, theme);
 				AddUnlockLinkIfRequired(context, mainContainer, theme);
 
 				// Create a field editor for each editable property detected via reflection
@@ -151,6 +150,8 @@ namespace MatterHackers.MatterControl.DesignTools
 						mainContainer.AddChild(editor);
 					}
 				}
+
+				AddWebPageLinkIfRequired(context, mainContainer, theme);
 
 				// add in an Update button if applicable
 				var showUpdate = context.item.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() as ShowUpdateButtonAttribute;
@@ -458,6 +459,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				var field = new TextField();
 				field.Initialize(0);
 				field.SetValue(stringValue, false);
+				field.Content.HAnchor = HAnchor.Stretch;
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(field.Value);
@@ -466,6 +468,16 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 
 				rowContainer = CreateSettingsRow(property, field);
+
+				var label = rowContainer.Children.First();
+
+				if (field is TextField)
+				{
+					var spacer = rowContainer.Children.OfType<HorizontalSpacer>().FirstOrDefault();
+					spacer.HAnchor = HAnchor.Absolute;
+					spacer.Width = Math.Max(0, 100 - label.Width);
+				}
+
 			}
 			// create a char editor
 			else if (propertyValue is char charValue)
