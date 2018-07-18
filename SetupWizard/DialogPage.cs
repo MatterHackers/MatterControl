@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 		protected FlowLayoutWidget contentRow;
 		protected FlowLayoutWidget footerRow;
 
-		private WrappedTextWidget headerLabel;
+		private TextWidget headerLabel;
 		private GuiWidget cancelButton;
 
 		public Vector2 WindowSize { get; set; }
@@ -99,8 +99,10 @@ namespace MatterHackers.MatterControl
 
 			this.AddChild(headerRow);
 
-			headerLabel = new WrappedTextWidget("Setup Wizard".Localize(), pointSize: 24, textColor: theme.Colors.PrimaryAccentColor)
+			headerLabel = new TextWidget("Setup Wizard".Localize(), pointSize: 24, textColor: theme.Colors.PrimaryAccentColor)
 			{
+				AutoExpandBoundsToText = true,
+				EllipsisIfClipped = true,
 				HAnchor = HAnchor.Stretch
 			};
 			headerRow.AddChild(headerLabel);
@@ -128,7 +130,7 @@ namespace MatterHackers.MatterControl
 #if !__ANDROID__
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
-			headerLabel.TextWidget.PointSize = 14;
+			headerLabel.PointSize = 14;
 			headerLabel.TextColor = theme.Colors.PrimaryTextColor;
 			contentRow.Padding = new BorderDouble(5);
 
