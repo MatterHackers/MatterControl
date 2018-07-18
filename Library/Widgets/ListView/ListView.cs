@@ -254,7 +254,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				writableContainer.ItemContentChanged += WritableContainer_ItemContentChanged;
 			}
 
-			this.Invalidate();
+			this.ScrollPositionFromTop = Vector2.Zero;
 
 			this.ContentReloaded?.Invoke(this, null);
 
