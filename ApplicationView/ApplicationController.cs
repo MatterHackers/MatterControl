@@ -970,7 +970,8 @@ namespace MatterHackers.MatterControl
 
 				if (printerConnection.AnyHeatIsOn)
 				{
-					Tasks.Execute("Holding Temp".Localize(), (reporter, cancellationToken) =>
+					var paused = false;
+					Tasks.Execute("", (reporter, cancellationToken) =>
 					{
 						var progressStatus = new ProgressStatus();
 
@@ -978,9 +979,20 @@ namespace MatterHackers.MatterControl
 							&& !cancellationToken.IsCancellationRequested
 							&& printerConnection.ContinuHoldingTemperature)
 						{
+							if (paused)
+							{
+								progressStatus.Status = "Holding Temperature".Localize();
+							}
+							else
+							{
+								progressStatus.Status = string.Format(
+									"{0} {1:0}s",
+									"Automatic Heater Shutdown in ".Localize(),
+									printerConnection.SecondsToHoldTemperature);
+							}
+							progressStatus.Progress0To1 = printerConnection.SecondsToHoldTemperature / printerConnection.TimeToHoldTemperature;
 							reporter.Report(progressStatus);
-							progressStatus.Status = "Holding Temperature for ".Localize() + " " + printerConnection.SecondsToHoldTemperature.ToString("0");
-							Thread.Sleep(100);
+							Thread.Sleep(20);
 						}
 
 						return Task.CompletedTask;
@@ -989,10 +1001,12 @@ namespace MatterHackers.MatterControl
 					{
 						PauseAction = () => UiThread.RunOnIdle(() =>
 						{
+							paused = true;
 							printerConnection.TimeHaveBeenHoldingTemperature.Stop();
 						}),
 						ResumeAction = () => UiThread.RunOnIdle(() =>
 						{
+							paused = false;
 							printerConnection.TimeHaveBeenHoldingTemperature.Start();
 						}),
 						StopAction = () => UiThread.RunOnIdle(() =>
@@ -1742,7 +1756,6 @@ namespace MatterHackers.MatterControl
 
 		public async Task PrintPart(EditContext editContext, PrinterConfig printer, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken, bool overrideAllowGCode = false)
 		{
-			var object3D = editContext.Content;
 			var partFilePath = editContext.SourceFilePath;
 			var gcodeFilePath = editContext.GCodeFilePath;
 			var printItemName = editContext.SourceItem.Name;
