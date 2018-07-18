@@ -189,6 +189,28 @@ namespace MatterHackers.MatterControl
 			return insertionGroup;
 		}
 
+		public async Task StashAndPrintGCode(ILibraryItem libraryItem)
+		{
+			// Clear plate
+			await this.ClearPlate();
+
+			// Add content
+			await this.LoadContent(
+				new EditContext()
+				{
+					SourceItem = libraryItem,
+					// No content store for GCode, otherwise PlatingHistory
+					ContentStore = this.EditContext.ContentStore
+				});
+
+			// Slice and print
+			await ApplicationController.Instance.PrintPart(
+				this.EditContext,
+				this.Printer,
+				null,
+				CancellationToken.None);
+		}
+
 		public async Task StashAndPrint(IEnumerable<ILibraryItem> selectedLibraryItems)
 		{
 			// Clear plate
