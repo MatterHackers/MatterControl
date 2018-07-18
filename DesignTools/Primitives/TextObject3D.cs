@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
-		[DisplayName("Name")]
+		[DisplayName("Text")]
 		public string NameToWrite { get; set; } = "Text";
 
 		public double PointSize { get; set; } = 24;
