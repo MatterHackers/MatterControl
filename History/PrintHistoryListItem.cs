@@ -42,13 +42,14 @@ namespace MatterHackers.MatterControl.PrintHistory
 {
 	public class HistoryListView : FlowLayoutWidget, IListContentView
 	{
-		private ThemeConfig theme;
+		private ThemeConfig theme = ApplicationController.Instance.Theme;
 
 		public int ThumbWidth { get; } = 50;
 		public int ThumbHeight { get; } = 50;
 
 		// Parameterless constructor required for ListView
 		public HistoryListView()
+			: base (FlowDirection.TopToBottom)
 		{
 		}
 
