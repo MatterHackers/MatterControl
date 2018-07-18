@@ -117,6 +117,13 @@ namespace MatterHackers.MatterControl
 				$"{cacheId}-{width}x{height}.png");
 		}
 
+		public string CachePath(ILibraryItem libraryItem)
+		{
+			return ApplicationController.CacheablePath(
+				Path.Combine("Thumbnails", "Library"),
+				$"{libraryItem.ID}.png");
+		}
+
 		public string CachePath(ILibraryItem libraryItem, int width, int height)
 		{
 			return ApplicationController.CacheablePath(

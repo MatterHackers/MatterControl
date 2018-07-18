@@ -102,8 +102,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					restoreButton.ToolTipText = "Restore Default".Localize();
 					restoreButton.Click += (sender, e) =>
 					{
-					// Revert the user override
-					settingsContext.ClearValue(settingData.SlicerConfigName);
+						// Revert the user override
+						settingsContext.ClearValue(settingData.SlicerConfigName);
 					};
 
 					restoreArea.AddChild(restoreButton);
