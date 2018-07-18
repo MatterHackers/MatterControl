@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.UI;
+
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class TextField : UIField
@@ -59,6 +61,34 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (this.Value != textEditWidget.Text)
 			{
 				textEditWidget.Text = this.Value;
+			}
+
+			base.OnValueChanged(fieldChangedEventArgs);
+		}
+	}
+
+	public class ReadOnlyTextField : UIField
+	{
+		TextWidget textWidget;
+
+		public override void Initialize(int tabIndex)
+		{
+			textWidget = new TextWidget("")
+			{
+				TabIndex = tabIndex,
+				ToolTipText = this.HelpText,
+				AutoExpandBoundsToText = true,
+				Name = this.Name,
+			};
+
+			this.Content = textWidget;
+		}
+
+		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
+		{
+			if (this.Value != textWidget.Text)
+			{
+				textWidget.Text = this.Value;
 			}
 
 			base.OnValueChanged(fieldChangedEventArgs);

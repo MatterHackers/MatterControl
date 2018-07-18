@@ -126,6 +126,8 @@ Printer
   General
     General
       Settings
+        make
+        model
         auto_connect
         baud_rate
         com_port
