@@ -199,8 +199,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				expandButton.Text = e.Status.Contains(taskDetails.Title, StringComparison.OrdinalIgnoreCase) ? e.Status : $"{taskDetails.Title} - {e.Status}";
 			}
 
-			progressBar.RatioComplete = e.Progress0To1;
-			this.Invalidate();
+			double ratio = ((int)(e.Progress0To1 * Width))/this.Width;
+			if (progressBar.RatioComplete != ratio)
+			{
+				progressBar.RatioComplete = ratio;
+				this.Invalidate();
+			}
 		}
 	}
 
