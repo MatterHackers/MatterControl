@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 						if (File.Exists(gcodePath))
 						{
-							SaveGCodeToNewLocation(gcodePath, outputPath);
+							ApplyStreamPipelineAndExport(gcodePath, outputPath);
 							return true;
 						}
 					}
@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public bool ApplyLeveling { get; set; } = true;
 
-		private void SaveGCodeToNewLocation(string gcodeFilename, string outputPath)
+		private void ApplyStreamPipelineAndExport(string gcodeFilename, string outputPath)
 		{
 			try
 			{
@@ -229,6 +229,7 @@ namespace MatterHackers.MatterControl.Library.Export
 					? new ProcessWriteRegexStream(printer.Settings, new PrintLevelingStream(printer.Settings, queueStream, false), queueStream)
 					: new ProcessWriteRegexStream(printer.Settings, queueStream, queueStream);
 
+				// Run each line from the source gcode through the loaded pipeline and dump to the output location
 				using (var file = new StreamWriter(outputPath))
 				{
 					string nextLine = finalStream.ReadLine();
