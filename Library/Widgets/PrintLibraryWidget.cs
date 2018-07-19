@@ -573,7 +573,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						selectedLibraryItems.FirstOrDefault() is ILibraryAssetStream assetStream
 						&& assetStream.ContentType == "gcode")
 					{
-						// Drop handler for special case of GCode or similar (change loaded scene to new context)
+						// Change loaded scene to new context
 						printer.Bed.LoadContent(
 							new EditContext()
 							{

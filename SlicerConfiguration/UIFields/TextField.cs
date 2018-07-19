@@ -70,10 +70,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class ReadOnlyTextField : UIField
 	{
 		TextWidget textWidget;
+		private ThemeConfig theme;
+
+		public ReadOnlyTextField(ThemeConfig theme)
+		{
+			this.theme = theme;
+		}
 
 		public override void Initialize(int tabIndex)
 		{
-			textWidget = new TextWidget("")
+			textWidget = new TextWidget("", textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
 			{
 				TabIndex = tabIndex,
 				ToolTipText = this.HelpText,
