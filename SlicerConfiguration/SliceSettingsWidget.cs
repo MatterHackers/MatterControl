@@ -764,7 +764,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					break;
 
 				case SliceSettingData.DataEditTypes.READONLY_STRING:
-					uiField = new ReadOnlyTextField();
+					uiField = new ReadOnlyTextField(theme);
 					break;
 
 				case SliceSettingData.DataEditTypes.STRING:
