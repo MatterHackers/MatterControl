@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			expandButton = new ExpandCheckboxButton(!string.IsNullOrWhiteSpace(title) ? title : taskDetails.Title, theme, 10)
 			{
 				VAnchor = VAnchor.Center | VAnchor.Fit,
-				HAnchor = HAnchor.Fit,
+				HAnchor = HAnchor.Stretch,
 				Checked = false,
 				Padding = 0
 			};
@@ -98,8 +98,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SetExpansionMode(theme, detailsPanel, expandButton.Checked);
 			};
 			topRow.AddChild(expandButton);
-
-			topRow.AddChild(new HorizontalSpacer());
 
 			IconButton resumeButton = null;
 
