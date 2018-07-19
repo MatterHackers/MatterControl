@@ -88,21 +88,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
+					testRunner.AddItemToBedplate();
+
 					testRunner.OpenPrintPopupMenu();
 
 					testRunner.ClickByName("Layer(s) To Pause Field");
 					testRunner.Type("2");
 
-					testRunner.AddItemToBedplate();
-
-					// Toggle Sync-to-print
-					testRunner.SwitchToGCodeTab();
-					testRunner.ClickByName("Sync To Print Toggle");
-
-					testRunner.StartPrint();
+					testRunner.ClickByName("Start Print Button");
 
 					// Wait for the Ok button
 					testRunner.WaitForName("Yes Button", 30);
+					emulator.RunSlow = true;
 					testRunner.ClickByName("Yes Button");
 
 					// Cancel the Printing task
@@ -110,7 +107,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// Wait for and assert that printing has been canceled
 					testRunner.WaitFor(() => printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Connected);
-					Assert.IsTrue(printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Connected);
+					Assert.AreEqual(printer.Connection.CommunicationState, PrinterCommunication.CommunicationStates.Connected);
 
 					// Assert that two G28s were output to the terminal
 					int g28Count = printer.Connection.TerminalLog.PrinterLines.Where(line => line.Contains("G28")).Count();
