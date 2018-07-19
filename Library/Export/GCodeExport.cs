@@ -212,12 +212,14 @@ namespace MatterHackers.MatterControl.Library.Export
 		{
 			try
 			{
-				GCodeFileStream gCodeFileStream = new GCodeFileStream(GCodeFile.Load(gcodeFilename,
-					new Vector4(),
-					new Vector4(),
-					new Vector4(),
-					Vector4.One,
-					CancellationToken.None));
+				var gCodeFileStream = new GCodeFileStream(
+					GCodeFile.Load(
+						gcodeFilename,
+						new Vector4(),
+						new Vector4(),
+						new Vector4(),
+						Vector4.One,
+						CancellationToken.None));
 
 				bool addLevelingStream = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && this.ApplyLeveling;
 				var queueStream = new QueuedCommandsStream(gCodeFileStream);
@@ -236,6 +238,7 @@ namespace MatterHackers.MatterControl.Library.Export
 						{
 							file.WriteLine(nextLine);
 						}
+
 						nextLine = finalStream.ReadLine();
 					}
 				}
