@@ -208,19 +208,10 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public bool ApplyLeveling { get; set; } = true;
 
-		private void ApplyStreamPipelineAndExport(string gcodeFilename, string outputPath)
+		private void ApplyStreamPipelineAndExport(GCodeFileStream gCodeFileStream, string outputPath)
 		{
 			try
 			{
-				var gCodeFileStream = new GCodeFileStream(
-					GCodeFile.Load(
-						gcodeFilename,
-						new Vector4(),
-						new Vector4(),
-						new Vector4(),
-						Vector4.One,
-						CancellationToken.None));
-
 				bool addLevelingStream = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && this.ApplyLeveling;
 				var queueStream = new QueuedCommandsStream(gCodeFileStream);
 
@@ -249,6 +240,30 @@ namespace MatterHackers.MatterControl.Library.Export
 				UiThread.RunOnIdle(() =>
 				{
 					StyledMessageBox.ShowMessageBox(e.Message, "Couldn't save file".Localize());
+				});
+			}
+		}
+
+		private void ApplyStreamPipelineAndExport(string gcodeFilename, string outputPath)
+		{
+			try
+			{
+				this.ApplyStreamPipelineAndExport(
+					new GCodeFileStream(
+						GCodeFile.Load(
+							gcodeFilename,
+							new Vector4(),
+							new Vector4(),
+							new Vector4(),
+							Vector4.One,
+							CancellationToken.None)),
+					outputPath);
+			}
+			catch (Exception e)
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					StyledMessageBox.ShowMessageBox(e.Message, "Couldn't load file".Localize());
 				});
 			}
 		}
