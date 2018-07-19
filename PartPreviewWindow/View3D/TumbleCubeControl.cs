@@ -27,10 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -41,18 +37,25 @@ using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using MatterHackers.VectorMath.TrackBall;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class TumbleCubeControl : GuiWidget
 	{
-		LightingData lighting = new LightingData();
-		Mesh cube = PlatonicSolids.CreateCube(3, 3, 3);
-		IPrimitive cubeTraceData;
-		InteractionLayer interactionLayer;
-		WorldView world;
-		Vector2 mouseDownPosition;
-		Vector2 lastMovePosition;
+		private Mesh cube = PlatonicSolids.CreateCube(3, 3, 3);
+		private IPrimitive cubeTraceData;
+		private InteractionLayer interactionLayer;
+		private Vector2 lastMovePosition;
+		private LightingData lighting = new LightingData();
+		private Vector2 mouseDownPosition;
+		private bool mouseOver = false;
+		private List<TextureData> textureDatas = new List<TextureData>();
+		private WorldView world;
 
 		public TumbleCubeControl(InteractionLayer interactionLayer)
 			: base(100 * GuiWidget.DeviceScale, 100 * GuiWidget.DeviceScale)
@@ -73,10 +76,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				cubeTraceData = cube.CreateTraceData();
 			});
+
+			MouseLeave += (s, e) =>
+			{
+				ResetTextures();
+			};
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
+			if (!mouseOver)
+			{
+				ResetTextures();
+			}
+
 			var screenSpaceBounds = this.TransformToScreenSpace(LocalBounds);
 			world = new WorldView(screenSpaceBounds.Width, screenSpaceBounds.Height);
 
@@ -104,6 +117,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
+			mouseOver = false;
 			// find the ray for this control
 			// check what face it hits
 			// mark that face to draw a highlight
@@ -113,7 +127,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (MouseDownOnWidget)
 			{
 				var movePosition = mouseEvent.Position;
-				Quaternion activeRotationQuaternion = TrackBallController.GetRotationForMove(new Vector2(Width/2, Height/2), world, Width, lastMovePosition, movePosition, false);
+				Quaternion activeRotationQuaternion = TrackBallController.GetRotationForMove(new Vector2(Width / 2, Height / 2), world, Width, lastMovePosition, movePosition, false);
 
 				if (activeRotationQuaternion != Quaternion.Identity)
 				{
@@ -122,7 +136,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					interactionLayer.Invalidate();
 				}
 			}
-			else if(world != null
+			else if (world != null
 				&& cubeTraceData != null) // Make sure we don't use the trace data before it is ready
 			{
 				Ray ray = world.GetRayForLocalBounds(mouseEvent.Position);
@@ -130,7 +144,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (info != null)
 				{
-					var uV = ((TriangleShapeUv)info.closestHitObject).GetUv(info);
+					mouseOver = true;
+
+					int hitFace = GetFaceFromHit(info.HitPosition);
+					var textureData = textureDatas[hitFace];
+					if (!textureData.textureChanged)
+					{
+						ResetTextures();
+
+						var graphics = textureData.active.NewGraphics2D();
+						graphics.Render(textureData.source, 0, 0);
+						graphics.FillRectangle(textureData.source.GetBoundingRect(), new Color(Color.LightBlue, 100));
+						textureData.textureChanged = true;
+
+						Invalidate();
+					}
+				}
+				else
+				{
+					ResetTextures();
 				}
 			}
 		}
@@ -148,32 +180,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (info != null)
 				{
-					var normal = ((TriangleShape)info.closestHitObject).Plane.Normal;
-					var directionForward = -new Vector3(normal);
+					var faceIndex = GetFaceFromHit(info.HitPosition);
+					var normalAndUp = GetDirectionForFace(faceIndex);
 
-					var directionUp = Vector3.UnitY;
-					if (directionForward.Equals(Vector3.UnitX, .001))
-					{
-						directionUp = Vector3.UnitZ;
-					}
-					else if (directionForward.Equals(-Vector3.UnitX, .001))
-					{
-						directionUp = Vector3.UnitZ;
-					}
-					else if (directionForward.Equals(Vector3.UnitY, .001))
-					{
-						directionUp = Vector3.UnitZ;
-					}
-					else if (directionForward.Equals(-Vector3.UnitY, .001))
-					{
-						directionUp = Vector3.UnitZ;
-					}
-					else if (directionForward.Equals(Vector3.UnitZ, .001))
-					{
-						directionUp = -Vector3.UnitY;
-					}
-
-					var look = Matrix4X4.LookAt(Vector3.Zero, directionForward, directionUp);
+					var look = Matrix4X4.LookAt(Vector3.Zero, normalAndUp.normal, normalAndUp.up);
 
 					var start = new Quaternion(interactionLayer.World.RotationMatrix);
 					var end = new Quaternion(look);
@@ -204,20 +214,123 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			interactionLayer.Focus();
 		}
 
-		private static void TextureFace(Face face, string name, Matrix4X4? initialRotation = null)
+		private (Vector3 normal, Vector3 up) GetDirectionForFace(int faceIndex)
 		{
-			ImageBuffer textureToUse = new ImageBuffer(256, 256);
-			var frontGraphics = textureToUse.NewGraphics2D();
+			switch (faceIndex)
+			{
+				case 0:
+					// Top
+					return (-Vector3.UnitZ, Vector3.UnitY);
+
+				case 1:
+					// Left
+					return (Vector3.UnitX, Vector3.UnitZ);
+
+				case 2:
+					// Right
+					return (-Vector3.UnitX, Vector3.UnitZ);
+
+				case 3:
+					// Bottom
+					return (Vector3.UnitZ, -Vector3.UnitY);
+
+				case 4:
+					// Back
+					return (-Vector3.UnitY, Vector3.UnitZ);
+
+				case 5:
+					// Front
+					return (Vector3.UnitY, Vector3.UnitZ);
+			}
+
+			return (Vector3.UnitZ, Vector3.UnitZ);
+		}
+
+		private int GetFaceFromHit(Vector3 hitPosition)
+		{
+			if (Math.Abs(hitPosition.Z - 1.5) < .001)
+			{
+				// Top
+				return 0;
+			}
+			else if (Math.Abs(hitPosition.X + 1.5) < .001)
+			{
+				// Left
+				return 1;
+			}
+			else if (Math.Abs(hitPosition.X - 1.5) < .001)
+			{
+				// Right
+				return 2;
+			}
+			else if (Math.Abs(hitPosition.Z + 1.5) < .001)
+			{
+				// Bottom
+				return 3;
+			}
+			else if (Math.Abs(hitPosition.Y - 1.5) < .001)
+			{
+				// Back
+				return 4;
+			}
+			else if (Math.Abs(hitPosition.Y + 1.5) < .001)
+			{
+				// Front
+				return 5;
+			}
+
+			return 0;
+		}
+
+		private void ResetTextures()
+		{
+			bool hadReset = false;
+			for (int i = 0; i < 6; i++)
+			{
+				var textureData = textureDatas[i];
+				if (textureData.textureChanged)
+				{
+					var graphics = textureData.active.NewGraphics2D();
+					graphics.Render(textureData.source, 0, 0);
+					textureData.textureChanged = false;
+					hadReset = true;
+				}
+			}
+
+			if (hadReset)
+			{
+				Invalidate();
+			}
+		}
+
+		private void TextureFace(Face face, string name, Matrix4X4? initialRotation = null)
+		{
+			ImageBuffer sourceTexture = new ImageBuffer(256, 256);
+			var frontGraphics = sourceTexture.NewGraphics2D();
 			frontGraphics.Clear(Color.White);
 			frontGraphics.DrawString(name,
-				textureToUse.Width / 2,
-				textureToUse.Height / 2,
+				sourceTexture.Width / 2,
+				sourceTexture.Height / 2,
 				60,
 				justification: Agg.Font.Justification.Center,
 				baseline: Agg.Font.Baseline.BoundsCenter);
 			frontGraphics.Render(new Stroke(new RoundedRect(.5, .5, 254.5, 254.4, 0), 6), Color.DarkGray);
-			ImageGlPlugin.GetImageGlPlugin(textureToUse, true);
-			MeshHelper.PlaceTextureOnFace(face, textureToUse, MeshHelper.GetMaxFaceProjection(face, textureToUse, initialRotation));
+			var activeTexture = new ImageBuffer(sourceTexture);
+			ImageGlPlugin.GetImageGlPlugin(activeTexture, true);
+			MeshHelper.PlaceTextureOnFace(face, activeTexture, MeshHelper.GetMaxFaceProjection(face, activeTexture, initialRotation));
+
+			textureDatas.Add(new TextureData()
+			{
+				source = sourceTexture,
+				active = activeTexture
+			});
 		}
+	}
+
+	internal class TextureData
+	{
+		internal ImageBuffer active;
+		internal ImageBuffer source;
+		internal bool textureChanged;
 	}
 }
