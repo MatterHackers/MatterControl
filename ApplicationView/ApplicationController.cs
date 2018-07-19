@@ -987,7 +987,7 @@ namespace MatterHackers.MatterControl
 							{
 								progressStatus.Status = string.Format(
 									"{0} {1:0}s",
-									"Automatic Heater Shutdown in ".Localize(),
+									"Automatic Heater Shutdown in".Localize(),
 									printerConnection.SecondsToHoldTemperature);
 							}
 							progressStatus.Progress0To1 = printerConnection.SecondsToHoldTemperature / printerConnection.TimeToHoldTemperature;
