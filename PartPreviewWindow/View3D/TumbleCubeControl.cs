@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class TumbleCubeControl : GuiWidget
 	{
-		private Mesh cube = PlatonicSolids.CreateCube(3, 3, 3);
+		private Mesh cube = PlatonicSolids.CreateCube(4, 4, 4);
 		private IPrimitive cubeTraceData;
 		private InteractionLayer interactionLayer;
 		private Vector2 lastMovePosition;
@@ -56,10 +56,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool mouseOver = false;
 		private List<TextureData> textureDatas = new List<TextureData>();
 		private WorldView world;
+		ThemeConfig theme;
 
-		public TumbleCubeControl(InteractionLayer interactionLayer)
+		public TumbleCubeControl(InteractionLayer interactionLayer, ThemeConfig theme)
 			: base(100 * GuiWidget.DeviceScale, 100 * GuiWidget.DeviceScale)
 		{
+			this.theme = theme;
 			this.interactionLayer = interactionLayer;
 
 			// this data needs to be made on the ui thread
@@ -98,7 +100,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var up = Vector3.UnitY;
 			var directionUp = Vector3.TransformNormal(up, interactionLayer.World.InverseModelviewMatrix);
-			world.RotationMatrix = Matrix4X4.LookAt(Vector3.Zero, directionForward, directionUp);
+			world.RotationMatrix = Matrix4X4.LookAt(Vector3.Zero, directionForward, directionUp) * Matrix4X4.CreateScale(.8);
 
 			GLHelper.SetGlContext(world, screenSpaceBounds, lighting);
 			GLHelper.Render(cube, Color.White, Matrix4X4.Identity, RenderTypes.Shaded);
@@ -146,19 +148,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					mouseOver = true;
 
-					int hitFace = GetFaceFromHit(info.HitPosition);
-					var textureData = textureDatas[hitFace];
-					if (!textureData.textureChanged)
-					{
-						ResetTextures();
-
-						var graphics = textureData.active.NewGraphics2D();
-						graphics.Render(textureData.source, 0, 0);
-						graphics.FillRectangle(textureData.source.GetBoundingRect(), new Color(Color.LightBlue, 100));
-						textureData.textureChanged = true;
-
-						Invalidate();
-					}
+					DrawMouseHover(GetHitData(info.HitPosition));
 				}
 				else
 				{
@@ -167,9 +157,114 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		HitData lastHitData = new HitData();
+		private void DrawMouseHover(HitData hitData)
+		{
+			if (!lastHitData.Equals(hitData))
+			{
+				ResetTextures();
+				lastHitData = hitData;
+				for (int i = 0; i < 3; i++)
+				{
+					var faceIndex = hitData.FaceIndex[i];
+					var tileIndex = hitData.TileIndex[i];
+					if (faceIndex == -1)
+					{
+						// done rendering faces
+						break;
+					}
+
+					var hitTexture = textureDatas[faceIndex];
+					var hitGraphics = hitTexture.active.NewGraphics2D();
+					switch (tileIndex)
+					{
+						case 0: // top
+							hitGraphics.FillRectangle(0,
+								0,
+								hitTexture.source.Width / 4,
+								hitTexture.source.Height / 4,
+								theme.AccentMimimalOverlay);
+							break;
+
+						case 1:
+							hitGraphics.FillRectangle(hitTexture.source.Width / 4 * 1,
+								hitTexture.source.Height / 4 * 0,
+								hitTexture.source.Width / 4 * 3,
+								hitTexture.source.Height / 4 * 1,
+								theme.AccentMimimalOverlay);
+							break;
+
+						case 2:
+							hitGraphics.FillRectangle(hitTexture.source.Width / 4 * 3,
+								hitTexture.source.Height / 4 * 0,
+								hitTexture.source.Width / 4 * 4,
+								hitTexture.source.Height / 4 * 1,
+								theme.AccentMimimalOverlay);
+							break;
+
+						case 3:
+							hitGraphics.FillRectangle(0,
+								hitTexture.source.Height / 4,
+								hitTexture.source.Width / 4,
+								hitTexture.source.Height / 4 * 3,
+								theme.AccentMimimalOverlay);
+							break;
+
+						case 4:
+							hitGraphics.FillRectangle(hitTexture.source.Width / 4,
+									hitTexture.source.Height / 4,
+									hitTexture.source.Width / 4 * 3,
+									hitTexture.source.Height / 4 * 3,
+									theme.AccentMimimalOverlay);
+							break;
+
+						case 5:
+							hitGraphics.FillRectangle(hitTexture.source.Width / 4 * 3,
+								hitTexture.source.Height / 4 * 1,
+								hitTexture.source.Width / 4 * 4,
+								hitTexture.source.Height / 4 * 3,
+								theme.AccentMimimalOverlay);
+							break;
+
+						case 6:
+							hitGraphics.FillRectangle(0,
+								hitTexture.source.Height / 4 * 3,
+								hitTexture.source.Width / 4,
+								hitTexture.source.Height,
+								theme.AccentMimimalOverlay);
+							break;
+
+						case 7:
+							hitGraphics.FillRectangle(hitTexture.source.Width / 4 * 1,
+								hitTexture.source.Height / 4 * 3,
+								hitTexture.source.Width / 4 * 3,
+								hitTexture.source.Height / 4 * 4,
+								theme.AccentMimimalOverlay);
+							break;
+
+						case 8:
+							hitGraphics.FillRectangle(hitTexture.source.Width / 4 * 3,
+								hitTexture.source.Height / 4 * 3,
+								hitTexture.source.Width / 4 * 4,
+								hitTexture.source.Height / 4 * 4,
+								theme.AccentMimimalOverlay);
+							break;
+					}
+
+					hitTexture.textureChanged = true;
+				}
+				Invalidate();
+			}
+		}
+
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
 			base.OnMouseUp(mouseEvent);
+
+			if(mouseEvent.Button != MouseButtons.Left)
+			{
+				return;
+			}
 
 			// Make sure we don't use the trace data before it is ready
 			if (mouseDownPosition == mouseEvent.Position
@@ -180,8 +275,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (info != null)
 				{
-					var faceIndex = GetFaceFromHit(info.HitPosition);
-					var normalAndUp = GetDirectionForFace(faceIndex);
+					var hitData = GetHitData(info.HitPosition);
+					var normalAndUp = GetDirectionForFace(hitData);
 
 					var look = Matrix4X4.LookAt(Vector3.Zero, normalAndUp.normal, normalAndUp.up);
 
@@ -214,78 +309,127 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			interactionLayer.Focus();
 		}
 
-		private (Vector3 normal, Vector3 up) GetDirectionForFace(int faceIndex)
+		private (Vector3 normal, Vector3 up) GetDirectionForFace(HitData hitData)
 		{
-			switch (faceIndex)
+			var up = Vector3.Zero;
+			var normal = Vector3.Zero;
+			var count = 0;
+			for (int i = 0; i < 3; i++)
 			{
-				case 0:
-					// Top
-					return (-Vector3.UnitZ, Vector3.UnitY);
+				count++;
+				int faceIndex = hitData.FaceIndex[i];
+				switch (faceIndex)
+				{
+					case -1:
+						count--;
+						break;
+					case 0:
+						// top
+						normal += -Vector3.UnitZ;
+						if (count == 1)
+						{
+							up = (hitData.TileIndex[0] == 4) ? Vector3.UnitY : Vector3.UnitZ;
+						}
+						break;
+					case 1:
+						// Left
+						normal += Vector3.UnitX;
+						if (count == 1) up = Vector3.UnitZ;
+						break;
+					case 2:
+						// Right
+						normal += -Vector3.UnitX;
+						if (count == 1) up = Vector3.UnitZ;
+						break;
 
-				case 1:
-					// Left
-					return (Vector3.UnitX, Vector3.UnitZ);
-
-				case 2:
-					// Right
-					return (-Vector3.UnitX, Vector3.UnitZ);
-
-				case 3:
-					// Bottom
-					return (Vector3.UnitZ, -Vector3.UnitY);
-
-				case 4:
-					// Back
-					return (-Vector3.UnitY, Vector3.UnitZ);
-
-				case 5:
-					// Front
-					return (Vector3.UnitY, Vector3.UnitZ);
+					case 3:
+						// Bottom
+						normal += Vector3.UnitZ;
+						if (count == 1) up = -Vector3.UnitY;
+						break;
+					case 4:
+						// Back
+						normal += -Vector3.UnitY;
+						if (count == 1) up = Vector3.UnitZ;
+						break;
+					case 5:
+						// Front
+						normal += Vector3.UnitY;
+						if (count == 1) up = Vector3.UnitZ;
+						break;
+				}
 			}
 
-			return (Vector3.UnitZ, Vector3.UnitZ);
+			return (normal / count, up);
 		}
 
-		private int GetFaceFromHit(Vector3 hitPosition)
+		private HitData GetHitData(Vector3 hitPosition)
 		{
-			if (Math.Abs(hitPosition.Z - 1.5) < .001)
+			if (Math.Abs(hitPosition.Z - 2) < .001)
 			{
 				// Top
-				return 0;
+				if (hitPosition.X < -1)
+				{
+					if(hitPosition.Y < -1)
+					{
+						return new HitData(0, 0, 1, 8, 5, 6);
+					}
+					else if (hitPosition.Y > 1)
+					{
+						return new HitData(0, 6, 1, 6, 4, 8);
+					}
+
+					return new HitData(0, 3, 1, 7);
+				}
+				else if(hitPosition.X > 1)
+				{
+					if (hitPosition.Y < -1)
+					{
+						return new HitData(0, 0, 1, 8, 5, 6);
+					}
+					else if (hitPosition.Y > 1)
+					{
+						return new HitData(0, 6, 1, 6, 4, 8);
+					}
+
+					return new HitData(0, 3, 1, 7);
+				}
+
+				return new HitData(0, 4);
 			}
-			else if (Math.Abs(hitPosition.X + 1.5) < .001)
+			else if (Math.Abs(hitPosition.X + 2) < .001)
 			{
 				// Left
-				return 1;
+				return new HitData(1, 4);
 			}
-			else if (Math.Abs(hitPosition.X - 1.5) < .001)
+			else if (Math.Abs(hitPosition.X - 2) < .001)
 			{
 				// Right
-				return 2;
+				return new HitData(2, 4);
 			}
-			else if (Math.Abs(hitPosition.Z + 1.5) < .001)
+			else if (Math.Abs(hitPosition.Z + 2) < .001)
 			{
 				// Bottom
-				return 3;
+				return new HitData(3, 4);
 			}
-			else if (Math.Abs(hitPosition.Y - 1.5) < .001)
+			else if (Math.Abs(hitPosition.Y - 2) < .001)
 			{
 				// Back
-				return 4;
+				return new HitData(4, 4);
 			}
-			else if (Math.Abs(hitPosition.Y + 1.5) < .001)
+			else if (Math.Abs(hitPosition.Y + 2) < .001)
 			{
 				// Front
-				return 5;
+				return new HitData(5, 4);
 			}
 
-			return 0;
+			return new HitData(0, 4);
 		}
 
 		private void ResetTextures()
 		{
 			bool hadReset = false;
-			for (int i = 0; i < 6; i++)
+			for (int i = 0; i < textureDatas.Count; i++)
 			{
 				var textureData = textureDatas[i];
 				if (textureData.textureChanged)
@@ -301,6 +445,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Invalidate();
 			}
+
+			lastHitData = new HitData();
 		}
 
 		private void TextureFace(Face face, string name, Matrix4X4? initialRotation = null)
@@ -324,6 +470,55 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				source = sourceTexture,
 				active = activeTexture
 			});
+		}
+	}
+
+	internal class HitData
+	{
+		internal int[] FaceIndex = new int[] { -1, -1, -1 };
+		internal int[] TileIndex = new int[] { -1, -1, -1 };
+
+		public HitData()
+		{
+		}
+
+		public HitData(int faceIndex0, int tileIndex0, 
+			int faceIndex1 = -1, int tileIndex1 = -1,
+			int faceIndex2 = -1, int tileIndex2 = -1)
+		{
+			FaceIndex[0] = faceIndex0;
+			TileIndex[0] = tileIndex0;
+			FaceIndex[1] = faceIndex1;
+			TileIndex[1] = tileIndex1;
+			FaceIndex[2] = faceIndex2;
+			TileIndex[2] = tileIndex2;
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is HitData hitData)
+			{
+				for(int i=0; i < 3; i++)
+				{
+					if(FaceIndex[i] != hitData.FaceIndex[i]
+						|| TileIndex != hitData.TileIndex)
+					{
+						return false;
+					}
+				}
+
+				return true;
+			}
+
+			return base.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			var hashCode = 1739626167;
+			hashCode = hashCode * -1521134295 + EqualityComparer<int[]>.Default.GetHashCode(FaceIndex);
+			hashCode = hashCode * -1521134295 + TileIndex.GetHashCode();
+			return hashCode;
 		}
 	}
 

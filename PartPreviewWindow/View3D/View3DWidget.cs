@@ -214,7 +214,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			modelViewSidePanel.AddChild(selectedObjectPanel);
 			splitContainer.AddChild(modelViewSidePanel);
 
-			this.InteractionLayer.AddChild(new TumbleCubeControl(this.InteractionLayer)
+			this.InteractionLayer.AddChild(new TumbleCubeControl(this.InteractionLayer, theme)
 			{
 				Margin = new BorderDouble(0, 0, 30, 30),
 				VAnchor = VAnchor.Top,
