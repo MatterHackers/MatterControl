@@ -123,7 +123,19 @@ namespace MatterHackers.MatterControl.Library.Export
 
 				bool centerOnBed = true;
 
-				if (firstItem.AssetPath == printer.Bed.EditContext.SourceFilePath)
+				var assetStream = firstItem as ILibraryAssetStream;
+				if (assetStream?.ContentType == "gcode")
+				{
+					using (var gcodeStream = await assetStream.GetStream(progress: null))
+					{
+						this.ApplyStreamPipelineAndExport(
+							new GCodeFileStream(new GCodeFileStreamed(gcodeStream.Stream)),
+							outputPath);
+
+						return true;
+					}
+				}
+				else if (firstItem.AssetPath == printer.Bed.EditContext.SourceFilePath)
 				{
 					// If item is bedplate, save any pending changes before starting the print
 					await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer.Bed.SaveChanges);
@@ -134,7 +146,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				{
 					loadedItem = await object3DItem.CreateContent(null);
 				}
-				else if (firstItem is ILibraryAssetStream assetStream)
+				else if (assetStream != null)
 				{
 					loadedItem = await assetStream.CreateContent(null);
 				}
