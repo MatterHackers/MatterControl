@@ -525,7 +525,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							printer.Connection.StartSdCardPrint(sdcardItem.Name.ToLower());
 							break;
 						case FileSystemFileItem fileItem when Path.GetExtension(fileItem.FileName).ToUpper() == ".GCODE":
-							//ApplicationController.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(fileItem.Name, fileItem.Path));
+							if (printer != null)
+							{
+								UiThread.RunOnIdle(async () =>
+								{
+									await printer.Bed.StashAndPrintGCode(fileItem);
+								});
+							}
+
 							break;
 						default:
 							//TODO: Otherwise add the selected items to the plate and print the plate?
@@ -559,9 +566,26 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Title = "Add to Plate".Localize(),
 				Action = (selectedLibraryItems, listView) =>
 				{
-					// TODO: Sort out the right way to have an ActivePrinter context that looks and behaves correctly
 					var activeContext = ApplicationController.Instance.DragDropData;
-					activeContext.SceneContext.AddToPlate(selectedLibraryItems);
+					var printer = activeContext.Printer;
+
+					if (listView.SelectedItems.Count == 1 &&
+						selectedLibraryItems.FirstOrDefault() is ILibraryAssetStream assetStream
+						&& assetStream.ContentType == "gcode")
+					{
+						// Drop handler for special case of GCode or similar (change loaded scene to new context)
+						printer.Bed.LoadContent(
+							new EditContext()
+							{
+								SourceItem = assetStream,
+								// No content store for GCode, otherwise PlatingHistory
+								ContentStore = printer.Bed.EditContext.ContentStore
+							}).ConfigureAwait(false);
+					}
+					else
+					{
+						activeContext.SceneContext.AddToPlate(selectedLibraryItems);
+					}
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
