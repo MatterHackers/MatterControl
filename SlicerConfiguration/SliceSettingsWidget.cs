@@ -779,7 +779,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				case SliceSettingData.DataEditTypes.MARKDOWN_TEXT:
 					uiField = new MarkdownEditField(theme, settingData.PresentationName);
-					placeFieldInDedicatedRow = true;
 					break;
 
 				case SliceSettingData.DataEditTypes.COM_PORT:
