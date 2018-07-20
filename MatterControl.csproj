@@ -128,6 +128,7 @@
     <Compile Include="PartPreviewWindow\GCodeDetails\GCodeOptionsPanel.cs" />
     <Compile Include="PartPreviewWindow\GCodeDetails\IToggleOption.cs" />
     <Compile Include="PartPreviewWindow\LeftClipFlowLayoutWidget.cs" />
+    <Compile Include="PartPreviewWindow\MarkdownEditPage.cs" />
     <Compile Include="PartPreviewWindow\Object3DTreeBuilder.cs" />
     <Compile Include="PartPreviewWindow\ResizableSectionWidget.cs" />
     <Compile Include="PartPreviewWindow\StartPage\FeedData.cs" />
@@ -264,6 +265,7 @@
     <Compile Include="SlicerConfiguration\UIFields\EnumField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IconEnumField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IpAddessField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\MarkdownEditField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\Vector3Field.cs" />
     <Compile Include="Utilities\MarkdigAgg\AggCodeBlockRenderer.cs" />
     <Compile Include="Utilities\MarkdigAgg\AggHeadingRenderer.cs" />
