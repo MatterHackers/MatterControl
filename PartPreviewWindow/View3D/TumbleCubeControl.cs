@@ -45,6 +45,110 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+	internal class ConnectedFaces
+	{
+		internal int left;
+		internal int right;
+		internal int top;
+		internal int bottom;
+
+		internal int axis;
+		internal double direction;
+
+		internal ConnectedFaces(int axis, double offset, int left, int bottom, int right, int top)
+		{
+			this.axis = axis;
+			this.direction = offset;
+			this.left = left;
+			this.bottom = bottom;
+			this.right = right;
+			this.top = top;
+		}
+
+		/// <summary>
+		/// Find the tile that is connected to the face on an edge
+		/// </summary>
+		/// <param name="faceSharingEdge"></param>
+		/// <returns></returns>
+		internal int Tile(int faceSharingEdge)
+		{
+			if(faceSharingEdge == left)
+			{
+				return 3;
+			}
+			else if (faceSharingEdge == bottom)
+			{
+				return 1;
+			}
+			else if (faceSharingEdge == right)
+			{
+				return 5;
+			}
+			else if (faceSharingEdge == top)
+			{
+				return 7;
+			}
+
+			return 4;
+		}
+
+		/// <summary>
+		/// Find the tile that is connected to the face on a corner
+		/// </summary>
+		/// <param name="faceCornerA"></param>
+		/// <param name="faceCornerB"></param>
+		/// <returns></returns>
+		internal int Tile(int faceCornerA, int faceCornerB)
+		{
+			if (faceCornerA == left)
+			{
+				if(faceCornerB == top)
+				{
+					return 6;
+				}
+				else
+				{
+					return 0;
+				}
+			}
+			else if (faceCornerA == bottom)
+			{
+				if(faceCornerB == left)
+				{
+					return 0;
+				}
+				else
+				{
+					return 2;
+				}
+			}
+			else if (faceCornerA == right)
+			{
+				if (faceCornerB == top)
+				{
+					return 8;
+				}
+				else
+				{
+					return 2;
+				}
+			}
+			else if (faceCornerA == top)
+			{
+				if (faceCornerB == left)
+				{
+					return 6;
+				}
+				else
+				{
+					return 8;
+				}
+			}
+
+			return 4;
+		}
+	}
+
 	public class TumbleCubeControl : GuiWidget
 	{
 		private Mesh cube = PlatonicSolids.CreateCube(4, 4, 4);
@@ -57,6 +161,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private List<TextureData> textureDatas = new List<TextureData>();
 		private WorldView world;
 		ThemeConfig theme;
+		List<ConnectedFaces> connections = new List<ConnectedFaces>();
 
 		public TumbleCubeControl(InteractionLayer interactionLayer, ThemeConfig theme)
 			: base(100 * GuiWidget.DeviceScale, 100 * GuiWidget.DeviceScale)
@@ -75,6 +180,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				TextureFace(cube.Faces[4], "Back", Matrix4X4.CreateRotationZ(MathHelper.Tau / 2));
 				TextureFace(cube.Faces[5], "Front");
 				cube.MarkAsChanged();
+
+				connections.Add(new ConnectedFaces(2, 1, 1, 5, 2, 4));
+				connections.Add(new ConnectedFaces(0, -1, 4, 3, 5, 0));
+				connections.Add(new ConnectedFaces(0, 1, 5, 3, 4, 0));
+				connections.Add(new ConnectedFaces(2, -1, 1, 4, 2, 5));
+				connections.Add(new ConnectedFaces(1, 1, 2, 3, 1, 0));
+				connections.Add(new ConnectedFaces(1, -1, 1, 3, 2, 0));
 
 				cubeTraceData = cube.CreateTraceData();
 			});
@@ -365,64 +477,83 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private HitData GetHitData(Vector3 hitPosition)
 		{
-			if (Math.Abs(hitPosition.Z - 2) < .001)
+			for(int i=0; i<6; i++)
 			{
-				// Top
-				if (hitPosition.X < -1)
+				var faceData = connections[i];
+				if (Math.Abs(hitPosition[faceData.axis] - faceData.direction * 2) < .0001)
 				{
-					if(hitPosition.Y < -1)
+					// hit to the left
+					if (hitPosition[connections[faceData.left].axis] 
+						* connections[faceData.left].direction
+						> 1)
 					{
-						return new HitData(0, 0, 1, 8, 5, 6);
+						// hit to the bottom
+						if (hitPosition[connections[faceData.bottom].axis]
+							* connections[faceData.bottom].direction
+							> 1)
+						{
+							return new HitData(i, 0,
+								faceData.left, connections[faceData.left].Tile(i, faceData.bottom),
+								faceData.bottom, connections[faceData.bottom].Tile(i, faceData.left));
+						}
+						// hit to the top
+						else if (hitPosition[connections[faceData.top].axis]
+							* connections[faceData.top].direction
+							> 1)
+						{
+							return new HitData(i, 6,
+								faceData.left, connections[faceData.left].Tile(i, faceData.top),
+								faceData.top, connections[faceData.top].Tile(i, faceData.left));
+						}
+
+						return new HitData(i, 3, faceData.left, connections[faceData.left].Tile(i));
 					}
-					else if (hitPosition.Y > 1)
+					// hit to the right
+					else if (hitPosition[connections[faceData.right].axis]
+						* connections[faceData.right].direction
+						> 1)
 					{
-						return new HitData(0, 6, 1, 6, 4, 8);
+						// hit to the bottom
+						if (hitPosition[connections[faceData.bottom].axis]
+							* connections[faceData.bottom].direction
+							> 1)
+						{
+							return new HitData(i, 2,
+								faceData.left, connections[faceData.left].Tile(i, faceData.bottom),
+								faceData.bottom, connections[faceData.bottom].Tile(i, faceData.left));
+						}
+						// hit to the top
+						else if (hitPosition[connections[faceData.top].axis]
+							* connections[faceData.top].direction
+							> 1)
+						{
+							return new HitData(i, 8,
+								faceData.left, connections[faceData.left].Tile(i, faceData.top),
+								faceData.top, connections[faceData.top].Tile(i, faceData.left));
+						}
+
+						return new HitData(i, 5, faceData.right, connections[faceData.right].Tile(i));
+					}
+					// hit to the bottom
+					if (hitPosition[connections[faceData.bottom].axis]
+						* connections[faceData.bottom].direction
+						> 1)
+					{
+						return new HitData(i, 1, faceData.bottom, connections[faceData.bottom].Tile(i));
+					}
+					// hit to the top
+					else if (hitPosition[connections[faceData.top].axis]
+						* connections[faceData.top].direction
+						> 1)
+					{
+						return new HitData(i, 7, faceData.top, connections[faceData.top].Tile(i));
 					}
 
-					return new HitData(0, 3, 1, 7);
+					// we have found the face we are hiting
+					return new HitData(i, 4);
 				}
-				else if(hitPosition.X > 1)
-				{
-					if (hitPosition.Y < -1)
-					{
-						return new HitData(0, 0, 1, 8, 5, 6);
-					}
-					else if (hitPosition.Y > 1)
-					{
-						return new HitData(0, 6, 1, 6, 4, 8);
-					}
-
-					return new HitData(0, 3, 1, 7);
-				}
-
-				return new HitData(0, 4);
 			}
-			else if (Math.Abs(hitPosition.X + 2) < .001)
-			{
-				// Left
-				return new HitData(1, 4);
-			}
-			else if (Math.Abs(hitPosition.X - 2) < .001)
-			{
-				// Right
-				return new HitData(2, 4);
-			}
-			else if (Math.Abs(hitPosition.Z + 2) < .001)
-			{
-				// Bottom
-				return new HitData(3, 4);
-			}
-			else if (Math.Abs(hitPosition.Y - 2) < .001)
-			{
-				// Back
-				return new HitData(4, 4);
-			}
-			else if (Math.Abs(hitPosition.Y + 2) < .001)
-			{
-				// Front
-				return new HitData(5, 4);
-			}
-
+			
 			return new HitData(0, 4);
 		}
 
