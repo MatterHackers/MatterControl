@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using Markdig.Agg;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -48,12 +49,21 @@ namespace MatterHackers.MatterControl
 			var tabControl = new SimpleTabs(theme, new GuiWidget())
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
+				VAnchor = VAnchor.Stretch,
 			};
 			tabControl.TabBar.BackgroundColor = theme.TabBarBackground;
+			tabControl.TabBar.Padding = 0;
 
 			contentRow.AddChild(tabControl);
 			contentRow.Padding = 0;
+
+			var editContainer = new GuiWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+				Padding = theme.DefaultContainerPadding,
+				BackgroundColor = theme.ActiveTabColor
+			};
 
 			editWidget = new MHTextEditWidget("", pixelWidth: 320, multiLine: true, typeFace: ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono))
 			{
@@ -70,7 +80,9 @@ namespace MatterHackers.MatterControl
 				});
 			};
 
-			var editTab = new ToolTab("Edit".Localize(), tabControl, editWidget, theme, hasClose: false)
+			editContainer.AddChild(editWidget);
+
+			var editTab = new ToolTab("Edit".Localize(), tabControl, editContainer, theme, hasClose: false)
 			{
 				Name = "Edit Tab"
 			};
@@ -80,6 +92,9 @@ namespace MatterHackers.MatterControl
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
+				Margin = theme.DefaultContainerPadding,
+				BackgroundColor = new Color(Color.White, 20),
+				Padding = theme.DefaultContainerPadding,
 			};
 
 			var previewTab = new ToolTab("Preview".Localize(), tabControl, markdownWidget, theme, hasClose: false)
@@ -108,6 +123,17 @@ namespace MatterHackers.MatterControl
 				this.DialogWindow.CloseOnIdle();
 			};
 			this.AddPageAction(saveButton);
+
+			var link = new LinkLabel("Markdown Help", theme)
+			{
+				Margin = new BorderDouble(right: 20),
+				VAnchor = VAnchor.Center
+			};
+			link.Click += (s, e) =>
+			{
+				ApplicationController.Instance.LaunchBrowser("https://guides.github.com/features/mastering-markdown/");
+			};
+			footerRow.AddChild(link, 0);
 		}
 
 		public string Markdown
