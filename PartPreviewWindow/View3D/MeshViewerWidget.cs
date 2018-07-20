@@ -270,15 +270,14 @@ namespace MatterHackers.MeshVisualizer
 
 	public class MeshViewerWidget : GuiWidget
 	{
-		static ImageBuffer ViewOnlyTexture;
+		private static ImageBuffer ViewOnlyTexture;
 
 		private Color lightWireframe = new Color("#aaa4");
 		private Color darkWireframe = new Color("#3334");
 		private GridColors gridColors;
 		private Color gCodeMeshColor;
 
-		// TODO: Need to be instance based for multi-printer
-		public GuiWidget ParentSurface { get; set; }
+		private InteractiveScene scene;
 
 		private InteractionLayer interactionLayer;
 
@@ -327,12 +326,6 @@ namespace MatterHackers.MeshVisualizer
 					var plugin = ImageGlPlugin.GetImageGlPlugin(ViewOnlyTexture, true, true, false);
 				});
 			}
-		}
-
-		public override void OnParentChanged(EventArgs e)
-		{
-			this.ParentSurface = this.Parent;
-			base.OnParentChanged(e);
 		}
 
 		public WorldView World { get; }
@@ -469,8 +462,6 @@ namespace MatterHackers.MeshVisualizer
 			base.FindNamedChildrenRecursive(nameToSearchFor, foundChildren, touchingBounds, seachType, allowInvalidItems);
 		}
 
-		protected InteractiveScene scene { get; }
-
 		public static void AssertDebugNotDefined()
 		{
 #if DEBUG
@@ -497,63 +488,6 @@ namespace MatterHackers.MeshVisualizer
 		}
 
 		public bool SuppressUiVolumes { get; set; } = false;
-
-		private CancellationTokenSource fileLoadCancellationTokenSource;
-
-		public async Task LoadItemIntoScene(string itemPath, Vector2 bedCenter = new Vector2(), string itemName = null)
-		{
-			if (File.Exists(itemPath))
-			{
-				fileLoadCancellationTokenSource = new CancellationTokenSource();
-
-				// TODO: How to we handle mesh load errors? How do we report success?
-				IObject3D loadedItem = await Task.Run(() => Object3D.Load(itemPath, fileLoadCancellationTokenSource.Token));
-				if (loadedItem != null)
-				{
-					if (itemName != null)
-					{
-						loadedItem.Name = itemName;
-					}
-
-					// SetMeshAfterLoad
-					scene.Children.Modify(list =>
-					{
-						if (loadedItem.Mesh != null)
-						{
-							// STLs currently load directly into the mesh rather than as a group like AMF
-							list.Add(loadedItem);
-						}
-						else
-						{
-							list.AddRange(loadedItem.Children);
-						}
-					});
-
-					CreateGlDataObject(loadedItem);
-				}
-				else
-				{
-					// TODO: Error message container moved to Interaction Layer - how could we support this type of error for a loaded scene item?
-					//partProcessingInfo.centeredInfoText.Text = string.Format("Sorry! No 3D view available\nfor this file.");
-				}
-
-				// Invoke LoadDone event
-				LoadDone?.Invoke(this, null);
-			}
-			else
-			{
-				// TODO: Error message container moved to Interaction Layer - how could we support this type of error for a loaded scene item?
-				//partProcessingInfo.centeredInfoText.Text = string.Format("{0}\n'{1}'", "File not found on disk.", Path.GetFileName(itemPath));
-			}
-
-			fileLoadCancellationTokenSource = null;
-		}
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			fileLoadCancellationTokenSource?.Cancel();
-			base.OnClosed(e);
-		}
 
 		private void DrawObject(IObject3D object3D, List<Object3DView> transparentMeshes, bool parentSelected, DrawEventArgs e)
 		{
