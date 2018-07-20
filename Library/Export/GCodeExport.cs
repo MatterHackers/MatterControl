@@ -123,7 +123,19 @@ namespace MatterHackers.MatterControl.Library.Export
 
 				bool centerOnBed = true;
 
-				if (firstItem.AssetPath == printer.Bed.EditContext.SourceFilePath)
+				var assetStream = firstItem as ILibraryAssetStream;
+				if (assetStream?.ContentType == "gcode")
+				{
+					using (var gcodeStream = await assetStream.GetStream(progress: null))
+					{
+						this.ApplyStreamPipelineAndExport(
+							new GCodeFileStream(new GCodeFileStreamed(gcodeStream.Stream)),
+							outputPath);
+
+						return true;
+					}
+				}
+				else if (firstItem.AssetPath == printer.Bed.EditContext.SourceFilePath)
 				{
 					// If item is bedplate, save any pending changes before starting the print
 					await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer.Bed.SaveChanges);
@@ -134,7 +146,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				{
 					loadedItem = await object3DItem.CreateContent(null);
 				}
-				else if (firstItem is ILibraryAssetStream assetStream)
+				else if (assetStream != null)
 				{
 					loadedItem = await assetStream.CreateContent(null);
 				}
@@ -193,7 +205,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 						if (File.Exists(gcodePath))
 						{
-							SaveGCodeToNewLocation(gcodePath, outputPath);
+							ApplyStreamPipelineAndExport(gcodePath, outputPath);
 							return true;
 						}
 					}
@@ -208,17 +220,10 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public bool ApplyLeveling { get; set; } = true;
 
-		private void SaveGCodeToNewLocation(string gcodeFilename, string outputPath)
+		private void ApplyStreamPipelineAndExport(GCodeFileStream gCodeFileStream, string outputPath)
 		{
 			try
 			{
-				GCodeFileStream gCodeFileStream = new GCodeFileStream(GCodeFile.Load(gcodeFilename,
-					new Vector4(),
-					new Vector4(),
-					new Vector4(),
-					Vector4.One,
-					CancellationToken.None));
-
 				bool addLevelingStream = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && this.ApplyLeveling;
 				var queueStream = new QueuedCommandsStream(gCodeFileStream);
 
@@ -227,6 +232,7 @@ namespace MatterHackers.MatterControl.Library.Export
 					? new ProcessWriteRegexStream(printer.Settings, new PrintLevelingStream(printer.Settings, queueStream, false), queueStream)
 					: new ProcessWriteRegexStream(printer.Settings, queueStream, queueStream);
 
+				// Run each line from the source gcode through the loaded pipeline and dump to the output location
 				using (var file = new StreamWriter(outputPath))
 				{
 					string nextLine = finalStream.ReadLine();
@@ -236,6 +242,7 @@ namespace MatterHackers.MatterControl.Library.Export
 						{
 							file.WriteLine(nextLine);
 						}
+
 						nextLine = finalStream.ReadLine();
 					}
 				}
@@ -245,6 +252,30 @@ namespace MatterHackers.MatterControl.Library.Export
 				UiThread.RunOnIdle(() =>
 				{
 					StyledMessageBox.ShowMessageBox(e.Message, "Couldn't save file".Localize());
+				});
+			}
+		}
+
+		private void ApplyStreamPipelineAndExport(string gcodeFilename, string outputPath)
+		{
+			try
+			{
+				this.ApplyStreamPipelineAndExport(
+					new GCodeFileStream(
+						GCodeFile.Load(
+							gcodeFilename,
+							new Vector4(),
+							new Vector4(),
+							new Vector4(),
+							Vector4.One,
+							CancellationToken.None)),
+					outputPath);
+			}
+			catch (Exception e)
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					StyledMessageBox.ShowMessageBox(e.Message, "Couldn't load file".Localize());
 				});
 			}
 		}

@@ -568,6 +568,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						});
 					},
 					IsEnabled = () => sceneContext.EditableScene
+						|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
+							&& string.Equals(Path.GetExtension(libraryAsset.FileName) ,".gcode" ,StringComparison.OrdinalIgnoreCase))
 				},
 				new NamedAction()
 				{

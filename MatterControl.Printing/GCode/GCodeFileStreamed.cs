@@ -43,11 +43,16 @@ namespace MatterControl.Printing
 		private bool readLastLineOfFile = false;
 		private int readLineCount = 0;
 		private const int MaxLinesToBuffer = 128;
+
 		private PrinterMachineInstruction[] readLinesRingBuffer = new PrinterMachineInstruction[MaxLinesToBuffer];
 
 		public GCodeFileStreamed(string fileName)
+			: this (new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 		{
-			var inStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+		}
+
+		public GCodeFileStreamed(Stream inStream)
+		{
 			openGcodeStream = new StreamReader(inStream);
 		}
 
