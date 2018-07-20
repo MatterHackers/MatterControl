@@ -194,20 +194,29 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 							{
 								if (rebuildThumbnails)
 								{
-									string directoryToRemove = ApplicationController.CacheablePath("ItemThumbnails", "");
-									try
+									string[] thumbnails = new string[]
 									{
-										if (Directory.Exists(directoryToRemove))
+										ApplicationController.CacheablePath(
+											Path.Combine("Thumbnails", "Content"), ""),
+										ApplicationController.CacheablePath(
+											Path.Combine("Thumbnails", "Library"), "")
+									};
+									foreach (var directoryToRemove in thumbnails)
+									{
+										try
 										{
-											Directory.Delete(directoryToRemove, true);
+											if (Directory.Exists(directoryToRemove))
+											{
+												Directory.Delete(directoryToRemove, true);
+											}
 										}
-									}
-									catch (Exception)
-									{
-										GuiWidget.BreakInDebugger();
-									}
+										catch (Exception)
+										{
+											GuiWidget.BreakInDebugger();
+										}
 
-									Directory.CreateDirectory(directoryToRemove);
+										Directory.CreateDirectory(directoryToRemove);
+									}
 
 									ApplicationController.Instance.Library.NotifyContainerChanged();
 								}
