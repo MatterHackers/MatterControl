@@ -31,6 +31,7 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 
@@ -104,7 +105,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var pauseButton = new IconButton(AggContext.StaticData.LoadIcon("fa-pause_12.png", theme.InvertIcons), theme)
 			{
 				Margin = theme.ButtonSpacing,
-				Enabled = taskDetails.Options?.PauseAction != null
+				Enabled = taskDetails.Options?.PauseAction != null,
+				ToolTipText = taskDetails.Options?.PauseToolTip ?? "Pause".Localize()
 			};
 			pauseButton.Click += (s, e) =>
 			{
@@ -117,7 +119,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			resumeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-play_12.png", theme.InvertIcons), theme)
 			{
 				Visible = false,
-				Margin = theme.ButtonSpacing
+				Margin = theme.ButtonSpacing,
+				ToolTipText = taskDetails.Options?.ResumeToolTip ?? "Resume".Localize()
 			};
 			resumeButton.Click += (s, e) =>
 			{
@@ -130,7 +133,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var stopButton = new IconButton(AggContext.StaticData.LoadIcon("fa-stop_12.png", theme.InvertIcons), theme)
 			{
 				Margin = theme.ButtonSpacing,
-				Name = "Stop Task Button"
+				Name = "Stop Task Button",
+				ToolTipText = taskDetails.Options?.StopToolTip ?? "Cancel".Localize()
 			};
 			stopButton.Click += (s, e) =>
 			{

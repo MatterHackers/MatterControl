@@ -1004,15 +1004,18 @@ namespace MatterHackers.MatterControl
 							paused = true;
 							printerConnection.TimeHaveBeenHoldingTemperature.Stop();
 						}),
+						PauseToolTip = "Pause automatic heater shutdown".Localize(),
 						ResumeAction = () => UiThread.RunOnIdle(() =>
 						{
 							paused = false;
 							printerConnection.TimeHaveBeenHoldingTemperature.Start();
 						}),
+						ResumeToolTip = "Resume automatic heater shutdown".Localize(),
 						StopAction = () => UiThread.RunOnIdle(() =>
 						{
 							printerConnection.TurnOffBedAndExtruders(TurnOff.Now);
-						})
+						}),
+						StopToolTip = "Immediately turn off heaters".Localize()
 					});
 				}
 			}, ref unregisterEvents);
@@ -1902,14 +1905,17 @@ namespace MatterHackers.MatterControl
 					{
 						printer.Connection.RequestPause();
 					}),
+					PauseToolTip = "Pause Print".Localize(),
 					ResumeAction = () => UiThread.RunOnIdle(() =>
 					{
 						printer.Connection.Resume();
 					}),
+					ResumeToolTip = "Resume Print".Localize(),
 					StopAction = () => UiThread.RunOnIdle(() =>
 					{
 						this.ConditionalCancelPrint();
-					})
+					}),
+					StopToolTip = "Cancel Print".Localize(),
 				});
 		}
 
@@ -2246,6 +2252,10 @@ namespace MatterHackers.MatterControl
 		public Action PauseAction { get; set; }
 		public Action ResumeAction { get; set; }
 		public Action StopAction { get; set; }
+
+		public string StopToolTip { get; set; } = "Cancel".Localize();
+		public string ResumeToolTip { get; set; } = "Resume".Localize();
+		public string PauseToolTip { get; set; } = "Pause".Localize();
 
 		/// <summary>
 		/// Indicates if the task should suppress pause/resume/stop operations
