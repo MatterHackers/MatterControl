@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,48 +28,69 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using Markdig.Agg;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class MultilineStringField : UIField
+	public class MarkdownEditField : UIField
 	{
-		private MHTextEditWidget editWidget;
+		private ThemeConfig theme;
+		private string fieldTitle;
+		private MarkdownWidget markdownWidget;
+
+		public MarkdownEditField(ThemeConfig theme, string fieldTitle)
+		{
+			this.theme = theme;
+			this.fieldTitle = fieldTitle;
+		}
 
 		public override void Initialize(int tabIndex)
 		{
-			editWidget = new MHTextEditWidget("", pixelWidth: 320, multiLine: true, tabIndex: tabIndex, typeFace: ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono))
+			var container = new GuiWidget()
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				Name = this.Name
-			};
-			editWidget.DrawFromHintedCache();
-			editWidget.ActualTextEditWidget.EditComplete += (sender, e) =>
-			{
-				if (sender is TextEditWidget textEditWidget)
-				{
-					this.SetValue(
-						textEditWidget.Text.Replace("\n", "\\n"),
-						userInitiated: true);
-				}
+				VAnchor = VAnchor.Fit
 			};
 
-			editWidget.ActualTextEditWidget.TextChanged += (s, e) =>
+			markdownWidget = new MarkdownWidget(theme, true)
 			{
-				UiThread.RunOnIdle(() =>
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Absolute,
+				Height = 100,
+				Margin = new BorderDouble(right: 35),
+				BackgroundColor = theme.MinimalShade
+			};
+
+			GuiWidget editButton;
+
+			container.AddChild(markdownWidget);
+			container.AddChild(editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
+			{
+				VAnchor = VAnchor.Top,
+				HAnchor = HAnchor.Right,
+				ToolTipText = "Edit".Localize(),
+				Name = "Edit Markdown Button"
+			});
+			editButton.Click += (s, e) =>
+			{
+				DialogWindow.Show(new MarkdownEditPage(this)
 				{
-					editWidget.ActualTextEditWidget.Height = Math.Min(editWidget.ActualTextEditWidget.Printer.LocalBounds.Height, 500);
+					Markdown = markdownWidget.Markdown,
+					HeaderText = fieldTitle
 				});
 			};
 
-			this.Content = editWidget;
+			this.Content = container;
 		}
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
-			editWidget.Text = this.Value.Replace("\\n", "\n");
-			editWidget.ActualTextEditWidget.Height = Math.Min(editWidget.ActualTextEditWidget.Printer.LocalBounds.Height, 500);
+			markdownWidget.Markdown = this.Value.Replace("\\n", "\n");
 		}
 	}
 }

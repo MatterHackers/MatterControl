@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -363,6 +362,12 @@ namespace MatterControl.Tests.MatterControl
 
 		[Test, Ignore("Not Implemented")]
 		public void IconEnumFieldTest()
+		{
+			Assert.Fail();
+		}
+
+		[Test, Ignore("Not Implemented")]
+		public async Task MarkdownEditFieldTest()
 		{
 			Assert.Fail();
 		}

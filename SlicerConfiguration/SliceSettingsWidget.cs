@@ -773,8 +773,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					break;
 
 				case SliceSettingData.DataEditTypes.MULTI_LINE_TEXT:
-				case SliceSettingData.DataEditTypes.MARKDOWN_TEXT:
 					uiField = new MultilineStringField();
+					placeFieldInDedicatedRow = true;
+					break;
+
+				case SliceSettingData.DataEditTypes.MARKDOWN_TEXT:
+					uiField = new MarkdownEditField(theme, settingData.PresentationName);
 					placeFieldInDedicatedRow = true;
 					break;
 
@@ -915,7 +919,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						Name = "contentWrapper",
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Fit,
-						Padding = new BorderDouble(right: 16, bottom: 10),
+						Padding = new BorderDouble(bottom: 10),
 					};
 					contentWrapper.AddChild(uiField.Content);
 
