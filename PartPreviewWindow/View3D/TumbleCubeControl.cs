@@ -519,8 +519,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							> 1)
 						{
 							return new HitData(i, 2,
-								faceData.left, connections[faceData.left].Tile(i, faceData.bottom),
-								faceData.bottom, connections[faceData.bottom].Tile(i, faceData.left));
+								faceData.right, connections[faceData.right].Tile(i, faceData.bottom),
+								faceData.bottom, connections[faceData.bottom].Tile(i, faceData.right));
 						}
 						// hit to the top
 						else if (hitPosition[connections[faceData.top].axis]
@@ -528,8 +528,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							> 1)
 						{
 							return new HitData(i, 8,
-								faceData.left, connections[faceData.left].Tile(i, faceData.top),
-								faceData.top, connections[faceData.top].Tile(i, faceData.left));
+								faceData.right, connections[faceData.right].Tile(i, faceData.top),
+								faceData.top, connections[faceData.top].Tile(i, faceData.right));
 						}
 
 						return new HitData(i, 5, faceData.right, connections[faceData.right].Tile(i));
