@@ -778,7 +778,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					break;
 
 				case SliceSettingData.DataEditTypes.MARKDOWN_TEXT:
+#if !__ANDROID__
 					uiField = new MarkdownEditField(theme, settingData.PresentationName);
+#endif
 					break;
 
 				case SliceSettingData.DataEditTypes.COM_PORT:
