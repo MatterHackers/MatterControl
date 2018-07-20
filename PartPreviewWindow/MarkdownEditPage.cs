@@ -40,6 +40,7 @@ namespace MatterHackers.MatterControl
 	public class MarkdownEditPage : DialogPage
 	{
 		private MHTextEditWidget editWidget;
+		private MarkdownWidget markdownWidget;
 
 		public MarkdownEditPage(UIField uiField)
 		{
@@ -65,36 +66,23 @@ namespace MatterHackers.MatterControl
 				BackgroundColor = theme.ActiveTabColor
 			};
 
-			editWidget = new MHTextEditWidget("", pixelWidth: 320, multiLine: true, typeFace: ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono))
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit | VAnchor.Top,
-				Name = this.Name
-			};
-			editWidget.DrawFromHintedCache();
-			editWidget.ActualTextEditWidget.TextChanged += (s, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					editWidget.ActualTextEditWidget.Height = Math.Min(editWidget.ActualTextEditWidget.Printer.LocalBounds.Height, 1500);
-				});
-			};
-
-			editContainer.AddChild(editWidget);
-
-			var editTab = new ToolTab("Edit".Localize(), tabControl, editContainer, theme, hasClose: false)
-			{
-				Name = "Edit Tab"
-			};
-			tabControl.AddTab(editTab);
-
-			var markdownWidget = new MarkdownWidget(theme, true)
+			editWidget = new MHTextEditWidget("", multiLine: true, typeFace: ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono))
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
-				Margin = theme.DefaultContainerPadding,
-				BackgroundColor = new Color(Color.White, 20),
-				Padding = theme.DefaultContainerPadding,
+				Name = this.Name
+			};
+			editWidget.DrawFromHintedCache();
+			editWidget.ActualTextEditWidget.VAnchor = VAnchor.Stretch;
+
+			editContainer.AddChild(editWidget);
+
+			markdownWidget = new MarkdownWidget(theme, true)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+				Margin = 0,
+				Padding = 0,
 			};
 
 			var previewTab = new ToolTab("Preview".Localize(), tabControl, markdownWidget, theme, hasClose: false)
@@ -102,6 +90,12 @@ namespace MatterHackers.MatterControl
 				Name = "Preview Tab"
 			};
 			tabControl.AddTab(previewTab);
+
+			var editTab = new ToolTab("Edit".Localize(), tabControl, editContainer, theme, hasClose: false)
+			{
+				Name = "Edit Tab"
+			};
+			tabControl.AddTab(editTab);
 
 			tabControl.ActiveTabChanged += (s, e) =>
 			{
@@ -139,7 +133,11 @@ namespace MatterHackers.MatterControl
 		public string Markdown
 		{
 			get => editWidget.Text;
-			set => editWidget.Text = value;
+			set
+			{
+				editWidget.Text = value;
+				markdownWidget.Markdown = value;
+			}
 		}
 	}
 }

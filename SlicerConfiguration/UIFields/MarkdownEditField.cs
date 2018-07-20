@@ -41,7 +41,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private ThemeConfig theme;
 		private string fieldTitle;
-		private MarkdownWidget markdownWidget;
 
 		public MarkdownEditField(ThemeConfig theme, string fieldTitle)
 		{
@@ -51,46 +50,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void Initialize(int tabIndex)
 		{
-			var container = new GuiWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
-			};
-
-			markdownWidget = new MarkdownWidget(theme, true)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Absolute,
-				Height = 100,
-				Margin = new BorderDouble(right: 35),
-				BackgroundColor = theme.MinimalShade
-			};
-
-			GuiWidget editButton;
-
-			container.AddChild(markdownWidget);
-			container.AddChild(editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
+			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
 			{
 				VAnchor = VAnchor.Top,
-				HAnchor = HAnchor.Right,
 				ToolTipText = "Edit".Localize(),
 				Name = "Edit Markdown Button"
-			});
+			};
 			editButton.Click += (s, e) =>
 			{
 				DialogWindow.Show(new MarkdownEditPage(this)
 				{
-					Markdown = markdownWidget.Markdown,
+					Markdown = this.Value.Replace("\\n", "\n"),
 					HeaderText = fieldTitle
 				});
 			};
 
-			this.Content = container;
-		}
-
-		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
-		{
-			markdownWidget.Markdown = this.Value.Replace("\\n", "\n");
+			this.Content = editButton;
 		}
 	}
 }
