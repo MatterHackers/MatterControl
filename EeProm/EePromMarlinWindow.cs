@@ -96,14 +96,21 @@ namespace MatterHackers.MatterControl.EeProm
 			currentEePromSettings = new EePromMarlinSettings(printer.Connection);
 			currentEePromSettings.eventAdded += SetUiToPrinterSettings;
 
-			var mainContainer = contentRow;
-
 			// the center content
 			var conterContent = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				VAnchor = VAnchor.Fit | VAnchor.Top,
 				HAnchor = HAnchor.Stretch
 			};
+
+			// add a scroll container
+			var settingsAreaScrollBox = new ScrollableWidget(true);
+			settingsAreaScrollBox.ScrollArea.HAnchor |= HAnchor.Stretch;
+			settingsAreaScrollBox.AnchorAll();
+			settingsAreaScrollBox.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+			contentRow.AddChild(settingsAreaScrollBox);
+
+			settingsAreaScrollBox.AddChild(conterContent);
 
 			conterContent.AddChild(Create4FieldSet("Steps per mm".Localize() + ":",
 				"X:", ref stepsPerMmX,
@@ -148,8 +155,6 @@ namespace MatterHackers.MatterControl.EeProm
 			conterContent.AddChild(CreateField("Maximum X-Y jerk [mm/s]".Localize() + ":", ref maxXYJerk));
 			conterContent.AddChild(CreateField("Maximum Z jerk [mm/s]".Localize() + ":", ref maxZJerk));
 			conterContent.AddChild(CreateField("Maximum E jerk [mm/s]".Localize() + ":", ref maxEJerk));
-
-			mainContainer.AddChild(conterContent);
 
 			// the bottom button bar
 			var buttonSave = theme.CreateDialogButton("Save to EEProm".Localize());
