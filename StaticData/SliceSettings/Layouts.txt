@@ -33,6 +33,7 @@ Advanced
       Speed for Infill
         infill_speed
         top_solid_infill_speed
+        bottom_infill_speed
         raft_print_speed
       Speed for Perimeters
         perimeter_speed
@@ -42,6 +43,7 @@ Advanced
         bridge_speed
         travel_speed
         first_layer_speed
+        first_layer_on_sparse_infill_speed
         number_of_first_layers
     Fan
       Fan

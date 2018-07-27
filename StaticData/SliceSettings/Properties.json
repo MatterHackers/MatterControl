@@ -147,6 +147,15 @@
     "DefaultValue": "20"
   },
   {
+    "SlicerConfigName": "bottom_infill_speed",
+    "PresentationName": "Botom Solid Infill",
+    "HelpText": "The speed at which the bottom solid layers will print. Can be set explicitly or as a percentage of the Infill speed. Use 0 to match infill speed.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "Units": "mm/s or %",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "0"
+  },
+  {
     "SlicerConfigName": "build_height",
     "PresentationName": "Build Height",
     "HelpText": "The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.",
@@ -1667,6 +1676,15 @@
     "HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
     "DataEditType": "DOUBLE_OR_PERCENT",
     "Units": "mm or %",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "first_layer_on_sparse_infill_speed",
+    "PresentationName": "First Layer on Sparse Infill",
+    "HelpText": "The speed at which the first solid layers on top of sparse infill will print. Can be set explicitly or as a percentage of the Top Infill speed. Use 0 to match the Top Infill Speed",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "Units": "mm/s or %",
+    "ShowIfSet": "!sla_printer",
     "DefaultValue": "0"
   },
   {
