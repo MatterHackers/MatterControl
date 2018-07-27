@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MapFirstValue("retract_speed", "retractionSpeed"),
 				new OverrideSpeedOnSlaPrinters("bridge_speed", "bridgeSpeed", "infill_speed"),
 				new OverrideSpeedOnSlaPrinters("bottom_infill_speed", "bottomInfillSpeed", "infill_speed"),
-				new OverrideSpeedOnSlaPrinters("first_layer_on_sparse_infill_speed", "firstLayerOnSparseInfillSpeed", "top_solid_infill_speed"),
+				new OverrideSpeedOnSlaPrinters("first_top_layer_speed", "firstTopLayerSpeed", "top_solid_infill_speed"),
 				new MappedSetting("extrusion_multiplier", "extrusionMultiplier"),
 				new MappedSetting("fill_angle", "infillStartingAngle"),
 				new AsPercentOfReferenceOrDirect(SettingsKey.infill_overlap_perimeter, "infillExtendIntoPerimeter", SettingsKey.nozzle_diameter, change0ToReference: false),

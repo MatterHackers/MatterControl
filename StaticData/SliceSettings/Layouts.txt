@@ -31,9 +31,10 @@ Advanced
         laser_speed_025
         laser_speed_100
       Speed for Infill
+        first_layer_speed
         infill_speed
+        first_top_layer_speed
         top_solid_infill_speed
-        bottom_infill_speed
         raft_print_speed
       Speed for Perimeters
         perimeter_speed
@@ -42,8 +43,6 @@ Advanced
         support_material_speed
         bridge_speed
         travel_speed
-        first_layer_speed
-        first_layer_on_sparse_infill_speed
         number_of_first_layers
     Fan
       Fan
