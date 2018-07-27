@@ -140,6 +140,15 @@
     <Compile Include="PartPreviewWindow\View3D\Actions\ModifiedMeshObject3D.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\SubtractAndReplaceObject3D.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\SubtractObject3D.cs" />
+    <Compile Include="PrinterCommunication\Drivers\TCPIP\TcpipSerialPort.cs" />
+    <Compile Include="PrinterCommunication\Drivers\TCPIP\TcpipSerialPortFactory.cs" />
+    <Compile Include="PrinterCommunication\Drivers\X3G\X3GCrc.cs" />
+    <Compile Include="PrinterCommunication\Drivers\X3G\X3GExport.cs" />
+    <Compile Include="PrinterCommunication\Drivers\X3G\X3GPrinterDetails.cs" />
+    <Compile Include="PrinterCommunication\Drivers\X3G\X3GReader.cs" />
+    <Compile Include="PrinterCommunication\Drivers\X3G\X3GSerialPortFactory.cs" />
+    <Compile Include="PrinterCommunication\Drivers\X3G\X3GSerialPortWrapper.cs" />
+    <Compile Include="PrinterCommunication\Drivers\X3G\X3GWriter.cs" />
     <Compile Include="PrinterControls\ControlWidgets\CalibrationControls.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingFunctions.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\ProbeCalibrationWizard.cs" />
