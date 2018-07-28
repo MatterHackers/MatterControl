@@ -86,10 +86,6 @@
       <Project>{97d5ade3-c1b4-4b46-8a3e-718a4f7f079f}</Project>
       <Name>MatterControl.Printing</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\PrinterEmulator\PrinterEmulator.csproj">
-      <Project>{bb58ca42-991b-41b7-bde7-dcd2911df8b9}</Project>
-      <Name>PrinterEmulator</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\agg\Agg.csproj">
       <Project>{657dbc6d-c3ea-4398-a3fa-ddb73c14f71b}</Project>
       <Name>Agg</Name>

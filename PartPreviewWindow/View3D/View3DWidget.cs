@@ -33,7 +33,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;

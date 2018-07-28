@@ -93,10 +93,6 @@
       <Project>{DF6845CD-64C6-4263-8357-DA8066855739}</Project>
       <Name>MarchingSquares</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Submodules\agg-sharp\OpenGlGui\OpenGlGui.csproj">
-      <Project>{C958F745-156E-4BDC-A24A-3721C7BE7B8A}</Project>
-      <Name>OpenGlGui</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj">
       <Project>{86F6AAF2-9B50-40B8-A427-1897D76471C5}</Project>
       <Name>PolygonMesh</Name>
