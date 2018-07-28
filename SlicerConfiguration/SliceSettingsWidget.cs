@@ -854,6 +854,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				uiField.SetValue(sliceSettingValue, userInitiated: false);
 
+				// make sure the undo data goes back to the intial value after a change
+				if(uiField.Content is MHTextEditWidget textWidget)
+				{
+					textWidget.ActualTextEditWidget.InternalTextEditWidget.ClearUndoHistory();
+				}
+				else if (uiField.Content is MHNumberEdit numberWidget)
+				{
+					numberWidget.ActuallNumberEdit.InternalTextEditWidget.ClearUndoHistory();
+				}
+
 				uiField.ValueChanged += (s, e) =>
 				{
 					if (useDefaultSavePattern
