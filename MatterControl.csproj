@@ -92,6 +92,10 @@
     <Compile Include="CustomWidgets\TreeView\TreeView.cs" />
     <Compile Include="DesignTools\Attributes\ShowSearchFieldAttribute.cs" />
     <Compile Include="DesignTools\Attributes\ShowUpdateButtonAttribute.cs" />
+    <Compile Include="DesignTools\Braille\BrailleCardObject3D.cs" />
+    <Compile Include="DesignTools\Braille\BrailleGrade2.cs" />
+    <Compile Include="DesignTools\Braille\BrailleGrade2Mapping.cs" />
+    <Compile Include="DesignTools\Braille\BrailleObject3D.cs" />
     <Compile Include="DesignTools\EditableTypes\DirectionAxis.cs" />
     <Compile Include="DesignTools\EditableTypes\DirectionVector.cs" />
     <Compile Include="DesignTools\Operations\Align2D.cs" />
@@ -140,6 +144,9 @@
     <Compile Include="PartPreviewWindow\View3D\Actions\ModifiedMeshObject3D.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\SubtractAndReplaceObject3D.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\SubtractObject3D.cs" />
+    <Compile Include="PrinterCommunication\Drivers\Emulator\Emulator.cs" />
+    <Compile Include="PrinterCommunication\Drivers\Emulator\EmulatorPortFactory.cs" />
+    <Compile Include="PrinterCommunication\Drivers\Emulator\Heater.cs" />
     <Compile Include="PrinterCommunication\Drivers\TCPIP\TcpipSerialPort.cs" />
     <Compile Include="PrinterCommunication\Drivers\TCPIP\TcpipSerialPortFactory.cs" />
     <Compile Include="PrinterCommunication\Drivers\X3G\X3GCrc.cs" />
@@ -638,10 +645,6 @@
       <Project>{97D5ADE3-C1B4-4B46-8A3E-718A4F7F079F}</Project>
       <Name>MatterControl.Printing</Name>
     </ProjectReference>
-    <ProjectReference Include="PrinterEmulator\PrinterEmulator.csproj" Condition="'$(Configuration)'=='Debug'">
-      <Project>{bb58ca42-991b-41b7-bde7-dcd2911df8b9}</Project>
-      <Name>PrinterEmulator</Name>
-    </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\clipper_library\clipper_library.csproj">
       <Project>{9B062971-A88E-4A3D-B3C9-12B78D15FA66}</Project>
       <Name>clipper_library</Name>
@@ -697,10 +700,6 @@
     <ProjectReference Include="Launcher\Launcher.csproj">
       <Project>{3DF4CB3D-9A03-4256-9A81-70523AAD828B}</Project>
       <Name>Launcher</Name>
-    </ProjectReference>
-    <ProjectReference Include="Submodules\agg-sharp\OpenGlGui\OpenGlGui.csproj">
-      <Project>{C958F745-156E-4BDC-A24A-3721C7BE7B8A}</Project>
-      <Name>OpenGlGui</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj">
       <Project>{545B6912-77FF-4B34-BA76-6C3D6A32BE6A}</Project>

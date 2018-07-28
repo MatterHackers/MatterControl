@@ -94,10 +94,6 @@
       <Project>{97d5ade3-c1b4-4b46-8a3e-718a4f7f079f}</Project>
       <Name>MatterControl.Printing</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\PrinterEmulator\PrinterEmulator.csproj">
-      <Project>{bb58ca42-991b-41b7-bde7-dcd2911df8b9}</Project>
-      <Name>PrinterEmulator</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\agg\Agg.csproj">
       <Project>{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}</Project>
       <Name>Agg</Name>
@@ -117,10 +113,6 @@
     <ProjectReference Include="..\..\Submodules\agg-sharp\Localizations\Localizations.csproj">
       <Project>{ca96058c-1a37-465d-a357-d6d695b13d25}</Project>
       <Name>Localizations</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\OpenGlGui\OpenGlGui.csproj">
-      <Project>{C958F745-156E-4BDC-A24A-3721C7BE7B8A}</Project>
-      <Name>OpenGlGui</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\PlatformWin32\PlatformWin32.csproj">
       <Project>{670BDDFF-927B-425D-9DD1-22ACB14356EB}</Project>
@@ -145,10 +137,6 @@
     <ProjectReference Include="..\..\Submodules\agg-sharp\VectorMath\VectorMath.csproj">
       <Project>{D3E41B4E-BFBB-44CA-94C8-95C00F754FDD}</Project>
       <Name>VectorMath</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\TextCreator\TextCreator.csproj">
-      <Project>{F49EC1DD-D645-4709-8667-B57318AF67B0}</Project>
-      <Name>TextCreator</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

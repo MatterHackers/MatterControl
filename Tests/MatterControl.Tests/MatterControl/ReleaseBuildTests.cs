@@ -49,14 +49,12 @@ namespace MatterControl.Tests
 						RayTracer.dll
 						MatterHackers.DataConverters3D.dll
 						MatterHackers.Localizations.dll
-						MatterHackers.OpenGL.UI.dll
 						agg_platform_win32.dll
 						Community.CsharpSqlite.dll
 						MatterHackers.MatterControl.Plugins.dll
 						MatterHackers.Agg.ImageProcessing.dll
 						MatterHackers.MarchingSquares.dll
-						GuiAutomation.dll
-						TextCreator.dll";
+						GuiAutomation.dll";
 
 			foreach (string assemblyName in knownAssemblies.Split('\n').Select(s => s.Trim()))
 			{

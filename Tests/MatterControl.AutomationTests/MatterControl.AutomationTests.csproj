@@ -86,10 +86,6 @@
       <Project>{97d5ade3-c1b4-4b46-8a3e-718a4f7f079f}</Project>
       <Name>MatterControl.Printing</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\PrinterEmulator\PrinterEmulator.csproj">
-      <Project>{bb58ca42-991b-41b7-bde7-dcd2911df8b9}</Project>
-      <Name>PrinterEmulator</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\agg\Agg.csproj">
       <Project>{657dbc6d-c3ea-4398-a3fa-ddb73c14f71b}</Project>
       <Name>Agg</Name>
@@ -125,10 +121,6 @@
     <ProjectReference Include="..\..\Submodules\agg-sharp\VectorMath\VectorMath.csproj">
       <Project>{D3E41B4E-BFBB-44CA-94C8-95C00F754FDD}</Project>
       <Name>VectorMath</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\TextCreator\TextCreator.csproj">
-      <Project>{f49ec1dd-d645-4709-8667-b57318af67b0}</Project>
-      <Name>TextCreator</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
