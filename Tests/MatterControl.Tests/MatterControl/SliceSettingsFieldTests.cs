@@ -294,10 +294,36 @@ namespace MatterControl.Tests.MatterControl
 			Assert.Fail();
 		}
 
-		[Test, Ignore("Not Implemented")]
-		public void MultilineStringFieldTest()
+		[Test, RunInApplicationDomain]
+		public async Task MultilineStringFieldTest()
 		{
-			Assert.Fail();
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			var theme = new ThemeConfig();
+			theme.RebuildTheme(ActiveTheme.Instance);
+
+			await ValidateAgainstValueMap<MultilineStringField>(
+				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
+				new List<ValueMap>()
+				{
+					{"0.12345", "0.12345"},
+					{"1.2345", "1.2345"},
+					{"12.345", "12.345"},
+					{"12.7", "12.7"},
+					{"+0.12345", "+0.12345"},
+					{"+1.2345", "+1.2345"},
+					{"+12.345", "+12.345"},
+					{"-0.12345", "-0.12345"},
+					{"-1.2345", "-1.2345"},
+					{"-12.345", "-12.345"},
+					{"12.7", "12.7"},
+					{"22", "22" },
+					{"abc", "abc"},
+					{"+abc", "+abc"},
+					{"-abc", "-abc"},
+					{"-abc\nline2", "-abc\nline2"},
+				});
 		}
 
 		[Test, Ignore("Not Implemented")]
