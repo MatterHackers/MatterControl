@@ -152,15 +152,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					targetBedTemp, targetHotendTemp);
 			}
 
-			string positionLabel = "Position".Localize();
-			string autoCalibrateLabel = "Auto Calibrate".Localize();
-			string lowPrecisionLabel = "Low Precision".Localize();
-			string medPrecisionLabel = "Medium Precision".Localize();
-			string highPrecisionLabel = "High Precision".Localize();
-
 			double bedRadius = Math.Min(printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).X, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
-
 			double startProbeHeight = printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start);
+
 			int i = 0;
 			foreach (var goalProbePosition in levelingPlan.GetPrintLevelPositionToSample())
 			{
@@ -174,9 +168,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						string.Format(
 							"{0} {1} {2} - {3}",
 							$"{"Step".Localize()} {i + 1} {"of".Localize()} {levelingPlan.ProbeCount}:",
-							positionLabel,
+							"Position".Localize(),
 							i + 1,
-							autoCalibrateLabel),
+							"Auto Calibrate".Localize()),
 						probePositions,
 						i);
 				}
@@ -188,9 +182,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						string.Format(
 							"{0} {1} {2} - {3}",
 							levelingStrings.GetStepString(levelingPlan.TotalSteps),
-							positionLabel,
+							"Position".Localize(),
 							i + 1,
-							lowPrecisionLabel),
+							"Low Precision".Localize()),
 						probePositions,
 						i,
 						levelingStrings);
@@ -200,9 +194,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						string.Format(
 							"{0} {1} {2} - {3}",
 							levelingStrings.GetStepString(levelingPlan.TotalSteps),
-							positionLabel,
+							"Position".Localize(),
 							i + 1,
-							medPrecisionLabel),
+							"Medium Precision".Localize()),
 						probePositions,
 						i,
 						levelingStrings);
@@ -212,9 +206,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						string.Format(
 							"{0} {1} {2} - {3}",
 							levelingStrings.GetStepString(levelingPlan.TotalSteps),
-							positionLabel,
+							"Position".Localize(),
 							i + 1,
-							highPrecisionLabel),
+							"High Precision".Localize()),
 						probePositions,
 						i,
 						levelingStrings);
