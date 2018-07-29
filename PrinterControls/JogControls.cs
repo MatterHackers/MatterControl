@@ -436,6 +436,7 @@ namespace MatterHackers.MatterControl
 				if (extruderCount == 1)
 				{
 					ExtrudeButton eMinusControl = theme.CreateExtrudeButton(printer, "E-", printer.Settings.EFeedRate(0), 0);
+					eMinusControl.MoveAmount = -eMinusControl.MoveAmount;
 					eMinusControl.Margin = extrusionMargin;
 					eMinusControl.ToolTipText = "Retract filament".Localize();
 					eMinusButtonAndText.AddChild(eMinusControl);
@@ -446,6 +447,7 @@ namespace MatterHackers.MatterControl
 					for (int i = 0; i < extruderCount; i++)
 					{
 						ExtrudeButton eMinusControl = theme.CreateExtrudeButton(printer, $"E{i + 1}-", printer.Settings.EFeedRate(0), i);
+						eMinusControl.MoveAmount = -eMinusControl.MoveAmount;
 						eMinusControl.ToolTipText = "Retract filament".Localize();
 						eMinusControl.Margin = extrusionMargin;
 						eMinusButtonAndText.AddChild(eMinusControl);
