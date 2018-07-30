@@ -32,6 +32,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -71,6 +72,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 
 			base.Apply(undoBuffer);
+		}
+
+		/// <summary>
+		/// MeshWrapperObject3D overrides GetAabb so that it can only check the geometry that it has created
+		/// </summary>
+		/// <param name="matrix"></param>
+		/// <returns></returns>
+		public override AxisAlignedBoundingBox GetAxisAlignedBoundingBox(Matrix4X4 matrix)
+		{
+			AxisAlignedBoundingBox totalBounds = AxisAlignedBoundingBox.Empty;
+
+			foreach (var child in this.Descendants().Where(i => i.OwnerID == this.ID && i.Visible))
+			{
+				// Add the bounds of each child object
+				var childBounds = child.Mesh.GetAxisAlignedBoundingBox(child.WorldMatrix(this) * matrix);
+				//var childBounds = child.GetAxisAlignedBoundingBox(child.WorldMatrix(item) * matrix);
+				// Check if the child actually has any bounds
+				if (childBounds.XSize > 0)
+				{
+					totalBounds += childBounds;
+				}
+			}
+
+			return totalBounds;
 		}
 
 		public IEnumerable<(IObject3D original, IObject3D meshCopy)> WrappedObjects()
