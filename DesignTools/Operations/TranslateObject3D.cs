@@ -50,12 +50,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public TranslateObject3D(IObject3D itemToTranslate, Vector3 translation)
 			: this()
 		{
-			var translate = this;
+			Translation = translation;
 			var aabb = itemToTranslate.GetAxisAlignedBoundingBox();
 
 			var translateItem = new Object3D();
-			translate.Children.Add(translateItem);
+			this.Children.Add(translateItem);
 			translateItem.Children.Add(itemToTranslate);
+
+			Rebuild(null);
 		}
 
 		public override bool CanApply => true;

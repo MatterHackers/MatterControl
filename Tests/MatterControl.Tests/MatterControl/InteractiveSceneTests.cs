@@ -27,6 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.VectorMath;
 using NUnit.Framework;
 
 namespace MatterControl.Tests.MatterControl
@@ -35,8 +39,108 @@ namespace MatterControl.Tests.MatterControl
 	public class InteractiveSceneTests
 	{
 		[Test, Category("InteractiveScene")]
-		public void GroupAndUngroupHandleHoles()
+		public void AabbCalculatedCorrectlyForPinchedFitObjects()
 		{
+			// build without pinch
+			{
+				var root = new Object3D();
+				var cube = new CubeObject3D(20, 20, 20);
+				root.Children.Add(cube);
+				Assert.IsTrue(root.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)), .001));
+				root.Children.Remove(cube);
+				var fit = FitToBoundsObject3D_2.Create(cube);
+
+				fit.SizeX = 50;
+				fit.SizeY = 20;
+				fit.SizeZ = 20;
+				root.Children.Add(fit);
+				var rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-25, -10, -10), new Vector3(25, 10, 10)), .001));
+			}
+
+			// build with pinch
+			{
+				var root = new Object3D();
+				var cube = new CubeObject3D(20, 20, 20);
+				root.Children.Add(cube);
+				var fit = FitToBoundsObject3D_2.Create(cube);
+
+				fit.SizeX = 50;
+				fit.SizeY = 20;
+				fit.SizeZ = 20;
+
+				var pinch = new PinchObject3D();
+				pinch.Children.Add(fit);
+				root.Children.Add(pinch);
+				var rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)), .001));
+			}
+
+			// build with translate
+			{
+				var root = new Object3D();
+				var cube = new CubeObject3D(20, 20, 20);
+
+				var translate = new TranslateObject3D(cube, 11, 0, 0);
+
+				root.Children.Add(translate);
+				var rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(1, -10, -10), new Vector3(21, 10, 10)), .001));
+			}
+
+			// build with pinch and translate
+			{
+				var root = new Object3D();
+				var cube = new CubeObject3D(20, 20, 20);
+
+				var translate = new TranslateObject3D(cube, 11, 0, 0);
+
+				var pinch = new PinchObject3D();
+				pinch.Children.Add(translate);
+				root.Children.Add(pinch);
+				pinch.Invalidate(new InvalidateArgs(pinch, InvalidateType.Properties));
+				var rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(1, -10, -10), new Vector3(21, 10, 10)), .001));
+			}
+
+			// build with pinch and translate
+			{
+				var root = new Object3D();
+				var cube = new CubeObject3D(20, 20, 20);
+				var fit = FitToBoundsObject3D_2.Create(cube);
+
+				fit.SizeX = 50;
+				fit.SizeY = 20;
+				fit.SizeZ = 20;
+
+				var translate = new TranslateObject3D(fit, 11, 0, 0);
+
+				var pinch = new PinchObject3D();
+				pinch.Children.Add(translate);
+				pinch.Invalidate(new InvalidateArgs(pinch, InvalidateType.Properties));
+				root.Children.Add(pinch);
+				var rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(1, -10, -10), new Vector3(21, 10, 10)), .001));
+			}
+		}
+
+		[Test, Category("InteractiveScene")]
+		public void AabbCalculatedCorrectlyForCurvedFitObjects()
+		{
+			var root = new Object3D();
+			var cube = new CubeObject3D(20, 20, 20);
+			var fit = FitToBoundsObject3D_2.Create(cube);
+
+			fit.SizeX = 50;
+			fit.SizeY = 20;
+			fit.SizeZ = 20;
+
+			var curve = new CurveObject3D();
+			curve.Children.Add(fit);
+			curve.Invalidate(new InvalidateArgs(curve, InvalidateType.Properties));
+			root.Children.Add(curve);
+			var rootAabb = root.GetAxisAlignedBoundingBox();
+			Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-25, 4, -10), new Vector3(25, 15, 10)), 1.0));
 		}
 	}
 }

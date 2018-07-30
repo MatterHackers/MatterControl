@@ -27,27 +27,45 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.ComponentModel;
-using System.Linq;
-using System.Threading;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
-using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
+using System.ComponentModel;
+using System.Threading;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
 	public class PinchObject3D : MeshWrapperObject3D
 	{
-		[DisplayName("Back Ratio")]
-		public double PinchRatio { get; set; } = .5;
-
 		public PinchObject3D()
 		{
 			Name = "Pinch".Localize();
+		}
+
+		[DisplayName("Back Ratio")]
+		public double PinchRatio { get; set; } = .5;
+
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if ((invalidateType.InvalidateType == InvalidateType.Content
+				|| invalidateType.InvalidateType == InvalidateType.Matrix
+				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+				&& invalidateType.Source != this
+				&& !RebuildLocked)
+			{
+				Rebuild(null);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
+			{
+				Rebuild(null);
+			}
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
 		}
 
 		private void Rebuild(UndoBuffer undoBuffer)
@@ -102,27 +120,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
-		}
-
-		public override void OnInvalidate(InvalidateArgs invalidateType)
-		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
-				&& invalidateType.Source != this
-				&& !RebuildLocked)
-			{
-				Rebuild(null);
-			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
-				&& invalidateType.Source == this)
-			{
-				Rebuild(null);
-			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
 		}
 	}
 }
