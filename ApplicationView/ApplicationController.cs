@@ -1860,7 +1860,30 @@ namespace MatterHackers.MatterControl
 
 		public void ResetTranslationMap()
 		{
-			TranslationMap.ActiveTranslationMap = new TranslationMap("Translations", UserSettings.Instance.Language);
+			LoadTranslationMap();
+		}
+
+		public static void LoadTranslationMap()
+		{
+			// Select either the user supplied language name or the current thread language name
+			string twoLetterIsoLanguageName = string.IsNullOrEmpty(UserSettings.Instance.Language) ?
+				Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName.ToLower() :
+				UserSettings.Instance.Language.ToLower();
+
+			string translationFilePath = Path.Combine("Translations", twoLetterIsoLanguageName, "Translation.txt");
+
+			if (twoLetterIsoLanguageName == "en")
+			{
+				TranslationMap.ActiveTranslationMap = new TranslationMap();
+			}
+			else
+			{
+				using (var stream = AggContext.StaticData.OpenStream(translationFilePath))
+				using (var streamReader = new StreamReader(stream))
+				{
+					TranslationMap.ActiveTranslationMap = new TranslationMap(streamReader, UserSettings.Instance.Language);
+				}
+			}
 		}
 
 		public void MonitorPrintTask(PrinterConfig printer)
@@ -2643,7 +2666,7 @@ namespace MatterHackers.MatterControl
 							ReportStartupProgress(0.2 + progress0To1 * 0.7, status);
 						});
 
-						TranslationMap.ActiveTranslationMap = new TranslationMap("Translations", UserSettings.Instance.Language);
+						ApplicationController.LoadTranslationMap();
 
 						ReportStartupProgress(0.9, "AddChild->MainView");
 						systemWindow.AddChild(mainView, 0);
