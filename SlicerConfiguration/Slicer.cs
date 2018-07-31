@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							item.WorldOutputType() == PrintOutputTypes.Support);
 
 
-					// if we added user generated support 
+					// if we added user generated support
 					if (supportObjects.Any())
 					{
 						// add a flag to the merge rules to let us know there was support
@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static string SaveAndGetFilePathForMesh(Mesh meshToSave, CancellationToken cancellationToken)
 		{
-			string folderToSaveStlsTo = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "amf_to_stl");
+			string folderToSaveStlsTo = Path.Combine(ApplicationDataStorage.Instance.ApplicationTempDataPath, "amf_to_stl");
 
 			// Create directory if needed
 			Directory.CreateDirectory(folderToSaveStlsTo);

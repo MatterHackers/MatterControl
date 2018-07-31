@@ -131,8 +131,6 @@ namespace MatterHackers.MatterControl
 
 		private static PrinterConfig emptyPrinter = new PrinterConfig(PrinterSettings.Empty);
 
-		private static string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache");
-
 		// TODO: Any references to this property almost certainly need to be reconsidered. ActiveSliceSettings static references that assume a single printer
 		// selection are being redirected here. This allows us to break the dependency to the original statics and consolidates
 		// us down to a single point where code is making assumptions about the presence of a printer, printer counts, etc. If we previously checked for
@@ -1309,7 +1307,7 @@ namespace MatterHackers.MatterControl
 
 		public static string CacheablePath(string cacheScope, string cacheKey)
 		{
-			string scopeDirectory = Path.Combine(cacheDirectory, cacheScope);
+			string scopeDirectory = Path.Combine(ApplicationDataStorage.Instance.CacheDirectory, cacheScope);
 
 			// Ensure directory exists
 			Directory.CreateDirectory(scopeDirectory);
