@@ -70,6 +70,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			editWidget.Text = this.Value.Replace("\\n", "\n");
 			editWidget.ActualTextEditWidget.Height = Math.Min(editWidget.ActualTextEditWidget.Printer.LocalBounds.Height, 500);
+
+			base.OnValueChanged(fieldChangedEventArgs);
 		}
 	}
 }

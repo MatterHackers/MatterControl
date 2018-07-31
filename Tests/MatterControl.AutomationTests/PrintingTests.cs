@@ -33,6 +33,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type("{BACKSPACE}");
 					testRunner.Type("G28");
 
+					testRunner.SelectSliceSettingsField("Printer", "start_gcode");
+
+					// Validate GCode fields persist values
+					Assert.AreEqual(
+						"G28",
+						ApplicationController.Instance.ActivePrinter.Settings.GetValue(SettingsKey.end_gcode),
+						"Failure persisting GCode/MultilineTextField value");
+
 					testRunner.AddItemToBedplate();
 
 					// Shorten the delay so the test runs in a reasonable time
