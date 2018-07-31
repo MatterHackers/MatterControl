@@ -90,6 +90,8 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		public string GCodeOutputPath => EnsurePath(_gcodeOutputPath);
 
+		public string CacheDirectory => Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache");
+
 		public string DownloadsDirectory { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 
 		public string CustomLibraryFoldersPath => Path.Combine(_applicationUserDataPath, "LibraryFolders.conf");
