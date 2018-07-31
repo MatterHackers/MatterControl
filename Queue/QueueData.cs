@@ -39,6 +39,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -205,7 +206,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			for (int i = 0; i < ItemCount; i++)
 			{
 				var printItem = GetPrintItemWrapper(i).PrintItem;
-				if (includeProtectedItems 
+				if (includeProtectedItems
 					|| !printItem.Protected)
 				{
 					listToReturn.Add(printItem);
@@ -231,7 +232,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				if (File.Exists(item.FileLocation)
 					&& checkSize == ValidateSizeOn32BitSystems.Required)
 				{
-					estimatedMemoryUse = MeshFileIo.GetEstimatedMemoryUse(item.FileLocation);
+					estimatedMemoryUse = GetEstimatedMemoryUse(item.FileLocation);
 
 					// If we have less than 2 gigs memory, warn on smaller file size
 					if (AggContext.PhysicalMemory < 2000000000)
@@ -257,7 +258,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 					UiThread.RunOnIdle(() =>
 					{
 						string memoryWarningMessage = "Are you sure you want to add this part ({0}) to the Queue?\nThe 3D part you are trying to load may be too complicated and cause performance or stability problems.\n\nConsider reducing the geometry before proceeding.".Localize().FormatWith(item.Name);
-						StyledMessageBox.ShowMessageBox(UserSaidToAllowAddToQueue, memoryWarningMessage, "File May Cause Problems".Localize(), StyledMessageBox.MessageType.YES_NO, "Add To Queue", "Do Not Add");
+						StyledMessageBox.ShowMessageBox(
+							UserSaidToAllowAddToQueue, memoryWarningMessage, "File May Cause Problems".Localize(), StyledMessageBox.MessageType.YES_NO, "Add To Queue", "Do Not Add");
 						// show a dialog to tell the user there is an update
 					});
 					return;
@@ -273,6 +275,23 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
+		public static long GetEstimatedMemoryUse(string fileLocation)
+		{
+			switch (Path.GetExtension(fileLocation).ToUpper())
+			{
+				case ".STL":
+					return StlProcessing.GetEstimatedMemoryUse(fileLocation);
+
+				case ".AMF":
+					return AmfDocument.GetEstimatedMemoryUse(fileLocation);
+
+				case ".OBJ":
+					throw new NotImplementedException();
+			}
+
+			return 0;
+		}
+
 		private void UserSaidToAllowAddToQueue(bool messageBoxResponse)
 		{
 			if (messageBoxResponse)
@@ -285,7 +304,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			if (insertAt == -1)
 			{
-				insertAt = PrintItems.Count; 
+				insertAt = PrintItems.Count;
 			}
 
 			PrintItems.Insert(insertAt, item);
