@@ -347,7 +347,7 @@ namespace MatterHackers.MatterControl
 
 							using (var stream = ApplicationController.Instance.LoadHttpAsset(url))
 							{
-								var mesh = MeshFileIo.Load(stream, extension, CancellationToken.None).Mesh;
+								var mesh = Object3D.Load(stream, extension, CancellationToken.None).Mesh;
 
 								BspNode bspTree = null;
 
