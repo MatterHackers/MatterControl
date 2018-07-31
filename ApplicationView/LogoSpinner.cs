@@ -37,6 +37,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.PolygonMesh;
+	using MatterHackers.PolygonMesh.Processors;
 	using MatterHackers.RenderOpenGl;
 	using MatterHackers.VectorMath;
 
@@ -55,7 +56,7 @@ namespace MatterHackers.MatterControl
 
 			using (var logoStream = AggContext.StaticData.OpenStream(Path.Combine("Stls", "MH Logo.stl")))
 			{
-				logoMesh = MeshFileIo.Load(logoStream, ".stl", CancellationToken.None).Mesh;
+				logoMesh = StlProcessing.Load(logoStream, CancellationToken.None);
 			}
 
 			// Position
