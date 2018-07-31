@@ -43,6 +43,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -165,6 +166,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						mergeString += ",";
 					}
+
+					// TODO: Use existing AssetsPath property
 					string assetsDirectory = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Assets");
 					outputItems.Add((item.WorldMatrix(), Path.Combine(assetsDirectory, item.MeshPath)));
 					mergeString += $"({savedStlCount++}";
@@ -175,26 +178,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else
 			{
-				var tinyObjectFileName = SaveAndGetFilePathForMesh(PlatonicSolids.CreateCube(.001, .001, .001), CancellationToken.None);
+				// TODO: consider dropping the custom path and using the AssetPath as above
+				string folderToSaveStlsTo = Path.Combine(ApplicationDataStorage.Instance.ApplicationTempDataPath, "amf_to_stl");
+
+				// Create directory if needed
+				Directory.CreateDirectory(folderToSaveStlsTo);
+
+				Mesh tinyMesh = PlatonicSolids.CreateCube(.001, .001, .001);
+
+				string tinyObjectFileName = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(tinyMesh.GetLongHashCode().ToString(), ".stl"));
+
+				StlProcessing.Save(tinyMesh, tinyObjectFileName, CancellationToken.None);
+
 				outputItems.Add((Matrix4X4.Identity, tinyObjectFileName));
 				mergeString += $"({savedStlCount++})";
 			}
 
 			return mergeString;
-		}
-
-		private static string SaveAndGetFilePathForMesh(Mesh meshToSave, CancellationToken cancellationToken)
-		{
-			string folderToSaveStlsTo = Path.Combine(ApplicationDataStorage.Instance.ApplicationTempDataPath, "amf_to_stl");
-
-			// Create directory if needed
-			Directory.CreateDirectory(folderToSaveStlsTo);
-
-			string filePath = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(meshToSave.GetLongHashCode().ToString(), ".stl"));
-
-			MeshFileIo.Save(meshToSave, filePath, cancellationToken);
-
-			return filePath;
 		}
 
 		public static Task<bool> SliceFile(string sourceFile, string gcodeFilePath, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
