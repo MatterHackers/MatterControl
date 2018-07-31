@@ -1680,8 +1680,8 @@
   },
   {
     "SlicerConfigName": "first_top_layer_speed",
-    "PresentationName": "First Top Layer",
-    "HelpText": "The speed at which the first top layer will print. Can be set explicitly or as a percentage of the Top Infill speed. Use 0 to match the Top Infill Speed",
+    "PresentationName": "First On Sparse Infill",
+    "HelpText": "The speed at which the first layer on sparse infill will print. Can be set explicitly or as a percentage of the Infill speed. Use 0 to match the Infill Speed",
     "DataEditType": "DOUBLE_OR_PERCENT",
     "Units": "mm/s or %",
     "ShowIfSet": "!sla_printer",
