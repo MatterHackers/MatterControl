@@ -1782,15 +1782,6 @@
     "DefaultValue": "0"
   },
   {
-    "SlicerConfigName": "wipe",
-    "PresentationName": "Wipe Before Retract",
-    "HelpText": "The extruder will wipe the nozzle over the last up to 10 mm of tool path after retracting.",
-    "DataEditType": "CHECK_BOX",
-    "ShowIfSet": "!sla_printer",
-    "EnableIfSet": "enable_retractions",
-    "DefaultValue": "0"
-  },
-  {
     "SlicerConfigName": "wipe_shield_distance",
     "PresentationName": "Wipe Shield Distance",
     "HelpText": "Creates a perimeter around the part on which to wipe the other nozzle when printing using dual extrusion. Set to 0 to disable.",
