@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 				else
 				{
-					ScaleRatio.X = value / SourceItem.XSize();
+					ScaleRatio.Y = value / SourceItem.YSize();
 				}
 			}
 		}
