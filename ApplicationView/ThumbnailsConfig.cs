@@ -103,12 +103,6 @@ namespace MatterHackers.MatterControl
 			return null;
 		}
 
-		public string CachePath(string cacheId)
-		{
-			return ApplicationController.CacheablePath(
-				Path.Combine("Thumbnails", "Content"),
-				$"{cacheId}.png");
-		}
 
 		public string CachePath(string cacheId, int width, int height)
 		{
@@ -208,6 +202,21 @@ namespace MatterHackers.MatterControl
 		{
 			// Release the waiting ThumbnailGeneration task so it can shutdown gracefully
 			thumbGenResetEvent?.Set();
+		}
+
+		public void DeleteCache(ILibraryItem sourceItem)
+		{
+			var thumbnailPath = ApplicationController.Instance.Thumbnails.CachePath(sourceItem);
+			if (File.Exists(thumbnailPath))
+			{
+				File.Delete(thumbnailPath);
+			}
+
+			// Purge any specifically sized thumbnails
+			foreach (var sizedThumbnail in Directory.GetFiles(Path.GetDirectoryName(thumbnailPath), Path.GetFileNameWithoutExtension(thumbnailPath) + "-*.png"))
+			{
+				File.Delete(sizedThumbnail);
+			}
 		}
 	}
 }
