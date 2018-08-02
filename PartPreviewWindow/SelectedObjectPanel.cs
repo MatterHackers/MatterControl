@@ -313,7 +313,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			bool allowOperations = true;
 
-			if (selectedItem is ComponentObject3D componentObject)
+			if (selectedItem is ComponentObject3D componentObject
+				&& componentObject.Finalized)
 			{
 				allowOperations = false;
 

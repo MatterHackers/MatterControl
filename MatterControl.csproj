@@ -85,6 +85,7 @@
     <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\LastPageInstructions.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingWizard.cs" />
     <Compile Include="CustomWidgets\HelpArticleHeader.cs" />
+    <Compile Include="CustomWidgets\InlineListItemEdit.cs" />
     <Compile Include="CustomWidgets\LinkLabel.cs" />
     <Compile Include="CustomWidgets\ResizeContainer\BottomResizeContainer.cs" />
     <Compile Include="CustomWidgets\ResizeContainer\LeftResizeContainer.cs" />
@@ -280,6 +281,7 @@
     <Compile Include="SlicerConfiguration\UIFields\CharField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\DirectionVectorField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\EnumField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\ListStringField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IconEnumField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IpAddessField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\MarkdownEditField.cs" />

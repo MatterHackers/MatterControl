@@ -43,6 +43,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public event EventHandler TitleChanged;
 
 		private TextWidget titleText;
+		protected FlowLayoutWidget rightPanel;
 		private GuiWidget editButton;
 		private GuiWidget saveButton;
 		private SearchInputBox searchPanel;
@@ -95,7 +96,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			this.AddChild(searchPanel);
 
-			var rightPanel = new FlowLayoutWidget();
+			rightPanel = new FlowLayoutWidget();
 
 			editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
 			{
