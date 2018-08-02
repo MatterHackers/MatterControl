@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
-using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.CustomWidgets;
 
@@ -48,11 +47,5 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public List<string> SurfacedEditors { get; set; } = new List<string>();
-
-		public override void Remove(UndoBuffer undoBuffer)
-		{
-			// TODO: change this into a ComponentEditorObject3D
-			base.Remove(undoBuffer);
-		}
 	}
 }
