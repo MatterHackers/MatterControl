@@ -242,13 +242,19 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			change.Context.GetEditRow(nameof(SizeX)).Visible = Operation == ScaleType.Specify;
-			change.Context.GetEditRow(nameof(SizeY)).Visible = Operation == ScaleType.Specify;
-			change.Context.GetEditRow(nameof(SizeZ)).Visible = Operation == ScaleType.Specify;
+			var editRow = change.Context.GetEditRow(nameof(SizeX));
+			if (editRow != null) editRow.Visible = Operation == ScaleType.Specify;
+			editRow = change.Context.GetEditRow(nameof(SizeY));
+			if (editRow != null) editRow.Visible = Operation == ScaleType.Specify;
+			editRow = change.Context.GetEditRow(nameof(SizeZ));
+			if (editRow != null) editRow.Visible = Operation == ScaleType.Specify;
 
-			change.Context.GetEditRow(nameof(MaitainProportions)).Visible = Operation == ScaleType.Specify;
-			change.Context.GetEditRow(nameof(UsePercentage)).Visible = Operation == ScaleType.Specify;
-			change.Context.GetEditRow(nameof(ScaleAbout)).Visible = Operation == ScaleType.Specify;
+			editRow = change.Context.GetEditRow(nameof(MaitainProportions));
+			if (editRow != null) editRow.Visible = Operation == ScaleType.Specify;
+			editRow = change.Context.GetEditRow(nameof(UsePercentage));
+			if (editRow != null) editRow.Visible = Operation == ScaleType.Specify;
+			editRow = change.Context.GetEditRow(nameof(ScaleAbout));
+			if (editRow != null) editRow.Visible = Operation == ScaleType.Specify;
 
 			if(change.Changed == nameof(Operation))
 			{

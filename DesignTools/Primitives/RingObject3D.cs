@@ -137,8 +137,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			change.Context.GetEditRow(nameof(StartingAngle)).Visible = Advanced;
-			change.Context.GetEditRow(nameof(EndingAngle)).Visible = Advanced;
+			var editRow = change.Context.GetEditRow(nameof(StartingAngle));
+			if (editRow != null) editRow.Visible = Advanced;
+			editRow = change.Context.GetEditRow(nameof(EndingAngle));
+			if (editRow != null) editRow.Visible = Advanced;
 		}
 	}
 }
