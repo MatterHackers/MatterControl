@@ -386,12 +386,18 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			change.Context.GetEditRow(nameof(XAlignTo)).Visible = Advanced && XAlign != Align.Origin;
-			change.Context.GetEditRow(nameof(XOffset)).Visible = Advanced;
-			change.Context.GetEditRow(nameof(YAlignTo)).Visible = Advanced && YAlign != Align.Origin;
-			change.Context.GetEditRow(nameof(YOffset)).Visible = Advanced;
-			change.Context.GetEditRow(nameof(ZAlignTo)).Visible = Advanced && ZAlign != Align.Origin;
-			change.Context.GetEditRow(nameof(ZOffset)).Visible = Advanced;
+			var editRow = change.Context.GetEditRow(nameof(XAlignTo));
+			if (editRow != null) editRow.Visible = Advanced && XAlign != Align.Origin;
+			editRow = change.Context.GetEditRow(nameof(XOffset));
+			if (editRow != null) editRow.Visible = Advanced;
+			editRow = change.Context.GetEditRow(nameof(YAlignTo));
+			if (editRow != null) editRow.Visible = Advanced && YAlign != Align.Origin;
+			editRow = change.Context.GetEditRow(nameof(YOffset));
+			if (editRow != null) editRow.Visible = Advanced;
+			editRow = change.Context.GetEditRow(nameof(ZAlignTo));
+			if (editRow != null) editRow.Visible = Advanced && ZAlign != Align.Origin;
+			editRow = change.Context.GetEditRow(nameof(ZOffset));
+			if (editRow != null) editRow.Visible = Advanced;
 		}
 
 		private static bool IsSet(FaceAlign variableToCheck, FaceAlign faceToCheckFor, FaceAlign faceToAssertNot)

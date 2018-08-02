@@ -270,13 +270,18 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			change.Context.GetEditRow(nameof(Diameter)).Visible = FitType != FitType.Box;
-
-			change.Context.GetEditRow(nameof(Width)).Visible = FitType == FitType.Box;
-			change.Context.GetEditRow(nameof(Depth)).Visible = FitType == FitType.Box;
-			change.Context.GetEditRow(nameof(MaintainRatio)).Visible = FitType == FitType.Box;
-			change.Context.GetEditRow(nameof(StretchX)).Visible = FitType == FitType.Box;
-			change.Context.GetEditRow(nameof(StretchY)).Visible = FitType == FitType.Box;
+			var editRow = change.Context.GetEditRow(nameof(Diameter));
+			if(editRow != null) editRow.Visible = FitType != FitType.Box;
+			editRow = change.Context.GetEditRow(nameof(Width));
+			if (editRow != null) editRow.Visible = FitType == FitType.Box;
+			editRow = change.Context.GetEditRow(nameof(Depth));
+			if (editRow != null) editRow.Visible = FitType == FitType.Box;
+			editRow = change.Context.GetEditRow(nameof(MaintainRatio));
+			if (editRow != null) editRow.Visible = FitType == FitType.Box;
+			editRow = change.Context.GetEditRow(nameof(StretchX));
+			if (editRow != null) editRow.Visible = FitType == FitType.Box;
+			editRow = change.Context.GetEditRow(nameof(StretchY));
+			if (editRow != null) editRow.Visible = FitType == FitType.Box;
 		}
 	}
 }

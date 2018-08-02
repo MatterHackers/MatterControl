@@ -118,6 +118,7 @@
     <Compile Include="DesignTools\Operations\ScaleObject3D.cs" />
     <Compile Include="DesignTools\Operations\SetCenterObject3D.cs" />
     <Compile Include="DesignTools\Operations\TranslateObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\ComponentEditorObject3D.cs" />
     <Compile Include="DesignTools\Primitives\ComponentObject3D.cs" />
     <Compile Include="DesignTools\Primitives\CubeObject3D.cs" />
     <Compile Include="DesignTools\Primitives\HalfCylinderObject3D.cs" />

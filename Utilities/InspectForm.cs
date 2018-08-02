@@ -301,6 +301,10 @@ namespace MatterHackers.MatterControl
 		{
 			this.InspectedObject3D = e.Node.Tag as IObject3D;
 			this.scene.DebugItem = this.InspectedObject3D;
+
+			var selector = string.Join(".", this.InspectedObject3D.AncestorsAndSelf().Select(o => $"Children<{o.GetType().Name.ToString()}>").Reverse().ToArray());
+			Console.WriteLine(selector);
+
 			view3DWidget.Invalidate();
 		}
 

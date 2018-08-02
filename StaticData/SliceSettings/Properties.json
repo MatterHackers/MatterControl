@@ -1712,7 +1712,7 @@
   },
   {
     "SlicerConfigName": "bridge_over_infill",
-    "PresentationName": "Bridge Over Infull",
+    "PresentationName": "Bridge Over Infill",
     "HelpText": "Make the first layer on top of partial infill use the speed and fan for bridging.",
     "DataEditType": "CHECK_BOX",
     "DefaultValue": "0"
@@ -1779,15 +1779,6 @@
     "HelpText": "This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.",
     "DataEditType": "INT",
     "Units": "Hz",
-    "DefaultValue": "0"
-  },
-  {
-    "SlicerConfigName": "wipe",
-    "PresentationName": "Wipe Before Retract",
-    "HelpText": "The extruder will wipe the nozzle over the last up to 10 mm of tool path after retracting.",
-    "DataEditType": "CHECK_BOX",
-    "ShowIfSet": "!sla_printer",
-    "EnableIfSet": "enable_retractions",
     "DefaultValue": "0"
   },
   {

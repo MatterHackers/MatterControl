@@ -34,23 +34,16 @@ using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class ComponentObject3D : Object3D, IVisualLeafNode
+	public class ComponentEditorObject3D : Object3D, IVisualLeafNode
 	{
-		public ComponentObject3D()
+		public ComponentEditorObject3D()
 		{
 		}
 
-		public ComponentObject3D(IEnumerable<IObject3D> children)
-			: base (children)
+		public override void Apply(UndoBuffer undoBuffer)
 		{
-		}
-
-		public List<string> SurfacedEditors { get; set; } = new List<string>();
-
-		public override void Remove(UndoBuffer undoBuffer)
-		{
-			// TODO: change this into a ComponentEditorObject3D
-			base.Remove(undoBuffer);
+			// TODO: change this into a Component
+			base.Apply(undoBuffer);
 		}
 	}
 }

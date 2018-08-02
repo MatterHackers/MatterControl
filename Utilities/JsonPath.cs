@@ -366,13 +366,16 @@ namespace JsonPath
 				// Separate member and typeFilter from member field
 				(member, typeFilter) = StripTypeFilter(member);
 
+				//if (TryParseInt(member) is int)
+				//{
+				//	return true;
+				//}
+
 				// IEnumerable field must be iterated to check
-				if (value is IEnumerable enumerable)
+				if (!string.IsNullOrEmpty(typeFilter)
+					&& GetMemberValue(value, member) is IEnumerable enumerable)
 				{
-					if (TryParseInt(member) is int)
-					{
-						return true;
-					}
+
 
 					// Handle the typeFilter case
 					foreach (var n in enumerable)
@@ -382,6 +385,8 @@ namespace JsonPath
 							return true;
 						}
 					}
+
+					return false;
 				}
 
 				// TODO: Inline once troubleshooting is complete
