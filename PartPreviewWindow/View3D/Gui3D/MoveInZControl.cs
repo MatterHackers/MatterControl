@@ -38,6 +38,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
@@ -134,10 +135,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			DrawOnTop = true;
 
-			string arrowFile = Path.Combine("Icons", "3D Icons", "up_pointer.stl");
-			using (Stream arrowStream = AggContext.StaticData.OpenStream(arrowFile))
+			using (Stream arrowStream = AggContext.StaticData.OpenStream(Path.Combine("Icons", "3D Icons", "up_pointer.stl")))
 			{
-				upArrowMesh = MeshFileIo.Load(arrowStream, Path.GetExtension(arrowFile), CancellationToken.None).Mesh;
+				upArrowMesh = StlProcessing.Load(arrowStream, CancellationToken.None);
 			}
 
 			CollisionVolume = upArrowMesh.CreateTraceData();

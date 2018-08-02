@@ -75,6 +75,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		private static string _partHistoryDirectory => Path.Combine(_applicationLibraryDataPath, "PartHistory");
 		private static string _applicationTempDataPath => Path.Combine(_applicationUserDataPath, "data", "temp");
 		private static string _gcodeOutputPath => Path.Combine(_applicationTempDataPath, "gcode");
+		private static string _cacheDirectory => Path.Combine(_applicationTempDataPath, "cache");
 
 		public static string ApplicationUserDataPath => EnsurePath(_applicationUserDataPath);
 
@@ -89,6 +90,8 @@ namespace MatterHackers.MatterControl.DataStorage
 		public string PartHistoryDirectory => EnsurePath(_partHistoryDirectory);
 
 		public string GCodeOutputPath => EnsurePath(_gcodeOutputPath);
+
+		public string CacheDirectory => EnsurePath(_cacheDirectory );
 
 		public string DownloadsDirectory { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 

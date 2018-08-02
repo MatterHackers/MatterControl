@@ -387,7 +387,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					scrollable.Width = width;
 
 					// Tuning values should default to 1 when missing
-					ConfirmExpectedSpeeds(testRunner, 1, 1);
+					ConfirmExpectedSpeeds(testRunner, 1, 1, "Initial case");
 
 					testRunner.Delay();
 					testRunner.ClickByName("Extrusion Multiplier NumberEdit");
@@ -399,19 +399,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Force focus away from the feed rate field, causing an persisted update
 					testRunner.ClickByName("Extrusion Multiplier NumberEdit");
 
-					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
+					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "After setting TextEdit values");
 
 					// Wait for slicing to complete before setting target values
 					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.DetailedPrintingState == DetailedPrintingState.Printing, 8);
 					testRunner.Delay();
 
-					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
+					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "While printing");
 
 					// Wait up to 60 seconds for the print to finish
 					printFinishedResetEvent.WaitOne(60 * 1000);
 
 					// Values should match entered values
-					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
+					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "After print finished");
 
 					testRunner.WaitForPrintFinished();
 
@@ -420,13 +420,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Delay(2);
 
 					// Values should match entered values
-					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
+					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "After print restarted");
 
 					testRunner.CancelPrint();
 					testRunner.Delay(1);
 
 					// Values should match entered values
-					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
+					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "After canceled print");
 				}
 
 				return Task.CompletedTask;
@@ -481,7 +481,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					scrollable.Width = width;
 
 					// Tuning values should match
-					ConfirmExpectedSpeeds(testRunner, initialExtrusionRate, initialFeedRate);
+					ConfirmExpectedSpeeds(testRunner, initialExtrusionRate, initialFeedRate, "Initial case");
 
 					testRunner.Delay();
 					testRunner.ClickByName("Extrusion Multiplier NumberEdit");
@@ -491,16 +491,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type(targetFeedRate.ToString());
 
 					// Force focus away from the feed rate field, causing an persisted update
-					testRunner.SwitchToControlsTab();
+					testRunner.ClickByName("Extrusion Multiplier NumberEdit");
 
-					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
+					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "After setting TextEdit values");
 
 					// Wait for slicing to complete before setting target values
 					testRunner.WaitFor(() => printer.Connection.DetailedPrintingState == DetailedPrintingState.Printing, 8);
 					testRunner.Delay();
 
 					// Values should remain after print completes
-					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
+					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "While printing");
 
 					// Wait for printing to complete
 					printFinishedResetEvent.WaitOne();
@@ -512,13 +512,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Printing, 15);
 
 					// Values should match entered values
-					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
+					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "While reprinting");
 
 					testRunner.CancelPrint();
 					testRunner.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Connected, 15);
 
 					// Values should match entered values
-					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
+					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "After cancel");
 				}
 
 				return Task.CompletedTask;
@@ -635,23 +635,27 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideHeight: 900, maxTimeToRun: 90);
 		}
 
-		private static void ConfirmExpectedSpeeds(AutomationRunner testRunner, double targetExtrusionRate, double targetFeedRate)
+		private static void ConfirmExpectedSpeeds(AutomationRunner testRunner, double targetExtrusionRate, double targetFeedRate, string scope)
 		{
 			SystemWindow systemWindow;
 			SolidSlider slider;
 
 			// Assert the UI has the expected values
 			slider = testRunner.GetWidgetByName("Extrusion Multiplier Slider", out systemWindow, 5) as SolidSlider;
-			Assert.IsTrue(targetExtrusionRate == slider.Value);
+			testRunner.WaitFor(() => targetExtrusionRate == slider.Value);
+
+			Assert.AreEqual(targetExtrusionRate, slider.Value, $"Unexpected Extrusion Rate Slider Value - {scope}");
 
 			slider = testRunner.GetWidgetByName("Feed Rate Slider", out systemWindow, 5) as SolidSlider;
-			Assert.IsTrue(targetFeedRate == slider.Value);
-
-			testRunner.Delay(.2);
+			testRunner.WaitFor(() => targetFeedRate == slider.Value);
+			Assert.AreEqual(targetFeedRate, slider.Value, $"Unexpected Feed Rate Slider Value - {scope}");
 
 			// Assert the changes took effect on the model
-			Assert.IsTrue(targetExtrusionRate == ExtrusionMultiplyerStream.ExtrusionRatio);
-			Assert.IsTrue(targetFeedRate == FeedRateMultiplyerStream.FeedRateRatio);
+			testRunner.WaitFor(() => targetExtrusionRate == ExtrusionMultiplyerStream.ExtrusionRatio);
+			Assert.AreEqual(targetExtrusionRate, ExtrusionMultiplyerStream.ExtrusionRatio, $"Unexpected Extrusion Rate - {scope}");
+
+			testRunner.WaitFor(() => targetFeedRate == FeedRateMultiplyerStream.FeedRateRatio);
+			Assert.AreEqual(targetFeedRate, FeedRateMultiplyerStream.FeedRateRatio, $"Unexpected Feed Rate - {scope}");
 		}
 	}
 }

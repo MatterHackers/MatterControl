@@ -120,10 +120,9 @@ namespace MatterHackers.MatterControl
 				});
 		}
 
-		private static string applicationDataPath = ApplicationDataStorage.ApplicationUserDataPath;
-		private static string archiveStagingFolder = Path.Combine(applicationDataPath, "data", "temp", "project-assembly");
+		private static string archiveStagingFolder = Path.Combine(ApplicationDataStorage.Instance.ApplicationTempDataPath, "project-assembly");
 		private static string defaultManifestPathAndFileName = Path.Combine(archiveStagingFolder, "manifest.json");
-		private static string defaultProjectPathAndFileName = Path.Combine(applicationDataPath, "data", "default.zip");
+		private static string defaultProjectPathAndFileName = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "default.zip");
 
 		public static void EmptyFolder(System.IO.DirectoryInfo directory)
 		{
@@ -224,7 +223,7 @@ namespace MatterHackers.MatterControl
 					int projectHashCode = zip.GetHashCode();
 
 					//If the temp folder doesn't exist - create it, otherwise clear it
-					string stagingFolder = Path.Combine(applicationDataPath, "data", "temp", "project-extract", projectHashCode.ToString());
+					string stagingFolder = Path.Combine(ApplicationDataStorage.Instance.ApplicationTempDataPath, "project-extract", projectHashCode.ToString());
 					if (!Directory.Exists(stagingFolder))
 					{
 						Directory.CreateDirectory(stagingFolder);

@@ -37,12 +37,10 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
-using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
@@ -98,7 +96,7 @@ namespace MatterHackers.MatterControl
 		public double PixelPerMM => inchesPerMm * SheetDpi;
 
 		public BorderDouble PageMarginMM { get; } = new BorderDouble(10, 5);
-		
+
 		public BorderDouble PageMarginPixels => PageMarginMM * PixelPerMM;
 
 		public double PartMarginMM { get; } = 2;
@@ -106,7 +104,7 @@ namespace MatterHackers.MatterControl
 		public double PartMarginPixels =>  PartMarginMM * PixelPerMM;
 
 		public double PartPaddingMM { get; } = 2;
-		
+
 		public double PartPaddingPixels => PartPaddingMM * PixelPerMM;
 
 		public int SheetDpi { get; set; }
@@ -281,14 +279,10 @@ namespace MatterHackers.MatterControl
 			printer.Origin = new Vector2(plateGraphics.DestImage.Width / 2, 60);
 			plateGraphics.Render(printer, Color.Black);
 
-			string applicationUserDataPath = ApplicationDataStorage.ApplicationUserDataPath;
-			string folderToSavePrintsTo = Path.Combine(applicationUserDataPath, "data", "temp", "plateImages");
+			string folderToSavePrintsTo = Path.Combine(ApplicationDataStorage.Instance.ApplicationTempDataPath, "plateImages");
 			string jpegFileName = Path.Combine(folderToSavePrintsTo, plateNumber.ToString() + ".jpeg");
 
-			if (!Directory.Exists(folderToSavePrintsTo))
-			{
-				Directory.CreateDirectory(folderToSavePrintsTo);
-			}
+			Directory.CreateDirectory(folderToSavePrintsTo);
 
 			AggContext.ImageIO.SaveImageData(jpegFileName, plateInventoryImage);
 
