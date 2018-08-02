@@ -770,13 +770,32 @@ namespace MatterHackers.MatterControl
 				"Make Component".Localize(),
 				(sceneItem, scene) =>
 				{
-					var selectedItem = scene.SelectedItem;
+					IEnumerable<IObject3D> items = new[] { sceneItem };
+
+					// If SelectionGroup, operate on Children instead
+					if (sceneItem is SelectionGroupObject3D)
+					{
+						items = sceneItem.Children;
+					}
+
+					// Dump selection forcing collapse of selection group
 					scene.SelectedItem = null;
-					var component = new ComponentObject3D();
-					component.Children.Add(selectedItem.Clone());
+
+					var component = new ComponentObject3D
+					{
+						Name = "New Component",
+						Finalized = false
+					};
+
+					// Copy an selected item into the component as a clone
+					component.Children.Modify(children =>
+					{
+						children.AddRange(items.Select(o => o.Clone()));
+					});
+
 					component.MakeNameNonColliding();
 
-					scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, new List<IObject3D> { component }));
+					scene.UndoBuffer.AddAndDo(new ReplaceCommand(items, new [] { component }));
 					scene.SelectedItem = component;
 
 					return Task.CompletedTask;
