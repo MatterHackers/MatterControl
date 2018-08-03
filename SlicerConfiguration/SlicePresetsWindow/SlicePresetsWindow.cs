@@ -82,12 +82,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			contentRow.BackgroundColor = Color.Transparent;
 
-			var inlineTitleEdit = new InlineTitleEdit(presetsContext.PersistenceLayer.Name, theme, presetsContext.LayerType.ToString() + " Name", boldFont: true);
-			inlineTitleEdit.TitleChanged += (s, e) =>
+			var inlineNameEdit = new InlineStringEdit(presetsContext.PersistenceLayer.Name, theme, presetsContext.LayerType.ToString() + " Name", boldFont: true);
+			inlineNameEdit.ValueChanged += (s, e) =>
 			{
-				printer.Settings.SetValue(SettingsKey.layer_name, inlineTitleEdit.Text, presetsContext.PersistenceLayer);
+				printer.Settings.SetValue(SettingsKey.layer_name, inlineNameEdit.Text, presetsContext.PersistenceLayer);
 			};
-			contentRow.AddChild(inlineTitleEdit);
+			contentRow.AddChild(inlineNameEdit);
 
 			var sliceSettingsWidget = CreateSliceSettingsWidget(printer, presetsContext.PersistenceLayer);
 			contentRow.AddChild(sliceSettingsWidget);
@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					string sanitizedName = numberMatch.Replace(inlineTitleEdit.Text, "").Trim();
+					string sanitizedName = numberMatch.Replace(inlineNameEdit.Text, "").Trim();
 					string newProfileName = agg_basics.GetNonCollidingName(sanitizedName, presetsContext.PresetLayers.Select(preset => preset.ValueOrDefault(SettingsKey.layer_name)));
 
 					var clonedLayer = presetsContext.PersistenceLayer.Clone();
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					sliceSettingsWidget = CreateSliceSettingsWidget(printer, clonedLayer);
 					contentRow.AddChild(sliceSettingsWidget);
 
-					inlineTitleEdit.Text = newProfileName;
+					inlineNameEdit.Text = newProfileName;
 				});
 			};
 			this.AddPageAction(duplicateButton);

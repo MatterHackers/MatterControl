@@ -45,7 +45,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			: base (FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Absolute;
-			this.Cursor = Cursors.HSplit;
 			this.SplitterHeight = theme.SplitterWidth;
 			this.SpliterBarColor = theme.SplitterBackground;
 		}
@@ -80,7 +79,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			if (mouseEvent.Position.Y < this.SplitterHeight)
+			if (mouseEvent.Position.Y <= this.LocalBounds.Bottom + this.SplitterHeight
+				&& mouseEvent.Position.Y >= this.LocalBounds.Bottom)
 			{
 				mouseDownOnBar = true;
 				mouseDownY = TransformToScreenSpace(mouseEvent.Position).Y;
@@ -99,6 +99,26 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					Height = downHeight + mouseDownY - currentMouseY;
 				});
 			}
+
+			var currentCursor = this.Cursor;
+
+			if (mouseEvent.Position.Y <= this.LocalBounds.Bottom + this.SplitterHeight
+				&& mouseEvent.Position.Y >= this.LocalBounds.Bottom)
+			{
+				this.Cursor = Cursors.HSplit;
+
+			}
+			else
+			{
+				this.Cursor = Cursors.Default;
+			}
+
+			if (this.FirstWidgetUnderMouse
+				&& this.Cursor != currentCursor)
+			{
+				this.SetCursor(this.Cursor);
+			}
+
 			base.OnMouseMove(mouseEvent);
 		}
 

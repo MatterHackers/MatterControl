@@ -404,6 +404,12 @@ namespace MatterControl.Tests.MatterControl
 			Assert.Fail();
 		}
 
+		[Test, Ignore("Not Implemented")]
+		public async Task SurfacedEditorsFieldTest()
+		{
+			Assert.Fail();
+		}
+
 		public class ValueMap
 		{
 			[DebuggerStepThrough]
