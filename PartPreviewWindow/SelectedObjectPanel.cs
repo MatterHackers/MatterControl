@@ -174,6 +174,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}
 						}
 					}
+
+					if (selectedItem.Ancestors().OfType<ComponentObject3D>().FirstOrDefault() is ComponentObject3D componentAncestor
+						&& !componentAncestor.Finalized)
+					{
+						var button = popupMenu.CreateMenuItem("Copy Path".Localize());
+						button.Click += (s, e) =>
+						{
+							var selector = "$." + string.Join(".", selectedItem.AncestorsAndSelf().TakeWhile(o => !(o is ComponentObject3D)).Select(o => $"Children<{o.GetType().Name.ToString()}>").Reverse().ToArray());
+
+							Clipboard.Instance.SetText(selector);
+						};
+					}
 				}
 
 				return popupMenu;
@@ -313,7 +325,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			bool allowOperations = true;
 
-			if (selectedItem is ComponentObject3D componentObject)
+			if (selectedItem is ComponentObject3D componentObject
+				&& componentObject.Finalized)
 			{
 				allowOperations = false;
 

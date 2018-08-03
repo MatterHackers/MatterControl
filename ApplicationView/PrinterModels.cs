@@ -617,17 +617,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (!this.FreezeGCode)
 			{
-				var thumbnailPath = ApplicationController.Instance.Thumbnails.CachePath(this.SourceItem);
-				if (File.Exists(thumbnailPath))
-				{
-					File.Delete(thumbnailPath);
-				}
-
-				// Purge any specifically sized thumbnails
-				foreach(var sizedThumbnail in Directory.GetFiles(Path.GetDirectoryName(thumbnailPath), Path.GetFileNameWithoutExtension(thumbnailPath) + "-*.png"))
-				{
-					File.Delete(sizedThumbnail);
-				}
+				ApplicationController.Instance.Thumbnails.DeleteCache(this.SourceItem);
 
 				// Call save on the provider
 				this.ContentStore.Save(this.SourceItem, this.Content);

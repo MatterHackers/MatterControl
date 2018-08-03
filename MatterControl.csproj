@@ -85,6 +85,7 @@
     <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\LastPageInstructions.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingWizard.cs" />
     <Compile Include="CustomWidgets\HelpArticleHeader.cs" />
+    <Compile Include="CustomWidgets\InlineListItemEdit.cs" />
     <Compile Include="CustomWidgets\LinkLabel.cs" />
     <Compile Include="CustomWidgets\ResizeContainer\BottomResizeContainer.cs" />
     <Compile Include="CustomWidgets\ResizeContainer\LeftResizeContainer.cs" />
@@ -118,7 +119,6 @@
     <Compile Include="DesignTools\Operations\ScaleObject3D.cs" />
     <Compile Include="DesignTools\Operations\SetCenterObject3D.cs" />
     <Compile Include="DesignTools\Operations\TranslateObject3D.cs" />
-    <Compile Include="DesignTools\Primitives\ComponentEditorObject3D.cs" />
     <Compile Include="DesignTools\Primitives\ComponentObject3D.cs" />
     <Compile Include="DesignTools\Primitives\CubeObject3D.cs" />
     <Compile Include="DesignTools\Primitives\HalfCylinderObject3D.cs" />
@@ -280,6 +280,7 @@
     <Compile Include="SlicerConfiguration\UIFields\CharField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\DirectionVectorField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\EnumField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\ListStringField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IconEnumField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IpAddessField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\MarkdownEditField.cs" />
@@ -301,10 +302,10 @@
     <Compile Include="Utilities\MarkdigAgg\Inlines\AggLiteralInlineRenderer.cs" />
     <Compile Include="Utilities\MarkdigAgg\AggParagraphRenderer.cs" />
     <Compile Include="Utilities\IGCodePostProcessor.cs" />
-    <Compile Include="Utilities\InspectForm.cs" Condition="'$(Configuration)' == 'Debug'">
+    <Compile Include="Utilities\InspectForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Utilities\InspectForm.Designer.cs" Condition="'$(Configuration)' == 'Debug'">
+    <Compile Include="Utilities\InspectForm.Designer.cs">
       <DependentUpon>InspectForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Library\ContentProviders\GCodeContentProvider.cs" />
@@ -623,7 +624,7 @@
     <EmbeddedResource Include="config.json">
       <LogicalName>config.json</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Utilities\InspectForm.resx" Condition="'$(Configuration)' == 'Debug'">
+    <EmbeddedResource Include="Utilities\InspectForm.resx">
       <DependentUpon>InspectForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="App.config" />

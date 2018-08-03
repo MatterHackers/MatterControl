@@ -766,26 +766,45 @@ namespace MatterHackers.MatterControl
 #if DEBUG // when this is working (Component and ComponentPicker work), enable it.
 			this.Graph.RegisterOperation(
 				typeof(IObject3D),
-				typeof(ComponentEditorObject3D),
+				typeof(ComponentObject3D),
 				"Make Component".Localize(),
 				(sceneItem, scene) =>
 				{
-					var selectedItem = scene.SelectedItem;
+					IEnumerable<IObject3D> items = new[] { sceneItem };
+
+					// If SelectionGroup, operate on Children instead
+					if (sceneItem is SelectionGroupObject3D)
+					{
+						items = sceneItem.Children;
+					}
+
+					// Dump selection forcing collapse of selection group
 					scene.SelectedItem = null;
-					var component = new ComponentEditorObject3D();
-					component.Children.Add(selectedItem.Clone());
+
+					var component = new ComponentObject3D
+					{
+						Name = "New Component",
+						Finalized = false
+					};
+
+					// Copy an selected item into the component as a clone
+					component.Children.Modify(children =>
+					{
+						children.AddRange(items.Select(o => o.Clone()));
+					});
+
 					component.MakeNameNonColliding();
 
-					scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, new List<IObject3D> { component }));
+					scene.UndoBuffer.AddAndDo(new ReplaceCommand(items, new [] { component }));
 					scene.SelectedItem = component;
 
 					return Task.CompletedTask;
 				},
 				isVisible: (sceneItem) =>
 				{
-					bool noInternalComponents = sceneItem.Descendants().All((d) => !(d is ComponentObject3D) && !(d is ComponentEditorObject3D));
-					return noInternalComponents;
-				}, 
+					return sceneItem.Parent.Parent == null
+						&&  sceneItem.DescendantsAndSelf().All(d => !(d is ComponentObject3D));
+				},
 				iconCollector: (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons));
 #endif
 
@@ -2380,8 +2399,6 @@ namespace MatterHackers.MatterControl
 		private static string lastSection = "";
 		private static Stopwatch timer;
 
-		public static string PlatformFeaturesProvider { get; set; } = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl";
-
 		public static SystemWindow LoadRootWindow(int width, int height)
 		{
 			timer = Stopwatch.StartNew();
@@ -2761,8 +2778,6 @@ namespace MatterHackers.MatterControl
 
 		public static async Task<GuiWidget> Initialize(SystemWindow systemWindow, Action<double, string> reporter)
 		{
-			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(PlatformFeaturesProvider);
-
 			reporter?.Invoke(0.01, "PlatformInit");
 			AppContext.Platform.PlatformInit((status) =>
 			{
@@ -2788,9 +2803,6 @@ namespace MatterHackers.MatterControl
 			// now that we are all set up lets load our plugins and allow them their chance to set things up
 			reporter?.Invoke(0.8, "Plugins");
 			AppContext.Platform.FindAndInstantiatePlugins(systemWindow);
-
-			reporter?.Invoke(0.9, "Process Commandline");
-			AppContext.Platform.ProcessCommandline();
 
 			reporter?.Invoke(0.91, "OnLoadActions");
 			applicationController.OnLoadActions();

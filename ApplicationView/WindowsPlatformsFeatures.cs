@@ -117,11 +117,14 @@ namespace MatterHackers.MatterControl
 		{
 			var commandLineArgs = Environment.GetCommandLineArgs();
 
+#if DEBUG
+			WinformsEventSink.AllowInspector = true;
+#endif
+
 			for (int currentCommandIndex = 0; currentCommandIndex < commandLineArgs.Length; currentCommandIndex++)
 			{
 				string command = commandLineArgs[currentCommandIndex];
-				string commandUpper = command.ToUpper();
-				switch (commandUpper)
+				switch (command.ToUpper())
 				{
 					case "FORCE_SOFTWARE_RENDERING":
 						GL.HardwareAvailable = false;
@@ -133,6 +136,10 @@ namespace MatterHackers.MatterControl
 
 					case "SHOW_MEMORY":
 						RootSystemWindow.ShowMemoryUsed = true;
+						break;
+
+					case "ALLOW_INSPECTOR":
+						WinformsEventSink.AllowInspector = true;
 						break;
 				}
 			}

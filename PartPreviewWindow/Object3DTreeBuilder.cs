@@ -36,6 +36,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
@@ -57,7 +58,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			using (contextNode.LayoutLock())
 			{
-				if (!(item.Source is IVisualLeafNode))
+				var componentObject3D = item.Source as ComponentObject3D;
+
+				if (componentObject3D?.Finalized == false
+					|| componentObject3D is null && !(item.Source is IVisualLeafNode))
 				{
 					foreach (var child in item.Children)
 					{

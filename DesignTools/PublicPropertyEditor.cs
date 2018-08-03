@@ -105,6 +105,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			typeof(DirectionVector), typeof(DirectionAxis),
 			typeof(ChildrenSelector),
 			typeof(ImageBuffer),
+			typeof(List<string>)
 		};
 
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -311,6 +312,20 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 
 				rowContainer = CreateSettingsColumn(property, field);
+			}
+			else if (propertyValue is List<string> stringList)
+			{
+				var field = new ListStringField(theme);
+				field.Initialize(0);
+				field.ListValue = stringList;
+				field.ValueChanged += (s, e) =>
+				{
+					property.SetValue(field.ListValue);
+				};
+
+				rowContainer = CreateSettingsColumn(property, field);
+
+				rowContainer.Descendants<HorizontalSpacer>().FirstOrDefault()?.Close();
 			}
 			else if (propertyValue is Vector3 vector3)
 			{

@@ -30,7 +30,9 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text;
 using ClipperLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
@@ -86,6 +88,19 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public static bool IsRoot(this IObject3D object3D)
 		{
 			return object3D.Parent == null;
+		}
+
+		public static string ComputeSHA1(this IObject3D object3D)
+		{
+			// *******************************************************************************************************************************
+			// TODO: We must ensure we always compute with a stream that marks for UTF encoding with BOM, irrelevant of in-memory or on disk
+			// *******************************************************************************************************************************
+
+			// SHA1 value is based on UTF8 encoded file contents
+			using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(object3D.ToJson())))
+			{
+				return Object3D.ComputeSHA1(memoryStream);
+			}
 		}
 
 		public static void CopyProperties(this IObject3D copyTo, IObject3D copyFrom, Object3DPropertyFlags flags)

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,23 +27,36 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
-using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
-using MatterHackers.MatterControl.CustomWidgets;
+using System;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Localizations;
 
-namespace MatterHackers.MatterControl.DesignTools
+namespace MatterHackers.MatterControl.CustomWidgets
 {
-	public class ComponentEditorObject3D : Object3D, IVisualLeafNode
+	public class InlineListItemEdit : InlineTitleEdit
 	{
-		public ComponentEditorObject3D()
-		{
-		}
+		public event EventHandler ItemDeleted;
 
-		public override void Apply(UndoBuffer undoBuffer)
+		public InlineListItemEdit(string title, ThemeConfig theme, string automationName, bool boldFont = false)
+			: base(title, theme, automationName, boldFont)
 		{
-			// TODO: change this into a Component
-			base.Apply(undoBuffer);
+			var removeButton = new IconButton(AggContext.StaticData.LoadIcon("remove.png", 16, 16, theme.InvertIcons), theme)
+			{
+				ToolTipText = "Delete".Localize(),
+				Visible = true,
+				Name = automationName + " Save",
+				Margin = new BorderDouble(left: 5)
+			};
+
+			removeButton.Click += (s, e) =>
+			{
+				this.ItemDeleted?.Invoke(this, null);
+			};
+
+			rightPanel.AddChild(removeButton);
+
+			this.ActionArea.Margin = this.ActionArea.Margin.Clone(right: rightPanel.Width + 5);
 		}
 	}
 }
