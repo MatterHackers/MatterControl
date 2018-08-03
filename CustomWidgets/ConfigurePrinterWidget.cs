@@ -38,12 +38,12 @@ namespace MatterHackers.MatterControl
 		public ConfigurePrinterWidget(SettingsContext settingsContext, PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
-			var inlineTitleEdit = new InlineTitleEdit(printer.Settings.GetValue(SettingsKey.printer_name), theme, "Printer Name", boldFont: true);
-			inlineTitleEdit.ValueChanged += (s, e) =>
+			var inlineNameEdit = new InlineStringEdit(printer.Settings.GetValue(SettingsKey.printer_name), theme, "Printer Name", boldFont: true);
+			inlineNameEdit.ValueChanged += (s, e) =>
 			{
-				printer.Settings.SetValue(SettingsKey.printer_name, inlineTitleEdit.Text);
+				printer.Settings.SetValue(SettingsKey.printer_name, inlineNameEdit.Text);
 			};
-			this.AddChild(inlineTitleEdit);
+			this.AddChild(inlineNameEdit);
 
 			this.AddChild(
 				new SliceSettingsTabView(

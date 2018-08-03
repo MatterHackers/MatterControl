@@ -86,6 +86,7 @@
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingWizard.cs" />
     <Compile Include="CustomWidgets\HelpArticleHeader.cs" />
     <Compile Include="CustomWidgets\InlineListItemEdit.cs" />
+    <Compile Include="CustomWidgets\InlineStringEdit.cs" />
     <Compile Include="CustomWidgets\LinkLabel.cs" />
     <Compile Include="CustomWidgets\ResizeContainer\BottomResizeContainer.cs" />
     <Compile Include="CustomWidgets\ResizeContainer\LeftResizeContainer.cs" />
@@ -201,7 +202,6 @@
     <Compile Include="DesignTools\Attributes\UnlockLinkAttribute.cs" />
     <Compile Include="Library\Providers\FileSystem\McxContainer.cs" />
     <Compile Include="Library\Providers\GraphConfig.cs" />
-    <Compile Include="CustomWidgets\InlineTitleEdit.cs" />
     <Compile Include="Library\DynamicContentStore.cs" />
     <Compile Include="Library\InMemoryLibraryItem.cs" />
     <Compile Include="DesignTools\LithophaneObject3D.cs" />

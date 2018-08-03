@@ -34,7 +34,7 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
-	public class InlineListItemEdit : InlineTitleEdit
+	public class InlineListItemEdit : InlineStringEdit
 	{
 		public event EventHandler ItemDeleted;
 

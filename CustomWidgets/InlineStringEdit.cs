@@ -38,7 +38,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
-	public class InlineTitleEdit : Toolbar
+	public class InlineStringEdit : Toolbar
 	{
 		public event EventHandler ValueChanged;
 
@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private GuiWidget saveButton;
 		private SearchInputBox searchPanel;
 
-		public InlineTitleEdit(string title, ThemeConfig theme, string automationName, bool boldFont = false)
+		public InlineStringEdit(string title, ThemeConfig theme, string automationName, bool boldFont = false)
 			: base(theme)
 		{
 			this.Padding = theme.ToolbarPadding;
