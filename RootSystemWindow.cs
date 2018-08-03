@@ -130,9 +130,7 @@ namespace MatterHackers.MatterControl
 			{
 				Clipboard.SetSystemClipboard(new WindowsFormsClipboard());
 			}
-#endif
 
-#if DEBUG && !__ANDROID__
 			WinformsSystemWindow.InspectorCreator = (inspectingWindow) =>
 			{
 				if (inspectingWindow == this)
