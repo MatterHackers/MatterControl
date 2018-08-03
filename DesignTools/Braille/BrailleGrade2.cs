@@ -27,8 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.PluginSystem;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -77,7 +75,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			{
 				string numConversion = ("#" + converted);
 
-				foreach(TextMapping keyValue in numberMappngs)
+				foreach (TextMapping keyValue in numberMappngs)
 				{
 					numConversion = numConversion.Replace(keyValue.Key, keyValue.Value);
 				}
@@ -93,10 +91,8 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				}
 			}
 
-			if(converted[0] != '#')
-			{ 
-				
-
+			if (converted[0] != '#')
+			{
 				// put in commas before capitals
 				converted = Regex.Replace(converted, "([A-Z])", ",$1");
 				converted = converted.ToLower();
@@ -123,12 +119,12 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				}
 
 				// do the replacements that must come after other characters
-				string tempBeforeLastCharacter = converted.Substring(0,converted.Length-1);
+				string tempBeforeLastCharacter = converted.Substring(0, converted.Length - 1);
 				foreach (TextMapping keyValue in beforeTextMappings)
 				{
 					if (tempBeforeLastCharacter.Contains(keyValue.Key))
 					{
-						converted = tempBeforeLastCharacter.Replace(keyValue.Key, keyValue.Value) + converted[converted.Length-1];
+						converted = tempBeforeLastCharacter.Replace(keyValue.Key, keyValue.Value) + converted[converted.Length - 1];
 						tempBeforeLastCharacter = converted.Substring(0, converted.Length - 1);
 					}
 				}
@@ -150,7 +146,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					{
 						if (tempMiddleCharacters.Contains(keyValue.Key))
 						{
-							converted = converted.Substring(0, 1) + tempMiddleCharacters.Replace(keyValue.Key, keyValue.Value) + converted.Substring(converted.Length-1, 1);						
+							converted = converted.Substring(0, 1) + tempMiddleCharacters.Replace(keyValue.Key, keyValue.Value) + converted.Substring(converted.Length - 1, 1);
 						}
 					}
 				}
@@ -171,7 +167,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		}
 
 		private static bool compareStringIgnoringPunctuation(string possiblyPunctuatedString, string targetExactMatch)
-		{			
+		{
 			string punctuationStrippedString = possiblyPunctuatedString;
 
 			if (Char.IsPunctuation(punctuationStrippedString[0]))
@@ -183,7 +179,6 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			{
 				punctuationStrippedString = punctuationStrippedString.TrimEnd(punctuationStrippedString[punctuationStrippedString.Length - 1]);
 			}
-
 
 			return punctuationStrippedString == targetExactMatch;
 		}
@@ -224,7 +219,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 						finalString.Append(" ");
 						skipSpace = false;
 					}
-					skipSpace = checkSkipSpace(word, wordIndex != numWords?words[wordIndex]: null);
+					skipSpace = checkSkipSpace(word, wordIndex != numWords ? words[wordIndex] : null);
 					finalString.Append(ConvertWord(word, wordIndex == numWords));
 
 					first = false;
@@ -238,7 +233,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		private static bool checkSkipSpace(string word, string nextWord)
 		{
 			bool skipSpace = false;
-			if(nextWord != null)
+			if (nextWord != null)
 			{
 				foreach (TextMapping keyValue in beforeWordsMappings)
 				{
@@ -248,36 +243,36 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					}
 				}
 
-				if(skipSpace)//Special Case: The word 'for' only skips if followed by the word 'the'
-				{					
-					skipSpace = word != "for"|| nextWord == "the";					
+				if (skipSpace)//Special Case: The word 'for' only skips if followed by the word 'the'
+				{
+					skipSpace = word != "for" || nextWord == "the";
 				}
-			}			
+			}
 
 			return skipSpace;
 		}
 
 		private static void ConvertMappingStringToList()
 		{
-			string[] conversions = BrailleGrade2Mapping.mappingTable.Split('\n'); 
+			string[] conversions = BrailleGrade2Mapping.mappingTable.Split('\n');
 
-			foreach(string inLine in conversions)
+			foreach (string inLine in conversions)
 			{
 				string line = inLine.Replace("\r", "").Trim();
-				if(line != null && line.Length>0)
+				if (line != null && line.Length > 0)
 				{
 					string[] keyConversionPair = line.Split(' ');
-					if(keyConversionPair.Length == 2 && keyConversionPair[0] != null && keyConversionPair[0].Length > 0 && keyConversionPair[1] != null && keyConversionPair[1].Length >0)
+					if (keyConversionPair.Length == 2 && keyConversionPair[0] != null && keyConversionPair[0].Length > 0 && keyConversionPair[1] != null && keyConversionPair[1].Length > 0)
 					{
-						if(keyConversionPair[0] != "//")
+						if (keyConversionPair[0] != "//")
 						{
-							TextMapping mapping = new TextMapping(keyConversionPair[0],keyConversionPair[1]);
+							TextMapping mapping = new TextMapping(keyConversionPair[0], keyConversionPair[1]);
 
-							if(IsNumeric(mapping.Key))
+							if (IsNumeric(mapping.Key))
 							{
 								numberMappngs.Add(mapping);
-							}							
-							else if(mapping.Key == mapping.Key.ToUpper())//if in all caps it is an exact match
+							}
+							else if (mapping.Key == mapping.Key.ToUpper())//if in all caps it is an exact match
 							{
 								mapping.Key = mapping.Key.ToLower();
 								if (mapping.Key.Contains("*"))
@@ -297,26 +292,26 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 								{
 									exactTextMappings.Add(mapping);
 								}
-								
+
 							}
-							else if(mapping.Key[0] == '+' && mapping.Key[mapping.Key.Length-1] == '+')//check between
+							else if (mapping.Key[0] == '+' && mapping.Key[mapping.Key.Length - 1] == '+')//check between
 							{
 								mapping.Key = mapping.Key.Trim('+');
 								betweenTextMappings.Add(mapping);
 							}
-							else if (mapping.Key[0] == '+') 
+							else if (mapping.Key[0] == '+')
 							{
 								mapping.Key = mapping.Key.Trim('+');
 								afterTextMappings.Add(mapping);
 							}
-							else if(mapping.Key[mapping.Key.Length-1] == '+')
+							else if (mapping.Key[mapping.Key.Length - 1] == '+')
 							{
 								mapping.Key = mapping.Key.Trim('+');
 								beforeTextMappings.Add(mapping);
 							}
-							else if(mapping.Key.Contains("*"))
-							{								
-								if(mapping.Key[0] == '*')
+							else if (mapping.Key.Contains("*"))
+							{
+								if (mapping.Key[0] == '*')
 								{
 									mapping.Key = mapping.Key.Trim('*');
 									postWordPunctuationMappings.Add(mapping);
@@ -326,7 +321,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 									mapping.Key = mapping.Key.Trim('*');
 									beforeWordsMappings.Add(mapping);
 								}
-								
+
 							}
 							else//if not a special type then it is an anyPositionMapping
 							{
@@ -336,21 +331,19 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					}
 				}
 			}
-
 		}
 
 		private static bool IsNumeric(string p)
-		{			
+		{
 			bool isNumeric = true;
 
-			for(int i = 0; i < p.Length && isNumeric; i++)
+			for (int i = 0; i < p.Length && isNumeric; i++)
 			{
 				char current = p[i];
 				isNumeric = (Char.IsNumber(current) || char.IsPunctuation(current)) && current != '*';
 			}
-			
+
 			return isNumeric;
 		}
-
 	}
 }
