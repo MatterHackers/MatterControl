@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				var localIndex = i;
 
-				inlineEdit.TitleChanged += (s, e) =>
+				inlineEdit.ValueChanged += (s, e) =>
 				{
 					_list[localIndex] = inlineEdit.Text;
 				};

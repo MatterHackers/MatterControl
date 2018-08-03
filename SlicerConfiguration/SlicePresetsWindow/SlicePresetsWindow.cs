@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			contentRow.BackgroundColor = Color.Transparent;
 
 			var inlineTitleEdit = new InlineTitleEdit(presetsContext.PersistenceLayer.Name, theme, presetsContext.LayerType.ToString() + " Name", boldFont: true);
-			inlineTitleEdit.TitleChanged += (s, e) =>
+			inlineTitleEdit.ValueChanged += (s, e) =>
 			{
 				printer.Settings.SetValue(SettingsKey.layer_name, inlineTitleEdit.Text, presetsContext.PersistenceLayer);
 			};

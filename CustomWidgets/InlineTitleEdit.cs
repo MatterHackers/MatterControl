@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class InlineTitleEdit : Toolbar
 	{
-		public event EventHandler TitleChanged;
+		public event EventHandler ValueChanged;
 
 		private TextWidget titleText;
 		protected FlowLayoutWidget rightPanel;
@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				this.Text = searchPanel.Text;
 				this.SetVisibility(showEditPanel: false);
-				this.TitleChanged?.Invoke(this, null);
+				this.ValueChanged?.Invoke(this, null);
 			};
 
 			searchPanel.searchInput.Name = automationName + " Field";
@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				this.Text = searchPanel.Text;
 				this.SetVisibility(showEditPanel: false);
-				this.TitleChanged?.Invoke(this, null);
+				this.ValueChanged?.Invoke(this, null);
 			};
 			rightPanel.AddChild(saveButton);
 
