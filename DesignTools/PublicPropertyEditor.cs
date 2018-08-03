@@ -315,7 +315,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (propertyValue is List<string> stringList)
 			{
-				var field = new ListStringField(theme);
+				var selectedItem = ApplicationController.Instance.DragDropData.SceneContext.Scene.SelectedItem;
+
+				var field = new SurfacedEditorsField(theme, selectedItem);
 				field.Initialize(0);
 				field.ListValue = stringList;
 				field.ValueChanged += (s, e) =>

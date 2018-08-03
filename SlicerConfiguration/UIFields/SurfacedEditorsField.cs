@@ -28,89 +28,48 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class ListStringField : UIField
+	public class SurfacedEditorsField : ListStringField
 	{
-		private ThemeConfig theme;
+		private IObject3D selectedItem;
 
-		public ListStringField(ThemeConfig theme)
+		public SurfacedEditorsField(ThemeConfig theme, IObject3D selectedItem)
+			: base(theme)
 		{
-			this.theme = theme;
+			this.selectedItem = selectedItem;
 		}
 
-		public override void Initialize(int tabIndex)
+		protected override void Rebuild()
 		{
-			this.Content = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			base.Rebuild();
+
+			foreach(var inlineEdit in this.Content.Children<InlineListItemEdit>())
 			{
-				Margin = new BorderDouble(20, 0, 0, 0),
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-			};
-
-			base.Initialize(tabIndex);
-		}
-
-		public List<string> _list = new List<string>();
-		public List<string> ListValue
-		{
-			get => _list;
-			set
-			{
-				_list = value;
-
-				this.Rebuild();
+				inlineEdit.EditOverride += InlineEdit_EditOverride;
 			}
 		}
 
-		protected virtual void Rebuild()
+		private void InlineEdit_EditOverride(object sender, EventArgs e)
 		{
-			this.Content.CloseAllChildren();
-
-			for (int i = 0; i < _list.Count; i++)
+			if (sender is InlineStringEdit inlineEdit)
 			{
-				var item = _list[i];
-
-				var inlineEdit = new InlineListItemEdit(item, theme, "none");
-
-				var localIndex = i;
-
-				inlineEdit.ValueChanged += (s, e) =>
+				var uifield = new TextField();
+				uifield.Initialize(0);
+				uifield.ValueChanged += (s, e2) =>
 				{
-					_list[localIndex] = inlineEdit.Text;
+					inlineEdit.Text = uifield.Value;
 				};
 
-				inlineEdit.ItemDeleted += (s, e) =>
+				DialogWindow.Show(new SurfacedEditorPage(uifield, selectedItem)
 				{
-					_list.RemoveAt(localIndex);
-					this.Rebuild();
-				};
-
-				this.Content.AddChild(inlineEdit);
+					EditorString = inlineEdit.Text,
+				});
 			}
-
-			var addItem = new IconButton(AggContext.StaticData.LoadIcon("md-add-circle_18.png", 18, 18, theme.InvertIcons), theme)
-			{
-				HAnchor = HAnchor.Right | HAnchor.Absolute,
-				Width = theme.ButtonHeight,
-				Height = theme.ButtonHeight,
-				VAnchor = VAnchor.Absolute,
-				Margin = 3
-			};
-
-			addItem.Click += (s, e) =>
-			{
-				_list.Add("New Entry");
-				this.Rebuild();
-			};
-
-			this.Content.AddChild(addItem);
 		}
 	}
 }

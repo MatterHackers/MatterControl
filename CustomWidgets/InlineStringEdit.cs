@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				if (this.EditOverride != null)
 				{
-					this.EditOverride.Invoke();
+					this.EditOverride.Invoke(this, null);
 				}
 				else
 				{
@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.ActionArea.Margin = this.ActionArea.Margin.Clone(right: rightPanel.Width + 5);
 		}
 
-		public Action EditOverride { get; set; }
+		public event EventHandler EditOverride;
 
 		public override string Text
 		{

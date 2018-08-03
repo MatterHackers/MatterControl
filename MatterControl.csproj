@@ -284,6 +284,8 @@
     <Compile Include="SlicerConfiguration\UIFields\IconEnumField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IpAddessField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\MarkdownEditField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\SurfacedEditorPage.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\SurfacedEditorsField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\Vector3Field.cs" />
     <Compile Include="Utilities\MarkdigAgg\AggCodeBlockRenderer.cs" />
     <Compile Include="Utilities\MarkdigAgg\AggHeadingRenderer.cs" />
