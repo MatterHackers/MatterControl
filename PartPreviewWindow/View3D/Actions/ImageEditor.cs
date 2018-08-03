@@ -62,10 +62,11 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var activeImage = imageObject.Image;
 
-			var imageSection = new SectionWidget(
-				"Image".Localize(),
-				new FlowLayoutWidget(FlowDirection.TopToBottom),
-				theme);
+			var imageSection = new SearchableSectionWidget("Image".Localize(), new FlowLayoutWidget(FlowDirection.TopToBottom), theme, emptyText: "Search Google".Localize());
+			imageSection.SearchInvoked += (s, e) =>
+			{
+				ApplicationController.Instance.LaunchBrowser($"http://www.google.com/search?q={e.Data} silhouette&tbm=isch");
+			};
 
 			theme.ApplyBoxStyle(imageSection, margin: 0);
 
@@ -79,31 +80,6 @@ namespace MatterHackers.MatterControl.DesignTools
 				Margin = new BorderDouble(bottom: 5),
 				HAnchor = HAnchor.Center
 			});
-
-			bool addImageSearch = true;
-			if(addImageSearch)
-			{
-				// add a search Google box
-				var searchRow = new FlowLayoutWidget()
-				{
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Fit,
-				};
-				imageSection.ContentPanel.AddChild(searchRow);
-
-				MHTextEditWidget textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Search Google".Localize());
-				textToAddWidget.HAnchor = HAnchor.Stretch;
-				searchRow.AddChild(textToAddWidget);
-				textToAddWidget.ActualTextEditWidget.EnterPressed += (object sender, KeyEventArgs keyEvent) =>
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						textToAddWidget.Unfocus();
-						string search = "http://www.google.com/search?q={0} silhouette&tbm=isch".FormatWith(textToAddWidget.Text);
-						ApplicationController.Instance.LaunchBrowser(search);
-					});
-				};
-			}
 
 			// add in the invert checkbox and change image button
 			var changeButton = new TextButton("Change".Localize(), theme)

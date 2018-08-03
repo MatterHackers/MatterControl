@@ -1011,12 +1011,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		internal MHTextEditWidget searchInput;
 		public Button ResetButton { get; }
 
-		public SearchInputBox(ThemeConfig theme)
+		public SearchInputBox(ThemeConfig theme, string emptyText = null)
 		{
 			this.VAnchor = VAnchor.Center | VAnchor.Fit;
 			this.HAnchor = HAnchor.Stretch;
 
-			searchInput = new MHTextEditWidget(messageWhenEmptyAndNotSelected: "Search".Localize())
+			searchInput = new MHTextEditWidget(messageWhenEmptyAndNotSelected: emptyText ?? "Search".Localize())
 			{
 				Name = "Search Library Edit",
 				HAnchor = HAnchor.Stretch,
