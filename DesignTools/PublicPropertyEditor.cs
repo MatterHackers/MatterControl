@@ -313,6 +313,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				rowContainer = CreateSettingsColumn(property, field);
 			}
+#if !__ANDROID__
 			else if (propertyValue is List<string> stringList)
 			{
 				var selectedItem = ApplicationController.Instance.DragDropData.SceneContext.Scene.SelectedItem;
@@ -329,6 +330,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				rowContainer.Descendants<HorizontalSpacer>().FirstOrDefault()?.Close();
 			}
+#endif
 			else if (propertyValue is Vector3 vector3)
 			{
 				var field = new Vector3Field();
