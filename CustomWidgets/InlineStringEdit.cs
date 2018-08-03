@@ -48,14 +48,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private GuiWidget saveButton;
 		private SearchInputBox searchPanel;
 
-		public InlineStringEdit(string title, ThemeConfig theme, string automationName, bool boldFont = false)
+		public InlineStringEdit(string stringValue, ThemeConfig theme, string automationName, bool boldFont = false)
 			: base(theme)
 		{
 			this.Padding = theme.ToolbarPadding;
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
 
-			titleText = new TextWidget(title, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: theme.DefaultFontSize, bold: boldFont)
+			titleText = new TextWidget(stringValue, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: theme.DefaultFontSize, bold: boldFont)
 			{
 				VAnchor = VAnchor.Center,
 				AutoExpandBoundsToText = true,
@@ -105,8 +105,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			editButton.Click += (s, e) =>
 			{
-				searchPanel.Text = this.Text;
-				this.SetVisibility(showEditPanel: true);
+				if (this.EditOverride != null)
+				{
+					this.EditOverride.Invoke();
+				}
+				else
+				{
+					searchPanel.Text = this.Text;
+					this.SetVisibility(showEditPanel: true);
+				}
 			};
 			rightPanel.AddChild(editButton);
 
@@ -114,7 +121,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				this.Text = searchPanel.Text;
 				this.SetVisibility(showEditPanel: false);
-				this.ValueChanged?.Invoke(this, null);
 			};
 			rightPanel.AddChild(saveButton);
 
@@ -122,6 +128,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			this.ActionArea.Margin = this.ActionArea.Margin.Clone(right: rightPanel.Width + 5);
 		}
+
+		public Action EditOverride { get; set; }
 
 		public override string Text
 		{
@@ -131,6 +139,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				if (titleText.Text != value)
 				{
 					titleText.Text = value;
+					this.ValueChanged?.Invoke(this, null);
 				}
 			}
 		}
