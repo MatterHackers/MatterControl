@@ -2399,8 +2399,6 @@ namespace MatterHackers.MatterControl
 		private static string lastSection = "";
 		private static Stopwatch timer;
 
-		public static string PlatformFeaturesProvider { get; set; } = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl";
-
 		public static SystemWindow LoadRootWindow(int width, int height)
 		{
 			timer = Stopwatch.StartNew();
@@ -2780,8 +2778,6 @@ namespace MatterHackers.MatterControl
 
 		public static async Task<GuiWidget> Initialize(SystemWindow systemWindow, Action<double, string> reporter)
 		{
-			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(PlatformFeaturesProvider);
-
 			reporter?.Invoke(0.01, "PlatformInit");
 			AppContext.Platform.PlatformInit((status) =>
 			{
@@ -2807,9 +2803,6 @@ namespace MatterHackers.MatterControl
 			// now that we are all set up lets load our plugins and allow them their chance to set things up
 			reporter?.Invoke(0.8, "Plugins");
 			AppContext.Platform.FindAndInstantiatePlugins(systemWindow);
-
-			reporter?.Invoke(0.9, "Process Commandline");
-			AppContext.Platform.ProcessCommandline();
 
 			reporter?.Invoke(0.91, "OnLoadActions");
 			applicationController.OnLoadActions();
