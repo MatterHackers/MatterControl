@@ -73,7 +73,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Name = this.Name
 			};
 			editWidget.DrawFromHintedCache();
-			//editWidget.ActualTextEditWidget.VAnchor = VAnchor.Stretch;
 
 			editContainer.AddChild(editWidget);
 
@@ -86,7 +85,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (treeView.SelectedNode.Tag is IObject3D contextNode)
 				{
-					Console.WriteLine(contextNode.Name);
+					editWidget.Text = "$." + string.Join(".", contextNode.AncestorsAndSelf().TakeWhile(o => !(o is ComponentObject3D)).Select(o => $"Children<{o.GetType().Name.ToString()}>").Reverse().ToArray());
 				}
 			};
 			treeView.ScrollArea.ChildAdded += (s, e) =>
@@ -113,21 +112,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			rootNode.TreeView = treeView;
 
 			editContainer.AddChild(treeView);
-
-			var createButton = new TextButton("Create from selection", theme);
-			createButton.VAnchor = VAnchor.Absolute;
-			createButton.HAnchor = HAnchor.Left;
-			createButton.BackgroundColor = theme.MinimalShade;
-			createButton.Click += (s, e) =>
-			{
-				if (treeView.SelectedNode.Tag is IObject3D contextNode)
-				{
-					editWidget.Text = "$." + string.Join(".", contextNode.AncestorsAndSelf().TakeWhile(o => !(o is ComponentObject3D)).Select(o => $"Children<{o.GetType().Name.ToString()}>").Reverse().ToArray());
-				}
-			};
-
-			editContainer.AddChild(createButton);
-
 			var dummyWidget = new GuiWidget()
 			{
 				BackgroundColor = Color.Red
