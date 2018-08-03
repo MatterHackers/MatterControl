@@ -763,7 +763,6 @@ namespace MatterHackers.MatterControl
 				},
 				iconCollector: (theme) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16, theme.InvertIcons));
 
-#if DEBUG // when this is working (Component and ComponentPicker work), enable it.
 			this.Graph.RegisterOperation(
 				typeof(IObject3D),
 				typeof(ComponentObject3D),
@@ -806,7 +805,33 @@ namespace MatterHackers.MatterControl
 						&&  sceneItem.DescendantsAndSelf().All(d => !(d is ComponentObject3D));
 				},
 				iconCollector: (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons));
-#endif
+
+			this.Graph.RegisterOperation(
+				typeof(IObject3D),
+				typeof(ComponentObject3D),
+				"Edit Component".Localize(),
+				(sceneItem, scene) =>
+				{
+					if (sceneItem is ComponentObject3D componentObject)
+					{
+						// Enable editing mode
+						componentObject.Finalized = false;
+
+						// Force editor rebuild
+						scene.SelectedItem = null;
+						scene.SelectedItem = componentObject;
+					}
+
+					return Task.CompletedTask;
+				},
+				isVisible: (sceneItem) =>
+				{
+					return sceneItem.Parent.Parent == null
+						&& sceneItem is ComponentObject3D componentObject
+						&& componentObject.Finalized;
+				},
+				iconCollector: (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons));
+
 
 			this.Graph.RegisterOperation(
 				typeof(IObject3D),
