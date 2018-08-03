@@ -99,13 +99,13 @@ namespace MatterHackers.MatterControl
 
 			this.MinimumSize = minSize;
 
-			this.Title = "MatterHackers: MatterControl {0}".FormatWith(version);
+			this.Title = $"MatterHackers: MatterControl {version}";
 			if (OemSettings.Instance.WindowTitleExtra != null && OemSettings.Instance.WindowTitleExtra.Trim().Length > 0)
 			{
-				this.Title = this.Title + " - {1}".FormatWith(version, OemSettings.Instance.WindowTitleExtra);
+				this.Title += $" - {OemSettings.Instance.WindowTitleExtra}";
 			}
 
-			this.Title = IntPtr.Size == 4 ? this.Title + " - 32Bit" : this.Title = this.Title + " - 64Bit";
+			this.Title += string.Format(" - {0}Bit", IntPtr.Size == 4 ? 32 : 64);
 
 			string desktopPosition = ApplicationSettings.Instance.get(ApplicationSettingsKey.DesktopPosition);
 			if (!string.IsNullOrEmpty(desktopPosition))
