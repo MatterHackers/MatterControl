@@ -261,7 +261,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					ActiveSliceSettings.Instance.SetValue("boolean_operations", mergeRules);
 
-					var matrixAndMeshArgs = new StringBuilder(); ;
+					var matrixAndMeshArgs = new StringBuilder();
 					foreach (var matrixAndFile in stlFileLocations)
 					{
 						var matrixString = "";

@@ -41,9 +41,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SurfacedEditorPage : DialogPage
 	{
+		public event EventHandler ValueChanged;
+
 		private MHTextEditWidget editWidget;
 
-		public SurfacedEditorPage(UIField uiField, IObject3D selectedItem)
+		public SurfacedEditorPage(IObject3D selectedItem)
 		{
 			this.WindowTitle = "MatterControl - " + "Editor Selector".Localize();
 			this.HeaderText = "Surfaced Editor".Localize();
@@ -142,9 +144,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var saveButton = theme.CreateDialogButton("Save".Localize());
 			saveButton.Click += (s, e) =>
 			{
-				uiField.SetValue(
-					editWidget.Text.Replace("\n", "\\n"),
-					userInitiated: true);
+				this.ValueChanged?.Invoke(this, null);
 
 				this.DialogWindow.CloseOnIdle();
 			};

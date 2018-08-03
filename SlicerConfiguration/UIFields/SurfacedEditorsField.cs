@@ -58,17 +58,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (sender is InlineStringEdit inlineEdit)
 			{
-				var uifield = new TextField();
-				uifield.Initialize(0);
-				uifield.ValueChanged += (s, e2) =>
-				{
-					inlineEdit.Text = uifield.Value;
-				};
-
-				DialogWindow.Show(new SurfacedEditorPage(uifield, selectedItem)
+				var editorPage = new SurfacedEditorPage(selectedItem)
 				{
 					EditorString = inlineEdit.Text,
-				});
+				};
+
+				editorPage.ValueChanged += (s, e2) =>
+				{
+					inlineEdit.Text = editorPage.EditorString;
+				};
+
+				DialogWindow.Show(editorPage);
 			}
 		}
 	}
