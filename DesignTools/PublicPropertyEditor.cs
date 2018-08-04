@@ -313,24 +313,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				rowContainer = CreateSettingsColumn(property, field);
 			}
-#if !__ANDROID__
-			else if (propertyValue is List<string> stringList)
-			{
-				var selectedItem = ApplicationController.Instance.DragDropData.SceneContext.Scene.SelectedItem;
-
-				var field = new SurfacedEditorsField(theme, selectedItem);
-				field.Initialize(0);
-				field.ListValue = stringList;
-				field.ValueChanged += (s, e) =>
-				{
-					property.SetValue(field.ListValue);
-				};
-
-				rowContainer = CreateSettingsColumn(property, field);
-
-				rowContainer.Descendants<HorizontalSpacer>().FirstOrDefault()?.Close();
-			}
-#endif
 			else if (propertyValue is Vector3 vector3)
 			{
 				var field = new Vector3Field();
@@ -427,6 +409,24 @@ namespace MatterHackers.MatterControl.DesignTools
 				rowContainer = CreateSettingsColumn(property);
 				rowContainer.AddChild(CreateImageDisplay(imageBuffer, property.Item, theme));
 			}
+#if !__ANDROID__
+			else if (propertyValue is List<string> stringList)
+			{
+				var selectedItem = ApplicationController.Instance.DragDropData.SceneContext.Scene.SelectedItem;
+
+				var field = new SurfacedEditorsField(theme, selectedItem);
+				field.Initialize(0);
+				field.ListValue = stringList;
+				field.ValueChanged += (s, e) =>
+				{
+					property.SetValue(field.ListValue);
+				};
+
+				rowContainer = CreateSettingsColumn(property, field);
+
+				rowContainer.Descendants<HorizontalSpacer>().FirstOrDefault()?.Close();
+			}
+#endif
 			// create a int editor
 			else if (propertyValue is int intValue)
 			{

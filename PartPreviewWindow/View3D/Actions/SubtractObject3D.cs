@@ -42,7 +42,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	[ShowUpdateButtonAttribute]
+	[ShowUpdateButton]
 	public class SubtractObject3D : MeshWrapperObject3D
 	{
 		public SubtractObject3D()
