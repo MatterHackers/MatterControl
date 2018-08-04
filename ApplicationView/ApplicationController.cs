@@ -1122,6 +1122,9 @@ namespace MatterHackers.MatterControl
 			HashSet<IObject3DEditor> mappedEditors;
 			objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
 
+			// Initialize plugins, passing the MatterControl assembly as the only non-dll instance
+			PluginFinder.Initialize(Assembly.GetExecutingAssembly());
+
 			foreach (IObject3DEditor editor in PluginFinder.CreateInstancesOf<IObject3DEditor>())
 			{
 				foreach (Type type in editor.SupportedTypes())
