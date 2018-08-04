@@ -196,7 +196,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
-				Padding = new BorderDouble(top: 10)
+				Name = "editorPanel",
+				Padding = new BorderDouble(right: theme.DefaultContainerPadding + 1)
 			};
 
 			// Wrap editorPanel with scrollable container
@@ -207,6 +208,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			scrollableWidget.AddChild(editorPanel);
 			scrollableWidget.ScrollArea.HAnchor = HAnchor.Stretch;
+			scrollableWidget.Padding = new BorderDouble(right: theme.DefaultContainerPadding * .8);
 
 			editorSectionWidget = new ResizableSectionWidget("Editor", sceneContext.ViewState.SelectedObjectEditorHeight, scrollableWidget, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, rightAlignedContent: toolbar, defaultExpansion: true)
 			{
@@ -216,6 +218,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				sceneContext.ViewState.SelectedObjectEditorHeight = editorSectionWidget.ResizeContainer.Height;
 			};
+
+			int topBottom = theme.DefaultContainerPadding / 2;
+			editorSectionWidget.ResizeContainer.Padding = new BorderDouble(left: theme.DefaultContainerPadding, top: topBottom, bottom: topBottom + editorSectionWidget.ResizeContainer.SplitterHeight);
 
 			this.ContentPanel.AddChild(editorSectionWidget);
 
@@ -245,7 +250,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (sectionWidget is ResizableSectionWidget resizableSectionWidget)
 				{
 					// Apply padding to ResizeContainer not wrapper
-					resizableSectionWidget.ResizeContainer.Padding = new BorderDouble(10, 10, 10, 0);
+					//resizableSectionWidget.ResizeContainer.Padding = new BorderDouble(10, 10, 10, 0);
 				}
 				else
 				{
@@ -371,6 +376,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}
 						}
 					}
+				}
+
+				// Enforce panel padding
+				foreach (var sectionWidget in editorPanel.Descendants<SectionWidget>())
+				{
+					sectionWidget.Margin = new BorderDouble(0, theme.DefaultContainerPadding / 2);
 				}
 			}
 			else
