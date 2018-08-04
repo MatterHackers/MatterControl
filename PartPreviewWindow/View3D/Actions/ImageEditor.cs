@@ -65,7 +65,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			var imageSection = new SearchableSectionWidget("Image".Localize(), new FlowLayoutWidget(FlowDirection.TopToBottom), theme, emptyText: "Search Google".Localize());
 			imageSection.SearchInvoked += (s, e) =>
 			{
-				ApplicationController.Instance.LaunchBrowser($"http://www.google.com/search?q={e.Data} silhouette&tbm=isch");
+				string imageType = " silhouette";
+
+				if (item.Parent.GetType().Name.Contains("Lithophane"))
+				{
+					imageType = "";
+				}
+
+				ApplicationController.Instance.LaunchBrowser($"http://www.google.com/search?q={e.Data}{imageType}&tbm=isch");
 			};
 
 			theme.ApplyBoxStyle(imageSection, margin: 0);
