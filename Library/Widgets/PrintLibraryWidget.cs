@@ -852,6 +852,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					&& libraryAsset.ContentType == "mcx";
 				}
 			});
+
+			libraryView.MenuActions = menuActions;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

@@ -213,6 +213,7 @@
     <Compile Include="PartPreviewWindow\MoveItemPage.cs" />
     <Compile Include="PartPreviewWindow\StartPage\ExplorerBar.cs" />
     <Compile Include="PartPreviewWindow\RoundedToggleSwitch.cs" />
+    <Compile Include="PartPreviewWindow\SystemWindowExtension.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\ImageEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\MeshWrapperObject3D.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\OverflowBar.cs" />

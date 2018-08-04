@@ -38,6 +38,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
@@ -59,6 +60,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private GuiWidget contentView;
 		private Color loadingBackgroundColor;
 		private ImageSequenceWidget loadingIndicator;
+
+		public List<PrintItemAction> MenuActions { get; set; }
 
 		// Default constructor uses IconListView
 		public ListView(ILibraryContext context, ThemeConfig theme)
@@ -224,6 +227,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				items.Add(listViewItem);
 
 				listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
+				listViewItem.ViewWidget.HasMenu = true;
 				listViewItem.ViewWidget.Name = childContainer.Name + " Row Item Collection";
 			}
 
@@ -243,6 +247,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					items.Add(listViewItem);
 
 					listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
+					listViewItem.ViewWidget.HasMenu = true;
 					listViewItem.ViewWidget.Name = "Row Item " + item.Name;
 				}
 
