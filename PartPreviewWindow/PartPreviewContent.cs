@@ -268,8 +268,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Printer page is in fixed position
 			var tab1 = tabControl.AllTabs.Skip(1).FirstOrDefault();
 
-			string tabTitle = printer.Settings.GetValue(SettingsKey.printer_name);
-
 			var printerTabPage = tab1?.TabContent as PrinterTabPage;
 			if (printerTabPage == null
 				|| printerTabPage.printer != printer)
@@ -283,9 +281,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				printerTab = new ChromeTab(
-					tabTitle,
+					printer.Settings.GetValue(SettingsKey.printer_name),
 					tabControl,
-					new PrinterTabPage(printer, theme, tabTitle.ToUpper()),
+					new PrinterTabPage(printer, theme, "unused_tab_title"),
 					theme,
 					tabImageUrl: ApplicationController.Instance.GetFavIconUrl(oemName: printer.Settings.GetValue(SettingsKey.make)),
 					hasClose: false)
@@ -293,6 +291,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Name = "3D View Tab",
 					MinimumSize = new Vector2(120, theme.TabButtonHeight)
 				};
+
+				ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+				{
+					string settingsName = (e as StringEventArgs)?.Data;
+					if (settingsName != null && settingsName == SettingsKey.printer_name)
+					{
+						printerTab.Title = printer.Settings.GetValue(SettingsKey.printer_name);
+					}
+				}, ref unregisterEvents);
+
 
 				// Add printer into fixed position
 				tabControl.AddTab(printerTab, 1);
