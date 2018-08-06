@@ -801,7 +801,8 @@ namespace MatterHackers.MatterControl
 				},
 				isVisible: (sceneItem) =>
 				{
-					return sceneItem.Parent.Parent == null
+					return sceneItem.Parent != null
+						&& sceneItem.Parent.Parent == null
 						&&  sceneItem.DescendantsAndSelf().All(d => !(d is ComponentObject3D));
 				},
 				iconCollector: (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons));
@@ -826,7 +827,8 @@ namespace MatterHackers.MatterControl
 				},
 				isVisible: (sceneItem) =>
 				{
-					return sceneItem.Parent.Parent == null
+					return sceneItem.Parent != null
+						&& sceneItem.Parent.Parent == null
 						&& sceneItem is ComponentObject3D componentObject
 						&& componentObject.Finalized;
 				},

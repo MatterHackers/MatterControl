@@ -101,7 +101,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var applyButton = new IconButton(icon, theme)
 			{
 				Margin = theme.ButtonSpacing,
-				ToolTipText = "Apply operation and make permanent".Localize()
+				ToolTipText = "Apply operation and make permanent".Localize(),
+				Enabled = scene.SelectedItem?.CanApply == true
 			};
 			applyButton.Click += (s, e) =>
 			{
@@ -115,7 +116,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var removeButton = new IconButton(AggContext.StaticData.LoadIcon("close.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Margin = theme.ButtonSpacing,
-				ToolTipText = "Remove operation from parts".Localize()
+				ToolTipText = "Remove operation from parts".Localize(),
+				Enabled = scene.SelectedItem?.CanRemove == true
 			};
 			removeButton.Click += (s, e) =>
 			{
@@ -126,6 +128,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			toolbar.AddChild(removeButton);
 
 			var overflowButton = new OverflowBar.OverflowMenuButton(theme);
+			overflowButton.Enabled = scene.SelectedItem != null;
+			scene.SelectionChanged += (s, e) => overflowButton.Enabled = scene.SelectedItem != null;
 
 			overflowButton.PopupBorderColor = ApplicationController.Instance.MenuTheme.GetBorderColor(120);
 			overflowButton.DynamicPopupContent = () =>
