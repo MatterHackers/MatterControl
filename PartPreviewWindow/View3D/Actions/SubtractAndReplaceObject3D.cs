@@ -42,7 +42,7 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	[ShowUpdateButtonAttribute]
+	[ShowUpdateButton]
 	public class SubtractAndReplaceObject3D : MeshWrapperObject3D
 	{
 		public SubtractAndReplaceObject3D()
