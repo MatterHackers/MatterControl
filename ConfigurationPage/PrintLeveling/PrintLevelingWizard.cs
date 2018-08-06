@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					heatingInstructions = "Waiting for the bed to heat to ".Localize() + targetBedTemp +"\n"
 						+ "and the hotend to heat to ".Localize() + targetHotendTemp + ".\n"
 						+ "\n"
-						+ "This will improve the accuracy of print leveling".Localize()
+						+ "This will improve the accuracy of print leveling ".Localize()
 						+ "and ensure no filament is stuck to the tip of the extruder.".Localize() + "\n"
 						+ "\n"
 						+ "Warning! The tip of the nozzle will be HOT!".Localize() + "\n"
