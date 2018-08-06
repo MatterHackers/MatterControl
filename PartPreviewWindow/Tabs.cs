@@ -417,7 +417,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				label = new TextWidget(tabTitle, pointSize: pointSize)
 				{
 					TextColor = textColor,
-					VAnchor = VAnchor.Center
+					VAnchor = VAnchor.Center,
+					AutoExpandBoundsToText = true
 				};
 				this.AddChild(label);
 			}
@@ -545,6 +546,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			base.OnDraw(graphics2D);
+		}
+
+		public string Title
+		{
+			get => tabPill?.Text;
+			set
+			{
+				if (tabPill != null)
+				{
+					tabPill.Text = value;
+				}
+			}
 		}
 
 		public static void DrawTabLowerRight(Graphics2D graphics2D, RectangleDouble rect, Color color)

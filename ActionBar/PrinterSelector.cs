@@ -115,6 +115,9 @@ namespace MatterHackers.MatterControl
 		{
 			this.MenuItems.Clear();
 
+			// Always reset to -1, then search for match below
+			this.SelectedIndex = -1;
+
 			//Add the menu items to the menu itself
 			foreach (var printer in ProfileManager.Instance.ActiveProfiles.OrderBy(p => p.Name))
 			{
