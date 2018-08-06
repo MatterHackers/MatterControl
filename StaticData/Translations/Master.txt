@@ -208,6 +208,9 @@ Translated:Auto Release Motors
 English:Auto Uppercase
 Translated:Auto Uppercase
 
+English:Automatic Heater Shutdown in
+Translated:Automatic Heater Shutdown in
+
 English:Avoid contact with your skin.
 Translated:Avoid contact with your skin.
 
@@ -277,6 +280,9 @@ Translated:Beta
 English:Beta: The release candidate version of MatterControl
 Translated:Beta: The release candidate version of MatterControl
 
+English:Botom Solid Infill
+Translated:Botom Solid Infill
+
 English:Bottom Solid Layers
 Translated:Bottom Solid Layers
 
@@ -285,6 +291,9 @@ Translated:Braille
 
 English:Braille Card
 Translated:Braille Card
+
+English:Bridge Over Infill
+Translated:Bridge Over Infill
 
 English:Bridges
 Translated:Bridges
@@ -385,8 +394,8 @@ Translated:Choose the command for showing the print progress on the printer's LC
 English:Clean
 Translated:Clean
 
-English:Clean Nozzle Image
-Translated:Clean Nozzle Image
+English:Clean Filament Page
+Translated:Clean Filament Page
 
 English:Clear
 Translated:Clear
@@ -547,6 +556,9 @@ Translated:Copy Edges
 English:Copy Faces
 Translated:Copy Faces
 
+English:Copy Path
+Translated:Copy Path
+
 English:Copy Printers
 Translated:Copy Printers
 
@@ -564,6 +576,9 @@ Translated:Cost
 
 English:Could not find a selected button.
 Translated:Could not find a selected button.
+
+English:Couldn't load file
+Translated:Couldn't load file
 
 English:Couldn't save file
 Translated:Couldn't save file
@@ -721,9 +736,6 @@ Translated:Diameter
 English:Disable Fan For The First
 Translated:Disable Fan For The First
 
-English:Disable Heaters
-Translated:Disable Heaters
-
 English:Disconnect
 Translated:Disconnect
 
@@ -793,6 +805,9 @@ Translated:edit
 English:Edit
 Translated:Edit
 
+English:Edit Component
+Translated:Edit Component
+
 English:Edit Macro
 Translated:Edit Macro
 
@@ -804,6 +819,9 @@ Translated:Edit Page
 
 English:Edit Selected Setting
 Translated:Edit Selected Setting
+
+English:Editor Selector
+Translated:Editor Selector
 
 English:EEProm Settings
 Translated:EEProm Settings
@@ -1267,6 +1285,9 @@ Translated:High Precision
 English:History
 Translated:History
 
+English:Holding Temperature
+Translated:Holding Temperature
+
 English:Home
 Translated:Home
 
@@ -1336,6 +1357,9 @@ Translated:Image Converter
 English:Image to Path
 Translated:Image to Path
 
+English:Immediately turn off heaters
+Translated:Immediately turn off heaters
+
 English:Import
 Translated:Import
 
@@ -1390,8 +1414,8 @@ Translated:Initializing hardware...
 English:Insert
 Translated:Insert
 
-English:Insert Image
-Translated:Insert Image
+English:Insert Filament Page
+Translated:Insert Filament Page
 
 English:Inside Perimeters
 Translated:Inside Perimeters
@@ -1543,6 +1567,9 @@ Translated:Load filament
 English:Load Filament Length
 Translated:Load Filament Length
 
+English:Load Filament Time
+Translated:Load Filament Time
+
 English:Loading
 Translated:Loading
 
@@ -1618,8 +1645,14 @@ Translated:Macro Presets
 English:Macros
 Translated:Macros
 
+English:make
+Translated:make
+
 English:Make
 Translated:Make
+
+English:Make Component
+Translated:Make Component
 
 English:Make Selection
 Translated:Make Selection
@@ -1633,6 +1666,9 @@ Translated:Make sure the first point on a perimeter is a concave point.
 English:Make sure the first point on a perimeter is not an overhang.
 Translated:Make sure the first point on a perimeter is not an overhang.
 
+English:Make the first layer on top of partial infill use the speed and fan for bridging.
+Translated:Make the first layer on top of partial infill use the speed and fan for bridging.
+
 English:Manual Configuration
 Translated:Manual Configuration
 
@@ -1644,6 +1680,9 @@ Translated:Manually Configure Connection
 
 English:Manually measure the extruder at the center
 Translated:Manually measure the extruder at the center
+
+English:Markdown Edit
+Translated:Markdown Edit
 
 English:Marlin Firmware EEPROM Settings
 Translated:Marlin Firmware EEPROM Settings
@@ -1755,6 +1794,9 @@ Translated:mm/s or %
 
 English:mm/s²
 Translated:mm/s²
+
+English:model
+Translated:model
 
 English:Model
 Translated:Model
@@ -2041,8 +2083,17 @@ Translated:Paste
 English:Pattern Spacing
 Translated:Pattern Spacing
 
+English:Pause
+Translated:Pause
+
+English:Pause automatic heater shutdown
+Translated:Pause automatic heater shutdown
+
 English:Pause G-Code
 Translated:Pause G-Code
+
+English:Pause Print
+Translated:Pause Print
 
 English:Paused
 Translated:Paused
@@ -2142,6 +2193,9 @@ Translated:Press [Z-] until there is resistance to moving the paper
 
 English:Press [Z+] once to release the paper
 Translated:Press [Z+] once to release the paper
+
+English:Preview
+Translated:Preview
 
 English:Primitive Shapes
 Translated:Primitive Shapes
@@ -2413,8 +2467,14 @@ Translated:Restore Settings
 English:Resume
 Translated:Resume
 
+English:Resume automatic heater shutdown
+Translated:Resume automatic heater shutdown
+
 English:Resume G-Code
 Translated:Resume G-Code
+
+English:Resume Print
+Translated:Resume Print
 
 English:Retract
 Translated:Retract
@@ -2487,9 +2547,6 @@ Translated:Run Max if Below
 
 English:Run setup configuration for printer.
 Translated:Run setup configuration for printer.
-
-English:Running Clean Image
-Translated:Running Clean Image
 
 English:Running Macro
 Translated:Running Macro
@@ -2980,6 +3037,9 @@ Translated:Support Percent
 English:Support Type
 Translated:Support Type
 
+English:Surfaced Editor
+Translated:Surfaced Editor
+
 English:Switch the settings interface to one intended for SLA printers.
 Translated:Switch the settings interface to one intended for SLA printers.
 
@@ -3070,8 +3130,8 @@ Translated:The distance between the top of the support and the bottom of the mod
 English:The distance filament will reverse before each qualifying non-print move
 Translated:The distance filament will reverse before each qualifying non-print move
 
-English:The distance from the model at which the first skirt loop is drawn. Make this 0 to create an anchor for the part to the bed, also known as a brim.
-Translated:The distance from the model at which the first skirt loop is drawn. Make this 0 to create an anchor for the part to the bed, also known as a brim.
+English:The distance from the model at which the first skirt loop is drawn.
+Translated:The distance from the model at which the first skirt loop is drawn.
 
 English:The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.
 Translated:The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.
@@ -3100,9 +3160,6 @@ Translated:The Extruder Count must be at least 1.
 English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
 Translated:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
 
-English:The extruder will wipe the nozzle over the last up to 10 mm of tool path after retracting.
-Translated:The extruder will wipe the nozzle over the last up to 10 mm of tool path after retracting.
-
 English:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
 Translated:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
 
@@ -3118,18 +3175,6 @@ Translated:The height of the printer's printable volume, in millimeters. Control
 English:The hot end needs to be heated to ensure it is clean.
 Translated:The hot end needs to be heated to ensure it is clean.
 
-English:The image to show when explaining filament running clean.
-Translated:The image to show when explaining filament running clean.
-
-English:The image to show when explaining inserting.
-Translated:The image to show when explaining inserting.
-
-English:The image to show when explaining leveling and calibration.
-Translated:The image to show when explaining leveling and calibration.
-
-English:The image to show when explaining trimming.
-Translated:The image to show when explaining trimming.
-
 English:The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.
 Translated:The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.
 
@@ -3144,6 +3189,15 @@ Translated:The layer(s) at which the print will pause, allowing for a change in 
 
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
 Translated:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
+
+English:The Markdown that will be shown on the Clean Filament page.
+Translated:The Markdown that will be shown on the Clean Filament page.
+
+English:The Markdown that will be shown on the Insert Filament page.
+Translated:The Markdown that will be shown on the Insert Filament page.
+
+English:The Markdown that will be shown on the Trim Filament page.
+Translated:The Markdown that will be shown on the Trim Filament page.
 
 English:The maximum amount the printer can accelerate on a G-Code move. Only effects G-Code time estimates, does not change printer behavior.
 Translated:The maximum amount the printer can accelerate on a G-Code move. Only effects G-Code time estimates, does not change printer behavior.
@@ -3310,6 +3364,9 @@ Translated:The speed at which outside, external, or the otherwise visible perime
 English:The speed at which support material structures will print.
 Translated:The speed at which support material structures will print.
 
+English:The speed at which the bottom solid layers will print. Can be set explicitly or as a percentage of the Infill speed. Use 0 to match infill speed.
+Translated:The speed at which the bottom solid layers will print. Can be set explicitly or as a percentage of the Infill speed. Use 0 to match infill speed.
+
 English:The speed at which the layer cooling fan will run when bridging, expressed as a percentage of full power.
 Translated:The speed at which the layer cooling fan will run when bridging, expressed as a percentage of full power.
 
@@ -3370,6 +3427,12 @@ Translated:The thickness of each layer of the print, except the first layer. A s
 English:The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.
 Translated:The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.
 
+English:The time it will take to load the filament
+Translated:The time it will take to load the filament
+
+English:The time it will take to unload the filament
+Translated:The time it will take to unload the filament
+
 English:The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.
 Translated:The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.
 
@@ -3421,6 +3484,12 @@ Translated:This is the angle that lowers or deploys the z probe.
 English:This is the angle that raises or stows the z probe.
 Translated:This is the angle that raises or stows the z probe.
 
+English:This is the make (often the manufacturer) of printer this profile is targeting.
+Translated:This is the make (often the manufacturer) of printer this profile is targeting.
+
+English:This is the model of printer this profile is targeting.
+Translated:This is the model of printer this profile is targeting.
+
 English:This is the name of your printer that will be displayed in the choose printer menu.
 Translated:This is the name of your printer that will be displayed in the choose printer menu.
 
@@ -3433,8 +3502,8 @@ Translated:This should be in 'G-Code'
 English:This will ensure no filament is stuck to the tip.
 Translated:This will ensure no filament is stuck to the tip.
 
-English:This will improve the accuracy of print leveling
-Translated:This will improve the accuracy of print leveling
+English:This will improve the accuracy of print leveling 
+Translated:This will improve the accuracy of print leveling 
 
 English:This will improve the accuracy of print leveling.
 Translated:This will improve the accuracy of print leveling.
@@ -3502,8 +3571,8 @@ Translated:Transparent
 English:Travel
 Translated:Travel
 
-English:Trim Image
-Translated:Trim Image
+English:Trim Filament Page
+Translated:Trim Filament Page
 
 English:Troubleshoot
 Translated:Troubleshoot
@@ -3519,9 +3588,6 @@ Translated:Tuning Adjustment
 
 English:Turn auto leveling on
 Translated:Turn auto leveling on
-
-English:Turn Off Heat in
-Translated:Turn Off Heat in
 
 English:Turn off motor current at end of print or after cancel print.
 Translated:Turn off motor current at end of print or after cancel print.
@@ -3576,6 +3642,9 @@ Translated:Unload filament
 
 English:Unload Filament Length
 Translated:Unload Filament Length
+
+English:Unload Filament Time
+Translated:Unload Filament Time
 
 English:Unlock
 Translated:Unlock
@@ -3786,9 +3855,6 @@ Translated:Wiki
 
 English:wipe
 Translated:wipe
-
-English:Wipe Before Retract
-Translated:Wipe Before Retract
 
 English:Wipe Shield Distance
 Translated:Wipe Shield Distance
