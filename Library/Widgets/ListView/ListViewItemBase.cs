@@ -168,8 +168,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			if (this.IsSelectableContent)
 			{
-				// Existing selection only survives with ctrl->click
-				if (!Keyboard.IsKeyDown(Keys.ControlKey))
+				// Clear existing selection when item is not selected and control key is not press
+				if (!this.IsSelected
+					&& !Keyboard.IsKeyDown(Keys.ControlKey))
 				{
 					listViewItem.ListView?.SelectedItems.Clear();
 				}
@@ -189,7 +190,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			if (this.IsSelectableContent
 				&& !hitDragThreshold)
 			{
-				if (wasSelected)
+				if (toggleSelection)
 				{
 					listViewItem.ListView?.SelectedItems.Remove(listViewItem);
 				}
@@ -259,7 +260,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private bool hitDragThreshold = false;
 
-		private bool wasSelected = false;
+		private bool toggleSelection = false;
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
@@ -267,7 +268,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			mouseDownAt = mouseEvent.Position;
 			hitDragThreshold = false;
 
-			wasSelected = this.IsSelected;
+			// Used to toggle selection on selected items - revised to require control key
+			toggleSelection = this.IsSelected && Keyboard.IsKeyDown(Keys.ControlKey);
 
 			this.EnsureSelection();
 
