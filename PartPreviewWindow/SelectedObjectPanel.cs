@@ -134,65 +134,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			overflowButton.PopupBorderColor = ApplicationController.Instance.MenuTheme.GetBorderColor(120);
 			overflowButton.DynamicPopupContent = () =>
 			{
-				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
-
-				var menuItem = popupMenu.CreateMenuItem("Rename");
-				menuItem.Click += (s, e) =>
-				{
-					DialogWindow.Show(
-						new InputBoxPage(
-							"Rename Item".Localize(),
-							"Name".Localize(),
-							item.Name,
-							"Enter New Name Here".Localize(),
-							"Rename".Localize(),
-							(newName) =>
-							{
-								item.Name = newName;
-								editorSectionWidget.Text = newName;
-							}));
-				};
-
-				popupMenu.CreateHorizontalLine();
-
-				if (true) //allowOperations)
-				{
-					var selectedItemType = item.GetType();
-					var selectedItem = item;
-
-					var menuTheme = ApplicationController.Instance.MenuTheme;
-
-					foreach (var nodeOperation in ApplicationController.Instance.Graph.Operations)
-					{
-						foreach (var type in nodeOperation.MappedTypes)
-						{
-							if (type.IsAssignableFrom(selectedItemType)
-								&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
-								&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
-							{
-								var button = popupMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme));
-								button.Click += (s, e) =>
-								{
-									nodeOperation.Operation(selectedItem, sceneContext.Scene).ConfigureAwait(false);
-								};
-							}
-						}
-					}
-
-					if (selectedItem.Ancestors().OfType<ComponentObject3D>().FirstOrDefault() is ComponentObject3D componentAncestor
-						&& !componentAncestor.Finalized)
-					{
-						var button = popupMenu.CreateMenuItem("Copy Path".Localize());
-						button.Click += (s, e) =>
-						{
-							var selector = "$." + string.Join(".", selectedItem.AncestorsAndSelf().TakeWhile(o => !(o is ComponentObject3D)).Select(o => $"Children<{o.GetType().Name.ToString()}>").Reverse().ToArray());
-
-							Clipboard.Instance.SetText(selector);
-						};
-					}
-				}
-
-				return popupMenu;
+				return ApplicationController.Instance.GetActionMenuForSceneItem(item, sceneContext.Scene);
 			};
 			toolbar.AddChild(overflowButton);
 

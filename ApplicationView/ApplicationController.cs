@@ -131,6 +131,70 @@ namespace MatterHackers.MatterControl
 
 		private static PrinterConfig emptyPrinter = new PrinterConfig(PrinterSettings.Empty);
 
+		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene)
+		{
+			var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+
+			var menuItem = popupMenu.CreateMenuItem("Rename");
+			menuItem.Click += (s, e) =>
+			{
+				DialogWindow.Show(
+					new InputBoxPage(
+						"Rename Item".Localize(),
+						"Name".Localize(),
+						selectedItem.Name,
+						"Enter New Name Here".Localize(),
+						"Rename".Localize(),
+						(newName) =>
+						{
+							selectedItem.Name = newName;
+
+							// TODO: Revise SelectedObjectPanel to sync name on model change
+							// editorSectionWidget.Text = newName;
+						}));
+			};
+
+			popupMenu.CreateHorizontalLine();
+
+			if (true) //allowOperations)
+			{
+				var selectedItemType = selectedItem.GetType();
+
+				var menuTheme = ApplicationController.Instance.MenuTheme;
+
+				foreach (var nodeOperation in ApplicationController.Instance.Graph.Operations)
+				{
+					foreach (var type in nodeOperation.MappedTypes)
+					{
+						if (type.IsAssignableFrom(selectedItemType)
+							&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
+							&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
+						{
+							var button = popupMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme));
+							button.Click += (s, e) =>
+							{
+								nodeOperation.Operation(selectedItem, scene).ConfigureAwait(false);
+							};
+						}
+					}
+				}
+
+				if (selectedItem.Ancestors().OfType<ComponentObject3D>().FirstOrDefault() is ComponentObject3D componentAncestor
+					&& !componentAncestor.Finalized)
+				{
+					var button = popupMenu.CreateMenuItem("Copy Path".Localize());
+					button.Click += (s, e) =>
+					{
+						var selector = "$." + string.Join(".", selectedItem.AncestorsAndSelf().TakeWhile(o => !(o is ComponentObject3D)).Select(o => $"Children<{o.GetType().Name.ToString()}>").Reverse().ToArray());
+
+						Clipboard.Instance.SetText(selector);
+					};
+				}
+			}
+
+			return popupMenu;
+		}
+
 		// TODO: Any references to this property almost certainly need to be reconsidered. ActiveSliceSettings static references that assume a single printer
 		// selection are being redirected here. This allows us to break the dependency to the original statics and consolidates
 		// us down to a single point where code is making assumptions about the presence of a printer, printer counts, etc. If we previously checked for
