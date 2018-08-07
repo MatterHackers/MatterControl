@@ -761,9 +761,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ViewControls3DButtons? activeButtonBeforeMouseOverride = null;
 
 		Vector2 lastMouseMove;
+		Vector2 mouseDownPositon = Vector2.Zero;
 		Matrix4X4 worldMatrixOnMouseDown;
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
+			mouseDownPositon = mouseEvent.Position;
 			worldMatrixOnMouseDown = World.GetTransform4X4();
 			// Show transform override
 			if (activeButtonBeforeMouseOverride == null
@@ -891,34 +893,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 			}
-
-			UiThread.RunOnIdle(() =>
-			{
-				if (mouseEvent.Button == MouseButtons.Right)
-				{
-					var info2 = new IntersectInfo();
-					if (Scene.SelectedItem is IObject3D selectedItem
-						&& FindHitObject3D(mouseEvent.Position, ref info2) is IObject3D hitObject2
-						&& hitObject2 == selectedItem)
-					{
-						var menu = ApplicationController.Instance.GetActionMenuForSceneItem(Scene.SelectedItem, Scene);
-
-						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-						systemWindow.ShowPopup(
-							new MatePoint(this)
-							{
-								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-							},
-							new MatePoint(menu)
-							{
-								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-							},
-							altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
-					}
-				}
-			});
 		}
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
@@ -926,6 +900,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			IObject3D selectedItem = Scene.SelectedItem;
 
 			lastMouseMove = mouseEvent.Position;
+			if(lastMouseMove != mouseDownPositon)
+			{
+				mouseDownPositon = Vector2.Zero;
+			}
+
 			// File system Drop validation
 			mouseEvent.AcceptDrop = this.AllowDragDrop()
 					&& mouseEvent.DragFiles?.Count > 0
@@ -1190,6 +1169,73 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}
 						}
 					}
+				}
+			}
+
+			if (mouseEvent.Button == MouseButtons.Right
+				&& mouseDownPositon == mouseEvent.Position
+				&& this.TrackballTumbleWidget.FirstWidgetUnderMouse)
+			{
+				IntersectInfo info = new IntersectInfo();
+				var hitObject = FindHitObject3D(mouseEvent.Position, ref info);
+				if (hitObject != null)
+				{
+					if (hitObject != Scene.SelectedItem)
+					{
+						Scene.SelectedItem = null;
+						Scene.SelectedItem = hitObject;
+					}
+
+					UiThread.RunOnIdle(() =>
+					{
+						var menu = ApplicationController.Instance.GetActionMenuForSceneItem(Scene.SelectedItem, Scene);
+
+						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+						systemWindow.ShowPopup(
+						new MatePoint(this)
+						{
+							Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+							AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+						},
+						new MatePoint(menu)
+						{
+							Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+							AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+						},
+						altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
+					});
+				}
+				else // open up the menu for the bed (copy past image)
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						var popupMenu = new PopupMenu(theme);
+
+						var pasteMenu = popupMenu.CreateMenuItem("Paste".Localize());
+						pasteMenu.Click += (s2, e2) =>
+						{
+							Scene.Paste();
+							popupMenu.Unfocus();
+						};
+
+						pasteMenu.Enabled = Clipboard.Instance.ContainsImage;
+
+						var popupBounds = new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1);
+
+						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+						systemWindow.ShowPopup(
+							new MatePoint(this)
+							{
+								Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom),
+								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+							},
+							new MatePoint(popupMenu)
+							{
+								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+							},
+							altBounds: popupBounds);
+					});
 				}
 			}
 
