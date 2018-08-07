@@ -144,8 +144,6 @@ namespace MatterHackers.MatterControl.DesignTools
 							AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
 						},
 						altBounds: popupBounds);
-
-					systemWindow.Invalidate();
 				}
 			};
 

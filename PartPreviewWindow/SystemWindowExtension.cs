@@ -206,6 +206,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			popup.Widget.Focus();
+
+			popup.Widget.Invalidate();
 		}
 
 		private static Vector2 GetYAnchor(MateOptions anchor, MateOptions popup, GuiWidget popupWidget, RectangleDouble bounds)
