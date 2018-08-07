@@ -892,31 +892,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-
-			if (mouseEvent.Button == MouseButtons.Right)
+			UiThread.RunOnIdle(() =>
 			{
-				var info2 = new IntersectInfo();
-				if (Scene.SelectedItem is IObject3D selectedItem
-					&& FindHitObject3D(mouseEvent.Position, ref info2) is IObject3D hitObject2
-					&& hitObject2 == selectedItem)
+				if (mouseEvent.Button == MouseButtons.Right)
 				{
-					var menu = ApplicationController.Instance.GetActionMenuForSceneItem(Scene.SelectedItem, Scene);
+					var info2 = new IntersectInfo();
+					if (Scene.SelectedItem is IObject3D selectedItem
+						&& FindHitObject3D(mouseEvent.Position, ref info2) is IObject3D hitObject2
+						&& hitObject2 == selectedItem)
+					{
+						var menu = ApplicationController.Instance.GetActionMenuForSceneItem(Scene.SelectedItem, Scene);
 
-					var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-					systemWindow.ShowPopup(
-						new MatePoint(this)
-						{
-							Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-							AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-						},
-						new MatePoint(menu)
-						{
-							Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-							AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-						},
-						altBounds: new RectangleDouble(mouseEvent.X, mouseEvent.Y, mouseEvent.X, mouseEvent.Y));
+						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+						systemWindow.ShowPopup(
+							new MatePoint(this)
+							{
+								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+							},
+							new MatePoint(menu)
+							{
+								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+							},
+							altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
+					}
 				}
-			}
+			});
 		}
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)

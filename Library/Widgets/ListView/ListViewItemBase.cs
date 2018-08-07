@@ -410,7 +410,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				RectangleDouble popupBounds;
 				if (mouseEvent.Button == MouseButtons.Right)
 				{
-					popupBounds = new RectangleDouble(mouseEvent.X, mouseEvent.Y, mouseEvent.X, mouseEvent.Y);
+					popupBounds = new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1);
 				}
 				else
 				{
@@ -421,7 +421,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				systemWindow.ShowPopup(
 					new MatePoint(this)
 					{
-						Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+						Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom),
 						AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
 					},
 					new MatePoint(menu)
