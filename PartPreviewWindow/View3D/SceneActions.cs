@@ -33,10 +33,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
@@ -198,6 +201,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					scene.DuplicateItem(ApplicationController.ClipboardItem);
 				}
+			}
+			else if (Clipboard.Instance.ContainsImage)
+			{
+				// Persist
+				string filePath = ApplicationDataStorage.Instance.GetNewLibraryFilePath(".png");
+				AggContext.ImageIO.SaveImageData(
+					filePath,
+					Clipboard.Instance.GetImage());
+
+				scene.UndoBuffer.AddAndDo(
+					new InsertCommand(
+						scene,
+						new ImageObject3D()
+						{
+							AssetPath = filePath
+						}));
 			}
 		}
 
