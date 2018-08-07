@@ -300,8 +300,7 @@ namespace MatterHackers.MatterControl
 
 			double currentlyPrintingHeightPixels = plateInventoryImage.Height - PageMarginMM.Top * PixelPerMM;
 
-			// TODO: Application should not save data back to StaticDataPath - use application data dir instead
-			string logoPathAndFile = "PartSheetLogo.png";
+			string logoPathAndFile = Path.Combine("Images", "PartSheetLogo.png");
 			if (AggContext.StaticData.FileExists(logoPathAndFile))
 			{
 				ImageBuffer logoImage = AggContext.StaticData.LoadImage(logoPathAndFile);
@@ -312,7 +311,8 @@ namespace MatterHackers.MatterControl
 			currentlyPrintingHeightPixels -= PartPaddingPixels;
 
 			double underlineHeightMM = 1;
-			RectangleDouble lineBounds = new RectangleDouble(0, 0, plateInventoryImage.Width - PageMarginPixels.Left * 2, underlineHeightMM * PixelPerMM);
+
+			var lineBounds = new RectangleDouble(0, 0, plateInventoryImage.Width - PageMarginPixels.Left * 2, underlineHeightMM * PixelPerMM);
 			lineBounds.Offset(PageMarginPixels.Left, currentlyPrintingHeightPixels - lineBounds.Height);
 			plateGraphics.FillRectangle(lineBounds, Color.Black);
 
