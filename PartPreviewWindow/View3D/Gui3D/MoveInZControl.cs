@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			DrawOnTop = true;
 
-			using (Stream arrowStream = AggContext.StaticData.OpenStream(Path.Combine("Icons", "3D Icons", "up_pointer.stl")))
+			using (Stream arrowStream = AggContext.StaticData.OpenStream(Path.Combine("Stls", "up_pointer.stl")))
 			{
 				upArrowMesh = StlProcessing.Load(arrowStream, CancellationToken.None);
 			}
@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var selectedItem = InteractionContext.Scene.RootSelectedItem;
 
-			if (mouseEvent3D.info != null 
+			if (mouseEvent3D.info != null
 				&& selectedItem != null)
 			{
 				HadClickOnControl = true;
@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
 
-				if (info != null 
+				if (info != null
 					&& selectedItem != null)
 				{
 					var delta = info.HitPosition.Z - initialHitPosition.Z;
