@@ -62,7 +62,6 @@ namespace MatterHackers.MatterControl
 			MatterHackers.MarchingSquares.MarchingSquaresByte.AssertDebugNotDefined();
 			MatterHackers.MatterControl.PluginSystem.MatterControlPlugin.AssertDebugNotDefined();
 			MatterHackers.MatterSlice.MatterSlice.AssertDebugNotDefined();
-			MatterHackers.MeshVisualizer.MeshViewerWidget.AssertDebugNotDefined();
 			MatterHackers.RenderOpenGl.GLMeshTrianglePlugin.AssertDebugNotDefined();
 		}
 	}
