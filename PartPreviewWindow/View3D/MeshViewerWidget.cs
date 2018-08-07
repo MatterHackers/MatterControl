@@ -461,13 +461,6 @@ namespace MatterHackers.MeshVisualizer
 			base.FindNamedChildrenRecursive(nameToSearchFor, foundChildren, touchingBounds, seachType, allowInvalidItems);
 		}
 
-		public static void AssertDebugNotDefined()
-		{
-#if DEBUG
-			throw new Exception("DEBUG is defined and should not be!");
-#endif
-		}
-
 		public static Color GetExtruderColor(int extruderIndex)
 		{
 			return MaterialRendering.Color(extruderIndex);

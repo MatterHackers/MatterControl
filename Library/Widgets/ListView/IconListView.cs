@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -80,7 +81,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					// Reflow Children
 					foreach (var iconView in allIconViews)
 					{
-						iconView.Parent.RemoveChild(iconView);
+						iconView.Parent?.RemoveChild(iconView);
 						iconView.Margin = new BorderDouble(leftRightMargin, 0);
 					}
 
@@ -166,7 +167,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				this.AddChild(rowButtonContainer);
 			}
 
-			rowButtonContainer.AddChild(iconView);
+			rowButtonContainer?.AddChild(iconView);
 
 			if (cellIndex++ >= columnCount - 1)
 			{
