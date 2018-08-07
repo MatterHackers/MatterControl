@@ -194,6 +194,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				selectedObjectPanel.SetActiveItem((IObject3D)treeView.SelectedNode.Tag);
 			};
+			treeView.NodeMouseClick += (s, e) =>
+			{
+				if (e is MouseEventArgs mouseEvent
+					&& mouseEvent.Button == MouseButtons.Right)
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						var menu = ApplicationController.Instance.GetActionMenuForSceneItem((IObject3D)treeView.SelectedNode.Tag, Scene);
+
+						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+						systemWindow.ShowPopup(
+						new MatePoint(treeView.SelectedNode)
+						{
+							Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+							AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+						},
+						new MatePoint(menu)
+						{
+							Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+							AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
+						},
+						altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
+					});
+				}
+			};
 			treeView.ScrollArea.ChildAdded += (s, e) =>
 			{
 				if (e is GuiWidgetEventArgs childEventArgs
