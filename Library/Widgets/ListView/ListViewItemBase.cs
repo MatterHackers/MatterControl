@@ -54,6 +54,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private bool mouseDownInBounds = false;
 		private Vector2 mouseDownAt;
 
+		private ImageBuffer overflowIcon;
+
 		public ImageWidget imageWidget;
 		protected int thumbWidth;
 		protected int thumbHeight;
@@ -64,6 +66,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.listViewItem = listViewItem;
 			this.thumbWidth = width;
 			this.thumbHeight = height;
+
+			overflowIcon = AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, theme.InvertIcons);
 		}
 
 		public bool HasMenu { get; set; } = false;
@@ -388,7 +392,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				&& (hitRegion.Contains(mouseEvent.Position)
 					|| mouseEvent.Button == MouseButtons.Right))
 			{
-				var menu = new PopupMenu(theme);
+				var menu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
 				foreach (var menuAction in this.listViewItem.ListView.MenuActions)
 				{
@@ -434,8 +438,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			base.OnClick(mouseEvent);
 		}
-
-		private ImageBuffer overflowIcon = AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32);
 
 		protected virtual void UpdateColors()
 		{
