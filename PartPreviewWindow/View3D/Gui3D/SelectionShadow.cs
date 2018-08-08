@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void DrawGlContent(DrawGlContentEventArgs e)
 		{
-			var selectedItem = InteractionContext.Scene.RootSelectedItem;
+			var selectedItem = RootSelection;
 			if (selectedItem != null
 				&& InteractionContext.Scene.ShowSelectionShadow)
 			{

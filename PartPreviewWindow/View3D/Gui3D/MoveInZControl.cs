@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				ForceHide = () =>
 				{
-					var selectedItem = InteractionContext.Scene.RootSelectedItem;
+					var selectedItem = RootSelection;
 					// if the selection changes
 					if (selectedItem != ActiveSelectedItem)
 					{
@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			zHeightDisplayInfo.EditComplete += (s, e) =>
 			{
-				var selectedItem = InteractionContext.Scene.RootSelectedItem;
+				var selectedItem = RootSelection;
 
 				Matrix4X4 startingTransform = selectedItem.Matrix;
 
@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				shouldDrawMoveControls = false;
 			}
 
-			var selectedItem = InteractionContext.Scene.RootSelectedItem;
+			var selectedItem = RootSelection;
 			if (selectedItem != null)
 			{
 				if (shouldDrawMoveControls)
@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
 		{
-			var selectedItem = InteractionContext.Scene.RootSelectedItem;
+			var selectedItem = RootSelection;
 
 			if (mouseEvent3D.info != null
 				&& selectedItem != null)
@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseMove(MouseEvent3DArgs mouseEvent3D)
 		{
-			var selectedItem = InteractionContext.Scene.RootSelectedItem;
+			var selectedItem = RootSelection;
 			ActiveSelectedItem = selectedItem;
 			if (MouseOver)
 			{
@@ -263,7 +263,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void CancelOpperation()
 		{
-			IObject3D selectedItem = InteractionContext.Scene.RootSelectedItem;
+			IObject3D selectedItem = RootSelection;
 			if (selectedItem != null
 				&& MouseDownOnControl)
 			{
@@ -306,7 +306,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void InteractionLayer_AfterDraw(object sender, DrawEventArgs drawEvent)
 		{
-			var selectedItem = InteractionContext.Scene.RootSelectedItem;
+			var selectedItem = RootSelection;
 
 			if (selectedItem != null
 				&& lines.Count > 2)
