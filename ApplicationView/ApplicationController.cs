@@ -898,7 +898,24 @@ namespace MatterHackers.MatterControl
 
 					return Task.CompletedTask;
 				},
-				iconCollector: (theme) => AggContext.StaticData.LoadIcon("noun_479927.png", theme.InvertIcons));
+				iconCollector: (theme) => AggContext.StaticData.LoadIcon("noun_simplify_340976_000000.png", 16, 16, theme.InvertIcons));
+
+			this.Graph.RegisterOperation(
+				typeof(IPathObject),
+				typeof(InflatePathObject3D),
+				"Inflate Path".Localize(),
+				(sceneItem, scene) =>
+				{
+					if (sceneItem is IPathObject imageObject)
+					{
+						var inflatePath = new InflatePathObject3D();
+						sceneItem.WrapWith(inflatePath, scene);
+						inflatePath.Invalidate(new InvalidateArgs(inflatePath, InvalidateType.Properties, null));
+					}
+
+					return Task.CompletedTask;
+				},
+				iconCollector: (theme) => AggContext.StaticData.LoadIcon("noun_expand_1823853_000000.png", 16, 16, theme.InvertIcons));
 
 			this.Graph.RegisterOperation(
 				typeof(IObject3D),

@@ -32,7 +32,7 @@ using ClipperLib;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.VectorMath;
+using MatterHackers.MatterControl.DesignTools.Operations;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -40,21 +40,21 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	using MatterHackers.DataConverters2D;
 	using Newtonsoft.Json;
 	using System;
+	using System.ComponentModel;
 	using System.Linq;
-	using Polygon = List<IntPoint>;
 	using Polygons = List<List<IntPoint>>;
 
-	public class SmoothPathObject3D : Object3D, IPathObject, IEditorDraw
+	public class InflatePathObject3D : Object3D, IPathObject, IEditorDraw
 	{
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
-		public SmoothPathObject3D()
+		public InflatePathObject3D()
 		{
-			Name = "Smooth Path".Localize();
+			Name = "Inflate Path".Localize();
 		}
 
-		public double SmoothDistance { get; set; } = .3;
-		public int Iterations { get; set; } = 3;
+		[Description("Change the width of the image lines.")]
+		public double Inflate { get; set; }
 
 		public override bool CanRemove => true;
 
@@ -84,16 +84,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())
 			{
-				DoSmoothing((long)(SmoothDistance * 1000), Iterations);
+				InsetPath();
 			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Path));
 		}
 
-		private void DoSmoothing(long maxDist, int interations)
+		private void InsetPath()
 		{
-
-			bool closedPath = true;
 			var path = this.Children.OfType<IPathObject>().FirstOrDefault();
 			if(path == null)
 			{
@@ -101,57 +99,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				VertexSource = new VertexStorage();
 				return;
 			}
-			var sourceVertices = path.VertexSource;
 
-			var inputPolygons = sourceVertices.CreatePolygons();
-
-			Polygons outputPolygons = new Polygons();
-			foreach (Polygon inputPolygon in inputPolygons)
-			{
-				int numVerts = inputPolygon.Count;
-				long maxDistSquared = maxDist * maxDist;
-
-				var smoothedPositions = new Polygon(numVerts);
-				foreach (IntPoint inputPosition in inputPolygon)
-				{
-					smoothedPositions.Add(inputPosition);
-				}
-
-				for (int iteration = 0; iteration < interations; iteration++)
-				{
-					var positionsThisPass = new Polygon(numVerts);
-					foreach (IntPoint inputPosition in smoothedPositions)
-					{
-						positionsThisPass.Add(inputPosition);
-					}
-
-					int startIndex = closedPath ? 0 : 1;
-					int endIndex = closedPath ? numVerts : numVerts - 1;
-
-					for (int i = startIndex; i < endIndex; i++)
-					{
-						// wrap back to the previous index
-						IntPoint prev = positionsThisPass[(i + numVerts - 1) % numVerts];
-						IntPoint cur = positionsThisPass[i];
-						IntPoint next = positionsThisPass[(i + 1) % numVerts];
-
-						IntPoint newPos = (prev + cur + next) / 3;
-						IntPoint delta = newPos - inputPolygon[i];
-						if (delta.LengthSquared() > maxDistSquared)
-						{
-							delta = delta.GetLength(maxDist);
-							newPos = inputPolygon[i] + delta;
-						}
-						smoothedPositions[i] = newPos;
-					}
-				}
-
-				outputPolygons.Add(smoothedPositions);
-
-				outputPolygons = ClipperLib.Clipper.CleanPolygons(outputPolygons, Math.Max(maxDist/10, 1.415));
-			}
-
-			VertexSource = outputPolygons.CreateVertexStorage();
+			VertexSource = path.VertexSource.Offset(Inflate);
 		}
 
 		public void DrawEditor(object sender, DrawEventArgs e)
