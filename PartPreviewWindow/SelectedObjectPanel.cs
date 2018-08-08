@@ -120,8 +120,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			removeButton.Click += (s, e) =>
 			{
+				var rootSelection = scene.SelectedItemRoot;
+
 				item.Remove(view3DWidget.Scene.UndoBuffer);
+
 				scene.SelectedItem = null;
+
+				if (item != rootSelection)
+				{
+					scene.SelectedItem = rootSelection;
+				}
 			};
 			toolbar.AddChild(removeButton);
 
