@@ -323,10 +323,16 @@ namespace MatterHackers.MatterControl
 			return new BlenderBGRA().Blend(background, overlay);
 		}
 
-		public FlowLayoutWidget CreateMenuItems(PopupMenu popupMenu, IEnumerable<NamedAction> menuActions)
+		public FlowLayoutWidget CreateMenuItems(PopupMenu popupMenu, IEnumerable<NamedAction> menuActions, bool emptyMenu = true)
 		{
+			// Retain past behavior, where menu is cleared each call. More recent callers many pass in a newly populated menu and
+			// not require the clear
+			if (emptyMenu)
+			{
+				popupMenu.CloseAllChildren();
+			}
+
 			// Create menu items in the DropList for each element in this.menuActions
-			popupMenu.CloseAllChildren();
 			foreach (var menuAction in menuActions)
 			{
 				if (menuAction is ActionSeparator)
