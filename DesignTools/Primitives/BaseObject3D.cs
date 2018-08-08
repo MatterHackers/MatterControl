@@ -55,7 +55,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Base".Localize();
 		}
 
-		public override bool CanRemove => true;
 		public override bool CanApply => true;
 
 		public BaseTypes BaseType { get; set; } = BaseTypes.Circle;

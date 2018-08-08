@@ -65,8 +65,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public enum ThresholdFunctions { Silhouette, Intensity, Alpha, Hue }
 
-		public override bool CanRemove => true;
-
 		public ThresholdFunctions FeatureDetector
 		{
 			get { return _featureDetector; }

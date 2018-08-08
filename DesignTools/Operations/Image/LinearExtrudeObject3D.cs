@@ -47,7 +47,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double Height { get; set; } = 5;
 
 		public override bool CanApply => true;
-		public override bool CanRemove => true;
 
 		[JsonIgnore]
 		private IVertexSource VertexSource

@@ -75,8 +75,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override bool CanApply => true;
 
-		public override bool CanRemove => true;
-
 		public static ScaleObject3D Create(IObject3D itemToScale)
 		{
 			return new ScaleObject3D(itemToScale, Vector3.One);

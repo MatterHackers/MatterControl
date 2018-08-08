@@ -67,7 +67,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		public override bool CanApply => true;
-		public override bool CanRemove => true;
 
 		#region // editable properties
 		public DirectionAxis RotateAbout { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
