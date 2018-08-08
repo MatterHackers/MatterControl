@@ -329,7 +329,7 @@ namespace MatterHackers.MatterControl
 			popupMenu.CloseAllChildren();
 			foreach (var menuAction in menuActions)
 			{
-				if (menuAction.Title == "----")
+				if (menuAction is ActionSeparator)
 				{
 					popupMenu.CreateHorizontalLine();
 				}

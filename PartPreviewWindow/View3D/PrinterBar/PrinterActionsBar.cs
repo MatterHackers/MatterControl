@@ -292,7 +292,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					GetIsActive = () => printer.ViewState.ConfigurePrinterVisible,
 					SetIsActive = (value) => printer.ViewState.ConfigurePrinterVisible = value
 				},
-				new NamedAction() { Title = "----" },
+				new ActionSeparator(),
 				new NamedAction()
 				{
 					Title = "Delete Printer".Localize(),

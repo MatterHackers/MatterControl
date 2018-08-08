@@ -484,7 +484,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						});
 					}
 				},
-				new NamedAction() { Title = "----" },
+				new ActionSeparator(),
 				new NamedAction()
 				{
 					Title = "Cut".Localize(),
@@ -515,7 +515,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					},
 					IsEnabled = () => sceneContext.EditableScene
 				},
-				new NamedAction() { Title = "----" },
+				new ActionSeparator(),
 				new NamedAction()
 				{
 					Title = "Save".Localize(),
@@ -580,7 +580,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					},
 					IsEnabled = () => sceneContext.EditableScene
 				},
-				new NamedAction() { Title = "----" },
+				new ActionSeparator(),
 				new NamedAction()
 				{
 					Title = "Clear Bed".Localize(),
@@ -605,7 +605,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				},
 #endif
-				new NamedAction() { Title = "----" },
+				new ActionSeparator(),
 				new NamedAction()
 				{
 					Title = "Help".Localize() + "...",
