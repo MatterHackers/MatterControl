@@ -1208,6 +1208,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (FindHitObject3D(mouseEvent.Position, ref info) is IObject3D hitObject)
 				{
+					// Object3D/hit item context menu
 					if (hitObject != Scene.SelectedItem)
 					{
 						Scene.SelectedItem = null;
@@ -1231,22 +1232,94 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
 							},
 							altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
+
+						var actions = new[] {
+							new ActionSeparator(),
+							WorkspaceActions["Cut"],
+							WorkspaceActions["Copy"],
+							WorkspaceActions["Paste"],
+							new ActionSeparator(),
+							new NamedAction()
+							{
+			 					Title = "Save As".Localize(),
+								Action = () => UiThread.RunOnIdle(() =>
+								{
+									var selectedItem = sceneContext.Scene.SelectedItem;
+
+									DialogWindow.Show(
+										new SaveAsPage(
+											async (newName, destinationContainer) =>
+											{
+												// Save to the destination provider
+												if (destinationContainer is ILibraryWritableContainer writableContainer)
+												{
+													// Wrap stream with ReadOnlyStream library item and add to container
+													writableContainer.Add(new[]
+													{
+														new InMemoryLibraryItem(selectedItem)
+														{
+															Name = newName
+														}
+													});
+
+													destinationContainer.Dispose();
+												}
+											}));
+								}),
+								IsEnabled = () => sceneContext.EditableScene
+							},
+							new NamedAction()
+							{
+								ID = "Export",
+								Title = "Export".Localize(),
+								Action = () =>
+								{
+									UiThread.RunOnIdle(async () =>
+									{
+										var selectedItem = sceneContext.Scene.SelectedItem;
+
+										DialogWindow.Show(
+											new ExportPrintItemPage(new[]
+											{
+												new InMemoryLibraryItem(selectedItem)
+											}));
+									});
+								}
+							}};
+
+						theme.CreateMenuItems(menu, actions, emptyMenu: false);
 					});
 				}
-				else // open up the menu for the bed (copy past image)
+				else
 				{
+					// Workspace/plate context menu
 					UiThread.RunOnIdle(() =>
 					{
 						var popupMenu = new PopupMenu(theme);
 
-						var pasteMenu = popupMenu.CreateMenuItem("Paste".Localize());
-						pasteMenu.Click += (s2, e2) =>
-						{
-							Scene.Paste();
-							popupMenu.Unfocus();
+						var actions = new[] {
+							new ActionSeparator(),
+							WorkspaceActions["Insert"],
+							new ActionSeparator(),
+							new NamedAction()
+							{
+								Title = "Paste".Localize(),
+								Action = () =>
+								{
+									Scene.Paste();
+									popupMenu.Unfocus();
+								},
+								IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
+							},
+							WorkspaceActions["Save"],
+							WorkspaceActions["SaveAs"],
+							WorkspaceActions["Export"],
+							new ActionSeparator(),
+							WorkspaceActions["ArrangeAll"],
+							WorkspaceActions["ClearBed"],
 						};
 
-						pasteMenu.Enabled = Clipboard.Instance.ContainsImage;
+						theme.CreateMenuItems(popupMenu, actions, emptyMenu: false);
 
 						var popupBounds = new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1);
 
