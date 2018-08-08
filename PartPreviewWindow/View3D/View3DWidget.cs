@@ -270,6 +270,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.sceneContext.SceneLoaded += SceneContext_SceneLoaded;
 		}
 
+		public Dictionary<string, NamedAction> WorkspaceActions { get; set; }
+
 		private void ModelViewSidePanel_Resized(object sender, EventArgs e)
 		{
 			if (this.Printer !=null)
