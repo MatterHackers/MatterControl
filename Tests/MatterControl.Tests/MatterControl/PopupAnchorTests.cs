@@ -486,8 +486,6 @@ namespace MatterControl.Tests.MatterControl
 				},
 				(row) =>
 				{
-					row.Parent.DebugShowBounds = true;
-					row.DebugShowBounds = true;
 					row.HAnchor = HAnchor.Right | HAnchor.Fit;
 					row.VAnchor = VAnchor.Center | VAnchor.Fit;
 				});
