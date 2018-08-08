@@ -194,6 +194,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				selectedObjectPanel.SetActiveItem((IObject3D)treeView.SelectedNode.Tag);
 			};
+			treeView.NodeMouseClick += (s, e) =>
+			{
+				if (e is MouseEventArgs sourceEvent
+					&& s is GuiWidget clickedWidget
+					&& sourceEvent.Button == MouseButtons.Right)
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						var menu = ApplicationController.Instance.GetActionMenuForSceneItem((IObject3D)treeView.SelectedNode.Tag, Scene);
+
+						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+						systemWindow.ShowPopup(
+							new MatePoint(clickedWidget)
+							{
+								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+							},
+							new MatePoint(menu)
+							{
+								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+								AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
+							},
+							altBounds: new RectangleDouble(sourceEvent.X + 1, sourceEvent.Y + 1, sourceEvent.X + 1, sourceEvent.Y + 1));
+					});
+				}
+			};
 			treeView.ScrollArea.ChildAdded += (s, e) =>
 			{
 				if (e is GuiWidgetEventArgs childEventArgs
@@ -243,6 +269,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.sceneContext.SceneLoaded += SceneContext_SceneLoaded;
 		}
+
+		public Dictionary<string, NamedAction> WorkspaceActions { get; set; }
 
 		private void ModelViewSidePanel_Resized(object sender, EventArgs e)
 		{
@@ -761,9 +789,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ViewControls3DButtons? activeButtonBeforeMouseOverride = null;
 
 		Vector2 lastMouseMove;
+		Vector2 mouseDownPositon = Vector2.Zero;
 		Matrix4X4 worldMatrixOnMouseDown;
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
+			mouseDownPositon = mouseEvent.Position;
 			worldMatrixOnMouseDown = World.GetTransform4X4();
 			// Show transform override
 			if (activeButtonBeforeMouseOverride == null
@@ -898,6 +928,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			IObject3D selectedItem = Scene.SelectedItem;
 
 			lastMouseMove = mouseEvent.Position;
+			if(lastMouseMove != mouseDownPositon)
+			{
+				mouseDownPositon = Vector2.Zero;
+			}
+
 			// File system Drop validation
 			mouseEvent.AcceptDrop = this.AllowDragDrop()
 					&& mouseEvent.DragFiles?.Count > 0
@@ -1162,6 +1197,146 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}
 						}
 					}
+				}
+			}
+
+			if (mouseEvent.Button == MouseButtons.Right
+				&& mouseDownPositon == mouseEvent.Position
+				&& this.TrackballTumbleWidget.FirstWidgetUnderMouse)
+			{
+				var info = new IntersectInfo();
+
+				if (FindHitObject3D(mouseEvent.Position, ref info) is IObject3D hitObject)
+				{
+					// Object3D/hit item context menu
+					if (hitObject != Scene.SelectedItem)
+					{
+						Scene.SelectedItem = null;
+						Scene.SelectedItem = hitObject;
+					}
+
+					UiThread.RunOnIdle(() =>
+					{
+						var menu = ApplicationController.Instance.GetActionMenuForSceneItem(Scene.SelectedItem, Scene);
+
+						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+						systemWindow.ShowPopup(
+							new MatePoint(this)
+							{
+								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+							},
+							new MatePoint(menu)
+							{
+								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+							},
+							altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
+
+						var actions = new[] {
+							new ActionSeparator(),
+							WorkspaceActions["Cut"],
+							WorkspaceActions["Copy"],
+							WorkspaceActions["Paste"],
+							new ActionSeparator(),
+							new NamedAction()
+							{
+			 					Title = "Save As".Localize(),
+								Action = () => UiThread.RunOnIdle(() =>
+								{
+									var selectedItem = sceneContext.Scene.SelectedItem;
+
+									DialogWindow.Show(
+										new SaveAsPage(
+											async (newName, destinationContainer) =>
+											{
+												// Save to the destination provider
+												if (destinationContainer is ILibraryWritableContainer writableContainer)
+												{
+													// Wrap stream with ReadOnlyStream library item and add to container
+													writableContainer.Add(new[]
+													{
+														new InMemoryLibraryItem(selectedItem)
+														{
+															Name = newName
+														}
+													});
+
+													destinationContainer.Dispose();
+												}
+											}));
+								}),
+								IsEnabled = () => sceneContext.EditableScene
+							},
+							new NamedAction()
+							{
+								ID = "Export",
+								Title = "Export".Localize(),
+								Action = () =>
+								{
+									UiThread.RunOnIdle(async () =>
+									{
+										var selectedItem = sceneContext.Scene.SelectedItem;
+
+										DialogWindow.Show(
+											new ExportPrintItemPage(new[]
+											{
+												new InMemoryLibraryItem(selectedItem)
+											}));
+									});
+								}
+							}};
+
+						theme.CreateMenuItems(menu, actions, emptyMenu: false);
+					});
+				}
+				else
+				{
+					// Workspace/plate context menu
+					UiThread.RunOnIdle(() =>
+					{
+						var popupMenu = new PopupMenu(theme);
+
+						var actions = new[] {
+							new ActionSeparator(),
+							WorkspaceActions["Insert"],
+							new ActionSeparator(),
+							new NamedAction()
+							{
+								Title = "Paste".Localize(),
+								Action = () =>
+								{
+									Scene.Paste();
+									popupMenu.Unfocus();
+								},
+								IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
+							},
+							WorkspaceActions["Save"],
+							WorkspaceActions["SaveAs"],
+							WorkspaceActions["Export"],
+							new ActionSeparator(),
+							WorkspaceActions["ArrangeAll"],
+							WorkspaceActions["ClearBed"],
+						};
+
+						theme.CreateMenuItems(popupMenu, actions, emptyMenu: false);
+
+						var popupBounds = new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1);
+
+						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+						systemWindow.ShowPopup(
+							new MatePoint(this)
+							{
+								Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom),
+								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+							},
+							new MatePoint(popupMenu)
+							{
+								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+							},
+							altBounds: popupBounds);
+					});
 				}
 			}
 

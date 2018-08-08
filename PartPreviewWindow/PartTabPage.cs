@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Linq;
 using MatterHackers.Agg.UI;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
@@ -87,6 +88,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				editorType: (isPrinterType) ? MeshViewerWidget.EditorType.Printer : MeshViewerWidget.EditorType.Part);
 
 			viewControls3D.SetView3DWidget(view3DWidget);
+
+			// Construct and store dictionary of menu actions accessible at workspace level
+			view3DWidget.WorkspaceActions = viewControls3D.MenuActions.Where(o => !string.IsNullOrEmpty(o.ID)).ToDictionary(o => o.ID, o => o);
 
 			this.AddChild(topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{

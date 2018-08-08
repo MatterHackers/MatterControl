@@ -87,6 +87,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.PartSelect;
 		private List<(GuiWidget button, SceneSelectionOperation operation)> operationButtons;
 
+		public NamedAction[] MenuActions { get; private set; }
+
 		public bool IsPrinterMode { get; }
 
 		public ViewControls3DButtons ActiveButton
@@ -345,12 +347,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Fit,
 			};
 
+			// Construct and store menu actions
+			this.MenuActions = this.BedMenuActions(sceneContext, ApplicationController.Instance.MenuTheme);
+
 			return new PopupMenuButton(buttonView, theme)
 			{
 				Name = "Bed Options Menu",
 				DynamicPopupContent = () =>
 				{
-					var menuContent = theme.CreateMenuItems(popupMenu, this.BedMenuActions(sceneContext, ApplicationController.Instance.MenuTheme));
+					var menuContent = theme.CreateMenuItems(popupMenu, this.MenuActions);
 					menuContent.MinimumSize = new Vector2(200, 0);
 
 					return menuContent;
@@ -455,6 +460,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				new NamedAction()
 				{
+					ID = "Insert",
 					Title = "Insert".Localize(),
 					Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons),
 					Action = () =>
@@ -484,9 +490,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						});
 					}
 				},
-				new NamedAction() { Title = "----" },
+				new ActionSeparator(),
 				new NamedAction()
 				{
+					ID = "Cut",
 					Title = "Cut".Localize(),
 					Shortcut = "Ctrl+X",
 					Action = () =>
@@ -497,6 +504,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				new NamedAction()
 				{
+					ID = "Copy",
 					Title = "Copy".Localize(),
 					Shortcut = "Ctrl+C",
 					Action = () =>
@@ -507,6 +515,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				new NamedAction()
 				{
+					ID = "Paste",
 					Title = "Paste".Localize(),
 					Shortcut = "Ctrl+V",
 					Action = () =>
@@ -515,9 +524,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					},
 					IsEnabled = () => sceneContext.EditableScene
 				},
-				new NamedAction() { Title = "----" },
+				new ActionSeparator(),
 				new NamedAction()
 				{
+					ID = "Save",
 					Title = "Save".Localize(),
 					Shortcut = "Ctrl+S",
 					Action = async () =>
@@ -528,6 +538,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				new NamedAction()
 				{
+					ID = "SaveAs",
 					Title = "Save As".Localize(),
 					Action = () => UiThread.RunOnIdle(() =>
 					{
@@ -555,6 +566,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				new NamedAction()
 				{
+					ID = "Export",
 					Title = "Export".Localize(),
 					Action = () =>
 					{
@@ -573,6 +585,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				new NamedAction()
 				{
+					ID = "ArrangeAll",
 					Title = "Arrange All Parts".Localize(),
 					Action = () =>
 					{
@@ -580,9 +593,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					},
 					IsEnabled = () => sceneContext.EditableScene
 				},
-				new NamedAction() { Title = "----" },
+				new ActionSeparator(),
 				new NamedAction()
 				{
+					ID = "ClearBed",
 					Title = "Clear Bed".Localize(),
 					Action = () =>
 					{
@@ -605,9 +619,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				},
 #endif
-				new NamedAction() { Title = "----" },
+				new ActionSeparator(),
 				new NamedAction()
 				{
+					ID = "Help",
 					Title = "Help".Localize() + "...",
 					Action = () =>
 					{

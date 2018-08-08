@@ -38,9 +38,11 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
+	using System.Linq;
 	using CustomWidgets;
 	using DataConverters3D;
 	using MatterHackers.Agg.Platform;
+	using MatterHackers.MatterControl.DataStorage;
 	using MatterHackers.MatterControl.Library;
 
 	public class ImageEditor : IObject3DEditor
@@ -87,6 +89,63 @@ namespace MatterHackers.MatterControl.DesignTools
 				Margin = new BorderDouble(bottom: 5),
 				HAnchor = HAnchor.Center
 			});
+
+			thumbnailWidget.Click += (s, e) =>
+			{
+				if (e.Button == MouseButtons.Right)
+				{
+					var popupMenu = new PopupMenu(theme);
+
+					var pasteMenu = popupMenu.CreateMenuItem("Paste".Localize());
+					pasteMenu.Click += (s2, e2) =>
+					{
+						activeImage = Clipboard.Instance.GetImage();
+
+						thumbnailWidget.Image = activeImage;
+
+						// Persist
+						string filePath = ApplicationDataStorage.Instance.GetNewLibraryFilePath(".png");
+						AggContext.ImageIO.SaveImageData(
+							filePath,
+							activeImage);
+
+						imageObject.AssetPath = filePath;
+						imageObject.Mesh = null;
+
+						thumbnailWidget.Image = SetImage(theme, imageObject);
+
+						column.Invalidate();
+						imageObject.Invalidate(new InvalidateArgs(imageObject, InvalidateType.Image));
+
+						popupMenu.Unfocus();
+					};
+
+					pasteMenu.Enabled = Clipboard.Instance.ContainsImage;
+
+					var copyMenu = popupMenu.CreateMenuItem("Copy".Localize());
+					copyMenu.Click += (s2, e2) =>
+					{
+						Clipboard.Instance.SetImage(thumbnailWidget.Image);
+						popupMenu.Unfocus();
+					};
+
+					var popupBounds = new RectangleDouble(e.X + 1, e.Y + 1, e.X + 1, e.Y + 1);
+
+					var systemWindow = column.Parents<SystemWindow>().FirstOrDefault();
+					systemWindow.ShowPopup(
+						new MatePoint(thumbnailWidget)
+						{
+							Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom),
+							AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+						},
+						new MatePoint(popupMenu)
+						{
+							Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+							AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+						},
+						altBounds: popupBounds);
+				}
+			};
 
 			// add in the invert checkbox and change image button
 			var changeButton = new TextButton("Change".Localize(), theme)

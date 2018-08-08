@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="MatterControl\ApplicationControllerTests.cs" />
     <Compile Include="MatterControl\BrailleGrade2Tests.cs" />
+    <Compile Include="MatterControl\PopupAnchorTests.cs" />
     <Compile Include="MatterControl\InteractiveSceneTests.cs" />
     <Compile Include="MatterControl\ImportSettingsTests.cs" />
     <Compile Include="MatterControl\AssetManagerTests.cs" />

@@ -75,6 +75,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public event EventHandler BeforeCheck;
 
+		internal void NotifyItemClicked(GuiWidget sourceWidget, MouseEventArgs e)
+		{
+			this.NodeMouseClick?.Invoke(sourceWidget, e);
+		}
+
 		public event EventHandler BeforeCollapse;
 
 		public event EventHandler BeforeExpand;

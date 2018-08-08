@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
@@ -36,6 +37,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
@@ -52,6 +54,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private bool mouseDownInBounds = false;
 		private Vector2 mouseDownAt;
 
+		private ImageBuffer overflowIcon;
+
 		public ImageWidget imageWidget;
 		protected int thumbWidth;
 		protected int thumbHeight;
@@ -62,7 +66,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.listViewItem = listViewItem;
 			this.thumbWidth = width;
 			this.thumbHeight = height;
+
+			overflowIcon = AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, theme.InvertIcons);
 		}
+
+		public bool HasMenu { get; set; } = false;
 
 		public async Task LoadItemThumbnail()
 		{
@@ -286,6 +294,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnLoad(EventArgs args)
 		{
+			foreach (var child in Children)
+			{
+				child.Selectable = false;
+			}
+
 			// On first draw, lookup and set best thumbnail
 			this.LoadItemThumbnail().ConfigureAwait(false);
 
@@ -302,6 +315,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				// Requeue thumbnail generation
 				this.ScheduleRaytraceOperation();
+			}
+
+			if (this.mouseInBounds
+				&& this.HasMenu)
+			{
+				var bounds = this.LocalBounds;
+				graphics2D.Render(overflowIcon, new Point2D(bounds.Right - 32, bounds.Top - 32 - 3));
 			}
 
 			base.OnDraw(graphics2D);
@@ -359,6 +379,64 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.OnMouseLeaveBounds(mouseEvent);
 			UpdateHoverState();
 			Invalidate();
+		}
+
+		public override void OnClick(MouseEventArgs mouseEvent)
+		{
+			var bounds = this.LocalBounds;
+			var hitRegion = new RectangleDouble(
+				new Vector2(bounds.Right - 32, bounds.Top),
+				new Vector2(bounds.Right, bounds.Top - 32));
+
+			if (this.HasMenu
+				&& (hitRegion.Contains(mouseEvent.Position)
+					|| mouseEvent.Button == MouseButtons.Right))
+			{
+				var menu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+
+				foreach (var menuAction in this.listViewItem.ListView.MenuActions)
+				{
+					if (menuAction is MenuSeparator)
+					{
+						menu.CreateHorizontalLine();
+					}
+					else if (menuAction.IsEnabled(this.listViewItem.ListView.SelectedItems, this.listViewItem.ListView))
+					{
+						var item = menu.CreateMenuItem(menuAction.Title);
+						item.Click += (s, e) => UiThread.RunOnIdle(() =>
+						{
+							menu.Close();
+							menuAction.Action.Invoke(this.listViewItem.ListView.SelectedItems.Select(o => o.Model), this.listViewItem.ListView);
+						});
+					}
+				}
+
+				RectangleDouble popupBounds;
+				if (mouseEvent.Button == MouseButtons.Right)
+				{
+					popupBounds = new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1);
+				}
+				else
+				{
+					popupBounds = new RectangleDouble(this.Width - 32, this.Height - 32, this.Width, this.Height);
+				}
+
+				var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+				systemWindow.ShowPopup(
+					new MatePoint(this)
+					{
+						Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom),
+						AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+					},
+					new MatePoint(menu)
+					{
+						Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+						AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+					},
+					altBounds: popupBounds);
+			}
+
+			base.OnClick(mouseEvent);
 		}
 
 		protected virtual void UpdateColors()
