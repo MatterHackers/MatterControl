@@ -87,6 +87,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.PartSelect;
 		private List<(GuiWidget button, SceneSelectionOperation operation)> operationButtons;
 
+		public NamedAction[] MenuActions { get; private set; }
+
 		public bool IsPrinterMode { get; }
 
 		public ViewControls3DButtons ActiveButton
@@ -345,12 +347,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Fit,
 			};
 
+			// Construct and store menu actions
+			this.MenuActions = this.BedMenuActions(sceneContext, ApplicationController.Instance.MenuTheme);
+
 			return new PopupMenuButton(buttonView, theme)
 			{
 				Name = "Bed Options Menu",
 				DynamicPopupContent = () =>
 				{
-					var menuContent = theme.CreateMenuItems(popupMenu, this.BedMenuActions(sceneContext, ApplicationController.Instance.MenuTheme));
+					var menuContent = theme.CreateMenuItems(popupMenu, this.MenuActions);
 					menuContent.MinimumSize = new Vector2(200, 0);
 
 					return menuContent;
