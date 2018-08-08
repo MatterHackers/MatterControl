@@ -108,6 +108,7 @@
     <Compile Include="DesignTools\Obsolete\FitToBoundsObject3D.cs" />
     <Compile Include="DesignTools\Operations\FitToBoundsObject3D_2.cs" />
     <Compile Include="DesignTools\Operations\MirrorObject3D.cs" />
+    <Compile Include="DesignTools\Operations\Path\InflatePathObject3D.cs" />
     <Compile Include="DesignTools\Operations\TransformWrapperObject3D.cs" />
     <Compile Include="DesignTools\Operations\GroupObject3D.cs" />
     <Compile Include="DesignTools\Operations\Image\ImageToPathObject3D.cs" />
