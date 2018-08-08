@@ -1218,17 +1218,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 						systemWindow.ShowPopup(
-						new MatePoint(this)
-						{
-							Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-							AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-						},
-						new MatePoint(menu)
-						{
-							Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-							AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-						},
-						altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
+							new MatePoint(this)
+							{
+								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+							},
+							new MatePoint(menu)
+							{
+								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+							},
+							altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
 					});
 				}
 				else // open up the menu for the bed (copy past image)
