@@ -1202,9 +1202,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& mouseDownPositon == mouseEvent.Position
 				&& this.TrackballTumbleWidget.FirstWidgetUnderMouse)
 			{
-				IntersectInfo info = new IntersectInfo();
-				var hitObject = FindHitObject3D(mouseEvent.Position, ref info);
-				if (hitObject != null)
+				var info = new IntersectInfo();
+
+				if (FindHitObject3D(mouseEvent.Position, ref info) is IObject3D hitObject)
 				{
 					if (hitObject != Scene.SelectedItem)
 					{
