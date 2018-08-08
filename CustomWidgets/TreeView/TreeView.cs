@@ -75,9 +75,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public event EventHandler BeforeCheck;
 
-		internal void NotifyItemClicked(TreeNode treeNode, MouseEventArgs e)
+		internal void NotifyItemClicked(GuiWidget sourceWidget, MouseEventArgs e)
 		{
-			this.NodeMouseClick?.Invoke(treeNode, e);
+			this.NodeMouseClick?.Invoke(sourceWidget, e);
 		}
 
 		public event EventHandler BeforeCollapse;

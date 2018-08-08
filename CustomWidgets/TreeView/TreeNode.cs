@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					TreeView.SelectedNode = this;
 				}
 
-				this.TreeView.NotifyItemClicked(this, e);
+				this.TreeView.NotifyItemClicked(this.TitleBar, e);
 			};
 			this.AddChild(this.TitleBar);
 
