@@ -46,7 +46,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		}
 
 		public override bool CanApply => true;
-		public override bool CanRemove => true;
 
 		public override void Apply(UndoBuffer undoBuffer)
 		{

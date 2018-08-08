@@ -58,7 +58,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		public override bool CanApply => true;
-		public override bool CanRemove => true;
 		private IObject3D FitBounds => Children.Last();
 
 		public static FitToBoundsObject3D_2 Create(IObject3D itemToFit)

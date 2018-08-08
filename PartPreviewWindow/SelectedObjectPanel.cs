@@ -116,15 +116,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var removeButton = new IconButton(AggContext.StaticData.LoadIcon("close.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Margin = theme.ButtonSpacing,
-				ToolTipText = "Remove operation from parts".Localize(),
-				Enabled = scene.SelectedItem?.CanRemove == true
+				ToolTipText = "Remove operation from parts".Localize()
 			};
 			removeButton.Click += (s, e) =>
 			{
+				var rootSelection = scene.SelectedItemRoot;
+
 				item.Remove(view3DWidget.Scene.UndoBuffer);
+
 				scene.SelectedItem = null;
+
+				if (item != rootSelection)
+				{
+					scene.SelectedItem = rootSelection;
+				}
 			};
-			scene.SelectionChanged += (s, e) => removeButton.Enabled = scene.SelectedItem?.CanRemove == true;
 			toolbar.AddChild(removeButton);
 
 			var overflowButton = new OverflowBar.OverflowMenuButton(theme);

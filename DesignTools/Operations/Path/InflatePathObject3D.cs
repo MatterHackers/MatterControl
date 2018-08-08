@@ -56,8 +56,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[Description("Change the width of the image lines.")]
 		public double Inflate { get; set; }
 
-		public override bool CanRemove => true;
-
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if ((invalidateType.InvalidateType == InvalidateType.Content

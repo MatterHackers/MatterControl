@@ -174,7 +174,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						CloseMenu();
 					}
 				});
+			}
 
+			void MouseUp(object sender, EventArgs e)
+			{
+				bool mouseUpOnIgnoredChild = ignoredWidgets.Any(w => w.MouseCaptured || w.ChildHasMouseCaptured);
+				if (!mouseUpOnIgnoredChild)
+				{
+					UiThread.RunOnIdle(CloseMenu);
+				}
 			}
 
 			void anchor_Closed(object sender, ClosedEventArgs e)

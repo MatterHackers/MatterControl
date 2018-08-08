@@ -186,13 +186,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override bool CanApply => true;
 
-		public override bool CanRemove => true;
-
 		private List<Aabb> CurrentChildrenBounds
 		{
 			get
 			{
-				List<Aabb> currentChildrenBounds = new List<Aabb>();
+				var currentChildrenBounds = new List<Aabb>();
 				this.Children.Modify(list =>
 				{
 					foreach (var child in list)

@@ -56,8 +56,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public double SmoothDistance { get; set; } = .3;
 		public int Iterations { get; set; } = 3;
 
-		public override bool CanRemove => true;
-
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if ((invalidateType.InvalidateType == InvalidateType.Content

@@ -38,7 +38,5 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			Name = "Group".Localize();
 		}
-
-		public override bool CanRemove => true;
 	}
 }

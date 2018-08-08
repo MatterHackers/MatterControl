@@ -87,6 +87,16 @@ namespace MatterHackers.MeshVisualizer
 		protected double SecondsToShowNumberEdit { get; private set; } = 4;
 		protected Stopwatch timeSinceMouseUp { get; private set; } = new Stopwatch();
 
+		public IObject3D RootSelection
+		{
+			get
+			{
+				var selectedItemRoot = InteractionContext.Scene.SelectedItemRoot;
+				var selectedItem = InteractionContext.Scene.SelectedItem;
+				return (selectedItemRoot == selectedItem) ? selectedItem : null;
+			}
+		}
+
 		public static void DrawMeasureLine(Graphics2D graphics2D, Vector2 lineStart, Vector2 lineEnd, Color color, LineArrows arrows)
 		{
 			graphics2D.Line(lineStart, lineEnd, Color.Black);

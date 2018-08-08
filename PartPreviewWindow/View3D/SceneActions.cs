@@ -310,7 +310,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var selectedItem = scene.SelectedItem;
 			if (selectedItem != null)
 			{
-				// Create and perform the delete operation 
+				// Create and perform the delete operation
 				var deleteOperation = new DeleteCommand(scene, selectedItem);
 
 				// Store the operation for undo/redo

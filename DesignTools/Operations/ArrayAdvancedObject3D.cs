@@ -43,7 +43,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		public override bool CanApply => true;
-		public override bool CanRemove => true;
 
 		public int Count { get; set; } = 3;
 

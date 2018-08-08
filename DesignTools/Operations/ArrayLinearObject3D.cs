@@ -45,7 +45,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		public override bool CanApply => true;
-		public override bool CanRemove => true;
 		public int Count { get; set; } = 3;
 		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };
 		public double Distance { get; set; } = 30;
