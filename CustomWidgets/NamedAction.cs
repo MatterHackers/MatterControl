@@ -42,6 +42,8 @@ namespace MatterHackers.Agg.UI
 		public Action Action { get; set; }
 		public ImageBuffer Icon { get; set; }
 		public Func<bool> IsEnabled { get; set; }
+		public string ID { get; internal set; }
+	}
 
 	public class ActionSeparator : NamedAction
 	{

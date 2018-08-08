@@ -455,6 +455,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				new NamedAction()
 				{
+					ID = "Insert",
 					Title = "Insert".Localize(),
 					Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons),
 					Action = () =>
@@ -487,6 +488,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new ActionSeparator(),
 				new NamedAction()
 				{
+					ID = "Cut",
 					Title = "Cut".Localize(),
 					Shortcut = "Ctrl+X",
 					Action = () =>
@@ -497,6 +499,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				new NamedAction()
 				{
+					ID = "Copy",
 					Title = "Copy".Localize(),
 					Shortcut = "Ctrl+C",
 					Action = () =>
@@ -507,6 +510,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				new NamedAction()
 				{
+					ID = "Paste",
 					Title = "Paste".Localize(),
 					Shortcut = "Ctrl+V",
 					Action = () =>
@@ -518,6 +522,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new ActionSeparator(),
 				new NamedAction()
 				{
+					ID = "Save",
 					Title = "Save".Localize(),
 					Shortcut = "Ctrl+S",
 					Action = async () =>
@@ -528,6 +533,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				new NamedAction()
 				{
+					ID = "SaveAs",
 					Title = "Save As".Localize(),
 					Action = () => UiThread.RunOnIdle(() =>
 					{
@@ -555,6 +561,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				new NamedAction()
 				{
+					ID = "Export",
 					Title = "Export".Localize(),
 					Action = () =>
 					{
@@ -573,6 +580,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				new NamedAction()
 				{
+					ID = "ArrangeAll",
 					Title = "Arrange All Parts".Localize(),
 					Action = () =>
 					{
@@ -583,6 +591,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new ActionSeparator(),
 				new NamedAction()
 				{
+					ID = "ClearBed",
 					Title = "Clear Bed".Localize(),
 					Action = () =>
 					{
@@ -608,6 +617,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new ActionSeparator(),
 				new NamedAction()
 				{
+					ID = "Help",
 					Title = "Help".Localize() + "...",
 					Action = () =>
 					{
