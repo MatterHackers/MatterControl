@@ -37,6 +37,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.Agg.Image;
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.DataConverters3D;
+	using MatterHackers.MatterControl.DesignTools.Operations;
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.RayTracer;
 

@@ -85,6 +85,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+		public static int EstimatedMemory(this IObject3D object3D)
+		{
+			return 0;
+		}
+
 		public static bool IsRoot(this IObject3D object3D)
 		{
 			return object3D.Parent == null;
