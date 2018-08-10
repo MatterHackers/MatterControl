@@ -27,25 +27,72 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DesignTools.Operations;
+using System.Collections.Generic;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
 	public class ComponentObject3D : Object3D, IVisualLeafNode
 	{
-		public bool Finalized { get; set; } = true;
-
 		public ComponentObject3D()
 		{
 		}
 
 		public ComponentObject3D(IEnumerable<IObject3D> children)
-			: base (children)
+			: base(children)
 		{
 		}
 
+		public override bool CanApply => Finalized;
+		public bool Finalized { get; set; } = true;
 		public List<string> SurfacedEditors { get; set; } = new List<string>();
+
+		public override void Apply(UndoBuffer undoBuffer)
+		{
+			// we want to end up with just a group of all the visible mesh objects
+			using (RebuildLock())
+			{
+				List<IObject3D> newChildren = new List<IObject3D>();
+
+				// push our matrix into a copy of our visible children
+				foreach (var child in this.VisibleMeshes())
+				{
+					var meshOnlyItem = new Object3D();
+					meshOnlyItem.Matrix = child.WorldMatrix(this);
+					meshOnlyItem.Color = child.WorldColor(this);
+					meshOnlyItem.MaterialIndex = child.WorldMaterialIndex(this);
+					meshOnlyItem.OutputType = child.WorldOutputType(this);
+					meshOnlyItem.Mesh = child.Mesh;
+					meshOnlyItem.Name = "Mesh".Localize();
+					newChildren.Add(meshOnlyItem);
+				}
+
+				if(newChildren.Count > 1)
+				{
+					var group = new GroupObject3D();
+					group.Name = this.Name;
+					group.Children.Modify(list =>
+					{
+						list.AddRange(newChildren);
+					});
+					newChildren.Clear();
+					newChildren.Add(group);
+				}
+				else if(newChildren.Count == 1)
+				{
+					newChildren[0].Name = this.Name;
+				}
+
+				// and replace us with the children
+				undoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { this }, newChildren));
+			}
+
+			Invalidate(new InvalidateArgs(this, InvalidateType.Content, undoBuffer));
+		}
 	}
 }
