@@ -96,29 +96,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var scene = sceneContext.Scene;
 
-			// put in a make permanent button
-			var icon = AggContext.StaticData.LoadIcon("fa-check_16.png", 16, 16, theme.InvertIcons).SetPreMultiply();
-			var applyButton = new IconButton(icon, theme)
-			{
-				Margin = theme.ButtonSpacing,
-				ToolTipText = "Apply operation and make permanent".Localize(),
-				Enabled = scene.SelectedItem?.CanApply == true
-			};
-			applyButton.Click += (s, e) =>
+			var removeMenu = new PopupMenu(theme);
+
+			var applyAndDeleteItem = removeMenu.CreateMenuItem("Apply & Delete".Localize(), AggContext.StaticData.LoadIcon("fa-check_16.png", 16, 16, theme.InvertIcons).SetPreMultiply());
+			applyAndDeleteItem.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				this.item.Apply(view3DWidget.Scene.UndoBuffer);
 				scene.SelectedItem = null;
-			};
-			scene.SelectionChanged += (s, e) => applyButton.Enabled = scene.SelectedItem?.CanApply == true;
-			toolbar.AddChild(applyButton);
+			});
 
-			// put in a remove button
-			var removeButton = new IconButton(AggContext.StaticData.LoadIcon("close.png", 16, 16, theme.InvertIcons), theme)
-			{
-				Margin = theme.ButtonSpacing,
-				ToolTipText = "Remove operation from parts".Localize()
-			};
-			removeButton.Click += (s, e) =>
+			var deleteItem = removeMenu.CreateMenuItem("Delete".Localize());
+			deleteItem.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				var rootSelection = scene.SelectedItemRoot;
 
@@ -132,6 +120,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					scene.SelectedItem = rootSelection;
 				}
+			});
+
+			// Delete button
+			var removeButton = new PopupMenuButton(AggContext.StaticData.LoadIcon("close.png", 16, 16, theme.InvertIcons), theme);
+
+			removeButton.PopupBorderColor = ApplicationController.Instance.MenuTheme.GetBorderColor(120);
+			removeButton.DynamicPopupContent = () =>
+			{
+				applyAndDeleteItem.Enabled = scene.SelectedItem?.CanApply == true;
+				return removeMenu;
 			};
 			toolbar.AddChild(removeButton);
 
