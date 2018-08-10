@@ -38,17 +38,17 @@ namespace MatterControl.Tests
 #endif
 
 			// This list can be refreshed via the rebuildDependencies() helper function below
-			string knownAssemblies = @"MatterHackers.VectorMath.dll
-						AGG.dll
-						MatterHackers.PolygonMesh.dll
+			string knownAssemblies = @"VectorMath.dll
+						Agg.dll
+						PolygonMesh.dll
 						clipper_library.dll
-						MatterHackers.Agg.UI.dll
+						Gui.dll
 						Tesselate.dll
-						MatterHackers.DataConverters2D.dll
+						DataConverters2D.dll
 						MatterHackers.RenderOpenGl.dll
 						RayTracer.dll
-						MatterHackers.DataConverters3D.dll
-						MatterHackers.Localizations.dll
+						DataConverters3D.dll
+						Localizations.dll
 						agg_platform_win32.dll
 						Community.CsharpSqlite.dll
 						MatterHackers.MatterControl.Plugins.dll
