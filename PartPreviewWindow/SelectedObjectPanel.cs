@@ -122,11 +122,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var rootSelection = scene.SelectedItemRoot;
 
-				item.Remove(view3DWidget.Scene.UndoBuffer);
+				var removeItem = item;
+				removeItem.Remove(view3DWidget.Scene.UndoBuffer);
 
 				scene.SelectedItem = null;
 
-				if (item != rootSelection)
+				// Only restore the root selection if it wasn't the item removed
+				if (removeItem != rootSelection)
 				{
 					scene.SelectedItem = rootSelection;
 				}
