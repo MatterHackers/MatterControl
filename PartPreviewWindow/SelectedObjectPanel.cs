@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var scene = sceneContext.Scene;
 
-			var removeMenu = new PopupMenu(theme);
+			var removeMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
 			var applyAndDeleteItem = removeMenu.CreateMenuItem("Apply & Delete".Localize(), AggContext.StaticData.LoadIcon("fa-check_16.png", 16, 16, theme.InvertIcons).SetPreMultiply());
 			applyAndDeleteItem.Click += (s, e) => UiThread.RunOnIdle(() =>

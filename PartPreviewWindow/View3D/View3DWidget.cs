@@ -1295,7 +1295,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// Workspace/plate context menu
 					UiThread.RunOnIdle(() =>
 					{
-						var popupMenu = new PopupMenu(theme);
+						var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
 						var actions = new[] {
 							new ActionSeparator(),
