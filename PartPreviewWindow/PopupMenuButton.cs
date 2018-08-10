@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -43,6 +44,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.DisabledColor = new Color(theme.Colors.SecondaryTextColor, 50);
 			this.HoverColor = theme.MinimalShade;
+		}
+
+		public PopupMenuButton(ImageBuffer imageBuffer, ThemeConfig theme)
+			: this (new IconButton(imageBuffer, theme), theme)
+		{
 		}
 
 		public PopupMenuButton(GuiWidget viewWidget, ThemeConfig theme)
