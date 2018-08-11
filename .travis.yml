@@ -3,4 +3,5 @@ solution: MatterControl.sln
 mono: latest
 dotnet: 2.0.0
 script:
-  - dotnet restore
+  - nuget restore MatterControl.sln
+  - msbuild MatterControl.sln
