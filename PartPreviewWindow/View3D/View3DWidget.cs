@@ -793,6 +793,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		Matrix4X4 worldMatrixOnMouseDown;
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
+			var selectedItem = Scene.SelectedItem;
 			mouseDownPositon = mouseEvent.Position;
 			worldMatrixOnMouseDown = World.GetTransform4X4();
 			// Show transform override
@@ -850,9 +851,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						IObject3D hitObject = FindHitObject3D(mouseEvent.Position, ref info);
 						if (hitObject == null)
 						{
-							if (Scene.SelectedItem != null)
+							if (selectedItem != null)
 							{
 								Scene.ClearSelection();
+								selectedItem = null;
 							}
 
 							// start a selection rect
@@ -864,36 +866,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							CurrentSelectInfo.HitPlane = new PlaneShape(Vector3.UnitZ, CurrentSelectInfo.PlaneDownHitPos.Z, null);
 
-							if (hitObject != Scene.SelectedItem)
+							if (hitObject != selectedItem)
 							{
-								if (Scene.SelectedItem == null)
+								if (selectedItem == null)
 								{
 									// No selection exists
-									Scene.SelectedItem = hitObject;
+									selectedItem = hitObject;
 								}
 								else if ((ModifierKeys == Keys.Shift || ModifierKeys == Keys.Control)
-									&& !Scene.SelectedItem.Children.Contains(hitObject))
+									&& !selectedItem.Children.Contains(hitObject))
 								{
 									Scene.AddToSelection(hitObject);
 								}
-								else if (Scene.SelectedItem == hitObject || Scene.SelectedItem.Children.Contains(hitObject))
+								else if (selectedItem == hitObject || selectedItem.Children.Contains(hitObject))
 								{
 									// Selection should not be cleared and drag should occur
 								}
 								else if (ModifierKeys != Keys.Shift)
 								{
 									Scene.SelectedItem = hitObject;
+									selectedItem = hitObject;
 								}
 
 								Invalidate();
 							}
 
-							TransformOnMouseDown = Scene.SelectedItem.Matrix;
+							TransformOnMouseDown = selectedItem.Matrix;
 
 							Invalidate();
 							CurrentSelectInfo.DownOnPart = true;
 
-							AxisAlignedBoundingBox selectedBounds = Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+							AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 							if (info.HitPosition.X < selectedBounds.Center.X)
 							{
@@ -1115,6 +1118,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
+			var selectedItem = Scene.SelectedItem;
 			if (this.DragOperationActive)
 			{
 				this.FinishDrop(mouseUpInBounds: true);
@@ -1122,7 +1126,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (TrackballTumbleWidget.TransformState == TrackBallTransformType.None)
 			{
-				if (Scene.SelectedItem != null
+				if (selectedItem != null
 					&& CurrentSelectInfo.DownOnPart
 					&& CurrentSelectInfo.LastMoveDelta != Vector3.Zero)
 				{
@@ -1159,17 +1163,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						var hitObject = FindHitObject3D(mouseEvent.Position, ref info);
 						if (hitObject != null)
 						{
-							if (Scene.SelectedItem == hitObject
-								&& !(Scene.SelectedItem is SelectionGroupObject3D))
+							if (selectedItem == hitObject
+								&& !(selectedItem is SelectionGroupObject3D))
 							{
 								Scene.SelectedItem = null;
+								selectedItem = null;
 							}
 							else
 							{
 								IObject3D selectedHitItem = null;
-								if (Scene.SelectedItem != null)
+								if (selectedItem != null)
 								{
-									foreach (Object3D object3D in Scene.SelectedItem.Children)
+									foreach (Object3D object3D in selectedItem.Children)
 									{
 										if (object3D.TraceData().Contains(info.HitPosition))
 										{
@@ -1183,10 +1188,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 								if (selectedHitItem != null)
 								{
-									Scene.SelectedItem.Children.Remove(selectedHitItem);
-									if(Scene.SelectedItem.Children.Count == 0)
+									selectedItem.Children.Remove(selectedHitItem);
+									if(selectedItem.Children.Count == 0)
 									{
 										Scene.SelectedItem = null;
+										selectedItem = null;
 									}
 									Scene.Children.Add(selectedHitItem);
 								}
@@ -1209,15 +1215,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (FindHitObject3D(mouseEvent.Position, ref info) is IObject3D hitObject)
 				{
 					// Object3D/hit item context menu
-					if (hitObject != Scene.SelectedItem)
+					if (hitObject != selectedItem)
 					{
 						Scene.SelectedItem = null;
 						Scene.SelectedItem = hitObject;
+						selectedItem = hitObject;
 					}
 
 					UiThread.RunOnIdle(() =>
 					{
-						var menu = ApplicationController.Instance.GetActionMenuForSceneItem(Scene.SelectedItem, Scene);
+						var menu = ApplicationController.Instance.GetActionMenuForSceneItem(selectedItem, Scene);
 
 						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 						systemWindow.ShowPopup(
@@ -1244,8 +1251,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			 					Title = "Save As".Localize(),
 								Action = () => UiThread.RunOnIdle(() =>
 								{
-									var selectedItem = sceneContext.Scene.SelectedItem;
-
 									DialogWindow.Show(
 										new SaveAsPage(
 											async (newName, destinationContainer) =>
@@ -1276,8 +1281,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								{
 									UiThread.RunOnIdle(async () =>
 									{
-										var selectedItem = sceneContext.Scene.SelectedItem;
-
 										DialogWindow.Show(
 											new ExportPrintItemPage(new[]
 											{
