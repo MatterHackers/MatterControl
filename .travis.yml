@@ -1,4 +1,7 @@
 language: csharp
 solution: MatterControl.sln
 mono: latest
-
+dotnet: 2.0.0
+script:
+  - nuget restore MatterControl.sln
+  - msbuild MatterControl.sln
