@@ -871,7 +871,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								if (selectedItem == null)
 								{
 									// No selection exists
-									selectedItem = hitObject;
+									Scene.SelectedItem = hitObject;
 								}
 								else if ((ModifierKeys == Keys.Shift || ModifierKeys == Keys.Control)
 									&& !selectedItem.Children.Contains(hitObject))
@@ -885,8 +885,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								else if (ModifierKeys != Keys.Shift)
 								{
 									Scene.SelectedItem = hitObject;
-									selectedItem = hitObject;
 								}
+
+								// Selection may have changed, update local reference to current value
+								selectedItem = Scene.SelectedItem;
 
 								Invalidate();
 							}
@@ -1167,7 +1169,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								&& !(selectedItem is SelectionGroupObject3D))
 							{
 								Scene.SelectedItem = null;
-								selectedItem = null;
 							}
 							else
 							{
@@ -1192,7 +1193,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									if(selectedItem.Children.Count == 0)
 									{
 										Scene.SelectedItem = null;
-										selectedItem = null;
 									}
 									Scene.Children.Add(selectedHitItem);
 								}
@@ -1200,6 +1200,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								{
 									Scene.AddToSelection(hitObject);
 								}
+
+								// Selection may have changed, update local reference to current value
+								selectedItem = Scene.SelectedItem;
 							}
 						}
 					}
