@@ -37,6 +37,16 @@ using System;
 
 namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 {
+	public static class Graphics2DOverrides
+	{
+		public static void Ring(this Graphics2D graphics2D, Vector2 center, double radius, double width, Color color)
+		{
+			var ring = new Ellipse(center, radius);
+			var ringStroke = new Stroke(ring, width);
+			graphics2D.Render(ringStroke, color);
+		}
+	}
+
 	public class RadialColorPicker : GuiWidget
 	{
 		private double colorAngle = 0;
@@ -48,13 +58,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			BackgroundColor = Color.White;
 		}
 
-		public Color SelectedHueColor
-		{
-			get
-			{
-				return ColorF.FromHSL(colorAngle / MathHelper.Tau, 1, .5).ToColor();
-			}
-		}
+		public double RingWidth { get => Width / 10; }
 
 		public Color SelectedColor
 		{
@@ -64,8 +68,15 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			}
 		}
 
-		public double RingWidth { get => Width / 10; }
-		double RingRadius
+		public Color SelectedHueColor
+		{
+			get
+			{
+				return ColorF.FromHSL(colorAngle / MathHelper.Tau, 1, .5).ToColor();
+			}
+		}
+
+		private double RingRadius
 		{
 			get
 			{
@@ -77,19 +88,20 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 		{
 			var center = new Vector2(Width / 2, Height / 2);
 			var radius = new Vector2(RingRadius, RingRadius);
+			var innerRadius = RingRadius - RingWidth / 2;
 
 			// draw the big outside ring (color part)
-			DrawColorRing(graphics2D, center, RingRadius, RingWidth);
+			DrawColorRing(graphics2D, RingRadius, RingWidth);
 
 			// draw the inner triangle (color part)
-			DrawColorTriangle(graphics2D, center, RingRadius - RingWidth / 2, colorAngle,
-				SelectedHueColor);
+			DrawColorTriangle(graphics2D, innerRadius, SelectedHueColor);
 
 			// draw the big ring outline
 			graphics2D.Ring(center, RingRadius + RingWidth / 2, 1, Color.Black);
 			graphics2D.Ring(center, RingRadius - RingWidth / 2, 1, Color.Black);
 
 			// draw the triangle outline
+			graphics2D.Line(GetTrianglePoint(0, innerRadius), GetTrianglePoint(0, innerRadius), Color.Black);
 
 			// draw the color circle on the triangle
 
@@ -153,7 +165,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			base.OnMouseUp(mouseEvent);
 		}
 
-		private void DrawColorRing(Graphics2D graphics2D, Vector2 center, double radius, double width)
+		private void DrawColorRing(Graphics2D graphics2D, double radius, double width)
 		{
 			if (graphics2D is Graphics2DOpenGL graphicsGL)
 			{
@@ -163,8 +175,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 				GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 				GL.Enable(EnableCap.Blend);
 
-				var outer = new Vector2(radius + width / 2, 0);
-				var inner = new Vector2(radius - width / 2, 0);
+				var outer = radius + width / 2;
+				var inner = radius - width / 2;
 				GL.Begin(BeginMode.TriangleStrip);
 
 				for (int i = 0; i <= 360; i++)
@@ -173,8 +185,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 					var angle = MathHelper.DegreesToRadians(i);
 
 					GL.Color4(color.Red0To255, color.Green0To255, color.Blue0To255, color.Alpha0To255);
-					GL.Vertex2(center + Vector2.Rotate(outer, angle));
-					GL.Vertex2(center + Vector2.Rotate(inner, angle));
+					GL.Vertex2(GetAtAngle(angle, outer));
+					GL.Vertex2(GetAtAngle(angle, inner));
 				}
 
 				GL.End();
@@ -183,7 +195,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			}
 		}
 
-		private void DrawColorTriangle(Graphics2D graphics2D, Vector2 center, double radius, double angle, Color color)
+		private void DrawColorTriangle(Graphics2D graphics2D, double radius, Color color)
 		{
 			if (graphics2D is Graphics2DOpenGL graphicsGL)
 			{
@@ -193,29 +205,43 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 				GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 				GL.Enable(EnableCap.Blend);
 
-				var start = new Vector2(radius, 0);
 				GL.Begin(BeginMode.Triangles);
 				GL.Color4(color.Red0To255, color.Green0To255, color.Blue0To255, color.Alpha0To255);
-				GL.Vertex2(center + Vector2.Rotate(start, angle));
+				GL.Vertex2(GetTrianglePoint(0, radius));
 				GL.Color4(Color.Black);
-				GL.Vertex2(center + Vector2.Rotate(start, angle + MathHelper.DegreesToRadians(120)));
+				GL.Vertex2(GetTrianglePoint(1, radius));
 				GL.Color4(Color.White);
-				GL.Vertex2(center + Vector2.Rotate(start, angle + MathHelper.DegreesToRadians(240)));
+				GL.Vertex2(GetTrianglePoint(2, radius));
 
 				GL.End();
 
 				graphicsGL.PopOrthoProjection();
 			}
 		}
-	}
 
-	public static class Graphics2DOverrides
-	{
-		public static void Ring(this Graphics2D graphics2D, Vector2 center, double radius, double width, Color color)
+		private Vector2 GetAtAngle(double angle, double radius)
 		{
-			var ring = new Ellipse(center, radius);
-			var ringStroke = new Stroke(ring, width);
-			graphics2D.Render(ringStroke, color);
+			var start = new Vector2(radius, 0);
+
+			var center = new Vector2(Width / 2, Height / 2);
+			return center + Vector2.Rotate(start, angle);
+		}
+
+		private Vector2 GetTrianglePoint(int index, double radius)
+		{
+			switch (index)
+			{
+				case 0:
+					return GetAtAngle(colorAngle, radius);
+
+				case 1:
+					return GetAtAngle(colorAngle + MathHelper.DegreesToRadians(120), radius);
+
+				case 2:
+					return GetAtAngle(colorAngle + MathHelper.DegreesToRadians(240), radius);
+			}
+
+			return Vector2.Zero;
 		}
 	}
 }
