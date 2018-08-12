@@ -84,6 +84,7 @@
     <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelingWizard.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\LastPageInstructions.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingWizard.cs" />
+    <Compile Include="CustomWidgets\ColorPicker\RadialColorPicker.cs" />
     <Compile Include="CustomWidgets\HelpArticleHeader.cs" />
     <Compile Include="CustomWidgets\InlineListItemEdit.cs" />
     <Compile Include="CustomWidgets\InlineStringEdit.cs" />
