@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MatterControl\ApplicationControllerTests.cs" />
+    <Compile Include="MatterControl\BoundDropListTests.cs" />
     <Compile Include="MatterControl\BrailleGrade2Tests.cs" />
     <Compile Include="MatterControl\PopupAnchorTests.cs" />
     <Compile Include="MatterControl\InteractiveSceneTests.cs" />
@@ -70,7 +71,6 @@
     <Compile Include="MatterControl\MatterControlUiFeatures.cs" />
     <Compile Include="MatterControl\MatterControlUtilities.cs" />
     <Compile Include="MatterControl\OemProfileTests.cs" />
-    <Compile Include="MatterControl\PrinterChooserUnitTests.cs" />
     <Compile Include="MatterControl\PrinterConfigurationTests.cs" />
     <Compile Include="MatterControl\PrinterWhiteListTests.cs" />
     <Compile Include="MatterControl\ReleaseBuildTests.cs" />
