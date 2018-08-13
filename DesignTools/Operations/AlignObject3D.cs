@@ -149,6 +149,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Children.Add(item.Clone());
 		}
 
+		[ShowAsList]
+		[DisplayName("Anchor")]
+		public ChildrenSelector AnchorObjectSelector { get; set; } = new ChildrenSelector();
+
 		public bool Advanced { get; set; } = false;
 
 		[DisplayName("X")]
@@ -200,6 +204,39 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				});
 
 				return currentChildrenBounds;
+			}
+		}
+
+		[JsonIgnore]
+		private IObject3D AnchorObject
+		{
+			get
+			{
+				if (AnchorObjectSelector.Count == 1)
+				{
+					return this.Children.Where(c => c.ID == AnchorObjectSelector[0]).FirstOrDefault();
+				}
+
+				return null;
+			}
+		}
+
+		[JsonIgnore]
+		private int AnchorObjectIndex
+		{
+			get
+			{
+				int index = 0;
+				foreach(var child in this.Children)
+				{ 
+					if(child.ID == AnchorObjectSelector[0])
+					{
+						return index;
+					}
+					index++;
+				}
+
+				return -1;
 			}
 		}
 
@@ -258,6 +295,24 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			this.DebugDepth("Rebuild");
 
+			var childrenIds = Children.Select(c => c.ID).ToArray();
+			if(childrenIds.Length == 0)
+			{
+				AnchorObjectSelector.Clear();
+			}
+			else if (AnchorObjectSelector.Count != 1
+				|| !AnchorObjectSelector.Where(i => childrenIds.Contains(i)).Any())
+			{
+				AnchorObjectSelector.Clear();
+				AnchorObjectSelector.Add(childrenIds[0]);
+			}
+
+			// if the count of our children changed clear our cache of the bounds
+			if (Children.Count != OriginalChildrenBounds.Count)
+			{
+				OriginalChildrenBounds.Clear();
+			}
+
 			using (RebuildLock())
 			{
 				var aabb = this.GetAxisAlignedBoundingBox();
@@ -274,82 +329,98 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					});
 				}
 
-				var currentChildrenBounds = CurrentChildrenBounds;
 				this.Children.Modify(list =>
 				{
 					if (list.Count == 0)
 					{
 						return;
 					}
-					var firstBounds = currentChildrenBounds[0];
+					int anchorIndex = AnchorObjectIndex;
+					var anchorBounds = CurrentChildrenBounds[anchorIndex];
+
 					int i = 0;
+					// first align the anchor object
 					foreach (var child in list)
 					{
-						if (i > 0)
+						if (XAlign == Align.None
+							|| i == anchorIndex)
 						{
-							if (XAlign == Align.None)
+							if (i < OriginalChildrenBounds.Count)
 							{
-								if (i < OriginalChildrenBounds.Count)
-								{
-									// make sure it is where it started
-									AlignAxis(0, Align.Min, OriginalChildrenBounds[i].minXYZ.X, 0, child);
-								}
+								// make sure it is where it started
+								AlignAxis(0, Align.Min, OriginalChildrenBounds[i].minXYZ.X, 0, child);
+							}
+						}
+
+						if (YAlign == Align.None
+							|| i == anchorIndex)
+						{
+							if (i < OriginalChildrenBounds.Count)
+							{
+								AlignAxis(1, Align.Min, OriginalChildrenBounds[i].minXYZ.Y, 0, child);
+							}
+						}
+
+						if (ZAlign == Align.None
+							|| i == anchorIndex)
+						{
+							if (i < OriginalChildrenBounds.Count)
+							{
+								AlignAxis(2, Align.Min, OriginalChildrenBounds[i].minXYZ.Z, 0, child);
+							}
+						}
+						i++;
+					}
+
+					// the align all the objects to it
+					i = 0;
+					foreach (var child in list)
+					{
+						if (XAlign != Align.None
+							&& i != anchorIndex)
+						{
+							if (XAlign == Align.Origin)
+							{
+								// find the origin in world space of the child
+								var firstOrigin = Vector3.Transform(Vector3.Zero, AnchorObject.WorldMatrix());
+								var childOrigin = Vector3.Transform(Vector3.Zero, child.WorldMatrix());
+								child.Translate(new Vector3(-(childOrigin - firstOrigin).X + (Advanced ? XOffset : 0), 0, 0));
 							}
 							else
 							{
-								if (XAlign == Align.Origin)
-								{
-									// find the origin in world space of the child
-									var firstOrigin = Vector3.Transform(Vector3.Zero, this.Children.First().WorldMatrix());
-									var childOrigin = Vector3.Transform(Vector3.Zero, child.WorldMatrix());
-									child.Translate(new Vector3(-(childOrigin - firstOrigin).X + (Advanced ? XOffset : 0), 0, 0));
-								}
-								else
-								{
-									AlignAxis(0, XAlign, GetAlignToOffset(currentChildrenBounds, 0, (!Advanced || XAlignTo == Align.None) ? XAlign : XAlignTo), XOffset, child);
-								}
+								AlignAxis(0, XAlign, GetAlignToOffset(CurrentChildrenBounds, 0, (!Advanced || XAlignTo == Align.None) ? XAlign : XAlignTo), XOffset, child);
 							}
-							if (YAlign == Align.None)
+						}
+
+						if (YAlign != Align.None
+							&& i != anchorIndex)
+						{
+							if (YAlign == Align.Origin)
 							{
-								if (i < OriginalChildrenBounds.Count)
-								{
-									AlignAxis(1, Align.Min, OriginalChildrenBounds[i].minXYZ.Y, 0, child);
-								}
+								// find the origin in world space of the child
+								var firstOrigin = Vector3.Transform(Vector3.Zero, AnchorObject.WorldMatrix());
+								var childOrigin = Vector3.Transform(Vector3.Zero, child.WorldMatrix());
+								child.Translate(new Vector3(0, -(childOrigin - firstOrigin).Y + (Advanced ? YOffset : 0), 0));
 							}
 							else
 							{
-								if (YAlign == Align.Origin)
-								{
-									// find the origin in world space of the child
-									var firstOrigin = Vector3.Transform(Vector3.Zero, this.Children.First().WorldMatrix());
-									var childOrigin = Vector3.Transform(Vector3.Zero, child.WorldMatrix());
-									child.Translate(new Vector3(0, -(childOrigin - firstOrigin).Y + (Advanced ? YOffset : 0), 0));
-								}
-								else
-								{
-									AlignAxis(1, YAlign, GetAlignToOffset(currentChildrenBounds, 1, (!Advanced || YAlignTo == Align.None) ? YAlign : YAlignTo), YOffset, child);
-								}
+								AlignAxis(1, YAlign, GetAlignToOffset(CurrentChildrenBounds, 1, (!Advanced || YAlignTo == Align.None) ? YAlign : YAlignTo), YOffset, child);
 							}
-							if (ZAlign == Align.None)
+						}
+
+						if (ZAlign != Align.None
+							&& i != anchorIndex)
+						{
+							if (ZAlign == Align.Origin)
 							{
-								if (i < OriginalChildrenBounds.Count)
-								{
-									AlignAxis(2, Align.Min, OriginalChildrenBounds[i].minXYZ.Z, 0, child);
-								}
+								// find the origin in world space of the child
+								var firstOrigin = Vector3.Transform(Vector3.Zero, AnchorObject.WorldMatrix());
+								var childOrigin = Vector3.Transform(Vector3.Zero, child.WorldMatrix());
+								child.Translate(new Vector3(0, 0, -(childOrigin - firstOrigin).Z + (Advanced ? ZOffset : 0)));
 							}
 							else
 							{
-								if (ZAlign == Align.Origin)
-								{
-									// find the origin in world space of the child
-									var firstOrigin = Vector3.Transform(Vector3.Zero, this.Children.First().WorldMatrix());
-									var childOrigin = Vector3.Transform(Vector3.Zero, child.WorldMatrix());
-									child.Translate(new Vector3(0, 0, -(childOrigin - firstOrigin).Z + (Advanced ? ZOffset : 0)));
-								}
-								else
-								{
-									AlignAxis(2, ZAlign, GetAlignToOffset(currentChildrenBounds, 2, (!Advanced || ZAlignTo == Align.None) ? ZAlign : ZAlignTo), ZOffset, child);
-								}
+								AlignAxis(2, ZAlign, GetAlignToOffset(CurrentChildrenBounds, 2, (!Advanced || ZAlignTo == Align.None) ? ZAlign : ZAlignTo), ZOffset, child);
 							}
 						}
 						i++;
@@ -440,13 +511,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			switch (alignTo)
 			{
 				case Align.Min:
-					return currentChildrenBounds[0].minXYZ[axis];
+					return currentChildrenBounds[AnchorObjectIndex].minXYZ[axis];
 
 				case Align.Center:
-					return currentChildrenBounds[0].Center[axis];
+					return currentChildrenBounds[AnchorObjectIndex].Center[axis];
 
 				case Align.Max:
-					return currentChildrenBounds[0].maxXYZ[axis];
+					return currentChildrenBounds[AnchorObjectIndex].maxXYZ[axis];
 
 				default:
 					throw new NotImplementedException();
