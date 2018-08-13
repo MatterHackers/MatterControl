@@ -635,7 +635,6 @@
     <EmbeddedResource Include="Utilities\InspectForm.resx">
       <DependentUpon>InspectForm.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="App.config" />
     <None Include="Library\LibraryProviders.cd" />
     <None Include="Library\Widgets\ListView\ListView.cd" />
     <None Include="SlicerConfiguration\Settings\SettingsDiagram.cd" />
