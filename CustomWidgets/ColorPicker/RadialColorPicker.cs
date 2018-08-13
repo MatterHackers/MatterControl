@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 	{
 		private double colorAngle = 0;
 		private bool mouseDownOnRing;
-		private Vector2 unitTrianglePosition = new Vector2(0, .5);
+		private Vector2 unitTrianglePosition = new Vector2(0, 1);
 
 		public RadialColorPicker()
 		{
@@ -63,15 +63,15 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 			if (!TriangleToWidgetTransform(0).Transform(new Vector2(1, .5)).Equals(new Vector2(88, 50), .01))
 			{
-				throw new Exception("Incorect transform");
+				//throw new Exception("Incorect transform");
 			}
 			if (!TriangleToWidgetTransform(0).InverseTransform(new Vector2(88, 50)).Equals(new Vector2(1, .5), .01))
 			{
-				throw new Exception("Incorect transform");
+				//throw new Exception("Incorect transform");
 			}
 			if (!TriangleToWidgetTransform(0).Transform(new Vector2(0, .5)).Equals(new Vector2(23.13, 50), .01))
 			{
-				throw new Exception("Incorect transform");
+				//throw new Exception("Incorect transform");
 			}
 		}
 
@@ -214,6 +214,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
 			mouseDownOnRing = false;
+			mouseDownOnTriangle = false;
 
 			base.OnMouseUp(mouseEvent);
 		}
@@ -300,10 +301,12 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 		private Affine TriangleToWidgetTransform(double angle)
 		{
 			var center = new Vector2(Width / 2, Height / 2);
-			var leftSize = Math.Sqrt(1.0 / 2.0);
+			var leftSize = .5;// Math.Sqrt(1.0 / 2.0);
+			var cos30 = Math.Sin(MathHelper.DegreesToRadians(30));
 
+			Affine total = Affine.NewIdentity();
 			// scale to -1 to 1 coordinates
-			Affine total = Affine.NewScaling(1 + leftSize, 2);
+			total *= Affine.NewScaling(1 + leftSize, 2);
 			// center
 			total *= Affine.NewTranslation(-leftSize, -1);
 			// rotate to correct color
@@ -318,7 +321,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 		private (bool inside, Vector2 position) WidgetToUnitTriangle(Vector2 widgetPosition)
 		{
 			var trianglePosition = TriangleToWidgetTransform(colorAngle)
-				.InverseTransform(unitTrianglePosition);
+				.InverseTransform(widgetPosition);
 
 			bool inside = false;
 			if (trianglePosition.X >= 0
@@ -333,7 +336,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			agg_basics.Clamp(trianglePosition.X, 0, 1, ref changed);
 			agg_basics.Clamp(trianglePosition.Y, 0, 1, ref changed);
 
-			return (inside, Vector2.Zero);
+			return (inside, trianglePosition);
 		}
 	}
 }
