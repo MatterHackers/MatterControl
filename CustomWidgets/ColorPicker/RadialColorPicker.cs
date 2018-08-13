@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.RenderOpenGl;
@@ -50,14 +51,31 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 	public class RadialColorPicker : GuiWidget
 	{
 		private double colorAngle = 0;
-
 		private bool mouseDownOnRing;
+		private Vector2 unitTrianglePosition = new Vector2(0, .5);
 
 		public RadialColorPicker()
 		{
 			BackgroundColor = Color.White;
+
+			this.Width = 100;
+			this.Height = 100;
+
+			if (!TriangleToWidgetTransform(0).Transform(new Vector2(1, .5)).Equals(new Vector2(88, 50), .01))
+			{
+				throw new Exception("Incorect transform");
+			}
+			if (!TriangleToWidgetTransform(0).InverseTransform(new Vector2(88, 50)).Equals(new Vector2(1, .5), .01))
+			{
+				throw new Exception("Incorect transform");
+			}
+			if (!TriangleToWidgetTransform(0).Transform(new Vector2(0, .5)).Equals(new Vector2(23.13, 50), .01))
+			{
+				throw new Exception("Incorect transform");
+			}
 		}
 
+		public bool mouseDownOnTriangle { get; private set; }
 		public double RingWidth { get => Width / 10; }
 
 		public Color SelectedColor
@@ -76,6 +94,14 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			}
 		}
 
+		private double InnerRadius
+		{
+			get
+			{
+				return RingRadius - RingWidth / 2;
+			}
+		}
+
 		private double RingRadius
 		{
 			get
@@ -88,27 +114,36 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 		{
 			var center = new Vector2(Width / 2, Height / 2);
 			var radius = new Vector2(RingRadius, RingRadius);
-			var innerRadius = RingRadius - RingWidth / 2;
 
 			// draw the big outside ring (color part)
 			DrawColorRing(graphics2D, RingRadius, RingWidth);
 
 			// draw the inner triangle (color part)
-			DrawColorTriangle(graphics2D, innerRadius, SelectedHueColor);
+			DrawColorTriangle(graphics2D, InnerRadius, SelectedHueColor);
 
 			// draw the big ring outline
 			graphics2D.Ring(center, RingRadius + RingWidth / 2, 1, Color.Black);
 			graphics2D.Ring(center, RingRadius - RingWidth / 2, 1, Color.Black);
 
 			// draw the triangle outline
-			graphics2D.Line(GetTrianglePoint(0, innerRadius), GetTrianglePoint(0, innerRadius), Color.Black);
+			graphics2D.Line(GetTrianglePoint(0, InnerRadius, colorAngle), GetTrianglePoint(1, InnerRadius, colorAngle), Color.Black);
+			graphics2D.Line(GetTrianglePoint(1, InnerRadius, colorAngle), GetTrianglePoint(2, InnerRadius, colorAngle), Color.Black);
+			graphics2D.Line(GetTrianglePoint(2, InnerRadius, colorAngle), GetTrianglePoint(0, InnerRadius, colorAngle), Color.Black);
 
 			// draw the color circle on the triangle
+			var triangleColorCenter = TriangleToWidgetTransform(colorAngle).Transform(unitTrianglePosition);
+			graphics2D.Circle(triangleColorCenter,
+				RingWidth / 2 - 2,
+				SelectedColor);
+			graphics2D.Ring(triangleColorCenter,
+				RingWidth / 2 - 2,
+				2,
+				Color.White);
 
 			// draw the color circle on the ring
 			var ringColorCenter = center + Vector2.Rotate(new Vector2(RingRadius, 0), colorAngle);
 			graphics2D.Circle(ringColorCenter,
-				RingWidth / 2 - 4,
+				RingWidth / 2 - 2,
 				SelectedHueColor);
 			graphics2D.Ring(ringColorCenter,
 				RingWidth / 2 - 2,
@@ -123,18 +158,31 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			var center = new Vector2(Width / 2, Height / 2);
 			var direction = mouseEvent.Position - center;
 
-			if (mouseEvent.Button == MouseButtons.Left
-				&& direction.Length > RingRadius - RingWidth
-				&& direction.Length < RingRadius + RingWidth)
+			if (mouseEvent.Button == MouseButtons.Left)
 			{
-				mouseDownOnRing = true;
-
-				colorAngle = Math.Atan2(direction.Y, direction.X);
-				if (colorAngle < 0)
+				if (direction.Length > RingRadius - RingWidth / 2
+				&& direction.Length < RingRadius + RingWidth / 2)
 				{
-					colorAngle += MathHelper.Tau;
+					mouseDownOnRing = true;
+
+					colorAngle = Math.Atan2(direction.Y, direction.X);
+					if (colorAngle < 0)
+					{
+						colorAngle += MathHelper.Tau;
+					}
+					Invalidate();
 				}
-				Invalidate();
+				else
+				{
+					var trianglePositon = WidgetToUnitTriangle(mouseEvent.Position);
+
+					if (trianglePositon.inside)
+					{
+						mouseDownOnTriangle = true;
+						unitTrianglePosition = trianglePositon.position;
+					}
+					Invalidate();
+				}
 			}
 
 			base.OnMouseDown(mouseEvent);
@@ -152,8 +200,13 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 				{
 					colorAngle += MathHelper.Tau;
 				}
+				Invalidate();
 			}
-			Invalidate();
+			else if (mouseDownOnTriangle)
+			{
+				unitTrianglePosition = WidgetToUnitTriangle(mouseEvent.Position).position;
+				Invalidate();
+			}
 
 			base.OnMouseMove(mouseEvent);
 		}
@@ -207,11 +260,11 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 				GL.Begin(BeginMode.Triangles);
 				GL.Color4(color.Red0To255, color.Green0To255, color.Blue0To255, color.Alpha0To255);
-				GL.Vertex2(GetTrianglePoint(0, radius));
+				GL.Vertex2(GetTrianglePoint(0, radius, colorAngle));
 				GL.Color4(Color.Black);
-				GL.Vertex2(GetTrianglePoint(1, radius));
+				GL.Vertex2(GetTrianglePoint(1, radius, colorAngle));
 				GL.Color4(Color.White);
-				GL.Vertex2(GetTrianglePoint(2, radius));
+				GL.Vertex2(GetTrianglePoint(2, radius, colorAngle));
 
 				GL.End();
 
@@ -227,21 +280,60 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			return center + Vector2.Rotate(start, angle);
 		}
 
-		private Vector2 GetTrianglePoint(int index, double radius)
+		private Vector2 GetTrianglePoint(int index, double radius, double pontingAngle)
 		{
 			switch (index)
 			{
 				case 0:
-					return GetAtAngle(colorAngle, radius);
+					return GetAtAngle(pontingAngle, radius);
 
 				case 1:
-					return GetAtAngle(colorAngle + MathHelper.DegreesToRadians(120), radius);
+					return GetAtAngle(pontingAngle + MathHelper.DegreesToRadians(120), radius);
 
 				case 2:
-					return GetAtAngle(colorAngle + MathHelper.DegreesToRadians(240), radius);
+					return GetAtAngle(pontingAngle + MathHelper.DegreesToRadians(240), radius);
 			}
 
 			return Vector2.Zero;
+		}
+
+		private Affine TriangleToWidgetTransform(double angle)
+		{
+			var center = new Vector2(Width / 2, Height / 2);
+			var leftSize = Math.Sqrt(1.0 / 2.0);
+
+			// scale to -1 to 1 coordinates
+			Affine total = Affine.NewScaling(1 + leftSize, 2);
+			// center
+			total *= Affine.NewTranslation(-leftSize, -1);
+			// rotate to correct color
+			total *= Affine.NewRotation(angle);
+			// scale to radius
+			total *= Affine.NewScaling(InnerRadius);
+			// move to center
+			total *= Affine.NewTranslation(center);
+			return total;
+		}
+
+		private (bool inside, Vector2 position) WidgetToUnitTriangle(Vector2 widgetPosition)
+		{
+			var trianglePosition = TriangleToWidgetTransform(colorAngle)
+				.InverseTransform(unitTrianglePosition);
+
+			bool inside = false;
+			if (trianglePosition.X >= 0
+				&& trianglePosition.X <=1
+				&& trianglePosition.Y >= 0
+				&& trianglePosition.Y <= 1)
+			{
+				inside = true; 
+			}
+
+			bool changed = false;
+			agg_basics.Clamp(trianglePosition.X, 0, 1, ref changed);
+			agg_basics.Clamp(trianglePosition.Y, 0, 1, ref changed);
+
+			return (inside, Vector2.Zero);
 		}
 	}
 }
