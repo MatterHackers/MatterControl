@@ -10,10 +10,10 @@ using NUnit.Framework;
 
 namespace MatterControl.Tests.MatterControl
 {
-	class PrinterChooserUnitTests
+	class BoundDropListTests
 	{
 		[Test]
-		public void PrinterChooserHonorsWhitelist()
+		public void BoundDropListHonorsWhitelist()
 		{
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
@@ -26,8 +26,9 @@ namespace MatterControl.Tests.MatterControl
 
 			var theme = new ThemeConfig()
 			{
-				Colors = ActiveTheme.Instance 
+				Colors = ActiveTheme.Instance
 			};
+
 			// Whitelist on non-OEM builds should contain all printers
 			dropList = new BoundDropList("Test", theme);
 			dropList.ListSource = allManufacturers;
@@ -47,26 +48,6 @@ namespace MatterControl.Tests.MatterControl
 			dropList = new BoundDropList("Test", theme);
 			dropList.ListSource = OemSettings.Instance.AllOems;
 			Assert.AreEqual(2, dropList.MenuItems.Count);
-
-			/* 
-			 * Disable Esagono tests
-			 * 
-			SetPrivatePrinterWhiteListMember(new List<string>() { "Esagono" });
-			var manufacturerNameMapping = new ManufacturerNameMapping();
-			manufacturerNameMapping.NameOnDisk = "Esagono";
-			manufacturerNameMapping.NameToDisplay = "Esagonò";
-			printChooser = new PrinterChooser();
-
-			string expectedItem = null;
-			foreach (var menuItem in printChooser.ManufacturerDropList.MenuItems)
-			{
-				if(menuItem.Text.StartsWith("Esa"))
-				{
-					expectedItem = menuItem.Text;
-				}
-			}
-			Assert.IsTrue(!string.IsNullOrEmpty(expectedItem) && expectedItem == "Esagonò");
-			*/
 		}
 	}
 }
