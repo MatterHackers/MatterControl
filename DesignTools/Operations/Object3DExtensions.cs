@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public static IObject3D Minus(this IObject3D a, IObject3D b)
 		{
 			var resultsA = a.Clone();
-			SubtractObject3D.Subtract(resultsA.VisibleMeshes().Select((i) => i).ToList(), b.VisibleMeshes().Select((i) => i).ToList());
+			SubtractObject3D.Subtract(resultsA.VisibleMeshes().ToList(), b.VisibleMeshes().ToList());
 			return resultsA;
 		}
 

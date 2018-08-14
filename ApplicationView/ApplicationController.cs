@@ -69,6 +69,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 	using MatterHackers.MatterControl.SetupWizard;
 	using MatterHackers.PolygonMesh;
+	using MatterHackers.PolygonMesh.Processors;
 	using MatterHackers.RenderOpenGl;
 	using MatterHackers.SerialPortCommunication;
 	using MatterHackers.VectorMath;
@@ -759,6 +760,11 @@ namespace MatterHackers.MatterControl
 			this.ChangeToTheme(ActiveTheme.Instance);
 
 			Object3D.AssetsPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Assets");
+
+			using (var meshSteam = AggContext.StaticData.OpenStream(Path.Combine("Stls", "missing.stl")))
+			{
+				Object3D.FileMissingMesh = StlProcessing.Load(meshSteam, CancellationToken.None);
+			}
 
 			ScrollBar.DefaultMargin = new BorderDouble(right: 1);
 			ScrollBar.ScrollBarWidth = 8 * GuiWidget.DeviceScale;

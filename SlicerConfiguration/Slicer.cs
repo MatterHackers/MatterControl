@@ -104,12 +104,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						var extruderIndex = extruderIndexIn;
 						var itemsThisExtruder = meshItemsOnBuildPlate.Where((item) =>
-							(item.WorldMaterialIndex() == extruderIndex
+							(File.Exists(item.MeshPath) // Drop missing files
+								|| File.Exists(Path.Combine(Object3D.AssetsPath, item.MeshPath)))
+							&& (item.WorldMaterialIndex() == extruderIndex
 								|| (extruderIndex == 0
 									&& (item.WorldMaterialIndex() >= extruderCount || item.WorldMaterialIndex() == -1)))
 							&& (item.WorldOutputType() == PrintOutputTypes.Solid || item.WorldOutputType() == PrintOutputTypes.Default));
 
-						itemsByExtruder.Add(itemsThisExtruder.Select((i) => i));
+						itemsByExtruder.Add(itemsThisExtruder);
 						extrudersUsed[extruderIndex] |= itemsThisExtruder.Any();
 						if (extrudersUsed[extruderIndex])
 						{
@@ -126,21 +128,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						if (!first)
 						{
 							mergeRules += ",";
+							first = false;
 						}
-						var itemsThisExtruder = itemsByExtruder[extruderIndex];
-						mergeRules += AddObjectsForExtruder(itemsThisExtruder, outputOptions, ref savedStlCount);
-						first = false;
+
+						mergeRules += AddObjectsForExtruder(itemsByExtruder[extruderIndex], outputOptions, ref savedStlCount);
 					}
 
-					var supportObjects = meshItemsOnBuildPlate.Where((item) =>
-							item.WorldOutputType() == PrintOutputTypes.Support);
-
+					var supportObjects = meshItemsOnBuildPlate.Where((item) => item.WorldOutputType() == PrintOutputTypes.Support);
 
 					// if we added user generated support
 					if (supportObjects.Any())
 					{
 						// add a flag to the merge rules to let us know there was support
-						mergeRules += "," + AddObjectsForExtruder(supportObjects.Select((i) => i), outputOptions, ref savedStlCount) + "S";
+						mergeRules += "," + AddObjectsForExtruder(supportObjects, outputOptions, ref savedStlCount) + "S";
 					}
 
 					mergeRules += " ";
