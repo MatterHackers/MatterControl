@@ -104,7 +104,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						var extruderIndex = extruderIndexIn;
 						var itemsThisExtruder = meshItemsOnBuildPlate.Where((item) =>
-							(item.WorldMaterialIndex() == extruderIndex
+							File.Exists(item.MeshPath) // Drop missing files
+							&& (item.WorldMaterialIndex() == extruderIndex
 								|| (extruderIndex == 0
 									&& (item.WorldMaterialIndex() >= extruderCount || item.WorldMaterialIndex() == -1)))
 							&& (item.WorldOutputType() == PrintOutputTypes.Solid || item.WorldOutputType() == PrintOutputTypes.Default));
