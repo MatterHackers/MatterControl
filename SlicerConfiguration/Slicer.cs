@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									&& (item.WorldMaterialIndex() >= extruderCount || item.WorldMaterialIndex() == -1)))
 							&& (item.WorldOutputType() == PrintOutputTypes.Solid || item.WorldOutputType() == PrintOutputTypes.Default));
 
-						itemsByExtruder.Add(itemsThisExtruder.Select((i) => i));
+						itemsByExtruder.Add(itemsThisExtruder);
 						extrudersUsed[extruderIndex] |= itemsThisExtruder.Any();
 						if (extrudersUsed[extruderIndex])
 						{
@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (supportObjects.Any())
 					{
 						// add a flag to the merge rules to let us know there was support
-						mergeRules += "," + AddObjectsForExtruder(supportObjects.Select((i) => i), outputOptions, ref savedStlCount) + "S";
+						mergeRules += "," + AddObjectsForExtruder(supportObjects, outputOptions, ref savedStlCount) + "S";
 					}
 
 					mergeRules += " ";
