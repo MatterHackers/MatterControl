@@ -127,15 +127,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						if (!first)
 						{
 							mergeRules += ",";
+							first = false;
 						}
-						var itemsThisExtruder = itemsByExtruder[extruderIndex];
-						mergeRules += AddObjectsForExtruder(itemsThisExtruder, outputOptions, ref savedStlCount);
-						first = false;
+
+						mergeRules += AddObjectsForExtruder(itemsByExtruder[extruderIndex], outputOptions, ref savedStlCount);
 					}
 
-					var supportObjects = meshItemsOnBuildPlate.Where((item) =>
-							item.WorldOutputType() == PrintOutputTypes.Support);
-
+					var supportObjects = meshItemsOnBuildPlate.Where((item) => item.WorldOutputType() == PrintOutputTypes.Support);
 
 					// if we added user generated support
 					if (supportObjects.Any())
