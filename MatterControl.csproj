@@ -84,6 +84,7 @@
     <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelingWizard.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\LastPageInstructions.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingWizard.cs" />
+    <Compile Include="CustomWidgets\ColorPicker\RadialColorPicker.cs" />
     <Compile Include="CustomWidgets\HelpArticleHeader.cs" />
     <Compile Include="CustomWidgets\InlineListItemEdit.cs" />
     <Compile Include="CustomWidgets\InlineStringEdit.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="CustomWidgets\TreeView\TreeView.cs" />
     <Compile Include="DesignTools\Attributes\ShowSearchFieldAttribute.cs" />
     <Compile Include="DesignTools\Attributes\ShowUpdateButtonAttribute.cs" />
+    <Compile Include="DesignTools\Attributes\ShowAsListAttribute.cs" />
     <Compile Include="DesignTools\Braille\BrailleCardObject3D.cs" />
     <Compile Include="DesignTools\Braille\BrailleGrade2.cs" />
     <Compile Include="DesignTools\Braille\BrailleGrade2Mapping.cs" />
@@ -283,6 +285,7 @@
     <Compile Include="SlicerConfiguration\SettingsRow.cs" />
     <Compile Include="SlicerConfiguration\UIFields\CharField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\DirectionVectorField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\ChildrenSelectorListField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\EnumField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\ListStringField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IconEnumField.cs" />

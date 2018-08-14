@@ -401,8 +401,26 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (propertyValue is ChildrenSelector childSelector)
 			{
-				rowContainer = CreateSettingsColumn(property);
-				rowContainer.AddChild(CreateSelector(childSelector, property.Item, theme));
+				var showAsList = property.PropertyInfo.GetCustomAttributes(true).OfType<ShowAsListAttribute>().FirstOrDefault() != null;
+				if (showAsList)
+				{
+					UIField field = new ChildrenSelectorListField(property, theme);
+
+					field.Initialize(0);
+					field.ValueChanged += (s, e) =>
+					{
+						property.SetValue(new ChildrenSelector() { field.Value });
+						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
+						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					};
+
+					rowContainer = CreateSettingsRow(property, field);
+				}
+				else // show the subtarct editor for boolean subtract and subtract and replace
+				{
+					rowContainer = CreateSettingsColumn(property);
+					rowContainer.AddChild(CreateSelector(childSelector, property.Item, theme));
+				}
 			}
 			else if (propertyValue is ImageBuffer imageBuffer)
 			{
