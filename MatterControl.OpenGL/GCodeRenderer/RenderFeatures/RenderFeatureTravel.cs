@@ -130,7 +130,7 @@ namespace MatterHackers.GCodeVisualizer
 						pathStorage.Add(end.x + .01, end.y, ShapePath.FlagsAndCommand.LineTo);
 					}
 
-					graphics2D.Render(stroke, 0, movementColor);
+					graphics2D.Render(stroke, movementColor);
 				}
 			}
 		}

@@ -164,7 +164,7 @@ namespace MatterHackers.GCodeVisualizer
 					pathStorage.Add(start.x, start.y, ShapePath.FlagsAndCommand.MoveTo);
 					pathStorage.Add(end.x, end.y, ShapePath.FlagsAndCommand.LineTo);
 
-					graphics2D.Render(stroke, 0, extrusionColor);
+					graphics2D.Render(stroke, extrusionColor);
 				}
 			}
 		}
