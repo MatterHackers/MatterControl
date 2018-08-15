@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 	{
 		private double colorAngle = 0;
 		private bool mouseDownOnRing;
-		private Vector2 unitTrianglePosition = new Vector2(0, 1);
+		private Vector2 unitTrianglePosition = new Vector2(1, .5);
 
 		public RadialColorPicker()
 		{
@@ -82,7 +82,15 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 		{
 			get
 			{
-				return ColorF.FromHSL(colorAngle / MathHelper.Tau, 1, .5).ToColor();
+				return ColorF.FromHSL(colorAngle / MathHelper.Tau, unitTrianglePosition.X, unitTrianglePosition.Y).ToColor();
+			}
+
+			set
+			{
+				value.ToColorF().GetHSL(out double h, out double s, out double l);
+				colorAngle = h * MathHelper.Tau;
+				unitTrianglePosition.X = s;
+				unitTrianglePosition.Y = l;
 			}
 		}
 
@@ -91,6 +99,12 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			get
 			{
 				return ColorF.FromHSL(colorAngle / MathHelper.Tau, 1, .5).ToColor();
+			}
+
+			set
+			{
+				value.ToColorF().GetHSL(out double h, out double s, out double l);
+				colorAngle = h * MathHelper.Tau;
 			}
 		}
 
@@ -132,13 +146,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 			// draw the color circle on the triangle
 			var triangleColorCenter = TriangleToWidgetTransform(colorAngle).Transform(unitTrianglePosition);
-			graphics2D.Circle(triangleColorCenter,
-				RingWidth / 2 - 2,
-				SelectedColor);
-			graphics2D.Ring(triangleColorCenter,
-				RingWidth / 2 - 2,
-				2,
-				Color.White);
+			graphics2D.Circle(triangleColorCenter, RingWidth / 2 - 2, SelectedColor);
+			graphics2D.Ring(triangleColorCenter, RingWidth / 2 - 2, 2, Color.White);
 
 			// draw the color circle on the ring
 			var ringColorCenter = center + Vector2.Rotate(new Vector2(RingRadius, 0), colorAngle);
@@ -262,9 +271,9 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 				GL.Begin(BeginMode.Triangles);
 				GL.Color4(color.Red0To255, color.Green0To255, color.Blue0To255, color.Alpha0To255);
 				GL.Vertex2(GetTrianglePoint(0, radius, colorAngle));
-				GL.Color4(Color.Black);
-				GL.Vertex2(GetTrianglePoint(1, radius, colorAngle));
 				GL.Color4(Color.White);
+				GL.Vertex2(GetTrianglePoint(1, radius, colorAngle));
+				GL.Color4(Color.Black);
 				GL.Vertex2(GetTrianglePoint(2, radius, colorAngle));
 
 				GL.End();
@@ -301,14 +310,14 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 		private Affine TriangleToWidgetTransform(double angle)
 		{
 			var center = new Vector2(Width / 2, Height / 2);
-			var leftSize = .5;// Math.Sqrt(1.0 / 2.0);
-			var cos30 = Math.Sin(MathHelper.DegreesToRadians(30));
+			var leftSize = .5;
+			var sizeToTop = Math.Sin(MathHelper.DegreesToRadians(60));
 
 			Affine total = Affine.NewIdentity();
 			// scale to -1 to 1 coordinates
-			total *= Affine.NewScaling(1 + leftSize, 2);
+			total *= Affine.NewScaling(1 + leftSize, sizeToTop * 2);
 			// center
-			total *= Affine.NewTranslation(-leftSize, -1);
+			total *= Affine.NewTranslation(-leftSize, -sizeToTop);
 			// rotate to correct color
 			total *= Affine.NewRotation(angle);
 			// scale to radius
@@ -323,20 +332,16 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			var trianglePosition = TriangleToWidgetTransform(colorAngle)
 				.InverseTransform(widgetPosition);
 
-			bool inside = false;
-			if (trianglePosition.X >= 0
-				&& trianglePosition.X <=1
-				&& trianglePosition.Y >= 0
-				&& trianglePosition.Y <= 1)
-			{
-				inside = true; 
-			}
-
 			bool changed = false;
-			agg_basics.Clamp(trianglePosition.X, 0, 1, ref changed);
-			agg_basics.Clamp(trianglePosition.Y, 0, 1, ref changed);
+			trianglePosition.X = agg_basics.Clamp(trianglePosition.X, 0, 1, ref changed);
+			trianglePosition.Y = agg_basics.Clamp(trianglePosition.Y, 0, 1, ref changed);
 
-			return (inside, trianglePosition);
+			trianglePosition.Y = agg_basics.Clamp(trianglePosition.Y,
+				.5 - (1 - trianglePosition.X) / 2,
+				.5 + (1 - trianglePosition.X) / 2,
+				ref changed);
+
+			return (!changed, trianglePosition);
 		}
 	}
 }
