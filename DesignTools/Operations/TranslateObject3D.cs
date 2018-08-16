@@ -90,19 +90,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				Rebuild(null);
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Color)
-			{
-				var sourceItem = OperationSourceObject3D.GetOrCreateSourceContainer(this).Children.FirstOrDefault();
-				foreach (var item in Children)
-				{
-					if (item != sourceItem)
-					{
-						item.Color = sourceItem.Color;
-					}
-				}
-
-				base.OnInvalidate(invalidateType);
-			}
 			else if (invalidateType.InvalidateType == InvalidateType.Properties
 				&& invalidateType.Source == this)
 			{
