@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.ActionBar
 {
 	internal class ControlContentExtruder : FlowLayoutWidget
 	{
-		private int moveAmount = 1;
+		private int moveAmount = 10;
 		private PrinterConfig printer;
 
 		internal ControlContentExtruder(PrinterConfig printer, int extruderIndex, ThemeConfig theme)
