@@ -524,7 +524,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							//  - ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader)
 							printer.Connection.StartSdCardPrint(sdcardItem.Name.ToLower());
 							break;
-						case FileSystemFileItem fileItem when Path.GetExtension(fileItem.FileName).ToUpper() == ".GCODE":
+						case FileSystemFileItem fileItem when Path.GetExtension(fileItem.FileName).IndexOf(".gco", StringComparison.OrdinalIgnoreCase) == 0:
 							if (printer != null)
 							{
 								UiThread.RunOnIdle(async () =>
