@@ -12,6 +12,10 @@
     <NoStdLib>False</NoStdLib>
     <RegisterForComInterop>False</RegisterForComInterop>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <!-- See the following for details on .Net standard binding workround: https://github.com/dotnet/standard/issues/481 -->
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <BaseAddress>4194304</BaseAddress>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <FileAlignment>4096</FileAlignment>
@@ -642,7 +646,6 @@
     <None Include="Library\LibraryProviders.cd" />
     <None Include="Library\Widgets\ListView\ListView.cd" />
     <None Include="SlicerConfiguration\Settings\SettingsDiagram.cd" />
-    <None Include="packages.config" />
     <None Include="StaticData\OEMSettings\Settings.json" />
     <None Include="StaticData\SliceSettings\Properties.json" />
   </ItemGroup>
@@ -754,6 +757,19 @@
       <Project>{23ec3364-7c93-4169-9ab2-7181c66004c0}</Project>
       <Name>QuadTree</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Markdig" Version="0.15.0" />
+    <PackageReference Include="MIConvexHull" Version="1.1.17.1019" />
+    <PackageReference Include="Mindscape.Raygun4Net" Version="5.5.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="System.Reactive" Version="3.1.1" />
+    <PackageReference Include="System.Reactive.Core" Version="3.1.1" />
+    <PackageReference Include="System.Reactive.Interfaces" Version="3.1.1" />
+    <PackageReference Include="System.Reactive.Linq" Version="3.1.1" />
+    <PackageReference Include="System.Reactive.PlatformServices" Version="3.1.1" />
+    <PackageReference Include="System.Reactive.Windows.Threading" Version="3.1.1" />
+    <PackageReference Include="Zeroconf" Version="2.9.0" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
