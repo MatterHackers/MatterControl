@@ -171,7 +171,18 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			moveButtonsContainer.AddChild(oneHundredButton);
 
-			tenButton.Checked = true;
+			switch (moveAmount)
+			{
+				case 1:
+					oneButton.Checked = true;
+					break;
+				case 10:
+					tenButton.Checked = true;
+					break;
+				case 100:
+					oneHundredButton.Checked = true;
+					break;
+			}
 
 			moveButtonsContainer.AddChild(new TextWidget("mm", textColor: theme.Colors.PrimaryTextColor, pointSize: 8)
 			{
