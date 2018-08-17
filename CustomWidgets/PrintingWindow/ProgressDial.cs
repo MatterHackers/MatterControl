@@ -173,8 +173,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Vector2.Zero,
 				new Vector2(outerRingRadius, outerRingRadius),
 				0,
-				MathHelper.DegreesToRadians(360) * LayerCompletedRatio, // percentCompletedInRadians
-				Arc.Direction.ClockWise);
+				MathHelper.Tau - MathHelper.DegreesToRadians(360) * LayerCompletedRatio, // percentCompletedInRadians
+				Arc.Direction.CounterClockWise);
 
 			var arcStroke = new Stroke(ringArc);
 			arcStroke.width(outerRingStrokeWidth);
@@ -187,8 +187,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Vector2.Zero,
 				new Vector2(innerRingRadius, innerRingRadius),
 				0,
-				MathHelper.DegreesToRadians(360) * CompletedRatio, // percentCompletedInRadians
-				Arc.Direction.ClockWise);
+				MathHelper.Tau - MathHelper.DegreesToRadians(360) * CompletedRatio, // percentCompletedInRadians
+				Arc.Direction.CounterClockWise);
 			arcStroke = new Stroke(ringArc);
 			arcStroke.width(innerRingStrokeWidth);
 			graphics2D.Render(
