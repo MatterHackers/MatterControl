@@ -226,6 +226,8 @@ Printer
         layer_gcode
         before_toolchange_gcode
         toolchange_gcode
+        before_toolchange_gcode_1
+        toolchange_gcode_1
     Filters
       Filters
         write_regex

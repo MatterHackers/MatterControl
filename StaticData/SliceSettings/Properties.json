@@ -1641,19 +1641,35 @@
     "RebuildGCodeOnChange": false
   },
   {
+    "SlicerConfigName": "before_toolchange_gcode",
+    "PresentationName": "Before Tool Change G-Code",
+    "HelpText": "G-Code to be run before every tool change. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": ""
+  },
+  {
     "SlicerConfigName": "toolchange_gcode",
     "PresentationName": "After Tool Change G-Code",
-    "HelpText": "G-Code to be run after every tool change.",
+    "HelpText": "G-Code to be run after every tool change. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.",
     "ShowIfSet": "!sla_printer",
     "DataEditType": "MULTI_LINE_TEXT",
     "DefaultValue": ""
   },
   {
-    "SlicerConfigName": "before_toolchange_gcode",
-    "PresentationName": "Before Tool Change G-Code",
-    "HelpText": "G-Code to be run before every tool change.",
+    "SlicerConfigName": "before_toolchange_gcode_1",
+    "PresentationName": "Before Tool Change G-Code 2",
+    "HelpText": "G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.",
     "DataEditType": "MULTI_LINE_TEXT",
     "ShowIfSet": "!sla_printer",
+    "DefaultValue": ""
+  },
+  {
+    "SlicerConfigName": "toolchange_gcode_1",
+    "PresentationName": "After Tool Change G-Code 2",
+    "HelpText": "G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.",
+    "ShowIfSet": "!sla_printer",
+    "DataEditType": "MULTI_LINE_TEXT",
     "DefaultValue": ""
   },
   {
