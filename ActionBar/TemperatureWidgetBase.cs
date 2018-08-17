@@ -111,24 +111,9 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			container.AddChild(DirectionIndicator);
 
-			bool isEnabled = printer.Connection.IsConnected;
-
 			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
-				if (isEnabled != printer.Connection.IsConnected)
-				{
-					isEnabled = printer.Connection.IsConnected;
-
-					var flowLayout = this.PopupContent.Children.OfType<FlowLayoutWidget>().FirstOrDefault();
-					if (flowLayout != null)
-					{
-						foreach (var child in flowLayout.Children.Except(alwaysEnabled))
-						{
-							child.Enabled = isEnabled;
-						}
-					}
-				}
-
+				enableControls();
 			}, ref unregisterEvents);
 		}
 
@@ -156,10 +141,38 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected virtual void SetTargetTemperature(double targetTemp) { }
 
+		public override void OnLoad(EventArgs args)
+		{
+			enableControls();
+
+			base.OnLoad(args);
+		}
+
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
+
+		bool? isEnabled = null;
+
+		private void enableControls()
+		{
+			if (isEnabled != printer.Connection.IsConnected)
+			{
+				isEnabled = printer.Connection.IsConnected;
+
+				var flowLayout = this.PopupContent.Children.OfType<FlowLayoutWidget>().FirstOrDefault();
+				if (flowLayout != null)
+				{
+					foreach (var child in flowLayout.Children.Except(alwaysEnabled))
+					{
+						child.Enabled = isEnabled == true;
+					}
+				}
+			}
+		}
+
+
 	}
 }

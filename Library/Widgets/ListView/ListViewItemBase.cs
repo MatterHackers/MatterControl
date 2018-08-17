@@ -216,8 +216,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					&& ApplicationController.Instance.Library.IsContentFileType(stream.FileName));
 				bool isContainerLink = listViewItem.Model is ILibraryContainerLink;
 
-				bool isGCode = listViewItem.Model is FileSystemFileItem item && Path.GetExtension(item.FileName.ToUpper()) == ".GCODE"
-					|| listViewItem.Model is SDCardFileItem sdItem && Path.GetExtension(sdItem.Name.ToUpper()) == ".GCODE";
+				bool isGCode = listViewItem.Model is FileSystemFileItem item && Path.GetExtension(item.Name).IndexOf(".gco", StringComparison.OrdinalIgnoreCase) == 0
+					|| listViewItem.Model is SDCardFileItem sdItem && Path.GetExtension(sdItem.Name).IndexOf(".gco", StringComparison.OrdinalIgnoreCase) == 0;
 
 				return isContentItem || isValidStream || isContainerLink || isGCode;
 			}
