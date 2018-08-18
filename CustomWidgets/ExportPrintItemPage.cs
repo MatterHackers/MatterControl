@@ -162,13 +162,19 @@ namespace MatterHackers.MatterControl
 								ActionButtonLabel = "Export".Localize(),
 								Title = ApplicationController.Instance.ProductName + " - " + "Select A Folder".Localize()
 							},
-							async (openParams) =>
+							(openParams) =>
 							{
-								string path = openParams.FolderPath;
-								if (!string.IsNullOrEmpty(path))
-								{
-									await activePlugin.Generate(libraryItems, path);
-								}
+								ApplicationController.Instance.Tasks.Execute(
+									"Saving".Localize() + "...",
+									async (reporter, cancellationToken) =>
+									{
+
+										string path = openParams.FolderPath;
+										if (!string.IsNullOrEmpty(path))
+										{
+											await activePlugin.Generate(libraryItems, path, reporter, cancellationToken);
+										}
+									});
 							});
 					});
 
@@ -192,33 +198,35 @@ namespace MatterHackers.MatterControl
 
 							if (!string.IsNullOrEmpty(savePath))
 							{
-								Task.Run(async () =>
-								{
-									string extension = Path.GetExtension(savePath);
-									if (extension != targetExtension)
+								ApplicationController.Instance.Tasks.Execute(
+									"Exporting".Localize() + "...",
+									async (reporter, cancellationToken) =>
 									{
-										savePath += targetExtension;
-									}
-
-									bool succeeded = false;
-
-									if (activePlugin != null)
-									{
-										succeeded = await activePlugin.Generate(libraryItems, savePath);
-									}
-
-									if (succeeded)
-									{
-										ShowFileIfRequested(savePath);
-									}
-									else
-									{
-										UiThread.RunOnIdle(() =>
+										string extension = Path.GetExtension(savePath);
+										if (extension != targetExtension)
 										{
-											StyledMessageBox.ShowMessageBox("Export failed".Localize(), title);
-										});
-									}
-								});
+											savePath += targetExtension;
+										}
+
+										bool succeeded = false;
+
+										if (activePlugin != null)
+										{
+											succeeded = await activePlugin.Generate(libraryItems, savePath, reporter, cancellationToken);
+										}
+
+										if (succeeded)
+										{
+											ShowFileIfRequested(savePath);
+										}
+										else
+										{
+											UiThread.RunOnIdle(() =>
+											{
+												StyledMessageBox.ShowMessageBox("Export failed".Localize(), title);
+											});
+										}
+									});
 							}
 						});
 				});

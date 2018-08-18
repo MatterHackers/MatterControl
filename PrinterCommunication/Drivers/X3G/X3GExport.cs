@@ -31,7 +31,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.Library;
@@ -65,7 +67,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 
 		public bool ExportPossible(ILibraryAsset libraryItem) => true;
 
-		public async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath)
+		public async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
 		{
 			ILibraryAssetStream libraryContent = libraryItems.OfType<ILibraryAssetStream>().FirstOrDefault();
 
