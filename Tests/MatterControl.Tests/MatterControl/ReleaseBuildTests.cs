@@ -45,7 +45,7 @@ namespace MatterControl.Tests
 						Gui.dll
 						Tesselate.dll
 						DataConverters2D.dll
-						MatterHackers.RenderOpenGl.dll
+						//MatterHackers.RenderOpenGl.dll
 						RayTracer.dll
 						DataConverters3D.dll
 						Localizations.dll
