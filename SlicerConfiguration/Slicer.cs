@@ -39,6 +39,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MeshVisualizer;
@@ -235,8 +236,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return SliceItem(stlFileLocations, mergeRules, gcodeFilePath, printer, progressReporter, cancellationToken);
 		}
 
-		public static Task<bool> SliceItem(List<(Matrix4X4 matrix, string fileName)> stlFileLocations, string mergeRules, string gcodeFilePath, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
+		public static Task<bool> SliceItem(List<(Matrix4X4 matrix, string fileName)> stlFileLocations, string mergeRules, string gcodeFilePath, PrinterConfig printer, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
 		{
+			// Wrap the reporter with a specialized MatterSlice string parser for percent from string results
+			var sliceProgressReporter = new SliceProgressReporter(reporter, printer);
+
 			bool slicingSucceeded = true;
 
 			if(stlFileLocations.Count > 0)
@@ -245,14 +249,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					Status = "Generating Config"
 				};
-				progressReporter.Report(progressStatus);
+				sliceProgressReporter.Report(progressStatus);
 
 				string configFilePath = Path.Combine(
 					ApplicationDataStorage.Instance.GCodeOutputPath,
 					string.Format("config_{0}.ini", printer.Settings.GetLongHashCode().ToString()));
 
 				progressStatus.Status = "Starting slicer";
-				progressReporter.Report(progressStatus);
+				sliceProgressReporter.Report(progressStatus);
 
 				if (!File.Exists(gcodeFilePath)
 					|| !HasCompletedSuccessfully(gcodeFilePath))
@@ -301,7 +305,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							}
 							if (s is string stringValue)
 							{
-								progressReporter?.Report(new ProgressStatus()
+
+
+
+								sliceProgressReporter?.Report(new ProgressStatus()
 								{
 									Status = stringValue
 								});
@@ -350,7 +357,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								}
 								message += "...";
 
-								progressReporter?.Report(new ProgressStatus()
+								sliceProgressReporter?.Report(new ProgressStatus()
 								{
 									Status = message
 								});

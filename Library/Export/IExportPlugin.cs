@@ -26,8 +26,11 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
+using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.Library;
@@ -43,7 +46,7 @@ namespace MatterHackers.MatterControl
 
 		void Initialize(PrinterConfig printer);
 
-		Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath);
+		Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken);
 
 		bool Enabled { get; }
 

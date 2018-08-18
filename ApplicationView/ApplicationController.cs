@@ -2186,7 +2186,7 @@ namespace MatterHackers.MatterControl
 					object3D,
 					gcodeFilePath,
 					printer,
-					new SliceProgressReporter(reporter, printer),
+					reporter,
 					cancellationToken);
 			});
 

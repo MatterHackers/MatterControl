@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			return container;
 		}
 
-		public async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath)
+		public async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
 		{
 			var firstItem = libraryItems.OfType<ILibraryAsset>().FirstOrDefault();
 			if (firstItem != null)
@@ -144,7 +144,17 @@ namespace MatterHackers.MatterControl.Library.Export
 				}
 				else if (firstItem is ILibraryObject3D object3DItem)
 				{
+					var status = new ProgressStatus()
+					{
+						Status = "Saving Asset".Localize()
+					};
+
 					loadedItem = await object3DItem.CreateContent(null);
+					await loadedItem.PersistAssets((percentComplete, text) =>
+					{
+						status.Progress0To1 = percentComplete;
+						progress.Report(status);
+					}, publishAssets: false);
 				}
 				else if (assetStream != null)
 				{
@@ -189,10 +199,12 @@ namespace MatterHackers.MatterControl.Library.Export
 									printer.Settings.SetValue(SettingsKey.spiral_vase, "1");
 								}
 
-								await ApplicationController.Instance.Tasks.Execute("Slicing Item".Localize() + " " + loadedItem.Name, (reporter, cancellationToken) =>
-								{
-									return Slicer.SliceItem(loadedItem, gcodePath, printer, reporter, cancellationToken);
-								});
+								await ApplicationController.Instance.Tasks.Execute(
+									"Slicing Item".Localize() + " " + loadedItem.Name,
+									(reporter, cancellationToken2) =>
+									{
+										return Slicer.SliceItem(loadedItem, gcodePath, printer, reporter, cancellationToken2);
+									});
 							}
 							finally
 							{
