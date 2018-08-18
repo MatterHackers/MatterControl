@@ -37,6 +37,8 @@ namespace MatterControl.Tests
 			string configuration = "Release";
 #endif
 
+			//MatterHackers.RenderOpenGl.dll
+
 			// This list can be refreshed via the rebuildDependencies() helper function below
 			string knownAssemblies = @"VectorMath.dll
 						Agg.dll
@@ -45,7 +47,6 @@ namespace MatterControl.Tests
 						Gui.dll
 						Tesselate.dll
 						DataConverters2D.dll
-						MatterHackers.RenderOpenGl.dll
 						RayTracer.dll
 						DataConverters3D.dll
 						Localizations.dll
