@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public double XOffset { get; set; } = 0;
 
 		[DisplayName("Y")]
-		[Icons(new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_top.png", "align_origin.png" })]
+		[Icons(new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_Top.png", "align_origin.png" })]
 		public Align YAlign { get; set; } = Align.None;
 
 		[DisplayName("Start Y")]
@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public double YOffset { get; set; } = 0;
 
 		[DisplayName("Z")]
-		[Icons(new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_top.png", "align_origin.png" })]
+		[Icons(new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_Top.png", "align_origin.png" })]
 		public Align ZAlign { get; set; } = Align.None;
 
 		[DisplayName("Start Z")]
