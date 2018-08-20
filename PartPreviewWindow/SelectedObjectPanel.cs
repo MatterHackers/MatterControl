@@ -261,7 +261,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public GuiWidget ContentPanel { get; set; }
 
-		JsonPathContext xpathLikeResolver = new JsonPathContext();
+		private JsonPathContext pathResolver = new JsonPathContext();
 
 		public void SetActiveItem(IObject3D selectedItem)
 		{
@@ -293,7 +293,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					// Get the named property via reflection
 					// Selector example:            '$.Children<CylinderObject3D>'
-					var match = xpathLikeResolver.Select(componentObject, selector).ToList();
+					var match = pathResolver.Select(componentObject, selector).ToList();
 
 					//// TODO: Create editor row for each property
 					//// - Use the type of the property to find a matching editor (ideally all datatype -> editor functionality would resolve consistently)
