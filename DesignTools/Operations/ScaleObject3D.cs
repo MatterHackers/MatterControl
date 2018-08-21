@@ -49,12 +49,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Scale".Localize();
 		}
 
-		public ScaleObject3D(IObject3D item, double x = 0, double y = 0, double z = 0, string name = "")
-			: this(item, new Vector3(x, y, z), name)
+		public ScaleObject3D(IObject3D item, double x = 0, double y = 0, double z = 0)
+			: this(item, new Vector3(x, y, z))
 		{
 		}
 
-		public ScaleObject3D(IObject3D itemToScale, Vector3 scale, string name = "")
+		public ScaleObject3D(IObject3D itemToScale, Vector3 scale)
 			: this()
 		{
 			var aabb = itemToScale.GetAxisAlignedBoundingBox();
