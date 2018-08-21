@@ -75,11 +75,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override bool CanApply => true;
 
-		public static ScaleObject3D Create(IObject3D itemToScale)
-		{
-			return new ScaleObject3D(itemToScale, Vector3.One);
-		}
-
 		// this is the size we actually serialize
 		public Vector3 ScaleRatio = Vector3.One;
 

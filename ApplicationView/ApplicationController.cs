@@ -913,7 +913,9 @@ namespace MatterHackers.MatterControl
 				{
 					var selectedItem = scene.SelectedItem;
 					scene.SelectedItem = null;
-					var scale = ScaleObject3D.Create(selectedItem.Clone());
+
+					var scale = new ScaleObject3D(selectedItem.Clone(), Vector3.One);
+
 					scale.MakeNameNonColliding();
 
 					scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, new List<IObject3D> { scale }));
