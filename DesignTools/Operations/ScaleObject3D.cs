@@ -49,12 +49,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Scale".Localize();
 		}
 
-		public ScaleObject3D(IObject3D item, double x = 0, double y = 0, double z = 0, string name = "")
-			: this(item, new Vector3(x, y, z), name)
+		public ScaleObject3D(IObject3D item, double x = 0, double y = 0, double z = 0)
+			: this(item, new Vector3(x, y, z))
 		{
 		}
 
-		public ScaleObject3D(IObject3D itemToScale, Vector3 scale, string name = "")
+		public ScaleObject3D(IObject3D itemToScale, Vector3 scale)
 			: this()
 		{
 			var aabb = itemToScale.GetAxisAlignedBoundingBox();
@@ -74,11 +74,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		public override bool CanApply => true;
-
-		public static ScaleObject3D Create(IObject3D itemToScale)
-		{
-			return new ScaleObject3D(itemToScale, Vector3.One);
-		}
 
 		// this is the size we actually serialize
 		public Vector3 ScaleRatio = Vector3.One;
@@ -168,6 +163,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		[Description("Ensure that the part maintains its proportions.")]
+		[DisplayName("Maintain Proportions")]
 		public bool MaitainProportions { get; set; } = true;
 
 		[Description("Toggle between specifying the size or the percentage to scale.")]

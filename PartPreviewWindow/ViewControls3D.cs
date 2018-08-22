@@ -210,6 +210,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				redoButton.Enabled = undoBuffer.RedoCount > 0;
 			};
 
+			undoButton.Enabled = undoBuffer.UndoCount > 0;
+			redoButton.Enabled = undoBuffer.RedoCount > 0;
+
 			var buttonGroupA = new ObservableCollection<GuiWidget>();
 
 			if (UserSettings.Instance.IsTouchScreen)
