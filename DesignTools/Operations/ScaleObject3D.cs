@@ -163,6 +163,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		[Description("Ensure that the part maintains its proportions.")]
+		[DisplayName("Maintain Proportions")]
 		public bool MaitainProportions { get; set; } = true;
 
 		[Description("Toggle between specifying the size or the percentage to scale.")]
