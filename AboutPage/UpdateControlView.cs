@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl
 			this.UpdateStatusChanged(null, null);
 		}
 
-		public override void OnClosed(ClosedEventArgs e)
+		public override void OnClosed(EventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);

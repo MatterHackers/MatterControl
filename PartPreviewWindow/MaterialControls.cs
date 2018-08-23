@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public override void OnClosed(ClosedEventArgs e)
+		public override void OnClosed(EventArgs e)
 		{
 			scene.SelectionChanged -= Scene_SelectionChanged;
 			base.OnClosed(e);

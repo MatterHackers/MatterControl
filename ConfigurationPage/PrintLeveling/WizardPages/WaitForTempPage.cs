@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			base.OnLoad(args);
 		}
 
-		private void WizardWindow_Closed(object sender, ClosedEventArgs e)
+		private void WizardWindow_Closed(object sender, EventArgs e)
 		{
 			// Make sure when the wizard closes we turn off the bed heating
 			printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);

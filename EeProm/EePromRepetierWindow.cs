@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.EeProm
 			}, ref unregisterEvents);
 		}
 
-		public override void OnClosed(ClosedEventArgs e)
+		public override void OnClosed(EventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
@@ -240,7 +240,7 @@ namespace MatterHackers.MatterControl.EeProm
 			});
 		}
 
-		public override void OnClosed(ClosedEventArgs e)
+		public override void OnClosed(EventArgs e)
 		{
 			if (currentEePromSettings != null)
 			{

@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			public override void OnClosed(ClosedEventArgs e)
+			public override void OnClosed(EventArgs e)
 			{
 				if (!haveResponded)
 				{

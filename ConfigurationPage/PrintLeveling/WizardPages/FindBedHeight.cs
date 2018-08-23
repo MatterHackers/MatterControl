@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			base.OnLoad(args);
 		}
 
-		public override void OnClosed(ClosedEventArgs e)
+		public override void OnClosed(EventArgs e)
 		{
 			this.DialogWindow.KeyDown -= TopWindowKeyDown;
 			base.OnClosed(e);

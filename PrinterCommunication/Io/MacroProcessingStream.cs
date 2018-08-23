@@ -51,9 +51,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private double startingBedTemp = 0;
 		private List<double> startingExtruderTemps = new List<double>();
 		private Stopwatch timeHaveBeenWaiting = new Stopwatch();
-		private bool waitingForUserInput = false;
+		private bool WaitingForUserInput { get; set; } = false;
 		private PrinterConfig printer;
 		QueuedCommandsStream queuedCommandsStream;
+
+		RunningMacroPage currentPage = null;
 
 		public MacroProcessingStream(QueuedCommandsStream queuedCommandsStream, PrinterConfig printer)
 			: base(queuedCommandsStream)
@@ -69,7 +71,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public void Continue()
 		{
-			waitingForUserInput = false;
+			WaitingForUserInput = false;
 			timeHaveBeenWaiting.Reset();
 			maxTimeToWaitForOk = 0;
 			commandsToRepeat.Clear();
@@ -109,7 +111,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			string lineToSend = null;
 
-			if (waitingForUserInput)
+			if (WaitingForUserInput)
 			{
 				lineToSend = "";
 				Thread.Sleep(100);
@@ -141,7 +143,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				lineToSend = base.ReadLine();
 
-				if (lineToSend != null)
+				if (!string.IsNullOrEmpty(lineToSend))
 				{
 					if (lineToSend.StartsWith(MacroPrefix) && lineToSend.TrimEnd().EndsWith(")"))
 					{
@@ -202,18 +204,28 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						switch (command)
 						{
 							case "choose_material":
-								waitingForUserInput = true;
+								WaitingForUserInput = true;
 								macroData.showMaterialSelector = true;
 								macroData.waitOk = true;
 
 								UiThread.RunOnIdle(() =>
 								{
-									DialogWindow.Show(new RunningMacroPage(printer, macroData, ApplicationController.Instance.Theme));
+									// we are continuing normaly
+									if (currentPage != null)
+									{
+										currentPage.ContinueToNextPage = true;
+									}
+									DialogWindow.Show(currentPage = new RunningMacroPage(printer, macroData, ApplicationController.Instance.Theme));
 								});
 								break;
 
 							case "close":
 								runningMacro = false;
+								// we are closing normaly
+								if (currentPage != null)
+								{
+									currentPage.ContinueToNextPage = true;
+								}
 								UiThread.RunOnIdle(() => DialogWindow.Close(typeof(RunningMacroPage)));
 								break;
 
@@ -231,11 +243,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 								break;
 
 							case "show_message":
-								waitingForUserInput = macroData.waitOk | macroData.expireTime > 0;
+								WaitingForUserInput = macroData.waitOk | macroData.expireTime > 0;
 
 								UiThread.RunOnIdle(() =>
 								{
-									DialogWindow.Show(new RunningMacroPage(printer, macroData, ApplicationController.Instance.Theme));
+									// we are continuing normaly
+									if (currentPage != null)
+									{
+										currentPage.ContinueToNextPage = true;
+									}
+									DialogWindow.Show(currentPage = new RunningMacroPage(printer, macroData, ApplicationController.Instance.Theme));
 								});
 
 								break;
@@ -266,7 +283,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					printer.Connection.TargetBedTemperature = startingBedTemp;
 				}
 			}
-			waitingForUserInput = false;
+			WaitingForUserInput = false;
 			timeHaveBeenWaiting.Reset();
 			maxTimeToWaitForOk = 0;
 			UiThread.RunOnIdle(() => DialogWindow.Close(typeof(RunningMacroPage)));

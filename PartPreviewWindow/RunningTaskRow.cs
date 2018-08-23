@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			detailsPanel.Visible = isExpanded;
 		}
 
-		public override void OnClosed(ClosedEventArgs e)
+		public override void OnClosed(EventArgs e)
 		{
 			base.OnClosed(e);
 			taskDetails.ProgressChanged -= TaskDetails_ProgressChanged;

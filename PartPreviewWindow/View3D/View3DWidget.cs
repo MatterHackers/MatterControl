@@ -388,7 +388,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public bool DisplayAllValueData { get; set; }
 
-		public override void OnClosed(ClosedEventArgs e)
+		public override void OnClosed(EventArgs e)
 		{
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;
 			Scene.SelectionChanged -= Scene_SelectionChanged;
