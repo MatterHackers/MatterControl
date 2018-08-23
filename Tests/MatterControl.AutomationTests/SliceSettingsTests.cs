@@ -196,14 +196,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// turn on the heater
 					testRunner.ClickByName("Toggle Heater");
-					testRunner.Delay(2);
+					testRunner.Delay(1);
 
 					// assert the printer is heating
 					Assert.AreEqual(hipsGoalTemp, (int)emulator.CurrentExtruder.TargetTemperature, "The printer should report the expected goal temp");
 
 					// turn off the heater
 					testRunner.ClickByName("Toggle Heater");
-					testRunner.Delay(2);
+					testRunner.Delay(1);
 
 					// assert the printer is off
 					Assert.AreEqual(0, (int)emulator.CurrentExtruder.TargetTemperature, "The printer should report the heaters are off");
@@ -244,8 +244,30 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// and the on toggle is showing off
 					Assert.IsFalse(heatToggle.Checked);
 
-					// Collapse the popup and switch back to the general tab
+					// test that the load filament button works and closes correctly
+					testRunner.ClickByName("Temperature Input");
+					testRunner.Type("^a");
+					testRunner.Type("104");
+					testRunner.Type("{Enter}");
+					testRunner.Delay();
+					testRunner.ClickByName("Load Filament Button");
+					testRunner.ClickByName("Continue Button");
+					Assert.AreEqual(104, (int)emulator.CurrentExtruder.TargetTemperature);
+					testRunner.ClickByName("Cancel Wizard Button");
+					testRunner.Delay();
+					Assert.AreEqual(0, (int)emulator.CurrentExtruder.TargetTemperature);
+
 					testRunner.ClickByName("Hotend 0");
+					testRunner.ClickByName("Load Filament Button");
+					testRunner.ClickByName("Continue Button");
+					testRunner.Delay();
+					Assert.AreEqual(104, (int)emulator.CurrentExtruder.TargetTemperature);
+					var systemWindow = testRunner.GetWidgetByName("Cancel Wizard Button", out SystemWindow containingWindow);
+					// close the window through windows (alt-f4)
+					testRunner.Type("%{F4}");
+					Assert.AreEqual(0, (int)emulator.CurrentExtruder.TargetTemperature);
+
+					// Switch back to the general tab
 					testRunner.ClickByName("General Tab");
 
 					testRunner.SelectSliceSettingsField("Printer", SettingsKey.extruder_count);
@@ -269,7 +291,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.CompletedTask;
-			}, maxTimeToRun: 666, overrideWidth: 1224, overrideHeight: 900);
+			});
 		}
 
 		[Test, RunInApplicationDomain]
