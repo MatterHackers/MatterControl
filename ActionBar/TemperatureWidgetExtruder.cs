@@ -73,6 +73,7 @@ namespace MatterHackers.MatterControl.ActionBar
 					Margin = theme.ButtonSpacing,
 					ToolTipText = "Load filament".Localize()
 				};
+				loadButton.Name = "Load Filament Button";
 				loadButton.Click += (s, e) => loadFilament.Run(printer.Connection);
 				macroButtons.AddChild(loadButton);
 
