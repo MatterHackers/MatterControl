@@ -230,8 +230,8 @@ namespace MatterHackers.MeshVisualizer
 			var bed = printerConfig.Bed;
 
 			if (bed.BuildHeight > 0
-				&& (aabb.maxXYZ.Z <= 0
-				|| aabb.maxXYZ.Z >= bed.BuildHeight))
+					&& aabb.maxXYZ.Z >= bed.BuildHeight
+				|| aabb.maxXYZ.Z <= 0)
 			{
 				// object completely below the bed or any part above the build volume
 				return false;
