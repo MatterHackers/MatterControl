@@ -93,9 +93,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				meshPrintOutputSettings.Clear();
 
 				// Flatten the scene, filtering out items outside of the build volume
-				var meshItemsOnBuildPlate = object3D.VisibleMeshes().Where((item) => item.InsideBuildVolume(printer)
-					&& item.WorldPersistable());
-
+				var meshItemsOnBuildPlate = printer.PrintableItems(object3D);
 				if (meshItemsOnBuildPlate.Any())
 				{
 					int maxExtruderIndex = 0;
