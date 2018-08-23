@@ -615,65 +615,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void DrawTestToGl(Graphics2D graphics2D, IObject3D selectedItem)
-		{
-			ImageBuffer image = new ImageBuffer(256, 256);
-
-			// create gl stuff
-			int fbo, render_buf;
-			GL.GenFramebuffers(1, out fbo);
-			GL.GetError();
-			GL.GenRenderbuffers(1, out render_buf);
-			GL.GetError();
-			GL.BindRenderbuffer(render_buf);
-			GL.GetError();
-			GL.RenderbufferStorage(RenderbufferStorage.Rgba8, image.Width, image.Height);
-			GL.GetError();
-			GL.BindFramebuffer(fbo);
-			GL.GetError();
-			GL.FramebufferRenderbuffer(render_buf);
-			GL.GetError();
-
-			//Before drawing
-			GL.BindFramebuffer(fbo);
-
-			// draw to gl stuff
-			LightingData lighting = new LightingData();
-			var screenSpaceBounds = new RectangleDouble(0, 0, image.Width, image.Height);
-			WorldView world = new WorldView(screenSpaceBounds.Width, screenSpaceBounds.Height);
-			world.Translate(new Vector3(0, 0, 0));
-			world.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, 0)));
-
-			GLHelper.SetGlContext(world, screenSpaceBounds, lighting);
-			GL.GetError();
-			//GL.Clear(ClearBufferMask.ColorBufferBit);
-			foreach (var visibleStuff in selectedItem.VisibleMeshes())
-			{
-				var mesh = visibleStuff.Mesh;
-				var obj3D = visibleStuff;
-				GLHelper.Render(mesh, obj3D.WorldColor(), obj3D.WorldMatrix(), RenderTypes.Shaded);
-			}
-			GLHelper.UnsetGlContext();
-			GL.GetError();
-
-			//after drawing
-			GL.ReadBuffer();
-			GL.GetError();
-			GL.ReadPixels((int)lastMouseMove.X, (int)lastMouseMove.Y, image.Width, image.Height, PixelFormat.Rgba, PixelType.UnsignedByte, image.GetBuffer());
-			GL.GetError();
-
-			// Return to on-screen rendering:
-			//GL.BindFramebuffer(0);
-
-			// Clean up gl stuff
-			GL.DeleteFramebuffers(1, ref fbo);
-			GL.GetError();
-			GL.DeleteRenderbuffers(1, ref render_buf);
-			GL.GetError();
-
-			graphics2D.Render(image, 50, 50);
-		}
-
 		private void AfterDraw3DContent(object sender, DrawEventArgs e)
 		{
 			if (DragSelectionInProgress)

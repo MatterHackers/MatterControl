@@ -46,6 +46,7 @@ namespace MatterHackers.MatterControl
 {
 	public class RootSystemWindow : SystemWindow
 	{
+		public static bool UseGl { get; set; } = true;
 		private static Vector2 minSize { get; set; } = new Vector2(600, 480);
 
 		private Stopwatch totalDrawTime = new Stopwatch();
@@ -85,10 +86,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			if (GL.HardwareAvailable)
-			{
-				UseOpenGL = true;
-			}
+			UseOpenGL = UseGl;
 
 			this.SetStartupTraits();
 		}

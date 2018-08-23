@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl
 				switch (command.ToUpper())
 				{
 					case "FORCE_SOFTWARE_RENDERING":
-						GL.HardwareAvailable = false;
+						RootSystemWindow.UseGl = false;
 						break;
 
 					case "CLEAR_CACHE":
