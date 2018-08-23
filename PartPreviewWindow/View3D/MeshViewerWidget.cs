@@ -216,7 +216,7 @@ namespace MatterHackers.MeshVisualizer
 			return ColorF.FromHSL(Math.Max(materialIndex, 0) / 10.0, .99, .49).ToColor();
 		}
 
-		public static bool InsideBuildVolume(this IObject3D item, PrinterConfig printerConfig)
+		public static bool InsideBuildVolume(this PrinterConfig printerConfig,  IObject3D item)
 		{
 			if(item.Mesh == null)
 			{
@@ -230,8 +230,8 @@ namespace MatterHackers.MeshVisualizer
 			var bed = printerConfig.Bed;
 
 			if (bed.BuildHeight > 0
-				&& (aabb.maxXYZ.Z <= 0
-				|| aabb.maxXYZ.Z >= bed.BuildHeight))
+					&& aabb.maxXYZ.Z >= bed.BuildHeight
+				|| aabb.maxXYZ.Z <= 0)
 			{
 				// object completely below the bed or any part above the build volume
 				return false;
@@ -264,6 +264,17 @@ namespace MatterHackers.MeshVisualizer
 			}
 
 			return true;
+		}
+
+		/// <summary>
+		/// Filters items from a given source returning only persistable items inside the Build Volume
+		/// </summary>
+		/// <param name="source">The source content to filter</param>
+		/// <param name="printer">The printer config to consider</param>
+		/// <returns></returns>
+		public static IEnumerable<IObject3D> PrintableItems(this PrinterConfig printer, IObject3D source)
+		{
+			return source.VisibleMeshes().Where(item => printer.InsideBuildVolume(item) && item.WorldPersistable());
 		}
 	}
 
@@ -606,7 +617,7 @@ namespace MatterHackers.MeshVisualizer
 			// If there is a printer - check if the object is within the bed volume (has no AABB outside the bed volume)
 			if (sceneContext.Printer != null)
 			{
-				if (!item.InsideBuildVolume(sceneContext.Printer))
+				if (!sceneContext.Printer.InsideBuildVolume(item))
 				{
 					drawColor = new Color(drawColor, 65);
 				}

@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static List<bool> extrudersUsed = new List<bool>();
 		public static bool runInProcess = false;
 
-		public static List<(Matrix4X4 matrix, string fileName)> GetStlFileLocations(IObject3D reloadedItem, ref string mergeRules, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
+		public static List<(Matrix4X4 matrix, string fileName)> GetStlFileLocations(IObject3D object3D, ref string mergeRules, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
 		{
 			var progressStatus = new ProgressStatus();
 
@@ -93,9 +93,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				meshPrintOutputSettings.Clear();
 
 				// Flatten the scene, filtering out items outside of the build volume
-				var meshItemsOnBuildPlate = reloadedItem.VisibleMeshes().Where((item) => item.InsideBuildVolume(printer)
-					&& item.WorldPersistable());
-
+				var meshItemsOnBuildPlate = printer.PrintableItems(object3D);
 				if (meshItemsOnBuildPlate.Any())
 				{
 					int maxExtruderIndex = 0;

@@ -37,6 +37,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -146,9 +147,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				button.Click += (s, e) =>
 				{
-					// Exit if the bed is not GCode and the bed has no items
+					// Exit if the bed is not GCode and the bed has no printable items
 					if ((printer.Bed.EditContext.SourceItem as ILibraryAsset)?.ContentType != "gcode"
-						&& printer.Bed.Scene.Children.Count <= 0)
+						&& !printer.PrintableItems(printer.Bed.EditContext.Content).Any())
 					{
 						return;
 					}
