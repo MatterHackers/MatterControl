@@ -488,7 +488,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			ScrollPosition += new Vector2(0, scrollAmount * direction);
 		}
 
-		public override void OnClosed(ClosedEventArgs e)
+		public override void OnClosed(EventArgs e)
 		{
 			if (this.LibraryContext != null)
 			{

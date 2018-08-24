@@ -74,6 +74,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				okButton.Name = "Continue Button";
 				okButton.Click += (s, e) =>
 				{
+					ContinueToNextPage = true;
 					printer.Connection.MacroContinue();
 				};
 
@@ -136,9 +137,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 			public string markdown = "";
 		}
 
-		public override void OnClosed(ClosedEventArgs e)
+		public override void OnClosed(EventArgs e)
 		{
-			if(e.OsEvent)
+			if (!ContinueToNextPage)
 			{
 				printer.Connection.MacroCancel();
 			}
@@ -152,6 +153,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 			if(runningInterval != null)
 			{
 				runningInterval.Continue = !HasBeenClosed && progressBar.RatioComplete < 1;
+				if(!runningInterval.Continue)
+				{
+					ContinueToNextPage = true;
+				}
 			}
 			progressBar.Visible = true;
 			long timeSinceStartMs = UiThread.CurrentTimerMs - startTimeMs;
@@ -161,6 +166,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 		}
 
 		double startingTemp;
+
+		public bool ContinueToNextPage { get; set; } = false;
+
 		private void LookForTempRequest(object sender, EventArgs e)
 		{
 			var stringEvent = e as StringEventArgs;

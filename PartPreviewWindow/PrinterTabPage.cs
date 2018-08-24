@@ -379,7 +379,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public override void OnClosed(ClosedEventArgs e)
+		public override void OnClosed(EventArgs e)
 		{
 			unregisterEvents?.Invoke(null, null);
 

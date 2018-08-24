@@ -276,7 +276,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			}
 		}
 
-		public override void OnClosed(ClosedEventArgs e)
+		public override void OnClosed(EventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 

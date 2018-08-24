@@ -464,7 +464,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			widgetTodockTo.Closed += widgetRelativeTo_Closed;
 		}
 
-		private void widgetRelativeTo_Closed(object sender, ClosedEventArgs e)
+		private void widgetRelativeTo_Closed(object sender, EventArgs e)
 		{
 			// If the owning widget closed, so should we
 			popupWidget.CloseMenu();

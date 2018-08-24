@@ -215,7 +215,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public override void OnClosed(ClosedEventArgs e)
+		public override void OnClosed(EventArgs e)
 		{
 			printer.Bed.RendererOptions.PropertyChanged -= RendererOptions_PropertyChanged;
 			printer.Bed.LoadedGCodeChanged -= Bed_LoadedGCodeChanged;

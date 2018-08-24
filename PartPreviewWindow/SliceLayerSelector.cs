@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			set => layerScrollbar.Value = value;
 		}
 
-		public override void OnClosed(ClosedEventArgs e)
+		public override void OnClosed(EventArgs e)
 		{
 			sceneContext.ActiveLayerChanged -= SetPositionAndValue;
 			layerSlider.MouseEnter -= SetPositionAndValue;
@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			public override void OnClosed(ClosedEventArgs e)
+			public override void OnClosed(EventArgs e)
 			{
 				base.OnClosed(e);
 

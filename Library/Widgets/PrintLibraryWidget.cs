@@ -856,7 +856,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			libraryView.MenuActions = menuActions;
 		}
 
-		public override void OnClosed(ClosedEventArgs e)
+		public override void OnClosed(EventArgs e)
 		{
 			if (libraryView?.ActiveContainer != null)
 			{

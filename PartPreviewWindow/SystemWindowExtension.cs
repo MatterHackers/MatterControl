@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			void anchor_Closed(object sender, ClosedEventArgs e)
+			void anchor_Closed(object sender, EventArgs e)
 			{
 				// If the owning widget closed, so should we
 				CloseMenu();
