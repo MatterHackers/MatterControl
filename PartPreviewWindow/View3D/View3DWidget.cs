@@ -1156,7 +1156,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var info = new IntersectInfo();
 
-				if (FindHitObject3D(mouseEvent.Position, ref info) is IObject3D hitObject)
+				if (FindHitObject3D(mouseEvent.Position, ref info) is IObject3D hitObject
+					&& this.Printer?.ViewState.ViewMode == PartViewMode.Model) // Disallow Model -> Right Click in GCode views
 				{
 					// Object3D/hit item context menu
 					if (hitObject != selectedItem)
@@ -1237,7 +1238,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						theme.CreateMenuItems(menu, actions, emptyMenu: false);
 					});
 				}
-				else
+				else // Allow right click on bed in all modes
 				{
 					// Workspace/plate context menu
 					UiThread.RunOnIdle(() =>

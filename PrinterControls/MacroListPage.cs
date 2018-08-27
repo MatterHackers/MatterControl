@@ -76,10 +76,9 @@ namespace MatterHackers.MatterControl
 						Margin = new BorderDouble(3, 0, 3, 3),
 						HAnchor = HAnchor.Stretch,
 						Padding = new BorderDouble(3),
-						BackgroundColor = Color.White
 					};
 
-					macroRow.AddChild(new TextWidget(GCodeMacro.FixMacroName(macro.Name)));
+					macroRow.AddChild(new TextWidget(GCodeMacro.FixMacroName(macro.Name), textColor: theme.Colors.PrimaryTextColor));
 
 					macroRow.AddChild(new HorizontalSpacer());
 
