@@ -84,6 +84,7 @@
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingWizardPage.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingWizardRootPage.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard100PointRadial.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardCustom.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardMesh.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelingWizard.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\WizardPages\LastPageInstructions.cs" />

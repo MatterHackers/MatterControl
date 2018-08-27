@@ -83,6 +83,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.probe_has_been_calibrated,
 			SettingsKey.print_leveling_required_to_print,
 			SettingsKey.print_leveling_solution,
+			SettingsKey.leveling_sample_points,
 			SettingsKey.recover_first_layer_speed,
 			SettingsKey.number_of_first_layers,
 			SettingsKey.recover_is_enabled,

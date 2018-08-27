@@ -42,6 +42,7 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
+			// test single if set to 0
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "0" };
 				var profile = GetProfile(settings);
@@ -49,6 +50,7 @@ namespace MatterControl.Tests.MatterControl
 				Assert.IsTrue(profile.ParseShowString("!has_heated_bed", null));
 			}
 
+			// test single if set to 1
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "1" };
 				var profile = GetProfile(settings);
@@ -56,6 +58,7 @@ namespace MatterControl.Tests.MatterControl
 				Assert.IsFalse(profile.ParseShowString("!has_heated_bed", null));
 			}
 
+			// test & with set to 0 and 0
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "0", SettingsKey.auto_connect, "0" };
 				var profile = GetProfile(settings);
@@ -64,6 +67,8 @@ namespace MatterControl.Tests.MatterControl
 				Assert.IsFalse(profile.ParseShowString("!has_heated_bed&auto_connect", null));
 				Assert.IsTrue(profile.ParseShowString("!has_heated_bed&!auto_connect", null));
 			}
+
+			// test & with 0 and 1
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "0", SettingsKey.auto_connect, "1" };
 				var profile = GetProfile(settings);
@@ -72,6 +77,8 @@ namespace MatterControl.Tests.MatterControl
 				Assert.IsTrue(profile.ParseShowString("!has_heated_bed&auto_connect", null));
 				Assert.IsFalse(profile.ParseShowString("!has_heated_bed&!auto_connect", null));
 			}
+
+			// test & with 1 and 0
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "1", SettingsKey.auto_connect, "0" };
 				var profile = GetProfile(settings);
@@ -80,6 +87,8 @@ namespace MatterControl.Tests.MatterControl
 				Assert.IsFalse(profile.ParseShowString("!has_heated_bed&auto_connect", null));
 				Assert.IsFalse(profile.ParseShowString("!has_heated_bed&!auto_connect", null));
 			}
+
+			// test & with 1 and 1 
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "1", SettingsKey.auto_connect, "1" };
 				var profile = GetProfile(settings);
@@ -89,6 +98,7 @@ namespace MatterControl.Tests.MatterControl
 				Assert.IsFalse(profile.ParseShowString("!has_heated_bed&!auto_connect", null));
 			}
 
+			// test 3 &s
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "1", SettingsKey.auto_connect, "1", SettingsKey.has_fan, "1" };
 				var profile = GetProfile(settings);

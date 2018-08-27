@@ -720,10 +720,20 @@
     "PresentationName": "Leveling Solution",
     "HelpText": "The print leveling algorithm to use.",
     "DataEditType": "LIST",
-    "ListValues": "3 Point Plane,3x3 Mesh,5x5 Mesh,10x10 Mesh,7 Point Disk,13 Point Disk,100 Point Disk",
+    "ListValues": "3 Point Plane,3x3 Mesh,5x5 Mesh,10x10 Mesh,7 Point Disk,13 Point Disk,100 Point Disk,Custom Points",
     "ShowAsOverride": true,
     "ShowIfSet": "!has_hardware_leveling",
     "DefaultValue": "3 Point Plane",
+    "ReloadUiWhenChanged": true,
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "leveling_sample_points",
+    "PresentationName": "Sample Points",
+    "HelpText": "A comma separated list of sample points to probje the bed at. You must specify an x and y position for each point. For example: '20,20,100,180,180,20' will saple the bad at 3 points.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "DefaultValue": "20,20,100,180,180,20",
+    "ShowIfSet": "!sla_printer&!has_hardware_leveling&print_leveling_solution=Custom Points",
     "RebuildGCodeOnChange": false
   },
   {

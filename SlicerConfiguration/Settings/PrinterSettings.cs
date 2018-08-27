@@ -860,6 +860,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						return (T)(object)(LevelingSystem.Probe5x5Mesh);
 					case "10x10 Mesh":
 						return (T)(object)(LevelingSystem.Probe10x10Mesh);
+					case "Custom Points":
+						return (T)(object)(LevelingSystem.ProbeCustom);
 					default:
 #if DEBUG
 						throw new NotImplementedException();
