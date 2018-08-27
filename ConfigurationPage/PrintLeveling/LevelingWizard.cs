@@ -117,6 +117,10 @@ namespace MatterHackers.MatterControl
 					levelingPlan = new LevelWizardMesh(printer, 10, 10);
 					break;
 
+				case LevelingSystem.ProbeCustom:
+					levelingPlan = new LevelWizardCustom(printer);
+					break;
+
 				default:
 					throw new NotImplementedException();
 			}
