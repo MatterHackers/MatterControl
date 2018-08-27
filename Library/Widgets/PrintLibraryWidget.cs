@@ -202,7 +202,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				var siblingList = new List<GuiWidget>();
 
-
 				popupMenu.CreateBoolMenuItem(
 					"View List".Localize(),
 					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.RowListView,
