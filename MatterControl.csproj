@@ -639,6 +639,7 @@
   <ItemGroup>
     <EmbeddedResource Include="config.json">
       <LogicalName>config.json</LogicalName>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Utilities\InspectForm.resx">
       <DependentUpon>InspectForm.cs</DependentUpon>
@@ -701,6 +702,10 @@
     <ProjectReference Include="Submodules\agg-sharp\VectorMath\VectorMath.csproj">
       <Project>{D3E41B4E-BFBB-44CA-94C8-95C00F754FDD}</Project>
       <Name>VectorMath</Name>
+    </ProjectReference>
+    <ProjectReference Include="Submodules\agg-sharp\Veldrid\MatterHackers.Veldrid.csproj">
+      <Project>{0d815605-6bd0-4068-86b9-18ac248109e1}</Project>
+      <Name>MatterHackers.Veldrid</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\MatterSlice\MatterSlice.csproj">
       <Project>{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}</Project>
