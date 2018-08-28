@@ -33,6 +33,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using JsonPath;
+using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -95,6 +96,44 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			var scene = sceneContext.Scene;
+
+
+			// put in the help icon
+			var helpIcon = AggContext.StaticData.LoadIcon("help.png", 16, 16, theme.InvertIcons).SetPreMultiply();
+			var helpButton = new IconButton(helpIcon, theme)
+			{
+				Margin = theme.ButtonSpacing,
+				ToolTipText = "Help".Localize(),
+				Visible = false
+			};
+			helpButton.Click += (s, e) =>
+			{
+				// show the help in a new markdown pop-up
+				if (item is IHelpMarkdown helpMarkdown
+					&& !string.IsNullOrWhiteSpace(helpMarkdown.HelpMarkdown))
+				{
+					var helpWindow = new SystemWindow(400, 300);
+					helpWindow.AddChild(new MarkdownWidget(theme)
+					{
+						Markdown = helpMarkdown.HelpMarkdown
+					});
+					helpWindow.ShowAsSystemWindow();
+				}
+			};
+			scene.SelectionChanged += (s, e) =>
+			{
+				if (item is IHelpMarkdown helpMarkdown
+					&& !string.IsNullOrWhiteSpace(helpMarkdown.HelpMarkdown))
+				{
+					helpButton.Visible = true;
+				}
+				else
+				{
+					helpButton.Visible = false;
+				}
+			};
+			toolbar.AddChild(helpButton);
+			
 
 			// put in a make permanent button
 			var icon = AggContext.StaticData.LoadIcon("noun_766157.png", 16, 16, theme.InvertIcons).SetPreMultiply();
