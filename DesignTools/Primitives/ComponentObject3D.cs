@@ -37,7 +37,7 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class ComponentObject3D : Object3D, IVisualLeafNode
+	public class ComponentObject3D : Object3D, IVisualLeafNode, IHelpMarkdown
 	{
 		public ComponentObject3D()
 		{
@@ -51,6 +51,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override bool CanApply => Finalized;
 		public bool Finalized { get; set; } = true;
 		public List<string> SurfacedEditors { get; set; } = new List<string>();
+
+		public string HelpMarkdown { get; set; }
 
 		public override void Apply(UndoBuffer undoBuffer)
 		{

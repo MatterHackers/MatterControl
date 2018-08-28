@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 				else
 				{
-					rightAlignedContent.HAnchor = HAnchor.Right;
+					rightAlignedContent.HAnchor |= HAnchor.Right;
 
 					var headingRow = new GuiWidget()
 					{
