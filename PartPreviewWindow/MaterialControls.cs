@@ -27,13 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.ObjectModel;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MeshVisualizer;
+using System;
+using System.Collections.ObjectModel;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -123,7 +123,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Set the material selector to have the correct material button selected
 				for (int i = 0; i < materialButtons.Count; i++)
 				{
-					if (selectedItem.MaterialIndex == i)
+					// the first button is 'Default' so we are looking for the button that is i - 1 (0 = material 1 = button 1)
+					if (selectedItem.MaterialIndex == i - 1)
 					{
 						((RadioButton)materialButtons[i]).Checked = true;
 						setSelection = true;
