@@ -33,7 +33,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using JsonPath;
-using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
