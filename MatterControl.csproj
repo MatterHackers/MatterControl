@@ -107,7 +107,6 @@
     <Compile Include="DesignTools\Braille\BrailleObject3D.cs" />
     <Compile Include="DesignTools\EditableTypes\DirectionAxis.cs" />
     <Compile Include="DesignTools\EditableTypes\DirectionVector.cs" />
-    <Compile Include="DesignTools\Interfaces\IHelpMarkdown.cs" />
     <Compile Include="DesignTools\Operations\Align2D.cs" />
     <Compile Include="DesignTools\Operations\AlignObject3D.cs" />
     <Compile Include="DesignTools\Operations\ArrayAdvancedObject3D.cs" />

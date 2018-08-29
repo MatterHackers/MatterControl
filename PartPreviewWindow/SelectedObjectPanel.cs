@@ -97,44 +97,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var scene = sceneContext.Scene;
 
-
-			// put in the help icon
-			var helpIcon = AggContext.StaticData.LoadIcon("help.png", 16, 16, theme.InvertIcons).SetPreMultiply();
-			var helpButton = new IconButton(helpIcon, theme)
-			{
-				Margin = theme.ButtonSpacing,
-				ToolTipText = "Help".Localize(),
-				Visible = false
-			};
-			helpButton.Click += (s, e) =>
-			{
-				// show the help in a new markdown pop-up
-				if (item is IHelpMarkdown helpMarkdown
-					&& !string.IsNullOrWhiteSpace(helpMarkdown.HelpMarkdown))
-				{
-					var helpWindow = new SystemWindow(400, 300);
-					helpWindow.AddChild(new MarkdownWidget(theme)
-					{
-						Markdown = helpMarkdown.HelpMarkdown
-					});
-					helpWindow.ShowAsSystemWindow();
-				}
-			};
-			scene.SelectionChanged += (s, e) =>
-			{
-				if (item is IHelpMarkdown helpMarkdown
-					&& !string.IsNullOrWhiteSpace(helpMarkdown.HelpMarkdown))
-				{
-					helpButton.Visible = true;
-				}
-				else
-				{
-					helpButton.Visible = false;
-				}
-			};
-			toolbar.AddChild(helpButton);
-			
-
 			// put in a make permanent button
 			var icon = AggContext.StaticData.LoadIcon("noun_766157.png", 16, 16, theme.InvertIcons).SetPreMultiply();
 			var applyButton = new IconButton(icon, theme)
@@ -148,14 +110,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.item.Apply(view3DWidget.Scene.UndoBuffer);
 				scene.SelectedItem = null;
 			};
-			scene.SelectionChanged += (s, e) => applyButton.Enabled = scene.SelectedItem?.CanApply == true;
 			toolbar.AddChild(applyButton);
 
 			// put in a remove button
 			var removeButton = new IconButton(AggContext.StaticData.LoadIcon("close.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Margin = theme.ButtonSpacing,
-				ToolTipText = "Delete".Localize()
+				ToolTipText = "Delete".Localize(),
+				Enabled = scene.SelectedItem != null
 			};
 			removeButton.Click += (s, e) =>
 			{
@@ -174,11 +136,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			toolbar.AddChild(removeButton);
 
-			var overflowButton = new OverflowBar.OverflowMenuButton(theme);
-			overflowButton.Enabled = scene.SelectedItem != null;
-			scene.SelectionChanged += (s, e) => overflowButton.Enabled = scene.SelectedItem != null;
-
-			overflowButton.PopupBorderColor = ApplicationController.Instance.MenuTheme.GetBorderColor(120);
+			var overflowButton = new OverflowBar.OverflowMenuButton(theme)
+			{
+				Enabled = scene.SelectedItem != null,
+				PopupBorderColor = ApplicationController.Instance.MenuTheme.GetBorderColor(120)
+			};
 			overflowButton.DynamicPopupContent = () =>
 			{
 				return ApplicationController.Instance.GetActionMenuForSceneItem(item, sceneContext.Scene);
@@ -252,6 +214,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					sectionWidget.Enabled = false;
 				}
 			}
+
+			scene.SelectionChanged += (s, e) =>
+			{
+				applyButton.Enabled = scene.SelectedItem?.CanApply == true;
+				removeButton.Enabled = scene.SelectedItem != null;
+				overflowButton.Enabled = scene.SelectedItem != null;
+
+			};
 		}
 
 		/// <summary>
