@@ -37,6 +37,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.RayTracer;
@@ -1236,6 +1237,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}};
 
 						theme.CreateMenuItems(menu, actions, emptyMenu: false);
+
+						menu.CreateHorizontalLine();
+
+						string componentID = (selectedItem as ComponentObject3D)?.ComponentID;
+
+						var helpItem = menu.CreateMenuItem("Help".Localize());
+						helpItem.Enabled = !string.IsNullOrEmpty(componentID) && ApplicationController.Instance.HelpArticlesByID.ContainsKey(componentID);
+						helpItem.Click += (s, e) =>
+						{
+							DialogWindow.Show(new HelpPage(componentID));
+						};
 					});
 				}
 				else // Allow right click on bed in all modes

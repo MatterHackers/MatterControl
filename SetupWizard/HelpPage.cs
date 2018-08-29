@@ -49,6 +49,8 @@ namespace MatterHackers.MatterControl
 
 		public string Path;
 
+		public string ArticleKey { get; set; }
+
 		public List<HelpArticle> Children { get; set; } = new List<HelpArticle>();
 	}
 
@@ -258,17 +260,31 @@ namespace MatterHackers.MatterControl
 					}
 					else
 					{
-						// Find the target TreeNode by ID and select
-						foreach (var node in rootNode.Nodes)
+						if (defaultSelection != null)
 						{
-							if (node.Text == guideKey)
+							treeView.SelectedNode = defaultSelection;
+						}
+						else
+						{
+							// Find the target TreeNode by ID and select
+							foreach (var node in rootNode.Nodes)
 							{
-								treeView.SelectedNode = node;
+								if (node.Text == guideKey)
+								{
+									treeView.SelectedNode = node;
+								}
+							}
+						}
+
+						if (treeView.SelectedNode != null)
+						{
+							foreach (var ancestor in treeView.SelectedNode.Parents<TreeNode>())
+							{
+								ancestor.Expanded = true;
 							}
 						}
 					}
 				}
-
 
 				if (treeView.SelectedNode == null)
 				{
@@ -300,6 +316,8 @@ namespace MatterHackers.MatterControl
 #endif
 		}
 
+		private TreeNode defaultSelection = null;
+
 		private TreeNode ProcessTree(HelpArticle container)
 		{
 			var treeNode = new TreeNode(theme, false)
@@ -316,11 +334,20 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
-					treeNode.Nodes.Add(new TreeNode(theme, false)
+					var newNode = new TreeNode(theme, false)
 					{
 						Text = item.Name,
 						Tag = item
-					});
+
+					};
+
+					if (item.ArticleKey == guideKey
+						&& ApplicationController.Instance.HelpArticlesByID.ContainsKey(guideKey))
+					{
+						defaultSelection = newNode;
+					}
+
+					treeNode.Nodes.Add(newNode);
 				}
 			}
 
