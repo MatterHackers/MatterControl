@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -46,14 +47,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private static HashSet<Type> ignoredInMenuTypes = new HashSet<Type> { typeof(VerticalLine), typeof(HorizontalLine), typeof(SearchInputBox), typeof(HorizontalSpacer) };
 
 		public OverflowBar(ThemeConfig theme)
+			: this(null, theme)
+		{ }
+
+		public OverflowBar(ImageBuffer icon, ThemeConfig theme)
 			: base (theme)
 		{
 			this.theme = theme;
 
-			this.OverflowButton = new OverflowMenuButton(this, theme)
+			if (icon == null)
 			{
-				AlignToRightEdge = true,
-			};
+				this.OverflowButton = new OverflowMenuButton(this, theme)
+				{
+					AlignToRightEdge = true,
+				};
+			}
+			else
+			{
+				this.OverflowButton = new OverflowMenuButton(this, icon, theme)
+				{
+					AlignToRightEdge = true,
+				};
+			}
 
 			// We want to set right margin to overflow button width but width is already scaled - need to inflate value by amount needed to hit width when rescaled in Margin setter
 			this.ActionArea.Margin = new BorderDouble(right: Math.Ceiling(this.OverflowButton.Width / GuiWidget.DeviceScale));
@@ -115,7 +130,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			public OverflowMenuButton(OverflowBar overflowBar, ThemeConfig theme)
-				: base(CreateOverflowIcon(theme), theme)
+				: this(overflowBar, CreateOverflowIcon(theme), theme)
+			{
+			}
+
+			public OverflowMenuButton(OverflowBar overflowBar, ImageBuffer icon, ThemeConfig theme)
+				: base(icon, theme)
 			{
 				this.DynamicPopupContent = () =>
 				{
@@ -164,7 +184,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 			}
 
-			private static ImageWidget CreateOverflowIcon(ThemeConfig theme)
+			private static Agg.Image.ImageBuffer CreateOverflowIcon(ThemeConfig theme)
+			{
+				return AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, theme.InvertIcons);
+			}
+
+			private static ImageWidget CreateOverflowIcon2(ThemeConfig theme)
 			{
 				return new ImageWidget(AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, theme.InvertIcons))
 				{

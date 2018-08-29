@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				this.EnableMenus();
 			};
 
-			var toolbar = new OverflowBar(theme)
+			var toolbar = new OverflowBar(AggContext.StaticData.LoadIcon("fa-sort_16.png", 32, 32, theme.InvertIcons), theme)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
@@ -111,10 +111,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 
 			theme.ApplyBottomBorder(toolbar, shadedBorder: true);
-
-			// Change the overflow button to a sort icon
-			var firstChild = toolbar.OverflowButton.Children<ImageWidget>().FirstOrDefault();
-			firstChild.Image = AggContext.StaticData.LoadIcon("fa-sort_16.png", 32, 32, theme.InvertIcons);
 
 			toolbar.OverflowButton.Name = "Print Library View Options";
 			toolbar.Padding = theme.ToolbarPadding;
