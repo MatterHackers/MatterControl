@@ -260,22 +260,12 @@ namespace MatterHackers.MatterControl
 					}
 					else
 					{
-						if (defaultSelection != null)
+						if (initialSelection != null)
 						{
-							treeView.SelectedNode = defaultSelection;
-						}
-						else
-						{
-							// Find the target TreeNode by ID and select
-							foreach (var node in rootNode.Nodes)
-							{
-								if (node.Text == guideKey)
-								{
-									treeView.SelectedNode = node;
-								}
-							}
+							treeView.SelectedNode = initialSelection;
 						}
 
+						// TODO: Implement or revise .Expanded
 						if (treeView.SelectedNode != null)
 						{
 							foreach (var ancestor in treeView.SelectedNode.Parents<TreeNode>())
@@ -316,7 +306,7 @@ namespace MatterHackers.MatterControl
 #endif
 		}
 
-		private TreeNode defaultSelection = null;
+		private TreeNode initialSelection = null;
 
 		private TreeNode ProcessTree(HelpArticle container)
 		{
@@ -341,10 +331,11 @@ namespace MatterHackers.MatterControl
 
 					};
 
-					if (item.ArticleKey == guideKey
-						&& ApplicationController.Instance.HelpArticlesByID.ContainsKey(guideKey))
+					if (item.Name == guideKey
+						|| (item.ArticleKey == guideKey
+							&& ApplicationController.Instance.HelpArticlesByID.ContainsKey(guideKey)))
 					{
-						defaultSelection = newNode;
+						initialSelection = newNode;
 					}
 
 					treeNode.Nodes.Add(newNode);
