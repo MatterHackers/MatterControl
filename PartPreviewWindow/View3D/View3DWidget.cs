@@ -1158,7 +1158,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var info = new IntersectInfo();
 
 				if (FindHitObject3D(mouseEvent.Position, ref info) is IObject3D hitObject
-					&& this.Printer?.ViewState.ViewMode == PartViewMode.Model) // Disallow Model -> Right Click in GCode views
+					&& (this.Printer == null // Allow Model -> Right Click in Part view
+						|| this.Printer?.ViewState.ViewMode == PartViewMode.Model)) // Disallow Model -> Right Click in GCode views
 				{
 					// Object3D/hit item context menu
 					if (hitObject != selectedItem)
