@@ -1683,20 +1683,6 @@
     "DefaultValue": ""
   },
   {
-    "SlicerConfigName": "boolean_operations",
-    "PresentationName": "The combine command for the parts to slice",
-    "DataEditType": "MULTI_LINE_TEXT",
-    "ShowIfSet": "!sla_printer",
-    "DefaultValue": ""
-  },
-  {
-    "SlicerConfigName": "additional_args_to_process",
-    "PresentationName": "useful to pass lots of files to slicer",
-    "DataEditType": "MULTI_LINE_TEXT",
-    "ShowIfSet": "!sla_printer",
-    "DefaultValue": ""
-  },
-  {
     "SlicerConfigName": "top_infill_extrusion_width",
     "PresentationName": "Top Solid Infill",
     "HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",

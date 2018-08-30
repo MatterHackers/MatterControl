@@ -261,8 +261,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					string commandArgs;
 
-					ActiveSliceSettings.Instance.SetValue("boolean_operations", mergeRules);
-
 					var matrixAndMeshArgs = new StringBuilder();
 					foreach (var matrixAndFile in stlFileLocations)
 					{
@@ -285,9 +283,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						matrixAndMeshArgs.Append($" \"{matrixAndFile.fileName}\" ");
 					}
 
-					ActiveSliceSettings.Instance.SetValue("additional_args_to_process", matrixAndMeshArgs.ToString());
-
-					EngineMappingsMatterSlice.WriteSliceSettingsFile(configFilePath);
+					EngineMappingsMatterSlice.WriteSliceSettingsFile(configFilePath, rawLines: new[]
+					{
+						$"booleanOperations = {mergeRules}",
+						$"additionalArgsToProcess ={matrixAndMeshArgs}"
+					});
 
 					commandArgs = $"-v -o \"{gcodeFilePath}\" -c \"{configFilePath}\"";
 
