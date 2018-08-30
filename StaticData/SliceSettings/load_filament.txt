@@ -7,7 +7,7 @@ M104 S[temperature] ; start heating up the extruder
 
 M302 S0  ; Allow extrusion at any temperature
 G91                 ; Relative positioning
-; host.show_message(title:"Insert Filament", repeat_gcode:"G1 E.1 F150|G4 P10", expire:"300", markdown:"[insert_filament_markdown]")
+; host.show_message(title:"Insert Filament", repeat_gcode:"G1 E.2 F80", expire:"300", markdown:"[insert_filament_markdown]")
 G90                 ; Absolute positioning
 ; host.show_message(title:"Loading Filament...", count_down:"[load_filament_time]")
 G92 E0              ; reset the extruder position to 0
@@ -26,7 +26,7 @@ G4 S1               ; wait message to display
 M109 S[temperature] ; heat up the extruder
 
 ; extrude slowly so that we can prime the extruder
-; host.show_message(title:"Wait For Running Clean", repeat_gcode:"G1 E1 F300|G4 P10", expire:"90", markdown:"[running_clean_markdown]")
+; host.show_message(title:"Wait For Running Clean", repeat_gcode:"G1 E0.35 F140", expire:"90", markdown:"[running_clean_markdown]")
 
 G4 S1               ; wait for move to finish
 G90                 ; Absolute positioning
