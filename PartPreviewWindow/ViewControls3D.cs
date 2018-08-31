@@ -337,8 +337,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private GuiWidget CreateBedButton(BedConfig sceneContext, ThemeConfig theme)
 		{
 			var buttonView = new TextIconButton(
-				(IsPrinterMode) ? "Bed".Localize() : "Part".Localize(),
-				AggContext.StaticData.LoadIcon((IsPrinterMode) ? "bed.png" : "cube.png", theme.InvertIcons),
+				"",
+				AggContext.StaticData.LoadIcon("cube.png", theme.InvertIcons),
 				theme);
 
 			// Remove right Padding for drop style
