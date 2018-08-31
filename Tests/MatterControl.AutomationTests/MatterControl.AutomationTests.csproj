@@ -99,7 +99,7 @@
       <Name>PolygonMesh</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj">
-      <Project>{545B6912-77FF-4B34-BA76-6C3D6A32BE6A}</Project>
+      <Project>{545b6912-77ff-4b34-ba76-6c3d6a32be6a}</Project>
       <Name>RenderOpenGl</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\Tests\Agg.Tests\Agg.Tests.csproj">
@@ -107,7 +107,7 @@
       <Name>Agg.Tests</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\VectorMath\VectorMath.csproj">
-      <Project>{D3E41B4E-BFBB-44CA-94C8-95C00F754FDD}</Project>
+      <Project>{d3e41b4e-bfbb-44ca-94c8-95c00f754fdd}</Project>
       <Name>VectorMath</Name>
     </ProjectReference>
   </ItemGroup>
