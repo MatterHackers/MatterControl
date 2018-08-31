@@ -656,15 +656,15 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="MatterControl.OpenGL\MatterControl.OpenGL.csproj">
-      <Project>{CBDEEC31-D688-417B-9BF2-F0DB2E4FB268}</Project>
+      <Project>{cbdeec31-d688-417b-9bf2-f0db2e4fb268}</Project>
       <Name>MatterControl.OpenGL</Name>
     </ProjectReference>
     <ProjectReference Include="MatterControl.Printing\MatterControl.Printing.csproj">
-      <Project>{97D5ADE3-C1B4-4B46-8A3E-718A4F7F079F}</Project>
+      <Project>{97d5ade3-c1b4-4b46-8a3e-718a4f7f079f}</Project>
       <Name>MatterControl.Printing</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\clipper_library\clipper_library.csproj">
-      <Project>{9B062971-A88E-4A3D-B3C9-12B78D15FA66}</Project>
+      <Project>{9b062971-a88e-4a3d-b3c9-12b78d15fa66}</Project>
       <Name>clipper_library</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\DataConverters2D\DataConverters2D.csproj">
@@ -672,23 +672,23 @@
       <Name>DataConverters2D</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj">
-      <Project>{04667764-DC7B-4B95-AEF6-B4E6C87A54E9}</Project>
+      <Project>{04667764-dc7b-4b95-aef6-b4e6c87a54e9}</Project>
       <Name>DataConverters3D</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\GuiAutomation\GuiAutomation.csproj">
-      <Project>{E9102310-0029-4D8F-B1E9-88FBA6147D45}</Project>
+      <Project>{e9102310-0029-4d8f-b1e9-88fba6147d45}</Project>
       <Name>GuiAutomation</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\Gui\Gui.csproj">
-      <Project>{74F6BB6C-9D02-4512-A59A-21940E35C532}</Project>
+      <Project>{74f6bb6c-9d02-4512-a59a-21940e35c532}</Project>
       <Name>Gui</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\ImageProcessing\ImageProcessing.csproj">
-      <Project>{036BCCBA-52D8-457C-84AE-8821F209FE4A}</Project>
+      <Project>{036bccba-52d8-457c-84ae-8821f209fe4a}</Project>
       <Name>ImageProcessing</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\MarchingSquares\MarchingSquares.csproj">
-      <Project>{DF6845CD-64C6-4263-8357-DA8066855739}</Project>
+      <Project>{df6845cd-64c6-4263-8357-da8066855739}</Project>
       <Name>MarchingSquares</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\MeshThumbnails\MeshThumbnails\MeshThumbnails.csproj">
@@ -696,59 +696,59 @@
       <Name>MeshThumbnails</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\RayTracer\RayTracer.csproj">
-      <Project>{1E01ABE0-B494-4FE4-B0D6-540133286887}</Project>
+      <Project>{1e01abe0-b494-4fe4-b0d6-540133286887}</Project>
       <Name>RayTracer</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\VectorMath\VectorMath.csproj">
-      <Project>{D3E41B4E-BFBB-44CA-94C8-95C00F754FDD}</Project>
+      <Project>{d3e41b4e-bfbb-44ca-94c8-95c00f754fdd}</Project>
       <Name>VectorMath</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\Veldrid\MatterHackers.VeldridProvider.csproj">
-      <Project>{5754893A-E806-4D67-96B4-D64D3F85D1E4}</Project>
+      <Project>{5754893a-e806-4d67-96b4-d64d3f85d1e4}</Project>
       <Name>MatterHackers.VeldridProvider</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\MatterSlice\MatterSlice.csproj">
-      <Project>{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}</Project>
+      <Project>{c46ca728-dd2f-4dd1-971a-aaa89d9dff95}</Project>
       <Name>MatterSlice</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\Tesselate\Tesselate.csproj">
-      <Project>{AE37DE1F-22F7-49EE-8732-FC6BC8DC58D9}</Project>
+      <Project>{ae37de1f-22f7-49ee-8732-fc6bc8dc58d9}</Project>
       <Name>Tesselate</Name>
     </ProjectReference>
     <ProjectReference Include="Community.CsharpSqlite\Community.CsharpSqlite.csproj">
-      <Project>{F1653F20-D47D-4F29-8C55-3C835542AF5F}</Project>
+      <Project>{f1653f20-d47d-4f29-8c55-3c835542af5f}</Project>
       <Name>Community.CsharpSqlite</Name>
     </ProjectReference>
     <ProjectReference Include="Launcher\Launcher.csproj">
-      <Project>{3DF4CB3D-9A03-4256-9A81-70523AAD828B}</Project>
+      <Project>{3df4cb3d-9a03-4256-9a81-70523aad828b}</Project>
       <Name>Launcher</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj">
-      <Project>{545B6912-77FF-4B34-BA76-6C3D6A32BE6A}</Project>
+      <Project>{545b6912-77ff-4b34-ba76-6c3d6a32be6a}</Project>
       <Name>RenderOpenGl</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj">
-      <Project>{86F6AAF2-9B50-40B8-A427-1897D76471C5}</Project>
+      <Project>{86f6aaf2-9b50-40b8-a427-1897d76471c5}</Project>
       <Name>PolygonMesh</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\PlatformWin32\PlatformWin32.csproj">
-      <Project>{670BDDFF-927B-425D-9DD1-22ACB14356EB}</Project>
+      <Project>{670bddff-927b-425d-9dd1-22acb14356eb}</Project>
       <Name>PlatformWin32</Name>
     </ProjectReference>
     <ProjectReference Include="PluginSystem\MatterControlPluginSystem.csproj">
-      <Project>{865172A0-A1A9-49C2-9386-F2FDB4E141B7}</Project>
+      <Project>{865172a0-a1a9-49c2-9386-f2fdb4e141b7}</Project>
       <Name>MatterControlPluginSystem</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\Localizations\Localizations.csproj">
-      <Project>{CA96058C-1A37-465D-A357-D6D695B13D25}</Project>
+      <Project>{ca96058c-1a37-465d-a357-d6d695b13d25}</Project>
       <Name>Localizations</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\agg\Agg.csproj">
-      <Project>{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}</Project>
+      <Project>{657dbc6d-c3ea-4398-a3fa-ddb73c14f71b}</Project>
       <Name>Agg</Name>
     </ProjectReference>
     <ProjectReference Include="PrinterDriverInstaller\InfInstaller.csproj">
-      <Project>{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}</Project>
+      <Project>{990a9ad3-b6a4-407b-9dfc-9c722af7c9b9}</Project>
       <Name>InfInstaller</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\MatterSlice\MSClipperLib\MSClipperLib.csproj">

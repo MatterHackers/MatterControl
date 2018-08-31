@@ -11,6 +11,10 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <!--See the following for details on netstandard2 binding workround: https://github.com/dotnet/standard/issues/481-->
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MatterControl.Tests</RootNamespace>
     <AssemblyName>MatterControl.Tests</AssemblyName>
@@ -82,7 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\MatterControl.csproj">
-      <Project>{0B8D6F56-BD7F-4426-B858-D9292B084656}</Project>
+      <Project>{0b8d6f56-bd7f-4426-b858-d9292b084656}</Project>
       <Name>MatterControl</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\MatterControl.Printing\MatterControl.Printing.csproj">
@@ -90,7 +94,7 @@
       <Name>MatterControl.Printing</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\agg\Agg.csproj">
-      <Project>{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}</Project>
+      <Project>{657dbc6d-c3ea-4398-a3fa-ddb73c14f71b}</Project>
       <Name>Agg</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj">
@@ -98,11 +102,11 @@
       <Name>DataConverters3D</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\GuiAutomation\GuiAutomation.csproj">
-      <Project>{E9102310-0029-4D8F-B1E9-88FBA6147D45}</Project>
+      <Project>{e9102310-0029-4d8f-b1e9-88fba6147d45}</Project>
       <Name>GuiAutomation</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\Gui\Gui.csproj">
-      <Project>{74F6BB6C-9D02-4512-A59A-21940E35C532}</Project>
+      <Project>{74f6bb6c-9d02-4512-a59a-21940e35c532}</Project>
       <Name>Gui</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\Localizations\Localizations.csproj">
@@ -110,7 +114,7 @@
       <Name>Localizations</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\PlatformWin32\PlatformWin32.csproj">
-      <Project>{670BDDFF-927B-425D-9DD1-22ACB14356EB}</Project>
+      <Project>{670bddff-927b-425d-9dd1-22acb14356eb}</Project>
       <Name>PlatformWin32</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\PolygonMesh\Net3dBool\Net3dBool.csproj">
@@ -118,7 +122,7 @@
       <Name>Net3dBool</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj">
-      <Project>{86F6AAF2-9B50-40B8-A427-1897D76471C5}</Project>
+      <Project>{86f6aaf2-9b50-40b8-a427-1897d76471c5}</Project>
       <Name>PolygonMesh</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj">
@@ -126,13 +130,20 @@
       <Name>RenderOpenGl</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\Tests\Agg.Tests\Agg.Tests.csproj">
-      <Project>{195CBE56-E654-437B-AB05-3BE1B9452497}</Project>
+      <Project>{195cbe56-e654-437b-ab05-3be1b9452497}</Project>
       <Name>Agg.Tests</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\VectorMath\VectorMath.csproj">
-      <Project>{D3E41B4E-BFBB-44CA-94C8-95C00F754FDD}</Project>
+      <Project>{d3e41b4e-bfbb-44ca-94c8-95c00f754fdd}</Project>
       <Name>VectorMath</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="C5" Version="2.5.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="NUnit" Version="3.9.0" />
+    <PackageReference Include="NUnit.ApplicationDomain" Version="11.0.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.9.0" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Xml" />

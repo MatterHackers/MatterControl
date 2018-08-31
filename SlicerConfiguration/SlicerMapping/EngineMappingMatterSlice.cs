@@ -122,17 +122,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"load_filament_speed",
 		};
 
-		private MappedSetting[] mappedSettings;
+		public List<MappedSetting> MappedSettings { get; private set; }
 		private HashSet<string> matterSliceSettingNames;
 
 		// Singleton use only - prevent external construction
 		private EngineMappingsMatterSlice()
 		{
-			mappedSettings = new MappedSetting[]
+			MappedSettings = new List<MappedSetting>()
 			{
 				new AsCountOrDistance("bottom_solid_layers", "numberOfBottomLayers", SettingsKey.layer_height),
-				new MappedSetting("boolean_operations", "booleanOperations"),
-				new MappedSetting("additional_args_to_process", "AdditionalArgsToProcess"),
 				new AsCountOrDistance("perimeters", "numberOfPerimeters", SettingsKey.nozzle_diameter),
 				new AsCountOrDistance("raft_extra_distance_around_part", "raftExtraDistanceAroundPart", SettingsKey.nozzle_diameter),
 				new AsCountOrDistance("support_material_interface_layers", "supportInterfaceLayers", SettingsKey.layer_height),
@@ -232,21 +230,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedBrimLoopsSetting("brims", "numberOfBrimLoops", SettingsKey.nozzle_diameter),
 			};
 
-			matterSliceSettingNames = new HashSet<string>(mappedSettings.Select(m => m.CanonicalSettingsName));
+			matterSliceSettingNames = new HashSet<string>(MappedSettings.Select(m => m.CanonicalSettingsName));
 		}
 
 		public string Name => "MatterSlice";
 
-		public static void WriteSliceSettingsFile(string outputFilename)
+		public static void WriteSliceSettingsFile(string outputFilename, IEnumerable<string> rawLines)
 		{
-			using (StreamWriter sliceSettingsFile = new StreamWriter(outputFilename))
+			using (var sliceSettingsFile = new StreamWriter(outputFilename))
 			{
-				foreach (MappedSetting mappedSetting in Instance.mappedSettings)
+				foreach (MappedSetting mappedSetting in Instance.MappedSettings)
 				{
 					if (mappedSetting.Value != null)
 					{
 						sliceSettingsFile.WriteLine("{0} = {1}".FormatWith(mappedSetting.ExportedName, mappedSetting.Value));
 					}
+				}
+
+				foreach(var line in rawLines)
+				{
+					sliceSettingsFile.WriteLine(line);
 				}
 			}
 		}
