@@ -144,6 +144,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			RenderRecursive((dynamic)objectToProcess.Child, level + 1);
 		}
 
-		#endregion Visitor Patern Functions
+		#endregion Visitor Pattern Functions
 	}
 }

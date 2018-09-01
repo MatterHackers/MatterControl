@@ -41,7 +41,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="NUnit" Version="3.9.0" />
     <PackageReference Include="NUnit.ApplicationDomain" Version="11.0.0" />
   </ItemGroup>
