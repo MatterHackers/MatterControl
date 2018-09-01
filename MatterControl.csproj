@@ -768,7 +768,7 @@
     <PackageReference Include="Markdig" Version="0.15.0" />
     <PackageReference Include="MIConvexHull" Version="1.1.17.1019" />
     <PackageReference Include="Mindscape.Raygun4Net" Version="5.5.2" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="System.Reactive" Version="3.1.1" />
     <PackageReference Include="System.Reactive.Core" Version="3.1.1" />
     <PackageReference Include="System.Reactive.Interfaces" Version="3.1.1" />
