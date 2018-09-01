@@ -729,7 +729,7 @@
   <ItemGroup>
     <PackageReference Include="Markdig" Version="0.15.0" />
     <PackageReference Include="MIConvexHull" Version="1.1.17.1019" />
-    <PackageReference Include="Mindscape.Raygun4Net" Version="5.5.2" />
+    <PackageReference Include="Mindscape.Raygun4Net" Version="5.5.4" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Zeroconf" Version="3.0.30" />
   </ItemGroup>
