@@ -607,6 +607,7 @@
       <DependentUpon>InspectForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="App.config" />
+    <None Include="appsettings.json" />
     <None Include="Library\LibraryProviders.cd" />
     <None Include="Library\Widgets\ListView\ListView.cd" />
     <None Include="SlicerConfiguration\Settings\SettingsDiagram.cd" />
@@ -730,6 +731,8 @@
     <PackageReference Include="Markdig" Version="0.15.2" />
     <PackageReference Include="MIConvexHull" Version="1.1.17.1019" />
     <PackageReference Include="Mindscape.Raygun4Net" Version="5.5.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Zeroconf" Version="3.0.30" />
   </ItemGroup>

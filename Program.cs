@@ -5,6 +5,8 @@ using System.Threading;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using Microsoft.Extensions.Configuration;
 using Mindscape.Raygun4Net;
 
 namespace MatterHackers.MatterControl
@@ -16,6 +18,11 @@ namespace MatterHackers.MatterControl
 		private static int raygunNotificationCount = 0;
 
 		private static RaygunClient _raygunClient;
+
+		private class SlicerOptions
+		{
+			public bool Debug { get; set; }
+		}
 
 		/// <summary>
 		/// The main entry point for the application.
@@ -40,7 +47,19 @@ namespace MatterHackers.MatterControl
 				_raygunClient = new RaygunClient("hQIlyUUZRGPyXVXbI6l1dA=="); // this is the PC key
 			}
 
-			AggContext.Init(embeddedResourceName: "config.json");
+			// Set default Agg providers
+			AggContext.Config.ProviderTypes.SystemWindow = "MatterHackers.Agg.UI.OpenGLSystemWindow, agg_platform_win32";
+			AggContext.Config.ProviderTypes.SystemWindowProvider = "MatterHackers.Agg.UI.WinformsSystemWindowProvider, agg_platform_win32";
+
+			// Load optional user configuration
+			IConfiguration config = new ConfigurationBuilder()
+				.AddJsonFile("appsettings.json", optional: true)
+				.Build();
+
+			// Override defaults via configuration
+			config.Bind("Agg:ProviderTypes", AggContext.Config.ProviderTypes);
+			config.Bind("Agg:GraphicsMode", AggContext.Config.GraphicsMode);
+			Slicer.RunInProcess = config.GetValue<bool>("MatterControl:Slicer:Debug");
 
 			// Make sure we have the right working directory as we assume everything relative to the executable.
 			Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
