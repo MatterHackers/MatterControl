@@ -730,10 +730,20 @@
   {
     "SlicerConfigName": "leveling_sample_points",
     "PresentationName": "Sample Points",
-    "HelpText": "A comma separated list of sample points to probje the bed at. You must specify an x and y position for each point. For example: '20,20,100,180,180,20' will saple the bad at 3 points.",
+    "HelpText": "A comma separated list of sample points to probe the bed at. You must specify an x and y position for each point. For example: '20,20,100,180,180,20' will saple the bad at 3 points.",
     "DataEditType": "MULTI_LINE_TEXT",
     "DefaultValue": "20,20,100,180,180,20",
     "ShowIfSet": "!sla_printer&!has_hardware_leveling&print_leveling_solution=Custom Points",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "probe_offset_sample_point",
+    "PresentationName": "Probe Offset Sample Point",
+    "HelpText": "The position to measure the probe offset.",
+    "Units": "mm",
+    "DataEditType": "VECTOR2",
+    "DefaultValue": "100,100",
+    "ShowIfSet": "!sla_printer&!has_hardware_leveling&print_leveling_solution=Custom Points&use_z_probe",
     "RebuildGCodeOnChange": false
   },
   {
@@ -1189,7 +1199,7 @@
     "PresentationName": "Length on Tool Change",
     "HelpText": "When using multiple extruders, the distance filament will reverse before changing to a different extruder.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ShowIfSet": "!sla_printer",
+    "ShowIfSet": "!sla_printer&extruder_count>1",
     "Units": "mm",
     "EnableIfSet": "enable_retractions",
     "DefaultValue": "10"
@@ -1218,7 +1228,7 @@
     "PresentationName": "Extra Length After Tool Change",
     "HelpText": "Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ShowIfSet": "!sla_printer",
+    "ShowIfSet": "!sla_printer&extruder_count>1",
     "EnableIfSet": "enable_retractions",
     "Units": "mm zero to disable",
     "DefaultValue": "0"
@@ -1505,7 +1515,7 @@
   {
     "SlicerConfigName": "support_material_extruder",
     "PresentationName": "Support Material Extruder",
-    "ShowIfSet": "!sla_printer",
+    "ShowIfSet": "!sla_printer&extruder_count>1",
     "HelpText": "The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.",
     "DataEditType": "INT",
     "DefaultValue": "1"
@@ -1514,7 +1524,7 @@
     "SlicerConfigName": "raft_extruder",
     "PresentationName": "Raft Extruder",
     "HelpText": "The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.",
-    "ShowIfSet": "!sla_printer",
+    "ShowIfSet": "!sla_printer&extruder_count>1",
     "EnableIfSet": "create_raft",
     "DataEditType": "INT",
     "DefaultValue": "0"
@@ -1523,7 +1533,7 @@
     "SlicerConfigName": "support_material_interface_extruder",
     "PresentationName": "Support Interface Extruder",
     "HelpText": "The index of the extruder to use for support material interface layer(s).",
-    "ShowIfSet": "!sla_printer",
+    "ShowIfSet": "!sla_printer&extruder_count>1",
     "DataEditType": "INT",
     "DefaultValue": "1"
   },
@@ -1655,14 +1665,14 @@
     "PresentationName": "Before Tool Change G-Code",
     "HelpText": "G-Code to be run before every tool change. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.",
     "DataEditType": "MULTI_LINE_TEXT",
-    "ShowIfSet": "!sla_printer",
+    "ShowIfSet": "!sla_printer&extruder_count>1",
     "DefaultValue": ""
   },
   {
     "SlicerConfigName": "toolchange_gcode",
     "PresentationName": "After Tool Change G-Code",
     "HelpText": "G-Code to be run after every tool change. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.",
-    "ShowIfSet": "!sla_printer",
+    "ShowIfSet": "!sla_printer&extruder_count>1",
     "DataEditType": "MULTI_LINE_TEXT",
     "DefaultValue": ""
   },
@@ -1671,14 +1681,14 @@
     "PresentationName": "Before Tool Change G-Code 2",
     "HelpText": "G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.",
     "DataEditType": "MULTI_LINE_TEXT",
-    "ShowIfSet": "!sla_printer",
+    "ShowIfSet": "!sla_printer&extruder_count>1",
     "DefaultValue": ""
   },
   {
     "SlicerConfigName": "toolchange_gcode_1",
     "PresentationName": "After Tool Change G-Code 2",
     "HelpText": "G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.",
-    "ShowIfSet": "!sla_printer",
+    "ShowIfSet": "!sla_printer&extruder_count>1",
     "DataEditType": "MULTI_LINE_TEXT",
     "DefaultValue": ""
   },
@@ -1798,7 +1808,7 @@
     "PresentationName": "Wipe Shield Distance",
     "HelpText": "Creates a perimeter around the part on which to wipe the other nozzle when printing using dual extrusion. Set to 0 to disable.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ShowIfSet": "!sla_printer",
+    "ShowIfSet": "!sla_printer&extruder_count>1",
     "Units": "mm",
     "DefaultValue": "0"
   },
@@ -1808,7 +1818,7 @@
     "HelpText": "The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.",
     "DataEditType": "POSITIVE_DOUBLE",
     "Units": "mm",
-    "ShowIfSet": "!sla_printer",
+    "ShowIfSet": "!sla_printer&extruder_count>1",
     "DefaultValue": "0"
   },
   {

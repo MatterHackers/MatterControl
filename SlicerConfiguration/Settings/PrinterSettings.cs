@@ -168,6 +168,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							sliceSettingValue = this.GetValue(splitOnEquals[0], layerCascade);
 							matchString = splitOnEquals[1];
 						}
+						else if (orItem.Contains(">"))
+						{
+							matchString = "no_match";
+							string[] splitOnGreater = orItem.Split('>');
+
+							sliceSettingValue = this.GetValue(splitOnGreater[0], layerCascade);
+							if (double.TryParse(sliceSettingValue, out double doubleValue))
+							{
+								if (double.TryParse(splitOnGreater[1], out double greater))
+								{
+									if (doubleValue > greater)
+									{
+										matchString = sliceSettingValue;
+									}
+								}
+							}
+						}
 						else
 						{
 							sliceSettingValue = this.GetValue(orItem, layerCascade);

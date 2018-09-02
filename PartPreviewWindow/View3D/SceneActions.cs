@@ -140,18 +140,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								scene.SelectedItem = selectedItem;
 								// No further processing needed, nothing to ungroup
 								return Task.CompletedTask;
-
 							}
 
 							// build the ungroup list
 							List<IObject3D> addItems = new List<IObject3D>(discreetMeshes.Select(mesh => new Object3D()
 							{
 								Mesh = mesh,
-								Matrix = selectedItem.Matrix,
 							}));
+
+							foreach(var item in addItems)
+							{
+								item.CopyProperties(selectedItem, Object3DPropertyFlags.All);
+								item.Visible = true;
+							}
 
 							// add and do the undo data
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, addItems));
+
+							foreach (var item in addItems)
+							{
+								item.MakeNameNonColliding();
+							}
 
 							return Task.CompletedTask;
 						});
