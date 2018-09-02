@@ -50,6 +50,24 @@ namespace MatterControl.Tests.MatterControl
 				Assert.IsTrue(profile.ParseShowString("!has_heated_bed", null));
 			}
 
+			// test single >
+			{
+				string[] settings = new string[] { SettingsKey.extruder_count, "1" };
+				var profile = GetProfile(settings);
+				Assert.IsFalse(profile.ParseShowString("extruder_count>1", null));
+				Assert.IsTrue(profile.ParseShowString("extruder_count>0", null));
+			}
+
+			// test single >
+			{
+				string[] settings = new string[] { SettingsKey.extruder_count, "2" };
+				var profile = GetProfile(settings);
+				Assert.IsFalse(profile.ParseShowString("extruder_count>3", null));
+				Assert.IsFalse(profile.ParseShowString("extruder_count>2", null));
+				Assert.IsTrue(profile.ParseShowString("extruder_count>1", null));
+				Assert.IsTrue(profile.ParseShowString("extruder_count>0", null));
+			}
+
 			// test single if set to 1
 			{
 				string[] settings = new string[] { SettingsKey.has_heated_bed, "1" };
@@ -113,7 +131,9 @@ namespace MatterControl.Tests.MatterControl
 
 			// test list setting value
 			{
-				string[] settings = new string[] { SettingsKey.has_hardware_leveling, "0", SettingsKey.print_leveling_solution, "3 Point Plane" };
+				string[] settings = new string[] { SettingsKey.has_hardware_leveling, "0",
+					SettingsKey.print_leveling_solution, "3 Point Plane",
+					SettingsKey.extruder_count, "2"};
 				var profile = GetProfile(settings);
 				Assert.IsTrue(profile.ParseShowString("!has_hardware_leveling&print_leveling_solution=3 Point Plane", null));
 				Assert.IsTrue(profile.ParseShowString("!has_hardware_leveling&print_leveling_solution=3 Point Plane|print_leveling_solution=3x3 Mesh", null));
@@ -122,6 +142,11 @@ namespace MatterControl.Tests.MatterControl
 				Assert.IsFalse(profile.ParseShowString("has_hardware_leveling&print_leveling_solution=3 Point Plane", null));
 				Assert.IsFalse(profile.ParseShowString("!has_hardware_leveling&!print_leveling_solution=3 Point Plane", null));
 				Assert.IsFalse(profile.ParseShowString("!has_hardware_leveling&print_leveling_solution=7 Point Disk", null));
+
+				Assert.IsFalse(profile.ParseShowString("!has_hardware_leveling&print_leveling_solution=3 Point Plane&extruder_count>2", null));
+				Assert.IsFalse(profile.ParseShowString("!has_hardware_leveling&print_leveling_solution=3 Point Plane&extruder_count>2", null));
+				Assert.IsTrue(profile.ParseShowString("!has_hardware_leveling&print_leveling_solution=3 Point Plane&extruder_count>1", null));
+				Assert.IsTrue(profile.ParseShowString("!has_hardware_leveling&print_leveling_solution=3 Point Plane&extruder_count>0", null));
 			}
 		}
 
