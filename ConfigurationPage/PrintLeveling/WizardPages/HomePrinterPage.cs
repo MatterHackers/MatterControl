@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -58,6 +59,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printer.Connection.CommunicationStateChanged.RegisterEvent(CheckHomeFinished, ref unregisterEvents);
 
 			printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
+
+			if(!printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
+			{
+				// move so we don't heat the printer while the nozzle is touching the bed
+				printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, 10, printer.Settings.Helpers.ManualMovementSpeeds().Z);
+			}
 
 			if (autoAdvance)
 			{
