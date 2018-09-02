@@ -730,10 +730,20 @@
   {
     "SlicerConfigName": "leveling_sample_points",
     "PresentationName": "Sample Points",
-    "HelpText": "A comma separated list of sample points to probje the bed at. You must specify an x and y position for each point. For example: '20,20,100,180,180,20' will saple the bad at 3 points.",
+    "HelpText": "A comma separated list of sample points to probe the bed at. You must specify an x and y position for each point. For example: '20,20,100,180,180,20' will saple the bad at 3 points.",
     "DataEditType": "MULTI_LINE_TEXT",
     "DefaultValue": "20,20,100,180,180,20",
     "ShowIfSet": "!sla_printer&!has_hardware_leveling&print_leveling_solution=Custom Points",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "probe_offset_sample_point",
+    "PresentationName": "Probe Offset Sample Point",
+    "HelpText": "The position to measure the probe offset.",
+    "Units": "mm",
+    "DataEditType": "VECTOR2",
+    "DefaultValue": "100,100",
+    "ShowIfSet": "!sla_printer&!has_hardware_leveling&print_leveling_solution=Custom Points&use_z_probe",
     "RebuildGCodeOnChange": false
   },
   {

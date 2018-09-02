@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				targetHotendTemp);
 
 			double startProbeHeight = printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start);
-			Vector2 probePosition = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
+			Vector2 probePosition = LevelingPlan.ProbeOffsetSamplePosition(printer);
 
 			int i = 0;
 
