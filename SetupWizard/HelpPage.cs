@@ -332,7 +332,8 @@ namespace MatterHackers.MatterControl
 					};
 
 					if (item.Name == guideKey
-						|| (item.ArticleKey == guideKey
+						|| (guideKey != null
+							&& item.ArticleKey == guideKey
 							&& ApplicationController.Instance.HelpArticlesByID.ContainsKey(guideKey)))
 					{
 						initialSelection = newNode;
