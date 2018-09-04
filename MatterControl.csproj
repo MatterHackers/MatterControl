@@ -599,10 +599,6 @@
     <Content Include="StaticData\SliceSettings\unload_filament.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="config.json">
-      <LogicalName>config.json</LogicalName>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
     <EmbeddedResource Include="Utilities\InspectForm.resx">
       <DependentUpon>InspectForm.cs</DependentUpon>
     </EmbeddedResource>

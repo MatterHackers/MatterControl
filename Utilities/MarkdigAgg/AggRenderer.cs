@@ -27,8 +27,8 @@ namespace Markdig.Renderers
 
 	public class TextSpaceX : TextWidget, ISkipIfFirst
 	{
-		public TextSpaceX()
-			: base("", pointSize: 10, textColor: Color.Black)
+		public TextSpaceX(ThemeConfig theme)
+			: base("", pointSize: 10, textColor: theme.Colors.PrimaryTextColor)
 		{
 			this.AutoExpandBoundsToText = true;
 		}
@@ -199,7 +199,10 @@ namespace Markdig.Renderers
 			{
 				if(!first)
 				{
-					WriteInline(new TextSpaceX { Text = " " });
+					WriteInline(new TextSpaceX(theme)
+					{
+						Text = " "
+					});
 				}
 
 				WriteInline(new TextWordX (theme)

@@ -51,14 +51,18 @@ namespace MatterHackers.MatterControl
 			AggContext.Config.ProviderTypes.SystemWindow = "MatterHackers.Agg.UI.OpenGLSystemWindow, agg_platform_win32";
 			AggContext.Config.ProviderTypes.SystemWindowProvider = "MatterHackers.Agg.UI.WinformsSystemWindowProvider, agg_platform_win32";
 
+			string userProfilePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
 			// Load optional user configuration
 			IConfiguration config = new ConfigurationBuilder()
 				.AddJsonFile("appsettings.json", optional: true)
+				.AddJsonFile(Path.Combine(userProfilePath, "MatterControl.json"), optional: true)
 				.Build();
 
 			// Override defaults via configuration
 			config.Bind("Agg:ProviderTypes", AggContext.Config.ProviderTypes);
 			config.Bind("Agg:GraphicsMode", AggContext.Config.GraphicsMode);
+
 			Slicer.RunInProcess = config.GetValue<bool>("MatterControl:Slicer:Debug");
 
 			// Make sure we have the right working directory as we assume everything relative to the executable.
