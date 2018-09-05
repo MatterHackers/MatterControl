@@ -670,12 +670,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			OemSettings.Instance.ShowShopButton = false;
 
+			if (!config.UseAutomationMouse)
+			{
+				AutomationRunner.InputMethod = new WindowsInputMethods();
+			}
+
 			await AutomationRunner.ShowWindowAndExecuteTests(
 				rootSystemWindow,
 				testMethod,
 				maxTimeToRun,
 				defaultTestImages,
-				config.UseAutomationMouse ? AutomationRunner.InputType.SimulatedDrawMouse : AutomationRunner.InputType.Native,
 				closeWindow: () =>
 				{
 					if (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Printing)
