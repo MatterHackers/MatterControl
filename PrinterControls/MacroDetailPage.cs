@@ -107,8 +107,8 @@ namespace MatterHackers.MatterControl
 
 			contentRow.AddChild(container);
 
-			var addMacroButton = theme.CreateDialogButton("Save".Localize());
-			addMacroButton.Click += (s, e) =>
+			var saveMacroButton = theme.CreateDialogButton("Save".Localize());
+			saveMacroButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>
 				{
@@ -121,15 +121,17 @@ namespace MatterHackers.MatterControl
 						if (!printerSettings.Macros.Contains(gcodeMacro))
 						{
 							printerSettings.Macros.Add(gcodeMacro);
-							printerSettings.Save();
 						}
+
+						printerSettings.NotifyMacrosChanged();
+						printerSettings.Save();
 
 						this.DialogWindow.ChangeToPage(new MacroListPage(printerSettings));
 					}
 				});
 			};
 
-			this.AddPageAction(addMacroButton);
+			this.AddPageAction(saveMacroButton);
 
 			// Define field validation
 			var validationMethods = new ValidationMethods();
