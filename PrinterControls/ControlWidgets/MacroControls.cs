@@ -41,14 +41,19 @@ namespace MatterHackers.MatterControl.PrinterControls
 	public class MacroControls : FlowLeftRightWithWrapping
 	{
 		private EventHandler unregisterEvents;
-		PrinterConfig printer;
-		ThemeConfig theme;
+		private PrinterConfig printer;
+		private ThemeConfig theme;
 
 		private MacroControls(PrinterConfig printer, ThemeConfig theme)
 		{
 			this.printer = printer;
 			this.theme = theme;
-			Rebuild();
+			this.Rebuild();
+
+			printer.Settings.MacrosChanged.RegisterEvent((s, e) =>
+			{
+				UiThread.RunOnIdle(() => Rebuild());
+			}, ref unregisterEvents);
 
 			ActiveSliceSettings.ActiveProfileModified.RegisterEvent((s, e) =>
 			{
@@ -62,7 +67,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			base.OnClosed(e);
 		}
 
-		void Rebuild()
+		private void Rebuild()
 		{
 			addedChildren.Clear();
 

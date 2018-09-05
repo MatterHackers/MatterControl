@@ -60,6 +60,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		public RootedObjectEventHandler PrintLevelingEnabledChanged = new RootedObjectEventHandler();
 
+		public RootedObjectEventHandler MacrosChanged = new RootedObjectEventHandler();
+
 		public static PrinterSettings Empty { get; }
 
 		public int DocumentVersion { get; set; } = LatestVersion;
@@ -117,6 +119,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				StagedUserSettings.Remove(settingsKey);
 				UserLayer[settingsKey] = stagedUserOverride;
 			}
+		}
+
+		internal void NotifyMacrosChanged()
+		{
+			this.MacrosChanged.CallEvents(this, null);
 		}
 
 		/// <summary>

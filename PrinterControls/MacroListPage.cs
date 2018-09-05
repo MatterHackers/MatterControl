@@ -106,6 +106,7 @@ namespace MatterHackers.MatterControl
 					{
 						printerSettings.Macros.Remove(localMacroReference);
 						printerSettings.Save();
+						printerSettings.NotifyMacrosChanged();
 						this.RebuildList(printerSettings);
 					};
 					macroRow.AddChild(removeLink);
