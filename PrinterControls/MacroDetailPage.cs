@@ -121,10 +121,10 @@ namespace MatterHackers.MatterControl
 						if (!printerSettings.Macros.Contains(gcodeMacro))
 						{
 							printerSettings.Macros.Add(gcodeMacro);
-							printerSettings.Save();
 						}
 
 						printerSettings.NotifyMacrosChanged();
+						printerSettings.Save();
 
 						this.DialogWindow.ChangeToPage(new MacroListPage(printerSettings));
 					}
