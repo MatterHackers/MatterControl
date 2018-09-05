@@ -50,7 +50,6 @@ namespace MatterControl.Tests
 						RayTracer.dll
 						DataConverters3D.dll
 						Localizations.dll
-						agg_platform_win32.dll
 						Community.CsharpSqlite.dll
 						MatterHackers.MatterControl.Plugins.dll
 						MatterHackers.Agg.ImageProcessing.dll
