@@ -1250,12 +1250,7 @@ namespace MatterHackers.MatterControl
 
 			this.RebuildSceneOperations(this.Theme);
 
-#if DEBUG && !__ANDROID__
-			if (AggContext.StaticData is FileSystemStaticData staticData)
-			{
-				staticData.PurgeCache();
-			}
-#endif
+			AggContext.StaticData.PurgeCache();
 		}
 
 		public bool RunAnyRequiredPrinterSetup(PrinterConfig printer, ThemeConfig theme)
@@ -2496,20 +2491,6 @@ namespace MatterHackers.MatterControl
 	}
 
 	public enum ReportSeverity2 { Warning, Error }
-
-	public interface INativePlatformFeatures
-	{
-		event EventHandler PictureTaken;
-		void TakePhoto(string imageFileName);
-		void OpenCameraPreview();
-		void PlaySound(string fileName);
-		void ConfigureWifi();
-		bool CameraInUseByExternalProcess { get; set; }
-		bool IsNetworkConnected();
-		void FindAndInstantiatePlugins(SystemWindow systemWindow);
-		void ProcessCommandline();
-		void PlatformInit(Action<string> reporter);
-	}
 
 	public static class Application
 	{

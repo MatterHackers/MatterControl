@@ -158,7 +158,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 						if (languageCode == "L10N")
 						{
-							GenerateLocalizationValidationFile();
+#if DEBUG
+							AppContext.Platform.GenerateLocalizationValidationFile();
+#endif
 						}
 
 						ApplicationController.Instance.ResetTranslationMap();
@@ -423,51 +425,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			container.AddChild(themePreviews);
 
 			return container;
-		}
-
-		[Conditional("DEBUG")]
-		private void GenerateLocalizationValidationFile()
-		{
-#if !__ANDROID__
-			if (AggContext.StaticData is FileSystemStaticData fileSystemStaticData)
-			{
-				char currentChar = 'A';
-
-				// Note: Functionality only expected to work on Desktop/Debug builds and as such, is coupled to FileSystemStaticData
-				string outputPath = fileSystemStaticData.MapPath(Path.Combine("Translations", "L10N", "Translation.txt"));
-				string sourceFilePath = fileSystemStaticData.MapPath(Path.Combine("Translations", "Master.txt"));
-
-				// Ensure the output directory exists
-				Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
-
-				using (var outstream = new StreamWriter(outputPath))
-				{
-					foreach (var line in File.ReadAllLines(sourceFilePath))
-					{
-						if (line.StartsWith("Translated:"))
-						{
-							var pos = line.IndexOf(':');
-							var segments = new string[]
-							{
-							line.Substring(0, pos),
-							line.Substring(pos + 1),
-							};
-
-							outstream.WriteLine("{0}:{1}", segments[0], new string(segments[1].ToCharArray().Select(c => c == ' ' ? ' ' : currentChar).ToArray()));
-
-							if (currentChar++ == 'Z')
-							{
-								currentChar = 'A';
-							}
-						}
-						else
-						{
-							outstream.WriteLine(line);
-						}
-					}
-				}
-			}
-#endif
 		}
 	}
 }

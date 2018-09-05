@@ -553,7 +553,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 					}
 					catch { }
-				};
+				}
 			}
 
 			return null;
@@ -636,7 +636,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			var results = new List<(string layerName, string currentValue)>();
-
 
 			foreach (PrinterSettingsLayer layer in layerCascade)
 			{
@@ -974,7 +973,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 #endif
 				}
 			}
-
 
 			return (T)default(T);
 		}
@@ -1349,4 +1347,3 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 }
- 

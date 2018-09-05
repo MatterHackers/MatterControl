@@ -186,7 +186,6 @@
     <Compile Include="ActionBar\PrinterSelector.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
     <Compile Include="ApplicationView\OemProfileDictionary.cs" />
-    <Compile Include="ApplicationView\WindowsPlatformsFeatures.cs" />
     <Compile Include="DataStorage\ApplicationDataStorage.cs" />
     <Compile Include="DesignTools\Attributes\IconsAttribute.cs" />
     <Compile Include="DesignTools\Attributes\WebPageLinkAttribute.cs" />
@@ -316,12 +315,6 @@
     <Compile Include="Utilities\MarkdigAgg\Inlines\AggLiteralInlineRenderer.cs" />
     <Compile Include="Utilities\MarkdigAgg\AggParagraphRenderer.cs" />
     <Compile Include="Utilities\IGCodePostProcessor.cs" />
-    <Compile Include="Utilities\InspectForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Utilities\InspectForm.Designer.cs">
-      <DependentUpon>InspectForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Library\ContentProviders\GCodeContentProvider.cs" />
     <Compile Include="Library\ContentProviders\IContentProvider.cs" />
     <Compile Include="ConfigurationPage\ApplicationSettings\ApplicationSettingsView.cs" />
@@ -559,13 +552,8 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Windows" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
-    <Reference Include="OpenTK">
-      <HintPath>Submodules\agg-sharp\PlatformWin32\OpenTK.dll</HintPath>
-    </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml.Linq" />
@@ -598,9 +586,6 @@
     <Content Include="StaticData\SliceSettings\unload_filament.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Utilities\InspectForm.resx">
-      <DependentUpon>InspectForm.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="App.config" />
     <None Include="appsettings.json" />
     <None Include="Library\LibraryProviders.cd" />
@@ -661,10 +646,6 @@
       <Project>{d3e41b4e-bfbb-44ca-94c8-95c00f754fdd}</Project>
       <Name>VectorMath</Name>
     </ProjectReference>
-    <ProjectReference Include="Submodules\agg-sharp\Veldrid\MatterHackers.VeldridProvider.csproj">
-      <Project>{5754893a-e806-4d67-96b4-d64d3f85d1e4}</Project>
-      <Name>MatterHackers.VeldridProvider</Name>
-    </ProjectReference>
     <ProjectReference Include="Submodules\MatterSlice\MatterSlice.csproj">
       <Project>{c46ca728-dd2f-4dd1-971a-aaa89d9dff95}</Project>
       <Name>MatterSlice</Name>
@@ -688,10 +669,6 @@
     <ProjectReference Include="Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj">
       <Project>{86f6aaf2-9b50-40b8-a427-1897d76471c5}</Project>
       <Name>PolygonMesh</Name>
-    </ProjectReference>
-    <ProjectReference Include="Submodules\agg-sharp\PlatformWin32\PlatformWin32.csproj">
-      <Project>{670bddff-927b-425d-9dd1-22acb14356eb}</Project>
-      <Name>PlatformWin32</Name>
     </ProjectReference>
     <ProjectReference Include="PluginSystem\MatterControlPluginSystem.csproj">
       <Project>{865172a0-a1a9-49c2-9386-f2fdb4e141b7}</Project>

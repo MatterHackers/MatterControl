@@ -28,18 +28,16 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.PluginSystem;
 
 namespace MatterHackers.MatterControl
 {
-	using Agg.Image;
-	using MatterHackers.Agg.Platform;
-	using MatterHackers.MatterControl.PluginSystem;
-	using MatterHackers.RenderOpenGl.OpenGl;
-
 	public class WindowsPlatformsFeatures : INativePlatformFeatures
 	{
 		public bool CameraInUseByExternalProcess { get; set; } = false;
@@ -93,23 +91,9 @@ namespace MatterHackers.MatterControl
 
 		public void FindAndInstantiatePlugins(SystemWindow systemWindow)
 		{
-			string oemName = ApplicationSettings.Instance.GetOEMName();
 			foreach (MatterControlPlugin plugin in PluginFinder.CreateInstancesOf<MatterControlPlugin>())
 			{
-				string pluginInfo = plugin.GetPluginInfoJSon();
-				Dictionary<string, string> nameValuePairs = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(pluginInfo);
-
-				if (nameValuePairs != null && nameValuePairs.ContainsKey("OEM"))
-				{
-					if (nameValuePairs["OEM"] == oemName)
-					{
-						plugin.Initialize(systemWindow);
-					}
-				}
-				else
-				{
-					plugin.Initialize(systemWindow);
-				}
+				plugin.Initialize(systemWindow);
 			}
 		}
 
@@ -161,7 +145,70 @@ namespace MatterHackers.MatterControl
 				AggContext.StaticData = new FileSystemStaticData();
 			}
 
+			if (Clipboard.Instance == null)
+			{
+				Clipboard.SetSystemClipboard(new WindowsFormsClipboard());
+			}
+
+			WinformsSystemWindow.InspectorCreator = (inspectingWindow) =>
+			{
+				if (inspectingWindow == AppContext.RootSystemWindow)
+				{
+					// If this is MatterControlApplication, include Scene
+					var partContext = ApplicationController.Instance.DragDropData;
+					return new InspectForm(inspectingWindow, partContext.SceneContext?.Scene ?? null, partContext.View3DWidget);
+				}
+				else
+				{
+					// Otherwise, exclude Scene
+					return new InspectForm(inspectingWindow);
+				}
+			};
+
+
 			ApplicationSettings.Instance.set("HardwareHasCamera", "false");
+		}
+
+		public void GenerateLocalizationValidationFile()
+		{
+			if (AggContext.StaticData is FileSystemStaticData fileSystemStaticData)
+			{
+				char currentChar = 'A';
+
+				// Note: Functionality only expected to work on Desktop/Debug builds and as such, is coupled to FileSystemStaticData
+				string outputPath = fileSystemStaticData.MapPath(Path.Combine("Translations", "L10N", "Translation.txt"));
+				string sourceFilePath = fileSystemStaticData.MapPath(Path.Combine("Translations", "Master.txt"));
+
+				// Ensure the output directory exists
+				Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
+
+				using (var outstream = new StreamWriter(outputPath))
+				{
+					foreach (var line in File.ReadAllLines(sourceFilePath))
+					{
+						if (line.StartsWith("Translated:"))
+						{
+							var pos = line.IndexOf(':');
+							var segments = new string[]
+							{
+							line.Substring(0, pos),
+							line.Substring(pos + 1),
+							};
+
+							outstream.WriteLine("{0}:{1}", segments[0], new string(segments[1].ToCharArray().Select(c => c == ' ' ? ' ' : currentChar).ToArray()));
+
+							if (currentChar++ == 'Z')
+							{
+								currentChar = 'A';
+							}
+						}
+						else
+						{
+							outstream.WriteLine(line);
+						}
+					}
+				}
+			}
 		}
 	}
 }

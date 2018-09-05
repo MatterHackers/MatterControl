@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
 
 		private AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();
 
-		internal static bool ShowMemoryUsed = false;
+		public static bool ShowMemoryUsed = false;
 
 		private int drawCount = 0;
 
@@ -122,28 +122,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			this.Maximized = ApplicationSettings.Instance.get(ApplicationSettingsKey.MainWindowMaximized) == "true";
-
-#if IS_WINDOWS_FORMS
-			if (Clipboard.Instance == null)
-			{
-				Clipboard.SetSystemClipboard(new WindowsFormsClipboard());
-			}
-
-			WinformsSystemWindow.InspectorCreator = (inspectingWindow) =>
-			{
-				if (inspectingWindow == this)
-				{
-					// If this is MatterControlApplication, include Scene
-					var partContext = ApplicationController.Instance.DragDropData;
-					return new InspectForm(inspectingWindow, partContext.SceneContext?.Scene ?? null, partContext.View3DWidget);
-				}
-				else
-				{
-					// Otherwise, exclude Scene
-					return new InspectForm(inspectingWindow);
-				}
-			};
-#endif
 		}
 
 		public static (int width, int height) GetStartupBounds(int overrideWidth = -1, int overrideHeight = -1)

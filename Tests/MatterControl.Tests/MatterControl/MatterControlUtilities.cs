@@ -658,7 +658,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationRunner.UpDelaySeconds = config.MouseUpDelay;
 
 			// Automation runner must do as much as program.cs to spin up platform
-			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl";
+			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
 			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
 			AppContext.Platform.ProcessCommandline();
 
