@@ -78,6 +78,10 @@
       <Project>{97d5ade3-c1b4-4b46-8a3e-718a4f7f079f}</Project>
       <Name>MatterControl.Printing</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\PluginSystem\MatterControlPluginSystem.csproj">
+      <Project>{865172a0-a1a9-49c2-9386-f2fdb4e141b7}</Project>
+      <Name>MatterControlPluginSystem</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\agg\Agg.csproj">
       <Project>{657dbc6d-c3ea-4398-a3fa-ddb73c14f71b}</Project>
       <Name>Agg</Name>

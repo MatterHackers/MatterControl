@@ -45,6 +45,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="INativePlatformFeatures.cs" />
     <Compile Include="MatterControlPluginBase.cs" />
   </ItemGroup>
   <ItemGroup>
