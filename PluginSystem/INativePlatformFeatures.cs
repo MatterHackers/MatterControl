@@ -28,8 +28,9 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterHackers.Agg.UI;
 
-namespace MatterHackers.Agg.UI
+namespace MatterHackers.MatterControl
 {
 	public interface INativePlatformFeatures
 	{

@@ -29,16 +29,15 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.IO;
+using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.PluginSystem;
 
 namespace MatterHackers.MatterControl
 {
-	using Agg.Image;
-	using MatterHackers.Agg.Platform;
-	using MatterHackers.MatterControl.PluginSystem;
-	using MatterHackers.RenderOpenGl.OpenGl;
-
 	public class WindowsPlatformsFeatures : INativePlatformFeatures
 	{
 		public bool CameraInUseByExternalProcess { get; set; } = false;
@@ -212,6 +211,4 @@ namespace MatterHackers.MatterControl
 			}
 		}
 	}
-
-}
 }
