@@ -553,7 +553,6 @@
     <Reference Include="PdfSharp">
       <HintPath>PdfSharp.dll</HintPath>
     </Reference>
-    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
