@@ -36,6 +36,16 @@ using MatterHackers.Agg.Platform;
 
 namespace MatterHackers.MatterControl.Library
 {
+	public class LocalLibraryZipContainerLink : LocalZipContainerLink
+	{
+		public int RowID { get; }
+		public LocalLibraryZipContainerLink(int id, string filePath, string nameOverride = null)
+			: base (filePath, nameOverride)
+		{
+			this.RowID = id;
+		}
+	}
+
 	public class LocalZipContainerLink : FileSystemItem, ILibraryContainerLink
 	{
 		private static ImageBuffer thumbnail;
@@ -49,7 +59,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public Stream ZipStream { get; set; }
 
-		public override bool IsProtected { get; } = true;
+		public override bool IsProtected { get; } = false;
 
 		public LocalZipContainerLink(string filePath, string nameOverride = null)
 			: base(filePath)

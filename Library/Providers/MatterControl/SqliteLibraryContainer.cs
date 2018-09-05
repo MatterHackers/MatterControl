@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.Library
 			});
 
 			this.ChildContainers = childContainers.Concat(
-				zipFiles.Select(f => new LocalZipContainerLink(f.FileLocation, f.Name))).OrderBy(d => d.Name).ToList();
+				zipFiles.Select(f => new LocalLibraryZipContainerLink(f.Id, f.FileLocation, f.Name))).OrderBy(d => d.Name).ToList();
 
 			// PrintItems projected onto FileSystemFileItem
 			this.Items = nonZipFiles.Select<PrintItem, ILibraryItem>(printItem =>
@@ -189,8 +189,12 @@ namespace MatterHackers.MatterControl.Library
 				{
 					sqlItem.PrintItem.Delete();
 				}
-
-				this.Items.Remove(item);
+				else if (item is LocalLibraryZipContainerLink  link)
+				{
+					string sql = $"SELECT * FROM PrintItem WHERE ID = @id";
+					var container = Datastore.Instance.dbSQLite.Query<PrintItem>(sql, link.RowID).FirstOrDefault();
+					container?.Delete();
+				}
 			}
 
 			this.ReloadContent();
