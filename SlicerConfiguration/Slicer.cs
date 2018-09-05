@@ -299,7 +299,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							if(cancellationToken.IsCancellationRequested)
 							{
-								MatterSlice.MatterSlice.Stop();
+								MatterHackers.MatterSlice.MatterSlice.Stop();
 							}
 							if (s is string stringValue)
 							{

@@ -144,6 +144,14 @@
       <Project>{d3e41b4e-bfbb-44ca-94c8-95c00f754fdd}</Project>
       <Name>VectorMath</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Submodules\MatterSlice\MatterSlice.csproj">
+      <Project>{b0aed568-8796-42b9-baa9-ebc796134e78}</Project>
+      <Name>MatterSlice</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Submodules\MatterSlice\MatterSliceLib\MatterSliceLib.csproj">
+      <Project>{23bd06a4-d017-4dd0-a922-d2aad91c3484}</Project>
+      <Name>MatterSliceLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="C5" Version="2.5.3" />

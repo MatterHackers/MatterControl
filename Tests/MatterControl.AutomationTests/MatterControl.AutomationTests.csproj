@@ -122,6 +122,14 @@
       <Project>{d3e41b4e-bfbb-44ca-94c8-95c00f754fdd}</Project>
       <Name>VectorMath</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Submodules\MatterSlice\MatterSliceLib\MatterSliceLib.csproj">
+      <Project>{23bd06a4-d017-4dd0-a922-d2aad91c3484}</Project>
+      <Name>MatterSliceLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Submodules\MatterSlice\Tests\MatterSlice.Tests\MatterSlice.Tests.csproj">
+      <Project>{8cd15b23-d30f-470e-99ba-9276fb7cabd4}</Project>
+      <Name>MatterSlice.Tests</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
