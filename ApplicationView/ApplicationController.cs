@@ -43,6 +43,11 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("MatterControl.Tests")]
+[assembly: InternalsVisibleTo("MatterControl.AutomationTests")]
+[assembly: InternalsVisibleTo("CloudServices.Tests")]
 
 namespace MatterHackers.MatterControl
 {

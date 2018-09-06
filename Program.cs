@@ -8,7 +8,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using Microsoft.Extensions.Configuration;
-using Mindscape.Raygun4Net;
+//using Mindscape.Raygun4Net;
 
 namespace MatterHackers.MatterControl
 {
@@ -18,7 +18,7 @@ namespace MatterHackers.MatterControl
 
 		private static int raygunNotificationCount = 0;
 
-		private static RaygunClient _raygunClient;
+		//private static RaygunClient _raygunClient;
 
 		private class SlicerOptions
 		{
@@ -39,14 +39,14 @@ namespace MatterHackers.MatterControl
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
-			if (AggContext.OperatingSystem == OSType.Mac)
-			{
-				_raygunClient = new RaygunClient("qmMBpKy3OSTJj83+tkO7BQ=="); // this is the Mac key
-			}
-			else
-			{
-				_raygunClient = new RaygunClient("hQIlyUUZRGPyXVXbI6l1dA=="); // this is the PC key
-			}
+			//if (AggContext.OperatingSystem == OSType.Mac)
+			//{
+			//	_raygunClient = new RaygunClient("qmMBpKy3OSTJj83+tkO7BQ=="); // this is the Mac key
+			//}
+			//else
+			//{
+			//	_raygunClient = new RaygunClient("hQIlyUUZRGPyXVXbI6l1dA=="); // this is the PC key
+			//}
 
 			// Set default Agg providers
 			AggContext.Config.ProviderTypes.SystemWindow = "MatterHackers.Agg.UI.OpenGLSystemWindow, agg_platform_win32";
@@ -71,28 +71,28 @@ namespace MatterHackers.MatterControl
 
 			Datastore.Instance.Initialize();
 
-#if !DEBUG
-			// Conditionally spin up error reporting if not on the Stable channel
-			string channel = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
-			if (string.IsNullOrEmpty(channel) || channel != "release" || OemSettings.Instance.WindowTitleExtra == "Experimental")
-#endif
-			{
-				System.Windows.Forms.Application.ThreadException += (s, e) =>
-				{
-					if(raygunNotificationCount++ < RaygunMaxNotifications)
-					{
-						_raygunClient.Send(e.Exception);
-					}
-				};
+//#if !DEBUG
+//			// Conditionally spin up error reporting if not on the Stable channel
+//			string channel = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
+//			if (string.IsNullOrEmpty(channel) || channel != "release" || OemSettings.Instance.WindowTitleExtra == "Experimental")
+//#endif
+//			{
+//				System.Windows.Forms.Application.ThreadException += (s, e) =>
+//				{
+//					if(raygunNotificationCount++ < RaygunMaxNotifications)
+//					{
+//						_raygunClient.Send(e.Exception);
+//					}
+//				};
 
-				AppDomain.CurrentDomain.UnhandledException += (s, e) =>
-				{
-					if (raygunNotificationCount++ < RaygunMaxNotifications)
-					{
-						_raygunClient.Send(e.ExceptionObject as Exception);
-					}
-				};
-			}
+//				AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+//				{
+//					if (raygunNotificationCount++ < RaygunMaxNotifications)
+//					{
+//						_raygunClient.Send(e.ExceptionObject as Exception);
+//					}
+//				};
+//			}
 
 			// Init platformFeaturesProvider before ShowAsSystemWindow
 			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
