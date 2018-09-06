@@ -1,65 +1,16 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{97D5ADE3-C1B4-4B46-8A3E-718A4F7F079F}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MatterControl.Printing</RootNamespace>
-    <AssemblyName>MatterControl.Printing</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Company>MatterHackers Inc.</Company>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
+  
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="4.5.0" />
+    <PackageReference Include="System.IO.Ports" Version="4.5.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Communication\FoundStringCallBacks.cs" />
-    <Compile Include="Communication\FrostedSerial\CSharpSerialPortWrapper.cs" />
-    <Compile Include="Communication\FrostedSerial\FrostedSerialPort.cs" />
-    <Compile Include="Communication\FrostedSerial\FrostedSerialPortFactory.cs" />
-    <Compile Include="Communication\FrostedSerial\FrostedSerialStream.cs" />
-    <Compile Include="Communication\FrostedSerial\IFrostedSerialPort.cs" />
-    <Compile Include="Communication\FrostedSerial\IFrostedSerialStream.cs" />
-    <Compile Include="Communication\SerialPortFixer.cs" />
-    <Compile Include="Communication\TermiosH.cs" />
-    <Compile Include="GCode\GCodeFile.cs" />
-    <Compile Include="GCode\GCodeMemoryFile.cs" />
-    <Compile Include="GCode\GCodeFileStreamed.cs" />
-    <Compile Include="GCode\PrinterMachineInstruction.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj">
       <Project>{657dbc6d-c3ea-4398-a3fa-ddb73c14f71b}</Project>
@@ -70,5 +21,5 @@
       <Name>VectorMath</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>
