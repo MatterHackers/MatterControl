@@ -130,11 +130,10 @@ namespace MatterHackers.MatterControl
 					this.AddItemEnsureAncestors(_inspectedWidget);
 				}
 
-
 				_inspectedWidget.Invalidate();
 			}
-
 		}
+
 		private IObject3D _inspectedObject3D = null;
 		public IObject3D InspectedObject3D
 		{
@@ -362,7 +361,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-
 		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
 			inspectedSystemWindow.AfterDraw -= systemWindow_AfterDraw;
@@ -451,12 +449,10 @@ namespace MatterHackers.MatterControl
 		{
 			TextWidget.DebugShowSize = debugTextWidget.Checked;
 
-
 			foreach(var widget in this.inspectedSystemWindow.Descendants<TextWidget>())
 			{
 				widget.Invalidate();
 			}
-
 		}
 
 		protected override void OnKeyUp(System.Windows.Forms.KeyEventArgs e)
@@ -465,6 +461,7 @@ namespace MatterHackers.MatterControl
 			{
 				this.Inspecting = !this.Inspecting;
 			}
+
 			base.OnKeyUp(e);
 		}
 	}
