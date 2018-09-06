@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -9,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("MatterControl")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("MatterHackers, Inc.")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("MatterControl")]
-[assembly: AssemblyCopyright("2013")]
+[assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,12 +19,8 @@ using System.Runtime.InteropServices;
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
 
-[assembly: InternalsVisibleTo("MatterControl.Tests")]
-[assembly: InternalsVisibleTo("MatterControl.AutomationTests")]
-[assembly: InternalsVisibleTo("CloudServices.Tests")]
-
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("1558c103-dff3-49bd-854b-97d57339d662")]
+[assembly: Guid("b2b001ee-a142-4e20-acf8-ae4a9cb984f8")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -34,6 +29,8 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1001.1002.1003")]
-[assembly: AssemblyFileVersion("1001.1002.1003")]
-[assembly: NeutralResourcesLanguageAttribute("en")]
+// You can specify all the values or you can default the Build and Revision Numbers
+// by using the '*' as shown below:
+// [assembly: AssemblyVersion("1.0.*")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

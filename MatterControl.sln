@@ -3,25 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterControl", "MatterControl.csproj", "{0B8D6F56-BD7F-4426-B858-D9292B084656}"
-	ProjectSection(ProjectDependencies) = postProject
-		{545B6912-77FF-4B34-BA76-6C3D6A32BE6A} = {545B6912-77FF-4B34-BA76-6C3D6A32BE6A}
-		{AE37DE1F-22F7-49EE-8732-FC6BC8DC58D9} = {AE37DE1F-22F7-49EE-8732-FC6BC8DC58D9}
-		{F1653F20-D47D-4F29-8C55-3C835542AF5F} = {F1653F20-D47D-4F29-8C55-3C835542AF5F}
-		{3DF4CB3D-9A03-4256-9A81-70523AAD828B} = {3DF4CB3D-9A03-4256-9A81-70523AAD828B}
-		{D3E41B4E-BFBB-44CA-94C8-95C00F754FDD} = {D3E41B4E-BFBB-44CA-94C8-95C00F754FDD}
-		{74F6BB6C-9D02-4512-A59A-21940E35C532} = {74F6BB6C-9D02-4512-A59A-21940E35C532}
-		{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B} = {657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}
-		{9B062971-A88E-4A3D-B3C9-12B78D15FA66} = {9B062971-A88E-4A3D-B3C9-12B78D15FA66}
-		{CA96058C-1A37-465D-A357-D6D695B13D25} = {CA96058C-1A37-465D-A357-D6D695B13D25}
-		{036BCCBA-52D8-457C-84AE-8821F209FE4A} = {036BCCBA-52D8-457C-84AE-8821F209FE4A}
-		{7E61A5BD-E78F-4B80-88C9-3821B4FA062E} = {7E61A5BD-E78F-4B80-88C9-3821B4FA062E}
-		{DF6845CD-64C6-4263-8357-DA8066855739} = {DF6845CD-64C6-4263-8357-DA8066855739}
-		{1E01ABE0-B494-4FE4-B0D6-540133286887} = {1E01ABE0-B494-4FE4-B0D6-540133286887}
-		{86F6AAF2-9B50-40B8-A427-1897D76471C5} = {86F6AAF2-9B50-40B8-A427-1897D76471C5}
-		{670BDDFF-927B-425D-9DD1-22ACB14356EB} = {670BDDFF-927B-425D-9DD1-22ACB14356EB}
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tesselate", "Submodules\agg-sharp\Tesselate\Tesselate.csproj", "{AE37DE1F-22F7-49EE-8732-FC6BC8DC58D9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatformWin32", "Submodules\agg-sharp\PlatformWin32\PlatformWin32.csproj", "{670BDDFF-927B-425D-9DD1-22ACB14356EB}"
@@ -43,7 +24,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolygonMesh", "Submodules\a
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agg", "Submodules\agg-sharp\agg\Agg.csproj", "{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Community.CsharpSqlite", "Community.CsharpSqlite\Community.CsharpSqlite.csproj", "{F1653F20-D47D-4F29-8C55-3C835542AF5F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Community.CsharpSqlite", "Community.CsharpSqlite\Community.CsharpSqlite.csproj", "{F1653F20-D47D-4F29-8C55-3C835542AF5F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RayTracer", "Submodules\agg-sharp\RayTracer\RayTracer.csproj", "{1E01ABE0-B494-4FE4-B0D6-540133286887}"
 EndProject
@@ -53,9 +34,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageProcessing", "Submodul
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "clipper_library", "Submodules\agg-sharp\clipper_library\clipper_library.csproj", "{9B062971-A88E-4A3D-B3C9-12B78D15FA66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarchingSquares", "Submodules\agg-sharp\MarchingSquares\MarchingSquares.csproj", "{DF6845CD-64C6-4263-8357-DA8066855739}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarchingSquares", "Submodules\agg-sharp\MarchingSquares\MarchingSquares.csproj", "{DF6845CD-64C6-4263-8357-DA8066855739}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterControlPluginSystem", "PluginSystem\MatterControlPluginSystem.csproj", "{865172A0-A1A9-49C2-9386-F2FDB4E141B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatterControlPluginSystem", "PluginSystem\MatterControlPluginSystem.csproj", "{865172A0-A1A9-49C2-9386-F2FDB4E141B7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Launcher", "Launcher\Launcher.csproj", "{3DF4CB3D-9A03-4256-9A81-70523AAD828B}"
 EndProject
@@ -91,11 +72,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuadTree", "Submodules\Matt
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MSClipperLib", "Submodules\MatterSlice\MSClipperLib\MSClipperLib.csproj", "{2C564BE1-352D-4DDB-8226-F0981F983C60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeshThumbnails", "Submodules\agg-sharp\MeshThumbnails\MeshThumbnails\MeshThumbnails.csproj", "{1A901129-C885-425F-8D4B-86698F98A2B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeshThumbnails", "Submodules\agg-sharp\MeshThumbnails\MeshThumbnails\MeshThumbnails.csproj", "{1A901129-C885-425F-8D4B-86698F98A2B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterControl.OpenGL", "MatterControl.OpenGL\MatterControl.OpenGL.csproj", "{CBDEEC31-D688-417B-9BF2-F0DB2E4FB268}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatterControl.OpenGL", "MatterControl.OpenGL\MatterControl.OpenGL.csproj", "{CBDEEC31-D688-417B-9BF2-F0DB2E4FB268}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterControl.Printing", "MatterControl.Printing\MatterControl.Printing.csproj", "{97D5ADE3-C1B4-4B46-8A3E-718A4F7F079F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatterControl.Printing", "MatterControl.Printing\MatterControl.Printing.csproj", "{97D5ADE3-C1B4-4B46-8A3E-718A4F7F079F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Typography.GlyphLayout", "Submodules\agg-sharp\Typography.GlyphLayout\Typography.GlyphLayout.csproj", "{DE958333-2467-409D-904D-92C9CCD0BA52}"
 EndProject
@@ -109,6 +90,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatterSliceLib", "Submodule
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterSlice", "Submodules\MatterSlice\MatterSlice.csproj", "{B0AED568-8796-42B9-BAA9-EBC796134E78}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatterControlLib", "MatterControlLib\MatterControlLib.csproj", "{93BEBFDF-B81A-4344-AB82-0DBF58B234CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterControl", "MatterControl.csproj", "{B2B001EE-A142-4E20-ACF8-AE4A9CB984F8}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Submodules\agg-sharp\Typography.GlyphLayout\Typography.GlyphLayout.projitems*{657dbc6d-c3ea-4398-a3fa-ddb73c14f71b}*SharedItemsImports = 4
@@ -121,14 +106,6 @@ Global
 		Release|Mixed Platforms = Release|Mixed Platforms
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0B8D6F56-BD7F-4426-B858-D9292B084656}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0B8D6F56-BD7F-4426-B858-D9292B084656}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0B8D6F56-BD7F-4426-B858-D9292B084656}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{0B8D6F56-BD7F-4426-B858-D9292B084656}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{0B8D6F56-BD7F-4426-B858-D9292B084656}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0B8D6F56-BD7F-4426-B858-D9292B084656}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0B8D6F56-BD7F-4426-B858-D9292B084656}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{0B8D6F56-BD7F-4426-B858-D9292B084656}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{AE37DE1F-22F7-49EE-8732-FC6BC8DC58D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AE37DE1F-22F7-49EE-8732-FC6BC8DC58D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE37DE1F-22F7-49EE-8732-FC6BC8DC58D9}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -425,6 +402,22 @@ Global
 		{B0AED568-8796-42B9-BAA9-EBC796134E78}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B0AED568-8796-42B9-BAA9-EBC796134E78}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{B0AED568-8796-42B9-BAA9-EBC796134E78}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{93BEBFDF-B81A-4344-AB82-0DBF58B234CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93BEBFDF-B81A-4344-AB82-0DBF58B234CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93BEBFDF-B81A-4344-AB82-0DBF58B234CD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{93BEBFDF-B81A-4344-AB82-0DBF58B234CD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{93BEBFDF-B81A-4344-AB82-0DBF58B234CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93BEBFDF-B81A-4344-AB82-0DBF58B234CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93BEBFDF-B81A-4344-AB82-0DBF58B234CD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{93BEBFDF-B81A-4344-AB82-0DBF58B234CD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B2B001EE-A142-4E20-ACF8-AE4A9CB984F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2B001EE-A142-4E20-ACF8-AE4A9CB984F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2B001EE-A142-4E20-ACF8-AE4A9CB984F8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B2B001EE-A142-4E20-ACF8-AE4A9CB984F8}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B2B001EE-A142-4E20-ACF8-AE4A9CB984F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2B001EE-A142-4E20-ACF8-AE4A9CB984F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2B001EE-A142-4E20-ACF8-AE4A9CB984F8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B2B001EE-A142-4E20-ACF8-AE4A9CB984F8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

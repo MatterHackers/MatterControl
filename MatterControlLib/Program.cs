@@ -12,7 +12,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace MatterHackers.MatterControl
 {
-	static class Program
+	public static class MatterControlLib
 	{
 		private const int RaygunMaxNotifications = 15;
 
@@ -28,7 +28,6 @@ namespace MatterHackers.MatterControl
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
-		[STAThread]
 		public static void Main()
 		{
 			// this sets the global culture for the app and all new threads

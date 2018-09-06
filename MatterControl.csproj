@@ -1,100 +1,70 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Company>MatterHackers Inc.</Company>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B2B001EE-A142-4E20-ACF8-AE4A9CB984F8}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>MatterControl</RootNamespace>
+    <AssemblyName>MatterControl</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <!--See the following for details on netstandard2 binding workround: https://github.com/dotnet/standard/issues/481-->
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <CodeAnalysisRuleSet />
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <CodeAnalysisRuleSet />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Community.CsharpSqlite\**" />
-    <Compile Remove="Launcher\**" />
-    <Compile Remove="MatterControl.OpenGL\**" />
-    <Compile Remove="MatterControl.Printing\**" />
-    <Compile Remove="MatterControl.Winforms\**" />
-    <Compile Remove="packages\**" />
-    <Compile Remove="PluginSystem\**" />
-    <Compile Remove="PrinterDriverInstaller\**" />
-    <Compile Remove="StaticData\**" />
-    <Compile Remove="Submodules\**" />
-    <Compile Remove="Tests\**" />
-    <Compile Remove="Tools\**" />
-    <EmbeddedResource Remove="Community.CsharpSqlite\**" />
-    <EmbeddedResource Remove="Launcher\**" />
-    <EmbeddedResource Remove="MatterControl.OpenGL\**" />
-    <EmbeddedResource Remove="MatterControl.Printing\**" />
-    <EmbeddedResource Remove="MatterControl.Winforms\**" />
-    <EmbeddedResource Remove="packages\**" />
-    <EmbeddedResource Remove="PluginSystem\**" />
-    <EmbeddedResource Remove="PrinterDriverInstaller\**" />
-    <EmbeddedResource Remove="StaticData\**" />
-    <EmbeddedResource Remove="Submodules\**" />
-    <EmbeddedResource Remove="Tests\**" />
-    <EmbeddedResource Remove="Tools\**" />
-    <None Remove="Community.CsharpSqlite\**" />
-    <None Remove="Launcher\**" />
-    <None Remove="MatterControl.OpenGL\**" />
-    <None Remove="MatterControl.Printing\**" />
-    <None Remove="MatterControl.Winforms\**" />
-    <None Remove="packages\**" />
-    <None Remove="PluginSystem\**" />
-    <None Remove="PrinterDriverInstaller\**" />
-    <None Remove="StaticData\**" />
-    <None Remove="Submodules\**" />
-    <None Remove="Tests\**" />
-    <None Remove="Tools\**" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
-
   <ItemGroup>
-    <Compile Remove="DesignTools\Primitives\HexGridObject3D.cs" />
-    <Compile Remove="PrinterCommunication\Io\TrackPrinterPosition.cs" />
+    <Compile Include="MatterControl.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="MatterControl.OpenGL\MatterControl.OpenGL.csproj" />
-    <ProjectReference Include="MatterControl.Printing\MatterControl.Printing.csproj" />
-    <ProjectReference Include="Submodules\agg-sharp\clipper_library\clipper_library.csproj" />
-    <ProjectReference Include="Submodules\agg-sharp\DataConverters2D\DataConverters2D.csproj" />
-    <ProjectReference Include="Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj" />
-    <ProjectReference Include="Submodules\agg-sharp\GuiAutomation\GuiAutomation.csproj" />
-    <ProjectReference Include="Submodules\agg-sharp\Gui\Gui.csproj" />
-    <ProjectReference Include="Submodules\agg-sharp\ImageProcessing\ImageProcessing.csproj" />
-    <ProjectReference Include="Submodules\agg-sharp\MarchingSquares\MarchingSquares.csproj" />
-    <ProjectReference Include="Submodules\agg-sharp\MeshThumbnails\MeshThumbnails\MeshThumbnails.csproj" />
-    <ProjectReference Include="Submodules\agg-sharp\RayTracer\RayTracer.csproj" />
-    <ProjectReference Include="Submodules\agg-sharp\VectorMath\VectorMath.csproj" />
-    <ProjectReference Include="Submodules\agg-sharp\Tesselate\Tesselate.csproj" />
-    <ProjectReference Include="Community.CsharpSqlite\Community.CsharpSqlite.csproj" />
-    <ProjectReference Include="Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj" />
-    <ProjectReference Include="Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj" />
-    <ProjectReference Include="PluginSystem\MatterControlPluginSystem.csproj" />
-    <ProjectReference Include="Submodules\agg-sharp\Localizations\Localizations.csproj" />
-    <ProjectReference Include="Submodules\agg-sharp\agg\Agg.csproj" />
-    <ProjectReference Include="Submodules\MatterSlice\MatterSliceLib\MatterSliceLib.csproj" />
+    <None Include="App.config" />
   </ItemGroup>
-  
   <ItemGroup>
-    <PackageReference Include="Markdig" Version="0.15.2" />
-    <PackageReference Include="MIConvexHull" Version="1.1.17.1019" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
-    <PackageReference Include="Zeroconf" Version="3.0.30" />
+    <ProjectReference Include="Community.CsharpSqlite\Community.CsharpSqlite.csproj">
+      <Project>{f1653f20-d47d-4f29-8c55-3c835542af5f}</Project>
+      <Name>Community.CsharpSqlite</Name>
+    </ProjectReference>
+    <ProjectReference Include="MatterControlLib\MatterControlLib.csproj">
+      <Project>{93bebfdf-b81a-4344-ab82-0dbf58b234cd}</Project>
+      <Name>MatterControlLib</Name>
+    </ProjectReference>
   </ItemGroup>
-  
-  <ItemGroup>
-    <Reference Include="PdfSharp">
-      <HintPath>PdfSharp.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
