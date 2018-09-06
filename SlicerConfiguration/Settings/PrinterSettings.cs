@@ -143,12 +143,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		/// <summary>
-		/// Order of precedence &, |, !, =
+		/// Determines if a given field should be shown given its filter - Order of precedence &, |, !, =
 		/// </summary>
 		/// <param name="unsplitSettings"></param>
-		/// <param name="layerCascade"></param>
 		/// <returns></returns>
-		public bool ParseShowString(string unsplitSettings, IEnumerable<PrinterSettingsLayer> layerCascade)
+		public bool ParseShowString(string unsplitSettings)
 		{
 			if (!string.IsNullOrEmpty(unsplitSettings))
 			{
@@ -172,7 +171,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							string[] splitOnEquals = orItem.Split('=');
 
-							sliceSettingValue = this.GetValue(splitOnEquals[0], layerCascade);
+							sliceSettingValue = this.GetValue(splitOnEquals[0]);
 							matchString = splitOnEquals[1];
 						}
 						else if (orItem.Contains(">"))
@@ -180,7 +179,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							matchString = "no_match";
 							string[] splitOnGreater = orItem.Split('>');
 
-							sliceSettingValue = this.GetValue(splitOnGreater[0], layerCascade);
+							sliceSettingValue = this.GetValue(splitOnGreater[0]);
 							if (double.TryParse(sliceSettingValue, out double doubleValue))
 							{
 								if (double.TryParse(splitOnGreater[1], out double greater))
@@ -194,7 +193,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 						else
 						{
-							sliceSettingValue = this.GetValue(orItem, layerCascade);
+							sliceSettingValue = this.GetValue(orItem);
 						}
 
 						if ((!negate && sliceSettingValue == matchString)

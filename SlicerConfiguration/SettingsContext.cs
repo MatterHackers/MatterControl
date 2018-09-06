@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal bool ParseShowString(string enableIfSet)
 		{
-			return printer.Settings.ParseShowString(enableIfSet, layerCascade);
+			return printer.Settings.ParseShowString(enableIfSet);
 		}
 	}
 }
