@@ -143,15 +143,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		/// <summary>
-		/// Determines if a given field should be shown given its filter - Order of precedence &, |, !, =
+		/// Determines if a given field should be shown given its filter
 		/// </summary>
-		/// <param name="unsplitSettings"></param>
-		/// <returns></returns>
-		public bool ParseShowString(string unsplitSettings)
+		/// <param name="filter">The view filter - order of precedence &amp;, |, !, =</param>
+		/// <returns>An indicator if the field should be shown given the current filter</returns>
+		public bool ParseShowString(string filter)
 		{
-			if (!string.IsNullOrEmpty(unsplitSettings))
+			if (!string.IsNullOrEmpty(filter))
 			{
-				string[] splitOnAnd = unsplitSettings.Split('&');
+				string[] splitOnAnd = filter.Split('&');
 				foreach (var andGroup in splitOnAnd)
 				{
 					bool orResult = false;
@@ -505,7 +505,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					StyledMessageBox.ShowMessageBox((clicedOk) =>
 					{
 						warningWindowOpen = false;
-					}, String.Format("The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.".Localize(), profile.Make, profile.Model), "Recovered printer profile".Localize(), messageType: StyledMessageBox.MessageType.OK);
+					}, string.Format("The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.".Localize(), profile.Make, profile.Model), "Recovered printer profile".Localize(), messageType: StyledMessageBox.MessageType.OK);
 				});
 			}
 		}
@@ -617,12 +617,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string firstPresetValue = values.Skip(1).FirstOrDefault();
 
 			bool differsFromPreset = values.Count > 0
-				&& firstPresetValue != null 
+				&& firstPresetValue != null
 				&& firstPresetValue != currentValue;
 
 			bool differsFromBase = currentValue != firstBaseValue;
 
-			return currentValue != null 
+			return currentValue != null
 				&& (differsFromPreset || differsFromBase);
 		}
 
