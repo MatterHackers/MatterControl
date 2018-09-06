@@ -646,10 +646,6 @@
       <Project>{d3e41b4e-bfbb-44ca-94c8-95c00f754fdd}</Project>
       <Name>VectorMath</Name>
     </ProjectReference>
-    <ProjectReference Include="Submodules\MatterSlice\MatterSlice.csproj">
-      <Project>{c46ca728-dd2f-4dd1-971a-aaa89d9dff95}</Project>
-      <Name>MatterSlice</Name>
-    </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\Tesselate\Tesselate.csproj">
       <Project>{ae37de1f-22f7-49ee-8732-fc6bc8dc58d9}</Project>
       <Name>Tesselate</Name>
@@ -685,6 +681,14 @@
     <ProjectReference Include="PrinterDriverInstaller\InfInstaller.csproj">
       <Project>{990a9ad3-b6a4-407b-9dfc-9c722af7c9b9}</Project>
       <Name>InfInstaller</Name>
+    </ProjectReference>
+    <ProjectReference Include="Submodules\MatterSlice\MatterSlice.csproj">
+      <Project>{b0aed568-8796-42b9-baa9-ebc796134e78}</Project>
+      <Name>MatterSlice</Name>
+    </ProjectReference>
+    <ProjectReference Include="Submodules\MatterSlice\MatterSliceLib\MatterSliceLib.csproj">
+      <Project>{23bd06a4-d017-4dd0-a922-d2aad91c3484}</Project>
+      <Name>MatterSliceLib</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\MatterSlice\MSClipperLib\MSClipperLib.csproj">
       <Project>{2c564be1-352d-4ddb-8226-f0981f983c60}</Project>
