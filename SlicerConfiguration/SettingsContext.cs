@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,7 +48,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// When editing presets, LayerCascade contains a filtered list of settings layers. If the list is null we're in the primarySettingsView
 			this.IsPrimarySettingsView = layerCascade == null;
 
-			// The last layer of the layerFilters is the target persistence 
+			// The last layer of the layerFilters is the target persistence
 			this.persistenceLayer = layerCascade?.First() ?? printer.Settings.UserLayer;
 		}
 
@@ -84,7 +83,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal bool ParseShowString(string enableIfSet)
 		{
-			return printer.Settings.ParseShowString(enableIfSet, layerCascade);
+			return printer.Settings.ParseShowString(enableIfSet);
 		}
 	}
 }
