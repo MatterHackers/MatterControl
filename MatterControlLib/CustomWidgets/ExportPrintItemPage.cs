@@ -50,8 +50,11 @@ namespace MatterHackers.MatterControl
 
 		private IEnumerable<ILibraryItem> libraryItems;
 
-		public ExportPrintItemPage(IEnumerable<ILibraryItem> libraryItems)
+		bool centerOnBed;
+
+		public ExportPrintItemPage(IEnumerable<ILibraryItem> libraryItems, bool centerOnBed)
 		{
+			this.centerOnBed = centerOnBed;
 			this.WindowTitle = "Export File".Localize();
 			this.HeaderText = "Export selection to".Localize() + ":";
 
@@ -212,6 +215,10 @@ namespace MatterHackers.MatterControl
 
 										if (activePlugin != null)
 										{
+											if(activePlugin is GCodeExport gCodeExport)
+											{
+												gCodeExport.CenterOnBed = centerOnBed;
+											}
 											succeeded = await activePlugin.Generate(libraryItems, savePath, reporter, cancellationToken);
 										}
 

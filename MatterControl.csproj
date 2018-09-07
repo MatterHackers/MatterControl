@@ -65,6 +65,10 @@
       <Project>{93bebfdf-b81a-4344-ab82-0dbf58b234cd}</Project>
       <Name>MatterControlLib</Name>
     </ProjectReference>
+    <ProjectReference Include="Submodules\MatterSlice\MatterSlice.csproj">
+      <Project>{b0aed568-8796-42b9-baa9-ebc796134e78}</Project>
+      <Name>MatterSlice</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
