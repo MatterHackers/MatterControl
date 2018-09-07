@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl
 				Padding = theme.DefaultContainerPadding
 			};
 
-			var mouseTab = new ToolTab("Mouse".Localize(), tabControl, mouseControls, theme, hasClose: false)
+			var mouseTab = new ToolTab("Mouse", "Mouse".Localize(), tabControl, mouseControls, theme, hasClose: false)
 			{
 				// this can be used to navigate to this tab on construction
 				Name = "Mouse Tab"
@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl
 				Padding = theme.DefaultContainerPadding
 			};
 
-			var keyboardTab = new ToolTab("Keys".Localize(), tabControl, shortcutKeys, theme, hasClose: false)
+			var keyboardTab = new ToolTab("Keys", "Keys".Localize(), tabControl, shortcutKeys, theme, hasClose: false)
 			{
 				// this can be used to navigate to this tab on construction
 				Name = "Keys Tab"
@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Stretch,
 			};
 
-			var guideTab = new ToolTab("Guides".Localize(), tabControl, guideSectionContainer, theme, hasClose: false)
+			var guideTab = new ToolTab("Guides", "Guides".Localize(), tabControl, guideSectionContainer, theme, hasClose: false)
 			{
 				// this can be used to navigate to this tab on construction
 				Name = "Guides Tab"

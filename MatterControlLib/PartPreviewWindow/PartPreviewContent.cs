@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Show fixed start page
 			tabControl.AddTab(
-				new ChromeTab("Start".Localize(),  tabControl, tabControl.NewTabPage(), theme, hasClose: false)
+				new ChromeTab("Start", "Start".Localize(),  tabControl, tabControl.NewTabPage(), theme, hasClose: false)
 				{
 					MinimumSize = new Vector2(0, theme.TabButtonHeight),
 					Name = "Start Tab",
@@ -282,6 +282,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				printerTab = new ChromeTab(
 					printer.Settings.GetValue(SettingsKey.printer_name),
+					printer.Settings.GetValue(SettingsKey.printer_name),
 					tabControl,
 					new PrinterTabPage(printer, theme, "unused_tab_title"),
 					theme,
@@ -319,6 +320,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public ChromeTab CreatePartTab(string tabTitle, BedConfig sceneContext, ThemeConfig theme)
 		{
 			var partTab = new ChromeTab(
+				tabTitle,
 				tabTitle,
 				tabControl,
 				new PartTabPage(null, sceneContext, theme, ""),
