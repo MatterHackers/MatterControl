@@ -53,9 +53,9 @@
     <Compile Include="WindowsPlatformsFeatures.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MatterControl.csproj">
-      <Project>{0b8d6f56-bd7f-4426-b858-d9292b084656}</Project>
-      <Name>MatterControl</Name>
+    <ProjectReference Include="..\MatterControlLib\MatterControlLib.csproj">
+      <Project>{93BEBFDF-B81A-4344-AB82-0DBF58B234CD}</Project>
+      <Name>MatterControlLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\PluginSystem\MatterControlPluginSystem.csproj">
       <Project>{865172a0-a1a9-49c2-9386-f2fdb4e141b7}</Project>

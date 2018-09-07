@@ -1,62 +1,13 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{865172A0-A1A9-49C2-9386-F2FDB4E141B7}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MatterHackers.MatterControl.Plugins</RootNamespace>
-    <AssemblyName>MatterHackers.MatterControl.Plugins</AssemblyName>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <OldToolsVersion>2.0</OldToolsVersion>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Company>MatterHackers Inc.</Company>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>True</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>False</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>True</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
+    <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\Gui\Gui.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="INativePlatformFeatures.cs" />
-    <Compile Include="MatterControlPluginBase.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Submodules\agg-sharp\Gui\Gui.csproj">
-      <Project>{74f6bb6c-9d02-4512-a59a-21940e35c532}</Project>
-      <Name>Gui</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj">
-      <Project>{657dbc6d-c3ea-4398-a3fa-ddb73c14f71b}</Project>
-      <Name>Agg</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
 </Project>

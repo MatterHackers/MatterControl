@@ -1,0 +1,103 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Company>MatterHackers Inc.</Company>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;USE_OPENGL;IS_WINDOWS;IS_WINDOWS_FORMS</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>TRACE;USE_OPENGL;IS_WINDOWS;IS_WINDOWS_FORMS</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Community.CsharpSqlite\**" />
+    <Compile Remove="Launcher\**" />
+    <Compile Remove="MatterControl.OpenGL\**" />
+    <Compile Remove="MatterControl.Printing\**" />
+    <Compile Remove="MatterControl.Winforms\**" />
+    <Compile Remove="packages\**" />
+    <Compile Remove="PluginSystem\**" />
+    <Compile Remove="PrinterDriverInstaller\**" />
+    <Compile Remove="StaticData\**" />
+    <Compile Remove="Submodules\**" />
+    <Compile Remove="Tests\**" />
+    <Compile Remove="Tools\**" />
+    <EmbeddedResource Remove="Community.CsharpSqlite\**" />
+    <EmbeddedResource Remove="Launcher\**" />
+    <EmbeddedResource Remove="MatterControl.OpenGL\**" />
+    <EmbeddedResource Remove="MatterControl.Printing\**" />
+    <EmbeddedResource Remove="MatterControl.Winforms\**" />
+    <EmbeddedResource Remove="packages\**" />
+    <EmbeddedResource Remove="PluginSystem\**" />
+    <EmbeddedResource Remove="PrinterDriverInstaller\**" />
+    <EmbeddedResource Remove="StaticData\**" />
+    <EmbeddedResource Remove="Submodules\**" />
+    <EmbeddedResource Remove="Tests\**" />
+    <EmbeddedResource Remove="Tools\**" />
+    <None Remove="Community.CsharpSqlite\**" />
+    <None Remove="Launcher\**" />
+    <None Remove="MatterControl.OpenGL\**" />
+    <None Remove="MatterControl.Printing\**" />
+    <None Remove="MatterControl.Winforms\**" />
+    <None Remove="packages\**" />
+    <None Remove="PluginSystem\**" />
+    <None Remove="PrinterDriverInstaller\**" />
+    <None Remove="StaticData\**" />
+    <None Remove="Submodules\**" />
+    <None Remove="Tests\**" />
+    <None Remove="Tools\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="DesignTools\Primitives\HexGridObject3D.cs" />
+    <Compile Remove="PrinterCommunication\Io\TrackPrinterPosition.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MatterControl.OpenGL\MatterControl.OpenGL.csproj" />
+    <ProjectReference Include="..\MatterControl.Printing\MatterControl.Printing.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\clipper_library\clipper_library.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\DataConverters2D\DataConverters2D.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\GuiAutomation\GuiAutomation.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\Gui\Gui.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\ImageProcessing\ImageProcessing.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\MarchingSquares\MarchingSquares.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\MeshThumbnails\MeshThumbnails\MeshThumbnails.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\RayTracer\RayTracer.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\VectorMath\VectorMath.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\Tesselate\Tesselate.csproj" />
+    <ProjectReference Include="..\Community.CsharpSqlite\Community.CsharpSqlite.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj" />
+    <ProjectReference Include="..\PluginSystem\MatterControlPluginSystem.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\Localizations\Localizations.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj" />
+    <ProjectReference Include="..\Submodules\MatterSlice\MatterSliceLib\MatterSliceLib.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Markdig" Version="0.15.2" />
+    <PackageReference Include="MIConvexHull" Version="1.1.17.1019" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
+    <PackageReference Include="Zeroconf" Version="3.0.30" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="PdfSharp">
+      <HintPath>PdfSharp.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  
+</Project>

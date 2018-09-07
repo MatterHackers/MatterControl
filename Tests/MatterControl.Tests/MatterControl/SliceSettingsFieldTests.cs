@@ -289,6 +289,12 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Ignore("Not Implemented")]
+		public void ChildrenSelectorListFieldTest()
+		{
+			Assert.Fail();
+		}
+
+		[Test, Ignore("Not Implemented")]
 		public void ToggleboxFieldTest()
 		{
 			Assert.Fail();
