@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return this.CreateBoolMenuItem(row, name, getter, setter, useRadioStyle, siblingRadioButtonList);
 		}
 
-		public MenuItem CreateBoolMenuItem(GuiWidget textWidget, string name, Func<bool> getter, Action<bool> setter, bool useRadioStyle = false, IList<GuiWidget> siblingRadioButtonList = null)
+		public MenuItem CreateBoolMenuItem(GuiWidget guiWidget, string name, Func<bool> getter, Action<bool> setter, bool useRadioStyle = false, IList<GuiWidget> siblingRadioButtonList = null)
 		{
 			bool isChecked = (getter?.Invoke() == true);
 
@@ -263,7 +263,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (useRadioStyle)
 			{
-				menuItem = new RadioMenuItem(textWidget, theme)
+				menuItem = new RadioMenuItem(guiWidget, theme)
 				{
 					Name = name + " Menu Item",
 					Checked = isChecked,
@@ -272,7 +272,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				menuItem = new CheckboxMenuItem(textWidget, theme)
+				menuItem = new CheckboxMenuItem(guiWidget, theme)
 				{
 					Name = name + " Menu Item",
 					Checked = isChecked
