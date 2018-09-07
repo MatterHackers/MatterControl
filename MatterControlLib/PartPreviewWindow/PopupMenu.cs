@@ -234,6 +234,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Padding = MenuPadding,
 			};
 
+			return this.CreateBoolMenuItem(textWidget, name, getter, setter, useRadioStyle, siblingRadioButtonList);
+		}
+
+		public MenuItem CreateBoolMenuItem(string name, ImageBuffer icon, Func<bool> getter, Action<bool> setter, bool useRadioStyle = false, IList<GuiWidget> siblingRadioButtonList = null)
+		{
+			var row = new FlowLayoutWidget()
+			{
+				Selectable = false
+			};
+			row.AddChild(new IconButton(icon, theme));
+
+			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			{
+				Padding = MenuPadding,
+				VAnchor = VAnchor.Center
+			};
+			row.AddChild(textWidget);
+
+			return this.CreateBoolMenuItem(row, name, getter, setter, useRadioStyle, siblingRadioButtonList);
+		}
+
+		public MenuItem CreateBoolMenuItem(GuiWidget textWidget, string name, Func<bool> getter, Action<bool> setter, bool useRadioStyle = false, IList<GuiWidget> siblingRadioButtonList = null)
+		{
 			bool isChecked = (getter?.Invoke() == true);
 
 			MenuItem menuItem;
