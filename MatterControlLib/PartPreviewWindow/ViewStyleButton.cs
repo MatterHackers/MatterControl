@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -136,6 +135,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				useRadioStyle: true,
 				siblingRadioButtonList: siblingList);
+
+			// Override menu left padding to improve radio circle -> icon spacing
+			foreach(var menuItem in popupMenu.Children)
+			{
+				menuItem.Padding = menuItem.Padding.Clone(left: 25);
+			}
 
 			return popupMenu;
 		}
