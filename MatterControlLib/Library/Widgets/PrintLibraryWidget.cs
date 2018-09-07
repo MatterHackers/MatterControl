@@ -922,7 +922,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void exportButton_Click(object sender, EventArgs e)
 		{
 			//Open export options
-			var exportPage = new ExportPrintItemPage(libraryView.SelectedItems.Select(item => item.Model));
+			var exportPage = new ExportPrintItemPage(libraryView.SelectedItems.Select(item => item.Model), true);
 
 			DialogWindow.Show(exportPage);
 		}

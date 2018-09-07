@@ -1232,7 +1232,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 											new ExportPrintItemPage(new[]
 											{
 												new InMemoryLibraryItem(selectedItem)
-											}));
+											}, false));
 									});
 								}
 							}};

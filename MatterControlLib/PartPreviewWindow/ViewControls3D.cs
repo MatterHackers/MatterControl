@@ -579,7 +579,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								new ExportPrintItemPage(new[]
 								{
 									new InMemoryLibraryItem(sceneContext.Scene)
-								}));
+								}, false));
 						});
 					},
 					IsEnabled = () => sceneContext.EditableScene

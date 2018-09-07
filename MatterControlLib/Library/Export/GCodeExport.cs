@@ -121,8 +121,6 @@ namespace MatterHackers.MatterControl.Library.Export
 			{
 				IObject3D loadedItem = null;
 
-				bool centerOnBed = true;
-
 				var assetStream = firstItem as ILibraryAssetStream;
 				if (assetStream?.ContentType == "gcode")
 				{
@@ -140,7 +138,7 @@ namespace MatterHackers.MatterControl.Library.Export
 					// If item is bedplate, save any pending changes before starting the print
 					await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer.Bed.SaveChanges);
 					loadedItem = printer.Bed.Scene;
-					centerOnBed = false;
+					CenterOnBed = false;
 				}
 				else if (firstItem is ILibraryObject3D object3DItem)
 				{
@@ -178,7 +176,7 @@ namespace MatterHackers.MatterControl.Library.Export
 						if (ApplicationSettings.ValidFileExtensions.IndexOf(sourceExtension, StringComparison.OrdinalIgnoreCase) >= 0
 							|| string.Equals(sourceExtension, ".mcx", StringComparison.OrdinalIgnoreCase))
 						{
-							if (centerOnBed)
+							if (CenterOnBed)
 							{
 								// Get Bounds
 								var aabb = loadedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
@@ -186,7 +184,6 @@ namespace MatterHackers.MatterControl.Library.Export
 								// Move to bed center
 								var bedCenter = printer.Bed.BedCenter;
 								loadedItem.Matrix *= Matrix4X4.CreateTranslation((double)-aabb.Center.X, (double)-aabb.Center.Y, (double)-aabb.minXYZ.Z) * Matrix4X4.CreateTranslation(bedCenter.X, bedCenter.Y, 0);
-								loadedItem.Color = loadedItem.Color;
 							}
 
 							string originalSpiralVase = printer.Settings.GetValue(SettingsKey.spiral_vase);
@@ -231,6 +228,7 @@ namespace MatterHackers.MatterControl.Library.Export
 		}
 
 		public bool ApplyLeveling { get; set; } = true;
+		public bool CenterOnBed { get; set; }
 
 		private void ApplyStreamPipelineAndExport(GCodeFileStream gCodeFileStream, string outputPath)
 		{
