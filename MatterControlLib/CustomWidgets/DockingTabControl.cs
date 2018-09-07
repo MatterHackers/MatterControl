@@ -43,11 +43,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public enum DockSide { Left, Bottom, Right, Top };
 
+	public interface ICloseableTab
+	{
+	}
+
 	public class DockingTabControl : FlowLayoutWidget
 	{
 		public int MinDockingWidth = 400 * (int)GuiWidget.DeviceScale;
 		protected GuiWidget widgetTodockTo;
-		private Dictionary<string, GuiWidget> allTabs = new Dictionary<string, GuiWidget>();
+		private List<(string key, string text, GuiWidget widget)> allTabs = new List<(string key, string text, GuiWidget widget)>();
 
 		private PrinterConfig printer;
 
@@ -84,22 +88,29 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public DockSide DockSide { get; set; }
 
-		public void AddPage(string name, GuiWidget widget)
+		public void AddPage(string key, string name, GuiWidget widget, bool allowRebuild = true)
 		{
-			allTabs.Add(name, widget);
+			allTabs.Add((key, name, widget));
 
-			if (formHasLoaded)
+			if (formHasLoaded && allowRebuild)
 			{
 				Rebuild();
 			}
 		}
 
-		public void RemovePage(string name)
+		public void RemovePage(string key, bool allowRebuild = true)
 		{
-			if (allTabs.ContainsKey(name))
+			foreach(var tab in allTabs)
 			{
-				allTabs.Remove(name);
-				this.Rebuild();
+				if(tab.key == key)
+				{
+					allTabs.Remove(tab);
+					if (allowRebuild)
+					{
+						this.Rebuild();
+					}
+					return;
+				}
 			}
 		}
 
@@ -151,14 +162,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		private void Rebuild()
+		public void Rebuild()
 		{
 			this.Focus();
 
 			foreach (var nameWidget in allTabs)
 			{
-				nameWidget.Value.Parent?.RemoveChild(nameWidget.Value);
-				nameWidget.Value.ClearRemovedFlag();
+				nameWidget.widget.Parent?.RemoveChild(nameWidget.widget);
+				nameWidget.widget.ClearRemovedFlag();
 			}
 
 			this.RemoveAllChildren();
@@ -188,7 +199,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				tabControl.ActiveTabChanged += (s, e) =>
 				{
-					printer.ViewState.SliceSettingsTabIndex = tabControl.SelectedTabIndex;
+					printer.ViewState.SliceSettingsTabKey = tabControl.SelectedTabKey;
 				};
 
 				resizePage.AddChild(tabControl);
@@ -196,24 +207,22 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				this.AddChild(resizePage);
 			}
 
-			int tabIndex = 0;
-			foreach (var kvp in allTabs)
+			foreach (var item in allTabs)
 			{
-				string tabTitle = kvp.Key;
-
 				if (this.ControlIsPinned)
 				{
-					var content = new DockingWindowContent(this, kvp.Value, tabTitle, theme);
+					var content = new DockingWindowContent(this, item.widget, item.text, theme);
 
 					var tab = new ToolTab(
-							tabTitle,
+							item.key,
+							item.text,
 							tabControl,
 							content,
 							theme,
-							hasClose: kvp.Value is ConfigurePrinterWidget,
+							hasClose: item.widget is ICloseableTab,
 							pointSize: theme.DefaultFontSize)
 						{
-							Name = tabTitle + " Tab",
+							Name = item.key + " Tab",
 							InactiveTabColor = Color.Transparent,
 							ActiveTabColor = theme.TabBodyBackground
 						};
@@ -223,6 +232,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						if (tab.Name == "Printer Tab")
 						{
 							printer.ViewState.ConfigurePrinterVisible = false;
+						}
+						if (tab.Name == "Controls Tab")
+						{
+							printer.ViewState.ControlsVisible = false;
+						}
+						if (tab.Name == "Terminal Tab")
+						{
+							printer.ViewState.TerminalVisible = false;
 						}
 					};
 
@@ -238,24 +255,24 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						SpliterBarColor = theme.SplitterBackground,
 						SplitterWidth = theme.SplitterWidth,
 					};
-					resizeContainer.AddChild(new DockingWindowContent(this, kvp.Value, tabTitle, theme)
+					resizeContainer.AddChild(new DockingWindowContent(this, item.widget, item.text, theme)
 					{
 						BackgroundColor = theme.TabBodyBackground,
 						Width = this.ConstrainedWidth
 					});
 
-					int localTabIndex = tabIndex;
+					string localTabKey = item.key;
 
-					var settingsButton = new DockingTabButton(tabTitle, theme)
+					var settingsButton = new DockingTabButton(item.text, theme)
 					{
-						Name = $"{tabTitle} Sidebar",
+						Name = $"{item.key} Sidebar",
 						PopupContent = resizeContainer,
 						PopupLayoutEngine = new UnpinnedLayoutEngine(resizeContainer, widgetTodockTo, DockSide)
 					};
 					settingsButton.Click += (s, e) =>
 					{
 						resizeContainer.Width = this.ConstrainedWidth;
-						this.printer.ViewState.SliceSettingsTabIndex = localTabIndex;
+						this.printer.ViewState.SliceSettingsTabKey = localTabKey;
 						this.printer.ViewState.DockWindowFloating = true;
 					};
 					settingsButton.PopupWindowClosed += (s, e) =>
@@ -268,7 +285,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					this.AddChild(settingsButton);
 
 					if (this.printer.ViewState.DockWindowFloating
-						&& localTabIndex == this.printer.ViewState.SliceSettingsTabIndex)
+						&& localTabKey == this.printer.ViewState.SliceSettingsTabKey)
 					{
 						UiThread.RunOnIdle(() =>
 						{
@@ -279,22 +296,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						});
 					}
 				}
-
-				tabIndex++;
 			}
 
 			if (this.ControlIsPinned)
 			{
 				tabControl.TabBar.Padding = new BorderDouble(right: theme.ToolbarPadding.Right);
-
-				if (printer.ViewState.SliceSettingsTabIndex < tabControl.TabCount)
-				{
-					tabControl.SelectedTabIndex = printer.ViewState.SliceSettingsTabIndex;
-				}
-				else
-				{
-					tabControl.SelectedTabIndex = 0;
-				}
+				tabControl.SelectedTabKey = printer.ViewState.SliceSettingsTabKey;
 			}
 		}
 

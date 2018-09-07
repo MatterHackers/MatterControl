@@ -287,6 +287,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				new NamedBoolAction()
 				{
+					Title = "Show Controls".Localize(),
+					Action = () => { },
+					GetIsActive = () => printer.ViewState.ControlsVisible,
+					SetIsActive = (value) => printer.ViewState.ControlsVisible = value
+				},
+				new NamedBoolAction()
+				{
+					Title = "Show Terminal".Localize(),
+					Action = () => { },
+					GetIsActive = () => printer.ViewState.TerminalVisible,
+					SetIsActive = (value) => printer.ViewState.TerminalVisible = value
+				},
+				new NamedBoolAction()
+				{
 					Title = "Configure Printer".Localize(),
 					Action = () => { },
 					GetIsActive = () => printer.ViewState.ConfigurePrinterVisible,

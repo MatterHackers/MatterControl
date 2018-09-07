@@ -42,6 +42,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public interface ITab
 	{
 		GuiWidget TabContent { get; }
+		string Key { get; }
 		string Text { get; }
 	}
 
@@ -113,6 +114,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Push focus to tab content on tab pill selection
 			tab.TabContent.Focus();
+		}
+
+		public string SelectedTabKey
+		{
+			get => this.ActiveTab.Key;
+			set
+			{
+				var foundTab = _allTabs[0];
+				foreach (var tab in _allTabs)
+				{
+					if (tab.Key == value)
+					{
+						foundTab = tab;
+					}
+				}
+
+				this.ActiveTab = foundTab;
+			}
 		}
 
 		public int SelectedTabIndex
@@ -308,8 +327,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public GuiWidget TabContent { get; protected set; }
 
-		public SimpleTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null, bool hasClose = true, double pointSize = 12, ImageBuffer iconImage = null)
+		public string Key { get; }
+
+		public SimpleTab(string tabKey, string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null, bool hasClose = true, double pointSize = 12, ImageBuffer iconImage = null)
 		{
+			this.Key = tabKey;
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit | VAnchor.Bottom;
 			this.Padding = 0;
@@ -448,8 +470,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			set => base.BorderColor = value;
 		}
 
-		public ToolTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null, bool hasClose = true, int pointSize = -1)
-			: base(tabLabel, parentTabControl, tabContent, theme, tabImageUrl, hasClose, pointSize: (pointSize == -1) ? theme.FontSize10 : pointSize)
+		public ToolTab(string tabKey, string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null, bool hasClose = true, int pointSize = -1)
+			: base(tabKey, tabLabel, parentTabControl, tabContent, theme, tabImageUrl, hasClose, pointSize: (pointSize == -1) ? theme.FontSize10 : pointSize)
 		{
 			this.Border = new BorderDouble(top: 1);
 			this.InactiveTabColor = Color.Transparent;
@@ -474,13 +496,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public class ChromeTab : SimpleTab
 	{
-		public ChromeTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null, bool hasClose = true)
-			: base(tabLabel, parentTabControl, tabContent, theme, tabImageUrl, hasClose)
+		public ChromeTab(string tabKey, string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null, bool hasClose = true)
+			: base(tabKey, tabLabel, parentTabControl, tabContent, theme, tabImageUrl, hasClose)
 		{
 		}
 
-		public ChromeTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, ImageBuffer imageBuffer, bool hasClose = true)
-			: base(tabLabel, parentTabControl, tabContent, theme, iconImage: imageBuffer, hasClose: hasClose)
+		public ChromeTab(string tabKey, string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, ImageBuffer imageBuffer, bool hasClose = true)
+			: base(tabKey, tabLabel, parentTabControl, tabContent, theme, iconImage: imageBuffer, hasClose: hasClose)
 		{
 			this.Text = tabLabel;
 		}

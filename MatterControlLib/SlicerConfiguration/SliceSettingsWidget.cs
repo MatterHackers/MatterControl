@@ -332,6 +332,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							this.AddTab(
 								new ToolTab(
+									category.Name,
 									category.Name.Localize(),
 									this,
 									categoryPanel,

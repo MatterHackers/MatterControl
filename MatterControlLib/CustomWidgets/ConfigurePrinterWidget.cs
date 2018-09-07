@@ -33,7 +33,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
-	public class ConfigurePrinterWidget : FlowLayoutWidget
+	public class ConfigurePrinterWidget : FlowLayoutWidget, ICloseableTab
 	{
 		public ConfigurePrinterWidget(SettingsContext settingsContext, PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)

@@ -18,6 +18,8 @@ namespace MatterHackers.MatterControl
 		public const string ColorPanelExpanded = nameof(ColorPanelExpanded);
 		public const string ConfigurePrinter_CurrentTab = nameof(ConfigurePrinter_CurrentTab);
 		public const string ConfigurePrinterTabVisible = nameof(ConfigurePrinterTabVisible);
+		public const string ControlsTabVisible = nameof(ControlsTabVisible);
+		public const string TerminalTabVisible = nameof(TerminalTabVisible);
 		public const string CredentialsInvalid = nameof(CredentialsInvalid);
 		public const string CredentialsInvalidReason = nameof(CredentialsInvalidReason);
 		public const string defaultRenderSetting = nameof(defaultRenderSetting);

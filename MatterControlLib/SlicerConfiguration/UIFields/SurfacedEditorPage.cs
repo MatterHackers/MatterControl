@@ -119,13 +119,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				BackgroundColor = Color.Red
 			};
 
-			var editTab = new ToolTab("Edit".Localize(), tabControl, editContainer, theme, hasClose: false)
+			var editTab = new ToolTab("Edit", "Edit".Localize(), tabControl, editContainer, theme, hasClose: false)
 			{
 				Name = "Edit Tab"
 			};
 			tabControl.AddTab(editTab);
 
-			var previewTab = new ToolTab("Preview".Localize(), tabControl, dummyWidget, theme, hasClose: false)
+			var previewTab = new ToolTab("Preview", "Preview".Localize(), tabControl, dummyWidget, theme, hasClose: false)
 			{
 				Name = "Preview Tab"
 			};

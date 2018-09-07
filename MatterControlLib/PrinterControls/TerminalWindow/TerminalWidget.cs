@@ -38,7 +38,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
-	public class TerminalWidget : FlowLayoutWidget
+	public class TerminalWidget : FlowLayoutWidget, ICloseableTab
 	{
 		private CheckBox filterOutput;
 		private CheckBox autoUppercase;

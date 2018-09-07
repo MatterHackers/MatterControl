@@ -716,7 +716,9 @@ namespace MatterHackers.MatterControl
 	{
 		public event EventHandler<ViewModeChangedEventArgs> ViewModeChanged;
 
-		public event EventHandler ConfigurePrinterChanged;
+		public event EventHandler ConfigurePrinterVisibleChanged;
+		public event EventHandler ControlsVisibleChanged;
+		public event EventHandler TerminalVisibleChanged;
 
 		public bool SliceSettingsTabPinned
 		{
@@ -727,16 +729,15 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public int SliceSettingsTabIndex
+		public string SliceSettingsTabKey
 		{
 			get
 			{
-				int.TryParse(UserSettings.Instance.get(UserSettingsKey.SliceSettingsTabIndex), out int tabIndex);
-				return tabIndex;
+				return UserSettings.Instance.get(UserSettingsKey.SliceSettingsTabIndex);
 			}
 			set
 			{
-				UserSettings.Instance.set(UserSettingsKey.SliceSettingsTabIndex, value.ToString());
+				UserSettings.Instance.set(UserSettingsKey.SliceSettingsTabIndex, value);
 			}
 		}
 
@@ -779,6 +780,8 @@ namespace MatterHackers.MatterControl
 		}
 
 		public bool _configurePrinterVisible = UserSettings.Instance.get(UserSettingsKey.ConfigurePrinterTabVisible) == "true";
+		public bool _controlsVisible = UserSettings.Instance.get(UserSettingsKey.ControlsTabVisible) == "true";
+		public bool _terminalVisible = UserSettings.Instance.get(UserSettingsKey.TerminalTabVisible) == "true";
 
 		public bool ConfigurePrinterVisible
 		{
@@ -789,14 +792,56 @@ namespace MatterHackers.MatterControl
 				{
 					if (value)
 					{
-						this.SliceSettingsTabIndex = 3;
+						this.SliceSettingsTabKey = "Printer";
 					}
 
 					_configurePrinterVisible = value;
 
 					UserSettings.Instance.set(UserSettingsKey.ConfigurePrinterTabVisible, _configurePrinterVisible ? "true" : "false");
 
-					ConfigurePrinterChanged?.Invoke(this, null);
+					ConfigurePrinterVisibleChanged?.Invoke(this, null);
+				}
+			}
+		}
+
+		public bool ControlsVisible
+		{
+			get => _controlsVisible;
+			set
+			{
+				if (_controlsVisible != value)
+				{
+					if (value)
+					{
+						this.SliceSettingsTabKey = "Controls";
+					}
+
+					_controlsVisible = value;
+
+					UserSettings.Instance.set(UserSettingsKey.ControlsTabVisible, _controlsVisible ? "true" : "false");
+
+					ControlsVisibleChanged?.Invoke(this, null);
+				}
+			}
+		}
+
+		public bool TerminalVisible
+		{
+			get => _terminalVisible;
+			set
+			{
+				if (_terminalVisible != value)
+				{
+					if (value)
+					{
+						this.SliceSettingsTabKey = "Terminal";
+					}
+
+					_terminalVisible = value;
+
+					UserSettings.Instance.set(UserSettingsKey.TerminalTabVisible, _terminalVisible ? "true" : "false");
+
+					TerminalVisibleChanged?.Invoke(this, null);
 				}
 			}
 		}

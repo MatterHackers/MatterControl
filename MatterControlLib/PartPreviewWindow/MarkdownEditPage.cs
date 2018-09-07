@@ -85,13 +85,13 @@ namespace MatterHackers.MatterControl
 				Padding = 0,
 			};
 
-			var previewTab = new ToolTab("Preview".Localize(), tabControl, markdownWidget, theme, hasClose: false)
+			var previewTab = new ToolTab("Preview", "Preview".Localize(), tabControl, markdownWidget, theme, hasClose: false)
 			{
 				Name = "Preview Tab"
 			};
 			tabControl.AddTab(previewTab);
 
-			var editTab = new ToolTab("Edit".Localize(), tabControl, editContainer, theme, hasClose: false)
+			var editTab = new ToolTab("Edit", "Edit".Localize(), tabControl, editContainer, theme, hasClose: false)
 			{
 				Name = "Edit Tab"
 			};

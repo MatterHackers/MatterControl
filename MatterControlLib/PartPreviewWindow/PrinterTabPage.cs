@@ -207,7 +207,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.SetViewMode(printer.ViewState.ViewMode);
 
-			printer.ViewState.ConfigurePrinterChanged += ConfigurePrinter_Changed;
+			printer.ViewState.ConfigurePrinterVisibleChanged += ProcessOptionalTabs;
+			printer.ViewState.ControlsVisibleChanged += ProcessOptionalTabs;
+			printer.ViewState.TerminalVisibleChanged += ProcessOptionalTabs;
 
 			printer.Bed.RendererOptions.PropertyChanged += RendererOptions_PropertyChanged;
 
@@ -231,9 +233,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.SetViewMode(e.ViewMode);
 		}
 
-		private void ConfigurePrinter_Changed(object sender, EventArgs e)
+		private void ProcessOptionalTabs(object sender, EventArgs e)
 		{
-			this.ProcessOptionalTab();
+			this.ProcessOptionalTabs();
 		}
 
 		private void SetViewMode(PartViewMode viewMode)
@@ -384,7 +386,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			unregisterEvents?.Invoke(null, null);
 
 			sceneContext.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
-			printer.ViewState.ConfigurePrinterChanged -= ConfigurePrinter_Changed;
+			printer.ViewState.ConfigurePrinterVisibleChanged -= ProcessOptionalTabs;
+			printer.ViewState.ControlsVisibleChanged -= ProcessOptionalTabs;
+			printer.ViewState.TerminalVisibleChanged -= ProcessOptionalTabs;
 			printer.ViewState.ViewModeChanged -= ViewState_ViewModeChanged;
 			printer.Bed.RendererOptions.PropertyChanged -= RendererOptions_PropertyChanged;
 
@@ -405,6 +409,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			parent.AddChild(sideBar);
 
 			sideBar.AddPage(
+				"Slice Settings",
 				"Slice Settings".Localize(),
 				sliceSettingsWidget = new SliceSettingsWidget(
 					printer,
@@ -414,33 +419,46 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						NamedSettingsLayers.All),
 					theme));
 
-			sideBar.AddPage("Controls".Localize(), new ManualPrinterControls(printer, theme));
-
-			sideBar.AddPage("Terminal".Localize(), new TerminalWidget(printer, theme)
-			{
-				VAnchor = VAnchor.Stretch,
-				HAnchor = HAnchor.Stretch
-			});
-
-			this.ProcessOptionalTab();
+			this.ProcessOptionalTabs();
 		}
 
-		private void ProcessOptionalTab()
+		private void ProcessOptionalTabs()
 		{
+			sideBar.RemovePage("Controls", false);
+			sideBar.RemovePage("Terminal", false);
+			sideBar.RemovePage("Printer", false);
+
+			if (printer.ViewState.ControlsVisible)
+			{
+				sideBar.AddPage("Controls", "Controls".Localize(), new ManualPrinterControls(printer, theme), false);
+			}
+
+			if (printer.ViewState.TerminalVisible)
+			{
+				sideBar.AddPage("Terminal", 
+					"Terminal".Localize(), 
+					new TerminalWidget(printer, theme)
+					{
+						VAnchor = VAnchor.Stretch,
+						HAnchor = HAnchor.Stretch
+					}, 
+					false);
+			}
+
 			if (printer.ViewState.ConfigurePrinterVisible)
 			{
 				sideBar.AddPage(
+					"Printer", 
 					"Printer".Localize(),
 					new ConfigurePrinterWidget(sliceSettingsWidget.settingsContext, printer, theme)
 					{
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Stretch,
-					});
+					},
+					false);
 			}
-			else
-			{
-				sideBar.RemovePage("Printer");
-			}
+
+			sideBar.Rebuild();
 		}
 
 		public static GuiWidget PrintProgressWidget(PrinterConfig printer, ThemeConfig theme)
