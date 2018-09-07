@@ -24,7 +24,7 @@ namespace MatterControl.Tests
 		public void MatterControlAssemblyIsOptimized()
 		{
 #if (!DEBUG)
-            IsAssemblyOptimized(Assembly.Load("MatterControl, Culture=neutral, PublicKeyToken=null"));
+            IsAssemblyOptimized(Assembly.Load("MatterControlLib, Culture=neutral, PublicKeyToken=null"));
 #endif
 		}
 
@@ -108,7 +108,7 @@ namespace MatterControl.Tests
 		public void MatterControlDependenciesAreOptimized()
 		{
 #if (!DEBUG)
-			var matterControl = Assembly.Load("MatterControl, Culture=neutral, PublicKeyToken=null");
+			var matterControl = Assembly.Load("MatterControlLib, Culture=neutral, PublicKeyToken=null");
 
 			// Loop over all referenced assemblies to verify they are optimized and lack (symbols and Debug compile flag)
 			foreach (var assemblyName in matterControl.GetReferencedAssemblies())
@@ -145,7 +145,7 @@ namespace MatterControl.Tests
 
 			var debuggable = matchedAttributes.First() as DebuggableAttribute;
 			Assert.IsFalse(debuggable.IsJITOptimizerDisabled, "Referenced assembly is not optimized: " + assemblyName.Name);
-			Assert.IsFalse(debuggable.IsJITTrackingEnabled, "Referenced assembly is has symbols: " + assemblyName.Name);
+			Assert.IsFalse(debuggable.IsJITTrackingEnabled, "Referenced assembly has symbols: " + assemblyName.Name);
 			Console.WriteLine("Assembly is optimized: " + assemblyName.Name);
 		}
 	}
