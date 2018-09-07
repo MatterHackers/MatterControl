@@ -227,7 +227,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			public event EventHandler CheckedStateChanged;
 		}
 
-		public MenuItem CreateBoolMenuItem(string name, Func<bool> getter, Action<bool> setter, bool useRadioStyle = false, IList<GuiWidget> SiblingRadioButtonList = null)
+		public MenuItem CreateBoolMenuItem(string name, Func<bool> getter, Action<bool> setter, bool useRadioStyle = false, IList<GuiWidget> siblingRadioButtonList = null)
 		{
 			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 			{
@@ -244,7 +244,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Name = name + " Menu Item",
 					Checked = isChecked,
-					SiblingRadioButtonList = SiblingRadioButtonList
+					SiblingRadioButtonList = siblingRadioButtonList
 				};
 			}
 			else
