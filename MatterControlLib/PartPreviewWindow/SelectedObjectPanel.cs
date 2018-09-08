@@ -183,6 +183,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					itemMaterialButton.Color = MaterialRendering.Color(selectedItem.MaterialIndex, theme.MinimalHighlight);
 				}
 
+				itemColorButton.Enabled = selectedItem != null;
+				itemMaterialButton.Enabled = selectedItem != null;
 				applyButton.Enabled = selectedItem?.CanApply == true;
 				removeButton.Enabled = selectedItem != null;
 				overflowButton.Enabled = selectedItem != null;
