@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ThemeConfig theme;
 		private BedConfig sceneContext;
 		private View3DWidget view3DWidget;
-		private ResizableSectionWidget editorSectionWidget;
+		private SectionWidget editorSectionWidget;
 
 		private GuiWidget editorPanel;
 
@@ -179,18 +179,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			scrollableWidget.ScrollArea.HAnchor = HAnchor.Stretch;
 			scrollableWidget.Padding = new BorderDouble(right: theme.DefaultContainerPadding * .8);
 
-			editorSectionWidget = new ResizableSectionWidget("Editor", sceneContext.ViewState.SelectedObjectEditorHeight, scrollableWidget, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, rightAlignedContent: toolbar, defaultExpansion: true)
+			editorSectionWidget = new SectionWidget("Editor", scrollableWidget, theme, toolbar, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true)
 			{
 				VAnchor = VAnchor.Fit,
+				//DebugShowBounds = true
 			};
-			editorSectionWidget.Resized += (s, e) =>
-			{
-				sceneContext.ViewState.SelectedObjectEditorHeight = editorSectionWidget.ResizeContainer.Height;
-			};
-
-			int topBottom = theme.DefaultContainerPadding / 2;
-			editorSectionWidget.ResizeContainer.Padding = new BorderDouble(left: theme.DefaultContainerPadding, top: topBottom, bottom: topBottom + editorSectionWidget.ResizeContainer.SplitterHeight);
-
 			this.ContentPanel.AddChild(editorSectionWidget);
 
 			// Enforce panel padding in sidebar
