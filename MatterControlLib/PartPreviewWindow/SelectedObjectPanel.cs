@@ -215,7 +215,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var selectedItem = scene.SelectedItem;
 				if (selectedItem != null)
 				{
-					itemColorButton.Color = scene.SelectedItem.Color;
+					itemColorButton.Color = (scene.SelectedItem.Color == Color.Transparent) ? theme.MinimalHighlight : scene.SelectedItem.Color;
 					itemMaterialButton.Color = MaterialRendering.Color(scene.SelectedItem.MaterialIndex, theme.MinimalHighlight);
 				}
 

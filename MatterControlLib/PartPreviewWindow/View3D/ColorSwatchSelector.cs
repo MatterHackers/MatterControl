@@ -80,6 +80,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						resetButton.Click += (s, e) =>
 						{
 							scene.UndoBuffer.AddAndDo(new ChangeColor(scene.SelectedItem, Color.Transparent));
+
+							// The colorChanged action displays the given color - use .MinimalHighlight rather than no color
+							colorChanged(theme.MinimalHighlight);
 						};
 						colorRow.AddChild(resetButton);
 						break;
