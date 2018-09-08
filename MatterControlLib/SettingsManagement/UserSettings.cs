@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using Newtonsoft.Json;
@@ -93,7 +94,7 @@ namespace MatterHackers.MatterControl
 			this.Language = this.get("Language");
 		}
 
-		public event EventHandler Changed;
+		public event EventHandler<StringEventArgs> SettingChanged;
 
 		public static UserSettings Instance
 		{
@@ -173,7 +174,7 @@ namespace MatterHackers.MatterControl
 			setting.Value = value;
 			setting.Commit();
 
-			Changed?.Invoke(this, null);
+			SettingChanged?.Invoke(this, new StringEventArgs(key));
 		}
 
 		public double LibraryViewWidth

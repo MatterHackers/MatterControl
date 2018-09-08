@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,60 +27,62 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class ChangeColor : IUndoRedoCommand
+	public class ItemColorButton : PopupButton
 	{
-		List<PrintOutputTypes> itemsPrintOutputType = new List<PrintOutputTypes>();
-		List<Color> itemsColor = new List<Color>();
-		List<IObject3D> itemsToChange = new List<IObject3D>();
-		Color color;
+		private ColorButton colorButton;
 
-		public ChangeColor(IObject3D selectedItem, Color color)
+		public ItemColorButton(InteractiveScene scene, ThemeConfig theme)
 		{
-			this.color = color;
-			if (selectedItem is SelectionGroupObject3D)
+			this.ToolTipText = "Color".Localize();
+
+			this.DynamicPopupContent = () =>
 			{
-				SetData(selectedItem.Children.ToList());
-			}
-			else
+				return new ColorSwatchSelector(scene, theme, buttonSize: 16, buttonSpacing: new BorderDouble(1, 1, 0, 0), colorNotifier: (newColor) => colorButton.BackgroundColor = newColor)
+				{
+					Padding = theme.DefaultContainerPadding,
+					BackgroundColor = this.HoverColor
+				};
+			};
+
+			var scaledButtonSize = 14 * GuiWidget.DeviceScale;
+
+			colorButton = new ColorButton(scene.SelectedItem?.Color ?? theme.SlightShade)
 			{
-				SetData(new List<IObject3D> { selectedItem });
-			}
+				Width = scaledButtonSize,
+				Height = scaledButtonSize,
+				HAnchor = HAnchor.Center,
+				VAnchor = VAnchor.Center
+			};
+
+			this.AddChild(colorButton);
 		}
 
-		void SetData(List<IObject3D> itemsToChange)
+		public override void OnLoad(EventArgs args)
 		{
-			foreach (var item in itemsToChange)
+			var firstBackgroundColor = this.Parents<GuiWidget>().Where(p => p.BackgroundColor.Alpha0To1 == 1).FirstOrDefault()?.BackgroundColor;
+			if (firstBackgroundColor != null)
 			{
-				this.itemsToChange.Add(item);
-				this.itemsColor.Add(item.Color);
-				this.itemsPrintOutputType.Add(item.OutputType);
+				// Resolve alpha
+				this.HoverColor = new BlenderRGBA().Blend(firstBackgroundColor.Value, this.HoverColor);
 			}
+
+			base.OnLoad(args);
 		}
 
-		void IUndoRedoCommand.Do()
+		public Color Color
 		{
-			foreach(var item in this.itemsToChange)
-			{
-				item.OutputType = PrintOutputTypes.Solid;
-				item.Color = color;
-			}
-		}
-
-		void IUndoRedoCommand.Undo()
-		{
-			for(int i=0; i< this.itemsToChange.Count; i++)
-			{
-				itemsToChange[i].OutputType = itemsPrintOutputType[i];
-				itemsToChange[i].Color = itemsColor[i];
-			}
+			get => colorButton.BackgroundColor;
+			set => colorButton.BackgroundColor = value;
 		}
 	}
 }
