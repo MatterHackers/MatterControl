@@ -26,6 +26,7 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -36,7 +37,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class ColorSwatchSelector : FlowLayoutWidget
 	{
-		public ColorSwatchSelector(InteractiveScene scene, ThemeConfig theme, BorderDouble buttonSpacing, int buttonSize = 32)
+		public ColorSwatchSelector(InteractiveScene scene, ThemeConfig theme, BorderDouble buttonSpacing, int buttonSize = 32, Action<Color> colorNotifier = null)
 			: base(FlowDirection.TopToBottom)
 		{
 			var scaledButtonSize = buttonSize * GuiWidget.DeviceScale;
@@ -44,6 +45,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			int colorCount = 9;
 
 			double[] lightness = new double[] { .7, .5, .3 };
+
+			Action<Color> colorChanged = (color) =>
+			{
+				colorNotifier?.Invoke(color);
+			};
 
 			var grayLevel = new Color[] { Color.White, new Color(180, 180, 180), Color.Gray };
 
@@ -55,11 +61,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (int colorIndex = 0; colorIndex < colorCount; colorIndex++)
 				{
 					var color = ColorF.FromHSL(colorIndex / (double)colorCount, 1, lightness[rowIndex]).ToColor();
-					colorRow.AddChild(MakeColorButton(scene, color, scaledButtonSize, buttonSpacing));
+					colorRow.AddChild(MakeColorButton(scene, color, scaledButtonSize, buttonSpacing, colorChanged));
 				}
 
 				// put in white and black buttons
-				colorRow.AddChild(MakeColorButton(scene, grayLevel[rowIndex], scaledButtonSize, buttonSpacing));
+				colorRow.AddChild(MakeColorButton(scene, grayLevel[rowIndex], scaledButtonSize, buttonSpacing, colorChanged));
 
 				switch(rowIndex)
 				{
@@ -79,17 +85,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						break;
 
 					case 1:
-						colorRow.AddChild(MakeColorButton(scene, new Color("#555"), scaledButtonSize, buttonSpacing));
+						colorRow.AddChild(MakeColorButton(scene, new Color("#555"), scaledButtonSize, buttonSpacing, colorChanged));
 						break;
 
 					case 2:
-						colorRow.AddChild(MakeColorButton(scene, new Color("#222"), scaledButtonSize, buttonSpacing));
+						colorRow.AddChild(MakeColorButton(scene, new Color("#222"), scaledButtonSize, buttonSpacing, colorChanged));
 						break;
 				}
 			}
 		}
 
-		private GuiWidget MakeColorButton(InteractiveScene scene, Color color, double buttonSize, BorderDouble buttonSpacing)
+		private GuiWidget MakeColorButton(InteractiveScene scene, Color color, double buttonSize, BorderDouble buttonSpacing, Action<Color> colorChanged)
 		{
 			var button = new ColorButton(color)
 			{
@@ -103,6 +109,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UiThread.RunOnIdle(() =>
 				{
 					scene.UndoBuffer.AddAndDo(new ChangeColor(scene.SelectedItem, button.BackgroundColor));
+					colorChanged(button.BackgroundColor);
 				});
 			};
 
