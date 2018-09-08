@@ -165,16 +165,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			modelViewSidePanel.Resized += ModelViewSidePanel_Resized;
 
+			var viewOptionButtons = ApplicationController.Instance.GetViewOptionButtons(sceneContext, printer, theme);
+			viewOptionButtons.AddChild(new ViewStyleButton(sceneContext, theme));
+
 			modelViewSidePanel.AddChild(
 				new SectionWidget(
 					"Options".Localize(),
-					new ModelOptionsPanel(sceneContext, theme)
-					{
-						Margin = 0,
-						Padding = new BorderDouble(2, 2, 2, 0),
-					},
+					new GuiWidget(),
 					theme,
-					ApplicationController.Instance.GetViewOptionButtons(sceneContext, printer, theme))
+					viewOptionButtons,
+					expandingContent: false)
 				{
 					HAnchor = HAnchor.Stretch,
 					VAnchor = VAnchor.Fit,

@@ -227,29 +227,52 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			public event EventHandler CheckedStateChanged;
 		}
 
-		public MenuItem CreateBoolMenuItem(string name, Func<bool> getter, Action<bool> setter, bool useRadioStyle = false, IList<GuiWidget> SiblingRadioButtonList = null)
+		public MenuItem CreateBoolMenuItem(string name, Func<bool> getter, Action<bool> setter, bool useRadioStyle = false, IList<GuiWidget> siblingRadioButtonList = null)
 		{
 			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 			{
 				Padding = MenuPadding,
 			};
 
+			return this.CreateBoolMenuItem(textWidget, name, getter, setter, useRadioStyle, siblingRadioButtonList);
+		}
+
+		public MenuItem CreateBoolMenuItem(string name, ImageBuffer icon, Func<bool> getter, Action<bool> setter, bool useRadioStyle = false, IList<GuiWidget> siblingRadioButtonList = null)
+		{
+			var row = new FlowLayoutWidget()
+			{
+				Selectable = false
+			};
+			row.AddChild(new IconButton(icon, theme));
+
+			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			{
+				Padding = MenuPadding,
+				VAnchor = VAnchor.Center
+			};
+			row.AddChild(textWidget);
+
+			return this.CreateBoolMenuItem(row, name, getter, setter, useRadioStyle, siblingRadioButtonList);
+		}
+
+		public MenuItem CreateBoolMenuItem(GuiWidget guiWidget, string name, Func<bool> getter, Action<bool> setter, bool useRadioStyle = false, IList<GuiWidget> siblingRadioButtonList = null)
+		{
 			bool isChecked = (getter?.Invoke() == true);
 
 			MenuItem menuItem;
 
 			if (useRadioStyle)
 			{
-				menuItem = new RadioMenuItem(textWidget, theme)
+				menuItem = new RadioMenuItem(guiWidget, theme)
 				{
 					Name = name + " Menu Item",
 					Checked = isChecked,
-					SiblingRadioButtonList = SiblingRadioButtonList
+					SiblingRadioButtonList = siblingRadioButtonList
 				};
 			}
 			else
 			{
-				menuItem = new CheckboxMenuItem(textWidget, theme)
+				menuItem = new CheckboxMenuItem(guiWidget, theme)
 				{
 					Name = name + " Menu Item",
 					Checked = isChecked
@@ -312,6 +335,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.HoverColor = theme.Colors.PrimaryAccentColor;
 
 				content.VAnchor = VAnchor.Center;
+				content.HAnchor = HAnchor.Left;
+
 				this.AddChild(content);
 			}
 

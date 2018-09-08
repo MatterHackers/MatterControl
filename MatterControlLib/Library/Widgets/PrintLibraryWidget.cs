@@ -124,21 +124,21 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					() => libraryView.ActiveSort == ListView.SortKey.CreatedDate,
 					(v) => libraryView.ActiveSort = ListView.SortKey.CreatedDate,
 					useRadioStyle: true,
-					SiblingRadioButtonList: siblingList);
+					siblingRadioButtonList: siblingList);
 
 				popupMenu.CreateBoolMenuItem(
 					"Date Modified".Localize(),
 					() => libraryView.ActiveSort == ListView.SortKey.ModifiedDate,
 					(v) => libraryView.ActiveSort = ListView.SortKey.ModifiedDate,
 					useRadioStyle: true,
-					SiblingRadioButtonList: siblingList);
+					siblingRadioButtonList: siblingList);
 
 				popupMenu.CreateBoolMenuItem(
 					"Name".Localize(),
 					() => libraryView.ActiveSort == ListView.SortKey.Name,
 					(v) => libraryView.ActiveSort = ListView.SortKey.Name,
 					useRadioStyle: true,
-					SiblingRadioButtonList: siblingList);
+					siblingRadioButtonList: siblingList);
 
 				popupMenu.CreateHorizontalLine();
 
@@ -149,14 +149,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					() => libraryView.Ascending,
 					(v) => libraryView.Ascending = true,
 					useRadioStyle: true,
-					SiblingRadioButtonList: siblingList);
+					siblingRadioButtonList: siblingList);
 
 				popupMenu.CreateBoolMenuItem(
 					"Descending".Localize(),
 					() => !libraryView.Ascending,
 					(v) => libraryView.Ascending = false,
 					useRadioStyle: true,
-					SiblingRadioButtonList: siblingList);
+					siblingRadioButtonList: siblingList);
 			};
 
 			allControls.AddChild(toolbar);
@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						listView.Reload().ConfigureAwait(false);
 					},
 					useRadioStyle: true,
-					SiblingRadioButtonList: siblingList);
+					siblingRadioButtonList: siblingList);
 #if DEBUG
 				popupMenu.CreateBoolMenuItem(
 					"View XSmall Icons".Localize(),
@@ -220,8 +220,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						listView.Reload().ConfigureAwait(false);
 					},
 					useRadioStyle: true,
-					SiblingRadioButtonList: siblingList);
-
+					siblingRadioButtonList: siblingList);
 
 				popupMenu.CreateBoolMenuItem(
 					"View Small Icons".Localize(),
@@ -233,7 +232,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						listView.Reload().ConfigureAwait(false);
 					},
 					useRadioStyle: true,
-					SiblingRadioButtonList: siblingList);
+					siblingRadioButtonList: siblingList);
 #endif
 				popupMenu.CreateBoolMenuItem(
 					"View Icons".Localize(),
@@ -245,7 +244,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						listView.Reload().ConfigureAwait(false);
 					},
 					useRadioStyle: true,
-					SiblingRadioButtonList: siblingList);
+					siblingRadioButtonList: siblingList);
 
 				popupMenu.CreateBoolMenuItem(
 					"View Large Icons".Localize(),
@@ -257,7 +256,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						listView.Reload().ConfigureAwait(false);
 					},
 					useRadioStyle: true,
-					SiblingRadioButtonList: siblingList);
+					siblingRadioButtonList: siblingList);
 
 				return popupMenu;
 			};
@@ -349,7 +348,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				searchContainer = null;
 			});
 		}
-
 
 		private void SelectedItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
@@ -503,7 +501,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			menuActions.Add(new PrintItemAction()
 			{
-
 				Title = "Print".Localize(),
 				Action = (selectedLibraryItems, listView) =>
 				{
@@ -540,7 +537,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							}
 							break;
 					}
-
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
@@ -590,7 +586,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
 				}
 			});
-
 
 #if !__ANDROID__ && DEBUG
 			// edit menu item
