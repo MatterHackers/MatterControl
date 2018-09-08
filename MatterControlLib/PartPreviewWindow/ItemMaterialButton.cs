@@ -37,35 +37,39 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class ItemColorButton : PopupButton
+	public class ItemMaterialButton : PopupButton
 	{
-		private ColorButton colorButton;
+		private ColorButton materialColorButton;
 
-		public ItemColorButton(InteractiveScene scene, ThemeConfig theme)
+		public ItemMaterialButton(InteractiveScene scene, ThemeConfig theme)
 		{
-			this.ToolTipText = "Color".Localize();
+			this.ToolTipText = "Material".Localize();
+			var scaledButtonSize = 14 * GuiWidget.DeviceScale;
 
 			this.DynamicPopupContent = () =>
 			{
-				return new ColorSwatchSelector(scene, theme, buttonSize: 16, buttonSpacing: new BorderDouble(1, 1, 0, 0), colorNotifier: (newColor) => colorButton.BackgroundColor = newColor)
+				//return new ColorSwatchSelector(scene, theme, buttonSize: 16, buttonSpacing: new BorderDouble(1, 1, 0, 0), colorNotifier: (newColor) => colorButton.BackgroundColor = newColor)
+
+				return new MaterialControls(scene, theme, colorNotifier: (newColor) => materialColorButton.BackgroundColor = newColor)
 				{
 					Padding = theme.DefaultContainerPadding,
-					BackgroundColor = this.HoverColor
+					BackgroundColor = this.HoverColor,
+					HAnchor = HAnchor.Fit,
+					VAnchor = VAnchor.Fit
 				};
 			};
 
-			var scaledButtonSize = 14 * GuiWidget.DeviceScale;
-
-			colorButton = new ColorButton(scene.SelectedItem?.Color ?? theme.SlightShade)
+			materialColorButton = new ColorButton(scene.SelectedItem?.Color ?? theme.SlightShade)
 			{
 				Width = scaledButtonSize,
 				Height = scaledButtonSize,
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Center,
+				DrawGrid = true,
 				DisabledColor = theme.MinimalShade
 			};
 
-			this.AddChild(colorButton);
+			this.AddChild(materialColorButton);
 		}
 
 		public override void OnLoad(EventArgs args)
@@ -82,8 +86,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public Color Color
 		{
-			get => colorButton.BackgroundColor;
-			set => colorButton.BackgroundColor = value;
+			get => materialColorButton.BackgroundColor;
+			set => materialColorButton.BackgroundColor = value;
 		}
 	}
 }

@@ -42,6 +42,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using static JsonPath.JsonPathContext.ReflectionValueSystem;
 
@@ -54,7 +55,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ThemeConfig theme;
 		private BedConfig sceneContext;
 		private View3DWidget view3DWidget;
-		private ResizableSectionWidget editorSectionWidget;
+		private SectionWidget editorSectionWidget;
 
 		private GuiWidget editorPanel;
 
@@ -67,24 +68,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.view3DWidget = view3DWidget;
 			this.theme = theme;
 			this.sceneContext = sceneContext;
-
-			this.ContentPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-			};
-
-			var scrollable = new ScrollableWidget(true)
-			{
-				Name = "editorPanel",
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch,
-			};
-
-			scrollable.AddChild(this.ContentPanel);
-			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
-
-			this.AddChild(scrollable);
 
 			var toolbar = new LeftClipFlowLayoutWidget()
 			{
@@ -102,6 +85,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Height = 30,
 			};
 			toolbar.AddChild(itemColorButton);
+
+			var itemMaterialButton = new ItemMaterialButton(scene, theme)
+			{
+				Width = 30,
+				Height = 30,
+			};
+			toolbar.AddChild(itemMaterialButton);
 
 			// put in a make permanent button
 			var icon = AggContext.StaticData.LoadIcon("noun_766157.png", 16, 16, theme.InvertIcons).SetPreMultiply();
@@ -169,48 +159,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			scrollableWidget.AddChild(editorPanel);
 			scrollableWidget.ScrollArea.HAnchor = HAnchor.Stretch;
-			scrollableWidget.Padding = new BorderDouble(right: theme.DefaultContainerPadding * .8);
 
-			editorSectionWidget = new ResizableSectionWidget("Editor", sceneContext.ViewState.SelectedObjectEditorHeight, scrollableWidget, theme, serializationKey: UserSettingsKey.EditorPanelExpanded, rightAlignedContent: toolbar, defaultExpansion: true)
+			editorSectionWidget = new SectionWidget("Editor", scrollableWidget, theme, toolbar, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true, setContentVAnchor: false)
 			{
-				VAnchor = VAnchor.Fit,
+				VAnchor = VAnchor.Stretch,
 			};
-			editorSectionWidget.Resized += (s, e) =>
-			{
-				sceneContext.ViewState.SelectedObjectEditorHeight = editorSectionWidget.ResizeContainer.Height;
-			};
+			this.AddChild(editorSectionWidget);
 
-			int topBottom = theme.DefaultContainerPadding / 2;
-			editorSectionWidget.ResizeContainer.Padding = new BorderDouble(left: theme.DefaultContainerPadding, top: topBottom, bottom: topBottom + editorSectionWidget.ResizeContainer.SplitterHeight);
-
-			this.ContentPanel.AddChild(editorSectionWidget);
-
-			var materialsSection = new SectionWidget("Materials".Localize(), new MaterialControls(scene, theme), theme, serializationKey: UserSettingsKey.MaterialsPanelExpanded)
-			{
-				Name = "Materials Panel",
-			};
-			this.ContentPanel.AddChild(materialsSection);
-
-			// Enforce panel padding in sidebar
-			foreach(var sectionWidget in this.ContentPanel.Children<SectionWidget>())
-			{
-				// Special case for editorResizeWrapper due to ResizeContainer
-				if (sectionWidget is ResizableSectionWidget resizableSectionWidget)
-				{
-					// Apply padding to ResizeContainer not wrapper
-					//resizableSectionWidget.ResizeContainer.Padding = new BorderDouble(10, 10, 10, 0);
-				}
-				else
-				{
-					sectionWidget.ContentPanel.Padding = new BorderDouble(10, 10, 10, 0);
-					sectionWidget.ExpandableWhenDisabled = true;
-					sectionWidget.Enabled = false;
-				}
-			}
+			this.ContentPanel = editorPanel;
+			editorPanel.Padding = new BorderDouble(theme.DefaultContainerPadding, 0);
 
 			scene.SelectionChanged += (s, e) =>
 			{
-				itemColorButton.Color = scene.SelectedItem?.Color ?? theme.MinimalShade;
+				if (editorPanel.Children.FirstOrDefault()?.DescendantsAndSelf<SectionWidget>().FirstOrDefault() is SectionWidget firstSectionWidget)
+				{
+					firstSectionWidget.Margin = firstSectionWidget.Margin.Clone(top: 0);
+				}
+
+				var selectedItem = scene.SelectedItem;
+				if (selectedItem != null)
+				{
+					itemColorButton.Color = (scene.SelectedItem.Color == Color.Transparent) ? theme.MinimalHighlight : scene.SelectedItem.Color;
+					itemMaterialButton.Color = MaterialRendering.Color(scene.SelectedItem.MaterialIndex, theme.MinimalHighlight);
+				}
+
 				applyButton.Enabled = scene.SelectedItem?.CanApply == true;
 				removeButton.Enabled = scene.SelectedItem != null;
 				overflowButton.Enabled = scene.SelectedItem != null;

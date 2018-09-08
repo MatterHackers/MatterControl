@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,13 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.ObjectModel;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MeshVisualizer;
-using System;
-using System.Collections.ObjectModel;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -43,12 +43,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ThemeConfig theme;
 		private InteractiveScene scene;
 
-		public MaterialControls(InteractiveScene scene, ThemeConfig theme)
+		public MaterialControls(InteractiveScene scene, ThemeConfig theme, Action<Color> colorNotifier = null)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.theme = theme;
 			this.scene = scene;
-			this.HAnchor = HAnchor.Stretch;
+			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
 
 			materialButtons.Clear();
@@ -69,12 +69,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var scaledButtonSize = 16 * GuiWidget.DeviceScale;
 
-				buttonView.AddChild(new ColorButton(extruderIndex == -1 ? Color.Black : MaterialRendering.Color(extruderIndex))
+				buttonView.AddChild(new ColorButton(MaterialRendering.Color(extruderIndex, theme.MinimalHighlight))
 				{
 					Margin = new BorderDouble(right: 5),
 					Width = scaledButtonSize,
 					Height = scaledButtonSize,
 					VAnchor = VAnchor.Center,
+					DrawGrid = true,
+					//DoubleBuffer = true
 				});
 
 				buttonView.AddChild(new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
@@ -90,20 +92,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var radioButton = new RadioButton(radioButtonView)
 				{
-					HAnchor = HAnchor.Stretch,
+					HAnchor = HAnchor.Fit,
 					VAnchor = VAnchor.Fit,
-					TextColor = theme.Colors.PrimaryTextColor
+					TextColor = theme.Colors.PrimaryTextColor,
+					Checked = extruderIndex == scene.SelectedItem.MaterialIndex
 				};
 				materialButtons.Add(radioButton);
 				this.AddChild(radioButton);
 
-				int extruderIndexCanPassToClick = extruderIndex;
+				int localExtruderIndex = extruderIndex;
 				radioButton.Click += (sender, e) =>
 				{
 					var selectedItem = scene.SelectedItem;
 					if (selectedItem != null)
 					{
-						selectedItem.MaterialIndex = extruderIndexCanPassToClick;
+						selectedItem.MaterialIndex = localExtruderIndex;
+
+						colorNotifier?.Invoke(MaterialRendering.Color(localExtruderIndex, theme.MinimalHighlight));
+
 						scene.Invalidate(new InvalidateArgs(null, InvalidateType.Material));
 					}
 				};

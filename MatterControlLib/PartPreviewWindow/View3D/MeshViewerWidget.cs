@@ -211,9 +211,25 @@ namespace MatterHackers.MeshVisualizer
 			GL.Enable(EnableCap.Lighting);
 		}
 
+		/// <summary>
+		/// Get the color for a given extruder, falling back to extruder 0 color on -1 (unassigned)
+		/// </summary>
+		/// <param name="materialIndex">The extruder/material index to resolve</param>
+		/// <returns>The color for the given extruder</returns>
 		public static Color Color(int materialIndex)
 		{
 			return ColorF.FromHSL(Math.Max(materialIndex, 0) / 10.0, .99, .49).ToColor();
+		}
+
+		/// <summary>
+		/// Get the color for a given extruder, falling back to the supplied color on -1 (unassigned)
+		/// </summary>
+		/// <param name="materialIndex">The extruder/material index to resolve</param>
+		/// <param name="unassignedColor">The color to use when the extruder/material has not been assigned</param>
+		/// <returns>The color for the given extruder</returns>
+		public static Color Color(int materialIndex, Color unassignedColor)
+		{
+			return (materialIndex == -1) ? unassignedColor : ColorF.FromHSL(materialIndex / 10.0, .99, .49).ToColor();
 		}
 
 		public static bool InsideBuildVolume(this PrinterConfig printerConfig,  IObject3D item)
