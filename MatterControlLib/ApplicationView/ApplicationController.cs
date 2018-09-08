@@ -2265,7 +2265,8 @@ namespace MatterHackers.MatterControl
 				Margin = theme.ButtonSpacing,
 				ToggleButton = true,
 				Height = 24,
-				Width = 24
+				Width = 24,
+				SiblingRadioButtonList = new List<GuiWidget>()
 			};
 			bedButton.CheckedStateChanged += (s, e) =>
 			{
@@ -2284,7 +2285,8 @@ namespace MatterHackers.MatterControl
 				ToggleButton = true,
 				Enabled = buildHeightValid() && printer?.ViewState.ViewMode != PartViewMode.Layers2D,
 				Height = 24,
-				Width = 24
+				Width = 24,
+				SiblingRadioButtonList = new List<GuiWidget>()
 			};
 			printAreaButton.CheckedStateChanged += (s, e) =>
 			{
