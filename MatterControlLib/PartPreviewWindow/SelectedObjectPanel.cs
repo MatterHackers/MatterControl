@@ -42,6 +42,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using static JsonPath.JsonPathContext.ReflectionValueSystem;
 
@@ -102,6 +103,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Height = 30,
 			};
 			toolbar.AddChild(itemColorButton);
+
+			var itemMaterialButton = new ItemMaterialButton(scene, theme)
+			{
+				Width = 30,
+				Height = 30,
+			};
+			toolbar.AddChild(itemMaterialButton);
 
 			// put in a make permanent button
 			var icon = AggContext.StaticData.LoadIcon("noun_766157.png", 16, 16, theme.InvertIcons).SetPreMultiply();
@@ -185,12 +193,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.ContentPanel.AddChild(editorSectionWidget);
 
-			var materialsSection = new SectionWidget("Materials".Localize(), new MaterialControls(scene, theme), theme, serializationKey: UserSettingsKey.MaterialsPanelExpanded)
-			{
-				Name = "Materials Panel",
-			};
-			this.ContentPanel.AddChild(materialsSection);
-
 			// Enforce panel padding in sidebar
 			foreach(var sectionWidget in this.ContentPanel.Children<SectionWidget>())
 			{
@@ -210,7 +212,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			scene.SelectionChanged += (s, e) =>
 			{
-				itemColorButton.Color = scene.SelectedItem?.Color ?? theme.MinimalShade;
+				var selectedItem = scene.SelectedItem;
+				if (selectedItem != null)
+				{
+					itemColorButton.Color = scene.SelectedItem.Color;
+					itemMaterialButton.Color = MaterialRendering.Color(scene.SelectedItem.MaterialIndex, theme.MinimalHighlight);
+				}
+
 				applyButton.Enabled = scene.SelectedItem?.CanApply == true;
 				removeButton.Enabled = scene.SelectedItem != null;
 				overflowButton.Enabled = scene.SelectedItem != null;

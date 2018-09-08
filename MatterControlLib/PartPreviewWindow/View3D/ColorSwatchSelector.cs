@@ -119,20 +119,50 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public class ColorButton : GuiWidget
 	{
-		private Color grayScale;
-
 		public ColorButton(Color color)
 		{
 			this.BackgroundColor = color;
 
-			// Calculate and store grayscale of current color
-			grayScale = color.ToGrayscale();
+			// Default DisabledColor to the grayscale of current color
+			this.DisabledColor = color.ToGrayscale();
 		}
+
+		public bool DrawGrid { get; set; }
 
 		public override Color BackgroundColor
 		{
-			get => (this.Enabled) ? base.BackgroundColor : this.grayScale;
-			set => base.BackgroundColor = value;
+			get => (this.Enabled) ? base.BackgroundColor : this.DisabledColor;
+			set
+			{
+				base.BackgroundColor = value;
+			}
+		}
+
+		public Color DisabledColor { get; set; }
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			if (this.DrawGrid)
+			{
+				var numberOfStripes = 3;
+
+				int ix = 20;
+
+				for (var i = 0; i < numberOfStripes * 2; i++)
+				{
+					var thickness = ix / numberOfStripes;
+					
+					graphics2D.Line(
+						i * thickness + thickness / 2 - ix, 
+						0, 
+						i * thickness + thickness / 2, 
+						ix,
+						Color.Gray,
+						0.05);
+				}
+			}
+
+			base.OnDraw(graphics2D);
 		}
 	}
 
