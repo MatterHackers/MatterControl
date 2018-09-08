@@ -179,13 +179,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var selectedItem = scene.SelectedItem;
 				if (selectedItem != null)
 				{
-					itemColorButton.Color = (scene.SelectedItem.Color == Color.Transparent) ? theme.MinimalHighlight : scene.SelectedItem.Color;
-					itemMaterialButton.Color = MaterialRendering.Color(scene.SelectedItem.MaterialIndex, theme.MinimalHighlight);
+					itemColorButton.Color = (selectedItem.Color == Color.Transparent) ? theme.MinimalHighlight : selectedItem.Color;
+					itemMaterialButton.Color = MaterialRendering.Color(selectedItem.MaterialIndex, theme.MinimalHighlight);
 				}
 
-				applyButton.Enabled = scene.SelectedItem?.CanApply == true;
-				removeButton.Enabled = scene.SelectedItem != null;
-				overflowButton.Enabled = scene.SelectedItem != null;
+				applyButton.Enabled = selectedItem?.CanApply == true;
+				removeButton.Enabled = selectedItem != null;
+				overflowButton.Enabled = selectedItem != null;
 			};
 		}
 
