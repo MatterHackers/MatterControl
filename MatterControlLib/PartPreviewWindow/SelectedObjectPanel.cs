@@ -75,17 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Fit,
 			};
 
-			var scrollable = new ScrollableWidget(true)
-			{
-				Name = "editorPanel",
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch,
-			};
-
-			scrollable.AddChild(this.ContentPanel);
-			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
-
-			this.AddChild(scrollable);
+			this.AddChild(this.ContentPanel);
 
 			var toolbar = new LeftClipFlowLayoutWidget()
 			{
