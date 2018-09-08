@@ -207,9 +207,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.SetViewMode(printer.ViewState.ViewMode);
 
-			printer.ViewState.ConfigurePrinterVisibleChanged += ProcessOptionalTabs;
-			printer.ViewState.ControlsVisibleChanged += ProcessOptionalTabs;
-			printer.ViewState.TerminalVisibleChanged += ProcessOptionalTabs;
+			printer.ViewState.VisibilityChanged += ProcessOptionalTabs;
 
 			printer.Bed.RendererOptions.PropertyChanged += RendererOptions_PropertyChanged;
 
@@ -386,9 +384,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			unregisterEvents?.Invoke(null, null);
 
 			sceneContext.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
-			printer.ViewState.ConfigurePrinterVisibleChanged -= ProcessOptionalTabs;
-			printer.ViewState.ControlsVisibleChanged -= ProcessOptionalTabs;
-			printer.ViewState.TerminalVisibleChanged -= ProcessOptionalTabs;
+			printer.ViewState.VisibilityChanged -= ProcessOptionalTabs;
 			printer.ViewState.ViewModeChanged -= ViewState_ViewModeChanged;
 			printer.Bed.RendererOptions.PropertyChanged -= RendererOptions_PropertyChanged;
 

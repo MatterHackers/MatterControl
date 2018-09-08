@@ -716,9 +716,7 @@ namespace MatterHackers.MatterControl
 	{
 		public event EventHandler<ViewModeChangedEventArgs> ViewModeChanged;
 
-		public event EventHandler ConfigurePrinterVisibleChanged;
-		public event EventHandler ControlsVisibleChanged;
-		public event EventHandler TerminalVisibleChanged;
+		public event EventHandler VisibilityChanged;
 
 		public bool SliceSettingsTabPinned
 		{
@@ -799,7 +797,7 @@ namespace MatterHackers.MatterControl
 
 					UserSettings.Instance.set(UserSettingsKey.ConfigurePrinterTabVisible, _configurePrinterVisible ? "true" : "false");
 
-					ConfigurePrinterVisibleChanged?.Invoke(this, null);
+					VisibilityChanged?.Invoke(this, null);
 				}
 			}
 		}
@@ -820,7 +818,7 @@ namespace MatterHackers.MatterControl
 
 					UserSettings.Instance.set(UserSettingsKey.ControlsTabVisible, _controlsVisible ? "true" : "false");
 
-					ControlsVisibleChanged?.Invoke(this, null);
+					VisibilityChanged?.Invoke(this, null);
 				}
 			}
 		}
@@ -841,7 +839,7 @@ namespace MatterHackers.MatterControl
 
 					UserSettings.Instance.set(UserSettingsKey.TerminalTabVisible, _terminalVisible ? "true" : "false");
 
-					TerminalVisibleChanged?.Invoke(this, null);
+					VisibilityChanged?.Invoke(this, null);
 				}
 			}
 		}
