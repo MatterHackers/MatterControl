@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			// make the function inline so we don't have to create members for the buttons
-			EventHandler SetLinkButtonsVisibility = (s, e) =>
+			EventHandler<StringEventArgs> SetLinkButtonsVisibility = (s, e) =>
 			{
 				if (UserSettings.Instance.HasLookedAtWhatsNew())
 				{
@@ -134,8 +134,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			UserSettings.Instance.Changed += SetLinkButtonsVisibility;
-			Closed += (s, e) => UserSettings.Instance.Changed -= SetLinkButtonsVisibility;
+			UserSettings.Instance.SettingChanged += SetLinkButtonsVisibility;
+			this.Closed += (s, e) => UserSettings.Instance.SettingChanged -= SetLinkButtonsVisibility;
 
 			RunningInterval showUpdateInterval = null;
 			updateAvailableButton.VisibleChanged += (s, e) =>
@@ -205,7 +205,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.TabBar.ActionArea.AddChild(updateAvailableButton);
 
-			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(SetLinkButtonsVisibility, ref unregisterEvents);
+			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent((s, e) =>
+			{
+				SetLinkButtonsVisibility(s, new StringEventArgs("Unknown"));
+			}, ref unregisterEvents);
 
 			this.AddChild(tabControl);
 

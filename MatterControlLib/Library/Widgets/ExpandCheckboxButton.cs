@@ -53,11 +53,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			arrowRight = AggContext.StaticData.LoadIcon("fa-angle-right_12.png", theme.InvertIcons);
 			arrowDown = AggContext.StaticData.LoadIcon("fa-angle-down_12.png", theme.InvertIcons);
 
-			imageButton = new IconButton(arrowRight, theme)
+			imageButton = new IconButton(expandable ? arrowRight : new ImageBuffer(), theme)
 			{
 				MinimumSize = new Vector2((expandable) ? theme.ButtonHeight : 10, theme.ButtonHeight),
 				VAnchor = VAnchor.Center,
-				Selectable = false,
+				Selectable = false
 			};
 			this.AddChild(imageButton);
 
@@ -123,7 +123,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					_checked = value;
 
-					imageButton.SetIcon(value ? arrowDown : arrowRight);
+					if (this.Expandable)
+					{
+						imageButton.SetIcon(value ? arrowDown : arrowRight);
+					}
 
 					Invalidate();
 

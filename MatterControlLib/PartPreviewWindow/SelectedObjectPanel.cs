@@ -96,6 +96,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var scene = sceneContext.Scene;
 
+			var itemColorButton = new ItemColorButton(scene, theme)
+			{
+				Width = 30,
+				Height = 30,
+			};
+			toolbar.AddChild(itemColorButton);
+
 			// put in a make permanent button
 			var icon = AggContext.StaticData.LoadIcon("noun_766157.png", 16, 16, theme.InvertIcons).SetPreMultiply();
 			var applyButton = new IconButton(icon, theme)
@@ -178,19 +185,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.ContentPanel.AddChild(editorSectionWidget);
 
-			var colorSection = new SectionWidget(
-				"Color".Localize(),
-				new ColorSwatchSelector(scene, theme, buttonSize: 16, buttonSpacing: new BorderDouble(1, 1, 0, 0))
-				{
-					Margin = new BorderDouble(left: 10)
-				},
-				theme,
-				serializationKey: UserSettingsKey.ColorPanelExpanded)
-			{
-				Name = "Color Panel",
-			};
-			this.ContentPanel.AddChild(colorSection);
-
 			var materialsSection = new SectionWidget("Materials".Localize(), new MaterialControls(scene, theme), theme, serializationKey: UserSettingsKey.MaterialsPanelExpanded)
 			{
 				Name = "Materials Panel",
@@ -216,10 +210,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			scene.SelectionChanged += (s, e) =>
 			{
+				itemColorButton.Color = scene.SelectedItem?.Color ?? theme.MinimalShade;
 				applyButton.Enabled = scene.SelectedItem?.CanApply == true;
 				removeButton.Enabled = scene.SelectedItem != null;
 				overflowButton.Enabled = scene.SelectedItem != null;
-
 			};
 		}
 
