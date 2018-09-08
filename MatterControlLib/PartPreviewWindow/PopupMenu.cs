@@ -335,7 +335,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.HoverColor = theme.Colors.PrimaryAccentColor;
 
 				content.VAnchor = VAnchor.Center;
-				content.HAnchor = HAnchor.Left;
+				content.HAnchor |= HAnchor.Left;
 
 				this.AddChild(content);
 			}
