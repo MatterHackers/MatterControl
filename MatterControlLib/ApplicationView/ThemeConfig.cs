@@ -146,6 +146,8 @@ namespace MatterHackers.MatterControl
 		public Color Shade { get; } = new Color(0, 0, 0, 120);
 		public Color DarkShade { get; } = new Color(0, 0, 0, 190);
 
+		public Color MinimalHighlight { get; } = new Color(255, 255, 255, 15);
+
 		public Color ActiveTabColor { get; set; }
 		public Color TabBarBackground { get; set; }
 		public Color InactiveTabColor { get; set; }
