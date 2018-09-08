@@ -349,7 +349,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			});
 		}
 
-
 		private void SelectedItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
 			if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
@@ -502,7 +501,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			menuActions.Add(new PrintItemAction()
 			{
-
 				Title = "Print".Localize(),
 				Action = (selectedLibraryItems, listView) =>
 				{
@@ -539,7 +537,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							}
 							break;
 					}
-
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
@@ -589,7 +586,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
 				}
 			});
-
 
 #if !__ANDROID__ && DEBUG
 			// edit menu item

@@ -728,7 +728,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					else
 					{
 						uiField = new PositiveDoubleField();
-					};
+					}
 					break;
 
 				case SliceSettingData.DataEditTypes.DOUBLE_OR_PERCENT:
