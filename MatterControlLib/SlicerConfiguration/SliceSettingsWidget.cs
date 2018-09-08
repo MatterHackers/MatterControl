@@ -76,79 +76,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						"Advanced",
 						theme,
 						isPrimarySettingsView: true,
-						databaseMRUKey: UserSettingsKey.SliceSettingsWidget_CurrentTab,
-						extendPopupMenu: this.ExtendOverflowMenu));
+						databaseMRUKey: UserSettingsKey.SliceSettingsWidget_CurrentTab));
 			}
 
 			this.AnchorAll();
-		}
-
-		private void ExtendOverflowMenu(PopupMenu popupMenu)
-		{
-			popupMenu.CreateHorizontalLine();
-			PopupMenu.MenuItem menuItem;
-
-			menuItem = popupMenu.CreateMenuItem("Import Presets".Localize());
-			menuItem.Click += (s, e) => UiThread.RunOnIdle(() =>
-			{
-				AggContext.FileDialogs.OpenFileDialog(
-					new OpenFileDialogParams("settings files|*.printer"),
-					(dialogParams) =>
-					{
-						if (!string.IsNullOrEmpty(dialogParams.FileName))
-						{
-							DialogWindow.Show(new ImportSettingsPage(dialogParams.FileName, printer));
-						}
-					});
-			}, .2);
-
-			popupMenu.CreateHorizontalLine();
-
-			menuItem = popupMenu.CreateMenuItem("Restore Settings".Localize());
-			menuItem.Click += (s, e) => UiThread.RunOnIdle(() =>
-			{
-				DialogWindow.Show<PrinterProfileHistoryPage>();
-			}, .2);
-			menuItem.Enabled = !string.IsNullOrEmpty(AuthenticationData.Instance.ActiveSessionUsername);
-
-			menuItem = popupMenu.CreateMenuItem("Reset to Defaults".Localize());
-			menuItem.Click += (s, e) => UiThread.RunOnIdle(() =>
-			{
-				StyledMessageBox.ShowMessageBox(
-					(revertSettings) =>
-					{
-						if (revertSettings)
-						{
-							bool onlyReloadSliceSettings = true;
-							if (printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
-							&& printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled))
-							{
-								onlyReloadSliceSettings = false;
-							}
-
-							printer.Settings.ClearUserOverrides();
-							printer.Settings.Save();
-
-							if (onlyReloadSliceSettings)
-							{
-								printer?.Bed.GCodeRenderer?.Clear3DGCode();
-							}
-							else
-							{
-								ApplicationController.Instance.ReloadAll();
-							}
-						}
-					},
-					"Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?".Localize(),
-					"Revert Settings".Localize(),
-					StyledMessageBox.MessageType.YES_NO);
-			}, .2);
-
-			menuItem = popupMenu.CreateMenuItem("Export".Localize());
-			menuItem.Click += (s, e) => UiThread.RunOnIdle(() =>
-			{
-				ActiveSliceSettings.Instance.Helpers.ExportAsMatterControlConfig();
-			}, .2);
 		}
 
 		// TODO: This should just proxy to settingsControlBar.Visible. Having local state and pushing values on event listeners seems off

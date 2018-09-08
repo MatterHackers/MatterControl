@@ -40,6 +40,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.EeProm;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintHistory;
+using MatterHackers.MatterControl.SetupWizard;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -305,6 +306,75 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Action = () => { },
 					GetIsActive = () => printer.ViewState.ConfigurePrinterVisible,
 					SetIsActive = (value) => printer.ViewState.ConfigurePrinterVisible = value
+				},
+				new ActionSeparator(),
+				new NamedAction()
+				{
+					Title = "Import Presets".Localize(),
+					Action = () =>
+					{
+						AggContext.FileDialogs.OpenFileDialog(
+							new OpenFileDialogParams("settings files|*.printer"),
+							(dialogParams) =>
+							{
+								if (!string.IsNullOrEmpty(dialogParams.FileName))
+								{
+									DialogWindow.Show(new ImportSettingsPage(dialogParams.FileName, printer));
+								}
+							});
+					}
+				},
+				new NamedAction()
+				{
+					Title = "Export All Settings".Localize(),
+					Action = () =>
+					{
+						ActiveSliceSettings.Instance.Helpers.ExportAsMatterControlConfig();
+					}
+				},
+				new ActionSeparator(),
+				new NamedAction()
+				{
+					Title = "Restore Settings".Localize(),
+					Action = () =>
+					{
+						DialogWindow.Show<PrinterProfileHistoryPage>();
+					}
+				},
+				new NamedAction()
+				{
+					Title = "Reset to Defaults".Localize(),
+					Action = () =>
+					{
+						StyledMessageBox.ShowMessageBox(
+							(revertSettings) =>
+							{
+								if (revertSettings)
+								{
+									bool onlyReloadSliceSettings = true;
+									if (printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
+									&& printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled))
+									{
+										onlyReloadSliceSettings = false;
+									}
+
+									printer.Settings.ClearUserOverrides();
+									printer.Settings.Save();
+
+									if (onlyReloadSliceSettings)
+									{
+										printer?.Bed.GCodeRenderer?.Clear3DGCode();
+									}
+									else
+									{
+										ApplicationController.Instance.ReloadAll();
+									}
+								}
+							},
+							"Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?".Localize(),
+							"Revert Settings".Localize(),
+							StyledMessageBox.MessageType.YES_NO);
+					}
 				},
 				new ActionSeparator(),
 				new NamedAction()
