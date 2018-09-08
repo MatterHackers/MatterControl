@@ -69,14 +69,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.sceneContext = sceneContext;
 
-			this.ContentPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-			};
-
-			this.AddChild(this.ContentPanel);
-
 			var toolbar = new LeftClipFlowLayoutWidget()
 			{
 				BackgroundColor = theme.TabBodyBackground,
@@ -167,34 +159,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			scrollableWidget.AddChild(editorPanel);
 			scrollableWidget.ScrollArea.HAnchor = HAnchor.Stretch;
-			scrollableWidget.Padding = new BorderDouble(right: theme.DefaultContainerPadding * .8);
 
-			editorSectionWidget = new SectionWidget("Editor", scrollableWidget, theme, toolbar, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true)
+			editorSectionWidget = new SectionWidget("Editor", scrollableWidget, theme, toolbar, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true, setContentVAnchor: false)
 			{
-				VAnchor = VAnchor.Fit,
-				//DebugShowBounds = true
+				VAnchor = VAnchor.Stretch,
 			};
-			this.ContentPanel.AddChild(editorSectionWidget);
+			this.AddChild(editorSectionWidget);
 
-			// Enforce panel padding in sidebar
-			foreach(var sectionWidget in this.ContentPanel.Children<SectionWidget>())
-			{
-				// Special case for editorResizeWrapper due to ResizeContainer
-				if (sectionWidget is ResizableSectionWidget resizableSectionWidget)
-				{
-					// Apply padding to ResizeContainer not wrapper
-					//resizableSectionWidget.ResizeContainer.Padding = new BorderDouble(10, 10, 10, 0);
-				}
-				else
-				{
-					sectionWidget.ContentPanel.Padding = new BorderDouble(10, 10, 10, 0);
-					sectionWidget.ExpandableWhenDisabled = true;
-					sectionWidget.Enabled = false;
-				}
-			}
+			this.ContentPanel = editorPanel;
+			editorPanel.Padding = new BorderDouble(theme.DefaultContainerPadding, 0);
 
 			scene.SelectionChanged += (s, e) =>
 			{
+				if (editorPanel.Children.FirstOrDefault()?.DescendantsAndSelf<SectionWidget>().FirstOrDefault() is SectionWidget firstSectionWidget)
+				{
+					firstSectionWidget.Margin = firstSectionWidget.Margin.Clone(top: 0);
+				}
+
 				var selectedItem = scene.SelectedItem;
 				if (selectedItem != null)
 				{
