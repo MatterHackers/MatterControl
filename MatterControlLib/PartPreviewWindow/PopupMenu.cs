@@ -34,6 +34,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
@@ -112,6 +113,73 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return menuItem;
 		}
 
+		public class SubMenuItemButton : MenuItem, IIgnoredPopupChild
+		{
+			public PopupMenu PopupMenu { get; set; }
+			public SubMenuItemButton(GuiWidget content, ThemeConfig theme, PopupMenu menu) : base(content, theme)
+			{
+				PopupMenu = menu;
+			}
+
+			public override void OnDraw(Graphics2D graphics2D)
+			{
+				base.OnDraw(graphics2D);
+
+				// draw the right arrow
+				var x = this.LocalBounds.Right - this.LocalBounds.Height / 2;
+				var y = this.Size.Y / 2 + 2;
+
+				var arrow = new VertexStorage();
+				arrow.MoveTo(x + 3, y);
+				arrow.LineTo(x - 3, y + 5);
+				arrow.LineTo(x - 3, y - 5);
+
+				graphics2D.Render(arrow, this.Enabled ? Color.Black : Color.Gray);
+			}
+		}
+
+		private SubMenuItemButton CreateSubMenuButton(string name, PopupMenu popupMenu, ImageBuffer icon = null, string shortCut = null)
+		{
+			GuiWidget content;
+
+			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			{
+				Padding = MenuPadding,
+			};
+
+			if (shortCut != null)
+			{
+				content = new GuiWidget()
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit
+				};
+
+				content.AddChild(new TextWidget(shortCut, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+				{
+					HAnchor = HAnchor.Right
+				});
+
+				content.AddChild(textWidget);
+			}
+			else
+			{
+				content = textWidget;
+			}
+
+			content.Selectable = false;
+
+			var menuItem = new SubMenuItemButton(content, theme, popupMenu)
+			{
+				Name = name + " Menu Item",
+				Image = icon
+			};
+
+			this.AddChild(menuItem);
+
+			return menuItem;
+		}
+
 		public class CheckboxMenuItem : MenuItem, IIgnoredPopupChild, ICheckbox
 		{
 			private bool _checked;
@@ -158,7 +226,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			private ImageBuffer radioIconUnchecked;
 
 			public RadioMenuItem(GuiWidget widget, ThemeConfig theme)
-				: base (widget, theme)
+				: base(widget, theme)
 			{
 			}
 
@@ -225,6 +293,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			public event EventHandler CheckedStateChanged;
+		}
+
+		public PopupMenu CreateSubMenu(string menuTitle, ThemeConfig menuTheme)
+		{
+			var subMenu = new PopupMenu(menuTheme);
+			var subMenuItemButton = this.CreateSubMenuButton(menuTitle, subMenu);
+
+			subMenuItemButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+					systemWindow.ShowPopup(
+						new MatePoint(subMenuItemButton)
+						{
+							Mate = new MateOptions(MateEdge.Right, MateEdge.Top),
+							AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+						},
+						new MatePoint(subMenu)
+						{
+							Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+							AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
+						}
+						);// altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
+				});
+
+				subMenu.Closed += (s1, e1) =>
+				{
+					subMenu.ClearRemovedFlag();
+				};
+			};
+
+			return subMenu;
 		}
 
 		public MenuItem CreateBoolMenuItem(string name, Func<bool> getter, Action<bool> setter, bool useRadioStyle = false, IList<GuiWidget> siblingRadioButtonList = null)
