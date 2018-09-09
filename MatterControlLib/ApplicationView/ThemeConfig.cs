@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl
 
 			this.ActiveTabColor = this.TabBodyBackground;
 			this.TabBarBackground = this.ActiveTabColor.AdjustLightness(0.85).ToColor();
-			this.ThumbnailBackground = this.MinimalShade;
+			this.ThumbnailBackground = Color.Transparent;
 			this.AccentMimimalOverlay = new Color(this.Colors.PrimaryAccentColor, 50);
 
 			// Active tab color with slight transparency
