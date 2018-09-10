@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl
 			var library3DViewSplitter = new Splitter()
 			{
 				SplitterDistance = UserSettings.Instance.LibraryViewWidth,
-				SplitterWidth = theme.SplitterWidth,
+				SplitterSize = theme.SplitterWidth,
 				SplitterBackground = theme.SplitterBackground
 			};
 			library3DViewSplitter.AnchorAll();
