@@ -175,6 +175,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.RemoveAllChildren();
 
 			SimpleTabs tabControl = null;
+
 			if (this.ControlIsPinned)
 			{
 				var resizePage = new LeftResizeContainer(theme)
@@ -205,6 +206,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				resizePage.AddChild(tabControl);
 
 				this.AddChild(resizePage);
+			}
+			else
+			{
+				this.BackgroundColor = theme.TabBarBackground;
 			}
 
 			foreach (var item in allTabs)

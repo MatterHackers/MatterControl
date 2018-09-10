@@ -2250,29 +2250,25 @@ namespace MatterHackers.MatterControl
 			return (slicingSucceeded, gcodeFilePath);
 		}
 
-		internal GuiWidget GetViewOptionButtons(BedConfig sceneContext, PrinterConfig printer, ThemeConfig theme)
+		internal void GetViewOptionButtons(GuiWidget parent, BedConfig sceneContext, PrinterConfig printer, ThemeConfig theme)
 		{
-			var container = new FlowLayoutWidget()
-			{
-				VAnchor = VAnchor.Fit | VAnchor.Center
-			};
-
 			var bedButton = new RadioIconButton(AggContext.StaticData.LoadIcon("bed.png", theme.InvertIcons), theme)
 			{
 				Name = "Bed Button",
 				ToolTipText = "Show Print Bed".Localize(),
 				Checked = sceneContext.RendererOptions.RenderBed,
 				Margin = theme.ButtonSpacing,
+				VAnchor = VAnchor.Absolute,
 				ToggleButton = true,
-				Height = 24,
-				Width = 24,
+				Height = theme.ButtonHeight,
+				Width = theme.ButtonHeight,
 				SiblingRadioButtonList = new List<GuiWidget>()
 			};
 			bedButton.CheckedStateChanged += (s, e) =>
 			{
 				sceneContext.RendererOptions.RenderBed = bedButton.Checked;
 			};
-			container.AddChild(bedButton);
+			parent.AddChild(bedButton);
 
 			Func<bool> buildHeightValid = () => sceneContext.BuildHeight > 0;
 
@@ -2282,19 +2278,20 @@ namespace MatterHackers.MatterControl
 				ToolTipText = (buildHeightValid()) ? "Show Print Area".Localize() : "Define printer build height to enable",
 				Checked = sceneContext.RendererOptions.RenderBuildVolume,
 				Margin = theme.ButtonSpacing,
+				VAnchor = VAnchor.Absolute,
 				ToggleButton = true,
 				Enabled = buildHeightValid() && printer?.ViewState.ViewMode != PartViewMode.Layers2D,
-				Height = 24,
-				Width = 24,
+				Height = theme.ButtonHeight,
+				Width = theme.ButtonHeight,
 				SiblingRadioButtonList = new List<GuiWidget>()
 			};
 			printAreaButton.CheckedStateChanged += (s, e) =>
 			{
 				sceneContext.RendererOptions.RenderBuildVolume = printAreaButton.Checked;
 			};
-			container.AddChild(printAreaButton);
+			parent.AddChild(printAreaButton);
 
-			this.BindBedOptions(container, bedButton, printAreaButton, sceneContext.RendererOptions);
+			this.BindBedOptions(parent, bedButton, printAreaButton, sceneContext.RendererOptions);
 
 			if (printer != null)
 			{
@@ -2307,13 +2304,11 @@ namespace MatterHackers.MatterControl
 
 				printer.ViewState.ViewModeChanged += viewModeChanged;
 
-				container.Closed += (s, e) =>
+				parent.Closed += (s, e) =>
 				{
 					printer.ViewState.ViewModeChanged -= viewModeChanged;
 				};
 			}
-
-			return container;
 		}
 
 		public void BindBedOptions(GuiWidget container, ICheckbox bedButton, ICheckbox printAreaButton, View3DConfig renderOptions)

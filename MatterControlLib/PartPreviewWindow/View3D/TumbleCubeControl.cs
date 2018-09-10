@@ -160,8 +160,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool mouseOver = false;
 		private List<TextureData> textureDatas = new List<TextureData>();
 		private WorldView world;
-		ThemeConfig theme;
-		List<ConnectedFaces> connections = new List<ConnectedFaces>();
+		private ThemeConfig theme;
+		private List<ConnectedFaces> connections = new List<ConnectedFaces>();
 
 		public TumbleCubeControl(InteractionLayer interactionLayer, ThemeConfig theme)
 			: base(100 * GuiWidget.DeviceScale, 100 * GuiWidget.DeviceScale)

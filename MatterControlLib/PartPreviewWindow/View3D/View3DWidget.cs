@@ -33,6 +33,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -165,22 +166,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			modelViewSidePanel.Resized += ModelViewSidePanel_Resized;
 
-			var viewOptionButtons = ApplicationController.Instance.GetViewOptionButtons(sceneContext, printer, theme);
-			viewOptionButtons.AddChild(new ViewStyleButton(sceneContext, theme));
-
-			modelViewSidePanel.AddChild(
-				new SectionWidget(
-					"Options".Localize(),
-					new GuiWidget(),
-					theme,
-					viewOptionButtons,
-					expandingContent: false)
-				{
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Fit,
-					BorderColor = Color.Transparent // Disable top border to produce a more flat, dark top edge
-			});
-
 			// add the tree view
 			treeView = new TreeView(theme)
 			{
@@ -250,12 +235,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			historyAndProperties.Panel2.AddChild(selectedObjectPanel);
 			splitContainer.AddChild(modelViewSidePanel);
 
-			this.InteractionLayer.AddChild(new TumbleCubeControl(this.InteractionLayer, theme)
+			var tumbleCubeControl = new TumbleCubeControl(this.InteractionLayer, theme)
 			{
-				Margin = new BorderDouble(0, 0, 30, 30),
+				Margin = new BorderDouble(0, 0, 10, 10),
 				VAnchor = VAnchor.Top,
 				HAnchor = HAnchor.Right,
-			});
+			};
+
+			this.InteractionLayer.AddChild(tumbleCubeControl);
+
+			var viewOptionsBar = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Right | HAnchor.Fit,
+				VAnchor = VAnchor.Top | VAnchor.Fit,
+				Margin = new BorderDouble(top: tumbleCubeControl.Height + tumbleCubeControl.Margin.Height + 2)
+			};
+			this.InteractionLayer.AddChild(viewOptionsBar);
+
+			var homeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", theme.InvertIcons), theme)
+			{
+				VAnchor = VAnchor.Absolute,
+				ToolTipText = "Reset View".Localize(),
+				Margin = theme.ButtonSpacing
+			};
+			homeButton.Click += (s, e) => viewControls3D.NotifyResetView();
+			viewOptionsBar.AddChild(homeButton);
+
+			viewOptionsBar.AddChild(new ViewStyleButton(sceneContext, theme));
+
+			ApplicationController.Instance.GetViewOptionButtons(viewOptionsBar, sceneContext, printer, theme);
 
 			UiThread.RunOnIdle(AutoSpin);
 
