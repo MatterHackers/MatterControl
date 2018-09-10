@@ -237,18 +237,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var tumbleCubeControl = new TumbleCubeControl(this.InteractionLayer, theme)
 			{
-				Margin = new BorderDouble(0, 0, 10, 10),
+				Margin = new BorderDouble(0, 0, 10, 35),
 				VAnchor = VAnchor.Top,
 				HAnchor = HAnchor.Right,
 			};
 
 			this.InteractionLayer.AddChild(tumbleCubeControl);
 
-			var viewOptionsBar = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var viewOptionsBar = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Right | HAnchor.Fit,
 				VAnchor = VAnchor.Top | VAnchor.Fit,
-				Margin = new BorderDouble(top: tumbleCubeControl.Height + tumbleCubeControl.Margin.Height + 2)
+				BackgroundColor = theme.MinimalShade
 			};
 			this.InteractionLayer.AddChild(viewOptionsBar);
 
