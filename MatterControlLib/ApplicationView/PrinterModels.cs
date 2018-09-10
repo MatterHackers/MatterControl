@@ -778,7 +778,8 @@ namespace MatterHackers.MatterControl
 		}
 
 		public bool _configurePrinterVisible = UserSettings.Instance.get(UserSettingsKey.ConfigurePrinterTabVisible) == "true";
-		public bool _controlsVisible = UserSettings.Instance.get(UserSettingsKey.ControlsTabVisible) == "true";
+		// set the controls to default to visible
+		public bool _controlsVisible = UserSettings.Instance.get(UserSettingsKey.ControlsTabVisible) != "false";
 		public bool _terminalVisible = UserSettings.Instance.get(UserSettingsKey.TerminalTabVisible) == "true";
 
 		public bool ConfigurePrinterVisible
