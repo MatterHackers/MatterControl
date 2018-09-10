@@ -253,6 +253,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Load Filament Button");
 					testRunner.ClickByName("Continue Button");
 					Assert.AreEqual(104, (int)emulator.CurrentExtruder.TargetTemperature);
+					testRunner.Delay();
 					testRunner.ClickByName("Cancel Wizard Button");
 					testRunner.Delay();
 					Assert.AreEqual(0, (int)emulator.CurrentExtruder.TargetTemperature);

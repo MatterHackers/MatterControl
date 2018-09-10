@@ -17,8 +17,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Assert.IsFalse(testRunner.WaitForName("TerminalWidget", 0.5), "Terminal Window should not exist");
 
-				testRunner.ClickByName("Terminal Sidebar");
-				testRunner.Delay(1);
+				// when we start up a new session the Terminal Sidebar should not be present
+				Assert.IsFalse(testRunner.WaitForName("Terminal Sidebar", 0.5), "Terminal Sidebar should not exist");
+
+				testRunner.SwitchToTerminalTab();
 
 				Assert.IsTrue(testRunner.WaitForName("TerminalWidget"), "Terminal Window should exists after Show Terminal button is clicked");
 
