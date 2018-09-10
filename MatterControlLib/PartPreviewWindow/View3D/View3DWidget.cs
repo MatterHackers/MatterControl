@@ -64,6 +64,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private TreeView treeView;
 
+		private ViewStyleButton modelViewStyleButton;
+
+		private PrinterConfig printer;
+
 		private ThemeConfig theme;
 
 		public Vector3 BedCenter
@@ -99,6 +103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.InteractionLayer.AnchorAll();
 
 			this.viewControls3D = viewControls3D;
+			this.printer = printer;
 			this.theme = theme;
 			this.Name = "View3DWidget";
 			this.BackgroundColor = theme.ActiveTabColor;
@@ -248,6 +253,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Right | HAnchor.Fit,
 				VAnchor = VAnchor.Top | VAnchor.Fit,
+				//Margin = new BorderDouble(top: tumbleCubeControl.Height + tumbleCubeControl.Margin.Height + 2),
 				BackgroundColor = theme.MinimalShade
 			};
 			this.InteractionLayer.AddChild(viewOptionsBar);
@@ -261,7 +267,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			homeButton.Click += (s, e) => viewControls3D.NotifyResetView();
 			viewOptionsBar.AddChild(homeButton);
 
-			var viewStyleButton = new ViewStyleButton(sceneContext, theme)
+			modelViewStyleButton = new ViewStyleButton(sceneContext, theme)
 			{
 				ToolTipText = "Model View Style".Localize(),
 				PopupMate = new MatePoint()
@@ -269,10 +275,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Top)
 				}
 			};
-			viewStyleButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
-			viewStyleButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Left;
+			modelViewStyleButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
+			modelViewStyleButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Left;
 
-			viewOptionsBar.AddChild(viewStyleButton);
+			viewOptionsBar.AddChild(modelViewStyleButton);
+
+			printer.ViewState.ViewModeChanged += this.ViewState_ViewModeChanged;
 
 			ApplicationController.Instance.GetViewOptionButtons(viewOptionsBar, sceneContext, printer, theme);
 
@@ -298,6 +306,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.InteractionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
 
 			this.sceneContext.SceneLoaded += SceneContext_SceneLoaded;
+		}
+
+		private void ViewState_ViewModeChanged(object sender, ViewModeChangedEventArgs e)
+		{
+			this.modelViewStyleButton.Visible = e.ViewMode == PartViewMode.Model;
 		}
 
 		public Dictionary<string, NamedAction> WorkspaceActions { get; set; }
@@ -424,6 +437,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Scene.SelectionChanged -= Scene_SelectionChanged;
 			this.InteractionLayer.DrawGlOpaqueContent -= Draw_GlOpaqueContent;
 			this.sceneContext.SceneLoaded -= SceneContext_SceneLoaded;
+			printer.ViewState.ViewModeChanged -= this.ViewState_ViewModeChanged;
+
 			modelViewSidePanel.Resized -= ModelViewSidePanel_Resized;
 
 			if (meshViewerWidget != null)
