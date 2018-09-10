@@ -292,7 +292,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.CompletedTask;
-			});
+			}, maxTimeToRun: 120);
 		}
 
 		[Test, RunInApplicationDomain]
