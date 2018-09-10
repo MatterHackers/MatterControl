@@ -76,7 +76,16 @@ namespace MatterHackers.PrinterEmulator
 							}
 						}
 
-						Thread.Sleep(loopTimeInMs);
+						// Try catch this so that if the program exits while this thread is active we don't throw
+						// This fixes the DualExtrusionShowsCorrectHotendData test
+						try
+						{
+							Thread.Sleep(loopTimeInMs);
+						}
+						catch
+						{
+
+						}
 					}
 				});
 			}
