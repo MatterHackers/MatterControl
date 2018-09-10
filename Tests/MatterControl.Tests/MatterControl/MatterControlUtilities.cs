@@ -867,7 +867,32 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			// Change to Printer Controls
 			EnsurePrinterSidebarOpen(testRunner);
+
+			if (!testRunner.NameExists("Controls Tab", 0.2))
+			{
+				testRunner.ClickByName("Printer Overflow Menu");
+				testRunner.ClickByName("Show Controls Menu Item");
+			}
+
 			testRunner.ClickByName("Controls Tab");
+		}
+
+		/// <summary>
+		/// Switch to Printer -> Terminal
+		/// </summary>
+		/// <param name="testRunner"></param>
+		public static void SwitchToTerminalTab(this AutomationRunner testRunner)
+		{
+			// Change to Printer Controls
+			EnsurePrinterSidebarOpen(testRunner);
+
+			if (!testRunner.NameExists("Terminal Tab", 0.2))
+			{
+				testRunner.ClickByName("Printer Overflow Menu");
+				testRunner.ClickByName("Show Terminal Menu Item");
+			}
+
+			testRunner.ClickByName("Terminal Tab");
 		}
 
 		/// <summary>
