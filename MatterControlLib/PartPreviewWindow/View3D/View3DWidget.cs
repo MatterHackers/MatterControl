@@ -261,7 +261,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			homeButton.Click += (s, e) => viewControls3D.NotifyResetView();
 			viewOptionsBar.AddChild(homeButton);
 
-			viewOptionsBar.AddChild(new ViewStyleButton(sceneContext, theme));
+			var viewStyleButton = new ViewStyleButton(sceneContext, theme)
+			{
+				ToolTipText = "Model View Style".Localize(),
+				PopupMate = new MatePoint()
+				{
+					Mate = new MateOptions(MateEdge.Left, MateEdge.Top)
+				}
+			};
+			viewStyleButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
+			viewStyleButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Left;
+
+			viewOptionsBar.AddChild(viewStyleButton);
 
 			ApplicationController.Instance.GetViewOptionButtons(viewOptionsBar, sceneContext, printer, theme);
 

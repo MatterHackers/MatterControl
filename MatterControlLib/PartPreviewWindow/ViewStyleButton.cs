@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -38,7 +39,7 @@ using MatterHackers.RenderOpenGl;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class ViewStyleButton : PopupButton
+	public class ViewStyleButton : DropButton
 	{
 		private IconButton iconButton;
 		private BedConfig sceneContext;
@@ -46,10 +47,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Dictionary<RenderTypes, ImageBuffer> viewIcons;
 
 		public ViewStyleButton(BedConfig sceneContext, ThemeConfig theme)
+			: base(theme)
 		{
 			this.sceneContext = sceneContext;
-			this.DynamicPopupContent = () => ShowViewOptions(sceneContext, theme);
-			this.AlignToRightEdge = true;
+			this.PopupContent = () => ShowViewOptions(sceneContext, theme);
 
 			viewIcons = new Dictionary<RenderTypes, ImageBuffer>()
 			{
@@ -60,7 +61,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				[RenderTypes.Overhang] = AggContext.StaticData.LoadIcon("view_overhang.png", theme.InvertIcons),
 			};
 
-			this.AddChild(iconButton = new IconButton(viewIcons[sceneContext.ViewState.RenderType], theme));
+			this.AddChild(iconButton = new IconButton(viewIcons[sceneContext.ViewState.RenderType], theme)
+			{
+				Selectable = false
+			});
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
 
