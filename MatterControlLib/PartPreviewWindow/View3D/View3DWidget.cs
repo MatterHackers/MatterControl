@@ -230,14 +230,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			var treeSection = new ResizableSectionWidget("Design History".Localize(), sceneContext.ViewState.SceneTreeHeight, treeView, theme, serializationKey: UserSettingsKey.SelectionTreeViewPanelExpanded);
-			treeSection.Resized += (s, e) =>
+			Splitter historyAndProperties = new Splitter()
 			{
-				sceneContext.ViewState.SceneTreeHeight = treeSection.ResizeContainer.Height;
+				Orientation = Orientation.Horizontal,
+				SplitterDistance = sceneContext.ViewState.SceneTreeHeight,
+				SplitterSize = theme.SplitterWidth,
+				SplitterBackground = theme.SplitterBackground
 			};
-			modelViewSidePanel.AddChild(treeSection);
 
-			modelViewSidePanel.AddChild(selectedObjectPanel);
+			modelViewSidePanel.AddChild(historyAndProperties);
+
+			historyAndProperties.Panel1.AddChild(treeView);
+
+			historyAndProperties.DistanceChanged += (s, e) =>
+			{
+				sceneContext.ViewState.SceneTreeHeight = historyAndProperties.SplitterDistance;
+			};
+
+			historyAndProperties.Panel2.AddChild(selectedObjectPanel);
 			splitContainer.AddChild(modelViewSidePanel);
 
 			this.InteractionLayer.AddChild(new TumbleCubeControl(this.InteractionLayer, theme)
