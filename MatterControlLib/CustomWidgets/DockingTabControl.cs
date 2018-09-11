@@ -207,10 +207,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				this.AddChild(resizePage);
 			}
-			else
-			{
-				this.BackgroundColor = theme.TabBarBackground;
-			}
 
 			foreach (var item in allTabs)
 			{
