@@ -72,7 +72,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				};
 				checkbox.CheckedStateChanged += (s, e) =>
 				{
-					ContentPanel.Visible = checkbox.Checked;
+					if (expandingContent)
+					{
+						ContentPanel.Visible = checkbox.Checked;
+					}
 					// TODO: Remove this Height = 10 and figure out why the layout engine is not sizing these correctly without this.
 					ContentPanel.Height = 10;
 				};
