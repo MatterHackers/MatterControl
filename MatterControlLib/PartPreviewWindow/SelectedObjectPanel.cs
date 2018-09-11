@@ -160,9 +160,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			scrollableWidget.AddChild(editorPanel);
 			scrollableWidget.ScrollArea.HAnchor = HAnchor.Stretch;
 
-			editorSectionWidget = new SectionWidget("Editor", scrollableWidget, theme, toolbar, serializationKey: UserSettingsKey.EditorPanelExpanded, defaultExpansion: true, setContentVAnchor: false)
+			editorSectionWidget = new SectionWidget("Editor", scrollableWidget, theme, toolbar, serializationKey: UserSettingsKey.EditorPanelExpanded, expandingContent: false, defaultExpansion: true, setContentVAnchor: false)
 			{
-				VAnchor = VAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
 			};
 			this.AddChild(editorSectionWidget);
 
