@@ -159,5 +159,10 @@ namespace MatterHackers.MatterControl
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
+
+		public bool KeepMenuOpen()
+		{
+			return false;
+		}
 	}
 }

@@ -168,24 +168,25 @@ namespace MatterHackers.MatterControl
 
 				var menuTheme = ApplicationController.Instance.MenuTheme;
 
-				PopupMenu modifyMenu = popupMenu.CreateSubMenu("Modify".Localize(), ApplicationController.Instance.MenuTheme);
-
-				foreach (var nodeOperation in ApplicationController.Instance.Graph.Operations)
+				popupMenu.CreateSubMenu("Modify".Localize(), ApplicationController.Instance.MenuTheme, (modifyMenu) =>
 				{
-					foreach (var type in nodeOperation.MappedTypes)
+					foreach (var nodeOperation in ApplicationController.Instance.Graph.Operations)
 					{
-						if (type.IsAssignableFrom(selectedItemType)
-							&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
-							&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
+						foreach (var type in nodeOperation.MappedTypes)
 						{
-							var subMenuItem = modifyMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme));
-							subMenuItem.Click += (s2, e2) =>
+							if (type.IsAssignableFrom(selectedItemType)
+								&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
+								&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
 							{
-								nodeOperation.Operation(selectedItem, scene).ConfigureAwait(false);
-							};
+								var subMenuItem = modifyMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme));
+								subMenuItem.Click += (s2, e2) =>
+								{
+									nodeOperation.Operation(selectedItem, scene).ConfigureAwait(false);
+								};
+							}
 						}
 					}
-				}
+				});
 			};
 
 			return popupMenu;

@@ -149,5 +149,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			scene.SelectionChanged -= Scene_SelectionChanged;
 			base.OnClosed(e);
 		}
+
+		public bool KeepMenuOpen()
+		{
+			return false;
+		}
 	}
 }

@@ -116,8 +116,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 						column.Invalidate();
 						imageObject.Invalidate(new InvalidateArgs(imageObject, InvalidateType.Image));
-
-						popupMenu.Unfocus();
 					};
 
 					pasteMenu.Enabled = Clipboard.Instance.ContainsImage;
@@ -126,7 +124,6 @@ namespace MatterHackers.MatterControl.DesignTools
 					copyMenu.Click += (s2, e2) =>
 					{
 						Clipboard.Instance.SetImage(thumbnailWidget.Image);
-						popupMenu.Unfocus();
 					};
 
 					var popupBounds = new RectangleDouble(e.X + 1, e.Y + 1, e.X + 1, e.Y + 1);

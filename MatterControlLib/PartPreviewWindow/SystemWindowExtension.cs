@@ -88,9 +88,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var hookedParents = new HashSet<GuiWidget>();
 
-			var ignoredWidgets = popup.Widget.Children.Where(c => c is IIgnoredPopupChild).ToList();
-
-			bool checkIfNeedScrollBar = true;
+			List<IIgnoredPopupChild> ignoredWidgets = popup.Widget.Children.OfType<IIgnoredPopupChild>().ToList();
 
 			void widgetRelativeTo_PositionChanged(object sender, EventArgs e)
 			{
@@ -158,16 +156,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			void FocusChanged(object sender, EventArgs e)
+			void FocusChanged(object s, EventArgs e)
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					var send = sender;
-					// Fired any time focus changes. Traditionally we closed the menu if the we weren't focused.
+					// Fired any time focus changes. Traditionally we closed the menu if we weren't focused.
 					// To accommodate children (or external widgets) having focus we also query for and consider special cases
-					bool specialChildHasFocus = ignoredWidgets.Any(w => w.ContainsFocus || w.Focused)
-						|| popup.Widget.DescendantsAndSelf<DropDownList>().Any(w => w.IsOpen)
-						|| popup.Widget.DescendantsAndSelf<PopupMenu.SubMenuItemButton>().Any(w => w.PopupMenu.ContainsFocus);
+					bool specialChildHasFocus = ignoredWidgets.Any(w => w.ContainsFocus || w.Focused || w.KeepMenuOpen())
+						|| popup.Widget.DescendantsAndSelf<DropDownList>().Any(w => w.IsOpen);
 
 					// If the focused changed and we've lost focus and no special cases permit, close the menu
 					if (!popup.Widget.ContainsFocus

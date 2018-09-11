@@ -398,6 +398,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				AddChild(topToBottom);
 			}
+
+			public bool KeepMenuOpen()
+			{
+				return false;
+			}
 		}
 	}
 
