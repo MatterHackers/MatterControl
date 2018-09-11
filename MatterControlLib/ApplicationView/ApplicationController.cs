@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl
 		{
 			var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
-			var menuItem = popupMenu.CreateMenuItem("Rename");
+			var menuItem = popupMenu.CreateMenuItem("Rename".Localize());
 			menuItem.Click += (s, e) =>
 			{
 				DialogWindow.Show(
@@ -168,6 +168,8 @@ namespace MatterHackers.MatterControl
 
 				var menuTheme = ApplicationController.Instance.MenuTheme;
 
+				PopupMenu modifyMenu = popupMenu.CreateSubMenu("Modify".Localize(), ApplicationController.Instance.MenuTheme);
+
 				foreach (var nodeOperation in ApplicationController.Instance.Graph.Operations)
 				{
 					foreach (var type in nodeOperation.MappedTypes)
@@ -176,27 +178,15 @@ namespace MatterHackers.MatterControl
 							&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
 							&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
 						{
-							var button = popupMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme));
-							button.Click += (s, e) =>
+							var subMenuItem = modifyMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme));
+							subMenuItem.Click += (s2, e2) =>
 							{
 								nodeOperation.Operation(selectedItem, scene).ConfigureAwait(false);
 							};
 						}
 					}
 				}
-
-				if (selectedItem.Ancestors().OfType<ComponentObject3D>().FirstOrDefault() is ComponentObject3D componentAncestor
-					&& !componentAncestor.Finalized)
-				{
-					var button = popupMenu.CreateMenuItem("Copy Path".Localize());
-					button.Click += (s, e) =>
-					{
-						var selector = "$." + string.Join(".", selectedItem.AncestorsAndSelf().TakeWhile(o => !(o is ComponentObject3D)).Select(o => $"Children<{o.GetType().Name.ToString()}>").Reverse().ToArray());
-
-						Clipboard.Instance.SetText(selector);
-					};
-				}
-			}
+			};
 
 			return popupMenu;
 		}

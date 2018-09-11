@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// add the tree view
 			treeView = new TreeView(theme)
 			{
-				Margin = new BorderDouble(left: 18),
+				Margin = new BorderDouble(left: theme.DefaultContainerPadding, top: theme.DefaultContainerPadding),
 			};
 			treeView.AfterSelect += (s, e) =>
 			{

@@ -162,10 +162,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				UiThread.RunOnIdle(() =>
 				{
+					var send = sender;
 					// Fired any time focus changes. Traditionally we closed the menu if the we weren't focused.
 					// To accommodate children (or external widgets) having focus we also query for and consider special cases
 					bool specialChildHasFocus = ignoredWidgets.Any(w => w.ContainsFocus || w.Focused)
-						|| popup.Widget.DescendantsAndSelf<DropDownList>().Any(w => w.IsOpen);
+						|| popup.Widget.DescendantsAndSelf<DropDownList>().Any(w => w.IsOpen)
+						|| popup.Widget.DescendantsAndSelf<PopupMenu.SubMenuItemButton>().Any(w => w.PopupMenu.ContainsFocus);
 
 					// If the focused changed and we've lost focus and no special cases permit, close the menu
 					if (!popup.Widget.ContainsFocus
@@ -174,15 +176,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						CloseMenu();
 					}
 				});
-			}
-
-			void MouseUp(object sender, EventArgs e)
-			{
-				bool mouseUpOnIgnoredChild = ignoredWidgets.Any(w => w.MouseCaptured || w.ChildHasMouseCaptured);
-				if (!mouseUpOnIgnoredChild)
-				{
-					UiThread.RunOnIdle(CloseMenu);
-				}
 			}
 
 			void anchor_Closed(object sender, EventArgs e)
