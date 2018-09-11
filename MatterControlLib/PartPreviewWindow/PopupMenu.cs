@@ -108,6 +108,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Image = icon
 			};
 
+			menuItem.Click += (s, e) =>
+			{
+				Unfocus();
+			};
+
 			this.AddChild(menuItem);
 
 			return menuItem;
@@ -115,10 +120,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public class SubMenuItemButton : MenuItem, IIgnoredPopupChild
 		{
-			public PopupMenu PopupMenu { get; set; }
-			public SubMenuItemButton(GuiWidget content, ThemeConfig theme, PopupMenu menu) : base(content, theme)
+			public PopupMenu SubMenu { get; set; }
+
+			public SubMenuItemButton(GuiWidget content, ThemeConfig theme) : base(content, theme)
 			{
-				PopupMenu = menu;
 			}
 
 			public override void OnDraw(Graphics2D graphics2D)
@@ -136,48 +141,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				graphics2D.Render(arrow, this.Enabled ? Color.Black : Color.Gray);
 			}
-		}
 
-		private SubMenuItemButton CreateSubMenuButton(string name, PopupMenu popupMenu, ImageBuffer icon = null, string shortCut = null)
-		{
-			GuiWidget content;
-
-			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			public bool KeepMenuOpen()
 			{
-				Padding = MenuPadding,
-			};
-
-			if (shortCut != null)
-			{
-				content = new GuiWidget()
+				if (SubMenu != null)
 				{
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Fit
-				};
+					return SubMenu.ContainsFocus;
+				}
 
-				content.AddChild(new TextWidget(shortCut, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
-				{
-					HAnchor = HAnchor.Right
-				});
-
-				content.AddChild(textWidget);
+				return false;
 			}
-			else
-			{
-				content = textWidget;
-			}
-
-			content.Selectable = false;
-
-			var menuItem = new SubMenuItemButton(content, theme, popupMenu)
-			{
-				Name = name + " Menu Item",
-				Image = icon
-			};
-
-			this.AddChild(menuItem);
-
-			return menuItem;
 		}
 
 		public class CheckboxMenuItem : MenuItem, IIgnoredPopupChild, ICheckbox
@@ -196,6 +169,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				this.Image = _checked ? faChecked : null;
 				base.OnLoad(args);
+			}
+
+			public bool KeepMenuOpen()
+			{
+				return false;
 			}
 
 			public bool Checked
@@ -267,6 +245,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				base.OnLoad(args);
 			}
 
+			public bool KeepMenuOpen()
+			{
+				return false;
+			}
+
 			public IList<GuiWidget> SiblingRadioButtonList { get; set; }
 
 			public bool Checked
@@ -295,15 +278,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			public event EventHandler CheckedStateChanged;
 		}
 
-		public PopupMenu CreateSubMenu(string menuTitle, ThemeConfig menuTheme)
+		public void CreateSubMenu(string menuTitle, ThemeConfig menuTheme, Action<PopupMenu> populateSubMenu)
 		{
-			var subMenu = new PopupMenu(menuTheme);
-			var subMenuItemButton = this.CreateSubMenuButton(menuTitle, subMenu);
+			GuiWidget content = new TextWidget(menuTitle, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			{
+				Padding = MenuPadding,
+			};
+
+			content.Selectable = false;
+
+			var subMenuItemButton = new SubMenuItemButton(content, theme)
+			{
+				Name = menuTitle + " Menu Item",
+				//Image = icon
+			};
+
+			this.AddChild(subMenuItemButton);
 
 			subMenuItemButton.Click += (s, e) =>
 			{
+				var subMenu = new PopupMenu(menuTheme);
+				subMenuItemButton.SubMenu = subMenu;
+
 				UiThread.RunOnIdle(() =>
 				{
+					populateSubMenu(subMenu);
+
 					var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 					systemWindow.ShowPopup(
 						new MatePoint(subMenuItemButton)
@@ -322,10 +322,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				subMenu.Closed += (s1, e1) =>
 				{
 					subMenu.ClearRemovedFlag();
+					subMenuItemButton.SubMenu = null;
+					if(!this.ContainsFocus)
+					{
+						this.Close();
+					}
 				};
 			};
-
-			return subMenu;
 		}
 
 		public MenuItem CreateBoolMenuItem(string name, Func<bool> getter, Action<bool> setter, bool useRadioStyle = false, IList<GuiWidget> siblingRadioButtonList = null)

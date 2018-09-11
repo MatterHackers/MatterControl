@@ -146,5 +146,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.BeforePopup?.Invoke(this, null);
 		}
+
+		public bool KeepMenuOpen()
+		{
+			return false;
+		}
 	}
 }

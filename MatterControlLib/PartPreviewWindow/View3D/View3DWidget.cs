@@ -1320,7 +1320,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								Action = () =>
 								{
 									Scene.Paste();
-									popupMenu.Unfocus();
 								},
 								IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
 							},

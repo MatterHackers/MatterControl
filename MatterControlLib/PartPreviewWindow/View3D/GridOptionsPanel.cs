@@ -81,5 +81,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			this.AddChild(dropDownList);
 		}
+
+		public bool KeepMenuOpen()
+		{
+			return false;
+		}
 	}
 }

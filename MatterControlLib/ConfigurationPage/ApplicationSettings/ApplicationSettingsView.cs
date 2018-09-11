@@ -342,6 +342,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.AddSettingsRow(aboutMatterControl);
 		}
 
+		public bool KeepMenuOpen()
+		{
+			return false;
+		}
+
 		private void AddMenuItem(string title, Action callback)
 		{
 			var newItem = new SettingsItem(title, theme);

@@ -45,10 +45,32 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public abstract class TransformWrapperObject3D : Object3D
 	{
-		protected IObject3D TransformItem => Children.First();
+		protected IObject3D TransformItem
+		{
+			get
+			{
+				if (Children.Count > 0)
+				{
+					return Children.First();
+				}
+
+				return null;
+			}
+		}
 
 		[JsonIgnore]
-		public IObject3D SourceItem => Children.First().Children.First();
+		public IObject3D SourceItem
+		{
+			get
+			{
+				if (TransformItem?.Children.Count > 0)
+				{
+					return TransformItem.Children.First();
+				}
+
+				return null;
+			}
+		}
 
 		public TransformWrapperObject3D()
 		{

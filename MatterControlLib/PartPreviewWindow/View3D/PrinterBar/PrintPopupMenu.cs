@@ -212,6 +212,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				: base(FlowDirection.TopToBottom)
 			{
 			}
+
+			public bool KeepMenuOpen()
+			{
+				return false;
+			}
 		}
 	}
 }

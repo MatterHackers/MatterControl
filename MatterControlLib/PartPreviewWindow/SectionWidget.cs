@@ -183,5 +183,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				base.OnDrawBackground(graphics2D);
 			}
 		}
+
+		public bool KeepMenuOpen()
+		{
+			return false;
+		}
 	}
 }
