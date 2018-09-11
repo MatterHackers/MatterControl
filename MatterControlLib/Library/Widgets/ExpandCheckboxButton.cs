@@ -110,7 +110,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnClick(MouseEventArgs mouseEvent)
 		{
-			UiThread.RunOnIdle(() => this.Checked = !this.Checked);
+			if (this.Expandable)
+			{
+				UiThread.RunOnIdle(() => this.Checked = !this.Checked);
+			}
+
 			base.OnClick(mouseEvent);
 		}
 
