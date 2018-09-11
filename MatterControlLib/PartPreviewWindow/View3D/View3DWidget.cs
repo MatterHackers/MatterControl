@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			modelViewSidePanel = new LeftResizeContainer(theme)
 			{
-				Width = printer?.ViewState.SelectedObjectPanelWidth ?? 200,
+				Width = printer?.ViewState.SelectedObjectPanelWidth ?? 250,
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Absolute,
 				BackgroundColor = theme.InteractionLayerOverlayColor,
@@ -223,10 +223,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Splitter historyAndProperties = new Splitter()
 			{
 				Orientation = Orientation.Horizontal,
-				SplitterDistance = sceneContext.ViewState.SceneTreeHeight,
+				Panel1Ratio = sceneContext.ViewState.SceneTreeRatio,
 				SplitterSize = theme.SplitterWidth,
 				SplitterBackground = theme.SplitterBackground
 			};
+			historyAndProperties.Panel1.MinimumSize = new Vector2(0, 120);
+			historyAndProperties.Panel2.MinimumSize = new Vector2(0, 120);
 
 			modelViewSidePanel.AddChild(historyAndProperties);
 
@@ -234,7 +236,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			historyAndProperties.DistanceChanged += (s, e) =>
 			{
-				sceneContext.ViewState.SceneTreeHeight = historyAndProperties.SplitterDistance;
+				sceneContext.ViewState.SceneTreeRatio = historyAndProperties.Panel1Ratio;
 			};
 
 			historyAndProperties.Panel2.AddChild(selectedObjectPanel);
@@ -280,7 +282,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewOptionsBar.AddChild(modelViewStyleButton);
 
-			printer.ViewState.ViewModeChanged += this.ViewState_ViewModeChanged;
+			if (printer?.ViewState != null)
+			{
+				printer.ViewState.ViewModeChanged += this.ViewState_ViewModeChanged;
+			}
 
 			ApplicationController.Instance.GetViewOptionButtons(viewOptionsBar, sceneContext, printer, theme);
 
@@ -437,7 +442,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Scene.SelectionChanged -= Scene_SelectionChanged;
 			this.InteractionLayer.DrawGlOpaqueContent -= Draw_GlOpaqueContent;
 			this.sceneContext.SceneLoaded -= SceneContext_SceneLoaded;
-			printer.ViewState.ViewModeChanged -= this.ViewState_ViewModeChanged;
+			if (printer?.ViewState != null)
+			{
+				printer.ViewState.ViewModeChanged -= this.ViewState_ViewModeChanged;
+			}
 
 			modelViewSidePanel.Resized -= ModelViewSidePanel_Resized;
 

@@ -675,21 +675,20 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public double SceneTreeHeight
+		public double SceneTreeRatio
 		{
 			get
 			{
-				if (double.TryParse(UserSettings.Instance.get(UserSettingsKey.SceneTreeHeight), out double controlHeight))
+				if (double.TryParse(UserSettings.Instance.get(UserSettingsKey.SceneTreeRatio), out double treeRatio))
 				{
-					return Math.Max(controlHeight, 35);
+					return treeRatio;
 				}
 
-				return 35;
+				return .75;
 			}
 			set
 			{
-				var minimumValue = Math.Max(value, 35);
-				UserSettings.Instance.set(UserSettingsKey.SceneTreeHeight, minimumValue.ToString());
+				UserSettings.Instance.set(UserSettingsKey.SceneTreeRatio, value.ToString());
 			}
 		}
 
