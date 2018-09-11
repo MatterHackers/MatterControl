@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			toolbar.AddChild(applyButton);
 
 			// put in a remove button
-			var removeButton = new IconButton(AggContext.StaticData.LoadIcon("close.png", 16, 16, theme.InvertIcons), theme)
+			var removeButton = new IconButton(AggContext.StaticData.LoadIcon("remove.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Margin = theme.ButtonSpacing,
 				ToolTipText = "Delete".Localize(),

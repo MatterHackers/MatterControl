@@ -33,6 +33,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -62,6 +63,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public Matrix4X4 TransformOnMouseDown { get; private set; } = Matrix4X4.Identity;
 
 		private TreeView treeView;
+
+		private ViewStyleButton modelViewStyleButton;
+
+		private PrinterConfig printer;
 
 		private ThemeConfig theme;
 
@@ -98,6 +103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.InteractionLayer.AnchorAll();
 
 			this.viewControls3D = viewControls3D;
+			this.printer = printer;
 			this.theme = theme;
 			this.Name = "View3DWidget";
 			this.BackgroundColor = theme.ActiveTabColor;
@@ -164,22 +170,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			modelViewSidePanel.BoundsChanged += UpdateRenderView;
 
 			modelViewSidePanel.Resized += ModelViewSidePanel_Resized;
-
-			var viewOptionButtons = ApplicationController.Instance.GetViewOptionButtons(sceneContext, printer, theme);
-			viewOptionButtons.AddChild(new ViewStyleButton(sceneContext, theme));
-
-			modelViewSidePanel.AddChild(
-				new SectionWidget(
-					"Options".Localize(),
-					new GuiWidget(),
-					theme,
-					viewOptionButtons,
-					expandingContent: false)
-				{
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Fit,
-					BorderColor = Color.Transparent // Disable top border to produce a more flat, dark top edge
-			});
 
 			// add the tree view
 			treeView = new TreeView(theme)
@@ -250,12 +240,49 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			historyAndProperties.Panel2.AddChild(selectedObjectPanel);
 			splitContainer.AddChild(modelViewSidePanel);
 
-			this.InteractionLayer.AddChild(new TumbleCubeControl(this.InteractionLayer, theme)
+			var tumbleCubeControl = new TumbleCubeControl(this.InteractionLayer, theme)
 			{
-				Margin = new BorderDouble(0, 0, 30, 30),
+				Margin = new BorderDouble(0, 0, 10, 35),
 				VAnchor = VAnchor.Top,
 				HAnchor = HAnchor.Right,
-			});
+			};
+
+			this.InteractionLayer.AddChild(tumbleCubeControl);
+
+			var viewOptionsBar = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Right | HAnchor.Fit,
+				VAnchor = VAnchor.Top | VAnchor.Fit,
+				//Margin = new BorderDouble(top: tumbleCubeControl.Height + tumbleCubeControl.Margin.Height + 2),
+				BackgroundColor = theme.MinimalShade
+			};
+			this.InteractionLayer.AddChild(viewOptionsBar);
+
+			var homeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", theme.InvertIcons), theme)
+			{
+				VAnchor = VAnchor.Absolute,
+				ToolTipText = "Reset View".Localize(),
+				Margin = theme.ButtonSpacing
+			};
+			homeButton.Click += (s, e) => viewControls3D.NotifyResetView();
+			viewOptionsBar.AddChild(homeButton);
+
+			modelViewStyleButton = new ViewStyleButton(sceneContext, theme)
+			{
+				ToolTipText = "Model View Style".Localize(),
+				PopupMate = new MatePoint()
+				{
+					Mate = new MateOptions(MateEdge.Left, MateEdge.Top)
+				}
+			};
+			modelViewStyleButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
+			modelViewStyleButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Left;
+
+			viewOptionsBar.AddChild(modelViewStyleButton);
+
+			printer.ViewState.ViewModeChanged += this.ViewState_ViewModeChanged;
+
+			ApplicationController.Instance.GetViewOptionButtons(viewOptionsBar, sceneContext, printer, theme);
 
 			UiThread.RunOnIdle(AutoSpin);
 
@@ -279,6 +306,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.InteractionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
 
 			this.sceneContext.SceneLoaded += SceneContext_SceneLoaded;
+		}
+
+		private void ViewState_ViewModeChanged(object sender, ViewModeChangedEventArgs e)
+		{
+			this.modelViewStyleButton.Visible = e.ViewMode == PartViewMode.Model;
 		}
 
 		public Dictionary<string, NamedAction> WorkspaceActions { get; set; }
@@ -405,6 +437,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Scene.SelectionChanged -= Scene_SelectionChanged;
 			this.InteractionLayer.DrawGlOpaqueContent -= Draw_GlOpaqueContent;
 			this.sceneContext.SceneLoaded -= SceneContext_SceneLoaded;
+			printer.ViewState.ViewModeChanged -= this.ViewState_ViewModeChanged;
+
 			modelViewSidePanel.Resized -= ModelViewSidePanel_Resized;
 
 			if (meshViewerWidget != null)

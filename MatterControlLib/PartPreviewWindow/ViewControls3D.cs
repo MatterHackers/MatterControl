@@ -89,6 +89,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public NamedAction[] MenuActions { get; private set; }
 
+		internal void NotifyResetView()
+		{
+			this.ResetView.Invoke(this, null);
+		}
+
 		public bool IsPrinterMode { get; }
 
 		public ViewControls3DButtons ActiveButton
@@ -162,14 +167,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(CreateBedButton(sceneContext, theme));
 
 			this.AddChild(new ToolbarSeparator(theme));
-
-			var homeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", theme.InvertIcons), theme)
-			{
-				ToolTipText = "Reset View".Localize(),
-				Margin = theme.ButtonSpacing
-			};
-			homeButton.Click += (s, e) => ResetView?.Invoke(this, null);
-			AddChild(homeButton);
 
 			var undoButton = new IconButton(AggContext.StaticData.LoadIcon("Undo_grey_16x.png", 16, 16, theme.InvertIcons), theme)
 			{
