@@ -62,8 +62,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Height = scaledButtonSize,
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Center,
-				DisabledColor = theme.MinimalShade
-			};
+				DisabledColor = theme.MinimalShade,
+				Border = new BorderDouble(1),
+				BorderColor = theme.GetBorderColor(200)
+		};
 
 			this.AddChild(colorButton);
 		}
