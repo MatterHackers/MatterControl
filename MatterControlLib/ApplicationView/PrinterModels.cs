@@ -657,7 +657,7 @@ namespace MatterHackers.MatterControl
 
 		public RenderTypes RenderType
 		{
-			get => this.ModelView ? renderType : RenderTypes.Wireframe;
+			get => this.ModelView ? renderType : RenderTypes.Shaded;
 			set
 			{
 				if (renderType != value)
