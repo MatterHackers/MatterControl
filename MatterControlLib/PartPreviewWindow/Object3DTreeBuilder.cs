@@ -65,7 +65,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					foreach (var child in item.Children)
 					{
-						AddTree(BuildItemView(child), contextNode, theme);
+						if (child != null)
+						{
+							AddTree(BuildItemView(child), contextNode, theme);
+						}
 					}
 				}
 			}
