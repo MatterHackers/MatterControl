@@ -53,11 +53,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			arrowRight = AggContext.StaticData.LoadIcon("fa-angle-right_12.png", theme.InvertIcons);
 			arrowDown = AggContext.StaticData.LoadIcon("fa-angle-down_12.png", theme.InvertIcons);
 
-			imageButton = new IconButton(expandable ? arrowRight : new ImageBuffer(), theme)
+			imageButton = new IconButton(arrowRight, theme)
 			{
-				MinimumSize = new Vector2((expandable) ? theme.ButtonHeight : 10, theme.ButtonHeight),
+				MinimumSize = new Vector2(theme.ButtonHeight, theme.ButtonHeight),
 				VAnchor = VAnchor.Center,
-				Selectable = false
+				Selectable = false,
+				Enabled = expandable
 			};
 			this.AddChild(imageButton);
 
@@ -91,7 +92,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					_expandable = value;
 
 					imageButton.SetIcon(_expandable ? arrowRight : new ImageBuffer());
-					this.MinimumSize = new Vector2((double)((_expandable) ? this.MinimumSize.X : 10), (double)this.MinimumSize.Y);
+					this.MinimumSize = new Vector2((_expandable) ? this.MinimumSize.X : 10, this.MinimumSize.Y);
 				}
 			}
 		}
