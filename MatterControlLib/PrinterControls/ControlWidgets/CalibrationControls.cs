@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				SettingsRow settingsRow;
 
 				this.AddChild(settingsRow = new SettingsRow(
-					"Print Leveling Plane".Localize(),
+					"Bed Leveling".Localize(),
 					null,
 					theme,
 					AggContext.StaticData.LoadIcon("leveling_32x32.png", 16, 16, theme.InvertIcons)));
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					VAnchor = VAnchor.Center,
 					Margin = theme.ButtonSpacing,
 
-					ToolTipText = "Print Leveling Wizard - Can be re-calculated anytime there seems to be a problem with initial layer consistency".Localize()
+					ToolTipText = "Run Calibration".Localize()
 				};
 				runWizardButton.Click += (s, e) =>
 				{
@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe))
 				{
 					this.AddChild(settingsRow = new SettingsRow(
-						"Print Leveling Probe".Localize(),
+						"Calibrate Probe Offset".Localize(),
 						null,
 						theme,
 						AggContext.StaticData.LoadIcon("probing_32x32.png", 16, 16, theme.InvertIcons)));
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					{
 						VAnchor = VAnchor.Center,
 						Margin = theme.ButtonSpacing,
-						ToolTipText = "Probe Calibration Wizard - needed for initial setup - normally should remain calibrated unless there are changes to hardware.".Localize()
+						ToolTipText = "Run Calibration".Localize()
 					};
 					runCalibrateProbeButton.Click += (s, e) =>
 					{
