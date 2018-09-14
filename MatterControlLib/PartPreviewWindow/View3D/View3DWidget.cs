@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private PrinterTabPage printerTabPage;
 
-		public View3DWidget(PrinterConfig printer, BedConfig sceneContext, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, PartTabPage printerTabBase, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
+		public View3DWidget(PrinterConfig printer, BedConfig sceneContext, ViewControls3D viewControls3D, ThemeConfig theme, PartTabPage printerTabBase, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
 		{
 			this.sceneContext = sceneContext;
 			this.printerTabPage = printerTabBase as PrinterTabPage;
@@ -109,9 +109,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.BackgroundColor = theme.ActiveTabColor;
 			this.HAnchor = HAnchor.Stretch; //	HAnchor.MaxFitOrStretch,
 			this.VAnchor = VAnchor.Stretch; //  VAnchor.MaxFitOrStretch
-
-			autoRotating = allowAutoRotate;
-			allowAutoRotate = (autoRotate == AutoRotate.Enabled);
 
 			viewControls3D.TransformStateChanged += ViewControls3D_TransformStateChanged;
 
@@ -289,8 +286,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ApplicationController.Instance.GetViewOptionButtons(viewOptionsBar, sceneContext, printer, theme);
 
-			UiThread.RunOnIdle(AutoSpin);
-
 			var interactionVolumes = this.InteractionLayer.InteractionVolumes;
 			interactionVolumes.Add(new MoveInZControl(this.InteractionLayer));
 			interactionVolumes.Add(new SelectionShadow(this.InteractionLayer));
@@ -431,8 +426,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			Scene.UndoBuffer.Add(operation);
 		}
-
-		public enum AutoRotate { Enabled, Disabled };
 
 		public bool DisplayAllValueData { get; set; }
 
@@ -822,7 +815,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				meshViewerWidget.SuppressUiVolumes = true;
 			}
 
-			autoRotating = false;
 			base.OnMouseDown(mouseEvent);
 
 			if (TrackballTumbleWidget.UnderMouseState == UnderMouseState.FirstUnderMouse
@@ -1364,27 +1356,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		// TODO: Consider if we should always allow DragDrop or if we should prevent during printer or other scenarios
 		private bool AllowDragDrop() => true;
 
-		private void AutoSpin()
-		{
-			if (!HasBeenClosed && autoRotating)
-			{
-				if ((!timeSinceLastSpin.IsRunning || timeSinceLastSpin.ElapsedMilliseconds > 50)
-					&& hasDrawn)
-				{
-					hasDrawn = false;
-					timeSinceLastSpin.Restart();
-
-					Quaternion currentRotation = this.World.RotationMatrix.GetRotation();
-					Quaternion invertedRotation = Quaternion.Invert(currentRotation);
-
-					Quaternion rotateAboutZ = Quaternion.FromEulerAngles(new Vector3(0, 0, .01));
-					rotateAboutZ = invertedRotation * rotateAboutZ * currentRotation;
-					this.World.Rotate(rotateAboutZ);
-					Invalidate();
-				}
-			}
-		}
-
 		private void Scene_SelectionChanged(object sender, EventArgs e)
 		{
 			var selectedItem = Scene.SelectedItem;
@@ -1467,9 +1438,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// TODO: Extend popup menu if applicable
 			// popupMenu.CreateHorizontalLine();
 		}
-
-		protected bool autoRotating = false;
-		protected bool allowAutoRotate = false;
 
 		public MeshViewerWidget meshViewerWidget;
 		private bool assigningTreeNode;

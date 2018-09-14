@@ -81,7 +81,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			view3DWidget = new View3DWidget(
 				printer,
 				sceneContext,
-				View3DWidget.AutoRotate.Disabled,
 				viewControls3D,
 				theme,
 				this,
