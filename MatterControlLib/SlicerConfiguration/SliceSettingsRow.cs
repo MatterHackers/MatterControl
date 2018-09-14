@@ -33,6 +33,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -125,6 +126,85 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					overrideIndicator.BackgroundColor = value;
 				}
 			}
+		}
+
+		public override void OnClick(MouseEventArgs mouseEvent)
+		{
+			if (ActionWidget != null
+				&& mouseEvent.Button == MouseButtons.Left)
+			{
+				ActionWidget.OnClick(new MouseEventArgs(mouseEvent, 5, 5));
+			}
+			else if (mouseEvent.Button == MouseButtons.Right)
+			{
+				bool SettingIsOem()
+				{
+					if (printer.Settings.OemLayer.TryGetValue(settingData.SlicerConfigName, out string oemValue))
+					{
+						return printer.Settings.GetValue(settingData.SlicerConfigName) == oemValue;
+					}
+
+					if (printer.Settings.BaseLayer.TryGetValue(settingData.SlicerConfigName, out string baseValue))
+					{
+						return printer.Settings.GetValue(settingData.SlicerConfigName) == baseValue;
+					}
+
+					return false;
+				}
+
+				if(SettingIsOem())
+				{
+					return;
+				}
+
+				// show a right click menu ('Set as Default' & 'Help')
+				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+
+				//var clearUserOverrideMenuItem = popupMenu.CreateMenuItem("Cleare User Override".Localize());
+				//clearUserOverrideMenuItem.Enabled = HasUserOverride(settingData.SlicerConfigName); // check if the settings is already the default
+				//clearUserOverrideMenuItem.Click += (s, e) =>
+				//{
+				//	// clear the override
+				//	UpdateStyle();
+				//	printer.Settings.Save();
+				//};
+
+				var setAsDefaultMenuItem = popupMenu.CreateMenuItem("Set as Default".Localize());
+				setAsDefaultMenuItem.Enabled = !SettingIsOem(); // check if the settings is already the default
+				setAsDefaultMenuItem.Click += (s, e) =>
+				{
+					// we may want to ask if we should save this
+					// figure out what the current setting is and save it to the oem layer, than update the display
+					var settingName = settingData.SlicerConfigName;
+					printer.Settings.OemLayer[settingName] = printer.Settings.GetValue(settingName);
+					UpdateStyle();
+					printer.Settings.Save();
+				};
+
+				//var helpMenuItem = popupMenu.CreateMenuItem("Help".Localize());
+				//helpMenuItem.Enabled = false; // check if there is any help available
+				//helpMenuItem.Click += (s, e) =>
+				//{
+				//};
+
+				var sourceEvent = mouseEvent.Position;
+				var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+				this.Parents<SystemWindow>().FirstOrDefault().ToolTipManager.Clear();
+				systemWindow.ShowPopup(
+					new MatePoint(this)
+					{
+						Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+						AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+					},
+					new MatePoint(popupMenu)
+					{
+						Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+						AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
+					},
+					altBounds: new RectangleDouble(sourceEvent.X + 1, sourceEvent.Y + 1, sourceEvent.X + 1, sourceEvent.Y + 1));
+			}
+
+			base.OnClick(mouseEvent);
 		}
 
 		public void UpdateStyle()

@@ -96,7 +96,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				useRadioStyle: true,
 				siblingRadioButtonList: siblingList);
 
-			/*
 			popupMenu.CreateBoolMenuItem(
 				"Outlines".Localize(),
 				viewIcons[RenderTypes.Outlines],
@@ -106,7 +105,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					sceneContext.ViewState.RenderType = RenderTypes.Outlines;
 				},
 				useRadioStyle: true,
-				siblingRadioButtonList: siblingList); */
+				siblingRadioButtonList: siblingList);
 
 			popupMenu.CreateBoolMenuItem(
 				"Polygons".Localize(),

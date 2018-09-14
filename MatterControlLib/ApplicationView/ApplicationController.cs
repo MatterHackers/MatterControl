@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl
 
 		private static PrinterConfig emptyPrinter = new PrinterConfig(PrinterSettings.Empty);
 
-		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene)
+		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu)
 		{
 			var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
@@ -162,12 +162,12 @@ namespace MatterHackers.MatterControl
 
 			popupMenu.CreateHorizontalLine();
 
-			if (true) //allowOperations)
+			var selectedItemType = selectedItem.GetType();
+
+			var menuTheme = ApplicationController.Instance.MenuTheme;
+
+			if (addInSubmenu)
 			{
-				var selectedItemType = selectedItem.GetType();
-
-				var menuTheme = ApplicationController.Instance.MenuTheme;
-
 				popupMenu.CreateSubMenu("Modify".Localize(), ApplicationController.Instance.MenuTheme, (modifyMenu) =>
 				{
 					foreach (var nodeOperation in ApplicationController.Instance.Graph.Operations)
@@ -187,7 +187,26 @@ namespace MatterHackers.MatterControl
 						}
 					}
 				});
-			};
+			}
+			else
+			{
+				foreach (var nodeOperation in ApplicationController.Instance.Graph.Operations)
+				{
+					foreach (var type in nodeOperation.MappedTypes)
+					{
+						if (type.IsAssignableFrom(selectedItemType)
+							&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
+							&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
+						{
+							menuItem = popupMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme));
+							menuItem.Click += (s2, e2) =>
+							{
+								nodeOperation.Operation(selectedItem, scene).ConfigureAwait(false);
+							};
+						}
+					}
+				}
+			}
 
 			return popupMenu;
 		}

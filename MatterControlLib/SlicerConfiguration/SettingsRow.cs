@@ -32,6 +32,8 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
@@ -157,16 +159,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			this.Invalidate();
 			base.OnMouseLeaveBounds(mouseEvent);
-		}
-
-		public override void OnClick(MouseEventArgs mouseEvent)
-		{
-			if (ActionWidget != null)
-			{
-				ActionWidget.OnClick(new MouseEventArgs(mouseEvent, 5, 5));
-			}
-
-			base.OnClick(mouseEvent);
 		}
 	}
 }
