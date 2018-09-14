@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						var menu = ApplicationController.Instance.GetActionMenuForSceneItem((IObject3D)treeView.SelectedNode.Tag, Scene);
+						var menu = ApplicationController.Instance.GetActionMenuForSceneItem((IObject3D)treeView.SelectedNode.Tag, Scene, true);
 
 						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 						systemWindow.ShowPopup(
@@ -1215,7 +1215,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					UiThread.RunOnIdle(() =>
 					{
-						var menu = ApplicationController.Instance.GetActionMenuForSceneItem(selectedItem, Scene);
+						var menu = ApplicationController.Instance.GetActionMenuForSceneItem(selectedItem, Scene, true);
 
 						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 						systemWindow.ShowPopup(

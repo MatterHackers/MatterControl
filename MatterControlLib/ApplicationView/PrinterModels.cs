@@ -633,7 +633,7 @@ namespace MatterHackers.MatterControl
 	public class SceneContextViewState
 	{
 		private BedConfig sceneContext;
-		private RenderTypes renderType = RenderTypes.Shaded;
+		private RenderTypes renderType = RenderTypes.Outlines;
 
 		public SceneContextViewState(BedConfig sceneContext)
 		{
@@ -643,7 +643,7 @@ namespace MatterHackers.MatterControl
 			string renderTypeString = UserSettings.Instance.get(UserSettingsKey.defaultRenderSetting);
 			if (renderTypeString == null)
 			{
-				renderTypeString = "Shaded";
+				renderTypeString = "Outlines";
 				UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, renderTypeString);
 			}
 

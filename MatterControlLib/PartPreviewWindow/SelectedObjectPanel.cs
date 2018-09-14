@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			overflowButton.DynamicPopupContent = () =>
 			{
-				return ApplicationController.Instance.GetActionMenuForSceneItem(item, sceneContext.Scene);
+				return ApplicationController.Instance.GetActionMenuForSceneItem(item, sceneContext.Scene, false);
 			};
 			toolbar.AddChild(overflowButton);
 
