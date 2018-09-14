@@ -160,48 +160,5 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Invalidate();
 			base.OnMouseLeaveBounds(mouseEvent);
 		}
-
-		public override void OnClick(MouseEventArgs mouseEvent)
-		{
-			if (ActionWidget != null
-				&& mouseEvent.Button == MouseButtons.Left)
-			{
-				ActionWidget.OnClick(new MouseEventArgs(mouseEvent, 5, 5));
-			}
-			else if(mouseEvent.Button == MouseButtons.Right)
-			{
-				// show a right click menu ('Set as Default' & 'Help')
-				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
-
-				var setAsDefaultMenuItem = popupMenu.CreateMenuItem("Set as Default".Localize());
-				setAsDefaultMenuItem.Enabled = true; // check if the settings is already the default
-				setAsDefaultMenuItem.Click += (s, e) =>
-				{
-				};
-
-				var helpMenuItem = popupMenu.CreateMenuItem("Help".Localize());
-				helpMenuItem.Enabled = false; // check if there is any help available
-				helpMenuItem.Click += (s, e) =>
-				{
-				};
-
-				var sourceEvent = mouseEvent.Position;
-				var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-				systemWindow.ShowPopup(
-					new MatePoint(this)
-					{
-						Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-						AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-					},
-					new MatePoint(popupMenu)
-					{
-						Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-						AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
-					},
-					altBounds: new RectangleDouble(sourceEvent.X + 1, sourceEvent.Y + 1, sourceEvent.X + 1, sourceEvent.Y + 1));
-			}
-
-			base.OnClick(mouseEvent);
-		}
 	}
 }
