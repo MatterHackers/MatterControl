@@ -218,8 +218,8 @@
     "SlicerConfigName": "raft_extra_distance_around_part",
     "PresentationName": "Expand Distance",
     "HelpText": "The extra distance the raft will extend around the edge of the part.",
-    "DataEditType": "INT_OR_MM",
-    "Units": "count or mm",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm",
     "ShowIfSet": "!sla_printer",
     "EnableIfSet": "create_raft",
     "DefaultValue": "5"
