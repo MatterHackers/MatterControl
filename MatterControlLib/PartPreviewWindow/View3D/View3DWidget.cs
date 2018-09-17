@@ -286,6 +286,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ApplicationController.Instance.GetViewOptionButtons(viewOptionsBar, sceneContext, printer, theme);
 
+			// now add the grid snap button
+			viewOptionsBar.AddChild(new GridOptionsPanel(this.InteractionLayer, theme));
+
 			var interactionVolumes = this.InteractionLayer.InteractionVolumes;
 			interactionVolumes.Add(new MoveInZControl(this.InteractionLayer));
 			interactionVolumes.Add(new SelectionShadow(this.InteractionLayer));
@@ -1427,8 +1430,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal GuiWidget ShowOverflowMenu(PopupMenu popupMenu)
 		{
 			this.ShowBedViewOptions(popupMenu);
-
-			popupMenu.AddChild(new GridOptionsPanel(this.InteractionLayer, theme));
 
 			return popupMenu;
 		}

@@ -1199,13 +1199,19 @@ namespace MatterHackers.MatterControl
 				var foundStringEventArgs = e as FoundStringEventArgs;
 				if (foundStringEventArgs != null)
 				{
-					string message = "Your printer is reporting a hardware Error. This may prevent your printer from functioning properly.".Localize()
+					string message = "Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.".Localize()
 						+ "\n"
 						+ "\n"
 						+ "Error Reported".Localize() + ":"
 						+ $" \"{foundStringEventArgs.LineToCheck}\".";
 					UiThread.RunOnIdle(() =>
-						StyledMessageBox.ShowMessageBox(message, "Printer Hardware Error".Localize())
+						StyledMessageBox.ShowMessageBox((clickedOk) =>
+						{
+							if (clickedOk && this.ActivePrinter.Connection.PrinterIsPaused)
+							{
+								this.ActivePrinter.Connection.Resume();
+							}
+						}, message, "Printer Hardware Error".Localize(), StyledMessageBox.MessageType.YES_NO, "Resume".Localize(), "OK".Localize())
 					);
 				}
 			}, ref unregisterEvent);
@@ -2101,6 +2107,10 @@ namespace MatterHackers.MatterControl
 					{
 						printer.Connection.RequestPause();
 					}),
+					IsPaused = () =>
+					{
+						return printer.Connection.PrinterIsPaused;
+					},
 					PauseToolTip = "Pause Print".Localize(),
 					ResumeAction = () => UiThread.RunOnIdle(() =>
 					{
@@ -2441,6 +2451,11 @@ namespace MatterHackers.MatterControl
 		/// The database key used to round trip expansion state
 		/// </summary>
 		public string ExpansionSerializationKey { get; set; }
+
+		/// <summary>
+		/// Set this if you would like to update the stated of the pause resume button
+		/// </summary>
+		public Func<bool> IsPaused { get; set; }
 
 		public Action PauseAction { get; set; }
 		public Action ResumeAction { get; set; }

@@ -38,14 +38,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public GridOptionsPanel(InteractionLayer interactionLayer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
-			this.HAnchor = HAnchor.MaxFitOrStretch;
+			this.HAnchor = HAnchor.Fit;
 
-			this.AddChild(new TextWidget("Snap Grid".Localize())
-			{
-				Margin = new BorderDouble(35, 2, 8, 8),
-				TextColor = Color.Gray,
-				HAnchor = HAnchor.Left
-			});
+			ToolTipText = "Snap Grid".Localize();
 
 			var snapSettings = new Dictionary<double, string>()
 			{
@@ -58,10 +53,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{ 5, "5" },
 			};
 
-			var dropDownList = new DropDownList("Custom", theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
+			var dropDownList = new DropDownList("0.25", theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
 			{
 				TextColor = Color.Black,
-				Margin = new BorderDouble(35, 15, 35, 5),
 				HAnchor = HAnchor.Left,
 				BorderColor = theme.GetBorderColor(75)
 			};
