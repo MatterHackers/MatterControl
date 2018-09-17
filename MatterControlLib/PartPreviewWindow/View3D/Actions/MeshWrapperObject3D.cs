@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		/// <returns></returns>
 		public override AxisAlignedBoundingBox GetAxisAlignedBoundingBox(Matrix4X4 matrix)
 		{
-			AxisAlignedBoundingBox totalBounds = AxisAlignedBoundingBox.Empty;
+			AxisAlignedBoundingBox totalBounds = AxisAlignedBoundingBox.Empty();
 
 			foreach (var child in this.Descendants().Where(i => i.OwnerID == this.ID && i.Visible))
 			{
