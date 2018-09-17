@@ -108,6 +108,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Enabled = taskDetails.Options?.PauseAction != null,
 				ToolTipText = taskDetails.Options?.PauseToolTip ?? "Pause".Localize()
 			};
+			if(taskDetails.Options?.IsPaused != null)
+			{
+				RunningInterval runningInterval = null;
+				runningInterval = UiThread.SetInterval(() =>
+				{
+					if(taskDetails.Options.IsPaused())
+					{
+						pauseButton.Visible = false;
+						resumeButton.Visible = true;
+					}
+					else
+					{
+						pauseButton.Visible = true;
+						resumeButton.Visible = false;
+					}
+					if (this.HasBeenClosed)
+					{
+						runningInterval.Continue = false;
+					}
+				}, .2);
+
+			}
 			pauseButton.Click += (s, e) =>
 			{
 				taskDetails.Options?.PauseAction();

@@ -1302,6 +1302,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					ErrorReported.CallEvents(null, foundStringEventArgs);
 				}
+
+				// pause the printer
+				RequestPause();
 			}
 		}
 

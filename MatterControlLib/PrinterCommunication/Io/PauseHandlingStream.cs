@@ -92,8 +92,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		}
 
 		string pauseCaption = "Printer Paused".Localize();
-		string layerPauseMessage = "Your 3D print has been auto-paused.\nPause layer{0} reached.".Localize();
-		string filamentPauseMessage = "Out of filament detected\nYour 3D print has been paused.".Localize();
+		string layerPauseMessage = "Your 3D print has been auto-paused.\n\nLayer{0} reached.".Localize();
+		string filamentPauseMessage = "Your 3D print has been paused.\n\nOut of filament detected.".Localize();
 		private long lastSendTimeMs;
 
 		public void DoPause(PauseReason pauseReason, string layerNumber = "")
@@ -107,12 +107,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				case PauseReason.PauseLayerReached:
 				case PauseReason.GCodeRequest:
 					printer.Connection.PauseOnLayer.CallEvents(printer.Connection, new NamedItemEventArgs(printer.Bed.EditContext?.SourceItem?.Name ?? "Unknown"));
-					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, layerPauseMessage.FormatWith(layerNumber), pauseCaption, StyledMessageBox.MessageType.YES_NO, "Ok".Localize(), "Resume".Localize()));
+					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, layerPauseMessage.FormatWith(layerNumber), pauseCaption, StyledMessageBox.MessageType.YES_NO, "Resume".Localize(), "OK".Localize()));
 					break;
 
 				case PauseReason.FilamentRunout:
 					printer.Connection.FilamentRunout.CallEvents(printer.Connection, new NamedItemEventArgs(printer.Bed.EditContext?.SourceItem?.Name ?? "Unknown"));
-					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, filamentPauseMessage, pauseCaption, StyledMessageBox.MessageType.YES_NO, "Ok".Localize(), "Resume".Localize()));
+					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, filamentPauseMessage, pauseCaption, StyledMessageBox.MessageType.YES_NO, "Resume".Localize(), "OK".Localize()));
 					break;
 			}
 
@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private void ResumePrint(bool clickedOk)
 		{
 			// They clicked either Resume or Ok
-			if (!clickedOk && printer.Connection.PrinterIsPaused)
+			if (clickedOk && printer.Connection.PrinterIsPaused)
 			{
 				printer.Connection.Resume();
 			}
