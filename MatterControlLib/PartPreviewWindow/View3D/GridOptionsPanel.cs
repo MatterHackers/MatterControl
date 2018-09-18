@@ -28,57 +28,72 @@ either expressed or implied, of the FreeBSD Project.
 */
 using System.Collections.Generic;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class GridOptionsPanel : FlowLayoutWidget, IIgnoredPopupChild
+	public class GridOptionsPanel : DropButton
 	{
+		InteractionLayer interactionLayer;
+
 		public GridOptionsPanel(InteractionLayer interactionLayer, ThemeConfig theme)
-			: base(FlowDirection.TopToBottom)
+			: base(theme)
 		{
+			this.interactionLayer = interactionLayer;
+			this.PopupContent = () => ShowGridOptions(theme);
+
+			this.AddChild(new IconButton(AggContext.StaticData.LoadIcon("1694146.png", theme.InvertIcons), theme)
+			{
+				Selectable = false
+			});
 			this.HAnchor = HAnchor.Fit;
-
-			ToolTipText = "Snap Grid".Localize();
-
-			var snapSettings = new Dictionary<double, string>()
-			{
-				{ 0, "Off" },
-				{ .1, "0.1" },
-				{ .25, "0.25" },
-				{ .5, "0.5" },
-				{ 1, "1" },
-				{ 2, "2" },
-				{ 5, "5" },
-			};
-
-			var dropDownList = new DropDownList("0.25", theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
-			{
-				TextColor = Color.Black,
-				HAnchor = HAnchor.Left,
-				BorderColor = theme.GetBorderColor(75)
-			};
-
-			foreach (var snapSetting in snapSettings)
-			{
-				MenuItem newItem = dropDownList.AddItem(snapSetting.Value);
-				if (interactionLayer.SnapGridDistance == snapSetting.Key)
-				{
-					dropDownList.SelectedLabel = snapSetting.Value;
-				}
-
-				newItem.Selected += (sender, e) =>
-				{
-					interactionLayer.SnapGridDistance = snapSetting.Key;
-				};
-			}
-			this.AddChild(dropDownList);
+			this.VAnchor = VAnchor.Fit;
 		}
 
-		public bool KeepMenuOpen()
+		private GuiWidget ShowGridOptions(ThemeConfig theme)
 		{
-			return false;
+			var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+
+			var siblingList = new List<GuiWidget>();
+
+			popupMenu.CreateBoolMenuItem(
+				"Off".Localize(),
+				() => interactionLayer.SnapGridDistance ==  0,
+				(isChecked) =>
+				{
+					interactionLayer.SnapGridDistance = 0;
+				},
+				useRadioStyle: true,
+				siblingRadioButtonList: siblingList);
+
+			var snapSettings = new List<double>()
+			{
+				.1, .25, .5, 1, 2, 5
+			};
+
+			foreach(var snap in snapSettings)
+			{
+				popupMenu.CreateBoolMenuItem(
+					snap.ToString(),
+					() => interactionLayer.SnapGridDistance == snap,
+					(isChecked) =>
+					{
+						interactionLayer.SnapGridDistance =  snap;
+					},
+					useRadioStyle: true,
+					siblingRadioButtonList: siblingList);
+			}
+
+			// Override menu left padding to improve radio circle -> icon spacing
+			foreach (var menuItem in popupMenu.Children)
+			{
+				//menuItem.Padding = menuItem.Padding.Clone(left: 25);
+			}
+
+			return popupMenu;
 		}
 	}
 }

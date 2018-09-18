@@ -320,7 +320,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public InteractionVolume SelectedInteractionVolume { get; set; } = null;
 		public InteractionVolume HoveredInteractionVolume { get; set; } = null;
 
-		public double SnapGridDistance { get; set; } = 1;
+		public double SnapGridDistance
+		{
+			get
+			{
+				if(string.IsNullOrEmpty(UserSettings.Instance.get(UserSettingsKey.SnapGridDistance)))
+				{
+					return 1;
+				}
+				return UserSettings.Instance.GetValue<double>(UserSettingsKey.SnapGridDistance);
+			}
+
+			set
+			{
+				UserSettings.Instance.set(UserSettingsKey.SnapGridDistance, value.ToString());
+			}
+		} 
 
 		public GuiWidget GuiSurface => this;
 

@@ -186,13 +186,13 @@ namespace MatterHackers.MeshVisualizer
 		InteractionVolume SelectedInteractionVolume { get; }
 		InteractiveScene Scene { get; }
 		WorldView World { get; }
-		double SnapGridDistance { get; }
 
 		GuiWidget GuiSurface { get; }
 
 		void AddTransformSnapshot(Matrix4X4 originalTransform);
 
 		List<InteractionVolume> InteractionVolumes { get; }
+		double SnapGridDistance { get; }
 	}
 
 	public class InteractionVolumePlugin

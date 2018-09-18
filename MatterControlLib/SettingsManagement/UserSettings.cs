@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 using System.Reflection;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -24,6 +25,7 @@ namespace MatterHackers.MatterControl
 		public const string CredentialsInvalid = nameof(CredentialsInvalid);
 		public const string CredentialsInvalidReason = nameof(CredentialsInvalidReason);
 		public const string defaultRenderSetting = nameof(defaultRenderSetting);
+		public const string SnapGridDistance = nameof(SnapGridDistance);
 		public const string DisplayedTip_LoadFilament = nameof(DisplayedTip_LoadFilament);
 		public const string EditorPanelExpanded = nameof(EditorPanelExpanded);
 		public const string GCodeLineColorStyle = nameof(GCodeLineColorStyle);
@@ -139,6 +141,35 @@ namespace MatterHackers.MatterControl
 		public string Language { get; private set; }
 
 		public UserSettingsFields Fields { get; private set; } = new UserSettingsFields();
+
+		///<summary>
+		///Returns the first matching value discovered while enumerating the settings layers
+		///</summary>
+		public T GetValue<T>(string settingsKey) where T : IConvertible
+		{
+			if (typeof(T) == typeof(string))
+			{
+				// this way we can use the common pattern without error
+				return (T)(object)this.get(settingsKey);
+			}
+			else if (typeof(T) == typeof(bool))
+			{
+				return (T)(object)(this.get(settingsKey) == "1");
+			}
+			else if (typeof(T) == typeof(int))
+			{
+				int result;
+				int.TryParse(this.get(settingsKey), out result);
+				return (T)(object)(result);
+			}
+			else if (typeof(T) == typeof(double))
+			{
+				double.TryParse(this.get(settingsKey), out double result);
+				return (T)(object)(result);
+			}
+
+			return (T)default(T);
+		}
 
 		public string get(string key)
 		{
