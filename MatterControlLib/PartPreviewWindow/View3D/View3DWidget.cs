@@ -287,7 +287,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.GetViewOptionButtons(viewOptionsBar, sceneContext, printer, theme);
 
 			// now add the grid snap button
-			viewOptionsBar.AddChild(new GridOptionsPanel(this.InteractionLayer, theme));
+			var gridSnapButton = new GridOptionsPanel(InteractionLayer, theme)
+			{
+				ToolTipText = "Snap Grid".Localize(),
+				PopupMate = new MatePoint()
+				{
+					Mate = new MateOptions(MateEdge.Right, MateEdge.Top)
+				}
+			};
+			gridSnapButton.AnchorMate.Mate.VerticalEdge = MateEdge.Bottom;
+			gridSnapButton.AnchorMate.Mate.HorizontalEdge = MateEdge.Right;
+
+			viewOptionsBar.AddChild(gridSnapButton);
 
 			var interactionVolumes = this.InteractionLayer.InteractionVolumes;
 			interactionVolumes.Add(new MoveInZControl(this.InteractionLayer));
