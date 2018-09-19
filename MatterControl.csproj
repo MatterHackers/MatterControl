@@ -44,7 +44,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -53,7 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MatterControl.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -68,9 +67,21 @@
       <Project>{93bebfdf-b81a-4344-ab82-0dbf58b234cd}</Project>
       <Name>MatterControlLib</Name>
     </ProjectReference>
+    <ProjectReference Include="PluginSystem\MatterControlPluginSystem.csproj">
+      <Project>{865172a0-a1a9-49c2-9386-f2fdb4e141b7}</Project>
+      <Name>MatterControlPluginSystem</Name>
+    </ProjectReference>
     <ProjectReference Include="PrinterDriverInstaller\InfInstaller.csproj">
       <Project>{990a9ad3-b6a4-407b-9dfc-9c722af7c9b9}</Project>
       <Name>InfInstaller</Name>
+    </ProjectReference>
+    <ProjectReference Include="Submodules\agg-sharp\agg\Agg.csproj">
+      <Project>{657dbc6d-c3ea-4398-a3fa-ddb73c14f71b}</Project>
+      <Name>Agg</Name>
+    </ProjectReference>
+    <ProjectReference Include="Submodules\agg-sharp\Gui\Gui.csproj">
+      <Project>{74F6BB6C-9D02-4512-A59A-21940E35C532}</Project>
+      <Name>Gui</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\MatterSlice\MatterSlice.csproj">
       <Project>{b0aed568-8796-42b9-baa9-ebc796134e78}</Project>
