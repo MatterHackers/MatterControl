@@ -1,34 +1,47 @@
-﻿using System;
+﻿/*
+Copyright (c) 2018, Lars Brubaker, John Lewin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using System;
 using System.Globalization;
 using System.IO;
 using System.Threading;
 using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using Microsoft.Extensions.Configuration;
-//using Mindscape.Raygun4Net;
 
 namespace MatterHackers.MatterControl
 {
-	public static class MatterControlLib
+	class Program
 	{
-		private const int RaygunMaxNotifications = 15;
-
-		private static int raygunNotificationCount = 0;
-
-		//private static RaygunClient _raygunClient;
-
-		private class SlicerOptions
-		{
-			public bool Debug { get; set; }
-		}
-
-		/// <summary>
-		/// The main entry point for the application.
-		/// </summary>
-		public static void Main()
+		[STAThread]
+		static void Main(string[] args)
 		{
 			// this sets the global culture for the app and all new threads
 			CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
@@ -37,15 +50,6 @@ namespace MatterHackers.MatterControl
 			// and make sure the app is set correctly
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-
-			//if (AggContext.OperatingSystem == OSType.Mac)
-			//{
-			//	_raygunClient = new RaygunClient("qmMBpKy3OSTJj83+tkO7BQ=="); // this is the Mac key
-			//}
-			//else
-			//{
-			//	_raygunClient = new RaygunClient("hQIlyUUZRGPyXVXbI6l1dA=="); // this is the PC key
-			//}
 
 			// Set default Agg providers
 			AggContext.Config.ProviderTypes.SystemWindow = "MatterHackers.Agg.UI.OpenGLSystemWindow, agg_platform_win32";
@@ -70,33 +74,11 @@ namespace MatterHackers.MatterControl
 
 			Datastore.Instance.Initialize();
 
-//#if !DEBUG
-//			// Conditionally spin up error reporting if not on the Stable channel
-//			string channel = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
-//			if (string.IsNullOrEmpty(channel) || channel != "release" || OemSettings.Instance.WindowTitleExtra == "Experimental")
-//#endif
-//			{
-//				System.Windows.Forms.Application.ThreadException += (s, e) =>
-//				{
-//					if(raygunNotificationCount++ < RaygunMaxNotifications)
-//					{
-//						_raygunClient.Send(e.Exception);
-//					}
-//				};
-
-//				AppDomain.CurrentDomain.UnhandledException += (s, e) =>
-//				{
-//					if (raygunNotificationCount++ < RaygunMaxNotifications)
-//					{
-//						_raygunClient.Send(e.ExceptionObject as Exception);
-//					}
-//				};
-//			}
-
 			// Init platformFeaturesProvider before ShowAsSystemWindow
 			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
-			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
-			AppContext.Platform.ProcessCommandline();
+
+			MatterHackers.MatterControl.AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
+			MatterHackers.MatterControl.AppContext.Platform.ProcessCommandline();
 
 			// Get startup bounds from MatterControl and construct system window
 			//var systemWindow = new DesktopMainWindow(400, 200)
@@ -105,14 +87,5 @@ namespace MatterHackers.MatterControl
 			var systemWindow = Application.LoadRootWindow(width, height);
 			systemWindow.ShowAsSystemWindow();
 		}
-
-		// ** Standard Winforms Main ** //
-		//[STAThread]
-		//static void Main()
-		//{
-		//	Application.EnableVisualStyles();
-		//	Application.SetCompatibleTextRenderingDefault(false);
-		//	Application.Run(new Form1());
-		//}
 	}
 }
