@@ -129,6 +129,11 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			}
 		}
 
+		/// <summary>
+		/// given a serialPortName return a IFrostedSerialPort compatible with the system
+		/// </summary>
+		public static Func<string, IFrostedSerialPort> GetPlatformSerialPort;
+
 		public virtual IFrostedSerialPort Create(string serialPortName)
 		{
 #if __ANDROID__
@@ -147,7 +152,7 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			}
 			else // use the c# native serial port
 			{
-				newPort = new CSharpSerialPortWrapper(serialPortName);
+				newPort = GetPlatformSerialPort(serialPortName);
 			}
 
 			return newPort;

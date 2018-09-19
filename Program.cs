@@ -34,6 +34,7 @@ using System.Threading;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.SerialPortCommunication.FrostedSerial;
 using Microsoft.Extensions.Configuration;
 
 namespace MatterHackers.MatterControl
@@ -46,6 +47,12 @@ namespace MatterHackers.MatterControl
 			// this sets the global culture for the app and all new threads
 			CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 			CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+
+			// make sure we can bulid a system relevant serial port
+			FrostedSerialPortFactory.GetPlatformSerialPort = (serialPortName) =>
+			{
+				return new CSharpSerialPortWrapper(serialPortName);
+			};
 
 			// and make sure the app is set correctly
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
