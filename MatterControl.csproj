@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CSharpSerialPortWrapper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -62,6 +63,10 @@
     <ProjectReference Include="Community.CsharpSqlite\Community.CsharpSqlite.csproj">
       <Project>{f1653f20-d47d-4f29-8c55-3c835542af5f}</Project>
       <Name>Community.CsharpSqlite</Name>
+    </ProjectReference>
+    <ProjectReference Include="MatterControl.Printing\MatterControl.Printing.csproj">
+      <Project>{97d5ade3-c1b4-4b46-8a3e-718a4f7f079f}</Project>
+      <Name>MatterControl.Printing</Name>
     </ProjectReference>
     <ProjectReference Include="MatterControlLib\MatterControlLib.csproj">
       <Project>{93bebfdf-b81a-4344-ab82-0dbf58b234cd}</Project>
