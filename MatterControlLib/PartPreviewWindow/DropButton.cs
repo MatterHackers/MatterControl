@@ -71,9 +71,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			set => base.BackgroundColor = value;
 		}
 
+		private bool downWhileOpen = false;
+
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			downWhileOpen = menuVisible;
+
+			base.OnMouseDown(mouseEvent);
+		}
+
 		public override void OnClick(MouseEventArgs mouseEvent)
 		{
-			if (!menuVisible)
+			if (!menuVisible
+				&& !downWhileOpen)
 			{
 				var popupContent = this.PopupContent();
 				if (popupContent == null
