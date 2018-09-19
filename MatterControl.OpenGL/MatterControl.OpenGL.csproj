@@ -8,24 +8,14 @@
 
   <ItemGroup>
       <ProjectReference Include="..\MatterControl.Printing\MatterControl.Printing.csproj">
-      <Project>{97d5ade3-c1b4-4b46-8a3e-718a4f7f079f}</Project>
-      <Name>MatterControl.Printing</Name>
     </ProjectReference>
     <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj">
-      <Project>{657dbc6d-c3ea-4398-a3fa-ddb73c14f71b}</Project>
-      <Name>Agg</Name>
     </ProjectReference>
     <ProjectReference Include="..\Submodules\agg-sharp\Gui\Gui.csproj">
-      <Project>{74f6bb6c-9d02-4512-a59a-21940e35c532}</Project>
-      <Name>Gui</Name>
     </ProjectReference>
     <ProjectReference Include="..\Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj">
-      <Project>{545b6912-77ff-4b34-ba76-6c3d6a32be6a}</Project>
-      <Name>RenderOpenGl</Name>
     </ProjectReference>
     <ProjectReference Include="..\Submodules\agg-sharp\VectorMath\VectorMath.csproj">
-      <Project>{d3e41b4e-bfbb-44ca-94c8-95c00f754fdd}</Project>
-      <Name>VectorMath</Name>
     </ProjectReference>
   </ItemGroup>
 

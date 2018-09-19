@@ -13,12 +13,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj">
-      <Project>{657dbc6d-c3ea-4398-a3fa-ddb73c14f71b}</Project>
-      <Name>Agg</Name>
     </ProjectReference>
     <ProjectReference Include="..\Submodules\agg-sharp\VectorMath\VectorMath.csproj">
-      <Project>{d3e41b4e-bfbb-44ca-94c8-95c00f754fdd}</Project>
-      <Name>VectorMath</Name>
     </ProjectReference>
   </ItemGroup>
 
