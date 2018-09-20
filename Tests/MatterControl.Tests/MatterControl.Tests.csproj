@@ -44,12 +44,6 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="NUnit" Version="3.10.1" />
-    <PackageReference Include="NUnit.ApplicationDomain" Version="11.1.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="MatterControl\ApplicationControllerTests.cs" />
     <Compile Include="MatterControl\BoundDropListTests.cs" />
     <Compile Include="MatterControl\BrailleGrade2Tests.cs" />
@@ -93,7 +87,7 @@
       <Name>MatterControl.Winforms</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\MatterControlLib\MatterControlLib.csproj">
-      <Project>{93BEBFDF-B81A-4344-AB82-0DBF58B234CD}</Project>
+      <Project>{D557B079-612F-467F-AE0D-3F77BCD627F7}</Project>
       <Name>MatterControlLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\PluginSystem\MatterControlPluginSystem.csproj">
@@ -109,7 +103,7 @@
       <Name>DataConverters3D</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\GuiAutomation\GuiAutomation.csproj">
-      <Project>{e9102310-0029-4d8f-b1e9-88fba6147d45}</Project>
+      <Project>{807F5686-A3EC-4BCC-AA42-B75D79E0D855}</Project>
       <Name>GuiAutomation</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\Gui\Gui.csproj">
@@ -121,7 +115,7 @@
       <Name>Localizations</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\PlatformWin32\PlatformWin32.csproj">
-      <Project>{670bddff-927b-425d-9dd1-22acb14356eb}</Project>
+      <Project>{CD8A3D1A-24D5-4184-8CF3-7B2AD5CD7A71}</Project>
       <Name>PlatformWin32</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\PolygonMesh\Net3dBool\Net3dBool.csproj">
@@ -149,16 +143,16 @@
       <Name>MatterSlice</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\MatterSlice\MatterSliceLib\MatterSliceLib.csproj">
-      <Project>{23bd06a4-d017-4dd0-a922-d2aad91c3484}</Project>
+      <Project>{D0B7E0DD-3517-4BFD-A934-95A568FEED1E}</Project>
       <Name>MatterSliceLib</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="C5" Version="2.5.3" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-    <PackageReference Include="NUnit" Version="3.9.0" />
-    <PackageReference Include="NUnit.ApplicationDomain" Version="11.0.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.9.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="NUnit" Version="3.10.1" />
+    <PackageReference Include="NUnit.ApplicationDomain" Version="11.1.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Xml" />

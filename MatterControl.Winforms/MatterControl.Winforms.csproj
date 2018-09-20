@@ -56,7 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MatterControlLib\MatterControlLib.csproj">
-      <Project>{93BEBFDF-B81A-4344-AB82-0DBF58B234CD}</Project>
+      <Project>{D557B079-612F-467F-AE0D-3F77BCD627F7}</Project>
       <Name>MatterControlLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\PluginSystem\MatterControlPluginSystem.csproj">
@@ -76,7 +76,7 @@
       <Name>Gui</Name>
     </ProjectReference>
     <ProjectReference Include="..\Submodules\agg-sharp\PlatformWin32\PlatformWin32.csproj">
-      <Project>{670bddff-927b-425d-9dd1-22acb14356eb}</Project>
+      <Project>{CD8A3D1A-24D5-4184-8CF3-7B2AD5CD7A71}</Project>
       <Name>PlatformWin32</Name>
     </ProjectReference>
     <ProjectReference Include="..\Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj">
