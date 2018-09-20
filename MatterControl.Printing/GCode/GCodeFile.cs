@@ -214,63 +214,6 @@ namespace MatterControl.Printing
 			return stringWithNumber;
 		}
 
-		// Vector4 maxAccelerationMmPerS2 = new Vector4(1000, 1000, 100, 5000);
-		// Vector4 maxVelocityMmPerS = new Vector4(500, 500, 5, 25);
-		// Vector4 velocitySameAsStopMmPerS = new Vector4(8, 8, .4, 5);
-
-		protected static double GetSecondsThisLine(Vector3 deltaPositionThisLine, 
-			double deltaEPositionThisLine, 
-			double feedRateMmPerMin,
-			Vector4 maxAccelerationMmPerS2,
-			Vector4 maxVelocityMmPerS,
-			Vector4 velocitySameAsStopMmPerS,
-			Vector4 speedMultiplierV4)
-		{
-			double lengthOfThisMoveMm = Math.Max(deltaPositionThisLine.Length, deltaEPositionThisLine);
-
-			if (lengthOfThisMoveMm == 0)
-			{
-				return 0;
-			}
-
-			double maxVelocityMmPerSx = Math.Min(feedRateMmPerMin / 60, maxVelocityMmPerS.X);
-			double startingVelocityMmPerS = Math.Min(velocitySameAsStopMmPerS.X, maxVelocityMmPerSx);
-			double endingVelocityMmPerS = startingVelocityMmPerS;
-			double acceleration = maxAccelerationMmPerS2.X;
-			double speedMultiplier = speedMultiplierV4.X;
-
-			double distanceToMaxVelocity = GetDistanceToReachEndingVelocity(startingVelocityMmPerS, maxVelocityMmPerSx, acceleration);
-			if (distanceToMaxVelocity <= lengthOfThisMoveMm / 2)
-			{
-				// we will reach max velocity then run at it and then decelerate
-				double accelerationTime = GetTimeToAccelerateDistance(startingVelocityMmPerS, distanceToMaxVelocity, acceleration) * 2;
-				double runningTime = (lengthOfThisMoveMm - (distanceToMaxVelocity * 2)) / maxVelocityMmPerSx;
-				return (accelerationTime + runningTime) * speedMultiplier;
-			}
-			else
-			{
-				// we will accelerate to the center then decelerate
-				double accelerationTime = GetTimeToAccelerateDistance(startingVelocityMmPerS, lengthOfThisMoveMm / 2, acceleration) * 2;
-				return (accelerationTime) * speedMultiplier;
-			}
-		}
-
-		private static double GetDistanceToReachEndingVelocity(double startingVelocityMmPerS, double endingVelocityMmPerS, double accelerationMmPerS2)
-		{
-			double endingVelocityMmPerS2 = endingVelocityMmPerS * endingVelocityMmPerS;
-			double startingVelocityMmPerS2 = startingVelocityMmPerS * startingVelocityMmPerS;
-			return (endingVelocityMmPerS2 - startingVelocityMmPerS2) / (2.0 * accelerationMmPerS2);
-		}
-
-		private static double GetTimeToAccelerateDistance(double startingVelocityMmPerS, double distanceMm, double accelerationMmPerS2)
-		{
-			// d = vi * t + .5 * a * t^2;
-			// t = (√(vi^2+2ad)-vi)/a
-			double startingVelocityMmPerS2 = startingVelocityMmPerS * startingVelocityMmPerS;
-			double distanceAcceleration2 = 2 * accelerationMmPerS2 * distanceMm;
-			return (Math.Sqrt(startingVelocityMmPerS2 + distanceAcceleration2) - startingVelocityMmPerS) / accelerationMmPerS2;
-		}
-
 		private static readonly bool Is32Bit = IntPtr.Size == 4;
 		#endregion Static Functions
     }
