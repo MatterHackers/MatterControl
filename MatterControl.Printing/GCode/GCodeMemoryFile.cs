@@ -402,8 +402,21 @@ namespace MatterControl.Printing
 
 				if (feedRateMmPerMin > 0) 
 				{
-					instruction.secondsThisLine = (float)GetSecondsThisLine(deltaPositionThisLine, deltaEPositionThisLine, feedRateMmPerMin,
-						maxAccelerationMmPerS2, maxVelocityMmPerS, velocitySameAsStopMmPerS, speedMultiplier);
+					var timeForE = Estimator.GetSecondsForMovement(deltaEPositionThisLine,
+						feedRateMmPerMin / 60.0,
+						maxAccelerationMmPerS2[3],
+						maxVelocityMmPerS[3],
+						velocitySameAsStopMmPerS[3],
+						speedMultiplier[3]);
+
+					var timeForPosition = Estimator.GetSecondsForMovement(deltaPositionThisLine,
+						feedRateMmPerMin / 60.0,
+						new Vector3(maxAccelerationMmPerS2),
+						new Vector3(maxVelocityMmPerS),
+						new Vector3(velocitySameAsStopMmPerS),
+						new Vector3(speedMultiplier));
+
+					instruction.secondsThisLine = (float)Math.Max(timeForE, timeForPosition);
 				}
 
 				if (progressReporter != null && maxProgressReport.ElapsedMilliseconds > 200)

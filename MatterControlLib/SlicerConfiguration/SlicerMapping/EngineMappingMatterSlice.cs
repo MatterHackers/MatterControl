@@ -108,10 +108,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.model,
 			SettingsKey.enable_network_printing,
 			SettingsKey.enable_sailfish_communication,
-			SettingsKey.max_velocity,
-			SettingsKey.jerk_velocity,
 			SettingsKey.print_time_estimate_multiplier,
-			SettingsKey.max_acceleration,
 			SettingsKey.ip_address,
 			SettingsKey.ip_port,
 			SettingsKey.progress_reporting,
@@ -168,6 +165,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedSetting("min_print_speed", "minimumPrintingSpeed"),
 				new OverrideSpeedOnSlaPrinters("perimeter_speed", "insidePerimetersSpeed", "infill_speed"),
 				new MappedSetting("raft_air_gap", "raftAirGap"),
+				new MappedSetting(SettingsKey.max_acceleration, "maxAcceleration"),
+				new MappedSetting(SettingsKey.max_velocity, "maxVelocity"),
+				new MappedSetting(SettingsKey.jerk_velocity, "jerkVelocity"),
 				// fan settings
 				new VisibleButNotMappedToEngine("enable_fan"), // this is considered when sending fan speeds to slicing
 				new MappedFanSpeedSetting("min_fan_speed", "fanSpeedMinPercent"),
