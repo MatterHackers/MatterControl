@@ -29,5 +29,10 @@ namespace MatterHackers.PrinterEmulator
 	{
 		override protected string GetDriverType() => "Emulator";
 		public override IFrostedSerialPort Create(string serialPortName) => new Emulator();
+
+		public override IFrostedSerialPort CreateAndOpen(string serialPortName, int baudRate, bool DtrEnableOnConnect)
+		{
+			return this.Create(serialPortName);
+		}
 	}
 }

@@ -506,7 +506,7 @@ namespace MatterHackers.PrinterEmulator
 	{
 		private object receiveLock = new object();
 		private Queue<string> receiveQueue = new Queue<string>();
-		private AutoResetEvent receiveResetEvent;
+		private AutoResetEvent receiveResetEvent = new AutoResetEvent(false);
 		private object sendLock = new object();
 		private Queue<string> sendQueue = new Queue<string>(new string[] { "Emulator v0.1\n" });
 		public int BaudRate { get; set; }
