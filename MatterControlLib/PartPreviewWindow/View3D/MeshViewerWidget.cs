@@ -551,6 +551,10 @@ namespace MatterHackers.MeshVisualizer
 					{
 						drawColor = gCodeMeshColor;
 					}
+					else if(modelRenderStyle == ModelRenderStyle.Wireframe)
+					{
+						drawColor = new Color(gCodeMeshColor, 1);
+					}
 					else if (modelRenderStyle == ModelRenderStyle.None)
 					{
 						drawColor = Color.Transparent;
@@ -782,6 +786,17 @@ namespace MatterHackers.MeshVisualizer
 				RenderBedMesh(lookingDownOnBed);
 			}
 
+			var wireColor = Color.Transparent;
+			switch(modelRenderStyle)
+			{
+				case ModelRenderStyle.Wireframe:
+					wireColor = darkWireframe;
+					break;
+
+				case ModelRenderStyle.WireframeAndSolid:
+					wireColor = lightWireframe;
+					break;
+			}
 			// Draw transparent objects
 			foreach (var item in transparentMeshes)
 			{
@@ -792,7 +807,7 @@ namespace MatterHackers.MeshVisualizer
 					object3D.WorldMatrix(),
 					RenderTypes.Outlines,
 					object3D.WorldMatrix() * World.ModelviewMatrix,
-					(modelRenderStyle == ModelRenderStyle.Solid) ? Color.Transparent : lightWireframe);
+					wireColor);
 			}
 
 			if (!lookingDownOnBed)
