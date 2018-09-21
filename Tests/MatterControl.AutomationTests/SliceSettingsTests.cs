@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		private static void WaitForLayerAndResume(AutomationRunner testRunner, int indexToWaitFor)
 		{
-			testRunner.WaitForName("No Button", 30);
+			testRunner.WaitForName("Yes Button", 30);
 
 			var printer = ApplicationController.Instance.ActivePrinter;
 
@@ -128,8 +128,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.WaitFor(() => printer.Bed.ActiveLayerIndex + 1 == indexToWaitFor, 30, 500);
 			Assert.AreEqual(indexToWaitFor, printer.Bed.ActiveLayerIndex + 1);
 
-			testRunner.ClickByName("No Button");
-			testRunner.WaitForWidgetDisappear("No Button", 10);
+			testRunner.ClickByName("Yes Button");
+			testRunner.WaitForWidgetDisappear("Yes Button", 10);
 		}
 
 		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]

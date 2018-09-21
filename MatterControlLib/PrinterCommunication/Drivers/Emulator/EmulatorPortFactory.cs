@@ -32,7 +32,9 @@ namespace MatterHackers.PrinterEmulator
 
 		public override IFrostedSerialPort CreateAndOpen(string serialPortName, int baudRate, bool DtrEnableOnConnect)
 		{
-			return this.Create(serialPortName);
+			var port = this.Create(serialPortName);
+			port.Open();
+			return port;
 		}
 	}
 }

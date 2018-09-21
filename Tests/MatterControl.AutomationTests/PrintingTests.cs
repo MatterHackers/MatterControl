@@ -254,16 +254,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					emulator.SimulateLineErrors = true;
 
 					// close the pause dialog pop-up (resume)
-					testRunner.WaitForName("No Button", 90);// the no button is 'Resume'
-					testRunner.ClickByName("No Button");
+					testRunner.WaitForName("Yes Button", 20);// the yes button is 'Resume'
+					testRunner.ClickByName("Yes Button");
 
 					// simulate board reboot
 					emulator.SimulateReboot();
 
 					// close the pause dialog pop-up (resume)
 					testRunner.Delay(3);
-					testRunner.WaitForName("No Button", 90);
-					testRunner.ClickByName("No Button");
+					testRunner.WaitForName("Yes Button", 20);
+					testRunner.ClickByName("Yes Button");
 
 					// Wait for done
 					testRunner.WaitForPrintFinished();
@@ -299,15 +299,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.StartPrint();
 
 					// Dismiss pause dialog
-					testRunner.WaitForName("No Button", 90); // the no button is 'Resume'
+					testRunner.WaitForName("Yes Button", 90); // the yes button is 'Resume'
 
 					// validate the current layer
 					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinter.Connection.CurrentlyPrintingLayer);
-					testRunner.ClickByName("No Button");
+					testRunner.ClickByName("Yes Button");
 
 					// the printer is now paused
 					// close the pause dialog pop-up do not resume
-					ClickDialogButton(testRunner, "Yes Button", 3);
+					ClickDialogButton(testRunner, "No Button", 3);
 
 					// Disconnect
 					testRunner.ClickByName("Disconnect from printer button");
@@ -325,7 +325,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// The first pause that we get after recovery should be layer 6.
 					// wait for the pause and continue
-					ClickDialogButton(testRunner, "No Button", 5);
+					ClickDialogButton(testRunner, "Yes Button", 5);
 
 					// Wait for done
 					testRunner.WaitForPrintFinished();
