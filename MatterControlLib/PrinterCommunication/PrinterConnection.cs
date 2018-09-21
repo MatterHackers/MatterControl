@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private PrinterMove lastReportedPosition;
 
-		private GCodeFileStream gCodeFileStream0 = null;
+		private GCodeSwitcher gCodeFileSwitcher0 = null;
 		private SendProgressStream sendProgressStream1 = null;
 		private PauseHandlingStream pauseHandlingStream2 = null;
 		private QueuedCommandsStream queuedCommandStream3 = null;
@@ -513,6 +513,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
+		public void SwitchToGCode(string gCodeFilePath)
+		{
+			gCodeFileSwitcher0.SwitchTo(gCodeFilePath);
+		}
+
 		public string ComPort => printer.Settings?.Helpers.ComPort();
 
 		public string DriverType => (this.ComPort == "Emulator") ? "Emulator" : printer.Settings?.GetValue("driver_type");
@@ -542,9 +547,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			get
 			{
-				if (gCodeFileStream0 != null)
+				if (gCodeFileSwitcher0 != null)
 				{
-					return gCodeFileStream0?.GCodeFile?.GetLayerIndex(gCodeFileStream0.LineIndex) ?? -1;
+					return gCodeFileSwitcher0?.GCodeFile?.GetLayerIndex(gCodeFileSwitcher0.LineIndex) ?? -1;
 				}
 
 				return -1;
@@ -597,9 +602,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					return 100.0;
 				}
 				else if (NumberOfLinesInCurrentPrint > 0
-					&& gCodeFileStream0?.GCodeFile != null)
+					&& gCodeFileSwitcher0?.GCodeFile != null)
 				{
-					return gCodeFileStream0.GCodeFile.PercentComplete(gCodeFileStream0.LineIndex);
+					return gCodeFileSwitcher0.GCodeFile.PercentComplete(gCodeFileSwitcher0.LineIndex);
 				}
 				else
 				{
@@ -714,12 +719,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			get
 			{
-				if (gCodeFileStream0?.GCodeFile == null)
+				if (gCodeFileSwitcher0?.GCodeFile == null)
 				{
 					return 0;
 				}
 
-				return gCodeFileStream0.GCodeFile.Ratio0to1IntoContainedLayer(gCodeFileStream0.LineIndex);
+				return gCodeFileSwitcher0.GCodeFile.Ratio0to1IntoContainedLayer(gCodeFileSwitcher0.LineIndex);
 			}
 		}
 
@@ -754,22 +759,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public int TotalLayersInPrint => gCodeFileStream0?.GCodeFile?.LayerCount ?? -1;
+		public int TotalLayersInPrint => gCodeFileSwitcher0?.GCodeFile?.LayerCount ?? -1;
 
-		private int NumberOfLinesInCurrentPrint => gCodeFileStream0?.GCodeFile?.LineCount ?? -1;
+		private int NumberOfLinesInCurrentPrint => gCodeFileSwitcher0?.GCodeFile?.LineCount ?? -1;
 
 		public int TotalSecondsInPrint
 		{
 			get
 			{
-				if (gCodeFileStream0?.GCodeFile?.LineCount > 0)
+				if (gCodeFileSwitcher0?.GCodeFile?.LineCount > 0)
 				{
 					if (this.FeedRateRatio != 0)
 					{
-						return (int)(gCodeFileStream0.GCodeFile.TotalSecondsInPrint / this.FeedRateRatio);
+						return (int)(gCodeFileSwitcher0.GCodeFile.TotalSecondsInPrint / this.FeedRateRatio);
 					}
 
-					return (int)(gCodeFileStream0.GCodeFile.TotalSecondsInPrint);
+					return (int)(gCodeFileSwitcher0.GCodeFile.TotalSecondsInPrint);
 				}
 
 				return 0;
@@ -2031,7 +2036,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void ClearQueuedGCode()
 		{
-			gCodeFileStream0?.GCodeFile?.Clear();
+			gCodeFileSwitcher0?.GCodeFile?.Clear();
 		}
 
 		private void DonePrintingSdFile(object sender, FoundStringEventArgs e)
@@ -2096,24 +2101,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			GCodeStream firstStreamToRead = null;
 			if (gcodeFilename != null)
 			{
-				gCodeFileStream0 = new GCodeFileStream(GCodeFile.Load(gcodeFilename,
-					new Vector4(),
-					new Vector4(),
-					new Vector4(),
-					Vector4.One,
-					CancellationToken.None));
+				gCodeFileSwitcher0 = new GCodeSwitcher(gcodeFilename, this);
 
 				if (this.RecoveryIsEnabled
 					&& activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
 				{
-					sendProgressStream1 = new SendProgressStream(printer, new PrintRecoveryStream(printer, gCodeFileStream0, activePrintTask.PercentDone));
+					sendProgressStream1 = new SendProgressStream(printer, new PrintRecoveryStream(printer, gCodeFileSwitcher0, activePrintTask.PercentDone));
 					// And increment the recovery count
 					activePrintTask.RecoveryCount++;
 					activePrintTask.Commit();
 				}
 				else
 				{
-					sendProgressStream1 = new SendProgressStream(printer, gCodeFileStream0);
+					sendProgressStream1 = new SendProgressStream(printer, gCodeFileSwitcher0);
 				}
 
 				pauseHandlingStream2 = new PauseHandlingStream(printer, sendProgressStream1);
@@ -2121,7 +2121,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 			else
 			{
-				gCodeFileStream0 = null;
+				gCodeFileSwitcher0 = null;
 				firstStreamToRead = new NotPrintingStream();
 			}
 
@@ -2167,12 +2167,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				double secondsSinceStartedPrint = timeSinceStartedPrint.Elapsed.TotalSeconds;
 
 				if (timeSinceStartedPrint.Elapsed.TotalSeconds > 0
-					&& gCodeFileStream0 != null
+					&& gCodeFileSwitcher0 != null
 					&& (secondsSinceUpdateHistory > secondsSinceStartedPrint
 					|| secondsSinceUpdateHistory + 1 < secondsSinceStartedPrint
-					|| lineSinceUpdateHistory + 20 < gCodeFileStream0.LineIndex))
+					|| lineSinceUpdateHistory + 20 < gCodeFileSwitcher0.LineIndex))
 				{
-					double currentDone = gCodeFileStream0.GCodeFile.PercentComplete(gCodeFileStream0.LineIndex);
+					double currentDone = gCodeFileSwitcher0.GCodeFile.PercentComplete(gCodeFileSwitcher0.LineIndex);
 					// Only update the amount done if it is greater than what is recorded.
 					// We don't want to mess up the resume before we actually resume it.
 					if (activePrintTask != null
@@ -2190,7 +2190,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						//timer.Restart();
 					}
 					secondsSinceUpdateHistory = secondsSinceStartedPrint;
-					lineSinceUpdateHistory = gCodeFileStream0.LineIndex;
+					lineSinceUpdateHistory = gCodeFileSwitcher0.LineIndex;
 				}
 
 				Thread.Sleep(5);
