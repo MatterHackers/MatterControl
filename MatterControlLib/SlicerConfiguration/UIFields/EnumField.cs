@@ -52,11 +52,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Enum keyed on name to friendly name
 			var enumItems = Enum.GetNames(property.PropertyType).Select(enumName =>
 			{
+				var renamedName = enumName;
+
+				var renameAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<EnumRenameAttribute>().FirstOrDefault();
+				if (renameAttribute != null)
+				{
+					if(renameAttribute.NameMaping.TryGetValue(renamedName, out string value))
+					{
+						renamedName = value;
+					}
+				}
 				return new
 				{
 					Key = enumName,
-					Value = enumName.Replace('_', ' ')
-				};
+					Value = renamedName.Replace('_', ' ')
+			};
 			});
 
 			dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
