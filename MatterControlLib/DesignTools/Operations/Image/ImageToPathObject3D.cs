@@ -65,6 +65,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public enum ThresholdFunctions { Silhouette, Intensity, Alpha, Hue }
 
+		[EnumRename("Alpha", "Transparency")]
 		public ThresholdFunctions FeatureDetector
 		{
 			get { return _featureDetector; }
