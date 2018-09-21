@@ -942,6 +942,11 @@ namespace MatterControl.Printing
 			return false;
 		}
 
+		/// <summary>
+		/// Get the height of this layer (from the top of the previous layer to the top of this layer).
+		/// </summary>
+		/// <param name="layerIndex"></param>
+		/// <returns></returns>
 		public override double GetLayerHeight(int layerIndex)
 		{
 			if (layerHeights.Count > 0)
@@ -962,10 +967,30 @@ namespace MatterControl.Printing
 			return .5;
 		}
 
+		/// <summary>
+		/// Get the height of the top of this layer as measure from the bed
+		/// </summary>
+		/// <param name="layerIndex"></param>
+		/// <returns></returns>
 		public override double GetLayerTop(int layerIndex)
 		{
 			double total = 0;
 			for (int i = 0; i <= layerIndex; i++)
+			{
+				total += GetLayerHeight(i);
+			}
+			return total;
+		}
+
+		/// <summary>
+		/// Get the height of the bottom of this layer as measure from the bed
+		/// </summary>
+		/// <param name="layerIndex"></param>
+		/// <returns></returns>
+		public double GetLayerBottom(int layerIndex)
+		{
+			double total = 0;
+			for (int i = 0; i < layerIndex; i++)
 			{
 				total += GetLayerHeight(i);
 			}

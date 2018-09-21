@@ -461,11 +461,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var bodyRow = new GuiWidget()
 			{
-				HAnchor = HAnchor.Fit | HAnchor.Center,
+				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Top | VAnchor.Fit,
 				//BackgroundColor = new Color(theme.Colors.PrimaryBackgroundColor, 128),
 				MinimumSize = new Vector2(275, 140),
-				Selectable = false
 			};
 
 			// Progress section
@@ -477,9 +476,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var progressContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				Margin = new BorderDouble(50, 0),
 				VAnchor = VAnchor.Center | VAnchor.Fit,
-				HAnchor = HAnchor.Center | HAnchor.Fit,
+				HAnchor = HAnchor.Stretch,
 			};
 			expandingContainer.AddChild(progressContainer);
 
@@ -491,12 +489,88 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			progressContainer.AddChild(progressDial);
 
+			var bottomRow = new GuiWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			};
+			progressContainer.AddChild(bottomRow);
+
 			var timeContainer = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Center | HAnchor.Fit,
 				Margin = 3
 			};
-			progressContainer.AddChild(timeContainer);
+			bottomRow.AddChild(timeContainer);
+
+			// we can only reslice on 64 bit, because in 64 bit we always have the gcode loaded
+			if (IntPtr.Size == 8)
+			{
+				var resliceButton = new TextButton("Re-Slice", theme)
+				{
+					HAnchor = HAnchor.Right,
+					VAnchor = VAnchor.Center,
+					Margin = new BorderDouble(0, 0, 7, 0)
+				};
+				bool activelySlicing = false;
+				resliceButton.Click += (s, e) =>
+				{
+					resliceButton.Enabled = false;
+					UiThread.RunOnIdle(async () =>
+					{
+						if (!activelySlicing
+							&& printer.Settings.IsValid()
+							&& printer.Bed.EditContext.SourceItem != null)
+						{
+							activelySlicing = true;
+							if (bottomRow.Name == null)
+							{
+								bottomRow.Name = printer.Bed.EditContext.GCodeFilePath;
+							}
+							await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer.Bed.SaveChanges);
+							// start up a new slice on a backgroud thread
+							await ApplicationController.Instance.SliceItemLoadOutput(
+								printer,
+								printer.Bed.Scene,
+								printer.Bed.EditContext.GCodeFilePath);
+							// Switch to the 3D layer view if on Model view
+							if (printer.ViewState.ViewMode == PartViewMode.Model)
+							{
+								printer.ViewState.ViewMode = PartViewMode.Layers3D;
+							}
+							// when it is done queue it to the change to gcode stream
+							var message2 = "Would you like to switch to the new G-Code? Before you switch, check that your are seeing the changes you expect.".Localize();
+							var caption2 = "Switch to new G-Code?".Localize();
+							StyledMessageBox.ShowMessageBox(async (clickedOk2) =>
+							{
+								if (clickedOk2)
+								{
+									if (printer.Connection != null
+										&& (printer.Connection.PrinterIsPrinting || printer.Connection.PrinterIsPaused))
+									{
+										printer.Connection.SwitchToGCode(printer.Bed.EditContext.GCodeFilePath);
+										bottomRow.Name = printer.Bed.EditContext.GCodeFilePath;
+									}
+								}
+								else
+								{
+									await ApplicationController.Instance.SliceItemLoadOutput(
+										printer,
+										printer.Bed.Scene,
+										bottomRow.Name);
+								}
+								activelySlicing = false;
+								resliceButton.Enabled = true;
+							}, message2, caption2, StyledMessageBox.MessageType.YES_NO, "Switch".Localize(), "Cancel".Localize());
+						}
+						else
+						{
+							resliceButton.Enabled = true;
+						}
+					});
+				};
+				bottomRow.AddChild(resliceButton);
+			}
 
 			timeContainer.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon("fa-clock_24.png", theme.InvertIcons))
 			{

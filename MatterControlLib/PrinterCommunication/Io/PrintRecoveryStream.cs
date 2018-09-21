@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 	public class PrintRecoveryStream : GCodeStream
 	{
-		private GCodeFileStream internalStream;
+		private GCodeSwitcher internalStream;
 		private double percentDone;
 		double recoverFeedRate;
 		PrinterMove lastDestination;
@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public RecoveryState RecoveryState { get; private set; } = RecoveryState.RemoveHeating;
 		private PrinterConfig printer;
 
-		public PrintRecoveryStream(PrinterConfig printer, GCodeFileStream internalStream, double percentDone)
+		public PrintRecoveryStream(PrinterConfig printer, GCodeSwitcher internalStream, double percentDone)
 		{
 			this.printer = printer;
 			this.internalStream = internalStream;
