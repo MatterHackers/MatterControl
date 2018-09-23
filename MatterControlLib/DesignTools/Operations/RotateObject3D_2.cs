@@ -88,11 +88,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public static RotateObject3D_2 Create(IObject3D itemToRotate)
-		{
-			return new RotateObject3D_2(itemToRotate);
-		}
-
 		public void DrawEditor(object sender, DrawEventArgs e)
 		{
 			if (sender is InteractionLayer layer
