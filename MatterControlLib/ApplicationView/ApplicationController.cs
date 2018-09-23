@@ -423,7 +423,17 @@ namespace MatterHackers.MatterControl
 				{
 					TitleResolver = () => "Ungroup".Localize(),
 					Action = (scene) => scene.UngroupSelection(),
-					IsEnabled = (scene) => scene.SelectedItem != null,
+					IsEnabled = (scene) =>
+					{
+						var selectedItem = scene.SelectedItem;
+						if(selectedItem != null)
+						{
+							var hasSingleMesh = selectedItem.Mesh != null && selectedItem.Children.Count == 0;
+							return hasSingleMesh || selectedItem is GroupObject3D;
+						}
+
+						return false;
+					},
 					Icon = AggContext.StaticData.LoadIcon("ungroup.png", 16, 16).SetPreMultiply(),
 				},
 				new SceneSelectionSeparator(),
@@ -746,6 +756,28 @@ namespace MatterHackers.MatterControl
 					() => new RootHistoryContainer()));
 		}
 
+		public static IObject3D SelectionAsSingleClone(IObject3D selection)
+		{
+			IEnumerable<IObject3D> items = new[] { selection };
+
+			// If SelectionGroup, operate on Children instead
+			if (selection is SelectionGroupObject3D)
+			{
+				items = selection.Children;
+
+				var group = new GroupObject3D();
+
+				group.Children.Modify(children =>
+				{
+					children.AddRange(items.Select(o => o.Clone()));
+				});
+
+				return group;
+			}
+
+			return selection.Clone();
+		}
+
 		public ApplicationController()
 		{
 			// Initialize the AppContext theme object which will sync its content with Agg ActiveTheme changes
@@ -819,12 +851,14 @@ namespace MatterHackers.MatterControl
 				(sceneItem, scene) =>
 				{
 					var selectedItem = scene.SelectedItem;
+					var replaceItems = (selectedItem is SelectionGroupObject3D) ? selectedItem.Children.ToList() : new List<IObject3D> { selectedItem };
 					scene.SelectedItem = null;
-					var translate = TranslateObject3D.Create(selectedItem.Clone());
-					translate.MakeNameNonColliding();
+					var selectedClone = SelectionAsSingleClone(selectedItem);
+					var tranlate = TranslateObject3D.Create(selectedClone);
+					tranlate.MakeNameNonColliding();
 
-					scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, new List<IObject3D> { translate }));
-					scene.SelectedItem = translate;
+					scene.UndoBuffer.AddAndDo(new ReplaceCommand(replaceItems, new List<IObject3D> { tranlate }));
+					scene.SelectedItem = tranlate;
 
 					return Task.CompletedTask;
 				},
@@ -837,11 +871,13 @@ namespace MatterHackers.MatterControl
 				(sceneItem, scene) =>
 				{
 					var selectedItem = scene.SelectedItem;
+					var replaceItems = (selectedItem is SelectionGroupObject3D) ? selectedItem.Children.ToList() : new List<IObject3D> { selectedItem };
 					scene.SelectedItem = null;
-					var rotate = RotateObject3D_2.Create(selectedItem.Clone());
+					var selectedClone = SelectionAsSingleClone(selectedItem);
+					var rotate = new RotateObject3D_2(selectedClone);
 					rotate.MakeNameNonColliding();
 
-					scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, new List<IObject3D> { rotate }));
+					scene.UndoBuffer.AddAndDo(new ReplaceCommand(replaceItems, new List<IObject3D> { rotate }));
 					scene.SelectedItem = rotate;
 
 					return Task.CompletedTask;
@@ -927,13 +963,13 @@ namespace MatterHackers.MatterControl
 				(sceneItem, scene) =>
 				{
 					var selectedItem = scene.SelectedItem;
+					var replaceItems = (selectedItem is SelectionGroupObject3D) ? selectedItem.Children.ToList() : new List<IObject3D> { selectedItem };
 					scene.SelectedItem = null;
-
-					var scale = new ScaleObject3D(selectedItem.Clone(), Vector3.One);
-
+					var selectedClone = SelectionAsSingleClone(selectedItem);
+					var scale = new ScaleObject3D(selectedClone);
 					scale.MakeNameNonColliding();
 
-					scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, new List<IObject3D> { scale }));
+					scene.UndoBuffer.AddAndDo(new ReplaceCommand(replaceItems, new List<IObject3D> { scale }));
 					scene.SelectedItem = scale;
 
 					return Task.CompletedTask;

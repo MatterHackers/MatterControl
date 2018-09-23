@@ -108,34 +108,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public static void CopyProperties(this IObject3D copyTo, IObject3D copyFrom, Object3DPropertyFlags flags)
-		{
-			if (flags.HasFlag(Object3DPropertyFlags.Matrix))
-			{
-				copyTo.Matrix = copyFrom.Matrix;
-			}
-			if (flags.HasFlag(Object3DPropertyFlags.Color))
-			{
-				copyTo.Color = copyFrom.Color;
-			}
-			if (flags.HasFlag(Object3DPropertyFlags.MaterialIndex))
-			{
-				copyTo.MaterialIndex = copyFrom.MaterialIndex;
-			}
-			if (flags.HasFlag(Object3DPropertyFlags.Name))
-			{
-				copyTo.Name = copyFrom.Name;
-			}
-			if (flags.HasFlag(Object3DPropertyFlags.OutputType))
-			{
-				copyTo.OutputType = copyFrom.OutputType;
-			}
-			if (flags.HasFlag(Object3DPropertyFlags.Visible))
-			{
-				copyTo.Visible = copyFrom.Visible;
-			}
-		}
-
 		public static IObject3D Translate(this IObject3D objectToTranslate, double x = 0, double y = 0, double z = 0, string name = "")
 		{
 			return objectToTranslate.Translate(new Vector3(x, y, z), name);

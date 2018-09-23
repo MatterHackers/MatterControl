@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override void Apply(UndoBuffer undoBuffer)
 		{
 			// change this from a text object to a group
-			var newContainer = new Object3D();
+			var newContainer = new GroupObject3D();
 			newContainer.CopyProperties(this, Object3DPropertyFlags.All);
 			foreach (var child in this.Children)
 			{

@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Scale".Localize();
 		}
 
-		public ScaleObject3D(IObject3D item, double x = 0, double y = 0, double z = 0)
+		public ScaleObject3D(IObject3D item, double x = 1, double y = 1, double z = 1)
 			: this(item, new Vector3(x, y, z))
 		{
 		}
