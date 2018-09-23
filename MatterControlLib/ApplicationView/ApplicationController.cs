@@ -423,7 +423,17 @@ namespace MatterHackers.MatterControl
 				{
 					TitleResolver = () => "Ungroup".Localize(),
 					Action = (scene) => scene.UngroupSelection(),
-					IsEnabled = (scene) => scene.SelectedItem != null,
+					IsEnabled = (scene) =>
+					{
+						var selectedItem = scene.SelectedItem;
+						if(selectedItem != null)
+						{
+							var hasSingleMesh = selectedItem.Mesh != null && selectedItem.Children.Count == 0;
+							return hasSingleMesh || selectedItem is GroupObject3D;
+						}
+
+						return false;
+					},
 					Icon = AggContext.StaticData.LoadIcon("ungroup.png", 16, 16).SetPreMultiply(),
 				},
 				new SceneSelectionSeparator(),
