@@ -90,12 +90,19 @@ namespace Markdig.Agg
 
 		public void LoadUri(Uri uri, HelpArticle sourceArticle = null)
 		{
-			var webClient = new WebClient();
-			markdownDocument.BaseUri = uri;
+			try
+			{
+				var webClient = new WebClient();
+				markdownDocument.BaseUri = uri;
 
-			this.sourceArticle = sourceArticle;
-
-			this.Markdown = webClient.DownloadString(uri);
+				this.sourceArticle = sourceArticle;
+				this.Markdown = webClient.DownloadString(uri);
+			}
+			catch
+			{
+				// On error, revert to empty content
+				this.Markdown = "";
+			}
 		}
 
 		private HelpArticle sourceArticle;

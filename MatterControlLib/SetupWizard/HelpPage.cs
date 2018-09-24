@@ -242,7 +242,15 @@ namespace MatterHackers.MatterControl
 			{
 				if (treeView.SelectedNode.Tag is HelpArticle article)
 				{
-					markdownWidget.LoadUri(new Uri(ApplicationController.Instance.HelpArticleSource, article.Path), sourceArticle: article);
+					if (!string.IsNullOrWhiteSpace(article.Path))
+					{
+						markdownWidget.LoadUri(new Uri(ApplicationController.Instance.HelpArticleSource, article.Path), sourceArticle: article);
+					}
+					else
+					{
+						// Switch to empty content when path article lacks path
+						markdownWidget.Markdown = "";
+					}
 				}
 			};
 
