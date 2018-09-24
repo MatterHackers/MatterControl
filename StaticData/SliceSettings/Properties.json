@@ -147,6 +147,15 @@
     "DefaultValue": "20"
   },
   {
+    "SlicerConfigName": "air_gap_speed",
+    "PresentationName": "Air Gap",
+    "HelpText": "The speed at which the air gap layer will print.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm/s",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "15"
+  },
+  {
     "SlicerConfigName": "bottom_infill_speed",
     "PresentationName": "Botom Solid Infill",
     "HelpText": "The speed at which the bottom solid layers will print. Can be set explicitly or as a percentage of the Infill speed. Use 0 to match infill speed.",

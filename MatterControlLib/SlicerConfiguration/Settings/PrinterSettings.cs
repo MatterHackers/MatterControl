@@ -1182,6 +1182,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				string normalSpeedLocation = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Speed'".Localize();
 				// If the given speed is part of the current slice engine then check that it is greater than 0.
 				if (!ValidateGoodSpeedSettingGreaterThan0("bridge_speed", normalSpeedLocation)) return false;
+				if (!ValidateGoodSpeedSettingGreaterThan0("air_gap_speed", normalSpeedLocation)) return false;
 				if (!ValidateGoodSpeedSettingGreaterThan0("external_perimeter_speed", normalSpeedLocation)) return false;
 				if (!ValidateGoodSpeedSettingGreaterThan0(SettingsKey.first_layer_speed, normalSpeedLocation)) return false;
 				if (!ValidateGoodSpeedSettingGreaterThan0("infill_speed", normalSpeedLocation)) return false;

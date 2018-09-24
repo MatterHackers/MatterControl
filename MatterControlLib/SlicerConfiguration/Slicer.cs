@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static Dictionary<Mesh, MeshPrintOutputSettings> meshPrintOutputSettings = new Dictionary<Mesh, MeshPrintOutputSettings>();
 
 		public static List<bool> extrudersUsed = new List<bool>();
-		public static bool RunInProcess = false;
+		public static bool RunInProcess { get; set; } = false;
 
 		public static List<(Matrix4X4 matrix, string fileName)> GetStlFileLocations(IObject3D object3D, ref string mergeRules, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
 		{

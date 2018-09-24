@@ -47,6 +47,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			new MappedSetting(SettingsKey.bed_remove_part_temperature,SettingsKey.bed_remove_part_temperature),
 			new MappedSetting("bridge_fan_speed","bridge_fan_speed"),
 			new MappedSetting("bridge_speed","bridge_speed"),
+			new MappedSetting("air_gap_speed", "air_gap_speed"),
 			new MappedSetting("extruder_wipe_temperature","extruder_wipe_temperature"),
 			new MappedSetting(SettingsKey.filament_diameter,SettingsKey.filament_diameter),
 			new MappedSetting("first_layer_bed_temperature", SettingsKey.bed_temperature),

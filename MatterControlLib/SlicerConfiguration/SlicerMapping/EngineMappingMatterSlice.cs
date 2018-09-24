@@ -154,6 +154,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MapFirstValue("retract_restart_extra_time_to_apply", "retractRestartExtraTimeToApply"),
 				new MapFirstValue("retract_speed", "retractionSpeed"),
 				new OverrideSpeedOnSlaPrinters("bridge_speed", "bridgeSpeed", "infill_speed"),
+				new OverrideSpeedOnSlaPrinters("air_gap_speed", "airGapSpeed", "infill_speed"),
 				new OverrideSpeedOnSlaPrinters("bottom_infill_speed", "bottomInfillSpeed", "infill_speed"),
 				new MappedToBoolString("bridge_over_infill", "bridgeOverInfill"),
 				new MappedSetting("extrusion_multiplier", "extrusionMultiplier"),
