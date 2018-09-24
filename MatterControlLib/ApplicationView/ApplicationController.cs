@@ -1887,10 +1887,8 @@ namespace MatterHackers.MatterControl
 		/// Cancels prints within the first two minutes or interactively prompts the user to confirm cancellation
 		/// </summary>
 		/// <returns>A boolean value indicating if the print was canceled</returns>
-		public bool ConditionalCancelPrint()
+		public void ConditionallyCancelPrint()
 		{
-			bool canceled = false;
-
 			if (this.ActivePrinter.Connection.SecondsPrinted > 120)
 			{
 				StyledMessageBox.ShowMessageBox(
@@ -1899,10 +1897,7 @@ namespace MatterHackers.MatterControl
 						if (response)
 						{
 							UiThread.RunOnIdle(() => this.ActivePrinter.Connection.Stop());
-							canceled = true;
 						}
-
-						canceled = false;
 					},
 					"Cancel the current print?".Localize(),
 					"Cancel Print?".Localize(),
@@ -1913,10 +1908,7 @@ namespace MatterHackers.MatterControl
 			else
 			{
 				this.ActivePrinter.Connection.Stop();
-				canceled = false;
 			}
-
-			return canceled;
 		}
 
 		/// <summary>
@@ -2155,7 +2147,7 @@ namespace MatterHackers.MatterControl
 					ResumeToolTip = "Resume Print".Localize(),
 					StopAction = () => UiThread.RunOnIdle(() =>
 					{
-						this.ConditionalCancelPrint();
+						this.ConditionallyCancelPrint();
 					}),
 					StopToolTip = "Cancel Print".Localize(),
 				});
