@@ -207,6 +207,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.SetViewMode(printer.ViewState.ViewMode);
 
+			this.LayerScrollbar.Margin = LayerScrollbar.Margin.Clone(top: tumbleCubeControl.Height + tumbleCubeControl.Margin.Height + 4);
+
 			printer.ViewState.VisibilityChanged += ProcessOptionalTabs;
 
 			printer.Bed.RendererOptions.PropertyChanged += RendererOptions_PropertyChanged;
