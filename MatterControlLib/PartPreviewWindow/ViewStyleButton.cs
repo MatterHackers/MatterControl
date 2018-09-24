@@ -51,22 +51,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.sceneContext = sceneContext;
 			this.PopupContent = () => ShowViewOptions(sceneContext, theme);
+			this.HAnchor = HAnchor.Fit;
+			this.VAnchor = VAnchor.Fit;
 
 			viewIcons = new Dictionary<RenderTypes, ImageBuffer>()
 			{
-				[RenderTypes.Shaded] = AggContext.StaticData.LoadIcon("view_shaded.png", theme.InvertIcons),
-				[RenderTypes.Outlines] = AggContext.StaticData.LoadIcon("view_outlines.png", theme.InvertIcons),
-				[RenderTypes.Polygons] = AggContext.StaticData.LoadIcon("view_polygons.png", theme.InvertIcons),
-				[RenderTypes.Materials] = AggContext.StaticData.LoadIcon("view_materials.png", theme.InvertIcons),
-				[RenderTypes.Overhang] = AggContext.StaticData.LoadIcon("view_overhang.png", theme.InvertIcons),
+				[RenderTypes.Shaded] = AggContext.StaticData.LoadIcon("view_shaded.png", 16, 16, theme.InvertIcons),
+				[RenderTypes.Outlines] = AggContext.StaticData.LoadIcon("view_outlines.png", 16, 16, theme.InvertIcons),
+				[RenderTypes.Polygons] = AggContext.StaticData.LoadIcon("view_polygons.png", 16, 16, theme.InvertIcons),
+				[RenderTypes.Materials] = AggContext.StaticData.LoadIcon("view_materials.png", 16, 16, theme.InvertIcons),
+				[RenderTypes.Overhang] = AggContext.StaticData.LoadIcon("view_overhang.png", 16, 16, theme.InvertIcons),
 			};
 
 			this.AddChild(iconButton = new IconButton(viewIcons[sceneContext.ViewState.RenderType], theme)
 			{
 				Selectable = false
 			});
-			this.HAnchor = HAnchor.Fit;
-			this.VAnchor = VAnchor.Fit;
 
 			UserSettings.Instance.SettingChanged += UserSettings_SettingChanged;
 		}
