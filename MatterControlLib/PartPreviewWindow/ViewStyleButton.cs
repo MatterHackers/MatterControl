@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			popupMenu.CreateBoolMenuItem(
 				"Overhang".Localize(),
-				AggContext.StaticData.LoadIcon("view_overhang.png", theme.InvertIcons),
+				viewIcons[RenderTypes.Overhang],
 				() => sceneContext.ViewState.RenderType == RenderTypes.Overhang,
 				(isChecked) =>
 				{
