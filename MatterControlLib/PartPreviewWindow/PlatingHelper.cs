@@ -159,6 +159,10 @@ namespace MatterHackers.MatterControl
 			Vector3 meshLowerLeft = objectToAdd.GetAxisAlignedBoundingBox(Matrix4X4.Identity).minXYZ;
 			objectToAdd.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft + allPlacedMeshBounds.minXYZ);
 
+			// make sure it is on the 0 plane
+			var aabb = objectToAdd.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			objectToAdd.Matrix *= Matrix4X4.CreateTranslation(0, 0, -aabb.minXYZ.Z);
+
 			// keep moving the item until its in an open slot 
 			MoveToOpenPosition(objectToAdd, sceneItems);
 		}
