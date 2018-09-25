@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
+using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
@@ -41,12 +42,12 @@ namespace MatterHackers.MatterControl.Library
 {
 	public class InsertionGroupObject3D : Object3D
 	{
-		public event EventHandler ContentLoaded;
-
 		internal static Mesh placeHolderMesh;
 
 		private InteractiveScene scene;
 		private View3DWidget view3DWidget;
+
+		private Action<IObject3D, IEnumerable<IObject3D>> layoutParts;
 
 		public Task LoadingItemsTask { get; }
 
@@ -58,12 +59,18 @@ namespace MatterHackers.MatterControl.Library
 		}
 
 		// TODO: Figure out how best to collapse the InsertionGroup after the load task completes
-		public InsertionGroupObject3D(IEnumerable<ILibraryItem> items, View3DWidget view3DWidget, InteractiveScene scene, Vector2 bedCenter, Func<bool> dragOperationActive, bool trackSourceFiles = false)
+		public InsertionGroupObject3D(IEnumerable<ILibraryItem> items, 
+			View3DWidget view3DWidget, 
+			InteractiveScene scene, 
+			Action<IObject3D, IEnumerable<IObject3D>> layoutParts,
+			bool trackSourceFiles = false)
 		{
-			if(items == null)
+			if (items == null)
 			{
 				return;
 			}
+
+			this.layoutParts = layoutParts;
 
 			// Add a temporary placeholder to give us some bounds
 			this.scene = scene;
@@ -72,12 +79,6 @@ namespace MatterHackers.MatterControl.Library
 			this.LoadingItemsTask = Task.Run((Func<Task>)(async () =>
 			{
 				var newItemOffset = Vector2.Zero;
-				if (dragOperationActive != null
-					&& !dragOperationActive())
-				{
-					newItemOffset = bedCenter;
-				}
-
 				var offset = Matrix4X4.Identity;
 
 				// Add the placeholder 'Loading...' object
@@ -93,7 +94,6 @@ namespace MatterHackers.MatterControl.Library
 				// Filter to content file types only
 				foreach (var item in items.Where(item => item.IsContentFileType()).ToList())
 				{
-
 					// Acquire
 					var progressControl = new DragDropLoadProgress(view3DWidget, null);
 
@@ -132,43 +132,24 @@ namespace MatterHackers.MatterControl.Library
 							loadedItem.MeshPath = fileItem.Path;
 						}
 
-						// Notification should force invalidate and redraw
-						//progressReporter?.Invoke(1, "");
-
 						this.Children.Add(loadedItem);
 
 						loadedItem.MakeNameNonColliding();
 
-						// Wait for content to load
-
 						// Adjust next item position
-						// TODO: do something more interesting than increment in x
-						newItemOffset.X = loadedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity).XSize/2 + 10;
+						newItemOffset.X = loadedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity).XSize / 2 + 10;
 					}
 
+					// the 1.3 is so the progress bar will collapse after going past 1
 					progressControl.ProgressReporter(1.3, "");
 				}
 
 				this.Children.Remove(placeholderItem);
-
-				this.ContentAcquired = true;
-
-				ContentLoaded?.Invoke(this, null);
-
-				if (dragOperationActive != null
-					&& !dragOperationActive())
-				{
-					this.Collapse();
-				}
+				this.Collapse();
 
 				this.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 			}));
 		}
-
-		/// <summary>
-		/// Indicates if all content has been acquired or if pending operations are still active
-		/// </summary>
-		public bool ContentAcquired { get; set; } = false;
 
 		/// <summary>
 		/// Collapse the InsertionGroup into the scene
@@ -178,6 +159,7 @@ namespace MatterHackers.MatterControl.Library
 			// Drag operation has finished, we need to perform the collapse
 			var loadedItems = this.Children;
 
+			// If we only have one item it may be a mcx wrapper, collapse that first.
 			if(loadedItems.Count == 1)
 			{
 				var first = loadedItems.First();
@@ -191,31 +173,27 @@ namespace MatterHackers.MatterControl.Library
 						first.CollapseInto(list, false);
 					});
 				}
+				loadedItems = this.Children;
 			}
 
-			// Collapse our contents into the root of the scene
-			// of the scene when it loses focus
-			scene.Children.Modify(list =>
+			foreach(var item in loadedItems)
 			{
-				this.CollapseInto(list, false);
-			});
-
-			// Create and push the undo operation
-			foreach (var item in loadedItems)
-			{
-				view3DWidget.AddUndoOperation(new InsertCommand(scene, item));
+				item.Matrix *= this.Matrix;
 			}
+			view3DWidget.Scene.Children.Remove(this);
 
-			if (scene.SelectedItem == this
-				&& loadedItems.Count > 0)
+			if (layoutParts != null)
 			{
-				scene.ClearSelection();
+				List<IObject3D> allBedItems = new List<IObject3D>(view3DWidget.Scene.Children);
 
 				foreach (var item in loadedItems)
 				{
-					scene.AddToSelection(item);
+					layoutParts?.Invoke(item, allBedItems);
+					allBedItems.Add(item);
 				}
 			}
+
+			view3DWidget.Scene.UndoBuffer.AddAndDo(new InsertCommand(view3DWidget.Scene, loadedItems));
 		}
 	}
 }

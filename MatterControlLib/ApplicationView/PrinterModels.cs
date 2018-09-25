@@ -171,44 +171,36 @@ namespace MatterHackers.MatterControl
 
 		public InsertionGroupObject3D AddToPlate(IEnumerable<ILibraryItem> itemsToAdd)
 		{
-			var activeContext = ApplicationController.Instance.DragDropData;
+			InsertionGroupObject3D insertionGroup = null;
 
-			var scene = activeContext.SceneContext.Scene;
-			var bedCenter = activeContext.SceneContext.BedCenter;
-
-			InsertionGroupObject3D firstItem = null;
-			foreach (var item in itemsToAdd)
+			var context = ApplicationController.Instance.DragDropData;
+			var scene = context.SceneContext.Scene;
+			scene.Children.Modify(list =>
 			{
-				var injector = new InsertionGroupObject3D(new ILibraryItem[] { item }, activeContext.View3DWidget, scene, bedCenter, () => false);
-				if (firstItem == null)
-				{
-					firstItem = injector;
-				}
+				list.Add(
+					insertionGroup = new InsertionGroupObject3D(
+						itemsToAdd,
+						context.View3DWidget,
+						scene,
+						(item, itemsToAvoid) =>
+						{
+							PlatingHelper.MoveToOpenPositionRelativeGroup(item, itemsToAvoid);
+						}));
+			});
 
-				injector.ContentLoaded += (s, args) =>
-				{
-					// Get the bounds of the loaded InsertionGroup with all of its content
-					var aabb = injector.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			// Get the bounds of the loaded InsertionGroup with all of its content
+			//var aabb = injector.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
-					// Remove position
-					injector.Matrix *= Matrix4X4.CreateTranslation(new Vector3(-aabb.minXYZ.X, -aabb.minXYZ.Y, -aabb.minXYZ.Z));
+			// Remove position
+			//injector.Matrix *= Matrix4X4.CreateTranslation(new Vector3(-aabb.minXYZ.X, -aabb.minXYZ.Y, -aabb.minXYZ.Z));
 
-					// Recenter
-					injector.Matrix *= Matrix4X4.CreateTranslation(new Vector3(bedCenter.X - aabb.XSize / 2, (double)(bedCenter.Y - aabb.YSize / 2), 0));
+			// Recenter
+			//injector.Matrix *= Matrix4X4.CreateTranslation(new Vector3(bedCenter.X - aabb.XSize / 2, (double)(bedCenter.Y - aabb.YSize / 2), 0));
 
-					// Move again after content loaded
-					PlatingHelper.MoveToOpenPosition(injector, scene.Children.ToList());
-				};
+			// Move again after content loaded
+			//PlatingHelper.MoveToOpenPosition(injector, scene.Children.ToList());
 
-				// Move to bed center - (before we know the bounds of the content to load)
-				injector.Matrix *= Matrix4X4.CreateTranslation(new Vector3(bedCenter.X, (double)bedCenter.Y, 0));
-
-				scene.Children.Add(injector);
-
-				PlatingHelper.MoveToOpenPosition(injector, scene.Children.ToList());
-			}
-
-			return firstItem;
+			return insertionGroup;
 		}
 
 		public async Task StashAndPrintGCode(ILibraryItem libraryItem)
