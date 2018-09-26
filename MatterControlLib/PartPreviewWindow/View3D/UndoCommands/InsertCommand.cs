@@ -30,43 +30,56 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class InsertCommand : IUndoRedoCommand
 	{
-		private IObject3D item;
-		private Matrix4X4 originalTransform;
+		private IEnumerable<IObject3D> items;
 		private InteractiveScene scene;
 
 		bool firstPass = true;
 
 		public InsertCommand(InteractiveScene scene, IObject3D insertingItem)
+			: this(scene, new IObject3D[] { insertingItem })
+		{
+		}
+
+		public InsertCommand(InteractiveScene scene, IEnumerable<IObject3D> insertingItem)
 		{
 			this.scene = scene;
-			this.item = insertingItem;
-			this.originalTransform = insertingItem.Matrix;
+			this.items = insertingItem;
 		}
 
 		public void Do()
 		{
 			if (!firstPass)
 			{
-				item.Matrix = originalTransform;
 				firstPass = false;
 			}
 
-			scene.Children.Modify(list => list.Add(item));
+			scene.Children.Modify(list => list.AddRange(items));
 
-			scene.SelectedItem = item;
+			scene.SelectedItem = null;
+			foreach(var item in items)
+			{
+				scene.AddToSelection(item);
+			}
 
 			scene.Invalidate(new InvalidateArgs(null, InvalidateType.Content));
 		}
 
 		public void Undo()
 		{
-			bool clearSelection = scene.SelectedItem == item;
-			scene.Children.Modify(list => list.Remove(item));
+			bool clearSelection = scene.SelectedItem == items;
+			scene.Children.Modify(list =>
+			{
+				foreach (var item in items)
+				{
+					list.Remove(item);
+				}
+			});
 
 			if(clearSelection)
 			{

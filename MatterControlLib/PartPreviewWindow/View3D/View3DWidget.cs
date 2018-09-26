@@ -549,8 +549,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				items,
 				this,
 				Scene,
-				sceneContext.BedCenter,
-				() => this.DragOperationActive,
+				null,
 				trackSourceFiles);
 
 			// Find intersection position of the mouse with the bed plane
@@ -611,14 +610,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}).ConfigureAwait(false);
 
 						this.SceneReplacement = null;
-					}
-					else if (this.DragDropObject.ContentAcquired)
-					{
-						// TODO: Unclear when this is needed and how it would be enabled if the content hadn't loaded by FinishDrop (i.e. how would long running InsertionGroup operations be doing the same thing?)
-						//this.viewControls3D.modelViewButton.Enabled = true;
-
-						// Drop handler for InsertionGroup - all normal content
-						this.DragDropObject.Collapse();
 					}
 				}
 				else

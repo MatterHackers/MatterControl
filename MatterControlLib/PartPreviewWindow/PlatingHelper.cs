@@ -144,16 +144,16 @@ namespace MatterHackers.MatterControl
 		/// Moves the target object to the first non-colliding position, starting from the lower left corner of the bounding box containing all sceneItems
 		/// </summary>
 		/// <param name="objectToAdd">The object to position</param>
-		/// <param name="sceneItems">The objects to hit test against</param>
-		public static void MoveToOpenPositionRelativeGroup(IObject3D objectToAdd, IEnumerable<IObject3D> sceneItems)
+		/// <param name="itemsToAvoid">The objects to hit test against</param>
+		public static void MoveToOpenPositionRelativeGroup(IObject3D objectToAdd, IEnumerable<IObject3D> itemsToAvoid)
 		{
-			if (objectToAdd == null || !sceneItems.Any())
+			if (objectToAdd == null || !itemsToAvoid.Any())
 			{
 				return;
 			}
 
 			// find the bounds of all items in the scene
-			AxisAlignedBoundingBox allPlacedMeshBounds = sceneItems.GetUnionedAxisAlignedBoundingBox();
+			AxisAlignedBoundingBox allPlacedMeshBounds = itemsToAvoid.GetUnionedAxisAlignedBoundingBox();
 
 			// move the part to the total bounds lower left side
 			Vector3 meshLowerLeft = objectToAdd.GetAxisAlignedBoundingBox(Matrix4X4.Identity).minXYZ;
@@ -164,15 +164,15 @@ namespace MatterHackers.MatterControl
 			objectToAdd.Matrix *= Matrix4X4.CreateTranslation(0, 0, -aabb.minXYZ.Z);
 
 			// keep moving the item until its in an open slot 
-			MoveToOpenPosition(objectToAdd, sceneItems);
+			MoveToOpenPosition(objectToAdd, itemsToAvoid);
 		}
 
 		/// <summary>
 		/// Moves the target object to the first non-colliding position, starting at the initial position of the target object
 		/// </summary>
 		/// <param name="objectToAdd">The object to position</param>
-		/// <param name="sceneItems">The objects to hit test against</param>
-		public static void MoveToOpenPosition(IObject3D itemToMove, IEnumerable<IObject3D> sceneItems)
+		/// <param name="itemsToAvoid">The objects to hit test against</param>
+		public static void MoveToOpenPosition(IObject3D itemToMove, IEnumerable<IObject3D> itemsToAvoid)
 		{
 			// find a place to put it that doesn't hit anything
 			AxisAlignedBoundingBox itemToMoveBounds = itemToMove.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl
 				// check far right edge
 				for (yStep = 0; yStep < currentSize; yStep++)
 				{
-					partPlaced = CheckPosition(sceneItems, itemToMove, itemToMoveBounds, yStep, xStep, ref transform);
+					partPlaced = CheckPosition(itemsToAvoid, itemToMove, itemToMoveBounds, yStep, xStep, ref transform);
 
 					if (partPlaced)
 					{
@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl
 					// check top edge 
 					for (xStep = 0; xStep < currentSize; xStep++)
 					{
-						partPlaced = CheckPosition(sceneItems, itemToMove, itemToMoveBounds, yStep, xStep, ref transform);
+						partPlaced = CheckPosition(itemsToAvoid, itemToMove, itemToMoveBounds, yStep, xStep, ref transform);
 
 						if (partPlaced)
 						{
@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl
 					{
 						xStep = currentSize;
 						// check top right point
-						partPlaced = CheckPosition(sceneItems, itemToMove, itemToMoveBounds, yStep, xStep, ref transform);
+						partPlaced = CheckPosition(itemsToAvoid, itemToMove, itemToMoveBounds, yStep, xStep, ref transform);
 					}
 				}
 
@@ -228,7 +228,7 @@ namespace MatterHackers.MatterControl
 			itemToMove.Matrix *= transform;
 		}
 
-		private static bool CheckPosition(IEnumerable<IObject3D> sceneItems, IObject3D itemToMove, AxisAlignedBoundingBox meshToMoveBounds, int yStep, int xStep, ref Matrix4X4 transform)
+		private static bool CheckPosition(IEnumerable<IObject3D> itemsToAvoid, IObject3D itemToMove, AxisAlignedBoundingBox meshToMoveBounds, int yStep, int xStep, ref Matrix4X4 transform)
 		{
 			double xStepAmount = 5;
 			double yStepAmount = 5;
@@ -240,7 +240,7 @@ namespace MatterHackers.MatterControl
 
 			AxisAlignedBoundingBox testBounds = meshToMoveBounds.NewTransformed(transform);
 
-			foreach (IObject3D meshToTest in sceneItems)
+			foreach (IObject3D meshToTest in itemsToAvoid)
 			{
 				if (meshToTest != itemToMove)
 				{
