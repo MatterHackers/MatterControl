@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (AggContext.OperatingSystem == OSType.Mac)
 				{
-					return "pkg";
+					return "dmg";
 				}
 				else if (AggContext.OperatingSystem == OSType.X11)
 				{
