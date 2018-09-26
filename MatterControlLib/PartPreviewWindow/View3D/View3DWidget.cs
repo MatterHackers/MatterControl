@@ -550,7 +550,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				items,
 				this,
 				Scene,
-				sceneContext.BedCenter,
+				Vector2.Zero,
 				null,
 				trackSourceFiles);
 
