@@ -516,7 +516,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			IObject3D selectedItem = Scene.SelectedItem;
 			// Move the object being dragged
 			if (this.DragOperationActive
-				&& this.DragDropObject != null)
+				&& this.DragDropObject != null
+				&& selectedItem != null)
 			{
 				// Move the DropDropObject the target item
 				DragSelectedObject(selectedItem, localMousePosition: this.TransformFromParentSpace(topMostParent, screenSpaceMousePosition));
