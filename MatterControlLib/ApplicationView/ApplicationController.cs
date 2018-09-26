@@ -1654,9 +1654,10 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			// TODO: This should be moved into the splash screen and shown instead of MainView
-			if (AggContext.OperatingSystem == OSType.Android)
+			// Show the End User License Agreement if it has not been shown (on windows it is shown in the installer)
+			if (AggContext.OperatingSystem != OSType.Windows)
 			{
+				// Make sure this window is show modal (if available)
 				// show this last so it is on top
 				if (UserSettings.Instance.get(UserSettingsKey.SoftwareLicenseAccepted) != "true")
 				{
