@@ -399,16 +399,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (filesToLoadIncludingZips?.Any() == true)
 			{
+				// When a single gcode file is selected, swap the plate to the new GCode content
+				if (filesToLoadIncludingZips.Count() == 1
+					&& filesToLoadIncludingZips.FirstOrDefault() is string firstFilePath
+					&& Path.GetExtension(firstFilePath).ToUpper() == ".GCODE")
+				{
+					// Drop handler for special case of GCode or similar (change loaded scene to new context)
+					await sceneContext.LoadContent(
+						new EditContext()
+						{
+							SourceItem = new FileSystemFileItem(firstFilePath),
+							// No content store for GCode, otherwise PlatingHistory
+							ContentStore = sceneContext.EditContext.ContentStore
+						});
+
+					return;
+				}
+
 				List<string> filesToLoad = new List<string>();
 				foreach (string loadedFileName in filesToLoadIncludingZips)
 				{
 					string extension = Path.GetExtension(loadedFileName).ToUpper();
 					if ((extension != ""
 						&& extension != ".ZIP"
-						&& ApplicationController.Instance.Library.IsContentFileType(loadedFileName)))
+						&& extension != ".GCODE"
+						&& ApplicationController.Instance.Library.IsContentFileType(loadedFileName))
+						)
 					{
 						filesToLoad.Add(loadedFileName);
-					}
+					}    
 					else if (extension == ".ZIP")
 					{
 						List<PrintItem> partFiles = ProjectFileHandler.ImportFromProjectArchive(loadedFileName);
@@ -416,7 +435,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							foreach (PrintItem part in partFiles)
 							{
-								filesToLoad.Add(part.FileLocation);
+								string itemExtension = Path.GetExtension(part.FileLocation).ToUpper();
+								if (itemExtension != ".GCODE")
+								{
+									filesToLoad.Add(part.FileLocation);
+								}
 							}
 						}
 					}
