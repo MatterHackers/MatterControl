@@ -182,23 +182,12 @@ namespace MatterHackers.MatterControl
 						itemsToAdd,
 						context.View3DWidget,
 						scene,
+						(Printer != null) ? Printer.Bed.BedCenter : Vector2.Zero,
 						(item, itemsToAvoid) =>
 						{
 							PlatingHelper.MoveToOpenPositionRelativeGroup(item, itemsToAvoid);
 						}));
 			});
-
-			// Get the bounds of the loaded InsertionGroup with all of its content
-			//var aabb = injector.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-
-			// Remove position
-			//injector.Matrix *= Matrix4X4.CreateTranslation(new Vector3(-aabb.minXYZ.X, -aabb.minXYZ.Y, -aabb.minXYZ.Z));
-
-			// Recenter
-			//injector.Matrix *= Matrix4X4.CreateTranslation(new Vector3(bedCenter.X - aabb.XSize / 2, (double)(bedCenter.Y - aabb.YSize / 2), 0));
-
-			// Move again after content loaded
-			//PlatingHelper.MoveToOpenPosition(injector, scene.Children.ToList());
 
 			return insertionGroup;
 		}

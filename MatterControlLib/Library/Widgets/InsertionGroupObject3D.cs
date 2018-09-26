@@ -62,6 +62,7 @@ namespace MatterHackers.MatterControl.Library
 		public InsertionGroupObject3D(IEnumerable<ILibraryItem> items, 
 			View3DWidget view3DWidget, 
 			InteractiveScene scene, 
+			Vector2 newItemOffset,
 			Action<IObject3D, IEnumerable<IObject3D>> layoutParts,
 			bool trackSourceFiles = false)
 		{
@@ -78,7 +79,6 @@ namespace MatterHackers.MatterControl.Library
 
 			this.LoadingItemsTask = Task.Run((Func<Task>)(async () =>
 			{
-				var newItemOffset = Vector2.Zero;
 				var offset = Matrix4X4.Identity;
 
 				// Add the placeholder 'Loading...' object
