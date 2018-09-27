@@ -634,6 +634,22 @@ namespace MatterHackers.MatterControl
 			operationIconsByType.Add(typeof(ImageObject3D), AggContext.StaticData.LoadIcon("140.png", 16, 16, theme.InvertIcons));
 		}
 
+		public void ShowApplicationHelp()
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				DialogWindow.Show(new HelpPage("AllGuides"));
+			});
+		}
+
+		public void ShowAboutPage()
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				DialogWindow.Show<AboutPage>();
+			});
+		}
+
 		public ImageSequence GetProcessingSequence(Color color)
 		{
 			int size = (int)Math.Round(80 * GuiWidget.DeviceScale);
