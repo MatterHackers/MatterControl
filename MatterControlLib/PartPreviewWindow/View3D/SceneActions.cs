@@ -204,14 +204,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static void Paste(this InteractiveScene scene)
 		{
-			if (Clipboard.Instance.ContainsText)
-			{
-				if (Clipboard.Instance.GetText() == "!--IObjectSelection--!")
-				{
-					scene.DuplicateItem(ApplicationController.ClipboardItem);
-				}
-			}
-			else if (Clipboard.Instance.ContainsImage)
+			if (Clipboard.Instance.ContainsImage)
 			{
 				// Persist
 				string filePath = ApplicationDataStorage.Instance.GetNewLibraryFilePath(".png");
@@ -226,6 +219,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							AssetPath = filePath
 						}));
+			}
+			else if (Clipboard.Instance.ContainsText)
+			{
+				if (Clipboard.Instance.GetText() == "!--IObjectSelection--!")
+				{
+					scene.DuplicateItem(ApplicationController.ClipboardItem);
+				}
 			}
 		}
 
