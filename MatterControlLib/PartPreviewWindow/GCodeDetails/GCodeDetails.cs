@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			int secondsRemaining = (int)seconds;
 			int hoursRemaining = (int)(secondsRemaining / (60 * 60));
-			int minutesRemaining = (int)((secondsRemaining + 30) / 60 - hoursRemaining * 60); // +30 for rounding
+			int minutesRemaining = (int)(secondsRemaining / 60 - hoursRemaining * 60);
 
 			secondsRemaining = secondsRemaining % 60;
 
