@@ -103,13 +103,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				}
 			};
 
-			AddMenuItem("Help".Localize(), () =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					DialogWindow.Show(new HelpPage("AllGuides"));
-				});
-			});
+			AddMenuItem("Help".Localize(), ApplicationController.Instance.ShowApplicationHelp);
 
 			this.AddSettingsRow(
 				new SettingsItem(
@@ -337,7 +331,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			}
 			aboutMatterControl.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle(() => DialogWindow.Show<AboutPage>());
+				ApplicationController.Instance.ShowAboutPage();
 			};
 			this.AddSettingsRow(aboutMatterControl);
 		}
