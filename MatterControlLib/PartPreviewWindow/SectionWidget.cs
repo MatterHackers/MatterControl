@@ -58,7 +58,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				// Add heading
 				var pointSize = (headingPointSize) == -1 ? theme.DefaultFontSize : headingPointSize;
 
-				if (serializationKey != null)
+				// If the control is expandable and a serialization key is supplied, set expanded from persisted value
+				if (serializationKey != null && expandingContent)
 				{
 					string dbValue = UserSettings.Instance.get(serializationKey);
 					expanded = dbValue == "1" || (dbValue == null && defaultExpansion);
