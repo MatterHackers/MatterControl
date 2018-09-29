@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		{
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
-			this.Margin = new BorderDouble(30, 0, 30, 15);
+			this.Margin = new BorderDouble(30, 15);
 
 			headingBar = new FlowLayoutWidget()
 			{
@@ -281,85 +281,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			unregisterEvents?.Invoke(this, null);
 
 			base.OnClosed(e);
-		}
-	}
-
-	public class PartsBar : ExplorerBar
-	{
-		public PartsBar(PartPreviewContent partPreviewContent, ThemeConfig theme)
-			: base("Parts".Localize(), theme)
-		{
-
-			var emptyPlateButton = new ImageWidget(AggContext.StaticData.LoadIcon("new-part.png", 70, 70))
-			{
-				Margin = new BorderDouble(right: 5),
-				Selectable = true,
-				BackgroundColor = theme.MinimalShade,
-				Cursor = Cursors.Hand,
-				Name = "Create Part Button"
-			};
-			emptyPlateButton.Click += (s, e) =>
-			{
-				if (e.Button == MouseButtons.Left)
-				{
-					UiThread.RunOnIdle(async () =>
-					{
-						var workspace = new BedConfig();
-						await workspace.LoadContent(
-							new EditContext()
-							{
-								ContentStore = ApplicationController.Instance.Library.PartHistory,
-								SourceItem = BedConfig.NewPlatingItem(ApplicationController.Instance.Library.PartHistory)
-							});
-
-						ApplicationController.Instance.Workspaces.Add(workspace);
-
-						partPreviewContent.CreatePartTab("New Part", workspace, theme);
-					});
-				}
-			};
-			toolbar.AddChild(emptyPlateButton);
-
-			var recentParts = new DirectoryInfo(ApplicationDataStorage.Instance.PartHistoryDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
-
-			foreach (var item in recentParts.Where(f => f.Length > 500).Select(f => new SceneReplacementFileItem(f.FullName)).Take(10).ToList<ILibraryItem>())
-			{
-				var iconButton = new IconViewItem(new ListViewItem(item, ApplicationController.Instance.Library.PlatingHistory), 70, 70, theme)
-				{
-					Margin = new BorderDouble(right: 5),
-					Selectable = true,
-				};
-
-				iconButton.Click += async (s, e) =>
-				{
-					// Activate selected item tab
-					if (partPreviewContent.TabControl.AllTabs.FirstOrDefault(t => t.Text == item.Name) is ChromeTab existingItemTab)
-					{
-						partPreviewContent.TabControl.ActiveTab = existingItemTab;
-					}
-					else
-					{
-						// Create tab for selected item
-						if (this.PositionWithinLocalBounds(e.X, e.Y)
-							&& e.Button == MouseButtons.Left)
-						{
-							var workspace = new BedConfig();
-							await workspace.LoadContent(
-								new EditContext()
-								{
-									ContentStore = ApplicationController.Instance.Library.PartHistory,
-									SourceItem = item
-								});
-
-							ApplicationController.Instance.Workspaces.Add(workspace);
-
-							partPreviewContent.CreatePartTab(item.Name, workspace, theme);
-						}
-					}
-				};
-
-				toolbar.AddChild(iconButton);
-			}
 		}
 	}
 }

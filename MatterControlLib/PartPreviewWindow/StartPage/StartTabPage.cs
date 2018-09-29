@@ -66,11 +66,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			topToBottom.AddChild(
 				new PrinterBar(partPreviewContent, lastProfile, theme));
 
-			topToBottom.AddChild(new PartsBar(partPreviewContent, theme)
-			{
-				Margin = new BorderDouble(30, 15)
-			});
-
 			if (OemSettings.Instance.ShowShopButton)
 			{
 				// actual feed
