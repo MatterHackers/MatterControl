@@ -1930,7 +1930,7 @@
   {
     "SlicerConfigName": "max_acceleration",
     "PresentationName": "Max Acceleration",
-    "HelpText": "The maximum amount the printer can accelerate on a G-Code move. Only effects G-Code time estimates, does not change printer behavior.",
+    "HelpText": "The maximum amount the printer can accelerate on a G-Code move.",
     "DataEditType": "POSITIVE_DOUBLE",
     "DefaultValue": "1000",
     "Units": "mm/s²"
@@ -1938,7 +1938,7 @@
   {
     "SlicerConfigName": "max_velocity",
     "PresentationName": "Max Velocity",
-    "HelpText": "The maximum speed the printer can move. Only effects G-Code time estimates, does not change printer behavior.",
+    "HelpText": "The maximum speed the printer can move.",
     "DataEditType": "POSITIVE_DOUBLE",
     "DefaultValue": "500",
     "Units": "mm/s"
@@ -1946,7 +1946,7 @@
   {
     "SlicerConfigName": "jerk_velocity",
     "PresentationName": "Jerk Velocity",
-    "HelpText": "The maximum speed that the printer treats as 0 and changes direction instantly. Only effects G-Code time estimates, does not change printer behavior.",
+    "HelpText": "The maximum speed that the printer treats as 0 and changes direction instantly.",
     "DataEditType": "POSITIVE_DOUBLE",
     "DefaultValue": "8",
     "Units": "mm/s"

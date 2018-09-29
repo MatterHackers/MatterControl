@@ -169,6 +169,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedSetting(SettingsKey.max_acceleration, "maxAcceleration"),
 				new MappedSetting(SettingsKey.max_velocity, "maxVelocity"),
 				new MappedSetting(SettingsKey.jerk_velocity, "jerkVelocity"),
+				new ScaledSingleNumber(SettingsKey.print_time_estimate_multiplier, "printTimeEstimateMultiplier", .01),
 				// fan settings
 				new VisibleButNotMappedToEngine("enable_fan"), // this is considered when sending fan speeds to slicing
 				new MappedFanSpeedSetting("min_fan_speed", "fanSpeedMinPercent"),
