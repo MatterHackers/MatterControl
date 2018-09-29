@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.AddChild(new SettingsItem("Theme".Localize(), new GuiWidget(), theme));
 			this.AddChild(this.GetThemeControl());
 
-			var aboutMatterControl = new SettingsItem("About".Localize() + " " + ApplicationController.Instance.ProductName, theme);
+			var aboutMatterControl = new SettingsItem("About".Localize() + " MatterControl", theme);
 			if (IntPtr.Size == 8)
 			{
 				// Push right
