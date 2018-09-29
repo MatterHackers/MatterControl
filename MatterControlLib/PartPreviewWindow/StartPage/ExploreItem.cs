@@ -36,37 +36,52 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 	public class ExploreItem : FlowLayoutWidget
 	{
 		private FeedItemData item;
+		private ThemeConfig theme;
+		private ImageBuffer image;
 
 		public static int IconSize => (int)(40 * GuiWidget.DeviceScale);
 		public static int ItemSpacing { get; } = 10;
 
+		private ImageBuffer hoverImage = null;
+		private ImageWidget imageWidget;
+
 		public ExploreItem(FeedItemData item, ThemeConfig theme)
 		{
-
 			this.HAnchor = HAnchor.Absolute;
 			this.Width = 400 * GuiWidget.DeviceScale;
 			//this.Border = spacing;
 			this.Padding = ItemSpacing;
 			this.item = item;
+			this.theme = theme;
+
+			image = new ImageBuffer(IconSize, IconSize);
 
 			if (item.icon != null)
 			{
-				ImageBuffer image = new ImageBuffer(IconSize, IconSize);
-
-				var imageWidget = new ImageWidget(image)
+				imageWidget = new ImageWidget(image)
 				{
 					Selectable = false,
 					VAnchor = VAnchor.Top,
 					Margin = new BorderDouble(right: ItemSpacing)
 				};
 
-				imageWidget.Load += (s, e) => ApplicationController.Instance.DownloadToImageAsync(image, item.icon, true, new BlenderPreMultBGRA());
+				imageWidget.Load += async (s, e) =>
+				{
+					var loadInto = new ImageBuffer(IconSize, IconSize);
+					await ApplicationController.Instance.LoadRemoteImage(loadInto, item.icon, true, new BlenderPreMultBGRA());
+
+					var grayscale = new ImageBuffer(loadInto);
+					ApplicationController.Instance.MakeGrayscale(grayscale);
+
+					image = grayscale;
+					imageWidget.Image = image;
+
+					hoverImage = loadInto;
+				};
 				this.AddChild(imageWidget);
 			}
 			else if(item.widget_url != null)
 			{
-				ImageBuffer image = new ImageBuffer(IconSize, IconSize);
-
 				var whiteBackground = new GuiWidget(IconSize, IconSize)
 				{
 					// these images expect to be on white so change the background to white
@@ -75,13 +90,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				};
 				this.AddChild(whiteBackground);
 
-				var imageWidget = new ImageWidget(image)
+				imageWidget = new ImageWidget(image)
 				{
 					Selectable = false,
 					VAnchor = VAnchor.Center,
 				};
 
-				imageWidget.Load += (s, e) => ApplicationController.Instance.DownloadToImageAsync(image, item.widget_url, true, new BlenderPreMultBGRA());
+				imageWidget.Load += async (s, e) =>
+				{
+					var loadInto = new ImageBuffer(IconSize, IconSize);
+					await ApplicationController.Instance.LoadRemoteImage(loadInto, item.widget_url, true, new BlenderPreMultBGRA());
+
+					var grayscale = new ImageBuffer(loadInto);
+					ApplicationController.Instance.MakeGrayscale(grayscale);
+
+					image = grayscale;
+					imageWidget.Image = image;
+
+					hoverImage = loadInto;
+				};
 				whiteBackground.AddChild(imageWidget);
 			}
 
@@ -98,6 +125,38 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			};
 
 			this.Cursor = Cursors.Hand;
+		}
+
+		public override Color BackgroundColor
+		{
+			get => (mouseInBounds) ? theme.AccentMimimalOverlay : base.BackgroundColor;
+			set => base.BackgroundColor = value;
+		}
+
+		private bool mouseInBounds = false;
+
+		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
+		{
+			mouseInBounds = true;
+
+			if (hoverImage != null)
+			{
+				imageWidget.Image = hoverImage;
+				this.Invalidate();
+			}
+
+			base.OnMouseEnterBounds(mouseEvent);
+			
+		}
+
+		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
+		{
+			mouseInBounds = false;
+
+			imageWidget.Image = image;
+			base.OnMouseLeaveBounds(mouseEvent);
+
+			this.Invalidate();
 		}
 
 		public override void OnClick(MouseEventArgs mouseEvent)

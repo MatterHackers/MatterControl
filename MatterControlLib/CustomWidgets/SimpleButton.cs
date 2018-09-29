@@ -34,6 +34,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.ImageProcessing;
+using static MatterHackers.MatterControl.ApplicationSettingsPage;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
@@ -190,8 +191,29 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	public class IconButton : SimpleButton
 	{
 		private ImageWidget imageWidget;
-
 		private ImageBuffer image;
+
+		public IconButton(ImageBuffer icon, ImageBuffer hoverIcon, ThemeConfig theme)
+			: base(theme)
+		{
+			this.image = icon;
+			this.HAnchor = HAnchor.Absolute;
+			this.VAnchor = VAnchor.Absolute | VAnchor.Center;
+			this.Height = theme.ButtonHeight;
+			this.Width = theme.ButtonHeight;
+
+			imageWidget = new HoverImageWidget(icon, hoverIcon)
+			{
+				HAnchor = HAnchor.Center,
+				VAnchor = VAnchor.Center,
+			};
+			imageWidget.Click += (s, e) =>
+			{
+				this.OnClick(e);
+			};
+
+			this.AddChild(imageWidget);
+		}
 
 		public IconButton(ImageBuffer icon, ThemeConfig theme)
 			: base(theme)
@@ -220,7 +242,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		/// <param name="icon"></param>
 		internal void SetIcon(ImageBuffer icon)
 		{
-			image = icon;
+			image  = icon;
 			imageWidget.Image = icon;
 		}
 

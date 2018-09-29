@@ -190,14 +190,6 @@ namespace MatterHackers.MatterControl
 				ApplicationController.Instance.LaunchBrowser("http://www.matterhackers.com");
 			});
 			contentRow.AddChild(siteLink);
-
-			var clearCacheLink = theme.CreateDialogButton("Clear Cache".Localize());
-			clearCacheLink.Click += (s, e) => UiThread.RunOnIdle(() =>
-			{
-				CacheDirectory.DeleteCacheData();
-			});
-
-			this.AddPageAction(clearCacheLink, highlightFirstAction: false);
 		}
 
 		private class LazyLicenseText : GuiWidget
