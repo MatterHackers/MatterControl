@@ -338,7 +338,7 @@ namespace MatterHackers.MatterControl
 			var removeNormalIcon = new ImageBuffer(removeHoveredIcon);
 
 			//removeNormalIcon.NewGraphics2D().Render(removeHoveredIcon.ToGrayscale(), 0, 0);
-			ToGrayscale(removeNormalIcon);
+			ApplicationController.Instance.MakeGrayscale(removeNormalIcon);
 
 			var clearCacheButton = new IconButton(removeNormalIcon, removeHoveredIcon, theme)
 			{
@@ -357,30 +357,6 @@ namespace MatterHackers.MatterControl
 				advancedPanel);
 
 			advancedPanel.Children<SettingsItem>().First().Border = new BorderDouble(0, 1);
-		}
-
-		private static void ToGrayscale(ImageBuffer sourceImage)
-		{
-			var buffer = sourceImage.GetBuffer();
-			int destIndex = 0;
-			for (int y = 0; y < sourceImage.Height; y++)
-			{
-				for (int x = 0; x < sourceImage.Width; x++)
-				{
-					int b = buffer[destIndex + 0];
-					int g = buffer[destIndex + 1];
-					int r = buffer[destIndex + 2];
-
-					int c = (r * 77) + (g * 151) + (b * 28);
-					byte gray = (byte)(c >> 8);
-
-					buffer[destIndex + 0] = gray;
-					buffer[destIndex + 1] = gray;
-					buffer[destIndex + 2] = gray;
-
-					destIndex += 4;
-				}
-			}
 		}
 
 		private void AddSettingsRow(GuiWidget widget, GuiWidget container)

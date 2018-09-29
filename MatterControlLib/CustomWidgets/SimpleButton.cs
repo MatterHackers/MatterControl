@@ -195,7 +195,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public IconButton(ImageBuffer icon, ImageBuffer hoverIcon, ThemeConfig theme)
 			: base(theme)
-
 		{
 			this.image = icon;
 			this.HAnchor = HAnchor.Absolute;

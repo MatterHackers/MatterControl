@@ -357,6 +357,30 @@ namespace MatterHackers.MatterControl
 			}*/
 		}
 
+		internal void MakeGrayscale(ImageBuffer sourceImage)
+		{
+			var buffer = sourceImage.GetBuffer();
+			int destIndex = 0;
+			for (int y = 0; y < sourceImage.Height; y++)
+			{
+				for (int x = 0; x < sourceImage.Width; x++)
+				{
+					int b = buffer[destIndex + 0];
+					int g = buffer[destIndex + 1];
+					int r = buffer[destIndex + 2];
+
+					int c = (r * 77) + (g * 151) + (b * 28);
+					byte gray = (byte)(c >> 8);
+
+					buffer[destIndex + 0] = gray;
+					buffer[destIndex + 1] = gray;
+					buffer[destIndex + 2] = gray;
+
+					destIndex += 4;
+				}
+			}
+		}
+
 		public static Func<PrinterInfo, string, Task<PrinterSettings>> GetPrinterProfileAsync;
 		public static Func<string, IProgress<ProgressStatus>, Task> SyncPrinterProfiles;
 		public static Func<Task<OemProfileDictionary>> GetPublicProfileList;
