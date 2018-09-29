@@ -36,6 +36,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 	public class ExploreItem : FlowLayoutWidget
 	{
 		private FeedItemData item;
+		private ThemeConfig theme;
 		private ImageBuffer image;
 
 		public static int IconSize => (int)(40 * GuiWidget.DeviceScale);
@@ -51,6 +52,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			//this.Border = spacing;
 			this.Padding = ItemSpacing;
 			this.item = item;
+			this.theme = theme;
 
 			image = new ImageBuffer(IconSize, IconSize);
 
@@ -125,8 +127,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			this.Cursor = Cursors.Hand;
 		}
 
+		public override Color BackgroundColor
+		{
+			get => (mouseInBounds) ? theme.AccentMimimalOverlay : base.BackgroundColor;
+			set => base.BackgroundColor = value;
+		}
+
+		private bool mouseInBounds = false;
+
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
+			mouseInBounds = true;
+
 			if (hoverImage != null)
 			{
 				imageWidget.Image = hoverImage;
@@ -139,6 +151,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
 		{
+			mouseInBounds = false;
+
 			imageWidget.Image = image;
 			base.OnMouseLeaveBounds(mouseEvent);
 
