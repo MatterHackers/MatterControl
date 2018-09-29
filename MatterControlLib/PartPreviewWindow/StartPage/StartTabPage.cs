@@ -55,11 +55,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			};
 			this.AddChild(topToBottom);
 
-			if (OemSettings.Instance.ShowShopButton)
-			{
-				topToBottom.AddChild(new ExplorePanel(theme, "banners?sk=ii2gffs6e89c2cdd9er21v", "BannerFeed.json"));
-			}
-
 			var lastProfileID = ProfileManager.Instance.LastProfileID;
 			var lastProfile = ProfileManager.Instance[lastProfileID];
 
