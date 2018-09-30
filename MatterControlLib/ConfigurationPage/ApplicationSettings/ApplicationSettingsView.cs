@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			AddMenuItem("Guides and Articles".Localize(), () => ApplicationController.Instance.LaunchBrowser("http://www.matterhackers.com/topic/mattercontrol"));
 			AddMenuItem("Release Notes".Localize(), () => ApplicationController.Instance.LaunchBrowser("http://wiki.mattercontrol.com/Release_Notes"));
 			AddMenuItem("Report a Bug".Localize(), () => ApplicationController.Instance.LaunchBrowser("https://github.com/MatterHackers/MatterControl/issues"));
-			AddMenuItem("Settings".Localize(), () => DialogWindow.Show<ApplicationSettingsPage>());
+			AddMenuItem("Settings".Localize(), () => DialogWindow.Show<ApplicationSettingsPage>(), "Settings MenuItem");
 
 			var updateMatterControl = new SettingsItem("Check For Update".Localize(), theme);
 			updateMatterControl.Click += (s, e) =>
@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			return false;
 		}
 
-		private void AddMenuItem(string title, Action callback)
+		private void AddMenuItem(string title, Action callback, string widgetName = null)
 		{
 			var newItem = new SettingsItem(title, theme);
 			newItem.Click += (s, e) =>
@@ -119,6 +119,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					callback?.Invoke();
 				});
 			};
+
+			if (widgetName != null)
+			{
+				newItem.Name = widgetName;
+			}
 
 			this.AddSettingsRow(newItem);
 		}
