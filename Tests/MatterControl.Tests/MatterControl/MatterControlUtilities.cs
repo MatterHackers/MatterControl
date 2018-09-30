@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void OpenEmptyPartTab(this AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("Create Part Button");
+			testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 		}
 
 		public static void ChangeToQueueContainer(this AutomationRunner testRunner)
