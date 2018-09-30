@@ -34,7 +34,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.ImageProcessing;
-using static MatterHackers.MatterControl.ApplicationSettingsPage;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {

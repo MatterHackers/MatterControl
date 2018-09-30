@@ -90,7 +90,8 @@ namespace MatterHackers.MatterControl
 						}
 					},
 					previewButton,
-					AggContext.StaticData.LoadIcon("camera-24x24.png", 24, 24))
+					AggContext.StaticData.LoadIcon("camera-24x24.png", 24, 24)),
+				generalPanel
 			);
 #endif
 			// Print Notifications
