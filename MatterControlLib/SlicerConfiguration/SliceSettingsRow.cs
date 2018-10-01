@@ -170,6 +170,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				//};
 
 				var setAsDefaultMenuItem = popupMenu.CreateMenuItem("Set as Default".Localize());
+				setAsDefaultMenuItem.Focus();
 				setAsDefaultMenuItem.Enabled = !SettingIsOem(); // check if the settings is already the default
 				setAsDefaultMenuItem.Click += (s, e) =>
 				{

@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public bool KeepMenuOpen()
 		{
-			return false;
+			return menuVisible;
 		}
 	}
 }
