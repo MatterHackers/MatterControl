@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 										// switch the first time we can
 										GCodeFile = switchToGCode;
 										LineIndex = switchToGCode.GetFirstLayerInstruction(i);
-										printerConnection.QueueLine($"G92 E{switchToGCode.Instruction(LineIndex).EPosition}", true);
+										printerConnection.QueueLine($"G92 E{switchToGCode.Instruction(LineIndex).EPosition}");
 										switchToGCode = null;
 									}
 									else // only switch if we are within one layer height of the new gcode
