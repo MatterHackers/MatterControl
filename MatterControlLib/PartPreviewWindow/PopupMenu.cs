@@ -42,7 +42,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class PopupMenu : FlowLayoutWidget
+	public class PopupMenu : FlowLayoutWidget, IIgnoredPopupChild
 	{
 		private ThemeConfig theme;
 
@@ -419,6 +419,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(menuItem);
 
 			return menuItem;
+		}
+
+		public bool KeepMenuOpen()
+		{
+			return ContainsFocus;
 		}
 
 		public class MenuItem : SimpleButton
