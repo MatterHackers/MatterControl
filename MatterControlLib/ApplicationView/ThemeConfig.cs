@@ -397,7 +397,7 @@ namespace MatterHackers.MatterControl
 			return imageBuffer;
 		}
 
-		internal Button CreateSmallResetButton()
+		public Button CreateSmallResetButton()
 		{
 			return new Button(
 				new ButtonViewStates(
