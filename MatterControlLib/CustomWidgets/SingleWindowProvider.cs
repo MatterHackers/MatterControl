@@ -41,9 +41,9 @@ namespace MatterHackers.Agg.UI
 		protected List<SystemWindow> _openWindows = new List<SystemWindow>();
 		protected IPlatformWindow platformWindow;
 
-		public SystemWindow topWindow { get; private set; }
+		public SystemWindow TopWindow { get; private set; }
 
-		public IReadOnlyList<SystemWindow> openWindows => _openWindows;
+		public IReadOnlyList<SystemWindow> OpenWindows => _openWindows;
 
 		/// <summary>
 		/// Creates or connects a PlatformWindow to the given SystemWindow
@@ -113,9 +113,9 @@ namespace MatterHackers.Agg.UI
 				this._openWindows.Add(overlayWindow);
 			}
 
-			topWindow = _openWindows.LastOrDefault();
+			TopWindow = _openWindows.LastOrDefault();
 
-			platformWindow.ShowSystemWindow(topWindow);
+			platformWindow.ShowSystemWindow(TopWindow);
 		}
 
 		public virtual void CloseSystemWindow(SystemWindow systemWindow)
@@ -136,7 +136,7 @@ namespace MatterHackers.Agg.UI
 				_openWindows.Remove(systemWindow);
 			}
 
-			topWindow = _openWindows.LastOrDefault();
+			TopWindow = _openWindows.LastOrDefault();
 
 			platformWindow.CloseSystemWindow(systemWindow);
 		}

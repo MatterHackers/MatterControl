@@ -59,8 +59,7 @@ namespace MatterHackers.MatterControl
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
 			// Set default Agg providers
-			AggContext.Config.ProviderTypes.SystemWindow = "MatterHackers.Agg.UI.OpenGLSystemWindow, agg_platform_win32";
-			AggContext.Config.ProviderTypes.SystemWindowProvider = "MatterHackers.Agg.UI.WinformsSystemWindowProvider, agg_platform_win32";
+			AggContext.Config.ProviderTypes.SystemWindowProvider = "MatterHackers.Agg.UI.WinformsSystemWindowProvider`1[[MatterHackers.Agg.UI.OpenGLSystemWindow, agg_platform_win32]], agg_platform_win32";
 			//AggContext.Config.ProviderTypes.SystemWindowProvider = "MatterHackers.MatterControl.WinformsSingleWindowProvider, MatterControl.Winforms";
 
 			string userProfilePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
