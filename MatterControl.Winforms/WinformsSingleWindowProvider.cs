@@ -46,6 +46,7 @@ namespace MatterHackers.MatterControl
 				platformWindow = winform;
 			}
 
+			systemWindow.PlatformWindow = winform;
 			base.ShowSystemWindow(systemWindow);
 		}
 	}
