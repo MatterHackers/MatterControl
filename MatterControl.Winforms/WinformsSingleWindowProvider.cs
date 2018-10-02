@@ -33,19 +33,20 @@ namespace MatterHackers.MatterControl
 {
 	public class WinformsSingleWindowProvider : SingleWindowProvider
 	{
-		private OpenGLSystemWindow winform;
+		private OpenGLSystemWindow openGLPlatformWindow;
 
 		public override void ShowSystemWindow(SystemWindow systemWindow)
 		{
 			if (platformWindow == null)
 			{
-				winform = new OpenGLSystemWindow();
-				winform.WindowProvider = this;
+				openGLPlatformWindow = new OpenGLSystemWindow();
+				openGLPlatformWindow.WindowProvider = this;
 				WinformsSystemWindow.SingleWindowMode = true;
 
-				platformWindow = winform;
+				platformWindow = openGLPlatformWindow;
 			}
 
+			systemWindow.PlatformWindow = openGLPlatformWindow;
 			base.ShowSystemWindow(systemWindow);
 		}
 	}

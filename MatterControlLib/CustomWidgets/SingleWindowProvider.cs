@@ -115,7 +115,7 @@ namespace MatterHackers.Agg.UI
 
 			topWindow = _openWindows.LastOrDefault();
 
-			platformWindow.ShowSystemWindow(systemWindow);
+			platformWindow.ShowSystemWindow(topWindow);
 		}
 
 		public virtual void CloseSystemWindow(SystemWindow systemWindow)
