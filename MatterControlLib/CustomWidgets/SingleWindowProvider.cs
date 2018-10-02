@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg.Platform;
@@ -37,13 +36,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.Agg.UI
 {
-	public interface ISingleWindowProvider
-	{
-		IReadOnlyList<SystemWindow> openWindows { get; }
-		SystemWindow topWindow { get; }
-	}
-
-	public class SingleWindowProvider : ISystemWindowProvider, ISingleWindowProvider
+	public class SingleWindowProvider : ISystemWindowProvider
 	{
 		protected List<SystemWindow> _openWindows = new List<SystemWindow>();
 		protected IPlatformWindow platformWindow;
@@ -141,8 +134,6 @@ namespace MatterHackers.Agg.UI
 
 				// Find and remove the WindowContainer from the openWindows list
 				_openWindows.Remove(systemWindow);
-
-				/////////// UiThread.RunOnIdle(this.Invalidate);
 			}
 
 			topWindow = _openWindows.LastOrDefault();
