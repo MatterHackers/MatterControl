@@ -79,6 +79,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public double EstimatedPrintSeconds
+		{
+			get
+			{
+				if (loadedGCode == null || loadedGCode.LayerCount == 0)
+				{
+					return 0;
+				}
+
+				return loadedGCode.Instruction(0).secondsToEndFromHere;
+			}
+		}
+
 		public string FilamentUsed => string.Format("{0:0.0} mm", loadedGCode.GetFilamentUsedMm(printer.Settings.GetValue<double>(SettingsKey.filament_diameter)));
 
 		public string FilamentVolume => string.Format("{0:0.00} cm³", loadedGCode.GetFilamentCubicMm(printer.Settings.GetValue<double>(SettingsKey.filament_diameter)) / 1000);
