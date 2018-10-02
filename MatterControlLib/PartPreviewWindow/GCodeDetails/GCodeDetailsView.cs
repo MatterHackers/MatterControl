@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if(gcodeDetails.EstimatedPrintSeconds < 30)
 			{
 				var message = "The time to print this G-Code is estimated to be {0} seconds.\n\nPlease check your part for errors if this is unexpected.".Localize();
-				message = message.FormatWith(gcodeDetails.EstimatedPrintSeconds);
+				message = message.FormatWith((int)gcodeDetails.EstimatedPrintSeconds);
 				StyledMessageBox.ShowMessageBox(message, "Warning, very short print".Localize());
 			}
 
