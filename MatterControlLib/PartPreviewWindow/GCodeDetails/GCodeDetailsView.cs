@@ -41,10 +41,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private EventHandler unregisterEvents;
 		private ThemeConfig theme;
+		private GCodeDetails gcodeDetails;
 
 		public GCodeDetailsView(GCodeDetails gcodeDetails, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
+			this.gcodeDetails = gcodeDetails;
 			this.theme = theme;
 
 			// put in the print time
@@ -81,6 +83,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 			}, ref unregisterEvents);
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			// try to validate the gcode file and warn if it seems invalid.
+			// for now the definition of invalid is that it has a print time of < 30 seconds
+			if(gcodeDetails.EstimatedPrintSeconds < 30)
+			{
+				var message = "The time to print this G-Code is estimated to be {0} seconds.\n\nPlease check your part for errors if this is unexpected.".Localize();
+				message = message.FormatWith(gcodeDetails.EstimatedPrintSeconds);
+				StyledMessageBox.ShowMessageBox(message, "Warning, very short print".Localize());
+			}
+
+			base.OnLoad(args);
 		}
 
 		TextWidget AddSetting(string title, string value)
