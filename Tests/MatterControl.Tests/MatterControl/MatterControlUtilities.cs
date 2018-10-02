@@ -625,7 +625,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Environment.CurrentDirectory = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "bin", outputDirectory);
 
 			// Override the default SystemWindow type without config.json
-			AggContext.Config.ProviderTypes.SystemWindow = "MatterHackers.Agg.UI.OpenGLSystemWindow, agg_platform_win32";
+			AggContext.Config.ProviderTypes.SystemWindowProvider = "MatterHackers.Agg.UI.WinformsSystemWindowProvider`1[[MatterHackers.Agg.UI.OpenGLSystemWindow, agg_platform_win32]], agg_platform_win32";
 
 #if !__ANDROID__
 			// Set the static data to point to the directory of MatterControl
