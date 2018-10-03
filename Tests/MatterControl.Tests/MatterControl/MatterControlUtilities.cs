@@ -799,6 +799,60 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("General Tab");
 		}
 
+		public static void Complete9StepLeveling(this AutomationRunner testRunner)
+		{
+			// Helper methods
+			bool headerExists(string headerText)
+			{
+				var header = testRunner.GetWidgetByName("HeaderRow", out _);
+				var textWidget = header.Children<TextWidget>().FirstOrDefault();
+
+				return textWidget?.Text.StartsWith(headerText) ?? false;
+			}
+
+			void waitForPage(string headerText)
+			{
+				testRunner.WaitFor(() => headerExists(headerText));
+				Assert.IsTrue(headerExists(headerText), "Expected page not found: " + headerText);
+			}
+
+			void waitForPageAndAdvance(string headerText)
+			{
+				waitForPage(headerText);
+				testRunner.ClickByName("Next Button");
+			}
+
+			// do print leveling steps
+			waitForPageAndAdvance("Initial Printer Setup");
+
+			waitForPageAndAdvance("Print Leveling Overview");
+
+			waitForPageAndAdvance("Select Material");
+
+			waitForPageAndAdvance("Homing The Printer");
+
+			waitForPageAndAdvance("Waiting For Printer To Heat");
+
+			for (int i = 0; i < 3; i++)
+			{
+				var section = (i * 3) + 1;
+
+				waitForPage($"Step {section} of 9");
+				testRunner.ClickByName("Move Z positive");
+
+				waitForPage($"Step {section} of 9");
+				testRunner.ClickByName("Next Button");
+
+				waitForPage($"Step {section + 1} of 9");
+				testRunner.ClickByName("Next Button");
+
+				waitForPage($"Step {section + 2} of 9");
+				testRunner.ClickByName("Next Button");
+			}
+
+			testRunner.ClickByName("Done Button");
+		}
+
 		/// <summary>
 		/// Switch to printer settings
 		/// </summary>
