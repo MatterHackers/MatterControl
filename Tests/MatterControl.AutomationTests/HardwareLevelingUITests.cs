@@ -1,9 +1,5 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.Agg.UI;
-using MatterHackers.GuiAutomation;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
@@ -73,8 +69,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				return Task.CompletedTask;
 			});
 		}
-
-		
 	}
 }
 
