@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					for (int i = 0; i < 3; i++)
 					{
-						var section = i * 3 + 1;
+						var section = (i * 3) + 1;
 
 						waitForPage($"Step {section} of 9");
 						testRunner.ClickByName("Move Z positive");
