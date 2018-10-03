@@ -56,6 +56,11 @@ namespace MatterHackers.Agg.UI
 			}
 			else
 			{
+				if (systemWindow.PlatformWindow != null)
+				{
+					return;
+				}
+
 				var overlayWindow = new SystemWindow(_openWindows.FirstOrDefault().Width, _openWindows.FirstOrDefault().Height)
 				{
 					PlatformWindow = platformWindow

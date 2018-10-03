@@ -46,8 +46,9 @@ namespace MatterHackers.MatterControl
 				platformWindow = openGLPlatformWindow;
 			}
 
-			systemWindow.PlatformWindow = openGLPlatformWindow;
 			base.ShowSystemWindow(systemWindow);
+
+			systemWindow.PlatformWindow = openGLPlatformWindow;
 		}
 	}
 }
