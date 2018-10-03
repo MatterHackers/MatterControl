@@ -1,9 +1,5 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.Agg.UI;
-using MatterHackers.GuiAutomation;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
@@ -52,56 +48,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsFalse(testRunner.WaitForName("PrintPopupMenu", .5), "Start Print should not be visible if PrintLeveling is required");
 					Assert.IsTrue(testRunner.WaitForName("Finish Setup Button"), "Finish Setup should be visible if PrintLeveling is required");
 
-					// Helper methods
-					bool headerExists(string headerText)
-					{
-						var header = testRunner.GetWidgetByName("HeaderRow", out _);
-						var textWidget = header.Children<TextWidget>().FirstOrDefault();
-
-						return textWidget?.Text.StartsWith(headerText) ?? false;
-					}
-
-					void waitForPage(string headerText)
-					{
-						testRunner.WaitFor(() => headerExists(headerText));
-						Assert.IsTrue(headerExists(headerText), "Expected page not found: " + headerText);
-					}
-
-					void waitForPageAndAdvance(string headerText)
-					{
-						waitForPage(headerText);
-						testRunner.ClickByName("Next Button");
-					}
-
-					// do print leveling
-					waitForPageAndAdvance("Initial Printer Setup");
-
-					waitForPageAndAdvance("Print Leveling Overview");
-
-					waitForPageAndAdvance("Select Material");
-
-					waitForPageAndAdvance("Homing The Printer");
-
-					waitForPageAndAdvance("Waiting For Printer To Heat");
-
-					for (int i = 0; i < 3; i++)
-					{
-						var section = i * 3 + 1;
-
-						waitForPage($"Step {section} of 9");
-						testRunner.ClickByName("Move Z positive");
-
-						waitForPage($"Step {section} of 9");
-						testRunner.ClickByName("Next Button");
-
-						waitForPage($"Step {section + 1} of 9");
-						testRunner.ClickByName("Next Button");
-
-						waitForPage($"Step {section + 2} of 9");
-						testRunner.ClickByName("Next Button");
-					}
-
-					testRunner.ClickByName("Done Button");
+					testRunner.Complete9StepLeveling();
 
 					// make sure the button has changed to start print
 					Assert.IsTrue(testRunner.WaitForName("PrintPopupMenu"), "Start Print should be visible after leveling the printer");
