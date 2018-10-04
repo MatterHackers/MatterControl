@@ -45,9 +45,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 		}
 
-		public override bool CanApply => true;
+		public override bool CanFlatten => true;
 
-		public override void Apply(UndoBuffer undoBuffer)
+		public override void Flatten(UndoBuffer undoBuffer)
 		{
 			var meshWrappers = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
 
@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				parent.Children.Remove(meshWrapper);
 			}
 
-			base.Apply(undoBuffer);
+			base.Flatten(undoBuffer);
 		}
 
 		/// <summary>

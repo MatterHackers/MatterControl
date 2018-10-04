@@ -72,9 +72,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		[JsonConverter(typeof(StringEnumConverter))]
 		public NamedTypeFace Font { get; set; } = new NamedTypeFace();
 
-		public override bool CanApply => true;
+		public override bool CanFlatten => true;
 
-		public override void Apply(UndoBuffer undoBuffer)
+		public override void Flatten(UndoBuffer undoBuffer)
 		{
 			// change this from a text object to a group
 			var newContainer = new GroupObject3D();

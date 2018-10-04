@@ -44,16 +44,16 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Linear Array".Localize();
 		}
 
-		public override bool CanApply => true;
+		public override bool CanFlatten => true;
 		public int Count { get; set; } = 3;
 		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };
 		public double Distance { get; set; } = 30;
 
-		public override void Apply(UndoBuffer undoBuffer)
+		public override void Flatten(UndoBuffer undoBuffer)
 		{
 			OperationSourceObject3D.Apply(this);
 
-			base.Apply(undoBuffer);
+			base.Flatten(undoBuffer);
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)

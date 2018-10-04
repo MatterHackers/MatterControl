@@ -95,18 +95,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in a make permanent button
 			var icon = AggContext.StaticData.LoadIcon("noun_766157.png", 16, 16, theme.InvertIcons).SetPreMultiply();
-			var applyButton = new IconButton(icon, theme)
+			var flattenButton = new IconButton(icon, theme)
 			{
 				Margin = theme.ButtonSpacing,
-				ToolTipText = "Merge".Localize(),
-				Enabled = scene.SelectedItem?.CanApply == true
+				ToolTipText = "Flatten".Localize(),
+				Enabled = scene.SelectedItem?.CanFlatten == true
 			};
-			applyButton.Click += (s, e) =>
+			flattenButton.Click += (s, e) =>
 			{
-				this.item.Apply(view3DWidget.Scene.UndoBuffer);
+				this.item.Flatten(view3DWidget.Scene.UndoBuffer);
 				scene.SelectedItem = null;
 			};
-			toolbar.AddChild(applyButton);
+			toolbar.AddChild(flattenButton);
 
 			// put in a remove button
 			var removeButton = new IconButton(AggContext.StaticData.LoadIcon("remove.png", 16, 16, theme.InvertIcons), theme)
@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				itemColorButton.Enabled = selectedItem != null;
 				itemMaterialButton.Enabled = selectedItem != null;
-				applyButton.Enabled = selectedItem?.CanApply == true;
+				flattenButton.Enabled = selectedItem?.CanFlatten == true;
 				removeButton.Enabled = selectedItem != null;
 				overflowButton.Enabled = selectedItem != null;
 			};
