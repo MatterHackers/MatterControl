@@ -335,13 +335,7 @@ namespace MatterHackers.MatterControl
 					theme),
 				advancedPanel);
 
-			var removeHoveredIcon = AggContext.StaticData.LoadIcon("remove.png", 16, 16, theme.InvertIcons);
-			var removeNormalIcon = new ImageBuffer(removeHoveredIcon);
-
-			//removeNormalIcon.NewGraphics2D().Render(removeHoveredIcon.ToGrayscale(), 0, 0);
-			ApplicationController.Instance.MakeGrayscale(removeNormalIcon);
-
-			var clearCacheButton = new IconButton(removeNormalIcon, removeHoveredIcon, theme)
+			var clearCacheButton = new HoverIconButton(AggContext.StaticData.LoadIcon("remove.png", 16, 16, theme.InvertIcons), theme)
 			{
 				ToolTipText = "Clear Cache".Localize(),
 			};
