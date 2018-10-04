@@ -422,7 +422,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					if (itemModel != null)
 					{
 						var activeContext = ApplicationController.Instance.DragDropData;
-						activeContext.SceneContext.AddToPlate(new[] { itemModel });
+						activeContext.SceneContext?.AddToPlate(new[] { itemModel });
 					}
 				}
 			});
