@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private RadioIconButton materialsButton;
 		private RadioIconButton noColorButton;
 		private View3DConfig gcodeOptions;
-		private RadioIconButton solidButton;
 
 		public GCodeOptionsPanel(BedConfig sceneContext, PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -107,67 +106,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					optionalControls: buttonPanel,
 					enforceGutter: false));
 
-			buttonPanel = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Fit
-			};
-
-			// Reset to new button group
-			buttonGroup = new ObservableCollection<GuiWidget>();
-
-			solidButton = new RadioIconButton(AggContext.StaticData.LoadIcon("solid.png", theme.InvertIcons), theme)
-			{
-				SiblingRadioButtonList = buttonGroup,
-				Name = "Solid Button",
-				Checked = gcodeOptions.GCodeModelView == "Semi-Transparent",
-				ToolTipText = "Show Semi-Transparent Model".Localize(),
-				Margin = theme.ButtonSpacing
-			};
-			solidButton.Click += SwitchModelModes_Click;
-			buttonGroup.Add(solidButton);
-
-			buttonPanel.AddChild(solidButton);
-
-			materialsButton = new RadioIconButton(AggContext.StaticData.LoadIcon("wireframe.png", theme.InvertIcons), theme)
-			{
-				SiblingRadioButtonList = buttonGroup,
-				Name = "Wireframe Button",
-				Checked = gcodeOptions.GCodeModelView == "Wireframe",
-				ToolTipText = "Show Wireframe Model".Localize(),
-				Margin = theme.ButtonSpacing
-			};
-			materialsButton.Click += SwitchModelModes_Click;
-			buttonGroup.Add(materialsButton);
-
-			buttonPanel.AddChild(materialsButton);
-
-			noColorButton = new RadioIconButton(AggContext.StaticData.LoadIcon("no-color.png", theme.InvertIcons), theme)
-			{
-				SiblingRadioButtonList = buttonGroup,
-				Name = "No Model Button",
-				Checked = gcodeOptions.GCodeModelView == "None",
-				ToolTipText = "No Model".Localize(),
-				Margin = theme.ButtonSpacing
-			};
-			noColorButton.Click += SwitchModelModes_Click;
-			buttonGroup.Add(noColorButton);
-
-			buttonPanel.AddChild(noColorButton);
-
-			this.AddChild(
-				new SettingsItem(
-					"Model View".Localize(),
-					buttonPanel,
-					theme,
-					enforceGutter: false));
-
 			gcodeOptions = sceneContext.RendererOptions;
 
 			var viewOptions = sceneContext.GetBaseViewOptions();
 
 			viewOptions.AddRange(new[]
 			{
+				new BoolOption(
+					"Model".Localize(),
+					() => gcodeOptions.GCodeModelView == "Semi-Transparent",
+					(value) => gcodeOptions.GCodeModelView = (value) ? "Semi-Transparent" : "None"),
 				new BoolOption(
 					"Moves".Localize(),
 					() => gcodeOptions.RenderMoves,
@@ -266,25 +214,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				else
 				{
 					gcodeOptions.GCodeLineColorStyle = "None";
-				}
-			}
-		}
-
-		private void SwitchModelModes_Click(object sender, MouseEventArgs e)
-		{
-			if (sender is GuiWidget widget)
-			{
-				if (widget.Name == "Solid Button")
-				{
-					gcodeOptions.GCodeModelView = "Semi-Transparent";
-				}
-				else if (widget.Name == "Wireframe Button")
-				{
-					gcodeOptions.GCodeModelView = "Wireframe";
-				}
-				else
-				{
-					gcodeOptions.GCodeModelView = "None";
 				}
 			}
 		}
