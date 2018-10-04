@@ -189,29 +189,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	public class IconButton : SimpleButton
 	{
-		private ImageWidget imageWidget;
-		private ImageBuffer image;
+		protected ImageWidget imageWidget;
+		protected ImageBuffer image;
 
-		public IconButton(ImageBuffer icon, ImageBuffer hoverIcon, ThemeConfig theme)
+		public IconButton(ThemeConfig theme)
 			: base(theme)
 		{
-			this.image = icon;
-			this.HAnchor = HAnchor.Absolute;
-			this.VAnchor = VAnchor.Absolute | VAnchor.Center;
-			this.Height = theme.ButtonHeight;
-			this.Width = theme.ButtonHeight;
-
-			imageWidget = new HoverImageWidget(icon, hoverIcon)
-			{
-				HAnchor = HAnchor.Center,
-				VAnchor = VAnchor.Center,
-			};
-			imageWidget.Click += (s, e) =>
-			{
-				this.OnClick(e);
-			};
-
-			this.AddChild(imageWidget);
 		}
 
 		public IconButton(ImageBuffer icon, ThemeConfig theme)
@@ -241,7 +224,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		/// <param name="icon"></param>
 		internal void SetIcon(ImageBuffer icon)
 		{
-			image  = icon;
+			image = icon;
 			imageWidget.Image = icon;
 		}
 
@@ -494,5 +477,64 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public ImageWidget ImageWidget { get; }
 
 		public override string Text { get => textWidget.Text; set => textWidget.Text = value; }
+	}
+
+	public class HoverIconButton : IconButton
+	{
+		private ImageBuffer normalImage;
+		private ImageBuffer hoverImage;
+
+		// Single ImageBuffer constructor creates a grayscale copy for use as the normal image
+		// and uses the original as the hover image
+		public HoverIconButton(ImageBuffer icon, ThemeConfig theme)
+			: this(MakeGrayscale(icon), icon, theme)
+		{
+		}
+
+		public HoverIconButton(ImageBuffer icon, ImageBuffer hoverIcon, ThemeConfig theme)
+			: base(theme)
+		{
+			this.image = icon;
+
+			normalImage = icon;
+			hoverImage = hoverIcon;
+
+			this.HAnchor = HAnchor.Absolute;
+			this.VAnchor = VAnchor.Absolute | VAnchor.Center;
+			this.Height = theme.ButtonHeight;
+			this.Width = theme.ButtonHeight;
+
+			imageWidget = new ImageWidget(icon, listenForImageChanged: false)
+			{
+				HAnchor = HAnchor.Center,
+				VAnchor = VAnchor.Center,
+			};
+
+			this.AddChild(imageWidget);
+		}
+
+		public static ImageBuffer MakeGrayscale(ImageBuffer icon)
+		{
+			var hoverIcon = new ImageBuffer(icon);
+			ApplicationController.Instance.MakeGrayscale(hoverIcon);
+
+			return hoverIcon;
+		}
+
+		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
+		{
+			imageWidget.Image = hoverImage;
+
+			base.OnMouseEnterBounds(mouseEvent);
+			this.Invalidate();
+		}
+
+		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
+		{
+			imageWidget.Image = normalImage;
+
+			base.OnMouseLeaveBounds(mouseEvent);
+			this.Invalidate();
+		}
 	}
 }
