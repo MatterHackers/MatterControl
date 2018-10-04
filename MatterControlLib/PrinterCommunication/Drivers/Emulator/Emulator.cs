@@ -91,6 +91,7 @@ namespace MatterHackers.PrinterEmulator
 		public event EventHandler FanSpeedChanged;
 
 		public event EventHandler ZPositionChanged;
+		public event EventHandler EPositionChanged;
 
 		// Instance reference allows test to access the most recently initialized emulator
 		public static Emulator Instance { get; private set; }
@@ -113,7 +114,6 @@ namespace MatterHackers.PrinterEmulator
 		public bool SimulateLineErrors { get; set; } = false;
 		public double XPosition { get; private set; }
 		public double YPosition { get; private set; }
-
 		public double ZPosition { get; private set; }
 
 		public static int CalculateChecksum(string commandToGetChecksumFor)
@@ -364,6 +364,7 @@ namespace MatterHackers.PrinterEmulator
 
 		private string ResetPosition(string command)
 		{
+			SetPosition(command);
 			return "ok\n";
 		}
 
@@ -471,6 +472,7 @@ namespace MatterHackers.PrinterEmulator
 			if (GetFirstNumberAfter("E", command, ref value))
 			{
 				CurrentExtruder.EPosition = value;
+				EPositionChanged?.Invoke(null, null);
 			}
 
 			return "ok\n";

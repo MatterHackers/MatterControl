@@ -512,7 +512,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					HAnchor = HAnchor.Right,
 					VAnchor = VAnchor.Center,
-					Margin = new BorderDouble(0, 0, 7, 0)
+					Margin = new BorderDouble(0, 0, 7, 0),
+					Name = "Re-Slice Button"
 				};
 				bool activelySlicing = false;
 				resliceButton.Click += (s, e) =>
