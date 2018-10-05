@@ -1,11 +1,6 @@
 ﻿using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MatterHackers.Plugins.X3GDriver
+namespace MatterHackers.MatterControl.Plugins.X3GDriver
 {
 	public class X3GPrinterDetails
 	{

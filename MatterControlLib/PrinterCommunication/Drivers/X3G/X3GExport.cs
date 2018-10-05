@@ -38,7 +38,6 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.Plugins.X3GDriver;
 
 namespace MatterHackers.MatterControl.Plugins.X3GDriver
 {

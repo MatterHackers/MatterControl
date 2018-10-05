@@ -1,10 +1,7 @@
-﻿using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Text;
-using System.Threading.Tasks;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.Plugins.X3GDriver
 {
@@ -14,17 +11,15 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
      * Index 1:packet length
      * Index 2+: Payload-
      *  PayLoad Index 0: Response Code(values 0x80 - 0x8C
-     *  PayLoad Index 1+: Optional Response Arguments 
+     *  PayLoad Index 1+: Optional Response Arguments
      * Index (2+N): crc
      *******************************************************/
-
-
 	public class X3GReader
 	{
-		private MatterHackers.Plugins.X3GDriver.X3GPrinterDetails printerDetails;
+		private X3GPrinterDetails printerDetails;
 		private X3GPacketAnalyzer analyzer;
 
-		public X3GReader(MatterHackers.Plugins.X3GDriver.X3GPrinterDetails PtrDetails)
+		public X3GReader(X3GPrinterDetails PtrDetails)
 		{
 			this.printerDetails = PtrDetails;
 			analyzer = new X3GPacketAnalyzer(PtrDetails);
@@ -44,19 +39,17 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 			private byte[] response;
 			private X3GCrc crc;
 			private string gCommandForResponse; //Figure out better name. this is the gCommand that was sent to the printer that caused this response
-			private MatterHackers.Plugins.X3GDriver.X3GPrinterDetails printerDetails; //used to get location information and other needed response data
+			private X3GPrinterDetails printerDetails; //used to get location information and other needed response data
 			private StringBuilder temperatureResponseStrBuilder; //Saves extruder temp when we have a heated bed to send back temps together
 
-
-
-			public X3GPacketAnalyzer(MatterHackers.Plugins.X3GDriver.X3GPrinterDetails PtrDetails)
+			public X3GPacketAnalyzer(X3GPrinterDetails PtrDetails)
 			{
 				crc = new X3GCrc();
 				printerDetails = PtrDetails;
 				temperatureResponseStrBuilder = new StringBuilder();
 			}
 
-			public X3GPacketAnalyzer(byte[] x3gResponse, string relatedGCommand, MatterHackers.Plugins.X3GDriver.X3GPrinterDetails PtrDetails)
+			public X3GPacketAnalyzer(byte[] x3gResponse, string relatedGCommand, X3GPrinterDetails PtrDetails)
 			{
 				response = x3gResponse;
 				crc = new X3GCrc();

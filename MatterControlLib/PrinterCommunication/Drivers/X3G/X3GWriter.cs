@@ -1,11 +1,9 @@
-﻿using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 //Protocol Documentation found at: https://github.com/makerbot/s3g/blob/master/doc/s3gProtocol.md
 
@@ -13,7 +11,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 {
 	public class X3GWriter
 	{
-		private MatterHackers.Plugins.X3GDriver.X3GPrinterDetails printerDetails;
+		private X3GPrinterDetails printerDetails;
 
 		private Queue<byte[]> overFlowPackets;
 
@@ -26,13 +24,13 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 		public X3GWriter()
 		{
 			overFlowPackets = new Queue<byte[]>();
-			printerDetails = new MatterHackers.Plugins.X3GDriver.X3GPrinterDetails();
+			printerDetails = new X3GPrinterDetails();
 			feedrate = 3200;
 			printerDetails.activeExtruderIndex = 0;
 			lineNumber = 0;
 		}
 
-		public X3GWriter(MatterHackers.Plugins.X3GDriver.X3GPrinterDetails printerInfo)
+		public X3GWriter(X3GPrinterDetails printerInfo)
 		{
 			printerDetails = printerInfo;
 			overFlowPackets = new Queue<byte[]>();
