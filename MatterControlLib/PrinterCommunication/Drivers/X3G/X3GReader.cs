@@ -27,10 +27,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 
 		public string translate(byte[] x3gResponse, string relatedGCommand, out bool commandOK)
 		{
-
-			//X3GPacketAnalyzer analyzer = new X3GPacketAnalyzer(,writerPtr); 
-
-
+			//X3GPacketAnalyzer analyzer = new X3GPacketAnalyzer(,writerPtr);
 			return analyzer.analyze(x3gResponse, relatedGCommand, out commandOK);
 		}
 
@@ -106,7 +103,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 						payloadStrBuilder.Append("RS:" + X3GWriter.lineNumber + "\n");
 						payloadStrBuilder.Append("ok");
 						break;
-					case 0x82://Action Buffer overflow, Packet Discarded (currently will request resend of line, later should be avoided by checking buffer size before send)                        
+					case 0x82://Action Buffer overflow, Packet Discarded (currently will request resend of line, later should be avoided by checking buffer size before send)
 						payloadStrBuilder.Append("Action Buffer overflow, Packet Discarded\n");
 						payloadStrBuilder.Append("RS:" + X3GWriter.lineNumber + "\n");
 						payloadStrBuilder.Append("ok");
@@ -130,7 +127,6 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 						payloadStrBuilder.Append("Command Failed: " + response[2]);
 						break;
 				}
-
 
 				switch (payloadLength)
 				{
@@ -181,7 +177,6 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 								temperatureResponseStrBuilder.Append(String.Format(" T1:{0}", temperature));
 							}
 
-
 							if (printerDetails.teperatureResponseCount == printerDetails.requiredTemperatureResponseCount)
 							{
 								payloadStrBuilder.Append(temperatureResponseStrBuilder.ToString());
@@ -215,8 +210,5 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 				return crc.getCrc() == response[crcIndex];
 			}
 		}
-
-
 	}
-
 }

@@ -47,7 +47,6 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 			char commandType = writemessage[0];
 			sendToPrinter = true;
 
-
 			if (commandType == 'N') //Strips leading line number and post command checksum
 			{
 
@@ -795,8 +794,6 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 				printerDetails.positionalOffset.Z = offSet;
 
 			}
-
-
 		}
 
 		private void updateStepsPerMm(List<string> commands)
@@ -880,14 +877,13 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 					}
 
 				}//End else
-
 			}
+
 			return gCodeList;
 		}
 
 		private bool moveIsExtrudeOnly(List<string> commands)
 		{
-
 			int numParamsNotExtrude = commands.Count((x => x[0] != 'E' && x[0] != 'F'));
 
 			return numParamsNotExtrude <= 1;//The G command will count as 1 so if there are more then there are other params
@@ -918,7 +914,6 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 					move = (float)(printerDetails.targetMovePosition - printerDetails.currentPosition).Length;
 				}
 			}
-
 
 			return move;
 		}
@@ -1095,7 +1090,6 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 			return paramValue;
 		}
 
-
 		private class X3GPacketFactory
 		{
 			private const int MAX_PACKET_SIZE = 256;
@@ -1166,8 +1160,6 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 				packetOutline = new byte[MAX_PACKET_SIZE];
 				crc.clear();
 			}
-
 		}
-
 	}
 }

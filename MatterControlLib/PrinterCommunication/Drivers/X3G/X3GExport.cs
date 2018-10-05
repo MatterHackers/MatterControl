@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 			byte[] emptyByteArray = { 0 };
 			string line;
 
-			//Makes sure steps per mm and bed offset is set 
+			//Makes sure steps per mm and bed offset is set
 			string splitString = "\\n";
 			string connectGCodeLines = printer.Settings.GetValue(SettingsKey.connect_gcode);
 			foreach (string connectLine in connectGCodeLines.Split(splitString.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
