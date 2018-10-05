@@ -724,6 +724,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Yes Button");
 		}
 
+		public static void LibraryMoveSelectedItem(this AutomationRunner testRunner)
+		{
+			testRunner.ClickByName("Print Library Overflow Menu");
+			testRunner.ClickByName("Move Menu Item");
+		}
+
 		public static string ResolveProjectPath(this TestContext context, int stepsToProjectRoot, params string[] relativePathSteps)
 		{
 			string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);

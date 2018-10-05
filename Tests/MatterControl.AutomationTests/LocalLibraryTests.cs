@@ -46,6 +46,50 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test]
+		public async Task ParentFolderRefreshedOnPathPop()
+		{
+			// Expected: When descending into a child folder and moving items into the parent, popping the path to the parent should refresh and show the moved content
+			await MatterControlUtilities.RunTest(testRunner =>
+			{
+				testRunner.CloseSignInAndPrinterSelect();
+
+				// Navigate to Local Library
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
+
+				string folderID = testRunner.CreateChildFolder("New Folder");
+
+				testRunner.DoubleClickByName(folderID);
+
+				// Add Library item
+				testRunner.InvokeLibraryAddDialog();
+				testRunner.Delay(2);
+				testRunner.Type(MatterControlUtilities.GetTestItemPath("Batman.stl"));
+				testRunner.Delay(1);
+				testRunner.Type("{Enter}");
+
+				string newFileID = "Row Item Batman";
+
+				testRunner.ClickByName(newFileID);
+
+				testRunner.LibraryMoveSelectedItem();
+
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
+
+				// Click Move
+				testRunner.ClickByName("Accept Button");
+
+				// Return to the Local Library folder
+				testRunner.ClickByName("Library Up Button");
+
+				// Assert that the expected item appears in the parent after popping the path
+				testRunner.ClickByName(newFileID);
+
+				return Task.CompletedTask;
+			});
+		}
+
+
+		[Test]
 		public async Task LocalLibraryAddButtonAddZipToLibrary()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
