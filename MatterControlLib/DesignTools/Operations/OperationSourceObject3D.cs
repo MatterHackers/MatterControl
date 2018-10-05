@@ -76,15 +76,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		/// <summary>
-		/// Do the work of apply for a parent that has a source Operation in it
+		/// Flatten the children of an object that has an OperationSource in it
 		/// </summary>
-		/// <param name="parent"></param>
-		public static void Apply(IObject3D parent)
+		/// <param name="item"></param>
+		public static void Flatten(IObject3D item)
 		{
-			using (parent.RebuildLock())
+			using (item.RebuildLock())
 			{
 				// The idea is we leave everything but the source and that is the applied operation
-				parent.Children.Modify(list =>
+				item.Children.Modify(list =>
 				{
 					var sourceItem = list.FirstOrDefault(c => c is OperationSourceObject3D);
 					if (sourceItem != null)
@@ -108,6 +108,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+		/// <summary>
+		/// Prepare the children of an object tha contains an OpperationSource to be removed
+		/// </summary>
+		/// <param name="parent"></param>
 		internal static void Remove(IObject3D parent)
 		{
 			using (parent.RebuildLock())

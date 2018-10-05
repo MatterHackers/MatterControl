@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override void Flatten(UndoBuffer undoBuffer)
 		{
-			OperationSourceObject3D.Apply(this);
+			OperationSourceObject3D.Flatten(this);
 
 			base.Flatten(undoBuffer);
 		}
