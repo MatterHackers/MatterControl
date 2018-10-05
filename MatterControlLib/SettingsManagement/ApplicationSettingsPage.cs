@@ -77,16 +77,18 @@ namespace MatterHackers.MatterControl
 				AppContext.Platform.OpenCameraPreview();
 			};
 
+			var printer = ApplicationController.Instance.ActivePrinter;
+
 			this.AddSettingsRow(
 				new SettingsItem(
 					"Camera Monitoring".Localize(),
 					theme,
 					new SettingsItem.ToggleSwitchConfig()
 					{
-						Checked = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.publish_bed_image),
+						Checked = printer.Settings.GetValue<bool>(SettingsKey.publish_bed_image),
 						ToggleAction = (itemChecked) =>
 						{
-							ActiveSliceSettings.Instance.SetValue(SettingsKey.publish_bed_image, itemChecked ? "1" : "0");
+							printer.Settings.SetValue(SettingsKey.publish_bed_image, itemChecked ? "1" : "0");
 						}
 					},
 					previewButton,
