@@ -55,16 +55,16 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Base".Localize();
 		}
 
-		public override bool CanApply => true;
+		public override bool CanFlatten => true;
 
 		public BaseTypes BaseType { get; set; } = BaseTypes.Circle;
 		public double BaseSize { get; set; } = 3;
 		public double InfillAmount { get; set; } = 3;
 		public double ExtrusionHeight { get; set; } = 5;
 
-		public override void Apply(UndoBuffer undoBuffer)
+		public override void Flatten(UndoBuffer undoBuffer)
 		{
-			base.Apply(undoBuffer);
+			base.Flatten(undoBuffer);
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)

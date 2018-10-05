@@ -1029,7 +1029,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	public enum QueueTemplate
 	{
 		None,
-		Three_Queue_Items
+		Three_Queue_Items,
+		ReSliceParts
 	}
 
 	public class TestAutomationConfig

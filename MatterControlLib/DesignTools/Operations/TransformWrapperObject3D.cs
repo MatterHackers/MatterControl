@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Transform Wrapper".Localize();
 		}
 
-		public override void Apply(UndoBuffer undoBuffer)
+		public override void Flatten(UndoBuffer undoBuffer)
 		{
 			using (RebuildLock())
 			{

@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public double Height { get; set; } = 5;
 
-		public override bool CanApply => true;
+		public override bool CanFlatten => true;
 
 		[JsonIgnore]
 		private IVertexSource VertexSource
@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public override void Apply(UndoBuffer undoBuffer)
+		public override void Flatten(UndoBuffer undoBuffer)
 		{
 			// only keep the mesh and get rid of everything else
 			using (RebuildLock())

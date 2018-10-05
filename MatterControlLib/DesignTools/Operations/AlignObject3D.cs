@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[DisplayName("Offset Z")]
 		public double ZOffset { get; set; } = 0;
 
-		public override bool CanApply => true;
+		public override bool CanFlatten => true;
 
 		private List<Aabb> CurrentChildrenBounds
 		{

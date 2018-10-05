@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Advanced Array".Localize();
 		}
 
-		public override bool CanApply => true;
+		public override bool CanFlatten => true;
 
 		public int Count { get; set; } = 3;
 
@@ -56,11 +56,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public bool ScaleOffset { get; set; } = true;
 
-		public override void Apply(UndoBuffer undoBuffer)
+		public override void Flatten(UndoBuffer undoBuffer)
 		{
 			OperationSourceObject3D.Apply(this);
 
-			base.Apply(undoBuffer);
+			base.Flatten(undoBuffer);
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)

@@ -48,12 +48,12 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 		}
 
-		public override bool CanApply => Finalized;
+		public override bool CanFlatten => Finalized;
 		public bool Finalized { get; set; } = true;
 		public List<string> SurfacedEditors { get; set; } = new List<string>();
 		public string ComponentID { get; set; }
 
-		public override void Apply(UndoBuffer undoBuffer)
+		public override void Flatten(UndoBuffer undoBuffer)
 		{
 			// we want to end up with just a group of all the visible mesh objects
 			using (RebuildLock())

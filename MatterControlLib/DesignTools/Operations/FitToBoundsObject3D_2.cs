@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Fit to Bounds".Localize();
 		}
 
-		public override bool CanApply => true;
+		public override bool CanFlatten => true;
 		private IObject3D FitBounds => Children.Last();
 
 		public static FitToBoundsObject3D_2 Create(IObject3D itemToFit)

@@ -142,7 +142,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Visible = false,
 				Margin = theme.ButtonSpacing,
-				ToolTipText = taskDetails.Options?.ResumeToolTip ?? "Resume".Localize()
+				ToolTipText = taskDetails.Options?.ResumeToolTip ?? "Resume".Localize(),
+				Name = "Resume Task Button"
 			};
 			resumeButton.Click += (s, e) =>
 			{
