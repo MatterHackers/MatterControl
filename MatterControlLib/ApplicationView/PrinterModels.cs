@@ -184,6 +184,20 @@ namespace MatterHackers.MatterControl
 			return insertionGroup;
 		}
 
+		/// <summary>
+		/// Loads content to the bed and prepares edit/persistence context for use
+		/// </summary>
+		/// <param name="editContext"></param>
+		/// <returns></returns>
+		public async Task LoadPlateFromHistory()
+		{
+			await this.LoadContent(new EditContext()
+			{
+				ContentStore = historyContainer,
+				SourceItem = historyContainer.GetLastPlateOrNew()
+			});
+		}
+
 		public async Task StashAndPrintGCode(ILibraryItem libraryItem)
 		{
 			// Clear plate
@@ -1049,20 +1063,6 @@ namespace MatterHackers.MatterControl
 						break;
 				}
 			}
-		}
-
-		/// <summary>
-		/// Loads content to the bed and prepares edit/persistence context for use
-		/// </summary>
-		/// <param name="editContext"></param>
-		/// <returns></returns>
-		internal async Task LoadPlateFromHistory()
-		{
-			await this.Bed.LoadContent(new EditContext()
-			{
-				ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-				SourceItem = BedConfig.GetLastPlateOrNew()
-			});
 		}
 	}
 
