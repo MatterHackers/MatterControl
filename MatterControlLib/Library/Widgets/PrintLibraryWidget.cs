@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 #if !__ANDROID__
 using Markdig.Agg;
@@ -704,6 +705,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						DialogWindow.Show(new MoveItemPage((newName, destinationContainer) =>
 						{
 							destinationContainer.Move(partItems, sourceContainer);
+
+							// Discover if item was moved to an already loaded and now stale view on an ancestor and force reload
+							var openParent = ApplicationController.Instance.Library.ActiveContainer.Ancestors().FirstOrDefault(c => c.ID == destinationContainer.ID);
+							if (openParent != null)
+							{
+								// TODO: Consider changing this brute force approach to instead mark as dirty and allow Activate base method to reload if dirty
+								Task.Run(() => openParent.Load());
+							}
+
 							libraryView.SelectedItems.Clear();
 						}));
 					}
