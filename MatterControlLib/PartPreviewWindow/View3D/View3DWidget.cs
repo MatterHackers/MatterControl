@@ -1407,15 +1407,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void ClearPlate()
 		{
 			selectedObjectPanel.SetActiveItem(null);
-			sceneContext.ClearPlate().ContinueWith(t =>
-			{
-				sceneContext.Scene.UndoBuffer.ClearHistory();
+			sceneContext.ClearPlate();
+			sceneContext.Scene.UndoBuffer.ClearHistory();
 
-				UiThread.RunOnIdle(() =>
-				{
-					this.Invalidate();
-				}, 1);
-			});
+			this.Invalidate();
 		}
 
 		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);

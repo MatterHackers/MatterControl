@@ -84,6 +84,20 @@ namespace MatterHackers.MatterControl
 			this.ViewState = new SceneContextViewState(this);
 		}
 
+		public void LoadEmptyContent(EditContext editContext, IObject3D content)
+		{
+			// Make sure we don't have a selection
+			this.Scene.SelectedItem = null;
+			
+			this.EditContext = editContext;
+			this.ContentType = "mcx";
+
+			editContext.Content = content;
+
+			// Notify
+			this.SceneLoaded?.Invoke(this, null);
+		}
+
 		public async Task LoadContent(EditContext editContext)
 		{
 			// Make sure we don't have a selection
@@ -141,7 +155,7 @@ namespace MatterHackers.MatterControl
 		}
 
 
-		internal async Task ClearPlate()
+		internal void ClearPlate()
 		{
 			// Clear existing
 			this.LoadedGCode = null;
@@ -154,11 +168,14 @@ namespace MatterHackers.MatterControl
 			}
 
 			// Load
-			await this.LoadContent(new EditContext()
-			{
-				ContentStore = historyContainer,
-				SourceItem = historyContainer.NewPlatingItem()
-			});
+			this.LoadEmptyContent(
+				new EditContext()
+				{
+					Content = new Object3D(),
+					ContentStore = historyContainer,
+					SourceItem = historyContainer.NewPlatingItem()
+				}, 
+				new Object3D());
 		}
 
 		public InsertionGroupObject3D AddToPlate(IEnumerable<ILibraryItem> itemsToAdd)
@@ -201,7 +218,7 @@ namespace MatterHackers.MatterControl
 		public async Task StashAndPrintGCode(ILibraryItem libraryItem)
 		{
 			// Clear plate
-			await this.ClearPlate();
+			this.ClearPlate();
 
 			// Add content
 			await this.LoadContent(
@@ -223,7 +240,7 @@ namespace MatterHackers.MatterControl
 		public async Task StashAndPrint(IEnumerable<ILibraryItem> selectedLibraryItems)
 		{
 			// Clear plate
-			await this.ClearPlate();
+			this.ClearPlate();
 
 			// Add content
 			var insertionGroup = this.AddToPlate(selectedLibraryItems);
