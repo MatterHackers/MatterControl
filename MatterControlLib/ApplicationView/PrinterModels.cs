@@ -503,19 +503,12 @@ namespace MatterHackers.MatterControl
 					this.GetRenderType,
 					MeshViewerWidget.GetExtruderColor);
 
-			if (ActiveSliceSettings.Instance.PrinterSelected)
-			{
-				GCodeRenderer.ExtruderWidth = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
-			}
-			else
-			{
-				GCodeRenderer.ExtruderWidth = .4;
-			}
+			GCodeRenderer.ExtruderWidth = this.Printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
 
 			try
 			{
 				// TODO: After loading we reprocess the entire document just to compute filament used. If it's a feature we need, seems like it should just be normal step during load and result stored in a property
-				GCodeRenderer.GCodeFileToDraw?.GetFilamentUsedMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
+				GCodeRenderer.GCodeFileToDraw?.GetFilamentUsedMm(this.Printer.Settings.GetValue<double>(SettingsKey.filament_diameter));
 			}
 			catch (Exception ex)
 			{

@@ -2053,7 +2053,7 @@ namespace MatterHackers.MatterControl
 
 				this.PrintingItemName = printItemName;
 
-				if (ActiveSliceSettings.Instance.IsValid())
+				if (printer.Settings.IsValid())
 				{
 					// clear the output cache prior to starting a print
 					this.ActivePrinter.Connection.TerminalLog.Clear();
@@ -2245,7 +2245,7 @@ namespace MatterHackers.MatterControl
 						using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
 						{
 							zip.CreateEntryFromFile(sourcePath, "PrinterPlate.mcx");
-							zip.CreateEntryFromFile(ActiveSliceSettings.Instance.DocumentPath, ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name) + ".printer");
+							zip.CreateEntryFromFile(printer.Settings.DocumentPath, printer.Settings.GetValue(SettingsKey.printer_name) + ".printer");
 							zip.CreateEntryFromFile(gcodeFilePath, "sliced.gcode");
 						}
 					}

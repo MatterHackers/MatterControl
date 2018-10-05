@@ -11,6 +11,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 {
 	public class X3GWriter
 	{
+		private PrinterConfig printer;
 		private X3GPrinterDetails printerDetails;
 
 		private Queue<byte[]> overFlowPackets;
@@ -30,8 +31,9 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 			lineNumber = 0;
 		}
 
-		public X3GWriter(X3GPrinterDetails printerInfo)
+		public X3GWriter(X3GPrinterDetails printerInfo, PrinterConfig printer)
 		{
+			this.printer = printer;
 			printerDetails = printerInfo;
 			overFlowPackets = new Queue<byte[]>();
 			feedrate = 3200;
@@ -116,7 +118,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 							convertedMessage = binaryPacket.getX3GPacket();
 							printerDetails.requiredTemperatureResponseCount = 1;
 
-							if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))//if it has a bed get the bed temp
+							if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))//if it has a bed get the bed temp
 							{
 								binaryPacket = new X3GPacketFactory(10);
 								binaryPacket.addByte(0);
@@ -125,7 +127,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 								overFlowPackets.Enqueue(binaryPacket.getX3GPacket());
 							}
 
-							if (ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count) > 1)
+							if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
 							{
 								binaryPacket = new X3GPacketFactory(10);
 								binaryPacket.addByte(1);
@@ -275,7 +277,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 							printerDetails.heatingLockout = true;
 							break;
 						case 134://wait for build platform temp Makerbot M134
-							if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
+							if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))
 							{
 
 								binaryPacket = new X3GPacketFactory(136);
@@ -303,7 +305,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 							convertedMessage = binaryPacket.getX3GPacket();
 							break;
 						case 140://Set Bed temp M140
-							if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
+							if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))
 							{
 								int temperature = (int)getParameterValue(commands, 'S');
 								binaryPacket = new X3GPacketFactory(136);
@@ -322,7 +324,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 
 							break;
 						case 190://Wait for bed to reach target temp M190
-							if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
+							if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))
 							{
 								int temperature = (int)getParameterValue(commands, 'S');
 								binaryPacket = new X3GPacketFactory(136);

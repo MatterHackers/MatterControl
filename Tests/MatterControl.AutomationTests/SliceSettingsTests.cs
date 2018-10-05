@@ -146,9 +146,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Features Tab");
 
-				CheckAndUncheckSetting(testRunner, SettingsKey.heat_extruder_before_homing, true, false);
+				var printer = ApplicationController.Instance.ActivePrinter;
 
-				CheckAndUncheckSetting(testRunner, SettingsKey.has_fan, true, true);
+				CheckAndUncheckSetting(testRunner, printer, SettingsKey.heat_extruder_before_homing, false);
+
+				CheckAndUncheckSetting(testRunner, printer, SettingsKey.has_fan, true);
 
 				return Task.CompletedTask;
 			}, overrideWidth: 1224, overrideHeight: 900, maxTimeToRun: 600);
@@ -279,7 +281,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsTrue(testRunner.NameExists("Hotend 0"));
 					Assert.IsTrue(testRunner.NameExists("Hotend 1"));
 
-					SetCheckBoxSetting(testRunner, SettingsKey.extruders_share_temperature, true, true);
+					var printer = ApplicationController.Instance.ActivePrinter;
+
+					SetCheckBoxSetting(testRunner, printer, SettingsKey.extruders_share_temperature, true);
 
 					// there is one hotend and 2 extruders
 					Assert.IsTrue(testRunner.NameExists("Hotend 0"));
@@ -295,8 +299,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
-		[Test, RunInApplicationDomain]
-		public async Task SliceSettingsOrganizerSupportsKeyLookup()
+		[Test]
+		public void SliceSettingsOrganizerSupportsKeyLookup()
 		{
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData"));
 
@@ -384,33 +388,33 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1224, overrideHeight: 900);
 		}
 
-		private static void SetCheckBoxSetting(AutomationRunner testRunner, string settingToChange, bool printer, bool valueToSet)
+		private static void SetCheckBoxSetting(AutomationRunner testRunner, PrinterConfig printer, string settingToChange, bool valueToSet)
 		{
 			var settingsData = SettingsOrganizer.Instance.GetSettingsData(settingToChange);
 			string checkBoxName = $"{settingsData.PresentationName} Field";
 
-			Assert.IsTrue(ActiveSliceSettings.Instance.GetValue<bool>(settingToChange) != valueToSet);
+			Assert.IsTrue(printer.Settings.GetValue<bool>(settingToChange) != valueToSet);
 
 			//testRunner.ScrollIntoView(checkBoxName);
 			//testRunner.ClickByName(checkBoxName);
-			testRunner.SelectSliceSettingsField(printer ? "Printer" : "Advanced", settingToChange);
+			testRunner.SelectSliceSettingsField("Printer", settingToChange);
 
 			// give some time for the ui to update if necessary
 			testRunner.Delay(2);
 
-			Assert.IsTrue(ActiveSliceSettings.Instance.GetValue<bool>(settingToChange) == valueToSet);
+			Assert.IsTrue(printer.Settings.GetValue<bool>(settingToChange) == valueToSet);
 		}
 
-		private static void CheckAndUncheckSetting(AutomationRunner testRunner, string settingToChange, bool printer, bool expected)
+		private static void CheckAndUncheckSetting(AutomationRunner testRunner, PrinterConfig printer, string settingToChange, bool expected)
 		{
 			// Assert that the checkbox is currently unchecked, and there is no user override
-			Assert.IsTrue(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == false);
+			Assert.IsFalse(printer.Settings.UserLayer.ContainsKey(settingToChange));
 
 			// Click the checkbox
-			SetCheckBoxSetting(testRunner, settingToChange, printer, !expected);
+			SetCheckBoxSetting(testRunner, printer, settingToChange, !expected);
 
 			// Assert the checkbox is checked and the user override is set
-			Assert.IsTrue(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == true);
+			Assert.IsTrue(printer.Settings.UserLayer.ContainsKey(settingToChange));
 
 			// make sure the setting is still open in case of a reload all
 			testRunner.NavigateToSliceSettingsField("Printer", settingToChange);
@@ -419,8 +423,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Delay(2);
 
 			// Assert the checkbox is unchecked and there is no user override
-			Assert.IsTrue(ActiveSliceSettings.Instance.GetValue<bool>(settingToChange) == expected);
-			Assert.IsTrue(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == false);
+			Assert.IsTrue(printer.Settings.GetValue<bool>(settingToChange) == expected);
+			Assert.IsFalse(printer.Settings.UserLayer.ContainsKey(settingToChange));
 		}
 
 		[Test]

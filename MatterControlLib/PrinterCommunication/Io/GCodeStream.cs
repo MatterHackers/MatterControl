@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public GCodeStream()
 		{
-			useG0ForMovement = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.g0);
+			useG0ForMovement = ApplicationController.Instance.ActivePrinter.Settings.GetValue<bool>(SettingsKey.g0);
 		}
 
 		public string CreateMovementLine(PrinterMove currentDestination)

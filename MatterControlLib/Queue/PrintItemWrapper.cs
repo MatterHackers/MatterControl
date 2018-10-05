@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public static string GCodePath(string fileHashCode)
 		{
-			long settingsHashCode = ActiveSliceSettings.Instance.GetLongHashCode();
+			long settingsHashCode = ApplicationController.Instance.ActivePrinter.Settings.GetLongHashCode();
 
 			return Path.Combine(
 				ApplicationDataStorage.Instance.GCodeOutputPath, 

@@ -79,8 +79,9 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 			StreamReader inputFile = new StreamReader(result.Stream);
 			FileStream binaryFileStream = new FileStream(outputPath, FileMode.OpenOrCreate);
 			BinaryWriter outputFile = new BinaryWriter(binaryFileStream);
-			X3GPrinterDetails printerDetails = new X3GPrinterDetails();
-			X3GWriter x3gConverter = new X3GWriter(printerDetails);
+
+			var x3gConverter = new X3GWriter(new X3GPrinterDetails(), ApplicationController.Instance.ActivePrinter);
+
 			List<byte[]> x3gLines = new List<byte[]>();
 			byte[] emptyByteArray = { 0 };
 			string line;

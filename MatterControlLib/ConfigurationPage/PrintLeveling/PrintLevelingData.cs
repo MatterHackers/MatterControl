@@ -36,7 +36,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				return true;
 			}
 
-			var enabled = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled);
+			var enabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
+
 			// check if leveling is turned on
 			if (required && !enabled)
 			{

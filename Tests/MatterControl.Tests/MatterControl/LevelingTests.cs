@@ -49,7 +49,7 @@ namespace MatterControl.Tests.MatterControl
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 
-			var printerSettings = ActiveSliceSettings.Instance;
+			var printerSettings = new PrinterSettings();
 			printerSettings.SetValue(SettingsKey.z_probe_z_offset, "0");
 			// a 2 x 2 mesh that goes form 0 on the left to 10 on the right
 			{

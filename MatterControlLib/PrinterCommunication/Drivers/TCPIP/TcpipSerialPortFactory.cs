@@ -13,13 +13,15 @@ namespace TcpipDriver
 
 		public override IFrostedSerialPort Create(string serialPortName)
 		{
-			return new TcpipSerialPort(ApplicationController.Instance.ActivePrinter.Connection, serialPortName);
+			return new TcpipSerialPort(ApplicationController.Instance.ActivePrinter, serialPortName);
 		}
 
 		public override bool SerialPortIsAvailable(string serialPortName)
 		{
-			return int.TryParse(ActiveSliceSettings.Instance.GetValue(SettingsKey.ip_port), out _)
-				&& IPAddress.TryParse(ActiveSliceSettings.Instance.GetValue(SettingsKey.ip_address), out _);
+			var printer = ApplicationController.Instance.ActivePrinter;
+
+			return int.TryParse(printer.Settings.GetValue(SettingsKey.ip_port), out _)
+				&& IPAddress.TryParse(printer.Settings.GetValue(SettingsKey.ip_address), out _);
 		}
 	}
 }

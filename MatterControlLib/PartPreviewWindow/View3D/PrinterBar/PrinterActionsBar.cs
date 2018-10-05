@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var defaultMargin = theme.ButtonSpacing;
 
 			// add the reset button first (if there is one)
-			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection))
+			if (printer.Settings.GetValue<bool>(SettingsKey.show_reset_connection))
 			{
 				var resetConnectionButton = new TextIconButton(
 					"Reset".Localize(),
@@ -329,7 +329,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Title = "Export All Settings".Localize(),
 					Action = () =>
 					{
-						ActiveSliceSettings.Instance.Helpers.ExportAsMatterControlConfig();
+						printer.Settings.Helpers.ExportAsMatterControlConfig();
 					}
 				},
 				new ActionSeparator(),

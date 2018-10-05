@@ -33,12 +33,12 @@ namespace MatterHackers.Plugins.X3GDriver
 		private bool waitForResponse;
 		private bool dtrEnable;
 
-		public X3GSerialPortWrapper(string serialPortName)
+		public X3GSerialPortWrapper(string serialPortName, PrinterConfig printer)
 		{
 			port = FrostedSerialPortFactory.GetAppropriateFactory("raw").Create(serialPortName);
 			printerDetails = new X3GPrinterDetails();
-			writer = new X3GWriter(printerDetails);
-			reader = new X3GReader(printerDetails);
+			writer = new X3GWriter(printerDetails, printer);
+			reader = new X3GReader(printerDetails, printer);
 			timeSinceLastCommandSent = new Stopwatch();
 			timeSinceLastOK = new Stopwatch();
 			sentCommandQueue = new Queue<string>();

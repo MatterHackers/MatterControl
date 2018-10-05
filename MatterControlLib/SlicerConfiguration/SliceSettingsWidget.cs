@@ -556,9 +556,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				// OEM_LAYER_DATE:
 				string lastUpdateTime = "March 1, 2016";
-				if (ActiveSliceSettings.Instance?.OemLayer != null)
+				if (printer.Settings?.OemLayer != null)
 				{
-					string fromCreatedDate = ActiveSliceSettings.Instance.OemLayer.ValueOrDefault(SettingsKey.created_date);
+					string fromCreatedDate = printer.Settings.OemLayer.ValueOrDefault(SettingsKey.created_date);
 					try
 					{
 						if (!string.IsNullOrEmpty(fromCreatedDate))

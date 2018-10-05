@@ -9,7 +9,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 
 		public override IFrostedSerialPort Create(string serialPortName)
 		{
-			return new X3GSerialPortWrapper(serialPortName);
+			return new X3GSerialPortWrapper(serialPortName, ApplicationController.Instance.ActivePrinter);
 		}
 	}
 }

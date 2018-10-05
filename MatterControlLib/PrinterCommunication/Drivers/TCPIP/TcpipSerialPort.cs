@@ -43,14 +43,17 @@ namespace TcpipDriver
 
 		private bool reconnecting = false;
 		PrinterConnection printerConnection;
+		private PrinterConfig printer;
 
-		public TcpipSerialPort(PrinterConnection printerConnection, string name)
+		public TcpipSerialPort(PrinterConfig printer, string name)
 		{
-			this.printerConnection = printerConnection;
+			this.printer = printer;
+			this.printerConnection = printer.Connection;
+
 			socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-			if (int.TryParse(ActiveSliceSettings.Instance.GetValue("ip_port"), out port)
-				&& IPAddress.TryParse(ActiveSliceSettings.Instance.GetValue("ip_address"), out ipAddress))
+			if (int.TryParse(printer.Settings.GetValue("ip_port"), out port)
+				&& IPAddress.TryParse(printer.Settings.GetValue("ip_address"), out ipAddress))
 			{
 				ipEndPoint = new IPEndPoint(ipAddress, port);
 				readBuffer = new byte[1024];
