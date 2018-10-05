@@ -1411,11 +1411,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				sceneContext.Scene.UndoBuffer.ClearHistory();
 
-				GC.Collect();
-
 				UiThread.RunOnIdle(() =>
 				{
-					GC.Collect();
 					this.Invalidate();
 				}, 1);
 			});
