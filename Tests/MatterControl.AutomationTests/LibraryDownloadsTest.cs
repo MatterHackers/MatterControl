@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
 				testRunner.NavigateToFolder("-Temporary Row Item Collection");
 
-				// Add AMF part items to Downloads and then type paths into file dialog 
+				// Add AMF part items to Downloads and then type paths into file dialog
 				testRunner.InvokeLibraryAddDialog();
 				testRunner.CompleteDialog(MatterControlUtilities.GetTestItemPath("Rook.amf"), 4);
 
@@ -137,14 +137,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
 				testRunner.NavigateToFolder("-Temporary Row Item Collection");
 
-				string newFolderName = "New Folder";
-
-				testRunner.InvokeLibraryCreateFolderDialog();
-				testRunner.WaitForName("InputBoxPage Action Button");
-				testRunner.Type(newFolderName);
-				testRunner.ClickByName("InputBoxPage Action Button");
-
-				Assert.IsTrue(testRunner.WaitForName(newFolderName + " Row Item Collection"), $"{newFolderName} exists");
+				testRunner.CreateChildFolder("New Folder");
 
 				return Task.CompletedTask;
 			});

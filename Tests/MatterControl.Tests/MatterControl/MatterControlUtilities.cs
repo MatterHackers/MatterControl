@@ -516,6 +516,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Create Folder Menu Item");
 		}
 
+		public static string CreateChildFolder(this AutomationRunner testRunner, string folderName)
+		{
+			testRunner.InvokeLibraryCreateFolderDialog();
+			testRunner.WaitForName("InputBoxPage Action Button");
+			testRunner.Type(folderName);
+			testRunner.ClickByName("InputBoxPage Action Button");
+
+			string folderID = $"{folderName} Row Item Collection";
+
+			Assert.IsTrue(testRunner.WaitForName(folderID), $"{folderName} exists");
+
+			return folderID;
+		}
+
 		/// <summary>
 		/// Types the specified text into the dialog and sends {Enter} to complete the interaction
 		/// </summary>

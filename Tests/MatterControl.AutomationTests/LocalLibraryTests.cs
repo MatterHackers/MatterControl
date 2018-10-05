@@ -70,7 +70,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.DoubleClickByName("Batman Row Item Collection");
 
-
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman.stl"), "Batman part should exist after adding");
 				Assert.IsTrue(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2.stl"), "Mouthpiece part should exist after adding");
 
@@ -118,19 +117,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				// Create New Folder
-				testRunner.InvokeLibraryCreateFolderDialog();
-				testRunner.Delay(.5);
+				string folderID = testRunner.CreateChildFolder("New Folder");
 
-				testRunner.Type("New Folder");
-				testRunner.Delay(.5);
-
-				testRunner.ClickByName("InputBoxPage Action Button");
-				testRunner.Delay(.2);
-
-				// Confirm newly created folder exists
-				Assert.IsTrue(testRunner.WaitForName("New Folder Row Item Collection"), "New folder should appear as GuiWidget");
-
-				testRunner.ClickByName("New Folder Row Item Collection");
+				testRunner.ClickByName(folderID);
 				testRunner.Delay(.2);
 
 				testRunner.LibraryRenameSelectedItem();
