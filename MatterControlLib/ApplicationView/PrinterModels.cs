@@ -872,6 +872,13 @@ namespace MatterHackers.MatterControl
 
 		private EventHandler unregisterEvents;
 
+		public static PrinterConfig EmptyPrinter { get; } = new PrinterConfig();
+
+		private PrinterConfig()
+		{
+			this.Connection = new PrinterConnection(this);
+		}
+
 		public PrinterConfig(PrinterSettings settings)
 		{
 			this.Bed = new BedConfig(this);
@@ -916,7 +923,7 @@ namespace MatterHackers.MatterControl
 
 		public PrinterViewState ViewState { get; }
 
-		private PrinterSettings _settings;
+		private PrinterSettings _settings = PrinterSettings.Empty;
 		public PrinterSettings Settings
 		{
 			get => _settings;
