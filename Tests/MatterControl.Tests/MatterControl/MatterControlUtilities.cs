@@ -516,6 +516,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Create Folder Menu Item");
 		}
 
+		public static string CreateChildFolder(this AutomationRunner testRunner, string folderName)
+		{
+			testRunner.InvokeLibraryCreateFolderDialog();
+			testRunner.WaitForName("InputBoxPage Action Button");
+			testRunner.Type(folderName);
+			testRunner.ClickByName("InputBoxPage Action Button");
+
+			string folderID = $"{folderName} Row Item Collection";
+
+			Assert.IsTrue(testRunner.WaitForName(folderID), $"{folderName} exists");
+
+			return folderID;
+		}
+
 		/// <summary>
 		/// Types the specified text into the dialog and sends {Enter} to complete the interaction
 		/// </summary>
@@ -708,6 +722,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Print Library Overflow Menu");
 			testRunner.ClickByName("Remove Menu Item");
 			testRunner.ClickByName("Yes Button");
+		}
+
+		public static void LibraryMoveSelectedItem(this AutomationRunner testRunner)
+		{
+			testRunner.ClickByName("Print Library Overflow Menu");
+			testRunner.ClickByName("Move Menu Item");
 		}
 
 		public static string ResolveProjectPath(this TestContext context, int stepsToProjectRoot, params string[] relativePathSteps)
