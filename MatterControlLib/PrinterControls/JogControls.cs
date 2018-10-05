@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl
 
 			this.PerformLayout();
 
-			ActiveSliceSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
+			PrinterSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
 		}
 
 		internal void SetEnabledLevels(bool enableBabysteppingMode, bool enableEControls)

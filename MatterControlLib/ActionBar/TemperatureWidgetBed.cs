@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			var valueField = temperatureRow.Descendants<MHNumberEdit>().FirstOrDefault();
 			var settingsRow = temperatureRow.DescendantsAndSelf<SliceSettingsRow>().FirstOrDefault();
-			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if (e is StringEventArgs stringEvent)
 				{

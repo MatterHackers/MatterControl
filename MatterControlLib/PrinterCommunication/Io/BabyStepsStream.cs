@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			: base(null)
 		{
 			this.printerSettings = printerSettings;
-			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if ((e as StringEventArgs)?.Data == SettingsKey.baby_step_z_offset)
 				{

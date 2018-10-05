@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				settingsRow.AddChild(extrusionValue);
 			}
 
-			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				var eventArgs = e as StringEventArgs;
 				if (eventArgs?.Data == SettingsKey.extrusion_ratio)

@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UiThread.RunOnIdle(SetButtonStates);
 			}, ref unregisterEvents);
 
-			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if (e is StringEventArgs stringEvent
 					&& (stringEvent.Data == SettingsKey.z_probe_z_offset

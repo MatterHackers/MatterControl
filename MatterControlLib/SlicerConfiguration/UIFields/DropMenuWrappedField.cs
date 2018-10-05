@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			EventHandler localUnregisterEvents = null;
 
-			ActiveSliceSettings.SettingChanged.RegisterEvent((sender, e) =>
+			PrinterSettings.SettingChanged.RegisterEvent((sender, e) =>
 			{
 				if (e is StringEventArgs stringArgs
 					&& stringArgs.Data == settingData.SlicerConfigName)

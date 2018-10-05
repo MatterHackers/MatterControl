@@ -51,11 +51,28 @@ using Newtonsoft.Json.Linq;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
+	public enum NamedSettingsLayers { MHBaseSettings, OEMSettings, Quality, Material, User, All }
+
 	public class PrinterSettings
 	{
 		// Latest version should be in the form of:
 		// Year|month|day|versionForDay (to support multiple revisions on a given day)
 		public static int LatestVersion { get; } = 201606271;
+
+		// TODO: Change to instance based, revise listeners and register to expect specific printer settings
+		public static RootedObjectEventHandler SettingChanged = new RootedObjectEventHandler();
+
+		public static event EventHandler MaterialPresetChanged;
+
+		internal static void OnMaterialPresetChanged()
+		{
+			MaterialPresetChanged?.Invoke(null, null);
+		}
+
+		public static void OnSettingChanged(string slicerConfigName)
+		{
+			SettingChanged.CallEvents(null, new StringEventArgs(slicerConfigName));
+		}
 
 		[JsonIgnore]
 		public RootedObjectEventHandler PrintLevelingEnabledChanged = new RootedObjectEventHandler();
@@ -352,7 +369,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				MaterialLayer = GetMaterialLayer(materialKey);
 
-				ActiveSliceSettings.OnMaterialPresetChanged();
+				PrinterSettings.OnMaterialPresetChanged();
 			}
 
 			Save();
@@ -395,7 +412,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (ApplicationController.Instance.ActivePrinter.Settings.ID == this.ID)
 			{
-				ActiveSliceSettings.ActiveProfileModified.CallEvents(null, null);
+				ApplicationController.Instance.ActiveProfileModified.CallEvents(null, null);
 			}
 		}
 
@@ -1299,7 +1316,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			persistenceLayer[settingsKey] = settingsValue;
 			Save();
 
-			ActiveSliceSettings.OnSettingChanged(settingsKey);
+			PrinterSettings.OnSettingChanged(settingsKey);
 		}
 
 		public string ToJson()
@@ -1342,7 +1359,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				Save();
 
-				ActiveSliceSettings.OnSettingChanged(settingsKey);
+				PrinterSettings.OnSettingChanged(settingsKey);
 			}
 		}
 	}

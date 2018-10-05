@@ -212,7 +212,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(tabControl);
 
-			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				var activePrinter = ApplicationController.Instance.ActivePrinter;
 
@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			}, ref unregisterEvents);
 
-			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) =>
+			ApplicationController.Instance.ActivePrinterChanged.RegisterEvent((s, e) =>
 			{
 				var activePrinter = ApplicationController.Instance.ActivePrinter;
 
@@ -298,7 +298,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					MinimumSize = new Vector2(120, theme.TabButtonHeight)
 				};
 
-				ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+				PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 				{
 					string settingsName = (e as StringEventArgs)?.Data;
 					if (settingsName != null && settingsName == SettingsKey.printer_name)

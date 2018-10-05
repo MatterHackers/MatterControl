@@ -83,8 +83,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			pullDownContainer.AddChild(this.GetPulldownContainer());
 			this.AddChild(pullDownContainer);
 
-			ActiveSliceSettings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
-			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			PrinterSettings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
+			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if (e is StringEventArgs stringEvent
 					&& (stringEvent.Data == SettingsKey.default_material_presets
@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void OnClosed(EventArgs e)
 		{
-			ActiveSliceSettings.MaterialPresetChanged -= ActiveSliceSettings_MaterialPresetChanged;
+			PrinterSettings.MaterialPresetChanged -= ActiveSliceSettings_MaterialPresetChanged;
 			unregisterEvents?.Invoke(this, null);
 
 			base.OnClosed(e);
@@ -366,7 +366,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (settingBeforeChange[keyName] != printer.Settings.GetValue(keyName))
 					{
-						ActiveSliceSettings.OnSettingChanged(keyName);
+						PrinterSettings.OnSettingChanged(keyName);
 					}
 				}
 			});

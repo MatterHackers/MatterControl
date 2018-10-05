@@ -321,7 +321,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				};
 
-				ActiveSliceSettings.SettingChanged.RegisterEvent(
+				PrinterSettings.SettingChanged.RegisterEvent(
 					(s, e) =>
 					{
 						if (e is StringEventArgs stringEvent)
