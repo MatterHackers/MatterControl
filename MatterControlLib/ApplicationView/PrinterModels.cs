@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using MatterControl.Printing;
 using MatterHackers.Agg.UI;
@@ -94,6 +93,8 @@ namespace MatterHackers.MatterControl
 
 			editContext.Content = content;
 
+			this.Scene.Children.Modify(children => children.Clear());
+
 			// Notify
 			this.SceneLoaded?.Invoke(this, null);
 		}
@@ -153,7 +154,6 @@ namespace MatterHackers.MatterControl
 				return Task.CompletedTask;
 			});
 		}
-
 
 		internal void ClearPlate()
 		{
