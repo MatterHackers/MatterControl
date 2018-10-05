@@ -4,6 +4,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
@@ -22,14 +23,15 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			var levelingSolution = new LevelWizard3Point(ActiveSliceSettings.Instance.printer);
-			var printerSettings = ActiveSliceSettings.Instance;
+			var printer = new PrinterConfig(new PrinterSettings());
+			var levelingSolution = new LevelWizard3Point(printer);
+			var printerSettings = printer.Settings;
 
 			{
 				var samples = levelingSolution.GetPrintLevelPositionToSample().ToList();
-				Assert.AreEqual("200,200", ActiveSliceSettings.Instance.GetValue(SettingsKey.bed_size));
-				Assert.AreEqual("100,100", ActiveSliceSettings.Instance.GetValue(SettingsKey.print_center));
-				Assert.AreEqual("rectangular", ActiveSliceSettings.Instance.GetValue(SettingsKey.bed_shape));
+				Assert.AreEqual("200,200", printerSettings.GetValue(SettingsKey.bed_size));
+				Assert.AreEqual("100,100", printerSettings.GetValue(SettingsKey.print_center));
+				Assert.AreEqual("rectangular", printerSettings.GetValue(SettingsKey.bed_shape));
 				Assert.AreEqual(new Vector2(20, 20), samples[0]);
 				Assert.AreEqual(new Vector2(180, 20), samples[1]);
 				Assert.AreEqual(new Vector2(100, 180), samples[2]);
