@@ -208,8 +208,8 @@ namespace MatterHackers.MatterControl
 				new EditContext()
 				{
 					SourceItem = libraryItem,
-					// No content store for GCode, otherwise PlatingHistory
-					ContentStore = this.EditContext.ContentStore
+					// No content store for GCode
+					ContentStore = null
 				});
 
 			// Slice and print
@@ -613,7 +613,7 @@ namespace MatterHackers.MatterControl
 				ApplicationController.Instance.Thumbnails.DeleteCache(this.SourceItem);
 
 				// Call save on the provider
-				this.ContentStore.Save(this.SourceItem, this.Content);
+				this.ContentStore?.Save(this.SourceItem, this.Content);
 			}
 		}
 	}

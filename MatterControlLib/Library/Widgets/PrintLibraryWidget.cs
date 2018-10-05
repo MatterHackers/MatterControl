@@ -569,8 +569,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							new EditContext()
 							{
 								SourceItem = assetStream,
-								// No content store for GCode, otherwise PlatingHistory
-								ContentStore = printer.Bed.EditContext.ContentStore
+								// No content store for GCode
+								ContentStore = null
 							}).ConfigureAwait(false);
 					}
 					else
