@@ -214,11 +214,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
+				var activePrinter = ApplicationController.Instance.ActivePrinter;
+
 				if (e is StringEventArgs stringEvent
 					&& stringEvent.Data == SettingsKey.printer_name
 					&& printerTab != null)
 				{
-					printerTab.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
+					printerTab.Text = activePrinter.Settings.GetValue(SettingsKey.printer_name);
 				}
 
 			}, ref unregisterEvents);
@@ -252,7 +254,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				});
 
 			// Add a tab for the current printer
-			if (ActiveSliceSettings.Instance.PrinterSelected)
+			if (ApplicationController.Instance.ActivePrinter.Settings.PrinterSelected)
 			{
 				this.CreatePrinterTab(ApplicationController.Instance.ActivePrinter, theme);
 			}

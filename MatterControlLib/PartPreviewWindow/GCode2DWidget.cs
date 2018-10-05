@@ -82,8 +82,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ActiveSliceSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
 			Printer_SettingChanged(this, null);
 
-			this.gridSizeMm = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size);
-			this.gridCenterMm = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
+			this.gridSizeMm = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
+			this.gridCenterMm = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
 
 			bedImage = BedMeshGenerator.CreatePrintBedImage(printer).Multiply(theme.TabBodyBackground);
 		}
@@ -96,8 +96,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					|| stringEvent.Data == SettingsKey.print_center
 					|| stringEvent.Data == SettingsKey.bed_shape)
 				{
-					this.gridSizeMm = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size);
-					this.gridCenterMm = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
+					this.gridSizeMm = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
+					this.gridCenterMm = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
 
 					bedImage = BedMeshGenerator.CreatePrintBedImage(printer);
 				}

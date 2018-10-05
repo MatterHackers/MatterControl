@@ -100,6 +100,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class MappedSetting
 	{
+		protected PrinterConfig printer => ApplicationController.Instance.ActivePrinter;
+
 		public MappedSetting(string canonicalSettingsName, string exportedName)
 		{
 			this.CanonicalSettingsName = canonicalSettingsName;
@@ -121,7 +123,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string CanonicalSettingsName { get; }
 
-		public virtual string Value => ActiveSliceSettings.Instance.GetValue(CanonicalSettingsName);
+		public virtual string Value => printer.Settings.GetValue(CanonicalSettingsName);
 	}
 
 	public class MappedFanSpeedSetting : MappedSetting
@@ -134,7 +136,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				if (ActiveSliceSettings.Instance.GetValue<bool>("enable_fan"))
+				if (printer.Settings.GetValue<bool>("enable_fan"))
 				{
 					return base.Value;
 				}
@@ -154,7 +156,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				if (ActiveSliceSettings.Instance.GetValue<bool>("create_brim"))
+				if (printer.Settings.GetValue<bool>("create_brim"))
 				{
 					return base.Value;
 				}
@@ -174,7 +176,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				if (ActiveSliceSettings.Instance.GetValue<bool>("create_skirt"))
+				if (printer.Settings.GetValue<bool>("create_skirt"))
 				{
 					return base.Value;
 				}
@@ -195,9 +197,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				Vector2 printCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
-				Vector2 bedSize = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size);
-				switch (ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape))
+				Vector2 printCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
+				Vector2 bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
+				switch (printer.Settings.GetValue<BedShape>(SettingsKey.bed_shape))
 				{
 					case BedShape.Circular:
 						{
@@ -335,21 +337,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<string> PreStartGCode(List<bool> extrudersUsed)
 		{
-			string startGCode = ActiveSliceSettings.Instance.GetValue(SettingsKey.start_gcode);
+			string startGCode = printer.Settings.GetValue(SettingsKey.start_gcode);
 			string[] preStartGCodeLines = startGCode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries);
 
 			List<string> preStartGCode = new List<string>();
 			preStartGCode.Add("; automatic settings before start_gcode");
 			AddDefaultIfNotPresent(preStartGCode, "G21", preStartGCodeLines, "set units to millimeters");
 			AddDefaultIfNotPresent(preStartGCode, "M107", preStartGCodeLines, "fan off");
-			double bed_temperature = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.bed_temperature);
+			double bed_temperature = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
 			if (bed_temperature > 0)
 			{
 				string setBedTempString = string.Format("M190 S{0}", bed_temperature);
 				AddDefaultIfNotPresent(preStartGCode, setBedTempString, preStartGCodeLines, "wait for bed temperature to be reached");
 			}
 
-			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.Helpers.NumberOfHotends();
+			int numberOfHeatedExtruders = printer.Settings.Helpers.NumberOfHotends();
 
 			// Start heating all the extruder that we are going to use.
 			for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
@@ -357,7 +359,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (extrudersUsed.Count > extruderIndex0Based
 					&& extrudersUsed[extruderIndex0Based])
 				{
-					double materialTemperature = ActiveSliceSettings.Instance.Helpers.ExtruderTemperature(extruderIndex0Based);
+					double materialTemperature = printer.Settings.Helpers.ExtruderTemperature(extruderIndex0Based);
 					if (materialTemperature != 0)
 					{
 						string setTempString = "M104 T{0} S{1}".FormatWith(extruderIndex0Based, materialTemperature);
@@ -367,14 +369,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			// If we need to wait for the heaters to heat up before homing then set them to M109 (heat and wait).
-			if (ActiveSliceSettings.Instance.GetValue(SettingsKey.heat_extruder_before_homing) == "1")
+			if (printer.Settings.GetValue(SettingsKey.heat_extruder_before_homing) == "1")
 			{
 				for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
 				{
 					if (extrudersUsed.Count > extruderIndex0Based
 						&& extrudersUsed[extruderIndex0Based])
 					{
-						double materialTemperature = ActiveSliceSettings.Instance.Helpers.ExtruderTemperature(extruderIndex0Based);
+						double materialTemperature = printer.Settings.Helpers.ExtruderTemperature(extruderIndex0Based);
 						if (materialTemperature != 0)
 						{
 							string setTempString = "M109 T{0} S{1}".FormatWith(extruderIndex0Based, materialTemperature);
@@ -406,20 +408,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<string> PostStartGCode(List<bool> extrudersUsed)
 		{
-			string startGCode = ActiveSliceSettings.Instance.GetValue(SettingsKey.start_gcode);
+			string startGCode = printer.Settings.GetValue(SettingsKey.start_gcode);
 			string[] postStartGCodeLines = startGCode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries);
 
 			List<string> postStartGCode = new List<string>();
 			postStartGCode.Add("; automatic settings after start_gcode");
 
-			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
+			int numberOfHeatedExtruders = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
 			// don't set extruder 0 to heating if we already waited for it to reach temp
-			if (ActiveSliceSettings.Instance.GetValue(SettingsKey.heat_extruder_before_homing) != "1")
+			if (printer.Settings.GetValue(SettingsKey.heat_extruder_before_homing) != "1")
 			{
 				if (extrudersUsed[0])
 				{
-					double materialTemperature = ActiveSliceSettings.Instance.Helpers.ExtruderTemperature(0);
+					double materialTemperature = printer.Settings.Helpers.ExtruderTemperature(0);
 					if (materialTemperature != 0)
 					{
 						string setTempString = $"M109 T0 S{materialTemperature}";
@@ -436,7 +438,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (extruderIndex0Based < extrudersUsed.Count
 						&& extrudersUsed[extruderIndex0Based])
 					{
-						double materialTemperature = ActiveSliceSettings.Instance.Helpers.ExtruderTemperature(extruderIndex0Based);
+						double materialTemperature = printer.Settings.Helpers.ExtruderTemperature(extruderIndex0Based);
 						if (materialTemperature != 0)
 						{
 							// always heat the extruders that are used beyond extruder 0
@@ -451,7 +453,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (extruderIndex0Based < extrudersUsed.Count
 						&& extrudersUsed[extruderIndex0Based])
 					{
-						double materialTemperature = ActiveSliceSettings.Instance.Helpers.ExtruderTemperature(extruderIndex0Based);
+						double materialTemperature = printer.Settings.Helpers.ExtruderTemperature(extruderIndex0Based);
 						if (materialTemperature != 0)
 						{
 							// always heat the extruders that are used beyond extruder 0
@@ -553,7 +555,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (base.Value.Contains("mm"))
 				{
 					string withoutMm = base.Value.Replace("mm", "");
-					string distanceString = ActiveSliceSettings.Instance.GetValue(keyToUseAsDenominatorForCount);
+					string distanceString = printer.Settings.GetValue(keyToUseAsDenominatorForCount);
 					double denominator = ParseDouble(distanceString, 1);
 
 					int layers = (int)(ParseDouble(withoutMm) / denominator + .5);
@@ -576,7 +578,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.enable_retractions))
+				if (printer.Settings.GetValue<bool>(SettingsKey.enable_retractions))
 				{
 					return base.Value;
 				}
@@ -599,14 +601,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.sla_printer))
+				if (printer.Settings.GetValue<bool>(SettingsKey.sla_printer))
 				{
 					// return the speed based on the layer height
-					var speedAt025 = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.laser_speed_025);
-					var speedAt100 = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.laser_speed_100);
+					var speedAt025 = printer.Settings.GetValue<double>(SettingsKey.laser_speed_025);
+					var speedAt100 = printer.Settings.GetValue<double>(SettingsKey.laser_speed_100);
 					var deltaSpeed = speedAt100 - speedAt025;
 
-					var layerHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height);
+					var layerHeight = printer.Settings.GetValue<double>(SettingsKey.layer_height);
 					var deltaHeight = .1 - .025;
 					var heightRatio = (layerHeight - .025) / deltaHeight;
 					var ajustedSpeed = speedAt025 + deltaSpeed * heightRatio;
@@ -643,7 +645,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					string withoutPercent = base.Value.Replace("%", "");
 					double ratio = ParseDouble(withoutPercent) / 100.0;
-					string originalReferenceString = ActiveSliceSettings.Instance.GetValue(originalReference);
+					string originalReferenceString = printer.Settings.GetValue(originalReference);
 					double valueToModify = ParseDouble(originalReferenceString);
 					finalValue = valueToModify * ratio;
 				}
@@ -655,7 +657,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (change0ToReference
 					&& finalValue == 0)
 				{
-					finalValue = ParseDouble(ActiveSliceSettings.Instance.GetValue(originalReference));
+					finalValue = ParseDouble(printer.Settings.GetValue(originalReference));
 				}
 
 				finalValue *= scale;
@@ -681,10 +683,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				string lengthString = ActiveSliceSettings.Instance.GetValue(lengthSettingName);
+				string lengthString = printer.Settings.GetValue(lengthSettingName);
 				double length = ParseDouble(lengthString);
 
-				string speedString = ActiveSliceSettings.Instance.GetValue(speedSettingName);
+				string speedString = printer.Settings.GetValue(speedSettingName);
 				double speed = ParseDouble(speedString);
 
 				return (length / speed).ToString();

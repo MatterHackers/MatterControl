@@ -99,7 +99,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (e is StringEventArgs stringArgs
 					&& stringArgs.Data == settingData.SlicerConfigName)
 				{
-					string newSliceSettingValue = ActiveSliceSettings.Instance.GetValue(settingData.SlicerConfigName);
+					var activePrinter = ApplicationController.Instance.ActivePrinter;
+					string newSliceSettingValue = activePrinter.Settings.GetValue(settingData.SlicerConfigName);
 
 					bool foundSetting = false;
 					foreach (QuickMenuNameValue nameValue in settingData.QuickMenuSettings)

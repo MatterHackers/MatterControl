@@ -135,8 +135,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new List<PrinterSettingsLayer>
 				{
 					persistenceLayer,
-					ActiveSliceSettings.Instance.OemLayer,
-					ActiveSliceSettings.Instance.BaseLayer
+					printer.Settings.OemLayer,
+					printer.Settings.BaseLayer
 				},
 				presetsContext.LayerType);
 

@@ -97,7 +97,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.AddItemToBedplate();
 					testRunner.StartPrint();
 
-					emulator.WaitForLayer(ActiveSliceSettings.Instance.printer.Settings, 2);
+					var printer = ApplicationController.Instance.ActivePrinter;
+					emulator.WaitForLayer(printer.Settings, 2);
 
 					testRunner.WaitFor(() => emulator.ZPosition > 5);
 
@@ -264,8 +265,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					ActiveSliceSettings.Instance.SetValue(SettingsKey.recover_is_enabled, "1");
-					ActiveSliceSettings.Instance.SetValue(SettingsKey.has_hardware_leveling, "0");
+					var printer = ApplicationController.Instance.ActivePrinter;
+					printer.Settings.SetValue(SettingsKey.recover_is_enabled, "1");
+					printer.Settings.SetValue(SettingsKey.has_hardware_leveling, "0");
 
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
@@ -276,7 +278,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Layer(s) To Pause Field");
 					testRunner.Type("2;4;6");
 
-					Assert.IsTrue(ApplicationController.Instance.ActivePrinter.Connection.RecoveryIsEnabled);
+					Assert.IsTrue(printer.Connection.RecoveryIsEnabled);
 
 					// print a part
 					testRunner.AddItemToBedplate();
@@ -286,7 +288,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForName("Yes Button", 90); // the yes button is 'Resume'
 
 					// validate the current layer
-					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinter.Connection.CurrentlyPrintingLayer);
+					Assert.AreEqual(1, printer.Connection.CurrentlyPrintingLayer);
 					testRunner.ClickByName("Yes Button");
 
 					// the printer is now paused
@@ -300,7 +302,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForName("Connect to printer button", 10);
 					testRunner.ClickByName("Connect to printer button");
 
-					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Connected);
+					testRunner.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Connected);
 
 					// Assert that recovery happens
 

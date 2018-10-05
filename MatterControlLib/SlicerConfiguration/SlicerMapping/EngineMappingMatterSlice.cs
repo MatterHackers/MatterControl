@@ -356,7 +356,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					double infillRatio0To1 = ParseDouble(base.Value);
 					// 400 = solid (extruder width)
 
-					double nozzle_diameter = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
+					double nozzle_diameter = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
 					double linespacing = 1000;
 					if (infillRatio0To1 > .01)
 					{
@@ -381,8 +381,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					double lengthToExtrudeMm = ParseDouble(base.Value);
 					// we need to convert mm of filament to mm of extrusion path
-					double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter) * MathHelper.Tau * lengthToExtrudeMm;
-					double extrusionSquareSize = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.first_layer_height) * ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
+					double amountOfFilamentCubicMms = printer.Settings.GetValue<double>(SettingsKey.filament_diameter) * MathHelper.Tau * lengthToExtrudeMm;
+					double extrusionSquareSize = printer.Settings.GetValue<double>(SettingsKey.first_layer_height) * printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
 					double lineLength = amountOfFilamentCubicMms / extrusionSquareSize;
 
 					return lineLength.ToString();
@@ -401,7 +401,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				get
 				{
-					double nozzleDiameter = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
+					double nozzleDiameter = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
 
 					string extrusionWidth = base.Value;
 

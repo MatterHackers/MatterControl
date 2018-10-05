@@ -43,8 +43,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static event EventHandler MaterialPresetChanged;
 
-		public static PrinterSettings Instance => ApplicationController.Instance.ActivePrinter.Settings;
-
 		public static void OnSettingChanged(string slicerConfigName)
 		{
 			SettingChanged.CallEvents(null, new StringEventArgs(slicerConfigName));

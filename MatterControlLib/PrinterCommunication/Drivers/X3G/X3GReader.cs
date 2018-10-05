@@ -1,10 +1,7 @@
-﻿using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Text;
-using System.Threading.Tasks;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.Plugins.X3GDriver
 {
@@ -14,53 +11,41 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
      * Index 1:packet length
      * Index 2+: Payload-
      *  PayLoad Index 0: Response Code(values 0x80 - 0x8C
-     *  PayLoad Index 1+: Optional Response Arguments 
+     *  PayLoad Index 1+: Optional Response Arguments
      * Index (2+N): crc
      *******************************************************/
-
-
 	public class X3GReader
 	{
-		private MatterHackers.Plugins.X3GDriver.X3GPrinterDetails printerDetails;
+		private PrinterConfig printer;
+		private X3GPrinterDetails printerDetails;
 		private X3GPacketAnalyzer analyzer;
 
-		public X3GReader(MatterHackers.Plugins.X3GDriver.X3GPrinterDetails PtrDetails)
+		public X3GReader(X3GPrinterDetails PtrDetails, PrinterConfig printer)
 		{
+			this.printer = printer;
 			this.printerDetails = PtrDetails;
-			analyzer = new X3GPacketAnalyzer(PtrDetails);
+			analyzer = new X3GPacketAnalyzer(PtrDetails, printer);
 		}
 
 		public string translate(byte[] x3gResponse, string relatedGCommand, out bool commandOK)
 		{
-
-			//X3GPacketAnalyzer analyzer = new X3GPacketAnalyzer(,writerPtr); 
-
-
+			//X3GPacketAnalyzer analyzer = new X3GPacketAnalyzer(,writerPtr);
 			return analyzer.analyze(x3gResponse, relatedGCommand, out commandOK);
 		}
 
 		private class X3GPacketAnalyzer
 		{
 			private byte[] response;
+			private PrinterConfig printer;
 			private X3GCrc crc;
 			private string gCommandForResponse; //Figure out better name. this is the gCommand that was sent to the printer that caused this response
-			private MatterHackers.Plugins.X3GDriver.X3GPrinterDetails printerDetails; //used to get location information and other needed response data
+			private X3GPrinterDetails printerDetails; //used to get location information and other needed response data
 			private StringBuilder temperatureResponseStrBuilder; //Saves extruder temp when we have a heated bed to send back temps together
 
-
-
-			public X3GPacketAnalyzer(MatterHackers.Plugins.X3GDriver.X3GPrinterDetails PtrDetails)
+			public X3GPacketAnalyzer(X3GPrinterDetails PtrDetails, PrinterConfig printer)
 			{
+				this.printer = printer;
 				crc = new X3GCrc();
-				printerDetails = PtrDetails;
-				temperatureResponseStrBuilder = new StringBuilder();
-			}
-
-			public X3GPacketAnalyzer(byte[] x3gResponse, string relatedGCommand, MatterHackers.Plugins.X3GDriver.X3GPrinterDetails PtrDetails)
-			{
-				response = x3gResponse;
-				crc = new X3GCrc();
-				gCommandForResponse = relatedGCommand;
 				printerDetails = PtrDetails;
 				temperatureResponseStrBuilder = new StringBuilder();
 			}
@@ -113,7 +98,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 						payloadStrBuilder.Append("RS:" + X3GWriter.lineNumber + "\n");
 						payloadStrBuilder.Append("ok");
 						break;
-					case 0x82://Action Buffer overflow, Packet Discarded (currently will request resend of line, later should be avoided by checking buffer size before send)                        
+					case 0x82://Action Buffer overflow, Packet Discarded (currently will request resend of line, later should be avoided by checking buffer size before send)
 						payloadStrBuilder.Append("Action Buffer overflow, Packet Discarded\n");
 						payloadStrBuilder.Append("RS:" + X3GWriter.lineNumber + "\n");
 						payloadStrBuilder.Append("ok");
@@ -137,7 +122,6 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 						payloadStrBuilder.Append("Command Failed: " + response[2]);
 						break;
 				}
-
 
 				switch (payloadLength)
 				{
@@ -170,7 +154,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 
 							if (printerDetails.teperatureResponseCount == 1)
 							{
-								if (ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count) > 1)
+								if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
 								{
 									temperatureResponseStrBuilder.Append(String.Format(" T0:{0}", temperature));
 								}
@@ -179,7 +163,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 									temperatureResponseStrBuilder.Append(String.Format(" T:{0}", temperature));
 								}
 							}
-							else if (printerDetails.teperatureResponseCount == 2 && ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
+							else if (printerDetails.teperatureResponseCount == 2 && printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))
 							{
 								temperatureResponseStrBuilder.Append(String.Format(" B:{0}", temperature));
 							}
@@ -187,7 +171,6 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 							{
 								temperatureResponseStrBuilder.Append(String.Format(" T1:{0}", temperature));
 							}
-
 
 							if (printerDetails.teperatureResponseCount == printerDetails.requiredTemperatureResponseCount)
 							{
@@ -222,8 +205,5 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 				return crc.getCrc() == response[crcIndex];
 			}
 		}
-
-
 	}
-
 }

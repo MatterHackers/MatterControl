@@ -57,18 +57,20 @@ namespace MatterHackers.MatterControl
 
 			this.SelectionChanged += (s, e) =>
 			{
+				var activePrinter = ApplicationController.Instance.ActivePrinter;
+
 				string printerID = this.SelectedValue;
 				if (printerID == "new"
 					|| string.IsNullOrEmpty(printerID)
-					|| printerID == ActiveSliceSettings.Instance.ID)
+					|| printerID == activePrinter.Settings.ID)
 				{
 					// do nothing
 				}
 				else
 				{
 					// TODO: when this opens a new tab we will not need to check any printer
-					if (ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting
-						|| ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPaused)
+					if (activePrinter.Connection.PrinterIsPrinting
+						|| activePrinter.Connection.PrinterIsPaused)
 					{
 						if (this.SelectedIndex != lastSelectedIndex)
 						{
@@ -89,12 +91,14 @@ namespace MatterHackers.MatterControl
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
+				var activePrinter = ApplicationController.Instance.ActivePrinter;
+
 				string settingsName = (e as StringEventArgs)?.Data;
 				if (settingsName != null && settingsName == SettingsKey.printer_name)
 				{
 					if (ProfileManager.Instance.ActiveProfile != null)
 					{
-						ProfileManager.Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
+						ProfileManager.Instance.ActiveProfile.Name = activePrinter.Settings.GetValue(SettingsKey.printer_name);
 						Rebuild();
 					}
 				}

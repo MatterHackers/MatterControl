@@ -1,11 +1,9 @@
-﻿using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 //Protocol Documentation found at: https://github.com/makerbot/s3g/blob/master/doc/s3gProtocol.md
 
@@ -13,7 +11,8 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 {
 	public class X3GWriter
 	{
-		private MatterHackers.Plugins.X3GDriver.X3GPrinterDetails printerDetails;
+		private PrinterConfig printer;
+		private X3GPrinterDetails printerDetails;
 
 		private Queue<byte[]> overFlowPackets;
 
@@ -26,14 +25,15 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 		public X3GWriter()
 		{
 			overFlowPackets = new Queue<byte[]>();
-			printerDetails = new MatterHackers.Plugins.X3GDriver.X3GPrinterDetails();
+			printerDetails = new X3GPrinterDetails();
 			feedrate = 3200;
 			printerDetails.activeExtruderIndex = 0;
 			lineNumber = 0;
 		}
 
-		public X3GWriter(MatterHackers.Plugins.X3GDriver.X3GPrinterDetails printerInfo)
+		public X3GWriter(X3GPrinterDetails printerInfo, PrinterConfig printer)
 		{
+			this.printer = printer;
 			printerDetails = printerInfo;
 			overFlowPackets = new Queue<byte[]>();
 			feedrate = 3200;
@@ -48,7 +48,6 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 			X3GPacketFactory binaryPacket;
 			char commandType = writemessage[0];
 			sendToPrinter = true;
-
 
 			if (commandType == 'N') //Strips leading line number and post command checksum
 			{
@@ -119,7 +118,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 							convertedMessage = binaryPacket.getX3GPacket();
 							printerDetails.requiredTemperatureResponseCount = 1;
 
-							if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))//if it has a bed get the bed temp
+							if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))//if it has a bed get the bed temp
 							{
 								binaryPacket = new X3GPacketFactory(10);
 								binaryPacket.addByte(0);
@@ -128,7 +127,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 								overFlowPackets.Enqueue(binaryPacket.getX3GPacket());
 							}
 
-							if (ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count) > 1)
+							if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
 							{
 								binaryPacket = new X3GPacketFactory(10);
 								binaryPacket.addByte(1);
@@ -278,7 +277,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 							printerDetails.heatingLockout = true;
 							break;
 						case 134://wait for build platform temp Makerbot M134
-							if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
+							if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))
 							{
 
 								binaryPacket = new X3GPacketFactory(136);
@@ -306,7 +305,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 							convertedMessage = binaryPacket.getX3GPacket();
 							break;
 						case 140://Set Bed temp M140
-							if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
+							if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))
 							{
 								int temperature = (int)getParameterValue(commands, 'S');
 								binaryPacket = new X3GPacketFactory(136);
@@ -325,7 +324,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 
 							break;
 						case 190://Wait for bed to reach target temp M190
-							if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
+							if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))
 							{
 								int temperature = (int)getParameterValue(commands, 'S');
 								binaryPacket = new X3GPacketFactory(136);
@@ -797,8 +796,6 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 				printerDetails.positionalOffset.Z = offSet;
 
 			}
-
-
 		}
 
 		private void updateStepsPerMm(List<string> commands)
@@ -882,14 +879,13 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 					}
 
 				}//End else
-
 			}
+
 			return gCodeList;
 		}
 
 		private bool moveIsExtrudeOnly(List<string> commands)
 		{
-
 			int numParamsNotExtrude = commands.Count((x => x[0] != 'E' && x[0] != 'F'));
 
 			return numParamsNotExtrude <= 1;//The G command will count as 1 so if there are more then there are other params
@@ -920,7 +916,6 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 					move = (float)(printerDetails.targetMovePosition - printerDetails.currentPosition).Length;
 				}
 			}
-
 
 			return move;
 		}
@@ -1097,7 +1092,6 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 			return paramValue;
 		}
 
-
 		private class X3GPacketFactory
 		{
 			private const int MAX_PACKET_SIZE = 256;
@@ -1168,8 +1162,6 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 				packetOutline = new byte[MAX_PACKET_SIZE];
 				crc.clear();
 			}
-
 		}
-
 	}
 }

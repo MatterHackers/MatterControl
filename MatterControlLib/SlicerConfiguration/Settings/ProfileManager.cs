@@ -204,16 +204,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return;
 			}
 
+			var printer = ApplicationController.Instance.ActivePrinter;
+
 			string settingsKey = ((StringEventArgs)e).Data;
 			switch (settingsKey)
 			{
 				case SettingsKey.printer_name:
-					Instance.ActiveProfile.Name = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
+					Instance.ActiveProfile.Name = printer.Settings.GetValue(SettingsKey.printer_name);
 					Instance.Save();
 					break;
 
 				case SettingsKey.com_port:
-					Instance.ActiveProfile.ComPort = ActiveSliceSettings.Instance.Helpers.ComPort();
+					Instance.ActiveProfile.ComPort = printer.Settings.Helpers.ComPort();
 					Instance.Save();
 					break;
 			}
@@ -229,7 +231,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				var activeID = ActiveSliceSettings.Instance?.ID;
+				var printer = ApplicationController.Instance.ActivePrinter;
+
+				var activeID = printer.Settings?.ID;
 				if (activeID == null)
 				{
 					return null;
@@ -308,9 +312,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// <returns></returns>
 		public static async Task<PrinterSettings> LoadProfileAsync(string profileID, bool useActiveInstance = true)
 		{
-			if (useActiveInstance && ActiveSliceSettings.Instance?.ID == profileID)
+			var activePrinter = ApplicationController.Instance.ActivePrinter;
+			
+			if (useActiveInstance && activePrinter.Settings.ID == profileID)
 			{
-				return ActiveSliceSettings.Instance;
+				return activePrinter.Settings;
 			}
 
 			// Only load profiles by ID that are defined in the profiles document

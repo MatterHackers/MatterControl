@@ -463,10 +463,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			get { return id; }
 			set
 			{
+				var activePrinter = ApplicationController.Instance.ActivePrinter;
+
 				// Update in memory state if IDs match
-				if (ActiveSliceSettings.Instance.ID == this.ID)
+				if (activePrinter.Settings.ID == this.ID)
 				{
-					ActiveSliceSettings.Instance.ID = value;
+					activePrinter.Settings.ID = value;
 				}
 
 				// Ensure the local file with the old ID moves with the new ID change

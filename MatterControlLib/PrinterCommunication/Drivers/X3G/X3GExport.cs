@@ -38,7 +38,6 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.Plugins.X3GDriver;
 
 namespace MatterHackers.MatterControl.Plugins.X3GDriver
 {
@@ -80,13 +79,14 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 			StreamReader inputFile = new StreamReader(result.Stream);
 			FileStream binaryFileStream = new FileStream(outputPath, FileMode.OpenOrCreate);
 			BinaryWriter outputFile = new BinaryWriter(binaryFileStream);
-			X3GPrinterDetails printerDetails = new X3GPrinterDetails();
-			X3GWriter x3gConverter = new X3GWriter(printerDetails);
+
+			var x3gConverter = new X3GWriter(new X3GPrinterDetails(), ApplicationController.Instance.ActivePrinter);
+
 			List<byte[]> x3gLines = new List<byte[]>();
 			byte[] emptyByteArray = { 0 };
 			string line;
 
-			//Makes sure steps per mm and bed offset is set 
+			//Makes sure steps per mm and bed offset is set
 			string splitString = "\\n";
 			string connectGCodeLines = printer.Settings.GetValue(SettingsKey.connect_gcode);
 			foreach (string connectLine in connectGCodeLines.Split(splitString.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))

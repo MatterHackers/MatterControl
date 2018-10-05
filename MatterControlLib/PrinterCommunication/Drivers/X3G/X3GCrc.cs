@@ -41,5 +41,4 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 			crc = 0;
 		}
 	}
-
 }

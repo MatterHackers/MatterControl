@@ -393,7 +393,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				File.WriteAllText(filePath, json);
 			}
 
-			if (ActiveSliceSettings.Instance?.ID == this.ID)
+			if (ApplicationController.Instance.ActivePrinter.Settings.ID == this.ID)
 			{
 				ActiveSliceSettings.ActiveProfileModified.CallEvents(null, null);
 			}

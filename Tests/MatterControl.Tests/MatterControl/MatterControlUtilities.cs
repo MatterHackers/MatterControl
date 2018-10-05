@@ -236,7 +236,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.AddAndSelectPrinter(make, model);
 
 			// Force the configured printer to use the emulator driver
-			ActiveSliceSettings.Instance.SetValue("driver_type", "Emulator");
+			ApplicationController.Instance.ActivePrinter.Settings.SetValue("driver_type", "Emulator");
 
 			// edit the com port
 			testRunner.SwitchToPrinterSettings();

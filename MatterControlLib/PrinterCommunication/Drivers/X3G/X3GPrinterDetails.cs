@@ -1,15 +1,9 @@
 ﻿using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MatterHackers.Plugins.X3GDriver
+namespace MatterHackers.MatterControl.Plugins.X3GDriver
 {
 	public class X3GPrinterDetails
 	{
-
 		public Vector3 stepsPerMm;//Make a M command to receive steps and save into these static values (will be sent after successful connect)
 		public long extruderStepsPerMm;
 
@@ -32,6 +26,7 @@ namespace MatterHackers.Plugins.X3GDriver
 		public int requiredTemperatureResponseCount;//The number of responses from the printer that corresponds to one M105 (adjusts to extruders & bed heating as required)
 		public int teperatureResponseCount;//number of responses for temperature currently received from the printer. resets after hitting target count
 		public long dwellTime; //this is set during a dwell command and is reset to zero after the dwell has completed
+
 		public X3GPrinterDetails()
 		{
 			currentPosition = new Vector3(/*285,150,0*/);//defaults to "far corner" (where the machine thinks it is at 0,0) inverted positional offset
@@ -49,6 +44,5 @@ namespace MatterHackers.Plugins.X3GDriver
 			extruderOffset = new Vector2();
 			extruderRelativePos = false;
 		}
-
 	}
 }
