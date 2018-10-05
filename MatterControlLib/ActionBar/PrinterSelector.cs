@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl
 				}
 			};
 
-			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				var activePrinter = ApplicationController.Instance.ActivePrinter;
 

@@ -329,7 +329,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				EventHandler unregisterEvents = null;
 				int layerHeightChangedCount = 0;
 
-				ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+				PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 				{
 					var stringEvent = e as StringEventArgs;
 					if (stringEvent != null)

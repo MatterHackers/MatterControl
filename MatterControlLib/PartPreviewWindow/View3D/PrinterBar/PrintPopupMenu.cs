@@ -179,7 +179,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Padding = theme.TextButtonPadding.Clone(right: 5)
 			});
 
-			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if (e is StringEventArgs stringEvent)
 				{

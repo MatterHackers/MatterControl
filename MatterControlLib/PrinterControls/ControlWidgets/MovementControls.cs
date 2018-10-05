@@ -261,7 +261,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 
-			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if ((e as StringEventArgs)?.Data == SettingsKey.baby_step_z_offset)
 				{

@@ -349,7 +349,7 @@ namespace MatterHackers.MatterControl
 			/*
 			// TODO: Should we rebroadcast settings changed events for each settings?
 			bool themeChanged = ActivePrinter.Settings.GetValue(SettingsKey.active_theme_name) != updatedProfile.GetValue(SettingsKey.active_theme_name);
-			ActiveSliceSettings.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.printer_name));
+			PrinterSettings.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.printer_name));
 
 			// TODO: Decide if non-printer contexts should prompt for a printer, if we should have a default printer, or get "ActiveTab printer" working
 			// HACK: short term solution to resolve printer reference for non-printer related contexts
@@ -1120,7 +1120,7 @@ namespace MatterHackers.MatterControl
 				iconCollector: (theme) => AggContext.StaticData.LoadIcon("noun_55060.png", theme.InvertIcons));
 
 
-			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if (e is StringEventArgs stringArg
 					&& SettingsOrganizer.SettingsData.TryGetValue(stringArg.Data, out SliceSettingData settingsData)

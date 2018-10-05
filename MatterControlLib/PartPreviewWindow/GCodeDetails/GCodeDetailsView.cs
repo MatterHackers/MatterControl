@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var conditionalCostContainer = costTextWidget.Parent;
 			conditionalCostContainer.Visible = gcodeDetails.TotalCost > 0;
 
-			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if (e is StringEventArgs stringEvent)
 				{

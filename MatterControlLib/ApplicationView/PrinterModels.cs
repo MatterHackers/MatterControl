@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl
 		{
 			// Make sure we don't have a selection
 			this.Scene.SelectedItem = null;
-			
+
 			this.EditContext = editContext;
 			this.ContentType = "mcx";
 
@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl
 					Content = new Object3D(),
 					ContentStore = historyContainer,
 					SourceItem = historyContainer.NewPlatingItem()
-				}, 
+				},
 				new Object3D());
 		}
 
@@ -888,7 +888,7 @@ namespace MatterHackers.MatterControl
 			this.Settings.printer = this;
 
 			// TODO: ActiveSliceSettings is not our Settings! Move SettingsChanged to instance rather than static
-			ActiveSliceSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
+			PrinterSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
 
 			this.Connection.PrintFinished.RegisterEvent((s, e) =>
 			{

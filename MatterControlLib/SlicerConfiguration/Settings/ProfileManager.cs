@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		static ProfileManager()
 		{
-			ActiveSliceSettings.SettingChanged.RegisterEvent(SettingsChanged, ref unregisterEvents);
+			PrinterSettings.SettingChanged.RegisterEvent(SettingsChanged, ref unregisterEvents);
 			ReloadActiveUser();
 		}
 

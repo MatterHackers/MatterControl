@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// make sure we have good settings
 
-			ActiveSliceSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
+			PrinterSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
 			Printer_SettingChanged(this, null);
 
 			this.gridSizeMm = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
