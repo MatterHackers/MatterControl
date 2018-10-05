@@ -51,6 +51,8 @@ using Newtonsoft.Json.Linq;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
+	public enum NamedSettingsLayers { MHBaseSettings, OEMSettings, Quality, Material, User, All }
+
 	public class PrinterSettings
 	{
 		// Latest version should be in the form of:
@@ -59,6 +61,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		// TODO: Change to instance based, revise listeners and register to expect specific printer settings
 		public static RootedObjectEventHandler SettingChanged = new RootedObjectEventHandler();
+
+		public static event EventHandler MaterialPresetChanged;
+
+		internal static void OnMaterialPresetChanged()
+		{
+			MaterialPresetChanged?.Invoke(null, null);
+		}
 
 		public static void OnSettingChanged(string slicerConfigName)
 		{
@@ -360,7 +369,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				MaterialLayer = GetMaterialLayer(materialKey);
 
-				ActiveSliceSettings.OnMaterialPresetChanged();
+				PrinterSettings.OnMaterialPresetChanged();
 			}
 
 			Save();
