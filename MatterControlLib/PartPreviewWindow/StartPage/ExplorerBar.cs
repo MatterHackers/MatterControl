@@ -226,12 +226,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 							var printer = await ProfileManager.Instance.LoadPrinter();
 							printer.ViewState.ViewMode = PartViewMode.Model;
 
+							var historyContainer = ApplicationController.Instance.Library.PlatingHistory;
+
 							// Load empty plate
 							await printer.Bed.LoadContent(
 								new EditContext()
 								{
-									ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-									SourceItem = BedConfig.NewPlatingItem(ApplicationController.Instance.Library.PlatingHistory)
+									ContentStore = historyContainer,
+									SourceItem = historyContainer.NewPlatingItem()
 								});
 
 							// Always switch to printer tab after changing plate

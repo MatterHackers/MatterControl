@@ -75,8 +75,11 @@ namespace MatterHackers.MatterControl
 
 		public SceneContextViewState ViewState { get; }
 
-		public BedConfig(PrinterConfig printer = null)
+		private HistoryContainerBase historyContainer;
+
+		public BedConfig(HistoryContainerBase historyContainer, PrinterConfig printer = null)
 		{
+			this.historyContainer = historyContainer;
 			this.Printer = printer;
 			this.ViewState = new SceneContextViewState(this);
 		}
@@ -137,23 +140,12 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		internal static ILibraryItem NewPlatingItem(HistoryContainerBase historyContainer)
-		{
-			string now = "Workspace " + DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
-			string mcxPath = Path.Combine(historyContainer.FullPath, now + ".mcx");
-
-			File.WriteAllText(mcxPath, new Object3D().ToJson());
-
-			return new FileSystemFileItem(mcxPath);
-		}
 
 		internal async Task ClearPlate()
 		{
 			// Clear existing
 			this.LoadedGCode = null;
 			this.GCodeRenderer = null;
-
-			var historyContainer = this.EditContext.ContentStore as HistoryContainerBase;
 
 			// Switch back to Model view on ClearPlate
 			if (this.Printer != null)
@@ -165,7 +157,7 @@ namespace MatterHackers.MatterControl
 			await this.LoadContent(new EditContext()
 			{
 				ContentStore = historyContainer,
-				SourceItem = BedConfig.NewPlatingItem(historyContainer)
+				SourceItem = historyContainer.NewPlatingItem()
 			});
 		}
 
@@ -234,22 +226,6 @@ namespace MatterHackers.MatterControl
 				CancellationToken.None);
 		}
 
-		internal static ILibraryItem GetLastPlateOrNew()
-		{
-			// Find the last used bed plate mcx
-			var directoryInfo = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory);
-			var firstFile = directoryInfo.GetFileSystemInfos("*.mcx").OrderByDescending(fl => fl.LastWriteTime).FirstOrDefault();
-
-			// Set as the current item - should be restored as the Active scene in the MeshViewer
-			if (firstFile != null)
-			{
-				return new FileSystemFileItem(firstFile.FullName);
-			}
-
-			// Otherwise generate a new plating item
-			return NewPlatingItem(ApplicationController.Instance.Library.PlatingHistory);
-		}
-
 		private GCodeFile loadedGCode;
 		public GCodeFile LoadedGCode
 		{
@@ -266,7 +242,7 @@ namespace MatterHackers.MatterControl
 
 		internal void EnsureGCodeLoaded()
 		{
-			if (this.loadedGCode == null
+			if (this.LoadedGCode == null
 				&& File.Exists(this.EditContext?.GCodeFilePath))
 			{
 				UiThread.RunOnIdle(async () =>
@@ -881,9 +857,9 @@ namespace MatterHackers.MatterControl
 
 		public PrinterConfig(PrinterSettings settings)
 		{
-			this.Bed = new BedConfig(this);
+			this.Bed = new BedConfig(ApplicationController.Instance.Library.PlatingHistory, this);
 			this.ViewState = new PrinterViewState();
-			this.Connection = new PrinterConnection(printer: this);
+			this.Connection = new PrinterConnection(this);
 			this.Settings = settings;
 			this.Settings.printer = this;
 

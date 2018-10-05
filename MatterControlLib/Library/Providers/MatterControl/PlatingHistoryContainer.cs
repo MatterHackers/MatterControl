@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg.Image;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 
@@ -85,6 +86,32 @@ namespace MatterHackers.MatterControl.Library
 				var recentFiles = new DirectoryInfo(this.FullPath).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
 				Items = recentFiles.Where(f => f.Length > 500).Take(this.PageSize).Select(f => new FileSystemFileItem(f.FullName)).ToList<ILibraryItem>();
 			}
+		}
+
+		internal ILibraryItem NewPlatingItem()
+		{
+			string now = "Workspace " + DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
+			string mcxPath = Path.Combine(this.FullPath, now + ".mcx");
+
+			File.WriteAllText(mcxPath, new Object3D().ToJson());
+
+			return new FileSystemFileItem(mcxPath);
+		}
+
+		public ILibraryItem GetLastPlateOrNew()
+		{
+			// Find the last used bed plate mcx
+			var directoryInfo = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory);
+			var firstFile = directoryInfo.GetFileSystemInfos("*.mcx").OrderByDescending(fl => fl.LastWriteTime).FirstOrDefault();
+
+			// Set as the current item - should be restored as the Active scene in the MeshViewer
+			if (firstFile != null)
+			{
+				return new FileSystemFileItem(firstFile.FullName);
+			}
+
+			// Otherwise generate a new plating item
+			return this.NewPlatingItem();
 		}
 
 		public void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer)

@@ -616,7 +616,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 						var newTab = partPreviewContent.CreatePartTab(
 							firstItem.Name,
-							bed = new BedConfig(),
+							bed = new BedConfig(ApplicationController.Instance.Library.PartHistory),
 							theme);
 
 						// Load content after UI widgets to support progress notification during acquire/load
