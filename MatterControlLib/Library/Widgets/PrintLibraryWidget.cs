@@ -569,8 +569,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							new EditContext()
 							{
 								SourceItem = assetStream,
-								// No content store for GCode, otherwise PlatingHistory
-								ContentStore = printer.Bed.EditContext.ContentStore
+								// No content store for GCode
+								ContentStore = null
 							}).ConfigureAwait(false);
 					}
 					else
@@ -616,7 +616,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 						var newTab = partPreviewContent.CreatePartTab(
 							firstItem.Name,
-							bed = new BedConfig(),
+							bed = new BedConfig(ApplicationController.Instance.Library.PartHistory),
 							theme);
 
 						// Load content after UI widgets to support progress notification during acquire/load

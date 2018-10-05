@@ -93,10 +93,8 @@ namespace MatterControl.Tests.MatterControl
 			}
 		}
 
-		public static GCodeStream CreateTestGCodeStream(string[] inputLines, out List<GCodeStream> streamList)
+		public static GCodeStream CreateTestGCodeStream(PrinterConfig printer, string[] inputLines, out List<GCodeStream> streamList)
 		{
-			var printer = ApplicationController.Instance.ActivePrinter;
-
 			streamList = new List<GCodeStream>();
 			streamList.Add(new TestGCodeStream(inputLines));
 			streamList.Add(new PauseHandlingStream(printer, streamList[streamList.Count - 1]));
@@ -182,8 +180,9 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			List<GCodeStream> streamList;
-			GCodeStream testStream = CreateTestGCodeStream(inputLines, out streamList);
+			var printer = new PrinterConfig(new PrinterSettings());
+
+			GCodeStream testStream = CreateTestGCodeStream(printer, inputLines, out List<GCodeStream> streamList);
 
 			int expectedIndex = 0;
 			string actualLine = testStream.ReadLine();
@@ -238,8 +237,8 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			List<GCodeStream> streamList;
-			GCodeStream testStream = CreateTestGCodeStream(inputLines, out streamList);
+			var printer = new PrinterConfig(new PrinterSettings());
+			GCodeStream testStream = CreateTestGCodeStream(printer, inputLines, out List<GCodeStream> streamList);
 
 			int expectedIndex = 0;
 			string actualLine = testStream.ReadLine();
@@ -327,8 +326,8 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			List<GCodeStream> streamList;
-			GCodeStream pauseHandlingStream = CreateTestGCodeStream(inputLines, out streamList);
+			var printer = new PrinterConfig(new PrinterSettings());
+			GCodeStream pauseHandlingStream = CreateTestGCodeStream(printer, inputLines, out List<GCodeStream> streamList);
 
 			int expectedIndex = 0;
 			string actualLine = pauseHandlingStream.ReadLine();
@@ -407,12 +406,12 @@ namespace MatterControl.Tests.MatterControl
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			// this is the pause and resume from the Eris
-			PrinterSettings settings = ActiveSliceSettings.Instance;
-			settings.SetValue(SettingsKey.pause_gcode, "G91\nG1 Z10 E - 10 F12000\n  G90");
-			settings.SetValue(SettingsKey.resume_gcode, "G91\nG1 Z-10 E10.8 F12000\nG90");
+			var printer = new PrinterConfig(new PrinterSettings());
 
-			List<GCodeStream> streamList;
-			GCodeStream pauseHandlingStream = CreateTestGCodeStream(inputLines, out streamList);
+			printer.Settings.SetValue(SettingsKey.pause_gcode, "G91\nG1 Z10 E - 10 F12000\n  G90");
+			printer.Settings.SetValue(SettingsKey.resume_gcode, "G91\nG1 Z-10 E10.8 F12000\nG90");
+
+			GCodeStream pauseHandlingStream = CreateTestGCodeStream(printer, inputLines, out List<GCodeStream> streamList);
 			PauseHandlingStream pauseStream = null;
 			foreach (var stream in streamList)
 			{
@@ -477,12 +476,13 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			PrinterSettings printerSettings = ActiveSliceSettings.Instance;
-			printerSettings.SetValue(SettingsKey.write_regex, "\"^(G28)\",\"G28,M115\"\\n\"^(M107)\",\"; none\"");
+			var printer = new PrinterConfig(new PrinterSettings());
+
+			printer.Settings.SetValue(SettingsKey.write_regex, "\"^(G28)\",\"G28,M115\"\\n\"^(M107)\",\"; none\"");
 
 			var inputLinesStream = new TestGCodeStream(inputLines);
 			var queueStream = new QueuedCommandsStream(inputLinesStream);
-			ProcessWriteRegexStream writeStream = new ProcessWriteRegexStream(printerSettings, queueStream, queueStream);
+			ProcessWriteRegexStream writeStream = new ProcessWriteRegexStream(printer.Settings, queueStream, queueStream);
 
 			int expectedIndex = 0;
 			string actualLine = writeStream.ReadLine();

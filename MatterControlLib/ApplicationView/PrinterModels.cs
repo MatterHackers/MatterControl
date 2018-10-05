@@ -75,10 +75,27 @@ namespace MatterHackers.MatterControl
 
 		public SceneContextViewState ViewState { get; }
 
-		public BedConfig(PrinterConfig printer = null)
+		private HistoryContainerBase historyContainer;
+
+		public BedConfig(HistoryContainerBase historyContainer, PrinterConfig printer = null)
 		{
+			this.historyContainer = historyContainer;
 			this.Printer = printer;
 			this.ViewState = new SceneContextViewState(this);
+		}
+
+		public void LoadEmptyContent(EditContext editContext, IObject3D content)
+		{
+			// Make sure we don't have a selection
+			this.Scene.SelectedItem = null;
+			
+			this.EditContext = editContext;
+			this.ContentType = "mcx";
+
+			editContext.Content = content;
+
+			// Notify
+			this.SceneLoaded?.Invoke(this, null);
 		}
 
 		public async Task LoadContent(EditContext editContext)
@@ -137,23 +154,12 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		internal static ILibraryItem NewPlatingItem(HistoryContainerBase historyContainer)
-		{
-			string now = "Workspace " + DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
-			string mcxPath = Path.Combine(historyContainer.FullPath, now + ".mcx");
 
-			File.WriteAllText(mcxPath, new Object3D().ToJson());
-
-			return new FileSystemFileItem(mcxPath);
-		}
-
-		internal async Task ClearPlate()
+		internal void ClearPlate()
 		{
 			// Clear existing
 			this.LoadedGCode = null;
 			this.GCodeRenderer = null;
-
-			var historyContainer = this.EditContext.ContentStore as HistoryContainerBase;
 
 			// Switch back to Model view on ClearPlate
 			if (this.Printer != null)
@@ -162,11 +168,14 @@ namespace MatterHackers.MatterControl
 			}
 
 			// Load
-			await this.LoadContent(new EditContext()
-			{
-				ContentStore = historyContainer,
-				SourceItem = BedConfig.NewPlatingItem(historyContainer)
-			});
+			this.LoadEmptyContent(
+				new EditContext()
+				{
+					Content = new Object3D(),
+					ContentStore = historyContainer,
+					SourceItem = historyContainer.NewPlatingItem()
+				}, 
+				new Object3D());
 		}
 
 		public InsertionGroupObject3D AddToPlate(IEnumerable<ILibraryItem> itemsToAdd)
@@ -192,18 +201,32 @@ namespace MatterHackers.MatterControl
 			return insertionGroup;
 		}
 
+		/// <summary>
+		/// Loads content to the bed and prepares edit/persistence context for use
+		/// </summary>
+		/// <param name="editContext"></param>
+		/// <returns></returns>
+		public async Task LoadPlateFromHistory()
+		{
+			await this.LoadContent(new EditContext()
+			{
+				ContentStore = historyContainer,
+				SourceItem = historyContainer.GetLastPlateOrNew()
+			});
+		}
+
 		public async Task StashAndPrintGCode(ILibraryItem libraryItem)
 		{
 			// Clear plate
-			await this.ClearPlate();
+			this.ClearPlate();
 
 			// Add content
 			await this.LoadContent(
 				new EditContext()
 				{
 					SourceItem = libraryItem,
-					// No content store for GCode, otherwise PlatingHistory
-					ContentStore = this.EditContext.ContentStore
+					// No content store for GCode
+					ContentStore = null
 				});
 
 			// Slice and print
@@ -217,7 +240,7 @@ namespace MatterHackers.MatterControl
 		public async Task StashAndPrint(IEnumerable<ILibraryItem> selectedLibraryItems)
 		{
 			// Clear plate
-			await this.ClearPlate();
+			this.ClearPlate();
 
 			// Add content
 			var insertionGroup = this.AddToPlate(selectedLibraryItems);
@@ -232,22 +255,6 @@ namespace MatterHackers.MatterControl
 				this.Printer,
 				null,
 				CancellationToken.None);
-		}
-
-		internal static ILibraryItem GetLastPlateOrNew()
-		{
-			// Find the last used bed plate mcx
-			var directoryInfo = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory);
-			var firstFile = directoryInfo.GetFileSystemInfos("*.mcx").OrderByDescending(fl => fl.LastWriteTime).FirstOrDefault();
-
-			// Set as the current item - should be restored as the Active scene in the MeshViewer
-			if (firstFile != null)
-			{
-				return new FileSystemFileItem(firstFile.FullName);
-			}
-
-			// Otherwise generate a new plating item
-			return NewPlatingItem(ApplicationController.Instance.Library.PlatingHistory);
 		}
 
 		private GCodeFile loadedGCode;
@@ -266,7 +273,7 @@ namespace MatterHackers.MatterControl
 
 		internal void EnsureGCodeLoaded()
 		{
-			if (this.loadedGCode == null
+			if (this.LoadedGCode == null
 				&& File.Exists(this.EditContext?.GCodeFilePath))
 			{
 				UiThread.RunOnIdle(async () =>
@@ -623,7 +630,7 @@ namespace MatterHackers.MatterControl
 				ApplicationController.Instance.Thumbnails.DeleteCache(this.SourceItem);
 
 				// Call save on the provider
-				this.ContentStore.Save(this.SourceItem, this.Content);
+				this.ContentStore?.Save(this.SourceItem, this.Content);
 			}
 		}
 	}
@@ -872,11 +879,18 @@ namespace MatterHackers.MatterControl
 
 		private EventHandler unregisterEvents;
 
+		public static PrinterConfig EmptyPrinter { get; } = new PrinterConfig();
+
+		private PrinterConfig()
+		{
+			this.Connection = new PrinterConnection(this);
+		}
+
 		public PrinterConfig(PrinterSettings settings)
 		{
-			this.Bed = new BedConfig(this);
+			this.Bed = new BedConfig(ApplicationController.Instance.Library.PlatingHistory, this);
 			this.ViewState = new PrinterViewState();
-			this.Connection = new PrinterConnection(printer: this);
+			this.Connection = new PrinterConnection(this);
 			this.Settings = settings;
 			this.Settings.printer = this;
 
@@ -916,7 +930,7 @@ namespace MatterHackers.MatterControl
 
 		public PrinterViewState ViewState { get; }
 
-		private PrinterSettings _settings;
+		private PrinterSettings _settings = PrinterSettings.Empty;
 		public PrinterSettings Settings
 		{
 			get => _settings;
@@ -1066,20 +1080,6 @@ namespace MatterHackers.MatterControl
 						break;
 				}
 			}
-		}
-
-		/// <summary>
-		/// Loads content to the bed and prepares edit/persistence context for use
-		/// </summary>
-		/// <param name="editContext"></param>
-		/// <returns></returns>
-		internal async Task LoadPlateFromHistory()
-		{
-			await this.Bed.LoadContent(new EditContext()
-			{
-				ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-				SourceItem = BedConfig.GetLastPlateOrNew()
-			});
 		}
 	}
 

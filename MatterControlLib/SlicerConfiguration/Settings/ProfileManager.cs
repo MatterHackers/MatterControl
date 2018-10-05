@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var printer = new PrinterConfig(await ProfileManager.LoadProfileAsync(printerID));
 
-			await printer.LoadPlateFromHistory();
+			await printer.Bed.LoadPlateFromHistory();
 
 			await ApplicationController.Instance.SetActivePrinter(printer);
 		}
@@ -492,7 +492,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ProfileManager.Instance.LastProfileID = guid;
 
 			var printer = new PrinterConfig(printerSettings);
-			await printer.LoadPlateFromHistory();
+			await printer.Bed.LoadPlateFromHistory();
 
 			await ApplicationController.Instance.SetActivePrinter(printer);
 

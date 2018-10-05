@@ -528,6 +528,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.DragOperationActive = true;
 
+			// ContentStore is null for plated gcode, call ClearPlate to exit mode and return to bed mcx
+			if (sceneContext.EditContext.ContentStore == null)
+			{
+				this.ClearPlate();
+			}
+
 			var firstItem = items.FirstOrDefault();
 
 			if ((firstItem is ILibraryAssetStream contentStream
@@ -607,8 +613,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							new EditContext()
 							{
 								SourceItem = this.SceneReplacement,
-								// No content store for GCode, otherwise PlatingHistory
-								ContentStore = sceneContext.EditContext.ContentStore
+								// No content store for GCode
+								ContentStore = null
 							}).ConfigureAwait(false);
 
 						this.SceneReplacement = null;
@@ -1407,18 +1413,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void ClearPlate()
 		{
 			selectedObjectPanel.SetActiveItem(null);
-			sceneContext.ClearPlate().ContinueWith(t =>
-			{
-				sceneContext.Scene.UndoBuffer.ClearHistory();
+			sceneContext.ClearPlate();
+			sceneContext.Scene.UndoBuffer.ClearHistory();
 
-				GC.Collect();
-
-				UiThread.RunOnIdle(() =>
-				{
-					GC.Collect();
-					this.Invalidate();
-				}, 1);
-			});
+			this.Invalidate();
 		}
 
 		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);

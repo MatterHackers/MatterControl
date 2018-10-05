@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		/// <returns></returns>
 		private async Task EditChildInIsolatedContext()
 		{
-			var bed = new BedConfig();
+			var bed = new BedConfig(ApplicationController.Instance.Library.PartHistory);
 
 			var partPreviewContent = this.Parents<PartPreviewContent>().FirstOrDefault();
 			partPreviewContent.CreatePartTab(
