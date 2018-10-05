@@ -65,6 +65,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				VAnchor = VAnchor.Fit | VAnchor.Center,
 				Enabled = currentContainer.Parent != null,
 				Name = "Library Up Button",
+				ToolTipText = "Up one folder".Localize(),
 				Margin = theme.ButtonSpacing,
 				MinimumSize = new Vector2(theme.ButtonHeight, theme.ButtonHeight)
 			};
