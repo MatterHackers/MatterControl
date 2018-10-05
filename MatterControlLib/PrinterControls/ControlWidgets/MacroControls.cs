@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				UiThread.RunOnIdle(() => Rebuild());
 			}, ref unregisterEvents);
 
-			ActiveSliceSettings.ActiveProfileModified.RegisterEvent((s, e) =>
+			ApplicationController.Instance.ActiveProfileModified.RegisterEvent((s, e) =>
 			{
 				UiThread.RunOnIdle(() => Rebuild());
 			}, ref unregisterEvents);

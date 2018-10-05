@@ -313,7 +313,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static async Task<PrinterSettings> LoadProfileAsync(string profileID, bool useActiveInstance = true)
 		{
 			var activePrinter = ApplicationController.Instance.ActivePrinter;
-			
+
 			if (useActiveInstance && activePrinter.Settings.ID == profileID)
 			{
 				return activePrinter.Settings;

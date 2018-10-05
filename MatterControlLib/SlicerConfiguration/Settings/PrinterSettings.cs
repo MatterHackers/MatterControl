@@ -395,7 +395,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (ApplicationController.Instance.ActivePrinter.Settings.ID == this.ID)
 			{
-				ActiveSliceSettings.ActiveProfileModified.CallEvents(null, null);
+				ApplicationController.Instance.ActiveProfileModified.CallEvents(null, null);
 			}
 		}
 

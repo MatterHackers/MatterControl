@@ -38,7 +38,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public static class ActiveSliceSettings
 	{
 		public static RootedObjectEventHandler ActivePrinterChanged = new RootedObjectEventHandler();
-		public static RootedObjectEventHandler ActiveProfileModified = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler SettingChanged = new RootedObjectEventHandler();
 
 		public static event EventHandler MaterialPresetChanged;

@@ -221,8 +221,10 @@ namespace MatterHackers.MatterControl
 		public Action EnterShareCode;
 
 		private static ApplicationController globalInstance;
+
 		public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
+		public RootedObjectEventHandler ActiveProfileModified = new RootedObjectEventHandler();
 
 		public static Action SignInAction;
 		public static Action SignOutAction;
