@@ -225,6 +225,7 @@ namespace MatterHackers.MatterControl
 		public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
 		public RootedObjectEventHandler ActiveProfileModified = new RootedObjectEventHandler();
+		public RootedObjectEventHandler ActivePrinterChanged = new RootedObjectEventHandler();
 
 		public static Action SignInAction;
 		public static Action SignOutAction;
@@ -284,7 +285,7 @@ namespace MatterHackers.MatterControl
 
 				if (allowChangedEvent)
 				{
-					ActiveSliceSettings.OnActivePrinterChanged(null);
+					this.OnActivePrinterChanged(null);
 				}
 
 				if (!AppContext.IsLoading
@@ -302,6 +303,11 @@ namespace MatterHackers.MatterControl
 					this.Library.NotifyContainerChanged();
 				}
 			}
+		}
+
+		public void OnActivePrinterChanged(EventArgs e)
+		{
+			this.ActivePrinterChanged.CallEvents(null, e);
 		}
 
 		public string GetFavIconUrl(string oemName)

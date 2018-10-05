@@ -37,7 +37,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public static class ActiveSliceSettings
 	{
-		public static RootedObjectEventHandler ActivePrinterChanged = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler SettingChanged = new RootedObjectEventHandler();
 
 		public static event EventHandler MaterialPresetChanged;
@@ -45,11 +44,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static void OnSettingChanged(string slicerConfigName)
 		{
 			SettingChanged.CallEvents(null, new StringEventArgs(slicerConfigName));
-		}
-
-		public static void OnActivePrinterChanged(EventArgs e)
-		{
-			ActivePrinterChanged.CallEvents(null, e);
 		}
 
 		internal static void OnMaterialPresetChanged()

@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl
 			}, ref unregisterEvents);
 
 			// Rebuild the droplist any time the ActivePrinter changes
-			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) =>
+			ApplicationController.Instance.ActivePrinterChanged.RegisterEvent((s, e) =>
 			{
 				this.Rebuild();
 			}, ref unregisterEvents);

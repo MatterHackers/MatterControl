@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			}, ref unregisterEvents);
 
-			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) =>
+			ApplicationController.Instance.ActivePrinterChanged.RegisterEvent((s, e) =>
 			{
 				var activePrinter = ApplicationController.Instance.ActivePrinter;
 
