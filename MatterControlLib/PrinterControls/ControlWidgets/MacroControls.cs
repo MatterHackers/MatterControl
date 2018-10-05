@@ -50,10 +50,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.theme = theme;
 			this.Rebuild();
 
-			printer.Settings.MacrosChanged.RegisterEvent((s, e) =>
-			{
-				UiThread.RunOnIdle(() => Rebuild());
-			}, ref unregisterEvents);
+			printer.Settings.MacrosChanged += Settings_MacrosChanged;
 
 			ApplicationController.Instance.ActiveProfileModified.RegisterEvent((s, e) =>
 			{
@@ -61,9 +58,15 @@ namespace MatterHackers.MatterControl.PrinterControls
 			}, ref unregisterEvents);
 		}
 
+		private void Settings_MacrosChanged(object sender, EventArgs e)
+		{
+			UiThread.RunOnIdle(() => Rebuild());
+		}
+
 		public override void OnClosed(EventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
+			printer.Settings.MacrosChanged -= Settings_MacrosChanged;
 			base.OnClosed(e);
 		}
 

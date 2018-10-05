@@ -62,9 +62,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		// TODO: Change to instance based, revise listeners and register to expect specific printer settings
 		public static RootedObjectEventHandler SettingChanged = new RootedObjectEventHandler();
 
-		public static event EventHandler MaterialPresetChanged;
+		public event EventHandler MaterialPresetChanged;
 
-		internal static void OnMaterialPresetChanged()
+		public void OnMaterialPresetChanged()
 		{
 			MaterialPresetChanged?.Invoke(null, null);
 		}
@@ -74,10 +74,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingChanged.CallEvents(null, new StringEventArgs(slicerConfigName));
 		}
 
-		[JsonIgnore]
-		public RootedObjectEventHandler PrintLevelingEnabledChanged = new RootedObjectEventHandler();
+		public event EventHandler PrintLevelingEnabledChanged;
 
-		public RootedObjectEventHandler MacrosChanged = new RootedObjectEventHandler();
+		public event EventHandler MacrosChanged;
 
 		public static PrinterSettings Empty { get; }
 
@@ -140,7 +139,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal void NotifyMacrosChanged()
 		{
-			this.MacrosChanged.CallEvents(this, null);
+			this.MacrosChanged?.Invoke(this, null);
 		}
 
 		/// <summary>
@@ -369,7 +368,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				MaterialLayer = GetMaterialLayer(materialKey);
 
-				PrinterSettings.OnMaterialPresetChanged();
+				this.OnMaterialPresetChanged();
 			}
 
 			Save();
@@ -525,6 +524,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}, string.Format("The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.".Localize(), profile.Make, profile.Model), "Recovered printer profile".Localize(), messageType: StyledMessageBox.MessageType.OK);
 				});
 			}
+		}
+
+		internal void OnPrintLevelingEnabledChanged(object s, EventArgs e)
+		{
+			PrintLevelingEnabledChanged?.Invoke(s, e);
 		}
 
 		public static PrinterSettings RestoreFromOemProfile(PrinterInfo profile)

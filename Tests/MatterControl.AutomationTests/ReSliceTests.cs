@@ -34,6 +34,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.VersionManagement;
 using NUnit.Framework;
 
@@ -42,7 +43,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class ReSliceTests
 	{
-		[Test, Category("Emulator"), Ignore("WorkInProgress")]
+		[Test, Category("Emulator")]
 		public async Task ReSliceHasCorrectEPositions()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -51,6 +52,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
+					var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
+					var scene = view3D.InteractionLayer.Scene;
+
 					testRunner.OpenPrintPopupMenu();
 
 					// Add a pause on layer(in the center)
@@ -63,7 +67,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					double lastEPostion = 0;
 					emulator.EPositionChanged += (e, s) =>
 					{
-						Assert.GreaterOrEqual(emulator.CurrentExtruder.EPosition, lastEPostion - 0, "We should never move back more than 5 mm");
+						Assert.GreaterOrEqual(emulator.CurrentExtruder.EPosition, lastEPostion - 5, "We should never move back more than 5 mm");
 						lastEPostion = emulator.CurrentExtruder.EPosition;
 					};
 
@@ -83,6 +87,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Delete the cube
 					testRunner.ClickByName("Bed Options Menu");
 					testRunner.ClickByName("Clear Bed Menu Item");
+
+					testRunner.Delay(100);
+
+					// ensure there is nothing on the bed
+					Assert.AreEqual(0, scene.Children.Count);
 
 					// Add a cylinder
 					testRunner.ClickByName("Row Item cylinder_5x20");
@@ -106,6 +115,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Bed Options Menu");
 					testRunner.ClickByName("Clear Bed Menu Item");
 
+					// ensure there is nothing on the bed
+					Assert.AreEqual(0, scene.Children.Count);
+
 					// add the cube
 					testRunner.ClickByName("Row Item cube_20x20x20");
 					testRunner.ClickByName("Print Library Overflow Menu");
@@ -124,7 +136,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.CompletedTask;
-			}, maxTimeToRun: 90, queueItemFolderToAdd: QueueTemplate.ReSliceParts);
+			}, maxTimeToRun: 190, queueItemFolderToAdd: QueueTemplate.ReSliceParts);
 		}
 	}
 }

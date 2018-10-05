@@ -91,10 +91,16 @@ namespace MatterHackers.MatterControl.PrinterControls
 						printer.Settings.Helpers.DoPrintLeveling(printLevelingSwitch.Checked);
 					};
 
-					printer.Settings.PrintLevelingEnabledChanged.RegisterEvent((sender, e) =>
+					void Settings_PrintLevelingEnabledChanged(object sender, EventArgs e)
 					{
 						printLevelingSwitch.Checked = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
-					}, ref unregisterEvents);
+					}
+
+					printer.Settings.PrintLevelingEnabledChanged += Settings_PrintLevelingEnabledChanged;
+					this.Closed += (s,e) =>
+					{
+						printer.Settings.PrintLevelingEnabledChanged -= Settings_PrintLevelingEnabledChanged;
+					};
 
 					settingsRow.AddChild(printLevelingSwitch);
 				}
