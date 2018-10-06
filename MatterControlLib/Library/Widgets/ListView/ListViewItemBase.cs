@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			// On first draw, lookup and set best thumbnail
 			await ApplicationController.Instance.Library.LoadItemThumbnail(
-				this.SetItemThumbnail,
+				this.SetSizedThumbnail,
 				(meshContentProvider) =>
 				{
 					// Store meshContentProvider reference
@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					requeueRaytraceOnDraw = false;
 
 					// Show processing image
-					this.SetItemThumbnail(theme.GeneratingThumbnailIcon);
+					this.SetUnsizedThumbnail(theme.GeneratingThumbnailIcon);
 
 					// Ask the MeshContentProvider to RayTrace the image
 					var thumbnail = await meshContentProvider.GetThumbnail(listViewItem.Model, thumbWidth, thumbHeight);
@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						requeueRaytraceOnDraw = false;
 						raytracePending = false;
 
-						this.SetItemThumbnail(thumbnail);
+						this.SetSizedThumbnail(thumbnail);
 					}
 				}
 			});
@@ -180,7 +180,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public event EventHandler ImageSet;
 
-		protected void SetItemThumbnail(ImageBuffer thumbnail)
+		protected void SetUnsizedThumbnail(ImageBuffer thumbnail)
+		{
+			this.SetSizedThumbnail(
+				ApplicationController.Instance.Library.EnsureCorrectThumbnailSizing(
+					theme.GeneratingThumbnailIcon,
+					thumbWidth,
+					thumbHeight));
+		}
+
+		private void SetSizedThumbnail(ImageBuffer thumbnail)
 		{
 			if (thumbnail != null
 				&& this.imageWidget != null

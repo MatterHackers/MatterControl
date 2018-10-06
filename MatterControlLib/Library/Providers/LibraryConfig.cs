@@ -211,25 +211,7 @@ namespace MatterHackers.MatterControl.Library
 			{
 				if (icon != null)
 				{
-					// Resize canvas to target as fallback
-					if (icon.Width < thumbWidth || icon.Height < thumbHeight)
-					{
-						icon = ListView.ResizeCanvas(icon, thumbWidth, thumbHeight);
-					}
-					else if (icon.Width > thumbWidth || icon.Height > thumbHeight)
-					{
-						icon = LibraryProviderHelpers.ResizeImage(icon, thumbWidth, thumbHeight);
-					}
-
-					if (GuiWidget.DeviceScale != 1)
-					{
-						icon = icon.CreateScaledImage(GuiWidget.DeviceScale);
-					}
-
-					// TODO: Resolve and implement
-					// Allow the container to draw an overlay - use signal interface or add method to interface?
-					//var iconWithOverlay = ActiveContainer.DrawOverlay()
-
+					icon = this.EnsureCorrectThumbnailSizing(icon, thumbWidth, thumbHeight);
 					thumbnailListener?.Invoke(icon);
 				}
 			}
@@ -284,7 +266,31 @@ namespace MatterHackers.MatterControl.Library
 				thumbnail = ((libraryItem is ILibraryContainerLink) ? defaultFolderIcon : defaultItemIcon).AlphaToPrimaryAccent();
 			}
 
+			// TODO: Resolve and implement
+			// Allow the container to draw an overlay - use signal interface or add method to interface?
+			//var iconWithOverlay = ActiveContainer.DrawOverlay()
+
 			setItemThumbnail(thumbnail);
+		}
+
+		public ImageBuffer EnsureCorrectThumbnailSizing(ImageBuffer thumbnail, int thumbWidth, int thumbHeight)
+		{
+			// Resize canvas to target as fallback
+			if (thumbnail.Width < thumbWidth || thumbnail.Height < thumbHeight)
+			{
+				thumbnail = ListView.ResizeCanvas(thumbnail, thumbWidth, thumbHeight);
+			}
+			else if (thumbnail.Width > thumbWidth || thumbnail.Height > thumbHeight)
+			{
+				thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, thumbWidth, thumbHeight);
+			}
+
+			if (GuiWidget.DeviceScale != 1)
+			{
+				thumbnail = thumbnail.CreateScaledImage(GuiWidget.DeviceScale);
+			}
+
+			return thumbnail;
 		}
 
 
