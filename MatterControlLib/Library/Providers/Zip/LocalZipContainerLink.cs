@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.Library
 
 		static LocalZipContainerLink()
 		{
-			thumbnail = AggContext.StaticData.LoadIcon(System.IO.Path.Combine("FileDialog", "folder_zip.png")).SetPreMultiply();
+			thumbnail = AggContext.StaticData.LoadIcon(System.IO.Path.Combine("Library", "zip_folder.png")).SetPreMultiply();
 		}
 
 		public bool IsReadOnly { get; } = true;

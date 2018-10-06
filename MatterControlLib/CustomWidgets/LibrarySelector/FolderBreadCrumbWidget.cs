@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			this.CloseAllChildren();
 
-			var upbutton = new IconButton(AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "up_folder_20.png"), theme.InvertIcons), theme)
+			var upbutton = new IconButton(AggContext.StaticData.LoadIcon(Path.Combine("Library", "upfolder_20.png"), theme.InvertIcons), theme)
 			{
 				VAnchor = VAnchor.Fit | VAnchor.Center,
 				Enabled = currentContainer.Parent != null,
