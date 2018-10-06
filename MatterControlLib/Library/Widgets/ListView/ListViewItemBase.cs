@@ -44,9 +44,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class ListViewItemBase : GuiWidget
 	{
-		private static ImageBuffer defaultFolderIcon = AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder.png")).SetPreMultiply();
-		private static ImageBuffer defaultItemIcon = AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "file.png"));
-
 		protected ThemeConfig theme;
 		protected ListViewItem listViewItem;
 		protected View3DWidget view3DWidget;
@@ -74,64 +71,22 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public async Task LoadItemThumbnail()
 		{
-			ILibraryItem libraryItem = listViewItem.Model;
-			ILibraryContainer libraryContainer = listViewItem.Container;
-
-			// Load from cache via LibraryID
-			var thumbnail = ApplicationController.Instance.Thumbnails.LoadCachedImage(libraryItem, thumbWidth, thumbHeight);
-			if (thumbnail != null)
-			{
-				this.SetItemThumbnail(thumbnail);
-				return;
-			}
-
-			if (thumbnail == null)
-			{
-				// Ask the container - allows the container to provide its own interpretation of the item thumbnail
-				thumbnail = await libraryContainer.GetThumbnail(libraryItem, thumbWidth, thumbHeight);
-			}
-
-			if (thumbnail == null && libraryItem is IThumbnail)
-			{
-				// If the item provides its own thumbnail, try to collect it
-				thumbnail = await (libraryItem as IThumbnail).GetThumbnail(thumbWidth, thumbHeight);
-			}
-
-			if (thumbnail == null)
-			{
-				// Ask content provider - allows type specific thumbnail creation
-				var contentProvider = ApplicationController.Instance.Library.GetContentProvider(libraryItem);
-				if (contentProvider != null)
+			// On first draw, lookup and set best thumbnail
+			await ApplicationController.Instance.Library.LoadItemThumbnail(
+				this.SetItemThumbnail,
+				(meshContentProvider) =>
 				{
-					// Before we have a thumbnail set to the content specific thumbnail
-					thumbnail = contentProvider.DefaultImage;
+					// Store meshContentProvider reference
+					this.meshContentProvider = meshContentProvider;
 
-					if (contentProvider is MeshContentProvider meshContentProvider)
-					{
-						// Store meshContentProvider reference
-						this.meshContentProvider = meshContentProvider;
-
-						// Schedule work
-						this.ScheduleRaytraceOperation();
-					}
-					else
-					{
-						// Show processing image
-						this.SetItemThumbnail(theme.GeneratingThumbnailIcon);
-
-						// Ask the provider for a content specific thumbnail
-						thumbnail = await contentProvider.GetThumbnail(libraryItem, thumbWidth, thumbHeight);
-					}
-				}
-			}
-
-			if (thumbnail == null)
-			{
-				// Use the listview defaults
-				thumbnail = ((libraryItem is ILibraryContainerLink) ? defaultFolderIcon : defaultItemIcon).AlphaToPrimaryAccent();
-			}
-
-			this.SetItemThumbnail(thumbnail);
+					// Schedule work
+					this.ScheduleRaytraceOperation();
+				},
+				listViewItem.Model,
+				listViewItem.Container,
+				this.thumbWidth,
+				this.thumbHeight,
+				theme);
 		}
 
 		private void ScheduleRaytraceOperation()
@@ -227,36 +182,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		protected void SetItemThumbnail(ImageBuffer thumbnail)
 		{
-			if (thumbnail != null)
+			if (thumbnail != null
+				&& this.imageWidget != null
+				&& (this.imageWidget.Image == null
+				|| !thumbnail.Equals(this.imageWidget.Image, 5)))
 			{
-				// Resize canvas to target as fallback
-				if (thumbnail.Width < thumbWidth || thumbnail.Height < thumbHeight)
-				{
-					thumbnail = ListView.ResizeCanvas(thumbnail, thumbWidth, thumbHeight);
-				}
-				else if (thumbnail.Width > thumbWidth || thumbnail.Height > thumbHeight)
-				{
-					thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, thumbWidth, thumbHeight);
-				}
-
-				if (GuiWidget.DeviceScale != 1)
-				{
-					thumbnail = thumbnail.CreateScaledImage(GuiWidget.DeviceScale);
-				}
-
-				// TODO: Resolve and implement
-				// Allow the container to draw an overlay - use signal interface or add method to interface?
-				//var iconWithOverlay = ActiveContainer.DrawOverlay()
-
-				if (thumbnail != null
-					&& this.imageWidget != null
-					&& (this.imageWidget.Image == null
-					|| !thumbnail.Equals(this.imageWidget.Image, 5)))
-				{
-					this.imageWidget.Image = thumbnail;
-					this.ImageSet?.Invoke(this, null);
-					this.Invalidate();
-				}
+				this.imageWidget.Image = thumbnail;
+				this.ImageSet?.Invoke(this, null);
+				this.Invalidate();
 			}
 		}
 
