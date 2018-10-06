@@ -31,6 +31,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.Library
@@ -62,6 +66,9 @@ namespace MatterHackers.MatterControl.Library
 		private List<ILibraryContainerLink> libraryProviders;
 
 		private ILibraryContainer activeContainer;
+
+		private static ImageBuffer defaultFolderIcon = AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder.png")).SetPreMultiply();
+		private static ImageBuffer defaultItemIcon = AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "file.png"));
 
 		public LibraryConfig()
 		{
@@ -197,6 +204,89 @@ namespace MatterHackers.MatterControl.Library
 			return !string.IsNullOrEmpty(fileExtensionLower)
 				&& ApplicationSettings.LibraryMeshFileExtensions.Contains(fileExtensionLower);
 		}
+
+		public async Task LoadItemThumbnail(Action<ImageBuffer> thumbnailListener, Action<MeshContentProvider> buildThumbnail, ILibraryItem libraryItem, ILibraryContainer libraryContainer, int thumbWidth, int thumbHeight, ThemeConfig theme)
+		{
+			void setItemThumbnail(ImageBuffer icon)
+			{
+				if (icon != null)
+				{
+					// Resize canvas to target as fallback
+					if (icon.Width < thumbWidth || icon.Height < thumbHeight)
+					{
+						icon = ListView.ResizeCanvas(icon, thumbWidth, thumbHeight);
+					}
+					else if (icon.Width > thumbWidth || icon.Height > thumbHeight)
+					{
+						icon = LibraryProviderHelpers.ResizeImage(icon, thumbWidth, thumbHeight);
+					}
+
+					if (GuiWidget.DeviceScale != 1)
+					{
+						icon = icon.CreateScaledImage(GuiWidget.DeviceScale);
+					}
+
+					// TODO: Resolve and implement
+					// Allow the container to draw an overlay - use signal interface or add method to interface?
+					//var iconWithOverlay = ActiveContainer.DrawOverlay()
+
+					thumbnailListener?.Invoke(icon);
+				}
+			}
+
+			// Load from cache via LibraryID
+			var thumbnail = ApplicationController.Instance.Thumbnails.LoadCachedImage(libraryItem, thumbWidth, thumbHeight);
+			if (thumbnail != null)
+			{
+				setItemThumbnail(thumbnail);
+				return;
+			}
+
+			if (thumbnail == null && libraryContainer != null)
+			{
+				// Ask the container - allows the container to provide its own interpretation of the item thumbnail
+				thumbnail = await libraryContainer.GetThumbnail(libraryItem, thumbWidth, thumbHeight);
+			}
+
+			if (thumbnail == null && libraryItem is IThumbnail)
+			{
+				// If the item provides its own thumbnail, try to collect it
+				thumbnail = await (libraryItem as IThumbnail).GetThumbnail(thumbWidth, thumbHeight);
+			}
+
+			if (thumbnail == null)
+			{
+				// Ask content provider - allows type specific thumbnail creation
+				var contentProvider = ApplicationController.Instance.Library.GetContentProvider(libraryItem);
+				if (contentProvider != null)
+				{
+					// Before we have a thumbnail set to the content specific thumbnail
+					thumbnail = contentProvider.DefaultImage;
+
+					if (contentProvider is MeshContentProvider meshContentProvider)
+					{
+						buildThumbnail?.Invoke(meshContentProvider);
+					}
+					else
+					{
+						// Show processing image
+						setItemThumbnail(theme.GeneratingThumbnailIcon);
+
+						// Ask the provider for a content specific thumbnail
+						thumbnail = await contentProvider.GetThumbnail(libraryItem, thumbWidth, thumbHeight);
+					}
+				}
+			}
+
+			if (thumbnail == null)
+			{
+				// Use the listview defaults
+				thumbnail = ((libraryItem is ILibraryContainerLink) ? defaultFolderIcon : defaultItemIcon).AlphaToPrimaryAccent();
+			}
+
+			setItemThumbnail(thumbnail);
+		}
+
 
 		/// <summary>
 		/// Notifies listeners that the ActiveContainer Changed
