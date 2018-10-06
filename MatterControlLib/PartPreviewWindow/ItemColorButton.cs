@@ -41,13 +41,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private ColorButton colorButton;
 
-		public ItemColorButton(InteractiveScene scene, ThemeConfig theme)
+		public event EventHandler ColorChanged;
+
+		public ItemColorButton(ThemeConfig theme, Color selectedColor)
 		{
 			this.ToolTipText = "Color".Localize();
 
+			HAnchor = HAnchor.Fit;
+			VAnchor = VAnchor.Fit;
+
 			this.DynamicPopupContent = () =>
 			{
-				return new ColorSwatchSelector(scene, theme, buttonSize: 16, buttonSpacing: new BorderDouble(1, 1, 0, 0), colorNotifier: (newColor) => colorButton.BackgroundColor = newColor)
+				return new ColorSwatchSelector(theme, buttonSize: 16, buttonSpacing: new BorderDouble(1, 1, 0, 0), colorNotifier: (newColor) => colorButton.BackgroundColor = newColor)
 				{
 					Padding = theme.DefaultContainerPadding,
 					BackgroundColor = this.HoverColor
@@ -56,7 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var scaledButtonSize = 14 * GuiWidget.DeviceScale;
 
-			colorButton = new ColorButton(scene.SelectedItem?.Color ?? theme.SlightShade)
+			colorButton = new ColorButton(selectedColor == Color.Transparent ? theme.SlightShade : selectedColor)
 			{
 				Width = scaledButtonSize,
 				Height = scaledButtonSize,
@@ -65,6 +70,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				DisabledColor = theme.MinimalShade,
 				Border = new BorderDouble(1),
 				BorderColor = theme.GetBorderColor(75)
+			};
+
+			colorButton.BackgroundColorChanged += (s, e) =>
+			{
+				ColorChanged?.Invoke(this, null);
 			};
 
 			this.AddChild(colorButton);

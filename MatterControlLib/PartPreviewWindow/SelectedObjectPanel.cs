@@ -42,6 +42,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using static JsonPath.JsonPathContext.ReflectionValueSystem;
@@ -78,13 +79,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			var scene = sceneContext.Scene;
-
-			var itemColorButton = new ItemColorButton(scene, theme)
-			{
-				Width = 30,
-				Height = 30,
-			};
-			toolbar.AddChild(itemColorButton);
 
 			var itemMaterialButton = new ItemMaterialButton(scene, theme)
 			{
@@ -179,11 +173,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var selectedItem = scene.SelectedItem;
 				if (selectedItem != null)
 				{
-					itemColorButton.Color = (selectedItem.Color == Color.Transparent) ? theme.MinimalHighlight : selectedItem.Color;
 					itemMaterialButton.Color = MaterialRendering.Color(selectedItem.MaterialIndex, theme.MinimalHighlight);
 				}
 
-				itemColorButton.Enabled = selectedItem != null;
 				itemMaterialButton.Enabled = selectedItem != null;
 				flattenButton.Enabled = selectedItem?.CanFlatten == true;
 				removeButton.Enabled = selectedItem != null;
@@ -260,6 +252,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			bool allowOperations = true;
 
+			// put in a color edit field
+			var field = new ColorField(theme, selectedItem.Color);
+			field.Initialize(0);
+			field.ValueChanged += (s, e) =>
+			{
+				if (selectedItem.Color != field.Color)
+				{
+					undoBuffer.AddAndDo(new ChangeColor(selectedItem, field.Color));
+				}
+			};
+
+			var row = PublicPropertyEditor.CreateSettingsRow("Color".Localize());
+			row.AddChild(field.Content);
+			editorPanel.AddChild(row);
+
+			// put in the normal editor
 			if (selectedItem is ComponentObject3D componentObject
 				&& componentObject.Finalized)
 			{
