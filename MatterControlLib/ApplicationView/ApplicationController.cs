@@ -747,7 +747,7 @@ namespace MatterHackers.MatterControl
 				this.Library.RegisterContainer(
 					new DynamicContainerLink(
 						() => "Downloads".Localize(),
-						AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "download_folder.png")),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "download_folder.png")),
 						() => new FileSystemContainer(ApplicationDataStorage.Instance.DownloadsDirectory)
 						{
 							UseIncrementedNameDuringTypeChange = true
@@ -759,7 +759,7 @@ namespace MatterHackers.MatterControl
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 					() => "Library".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "library_folder.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "library_folder.png")),
 					() => this.Library.LibraryCollectionContainer));
 
 			if (File.Exists(ApplicationDataStorage.Instance.CustomLibraryFoldersPath))
@@ -781,7 +781,7 @@ namespace MatterHackers.MatterControl
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 						() => "SD Card".Localize(),
-						AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "sd_folder.png")),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_folder.png")),
 						() => new SDCardContainer(),
 						() =>
 						{
@@ -799,7 +799,7 @@ namespace MatterHackers.MatterControl
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 					() => "History".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "history_folder.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_folder.png")),
 					() => new RootHistoryContainer()));
 		}
 

@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.Library
 		{
 			if (item is LocalZipContainerLink)
 			{
-				return Task.FromResult(AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder_zip.png")).AlphaToPrimaryAccent().SetPreMultiply());
+				return Task.FromResult(AggContext.StaticData.LoadIcon(Path.Combine("Library", "zip_folder.png")).AlphaToPrimaryAccent().SetPreMultiply());
 			}
 
 			return Task.FromResult<ImageBuffer>(null);

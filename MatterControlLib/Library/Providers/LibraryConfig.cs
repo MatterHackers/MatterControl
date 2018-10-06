@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -67,8 +67,8 @@ namespace MatterHackers.MatterControl.Library
 
 		private ILibraryContainer activeContainer;
 
-		private static ImageBuffer defaultFolderIcon = AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder.png")).SetPreMultiply();
-		private static ImageBuffer defaultItemIcon = AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "file.png"));
+		private static ImageBuffer defaultFolderIcon = AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")).SetPreMultiply();
+		private static ImageBuffer defaultItemIcon = AggContext.StaticData.LoadIcon(Path.Combine("Library", "file.png"));
 
 		public LibraryConfig()
 		{
@@ -292,7 +292,6 @@ namespace MatterHackers.MatterControl.Library
 
 			return thumbnail;
 		}
-
 
 		/// <summary>
 		/// Notifies listeners that the ActiveContainer Changed
