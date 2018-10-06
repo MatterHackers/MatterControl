@@ -341,7 +341,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			printerSettings.SetValue(SettingsKey.print_leveling_enabled, doLeveling ? "1" : "0");
 
-			printerSettings.PrintLevelingEnabledChanged?.CallEvents(this, null);
+			printerSettings.OnPrintLevelingEnabledChanged(this, null);
 		}
 
 		public Vector2 ExtruderOffset(int extruderIndex)
