@@ -80,13 +80,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var scene = sceneContext.Scene;
 
-			var itemMaterialButton = new ItemMaterialButton(scene, theme)
-			{
-				Width = 30,
-				Height = 30,
-			};
-			toolbar.AddChild(itemMaterialButton);
-
 			// put in a make permanent button
 			var icon = AggContext.StaticData.LoadIcon("noun_766157.png", 16, 16, theme.InvertIcons).SetPreMultiply();
 			var flattenButton = new IconButton(icon, theme)
@@ -171,60 +164,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				var selectedItem = scene.SelectedItem;
-				if (selectedItem != null)
-				{
-					itemMaterialButton.Color = MaterialRendering.Color(selectedItem.MaterialIndex, theme.MinimalHighlight);
-				}
 
-				itemMaterialButton.Enabled = selectedItem != null;
 				flattenButton.Enabled = selectedItem?.CanFlatten == true;
 				removeButton.Enabled = selectedItem != null;
 				overflowButton.Enabled = selectedItem != null;
 			};
-		}
-
-		/// <summary>
-		/// Behavior from removed Edit button - keeping around for reuse as an advanced feature in the future
-		/// </summary>
-		/// <returns></returns>
-		private async Task EditChildInIsolatedContext()
-		{
-			var bed = new BedConfig(ApplicationController.Instance.Library.PartHistory);
-
-			var partPreviewContent = this.Parents<PartPreviewContent>().FirstOrDefault();
-			partPreviewContent.CreatePartTab(
-				"New Part",
-				bed,
-				theme);
-
-			var clonedItem = this.item.Clone();
-
-			// Edit in Identity transform
-			clonedItem.Matrix = Matrix4X4.Identity;
-
-			await bed.LoadContent(
-				new EditContext()
-				{
-					ContentStore = new DynamicContentStore((libraryItem, object3D) =>
-					{
-						var replacement = object3D.Clone();
-
-						this.item.Parent.Children.Modify(list =>
-						{
-							list.Remove(item);
-
-								// Restore matrix of item being replaced
-								replacement.Matrix = item.Matrix;
-
-							list.Add(replacement);
-
-							item = replacement;
-						});
-
-						sceneContext.Scene.SelectedItem = replacement;
-					}),
-					SourceItem = new InMemoryLibraryItem(clonedItem),
-				});
 		}
 
 		public GuiWidget ContentPanel { get; set; }
@@ -253,19 +197,41 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			bool allowOperations = true;
 
 			// put in a color edit field
-			var field = new ColorField(theme, selectedItem.Color);
-			field.Initialize(0);
-			field.ValueChanged += (s, e) =>
+			var colorField = new ColorField(theme, selectedItem.Color);
+			colorField.Initialize(0);
+			colorField.ValueChanged += (s, e) =>
 			{
-				if (selectedItem.Color != field.Color)
+				if (selectedItem.Color != colorField.Color)
 				{
-					undoBuffer.AddAndDo(new ChangeColor(selectedItem, field.Color));
+					undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color));
 				}
 			};
 
-			var row = PublicPropertyEditor.CreateSettingsRow("Color".Localize());
-			row.AddChild(field.Content);
-			editorPanel.AddChild(row);
+			var colorRow = PublicPropertyEditor.CreateSettingsRow("Color".Localize());
+			colorRow.AddChild(colorField.Content);
+			colorField.Content.MouseDown += (s, e) =>
+			{
+				// make sure the render mode is set to shaded or outline
+			};
+			editorPanel.AddChild(colorRow);
+
+			// put in a material edit field
+			var materialField = new MaterialIndexField(theme, selectedItem.MaterialIndex);
+			materialField.Initialize(0);
+			materialField.ValueChanged += (s, e) =>
+			{
+				if (selectedItem.MaterialIndex != materialField.MaterialIndex)
+				{
+					undoBuffer.AddAndDo(new ChangeMaterial(selectedItem, materialField.MaterialIndex));
+				}
+			};
+
+			var materialRow = PublicPropertyEditor.CreateSettingsRow("Material".Localize());
+			materialRow.AddChild(materialField.Content);
+			materialField.Content.MouseDown += (s, e) =>
+			{
+				// make sure the render mode is set to material
+			}; editorPanel.AddChild(materialRow);
 
 			// put in the normal editor
 			if (selectedItem is ComponentObject3D componentObject

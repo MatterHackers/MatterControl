@@ -46,20 +46,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public ItemColorButton(ThemeConfig theme, Color selectedColor)
 		{
 			this.ToolTipText = "Color".Localize();
+			var scaledButtonSize = 14 * GuiWidget.DeviceScale;
 
-			HAnchor = HAnchor.Fit;
-			VAnchor = VAnchor.Fit;
+			Width = 30 * GuiWidget.DeviceScale;
+			Height = 30 * GuiWidget.DeviceScale;
 
 			this.DynamicPopupContent = () =>
 			{
 				return new ColorSwatchSelector(theme, buttonSize: 16, buttonSpacing: new BorderDouble(1, 1, 0, 0), colorNotifier: (newColor) => colorButton.BackgroundColor = newColor)
 				{
 					Padding = theme.DefaultContainerPadding,
-					BackgroundColor = this.HoverColor
+					BackgroundColor = this.HoverColor,
+					HAnchor = HAnchor.Fit,
+					VAnchor = VAnchor.Fit
 				};
 			};
-
-			var scaledButtonSize = 14 * GuiWidget.DeviceScale;
 
 			colorButton = new ColorButton(selectedColor == Color.Transparent ? theme.SlightShade : selectedColor)
 			{

@@ -27,58 +27,60 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.VectorMath;
+using MatterHackers.DataConverters3D;
 
-namespace MatterHackers.MatterControl.SlicerConfiguration
+namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class ColorField : UIField
+	public class ChangeMaterial : IUndoRedoCommand
 	{
-		private ItemColorButton colorWidget;
-		private ThemeConfig theme;
-		private Color initialColor;
+		List<PrintOutputTypes> itemsPrintOutputType = new List<PrintOutputTypes>();
+		List<int> itemsMaterialIndex = new List<int>();
+		List<IObject3D> itemsToChange = new List<IObject3D>();
+		int materialIndex;
 
-		public ColorField(ThemeConfig theme, Color initialColor)
+		public ChangeMaterial(IObject3D selectedItem, int materialIndex)
 		{
-			this.theme = theme;
-			this.initialColor = initialColor;
-		}
-
-		public Color Color
-		{
-			get
+			this.materialIndex = materialIndex;
+			if (selectedItem is SelectionGroupObject3D)
 			{
-				return new Color(colorWidget.Color);
+				SetData(selectedItem.Children.ToList());
 			}
-
-			set
+			else
 			{
-				colorWidget.Color = value;
+				SetData(new List<IObject3D> { selectedItem });
 			}
 		}
 
-		public override void Initialize(int tabIndex)
+		void SetData(List<IObject3D> itemsToChange)
 		{
-			var container = new FlowLayoutWidget();
-
-			colorWidget = new ItemColorButton(theme, initialColor);
-			colorWidget.ColorChanged += (s, e) =>
+			foreach (var item in itemsToChange)
 			{
-				base.OnValueChanged(new FieldChangedEventArgs(true));
-			};
-
-			container.AddChild(colorWidget);
-
-			this.Content = container;
+				this.itemsToChange.Add(item);
+				this.itemsMaterialIndex.Add(item.MaterialIndex);
+				this.itemsPrintOutputType.Add(item.OutputType);
+			}
 		}
 
-		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
+		void IUndoRedoCommand.Do()
 		{
-			colorWidget.Color = new Color(this.Value);
+			foreach(var item in this.itemsToChange)
+			{
+				item.OutputType = PrintOutputTypes.Solid;
+				item.MaterialIndex = materialIndex;
+			}
+		}
 
-			base.OnValueChanged(fieldChangedEventArgs);
+		void IUndoRedoCommand.Undo()
+		{
+			for(int i=0; i< this.itemsToChange.Count; i++)
+			{
+				itemsToChange[i].OutputType = itemsPrintOutputType[i];
+				itemsToChange[i].MaterialIndex = itemsMaterialIndex[i];
+			}
 		}
 	}
 }

@@ -34,6 +34,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -41,25 +42,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private ColorButton materialColorButton;
 
-		public ItemMaterialButton(InteractiveScene scene, ThemeConfig theme)
+		public event EventHandler<int> MaterialChanged;
+
+		public ItemMaterialButton(ThemeConfig theme, int initialMaterialIndex)
 		{
 			this.ToolTipText = "Material".Localize();
 			var scaledButtonSize = 14 * GuiWidget.DeviceScale;
 
+			Width = 30 * GuiWidget.DeviceScale;
+			Height = 30 * GuiWidget.DeviceScale;
+
 			this.DynamicPopupContent = () =>
 			{
-				//return new ColorSwatchSelector(scene, theme, buttonSize: 16, buttonSpacing: new BorderDouble(1, 1, 0, 0), colorNotifier: (newColor) => colorButton.BackgroundColor = newColor)
-
-				return new MaterialControls(scene, theme, colorNotifier: (newColor) => materialColorButton.BackgroundColor = newColor)
+				var materialControl = new MaterialControls(theme, initialMaterialIndex)
 				{
 					Padding = theme.DefaultContainerPadding,
 					BackgroundColor = this.HoverColor,
 					HAnchor = HAnchor.Fit,
 					VAnchor = VAnchor.Fit
 				};
+
+				materialControl.IndexChanged += (s, e) =>
+				{
+					MaterialChanged?.Invoke(this, e);
+				};
+
+				return materialControl;
 			};
 
-			materialColorButton = new ColorButton(scene.SelectedItem?.Color ?? theme.SlightShade)
+			materialColorButton = new ColorButton(MaterialRendering.Color(initialMaterialIndex, theme.MinimalHighlight))
 			{
 				Width = scaledButtonSize,
 				Height = scaledButtonSize,

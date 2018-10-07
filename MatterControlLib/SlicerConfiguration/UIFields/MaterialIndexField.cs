@@ -30,53 +30,41 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class ColorField : UIField
+	public class MaterialIndexField : UIField
 	{
-		private ItemColorButton colorWidget;
+		private ItemMaterialButton materialWidget;
 		private ThemeConfig theme;
-		private Color initialColor;
 
-		public ColorField(ThemeConfig theme, Color initialColor)
+		public MaterialIndexField(ThemeConfig theme, int materialIndex)
 		{
 			this.theme = theme;
-			this.initialColor = initialColor;
+			this.MaterialIndex = materialIndex;
 		}
 
-		public Color Color
-		{
-			get
-			{
-				return new Color(colorWidget.Color);
-			}
-
-			set
-			{
-				colorWidget.Color = value;
-			}
-		}
+		public int MaterialIndex { get; set; }
 
 		public override void Initialize(int tabIndex)
 		{
 			var container = new FlowLayoutWidget();
 
-			colorWidget = new ItemColorButton(theme, initialColor);
-			colorWidget.ColorChanged += (s, e) =>
+			materialWidget = new ItemMaterialButton(theme, MaterialIndex);
+			materialWidget.MaterialChanged += (s, e) =>
 			{
+				MaterialIndex = e;
 				base.OnValueChanged(new FieldChangedEventArgs(true));
 			};
 
-			container.AddChild(colorWidget);
+			container.AddChild(materialWidget);
 
 			this.Content = container;
 		}
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
-			colorWidget.Color = new Color(this.Value);
+			materialWidget.Color = new Color(this.Value);
 
 			base.OnValueChanged(fieldChangedEventArgs);
 		}
