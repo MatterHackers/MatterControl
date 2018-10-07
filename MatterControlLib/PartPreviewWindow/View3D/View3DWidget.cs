@@ -478,7 +478,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		/// Provides a View3DWidget specific drag implementation
 		/// </summary>
 		/// <param name="screenSpaceMousePosition">The screen space mouse position.</param>
-		public void ExternalDragOver(Vector2 screenSpaceMousePosition)
+		public void ExternalDragOver(Vector2 screenSpaceMousePosition, GuiWidget sourceWidget)
 		{
 			if (this.HasBeenClosed)
 			{
@@ -502,11 +502,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						this.Printer.ViewState.ViewMode = PartViewMode.Model;
 					}
 
-					// Otherwise begin an externally started DragDropOperation hard-coded to use LibraryView->SelectedItems
-					this.StartDragDrop(
+					IEnumerable<ILibraryItem> selectedItems;
+
+					if (sourceWidget is ListView listView)
+					{
 						// Project from ListViewItem to ILibraryItem
-						ApplicationController.Instance.Library.ActiveViewWidget.SelectedItems.Select(l => l.Model),
-						screenSpaceMousePosition);
+						selectedItems = listView.SelectedItems.Select(l => l.Model);
+					}
+					else// Project from ListViewItem to ILibraryItem
+					{
+						selectedItems = Enumerable.Empty<ILibraryItem>();
+					}
+
+					// Otherwise begin an externally started DragDropOperation hard-coded to use LibraryView->SelectedItems
+					this.StartDragDrop(selectedItems, screenSpaceMousePosition);
 				}
 			}
 		}

@@ -85,8 +85,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Border = new BorderDouble(top: 1)
 			};
 
-			ApplicationController.Instance.Library.ActiveViewWidget = libraryView;
-
 			libraryView.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
 
 			ApplicationController.Instance.Library.ContainerChanged += Library_ContainerChanged;
