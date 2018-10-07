@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.IO;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library
@@ -46,7 +48,8 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Plating History".Localize(),
-					null,
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_20x20.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_folder.png")),
 					() => new PlatingHistoryContainer())
 				{
 					IsReadOnly = true
@@ -55,7 +58,8 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Part History".Localize(),
-					null,
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_20x20.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_folder.png")),
 					() => new PartHistoryContainer())
 				{
 					IsReadOnly = true
@@ -64,7 +68,8 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Print History".Localize(),
-					null,
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_20x20.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_folder.png")),
 					() => new PrintHistoryContainer())
 				{
 					IsReadOnly = true

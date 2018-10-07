@@ -98,7 +98,8 @@ namespace MatterHackers.MatterControl
 				{
 					if (ProfileManager.Instance.ActiveProfile != null)
 					{
-						ProfileManager.Instance.ActiveProfile.Name = activePrinter.Settings.GetValue(SettingsKey.printer_name);
+						// TODO: Looks very wrong, if this widget was driving the profile name value, it will no longer be synced
+						////////////////ProfileManager.Instance.ActiveProfile.Name = activePrinter.Settings.GetValue(SettingsKey.printer_name);
 						Rebuild();
 					}
 				}

@@ -43,6 +43,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.ContactForm;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
@@ -83,8 +84,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public int DocumentVersion { get; set; } = LatestVersion;
 
 		public string ID { get; set; }
-
-		public static Func<bool> ShouldShowAuthPanel { get; set; }
 
 		private static object writeLock = new object();
 
@@ -468,7 +467,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public async static Task<PrinterSettings> RecoverProfile(PrinterInfo printerInfo)
 		{
-			bool userIsLoggedIn = !ShouldShowAuthPanel?.Invoke() ?? false;
+			bool userIsLoggedIn = !ApplicationController.GuestUserActive?.Invoke() ?? false;
 			if (userIsLoggedIn && printerInfo != null)
 			{
 				// Attempt to load from MCWS history

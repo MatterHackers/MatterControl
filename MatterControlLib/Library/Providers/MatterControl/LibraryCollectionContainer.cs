@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.Library
 				this.ChildContainers.Add(
 					new DynamicContainerLink(
 						() => "Local Library".Localize(),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "library_20x20.png")),
 						AggContext.StaticData.LoadIcon(Path.Combine("Library", "library_folder.png")),
 						() => new SqliteLibraryContainer(rootLibraryCollection.Id)));
 			}
@@ -56,6 +57,7 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Calibration Parts".Localize(),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
 					() => new CalibrationPartsContainer())
 				{
@@ -65,6 +67,7 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Print Queue".Localize(),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "queue_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "queue_folder.png")),
 					() => new PrintQueueContainer()));
 		}

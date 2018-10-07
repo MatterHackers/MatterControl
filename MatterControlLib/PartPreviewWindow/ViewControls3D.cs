@@ -41,6 +41,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -152,7 +153,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		public ViewControls3D(BedConfig sceneContext, ThemeConfig theme, UndoBuffer undoBuffer, bool isPrinterType)
-			: base (theme)
+			: base(theme)
 		{
 			this.ActionArea.Click += (s, e) =>
 			{
@@ -164,7 +165,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			string iconPath;
 
-			this.AddChild(CreateBedButton(sceneContext, theme));
+			this.AddChild(CreateAddButton(sceneContext, theme));
 
 			this.AddChild(new ToolbarSeparator(theme));
 
@@ -198,6 +199,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				view3DWidget.InteractionLayer.Focus();
 			};
 			this.AddChild(redoButton);
+
+			this.AddChild(CreateSaveButton(theme));
+
+			var exportButton = new IconButton(AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons), theme)
+			{
+				ToolTipText = "Export".Localize()
+			};
+			exportButton.Click += (s, e) =>
+			{
+				this.MenuActions.FirstOrDefault(m => m.ID == "Export")?.Action?.Invoke();
+			};
+			this.AddChild(exportButton);
 
 			this.AddChild(new ToolbarSeparator(theme));
 
@@ -331,11 +344,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private GuiWidget CreateBedButton(BedConfig sceneContext, ThemeConfig theme)
+		private PartPreviewContent partPreviewContent = null;
+
+		private GuiWidget CreateAddButton(BedConfig sceneContext, ThemeConfig theme)
 		{
 			var buttonView = new TextIconButton(
 				"",
-				AggContext.StaticData.LoadIcon("cube.png", theme.InvertIcons),
+				AggContext.StaticData.LoadIcon("cube_add.png", 16, 16, theme.InvertIcons),
 				theme);
 
 			// Remove right Padding for drop style
@@ -353,12 +368,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return new PopupMenuButton(buttonView, theme)
 			{
 				Name = "Bed Options Menu",
+				ToolTipText = "Add Content".Localize(),
 				DynamicPopupContent = () =>
 				{
-					var menuContent = theme.CreateMenuItems(popupMenu, this.MenuActions);
-					menuContent.MinimumSize = new Vector2(200, 0);
+					if (partPreviewContent == null)
+					{
+						partPreviewContent = this.Parents<PartPreviewContent>().FirstOrDefault();
+					}
 
-					return menuContent;
+					var widget = new GuiWidget()
+					{
+						VAnchor = VAnchor.Fit,
+						HAnchor = HAnchor.Fit,
+						BackgroundColor = theme.TabBarBackground,
+						Padding = new BorderDouble(theme.DefaultContainerPadding / 2, 0)
+					};
+
+					var height = view3DWidget.Height - theme.DefaultContainerPadding;
+
+					widget.AddChild(new PrintLibraryWidget(partPreviewContent, theme)
+					{
+						HAnchor = HAnchor.Absolute,
+						VAnchor = VAnchor.Absolute,
+						Height = height,
+						Width = 400,
+						MinimumSize = new Vector2(400, height)
+					});
+
+					return widget;
+
+					//var menuContent = theme.CreateMenuItems(popupMenu, this.MenuActions);
+					//menuContent.MinimumSize = new Vector2(200, 0);
+
+					//return menuContent;
 				},
 				BackgroundColor = theme.ToolbarButtonBackground,
 				HoverColor = theme.ToolbarButtonHover,
@@ -368,16 +410,64 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 		}
 
-		private async void LoadAndAddPartsToPlate(string[] filesToLoad, InteractiveScene scene)
+		private GuiWidget CreateSaveButton(ThemeConfig theme)
+		{
+			var iconButton = new IconButton(
+				AggContext.StaticData.LoadIcon("save_grey_16x.png", 16, 16, theme.InvertIcons),
+				theme)
+			{
+				ToolTipText = "Save".Localize(),
+			};
+
+			iconButton.Click += (s, e) =>
+			{
+				ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.SaveChanges).ConfigureAwait(false);
+			};
+
+			// Remove right Padding for drop style
+			iconButton.Padding = iconButton.Padding.Clone(right: 0);
+
+			var button = new PopupMenuButton(iconButton, theme)
+			{
+				Name = "Save SplitButton",
+				ToolTipText = "Save As".Localize(),
+				DynamicPopupContent = () =>
+				{
+					var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+
+					var saveAs = popupMenu.CreateMenuItem("Save As".Localize());
+					saveAs.Click += (s, e) => UiThread.RunOnIdle(() =>
+					{
+						this.MenuActions.FirstOrDefault(m => m.ID == "SaveAs")?.Action?.Invoke();
+					});
+
+					return popupMenu;
+				},
+				BackgroundColor = theme.ToolbarButtonBackground,
+				HoverColor = theme.ToolbarButtonHover,
+				MouseDownColor = theme.ToolbarButtonDown,
+				DrawArrow = true,
+				Margin = theme.ButtonSpacing,
+			};
+
+			iconButton.Selectable = true;
+
+			return button;
+		}
+
+		public static async void LoadAndAddPartsToPlate(GuiWidget originatingWidget, string[] filesToLoad, BedConfig sceneContext)
 		{
 			if (filesToLoad != null && filesToLoad.Length > 0)
 			{
-				await Task.Run(() => loadAndAddPartsToPlate(filesToLoad, scene));
+				
+				await Task.Run(() => loadAndAddPartsToPlate(filesToLoad, sceneContext));
 
-				if (HasBeenClosed)
+				if (originatingWidget.HasBeenClosed)
 				{
 					return;
 				}
+
+				var scene = sceneContext.Scene;
 
 				bool addingOnlyOneItem = scene.Children.Count == scene.Children.Count + 1;
 
@@ -391,14 +481,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				scene.Invalidate(new InvalidateArgs(null, InvalidateType.Content, null));
-				this.Invalidate();
 			}
 		}
 
-		private async Task loadAndAddPartsToPlate(string[] filesToLoadIncludingZips, InteractiveScene scene)
+		private static async Task loadAndAddPartsToPlate(string[] filesToLoadIncludingZips, BedConfig sceneContext)
 		{
 			if (filesToLoadIncludingZips?.Any() == true)
 			{
+				var scene = sceneContext.Scene;
+
 				// When a single gcode file is selected, swap the plate to the new GCode content
 				if (filesToLoadIncludingZips.Count() == 1
 					&& filesToLoadIncludingZips.FirstOrDefault() is string firstFilePath
@@ -427,7 +518,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						)
 					{
 						filesToLoad.Add(loadedFileName);
-					}    
+					}
 					else if (extension == ".ZIP")
 					{
 						List<PrintItem> partFiles = ProjectFileHandler.ImportFromProjectArchive(loadedFileName);
@@ -508,7 +599,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								new OpenFileDialogParams(filter, multiSelect: true),
 								(openParams) =>
 								{
-									this.LoadAndAddPartsToPlate(openParams.FileNames, sceneContext.Scene);
+									ViewControls3D.LoadAndAddPartsToPlate(this, openParams.FileNames, sceneContext);
 								});
 						});
 					}
@@ -553,9 +644,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					ID = "Save",
 					Title = "Save".Localize(),
 					Shortcut = "Ctrl+S",
-					Action = async () =>
+					Action = () =>
 					{
-						await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.SaveChanges);
+						ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.SaveChanges).ConfigureAwait(false);
 					},
 					IsEnabled = () => sceneContext.EditableScene
 				},

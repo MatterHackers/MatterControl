@@ -49,8 +49,15 @@ namespace MatterHackers.MatterControl.Library
 		private Func<ILibraryContainer> containerCreator;
 		private Func<bool> visibilityResolver;
 		private Func<string> nameResolver;
+		private ImageBuffer microIcon;
 
-		public DynamicContainerLink(Func<string> nameResolver, ImageBuffer thumbnail, Func<ILibraryContainer> creator = null, Func<bool> visibilityResolver = null)
+		public DynamicContainerLink(Func<string> nameResolver, ImageBuffer microIcon, ImageBuffer thumbnail, Func<ILibraryContainer> creator = null, Func<bool> visibilityResolver = null)
+			: this (nameResolver, thumbnail, creator, visibilityResolver)
+		{
+			this.microIcon = microIcon;
+		}
+
+		private DynamicContainerLink(Func<string> nameResolver, ImageBuffer thumbnail, Func<ILibraryContainer> creator = null, Func<bool> visibilityResolver = null)
 		{
 			this.thumbnail = thumbnail?.SetPreMultiply();
 			this.nameResolver = nameResolver;
@@ -69,6 +76,11 @@ namespace MatterHackers.MatterControl.Library
 
 		public Task<ImageBuffer> GetThumbnail(int width, int height)
 		{
+			if (width < 24 && height < 24)
+			{
+				return Task.FromResult(microIcon?.AlphaToPrimaryAccent());
+			}
+
 			//return Task.FromResult(thumbnail);
 			return Task.FromResult(thumbnail?.AlphaToPrimaryAccent());
 		}

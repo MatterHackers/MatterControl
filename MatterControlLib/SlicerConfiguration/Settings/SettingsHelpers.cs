@@ -242,30 +242,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return firstLayerValue;
 		}
 
-		public void SetMarkedForDelete(bool markedForDelete)
-		{
-			var printerInfo = ProfileManager.Instance.ActiveProfile;
-			if (printerInfo != null)
-			{
-				printerInfo.MarkedForDelete = markedForDelete;
-				ProfileManager.Instance.Save();
-			}
-
-			// Clear selected printer state
-			ProfileManager.Instance.LastProfileID = "";
-
-			UiThread.RunOnIdle(async () =>
-			{
-				await ApplicationController.Instance.ClearActivePrinter();
-
-				// Notify listeners of a ProfileListChange event due to this printers removal
-				ProfileManager.ProfilesListChanged.CallEvents(this, null);
-
-				// Force sync after marking for delete if assigned
-				ApplicationController.SyncPrinterProfiles?.Invoke("SettingsHelpers.SetMarkedForDelete()", null);
-			});
-		}
-
 		public void SetBaudRate(string baudRate)
 		{
 			printerSettings.SetValue(SettingsKey.baud_rate, baudRate);

@@ -388,10 +388,25 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		// Plugin Registration Points
+
+		// Returns the user printer profile from the webservices plugin
 		public static Func<PrinterInfo, string, Task<PrinterSettings>> GetPrinterProfileAsync;
+
+		// Executes the user printer profile sync logic in the webservices plugin
 		public static Func<string, IProgress<ProgressStatus>, Task> SyncPrinterProfiles;
+
+		// Returns all public printer profiles from the webservices plugin
 		public static Func<Task<OemProfileDictionary>> GetPublicProfileList;
+
+		// Returns the public printer profile from the webservices plugin
 		public static Func<string, Task<PrinterSettings>> DownloadPublicProfileAsync;
+
+		// Indicates if guest, rather than an authenticated user, is active
+		public static Func<bool> GuestUserActive { get; set; }
+
+		// Returns the authentication dialog from the authentication plugin
+		public static Func<DialogPage> GetAuthPage;
 
 		public SlicePresetsPage EditMaterialPresetsPage { get; set; }
 
@@ -747,6 +762,7 @@ namespace MatterHackers.MatterControl
 				this.Library.RegisterContainer(
 					new DynamicContainerLink(
 						() => "Downloads".Localize(),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "download_20x20.png")),
 						AggContext.StaticData.LoadIcon(Path.Combine("Library", "download_folder.png")),
 						() => new FileSystemContainer(ApplicationDataStorage.Instance.DownloadsDirectory)
 						{
@@ -759,6 +775,7 @@ namespace MatterHackers.MatterControl
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 					() => "Library".Localize(),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "library_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "library_folder.png")),
 					() => this.Library.LibraryCollectionContainer));
 
@@ -781,6 +798,7 @@ namespace MatterHackers.MatterControl
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 						() => "SD Card".Localize(),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_20x20.png")),
 						AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_folder.png")),
 						() => new SDCardContainer(),
 						() =>
@@ -799,6 +817,7 @@ namespace MatterHackers.MatterControl
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 					() => "History".Localize(),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_folder.png")),
 					() => new RootHistoryContainer()));
 		}
@@ -1672,11 +1691,7 @@ namespace MatterHackers.MatterControl
 
 		public void OnLoadActions()
 		{
-			// TODO: Calling UserChanged seems wrong. Load the right user before we spin up controls, rather than after
-			// Pushing this after load fixes that empty printer list
-			/////////////////////ApplicationController.Instance.UserChanged();
-
-			bool showAuthWindow = PrinterSetup.ShouldShowAuthPanel?.Invoke() ?? false;
+			bool showAuthWindow = ApplicationController.GuestUserActive?.Invoke() ?? false;
 			if (showAuthWindow)
 			{
 				if (ApplicationSettings.Instance.get(ApplicationSettingsKey.SuppressAuthPanel) != "True")

@@ -34,7 +34,9 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using Newtonsoft.Json;
 
@@ -75,6 +77,34 @@ namespace MatterHackers.MatterControl.SettingsManagement
 		public List<ManufacturerNameMapping> ManufacturerNameMappings { get; set; }
 
 		public List<string> PreloadedLibraryFiles { get; } = new List<string>();
+
+		public ImageBuffer GetIcon(string oemName)
+		{
+			string cachePath = ApplicationController.CacheablePath("OemIcons", oemName + ".png");
+			try
+			{
+				if (File.Exists(cachePath))
+				{
+					return AggContext.ImageIO.LoadImage(cachePath);
+				}
+			}
+			catch
+			{
+			}
+
+			var imageBuffer = new ImageBuffer(16, 16).MultiplyWithPrimaryAccent();
+
+			ApplicationController.Instance.LoadRemoteImage(
+				imageBuffer,
+				ApplicationController.Instance.GetFavIconUrl(oemName),
+				scaleToImageX: false).ContinueWith(t =>
+				{
+					AggContext.ImageIO.SaveImageData(cachePath, imageBuffer);
+				});
+
+			return imageBuffer;
+		}
+
 
 		internal void SetManufacturers(IEnumerable<KeyValuePair<string, string>> unorderedManufacturers, List<string> whitelist = null)
 		{

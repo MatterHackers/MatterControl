@@ -115,6 +115,11 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				enableControls();
 			}, ref unregisterEvents);
+
+			foreach (var child in this.Children)
+			{
+				child.Selectable = false;
+			}
 		}
 
 		protected void DisplayCurrentTemperature()

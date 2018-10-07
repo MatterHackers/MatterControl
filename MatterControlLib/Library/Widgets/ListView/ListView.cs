@@ -92,6 +92,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public bool ShowItems { get; set; } = true;
 
+		public bool AllowContextMenu { get; set; } = true;
+
 		public Predicate<ILibraryContainerLink> ContainerFilter { get; set; } = (o) => true;
 
 		public Predicate<ILibraryItem> ItemFilter { get; set; } = (o) => true;
@@ -227,7 +229,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				items.Add(listViewItem);
 
 				listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
-				listViewItem.ViewWidget.HasMenu = true;
+				listViewItem.ViewWidget.HasMenu = this.AllowContextMenu;
 				listViewItem.ViewWidget.Name = childContainer.Name + " Row Item Collection";
 			}
 
@@ -247,7 +249,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					items.Add(listViewItem);
 
 					listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
-					listViewItem.ViewWidget.HasMenu = true;
+					listViewItem.ViewWidget.HasMenu = this.AllowContextMenu;
 					listViewItem.ViewWidget.Name = "Row Item " + item.Name;
 				}
 

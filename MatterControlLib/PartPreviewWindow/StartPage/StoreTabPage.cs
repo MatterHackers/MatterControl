@@ -30,14 +30,13 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.SettingsManagement;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
-	public class StartTabPage : ScrollableWidget
+	public class StoreTabPage : ScrollableWidget
 	{
-		public StartTabPage(PartPreviewContent partPreviewContent, ThemeConfig theme)
+		public StoreTabPage(PartPreviewContent partPreviewContent, ThemeConfig theme)
 		{
 			this.AutoScroll = true;
 			this.ScrollArea.Padding = new BorderDouble(3);
@@ -47,7 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			this.MinimumSize = new Vector2(0, 200);
 			this.BackgroundColor = theme.TabBodyBackground;
 
-			this.Name = "PlusTabPage";
+			this.Name = "StoreTab";
 
 			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -55,11 +54,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			};
 			this.AddChild(topToBottom);
 
-			var lastProfileID = ProfileManager.Instance.LastProfileID;
-			var lastProfile = ProfileManager.Instance[lastProfileID];
-
-			topToBottom.AddChild(
-				new PrinterBar(partPreviewContent, lastProfile, theme));
+			if (OemSettings.Instance.ShowShopButton)
+			{
+				topToBottom.AddChild(new ExplorePanel(theme, "banners?sk=ii2gffs6e89c2cdd9er21v", "BannerFeed.json"));
+			}
 
 			if (OemSettings.Instance.ShowShopButton)
 			{

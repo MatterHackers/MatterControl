@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2017, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,33 +27,27 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
 
-namespace MatterHackers.MatterControl.PartPreviewWindow
+using System;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.Library;
+
+namespace MatterHackers.MatterControl.PrintLibrary
 {
-	// Holds the space and draws the trailing tabs LowerLeft notch
-	public class TabTrailer : GuiWidget
+	public class ContainerTreeNode : TreeNode
 	{
-		private SimpleTabs parentTabControl;
-		private ThemeConfig theme;
-
-		public ITab LastTab { get; set; }
-
-		public TabTrailer(SimpleTabs parentTabControl, ThemeConfig theme)
+		public ContainerTreeNode(ThemeConfig theme)
+			: base (theme, true)
 		{
-			this.parentTabControl = parentTabControl;
-			this.theme = theme;
 		}
 
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			ChromeTab.DrawTabLowerLeft(
-				graphics2D,
-				this.LocalBounds,
-				(parentTabControl.ActiveTab == this.LastTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
+		public bool ContainerAcquired => this.Container != null;
 
-			base.OnDraw(graphics2D);
-		}
+		public ILibraryContainer Container { get; set; } = null;
+
+		//public override void OnChildAdded(EventArgs e)
+		//{
+		//	base.OnChildAdded(e);
+		//}
 	}
 }
