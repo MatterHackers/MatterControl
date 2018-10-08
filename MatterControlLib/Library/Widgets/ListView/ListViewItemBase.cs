@@ -281,7 +281,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				hitDragThreshold = true;
 
 				// Performs move and possible Scene add in View3DWidget
-				view3DWidget.ExternalDragOver(screenSpaceMousePosition: this.TransformToScreenSpace(mouseEvent.Position));
+				view3DWidget.ExternalDragOver(screenSpaceMousePosition: this.TransformToScreenSpace(mouseEvent.Position), sourceWidget: this.listViewItem.ListView);
 			}
 
 			base.OnMouseMove(mouseEvent);

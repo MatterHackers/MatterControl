@@ -79,8 +79,6 @@ namespace MatterHackers.MatterControl.Library
 			this.ActiveContainer = this.RootLibaryContainer;
 		}
 
-		public ListView ActiveViewWidget { get; internal set; }
-
 		public ILibraryContainer RootLibaryContainer { get; }
 
 		public Dictionary<string, IContentProvider> ContentProviders = new Dictionary<string, IContentProvider>();

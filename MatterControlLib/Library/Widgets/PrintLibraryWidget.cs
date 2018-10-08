@@ -85,8 +85,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Border = new BorderDouble(top: 1)
 			};
 
-			ApplicationController.Instance.Library.ActiveViewWidget = libraryView;
-
 			libraryView.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
 
 			ApplicationController.Instance.Library.ContainerChanged += Library_ContainerChanged;
@@ -98,11 +96,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			allControls.AddChild(navBar);
 			theme.ApplyBottomBorder(navBar);
-
-			navBar.OverflowButton.BeforePopup += (s, e) =>
-			{
-				this.EnableMenus();
-			};
 
 			var toolbar = new OverflowBar(AggContext.StaticData.LoadIcon("fa-sort_16.png", 32, 32, theme.InvertIcons), theme)
 			{
@@ -876,14 +869,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		private void EnableMenus()
-		{
-			foreach (var menuAction in menuActions.Where(m => m.MenuItem != null))
-			{
-				menuAction.MenuItem.Enabled = menuAction.IsEnabled(libraryView.SelectedItems, libraryView);
-			}
-		}
-
 		private void deleteFromLibraryButton_Click(object sender, EventArgs e)
 		{
 			// ask before remove
@@ -982,16 +967,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					{
 						var menuItem = popupMenu.CreateMenuItem(menuAction.Title, menuAction.Icon);
 						menuItem.Name = $"{menuAction.Title} Menu Item";
-
-						menuItem.Enabled = menuAction.Action != null;
-						menuItem.ClearRemovedFlag();
+						menuItem.Enabled = menuAction.Action != null && menuAction.IsEnabled(libraryView.SelectedItems, libraryView);
 						menuItem.Click += (s, e) =>
 						{
 							menuAction.Action?.Invoke(libraryView.SelectedItems.Select(i => i.Model), libraryView);
 						};
-
-						// Store a reference to the newly created MenuItem back on the MenuAction definition
-						menuAction.MenuItem = menuItem;
 					}
 				}
 			};
