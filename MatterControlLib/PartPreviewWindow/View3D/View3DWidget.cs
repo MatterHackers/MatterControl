@@ -55,8 +55,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public readonly int EditButtonHeight = 44;
 
-		private bool hasDrawn = false;
-
 		private Color[] SelectionColors = new Color[] { new Color(131, 4, 66), new Color(227, 31, 61), new Color(255, 148, 1), new Color(247, 224, 23), new Color(143, 212, 1) };
 		private Stopwatch timeSinceLastSpin = new Stopwatch();
 		private Stopwatch timeSinceReported = new Stopwatch();
@@ -672,8 +670,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					volume.SetPosition(selectedItem);
 				}
 			}
-
-			hasDrawn = true;
 
 			base.OnDraw(graphics2D);
 

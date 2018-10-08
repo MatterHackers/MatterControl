@@ -37,7 +37,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class DropButton : SimpleButton
 	{
-		private bool menuVisible;
+		public bool MenuVisible { get; private set; } 
 
 		public DropButton(ThemeConfig theme)
 			: base(theme)
@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override Color BackgroundColor
 		{
-			get => menuVisible ? theme.SlightShade : base.BackgroundColor;
+			get => MenuVisible ? theme.SlightShade : base.BackgroundColor;
 			set => base.BackgroundColor = value;
 		}
 
@@ -75,14 +75,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			downWhileOpen = menuVisible;
+			downWhileOpen = MenuVisible;
 
 			base.OnMouseDown(mouseEvent);
 		}
 
 		public override void OnClick(MouseEventArgs mouseEvent)
 		{
-			if (!menuVisible
+			if (!MenuVisible
 				&& !downWhileOpen)
 			{
 				var popupContent = this.PopupContent();
@@ -96,12 +96,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (this.Parents<SystemWindow>().FirstOrDefault() is SystemWindow systemWindow)
 				{
-					menuVisible = true;
+					MenuVisible = true;
 
 					void popupContent_Closed(object sender, EventArgs e)
 					{
 						// Reset menuVisible
-						menuVisible = false;
+						MenuVisible = false;
 						popupContent.Closed -= popupContent_Closed;
 					}
 
