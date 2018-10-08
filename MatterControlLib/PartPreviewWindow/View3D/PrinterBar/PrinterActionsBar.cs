@@ -199,33 +199,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					if (!buttonIsBeingClicked)
 					{
-						double displayTime = 2;
-						double pulseTime = .5;
-						double totalSeconds = 0;
-						Color backgroundColor = activeButton.BackgroundColor;
-						Color hightlightColor = theme.Colors.PrimaryAccentColor.AdjustContrast(theme.Colors.PrimaryTextColor, 6).ToColor();
-						// Show a highlight on the button as the user did not click it
-						Animation flashBackground = null;
-						flashBackground = new Animation()
-						{
-							DrawTarget = activeButton,
-							FramesPerSecond = 10,
-							Update = (s1, updateEvent) =>
-							{
-								totalSeconds += updateEvent.SecondsPassed;
-								if (totalSeconds < displayTime)
-								{
-									double blend = AttentionGetter.GetFadeInOutPulseRatio(totalSeconds, pulseTime);
-									activeButton.BackgroundColor = new Color(hightlightColor, (int)(blend * 255));
-								}
-								else
-								{
-									activeButton.BackgroundColor = backgroundColor;
-									flashBackground.Stop();
-								}
-							}
-						};
-						flashBackground.Start();
+						activeButton.FlashBackground(theme.Colors.PrimaryAccentColor.AdjustContrast(theme.Colors.PrimaryTextColor, 6).ToColor());
 					}
 				}
 			};
@@ -458,6 +432,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						break;
 				}
 			});
+		}
+	}
+
+	public static class WidgetAnimationExtensions
+	{
+		public static void FlashBackground(this GuiWidget widget, Color hightlightColor)
+		{
+			double displayTime = 2;
+			double pulseTime = .5;
+			double totalSeconds = 0;
+			Color backgroundColor = widget.BackgroundColor;
+			// Show a highlight on the button as the user did not click it
+			Animation flashBackground = null;
+			flashBackground = new Animation()
+			{
+				DrawTarget = widget,
+				FramesPerSecond = 10,
+				Update = (s1, updateEvent) =>
+				{
+					totalSeconds += updateEvent.SecondsPassed;
+					if (totalSeconds < displayTime)
+					{
+						double blend = AttentionGetter.GetFadeInOutPulseRatio(totalSeconds, pulseTime);
+						widget.BackgroundColor = new Color(hightlightColor, (int)(blend * 255));
+					}
+					else
+					{
+						widget.BackgroundColor = backgroundColor;
+						flashBackground.Stop();
+					}
+				}
+			};
+			flashBackground.Start();
 		}
 	}
 }

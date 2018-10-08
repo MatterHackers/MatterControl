@@ -289,6 +289,18 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Ignore("Not Implemented")]
+		public void MaterialIndexFieldTest()
+		{
+			Assert.Fail();
+		}
+
+		[Test, Ignore("Not Implemented")]
+		public void ColorFieldTest()
+		{
+			Assert.Fail();
+		}
+
+		[Test, Ignore("Not Implemented")]
 		public void ChildrenSelectorListFieldTest()
 		{
 			Assert.Fail();

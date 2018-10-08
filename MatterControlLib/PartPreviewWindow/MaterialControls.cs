@@ -41,13 +41,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private ObservableCollection<GuiWidget> materialButtons = new ObservableCollection<GuiWidget>();
 		private ThemeConfig theme;
-		private InteractiveScene scene;
+		public event EventHandler<int> IndexChanged;
 
-		public MaterialControls(InteractiveScene scene, ThemeConfig theme, Action<Color> colorNotifier = null)
+		public MaterialControls(ThemeConfig theme, int initialMaterialIndex)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.theme = theme;
-			this.scene = scene;
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
 
@@ -71,12 +70,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				buttonView.AddChild(new ColorButton(MaterialRendering.Color(extruderIndex, theme.MinimalHighlight))
 				{
-					Margin = new BorderDouble(right: 5),
 					Width = scaledButtonSize,
 					Height = scaledButtonSize,
 					VAnchor = VAnchor.Center,
 					DrawGrid = true,
-					//DoubleBuffer = true
 				});
 
 				buttonView.AddChild(new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
@@ -95,7 +92,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					HAnchor = HAnchor.Fit,
 					VAnchor = VAnchor.Fit,
 					TextColor = theme.Colors.PrimaryTextColor,
-					Checked = extruderIndex == scene.SelectedItem.MaterialIndex
+					Checked = extruderIndex == initialMaterialIndex
 				};
 				materialButtons.Add(radioButton);
 				this.AddChild(radioButton);
@@ -103,50 +100,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				int localExtruderIndex = extruderIndex;
 				radioButton.Click += (sender, e) =>
 				{
-					var selectedItem = scene.SelectedItem;
-					if (selectedItem != null)
-					{
-						selectedItem.MaterialIndex = localExtruderIndex;
-
-						colorNotifier?.Invoke(MaterialRendering.Color(localExtruderIndex, theme.MinimalHighlight));
-
-						scene.Invalidate(new InvalidateArgs(null, InvalidateType.Material));
-					}
+					IndexChanged?.Invoke(this, localExtruderIndex);
 				};
-			}
-
-			scene.SelectionChanged += Scene_SelectionChanged;
-		}
-
-		private void Scene_SelectionChanged(object sender, EventArgs e)
-		{
-			var selectedItem = scene.SelectedItem;
-
-			if (selectedItem != null
-				&& materialButtons?.Count > 0)
-			{
-				bool setSelection = false;
-				// Set the material selector to have the correct material button selected
-				for (int i = 0; i < materialButtons.Count; i++)
-				{
-					// the first button is 'Default' so we are looking for the button that is i - 1 (0 = material 1 = button 1)
-					if (selectedItem.MaterialIndex == i - 1)
-					{
-						((RadioButton)materialButtons[i]).Checked = true;
-						setSelection = true;
-					}
-				}
-
-				if (!setSelection)
-				{
-					((RadioButton)materialButtons[0]).Checked = true;
-				}
 			}
 		}
 
 		public override void OnClosed(EventArgs e)
 		{
-			scene.SelectionChanged -= Scene_SelectionChanged;
 			base.OnClosed(e);
 		}
 

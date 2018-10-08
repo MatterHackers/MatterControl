@@ -101,6 +101,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		private static Type[] allowedTypes =
 		{
 			typeof(double), typeof(int), typeof(char), typeof(string), typeof(bool),
+			typeof(Color),
 			typeof(Vector2), typeof(Vector3),
 			typeof(DirectionVector), typeof(DirectionAxis),
 			typeof(ChildrenSelector),
@@ -187,7 +188,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return row;
 		}
 
-		private static FlowLayoutWidget CreateSettingsRow(string labelText, string toolTipText = null)
+		public static FlowLayoutWidget CreateSettingsRow(string labelText, string toolTipText = null)
 		{
 			var rowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
@@ -296,6 +297,19 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				object3D.Invalidated += RefreshField;
 				field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
+
+				rowContainer = CreateSettingsRow(property, field);
+			}
+			else if (propertyValue is Color color)
+			{
+				var field = new ColorField(theme, object3D.Color);
+				field.Initialize(0);
+				field.ValueChanged += (s, e) =>
+				{
+					property.SetValue(field.Color);
+					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
+					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+				};
 
 				rowContainer = CreateSettingsRow(property, field);
 			}
