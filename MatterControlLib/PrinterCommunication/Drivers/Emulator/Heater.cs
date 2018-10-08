@@ -113,7 +113,18 @@ namespace MatterHackers.PrinterEmulator
 				}
 			}
 
+			#region EPositions data
+			/// <summary>
+			/// The absolute eposition from the time the emulator was started.
+			/// never resets with G92
+			/// </summary>
+			public double AbsoluteEPosition { get; set; } = 0;
+			public double LastEPosition = 0;
+			/// <summary>
+			/// The current e-position the hardware believes it is at
+			/// </summary>
 			public double EPosition { get; set; }
+			#endregion
 
 			public double HeatUpTimeInSeconds
 			{

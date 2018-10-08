@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// To accommodate children (or external widgets) having focus we also query for and consider special cases
 					bool specialChildHasFocus = ignoredWidgets.Any(w => w.ContainsFocus || w.Focused || w.KeepMenuOpen());
 					bool descendantIsHoldingOpen = popup.Widget.Descendants<GuiWidget>().Any(w => w is IIgnoredPopupChild ignoredPopupChild
-						&& (ignoredPopupChild.ContainsFocus || ignoredPopupChild.Focused || ignoredPopupChild.KeepMenuOpen()));
+						&& ((ignoredPopupChild.ContainsFocus || ignoredPopupChild.KeepMenuOpen()) && !popup.Widget.ContainsFocus));
 
 					// If the focused changed and we've lost focus and no special cases permit, close the menu
 					if (!popup.Widget.ContainsFocus
