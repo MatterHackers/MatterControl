@@ -241,7 +241,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// make sure the render mode is set to material
 					sceneContext.ViewState.RenderType = RenderOpenGl.RenderTypes.Materials;
 				}
-			}; editorPanel.AddChild(materialRow);
+			};
+			editorPanel.AddChild(materialRow);
 
 			// put in the normal editor
 			if (selectedItem is ComponentObject3D componentObject

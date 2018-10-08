@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class ReSliceTests
 	{
-		[Test, Category("Emulator")]
+		[Test, Category("Emulator"), Ignore("WIP")]
 		public async Task ReSliceHasCorrectEPositions()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -64,11 +64,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Add a callback to check that every line has an extruder 
 					// distance greater than the largest distance minus the max retraction 
 					// amount and less than some amount that is reasonable
-					double lastEPostion = 0;
+					double lastAbsoluteEPostion = 0;
 					emulator.EPositionChanged += (e, s) =>
 					{
-						Assert.GreaterOrEqual(emulator.CurrentExtruder.EPosition, lastEPostion - 5, "We should never move back more than 5 mm");
-						lastEPostion = emulator.CurrentExtruder.EPosition;
+						Assert.GreaterOrEqual(emulator.CurrentExtruder.AbsoluteEPosition, lastAbsoluteEPostion - 5, "We should never move back more than 5 mm");
+						lastAbsoluteEPostion = emulator.CurrentExtruder.AbsoluteEPosition;
 					};
 
 					// Add a cube to the bed

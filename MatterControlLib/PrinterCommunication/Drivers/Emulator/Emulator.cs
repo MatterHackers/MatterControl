@@ -364,7 +364,27 @@ namespace MatterHackers.PrinterEmulator
 
 		private string ResetPosition(string command)
 		{
-			SetPosition(command);
+			double value = 0;
+			if (GetFirstNumberAfter("X", command, ref value))
+			{
+				XPosition = value;
+			}
+			if (GetFirstNumberAfter("Y", command, ref value))
+			{
+				YPosition = value;
+			}
+			if (GetFirstNumberAfter("Z", command, ref value))
+			{
+				ZPosition = value;
+				ZPositionChanged?.Invoke(null, null);
+			}
+			if (GetFirstNumberAfter("E", command, ref value))
+			{
+				CurrentExtruder.LastEPosition = value;
+				CurrentExtruder.EPosition = value;
+				EPositionChanged?.Invoke(null, null);
+			}
+
 			return "ok\n";
 		}
 
@@ -471,7 +491,9 @@ namespace MatterHackers.PrinterEmulator
 			}
 			if (GetFirstNumberAfter("E", command, ref value))
 			{
+				CurrentExtruder.LastEPosition = CurrentExtruder.EPosition;
 				CurrentExtruder.EPosition = value;
+				CurrentExtruder.AbsoluteEPosition += CurrentExtruder.EPosition - CurrentExtruder.LastEPosition;
 				EPositionChanged?.Invoke(null, null);
 			}
 
