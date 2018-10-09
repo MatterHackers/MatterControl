@@ -65,48 +65,46 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			if (LineIndex < GCodeFile.LineCount)
 			{
 				if (LineIndex > 1
-					&& GCodeFile is GCodeMemoryFile currentMemoryFile)
+					&& GCodeFile is GCodeMemoryFile currentMemoryFile
+					&& switchToGCode != null)
 				{
-					if (switchToGCode != null)
+					var prevlayerIndex = currentMemoryFile.GetLayerIndex(LineIndex - 1);
+					var layerIndex = currentMemoryFile.GetLayerIndex(LineIndex);
+					// we only try to switch as we are changing layers
+					if (prevlayerIndex < layerIndex)
 					{
-						var prevlayerIndex = currentMemoryFile.GetLayerIndex(LineIndex - 1);
-						var layerIndex = currentMemoryFile.GetLayerIndex(LineIndex);
-						// we only try to switch as we are changing layers
-						if (prevlayerIndex < layerIndex)
+						var currentBottom = currentMemoryFile.GetLayerBottom(layerIndex);
+						// see if there is a layer height that is compatible in the new gcode
+						for (int i = 0; i < switchToGCode.LayerCount; i++)
 						{
-							var currentBottom = currentMemoryFile.GetLayerBottom(layerIndex);
-							// see if there is a layer height that is compatible in the new gcode
-							for (int i = 0; i < switchToGCode.LayerCount; i++)
+							// find the first layer in the new code that is greater than or eaqual to our current height
+							var switchBottom = switchToGCode.GetLayerBottom(i);
+							if (switchBottom >= currentBottom)
 							{
-								// find the first layer in the new code that is greater than or eaqual to our current height
-								var switchBottom = switchToGCode.GetLayerBottom(i);
-								if (switchBottom >= currentBottom)
+								// is the current gcode the same or bigger than the new gcode
+								if (currentBottom >= switchBottom)
 								{
-									// is the current gcode the same or bigger than the new gcode
-									if (currentBottom >= switchBottom)
+									// switch the first time we can
+									GCodeFile = switchToGCode;
+									LineIndex = switchToGCode.GetFirstLayerInstruction(i);
+									var line = $"G92 E{switchToGCode.Instruction(LineIndex).EPosition:0.###}";
+									switchToGCode = null;
+									return line;
+								}
+								else // only switch if we are within one layer height of the new gcode
+								{
+									if (currentBottom - switchBottom < switchToGCode.GetLayerHeight(layerIndex))
 									{
-										// switch the first time we can
 										GCodeFile = switchToGCode;
 										LineIndex = switchToGCode.GetFirstLayerInstruction(i);
-										var line = $"G92 E{switchToGCode.Instruction(LineIndex).EPosition}";
+										switchToGCode = null;
+										var line = $"G92 E{switchToGCode.Instruction(LineIndex).EPosition:0.###}";
 										switchToGCode = null;
 										return line;
 									}
-									else // only switch if we are within one layer height of the new gcode
-									{
-										if(currentBottom - switchBottom < switchToGCode.GetLayerHeight(layerIndex))
-										{
-											GCodeFile = switchToGCode;
-											LineIndex = switchToGCode.GetFirstLayerInstruction(i);
-											switchToGCode = null;
-											var line = $"G92 E{switchToGCode.Instruction(LineIndex).EPosition}";
-											switchToGCode = null;
-											return line;
-										}
-									}
-									// we are done evaluating after the first found layer
-									break;
 								}
+								// we are done evaluating after the first found layer
+								break;
 							}
 						}
 					}

@@ -27,97 +27,26 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class MaxLengthStream : GCodeStreamProxy
-    {
-        protected PrinterMove lastDestination = new PrinterMove();
-        private List<PrinterMove> movesToSend = new List<PrinterMove>();
-        private double maxSecondsPerSegment = 1.0/20.0; // 20 instruction per second
+	public class MaxLengthStream : GCodeStreamProxy
+	{
+		protected PrinterMove lastDestination = new PrinterMove();
+		// 20 instruction per second
+		private double maxSecondsPerSegment = 1.0 / 20.0;
+		private List<PrinterMove> movesToSend = new List<PrinterMove>();
 
-        public MaxLengthStream(GCodeStream internalStream, double maxSegmentLength)
-            : base(internalStream)
-        {
-            this.MaxSegmentLength = maxSegmentLength;
-        }
+		public MaxLengthStream(GCodeStream internalStream, double maxSegmentLength)
+			: base(internalStream)
+		{
+			this.MaxSegmentLength = maxSegmentLength;
+		}
 
-        public PrinterMove LastDestination { get { return lastDestination; } }
-        public double MaxSegmentLength { get; set; }
-
-        public override string ReadLine()
-        {
-            if (movesToSend.Count == 0)
-            {
-                string lineFromChild = base.ReadLine();
-
-                if (lineFromChild != null
-                    && LineIsMovement(lineFromChild))
-                {
-                    PrinterMove currentDestination = GetPosition(lineFromChild, lastDestination);
-                    PrinterMove deltaToDestination = currentDestination - lastDestination;
-                    deltaToDestination.feedRate = 0; // remove the changing of the federate (we'll set it initially)
-                    double lengthSquared = Math.Max(deltaToDestination.LengthSquared, deltaToDestination.extrusion * deltaToDestination.extrusion);
-                    if (lengthSquared > MaxSegmentLength * MaxSegmentLength)
-                    {
-                        // create the line segments to send
-                        double length = Math.Sqrt(lengthSquared);
-                        int numSegmentsToCutInto = (int)Math.Ceiling(length / MaxSegmentLength);
-
-                        // segments = (((mm/min) / (60s/min))mm/s / s/segment)segments*mm / mm
-                        double maxSegmentsCanTransmit = 1 / (((currentDestination.feedRate / 60) * maxSecondsPerSegment) / length);
-
-                        int numSegmentsToSend = Math.Max(1, Math.Min(numSegmentsToCutInto, (int)maxSegmentsCanTransmit));
-
-                        if (numSegmentsToSend > 1)
-                        {
-                            PrinterMove deltaForSegment = deltaToDestination / numSegmentsToSend;
-                            PrinterMove nextPoint = lastDestination + deltaForSegment;
-                            nextPoint.feedRate = currentDestination.feedRate;
-                            for (int i = 0; i < numSegmentsToSend; i++)
-                            {
-								lock (movesToSend)
-								{
-									movesToSend.Add(nextPoint);
-								}
-                                nextPoint += deltaForSegment;
-                            }
-
-                            // send the first one
-                            PrinterMove positionToSend = movesToSend[0];
-							lock (movesToSend)
-							{
-								movesToSend.RemoveAt(0);
-							}
-
-                            string altredLineToSend = CreateMovementLine(positionToSend, lastDestination);
-                            lastDestination = positionToSend;
-                            return altredLineToSend;
-                        }
-                    }
-
-                    lastDestination = currentDestination;
-                }
-                return lineFromChild;
-            }
-            else
-            {
-                PrinterMove positionToSend = movesToSend[0];
-				lock (movesToSend)
-				{
-					movesToSend.RemoveAt(0);
-				}
-
-                string lineToSend = CreateMovementLine(positionToSend, lastDestination);
-
-                lastDestination = positionToSend;
-
-                return lineToSend;
-            }
-        }
+		public PrinterMove LastDestination { get { return lastDestination; } }
+		public double MaxSegmentLength { get; set; }
 
 		public void Cancel()
 		{
@@ -127,8 +56,79 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 		}
 
-        public override void SetPrinterPosition(PrinterMove position)
-        {
+		public override string ReadLine()
+		{
+			if (movesToSend.Count == 0)
+			{
+				string lineFromChild = base.ReadLine();
+
+				if (lineFromChild != null
+					&& LineIsMovement(lineFromChild))
+				{
+					PrinterMove currentDestination = GetPosition(lineFromChild, lastDestination);
+					PrinterMove deltaToDestination = currentDestination - lastDestination;
+					deltaToDestination.feedRate = 0; // remove the changing of the federate (we'll set it initially)
+					double lengthSquared = Math.Max(deltaToDestination.LengthSquared, deltaToDestination.extrusion * deltaToDestination.extrusion);
+					if (lengthSquared > MaxSegmentLength * MaxSegmentLength)
+					{
+						// create the line segments to send
+						double length = Math.Sqrt(lengthSquared);
+						int numSegmentsToCutInto = (int)Math.Ceiling(length / MaxSegmentLength);
+
+						// segments = (((mm/min) / (60s/min))mm/s / s/segment)segments*mm / mm
+						double maxSegmentsCanTransmit = 1 / (((currentDestination.feedRate / 60) * maxSecondsPerSegment) / length);
+
+						int numSegmentsToSend = Math.Max(1, Math.Min(numSegmentsToCutInto, (int)maxSegmentsCanTransmit));
+
+						if (numSegmentsToSend > 1)
+						{
+							PrinterMove deltaForSegment = deltaToDestination / numSegmentsToSend;
+							PrinterMove nextPoint = lastDestination + deltaForSegment;
+							nextPoint.feedRate = currentDestination.feedRate;
+							for (int i = 0; i < numSegmentsToSend; i++)
+							{
+								lock (movesToSend)
+								{
+									movesToSend.Add(nextPoint);
+								}
+								nextPoint += deltaForSegment;
+							}
+
+							// send the first one
+							PrinterMove positionToSend = movesToSend[0];
+							lock (movesToSend)
+							{
+								movesToSend.RemoveAt(0);
+							}
+
+							string altredLineToSend = CreateMovementLine(positionToSend, lastDestination);
+							lastDestination = positionToSend;
+							return altredLineToSend;
+						}
+					}
+
+					lastDestination = currentDestination;
+				}
+				return lineFromChild;
+			}
+			else
+			{
+				PrinterMove positionToSend = movesToSend[0];
+				lock (movesToSend)
+				{
+					movesToSend.RemoveAt(0);
+				}
+
+				string lineToSend = CreateMovementLine(positionToSend, lastDestination);
+
+				lastDestination = positionToSend;
+
+				return lineToSend;
+			}
+		}
+
+		public override void SetPrinterPosition(PrinterMove position)
+		{
 			lastDestination = position;
 			internalStream.SetPrinterPosition(lastDestination);
 		}
