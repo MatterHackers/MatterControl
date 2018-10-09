@@ -35,6 +35,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.VersionManagement;
 using NUnit.Framework;
 
@@ -43,15 +44,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class ReSliceTests
 	{
-		[Test, Category("Emulator")]
+		[Test, Category("Emulator"), Ignore("WIP")]
+		//[Test, Category("Emulator")]
 		public async Task ReSliceHasCorrectEPositions()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
+				AutomationRunner.TimeToMoveMouse = .1;
 				//testRunner.ClickByName("Connection Wizard Skip Sign In Button");
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
+					var printer = ApplicationController.Instance.ActivePrinter;
+					printer.Settings.SetValue(SettingsKey.enable_line_spliting, "0");
+
 					var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
 					var scene = view3D.InteractionLayer.Scene;
 
@@ -65,9 +71,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// distance greater than the largest distance minus the max retraction 
 					// amount and less than some amount that is reasonable
 					double lastAbsoluteEPostion = 0;
+					double largestRetraction = 0;
 					emulator.EPositionChanged += (e, s) =>
 					{
-						Assert.GreaterOrEqual(emulator.CurrentExtruder.AbsoluteEPosition, lastAbsoluteEPostion - 1, "We should never move back more than 1 mm");
+						var delta = emulator.CurrentExtruder.AbsoluteEPosition - lastAbsoluteEPostion;
+						if(delta < largestRetraction)
+						{
+							largestRetraction = delta;
+						}
+						Assert.GreaterOrEqual(-7, delta, "We should never move back more than 1 mm");
 						Assert.LessOrEqual(emulator.CurrentExtruder.AbsoluteEPosition, lastAbsoluteEPostion + 10, "We should never move up more than 10 mm");
 						lastAbsoluteEPostion = emulator.CurrentExtruder.AbsoluteEPosition;
 					};
@@ -75,6 +87,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Add a cube to the bed
 					testRunner.NavigateToFolder("Print Queue Row Item Collection");
 					testRunner.ClickByName("Row Item cube_20x20x20");
+					testRunner.ClickByName("Print Library Overflow Menu");
+					testRunner.ClickByName("Add to Plate Menu Item");
 					testRunner.ClickByName("Print Library Overflow Menu");
 					testRunner.ClickByName("Add to Plate Menu Item");
 
@@ -134,6 +148,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// Wait for done
 					testRunner.WaitForPrintFinished();
+
+					// this will make sure we turned off line spliting and had good data about the extruder position
+					Assert.AreEqual(-7, largestRetraction, "Airwolf HD has a retraction of 7mm, make sure we had one");
 				}
 
 				return Task.CompletedTask;

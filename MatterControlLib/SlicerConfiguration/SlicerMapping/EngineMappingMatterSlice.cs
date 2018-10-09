@@ -107,6 +107,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.make,
 			SettingsKey.model,
 			SettingsKey.enable_network_printing,
+			SettingsKey.enable_line_spliting,
 			SettingsKey.enable_sailfish_communication,
 			SettingsKey.print_time_estimate_multiplier,
 			SettingsKey.ip_address,

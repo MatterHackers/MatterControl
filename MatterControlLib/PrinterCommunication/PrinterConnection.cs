@@ -42,6 +42,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using MatterHackers.VectorMath;
@@ -2128,7 +2129,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			queuedCommandStream3 = new QueuedCommandsStream(firstStreamToRead);
 			macroProcessingStream4 = new MacroProcessingStream(queuedCommandStream3, printer);
 			relativeToAbsoluteStream5 = new RelativeToAbsoluteStream(macroProcessingStream4);
-			babyStepsStream6 = new BabyStepsStream(printer.Settings, relativeToAbsoluteStream5, gcodeFilename == null ? 2000 : 1);
+			bool enableLineSpliting = gcodeFilename != null && printer.Settings.GetValue<bool>(SettingsKey.enable_line_spliting);
+			babyStepsStream6 = new BabyStepsStream(printer.Settings, relativeToAbsoluteStream5, enableLineSpliting ? 1 : 2000);
 			if (activePrintTask != null)
 			{
 				// make sure we are in the position we were when we stopped printing

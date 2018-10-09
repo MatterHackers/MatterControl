@@ -459,8 +459,8 @@ namespace MatterHackers.MatterControl
 						var selectedItem = scene.SelectedItem;
 						if(selectedItem != null)
 						{
-							var hasSingleMesh = selectedItem.Mesh != null && selectedItem.Children.Count == 0;
-							return hasSingleMesh || selectedItem is GroupObject3D;
+							return selectedItem is GroupObject3D
+								|| selectedItem.GetType() == typeof(Object3D);
 						}
 
 						return false;

@@ -1854,6 +1854,15 @@
     "ReloadUiWhenChanged": true
   },
   {
+    "SlicerConfigName": "enable_line_spliting",
+    "PresentationName": "Enable Line Spliting",
+    "HelpText": "Allow MatterControl to split long lines to improve levesing and print canceling. Critical for printers that are significantly out of level.",
+    "ShowIfSet": "!sla_printer",
+    "DataEditType": "CHECK_BOX",
+    "DefaultValue": "1",
+    "RebuildGCodeOnChange": false
+  },
+  {
     "SlicerConfigName": "enable_sailfish_communication",
     "PresentationName": "Sailfish Communication",
     "HelpText": "Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)",
