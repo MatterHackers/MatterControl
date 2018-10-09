@@ -88,8 +88,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 										// switch the first time we can
 										GCodeFile = switchToGCode;
 										LineIndex = switchToGCode.GetFirstLayerInstruction(i);
-										printerConnection.QueueLine($"G92 E{switchToGCode.Instruction(LineIndex).EPosition}");
+										var line = $"G92 E{switchToGCode.Instruction(LineIndex).EPosition}";
 										switchToGCode = null;
+										return line;
 									}
 									else // only switch if we are within one layer height of the new gcode
 									{
@@ -97,7 +98,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 										{
 											GCodeFile = switchToGCode;
 											LineIndex = switchToGCode.GetFirstLayerInstruction(i);
-											printerConnection.QueueLine($"G92 E{switchToGCode.Instruction(LineIndex).EPosition}");
+											switchToGCode = null;
+											var line = $"G92 E{switchToGCode.Instruction(LineIndex).EPosition}";
+											switchToGCode = null;
+											return line;
 										}
 									}
 									// we are done evaluating after the first found layer

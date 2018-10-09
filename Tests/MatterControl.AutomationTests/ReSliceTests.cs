@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class ReSliceTests
 	{
-		[Test, Category("Emulator"), Ignore("WIP")]
+		[Test, Category("Emulator")]
 		public async Task ReSliceHasCorrectEPositions()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -67,7 +67,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					double lastAbsoluteEPostion = 0;
 					emulator.EPositionChanged += (e, s) =>
 					{
-						Assert.GreaterOrEqual(emulator.CurrentExtruder.AbsoluteEPosition, lastAbsoluteEPostion - 5, "We should never move back more than 5 mm");
+						Assert.GreaterOrEqual(emulator.CurrentExtruder.AbsoluteEPosition, lastAbsoluteEPostion - 1, "We should never move back more than 1 mm");
+						Assert.LessOrEqual(emulator.CurrentExtruder.AbsoluteEPosition, lastAbsoluteEPostion + 10, "We should never move up more than 10 mm");
 						lastAbsoluteEPostion = emulator.CurrentExtruder.AbsoluteEPosition;
 					};
 
@@ -88,7 +89,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Bed Options Menu");
 					testRunner.ClickByName("Clear Bed Menu Item");
 
-					testRunner.Delay(100);
+					testRunner.Delay();
 
 					// ensure there is nothing on the bed
 					Assert.AreEqual(0, scene.Children.Count);
