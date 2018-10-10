@@ -95,6 +95,8 @@ namespace MatterHackers.MatterControl
 
 			this.Scene.Children.Modify(children => children.Clear());
 
+			this.Scene.Load(editContext.Content);
+
 			// Notify
 			this.SceneLoaded?.Invoke(this, null);
 		}
