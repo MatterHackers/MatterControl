@@ -80,6 +80,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.NodeMouseClick?.Invoke(sourceWidget, e);
 		}
 
+		internal void NotifyItemDoubleClicked(GuiWidget sourceWidget, MouseEventArgs e)
+		{
+			this.NodeMouseDoubleClick?.Invoke(sourceWidget, e);
+		}
+
 		public event EventHandler BeforeCollapse;
 
 		public event EventHandler BeforeExpand;
