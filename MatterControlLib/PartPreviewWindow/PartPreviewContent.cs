@@ -193,11 +193,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			updateAvailableButton.Margin = new BorderDouble(10, 0);
 			updateAvailableButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				UiThread.RunOnIdle(() =>
-				{
-					UpdateControlData.Instance.CheckForUpdate();
-					DialogWindow.Show<CheckForUpdatesPage>();
-				});
+				UpdateControlData.Instance.CheckForUpdate();
+				DialogWindow.Show<CheckForUpdatesPage>();
 			});
 
 			tabControl.TabBar.ActionArea.AddChild(updateAvailableButton);
