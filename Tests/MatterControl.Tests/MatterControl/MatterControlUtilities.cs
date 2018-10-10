@@ -175,23 +175,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.WaitforDraw(systemWindow);
 		}
 
-		public static void CloseSignInAndPrinterSelect(this AutomationRunner testRunner)
-		{
-			testRunner.WaitForFirstDraw();
-
-			// If there is an auth panel make sure we try and close it
-			// Non-MCCentral builds won't have the plugin. Reduce the wait time for these cases
-			if (testRunner.WaitForName("Connection Wizard Skip Sign In Button", 1))
-			{
-				testRunner.ClickByName("Connection Wizard Skip Sign In Button");
-			}
-
-			if (testRunner.WaitForName("Cancel Wizard Button", 1))
-			{
-				testRunner.ClickByName("Cancel Wizard Button");
-			}
-		}
-
 		public static void OpenEmptyPartTab(this AutomationRunner testRunner)
 		{
 			testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
@@ -315,7 +298,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.WaitForReloadAll(() => testRunner.ClickByName("Yes Button"));
 		}
 
-		public static void AddAndSelectPrinter(this AutomationRunner testRunner, string make, string model)
+		public static void AddAndSelectPrinter(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD")
 		{
 			SystemWindow systemWindow;
 			testRunner.GetWidgetByName("WidescreenPanel", out systemWindow, 10);
@@ -468,6 +451,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void EnsureFoldersVisible(this AutomationRunner testRunner)
 		{
+			testRunner.ClickByName("Add Content Menu");
+
 			var checkBox = (ExpandCheckboxButton)testRunner.GetWidgetByName("Show Folders Toggle", out _);
 			if (!checkBox.Checked)
 			{

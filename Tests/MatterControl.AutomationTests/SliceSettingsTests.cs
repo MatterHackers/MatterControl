@@ -324,7 +324,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				EventHandler unregisterEvents = null;
 				int layerHeightChangedCount = 0;

@@ -27,7 +27,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				// Navigate to Downloads Library Provider
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				// Navigate to Downloads Library Provider
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				// Navigate to Downloads Library Provider
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				// Navigate to Downloads Library Provider
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				//Navigate to Downloads Library Provider
 				testRunner.NavigateToFolder("Downloads Row Item Collection");

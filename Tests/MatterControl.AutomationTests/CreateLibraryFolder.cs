@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 				testRunner.InvokeLibraryCreateFolderDialog();

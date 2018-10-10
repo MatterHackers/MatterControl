@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testRunner =>
 			{
 				// Tests that clicking the queue export button with a single item selected opens export item window
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				//Make sure that the export window does not exist
 				bool exportWindowExists1 = testRunner.WaitForName("Export Item Window", 0);
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					File.Delete(exportZipPath);
 				}
 
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				Assert.AreEqual(4, QueueData.Instance.ItemCount, "Queue should initially have 4 items");
 
@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				testRunner.ClickByName("Queue... Menu");
 
@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				testRunner.ChangeToQueueContainer();
 
