@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void WaitForFirstDraw(this AutomationRunner testRunner)
 		{
-			testRunner.GetWidgetByName("Start Tab", out SystemWindow systemWindow, 10);
+			testRunner.GetWidgetByName("WidescreenPanel", out SystemWindow systemWindow, 10);
 			// make sure we wait for MC to be up and running
 			testRunner.WaitforDraw(systemWindow);
 		}
@@ -219,7 +219,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static Emulator LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD", bool runSlow = false)
 		{
 			SystemWindow systemWindow;
-			testRunner.GetWidgetByName("Start Tab", out systemWindow, 10);
+			testRunner.GetWidgetByName("Hardware Tab", out systemWindow, 10);
 			// make sure we wait for MC to be up and running
 			testRunner.WaitforDraw(systemWindow);
 
@@ -318,17 +318,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void AddAndSelectPrinter(this AutomationRunner testRunner, string make, string model)
 		{
 			SystemWindow systemWindow;
-			testRunner.GetWidgetByName("Start Tab", out systemWindow, 10);
+			testRunner.GetWidgetByName("WidescreenPanel", out systemWindow, 10);
 			// make sure we wait for MC to be up and running
 			testRunner.WaitforDraw(systemWindow);
 
-			// If SelectMake is not visible and the ConnectionWizard is, click Skip
+			// Click 'Add Printer' if not on screen
 			if (!testRunner.NameExists("Select Make", 0.1))
 			{
 				if (!testRunner.NameExists("Create Printer", 0.1))
 				{
 					// go to the start page
-					testRunner.ClickByName("Start Tab");
+					testRunner.ClickByName("Hardware Tab");
 				}
 
 				testRunner.ClickByName("Create Printer");
