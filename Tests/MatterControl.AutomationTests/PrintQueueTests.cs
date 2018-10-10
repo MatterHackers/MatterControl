@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Expected = initial + 1
 				int expectedCount = QueueData.Instance.ItemCount + 1;
 
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				testRunner.ChangeToQueueContainer();
 
@@ -56,14 +56,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.InvokeLibraryAddDialog();
 
 				// Open Fennec_Fox
-				testRunner.CompleteDialog(
-					MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"));
+				testRunner.CompleteDialog(MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"));
 
 				// Wait for expected outcome
 				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount);
 
 				// Assert - one part  added and queue count increases by one
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
+
 				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox.stl"), "Named widget should exist after add(Fennec_Fox)");
 
 				return Task.CompletedTask;
@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Expected = initial + 2;
 				int expectedCount = QueueData.Instance.ItemCount + 2;
 
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				testRunner.ChangeToQueueContainer();
 
@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				int expectedCount = QueueData.Instance.ItemCount - 1;
 
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 
@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				int expectedCount = QueueData.Instance.ItemCount - 2;
 
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 
@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				testRunner.OpenEmptyPartTab();
 
@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Expected = initial + 1
 				int expectedCount = QueueData.Instance.ItemCount + 1;
 
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				testRunner.ChangeToQueueContainer();
 
@@ -226,7 +226,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Expected = initial + 1
 				int expectedCount = QueueData.Instance.ItemCount + 1;
 
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				testRunner.ChangeToQueueContainer();
 
@@ -256,7 +256,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Expected = initial + 1
 				int expectedCount = QueueData.Instance.ItemCount + 1;
 
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				testRunner.ChangeToQueueContainer();
 

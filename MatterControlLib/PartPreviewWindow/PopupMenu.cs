@@ -423,7 +423,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public bool KeepMenuOpen()
 		{
-			return ContainsFocus;
+			return false;
 		}
 
 		public class MenuItem : SimpleButton

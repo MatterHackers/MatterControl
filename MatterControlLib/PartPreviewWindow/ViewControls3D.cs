@@ -367,7 +367,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			return new PopupMenuButton(buttonView, theme)
 			{
-				Name = "Bed Options Menu",
+				Name = "Add Content Menu",
 				ToolTipText = "Add Content".Localize(),
 				DynamicPopupContent = () =>
 				{

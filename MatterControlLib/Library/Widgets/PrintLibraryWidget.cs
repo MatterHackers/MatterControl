@@ -49,7 +49,7 @@ using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
-	public class PrintLibraryWidget : GuiWidget
+	public class PrintLibraryWidget : GuiWidget, IIgnoredPopupChild
 	{
 		private FlowLayoutWidget buttonPanel;
 		private ListView libraryView;
@@ -1010,6 +1010,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 
 			base.OnLoad(args);
+		}
+
+		public bool KeepMenuOpen()
+		{
+			return ContainsFocus;
 		}
 
 		public enum ListViewModes

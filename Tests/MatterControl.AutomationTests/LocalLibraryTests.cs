@@ -14,7 +14,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 				testRunner.AddTestAssetsToLibrary("Batman.stl");
 
 				return Task.CompletedTask;
@@ -26,7 +26,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 				testRunner.AddTestAssetsToLibrary("Rook.amf", "Batman.stl");
 
 				return Task.CompletedTask;
@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 				testRunner.AddTestAssetsToLibrary("Rook.amf");
 
 				return Task.CompletedTask;
@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Expected: When descending into a child folder and moving items into the parent, popping the path to the parent should refresh and show the moved content
 			await MatterControlUtilities.RunTest(testRunner =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				// Navigate to Local Library
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				// Navigate to Local Library
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				testRunner.AddTestAssetsToLibrary("Rook.amf");
 
@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				// Navigate to Local Library
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				testRunner.AddTestAssetsToLibrary("Rook.amf");
 
@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter();
 
 				testRunner.AddTestAssetsToLibrary("Rook.amf", "Batman.stl");
 
