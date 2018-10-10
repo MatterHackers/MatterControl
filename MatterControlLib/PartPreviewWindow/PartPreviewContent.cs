@@ -292,20 +292,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				this.CreatePartTab("New Part", bed, theme);
 			}
-
-			// TODO: Initial hack to prototype desired behavior. Ideally loading the printer would occur during the loading screen and be initialized before widget load
-			UiThread.RunOnIdle(() =>
-			{
-				ProfileManager.Instance.LoadPrinter().ContinueWith(task =>
-				{
-					var printer = task.Result;
-					if (printer.Settings.PrinterSelected)
-					{
-						printer.ViewState.ViewMode = PartViewMode.Model;
-						printer.Bed.LoadPlateFromHistory().ConfigureAwait(false);
-					}
-				});
-			});
 		}
 
 		public ChromeTabs TabControl => tabControl;
