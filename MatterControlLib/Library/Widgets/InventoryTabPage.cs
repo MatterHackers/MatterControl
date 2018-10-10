@@ -154,11 +154,27 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Width = 300,
 				Margin = 5
 			};
+
+			treeView.NodeMouseDoubleClick += (s, e) =>
+			{
+				if (e is MouseEventArgs mouseEvent
+					&& s is GuiWidget clickedWidget
+					&& mouseEvent.Button == MouseButtons.Left
+						&& mouseEvent.Clicks == 2)
+				{
+					if (treeView?.SelectedNode.Tag is PrinterInfo printerInfo)
+					{
+						// Open printer
+						PrinterDetails.SwitchPrinters(printerInfo.ID);
+					}
+				}
+			};
+
 			treeView.NodeMouseClick += (s, e) =>
 			{
-				if (e is MouseEventArgs sourceEvent
+				if (e is MouseEventArgs mouseEvent
 					&& s is GuiWidget clickedWidget
-					&& sourceEvent.Button == MouseButtons.Right)
+					&& mouseEvent.Button == MouseButtons.Right)
 				{
 					UiThread.RunOnIdle(() =>
 					{
@@ -169,8 +185,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						{
 							if (treeView?.SelectedNode.Tag is PrinterInfo printerInfo)
 							{
-								// Open printer
-								PrinterDetails.SwitchPrinters(printerInfo.ID);
+									// Open printer
+									PrinterDetails.SwitchPrinters(printerInfo.ID);
 							}
 						};
 
@@ -179,10 +195,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						var deleteMenuItem = menu.CreateMenuItem("Delete".Localize());
 						deleteMenuItem.Click += (s2, e2) =>
 						{
-							// Delete printer
-							StyledMessageBox.ShowMessageBox(
-							(deletePrinter) =>
-							{
+								// Delete printer
+								StyledMessageBox.ShowMessageBox(
+									(deletePrinter) =>
+									{
 								if (deletePrinter)
 								{
 									if (treeView.SelectedNode.Tag is PrinterInfo printerInfo)
@@ -191,10 +207,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 									}
 								}
 							},
-							"Are you sure you want to delete your currently selected printer?".Localize(),
-							"Delete Printer?".Localize(),
-							StyledMessageBox.MessageType.YES_NO,
-							"Delete Printer".Localize());
+									"Are you sure you want to delete your currently selected printer?".Localize(),
+									"Delete Printer?".Localize(),
+									StyledMessageBox.MessageType.YES_NO,
+									"Delete Printer".Localize());
 						};
 
 
@@ -210,7 +226,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
 								AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
 							},
-							altBounds: new RectangleDouble(sourceEvent.X + 1, sourceEvent.Y + 1, sourceEvent.X + 1, sourceEvent.Y + 1));
+							altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
 					});
 				}
 			};

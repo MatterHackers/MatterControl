@@ -66,6 +66,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				this.TreeView.NotifyItemClicked(this.TitleBar, e);
 			};
+
+			this.TitleBar.MouseDown += (s, e) =>
+			{
+				if (TreeView != null
+					&& e.Button == MouseButtons.Left
+					&& e.Clicks == 2)
+				{
+					TreeView.SelectedNode = this;
+					this.TreeView.NotifyItemDoubleClicked(this.TitleBar, e);
+				}
+			};
+
 			this.AddChild(this.TitleBar);
 
 			// add a check box

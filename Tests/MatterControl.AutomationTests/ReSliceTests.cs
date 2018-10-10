@@ -44,8 +44,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class ReSliceTests
 	{
-		[Test, Category("Emulator"), Ignore("WIP")]
-		//[Test, Category("Emulator")]
+		//[Test, Category("Emulator"), Ignore("WIP")]
+		[Test, Category("Emulator")]
 		public async Task ReSliceHasCorrectEPositions()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -71,15 +71,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// distance greater than the largest distance minus the max retraction 
 					// amount and less than some amount that is reasonable
 					double lastAbsoluteEPostion = 0;
+					double largestAbsoluteEPosition = 0;
 					double largestRetraction = 0;
 					emulator.EPositionChanged += (e, s) =>
 					{
+						largestAbsoluteEPosition = Math.Max(largestAbsoluteEPosition, emulator.CurrentExtruder.AbsoluteEPosition);
 						var delta = emulator.CurrentExtruder.AbsoluteEPosition - lastAbsoluteEPostion;
 						if(delta < largestRetraction)
 						{
 							largestRetraction = delta;
 						}
-						Assert.GreaterOrEqual(-7, delta, "We should never move back more than 1 mm");
+						double printerRetraction = 7 + .1; // the airwolf has a retraction of 7 mm
+						Assert.GreaterOrEqual(delta, -printerRetraction, "We should never move back more than the retraction amount");
+						Assert.GreaterOrEqual(emulator.CurrentExtruder.AbsoluteEPosition, largestAbsoluteEPosition - printerRetraction, "Never go back more than the retaction amount");
 						Assert.LessOrEqual(emulator.CurrentExtruder.AbsoluteEPosition, lastAbsoluteEPostion + 10, "We should never move up more than 10 mm");
 						lastAbsoluteEPostion = emulator.CurrentExtruder.AbsoluteEPosition;
 					};
@@ -96,7 +100,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.StartPrint();
 
 					// Wait for pause
-					testRunner.WaitForName("No Button", 20);// the yes button is 'Resume'
+					testRunner.WaitForName("No Button", 40);// the yes button is 'Resume'
 					testRunner.ClickByName("No Button");
 
 					// Delete the cube
