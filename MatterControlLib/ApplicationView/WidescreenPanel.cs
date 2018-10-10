@@ -59,21 +59,6 @@ namespace MatterHackers.MatterControl
 			// Push TouchScreenMode into GuiWidget
 			GuiWidget.TouchScreenMode = UserSettings.Instance.IsTouchScreen;
 
-			var library3DViewSplitter = new Splitter()
-			{
-				SplitterDistance = UserSettings.Instance.LibraryViewWidth,
-				SplitterSize = theme.SplitterWidth,
-				SplitterBackground = theme.SplitterBackground
-			};
-			library3DViewSplitter.AnchorAll();
-
-			library3DViewSplitter.DistanceChanged += (s, e) =>
-			{
-				UserSettings.Instance.LibraryViewWidth = library3DViewSplitter.SplitterDistance;
-			};
-
-			this.AddChild(library3DViewSplitter);
-
 			// put in the right column
 			var partPreviewContent = new PartPreviewContent(theme)
 			{
@@ -81,31 +66,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Left | HAnchor.Right
 			};
 
-			library3DViewSplitter.Panel2.AddChild(partPreviewContent);
-
-			// put in the left column
-			var leftNav = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			using (leftNav.LayoutLock())
-			{
-				leftNav.AddChild(new BrandMenuButton(theme)
-				{
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Fit,
-					BackgroundColor = theme.TabBarBackground,
-					Border = new BorderDouble(right: 1),
-					BorderColor = theme.MinimalShade,
-					Padding = theme.TabbarPadding.Clone(right: 0)
-				});
-
-				leftNav.AddChild(new PrintLibraryWidget(partPreviewContent, theme)
-				{
-					BackgroundColor = theme.ActiveTabColor
-				});
-			}
-
-			leftNav.AnchorAll();
-
-			library3DViewSplitter.Panel1.AddChild(leftNav);
+			this.AddChild(partPreviewContent);
 		}
 	}
 
@@ -115,7 +76,7 @@ namespace MatterHackers.MatterControl
 		{
 			this.Name = "MatterControl BrandMenuButton";
 			this.VAnchor = VAnchor.Fit;
-			this.HAnchor = HAnchor.Stretch;
+			this.HAnchor = HAnchor.Fit;
 			this.Margin = 0;
 			this.PopupContent = new ApplicationSettingsWidget(ApplicationController.Instance.MenuTheme)
 			{
@@ -126,7 +87,7 @@ namespace MatterHackers.MatterControl
 
 			var row = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.Stretch,
+				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
 			};
 			this.AddChild(row);
@@ -142,6 +103,11 @@ namespace MatterHackers.MatterControl
 			{
 				VAnchor = VAnchor.Center
 			});
+
+			foreach (var child in this.Children)
+			{
+				child.Selectable = false;
+			}
 		}
 	}
 }

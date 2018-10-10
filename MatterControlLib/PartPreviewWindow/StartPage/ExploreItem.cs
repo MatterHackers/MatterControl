@@ -37,13 +37,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 	{
 		private FeedItemData item;
 		private ThemeConfig theme;
-		private ImageBuffer image;
 
 		public static int IconSize => (int)(40 * GuiWidget.DeviceScale);
 		public static int ItemSpacing { get; } = 10;
-
-		private ImageBuffer hoverImage = null;
-		private ImageWidget imageWidget;
 
 		public ExploreItem(FeedItemData item, ThemeConfig theme)
 		{
@@ -54,33 +50,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			this.item = item;
 			this.theme = theme;
 
-			image = new ImageBuffer(IconSize, IconSize);
+			var image = new ImageBuffer(IconSize, IconSize);
 
 			if (item.icon != null)
 			{
-				imageWidget = new ImageWidget(image)
+				var imageWidget = new ImageWidget(image)
 				{
 					Selectable = false,
 					VAnchor = VAnchor.Top,
 					Margin = new BorderDouble(right: ItemSpacing)
 				};
 
-				imageWidget.Load += async (s, e) =>
-				{
-					var loadInto = new ImageBuffer(IconSize, IconSize);
-					await ApplicationController.Instance.LoadRemoteImage(loadInto, item.icon, true, new BlenderPreMultBGRA());
-
-					var grayscale = new ImageBuffer(loadInto);
-					ApplicationController.Instance.MakeGrayscale(grayscale);
-
-					image = grayscale;
-					imageWidget.Image = image;
-
-					hoverImage = loadInto;
-				};
+				imageWidget.Load += (s, e) => ApplicationController.Instance.DownloadToImageAsync(image, item.icon, true, new BlenderPreMultBGRA());
 				this.AddChild(imageWidget);
 			}
-			else if(item.widget_url != null)
+			else if (item.widget_url != null)
 			{
 				var whiteBackground = new GuiWidget(IconSize, IconSize)
 				{
@@ -90,25 +74,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				};
 				this.AddChild(whiteBackground);
 
-				imageWidget = new ImageWidget(image)
+				var imageWidget = new ImageWidget(image)
 				{
 					Selectable = false,
 					VAnchor = VAnchor.Center,
 				};
 
-				imageWidget.Load += async (s, e) =>
-				{
-					var loadInto = new ImageBuffer(IconSize, IconSize);
-					await ApplicationController.Instance.LoadRemoteImage(loadInto, item.widget_url, true, new BlenderPreMultBGRA());
-
-					var grayscale = new ImageBuffer(loadInto);
-					ApplicationController.Instance.MakeGrayscale(grayscale);
-
-					image = grayscale;
-					imageWidget.Image = image;
-
-					hoverImage = loadInto;
-				};
+				imageWidget.Load += (s, e) => ApplicationController.Instance.DownloadToImageAsync(image, item.widget_url, true, new BlenderPreMultBGRA());
 				whiteBackground.AddChild(imageWidget);
 			}
 
@@ -138,22 +110,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
 			mouseInBounds = true;
-
-			if (hoverImage != null)
-			{
-				imageWidget.Image = hoverImage;
-				this.Invalidate();
-			}
-
 			base.OnMouseEnterBounds(mouseEvent);
-			
+
+			this.Invalidate();
 		}
 
 		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
 		{
 			mouseInBounds = false;
-
-			imageWidget.Image = image;
 			base.OnMouseLeaveBounds(mouseEvent);
 
 			this.Invalidate();

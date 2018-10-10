@@ -29,7 +29,10 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Linq;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 
@@ -116,7 +119,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch
 			};
 			toolbarAndView3DWidget.AddChild(viewControls3D);
-			toolbarAndView3DWidget.AddChild(view3DWidget);
+
+			var favoritesBarAndView3DWidget = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			};
+
+			var dummyContext = new LibraryConfig()
+			{
+				ActiveContainer = ApplicationController.Instance.Library.ActiveContainer
+			};
+
+			var favoritesBar = new ListView(dummyContext, theme)
+			{
+				Name = "LibraryView",
+				// Drop containers
+				ContainerFilter = (container) => false,
+				BackgroundColor = new Color(theme.MinimalShade, 25),
+				ListContentView = new IconListView(theme, 22),
+				Border = new BorderDouble(top: 1),
+				HAnchor = HAnchor.Absolute,
+				Width = 33,
+				AllowContextMenu = false
+			};
+
+			favoritesBarAndView3DWidget.AddChild(favoritesBar);
+			favoritesBarAndView3DWidget.AddChild(view3DWidget);
+			toolbarAndView3DWidget.AddChild(favoritesBarAndView3DWidget);
+
 			view3DContainer.AddChild(toolbarAndView3DWidget);
 
 			leftToRight.AddChild(view3DContainer);

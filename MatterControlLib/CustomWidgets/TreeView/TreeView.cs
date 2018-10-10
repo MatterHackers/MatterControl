@@ -36,7 +36,7 @@ using MatterHackers.VectorMath;
 namespace MatterHackers.MatterControl.CustomWidgets
 {
 	/// <summary>
-	/// Make this object a terminating leafe in the Design History. Do 
+	/// Make this object a terminating leaf in the Design History. Do
 	/// not show any of its children
 	/// </summary>
 	public interface IVisualLeafNode
@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	public class TreeView : ScrollableWidget
 	{
-		private ThemeConfig theme;
+		protected ThemeConfig theme;
 
 		public TreeView(ThemeConfig theme)
 			: this(0, 0, theme)

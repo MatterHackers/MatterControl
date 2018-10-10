@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Kevin Pope, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,10 +33,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-#if !__ANDROID__
-using Markdig.Agg;
-#endif
-
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -46,10 +42,11 @@ using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
+using static MatterHackers.MatterControl.PrintLibrary.PrintLibraryWidget;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
-	public class PrintLibraryWidget : GuiWidget
+	public class LibraryWidget : GuiWidget
 	{
 		private FlowLayoutWidget buttonPanel;
 		private ListView libraryView;
@@ -66,8 +63,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private ThemeConfig theme;
 		private OverflowBar navBar;
 		private GuiWidget searchButton;
+		private TreeView treeView;
 
-		public PrintLibraryWidget(PartPreviewContent partPreviewContent, ThemeConfig theme)
+		public LibraryWidget(PartPreviewContent partPreviewContent, ThemeConfig theme)
 		{
 			this.theme = theme;
 			this.partPreviewContent = partPreviewContent;
@@ -97,20 +95,71 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			allControls.AddChild(navBar);
 			theme.ApplyBottomBorder(navBar);
 
-			var toolbar = new OverflowBar(AggContext.StaticData.LoadIcon("fa-sort_16.png", 32, 32, theme.InvertIcons), theme)
+			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView, theme);
+			navBar.AddChild(breadCrumbWidget);
+
+			var searchPanel = new SearchInputBox(theme)
 			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				Name = "Folders Toolbar"
+				Visible = false,
+				Margin = new BorderDouble(10, 0, 5, 0),
+			};
+			searchPanel.searchInput.ActualTextEditWidget.EnterPressed += (s, e) =>
+			{
+				this.PerformSearch();
+			};
+			searchPanel.ResetButton.Click += (s, e) =>
+			{
+				breadCrumbWidget.Visible = true;
+				searchPanel.Visible = false;
+
+				searchPanel.searchInput.Text = "";
+
+				this.ClearSearch();
 			};
 
-			theme.ApplyBottomBorder(toolbar, shadedBorder: true);
+			// Store a reference to the input field
+			this.searchInput = searchPanel.searchInput;
 
-			toolbar.OverflowButton.Name = "Print Library View Options";
-			toolbar.Padding = theme.ToolbarPadding;
+			navBar.AddChild(searchPanel);
 
-			toolbar.ExtendOverflowMenu = (popupMenu) =>
+			searchButton = theme.CreateSearchButton();
+			searchButton.Enabled = false;
+			searchButton.Name = "Search Library Button";
+			searchButton.Click += (s, e) =>
 			{
+				if (searchPanel.Visible)
+				{
+					PerformSearch();
+				}
+				else
+				{
+					searchContainer = ApplicationController.Instance.Library.ActiveContainer;
+
+					breadCrumbWidget.Visible = false;
+					searchPanel.Visible = true;
+					searchInput.Focus();
+				}
+			};
+			navBar.AddChild(searchButton);
+
+			PopupMenuButton viewOptionsButton;
+
+			navBar.AddChild(
+				viewOptionsButton = new PopupMenuButton(
+					new ImageWidget(AggContext.StaticData.LoadIcon("fa-sort_16.png", 32, 32, theme.InvertIcons))
+					{
+						//VAnchor = VAnchor.Center
+					},
+					theme)
+				{
+					AlignToRightEdge = true,
+					Name = "Print Library View Options"
+				});
+
+			viewOptionsButton.DynamicPopupContent = () =>
+			{
+				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+
 				var siblingList = new List<GuiWidget>();
 
 				popupMenu.CreateBoolMenuItem(
@@ -151,62 +200,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					(v) => libraryView.Ascending = false,
 					useRadioStyle: true,
 					siblingRadioButtonList: siblingList);
+
+				return popupMenu;
 			};
-
-			allControls.AddChild(toolbar);
-
-			var showFolders = new ExpandCheckboxButton("Folders".Localize(), theme)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit | VAnchor.Center,
-				Margin = theme.ButtonSpacing,
-				Name = "Show Folders Toggle",
-				Checked = UserSettings.Instance.ShowContainers,
-			};
-			showFolders.SetIconMargin(theme.ButtonSpacing);
-			showFolders.CheckedStateChanged += async (s, e) =>
-			{
-				UserSettings.Instance.set(UserSettingsKey.ShowContainers, showFolders.Checked ? "1" : "0");
-				await libraryView.Reload();
-			};
-			toolbar.AddChild(showFolders);
-
-			var openButton = new TextButton("Open", theme)
-			{
-				Margin = theme.ButtonSpacing,
-			};
-			openButton.Click += (s, e) =>
-			{
-				var extensionsWithoutPeriod = new HashSet<string>(ApplicationSettings.OpenDesignFileParams.Split('|').First().Split(',').Select(t => t.Trim().Trim('.')));
-
-				foreach (var extension in ApplicationController.Instance.Library.ContentProviders.Keys)
-				{
-					extensionsWithoutPeriod.Add(extension.ToUpper());
-				}
-
-				var extensionsArray = extensionsWithoutPeriod.OrderBy(t => t).ToArray();
-
-				string filter = string.Format(
-					"{0}|{1}",
-					string.Join(",", extensionsArray),
-					string.Join("", extensionsArray.Select(t => $"*.{t.ToLower()};").ToArray()));
-
-				UiThread.RunOnIdle(() =>
-				{
-					AggContext.FileDialogs.OpenFileDialog(
-						new OpenFileDialogParams(filter, multiSelect: true),
-						(openParams) =>
-						{
-							ViewControls3D.LoadAndAddPartsToPlate(this, openParams.FileNames, ApplicationController.Instance.DragDropData.SceneContext);
-						});
-				});
-			};
-
-			toolbar.AddChild(openButton);
 
 			PopupMenuButton viewMenuButton;
 
-			toolbar.AddChild(
+			navBar.AddChild(
 				viewMenuButton = new PopupMenuButton(
 					new ImageWidget(AggContext.StaticData.LoadIcon("mi-view-list_10.png", 32, 32, theme.InvertIcons))
 					{
@@ -288,59 +288,70 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				return popupMenu;
 			};
 
-			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView, theme);
-			navBar.AddChild(breadCrumbWidget);
-
-			var searchPanel = new SearchInputBox(theme)
+			var horizontalSplitter = new Splitter()
 			{
-				Visible = false,
-				Margin = new BorderDouble(10, 0, 5, 0),
+				SplitterDistance = UserSettings.Instance.LibraryViewWidth,
+				SplitterSize = theme.SplitterWidth,
+				SplitterBackground = theme.SplitterBackground
 			};
-			searchPanel.searchInput.ActualTextEditWidget.EnterPressed += (s, e) =>
-			{
-				this.PerformSearch();
-			};
-			searchPanel.ResetButton.Click += (s, e) =>
-			{
-				breadCrumbWidget.Visible = true;
-				searchPanel.Visible = false;
+			horizontalSplitter.AnchorAll();
 
-				searchPanel.searchInput.Text = "";
-
-				this.ClearSearch();
+			horizontalSplitter.DistanceChanged += (s, e) =>
+			{
+				UserSettings.Instance.LibraryViewWidth = horizontalSplitter.SplitterDistance;
 			};
 
-			// Store a reference to the input field
-			this.searchInput = searchPanel.searchInput;
+			allControls.AddChild(horizontalSplitter);
 
-			navBar.AddChild(searchPanel);
-
-			searchButton = theme.CreateSearchButton();
-			searchButton.Enabled = false;
-			searchButton.Name = "Search Library Button";
-			searchButton.Click += (s, e) =>
+			treeView = new TreeView(theme)
 			{
-				if (searchPanel.Visible)
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Stretch,
+				Width = 300,
+				Margin = 5
+			};
+			treeView.AfterSelect += async (s, e) =>
+			{
+				if (treeView.SelectedNode is ContainerTreeNode treeNode)
 				{
-					PerformSearch();
-				}
-				else
-				{
-					searchContainer = ApplicationController.Instance.Library.ActiveContainer;
+					if (!treeNode.ContainerAcquired)
+					{
+						await this.EnsureExpanded(treeNode.Tag as ILibraryItem, treeNode);
+					}
 
-					breadCrumbWidget.Visible = false;
-					searchPanel.Visible = true;
-					searchInput.Focus();
+					if (treeNode.ContainerAcquired)
+					{
+						ApplicationController.Instance.Library.ActiveContainer = treeNode.Container;
+					}
 				}
 			};
-			navBar.AddChild(searchButton);
+			horizontalSplitter.Panel1.AddChild(treeView);
 
-			allControls.AddChild(libraryView);
+			var rootColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Fit,
+				Margin = new BorderDouble(left: 10)
+			};
+			treeView.AddChild(rootColumn);
+
+			UiThread.RunOnIdle(() =>
+			{
+				foreach (var item in ApplicationController.Instance.Library.ActiveContainer.ChildContainers)
+				{
+					var rootNode = this.CreateTreeNode(item);
+					rootNode.TreeView = treeView;
+
+					rootColumn.AddChild(rootNode);
+				}
+			}, 1);
+			horizontalSplitter.Panel2.AddChild(libraryView);
 
 			buttonPanel = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch,
 				Padding = theme.ToolbarPadding,
+				DebugShowBounds = true
 			};
 			AddLibraryButtonElements();
 			allControls.AddChild(buttonPanel);
@@ -348,6 +359,98 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			allControls.AnchorAll();
 
 			this.AddChild(allControls);
+		}
+
+		private async Task GetExpansionItems(ILibraryItem containerItem, ContainerTreeNode treeNode)
+		{
+			if (containerItem is ILibraryContainerLink containerLink)
+			{
+				// Prevent invalid assignment of container.Parent due to overlapping load attempts that
+				// would otherwise result in containers with self referencing parent properties
+				//if (loadingContainerLink != containerLink)
+				//{
+				//	loadingContainerLink = containerLink;
+
+				try
+				{
+					// Container items
+					var container = await containerLink.GetContainer(null);
+					if (container != null)
+					{
+						await Task.Run(() =>
+						{
+							container.Load();
+						});
+
+						if (treeNode.NodeParent is ContainerTreeNode parentNode)
+						{
+							container.Parent = parentNode.Container;
+						}
+
+						foreach (var childContainer in container.ChildContainers)
+						{
+							treeNode.Nodes.Add(CreateTreeNode(childContainer));
+						}
+
+						treeNode.Container = container;
+
+						treeNode.AlwaysExpandable = treeNode.Nodes.Count > 0;
+						treeNode.Expandable = treeNode.Nodes.Count > 0;
+						treeNode.Expanded = treeNode.Nodes.Count > 0;
+
+						treeNode.Invalidate();
+
+						this.BackgroundColor = Color.Transparent;
+
+						//	container.Parent = ActiveContainer;
+						// SetActiveContainer(container);
+					}
+				}
+				catch { }
+				finally
+				{
+					// Clear the loading guard and any completed load attempt
+					// loadingContainerLink = null;
+				}
+			///////////////////}
+			}
+		}
+
+		private TreeNode CreateTreeNode(ILibraryItem containerItem)
+		{
+			var treeNode = new ContainerTreeNode(theme)
+			{
+				Text = containerItem.Name,
+				Tag = containerItem,
+				AlwaysExpandable = true
+			};
+
+			ApplicationController.Instance.Library.LoadItemThumbnail(
+				(icon) =>
+				{
+					treeNode.Image = icon.SetPreMultiply();
+				},
+				null,
+				containerItem,
+				null,
+				16,
+				16,
+				theme).ConfigureAwait(false);
+
+			treeNode.ExpandedChanged += (s, e) =>
+			{
+				this.EnsureExpanded(containerItem, treeNode).ConfigureAwait(false);
+			};
+
+			return treeNode;
+		}
+
+		public async Task EnsureExpanded(ILibraryItem libraryItem, ContainerTreeNode treeNode)
+		{
+			if (!treeNode.ContainerAcquired)
+			{
+				await GetExpansionItems(libraryItem, treeNode).ConfigureAwait(false);
+			}
 		}
 
 		private void PerformSearch()
@@ -414,6 +517,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			var activeContainer = this.libraryView.ActiveContainer;
 
 			bool containerSupportsEdits = activeContainer is ILibraryWritableContainer;
+
+			var owningNode = treeView.SelectedNode?.Parents<ContainerTreeNode>().Where(p => p.Container == activeContainer).FirstOrDefault();
+			if (owningNode != null)
+			{
+				treeView.SelectedNode = owningNode;
+			}
 
 			searchInput.Text = activeContainer.KeywordFilter;
 			breadCrumbWidget.SetContainer(activeContainer);
@@ -613,22 +722,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
 				}
 			});
-
-#if !__ANDROID__ && DEBUG
-			// edit menu item
-			menuActions.Add(new PrintItemAction()
-			{
-				Title = "Markdown Tests"/* Don't localize debug tool */,
-				Action = (selectedLibraryItems, listView) =>
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						DialogWindow.Show<MarkdownPage>();
-					});
-				},
-				IsEnabled = (selectedListItems, listView) => true
-			});
-#endif
 
 			// edit menu item
 			menuActions.Add(new PrintItemAction()
@@ -893,15 +986,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			base.OnClosed(e);
 		}
 
-		private async void addToQueueButton_Click(object sender, EventArgs e)
-		{
-			var selectedItems = libraryView.SelectedItems.Select(o => o.Model);
-			if (selectedItems.Any())
-			{
-				await PrintQueueContainer.AddAllItems(selectedItems);
-			}
-		}
-
 		private void deleteFromLibraryButton_Click(object sender, EventArgs e)
 		{
 			// ask before remove
@@ -1010,51 +1094,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 
 			base.OnLoad(args);
-		}
-
-		public enum ListViewModes
-		{
-			RowListView,
-			IconListView,
-			IconListView18,
-			IconListView70,
-			IconListView256
-		}
-	}
-
-	public class SearchInputBox : GuiWidget
-	{
-		internal MHTextEditWidget searchInput;
-		public Button ResetButton { get; }
-
-		public SearchInputBox(ThemeConfig theme, string emptyText = null)
-		{
-			this.VAnchor = VAnchor.Center | VAnchor.Fit;
-			this.HAnchor = HAnchor.Stretch;
-
-			searchInput = new MHTextEditWidget(messageWhenEmptyAndNotSelected: emptyText ?? "Search".Localize())
-			{
-				Name = "Search Library Edit",
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Center
-			};
-			this.AddChild(searchInput);
-
-			var resetButton = theme.CreateSmallResetButton();
-			resetButton.HAnchor = HAnchor.Right | HAnchor.Fit;
-			resetButton.VAnchor = VAnchor.Center | VAnchor.Fit;
-			resetButton.Name = "Close Search";
-			resetButton.ToolTipText = "Clear".Localize();
-
-			this.AddChild(resetButton);
-
-			this.ResetButton = resetButton;
-		}
-
-		public override string Text
-		{
-			get => searchInput.ActualTextEditWidget.Text;
-			set => searchInput.ActualTextEditWidget.Text = value;
 		}
 	}
 }

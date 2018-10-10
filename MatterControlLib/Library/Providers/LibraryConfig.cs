@@ -68,7 +68,10 @@ namespace MatterHackers.MatterControl.Library
 		private ILibraryContainer activeContainer;
 
 		private static ImageBuffer defaultFolderIcon = AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")).SetPreMultiply();
+		private static ImageBuffer defaultFolderIconx20 = AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")).SetPreMultiply();
+
 		private static ImageBuffer defaultItemIcon = AggContext.StaticData.LoadIcon(Path.Combine("Library", "file.png"));
+		private static ImageBuffer defaultItemIconx20 = AggContext.StaticData.LoadIcon(Path.Combine("Library", "file_20x20.png"));
 
 		public LibraryConfig()
 		{
@@ -261,7 +264,21 @@ namespace MatterHackers.MatterControl.Library
 			if (thumbnail == null)
 			{
 				// Use the listview defaults
-				thumbnail = ((libraryItem is ILibraryContainerLink) ? defaultFolderIcon : defaultItemIcon).AlphaToPrimaryAccent();
+				if (thumbHeight < 24 && thumbWidth < 24)
+				{
+					thumbnail = ((libraryItem is ILibraryContainerLink) ? defaultFolderIconx20 : defaultItemIconx20); ;
+
+					//if (!theme.InvertIcons)
+					//{
+					//	thumbnail = thumbnail.InvertLightness();
+					//}
+
+					thumbnail = thumbnail.MultiplyWithPrimaryAccent();
+				}
+				else
+				{
+					thumbnail = ((libraryItem is ILibraryContainerLink) ? defaultFolderIcon : defaultItemIcon).AlphaToPrimaryAccent();
+				}
 			}
 
 			// TODO: Resolve and implement

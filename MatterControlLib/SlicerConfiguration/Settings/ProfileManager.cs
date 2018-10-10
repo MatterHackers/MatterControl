@@ -129,6 +129,63 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return userProfilesDirectory;
 		}
 
+		public void DeletePrinter(string printerID, bool markedForDelete)
+		{
+
+			bool isActivePrinter = printerID == this.ActiveProfile.ID;
+
+			var printerInfo = ProfileManager.Instance[printerID];
+			if (printerInfo != null)
+			{
+				printerInfo.MarkedForDelete = markedForDelete;
+				ProfileManager.Instance.Save();
+			}
+
+			if (isActivePrinter)
+			{
+				// Clear selected printer state
+				ProfileManager.Instance.LastProfileID = "";
+			}
+
+			UiThread.RunOnIdle(async () =>
+			{
+				if (isActivePrinter)
+				{
+					await ApplicationController.Instance.ClearActivePrinter();
+				}
+
+				// Notify listeners of a ProfileListChange event due to this printers removal
+				ProfileManager.ProfilesListChanged.CallEvents(this, null);
+
+				// Force sync after marking for delete if assigned
+				ApplicationController.SyncPrinterProfiles?.Invoke("SettingsHelpers.SetMarkedForDelete()", null);
+			});
+		}
+
+		public void DeleteActivePrinter(bool markedForDelete)
+		{
+			var printerInfo = ProfileManager.Instance.ActiveProfile;
+			if (printerInfo != null)
+			{
+				printerInfo.MarkedForDelete = markedForDelete;
+				ProfileManager.Instance.Save();
+			}
+
+			// Clear selected printer state
+			ProfileManager.Instance.LastProfileID = "";
+
+			UiThread.RunOnIdle(async () =>
+			{
+				await ApplicationController.Instance.ClearActivePrinter();
+
+				// Notify listeners of a ProfileListChange event due to this printers removal
+				ProfileManager.ProfilesListChanged.CallEvents(this, null);
+
+				// Force sync after marking for delete if assigned
+				ApplicationController.SyncPrinterProfiles?.Invoke("SettingsHelpers.SetMarkedForDelete()", null);
+			});
+		}
+
 		[JsonIgnore]
 		public bool IsGuestProfile => this.UserName == "guest";
 

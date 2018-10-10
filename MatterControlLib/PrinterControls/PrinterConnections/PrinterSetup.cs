@@ -33,25 +33,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
 	public static class PrinterSetup
 	{
-		public static Func<bool> ShouldShowAuthPanel { get; set; }
-		public static Action ShowAuthDialog;
-		public static Action ChangeToAccountCreate;
-
 		public enum StartPageOptions { Default, SkipWifiSetup, ShowMakeModel }
 
 		public static DialogPage GetBestStartPage(StartPageOptions options = StartPageOptions.Default)
 		{
 			// Do the printer setup logic
 			bool WifiDetected = AppContext.Platform.IsNetworkConnected();
-			if (!WifiDetected 
+			if (!WifiDetected
 				&& options != StartPageOptions.SkipWifiSetup)
 			{
 				return new SetupWizardWifi();
-			}
-			else if (ShouldShowAuthPanel?.Invoke() == true
-				&& options != StartPageOptions.ShowMakeModel)
-			{
-				return new ShowAuthPanel();
 			}
 			else
 			{

@@ -76,19 +76,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseDown(mouseEvent);
 		}
 
-		public override void OnMouseUp(MouseEventArgs mouseEvent)
+		public override void OnClick(MouseEventArgs mouseEvent)
 		{
-			// HACK: Child controls seem to be interfering with this.MouseCaptured - this short term workaround ensure we get clicks but likely mean mouse down outside of the control will fire the popup
-			bool mouseUpInBounds = this.PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y);
-
-			// Only show the popup if the menu was hidden as the mouse events started
-			if ((mouseUpInBounds || buttonView?.MouseCaptured == true)
-				&& !menuVisibileAtMouseDown)
+			if (!menuVisibileAtMouseDown)
 			{
 				UiThread.RunOnIdle(this.ShowPopup);
 			}
 
-			base.OnMouseUp(mouseEvent);
+			base.OnClick(mouseEvent);
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)

@@ -107,6 +107,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.TabContainer.AddChild(iTab.TabContent);
 		}
 
+		public virtual void AddTab(GuiWidget tabWidget, int tabPosition, int widgetPosition)
+		{
+			var iTab = tabWidget as ITab;
+			_allTabs.Insert(tabPosition, iTab);
+
+			tabWidget.Click += TabWidget_Click;
+
+			this.TabBar.ActionArea.AddChild(tabWidget, widgetPosition);
+
+			this.TabContainer.AddChild(iTab.TabContent);
+		}
+
 		private void TabWidget_Click(object sender, MouseEventArgs e)
 		{
 			var tab = sender as ITab;
@@ -211,11 +223,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private TabTrailer tabTrailer;
 
+		private GuiWidget leadingTabAdornment;
+
 		public ChromeTabs(GuiWidget rightAnchorItem, ThemeConfig theme)
 			: base(theme, rightAnchorItem)
 		{
-			// TODO: add in the printers and designs that are currently open (or were open last run).
-			var leadingTabAdornment = new GuiWidget()
+			leadingTabAdornment = new GuiWidget()
 			{
 				MinimumSize = new Vector2(16, theme.TabButtonHeight),
 				VAnchor = VAnchor.Bottom
@@ -226,7 +239,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ChromeTab.DrawTabLowerRight(e.Graphics2D, leadingTabAdornment.LocalBounds, (firstItem == this.ActiveTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
 			};
 			this.TabBar.ActionArea.AddChild(leadingTabAdornment);
-			// TODO: add in the printers and designs that are currently open (or were open last run).
+
 			tabTrailer = new TabTrailer(this, theme)
 			{
 				VAnchor = VAnchor.Bottom,
@@ -238,7 +251,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void AddTab(GuiWidget tabWidget, int tabIndex = -1)
 		{
-			var position = this.TabBar.ActionArea.GetChildIndex(tabTrailer);
+			// Default position if tabIndex == -1 is just before the tabTrailer
+			var widgetPosition = this.TabBar.ActionArea.GetChildIndex(tabTrailer);
+			var firstTabPosition = this.TabBar.ActionArea.GetChildIndex(leadingTabAdornment) + 1;
+
+			if (tabIndex != -1)
+			{
+				// Adjust position to be the head of the list + the tabIndex offset
+				widgetPosition = firstTabPosition + tabIndex;
+			}
 
 			if (tabWidget is ChromeTab newTab)
 			{
@@ -246,20 +267,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (tabIndex == -1)
 				{
-					leftTab = this.AllTabs.OfType<ChromeTab>().LastOrDefault();
+					leftTab = AllTabs.OfType<ChromeTab>().LastOrDefault();
 				}
 				else
 				{
-					leftTab = this.AllTabs.Skip(tabIndex - 1).FirstOrDefault() as ChromeTab;
-
-					var rightTab = leftTab.NextTab;
-					if (rightTab != null)
+					if (tabIndex == 0)
 					{
-						// Insert us in the middle
-						rightTab.PreviousTab = newTab;
+						leftTab = null;
+						var firstTab = AllTabs.OfType<ChromeTab>().FirstOrDefault();
 
-						// Set Next
-						newTab.NextTab = rightTab;
+						newTab.NextTab = firstTab;
+						firstTab.PreviousTab = newTab;
+					}
+					else
+					{
+						leftTab = this.AllTabs.Skip(tabIndex - 1).FirstOrDefault() as ChromeTab;
+
+						var rightTab = leftTab?.NextTab;
+						if (rightTab != null)
+						{
+							// Insert us in the middle
+							rightTab.PreviousTab = newTab;
+
+							// Set Next
+							newTab.NextTab = rightTab;
+						}
 					}
 				}
 
@@ -272,13 +304,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					leftTab.NextTab = newTab;
 				}
 
-				if (tabIndex != -1)
-				{
-					position = this.TabBar.ActionArea.GetChildIndex(leftTab) + 1;
-				}
-
 				// Call AddTab(widget, int) in base explicitly
-				base.AddTab(tabWidget, position);
+				base.AddTab(tabWidget, widgetPosition - firstTabPosition, widgetPosition);
 
 				this.ActiveTab = newTab;
 			}

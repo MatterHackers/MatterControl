@@ -34,6 +34,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -97,6 +98,25 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			contentRow.AddChild(printerMakeContainer);
 			contentRow.AddChild(printerModelContainer);
 			contentRow.AddChild(createPrinterNameContainer());
+
+			if (ApplicationController.GuestUserActive())
+			{
+				var signInRow = new FlowLayoutWidget()
+				{
+					HAnchor = HAnchor.Stretch,
+				};
+
+				signInRow.AddChild(new TextWidget("Sign in to access your existing printers", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor));
+				signInRow.AddChild(new HorizontalSpacer());
+
+				var signInLink = new LinkLabel("Sign In", theme, pointSize: theme.DefaultFontSize);
+				signInLink.Click += (s, e) => UiThread.RunOnIdle(() =>
+				{
+					this.DialogWindow.ChangeToPage(ApplicationController.GetAuthPage());
+				});
+				signInRow.AddChild(signInLink);
+				contentRow.AddChild(signInRow);
+			}
 
 			//Construct buttons
 			nextButton = theme.CreateDialogButton("Next".Localize());

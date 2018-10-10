@@ -72,35 +72,24 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			expandWidget = new TreeExpandWidget(theme)
 			{
 				Expandable = GetNodeCount(false) != 0,
-				VAnchor = VAnchor.Fit,
+				VAnchor = VAnchor.Fit | VAnchor.Center,
 				Height = 16,
 				Width = 16
 			};
 
-			var expandCheckBox = new CheckBox(expandWidget)
+			expandWidget.Click += (s, e) =>
 			{
-				Checked = this.Expanded,
-				VAnchor = VAnchor.Center,
-			};
-
-			this.ExpandedChanged += (s, e) =>
-			{
+				this.Expanded = !this.Expanded;
 				expandWidget.Expanded = this.Expanded;
-				expandCheckBox.Checked = this.Expanded;
 			};
 
-			expandCheckBox.CheckedStateChanged += (s, e) =>
-			{
-				Expanded = expandCheckBox.Checked;
-			};
-
-			this.TitleBar.AddChild(expandCheckBox);
+			this.TitleBar.AddChild(expandWidget);
 
 			this.HighlightRegion = new FlowLayoutWidget()
 			{
 				VAnchor = VAnchor.Fit,
 				HAnchor = HAnchor.Fit,
-				Padding = useIcon ? 0 : new BorderDouble(4, 2),
+				Padding = useIcon ? new BorderDouble(2) : new BorderDouble(4, 2),
 				Selectable = false
 			};
 			this.TitleBar.AddChild(this.HighlightRegion);
@@ -113,8 +102,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				this.HighlightRegion.AddChild(imageWidget = new ImageWidget(this.Image)
 				{
 					VAnchor = VAnchor.Center,
-					BackgroundColor = new Color(theme.Colors.PrimaryTextColor, 12),
-					Margin = 2,
+					Margin = new BorderDouble(right: 4),
 					Selectable = false
 				});
 			};
@@ -133,9 +121,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Name = "content",
 				Margin = new BorderDouble(12, 3),
 			};
-			AddChild(content);
+			this.AddChild(content);
 
-			Nodes.CollectionChanged += (s, e) => isDirty = true;
+			this.Nodes.CollectionChanged += (s, e) => isDirty = true;
 		}
 
 		public FlowLayoutWidget TitleBar { get; }
@@ -218,14 +206,30 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public bool Editing { get; }
 
+		public bool Expandable
+		{
+			get => expandWidget.Expandable;
+			set => expandWidget.Expandable = value;
+		}
+
+		public bool ReserveIconSpace
+		{
+			get => expandWidget.ReserveIconSpace;
+			set => expandWidget.ReserveIconSpace = value;
+		}
+
+		private bool _expanded;
 		public bool Expanded
 		{
-			get => content?.Visible == true;
+			get => _expanded;
 			set
 			{
-				if (content.Visible != value)
+				if (_expanded != value || content.Visible != value)
 				{
-					content.Visible = value;
+					_expanded = value;
+					expandWidget.Expanded = _expanded;
+
+					content.Visible = _expanded && this.Nodes.Count > 0;
 					ExpandedChanged?.Invoke(this, null);
 				}
 			}
@@ -413,8 +417,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				arrowDown = AggContext.StaticData.LoadIcon("fa-angle-down_12.png", theme.InvertIcons);
 				placeholder = new ImageBuffer(16, 16);
 
-				//this.VAnchor = VAnchor.Center;
-				this.Margin = new BorderDouble(right: 5);
+				this.Margin = new BorderDouble(right: 4);
 
 				imageButton = new IconButton(placeholder, theme)
 				{
@@ -448,16 +451,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					if (_expandable != value)
 					{
 						_expandable = value;
-
-						if (!value)
-						{
-							imageButton.SetIcon(placeholder);
-						}
-						else
-						{
-							imageButton.SetIcon((this.Expanded) ? arrowDown : arrowRight);
-						}
 					}
+
+					this.EnsureExpansionState();
 				}
 			}
 
@@ -471,17 +467,30 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					{
 						_expanded = value;
 
-						if (!this.Expandable)
-						{
-							imageButton.SetIcon(placeholder);
-						}
-						else
-						{
-							imageButton.SetIcon((_expanded) ? arrowDown : arrowRight);
-						}
+						this.EnsureExpansionState();
 					}
 				}
 			}
+
+			private void EnsureExpansionState()
+			{
+				if (!this.Expandable)
+				{
+					if (this.ReserveIconSpace)
+					{
+						imageButton.SetIcon(placeholder);
+					}
+
+					imageButton.Visible = this.ReserveIconSpace;
+				}
+				else
+				{
+					imageButton.Visible = true;
+					imageButton.SetIcon((_expanded) ? arrowDown : arrowRight);
+				}
+			}
+
+			public bool ReserveIconSpace { get; set; } = true;
 		}
 	}
 }

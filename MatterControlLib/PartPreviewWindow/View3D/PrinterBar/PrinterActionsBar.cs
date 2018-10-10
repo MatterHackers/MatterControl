@@ -361,7 +361,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							{
 								if (doDelete)
 								{
-									printer.Settings.Helpers.SetMarkedForDelete(true);
+									ProfileManager.Instance.DeleteActivePrinter(true);
 								}
 							},
 							"Are you sure you want to delete your currently selected printer?".Localize(),
