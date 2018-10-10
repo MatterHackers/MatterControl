@@ -199,42 +199,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.TabBar.ActionArea.AddChild(updateAvailableButton);
 
-			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent((s, e) =>
-			{
-				SetLinkButtonsVisibility(s, new StringEventArgs("Unknown"));
-			}, ref unregisterEvents);
-
 			this.AddChild(tabControl);
-
-			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
-			{
-				var activePrinter = ApplicationController.Instance.ActivePrinter;
-
-				if (e is StringEventArgs stringEvent
-					&& stringEvent.Data == SettingsKey.printer_name
-					&& printerTab != null)
-				{
-					printerTab.Text = activePrinter.Settings.GetValue(SettingsKey.printer_name);
-				}
-
-			}, ref unregisterEvents);
-
-			ApplicationController.Instance.ActivePrinterChanged.RegisterEvent((s, e) =>
-			{
-				var activePrinter = ApplicationController.Instance.ActivePrinter;
-
-				// If ActivePrinter has been nulled and a printer tab is open, close it
-				var tab1 = tabControl.AllTabs.Skip(1).FirstOrDefault();
-				if ((activePrinter == null || !activePrinter.Settings.PrinterSelected)
-					&& tab1?.TabContent is PrinterTabPage)
-				{
-					tabControl.RemoveTab(tab1);
-				}
-				else
-				{
-					this.CreatePrinterTab(activePrinter, theme);
-				}
-			}, ref unregisterEvents);
 
 			ApplicationController.Instance.NotifyPrintersTabRightElement(extensionArea);
 
@@ -292,6 +257,41 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				this.CreatePartTab("New Part", bed, theme);
 			}
+
+			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent((s, e) =>
+			{
+				SetLinkButtonsVisibility(s, new StringEventArgs("Unknown"));
+			}, ref unregisterEvents);
+
+			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
+			{
+				var activePrinter = ApplicationController.Instance.ActivePrinter;
+
+				if (e is StringEventArgs stringEvent
+					&& stringEvent.Data == SettingsKey.printer_name
+					&& printerTab != null)
+				{
+					printerTab.Text = activePrinter.Settings.GetValue(SettingsKey.printer_name);
+				}
+
+			}, ref unregisterEvents);
+
+			ApplicationController.Instance.ActivePrinterChanged.RegisterEvent((s, e) =>
+			{
+				var activePrinter = ApplicationController.Instance.ActivePrinter;
+
+				// If ActivePrinter has been nulled and a printer tab is open, close it
+				var tab1 = tabControl.AllTabs.Skip(1).FirstOrDefault();
+				if ((activePrinter == null || !activePrinter.Settings.PrinterSelected)
+					&& tab1?.TabContent is PrinterTabPage)
+				{
+					tabControl.RemoveTab(tab1);
+				}
+				else
+				{
+					this.CreatePrinterTab(activePrinter, theme);
+				}
+			}, ref unregisterEvents);
 		}
 
 		public ChromeTabs TabControl => tabControl;
