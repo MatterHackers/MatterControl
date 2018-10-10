@@ -259,10 +259,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				});
 
 			tabControl.AddTab(
-				new ChromeTab("Inventory", "Hardware".Localize(), tabControl, new InventoryTabPage(theme), theme, hasClose: false)
+				new ChromeTab("Hardware", "Hardware".Localize(), tabControl, new InventoryTabPage(theme), theme, hasClose: false)
 				{
 					MinimumSize = new Vector2(0, theme.TabButtonHeight),
-					Name = "Library Tab",
+					Name = "Hardware Tab",
 					Padding = new BorderDouble(15, 0)
 				});
 
