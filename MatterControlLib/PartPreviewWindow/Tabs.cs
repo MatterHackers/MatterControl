@@ -304,10 +304,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					leftTab.NextTab = newTab;
 				}
 
+				newTab.TabContent.Visible = false;
+
 				// Call AddTab(widget, int) in base explicitly
 				base.AddTab(tabWidget, widgetPosition - firstTabPosition, widgetPosition);
 
-				this.ActiveTab = newTab;
 			}
 		}
 
