@@ -298,7 +298,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					printerTab.Text = activePrinter.Settings.GetValue(SettingsKey.printer_name);
 				}
-
 			}, ref unregisterEvents);
 
 			ApplicationController.Instance.ActivePrinterChanged.RegisterEvent((s, e) =>
@@ -323,7 +322,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				libraryTab.Visible = activePrinter?.Settings.PrinterSelected ?? false;
 				storeTab.Visible = activePrinter?.Settings.PrinterSelected ?? false;
-
 			}, ref unregisterEvents);
 		}
 
@@ -367,7 +365,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						printerTab.Title = printer.Settings.GetValue(SettingsKey.printer_name);
 					}
 				}, ref unregisterEvents);
-
 
 				// Add printer into fixed position
 				if (tabControl.AllTabs.Any())
