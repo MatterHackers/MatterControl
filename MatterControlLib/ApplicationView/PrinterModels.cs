@@ -725,22 +725,13 @@ namespace MatterHackers.MatterControl
 		public bool SliceSettingsTabPinned
 		{
 			get => UserSettings.Instance.get(UserSettingsKey.SliceSettingsTabPinned) == "true";
-			set
-			{
-				UserSettings.Instance.set(UserSettingsKey.SliceSettingsTabPinned, value ? "true" : "false");
-			}
+			set => UserSettings.Instance.set(UserSettingsKey.SliceSettingsTabPinned, value ? "true" : "false");
 		}
 
 		public string SliceSettingsTabKey
 		{
-			get
-			{
-				return UserSettings.Instance.get(UserSettingsKey.SliceSettingsTabIndex);
-			}
-			set
-			{
-				UserSettings.Instance.set(UserSettingsKey.SliceSettingsTabIndex, value);
-			}
+			get => UserSettings.Instance.get(UserSettingsKey.SliceSettingsTabIndex);
+			set => UserSettings.Instance.set(UserSettingsKey.SliceSettingsTabIndex, value);
 		}
 
 		public bool DockWindowFloating { get; internal set; }
