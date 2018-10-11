@@ -365,10 +365,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Construct and store menu actions
 			this.MenuActions = this.BedMenuActions(sceneContext, ApplicationController.Instance.MenuTheme);
 
-			return new PopupMenuButton(buttonView, theme)
+			PopupMenuButton libraryPopup = null;
+
+			libraryPopup = new PopupMenuButton(buttonView, theme)
 			{
 				Name = "Add Content Menu",
 				ToolTipText = "Add Content".Localize(),
+				AlwaysKeepOpen = true,
 				DynamicPopupContent = () =>
 				{
 					if (partPreviewContent == null)
@@ -386,21 +389,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					var height = view3DWidget.Height - theme.DefaultContainerPadding;
 
-					widget.AddChild(new PrintLibraryWidget(partPreviewContent, theme)
+					var printLibraryWidget = new PrintLibraryWidget(partPreviewContent, theme)
 					{
 						HAnchor = HAnchor.Absolute,
 						VAnchor = VAnchor.Absolute,
 						Height = height,
 						Width = 400,
 						MinimumSize = new Vector2(400, height)
-					});
+					};
+
+					widget.AddChild(printLibraryWidget);
+
+					var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+					systemWindow.MouseDown += mouseDown;
+
+					void mouseDown(object s2, MouseEventArgs mouseEvent)
+					{
+						// MouseUp on our SystemWindow outside of our bounds should call close
+						var screenspacePosition = mouseEvent.Position;
+						bool mouseUpOnWidget = printLibraryWidget.PositionWithinLocalBounds(screenspacePosition.X, screenspacePosition.Y);
+
+						if (!mouseUpOnWidget)
+						{
+							libraryPopup.CloseMenu();
+							systemWindow.MouseDown -= mouseDown;
+						}
+					};
 
 					return widget;
-
-					//var menuContent = theme.CreateMenuItems(popupMenu, this.MenuActions);
-					//menuContent.MinimumSize = new Vector2(200, 0);
-
-					//return menuContent;
 				},
 				BackgroundColor = theme.ToolbarButtonBackground,
 				HoverColor = theme.ToolbarButtonHover,
@@ -408,6 +424,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				DrawArrow = true,
 				Margin = theme.ButtonSpacing,
 			};
+
+			return libraryPopup;
 		}
 
 		private GuiWidget CreateSaveButton(ThemeConfig theme)

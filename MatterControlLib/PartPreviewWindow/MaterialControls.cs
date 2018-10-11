@@ -110,9 +110,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnClosed(e);
 		}
 
-		public bool KeepMenuOpen()
-		{
-			return false;
-		}
+		public bool KeepMenuOpen => false;
 	}
 }

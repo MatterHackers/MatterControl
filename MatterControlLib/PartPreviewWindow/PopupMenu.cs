@@ -142,14 +142,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				graphics2D.Render(arrow, this.Enabled ? Color.Black : Color.Gray);
 			}
 
-			public bool KeepMenuOpen()
+			public bool KeepMenuOpen
 			{
-				if (SubMenu != null)
+				get
 				{
-					return SubMenu.ContainsFocus;
-				}
+					if (SubMenu != null)
+					{
+						return SubMenu.ContainsFocus;
+					}
 
-				return false;
+					return false;
+				}
 			}
 		}
 
@@ -171,10 +174,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				base.OnLoad(args);
 			}
 
-			public bool KeepMenuOpen()
-			{
-				return false;
-			}
+			public bool KeepMenuOpen => false;
 
 			public bool Checked
 			{
@@ -245,10 +245,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				base.OnLoad(args);
 			}
 
-			public bool KeepMenuOpen()
-			{
-				return false;
-			}
+			public bool KeepMenuOpen => false;
 
 			public IList<GuiWidget> SiblingRadioButtonList { get; set; }
 
@@ -421,10 +418,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return menuItem;
 		}
 
-		public bool KeepMenuOpen()
-		{
-			return false;
-		}
+		public bool KeepMenuOpen => false;
 
 		public class MenuItem : SimpleButton
 		{

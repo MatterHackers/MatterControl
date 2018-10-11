@@ -69,6 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BorderColor = theme.MinimalShade,
 				Border = new BorderDouble(left: 1),
 			};
+
 			tabControl.ActiveTabChanged += (s, e) =>
 			{
 				if (this.tabControl.ActiveTab?.TabContent is PartTabPage tabPage)

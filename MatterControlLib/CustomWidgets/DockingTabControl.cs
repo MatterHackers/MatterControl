@@ -399,10 +399,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				AddChild(topToBottom);
 			}
 
-			public bool KeepMenuOpen()
-			{
-				return false;
-			}
+			public bool KeepMenuOpen => false;
 		}
 	}
 
@@ -421,7 +418,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			contentWidget.BoundsChanged += widgetRelativeTo_PositionChanged;
 		}
 
+		public GuiWidget Anchor { get; }
+
 		public DockSide DockSide { get; set; }
+
 		public double MaxHeight { get; private set; }
 
 		public void Closed()

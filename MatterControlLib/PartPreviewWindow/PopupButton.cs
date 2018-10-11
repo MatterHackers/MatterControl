@@ -33,7 +33,7 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class PopupButton : GuiWidget, IIgnoredPopupChild
+	public class PopupButton : GuiWidget, IIgnoredPopupChild, IMenuCreator
 	{
 		public Color HoverColor { get; set; } = new Color(0, 0, 0, 40);
 
@@ -137,14 +137,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupWidget.Focus();
 		}
 
+		public void CloseMenu() => popupWidget?.CloseMenu();
+
 		protected virtual void OnBeforePopup()
 		{
 			this.BeforePopup?.Invoke(this, null);
 		}
 
-		public bool KeepMenuOpen()
-		{
-			return menuVisible;
-		}
+		public bool AlwaysKeepOpen { get; set; }
+
+		public bool KeepMenuOpen => menuVisible || this.AlwaysKeepOpen;
 	}
 }
