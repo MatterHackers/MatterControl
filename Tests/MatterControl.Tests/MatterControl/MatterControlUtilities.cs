@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -429,6 +429,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void NavigateToFolder(this AutomationRunner testRunner, string libraryRowItemName)
 		{
+			testRunner.EnsureContentMenuOpen();
 			testRunner.EnsureFoldersVisible();
 
 			switch (libraryRowItemName)
@@ -437,6 +438,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				case "Cloud Library Row Item Collection":
 				case "Print Queue Row Item Collection":
 				case "Local Library Row Item Collection":
+					if (!testRunner.NameExists("Library Row Item Collection"))
+					{
+						testRunner.ClickByName("Bread Crumb Button Home");
+						testRunner.Delay();
+					}
+
 					// If visible, navigate into Libraries container before opening target
 					if (testRunner.NameExists("Library Row Item Collection"))
 					{
@@ -451,10 +458,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void EnsureFoldersVisible(this AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("Add Content Menu");
-
-			var checkBox = (ExpandCheckboxButton)testRunner.GetWidgetByName("Show Folders Toggle", out _);
-			if (!checkBox.Checked)
+			var checkBox = (ExpandCheckboxButton)testRunner.GetWidgetByName("Show Folders Toggle", out _, secondsToWait: 0.2);
+			if (checkBox?.Checked == false)
 			{
 				var resetEvent = new AutoResetEvent(false);
 
@@ -478,14 +483,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		}
 
+		public static void EnsureContentMenuOpen(this AutomationRunner testRunner)
+		{
+			if (!testRunner.WaitForName("FolderBreadCrumbWidget", secondsToWait: 0.2))
+			{
+				testRunner.ClickByName("Add Content Menu");
+			}
+		}
+
 		public static void NavigateToLibraryHome(this AutomationRunner testRunner)
 		{
-			while (!testRunner.NameExists("Local Library Row Item Collection", .5))
-			{
-				testRunner.ClickByName("Library Up Button");
-				testRunner.Delay(1);
-			}
-
+			testRunner.EnsureContentMenuOpen();
+			testRunner.ClickByName("Bread Crumb Button Home");
 			testRunner.Delay(.5);
 		}
 
@@ -571,7 +580,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void SaveBedplateToFolder(this AutomationRunner testRunner, string newFileName, string folderName)
 		{
-			testRunner.ClickByName("Bed Options Menu");
+			testRunner.ClickByName("Save SplitButton", offset: new Point2D(8, 0));
+
 			testRunner.ClickByName("Save As Menu Item");
 
 			testRunner.Delay(1);

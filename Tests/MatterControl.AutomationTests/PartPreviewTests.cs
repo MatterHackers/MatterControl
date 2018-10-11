@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Select scene object
 				testRunner.Select3DPart("Calibration - Box.stl");
 
-				// Click Copy button and count Scene.Children 
+				// Click Copy button and count Scene.Children
 				testRunner.ClickByName("Duplicate Button");
 				testRunner.WaitFor(() => scene.Children.Count == 2);
 				Assert.AreEqual(2, scene.Children.Count, "Should have 2 parts after copy");
@@ -146,8 +146,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.AddAndSelectPrinter();
-
-				testRunner.OpenEmptyPartTab();
 
 				testRunner.AddItemToBedplate();
 
