@@ -400,8 +400,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 						treeNode.Invalidate();
 
-						this.BackgroundColor = Color.Transparent;
-
 						//	container.Parent = ActiveContainer;
 						// SetActiveContainer(container);
 					}
@@ -412,7 +410,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					// Clear the loading guard and any completed load attempt
 					// loadingContainerLink = null;
 				}
-			///////////////////}
 			}
 		}
 
