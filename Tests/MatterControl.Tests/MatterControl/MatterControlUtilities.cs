@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public enum PrepAction
 		{
-			CloseSignInAndPrinterSelect,
+			CloseSignInAndPrinterSelect
 		};
 
 		public static void ExpandEditTool(this AutomationRunner testRunner, string expandCheckboxButtonName)
@@ -193,7 +193,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					this.Kill();
 				}
-				catch { }
+				catch
+				{
+				}
 
 				base.Dispose(disposing);
 			}
@@ -322,7 +324,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Type(make);
 			testRunner.Type("{Enter}");
 			testRunner.WaitFor(() => !testRunner.WidgetExists<PopupWidget>());
-
 
 			testRunner.ClickByName("Select Model");
 			testRunner.WaitFor(() => testRunner.WidgetExists<PopupWidget>());
@@ -480,7 +481,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Release event listener
 				listView.ContentReloaded -= contentReloaded;
 			}
-
 		}
 
 		public static void EnsureContentMenuOpen(this AutomationRunner testRunner)

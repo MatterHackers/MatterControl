@@ -251,7 +251,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				HAnchor =HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
-				BackgroundColor = theme.AccentMimimalOverlay
 			});
 
 			allControls.AnchorAll();
