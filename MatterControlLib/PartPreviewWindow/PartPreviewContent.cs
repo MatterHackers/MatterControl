@@ -46,6 +46,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private EventHandler unregisterEvents;
 		private ChromeTab printerTab = null;
 		private ChromeTabs tabControl;
+		private ChromeTab libraryTab;
+		private ChromeTab storeTab;
 
 		public PartPreviewContent(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -77,6 +79,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					dragDropData.View3DWidget = tabPage.view3DWidget;
 					dragDropData.SceneContext = tabPage.sceneContext;
 				}
+
+				ApplicationController.Instance.MainTabKey = tabControl.SelectedTabKey;
 			};
 
 			// Force the ActionArea to be as high as ButtonHeight
@@ -203,10 +207,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ApplicationController.Instance.NotifyPrintersTabRightElement(extensionArea);
 
-			// Add a tab for the current printer
-			if (ApplicationController.Instance.ActivePrinter.Settings.PrinterSelected)
+			var printer = ApplicationController.Instance.ActivePrinter;
+
+			// Printer tab
+			if (printer.Settings.PrinterSelected)
 			{
-				this.CreatePrinterTab(ApplicationController.Instance.ActivePrinter, theme);
+				this.CreatePrinterTab(printer, theme);
 			}
 
 			// Library tab
@@ -216,13 +222,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			tabControl.AddTab(
-				new ChromeTab("Library", "Library".Localize(), tabControl, libraryWidget, theme, hasClose: false)
+				libraryTab = new ChromeTab("Library", "Library".Localize(), tabControl, libraryWidget, theme, hasClose: false)
 				{
 					MinimumSize = new Vector2(0, theme.TabButtonHeight),
 					Name = "Library Tab",
-					Padding = new BorderDouble(15, 0)
+					Padding = new BorderDouble(15, 0),
+					Visible = printer.Settings.PrinterSelected
 				});
 
+			// Hardware tab
 			tabControl.AddTab(
 				new ChromeTab("Hardware", "Hardware".Localize(), tabControl, new InventoryTabPage(theme), theme, hasClose: false)
 				{
@@ -233,11 +241,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Store tab
 			tabControl.AddTab(
-				new ChromeTab("Store", "Store".Localize(), tabControl, new StoreTabPage(this, theme), theme, hasClose: false)
+				storeTab = new ChromeTab("Store", "Store".Localize(), tabControl, new StoreTabPage(this, theme), theme, hasClose: false)
 				{
 					MinimumSize = new Vector2(0, theme.TabButtonHeight),
 					Name = "Store Tab",
-					Padding = new BorderDouble(15, 0)
+					Padding = new BorderDouble(15, 0),
+					Visible = printer.Settings.PrinterSelected
 				});
 
 			string tabKey = ApplicationController.Instance.MainTabKey;
@@ -305,8 +314,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					this.CreatePrinterTab(activePrinter, theme);
+					if (activePrinter.Settings.PrinterSelected)
+					{
+						this.CreatePrinterTab(activePrinter, theme);
+					}
 				}
+
+				libraryTab.Visible = activePrinter?.Settings.PrinterSelected ?? false;
+				storeTab.Visible = activePrinter?.Settings.PrinterSelected ?? false;
+
 			}, ref unregisterEvents);
 		}
 
