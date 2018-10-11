@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Padding = theme.DefaultContainerPadding,
 					BackgroundColor = this.HoverColor,
 					HAnchor = HAnchor.Fit,
-					VAnchor = VAnchor.Fit
+					VAnchor = VAnchor.Fit,
 				};
 
 				materialControl.IndexChanged += (s, e) =>
@@ -77,7 +77,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Center,
 				DrawGrid = true,
-				DisabledColor = theme.MinimalShade
+				DisabledColor = theme.MinimalShade,
+				Selectable = false,
 			};
 
 			this.AddChild(materialColorButton);
