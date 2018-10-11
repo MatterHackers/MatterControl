@@ -2037,6 +2037,7 @@ namespace MatterHackers.MatterControl
 		public AppViewState ViewState { get; } = new AppViewState();
 		public Uri HelpArticleSource { get; set; }
 		public Dictionary<string, HelpArticle> HelpArticlesByID { get; set; }
+		public string MainTabKey { get; internal set; }
 
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 

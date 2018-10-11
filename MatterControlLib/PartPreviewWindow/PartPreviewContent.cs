@@ -240,6 +240,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Padding = new BorderDouble(15, 0)
 				});
 
+			string tabKey = ApplicationController.Instance.MainTabKey;
+
+			if (string.IsNullOrEmpty(tabKey))
+			{
+				if (printer.Settings.PrinterSelected)
+				{
+					tabKey = printer.Settings.GetValue(SettingsKey.printer_name);
+				}
+				else
+				{
+					tabKey = "Hardware Tab";
+				}
+			}
+
+			tabControl.SelectedTabKey = tabKey;
+
 			var brandMenu = new BrandMenuButton(theme)
 			{
 				HAnchor = HAnchor.Fit,
