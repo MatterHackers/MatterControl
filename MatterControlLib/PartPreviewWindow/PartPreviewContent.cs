@@ -306,7 +306,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var activePrinter = ApplicationController.Instance.ActivePrinter;
 
 				// If ActivePrinter has been nulled and a printer tab is open, close it
-				var tab1 = tabControl.AllTabs.Skip(1).FirstOrDefault();
+				var tab1 = tabControl.AllTabs.FirstOrDefault();
 				if ((activePrinter == null || !activePrinter.Settings.PrinterSelected)
 					&& tab1?.TabContent is PrinterTabPage)
 				{
