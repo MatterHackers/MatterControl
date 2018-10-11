@@ -259,7 +259,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					tabKey = "Hardware Tab";
+					tabKey = "Hardware";
 				}
 			}
 
@@ -316,7 +316,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (activePrinter.Settings.PrinterSelected)
 					{
-						this.CreatePrinterTab(activePrinter, theme);
+						// Create and switch to new printer tab
+						tabControl.ActiveTab = this.CreatePrinterTab(activePrinter, theme);
 					}
 				}
 
