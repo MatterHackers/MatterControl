@@ -32,6 +32,7 @@ using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MeshVisualizer;
@@ -67,7 +68,10 @@ namespace MatterHackers.MatterControl
 			}
 
 			// Preload GL texture for 2D bed image and use MipMaps
-			ImageGlPlugin.GetImageGlPlugin(bedImage, createAndUseMipMaps: true);
+			UiThread.RunOnIdle(() =>
+			{
+				ImageGlPlugin.GetImageGlPlugin(bedImage, createAndUseMipMaps: true);
+			});
 
 			return bedImage;
 		}

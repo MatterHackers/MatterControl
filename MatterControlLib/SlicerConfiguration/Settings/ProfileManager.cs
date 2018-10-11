@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public void DeletePrinter(string printerID, bool markedForDelete)
 		{
 
-			bool isActivePrinter = printerID == this.ActiveProfile.ID;
+			bool isActivePrinter = printerID == this.ActiveProfile?.ID;
 
 			var printerInfo = ProfileManager.Instance[printerID];
 			if (printerInfo != null)

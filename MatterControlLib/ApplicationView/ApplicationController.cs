@@ -274,11 +274,6 @@ namespace MatterHackers.MatterControl
 				// HACK: short term solution to resolve printer reference for non-printer related contexts
 				DragDropData.Printer = printer;
 
-				if (!AppContext.IsLoading)
-				{
-					// Fire printer changed event
-				}
-
 				BedSettings.SetMakeAndModel(
 					printer.Settings.GetValue(SettingsKey.make),
 					printer.Settings.GetValue(SettingsKey.model));
@@ -2042,6 +2037,7 @@ namespace MatterHackers.MatterControl
 		public AppViewState ViewState { get; } = new AppViewState();
 		public Uri HelpArticleSource { get; set; }
 		public Dictionary<string, HelpArticle> HelpArticlesByID { get; set; }
+		public string MainTabKey { get; internal set; }
 
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 
@@ -3040,6 +3036,19 @@ namespace MatterHackers.MatterControl
 			bool na2 = ProfileManager.Instance.IsGuestProfile;
 
 			await ProfileManager.Instance.Initialize();
+
+			reporter?.Invoke(0.25, "Initialize printer");
+			var printer = await ProfileManager.Instance.LoadPrinter();
+
+			// Restore bed
+			if (printer.Settings.PrinterSelected)
+			{
+				printer.ViewState.ViewMode = PartViewMode.Model;
+				UiThread.RunOnIdle(() =>
+				{
+					printer.Bed.LoadPlateFromHistory().ConfigureAwait(false);
+				}, 2);
+			}
 
 			reporter?.Invoke(0.3, "MainView");
 			applicationController.MainView = new WidescreenPanel(applicationController.Theme);

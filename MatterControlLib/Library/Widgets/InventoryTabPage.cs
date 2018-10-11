@@ -43,8 +43,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public class InventoryTabPage : GuiWidget
 	{
-		private FlowLayoutWidget buttonPanel;
-		
 		private GuiWidget searchInput;
 
 		private ThemeConfig theme;
@@ -255,14 +253,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				VAnchor = VAnchor.Stretch,
 				BackgroundColor = theme.AccentMimimalOverlay
 			});
-
-			buttonPanel = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				Padding = theme.ToolbarPadding,
-				DebugShowBounds = true
-			};
-			allControls.AddChild(buttonPanel);
 
 			allControls.AnchorAll();
 

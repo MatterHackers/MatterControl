@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public IThemeColors Colors { get; set; }
+		public IThemeColors Colors { get; set; } = new ThemeColors();
 		public PresetColors PresetColors { get; set; } = new PresetColors();
 
 		public Color SlightShade { get; } = new Color(0, 0, 0, 40);
