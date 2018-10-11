@@ -566,7 +566,12 @@ namespace MatterHackers.MeshVisualizer
 					|| isDebugItem)
 				{
 					// Render as solid
-					GLHelper.Render(item.Mesh, drawColor, item.WorldMatrix(), sceneContext.ViewState.RenderType, item.WorldMatrix() * World.ModelviewMatrix, darkWireframe);
+					GLHelper.Render(item.Mesh, 
+						drawColor, 
+						item.WorldMatrix(), 
+						sceneContext.ViewState.RenderType, 
+						item.WorldMatrix() * World.ModelviewMatrix, 
+						darkWireframe, () => Invalidate());
 				}
 				else if (drawColor != Color.Transparent)
 				{
