@@ -369,10 +369,7 @@ namespace MatterHackers.MatterControl
 			{
 			}
 
-			public bool KeepMenuOpen()
-			{
-				return false;
-			}
+			public bool KeepMenuOpen => false;
 		}
 	}
 }

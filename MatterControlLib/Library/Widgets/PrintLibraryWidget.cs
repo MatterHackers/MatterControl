@@ -1012,10 +1012,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			base.OnLoad(args);
 		}
 
-		public bool KeepMenuOpen()
-		{
-			return ContainsFocus;
-		}
+		public bool KeepMenuOpen => this.ContainsFocus;
 
 		public enum ListViewModes
 		{

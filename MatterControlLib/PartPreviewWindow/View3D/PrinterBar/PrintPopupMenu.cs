@@ -213,10 +213,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 			}
 
-			public bool KeepMenuOpen()
-			{
-				return false;
-			}
+			public bool KeepMenuOpen => false;
 		}
 	}
 }

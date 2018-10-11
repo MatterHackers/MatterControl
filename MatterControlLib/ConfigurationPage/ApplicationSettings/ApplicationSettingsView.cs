@@ -104,10 +104,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.AddSettingsRow(aboutMatterControl);
 		}
 
-		public bool KeepMenuOpen()
-		{
-			return false;
-		}
+		public bool KeepMenuOpen => false;
 
 		private void AddMenuItem(string title, Action callback, string widgetName = null)
 		{

@@ -185,9 +185,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		public bool KeepMenuOpen()
-		{
-			return false;
-		}
+		public bool KeepMenuOpen => false;
 	}
 }
