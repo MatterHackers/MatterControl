@@ -28,107 +28,28 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Linq;
-using System.Threading.Tasks;
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
-	public class InventoryTabPage : GuiWidget
+	public class HardwareTabPage : GuiWidget
 	{
-		private GuiWidget searchInput;
-
 		private ThemeConfig theme;
-		private OverflowBar navBar;
-		private GuiWidget searchButton;
 		private TreeView treeView;
 
-		public InventoryTabPage(ThemeConfig theme)
+		public HardwareTabPage(ThemeConfig theme)
 		{
 			this.theme = theme;
 			this.Padding = 0;
 			this.AnchorAll();
 
 			var allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
-
-			navBar = new OverflowBar(theme)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				Visible = false
-			};
-			allControls.AddChild(navBar);
-			theme.ApplyBottomBorder(navBar);
-
-			var searchPanel = new SearchInputBox(theme)
-			{
-				Visible = false,
-				Margin = new BorderDouble(10, 0, 5, 0),
-			};
-			searchPanel.searchInput.ActualTextEditWidget.EnterPressed += (s, e) =>
-			{
-				this.PerformSearch();
-			};
-			searchPanel.ResetButton.Click += (s, e) =>
-			{
-				searchPanel.Visible = false;
-
-				searchPanel.searchInput.Text = "";
-
-				this.ClearSearch();
-			};
-
-			// Store a reference to the input field
-			this.searchInput = searchPanel.searchInput;
-
-			navBar.AddChild(searchPanel);
-
-			searchButton = theme.CreateSearchButton();
-			searchButton.Enabled = false;
-			searchButton.Name = "Search Library Button";
-			searchButton.Click += (s, e) =>
-			{
-				if (searchPanel.Visible)
-				{
-					PerformSearch();
-				}
-				else
-				{
-					searchPanel.Visible = true;
-					searchInput.Focus();
-				}
-			};
-			navBar.AddChild(searchButton);
-
-			PopupMenuButton viewOptionsButton;
-
-			navBar.AddChild(
-				viewOptionsButton = new PopupMenuButton(
-					new ImageWidget(AggContext.StaticData.LoadIcon("fa-sort_16.png", 32, 32, theme.InvertIcons))
-					{
-						//VAnchor = VAnchor.Center
-					},
-					theme)
-				{
-					AlignToRightEdge = true,
-					Name = "Print Library View Options"
-				});
-
-			viewOptionsButton.DynamicPopupContent = () =>
-			{
-				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
-
-				popupMenu.CreateMenuItem("xxx");
-
-				return popupMenu;
-			};
 
 			var horizontalSplitter = new Splitter()
 			{
@@ -229,7 +150,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 			};
 
-
 			treeView.ScrollArea.HAnchor = HAnchor.Stretch;
 
 			treeView.AfterSelect += async (s, e) =>
@@ -256,110 +176,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			allControls.AnchorAll();
 
 			this.AddChild(allControls);
-		}
-
-		private async Task GetExpansionItems(ILibraryItem containerItem, ContainerTreeNode treeNode)
-		{
-			if (containerItem is ILibraryContainerLink containerLink)
-			{
-				// Prevent invalid assignment of container.Parent due to overlapping load attempts that
-				// would otherwise result in containers with self referencing parent properties
-				//if (loadingContainerLink != containerLink)
-				//{
-				//	loadingContainerLink = containerLink;
-
-				try
-				{
-					// Container items
-					var container = await containerLink.GetContainer(null);
-					if (container != null)
-					{
-						await Task.Run(() =>
-						{
-							container.Load();
-						});
-
-						if (treeNode.NodeParent is ContainerTreeNode parentNode)
-						{
-							container.Parent = parentNode.Container;
-						}
-
-						foreach (var childContainer in container.ChildContainers)
-						{
-							treeNode.Nodes.Add(CreateTreeNode(childContainer));
-						}
-
-						treeNode.Container = container;
-
-						treeNode.AlwaysExpandable = treeNode.Nodes.Count > 0;
-						treeNode.Expandable = treeNode.Nodes.Count > 0;
-						treeNode.Expanded = treeNode.Nodes.Count > 0;
-
-						treeNode.Invalidate();
-
-						this.BackgroundColor = Color.Transparent;
-
-						//	container.Parent = ActiveContainer;
-						// SetActiveContainer(container);
-					}
-				}
-				catch { }
-				finally
-				{
-					// Clear the loading guard and any completed load attempt
-					// loadingContainerLink = null;
-				}
-				///////////////////}
-			}
-		}
-
-		private TreeNode CreateTreeNode(ILibraryItem containerItem)
-		{
-			var treeNode = new ContainerTreeNode(theme)
-			{
-				Text = containerItem.Name,
-				Tag = containerItem,
-				AlwaysExpandable = true
-			};
-
-			ApplicationController.Instance.Library.LoadItemThumbnail(
-				(icon) =>
-				{
-					treeNode.Image = icon.SetPreMultiply();
-				},
-				null,
-				containerItem,
-				null,
-				16,
-				16,
-				theme).ConfigureAwait(false);
-
-			treeNode.ExpandedChanged += (s, e) =>
-			{
-				this.EnsureExpanded(containerItem, treeNode).ConfigureAwait(false);
-			};
-
-			return treeNode;
-		}
-
-		public async Task EnsureExpanded(ILibraryItem libraryItem, ContainerTreeNode treeNode)
-		{
-			if (!treeNode.ContainerAcquired)
-			{
-				await GetExpansionItems(libraryItem, treeNode).ConfigureAwait(false);
-			}
-		}
-
-		private void PerformSearch()
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				ApplicationController.Instance.Library.ActiveContainer.KeywordFilter = searchInput.Text.Trim();
-			});
-		}
-
-		private void ClearSearch()
-		{
 		}
 	}
 }
