@@ -496,9 +496,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Check if Guest printer names exists in dropdown
 				testRunner.OpenPrintersDropdown();
-				testRunner.ClickByName("Airwolf 3D HD Menu Item");
+				testRunner.DoubleClickByName("Airwolf 3D HD Node");
 				testRunner.Delay(0.2);
-				testRunner.ClickByName("Open Empty Plate Button");
 
 				printer = ApplicationController.Instance.ActivePrinter;
 
