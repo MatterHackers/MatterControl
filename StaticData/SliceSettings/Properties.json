@@ -121,6 +121,13 @@
     "DefaultValue": "In a few seconds filament should be coming out of the extruder\n* Wait for the new filament to be coming out with no trace of the previous filament\n* Click 'Continue' when the new filament is running cleanly\n## Success! Your new filament should now be loaded"
   },
   {
+    "SlicerConfigName": "matterhackers_sid",
+    "PresentationName": "MatterHackers Sku-ID",
+    "HelpText": "The identification used on MatterHackers.com for this product. This will allow detailed information to show up on the printer page.",
+    "DataEditType": "STRING",
+    "DefaultValue": ""
+  },
+  {
     "SlicerConfigName": "bottom_solid_layers",
     "PresentationName": "Bottom Solid Layers",
     "HelpText": "The number of layers or the distance in millimeters to solid fill on the bottom surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.",

@@ -28,23 +28,33 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 
+using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using Newtonsoft.Json;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 
-namespace MatterHackers.MatterControl.PrintLibrary
+namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 {
 	public class PrinterDetails : FlowLayoutWidget
 	{
 		private ThemeConfig theme;
+		private PrinterInfo printerInfo;
 
 		public PrinterDetails(PrinterInfo printerInfo, ThemeConfig theme)
-			: base (FlowDirection.TopToBottom)
+			: base(FlowDirection.TopToBottom)
 		{
+			this.printerInfo = printerInfo;
 			this.theme = theme;
 
 			var headingRow = this.AddHeading(
@@ -66,44 +76,116 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 
 			this.AddChild(headingRow);
+		}
 
-			GuiWidget row;
-
-			row = this.AddHeading("Parts & Accessories");
-			row.Margin = row.Margin.Clone(top: 20);
-			this.AddChild(row);
-
-			if (printerInfo.Make == "BCN")
+		public override async void OnLoad(EventArgs args)
+		{
+			if (File.Exists(printerInfo.ProfilePath))
 			{
-				var accessoriesImage = new ImageBuffer();
-				row = new ImageWidget(accessoriesImage);
-				this.AddChild(row);
+				// load up the printer profile so we can get the MatterHackers Skew-ID out of it
+				var profile = PrinterSettings.LoadFile(printerInfo.ProfilePath);
 
-				ApplicationController.Instance.LoadRemoteImage(accessoriesImage, "https://i.imgur.com/io37z8h.png", false).ConfigureAwait(false);
-			}
-
-			row = this.AddHeading("Upgrades");
-			row.Margin = row.Margin.Clone(top: 20);
-			this.AddChild(row);
-
-			var upgradesImage = new ImageBuffer();
-			row = new ImageWidget(upgradesImage);
-			this.AddChild(row);
-
-			ApplicationController.Instance.LoadRemoteImage(upgradesImage, "https://i.imgur.com/kDiV2Da.png", false).ConfigureAwait(false);
-
-
-			if (printerInfo.Make == "BCN")
-			{
-				var accessoriesImage = new ImageBuffer();
-				row = new ImageWidget(accessoriesImage)
+				// if there is a SID than get the data from that url and display it
+				var sid = profile.GetValue(SettingsKey.matterhackers_sid);
+				if (!string.IsNullOrWhiteSpace(sid))
 				{
-					Margin = new BorderDouble(top: 30)
-				};
-				this.AddChild(row);
+					var product = (await LoadProductData(sid)).ProductSku;
+					// put in controls from the feed that show relevant printer information
 
-				ApplicationController.Instance.LoadRemoteImage(accessoriesImage, "https://i.imgur.com/rrEwKY9.png", false).ConfigureAwait(false);
+					GuiWidget row;
+					row = this.AddHeading("Description".Localize() + ":");
+					row.Margin = row.Margin.Clone(top: 20);
+					this.AddChild(row);
+
+					var descriptionBackground = new GuiWidget()
+					{
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Fit
+					};
+
+					var image = new ImageBuffer();
+					this.AddChild(new ImageWidget(image));
+
+					ApplicationController.Instance.DownloadToImageAsync(image, product.FeaturedImage.ImageUrl, false);
+
+					var description = new MarkdownWidget(theme)
+					{
+						MinimumSize = new VectorMath.Vector2(350, 0),
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Fit,
+						Margin = new BorderDouble(5),
+						Markdown = product.ProductDescription.Trim()
+					};
+					descriptionBackground.AddChild(description);
+
+					descriptionBackground.BeforeDraw += (s, e) =>
+					{
+						var rect = new RoundedRect(descriptionBackground.LocalBounds, 3);
+						e.Graphics2D.Render(rect, theme.SlightShade);
+					};
+
+					this.AddChild(descriptionBackground);
+				}
+				else // show some test data
+				{
+					GuiWidget row;
+					row = this.AddHeading("Parts & Accessories");
+					row.Margin = row.Margin.Clone(top: 20);
+					this.AddChild(row);
+
+					if (printerInfo.Make == "BCN")
+					{
+						var accessoriesImage = new ImageBuffer();
+						row = new ImageWidget(accessoriesImage);
+						this.AddChild(row);
+
+						ApplicationController.Instance.LoadRemoteImage(accessoriesImage, "https://i.imgur.com/io37z8h.png", false).ConfigureAwait(false);
+					}
+
+					row = this.AddHeading("Upgrades");
+					row.Margin = row.Margin.Clone(top: 20);
+					this.AddChild(row);
+
+					var upgradesImage = new ImageBuffer();
+					row = new ImageWidget(upgradesImage);
+					this.AddChild(row);
+
+					ApplicationController.Instance.LoadRemoteImage(upgradesImage, "https://i.imgur.com/kDiV2Da.png", false).ConfigureAwait(false);
+
+
+					if (printerInfo.Make == "BCN")
+					{
+						var accessoriesImage = new ImageBuffer();
+						row = new ImageWidget(accessoriesImage)
+						{
+							Margin = new BorderDouble(top: 30)
+						};
+						this.AddChild(row);
+
+						ApplicationController.Instance.LoadRemoteImage(accessoriesImage, "https://i.imgur.com/rrEwKY9.png", false).ConfigureAwait(false);
+					}
+				}
 			}
+
+			base.OnLoad(args);
+		}
+
+		public async Task<ProductSidData> LoadProductData(string sid)
+		{
+			try
+			{
+				var client = new HttpClient();
+				string json = await client.GetStringAsync($"https://mh-pls-prod.appspot.com/p/1/product-sid/{sid}?IncludeListingData=True");
+
+				var result = JsonConvert.DeserializeObject<ProductSidData>(json);
+				return result;
+			}
+			catch (Exception ex)
+			{
+				Trace.WriteLine("Error collecting or loading printer details: " + ex.Message);
+			}
+
+			return null;
 		}
 
 		public static void SwitchPrinters(string printerID)
