@@ -29,15 +29,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 
 			ApplicationController.SyncPrinterProfiles("SyncingPrintersPage.ctor()", progress).ContinueWith((task) =>
 			{
-				if (!ProfileManager.Instance.ActiveProfiles.Any())
-				{
-					// Switch to setup wizard if no profiles exist
-					UiThread.RunOnIdle(() =>
-					{
-						this.DialogWindow.ChangeToPage(PrinterSetup.GetBestStartPage());
-					});
-				}
-				else if (ProfileManager.Instance.ActiveProfiles.Count() == 1)
+				if (ProfileManager.Instance.ActiveProfiles.Count() == 1)
 				{
 					// TODO: Investigate what this was doing and re-implement
 					//ActiveSliceSettings.ShowComPortConnectionHelp();
