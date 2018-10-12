@@ -150,7 +150,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				materialsNode.TreeView = this;
 
 				rootColumn.AddChild(materialsNode);
-			
 			}, 1);
 
 			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
@@ -207,6 +206,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				var printerNode = new TreeNode(theme)
 				{
 					Text = printer.Name,
+					Name = $"{printer.Name} Node",
 					Tag = printer
 				};
 
