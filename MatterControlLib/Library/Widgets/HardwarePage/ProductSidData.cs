@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
+
 namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 {
 	public class ProductSidData
@@ -41,10 +43,30 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 		public string SkuName;
 		public string Status;
 		public FeaturedImage FeaturedImage;
+		public ProductListing ProductListing;
 	}
 
 	public class FeaturedImage
 	{
 		public string ImageUrl;
+	}
+
+	public class ProductListing
+	{
+		public string ActiveSkuCount { get; set; }
+		public List<string> ActiveSkus { get; set; }
+		public List<AddOns> AddOns { get; set; }
+	}
+
+	public class AddOns
+	{
+		public string AddOnListingReference { get; set; }
+		public string AddOnSkuReference { get; set; }
+		public string AddOnTitle { get; set; }
+		public FeaturedImage FeaturedImage { get; set; }
+		public bool ListingIsActive { get; set; }
+		public int QuantityAvailable { get; set; }
+		public bool SingleSku { get; set; }
+		public bool SkuIsActive { get; set; }
 	}
 }

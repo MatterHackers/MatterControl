@@ -34,6 +34,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -92,28 +93,34 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 					var product = (await LoadProductData(sid)).ProductSku;
 					// put in controls from the feed that show relevant printer information
 
-					GuiWidget row;
-					row = this.AddHeading("Description".Localize() + ":");
-					row.Margin = row.Margin.Clone(top: 20);
+					var row = new FlowLayoutWidget()
+					{
+						HAnchor = HAnchor.Stretch,
+						Margin = new BorderDouble(top: theme.DefaultContainerPadding)
+					};
 					this.AddChild(row);
+
+					var image = new ImageBuffer(150, 10);
+					row.AddChild(new ImageWidget(image)
+					{
+						Margin = new BorderDouble(right: theme.DefaultContainerPadding),
+						VAnchor = VAnchor.Top
+					});
+
+					ApplicationController.Instance.DownloadToImageAsync(image, product.FeaturedImage.ImageUrl, scaleToImageX: true);
 
 					var descriptionBackground = new GuiWidget()
 					{
 						HAnchor = HAnchor.Stretch,
-						VAnchor = VAnchor.Fit
+						VAnchor = VAnchor.Fit | VAnchor.Top,
+						Padding = theme.DefaultContainerPadding
 					};
-
-					var image = new ImageBuffer();
-					this.AddChild(new ImageWidget(image));
-
-					ApplicationController.Instance.DownloadToImageAsync(image, product.FeaturedImage.ImageUrl, false);
 
 					var description = new MarkdownWidget(theme)
 					{
 						MinimumSize = new VectorMath.Vector2(350, 0),
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Fit,
-						Margin = new BorderDouble(5),
 						Markdown = product.ProductDescription.Trim()
 					};
 					descriptionBackground.AddChild(description);
@@ -124,7 +131,40 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 						e.Graphics2D.Render(rect, theme.SlightShade);
 					};
 
-					this.AddChild(descriptionBackground);
+					row.AddChild(descriptionBackground);
+
+					this.AddChild(new TextWidget("Add-Ons", theme.DefaultFontSize, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+					{
+						Margin = new BorderDouble(top: 20),
+						HAnchor = HAnchor.Left
+					});
+
+					var addonsColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
+					{
+						Margin = new BorderDouble(left: 20),
+						HAnchor = HAnchor.Stretch
+					};
+					this.AddChild(addonsColumn);
+
+					foreach(var item in product.ProductListing.AddOns)
+					{
+						var icon = new ImageBuffer(80, 0);
+						ApplicationController.Instance.DownloadToImageAsync(icon, item.FeaturedImage.ImageUrl, scaleToImageX: true);
+
+						var link = new LinkLabel("More Info", theme, pointSize: theme.DefaultFontSize)
+						{
+							VAnchor = VAnchor.Center
+						};
+						link.Click += (s, e) =>
+						{
+							ApplicationController.Instance.LaunchBrowser($"https://www.matterhackers.com/store/l/{item.AddOnListingReference}/sk/{item.AddOnSkuReference}");
+						};
+
+						addonsColumn.AddChild(new AddOnRow(item.AddOnTitle, theme, link, icon)
+						{
+							HAnchor = HAnchor.Stretch,
+						});
+					}
 				}
 				else // show some test data
 				{
@@ -256,6 +296,20 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 					pointSize: theme.DefaultFontSize));
 
 			return row;
+		}
+
+		private class AddOnRow : SettingsItem
+		{
+			public AddOnRow(string text, ThemeConfig theme, GuiWidget optionalControls, ImageBuffer icon)
+				: base(text, theme, null, optionalControls, icon)
+			{
+				imageWidget.Cursor = Cursors.Hand;
+				imageWidget.Margin = 4;
+				imageWidget.Click += (s, e) =>
+				{
+					optionalControls.InvokeClick();
+				};
+			}
 		}
 	}
 }
