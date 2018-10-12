@@ -113,12 +113,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.ip_address,
 			SettingsKey.ip_port,
 			SettingsKey.progress_reporting,
-			"load_filament_length",
+			SettingsKey.load_filament_length,
 			"trim_filament_markdown",
 			"insert_filament_markdown",
 			"running_clean_markdown",
 			"unload_filament_length",
 			"load_filament_speed",
+			SettingsKey.matterhackers_sid,
 		};
 
 		public List<MappedSetting> MappedSettings { get; private set; }

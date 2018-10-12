@@ -22,7 +22,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		}
 
 		public SettingsItem (string text, GuiWidget settingsControls, ThemeConfig theme, GuiWidget optionalControls = null, ImageBuffer imageBuffer = null, bool enforceGutter = true)
-			: base (text, "", theme)
+			: base (text, "", theme, imageBuffer)
 		{
 			this.SettingsControl = settingsControls;
 

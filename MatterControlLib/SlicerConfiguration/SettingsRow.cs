@@ -48,6 +48,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private Color hoverColor;
 		private bool fullRowSelect;
 		private GuiWidget settingsLabel;
+		protected ImageWidget imageWidget;
 
 		public GuiWidget ActionWidget { get; set; }
 
@@ -68,11 +69,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				if (icon != null)
 				{
-					this.AddChild(new ImageWidget(icon)
-					{
-						Margin = new BorderDouble(right: 6, left: 6),
-						VAnchor = VAnchor.Center
-					});
+					this.AddChild(
+						imageWidget = new ImageWidget(icon)
+						{
+							Margin = new BorderDouble(right: 6, left: 6),
+							VAnchor = VAnchor.Center
+						});
 				}
 				else if (enforceGutter)
 				{

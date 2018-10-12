@@ -105,8 +105,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string layer_height = nameof(layer_height);
 		public const string layer_name = nameof(layer_name);
 		public const string layer_to_pause = nameof(layer_to_pause);
+		public const string load_filament_length = nameof(load_filament_length);
 		public const string make = nameof(make);
 		public const string manual_movement_speeds = nameof(manual_movement_speeds);
+		public const string matterhackers_sid = nameof(matterhackers_sid);
 		public const string max_acceleration = nameof(max_acceleration);
 		public const string max_velocity = nameof(max_velocity);
 		public const string merge_overlapping_lines = nameof(merge_overlapping_lines);
