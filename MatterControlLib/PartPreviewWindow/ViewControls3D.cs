@@ -387,20 +387,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Padding = new BorderDouble(theme.DefaultContainerPadding / 2, 0)
 					};
 
-					var height = view3DWidget.Height - theme.DefaultContainerPadding;
+					var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 
 					var printLibraryWidget = new PrintLibraryWidget(partPreviewContent, theme)
 					{
-						HAnchor = HAnchor.Absolute,
-						VAnchor = VAnchor.Absolute,
-						Height = height,
+						HAnchor = HAnchor.Left,
+						VAnchor = VAnchor.Bottom,
+						Height = libraryPopup.TransformToScreenSpace(libraryPopup.Position).Y,
 						Width = 400,
-						MinimumSize = new Vector2(400, height)
+						MinimumSize = new Vector2(400, 50)
+					};
+
+					systemWindow.SizeChanged += (s, e) =>
+					{
+						printLibraryWidget.Height = libraryPopup.TransformToScreenSpace(libraryPopup.Position).Y;
 					};
 
 					widget.AddChild(printLibraryWidget);
 
-					var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 					systemWindow.MouseDown += mouseDown;
 
 					void mouseDown(object s2, MouseEventArgs mouseEvent)
