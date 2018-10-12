@@ -213,7 +213,13 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 				else
 				{
 					ProfileManager.Instance.LastProfileID = printerID;
-					ProfileManager.Instance.LoadPrinter().ConfigureAwait(false);
+					ProfileManager.Instance.LoadPrinter().ContinueWith(task =>
+					{
+						var printer = task.Result;
+
+						// TODO: Alternatively we could hold and restore the Scene from the prior printer
+						printer.Bed.LoadPlateFromHistory().ConfigureAwait(false);
+					});
 				}
 			}
 		}
