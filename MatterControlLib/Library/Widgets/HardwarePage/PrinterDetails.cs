@@ -87,10 +87,10 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 				var profile = PrinterSettings.LoadFile(printerInfo.ProfilePath);
 
 				// if there is a SID than get the data from that url and display it
-				var sid = profile.GetValue(SettingsKey.matterhackers_sid);
-				if (!string.IsNullOrWhiteSpace(sid))
+				var storeID = profile.GetValue(SettingsKey.matterhackers_sid);
+				if (!string.IsNullOrWhiteSpace(storeID))
 				{
-					var product = (await LoadProductData(sid)).ProductSku;
+					var product = (await LoadProductData(storeID)).ProductSku;
 					// put in controls from the feed that show relevant printer information
 
 					var row = new FlowLayoutWidget()
@@ -164,45 +164,6 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 						{
 							HAnchor = HAnchor.Stretch,
 						});
-					}
-				}
-				else // show some test data
-				{
-					GuiWidget row;
-					row = this.AddHeading("Parts & Accessories");
-					row.Margin = row.Margin.Clone(top: 20);
-					this.AddChild(row);
-
-					if (printerInfo.Make == "BCN")
-					{
-						var accessoriesImage = new ImageBuffer();
-						row = new ImageWidget(accessoriesImage);
-						this.AddChild(row);
-
-						ApplicationController.Instance.LoadRemoteImage(accessoriesImage, "https://i.imgur.com/io37z8h.png", false).ConfigureAwait(false);
-					}
-
-					row = this.AddHeading("Upgrades");
-					row.Margin = row.Margin.Clone(top: 20);
-					this.AddChild(row);
-
-					var upgradesImage = new ImageBuffer();
-					row = new ImageWidget(upgradesImage);
-					this.AddChild(row);
-
-					ApplicationController.Instance.LoadRemoteImage(upgradesImage, "https://i.imgur.com/kDiV2Da.png", false).ConfigureAwait(false);
-
-
-					if (printerInfo.Make == "BCN")
-					{
-						var accessoriesImage = new ImageBuffer();
-						row = new ImageWidget(accessoriesImage)
-						{
-							Margin = new BorderDouble(top: 30)
-						};
-						this.AddChild(row);
-
-						ApplicationController.Instance.LoadRemoteImage(accessoriesImage, "https://i.imgur.com/rrEwKY9.png", false).ConfigureAwait(false);
 					}
 				}
 			}
