@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Hardware tab
 			tabControl.AddTab(
-				new ChromeTab("Hardware", "Hardware".Localize(), tabControl, new InventoryTabPage(theme), theme, hasClose: false)
+				new ChromeTab("Hardware", "Hardware".Localize(), tabControl, new HardwareTabPage(theme), theme, hasClose: false)
 				{
 					MinimumSize = new Vector2(0, theme.TabButtonHeight),
 					Name = "Hardware Tab",

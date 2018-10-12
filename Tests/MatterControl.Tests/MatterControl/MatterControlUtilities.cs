@@ -302,13 +302,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void AddAndSelectPrinter(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD")
 		{
-			SystemWindow systemWindow;
-			testRunner.GetWidgetByName("WidescreenPanel", out systemWindow, 10);
+			testRunner.GetWidgetByName("WidescreenPanel", out SystemWindow systemWindow, 10);
+
 			// make sure we wait for MC to be up and running
 			testRunner.WaitforDraw(systemWindow);
 
 			// Click 'Add Printer' if not on screen
-			if (!testRunner.NameExists("Select Make", 0.1))
+			if (!testRunner.NameExists("Select Make", 0.2))
 			{
 				if (!testRunner.NameExists("Create Printer", 0.1))
 				{
@@ -342,13 +342,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void OpenPrintersDropdown(this AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("Start Tab");
-			testRunner.ClickByName("Printers... Menu");
-		}
-
-		public static void ClosePrintersDropdown(this AutomationRunner testRunner)
-		{
-			testRunner.ClickByName("Printers... Menu");
+			testRunner.ClickByName("Hardware Tab");
 		}
 
 		private static void OutputImage(ImageBuffer imageToOutput, string fileName)
