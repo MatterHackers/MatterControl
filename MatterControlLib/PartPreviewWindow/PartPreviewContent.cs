@@ -339,7 +339,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ChromeTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme)
 		{
 			// Printer page is in fixed position
-			var tab1 = tabControl.AllTabs.Skip(0).FirstOrDefault();
+			var tab1 = tabControl.AllTabs.FirstOrDefault();
 
 			var printerTabPage = tab1?.TabContent as PrinterTabPage;
 			if (printerTabPage == null

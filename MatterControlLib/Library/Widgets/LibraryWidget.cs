@@ -351,7 +351,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				HAnchor = HAnchor.Stretch,
 				Padding = theme.ToolbarPadding,
-				DebugShowBounds = true
 			};
 			AddLibraryButtonElements();
 			allControls.AddChild(buttonPanel);
