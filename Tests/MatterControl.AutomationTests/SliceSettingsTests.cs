@@ -190,6 +190,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(1, extrudeButtons.Count, "There should be just one.");
 
 					int hipsGoalTemp = 220;
+					testRunner.Delay();
 
 					// assert the temp changed to a new temp
 					Assert.AreEqual(hipsGoalTemp,(int) tempWidget.Value, "The goal temp should match the material temp");
@@ -233,6 +234,34 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type("{Enter}");
 					testRunner.Delay();
 					Assert.AreEqual(104, (int)emulator.CurrentExtruder.TargetTemperature);
+
+					// type in 0 and have the heater turn off
+					testRunner.ClickByName("Temperature Input");
+					testRunner.Type("^a");
+					testRunner.Type("0");
+					testRunner.Type("{Enter}");
+					testRunner.Delay();
+
+					// type in 60 and have the heater turn on
+					testRunner.ClickByName("Temperature Input");
+					testRunner.Type("^a");
+					testRunner.Type("60");
+					testRunner.Type("{Enter}");
+					testRunner.Delay();
+					testRunner.ClickByName("Toggle Heater");
+					Assert.AreEqual(60, (int)emulator.CurrentExtruder.TargetTemperature);
+
+					// click the remove override and have it change to default temp
+					testRunner.ClickByName("Restore temperature");
+					Assert.AreEqual(hipsGoalTemp, (int)emulator.CurrentExtruder.TargetTemperature, "The printer should report the expected goal temp");
+
+					// type in 60 and have the heater turn on
+					testRunner.ClickByName("Temperature Input");
+					testRunner.Type("^a");
+					testRunner.Type("60");
+					testRunner.Type("{Enter}");
+					testRunner.Delay();
+					Assert.AreEqual(60, (int)emulator.CurrentExtruder.TargetTemperature);
 
 					// type in 0 and have the heater turn off
 					testRunner.ClickByName("Temperature Input");
