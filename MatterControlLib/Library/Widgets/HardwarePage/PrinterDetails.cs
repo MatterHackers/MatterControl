@@ -75,7 +75,6 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 			};
 			headingRow.AddChild(openButton);
 
-
 			this.AddChild(headingRow);
 		}
 
@@ -84,10 +83,20 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 			if (File.Exists(printerInfo.ProfilePath))
 			{
 				// load up the printer profile so we can get the MatterHackers Skew-ID out of it
-				var profile = PrinterSettings.LoadFile(printerInfo.ProfilePath);
+				var printerSettings = PrinterSettings.LoadFile(printerInfo.ProfilePath);
 
-				// if there is a SID than get the data from that url and display it
-				var storeID = profile.GetValue(SettingsKey.matterhackers_sid);
+				// Get the printer sid from settings
+				var storeID = printerSettings.GetValue(SettingsKey.matterhackers_sid);
+
+				// If empty, fall back to the make-model mapping table
+				if (string.IsNullOrEmpty(storeID))
+				{
+					if (OemSettings.Instance.OemPrinters.TryGetValue($"{printerInfo.Make}-{ printerInfo.Model}", out StorePrinterID storePrinterID))
+					{
+						storeID = storePrinterID?.SID;
+					}
+				}
+
 				if (!string.IsNullOrWhiteSpace(storeID))
 				{
 					var product = (await LoadProductData(storeID)).ProductSku;
@@ -151,18 +160,55 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 						var icon = new ImageBuffer(80, 0);
 						ApplicationController.Instance.DownloadToImageAsync(icon, item.FeaturedImage.ImageUrl, scaleToImageX: true);
 
-						var link = new LinkLabel("More Info", theme, pointSize: theme.DefaultFontSize)
+						var addOnRow = new AddOnRow(item.AddOnTitle, theme, null, icon)
 						{
-							VAnchor = VAnchor.Center
+							HAnchor = HAnchor.Stretch,
+							Cursor = Cursors.Hand
 						};
-						link.Click += (s, e) =>
+
+						foreach(var child in addOnRow.Children)
+						{
+							child.Selectable = false;
+						}
+
+						addOnRow.Click += (s, e) =>
 						{
 							ApplicationController.Instance.LaunchBrowser($"https://www.matterhackers.com/store/l/{item.AddOnListingReference}/sk/{item.AddOnSkuReference}");
 						};
 
-						addonsColumn.AddChild(new AddOnRow(item.AddOnTitle, theme, link, icon)
+						addonsColumn.AddChild(addOnRow);
+					}
+
+					if (false)
+					{
+						var settingsPanel = new GuiWidget()
 						{
 							HAnchor = HAnchor.Stretch,
+							VAnchor = VAnchor.Stretch,
+							MinimumSize = new VectorMath.Vector2(20, 20),
+							DebugShowBounds = true
+						};
+
+						settingsPanel.Load += (s, e) =>
+						{
+							var printer = new PrinterConfig(printerSettings);
+
+							var settingsContext = new SettingsContext(
+								printer,
+								null,
+								NamedSettingsLayers.All);
+
+							settingsPanel.AddChild(
+								new ConfigurePrinterWidget(settingsContext, printer, theme)
+								{
+									HAnchor = HAnchor.Stretch,
+									VAnchor = VAnchor.Stretch,
+								});
+						};
+
+						this.AddChild(new SectionWidget("Settings", settingsPanel, theme, expanded: false, setContentVAnchor: false)
+						{
+							VAnchor = VAnchor.Stretch
 						});
 					}
 				}
