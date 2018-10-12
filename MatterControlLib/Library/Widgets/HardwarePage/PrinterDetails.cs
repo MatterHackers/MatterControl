@@ -133,18 +133,18 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 
 					row.AddChild(descriptionBackground);
 
-					this.AddChild(new TextWidget("Add-Ons", theme.DefaultFontSize, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
-					{
-						Margin = new BorderDouble(top: 20),
-						HAnchor = HAnchor.Left
-					});
+					var padding = theme.DefaultContainerPadding;
 
 					var addonsColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
 					{
-						Margin = new BorderDouble(left: 20),
+						Padding = new BorderDouble(padding, padding, padding, 0),
 						HAnchor = HAnchor.Stretch
 					};
-					this.AddChild(addonsColumn);
+
+					var addonsSection = new SectionWidget("Upgrades and Accessories", addonsColumn, theme);
+					this.AddChild(addonsSection);
+					theme.ApplyBoxStyle(addonsSection);
+					addonsSection.Margin = addonsSection.Margin.Clone(left: 0);
 
 					foreach(var item in product.ProductListing.AddOns)
 					{
