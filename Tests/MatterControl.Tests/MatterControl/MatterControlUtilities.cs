@@ -340,7 +340,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.WaitFor(() => !testRunner.WidgetExists<SetupStepComPortOne>());
 		}
 
-		public static void OpenPrintersDropdown(this AutomationRunner testRunner)
+		public static void SwitchToHardwareTab(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Hardware Tab");
 		}

@@ -495,7 +495,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(2, ProfileManager.Instance.ActiveProfiles.Count(), "ProfileManager has 2 Profiles");
 
 				// Check if Guest printer names exists in dropdown
-				testRunner.OpenPrintersDropdown();
+				testRunner.SwitchToHardwareTab();
 				testRunner.DoubleClickByName("Airwolf 3D HD Node");
 				testRunner.Delay(0.2);
 

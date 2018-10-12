@@ -31,7 +31,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(1);
 
 				//Check to make sure the Printer dropdown gets the name change
-				testRunner.OpenPrintersDropdown();
+				testRunner.SwitchToHardwareTab();
 				Assert.IsTrue(testRunner.WaitForName(newName + " Node"), "Widget with updated printer name exists");
 
 				//Make sure the Active profile name changes as well
