@@ -561,7 +561,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			var scene = view3D.InteractionLayer.Scene;
 			var preAddCount = scene.Children.Count();
 
-			testRunner.ClickByName("Add to Plate Menu Item");
+			testRunner.ClickByName("Add to Bed Menu Item");
 			// wait for the object to be added
 			testRunner.WaitFor(() => scene.Children.Count == preAddCount + 1);
 			// wait for the object to be done loading

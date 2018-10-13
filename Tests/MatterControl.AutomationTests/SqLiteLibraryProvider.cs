@@ -23,7 +23,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				var scene = view3D.InteractionLayer.Scene;
 
 				testRunner.WaitFor(() => scene.SelectedItem != null);
-				Assert.IsNotNull(scene.SelectedItem, "Expect part selection after Add to Plate action");
+				Assert.IsNotNull(scene.SelectedItem, "Expect part selection after Add to Bed action");
 
 				testRunner.ClickByName("Duplicate Button");
 

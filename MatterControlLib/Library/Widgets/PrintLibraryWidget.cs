@@ -581,7 +581,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// edit menu item
 			menuActions.Add(new PrintItemAction()
 			{
-				Title = "Add to Plate".Localize(),
+				Title = "Add to Bed".Localize(),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					var activeContext = ApplicationController.Instance.DragDropData;
