@@ -92,9 +92,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.NavigateToFolder("Print Queue Row Item Collection");
 					testRunner.ClickByName("Row Item cube_20x20x20");
 					testRunner.ClickByName("Print Library Overflow Menu");
-					testRunner.ClickByName("Add to Plate Menu Item");
+					testRunner.ClickByName("Add to Bed Menu Item");
 					testRunner.ClickByName("Print Library Overflow Menu");
-					testRunner.ClickByName("Add to Plate Menu Item");
+					testRunner.ClickByName("Add to Bed Menu Item");
 
 					// start the print
 					testRunner.StartPrint();
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Add a cylinder
 					testRunner.ClickByName("Row Item cylinder_5x20");
 					testRunner.ClickByName("Print Library Overflow Menu");
-					testRunner.ClickByName("Add to Plate Menu Item");
+					testRunner.ClickByName("Add to Bed Menu Item");
 
 					// re-slice the part
 					testRunner.ClickByName("Re-Slice Button");
@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// add the cube
 					testRunner.ClickByName("Row Item cube_20x20x20");
 					testRunner.ClickByName("Print Library Overflow Menu");
-					testRunner.ClickByName("Add to Plate Menu Item");
+					testRunner.ClickByName("Add to Bed Menu Item");
 
 					// re-slice the part
 					testRunner.ClickByName("Re-Slice Button");
