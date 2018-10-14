@@ -265,35 +265,36 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 					string localTabKey = item.key;
 
-					var settingsButton = new DockingTabButton(item.text, theme)
+					var itemButton = new DockingTabButton(item.text, theme)
 					{
 						Name = $"{item.key} Sidebar",
 						PopupContent = resizeContainer,
 						PopupLayoutEngine = new UnpinnedLayoutEngine(resizeContainer, widgetTodockTo, DockSide)
+						, DebugShowBounds = true
 					};
-					settingsButton.Click += (s, e) =>
+					itemButton.Click += (s, e) =>
 					{
 						resizeContainer.Width = this.ConstrainedWidth;
 						this.printer.ViewState.SliceSettingsTabKey = localTabKey;
 						this.printer.ViewState.DockWindowFloating = true;
 					};
-					settingsButton.PopupWindowClosed += (s, e) =>
+					itemButton.PopupWindowClosed += (s, e) =>
 					{
 						if (!ApplicationController.Instance.IsReloading)
 						{
 							this.printer.ViewState.DockWindowFloating = false;
 						}
 					};
-					this.AddChild(settingsButton);
+					this.AddChild(itemButton);
 
 					if (this.printer.ViewState.DockWindowFloating
 						&& localTabKey == this.printer.ViewState.SliceSettingsTabKey)
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							if (!settingsButton.HasBeenClosed && settingsButton.Parent != null)
+							if (!itemButton.HasBeenClosed && itemButton.Parent != null)
 							{
-								settingsButton.ShowPopup();
+								itemButton.ShowPopup();
 							}
 						});
 					}
