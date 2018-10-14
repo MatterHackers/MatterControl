@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
 
@@ -16,6 +18,13 @@ namespace MatterControl.Tests.MatterControl
 	[TestFixture, Category("PopupAnchorTests"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class PopupAnchorTests
 	{
+		[SetUp]
+		public void TestSetup()
+		{
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+		}
+
 		[Test]
 		public async Task WindowTest()
 		{
@@ -496,6 +505,10 @@ namespace MatterControl.Tests.MatterControl
 		{
 			await systemWindow.RunTest(testRunner =>
 			{
+				button.BackgroundColor = Color.LightGray;
+				button.HoverColor = Color.LightBlue;
+				button.MouseDownColor = Color.Magenta;
+
 				var row = new FlowLayoutWidget()
 				{
 					VAnchor = VAnchor.Center | VAnchor.Fit,
