@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			contentRow.AddChild(createPrinterNameContainer());
 
 			bool userIsLoggedIn = !ApplicationController.GuestUserActive?.Invoke() ?? false;
-			if (userIsLoggedIn)
+			if (!userIsLoggedIn)
 			{
 				var signInRow = new FlowLayoutWidget()
 				{

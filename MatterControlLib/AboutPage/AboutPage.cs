@@ -135,6 +135,8 @@ namespace MatterHackers.MatterControl
 
 			var linkIcon = AggContext.StaticData.LoadIcon("fa-link_16.png", 16, 16, theme.InvertIcons);
 
+			SectionWidget section = null;
+
 			foreach (var item in data.OrderBy(i => i.Name))
 			{
 				var linkButton = new IconButton(linkIcon, theme);
@@ -143,11 +145,17 @@ namespace MatterHackers.MatterControl
 					ApplicationController.Instance.LaunchBrowser(item.Url);
 				});
 
-				var section = new SectionWidget(item.Title ?? item.Name, new LazyLicenseText(item.Name, theme), theme, linkButton, expanded: false)
+				section = new SectionWidget(item.Title ?? item.Name, new LazyLicenseText(item.Name, theme), theme, linkButton, expanded: false)
 				{
 					HAnchor = HAnchor.Stretch
 				};
 				licensePanel.AddChild(section);
+			}
+
+			// Apply a bottom border to the last time for balance
+			if (section != null)
+			{
+				section.Border = section.Border.Clone(bottom: 1);
 			}
 
 			var scrollable = new ScrollableWidget(autoScroll: true)
@@ -155,9 +163,8 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
 				Margin = new BorderDouble(bottom: 10),
-				Border = new BorderDouble(top: 1),
-				BorderColor = new Color(theme.Colors.SecondaryTextColor, 50)
 			};
+
 			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
 			scrollable.AddChild(licensePanel);
 			contentRow.AddChild( scrollable);

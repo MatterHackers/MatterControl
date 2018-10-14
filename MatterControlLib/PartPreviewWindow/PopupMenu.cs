@@ -56,7 +56,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Fit;
-			this.BackgroundColor = theme.Colors.PrimaryBackgroundColor;
 		}
 
 		public HorizontalLine CreateHorizontalLine()
@@ -429,7 +428,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				// Inflate padding to match the target (MenuGutterWidth) after scale operation in assignment
 				this.Padding = new BorderDouble(left: Math.Ceiling(theme.MenuGutterWidth / GuiWidget.DeviceScale) , right: 15);
-				this.BackgroundColor = theme.Colors.PrimaryBackgroundColor;
 				this.HAnchor = HAnchor.MaxFitOrStretch;
 				this.VAnchor = VAnchor.Fit;
 				this.MinimumSize = new Vector2(150 * GuiWidget.DeviceScale, theme.ButtonHeight);

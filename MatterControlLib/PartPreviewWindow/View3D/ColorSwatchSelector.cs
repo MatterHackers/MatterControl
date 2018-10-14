@@ -151,11 +151,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (var i = 0; i < numberOfStripes * 2; i++)
 				{
 					var thickness = ix / numberOfStripes;
-					
+
 					graphics2D.Line(
-						i * thickness + thickness / 2 - ix, 
-						0, 
-						i * thickness + thickness / 2, 
+						i * thickness + thickness / 2 - ix,
+						0,
+						i * thickness + thickness / 2,
 						ix,
 						Color.Gray,
 						0.05);
@@ -164,6 +164,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			base.OnDraw(graphics2D);
 		}
+
+		public Color SourceColor { get; set; }
 	}
 
 	public static class ColorExtensions

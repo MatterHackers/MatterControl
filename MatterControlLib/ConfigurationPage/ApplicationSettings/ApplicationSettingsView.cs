@@ -75,9 +75,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			};
 			this.AddSettingsRow(updateMatterControl);
 
-			this.AddChild(new SettingsItem("Theme".Localize(), new GuiWidget(), theme));
-			this.AddChild(this.GetThemeControl());
-
 			var aboutMatterControl = new SettingsItem("About".Localize() + " MatterControl", theme);
 			if (IntPtr.Size == 8)
 			{
@@ -129,71 +126,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		{
 			this.AddChild(widget);
 			widget.Padding = widget.Padding.Clone(right: 10);
-		}
-
-		private FlowLayoutWidget GetThemeControl()
-		{
-			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				Margin = new BorderDouble(left: 30)
-			};
-
-			// Determine if we should set the dark or light version of the theme
-			var activeThemeIndex = ActiveTheme.AvailableThemes.IndexOf(ApplicationController.Instance.Theme.Colors);
-
-			var midPoint = ActiveTheme.AvailableThemes.Count / 2;
-
-			int darkThemeIndex;
-			int lightThemeIndex;
-
-			bool isLightTheme = activeThemeIndex >= midPoint;
-			if (isLightTheme)
-			{
-				lightThemeIndex = activeThemeIndex;
-				darkThemeIndex = activeThemeIndex - midPoint;
-			}
-			else
-			{
-				darkThemeIndex = activeThemeIndex;
-				lightThemeIndex = activeThemeIndex + midPoint;
-			}
-
-			var darkPreview = new ThemePreviewButton(ActiveTheme.AvailableThemes[darkThemeIndex], !isLightTheme)
-			{
-				HAnchor = HAnchor.Absolute,
-				VAnchor = VAnchor.Absolute,
-				Width = 80,
-				Height = 65,
-				Margin = new BorderDouble(5, 15, 10, 10)
-			};
-
-			var lightPreview = new ThemePreviewButton(ActiveTheme.AvailableThemes[lightThemeIndex], isLightTheme)
-			{
-				HAnchor = HAnchor.Absolute,
-				VAnchor = VAnchor.Absolute,
-				Width = 80,
-				Height = 65,
-				Margin = new BorderDouble(5, 15, 10, 10)
-			};
-
-			// Add color selector
-			container.AddChild(new ThemeColorSelectorWidget(darkPreview, lightPreview)
-			{
-				Margin = new BorderDouble(right: 5)
-			});
-
-			var themePreviews = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
-			};
-
-			themePreviews.AddChild(darkPreview);
-			themePreviews.AddChild(lightPreview);
-
-			container.AddChild(themePreviews);
-
-			return container;
 		}
 	}
 }

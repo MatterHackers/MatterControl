@@ -562,7 +562,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				PointSize = 8,
 				HAnchor = HAnchor.Right,
 				VAnchor = VAnchor.Bottom,
-				TextColor = ActiveTheme.Instance.SecondaryTextColor,
+				TextColor =  theme.BorderColor,
 				Margin = new BorderDouble(6),
 				AutoExpandBoundsToText = true,
 			};

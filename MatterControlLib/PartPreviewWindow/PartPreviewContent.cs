@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Stretch,
-				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
+				BackgroundColor = theme.ActiveTabColor,
 				BorderColor = theme.MinimalShade,
 				Border = new BorderDouble(left: 1),
 			};
@@ -279,9 +279,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
 				BackgroundColor = theme.TabBarBackground,
-				Border = new BorderDouble(right: 1),
-				BorderColor = theme.MinimalShade,
-				Padding = theme.TabbarPadding.Clone(right: 0)
+				Padding = theme.TabbarPadding.Clone(right: theme.DefaultContainerPadding)
 			};
 
 			tabControl.TabBar.ActionArea.AddChild(brandMenu, 0);

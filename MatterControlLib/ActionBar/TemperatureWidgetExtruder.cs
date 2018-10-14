@@ -230,8 +230,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				Width = 350,
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
-				BackgroundColor = theme.Colors.PrimaryBackgroundColor,
-				Padding = new BorderDouble(12, 0)
+				Padding = new BorderDouble(12, 0),
 			};
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)

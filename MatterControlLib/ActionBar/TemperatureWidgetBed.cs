@@ -71,7 +71,6 @@ namespace MatterHackers.MatterControl.ActionBar
 				Width = 300,
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
-				BackgroundColor = theme.Colors.PrimaryBackgroundColor,
 				Padding = new BorderDouble(12, 0)
 			};
 

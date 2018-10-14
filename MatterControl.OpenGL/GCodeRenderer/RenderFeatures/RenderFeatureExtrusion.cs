@@ -41,11 +41,13 @@ namespace MatterHackers.GCodeVisualizer
 		private float extrusionVolumeMm3;
 		private float layerHeight;
 		private Color color;
+		private Color gray;
 
-		public RenderFeatureExtrusion(Vector3 start, Vector3 end, int extruderIndex, double travelSpeed, double totalExtrusionMm, double filamentDiameterMm, double layerHeight, Color color)
+		public RenderFeatureExtrusion(Vector3 start, Vector3 end, int extruderIndex, double travelSpeed, double totalExtrusionMm, double filamentDiameterMm, double layerHeight, Color color, Color gray)
 			: base(start, end, extruderIndex, travelSpeed)
 		{
 			this.color = color;
+			this.gray = gray;
 			double filamentRadius = filamentDiameterMm / 2;
 			double areaSquareMm = (filamentRadius * filamentRadius) * Math.PI;
 
@@ -98,7 +100,7 @@ namespace MatterHackers.GCodeVisualizer
 				}
 				else if (renderInfo.CurrentRenderType.HasFlag(RenderType.GrayColors))
 				{
-					lineColor = ActiveTheme.Instance.IsDarkTheme ? Color.DarkGray : Color.Gray;
+					lineColor = this.gray;
 				}
 				else
 				{

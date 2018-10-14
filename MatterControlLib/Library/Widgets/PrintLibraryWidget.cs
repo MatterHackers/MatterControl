@@ -46,6 +46,7 @@ using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
@@ -457,7 +458,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				PointSize = 8,
 				HAnchor = HAnchor.Right,
 				VAnchor = VAnchor.Bottom,
-				TextColor = ActiveTheme.Instance.SecondaryTextColor,
+				TextColor = theme.LightTextColor,
 				Margin = new BorderDouble(6),
 				AutoExpandBoundsToText = true,
 			};
@@ -830,7 +831,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 											var feedbackWindow = new SavePartsSheetFeedbackWindow(
 												printItems.Count(),
 												printItems.FirstOrDefault()?.Name,
-												ActiveTheme.Instance.PrimaryBackgroundColor);
+												theme.ActiveTabColor);
 
 											var currentPartsInQueue = new PartsSheet(printItems, saveParams.FileName);
 											currentPartsInQueue.UpdateRemainingItems += feedbackWindow.StartingNextPart;

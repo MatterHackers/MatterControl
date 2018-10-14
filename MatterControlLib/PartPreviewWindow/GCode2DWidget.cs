@@ -70,8 +70,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.printer = printer;
 			options = printer.Bed.RendererOptions;
 
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
 			this.LocalBounds = new RectangleDouble(0, 0, 100, 100);
 			this.AnchorAll();
 

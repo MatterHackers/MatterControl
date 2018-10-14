@@ -453,6 +453,7 @@ namespace JsonPath
 					}
 				}
 
+				// Invoke property to get value
 				var propertyValue = propertyInfo.GetGetMethod().Invoke(value, null);
 
 				if (!string.IsNullOrEmpty(typeFilter) && propertyValue is IEnumerable items)

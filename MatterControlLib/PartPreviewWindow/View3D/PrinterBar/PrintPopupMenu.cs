@@ -73,8 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
-					Padding = 10,
-					BackgroundColor = menuTheme.Colors.PrimaryBackgroundColor
+					Padding = theme.DefaultContainerPadding,
 				};
 
 				column.AddChild(new TextWidget("Options".Localize(), textColor: menuTheme.Colors.PrimaryTextColor)

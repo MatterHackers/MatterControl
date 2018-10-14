@@ -81,6 +81,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.VectorMath;
 	using MatterHackers.VectorMath.TrackBall;
 	using Newtonsoft.Json.Converters;
+	using Newtonsoft.Json.Serialization;
 	using SettingsManagement;
 
 	[JsonConverter(typeof(StringEnumConverter))]
@@ -119,6 +120,102 @@ namespace MatterHackers.MatterControl
 		/// The root SystemWindow
 		/// </summary>
 		public static SystemWindow RootSystemWindow { get; internal set; }
+
+		public static ThemeConfig Theme => themeset.Theme;
+
+		public static ThemeConfig MenuTheme => themeset.MenuTheme;
+
+		private static ThemeSet themeset;
+
+		public static ThemeSet ThemeSet => themeset;
+
+		public static Dictionary<string, IColorTheme> ThemeProviders = new Dictionary<string, IColorTheme>()
+		{
+			{ "Classic" , new ClassicColorsTheme() },
+			{ "Solarized", new SolarizedTheme() },
+		};
+
+		public static IColorTheme GetColorProvider(string key)
+		{
+			if (ThemeProviders.TryGetValue(key, out IColorTheme themeProvider))
+			{
+				return themeProvider;
+			}
+
+			return ThemeProviders.Values.First();
+		}
+
+		static AppContext()
+		{
+			// Load theme
+			try
+			{
+				if (File.Exists(ProfileManager.Instance.ProfileThemeSetPath))
+				{
+					themeset = JsonConvert.DeserializeObject<ThemeSet>(File.ReadAllText(ProfileManager.Instance.ProfileThemeSetPath));
+				}
+			}
+			catch { }
+
+			if (themeset == null)
+			{
+				var themeProvider = ThemeProviders.Values.First();
+				var defaultColor = themeProvider.Colors.First();
+
+				themeset = themeProvider.GetTheme("Dark", defaultColor);
+			}
+
+			DefaultThumbView.ThumbColor = new Color(themeset.Theme.Colors.PrimaryTextColor, 30);
+			ActiveTheme.Instance = themeset.Theme.Colors;
+
+			(ActiveTheme.Instance as ThemeColors).DisabledColor = themeset.Theme.GetBorderColor(20);
+		}
+
+		public static void SetTheme(ThemeSet themeSet)
+		{
+			themeset = themeSet;
+
+			//var theme = ApplicationController.ThemeProvider.GetTheme(color);
+			File.WriteAllText(
+				ProfileManager.Instance.ProfileThemeSetPath,
+				JsonConvert.SerializeObject(
+					themeset,
+					Formatting.Indented,
+					new JsonSerializerSettings
+					{
+						ContractResolver = new WritablePropertiesOnlyResolver()
+					}));
+
+			UiThread.RunOnIdle(() =>
+			{
+				UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, themeset.ThemeName);
+
+				//Set new user selected Default
+				ActiveTheme.Instance = themeset.Theme.Colors;
+				(ActiveTheme.Instance as ThemeColors).DisabledColor = themeset.Theme.GetBorderColor(20);
+
+				// Explicitly fire ReloadAll in response to user interaction
+				ApplicationController.Instance.ReloadAll();
+			});
+		}
+
+		private class WritablePropertiesOnlyResolver : DefaultContractResolver
+		{
+			protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+			{
+				IList<JsonProperty> props = base.CreateProperties(type, memberSerialization);
+				return props.Where(p => p.Writable).ToList();
+			}
+		}
+	}
+
+	public class ThemeSet
+	{
+		public string ThemeName { get; set; }
+
+		public ThemeConfig Theme { get; set; }
+
+		public ThemeConfig MenuTheme { get; set; }
 	}
 
 	public class ApplicationController
@@ -127,9 +224,9 @@ namespace MatterHackers.MatterControl
 
 		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 
-		public ThemeConfig Theme { get; set; }
+		public ThemeConfig Theme => AppContext.Theme;
 
-		public ThemeConfig MenuTheme { get; set; }
+		public ThemeConfig MenuTheme => AppContext.MenuTheme;
 
 		public RunningTasksConfig Tasks { get; set; } = new RunningTasksConfig();
 
@@ -841,10 +938,9 @@ namespace MatterHackers.MatterControl
 
 		public ApplicationController()
 		{
-			// Initialize the AppContext theme object which will sync its content with Agg ActiveTheme changes
-			this.Theme = new ThemeConfig();
 			this.Thumbnails = new ThumbnailsConfig(this.Theme);
-			this.MenuTheme = new ThemeConfig();
+
+			this.RebuildSceneOperations(this.Theme);
 
 			HelpArticle helpArticle = null;
 
@@ -859,13 +955,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			this.HelpArticles = helpArticle ?? new HelpArticle();
-
-			ActiveTheme.ThemeChanged.RegisterEvent((s, e) =>
-			{
-				ChangeToTheme(ActiveTheme.Instance);
-			}, ref unregisterEvents);
-
-			this.ChangeToTheme(ActiveTheme.Instance);
 
 			Object3D.AssetsPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Assets");
 
@@ -1349,28 +1438,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void ChangeToTheme(IThemeColors themeColors)
-		{
-			this.Theme.RebuildTheme(themeColors);
-
-			var json = JsonConvert.SerializeObject(ActiveTheme.Instance);
-
-			var clonedColors = JsonConvert.DeserializeObject<ThemeColors>(json);
-			clonedColors.IsDarkTheme = false;
-			clonedColors.Name = "MenuColors";
-			clonedColors.PrimaryTextColor = new Color("#222");
-			clonedColors.SecondaryTextColor = new Color("#666");
-			clonedColors.PrimaryBackgroundColor = new Color("#fff");
-			clonedColors.SecondaryBackgroundColor = new Color("#ddd");
-			clonedColors.TertiaryBackgroundColor = new Color("#ccc");
-
-			this.MenuTheme.RebuildTheme(clonedColors);
-
-			this.RebuildSceneOperations(this.Theme);
-
-			AggContext.StaticData.PurgeCache();
-		}
-
 		public bool RunAnyRequiredPrinterSetup(PrinterConfig printer, ThemeConfig theme)
 		{
 			if (PrintLevelingData.NeedsToBeRun(printer))
@@ -1635,23 +1702,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			ApplicationSettings.Instance.ReleaseClientToken();
-		}
-
-		internal static void LoadTheme()
-		{
-			string activeThemeName = UserSettings.Instance.get(UserSettingsKey.ActiveThemeName);
-			if (!string.IsNullOrEmpty(activeThemeName))
-			{
-				ActiveTheme.Instance = ActiveTheme.GetThemeColors(activeThemeName);
-			}
-			else if (!string.IsNullOrEmpty(OemSettings.Instance.ThemeColor))
-			{
-				ActiveTheme.Instance = ActiveTheme.GetThemeColors(OemSettings.Instance.ThemeColor);
-			}
-			else
-			{
-				ActiveTheme.Instance = ActiveTheme.GetThemeColors("Blue - Light");
-			}
 		}
 
 		public static ApplicationController Instance
@@ -2645,18 +2695,15 @@ namespace MatterHackers.MatterControl
 
 			var systemWindow = new RootSystemWindow(width, height);
 
-			// Load theme
-			ApplicationController.LoadTheme();
-
 			var overlay = new GuiWidget()
 			{
-				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
+				BackgroundColor = AppContext.Theme.ActiveTabColor,
 			};
 			overlay.AnchorAll();
 
 			systemWindow.AddChild(overlay);
 
-			var mutedAccentColor = new Color(ActiveTheme.Instance.PrimaryAccentColor, 185).OverlayOn(Color.White).ToColor();
+			var mutedAccentColor = AppContext.Theme.SplashAccentColor;
 
 			var spinner = new LogoSpinner(overlay, rotateX: -0.05)
 			{
@@ -2673,7 +2720,7 @@ namespace MatterHackers.MatterControl
 			};
 			overlay.AddChild(progressPanel);
 
-			progressPanel.AddChild(statusText = new TextWidget("", textColor: ActiveTheme.Instance.PrimaryTextColor)
+			progressPanel.AddChild(statusText = new TextWidget("", textColor: AppContext.Theme.Colors.PrimaryTextColor)
 			{
 				MinimumSize = new Vector2(200, 30),
 				HAnchor = HAnchor.Center,

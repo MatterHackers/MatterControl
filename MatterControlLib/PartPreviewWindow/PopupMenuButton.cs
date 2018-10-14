@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public PopupMenuButton(ThemeConfig theme)
 		{
 			this.theme = theme;
-			this.DisabledColor = new Color(theme.Colors.SecondaryTextColor, 50);
+			this.DisabledColor = theme.DisabledColor;
 			this.HoverColor = theme.MinimalShade;
 		}
 
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewWidget.BackgroundColor = Color.Transparent;
 
 			this.theme = theme;
-			this.DisabledColor = new Color(theme.Colors.SecondaryTextColor, 50);
+			this.DisabledColor = theme.DisabledColor;
 
 			this.HoverColor = theme.ToolbarButtonHover;
 			this.BackgroundColor = theme.ToolbarButtonBackground;
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					dropArrow,
 					LocalBounds.Right - DropArrow.ArrowHeight * 2 - 2,
 					LocalBounds.Center.Y + DropArrow.ArrowHeight / 2,
-					this.Enabled ? theme.Colors.SecondaryTextColor : this.DisabledColor);
+					this.Enabled ? theme.BorderColor : this.DisabledColor);
 			}
 		}
 

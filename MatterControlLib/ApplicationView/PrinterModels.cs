@@ -487,7 +487,11 @@ namespace MatterHackers.MatterControl
 				new Vector4(jerkVelocity, jerkVelocity, jerkVelocity, jerkVelocity),
 				new Vector4(multiplier, multiplier, multiplier, multiplier),
 				cancellationToken, progressReporter);
-			this.GCodeRenderer = new GCodeRenderer(loadedGCode);
+
+			this.GCodeRenderer = new GCodeRenderer(loadedGCode)
+			{
+				Gray = AppContext.Theme.Colors.IsDarkTheme ? Color.DarkGray : Color.Gray
+			};
 
 			this.RenderInfo = new GCodeRenderInfo(
 					0,

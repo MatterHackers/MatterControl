@@ -41,7 +41,6 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PrinterCommunication;
 	using MatterHackers.VectorMath;
-	using Newtonsoft.Json;
 
 	public class ThemeConfig
 	{
@@ -72,7 +71,7 @@ namespace MatterHackers.MatterControl
 		/// <summary>
 		/// Indicates if icons should be inverted due to black source images on a dark theme
 		/// </summary>
-		public bool InvertIcons => this.Colors.IsDarkTheme;
+		public bool InvertIcons => this?.Colors.IsDarkTheme ?? false;
 
 		internal void ApplyPrimaryActionStyle(GuiWidget guiWidget)
 		{
@@ -138,20 +137,18 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public IThemeColors Colors { get; set; } = new ThemeColors();
+		public ThemeColors Colors { get; set; } = new ThemeColors();
 		public PresetColors PresetColors { get; set; } = new PresetColors();
 
-		public Color SlightShade { get; } = new Color(0, 0, 0, 40);
-		public Color MinimalShade { get; } = new Color(0, 0, 0, 15);
-		public Color Shade { get; } = new Color(0, 0, 0, 120);
-		public Color DarkShade { get; } = new Color(0, 0, 0, 190);
-
-		public Color MinimalHighlight { get; } = new Color(255, 255, 255, 15);
+		public Color SlightShade { get; set; }
+		public Color MinimalShade { get; set; }
+		public Color Shade { get; set; }
+		public Color DarkShade { get; set; }
 
 		public Color ActiveTabColor { get; set; }
 		public Color TabBarBackground { get; set; }
 		public Color InactiveTabColor { get; set; }
-		public Color InteractionLayerOverlayColor { get; private set; }
+		public Color InteractionLayerOverlayColor { get; set; }
 
 		public TextWidget CreateHeading(string text)
 		{
@@ -161,8 +158,8 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		public Color SplitterBackground { get; private set; } = new Color(0, 0, 0, 60);
-		public Color TabBodyBackground { get; private set; }
+		public Color SplitterBackground { get; set; } = new Color(0, 0, 0, 60);
+		public Color TabBodyBackground { get; set; }
 		public Color ToolbarButtonBackground { get; set; } = Color.Transparent;
 		public Color ToolbarButtonHover => this.SlightShade;
 		public Color ToolbarButtonDown => this.MinimalShade;
@@ -172,6 +169,11 @@ namespace MatterHackers.MatterControl
 		public BorderDouble SeparatorMargin { get; }
 
 		public ImageBuffer GeneratingThumbnailIcon { get; private set; }
+
+		public Color LightTextColor { get; set; }
+		public Color BorderColor { get; set; }
+		public Color DisabledColor { get; set; }
+		public Color SplashAccentColor { get; set; }
 
 		public GuiWidget CreateSearchButton()
 		{
@@ -184,49 +186,27 @@ namespace MatterHackers.MatterControl
 		public ThemeConfig()
 		{
 			this.SeparatorMargin = (this.ButtonSpacing * 2).Clone(left: this.ButtonSpacing.Right);
+			this.RebuildTheme();
 		}
 
-		public void RebuildTheme(IThemeColors colors)
+		public void SetDefaults()
+		{
+			this.DisabledColor = new Color(this.LightTextColor, 50);
+			this.SplashAccentColor = new Color(this.Colors.PrimaryAccentColor, 185).OverlayOn(Color.White).ToColor();
+		}
+
+		public void RebuildTheme()
 		{
 			int size = (int)(16 * GuiWidget.DeviceScale);
 
-			if (AggContext.OperatingSystem == OSType.Android)
-			{
-				restoreNormal = ColorCircle(size, new Color(200, 0, 0));
-			}
-			else
-			{
-				restoreNormal = ColorCircle(size, Color.Transparent);
-			}
-
+			// On Android, use red icon as no hover events, otherwise transparent and red on hover
+			restoreNormal = ColorCircle(size, (AggContext.OperatingSystem == OSType.Android) ? new Color(200, 0, 0) : Color.Transparent);
 			restoreHover = ColorCircle(size, new Color("#DB4437"));
 			restorePressed = ColorCircle(size, new Color(255, 0, 0));
 
-			this.Colors = colors;
-
 			this.GeneratingThumbnailIcon = AggContext.StaticData.LoadIcon("building_thumbnail_40x40.png", 40, 40, this.InvertIcons);
 
-			DefaultThumbView.ThumbColor = new Color(colors.PrimaryTextColor, 30);
-
-			this.TabBodyBackground = this.ResolveColor(
-				colors.TertiaryBackgroundColor,
-				new Color(
-					Color.White,
-					(colors.IsDarkTheme) ? 3 : 25));
-
-			this.ActiveTabColor = this.TabBodyBackground;
-			this.TabBarBackground = this.ActiveTabColor.AdjustLightness(0.85).ToColor();
-			this.ThumbnailBackground = Color.Transparent;
-			this.AccentMimimalOverlay = new Color(this.Colors.PrimaryAccentColor, 50);
-
-			// Active tab color with slight transparency
-			this.InteractionLayerOverlayColor = new Color(this.ActiveTabColor, 240);
-
-			float alpha0to1 = (colors.IsDarkTheme ? 20 : 60) / 255.0f;
-
-			this.InactiveTabColor = ResolveColor(colors.PrimaryBackgroundColor, new Color(Color.White, this.SlightShade.alpha));
-
-			this.SplitterBackground = this.ActiveTabColor.AdjustLightness(0.87).ToColor();
+			DefaultThumbView.ThumbColor = new Color(this.Colors.PrimaryTextColor, 30);
 		}
 
 		public JogControls.MoveButton CreateMoveButton(PrinterConfig printer, string label, PrinterConnection.Axis axis, double movementFeedRate, bool levelingButtons = false)
@@ -316,7 +296,7 @@ namespace MatterHackers.MatterControl
 
 		public Color GetBorderColor(int alpha)
 		{
-			return new Color(this.Colors.SecondaryTextColor, alpha);
+			return new Color(this.BorderColor, alpha);
 		}
 
 		// Compute a fixed color from a source and a target alpha
