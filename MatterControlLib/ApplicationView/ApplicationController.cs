@@ -330,6 +330,8 @@ namespace MatterHackers.MatterControl
 		public static Action WebRequestFailed;
 		public static Action WebRequestSucceeded;
 
+		public static Action<DialogWindow> ChangeToPrintNotification = null;
+
 #if DEBUG
 		public const string EnvironmentName = "TestEnv_";
 #else

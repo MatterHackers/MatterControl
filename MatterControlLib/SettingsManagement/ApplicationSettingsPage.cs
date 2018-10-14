@@ -38,7 +38,6 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
@@ -106,11 +105,11 @@ namespace MatterHackers.MatterControl
 			};
 			configureNotificationsButton.Click += (s, e) =>
 			{
-				if (ApplicationSettingsWidget.OpenPrintNotification != null)
+				if (ApplicationController.ChangeToPrintNotification != null)
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						ApplicationSettingsWidget.OpenPrintNotification(this.DialogWindow);
+						ApplicationController.ChangeToPrintNotification(this.DialogWindow);
 					});
 				}
 			};
