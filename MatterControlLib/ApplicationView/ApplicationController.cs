@@ -1778,8 +1778,6 @@ namespace MatterHackers.MatterControl
 			{
 				AssetObject3D.AssetManager = new AssetManager();
 			}
-
-			//HtmlWindowTest();
 		}
 
 		private static void RunSetupIfRequired()
