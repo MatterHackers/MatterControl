@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl
 						}
 					},
 					configureNotificationsButton,
-					AggContext.StaticData.LoadIcon("notify-24x24.png")),
+					AggContext.StaticData.LoadIcon("notify-24x24.png", 16, 16, theme.InvertIcons)),
 					generalPanel);
 
 			// LanguageControl
