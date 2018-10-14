@@ -136,9 +136,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "LibraryView",
 				// Drop containers
 				ContainerFilter = (container) => false,
-				BackgroundColor = new Color(theme.MinimalShade, 25),
+				BackgroundColor = theme.ActiveTabColor,
 				ListContentView = new IconListView(theme, 22),
-				Border = new BorderDouble(top: 1),
+				Border = new BorderDouble(top: 1, right: 1),
+				BorderColor = theme.GetBorderColor(15),
 				HAnchor = HAnchor.Absolute,
 				Width = 33,
 				AllowContextMenu = false

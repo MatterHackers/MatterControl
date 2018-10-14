@@ -67,6 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var menuTheme = ApplicationController.Instance.MenuTheme;
 
+
 				int tabIndex = 0;
 
 				allUiFields.Clear();
@@ -74,6 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
 					Padding = theme.DefaultContainerPadding,
+					BackgroundColor = menuTheme.Colors.PrimaryBackgroundColor
 				};
 
 				column.AddChild(new TextWidget("Options".Localize(), textColor: menuTheme.Colors.PrimaryTextColor)

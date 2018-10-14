@@ -223,7 +223,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			get => "temperature" + ((this.hotendIndex > 0 && this.hotendIndex < 4) ? hotendIndex.ToString() : "");
 		}
 
-		private GuiWidget GetPopupContent(ThemeConfig theme)
+		private GuiWidget GetPopupContent(ThemeConfig menuTheme)
 		{
 			var widget = new IgnoredPopupWidget()
 			{
@@ -231,6 +231,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
 				Padding = new BorderDouble(12, 0),
+				BackgroundColor = menuTheme.Colors.PrimaryBackgroundColor
 			};
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -243,7 +244,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			GuiWidget hotendRow;
 			container.AddChild(hotendRow = new SettingsItem(
 				string.Format("{0} {1}", "Hotend".Localize(), hotendIndex + 1),
-				theme,
+				menuTheme,
 				new SettingsItem.ToggleSwitchConfig()
 				{
 					Checked = false,
@@ -271,7 +272,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			int tabIndex = 0;
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 			var settingsData = SettingsOrganizer.Instance.GetSettingsData(TemperatureKey);
-			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, theme, ref tabIndex);
+			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex);
 			SliceSettingsRow.AddBordersToEditFields(temperatureRow);
 			container.AddChild(temperatureRow);
 
@@ -322,9 +323,9 @@ namespace MatterHackers.MatterControl.ActionBar
 			if (hotendIndex == 0)
 			{
 				// put in the material selector
-				var presetsSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, theme)
+				var presetsSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, menuTheme)
 				{
-					Margin = new BorderDouble(right: theme.ToolbarPadding.Right),
+					Margin = new BorderDouble(right: menuTheme.ToolbarPadding.Right),
 					Padding = 0,
 					BackgroundColor = Color.Transparent,
 					VAnchor = VAnchor.Center | VAnchor.Fit
@@ -336,7 +337,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				var pulldownContainer = presetsSelector.FindNamedChildRecursive("Preset Pulldown Container");
 				if (pulldownContainer != null)
 				{
-					pulldownContainer.Padding = theme.ToolbarPadding;
+					pulldownContainer.Padding = menuTheme.ToolbarPadding;
 					pulldownContainer.HAnchor = HAnchor.Fit;
 					pulldownContainer.Margin = 0;
 					pulldownContainer.Padding = 0;
@@ -353,7 +354,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				}
 
 				container.AddChild(
-					new SettingsItem("Material".Localize(), presetsSelector, theme, enforceGutter: false)
+					new SettingsItem("Material".Localize(), presetsSelector, menuTheme, enforceGutter: false)
 					{
 						Border = new BorderDouble(0, 1)
 					});
@@ -375,18 +376,18 @@ namespace MatterHackers.MatterControl.ActionBar
 						Margin = new BorderDouble(0, 5, 0, 0)
 					});
 
-					container.AddChild(new TextWidget("Extruder".Localize() + " " + (extruderIndex + 1).ToString(), pointSize: theme.DefaultFontSize)
+					container.AddChild(new TextWidget("Extruder".Localize() + " " + (extruderIndex + 1).ToString(), pointSize: menuTheme.DefaultFontSize)
 					{
 						AutoExpandBoundsToText = true,
 						TextColor = Color.Black,
 						HAnchor = HAnchor.Left,
 					});
-					container.AddChild(new ControlContentExtruder(printer, extruderIndex, theme));
+					container.AddChild(new ControlContentExtruder(printer, extruderIndex, menuTheme));
 				}
 			}
 			else
 			{
-				container.AddChild(new ControlContentExtruder(printer, hotendIndex, theme));
+				container.AddChild(new ControlContentExtruder(printer, hotendIndex, menuTheme));
 			}
 
 			return widget;

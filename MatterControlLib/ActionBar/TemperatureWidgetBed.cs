@@ -64,14 +64,15 @@ namespace MatterHackers.MatterControl.ActionBar
 		protected override int ActualTemperature => (int)printer.Connection.ActualBedTemperature;
 		protected override int TargetTemperature => (int)printer.Connection.TargetBedTemperature;
 
-		private GuiWidget GetPopupContent(ThemeConfig theme)
+		private GuiWidget GetPopupContent(ThemeConfig menuTheme)
 		{
 			var widget = new IgnoredPopupWidget()
 			{
 				Width = 300,
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
-				Padding = new BorderDouble(12, 0)
+				Padding = new BorderDouble(12, 0),
+				BackgroundColor = menuTheme.Colors.PrimaryBackgroundColor
 			};
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -85,7 +86,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			container.AddChild(hotendRow = new SettingsItem(
 				"Heated Bed".Localize(),
-				theme,
+				menuTheme,
 				new SettingsItem.ToggleSwitchConfig()
 				{
 					Checked = false,
@@ -114,7 +115,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 
 			var settingsData = SettingsOrganizer.Instance.GetSettingsData(SettingsKey.bed_temperature);
-			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, theme, ref tabIndex);
+			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex);
 			SliceSettingsRow.AddBordersToEditFields(temperatureRow);
 			container.AddChild(temperatureRow);
 
