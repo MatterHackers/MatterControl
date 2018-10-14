@@ -233,13 +233,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Hardware tab
 			tabControl.AddTab(
-				new ChromeTab("Hardware", 
-				"Hardware".Localize(), 
-				tabControl, 
+				new ChromeTab("Hardware",
+				"Hardware".Localize(),
+				tabControl,
 				new HardwareTabPage(theme)
 				{
 					BackgroundColor = theme.ActiveTabColor
-				}, 
+				},
 				theme,
 				hasClose: false)
 				{
