@@ -344,7 +344,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					}
 					else if (menuAction.IsEnabled(this.listViewItem.ListView.SelectedItems, this.listViewItem.ListView))
 					{
-						var item = menu.CreateMenuItem(menuAction.Title);
+						var item = menu.CreateMenuItem(menuAction.Title, menuAction.Icon);
 						item.Click += (s, e) => UiThread.RunOnIdle(() =>
 						{
 							menu.Close();
