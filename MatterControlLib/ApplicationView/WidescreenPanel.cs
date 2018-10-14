@@ -121,27 +121,10 @@ namespace MatterHackers.MatterControl
 
 			PopupMenu.MenuItem menuItem;
 
-			menuItem = popupMenu.CreateMenuItem("Help".Localize(), linkIcon);
+			menuItem = popupMenu.CreateMenuItem("Help".Localize(), AggContext.StaticData.LoadIcon("help_page.png", 16, 16, menuTheme.InvertIcons));
 			menuItem.Click += (s, e) => ApplicationController.Instance.ShowApplicationHelp();
 
-			menuItem = popupMenu.CreateMenuItem("Forums".Localize(), linkIcon);
-			menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("https://forums.matterhackers.com/category/20/mattercontrol");
-
-			menuItem = popupMenu.CreateMenuItem("Wiki".Localize(), linkIcon);
-			menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("http://wiki.mattercontrol.com");
-
-			menuItem = popupMenu.CreateMenuItem("Guides and Articles".Localize(), linkIcon);
-			menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("http://www.matterhackers.com/topic/mattercontrol");
-
-			menuItem = popupMenu.CreateMenuItem("Release Notes".Localize(), linkIcon);
-			menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("http://wiki.mattercontrol.com/Release_Notes");
-
-			menuItem = popupMenu.CreateMenuItem("Report a Bug".Localize());
-			menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("https://github.com/MatterHackers/MatterControl/issues");
-
-			menuItem = popupMenu.CreateMenuItem("Settings".Localize(), AggContext.StaticData.LoadIcon("fa-cog_16.png", 16, 16, menuTheme.InvertIcons));
-			menuItem.Click += (s, e) => DialogWindow.Show<ApplicationSettingsPage>();
-			menuItem.Name = "Settings MenuItem";
+			popupMenu.CreateHorizontalLine();
 
 			menuItem = popupMenu.CreateMenuItem("Check For Update".Localize(), AggContext.StaticData.LoadIcon("update.png", 16, 16, menuTheme.InvertIcons));
 			menuItem.Click += (s, e) => UiThread.RunOnIdle(() =>
@@ -150,12 +133,26 @@ namespace MatterHackers.MatterControl
 				DialogWindow.Show<CheckForUpdatesPage>();
 			});
 
+			popupMenu.CreateHorizontalLine();
+
+			menuItem = popupMenu.CreateMenuItem("Settings".Localize(), AggContext.StaticData.LoadIcon("fa-cog_16.png", 16, 16, menuTheme.InvertIcons));
+			menuItem.Click += (s, e) => DialogWindow.Show<ApplicationSettingsPage>();
+			menuItem.Name = "Settings MenuItem";
+
+			popupMenu.CreateHorizontalLine();
+
 			ImageBuffer indicatorIcon = null;
 
 			if (IntPtr.Size == 8)
 			{
 				indicatorIcon = AggContext.StaticData.LoadIcon("x64.png", 16, 16, menuTheme.InvertIcons);
 			}
+
+			menuItem = popupMenu.CreateMenuItem("Report a Bug".Localize(), AggContext.StaticData.LoadIcon("feedback.png", 16, 16, menuTheme.InvertIcons));
+			menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("https://github.com/MatterHackers/MatterControl/issues");
+
+			popupMenu.CreateHorizontalLine();
+
 
 			//// x64 indicator icon
 			//if (IntPtr.Size == 8)
@@ -178,6 +175,21 @@ namespace MatterHackers.MatterControl
 
 			//	indicatorIcon = blueBox.BackBuffer;
 			//}
+
+
+			menuItem = popupMenu.CreateMenuItem("Forums".Localize(), linkIcon);
+			menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("https://forums.matterhackers.com/category/20/mattercontrol");
+
+			menuItem = popupMenu.CreateMenuItem("Wiki".Localize(), linkIcon);
+			menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("http://wiki.mattercontrol.com");
+
+			menuItem = popupMenu.CreateMenuItem("Guides and Articles".Localize(), linkIcon);
+			menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("http://www.matterhackers.com/topic/mattercontrol");
+
+			menuItem = popupMenu.CreateMenuItem("Release Notes".Localize(), linkIcon);
+			menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("http://wiki.mattercontrol.com/Release_Notes");
+
+			popupMenu.CreateHorizontalLine();
 
 			menuItem = popupMenu.CreateMenuItem("About".Localize() + " MatterControl", indicatorIcon);
 			menuItem.Click += (s, e) => ApplicationController.Instance.ShowAboutPage();

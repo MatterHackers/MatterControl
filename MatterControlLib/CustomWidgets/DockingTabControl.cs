@@ -270,7 +270,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						Name = $"{item.key} Sidebar",
 						PopupContent = resizeContainer,
 						PopupLayoutEngine = new UnpinnedLayoutEngine(resizeContainer, widgetTodockTo, DockSide)
-						, DebugShowBounds = true
 					};
 					itemButton.Click += (s, e) =>
 					{
