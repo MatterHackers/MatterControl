@@ -505,6 +505,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 					case DockSide.Bottom:
 						throw new NotImplementedException();
+
 					case DockSide.Right:
 						popupWidget.HAnchor = HAnchor.Absolute;
 						popupWidget.LocalBounds = new RectangleDouble(bounds.Right - contentWidget.Width, bounds.Bottom, bounds.Right, bounds.Top);
@@ -512,6 +513,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 					case DockSide.Top:
 						throw new NotImplementedException();
+
 					default:
 						throw new NotImplementedException();
 				}

@@ -31,8 +31,10 @@ using System;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 
@@ -61,6 +63,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.printer = printer;
 
 			bool isPrinterType = this is PrinterTabPage;
+
+			// library popout content
+			var librarySideBar = new DockingTabControl(this, DockSide.Right, printer, theme)
+			{
+				Name = "LibraryDockingTabControl",
+				//ControlIsPinned = printer.ViewState.SliceSettingsTabPinned
+			};
+			librarySideBar.PinStatusChanged += (s, e) =>
+			{
+				//printer.ViewState.SliceSettingsTabPinned = sideBar.ControlIsPinned;
+			};
+
+			var partPreviewContent = this.Parents<PartPreviewContent>().FirstOrDefault();
+
+			librarySideBar.AddPage(
+				"Library",
+				"Library".Localize(),
+				new PrintLibraryWidget(
+					partPreviewContent, theme));
 
 			viewControls3D = new ViewControls3D(sceneContext, theme, sceneContext.Scene.UndoBuffer, isPrinterType)
 			{
@@ -145,6 +166,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AllowContextMenu = false
 			};
 
+			favoritesBarAndView3DWidget.AddChild(librarySideBar);
 			favoritesBarAndView3DWidget.AddChild(favoritesBar);
 			favoritesBarAndView3DWidget.AddChild(view3DWidget);
 			toolbarAndView3DWidget.AddChild(favoritesBarAndView3DWidget);
