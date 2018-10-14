@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.EeProm
 				var settingsAreaScrollBox = new ScrollableWidget(true);
 				settingsAreaScrollBox.ScrollArea.HAnchor |= HAnchor.Stretch;
 				settingsAreaScrollBox.AnchorAll();
-				settingsAreaScrollBox.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+				settingsAreaScrollBox.BackgroundColor = theme.MinimalShade;
 				topToBottom.AddChild(settingsAreaScrollBox);
 
 				settingsColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)

@@ -340,7 +340,7 @@ namespace MatterHackers.MatterControl
 
 		private void systemWindow_AfterDraw(object sender, EventArgs e)
 		{
-			if (this.Inspecting 
+			if (this.Inspecting
 				&& !inspectedSystemWindow.HasBeenClosed
 				&& tabControl1.SelectedIndex == 0)
 			{
@@ -415,7 +415,7 @@ namespace MatterHackers.MatterControl
 			{
 				//var item = node.Tag as IObject3D;
 				e.Graphics.FillRectangle(
-					(sceneTreeView.SelectedNode == node) ? SystemBrushes.Highlight : Brushes.Transparent, 
+					(sceneTreeView.SelectedNode == node) ? SystemBrushes.Highlight : Brushes.Transparent,
 					node.Bounds);
 
 				TextRenderer.DrawText(
@@ -443,6 +443,7 @@ namespace MatterHackers.MatterControl
 			{
 				scene.DebugItem = null;
 			}
+
 		}
 
 		private void debugTextWidget_CheckedChanged(object sender, EventArgs e)
@@ -463,6 +464,44 @@ namespace MatterHackers.MatterControl
 			}
 
 			base.OnKeyUp(e);
+		}
+
+		private void InspectForm_Load(object sender, EventArgs e1)
+		{
+			var rootNode = new TreeNode("Theme");
+
+			var themeNode = new TreeNode("Theme");
+
+			var menuThemeNode = new TreeNode("MenuTheme");
+
+			rootNode.Nodes.Add(themeNode);
+			rootNode.Nodes.Add(menuThemeNode);
+
+			themeTreeView.Nodes.Add(rootNode);
+
+			rootNode.Expand();
+
+			themeTreeView.AfterSelect += (s, e) =>
+			{
+				if (e.Node == rootNode)
+				{
+					propertyGrid1.SelectedObject = MatterControl.AppContext.ThemeSet;
+				}
+				else if (e.Node == themeNode)
+				{
+					propertyGrid1.SelectedObject = MatterControl.AppContext.Theme;
+
+				}
+				else if (e.Node == menuThemeNode)
+				{
+					propertyGrid1.SelectedObject = MatterControl.AppContext.MenuTheme;
+				}
+			};
+		}
+
+		private void btnApply_Click(object sender, EventArgs e)
+		{
+			ApplicationController.Instance.ReloadAll();
 		}
 	}
 }

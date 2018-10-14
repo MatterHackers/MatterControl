@@ -28,30 +28,29 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
 	public partial class ApplicationSettingsPage : DialogPage
 	{
+		private ThemeColorPanel themeColorPanel;
+
 		public ApplicationSettingsPage()
 		{
 			this.AlwaysOnTopOfMain = true;
 			this.WindowTitle = this.HeaderText = "MatterControl " + "Settings".Localize();
-			this.WindowSize = new Vector2(500 * GuiWidget.DeviceScale, 500 * GuiWidget.DeviceScale);
+			this.WindowSize = new Vector2(700 * GuiWidget.DeviceScale, 600 * GuiWidget.DeviceScale);
 
 			contentRow.Padding = contentRow.Padding.Clone(top: 0);
 
@@ -283,12 +282,54 @@ namespace MatterHackers.MatterControl
 
 			this.AddSettingsRow(section, generalPanel);
 
+			themeColorPanel = new ThemeColorPanel(theme)
+			{
+				HAnchor = HAnchor.Stretch
+			};
+
+			var droplist = new DropDownList("Custom", theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
+			{
+				BorderColor = theme.GetBorderColor(75),
+				Margin = new BorderDouble(0, 0, 10, 0)
+			};
+
+			int i = 0;
+
+			foreach (var item in AppContext.ThemeProviders)
+			{
+				var newItem = droplist.AddItem(item.Key);
+
+				if (item.Value == themeColorPanel.ThemeProvider)
+				{
+					droplist.SelectedIndex = i;
+				}
+
+				i++;
+			}
+
+			droplist.SelectionChanged += (s, e) =>
+			{
+				if (AppContext.ThemeProviders.TryGetValue(droplist.SelectedValue, out IColorTheme provider))
+				{
+					themeColorPanel.ThemeProvider = provider;
+					UserSettings.Instance.set(UserSettingsKey.ThemeName, droplist.SelectedValue);
+				}
+			};
+
+			var themeRow = new SettingsItem("Theme".Localize(), droplist, theme);
+			generalPanel.AddChild(themeRow);
+			generalPanel.AddChild(themeColorPanel);
+
+			themeColorPanel.Border = themeRow.Border;
+			themeColorPanel.BorderColor = themeRow.BorderColor;
+			themeRow.Border = 0;
+
 			var advancedPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				Margin = new BorderDouble(2, 0)
 			};
 
-			var sectionWidget = new SectionWidget("Advanced", advancedPanel, theme, serializationKey: "ApplicationSettings-Advanced", expanded: false)
+			var sectionWidget = new SectionWidget("Advanced".Localize(), advancedPanel, theme, serializationKey: "ApplicationSettings-Advanced", expanded: false)
 			{
 				Name = "Advanced Section",
 				HAnchor = HAnchor.Stretch,
@@ -354,6 +395,18 @@ namespace MatterHackers.MatterControl
 				advancedPanel);
 
 			advancedPanel.Children<SettingsItem>().First().Border = new BorderDouble(0, 1);
+		}
+
+		public void BeforePopup()
+		{
+			// Refresh theme mode buttons
+			string activeMode = UserSettings.Instance.get(UserSettingsKey.ThemeMode);
+
+			foreach (var button in themeColorPanel.Children[1].Children<ThemePreviewButton>())
+			{
+				button.IsActive = activeMode == button.Mode;
+				button.PreviewThemeColor(theme.Colors.SourceColor);
+			}
 		}
 
 		private void AddSettingsRow(GuiWidget widget, GuiWidget container)

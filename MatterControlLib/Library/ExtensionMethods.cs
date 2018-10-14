@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public static ImageBuffer AlphaToPrimaryAccent(this ImageBuffer sourceImage)
 		{
-			return sourceImage.AnyAlphaToColor(ActiveTheme.Instance.PrimaryAccentColor);
+			return sourceImage.AnyAlphaToColor(AppContext.Theme.Colors.PrimaryAccentColor);
 		}
 	}
 }

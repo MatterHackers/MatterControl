@@ -64,14 +64,14 @@ namespace MatterHackers.MatterControl
 
 			librarySelectorWidget = new ListView(libraryNavContext, new IconListView(theme, 75), theme)
 			{
-				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
+				BackgroundColor = theme.MinimalShade,
 				ShowItems = true,
 				ContainerFilter = (container) => !container.IsReadOnly,
 			};
 
 			// put in the bread crumb widget
 			breadCrumbWidget = new FolderBreadCrumbWidget(librarySelectorWidget, theme);
-			breadCrumbWidget.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
+			breadCrumbWidget.BackgroundColor = theme.MinimalShade;
 			contentRow.AddChild(breadCrumbWidget);
 			contentRow.BackgroundColor = Color.Transparent;
 

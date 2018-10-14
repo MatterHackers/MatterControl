@@ -29,13 +29,17 @@
 		private void InitializeComponent()
 		{
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+			this.debugTextWidget = new System.Windows.Forms.CheckBox();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.aggTreeView = new System.Windows.Forms.TreeView();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.sceneTreeView = new System.Windows.Forms.TreeView();
+			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.themeTreeView = new System.Windows.Forms.TreeView();
+			this.btnSaveTheme = new System.Windows.Forms.Button();
 			this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
-			this.debugTextWidget = new System.Windows.Forms.CheckBox();
+			this.btnApply = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
@@ -43,6 +47,7 @@
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
+			this.tabPage3.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// splitContainer1
@@ -65,10 +70,23 @@
 			this.splitContainer1.SplitterWidth = 3;
 			this.splitContainer1.TabIndex = 0;
 			// 
+			// debugTextWidget
+			// 
+			this.debugTextWidget.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.debugTextWidget.AutoSize = true;
+			this.debugTextWidget.Location = new System.Drawing.Point(489, 3);
+			this.debugTextWidget.Name = "debugTextWidget";
+			this.debugTextWidget.Size = new System.Drawing.Size(116, 17);
+			this.debugTextWidget.TabIndex = 2;
+			this.debugTextWidget.Text = "Debug TextWidget";
+			this.debugTextWidget.UseVisualStyleBackColor = true;
+			this.debugTextWidget.CheckedChanged += new System.EventHandler(this.debugTextWidget_CheckedChanged);
+			// 
 			// tabControl1
 			// 
 			this.tabControl1.Controls.Add(this.tabPage1);
 			this.tabControl1.Controls.Add(this.tabPage2);
+			this.tabControl1.Controls.Add(this.tabPage3);
 			this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tabControl1.Location = new System.Drawing.Point(0, 0);
 			this.tabControl1.Name = "tabControl1";
@@ -108,7 +126,7 @@
 			this.tabPage2.Location = new System.Drawing.Point(4, 22);
 			this.tabPage2.Name = "tabPage2";
 			this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage2.Size = new System.Drawing.Size(546, 606);
+			this.tabPage2.Size = new System.Drawing.Size(600, 606);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Scene";
 			this.tabPage2.UseVisualStyleBackColor = true;
@@ -122,10 +140,44 @@
 			this.sceneTreeView.Location = new System.Drawing.Point(3, 3);
 			this.sceneTreeView.Margin = new System.Windows.Forms.Padding(2);
 			this.sceneTreeView.Name = "sceneTreeView";
-			this.sceneTreeView.Size = new System.Drawing.Size(540, 600);
+			this.sceneTreeView.Size = new System.Drawing.Size(594, 600);
 			this.sceneTreeView.TabIndex = 2;
 			this.sceneTreeView.DrawNode += new System.Windows.Forms.DrawTreeNodeEventHandler(this.SceneTreeView_DrawNode);
 			this.sceneTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.SceneTreeView_AfterSelect);
+			// 
+			// tabPage3
+			// 
+			this.tabPage3.Controls.Add(this.btnApply);
+			this.tabPage3.Controls.Add(this.themeTreeView);
+			this.tabPage3.Controls.Add(this.btnSaveTheme);
+			this.tabPage3.Location = new System.Drawing.Point(4, 22);
+			this.tabPage3.Name = "tabPage3";
+			this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPage3.Size = new System.Drawing.Size(600, 606);
+			this.tabPage3.TabIndex = 2;
+			this.tabPage3.Text = "Theme";
+			this.tabPage3.UseVisualStyleBackColor = true;
+			// 
+			// themeTreeView
+			// 
+			this.themeTreeView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.themeTreeView.FullRowSelect = true;
+			this.themeTreeView.HideSelection = false;
+			this.themeTreeView.Location = new System.Drawing.Point(3, 3);
+			this.themeTreeView.Margin = new System.Windows.Forms.Padding(2);
+			this.themeTreeView.Name = "themeTreeView";
+			this.themeTreeView.Size = new System.Drawing.Size(592, 253);
+			this.themeTreeView.TabIndex = 2;
+			// 
+			// btnSaveTheme
+			// 
+			this.btnSaveTheme.Location = new System.Drawing.Point(519, 322);
+			this.btnSaveTheme.Name = "btnSaveTheme";
+			this.btnSaveTheme.Size = new System.Drawing.Size(75, 23);
+			this.btnSaveTheme.TabIndex = 0;
+			this.btnSaveTheme.Text = "Save Theme";
+			this.btnSaveTheme.UseVisualStyleBackColor = true;
 			// 
 			// propertyGrid1
 			// 
@@ -138,17 +190,15 @@
 			this.propertyGrid1.TabIndex = 0;
 			this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
 			// 
-			// debugTextWidget
+			// btnApply
 			// 
-			this.debugTextWidget.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.debugTextWidget.AutoSize = true;
-			this.debugTextWidget.Location = new System.Drawing.Point(489, 3);
-			this.debugTextWidget.Name = "debugTextWidget";
-			this.debugTextWidget.Size = new System.Drawing.Size(116, 17);
-			this.debugTextWidget.TabIndex = 2;
-			this.debugTextWidget.Text = "Debug TextWidget";
-			this.debugTextWidget.UseVisualStyleBackColor = true;
-			this.debugTextWidget.CheckedChanged += new System.EventHandler(this.debugTextWidget_CheckedChanged);
+			this.btnApply.Location = new System.Drawing.Point(438, 322);
+			this.btnApply.Name = "btnApply";
+			this.btnApply.Size = new System.Drawing.Size(75, 23);
+			this.btnApply.TabIndex = 3;
+			this.btnApply.Text = "Apply";
+			this.btnApply.UseVisualStyleBackColor = true;
+			this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
 			// 
 			// InspectForm
 			// 
@@ -159,6 +209,7 @@
 			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "InspectForm";
 			this.Text = "InspectForm";
+			this.Load += new System.EventHandler(this.InspectForm_Load);
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel1.PerformLayout();
 			this.splitContainer1.Panel2.ResumeLayout(false);
@@ -167,6 +218,7 @@
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
 			this.tabPage2.ResumeLayout(false);
+			this.tabPage3.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -181,5 +233,9 @@
 		private System.Windows.Forms.TabPage tabPage2;
 		private System.Windows.Forms.TreeView sceneTreeView;
 		private System.Windows.Forms.CheckBox debugTextWidget;
+		private System.Windows.Forms.TabPage tabPage3;
+		private System.Windows.Forms.Button btnSaveTheme;
+		private System.Windows.Forms.TreeView themeTreeView;
+		private System.Windows.Forms.Button btnApply;
 	}
 }

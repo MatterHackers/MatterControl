@@ -27,14 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
@@ -54,7 +51,7 @@ namespace MatterHackers.MatterControl
 
 			this.AnchorAll();
 			this.Name = "WidescreenPanel";
-			this.BackgroundColor = theme.Colors.PrimaryBackgroundColor;
+			this.BackgroundColor = theme.ActiveTabColor;
 
 			// Push TouchScreenMode into GuiWidget
 			GuiWidget.TouchScreenMode = UserSettings.Instance.IsTouchScreen;
@@ -83,6 +80,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
 				Width = 500,
+				MinimumSize = new Vector2(400, 0)
 			};
 
 			var row = new FlowLayoutWidget()

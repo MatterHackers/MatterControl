@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl
 
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
-			this.BackgroundColor = theme.Colors.PrimaryBackgroundColor;
+			this.BackgroundColor = theme.ActiveTabColor;
 
 			if (cancelButtonText == null)
 			{

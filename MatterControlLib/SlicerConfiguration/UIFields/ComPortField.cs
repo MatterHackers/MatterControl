@@ -73,7 +73,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Name = "com_port Field",
 				// Prevent droplist interaction when connected
 				Enabled = canChangeComPort,
-				TextColor = canChangeComPort ? ActiveTheme.Instance.PrimaryTextColor : new Color(ActiveTheme.Instance.PrimaryTextColor, 150),
 				BorderColor = theme.GetBorderColor(75)
 			};
 
@@ -90,7 +89,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				canChangeComPort = !printer.Connection.IsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
 				dropdownList.Enabled = canChangeComPort;
-				dropdownList.TextColor = canChangeComPort ? ActiveTheme.Instance.PrimaryTextColor : new Color(ActiveTheme.Instance.PrimaryTextColor, 150);
 
 				if (printer.Connection.ComPort != dropdownList.SelectedLabel)
 				{

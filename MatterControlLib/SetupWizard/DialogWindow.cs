@@ -38,19 +38,18 @@ namespace MatterHackers.MatterControl
 	public class DialogWindow : SystemWindow
 	{
 		private DialogPage activePage;
-
 		private EventHandler unregisterEvents;
-
 		private static Dictionary<Type, DialogWindow> allWindows = new Dictionary<Type, DialogWindow>();
+		private ThemeConfig theme;
 
 		private DialogWindow()
 			: base(500 * GuiWidget.DeviceScale, 500 * GuiWidget.DeviceScale)
 		{
-			var theme = ApplicationController.Instance.Theme;
+			theme = ApplicationController.Instance.Theme;
 
 			this.AlwaysOnTopOfMain = true;
 			this.MinimumSize = new Vector2(200, 200);
-			this.BackgroundColor = theme.Colors.PrimaryBackgroundColor;
+			this.BackgroundColor = theme.ActiveTabColor;
 
 			var defaultPadding = theme.DefaultContainerPadding;
 			this.Padding = new BorderDouble(defaultPadding, defaultPadding, defaultPadding, 2);
@@ -141,24 +140,32 @@ namespace MatterHackers.MatterControl
 
 		public DialogPage ChangeToPage<PanelType>() where PanelType : DialogPage, new()
 		{
-			PanelType panel = new PanelType();
-			panel.DialogWindow = this;
-			ChangeToPage(panel);
+			var panel = new PanelType
+			{
+				DialogWindow = this
+			};
+			this.ChangeToPage(panel);
 
 			// in the event of a reload all make sure we rebuild the contents correctly
 			ApplicationController.Instance.DoneReloadingAll.RegisterEvent((s,e) =>
 			{
+				// Normal theme references are safe to hold in widgets because they're rebuild on ReloadAll. DialogWindow
+				// survives and must refresh its reference on reload
+				theme = ApplicationController.Instance.Theme;
+
 				// fix the main window background color if needed
-				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+				this.BackgroundColor = theme.ActiveTabColor;
 
 				// find out where the contents we put in last time are
 				int thisIndex = GetChildIndex(panel);
-				RemoveAllChildren();
+				this.RemoveAllChildren();
 
 				// make new content with the possibly changed theme
-				PanelType newPanel = new PanelType();
-				newPanel.DialogWindow = this;
-				AddChild(newPanel, thisIndex);
+				var newPanel = new PanelType
+				{
+					DialogWindow = this
+				};
+				this.AddChild(newPanel, thisIndex);
 				panel.CloseOnIdle();
 
 				// remember the new content

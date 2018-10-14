@@ -275,7 +275,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				Padding = new BorderDouble(3),
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Center,
-				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
+				BackgroundColor = theme.MinimalShade,
 				Height = 20
 			};
 			this.AddChild(zOffsetStreamContainer);
@@ -306,7 +306,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			double zoffset = printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset);
 			bool hasOverriddenZOffset = (zoffset != 0);
 
-			zOffsetStreamContainer.BackgroundColor = (allowRemoveButton && hasOverriddenZOffset) ? theme.PresetColors.UserOverride : ActiveTheme.Instance.SecondaryBackgroundColor;
+			zOffsetStreamContainer.BackgroundColor = (allowRemoveButton && hasOverriddenZOffset) ? theme.PresetColors.UserOverride : theme.MinimalShade;
 			clearZOffsetButton.Visible = allowRemoveButton && hasOverriddenZOffset;
 
 			zOffsetStreamDisplay.Text = zoffset.ToString("0.##");

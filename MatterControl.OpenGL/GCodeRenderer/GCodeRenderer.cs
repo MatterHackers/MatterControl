@@ -66,6 +66,8 @@ namespace MatterHackers.GCodeVisualizer
 
 		public ExtrusionColors ExtrusionColors { get; } = null;
 
+		public Color Gray { get; set; }
+
 		public GCodeRenderer(GCodeFile gCodeFileToDraw)
 		{
 			if (gCodeFileToDraw != null)
@@ -133,11 +135,26 @@ namespace MatterHackers.GCodeVisualizer
 						double layerThickness = gCodeFileToDraw.GetLayerHeight(layerToCreate);
 
 						Color extrusionColor = ExtrusionColors.GetColorForSpeed((float)currentInstruction.FeedRate);
-						renderFeaturesForLayer.Add(new RenderFeatureExtrusion(previousInstruction.Position, currentInstruction.Position, currentInstruction.ExtruderIndex, currentInstruction.FeedRate, currentInstruction.EPosition - previousInstruction.EPosition, gCodeFileToDraw.GetFilamentDiameter(), layerThickness, extrusionColor));
+						renderFeaturesForLayer.Add(
+							new RenderFeatureExtrusion(
+								previousInstruction.Position,
+								currentInstruction.Position,
+								currentInstruction.ExtruderIndex,
+								currentInstruction.FeedRate,
+								currentInstruction.EPosition - previousInstruction.EPosition,
+								gCodeFileToDraw.GetFilamentDiameter(),
+								layerThickness,
+								extrusionColor,
+								this.Gray));
 					}
 					else
 					{
-						renderFeaturesForLayer.Add(new RenderFeatureTravel(previousInstruction.Position, currentInstruction.Position, currentInstruction.ExtruderIndex, currentInstruction.FeedRate));
+						renderFeaturesForLayer.Add(
+							new RenderFeatureTravel(
+								previousInstruction.Position,
+								currentInstruction.Position,
+								currentInstruction.ExtruderIndex,
+								currentInstruction.FeedRate));
 					}
 				}
 			}

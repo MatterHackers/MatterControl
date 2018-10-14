@@ -75,6 +75,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		private string UserProfilesDirectory => GetProfilesDirectoryForUser(this.UserName);
 
+		[JsonIgnore]
+		public string ProfileThemeSetPath => Path.Combine(UserProfilesDirectory, "themeset.json");
+
 		/// <summary>
 		/// The user specific path to the Profiles document
 		/// </summary>
@@ -534,10 +537,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			printerSettings.ID = guid;
 			printerSettings.DocumentVersion = PrinterSettings.LatestVersion;
 
-			printerSettings.UserLayer[SettingsKey.printer_name.ToString()] = printerName;
-
-			//If the active printer has no theme we set it to the current theme color
-			printerSettings.UserLayer[SettingsKey.active_theme_name] = ActiveTheme.Instance.Name;
+			printerSettings.UserLayer[SettingsKey.printer_name] = printerName;
 
 			// Add to Profiles - fires ProfileManager.Save due to ObservableCollection event listener
 			Instance.Profiles.Add(new PrinterInfo

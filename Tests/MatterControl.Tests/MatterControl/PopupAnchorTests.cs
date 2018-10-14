@@ -878,10 +878,7 @@ namespace MatterControl.Tests.MatterControl
 			{
 				this.BackgroundColor = new Color(56, 56, 56);
 
-				Theme = new ThemeConfig()
-				{
-					Colors = ActiveTheme.Instance
-				};
+				Theme = new ThemeConfig();
 
 				this.Padding = new BorderDouble(left: 120, bottom: 10, right: 10, top: 10);
 

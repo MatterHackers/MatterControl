@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return materialControl;
 			};
 
-			materialColorButton = new ColorButton(MaterialRendering.Color(initialMaterialIndex, theme.MinimalHighlight))
+			materialColorButton = new ColorButton(MaterialRendering.Color(initialMaterialIndex, theme.BorderColor))
 			{
 				Width = scaledButtonSize,
 				Height = scaledButtonSize,

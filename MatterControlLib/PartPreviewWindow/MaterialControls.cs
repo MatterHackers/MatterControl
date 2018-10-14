@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var scaledButtonSize = 16 * GuiWidget.DeviceScale;
 
-				buttonView.AddChild(new ColorButton(MaterialRendering.Color(extruderIndex, theme.MinimalHighlight))
+				buttonView.AddChild(new ColorButton(MaterialRendering.Color(extruderIndex, theme.BorderColor))
 				{
 					Width = scaledButtonSize,
 					Height = scaledButtonSize,

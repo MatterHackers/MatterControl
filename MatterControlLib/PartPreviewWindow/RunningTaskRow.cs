@@ -81,7 +81,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Absolute | VAnchor.Bottom,
 				FillColor = ActiveTheme.Instance.PrimaryAccentColor,
 				BorderColor = Color.Transparent,
-				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
 				Margin = new BorderDouble(32, 7, theme.ButtonHeight * 2 + 14, 0),
 			};
 			rowContainer.AddChild(progressBar);

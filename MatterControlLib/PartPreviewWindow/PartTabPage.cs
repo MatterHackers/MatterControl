@@ -152,8 +152,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			leftToRight.AddChild(view3DContainer);
 
-			view3DWidget.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
-
 			if (sceneContext.World.RotationMatrix == Matrix4X4.Identity)
 			{
 				this.view3DWidget.ResetView();

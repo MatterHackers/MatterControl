@@ -59,9 +59,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
 				canChangeComPort = !printer.Connection.IsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
+				dropdownList.TextColor = theme.Colors.PrimaryTextColor;
 				dropdownList.Enabled = canChangeComPort;
-				dropdownList.TextColor = canChangeComPort ? theme.Colors.PrimaryTextColor : new Color(theme.Colors.PrimaryTextColor, 150);
-				dropdownList.BorderColor = canChangeComPort ? theme.Colors.SecondaryTextColor : new Color(theme.Colors.SecondaryTextColor, 150);
 			}, ref unregisterEvents);
 
 			// Release event listener on close

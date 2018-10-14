@@ -54,8 +54,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			: base (FlowDirection.TopToBottom)
 		{
 			this.printer = printer;
-			this.BackgroundColor = theme.TabBodyBackground;
-
 			this.settingsContext = settingsContext;
 
 			settingsControlBar = new PresetsToolbar(printer, theme)
@@ -574,7 +572,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				var row = new FlowLayoutWidget()
 				{
-					BackgroundColor = theme.Colors.TertiaryBackgroundColor,
+					BackgroundColor = theme.SlightShade,
 					Padding = new BorderDouble(5),
 					Margin = new BorderDouble(3, 20, 3, 0),
 					HAnchor = HAnchor.Stretch,

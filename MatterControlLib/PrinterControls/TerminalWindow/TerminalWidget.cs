@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl
 
 			textScrollWidget = new TextScrollWidget(printer, printer.Connection.TerminalLog.PrinterLines)
 			{
-				BackgroundColor = theme.Colors.SecondaryBackgroundColor,
+				BackgroundColor = theme.MinimalShade,
 				TextColor = theme.Colors.PrimaryTextColor,
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
