@@ -434,7 +434,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.MinimumSize = new Vector2(150 * GuiWidget.DeviceScale, theme.ButtonHeight);
 				this.content = content;
 
-				this.HoverColor = theme.Colors.PrimaryAccentColor;
+				this.HoverColor = theme.AccentMimimalOverlay;
 
 				content.VAnchor = VAnchor.Center;
 				content.HAnchor |= HAnchor.Left;
