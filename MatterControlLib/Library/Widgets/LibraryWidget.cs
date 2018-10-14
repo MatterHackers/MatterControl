@@ -687,6 +687,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Add to Bed".Localize(),
+				Icon = AggContext.StaticData.LoadIcon("bed_add.png", 16, 16, theme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					var activeContext = ApplicationController.Instance.DragDropData;
@@ -895,6 +896,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Export".Localize(),
+				Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					// Previously - exportButton_Click(object sender, EventArgs e)
