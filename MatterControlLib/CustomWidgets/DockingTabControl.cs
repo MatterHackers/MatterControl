@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	public class DockingTabControl : FlowLayoutWidget
 	{
-		public int MinDockingWidth = 400 * (int)GuiWidget.DeviceScale;
+		public int MinDockingWidth { get; set; }
 		protected GuiWidget widgetTodockTo;
 		private List<(string key, string text, GuiWidget widget)> allTabs = new List<(string key, string text, GuiWidget widget)>();
 
@@ -176,9 +176,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			SimpleTabs tabControl = null;
 
+			var grabBarSide = DockSide == DockSide.Left ? GrabBarSide.Right : GrabBarSide.Left;
 			if (this.ControlIsPinned)
 			{
-				var resizePage = new LeftResizeContainer(theme)
+				var resizePage = new VerticalResizeContainer(theme, grabBarSide)
 				{
 					Width = this.ConstrainedWidth,
 					VAnchor = VAnchor.Stretch,
@@ -248,7 +249,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 				else // control is floating
 				{
-					var resizeContainer = new LeftResizeContainer(theme)
+					var resizeContainer = new VerticalResizeContainer(theme, grabBarSide)
 					{
 						Width = this.ConstrainedWidth,
 						VAnchor = VAnchor.Stretch,
@@ -500,7 +501,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				switch (DockSide)
 				{
 					case DockSide.Left:
-						popupWidget.LocalBounds = new RectangleDouble(bounds.Left, bounds.Bottom, bounds.Left - contentWidget.Width, bounds.Top);
+						popupWidget.HAnchor = HAnchor.Absolute;
+						popupWidget.LocalBounds = new RectangleDouble(bounds.Left, bounds.Bottom, bounds.Left + contentWidget.Width, bounds.Top);
 						break;
 
 					case DockSide.Bottom:

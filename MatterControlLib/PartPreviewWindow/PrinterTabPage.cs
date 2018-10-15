@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private DoubleSolidSlider layerRenderRatioSlider;
 		public SliceLayerSelector LayerScrollbar { get; private set; }
 		private GCodePanel gcodePanel;
-		internal LeftResizeContainer gcodeContainer;
+		internal VerticalResizeContainer gcodeContainer;
 		internal PrinterActionsBar printerActionsBar;
 		private DockingTabControl sideBar;
 		private SliceSettingsWidget sliceSettingsWidget;
@@ -153,9 +153,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BackgroundColor = theme.InteractionLayerOverlayColor,
 			};
 
-			var modelViewSidePanel = view3DWidget.Descendants<LeftResizeContainer>().FirstOrDefault();
+			var modelViewSidePanel = view3DWidget.Descendants<VerticalResizeContainer>().FirstOrDefault();
 
-			gcodeContainer = new LeftResizeContainer(theme)
+			gcodeContainer = new VerticalResizeContainer(theme, GrabBarSide.Left)
 			{
 				Width = printer?.ViewState.SelectedObjectPanelWidth ?? 200,
 				VAnchor = VAnchor.Stretch,
@@ -398,7 +398,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			sideBar = new DockingTabControl(widgetTodockTo, DockSide.Right, printer, theme)
 			{
 				Name = "DockingTabControl",
-				ControlIsPinned = printer.ViewState.SliceSettingsTabPinned
+				ControlIsPinned = printer.ViewState.SliceSettingsTabPinned,
+				MinDockingWidth = 400 * (int)GuiWidget.DeviceScale
 			};
 			sideBar.PinStatusChanged += (s, e) =>
 			{

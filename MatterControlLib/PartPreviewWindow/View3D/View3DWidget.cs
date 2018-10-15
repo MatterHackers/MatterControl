@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch,
 			};
 
-			modelViewSidePanel = new LeftResizeContainer(theme)
+			modelViewSidePanel = new VerticalResizeContainer(theme, GrabBarSide.Left)
 			{
 				Width = printer?.ViewState.SelectedObjectPanelWidth ?? 250,
 				VAnchor = VAnchor.Stretch,
@@ -484,8 +484,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// If the mouse is within the MeshViewer process the Drag move
-			var meshViewerPosition = this.meshViewerWidget.TransformToScreenSpace(meshViewerWidget.LocalBounds);
-			if (meshViewerPosition.Contains(screenSpaceMousePosition))
+			var meshViewerScreenBounds = this.meshViewerWidget.TransformToScreenSpace(meshViewerWidget.LocalBounds);
+			if (meshViewerScreenBounds.Contains(screenSpaceMousePosition))
 			{
 				// If already started, process drag move
 				if (this.DragOperationActive)
@@ -527,7 +527,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& selectedItem != null)
 			{
 				// Move the DropDropObject the target item
-				DragSelectedObject(selectedItem, localMousePosition: this.TransformFromParentSpace(topMostParent, screenSpaceMousePosition));
+				DragSelectedObject(selectedItem, localMousePosition: meshViewerWidget.TransformFromScreenSpace(screenSpaceMousePosition));
 			}
 		}
 
@@ -994,7 +994,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			//Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, new Vector2(mouseEvent.X, mouseEvent.Y));
 
 			// Translate to local
-			Vector2 localPosition = this.TransformFromScreenSpace(screenSpacePosition);
+			Vector2 localPosition = meshViewerWidget.TransformFromScreenSpace(screenSpacePosition);
 
 			Ray ray = this.World.GetRayForLocalBounds(localPosition);
 
@@ -1428,7 +1428,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private SelectedObjectPanel selectedObjectPanel;
 
-		internal LeftResizeContainer modelViewSidePanel;
+		internal VerticalResizeContainer modelViewSidePanel;
 
 		public Vector2 DragSelectionStartPosition { get; private set; }
 		public bool DragSelectionInProgress { get; private set; }

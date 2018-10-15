@@ -64,11 +64,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			bool isPrinterType = this is PrinterTabPage;
 
+			var favoritesBarAndView3DWidget = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			};
+
 			// library popout content
-			var librarySideBar = new DockingTabControl(this, DockSide.Right, printer, theme)
+			var librarySideBar = new DockingTabControl(favoritesBarAndView3DWidget, DockSide.Left, printer, theme)
 			{
 				Name = "LibraryDockingTabControl",
 				//ControlIsPinned = printer.ViewState.SliceSettingsTabPinned
+				MinDockingWidth = 120 * (int)GuiWidget.DeviceScale
 			};
 			librarySideBar.PinStatusChanged += (s, e) =>
 			{
@@ -140,12 +147,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch
 			};
 			toolbarAndView3DWidget.AddChild(viewControls3D);
-
-			var favoritesBarAndView3DWidget = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
-			};
 
 			var dummyContext = new LibraryConfig()
 			{
