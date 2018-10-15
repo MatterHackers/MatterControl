@@ -98,10 +98,14 @@ namespace MatterHackers.MatterControl
 			var clonedColors = JsonConvert.DeserializeObject<ThemeColors>(json);
 			clonedColors.PrimaryTextColor = new Color("#222");
 
+			var menuTheme = BuildTheme(clonedColors, darkTheme);
+			menuTheme.ActiveTabColor = new Color("#f1f1f1");
+			menuTheme.IsDarkTheme = false;
+
 			return new ThemeSet()
 			{
 				Theme = BuildTheme(colors, darkTheme),
-				MenuTheme = BuildTheme(clonedColors, darkTheme)
+				MenuTheme = menuTheme
 			};
 		}
 
