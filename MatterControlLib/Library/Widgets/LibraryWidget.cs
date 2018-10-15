@@ -569,7 +569,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			providerMessageContainer.AddChild(providerMessageWidget);
 		}
 
-		private void CreateMenuActions()
+		public static void CreateMenuActions(ListView libraryView, List<PrintItemAction> menuActions, PartPreviewContent partPreviewContent, ThemeConfig theme)
 		{
 			menuActions.Add(new PrintItemAction()
 			{
@@ -586,7 +586,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							{
 								if (openParams.FileNames != null)
 								{
-									var writableContainer = this.libraryView.ActiveContainer as ILibraryWritableContainer;
+									var writableContainer = libraryView.ActiveContainer as ILibraryWritableContainer;
 									if (writableContainer != null
 										&& openParams.FileNames.Length > 0)
 									{
@@ -596,7 +596,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							});
 					});
 				},
-				IsEnabled = (s, l) => this.libraryView.ActiveContainer is ILibraryWritableContainer
+				IsEnabled = (s, l) => libraryView.ActiveContainer is ILibraryWritableContainer
 			});
 
 			menuActions.Add(new PrintItemAction()
@@ -615,7 +615,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							(newName) =>
 							{
 								if (!string.IsNullOrEmpty(newName)
-									&& this.libraryView.ActiveContainer is ILibraryWritableContainer writableContainer)
+									&& libraryView.ActiveContainer is ILibraryWritableContainer writableContainer)
 								{
 									writableContainer.Add(new[]
 									{
@@ -626,7 +626,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				},
 				IsEnabled = (s, l) =>
 				{
-					return this.libraryView.ActiveContainer is ILibraryWritableContainer writableContainer
+					return libraryView.ActiveContainer is ILibraryWritableContainer writableContainer
 						&& writableContainer?.AllowAction(ContainerActions.AddContainers) == true;
 				}
 			});
@@ -687,6 +687,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Add to Bed".Localize(),
+				Icon = AggContext.StaticData.LoadIcon("bed_add.png", 16, 16, theme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					var activeContext = ApplicationController.Instance.DragDropData;
@@ -846,7 +847,40 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Remove".Localize(),
-				Action = (selectedLibraryItems, listView) => deleteFromLibraryButton_Click(selectedLibraryItems, null),
+				Action = (selectedLibraryItems, listView) =>
+				{
+					// Perviously - deleteFromLibraryButton_Click
+
+					// ask before remove
+					var libraryItems = libraryView.SelectedItems.Select(p => p.Model);
+					if (libraryItems.Any())
+					{
+						if (libraryView.ActiveContainer is ILibraryWritableContainer container)
+						{
+							if (container is FileSystemContainer)
+							{
+								container.Remove(libraryItems);
+								libraryView.SelectedItems.Clear();
+							}
+							else
+							{
+								StyledMessageBox.ShowMessageBox(
+									(doDelete) =>
+									{
+										if (doDelete)
+										{
+											container.Remove(libraryItems);
+											libraryView.SelectedItems.Clear();
+										}
+									},
+									"Are you sure you want to remove the currently selected items?".Localize(),
+									"Remove Items?".Localize(),
+									StyledMessageBox.MessageType.YES_NO,
+									"Remove".Localize());
+							}
+						}
+					}
+				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
 					// Multiselect, WritableContainer - disallow protected
@@ -862,7 +896,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Export".Localize(),
-				Action = (selectedLibraryItems, listView) => exportButton_Click(selectedLibraryItems, null),
+				Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons),
+				Action = (selectedLibraryItems, listView) =>
+				{
+					// Previously - exportButton_Click(object sender, EventArgs e)
+					// Open export options
+					var exportPage = new ExportPrintItemPage(libraryView.SelectedItems.Select(item => item.Model), true);
+
+					DialogWindow.Show(exportPage);
+				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
 					// Multiselect - disallow containers
@@ -875,7 +917,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Share".Localize(),
-				Action = (selectedLibraryItems, listView) => shareFromLibraryButton_Click(selectedLibraryItems, null),
+				Action = (selectedLibraryItems, listView) =>
+				{
+					// Previously - shareFromLibraryButton_Click
+					// TODO: Should be rewritten to Register from cloudlibrary, include logic to add to library as needed
+					ApplicationController.Instance.ShareLibraryItem(libraryView.SelectedItems.Select(i => i.Model).FirstOrDefault());
+				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
 					// Singleselect - disallow containers and protected items
@@ -927,7 +974,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 											feedbackWindow.ShowAsSystemWindow();
 
-											currentPartsInQueue.SaveSheets();
+											currentPartsInQueue.SaveSheets().ConfigureAwait(false);
 										}
 									});
 							}
@@ -982,54 +1029,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			base.OnClosed(e);
 		}
 
-		private void deleteFromLibraryButton_Click(object sender, EventArgs e)
-		{
-			// ask before remove
-			var libraryItems = libraryView.SelectedItems.Select(p => p.Model);
-			if (libraryItems.Any())
-			{
-				if (libraryView.ActiveContainer is ILibraryWritableContainer container)
-				{
-					if (container is FileSystemContainer)
-					{
-						container.Remove(libraryItems);
-						libraryView.SelectedItems.Clear();
-					}
-					else
-					{
-						StyledMessageBox.ShowMessageBox(
-							(doDelete) =>
-							{
-								if (doDelete)
-								{
-									container.Remove(libraryItems);
-									libraryView.SelectedItems.Clear();
-								}
-							},
-							"Are you sure you want to remove the currently selected items?".Localize(),
-							"Remove Items?".Localize(),
-							StyledMessageBox.MessageType.YES_NO,
-							"Remove".Localize());
-					}
-				}
-			}
-		}
-
-		private void shareFromLibraryButton_Click(object sender, EventArgs e)
-		{
-			// TODO: Should be rewritten to Register from cloudlibrary, include logic to add to library as needed
-
-			ApplicationController.Instance.ShareLibraryItem(libraryView.SelectedItems.Select(i => i.Model).FirstOrDefault());
-		}
-
-		private void exportButton_Click(object sender, EventArgs e)
-		{
-			//Open export options
-			var exportPage = new ExportPrintItemPage(libraryView.SelectedItems.Select(item => item.Model), true);
-
-			DialogWindow.Show(exportPage);
-		}
-
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
 			if (PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y)
@@ -1064,7 +1063,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public override void OnLoad(EventArgs args)
 		{
 			// Defer creating menu items until plugins have loaded
-			CreateMenuActions();
+			LibraryWidget.CreateMenuActions(libraryView, menuActions, partPreviewContent, theme);
 
 			navBar.OverflowButton.Name = "Print Library Overflow Menu";
 			navBar.ExtendOverflowMenu = (popupMenu) =>

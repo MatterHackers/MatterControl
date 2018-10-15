@@ -153,7 +153,6 @@ namespace MatterHackers.MatterControl
 
 			popupMenu.CreateHorizontalLine();
 
-
 			//// x64 indicator icon
 			//if (IntPtr.Size == 8)
 			//{
@@ -175,7 +174,6 @@ namespace MatterHackers.MatterControl
 
 			//	indicatorIcon = blueBox.BackBuffer;
 			//}
-
 
 			menuItem = popupMenu.CreateMenuItem("Forums".Localize(), linkIcon);
 			menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("https://forums.matterhackers.com/category/20/mattercontrol");
