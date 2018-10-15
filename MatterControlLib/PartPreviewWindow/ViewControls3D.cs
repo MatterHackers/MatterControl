@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.view3DWidget = view3DWidget;
 		}
 
-		public ViewControls3D(BedConfig sceneContext, ThemeConfig theme, UndoBuffer undoBuffer, bool isPrinterType)
+		public ViewControls3D(BedConfig sceneContext, ThemeConfig theme, UndoBuffer undoBuffer, bool isPrinterType, bool showPrintButton)
 			: base(theme)
 		{
 			this.ActionArea.Click += (s, e) =>
@@ -211,6 +211,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.MenuActions.FirstOrDefault(m => m.ID == "Export")?.Action?.Invoke();
 			};
 			this.AddChild(exportButton);
+
+			if (showPrintButton)
+			{
+				var printButton = new TextButton("Print", theme);
+				this.AddChild(printButton);
+			}
 
 			this.AddChild(new ToolbarSeparator(theme));
 
