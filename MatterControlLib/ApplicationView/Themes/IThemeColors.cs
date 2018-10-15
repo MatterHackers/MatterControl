@@ -35,8 +35,6 @@ namespace MatterHackers.Agg.UI
 	{
 		bool IsDarkTheme { get; }
 
-		Color PrimaryBackgroundColor { get; }
-
 		Color PrimaryTextColor { get; }
 
 		Color PrimaryAccentColor { get; }

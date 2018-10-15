@@ -35,8 +35,6 @@ namespace MatterHackers.Agg.UI
 	{
 		public bool IsDarkTheme { get; set; }
 
-		public Color PrimaryBackgroundColor { get; set; }
-
 		public Color PrimaryTextColor { get; set; }
 
 		public Color PrimaryAccentColor { get; set; }
@@ -52,7 +50,6 @@ namespace MatterHackers.Agg.UI
 			return new ThemeColors
 			{
 				IsDarkTheme = darkTheme,
-				PrimaryBackgroundColor = primaryBackgroundColor,
 				PrimaryTextColor = new Color(darkTheme ? "#FFFFFF" : "#222"),
 				PrimaryAccentColor = GetAdjustedAccentColor(accentColor, primaryBackgroundColor),
 				SourceColor = accentColor,

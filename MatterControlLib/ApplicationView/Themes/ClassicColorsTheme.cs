@@ -98,7 +98,6 @@ namespace MatterHackers.MatterControl
 			var clonedColors = JsonConvert.DeserializeObject<ThemeColors>(json);
 			clonedColors.IsDarkTheme = false;
 			clonedColors.PrimaryTextColor = new Color("#222");
-			clonedColors.PrimaryBackgroundColor = new Color("#fff");
 
 			return new ThemeSet()
 			{
