@@ -132,18 +132,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			string imageFile = this.ControlIsPinned ? "Pushpin_16x.png" : "PushpinUnpin_16x.png";
 
-			var imageWidget = new IconButton(AggContext.StaticData.LoadIcon(imageFile, 16, 16, theme.InvertIcons), theme)
+			var pinTabButton = new IconButton(AggContext.StaticData.LoadIcon(imageFile, 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "Pin Settings Button"
 			};
-			imageWidget.Click += (s, e) =>
+			pinTabButton.Click += (s, e) =>
 			{
 				this.ControlIsPinned = !this.ControlIsPinned;
 				this.printer.ViewState.DockWindowFloating = false;
 				UiThread.RunOnIdle(this.Rebuild);
 			};
 
-			return imageWidget;
+			return pinTabButton;
 		}
 
 		// Clamped to MinDockingWidth or value
@@ -266,35 +266,35 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 					string localTabKey = item.key;
 
-					var itemButton = new DockingTabButton(item.text, theme)
+					var tabBarButton = new DockingTabButton(item.text, theme)
 					{
 						Name = $"{item.key} Sidebar",
 						PopupContent = resizeContainer,
 						PopupLayoutEngine = new UnpinnedLayoutEngine(resizeContainer, widgetTodockTo, DockSide)
 					};
-					itemButton.Click += (s, e) =>
+					tabBarButton.Click += (s, e) =>
 					{
 						resizeContainer.Width = this.ConstrainedWidth;
 						this.printer.ViewState.SliceSettingsTabKey = localTabKey;
 						this.printer.ViewState.DockWindowFloating = true;
 					};
-					itemButton.PopupWindowClosed += (s, e) =>
+					tabBarButton.PopupWindowClosed += (s, e) =>
 					{
 						if (!ApplicationController.Instance.IsReloading)
 						{
 							this.printer.ViewState.DockWindowFloating = false;
 						}
 					};
-					this.AddChild(itemButton);
+					this.AddChild(tabBarButton);
 
 					if (this.printer.ViewState.DockWindowFloating
 						&& localTabKey == this.printer.ViewState.SliceSettingsTabKey)
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							if (!itemButton.HasBeenClosed && itemButton.Parent != null)
+							if (!tabBarButton.HasBeenClosed && tabBarButton.Parent != null)
 							{
-								itemButton.ShowPopup();
+								tabBarButton.ShowPopup();
 							}
 						});
 					}
