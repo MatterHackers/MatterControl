@@ -20,6 +20,8 @@ namespace MatterHackers.MatterControl
 		}
 
 		Color _borderColor = Color.White;
+		private ThemeConfig theme;
+
 		public override Color BorderColor
 		{
 			get { return _borderColor; }
@@ -30,16 +32,17 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public EditableNumberDisplay(double startingValue, string largestPossibleValue)
-			: this(startingValue, largestPossibleValue, ActiveTheme.Instance.PrimaryTextColor)
+		public EditableNumberDisplay(double startingValue, string largestPossibleValue, ThemeConfig theme)
+			: this(startingValue, largestPossibleValue, ActiveTheme.Instance.PrimaryTextColor, theme)
 		{
 		}
 
-		public EditableNumberDisplay(double startingValue, string largestPossibleValue, Color textColor)
+		public EditableNumberDisplay(double startingValue, string largestPossibleValue, Color textColor, ThemeConfig theme)
 			: base(FlowDirection.LeftToRight)
 		{
 			this.Margin = new BorderDouble(3, 0);
 			this.VAnchor = VAnchor.Center;
+			this.theme = theme;
 
 			clickableValueContainer = new GuiWidget()
 			{
@@ -72,7 +75,7 @@ namespace MatterHackers.MatterControl
 			clickableValueContainer.AddChild(valueDisplay);
 			clickableValueContainer.SetBoundsToEncloseChildren();
 
-			numberInputField = new MHNumberEdit(0, pixelWidth: 40, allowDecimals: true)
+			numberInputField = new MHNumberEdit(0, theme, pixelWidth: 40, allowDecimals: true)
 			{
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(left: 6),

@@ -46,6 +46,8 @@ namespace MatterControl.Tests.MatterControl
 		public UIFieldTestWindow(int width, int height, UIField field)
 			: base(width, height)
 		{
+			var theme = new ThemeConfig();
+
 			this.BackgroundColor = new Color(56, 56, 56);
 
 			GuiWidget column, row;
@@ -77,7 +79,7 @@ namespace MatterControl.Tests.MatterControl
 				Margin = new BorderDouble(right: 10, bottom: 2),
 			});
 
-			this.InputText = new MHTextEditWidget("", pixelWidth: pixelWidth)
+			this.InputText = new MHTextEditWidget("", theme, pixelWidth: pixelWidth)
 			{
 				Margin = new BorderDouble(right: 8)
 			};
@@ -94,7 +96,7 @@ namespace MatterControl.Tests.MatterControl
 				Margin = new BorderDouble(right: 10, bottom: 2)
 			});
 
-			this.ExpectedText = new MHTextEditWidget("", pixelWidth: pixelWidth)
+			this.ExpectedText = new MHTextEditWidget("", theme, pixelWidth: pixelWidth)
 			{
 				Margin = new BorderDouble(right: 8)
 			};

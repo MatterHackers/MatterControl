@@ -33,13 +33,12 @@ using MatterHackers.Agg.UI;
 namespace MatterHackers.MatterControl
 {
 	using System.Collections.Generic;
-	using Agg.Image;
 
-	public class SolarizedTheme : IColorTheme
+	public class AffinityTheme : IColorTheme
 	{
 		private SolarizedColors solarized = new SolarizedColors();
 
-		public SolarizedTheme()
+		public AffinityTheme()
 		{
 			this.Colors = new[]
 			{
@@ -69,16 +68,17 @@ namespace MatterHackers.MatterControl
 			bool darkTheme = mode == "Dark";
 			var baseColors = darkTheme ? solarized.Dark : solarized.Light;
 
+			var textColor = new Color("#bbb");
+
 			return new ThemeSet()
 			{
 				Theme = new ThemeConfig()
 				{
-					IsDarkTheme = darkTheme,
 					PrimaryAccentColor = accentColor,
+					IsDarkTheme = darkTheme,
 					Colors = new ThemeColors()
 					{
-						PrimaryTextColor = baseColors.Base0,
-						SourceColor = accentColor
+						PrimaryTextColor = textColor,
 					},
 					PresetColors = new PresetColors()
 					{
@@ -90,17 +90,21 @@ namespace MatterHackers.MatterControl
 					{
 						Focused = new ThemeConfig.StateColor()
 						{
-							BackgroundColor = baseColors.Base0,
-							TextColor = baseColors.Base02
+							BackgroundColor = new Color("#F0F0F0"),
+							TextColor = new Color("#222"),
+							BorderColor = accentColor
 						},
 						Hovered = new ThemeConfig.StateColor()
 						{
-							BackgroundColor = baseColors.Base01
+							BackgroundColor = new Color("#333333"),
+							TextColor = new Color("#fff"),
+							BorderColor = new Color("#282828")
 						},
 						Inactive = new ThemeConfig.StateColor()
 						{
-							BackgroundColor = baseColors.Base02,
-							TextColor = baseColors.Base0
+							BackgroundColor = new Color("#333333"),
+							TextColor = textColor,
+							BorderColor = new Color("#282828")
 						}
 					},
 					SlightShade = new Color("#00000028"),
@@ -108,9 +112,8 @@ namespace MatterHackers.MatterControl
 					Shade = new Color("#00000078"),
 					DarkShade = new Color("#000000BE"),
 
-					ActiveTabColor = baseColors.Base03,
-					TabBarBackground = baseColors.Base03.Blend(Color.Black, darkTheme ? 0.4 : 0.1),
-					//TabBarBackground = new Color(darkTheme ? "#00212B" : "#EEE8D5"),
+					ActiveTabColor = new Color("#373737"),
+					TabBarBackground = new Color("#282828"),
 
 					InactiveTabColor = baseColors.Base02,
 					InteractionLayerOverlayColor = new Color(baseColors.Base03, 240),
@@ -120,8 +123,7 @@ namespace MatterHackers.MatterControl
 					ThumbnailBackground = new Color("#00000000"),
 					AccentMimimalOverlay = new Color(accentColor, 80),
 					BorderColor = baseColors.Base0,
-					SplashAccentColor = new Color("#eee"),
-					BedBackgroundColor = ThemeConfig.ResolveColor2(baseColors.Base03, new Color(Color.Black, 20))
+					SplashAccentColor = new Color("#eee")
 				},
 				MenuTheme = (darkTheme) ? this.DarkMenu(baseColors, accentColor) : this.LightMenu(baseColors, accentColor)
 			};
@@ -171,7 +173,6 @@ namespace MatterHackers.MatterControl
 			return new ThemeConfig()
 			{
 				IsDarkTheme = true,
-				PrimaryAccentColor = accentColor,
 				Colors = new ThemeColors()
 				{
 					PrimaryTextColor = baseColors.Base1,

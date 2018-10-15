@@ -34,13 +34,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public abstract class NumberField : UIField
 	{
 		protected MHNumberEdit numberEdit;
+		private ThemeConfig theme;
 
 		protected bool AllowNegatives { get; set; } = true;
 		protected bool AllowDecimals { get; set; } = true;
 
+		public NumberField(ThemeConfig theme)
+		{
+			this.theme = theme;
+		}
+
 		public override void Initialize(int tabIndex)
 		{
-			numberEdit = new MHNumberEdit(0, pixelWidth: ControlWidth, allowDecimals: this.AllowDecimals, allowNegatives: this.AllowNegatives, tabIndex: tabIndex)
+			numberEdit = new MHNumberEdit(0, theme, pixelWidth: ControlWidth, allowDecimals: this.AllowDecimals, allowNegatives: this.AllowNegatives, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				SelectAllOnFocus = true,

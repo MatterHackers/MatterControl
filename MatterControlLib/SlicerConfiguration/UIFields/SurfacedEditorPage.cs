@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				BackgroundColor = theme.ActiveTabColor
 			};
 
-			editWidget = new MHTextEditWidget("", multiLine: true)
+			editWidget = new MHTextEditWidget("", theme, multiLine: true)
 			{
 				HAnchor = HAnchor.Stretch,
 				Name = this.Name

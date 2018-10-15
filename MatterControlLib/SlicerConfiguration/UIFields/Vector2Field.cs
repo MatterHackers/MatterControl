@@ -40,6 +40,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private MHNumberEdit yEditWidget;
 
 		private MHNumberEdit xEditWidget;
+		private ThemeConfig theme;
+
+		public Vector2Field(ThemeConfig theme)
+		{
+			this.theme = theme;
+		}
 
 		public Vector2 Vector2
 		{
@@ -60,7 +66,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var container = new FlowLayoutWidget();
 
 			string[] xyValueStrings = this.Value?.Split(',');
-			if (xyValueStrings == null 
+			if (xyValueStrings == null
 				|| xyValueStrings.Length != 2)
 			{
 				xyValueStrings = new string[] { "0", "0" };
@@ -68,7 +74,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyValueStrings[0], out double currentXValue);
 
-			xEditWidget = new MHNumberEdit(currentXValue, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
+			xEditWidget = new MHNumberEdit(currentXValue, theme, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex,
@@ -90,7 +96,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyValueStrings[1], out double currentYValue);
 
-			yEditWidget = new MHNumberEdit(currentYValue, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
+			yEditWidget = new MHNumberEdit(currentYValue, theme, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex + 1,

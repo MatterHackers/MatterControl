@@ -34,6 +34,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		protected string unitsToken = "units-token";
 
+		public ValueOrUnitsField(ThemeConfig theme)
+			: base (theme)
+		{
+		}
+
 		public override void Initialize(int tabIndex)
 		{
 			base.Initialize(tabIndex);

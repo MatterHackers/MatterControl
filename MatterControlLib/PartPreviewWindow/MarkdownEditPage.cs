@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl
 				BackgroundColor = theme.ActiveTabColor
 			};
 
-			editWidget = new MHTextEditWidget("", multiLine: true, typeFace: ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono))
+			editWidget = new MHTextEditWidget("", theme, multiLine: true, typeFace: ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono))
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,

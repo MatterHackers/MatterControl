@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			settingsRow.AddChild(container);
 			settingsRow.BorderColor = Color.Transparent;
 
-			fanSpeedDisplay = new EditableNumberDisplay(0, "100")
+			fanSpeedDisplay = new EditableNumberDisplay(0, "100", theme)
 			{
 				DisplayFormat = "{0:0}",
 				Value = printerConnection.FanSpeed0To255 * 100 / 255

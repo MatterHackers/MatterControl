@@ -37,6 +37,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private double _doubleValue;
 
+		public DoubleField(ThemeConfig theme)
+			: base (theme)
+		{
+		}
+
 		public double DoubleValue
 		{
 			get { return _doubleValue; }

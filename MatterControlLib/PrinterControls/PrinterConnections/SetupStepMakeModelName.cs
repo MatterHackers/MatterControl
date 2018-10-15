@@ -223,7 +223,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				Margin = new BorderDouble(0, 4, 0, 1)
 			};
 
-			printerNameInput = new MHTextEditWidget("")
+			printerNameInput = new MHTextEditWidget("", theme)
 			{
 				HAnchor = HAnchor.Stretch,
 			};

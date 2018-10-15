@@ -133,6 +133,7 @@ namespace MatterHackers.MatterControl
 		{
 			{ "Classic" , new ClassicColorsTheme() },
 			{ "Solarized", new SolarizedTheme() },
+			{ "Affinity", new AffinityTheme() }
 		};
 
 		public static IColorTheme GetColorProvider(string key)

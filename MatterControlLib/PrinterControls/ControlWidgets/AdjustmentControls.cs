@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				};
 				settingsRow.AddChild(feedRateRatioSlider);
 
-				feedRateValue = new MHNumberEdit(Math.Round(FeedRateMultiplyerStream.FeedRateRatio, 2), allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
+				feedRateValue = new MHNumberEdit(Math.Round(FeedRateMultiplyerStream.FeedRateRatio, 2), theme, allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
 				{
 					Name = "Feed Rate NumberEdit",
 					SelectAllOnFocus = true,
@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				};
 				settingsRow.AddChild(extrusionRatioSlider);
 
-				extrusionValue = new MHNumberEdit(Math.Round(ExtrusionMultiplyerStream.ExtrusionRatio, 2), allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
+				extrusionValue = new MHNumberEdit(Math.Round(ExtrusionMultiplyerStream.ExtrusionRatio, 2), theme, allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
 				{
 					Name = "Extrusion Multiplier NumberEdit",
 					SelectAllOnFocus = true,

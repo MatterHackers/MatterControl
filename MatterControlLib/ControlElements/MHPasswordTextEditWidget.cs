@@ -37,13 +37,13 @@ namespace MatterHackers.MatterControl
 	{
 		private TextEditWidget passwordCoverText;
 
-		public MHPasswordTextEditWidget(string text = "", double x = 0, double y = 0, double pointSize = 12, double pixelWidth = 0, double pixelHeight = 0, bool multiLine = false, int tabIndex = 0, string messageWhenEmptyAndNotSelected = "")
-			: base(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine, tabIndex, messageWhenEmptyAndNotSelected)
+		public MHPasswordTextEditWidget(string text, ThemeConfig theme, double pixelWidth = 0, double pixelHeight = 0, bool multiLine = false, int tabIndex = 0, string messageWhenEmptyAndNotSelected = "")
+			: base(text, theme, pixelWidth, pixelHeight, multiLine, tabIndex, messageWhenEmptyAndNotSelected)
 		{
 			// remove this so that we can have other content first (the hidden letters)
 			this.RemoveChild(noContentFieldDescription);
 
-			passwordCoverText = new TextEditWidget(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine)
+			passwordCoverText = new TextEditWidget(text, 0, 0, theme.DefaultFontSize, pixelWidth, pixelHeight, multiLine)
 			{
 				Selectable = false,
 				HAnchor = HAnchor.Stretch,

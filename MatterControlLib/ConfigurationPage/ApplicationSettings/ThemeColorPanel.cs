@@ -60,13 +60,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				_themeProvider = AppContext.ThemeProviders.Values.First();
 			}
 
-			this.SelectionColor = activeTheme.GetBorderColor(80);
+			this.SelectionColor = activeTheme.MinimalShade;
 
 			// Add color selector
-			this.AddChild(colorSelector = new AccentColorsWidget(this)
-			{
-				Margin = new BorderDouble(activeTheme.DefaultContainerPadding, 0)
-			});
+			this.AddChild(colorSelector = new AccentColorsWidget(this));
 
 			this.AddChild(previewButtonPanel = new FlowLayoutWidget()
 			{
@@ -174,9 +171,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			public AccentColorsWidget(ThemeColorPanel themeColorPanel)
 			{
-				this.Padding = new BorderDouble(2, 0);
 				this.themeColorPanel = themeColorPanel;
-
 				this.RebuildColorButtons();
 			}
 
@@ -217,7 +212,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					Cursor = Cursors.Hand,
 					Width = containerHeight,
 					Height = containerHeight,
-					Border = 5,
+					Border = 6,
 				};
 				colorButton.Click += (s, e) =>
 				{

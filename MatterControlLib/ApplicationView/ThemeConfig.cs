@@ -173,6 +173,23 @@ namespace MatterHackers.MatterControl
 
 		public ImageBuffer GeneratingThumbnailIcon { get; private set; }
 
+		public class StateColor
+		{
+			public Color BackgroundColor { get; set; } = Color.Green;
+			public Color ForegroundColor { get; set; }
+			public Color BorderColor { get; set; }
+			public Color TextColor { get; internal set; }
+		}
+
+		public class ThreeStateColor
+		{
+			public StateColor Focused { get; set; } = new StateColor();
+			public StateColor Hovered { get; set; } = new StateColor();
+			public StateColor Inactive { get; set; } = new StateColor();
+		}
+
+		public ThreeStateColor EditFieldColors { get; set; } = new ThreeStateColor();
+
 		public Color LightTextColor { get; set; }
 		public Color BorderColor { get; set; }
 		public Color DisabledColor { get; set; }

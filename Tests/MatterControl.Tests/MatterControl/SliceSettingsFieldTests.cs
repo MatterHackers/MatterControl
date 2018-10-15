@@ -94,7 +94,11 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task DoubleFieldTest()
 		{
-			await ValidateAgainstValueMap<DoubleField>(
+			var theme = new ThemeConfig();
+			var testField = new DoubleField(theme);
+
+			await ValidateAgainstValueMap(
+				testField,
 				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
 				new List<ValueMap>()
 				{
@@ -120,7 +124,11 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task PositiveDoubleFieldTest()
 		{
-			await ValidateAgainstValueMap<PositiveDoubleField>(
+			var theme = new ThemeConfig();
+			var testField = new PositiveDoubleField(theme);
+
+			await ValidateAgainstValueMap(
+				testField,
 				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
 				new List<ValueMap>()
 				{
@@ -146,7 +154,11 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task IntFieldTest()
 		{
-			await ValidateAgainstValueMap<IntField>(
+			var theme = new ThemeConfig();
+			var testField = new IntField(theme);
+
+			await ValidateAgainstValueMap(
+				testField,
 				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
 				new List<ValueMap>()
 				{
@@ -172,7 +184,11 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task DoubleOrPercentFieldTest()
 		{
-			await ValidateAgainstValueMap<DoubleOrPercentField>(
+			var theme = new ThemeConfig();
+			var testField = new DoubleOrPercentField(theme);
+
+			await ValidateAgainstValueMap(
+				testField,
 				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
 				new List<ValueMap>()
 				{
@@ -213,7 +229,11 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task IntOrMmFieldTest()
 		{
-			await ValidateAgainstValueMap<IntOrMmField>(
+			var theme = new ThemeConfig();
+			var testField = new IntOrMmField(theme);
+
+			await ValidateAgainstValueMap(
+				testField,
 				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
 				new List<ValueMap>()
 				{
@@ -320,7 +340,10 @@ namespace MatterControl.Tests.MatterControl
 			var theme = new ThemeConfig();
 			theme.RebuildTheme();
 
-			await ValidateAgainstValueMap<MultilineStringField>(
+			var testField = new MultilineStringField(theme);
+
+			await ValidateAgainstValueMap(
+				testField,
 				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
 				new List<ValueMap>()
 				{
@@ -438,18 +461,6 @@ namespace MatterControl.Tests.MatterControl
 
 			public string InputValue { get; }
 			public string ExpectedValue { get; }
-		}
-
-		/// <summary>
-		/// Take a Type, a delegate to resolve the UI widget value and a map of input->expected values and validates the results for a given field
-		/// </summary>
-		/// <param name="collectValueFromWidget">A delegate to resolve the currently displayed widget value</param>
-		/// <param name="valuesMap">A map of input to expected values</param>
-		/// <returns></returns>
-		public static Task ValidateAgainstValueMap<T>(Func<UIField, string> collectValueFromWidget, IEnumerable<ValueMap> valuesMap) where T : UIField, new()
-		{
-			var field = new T();
-			return ValidateAgainstValueMap(new T(), collectValueFromWidget, valuesMap);
 		}
 
 		/// <summary>

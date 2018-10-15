@@ -560,7 +560,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.VAnchor = VAnchor.Center | VAnchor.Fit;
 			this.HAnchor = HAnchor.Stretch;
 
-			searchInput = new MHTextEditWidget(messageWhenEmptyAndNotSelected: emptyText ?? "Search".Localize())
+			searchInput = new MHTextEditWidget("", theme, messageWhenEmptyAndNotSelected: emptyText ?? "Search".Localize())
 			{
 				Name = "Search Library Edit",
 				HAnchor = HAnchor.Stretch,

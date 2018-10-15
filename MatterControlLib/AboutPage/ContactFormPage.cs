@@ -112,28 +112,28 @@ namespace MatterHackers.MatterControl.ContactForm
 			var subjectRow = CreateLabelRow("Subject".Localize());
 			subjectRow.VAnchor = VAnchor.Fit;
 			contentRow.AddChild(subjectRow);
-			contentRow.AddChild(questionInput = new MHTextEditWidget("")
+			contentRow.AddChild(questionInput = new MHTextEditWidget("", theme)
 			{
 				HAnchor = HAnchor.Stretch
 			});
 			contentRow.AddChild(questionErrorMessage = CreateErrorRow());
 
 			contentRow.AddChild(CreateLabelRow("Message".Localize()));
-			contentRow.AddChild(detailInput = new MHTextEditWidget("", pixelHeight: 120, multiLine: true)
+			contentRow.AddChild(detailInput = new MHTextEditWidget("", theme, pixelHeight: 120, multiLine: true)
 			{
 				HAnchor = HAnchor.Stretch
 			});
 			contentRow.AddChild(detailErrorMessage = CreateErrorRow());
 
 			contentRow.AddChild(CreateLabelRow("Email Address".Localize()));
-			contentRow.AddChild(emailInput = new MHTextEditWidget
+			contentRow.AddChild(emailInput = new MHTextEditWidget("", theme)
 			{
 				HAnchor = HAnchor.Stretch
 			});
 			contentRow.AddChild(emailErrorMessage = CreateErrorRow());
 
 			contentRow.AddChild(CreateLabelRow("Name".Localize()));
-			contentRow.AddChild(nameInput = new MHTextEditWidget
+			contentRow.AddChild(nameInput = new MHTextEditWidget("", theme)
 			{
 				HAnchor = HAnchor.Stretch
 			});

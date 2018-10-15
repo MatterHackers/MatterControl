@@ -285,7 +285,8 @@ namespace MatterHackers.MatterControl
 
 			themeColorPanel = new ThemeColorPanel(theme)
 			{
-				HAnchor = HAnchor.Stretch
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(10, 10, 10, 2)
 			};
 
 			var droplist = new DropDownList("Custom", theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)

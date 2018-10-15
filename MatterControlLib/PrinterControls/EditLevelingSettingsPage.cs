@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl
 					int linkCompatibleRow = row;
 					int linkCompatibleAxis = axis;
 
-					MHNumberEdit valueEdit = new MHNumberEdit(positions[linkCompatibleRow][linkCompatibleAxis], allowNegatives: true, allowDecimals: true, pixelWidth: 60, tabIndex: tab_index++);
+					MHNumberEdit valueEdit = new MHNumberEdit(positions[linkCompatibleRow][linkCompatibleAxis], theme, allowNegatives: true, allowDecimals: true, pixelWidth: 60, tabIndex: tab_index++);
 					valueEdit.ActuallNumberEdit.InternalTextEditWidget.EditComplete += (sender, e) =>
 					{
 						Vector3 position = positions[linkCompatibleRow];

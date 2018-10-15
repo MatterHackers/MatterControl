@@ -38,21 +38,32 @@ namespace MatterHackers.MatterControl
 	public class MHTextEditWidget : GuiWidget
 	{
 		protected TextWidget noContentFieldDescription = null;
+		private ThemeConfig theme;
 
 		public TextEditWidget ActualTextEditWidget { get; }
 
-		public MHTextEditWidget(string text = "", double x = 0, double y = 0, double pointSize = 12, double pixelWidth = 0, double pixelHeight = 0, bool multiLine = false, int tabIndex = 0, string messageWhenEmptyAndNotSelected = "", TypeFace typeFace = null)
+		public MHTextEditWidget(string text, ThemeConfig theme, double pixelWidth = 0, double pixelHeight = 0, bool multiLine = false, int tabIndex = 0, string messageWhenEmptyAndNotSelected = "", TypeFace typeFace = null)
 		{
 			this.Padding = new BorderDouble(3);
-			this.BackgroundColor = Color.White;
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
 			this.Border = 1;
+			this.theme = theme;
 
-			this.ActualTextEditWidget = new TextEditWidget(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine, tabIndex: tabIndex, typeFace: typeFace)
+			this.ActualTextEditWidget = new TextEditWidget(text, 0, 0, theme.DefaultFontSize, pixelWidth, pixelHeight, multiLine, tabIndex: tabIndex, typeFace: typeFace)
 			{
-				VAnchor = VAnchor.Bottom
+				VAnchor = VAnchor.Bottom,
 			};
+
+			var internalWidget = this.ActualTextEditWidget.InternalTextEditWidget;
+			internalWidget.TextColor = theme.EditFieldColors.Inactive.TextColor;
+			internalWidget.FocusChanged += (s, e) =>
+			{
+				internalWidget.TextColor = (internalWidget.Focused) ? theme.EditFieldColors.Focused.TextColor : theme.EditFieldColors.Inactive.TextColor;
+			};
+
+			this.ActualTextEditWidget.InternalTextEditWidget.BackgroundColor = Color.Transparent;
+
 			this.ActualTextEditWidget.MinimumSize = new Vector2(Math.Max(ActualTextEditWidget.MinimumSize.X, pixelWidth), Math.Max(ActualTextEditWidget.MinimumSize.Y, pixelHeight));
 			this.AddChild(this.ActualTextEditWidget);
 
@@ -65,13 +76,82 @@ namespace MatterHackers.MatterControl
 			SetNoContentFieldDescriptionVisibility();
 		}
 
+		public override Color BackgroundColor
+		{
+			get
+			{
+				if (base.BackgroundColor != Color.Transparent)
+				{
+					return base.BackgroundColor;
+				}
+				else if (this.ContainsFocus)
+				{
+					return theme.EditFieldColors.Focused.BackgroundColor;
+				}
+				else if (this.mouseInBounds)
+				{
+					return theme.EditFieldColors.Hovered.BackgroundColor;
+				}
+				else
+				{
+					return theme.EditFieldColors.Inactive.BackgroundColor;
+				}
+			}
+			set => base.BackgroundColor = value;
+		}
+
+		public override Color BorderColor
+		{
+			get
+			{
+				if (base.BorderColor != Color.Transparent)
+				{
+					return base.BackgroundColor;
+				}
+				else if (this.ContainsFocus)
+				{
+					return theme.EditFieldColors.Focused.BorderColor;
+				}
+				else if (this.mouseInBounds)
+				{
+					return theme.EditFieldColors.Hovered.BorderColor;
+				}
+				else
+				{
+					return theme.EditFieldColors.Inactive.BorderColor;
+				}
+			}
+			set => base.BorderColor = value;
+		}
+
+		private bool mouseInBounds = false;
+
+		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
+		{
+			mouseInBounds = true;
+			base.OnMouseEnterBounds(mouseEvent);
+
+			this.Invalidate();
+		}
+
+		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
+		{
+			mouseInBounds = false;
+			base.OnMouseLeaveBounds(mouseEvent);
+
+			this.Invalidate();
+		}
+
 		public override HAnchor HAnchor
 		{
 			get => base.HAnchor;
 			set
 			{
 				base.HAnchor = value;
-				if(ActualTextEditWidget != null) ActualTextEditWidget.HAnchor = value;
+				if (ActualTextEditWidget != null)
+				{
+					ActualTextEditWidget.HAnchor = value;
+				}
 			}
 		}
 
@@ -88,10 +168,7 @@ namespace MatterHackers.MatterControl
 			SetNoContentFieldDescriptionVisibility();
 			base.OnDraw(graphics2D);
 
-			if (ContainsFocus)
-			{
-				graphics2D.Rectangle(LocalBounds, Color.Orange);
-			}
+			//graphics2D.Rectangle(LocalBounds, this.BorderColor);
 		}
 
 		public override string Text

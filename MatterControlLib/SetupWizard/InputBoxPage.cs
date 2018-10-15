@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl
 			});
 
 			//Adds text box and check box to the above container
-			textEditWidget = new MHTextEditWidget(initialValue, pixelWidth: 300, messageWhenEmptyAndNotSelected: emptyText);
+			textEditWidget = new MHTextEditWidget(initialValue, theme, pixelWidth: 300, messageWhenEmptyAndNotSelected: emptyText);
 			textEditWidget.Name = "InputBoxPage TextEditWidget";
 			textEditWidget.HAnchor = HAnchor.Stretch;
 			textEditWidget.Margin = new BorderDouble(5);
