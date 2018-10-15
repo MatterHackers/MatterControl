@@ -231,7 +231,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
 				Padding = new BorderDouble(12, 0),
-				BackgroundColor = menuTheme.Colors.PrimaryBackgroundColor
+				BackgroundColor = menuTheme.ActiveTabColor
 			};
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)

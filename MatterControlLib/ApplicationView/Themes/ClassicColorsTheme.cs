@@ -96,14 +96,16 @@ namespace MatterHackers.MatterControl
 			var json = JsonConvert.SerializeObject(colors);
 
 			var clonedColors = JsonConvert.DeserializeObject<ThemeColors>(json);
-			clonedColors.IsDarkTheme = false;
 			clonedColors.PrimaryTextColor = new Color("#222");
-			clonedColors.PrimaryBackgroundColor = new Color("#fff");
+
+			var menuTheme = BuildTheme(clonedColors, darkTheme);
+			menuTheme.ActiveTabColor = new Color("#f1f1f1");
+			menuTheme.IsDarkTheme = false;
 
 			return new ThemeSet()
 			{
 				Theme = BuildTheme(colors, darkTheme),
-				MenuTheme = BuildTheme(clonedColors, darkTheme)
+				MenuTheme = menuTheme
 			};
 		}
 
@@ -112,6 +114,7 @@ namespace MatterHackers.MatterControl
 			var theme = new ThemeConfig();
 
 			theme.Colors = colors;
+			theme.IsDarkTheme = darkTheme;
 
 			theme.SlightShade = new Color(0, 0, 0, 40);
 			theme.MinimalShade = new Color(0, 0, 0, 15);
@@ -122,12 +125,12 @@ namespace MatterHackers.MatterControl
 				new Color(darkTheme ? "#3E3E3E" : "#BEBEBE"),
 				new Color(
 					Color.White,
-					(colors.IsDarkTheme) ? 3 : 25));
+					(darkTheme) ? 3 : 25));
 			theme.TabBarBackground = theme.ActiveTabColor.AdjustLightness(0.85).ToColor();
-			theme.ThumbnailBackground = theme.MinimalShade;
+			theme.ThumbnailBackground = Color.Transparent;
 			theme.AccentMimimalOverlay = new Color(theme.Colors.PrimaryAccentColor, 50);
 			theme.InteractionLayerOverlayColor = new Color(theme.ActiveTabColor, 240);
-			theme.InactiveTabColor = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.White, theme.MinimalShade.alpha));
+			theme.InactiveTabColor = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.White, darkTheme ? 20 : 60));
 
 			theme.SplitterBackground = theme.ActiveTabColor.AdjustLightness(0.87).ToColor();
 

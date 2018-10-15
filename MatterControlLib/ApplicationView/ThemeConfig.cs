@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl
 		/// <summary>
 		/// Indicates if icons should be inverted due to black source images on a dark theme
 		/// </summary>
-		public bool InvertIcons => this?.Colors.IsDarkTheme ?? false;
+		public bool InvertIcons => this?.IsDarkTheme ?? false;
 
 		internal void ApplyPrimaryActionStyle(GuiWidget guiWidget)
 		{
@@ -139,6 +139,8 @@ namespace MatterHackers.MatterControl
 
 		public ThemeColors Colors { get; set; } = new ThemeColors();
 		public PresetColors PresetColors { get; set; } = new PresetColors();
+
+		public bool IsDarkTheme { get; set; }
 
 		public Color SlightShade { get; set; }
 		public Color MinimalShade { get; set; }

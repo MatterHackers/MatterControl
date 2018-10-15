@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Fit;
-			this.BackgroundColor = theme.Colors.PrimaryBackgroundColor;
+			this.BackgroundColor = theme.ActiveTabColor;
 		}
 
 		public HorizontalLine CreateHorizontalLine()
@@ -221,14 +221,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					RadioImage.DrawCircle(
 						radioIconChecked.NewGraphics2D(),
 						rect.Center,
-						theme.Colors.IsDarkTheme ? Color.White : Color.Black,
+						theme.Colors.PrimaryTextColor,
 						isChecked: true,
 						isActive: false);
 
 					RadioImage.DrawCircle(
 						radioIconUnchecked.NewGraphics2D(),
 						rect.Center,
-						theme.Colors.IsDarkTheme ? Color.White : Color.Black,
+						theme.Colors.PrimaryTextColor,
 						isChecked: false,
 						isActive: false);
 				}

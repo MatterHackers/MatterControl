@@ -314,7 +314,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			public DockingTabButton(string tabTitle, ThemeConfig theme)
 			{
-				this.grayBorder = theme.GetBorderColor(theme.Colors.IsDarkTheme ? 45 : 55);
+				this.grayBorder = theme.GetBorderColor(theme.IsDarkTheme ? 45 : 55);
 				this.theme = theme;
 				this.HAnchor = HAnchor.Fit;
 				this.VAnchor = VAnchor.Fit | VAnchor.Center;

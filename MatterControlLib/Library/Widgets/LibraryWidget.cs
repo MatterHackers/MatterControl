@@ -966,7 +966,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 											var feedbackWindow = new SavePartsSheetFeedbackWindow(
 												printItems.Count(),
 												printItems.FirstOrDefault()?.Name,
-												ActiveTheme.Instance.PrimaryBackgroundColor);
+												theme.ActiveTabColor);
 
 											var currentPartsInQueue = new PartsSheet(printItems, saveParams.FileName);
 											currentPartsInQueue.UpdateRemainingItems += feedbackWindow.StartingNextPart;
