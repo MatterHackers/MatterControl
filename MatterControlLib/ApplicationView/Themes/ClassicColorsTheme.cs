@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl
 			theme.ThumbnailBackground = Color.Transparent;
 			theme.AccentMimimalOverlay = new Color(theme.Colors.PrimaryAccentColor, 50);
 			theme.InteractionLayerOverlayColor = new Color(theme.ActiveTabColor, 240);
-			theme.InactiveTabColor = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.White, theme.MinimalShade.alpha));
+			theme.InactiveTabColor = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.White, darkTheme ? 20 : 60));
 
 			theme.SplitterBackground = theme.ActiveTabColor.AdjustLightness(0.87).ToColor();
 
