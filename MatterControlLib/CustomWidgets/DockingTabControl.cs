@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	public class DockingTabControl : FlowLayoutWidget
 	{
-		public int MinDockingWidth = 400 * (int)GuiWidget.DeviceScale;
+		public int MinDockingWidth { get; set; }
 		protected GuiWidget widgetTodockTo;
 		private List<(string key, string text, GuiWidget widget)> allTabs = new List<(string key, string text, GuiWidget widget)>();
 
@@ -132,18 +132,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			string imageFile = this.ControlIsPinned ? "Pushpin_16x.png" : "PushpinUnpin_16x.png";
 
-			var imageWidget = new IconButton(AggContext.StaticData.LoadIcon(imageFile, 16, 16, theme.InvertIcons), theme)
+			var pinTabButton = new IconButton(AggContext.StaticData.LoadIcon(imageFile, 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "Pin Settings Button"
 			};
-			imageWidget.Click += (s, e) =>
+			pinTabButton.Click += (s, e) =>
 			{
 				this.ControlIsPinned = !this.ControlIsPinned;
 				this.printer.ViewState.DockWindowFloating = false;
 				UiThread.RunOnIdle(this.Rebuild);
 			};
 
-			return imageWidget;
+			return pinTabButton;
 		}
 
 		// Clamped to MinDockingWidth or value
@@ -176,9 +176,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			SimpleTabs tabControl = null;
 
+			var grabBarSide = DockSide == DockSide.Left ? GrabBarSide.Right : GrabBarSide.Left;
 			if (this.ControlIsPinned)
 			{
-				var resizePage = new LeftResizeContainer(theme)
+				var resizePage = new VerticalResizeContainer(theme, grabBarSide)
 				{
 					Width = this.ConstrainedWidth,
 					VAnchor = VAnchor.Stretch,
@@ -248,7 +249,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 				else // control is floating
 				{
-					var resizeContainer = new LeftResizeContainer(theme)
+					var resizeContainer = new VerticalResizeContainer(theme, grabBarSide)
 					{
 						Width = this.ConstrainedWidth,
 						VAnchor = VAnchor.Stretch,
@@ -265,35 +266,35 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 					string localTabKey = item.key;
 
-					var itemButton = new DockingTabButton(item.text, theme)
+					var tabBarButton = new DockingTabButton(item.text, theme)
 					{
 						Name = $"{item.key} Sidebar",
 						PopupContent = resizeContainer,
 						PopupLayoutEngine = new UnpinnedLayoutEngine(resizeContainer, widgetTodockTo, DockSide)
 					};
-					itemButton.Click += (s, e) =>
+					tabBarButton.Click += (s, e) =>
 					{
 						resizeContainer.Width = this.ConstrainedWidth;
 						this.printer.ViewState.SliceSettingsTabKey = localTabKey;
 						this.printer.ViewState.DockWindowFloating = true;
 					};
-					itemButton.PopupWindowClosed += (s, e) =>
+					tabBarButton.PopupWindowClosed += (s, e) =>
 					{
 						if (!ApplicationController.Instance.IsReloading)
 						{
 							this.printer.ViewState.DockWindowFloating = false;
 						}
 					};
-					this.AddChild(itemButton);
+					this.AddChild(tabBarButton);
 
 					if (this.printer.ViewState.DockWindowFloating
 						&& localTabKey == this.printer.ViewState.SliceSettingsTabKey)
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							if (!itemButton.HasBeenClosed && itemButton.Parent != null)
+							if (!tabBarButton.HasBeenClosed && tabBarButton.Parent != null)
 							{
-								itemButton.ShowPopup();
+								tabBarButton.ShowPopup();
 							}
 						});
 					}
@@ -500,11 +501,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				switch (DockSide)
 				{
 					case DockSide.Left:
-						popupWidget.LocalBounds = new RectangleDouble(bounds.Left, bounds.Bottom, bounds.Left - contentWidget.Width, bounds.Top);
+						popupWidget.HAnchor = HAnchor.Absolute;
+						popupWidget.LocalBounds = new RectangleDouble(bounds.Left, bounds.Bottom, bounds.Left + contentWidget.Width, bounds.Top);
 						break;
 
 					case DockSide.Bottom:
 						throw new NotImplementedException();
+
 					case DockSide.Right:
 						popupWidget.HAnchor = HAnchor.Absolute;
 						popupWidget.LocalBounds = new RectangleDouble(bounds.Right - contentWidget.Width, bounds.Bottom, bounds.Right, bounds.Top);
@@ -512,6 +515,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 					case DockSide.Top:
 						throw new NotImplementedException();
+
 					default:
 						throw new NotImplementedException();
 				}

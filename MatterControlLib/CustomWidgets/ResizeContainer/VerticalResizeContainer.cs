@@ -33,7 +33,8 @@ using System;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
-	public class LeftResizeContainer : FlowLayoutWidget
+	enum GrabBarSide { Left, Right }
+	public class VerticalResizeContainer : FlowLayoutWidget
 	{
 		public event EventHandler Resized;
 
@@ -42,10 +43,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private double mouseDownX;
 
 		private int _splitterWidth;
+		GrabBarSide grabSide;
 
-		internal LeftResizeContainer(ThemeConfig theme)
+		internal VerticalResizeContainer(ThemeConfig theme, GrabBarSide grabSide)
 			: base (FlowDirection.TopToBottom)
 		{
+			this.grabSide = grabSide;
 			this.HAnchor = HAnchor.Absolute;
 			this.Cursor = Cursors.VSplit;
 			this.SplitterWidth = theme.SplitterWidth;
@@ -62,7 +65,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				if (_splitterWidth != value)
 				{
 					_splitterWidth = value;
-					this.Padding = new BorderDouble(_splitterWidth, 0, 0, 0);
+					if (grabSide == GrabBarSide.Left)
+					{
+						this.Padding = new BorderDouble(_splitterWidth, 0, 0, 0);
+					}
+					else
+					{
+						this.Padding = new BorderDouble(0, 0, _splitterWidth, 0);
+					}
 					this.MinimumSize = new VectorMath.Vector2(_splitterWidth, 0);
 				}
 			}
@@ -75,18 +85,28 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			graphics2D.FillRectangle(LocalBounds.Left, LocalBounds.Bottom, LocalBounds.Left + this.SplitterWidth, LocalBounds.Top, this.SpliterBarColor);
+			if (grabSide == GrabBarSide.Left)
+			{
+				graphics2D.FillRectangle(LocalBounds.Left, LocalBounds.Bottom, LocalBounds.Left + this.SplitterWidth, LocalBounds.Top, this.SpliterBarColor);
+			}
+			else
+			{
+				graphics2D.FillRectangle(LocalBounds.Right - this.SplitterWidth, LocalBounds.Bottom, LocalBounds.Right, LocalBounds.Top, this.SpliterBarColor);
+			}
+
 			base.OnDraw(graphics2D);
 		}
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			if (mouseEvent.Position.X < this.SplitterWidth)
+			if ((grabSide == GrabBarSide.Left && mouseEvent.Position.X < this.SplitterWidth)
+				|| (grabSide == GrabBarSide.Right && mouseEvent.Position.X > Width - this.SplitterWidth))
 			{
 				mouseDownOnBar = true;
 				mouseDownX = TransformToScreenSpace(mouseEvent.Position).X;
 				downWidth = Width;
 			}
+
 			base.OnMouseDown(mouseEvent);
 		}
 
@@ -97,7 +117,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				int currentMouseX = (int)TransformToScreenSpace(mouseEvent.Position).X;
 				UiThread.RunOnIdle(() =>
 				{
-					Width = downWidth + mouseDownX - currentMouseX;
+					if (grabSide == GrabBarSide.Left)
+					{
+						Width = downWidth + mouseDownX - currentMouseX;
+					}
+					else
+					{
+						Width = downWidth + currentMouseX- mouseDownX;
+					}
 				});
 			}
 			base.OnMouseMove(mouseEvent);

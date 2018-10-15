@@ -223,7 +223,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			tabControl.AddTab(
-				libraryTab = new ChromeTab("Library", "Designs".Localize(), tabControl, libraryWidget, theme, hasClose: false)
+				libraryTab = new ChromeTab("Library", "Library".Localize(), tabControl, libraryWidget, theme, hasClose: false)
 				{
 					MinimumSize = new Vector2(0, theme.TabButtonHeight),
 					Name = "Library Tab",
