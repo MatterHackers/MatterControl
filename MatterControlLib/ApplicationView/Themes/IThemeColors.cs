@@ -33,12 +33,8 @@ namespace MatterHackers.Agg.UI
 {
 	public interface IThemeColors
 	{
-		bool IsDarkTheme { get; }
-
 		Color PrimaryTextColor { get; }
 
 		Color PrimaryAccentColor { get; }
-
-		Color DisabledColor { get; }
 	}
 }

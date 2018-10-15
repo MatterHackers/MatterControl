@@ -100,8 +100,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			this.theme = theme;
 			this.DoubleBuffer = true;
-			inactiveBarColor = theme.Colors.IsDarkTheme ? theme.Shade : theme.SlightShade;
-			activeBarColor = new Color(theme.Colors.PrimaryAccentColor, (theme.Colors.IsDarkTheme ? 100 : 70));
+			inactiveBarColor = theme.IsDarkTheme ? theme.Shade : theme.SlightShade;
+			activeBarColor = new Color(theme.Colors.PrimaryAccentColor, (theme.IsDarkTheme ? 100 : 70));
 
 			this.MinimumSize = new Vector2(minWidth, theme.ButtonHeight);
 		}

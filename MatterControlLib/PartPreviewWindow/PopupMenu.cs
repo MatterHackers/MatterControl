@@ -221,14 +221,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					RadioImage.DrawCircle(
 						radioIconChecked.NewGraphics2D(),
 						rect.Center,
-						theme.Colors.IsDarkTheme ? Color.White : Color.Black,
+						theme.Colors.PrimaryTextColor,
 						isChecked: true,
 						isActive: false);
 
 					RadioImage.DrawCircle(
 						radioIconUnchecked.NewGraphics2D(),
 						rect.Center,
-						theme.Colors.IsDarkTheme ? Color.White : Color.Black,
+						theme.Colors.PrimaryTextColor,
 						isChecked: false,
 						isActive: false);
 				}

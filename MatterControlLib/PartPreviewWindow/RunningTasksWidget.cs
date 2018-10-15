@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.theme = theme;
 
-			if (theme.Colors.IsDarkTheme)
+			if (theme.IsDarkTheme)
 			{
 				borderColor = theme.AccentMimimalOverlay.Blend(Color.White, 0.2);
 			}

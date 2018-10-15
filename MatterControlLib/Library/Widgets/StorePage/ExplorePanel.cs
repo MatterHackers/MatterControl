@@ -210,8 +210,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 						GCodeFile.GetFirstNumberAfter("=w", content.image_url, ref expectedWidth);
 						int expectedHeight = 170;
 						GCodeFile.GetFirstNumberAfter("-h", content.image_url, ref expectedHeight);
-						if ((content.theme_filter == "dark" && ActiveTheme.Instance.IsDarkTheme)
-							|| (content.theme_filter == "light" && !ActiveTheme.Instance.IsDarkTheme)
+						if ((content.theme_filter == "dark" && theme.IsDarkTheme)
+							|| (content.theme_filter == "light" && !theme.IsDarkTheme)
 							|| (content.theme_filter == "all"))
 						{
 							var image = new ImageBuffer(expectedWidth, expectedHeight);

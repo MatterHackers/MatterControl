@@ -490,7 +490,7 @@ namespace MatterHackers.MatterControl
 
 			this.GCodeRenderer = new GCodeRenderer(loadedGCode)
 			{
-				Gray = AppContext.Theme.Colors.IsDarkTheme ? Color.DarkGray : Color.Gray
+				Gray = AppContext.Theme.IsDarkTheme ? Color.DarkGray : Color.Gray
 			};
 
 			this.RenderInfo = new GCodeRenderInfo(

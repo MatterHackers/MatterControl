@@ -321,9 +321,9 @@ namespace MatterHackers.MeshVisualizer
 
 			gridColors = new GridColors()
 			{
-				Gray = theme.ResolveColor(theme.ActiveTabColor, theme.GetBorderColor((theme.Colors.IsDarkTheme ? 35 : 55))),
-				Red = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.Red, (theme.Colors.IsDarkTheme ? 105 : 170))),
-				Green = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.Green, (theme.Colors.IsDarkTheme ? 105 : 170))),
+				Gray = theme.ResolveColor(theme.ActiveTabColor, theme.GetBorderColor((theme.IsDarkTheme ? 35 : 55))),
+				Red = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.Red, (theme.IsDarkTheme ? 105 : 170))),
+				Green = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.Green, (theme.IsDarkTheme ? 105 : 170))),
 				Blue = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.Blue, 195))
 			};
 
