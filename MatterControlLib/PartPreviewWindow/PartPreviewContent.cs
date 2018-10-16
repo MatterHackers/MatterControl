@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -50,11 +51,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ChromeTab storeTab;
 
 		private int partCount = 0;
+		private ThemeConfig theme;
 
 		public PartPreviewContent(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.AnchorAll();
+			this.theme = theme;
 
 			var extensionArea = new LeftClipFlowLayoutWidget()
 			{
@@ -76,26 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				UiThread.RunOnIdle(async () =>
 				{
-					var partHistory = ApplicationController.Instance.Library.PartHistory;
-
-					var workspace = new BedConfig(partHistory);
-					await workspace.LoadContent(
-						new EditContext()
-						{
-							ContentStore = ApplicationController.Instance.Library.PartHistory,
-							SourceItem = partHistory.NewPlatingItem()
-						});
-
-					ApplicationController.Instance.Workspaces.Add(workspace);
-
-					var partID = partCount;
-
-					var newTab = this.CreatePartTab(
-						"New Design".Localize() + (partCount == 0 ?  "" : $" ({partCount++})"), workspace, theme);
-
-					tabControl.ActiveTab = newTab;
-
-					partCount++;
+					this.CreatePartTab();
 				});
 			};
 
@@ -286,6 +270,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				this.CreatePrinterTab(printer, theme);
 			}
+			else
+			{
+				this.CreatePartTab().ConfigureAwait(false);
+			}
 
 			string tabKey = ApplicationController.Instance.MainTabKey;
 
@@ -313,11 +301,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.TabBar.ActionArea.AddChild(brandMenu, 0);
 
-			// Restore active tabs
-			foreach (var bed in ApplicationController.Instance.Workspaces)
+			UiThread.RunOnIdle(async () =>
 			{
-				this.CreatePartTab("New Part", bed, theme);
-			}
+				// Restore active tabs
+				foreach (var workspace in ApplicationController.Instance.Workspaces)
+				{
+					this.CreatePartTab(workspace);
+				}
+			});
 
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent((s, e) =>
 			{
@@ -423,13 +414,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return null;
 		}
 
-		public ChromeTab CreatePartTab(string tabTitle, BedConfig sceneContext, ThemeConfig theme)
+		public async Task<ChromeTab> CreatePartTab()
+		{
+			var partHistory = ApplicationController.Instance.Library.PartHistory;
+
+			var workspace = new PartWorkspace()
+			{
+				Name = "New Design".Localize() + (partCount == 0 ? "" : $" ({partCount})"),
+				SceneContext = new BedConfig(partHistory)
+			};
+
+			partCount++;
+
+			await workspace.SceneContext.LoadContent(
+				new EditContext()
+				{
+					ContentStore = ApplicationController.Instance.Library.PartHistory,
+					SourceItem = partHistory.NewPlatingItem()
+				});
+
+			ApplicationController.Instance.Workspaces.Add(workspace);
+
+			return CreatePartTab(workspace);
+		}
+
+		public ChromeTab CreatePartTab(PartWorkspace workspace)
 		{
 			var partTab = new ChromeTab(
-				tabTitle,
-				tabTitle,
+				workspace.Name,
+				workspace.Name,
 				tabControl,
-				new PartTabPage(null, sceneContext, theme, ""),
+				new PartTabPage(null, workspace.SceneContext, theme, ""),
 				theme,
 				AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons))
 			{
@@ -438,6 +453,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			tabControl.AddTab(partTab);
+			tabControl.ActiveTab = partTab;
 
 			return partTab;
 		}

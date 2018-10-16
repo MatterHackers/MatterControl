@@ -729,25 +729,23 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					if (selectedLibraryItems.FirstOrDefault() is ILibraryItem firstItem
 						&& ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer writableContainer)
 					{
-						BedConfig bed;
+						var workspace = new PartWorkspace()
+						{
+							Name = firstItem.Name,
+							SceneContext = new BedConfig(ApplicationController.Instance.Library.PartHistory)
+						};
 
-						var newTab = partPreviewContent.CreatePartTab(
-							firstItem.Name,
-							bed = new BedConfig(ApplicationController.Instance.Library.PartHistory),
-							theme);
+						ApplicationController.Instance.Workspaces.Add(workspace);
+
+						partPreviewContent.CreatePartTab(workspace);
 
 						// Load content after UI widgets to support progress notification during acquire/load
-						await bed.LoadContent(
+						await workspace.SceneContext.LoadContent(
 							new EditContext()
 							{
 								ContentStore = writableContainer,
 								SourceItem = firstItem
 							});
-
-						if (newTab.TabContent is PartTabPage partTab)
-						{
-							// TODO: Restore ability to render progress loading
-						}
 					}
 				},
 				IsEnabled = (selectedListItems, listView) =>
