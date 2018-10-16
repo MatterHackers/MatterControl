@@ -138,7 +138,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				rootColumn.AddChild(printersNode);
 
-				this.RebuildPrintersList();
+				InventoryTreeView.RebuildPrintersList(printersNode, theme);
+				this.Invalidate();
 
 				// Filament
 				var materialsNode = new TreeNode(theme)
@@ -162,7 +163,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					if (ProfileManager.Instance.ActiveProfile != null)
 					{
 						ProfileManager.Instance.ActiveProfile.Name = activePrinter.Settings.GetValue(SettingsKey.printer_name);
-						this.RebuildPrintersList();
+						InventoryTreeView.RebuildPrintersList(printersNode, theme);
+						this.Invalidate();
 					}
 				}
 			}, ref unregisterEvents);
@@ -174,7 +176,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				string settingsName = (e as StringEventArgs)?.Data;
 				if (settingsName == SettingsKey.printer_name)
 				{
-					this.RebuildPrintersList();
+					InventoryTreeView.RebuildPrintersList(printersNode, theme);
+					this.Invalidate();
 				}
 			}, ref unregisterEvents);
 
@@ -187,11 +190,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// Rebuild the droplist any time the Profiles list changes
 			ProfileManager.ProfilesListChanged.RegisterEvent((s, e) =>
 			{
-				this.RebuildPrintersList();
+				InventoryTreeView.RebuildPrintersList(printersNode, theme);
+				this.Invalidate();
 			}, ref unregisterEvents);
 		}
 
-		private void RebuildPrintersList()
+		public static void RebuildPrintersList(TreeNode printersNode, ThemeConfig theme)
 		{
 			if (printersNode == null)
 			{
@@ -219,7 +223,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 
 			printersNode.Expanded = true;
-			this.Invalidate();
 		}
 	}
 }
