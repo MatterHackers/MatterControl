@@ -56,6 +56,7 @@ namespace MatterHackers.MatterControl
 		public const string SliceSettingsTabPinned = nameof(SliceSettingsTabPinned);
 		public const string SliceSettingsWidget_CurrentTab = nameof(SliceSettingsWidget_CurrentTab);
 		public const string SliceSettingsWidth = nameof(SliceSettingsWidth);
+		public const string PopupLibraryWidth = nameof(PopupLibraryWidth);
 		public const string SoftwareLicenseAccepted = nameof(SoftwareLicenseAccepted);
 		public const string TerminalAutoUppercase = nameof(TerminalAutoUppercase);
 		public const string TerminalFilterOutput = nameof(TerminalFilterOutput);

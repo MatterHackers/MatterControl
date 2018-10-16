@@ -99,8 +99,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			if ((grabSide == GrabBarSide.Left && mouseEvent.Position.X < this.SplitterWidth)
-				|| (grabSide == GrabBarSide.Right && mouseEvent.Position.X > Width - this.SplitterWidth))
+			if ((grabSide == GrabBarSide.Left && mouseEvent.Position.X < LocalBounds.Left + this.SplitterWidth)
+				|| (grabSide == GrabBarSide.Right && mouseEvent.Position.X > LocalBounds.Right - this.SplitterWidth))
 			{
 				mouseDownOnBar = true;
 				mouseDownX = TransformToScreenSpace(mouseEvent.Position).X;

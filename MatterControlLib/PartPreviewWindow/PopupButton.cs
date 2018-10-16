@@ -39,6 +39,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public event EventHandler PopupWindowClosed;
 		public event EventHandler BeforePopup;
+		public event EventHandler<GuiWidget> ConfigurePopup;
 
 		protected GuiWidget buttonView;
 
@@ -133,6 +134,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				this.PopupWindowClosed?.Invoke(this, null);
 			};
+
+			ConfigurePopup?.Invoke(this, popupWidget);
 
 			popupWidget.Focus();
 		}
