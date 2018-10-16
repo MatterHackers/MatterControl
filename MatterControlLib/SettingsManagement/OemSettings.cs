@@ -87,22 +87,33 @@ namespace MatterHackers.MatterControl.SettingsManagement
 				{
 					return AggContext.ImageIO.LoadImage(cachePath);
 				}
+				else
+				{
+					var imageBuffer = new ImageBuffer(16, 16);
+
+					ApplicationController.Instance.LoadRemoteImage(
+						imageBuffer,
+						ApplicationController.Instance.GetFavIconUrl(oemName),
+						scaleToImageX: false).ContinueWith(t =>
+						{
+							try
+							{
+								AggContext.ImageIO.SaveImageData(cachePath, imageBuffer);
+							}
+							catch (Exception ex)
+							{
+								Console.Write(ex.Message);
+							}
+						});
+
+					return imageBuffer;
+				}
 			}
 			catch
 			{
 			}
 
-			var imageBuffer = new ImageBuffer(16, 16).MultiplyWithPrimaryAccent();
-
-			ApplicationController.Instance.LoadRemoteImage(
-				imageBuffer,
-				ApplicationController.Instance.GetFavIconUrl(oemName),
-				scaleToImageX: false).ContinueWith(t =>
-				{
-					AggContext.ImageIO.SaveImageData(cachePath, imageBuffer);
-				});
-
-			return imageBuffer;
+			return new ImageBuffer(16, 16);
 		}
 
 
