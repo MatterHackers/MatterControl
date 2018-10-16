@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -113,7 +113,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				var signInLink = new LinkLabel("Sign In", theme, pointSize: theme.DefaultFontSize);
 				signInLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 				{
-					this.DialogWindow.ChangeToPage(ApplicationController.GetAuthPage());
+					var authContext = new AuthenticationContext();
+					authContext.SignInComplete += (s2, e2) =>
+					{
+						this.DialogWindow.ChangeToPage(new SelectPrinterPage("Finish".Localize()));
+					};
+
+					this.DialogWindow.ChangeToPage(ApplicationController.GetAuthPage(authContext));
 				});
 				signInRow.AddChild(signInLink);
 				contentRow.AddChild(signInRow);

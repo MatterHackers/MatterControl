@@ -171,7 +171,6 @@ namespace MatterHackers.MatterControl
 									"Saving".Localize() + "...",
 									async (reporter, cancellationToken) =>
 									{
-
 										string path = openParams.FolderPath;
 										if (!string.IsNullOrEmpty(path))
 										{

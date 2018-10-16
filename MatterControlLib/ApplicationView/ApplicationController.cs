@@ -497,7 +497,7 @@ namespace MatterHackers.MatterControl
 		public static Func<bool> GuestUserActive { get; set; }
 
 		// Returns the authentication dialog from the authentication plugin
-		public static Func<DialogPage> GetAuthPage;
+		public static Func<AuthenticationContext, DialogPage> GetAuthPage;
 
 		public SlicePresetsPage EditMaterialPresetsPage { get; set; }
 
