@@ -702,7 +702,7 @@ namespace MatterHackers.MeshVisualizer
 			var worldCenter = worldBounds.Center;
 			double distBetweenPixelsWorldSpace = World.GetWorldUnitsPerScreenPixelAtPosition(worldCenter);
 			var pixelsAccross = worldBounds.Size / distBetweenPixelsWorldSpace;
-			var pixelsWant = pixelsAccross + Vector3.One * 4;
+			var pixelsWant = pixelsAccross + Vector3.One * 4 * Math.Sqrt(2);
 
 			var wantMm = pixelsWant * distBetweenPixelsWorldSpace;
 
