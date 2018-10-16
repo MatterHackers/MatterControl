@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
@@ -225,6 +226,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GuiWidget leadingTabAdornment;
 
+		public event EventHandler PlusClicked;
+
 		public ChromeTabs(GuiWidget rightAnchorItem, ThemeConfig theme)
 			: base(theme, rightAnchorItem)
 		{
@@ -243,10 +246,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabTrailer = new TabTrailer(this, theme)
 			{
 				VAnchor = VAnchor.Bottom,
-				MinimumSize = new Vector2(16, theme.TabButtonHeight),
+				MinimumSize = new Vector2(8, theme.TabButtonHeight),
 			};
 
 			this.TabBar.ActionArea.AddChild(tabTrailer);
+
+			var plusTabButton = new NewTabButton(AggContext.StaticData.LoadIcon("fa-plus_12.png", theme.InvertIcons), theme)
+			{
+				Height = 20,
+			};
+
+			plusTabButton.IconButton.Click += (s, e) =>
+			{
+				this.PlusClicked?.Invoke(this, null);
+			};
+
+			this.TabBar.ActionArea.AddChild(plusTabButton);
 		}
 
 		public override void AddTab(GuiWidget tabWidget, int tabIndex = -1)

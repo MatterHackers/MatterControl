@@ -49,6 +49,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ChromeTab libraryTab;
 		private ChromeTab storeTab;
 
+		private int partCount = 0;
+
 		public PartPreviewContent(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
@@ -68,6 +70,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BackgroundColor = theme.ActiveTabColor,
 				BorderColor = theme.MinimalShade,
 				Border = new BorderDouble(left: 1),
+			};
+
+			tabControl.PlusClicked += (s, e) =>
+			{
+				UiThread.RunOnIdle(async () =>
+				{
+					var partHistory = ApplicationController.Instance.Library.PartHistory;
+
+					var workspace = new BedConfig(partHistory);
+					await workspace.LoadContent(
+						new EditContext()
+						{
+							ContentStore = ApplicationController.Instance.Library.PartHistory,
+							SourceItem = partHistory.NewPlatingItem()
+						});
+
+					ApplicationController.Instance.Workspaces.Add(workspace);
+
+					var partID = partCount;
+
+					var newTab = this.CreatePartTab(
+						"New Design".Localize() + (partCount == 0 ?  "" : $" ({partCount++})"), workspace, theme);
+
+					tabControl.ActiveTab = newTab;
+
+					partCount++;
+				});
 			};
 
 			tabControl.ActiveTabChanged += (s, e) =>
