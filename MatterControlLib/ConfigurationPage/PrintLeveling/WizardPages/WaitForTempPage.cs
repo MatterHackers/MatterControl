@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				// put in the progress bar
 				hotEndProgressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))
 				{
-					FillColor = ActiveTheme.Instance.PrimaryAccentColor,
+					FillColor = theme.PrimaryAccentColor,
 					BorderColor = ActiveTheme.Instance.PrimaryTextColor,
 					BackgroundColor = Color.White,
 					Margin = new BorderDouble(3, 0, 0, 0),
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				// put in progress bar
 				bedProgressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))
 				{
-					FillColor = ActiveTheme.Instance.PrimaryAccentColor,
+					FillColor = theme.PrimaryAccentColor,
 					BorderColor = ActiveTheme.Instance.PrimaryTextColor,
 					BackgroundColor = Color.White,
 					Margin = new BorderDouble(3, 0, 0, 0),

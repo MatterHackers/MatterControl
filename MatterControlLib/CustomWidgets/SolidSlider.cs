@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl
 
 		public Color TickColor { get; set; }
 
-		public SolidSlideView(SolidSlider sliderWidget)
+		public SolidSlideView(SolidSlider sliderWidget, ThemeConfig theme)
 		{
 			sliderAttachedTo = sliderWidget;
 
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl
 
 			TextColor = Color.Black;
 			TrackColor = new Color(220, 220, 220);
-			ThumbColor = ActiveTheme.Instance.PrimaryAccentColor;
+			ThumbColor = theme.PrimaryAccentColor;
 		}
 
 		private RectangleDouble GetTrackBounds()
@@ -241,9 +241,9 @@ namespace MatterHackers.MatterControl
 
 		public bool LargeChange { get; set; }
 
-		public SolidSlider(Vector2 positionOfTrackFirstValue, double thumbWidth, double minimum = 0, double maximum = 1, Orientation orientation = Orientation.Horizontal)
+		public SolidSlider(Vector2 positionOfTrackFirstValue, double thumbWidth, ThemeConfig theme, double minimum = 0, double maximum = 1, Orientation orientation = Orientation.Horizontal)
 		{
-			View = new SolidSlideView(this);
+			View = new SolidSlideView(this, theme);
 			View.TrackHeight = thumbWidth;
 			OriginRelativeParent = positionOfTrackFirstValue;
 			Orientation = orientation;

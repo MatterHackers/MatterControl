@@ -178,6 +178,7 @@ namespace MatterHackers.MatterControl
 		public Color DisabledColor { get; set; }
 		public Color SplashAccentColor { get; set; }
 		public Color BedBackgroundColor { get; set; }
+		public Color PrimaryAccentColor { get; set; }
 
 		public GuiWidget CreateSearchButton()
 		{
@@ -196,7 +197,7 @@ namespace MatterHackers.MatterControl
 		public void SetDefaults()
 		{
 			this.DisabledColor = new Color(this.LightTextColor, 50);
-			this.SplashAccentColor = new Color(this.Colors.PrimaryAccentColor, 185).OverlayOn(Color.White).ToColor();
+			this.SplashAccentColor = new Color(this.PrimaryAccentColor, 185).OverlayOn(Color.White).ToColor();
 		}
 
 		public void RebuildTheme()
@@ -402,7 +403,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		public SolidSlider CreateSolidSlider(GuiWidget wordOptionContainer, string header, double min = 0, double max = .5)
+		public SolidSlider CreateSolidSlider(GuiWidget wordOptionContainer, string header, ThemeConfig theme, double min = 0, double max = .5)
 		{
 			double scrollBarWidth = 10;
 
@@ -412,7 +413,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Left
 			});
 
-			var namedSlider = new SolidSlider(new Vector2(), scrollBarWidth, 0, 1)
+			var namedSlider = new SolidSlider(new Vector2(), scrollBarWidth, theme, 0, 1)
 			{
 				TotalWidthInPixels = defaultScrollBarWidth,
 				Minimum = min,

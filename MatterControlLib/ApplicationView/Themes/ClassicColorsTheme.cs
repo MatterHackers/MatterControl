@@ -84,37 +84,39 @@ namespace MatterHackers.MatterControl
 		{
 			bool darkTheme = mode == "Dark";
 			Console.WriteLine("Requesting theme for " + accentColor.Html);
-			var colors = ThemeColors.Create(accentColor, darkTheme);
 
-			Console.WriteLine("Generated: PrimaryAccent: " + colors.PrimaryAccentColor  + " source: " + colors.SourceColor);
+			var (colors, modifiedAccentColor) = ThemeColors.Create(accentColor, darkTheme);
 
-			return ThemeFromColors(colors, darkTheme);
+			Console.WriteLine("Generated: PrimaryAccent: " + modifiedAccentColor + " source: " + colors.SourceColor);
+
+			return ThemeFromColors(colors, modifiedAccentColor, darkTheme);
 		}
 
-		public static ThemeSet ThemeFromColors(ThemeColors colors, bool darkTheme)
+		public static ThemeSet ThemeFromColors(ThemeColors colors, Color accentColor, bool darkTheme)
 		{
 			var json = JsonConvert.SerializeObject(colors);
 
 			var clonedColors = JsonConvert.DeserializeObject<ThemeColors>(json);
 			clonedColors.PrimaryTextColor = new Color("#222");
 
-			var menuTheme = BuildTheme(clonedColors, darkTheme);
+			var menuTheme = BuildTheme(clonedColors, accentColor, darkTheme);
 			menuTheme.ActiveTabColor = new Color("#f1f1f1");
 			menuTheme.IsDarkTheme = false;
 
 			return new ThemeSet()
 			{
-				Theme = BuildTheme(colors, darkTheme),
+				Theme = BuildTheme(colors, accentColor, darkTheme),
 				MenuTheme = menuTheme
 			};
 		}
 
-		private static ThemeConfig BuildTheme(ThemeColors colors, bool darkTheme)
+		private static ThemeConfig BuildTheme(ThemeColors colors, Color accentColor, bool darkTheme)
 		{
 			var theme = new ThemeConfig();
 
 			theme.Colors = colors;
 			theme.IsDarkTheme = darkTheme;
+			theme.PrimaryAccentColor = accentColor;
 
 			theme.SlightShade = new Color(0, 0, 0, 40);
 			theme.MinimalShade = new Color(0, 0, 0, 15);
@@ -128,7 +130,7 @@ namespace MatterHackers.MatterControl
 					(darkTheme) ? 3 : 25));
 			theme.TabBarBackground = theme.ActiveTabColor.WithLightnessAdjustment(0.85).ToColor();
 			theme.ThumbnailBackground = Color.Transparent;
-			theme.AccentMimimalOverlay = new Color(theme.Colors.PrimaryAccentColor, 50);
+			theme.AccentMimimalOverlay = new Color(accentColor, 50);
 			theme.InteractionLayerOverlayColor = new Color(theme.ActiveTabColor, 240);
 			theme.InactiveTabColor = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.White, darkTheme ? 20 : 60));
 
@@ -136,7 +138,7 @@ namespace MatterHackers.MatterControl
 
 			theme.BorderColor = new Color(darkTheme ? "#C8C8C8" : "#333");
 
-			theme.SplashAccentColor = theme.Colors.PrimaryAccentColor;
+			theme.SplashAccentColor = accentColor;
 
 			theme.BedBackgroundColor = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.Black, 20));
 

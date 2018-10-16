@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			var theme = AppContext.Theme;
 
-			var accentColor = theme.Colors.PrimaryAccentColor;
+			var accentColor = theme.PrimaryAccentColor;
 
 			if (!_themeProvider.Colors.Contains(accentColor))
 			{

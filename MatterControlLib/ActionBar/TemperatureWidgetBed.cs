@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				DynamicallyScaleRange = false,
 				MinValue = 0,
 				ShowGoal = true,
-				GoalColor = ActiveTheme.Instance.PrimaryAccentColor,
+				GoalColor = menuTheme.PrimaryAccentColor,
 				GoalValue = printer.Settings.GetValue<double>(SettingsKey.bed_temperature),
 				MaxValue = 150, // could come from some profile value in the future
 				Width = widget.Width - 20,

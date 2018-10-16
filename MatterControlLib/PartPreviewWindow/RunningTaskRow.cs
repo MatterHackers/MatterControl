@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Stretch,
 				Height = 2,
 				VAnchor = VAnchor.Absolute | VAnchor.Bottom,
-				FillColor = ActiveTheme.Instance.PrimaryAccentColor,
+				FillColor = theme.PrimaryAccentColor,
 				BorderColor = Color.Transparent,
 				Margin = new BorderDouble(32, 7, theme.ButtonHeight * 2 + 14, 0),
 			};
@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void SetExpansionMode(ThemeConfig theme, GuiWidget detailsPanel, bool isExpanded)
 		{
 			expandButton.Checked = isExpanded;
-			progressBar.FillColor = isExpanded ? theme.Shade : theme.Colors.PrimaryAccentColor;
+			progressBar.FillColor = isExpanded ? theme.Shade : theme.PrimaryAccentColor;
 			detailsPanel.Visible = isExpanded;
 		}
 

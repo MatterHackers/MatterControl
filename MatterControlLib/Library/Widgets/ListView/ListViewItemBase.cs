@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override Color BorderColor
 		{
-			get => (this.IsSelected || mouseInBounds) ? theme.Colors.PrimaryAccentColor : base.BorderColor;
+			get => (this.IsSelected || mouseInBounds) ? theme.PrimaryAccentColor : base.BorderColor;
 			set => base.BorderColor = value;
 		}
 

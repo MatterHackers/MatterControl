@@ -74,10 +74,10 @@ namespace MatterHackers.MatterControl
 				Theme = new ThemeConfig()
 				{
 					IsDarkTheme = darkTheme,
+					PrimaryAccentColor = accentColor,
 					Colors = new ThemeColors()
 					{
 						PrimaryTextColor = baseColors.Base0,
-						PrimaryAccentColor = accentColor,
 						SourceColor = accentColor
 					},
 					PresetColors = new PresetColors()
@@ -118,10 +118,10 @@ namespace MatterHackers.MatterControl
 			return new ThemeConfig()
 			{
 				IsDarkTheme = false,
+				PrimaryAccentColor = accentColor,
 				Colors = new ThemeColors()
 				{
 					PrimaryTextColor = new Color("#555"),
-					PrimaryAccentColor = accentColor,
 					SourceColor = accentColor
 				},
 				PresetColors = new PresetColors()
@@ -155,10 +155,10 @@ namespace MatterHackers.MatterControl
 			return new ThemeConfig()
 			{
 				IsDarkTheme = true,
+				PrimaryAccentColor = accentColor,
 				Colors = new ThemeColors()
 				{
 					PrimaryTextColor = baseColors.Base1,
-					PrimaryAccentColor = accentColor,
 					SourceColor = accentColor
 				},
 				PresetColors = new PresetColors()

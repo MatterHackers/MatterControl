@@ -205,7 +205,7 @@ namespace MatterHackers.MatterControl
 				errorText.AddChild(
 					new TextWidget(CriteriaRow.ActiveErrorItem.ErrorText)
 					{
-						TextColor = theme.Colors.PrimaryAccentColor
+						TextColor = theme.PrimaryAccentColor
 					});
 
 				contentRow.AddChild(errorText);

@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.theme = theme;
 			activeColor = theme.Colors.SourceColor;
 
-			var primaryAccentColor = theme.Colors.PrimaryAccentColor;
+			var primaryAccentColor = theme.PrimaryAccentColor;
 
 			this.Padding = 8;
 			this.BackgroundColor = theme.ActiveTabColor;

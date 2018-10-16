@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private int fontSize = 14;
 		protected PrinterConfig printer;
 
-		public TemperatureStatusWidget(PrinterConfig printer, string dispalyName)
+		public TemperatureStatusWidget(PrinterConfig printer, string dispalyName, ThemeConfig theme)
 		{
 			this.printer = printer;
 			var extruderName = new TextWidget(dispalyName, pointSize: fontSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			progressBar = new ProgressBar(200, 6)
 			{
-				FillColor = ActiveTheme.Instance.PrimaryAccentColor,
+				FillColor = theme.PrimaryAccentColor,
 				Margin = new BorderDouble(right: 10),
 				BorderColor = Color.Transparent,
 				BackgroundColor = new Color(ActiveTheme.Instance.PrimaryTextColor, 50),

@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl
 
 			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
 			double sliderWidth = 100 * GuiWidget.DeviceScale;
-			var textSizeSlider = new SolidSlider(new Vector2(), sliderThumbWidth, .7, 1.4)
+			var textSizeSlider = new SolidSlider(new Vector2(), sliderThumbWidth, theme, .7, 1.4)
 			{
 				Name = "Text Size Slider",
 				Margin = new BorderDouble(5, 0),

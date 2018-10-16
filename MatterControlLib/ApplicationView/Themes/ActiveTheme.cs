@@ -35,7 +35,14 @@ namespace MatterHackers.Agg.UI
 	{
 		public static RootedObjectEventHandler ThemeChanged = new RootedObjectEventHandler();
 
-		private static IThemeColors activeTheme = ThemeColors.Create(new Color(172, 25, 61) /* Classic Red */);
+		private static IThemeColors activeTheme;
+
+		static ActiveTheme()
+		{
+			Color accentColor;
+
+			(activeTheme, accentColor) = ThemeColors.Create(new Color(172, 25, 61) /* Classic Red */);
+		}
 
 		public static IThemeColors Instance
 		{

@@ -34,7 +34,5 @@ namespace MatterHackers.Agg.UI
 	public interface IThemeColors
 	{
 		Color PrimaryTextColor { get; }
-
-		Color PrimaryAccentColor { get; }
 	}
 }

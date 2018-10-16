@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			view3DWidget.InteractionLayer.AddChild(LayerScrollbar);
 
-			layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), SliceLayerSelector.SliderWidth);
+			layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), SliceLayerSelector.SliderWidth, theme);
 			layerRenderRatioSlider.FirstValue = 0;
 			layerRenderRatioSlider.FirstValueChanged += (s, e) =>
 			{
@@ -434,20 +434,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (printer.ViewState.TerminalVisible)
 			{
-				sideBar.AddPage("Terminal", 
-					"Terminal".Localize(), 
+				sideBar.AddPage("Terminal",
+					"Terminal".Localize(),
 					new TerminalWidget(printer, theme)
 					{
 						VAnchor = VAnchor.Stretch,
 						HAnchor = HAnchor.Stretch
-					}, 
+					},
 					false);
 			}
 
 			if (printer.ViewState.ConfigurePrinterVisible)
 			{
 				sideBar.AddPage(
-					"Printer", 
+					"Printer",
 					"Printer".Localize(),
 					new ConfigurePrinterWidget(sliceSettingsWidget.settingsContext, printer, theme)
 					{
@@ -484,7 +484,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			expandingContainer.AddChild(progressContainer);
 
-			var progressDial = new ProgressDial()
+			var progressDial = new ProgressDial(theme)
 			{
 				HAnchor = HAnchor.Center,
 				Height = 200 * DeviceScale,

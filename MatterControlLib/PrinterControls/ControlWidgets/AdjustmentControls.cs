@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				// Remove the HorizontalSpacer
 				settingsRow.Children.Last().Close();
 
-				feedRateRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, minFeedRateRatio, maxFeedRateRatio)
+				feedRateRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, theme, minFeedRateRatio, maxFeedRateRatio)
 				{
 					Name = "Feed Rate Slider",
 					Margin = new BorderDouble(5, 0),
@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				// Remove the HorizontalSpacer
 				settingsRow.Children.Last().Close();
 
-				extrusionRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, minExtrutionRatio, maxExtrusionRatio, Orientation.Horizontal)
+				extrusionRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, theme, minExtrutionRatio, maxExtrusionRatio, Orientation.Horizontal)
 				{
 					Name = "Extrusion Multiplier Slider",
 					TotalWidthInPixels = sliderWidth,

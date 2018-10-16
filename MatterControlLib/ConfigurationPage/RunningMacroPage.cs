@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			var holder = new FlowLayoutWidget();
 			progressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))
 			{
-				FillColor = ActiveTheme.Instance.PrimaryAccentColor,
+				FillColor = theme.PrimaryAccentColor,
 				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
 				BackgroundColor = Color.White,
 				Margin = new BorderDouble(3, 0, 0, 10),

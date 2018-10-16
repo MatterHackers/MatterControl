@@ -36,8 +36,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private int extruderIndex;
 
-		public ExtruderStatusWidget(PrinterConfig printer, int extruderIndex)
-			: base(printer, $"{"Extruder".Localize()} {extruderIndex + 1}")
+		public ExtruderStatusWidget(PrinterConfig printer, int extruderIndex, ThemeConfig theme)
+			: base(printer, $"{"Extruder".Localize()} {extruderIndex + 1}", theme)
 		{
 			this.extruderIndex = extruderIndex;
 
