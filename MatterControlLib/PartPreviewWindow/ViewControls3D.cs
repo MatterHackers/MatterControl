@@ -375,6 +375,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			libraryPopup = new PopupMenuButton(buttonView, theme)
 			{
+				MakeScrollable = false,
 				Name = "Add Content Menu",
 				ToolTipText = "Add Content".Localize(),
 				AlwaysKeepOpen = true,
@@ -385,23 +386,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						partPreviewContent = this.Parents<PartPreviewContent>().FirstOrDefault();
 					}
 
-					var widget = new GuiWidget()
+					var verticalResizeContainer = new VerticalResizeContainer(theme, GrabBarSide.Right)
 					{
-						VAnchor = VAnchor.Fit,
-						HAnchor = HAnchor.Fit,
 						BackgroundColor = theme.TabBarBackground,
-						Padding = new BorderDouble(theme.DefaultContainerPadding / 2, 0)
+						Padding = new BorderDouble(theme.DefaultContainerPadding / 2, 0),
+						MinimumSize = new Vector2(120, 50),
+						Height = libraryPopup.TransformToScreenSpace(libraryPopup.Position).Y,
 					};
+
+					double.TryParse(UserSettings.Instance.get(UserSettingsKey.PopupLibraryWidth), out double controlWidth);
+					if (controlWidth == 0)
+					{
+						controlWidth = 400;
+					}
+					verticalResizeContainer.Width = controlWidth;
+
+					verticalResizeContainer.BoundsChanged += (s2, e2) =>
+					{
+						UserSettings.Instance.set(UserSettingsKey.PopupLibraryWidth, verticalResizeContainer.Width.ToString());
+					};
+
 
 					var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 
 					var printLibraryWidget = new PrintLibraryWidget(partPreviewContent, theme)
 					{
-						HAnchor = HAnchor.Left,
-						VAnchor = VAnchor.Bottom,
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Absolute,
 						Height = libraryPopup.TransformToScreenSpace(libraryPopup.Position).Y,
-						Width = 400,
-						MinimumSize = new Vector2(400, 50)
+						Margin = new BorderDouble(left: verticalResizeContainer.SplitterWidth)
 					};
 
 					systemWindow.SizeChanged += (s, e) =>
@@ -409,30 +422,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						printLibraryWidget.Height = libraryPopup.TransformToScreenSpace(libraryPopup.Position).Y;
 					};
 
-					widget.AddChild(printLibraryWidget);
+					verticalResizeContainer.AddChild(printLibraryWidget);
 
-					systemWindow.MouseDown += mouseDown;
+					systemWindow.MouseDown += systemWindownMouseDown;
 
-					void mouseDown(object s2, MouseEventArgs mouseEvent)
+					void systemWindownMouseDown(object s2, MouseEventArgs mouseEvent)
 					{
 						// MouseUp on our SystemWindow outside of our bounds should call close
-						var screenspacePosition = mouseEvent.Position;
-						bool mouseUpOnWidget = printLibraryWidget.PositionWithinLocalBounds(screenspacePosition.X, screenspacePosition.Y);
+						var resizeContainerMousePosition = verticalResizeContainer.TransformFromScreenSpace(mouseEvent.Position);
+						bool mouseUpOnWidget = resizeContainerMousePosition.X >= 0 && resizeContainerMousePosition.X <= verticalResizeContainer.Width
+							&& resizeContainerMousePosition.Y >= 0 && resizeContainerMousePosition.Y <= verticalResizeContainer.Height;
 
 						if (!mouseUpOnWidget)
 						{
 							libraryPopup.CloseMenu();
-							systemWindow.MouseDown -= mouseDown;
+							systemWindow.MouseDown -= systemWindownMouseDown;
 						}
 					};
 
-					return widget;
+					return verticalResizeContainer;
 				},
 				BackgroundColor = theme.ToolbarButtonBackground,
 				HoverColor = theme.ToolbarButtonHover,
 				MouseDownColor = theme.ToolbarButtonDown,
 				DrawArrow = true,
 				Margin = theme.ButtonSpacing,
+			};
+
+			libraryPopup.ConfigurePopup += (s, e) =>
+			{
+				e.HAnchor = HAnchor.Fit;
+				e.VAnchor = VAnchor.Fit;
 			};
 
 			return libraryPopup;
