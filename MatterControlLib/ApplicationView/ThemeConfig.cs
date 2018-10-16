@@ -64,8 +64,9 @@ namespace MatterHackers.MatterControl
 		public double TabButtonHeight => 30 * GuiWidget.DeviceScale;
 		public double MenuGutterWidth => 35 * GuiWidget.DeviceScale;
 
-		private double microButtonHeight => 20 * GuiWidget.DeviceScale;
+		public double MicroButtonHeight => 20 * GuiWidget.DeviceScale;
 		private double microButtonWidth => 30 * GuiWidget.DeviceScale;
+
 		private readonly int defaultScrollBarWidth = 120;
 
 		/// <summary>
@@ -254,7 +255,7 @@ namespace MatterHackers.MatterControl
 				HoverColor = this.AccentMimimalOverlay,
 				Margin = new BorderDouble(right: 1),
 				HAnchor = HAnchor.Absolute,
-				Height = this.microButtonHeight,
+				Height = this.MicroButtonHeight,
 				Width = this.microButtonWidth
 			};
 

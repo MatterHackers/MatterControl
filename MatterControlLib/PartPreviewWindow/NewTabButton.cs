@@ -28,7 +28,9 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -55,5 +57,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			base.OnDraw(graphics2D);
 		}
+	}
+
+	public class NewTabButton : GuiWidget
+	{
+		private ThemeConfig theme;
+
+		public NewTabButton(ImageBuffer imageBuffer, ThemeConfig theme)
+		{
+			this.HAnchor = HAnchor.Fit;
+			this.VAnchor = VAnchor.Center;
+			this.theme = theme;
+
+			IconButton = new IconButton(imageBuffer, theme)
+			{
+				HAnchor = HAnchor.Left,
+				Height = theme.MicroButtonHeight,
+				Width = theme.MicroButtonHeight,
+				Name = "Create New",
+			};
+
+			this.AddChild(IconButton);
+		}
+
+		public ITab LastTab { get; set; }
+
+		public IconButton IconButton { get; }
 	}
 }
