@@ -239,11 +239,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var printer = ApplicationController.Instance.ActivePrinter;
 
-			// Printer tab
-			if (printer.Settings.PrinterSelected)
-			{
-				this.CreatePrinterTab(printer, theme);
-			}
+			// Store tab
+			tabControl.AddTab(
+				storeTab = new ChromeTab("Store", "Store".Localize(), tabControl, new StoreTabPage(this, theme), theme, hasClose: false)
+				{
+					MinimumSize = new Vector2(0, theme.TabButtonHeight),
+					Name = "Store Tab",
+					Padding = new BorderDouble(15, 0),
+					Visible = printer.Settings.PrinterSelected
+				});
 
 			// Library tab
 			var libraryWidget = new LibraryWidget(this, theme)
@@ -277,15 +281,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Padding = new BorderDouble(15, 0)
 				});
 
-			// Store tab
-			tabControl.AddTab(
-				storeTab = new ChromeTab("Store", "Store".Localize(), tabControl, new StoreTabPage(this, theme), theme, hasClose: false)
-				{
-					MinimumSize = new Vector2(0, theme.TabButtonHeight),
-					Name = "Store Tab",
-					Padding = new BorderDouble(15, 0),
-					Visible = printer.Settings.PrinterSelected
-				});
+			// Printer tab
+			if (printer.Settings.PrinterSelected)
+			{
+				this.CreatePrinterTab(printer, theme);
+			}
 
 			string tabKey = ApplicationController.Instance.MainTabKey;
 
@@ -405,7 +405,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Add printer into fixed position
 				if (tabControl.AllTabs.Any())
 				{
-					tabControl.AddTab(printerTab, 0);
+					tabControl.AddTab(printerTab, 3);
 				}
 				else
 				{
