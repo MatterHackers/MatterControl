@@ -269,7 +269,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				this.CreatePartTab().ConfigureAwait(false);
+				if (ApplicationController.Instance.Workspaces.Count == 0)
+				{
+					this.CreatePartTab().ConfigureAwait(false);
+				}
 			}
 
 			string tabKey = ApplicationController.Instance.MainTabKey;
