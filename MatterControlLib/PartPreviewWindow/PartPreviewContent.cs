@@ -47,11 +47,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private EventHandler unregisterEvents;
 		private ChromeTab printerTab = null;
 		private ChromeTabs tabControl;
-		private ChromeTab libraryTab;
-		private ChromeTab storeTab;
 
 		private int partCount = 0;
 		private ThemeConfig theme;
+		private ChromeTab hardwareTab;
 
 		public PartPreviewContent(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -77,9 +76,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.PlusClicked += (s, e) =>
 			{
-				UiThread.RunOnIdle(async () =>
+				UiThread.RunOnIdle(() =>
 				{
-					this.CreatePartTab();
+					this.CreatePartTab().ConfigureAwait(false);
 				});
 			};
 
@@ -225,12 +224,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Store tab
 			tabControl.AddTab(
-				storeTab = new ChromeTab("Store", "Store".Localize(), tabControl, new StoreTabPage(this, theme), theme, hasClose: false)
+				new ChromeTab("Store", "Store".Localize(), tabControl, new StoreTabPage(this, theme), theme, hasClose: false)
 				{
 					MinimumSize = new Vector2(0, theme.TabButtonHeight),
 					Name = "Store Tab",
 					Padding = new BorderDouble(15, 0),
-					Visible = printer.Settings.PrinterSelected
 				});
 
 			// Library tab
@@ -240,30 +238,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			tabControl.AddTab(
-				libraryTab = new ChromeTab("Library", "Library".Localize(), tabControl, libraryWidget, theme, hasClose: false)
+				new ChromeTab("Library", "Library".Localize(), tabControl, libraryWidget, theme, hasClose: false)
 				{
 					MinimumSize = new Vector2(0, theme.TabButtonHeight),
 					Name = "Library Tab",
 					Padding = new BorderDouble(15, 0),
-					Visible = printer.Settings.PrinterSelected
 				});
 
 			// Hardware tab
 			tabControl.AddTab(
-				new ChromeTab("Hardware",
-				"Hardware".Localize(),
-				tabControl,
-				new HardwareTabPage(theme)
-				{
-					BackgroundColor = theme.ActiveTabColor
-				},
-				theme,
-				hasClose: false)
-				{
-					MinimumSize = new Vector2(0, theme.TabButtonHeight),
-					Name = "Hardware Tab",
-					Padding = new BorderDouble(15, 0)
-				});
+				hardwareTab = new ChromeTab(
+					"Hardware",
+					"Hardware".Localize(),
+					tabControl,
+					new HardwareTabPage(theme)
+					{
+						BackgroundColor = theme.ActiveTabColor
+					},
+					theme,
+					hasClose: false)
+					{
+						MinimumSize = new Vector2(0, theme.TabButtonHeight),
+						Name = "Hardware Tab",
+						Padding = new BorderDouble(15, 0),
+						Visible = printer.Settings.PrinterSelected
+					});
 
 			// Printer tab
 			if (printer.Settings.PrinterSelected)
@@ -301,14 +300,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.TabBar.ActionArea.AddChild(brandMenu, 0);
 
-			UiThread.RunOnIdle(async () =>
+			// Restore active tabs
+			foreach (var workspace in ApplicationController.Instance.Workspaces)
 			{
-				// Restore active tabs
-				foreach (var workspace in ApplicationController.Instance.Workspaces)
-				{
-					this.CreatePartTab(workspace);
-				}
-			});
+				this.CreatePartTab(workspace);
+			}
 
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent((s, e) =>
 			{
@@ -347,8 +343,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 
-				libraryTab.Visible = activePrinter?.Settings.PrinterSelected ?? false;
-				storeTab.Visible = activePrinter?.Settings.PrinterSelected ?? false;
+				hardwareTab.Visible = activePrinter?.Settings.PrinterSelected ?? false;
 			}, ref unregisterEvents);
 		}
 
