@@ -344,6 +344,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				hardwareTab.Visible = activePrinter?.Settings.PrinterSelected ?? false;
+
+				tabControl.RefreshTabPointers();
 			}, ref unregisterEvents);
 		}
 

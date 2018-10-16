@@ -278,52 +278,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (tabWidget is ChromeTab newTab)
 			{
-				ChromeTab leftTab;
-
-				if (tabIndex == -1)
-				{
-					leftTab = AllTabs.OfType<ChromeTab>().LastOrDefault();
-				}
-				else
-				{
-					if (tabIndex == 0)
-					{
-						leftTab = null;
-						var firstTab = AllTabs.OfType<ChromeTab>().FirstOrDefault();
-
-						newTab.NextTab = firstTab;
-						firstTab.PreviousTab = newTab;
-					}
-					else
-					{
-						leftTab = this.AllTabs.Skip(tabIndex - 1).FirstOrDefault() as ChromeTab;
-
-						var rightTab = leftTab?.NextTab;
-						if (rightTab != null)
-						{
-							// Insert us in the middle
-							rightTab.PreviousTab = newTab;
-
-							// Set Next
-							newTab.NextTab = rightTab;
-						}
-					}
-				}
-
-				// Set previous
-				newTab.PreviousTab = leftTab;
-
-				// Insert us as next
-				if (leftTab != null)
-				{
-					leftTab.NextTab = newTab;
-				}
-
 				newTab.TabContent.Visible = false;
 
 				// Call AddTab(widget, int) in base explicitly
 				base.AddTab(tabWidget, widgetPosition - firstTabPosition, widgetPosition);
 
+				// Listen for tab changes and update links
+				/*
+				newTab.VisibleChanged += (s, e) =>
+				{
+					this.RefreshTabPointers();
+				}; */
+
+				this.RefreshTabPointers();
+			}
+		}
+
+		public void RefreshTabPointers()
+		{
+			ChromeTab lastTab = null;
+
+			foreach(var tab in AllTabs.OfType<ChromeTab>().Where(t => t.Visible))
+			{
+				if (lastTab != null)
+				{
+					lastTab.NextTab = tab;
+				}
+
+				tab.PreviousTab = lastTab;
+
+				lastTab = tab;
 			}
 		}
 
