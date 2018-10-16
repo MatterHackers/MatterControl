@@ -232,7 +232,8 @@ namespace MatterControl.Printing
 			PrinterMachineInstruction machineInstructionForLine = new PrinterMachineInstruction("None");
 
 			bool gcodeHasExplicitLayerChangeInfo = false;
-			if (gCodeString.Contains("LAYER:"))
+			if (gCodeString.Contains("LAYER:")
+				|| gCodeString.Contains("; layer"))
 			{
 				gcodeHasExplicitLayerChangeInfo = true;
 			}
