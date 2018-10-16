@@ -119,14 +119,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 								StyledMessageBox.ShowMessageBox(
 									(deletePrinter) =>
 									{
-								if (deletePrinter)
-								{
-									if (treeView.SelectedNode.Tag is PrinterInfo printerInfo)
-									{
-										ProfileManager.Instance.DeletePrinter(printerInfo.ID, true);
-									}
-								}
-							},
+										if (deletePrinter)
+										{
+											if (treeView.SelectedNode.Tag is PrinterInfo printerInfo)
+											{
+												ProfileManager.Instance.DeletePrinter(printerInfo.ID, true);
+											}
+										}
+									},
 									"Are you sure you want to delete your currently selected printer?".Localize(),
 									"Delete Printer?".Localize(),
 									StyledMessageBox.MessageType.YES_NO,

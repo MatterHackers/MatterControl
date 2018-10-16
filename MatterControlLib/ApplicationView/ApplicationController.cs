@@ -1736,15 +1736,7 @@ namespace MatterHackers.MatterControl
 		public void OnLoadActions()
 		{
 			bool showAuthWindow = ApplicationController.GuestUserActive?.Invoke() ?? false;
-			if (showAuthWindow)
-			{
-				if (ApplicationSettings.Instance.get(ApplicationSettingsKey.SuppressAuthPanel) != "True")
-				{
-					//Launch window to prompt user to sign in
-					UiThread.RunOnIdle(() => DialogWindow.Show(PrinterSetup.GetBestStartPage()));
-				}
-			}
-			else
+			if (!showAuthWindow)
 			{
 				//If user in logged in sync before checking to prompt to create printer
 				if (ApplicationController.SyncPrinterProfiles == null)

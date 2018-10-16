@@ -41,6 +41,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.VectorMath;
 
@@ -215,6 +216,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (showPrintButton)
 			{
 				var printButton = new TextButton("Print", theme);
+				printButton.Click += (s, e) =>
+				{
+					bool showAuthWindow = ApplicationController.GuestUserActive?.Invoke() ?? false;
+					if (showAuthWindow)
+					{
+						if (ApplicationSettings.Instance.get(ApplicationSettingsKey.SuppressAuthPanel) != "True")
+						{
+							//Launch window to prompt user to sign in
+							UiThread.RunOnIdle(() => DialogWindow.Show(PrinterSetup.GetBestStartPage()));
+						}
+					}
+				};
 				this.AddChild(printButton);
 			}
 
