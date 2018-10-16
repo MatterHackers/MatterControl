@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl
 			SetNoContentFieldDescriptionVisibility();
 			base.OnDraw(graphics2D);
 
-			//graphics2D.Rectangle(LocalBounds, this.BorderColor);
+			//graphics2D.Rectangle(LocalBounds, Color.Orange);
 		}
 
 		public override string Text

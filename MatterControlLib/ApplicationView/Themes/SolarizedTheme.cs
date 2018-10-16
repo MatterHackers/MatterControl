@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl
 			return ThemeColors.GetAdjustedAccentColor(accentColor, backgroundColor);
 		}
 
-		private class SolarizedColors
+		public class SolarizedColors
 		{
 			public BaseColors Dark { get; } = new BaseColors()
 			{
@@ -242,7 +242,7 @@ namespace MatterHackers.MatterControl
 			public Color Green { get; } = new Color("#859900");
 		}
 
-		private class BaseColors
+		public class BaseColors
 		{
 			public Color Base03 { get; set; }
 			public Color Base02 { get; set; }

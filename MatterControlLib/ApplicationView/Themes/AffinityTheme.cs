@@ -33,13 +33,14 @@ using MatterHackers.Agg.UI;
 namespace MatterHackers.MatterControl
 {
 	using System.Collections.Generic;
+	using static MatterHackers.MatterControl.SolarizedTheme;
 
 	public class AffinityTheme : IColorTheme
 	{
-		private SolarizedColors solarized = new SolarizedColors();
-
 		public AffinityTheme()
 		{
+			var solarized = new SolarizedColors();
+
 			this.Colors = new[]
 			{
 				solarized.Blue,
@@ -55,7 +56,7 @@ namespace MatterHackers.MatterControl
 			this.DefaultColor = solarized.Yellow;
 			this.DefaultMode = "Dark";
 
-			this.Modes = new[] { "Dark", "Light" };
+			this.Modes = new[] { "Dark" };
 		}
 
 		public Color DefaultColor { get; }
@@ -66,7 +67,6 @@ namespace MatterHackers.MatterControl
 		public ThemeSet GetTheme(string mode, Color accentColor)
 		{
 			bool darkTheme = mode == "Dark";
-			var baseColors = darkTheme ? solarized.Dark : solarized.Light;
 
 			var textColor = new Color("#bbb");
 
@@ -90,15 +90,15 @@ namespace MatterHackers.MatterControl
 					{
 						Focused = new ThemeConfig.StateColor()
 						{
-							BackgroundColor = new Color("#F0F0F0"),
+							BackgroundColor = new Color("#999"),
 							TextColor = new Color("#222"),
-							BorderColor = accentColor
+							BorderColor = new Color("#FF7F00")
 						},
 						Hovered = new ThemeConfig.StateColor()
 						{
 							BackgroundColor = new Color("#333333"),
 							TextColor = new Color("#fff"),
-							BorderColor = new Color("#282828")
+							BorderColor = new Color("#FF7F00")
 						},
 						Inactive = new ThemeConfig.StateColor()
 						{
@@ -115,58 +115,21 @@ namespace MatterHackers.MatterControl
 					ActiveTabColor = new Color("#373737"),
 					TabBarBackground = new Color("#282828"),
 
-					InactiveTabColor = baseColors.Base02,
-					InteractionLayerOverlayColor = new Color(baseColors.Base03, 240),
-					SplitterBackground = baseColors.Base02,
+					InactiveTabColor = new Color("#404040"),
+					InteractionLayerOverlayColor = new Color(new Color("#373737"), 240),
+					SplitterBackground = new Color("#282828"),
 					TabBodyBackground = new Color("#00000000"),
 					ToolbarButtonBackground = new Color("#00000000"),
 					ThumbnailBackground = new Color("#00000000"),
 					AccentMimimalOverlay = new Color(accentColor, 80),
-					BorderColor = baseColors.Base0,
+					BorderColor = new Color("#000"),
 					SplashAccentColor = new Color("#eee")
 				},
-				MenuTheme = (darkTheme) ? this.DarkMenu(baseColors, accentColor) : this.LightMenu(baseColors, accentColor)
+				MenuTheme = this.DarkMenu(accentColor)
 			};
 		}
 
-		private ThemeConfig LightMenu(BaseColors baseColors, Color accentColor)
-		{
-			var backgroundColor = new Color("#f1f1f1");
-
-			return new ThemeConfig()
-			{
-				IsDarkTheme = false,
-				PrimaryAccentColor = accentColor,
-				Colors = new ThemeColors()
-				{
-					PrimaryTextColor = new Color("#555"),
-					SourceColor = accentColor
-				},
-				PresetColors = new PresetColors()
-				{
-					MaterialPreset = new Color("#FF7F00"),
-					QualityPreset = new Color("#FFFF00"),
-					UserOverride = new Color("#445FDC96")
-				},
-				SlightShade = new Color("#00000028"),
-				MinimalShade = new Color("#0000000F"),
-				Shade = new Color("#00000078"),
-				DarkShade = new Color("#000000BE"),
-
-				ActiveTabColor = backgroundColor,
-				TabBarBackground = new Color("#B1B1B1"),
-				InactiveTabColor = new Color("#D0D0D0"),
-				InteractionLayerOverlayColor = new Color("#D0D0D0F0"),
-				SplitterBackground = new Color("#B5B5B5"),
-				TabBodyBackground = new Color("#00000000"),
-				ToolbarButtonBackground = new Color("#00000000"),
-				ThumbnailBackground = new Color("#00000000"),
-				AccentMimimalOverlay = new Color(accentColor, 80),
-				BorderColor = new Color("#666666"),
-			};
-		}
-
-		private ThemeConfig DarkMenu(BaseColors baseColors, Color accentColor)
+		private ThemeConfig DarkMenu(Color accentColor)
 		{
 			var backgroundColor = new Color("#2d2f31");
 
@@ -175,7 +138,7 @@ namespace MatterHackers.MatterControl
 				IsDarkTheme = true,
 				Colors = new ThemeColors()
 				{
-					PrimaryTextColor = baseColors.Base1,
+					PrimaryTextColor = new Color("#eee"),
 					SourceColor = accentColor
 				},
 				PresetColors = new PresetColors()
@@ -200,59 +163,6 @@ namespace MatterHackers.MatterControl
 				AccentMimimalOverlay = new Color(accentColor, 80),
 				BorderColor = new Color("#c8c8c8"),
 			};
-		}
-
-		public Color GetAdjustedAccentColor(Color accentColor, Color backgroundColor)
-		{
-			return ThemeColors.GetAdjustedAccentColor(accentColor, backgroundColor);
-		}
-
-		private class SolarizedColors
-		{
-			public BaseColors Dark { get; } = new BaseColors()
-			{
-				Base03 = new Color("#002b36"),
-				Base02 = new Color("#073642"),
-				Base01 = new Color("#586e75"),
-				Base00 = new Color("#657b83"),
-				Base0 = new Color("#839496"),
-				Base1 = new Color("#93a1a1"),
-				Base2 = new Color("#eee8d5"),
-				Base3 = new Color("#fdf6e3")
-			};
-
-			public BaseColors Light { get; } = new BaseColors()
-			{
-				Base03 = new Color("#fdf6e3"),
-				Base02 = new Color("#eee8d5"),
-				Base01 = new Color("#93a1a1"),
-				Base00 = new Color("#839496"),
-				Base0 = new Color("#657b83"),
-				Base1 = new Color("#586e75"),
-				Base2 = new Color("#073642"),
-				Base3 = new Color("#002b36")
-			};
-
-			public Color Yellow { get; } = new Color("#b58900");
-			public Color Orange { get; } = new Color("#cb4b16");
-			public Color Red { get; } = new Color("#dc322f");
-			public Color Magenta { get; } = new Color("#d33682");
-			public Color Violet { get; } = new Color("#6c71c4");
-			public Color Blue { get; } = new Color("#268bd2");
-			public Color Cyan { get; } = new Color("#2aa198");
-			public Color Green { get; } = new Color("#859900");
-		}
-
-		private class BaseColors
-		{
-			public Color Base03 { get; set; }
-			public Color Base02 { get; set; }
-			public Color Base01 { get; set; }
-			public Color Base00 { get; set; }
-			public Color Base0 { get; set; }
-			public Color Base1 { get; set; }
-			public Color Base2 { get; set; }
-			public Color Base3 { get; set; }
 		}
 	}
 }
