@@ -50,7 +50,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private int partCount = 0;
 		private ThemeConfig theme;
-		private ChromeTab hardwareTab;
 
 		public PartPreviewContent(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -247,7 +246,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Hardware tab
 			tabControl.AddTab(
-				hardwareTab = new ChromeTab(
+				new ChromeTab(
 					"Hardware",
 					"Hardware".Localize(),
 					tabControl,
@@ -261,7 +260,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						MinimumSize = new Vector2(0, theme.TabButtonHeight),
 						Name = "Hardware Tab",
 						Padding = new BorderDouble(15, 0),
-						Visible = printer.Settings.PrinterSelected
 					});
 
 			// Printer tab
@@ -342,8 +340,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						tabControl.ActiveTab = this.CreatePrinterTab(activePrinter, theme);
 					}
 				}
-
-				hardwareTab.Visible = activePrinter?.Settings.PrinterSelected ?? false;
 
 				tabControl.RefreshTabPointers();
 			}, ref unregisterEvents);
