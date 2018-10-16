@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl
 			this.HAnchor = HAnchor.Fit;
 			this.Margin = 0;
 
-			this.PopupContent = BrandMenuButton.CreatePopupMenu();
+			this.DynamicPopupContent = () => BrandMenuButton.CreatePopupMenu();
 
 			var row = new FlowLayoutWidget()
 			{
@@ -148,44 +148,25 @@ namespace MatterHackers.MatterControl
 				indicatorIcon = AggContext.StaticData.LoadIcon("x64.png", 16, 16, menuTheme.InvertIcons);
 			}
 
-			menuItem = popupMenu.CreateMenuItem("Report a Bug".Localize(), AggContext.StaticData.LoadIcon("feedback.png", 16, 16, menuTheme.InvertIcons));
-			menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("https://github.com/MatterHackers/MatterControl/issues");
+			popupMenu.CreateSubMenu("Community".Localize(), menuTheme, (modifyMenu) =>
+			{
+				menuItem = modifyMenu.CreateMenuItem("Forums".Localize(), linkIcon);
+				menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("https://forums.matterhackers.com/category/20/mattercontrol");
 
-			popupMenu.CreateHorizontalLine();
+				menuItem = modifyMenu.CreateMenuItem("Guides and Articles".Localize(), linkIcon);
+				menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("http://www.matterhackers.com/topic/mattercontrol");
 
-			//// x64 indicator icon
-			//if (IntPtr.Size == 8)
-			//{
-			//	// Add x64 adornment
-			//	var blueBox = new FlowLayoutWidget()
-			//	{
-			//		Margin = new BorderDouble(10, 0),
-			//		Padding = new BorderDouble(2),
-			//		Border = new BorderDouble(1),
-			//		BorderColor = theme.Colors.PrimaryAccentColor,
-			//		VAnchor = VAnchor.Center | VAnchor.Fit,
-			//		DoubleBuffer = true
-			//	};
-			//	blueBox.AddChild(new TextWidget("64", pointSize: 8, textColor: menuTheme.Colors.PrimaryAccentColor));
+				menuItem = modifyMenu.CreateMenuItem("Support".Localize(), linkIcon);
+				menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("http://https://www.matterhackers.com/mattercontrol/support");
 
-			//	//var xxx = new ImageGraphics2D();
+				menuItem = modifyMenu.CreateMenuItem("Release Notes".Localize(), linkIcon);
+				menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("http://wiki.mattercontrol.com/Release_Notes");
 
-			//	//blueBox.OnDraw(xxx);
+				modifyMenu.CreateHorizontalLine();
 
-			//	indicatorIcon = blueBox.BackBuffer;
-			//}
-
-			menuItem = popupMenu.CreateMenuItem("Forums".Localize(), linkIcon);
-			menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("https://forums.matterhackers.com/category/20/mattercontrol");
-
-			menuItem = popupMenu.CreateMenuItem("Wiki".Localize(), linkIcon);
-			menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("http://wiki.mattercontrol.com");
-
-			menuItem = popupMenu.CreateMenuItem("Guides and Articles".Localize(), linkIcon);
-			menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("http://www.matterhackers.com/topic/mattercontrol");
-
-			menuItem = popupMenu.CreateMenuItem("Release Notes".Localize(), linkIcon);
-			menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("http://wiki.mattercontrol.com/Release_Notes");
+				menuItem = modifyMenu.CreateMenuItem("Report a Bug".Localize(), AggContext.StaticData.LoadIcon("feedback.png", 16, 16, menuTheme.InvertIcons));
+				menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("https://github.com/MatterHackers/MatterControl/issues");
+			}, AggContext.StaticData.LoadIcon("feedback.png", 16, 16, menuTheme.InvertIcons));
 
 			popupMenu.CreateHorizontalLine();
 

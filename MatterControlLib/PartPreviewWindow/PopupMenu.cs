@@ -275,7 +275,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			public event EventHandler CheckedStateChanged;
 		}
 
-		public void CreateSubMenu(string menuTitle, ThemeConfig menuTheme, Action<PopupMenu> populateSubMenu)
+		public void CreateSubMenu(string menuTitle, ThemeConfig menuTheme, Action<PopupMenu> populateSubMenu, ImageBuffer icon = null)
 		{
 			GuiWidget content = new TextWidget(menuTitle, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 			{
@@ -287,7 +287,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var subMenuItemButton = new SubMenuItemButton(content, theme)
 			{
 				Name = menuTitle + " Menu Item",
-				//Image = icon
+				Image = icon
 			};
 
 			this.AddChild(subMenuItemButton);
