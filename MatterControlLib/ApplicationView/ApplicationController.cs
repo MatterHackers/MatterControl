@@ -2081,7 +2081,7 @@ namespace MatterHackers.MatterControl
 		public static IObject3D ClipboardItem { get; internal set; }
 		public Action<ILibraryItem> ShareLibraryItem { get; set; }
 
-		public List<BedConfig> Workspaces { get; } = new List<BedConfig>();
+		public List<PartWorkspace> Workspaces { get; } = new List<PartWorkspace>();
 
 		public AppViewState ViewState { get; } = new AppViewState();
 		public Uri HelpArticleSource { get; set; }
@@ -3129,4 +3129,11 @@ namespace MatterHackers.MatterControl
 			});
 		}
 	}
+
+	public class PartWorkspace
+	{
+		public string Name { get; set; }
+		public BedConfig SceneContext { get; set; }
+	}
+
 }

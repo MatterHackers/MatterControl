@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -46,15 +47,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private EventHandler unregisterEvents;
 		private ChromeTab printerTab = null;
 		private ChromeTabs tabControl;
-		private ChromeTab libraryTab;
-		private ChromeTab storeTab;
 
 		private int partCount = 0;
+		private ThemeConfig theme;
+		private ChromeTab hardwareTab;
 
 		public PartPreviewContent(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.AnchorAll();
+			this.theme = theme;
 
 			var extensionArea = new LeftClipFlowLayoutWidget()
 			{
@@ -74,28 +76,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.PlusClicked += (s, e) =>
 			{
-				UiThread.RunOnIdle(async () =>
+				UiThread.RunOnIdle(() =>
 				{
-					var partHistory = ApplicationController.Instance.Library.PartHistory;
-
-					var workspace = new BedConfig(partHistory);
-					await workspace.LoadContent(
-						new EditContext()
-						{
-							ContentStore = ApplicationController.Instance.Library.PartHistory,
-							SourceItem = partHistory.NewPlatingItem()
-						});
-
-					ApplicationController.Instance.Workspaces.Add(workspace);
-
-					var partID = partCount;
-
-					var newTab = this.CreatePartTab(
-						"New Design".Localize() + (partCount == 0 ?  "" : $" ({partCount++})"), workspace, theme);
-
-					tabControl.ActiveTab = newTab;
-
-					partCount++;
+					this.CreatePartTab().ConfigureAwait(false);
 				});
 			};
 
@@ -239,11 +222,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var printer = ApplicationController.Instance.ActivePrinter;
 
-			// Printer tab
-			if (printer.Settings.PrinterSelected)
-			{
-				this.CreatePrinterTab(printer, theme);
-			}
+			// Store tab
+			tabControl.AddTab(
+				new ChromeTab("Store", "Store".Localize(), tabControl, new StoreTabPage(this, theme), theme, hasClose: false)
+				{
+					MinimumSize = new Vector2(0, theme.TabButtonHeight),
+					Name = "Store Tab",
+					Padding = new BorderDouble(15, 0),
+				});
 
 			// Library tab
 			var libraryWidget = new LibraryWidget(this, theme)
@@ -252,40 +238,41 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			tabControl.AddTab(
-				libraryTab = new ChromeTab("Library", "Library".Localize(), tabControl, libraryWidget, theme, hasClose: false)
+				new ChromeTab("Library", "Library".Localize(), tabControl, libraryWidget, theme, hasClose: false)
 				{
 					MinimumSize = new Vector2(0, theme.TabButtonHeight),
 					Name = "Library Tab",
 					Padding = new BorderDouble(15, 0),
-					Visible = printer.Settings.PrinterSelected
 				});
 
 			// Hardware tab
 			tabControl.AddTab(
-				new ChromeTab("Hardware",
-				"Hardware".Localize(),
-				tabControl,
-				new HardwareTabPage(theme)
-				{
-					BackgroundColor = theme.ActiveTabColor
-				},
-				theme,
-				hasClose: false)
-				{
-					MinimumSize = new Vector2(0, theme.TabButtonHeight),
-					Name = "Hardware Tab",
-					Padding = new BorderDouble(15, 0)
-				});
+				hardwareTab = new ChromeTab(
+					"Hardware",
+					"Hardware".Localize(),
+					tabControl,
+					new HardwareTabPage(theme)
+					{
+						BackgroundColor = theme.ActiveTabColor
+					},
+					theme,
+					hasClose: false)
+					{
+						MinimumSize = new Vector2(0, theme.TabButtonHeight),
+						Name = "Hardware Tab",
+						Padding = new BorderDouble(15, 0),
+						Visible = printer.Settings.PrinterSelected
+					});
 
-			// Store tab
-			tabControl.AddTab(
-				storeTab = new ChromeTab("Store", "Store".Localize(), tabControl, new StoreTabPage(this, theme), theme, hasClose: false)
-				{
-					MinimumSize = new Vector2(0, theme.TabButtonHeight),
-					Name = "Store Tab",
-					Padding = new BorderDouble(15, 0),
-					Visible = printer.Settings.PrinterSelected
-				});
+			// Printer tab
+			if (printer.Settings.PrinterSelected)
+			{
+				this.CreatePrinterTab(printer, theme);
+			}
+			else
+			{
+				this.CreatePartTab().ConfigureAwait(false);
+			}
 
 			string tabKey = ApplicationController.Instance.MainTabKey;
 
@@ -314,9 +301,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabControl.TabBar.ActionArea.AddChild(brandMenu, 0);
 
 			// Restore active tabs
-			foreach (var bed in ApplicationController.Instance.Workspaces)
+			foreach (var workspace in ApplicationController.Instance.Workspaces)
 			{
-				this.CreatePartTab("New Part", bed, theme);
+				this.CreatePartTab(workspace);
 			}
 
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent((s, e) =>
@@ -356,8 +343,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 
-				libraryTab.Visible = activePrinter?.Settings.PrinterSelected ?? false;
-				storeTab.Visible = activePrinter?.Settings.PrinterSelected ?? false;
+				hardwareTab.Visible = activePrinter?.Settings.PrinterSelected ?? false;
+
+				tabControl.RefreshTabPointers();
 			}, ref unregisterEvents);
 		}
 
@@ -405,7 +393,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Add printer into fixed position
 				if (tabControl.AllTabs.Any())
 				{
-					tabControl.AddTab(printerTab, 0);
+					tabControl.AddTab(printerTab, 3);
 				}
 				else
 				{
@@ -423,13 +411,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return null;
 		}
 
-		public ChromeTab CreatePartTab(string tabTitle, BedConfig sceneContext, ThemeConfig theme)
+		public async Task<ChromeTab> CreatePartTab()
+		{
+			var partHistory = ApplicationController.Instance.Library.PartHistory;
+
+			var workspace = new PartWorkspace()
+			{
+				Name = "New Design".Localize() + (partCount == 0 ? "" : $" ({partCount})"),
+				SceneContext = new BedConfig(partHistory)
+			};
+
+			partCount++;
+
+			await workspace.SceneContext.LoadContent(
+				new EditContext()
+				{
+					ContentStore = ApplicationController.Instance.Library.PartHistory,
+					SourceItem = partHistory.NewPlatingItem()
+				});
+
+			ApplicationController.Instance.Workspaces.Add(workspace);
+
+			return CreatePartTab(workspace);
+		}
+
+		public ChromeTab CreatePartTab(PartWorkspace workspace)
 		{
 			var partTab = new ChromeTab(
-				tabTitle,
-				tabTitle,
+				workspace.Name,
+				workspace.Name,
 				tabControl,
-				new PartTabPage(null, sceneContext, theme, ""),
+				new PartTabPage(null, workspace.SceneContext, theme, ""),
 				theme,
 				AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons))
 			{
@@ -438,6 +450,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			tabControl.AddTab(partTab);
+			tabControl.ActiveTab = partTab;
 
 			return partTab;
 		}
