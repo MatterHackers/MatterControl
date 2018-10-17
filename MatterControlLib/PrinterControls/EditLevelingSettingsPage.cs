@@ -27,20 +27,28 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
 	public class EditLevelingSettingsPage : DialogPage
 	{
+		private readonly PrinterConfig printer;
+
 		public EditLevelingSettingsPage(PrinterConfig printer, ThemeConfig theme)
 		{
+			this.printer = printer;
+
 			this.WindowTitle = "Leveling Settings".Localize();
 			this.HeaderText = "Sampled Positions".Localize();
 
@@ -125,8 +133,47 @@ namespace MatterHackers.MatterControl
 				printer.Settings.Helpers.SetPrintLevelingData(newLevelingData, false);
 				this.DialogWindow.Close();
 			});
-
 			this.AddPageAction(savePresetsButton);
+
+			var exportButton = theme.CreateDialogButton("Export".Localize());
+			exportButton.Click += (s, e) => {
+				UiThread.RunOnIdle(this.ExportSettings, .1);
+			};
+			this.AddPageAction(exportButton);
+
+		}
+
+		private void ExportSettings()
+		{
+			AggContext.FileDialogs.SaveFileDialog(
+				new SaveFileDialogParams("Bed Leveling Data|*.csv") {
+					Title = "Export Bed Leveling Data".Localize(),
+					FileName = $"{printer.Settings.GetValue(SettingsKey.printer_name)} Leveling Data"
+				},
+				(saveParams) => {
+					try {
+						if (!string.IsNullOrWhiteSpace(saveParams.FileName)) {
+							// Export JSON data
+							//File.WriteAllText(saveParams.FileName, printer.Settings.GetValue(SettingsKey.print_leveling_data));
+
+							// Export CSV data
+							PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
+							using (StreamWriter file =
+								   new StreamWriter(saveParams.FileName)) {
+								for (int i = 0; i < levelingData.SampledPositions.Count; i++) {
+									double x = levelingData.SampledPositions[i].X;
+									double y = levelingData.SampledPositions[i].Y;
+									double z = levelingData.SampledPositions[i].Z;
+									file.WriteLine($"{x}, {y}, {z}");
+								}
+							}
+						}
+					} catch (Exception e) {
+						UiThread.RunOnIdle(() => {
+							StyledMessageBox.ShowMessageBox(e.Message, "Couldn't save file".Localize());
+						});
+					}
+				});
 		}
 	}
 }
