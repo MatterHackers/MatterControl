@@ -215,7 +215,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (showPrintButton)
 			{
-				var printButton = new TextButton("Print", theme);
+				var printButton = new TextButton("Print", theme)
+				{
+					BackgroundColor = theme.AccentMimimalOverlay
+				};
 				printButton.Click += (s, e) =>
 				{
 					bool showAuthWindow = ApplicationController.GuestUserActive?.Invoke() ?? false;
