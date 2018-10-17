@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Name = "com_port Field",
 				// Prevent droplist interaction when connected
 				Enabled = canChangeComPort,
-				BorderColor = theme.GetBorderColor(75)
+				BorderColor = theme.DropListFieldBorder
 			};
 
 			dropdownList.Click += (s, e) =>

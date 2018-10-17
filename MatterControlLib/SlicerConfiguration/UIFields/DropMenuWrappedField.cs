@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var selectableOptions = new DropDownList("Custom", textColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
 			{
-				BorderColor = theme.GetBorderColor(75),
+				BorderColor = theme.DropListFieldBorder,
 				Margin = new BorderDouble(0, 0, 10, 0)
 			};
 

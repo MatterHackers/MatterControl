@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl
 			var releaseOptionsDropList = new DropDownList("Development", theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
 			{
 				HAnchor = HAnchor.Fit,
-				BorderColor = theme.GetBorderColor(75)
+				BorderColor = theme.DropListFieldBorder
 			};
 			releaseOptionsDropList.AddItem("Stable".Localize(), "release");
 			releaseOptionsDropList.AddItem("Beta".Localize(), "pre-release");

@@ -2749,7 +2749,7 @@ If you experience adhesion problems, please re-run leveling."
 			progressPanel.AddChild(progressBar = new ProgressBar()
 			{
 				FillColor = mutedAccentColor,
-				BorderColor = Color.Gray, // theme.GetBorderColor(75),
+				BorderColor = Color.Gray, // theme.BorderColor75,
 				Height = 11,
 				Width = 230,
 				HAnchor = HAnchor.Center,

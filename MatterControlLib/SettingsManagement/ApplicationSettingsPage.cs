@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl
 			// ThumbnailRendering
 			var thumbnailsModeDropList = new DropDownList("", theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
 			{
-				BorderColor = theme.GetBorderColor(75)
+				BorderColor = theme.DropListFieldBorder
 			};
 			thumbnailsModeDropList.AddItem("Flat".Localize(), "orthographic");
 			thumbnailsModeDropList.AddItem("3D".Localize(), "raytraced");
@@ -291,7 +291,7 @@ namespace MatterHackers.MatterControl
 
 			var droplist = new DropDownList("Custom", theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
 			{
-				BorderColor = theme.GetBorderColor(75),
+				BorderColor = theme.DropListFieldBorder,
 				Margin = new BorderDouble(0, 0, 10, 0)
 			};
 

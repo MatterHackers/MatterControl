@@ -235,10 +235,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		public XYZColors(ThemeConfig theme)
 		{
-			this.EColor = theme.GetBorderColor(40); // new Color(180, 180, 180);
-			this.XColor = theme.GetBorderColor(40); // new Color(180, 180, 180);
-			this.YColor = theme.GetBorderColor(40); //new Color(255, 255, 255);
-			this.ZColor = theme.GetBorderColor(40); //new Color(255, 255, 255);
+			this.EColor = theme.BorderColor40; // new Color(180, 180, 180);
+			this.XColor = theme.BorderColor40; // new Color(180, 180, 180);
+			this.YColor = theme.BorderColor40; //new Color(255, 255, 255);
+			this.ZColor = theme.BorderColor40; //new Color(255, 255, 255);
 		}
 	}
 

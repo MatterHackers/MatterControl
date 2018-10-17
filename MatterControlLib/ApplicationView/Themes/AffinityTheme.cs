@@ -102,11 +102,14 @@ namespace MatterHackers.MatterControl
 						},
 						Inactive = new ThemeConfig.StateColor()
 						{
-							BackgroundColor = new Color("#333333"),
+							BackgroundColor = new Color("#303030"),
 							TextColor = textColor,
 							BorderColor = new Color("#282828")
 						}
 					},
+					DropListFieldBorder = new Color("#282828"),
+					RowBorder = new Color("#2c2c2c"),
+
 					SlightShade = new Color("#00000028"),
 					MinimalShade = new Color("#0000000F"),
 					Shade = new Color("#00000078"),
@@ -122,7 +125,11 @@ namespace MatterHackers.MatterControl
 					ToolbarButtonBackground = new Color("#00000000"),
 					ThumbnailBackground = new Color("#00000000"),
 					AccentMimimalOverlay = new Color(accentColor, 80),
-					BorderColor = new Color("#000"),
+
+					BorderColor = new Color("#bbb"),
+					BorderColor40  = new Color("#555"),
+					BorderColor20  = new Color("#444"),
+
 					SplashAccentColor = new Color("#eee")
 				},
 				MenuTheme = this.DarkMenu(accentColor)

@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					Margin = new BorderDouble(theme.DefaultContainerPadding, theme.DefaultContainerPadding, 0, theme.DefaultContainerPadding),
 					Border = 1,
 					IsActive = mode == activeMode,
-					BorderColor = theme.GetBorderColor(20),
+					BorderColor = theme.BorderColor20,
 				});
 			}
 		}

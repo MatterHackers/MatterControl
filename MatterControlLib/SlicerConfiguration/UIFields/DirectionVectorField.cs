@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
 			{
-				BorderColor = theme.GetBorderColor(75)
+				BorderColor = theme.DropListFieldBorder
 			};
 
 			dropDownList.AddItem(

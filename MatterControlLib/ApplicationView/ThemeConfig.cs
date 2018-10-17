@@ -191,7 +191,13 @@ namespace MatterHackers.MatterControl
 		public ThreeStateColor EditFieldColors { get; set; } = new ThreeStateColor();
 
 		public Color LightTextColor { get; set; }
+
 		public Color BorderColor { get; set; }
+		public Color BorderColor40 { get; set; }
+		public Color BorderColor20 { get; set; }
+		public Color RowBorder { get; internal set; }
+		public Color DropListFieldBorder { get; set; }
+
 		public Color DisabledColor { get; set; }
 		public Color SplashAccentColor { get; set; }
 		public Color BedBackgroundColor { get; set; }
@@ -237,7 +243,7 @@ namespace MatterHackers.MatterControl
 			{
 				BackgroundColor = this.MinimalShade,
 				Border = 1,
-				BorderColor = this.GetBorderColor(40),
+				BorderColor = this.BorderColor40,
 				VAnchor = VAnchor.Absolute,
 				HAnchor = HAnchor.Absolute,
 				Margin = 0,
@@ -253,7 +259,7 @@ namespace MatterHackers.MatterControl
 			{
 				BackgroundColor = this.MinimalShade,
 				Border = 1,
-				BorderColor = this.GetBorderColor(40),
+				BorderColor = this.BorderColor40,
 				VAnchor = VAnchor.Absolute,
 				HAnchor = HAnchor.Absolute,
 				Margin = 0,
@@ -460,14 +466,14 @@ namespace MatterHackers.MatterControl
 
 		public void ApplyBottomBorder(GuiWidget widget, bool shadedBorder = false)
 		{
-			widget.BorderColor = shadedBorder ? this.MinimalShade : this.GetBorderColor(20);
+			widget.BorderColor = shadedBorder ? this.MinimalShade : this.BorderColor20;
 
 			this.ApplyBorder(widget, new BorderDouble(bottom: 1), shadedBorder);
 		}
 
 		public void ApplyBorder(GuiWidget widget, BorderDouble border, bool shadedBorder = false)
 		{
-			widget.BorderColor = shadedBorder ? this.MinimalShade : this.GetBorderColor(20);
+			widget.BorderColor = shadedBorder ? this.MinimalShade : this.BorderColor20;
 			widget.Border = border;
 		}
 

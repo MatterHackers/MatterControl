@@ -122,7 +122,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var overflowButton = new OverflowBar.OverflowMenuButton(theme)
 			{
 				Enabled = scene.SelectedItem != null,
-				PopupBorderColor = ApplicationController.Instance.MenuTheme.GetBorderColor(120)
 			};
 			overflowButton.DynamicPopupContent = () =>
 			{

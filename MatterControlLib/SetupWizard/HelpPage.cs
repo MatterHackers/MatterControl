@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl
 			this.guideKey = guideKey;
 			this.WindowTitle = "MatterControl " + "Help".Localize();
 			this.HeaderText = "How to succeed with MatterControl".Localize();
-			this.ChildBorderColor = theme.GetBorderColor(75);
+			this.ChildBorderColor = theme.BorderColor40;
 
 			var tabControl = new SimpleTabs(theme, new GuiWidget())
 			{
