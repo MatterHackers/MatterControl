@@ -387,44 +387,56 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				closeButton.Margin = new BorderDouble(right: 7, top: 1);
 				closeButton.Name = "Close Tab Button";
 				closeButton.ToolTipText = "Close".Localize();
-				closeButton.Click += (sender, e) =>
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						if (TabContent is PrinterTabPage printerTab
-							&& printerTab.printer.Connection.PrinterIsPrinting)
-						{
-							StyledMessageBox.ShowMessageBox(
-								(bool response) =>
-								{
-									if (response)
-									{
-										UiThread.RunOnIdle(() =>
-										{
-											this.parentTabControl.RemoveTab(this);
-											this.CloseClicked?.Invoke(this, null);
-										});
-									}
-								},
-								"Cancel the current print?".Localize(),
-								"Cancel Print?".Localize(),
-								StyledMessageBox.MessageType.YES_NO,
-								"Cancel Print".Localize(),
-								"Continue Printing".Localize());
-						}
-						else // need to handle asking about saving a
-						{
-							UiThread.RunOnIdle(() =>
-							{
-								this.parentTabControl.RemoveTab(this);
-								this.CloseClicked?.Invoke(this, null);
-							});
-						}
-					});
-				};
+				closeButton.Click += (s, e) => ConditionallyCloseTab();
 
 				this.AddChild(closeButton);
 			}
+		}
+
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			if(mouseEvent.Button == MouseButtons.Middle)
+			{
+				ConditionallyCloseTab();
+			}
+
+			base.OnMouseDown(mouseEvent);
+		}
+
+		private void ConditionallyCloseTab()
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				if (TabContent is PrinterTabPage printerTab
+					&& printerTab.printer.Connection.PrinterIsPrinting)
+				{
+					StyledMessageBox.ShowMessageBox(
+						(bool response) =>
+						{
+							if (response)
+							{
+								UiThread.RunOnIdle(() =>
+								{
+									this.parentTabControl.RemoveTab(this);
+									this.CloseClicked?.Invoke(this, null);
+								});
+							}
+						},
+						"Cancel the current print?".Localize(),
+						"Cancel Print?".Localize(),
+						StyledMessageBox.MessageType.YES_NO,
+						"Cancel Print".Localize(),
+						"Continue Printing".Localize());
+				}
+				else // need to handle asking about saving a
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						this.parentTabControl.RemoveTab(this);
+						this.CloseClicked?.Invoke(this, null);
+					});
+				}
+			});
 		}
 
 		protected class TabPill : FlowLayoutWidget
