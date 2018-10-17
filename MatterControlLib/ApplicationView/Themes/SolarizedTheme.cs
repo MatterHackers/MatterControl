@@ -104,7 +104,8 @@ namespace MatterHackers.MatterControl
 					ThumbnailBackground = new Color("#00000000"),
 					AccentMimimalOverlay = new Color(accentColor, 80),
 					BorderColor = baseColors.Base0,
-					SplashAccentColor = new Color("#eee")
+					SplashAccentColor = new Color("#eee"),
+					BedBackgroundColor = ThemeConfig.ResolveColor2(baseColors.Base03, new Color(Color.Black, 20))
 				},
 				MenuTheme = (darkTheme) ? this.DarkMenu(baseColors, accentColor) : this.LightMenu(baseColors, accentColor)
 			};

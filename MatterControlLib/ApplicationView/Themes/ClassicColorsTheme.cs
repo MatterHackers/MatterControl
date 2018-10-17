@@ -138,6 +138,8 @@ namespace MatterHackers.MatterControl
 
 			theme.SplashAccentColor = theme.Colors.PrimaryAccentColor;
 
+			theme.BedBackgroundColor = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.Black, 20));
+
 			theme.PresetColors = new PresetColors();
 
 			return theme;
