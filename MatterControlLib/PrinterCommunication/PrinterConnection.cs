@@ -2413,7 +2413,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public int TimeToHoldTemperature { get; set; } = 60;
+		public int TimeToHoldTemperature { get; set; } = 600;
 
 		public bool AnyHeatIsOn
 		{
