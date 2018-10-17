@@ -347,7 +347,7 @@ namespace MatterHackers.MatterControl
 				// TODO: Consider if autosave is appropriate
 				if (initialPrinter != PrinterConfig.EmptyPrinter)
 				{
-					await initialPrinter.Bed.SaveChanges(null, CancellationToken.None);
+					await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), initialPrinter.Bed.SaveChanges);
 				}
 
 				// If we have an active printer, run Disable
