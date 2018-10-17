@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -89,6 +89,30 @@ namespace MatterHackers.MatterControl
 				}
 			}
 			set => base.BackgroundColor = value;
+		}
+
+		public override Color BorderColor
+		{
+			get
+			{
+				if (base.BorderColor != Color.Transparent)
+				{
+					return base.BackgroundColor;
+				}
+				else if (this.ContainsFocus)
+				{
+					return theme.EditFieldColors.Focused.BorderColor;
+				}
+				else if (this.mouseInBounds)
+				{
+					return theme.EditFieldColors.Hovered.BorderColor;
+				}
+				else
+				{
+					return theme.EditFieldColors.Inactive.BorderColor;
+				}
+			}
+			set => base.BorderColor = value;
 		}
 
 		private bool mouseInBounds = false;
