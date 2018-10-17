@@ -409,6 +409,9 @@ namespace MatterHackers.MatterControl
 
 		internal async Task ClearActivePrinter()
 		{
+			// Actually clear printer
+			ProfileManager.Instance.LastProfileID = "";
+
 			await this.SetActivePrinter(PrinterConfig.EmptyPrinter);
 		}
 
