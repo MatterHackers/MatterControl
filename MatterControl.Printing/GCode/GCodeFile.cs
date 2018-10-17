@@ -106,9 +106,9 @@ namespace MatterControl.Printing
 
 		public static bool IsLayerChange(string lineString)
 		{
-			return lineString.StartsWith("; LAYER:", StringComparison.InvariantCultureIgnoreCase)
-				|| lineString.StartsWith(";LAYER:", StringComparison.InvariantCultureIgnoreCase)
-				|| lineString.StartsWith("; LAYER ", StringComparison.InvariantCultureIgnoreCase);
+			return lineString.StartsWith("; LAYER:")
+				|| lineString.StartsWith(";LAYER:")
+				|| lineString.StartsWith("; layer ");
 		}
 
 		public static bool FileTooBigToLoad(string fileName)

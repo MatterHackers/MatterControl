@@ -1192,6 +1192,15 @@
     "DefaultValue": "20"
   },
   {
+    "SlicerConfigName": "coast_at_end_distance",
+    "PresentationName": "Coast At End",
+    "HelpText": "The distance to travel after completing a perimeter to improve seams.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "3"
+  },
+  {
     "SlicerConfigName": "enable_retractions",
     "PresentationName": "Enable Retractions",
     "HelpText": "Turn retractions on and off.",
