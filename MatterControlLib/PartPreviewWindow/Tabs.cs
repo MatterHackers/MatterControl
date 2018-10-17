@@ -407,7 +407,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				if (TabContent is PrinterTabPage printerTab
+				if (this.TabContent is PrinterTabPage printerTab
 					&& printerTab.printer.Connection.PrinterIsPrinting)
 				{
 					StyledMessageBox.ShowMessageBox(
@@ -428,13 +428,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						"Cancel Print".Localize(),
 						"Continue Printing".Localize());
 				}
-				else // need to handle asking about saving a
+				else
 				{
-					UiThread.RunOnIdle(() =>
-					{
-						this.parentTabControl.RemoveTab(this);
-						this.CloseClicked?.Invoke(this, null);
-					});
+					this.parentTabControl.RemoveTab(this);
+					this.CloseClicked?.Invoke(this, null);
 				}
 			});
 		}
