@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -63,9 +63,19 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		string activeModel;
 		string activeName;
 
+		private RadioButton createPrinterRadioButton = null;
+
 		public SetupStepMakeModelName()
 		{
-			this.WindowTitle = "Setup Wizard".Localize();
+			bool userIsLoggedIn = !ApplicationController.GuestUserActive?.Invoke() ?? false;
+
+			this.HeaderText = this.WindowTitle = "Printer Setup".Localize();
+
+			var addPrinterColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+			};
 
 			printerManufacturerSelector = new BoundDropList(string.Format("- {0} -", "Select Make".Localize()), theme, maxHeight: 200)
 			{
@@ -92,61 +102,98 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			};
 			printerModelSelector.SelectionChanged += ModelDropList_SelectionChanged;
 
-			printerModelContainer = CreateSelectionContainer("Model".Localize() + ":", "Select the printer model".Localize(), printerModelSelector);
+			printerModelContainer = CreateSelectionContainer(
+				"Model".Localize() + ":",
+				"Select the printer model".Localize(),
+				printerModelSelector);
 
 			//Add inputs to main container
-			contentRow.AddChild(printerMakeContainer);
-			contentRow.AddChild(printerModelContainer);
-			contentRow.AddChild(createPrinterNameContainer());
+			addPrinterColumn.AddChild(printerMakeContainer);
+			addPrinterColumn.AddChild(printerModelContainer);
+			addPrinterColumn.AddChild(createPrinterNameContainer());
 
-			bool userIsLoggedIn = !ApplicationController.GuestUserActive?.Invoke() ?? false;
-			if (!userIsLoggedIn)
+			RadioButton signInRadioButton = null;
+
+			if (userIsLoggedIn)
 			{
-				var signInRow = new FlowLayoutWidget()
+				contentRow.AddChild(addPrinterColumn);
+			}
+			else
+			{
+				contentRow.Padding = 10;
+				addPrinterColumn.Margin = new BorderDouble(28, 15, 15, 5);
+
+				var commonMargin = new BorderDouble(4, 2);
+
+				// Create export button for each plugin
+				signInRadioButton = new RadioButton(new RadioButtonViewText("Sign in to access your existing printers".Localize(), theme.Colors.PrimaryTextColor))
 				{
-					HAnchor = HAnchor.Stretch,
+					HAnchor = HAnchor.Left,
+					Margin = commonMargin.Clone(bottom: 10),
+					Cursor = Cursors.Hand,
+					Name = "Sign In Radio Button",
+				};
+				contentRow.AddChild(signInRadioButton);
+
+				createPrinterRadioButton = new RadioButton(new RadioButtonViewText("Create a new printer", theme.Colors.PrimaryTextColor))
+				{
+					HAnchor = HAnchor.Left,
+					Margin = commonMargin,
+					Cursor = Cursors.Hand,
+					Name = "Create Printer Radio Button",
+					Checked = true
+				};
+				contentRow.AddChild(createPrinterRadioButton);
+
+				createPrinterRadioButton.CheckedStateChanged += (s, e) =>
+				{
+					addPrinterColumn.Enabled = createPrinterRadioButton.Checked;
+					this.SetElementVisibility();
 				};
 
-				signInRow.AddChild(new TextWidget("Sign in to access your existing printers", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor));
-				signInRow.AddChild(new HorizontalSpacer());
-
-				var signInLink = new LinkLabel("Sign In", theme, pointSize: theme.DefaultFontSize);
-				signInLink.Click += (s, e) => UiThread.RunOnIdle(() =>
-				{
-					this.DialogWindow.ChangeToPage(ApplicationController.GetAuthPage());
-				});
-				signInRow.AddChild(signInLink);
-				contentRow.AddChild(signInRow);
+				contentRow.AddChild(addPrinterColumn);
 			}
 
-			//Construct buttons
 			nextButton = theme.CreateDialogButton("Next".Localize());
-			nextButton.Name = "Save & Continue Button";
-			nextButton.Click += async (s, e) =>
+			nextButton.Name = "Next Button";
+			nextButton.Click += (s, e) => UiThread.RunOnIdle(async () =>
 			{
-				bool controlsValid = this.ValidateControls();
-				if (controlsValid)
+				if (signInRadioButton?.Checked == true)
 				{
-					var printer = await ProfileManager.CreateProfileAsync(activeMake, activeModel, activeName);
-					if (printer == null)
+					var authContext = new AuthenticationContext();
+					authContext.SignInComplete += (s2, e2) =>
 					{
-						this.printerNameError.Text = "Error creating profile".Localize();
-						this.printerNameError.Visible = true;
-						return;
-					}
+						this.DialogWindow.ChangeToPage(new SelectPrinterPage("Finish".Localize()));
+					};
 
-					LoadCalibrationPrints();
+					this.DialogWindow.ChangeToPage(ApplicationController.GetAuthPage(authContext));
+				}
+				else
+				{
+					bool controlsValid = this.ValidateControls();
+					if (controlsValid)
+					{
+						var printer = await ProfileManager.CreateProfileAsync(activeMake, activeModel, activeName);
+						if (printer == null)
+						{
+							this.printerNameError.Text = "Error creating profile".Localize();
+							this.printerNameError.Visible = true;
+							return;
+						}
+
+						this.LoadCalibrationPrints();
 
 #if __ANDROID__
-					UiThread.RunOnIdle(() => DialogWindow.ChangeToPage<AndroidConnectDevicePage>());
+						UiThread.RunOnIdle(() => DialogWindow.ChangeToPage<AndroidConnectDevicePage>());
 #else
-					UiThread.RunOnIdle(() =>
-					{
-						DialogWindow.ChangeToPage(new SetupStepComPortOne(printer));
-					});
+						UiThread.RunOnIdle(() =>
+						{
+							DialogWindow.ChangeToPage(new SetupStepComPortOne(printer));
+						});
 #endif
+					}
 				}
-			};
+			});
 
 			this.AddPageAction(nextButton);
 
@@ -162,7 +209,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void SetElementVisibility()
 		{
-			nextButton.Visible = (activeModel != null && this.activeMake != null);
+				nextButton.Enabled = createPrinterRadioButton == null
+					|| !createPrinterRadioButton.Checked
+					|| (createPrinterRadioButton.Checked && (activeModel != null && this.activeMake != null));
 		}
 
 		private FlowLayoutWidget createPrinterNameContainer()

@@ -347,7 +347,7 @@ namespace MatterHackers.MatterControl
 				// TODO: Consider if autosave is appropriate
 				if (initialPrinter != PrinterConfig.EmptyPrinter)
 				{
-					await initialPrinter.Bed.SaveChanges(null, CancellationToken.None);
+					await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), initialPrinter.Bed.SaveChanges);
 				}
 
 				// If we have an active printer, run Disable
@@ -409,6 +409,9 @@ namespace MatterHackers.MatterControl
 
 		internal async Task ClearActivePrinter()
 		{
+			// Actually clear printer
+			ProfileManager.Instance.LastProfileID = "";
+
 			await this.SetActivePrinter(PrinterConfig.EmptyPrinter);
 		}
 
@@ -497,7 +500,7 @@ namespace MatterHackers.MatterControl
 		public static Func<bool> GuestUserActive { get; set; }
 
 		// Returns the authentication dialog from the authentication plugin
-		public static Func<DialogPage> GetAuthPage;
+		public static Func<AuthenticationContext, DialogPage> GetAuthPage;
 
 		public SlicePresetsPage EditMaterialPresetsPage { get; set; }
 
@@ -1736,15 +1739,7 @@ namespace MatterHackers.MatterControl
 		public void OnLoadActions()
 		{
 			bool showAuthWindow = ApplicationController.GuestUserActive?.Invoke() ?? false;
-			if (showAuthWindow)
-			{
-				if (ApplicationSettings.Instance.get(ApplicationSettingsKey.SuppressAuthPanel) != "True")
-				{
-					//Launch window to prompt user to sign in
-					UiThread.RunOnIdle(() => DialogWindow.Show(PrinterSetup.GetBestStartPage()));
-				}
-			}
-			else
+			if (!showAuthWindow)
 			{
 				//If user in logged in sync before checking to prompt to create printer
 				if (ApplicationController.SyncPrinterProfiles == null)
@@ -1786,8 +1781,6 @@ namespace MatterHackers.MatterControl
 			{
 				AssetObject3D.AssetManager = new AssetManager();
 			}
-
-			//HtmlWindowTest();
 		}
 
 		private static void RunSetupIfRequired()

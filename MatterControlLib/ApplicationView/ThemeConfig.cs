@@ -281,7 +281,8 @@ namespace MatterHackers.MatterControl
 			return new TextButton(text, this)
 			{
 				BackgroundColor = backgroundColor,
-				HoverColor = hoverColor
+				HoverColor = hoverColor,
+				MinimumSize = new Vector2(75, 0)
 			};
 #else
 			var button = new TextButton(text, this, this.FontSize14)

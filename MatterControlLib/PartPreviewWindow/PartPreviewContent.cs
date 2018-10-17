@@ -50,7 +50,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private int partCount = 0;
 		private ThemeConfig theme;
-		private ChromeTab hardwareTab;
 
 		public PartPreviewContent(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -247,7 +246,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Hardware tab
 			tabControl.AddTab(
-				hardwareTab = new ChromeTab(
+				new ChromeTab(
 					"Hardware",
 					"Hardware".Localize(),
 					tabControl,
@@ -261,7 +260,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						MinimumSize = new Vector2(0, theme.TabButtonHeight),
 						Name = "Hardware Tab",
 						Padding = new BorderDouble(15, 0),
-						Visible = printer.Settings.PrinterSelected
 					});
 
 			// Printer tab
@@ -271,7 +269,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				this.CreatePartTab().ConfigureAwait(false);
+				if (ApplicationController.Instance.Workspaces.Count == 0)
+				{
+					this.CreatePartTab().ConfigureAwait(false);
+				}
 			}
 
 			string tabKey = ApplicationController.Instance.MainTabKey;
@@ -328,9 +329,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var activePrinter = ApplicationController.Instance.ActivePrinter;
 
 				// If ActivePrinter has been nulled and a printer tab is open, close it
-				var tab1 = tabControl.AllTabs.FirstOrDefault();
+				var tab1 = tabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage);
 				if ((activePrinter == null || !activePrinter.Settings.PrinterSelected)
-					&& tab1?.TabContent is PrinterTabPage)
+					&& tab1 != null)
 				{
 					tabControl.RemoveTab(tab1);
 				}
@@ -342,8 +343,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						tabControl.ActiveTab = this.CreatePrinterTab(activePrinter, theme);
 					}
 				}
-
-				hardwareTab.Visible = activePrinter?.Settings.PrinterSelected ?? false;
 
 				tabControl.RefreshTabPointers();
 			}, ref unregisterEvents);
@@ -374,11 +373,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					tabControl,
 					new PrinterTabPage(printer, theme, "unused_tab_title"),
 					theme,
-					tabImageUrl: ApplicationController.Instance.GetFavIconUrl(oemName: printer.Settings.GetValue(SettingsKey.make)),
-					hasClose: false)
+					tabImageUrl: ApplicationController.Instance.GetFavIconUrl(oemName: printer.Settings.GetValue(SettingsKey.make)))
 				{
 					Name = "3D View Tab",
 					MinimumSize = new Vector2(120, theme.TabButtonHeight)
+				};
+
+				printerTab.CloseClicked += (s, e) =>
+				{
+					ApplicationController.Instance.ClearActivePrinter().ConfigureAwait(false);
 				};
 
 				PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
@@ -451,6 +454,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.AddTab(partTab);
 			tabControl.ActiveTab = partTab;
+
+			partTab.CloseClicked += (s, e) =>
+			{
+				ApplicationController.Instance.Workspaces.Remove(workspace);
+			};
 
 			return partTab;
 		}
