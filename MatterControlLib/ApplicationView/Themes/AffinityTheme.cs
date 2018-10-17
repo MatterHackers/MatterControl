@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl
 					{
 						Focused = new ThemeConfig.StateColor()
 						{
-							BackgroundColor = new Color("#999"),
+							BackgroundColor = new Color("#ccc"),
 							TextColor = new Color("#222"),
 							BorderColor = new Color("#FF7F00")
 						},
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl
 
 					InactiveTabColor = new Color("#404040"),
 					InteractionLayerOverlayColor = new Color(new Color("#373737"), 240),
-					SplitterBackground = new Color("#282828"),
+					SplitterBackground = new Color("#2C2C2C"),
 					TabBodyBackground = new Color("#00000000"),
 					ToolbarButtonBackground = new Color("#00000000"),
 					ThumbnailBackground = new Color("#00000000"),
