@@ -569,7 +569,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			providerMessageContainer.AddChild(providerMessageWidget);
 		}
 
-		public static void CreateMenuActions(ListView libraryView, List<PrintItemAction> menuActions, PartPreviewContent partPreviewContent, ThemeConfig theme)
+		public static void CreateMenuActions(ListView libraryView, List<PrintItemAction> menuActions, PartPreviewContent partPreviewContent, ThemeConfig theme, bool allowPrint)
 		{
 			menuActions.Add(new PrintItemAction()
 			{
@@ -631,57 +631,60 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 			});
 
-			menuActions.Add(new PrintItemAction()
+			if (allowPrint)
 			{
-				Title = "Print".Localize(),
-				Action = (selectedLibraryItems, listView) =>
+				menuActions.Add(new PrintItemAction()
 				{
+					Title = "Print".Localize(),
+					Action = (selectedLibraryItems, listView) =>
+					{
 					// TODO: Sort out the right way to have an ActivePrinter context that looks and behaves correctly
 					var activeContext = ApplicationController.Instance.DragDropData;
-					var printer = activeContext.Printer;
+						var printer = activeContext.Printer;
 
-					switch (selectedLibraryItems.FirstOrDefault())
-					{
-						case SDCardFileItem sdcardItem:
+						switch (selectedLibraryItems.FirstOrDefault())
+						{
+							case SDCardFileItem sdcardItem:
 							// TODO: Confirm SD printing?
 							// TODO: Need to rewrite library menu item validation can write one off validations like below so we don't end up here
 							//  - ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader)
 							printer.Connection.StartSdCardPrint(sdcardItem.Name.ToLower());
-							break;
-						case FileSystemFileItem fileItem when Path.GetExtension(fileItem.FileName).IndexOf(".gco", StringComparison.OrdinalIgnoreCase) == 0:
-							if (printer != null)
-							{
-								UiThread.RunOnIdle(async () =>
+								break;
+							case FileSystemFileItem fileItem when Path.GetExtension(fileItem.FileName).IndexOf(".gco", StringComparison.OrdinalIgnoreCase) == 0:
+								if (printer != null)
 								{
-									await printer.Bed.StashAndPrintGCode(fileItem);
-								});
-							}
+									UiThread.RunOnIdle(async () =>
+									{
+										await printer.Bed.StashAndPrintGCode(fileItem);
+									});
+								}
 
-							break;
-						default:
+								break;
+							default:
 							//TODO: Otherwise add the selected items to the plate and print the plate?
 							if (printer != null)
-							{
-								UiThread.RunOnIdle(async () =>
 								{
-									await printer.Bed.StashAndPrint(selectedLibraryItems);
-								});
-							}
-							break;
-					}
-				},
-				IsEnabled = (selectedListItems, listView) =>
-				{
-					var communicationState = ApplicationController.Instance.DragDropData?.Printer?.Connection.CommunicationState;
+									UiThread.RunOnIdle(async () =>
+									{
+										await printer.Bed.StashAndPrint(selectedLibraryItems);
+									});
+								}
+								break;
+						}
+					},
+					IsEnabled = (selectedListItems, listView) =>
+					{
+						var communicationState = ApplicationController.Instance.DragDropData?.Printer?.Connection.CommunicationState;
 
 					// Singleselect - disallow containers
 					return listView.SelectedItems.Count == 1
-						&& selectedListItems.FirstOrDefault()?.Model is ILibraryItem firstItem
-						&& !(firstItem is ILibraryContainer)
-						&& (communicationState == CommunicationStates.Connected
-							|| communicationState == CommunicationStates.FinishedPrint);
-				}
-			});
+							&& selectedListItems.FirstOrDefault()?.Model is ILibraryItem firstItem
+							&& !(firstItem is ILibraryContainer)
+							&& (communicationState == CommunicationStates.Connected
+								|| communicationState == CommunicationStates.FinishedPrint);
+					}
+				});
+			}
 
 			// edit menu item
 			menuActions.Add(new PrintItemAction()
@@ -1061,7 +1064,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public override void OnLoad(EventArgs args)
 		{
 			// Defer creating menu items until plugins have loaded
-			LibraryWidget.CreateMenuActions(libraryView, menuActions, partPreviewContent, theme);
+			LibraryWidget.CreateMenuActions(libraryView, menuActions, partPreviewContent, theme, allowPrint: false);
 
 			navBar.OverflowButton.Name = "Print Library Overflow Menu";
 			navBar.ExtendOverflowMenu = (popupMenu) =>
