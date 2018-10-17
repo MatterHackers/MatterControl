@@ -16,6 +16,7 @@ Advanced
         perimeter_start_end_overlap
         merge_overlapping_lines
         expand_thin_walls
+        coast_at_end_distance
     Infill
       Advanced
         fill_angle
