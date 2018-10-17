@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public HorizontalLine CreateHorizontalLine()
 		{
-			var line = new HorizontalLine(20, theme: ApplicationController.Instance.MenuTheme)
+			var line = new HorizontalLine(theme: ApplicationController.Instance.MenuTheme)
 			{
 				Margin = new BorderDouble(theme.MenuGutterWidth - 8, 1, 8, 1),
 			};
