@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl
 			public Color BackgroundColor { get; set; } = Color.Green;
 			public Color ForegroundColor { get; set; }
 			public Color BorderColor { get; set; }
-			public Color TextColor { get; internal set; }
+			public Color TextColor { get; set; }
 		}
 
 		public class ThreeStateColor
