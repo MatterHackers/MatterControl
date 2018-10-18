@@ -63,9 +63,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var totalContent = new FlowLayoutWidget();
 
-			var selectableOptions = new DropDownList("Custom", textColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
+			var selectableOptions = new MHDropDownList("Custom", theme, maxHeight: 200)
 			{
-				BorderColor = theme.DropListFieldBorder,
 				Margin = new BorderDouble(0, 0, 10, 0)
 			};
 

@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			bool canChangeComPort = !printer.Connection.IsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
 			//This setting defaults to Manual
 			var selectedMachine = printer.Settings.GetValue(SettingsKey.selector_ip_address);
-			dropdownList = new DropDownList(selectedMachine, theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
+			dropdownList = new MHDropDownList(selectedMachine, theme, maxHeight: 200)
 			{
 				ToolTipText = HelpText,
 				Margin = new BorderDouble(),
@@ -44,7 +44,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				Enabled = canChangeComPort,
 				TextColor = canChangeComPort ? theme.Colors.PrimaryTextColor : new Color(theme.Colors.PrimaryTextColor, 150),
-				BorderColor = theme.DropListFieldBorder
 			};
 
 			//Create default option

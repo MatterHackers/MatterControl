@@ -235,12 +235,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private DropDownList CreateDropdown()
 		{
-			var dropDownList = new DropDownList(defaultMenuItemText, theme.Colors.PrimaryTextColor, maxHeight: 300, useLeftIcons: true, pointSize: theme.DefaultFontSize)
+			var dropDownList = new MHDropDownList(defaultMenuItemText, theme, maxHeight: 300, useLeftIcons: true)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Center,
 				MenuItemsPadding = new BorderDouble(10, 7, 7, 7),
-				BorderColor = theme.DropListFieldBorder
 			};
 
 			dropDownList.Name = layerType.ToString() + " DropDown List";

@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 			});
 
-			dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
+			dropDownList = new MHDropDownList("Name".Localize(), theme)
 			{
 				BorderColor = theme.DropListFieldBorder,
 				Name = property.DisplayName + " DropDownList"

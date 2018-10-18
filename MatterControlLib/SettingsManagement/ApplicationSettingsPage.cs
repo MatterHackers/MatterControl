@@ -159,10 +159,7 @@ namespace MatterHackers.MatterControl
 
 #if !__ANDROID__
 			// ThumbnailRendering
-			var thumbnailsModeDropList = new DropDownList("", theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
-			{
-				BorderColor = theme.DropListFieldBorder
-			};
+			var thumbnailsModeDropList = new MHDropDownList("", theme, maxHeight: 200);
 			thumbnailsModeDropList.AddItem("Flat".Localize(), "orthographic");
 			thumbnailsModeDropList.AddItem("3D".Localize(), "raytraced");
 
@@ -289,9 +286,8 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(10, 10, 10, 2)
 			};
 
-			var droplist = new DropDownList("Custom", theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
+			var droplist = new MHDropDownList("Custom", theme, maxHeight: 200)
 			{
-				BorderColor = theme.DropListFieldBorder,
 				Margin = new BorderDouble(0, 0, 10, 0)
 			};
 

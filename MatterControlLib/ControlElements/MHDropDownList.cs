@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,61 +27,72 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
 
-namespace MatterHackers.MatterControl.SlicerConfiguration
+namespace MatterHackers.MatterControl
 {
-	public class ListField : UIField
+	public class MHDropDownList : DropDownList
 	{
-		private DropDownList dropdownList;
+		private bool mouseInBounds = false;
 		private ThemeConfig theme;
 
-		public List<string> ListItems { get; set; }
-
-		public ListField(ThemeConfig theme)
+		public MHDropDownList(string noSelectionString, ThemeConfig theme, Direction direction = Direction.Down, double maxHeight = 0, bool useLeftIcons = false)
+			: base (noSelectionString, theme.Colors.PrimaryTextColor, direction, maxHeight, useLeftIcons, theme.DefaultFontSize)
 		{
+			this.BackgroundColor = theme.EditFieldColors.Inactive.BackgroundColor;
+			this.MenuItemsBackgroundColor = theme.EditFieldColors.Focused.BackgroundColor;
+			this.MenuItemsTextColor = theme.EditFieldColors.Focused.TextColor;
 			this.theme = theme;
+
+			// Clear border set by base, use border color override
+			this.BorderColor = Color.Transparent;
+
+			this.HoverColor = theme.EditFieldColors.Hovered.BackgroundColor;
 		}
 
-		public override void Initialize(int tabIndex)
+		public override Color BorderColor
 		{
-			dropdownList = new MHDropDownList("None".Localize(), theme, maxHeight: 200)
+			get
 			{
-				ToolTipText = this.HelpText,
-				TabIndex = tabIndex,
-				Margin = new BorderDouble(),
-			};
-
-			foreach (string listItem in this.ListItems)
-			{
-				MenuItem newItem = dropdownList.AddItem(listItem);
-				if (newItem.Text == this.Value)
+				if (base.BorderColor != Color.Transparent)
 				{
-					dropdownList.SelectedLabel = this.Value;
+					return base.BorderColor;
 				}
-
-				newItem.Selected += (sender, e) =>
+				else if (menuVisible)
 				{
-					if (sender is MenuItem menuItem)
-					{
-						this.SetValue(
-							menuItem.Text,
-							userInitiated: true);
-					}
-				};
+					return Color.Transparent;
+				}
+				else if (this.ContainsFocus)
+				{
+					return theme.EditFieldColors.Focused.BorderColor;
+				}
+				else if (this.mouseInBounds)
+				{
+					return theme.EditFieldColors.Hovered.BorderColor;
+				}
+				else
+				{
+					return theme.EditFieldColors.Inactive.BorderColor;
+				}
 			}
-
-			this.Content = dropdownList;
+			set => base.BorderColor = value;
 		}
 
-		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
+		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
-			dropdownList.SelectedLabel = this.Value;
-			base.OnValueChanged(fieldChangedEventArgs);
+			mouseInBounds = true;
+			base.OnMouseEnterBounds(mouseEvent);
+
+			this.Invalidate();
+		}
+
+		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
+		{
+			mouseInBounds = false;
+			base.OnMouseLeaveBounds(mouseEvent);
+
+			this.Invalidate();
 		}
 	}
 }

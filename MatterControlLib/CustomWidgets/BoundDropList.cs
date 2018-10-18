@@ -33,14 +33,13 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
 {
-	public class BoundDropList : DropDownList
+	public class BoundDropList : MHDropDownList
 	{
 		private List<KeyValuePair<string, string>> listSource;
 
 		public BoundDropList(string noSelectionString, ThemeConfig theme, int maxHeight = 0)
-			: base(noSelectionString, theme.Colors.PrimaryTextColor, maxHeight: maxHeight, pointSize: theme.DefaultFontSize)
+			: base(noSelectionString, theme, maxHeight: maxHeight)
 		{
-			this.BorderColor = theme.DropListFieldBorder;
 		}
 
 		public List<KeyValuePair<string, string>> ListSource

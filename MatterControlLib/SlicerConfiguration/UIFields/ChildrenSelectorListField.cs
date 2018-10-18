@@ -71,10 +71,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
-			{
-				BorderColor = theme.DropListFieldBorder
-			};
+			dropDownList = new MHDropDownList("Name".Localize(), theme);
 
 			var orderedItems = names.OrderBy(n => n.value);
 

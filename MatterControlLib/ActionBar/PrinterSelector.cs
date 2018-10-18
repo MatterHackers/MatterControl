@@ -37,13 +37,13 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
-	public class PrinterSelector : DropDownList, IIgnoredPopupChild
+	public class PrinterSelector : MHDropDownList, IIgnoredPopupChild
 	{
 		private EventHandler unregisterEvents;
 		int lastSelectedIndex = -1;
 
 		public PrinterSelector(ThemeConfig theme)
-			: base("Printers".Localize() + "... ", theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
+			: base("Printers".Localize() + "... ", theme)
 		{
 			this.Name = "Printers... Menu";
 			this.BorderColor = Color.Transparent;
