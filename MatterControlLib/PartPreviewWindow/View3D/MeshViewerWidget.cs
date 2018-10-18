@@ -318,6 +318,7 @@ namespace MatterHackers.MeshVisualizer
 			this.sceneContext = sceneContext;
 			this.interactionLayer = interactionLayer;
 			this.World = interactionLayer.World;
+			this.theme = theme;
 
 			gridColors = new GridColors()
 			{
@@ -335,7 +336,6 @@ namespace MatterHackers.MeshVisualizer
 				lastSelectionChangedMs = UiThread.CurrentTimerMs;
 			};
 
-			BedColor = new ColorF(.8, .8, .8, .7).ToColor();
 			BuildVolumeColor = new ColorF(.2, .8, .3, .2).ToColor();
 
 			this.interactionLayer.DrawGlTransparentContent += Draw_GlTransparentContent;
@@ -356,6 +356,8 @@ namespace MatterHackers.MeshVisualizer
 
 		public WorldView World { get; }
 
+		private ThemeConfig theme;
+
 		private class GridColors
 		{
 			public Color Red { get; set; }
@@ -367,7 +369,6 @@ namespace MatterHackers.MeshVisualizer
 		public event EventHandler LoadDone;
 
 		public bool AllowBedRenderingWhenEmpty { get; set; }
-		public Color BedColor { get; set; }
 
 		public Color BuildVolumeColor { get; set; }
 
@@ -853,10 +854,12 @@ namespace MatterHackers.MeshVisualizer
 				// only render if we are above the bed
 				if (sceneContext.RendererOptions.RenderBed)
 				{
-					var bedColor = this.BedColor;
+					var bedColor = theme.ResolveColor(Color.White, theme.ActiveTabColor.WithAlpha(111));
+
+
 					if (!lookingDownOnBed)
 					{
-						bedColor = new Color(this.BedColor, this.BedColor.alpha / 4);
+						bedColor = new Color(bedColor, bedColor.alpha / 4);
 					}
 
 					GLHelper.Render(sceneContext.Mesh, bedColor, RenderTypes.Shaded, World.ModelviewMatrix);
