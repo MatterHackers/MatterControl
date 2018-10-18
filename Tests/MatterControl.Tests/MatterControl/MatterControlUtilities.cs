@@ -310,7 +310,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Click 'Add Printer' if not on screen
 			if (!testRunner.NameExists("Select Make", 0.2))
 			{
-				testRunner.ClickByName("Print Button");
+				if (!testRunner.NameExists("Create Printer", 0.1))
+				{
+					// go to the start page
+					testRunner.ClickByName("Hardware Tab");
+					testRunner.ClickByName("Create Printer");
+				}
+				else
+				{
+					testRunner.ClickByName("Print Button");
+				}
 			}
 
 			testRunner.ClickByName("Select Make");
