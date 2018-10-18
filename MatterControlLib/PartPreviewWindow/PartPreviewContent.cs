@@ -328,21 +328,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var activePrinter = ApplicationController.Instance.ActivePrinter;
 
-				// If ActivePrinter has been nulled and a printer tab is open, close it
-				var tab1 = tabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage);
-				if ((activePrinter == null || !activePrinter.Settings.PrinterSelected)
-					&& tab1 != null)
+				// Close existing printer tabs
+				if (tabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage) is ITab tab
+					&& tab.TabContent is PrinterTabPage printerPage
+					&& (activePrinter == null || printerPage.printer != activePrinter))
 				{
-					tabControl.RemoveTab(tab1);
+					tabControl.RemoveTab(tab);
 				}
-				else
+
+				if (activePrinter.Settings.PrinterSelected)
 				{
-					if (activePrinter.Settings.PrinterSelected)
-					{
-						// Create and switch to new printer tab
-						tabControl.ActiveTab = this.CreatePrinterTab(activePrinter, theme);
-					}
+					// Create and switch to new printer tab
+					tabControl.ActiveTab = this.CreatePrinterTab(activePrinter, theme);
 				}
+				
 
 				tabControl.RefreshTabPointers();
 			}, ref unregisterEvents);
