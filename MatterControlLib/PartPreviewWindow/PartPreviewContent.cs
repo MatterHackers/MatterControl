@@ -435,7 +435,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ApplicationController.Instance.Workspaces.Add(workspace);
 
-			return CreatePartTab(workspace);
+			var newTab = CreatePartTab(workspace);
+			tabControl.ActiveTab = newTab;
+
+			return newTab;
 		}
 
 		public ChromeTab CreatePartTab(PartWorkspace workspace)
