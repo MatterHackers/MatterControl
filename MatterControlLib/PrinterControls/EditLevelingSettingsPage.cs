@@ -52,11 +52,16 @@ namespace MatterHackers.MatterControl
 			};
 			scrollableWidget.ScrollArea.HAnchor = HAnchor.Stretch;
 			contentRow.AddChild(scrollableWidget);
-			var scrollArrea = new FlowLayoutWidget(FlowDirection.TopToBottom)
+
+			// No right padding removes unexpected spacing to the right of scrollbar
+			contentRow.Padding = contentRow.Padding.Clone(right: 0);
+
+			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
+				Padding = new BorderDouble(right: theme.DefaultContainerPadding + 4)
 			};
-			scrollableWidget.AddChild(scrollArrea);
+			scrollableWidget.AddChild(column);
 
 			var positions = new List<Vector3>();
 
@@ -109,7 +114,7 @@ namespace MatterHackers.MatterControl
 					leftRightEdit.AddChild(valueEdit);
 				}
 
-				scrollArrea.AddChild(leftRightEdit);
+				column.AddChild(leftRightEdit);
 			}
 
 			var savePresetsButton = theme.CreateDialogButton("Save".Localize());
