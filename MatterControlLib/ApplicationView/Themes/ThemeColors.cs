@@ -53,7 +53,7 @@ namespace MatterHackers.Agg.UI
 
 		public static Color GetAdjustedAccentColor(Color accentColor, Color backgroundColor)
 		{
-			return accentColor.AdjustContrast(backgroundColor).ToColor();
+			return accentColor.WithContrast(backgroundColor).ToColor();
 		}
 	}
 }

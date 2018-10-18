@@ -638,8 +638,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					Title = "Print".Localize(),
 					Action = (selectedLibraryItems, listView) =>
 					{
-					// TODO: Sort out the right way to have an ActivePrinter context that looks and behaves correctly
-					var activeContext = ApplicationController.Instance.DragDropData;
+						// TODO: Sort out the right way to have an ActivePrinter context that looks and behaves correctly
+						var activeContext = ApplicationController.Instance.DragDropData;
 						var printer = activeContext.Printer;
 
 						switch (selectedLibraryItems.FirstOrDefault())

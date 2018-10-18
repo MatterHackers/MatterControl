@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							paint.obj3D.Mesh = paintMesh;
 						}
 
-						paint.obj3D.Color = paint.obj3D.WorldColor().AdjustContrast(keepObjects.First().WorldColor(), 2).ToColor();
+						paint.obj3D.Color = paint.obj3D.WorldColor().WithContrast(keepObjects.First().WorldColor(), 2).ToColor();
 					}
 				}
 
