@@ -13,8 +13,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.AddAndSelectPrinter();
-
 				testRunner.OpenEmptyPartTab();
 
 				testRunner.AddItemToBedplate();

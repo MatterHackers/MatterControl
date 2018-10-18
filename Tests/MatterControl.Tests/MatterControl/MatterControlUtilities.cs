@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void OpenEmptyPartTab(this AutomationRunner testRunner)
 		{
-			testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
+			// Latest product starts at empty part tab
 		}
 
 		public static void ChangeToQueueContainer(this AutomationRunner testRunner)
