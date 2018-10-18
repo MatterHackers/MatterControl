@@ -770,11 +770,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			var printerPopup = testRunner.GetWidgetByName("PrintPopupMenu", out _);
 			testRunner.WaitFor(() => printerPopup.Enabled);
 
-			testRunner.ClickByName("PrintPopupMenu");
-
-			if (!testRunner.NameExists("Layer(s) To Pause Field", .2))
+			// check if the print menu is already open
+			if (!testRunner.NameExists("Advanced Section", .2))
 			{
-				testRunner.ClickByName("Advanced Section");
+				// open it
+				testRunner.ClickByName("PrintPopupMenu");
+
+				if (!testRunner.NameExists("Layer(s) To Pause Field", .2))
+				{
+					testRunner.ClickByName("Advanced Section");
+				}
 			}
 		}
 
@@ -811,7 +816,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("General Tab");
 		}
 
-		public static void Complete9StepLeveling(this AutomationRunner testRunner)
+		public static void Complete9StepLeveling(this AutomationRunner testRunner, int numUpClicks = 1)
 		{
 			// Helper methods
 			bool headerExists(string headerText)
@@ -834,8 +839,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Next Button");
 			}
 
-			// do print leveling steps
-			waitForPageAndAdvance("Initial Printer Setup");
+			testRunner.Delay();
+
+			testRunner.WaitFor(() => headerExists("Initial Printer Setup"));
+			if (headerExists("Initial Printer Setup"))
+			{
+				// do print leveling steps
+				waitForPageAndAdvance("Initial Printer Setup");
+			}
 
 			waitForPageAndAdvance("Print Leveling Overview");
 
@@ -850,7 +861,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				var section = (i * 3) + 1;
 
 				waitForPage($"Step {section} of 9");
-				testRunner.ClickByName("Move Z positive");
+				for (int j = 0; j < numUpClicks; j++)
+				{
+					testRunner.Delay();
+					testRunner.ClickByName("Move Z positive");
+				}
 
 				waitForPage($"Step {section} of 9");
 				testRunner.ClickByName("Next Button");
