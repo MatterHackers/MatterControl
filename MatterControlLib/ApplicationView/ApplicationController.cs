@@ -1738,23 +1738,6 @@ namespace MatterHackers.MatterControl
 
 		public void OnLoadActions()
 		{
-			bool showAuthWindow = ApplicationController.GuestUserActive?.Invoke() ?? false;
-			if (!showAuthWindow)
-			{
-				//If user in logged in sync before checking to prompt to create printer
-				if (ApplicationController.SyncPrinterProfiles == null)
-				{
-					RunSetupIfRequired();
-				}
-				else
-				{
-					ApplicationController.SyncPrinterProfiles.Invoke("ApplicationController.OnLoadActions()", null).ContinueWith((task) =>
-					{
-						RunSetupIfRequired();
-					});
-				}
-			}
-
 			// Show the End User License Agreement if it has not been shown (on windows it is shown in the installer)
 			if (AggContext.OperatingSystem != OSType.Windows)
 			{
