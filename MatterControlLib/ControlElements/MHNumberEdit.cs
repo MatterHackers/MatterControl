@@ -140,15 +140,6 @@ namespace MatterHackers.MatterControl
 			set => this.ActuallNumberEdit.TabIndex = value;
 		}
 
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			base.OnDraw(graphics2D);
-			if (ContainsFocus)
-			{
-				graphics2D.Rectangle(LocalBounds, Color.Orange);
-			}
-		}
-
 		public double Value
 		{
 			get => this.ActuallNumberEdit.Value;
