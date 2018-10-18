@@ -453,7 +453,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			tabControl.AddTab(partTab);
-			tabControl.ActiveTab = partTab;
 
 			partTab.CloseClicked += (s, e) =>
 			{
