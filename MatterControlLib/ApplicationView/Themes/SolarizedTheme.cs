@@ -104,6 +104,10 @@ namespace MatterHackers.MatterControl
 						}
 					},
 
+					DropListFieldBorder = new Color("#282828"),
+					//RowBorder = new Color("#001A21"),
+					RowBorder = new Color("#00303D"),
+
 					SectionBackgroundColor = new Color("#002630"),
 
 					SlightShade = new Color("#00000028"),

@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl
 						Inactive = new ThemeConfig.StateColor()
 						{
 							BackgroundColor = new Color("#303030"),
-							TextColor = textColor,
+							TextColor = new Color("#eee"),
 							BorderColor = new Color("#282828")
 						}
 					},
