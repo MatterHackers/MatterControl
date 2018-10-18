@@ -214,7 +214,6 @@ Printer
         trim_filament_markdown
         insert_filament_markdown
         running_clean_markdown
-        matterhackers_sid
   G-Code
     G-Code
       G-Code

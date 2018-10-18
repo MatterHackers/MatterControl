@@ -119,7 +119,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"running_clean_markdown",
 			"unload_filament_length",
 			"load_filament_speed",
-			SettingsKey.matterhackers_sid,
 		};
 
 		public List<MappedSetting> MappedSettings { get; private set; }
