@@ -110,6 +110,8 @@ namespace MatterHackers.MatterControl
 					DropListFieldBorder = new Color("#282828"),
 					RowBorder = new Color("#2c2c2c"),
 
+					SectionBackgroundColor = new Color("#404040"),
+
 					SlightShade = new Color("#00000028"),
 					MinimalShade = new Color("#0000000F"),
 					Shade = new Color("#00000078"),

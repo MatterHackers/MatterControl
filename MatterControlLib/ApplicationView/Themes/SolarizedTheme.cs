@@ -103,6 +103,9 @@ namespace MatterHackers.MatterControl
 							TextColor = baseColors.Base0
 						}
 					},
+
+					SectionBackgroundColor = new Color("#002630"),
+
 					SlightShade = new Color("#00000028"),
 					MinimalShade = new Color("#0000000F"),
 					Shade = new Color("#00000078"),

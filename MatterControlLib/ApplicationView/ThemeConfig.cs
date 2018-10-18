@@ -202,6 +202,7 @@ namespace MatterHackers.MatterControl
 		public Color SplashAccentColor { get; set; }
 		public Color BedBackgroundColor { get; set; }
 		public Color PrimaryAccentColor { get; set; }
+		public Color SectionBackgroundColor { get; set; }
 
 		public GuiWidget CreateSearchButton()
 		{
@@ -481,13 +482,13 @@ namespace MatterHackers.MatterControl
 		{
 			return ApplyBoxStyle(
 				sectionWidget,
-				this.MinimalShade,
+				this.SectionBackgroundColor,
 				margin: new BorderDouble(this.DefaultContainerPadding, 0, this.DefaultContainerPadding, this.DefaultContainerPadding));
 		}
 
 		public SectionWidget ApplyBoxStyle(SectionWidget sectionWidget, BorderDouble margin)
 		{
-			return ApplyBoxStyle(sectionWidget, this.MinimalShade, margin);
+			return ApplyBoxStyle(sectionWidget, this.SectionBackgroundColor, margin);
 		}
 
 		public SectionWidget ApplyBoxStyle(SectionWidget sectionWidget, Color backgroundColor, BorderDouble margin)
