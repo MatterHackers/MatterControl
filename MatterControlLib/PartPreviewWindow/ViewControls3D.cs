@@ -43,6 +43,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -215,18 +216,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (showPrintButton)
 			{
-				var printButton = new TextButton("Print", theme);
+				var printButton = new TextButton("Print", theme)
+				{
+					Name = "Print Button",
+					BackgroundColor = theme.AccentMimimalOverlay
+				};
 				printButton.Click += (s, e) =>
 				{
-					bool showAuthWindow = ApplicationController.GuestUserActive?.Invoke() ?? false;
-					if (showAuthWindow)
+					if (ProfileManager.Instance.Profiles.Count <= 0)
 					{
-						if (ApplicationSettings.Instance.get(ApplicationSettingsKey.SuppressAuthPanel) != "True")
-						{
-							//Launch window to prompt user to sign in
-							UiThread.RunOnIdle(() => DialogWindow.Show(PrinterSetup.GetBestStartPage()));
-						}
+						//Launch window to prompt user to sign in
+						UiThread.RunOnIdle(() => DialogWindow.Show(new SetupStepMakeModelName()));
 					}
+					
 				};
 				this.AddChild(printButton);
 			}

@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.printer = printer;
 			this.theme = theme;
 			this.Name = "View3DWidget";
-			this.BackgroundColor = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.Black, 20));
+			this.BackgroundColor = theme.BedBackgroundColor;
 			this.HAnchor = HAnchor.Stretch; //	HAnchor.MaxFitOrStretch,
 			this.VAnchor = VAnchor.Stretch; //  VAnchor.MaxFitOrStretch
 

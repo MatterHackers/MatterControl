@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				iconButton.SetIcon(viewIcons[sceneContext.ViewState.RenderType]);
 				if (!this.MenuVisible)
 				{
-					iconButton.FlashBackground(theme.Colors.PrimaryAccentColor.AdjustContrast(theme.Colors.PrimaryTextColor, 6).ToColor());
+					iconButton.FlashBackground(theme.Colors.PrimaryAccentColor.WithContrast(theme.Colors.PrimaryTextColor, 6).ToColor());
 				}
 			}
 		}

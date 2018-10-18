@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void OpenEmptyPartTab(this AutomationRunner testRunner)
 		{
-			testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
+			// Latest product starts at empty part tab
 		}
 
 		public static void ChangeToQueueContainer(this AutomationRunner testRunner)
@@ -310,13 +310,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Click 'Add Printer' if not on screen
 			if (!testRunner.NameExists("Select Make", 0.2))
 			{
-				if (!testRunner.NameExists("Create Printer", 0.1))
-				{
-					// go to the start page
-					testRunner.ClickByName("Hardware Tab");
-				}
-
-				testRunner.ClickByName("Create Printer");
+				testRunner.ClickByName("Print Button");
 			}
 
 			testRunner.ClickByName("Select Make");
@@ -333,7 +327,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			// An unpredictable period of time will pass between Clicking Save, everything reloading and us returning to the caller.
 			// Block until ReloadAll has completed then close and return to the caller, at which point hopefully everything is reloaded.
-			testRunner.ClickByName("Save & Continue Button");
+			testRunner.ClickByName("Next Button");
 
 			testRunner.WaitFor(() => testRunner.WidgetExists<SetupStepComPortOne>());
 			testRunner.ClickByName("Cancel Wizard Button");
