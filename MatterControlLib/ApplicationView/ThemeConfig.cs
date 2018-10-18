@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl
 		public Color BorderColor { get; set; }
 		public Color BorderColor40 { get; set; }
 		public Color BorderColor20 { get; set; }
-		public Color RowBorder { get; internal set; }
+		public Color RowBorder { get; set; }
 		public Color DropListFieldBorder { get; set; }
 
 		public Color DisabledColor { get; set; }
