@@ -481,7 +481,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var x = this.LocalBounds.Left + (theme.MenuGutterWidth / 2 - this.Image.Width / 2);
 					var y = this.Size.Y / 2 - this.Image.Height / 2;
 
-					graphics2D.Render((this.Enabled) ? this.Image : this.DisabledImage, x, y);
+					graphics2D.Render((this.Enabled) ? this.Image : this.DisabledImage, (int)x, (int)y);
 				}
 
 				base.OnDraw(graphics2D);
