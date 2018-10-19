@@ -27,15 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.DesignTools;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class DoubleField : NumberField
 	{
-		double _doubleValue;
+		private double _doubleValue;
+
 		public double DoubleValue
 		{
 			get { return _doubleValue; }
@@ -52,7 +53,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		protected override string ConvertValue(string newValue)
 		{
 			double.TryParse(newValue, out double currentValue);
-			DoubleValue  = currentValue;
+			DoubleValue = currentValue;
 
 			return DoubleValue.ToString();
 		}
@@ -61,6 +62,46 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			numberEdit.ActuallNumberEdit.Value = DoubleValue;
 			base.OnValueChanged(fieldChangedEventArgs);
+		}
+	}
+
+	public class UndoRedoDoubleField : IUndoRedoCommand
+	{
+		private PPEContext context;
+		private double newValue;
+		private IObject3D object3D;
+		private double oldValue;
+		private EditableProperty property;
+		private UndoBuffer undoBuffer;
+
+		public UndoRedoDoubleField(double newValue, EditableProperty property, IObject3D object3D, PPEContext context, UndoBuffer undoBuffer)
+		{
+			this.newValue = newValue;
+			this.oldValue = (double)property.Value;
+			this.property = property;
+			this.object3D = object3D;
+			this.context = context;
+			this.undoBuffer = undoBuffer;
+		}
+
+		public void Do()
+		{
+			Update(newValue);
+		}
+
+		public void Undo()
+		{
+			Update(oldValue);
+		}
+
+		private void Update(double value)
+		{
+			property.SetValue(value);
+			object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
+			if (object3D is IPropertyGridModifier propertyGridModifier)
+			{
+				propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+			}
 		}
 	}
 }
