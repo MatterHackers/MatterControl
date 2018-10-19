@@ -305,9 +305,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			treeView = new TreeView(theme)
 			{
-				HAnchor = HAnchor.Absolute,
+				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
-				Width = 300,
 				Margin = 5
 			};
 			treeView.AfterSelect += async (s, e) =>

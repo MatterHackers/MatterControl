@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
@@ -201,6 +202,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.".Localize();
 		private string waitingForExtruderToHeatMessage = "The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}".Localize();
+		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
 
 		public TemperatureWidgetHotend(PrinterConfig printer, int hotendIndex, ThemeConfig theme)
 			: base(printer, "150.3°", theme)
@@ -272,7 +274,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			int tabIndex = 0;
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 			var settingsData = SettingsOrganizer.Instance.GetSettingsData(TemperatureKey);
-			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex);
+			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
 			SliceSettingsRow.AddBordersToEditFields(temperatureRow);
 			container.AddChild(temperatureRow);
 
@@ -299,21 +301,38 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			var valueField = temperatureRow.Descendants<MHNumberEdit>().FirstOrDefault();
 			valueField.Name = "Temperature Input";
+
 			var settingsRow = temperatureRow.DescendantsAndSelf<SliceSettingsRow>().FirstOrDefault();
 			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if (e is StringEventArgs stringEvent)
 				{
-					if (stringEvent.Data == TemperatureKey)
+					string settingsKey = stringEvent.Data;
+					if (this.allUiFields.TryGetValue(settingsKey, out UIField uifield))
+					{
+						string currentValue = settingsContext.GetValue(settingsKey);
+						if (uifield.Value != currentValue)
+						{
+							uifield.SetValue(
+								currentValue,
+								userInitiated: false);
+						}
+					}
+
+					if (stringEvent.Data == this.TemperatureKey)
 					{
 						var temp = printer.Settings.Helpers.ExtruderTemperature(hotendIndex);
-						valueField.Value = temp;
+
 						graph.GoalValue = temp;
-						settingsRow.UpdateStyle();
+
+						// TODO: Why is this only when enabled? How does it get set to 
 						if (heatToggle.Checked)
 						{
+							// TODO: Why is a UI widget who is listening to model events driving this behavior? What when it's not loaded?
 							SetTargetTemperature(temp);
 						}
+
+						settingsRow.UpdateStyle();
 					}
 				};
 			}, ref unregisterEvents);
