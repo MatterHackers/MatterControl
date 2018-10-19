@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;USE_OPENGL;IS_WINDOWS;IS_WINDOWS_FORMS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -45,6 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataStorage\SQLiteUnix.cs" />
+    <Compile Include="DataStorage\SQLiteWin32.cs" />
     <Compile Include="InspectForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -56,6 +58,10 @@
     <Compile Include="WinformsSingleWindowProvider.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Community.CsharpSqlite\Community.CsharpSqlite.csproj">
+      <Project>{f1653f20-d47d-4f29-8c55-3c835542af5f}</Project>
+      <Name>Community.CsharpSqlite</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MatterControlLib\MatterControlLib.csproj">
       <Project>{D557B079-612F-467F-AE0D-3F77BCD627F7}</Project>
       <Name>MatterControlLib</Name>

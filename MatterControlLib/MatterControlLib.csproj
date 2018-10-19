@@ -71,7 +71,6 @@
     <ProjectReference Include="..\Submodules\agg-sharp\RayTracer\RayTracer.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\VectorMath\VectorMath.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\Tesselate\Tesselate.csproj" />
-    <ProjectReference Include="..\Community.CsharpSqlite\Community.CsharpSqlite.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj" />
     <ProjectReference Include="..\PluginSystem\MatterControlPluginSystem.csproj" />

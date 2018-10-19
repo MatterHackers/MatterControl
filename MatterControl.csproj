@@ -76,6 +76,10 @@
       <Project>{97d5ade3-c1b4-4b46-8a3e-718a4f7f079f}</Project>
       <Name>MatterControl.Printing</Name>
     </ProjectReference>
+    <ProjectReference Include="MatterControl.Winforms\MatterControl.Winforms.csproj">
+      <Project>{D6DC2669-7B1F-40FE-89BF-45D4C94473E3}</Project>
+      <Name>MatterControl.Winforms</Name>
+    </ProjectReference>
     <ProjectReference Include="MatterControlLib\MatterControlLib.csproj">
       <Project>{93bebfdf-b81a-4344-ab82-0dbf58b234cd}</Project>
       <Name>MatterControlLib</Name>

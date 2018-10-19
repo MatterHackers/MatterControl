@@ -66,29 +66,6 @@ namespace MatterHackers.MatterControl.DataStorage
 			{
 				ApplicationDataStorage.Instance.FirstRun = true;
 			}
-
-			OSType osType = AggContext.OperatingSystem;
-			switch (osType)
-			{
-				case OSType.Windows:
-					dbSQLite = new SQLiteWin32.SQLiteConnection(datastoreLocation);
-					break;
-
-				case OSType.Mac:
-					dbSQLite = new SQLiteUnix.SQLiteConnection(datastoreLocation);
-					break;
-
-				case OSType.X11:
-					dbSQLite = new SQLiteUnix.SQLiteConnection(datastoreLocation);
-					break;
-
-				case OSType.Android:
-					dbSQLite = new SQLiteAndroid.SQLiteConnection(datastoreLocation);
-					break;
-
-				default:
-					throw new NotImplementedException();
-			}
 		}
 
 		public static Datastore Instance
@@ -102,7 +79,7 @@ namespace MatterHackers.MatterControl.DataStorage
 				return globalInstance;
 			}
 
-			// Special case to allow tests to set custom application paths 
+			// Special case to allow tests to set custom application paths
 			internal set
 			{
 				globalInstance = value;
@@ -146,8 +123,9 @@ namespace MatterHackers.MatterControl.DataStorage
 		}
 
 		//Run initial checks and operations on sqlite datastore
-		public void Initialize()
+		public void Initialize(ISQLite dbSQLite)
 		{
+			this.dbSQLite = dbSQLite;
 			ValidateSchema();
 
 			// Construct the root library collection if missing
