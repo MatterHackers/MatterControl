@@ -19,6 +19,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public LevelingSystem LevelingSystem;
 		public DateTime CreationDate;
 		public double BedTemperature;
+		public bool IssuedLevelingTempWarning;
 		#endregion
 
 		public PrintLevelingData()
@@ -75,12 +76,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			double requiredLevelingTemp = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?
 				printer.Settings.GetValue<double>(SettingsKey.bed_temperature)
 				: 0;
-
-			// check that it is within 10 degrees
-			if(Math.Abs(requiredLevelingTemp - levelingData.BedTemperature) > 10)
-			{
-				return true;
-			}
 
 			// check that the number of points sampled is correct for the solution
 			switch (levelingData.LevelingSystem)
@@ -145,8 +140,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					throw new NotImplementedException();
 			}
 
-			// All the above need to pass, as well as all rules defined in ProbeCalibrationWizard - any variance and we need to re-run
-			return ProbeCalibrationWizard.NeedsToBeRun(printer);
+			return false;
 		}
 
 		public bool SamplesAreSame(List<Vector3> sampledPositions)

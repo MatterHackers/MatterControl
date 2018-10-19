@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						+ "and the hotend to heat to ".Localize() + targetHotendTemp + ".\n"
 						+ "\n"
 						+ "This will improve the accuracy of print leveling ".Localize()
-						+ "and ensure no filament is stuck to the tip of the extruder.".Localize() + "\n"
+						+ "and ensure that no filament is stuck to your nozzle.".Localize() + "\n"
 						+ "\n"
 						+ "Warning! The tip of the nozzle will be HOT!".Localize() + "\n"
 						+ "Avoid contact with your skin.".Localize();
@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					// only heating the hotend
 					heatingInstructions += "Waiting for the hotend to heat to ".Localize() + targetHotendTemp + ".\n"
-						+ "This will ensure no filament is stuck to the tip.".Localize() + "\n"
+						+ "This will ensure that no filament is stuck to your nozzle.".Localize() + "\n"
 						+ "\n"
 						+ "Warning! The tip of the nozzle will be HOT!".Localize() + "\n"
 						+ "Avoid contact with your skin.".Localize();
