@@ -278,9 +278,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.DoubleValue = doubleValue;
 				field.ValueChanged += (s, e) =>
 				{
-					property.SetValue(field.DoubleValue);
-					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					undoBuffer.AddAndDo(new UndoRedoDoubleField(field.DoubleValue, property, object3D, context, undoBuffer));
 				};
 
 				void RefreshField(object s, InvalidateArgs e)
@@ -467,9 +465,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.IntValue = intValue;
 				field.ValueChanged += (s, e) =>
 				{
-					property.SetValue(field.IntValue);
-					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					undoBuffer.AddAndDo(new UndoRedoIntField(field.IntValue, property, object3D, context, undoBuffer));
 				};
 
 				void RefreshField(object s, InvalidateArgs e)
