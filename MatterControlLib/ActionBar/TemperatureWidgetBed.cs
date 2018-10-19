@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			// add in the temp graph
 			var graph = new DataViewGraph()
 			{
-				DynamiclyScaleRange = false,
+				DynamicallyScaleRange = false,
 				MinValue = 0,
 				ShowGoal = true,
 				GoalColor = ActiveTheme.Instance.PrimaryAccentColor,

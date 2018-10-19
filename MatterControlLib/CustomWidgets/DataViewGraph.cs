@@ -17,7 +17,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			DoubleBuffer = true;
 		}
 
-		public bool DynamiclyScaleRange { get; set; } = true;
+		public bool DynamicallyScaleRange { get; set; } = true;
 
 		Color _goalColor = Color.Yellow;
 		public Color GoalColor
@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public void AddData(double NewData)
 		{
-			if (DynamiclyScaleRange)
+			if (DynamicallyScaleRange)
 			{
 				MaxValue = System.Math.Max(MaxValue, NewData);
 				MinValue = System.Math.Min(MinValue, NewData);
