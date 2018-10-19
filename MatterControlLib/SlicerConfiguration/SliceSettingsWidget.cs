@@ -319,26 +319,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				};
 
-				PrinterSettings.SettingChanged.RegisterEvent(
-					(s, e) =>
+				PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
+				{
+					if (e is StringEventArgs stringEvent)
 					{
-						if (e is StringEventArgs stringEvent)
+						string settingsKey = stringEvent.Data;
+						if (this.allUiFields.TryGetValue(settingsKey, out UIField uifield))
 						{
-							string settingsKey = stringEvent.Data;
-							if (this.allUiFields.TryGetValue(settingsKey, out UIField uifield))
+							string currentValue = settingsContext.GetValue(settingsKey);
+							if (uifield.Value != currentValue
+								|| settingsKey == "com_port")
 							{
-								string currentValue = settingsContext.GetValue(settingsKey);
-								if (uifield.Value != currentValue
-									|| settingsKey == "com_port")
-								{
-									uifield.SetValue(
-										currentValue,
-										userInitiated: false);
-								}
+								uifield.SetValue(
+									currentValue,
+									userInitiated: false);
 							}
 						}
-					},
-					ref unregisterEvents);
+					}
+				},
+				ref unregisterEvents);
 			}
 
 			this.PerformLayout();
