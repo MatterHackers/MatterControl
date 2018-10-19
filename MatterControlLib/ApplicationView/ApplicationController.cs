@@ -1347,10 +1347,21 @@ namespace MatterHackers.MatterControl
 							}
 							else
 							{
-								progressStatus.Status = string.Format(
-									"{0} {1:0}s",
-									"Automatic Heater Shutdown in".Localize(),
-									printerConnection.SecondsToHoldTemperature);
+								if (printerConnection.SecondsToHoldTemperature > 60)
+								{
+									progressStatus.Status = string.Format(
+										"{0} {1:0}m {2:0}s",
+										"Automatic Heater Shutdown in".Localize(),
+										(int)(printerConnection.SecondsToHoldTemperature) / 60,
+										(int)(printerConnection.SecondsToHoldTemperature) % 60);
+								}
+								else
+								{ 
+									progressStatus.Status = string.Format(
+										"{0} {1:0}s",
+										"Automatic Heater Shutdown in".Localize(),
+										printerConnection.SecondsToHoldTemperature);
+								}
 							}
 							progressStatus.Progress0To1 = printerConnection.SecondsToHoldTemperature / printerConnection.TimeToHoldTemperature;
 							reporter.Report(progressStatus);
@@ -1442,23 +1453,23 @@ namespace MatterHackers.MatterControl
 
 		public bool RunAnyRequiredPrinterSetup(PrinterConfig printer, ThemeConfig theme)
 		{
+			// run probe calibration first if we need to
+			if (ProbeCalibrationWizard.NeedsToBeRun(printer))
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					LevelingWizard.ShowProbeCalibrationWizard(printer, theme);
+				});
+				return true;
+			}
+
+			// run the leveling wizard if we need to
 			if (PrintLevelingData.NeedsToBeRun(printer))
 			{
-				// run probe calibration first if we need to
-				if (ProbeCalibrationWizard.NeedsToBeRun(printer))
+				UiThread.RunOnIdle(() =>
 				{
-					UiThread.RunOnIdle(() =>
-					{
-						LevelingWizard.ShowProbeCalibrationWizard(printer, theme);
-					});
-				}
-				else // run the leveling wizard
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						LevelingWizard.ShowPrintLevelWizard(printer, theme);
-					});
-				}
+					LevelingWizard.ShowPrintLevelWizard(printer, theme);
+				});
 				return true;
 			}
 
@@ -2099,6 +2110,35 @@ namespace MatterHackers.MatterControl
 
 				if (printer.Settings.IsValid())
 				{
+					// check that current bed temp is is within 10 degrees of leveling temp
+					var enabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
+					var required = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print);
+					if (enabled || required)
+					{
+						double requiredLevelingTemp = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?
+							printer.Settings.GetValue<double>(SettingsKey.bed_temperature)
+							: 0;
+						PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
+						if (!levelingData.IssuedLevelingTempWarning 
+							&& Math.Abs(requiredLevelingTemp - levelingData.BedTemperature) > 10)
+						{
+							// Show a warning that leveling may be a good idea if better adhesion needed
+							UiThread.RunOnIdle(() =>
+							{
+								StyledMessageBox.ShowMessageBox(
+									@"Leveling data created with bed temperature of: {0}°C
+Current bed temperature: {1}°C
+
+If you experience adhesion problems, please re-run leveling."
+									.FormatWith(levelingData.BedTemperature, requiredLevelingTemp),
+									"Leveling data warning");
+
+								levelingData.IssuedLevelingTempWarning = true;
+								printer.Settings.Helpers.SetPrintLevelingData(levelingData, true);
+							});
+						}
+					}
+
 					// clear the output cache prior to starting a print
 					this.ActivePrinter.Connection.TerminalLog.Clear();
 

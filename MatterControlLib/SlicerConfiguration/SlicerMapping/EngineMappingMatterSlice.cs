@@ -226,7 +226,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new VisibleButNotMappedToEngine(SettingsKey.laser_speed_025),
 				new VisibleButNotMappedToEngine(SettingsKey.laser_speed_100),
 				new VisibleButNotMappedToEngine("selector_ip_address"),
-				new VisibleButNotMappedToEngine("selector_ip_address"),
 				// Skirt settings
 				new MappedSkirtLoopsSetting("skirts", "numberOfSkirtLoops", SettingsKey.nozzle_diameter),
 				new MappedSetting("skirt_distance", "skirtDistanceFromObject"),
