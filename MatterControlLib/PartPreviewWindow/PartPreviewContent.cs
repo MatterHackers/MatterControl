@@ -342,7 +342,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					tabControl.ActiveTab = this.CreatePrinterTab(activePrinter, theme);
 				}
 				
-
 				tabControl.RefreshTabPointers();
 			}, ref unregisterEvents);
 		}
