@@ -240,6 +240,11 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Ignore("Not implemented")]
+		public async Task PrimitivesContainerTest()
+		{
+		}
+
+		[Test, Ignore("Not implemented")]
 		public async Task McxContainerTest()
 		{
 		}

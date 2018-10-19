@@ -171,6 +171,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new ToolbarSeparator(theme));
 
+			var optionsButton = new PopupMenuButton("File".Localize(), theme)
+			{
+				Name = "Bed Options Menu",
+				//ToolTipText = "Options",
+				Enabled = true,
+				Margin = theme.ButtonSpacing,
+				VAnchor = VAnchor.Center
+			};
+			optionsButton.DynamicPopupContent = () =>
+			{
+				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+				theme.CreateMenuItems(popupMenu, this.BedMenuActions(sceneContext, theme), emptyMenu: false);
+
+				return popupMenu;
+			};
+			this.AddChild(optionsButton);
+
+			this.AddChild(new ToolbarSeparator(theme));
+
 			var undoButton = new IconButton(AggContext.StaticData.LoadIcon("Undo_grey_16x.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "3D View Undo",
@@ -677,7 +696,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						sceneContext.Scene.Cut();
 					},
-					IsEnabled = () => sceneContext.EditableScene
+					IsEnabled = () => sceneContext.Scene.SelectedItem != null
 				},
 				new NamedAction()
 				{
@@ -688,7 +707,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						sceneContext.Scene.Copy();
 					},
-					IsEnabled = () => sceneContext.EditableScene
+					IsEnabled = () => sceneContext.Scene.SelectedItem != null
 				},
 				new NamedAction()
 				{
@@ -699,7 +718,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						sceneContext.Scene.Paste();
 					},
-					IsEnabled = () => sceneContext.EditableScene
+					IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
 				},
 				new ActionSeparator(),
 				new NamedAction()
