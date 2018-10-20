@@ -344,6 +344,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				
 				tabControl.RefreshTabPointers();
 			}, ref unregisterEvents);
+
+			ApplicationController.Instance.AppView = this;
 		}
 
 		public ChromeTabs TabControl => tabControl;
