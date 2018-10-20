@@ -538,7 +538,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var saveAs = popupMenu.CreateMenuItem("Save As".Localize());
 					saveAs.Click += (s, e) => UiThread.RunOnIdle(() =>
 					{
-						this.MenuActions.FirstOrDefault(m => m.ID == "SaveAs")?.Action?.Invoke();
+						UiThread.RunOnIdle(() =>
+						{
+							DialogWindow.Show(
+								new SaveAsPage(
+									async (newName, destinationContainer) =>
+									{
+										// Save to the destination provider
+										if (destinationContainer is ILibraryWritableContainer writableContainer)
+										{
+											// Wrap stream with ReadOnlyStream library item and add to container
+											writableContainer.Add(new[]
+												{
+											new InMemoryLibraryItem(sceneContext.Scene)
+											{
+												Name = newName
+											}
+											});
+
+											destinationContainer.Dispose();
+										}
+									}));
+						});
 					});
 
 					return popupMenu;
