@@ -71,44 +71,4 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			base.OnValueChanged(fieldChangedEventArgs);
 		}
 	}
-
-	public class UndoRedoIntField : IUndoRedoCommand
-	{
-		private PPEContext context;
-		private int newValue;
-		private IObject3D object3D;
-		private int oldValue;
-		private EditableProperty property;
-		private UndoBuffer undoBuffer;
-
-		public UndoRedoIntField(int newValue, EditableProperty property, IObject3D object3D, PPEContext context, UndoBuffer undoBuffer)
-		{
-			this.newValue = newValue;
-			this.oldValue = (int)property.Value;
-			this.property = property;
-			this.object3D = object3D;
-			this.context = context;
-			this.undoBuffer = undoBuffer;
-		}
-
-		public void Do()
-		{
-			Update(newValue);
-		}
-
-		public void Undo()
-		{
-			Update(oldValue);
-		}
-
-		private void Update(int value)
-		{
-			property.SetValue(value);
-			object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-			if (object3D is IPropertyGridModifier propertyGridModifier)
-			{
-				propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-			}
-		}
-	}
 }
