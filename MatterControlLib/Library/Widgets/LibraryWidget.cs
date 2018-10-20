@@ -685,6 +685,27 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				});
 			}
 
+			// Open menu item
+			menuActions.Add(new PrintItemAction()
+			{
+				Title = "Open".Localize(),
+				Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons),
+				Action = (selectedLibraryItems, listView) =>
+				{
+					ApplicationController.Instance.AppView.CreatePartTab().ContinueWith(task =>
+					{
+						var workspace = ApplicationController.Instance.Workspaces.Last();
+						workspace.SceneContext.AddToPlate(selectedLibraryItems);
+					});
+				},
+				IsEnabled = (selectedListItems, listView) =>
+				{
+					// Singleselect - disallow containers
+					return listView.SelectedItems.Count == 1
+						&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainerLink));
+				}
+			});
+
 			// edit menu item
 			menuActions.Add(new PrintItemAction()
 			{
