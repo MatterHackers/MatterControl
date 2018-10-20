@@ -50,7 +50,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				AutomationRunner.TimeToMoveMouse = .1;
 				//testRunner.ClickByName("Connection Wizard Skip Sign In Button");
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
@@ -117,10 +116,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Row Item cylinder_5x20");
 					testRunner.ClickByName("Print Library Overflow Menu");
 					testRunner.ClickByName("Add to Bed Menu Item");
+					testRunner.ClickByName("Add Content Menu");
 
 					// re-slice the part
 					testRunner.ClickByName("Re-Slice Button");
-					testRunner.WaitForName("Yes Button", 80); // The change to new g-code
+					testRunner.WaitForName("Yes Button", 10); // The change to new g-code
 					testRunner.ClickByName("Yes Button");
 
 					// and resume the print
@@ -143,10 +143,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Row Item cube_20x20x20");
 					testRunner.ClickByName("Print Library Overflow Menu");
 					testRunner.ClickByName("Add to Bed Menu Item");
+					testRunner.ClickByName("Add Content Menu");
 
 					// re-slice the part
 					testRunner.ClickByName("Re-Slice Button");
-					testRunner.WaitForName("Yes Button", 80); // The change to new g-code
+					testRunner.WaitForName("Yes Button", 10); // The change to new g-code
 					testRunner.ClickByName("Yes Button");
 
 					// and resume the print
