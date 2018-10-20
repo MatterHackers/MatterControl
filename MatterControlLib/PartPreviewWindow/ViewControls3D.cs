@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -246,6 +247,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						//Launch window to prompt user to sign in
 						UiThread.RunOnIdle(() => DialogWindow.Show(new SetupStepMakeModelName()));
+					}
+					// If no active printer but profiles exist, show select printer
+					// If printer exists, stash plate with undo operation, then load this scene onto the printer bed
+					else if (ApplicationController.Instance.ActivePrinter is PrinterConfig printer && printer.Settings.PrinterSelected)
+					{
+						Task.Run(async () =>
+						{
+							await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.SaveChanges);
+
+							// Clear bed to get new MCX on disk for this item
+							printer.Bed.ClearPlate();
+
+							var editContext = sceneContext.EditContext;
+
+							await printer.Bed.LoadContent(editContext);
+
+							// Switch to printer
+							ApplicationController.Instance.AppView.TabControl.SelectedTabKey = printer.Settings.GetValue(SettingsKey.printer_name);
+
+							// Slice and print
+							await ApplicationController.Instance.PrintPart(
+								editContext,
+								printer,
+								null,
+								CancellationToken.None); ;
+						});
+
+
 					}
 					
 				};
