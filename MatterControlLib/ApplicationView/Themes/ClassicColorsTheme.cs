@@ -138,6 +138,63 @@ namespace MatterHackers.MatterControl
 
 			theme.BorderColor = new Color(darkTheme ? "#C8C8C8" : "#333");
 
+			theme.RowBorder = new Color(darkTheme ? "#474747" : "#A6A6A6");
+
+			theme.EditFieldColors = new ThemeConfig.ThreeStateColor()
+			{
+				Focused = new ThemeConfig.StateColor()
+				{
+					BackgroundColor = new Color("#eee"),
+					TextColor = new Color("#222"),
+					BorderColor = Color.Orange
+				},
+				Hovered = new ThemeConfig.StateColor()
+				{
+					BackgroundColor = new Color("#eee"),
+					BorderColor = Color.Orange
+				},
+				Inactive = new ThemeConfig.StateColor()
+				{
+					BackgroundColor = new Color("#eee"),
+					TextColor = new Color("#222")
+				}
+			};
+
+			theme.DropList = new ThemeConfig.DropListStyle()
+			{
+				Inactive = new ThemeConfig.StateColor()
+				{
+					BackgroundColor = (darkTheme) ? new Color("#404040") : new Color("#c4c4c4"),
+					TextColor = (darkTheme) ? new Color("#eee") : new Color("#222"),
+					BorderColor = (darkTheme) ? new Color("#656565") : new Color("#919191")
+				},
+				Hovered = new ThemeConfig.StateColor()
+				{
+					BackgroundColor = (darkTheme) ? new Color("#404040") : new Color("#aaa"),
+					TextColor = (darkTheme) ? new Color("#eee") : new Color("#222"),
+					BorderColor = Color.Orange
+				},
+				Open = new ThemeConfig.StateColor()
+				{
+					BackgroundColor = (darkTheme) ? new Color("#8A8A8A") : new Color("#dbdbdb"),
+					TextColor = (darkTheme) ? new Color("#eee") : new Color("#222"),
+				},
+				Focused = new ThemeConfig.StateColor()
+				{
+					BackgroundColor = (darkTheme) ? new Color("#282828") : new Color("#aaa"),
+					TextColor = (darkTheme) ? new Color("#eee") : new Color("#222"),
+					BorderColor = Color.Orange
+				},
+				Menu = new ThemeConfig.StateColor()
+				{
+					BackgroundColor = new Color("#eee"),
+					TextColor = new Color("#333"),
+					BorderColor = new Color("#333")
+				}
+			};
+
+			theme.SectionBackgroundColor = new Color(darkTheme ? "#393939" : "#B9B9B9");
+
 			theme.SplashAccentColor = accentColor;
 
 			theme.BedBackgroundColor = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.Black, 20));

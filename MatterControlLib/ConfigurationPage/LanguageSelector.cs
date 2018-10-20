@@ -12,7 +12,6 @@ namespace MatterHackers.MatterControl
 			: base("Default", theme)
 		{
 			this.MinimumSize = new Vector2(this.LocalBounds.Width, this.LocalBounds.Height);
-			this.BorderColor = theme.DropListFieldBorder;
 			CreateLanguageDict();
 
 

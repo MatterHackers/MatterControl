@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl
 
 		public class StateColor
 		{
-			public Color BackgroundColor { get; set; } = Color.Green;
+			public Color BackgroundColor { get; set; }
 			public Color ForegroundColor { get; set; }
 			public Color BorderColor { get; set; }
 			public Color TextColor { get; set; }
@@ -188,6 +188,12 @@ namespace MatterHackers.MatterControl
 			public StateColor Inactive { get; set; } = new StateColor();
 		}
 
+		public class DropListStyle : ThreeStateColor
+		{
+			public StateColor Open { get; set; } = new StateColor();
+			public StateColor Menu { get; set; } = new StateColor();
+		}
+
 		public ThreeStateColor EditFieldColors { get; set; } = new ThreeStateColor();
 
 		public Color LightTextColor { get; set; }
@@ -196,7 +202,8 @@ namespace MatterHackers.MatterControl
 		public Color BorderColor40 { get; set; }
 		public Color BorderColor20 { get; set; }
 		public Color RowBorder { get; set; }
-		public Color DropListFieldBorder { get; set; }
+
+		public DropListStyle DropList { get; set; } = new DropListStyle();
 
 		public Color DisabledColor { get; set; }
 		public Color SplashAccentColor { get; set; }

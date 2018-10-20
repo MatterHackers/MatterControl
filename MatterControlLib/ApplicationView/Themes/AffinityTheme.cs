@@ -107,8 +107,26 @@ namespace MatterHackers.MatterControl
 							BorderColor = new Color("#282828")
 						}
 					},
-					DropListFieldBorder = new Color("#282828"),
-					RowBorder = new Color("#2c2c2c"),
+					RowBorder = new Color("#333333"),
+
+					DropList = new ThemeConfig.DropListStyle()
+					{
+						Inactive = new ThemeConfig.StateColor()
+						{
+							BorderColor = new Color("#282828"),
+						},
+						Open = new ThemeConfig.StateColor()
+						{
+							BackgroundColor = new Color("#282828"),
+							TextColor = textColor,
+						},
+						Menu = new ThemeConfig.StateColor()
+						{
+							BackgroundColor = new Color("#333333"),
+							TextColor = new Color("#eee"),
+							BorderColor = new Color("#333")
+						}
+					},
 
 					SectionBackgroundColor = new Color("#404040"),
 

@@ -71,7 +71,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			dropDownList = new MHDropDownList("Name".Localize(), theme)
 			{
-				BorderColor = theme.DropListFieldBorder,
 				Name = property.DisplayName + " DropDownList"
 			};
 

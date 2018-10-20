@@ -38,15 +38,15 @@ namespace MatterHackers.MatterControl
 		private ThemeConfig theme;
 
 		public MHDropDownList(string noSelectionString, ThemeConfig theme, Direction direction = Direction.Down, double maxHeight = 0, bool useLeftIcons = false)
-			: base (noSelectionString, theme.Colors.PrimaryTextColor, direction, maxHeight, useLeftIcons, theme.DefaultFontSize)
+			: base (noSelectionString, theme.DropList.Inactive.TextColor, direction, maxHeight, useLeftIcons, theme.DefaultFontSize)
 		{
-			this.BackgroundColor = theme.EditFieldColors.Inactive.BackgroundColor;
-			this.MenuItemsBackgroundColor = theme.EditFieldColors.Focused.BackgroundColor;
-			this.MenuItemsTextColor = theme.EditFieldColors.Focused.TextColor;
+			this.MenuItemsBackgroundColor = theme.DropList.Menu.BackgroundColor;
+			this.MenuItemsTextColor = theme.DropList.Menu.TextColor;
 			this.theme = theme;
 
-			// Clear border set by base, use border color override
+			// Clear border/background set by base, use border color override
 			this.BorderColor = Color.Transparent;
+			this.BackgroundColor = Color.Transparent;
 
 			this.HoverColor = theme.EditFieldColors.Hovered.BackgroundColor;
 		}
@@ -63,20 +63,57 @@ namespace MatterHackers.MatterControl
 				{
 					return Color.Transparent;
 				}
-				else if (this.ContainsFocus)
-				{
-					return theme.EditFieldColors.Focused.BorderColor;
-				}
 				else if (this.mouseInBounds)
 				{
-					return theme.EditFieldColors.Hovered.BorderColor;
+					return theme.DropList.Hovered.BorderColor;
+				}
+				else if (this.ContainsFocus)
+				{
+					return theme.DropList.Focused.BorderColor;
 				}
 				else
 				{
-					return theme.EditFieldColors.Inactive.BorderColor;
+					return theme.DropList.Inactive.BorderColor;
 				}
 			}
 			set => base.BorderColor = value;
+		}
+
+		public override Color BackgroundColor
+		{
+			get
+			{
+				if (menuVisible)
+				{
+					var a = 1;
+				}
+
+				if (base.BackgroundColor != Color.Transparent)
+				{
+					return base.BackgroundColor;
+				}
+				else if (menuVisible)
+				{
+					return theme.DropList.Open.BackgroundColor;
+				}
+				else if (this.mouseInBounds)
+				{
+					return theme.DropList.Hovered.BackgroundColor;
+				}
+				else
+				{
+					return theme.DropList.Inactive.BackgroundColor;
+				}
+			}
+			set
+			{
+				if (value.GetAsHTMLString() == "#333333")
+				{
+					var a = 1;
+				}
+				base.BackgroundColor = value;
+			}
+
 		}
 
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
@@ -93,6 +130,18 @@ namespace MatterHackers.MatterControl
 			base.OnMouseLeaveBounds(mouseEvent);
 
 			this.Invalidate();
+		}
+
+		protected override void OnMenuOpen()
+		{
+			mainControlText.TextColor = theme.DropList.Open.TextColor;
+			base.OnMenuOpen();
+		}
+
+		protected override void OnMenuClose()
+		{
+			mainControlText.TextColor = theme.DropList.Inactive.TextColor;
+			base.OnMenuClose();
 		}
 	}
 }

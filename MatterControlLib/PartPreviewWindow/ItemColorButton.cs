@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Center,
 				DisabledColor = theme.MinimalShade,
 				Border = new BorderDouble(1),
-				BorderColor = theme.DropListFieldBorder,
+				BorderColor = theme.DropList.Inactive.BorderColor,
 				Selectable = false
 			};
 
