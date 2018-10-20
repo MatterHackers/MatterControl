@@ -1336,7 +1336,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
 				var actions = new[] {
-							WorkspaceActions["Insert"],
 							new ActionSeparator(),
 							new NamedAction()
 							{
@@ -1365,8 +1364,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								},
 								IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
 							},
-							WorkspaceActions["Save"],
-							WorkspaceActions["SaveAs"],
 							WorkspaceActions["Export"],
 							new ActionSeparator(),
 							WorkspaceActions["ArrangeAll"],
