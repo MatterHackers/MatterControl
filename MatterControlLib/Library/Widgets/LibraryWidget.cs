@@ -675,12 +675,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					{
 						var communicationState = ApplicationController.Instance.DragDropData?.Printer?.Connection.CommunicationState;
 
-					// Singleselect - disallow containers
-					return listView.SelectedItems.Count == 1
-							&& selectedListItems.FirstOrDefault()?.Model is ILibraryItem firstItem
-							&& !(firstItem is ILibraryContainer)
-							&& (communicationState == CommunicationStates.Connected
-								|| communicationState == CommunicationStates.FinishedPrint);
+						// Singleselect - disallow containers
+						return listView.SelectedItems.Count == 1
+								&& selectedListItems.FirstOrDefault()?.Model is ILibraryItem firstItem
+								&& !(firstItem is ILibraryContainer)
+								&& (communicationState == CommunicationStates.Connected
+									|| communicationState == CommunicationStates.FinishedPrint);
 					}
 				});
 			}
@@ -733,6 +733,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					{
 						activeContext.SceneContext.AddToPlate(selectedLibraryItems);
 					}
+
+#if DEBUG
+					// TODO: need to select the right tab to flash
+					var tabControl = ApplicationController.Instance.AppView.TabControl;
+					var tab = tabControl.AllTabs.LastOrDefault();
+					if (tab is GuiWidget guiWidget)
+					{
+						guiWidget.Descendants<TextWidget>().FirstOrDefault().FlashBackground(theme.Colors.PrimaryAccentColor.WithContrast(theme.Colors.PrimaryTextColor, 6).ToColor());
+					}
+#endif
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
