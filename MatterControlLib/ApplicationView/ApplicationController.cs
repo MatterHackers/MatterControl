@@ -151,9 +151,9 @@ namespace MatterHackers.MatterControl
 			if (AggContext.StaticData.DirectoryExists(themesPath))
 			{
 				foreach (var directoryTheme in AggContext.StaticData.GetDirectories(themesPath).Select(d => new DirectoryTheme(d)))
-			{
-				ThemeProviders.Add(directoryTheme.Name, directoryTheme);
-			}
+				{
+					ThemeProviders.Add(directoryTheme.Name, directoryTheme);
+				}
 			}
 
 			// Load theme
@@ -169,9 +169,7 @@ namespace MatterHackers.MatterControl
 			if (themeset == null)
 			{
 				var themeProvider = ThemeProviders.Values.First();
-				var defaultColor = themeProvider.Colors.First();
-
-				themeset = themeProvider.GetTheme("Dark", defaultColor);
+				themeset = themeProvider.GetTheme("Dark", themeProvider.DefaultColor);
 			}
 
 			DefaultThumbView.ThumbColor = new Color(themeset.Theme.Colors.PrimaryTextColor, 30);

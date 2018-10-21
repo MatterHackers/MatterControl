@@ -92,13 +92,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				_themeProvider = value;
 
-				var previewColor = _themeProvider.Colors.First();
-
 				colorSelector.RebuildColorButtons();
 
 				this.CreateThemeModeButtons();
 
-				this.PreviewTheme(previewColor);
+				this.PreviewTheme(_themeProvider.DefaultColor);
 			}
 		}
 		private void CreateThemeModeButtons()
@@ -108,11 +106,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			var theme = AppContext.Theme;
 
 			var accentColor = theme.PrimaryAccentColor;
-
-			if (!_themeProvider.Colors.Contains(accentColor))
-			{
-				accentColor = _themeProvider.DefaultColor;
-			}
 
 			int providerIndex = 0;
 
