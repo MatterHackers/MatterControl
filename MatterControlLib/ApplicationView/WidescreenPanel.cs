@@ -186,7 +186,8 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Right
 			});
 
-			menuItem = popupMenu.CreateMenuItem(themeRow, "Theme Menu Item", AggContext.StaticData.LoadIcon("theme.png", 16, 16, menuTheme.InvertIcons));
+			menuItem = popupMenu.CreateMenuItem(themeRow, "Theme", AggContext.StaticData.LoadIcon("theme.png", 16, 16, menuTheme.InvertIcons));
+			menuItem.Padding = menuItem.Padding.Clone(right: 5);
 
 			popupMenu.CreateHorizontalLine();
 
