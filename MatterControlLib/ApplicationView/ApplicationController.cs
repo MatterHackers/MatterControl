@@ -171,6 +171,9 @@ namespace MatterHackers.MatterControl
 			themeset.Theme.PrimaryAccentColor = accentColor;
 			themeset.Theme.AccentMimimalOverlay = accentColor.WithAlpha(90);
 
+			themeset.MenuTheme.PrimaryAccentColor = accentColor;
+			themeset.MenuTheme.AccentMimimalOverlay = accentColor.WithAlpha(90);
+
 			AppContext.SetTheme(themeset);
 		}
 
