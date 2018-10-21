@@ -59,6 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 
 			layerSlider = layerScrollbar.layerSlider;
+			theme.ApplySliderStyle(layerSlider);
 
 			var tagContainer = new HorizontalTag()
 			{
@@ -101,6 +102,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			sceneContext.ActiveLayerChanged += SetPositionAndValue;
 			layerScrollbar.MouseEnter += SetPositionAndValue;
 		}
+
+		public SolidSlider SolidSlider => layerSlider;
 
 		public double Maximum
 		{

@@ -92,6 +92,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			printer.ViewState.ViewModeChanged += ViewState_ViewModeChanged;
 
+			var opaqueTrackColor = theme.ResolveColor(theme.BedBackgroundColor, theme.SlightShade);
+
 			LayerScrollbar = new SliceLayerSelector(printer, sceneContext, theme)
 			{
 				VAnchor = VAnchor.Stretch,
@@ -99,6 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = new BorderDouble(0, 4, 4, 4),
 				Maximum = sceneContext.LoadedGCode?.LayerCount ?? 1
 			};
+			LayerScrollbar.SolidSlider.View.TrackColor = opaqueTrackColor;
 			view3DWidget.InteractionLayer.AddChild(LayerScrollbar);
 
 			layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), SliceLayerSelector.SliderWidth, theme);
@@ -122,6 +125,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.Invalidate();
 			};
 			view3DWidget.InteractionLayer.AddChild(layerRenderRatioSlider);
+			theme.ApplySliderStyle(layerRenderRatioSlider);
+
+			layerRenderRatioSlider.View.TrackColor = opaqueTrackColor;
 
 			sceneContext.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
 

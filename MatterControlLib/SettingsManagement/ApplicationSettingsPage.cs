@@ -242,7 +242,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Center,
 				TotalWidthInPixels = sliderWidth,
 			};
-			textSizeSlider.View.TrackColor = theme.SlightShade;
+			theme.ApplySliderStyle(textSizeSlider);
 
 			var optionalContainer = new FlowLayoutWidget()
 			{

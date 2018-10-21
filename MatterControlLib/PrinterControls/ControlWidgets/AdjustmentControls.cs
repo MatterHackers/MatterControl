@@ -60,8 +60,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			double sliderWidth = 300 * GuiWidget.DeviceScale;
 			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
 
-			Color sliderTrackColor = theme.SlightShade;
-
 			SettingsRow settingsRow;
 
 			{
@@ -82,8 +80,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					VAnchor = VAnchor.Center,
 					TotalWidthInPixels = sliderWidth,
 				};
-				feedRateRatioSlider.View.TrackColor = sliderTrackColor;
-				feedRateRatioSlider.View.TrackRadius = 4;
+				theme.ApplySliderStyle(feedRateRatioSlider);
 				feedRateRatioSlider.ValueChanged += (sender, e) =>
 				{
 					feedRateValue.ActuallNumberEdit.Value = Math.Round(feedRateRatioSlider.Value, 2);
@@ -141,8 +138,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					Margin = new BorderDouble(5, 0),
 					Value = ExtrusionMultiplyerStream.ExtrusionRatio
 				};
-				extrusionRatioSlider.View.TrackColor = sliderTrackColor;
-				extrusionRatioSlider.View.TrackRadius = 4;
+				theme.ApplySliderStyle(extrusionRatioSlider);
 				extrusionRatioSlider.ValueChanged += (sender, e) =>
 				{
 					extrusionValue.ActuallNumberEdit.Value = Math.Round(extrusionRatioSlider.Value, 2);

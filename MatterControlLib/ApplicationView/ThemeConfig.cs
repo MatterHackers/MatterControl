@@ -492,6 +492,22 @@ namespace MatterHackers.MatterControl
 				margin: new BorderDouble(this.DefaultContainerPadding, 0, this.DefaultContainerPadding, this.DefaultContainerPadding));
 		}
 
+		public SolidSlider ApplySliderStyle(SolidSlider solidSlider)
+		{
+			solidSlider.View.TrackColor = this.SlightShade;
+			solidSlider.View.TrackRadius = 4;
+
+			return solidSlider;
+		}
+
+		public DoubleSolidSlider ApplySliderStyle(DoubleSolidSlider solidSlider)
+		{
+			solidSlider.View.TrackColor = this.SlightShade;
+			solidSlider.View.TrackRadius = 4;
+
+			return solidSlider;
+		}
+
 		public SectionWidget ApplyBoxStyle(SectionWidget sectionWidget, BorderDouble margin)
 		{
 			return ApplyBoxStyle(sectionWidget, this.SectionBackgroundColor, margin);

@@ -111,9 +111,12 @@ namespace MatterHackers.MatterControl
 			graphics2D.FillRectangle(GetTotalBounds(), BackgroundColor);
 		}
 
+		public double TrackRadius { get; set; } = 0;
+
 		public void DoDrawAfterChildren(Graphics2D graphics2D)
 		{
-			RoundedRect track = new RoundedRect(GetTrackBounds(), 0);
+			RoundedRect track = new RoundedRect(GetTrackBounds(), this.TrackRadius);
+
 			Vector2 ValuePrintPosition;
 			if (sliderAttachedTo.Orientation == Orientation.Horizontal)
 			{
