@@ -191,7 +191,6 @@ namespace MatterHackers.MatterControl
 		public class DropListStyle : ThreeStateColor
 		{
 			public StateColor Open { get; set; } = new StateColor();
-			public StateColor Menu { get; set; } = new StateColor();
 		}
 
 		public ThreeStateColor EditFieldColors { get; set; } = new ThreeStateColor();

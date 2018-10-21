@@ -40,8 +40,11 @@ namespace MatterHackers.MatterControl
 		public MHDropDownList(string noSelectionString, ThemeConfig theme, Direction direction = Direction.Down, double maxHeight = 0, bool useLeftIcons = false)
 			: base (noSelectionString, theme.DropList.Inactive.TextColor, direction, maxHeight, useLeftIcons, theme.DefaultFontSize)
 		{
-			this.MenuItemsBackgroundColor = theme.DropList.Menu.BackgroundColor;
-			this.MenuItemsTextColor = theme.DropList.Menu.TextColor;
+			var menuTheme = AppContext.MenuTheme;
+
+			this.MenuItemsBackgroundColor = menuTheme.ActiveTabColor;
+			this.MenuItemsTextColor = menuTheme.Colors.PrimaryTextColor;
+
 			this.theme = theme;
 
 			// Clear border/background set by base, use border color override

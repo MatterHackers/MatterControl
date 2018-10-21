@@ -67,12 +67,6 @@
         "BorderColor": "#00000000",
         "TextColor": "#BBBBBB"
       },
-      "Menu": {
-        "BackgroundColor": "#333333",
-        "ForegroundColor": "#00000000",
-        "BorderColor": "#333333",
-        "TextColor": "#EEEEEE"
-      },
       "Focused": {
         "BackgroundColor": "#00000000",
         "ForegroundColor": "#00000000",
