@@ -106,6 +106,11 @@ namespace MatterHackers.GCodeVisualizer
 					Vector2 end = new Vector2(endF.x, endF.y);
 					renderInfo.Transform.transform(ref end);
 
+					if (renderInfo.CurrentRenderType.HasFlag(RenderType.TransparentExtrusion))
+					{
+						movementColor = new Color(movementColor, 200);
+					}
+
 					graphics2DGl.DrawAALineRounded(start, end, movementLineWidth, movementColor);
 				}
 				else

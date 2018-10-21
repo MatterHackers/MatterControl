@@ -62,6 +62,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			levelingData.BedTemperature = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?
 				printer.Settings.GetValue<double>(SettingsKey.bed_temperature)
 				: 0;
+			levelingData.IssuedLevelingTempWarning = false;
 
 			// Invoke setter forcing persistence of leveling data
 			printer.Settings.Helpers.SetPrintLevelingData(levelingData, true);

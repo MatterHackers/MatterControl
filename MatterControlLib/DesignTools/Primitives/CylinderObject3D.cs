@@ -136,9 +136,12 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			this.DebugDepth("Rebuild");
 			bool changed = false;
+
 			using (RebuildLock())
 			{
 				Sides = agg_basics.Clamp(Sides, 3, 360, ref changed);
+				Height = Math.Max(Height, .001);
+				Diameter = Math.Max(Diameter, .1);
 
 				var aabb = this.GetAxisAlignedBoundingBox();
 

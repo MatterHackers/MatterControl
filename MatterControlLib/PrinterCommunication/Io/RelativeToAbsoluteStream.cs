@@ -36,21 +36,21 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class RelativeToAbsoluteStream : GCodeStreamProxy
-    {
-        protected PrinterMove lastDestination = new PrinterMove();
-        public PrinterMove LastDestination { get { return lastDestination; } }
+	public class RelativeToAbsoluteStream : GCodeStreamProxy
+	{
+		protected PrinterMove lastDestination = new PrinterMove();
+		public PrinterMove LastDestination { get { return lastDestination; } }
 
 		bool xyzAbsoluteMode = true;
 		bool eAbsoluteMode = true;
 
-        public RelativeToAbsoluteStream(GCodeStream internalStream)
-            : base(internalStream)
-        {
-        }
+		public RelativeToAbsoluteStream(GCodeStream internalStream)
+			: base(internalStream)
+		{
+		}
 
-        public override void SetPrinterPosition(PrinterMove position)
-        {
+		public override void SetPrinterPosition(PrinterMove position)
+		{
 			lastDestination = position;
 			internalStream.SetPrinterPosition(lastDestination);
 		}
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					// extruder to relative mode
 					eAbsoluteMode = false;
 				}
-				else if(lineToProcess.StartsWith("82"))
+				else if (lineToProcess.StartsWith("82"))
 				{
 					// extruder to absolute mode
 					eAbsoluteMode = true;
@@ -124,12 +124,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		}
 
 		public override string ReadLine()
-        {
-            // G91 Relative
-            // G90 Absolute
-            string lineToSend = base.ReadLine();
+		{
+			// G91 Relative
+			// G90 Absolute
+			string lineToSend = base.ReadLine();
 
-            return ProcessLine(lineToSend);
-        }
-    }
+			return ProcessLine(lineToSend);
+		}
+	}
 }

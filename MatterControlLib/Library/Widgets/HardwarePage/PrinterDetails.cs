@@ -88,15 +88,12 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 				var printerSettings = PrinterSettings.LoadFile(printerInfo.ProfilePath);
 
 				// Get the printer sid from settings
-				var storeID = printerSettings.GetValue(SettingsKey.matterhackers_sid);
+				string storeID = null;
 
-				// If empty, fall back to the make-model mapping table
-				if (string.IsNullOrEmpty(storeID))
+				// Use the the make-model mapping table
+				if (OemSettings.Instance.OemPrinters.TryGetValue($"{printerInfo.Make}-{ printerInfo.Model}", out StorePrinterID storePrinterID))
 				{
-					if (OemSettings.Instance.OemPrinters.TryGetValue($"{printerInfo.Make}-{ printerInfo.Model}", out StorePrinterID storePrinterID))
-					{
-						storeID = storePrinterID?.SID;
-					}
+					storeID = storePrinterID?.SID;
 				}
 
 				if (!string.IsNullOrWhiteSpace(storeID))

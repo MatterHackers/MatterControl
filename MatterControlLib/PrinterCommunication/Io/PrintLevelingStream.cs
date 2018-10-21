@@ -72,10 +72,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				if (LineIsMovement(lineFromChild))
 				{
 					PrinterMove currentDestination = GetPosition(lineFromChild, lastDestination);
-					lineFromChild = GetLeveledPosition(lineFromChild, currentDestination);
+					var leveledLine = GetLeveledPosition(lineFromChild, currentDestination);
 					lastDestination = currentDestination;
 
-					return lineFromChild;
+					return leveledLine;
 				}
 				else if (lineFromChild.StartsWith("G29"))
 				{

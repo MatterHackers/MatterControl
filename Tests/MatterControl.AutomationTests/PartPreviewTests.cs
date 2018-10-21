@@ -1,17 +1,7 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
-using MatterHackers.DataConverters3D;
-using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.PolygonMesh;
-using MatterHackers.VectorMath;
-using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
@@ -24,8 +14,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.AddAndSelectPrinter();
-
 				testRunner.OpenEmptyPartTab();
 
 				testRunner.AddItemToBedplate();
@@ -59,8 +47,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.AddAndSelectPrinter();
-
 				testRunner.OpenEmptyPartTab();
 
 				testRunner.AddItemToBedplate();
@@ -108,8 +94,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.AddAndSelectPrinter();
-
 				testRunner.OpenEmptyPartTab();
 
 				testRunner.AddItemToBedplate();

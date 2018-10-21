@@ -95,17 +95,46 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// print a part
 					testRunner.AddItemToBedplate();
+
+					var currentSettings = ApplicationController.Instance.ActivePrinter.Settings;
+					currentSettings.SetValue(SettingsKey.pause_gcode, "");
+					currentSettings.SetValue(SettingsKey.resume_gcode, "");
+
+					testRunner.OpenPrintPopupMenu();
+					testRunner.ClickByName("Layer(s) To Pause Field");
+					testRunner.Type("2");
+
 					testRunner.StartPrint();
 
-					var printer = ApplicationController.Instance.ActivePrinter;
-					emulator.WaitForLayer(printer.Settings, 2);
+					testRunner.WaitForName("Yes Button", 20);// the yes button is 'Resume'
 
-					testRunner.WaitFor(() => emulator.ZPosition > 5);
+					var printer = ApplicationController.Instance.ActivePrinter;
+
+					// the usre types in the pause layer 1 based and we are 0 based, so we should be on: user 2, printer 1.
+					Assert.AreEqual(1, printer.Connection.CurrentlyPrintingLayer);
 
 					// assert the leveling is working
-					Assert.Greater(emulator.ZPosition, 5);
+					Assert.AreEqual(11.15, emulator.ZPosition);
 
 					testRunner.CancelPrint();
+
+					// now run leveling again and make sure we get the same result
+					testRunner.SwitchToControlsTab();
+					testRunner.ClickByName("Run Leveling Button");
+					testRunner.Complete9StepLeveling(2);
+
+					testRunner.OpenPrintPopupMenu();
+					testRunner.ClickByName("Layer(s) To Pause Field");
+					testRunner.Type("2");
+
+					testRunner.StartPrint();
+
+					testRunner.WaitForName("Yes Button", 20);// the yes button is 'Resume'
+
+					// the usre types in the pause layer 1 based and we are 0 based, so we should be on: user 2, printer 1.
+					Assert.AreEqual(1, printer.Connection.CurrentlyPrintingLayer);
+					// assert the leveling is working
+					Assert.AreEqual(12.15, emulator.ZPosition);
 				}
 
 				return Task.CompletedTask;

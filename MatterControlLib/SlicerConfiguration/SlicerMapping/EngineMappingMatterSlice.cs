@@ -119,7 +119,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"running_clean_markdown",
 			"unload_filament_length",
 			"load_filament_speed",
-			SettingsKey.matterhackers_sid,
 		};
 
 		public List<MappedSetting> MappedSettings { get; private set; }
@@ -175,6 +174,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// fan settings
 				new VisibleButNotMappedToEngine("enable_fan"), // this is considered when sending fan speeds to slicing
 				new MappedFanSpeedSetting("min_fan_speed", "fanSpeedMinPercent"),
+				new MappedSetting("coast_at_end_distance", "coastAtEndDistance"),
 				new MappedSetting("min_fan_speed_layer_time", "minFanSpeedLayerTime"),
 				new MappedFanSpeedSetting("max_fan_speed", "fanSpeedMaxPercent"),
 				new MappedSetting("max_fan_speed_layer_time", "maxFanSpeedLayerTime"),
@@ -225,7 +225,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new VisibleButNotMappedToEngine("solid_shell"),
 				new VisibleButNotMappedToEngine(SettingsKey.laser_speed_025),
 				new VisibleButNotMappedToEngine(SettingsKey.laser_speed_100),
-				new VisibleButNotMappedToEngine("selector_ip_address"),
 				new VisibleButNotMappedToEngine("selector_ip_address"),
 				// Skirt settings
 				new MappedSkirtLoopsSetting("skirts", "numberOfSkirtLoops", SettingsKey.nozzle_diameter),

@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.printer = printer;
 			this.theme = theme;
 			this.Name = "View3DWidget";
-			this.BackgroundColor = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.Black, 20));
+			this.BackgroundColor = theme.BedBackgroundColor;
 			this.HAnchor = HAnchor.Stretch; //	HAnchor.MaxFitOrStretch,
 			this.VAnchor = VAnchor.Stretch; //  VAnchor.MaxFitOrStretch
 
@@ -1315,50 +1315,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else // Allow right click on bed in all modes
 				{
-					// Workspace/plate context menu
-					UiThread.RunOnIdle(() =>
-					{
-						var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
-
-						var actions = new[] {
-							new ActionSeparator(),
-							WorkspaceActions["Insert"],
-							new ActionSeparator(),
-							new NamedAction()
-							{
-								Title = "Paste".Localize(),
-								Action = () =>
-								{
-									Scene.Paste();
-								},
-								IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
-							},
-							WorkspaceActions["Save"],
-							WorkspaceActions["SaveAs"],
-							WorkspaceActions["Export"],
-							new ActionSeparator(),
-							WorkspaceActions["ArrangeAll"],
-							WorkspaceActions["ClearBed"],
-						};
-
-						theme.CreateMenuItems(popupMenu, actions, emptyMenu: false);
-
-						var popupBounds = new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1);
-
-						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-						systemWindow.ShowPopup(
-							new MatePoint(this)
-							{
-								Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom),
-								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-							},
-							new MatePoint(popupMenu)
-							{
-								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-							},
-							altBounds: popupBounds);
-					});
+					PopupBedActionsMenu(mouseEvent.Position);
 				}
 			}
 
@@ -1369,6 +1326,68 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.deferEditorTillMouseUp = false;
 				Scene_SelectionChanged(null, null);
 			}
+		}
+
+		public void PopupBedActionsMenu(Vector2 position)
+		{
+			// Workspace/plate context menu
+			UiThread.RunOnIdle(() =>
+			{
+				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+
+				var actions = new[] {
+							new ActionSeparator(),
+							new NamedAction()
+							{
+								Title = "Cut".Localize(),
+								Action = () =>
+								{
+									Scene.Cut();
+								},
+								IsEnabled = () => Scene.SelectedItem != null
+							},
+							new NamedAction()
+							{
+								Title = "Copy".Localize(),
+								Action = () =>
+								{
+									Scene.Copy();
+								},
+								IsEnabled = () => Scene.SelectedItem != null
+							},
+							new NamedAction()
+							{
+								Title = "Paste".Localize(),
+								Action = () =>
+								{
+									Scene.Paste();
+								},
+								IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
+							},
+							WorkspaceActions["Export"],
+							new ActionSeparator(),
+							WorkspaceActions["ArrangeAll"],
+							WorkspaceActions["ClearBed"],
+						};
+
+				theme.CreateMenuItems(popupMenu, actions, emptyMenu: false);
+
+				var popupBounds = new RectangleDouble(position.X + 1, position.Y + 1, position.X + 1, position.Y + 1);
+
+				var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+				systemWindow.ShowPopup(
+					new MatePoint(this)
+					{
+						Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom),
+						AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+					},
+					new MatePoint(popupMenu)
+					{
+						Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+						AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+					},
+					altBounds: popupBounds);
+			});
 		}
 
 		// TODO: Consider if we should always allow DragDrop or if we should prevent during printer or other scenarios

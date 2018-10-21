@@ -278,9 +278,22 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.DoubleValue = doubleValue;
 				field.ValueChanged += (s, e) =>
 				{
-					property.SetValue(field.DoubleValue);
-					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					var newValue = field.DoubleValue;
+					var oldValue = property.Value;
+
+					//field.Content
+					undoBuffer.AddAndDo(new UndoRedoActions(() =>
+					{
+						property.SetValue(oldValue);
+						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
+						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					},
+					() =>
+					{
+						property.SetValue(newValue);
+						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
+						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					}));
 				};
 
 				void RefreshField(object s, InvalidateArgs e)
@@ -467,9 +480,22 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.IntValue = intValue;
 				field.ValueChanged += (s, e) =>
 				{
-					property.SetValue(field.IntValue);
-					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					var newValue = field.IntValue;
+					var oldValue = property.Value;
+
+					//field.Content
+					undoBuffer.AddAndDo(new UndoRedoActions(() =>
+					{
+						property.SetValue(oldValue);
+						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
+						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					},
+					() =>
+					{
+						property.SetValue(newValue);
+						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
+						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					}));
 				};
 
 				void RefreshField(object s, InvalidateArgs e)

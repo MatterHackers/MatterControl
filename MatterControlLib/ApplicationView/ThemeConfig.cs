@@ -177,6 +177,7 @@ namespace MatterHackers.MatterControl
 		public Color BorderColor { get; set; }
 		public Color DisabledColor { get; set; }
 		public Color SplashAccentColor { get; set; }
+		public Color BedBackgroundColor { get; set; }
 
 		public GuiWidget CreateSearchButton()
 		{
@@ -303,8 +304,14 @@ namespace MatterHackers.MatterControl
 			return new Color(this.BorderColor, alpha);
 		}
 
-		// Compute a fixed color from a source and a target alpha
+		// Compute an opaque color from a source and a target with alpha
 		public Color ResolveColor(Color background, Color overlay)
+		{
+			return ResolveColor2(background, overlay);
+		}
+
+		// Compute an opaque color from a source and a target with alpha
+		public static Color ResolveColor2(Color background, Color overlay)
 		{
 			return new BlenderBGRA().Blend(background, overlay);
 		}

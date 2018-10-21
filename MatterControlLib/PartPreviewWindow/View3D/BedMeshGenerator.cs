@@ -67,12 +67,6 @@ namespace MatterHackers.MatterControl
 					throw new NotImplementedException();
 			}
 
-			// Preload GL texture for 2D bed image and use MipMaps
-			UiThread.RunOnIdle(() =>
-			{
-				ImageGlPlugin.GetImageGlPlugin(bedImage, createAndUseMipMaps: true);
-			});
-
 			return bedImage;
 		}
 

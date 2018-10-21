@@ -91,15 +91,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					"We should be done in less than five minutes.".Localize(),
 					levelingStrings.ClickNext));
 
-			// add in the material select page
-			yield return new SelectMaterialPage(
-				this,
-				"Select Material".Localize(),
-				string.Format(
-					"{0}\n\n{1}",
-					"The hot end needs to be heated to ensure it is clean.".Localize(),
-					"Please select the material you will be printing, so we can heat the printer before calibrating.".Localize()));
-
 			// add in the homing printer page
 			yield return new HomePrinterPage(
 				this,
@@ -111,11 +102,23 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			targetHotendTemp = printer.Settings.Helpers.ExtruderTemperature(0);
 
+			if (PrintLevelingData.NeedsToBeRun(printer))
+			{
+				// start heating up the bed as that will be needed next
+				var bedTemperature = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?
+					printer.Settings.GetValue<double>(SettingsKey.bed_temperature)
+					: 0;
+				if(bedTemperature > 0)
+				{
+					printer.Connection.TargetBedTemperature = bedTemperature;
+				}
+			}
+
 			yield return new WaitForTempPage(
 				this,
 				"Waiting For Printer To Heat".Localize(),
 				"Waiting for the hotend to heat to ".Localize() + targetHotendTemp + ".\n"
-					+ "This will ensure no filament is stuck to the tip.".Localize() + "\n"
+					+ "This will ensure that no filament is stuck to your nozzle.".Localize() + "\n"
 					+ "\n"
 					+ "Warning! The tip of the nozzle will be HOT!".Localize() + "\n"
 					+ "Avoid contact with your skin.".Localize(),

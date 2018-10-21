@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Kevin Pope, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.ImageProcessing;
@@ -46,6 +47,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.".Localize();
 		private string waitingForBedToHeatMessage = "The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}".Localize();
 		private string waitingForBedToHeatTitle = "Waiting For Bed To Heat".Localize();
+		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
 
 		public TemperatureWidgetBed(PrinterConfig printer, ThemeConfig theme)
 			: base(printer, "150.3°", theme)
@@ -115,7 +117,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 
 			var settingsData = SettingsOrganizer.Instance.GetSettingsData(SettingsKey.bed_temperature);
-			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex);
+			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
 			SliceSettingsRow.AddBordersToEditFields(temperatureRow);
 			container.AddChild(temperatureRow);
 
@@ -124,7 +126,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			// add in the temp graph
 			var graph = new DataViewGraph()
 			{
-				DynamiclyScaleRange = false,
+				DynamicallyScaleRange = false,
 				MinValue = 0,
 				ShowGoal = true,
 				GoalColor = ActiveTheme.Instance.PrimaryAccentColor,
@@ -147,14 +149,31 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				if (e is StringEventArgs stringEvent)
 				{
-					var temp = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
-					valueField.Value = temp;
-					graph.GoalValue = temp;
-					settingsRow.UpdateStyle();
-					if (stringEvent.Data == SettingsKey.bed_temperature
-						&& heatToggle.Checked)
+					string settingsKey = stringEvent.Data;
+					if (this.allUiFields.TryGetValue(settingsKey, out UIField uifield))
 					{
-						SetTargetTemperature(temp);
+						string currentValue = settingsContext.GetValue(settingsKey);
+						if (uifield.Value != currentValue)
+						{
+							uifield.SetValue(
+								currentValue,
+								userInitiated: false);
+						}
+					}
+
+					if (stringEvent.Data == SettingsKey.bed_temperature)
+					{
+						var temp = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
+						graph.GoalValue = temp;
+
+						// TODO: Why is this only when enabled? How does it get set to 
+						if (heatToggle.Checked)
+						{
+							// TODO: Why is a UI widget who is listening to model events driving this behavior? What when it's not loaded?
+							SetTargetTemperature(temp);
+						}
+
+						settingsRow.UpdateStyle();
 					}
 				};
 			}, ref unregisterEvents);

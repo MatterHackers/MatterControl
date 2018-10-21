@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl
 				double time = GetFadeInOutPulseRatio(timeSinceStart.Elapsed.TotalSeconds, pulseTime);
 				double lightnessMultiplier = Quadratic.InOut(time);
 
-				widgetToHighlight.BackgroundColor = startColor.AdjustLightness(1 + lightnessChange * lightnessMultiplier).ToColor();
+				widgetToHighlight.BackgroundColor = startColor.WithLightnessAdjustment(1 + lightnessChange * lightnessMultiplier).ToColor();
 				if (widgetToHighlight.HasBeenClosed || timeSinceStart.Elapsed.TotalSeconds > cycles * pulseTime)
 				{
 					widgetToHighlight.BackgroundColor = startColor;

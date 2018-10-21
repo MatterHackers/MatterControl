@@ -27,15 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.DesignTools;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class DoubleField : NumberField
 	{
-		double _doubleValue;
+		private double _doubleValue;
+
 		public double DoubleValue
 		{
 			get { return _doubleValue; }
@@ -52,7 +53,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		protected override string ConvertValue(string newValue)
 		{
 			double.TryParse(newValue, out double currentValue);
-			DoubleValue  = currentValue;
+			DoubleValue = currentValue;
 
 			return DoubleValue.ToString();
 		}

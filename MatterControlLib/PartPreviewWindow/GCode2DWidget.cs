@@ -83,7 +83,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.gridSizeMm = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
 			this.gridCenterMm = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
 
-			bedImage = BedMeshGenerator.CreatePrintBedImage(printer).Multiply(theme.TabBodyBackground);
+			// Acquire the bed image
+			bedImage = BedMeshGenerator.CreatePrintBedImage(printer);
+
+			// Create a semi-transparent overlay with the theme color
+			var overlay = new ImageBuffer(bedImage.Width, bedImage.Height);
+			overlay.NewGraphics2D().Clear(new Color(theme.ActiveTabColor, 100));
+
+			// Render the overlay onto the bedImage to tint it and reduce its default overbearing light on dark contrast
+			bedImage.NewGraphics2D().Render(overlay, 0, 0);
+
+			// Preload GL texture for 2D bed image and use MipMaps
+			UiThread.RunOnIdle(() =>
+			{
+				ImageGlPlugin.GetImageGlPlugin(bedImage, createAndUseMipMaps: true);
+			});
 		}
 
 		private void Printer_SettingChanged(object sender, EventArgs e)

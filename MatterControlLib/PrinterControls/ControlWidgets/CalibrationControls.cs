@@ -64,6 +64,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				{
 					VAnchor = VAnchor.Center,
 					Margin = theme.ButtonSpacing,
+					Name = "Run Leveling Button",
 
 					ToolTipText = "Run Calibration".Localize()
 				};

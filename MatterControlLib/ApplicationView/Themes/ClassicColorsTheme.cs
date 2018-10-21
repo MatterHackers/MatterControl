@@ -126,17 +126,19 @@ namespace MatterHackers.MatterControl
 				new Color(
 					Color.White,
 					(darkTheme) ? 3 : 25));
-			theme.TabBarBackground = theme.ActiveTabColor.AdjustLightness(0.85).ToColor();
+			theme.TabBarBackground = theme.ActiveTabColor.WithLightnessAdjustment(0.85).ToColor();
 			theme.ThumbnailBackground = Color.Transparent;
 			theme.AccentMimimalOverlay = new Color(theme.Colors.PrimaryAccentColor, 50);
 			theme.InteractionLayerOverlayColor = new Color(theme.ActiveTabColor, 240);
 			theme.InactiveTabColor = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.White, darkTheme ? 20 : 60));
 
-			theme.SplitterBackground = theme.ActiveTabColor.AdjustLightness(0.87).ToColor();
+			theme.SplitterBackground = theme.ActiveTabColor.WithLightnessAdjustment(0.87).ToColor();
 
 			theme.BorderColor = new Color(darkTheme ? "#C8C8C8" : "#333");
 
 			theme.SplashAccentColor = theme.Colors.PrimaryAccentColor;
+
+			theme.BedBackgroundColor = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.Black, 20));
 
 			theme.PresetColors = new PresetColors();
 

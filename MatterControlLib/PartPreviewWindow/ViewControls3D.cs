@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -43,6 +44,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -170,6 +172,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new ToolbarSeparator(theme));
 
+			var optionsButton = new PopupMenuButton(AggContext.StaticData.LoadIcon("bed.png", 16, 16, theme.InvertIcons), theme)
+			{
+				Name = "Bed Options Menu",
+				//ToolTipText = "Options",
+				Enabled = true,
+				Margin = theme.ButtonSpacing,
+				VAnchor = VAnchor.Center,
+				DrawArrow = true
+			};
+			optionsButton.DynamicPopupContent = () =>
+			{
+				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+				theme.CreateMenuItems(popupMenu, this.BedMenuActions(sceneContext, theme), emptyMenu: false);
+
+				return popupMenu;
+			};
+			this.AddChild(optionsButton);
+
+			this.AddChild(new ToolbarSeparator(theme));
+
 			var undoButton = new IconButton(AggContext.StaticData.LoadIcon("Undo_grey_16x.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "3D View Undo",
@@ -203,30 +225,47 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(CreateSaveButton(theme));
 
-			var exportButton = new IconButton(AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons), theme)
-			{
-				ToolTipText = "Export".Localize()
-			};
-			exportButton.Click += (s, e) =>
-			{
-				this.MenuActions.FirstOrDefault(m => m.ID == "Export")?.Action?.Invoke();
-			};
-			this.AddChild(exportButton);
-
 			if (showPrintButton)
 			{
-				var printButton = new TextButton("Print", theme);
+				var printButton = new TextButton("Print", theme)
+				{
+					Name = "Print Button",
+					BackgroundColor = theme.AccentMimimalOverlay
+				};
 				printButton.Click += (s, e) =>
 				{
-					bool showAuthWindow = ApplicationController.GuestUserActive?.Invoke() ?? false;
-					if (showAuthWindow)
+					if (ProfileManager.Instance.Profiles.Count <= 0)
 					{
-						if (ApplicationSettings.Instance.get(ApplicationSettingsKey.SuppressAuthPanel) != "True")
-						{
-							//Launch window to prompt user to sign in
-							UiThread.RunOnIdle(() => DialogWindow.Show(PrinterSetup.GetBestStartPage()));
-						}
+						//Launch window to prompt user to sign in
+						UiThread.RunOnIdle(() => DialogWindow.Show(new SetupStepMakeModelName()));
 					}
+					// If no active printer but profiles exist, show select printer
+					// If printer exists, stash plate with undo operation, then load this scene onto the printer bed
+					else if (ApplicationController.Instance.ActivePrinter is PrinterConfig printer && printer.Settings.PrinterSelected)
+					{
+						Task.Run(async () =>
+						{
+							await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.SaveChanges);
+
+							// Clear bed to get new MCX on disk for this item
+							printer.Bed.ClearPlate();
+
+							var editContext = sceneContext.EditContext;
+
+							await printer.Bed.LoadContent(editContext);
+
+							// Switch to printer
+							ApplicationController.Instance.AppView.TabControl.SelectedTabKey = printer.Settings.GetValue(SettingsKey.printer_name);
+
+							// Slice and print
+							await ApplicationController.Instance.PrintPart(
+								editContext,
+								printer,
+								null,
+								CancellationToken.None);
+						});
+					}
+					
 				};
 				this.AddChild(printButton);
 			}
@@ -499,7 +538,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var saveAs = popupMenu.CreateMenuItem("Save As".Localize());
 					saveAs.Click += (s, e) => UiThread.RunOnIdle(() =>
 					{
-						this.MenuActions.FirstOrDefault(m => m.ID == "SaveAs")?.Action?.Invoke();
+						UiThread.RunOnIdle(() =>
+						{
+							DialogWindow.Show(
+								new SaveAsPage(
+									async (newName, destinationContainer) =>
+									{
+										// Save to the destination provider
+										if (destinationContainer is ILibraryWritableContainer writableContainer)
+										{
+											// Wrap stream with ReadOnlyStream library item and add to container
+											writableContainer.Add(new[]
+												{
+											new InMemoryLibraryItem(sceneContext.Scene)
+											{
+												Name = newName
+											}
+											});
+
+											destinationContainer.Dispose();
+										}
+									}));
+						});
 					});
 
 					return popupMenu;
@@ -635,39 +695,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				new NamedAction()
 				{
-					ID = "Insert",
-					Title = "Insert".Localize(),
-					Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons),
-					Action = () =>
-					{
-						var extensionsWithoutPeriod = new HashSet<string>(ApplicationSettings.OpenDesignFileParams.Split('|').First().Split(',').Select(s => s.Trim().Trim('.')));
-
-						foreach(var extension in ApplicationController.Instance.Library.ContentProviders.Keys)
-						{
-							extensionsWithoutPeriod.Add(extension.ToUpper());
-						}
-
-						var extensionsArray = extensionsWithoutPeriod.OrderBy(t => t).ToArray();
-
-						string filter = string.Format(
-							"{0}|{1}",
-							string.Join(",", extensionsArray),
-							string.Join("", extensionsArray.Select(e => $"*.{e.ToLower()};").ToArray()));
-
-						UiThread.RunOnIdle(() =>
-						{
-							AggContext.FileDialogs.OpenFileDialog(
-								new OpenFileDialogParams(filter, multiSelect: true),
-								(openParams) =>
-								{
-									ViewControls3D.LoadAndAddPartsToPlate(this, openParams.FileNames, sceneContext);
-								});
-						});
-					}
-				},
-				new ActionSeparator(),
-				new NamedAction()
-				{
 					ID = "Cut",
 					Title = "Cut".Localize(),
 					Shortcut = "Ctrl+X",
@@ -675,7 +702,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						sceneContext.Scene.Cut();
 					},
-					IsEnabled = () => sceneContext.EditableScene
+					IsEnabled = () => sceneContext.Scene.SelectedItem != null
 				},
 				new NamedAction()
 				{
@@ -686,7 +713,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						sceneContext.Scene.Copy();
 					},
-					IsEnabled = () => sceneContext.EditableScene
+					IsEnabled = () => sceneContext.Scene.SelectedItem != null
 				},
 				new NamedAction()
 				{
@@ -697,52 +724,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						sceneContext.Scene.Paste();
 					},
-					IsEnabled = () => sceneContext.EditableScene
+					IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
 				},
 				new ActionSeparator(),
 				new NamedAction()
 				{
-					ID = "Save",
-					Title = "Save".Localize(),
-					Shortcut = "Ctrl+S",
-					Action = () =>
-					{
-						ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.SaveChanges).ConfigureAwait(false);
-					},
-					IsEnabled = () => sceneContext.EditableScene
-				},
-				new NamedAction()
-				{
-					ID = "SaveAs",
-					Title = "Save As".Localize(),
-					Action = () => UiThread.RunOnIdle(() =>
-					{
-						DialogWindow.Show(
-							new SaveAsPage(
-								async (newName, destinationContainer) =>
-								{
-									// Save to the destination provider
-									if (destinationContainer is ILibraryWritableContainer writableContainer)
-									{
-										// Wrap stream with ReadOnlyStream library item and add to container
-										writableContainer.Add(new[]
-										{
-											new InMemoryLibraryItem(sceneContext.Scene)
-											{
-												Name = newName
-											}
-										});
-
-										destinationContainer.Dispose();
-									}
-								}));
-					}),
-					IsEnabled = () => sceneContext.EditableScene
-				},
-				new NamedAction()
-				{
 					ID = "Export",
 					Title = "Export".Localize(),
+					Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16),
 					Action = () =>
 					{
 						UiThread.RunOnIdle(async () =>
@@ -794,19 +783,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				},
 #endif
-				new ActionSeparator(),
-				new NamedAction()
-				{
-					ID = "Help",
-					Title = "Help".Localize() + "...",
-					Action = () =>
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							DialogWindow.Show(new HelpPage());
-						});
-					}
-				}
 			};
 		}
 
