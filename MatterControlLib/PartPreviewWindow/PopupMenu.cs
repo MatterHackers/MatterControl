@@ -405,12 +405,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return menuItem;
 		}
 
-		public MenuItem CreateMenuItem(GuiWidget guiWidget, string name)
+		public MenuItem CreateMenuItem(GuiWidget guiWidget, string name, ImageBuffer icon = null)
 		{
 			var menuItem = new MenuItem(guiWidget, theme)
 			{
 				Text = name,
-				Name = name + " Menu Item"
+				Name = name + " Menu Item",
+				Image = icon
 			};
 
 			this.AddChild(menuItem);
