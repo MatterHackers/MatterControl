@@ -131,16 +131,6 @@ namespace MatterHackers.MatterControl
 
 		public static Dictionary<string, IColorTheme> ThemeProviders { get; }
 
-		public static IColorTheme GetColorProvider(string key)
-		{
-			if (ThemeProviders.TryGetValue(key, out IColorTheme themeProvider))
-			{
-				return themeProvider;
-			}
-
-			return ThemeProviders.Values.First();
-		}
-
 		static AppContext()
 		{
 			ThemeProviders = new Dictionary<string, IColorTheme>();
@@ -1363,7 +1353,7 @@ namespace MatterHackers.MatterControl
 										(int)(printerConnection.SecondsToHoldTemperature) % 60);
 								}
 								else
-								{ 
+								{
 									progressStatus.Status = string.Format(
 										"{0} {1:0}s",
 										"Automatic Heater Shutdown in".Localize(),
@@ -2129,7 +2119,7 @@ namespace MatterHackers.MatterControl
 							printer.Settings.GetValue<double>(SettingsKey.bed_temperature)
 							: 0;
 						PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
-						if (!levelingData.IssuedLevelingTempWarning 
+						if (!levelingData.IssuedLevelingTempWarning
 							&& Math.Abs(requiredLevelingTemp - levelingData.BedTemperature) > 10)
 						{
 							// Show a warning that leveling may be a good idea if better adhesion needed
