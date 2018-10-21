@@ -289,7 +289,14 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(10, 10, 10, 2)
 			};
 
-			var themeSection = new SectionWidget("Theme".Localize(), themeColorPanel, theme, expanded: true, expandingContent: false)
+			var accentButtons = new ThemeColorPanel.AccentColorsWidget(AppContext.ThemeSet, 16)
+			{
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Center | VAnchor.Fit,
+				Margin = new BorderDouble(right: theme.DefaultContainerPadding)
+			};
+
+			var themeSection = new SectionWidget("Theme".Localize(), themeColorPanel, theme, accentButtons, expanded: true, expandingContent: false)
 			{
 				Name = "Theme Section",
 				HAnchor = HAnchor.Stretch,
