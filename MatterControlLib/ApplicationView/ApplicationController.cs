@@ -129,12 +129,7 @@ namespace MatterHackers.MatterControl
 
 		public static ThemeSet ThemeSet => themeset;
 
-		public static Dictionary<string, IColorTheme> ThemeProviders = new Dictionary<string, IColorTheme>()
-		{
-			{ "Classic" , new ClassicColorsTheme() },
-			{ "Solarized", new SolarizedTheme() },
-			{ "Affinity", new AffinityTheme() }
-		};
+		public static Dictionary<string, IColorTheme> ThemeProviders { get; }
 
 		public static IColorTheme GetColorProvider(string key)
 		{
@@ -148,6 +143,15 @@ namespace MatterHackers.MatterControl
 
 		static AppContext()
 		{
+			ThemeProviders = new Dictionary<string, IColorTheme>();
+
+			string themesPath = @"c:\temp\themes";
+
+			foreach (var directoryTheme in Directory.GetDirectories(themesPath).Select(d => new DirectoryTheme(d)))
+			{
+				ThemeProviders.Add(directoryTheme.Name, directoryTheme);
+			}
+
 			// Load theme
 			try
 			{
@@ -168,6 +172,14 @@ namespace MatterHackers.MatterControl
 
 			DefaultThumbView.ThumbColor = new Color(themeset.Theme.Colors.PrimaryTextColor, 30);
 			ActiveTheme.Instance = themeset.Theme.Colors;
+		}
+
+		public static void SetThemeAccentColor(Color accentColor)
+		{
+			themeset.Theme.PrimaryAccentColor = accentColor;
+			themeset.Theme.AccentMimimalOverlay = accentColor.WithAlpha(90);
+
+			AppContext.SetTheme(themeset);
 		}
 
 		public static void SetTheme(ThemeSet themeSet)
@@ -204,6 +216,8 @@ namespace MatterHackers.MatterControl
 		public ThemeConfig Theme { get; set; }
 
 		public ThemeConfig MenuTheme { get; set; }
+
+		public List<Color> AccentColors { get; set; } = new List<Color>();
 	}
 
 	public class ApplicationController
