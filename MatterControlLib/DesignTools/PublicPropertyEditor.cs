@@ -276,6 +276,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				var field = new DoubleField();
 				field.Initialize(0);
 				field.DoubleValue = doubleValue;
+
 				field.ValueChanged += (s, e) =>
 				{
 					var newValue = field.DoubleValue;
@@ -528,6 +529,25 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
+				field.ValueChanged += (s, e) =>
+				{
+					var newValue = field.Checked;
+
+					//field.Content
+					undoBuffer.AddAndDo(new UndoRedoActions(() =>
+					{
+						property.SetValue(!newValue);
+						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
+						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					},
+					() =>
+					{
+						property.SetValue(newValue);
+						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
+						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					}));
+				};
+
 				rowContainer = CreateSettingsRow(property, field);
 			}
 			// create a string editor
@@ -539,9 +559,22 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.Content.HAnchor = HAnchor.Stretch;
 				field.ValueChanged += (s, e) =>
 				{
-					property.SetValue(field.Value);
-					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					var newValue = field.Value;
+					var oldValue = property.Value;
+
+					//field.Content
+					undoBuffer.AddAndDo(new UndoRedoActions(() =>
+					{
+						property.SetValue(oldValue);
+						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
+						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					},
+					() =>
+					{
+						property.SetValue(newValue);
+						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
+						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					}));
 				};
 
 				rowContainer = CreateSettingsRow(property, field);
