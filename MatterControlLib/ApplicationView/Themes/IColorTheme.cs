@@ -35,10 +35,12 @@ namespace MatterHackers.MatterControl
 
 	public interface IColorTheme
 	{
+		string Name { get; }
 		string DefaultMode { get; }
 		Color DefaultColor { get; }
+
 		ThemeSet GetTheme(string mode, Color accentColor);
-		IEnumerable<Color> Colors { get; }
+		List<Color> Colors { get; }
 		IEnumerable<string> Modes { get; }
 	}
 }
