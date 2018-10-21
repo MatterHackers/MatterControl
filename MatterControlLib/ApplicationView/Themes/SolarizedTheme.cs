@@ -69,6 +69,8 @@ namespace MatterHackers.MatterControl
 			bool darkTheme = mode == "Dark";
 			var baseColors = darkTheme ? solarized.Dark : solarized.Light;
 
+			var fieldColor = darkTheme ? baseColors.Base0 : new Color("#");
+
 			return new ThemeSet()
 			{
 				Theme = new ThemeConfig()
@@ -104,19 +106,26 @@ namespace MatterHackers.MatterControl
 						}
 					},
 
-					RowBorder = new Color("#00303D"),
-
 					DropList = new ThemeConfig.DropListStyle()
 					{
 						Inactive = new ThemeConfig.StateColor()
 						{
-							BorderColor = new Color("#282828"),
-							/////////////////////////////
+							BackgroundColor = baseColors.Base02,
+							TextColor = baseColors.Base0
+						},
+						Hovered = new ThemeConfig.StateColor()
+						{
+							BackgroundColor = baseColors.Base01
 						},
 						Open = new ThemeConfig.StateColor()
 						{
 							BackgroundColor = new Color("#282828"),
 							TextColor = baseColors.Base0,
+						},
+						Focused = new ThemeConfig.StateColor()
+						{
+							BackgroundColor = baseColors.Base0,
+							TextColor = baseColors.Base02
 						},
 						Menu = new ThemeConfig.StateColor()
 						{
@@ -126,7 +135,8 @@ namespace MatterHackers.MatterControl
 						}
 					},
 
-					SectionBackgroundColor = new Color("#002630"),
+					RowBorder = darkTheme ? new Color("#00303D") : new Color("#DBD9CB"),
+					SectionBackgroundColor = darkTheme ? new Color("#002630") : new Color("#F2EBDA"),
 
 					SlightShade = new Color("#00000028"),
 					MinimalShade = new Color("#0000000F"),
