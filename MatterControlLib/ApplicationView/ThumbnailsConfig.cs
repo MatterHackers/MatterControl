@@ -83,6 +83,11 @@ namespace MatterHackers.MatterControl
 
 		public ImageBuffer LoadCachedImage(ILibraryItem libraryItem, int width, int height)
 		{
+			var staticDataFilename = Path.Combine("Images", "Thumbnails", CacheFilename(libraryItem, width, height));
+			if (AggContext.StaticData.FileExists(staticDataFilename))
+			{
+				return AggContext.StaticData.LoadImage(staticDataFilename);
+			}
 			ImageBuffer cachedItem = LoadImage(this.CachePath(libraryItem, width, height));
 			if (cachedItem != null)
 			{
@@ -118,11 +123,16 @@ namespace MatterHackers.MatterControl
 				$"{libraryItem.ID}.png");
 		}
 
+		public string CacheFilename(ILibraryItem libraryItem, int width, int height)
+		{
+			return $"{ libraryItem.ID}-{ width}x{ height}.png";
+		}
+
 		public string CachePath(ILibraryItem libraryItem, int width, int height)
 		{
 			return ApplicationController.CacheablePath(
 				Path.Combine("Thumbnails", "Library"),
-				$"{libraryItem.ID}-{width}x{height}.png");
+				CacheFilename(libraryItem, width, height));
 		}
 
 		internal void QueueForGeneration(Func<Task> func)
