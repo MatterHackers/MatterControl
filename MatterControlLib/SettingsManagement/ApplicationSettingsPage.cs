@@ -395,18 +395,6 @@ namespace MatterHackers.MatterControl
 			advancedPanel.Children<SettingsItem>().First().Border = new BorderDouble(0, 1);
 		}
 
-		public void BeforePopup()
-		{
-			// Refresh theme mode buttons
-			string activeMode = UserSettings.Instance.get(UserSettingsKey.ThemeMode);
-
-			foreach (var button in themeColorPanel.Children[1].Children<ThemePreviewButton>())
-			{
-				button.IsActive = activeMode == button.Mode;
-				button.PreviewThemeColor(theme.Colors.SourceColor);
-			}
-		}
-
 		private void AddSettingsRow(GuiWidget widget, GuiWidget container)
 		{
 			container.AddChild(widget);
