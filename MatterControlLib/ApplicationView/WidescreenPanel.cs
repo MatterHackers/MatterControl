@@ -170,6 +170,26 @@ namespace MatterHackers.MatterControl
 
 			popupMenu.CreateHorizontalLine();
 
+			var themeRow = new GuiWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+			};
+
+			themeRow.AddChild(new TextWidget("Theme".Localize(), pointSize: menuTheme.DefaultFontSize, textColor: menuTheme.Colors.PrimaryTextColor)
+			{
+				VAnchor = VAnchor.Center,
+			});
+
+			themeRow.AddChild(new ThemeColorPanel.AccentColorsWidget(AppContext.ThemeSet, 16, 2)
+			{
+				HAnchor = HAnchor.Right
+			});
+
+			menuItem = popupMenu.CreateMenuItem(themeRow, "Theme Menu Item", AggContext.StaticData.LoadIcon("theme.png", 16, 16, menuTheme.InvertIcons));
+
+			popupMenu.CreateHorizontalLine();
+
 			menuItem = popupMenu.CreateMenuItem("About".Localize() + " MatterControl", indicatorIcon);
 			menuItem.Click += (s, e) => ApplicationController.Instance.ShowAboutPage();
 			return popupMenu;
