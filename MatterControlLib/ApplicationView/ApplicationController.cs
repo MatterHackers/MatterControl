@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -174,7 +174,6 @@ namespace MatterHackers.MatterControl
 		{
 			themeset = themeSet;
 
-			//var theme = ApplicationController.ThemeProvider.GetTheme(color);
 			File.WriteAllText(
 				ProfileManager.Instance.ProfileThemeSetPath,
 				JsonConvert.SerializeObject(
@@ -182,7 +181,7 @@ namespace MatterHackers.MatterControl
 					Formatting.Indented,
 					new JsonSerializerSettings
 					{
-						ContractResolver = new WritablePropertiesOnlyResolver()
+						ContractResolver = new ThemeContractResolver()
 					}));
 
 			UiThread.RunOnIdle(() =>
@@ -195,15 +194,6 @@ namespace MatterHackers.MatterControl
 				// Explicitly fire ReloadAll in response to user interaction
 				ApplicationController.Instance.ReloadAll();
 			});
-		}
-
-		private class WritablePropertiesOnlyResolver : DefaultContractResolver
-		{
-			protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
-			{
-				IList<JsonProperty> props = base.CreateProperties(type, memberSerialization);
-				return props.Where(p => p.Writable).ToList();
-			}
 		}
 	}
 
