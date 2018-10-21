@@ -1,0 +1,191 @@
+{
+  "ThemeName": "Classic Dark",
+  "AccentColors": [
+    "#AC193D",
+    "#DC4FAD",
+    "#FF8119",
+    "#008A17",
+    "#004B8B",
+    "#008299",
+    "#5DB2FF",
+    "#4617B4",
+    "#8C0095",
+    "#585858"
+  ],
+  "Theme": {
+    "DefaultFontSize": 11,
+    "Colors": {
+      "PrimaryTextColor": "#FFFFFF",
+      "SourceColor": "#AC193D"
+    },
+    "PresetColors": {
+      "MaterialPreset": "#FF7F00",
+      "QualityPreset": "#FFFF00",
+      "UserOverride": "#445FDC96"
+    },
+    "IsDarkTheme": true,
+    "SlightShade": "#00000028",
+    "MinimalShade": "#0000000F",
+    "Shade": "#00000078",
+    "DarkShade": "#000000BE",
+    "ActiveTabColor": "#404040",
+    "TabBarBackground": "#363636",
+    "InactiveTabColor": "#4E4E4E",
+    "InteractionLayerOverlayColor": "#404040F0",
+    "SplitterBackground": "#383838",
+    "TabBodyBackground": "#00000000",
+    "ToolbarButtonBackground": "#00000000",
+    "ThumbnailBackground": "#00000000",
+    "AccentMimimalOverlay": "#EC678832",
+    "EditFieldColors": {
+      "Focused": {
+        "BackgroundColor": "#EEEEEE",
+        "ForegroundColor": "#00000000",
+        "BorderColor": "#FF7F00",
+        "TextColor": "#222222"
+      },
+      "Hovered": {
+        "BackgroundColor": "#EEEEEE",
+        "ForegroundColor": "#00000000",
+        "BorderColor": "#FF7F00",
+        "TextColor": "#00000000"
+      },
+      "Inactive": {
+        "BackgroundColor": "#EEEEEE",
+        "ForegroundColor": "#00000000",
+        "BorderColor": "#00000000",
+        "TextColor": "#222222"
+      }
+    },
+    "LightTextColor": "#00000000",
+    "BorderColor": "#C8C8C8",
+    "BorderColor40": "#00000000",
+    "BorderColor20": "#00000000",
+    "RowBorder": "#424242",
+    "DropList": {
+      "Open": {
+        "BackgroundColor": "#8A8A8A",
+        "ForegroundColor": "#00000000",
+        "BorderColor": "#00000000",
+        "TextColor": "#EEEEEE"
+      },
+      "Menu": {
+        "BackgroundColor": "#EEEEEE",
+        "ForegroundColor": "#00000000",
+        "BorderColor": "#333333",
+        "TextColor": "#333333"
+      },
+      "Focused": {
+        "BackgroundColor": "#282828",
+        "ForegroundColor": "#00000000",
+        "BorderColor": "#FF7F00",
+        "TextColor": "#EEEEEE"
+      },
+      "Hovered": {
+        "BackgroundColor": "#404040",
+        "ForegroundColor": "#00000000",
+        "BorderColor": "#FF7F00",
+        "TextColor": "#EEEEEE"
+      },
+      "Inactive": {
+        "BackgroundColor": "#404040",
+        "ForegroundColor": "#00000000",
+        "BorderColor": "#656565",
+        "TextColor": "#EEEEEE"
+      }
+    },
+    "DisabledColor": "#00000000",
+    "SplashAccentColor": "#EC6788",
+    "BedBackgroundColor": "#3B3B3B",
+    "PrimaryAccentColor": "#EC6788",
+    "SectionBackgroundColor": "#393939"
+  },
+  "MenuTheme": {
+    "DefaultFontSize": 11,
+    "Colors": {
+      "PrimaryTextColor": "#222222",
+      "SourceColor": "#AC193D"
+    },
+    "PresetColors": {
+      "MaterialPreset": "#FF7F00",
+      "QualityPreset": "#FFFF00",
+      "UserOverride": "#445FDC96"
+    },
+    "IsDarkTheme": false,
+    "SlightShade": "#00000028",
+    "MinimalShade": "#0000000F",
+    "Shade": "#00000078",
+    "DarkShade": "#000000BE",
+    "ActiveTabColor": "#F1F1F1",
+    "TabBarBackground": "#363636",
+    "InactiveTabColor": "#4E4E4E",
+    "InteractionLayerOverlayColor": "#404040F0",
+    "SplitterBackground": "#383838",
+    "TabBodyBackground": "#00000000",
+    "ToolbarButtonBackground": "#00000000",
+    "ThumbnailBackground": "#00000000",
+    "AccentMimimalOverlay": "#EC678832",
+    "EditFieldColors": {
+      "Focused": {
+        "BackgroundColor": "#EEEEEE",
+        "ForegroundColor": "#00000000",
+        "BorderColor": "#FF7F00",
+        "TextColor": "#222222"
+      },
+      "Hovered": {
+        "BackgroundColor": "#EEEEEE",
+        "ForegroundColor": "#00000000",
+        "BorderColor": "#FF7F00",
+        "TextColor": "#00000000"
+      },
+      "Inactive": {
+        "BackgroundColor": "#EEEEEE",
+        "ForegroundColor": "#00000000",
+        "BorderColor": "#00000000",
+        "TextColor": "#222222"
+      }
+    },
+    "LightTextColor": "#00000000",
+    "BorderColor": "#C8C8C8",
+    "BorderColor40": "#00000000",
+    "BorderColor20": "#00000000",
+    "RowBorder": "#474747",
+    "DropList": {
+      "Open": {
+        "BackgroundColor": "#8A8A8A",
+        "ForegroundColor": "#00000000",
+        "BorderColor": "#00000000",
+        "TextColor": "#EEEEEE"
+      },
+      "Menu": {
+        "BackgroundColor": "#EEEEEE",
+        "ForegroundColor": "#00000000",
+        "BorderColor": "#333333",
+        "TextColor": "#333333"
+      },
+      "Focused": {
+        "BackgroundColor": "#282828",
+        "ForegroundColor": "#00000000",
+        "BorderColor": "#FF7F00",
+        "TextColor": "#EEEEEE"
+      },
+      "Hovered": {
+        "BackgroundColor": "#404040",
+        "ForegroundColor": "#00000000",
+        "BorderColor": "#FF7F00",
+        "TextColor": "#EEEEEE"
+      },
+      "Inactive": {
+        "BackgroundColor": "#404040",
+        "ForegroundColor": "#00000000",
+        "BorderColor": "#656565",
+        "TextColor": "#EEEEEE"
+      }
+    },
+    "DisabledColor": "#00000000",
+    "SplashAccentColor": "#EC6788",
+    "BedBackgroundColor": "#3B3B3B",
+    "PrimaryAccentColor": "#EC6788",
+    "SectionBackgroundColor": "#333333"
+  }
+}

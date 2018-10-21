@@ -34,6 +34,7 @@ namespace MatterHackers.MatterControl
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
+	using MatterHackers.Agg.Platform;
 	using Newtonsoft.Json;
 
 	public class SerializedTheme : IColorTheme
@@ -43,8 +44,6 @@ namespace MatterHackers.MatterControl
 		public string DefaultMode { get; set; }
 
 		public Color DefaultColor { get; set; }
-
-		public List<Color> Colors { get; set; }
 
 		public IEnumerable<string> Modes { get; set; }
 
@@ -64,13 +63,12 @@ namespace MatterHackers.MatterControl
 		public DirectoryTheme(string directory)
 		{
 			var themeSetData = JsonConvert.DeserializeObject<SerializedTheme>(
-				File.ReadAllText(Path.Combine(directory, "theme.json")));
+				AggContext.StaticData.ReadAllText(Path.Combine(directory, "theme.json")));
 
 			path = directory;
 
 			this.Name = Path.GetFileName(directory);
-			this.Colors = themeSetData.Colors;
-			this.Modes = Directory.GetFiles(directory).Where(p => Path.GetFileName(p) != "theme.json").Select(p => Path.GetFileNameWithoutExtension(p)).ToArray();
+			this.Modes = AggContext.StaticData.GetFiles(directory).Where(p => Path.GetFileName(p) != "theme.json").Select(p => Path.GetFileNameWithoutExtension(p)).ToArray();
 
 			this.DefaultColor = themeSetData.DefaultColor;
 			this.DefaultMode = themeSetData.DefaultMode;
@@ -82,14 +80,12 @@ namespace MatterHackers.MatterControl
 
 		public Color DefaultColor { get; }
 
-		public List<Color> Colors { get; set; }
-
 		public IEnumerable<string> Modes { get; }
 
 		public ThemeSet GetTheme(string mode, Color accentColor)
 		{
 			return JsonConvert.DeserializeObject<ThemeSet>(
-				File.ReadAllText(Path.Combine(path, mode + ".json")));
+				AggContext.StaticData.ReadAllText(Path.Combine(path, mode + ".json")));
 		}
 	}
 }

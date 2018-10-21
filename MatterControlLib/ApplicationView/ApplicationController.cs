@@ -145,11 +145,15 @@ namespace MatterHackers.MatterControl
 		{
 			ThemeProviders = new Dictionary<string, IColorTheme>();
 
-			string themesPath = @"c:\temp\themes";
+			string themesPath = Path.Combine("Themes", "System");
 
-			foreach (var directoryTheme in Directory.GetDirectories(themesPath).Select(d => new DirectoryTheme(d)))
+			// Load available themes from StaticData
+			if (AggContext.StaticData.DirectoryExists(themesPath))
+			{
+				foreach (var directoryTheme in AggContext.StaticData.GetDirectories(themesPath).Select(d => new DirectoryTheme(d)))
 			{
 				ThemeProviders.Add(directoryTheme.Name, directoryTheme);
+			}
 			}
 
 			// Load theme
