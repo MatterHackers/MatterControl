@@ -236,7 +236,7 @@ namespace MatterHackers.MatterControl.EeProm
 				{
 					ActionButtonLabel = "Export EEPROM Settings".Localize(),
 					Title = "Export EEPROM".Localize(),
-					FileName = $"eeprom_settings_{base.GetSanitizedPrinterName()}.ini"
+					FileName = $"eeprom_settings_{base.GetSanitizedPrinterName()}"
 				},
 				(saveParams) =>
 				{
