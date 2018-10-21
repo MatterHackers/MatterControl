@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 
 			this.AlwaysOnTopOfMain = true;
 			this.MinimumSize = new Vector2(200, 200);
-			this.BackgroundColor = theme.ActiveTabColor;
+			this.SetBackgroundColor();
 
 			var defaultPadding = theme.DefaultContainerPadding;
 			this.Padding = new BorderDouble(defaultPadding, defaultPadding, defaultPadding, 2);
@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl
 				theme = ApplicationController.Instance.Theme;
 
 				// fix the main window background color if needed
-				this.BackgroundColor = theme.ActiveTabColor;
+				this.SetBackgroundColor();
 
 				// find out where the contents we put in last time are
 				int thisIndex = GetChildIndex(panel);
@@ -173,6 +173,11 @@ namespace MatterHackers.MatterControl
 			}, ref unregisterEvents);
 
 			return panel;
+		}
+
+		private void SetBackgroundColor()
+		{
+			this.BackgroundColor = theme.InactiveTabColor;
 		}
 	}
 }
