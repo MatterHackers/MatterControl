@@ -50,9 +50,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private IColorTheme _themeProvider;
 		private GuiWidget previewButtonPanel;
 
-		public ThemeColorPanel(ThemeConfig activeTheme)
+		public ThemeColorPanel(ThemeConfig activeTheme, AccentColorsWidget colorSelector)
 			: base (FlowDirection.TopToBottom)
 		{
+			this.colorSelector = colorSelector;
 			string currentProviderName = UserSettings.Instance.get(UserSettingsKey.ThemeName) ?? "";
 
 			if (AppContext.ThemeProviders.TryGetValue(currentProviderName, out IColorTheme currentProvider))
@@ -201,9 +202,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		{
 			lastColor = accentColor;
 
-			foreach (var colorButton in colorSelector.ColorButtons)
+			if (colorSelector != null)
 			{
-				colorButton.BorderColor = (colorButton.SourceColor == accentColor) ? Color.White : Color.Transparent;
+				foreach (var colorButton in colorSelector.ColorButtons)
+				{
+					colorButton.BorderColor = (colorButton.SourceColor == accentColor) ? Color.White : Color.Transparent;
+				}
 			}
 
 			themeSet.Theme.PrimaryAccentColor = accentColor;

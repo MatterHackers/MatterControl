@@ -283,18 +283,20 @@ namespace MatterHackers.MatterControl
 
 			this.AddSettingsRow(section, generalPanel);
 
-			themeColorPanel = new ThemeColorPanel(theme)
-			{
-				HAnchor = HAnchor.Stretch,
-				Margin = new BorderDouble(10, 10, 10, 2)
-			};
-
 			var accentButtons = new ThemeColorPanel.AccentColorsWidget(AppContext.ThemeSet, 16)
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Center | VAnchor.Fit,
 				Margin = new BorderDouble(right: theme.DefaultContainerPadding)
 			};
+
+			themeColorPanel = new ThemeColorPanel(theme, accentButtons)
+			{
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(10, 10, 10, 2)
+			};
+
+			accentButtons.ThemeColorPanel = themeColorPanel;
 
 			var themeSection = new SectionWidget("Theme".Localize(), themeColorPanel, theme, accentButtons, expanded: true, expandingContent: false)
 			{
