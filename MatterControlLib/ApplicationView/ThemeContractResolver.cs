@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
 using Newtonsoft.Json;
-using System.Runtime.CompilerServices;
 
 namespace MatterHackers.MatterControl
 {

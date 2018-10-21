@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
@@ -42,12 +43,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private GuiWidget icon1;
 		private GuiWidget icon2;
 		private GuiWidget icon3;
-		private ThemeConfig theme;
 		private ImageWidget activeIcon;
 
-		public ThemePreviewButton(ThemeConfig theme, ThemeColorPanel themeColorPanel)
+		public ThemePreviewButton(ThemeSet themeSet, ThemeColorPanel themeColorPanel)
 		{
-			this.theme = theme;
+			this.ThemeSet = themeSet;
+
+			var theme = this.ThemeSet.Theme;
+
 			activeColor = theme.Colors.SourceColor;
 
 			var primaryAccentColor = theme.PrimaryAccentColor;
@@ -135,14 +138,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			};
 			overlay.Click += (s, e) =>
 			{
-				UserSettings.Instance.set(UserSettingsKey.ThemeMode, this.Mode);
-
 				// Activate the theme
-				themeColorPanel.SetThemeColor(activeColor, this.Mode);
+				themeColorPanel.SetThemeColor(this.ThemeSet, activeColor, this.Mode);
 			};
 
 			this.AddChild(overlay);
 		}
+
+		public ThemeSet ThemeSet { get; }
 
 		public bool IsActive
 		{

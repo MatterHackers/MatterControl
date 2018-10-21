@@ -40,6 +40,8 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
+using static MatterHackers.MatterControl.AppContext;
 
 namespace MatterHackers.MatterControl
 {
@@ -53,6 +55,7 @@ namespace MatterHackers.MatterControl
 			this.WindowTitle = this.HeaderText = "MatterControl " + "Settings".Localize();
 			this.WindowSize = new Vector2(700 * GuiWidget.DeviceScale, 600 * GuiWidget.DeviceScale);
 
+			contentRow.Padding = theme.DefaultContainerPadding;
 			contentRow.Padding = contentRow.Padding.Clone(top: 0);
 
 			var generalPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -286,41 +289,21 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(10, 10, 10, 2)
 			};
 
-			var droplist = new MHDropDownList("Custom", theme, maxHeight: 200)
+			var themeSection = new SectionWidget("Theme".Localize(), themeColorPanel, theme, expanded: true, expandingContent: false)
 			{
-				Margin = new BorderDouble(0, 0, 10, 0)
+				Name = "Theme Section",
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+				Margin = 0
 			};
+			contentRow.AddChild(themeSection);
 
-			int i = 0;
+			theme.ApplyBoxStyle(themeSection);
 
-			foreach (var item in AppContext.ThemeProviders)
-			{
-				var newItem = droplist.AddItem(item.Key);
+			var imageWidget = themeSection.Children.First().Descendants<ImageWidget>().FirstOrDefault();
+			imageWidget.Image = AggContext.StaticData.LoadIcon("theme.png", 16, 16, theme.InvertIcons);
 
-				if (item.Value == themeColorPanel.ThemeProvider)
-				{
-					droplist.SelectedIndex = i;
-				}
-
-				i++;
-			}
-
-			droplist.SelectionChanged += (s, e) =>
-			{
-				if (AppContext.ThemeProviders.TryGetValue(droplist.SelectedValue, out IColorTheme provider))
-				{
-					themeColorPanel.ThemeProvider = provider;
-					UserSettings.Instance.set(UserSettingsKey.ThemeName, droplist.SelectedValue);
-				}
-			};
-
-			var themeRow = new SettingsItem("Theme".Localize(), droplist, theme);
-			generalPanel.AddChild(themeRow);
-			generalPanel.AddChild(themeColorPanel);
-
-			themeColorPanel.Border = themeRow.Border;
-			themeColorPanel.BorderColor = themeRow.BorderColor;
-			themeRow.Border = 0;
+			themeSection.Margin = new BorderDouble(0, 10);
 
 			var advancedPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
