@@ -120,9 +120,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					});
 				}
 
-				foreach (var mode in provider.Modes)
+				foreach (var themeName in provider.ThemeNames)
 				{
-					var themeset = provider.GetTheme(mode, accentColor);
+					var themeset = provider.GetTheme(themeName, provider.DefaultColor);
 
 					var previewContainer = new GuiWidget()
 					{
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						VAnchor = VAnchor.Absolute,
 						Width = 80,
 						Height = 65,
-						Mode = mode,
+						Mode = themeName,
 						Border = 1,
 						BorderColor = theme.BorderColor20,
 						Margin = theme.DefaultContainerPadding

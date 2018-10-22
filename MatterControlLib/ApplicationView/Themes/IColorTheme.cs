@@ -39,6 +39,6 @@ namespace MatterHackers.MatterControl
 		Color DefaultColor { get; }
 
 		ThemeSet GetTheme(string mode, Color accentColor);
-		IEnumerable<string> Modes { get; }
+		IEnumerable<string> ThemeNames { get; }
 	}
 }

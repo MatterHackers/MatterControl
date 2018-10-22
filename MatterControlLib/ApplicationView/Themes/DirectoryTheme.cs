@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl
 
 		public Color DefaultColor { get; set; }
 
-		public IEnumerable<string> Modes { get; set; }
+		public IEnumerable<string> ThemeNames { get; set; }
 
 		public ThemeSet GetTheme(string mode, Color accentColor)
 		{
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl
 			path = directory;
 
 			this.Name = Path.GetFileName(directory);
-			this.Modes = AggContext.StaticData.GetFiles(directory).Where(p => Path.GetFileName(p) != "theme.json").Select(p => Path.GetFileNameWithoutExtension(p)).ToArray();
+			this.ThemeNames = AggContext.StaticData.GetFiles(directory).Where(p => Path.GetFileName(p) != "theme.json").Select(p => Path.GetFileNameWithoutExtension(p)).ToArray();
 
 			this.DefaultColor = themeSetData.DefaultColor;
 		}
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl
 
 		public Color DefaultColor { get; }
 
-		public IEnumerable<string> Modes { get; }
+		public IEnumerable<string> ThemeNames { get; }
 
 		public ThemeSet GetTheme(string mode, Color accentColor)
 		{
