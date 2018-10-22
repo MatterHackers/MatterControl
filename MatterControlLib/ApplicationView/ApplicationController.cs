@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl
 			if (themeset == null)
 			{
 				var themeProvider = ThemeProviders.Values.First();
-				themeset = themeProvider.GetTheme("Dark", themeProvider.DefaultColor);
+				themeset = themeProvider.GetTheme(themeProvider.ThemeNames.First(), themeProvider.DefaultColor);
 			}
 
 			DefaultThumbView.ThumbColor = new Color(themeset.Theme.Colors.PrimaryTextColor, 30);
