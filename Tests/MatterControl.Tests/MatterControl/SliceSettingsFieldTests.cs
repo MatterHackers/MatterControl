@@ -64,12 +64,16 @@ namespace MatterControl.Tests.MatterControl
 	[TestFixture, Category("SliceSettingsTests"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class SliceSettingsFieldTests
 	{
-		[Test]
-		public Task TestExistsForEachUIFieldType()
+		[SetUp]
+		public void TestSetup()
 		{
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+		}
 
+		[Test]
+		public Task TestExistsForEachUIFieldType()
+		{
 			var testClass = this.GetType();
 			var thisClassMethods = testClass.GetMethods(BindingFlags.Public | BindingFlags.Instance);
 
@@ -271,12 +275,10 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, RunInApplicationDomain]
+		[Test]
 		public async Task ComPortFieldTest()
 		{
 			FrostedSerialPort.MockPortsForTest = true;
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var theme = new ThemeConfig();
 
@@ -331,12 +333,9 @@ namespace MatterControl.Tests.MatterControl
 			Assert.Fail();
 		}
 
-		[Test, RunInApplicationDomain]
+		[Test]
 		public async Task MultilineStringFieldTest()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-
 			var theme = new ThemeConfig();
 			theme.RebuildTheme();
 
