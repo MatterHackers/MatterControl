@@ -41,8 +41,6 @@ namespace MatterHackers.MatterControl
 	{
 		public string Name { get; set; }
 
-		public string DefaultMode { get; set; }
-
 		public Color DefaultColor { get; set; }
 
 		public IEnumerable<string> Modes { get; set; }
@@ -71,12 +69,9 @@ namespace MatterHackers.MatterControl
 			this.Modes = AggContext.StaticData.GetFiles(directory).Where(p => Path.GetFileName(p) != "theme.json").Select(p => Path.GetFileNameWithoutExtension(p)).ToArray();
 
 			this.DefaultColor = themeSetData.DefaultColor;
-			this.DefaultMode = themeSetData.DefaultMode;
 		}
 
 		public string Name { get; }
-
-		public string DefaultMode { get; }
 
 		public Color DefaultColor { get; }
 
