@@ -35,7 +35,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 	public class ThemePreviewButton : GuiWidget
 	{
 		private GuiWidget accentColor;
-		private Color activeColor;
 		private GuiWidget secondaryBackground;
 		private GuiWidget tertiaryBackground;
 		private GuiWidget icon1;
@@ -46,9 +45,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		{
 			this.ThemeSet = themeSet;
 
-			var theme = this.ThemeSet.Theme;
-
-			activeColor = theme.Colors.SourceColor;
+			var theme = themeSet.Theme;
 
 			var primaryAccentColor = theme.PrimaryAccentColor;
 
@@ -128,7 +125,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			overlay.Click += (s, e) =>
 			{
 				// Activate the theme
-				themeColorPanel.SetThemeColor(this.ThemeSet, activeColor, this.Mode);
+				themeColorPanel.SetThemeColor(this.ThemeSet, primaryAccentColor, this.Mode);
 			};
 
 			this.AddChild(overlay);
@@ -146,8 +143,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			icon1.BackgroundColor = adjustedAccentColor;
 			icon2.BackgroundColor = adjustedAccentColor;
 			icon3.BackgroundColor = adjustedAccentColor;
-
-			activeColor = adjustedAccentColor;
 		}
 	}
 }
