@@ -780,6 +780,15 @@ namespace MatterHackers.MatterControl
 			operationIconsByType.Add(typeof(ImageObject3D), AggContext.StaticData.LoadIcon("140.png", 16, 16, theme.InvertIcons));
 		}
 
+		internal void BlinkTab(ITab tab)
+		{
+			var theme = this.Theme;
+			if (tab is GuiWidget guiWidget)
+			{
+				guiWidget.Descendants<TextWidget>().FirstOrDefault().FlashBackground(theme.PrimaryAccentColor.WithContrast(theme.Colors.PrimaryTextColor, 6).ToColor());
+			}
+		}
+
 		public void ShowApplicationHelp()
 		{
 			UiThread.RunOnIdle(() =>
