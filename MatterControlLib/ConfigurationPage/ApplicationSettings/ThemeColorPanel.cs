@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.CreateThemeModeButtons();
 		}
 
-		public ImageBuffer CheckMark { get; } = AggContext.StaticData.LoadIcon("426.png", 16, 16, invertImage: true);
+		public ImageBuffer CheckMark { get; } = AggContext.StaticData.LoadIcon("fa-check_16.png", 16, 16, invertImage: true);
 
 		private Color accentPanelColor;
 
@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						upArrow.LineTo(0, 0);
 
 						graphics.Render(upArrow, new Vector2(0, 35), AppContext.Theme.PrimaryAccentColor);
-						graphics.Render(this.CheckMark, 3, 18);
+						graphics.Render(this.CheckMark, 4, 17);
 
 						imageBuffer.SetPreMultiply();
 
