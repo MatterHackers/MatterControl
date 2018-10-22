@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						Margin = theme.DefaultContainerPadding
 					});
 
-					if (AppContext.ThemeSet.ThemeName == themeset.ThemeName)
+					if (AppContext.ThemeSet.Name == themeset.Name)
 					{
 						var imageBuffer = new ImageBuffer(35, 35);
 						var graphics = imageBuffer.NewGraphics2D();

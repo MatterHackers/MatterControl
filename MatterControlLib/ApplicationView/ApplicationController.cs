@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl
 
 			UiThread.RunOnIdle(() =>
 			{
-				UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, themeset.ThemeName);
+				UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, themeset.Name);
 
 				//Set new user selected Default
 				ActiveTheme.Instance = themeset.Theme.Colors;
@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl
 
 	public class ThemeSet
 	{
-		public string ThemeName { get; set; }
+		public string Name { get; set; }
 
 		public ThemeConfig Theme { get; set; }
 
