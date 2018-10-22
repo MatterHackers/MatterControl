@@ -79,8 +79,12 @@ namespace MatterHackers.MatterControl
 
 		public ThemeSet GetTheme(string mode, Color accentColor)
 		{
-			return JsonConvert.DeserializeObject<ThemeSet>(
+			var themeset = JsonConvert.DeserializeObject<ThemeSet>(
 				AggContext.StaticData.ReadAllText(Path.Combine(path, mode + ".json")));
+
+			themeset.SetAccentColor(accentColor);
+
+			return themeset;
 		}
 	}
 }
