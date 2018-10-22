@@ -53,6 +53,7 @@ namespace MatterHackers.MatterControl
 			this.ActualTextEditWidget = new TextEditWidget(text, 0, 0, theme.DefaultFontSize, pixelWidth, pixelHeight, multiLine, tabIndex: tabIndex, typeFace: typeFace)
 			{
 				VAnchor = VAnchor.Bottom,
+				BackgroundColor = Color.Transparent
 			};
 
 			var internalWidget = this.ActualTextEditWidget.InternalTextEditWidget;
