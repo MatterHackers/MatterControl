@@ -27,10 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
@@ -43,7 +41,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private GuiWidget icon1;
 		private GuiWidget icon2;
 		private GuiWidget icon3;
-		private ImageWidget activeIcon;
 
 		public ThemePreviewButton(ThemeSet themeSet, ThemeColorPanel themeColorPanel)
 		{
@@ -122,14 +119,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			};
 			this.AddChild(tertiaryBackground);
 
-			this.AddChild(activeIcon = new ImageWidget(themeColorPanel.CheckMark)
-			{
-				HAnchor = HAnchor.Absolute,
-				VAnchor = VAnchor.Absolute,
-				OriginRelativeParent = new Vector2(45, 20),
-				Visible = false
-			});
-
 			var overlay = new GuiWidget
 			{
 				VAnchor = VAnchor.Stretch,
@@ -146,12 +135,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		}
 
 		public ThemeSet ThemeSet { get; }
-
-		public bool IsActive
-		{
-			get => activeIcon.Visible;
-			set => activeIcon.Visible = value;
-		}
 
 		public string Mode { get; internal set; }
 

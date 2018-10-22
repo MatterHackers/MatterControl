@@ -144,36 +144,35 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						Height = 65,
 						Mode = mode,
 						Border = 1,
-						IsActive = AppContext.ThemeSet.ThemeName == themeset.ThemeName,
 						BorderColor = theme.BorderColor20,
 						Margin = theme.DefaultContainerPadding
 					});
 
 					if (AppContext.ThemeSet.ThemeName == themeset.ThemeName)
 					{
-						var imageBuffer = new ImageBuffer(20, 20);
+						var imageBuffer = new ImageBuffer(35, 35);
 						var graphics = imageBuffer.NewGraphics2D();
 
-						var arrowHeight = 8;
+						previewContainer.BorderColor = AppContext.Theme.AccentMimimalOverlay;
+						previewContainer.Border = 1;
+
+						var arrowHeight = 35;
 
 						var upArrow = new VertexStorage();
-						upArrow.MoveTo(-arrowHeight, -arrowHeight);
-						upArrow.LineTo(arrowHeight, -arrowHeight);
+						upArrow.MoveTo(0, 0);
+						upArrow.LineTo(arrowHeight, 0);
+						upArrow.LineTo(0, -arrowHeight);
 						upArrow.LineTo(0, 0);
 
-						var dropArrowBounds = new RectangleDouble(0, 0, 20, arrowHeight +2);
-
-						var center = dropArrowBounds.Center;
-						center.Y += 3;
-
-						graphics.Render(upArrow, center, accentPanelColor);
+						graphics.Render(upArrow, new Vector2(0, 35), AppContext.Theme.PrimaryAccentColor);
+						graphics.Render(this.CheckMark, 3, 18);
 
 						imageBuffer.SetPreMultiply();
 
 						previewContainer.AddChild(new ImageWidget(imageBuffer, false)
 						{
-							HAnchor = HAnchor.Center,
-							VAnchor = VAnchor.Bottom,
+							HAnchor = HAnchor.Left,
+							VAnchor = VAnchor.Top,
 						});
 					}
 				}
