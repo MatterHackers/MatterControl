@@ -37,21 +37,21 @@
     "AccentMimimalOverlay": "#B5890050",
     "EditFieldColors": {
       "Focused": {
-        "BackgroundColor": "#657B83",
+        "BackgroundColor": "#fff",
         "ForegroundColor": "#00000000",
-        "BorderColor": "#00000000",
-        "TextColor": "#EEE8D5"
+        "BorderColor": "#8C846A",
+        "TextColor": "#222"
       },
       "Hovered": {
-        "BackgroundColor": "#93A1A1",
+        "BackgroundColor": "#f1f1f1",
         "ForegroundColor": "#00000000",
-        "BorderColor": "#00000000",
-        "TextColor": "#00000000"
+        "BorderColor": "#8D8464",
+        "TextColor": "#657B83"
       },
       "Inactive": {
-        "BackgroundColor": "#EEE8D5",
+        "BackgroundColor": "#FDF6E3",
         "ForegroundColor": "#00000000",
-        "BorderColor": "#00000000",
+        "BorderColor": "#CEC7B1",
         "TextColor": "#657B83"
       }
     },
@@ -62,10 +62,10 @@
     "RowBorder": "#DBD9CB",
     "DropList": {
       "Open": {
-        "BackgroundColor": "#282828",
+        "BackgroundColor": "#D8D4C4",
         "ForegroundColor": "#00000000",
         "BorderColor": "#00000000",
-        "TextColor": "#657B83"
+        "TextColor": "#222"
       },
       "Focused": {
         "BackgroundColor": "#657B83",
@@ -74,15 +74,15 @@
         "TextColor": "#EEE8D5"
       },
       "Hovered": {
-        "BackgroundColor": "#93A1A1",
+        "BackgroundColor": "#DDD6C1",
         "ForegroundColor": "#00000000",
-        "BorderColor": "#00000000",
-        "TextColor": "#00000000"
+        "BorderColor": "#CEC7B1",
+        "TextColor": "#657B83"
       },
       "Inactive": {
-        "BackgroundColor": "#EEE8D5",
+        "BackgroundColor": "#FDF6E3",
         "ForegroundColor": "#00000000",
-        "BorderColor": "#00000000",
+        "BorderColor": "#CEC7B1",
         "TextColor": "#657B83"
       }
     },
