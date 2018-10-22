@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterControl.Printing;
 using MatterHackers.VectorMath;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,6 +39,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	{
 		private GCodeMemoryFile switchToGCode = null;
 		PrinterConnection printerConnection;
+		private object locker = new object();
+		private List<string> commandQueue = new List<string>();
 
 		public GCodeSwitcher(string gcodeFilename, PrinterConnection printerConnection, int startLine = 0)
 		{
@@ -62,6 +65,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override string ReadLine()
 		{
+			lock (locker)
+			{
+				if (commandQueue.Count > 0)
+				{
+					var lineToSend = commandQueue[0];
+					commandQueue.RemoveAt(0);
+					return lineToSend;
+				}
+			}
+
 			if (LineIndex < GCodeFile.LineCount)
 			{
 				if (LineIndex > 1
@@ -81,28 +94,34 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							var switchBottom = switchToGCode.GetLayerBottom(i);
 							if (switchBottom >= currentBottom)
 							{
+								bool change = false;
 								// is the current gcode the same or bigger than the new gcode
 								if (currentBottom >= switchBottom)
 								{
-									// switch the first time we can
-									GCodeFile = switchToGCode;
-									LineIndex = switchToGCode.GetFirstLayerInstruction(i);
-									var line = $"G92 E{switchToGCode.Instruction(LineIndex).EPosition:0.###}";
-									switchToGCode = null;
-									return line;
+									change = true;
 								}
 								else // only switch if we are within one layer height of the new gcode
 								{
 									if (currentBottom - switchBottom < switchToGCode.GetLayerHeight(layerIndex))
 									{
-										GCodeFile = switchToGCode;
-										LineIndex = switchToGCode.GetFirstLayerInstruction(i);
-										switchToGCode = null;
-										var line = $"G92 E{switchToGCode.Instruction(LineIndex).EPosition:0.###}";
-										switchToGCode = null;
-										return line;
+										change = true;
 									}
 								}
+
+								if(change)
+								{
+									GCodeFile = switchToGCode;
+									LineIndex = switchToGCode.GetFirstLayerInstruction(i);
+									var line = $"G92 E{switchToGCode.Instruction(LineIndex).EPosition:0.###}";
+									lock (locker)
+									{
+										commandQueue.Add(line);
+									}
+									switchToGCode = null;
+									// return a dwell to exhaust the command queue on the firmware
+									return "G4 P1";
+								}
+
 								// we are done evaluating after the first found layer
 								break;
 							}
