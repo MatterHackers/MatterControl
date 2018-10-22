@@ -50,7 +50,10 @@ namespace MatterHackers.MatterControl
 				get => this.Parent.BackgroundColor;
 				set
 				{
-					this.Parent.BackgroundColor = value;
+					if (this.Parent != null)
+					{
+						this.Parent.BackgroundColor = value;
+					}
 				}
 			}
 		}
