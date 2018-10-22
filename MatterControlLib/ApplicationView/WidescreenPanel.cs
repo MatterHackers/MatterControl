@@ -31,6 +31,7 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
@@ -191,7 +192,18 @@ namespace MatterHackers.MatterControl
 
 			popupMenu.CreateHorizontalLine();
 
-			menuItem = popupMenu.CreateMenuItem("About".Localize() + " MatterControl", indicatorIcon);
+			var imageBuffer = new ImageBuffer(18, 18);
+
+			// x64 indicator icon
+			if (IntPtr.Size == 8)
+			{
+				var graphics = imageBuffer.NewGraphics2D();
+				graphics.Clear(menuTheme.ActiveTabColor);
+				graphics.Rectangle(imageBuffer.GetBoundingRect(), menuTheme.PrimaryAccentColor);
+				graphics.DrawString("64", imageBuffer.Width / 2, imageBuffer.Height / 2, 8, Agg.Font.Justification.Center, Agg.Font.Baseline.BoundsCenter, color: menuTheme.PrimaryAccentColor);
+			}
+
+			menuItem = popupMenu.CreateMenuItem("About".Localize() + " MatterControl", imageBuffer);
 			menuItem.Click += (s, e) => ApplicationController.Instance.ShowAboutPage();
 			return popupMenu;
 		}
