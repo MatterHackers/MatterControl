@@ -52,9 +52,11 @@ namespace MatterHackers.MatterControl
 			//graphics2D.Rectangle(LocalBounds, Color.Black);
 			double bottom = textScrollWidget.Position0To1 * (Height - thumbHeight);// the 2 is the border
 			RectangleDouble thumb = new RectangleDouble(0, bottom, Width, bottom + thumbHeight);// the 1 is the border
-			graphics2D.FillRectangle(thumb, Color.DarkGray);
+			graphics2D.FillRectangle(thumb, this.ThumbColor);
 			base.OnDraw(graphics2D);
 		}
+
+		public Color ThumbColor { get; set; } = Color.DarkGray;
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{

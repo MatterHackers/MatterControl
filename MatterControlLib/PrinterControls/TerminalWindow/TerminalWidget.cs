@@ -95,8 +95,12 @@ namespace MatterHackers.MatterControl
 			headerRow.AddChild(autoUppercase);
 
 			// Body
-			var bodyRow = new FlowLayoutWidget();
-			bodyRow.AnchorAll();
+			var bodyRow = new FlowLayoutWidget()
+			{
+				Margin = new BorderDouble(bottom: 4),
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			};
 			this.AddChild(bodyRow);
 
 			textScrollWidget = new TextScrollWidget(printer, printer.Connection.TerminalLog.PrinterLines)
@@ -109,7 +113,12 @@ namespace MatterHackers.MatterControl
 				Padding = new BorderDouble(3, 0)
 			};
 			bodyRow.AddChild(textScrollWidget);
-			bodyRow.AddChild(new TextScrollBar(textScrollWidget, 15));
+			bodyRow.AddChild(new TextScrollBar(textScrollWidget, 15)
+			{
+				ThumbColor = theme.AccentMimimalOverlay,
+				BackgroundColor = theme.SlightShade,
+				Margin = 0
+			});
 
 			// Input Row
 			var inputRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
@@ -176,7 +185,7 @@ namespace MatterHackers.MatterControl
 			this.AddChild(footerRow);
 
 			var sendButton = theme.CreateDialogButton("Send".Localize());
-			sendButton.Margin = 0;
+			sendButton.Margin = theme.ButtonSpacing;
 			sendButton.Click += (s, e) =>
 			{
 				SendManualCommand();
