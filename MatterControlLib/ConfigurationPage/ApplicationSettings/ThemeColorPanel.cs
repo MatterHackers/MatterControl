@@ -122,8 +122,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 				foreach (var themeName in provider.ThemeNames)
 				{
-					var themeset = provider.GetTheme(themeName, provider.DefaultColor);
-
 					var previewContainer = new GuiWidget()
 					{
 						HAnchor = HAnchor.Fit | HAnchor.Left,
@@ -131,9 +129,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					};
 					previewButtonPanel.AddChild(previewContainer);
 
-					if (themeset.ThemeName == AppContext.ThemeSet.ThemeName)
+					ThemeSet themeset;
+
+					if (themeName == AppContext.ThemeSet.ThemeID)
 					{
 						previewContainer.BackgroundColor = theme.MinimalShade;
+						themeset = AppContext.ThemeSet;
+					}
+					else
+					{
+						themeset = provider.GetTheme(themeName, provider.DefaultColor);
 					}
 
 					previewContainer.AddChild(new ThemePreviewButton(themeset, this)
@@ -148,7 +153,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						Margin = theme.DefaultContainerPadding
 					});
 
-					if (AppContext.ThemeSet.Name == themeset.Name)
+					if (themeName == AppContext.ThemeSet.ThemeID)
 					{
 						var imageBuffer = new ImageBuffer(35, 35);
 						var graphics = imageBuffer.NewGraphics2D();
@@ -183,7 +188,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		public void PreviewTheme(Color sourceAccentColor)
 		{
-			var previewButton = previewButtonPanel.Descendants<ThemePreviewButton>().FirstOrDefault(t => t.ThemeSet.ThemeName == AppContext.ThemeSet.ThemeName);
+			var previewButton = previewButtonPanel.Descendants<ThemePreviewButton>().FirstOrDefault(t => t.ThemeSet.ThemeID == AppContext.ThemeSet.ThemeID);
 			if (previewButton != null)
 			{
 				previewButton.PreviewThemeColor(sourceAccentColor);

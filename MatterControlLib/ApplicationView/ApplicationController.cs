@@ -201,6 +201,8 @@ namespace MatterHackers.MatterControl
 
 	public class ThemeSet
 	{
+		public string ThemeID { get; set; }
+
 		public string Name { get; set; }
 
 		public ThemeConfig Theme { get; set; }
