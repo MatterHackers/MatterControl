@@ -108,7 +108,7 @@
     "MinimalShade": "#0000000F",
     "Shade": "#00000078",
     "DarkShade": "#000000BE",
-    "ActiveTabColor": "#2D2F31",
+    "ActiveTabColor": "#404040",
     "TabBarBackground": "#B1B1B1",
     "InactiveTabColor": "#D0D0D0",
     "InteractionLayerOverlayColor": "#D0D0D0F0",
@@ -119,22 +119,22 @@
     "AccentMimimalOverlay": "#B5890050",
     "EditFieldColors": {
       "Focused": {
-        "BackgroundColor": "#00000000",
+        "BackgroundColor": "#CCCCCC",
         "ForegroundColor": "#00000000",
-        "BorderColor": "#00000000",
-        "TextColor": "#00000000"
+        "BorderColor": "#FF7F00",
+        "TextColor": "#222222"
       },
       "Hovered": {
-        "BackgroundColor": "#00000000",
+        "BackgroundColor": "#333333",
         "ForegroundColor": "#00000000",
-        "BorderColor": "#00000000",
-        "TextColor": "#00000000"
+        "BorderColor": "#FF7F00",
+        "TextColor": "#FFFFFF"
       },
       "Inactive": {
-        "BackgroundColor": "#00000000",
+        "BackgroundColor": "#303030",
         "ForegroundColor": "#00000000",
-        "BorderColor": "#00000000",
-        "TextColor": "#00000000"
+        "BorderColor": "#282828",
+        "TextColor": "#EEEEEE"
       }
     },
     "LightTextColor": "#00000000",
@@ -144,34 +144,28 @@
     "RowBorder": "#00000000",
     "DropList": {
       "Open": {
-        "BackgroundColor": "#00000000",
+        "BackgroundColor": "#282828",
         "ForegroundColor": "#00000000",
         "BorderColor": "#00000000",
-        "TextColor": "#00000000"
-      },
-      "Menu": {
-        "BackgroundColor": "#00000000",
-        "ForegroundColor": "#00000000",
-        "BorderColor": "#00000000",
-        "TextColor": "#00000000"
+        "TextColor": "#839496"
       },
       "Focused": {
-        "BackgroundColor": "#00000000",
+        "BackgroundColor": "#839496",
         "ForegroundColor": "#00000000",
         "BorderColor": "#00000000",
-        "TextColor": "#00000000"
+        "TextColor": "#073642"
       },
       "Hovered": {
-        "BackgroundColor": "#00000000",
+        "BackgroundColor": "#586E75",
         "ForegroundColor": "#00000000",
         "BorderColor": "#00000000",
         "TextColor": "#00000000"
       },
       "Inactive": {
-        "BackgroundColor": "#00000000",
+        "BackgroundColor": "#073642",
         "ForegroundColor": "#00000000",
         "BorderColor": "#00000000",
-        "TextColor": "#00000000"
+        "TextColor": "#839496"
       }
     },
     "DisabledColor": "#00000000",
