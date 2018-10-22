@@ -168,12 +168,7 @@ namespace MatterHackers.MatterControl
 
 		public static void SetThemeAccentColor(Color accentColor)
 		{
-			themeset.Theme.PrimaryAccentColor = accentColor;
-			themeset.Theme.AccentMimimalOverlay = accentColor.WithAlpha(90);
-
-			themeset.MenuTheme.PrimaryAccentColor = accentColor;
-			themeset.MenuTheme.AccentMimimalOverlay = accentColor.WithAlpha(90);
-
+			themeset.SetAccentColor(accentColor);
 			AppContext.SetTheme(themeset);
 		}
 
@@ -213,6 +208,15 @@ namespace MatterHackers.MatterControl
 		public ThemeConfig MenuTheme { get; set; }
 
 		public List<Color> AccentColors { get; set; } = new List<Color>();
+
+		public void SetAccentColor(Color accentColor)
+		{
+			this.Theme.PrimaryAccentColor = accentColor;
+			this.Theme.AccentMimimalOverlay = accentColor.WithAlpha(90);
+
+			this.MenuTheme.PrimaryAccentColor = accentColor;
+			this.MenuTheme.AccentMimimalOverlay = accentColor.WithAlpha(90);
+		}
 	}
 
 	public class ApplicationController
