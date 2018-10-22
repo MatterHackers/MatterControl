@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		protected override string ConvertValue(string newValue)
 		{
 			// Ensure we have a two value CSV or force to '0,0'
-			return (newValue?.Split(',').Length == 3) ? newValue.Trim() : "0,0";
+			return (newValue?.Split(',').Length == 3) ? newValue.Trim() : "0,0,0";
 		}
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
