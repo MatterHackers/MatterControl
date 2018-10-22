@@ -368,12 +368,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					new MatePoint(this)
 					{
 						Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom),
-						AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+						AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
 					},
 					new MatePoint(menu)
 					{
 						Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-						AltMate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
+						AltMate = new MateOptions(MateEdge.Right, MateEdge.Bottom)
 					},
 					altBounds: popupBounds);
 			}
