@@ -502,7 +502,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override Color BorderColor
 		{
-			get =>  (this.IsActiveTab) ? theme.Colors.PrimaryAccentColor : base.BorderColor;
+			get =>  (this.IsActiveTab) ? theme.PrimaryAccentColor : base.BorderColor;
 			set => base.BorderColor = value;
 		}
 

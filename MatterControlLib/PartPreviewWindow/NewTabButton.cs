@@ -75,6 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Height = theme.MicroButtonHeight,
 				Width = theme.MicroButtonHeight,
 				Name = "Create New",
+				HoverColor = theme.AccentMimimalOverlay
 			};
 
 			this.AddChild(IconButton);

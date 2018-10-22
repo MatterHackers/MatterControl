@@ -29,28 +29,25 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
 	public class ThemePreviewButton : GuiWidget
 	{
 		private GuiWidget accentColor;
-		private Color activeColor;
 		private GuiWidget secondaryBackground;
 		private GuiWidget tertiaryBackground;
 		private GuiWidget icon1;
 		private GuiWidget icon2;
 		private GuiWidget icon3;
-		private ThemeConfig theme;
-		private ImageWidget activeIcon;
 
-		public ThemePreviewButton(ThemeConfig theme, ThemeColorPanel themeColorPanel)
+		public ThemePreviewButton(ThemeSet themeSet, ThemeColorPanel themeColorPanel)
 		{
-			this.theme = theme;
-			activeColor = theme.Colors.SourceColor;
+			this.ThemeSet = themeSet;
 
-			var primaryAccentColor = theme.Colors.PrimaryAccentColor;
+			var theme = themeSet.Theme;
+
+			var primaryAccentColor = theme.PrimaryAccentColor;
 
 			this.Padding = 8;
 			this.BackgroundColor = theme.ActiveTabColor;
@@ -119,14 +116,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			};
 			this.AddChild(tertiaryBackground);
 
-			this.AddChild(activeIcon = new ImageWidget(themeColorPanel.CheckMark)
-			{
-				HAnchor = HAnchor.Absolute,
-				VAnchor = VAnchor.Absolute,
-				OriginRelativeParent = new Vector2(45, 20),
-				Visible = false
-			});
-
 			var overlay = new GuiWidget
 			{
 				VAnchor = VAnchor.Stretch,
@@ -135,20 +124,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			};
 			overlay.Click += (s, e) =>
 			{
-				UserSettings.Instance.set(UserSettingsKey.ThemeMode, this.Mode);
-
 				// Activate the theme
-				themeColorPanel.SetThemeColor(activeColor, this.Mode);
+				themeColorPanel.SetThemeColor(this.ThemeSet, primaryAccentColor, this.Mode);
 			};
 
 			this.AddChild(overlay);
 		}
 
-		public bool IsActive
-		{
-			get => activeIcon.Visible;
-			set => activeIcon.Visible = value;
-		}
+		public ThemeSet ThemeSet { get; }
 
 		public string Mode { get; internal set; }
 
@@ -160,8 +143,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			icon1.BackgroundColor = adjustedAccentColor;
 			icon2.BackgroundColor = adjustedAccentColor;
 			icon3.BackgroundColor = adjustedAccentColor;
-
-			activeColor = adjustedAccentColor;
 		}
 	}
 }

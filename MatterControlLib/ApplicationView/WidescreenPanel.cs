@@ -31,6 +31,7 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
@@ -170,7 +171,39 @@ namespace MatterHackers.MatterControl
 
 			popupMenu.CreateHorizontalLine();
 
-			menuItem = popupMenu.CreateMenuItem("About".Localize() + " MatterControl", indicatorIcon);
+			var themeRow = new GuiWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+			};
+
+			themeRow.AddChild(new TextWidget("Theme".Localize(), pointSize: menuTheme.DefaultFontSize, textColor: menuTheme.Colors.PrimaryTextColor)
+			{
+				VAnchor = VAnchor.Center,
+			});
+
+			themeRow.AddChild(new ThemeColorPanel.AccentColorsWidget(AppContext.ThemeSet, 16, 2)
+			{
+				HAnchor = HAnchor.Right
+			});
+
+			menuItem = popupMenu.CreateMenuItem(themeRow, "Theme", AggContext.StaticData.LoadIcon("theme.png", 16, 16, menuTheme.InvertIcons));
+			menuItem.Padding = menuItem.Padding.Clone(right: 5);
+
+			popupMenu.CreateHorizontalLine();
+
+			var imageBuffer = new ImageBuffer(18, 18);
+
+			// x64 indicator icon
+			if (IntPtr.Size == 8)
+			{
+				var graphics = imageBuffer.NewGraphics2D();
+				graphics.Clear(menuTheme.ActiveTabColor);
+				graphics.Rectangle(imageBuffer.GetBoundingRect(), menuTheme.PrimaryAccentColor);
+				graphics.DrawString("64", imageBuffer.Width / 2, imageBuffer.Height / 2, 8, Agg.Font.Justification.Center, Agg.Font.Baseline.BoundsCenter, color: menuTheme.PrimaryAccentColor);
+			}
+
+			menuItem = popupMenu.CreateMenuItem("About".Localize() + " MatterControl", imageBuffer);
 			menuItem.Click += (s, e) => ApplicationController.Instance.ShowAboutPage();
 			return popupMenu;
 		}

@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 
@@ -37,17 +38,37 @@ namespace MatterHackers.MatterControl
 	{
 		private TextEditWidget passwordCoverText;
 
-		public MHPasswordTextEditWidget(string text = "", double x = 0, double y = 0, double pointSize = 12, double pixelWidth = 0, double pixelHeight = 0, bool multiLine = false, int tabIndex = 0, string messageWhenEmptyAndNotSelected = "")
-			: base(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine, tabIndex, messageWhenEmptyAndNotSelected)
+		private class TextEditOverlay : TextEditWidget
+		{
+			public TextEditOverlay(string text, int pointSize, double pixelWidth, double pixelHeight, bool multiLine)
+				: base(text, 0, 0, pointSize, pixelWidth, pixelHeight, multiLine)
+			{
+			}
+
+			public override Color BackgroundColor
+			{
+				get => this.Parent.BackgroundColor;
+				set
+				{
+					if (this.Parent != null)
+					{
+						this.Parent.BackgroundColor = value;
+					}
+				}
+			}
+		}
+
+		public MHPasswordTextEditWidget(string text, ThemeConfig theme, double pixelWidth = 0, double pixelHeight = 0, bool multiLine = false, int tabIndex = 0, string messageWhenEmptyAndNotSelected = "")
+			: base(text, theme, pixelWidth, pixelHeight, multiLine, tabIndex, messageWhenEmptyAndNotSelected)
 		{
 			// remove this so that we can have other content first (the hidden letters)
 			this.RemoveChild(noContentFieldDescription);
 
-			passwordCoverText = new TextEditWidget(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine)
+			passwordCoverText = new TextEditOverlay(text, theme.DefaultFontSize, pixelWidth, pixelHeight, multiLine)
 			{
 				Selectable = false,
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Bottom
+				VAnchor = VAnchor.Bottom,
 			};
 			passwordCoverText.MinimumSize = new Vector2(Math.Max(passwordCoverText.MinimumSize.X, pixelWidth), Math.Max(passwordCoverText.MinimumSize.Y, pixelHeight));
 			this.AddChild(passwordCoverText);

@@ -47,10 +47,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void Initialize(int tabIndex)
 		{
-			dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize)
-			{
-				BorderColor = theme.GetBorderColor(75)
-			};
+			dropDownList = new MHDropDownList("Name".Localize(), theme);
 
 			dropDownList.AddItem(
 				"Back".Localize(),

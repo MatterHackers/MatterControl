@@ -60,8 +60,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			double sliderWidth = 300 * GuiWidget.DeviceScale;
 			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
 
-			Color sliderTrackColor = theme.SlightShade;
-
 			SettingsRow settingsRow;
 
 			{
@@ -73,7 +71,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				// Remove the HorizontalSpacer
 				settingsRow.Children.Last().Close();
 
-				feedRateRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, minFeedRateRatio, maxFeedRateRatio)
+				feedRateRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, theme, minFeedRateRatio, maxFeedRateRatio)
 				{
 					Name = "Feed Rate Slider",
 					Margin = new BorderDouble(5, 0),
@@ -82,8 +80,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					VAnchor = VAnchor.Center,
 					TotalWidthInPixels = sliderWidth,
 				};
-				feedRateRatioSlider.View.TrackColor = sliderTrackColor;
-				feedRateRatioSlider.View.TrackRadius = 4;
+				theme.ApplySliderStyle(feedRateRatioSlider);
 				feedRateRatioSlider.ValueChanged += (sender, e) =>
 				{
 					feedRateValue.ActuallNumberEdit.Value = Math.Round(feedRateRatioSlider.Value, 2);
@@ -100,7 +97,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				};
 				settingsRow.AddChild(feedRateRatioSlider);
 
-				feedRateValue = new MHNumberEdit(Math.Round(FeedRateMultiplyerStream.FeedRateRatio, 2), allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
+				feedRateValue = new MHNumberEdit(Math.Round(FeedRateMultiplyerStream.FeedRateRatio, 2), theme, allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
 				{
 					Name = "Feed Rate NumberEdit",
 					SelectAllOnFocus = true,
@@ -132,7 +129,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				// Remove the HorizontalSpacer
 				settingsRow.Children.Last().Close();
 
-				extrusionRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, minExtrutionRatio, maxExtrusionRatio, Orientation.Horizontal)
+				extrusionRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, theme, minExtrutionRatio, maxExtrusionRatio, Orientation.Horizontal)
 				{
 					Name = "Extrusion Multiplier Slider",
 					TotalWidthInPixels = sliderWidth,
@@ -141,8 +138,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					Margin = new BorderDouble(5, 0),
 					Value = ExtrusionMultiplyerStream.ExtrusionRatio
 				};
-				extrusionRatioSlider.View.TrackColor = sliderTrackColor;
-				extrusionRatioSlider.View.TrackRadius = 4;
+				theme.ApplySliderStyle(extrusionRatioSlider);
 				extrusionRatioSlider.ValueChanged += (sender, e) =>
 				{
 					extrusionValue.ActuallNumberEdit.Value = Math.Round(extrusionRatioSlider.Value, 2);
@@ -159,7 +155,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				};
 				settingsRow.AddChild(extrusionRatioSlider);
 
-				extrusionValue = new MHNumberEdit(Math.Round(ExtrusionMultiplyerStream.ExtrusionRatio, 2), allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
+				extrusionValue = new MHNumberEdit(Math.Round(ExtrusionMultiplyerStream.ExtrusionRatio, 2), theme, allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
 				{
 					Name = "Extrusion Multiplier NumberEdit",
 					SelectAllOnFocus = true,

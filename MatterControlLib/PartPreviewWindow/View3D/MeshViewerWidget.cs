@@ -328,7 +328,7 @@ namespace MatterHackers.MeshVisualizer
 				Blue = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.Blue, 195))
 			};
 
-			gCodeMeshColor = new Color(theme.Colors.PrimaryAccentColor, 35);
+			gCodeMeshColor = new Color(theme.PrimaryAccentColor, 35);
 
 			scene.SelectionChanged += (sender, e) =>
 			{

@@ -40,6 +40,8 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
+using static MatterHackers.MatterControl.AppContext;
 
 namespace MatterHackers.MatterControl
 {
@@ -53,6 +55,7 @@ namespace MatterHackers.MatterControl
 			this.WindowTitle = this.HeaderText = "MatterControl " + "Settings".Localize();
 			this.WindowSize = new Vector2(700 * GuiWidget.DeviceScale, 600 * GuiWidget.DeviceScale);
 
+			contentRow.Padding = theme.DefaultContainerPadding;
 			contentRow.Padding = contentRow.Padding.Clone(top: 0);
 
 			var generalPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -159,10 +162,7 @@ namespace MatterHackers.MatterControl
 
 #if !__ANDROID__
 			// ThumbnailRendering
-			var thumbnailsModeDropList = new DropDownList("", theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
-			{
-				BorderColor = theme.GetBorderColor(75)
-			};
+			var thumbnailsModeDropList = new MHDropDownList("", theme, maxHeight: 200);
 			thumbnailsModeDropList.AddItem("Flat".Localize(), "orthographic");
 			thumbnailsModeDropList.AddItem("3D".Localize(), "raytraced");
 
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl
 
 			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
 			double sliderWidth = 100 * GuiWidget.DeviceScale;
-			var textSizeSlider = new SolidSlider(new Vector2(), sliderThumbWidth, .7, 1.4)
+			var textSizeSlider = new SolidSlider(new Vector2(), sliderThumbWidth, theme, .7, 1.4)
 			{
 				Name = "Text Size Slider",
 				Margin = new BorderDouble(5, 0),
@@ -242,6 +242,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Center,
 				TotalWidthInPixels = sliderWidth,
 			};
+			theme.ApplySliderStyle(textSizeSlider);
 
 			var optionalContainer = new FlowLayoutWidget()
 			{
@@ -283,47 +284,36 @@ namespace MatterHackers.MatterControl
 
 			this.AddSettingsRow(section, generalPanel);
 
-			themeColorPanel = new ThemeColorPanel(theme)
+			var accentButtons = new ThemeColorPanel.AccentColorsWidget(AppContext.ThemeSet, 16)
 			{
-				HAnchor = HAnchor.Stretch
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Center | VAnchor.Fit,
+				Margin = new BorderDouble(right: theme.DefaultContainerPadding)
 			};
 
-			var droplist = new DropDownList("Custom", theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
+			themeColorPanel = new ThemeColorPanel(theme, accentButtons)
 			{
-				BorderColor = theme.GetBorderColor(75),
-				Margin = new BorderDouble(0, 0, 10, 0)
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(10, 10, 10, 2)
 			};
 
-			int i = 0;
+			accentButtons.ThemeColorPanel = themeColorPanel;
 
-			foreach (var item in AppContext.ThemeProviders)
+			var themeSection = new SectionWidget("Theme".Localize(), themeColorPanel, theme, accentButtons, expanded: true, expandingContent: false)
 			{
-				var newItem = droplist.AddItem(item.Key);
-
-				if (item.Value == themeColorPanel.ThemeProvider)
-				{
-					droplist.SelectedIndex = i;
-				}
-
-				i++;
-			}
-
-			droplist.SelectionChanged += (s, e) =>
-			{
-				if (AppContext.ThemeProviders.TryGetValue(droplist.SelectedValue, out IColorTheme provider))
-				{
-					themeColorPanel.ThemeProvider = provider;
-					UserSettings.Instance.set(UserSettingsKey.ThemeName, droplist.SelectedValue);
-				}
+				Name = "Theme Section",
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+				Margin = 0
 			};
+			contentRow.AddChild(themeSection);
 
-			var themeRow = new SettingsItem("Theme".Localize(), droplist, theme);
-			generalPanel.AddChild(themeRow);
-			generalPanel.AddChild(themeColorPanel);
+			theme.ApplyBoxStyle(themeSection);
 
-			themeColorPanel.Border = themeRow.Border;
-			themeColorPanel.BorderColor = themeRow.BorderColor;
-			themeRow.Border = 0;
+			var imageWidget = themeSection.Children.First().Descendants<ImageWidget>().FirstOrDefault();
+			imageWidget.Image = AggContext.StaticData.LoadIcon("theme.png", 16, 16, theme.InvertIcons);
+
+			themeSection.Margin = new BorderDouble(0, 10);
 
 			var advancedPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -396,18 +386,6 @@ namespace MatterHackers.MatterControl
 				advancedPanel);
 
 			advancedPanel.Children<SettingsItem>().First().Border = new BorderDouble(0, 1);
-		}
-
-		public void BeforePopup()
-		{
-			// Refresh theme mode buttons
-			string activeMode = UserSettings.Instance.get(UserSettingsKey.ThemeMode);
-
-			foreach (var button in themeColorPanel.Children[1].Children<ThemePreviewButton>())
-			{
-				button.IsActive = activeMode == button.Mode;
-				button.PreviewThemeColor(theme.Colors.SourceColor);
-			}
 		}
 
 		private void AddSettingsRow(GuiWidget widget, GuiWidget container)

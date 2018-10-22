@@ -73,7 +73,7 @@ namespace MatterHackers.Agg.UI
 
 				var movable = new WindowWidget(systemWindow)
 				{
-					WindowBorderColor = new Color(theme.Colors.PrimaryAccentColor, 175)
+					WindowBorderColor = new Color(theme.PrimaryAccentColor, 175)
 				};
 				overlayWindow.AddChild(movable);
 

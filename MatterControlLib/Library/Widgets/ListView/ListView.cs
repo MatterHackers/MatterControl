@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			contentView = new IconListView(theme);
 
-			loadingBackgroundColor = new Color(theme.Colors.PrimaryAccentColor, 10);
+			loadingBackgroundColor = new Color(theme.PrimaryAccentColor, 10);
 
 			this.theme = theme;
 			this.LibraryContext = context;
@@ -330,7 +330,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						this.AddChild(this.contentView);
 
 						this.ScrollArea.AddChild(
-							loadingIndicator = new ImageSequenceWidget(ApplicationController.Instance.GetProcessingSequence(theme.Colors.PrimaryAccentColor))
+							loadingIndicator = new ImageSequenceWidget(ApplicationController.Instance.GetProcessingSequence(theme.PrimaryAccentColor))
 							{
 								VAnchor = VAnchor.Top,
 								HAnchor = HAnchor.Center,

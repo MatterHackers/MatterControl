@@ -319,7 +319,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 			if (this.isSelectedItem)
 			{
-				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+				this.BackgroundColor = theme.PrimaryAccentColor;
 				this.partLabel.TextColor = Color.White;
 				this.selectionCheckBox.TextColor = Color.White;
 
@@ -332,11 +332,11 @@ namespace MatterHackers.MatterControl.PrintHistory
 				RectangleDouble Bounds = LocalBounds;
 				RoundedRect rectBorder = new RoundedRect(Bounds, 0);
 
-				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+				this.BackgroundColor = theme.PrimaryAccentColor;
 				this.partLabel.TextColor = Color.White;
 				this.selectionCheckBox.TextColor = Color.White;
 
-				graphics2D.Render(new Stroke(rectBorder, 3), ActiveTheme.Instance.PrimaryAccentColor);
+				graphics2D.Render(new Stroke(rectBorder, 3), theme.PrimaryAccentColor);
 			}
 			else
 			{

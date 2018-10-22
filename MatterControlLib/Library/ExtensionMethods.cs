@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.Library
 		// Color ExtensionMethods
 		public static ImageBuffer MultiplyWithPrimaryAccent(this ImageBuffer sourceImage)
 		{
-			return sourceImage.Multiply(ActiveTheme.Instance.PrimaryAccentColor);
+			return sourceImage.Multiply(ApplicationController.Instance.Theme.PrimaryAccentColor);
 		}
 
 		public static ImageBuffer SetPreMultiply(this ImageBuffer sourceImage)
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public static ImageBuffer AlphaToPrimaryAccent(this ImageBuffer sourceImage)
 		{
-			return sourceImage.AnyAlphaToColor(AppContext.Theme.Colors.PrimaryAccentColor);
+			return sourceImage.AnyAlphaToColor(ApplicationController.Instance.Theme.PrimaryAccentColor);
 		}
 	}
 }

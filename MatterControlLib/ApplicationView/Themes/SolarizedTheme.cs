@@ -69,15 +69,17 @@ namespace MatterHackers.MatterControl
 			bool darkTheme = mode == "Dark";
 			var baseColors = darkTheme ? solarized.Dark : solarized.Light;
 
+			var fieldColor = darkTheme ? baseColors.Base0 : new Color("#");
+
 			return new ThemeSet()
 			{
 				Theme = new ThemeConfig()
 				{
 					IsDarkTheme = darkTheme,
+					PrimaryAccentColor = accentColor,
 					Colors = new ThemeColors()
 					{
 						PrimaryTextColor = baseColors.Base0,
-						PrimaryAccentColor = accentColor,
 						SourceColor = accentColor
 					},
 					PresetColors = new PresetColors()
@@ -86,6 +88,55 @@ namespace MatterHackers.MatterControl
 						QualityPreset = new Color("#FFFF00"),
 						UserOverride = new Color("#445FDC96")
 					},
+					EditFieldColors = new ThemeConfig.ThreeStateColor()
+					{
+						Focused = new ThemeConfig.StateColor()
+						{
+							BackgroundColor = baseColors.Base0,
+							TextColor = baseColors.Base02
+						},
+						Hovered = new ThemeConfig.StateColor()
+						{
+							BackgroundColor = baseColors.Base01
+						},
+						Inactive = new ThemeConfig.StateColor()
+						{
+							BackgroundColor = baseColors.Base02,
+							TextColor = baseColors.Base0
+						}
+					},
+
+					DropList = new ThemeConfig.DropListStyle()
+					{
+						Inactive = new ThemeConfig.StateColor()
+						{
+							BackgroundColor = baseColors.Base02,
+							TextColor = baseColors.Base0
+						},
+						Hovered = new ThemeConfig.StateColor()
+						{
+							BackgroundColor = baseColors.Base01
+						},
+						Open = new ThemeConfig.StateColor()
+						{
+							BackgroundColor = new Color("#282828"),
+							TextColor = baseColors.Base0,
+						},
+						Focused = new ThemeConfig.StateColor()
+						{
+							BackgroundColor = baseColors.Base0,
+							TextColor = baseColors.Base02
+						},
+						Menu = new ThemeConfig.StateColor()
+						{
+							BackgroundColor = new Color("#333333"),
+							TextColor = new Color("#eee"),
+							BorderColor = new Color("#333")
+						}
+					},
+
+					RowBorder = darkTheme ? new Color("#00303D") : new Color("#DBD9CB"),
+					SectionBackgroundColor = darkTheme ? new Color("#002630") : new Color("#F2EBDA"),
 
 					SlightShade = new Color("#00000028"),
 					MinimalShade = new Color("#0000000F"),
@@ -118,10 +169,10 @@ namespace MatterHackers.MatterControl
 			return new ThemeConfig()
 			{
 				IsDarkTheme = false,
+				PrimaryAccentColor = accentColor,
 				Colors = new ThemeColors()
 				{
 					PrimaryTextColor = new Color("#555"),
-					PrimaryAccentColor = accentColor,
 					SourceColor = accentColor
 				},
 				PresetColors = new PresetColors()
@@ -155,10 +206,10 @@ namespace MatterHackers.MatterControl
 			return new ThemeConfig()
 			{
 				IsDarkTheme = true,
+				PrimaryAccentColor = accentColor,
 				Colors = new ThemeColors()
 				{
 					PrimaryTextColor = baseColors.Base1,
-					PrimaryAccentColor = accentColor,
 					SourceColor = accentColor
 				},
 				PresetColors = new PresetColors()
@@ -190,7 +241,7 @@ namespace MatterHackers.MatterControl
 			return ThemeColors.GetAdjustedAccentColor(accentColor, backgroundColor);
 		}
 
-		private class SolarizedColors
+		public class SolarizedColors
 		{
 			public BaseColors Dark { get; } = new BaseColors()
 			{
@@ -226,7 +277,7 @@ namespace MatterHackers.MatterControl
 			public Color Green { get; } = new Color("#859900");
 		}
 
-		private class BaseColors
+		public class BaseColors
 		{
 			public Color Base03 { get; set; }
 			public Color Base02 { get; set; }

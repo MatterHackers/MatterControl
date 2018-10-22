@@ -52,13 +52,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.sceneContext = sceneContext;
 
-			this.AddChild(layerScrollbar = new LayerScrollbar(printer, sceneContext)
+			this.AddChild(layerScrollbar = new LayerScrollbar(printer, sceneContext, theme)
 			{
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Right
 			});
 
 			layerSlider = layerScrollbar.layerSlider;
+			theme.ApplySliderStyle(layerSlider);
 
 			var tagContainer = new HorizontalTag()
 			{
@@ -102,6 +103,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			layerScrollbar.MouseEnter += SetPositionAndValue;
 		}
 
+		public SolidSlider SolidSlider => layerSlider;
+
 		public double Maximum
 		{
 			get => layerScrollbar.Maximum;
@@ -139,7 +142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			private TextWidget layerStartText;
 			private BedConfig sceneContext;
 
-			public LayerScrollbar(PrinterConfig printer, BedConfig sceneContext)
+			public LayerScrollbar(PrinterConfig printer, BedConfig sceneContext, ThemeConfig theme)
 				: base(FlowDirection.TopToBottom)
 			{
 				this.sceneContext = sceneContext;
@@ -152,7 +155,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				this.AddChild(layerCountText);
 
-				layerSlider = new SolidSlider(new Vector2(), SliderWidth, 0, 1, Orientation.Vertical)
+				layerSlider = new SolidSlider(new Vector2(), SliderWidth, theme, 0, 1, Orientation.Vertical)
 				{
 					HAnchor = HAnchor.Center,
 					VAnchor = VAnchor.Stretch,

@@ -632,7 +632,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				case SliceSettingData.DataEditTypes.INT:
 
-					var intField = new IntField();
+					var intField = new IntField(theme);
 					uiField = intField;
 
 					if (settingData.SlicerConfigName == "extruder_count")
@@ -645,26 +645,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				case SliceSettingData.DataEditTypes.DOUBLE:
 				case SliceSettingData.DataEditTypes.OFFSET:
-					uiField = new DoubleField();
+					uiField = new DoubleField(theme);
 					break;
 
 				case SliceSettingData.DataEditTypes.POSITIVE_DOUBLE:
 					if (settingData.SetSettingsOnChange.Count > 0)
 					{
-						uiField = new BoundDoubleField(settingsContext, settingData);
+						uiField = new BoundDoubleField(settingsContext, settingData, theme);
 					}
 					else
 					{
-						uiField = new PositiveDoubleField();
+						uiField = new PositiveDoubleField(theme);
 					}
 					break;
 
 				case SliceSettingData.DataEditTypes.DOUBLE_OR_PERCENT:
-					uiField = new DoubleOrPercentField();
+					uiField = new DoubleOrPercentField(theme);
 					break;
 
 				case SliceSettingData.DataEditTypes.INT_OR_MM:
-					uiField = new IntOrMmField();
+					uiField = new IntOrMmField(theme);
 					break;
 
 				case SliceSettingData.DataEditTypes.CHECK_BOX:
@@ -698,11 +698,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				case SliceSettingData.DataEditTypes.STRING:
 				case SliceSettingData.DataEditTypes.WIDE_STRING:
-					uiField = new TextField();
+					uiField = new TextField(theme);
 					break;
 
 				case SliceSettingData.DataEditTypes.MULTI_LINE_TEXT:
-					uiField = new MultilineStringField();
+					uiField = new MultilineStringField(theme);
 					placeFieldInDedicatedRow = true;
 					break;
 
@@ -740,12 +740,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					break;
 
 				case SliceSettingData.DataEditTypes.VECTOR2:
-					uiField = new Vector2Field();
+					uiField = new Vector2Field(theme);
 					break;
 
 				case SliceSettingData.DataEditTypes.OFFSET2:
 					placeFieldInDedicatedRow = true;
-					uiField = new ExtruderOffsetField(settingsContext, settingData.SlicerConfigName, theme.Colors.PrimaryTextColor);
+					uiField = new ExtruderOffsetField(settingsContext, settingData.SlicerConfigName, theme.Colors.PrimaryTextColor, theme);
 					break;
 #if !__ANDROID__
 				case SliceSettingData.DataEditTypes.IP_LIST:

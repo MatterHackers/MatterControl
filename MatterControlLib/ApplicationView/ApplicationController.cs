@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -129,24 +129,23 @@ namespace MatterHackers.MatterControl
 
 		public static ThemeSet ThemeSet => themeset;
 
-		public static Dictionary<string, IColorTheme> ThemeProviders = new Dictionary<string, IColorTheme>()
-		{
-			{ "Classic" , new ClassicColorsTheme() },
-			{ "Solarized", new SolarizedTheme() },
-		};
-
-		public static IColorTheme GetColorProvider(string key)
-		{
-			if (ThemeProviders.TryGetValue(key, out IColorTheme themeProvider))
-			{
-				return themeProvider;
-			}
-
-			return ThemeProviders.Values.First();
-		}
+		public static Dictionary<string, IColorTheme> ThemeProviders { get; }
 
 		static AppContext()
 		{
+			ThemeProviders = new Dictionary<string, IColorTheme>();
+
+			string themesPath = Path.Combine("Themes", "System");
+
+			// Load available themes from StaticData
+			if (AggContext.StaticData.DirectoryExists(themesPath))
+			{
+				foreach (var directoryTheme in AggContext.StaticData.GetDirectories(themesPath).Select(d => new DirectoryTheme(d)))
+				{
+					ThemeProviders.Add(directoryTheme.Name, directoryTheme);
+				}
+			}
+
 			// Load theme
 			try
 			{
@@ -160,20 +159,23 @@ namespace MatterHackers.MatterControl
 			if (themeset == null)
 			{
 				var themeProvider = ThemeProviders.Values.First();
-				var defaultColor = themeProvider.Colors.First();
-
-				themeset = themeProvider.GetTheme("Dark", defaultColor);
+				themeset = themeProvider.GetTheme(themeProvider.ThemeNames.First(), themeProvider.DefaultColor);
 			}
 
 			DefaultThumbView.ThumbColor = new Color(themeset.Theme.Colors.PrimaryTextColor, 30);
 			ActiveTheme.Instance = themeset.Theme.Colors;
 		}
 
+		public static void SetThemeAccentColor(Color accentColor)
+		{
+			themeset.SetAccentColor(accentColor);
+			AppContext.SetTheme(themeset);
+		}
+
 		public static void SetTheme(ThemeSet themeSet)
 		{
 			themeset = themeSet;
 
-			//var theme = ApplicationController.ThemeProvider.GetTheme(color);
 			File.WriteAllText(
 				ProfileManager.Instance.ProfileThemeSetPath,
 				JsonConvert.SerializeObject(
@@ -181,12 +183,12 @@ namespace MatterHackers.MatterControl
 					Formatting.Indented,
 					new JsonSerializerSettings
 					{
-						ContractResolver = new WritablePropertiesOnlyResolver()
+						ContractResolver = new ThemeContractResolver()
 					}));
 
 			UiThread.RunOnIdle(() =>
 			{
-				UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, themeset.ThemeName);
+				UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, themeset.Name);
 
 				//Set new user selected Default
 				ActiveTheme.Instance = themeset.Theme.Colors;
@@ -195,24 +197,28 @@ namespace MatterHackers.MatterControl
 				ApplicationController.Instance.ReloadAll();
 			});
 		}
-
-		private class WritablePropertiesOnlyResolver : DefaultContractResolver
-		{
-			protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
-			{
-				IList<JsonProperty> props = base.CreateProperties(type, memberSerialization);
-				return props.Where(p => p.Writable).ToList();
-			}
-		}
 	}
 
 	public class ThemeSet
 	{
-		public string ThemeName { get; set; }
+		public string ThemeID { get; set; }
+
+		public string Name { get; set; }
 
 		public ThemeConfig Theme { get; set; }
 
 		public ThemeConfig MenuTheme { get; set; }
+
+		public List<Color> AccentColors { get; set; } = new List<Color>();
+
+		public void SetAccentColor(Color accentColor)
+		{
+			this.Theme.PrimaryAccentColor = accentColor;
+			this.Theme.AccentMimimalOverlay = accentColor.WithAlpha(90);
+
+			this.MenuTheme.PrimaryAccentColor = accentColor;
+			this.MenuTheme.AccentMimimalOverlay = accentColor.WithAlpha(90);
+		}
 	}
 
 	public class ApplicationController
@@ -772,6 +778,15 @@ namespace MatterHackers.MatterControl
 			this.Thumbnails.OperationIcons = operationIconsByType;
 
 			operationIconsByType.Add(typeof(ImageObject3D), AggContext.StaticData.LoadIcon("140.png", 16, 16, theme.InvertIcons));
+		}
+
+		internal void BlinkTab(ITab tab)
+		{
+			var theme = this.Theme;
+			if (tab is GuiWidget guiWidget)
+			{
+				guiWidget.Descendants<TextWidget>().FirstOrDefault().FlashBackground(theme.PrimaryAccentColor.WithContrast(theme.Colors.PrimaryTextColor, 6).ToColor());
+			}
 		}
 
 		public void ShowApplicationHelp()
@@ -1356,7 +1371,7 @@ namespace MatterHackers.MatterControl
 										(int)(printerConnection.SecondsToHoldTemperature) % 60);
 								}
 								else
-								{ 
+								{
 									progressStatus.Status = string.Format(
 										"{0} {1:0}s",
 										"Automatic Heater Shutdown in".Localize(),
@@ -2122,7 +2137,7 @@ namespace MatterHackers.MatterControl
 							printer.Settings.GetValue<double>(SettingsKey.bed_temperature)
 							: 0;
 						PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
-						if (!levelingData.IssuedLevelingTempWarning 
+						if (!levelingData.IssuedLevelingTempWarning
 							&& Math.Abs(requiredLevelingTemp - levelingData.BedTemperature) > 10)
 						{
 							// Show a warning that leveling may be a good idea if better adhesion needed
@@ -2748,7 +2763,7 @@ If you experience adhesion problems, please re-run leveling."
 			progressPanel.AddChild(progressBar = new ProgressBar()
 			{
 				FillColor = mutedAccentColor,
-				BorderColor = Color.Gray, // theme.GetBorderColor(75),
+				BorderColor = Color.Gray, // theme.BorderColor75,
 				Height = 11,
 				Width = 230,
 				HAnchor = HAnchor.Center,

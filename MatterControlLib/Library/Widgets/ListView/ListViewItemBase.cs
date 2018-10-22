@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override Color BorderColor
 		{
-			get => (this.IsSelected || mouseInBounds) ? theme.Colors.PrimaryAccentColor : base.BorderColor;
+			get => (this.IsSelected || mouseInBounds) ? theme.PrimaryAccentColor : base.BorderColor;
 			set => base.BorderColor = value;
 		}
 
@@ -368,12 +368,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					new MatePoint(this)
 					{
 						Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom),
-						AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+						AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
 					},
 					new MatePoint(menu)
 					{
 						Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-						AltMate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
+						AltMate = new MateOptions(MateEdge.Right, MateEdge.Bottom)
 					},
 					altBounds: popupBounds);
 			}

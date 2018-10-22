@@ -59,9 +59,9 @@ namespace MatterHackers.MatterControl.Library
 		}
 
 		// TODO: Figure out how best to collapse the InsertionGroup after the load task completes
-		public InsertionGroupObject3D(IEnumerable<ILibraryItem> items, 
-			View3DWidget view3DWidget, 
-			InteractiveScene scene, 
+		public InsertionGroupObject3D(IEnumerable<ILibraryItem> items,
+			View3DWidget view3DWidget,
+			InteractiveScene scene,
 			Vector2 newItemOffset,
 			Action<IObject3D, IEnumerable<IObject3D>> layoutParts,
 			bool trackSourceFiles = false)
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.Library
 				foreach (var item in items.Where(item => item.IsContentFileType()).ToList())
 				{
 					// Acquire
-					var progressControl = new DragDropLoadProgress(view3DWidget, null);
+					var progressControl = new DragDropLoadProgress(view3DWidget, null, ApplicationController.Instance.Theme);
 
 					// Position at accumulating offset
 					placeholderItem.Matrix *= Matrix4X4.CreateTranslation(newItemOffset.X, (double)newItemOffset.Y, 0);
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.Library
 						loadedItem.Color = loadedItem.Color;
 
 						// Set mesh path if tracking requested
-						if (trackSourceFiles 
+						if (trackSourceFiles
 							&& item is FileSystemFileItem fileItem
 							&& item.IsMeshFileType())
 						{

@@ -273,7 +273,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			// create a double editor
 			if (propertyValue is double doubleValue)
 			{
-				var field = new DoubleField();
+				var field = new DoubleField(theme);
 				field.Initialize(0);
 				field.DoubleValue = doubleValue;
 
@@ -329,7 +329,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (propertyValue is Vector2 vector2)
 			{
-				var field = new Vector2Field();
+				var field = new Vector2Field(theme);
 				field.Initialize(0);
 				field.Vector2 = vector2;
 				field.ValueChanged += (s, e) =>
@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (propertyValue is Vector3 vector3)
 			{
-				var field = new Vector3Field();
+				var field = new Vector3Field(theme);
 				field.Initialize(0);
 				field.Vector3 = vector3;
 				field.ValueChanged += (s, e) =>
@@ -387,7 +387,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				// the direction axis
 				// the distance from the center of the part
 				// create a double editor
-				var field2 = new Vector3Field();
+				var field2 = new Vector3Field(theme);
 				field2.Initialize(0);
 				field2.Vector3 = directionAxis.Origin - property.Item.Children.First().GetAxisAlignedBoundingBox().Center;
 				var row2 = CreateSettingsColumn("Offset", field2);
@@ -476,7 +476,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			// create a int editor
 			else if (propertyValue is int intValue)
 			{
-				var field = new IntField();
+				var field = new IntField(theme);
 				field.Initialize(0);
 				field.IntValue = intValue;
 				field.ValueChanged += (s, e) =>
@@ -553,7 +553,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			// create a string editor
 			else if (propertyValue is string stringValue)
 			{
-				var field = new TextField();
+				var field = new TextField(theme);
 				field.Initialize(0);
 				field.SetValue(stringValue, false);
 				field.Content.HAnchor = HAnchor.Stretch;
@@ -592,7 +592,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			// create a char editor
 			else if (propertyValue is char charValue)
 			{
-				var field = new CharField();
+				var field = new CharField(theme);
 				field.Initialize(0);
 				field.SetValue(charValue.ToString(), false);
 				field.ValueChanged += (s, e) =>

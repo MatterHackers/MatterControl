@@ -61,7 +61,6 @@ namespace MatterHackers.MatterControl
 
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
-			this.BackgroundColor = theme.ActiveTabColor;
 
 			if (cancelButtonText == null)
 			{
@@ -98,7 +97,7 @@ namespace MatterHackers.MatterControl
 
 			this.AddChild(headerRow);
 
-			headerLabel = new TextWidget("Setup Wizard".Localize(), pointSize: 24, textColor: theme.Colors.PrimaryAccentColor)
+			headerLabel = new TextWidget("Setup Wizard".Localize(), pointSize: 24, textColor: theme.PrimaryAccentColor)
 			{
 				AutoExpandBoundsToText = true,
 				EllipsisIfClipped = true,
@@ -110,7 +109,7 @@ namespace MatterHackers.MatterControl
 			contentRow = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				Padding = new BorderDouble(10),
-				BackgroundColor = theme.MinimalShade,
+				BackgroundColor = theme.ActiveTabColor,
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch
 			};

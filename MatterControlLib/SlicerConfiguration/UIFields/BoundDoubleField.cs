@@ -41,7 +41,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private SettingsContext settingsContext;
 
-		public BoundDoubleField(SettingsContext settingsContext, SliceSettingData settingData)
+		public BoundDoubleField(SettingsContext settingsContext, SliceSettingData settingData, ThemeConfig theme)
+			: base (theme)
 		{
 			this.settingsContext = settingsContext;
 			this.settingData = settingData;

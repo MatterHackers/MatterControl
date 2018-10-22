@@ -734,15 +734,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						activeContext.SceneContext.AddToPlate(selectedLibraryItems);
 					}
 
-#if DEBUG
-					// TODO: need to select the right tab to flash
-					var tabControl = ApplicationController.Instance.AppView.TabControl;
-					var tab = tabControl.AllTabs.LastOrDefault();
-					if (tab is GuiWidget guiWidget)
-					{
-						guiWidget.Descendants<TextWidget>().FirstOrDefault().FlashBackground(theme.Colors.PrimaryAccentColor.WithContrast(theme.Colors.PrimaryTextColor, 6).ToColor());
-					}
-#endif
+					ApplicationController.Instance.BlinkTab(
+						ApplicationController.Instance.AppView.TabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage));
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{

@@ -117,10 +117,9 @@ namespace MatterHackers.MatterControl
 				UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, "release");
 			}
 
-			var releaseOptionsDropList = new DropDownList("Development", theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
+			var releaseOptionsDropList = new MHDropDownList("Development", theme, maxHeight: 200)
 			{
 				HAnchor = HAnchor.Fit,
-				BorderColor = theme.GetBorderColor(75)
 			};
 			releaseOptionsDropList.AddItem("Stable".Localize(), "release");
 			releaseOptionsDropList.AddItem("Beta".Localize(), "pre-release");

@@ -34,7 +34,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class PositiveDoubleField : DoubleField
 	{
-		public PositiveDoubleField()
+		public PositiveDoubleField(ThemeConfig theme)
+			: base(theme)
 		{
 			this.AllowNegatives = false;
 		}

@@ -49,12 +49,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void Initialize(int tabIndex)
 		{
-			dropdownList = new DropDownList("None".Localize(), theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
+			dropdownList = new MHDropDownList("None".Localize(), theme, maxHeight: 200)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex,
 				Margin = new BorderDouble(),
-				BorderColor = theme.GetBorderColor(75)
 			};
 
 			foreach (string listItem in this.ListItems)

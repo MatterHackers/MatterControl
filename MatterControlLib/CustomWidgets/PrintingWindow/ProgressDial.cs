@@ -55,14 +55,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private TextWidget percentCompleteWidget;
 
-		private Color PrimaryAccentColor = ActiveTheme.Instance.PrimaryAccentColor;
+		private Color primaryAccentColor;
 
-		private Color PrimaryAccentShade = ActiveTheme.Instance.PrimaryAccentColor.WithLightnessAdjustment(0.7).ToColor();
+		private Color primaryAccentShade;
 
 		private double innerRingStrokeWidth = 10 * GuiWidget.DeviceScale;
 
-		public ProgressDial()
+		public ProgressDial(ThemeConfig theme)
 		{
+			primaryAccentColor = theme.PrimaryAccentColor;
+			primaryAccentShade = theme.PrimaryAccentColor.WithLightnessAdjustment(0.7).ToColor();
+
 			percentCompleteWidget = new TextWidget("", pointSize: 22, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				AutoExpandBoundsToText = true,
@@ -180,7 +183,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			arcStroke.width(outerRingStrokeWidth);
 			graphics2D.Render(
 				arcStroke.Rotate(90, AngleType.Degrees).Translate(bounds.Center),
-				PrimaryAccentShade);
+				primaryAccentShade);
 
 			// Draw inner progress ring
 			ringArc = new Arc(
@@ -193,7 +196,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			arcStroke.width(innerRingStrokeWidth);
 			graphics2D.Render(
 				arcStroke.Rotate(90, AngleType.Degrees).Translate(bounds.Center),
-				PrimaryAccentColor);
+				primaryAccentColor);
 
 			// Draw child controls
 			base.OnDraw(graphics2D);

@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.theme = theme;
 			this.DoubleBuffer = true;
 			inactiveBarColor = theme.IsDarkTheme ? theme.Shade : theme.SlightShade;
-			activeBarColor = new Color(theme.Colors.PrimaryAccentColor, (theme.IsDarkTheme ? 100 : 70));
+			activeBarColor = new Color(theme.PrimaryAccentColor, (theme.IsDarkTheme ? 100 : 70));
 
 			this.MinimumSize = new Vector2(minWidth, theme.ButtonHeight);
 		}
@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			var position = new Vector2((this.Checked) ? LocalBounds.Right - toggleRadiusPlusPadding : toggleRadiusPlusPadding, centerY);
 			position = this.TransformToScreenSpace(position);
-			Color toggleColor = (this.Checked) ? theme.Colors.PrimaryAccentColor : Color.Gray;
+			Color toggleColor = (this.Checked) ? theme.PrimaryAccentColor : Color.Gray;
 
 			e.Graphics2D.Circle(position,
 				animation.finalRadius * Quadratic.Out(animation.animationRatio),
@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			var position = (this.Checked) ? LocalBounds.Right - toggleRadiusPlusPadding: toggleRadiusPlusPadding;
 
 			Color barColor = (this.Checked) ? activeBarColor : inactiveBarColor;
-			Color toggleColor = (this.Checked) ? theme.Colors.PrimaryAccentColor : Color.Gray;
+			Color toggleColor = (this.Checked) ? theme.PrimaryAccentColor : Color.Gray;
 
 			if (mouseIsDown && mouseInBounds)
 			{

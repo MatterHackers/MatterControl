@@ -287,7 +287,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				DynamicallyScaleRange = false,
 				MinValue = 0,
 				ShowGoal = true,
-				GoalColor = ActiveTheme.Instance.PrimaryAccentColor,
+				GoalColor = menuTheme.PrimaryAccentColor,
 				GoalValue = printer.Settings.Helpers.ExtruderTemperature(hotendIndex),
 				MaxValue = 280, // could come from some profile value in the future
 				Width = widget.Width - 20,
@@ -390,7 +390,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 				{
-					container.AddChild(new HorizontalLine(20)
+					container.AddChild(new HorizontalLine()
 					{
 						Margin = new BorderDouble(0, 5, 0, 0)
 					});

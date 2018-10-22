@@ -173,11 +173,42 @@ namespace MatterHackers.MatterControl
 
 		public ImageBuffer GeneratingThumbnailIcon { get; private set; }
 
+		public class StateColor
+		{
+			public Color BackgroundColor { get; set; }
+			public Color ForegroundColor { get; set; }
+			public Color BorderColor { get; set; }
+			public Color TextColor { get; set; }
+		}
+
+		public class ThreeStateColor
+		{
+			public StateColor Focused { get; set; } = new StateColor();
+			public StateColor Hovered { get; set; } = new StateColor();
+			public StateColor Inactive { get; set; } = new StateColor();
+		}
+
+		public class DropListStyle : ThreeStateColor
+		{
+			public StateColor Open { get; set; } = new StateColor();
+		}
+
+		public ThreeStateColor EditFieldColors { get; set; } = new ThreeStateColor();
+
 		public Color LightTextColor { get; set; }
+
 		public Color BorderColor { get; set; }
+		public Color BorderColor40 { get; set; }
+		public Color BorderColor20 { get; set; }
+		public Color RowBorder { get; set; }
+
+		public DropListStyle DropList { get; set; } = new DropListStyle();
+
 		public Color DisabledColor { get; set; }
 		public Color SplashAccentColor { get; set; }
 		public Color BedBackgroundColor { get; set; }
+		public Color PrimaryAccentColor { get; set; }
+		public Color SectionBackgroundColor { get; set; }
 
 		public GuiWidget CreateSearchButton()
 		{
@@ -196,7 +227,7 @@ namespace MatterHackers.MatterControl
 		public void SetDefaults()
 		{
 			this.DisabledColor = new Color(this.LightTextColor, 50);
-			this.SplashAccentColor = new Color(this.Colors.PrimaryAccentColor, 185).OverlayOn(Color.White).ToColor();
+			this.SplashAccentColor = new Color(this.PrimaryAccentColor, 185).OverlayOn(Color.White).ToColor();
 		}
 
 		public void RebuildTheme()
@@ -219,7 +250,7 @@ namespace MatterHackers.MatterControl
 			{
 				BackgroundColor = this.MinimalShade,
 				Border = 1,
-				BorderColor = this.GetBorderColor(40),
+				BorderColor = this.BorderColor40,
 				VAnchor = VAnchor.Absolute,
 				HAnchor = HAnchor.Absolute,
 				Margin = 0,
@@ -235,7 +266,7 @@ namespace MatterHackers.MatterControl
 			{
 				BackgroundColor = this.MinimalShade,
 				Border = 1,
-				BorderColor = this.GetBorderColor(40),
+				BorderColor = this.BorderColor40,
 				VAnchor = VAnchor.Absolute,
 				HAnchor = HAnchor.Absolute,
 				Margin = 0,
@@ -402,7 +433,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		public SolidSlider CreateSolidSlider(GuiWidget wordOptionContainer, string header, double min = 0, double max = .5)
+		public SolidSlider CreateSolidSlider(GuiWidget wordOptionContainer, string header, ThemeConfig theme, double min = 0, double max = .5)
 		{
 			double scrollBarWidth = 10;
 
@@ -412,7 +443,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Left
 			});
 
-			var namedSlider = new SolidSlider(new Vector2(), scrollBarWidth, 0, 1)
+			var namedSlider = new SolidSlider(new Vector2(), scrollBarWidth, theme, 0, 1)
 			{
 				TotalWidthInPixels = defaultScrollBarWidth,
 				Minimum = min,
@@ -442,14 +473,14 @@ namespace MatterHackers.MatterControl
 
 		public void ApplyBottomBorder(GuiWidget widget, bool shadedBorder = false)
 		{
-			widget.BorderColor = shadedBorder ? this.MinimalShade : this.GetBorderColor(20);
+			widget.BorderColor = shadedBorder ? this.MinimalShade : this.BorderColor20;
 
 			this.ApplyBorder(widget, new BorderDouble(bottom: 1), shadedBorder);
 		}
 
 		public void ApplyBorder(GuiWidget widget, BorderDouble border, bool shadedBorder = false)
 		{
-			widget.BorderColor = shadedBorder ? this.MinimalShade : this.GetBorderColor(20);
+			widget.BorderColor = shadedBorder ? this.MinimalShade : this.BorderColor20;
 			widget.Border = border;
 		}
 
@@ -457,13 +488,29 @@ namespace MatterHackers.MatterControl
 		{
 			return ApplyBoxStyle(
 				sectionWidget,
-				this.MinimalShade,
+				this.SectionBackgroundColor,
 				margin: new BorderDouble(this.DefaultContainerPadding, 0, this.DefaultContainerPadding, this.DefaultContainerPadding));
+		}
+
+		public SolidSlider ApplySliderStyle(SolidSlider solidSlider)
+		{
+			solidSlider.View.TrackColor = this.SlightShade;
+			solidSlider.View.TrackRadius = 4;
+
+			return solidSlider;
+		}
+
+		public DoubleSolidSlider ApplySliderStyle(DoubleSolidSlider solidSlider)
+		{
+			solidSlider.View.TrackColor = this.SlightShade;
+			solidSlider.View.TrackRadius = 4;
+
+			return solidSlider;
 		}
 
 		public SectionWidget ApplyBoxStyle(SectionWidget sectionWidget, BorderDouble margin)
 		{
-			return ApplyBoxStyle(sectionWidget, this.MinimalShade, margin);
+			return ApplyBoxStyle(sectionWidget, this.SectionBackgroundColor, margin);
 		}
 
 		public SectionWidget ApplyBoxStyle(SectionWidget sectionWidget, Color backgroundColor, BorderDouble margin)

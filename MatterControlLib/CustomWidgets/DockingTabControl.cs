@@ -351,7 +351,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 			{
 				base.OnMouseEnterBounds(mouseEvent);
-				this.BorderColor = theme.Colors.PrimaryAccentColor;
+				this.BorderColor = theme.PrimaryAccentColor;
 			}
 
 			public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)

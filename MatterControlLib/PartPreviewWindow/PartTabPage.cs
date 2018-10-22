@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BackgroundColor = theme.ActiveTabColor,
 				ListContentView = new IconListView(theme, 22),
 				Border = new BorderDouble(top: 1, right: 1),
-				BorderColor = theme.GetBorderColor(15),
+				BorderColor = theme.BorderColor20,
 				HAnchor = HAnchor.Absolute,
 				Width = 33,
 				AllowContextMenu = false

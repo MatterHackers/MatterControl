@@ -40,6 +40,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private MHNumberEdit xEditWidget;
 		private MHNumberEdit yEditWidget;
 		private MHNumberEdit zEditWidget;
+		private ThemeConfig theme;
+
+		public Vector3Field(ThemeConfig theme)
+		{
+			this.theme = theme;
+		}
 
 		public Vector3 Vector3
 		{
@@ -61,7 +67,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var container = new FlowLayoutWidget();
 
 			string[] xyzValueStrings = this.Value?.Split(',');
-			if (xyzValueStrings == null 
+			if (xyzValueStrings == null
 				|| xyzValueStrings.Length != 3)
 			{
 				xyzValueStrings = new string[] { "0", "0", "0" };
@@ -69,7 +75,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyzValueStrings[0], out double currentXValue);
 
-			xEditWidget = new MHNumberEdit(currentXValue, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
+			xEditWidget = new MHNumberEdit(currentXValue, theme, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex,
@@ -78,7 +84,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
 				this.SetValue(
-					string.Format("{0},{1},{2}", 
+					string.Format("{0},{1},{2}",
 						xEditWidget.ActuallNumberEdit.Value.ToString(),
 						yEditWidget.ActuallNumberEdit.Value.ToString(),
 						zEditWidget.ActuallNumberEdit.Value.ToString()),
@@ -94,7 +100,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyzValueStrings[1], out double currentYValue);
 
-			yEditWidget = new MHNumberEdit(currentYValue, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
+			yEditWidget = new MHNumberEdit(currentYValue, theme, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex + 1,
@@ -103,7 +109,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
 				this.SetValue(
-					string.Format("{0},{1},{2}", 
+					string.Format("{0},{1},{2}",
 					xEditWidget.ActuallNumberEdit.Value.ToString(),
 					yEditWidget.ActuallNumberEdit.Value.ToString(),
 					zEditWidget.ActuallNumberEdit.Value.ToString()),
@@ -119,7 +125,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyzValueStrings[2], out double currentZValue);
 
-			zEditWidget = new MHNumberEdit(currentZValue, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
+			zEditWidget = new MHNumberEdit(currentZValue, theme, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex + 1,
@@ -128,7 +134,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			zEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
 				this.SetValue(
-					string.Format("{0},{1},{2}", 
+					string.Format("{0},{1},{2}",
 					xEditWidget.ActuallNumberEdit.Value.ToString(),
 					yEditWidget.ActuallNumberEdit.Value.ToString(),
 					zEditWidget.ActuallNumberEdit.Value.ToString()),

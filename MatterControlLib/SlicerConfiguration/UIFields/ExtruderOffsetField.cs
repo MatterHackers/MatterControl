@@ -40,15 +40,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private SettingsContext settingsContext;
 		private Color textColor;
+		private ThemeConfig theme;
 		private string slicerConfigName;
 
 		private List<Vector2Field> childFields;
 
-		public ExtruderOffsetField(SettingsContext settingsContext, string slicerConfigName, Color textColor)
+		public ExtruderOffsetField(SettingsContext settingsContext, string slicerConfigName, Color textColor, ThemeConfig theme)
 		{
 			this.slicerConfigName = slicerConfigName;
 			this.settingsContext = settingsContext;
 			this.textColor = textColor;
+			this.theme = theme;
 
 			//SaveCommaSeparatedIndexSetting(extruderOffset.ExtruderIndex, settingsContext, slicerConfigName, extruderOffset.Value.Replace(",", "x"));
 		}
@@ -89,7 +91,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				labelWidget.Margin = new BorderDouble(right: 60);
 				row.AddChild(labelWidget);
 
-				var field = new Vector2Field();
+				var field = new Vector2Field(theme);
 				field.Initialize(tabIndex++);
 				field.Content.Margin = new BorderDouble(right: 55);
 				field.Content.VAnchor = VAnchor.Center;

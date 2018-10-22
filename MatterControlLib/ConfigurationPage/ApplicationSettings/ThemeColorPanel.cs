@@ -34,7 +34,11 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
@@ -46,9 +50,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private IColorTheme _themeProvider;
 		private GuiWidget previewButtonPanel;
 
-		public ThemeColorPanel(ThemeConfig activeTheme)
+		public ThemeColorPanel(ThemeConfig activeTheme, AccentColorsWidget colorSelector)
 			: base (FlowDirection.TopToBottom)
 		{
+			this.colorSelector = colorSelector;
 			string currentProviderName = UserSettings.Instance.get(UserSettingsKey.ThemeName) ?? "";
 
 			if (AppContext.ThemeProviders.TryGetValue(currentProviderName, out IColorTheme currentProvider))
@@ -60,26 +65,23 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				_themeProvider = AppContext.ThemeProviders.Values.First();
 			}
 
-			this.SelectionColor = activeTheme.GetBorderColor(80);
+			accentPanelColor = activeTheme.ResolveColor(activeTheme.SectionBackgroundColor, activeTheme.SlightShade);
 
-			// Add color selector
-			this.AddChild(colorSelector = new AccentColorsWidget(this)
-			{
-				Margin = new BorderDouble(activeTheme.DefaultContainerPadding, 0)
-			});
+			this.SelectionColor = activeTheme.MinimalShade;
 
 			this.AddChild(previewButtonPanel = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
-				BackgroundColor = this.SelectionColor,
-				Padding = new BorderDouble(left: colorSelector.ColorButtons.First().Border.Left)
+				//BackgroundColor = activeTheme.MinimalShade
 			});
 
 			this.CreateThemeModeButtons();
 		}
 
-		public ImageBuffer CheckMark { get; } = AggContext.StaticData.LoadIcon("426.png", 16, 16, invertImage: true);
+		public ImageBuffer CheckMark { get; } = AggContext.StaticData.LoadIcon("fa-check_16.png", 16, 16, invertImage: true);
+
+		private Color accentPanelColor;
 
 		public Color SelectionColor { get; private set; }
 
@@ -90,13 +92,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				_themeProvider = value;
 
-				var previewColor = _themeProvider.Colors.First();
-
 				colorSelector.RebuildColorButtons();
 
 				this.CreateThemeModeButtons();
 
-				this.PreviewTheme(previewColor);
+				this.PreviewTheme(_themeProvider.DefaultColor);
 			}
 		}
 		private void CreateThemeModeButtons()
@@ -105,84 +105,137 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			var theme = AppContext.Theme;
 
-			var accentColor = theme.Colors.PrimaryAccentColor;
+			var accentColor = theme.PrimaryAccentColor;
 
-			if (!_themeProvider.Colors.Contains(accentColor))
+			int providerIndex = 0;
+
+			foreach (var provider in AppContext.ThemeProviders.Values)
 			{
-				accentColor = _themeProvider.DefaultColor;
-			}
-
-			var activeMode = UserSettings.Instance.get(UserSettingsKey.ThemeMode);
-
-			foreach (var mode in _themeProvider.Modes)
-			{
-				var themeset = _themeProvider.GetTheme(mode, accentColor);
-
-				previewButtonPanel.AddChild(new ThemePreviewButton(themeset.Theme, this)
+				if (providerIndex > 0)
 				{
-					HAnchor = HAnchor.Absolute,
-					VAnchor = VAnchor.Absolute,
-					Width = 80,
-					Height = 65,
-					Mode = mode,
-					Margin = new BorderDouble(theme.DefaultContainerPadding, theme.DefaultContainerPadding, 0, theme.DefaultContainerPadding),
-					Border = 1,
-					IsActive = mode == activeMode,
-					BorderColor = theme.GetBorderColor(20),
-				});
+					previewButtonPanel.AddChild(new VerticalLine()
+					{
+						BackgroundColor = theme.MinimalShade,
+						Margin = new BorderDouble(0, theme.DefaultContainerPadding),
+					});
+				}
+
+				foreach (var themeName in provider.ThemeNames)
+				{
+					var previewContainer = new GuiWidget()
+					{
+						HAnchor = HAnchor.Fit | HAnchor.Left,
+						VAnchor = VAnchor.Fit | VAnchor.Center,
+					};
+					previewButtonPanel.AddChild(previewContainer);
+
+					ThemeSet themeset;
+
+					if (themeName == AppContext.ThemeSet.ThemeID)
+					{
+						previewContainer.BackgroundColor = theme.MinimalShade;
+						themeset = AppContext.ThemeSet;
+					}
+					else
+					{
+						themeset = provider.GetTheme(themeName, provider.DefaultColor);
+					}
+
+					previewContainer.AddChild(new ThemePreviewButton(themeset, this)
+					{
+						HAnchor = HAnchor.Absolute,
+						VAnchor = VAnchor.Absolute,
+						Width = 80,
+						Height = 65,
+						Mode = themeName,
+						Border = 1,
+						BorderColor = theme.BorderColor20,
+						Margin = theme.DefaultContainerPadding
+					});
+
+					if (themeName == AppContext.ThemeSet.ThemeID)
+					{
+						var imageBuffer = new ImageBuffer(35, 35);
+						var graphics = imageBuffer.NewGraphics2D();
+
+						previewContainer.BorderColor = AppContext.Theme.AccentMimimalOverlay;
+						previewContainer.Border = 1;
+
+						var arrowHeight = 35;
+
+						var upArrow = new VertexStorage();
+						upArrow.MoveTo(0, 0);
+						upArrow.LineTo(arrowHeight, 0);
+						upArrow.LineTo(0, -arrowHeight);
+						upArrow.LineTo(0, 0);
+
+						graphics.Render(upArrow, new Vector2(0, 35), AppContext.Theme.PrimaryAccentColor);
+						graphics.Render(this.CheckMark, 4, 17);
+
+						imageBuffer.SetPreMultiply();
+
+						previewContainer.AddChild(new ImageWidget(imageBuffer, false)
+						{
+							HAnchor = HAnchor.Left,
+							VAnchor = VAnchor.Top,
+						});
+					}
+				}
+
+				providerIndex++;
 			}
 		}
 
 		public void PreviewTheme(Color sourceAccentColor)
 		{
-			foreach (var previewButton in previewButtonPanel.Children<ThemePreviewButton>())
+			var previewButton = previewButtonPanel.Descendants<ThemePreviewButton>().FirstOrDefault(t => t.ThemeSet.ThemeID == AppContext.ThemeSet.ThemeID);
+			if (previewButton != null)
 			{
 				previewButton.PreviewThemeColor(sourceAccentColor);
 			}
 		}
 
-		public void SetThemeColor(Color accentColor, string mode = null)
+		public void SetThemeColor(ThemeSet themeSet, Color accentColor, string mode = null)
 		{
 			lastColor = accentColor;
 
-			foreach (var colorButton in colorSelector.ColorButtons)
+			if (colorSelector != null)
 			{
-				colorButton.BorderColor = (colorButton.SourceColor == accentColor) ? Color.White : Color.Transparent;
-			}
-
-			if (mode == null)
-			{
-				mode = this.ThemeProvider.DefaultMode;
-
-				var lastMode = UserSettings.Instance.get(UserSettingsKey.ThemeMode);
-				if (this.ThemeProvider.Modes.Contains(lastMode))
+				foreach (var colorButton in colorSelector.ColorButtons)
 				{
-					mode = lastMode;
+					colorButton.BorderColor = (colorButton.SourceColor == accentColor) ? Color.White : Color.Transparent;
 				}
 			}
 
-			Console.WriteLine("Getting/setting theme for " + accentColor.Html);
+			themeSet.Theme.PrimaryAccentColor = accentColor;
+			themeSet.Theme.AccentMimimalOverlay = accentColor.WithAlpha(90);
 
-			AppContext.SetTheme(this.ThemeProvider.GetTheme(mode, accentColor));
+			AppContext.SetTheme(themeSet);
+
 			previewButtonPanel.BackgroundColor = this.SelectionColor;
 		}
 
 		public class AccentColorsWidget : FlowLayoutWidget
 		{
-			private int containerHeight = (int)(20 * GuiWidget.DeviceScale);
-			private ThemeColorPanel themeColorPanel;
+			private int containerHeight;
+			private int buttonSpacing;
+			private List<ColorButton> colorButtons = new List<ColorButton>();
+			private ThemeSet themeSet;
 
-			public AccentColorsWidget(ThemeColorPanel themeColorPanel)
+			public AccentColorsWidget(ThemeSet themeSet, int buttonHeight = 18, int buttonSpacing = 3)
 			{
-				this.Padding = new BorderDouble(2, 0);
-				this.themeColorPanel = themeColorPanel;
+				this.themeSet = themeSet;
+				this.Margin = new BorderDouble(left: buttonSpacing);
+				this.buttonSpacing = buttonSpacing;
+
+				containerHeight = (int)(buttonHeight * GuiWidget.DeviceScale);
 
 				this.RebuildColorButtons();
 			}
 
-			private List<ColorButton> colorButtons = new List<ColorButton>();
-
 			public IEnumerable<ColorButton> ColorButtons => colorButtons;
+
+			public ThemeColorPanel ThemeColorPanel { get; set; }
 
 			public void RebuildColorButtons()
 			{
@@ -192,11 +245,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 				bool firstItem = true;
 
-				foreach (var color in themeColorPanel.ThemeProvider.Colors)
+				foreach (var color in themeSet.AccentColors)
 				{
-					var colorButton = CreateThemeButton(color);
+					var colorButton = this.CreateThemeButton(color);
 					colorButton.Width = containerHeight;
-					colorButton.BorderColor = (color == AppContext.Theme.Colors.SourceColor) ? themeColorPanel.SelectionColor : Color.Transparent;
 
 					colorButtons.Add(colorButton);
 
@@ -217,21 +269,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					Cursor = Cursors.Hand,
 					Width = containerHeight,
 					Height = containerHeight,
-					Border = 5,
+					Margin = buttonSpacing
 				};
 				colorButton.Click += (s, e) =>
 				{
-					themeColorPanel.SetThemeColor(colorButton.BackgroundColor);
+					AppContext.SetThemeAccentColor(colorButton.BackgroundColor);
 				};
 
 				colorButton.MouseEnterBounds += (s, e) =>
 				{
-					foreach(var button in this.ColorButtons)
-					{
-						button.BorderColor = (button == colorButton) ? themeColorPanel.SelectionColor : Color.Transparent;
-					}
-
-					themeColorPanel.PreviewTheme(colorButton.BackgroundColor);
+					this.ThemeColorPanel?.PreviewTheme(colorButton.BackgroundColor);
 				};
 
 				return colorButton;

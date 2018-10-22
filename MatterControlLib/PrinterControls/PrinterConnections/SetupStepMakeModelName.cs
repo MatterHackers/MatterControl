@@ -223,7 +223,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				Margin = new BorderDouble(0, 4, 0, 1)
 			};
 
-			printerNameInput = new MHTextEditWidget("")
+			printerNameInput = new MHTextEditWidget("", theme)
 			{
 				HAnchor = HAnchor.Stretch,
 			};
@@ -259,7 +259,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			var validationTextWidget = new TextWidget(validationMessage, 0, 0, 10)
 			{
-				TextColor = theme.Colors.PrimaryAccentColor,
+				TextColor = theme.PrimaryAccentColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			};

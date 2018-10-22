@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl
 			this.VAnchor = VAnchor.Fit;
 			this.Cursor = Cursors.Hand;
 
-			this.AddChild(innerText = new TextWidget(text, pointSize: (pointSize == double.MinValue) ? theme.DefaultFontSize : pointSize, textColor: theme.Colors.PrimaryAccentColor)
+			this.AddChild(innerText = new TextWidget(text, pointSize: (pointSize == double.MinValue) ? theme.DefaultFontSize : pointSize, textColor: theme.PrimaryAccentColor)
 			{
 				Underline = true,
 				Selectable = false

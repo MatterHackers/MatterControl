@@ -34,7 +34,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class DoubleOrPercentField : ValueOrUnitsField
 	{
-		public DoubleOrPercentField()
+		public DoubleOrPercentField(ThemeConfig theme)
+			: base (theme)
 		{
 			unitsToken = "%";
 		}

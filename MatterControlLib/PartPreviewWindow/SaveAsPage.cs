@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl
 				contentRow.AddChild(fileNameHeader);
 
 				//Adds text box and check box to the above container
-				itemNameWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Design Name Here".Localize())
+				itemNameWidget = new MHTextEditWidget("", theme, pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Design Name Here".Localize())
 				{
 					HAnchor = HAnchor.Stretch,
 					Margin = new BorderDouble(5)

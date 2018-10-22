@@ -312,7 +312,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			if (this.Checked)
 			{
-				graphics2D.Rectangle(0, 0, LocalBounds.Right, 2, theme.Colors.PrimaryAccentColor);
+				graphics2D.Rectangle(0, 0, LocalBounds.Right, 2, theme.PrimaryAccentColor);
 			}
 
 			base.OnDraw(graphics2D);
@@ -392,7 +392,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			if (this.Checked)
 			{
-				graphics2D.Rectangle(LocalBounds.Left, 0, LocalBounds.Right, 2, theme.Colors.PrimaryAccentColor);
+				graphics2D.Rectangle(LocalBounds.Left, 0, LocalBounds.Right, 2, theme.PrimaryAccentColor);
 			}
 
 			base.OnDraw(graphics2D);

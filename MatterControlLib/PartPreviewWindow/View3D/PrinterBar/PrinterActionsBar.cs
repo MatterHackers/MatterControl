@@ -199,7 +199,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					if (!buttonIsBeingClicked)
 					{
-						activeButton.FlashBackground(theme.Colors.PrimaryAccentColor.WithContrast(theme.Colors.PrimaryTextColor, 6).ToColor());
+						activeButton.FlashBackground(theme.PrimaryAccentColor.WithContrast(theme.Colors.PrimaryTextColor, 6).ToColor());
 					}
 				}
 			};

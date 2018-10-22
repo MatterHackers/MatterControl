@@ -4,15 +4,14 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
-	public class LanguageSelector : DropDownList
+	public class LanguageSelector : MHDropDownList
 	{
 		private Dictionary<string, string> languageDict;
 
 		public LanguageSelector(ThemeConfig theme)
-			: base("Default", theme.Colors.PrimaryTextColor)
+			: base("Default", theme)
 		{
 			this.MinimumSize = new Vector2(this.LocalBounds.Width, this.LocalBounds.Height);
-			this.BorderColor = theme.GetBorderColor(75);
 			CreateLanguageDict();
 
 

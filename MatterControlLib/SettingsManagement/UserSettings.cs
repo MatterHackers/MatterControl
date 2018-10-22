@@ -68,7 +68,6 @@ namespace MatterHackers.MatterControl
 		public const string SelectedObjectEditorHeight = nameof(SelectedObjectEditorHeight);
 		public const string SelectionTreeViewPanelExpanded = nameof(SelectionTreeViewPanelExpanded);
 		public const string ThemeName = nameof(ThemeName);
-		public const string ThemeMode = nameof(ThemeMode);
 	}
 
 	public class UserSettings

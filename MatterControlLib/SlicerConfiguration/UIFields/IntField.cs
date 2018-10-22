@@ -36,6 +36,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class IntField : NumberField
 	{
+		public IntField(ThemeConfig theme)
+			: base (theme)
+		{
+		}
+
 		int _intValue;
 		public int IntValue
 		{

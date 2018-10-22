@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -34,22 +34,32 @@ namespace MatterHackers.MatterControl
 {
 	public class MHNumberEdit : GuiWidget
 	{
+		private ThemeConfig theme;
+
 		public NumberEdit ActuallNumberEdit { get; }
 
-		public MHNumberEdit(double startingValue, double x = 0, double y = 0, double pointSize = 12, double pixelWidth = 0, double pixelHeight = 0, bool allowNegatives = false, bool allowDecimals = false, double minValue = int.MinValue, double maxValue = int.MaxValue, double increment = 1, int tabIndex = 0)
+		public MHNumberEdit(double startingValue, ThemeConfig theme, double pixelWidth = 0, double pixelHeight = 0, bool allowNegatives = false, bool allowDecimals = false, double minValue = int.MinValue, double maxValue = int.MaxValue, double increment = 1, int tabIndex = 0)
 		{
 			using (this.LayoutLock())
 			{
-				this.Padding = new BorderDouble(3);
-				this.BackgroundColor = Color.White;
+				this.Padding = 3;
 				this.HAnchor = HAnchor.Fit;
 				this.VAnchor = VAnchor.Fit;
 				this.Border = 1;
+				this.theme = theme;
 
-				this.ActuallNumberEdit = new NumberEdit(startingValue, x, y, pointSize, pixelWidth, pixelHeight, allowNegatives, allowDecimals, minValue, maxValue, increment, tabIndex)
+				this.ActuallNumberEdit = new NumberEdit(startingValue, 0, 0, theme.DefaultFontSize, pixelWidth, pixelHeight, allowNegatives, allowDecimals, minValue, maxValue, increment, tabIndex)
 				{
 					VAnchor = VAnchor.Bottom,
 				};
+
+				var internalWidget = this.ActuallNumberEdit.InternalTextEditWidget;
+				internalWidget.TextColor = theme.EditFieldColors.Inactive.TextColor;
+				internalWidget.FocusChanged += (s, e) =>
+				{
+					internalWidget.TextColor = (internalWidget.Focused) ? theme.EditFieldColors.Focused.TextColor : theme.EditFieldColors.Inactive.TextColor;
+				};
+
 				this.ActuallNumberEdit.InternalNumberEdit.MaxDecimalsPlaces = 5;
 				this.AddChild(this.ActuallNumberEdit);
 			}
@@ -57,20 +67,77 @@ namespace MatterHackers.MatterControl
 			this.PerformLayout();
 		}
 
+		public override Color BackgroundColor
+		{
+			get
+			{
+				if (base.BackgroundColor != Color.Transparent)
+				{
+					return base.BackgroundColor;
+				}
+				else if (this.ContainsFocus)
+				{
+					return theme.EditFieldColors.Focused.BackgroundColor;
+				}
+				else if (this.mouseInBounds)
+				{
+					return theme.EditFieldColors.Hovered.BackgroundColor;
+				}
+				else
+				{
+					return theme.EditFieldColors.Inactive.BackgroundColor;
+				}
+			}
+			set => base.BackgroundColor = value;
+		}
+
+		public override Color BorderColor
+		{
+			get
+			{
+				if (base.BorderColor != Color.Transparent)
+				{
+					return base.BackgroundColor;
+				}
+				else if (this.ContainsFocus)
+				{
+					return theme.EditFieldColors.Focused.BorderColor;
+				}
+				else if (this.mouseInBounds)
+				{
+					return theme.EditFieldColors.Hovered.BorderColor;
+				}
+				else
+				{
+					return theme.EditFieldColors.Inactive.BorderColor;
+				}
+			}
+			set => base.BorderColor = value;
+		}
+
+		private bool mouseInBounds = false;
+
+		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
+		{
+			mouseInBounds = true;
+			base.OnMouseEnterBounds(mouseEvent);
+
+			this.Invalidate();
+		}
+
+		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
+		{
+			mouseInBounds = false;
+			base.OnMouseLeaveBounds(mouseEvent);
+
+			this.Invalidate();
+		}
+
 		public override int TabIndex
 		{
 			// TODO: This looks invalid - setter and getter should use same context
 			get => base.TabIndex;
 			set => this.ActuallNumberEdit.TabIndex = value;
-		}
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			base.OnDraw(graphics2D);
-			if (ContainsFocus)
-			{
-				graphics2D.Rectangle(LocalBounds, Color.Orange);
-			}
 		}
 
 		public double Value

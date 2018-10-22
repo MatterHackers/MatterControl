@@ -38,14 +38,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private View3DWidget view3DWidget;
 		private ProgressBar progressBar;
 
-		public DragDropLoadProgress(View3DWidget view3DWidget, IObject3D trackingObject)
+		public DragDropLoadProgress(View3DWidget view3DWidget, IObject3D trackingObject, ThemeConfig theme)
 		{
 			this.TrackingObject = trackingObject;
 			this.view3DWidget = view3DWidget;
 			view3DWidget.AfterDraw += View3DWidget_AfterDraw;
 			progressBar = new ProgressBar(80, 15)
 			{
-				FillColor = ActiveTheme.Instance.PrimaryAccentColor,
+				FillColor = theme.PrimaryAccentColor,
 			};
 		}
 

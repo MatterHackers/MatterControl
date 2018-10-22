@@ -34,7 +34,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class IntOrMmField : ValueOrUnitsField
 	{
-		public IntOrMmField()
+		public IntOrMmField(ThemeConfig theme)
+			: base (theme)
 		{
 			this.unitsToken = "mm";
 		}

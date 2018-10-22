@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl
 
 		public Color TickColor { get; set; }
 
-		public DoubleSolidSlideView(DoubleSolidSlider sliderWidget)
+		public DoubleSolidSlideView(DoubleSolidSlider sliderWidget, ThemeConfig theme)
 		{
 			sliderAttachedTo = sliderWidget;
 
@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl
 
 			TextColor = Color.Black;
 			TrackColor = new Color(220, 220, 220);
-			ThumbColor = ActiveTheme.Instance.PrimaryAccentColor;
+			ThumbColor = theme.PrimaryAccentColor;
 
 			sliderWidget.FirstValueChanged += new EventHandler(sliderWidget_ValueChanged);
 			sliderWidget.SecondValueChanged += new EventHandler(sliderWidget_ValueChanged);
@@ -111,9 +111,12 @@ namespace MatterHackers.MatterControl
 			graphics2D.FillRectangle(GetTotalBounds(), BackgroundColor);
 		}
 
+		public double TrackRadius { get; set; } = 0;
+
 		public void DoDrawAfterChildren(Graphics2D graphics2D)
 		{
-			RoundedRect track = new RoundedRect(GetTrackBounds(), 0);
+			RoundedRect track = new RoundedRect(GetTrackBounds(), this.TrackRadius);
+
 			Vector2 ValuePrintPosition;
 			if (sliderAttachedTo.Orientation == Orientation.Horizontal)
 			{
@@ -309,9 +312,9 @@ namespace MatterHackers.MatterControl
 
 		public bool LargeChange { get; set; }
 
-		public DoubleSolidSlider(Vector2 positionOfTrackFirstValue, double widthInPixels, double minimum = 0, double maximum = 1, Orientation orientation = Orientation.Horizontal)
+		public DoubleSolidSlider(Vector2 positionOfTrackFirstValue, double widthInPixels, ThemeConfig theme, double minimum = 0, double maximum = 1, Orientation orientation = Orientation.Horizontal)
 		{
-			View = new DoubleSolidSlideView(this);
+			View = new DoubleSolidSlideView(this, theme);
 			View.TrackHeight = widthInPixels;
 			OriginRelativeParent = positionOfTrackFirstValue;
 			TotalWidthInPixels = widthInPixels;
@@ -324,13 +327,13 @@ namespace MatterHackers.MatterControl
 			MinimumSize = new Vector2(Width, Height);
 		}
 
-		public DoubleSolidSlider(Vector2 lowerLeft, Vector2 upperRight)
-			: this(new Vector2(lowerLeft.X, lowerLeft.Y + (upperRight.Y - lowerLeft.Y) / 2), upperRight.X - lowerLeft.X)
+		public DoubleSolidSlider(Vector2 lowerLeft, Vector2 upperRight, ThemeConfig theme)
+			: this(new Vector2(lowerLeft.X, lowerLeft.Y + (upperRight.Y - lowerLeft.Y) / 2), upperRight.X - lowerLeft.X, theme)
 		{
 		}
 
-		public DoubleSolidSlider(double lowerLeftX, double lowerLeftY, double upperRightX, double upperRightY)
-			: this(new Vector2(lowerLeftX, lowerLeftY + (upperRightY - lowerLeftY) / 2), upperRightX - lowerLeftX)
+		public DoubleSolidSlider(double lowerLeftX, double lowerLeftY, double upperRightX, double upperRightY, ThemeConfig theme)
+			: this(new Vector2(lowerLeftX, lowerLeftY + (upperRightY - lowerLeftY) / 2), upperRightX - lowerLeftX, theme)
 		{
 		}
 

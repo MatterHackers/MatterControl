@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			//See if the baud rate of the current print is in the list of displayed rates,
 			//flag the 'other' option if it is not and prefill the rate.
-			otherBaudRateInput = new MHTextEditWidget("");
+			otherBaudRateInput = new MHTextEditWidget("", theme);
 			otherBaudRateInput.Visible = false;
 			otherBaudRateInput.HAnchor = HAnchor.Stretch;
 
