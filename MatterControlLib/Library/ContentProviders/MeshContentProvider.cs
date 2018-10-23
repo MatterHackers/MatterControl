@@ -101,7 +101,6 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-
 		public async Task<ImageBuffer> GetThumbnail(ILibraryItem libraryItem, int width, int height)
 		{
 			IObject3D object3D = null;
@@ -175,6 +174,6 @@ namespace MatterHackers.MatterControl
 				allowMultiThreading: !ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting);
 		}
 
-		public ImageBuffer DefaultImage => AggContext.StaticData.LoadIcon("mesh.png");
+		public ImageBuffer DefaultImage { get; } = AggContext.StaticData.LoadIcon("mesh.png");
 	}
 }

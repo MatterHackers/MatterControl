@@ -121,7 +121,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						requeueRaytraceOnDraw = false;
 						raytracePending = false;
 
-						this.SetSizedThumbnail(thumbnail);
+						if (thumbnail.Width != thumbWidth
+						|| thumbnail.Height != thumbHeight)
+						{
+							this.SetUnsizedThumbnail(thumbnail);
+						}
+						else
+						{
+							this.SetSizedThumbnail(thumbnail);
+						}
 					}
 				}
 			});
@@ -184,7 +192,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			this.SetSizedThumbnail(
 				ApplicationController.Instance.Library.EnsureCorrectThumbnailSizing(
-					theme.GeneratingThumbnailIcon,
+					thumbnail,
 					thumbWidth,
 					thumbHeight));
 		}
