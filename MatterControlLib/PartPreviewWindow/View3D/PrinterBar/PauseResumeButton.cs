@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected void SetButtonStates()
 		{
 			// If we don't have leveling data and we need it
-			bool showSetupButton = PrintLevelingData.NeedsToBeRun(printer);
+			bool showSetupButton = PrintLevelingData.NeedsToBeRun(printer) || ProbeCalibrationWizard.NeedsToBeRun(printer);
 
 			switch (printer.Connection.CommunicationState)
 			{
