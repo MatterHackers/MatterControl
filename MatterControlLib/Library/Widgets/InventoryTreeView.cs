@@ -51,107 +51,104 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public InventoryTreeView(ThemeConfig theme)
 			: base (theme)
 		{
-			UiThread.RunOnIdle(() =>
+			rootColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				rootColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
-				{
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Fit
-				};
-				this.AddChild(rootColumn);
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			};
+			this.AddChild(rootColumn);
 
-				// Printers
-				printersNode = new TreeNode(theme)
-				{
-					Text = "Printers".Localize(),
-					HAnchor = HAnchor.Stretch,
-					AlwaysExpandable = true,
-					Image = AggContext.StaticData.LoadIcon("printer.png", 16, 16, theme.InvertIcons)
-				};
-				printersNode.TreeView = this;
+			// Printers
+			printersNode = new TreeNode(theme)
+			{
+				Text = "Printers".Localize(),
+				HAnchor = HAnchor.Stretch,
+				AlwaysExpandable = true,
+				Image = AggContext.StaticData.LoadIcon("printer.png", 16, 16, theme.InvertIcons)
+			};
+			printersNode.TreeView = this;
 
-				var forcedHeight = 20;
-				var mainRow = printersNode.Children.FirstOrDefault();
-				mainRow.HAnchor = HAnchor.Stretch;
-				mainRow.AddChild(new HorizontalSpacer());
+			var forcedHeight = 20;
+			var mainRow = printersNode.Children.FirstOrDefault();
+			mainRow.HAnchor = HAnchor.Stretch;
+			mainRow.AddChild(new HorizontalSpacer());
 
-				// add in the create printer button
-				var createPrinter = new IconButton(AggContext.StaticData.LoadIcon("md-add-circle_18.png", 18, 18, theme.InvertIcons), theme)
-				{
-					Name = "Create Printer",
-					VAnchor = VAnchor.Center,
-					Margin = theme.ButtonSpacing.Clone(left: theme.ButtonSpacing.Right),
-					ToolTipText = "Create Printer".Localize(),
-					Height = forcedHeight,
-					Width = forcedHeight
-				};
+			// add in the create printer button
+			var createPrinter = new IconButton(AggContext.StaticData.LoadIcon("md-add-circle_18.png", 18, 18, theme.InvertIcons), theme)
+			{
+				Name = "Create Printer",
+				VAnchor = VAnchor.Center,
+				Margin = theme.ButtonSpacing.Clone(left: theme.ButtonSpacing.Right),
+				ToolTipText = "Create Printer".Localize(),
+				Height = forcedHeight,
+				Width = forcedHeight
+			};
 
-				createPrinter.Click += (s, e) => UiThread.RunOnIdle(() =>
+			createPrinter.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				if (ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting
+				|| ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPaused)
 				{
-					if (ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting
-					|| ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPaused)
-					{
-						StyledMessageBox.ShowMessageBox("Please wait until the print has finished and try again.".Localize(), "Can't add printers while printing".Localize());
-					}
-					else
-					{
-						DialogWindow.Show(PrinterSetup.GetBestStartPage(PrinterSetup.StartPageOptions.ShowMakeModel));
-					}
-				});
-				mainRow.AddChild(createPrinter);
+					StyledMessageBox.ShowMessageBox("Please wait until the print has finished and try again.".Localize(), "Can't add printers while printing".Localize());
+				}
+				else
+				{
+					DialogWindow.Show(PrinterSetup.GetBestStartPage(PrinterSetup.StartPageOptions.ShowMakeModel));
+				}
+			});
+			mainRow.AddChild(createPrinter);
 
-				// add in the import printer button
-				var importPrinter = new IconButton(AggContext.StaticData.LoadIcon("md-import_18.png", 18, 18, theme.InvertIcons), theme)
-				{
-					VAnchor = VAnchor.Center,
-					Margin = theme.ButtonSpacing,
-					ToolTipText = "Import Printer".Localize(),
-					Height = forcedHeight,
-					Width = forcedHeight
-				};
-				importPrinter.Click += (s, e) => UiThread.RunOnIdle(() =>
-				{
-					AggContext.FileDialogs.OpenFileDialog(
-						new OpenFileDialogParams(
-							"settings files|*.ini;*.printer;*.slice"),
-							(result) =>
+			// add in the import printer button
+			var importPrinter = new IconButton(AggContext.StaticData.LoadIcon("md-import_18.png", 18, 18, theme.InvertIcons), theme)
+			{
+				VAnchor = VAnchor.Center,
+				Margin = theme.ButtonSpacing,
+				ToolTipText = "Import Printer".Localize(),
+				Height = forcedHeight,
+				Width = forcedHeight
+			};
+			importPrinter.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				AggContext.FileDialogs.OpenFileDialog(
+					new OpenFileDialogParams(
+						"settings files|*.ini;*.printer;*.slice"),
+						(result) =>
+						{
+							if (!string.IsNullOrEmpty(result.FileName)
+								&& File.Exists(result.FileName))
 							{
-								if (!string.IsNullOrEmpty(result.FileName)
-									&& File.Exists(result.FileName))
+								//simpleTabs.RemoveTab(simpleTabs.ActiveTab);
+								if (ProfileManager.ImportFromExisting(result.FileName))
 								{
-									//simpleTabs.RemoveTab(simpleTabs.ActiveTab);
-									if (ProfileManager.ImportFromExisting(result.FileName))
-									{
-										string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
-										DialogWindow.Show(
-											new ImportSucceeded(
-												importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(result.FileName))));
-									}
-									else
-									{
-										StyledMessageBox.ShowMessageBox("Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(result.FileName)), "Unable to Import".Localize());
-									}
+									string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
+									DialogWindow.Show(
+										new ImportSucceeded(
+											importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(result.FileName))));
 								}
-							});
-				});
-				mainRow.AddChild(importPrinter);
+								else
+								{
+									StyledMessageBox.ShowMessageBox("Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(result.FileName)), "Unable to Import".Localize());
+								}
+							}
+						});
+			});
+			mainRow.AddChild(importPrinter);
 
-				rootColumn.AddChild(printersNode);
+			rootColumn.AddChild(printersNode);
 
-				InventoryTreeView.RebuildPrintersList(printersNode, theme);
-				this.Invalidate();
+			InventoryTreeView.RebuildPrintersList(printersNode, theme);
+			this.Invalidate();
 
-				// Filament
-				var materialsNode = new TreeNode(theme)
-				{
-					Text = "Materials".Localize(),
-					AlwaysExpandable = true,
-					Image = AggContext.StaticData.LoadIcon("filament.png", 16, 16, theme.InvertIcons)
-				};
-				materialsNode.TreeView = this;
+			// Filament
+			var materialsNode = new TreeNode(theme)
+			{
+				Text = "Materials".Localize(),
+				AlwaysExpandable = true,
+				Image = AggContext.StaticData.LoadIcon("filament.png", 16, 16, theme.InvertIcons)
+			};
+			materialsNode.TreeView = this;
 
-				rootColumn.AddChild(materialsNode);
-			}, 1);
+			rootColumn.AddChild(materialsNode);
 
 			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
@@ -168,8 +165,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					}
 				}
 			}, ref unregisterEvents);
-
-
 
 			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
