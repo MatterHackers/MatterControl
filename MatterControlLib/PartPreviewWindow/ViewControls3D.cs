@@ -90,8 +90,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.PartSelect;
 		private List<(GuiWidget button, SceneSelectionOperation operation)> operationButtons;
-
-		public NamedAction[] MenuActions { get; private set; }
+		private PartPreviewContent partPreviewContent = null;
+		private PopupMenuButton bedMenuButton;
+		private ThemeConfig theme;
 
 		internal void NotifyResetView()
 		{
@@ -153,11 +154,74 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal void SetView3DWidget(View3DWidget view3DWidget)
 		{
 			this.view3DWidget = view3DWidget;
+
+			var workspaceActions = view3DWidget.WorkspaceActions;
+
+			bedMenuButton.DynamicPopupContent = () =>
+			{
+				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+
+				var actions = new NamedAction[] {
+					new ActionSeparator(),
+					workspaceActions["Cut"],
+					workspaceActions["Copy"],
+					workspaceActions["Paste"],
+					new ActionSeparator(),
+					new NamedAction()
+					{
+						ID = "Export",
+						Title = "Export".Localize(),
+						Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16),
+						Action = () =>
+						{
+							UiThread.RunOnIdle(async () =>
+							{
+								DialogWindow.Show(
+									new ExportPrintItemPage(new[]
+									{
+										new InMemoryLibraryItem(sceneContext.Scene)
+									}, false));
+							});
+						},
+						IsEnabled = () => sceneContext.EditableScene
+							|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
+								&& string.Equals(Path.GetExtension(libraryAsset.FileName) ,".gcode" ,StringComparison.OrdinalIgnoreCase))
+					},
+					new NamedAction()
+					{
+						ID = "ArrangeAll",
+						Title = "Arrange All Parts".Localize(),
+						Action = () =>
+						{
+							sceneContext.Scene.AutoArrangeChildren(view3DWidget);
+						},
+						IsEnabled = () => sceneContext.EditableScene
+					},
+					new ActionSeparator(),
+					new NamedAction()
+					{
+						ID = "ClearBed",
+						Title = "Clear Bed".Localize(),
+						Action = () =>
+						{
+							UiThread.RunOnIdle(() =>
+							{
+								view3DWidget.ClearPlate();
+							});
+						}
+					}
+				};
+
+				theme.CreateMenuItems(popupMenu, actions, emptyMenu: false);
+
+				return popupMenu;
+			};
 		}
 
-		public ViewControls3D(BedConfig sceneContext, ThemeConfig theme, UndoBuffer undoBuffer, bool isPrinterType, bool showPrintButton)
+		public ViewControls3D(BedConfig sceneContext, ThemeConfig theme,  UndoBuffer undoBuffer, bool isPrinterType, bool showPrintButton)
 			: base(theme)
 		{
+			this.theme = theme;
 			this.ActionArea.Click += (s, e) =>
 			{
 				view3DWidget.InteractionLayer.Focus();
@@ -172,7 +236,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new ToolbarSeparator(theme));
 
-			var optionsButton = new PopupMenuButton(AggContext.StaticData.LoadIcon("bed.png", 16, 16, theme.InvertIcons), theme)
+			bedMenuButton = new PopupMenuButton(AggContext.StaticData.LoadIcon("bed.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "Bed Options Menu",
 				//ToolTipText = "Options",
@@ -181,14 +245,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Center,
 				DrawArrow = true
 			};
-			optionsButton.DynamicPopupContent = () =>
-			{
-				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
-				theme.CreateMenuItems(popupMenu, this.BedMenuActions(sceneContext, theme), emptyMenu: false);
 
-				return popupMenu;
-			};
-			this.AddChild(optionsButton);
+			this.AddChild(bedMenuButton);
 
 			this.AddChild(new ToolbarSeparator(theme));
 
@@ -278,7 +336,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								CancellationToken.None);
 						});
 					}
-					
+
 				};
 				this.AddChild(printButton);
 			}
@@ -415,8 +473,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private PartPreviewContent partPreviewContent = null;
-
 		private GuiWidget CreateAddButton(BedConfig sceneContext, ThemeConfig theme)
 		{
 			var buttonView = new TextIconButton(
@@ -432,9 +488,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
 			};
-
-			// Construct and store menu actions
-			this.MenuActions = this.BedMenuActions(sceneContext, ApplicationController.Instance.MenuTheme);
 
 			PopupMenuButton libraryPopup = null;
 
@@ -593,7 +646,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (filesToLoad != null && filesToLoad.Length > 0)
 			{
-				
+
 				await Task.Run(() => loadAndAddPartsToPlate(filesToLoad, sceneContext));
 
 				if (originatingWidget.HasBeenClosed)
@@ -700,103 +753,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 			}
-		}
-
-		private NamedAction[] BedMenuActions(BedConfig sceneContext, ThemeConfig theme)
-		{
-			return new[]
-			{
-				new NamedAction()
-				{
-					ID = "Cut",
-					Title = "Cut".Localize(),
-					Shortcut = "Ctrl+X",
-					Action = () =>
-					{
-						sceneContext.Scene.Cut();
-					},
-					IsEnabled = () => sceneContext.Scene.SelectedItem != null
-				},
-				new NamedAction()
-				{
-					ID = "Copy",
-					Title = "Copy".Localize(),
-					Shortcut = "Ctrl+C",
-					Action = () =>
-					{
-						sceneContext.Scene.Copy();
-					},
-					IsEnabled = () => sceneContext.Scene.SelectedItem != null
-				},
-				new NamedAction()
-				{
-					ID = "Paste",
-					Title = "Paste".Localize(),
-					Shortcut = "Ctrl+V",
-					Action = () =>
-					{
-						sceneContext.Scene.Paste();
-					},
-					IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
-				},
-				new ActionSeparator(),
-				new NamedAction()
-				{
-					ID = "Export",
-					Title = "Export".Localize(),
-					Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16),
-					Action = () =>
-					{
-						UiThread.RunOnIdle(async () =>
-						{
-							DialogWindow.Show(
-								new ExportPrintItemPage(new[]
-								{
-									new InMemoryLibraryItem(sceneContext.Scene)
-								}, false));
-						});
-					},
-					IsEnabled = () => sceneContext.EditableScene
-						|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
-							&& string.Equals(Path.GetExtension(libraryAsset.FileName) ,".gcode" ,StringComparison.OrdinalIgnoreCase))
-				},
-				new NamedAction()
-				{
-					ID = "ArrangeAll",
-					Title = "Arrange All Parts".Localize(),
-					Action = () =>
-					{
-						sceneContext.Scene.AutoArrangeChildren(view3DWidget);
-					},
-					IsEnabled = () => sceneContext.EditableScene
-				},
-				new ActionSeparator(),
-				new NamedAction()
-				{
-					ID = "ClearBed",
-					Title = "Clear Bed".Localize(),
-					Action = () =>
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							view3DWidget.ClearPlate();
-						});
-					}
-				},
-#if DEBUG && false
-				new NamedAction()
-				{
-					Title = "GC.Collect"/* Don't localize debug tool */,
-					Action = () =>
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							GC.Collect();
-						});
-					}
-				},
-#endif
-			};
 		}
 
 		public override void OnClosed(EventArgs e)
