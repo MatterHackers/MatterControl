@@ -27,20 +27,37 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
 using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl
 {
-	using System.Collections.Generic;
-
-	public interface IColorTheme
+	public class ThemeSet
 	{
-		string Name { get; }
+		public static int LatestSchemeVersion { get; } = 20181023;
 
-		ThemeSet GetTheme(string mode);
+		public string ThemeID { get; set; }
 
-		ThemeSet GetTheme(string mode, Color accentColor);
+		public string Name { get; set; }
 
-		IEnumerable<string> ThemeNames { get; }
+		public ThemeConfig Theme { get; set; }
+
+		public ThemeConfig MenuTheme { get; set; }
+
+		public List<Color> AccentColors { get; set; } = new List<Color>();
+
+		public void SetAccentColor(Color accentColor)
+		{
+			this.Theme.PrimaryAccentColor = accentColor;
+			this.Theme.AccentMimimalOverlay = accentColor.WithAlpha(90);
+
+			this.MenuTheme.PrimaryAccentColor = accentColor;
+			this.MenuTheme.AccentMimimalOverlay = accentColor.WithAlpha(90);
+		}
+
+		/// <summary>
+		/// The latest version of the theme file format. When changed, the clients state becomes invalid and will require a reset to the new theme format
+		/// </summary>
+		public int SchemeVersion { get; set; }
 	}
 }

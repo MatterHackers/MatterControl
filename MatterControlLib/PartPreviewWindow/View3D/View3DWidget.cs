@@ -326,6 +326,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Dictionary<string, NamedAction> InitWorkspaceActions()
 		{
+			bool invertIcons = ApplicationController.Instance.MenuTheme.InvertIcons;
+
 			return new Dictionary<string, NamedAction>()
 			{
 				{
@@ -334,7 +336,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						ID = "Insert",
 						Title = "Insert".Localize(),
-						Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons),
+						Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, invertIcons),
 						Action = () =>
 						{
 							var extensionsWithoutPeriod = new HashSet<string>(ApplicationSettings.OpenDesignFileParams.Split('|').First().Split(',').Select(s => s.Trim().Trim('.')));
@@ -411,7 +413,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						ID = "Export",
 						Title = "Export".Localize(),
-						Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16),
+						Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, invertIcons),
 						Action = () =>
 						{
 							UiThread.RunOnIdle(async () =>

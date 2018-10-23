@@ -95,8 +95,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				colorSelector.RebuildColorButtons();
 
 				this.CreateThemeModeButtons();
-
-				this.PreviewTheme(_themeProvider.DefaultColor);
 			}
 		}
 		private void CreateThemeModeButtons()
@@ -138,7 +136,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					}
 					else
 					{
-						themeset = provider.GetTheme(themeName, provider.DefaultColor);
+						themeset = provider.GetTheme(themeName);
 					}
 
 					previewContainer.AddChild(new ThemePreviewButton(themeset, this)

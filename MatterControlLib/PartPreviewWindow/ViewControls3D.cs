@@ -542,7 +542,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 
-					var printLibraryWidget = new PrintLibraryWidget(partPreviewContent, theme)
+					var printLibraryWidget = new PrintLibraryWidget(partPreviewContent, theme, libraryPopup)
 					{
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Absolute,
@@ -561,14 +561,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					void systemWindownMouseDown(object s2, MouseEventArgs mouseEvent)
 					{
-						// MouseUp on our SystemWindow outside of our bounds should call close
-						var resizeContainerMousePosition = verticalResizeContainer.TransformFromScreenSpace(mouseEvent.Position);
-						bool mouseUpOnWidget = resizeContainerMousePosition.X >= 0 && resizeContainerMousePosition.X <= verticalResizeContainer.Width
-							&& resizeContainerMousePosition.Y >= 0 && resizeContainerMousePosition.Y <= verticalResizeContainer.Height;
-
-						if (!mouseUpOnWidget)
+						if (verticalResizeContainer.Parent != null)
 						{
-							libraryPopup.CloseMenu();
+							// MouseUp on our SystemWindow outside of our bounds should call close
+							var resizeContainerMousePosition = verticalResizeContainer.TransformFromScreenSpace(mouseEvent.Position);
+							bool mouseUpOnWidget = resizeContainerMousePosition.X >= 0 && resizeContainerMousePosition.X <= verticalResizeContainer.Width
+								&& resizeContainerMousePosition.Y >= 0 && resizeContainerMousePosition.Y <= verticalResizeContainer.Height;
+
+							if (!mouseUpOnWidget)
+							{
+								libraryPopup.CloseMenu();
+								systemWindow.MouseDown -= systemWindownMouseDown;
+							}
+						}
+						else
+						{
 							systemWindow.MouseDown -= systemWindownMouseDown;
 						}
 					};
@@ -661,7 +668,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (filesToLoad != null && filesToLoad.Length > 0)
 			{
-
 				await Task.Run(() => loadAndAddPartsToPlate(filesToLoad, sceneContext));
 
 				if (originatingWidget.HasBeenClosed)

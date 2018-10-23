@@ -289,8 +289,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			tabControl.SelectedTabKey = tabKey;
-
 			var brandMenu = new BrandMenuButton(theme)
 			{
 				HAnchor = HAnchor.Fit,
@@ -306,6 +304,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				this.CreatePartTab(workspace);
 			}
+
+			tabControl.SelectedTabKey = tabKey;
 
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent((s, e) =>
 			{

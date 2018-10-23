@@ -152,6 +152,12 @@ namespace MatterHackers.MatterControl
 				if (File.Exists(ProfileManager.Instance.ProfileThemeSetPath))
 				{
 					themeset = JsonConvert.DeserializeObject<ThemeSet>(File.ReadAllText(ProfileManager.Instance.ProfileThemeSetPath));
+
+					// If the serialized format is older than the current format, null and fall back to latest default below
+					if (themeset.SchemeVersion != ThemeSet.LatestSchemeVersion)
+					{
+						themeset = null;
+					}
 				}
 			}
 			catch { }
@@ -159,7 +165,7 @@ namespace MatterHackers.MatterControl
 			if (themeset == null)
 			{
 				var themeProvider = ThemeProviders.Values.First();
-				themeset = themeProvider.GetTheme(themeProvider.ThemeNames.First(), themeProvider.DefaultColor);
+				themeset = themeProvider.GetTheme(themeProvider.ThemeNames.First());
 			}
 
 			DefaultThumbView.ThumbColor = new Color(themeset.Theme.Colors.PrimaryTextColor, 30);
@@ -196,28 +202,6 @@ namespace MatterHackers.MatterControl
 				// Explicitly fire ReloadAll in response to user interaction
 				ApplicationController.Instance.ReloadAll();
 			});
-		}
-	}
-
-	public class ThemeSet
-	{
-		public string ThemeID { get; set; }
-
-		public string Name { get; set; }
-
-		public ThemeConfig Theme { get; set; }
-
-		public ThemeConfig MenuTheme { get; set; }
-
-		public List<Color> AccentColors { get; set; } = new List<Color>();
-
-		public void SetAccentColor(Color accentColor)
-		{
-			this.Theme.PrimaryAccentColor = accentColor;
-			this.Theme.AccentMimimalOverlay = accentColor.WithAlpha(90);
-
-			this.MenuTheme.PrimaryAccentColor = accentColor;
-			this.MenuTheme.AccentMimimalOverlay = accentColor.WithAlpha(90);
 		}
 	}
 

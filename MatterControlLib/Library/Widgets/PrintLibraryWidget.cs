@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private OverflowBar navBar;
 		private GuiWidget searchButton;
 
-		public PrintLibraryWidget(PartPreviewContent partPreviewContent, ThemeConfig theme)
+		public PrintLibraryWidget(PartPreviewContent partPreviewContent, ThemeConfig theme, PopupMenuButton popupMenuButton)
 		{
 			this.theme = theme;
 			this.partPreviewContent = partPreviewContent;
@@ -172,12 +172,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			toolbar.AddChild(showFolders);
 
-			var openButton = new TextButton("Open", theme)
+			var openButton = new TextIconButton("Open".Localize(), AggContext.StaticData.LoadIcon("fa-folder-open_16.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Margin = theme.ButtonSpacing,
+				ToolTipText = "Open File".Localize()
 			};
 			openButton.Click += (s, e) =>
 			{
+				popupMenuButton.CloseMenu();
+
 				var extensionsWithoutPeriod = new HashSet<string>(ApplicationSettings.OpenDesignFileParams.Split('|').First().Split(',').Select(t => t.Trim().Trim('.')));
 
 				foreach (var extension in ApplicationController.Instance.Library.ContentProviders.Keys)
@@ -200,7 +203,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						{
 							ViewControls3D.LoadAndAddPartsToPlate(this, openParams.FileNames, ApplicationController.Instance.DragDropData.SceneContext);
 						});
-				});
+				}, .1);
 			};
 
 			toolbar.AddChild(openButton);

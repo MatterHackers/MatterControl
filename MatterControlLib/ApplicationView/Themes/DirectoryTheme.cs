@@ -37,50 +37,45 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.Agg.Platform;
 	using Newtonsoft.Json;
 
-	public class SerializedTheme : IColorTheme
-	{
-		public string Name { get; set; }
-
-		public Color DefaultColor { get; set; }
-
-		public IEnumerable<string> ThemeNames { get; set; }
-
-		public ThemeSet GetTheme(string mode, Color accentColor)
-		{
-			throw new System.NotImplementedException();
-		}
-	}
-
 	public class DirectoryTheme : IColorTheme
 	{
 		private string path;
+
 		public DirectoryTheme()
 		{
 		}
 
 		public DirectoryTheme(string directory)
 		{
-			var themeSetData = JsonConvert.DeserializeObject<SerializedTheme>(
-				AggContext.StaticData.ReadAllText(Path.Combine(directory, "theme.json")));
-
 			path = directory;
 
 			this.Name = Path.GetFileName(directory);
 			this.ThemeNames = AggContext.StaticData.GetFiles(directory).Where(p => Path.GetFileName(p) != "theme.json").Select(p => Path.GetFileNameWithoutExtension(p)).ToArray();
-
-			this.DefaultColor = themeSetData.DefaultColor;
 		}
 
 		public string Name { get; }
-
-		public Color DefaultColor { get; }
 
 		public IEnumerable<string> ThemeNames { get; }
 
 		public ThemeSet GetTheme(string themeName, Color accentColor)
 		{
-			ThemeSet themeset = null;
+			var themeset = this.LoadTheme(themeName);
+			themeset.SetAccentColor(accentColor);
 
+			return themeset;
+		}
+
+		public ThemeSet GetTheme(string themeName)
+		{
+			var themeset = this.LoadTheme(themeName);
+			themeset.SetAccentColor(themeset.AccentColors.First());
+
+			return themeset;
+		}
+
+		private ThemeSet LoadTheme(string themeName)
+		{
+			ThemeSet themeset;
 			try
 			{
 				themeset = JsonConvert.DeserializeObject<ThemeSet>(
@@ -92,8 +87,9 @@ namespace MatterHackers.MatterControl
 					AggContext.StaticData.ReadAllText(Path.Combine(path, this.ThemeNames.First() + ".json")));
 			}
 
+			// Set SchemaVersion at construction time
+			themeset.SchemeVersion = ThemeSet.LatestSchemeVersion;
 			themeset.ThemeID = themeName;
-			themeset.SetAccentColor(accentColor);
 
 			return themeset;
 		}
