@@ -83,6 +83,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
+				AutomationRunner.TimeToMoveMouse = .2;
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator("Pulse", "A-134"))
@@ -135,10 +136,39 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(1, printer.Connection.CurrentlyPrintingLayer);
 					// assert the leveling is working
 					Assert.AreEqual(12.15, emulator.ZPosition);
+
+					testRunner.CancelPrint();
+
+					// now modify the leveling data manualy and assert that it is applied when printing
+					testRunner.SwitchToControlsTab();
+					testRunner.ClickByName("Edit Leveling Data Button");
+					for(int i=0; i<3; i++)
+					{
+						var name = $"z Position {i}";
+						testRunner.ClickByName(name);
+						testRunner.Type("^a"); // select all
+						testRunner.Type("5");
+					}
+
+					testRunner.ClickByName("Save Leveling Button");
+
+					testRunner.OpenPrintPopupMenu();
+					testRunner.ClickByName("Layer(s) To Pause Field");
+					testRunner.Type("2");
+
+					testRunner.StartPrint();
+
+					testRunner.WaitForName("Yes Button", 20);// the yes button is 'Resume'
+
+					// the usre types in the pause layer 1 based and we are 0 based, so we should be on: user 2, printer 1.
+					Assert.AreEqual(1, printer.Connection.CurrentlyPrintingLayer);
+					// assert the leveling is working
+					Assert.AreEqual(5.15, emulator.ZPosition);
+
 				}
 
 				return Task.CompletedTask;
-			}, maxTimeToRun: 90);
+			}, maxTimeToRun: 130);
 		}
 
 		[Test, Category("Emulator")]
