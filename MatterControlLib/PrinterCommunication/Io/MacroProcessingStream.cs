@@ -187,8 +187,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						}
 						if (TryGetAfterString(lineToSend, "markdown", out value))
 						{
-							macroData.markdown = value.Replace("\\n", "\n");
-							macroData.markdown = value.Replace("<br>", "\n");
+							// change writen \n's to actual cr.
+							var processedText = value.Replace("\\n", "\n");
+							// turn <br> into cr so we have more control
+							processedText = processedText.Replace("<br>", "\n");
+							macroData.markdown = processedText;
 						}
 						if (TryGetAfterString(lineToSend, "wait_ok", out value))
 						{

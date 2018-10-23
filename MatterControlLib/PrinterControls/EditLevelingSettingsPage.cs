@@ -98,8 +98,14 @@ namespace MatterHackers.MatterControl
 					leftRightEdit.AddChild(new HorizontalSpacer());
 
 					string axisName = "x";
-					if (axis == 1) axisName = "y";
-					else if (axis == 2) axisName = "z";
+					if (axis == 1)
+					{
+						axisName = "y";
+					}
+					else if (axis == 2)
+					{
+						axisName = "z";
+					}
 
 					leftRightEdit.AddChild(
 						new TextWidget($"  {axisName}: ", textColor: ActiveTheme.Instance.PrimaryTextColor)
@@ -110,7 +116,10 @@ namespace MatterHackers.MatterControl
 					int linkCompatibleRow = row;
 					int linkCompatibleAxis = axis;
 
-					MHNumberEdit valueEdit = new MHNumberEdit(positions[linkCompatibleRow][linkCompatibleAxis], theme, allowNegatives: true, allowDecimals: true, pixelWidth: 60, tabIndex: tab_index++);
+					MHNumberEdit valueEdit = new MHNumberEdit(positions[linkCompatibleRow][linkCompatibleAxis], theme, allowNegatives: true, allowDecimals: true, pixelWidth: 60, tabIndex: tab_index++)
+					{
+						Name = $"{axisName} Position {row}"
+					};
 					valueEdit.ActuallNumberEdit.InternalTextEditWidget.EditComplete += (sender, e) =>
 					{
 						Vector3 position = positions[linkCompatibleRow];
@@ -126,6 +135,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			var savePresetsButton = theme.CreateDialogButton("Save".Localize());
+			savePresetsButton.Name = "Save Leveling Button";
 			savePresetsButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				PrintLevelingData newLevelingData = printer.Settings.Helpers.GetPrintLevelingData();
