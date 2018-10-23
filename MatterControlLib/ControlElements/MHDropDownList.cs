@@ -88,11 +88,6 @@ namespace MatterHackers.MatterControl
 		{
 			get
 			{
-				if (menuVisible)
-				{
-					var a = 1;
-				}
-
 				if (base.BackgroundColor != Color.Transparent)
 				{
 					return base.BackgroundColor;
@@ -112,10 +107,6 @@ namespace MatterHackers.MatterControl
 			}
 			set
 			{
-				if (value.GetAsHTMLString() == "#333333")
-				{
-					var a = 1;
-				}
 				base.BackgroundColor = value;
 			}
 
