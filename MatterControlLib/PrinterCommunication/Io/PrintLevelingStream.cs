@@ -39,6 +39,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private LevelingFunctions currentLevelingFunctions = null;
 		private double currentProbeOffset;
 		private PrinterSettings printerSettings;
+		bool wroteLevelingStatus = false;
+		bool gcodeAlreadyLeveled = false;
 
 		public PrintLevelingStream(PrinterSettings printerSettings, GCodeStream internalStream, bool activePrinting)
 			: base(internalStream)
@@ -65,9 +67,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override string ReadLine()
 		{
+			if(!wroteLevelingStatus && LevelingActive)
+			{
+				wroteLevelingStatus = true;
+				return "; Software Leveling Applied";
+			}
+
 			string lineFromChild = base.ReadLine();
 
-			if (lineFromChild != null && LevelingActive)
+			if(lineFromChild == "; Software Leveling Applied")
+			{
+				gcodeAlreadyLeveled = true;
+			}
+
+			if (lineFromChild != null 
+				&& LevelingActive
+				&& !gcodeAlreadyLeveled)
 			{
 				if (LineIsMovement(lineFromChild))
 				{
