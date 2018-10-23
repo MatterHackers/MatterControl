@@ -1415,25 +1415,44 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						selectedItem = hitObject;
 					}
 
-					UiThread.RunOnIdle(() =>
+					this.ShowPartContextMenu(mouseEvent, selectedItem);
+				}
+				else // Allow right click on bed in all modes
+				{
+					this.ShowBedContextMenu(mouseEvent.Position);
+				}
+			}
+
+			base.OnMouseUp(mouseEvent);
+
+			if (deferEditorTillMouseUp)
+			{
+				this.deferEditorTillMouseUp = false;
+				Scene_SelectionChanged(null, null);
+			}
+		}
+
+		private void ShowPartContextMenu(MouseEventArgs mouseEvent, IObject3D selectedItem)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				var menu = ApplicationController.Instance.GetActionMenuForSceneItem(selectedItem, Scene, true);
+
+				var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+				systemWindow.ShowPopup(
+					new MatePoint(this)
 					{
-						var menu = ApplicationController.Instance.GetActionMenuForSceneItem(selectedItem, Scene, true);
+						Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+						AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+					},
+					new MatePoint(menu)
+					{
+						Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+						AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+					},
+					altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
 
-						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-						systemWindow.ShowPopup(
-							new MatePoint(this)
-							{
-								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-							},
-							new MatePoint(menu)
-							{
-								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-							},
-							altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
-
-						var actions = new[] {
+				var actions = new[] {
 							new ActionSeparator(),
 							WorkspaceActions["Cut"],
 							WorkspaceActions["Copy"],
@@ -1483,36 +1502,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								}
 							}};
 
-						theme.CreateMenuItems(menu, actions, emptyMenu: false);
+				theme.CreateMenuItems(menu, actions, emptyMenu: false);
 
-						menu.CreateHorizontalLine();
+				menu.CreateHorizontalLine();
 
-						string componentID = (selectedItem as ComponentObject3D)?.ComponentID;
+				string componentID = (selectedItem as ComponentObject3D)?.ComponentID;
 
-						var helpItem = menu.CreateMenuItem("Help".Localize());
-						helpItem.Enabled = !string.IsNullOrEmpty(componentID) && ApplicationController.Instance.HelpArticlesByID.ContainsKey(componentID);
-						helpItem.Click += (s, e) =>
-						{
-							DialogWindow.Show(new HelpPage(componentID));
-						};
-					});
-				}
-				else // Allow right click on bed in all modes
+				var helpItem = menu.CreateMenuItem("Help".Localize());
+				helpItem.Enabled = !string.IsNullOrEmpty(componentID) && ApplicationController.Instance.HelpArticlesByID.ContainsKey(componentID);
+				helpItem.Click += (s, e) =>
 				{
-					PopupBedActionsMenu(mouseEvent.Position);
-				}
-			}
-
-			base.OnMouseUp(mouseEvent);
-
-			if (deferEditorTillMouseUp)
-			{
-				this.deferEditorTillMouseUp = false;
-				Scene_SelectionChanged(null, null);
-			}
+					DialogWindow.Show(new HelpPage(componentID));
+				};
+			});
 		}
 
-		public void PopupBedActionsMenu(Vector2 position)
+		public void ShowBedContextMenu(Vector2 position)
 		{
 			// Workspace/plate context menu
 			UiThread.RunOnIdle(() =>
@@ -1520,23 +1525,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
 				var actions = new[] {
-							new ActionSeparator(),
-							new NamedAction()
-							{
-								Title = "Paste".Localize(),
-								Action = () =>
-								{
-									Scene.Paste();
-								},
-								IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
-							},
-							WorkspaceActions["Save"],
-							WorkspaceActions["SaveAs"],
-							WorkspaceActions["Export"],
-							new ActionSeparator(),
-							WorkspaceActions["ArrangeAll"],
-							WorkspaceActions["ClearBed"],
-						};
+					new ActionSeparator(),
+					new NamedAction()
+					{
+						Title = "Paste".Localize(),
+						Action = () =>
+						{
+							Scene.Paste();
+						},
+						IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
+					},
+					WorkspaceActions["Save"],
+					WorkspaceActions["SaveAs"],
+					WorkspaceActions["Export"],
+					new ActionSeparator(),
+					WorkspaceActions["ArrangeAll"],
+					WorkspaceActions["ClearBed"],
+				};
 
 				theme.CreateMenuItems(popupMenu, actions, emptyMenu: false);
 
