@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public static async void AutoArrangeChildren(this InteractiveScene scene, View3DWidget view3DWidget)
+		public static async Task AutoArrangeChildren(this InteractiveScene scene, View3DWidget view3DWidget)
 		{
 			await Task.Run(() =>
 			{
