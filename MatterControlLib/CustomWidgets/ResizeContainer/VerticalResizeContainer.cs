@@ -44,15 +44,30 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private int _splitterWidth;
 		GrabBarSide grabSide;
+		private bool mouseOverBar;
 
 		internal VerticalResizeContainer(ThemeConfig theme, GrabBarSide grabSide)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.grabSide = grabSide;
 			this.HAnchor = HAnchor.Absolute;
-			this.Cursor = Cursors.VSplit;
 			this.SplitterWidth = theme.SplitterWidth;
 			this.SpliterBarColor = theme.SplitterBackground;
+		}
+
+		public override Cursors Cursor
+		{
+			get
+			{
+				if (mouseOverBar)
+				{
+					return Cursors.VSplit;
+				}
+
+				return Cursors.Default;
+			}
+
+			set => base.Cursor = value;
 		}
 
 		public Color SpliterBarColor { get; set; }
@@ -112,6 +127,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
+			if ((grabSide == GrabBarSide.Left && mouseEvent.Position.X < LocalBounds.Left + this.SplitterWidth)
+				|| (grabSide == GrabBarSide.Right && mouseEvent.Position.X > LocalBounds.Right - this.SplitterWidth))
+			{
+				mouseOverBar = true;
+			}
+			else
+			{
+				mouseOverBar = false;
+			}
+
 			if (mouseDownOnBar)
 			{
 				int currentMouseX = (int)TransformToScreenSpace(mouseEvent.Position).X;

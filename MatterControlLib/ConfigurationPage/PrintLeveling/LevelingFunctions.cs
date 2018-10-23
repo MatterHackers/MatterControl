@@ -56,23 +56,47 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// get the delaunay triangulation
 			var zDictionary = new Dictionary<(double, double), double>();
 			var vertices = new List<DefaultVertex>();
-			foreach (var sample in SampledPositions)
+
+			if (SampledPositions.Count > 2)
+			{
+				foreach (var sample in SampledPositions)
+				{
+					vertices.Add(new DefaultVertex()
+					{
+						Position = new double[] { sample.X, sample.Y }
+					});
+					var key = (sample.X, sample.Y);
+					if (!zDictionary.ContainsKey(key))
+					{
+						zDictionary.Add(key, sample.Z);
+					}
+				};
+			}
+			else
 			{
 				vertices.Add(new DefaultVertex()
 				{
-					Position = new double[] { sample.X, sample.Y }//, sample.Z }
+					Position = new double[] { 0, 0 }
 				});
-				var key = (sample.X, sample.Y);
-				if (!zDictionary.ContainsKey(key))
+				zDictionary.Add((0, 0), 0);
+
+				vertices.Add(new DefaultVertex()
 				{
-					zDictionary.Add(key, sample.Z);
-				}
-			};
+					Position = new double[] { 200, 0 }
+				});
+				zDictionary.Add((200, 0), 0);
+
+				vertices.Add(new DefaultVertex()
+				{
+					Position = new double[] { 100, 200 }
+				});
+				zDictionary.Add((100, 200), 0);
+			}
 
 			int extraXPosition = -50000;
 			vertices.Add(new DefaultVertex()
 			{
-				Position = new double[] { extraXPosition, SampledPositions[0].Y }
+				Position = new double[] { extraXPosition, vertices[0].Position[1] }
 			});
 
 			var triangles = DelaunayTriangulation<DefaultVertex, DefaultTriangulationCell<DefaultVertex>>.Create(vertices, .001);
