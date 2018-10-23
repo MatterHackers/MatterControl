@@ -45,6 +45,7 @@ using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -325,12 +326,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 							await printer.Bed.LoadContent(editContext);
 
+							bool allInBounds = true;
+							foreach (var item in printer.Bed.Scene.Children)
+							{
+								allInBounds &= printer.InsideBuildVolume(item);
+							}
+
+							if(!allInBounds)
+							{
+								await printer.Bed.Scene.AutoArrangeChildren(view3DWidget);
+							}
+
 							// Switch to printer
 							ApplicationController.Instance.AppView.TabControl.SelectedTabKey = printer.Settings.GetValue(SettingsKey.printer_name);
 
 							// Slice and print
+							// Save any pending changes before starting print operation
+							await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), printer.Bed.SaveChanges);
+
 							await ApplicationController.Instance.PrintPart(
-								editContext,
+								printer.Bed.EditContext,
 								printer,
 								null,
 								CancellationToken.None);
