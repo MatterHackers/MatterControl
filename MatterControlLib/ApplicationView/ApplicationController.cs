@@ -413,12 +413,12 @@ namespace MatterHackers.MatterControl
 			return "https://www.google.com/s2/favicons?domain=" + (string.IsNullOrWhiteSpace(oemUrl) ? "www.matterhackers.com" : oemUrl);
 		}
 
-		internal async Task ClearActivePrinter()
+		public async Task ClearActivePrinter(bool allowChangedEvent = true)
 		{
 			// Actually clear printer
 			ProfileManager.Instance.LastProfileID = "";
 
-			await this.SetActivePrinter(PrinterConfig.EmptyPrinter);
+			await this.SetActivePrinter(PrinterConfig.EmptyPrinter, allowChangedEvent);
 		}
 
 		public void LaunchBrowser(string targetUri)
