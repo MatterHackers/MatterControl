@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using MatterHackers.Agg;
@@ -318,6 +319,189 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.InteractionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
 
 			this.sceneContext.SceneLoaded += SceneContext_SceneLoaded;
+
+			// Construct a dictionary of menu actions accessible at the workspace level
+			WorkspaceActions = this.InitWorkspaceActions();
+		}
+
+		private Dictionary<string, NamedAction> InitWorkspaceActions()
+		{
+			return new Dictionary<string, NamedAction>()
+			{
+				{
+					"Insert",
+					new NamedAction()
+					{
+						ID = "Insert",
+						Title = "Insert".Localize(),
+						Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons),
+						Action = () =>
+						{
+							var extensionsWithoutPeriod = new HashSet<string>(ApplicationSettings.OpenDesignFileParams.Split('|').First().Split(',').Select(s => s.Trim().Trim('.')));
+
+							foreach(var extension in ApplicationController.Instance.Library.ContentProviders.Keys)
+							{
+								extensionsWithoutPeriod.Add(extension.ToUpper());
+							}
+
+							var extensionsArray = extensionsWithoutPeriod.OrderBy(t => t).ToArray();
+
+							string filter = string.Format(
+								"{0}|{1}",
+								string.Join(",", extensionsArray),
+								string.Join("", extensionsArray.Select(e => $"*.{e.ToLower()};").ToArray()));
+
+							UiThread.RunOnIdle(() =>
+							{
+								AggContext.FileDialogs.OpenFileDialog(
+									new OpenFileDialogParams(filter, multiSelect: true),
+									(openParams) =>
+									{
+										ViewControls3D.LoadAndAddPartsToPlate(this, openParams.FileNames, sceneContext);
+									});
+							});
+						}
+					}
+				},
+				{
+					"Cut",
+					new NamedAction()
+					{
+						ID = "Cut",
+						Title = "Cut".Localize(),
+						Shortcut = "Ctrl+X",
+						Action = () =>
+						{
+							sceneContext.Scene.Cut();
+						},
+						IsEnabled = () => sceneContext.Scene.SelectedItem != null
+					}
+				},
+				{
+					"Copy",
+					new NamedAction()
+					{
+						ID = "Copy",
+						Title = "Copy".Localize(),
+						Shortcut = "Ctrl+C",
+						Action = () =>
+						{
+							sceneContext.Scene.Copy();
+						},
+						IsEnabled = () => sceneContext.Scene.SelectedItem != null
+					}
+				},
+				{
+					"Paste",
+					new NamedAction()
+					{
+						ID = "Paste",
+						Title = "Paste".Localize(),
+						Shortcut = "Ctrl+V",
+						Action = () =>
+						{
+							sceneContext.Scene.Paste();
+						},
+						IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
+					}
+				},
+				{
+					"Export",
+					new NamedAction()
+					{
+						ID = "Export",
+						Title = "Export".Localize(),
+						Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16),
+						Action = () =>
+						{
+							UiThread.RunOnIdle(async () =>
+							{
+								DialogWindow.Show(
+									new ExportPrintItemPage(new[]
+									{
+										new InMemoryLibraryItem(sceneContext.Scene)
+									}, false));
+							});
+						},
+						IsEnabled = () => sceneContext.EditableScene
+							|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
+								&& string.Equals(Path.GetExtension(libraryAsset.FileName) ,".gcode" ,StringComparison.OrdinalIgnoreCase))
+					}
+				},
+				{
+					"Save",
+					new NamedAction()
+					{
+						ID = "Save",
+						Title = "Save".Localize(),
+						Shortcut = "Ctrl+S",
+						Action = () =>
+						{
+							ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.SaveChanges).ConfigureAwait(false);
+						},
+						IsEnabled = () => sceneContext.EditableScene
+					}
+				},
+				{
+					"SaveAs",
+					new NamedAction()
+					{
+						ID = "SaveAs",
+						Title = "Save As".Localize(),
+						Action = () => UiThread.RunOnIdle(() =>
+						{
+							DialogWindow.Show(
+								new SaveAsPage(
+									async (newName, destinationContainer) =>
+									{
+										// Save to the destination provider
+										if (destinationContainer is ILibraryWritableContainer writableContainer)
+										{
+											// Wrap stream with ReadOnlyStream library item and add to container
+											writableContainer.Add(new[]
+											{
+												new InMemoryLibraryItem(sceneContext.Scene)
+												{
+													Name = newName
+												}
+											});
+
+											destinationContainer.Dispose();
+										}
+									}));
+						}),
+						IsEnabled = () => sceneContext.EditableScene
+					}
+				},
+				{
+					"ArrangeAll",
+					new NamedAction()
+					{
+						ID = "ArrangeAll",
+						Title = "Arrange All Parts".Localize(),
+						Action = () =>
+						{
+							sceneContext.Scene.AutoArrangeChildren(this);
+						},
+						IsEnabled = () => sceneContext.EditableScene
+					}
+				},
+				{
+					"ClearBed",
+					new NamedAction()
+					{
+						ID = "ClearBed",
+						Title = "Clear Bed".Localize(),
+						Action = () =>
+						{
+							UiThread.RunOnIdle(() =>
+							{
+								this.ClearPlate();
+							});
+						}
+					}
+				}
+			};
 		}
 
 		private void ViewState_ViewModeChanged(object sender, ViewModeChangedEventArgs e)
@@ -325,7 +509,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.modelViewStyleButton.Visible = e.ViewMode == PartViewMode.Model;
 		}
 
-		public Dictionary<string, NamedAction> WorkspaceActions { get; set; }
+		public Dictionary<string, NamedAction> WorkspaceActions { get; }
 
 		private void ModelViewSidePanel_Resized(object sender, EventArgs e)
 		{
@@ -1231,25 +1415,44 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						selectedItem = hitObject;
 					}
 
-					UiThread.RunOnIdle(() =>
+					this.ShowPartContextMenu(mouseEvent, selectedItem);
+				}
+				else // Allow right click on bed in all modes
+				{
+					this.ShowBedContextMenu(mouseEvent.Position);
+				}
+			}
+
+			base.OnMouseUp(mouseEvent);
+
+			if (deferEditorTillMouseUp)
+			{
+				this.deferEditorTillMouseUp = false;
+				Scene_SelectionChanged(null, null);
+			}
+		}
+
+		private void ShowPartContextMenu(MouseEventArgs mouseEvent, IObject3D selectedItem)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				var menu = ApplicationController.Instance.GetActionMenuForSceneItem(selectedItem, Scene, true);
+
+				var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+				systemWindow.ShowPopup(
+					new MatePoint(this)
 					{
-						var menu = ApplicationController.Instance.GetActionMenuForSceneItem(selectedItem, Scene, true);
+						Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+						AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+					},
+					new MatePoint(menu)
+					{
+						Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+						AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+					},
+					altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
 
-						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-						systemWindow.ShowPopup(
-							new MatePoint(this)
-							{
-								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-							},
-							new MatePoint(menu)
-							{
-								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-							},
-							altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
-
-						var actions = new[] {
+				var actions = new[] {
 							new ActionSeparator(),
 							WorkspaceActions["Cut"],
 							WorkspaceActions["Copy"],
@@ -1299,36 +1502,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								}
 							}};
 
-						theme.CreateMenuItems(menu, actions, emptyMenu: false);
+				theme.CreateMenuItems(menu, actions, emptyMenu: false);
 
-						menu.CreateHorizontalLine();
+				menu.CreateHorizontalLine();
 
-						string componentID = (selectedItem as ComponentObject3D)?.ComponentID;
+				string componentID = (selectedItem as ComponentObject3D)?.ComponentID;
 
-						var helpItem = menu.CreateMenuItem("Help".Localize());
-						helpItem.Enabled = !string.IsNullOrEmpty(componentID) && ApplicationController.Instance.HelpArticlesByID.ContainsKey(componentID);
-						helpItem.Click += (s, e) =>
-						{
-							DialogWindow.Show(new HelpPage(componentID));
-						};
-					});
-				}
-				else // Allow right click on bed in all modes
+				var helpItem = menu.CreateMenuItem("Help".Localize());
+				helpItem.Enabled = !string.IsNullOrEmpty(componentID) && ApplicationController.Instance.HelpArticlesByID.ContainsKey(componentID);
+				helpItem.Click += (s, e) =>
 				{
-					PopupBedActionsMenu(mouseEvent.Position);
-				}
-			}
-
-			base.OnMouseUp(mouseEvent);
-
-			if (deferEditorTillMouseUp)
-			{
-				this.deferEditorTillMouseUp = false;
-				Scene_SelectionChanged(null, null);
-			}
+					DialogWindow.Show(new HelpPage(componentID));
+				};
+			});
 		}
 
-		public void PopupBedActionsMenu(Vector2 position)
+		public void ShowBedContextMenu(Vector2 position)
 		{
 			// Workspace/plate context menu
 			UiThread.RunOnIdle(() =>
@@ -1336,39 +1525,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
 				var actions = new[] {
-							new ActionSeparator(),
-							new NamedAction()
-							{
-								Title = "Cut".Localize(),
-								Action = () =>
-								{
-									Scene.Cut();
-								},
-								IsEnabled = () => Scene.SelectedItem != null
-							},
-							new NamedAction()
-							{
-								Title = "Copy".Localize(),
-								Action = () =>
-								{
-									Scene.Copy();
-								},
-								IsEnabled = () => Scene.SelectedItem != null
-							},
-							new NamedAction()
-							{
-								Title = "Paste".Localize(),
-								Action = () =>
-								{
-									Scene.Paste();
-								},
-								IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
-							},
-							WorkspaceActions["Export"],
-							new ActionSeparator(),
-							WorkspaceActions["ArrangeAll"],
-							WorkspaceActions["ClearBed"],
-						};
+					new ActionSeparator(),
+					new NamedAction()
+					{
+						Title = "Paste".Localize(),
+						Action = () =>
+						{
+							Scene.Paste();
+						},
+						IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
+					},
+					WorkspaceActions["Save"],
+					WorkspaceActions["SaveAs"],
+					WorkspaceActions["Export"],
+					new ActionSeparator(),
+					WorkspaceActions["ArrangeAll"],
+					WorkspaceActions["ClearBed"],
+				};
 
 				theme.CreateMenuItems(popupMenu, actions, emptyMenu: false);
 
