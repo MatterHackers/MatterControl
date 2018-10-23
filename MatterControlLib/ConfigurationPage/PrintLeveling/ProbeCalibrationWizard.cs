@@ -45,7 +45,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public static bool UsingZProbe(PrinterConfig printer)
 		{
 			// we have a probe that we are using and we have not done leveling yet
-			return printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
+			return printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled)
+				&& printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
 				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe);
 		}
 
