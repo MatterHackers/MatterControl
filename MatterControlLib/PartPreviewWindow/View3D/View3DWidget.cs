@@ -32,6 +32,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -41,6 +43,8 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
@@ -366,6 +370,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				},
 				{
+					"Print",
+					new NamedAction()
+					{
+						ID = "Print",
+						Title = "Print".Localize(),
+						Shortcut = "Ctrl+P",
+						Action = this.PushToPrinterAndPrint,
+						IsEnabled = () => sceneContext.EditableScene
+							|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
+								&& string.Equals(Path.GetExtension(libraryAsset.FileName) ,".gcode" ,StringComparison.OrdinalIgnoreCase))
+					}
+				},
+				{
 					"Cut",
 					new NamedAction()
 					{
@@ -556,6 +573,89 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			this.Invalidate();
+		}
+
+		public void PushToPrinterAndPrint()
+		{
+			if (ProfileManager.Instance.Profiles.Where(p => !p.MarkedForDelete).Count() <= 0)
+			{
+				//Launch window to prompt user to sign in
+				UiThread.RunOnIdle(() =>
+				{
+					var window = DialogWindow.Show(new SetupStepMakeModelName());
+					window.Closed += (s2, e2) =>
+					{
+						if (ApplicationController.Instance.ActivePrinter is PrinterConfig printer
+							&& printer.Settings.PrinterSelected)
+						{
+							CopyPlateToPrinter(sceneContext, printer);
+						}
+					};
+				});
+			}
+			// If no active printer but profiles exist, show select printer
+			// If printer exists, stash plate with undo operation, then load this scene onto the printer bed
+			else if (ApplicationController.Instance.ActivePrinter is PrinterConfig printer && printer.Settings.PrinterSelected)
+			{
+				CopyPlateToPrinter(sceneContext, printer);
+			}
+		}
+
+		private static void CopyPlateToPrinter(BedConfig sceneContext, PrinterConfig printer)
+		{
+			Task.Run(async () =>
+			{
+				await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.SaveChanges);
+
+				// Clear bed to get new MCX on disk for this item
+				printer.Bed.ClearPlate();
+
+				await printer.Bed.LoadContent(sceneContext.EditContext);
+
+				bool allInBounds = true;
+				foreach (var item in printer.Bed.Scene.VisibleMeshes())
+				{
+					allInBounds &= printer.InsideBuildVolume(item);
+				}
+
+				if (!allInBounds)
+				{
+					var bounds = printer.Bed.Scene.GetAxisAlignedBoundingBox();
+					var boundsCenter = bounds.Center;
+					// don't move the z of our stuff
+					boundsCenter.Z = 0;
+
+					if (bounds.XSize <= printer.Bed.ViewerVolume.X
+						&& bounds.YSize <= printer.Bed.ViewerVolume.Y)
+					{
+						// center the collection of stuff
+						var bedCenter = new Vector3(printer.Bed.BedCenter);
+
+						foreach (var item in printer.Bed.Scene.Children)
+						{
+							item.Matrix *= Matrix4X4.CreateTranslation(-boundsCenter + bedCenter);
+						}
+					}
+					else
+					{
+						// arrange the stuff the best we can
+						await printer.Bed.Scene.AutoArrangeChildren(new Vector3(printer.Bed.BedCenter));
+					}
+				}
+
+				// Switch to printer
+				ApplicationController.Instance.AppView.TabControl.SelectedTabKey = printer.Settings.GetValue(SettingsKey.printer_name);
+
+				// Slice and print
+				// Save any pending changes before starting print operation
+				await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), printer.Bed.SaveChanges);
+
+				await ApplicationController.Instance.PrintPart(
+					printer.Bed.EditContext,
+					printer,
+					null,
+					CancellationToken.None);
+			});
 		}
 
 		private void ViewControls3D_TransformStateChanged(object sender, TransformStateChangedEventArgs e)
@@ -1555,6 +1655,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					WorkspaceActions["Save"],
 					WorkspaceActions["SaveAs"],
 					WorkspaceActions["Export"],
+					new ActionSeparator(),
+					WorkspaceActions["Print"],
 					new ActionSeparator(),
 					WorkspaceActions["ArrangeAll"],
 					WorkspaceActions["ClearBed"],

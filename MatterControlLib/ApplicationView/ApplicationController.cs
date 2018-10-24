@@ -2840,6 +2840,13 @@ If you experience adhesion problems, please re-run leveling."
 							}
 							break;
 
+						case Keys.P:
+							if (keyEvent.Control)
+							{
+								view3D.PushToPrinterAndPrint();
+							}
+							break;
+
 						case Keys.X:
 							if (keyEvent.Control)
 							{
