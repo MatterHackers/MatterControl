@@ -742,7 +742,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					// Multiselect - disallow containers, require View3DWidget context
 					return ApplicationController.Instance.DragDropData.View3DWidget != null
 						&& listView.SelectedItems.Any()
-						&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
+						&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainerLink));
 				}
 			});
 
@@ -1008,7 +1008,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					{
 						// Multiselect - disallow containers
 						return listView.SelectedItems.Any()
-							&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
+							&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainerLink));
 					}
 				});
 			}
