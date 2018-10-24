@@ -443,12 +443,16 @@ namespace MatterHackers.MatterControl.DesignTools
 					UIField field = new ChildrenSelectorListField(property, theme);
 
 					field.Initialize(0);
-					field.ValueChanged += (s, e) =>
-					{
-						property.SetValue(new ChildrenSelector() { field.Value });
-						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-					};
+					RegisterValueChanged(field,
+						(valueString) => 
+						{
+							var childrenSelector = new ChildrenSelector();
+							foreach (var child in valueString.Split(','))
+							{
+								childrenSelector.Add(child);
+							}
+							return childrenSelector;
+						});
 
 					rowContainer = CreateSettingsRow(property, field);
 				}
@@ -571,6 +575,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 
 				field.Initialize(0);
+				RegisterValueChanged(field,
+					(valueString) =>
+					{
+						return Enum.Parse(property.PropertyType, valueString);
+					});
+
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(Enum.Parse(property.PropertyType, field.Value));
