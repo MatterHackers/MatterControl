@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg.Platform;
@@ -75,6 +76,10 @@ namespace MatterHackers.Agg.UI
 				{
 					WindowBorderColor = new Color(theme.PrimaryAccentColor, 175)
 				};
+
+				movable.Width = Math.Min(overlayWindow.Width, movable.Width);
+				movable.Height = Math.Min(overlayWindow.Height, movable.Height);
+
 				overlayWindow.AddChild(movable);
 
 				var closeButton = theme.CreateSmallResetButton();
