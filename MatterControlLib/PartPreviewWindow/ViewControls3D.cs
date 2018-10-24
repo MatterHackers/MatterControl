@@ -306,7 +306,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				printButton.Click += (s, e) =>
 				{
-					if (ProfileManager.Instance.Profiles.Count <= 0)
+					if (ProfileManager.Instance.Profiles.Where(p => !p.MarkedForDelete).Count() <= 0)
 					{
 						//Launch window to prompt user to sign in
 						UiThread.RunOnIdle(() => DialogWindow.Show(new SetupStepMakeModelName()));
