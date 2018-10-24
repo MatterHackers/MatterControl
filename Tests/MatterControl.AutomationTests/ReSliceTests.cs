@@ -72,6 +72,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					double lastAbsoluteEPostion = 0;
 					double largestAbsoluteEPosition = 0;
 					double largestRetraction = 0;
+					emulator.RecievedInstruction += (e, s) =>
+					{
+						if(s.Contains("G92"))
+						{
+							int a = 0;
+						}
+					};
+
 					emulator.EPositionChanged += (e, s) =>
 					{
 						largestAbsoluteEPosition = Math.Max(largestAbsoluteEPosition, emulator.CurrentExtruder.AbsoluteEPosition);

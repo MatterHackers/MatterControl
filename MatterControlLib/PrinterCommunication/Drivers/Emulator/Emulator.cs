@@ -92,6 +92,7 @@ namespace MatterHackers.PrinterEmulator
 
 		public event EventHandler ZPositionChanged;
 		public event EventHandler EPositionChanged;
+		public event EventHandler<string> RecievedInstruction;
 
 		// Instance reference allows test to access the most recently initialized emulator
 		public static Emulator Instance { get; private set; }
@@ -178,6 +179,8 @@ namespace MatterHackers.PrinterEmulator
 		{
 			try
 			{
+				RecievedInstruction?.Invoke(this, inCommand);
+
 				// Remove line returns
 				var commandNoNl = inCommand.Split('\n')[0]; // strip of the trailing cr (\n)
 				var command = ParseChecksumLine(commandNoNl);
