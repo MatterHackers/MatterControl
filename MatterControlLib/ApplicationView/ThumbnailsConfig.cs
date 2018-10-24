@@ -32,8 +32,10 @@ namespace MatterHackers.MatterControl
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
+	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using MatterHackers.Agg;
 	using MatterHackers.Agg.Image;
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.MatterControl.Library;
@@ -81,28 +83,42 @@ namespace MatterHackers.MatterControl
 			return null;
 		}
 
+		static int[] CacheSizes = new int[]
+		{
+			18, 22, 50, 70, 100, 256
+		};
+
 		public ImageBuffer LoadCachedImage(ILibraryItem libraryItem, int width, int height)
 		{
-			var staticDataFilename = Path.Combine("Images", "Thumbnails", CacheFilename(libraryItem, width, height));
-			if (AggContext.StaticData.FileExists(staticDataFilename))
-			{
-				return AggContext.StaticData.LoadImage(staticDataFilename);
-			}
-			ImageBuffer cachedItem = LoadImage(this.CachePath(libraryItem, width, height));
-			if (cachedItem != null)
+			// try to load it from the users cache
+			var expectedCachePath = this.CachePath(libraryItem, width, height);
+			ImageBuffer cachedItem = LoadImage(expectedCachePath);
+			if(cachedItem != null)
 			{
 				return cachedItem;
 			}
-
-			if (width < 100
-				&& height < 100)
+			// if we don't find it see if it is in the cache at a bigger size
+			foreach(var cacheSize in CacheSizes.Where(s => s > width))
 			{
-				// check for a 100x100 image
-				var cachedAt100x100 = LoadImage(this.CachePath(libraryItem, 100, 100));
-				if (cachedAt100x100 != null)
+				cachedItem = LoadImage(this.CachePath(libraryItem, cacheSize, cacheSize));
+				if(cachedItem != null)
 				{
-					return cachedAt100x100.CreateScaledImage(width, height);
+					cachedItem = cachedItem.CreateScaledImage(width, height);
+					AggContext.ImageIO.SaveImageData(expectedCachePath, cachedItem);
+					cachedItem.SetRecieveBlender(new BlenderPreMultBGRA());
+					return cachedItem;
 				}
+			}
+
+			// could not find it in the user cache, try to load it from static data
+			var staticDataFilename = Path.Combine("Images", "Thumbnails", CacheFilename(libraryItem, 256, 256));
+			if (AggContext.StaticData.FileExists(staticDataFilename))
+			{
+				cachedItem = AggContext.StaticData.LoadImage(staticDataFilename);
+				cachedItem = cachedItem.CreateScaledImage(width, height);
+				AggContext.ImageIO.SaveImageData(expectedCachePath, cachedItem);
+				cachedItem.SetRecieveBlender(new BlenderPreMultBGRA());
+				return cachedItem;
 			}
 
 			return null;
