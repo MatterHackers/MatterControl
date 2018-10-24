@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Title = "Arrange All Parts".Localize(),
 						Action = () =>
 						{
-							sceneContext.Scene.AutoArrangeChildren(view3DWidget);
+							sceneContext.Scene.AutoArrangeChildren(view3DWidget.BedCenter);
 						},
 						IsEnabled = () => sceneContext.EditableScene
 					},
@@ -327,14 +327,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							await printer.Bed.LoadContent(editContext);
 
 							bool allInBounds = true;
-							foreach (var item in printer.Bed.Scene.Children)
+							foreach (var item in printer.Bed.Scene.VisibleMeshes())
 							{
 								allInBounds &= printer.InsideBuildVolume(item);
 							}
 
 							if(!allInBounds)
 							{
-								await printer.Bed.Scene.AutoArrangeChildren(view3DWidget);
+								var bounds = printer.Bed.Scene.GetAxisAlignedBoundingBox();
+								var boundsCenter = bounds.Center;
+								// don't move the z of our stuff
+								boundsCenter.Z = 0;
+
+								if (bounds.XSize <= printer.Bed.ViewerVolume.X
+									&& bounds.YSize <= printer.Bed.ViewerVolume.Y)
+								{
+									// center the collection of stuff
+									var bedCenter = new Vector3(printer.Bed.BedCenter);
+
+									foreach (var item in printer.Bed.Scene.Children)
+									{
+										item.Matrix *= Matrix4X4.CreateTranslation(-boundsCenter + bedCenter);
+									}
+								}
+								else
+								{
+									// arrange the stuff the best we can
+									await printer.Bed.Scene.AutoArrangeChildren(new Vector3(printer.Bed.BedCenter));
+								}
+
 							}
 
 							// Switch to printer

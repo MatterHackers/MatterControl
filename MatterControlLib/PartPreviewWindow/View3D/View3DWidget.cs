@@ -483,7 +483,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Title = "Arrange All Parts".Localize(),
 						Action = () =>
 						{
-							sceneContext.Scene.AutoArrangeChildren(this);
+							sceneContext.Scene.AutoArrangeChildren(this.BedCenter);
 						},
 						IsEnabled = () => sceneContext.EditableScene
 					}

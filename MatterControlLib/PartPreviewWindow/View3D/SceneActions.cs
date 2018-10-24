@@ -172,11 +172,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public static async Task AutoArrangeChildren(this InteractiveScene scene, View3DWidget view3DWidget)
+		public static async Task AutoArrangeChildren(this InteractiveScene scene, Vector3 bedCenter)
 		{
 			await Task.Run(() =>
 			{
-				PlatingHelper.ArrangeOnBed(scene.Children.ToList(), scene, view3DWidget.BedCenter);
+				PlatingHelper.ArrangeOnBed(scene.Children.ToList(), scene, bedCenter);
 			});
 		}
 
