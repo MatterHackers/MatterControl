@@ -408,6 +408,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				},
 				{
+					"Delete",
+					new NamedAction()
+					{
+						ID = "Delete",
+						Icon = AggContext.StaticData.LoadIcon("remove.png").SetPreMultiply(),
+						Title = "Remove".Localize(),
+						Action = sceneContext.Scene.DeleteSelection,
+						IsEnabled = () =>  sceneContext.Scene.SelectedItem != null
+					}
+				},
+				{
 					"Export",
 					new NamedAction()
 					{
@@ -483,7 +494,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Title = "Arrange All Parts".Localize(),
 						Action = () =>
 						{
-							sceneContext.Scene.AutoArrangeChildren(this);
+							sceneContext.Scene.AutoArrangeChildren(this.BedCenter);
 						},
 						IsEnabled = () => sceneContext.EditableScene
 					}
@@ -1491,6 +1502,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							{
 								ID = "Export",
 								Title = "Export".Localize(),
+								Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, AppContext.MenuTheme.InvertIcons),
 								Action = () =>
 								{
 									UiThread.RunOnIdle(async () =>
@@ -1502,7 +1514,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 											}, false));
 									});
 								}
-							}};
+							},
+							new ActionSeparator(),
+							WorkspaceActions["Delete"]
+				};
 
 				theme.CreateMenuItems(menu, actions, emptyMenu: false);
 

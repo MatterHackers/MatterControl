@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Title = "Arrange All Parts".Localize(),
 						Action = () =>
 						{
-							sceneContext.Scene.AutoArrangeChildren(view3DWidget);
+							sceneContext.Scene.AutoArrangeChildren(view3DWidget.BedCenter);
 						},
 						IsEnabled = () => sceneContext.EditableScene
 					},
@@ -306,50 +306,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				printButton.Click += (s, e) =>
 				{
-					if (ProfileManager.Instance.Profiles.Count <= 0)
+					if (ProfileManager.Instance.Profiles.Where(p => !p.MarkedForDelete).Count() <= 0)
 					{
 						//Launch window to prompt user to sign in
-						UiThread.RunOnIdle(() => DialogWindow.Show(new SetupStepMakeModelName()));
+						UiThread.RunOnIdle(() =>
+						{
+							var window = DialogWindow.Show(new SetupStepMakeModelName());
+							window.Closed += (s2, e2) =>
+							{
+								if (ApplicationController.Instance.ActivePrinter is PrinterConfig printer 
+									&& printer.Settings.PrinterSelected)
+								{
+									ViewControls3D.CopyPlateToPrinter(sceneContext, printer);
+								}
+							};
+						});
 					}
 					// If no active printer but profiles exist, show select printer
 					// If printer exists, stash plate with undo operation, then load this scene onto the printer bed
 					else if (ApplicationController.Instance.ActivePrinter is PrinterConfig printer && printer.Settings.PrinterSelected)
 					{
-						Task.Run(async () =>
-						{
-							await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.SaveChanges);
-
-							// Clear bed to get new MCX on disk for this item
-							printer.Bed.ClearPlate();
-
-							var editContext = sceneContext.EditContext;
-
-							await printer.Bed.LoadContent(editContext);
-
-							bool allInBounds = true;
-							foreach (var item in printer.Bed.Scene.Children)
-							{
-								allInBounds &= printer.InsideBuildVolume(item);
-							}
-
-							if(!allInBounds)
-							{
-								await printer.Bed.Scene.AutoArrangeChildren(view3DWidget);
-							}
-
-							// Switch to printer
-							ApplicationController.Instance.AppView.TabControl.SelectedTabKey = printer.Settings.GetValue(SettingsKey.printer_name);
-
-							// Slice and print
-							// Save any pending changes before starting print operation
-							await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), printer.Bed.SaveChanges);
-
-							await ApplicationController.Instance.PrintPart(
-								printer.Bed.EditContext,
-								printer,
-								null,
-								CancellationToken.None);
-						});
+						ViewControls3D.CopyPlateToPrinter(sceneContext, printer);
 					}
 
 				};
@@ -477,6 +454,63 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Run on load
 			Scene_SelectionChanged(null, null);
+		}
+
+		private static void CopyPlateToPrinter(BedConfig sceneContext, PrinterConfig printer)
+		{
+			Task.Run(async () =>
+			{
+				await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.SaveChanges);
+
+				// Clear bed to get new MCX on disk for this item
+				printer.Bed.ClearPlate();
+
+				await printer.Bed.LoadContent(sceneContext.EditContext);
+
+				bool allInBounds = true;
+				foreach (var item in printer.Bed.Scene.VisibleMeshes())
+				{
+					allInBounds &= printer.InsideBuildVolume(item);
+				}
+
+				if (!allInBounds)
+				{
+					var bounds = printer.Bed.Scene.GetAxisAlignedBoundingBox();
+					var boundsCenter = bounds.Center;
+					// don't move the z of our stuff
+					boundsCenter.Z = 0;
+
+					if (bounds.XSize <= printer.Bed.ViewerVolume.X
+						&& bounds.YSize <= printer.Bed.ViewerVolume.Y)
+					{
+						// center the collection of stuff
+						var bedCenter = new Vector3(printer.Bed.BedCenter);
+
+						foreach (var item in printer.Bed.Scene.Children)
+						{
+							item.Matrix *= Matrix4X4.CreateTranslation(-boundsCenter + bedCenter);
+						}
+					}
+					else
+					{
+						// arrange the stuff the best we can
+						await printer.Bed.Scene.AutoArrangeChildren(new Vector3(printer.Bed.BedCenter));
+					}
+				}
+
+				// Switch to printer
+				ApplicationController.Instance.AppView.TabControl.SelectedTabKey = printer.Settings.GetValue(SettingsKey.printer_name);
+
+				// Slice and print
+				// Save any pending changes before starting print operation
+				await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), printer.Bed.SaveChanges);
+
+				await ApplicationController.Instance.PrintPart(
+					printer.Bed.EditContext,
+					printer,
+					null,
+					CancellationToken.None);
+			});
 		}
 
 		private void Scene_SelectionChanged(object sender, EventArgs e)
@@ -649,6 +683,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									}));
 						});
 					});
+
+					var exportAction = view3DWidget.WorkspaceActions["Export"];
+
+					var exportItem = popupMenu.CreateMenuItem("Export".Localize(), exportAction.Icon);
+					exportItem.Click += (s, e) =>
+					{
+						exportAction.Action.Invoke();
+					};
 
 					return popupMenu;
 				},
