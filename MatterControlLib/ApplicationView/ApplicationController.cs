@@ -3089,26 +3089,30 @@ If you experience adhesion problems, please re-run leveling."
 
 		public static async Task<GuiWidget> Initialize(SystemWindow systemWindow, Action<double, string> reporter)
 		{
-			reporter?.Invoke(0.01, "PlatformInit");
+			var loading = "Loading...";
+#if DEBUG
+			loading = null;
+#endif
+			reporter?.Invoke(0.01, (loading != null) ? loading : "PlatformInit");
 			AppContext.Platform.PlatformInit((status) =>
 			{
-				reporter?.Invoke(0.01, status);
+				reporter?.Invoke(0.01, (loading != null) ? loading : status);
 			});
 
 			// TODO: Appears to be unused and should be removed
 			// set this at startup so that we can tell next time if it got set to true in close
 			UserSettings.Instance.Fields.StartCount = UserSettings.Instance.Fields.StartCount + 1;
 
-			reporter?.Invoke(0.05, "ApplicationController");
+			reporter?.Invoke(0.05, (loading != null) ? loading : "ApplicationController");
 			var applicationController = ApplicationController.Instance;
 
 			// Accessing any property on ProfileManager will run the static constructor and spin up the ProfileManager instance
-			reporter?.Invoke(0.2, "ProfileManager");
+			reporter?.Invoke(0.2, (loading != null) ? loading : "ProfileManager");
 			bool na2 = ProfileManager.Instance.IsGuestProfile;
 
 			await ProfileManager.Instance.Initialize();
 
-			reporter?.Invoke(0.25, "Initialize printer");
+			reporter?.Invoke(0.25, (loading != null) ? loading : "Initialize printer");
 			var printer = await ProfileManager.Instance.LoadPrinter();
 
 			// Restore bed
@@ -3121,14 +3125,14 @@ If you experience adhesion problems, please re-run leveling."
 				}, 2);
 			}
 
-			reporter?.Invoke(0.3, "MainView");
+			reporter?.Invoke(0.3, (loading != null) ? loading : "MainView");
 			applicationController.MainView = new WidescreenPanel(applicationController.Theme);
 
 			// now that we are all set up lets load our plugins and allow them their chance to set things up
-			reporter?.Invoke(0.8, "Plugins");
+			reporter?.Invoke(0.8, (loading != null) ? loading : "Plugins");
 			AppContext.Platform.FindAndInstantiatePlugins(systemWindow);
 
-			reporter?.Invoke(0.91, "OnLoadActions");
+			reporter?.Invoke(0.91, (loading != null) ? loading : "OnLoadActions");
 			applicationController.OnLoadActions();
 
 			UiThread.SetInterval(() =>
