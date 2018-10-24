@@ -650,6 +650,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						});
 					});
 
+					var exportAction = view3DWidget.WorkspaceActions["Export"];
+
+					var exportItem = popupMenu.CreateMenuItem("Export".Localize(), exportAction.Icon);
+					exportItem.Click += (s, e) =>
+					{
+						exportAction.Action.Invoke();
+					};
+
 					return popupMenu;
 				},
 				BackgroundColor = theme.ToolbarButtonBackground,
