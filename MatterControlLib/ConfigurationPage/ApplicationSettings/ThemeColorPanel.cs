@@ -139,7 +139,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						themeset = provider.GetTheme(themeName);
 					}
 
-					previewContainer.AddChild(new ThemePreviewButton(themeset, this)
+					var previewColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
+					previewContainer.AddChild(previewColumn);
+
+					previewColumn.AddChild(new ThemePreviewButton(themeset, this)
 					{
 						HAnchor = HAnchor.Absolute,
 						VAnchor = VAnchor.Absolute,
@@ -148,7 +151,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						Mode = themeName,
 						Border = 1,
 						BorderColor = theme.BorderColor20,
-						Margin = theme.DefaultContainerPadding
+						Margin = new BorderDouble(theme.DefaultContainerPadding, 0, theme.DefaultContainerPadding, theme.DefaultContainerPadding)
+					});
+
+					string name = themeset.Name;
+					if (string.IsNullOrEmpty(name))
+					{
+						name = themeset.ThemeID.Replace("-", " ");
+					}
+
+					previewColumn.AddChild(new TextWidget(name, pointSize: theme.FontSize7, textColor: theme.Colors.PrimaryTextColor)
+					{
+						HAnchor = HAnchor.Left,
+						Margin = new BorderDouble(12, 2)
 					});
 
 					if (themeName == AppContext.ThemeSet.ThemeID)
