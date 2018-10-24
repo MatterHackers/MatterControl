@@ -53,15 +53,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="ApplicationView\Themes\AffinityTheme.cs" />
-    <Compile Remove="ApplicationView\Themes\ClassicColorsTheme.cs" />
-    <Compile Remove="ApplicationView\Themes\SolarizedTheme.cs" />
     <Compile Remove="DesignTools\Primitives\HexGridObject3D.cs" />
     <Compile Remove="PrinterCommunication\Io\TrackPrinterPosition.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="ApplicationView\Themes\SolarizedTheme.cs___" />
   </ItemGroup>
 
   <ItemGroup>
@@ -86,7 +79,7 @@
     <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj" />
     <ProjectReference Include="..\Submodules\MatterSlice\MatterSliceLib\MatterSliceLib.csproj" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Markdig" Version="0.15.2" />
     <PackageReference Include="MIConvexHull" Version="1.1.17.1019" />
@@ -96,15 +89,15 @@
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
     <PackageReference Include="Zeroconf" Version="3.0.30" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <Reference Include="PdfSharp">
       <HintPath>PdfSharp.dll</HintPath>
     </Reference>
   </ItemGroup>
-  
+
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
+
 </Project>
