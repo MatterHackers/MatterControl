@@ -270,32 +270,40 @@ namespace MatterHackers.MatterControl.DesignTools
 			// Get reflected property value once, then test for each case below
 			var propertyValue = property.Value;
 
+			void RegisterValueChanged(UIField field, Func<string, object> valueFromString, Func<object, string> valueToString = null)
+			{
+				field.ValueChanged += (s, e) =>
+				{
+					var newValue = field.Value;
+					var oldValue = property.Value.ToString();
+					if (valueToString != null)
+					{
+						oldValue = valueToString(property.Value);
+					}
+
+					//field.Content
+					undoBuffer.AddAndDo(new UndoRedoActions(() =>
+					{
+						property.SetValue(valueFromString(oldValue));
+						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
+						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					},
+					() =>
+					{
+						property.SetValue(valueFromString(newValue));
+						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
+						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					}));
+				};
+			}
+
 			// create a double editor
 			if (propertyValue is double doubleValue)
 			{
 				var field = new DoubleField(theme);
 				field.Initialize(0);
 				field.DoubleValue = doubleValue;
-
-				field.ValueChanged += (s, e) =>
-				{
-					var newValue = field.DoubleValue;
-					var oldValue = property.Value;
-
-					//field.Content
-					undoBuffer.AddAndDo(new UndoRedoActions(() =>
-					{
-						property.SetValue(oldValue);
-						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-					},
-					() =>
-					{
-						property.SetValue(newValue);
-						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-					}));
-				};
+				RegisterValueChanged(field, (valueString) => { return double.Parse(valueString); });
 
 				void RefreshField(object s, InvalidateArgs e)
 				{
@@ -332,13 +340,13 @@ namespace MatterHackers.MatterControl.DesignTools
 				var field = new Vector2Field(theme);
 				field.Initialize(0);
 				field.Vector2 = vector2;
-				field.ValueChanged += (s, e) =>
-				{
-					property.SetValue(field.Vector2);
-					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-				};
-
+				RegisterValueChanged(field,
+					(valueString) => { return Vector2.Parse(valueString); },
+					(value) =>
+					{
+						var s = ((Vector2)value).ToString();
+						return s.Substring(1, s.Length - 2);
+					});
 				rowContainer = CreateSettingsColumn(property, field);
 			}
 			else if (propertyValue is Vector3 vector3)
@@ -346,13 +354,13 @@ namespace MatterHackers.MatterControl.DesignTools
 				var field = new Vector3Field(theme);
 				field.Initialize(0);
 				field.Vector3 = vector3;
-				field.ValueChanged += (s, e) =>
-				{
-					property.SetValue(field.Vector3);
-					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-				};
-
+				RegisterValueChanged(field,
+					(valueString) => { return Vector3.Parse(valueString); },
+					(value) =>
+					{
+						var s = ((Vector3)value).ToString();
+						return s.Substring(1, s.Length - 2);
+					});
 				rowContainer = CreateSettingsColumn(property, field);
 			}
 			else if (propertyValue is DirectionVector directionVector)
@@ -479,25 +487,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				var field = new IntField(theme);
 				field.Initialize(0);
 				field.IntValue = intValue;
-				field.ValueChanged += (s, e) =>
-				{
-					var newValue = field.IntValue;
-					var oldValue = property.Value;
-
-					//field.Content
-					undoBuffer.AddAndDo(new UndoRedoActions(() =>
-					{
-						property.SetValue(oldValue);
-						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-					},
-					() =>
-					{
-						property.SetValue(newValue);
-						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-					}));
-				};
+				RegisterValueChanged(field, (valueString) => { return int.Parse(valueString); });
 
 				void RefreshField(object s, InvalidateArgs e)
 				{
@@ -522,32 +512,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				var field = new ToggleboxField(theme);
 				field.Initialize(0);
 				field.Checked = boolValue;
-				field.ValueChanged += (s, e) =>
-				{
-					property.SetValue(field.Checked);
-					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-				};
 
-				field.ValueChanged += (s, e) =>
-				{
-					var newValue = field.Checked;
-
-					//field.Content
-					undoBuffer.AddAndDo(new UndoRedoActions(() =>
-					{
-						property.SetValue(!newValue);
-						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-					},
-					() =>
-					{
-						property.SetValue(newValue);
-						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-					}));
-				};
-
+				RegisterValueChanged(field, 
+					(valueString) => { return valueString == "1"; },
+					(value) => { return ((bool)(value)) ? "1" : "0"; });
 				rowContainer = CreateSettingsRow(property, field);
 			}
 			// create a string editor
@@ -557,26 +525,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.Initialize(0);
 				field.SetValue(stringValue, false);
 				field.Content.HAnchor = HAnchor.Stretch;
-				field.ValueChanged += (s, e) =>
-				{
-					var newValue = field.Value;
-					var oldValue = property.Value;
-
-					//field.Content
-					undoBuffer.AddAndDo(new UndoRedoActions(() =>
-					{
-						property.SetValue(oldValue);
-						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-					},
-					() =>
-					{
-						property.SetValue(newValue);
-						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-					}));
-				};
-
+				RegisterValueChanged(field, (valueString) => valueString);
 				rowContainer = CreateSettingsRow(property, field);
 
 				var label = rowContainer.Children.First();
