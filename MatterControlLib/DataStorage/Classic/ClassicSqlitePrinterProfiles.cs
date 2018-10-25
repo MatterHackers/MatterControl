@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 
 			printerSettings.Helpers.SetComPort(printer.ComPort);
 
-			printerSettings.Save();
+			printerSettings.Save(clearBlackListSettings: true);
 		}
 
 		private static void LoadMaterialSettings(PrinterSettings layeredProfile, Printer printer)

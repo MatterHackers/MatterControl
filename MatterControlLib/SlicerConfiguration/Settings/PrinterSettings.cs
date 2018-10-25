@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 					}
 
-					if(orResult == false)
+					if (orResult == false)
 					{
 						return false;
 					}
@@ -381,12 +381,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		public bool AutoSave { get; set; } = true;
 
-		public void Save()
+		Dictionary<string, string> blackListSettings = new Dictionary<string, string>()
+		{
+			["spiral_vase"] = "0",
+			["bottom_clip_amount"] = "0",
+			["layer_to_pause"] = "",
+			["print_leveling_data"] = "",
+			["print_leveling_enabled"] = "0",
+			["probe_has_been_calibrated"] = "0"
+		};
+
+		public void Save(bool clearBlackListSettings = false)
 		{
 			// Skip save operation if on the EmptyProfile
 			if (!this.PrinterSelected || !this.AutoSave)
 			{
 				return;
+			}
+
+			if(clearBlackListSettings)
+			{
+				foreach(var vkp in blackListSettings)
+				{
+					SetValue(vkp.Key, vkp.Value);
+				}
 			}
 
 			Save(DocumentPath);
