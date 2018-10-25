@@ -38,6 +38,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
 
@@ -447,6 +448,71 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 
 			base.OnLoad(args);
+		}
+
+		public bool HasMenu { get; set; } = true;
+
+		public override void OnClick(MouseEventArgs mouseEvent)
+		{
+			var bounds = this.LocalBounds;
+			var hitRegion = new RectangleDouble(
+				new Vector2(bounds.Right - 32, bounds.Top),
+				new Vector2(bounds.Right, bounds.Top - 32));
+
+			if (this.HasMenu
+				&& (hitRegion.Contains(mouseEvent.Position)
+					|| mouseEvent.Button == MouseButtons.Right))
+			{
+				var menu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+
+				foreach (var menuAction in this.MenuActions.Where(m => m.Scope == ActionScope.ListView))
+				{
+					if (menuAction is MenuSeparator)
+					{
+						menu.CreateSeparator();
+					}
+					else
+					{
+						var item = menu.CreateMenuItem(menuAction.Title, menuAction.Icon);
+						item.Enabled = menuAction.IsEnabled(this.SelectedItems, this);
+
+						if (item.Enabled)
+						{
+							item.Click += (s, e) => UiThread.RunOnIdle(() =>
+							{
+								menu.Close();
+								menuAction.Action.Invoke(this.SelectedItems.Select(o => o.Model), this);
+							});
+						}
+					}
+				}
+
+				RectangleDouble popupBounds;
+				if (mouseEvent.Button == MouseButtons.Right)
+				{
+					popupBounds = new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1);
+				}
+				else
+				{
+					popupBounds = new RectangleDouble(this.Width - 32, this.Height - 32, this.Width, this.Height);
+				}
+
+				var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+				systemWindow.ShowPopup(
+					new MatePoint(this)
+					{
+						Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom),
+						AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
+					},
+					new MatePoint(menu)
+					{
+						Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+						AltMate = new MateOptions(MateEdge.Right, MateEdge.Bottom)
+					},
+					altBounds: popupBounds);
+			}
+
+			base.OnClick(mouseEvent);
 		}
 
 		public override void OnMouseWheel(MouseEventArgs mouseEvent)
