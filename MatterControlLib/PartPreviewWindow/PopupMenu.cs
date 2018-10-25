@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.BackgroundColor = theme.ActiveTabColor;
 		}
 
-		public HorizontalLine CreateHorizontalLine()
+		public HorizontalLine CreateSeparator()
 		{
 			var line = new HorizontalLine(theme: ApplicationController.Instance.MenuTheme)
 			{

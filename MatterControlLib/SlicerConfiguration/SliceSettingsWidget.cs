@@ -369,7 +369,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				this.FilterToOverrides();
 			};
 
-			popupMenu.CreateHorizontalLine();
+			popupMenu.CreateSeparator();
 
 			popupMenu.CreateMenuItem("Expand All".Localize()).Click += (s, e) =>
 			{

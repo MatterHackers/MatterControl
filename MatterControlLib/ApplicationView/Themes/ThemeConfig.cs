@@ -361,7 +361,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (menuAction is ActionSeparator)
 				{
-					popupMenu.CreateHorizontalLine();
+					popupMenu.CreateSeparator();
 				}
 				else
 				{

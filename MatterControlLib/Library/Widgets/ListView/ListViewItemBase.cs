@@ -348,7 +348,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					if (menuAction is MenuSeparator)
 					{
-						menu.CreateHorizontalLine();
+						menu.CreateSeparator();
 					}
 					else if (menuAction.IsEnabled(this.listViewItem.ListView.SelectedItems, this.listViewItem.ListView))
 					{

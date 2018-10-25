@@ -1621,7 +1621,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				theme.CreateMenuItems(menu, actions, emptyMenu: false);
 
-				menu.CreateHorizontalLine();
+				menu.CreateSeparator();
 
 				string componentID = (selectedItem as ComponentObject3D)?.ComponentID;
 

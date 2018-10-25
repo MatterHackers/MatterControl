@@ -243,7 +243,7 @@ namespace MatterHackers.MatterControl
 						}));
 			};
 
-			popupMenu.CreateHorizontalLine();
+			popupMenu.CreateSeparator();
 
 			var selectedItemType = selectedItem.GetType();
 

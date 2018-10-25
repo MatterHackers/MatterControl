@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					useRadioStyle: true,
 					siblingRadioButtonList: siblingList);
 
-				popupMenu.CreateHorizontalLine();
+				popupMenu.CreateSeparator();
 
 				siblingList = new List<GuiWidget>();
 
@@ -1097,7 +1097,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				{
 					if (menuAction is MenuSeparator)
 					{
-						popupMenu.CreateHorizontalLine();
+						popupMenu.CreateSeparator();
 					}
 					else
 					{

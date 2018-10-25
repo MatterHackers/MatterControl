@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							}
 						};
 
-						menu.CreateHorizontalLine();
+						menu.CreateSeparator();
 
 						var deleteMenuItem = menu.CreateMenuItem("Delete".Localize());
 						deleteMenuItem.Click += (s2, e2) =>
