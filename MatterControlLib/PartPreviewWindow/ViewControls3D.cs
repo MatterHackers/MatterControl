@@ -544,7 +544,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					var verticalResizeContainer = new VerticalResizeContainer(theme, GrabBarSide.Right)
 					{
-						BackgroundColor = theme.TabBarBackground,
+						BackgroundColor = Color.Red,
 						Padding = new BorderDouble(0, 0, theme.DefaultContainerPadding / 2, 0),
 						MinimumSize = new Vector2(120, 50),
 						Height = libraryPopup.TransformToScreenSpace(libraryPopup.Position).Y,

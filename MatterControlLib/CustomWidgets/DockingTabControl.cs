@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					Width = this.ConstrainedWidth,
 					VAnchor = VAnchor.Stretch,
-					SpliterBarColor = theme.SplitterBackground,
+					SplitterBarColor = theme.SplitterBackground,
 					SplitterWidth = theme.SplitterWidth,
 					MinimumSize = new Vector2(this.MinDockingWidth, 0)
 				};
@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						VAnchor = VAnchor.Stretch,
 						HAnchor = HAnchor.Right,
 						BackgroundColor = theme.ActiveTabColor,
-						SpliterBarColor = theme.SplitterBackground,
+						SplitterBarColor = theme.SplitterBackground,
 						SplitterWidth = theme.SplitterWidth,
 					};
 					resizeContainer.AddChild(new DockingWindowContent(this, item.widget, item.text, theme)
