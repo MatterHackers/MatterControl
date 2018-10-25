@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl
 			return this.LoadContent(
 				new EditContext()
 				{
-					ContentStore = ApplicationController.Instance.Library.PartHistory,
+					ContentStore = ApplicationController.Instance.Library.PlatingHistory,
 					SourceItem = libraryItem
 				});
 		}

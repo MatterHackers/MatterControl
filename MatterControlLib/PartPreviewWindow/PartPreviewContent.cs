@@ -416,12 +416,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public async Task<ChromeTab> CreatePartTab()
 		{
-			var partHistory = ApplicationController.Instance.Library.PartHistory;
+			var history = ApplicationController.Instance.Library.PlatingHistory;
 
 			var workspace = new PartWorkspace()
 			{
 				Name = "New Design".Localize() + (partCount == 0 ? "" : $" ({partCount})"),
-				SceneContext = new BedConfig(partHistory)
+				SceneContext = new BedConfig(history)
 			};
 
 			partCount++;
@@ -429,8 +429,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			await workspace.SceneContext.LoadContent(
 				new EditContext()
 				{
-					ContentStore = ApplicationController.Instance.Library.PartHistory,
-					SourceItem = partHistory.NewPlatingItem()
+					ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+					SourceItem = history.NewPlatingItem()
 				});
 
 			ApplicationController.Instance.Workspaces.Add(workspace);

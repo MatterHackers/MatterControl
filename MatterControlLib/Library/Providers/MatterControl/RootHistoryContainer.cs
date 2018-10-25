@@ -29,8 +29,10 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -55,15 +57,18 @@ namespace MatterHackers.MatterControl.Library
 					IsReadOnly = true
 				});
 
-			this.ChildContainers.Add(
-				new DynamicContainerLink(
-					() => "Part History".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_20x20.png")),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_folder.png")),
-					() => new PartHistoryContainer())
-				{
-					IsReadOnly = true
-				});
+			if (Directory.GetFiles(ApplicationDataStorage.Instance.PartHistoryDirectory).Any())
+			{
+				this.ChildContainers.Add(
+					new DynamicContainerLink(
+						() => "Part History".Localize(),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_20x20.png")),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_folder.png")),
+						() => new PartHistoryContainer())
+					{
+						IsReadOnly = true
+					});
+			}
 
 			this.ChildContainers.Add(
 				new DynamicContainerLink(

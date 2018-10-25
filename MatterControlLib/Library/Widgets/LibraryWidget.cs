@@ -758,7 +758,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						var workspace = new PartWorkspace()
 						{
 							Name = firstItem.Name,
-							SceneContext = new BedConfig(ApplicationController.Instance.Library.PartHistory)
+							SceneContext = new BedConfig(ApplicationController.Instance.Library.PlatingHistory)
 						};
 
 						ApplicationController.Instance.Workspaces.Add(workspace);

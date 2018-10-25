@@ -905,8 +905,6 @@ namespace MatterHackers.MatterControl
 
 			this.Library.PlatingHistory = new PlatingHistoryContainer();
 
-			this.Library.PartHistory = new PartHistoryContainer();
-
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 					() => "History".Localize(),
