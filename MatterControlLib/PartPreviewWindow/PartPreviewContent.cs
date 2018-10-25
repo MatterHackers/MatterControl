@@ -341,7 +341,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// Create and switch to new printer tab
 					tabControl.ActiveTab = this.CreatePrinterTab(activePrinter, theme);
 				}
-				
+
 				tabControl.RefreshTabPointers();
 			}, ref unregisterEvents);
 

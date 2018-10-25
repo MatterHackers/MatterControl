@@ -893,7 +893,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// <param name="testRunner"></param>
 		public static void SwitchToPrinterSettings(this AutomationRunner testRunner)
 		{
-			testRunner.SwitchToSliceSettings();
+			EnsurePrinterSidebarOpen(testRunner);
 
 			if (!testRunner.NameExists("Printer Tab", 0.1))
 			{
