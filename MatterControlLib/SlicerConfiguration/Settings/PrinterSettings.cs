@@ -401,9 +401,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if(clearBlackListSettings)
 			{
-				foreach(var vkp in blackListSettings)
+				foreach(var kvp in blackListSettings)
 				{
-					SetValue(vkp.Key, vkp.Value);
+					if (UserLayer.ContainsKey(kvp.Key))
+					{
+						UserLayer.Remove(kvp.Key);
+					}
+					OemLayer[kvp.Key] = kvp.Value;
 				}
 			}
 
