@@ -95,6 +95,7 @@ namespace MatterHackers.MatterControl
 			ImageBuffer cachedItem = LoadImage(expectedCachePath);
 			if(cachedItem != null)
 			{
+				cachedItem.SetRecieveBlender(new BlenderPreMultBGRA());
 				return cachedItem;
 			}
 			// if we don't find it see if it is in the cache at a bigger size

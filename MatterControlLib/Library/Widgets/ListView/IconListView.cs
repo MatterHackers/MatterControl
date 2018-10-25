@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				reflownWidth = currentWidth;
 
-				int newColumnCount = RecomputeFlowValues();
+				int newColumnCount = RecomputeFlowValues(1);
 				if (newColumnCount != columnCount)
 				{
 					columnCount = newColumnCount;
@@ -105,10 +105,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.OnBoundsChanged(e);
 		}
 
-		private int RecomputeFlowValues()
+		private int RecomputeFlowValues(int leftRightItemMargin)
 		{
 			int scaledWidth = (int)(ThumbWidth * GuiWidget.DeviceScale);
-			int itemWidth = scaledWidth + (iconViewPadding * 2);
+			int itemWidth = scaledWidth + (iconViewPadding * 2) + (leftRightItemMargin * 2);
 
 			int newColumnCount = (int)Math.Floor(this.LocalBounds.Width / itemWidth);
 			int remainingSpace = (int)this.LocalBounds.Width - newColumnCount * itemWidth;
@@ -132,10 +132,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			// set the margin to be 1/2 the space (it will happen on each side of each icon)
 
 			// put in padding to get the "other" side of the outside icons
-			double leftRightMarginRaw = (remainingSpace > 0 ? spacePerColumn / 2 : 0);
+			double leftRightMarginRaw = (remainingSpace > 0) ? spacePerColumn / 2 : 0;
 
 			// Inflate to account for scaling
-			leftRightMargin = Math.Ceiling(leftRightMarginRaw / GuiWidget.DeviceScale);
+			leftRightMargin = Math.Floor(leftRightMarginRaw / GuiWidget.DeviceScale);
 
 			this.Padding = new BorderDouble(leftRightMargin, 0);
 
@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public void BeginReload()
 		{
-			columnCount = RecomputeFlowValues();
+			columnCount = RecomputeFlowValues(1);
 		}
 
 		public void EndReload()
