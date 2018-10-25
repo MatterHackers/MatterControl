@@ -459,7 +459,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							printerInfo.Model = printerSettings.OemLayer[SettingsKey.model] ?? "Other";
 						}
 
-						printerSettings.Save();
+						printerSettings.Save(clearBlackListSettings: true);
 						importSuccessful = true;
 					}
 					break;
@@ -508,12 +508,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							printerSettings.Helpers.SetName(printerInfo.Name);
 
-							printerSettings.Save();
+							printerSettings.Save(clearBlackListSettings: true);
 							importSuccessful = true;
 						}
 					}
 					break;
 			}
+
 			return importSuccessful;
 		}
 
@@ -548,7 +549,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			});
 
 			// Persist changes to PrinterSettings - must come after adding to Profiles above
-			printerSettings.Save();
+			printerSettings.Save(clearBlackListSettings: true);
 
 			// Set as active profile
 			ProfileManager.Instance.LastProfileID = guid;

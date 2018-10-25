@@ -333,7 +333,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									}
 
 									printer.Settings.ClearUserOverrides();
-									printer.Settings.Save();
+									printer.Settings.Save(clearBlackListSettings: true);
 
 									if (onlyReloadSliceSettings)
 									{
