@@ -46,6 +46,8 @@ namespace MatterHackers.MatterControl
 
 		public List<Color> AccentColors { get; set; } = new List<Color>();
 
+		public int DefaultColorIndex { get; set; }
+
 		public void SetAccentColor(Color accentColor)
 		{
 			this.Theme.PrimaryAccentColor = accentColor;

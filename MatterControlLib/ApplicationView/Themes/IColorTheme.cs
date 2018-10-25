@@ -37,9 +37,9 @@ namespace MatterHackers.MatterControl
 	{
 		string Name { get; }
 
-		ThemeSet GetTheme(string mode);
+		ThemeSet GetTheme(string themeName);
 
-		ThemeSet GetTheme(string mode, Color accentColor);
+		ThemeSet GetTheme(string themeName, Color accentColor);
 
 		IEnumerable<string> ThemeNames { get; }
 	}

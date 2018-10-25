@@ -1,5 +1,6 @@
 {
   "Name": "Classic Dark",
+  "DefaultColorIndex": 0,
   "AccentColors": [
     "#AC193D",
     "#DC4FAD",
