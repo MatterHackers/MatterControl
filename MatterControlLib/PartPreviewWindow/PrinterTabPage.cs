@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			view3DContainer.AddChild(new RunningTasksWidget(theme)
 			{
 				MinimumSize = new Vector2(100, 0),
-				Margin = new BorderDouble(top: printerActionsBar.Height),
+				Margin = new BorderDouble(top: printerActionsBar.Height + 1, left: favoritesBar.LocalBounds.Width + favoritesBar.DeviceMarginAndBorder.Width + 1),
 				VAnchor = VAnchor.Top | VAnchor.Fit,
 				HAnchor = HAnchor.Left | HAnchor.Fit,
 			});
