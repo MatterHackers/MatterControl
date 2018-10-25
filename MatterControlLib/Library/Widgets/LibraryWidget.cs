@@ -336,7 +336,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			UiThread.RunOnIdle(() =>
 			{
-				foreach (var item in ApplicationController.Instance.Library.ActiveContainer.ChildContainers)
+				foreach (var item in ApplicationController.Instance.Library.RootLibaryContainer.ChildContainers)
 				{
 					var rootNode = this.CreateTreeNode(item);
 					rootNode.TreeView = treeView;
