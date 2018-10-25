@@ -126,6 +126,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				// Activate the theme
 				themeColorPanel.SetThemeColor(this.ThemeSet, primaryAccentColor, this.Mode);
+
+				// Disable further theme clicks until reload completes
+				themeColorPanel.Enabled = false;
 			};
 
 			this.AddChild(overlay);

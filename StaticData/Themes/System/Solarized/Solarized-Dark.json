@@ -1,5 +1,6 @@
 {
   "Name": "Solarized Dark",
+  "DefaultColorIndex": 5,
   "AccentColors": [
     "#B58900",
     "#CB4B16",

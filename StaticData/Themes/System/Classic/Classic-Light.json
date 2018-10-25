@@ -1,16 +1,17 @@
 {
   "Name": "Classic Light",
+  "DefaultColorIndex": 0,
   "AccentColors": [
     "#AC193D",
-    "#DC4FAD",
-    "#FF8119",
-    "#008A17",
+    "#CD2895",
+    "#BA5400",
+    "#008316",
     "#004B8B",
-    "#008299",
-    "#5DB2FF",
+    "#007C91",
+    "#0074DB",
     "#4617B4",
     "#8C0095",
-    "#585858"
+    "#585858",
   ],
   "Theme": {
     "DefaultFontSize": 11,

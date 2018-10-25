@@ -1,5 +1,6 @@
 {
   "Name": "Modern Dark",
+  "DefaultColorIndex": 2,
   "AccentColors": [
     "#B58900",
     "#CB4B16",

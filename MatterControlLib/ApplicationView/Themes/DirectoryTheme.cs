@@ -68,7 +68,16 @@ namespace MatterHackers.MatterControl
 		public ThemeSet GetTheme(string themeName)
 		{
 			var themeset = this.LoadTheme(themeName);
-			themeset.SetAccentColor(themeset.AccentColors.First());
+
+			try
+			{
+				var defaultColor = themeset.AccentColors[themeset.DefaultColorIndex];
+				themeset.SetAccentColor(defaultColor);
+			}
+			catch
+			{
+				themeset.SetAccentColor(themeset.AccentColors.First());
+			}
 
 			return themeset;
 		}

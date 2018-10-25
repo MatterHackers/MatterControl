@@ -52,6 +52,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected GuiWidget view3DContainer;
 		protected FlowLayoutWidget topToBottom;
 		protected FlowLayoutWidget leftToRight;
+		protected LibraryListView favoritesBar;
 
 		public PartTabPage(PrinterConfig printer, BedConfig sceneContext, ThemeConfig theme, string tabTitle)
 			: base (tabTitle)
@@ -125,12 +126,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			toolbarAndView3DWidget.AddChild(viewControls3D);
 
-			var dummyContext = new LibraryConfig()
+			var favoritesBarContext = new LibraryConfig()
 			{
-				ActiveContainer = ApplicationController.Instance.Library.ActiveContainer
+				ActiveContainer = ApplicationController.Instance.Library.RootLibaryContainer
 			};
 
-			var favoritesBar = new LibraryListView(dummyContext, theme)
+			favoritesBar = new LibraryListView(favoritesBarContext, theme)
 			{
 				Name = "LibraryView",
 				// Drop containers
