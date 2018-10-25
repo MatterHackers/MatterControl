@@ -577,6 +577,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void PushToPrinterAndPrint()
 		{
+			// If invoked from a printer tab, simply start the print
 			if (this.Printer != null)
 			{
 				// Save any pending changes before starting print operation
@@ -589,9 +590,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						CancellationToken.None).ConfigureAwait(false);
 				});
 			}
-			else if (ProfileManager.Instance.Profiles.Where(p => !p.MarkedForDelete).Count() <= 0)
+			else if (ProfileManager.Instance.ActiveProfiles.Count() <= 0)
 			{
-				//Launch window to prompt user to sign in
+				// If no printer profiles exist, show the printer setup wizard
 				UiThread.RunOnIdle(() =>
 				{
 					var window = DialogWindow.Show(new SetupStepMakeModelName());
@@ -605,12 +606,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					};
 				});
 			}
-			// If no active printer but profiles exist, show select printer
-			// If printer exists, stash plate with undo operation, then load this scene onto the printer bed
 			else if (ApplicationController.Instance.ActivePrinter is PrinterConfig printer && printer.Settings.PrinterSelected)
 			{
+				// If a printer exists, stash plate with undo operation, then load this scene onto the printer bed
 				CopyPlateToPrinter(sceneContext, printer);
 			}
+			else if (ProfileManager.Instance.ActiveProfiles.Any())
+			{
+				// If no active printer but profiles exist, show select printer
+				UiThread.RunOnIdle(() =>
+				{
+					var window = DialogWindow.Show(new SelectPrinterPage("Next".Localize()));
+					window.Closed += (s2, e2) =>
+					{
+						if (ApplicationController.Instance.ActivePrinter is PrinterConfig activePrinter
+							&& activePrinter.Settings.PrinterSelected)
+						{
+							CopyPlateToPrinter(sceneContext, activePrinter);
+						}
+					};
+				});
+			}
+
 		}
 
 		private static void CopyPlateToPrinter(BedConfig sceneContext, PrinterConfig printer)
@@ -658,10 +675,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Switch to printer
 				ApplicationController.Instance.AppView.TabControl.SelectedTabKey = printer.Settings.GetValue(SettingsKey.printer_name);
 
-				// Slice and print
 				// Save any pending changes before starting print operation
 				await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), printer.Bed.SaveChanges);
 
+				// Slice and print
 				await ApplicationController.Instance.PrintPart(
 					printer.Bed.EditContext,
 					printer,
