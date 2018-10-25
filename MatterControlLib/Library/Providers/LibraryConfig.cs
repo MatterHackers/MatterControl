@@ -293,7 +293,7 @@ namespace MatterHackers.MatterControl.Library
 			// Resize canvas to target as fallback
 			if (thumbnail.Width < thumbWidth || thumbnail.Height < thumbHeight)
 			{
-				thumbnail = ListView.ResizeCanvas(thumbnail, thumbWidth, thumbHeight);
+				thumbnail = LibraryListView.ResizeCanvas(thumbnail, thumbWidth, thumbHeight);
 			}
 			else if (thumbnail.Width > thumbWidth || thumbnail.Height > thumbHeight)
 			{

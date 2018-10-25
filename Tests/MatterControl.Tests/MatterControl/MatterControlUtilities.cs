@@ -469,7 +469,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				var resetEvent = new AutoResetEvent(false);
 
 				// Wire up event listener
-				var listView = testRunner.GetWidgetByName("LibraryView", out _) as ListView;
+				var listView = testRunner.GetWidgetByName("LibraryView", out _) as LibraryListView;
 				EventHandler contentReloaded = (s, e) =>
 				{
 					resetEvent.Set();

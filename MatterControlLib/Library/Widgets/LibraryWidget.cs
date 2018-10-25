@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	public class LibraryWidget : GuiWidget
 	{
 		private FlowLayoutWidget buttonPanel;
-		private ListView libraryView;
+		private LibraryListView libraryView;
 		private GuiWidget providerMessageContainer;
 		private TextWidget providerMessageWidget;
 
@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			libraryView = new ListView(ApplicationController.Instance.Library, theme)
+			libraryView = new LibraryListView(ApplicationController.Instance.Library, theme)
 			{
 				Name = "LibraryView",
 				// Drop containers if ShowContainers != 1
@@ -164,22 +164,22 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				popupMenu.CreateBoolMenuItem(
 					"Date Created".Localize(),
-					() => libraryView.ActiveSort == ListView.SortKey.CreatedDate,
-					(v) => libraryView.ActiveSort = ListView.SortKey.CreatedDate,
+					() => libraryView.ActiveSort == LibraryListView.SortKey.CreatedDate,
+					(v) => libraryView.ActiveSort = LibraryListView.SortKey.CreatedDate,
 					useRadioStyle: true,
 					siblingRadioButtonList: siblingList);
 
 				popupMenu.CreateBoolMenuItem(
 					"Date Modified".Localize(),
-					() => libraryView.ActiveSort == ListView.SortKey.ModifiedDate,
-					(v) => libraryView.ActiveSort = ListView.SortKey.ModifiedDate,
+					() => libraryView.ActiveSort == LibraryListView.SortKey.ModifiedDate,
+					(v) => libraryView.ActiveSort = LibraryListView.SortKey.ModifiedDate,
 					useRadioStyle: true,
 					siblingRadioButtonList: siblingList);
 
 				popupMenu.CreateBoolMenuItem(
 					"Name".Localize(),
-					() => libraryView.ActiveSort == ListView.SortKey.Name,
-					(v) => libraryView.ActiveSort = ListView.SortKey.Name,
+					() => libraryView.ActiveSort == LibraryListView.SortKey.Name,
+					(v) => libraryView.ActiveSort = LibraryListView.SortKey.Name,
 					useRadioStyle: true,
 					siblingRadioButtonList: siblingList);
 
@@ -568,7 +568,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			providerMessageContainer.AddChild(providerMessageWidget);
 		}
 
-		public static void CreateMenuActions(ListView libraryView, List<LibraryAction> menuActions, PartPreviewContent partPreviewContent, ThemeConfig theme, bool allowPrint)
+		public static void CreateMenuActions(LibraryListView libraryView, List<LibraryAction> menuActions, PartPreviewContent partPreviewContent, ThemeConfig theme, bool allowPrint)
 		{
 			menuActions.Add(new LibraryAction(ActionScope.ListView)
 			{

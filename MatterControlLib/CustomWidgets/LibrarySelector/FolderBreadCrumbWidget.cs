@@ -42,10 +42,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class FolderBreadCrumbWidget : FlowLayoutWidget
 	{
-		private ListView listView;
+		private LibraryListView listView;
 		private ThemeConfig theme;
 
-		public FolderBreadCrumbWidget(ListView listView, ThemeConfig theme)
+		public FolderBreadCrumbWidget(LibraryListView listView, ThemeConfig theme)
 		{
 			this.listView = listView;
 

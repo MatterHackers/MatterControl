@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,12 +30,10 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -44,7 +42,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
-	public class ListView : ScrollableWidget
+	public class LibraryListView : ScrollableWidget
 	{
 		public event EventHandler ContentReloaded;
 
@@ -65,12 +63,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public List<LibraryAction> MenuActions { get; set; }
 
 		// Default constructor uses IconListView
-		public ListView(ILibraryContext context, ThemeConfig theme)
+		public LibraryListView(ILibraryContext context, ThemeConfig theme)
 			: this(context, new IconListView(theme), theme)
 		{
 		}
 
-		public ListView(ILibraryContext context, GuiWidget libraryView, ThemeConfig theme)
+		public LibraryListView(ILibraryContext context, GuiWidget libraryView, ThemeConfig theme)
 		{
 			contentView = new IconListView(theme);
 

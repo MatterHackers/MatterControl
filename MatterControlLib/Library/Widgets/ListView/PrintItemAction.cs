@@ -51,9 +51,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public string Title { get; set; }
 
-		public Action<IEnumerable<ILibraryItem>, ListView> Action { get; set; }
+		public Action<IEnumerable<ILibraryItem>, LibraryListView> Action { get; set; }
 
-		public Func<IEnumerable<ListViewItem>, ListView, bool> IsEnabled { get; set; }
+		public Func<IEnumerable<ListViewItem>, LibraryListView, bool> IsEnabled { get; set; }
 		public string ToolTipText { get; internal set; }
 		public ImageBuffer Icon { get; internal set; }
 		public ActionScope Scope { get; }

@@ -799,7 +799,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					IEnumerable<ILibraryItem> selectedItems;
 
-					if (sourceWidget is ListView listView)
+					if (sourceWidget is LibraryListView listView)
 					{
 						// Project from ListViewItem to ILibraryItem
 						selectedItems = listView.SelectedItems.Select(l => l.Model);
