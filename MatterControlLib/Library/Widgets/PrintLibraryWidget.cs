@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private GuiWidget providerMessageContainer;
 		private TextWidget providerMessageWidget;
 
-		private List<PrintItemAction> menuActions = new List<PrintItemAction>();
+		private List<LibraryAction> menuActions = new List<LibraryAction>();
 
 		private FolderBreadCrumbWidget breadCrumbWidget;
 		private GuiWidget searchInput;

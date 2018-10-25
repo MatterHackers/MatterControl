@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private Color loadingBackgroundColor;
 		private ImageSequenceWidget loadingIndicator;
 
-		public List<PrintItemAction> MenuActions { get; set; }
+		public List<LibraryAction> MenuActions { get; set; }
 
 		// Default constructor uses IconListView
 		public ListView(ILibraryContext context, ThemeConfig theme)

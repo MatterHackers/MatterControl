@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,15 +30,25 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
-using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
-	public class PrintItemAction
+	public enum ActionScope
 	{
+		ListItem,
+		ListView,
+		None
+	}
+
+	public class LibraryAction
+	{
+		public LibraryAction(ActionScope scope)
+		{
+			this.Scope = scope;
+		}
+
 		public string Title { get; set; }
 
 		public Action<IEnumerable<ILibraryItem>, ListView> Action { get; set; }
@@ -46,17 +56,19 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public Func<IEnumerable<ListViewItem>, ListView, bool> IsEnabled { get; set; }
 		public string ToolTipText { get; internal set; }
 		public ImageBuffer Icon { get; internal set; }
+		public ActionScope Scope { get; }
 	}
 
-	public class MenuSeparator : PrintItemAction
+	public class MenuSeparator : LibraryAction
 	{
 		public MenuSeparator(string section)
+			: base(ActionScope.None)
 		{
 		}
 	}
 
 	public abstract class PrintItemMenuExtension
 	{
-		public abstract IEnumerable<PrintItemAction> GetMenuItems();
+		public abstract IEnumerable<LibraryAction> GetMenuItems();
 	}
 }

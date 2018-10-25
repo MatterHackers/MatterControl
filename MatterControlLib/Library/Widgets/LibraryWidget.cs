@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private GuiWidget providerMessageContainer;
 		private TextWidget providerMessageWidget;
 
-		private List<PrintItemAction> menuActions = new List<PrintItemAction>();
+		private List<LibraryAction> menuActions = new List<LibraryAction>();
 
 		private FolderBreadCrumbWidget breadCrumbWidget;
 		private GuiWidget searchInput;
@@ -568,9 +568,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			providerMessageContainer.AddChild(providerMessageWidget);
 		}
 
-		public static void CreateMenuActions(ListView libraryView, List<PrintItemAction> menuActions, PartPreviewContent partPreviewContent, ThemeConfig theme, bool allowPrint)
+		public static void CreateMenuActions(ListView libraryView, List<LibraryAction> menuActions, PartPreviewContent partPreviewContent, ThemeConfig theme, bool allowPrint)
 		{
-			menuActions.Add(new PrintItemAction()
+			menuActions.Add(new LibraryAction(ActionScope.ListView)
 			{
 				Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, ApplicationController.Instance.MenuTheme.InvertIcons),
 				Title = "Add".Localize(),
@@ -598,7 +598,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				IsEnabled = (s, l) => libraryView.ActiveContainer is ILibraryWritableContainer
 			});
 
-			menuActions.Add(new PrintItemAction()
+			menuActions.Add(new LibraryAction(ActionScope.ListView)
 			{
 				Title = "Create Folder".Localize(),
 				Icon = AggContext.StaticData.LoadIcon("fa-folder-new_16.png", 16, 16, ApplicationController.Instance.MenuTheme.InvertIcons),
@@ -632,7 +632,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			if (allowPrint)
 			{
-				menuActions.Add(new PrintItemAction()
+				menuActions.Add(new LibraryAction(ActionScope.ListItem)
 				{
 					Title = "Print".Localize(),
 					Action = (selectedLibraryItems, listView) =>
@@ -686,7 +686,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 
 			// Open menu item
-			menuActions.Add(new PrintItemAction()
+			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Open".Localize(),
 				Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons),
@@ -707,7 +707,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			});
 
 			// edit menu item
-			menuActions.Add(new PrintItemAction()
+			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Add to Bed".Localize(),
 				Icon = AggContext.StaticData.LoadIcon("bed_add.png", 16, 16, theme.InvertIcons),
@@ -747,7 +747,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			});
 
 			// edit menu item
-			menuActions.Add(new PrintItemAction()
+			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Edit".Localize(),
 				Action = async (selectedLibraryItems, listView) =>
@@ -787,7 +787,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			});
 
 			// rename menu item
-			menuActions.Add(new PrintItemAction()
+			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Rename".Localize(),
 				Action = (selectedLibraryItems, listView) =>
@@ -833,7 +833,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			});
 
 			// move menu item
-			menuActions.Add(new PrintItemAction()
+			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Move".Localize(),
 				Action = (selectedLibraryItems, listView) =>
@@ -868,7 +868,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			});
 
 			// remove menu item
-			menuActions.Add(new PrintItemAction()
+			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Remove".Localize(),
 				Action = (selectedLibraryItems, listView) =>
@@ -917,7 +917,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new MenuSeparator("Export"));
 
 			// export menu item
-			menuActions.Add(new PrintItemAction()
+			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Export".Localize(),
 				Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons),
@@ -938,7 +938,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			});
 
 			// share menu item
-			menuActions.Add(new PrintItemAction()
+			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Share".Localize(),
 				Action = (selectedLibraryItems, listView) =>
@@ -967,7 +967,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// PDF export is limited to Windows
 			if (AggContext.OperatingSystem == OSType.Windows)
 			{
-				menuActions.Add(new PrintItemAction()
+				menuActions.Add(new LibraryAction(ActionScope.ListItem)
 				{
 					Title = "Create Part Sheet".Localize(),
 					Action = (selectedLibraryItems, listView) =>
@@ -1014,7 +1014,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 #endif
 
-			menuActions.Add(new PrintItemAction()
+			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Open Package".Localize(),
 				Action = (selectedItems, listView) =>
