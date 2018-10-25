@@ -277,7 +277,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void CreateSubMenu(string menuTitle, ThemeConfig menuTheme, Action<PopupMenu> populateSubMenu, ImageBuffer icon = null)
 		{
-			GuiWidget content = new TextWidget(menuTitle, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			var content = new TextWidget(menuTitle, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 			{
 				Padding = MenuPadding,
 			};

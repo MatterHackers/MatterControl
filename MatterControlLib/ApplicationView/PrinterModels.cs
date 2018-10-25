@@ -101,6 +101,16 @@ namespace MatterHackers.MatterControl
 			this.SceneLoaded?.Invoke(this, null);
 		}
 
+		public Task LoadLibraryContent(ILibraryItem libraryItem)
+		{
+			return this.LoadContent(
+				new EditContext()
+				{
+					ContentStore = ApplicationController.Instance.Library.PartHistory,
+					SourceItem = libraryItem
+				});
+		}
+
 		public async Task LoadContent(EditContext editContext)
 		{
 			// Make sure we don't have a selection
