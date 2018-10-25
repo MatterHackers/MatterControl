@@ -2,16 +2,16 @@
   "Name": "Classic Dark",
   "DefaultColorIndex": 0,
   "AccentColors": [
-    "#AC193D",
-    "#DC4FAD",
+    "#EC6788",
+    "#E168B9",
     "#FF8119",
-    "#008A17",
-    "#004B8B",
-    "#008299",
+    "#00A81B",
+    "#1393FF",
+    "#009FBA",
     "#5DB2FF",
-    "#4617B4",
-    "#8C0095",
-    "#585858"
+    "#9F7CF0",
+    "#F129FF",
+    "#909090"
   ],
   "Theme": {
     "DefaultFontSize": 11,
