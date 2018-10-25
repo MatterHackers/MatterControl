@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				Mesh tinyMesh = PlatonicSolids.CreateCube(.001, .001, .001);
 
-				string tinyObjectFileName = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(tinyMesh.GetLongHashCode().ToString(), ".stl"));
+				string tinyObjectFileName = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension("non_printing_extruder_change_mesh", ".stl"));
 
 				StlProcessing.Save(tinyMesh, tinyObjectFileName, CancellationToken.None);
 
