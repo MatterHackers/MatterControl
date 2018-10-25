@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl
 		protected GuiWidget acceptButton = null;
 		protected MHTextEditWidget itemNameWidget;
 		private ILibraryContext libraryNavContext;
-		protected ListView librarySelectorWidget;
+		protected LibraryListView librarySelectorWidget;
 
 		public LibraryBrowserPage(Action<string, ILibraryWritableContainer> acceptCallback, string acceptButtonText)
 		{
@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl
 				breadCrumbWidget.SetContainer(libraryNavContext.ActiveContainer);
 			};
 
-			librarySelectorWidget = new ListView(libraryNavContext, new IconListView(theme, 75), theme)
+			librarySelectorWidget = new LibraryListView(libraryNavContext, new IconListView(theme, 75), theme)
 			{
 				BackgroundColor = theme.MinimalShade,
 				ShowItems = true,

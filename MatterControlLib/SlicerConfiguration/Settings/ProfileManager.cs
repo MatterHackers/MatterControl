@@ -88,11 +88,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var printer = await LoadPrinter();
 
-			await printer?.Bed?.LoadContent(new EditContext()
-			{
-				ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-				SourceItem = libraryItem
-			});
+			await printer?.Bed?.LoadLibraryContent(libraryItem);
 		}
 
 		public async Task<PrinterConfig> LoadPrinter()

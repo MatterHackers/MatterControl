@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl
 			menuItem = popupMenu.CreateMenuItem("Help".Localize(), AggContext.StaticData.LoadIcon("help_page.png", 16, 16, menuTheme.InvertIcons));
 			menuItem.Click += (s, e) => ApplicationController.Instance.ShowApplicationHelp();
 
-			popupMenu.CreateHorizontalLine();
+			popupMenu.CreateSeparator();
 
 			menuItem = popupMenu.CreateMenuItem("Check For Update".Localize(), AggContext.StaticData.LoadIcon("update.png", 16, 16, menuTheme.InvertIcons));
 			menuItem.Click += (s, e) => UiThread.RunOnIdle(() =>
@@ -134,13 +134,13 @@ namespace MatterHackers.MatterControl
 				DialogWindow.Show<CheckForUpdatesPage>();
 			});
 
-			popupMenu.CreateHorizontalLine();
+			popupMenu.CreateSeparator();
 
 			menuItem = popupMenu.CreateMenuItem("Settings".Localize(), AggContext.StaticData.LoadIcon("fa-cog_16.png", 16, 16, menuTheme.InvertIcons));
 			menuItem.Click += (s, e) => DialogWindow.Show<ApplicationSettingsPage>();
 			menuItem.Name = "Settings MenuItem";
 
-			popupMenu.CreateHorizontalLine();
+			popupMenu.CreateSeparator();
 
 			ImageBuffer indicatorIcon = null;
 
@@ -163,13 +163,13 @@ namespace MatterHackers.MatterControl
 				menuItem = modifyMenu.CreateMenuItem("Release Notes".Localize(), linkIcon);
 				menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("http://wiki.mattercontrol.com/Release_Notes");
 
-				modifyMenu.CreateHorizontalLine();
+				modifyMenu.CreateSeparator();
 
 				menuItem = modifyMenu.CreateMenuItem("Report a Bug".Localize(), AggContext.StaticData.LoadIcon("feedback.png", 16, 16, menuTheme.InvertIcons));
 				menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("https://github.com/MatterHackers/MatterControl/issues");
 			}, AggContext.StaticData.LoadIcon("feedback.png", 16, 16, menuTheme.InvertIcons));
 
-			popupMenu.CreateHorizontalLine();
+			popupMenu.CreateSeparator();
 
 			var themeRow = new GuiWidget()
 			{
@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl
 			menuItem = popupMenu.CreateMenuItem(themeRow, "Theme", AggContext.StaticData.LoadIcon("theme.png", 16, 16, menuTheme.InvertIcons));
 			menuItem.Padding = menuItem.Padding.Clone(right: 5);
 
-			popupMenu.CreateHorizontalLine();
+			popupMenu.CreateSeparator();
 
 			var imageBuffer = new ImageBuffer(18, 18);
 

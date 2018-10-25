@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ActiveContainer = ApplicationController.Instance.Library.ActiveContainer
 			};
 
-			var favoritesBar = new ListView(dummyContext, theme)
+			var favoritesBar = new LibraryListView(dummyContext, theme)
 			{
 				Name = "LibraryView",
 				// Drop containers

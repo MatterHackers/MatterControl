@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -32,9 +32,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -42,7 +42,6 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
-using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -159,7 +158,75 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			bedMenuButton.DynamicPopupContent = () =>
 			{
-				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+				var menuTheme = ApplicationController.Instance.MenuTheme;
+				var popupMenu = new PopupMenu(menuTheme);
+
+				int thumbWidth = 24;
+
+				popupMenu.CreateSubMenu("Recent".Localize(), menuTheme, (subMenu) =>
+				{
+					// Select the 25 most recent files and project onto FileSystemItems
+					var recentFiles = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
+					foreach (var item in recentFiles.Where(f => f.Length > 500).Select(f => new SceneReplacementFileItem(f.FullName)).Take(10).ToList<ILibraryItem>())
+					{
+						var imageBuffer = new ImageBuffer(thumbWidth, thumbWidth);
+
+						var bedHistory = subMenu.CreateMenuItem(item.Name, imageBuffer);
+						bedHistory.Click += (s, e) =>
+						{
+							UiThread.RunOnIdle(async () =>
+							{
+								await ApplicationController.Instance.Tasks.Execute("Saving changes".Localize() + "...", sceneContext.SaveChanges);
+
+								await sceneContext.LoadLibraryContent(item);
+
+								if (sceneContext.Printer != null)
+								{
+									sceneContext.Printer.ViewState.ViewMode = PartViewMode.Model;
+								}
+							});
+						};
+
+						ApplicationController.Instance.Library.LoadItemThumbnail(
+							(icon) =>
+							{
+								imageBuffer.CopyFrom(icon);
+							},
+							(contentProvider) =>
+							{
+								if (contentProvider is MeshContentProvider meshContentProvider)
+								{
+									ApplicationController.Instance.Thumbnails.QueueForGeneration(async () =>
+									{
+										// Ask the MeshContentProvider to RayTrace the image
+										var thumbnail = await meshContentProvider.GetThumbnail(item, thumbWidth, thumbWidth);
+										if (thumbnail != null)
+										{
+											//if (thumbnail.Width != thumbWidth
+											//|| thumbnail.Height != thumbHeight)
+											//{
+											//	this.SetUnsizedThumbnail(thumbnail);
+											//}
+											//else
+											//{
+											//	this.SetSizedThumbnail(thumbnail);
+											//}
+											imageBuffer.CopyFrom(thumbnail);
+
+											popupMenu.Invalidate();
+										}
+									});
+								}
+							},
+							item,
+							ApplicationController.Instance.Library.PlatingHistory,
+							thumbWidth,
+							thumbWidth,
+							menuTheme).ConfigureAwait(false);
+					}
+				});
+
+				popupMenu.CreateSeparator();
 
 				var actions = new NamedAction[] {
 					new ActionSeparator(),

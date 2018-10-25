@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.BackgroundColor = theme.ActiveTabColor;
 		}
 
-		public HorizontalLine CreateHorizontalLine()
+		public HorizontalLine CreateSeparator()
 		{
 			var line = new HorizontalLine(theme: ApplicationController.Instance.MenuTheme)
 			{
@@ -277,7 +277,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void CreateSubMenu(string menuTitle, ThemeConfig menuTheme, Action<PopupMenu> populateSubMenu, ImageBuffer icon = null)
 		{
-			GuiWidget content = new TextWidget(menuTitle, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			var content = new TextWidget(menuTitle, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 			{
 				Padding = MenuPadding,
 			};

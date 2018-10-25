@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					if (hasOverflowItems)
 					{
-						popupMenu.CreateHorizontalLine();
+						popupMenu.CreateSeparator();
 					}
 
 					// Extend menu with non-overflow/standard items

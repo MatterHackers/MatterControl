@@ -243,7 +243,7 @@ namespace MatterHackers.MatterControl
 						}));
 			};
 
-			popupMenu.CreateHorizontalLine();
+			popupMenu.CreateSeparator();
 
 			var selectedItemType = selectedItem.GetType();
 
@@ -500,7 +500,7 @@ namespace MatterHackers.MatterControl
 
 		private EventHandler unregisterEvents;
 
-		private Dictionary<string, List<PrintItemAction>> registeredLibraryActions = new Dictionary<string, List<PrintItemAction>>();
+		private Dictionary<string, List<LibraryAction>> registeredLibraryActions = new Dictionary<string, List<LibraryAction>>();
 
 		private List<SceneSelectionOperation> registeredSceneOperations;
 
@@ -904,8 +904,6 @@ namespace MatterHackers.MatterControl
 				});
 
 			this.Library.PlatingHistory = new PlatingHistoryContainer();
-
-			this.Library.PartHistory = new PartHistoryContainer();
 
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
@@ -2034,12 +2032,12 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		/// <param name="section">The section to register in</param>
 		/// <param name="printItemAction">The action to register</param>
-		public void RegisterLibraryAction(string section, PrintItemAction printItemAction)
+		public void RegisterLibraryAction(string section, LibraryAction printItemAction)
 		{
-			List<PrintItemAction> items;
+			List<LibraryAction> items;
 			if (!registeredLibraryActions.TryGetValue(section, out items))
 			{
-				items = new List<PrintItemAction>();
+				items = new List<LibraryAction>();
 				registeredLibraryActions.Add(section, items);
 			}
 
@@ -2051,15 +2049,15 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		/// <param name="section">The section to enumerate</param>
 		/// <returns></returns>
-		public IEnumerable<PrintItemAction> RegisteredLibraryActions(string section)
+		public IEnumerable<LibraryAction> RegisteredLibraryActions(string section)
 		{
-			List<PrintItemAction> items;
+			List<LibraryAction> items;
 			if (registeredLibraryActions.TryGetValue(section, out items))
 			{
 				return items;
 			}
 
-			return Enumerable.Empty<PrintItemAction>();
+			return Enumerable.Empty<LibraryAction>();
 		}
 
 		public IEnumerable<SceneSelectionOperation> RegisteredSceneOperations => registeredSceneOperations;

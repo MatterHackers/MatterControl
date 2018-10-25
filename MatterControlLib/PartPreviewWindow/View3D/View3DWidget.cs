@@ -577,7 +577,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void PushToPrinterAndPrint()
 		{
-			if (ProfileManager.Instance.Profiles.Where(p => !p.MarkedForDelete).Count() <= 0)
+			if (this.Printer != null)
+			{
+				// Save any pending changes before starting print operation
+				ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), printer.Bed.SaveChanges).ContinueWith(task =>
+				{
+					ApplicationController.Instance.PrintPart(
+						printer.Bed.EditContext,
+						printer,
+						null,
+						CancellationToken.None).ConfigureAwait(false);
+				});
+			}
+			else if (ProfileManager.Instance.Profiles.Where(p => !p.MarkedForDelete).Count() <= 0)
 			{
 				//Launch window to prompt user to sign in
 				UiThread.RunOnIdle(() =>
@@ -799,7 +811,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					IEnumerable<ILibraryItem> selectedItems;
 
-					if (sourceWidget is ListView listView)
+					if (sourceWidget is LibraryListView listView)
 					{
 						// Project from ListViewItem to ILibraryItem
 						selectedItems = listView.SelectedItems.Select(l => l.Model);
@@ -1621,7 +1633,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				theme.CreateMenuItems(menu, actions, emptyMenu: false);
 
-				menu.CreateHorizontalLine();
+				menu.CreateSeparator();
 
 				string componentID = (selectedItem as ComponentObject3D)?.ComponentID;
 

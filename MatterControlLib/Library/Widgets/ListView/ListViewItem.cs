@@ -39,11 +39,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public ILibraryItem Model { get; }
 
-		public ListView ListView { get; }
+		public LibraryListView ListView { get; }
 
 		public ListViewItemBase ViewWidget { get; set; }
 
-		public ListViewItem(ILibraryItem libraryItem, ILibraryContainer container, ListView listView = null)
+		public ListViewItem(ILibraryItem libraryItem, ILibraryContainer container, LibraryListView listView = null)
 		{
 			this.Container = container;
 			this.ListView = listView;

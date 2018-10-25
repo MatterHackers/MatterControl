@@ -212,7 +212,7 @@ namespace MatterHackers.MatterControl.EeProm
 						UiThread.RunOnIdle(this.ExportSettings, .1);
 					};
 
-					popupMenu.CreateHorizontalLine();
+					popupMenu.CreateSeparator();
 
 					menuItem = popupMenu.CreateMenuItem("Reset to Factory Defaults".Localize());
 					menuItem.Click += (s, e) =>

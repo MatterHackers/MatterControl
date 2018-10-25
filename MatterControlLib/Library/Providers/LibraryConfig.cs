@@ -131,7 +131,6 @@ namespace MatterHackers.MatterControl.Library
 
 		public PlatingHistoryContainer PlatingHistory { get; internal set; }
 
-		public PartHistoryContainer PartHistory { get; internal set; }
 		public LibraryCollectionContainer LibraryCollectionContainer { get; internal set; }
 
 		public IContentProvider GetContentProvider(ILibraryItem item)
@@ -293,7 +292,7 @@ namespace MatterHackers.MatterControl.Library
 			// Resize canvas to target as fallback
 			if (thumbnail.Width < thumbWidth || thumbnail.Height < thumbHeight)
 			{
-				thumbnail = ListView.ResizeCanvas(thumbnail, thumbWidth, thumbHeight);
+				thumbnail = LibraryListView.ResizeCanvas(thumbnail, thumbWidth, thumbHeight);
 			}
 			else if (thumbnail.Width > thumbWidth || thumbnail.Height > thumbHeight)
 			{

@@ -344,11 +344,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				var menu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
-				foreach (var menuAction in this.listViewItem.ListView.MenuActions)
+				foreach (var menuAction in this.listViewItem.ListView.MenuActions.Where(m => m.Scope == ActionScope.ListItem))
 				{
 					if (menuAction is MenuSeparator)
 					{
-						menu.CreateHorizontalLine();
+						menu.CreateSeparator();
 					}
 					else if (menuAction.IsEnabled(this.listViewItem.ListView.SelectedItems, this.listViewItem.ListView))
 					{

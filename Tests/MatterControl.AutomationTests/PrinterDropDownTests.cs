@@ -1,9 +1,5 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.Agg.UI;
-using MatterHackers.Agg.UI.Tests;
-using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using NUnit.Framework;
 
@@ -13,8 +9,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	public class PrinterNameChangePersists
 	{
 		[Test]
-		public async Task PrinterNameStaysChanged()
+		public async Task PrinterNameChangeTest()
 		{
+			// Ensures that printer model changes are applied correctly and observed by the view
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.WaitForFirstDraw();
@@ -23,19 +20,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.SwitchToPrinterSettings();
 
+				// Change the printer name
 				string newName = "Updated name";
 				testRunner.InlineTitleEdit("Printer Name", newName);
+				testRunner.WaitFor(() => newName == ProfileManager.Instance.ActiveProfile.Name);
 
-				// Force loose focus
-				testRunner.ClickByName("Printer Tab");
-				testRunner.Delay(1);
+				// Validate that the model reflects the new name
+				Assert.AreEqual(newName, ProfileManager.Instance.ActiveProfile.Name, "ActiveProfile has updated name");
 
-				//Check to make sure the Printer dropdown gets the name change
+				// Validate that the treeview reflects the new name
 				testRunner.SwitchToHardwareTab();
 				Assert.IsTrue(testRunner.WaitForName(newName + " Node"), "Widget with updated printer name exists");
 
-				//Make sure the Active profile name changes as well
-				Assert.AreEqual(newName, ProfileManager.Instance.ActiveProfile.Name, "ActiveProfile has updated name");
+				// Validate that the tab reflects the new name
+				var printerTab = testRunner.GetWidgetByName("3D View Tab", out _);
+				Assert.AreEqual(newName, printerTab.Text);
 
 				return Task.CompletedTask;
 			});
