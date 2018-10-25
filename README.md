@@ -12,9 +12,8 @@ MatterControl
 
 Features
 --------
-* Integrated slicing engine [MatterSlice](https://github.com/MatterHackers/MatterSlice), as well as the ability to use Slic3r or Cura.
-* Designed to be driven and extended by the 3D printing community using a powerful [plugin architecture](http://wiki.mattercontrol.com/Developing_Plugins).
-* [Library](http://wiki.mattercontrol.com/Library) for managing your STL files, with a plugin for cloud synchronization.
+* Integrated slicing engine [MatterSlice](https://github.com/MatterHackers/MatterSlice)
+* [Library](http://wiki.mattercontrol.com/Library) for managing your STL files
 * Built in profiles for [a plethora of different printers](http://www.mattercontrol.com/#jumpSupportedModels).
 * Built in [editing tools](http://wiki.mattercontrol.com/3D_View/Edit) along with [plugins for creating](http://wiki.mattercontrol.com/Category:Design_Tools) text, images, and braille.
 * [Queue](http://wiki.mattercontrol.com/Queue) of items you are going to print, and [history](http://wiki.mattercontrol.com/History) of items you have printed.
