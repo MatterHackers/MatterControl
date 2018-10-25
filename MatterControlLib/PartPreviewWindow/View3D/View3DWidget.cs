@@ -627,7 +627,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					};
 				});
 			}
-
 		}
 
 		private static void CopyPlateToPrinter(BedConfig sceneContext, PrinterConfig printer)
