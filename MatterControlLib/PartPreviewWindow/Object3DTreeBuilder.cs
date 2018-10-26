@@ -100,10 +100,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			// Check for operation resulting in the given type
-			if (ApplicationController.Instance.Thumbnails.OperationIcons.TryGetValue(item.Source.GetType(), out ImageBuffer icon))
+			if (ApplicationController.Instance.Thumbnails.OperationIcons.TryGetValue(item.Source.GetType(), out Func<ImageBuffer> iconSource))
 			{
 				// If exists, use the operation icon
-				node.Image = icon;
+				node.Image = iconSource?.Invoke();
 			}
 			else
 			{

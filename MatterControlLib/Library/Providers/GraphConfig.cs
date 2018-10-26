@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.Library
 		{
 			this.applicationController = applicationController;
 
-			applicationController.Thumbnails.OperationIcons.Add(typeof(InteractiveScene), AggContext.StaticData.LoadIcon("cube.png", 16, 16));
+			applicationController.Thumbnails.OperationIcons.Add(typeof(InteractiveScene), () => AggContext.StaticData.LoadIcon("cube.png", 16, 16, ApplicationController.Instance.Theme.InvertIcons));
 		}
 
 		public void RegisterOperation(Type type, Type resultType, string title, Func<IObject3D, InteractiveScene, Task> operation, Func<IObject3D, bool> isEnabled = null, Func<IObject3D, bool> isVisible = null, Func<ThemeConfig, ImageBuffer> iconCollector = null)
@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.Library
 
 			if (!thumbnails.OperationIcons.ContainsKey(resultType))
 			{
-				thumbnails.OperationIcons.Add(resultType, iconCollector(applicationController.Theme));
+				thumbnails.OperationIcons.Add(resultType, () => iconCollector(applicationController.Theme));
 			}
 
 			_operations.Add(new NodeOperation()
