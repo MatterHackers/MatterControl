@@ -176,7 +176,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// add the tree view
 			treeView = new TreeView(theme)
 			{
-				Margin = new BorderDouble(left: theme.DefaultContainerPadding, top: theme.DefaultContainerPadding),
+				Margin = new BorderDouble(left: theme.DefaultContainerPadding + 12),
 			};
 			treeView.AfterSelect += (s, e) =>
 			{
@@ -222,6 +222,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
+			treeView.ScrollArea.HAnchor = HAnchor.Stretch;
+
+			treeNodeContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+				Margin = new BorderDouble(12, 3)
+			};
+			treeView.AddChild(treeNodeContainer);
+
 			var historyAndProperties = new Splitter()
 			{
 				Orientation = Orientation.Horizontal,
@@ -234,7 +244,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			modelViewSidePanel.AddChild(historyAndProperties);
 
-			historyAndProperties.Panel1.AddChild(treeView);
+			var titleAndTreeView = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			};
+
+			titleAndTreeView.AddChild(workspaceName = new InlineStringEdit(sceneContext.Scene.Name ?? "", theme, "WorkspaceName")
+			{
+				Border = new BorderDouble(top: 1),
+				BorderColor = theme.SplitterBackground
+			});
+			titleAndTreeView.AddChild(treeView);
+
+			workspaceName.ActionArea.AddChild(
+				new IconButton(AggContext.StaticData.LoadIcon("fa-angle-right_12.png", theme.InvertIcons), theme)
+				{
+					Enabled = false
+				},
+				indexInChildrenList: 0);
+
+			// Remove left margin
+			workspaceName.ActionArea.Children<TextWidget>().First().Margin = 0;
+
+			// Resize buttons
+			foreach (var iconButton in workspaceName.Descendants<IconButton>())
+			{
+				iconButton.Height = 26;
+				iconButton.Width = 26;
+			}
+
+			workspaceName.Margin = workspaceName.Margin.Clone(bottom: 0);
+
+			historyAndProperties.Panel1.AddChild(titleAndTreeView);
 
 			historyAndProperties.DistanceChanged += (s, e) =>
 			{
@@ -339,20 +381,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void RebuildTree()
 		{
+			workspaceName.Text = sceneContext.Scene.Name ?? "";
+
 			// Top level selection only - rebuild tree
-			treeView.ScrollArea.CloseAllChildren();
+			treeNodeContainer.CloseAllChildren();
 
 			keyValues.Clear();
 
-			var rootNode = Object3DTreeBuilder.BuildTree(this.Scene, keyValues, theme);
-			treeView.AddChild(rootNode);
-			rootNode.TreeView = treeView;
-
-			if (this.Parent != null)
+			foreach (var child in sceneContext.Scene.Children)
 			{
-				assigningTreeNode = true;
-				treeView.SelectedNode = rootNode;
-				assigningTreeNode = false;
+				var rootNode = Object3DTreeBuilder.BuildTree(child, keyValues, theme);
+				treeNodeContainer.AddChild(rootNode);
+				rootNode.TreeView = treeView;
+
+				if (this.Parent != null)
+				{
+					assigningTreeNode = true;
+					treeView.SelectedNode = rootNode;
+					assigningTreeNode = false;
+				}
 			}
 		}
 
@@ -1820,6 +1867,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public MeshViewerWidget meshViewerWidget;
 		private bool assigningTreeNode;
+		private FlowLayoutWidget treeNodeContainer;
+		private InlineStringEdit workspaceName;
 
 		public InteractiveScene Scene => sceneContext.Scene;
 

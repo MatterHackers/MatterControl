@@ -32,7 +32,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
@@ -58,8 +57,6 @@ namespace MatterHackers.MatterControl.Library
 		public GraphConfig(ApplicationController applicationController)
 		{
 			this.applicationController = applicationController;
-
-			applicationController.Thumbnails.OperationIcons.Add(typeof(InteractiveScene), () => AggContext.StaticData.LoadIcon("cube.png", 16, 16, ApplicationController.Instance.Theme.InvertIcons));
 		}
 
 		public void RegisterOperation(Type type, Type resultType, string title, Func<IObject3D, InteractiveScene, Task> operation, Func<IObject3D, bool> isEnabled = null, Func<IObject3D, bool> isVisible = null, Func<ThemeConfig, ImageBuffer> iconCollector = null)
