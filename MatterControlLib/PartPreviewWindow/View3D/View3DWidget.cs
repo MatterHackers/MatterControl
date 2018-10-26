@@ -145,6 +145,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			Scene.SelectionChanged += Scene_SelectionChanged;
 
+			this.Scene.Invalidated += Scene_Invalidated;
+
 			// if the scene is invalidated invalidate the widget
 			Scene.Invalidated += (s, e) => Invalidate();
 
@@ -220,7 +222,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			Splitter historyAndProperties = new Splitter()
+			var historyAndProperties = new Splitter()
 			{
 				Orientation = Orientation.Horizontal,
 				Panel1Ratio = sceneContext.ViewState.SceneTreeRatio,
@@ -322,10 +324,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.InteractionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
 
-			this.sceneContext.SceneLoaded += SceneContext_SceneLoaded;
+			sceneContext.SceneLoaded += SceneContext_SceneLoaded;
 
 			// Construct a dictionary of menu actions accessible at the workspace level
 			WorkspaceActions = this.InitWorkspaceActions();
+
+			if (!AppContext.IsLoading)
+			{
+				this.RebuildTree();
+			}
+		}
+
+		private Dictionary<IObject3D, TreeNode> keyValues = new Dictionary<IObject3D, TreeNode>();
+
+		private void RebuildTree()
+		{
+			// Top level selection only - rebuild tree
+			treeView.ScrollArea.CloseAllChildren();
+
+			keyValues.Clear();
+
+			var rootNode = Object3DTreeBuilder.BuildTree(this.Scene, keyValues, theme);
+			treeView.AddChild(rootNode);
+			rootNode.TreeView = treeView;
+
+			if (this.Parent != null)
+			{
+				assigningTreeNode = true;
+				treeView.SelectedNode = rootNode;
+				assigningTreeNode = false;
+			}
 		}
 
 		private Dictionary<string, NamedAction> InitWorkspaceActions()
@@ -572,6 +600,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
+			this.RebuildTree();
+
 			this.Invalidate();
 		}
 
@@ -769,15 +799,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnClosed(EventArgs e)
 		{
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;
-			Scene.SelectionChanged -= Scene_SelectionChanged;
+
+			// Release events
+			this.Scene.SelectionChanged -= Scene_SelectionChanged;
+			this.Scene.Invalidated -= Scene_Invalidated;
 			this.InteractionLayer.DrawGlOpaqueContent -= Draw_GlOpaqueContent;
-			this.sceneContext.SceneLoaded -= SceneContext_SceneLoaded;
+
+			sceneContext.SceneLoaded -= SceneContext_SceneLoaded;
+			modelViewSidePanel.Resized -= ModelViewSidePanel_Resized;
+
 			if (printer?.ViewState != null)
 			{
 				printer.ViewState.ViewModeChanged -= this.ViewState_ViewModeChanged;
 			}
-
-			modelViewSidePanel.Resized -= ModelViewSidePanel_Resized;
 
 			if (meshViewerWidget != null)
 			{
@@ -1713,6 +1747,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		// TODO: Consider if we should always allow DragDrop or if we should prevent during printer or other scenarios
 		private bool AllowDragDrop() => true;
 
+		private void Scene_Invalidated(object sender, InvalidateArgs e)
+		{
+			if (e.InvalidateType == InvalidateType.Content)
+			{
+				this.RebuildTree();
+			}
+		}
+
 		private void Scene_SelectionChanged(object sender, EventArgs e)
 		{
 			var selectedItem = Scene.SelectedItem;
@@ -1727,30 +1769,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// Clear the TreeView and release node references when no item is selected
 				selectedObjectPanel.SetActiveItem(null);
-				treeView.Clear();
 				return;
+			}
+			else
+			{
+				// Change tree selection to current node
+				if (keyValues.TryGetValue(selectedItem, out TreeNode treeNode))
+				{
+					treeView.SelectedNode = treeNode;
+				}
 			}
 
 			if (deferEditorTillMouseUp)
 			{
 				return;
-			}
-
-			// Top level selection only - rebuild tree
-			if (Scene.Children.Contains(selectedItem))
-			{
-				treeView.ScrollArea.CloseAllChildren();
-
-				var rootNode = Object3DTreeBuilder.BuildTree(selectedItem, theme);
-				treeView.AddChild(rootNode);
-				rootNode.TreeView = treeView;
-
-				if (this.Parent != null)
-				{
-					assigningTreeNode = true;
-					treeView.SelectedNode = rootNode;
-					assigningTreeNode = false;
-				}
 			}
 		}
 

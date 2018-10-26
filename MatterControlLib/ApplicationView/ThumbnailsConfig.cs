@@ -50,14 +50,13 @@ namespace MatterHackers.MatterControl
 
 		private Task thumbnailGenerator = null;
 
-		private ThemeConfig theme;
+		private ThemeConfig theme => ApplicationController.Instance.Theme;
 
-		public ThumbnailsConfig(ThemeConfig theme)
+		public ThumbnailsConfig()
 		{
-			this.theme = theme;
 		}
 
-		public Dictionary<Type, ImageBuffer> OperationIcons { get; internal set; }
+		public Dictionary<Type, Func<ImageBuffer>> OperationIcons { get; internal set; }
 
 		public ImageBuffer DefaultThumbnail() => AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons);
 

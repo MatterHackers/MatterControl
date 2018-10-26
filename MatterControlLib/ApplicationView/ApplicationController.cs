@@ -741,27 +741,27 @@ namespace MatterHackers.MatterControl
 				},
 			};
 
-			var operationIconsByType = new Dictionary<Type, ImageBuffer>();
+			var operationIconsByType = new Dictionary<Type, Func<ImageBuffer>>();
 
 			foreach (var operation in registeredSceneOperations)
 			{
 				if (operation.OperationType != null)
 				{
-					operationIconsByType.Add(operation.OperationType, operation.Icon);
+					operationIconsByType.Add(operation.OperationType, () => operation.Icon);
 				}
 			}
 
 			// TODO: Use custom selection group icon if reusing group icon seems incorrect
 			//
 			// Explicitly register SelectionGroup icon
-			if (operationIconsByType.TryGetValue(typeof(GroupObject3D), out ImageBuffer groupIcon))
+			if (operationIconsByType.TryGetValue(typeof(GroupObject3D), out Func<ImageBuffer> groupIconSource))
 			{
-				operationIconsByType.Add(typeof(SelectionGroupObject3D), groupIcon);
+				operationIconsByType.Add(typeof(SelectionGroupObject3D), groupIconSource);
 			}
 
 			this.Thumbnails.OperationIcons = operationIconsByType;
 
-			operationIconsByType.Add(typeof(ImageObject3D), AggContext.StaticData.LoadIcon("140.png", 16, 16, theme.InvertIcons));
+			operationIconsByType.Add(typeof(ImageObject3D), () => AggContext.StaticData.LoadIcon("140.png", 16, 16, theme.InvertIcons));
 		}
 
 		internal void BlinkTab(ITab tab)
@@ -937,7 +937,7 @@ namespace MatterHackers.MatterControl
 
 		public ApplicationController()
 		{
-			this.Thumbnails = new ThumbnailsConfig(this.Theme);
+			this.Thumbnails = new ThumbnailsConfig();
 
 			this.RebuildSceneOperations(this.Theme);
 

@@ -45,12 +45,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public static class Object3DTreeBuilder
 	{
-		public static TreeNode BuildTree(IObject3D rootItem, ThemeConfig theme)
+		public static TreeNode BuildTree(IObject3D rootItem, Dictionary<IObject3D, TreeNode> keyValues, ThemeConfig theme)
 		{
-			return AddTree(BuildItemView(rootItem), null, theme);
+			return AddTree(BuildItemView(rootItem), null, keyValues, theme);
 		}
 
-		private static TreeNode AddTree(ObjectView item, TreeNode parent, ThemeConfig theme)
+		private static TreeNode AddTree(ObjectView item, TreeNode parent, Dictionary<IObject3D, TreeNode> keyValues, ThemeConfig theme)
 		{
 			// Suppress MeshWrapper and OperationSource nodes in tree
 			bool shouldCollapseToParent = item.Source is ModifiedMeshObject3D || item.Source is OperationSourceObject3D;
@@ -67,7 +67,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						if (child != null)
 						{
-							AddTree(BuildItemView(child), contextNode, theme);
+							var newNode = AddTree(BuildItemView(child), contextNode, keyValues, theme);
+
+							keyValues?.Add(child, newNode);
 						}
 					}
 				}
@@ -98,19 +100,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			// Check for operation resulting in the given type
-			if (ApplicationController.Instance.Thumbnails.OperationIcons.TryGetValue(item.Source.GetType(), out ImageBuffer icon))
+			if (ApplicationController.Instance.Thumbnails.OperationIcons.TryGetValue(item.Source.GetType(), out Func<ImageBuffer> iconSource))
 			{
 				// If exists, use the operation icon
-				node.Image = icon;
+				node.Image = iconSource?.Invoke();
 			}
 			else
 			{
-				node.Load += (s, e) =>
-				{
-					string contentID = item.Source.MeshRenderId().ToString();
-					var thumbnail = ApplicationController.Instance.Thumbnails.LoadCachedImage(contentID, 16, 16);
-					node.Image = thumbnail ?? ApplicationController.Instance.Thumbnails.DefaultThumbnail();
-				};
+				node.Image = ApplicationController.Instance.Thumbnails.DefaultThumbnail();
 			}
 
 			if (parentNode != null)
