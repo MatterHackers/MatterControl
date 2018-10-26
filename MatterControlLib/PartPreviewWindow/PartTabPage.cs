@@ -160,8 +160,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			leftBar.AddChild(new VerticalSpacer());
 
-			var expandedImage = AggContext.StaticData.LoadIcon("expand.png", 18, 18, theme.InvertIcons);
-			var collapsedImage = AggContext.StaticData.LoadIcon("collapse.png", 18, 18, theme.InvertIcons);
+			var expandedImage = AggContext.StaticData.LoadIcon("expand.png", 16, 16, theme.InvertIcons);
+			var collapsedImage = AggContext.StaticData.LoadIcon("collapse.png", 16, 16, theme.InvertIcons);
 
 			var expandBarButton = new IconButton(expanded ? collapsedImage : expandedImage, theme)
 			{
