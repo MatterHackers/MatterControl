@@ -330,6 +330,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			WorkspaceActions = this.InitWorkspaceActions();
 		}
 
+		private Dictionary<IObject3D, TreeNode> keyValues = new Dictionary<IObject3D, TreeNode>();
+
 		private void RebuildTree()
 		{
 			// Top level selection only - rebuild tree

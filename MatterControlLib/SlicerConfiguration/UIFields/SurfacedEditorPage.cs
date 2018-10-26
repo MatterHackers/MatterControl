@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			treeView.ScrollArea.CloseAllChildren();
 
-			var rootNode = Object3DTreeBuilder.BuildTree(selectedItem, theme);
+			var rootNode = Object3DTreeBuilder.BuildTree(selectedItem, null, theme);
 			treeView.AddChild(rootNode);
 			rootNode.TreeView = treeView;
 
