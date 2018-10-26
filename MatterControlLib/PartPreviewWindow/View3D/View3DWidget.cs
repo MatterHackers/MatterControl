@@ -324,10 +324,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.InteractionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
 
-			this.sceneContext.SceneLoaded += SceneContext_SceneLoaded;
+			sceneContext.SceneLoaded += SceneContext_SceneLoaded;
 
 			// Construct a dictionary of menu actions accessible at the workspace level
 			WorkspaceActions = this.InitWorkspaceActions();
+
+			if (!AppContext.IsLoading)
+			{
+				this.RebuildTree();
+			}
 		}
 
 		private Dictionary<IObject3D, TreeNode> keyValues = new Dictionary<IObject3D, TreeNode>();
