@@ -68,6 +68,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnBoundsChanged(EventArgs e)
 		{
+			if (!reloading)
+			{
+				this.LayoutIcons();
+			}
+
+			base.OnBoundsChanged(e);
+		}
+
+		private void LayoutIcons()
+		{
 			int currentWidth = (int)this.Size.X;
 			if (reflownWidth != currentWidth)
 			{
@@ -101,8 +111,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					}
 				}
 			}
-
-			base.OnBoundsChanged(e);
 		}
 
 		private int RecomputeFlowValues(int leftRightItemMargin)
@@ -185,13 +193,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.CloseAllChildren();
 		}
 
+		private bool reloading = false;
+
 		public void BeginReload()
 		{
+			reloading = true;
 			columnCount = RecomputeFlowValues(1);
 		}
 
 		public void EndReload()
 		{
+			reloading = false;
+			this.LayoutIcons();
 		}
 	}
 
