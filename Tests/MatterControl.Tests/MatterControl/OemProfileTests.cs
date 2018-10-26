@@ -198,7 +198,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				string fanSpeedString = settings.GetValue("min_fan_speed");
+				string fanSpeedString = settings.GetValue(SettingsKey.min_fan_speed);
 				if (!string.IsNullOrEmpty(fanSpeedString))
 				{
 					// Must be valid int data
@@ -246,7 +246,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				string fanSpeedString = settings.GetValue("max_fan_speed");
+				string fanSpeedString = settings.GetValue(SettingsKey.max_fan_speed);
 				if (!string.IsNullOrEmpty(fanSpeedString))
 				{
 					// Must be valid int data

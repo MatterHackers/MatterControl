@@ -244,7 +244,7 @@ namespace MatterControl.Tests.MatterControl
 		public void minimumFanSpeedLessThanOrEqualToOneHundred(PrinterSettingsLayer layer, string sourceFile)
 		{
 			string settingValue;
-			if (!layer.TryGetValue("min_fan_speed", out settingValue))
+			if (!layer.TryGetValue(SettingsKey.min_fan_speed, out settingValue))
 			{
 				return;
 			}
@@ -255,7 +255,7 @@ namespace MatterControl.Tests.MatterControl
 		public void maxFanSpeedNotGreaterThanOneHundred(PrinterSettingsLayer layer, string sourceFile)
 		{
 			string settingValue;
-			if (!layer.TryGetValue("max_fan_speed", out settingValue))
+			if (!layer.TryGetValue(SettingsKey.max_fan_speed, out settingValue))
 			{
 				return;
 			}

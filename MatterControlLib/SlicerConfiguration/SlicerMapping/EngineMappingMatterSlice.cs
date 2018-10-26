@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedSetting("fill_angle", "infillStartingAngle"),
 				new AsPercentOfReferenceOrDirect(SettingsKey.infill_overlap_perimeter, "infillExtendIntoPerimeter", SettingsKey.nozzle_diameter, change0ToReference: false),
 				new OverrideSpeedOnSlaPrinters("infill_speed", "infillSpeed", "infill_speed"),
-				new MappedSetting("infill_type", "infillType"),
+				new MappedSetting(SettingsKey.infill_type, "infillType"),
 				new MappedSetting("min_extrusion_before_retract", "minimumExtrusionBeforeRetraction"),
 				new MappedSetting("min_print_speed", "minimumPrintingSpeed"),
 				new OverrideSpeedOnSlaPrinters("perimeter_speed", "insidePerimetersSpeed", "infill_speed"),
@@ -173,10 +173,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new ScaledSingleNumber(SettingsKey.print_time_estimate_multiplier, "printTimeEstimateMultiplier", .01),
 				// fan settings
 				new VisibleButNotMappedToEngine("enable_fan"), // this is considered when sending fan speeds to slicing
-				new MappedFanSpeedSetting("min_fan_speed", "fanSpeedMinPercent"),
+				new MappedFanSpeedSetting(SettingsKey.min_fan_speed, "fanSpeedMinPercent"),
 				new MappedSetting("coast_at_end_distance", "coastAtEndDistance"),
 				new MappedSetting("min_fan_speed_layer_time", "minFanSpeedLayerTime"),
-				new MappedFanSpeedSetting("max_fan_speed", "fanSpeedMaxPercent"),
+				new MappedFanSpeedSetting(SettingsKey.max_fan_speed, "fanSpeedMaxPercent"),
 				new MappedSetting("max_fan_speed_layer_time", "maxFanSpeedLayerTime"),
 				new MappedFanSpeedSetting("bridge_fan_speed", "bridgeFanSpeedPercent"),
 				new MappedSetting("disable_fan_first_layers", "firstLayerToAllowFan"),
