@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 20178 Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public Color HoverColor { get; set; } = new Color(0, 0, 0, 40);
 
+		public Color OpenColor { get; set; } = new Color(0, 0, 0, 40);
+
 		public event EventHandler PopupWindowClosed;
 		public event EventHandler BeforePopup;
 		public event EventHandler<GuiWidget> ConfigurePopup;
@@ -44,7 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected GuiWidget buttonView;
 
 		private bool menuVisibileAtMouseDown = false;
-		private bool menuVisible = false;
+		protected bool menuVisible = false;
 		private PopupWidget popupWidget;
 
 		public PopupButton()
@@ -70,6 +72,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public Color PopupBorderColor { get; set; } = Color.Transparent;
 
+		public override Color BackgroundColor
+		{
+			get => menuVisible ? this.OpenColor : base.BackgroundColor;
+			set => base.BackgroundColor = value;
+		}
+
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
 			// Store the menu state at the time of mousedown
@@ -85,16 +93,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			base.OnClick(mouseEvent);
-		}
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			if (menuVisible)
-			{
-				graphics2D.FillRectangle(this.LocalBounds, HoverColor);
-			}
-
-			base.OnDraw(graphics2D);
 		}
 
 		public void ShowPopup()

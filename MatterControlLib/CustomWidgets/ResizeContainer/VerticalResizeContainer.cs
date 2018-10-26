@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.grabSide = grabSide;
 			this.HAnchor = HAnchor.Absolute;
 			this.SplitterWidth = theme.SplitterWidth;
-			this.SpliterBarColor = theme.SplitterBackground;
+			this.SplitterBarColor = theme.SplitterBackground;
 		}
 
 		public override Cursors Cursor
@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			set => base.Cursor = value;
 		}
 
-		public Color SpliterBarColor { get; set; }
+		public Color SplitterBarColor { get; set; }
 
 		public int SplitterWidth
 		{
@@ -81,6 +81,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				if (_splitterWidth != value)
 				{
 					_splitterWidth = value;
+
 					if (grabSide == GrabBarSide.Left)
 					{
 						this.Padding = new BorderDouble(_splitterWidth, 0, 0, 0);
@@ -89,6 +90,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					{
 						this.Padding = new BorderDouble(0, 0, _splitterWidth, 0);
 					}
+
 					this.MinimumSize = new VectorMath.Vector2(_splitterWidth, 0);
 				}
 			}
@@ -103,11 +105,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			if (grabSide == GrabBarSide.Left)
 			{
-				graphics2D.FillRectangle(LocalBounds.Left, LocalBounds.Bottom, LocalBounds.Left + this.SplitterWidth, LocalBounds.Top, this.SpliterBarColor);
+				graphics2D.FillRectangle(LocalBounds.Left, LocalBounds.Bottom, LocalBounds.Left + this.SplitterWidth, LocalBounds.Top, this.SplitterBarColor);
 			}
 			else
 			{
-				graphics2D.FillRectangle(LocalBounds.Right - this.SplitterWidth, LocalBounds.Bottom, LocalBounds.Right, LocalBounds.Top, this.SpliterBarColor);
+				graphics2D.FillRectangle(LocalBounds.Right - this.SplitterWidth, LocalBounds.Bottom, LocalBounds.Right, LocalBounds.Top, this.SplitterBarColor);
 			}
 
 			base.OnDraw(graphics2D);

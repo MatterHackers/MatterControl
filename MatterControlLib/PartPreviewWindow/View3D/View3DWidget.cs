@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Absolute,
 				BackgroundColor = theme.InteractionLayerOverlayColor,
-				SpliterBarColor = theme.SplitterBackground,
+				SplitterBarColor = theme.SplitterBackground,
 				SplitterWidth = theme.SplitterWidth,
 				MinimumSize = new Vector2(theme.SplitterWidth, 0)
 			};

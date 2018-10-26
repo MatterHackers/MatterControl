@@ -527,8 +527,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Fit,
 			};
 
-			PopupMenuButton libraryPopup = null;
+			var openColor = theme.ResolveColor(theme.ActiveTabColor, theme.SlightShade);
 
+			PopupMenuButton libraryPopup = null;
 			libraryPopup = new PopupMenuButton(buttonView, theme)
 			{
 				MakeScrollable = false,
@@ -544,10 +545,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					var verticalResizeContainer = new VerticalResizeContainer(theme, GrabBarSide.Right)
 					{
-						BackgroundColor = theme.TabBarBackground,
-						Padding = new BorderDouble(0, 0, theme.DefaultContainerPadding / 2, 0),
+						BackgroundColor = openColor,
 						MinimumSize = new Vector2(120, 50),
 						Height = libraryPopup.TransformToScreenSpace(libraryPopup.Position).Y,
+						SplitterBarColor = theme.SlightShade,
 					};
 
 					double.TryParse(UserSettings.Instance.get(UserSettingsKey.PopupLibraryWidth), out double controlWidth);
@@ -607,6 +608,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BackgroundColor = theme.ToolbarButtonBackground,
 				HoverColor = theme.ToolbarButtonHover,
 				MouseDownColor = theme.ToolbarButtonDown,
+				OpenColor = openColor,
 				DrawArrow = true,
 				Margin = theme.ButtonSpacing,
 			};

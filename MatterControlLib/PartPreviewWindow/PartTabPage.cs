@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -131,21 +132,59 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ActiveContainer = ApplicationController.Instance.Library.RootLibaryContainer
 			};
 
+			var leftBar = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				VAnchor = VAnchor.Stretch
+			};
+			favoritesBarAndView3DWidget.AddChild(leftBar);
+
+			bool expanded = UserSettings.Instance.get(UserSettingsKey.FavoritesBarExpansion) != "0";
+
 			favoritesBar = new LibraryListView(favoritesBarContext, theme)
 			{
 				Name = "LibraryView",
 				// Drop containers
 				ContainerFilter = (container) => false,
 				BackgroundColor = theme.ActiveTabColor,
-				ListContentView = new IconListView(theme, 22),
 				Border = new BorderDouble(top: 1, right: 1),
 				BorderColor = theme.BorderColor20,
 				HAnchor = HAnchor.Absolute,
-				Width = 33,
-				AllowContextMenu = false
-			};
+				VAnchor = VAnchor.Fit | VAnchor.Top,
+				AllowContextMenu = false,
 
-			favoritesBarAndView3DWidget.AddChild(favoritesBar);
+				// restore to state for favorites bar size
+				Width = expanded ? 55 : 33,
+				ListContentView = new IconListView(theme, expanded ? 48 : 24),
+			};
+			leftBar.AddChild(favoritesBar);
+
+			leftBar.AddChild(new VerticalSpacer());
+
+			var expandedImage = AggContext.StaticData.LoadIcon("expand.png", 18, 18, theme.InvertIcons);
+			var collapsedImage = AggContext.StaticData.LoadIcon("collapse.png", 18, 18, theme.InvertIcons);
+
+			var expandBarButton = new IconButton(expanded ? collapsedImage : expandedImage, theme)
+			{
+				HAnchor = HAnchor.Center,
+				VAnchor = VAnchor.Absolute,
+				Margin = new BorderDouble(bottom: 4)
+			};
+			expandBarButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				expanded = !expanded;
+
+				UserSettings.Instance.set(UserSettingsKey.FavoritesBarExpansion, expanded ? "1" : "0");
+
+				favoritesBar.ListContentView = new IconListView(theme, expanded ? 48 : 24);
+				favoritesBar.Width = expanded ? 55 : 33;
+				expandBarButton.SetIcon(expanded ? collapsedImage : expandedImage);
+				expandBarButton.Invalidate();
+
+				favoritesBar.Reload().ConfigureAwait(false);
+			});
+
+			leftBar.AddChild(expandBarButton);
+			
 			favoritesBarAndView3DWidget.AddChild(view3DWidget);
 			toolbarAndView3DWidget.AddChild(favoritesBarAndView3DWidget);
 

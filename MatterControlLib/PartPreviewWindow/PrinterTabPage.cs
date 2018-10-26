@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Width = printer?.ViewState.SelectedObjectPanelWidth ?? 200,
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Absolute,
-				SpliterBarColor = theme.SplitterBackground,
+				SplitterBarColor = theme.SplitterBackground,
 				SplitterWidth = theme.SplitterWidth,
 				Visible = false,
 			};
