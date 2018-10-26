@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class SettingsOrganizer
 	{
-		public Dictionary<string, UserLevel> UserLevels { get; set; } = new Dictionary<string, UserLevel>();
+		public Dictionary<string, SettingsSection> UserLevels { get; set; } = new Dictionary<string, SettingsSection>();
 
 		private static SettingsOrganizer instance = null;
 
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool Contains(string userLevelKey, string slicerConfigName)
 		{
-			if (this.UserLevels.TryGetValue(userLevelKey, out UserLevel userLevel))
+			if (this.UserLevels.TryGetValue(userLevelKey, out SettingsSection userLevel))
 			{
 				return userLevel.ContainsKey(slicerConfigName);
 			}
@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void LoadAndParseSettingsFiles()
 		{
-			UserLevel userLevelToAddTo = null;
+			SettingsSection userLevelToAddTo = null;
 			Category categoryToAddTo = null;
 			Group groupToAddTo = null;
 			SubGroup subGroupToAddTo = null;
@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					switch (CountLeadingSpaces(line))
 					{
 						case 0:
-							userLevelToAddTo = new UserLevel(sanitizedLine);
+							userLevelToAddTo = new SettingsSection(sanitizedLine);
 							UserLevels.Add(sanitizedLine, userLevelToAddTo);
 							break;
 
@@ -222,13 +222,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return numSpaces;
 		}
 
-		public class UserLevel
+		/// <summary>
+		/// This is the 'Slice Settings' or the 'Printer' settings sections
+		/// </summary>
+		public class SettingsSection
 		{
 			private Dictionary<string, SubGroup> mappedSettings = new Dictionary<string, SubGroup>();
 
-			public UserLevel(string userLevelName)
+			public SettingsSection(string settingsSectionName)
 			{
-				this.Name = userLevelName;
+				this.Name = settingsSectionName;
 			}
 
 			public string Name { get; set; }
@@ -250,17 +253,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public class Category
 		{
-			public Category(string categoryName, UserLevel userLevel)
+			public Category(string categoryName, SettingsSection settingsSection)
 			{
 				this.Name = categoryName;
-				this.UserLevel = userLevel;
+				this.SettingsSection = settingsSection;
 			}
 
 			public string Name { get; set; }
 
 			public List<Group> Groups { get; set; } = new List<Group>();
 
-			private UserLevel UserLevel { get; }
+			public SettingsSection SettingsSection { get; }
 		}
 
 		public class Group

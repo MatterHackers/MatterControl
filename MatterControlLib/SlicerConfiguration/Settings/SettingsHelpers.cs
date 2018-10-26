@@ -94,6 +94,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string heat_extruder_before_homing = nameof(heat_extruder_before_homing);
 		public const string include_firmware_updater = nameof(include_firmware_updater);
 		public const string infill_overlap_perimeter = nameof(infill_overlap_perimeter);
+		public const string infill_type = nameof(infill_type);
 		public const string ip_address = nameof(ip_address);
 		public const string ip_port = nameof(ip_port);
 		public const string jerk_velocity = nameof(jerk_velocity);
@@ -111,6 +112,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string max_velocity = nameof(max_velocity);
 		public const string merge_overlapping_lines = nameof(merge_overlapping_lines);
 		public const string min_fan_speed = nameof(min_fan_speed);
+		public const string max_fan_speed = nameof(max_fan_speed);
 		public const string model = nameof(model);
 		public const string nozzle_diameter = nameof(nozzle_diameter);
 		public const string number_of_first_layers = nameof(number_of_first_layers);
