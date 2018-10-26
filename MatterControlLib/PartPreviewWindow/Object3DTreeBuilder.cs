@@ -107,12 +107,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				node.Load += (s, e) =>
-				{
-					string contentID = item.Source.MeshRenderId().ToString();
-					var thumbnail = ApplicationController.Instance.Thumbnails.LoadCachedImage(contentID, 16, 16);
-					node.Image = thumbnail ?? ApplicationController.Instance.Thumbnails.DefaultThumbnail();
-				};
+				node.Image = ApplicationController.Instance.Thumbnails.DefaultThumbnail();
 			}
 
 			if (parentNode != null)
