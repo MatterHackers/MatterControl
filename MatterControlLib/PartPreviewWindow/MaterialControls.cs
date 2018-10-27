@@ -73,6 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Width = scaledButtonSize,
 					Height = scaledButtonSize,
 					VAnchor = VAnchor.Center,
+					Margin = new BorderDouble(3, 0, 5, 0),
 					DrawGrid = true,
 				});
 
