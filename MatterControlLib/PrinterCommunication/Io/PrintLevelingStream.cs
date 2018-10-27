@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				gcodeAlreadyLeveled = true;
 			}
 
-			if (lineFromChild != null 
+			if (lineFromChild != null
 				&& LevelingActive
 				&& !gcodeAlreadyLeveled)
 			{
@@ -129,6 +129,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private string GetLeveledPosition(string lineBeingSent, PrinterMove currentDestination)
 		{
 			PrintLevelingData levelingData = printerSettings.Helpers.GetPrintLevelingData();
+
 			if (levelingData != null
 				&& printerSettings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
 				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 ")))
@@ -141,7 +142,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					currentLevelingFunctions = new LevelingFunctions(printerSettings, levelingData);
 				}
 
-				lineBeingSent = currentLevelingFunctions.DoApplyLeveling(lineBeingSent, currentDestination.position);
+				lineBeingSent = currentLevelingFunctions.ApplyLeveling(lineBeingSent, currentDestination.position);
 			}
 
 			return lineBeingSent;

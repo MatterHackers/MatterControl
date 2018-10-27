@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private List<LevelingTriangle> Regions { get; set; } = new List<LevelingTriangle>();
 
-		public string DoApplyLeveling(string lineBeingSent, Vector3 currentDestination)
+		public string ApplyLeveling(string lineBeingSent, Vector3 currentDestination)
 		{
 			double extruderDelta = 0;
 			GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref extruderDelta);
