@@ -119,10 +119,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		// you can only set this on construction
 		public List<Vector3> SampledPositions { get; }
 
-		private List<LevelingTriangle> Regions { get; set; } = new List<LevelingTriangle>();
+		private List<LevelingTriangle> Regions { get; } = new List<LevelingTriangle>();
 
 		public string ApplyLeveling(string lineBeingSent, Vector3 currentDestination)
 		{
