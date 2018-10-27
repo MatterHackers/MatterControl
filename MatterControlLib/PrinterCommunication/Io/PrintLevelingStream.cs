@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -34,13 +34,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class PrintLevelingStream : GCodeStreamProxy
 	{
-		protected PrinterMove lastDestination = new PrinterMove();
+		private PrinterMove lastDestination = new PrinterMove();
 		private bool activePrinting;
 		private LevelingFunctions currentLevelingFunctions = null;
 		private double currentProbeOffset;
 		private PrinterSettings printerSettings;
-		bool wroteLevelingStatus = false;
-		bool gcodeAlreadyLeveled = false;
+		private bool wroteLevelingStatus = false;
+		private bool gcodeAlreadyLeveled = false;
 
 		public PrintLevelingStream(PrinterSettings printerSettings, GCodeStream internalStream, bool activePrinting)
 			: base(internalStream)
@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public static bool AllowLeveling { get; set; }
 
-		public PrinterMove LastDestination { get { return lastDestination; } }
+		public PrinterMove LastDestination => lastDestination;
 
 		bool LevelingActive
 		{
