@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		}
 
 		// you can only set this on construction
-		public List<Vector3> SampledPositions { get; private set; }
+		public List<Vector3> SampledPositions { get; }
 
 		private List<LevelingTriangle> Regions { get; set; } = new List<LevelingTriangle>();
 
@@ -207,11 +207,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				plane = new Plane(V0, V1, V2);
 			}
 
-			public Vector3 Center { get; private set; }
-			public Plane plane { get; private set; }
-			public Vector3 V0 { get; private set; }
-			public Vector3 V1 { get; private set; }
-			public Vector3 V2 { get; private set; }
+			public Vector3 Center { get; }
+			public Plane plane { get; }
+			public Vector3 V0 { get; }
+			public Vector3 V1 { get; }
+			public Vector3 V2 { get; }
 
 			public Vector3 GetPositionWithZOffset(Vector3 currentDestination)
 			{
