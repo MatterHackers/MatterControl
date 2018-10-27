@@ -204,11 +204,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				V1 = v1;
 				V2 = v2;
 				Center = (V0 + V1 + V2) / 3;
-				plane = new Plane(V0, V1, V2);
+				Plane = new Plane(V0, V1, V2);
 			}
 
 			public Vector3 Center { get; }
-			public Plane plane { get; }
+			public Plane Plane { get; }
 			public Vector3 V0 { get; }
 			public Vector3 V1 { get; }
 			public Vector3 V2 { get; }
@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				var destinationAtZ0 = new Vector3(currentDestination.X, currentDestination.Y, 0);
 
-				double hitDistance = plane.GetDistanceToIntersection(destinationAtZ0, Vector3.UnitZ);
+				double hitDistance = this.Plane.GetDistanceToIntersection(destinationAtZ0, Vector3.UnitZ);
 				currentDestination.Z += hitDistance;
 
 				return currentDestination;
