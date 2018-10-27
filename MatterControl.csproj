@@ -58,6 +58,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="StaticData\License\license.json" />
+    <None Include="StaticData\OEMSettings\ExploreFeed.json" />
+    <None Include="StaticData\OEMSettings\OEMUrls.json" />
+    <None Include="StaticData\OEMSettings\Printers.json" />
+    <None Include="StaticData\OEMSettings\Settings.json" />
+    <None Include="StaticData\SliceSettings\Properties.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Community.CsharpSqlite\Community.CsharpSqlite.csproj">
@@ -97,6 +103,16 @@
     <Content Include="application.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="StaticData\MatterControl EULA.txt" />
+    <None Include="StaticData\BuildInfo.txt" />
+    <None Include="StaticData\License\agg-sharp.txt" />
+    <None Include="StaticData\License\clipper.txt" />
+    <None Include="StaticData\License\markdig.txt" />
+    <None Include="StaticData\License\matterslice.txt" />
+    <None Include="StaticData\License\opentk.txt" />
+    <None Include="StaticData\SliceSettings\Layouts.txt" />
+    <None Include="StaticData\SliceSettings\load_filament.txt" />
+    <None Include="StaticData\SliceSettings\unload_filament.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
