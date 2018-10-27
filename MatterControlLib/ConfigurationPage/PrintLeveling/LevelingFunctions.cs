@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,15 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterControl.Printing;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.VectorMath;
-using MIConvexHull;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using MatterControl.Printing;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
+using MIConvexHull;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -43,7 +41,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private Vector2 bedSize;
 		private Vector3 lastDestinationWithLevelingApplied = new Vector3();
-
+		private Dictionary<(int, int), int> positionToRegion = new Dictionary<(int, int), int>();
 		private PrinterSettings printerSettings;
 
 		public LevelingFunctions(PrinterSettings printerSettings, PrintLevelingData levelingData)
@@ -163,15 +161,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return region.GetPositionWithZOffset(currentDestination);
 		}
 
-		Dictionary<(int, int), int> positonToRegion = new Dictionary<(int, int), int>();
-
 		private LevelingTriangle GetCorrectRegion(Vector3 currentDestination)
 		{
 			int xIndex = (int)Math.Round(currentDestination.X * 100 / bedSize.X);
 			int yIndex = (int)Math.Round(currentDestination.Y * 100 / bedSize.Y);
 
 			int bestIndex;
-			if (!positonToRegion.TryGetValue((xIndex, yIndex), out bestIndex))
+			if (!positionToRegion.TryGetValue((xIndex, yIndex), out bestIndex))
 			{
 				// else calculate the region and store it
 				double bestDist = double.PositiveInfinity;
@@ -187,7 +183,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					}
 				}
 
-				positonToRegion.Add((xIndex, yIndex), bestIndex);
+				positionToRegion.Add((xIndex, yIndex), bestIndex);
 			}
 
 			return Regions[bestIndex];
