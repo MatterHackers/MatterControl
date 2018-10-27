@@ -90,7 +90,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Center | VAnchor.Fit,
 				HAnchor = HAnchor.Stretch,
 				Checked = false,
-				Padding = 0
+				Padding = 0,
+				AlwaysShowArrow = true
 			};
 			expandButton.CheckedStateChanged += (s, e) =>
 			{
@@ -178,6 +179,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (taskDetails.Options?.RichProgressWidget?.Invoke() is GuiWidget guiWidget)
 			{
 				detailsPanel.AddChild(guiWidget);
+			}
+			else
+			{
+				expandButton.Expandable = false;
 			}
 
 			if (taskDetails.Options?.ReadOnlyReporting == true)

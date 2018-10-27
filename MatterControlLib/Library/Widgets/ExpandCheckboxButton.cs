@@ -81,6 +81,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			imageButton.Margin = margin;
 		}
 
+		public bool AlwaysShowArrow { get; set; }
+
 		private bool _expandable = true;
 		public bool Expandable
 		{
@@ -91,7 +93,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					_expandable = value;
 
-					imageButton.SetIcon(_expandable ? arrowRight : new ImageBuffer());
+					imageButton.SetIcon(_expandable || this.AlwaysShowArrow ? arrowRight : new ImageBuffer());
+					imageButton.Enabled = _expandable;
+
 					this.MinimumSize = new Vector2((_expandable) ? this.MinimumSize.X : 10, this.MinimumSize.Y);
 				}
 			}
