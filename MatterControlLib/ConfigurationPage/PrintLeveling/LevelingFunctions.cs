@@ -196,15 +196,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public class LevelingTriangle
 		{
-			private VertexStorage triangle = new VertexStorage();
-
 			public LevelingTriangle(Vector3 v0, Vector3 v1, Vector3 v2)
 			{
-				V0 = v0;
-				V1 = v1;
-				V2 = v2;
-				Center = (V0 + V1 + V2) / 3;
-				Plane = new Plane(V0, V1, V2);
+				this.V0 = v0;
+				this.V1 = v1;
+				this.V2 = v2;
+				this.Center = (V0 + V1 + V2) / 3;
+				this.Plane = new Plane(V0, V1, V2);
 			}
 
 			public Vector3 Center { get; }
