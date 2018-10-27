@@ -132,9 +132,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ActiveContainer = ApplicationController.Instance.Library.RootLibaryContainer
 			};
 
-			var leftBar = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var leftBar = new GuiWidget()
 			{
-				VAnchor = VAnchor.Stretch
+				VAnchor = VAnchor.Stretch,
+				HAnchor = HAnchor.Fit
 			};
 			favoritesBarAndView3DWidget.AddChild(leftBar);
 
@@ -149,7 +150,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Border = new BorderDouble(top: 1, right: 1),
 				BorderColor = theme.BorderColor20,
 				HAnchor = HAnchor.Absolute,
-				VAnchor = VAnchor.Fit | VAnchor.Top,
+				VAnchor = VAnchor.Stretch,
 				AllowContextMenu = false,
 
 				// restore to state for favorites bar size
@@ -158,17 +159,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			leftBar.AddChild(favoritesBar);
 
-			leftBar.AddChild(new VerticalSpacer());
-
-			var expandedImage = AggContext.StaticData.LoadIcon("expand.png", 18, 18, theme.InvertIcons);
-			var collapsedImage = AggContext.StaticData.LoadIcon("collapse.png", 18, 18, theme.InvertIcons);
+			var expandedImage = AggContext.StaticData.LoadIcon("expand.png", 16, 16, theme.InvertIcons);
+			var collapsedImage = AggContext.StaticData.LoadIcon("collapse.png", 16, 16, theme.InvertIcons);
 
 			var expandBarButton = new IconButton(expanded ? collapsedImage : expandedImage, theme)
 			{
 				HAnchor = HAnchor.Center,
-				VAnchor = VAnchor.Absolute,
-				Margin = new BorderDouble(bottom: 4)
+				VAnchor = VAnchor.Absolute | VAnchor.Bottom,
+				Margin = new BorderDouble(bottom: 3, top: 3),
+				Height = theme.ButtonHeight - 6,
+				Width = theme.ButtonHeight - 6
 			};
+
 			expandBarButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				expanded = !expanded;
@@ -182,8 +184,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				favoritesBar.Reload().ConfigureAwait(false);
 			});
-
 			leftBar.AddChild(expandBarButton);
+
+			favoritesBar.Margin = new BorderDouble(bottom: expandBarButton.Height + expandBarButton.Margin.Height);
 			
 			favoritesBarAndView3DWidget.AddChild(view3DWidget);
 			toolbarAndView3DWidget.AddChild(favoritesBarAndView3DWidget);
