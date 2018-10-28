@@ -38,16 +38,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private bool activePrinting;
 		private LevelingFunctions currentLevelingFunctions = null;
 		private double currentProbeOffset;
-		private PrinterSettings printerSettings;
 		private bool wroteLevelingStatus = false;
 		private bool gcodeAlreadyLeveled = false;
+		private PrinterConfig printer;
 
-		public PrintLevelingStream(PrinterSettings printerSettings, GCodeStream internalStream, bool activePrinting)
+		public PrintLevelingStream(PrinterConfig printer, GCodeStream internalStream, bool activePrinting)
 			: base(internalStream)
 		{
 			// always reset this when we construct
 			AllowLeveling = true;
-			this.printerSettings = printerSettings;
+			this.printer = printer;
 			this.activePrinting = activePrinting;
 		}
 
@@ -60,8 +60,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			get
 			{
 				return AllowLeveling
-					&& printerSettings.GetValue<bool>(SettingsKey.print_leveling_enabled)
-					&& !printerSettings.GetValue<bool>(SettingsKey.has_hardware_leveling);
+					&& printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled)
+					&& !printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling);
 			}
 		}
 
@@ -128,18 +128,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		private string GetLeveledPosition(string lineBeingSent, PrinterMove currentDestination)
 		{
-			PrintLevelingData levelingData = printerSettings.Helpers.GetPrintLevelingData();
+			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
 
 			if (levelingData != null
-				&& printerSettings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
+				&& printer.Settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
 				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 ")))
 			{
 				if (currentLevelingFunctions == null
-					|| currentProbeOffset != printerSettings.GetValue<double>(SettingsKey.z_probe_z_offset)
+					|| currentProbeOffset != printer.Settings.GetValue<double>(SettingsKey.z_probe_z_offset)
 					|| !levelingData.SamplesAreSame(currentLevelingFunctions.SampledPositions))
 				{
-					currentProbeOffset = printerSettings.GetValue<double>(SettingsKey.z_probe_z_offset);
-					currentLevelingFunctions = new LevelingFunctions(printerSettings, levelingData);
+					currentProbeOffset = printer.Settings.GetValue<double>(SettingsKey.z_probe_z_offset);
+					currentLevelingFunctions = new LevelingFunctions(printer.Settings, levelingData);
 				}
 
 				lineBeingSent = currentLevelingFunctions.ApplyLeveling(lineBeingSent, currentDestination.position);

@@ -239,8 +239,8 @@ namespace MatterHackers.MatterControl.Library.Export
 
 				// this is added to ensure we are rewriting the G0 G1 commands as needed
 				GCodeStream finalStream = addLevelingStream
-					? new ProcessWriteRegexStream(printer.Settings, new PrintLevelingStream(printer.Settings, queueStream, false), queueStream)
-					: new ProcessWriteRegexStream(printer.Settings, queueStream, queueStream);
+					? new ProcessWriteRegexStream(printer, new PrintLevelingStream(printer, queueStream, false), queueStream)
+					: new ProcessWriteRegexStream(printer, queueStream, queueStream);
 
 				// Run each line from the source gcode through the loaded pipeline and dump to the output location
 				using (var file = new StreamWriter(outputPath))

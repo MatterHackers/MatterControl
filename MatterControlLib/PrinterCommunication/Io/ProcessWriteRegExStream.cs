@@ -44,12 +44,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		private QueuedCommandsStream queueStream;
 
-		private PrinterSettings printerSettings;
+		private PrinterConfig printer;
 
-		public ProcessWriteRegexStream(PrinterSettings printerSettings, GCodeStream internalStream, QueuedCommandsStream queueStream)
+		public ProcessWriteRegexStream(PrinterConfig printer, GCodeStream internalStream, QueuedCommandsStream queueStream)
 			: base(internalStream)
 		{
-			this.printerSettings = printerSettings;
+			this.printer = printer;
 			this.queueStream = queueStream;
 		}
 
@@ -82,10 +82,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			lock (WriteLineReplacements)
 			{
-				if (writeRegexString != printerSettings.GetValue(SettingsKey.write_regex))
+				if (writeRegexString != printer.Settings.GetValue(SettingsKey.write_regex))
 				{
 					WriteLineReplacements.Clear();
-					writeRegexString = printerSettings.GetValue(SettingsKey.write_regex);
+					writeRegexString = printer.Settings.GetValue(SettingsKey.write_regex);
 					foreach (string regExLine in writeRegexString.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries))
 					{
 						var matches = getQuotedParts.Matches(regExLine);
