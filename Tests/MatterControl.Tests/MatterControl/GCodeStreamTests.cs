@@ -482,7 +482,7 @@ namespace MatterControl.Tests.MatterControl
 
 			var inputLinesStream = new TestGCodeStream(inputLines);
 			var queueStream = new QueuedCommandsStream(inputLinesStream);
-			ProcessWriteRegexStream writeStream = new ProcessWriteRegexStream(printer.Settings, queueStream, queueStream);
+			ProcessWriteRegexStream writeStream = new ProcessWriteRegexStream(printer, queueStream, queueStream);
 
 			int expectedIndex = 0;
 			string actualLine = writeStream.ReadLine();

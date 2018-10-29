@@ -2136,12 +2136,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				// make sure we are in the position we were when we stopped printing
 				babyStepsStream6.Offset = new Vector3(activePrintTask.PrintingOffsetX, activePrintTask.PrintingOffsetY, activePrintTask.PrintingOffsetZ);
 			}
-			printLevelingStream7 = new PrintLevelingStream(printer.Settings, babyStepsStream6, true);
+			printLevelingStream7 = new PrintLevelingStream(printer, babyStepsStream6, true);
 			waitForTempStream8 = new WaitForTempStream(this, printLevelingStream7);
 			extrusionMultiplyerStream9 = new ExtrusionMultiplyerStream(waitForTempStream8);
 			feedrateMultiplyerStream10 = new FeedRateMultiplyerStream(extrusionMultiplyerStream9);
 			requestTemperaturesStream11 = new RequestTemperaturesStream(this, feedrateMultiplyerStream10);
-			processWriteRegExStream12 = new ProcessWriteRegexStream(this.printer.Settings, requestTemperaturesStream11, queuedCommandStream3);
+			processWriteRegExStream12 = new ProcessWriteRegexStream(printer, requestTemperaturesStream11, queuedCommandStream3);
 			totalGCodeStream = processWriteRegExStream12;
 
 			// Force a reset of the printer checksum state (but allow it to be write regexed)

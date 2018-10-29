@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -34,34 +34,34 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class PrintLevelingStream : GCodeStreamProxy
 	{
-		protected PrinterMove lastDestination = new PrinterMove();
+		private PrinterMove lastDestination = new PrinterMove();
 		private bool activePrinting;
 		private LevelingFunctions currentLevelingFunctions = null;
 		private double currentProbeOffset;
-		private PrinterSettings printerSettings;
-		bool wroteLevelingStatus = false;
-		bool gcodeAlreadyLeveled = false;
+		private bool wroteLevelingStatus = false;
+		private bool gcodeAlreadyLeveled = false;
+		private PrinterConfig printer;
 
-		public PrintLevelingStream(PrinterSettings printerSettings, GCodeStream internalStream, bool activePrinting)
+		public PrintLevelingStream(PrinterConfig printer, GCodeStream internalStream, bool activePrinting)
 			: base(internalStream)
 		{
 			// always reset this when we construct
 			AllowLeveling = true;
-			this.printerSettings = printerSettings;
+			this.printer = printer;
 			this.activePrinting = activePrinting;
 		}
 
 		public static bool AllowLeveling { get; set; }
 
-		public PrinterMove LastDestination { get { return lastDestination; } }
+		public PrinterMove LastDestination => lastDestination;
 
 		bool LevelingActive
 		{
 			get
 			{
 				return AllowLeveling
-					&& printerSettings.GetValue<bool>(SettingsKey.print_leveling_enabled)
-					&& !printerSettings.GetValue<bool>(SettingsKey.has_hardware_leveling);
+					&& printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled)
+					&& !printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling);
 			}
 		}
 
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				gcodeAlreadyLeveled = true;
 			}
 
-			if (lineFromChild != null 
+			if (lineFromChild != null
 				&& LevelingActive
 				&& !gcodeAlreadyLeveled)
 			{
@@ -128,20 +128,21 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		private string GetLeveledPosition(string lineBeingSent, PrinterMove currentDestination)
 		{
-			PrintLevelingData levelingData = printerSettings.Helpers.GetPrintLevelingData();
+			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
+
 			if (levelingData != null
-				&& printerSettings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
+				&& printer.Settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
 				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 ")))
 			{
 				if (currentLevelingFunctions == null
-					|| currentProbeOffset != printerSettings.GetValue<double>(SettingsKey.z_probe_z_offset)
+					|| currentProbeOffset != printer.Settings.GetValue<double>(SettingsKey.z_probe_z_offset)
 					|| !levelingData.SamplesAreSame(currentLevelingFunctions.SampledPositions))
 				{
-					currentProbeOffset = printerSettings.GetValue<double>(SettingsKey.z_probe_z_offset);
-					currentLevelingFunctions = new LevelingFunctions(printerSettings, levelingData);
+					currentProbeOffset = printer.Settings.GetValue<double>(SettingsKey.z_probe_z_offset);
+					currentLevelingFunctions = new LevelingFunctions(printer.Settings, levelingData);
 				}
 
-				lineBeingSent = currentLevelingFunctions.DoApplyLeveling(lineBeingSent, currentDestination.position);
+				lineBeingSent = currentLevelingFunctions.ApplyLeveling(lineBeingSent, currentDestination.position);
 			}
 
 			return lineBeingSent;

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,15 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterControl.Printing;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.VectorMath;
-using MIConvexHull;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using MatterControl.Printing;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
+using MIConvexHull;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -43,7 +41,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private Vector2 bedSize;
 		private Vector3 lastDestinationWithLevelingApplied = new Vector3();
-
+		private Dictionary<(int, int), int> positionToRegion = new Dictionary<(int, int), int>();
 		private PrinterSettings printerSettings;
 
 		public LevelingFunctions(PrinterSettings printerSettings, PrintLevelingData levelingData)
@@ -119,12 +117,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		// you can only set this on construction
-		public List<Vector3> SampledPositions { get; private set; }
+		public List<Vector3> SampledPositions { get; }
 
-		private List<LevelingTriangle> Regions { get; set; } = new List<LevelingTriangle>();
+		private List<LevelingTriangle> Regions { get; } = new List<LevelingTriangle>();
 
-		public string DoApplyLeveling(string lineBeingSent, Vector3 currentDestination)
+		public string ApplyLeveling(string lineBeingSent, Vector3 currentDestination)
 		{
 			double extruderDelta = 0;
 			GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref extruderDelta);
@@ -164,15 +161,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return region.GetPositionWithZOffset(currentDestination);
 		}
 
-		Dictionary<(int, int), int> positonToRegion = new Dictionary<(int, int), int>();
-
 		private LevelingTriangle GetCorrectRegion(Vector3 currentDestination)
 		{
 			int xIndex = (int)Math.Round(currentDestination.X * 100 / bedSize.X);
 			int yIndex = (int)Math.Round(currentDestination.Y * 100 / bedSize.Y);
 
 			int bestIndex;
-			if (!positonToRegion.TryGetValue((xIndex, yIndex), out bestIndex))
+			if (!positionToRegion.TryGetValue((xIndex, yIndex), out bestIndex))
 			{
 				// else calculate the region and store it
 				double bestDist = double.PositiveInfinity;
@@ -188,7 +183,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					}
 				}
 
-				positonToRegion.Add((xIndex, yIndex), bestIndex);
+				positionToRegion.Add((xIndex, yIndex), bestIndex);
 			}
 
 			return Regions[bestIndex];
@@ -196,28 +191,26 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public class LevelingTriangle
 		{
-			private VertexStorage triangle = new VertexStorage();
-
 			public LevelingTriangle(Vector3 v0, Vector3 v1, Vector3 v2)
 			{
-				V0 = v0;
-				V1 = v1;
-				V2 = v2;
-				Center = (V0 + V1 + V2) / 3;
-				plane = new Plane(V0, V1, V2);
+				this.V0 = v0;
+				this.V1 = v1;
+				this.V2 = v2;
+				this.Center = (V0 + V1 + V2) / 3;
+				this.Plane = new Plane(V0, V1, V2);
 			}
 
-			public Vector3 Center { get; private set; }
-			public Plane plane { get; private set; }
-			public Vector3 V0 { get; private set; }
-			public Vector3 V1 { get; private set; }
-			public Vector3 V2 { get; private set; }
+			public Vector3 Center { get; }
+			public Plane Plane { get; }
+			public Vector3 V0 { get; }
+			public Vector3 V1 { get; }
+			public Vector3 V2 { get; }
 
 			public Vector3 GetPositionWithZOffset(Vector3 currentDestination)
 			{
 				var destinationAtZ0 = new Vector3(currentDestination.X, currentDestination.Y, 0);
 
-				double hitDistance = plane.GetDistanceToIntersection(destinationAtZ0, Vector3.UnitZ);
+				double hitDistance = this.Plane.GetDistanceToIntersection(destinationAtZ0, Vector3.UnitZ);
 				currentDestination.Z += hitDistance;
 
 				return currentDestination;

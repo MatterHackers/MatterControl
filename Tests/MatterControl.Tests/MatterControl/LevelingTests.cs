@@ -138,7 +138,7 @@ namespace MatterControl.Tests.MatterControl
 			Assert.AreEqual(testLeveled.Y, testUnleveled.Y, .001, "We don't adjust the x or y on mesh leveling");
 			Assert.AreEqual(testLeveled.Y, controlLeveled.Y, .001, "We don't adjust the x or y on mesh leveling");
 			Assert.AreEqual(testLeveled.Z, controlLeveled.Z, .001);
-			string outPositionString = levelingFunctions.DoApplyLeveling(GetGCodeString(testUnleveled), testUnleveled);
+			string outPositionString = levelingFunctions.ApplyLeveling(GetGCodeString(testUnleveled), testUnleveled);
 			Assert.AreEqual(GetGCodeString(testLeveled), outPositionString);
 		}
 
