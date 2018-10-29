@@ -2131,7 +2131,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			macroProcessingStream4 = new MacroProcessingStream(queuedCommandStream3, printer);
 			relativeToAbsoluteStream5 = new RelativeToAbsoluteStream(macroProcessingStream4);
 			bool enableLineSpliting = gcodeFilename != null && printer.Settings.GetValue<bool>(SettingsKey.enable_line_spliting);
-			babyStepsStream6 = new BabyStepsStream(printer.Settings, relativeToAbsoluteStream5, enableLineSpliting ? 1 : 2000);
+			babyStepsStream6 = new BabyStepsStream(printer, relativeToAbsoluteStream5, enableLineSpliting ? 1 : 2000);
 			if (activePrintTask != null)
 			{
 				// make sure we are in the position we were when we stopped printing

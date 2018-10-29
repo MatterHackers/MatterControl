@@ -243,7 +243,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				{
 					if (printer.Settings.GetValue<bool>(SettingsKey.enable_line_spliting))
 					{
-						finalStream = new BabyStepsStream(printer.Settings, finalStream, 1);
+						finalStream = new BabyStepsStream(printer, finalStream, 1);
 					}
 
 					finalStream = new PrintLevelingStream(printer, finalStream, false);
