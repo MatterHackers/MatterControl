@@ -234,13 +234,20 @@ namespace MatterHackers.MatterControl.Library.Export
 		{
 			try
 			{
-				bool addLevelingStream = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && this.ApplyLeveling;
 				var queueStream = new QueuedCommandsStream(gCodeFileStream);
 
 				// this is added to ensure we are rewriting the G0 G1 commands as needed
-				GCodeStream finalStream = addLevelingStream
-					? new ProcessWriteRegexStream(printer, new PrintLevelingStream(printer, queueStream, false), queueStream)
-					: new ProcessWriteRegexStream(printer, queueStream, queueStream);
+				GCodeStream finalStream = new ProcessWriteRegexStream(printer, queueStream, queueStream);
+
+				if(printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && this.ApplyLeveling)
+				{
+					if (printer.Settings.GetValue<bool>(SettingsKey.enable_line_spliting))
+					{
+						finalStream = new BabyStepsStream(printer.Settings, finalStream, 1);
+					}
+
+					finalStream = new PrintLevelingStream(printer, finalStream, false);
+				}
 
 				// Run each line from the source gcode through the loaded pipeline and dump to the output location
 				using (var file = new StreamWriter(outputPath))
