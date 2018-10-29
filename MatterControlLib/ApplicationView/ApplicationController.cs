@@ -2441,6 +2441,23 @@ If you experience adhesion problems, please re-run leveling."
 					});
 				});
 
+				if (printer.Bed.LoadedGCode is GCodeMemoryFile gcodeMemoryFile)
+				{
+					// try to validate the gcode file and warn if it seems invalid.
+					// for now the definition of invalid is that it has a print time of < 30 seconds
+					var estimatedPrintSeconds = gcodeMemoryFile.EstimatedPrintSeconds();
+					if (estimatedPrintSeconds < 30)
+					{
+						var message = "The time to print this G-Code is estimated to be {0} seconds.\n\nPlease check your part for errors if this is unexpected."
+							.Localize()
+							.FormatWith((int)estimatedPrintSeconds);
+						UiThread.RunOnIdle(() =>
+						{
+							StyledMessageBox.ShowMessageBox(message, "Warning, very short print".Localize());
+						});
+					}
+				}
+
 				return Task.CompletedTask;
 			});
 

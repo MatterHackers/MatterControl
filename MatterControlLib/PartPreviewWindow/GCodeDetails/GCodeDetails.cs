@@ -33,120 +33,34 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class GCodeDetails
+	public static class GCodeDetails
 	{
-		private GCodeFile loadedGCode;
-
-		private PrinterConfig printer;
-		public GCodeDetails(PrinterConfig printer, GCodeFile loadedGCode)
+		public static string LayerTime(this GCodeFile loadedGCode, int activeLayerIndex)
 		{
-			this.printer = printer;
-			this.loadedGCode = loadedGCode;
+			return loadedGCode.InstructionTime(activeLayerIndex, activeLayerIndex + 1);
 		}
 
-		public string SecondsToTime(double seconds)
+		public static string LayerTimeToHere(this GCodeFile loadedGCode, int activeLayerIndex)
 		{
-			int secondsRemaining = (int)seconds;
-			int hoursRemaining = (int)(secondsRemaining / (60 * 60));
-			int minutesRemaining = (int)(secondsRemaining / 60 - hoursRemaining * 60);
-
-			secondsRemaining = secondsRemaining % 60;
-
-			if (hoursRemaining > 0)
-			{
-				return $"{hoursRemaining} h, {minutesRemaining} min";
-			}
-			else if(minutesRemaining > 10)
-			{
-				return $"{minutesRemaining} min";
-			}
-			else
-			{
-				return $"{minutesRemaining} min {secondsRemaining} s";
-			}
+			return loadedGCode.InstructionTime(0, activeLayerIndex + 1);
 		}
 
-		public string EstimatedPrintTime
+		public static string LayerTimeFromeHere(this GCodeFile loadedGCode, int activeLayerIndex)
 		{
-			get
-			{
-				if (loadedGCode == null || loadedGCode.LayerCount == 0)
-				{
-					return "---";
-				}
-
-				return SecondsToTime(loadedGCode.Instruction(0).secondsToEndFromHere);
-			}
+			return loadedGCode.InstructionTime(activeLayerIndex + 1, int.MaxValue);
 		}
 
-		public double EstimatedPrintSeconds
-		{
-			get
-			{
-				if (loadedGCode == null || loadedGCode.LayerCount == 0)
-				{
-					return 0;
-				}
-
-				return loadedGCode.Instruction(0).secondsToEndFromHere;
-			}
-		}
-
-		public string FilamentUsed => string.Format("{0:0.0} mm", loadedGCode.GetFilamentUsedMm(printer.Settings.GetValue<double>(SettingsKey.filament_diameter)));
-
-		public string FilamentVolume => string.Format("{0:0.00} cm³", loadedGCode.GetFilamentCubicMm(printer.Settings.GetValue<double>(SettingsKey.filament_diameter)) / 1000);
-
-		public string EstimatedMass => this.TotalMass <= 0 ? "Unknown" : string.Format("{0:0.00} g", this.TotalMass);
-
-		public string EstimatedCost => this.TotalCost <= 0 ? "Unknown" : string.Format("${0:0.00}", this.TotalCost);
-
-		public double TotalMass
-		{
-			get
-			{
-				double filamentDiameter = printer.Settings.GetValue<double>(SettingsKey.filament_diameter);
-				double filamentDensity = printer.Settings.GetValue<double>(SettingsKey.filament_density);
-
-				return loadedGCode.GetFilamentWeightGrams(filamentDiameter, filamentDensity);
-			}
-		}
-
-		public double GetLayerHeight(int layerIndex)
+		public static string EstimatedPrintTime(this GCodeFile loadedGCode)
 		{
 			if (loadedGCode == null || loadedGCode.LayerCount == 0)
 			{
-				return 0;
+				return "---";
 			}
 
-			return loadedGCode.GetLayerHeight(layerIndex);
+			return SecondsToTime(loadedGCode.Instruction(0).secondsToEndFromHere);
 		}
 
-		internal object GetLayerTop(int layerIndex)
-		{
-			if (loadedGCode == null || loadedGCode.LayerCount == 0)
-			{
-				return 0;
-			}
-
-			return loadedGCode.GetLayerTop(layerIndex);
-		}
-
-		public string LayerTime(int activeLayerIndex)
-		{
-			return InstructionTime(activeLayerIndex, activeLayerIndex + 1);
-		}
-
-		public string LayerTimeToHere(int activeLayerIndex)
-		{
-			return InstructionTime(0, activeLayerIndex + 1);
-		}
-
-		public string LayerTimeFromeHere(int activeLayerIndex)
-		{
-			return InstructionTime(activeLayerIndex + 1, int.MaxValue);
-		}
-
-		private string InstructionTime(int startLayer, int endLayer)
+		private static string InstructionTime(this GCodeFile loadedGCode, int startLayer, int endLayer)
 		{
 			if (loadedGCode == null || loadedGCode.LayerCount == 0)
 			{
@@ -160,7 +74,89 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return SecondsToTime(secondsToEndFromStart - secondsToEndFromEnd);
 		}
 
-		public string GetLayerFanSpeeds(int activeLayerIndex)
+		public static string SecondsToTime(double seconds)
+		{
+			int secondsRemaining = (int)seconds;
+			int hoursRemaining = (int)(secondsRemaining / (60 * 60));
+			int minutesRemaining = (int)(secondsRemaining / 60 - hoursRemaining * 60);
+
+			secondsRemaining = secondsRemaining % 60;
+
+			if (hoursRemaining > 0)
+			{
+				return $"{hoursRemaining} h, {minutesRemaining} min";
+			}
+			else if (minutesRemaining > 10)
+			{
+				return $"{minutesRemaining} min";
+			}
+			else
+			{
+				return $"{minutesRemaining} min {secondsRemaining} s";
+			}
+		}
+
+		public static double EstimatedPrintSeconds(this GCodeFile loadedGCode)
+		{
+			if (loadedGCode == null || loadedGCode.LayerCount == 0)
+			{
+				return 0;
+			}
+
+			return loadedGCode.Instruction(0).secondsToEndFromHere;
+		}
+
+		public static string FilamentUsed(this GCodeFile loadedGCode, PrinterConfig printer)
+		{
+			return string.Format("{0:0.0} mm", loadedGCode.GetFilamentUsedMm(printer.Settings.GetValue<double>(SettingsKey.filament_diameter)));
+		}
+
+		public static string FilamentVolume(this GCodeFile loadedGCode, PrinterConfig printer)
+		{
+			return string.Format("{0:0.00} cm³", loadedGCode.GetFilamentCubicMm(printer.Settings.GetValue<double>(SettingsKey.filament_diameter)) / 1000);
+		}
+
+		public static string EstimatedMass(this GCodeFile loadedGCode, PrinterConfig printer)
+		{
+			var totalMass = TotalCost(loadedGCode, printer);
+			return totalMass <= 0 ? "Unknown" : string.Format("{0:0.00} g", totalMass);
+		}
+
+		public static string EstimatedCost(this GCodeFile loadedGCode, PrinterConfig printer)
+		{
+			var totalMass = TotalCost(loadedGCode, printer);
+			return totalMass <= 0 ? "Unknown" : string.Format("${0:0.00}", totalMass);
+		}
+
+		public static double TotalMass(this GCodeFile loadedGCode, PrinterConfig printer)
+		{
+			double filamentDiameter = printer.Settings.GetValue<double>(SettingsKey.filament_diameter);
+			double filamentDensity = printer.Settings.GetValue<double>(SettingsKey.filament_density);
+
+			return loadedGCode.GetFilamentWeightGrams(filamentDiameter, filamentDensity);
+		}
+
+		public static double GetLayerHeight(this GCodeFile loadedGCode, int layerIndex)
+		{
+			if (loadedGCode == null || loadedGCode.LayerCount == 0)
+			{
+				return 0;
+			}
+
+			return loadedGCode.GetLayerHeight(layerIndex);
+		}
+
+		internal static object GetLayerTop(this GCodeFile loadedGCode, int layerIndex)
+		{
+			if (loadedGCode == null || loadedGCode.LayerCount == 0)
+			{
+				return 0;
+			}
+
+			return loadedGCode.GetLayerTop(layerIndex);
+		}
+
+		public static string GetLayerFanSpeeds(this GCodeFile loadedGCode, int activeLayerIndex)
 		{
 			if (loadedGCode == null || loadedGCode.LayerCount == 0)
 			{
@@ -198,13 +194,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return fanSpeeds;
 		}
 
-		public double TotalCost
+		public static double TotalCost(this GCodeFile loadedGCode, PrinterConfig printer)
 		{
-			get
-			{
-				double filamentCost = printer.Settings.GetValue<double>(SettingsKey.filament_cost);
-				return this.TotalMass / 1000 * filamentCost;
-			}
+			double filamentCost = printer.Settings.GetValue<double>(SettingsKey.filament_cost);
+			return loadedGCode.TotalMass(printer) / 1000 * filamentCost;
 		}
 	}
 }

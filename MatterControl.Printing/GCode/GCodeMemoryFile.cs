@@ -117,17 +117,6 @@ namespace MatterControl.Printing
 			GCodeCommandQueue.Insert(insertIndex, printerMachineInstruction);
 		}
 
-		public static GCodeFile ParseGCodeString(string gcodeContents, 
-			Vector4 maxAccelerationMmPerS2,
-			Vector4 maxVelocityMmPerS,
-			Vector4 velocitySameAsStopMmPerS,
-			Vector4 speedMultiplier,
-			CancellationToken cancellationToken)
-		{
-			return ParseFileContents(gcodeContents, 
-				maxAccelerationMmPerS2, maxVelocityMmPerS, velocitySameAsStopMmPerS, speedMultiplier, cancellationToken, null);
-		}
-
 		public static GCodeMemoryFile Load(Stream fileStream, 
 			Vector4 maxAccelerationMmPerS2,
 			Vector4 maxVelocityMmPerS,
@@ -140,9 +129,11 @@ namespace MatterControl.Printing
 			{
 				using (var reader = new StreamReader(fileStream))
 				{
-					return ParseFileContents(reader.ReadToEnd(), 
+					var gcodeMemoryFile = ParseFileContents(reader.ReadToEnd(), 
 						maxAccelerationMmPerS2, maxVelocityMmPerS, velocitySameAsStopMmPerS, speedMultiplier,
 						cancellationToken, progressReporter);
+
+					return gcodeMemoryFile;
 				}
 			}
 			catch (Exception e)
@@ -213,7 +204,7 @@ namespace MatterControl.Printing
 			return crCount + 1;
 		}
 
-		public static GCodeMemoryFile ParseFileContents(string gCodeString,
+		private static GCodeMemoryFile ParseFileContents(string gCodeString,
 			Vector4 maxAccelerationMmPerS2,
 			Vector4 maxVelocityMmPerS,
 			Vector4 velocitySameAsStopMmPerS,
