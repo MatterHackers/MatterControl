@@ -293,6 +293,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadLineContainsCallBacks.AddCallbackToKey("Error:Thermal Runaway, system stopped!", PrinterReportsError);
 			ReadLineContainsCallBacks.AddCallbackToKey("Error:Heating failed", PrinterReportsError);
 			ReadLineStartCallBacks.AddCallbackToKey("temp sensor defect", PrinterReportsError);
+			ReadLinestartCallBacks.AddCallbackToKey("Error:Printer halted", PrinterReportsError);
 
 			// repetier temperature failures
 			ReadLineContainsCallBacks.AddCallbackToKey("dry run mode", PrinterReportsError);
