@@ -48,6 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public static class SceneActions
 	{
+		private static int pastObjectXOffset = 5;
 		public static List<IObject3D> GetSelectedItems(this InteractiveScene scene)
 		{
 			var selectedItem = scene.SelectedItem;
@@ -187,6 +188,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Clipboard.Instance.SetText("!--IObjectSelection--!");
 				ApplicationController.ClipboardItem = selectedItem.Clone();
+				// put it back in right where we cut it from
+				pastObjectXOffset = 0;
 
 				scene.DeleteSelection();
 			}
@@ -199,6 +202,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Clipboard.Instance.SetText("!--IObjectSelection--!");
 				ApplicationController.ClipboardItem = selectedItem.Clone();
+				// when we copy an object put it back in with a slight offset
+				pastObjectXOffset = 5;
 			}
 		}
 
@@ -224,12 +229,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (Clipboard.Instance.GetText() == "!--IObjectSelection--!")
 				{
-					scene.DuplicateItem(ApplicationController.ClipboardItem);
+					scene.DuplicateItem(pastObjectXOffset, ApplicationController.ClipboardItem);
+					// each time we put in the object offset it a bit more
+					pastObjectXOffset += 5;
 				}
 			}
 		}
 
-		public static async void DuplicateItem(this InteractiveScene scene, IObject3D sourceItem = null)
+		public static async void DuplicateItem(this InteractiveScene scene, double xOffset, IObject3D sourceItem = null)
 		{
 			if (sourceItem == null)
 			{
@@ -255,6 +262,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							foreach(var item in copyList)
 							{
 								var clonedItem = item.Clone();
+								clonedItem.Translate(xOffset);
 								// make the name unique
 								var newName = agg_basics.GetNonCollidingName(item.Name, scene.DescendantsAndSelf().Select((d) => d.Name));
 								clonedItem.Name = newName;
@@ -268,6 +276,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							var clonedItem = sourceItem.Clone();
 
+							clonedItem.Translate(xOffset);
 							// make the name unique
 							var newName = agg_basics.GetNonCollidingName(sourceItem.Name, scene.DescendantsAndSelf().Select((d) => d.Name));
 							clonedItem.Name = newName;

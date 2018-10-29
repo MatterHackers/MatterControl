@@ -570,7 +570,7 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionOperation()
 				{
 					TitleResolver = () => "Duplicate".Localize(),
-					Action = (scene) => scene.DuplicateItem(),
+					Action = (scene) => scene.DuplicateItem(5),
 					IsEnabled = (scene) => scene.SelectedItem != null,
 					Icon = AggContext.StaticData.LoadIcon("duplicate.png").SetPreMultiply(),
 				},
