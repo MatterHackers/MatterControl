@@ -319,6 +319,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new ToolbarSeparator(theme));
 
+			this.AddChild(CreateOpenButton(theme));
+
+			this.AddChild(CreateSaveButton(theme));
+
+			this.AddChild(new ToolbarSeparator(theme));
+
 			var undoButton = new IconButton(AggContext.StaticData.LoadIcon("Undo_grey_16x.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "3D View Undo",
@@ -334,7 +340,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				undoBuffer.Undo();
 				view3DWidget.InteractionLayer.Focus();
 				// if the item we had selected is still in the scene, re-select it
-				if(sceneContext.Scene.Children.Contains(selectedItem))
+				if (sceneContext.Scene.Children.Contains(selectedItem))
 				{
 					sceneContext.Scene.SelectedItem = selectedItem;
 				}
@@ -362,8 +368,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 			this.AddChild(redoButton);
-
-			this.AddChild(CreateSaveButton(theme));
 
 			if (showPrintButton)
 			{
@@ -500,6 +504,42 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Run on load
 			Scene_SelectionChanged(null, null);
+		}
+
+		private IconButton CreateOpenButton(ThemeConfig theme)
+		{
+			var openButton = new IconButton(AggContext.StaticData.LoadIcon("fa-folder-open_16.png", 16, 16, theme.InvertIcons), theme)
+			{
+				Margin = theme.ButtonSpacing,
+				ToolTipText = "Open File".Localize()
+			};
+			openButton.Click += (s, e) =>
+			{
+				var extensionsWithoutPeriod = new HashSet<string>(ApplicationSettings.OpenDesignFileParams.Split('|').First().Split(',').Select(t => t.Trim().Trim('.')));
+
+				foreach (var extension in ApplicationController.Instance.Library.ContentProviders.Keys)
+				{
+					extensionsWithoutPeriod.Add(extension.ToUpper());
+				}
+
+				var extensionsArray = extensionsWithoutPeriod.OrderBy(t => t).ToArray();
+
+				string filter = string.Format(
+					"{0}|{1}",
+					string.Join(",", extensionsArray),
+					string.Join("", extensionsArray.Select(t => $"*.{t.ToLower()};").ToArray()));
+
+				UiThread.RunOnIdle(() =>
+				{
+					AggContext.FileDialogs.OpenFileDialog(
+						new OpenFileDialogParams(filter, multiSelect: true),
+						(openParams) =>
+						{
+							ViewControls3D.LoadAndAddPartsToPlate(this, openParams.FileNames, ApplicationController.Instance.DragDropData.SceneContext);
+						});
+				}, .1);
+			};
+			return openButton;
 		}
 
 		private void Scene_SelectionChanged(object sender, EventArgs e)
@@ -673,14 +713,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									}));
 						});
 					});
-
-					var exportAction = view3DWidget.WorkspaceActions["Export"];
-
-					var exportItem = popupMenu.CreateMenuItem("Export".Localize(), exportAction.Icon);
-					exportItem.Click += (s, e) =>
-					{
-						exportAction.Action.Invoke();
-					};
 
 					return popupMenu;
 				},
