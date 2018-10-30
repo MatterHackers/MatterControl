@@ -319,8 +319,7 @@ namespace MatterHackers.MatterControl
 
 			theme.ApplyBoxStyle(themeSection);
 
-			var imageWidget = themeSection.Children.First().Descendants<ImageWidget>().FirstOrDefault();
-			imageWidget.Image = AggContext.StaticData.LoadIcon("theme.png", 16, 16, theme.InvertIcons);
+			themeSection.SetNonExpandableIcon(AggContext.StaticData.LoadIcon("theme.png", 16, 16, theme.InvertIcons));
 
 			var advancedPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
