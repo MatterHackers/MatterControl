@@ -292,14 +292,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		internal static void AddBordersToEditFields(GuiWidget row)
-		{
-			foreach (var widget in row.Descendants().Where(d => d is MHNumberEdit || d is MHTextEditWidget))
-			{
-				widget.Border = 1;
-				widget.BorderColor = row.BorderColor;
-			}
-		}
 
 		public void AddContent(GuiWidget content)
 		{

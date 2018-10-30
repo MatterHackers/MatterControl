@@ -259,7 +259,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 			var settingsData = SettingsOrganizer.Instance.GetSettingsData(TemperatureKey);
 			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
-			SliceSettingsRow.AddBordersToEditFields(temperatureRow);
 			container.AddChild(temperatureRow);
 
 			// Add the temperature row to the always enabled list ensuring the field can be set when disconnected
@@ -309,7 +308,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 						graph.GoalValue = temp;
 
-						// TODO: Why is this only when enabled? How does it get set to 
+						// TODO: Why is this only when enabled?
 						if (heatToggle.Checked)
 						{
 							// TODO: Why is a UI widget who is listening to model events driving this behavior? What when it's not loaded?
