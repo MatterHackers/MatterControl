@@ -68,12 +68,8 @@ namespace MatterHackers.MatterControl.ActionBar
 					GCode = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "load_filament.txt"))
 				};
 
-				var loadButton = new TextButton("Load".Localize(), theme)
-				{
-					BackgroundColor = theme.SlightShade,
-					Margin = theme.ButtonSpacing,
-					ToolTipText = "Load filament".Localize()
-				};
+				var loadButton = theme.CreateDialogButton("Load".Localize());
+				loadButton.ToolTipText = "Load filament".Localize();
 				loadButton.Name = "Load Filament Button";
 				loadButton.Click += (s, e) => loadFilament.Run(printer.Connection);
 				macroButtons.AddChild(loadButton);
@@ -83,12 +79,8 @@ namespace MatterHackers.MatterControl.ActionBar
 					GCode = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "unload_filament.txt"))
 				};
 
-				var unloadButton = new TextButton("Unload".Localize(), theme)
-				{
-					BackgroundColor = theme.SlightShade,
-					Margin = theme.ButtonSpacing,
-					ToolTipText = "Unload filament".Localize()
-				};
+				var unloadButton = theme.CreateDialogButton("Unload".Localize());
+				unloadButton.ToolTipText = "Unload filament".Localize();
 				unloadButton.Click += (s, e) => unloadFilament.Run(printer.Connection);
 				macroButtons.AddChild(unloadButton);
 
@@ -103,12 +95,8 @@ namespace MatterHackers.MatterControl.ActionBar
 				Padding = theme.ToolbarPadding,
 			};
 
-			var retractButton = new TextButton("Retract".Localize(), theme)
-			{
-				BackgroundColor = theme.SlightShade,
-				Margin = theme.ButtonSpacing,
-				ToolTipText = "Retract filament".Localize()
-			};
+			var retractButton = theme.CreateDialogButton("Retract".Localize());
+			retractButton.ToolTipText = "Retract filament".Localize();
 			retractButton.Click += (s, e) =>
 			{
 				printer.Connection.MoveExtruderRelative(moveAmount * -1, printer.Settings.EFeedRate(extruderIndex), extruderIndex);
@@ -117,13 +105,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			int extruderButtonTopMargin = macroButtons == null ? 8 : 0;
 
-			var extrudeButton = new TextButton("Extrude".Localize(), theme)
-			{
-				BackgroundColor = theme.SlightShade,
-				Margin = theme.ButtonSpacing,
-				Name = "Extrude Button",
-				ToolTipText = "Extrude filament".Localize()
-			};
+			var extrudeButton = theme.CreateDialogButton("Extrude".Localize());
+			extrudeButton.Name = "Extrude Button";
+			extrudeButton.ToolTipText = "Extrude filament".Localize();
 			extrudeButton.Click += (s, e) =>
 			{
 				printer.Connection.MoveExtruderRelative(moveAmount, printer.Settings.EFeedRate(extruderIndex), extruderIndex);
