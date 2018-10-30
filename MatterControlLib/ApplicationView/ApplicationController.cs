@@ -3167,12 +3167,11 @@ If you experience adhesion problems, please re-run leveling."
 				}, 2);
 			}
 
-			reporter?.Invoke(0.3, (loading != null) ? loading : "MainView");
-			applicationController.MainView = new MainViewWidget(applicationController.Theme);
-
-			// now that we are all set up lets load our plugins and allow them their chance to set things up
-			reporter?.Invoke(0.8, (loading != null) ? loading : "Plugins");
+			reporter?.Invoke(0.3, (loading != null) ? loading : "Plugins");
 			AppContext.Platform.FindAndInstantiatePlugins(systemWindow);
+
+			reporter?.Invoke(0.4, (loading != null) ? loading : "MainView");
+			applicationController.MainView = new MainViewWidget(applicationController.Theme);
 
 			reporter?.Invoke(0.91, (loading != null) ? loading : "OnLoadActions");
 			applicationController.OnLoadActions();
