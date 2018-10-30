@@ -304,7 +304,7 @@ namespace MatterHackers.MatterControl
 
 		public TextButton CreateDialogButton(string text)
 		{
-			return CreateDialogButton(text, this.MinimalShade, this.SlightShade);
+			return CreateDialogButton(text, this.SlightShade, this.SlightShade.WithAlpha(75));
 		}
 
 		public TextButton CreateDialogButton(string text, Color backgroundColor, Color hoverColor)
@@ -314,7 +314,8 @@ namespace MatterHackers.MatterControl
 			{
 				BackgroundColor = backgroundColor,
 				HoverColor = hoverColor,
-				MinimumSize = new Vector2(75, 0)
+				MinimumSize = new Vector2(75, 0),
+				Margin = this.ButtonSpacing
 			};
 #else
 			var button = new TextButton(text, this, this.FontSize14)
