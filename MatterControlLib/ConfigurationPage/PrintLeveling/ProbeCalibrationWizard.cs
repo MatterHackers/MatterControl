@@ -182,7 +182,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			yield return new CalibrateProbeLastPagelInstructions(
 				this,
 				"Done".Localize(),
-				"Your Probe is now calibrated.".Localize() + "\n\n\t• " + "Remove the paper".Localize() + "\n\n" + "Click 'Done' to close this window.".Localize(),
 				autoProbePositions,
 				manualProbePositions);
 		}
