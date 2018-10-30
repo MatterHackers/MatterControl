@@ -25,22 +25,22 @@
   "AccentMimimalOverlay": "#B5890050",
   "EditFieldColors": {
     "Focused": {
-      "BackgroundColor": "#00000000",
+      "BackgroundColor": "#fff",
       "ForegroundColor": "#00000000",
-      "BorderColor": "#00000000",
-      "TextColor": "#00000000"
+      "BorderColor": "#8C846A",
+      "TextColor": "#222"
     },
     "Hovered": {
-      "BackgroundColor": "#00000000",
+      "BackgroundColor": "#f1f1f1",
       "ForegroundColor": "#00000000",
-      "BorderColor": "#00000000",
-      "TextColor": "#00000000"
+      "BorderColor": "#8D8464",
+      "TextColor": "#657B83"
     },
     "Inactive": {
-      "BackgroundColor": "#00000000",
+      "BackgroundColor": "#eee",
       "ForegroundColor": "#00000000",
-      "BorderColor": "#00000000",
-      "TextColor": "#00000000"
+      "BorderColor": "#CEC7B1",
+      "TextColor": "#657B83"
     }
   },
   "LightTextColor": "#00000000",
@@ -50,34 +50,28 @@
   "RowBorder": "#00000000",
   "DropList": {
     "Open": {
-      "BackgroundColor": "#00000000",
+      "BackgroundColor": "#ccc",
       "ForegroundColor": "#00000000",
       "BorderColor": "#00000000",
-      "TextColor": "#00000000"
-    },
-    "Menu": {
-      "BackgroundColor": "#00000000",
-      "ForegroundColor": "#00000000",
-      "BorderColor": "#00000000",
-      "TextColor": "#00000000"
+      "TextColor": "#222"
     },
     "Focused": {
-      "BackgroundColor": "#00000000",
+      "BackgroundColor": "#bbb",
       "ForegroundColor": "#00000000",
-      "BorderColor": "#00000000",
-      "TextColor": "#00000000"
+      "BorderColor": "#CEC7B1",
+      "TextColor": "#657B83"
     },
     "Hovered": {
-      "BackgroundColor": "#00000000",
+      "BackgroundColor": "#f1f1f1",
       "ForegroundColor": "#00000000",
-      "BorderColor": "#00000000",
-      "TextColor": "#00000000"
+      "BorderColor": "#CEC7B1",
+      "TextColor": "#657B83"
     },
     "Inactive": {
-      "BackgroundColor": "#00000000",
+      "BackgroundColor": "#eee",
       "ForegroundColor": "#00000000",
-      "BorderColor": "#00000000",
-      "TextColor": "#00000000"
+      "BorderColor": "#CEC7B1",
+      "TextColor": "#657B83"
     }
   },
   "DisabledColor": "#00000000",

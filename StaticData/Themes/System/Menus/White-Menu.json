@@ -50,7 +50,7 @@
   "RowBorder": "#ddd",
   "DropList": {
     "Open": {
-      "BackgroundColor": "#DBDBDB",
+      "BackgroundColor": "#bbb",
       "ForegroundColor": "#00000000",
       "BorderColor": "#00000000",
       "TextColor": "#222222"
