@@ -97,7 +97,7 @@ namespace MatterControl.Tests
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				Assert.IsTrue(testRunner.NameExists("WidescreenPanel"));
+				Assert.IsTrue(testRunner.NameExists("PartPreviewContent"));
 
 				return Task.CompletedTask;
 			});
