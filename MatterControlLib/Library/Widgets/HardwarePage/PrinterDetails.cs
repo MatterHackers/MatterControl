@@ -45,6 +45,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
@@ -258,13 +259,34 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 				}
 				else
 				{
-					ProfileManager.Instance.LastProfileID = printerID;
-					ProfileManager.Instance.LoadPrinter().ContinueWith(task =>
+					var theme = ApplicationController.Instance.Theme;
+					var reloadingOverlay = new GuiWidget
 					{
-						var printer = task.Result;
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Stretch,
+						BackgroundColor = theme.DarkShade
+					};
 
-						// TODO: Alternatively we could hold and restore the Scene from the prior printer
-						printer.Bed.LoadPlateFromHistory().ConfigureAwait(false);
+					reloadingOverlay.AddChild(new TextWidget("Reloading".Localize() + "...", textColor: Color.White, pointSize: theme.DefaultFontSize * 1.5)
+					{
+						HAnchor = HAnchor.Center,
+						VAnchor = VAnchor.Center
+					});
+
+					AppContext.RootSystemWindow.AddChild(reloadingOverlay);
+
+					ProfileManager.Instance.LastProfileID = printerID;
+					Task.Run(() =>
+					{
+						ProfileManager.Instance.LoadPrinter().ContinueWith(task =>
+						{
+							var printer = task.Result;
+
+							// TODO: Alternatively we could hold and restore the Scene from the prior printer
+							printer.Bed.LoadPlateFromHistory().ConfigureAwait(false);
+
+							AppContext.RootSystemWindow.RemoveChild(reloadingOverlay);
+						});
 					});
 				}
 			}
