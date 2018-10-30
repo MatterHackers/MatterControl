@@ -47,12 +47,11 @@ namespace MatterHackers.MatterControl
 		private ThemeColorPanel themeColorPanel;
 
 		public ApplicationSettingsPage()
+			: base("Close".Localize())
 		{
 			this.AlwaysOnTopOfMain = true;
 			this.WindowTitle = this.HeaderText = "MatterControl " + "Settings".Localize();
 			this.WindowSize = new Vector2(700 * GuiWidget.DeviceScale, 600 * GuiWidget.DeviceScale);
-
-			this.SetCancelButtonText("Close".Localize());
 
 			contentRow.Padding = theme.DefaultContainerPadding;
 			contentRow.Padding = 0;
