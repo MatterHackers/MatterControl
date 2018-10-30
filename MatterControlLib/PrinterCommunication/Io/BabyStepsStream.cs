@@ -53,7 +53,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				{
 					OffsetChanged();
 				}
-
 			}, ref unregisterEvents);
 
 			maxLengthStream = new MaxLengthStream(internalStream, startingMaxLength);

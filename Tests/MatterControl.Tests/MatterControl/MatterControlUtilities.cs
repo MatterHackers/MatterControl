@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void WaitForFirstDraw(this AutomationRunner testRunner)
 		{
-			testRunner.GetWidgetByName("WidescreenPanel", out SystemWindow systemWindow, 10);
+			testRunner.GetWidgetByName("PartPreviewContent", out SystemWindow systemWindow, 10);
 			// make sure we wait for MC to be up and running
 			testRunner.WaitforDraw(systemWindow);
 		}
@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void AddAndSelectPrinter(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD")
 		{
-			testRunner.GetWidgetByName("WidescreenPanel", out SystemWindow systemWindow, 10);
+			testRunner.GetWidgetByName("PartPreviewContent", out SystemWindow systemWindow, 10);
 
 			// make sure we wait for MC to be up and running
 			testRunner.WaitforDraw(systemWindow);

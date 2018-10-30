@@ -1682,7 +1682,7 @@ namespace MatterHackers.MatterControl
 					GuiWidget.LayoutCount = 0;
 					using (new QuickTimer($"ReloadAll_{reloadCount++}:"))
 					{
-						MainView = new WidescreenPanel(ApplicationController.Instance.Theme);
+						MainView = new PartPreviewContent(ApplicationController.Instance.Theme);
 						this.DoneReloadingAll?.CallEvents(null, null);
 
 						using (new QuickTimer("Time to AddMainview: "))
@@ -3141,7 +3141,7 @@ If you experience adhesion problems, please re-run leveling."
 			}
 
 			reporter?.Invoke(0.3, (loading != null) ? loading : "MainView");
-			applicationController.MainView = new WidescreenPanel(applicationController.Theme);
+			applicationController.MainView = new PartPreviewContent(applicationController.Theme);
 
 			// now that we are all set up lets load our plugins and allow them their chance to set things up
 			reporter?.Invoke(0.8, (loading != null) ? loading : "Plugins");

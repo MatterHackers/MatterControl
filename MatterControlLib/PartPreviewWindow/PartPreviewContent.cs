@@ -56,6 +56,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.AnchorAll();
 			this.theme = theme;
+			this.Name = "PartPreviewContent";
+			this.BackgroundColor = theme.ActiveTabColor;
+
+			// Push TouchScreenMode into GuiWidget
+			GuiWidget.TouchScreenMode = UserSettings.Instance.IsTouchScreen;
 
 			var extensionArea = new LeftClipFlowLayoutWidget()
 			{

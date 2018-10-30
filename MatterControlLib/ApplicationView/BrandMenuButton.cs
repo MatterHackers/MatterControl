@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Kevin Pope, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -41,37 +41,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public class WidescreenPanel : FlowLayoutWidget
-	{
-		private ThemeConfig theme;
-
-		public WidescreenPanel(ThemeConfig theme)
-		{
-			this.theme = theme;
-		}
-
-		public override void Initialize()
-		{
-			base.Initialize();
-
-			this.AnchorAll();
-			this.Name = "WidescreenPanel";
-			this.BackgroundColor = theme.ActiveTabColor;
-
-			// Push TouchScreenMode into GuiWidget
-			GuiWidget.TouchScreenMode = UserSettings.Instance.IsTouchScreen;
-
-			// put in the right column
-			var partPreviewContent = new PartPreviewContent(theme)
-			{
-				VAnchor = VAnchor.Bottom | VAnchor.Top,
-				HAnchor = HAnchor.Left | HAnchor.Right
-			};
-
-			this.AddChild(partPreviewContent);
-		}
-	}
-
 	public class BrandMenuButton : PopupMenuButton
 	{
 		public BrandMenuButton(ThemeConfig theme)

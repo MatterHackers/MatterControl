@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
-				enableControls();
+				this.EnableControls();
 			}, ref unregisterEvents);
 
 			foreach (var child in this.Children)
@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		public override void OnLoad(EventArgs args)
 		{
-			enableControls();
+			this.EnableControls();
 
 			base.OnLoad(args);
 		}
@@ -161,11 +161,11 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		bool? isEnabled = null;
 
-		private void enableControls()
+		private void EnableControls()
 		{
-			if (isEnabled != printer.Connection.IsConnected)
+			if (isEnabled != printer.Connection.IsConnected && !printer.Connection.PrinterIsPrinting)
 			{
-				isEnabled = printer.Connection.IsConnected;
+				isEnabled = printer.Connection.IsConnected && !printer.Connection.PrinterIsPrinting;
 
 				var flowLayout = this.PopupContent.Children.OfType<FlowLayoutWidget>().FirstOrDefault();
 				if (flowLayout != null)
