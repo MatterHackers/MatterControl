@@ -28,6 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.IO;
+using Markdig.Agg;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -38,13 +43,28 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private List<ProbePosition> autoProbePositions;
 		private List<ProbePosition> manualProbePositions;
 
-		public CalibrateProbeLastPagelInstructions(LevelingWizard context, string headerText, string instructionsText,
+		public CalibrateProbeLastPagelInstructions(LevelingWizard context, string headerText,
 			List<ProbePosition> autoProbePositions,
 			List<ProbePosition> manualProbePositions)
-			: base(context, headerText, instructionsText)
+			: base(context, headerText, "")
 		{
 			this.autoProbePositions = autoProbePositions;
 			this.manualProbePositions = manualProbePositions;
+
+			var calibrated = "Your Probe is now calibrated.".Localize() + "\n"
+				+ "    • " + "Remove the paper".Localize() + "\n"
+				+ "\n"
+				+ "If you wish to re-calibrate your probe in the future:".Localize() + "\n"
+				+ "    1. Select the 'Controls' tab on the right" + "\n"
+				+ "    2. Look for the calibration section (pictured below)".Localize() + "\n";
+			contentRow.AddChild(this.CreateTextField(calibrated));
+
+			contentRow.AddChild(new ImageWidget(AggContext.StaticData.LoadImage(Path.Combine("Images", "probe.png")))
+			{
+				HAnchor = HAnchor.Center
+			});
+
+			contentRow.AddChild(this.CreateTextField("Click 'Done' to close this window.".Localize()));
 
 			this.ShowWizardFinished();
 		}

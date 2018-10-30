@@ -46,8 +46,11 @@ namespace MatterHackers.MatterControl
 			this.WindowTitle = wizardContext.WindowTitle;
 			this.HeaderText = headerText;
 
-			contentRow.AddChild(
-				this.CreateTextField(instructionsText.Replace("\t", "    ")));
+			if (!string.IsNullOrEmpty(instructionsText))
+			{
+				contentRow.AddChild(
+					this.CreateTextField(instructionsText.Replace("\t", "    ")));
+			}
 
 			nextButton = new TextButton("Next".Localize(), theme)
 			{
