@@ -71,7 +71,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						"The next few screens will walk your through calibrating your printer.".Localize()));
 			}
 
-			// To make sure the bed is at the correct temp, put in a filament selection page.
 			bool hasHeatedBed = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed);
 			bool useZProbe = printer.Settings.Helpers.UseZProbe();
 			int zProbeSamples = printer.Settings.GetValue<int>(SettingsKey.z_probe_samples);
@@ -85,15 +84,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				this,
 				"Print Leveling Overview".Localize(),
 				levelingStrings.WelcomeText(levelingPlan.ProbeCount, (int)Math.Round(secondsToCompleteWizard / 60.0)));
-
-			// If we need to heat the bed or the extruder, select the current material
-			if (hasHeatedBed || !useZProbe)
-			{
-				yield return new SelectMaterialPage(
-					this,
-					"Select Material".Localize(),
-					"Please select the material you will be printing with, so we can accurately calibrate the printer.".Localize());
-			}
 
 			yield return new HomePrinterPage(
 				this,

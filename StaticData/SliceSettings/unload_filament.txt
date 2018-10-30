@@ -5,7 +5,7 @@ M106 S0 ; turn off the fan
 G4 S1               ; wait message to display
 M109 S[temperature] ; heat up the extruder
 
-M302 S0  ; Allow extrusion at any temperature
+M302 S1  ; Allow extrusion at any temperature. S0 only works on Marlin S1 works on repetier and marlin
 ; host.show_message(title:"Unloading filament..." count_down:"[unload_filament_time]")
 G92 E0              ; reset the extruder position to 0
 G91                 ; Relative positioning

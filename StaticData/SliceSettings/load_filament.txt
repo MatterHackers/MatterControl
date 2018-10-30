@@ -5,7 +5,7 @@ M104 S[temperature] ; start heating up the extruder
 
 ; host.show_message(title:"Trim Filament", markdown:"[trim_filament_markdown]", wait_ok:"true")
 
-M302 S0  ; Allow extrusion at any temperature
+M302 S1  ; Allow extrusion at any temperature. S0 only works on Marlin S1 works on repetier and marlin
 G91                 ; Relative positioning
 ; host.show_message(title:"Insert Filament", repeat_gcode:"G1 E.2 F80", expire:"300", markdown:"[insert_filament_markdown]")
 G90                 ; Absolute positioning
