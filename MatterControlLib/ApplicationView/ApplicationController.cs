@@ -131,16 +131,26 @@ namespace MatterHackers.MatterControl
 
 		public static Dictionary<string, IColorTheme> ThemeProviders { get; }
 
+		private static Dictionary<string, string> themes = new Dictionary<string, string>();
+
 		static AppContext()
 		{
 			ThemeProviders = new Dictionary<string, IColorTheme>();
 
 			string themesPath = Path.Combine("Themes", "System");
 
+			var staticData = AggContext.StaticData;
+
 			// Load available themes from StaticData
-			if (AggContext.StaticData.DirectoryExists(themesPath))
+			if (staticData.DirectoryExists(themesPath))
 			{
-				foreach (var directoryTheme in AggContext.StaticData.GetDirectories(themesPath).Select(d => new DirectoryTheme(d)))
+				var themeFiles = staticData.GetDirectories(themesPath).SelectMany(d => staticData.GetFiles(d).Where(p => Path.GetExtension(p) == ".json"));
+				foreach(var themeFile in themeFiles)
+				{
+					themes[Path.GetFileNameWithoutExtension(themeFile)] = themeFile;
+				}
+
+				foreach (var directoryTheme in AggContext.StaticData.GetDirectories(themesPath).Where(d => Path.GetFileName(d) != "Menus").Select(d => new DirectoryTheme(d)))
 				{
 					ThemeProviders.Add(directoryTheme.Name, directoryTheme);
 				}
@@ -170,6 +180,25 @@ namespace MatterHackers.MatterControl
 
 			DefaultThumbView.ThumbColor = new Color(themeset.Theme.Colors.PrimaryTextColor, 30);
 			ActiveTheme.Instance = themeset.Theme.Colors;
+		}
+
+		public static ThemeConfig LoadTheme(string themeName)
+		{
+			try
+			{
+				if (themes.TryGetValue(themeName, out string themePath))
+				{
+					string json = AggContext.StaticData.ReadAllText(themePath);
+
+					return JsonConvert.DeserializeObject<ThemeConfig>(json);
+				}
+			}
+			catch
+			{
+				Console.WriteLine("Error loading theme: " + themeName);
+			}
+
+			return new ThemeConfig();
 		}
 
 		public static void SetThemeAccentColor(Color accentColor)

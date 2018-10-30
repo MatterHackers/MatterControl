@@ -1,8 +1,8 @@
 {
   "DefaultFontSize": 11,
   "Colors": {
-    "PrimaryTextColor": "#BBBBBB",
-    "SourceColor": "#00000000"
+    "PrimaryTextColor": "#93A1A1",
+    "SourceColor": "#B58900"
   },
   "PresetColors": {
     "MaterialPreset": "#FF7F00",
@@ -14,11 +14,11 @@
   "MinimalShade": "#0000000F",
   "Shade": "#00000078",
   "DarkShade": "#000000BE",
-  "ActiveTabColor": "#373737",
-  "TabBarBackground": "#282828",
-  "InactiveTabColor": "#404040",
-  "InteractionLayerOverlayColor": "#373737F0",
-  "SplitterBackground": "#2C2C2C",
+  "ActiveTabColor": "#404040",
+  "TabBarBackground": "#B1B1B1",
+  "InactiveTabColor": "#D0D0D0",
+  "InteractionLayerOverlayColor": "#D0D0D0F0",
+  "SplitterBackground": "#B5B5B5",
   "TabBodyBackground": "#00000000",
   "ToolbarButtonBackground": "#00000000",
   "ThumbnailBackground": "#00000000",
@@ -44,39 +44,39 @@
     }
   },
   "LightTextColor": "#00000000",
-  "BorderColor": "#BBBBBB",
-  "BorderColor40": "#555555",
-  "BorderColor20": "#444444",
-  "RowBorder": "#333333",
+  "BorderColor": "#C8C8C8",
+  "BorderColor40": "#00000000",
+  "BorderColor20": "#00000000",
+  "RowBorder": "#555",
   "DropList": {
     "Open": {
       "BackgroundColor": "#282828",
       "ForegroundColor": "#00000000",
       "BorderColor": "#00000000",
-      "TextColor": "#BBBBBB"
+      "TextColor": "#839496"
     },
     "Focused": {
-      "BackgroundColor": "#00000000",
+      "BackgroundColor": "#839496",
+      "ForegroundColor": "#00000000",
+      "BorderColor": "#00000000",
+      "TextColor": "#073642"
+    },
+    "Hovered": {
+      "BackgroundColor": "#586E75",
       "ForegroundColor": "#00000000",
       "BorderColor": "#00000000",
       "TextColor": "#00000000"
     },
-    "Hovered": {
-      "BackgroundColor": "#333333",
-      "ForegroundColor": "#00000000",
-      "BorderColor": "#FF7F00",
-      "TextColor": "#FFFFFF"
-    },
     "Inactive": {
-      "BackgroundColor": "#303030",
+      "BackgroundColor": "#073642",
       "ForegroundColor": "#00000000",
-      "BorderColor": "#282828",
-      "TextColor": "#EEEEEE"
+      "BorderColor": "#00000000",
+      "TextColor": "#839496"
     }
   },
   "DisabledColor": "#00000000",
-  "SplashAccentColor": "#EEEEEE",
+  "SplashAccentColor": "#00000000",
   "BedBackgroundColor": "#00000000",
   "PrimaryAccentColor": "#B58900",
-  "SectionBackgroundColor": "#404040"
+  "SectionBackgroundColor": "#00000000"
 }

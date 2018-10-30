@@ -1,0 +1,16 @@
+{
+  "Name": "Modern Dark",
+  "DefaultColorIndex": 5,
+  "AccentColors": [
+    "#B58900",
+    "#CB4B16",
+    "#DC322F",
+    "#D33682",
+    "#6C71C4",
+    "#268BD2",
+    "#2AA198",
+    "#859900"
+  ],
+  "ThemeID": "Modern-Dark",
+  "MenuThemeID": "Modern-Dark-Menu"
+}

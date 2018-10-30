@@ -36,13 +36,25 @@ namespace MatterHackers.MatterControl
 	{
 		public static int LatestSchemeVersion { get; } = 20181030;
 
+		/// <summary>
+		/// The identifier to use for this combination of accent colors, theme and menu theme
+		/// </summary>
 		public string ThemesetID { get; set; }
 
+		/// <summary>
+		/// The name for this combination of accent colors, them and menu theme
+		/// </summary>
 		public string Name { get; set; }
 
-		public string ThemeName { get; set; }
+		/// <summary>
+		/// The theme identifier to load into the Theme property
+		/// </summary>
+		public string ThemeID { get; set; }
 
-		public string MenuThemeName { get; set; }
+		/// <summary>
+		/// The theme identifier to load into the MenuTheme property
+		/// </summary>
+		public string MenuThemeID { get; set; }
 
 		public ThemeConfig Theme { get; set; }
 
