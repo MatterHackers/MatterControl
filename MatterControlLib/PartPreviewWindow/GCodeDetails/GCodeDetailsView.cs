@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Linq;
+using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -41,29 +42,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private EventHandler unregisterEvents;
 		private ThemeConfig theme;
-		private GCodeDetails gcodeDetails;
 
-		public GCodeDetailsView(GCodeDetails gcodeDetails, ThemeConfig theme)
+		public GCodeDetailsView(GCodeFile gCodeMemoryFile, PrinterConfig printerConfig, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
-			this.gcodeDetails = gcodeDetails;
 			this.theme = theme;
 
 			// put in the print time
-			AddSetting("Print Time".Localize(), gcodeDetails.EstimatedPrintTime);
+			AddSetting("Print Time".Localize(), gCodeMemoryFile.EstimatedPrintTime());
 
 			// show the filament used
-			AddSetting("Filament Length".Localize(), gcodeDetails.FilamentUsed);
+			AddSetting("Filament Length".Localize(), gCodeMemoryFile.FilamentUsed(printerConfig));
 
-			AddSetting("Filament Volume".Localize(), gcodeDetails.FilamentVolume);
+			AddSetting("Filament Volume".Localize(), gCodeMemoryFile.FilamentVolume(printerConfig));
 
 			// Cost info is only displayed when available - conditionalCostPanel is invisible when cost <= 0
-			TextWidget costTextWidget = AddSetting("Estimated Cost".Localize(), gcodeDetails.EstimatedCost);
+			TextWidget costTextWidget = AddSetting("Estimated Cost".Localize(), gCodeMemoryFile.EstimatedCost(printerConfig));
 
-			TextWidget massTextWidget = AddSetting("Estimated Mass".Localize(), gcodeDetails.EstimatedMass);
+			TextWidget massTextWidget = AddSetting("Estimated Mass".Localize(), gCodeMemoryFile.EstimatedMass(printerConfig));
 
 			var conditionalCostContainer = costTextWidget.Parent;
-			conditionalCostContainer.Visible = gcodeDetails.TotalCost > 0;
+			conditionalCostContainer.Visible = gCodeMemoryFile.TotalCost(printerConfig) > 0;
 
 			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
@@ -73,30 +72,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						|| stringEvent.Data == SettingsKey.filament_diameter
 						|| stringEvent.Data == SettingsKey.filament_density)
 					{
-						massTextWidget.Text = gcodeDetails.EstimatedMass;
-						conditionalCostContainer.Visible = gcodeDetails.TotalCost > 0;
+						massTextWidget.Text = gCodeMemoryFile.EstimatedMass(printerConfig);
+						conditionalCostContainer.Visible = gCodeMemoryFile.TotalCost(printerConfig) > 0;
 
-						if (gcodeDetails.TotalCost > 0)
+						if (gCodeMemoryFile.TotalCost(printerConfig) > 0)
 						{
-							costTextWidget.Text = gcodeDetails.EstimatedCost;
+							costTextWidget.Text = gCodeMemoryFile.EstimatedCost(printerConfig);
 						}
 					}
 				}
 			}, ref unregisterEvents);
-		}
-
-		public override void OnLoad(EventArgs args)
-		{
-			// try to validate the gcode file and warn if it seems invalid.
-			// for now the definition of invalid is that it has a print time of < 30 seconds
-			if(gcodeDetails.EstimatedPrintSeconds < 30)
-			{
-				var message = "The time to print this G-Code is estimated to be {0} seconds.\n\nPlease check your part for errors if this is unexpected.".Localize();
-				message = message.FormatWith((int)gcodeDetails.EstimatedPrintSeconds);
-				StyledMessageBox.ShowMessageBox(message, "Warning, very short print".Localize());
-			}
-
-			base.OnLoad(args);
 		}
 
 		TextWidget AddSetting(string title, string value)

@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterControl.Printing;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
@@ -38,7 +39,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private ThemeConfig theme;
 
-		public GCodeLayerDetailsView(GCodeDetails gcodeDetails, BedConfig sceneContext, ThemeConfig theme)
+		public GCodeLayerDetailsView(GCodeFile gCodeMemoryFile, BedConfig sceneContext, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.theme = theme;
@@ -54,12 +55,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			void UpdateLayerDisplay(object sender, EventArgs e)
 			{
 				layerIndex.Text = $"{sceneContext.ActiveLayerIndex + 1}";
-				layerTime.Text = gcodeDetails.LayerTime(sceneContext.ActiveLayerIndex);
-				layerTimeToHere.Text = gcodeDetails.LayerTimeToHere(sceneContext.ActiveLayerIndex);
-				layerTimeFromHere.Text = gcodeDetails.LayerTimeFromeHere(sceneContext.ActiveLayerIndex);
-				layerHeight.Text = $"{gcodeDetails.GetLayerHeight(sceneContext.ActiveLayerIndex):0.###}";
-				layerWidth.Text = $"{gcodeDetails.GetLayerTop(sceneContext.ActiveLayerIndex):0.###}";
-				var fanSpeed = gcodeDetails.GetLayerFanSpeeds(sceneContext.ActiveLayerIndex);
+				layerTime.Text = gCodeMemoryFile.LayerTime(sceneContext.ActiveLayerIndex);
+				layerTimeToHere.Text = gCodeMemoryFile.LayerTimeToHere(sceneContext.ActiveLayerIndex);
+				layerTimeFromHere.Text = gCodeMemoryFile.LayerTimeFromeHere(sceneContext.ActiveLayerIndex);
+				layerHeight.Text = $"{gCodeMemoryFile.GetLayerHeight(sceneContext.ActiveLayerIndex):0.###}";
+				layerWidth.Text = $"{gCodeMemoryFile.GetLayerTop(sceneContext.ActiveLayerIndex):0.###}";
+				var fanSpeed = gCodeMemoryFile.GetLayerFanSpeeds(sceneContext.ActiveLayerIndex);
 				layerFanSpeeds.Text = string.IsNullOrWhiteSpace(fanSpeed) ? "Unchanged" : fanSpeed;
 			}
 
