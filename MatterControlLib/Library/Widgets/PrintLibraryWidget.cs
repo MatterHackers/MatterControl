@@ -172,42 +172,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			toolbar.AddChild(showFolders);
 
-			var openButton = new TextIconButton("Open".Localize(), AggContext.StaticData.LoadIcon("fa-folder-open_16.png", 16, 16, theme.InvertIcons), theme)
-			{
-				Margin = theme.ButtonSpacing,
-				ToolTipText = "Open File".Localize()
-			};
-			openButton.Click += (s, e) =>
-			{
-				popupMenuButton.CloseMenu();
-
-				var extensionsWithoutPeriod = new HashSet<string>(ApplicationSettings.OpenDesignFileParams.Split('|').First().Split(',').Select(t => t.Trim().Trim('.')));
-
-				foreach (var extension in ApplicationController.Instance.Library.ContentProviders.Keys)
-				{
-					extensionsWithoutPeriod.Add(extension.ToUpper());
-				}
-
-				var extensionsArray = extensionsWithoutPeriod.OrderBy(t => t).ToArray();
-
-				string filter = string.Format(
-					"{0}|{1}",
-					string.Join(",", extensionsArray),
-					string.Join("", extensionsArray.Select(t => $"*.{t.ToLower()};").ToArray()));
-
-				UiThread.RunOnIdle(() =>
-				{
-					AggContext.FileDialogs.OpenFileDialog(
-						new OpenFileDialogParams(filter, multiSelect: true),
-						(openParams) =>
-						{
-							ViewControls3D.LoadAndAddPartsToPlate(this, openParams.FileNames, ApplicationController.Instance.DragDropData.SceneContext);
-						});
-				}, .1);
-			};
-
-			toolbar.AddChild(openButton);
-
 			PopupMenuButton viewMenuButton;
 
 			toolbar.AddChild(
