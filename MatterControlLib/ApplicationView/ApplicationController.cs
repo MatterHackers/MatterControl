@@ -525,7 +525,7 @@ namespace MatterHackers.MatterControl
 
 		public SlicePresetsPage EditQualityPresetsWindow { get; set; }
 
-		public GuiWidget MainView;
+		public MainViewWidget MainView;
 
 		private EventHandler unregisterEvents;
 
@@ -1711,7 +1711,7 @@ namespace MatterHackers.MatterControl
 					GuiWidget.LayoutCount = 0;
 					using (new QuickTimer($"ReloadAll_{reloadCount++}:"))
 					{
-						MainView = new PartPreviewContent(ApplicationController.Instance.Theme);
+						MainView = new MainViewWidget(ApplicationController.Instance.Theme);
 						this.DoneReloadingAll?.CallEvents(null, null);
 
 						using (new QuickTimer("Time to AddMainview: "))
@@ -2101,8 +2101,6 @@ namespace MatterHackers.MatterControl
 		public Dictionary<string, HelpArticle> HelpArticlesByID { get; set; }
 
 		public string MainTabKey { get; internal set; }
-
-		public PartPreviewContent AppView { get; internal set; }
 
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 
@@ -3170,7 +3168,7 @@ If you experience adhesion problems, please re-run leveling."
 			}
 
 			reporter?.Invoke(0.3, (loading != null) ? loading : "MainView");
-			applicationController.MainView = new PartPreviewContent(applicationController.Theme);
+			applicationController.MainView = new MainViewWidget(applicationController.Theme);
 
 			// now that we are all set up lets load our plugins and allow them their chance to set things up
 			reporter?.Invoke(0.8, (loading != null) ? loading : "Plugins");

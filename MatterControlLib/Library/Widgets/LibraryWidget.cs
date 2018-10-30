@@ -59,16 +59,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private GuiWidget searchInput;
 		private ILibraryContainer searchContainer;
 
-		private PartPreviewContent partPreviewContent;
+		private MainViewWidget mainViewWidget;
 		private ThemeConfig theme;
 		private OverflowBar navBar;
 		private GuiWidget searchButton;
 		private TreeView treeView;
 
-		public LibraryWidget(PartPreviewContent partPreviewContent, ThemeConfig theme)
+		public LibraryWidget(MainViewWidget mainViewWidget, ThemeConfig theme)
 		{
 			this.theme = theme;
-			this.partPreviewContent = partPreviewContent;
+			this.mainViewWidget = mainViewWidget;
 			this.Padding = 0;
 			this.AnchorAll();
 
@@ -568,7 +568,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			providerMessageContainer.AddChild(providerMessageWidget);
 		}
 
-		public static void CreateMenuActions(LibraryListView libraryView, List<LibraryAction> menuActions, PartPreviewContent partPreviewContent, ThemeConfig theme, bool allowPrint)
+		public static void CreateMenuActions(LibraryListView libraryView, List<LibraryAction> menuActions, MainViewWidget mainViewWidget, ThemeConfig theme, bool allowPrint)
 		{
 			menuActions.Add(new LibraryAction(ActionScope.ListView)
 			{
@@ -692,7 +692,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
-					ApplicationController.Instance.AppView.CreatePartTab().ContinueWith(task =>
+					ApplicationController.Instance.MainView.CreatePartTab().ContinueWith(task =>
 					{
 						var workspace = ApplicationController.Instance.Workspaces.Last();
 						workspace.SceneContext.AddToPlate(selectedLibraryItems);
@@ -735,7 +735,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					}
 
 					ApplicationController.Instance.BlinkTab(
-						ApplicationController.Instance.AppView.TabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage));
+						ApplicationController.Instance.MainView.TabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage));
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
@@ -763,7 +763,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 						ApplicationController.Instance.Workspaces.Add(workspace);
 
-						partPreviewContent.CreatePartTab(workspace);
+						mainViewWidget.CreatePartTab(workspace);
 
 						// Load content after UI widgets to support progress notification during acquire/load
 						await workspace.SceneContext.LoadContent(
@@ -1087,7 +1087,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public override void OnLoad(EventArgs args)
 		{
 			// Defer creating menu items until plugins have loaded
-			LibraryWidget.CreateMenuActions(libraryView, menuActions, partPreviewContent, theme, allowPrint: false);
+			LibraryWidget.CreateMenuActions(libraryView, menuActions, mainViewWidget, theme, allowPrint: false);
 
 			navBar.OverflowButton.Name = "Print Library Overflow Menu";
 			navBar.ExtendOverflowMenu = (popupMenu) =>
