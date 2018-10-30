@@ -62,8 +62,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Yes Button");
 
 					// make sure it is showing the correct button
-					Assert.IsTrue(!testRunner.WaitForName("PrintPopupMenu"), "Start Print should be visible after reset to Defaults");
-					Assert.IsTrue(testRunner.WaitForName("Finish Setup Button"), "Finish Setup should not be visible after reset to Defaults");
+					Assert.IsTrue(testRunner.WaitForName("Finish Setup Button"), "Finish Setup should be visible after reset to Defaults");
+					Assert.IsTrue(!testRunner.WaitForName("PrintPopupMenu"), "Start Print should not be visible after reset to Defaults");
 				}
 
 				return Task.CompletedTask;
