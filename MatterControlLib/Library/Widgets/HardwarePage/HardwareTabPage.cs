@@ -84,8 +84,17 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				{
 					if (treeView?.SelectedNode.Tag is PrinterInfo printerInfo)
 					{
-						// Open printer
-						PrinterDetails.SwitchPrinters(printerInfo.ID);
+						if (ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == printerInfo.ID) is PrinterConfig printer
+							&& ApplicationController.Instance.AppView.TabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage printerTabPage && printerTabPage.printer == printer) is ITab tab)
+						{
+							// Switch to existing printer tab
+							ApplicationController.Instance.AppView.TabControl.ActiveTab = tab;
+						}
+						else
+						{
+							// Open new printer tab
+							PrinterDetails.SwitchPrinters(printerInfo.ID);
+						}
 					}
 				}
 			};

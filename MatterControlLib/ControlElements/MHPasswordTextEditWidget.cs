@@ -69,8 +69,16 @@ namespace MatterHackers.MatterControl
 				Selectable = false,
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Bottom,
+				TextColor = theme.EditFieldColors.Inactive.TextColor
 			};
 			passwordCoverText.MinimumSize = new Vector2(Math.Max(passwordCoverText.MinimumSize.X, pixelWidth), Math.Max(passwordCoverText.MinimumSize.Y, pixelHeight));
+
+			var internalWidget = this.ActualTextEditWidget.InternalTextEditWidget;
+			internalWidget.FocusChanged += (s, e) =>
+			{
+				passwordCoverText.TextColor = (internalWidget.Focused) ? theme.EditFieldColors.Focused.TextColor : theme.EditFieldColors.Inactive.TextColor;
+			};
+
 			this.AddChild(passwordCoverText);
 
 			this.ActualTextEditWidget.TextChanged += (sender, e) =>

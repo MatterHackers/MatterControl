@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl
 			contentRow = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				Padding = new BorderDouble(10),
-				BackgroundColor = theme.ActiveTabColor,
+				BackgroundColor = theme.SectionBackgroundColor,
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch
 			};

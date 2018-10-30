@@ -40,9 +40,6 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
-using static MatterHackers.MatterControl.AppContext;
-
 namespace MatterHackers.MatterControl
 {
 	public partial class ApplicationSettingsPage : DialogPage
@@ -58,16 +55,26 @@ namespace MatterHackers.MatterControl
 			this.SetCancelButtonText("Close".Localize());
 
 			contentRow.Padding = theme.DefaultContainerPadding;
-			contentRow.Padding = contentRow.Padding.Clone(top: 0);
+			contentRow.Padding = 0;
+			contentRow.BackgroundColor = Color.Transparent;
 
 			var generalPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
 			};
-			contentRow.AddChild(generalPanel);
 
 			var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", 16, 16, theme.InvertIcons);
+
+			var generalSection = new SectionWidget("General".Localize(), generalPanel, theme, expandingContent: false)
+			{
+				Name = "General Section",
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+			};
+			contentRow.AddChild(generalSection);
+
+			theme.ApplyBoxStyle(generalSection);
 
 #if __ANDROID__
 			// Camera Monitoring
@@ -276,15 +283,15 @@ namespace MatterHackers.MatterControl
 				textSizeApplyButton.Visible = textSizeNew != currentTextSize;
 			};
 
-			var section = new SettingsItem(
+			var textSizeRow = new SettingsItem(
 					"Text Size".Localize() + $" : {currentTextSize:0.0}",
 					textSizeSlider,
 					theme,
 					optionalContainer);
 
-			sectionLabel = section.Children<TextWidget>().FirstOrDefault();
+			sectionLabel = textSizeRow.Children<TextWidget>().FirstOrDefault();
 
-			this.AddSettingsRow(section, generalPanel);
+			this.AddSettingsRow(textSizeRow, generalPanel);
 
 			var accentButtons = new ThemeColorPanel.AccentColorsWidget(AppContext.ThemeSet, 16)
 			{
@@ -312,28 +319,29 @@ namespace MatterHackers.MatterControl
 
 			theme.ApplyBoxStyle(themeSection);
 
-			var imageWidget = themeSection.Children.First().Descendants<ImageWidget>().FirstOrDefault();
-			imageWidget.Image = AggContext.StaticData.LoadIcon("theme.png", 16, 16, theme.InvertIcons);
-
-			themeSection.Margin = new BorderDouble(0, 10);
+			themeSection.SetNonExpandableIcon(AggContext.StaticData.LoadIcon("theme.png", 16, 16, theme.InvertIcons));
 
 			var advancedPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				Margin = new BorderDouble(2, 0)
 			};
 
-			var sectionWidget = new SectionWidget("Advanced".Localize(), advancedPanel, theme, serializationKey: "ApplicationSettings-Advanced", expanded: false)
+			var advancedSection = new SectionWidget("Advanced".Localize(), advancedPanel, theme, serializationKey: "ApplicationSettings-Advanced", expanded: false)
 			{
 				Name = "Advanced Section",
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
 				Margin = 0
 			};
-			contentRow.AddChild(sectionWidget);
+			contentRow.AddChild(advancedSection);
 
-			theme.ApplyBoxStyle(sectionWidget);
+			theme.ApplyBoxStyle(advancedSection);
 
-			sectionWidget.Margin = new BorderDouble(0, 10);
+			// Enforce consistent SectionWidget spacing
+			foreach (var section in contentRow.Children<SectionWidget>())
+			{
+				section.Margin = new BorderDouble(0, 10, 0, 0);
+			}
 
 			// Touch Screen Mode
 			this.AddSettingsRow(

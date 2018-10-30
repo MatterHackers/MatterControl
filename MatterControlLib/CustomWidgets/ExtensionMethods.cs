@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,51 +27,21 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.ImageProcessing;
+using MatterHackers.MatterControl.CustomWidgets;
 
-namespace MatterHackers.MatterControl.Library
+namespace MatterHackers.MatterControl
 {
 	public static class ExtensionMethods
 	{
-		// Container ExtensionMethods
-		public static IEnumerable<ILibraryContainer> Ancestors(this ILibraryContainer item)
+		public static void SetNonExpandableIcon(this SectionWidget sectionWidget, ImageBuffer icon)
 		{
-			var context = item.Parent;
-			while (context != null)
-			{
-				yield return context;
-				context = context.Parent;
-			}
-		}
-
-		public static IEnumerable<ILibraryContainer> AncestorsAndSelf(this ILibraryContainer item)
-		{
-			var container = item;
-			while (container != null)
-			{
-				yield return container;
-				container = container.Parent;
-			}
-		}
-
-		public static void Add(this Dictionary<string, IContentProvider> list, IEnumerable<string> extensions, IContentProvider provider)
-		{
-			foreach (var extension in extensions)
-			{
-				list.Add(extension, provider);
-			}
-		}
-
-		public static Task<IObject3D> CreateContent(this ILibraryAssetStream item, Action<double, string> reporter = null)
-		{
-			var contentProvider = ApplicationController.Instance.Library.GetContentProvider(item) as ISceneContentProvider;
-			return contentProvider?.CreateItem(item, reporter);
+			var imageWidget = sectionWidget.Children.First().Descendants<ImageWidget>().FirstOrDefault();
+			imageWidget.Image = icon;
 		}
 
 		// Color ExtensionMethods

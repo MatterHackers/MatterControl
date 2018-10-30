@@ -101,7 +101,7 @@ namespace MatterControl.Tests.MatterControl
 			streamList.Add(new QueuedCommandsStream(streamList[streamList.Count - 1]));
 			streamList.Add(new RelativeToAbsoluteStream(streamList[streamList.Count - 1]));
 			streamList.Add(new WaitForTempStream(printer.Connection, streamList[streamList.Count - 1]));
-			streamList.Add(new BabyStepsStream(printer.Settings, streamList[streamList.Count - 1]));
+			streamList.Add(new BabyStepsStream(printer, streamList[streamList.Count - 1]));
 			streamList.Add(new ExtrusionMultiplyerStream(streamList[streamList.Count - 1]));
 			streamList.Add(new FeedRateMultiplyerStream(streamList[streamList.Count - 1]));
 			GCodeStream totalGCodeStream = streamList[streamList.Count - 1];
