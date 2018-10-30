@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
 
@@ -58,6 +59,40 @@ namespace MatterHackers.MatterControl.Library
 		{
 			return item is ILibraryAssetStream contentStream
 					&& ApplicationController.Instance.Library.IsMeshFileType(contentStream.FileName);
+		}
+
+		public static IEnumerable<ILibraryContainer> Ancestors(this ILibraryContainer item)
+		{
+			var context = item.Parent;
+			while (context != null)
+			{
+				yield return context;
+				context = context.Parent;
+			}
+		}
+
+		public static IEnumerable<ILibraryContainer> AncestorsAndSelf(this ILibraryContainer item)
+		{
+			var container = item;
+			while (container != null)
+			{
+				yield return container;
+				container = container.Parent;
+			}
+		}
+
+		public static void Add(this Dictionary<string, IContentProvider> list, IEnumerable<string> extensions, IContentProvider provider)
+		{
+			foreach (var extension in extensions)
+			{
+				list.Add(extension, provider);
+			}
+		}
+
+		public static Task<IObject3D> CreateContent(this ILibraryAssetStream item, Action<double, string> reporter = null)
+		{
+			var contentProvider = ApplicationController.Instance.Library.GetContentProvider(item) as ISceneContentProvider;
+			return contentProvider?.CreateItem(item, reporter);
 		}
 	}
 }
