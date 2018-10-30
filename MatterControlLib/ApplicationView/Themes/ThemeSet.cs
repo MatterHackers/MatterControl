@@ -34,11 +34,15 @@ namespace MatterHackers.MatterControl
 {
 	public class ThemeSet
 	{
-		public static int LatestSchemeVersion { get; } = 20181023;
+		public static int LatestSchemeVersion { get; } = 20181030;
 
-		public string ThemeID { get; set; }
+		public string ThemesetID { get; set; }
 
 		public string Name { get; set; }
+
+		public string ThemeName { get; set; }
+
+		public string MenuThemeName { get; set; }
 
 		public ThemeConfig Theme { get; set; }
 

@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl
 
 			// Set SchemaVersion at construction time
 			themeset.SchemeVersion = ThemeSet.LatestSchemeVersion;
-			themeset.ThemeID = themeName;
+			themeset.ThemesetID = themeName;
 
 			return themeset;
 		}

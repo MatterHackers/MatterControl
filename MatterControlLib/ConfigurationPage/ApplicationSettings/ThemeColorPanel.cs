@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 					ThemeSet themeset;
 
-					if (themeName == AppContext.ThemeSet.ThemeID)
+					if (themeName == AppContext.ThemeSet.ThemesetID)
 					{
 						previewContainer.BackgroundColor = theme.MinimalShade;
 						themeset = AppContext.ThemeSet;
@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					string name = themeset.Name;
 					if (string.IsNullOrEmpty(name))
 					{
-						name = themeset.ThemeID.Replace("-", " ");
+						name = themeset.ThemesetID.Replace("-", " ");
 					}
 
 					previewColumn.AddChild(new TextWidget(name, pointSize: theme.FontSize7, textColor: theme.Colors.PrimaryTextColor)
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						Margin = new BorderDouble(12, 2)
 					});
 
-					if (themeName == AppContext.ThemeSet.ThemeID)
+					if (themeName == AppContext.ThemeSet.ThemesetID)
 					{
 						var imageBuffer = new ImageBuffer(35, 35);
 						var graphics = imageBuffer.NewGraphics2D();
@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		public void PreviewTheme(Color sourceAccentColor)
 		{
-			var previewButton = previewButtonPanel.Descendants<ThemePreviewButton>().FirstOrDefault(t => t.ThemeSet.ThemeID == AppContext.ThemeSet.ThemeID);
+			var previewButton = previewButtonPanel.Descendants<ThemePreviewButton>().FirstOrDefault(t => t.ThemeSet.ThemesetID == AppContext.ThemeSet.ThemesetID);
 			if (previewButton != null)
 			{
 				previewButton.PreviewThemeColor(sourceAccentColor);
