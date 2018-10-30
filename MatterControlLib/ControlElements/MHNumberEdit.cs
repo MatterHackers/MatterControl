@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (base.BorderColor != Color.Transparent)
 				{
-					return base.BackgroundColor;
+					return base.BorderColor;
 				}
 				else if (this.ContainsFocus)
 				{
