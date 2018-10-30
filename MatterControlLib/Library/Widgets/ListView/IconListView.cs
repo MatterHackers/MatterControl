@@ -76,6 +76,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.OnBoundsChanged(e);
 		}
 
+		private void Row_Click(object sender, MouseEventArgs e)
+		{
+			if (sender is GuiWidget guiWidget)
+			{
+				var screenPosition = guiWidget.TransformToScreenSpace(e.Position);
+				var thisPosition = this.TransformFromScreenSpace(screenPosition);
+				var thisMouseClick = new MouseEventArgs(e, thisPosition.X, thisPosition.Y);
+				OnClick(thisMouseClick);
+			}
+		}
+
 		private void LayoutIcons()
 		{
 			int currentWidth = (int)this.Size.X;
@@ -93,6 +104,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					{
 						iconView.Parent?.RemoveChild(iconView);
 						iconView.Margin = new BorderDouble(leftRightMargin, 0);
+					}
+
+					foreach(var child in Children)
+					{
+						child.Click -= Row_Click;
 					}
 
 					this.CloseAllChildren();
@@ -173,6 +189,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					Margin = new BorderDouble(bottom: 6)
 				};
 				this.AddChild(rowButtonContainer);
+				rowButtonContainer.Click += Row_Click;
 			}
 
 			rowButtonContainer?.AddChild(iconView);
