@@ -122,6 +122,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			public PopupMenu SubMenu { get; set; }
 
+
 			public SubMenuItemButton(GuiWidget content, ThemeConfig theme) : base(content, theme)
 			{
 			}
@@ -139,7 +140,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				arrow.LineTo(x - 3, y + 5);
 				arrow.LineTo(x - 3, y - 5);
 
-				graphics2D.Render(arrow, this.Enabled ? Color.Black : Color.Gray);
+				graphics2D.Render(arrow, theme.Colors.PrimaryTextColor);
 			}
 
 			public bool KeepMenuOpen
