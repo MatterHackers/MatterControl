@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				int thumbWidth = 24;
 
-				popupMenu.CreateSubMenu("Recent".Localize(), menuTheme, (subMenu) =>
+				popupMenu.CreateSubMenu("Open Recent".Localize(), menuTheme, (subMenu) =>
 				{
 					// Select the 25 most recent files and project onto FileSystemItems
 					var recentFiles = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
