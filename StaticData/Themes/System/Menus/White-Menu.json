@@ -80,7 +80,7 @@
       "TextColor": "#222222"
     }
   },
-  "DisabledColor": "#00000000",
+  "DisabledColor": "#D3D3D3",
   "SplashAccentColor": "#AC193D",
   "BedBackgroundColor": "#B4B4B4",
   "PrimaryAccentColor": "#AC193D",
