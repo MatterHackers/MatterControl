@@ -194,7 +194,7 @@ namespace MatterHackers.GCodeVisualizer
 				Graphics2DOpenGL graphics2DGl = graphics2D as Graphics2DOpenGL;
 				if (graphics2DGl != null)
 				{
-					graphics2DGl.PreRender();
+					graphics2DGl.PreRender(Color.White);
 					GL.Begin(BeginMode.Triangles);
 					for (int i = startFeature; i < endFeature; i++)
 					{
