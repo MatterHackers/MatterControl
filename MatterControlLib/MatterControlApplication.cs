@@ -34,16 +34,20 @@ namespace MatterHackers.MatterControl
 {
 	public static class MatterControlApplication
 	{
+		public static string MCWSBaseUri { get; }
 
-#if DEBUG
+		static MatterControlApplication()
+		{
+			if (MatterHackers.MatterControl.AppContext.Options.McwsTestEnvironment)
+			{
+				MCWSBaseUri = "https://mattercontrol-test.appspot.com"; // http://192.168.2.129:9206
+			}
+			else
+			{
+				MCWSBaseUri = "https://mattercontrol.appspot.com";
+			}
+		}
 
-		//public static string MCWSBaseUri { get; } = "http://192.168.2.129:9206";
-		public static string MCWSBaseUri { get; } = "https://mattercontrol-test.appspot.com";
-#else
-		public static string MCWSBaseUri { get; } = "https://mattercontrol.appspot.com";
-#endif
-
-	
 		private static void AssertDebugNotDefined()
 		{
 #if DEBUG
