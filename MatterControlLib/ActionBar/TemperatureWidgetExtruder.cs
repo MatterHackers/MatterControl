@@ -340,7 +340,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				if (pulldownContainer != null)
 				{
 					pulldownContainer.Padding = menuTheme.ToolbarPadding;
-					pulldownContainer.HAnchor = HAnchor.Fit;
+					pulldownContainer.HAnchor = HAnchor.MaxFitOrStretch;
 					pulldownContainer.Margin = 0;
 					pulldownContainer.Padding = 0;
 				}
@@ -351,7 +351,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				if (dropList != null)
 				{
 					dropList.Name = "Hotend Preset Selector";
-					dropList.HAnchor = HAnchor.Fit;
+					dropList.HAnchor = HAnchor.Stretch;
 					dropList.Margin = 0;
 				}
 
@@ -360,6 +360,8 @@ namespace MatterHackers.MatterControl.ActionBar
 					{
 						Border = new BorderDouble(0, 1)
 					});
+
+				presetsSelector.PerformLayout();
 			}
 			else // put in a temperature selector for the correct material
 			{
