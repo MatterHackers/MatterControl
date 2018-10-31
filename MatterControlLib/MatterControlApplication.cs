@@ -47,7 +47,10 @@ namespace MatterHackers.MatterControl
 				MCWSBaseUri = "https://mattercontrol.appspot.com";
 			}
 		}
+	}
 
+	public static class BuildValidationTests
+	{
 		private static void AssertDebugNotDefined()
 		{
 #if DEBUG
@@ -57,7 +60,7 @@ namespace MatterHackers.MatterControl
 
 		public static void CheckKnownAssemblyConditionalCompSymbols()
 		{
-			MatterControlApplication.AssertDebugNotDefined();
+			BuildValidationTests.AssertDebugNotDefined();
 			GCodeFile.AssertDebugNotDefined();
 			MatterHackers.Agg.Graphics2D.AssertDebugNotDefined();
 			MatterHackers.Agg.UI.SystemWindow.AssertDebugNotDefined();

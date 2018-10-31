@@ -107,7 +107,6 @@ namespace MatterHackers.MatterControl
 		Titillium,
 	};
 
-
 	public static class AppContext
 	{
 		/// <summary>
