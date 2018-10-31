@@ -1070,6 +1070,13 @@
     "DefaultValue": "Undefined"
   },
   {
+    "SlicerConfigName": "created_date",
+    "PresentationName": "Creation Data",
+    "HelpText": "The date this file was originally created.",
+    "DataEditType": "READONLY_STRING",
+    "DefaultValue": "Undefined"
+  },
+  {
     "SlicerConfigName": "output_only_first_layer",
     "PresentationName": "First Layer Only",
     "HelpText": "Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.",

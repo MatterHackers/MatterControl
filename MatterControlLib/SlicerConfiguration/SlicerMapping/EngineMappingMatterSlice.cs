@@ -105,6 +105,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.show_reset_connection,
 			SettingsKey.validate_layer_height,
 			SettingsKey.make,
+			SettingsKey.created_date,
 			SettingsKey.model,
 			SettingsKey.enable_network_printing,
 			SettingsKey.enable_line_spliting,
