@@ -50,6 +50,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static Color DisabledTextColor { get; set; } = Color.Gray;
 
+		GuiWidget clientArea;
+
 		public PopupMenu(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
@@ -57,6 +59,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Fit;
 			this.BackgroundColor = theme.ActiveTabColor;
+
+			clientArea = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Fit,
+				Border = new BorderDouble(1),
+				BorderColor = theme.DropList.Open.BackgroundColor
+			};
+
+			this.MinimumSizeChanged += (s, e) =>
+			{
+				clientArea.MinimumSize = this.MinimumSize;
+			};
+
+			this.AddChild(clientArea);
 		}
 
 		public HorizontalLine CreateSeparator()
@@ -67,7 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BackgroundColor = theme.RowBorder
 			};
 
-			this.AddChild(line);
+			clientArea.AddChild(line);
 
 			return line;
 		}
@@ -114,7 +131,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Unfocus();
 			};
 
-			this.AddChild(menuItem);
+			clientArea.AddChild(menuItem);
 
 			return menuItem;
 		}
@@ -292,7 +309,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Image = icon
 			};
 
-			this.AddChild(subMenuItemButton);
+			clientArea.AddChild(subMenuItemButton);
 
 			subMenuItemButton.Click += (s, e) =>
 			{
@@ -402,7 +419,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				setter?.Invoke(isChecked);
 			};
 
-			this.AddChild(menuItem);
+			clientArea.AddChild(menuItem);
 
 			return menuItem;
 		}
@@ -416,7 +433,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Image = icon
 			};
 
-			this.AddChild(menuItem);
+			clientArea.AddChild(menuItem);
 
 			return menuItem;
 		}
