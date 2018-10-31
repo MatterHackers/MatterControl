@@ -664,6 +664,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GuiWidget CreateSaveButton(ThemeConfig theme)
 		{
+			PopupMenuButton saveButton = null;
+
 			var iconButton = new IconButton(
 				AggContext.StaticData.LoadIcon("save_grey_16x.png", 16, 16, theme.InvertIcons),
 				theme)
@@ -673,13 +675,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			iconButton.Click += (s, e) =>
 			{
-				ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.SaveChanges).ConfigureAwait(false);
+				ApplicationController.Instance.Tasks.Execute("Saving".Localize(), async(progress, cancellationToken) =>
+				{
+					saveButton.Enabled = false;
+
+					try
+					{
+						await sceneContext.SaveChanges(progress, cancellationToken);
+					}
+					catch
+					{
+					}
+
+					saveButton.Enabled = true;
+				}).ConfigureAwait(false);
 			};
 
 			// Remove right Padding for drop style
 			iconButton.Padding = iconButton.Padding.Clone(right: 0);
 
-			var button = new PopupMenuButton(iconButton, theme)
+			saveButton = new PopupMenuButton(iconButton, theme)
 			{
 				Name = "Save SplitButton",
 				ToolTipText = "Save As".Localize(),
@@ -725,7 +740,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			iconButton.Selectable = true;
 
-			return button;
+			return saveButton;
 		}
 
 		public static async void LoadAndAddPartsToPlate(GuiWidget originatingWidget, string[] filesToLoad, BedConfig sceneContext)

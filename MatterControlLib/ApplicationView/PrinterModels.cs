@@ -555,7 +555,7 @@ namespace MatterHackers.MatterControl
 		/// <param name="progress"></param>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		public Task SaveChanges(IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
+		public async Task SaveChanges(IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
 		{
 			var progressStatus = new ProgressStatus()
 			{
@@ -566,7 +566,7 @@ namespace MatterHackers.MatterControl
 
 			if (this.Scene.Persistable)
 			{
-				this.Scene.PersistAssets((progress0to1, status) =>
+				await this.Scene.PersistAssets((progress0to1, status) =>
 				{
 					if (progress != null)
 					{
@@ -578,8 +578,6 @@ namespace MatterHackers.MatterControl
 
 				this.EditContext?.Save();
 			}
-
-			return Task.CompletedTask;
 		}
 
 		public List<BoolOption> GetBaseViewOptions()
