@@ -74,7 +74,7 @@
       "TextColor": "#222222"
     }
   },
-  "DisabledColor": "#00000000",
+  "DisabledColor": "#ACACAC",
   "SplashAccentColor": "#AC193D",
   "BedBackgroundColor": "#B4B4B4",
   "PrimaryAccentColor": "#AC193D",

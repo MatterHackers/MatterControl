@@ -320,10 +320,7 @@ namespace MatterHackers.MatterControl
 
 			themeSection.SetNonExpandableIcon(AggContext.StaticData.LoadIcon("theme.png", 16, 16, theme.InvertIcons));
 
-			var advancedPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				Margin = new BorderDouble(2, 0)
-			};
+			var advancedPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
 			var advancedSection = new SectionWidget("Advanced".Localize(), advancedPanel, theme, serializationKey: "ApplicationSettings-Advanced", expanded: false)
 			{
@@ -335,12 +332,6 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(advancedSection);
 
 			theme.ApplyBoxStyle(advancedSection);
-
-			// Enforce consistent SectionWidget spacing
-			foreach (var section in contentRow.Children<SectionWidget>())
-			{
-				section.Margin = new BorderDouble(0, 10, 0, 0);
-			}
 
 			// Touch Screen Mode
 			this.AddSettingsRow(
@@ -395,6 +386,23 @@ namespace MatterHackers.MatterControl
 				advancedPanel);
 
 			advancedPanel.Children<SettingsItem>().First().Border = new BorderDouble(0, 1);
+
+			// Enforce consistent SectionWidget spacing and last child borders
+			foreach (var section in contentRow.Children<SectionWidget>())
+			{
+				section.Margin = new BorderDouble(0, 10, 0, 0);
+
+				if (section.ContentPanel.Children.LastOrDefault() is SettingsItem lastRow)
+				{
+					// If we're in a contentPanel that has SettingsItems...
+
+					// Clear the last items bottom border
+					lastRow.Border = lastRow.Border.Clone(bottom: 0);
+
+					// Set a common margin on the parent container
+					section.ContentPanel.Margin = new BorderDouble(2, 0);
+				}
+			}
 		}
 
 		private void AddSettingsRow(GuiWidget widget, GuiWidget container)
