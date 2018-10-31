@@ -883,12 +883,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			foreach (var item in this.settingsRows)
 			{
-				var settingData = item.settingData;
-
-				// var layerValues = printer.Settings.GetLayerValues(settingData.SlicerConfigName);
-				// var (currentValue, layerName) = printer.Settings.GetValueAndLayerName(settingData.SlicerConfigName, printer.Settings.defaultLayerCascade);
-
-				item.widget.Visible = printer.Settings.IsOverride(settingData.SlicerConfigName);
+				item.widget.Visible = printer.Settings.IsOverride(item.settingData.SlicerConfigName);
 			}
 
 			filteredItemsHeading.Visible = true;

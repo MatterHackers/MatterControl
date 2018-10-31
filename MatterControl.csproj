@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="appsettings.json" />
     <None Include="StaticData\License\license.json" />
     <None Include="StaticData\OEMSettings\ExploreFeed.json" />
     <None Include="StaticData\OEMSettings\OEMUrls.json" />

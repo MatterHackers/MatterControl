@@ -97,6 +97,8 @@ namespace MatterControl.Tests
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
+				testRunner.WaitForName("PartPreviewContent");
+
 				Assert.IsTrue(testRunner.NameExists("PartPreviewContent"));
 
 				return Task.CompletedTask;
@@ -129,7 +131,7 @@ namespace MatterControl.Tests
 		public void ClassicDebugComplicationFlagTests()
 		{
 #if (!DEBUG)
-            MatterControlApplication.CheckKnownAssemblyConditionalCompSymbols();
+            BuildValidationTests.CheckKnownAssemblyConditionalCompSymbols();
 #endif
 		}
 

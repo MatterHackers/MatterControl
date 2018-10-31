@@ -107,12 +107,14 @@ namespace MatterHackers.MatterControl
 		Titillium,
 	};
 
-	public class AppContext
+	public static class AppContext
 	{
 		/// <summary>
 		/// Native platform features
 		/// </summary>
 		public static INativePlatformFeatures Platform { get; set; }
+
+		public static MatterControlOptions Options { get; set; } = new MatterControlOptions();
 
 		public static bool IsLoading { get; internal set; } = true;
 
@@ -231,6 +233,11 @@ namespace MatterHackers.MatterControl
 				// Explicitly fire ReloadAll in response to user interaction
 				ApplicationController.Instance.ReloadAll();
 			});
+		}
+
+		public class MatterControlOptions
+		{
+			public bool McwsTestEnvironment { get; set; }
 		}
 	}
 

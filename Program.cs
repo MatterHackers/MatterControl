@@ -87,6 +87,8 @@ namespace MatterHackers.MatterControl
 			MatterHackers.MatterControl.AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
 			MatterHackers.MatterControl.AppContext.Platform.ProcessCommandline();
 
+			config.Bind("MatterControl", MatterHackers.MatterControl.AppContext.Options);
+
 			// Get startup bounds from MatterControl and construct system window
 			//var systemWindow = new DesktopMainWindow(400, 200)
 			var (width, height) = RootSystemWindow.GetStartupBounds();

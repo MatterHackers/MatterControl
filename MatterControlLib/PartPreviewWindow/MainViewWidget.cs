@@ -129,6 +129,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var updateAvailableButton = new LinkLabel("Update Available".Localize(), theme)
 			{
 				Visible = false,
+				Name = "Update Available Link",
+				ToolTipText = "There is a new update available for download".Localize(),
+				VAnchor = VAnchor.Center,
+				Margin = new BorderDouble(10, 0)
 			};
 
 			// make the function inline so we don't have to create members for the buttons
@@ -207,11 +211,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}, 120);
 			};
 
-			updateAvailableButton.Name = "Update Available Link";
 			SetLinkButtonsVisibility(this, null);
-			updateAvailableButton.ToolTipText = "There is a new update available for download".Localize();
-			updateAvailableButton.VAnchor = VAnchor.Center;
-			updateAvailableButton.Margin = new BorderDouble(10, 0);
 			updateAvailableButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				UpdateControlData.Instance.CheckForUpdate();
