@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -48,22 +47,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public Color Color
 		{
-			get
-			{
-				return new Color(colorWidget.Color);
-			}
-
-			set
-			{
-				colorWidget.Color = value;
-			}
+			get => new Color(colorWidget.Color);
+			set => colorWidget.Color = value;
 		}
 
 		public override void Initialize(int tabIndex)
 		{
 			var container = new FlowLayoutWidget();
 
-			colorWidget = new ItemColorButton(theme, initialColor);
+			colorWidget = new ItemColorButton(AppContext.MenuTheme, initialColor);
 			colorWidget.ColorChanged += (s, e) =>
 			{
 				base.OnValueChanged(new FieldChangedEventArgs(true));

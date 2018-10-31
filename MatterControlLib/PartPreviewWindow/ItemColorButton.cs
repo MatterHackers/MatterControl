@@ -53,13 +53,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.DynamicPopupContent = () =>
 			{
-				return new ColorSwatchSelector(theme, 
-					buttonSize: 16, 
-					buttonSpacing: new BorderDouble(1, 1, 0, 0), 
+				return new ColorSwatchSelector(theme,
+					buttonSize: 16,
+					buttonSpacing: new BorderDouble(1, 1, 0, 0),
 					colorNotifier: (newColor) => colorButton.BackgroundColor = newColor)
 				{
 					Padding = theme.DefaultContainerPadding,
-					BackgroundColor = this.HoverColor,
+					BackgroundColor = theme.ActiveTabColor,
 					HAnchor = HAnchor.Fit,
 					VAnchor = VAnchor.Fit
 				};
