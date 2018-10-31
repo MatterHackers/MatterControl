@@ -226,8 +226,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				});
 
-				popupMenu.CreateSeparator();
-
 				var actions = new NamedAction[] {
 					new ActionSeparator(),
 					workspaceActions["Cut"],
