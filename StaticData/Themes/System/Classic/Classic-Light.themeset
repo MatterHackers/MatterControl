@@ -1,0 +1,18 @@
+{
+  "Name": "Classic Light",
+  "DefaultColorIndex": 0,
+  "AccentColors": [
+    "#AC193D",
+    "#CD2895",
+    "#BA5400",
+    "#008316",
+    "#004B8B",
+    "#007C91",
+    "#0074DB",
+    "#4617B4",
+    "#8C0095",
+    "#585858"
+  ],
+  "ThemeID": "Classic-Light",
+  "MenuThemeID": "White-Menu"
+}

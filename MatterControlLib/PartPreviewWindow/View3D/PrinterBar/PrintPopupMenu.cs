@@ -98,7 +98,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var settingsData = SettingsOrganizer.Instance.GetSettingsData(key);
 					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
 
-					SliceSettingsRow.AddBordersToEditFields(row);
 
 					optionsPanel.AddChild(row);
 				}
@@ -125,12 +124,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				foreach (var key in new[] { SettingsKey.spiral_vase, SettingsKey.layer_to_pause })
 				{
-					var settingsData = SettingsOrganizer.Instance.GetSettingsData(key);
-					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
-
-					SliceSettingsRow.AddBordersToEditFields(row);
-
-					subPanel.AddChild(row);
+					subPanel.AddChild(
+						SliceSettingsTabView.CreateItemRow(
+							SettingsOrganizer.Instance.GetSettingsData(key),
+							settingsContext,
+							printer,
+							menuTheme,
+							ref tabIndex,
+							allUiFields));
 				}
 
 				theme.ApplyBoxStyle(sectionWidget);

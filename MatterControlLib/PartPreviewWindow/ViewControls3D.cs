@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.PartSelect;
 		private List<(GuiWidget button, SceneSelectionOperation operation)> operationButtons;
-		private PartPreviewContent partPreviewContent = null;
+		private MainViewWidget mainViewWidget = null;
 		private PopupMenuButton bedMenuButton;
 		private ThemeConfig theme;
 
@@ -578,9 +578,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AlwaysKeepOpen = true,
 				DynamicPopupContent = () =>
 				{
-					if (partPreviewContent == null)
+					if (mainViewWidget == null)
 					{
-						partPreviewContent = this.Parents<PartPreviewContent>().FirstOrDefault();
+						mainViewWidget = this.Parents<MainViewWidget>().FirstOrDefault();
 					}
 
 					var verticalResizeContainer = new VerticalResizeContainer(theme, GrabBarSide.Right)
@@ -605,7 +605,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 
-					var printLibraryWidget = new PrintLibraryWidget(partPreviewContent, theme, libraryPopup)
+					var printLibraryWidget = new PrintLibraryWidget(mainViewWidget, theme, libraryPopup)
 					{
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Absolute,

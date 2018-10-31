@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
 	public class StoreTabPage : ScrollableWidget
 	{
-		public StoreTabPage(PartPreviewContent partPreviewContent, ThemeConfig theme)
+		public StoreTabPage(ThemeConfig theme)
 		{
 			this.AutoScroll = true;
 			this.ScrollArea.Padding = new BorderDouble(3);

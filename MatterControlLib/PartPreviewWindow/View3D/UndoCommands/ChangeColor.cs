@@ -37,10 +37,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class ChangeColor : IUndoRedoCommand
 	{
-		List<PrintOutputTypes> itemsPrintOutputType = new List<PrintOutputTypes>();
-		List<Color> itemsColor = new List<Color>();
-		List<IObject3D> itemsToChange = new List<IObject3D>();
-		Color color;
+		private List<PrintOutputTypes> itemsPrintOutputType = new List<PrintOutputTypes>();
+		private List<Color> itemsColor = new List<Color>();
+		private List<IObject3D> itemsToChange = new List<IObject3D>();
+		private Color color;
 
 		public ChangeColor(IObject3D selectedItem, Color color)
 		{

@@ -63,15 +63,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private GuiWidget searchInput;
 		private ILibraryContainer searchContainer;
 
-		private PartPreviewContent partPreviewContent;
+		private MainViewWidget mainViewWidget;
 		private ThemeConfig theme;
 		private OverflowBar navBar;
 		private GuiWidget searchButton;
 
-		public PrintLibraryWidget(PartPreviewContent partPreviewContent, ThemeConfig theme, PopupMenuButton popupMenuButton)
+		public PrintLibraryWidget(MainViewWidget mainViewWidget, ThemeConfig theme, PopupMenuButton popupMenuButton)
 		{
 			this.theme = theme;
-			this.partPreviewContent = partPreviewContent;
+			this.mainViewWidget = mainViewWidget;
 			this.Padding = 0;
 			this.AnchorAll();
 
@@ -477,7 +477,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public override void OnLoad(EventArgs args)
 		{
 			// Defer creating menu items until plugins have loaded
-			LibraryWidget.CreateMenuActions(libraryView, menuActions, partPreviewContent, theme, allowPrint: true);
+			LibraryWidget.CreateMenuActions(libraryView, menuActions, mainViewWidget, theme, allowPrint: true);
 
 			navBar.OverflowButton.Name = "Print Library Overflow Menu";
 			navBar.ExtendOverflowMenu = (popupMenu) =>

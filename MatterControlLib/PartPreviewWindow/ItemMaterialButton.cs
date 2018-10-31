@@ -56,10 +56,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.DynamicPopupContent = () =>
 			{
-				var materialControl = new MaterialControls(theme, currentIndex)
+				var materialControl = new MaterialControls(AppContext.MenuTheme, currentIndex)
 				{
 					Padding = theme.DefaultContainerPadding,
-					BackgroundColor = this.HoverColor,
+					BackgroundColor = AppContext.MenuTheme.ActiveTabColor,
 					HAnchor = HAnchor.Fit,
 					VAnchor = VAnchor.Fit,
 				};

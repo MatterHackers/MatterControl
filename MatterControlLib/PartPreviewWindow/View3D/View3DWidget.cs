@@ -631,6 +631,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SceneContext_SceneLoaded(object sender, EventArgs e)
 		{
+			if (AppContext.IsLoading)
+			{
+				return;
+			}
+
 			if (printerTabPage?.printerActionsBar?.sliceButton is GuiWidget sliceButton)
 			{
 				sliceButton.Enabled = sceneContext.EditableScene;
@@ -749,7 +754,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				// Switch to printer
-				ApplicationController.Instance.AppView.TabControl.SelectedTabKey = printer.Settings.GetValue(SettingsKey.printer_name);
+				ApplicationController.Instance.MainView.TabControl.SelectedTabKey = printer.Settings.GetValue(SettingsKey.printer_name);
 
 				// Save any pending changes before starting print operation
 				await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), printer.Bed.SaveChanges);

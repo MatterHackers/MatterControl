@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl
 			path = directory;
 
 			this.Name = Path.GetFileName(directory);
-			this.ThemeNames = AggContext.StaticData.GetFiles(directory).Where(p => Path.GetFileName(p) != "theme.json").Select(p => Path.GetFileNameWithoutExtension(p)).ToArray();
+			this.ThemeNames = AggContext.StaticData.GetFiles(directory).Where(p => Path.GetExtension(p) == ".themeset").Select(p => Path.GetFileNameWithoutExtension(p)).ToArray();
 		}
 
 		public string Name { get; }
@@ -88,17 +88,20 @@ namespace MatterHackers.MatterControl
 			try
 			{
 				themeset = JsonConvert.DeserializeObject<ThemeSet>(
-					AggContext.StaticData.ReadAllText(Path.Combine(path, themeName + ".json")));
+					AggContext.StaticData.ReadAllText(Path.Combine(path, themeName + ".themeset")));
 			}
 			catch
 			{
 				themeset = JsonConvert.DeserializeObject<ThemeSet>(
-					AggContext.StaticData.ReadAllText(Path.Combine(path, this.ThemeNames.First() + ".json")));
+					AggContext.StaticData.ReadAllText(Path.Combine(path, this.ThemeNames.First() + ".themeset")));
 			}
+
+			themeset.Theme = AppContext.LoadTheme(themeset.ThemeID);
+			themeset.MenuTheme = AppContext.LoadTheme(themeset.MenuThemeID);
 
 			// Set SchemaVersion at construction time
 			themeset.SchemeVersion = ThemeSet.LatestSchemeVersion;
-			themeset.ThemeID = themeName;
+			themeset.ThemesetID = themeName;
 
 			return themeset;
 		}

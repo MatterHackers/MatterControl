@@ -42,7 +42,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class PartPreviewContent : FlowLayoutWidget
+	public class MainViewWidget : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
 		private ChromeTab printerTab = null;
@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private int partCount = 0;
 		private ThemeConfig theme;
 
-		public PartPreviewContent(ThemeConfig theme)
+		public MainViewWidget(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.AnchorAll();
@@ -228,7 +228,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Store tab
 			tabControl.AddTab(
-				new ChromeTab("Store", "Store".Localize(), tabControl, new StoreTabPage(this, theme), theme, hasClose: false)
+				new ChromeTab("Store", "Store".Localize(), tabControl, new StoreTabPage(theme), theme, hasClose: false)
 				{
 					MinimumSize = new Vector2(0, theme.TabButtonHeight),
 					Name = "Store Tab",
@@ -350,7 +350,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				tabControl.RefreshTabPointers();
 			}, ref unregisterEvents);
 
-			ApplicationController.Instance.AppView = this;
+			ApplicationController.Instance.MainView = this;
 		}
 
 		public ChromeTabs TabControl => tabControl;

@@ -118,7 +118,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			var settingsData = SettingsOrganizer.Instance.GetSettingsData(SettingsKey.bed_temperature);
 			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
-			SliceSettingsRow.AddBordersToEditFields(temperatureRow);
 			container.AddChild(temperatureRow);
 
 			alwaysEnabled.Add(hotendRow);
@@ -143,7 +142,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			}, 1);
 			this.Closed += (s, e) => runningInterval.Continue = false;
 
-			var valueField = temperatureRow.Descendants<MHNumberEdit>().FirstOrDefault();
 			var settingsRow = temperatureRow.DescendantsAndSelf<SliceSettingsRow>().FirstOrDefault();
 			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
@@ -166,7 +164,7 @@ namespace MatterHackers.MatterControl.ActionBar
 						var temp = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
 						graph.GoalValue = temp;
 
-						// TODO: Why is this only when enabled? How does it get set to 
+						// TODO: Why is this only when enabled? How does it get set to
 						if (heatToggle.Checked)
 						{
 							// TODO: Why is a UI widget who is listening to model events driving this behavior? What when it's not loaded?

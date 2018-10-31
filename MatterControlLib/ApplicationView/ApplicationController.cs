@@ -131,16 +131,26 @@ namespace MatterHackers.MatterControl
 
 		public static Dictionary<string, IColorTheme> ThemeProviders { get; }
 
+		private static Dictionary<string, string> themes = new Dictionary<string, string>();
+
 		static AppContext()
 		{
 			ThemeProviders = new Dictionary<string, IColorTheme>();
 
 			string themesPath = Path.Combine("Themes", "System");
 
+			var staticData = AggContext.StaticData;
+
 			// Load available themes from StaticData
-			if (AggContext.StaticData.DirectoryExists(themesPath))
+			if (staticData.DirectoryExists(themesPath))
 			{
-				foreach (var directoryTheme in AggContext.StaticData.GetDirectories(themesPath).Select(d => new DirectoryTheme(d)))
+				var themeFiles = staticData.GetDirectories(themesPath).SelectMany(d => staticData.GetFiles(d).Where(p => Path.GetExtension(p) == ".json"));
+				foreach(var themeFile in themeFiles)
+				{
+					themes[Path.GetFileNameWithoutExtension(themeFile)] = themeFile;
+				}
+
+				foreach (var directoryTheme in AggContext.StaticData.GetDirectories(themesPath).Where(d => Path.GetFileName(d) != "Menus").Select(d => new DirectoryTheme(d)))
 				{
 					ThemeProviders.Add(directoryTheme.Name, directoryTheme);
 				}
@@ -170,6 +180,25 @@ namespace MatterHackers.MatterControl
 
 			DefaultThumbView.ThumbColor = new Color(themeset.Theme.Colors.PrimaryTextColor, 30);
 			ActiveTheme.Instance = themeset.Theme.Colors;
+		}
+
+		public static ThemeConfig LoadTheme(string themeName)
+		{
+			try
+			{
+				if (themes.TryGetValue(themeName, out string themePath))
+				{
+					string json = AggContext.StaticData.ReadAllText(themePath);
+
+					return JsonConvert.DeserializeObject<ThemeConfig>(json);
+				}
+			}
+			catch
+			{
+				Console.WriteLine("Error loading theme: " + themeName);
+			}
+
+			return new ThemeConfig();
 		}
 
 		public static void SetThemeAccentColor(Color accentColor)
@@ -496,7 +525,7 @@ namespace MatterHackers.MatterControl
 
 		public SlicePresetsPage EditQualityPresetsWindow { get; set; }
 
-		public GuiWidget MainView;
+		public MainViewWidget MainView;
 
 		private EventHandler unregisterEvents;
 
@@ -1682,7 +1711,7 @@ namespace MatterHackers.MatterControl
 					GuiWidget.LayoutCount = 0;
 					using (new QuickTimer($"ReloadAll_{reloadCount++}:"))
 					{
-						MainView = new PartPreviewContent(ApplicationController.Instance.Theme);
+						MainView = new MainViewWidget(ApplicationController.Instance.Theme);
 						this.DoneReloadingAll?.CallEvents(null, null);
 
 						using (new QuickTimer("Time to AddMainview: "))
@@ -2072,8 +2101,6 @@ namespace MatterHackers.MatterControl
 		public Dictionary<string, HelpArticle> HelpArticlesByID { get; set; }
 
 		public string MainTabKey { get; internal set; }
-
-		public PartPreviewContent AppView { get; internal set; }
 
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 
@@ -3140,12 +3167,11 @@ If you experience adhesion problems, please re-run leveling."
 				}, 2);
 			}
 
-			reporter?.Invoke(0.3, (loading != null) ? loading : "MainView");
-			applicationController.MainView = new PartPreviewContent(applicationController.Theme);
-
-			// now that we are all set up lets load our plugins and allow them their chance to set things up
-			reporter?.Invoke(0.8, (loading != null) ? loading : "Plugins");
+			reporter?.Invoke(0.3, (loading != null) ? loading : "Plugins");
 			AppContext.Platform.FindAndInstantiatePlugins(systemWindow);
+
+			reporter?.Invoke(0.4, (loading != null) ? loading : "MainView");
+			applicationController.MainView = new MainViewWidget(applicationController.Theme);
 
 			reporter?.Invoke(0.91, (loading != null) ? loading : "OnLoadActions");
 			applicationController.OnLoadActions();

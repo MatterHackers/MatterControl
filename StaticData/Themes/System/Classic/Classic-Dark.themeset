@@ -1,0 +1,18 @@
+{
+  "Name": "Classic Dark",
+  "DefaultColorIndex": 0,
+  "AccentColors": [
+    "#EC6788",
+    "#E168B9",
+    "#FF8119",
+    "#00A81B",
+    "#1393FF",
+    "#009FBA",
+    "#5DB2FF",
+    "#9F7CF0",
+    "#F129FF",
+    "#909090"
+  ],
+  "ThemeID": "Classic-Dark",
+  "MenuThemeID": "White-Menu"
+}

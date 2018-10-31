@@ -417,7 +417,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.AddChild(textWidget = new TextWidget(text, pointSize: textSize, textColor: theme.Colors.PrimaryTextColor)
 			{
 				HAnchor = HAnchor.Center,
-				VAnchor = VAnchor.Center
+				VAnchor = VAnchor.Center,
+				AutoExpandBoundsToText = true
 			});
 		}
 
