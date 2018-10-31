@@ -160,15 +160,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// show a right click menu ('Set as Default' & 'Help')
 				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
-				//var clearUserOverrideMenuItem = popupMenu.CreateMenuItem("Cleare User Override".Localize());
-				//clearUserOverrideMenuItem.Enabled = HasUserOverride(settingData.SlicerConfigName); // check if the settings is already the default
-				//clearUserOverrideMenuItem.Click += (s, e) =>
-				//{
-				//	// clear the override
-				//	UpdateStyle();
-				//	printer.Settings.Save();
-				//};
-
 				var setAsDefaultMenuItem = popupMenu.CreateMenuItem("Set as Default".Localize());
 				setAsDefaultMenuItem.Focus();
 				setAsDefaultMenuItem.Enabled = !SettingIsOem(); // check if the settings is already the default
@@ -181,12 +172,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					UpdateStyle();
 					printer.Settings.Save();
 				};
-
-				//var helpMenuItem = popupMenu.CreateMenuItem("Help".Localize());
-				//helpMenuItem.Enabled = false; // check if there is any help available
-				//helpMenuItem.Click += (s, e) =>
-				//{
-				//};
 
 				var sourceEvent = mouseEvent.Position;
 				var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
@@ -291,7 +276,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				this.HighlightColor = Color.Transparent;
 			}
 		}
-
 
 		public void AddContent(GuiWidget content)
 		{
