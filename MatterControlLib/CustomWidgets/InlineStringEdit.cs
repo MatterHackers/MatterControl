@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -48,7 +49,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private GuiWidget saveButton;
 		private SearchInputBox searchPanel;
 
-		public InlineStringEdit(string stringValue, ThemeConfig theme, string automationName, bool boldFont = false)
+		public InlineStringEdit(string stringValue, ThemeConfig theme, string automationName, bool boldFont = false, bool editable = true)
 			: base(theme)
 		{
 			this.Padding = theme.ToolbarPadding;
@@ -98,10 +99,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			rightPanel = new FlowLayoutWidget();
 
-			editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
+			var icon = editable ? AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons) : new ImageBuffer(16, 16);
+
+			editButton = new IconButton(icon, theme)
 			{
 				ToolTipText = "Edit".Localize(),
-				Name = automationName + " Edit"
+				Name = automationName + " Edit",
+				Selectable = editable
 			};
 			editButton.Click += (s, e) =>
 			{
