@@ -1803,7 +1803,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (e.InvalidateType == InvalidateType.Content)
 			{
-				this.RebuildTree();
+				UiThread.RunOnIdle(this.RebuildTree);
 			}
 		}
 
