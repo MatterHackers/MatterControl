@@ -39,33 +39,34 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
-	public class HardwareTabPage : GuiWidget
+	public class HardwareTabPage : FlowLayoutWidget
 	{
 		private ThemeConfig theme;
 		private TreeView treeView;
 
 		public HardwareTabPage(ThemeConfig theme)
+			: base (FlowDirection.TopToBottom)
 		{
 			this.theme = theme;
 			this.Padding = 0;
-			this.AnchorAll();
-
-			var allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Stretch;
 
 			var horizontalSplitter = new Splitter()
 			{
 				SplitterDistance = UserSettings.Instance.LibraryViewWidth,
 				SplitterSize = theme.SplitterWidth,
-				SplitterBackground = theme.SplitterBackground
+				SplitterBackground = theme.SplitterBackground,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
 			};
-			horizontalSplitter.AnchorAll();
 
 			horizontalSplitter.DistanceChanged += (s, e) =>
 			{
 				UserSettings.Instance.LibraryViewWidth = horizontalSplitter.SplitterDistance;
 			};
 
-			allControls.AddChild(horizontalSplitter);
+			this.AddChild(horizontalSplitter);
 
 			treeView = new InventoryTreeView(theme)
 			{
@@ -182,10 +183,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				HAnchor =HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
 			});
-
-			allControls.AnchorAll();
-
-			this.AddChild(allControls);
 		}
 	}
 }
