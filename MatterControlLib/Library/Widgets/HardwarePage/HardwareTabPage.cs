@@ -36,6 +36,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library.Widgets.HardwarePage;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
@@ -50,6 +51,24 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.Padding = 0;
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
+
+			var toolbar = new Toolbar(theme)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+				Padding = theme.ToolbarPadding
+			};
+
+			theme.ApplyBottomBorder(toolbar);
+
+			toolbar.AddChild(new TextButton("Inventory".Localize(), theme)
+			{
+				Padding = new BorderDouble(6, 0),
+				MinimumSize = new Vector2(0, theme.ButtonHeight),
+				Selectable = false
+			});
+
+			this.AddChild(toolbar);
 
 			var horizontalSplitter = new Splitter()
 			{
