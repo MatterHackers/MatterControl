@@ -238,7 +238,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						ID = "Export",
 						Title = "Export".Localize(),
-						Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16),
+						Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, menuTheme.InvertIcons),
 						Action = () =>
 						{
 							UiThread.RunOnIdle(async () =>
@@ -260,7 +260,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Title = "Arrange All Parts".Localize(),
 						Action = () =>
 						{
-							sceneContext.Scene.AutoArrangeChildren(view3DWidget.BedCenter);
+							sceneContext.Scene.AutoArrangeChildren(view3DWidget.BedCenter).ConfigureAwait(false);
 						},
 						IsEnabled = () => sceneContext.EditableScene
 					},
@@ -279,7 +279,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 
-				theme.CreateMenuItems(popupMenu, actions, emptyMenu: false);
+				menuTheme.CreateMenuItems(popupMenu, actions, emptyMenu: false);
 
 				return popupMenu;
 			};
