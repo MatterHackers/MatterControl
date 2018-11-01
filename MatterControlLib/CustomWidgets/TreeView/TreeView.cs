@@ -234,7 +234,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					}
 
 					_selectedNode = value;
-					_selectedNode.HighlightRegion.BackgroundColor = theme.AccentMimimalOverlay;
+
+					if (_selectedNode != null)
+					{
+						_selectedNode.HighlightRegion.BackgroundColor = theme.AccentMimimalOverlay;
+					}
+
 					OnAfterSelect(null);
 				}
 			}
