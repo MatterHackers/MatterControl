@@ -95,14 +95,6 @@ namespace MatterHackers.MatterControl.ActionBar
 				Padding = theme.ToolbarPadding,
 			};
 
-			var retractButton = theme.CreateDialogButton("Retract".Localize());
-			retractButton.ToolTipText = "Retract filament".Localize();
-			retractButton.Click += (s, e) =>
-			{
-				printer.Connection.MoveExtruderRelative(moveAmount * -1, printer.Settings.EFeedRate(extruderIndex), extruderIndex);
-			};
-			buttonContainer.AddChild(retractButton);
-
 			int extruderButtonTopMargin = macroButtons == null ? 8 : 0;
 
 			var extrudeButton = theme.CreateDialogButton("Extrude".Localize());
@@ -113,6 +105,14 @@ namespace MatterHackers.MatterControl.ActionBar
 				printer.Connection.MoveExtruderRelative(moveAmount, printer.Settings.EFeedRate(extruderIndex), extruderIndex);
 			};
 			buttonContainer.AddChild(extrudeButton);
+
+			var retractButton = theme.CreateDialogButton("Retract".Localize());
+			retractButton.ToolTipText = "Retract filament".Localize();
+			retractButton.Click += (s, e) =>
+			{
+				printer.Connection.MoveExtruderRelative(moveAmount * -1, printer.Settings.EFeedRate(extruderIndex), extruderIndex);
+			};
+			buttonContainer.AddChild(retractButton);
 
 			this.AddChild(new SettingsItem(
 				macroButtons == null ? "Filament".Localize() : "", // Don't put the name if we put in a macro button (it has the name)
