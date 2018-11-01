@@ -386,7 +386,11 @@ namespace MatterHackers.MatterControl.ActionBar
 						TextColor = Color.Black,
 						HAnchor = HAnchor.Left,
 					});
-					container.AddChild(new ControlContentExtruder(printer, extruderIndex, menuTheme));
+					container.AddChild(new ControlContentExtruder(printer, extruderIndex, menuTheme)
+					{
+						Border = new BorderDouble(top: 1),
+						BorderColor = AppContext.MenuTheme.MinimalShade
+					});
 				}
 			}
 			else
