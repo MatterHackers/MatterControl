@@ -334,16 +334,22 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			treeView.AddChild(rootColumn);
 
-			UiThread.RunOnIdle(() =>
+			ApplicationController.StartupActions.Add(new ApplicationController.StartupAction()
 			{
-				foreach (var item in ApplicationController.Instance.Library.RootLibaryContainer.ChildContainers)
+				Title = "Initializing Library".Localize(),
+				Priority = 0,
+				Action = () =>
 				{
-					var rootNode = this.CreateTreeNode(item);
-					rootNode.TreeView = treeView;
+					foreach (var item in ApplicationController.Instance.Library.RootLibaryContainer.ChildContainers)
+					{
+						var rootNode = this.CreateTreeNode(item);
+						rootNode.TreeView = treeView;
 
-					rootColumn.AddChild(rootNode);
+						rootColumn.AddChild(rootNode);
+					}
 				}
-			}, 1);
+			});
+
 			horizontalSplitter.Panel2.AddChild(libraryView);
 
 			buttonPanel = new FlowLayoutWidget()
