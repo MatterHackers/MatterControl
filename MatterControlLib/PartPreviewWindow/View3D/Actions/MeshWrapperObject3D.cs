@@ -82,15 +82,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			AxisAlignedBoundingBox totalBounds = AxisAlignedBoundingBox.Empty();
 
+			// This needs to be Descendants because we need to move past the first visible mesh to our owned objects
 			foreach (var child in this.Descendants().Where(i => i.OwnerID == this.ID && i.Visible))
 			{
-				// Add the bounds of each child object
-				var childBounds = child.Mesh.GetAxisAlignedBoundingBox(child.WorldMatrix(this) * matrix);
-				//var childBounds = child.GetAxisAlignedBoundingBox(child.WorldMatrix(item) * matrix);
-				// Check if the child actually has any bounds
-				if (childBounds.XSize > 0)
+				var childMesh = child.Mesh;
+				if (childMesh != null)
 				{
-					totalBounds += childBounds;
+					// Add the bounds of each child object
+					var childBounds = childMesh.GetAxisAlignedBoundingBox(child.WorldMatrix(this) * matrix);
+					// Check if the child actually has any bounds
+					if (childBounds.XSize > 0)
+					{
+						totalBounds += childBounds;
+					}
 				}
 			}
 
