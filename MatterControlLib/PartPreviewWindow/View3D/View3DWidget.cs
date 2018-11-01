@@ -1814,11 +1814,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void Scene_SelectionChanged(object sender, EventArgs e)
 		{
 			var selectedItem = Scene.SelectedItem;
-			foreach (var child in selectedObjectPanel.ContentPanel.Children)
-			{
-				child.Enabled = selectedItem != null;
-			}
-
 			if (selectedItem == null)
 			{
 
