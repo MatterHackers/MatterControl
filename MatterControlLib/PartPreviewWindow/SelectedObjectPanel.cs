@@ -27,14 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using JsonPath;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -43,8 +39,6 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.VectorMath;
 using static JsonPath.JsonPathContext.ReflectionValueSystem;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -176,6 +170,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void SetActiveItem(IObject3D selectedItem)
 		{
+			if (this.item == selectedItem)
+			{
+				return;
+			}
+
 			this.item = selectedItem;
 			editorPanel.CloseAllChildren();
 

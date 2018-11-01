@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			// Suppress MeshWrapper and OperationSource nodes in tree
 			bool shouldCollapseToParent = item.Source is ModifiedMeshObject3D || item.Source is OperationSourceObject3D;
-			var contextNode = (shouldCollapseToParent && parent != null) ? parent : AddItem(item, parent, theme);
+			var contextNode = (shouldCollapseToParent && parent != null) ? parent : AddItem(item, parent, keyValues, theme);
 
 			using (contextNode.LayoutLock())
 			{
@@ -67,9 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						if (child != null)
 						{
-							var newNode = AddTree(BuildItemView(child), contextNode, keyValues, theme);
-
-							keyValues?.Add(child, newNode);
+							AddTree(BuildItemView(child), contextNode, keyValues, theme);
 						}
 					}
 				}
@@ -78,7 +76,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return contextNode;
 		}
 
-		private static TreeNode AddItem(ObjectView item, TreeNode parentNode, ThemeConfig theme)
+		private static TreeNode AddItem(ObjectView item, TreeNode parentNode, Dictionary<IObject3D, TreeNode> keyValues, ThemeConfig theme)
 		{
 			if(item.Source is InsertionGroupObject3D insertionGroup)
 			{
@@ -98,6 +96,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				TextColor = theme.Colors.PrimaryTextColor,
 				PointSize = theme.DefaultFontSize,
 			};
+
+			keyValues.Add(item.Source, node);
 
 			// Check for operation resulting in the given type
 			if (ApplicationController.Instance.Thumbnails.OperationIcons.TryGetValue(item.Source.GetType(), out Func<ImageBuffer> iconSource))
