@@ -183,6 +183,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (e is MouseEventArgs sourceEvent
 					&& s is GuiWidget clickedWidget)
 				{
+					// Ignore AfterSelect events if they're being driven by a SelectionChanged event
+					if (!assigningTreeNode)
+					{
+						Scene.SelectedItem = (IObject3D)treeView.SelectedNode.Tag;
+					}
+
 					if (sourceEvent.Button == MouseButtons.Right)
 					{
 						UiThread.RunOnIdle(() =>
@@ -203,14 +209,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								},
 								altBounds: new RectangleDouble(sourceEvent.X + 1, sourceEvent.Y + 1, sourceEvent.X + 1, sourceEvent.Y + 1));
 						});
-					}
-					else
-					{
-						// Ignore AfterSelect events if they're being driven by a SelectionChanged event
-						if (!assigningTreeNode)
-						{
-							Scene.SelectedItem = (IObject3D)treeView.SelectedNode.Tag;
-						}
 					}
 				}
 			};

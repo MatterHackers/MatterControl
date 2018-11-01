@@ -171,7 +171,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			if (isDirty)
 			{
-				RebuildContentSection();
+				// doing this durring draw will often result in a enumeration changed
+				UiThread.RunOnIdle(RebuildContentSection);
 			}
 
 			base.OnDraw(graphics2D);
