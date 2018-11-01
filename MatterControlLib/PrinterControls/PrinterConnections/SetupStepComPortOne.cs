@@ -28,8 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using System.IO;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
@@ -71,6 +74,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				Margin = elementMargin
 			};
 			container.AddChild(printerMessageThree);
+
+			var removeImage = AggContext.StaticData.LoadImage(Path.Combine("Images", "remove usb.png"));
+			removeImage.SetRecieveBlender(new BlenderPreMultBGRA());
+			container.AddChild(new ImageWidget(removeImage)
+			{
+				HAnchor = HAnchor.Center,
+				Margin = new BorderDouble(0, 10),
+			});
 
 			GuiWidget vSpacer = new GuiWidget();
 			vSpacer.VAnchor = VAnchor.Stretch;

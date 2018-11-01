@@ -28,8 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -82,9 +85,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				}
 			};
 
+			var backButton = theme.CreateDialogButton("<< Back".Localize());
+			backButton.Click += (s, e) =>
+			{
+				DialogWindow.ChangeToPage(new SetupStepComPortOne(printer));
+			};
+
 			printer.Connection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
 			this.AddPageAction(nextButton);
+			this.AddPageAction(backButton);
 			this.AddPageAction(connectButton);
 		}
 
@@ -114,7 +124,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			printerMessageOne.HAnchor = HAnchor.Stretch;
 			printerMessageOne.Margin = elementMargin;
 
-			string printerMessageFourBeg = "Connect printer and power on".Localize();
+			string printerMessageFourBeg = "Connect printer (make sure it is on)".Localize();
 			string printerMessageFourFull = string.Format("1.) {0}.", printerMessageFourBeg);
 			TextWidget printerMessageFour = new TextWidget(printerMessageFourFull, 0, 0, 12);
 			printerMessageFour.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -132,16 +142,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			GuiWidget vSpacer = new GuiWidget();
 			vSpacer.VAnchor = VAnchor.Stretch;
 
-			var manualLink = new LinkLabel("Manual Configuration".Localize(), theme)
-			{
-				Margin = new BorderDouble(0, 5),
-				TextColor =  theme.Colors.PrimaryTextColor
-			};
-			manualLink.Click += (s, e) => UiThread.RunOnIdle(() =>
-			{
-				DialogWindow.ChangeToPage(new SetupStepComPortManual(printer));
-			});
-
 			printerErrorMessage = new TextWidget("", 0, 0, 10)
 			{
 				AutoExpandBoundsToText = true,
@@ -153,8 +153,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			container.AddChild(printerMessageOne);
 			container.AddChild(printerMessageFour);
 			container.AddChild(printerErrorMessage);
+
+			var removeImage = AggContext.StaticData.LoadImage(Path.Combine("Images", "insert usb.png"));
+			removeImage.SetRecieveBlender(new BlenderPreMultBGRA());
+			container.AddChild(new ImageWidget(removeImage)
+			{
+				HAnchor = HAnchor.Center,
+				Margin = new BorderDouble(0, 10),
+			});
+
 			container.AddChild(vSpacer);
-			container.AddChild(manualLink);
 
 			container.HAnchor = HAnchor.Stretch;
 			return container;
