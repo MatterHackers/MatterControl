@@ -45,8 +45,8 @@
   },
   "LightTextColor": "#00000000",
   "BorderColor": "#839496",
-  "BorderColor40": "#00000000",
-  "BorderColor20": "#00000000",
+  "BorderColor40": "#094453",
+  "BorderColor20": "#073642",
   "RowBorder": "#00303D",
   "DropList": {
     "Open": {
