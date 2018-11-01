@@ -1902,7 +1902,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Save()
 		{
-			ApplicationController.Instance.Tasks.Execute("Saving".Localize(), Printer.Bed.SaveChanges);
+			ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.SaveChanges);
 		}
 	}
 
