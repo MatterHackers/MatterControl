@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				int thumbWidth = 24;
 
-				popupMenu.CreateSubMenu("Recent".Localize(), menuTheme, (subMenu) =>
+				popupMenu.CreateSubMenu("Open Recent".Localize(), menuTheme, (subMenu) =>
 				{
 					// Select the 25 most recent files and project onto FileSystemItems
 					var recentFiles = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
@@ -226,8 +226,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				});
 
-				popupMenu.CreateSeparator();
-
 				var actions = new NamedAction[] {
 					new ActionSeparator(),
 					workspaceActions["Cut"],
@@ -240,7 +238,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						ID = "Export",
 						Title = "Export".Localize(),
-						Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16),
+						Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, menuTheme.InvertIcons),
 						Action = () =>
 						{
 							UiThread.RunOnIdle(async () =>
@@ -262,7 +260,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Title = "Arrange All Parts".Localize(),
 						Action = () =>
 						{
-							sceneContext.Scene.AutoArrangeChildren(view3DWidget.BedCenter);
+							sceneContext.Scene.AutoArrangeChildren(view3DWidget.BedCenter).ConfigureAwait(false);
 						},
 						IsEnabled = () => sceneContext.EditableScene
 					},
@@ -281,7 +279,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 
-				theme.CreateMenuItems(popupMenu, actions, emptyMenu: false);
+				menuTheme.CreateMenuItems(popupMenu, actions, emptyMenu: false);
 
 				return popupMenu;
 			};
