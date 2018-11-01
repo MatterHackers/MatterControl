@@ -42,7 +42,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	public class HardwareTabPage : FlowLayoutWidget
 	{
 		private ThemeConfig theme;
-		private TreeView treeView;
 
 		public HardwareTabPage(ThemeConfig theme)
 			: base (FlowDirection.TopToBottom)
@@ -68,7 +67,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			this.AddChild(horizontalSplitter);
 
-			treeView = new InventoryTreeView(theme)
+			var treeView = new InventoryTreeView(theme)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
