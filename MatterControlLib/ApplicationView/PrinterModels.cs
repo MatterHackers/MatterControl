@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl
 			this.ViewState = new SceneContextViewState(this);
 		}
 
-		public void LoadEmptyContent(EditContext editContext, IObject3D content)
+		public void LoadEmptyContent(EditContext editContext)
 		{
 			// Make sure we don't have a selection
 			this.Scene.SelectedItem = null;
@@ -91,11 +91,9 @@ namespace MatterHackers.MatterControl
 			this.EditContext = editContext;
 			this.ContentType = "mcx";
 
-			editContext.Content = content;
-
 			this.Scene.Children.Modify(children => children.Clear());
 
-			this.Scene.Load(editContext.Content);
+			this.Scene.Load(new Object3D());
 
 			// Notify
 			this.SceneLoaded?.Invoke(this, null);
@@ -141,8 +139,8 @@ namespace MatterHackers.MatterControl
 			else
 			{
 				// Load last item or fall back to empty if unsuccessful
-				editContext.Content = await editContext.SourceItem.CreateContent(null) ?? new Object3D();
-				this.Scene.Load(editContext.Content);
+				var content = await editContext.SourceItem.CreateContent(null) ?? new Object3D();
+				this.Scene.Load(content);
 			}
 
 			// Notify
@@ -183,11 +181,9 @@ namespace MatterHackers.MatterControl
 			this.LoadEmptyContent(
 				new EditContext()
 				{
-					Content = new Object3D(),
 					ContentStore = historyContainer,
 					SourceItem = historyContainer.NewPlatingItem()
-				},
-				new Object3D());
+				});
 		}
 
 		public InsertionGroupObject3D AddToPlate(IEnumerable<ILibraryItem> itemsToAdd)
@@ -576,7 +572,7 @@ namespace MatterHackers.MatterControl
 					}
 				});
 
-				this.EditContext?.Save();
+				this.EditContext?.Save(this.Scene);
 			}
 		}
 
@@ -609,8 +605,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public IObject3D Content { get; set; }
-
 		// Natural path
 		private string gcodePath => printItem?.GetGCodePathAndFileName();
 
@@ -630,14 +624,14 @@ namespace MatterHackers.MatterControl
 		[Obsolete]
 		internal PrintItemWrapper printItem { get; set; }
 
-		internal void Save()
+		internal void Save(IObject3D scene)
 		{
 			if (!this.FreezeGCode)
 			{
 				ApplicationController.Instance.Thumbnails.DeleteCache(this.SourceItem);
 
 				// Call save on the provider
-				this.ContentStore?.Save(this.SourceItem, this.Content);
+				this.ContentStore?.Save(this.SourceItem, scene);
 			}
 		}
 	}
