@@ -722,7 +722,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Clear bed to get new MCX on disk for this item
 				printer.Bed.ClearPlate();
 
-				await printer.Bed.LoadContent(sceneContext.EditContext);
+				// Load current scene into new printer scene
+				await printer.Bed.LoadIntoCurrent(sceneContext.EditContext);
 
 				bool allInBounds = true;
 				foreach (var item in printer.Bed.Scene.VisibleMeshes())

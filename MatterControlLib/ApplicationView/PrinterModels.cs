@@ -123,6 +123,16 @@ namespace MatterHackers.MatterControl
 				this.ContentType = contentInfo.ContentType;
 			}
 
+			await this.LoadIntoCurrent(editContext);
+		}
+
+		/// <summary>
+		/// Load content from the given EditContext into the current one
+		/// </summary>
+		/// <param name="editContext"></param>
+		/// <returns></returns>
+		public async Task LoadIntoCurrent(EditContext editContext)
+		{
 			// Load
 			if (editContext.SourceItem is ILibraryAssetStream contentStream
 				&& contentStream.ContentType == "gcode")
