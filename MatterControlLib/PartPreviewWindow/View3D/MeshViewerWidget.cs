@@ -342,6 +342,7 @@ namespace MatterHackers.MeshVisualizer
 
 			if (ViewOnlyTexture == null)
 			{
+				// TODO: What is the ViewOnlyTexture???
 				UiThread.RunOnIdle(() =>
 				{
 					ViewOnlyTexture = new ImageBuffer(32, 32, 32);
@@ -567,11 +568,11 @@ namespace MatterHackers.MeshVisualizer
 					|| isDebugItem)
 				{
 					// Render as solid
-					GLHelper.Render(item.Mesh, 
-						drawColor, 
-						item.WorldMatrix(), 
-						sceneContext.ViewState.RenderType, 
-						item.WorldMatrix() * World.ModelviewMatrix, 
+					GLHelper.Render(item.Mesh,
+						drawColor,
+						item.WorldMatrix(),
+						sceneContext.ViewState.RenderType,
+						item.WorldMatrix() * World.ModelviewMatrix,
 						darkWireframe, () => Invalidate());
 				}
 				else if (drawColor != Color.Transparent)

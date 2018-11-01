@@ -637,6 +637,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabLeft.LineTo(rect.Left + tabInsetDistance, rect.Bottom);
 			tabLeft.LineTo(rect.Left, rect.Bottom);
 
+			graphics2D.Line(rect.Left, rect.YCenter, rect.Left + tabInsetDistance, rect.Bottom, AppContext.Theme.MinimalShade, 1.3);
+
 			graphics2D.Render(tabLeft, color);
 		}
 	}

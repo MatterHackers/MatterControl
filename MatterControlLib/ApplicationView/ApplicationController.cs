@@ -1785,6 +1785,11 @@ namespace MatterHackers.MatterControl
 			// Show the End User License Agreement if it has not been shown (on windows it is shown in the installer)
 			if (AggContext.OperatingSystem != OSType.Windows)
 			{
+				// *********************************************************************************
+				// TODO: This should happen much earlier in the process and we should conditionally
+				//       show License page or RootSystemWindow
+				// *********************************************************************************
+				//
 				// Make sure this window is show modal (if available)
 				// show this last so it is on top
 				if (UserSettings.Instance.get(UserSettingsKey.SoftwareLicenseAccepted) != "true")
@@ -1797,11 +1802,16 @@ namespace MatterHackers.MatterControl
 				&& printer.Settings.PrinterSelected
 				&& printer.Settings.GetValue<bool>(SettingsKey.auto_connect))
 			{
-				UiThread.RunOnIdle(() =>
+				ApplicationController.StartupTasks.Add(new ApplicationController.StartupTask()
 				{
-					//PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-					printer.Connection.Connect();
-				}, 2);
+					Title = "Auto Connect".Localize(),
+					Priority = 100,
+					Action = (progress, cancellationToken) =>
+					{
+						printer.Connection.Connect();
+						return Task.CompletedTask;
+					}
+				});
 			}
 
 			if (AssetObject3D.AssetManager == null)
@@ -2108,6 +2118,10 @@ namespace MatterHackers.MatterControl
 		public Dictionary<string, HelpArticle> HelpArticlesByID { get; set; }
 
 		public string MainTabKey { get; internal set; }
+
+		public static List<StartupAction> StartupActions { get; } = new List<StartupAction>();
+
+		public static List<StartupTask> StartupTasks { get; } = new List<StartupTask>();
 
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 
@@ -2586,6 +2600,20 @@ If you experience adhesion problems, please re-run leveling."
 		public class CloudSyncEventArgs : EventArgs
 		{
 			public bool IsAuthenticated { get; set; }
+		}
+
+		public class StartupTask
+		{
+			public string Title { get; set; }
+			public int Priority { get; set; }
+			public Func<IProgress<ProgressStatus>, CancellationToken, Task> Action { get; set; }
+		}
+
+		public class StartupAction
+		{
+			public string Title { get; set; }
+			public int Priority { get; set; }
+			public Action Action { get; set; }
 		}
 	}
 
@@ -3168,10 +3196,16 @@ If you experience adhesion problems, please re-run leveling."
 			if (printer.Settings.PrinterSelected)
 			{
 				printer.ViewState.ViewMode = PartViewMode.Model;
-				UiThread.RunOnIdle(() =>
+
+				ApplicationController.StartupTasks.Add(new ApplicationController.StartupTask()
 				{
-					printer.Bed.LoadPlateFromHistory().ConfigureAwait(false);
-				}, 2);
+					Title = "Loading Bed".Localize(),
+					Priority = 100,
+					Action = (progress, cancellationToken) =>
+					{
+						return printer.Bed.LoadPlateFromHistory();
+					}
+				});
 			}
 
 			reporter?.Invoke(0.3, (loading != null) ? loading : "Plugins");
@@ -3187,6 +3221,52 @@ If you experience adhesion problems, please re-run leveling."
 			{
 				applicationController.ActivePrinter.Connection.OnIdle();
 			}, .1);
+
+			// Wired up to MainView.Load with the intent to fire startup actions and tasks in order with reporting
+			async void initialWindowLoad(object s, EventArgs e)
+			{
+				try
+				{
+					// Batch startup actions
+					await applicationController.Tasks.Execute(
+						"Finishing Startup".Localize(),
+						(progress, cancellationToken) =>
+						{
+							var status = new ProgressStatus();
+
+							int itemCount = ApplicationController.StartupActions.Count;
+
+							double i = 1;
+
+							foreach (var action in ApplicationController.StartupActions.OrderByDescending(t => t.Priority))
+							{
+								status.Status = action.Title;
+								progress.Report(status);
+
+								action.Action?.Invoke();
+								status.Progress0To1 = i++ / itemCount;
+								progress.Report(status);
+							}
+
+							return Task.CompletedTask;
+						});
+
+					// Batch startup tasks
+					foreach (var task in ApplicationController.StartupTasks.OrderByDescending(t => t.Priority))
+					{
+						await applicationController.Tasks.Execute(task.Title, task.Action);
+					}
+				}
+				catch
+				{
+				}
+
+				// Unhook after execution
+				applicationController.MainView.Load -= initialWindowLoad;
+			}
+
+			// Hook after first draw
+			applicationController.MainView.Load += initialWindowLoad;
 
 			return applicationController.MainView;
 		}
@@ -3212,5 +3292,4 @@ If you experience adhesion problems, please re-run leveling."
 		public string Name { get; set; }
 		public BedConfig SceneContext { get; set; }
 	}
-
 }

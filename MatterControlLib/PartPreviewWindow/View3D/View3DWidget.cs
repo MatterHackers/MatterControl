@@ -211,8 +211,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							Scene.SelectedItem = (IObject3D)treeView.SelectedNode.Tag;
 						}
-
-						// selectedObjectPanel.SetActiveItem((IObject3D)treeView.SelectedNode.Tag);
 					}
 				}
 			};
@@ -1813,35 +1811,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Scene_SelectionChanged(object sender, EventArgs e)
 		{
-			var selectedItem = Scene.SelectedItem;
-			foreach (var child in selectedObjectPanel.ContentPanel.Children)
+			if (deferEditorTillMouseUp)
 			{
-				child.Enabled = selectedItem != null;
-			}
-
-			if (selectedItem == null)
-			{
-
-				// Clear the TreeView and release node references when no item is selected
 				selectedObjectPanel.SetActiveItem(null);
-				treeView.SelectedNode = null;
-
-				return;
 			}
 			else
 			{
+				var selectedItem = Scene.SelectedItem;
+
 				// Change tree selection to current node
-				if (keyValues.TryGetValue(selectedItem, out TreeNode treeNode))
+				if (selectedItem != null
+					&& keyValues.TryGetValue(selectedItem, out TreeNode treeNode))
 				{
 					treeView.SelectedNode = treeNode;
 				}
+				else
+				{
+					// Clear the TreeView and release node references when no item is selected
+					treeView.SelectedNode = null;
+				}
 
 				selectedObjectPanel.SetActiveItem(selectedItem);
-			}
-
-			if (deferEditorTillMouseUp)
-			{
-				return;
 			}
 		}
 
