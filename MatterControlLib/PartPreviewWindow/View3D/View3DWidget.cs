@@ -1811,25 +1811,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Scene_SelectionChanged(object sender, EventArgs e)
 		{
-			var selectedItem = Scene.SelectedItem;
-
-			// Change tree selection to current node
-			if (selectedItem != null
-				&& keyValues.TryGetValue(selectedItem, out TreeNode treeNode))
-			{
-				treeView.SelectedNode = treeNode;
-			}
-				else
-			{
-				// Clear the TreeView and release node references when no item is selected
-				treeView.SelectedNode = null;
-			}
-
-			selectedObjectPanel.SetActiveItem(selectedItem);
-
 			if (deferEditorTillMouseUp)
 			{
-				return;
+				selectedObjectPanel.SetActiveItem(null);
+			}
+			else
+			{
+				var selectedItem = Scene.SelectedItem;
+
+				// Change tree selection to current node
+				if (selectedItem != null
+					&& keyValues.TryGetValue(selectedItem, out TreeNode treeNode))
+				{
+					treeView.SelectedNode = treeNode;
+				}
+				else
+				{
+					// Clear the TreeView and release node references when no item is selected
+					treeView.SelectedNode = null;
+				}
+
+				selectedObjectPanel.SetActiveItem(selectedItem);
 			}
 		}
 
