@@ -178,39 +178,42 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Margin = new BorderDouble(left: theme.DefaultContainerPadding + 12),
 			};
-			treeView.AfterSelect += (s, e) =>
-			{
-				// Ignore AfterSelect events if they're being driven by a SelectionChanged event
-				if (!assigningTreeNode)
-				{
-					Scene.SelectedItem = (IObject3D)treeView.SelectedNode.Tag;
-				}
-				selectedObjectPanel.SetActiveItem((IObject3D)treeView.SelectedNode.Tag);
-			};
 			treeView.NodeMouseClick += (s, e) =>
 			{
 				if (e is MouseEventArgs sourceEvent
-					&& s is GuiWidget clickedWidget
-					&& sourceEvent.Button == MouseButtons.Right)
+					&& s is GuiWidget clickedWidget)
 				{
-					UiThread.RunOnIdle(() =>
+					if (sourceEvent.Button == MouseButtons.Right)
 					{
-						var menu = ApplicationController.Instance.GetActionMenuForSceneItem((IObject3D)treeView.SelectedNode.Tag, Scene, true);
+						UiThread.RunOnIdle(() =>
+						{
+							var menu = ApplicationController.Instance.GetActionMenuForSceneItem((IObject3D)treeView.SelectedNode.Tag, Scene, true);
 
-						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-						systemWindow.ShowPopup(
-							new MatePoint(clickedWidget)
-							{
-								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-							},
-							new MatePoint(menu)
-							{
-								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-								AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
-							},
-							altBounds: new RectangleDouble(sourceEvent.X + 1, sourceEvent.Y + 1, sourceEvent.X + 1, sourceEvent.Y + 1));
-					});
+							var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+							systemWindow.ShowPopup(
+								new MatePoint(clickedWidget)
+								{
+									Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+									AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+								},
+								new MatePoint(menu)
+								{
+									Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+									AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
+								},
+								altBounds: new RectangleDouble(sourceEvent.X + 1, sourceEvent.Y + 1, sourceEvent.X + 1, sourceEvent.Y + 1));
+						});
+					}
+					else
+					{
+						// Ignore AfterSelect events if they're being driven by a SelectionChanged event
+						if (!assigningTreeNode)
+						{
+							Scene.SelectedItem = (IObject3D)treeView.SelectedNode.Tag;
+						}
+
+						// selectedObjectPanel.SetActiveItem((IObject3D)treeView.SelectedNode.Tag);
+					}
 				}
 			};
 			treeView.ScrollArea.ChildAdded += (s, e) =>
@@ -393,13 +396,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var rootNode = Object3DTreeBuilder.BuildTree(child, keyValues, theme);
 				treeNodeContainer.AddChild(rootNode);
 				rootNode.TreeView = treeView;
+			}
 
-				if (this.Parent != null)
-				{
-					assigningTreeNode = true;
-					treeView.SelectedNode = rootNode;
-					assigningTreeNode = false;
-				}
+			// Ensure selectedItem is selected
+			var selectedItem = sceneContext.Scene.SelectedItem;
+			if (selectedItem != null
+				&& keyValues.TryGetValue(selectedItem, out TreeNode treeNode))
+			{
+				treeView.SelectedNode = treeNode;
 			}
 		}
 
@@ -1817,10 +1821,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (selectedItem == null)
 			{
-				this.Scene.ClearSelection();
 
 				// Clear the TreeView and release node references when no item is selected
 				selectedObjectPanel.SetActiveItem(null);
+				treeView.SelectedNode = null;
+
 				return;
 			}
 			else
@@ -1830,6 +1835,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					treeView.SelectedNode = treeNode;
 				}
+
+				selectedObjectPanel.SetActiveItem(selectedItem);
 			}
 
 			if (deferEditorTillMouseUp)
