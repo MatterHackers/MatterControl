@@ -401,6 +401,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				treeView.SelectedNode = treeNode;
 			}
+
+			Invalidate();
 		}
 
 		private Dictionary<string, NamedAction> InitWorkspaceActions()
