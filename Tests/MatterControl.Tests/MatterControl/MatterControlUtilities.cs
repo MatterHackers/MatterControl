@@ -1033,7 +1033,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			foreach (string assetName in assetNames)
 			{
 				string friendlyName = Path.GetFileNameWithoutExtension(assetName);
-				Assert.IsTrue(testRunner.WaitForName($"Row Item {friendlyName}"), $"{friendlyName} part should exist after adding");
+				string fileName = Path.GetFileName(assetName);
+
+				// Look for either expected format (print queue differs from libraries)
+				Assert.IsTrue(
+					testRunner.WaitForName($"Row Item {friendlyName}", 2)
+					|| testRunner.WaitForName($"Row Item {fileName}", 2),
+					$"{friendlyName} part should exist after adding");
 			}
 		}
 
