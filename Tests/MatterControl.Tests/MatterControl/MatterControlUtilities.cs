@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static string PathToExportGcodeFolder
 		{
-			get { return TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "ExportedGcode", runName); }
+			get => TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "ExportedGcode", runName);
 		}
 
 		public static string GetTestItemPath(string queueItemToLoad)
@@ -1010,10 +1010,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// </summary>
 		/// <param name="testRunner"></param>
 		/// <param name="assetNames">The test assets to add to the library</param>
-		public static void AddTestAssetsToLibrary(this AutomationRunner testRunner, params string[] assetNames)
+		public static void AddTestAssetsToLibrary(this AutomationRunner testRunner, IEnumerable<string> assetNames, string targetLibrary = "Local Library Row Item Collection")
 		{
 			// Switch to the Local Library tab
-			testRunner.NavigateToFolder("Local Library Row Item Collection");
+			testRunner.NavigateToFolder(targetLibrary);
 
 			// Assert that the requested items are *not* in the list
 			foreach (string assetName in assetNames)
@@ -1033,7 +1033,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			foreach (string assetName in assetNames)
 			{
 				string friendlyName = Path.GetFileNameWithoutExtension(assetName);
-				Assert.IsTrue(testRunner.WaitForName($"Row Item {friendlyName}"), $"{friendlyName} part should exist after adding");
+				string fileName = Path.GetFileName(assetName);
+
+				// Look for either expected format (print queue differs from libraries)
+				Assert.IsTrue(
+					testRunner.WaitForName($"Row Item {friendlyName}", 2)
+					|| testRunner.WaitForName($"Row Item {fileName}", 2),
+					$"{friendlyName} part should exist after adding");
 			}
 		}
 

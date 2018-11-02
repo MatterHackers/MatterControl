@@ -24,7 +24,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
-				testRunner.AddTestAssetsToLibrary("Rook.amf");
+				testRunner.AddTestAssetsToLibrary(new[] { "Rook.amf" });
 
 				testRunner.AddItemToBedplate("", "Row Item Rook");
 

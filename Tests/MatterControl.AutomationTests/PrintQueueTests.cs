@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.OpenEmptyPartTab();
 
-				testRunner.AddTestAssetsToLibrary("Batman.stl");
+				testRunner.AddTestAssetsToLibrary(new[] { "Batman.stl" });
 
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
 				var scene = view3D.InteractionLayer.Scene;

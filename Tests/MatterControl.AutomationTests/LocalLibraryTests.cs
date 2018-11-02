@@ -15,7 +15,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.AddAndSelectPrinter();
-				testRunner.AddTestAssetsToLibrary("Batman.stl");
+				testRunner.AddTestAssetsToLibrary(new[] { "Batman.stl" });
 
 				return Task.CompletedTask;
 			});
@@ -27,7 +27,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.AddAndSelectPrinter();
-				testRunner.AddTestAssetsToLibrary("Rook.amf", "Batman.stl");
+				testRunner.AddTestAssetsToLibrary(new[] { "Rook.amf", "Batman.stl" });
 
 				return Task.CompletedTask;
 			});
@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.AddAndSelectPrinter();
-				testRunner.AddTestAssetsToLibrary("Rook.amf");
+				testRunner.AddTestAssetsToLibrary(new[] { "Rook.amf" });
 
 				return Task.CompletedTask;
 			}, overrideWidth: 1024, overrideHeight: 800);
@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.AddAndSelectPrinter();
 
-				testRunner.AddTestAssetsToLibrary("Rook.amf");
+				testRunner.AddTestAssetsToLibrary(new[] { "Rook.amf" });
 
 				testRunner.ClickByName("Row Item Rook");
 
@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.AddAndSelectPrinter();
 
-				testRunner.AddTestAssetsToLibrary("Rook.amf");
+				testRunner.AddTestAssetsToLibrary(new[] { "Rook.amf" });
 
 				// Select and remove item
 				testRunner.ClickByName("Row Item Rook");
@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.AddAndSelectPrinter();
 
-				testRunner.AddTestAssetsToLibrary("Rook.amf", "Batman.stl");
+				testRunner.AddTestAssetsToLibrary(new[] { "Rook.amf", "Batman.stl" });
 
 				// Select both items
 				testRunner.SelectListItems("Row Item Rook", "Row Item Batman");
