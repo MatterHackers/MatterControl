@@ -61,6 +61,7 @@ namespace MatterHackers.MatterControl
 			internalWidget.FocusChanged += (s, e) =>
 			{
 				internalWidget.TextColor = (internalWidget.Focused) ? theme.EditFieldColors.Focused.TextColor : theme.EditFieldColors.Inactive.TextColor;
+				noContentFieldDescription.TextColor = (internalWidget.Focused) ? theme.EditFieldColors.Focused.TextColor : theme.EditFieldColors.Inactive.TextColor;
 			};
 
 			this.ActualTextEditWidget.InternalTextEditWidget.BackgroundColor = Color.Transparent;

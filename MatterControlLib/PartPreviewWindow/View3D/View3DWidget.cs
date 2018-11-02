@@ -249,7 +249,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch
 			};
 
-			titleAndTreeView.AddChild(workspaceName = new InlineStringEdit(sceneContext.Scene.Name ?? "", theme, "WorkspaceName")
+			titleAndTreeView.AddChild(workspaceName = new InlineStringEdit(sceneContext.Scene.Name ?? "", theme, "WorkspaceName", editable: false)
 			{
 				Border = new BorderDouble(top: 1),
 				BorderColor = theme.SplitterBackground
@@ -722,7 +722,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Clear bed to get new MCX on disk for this item
 				printer.Bed.ClearPlate();
 
-				await printer.Bed.LoadContent(sceneContext.EditContext);
+				// Load current scene into new printer scene
+				await printer.Bed.LoadIntoCurrent(sceneContext.EditContext);
 
 				bool allInBounds = true;
 				foreach (var item in printer.Bed.Scene.VisibleMeshes())
@@ -1902,7 +1903,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Save()
 		{
-			ApplicationController.Instance.Tasks.Execute("Saving".Localize(), Printer.Bed.SaveChanges);
+			ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.SaveChanges);
 		}
 	}
 
