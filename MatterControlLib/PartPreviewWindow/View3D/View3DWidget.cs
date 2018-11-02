@@ -401,6 +401,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				treeView.SelectedNode = treeNode;
 			}
+
+			Invalidate();
 		}
 
 		private Dictionary<string, NamedAction> InitWorkspaceActions()
@@ -1803,7 +1805,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (e.InvalidateType == InvalidateType.Content)
 			{
-				this.RebuildTree();
+				UiThread.RunOnIdle(this.RebuildTree);
 			}
 		}
 
