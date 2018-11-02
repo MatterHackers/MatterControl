@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.EeProm
 			var settingsAreaScrollBox = new ScrollableWidget(true);
 			settingsAreaScrollBox.ScrollArea.HAnchor |= HAnchor.Stretch;
 			settingsAreaScrollBox.AnchorAll();
-			contentRow.AddChild(settingsAreaScrollBox);
+			ContentRow.AddChild(settingsAreaScrollBox);
 
 			settingsAreaScrollBox.AddChild(conterContent);
 

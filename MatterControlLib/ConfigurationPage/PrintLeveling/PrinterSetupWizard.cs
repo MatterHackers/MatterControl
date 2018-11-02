@@ -28,70 +28,48 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterHackers.Agg;
+using System.Collections.Generic;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.MatterControl.PrinterCommunication.Io;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
-	public class LevelingWizardPage : DialogPage
+	public abstract class PrinterSetupWizard
 	{
-		protected TextButton nextButton;
+		private IEnumerator<PrinterSetupWizardPage> pages;
+
+		protected abstract IEnumerator<PrinterSetupWizardPage> GetWizardSteps();
+
+		public string WindowTitle { get; internal set; }
+
 		protected PrinterConfig printer;
 
-		public LevelingWizardPage(LevelingWizard wizardContext, string headerText, string instructionsText)
+		public PrinterConfig Printer => printer;
+
+		public PrinterSetupWizard(PrinterConfig printer)
 		{
-			this.printer = wizardContext.Printer;
-			this.WindowTitle = wizardContext.WindowTitle;
-			this.HeaderText = headerText;
-
-			if (!string.IsNullOrEmpty(instructionsText))
-			{
-				contentRow.AddChild(
-					this.CreateTextField(instructionsText.Replace("\t", "    ")));
-			}
-
-			nextButton = new TextButton("Next".Localize(), theme)
-			{
-				Name = "Next Button",
-				BackgroundColor = theme.MinimalShade
-			};
-			nextButton.Click += (s, e) =>
-			{
-				wizardContext.ShowNextPage(this.DialogWindow);
-			};
-
-			this.AddPageAction(nextButton);
+			this.printer = printer;
+			this.pages = this.GetWizardSteps();
 		}
 
-		protected GuiWidget CreateTextField(string text)
+		public void ShowNextPage(DialogWindow dialogWindow)
 		{
-			return new WrappedTextWidget(text)
+			UiThread.RunOnIdle(() =>
 			{
-				Margin = new BorderDouble(left: 10, top: 10),
-				TextColor = theme.Colors.PrimaryTextColor,
-				HAnchor = HAnchor.Stretch
-			};
-		}
+				// Shutdown active page
+				pages.Current?.PageIsBecomingInactive();
+				pages.Current?.Close();
 
-		protected void ShowWizardFinished()
-		{
-			var doneButton = new TextButton("Done".Localize(), theme)
-			{
-				Name = "Done Button",
-				BackgroundColor = theme.MinimalShade
-			};
+				// Advance
+				pages.MoveNext();
 
-			doneButton.Click += (s, e) =>
-			{
-				this.DialogWindow.CloseOnIdle();
-			};
+				pages.Current?.PageIsBecomingActive();
 
-			this.AddPageAction(doneButton);
-
-			nextButton.Visible = false;
-			this.HideCancelButton();
+				dialogWindow.ChangeToPage(pages.Current);
+			});
 		}
 	}
 }

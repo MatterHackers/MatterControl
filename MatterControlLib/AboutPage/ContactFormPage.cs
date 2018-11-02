@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			this.WindowTitle = "MatterControl : " + "Submit Feedback".Localize();
 			this.HeaderText = "How can we improve?".Localize();
 
-			contentRow.Padding = theme.DefaultContainerPadding;
+			ContentRow.Padding = theme.DefaultContainerPadding;
 
 			submitButton = theme.CreateDialogButton("Submit".Localize());
 			submitButton.Click += (sender, eventArgs) =>
@@ -72,9 +72,9 @@ namespace MatterHackers.MatterControl.ContactForm
 				{
 					ContactFormRequest postRequest = new ContactFormRequest(questionInput.Text, detailInput.Text, emailInput.Text, nameInput.Text, "");
 
-					contentRow.RemoveAllChildren();
+					ContentRow.RemoveAllChildren();
 
-					contentRow.AddChild(messageContainer);
+					ContentRow.AddChild(messageContainer);
 
 					submitButton.Visible = false;
 
@@ -111,33 +111,33 @@ namespace MatterHackers.MatterControl.ContactForm
 			// Default sizing results in too much top whitespace, revise Subject row to only be as big as content
 			var subjectRow = CreateLabelRow("Subject".Localize());
 			subjectRow.VAnchor = VAnchor.Fit;
-			contentRow.AddChild(subjectRow);
-			contentRow.AddChild(questionInput = new MHTextEditWidget("", theme)
+			ContentRow.AddChild(subjectRow);
+			ContentRow.AddChild(questionInput = new MHTextEditWidget("", theme)
 			{
 				HAnchor = HAnchor.Stretch
 			});
-			contentRow.AddChild(questionErrorMessage = CreateErrorRow());
+			ContentRow.AddChild(questionErrorMessage = CreateErrorRow());
 
-			contentRow.AddChild(CreateLabelRow("Message".Localize()));
-			contentRow.AddChild(detailInput = new MHTextEditWidget("", theme, pixelHeight: 120, multiLine: true)
+			ContentRow.AddChild(CreateLabelRow("Message".Localize()));
+			ContentRow.AddChild(detailInput = new MHTextEditWidget("", theme, pixelHeight: 120, multiLine: true)
 			{
 				HAnchor = HAnchor.Stretch
 			});
-			contentRow.AddChild(detailErrorMessage = CreateErrorRow());
+			ContentRow.AddChild(detailErrorMessage = CreateErrorRow());
 
-			contentRow.AddChild(CreateLabelRow("Email Address".Localize()));
-			contentRow.AddChild(emailInput = new MHTextEditWidget("", theme)
+			ContentRow.AddChild(CreateLabelRow("Email Address".Localize()));
+			ContentRow.AddChild(emailInput = new MHTextEditWidget("", theme)
 			{
 				HAnchor = HAnchor.Stretch
 			});
-			contentRow.AddChild(emailErrorMessage = CreateErrorRow());
+			ContentRow.AddChild(emailErrorMessage = CreateErrorRow());
 
-			contentRow.AddChild(CreateLabelRow("Name".Localize()));
-			contentRow.AddChild(nameInput = new MHTextEditWidget("", theme)
+			ContentRow.AddChild(CreateLabelRow("Name".Localize()));
+			ContentRow.AddChild(nameInput = new MHTextEditWidget("", theme)
 			{
 				HAnchor = HAnchor.Stretch
 			});
-			contentRow.AddChild(nameErrorMessage = CreateErrorRow());
+			ContentRow.AddChild(nameErrorMessage = CreateErrorRow());
 		}
 
 		private GuiWidget CreateLabelRow(string labelText, int fontSize = 12, int height = 28)

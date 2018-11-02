@@ -53,9 +53,9 @@ namespace MatterHackers.MatterControl
 			this.WindowTitle = this.HeaderText = "MatterControl " + "Settings".Localize();
 			this.WindowSize = new Vector2(700 * GuiWidget.DeviceScale, 600 * GuiWidget.DeviceScale);
 
-			contentRow.Padding = theme.DefaultContainerPadding;
-			contentRow.Padding = 0;
-			contentRow.BackgroundColor = Color.Transparent;
+			ContentRow.Padding = theme.DefaultContainerPadding;
+			ContentRow.Padding = 0;
+			ContentRow.BackgroundColor = Color.Transparent;
 
 			var generalPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
 			};
-			contentRow.AddChild(generalSection);
+			ContentRow.AddChild(generalSection);
 
 			theme.ApplyBoxStyle(generalSection);
 
@@ -314,7 +314,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Fit,
 				Margin = 0
 			};
-			contentRow.AddChild(themeSection);
+			ContentRow.AddChild(themeSection);
 
 			theme.ApplyBoxStyle(themeSection);
 
@@ -329,7 +329,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Fit,
 				Margin = 0
 			};
-			contentRow.AddChild(advancedSection);
+			ContentRow.AddChild(advancedSection);
 
 			theme.ApplyBoxStyle(advancedSection);
 
@@ -388,7 +388,7 @@ namespace MatterHackers.MatterControl
 			advancedPanel.Children<SettingsItem>().First().Border = new BorderDouble(0, 1);
 
 			// Enforce consistent SectionWidget spacing and last child borders
-			foreach (var section in contentRow.Children<SectionWidget>())
+			foreach (var section in ContentRow.Children<SectionWidget>())
 			{
 				section.Margin = new BorderDouble(0, 10, 0, 0);
 

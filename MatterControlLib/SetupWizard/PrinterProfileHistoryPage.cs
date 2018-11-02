@@ -31,8 +31,8 @@ namespace MatterHackers.MatterControl.SetupWizard
 				VAnchor = VAnchor.Stretch,
 			};
 			scrollWindow.ScrollArea.HAnchor = HAnchor.Stretch;
-			contentRow.FlowDirection = FlowDirection.TopToBottom;
-			contentRow.AddChild(scrollWindow);
+			ContentRow.FlowDirection = FlowDirection.TopToBottom;
+			ContentRow.AddChild(scrollWindow);
 
 			var revertButton = theme.CreateDialogButton("Restore".Localize());
 			revertButton.Click += async (s, e) =>

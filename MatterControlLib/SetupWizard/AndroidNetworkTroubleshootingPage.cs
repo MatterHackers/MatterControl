@@ -37,7 +37,7 @@ namespace MatterHackers.MatterControl
 	{
 		public NetworkTroubleshooting()
 		{
-			contentRow.AddChild(
+			ContentRow.AddChild(
 				new TextWidget(
 					"MatterControl was unable to connect to the Internet. Please check your Wifi connection and try again".Localize() + "...",
 					textColor: ActiveTheme.Instance.PrimaryTextColor));

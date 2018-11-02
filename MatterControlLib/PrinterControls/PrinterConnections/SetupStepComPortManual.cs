@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			this.printer = printer;
 
 			FlowLayoutWidget printerComPortContainer = createComPortContainer();
-			contentRow.AddChild(printerComPortContainer);
+			ContentRow.AddChild(printerComPortContainer);
 
 			//Construct buttons
 			nextButton = theme.CreateDialogButton("Done".Localize());

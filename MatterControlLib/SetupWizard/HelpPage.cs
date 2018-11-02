@@ -76,8 +76,8 @@ namespace MatterHackers.MatterControl
 			};
 			tabControl.TabBar.BackgroundColor = theme.TabBarBackground;
 
-			contentRow.AddChild(tabControl);
-			contentRow.Padding = 0;
+			ContentRow.AddChild(tabControl);
+			ContentRow.Padding = 0;
 
 			// add the mouse commands
 			var mouseControls = new FlowLayoutWidget()

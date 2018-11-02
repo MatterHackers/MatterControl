@@ -27,19 +27,58 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class ProbeCalibrationWizard : LevelingWizard
+	public class ProbeCalibrationWizard : PrinterSetupWizard
 	{
 		public ProbeCalibrationWizard(PrinterConfig printer)
 			: base(printer)
 		{
+		}
+
+		public static bool NeedsToBeRun(PrinterConfig printer)
+		{
+			// we have a probe that we are using and we have not done leveling yet
+			return UsingZProbe(printer) && !printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated);
+		}
+
+		public static void Start(PrinterConfig printer, ThemeConfig theme)
+		{
+			// turn off print leveling
+			PrintLevelingStream.AllowLeveling = false;
+
+			var levelingContext = new ProbeCalibrationWizard(printer)
+			{
+				WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Probe Calibration Wizard".Localize()
+			};
+
+			var probeCalibrationWizardWindow = DialogWindow.Show(new LevelingWizardRootPage(levelingContext)
+			{
+				WindowTitle = levelingContext.WindowTitle
+			});
+			probeCalibrationWizardWindow.Closed += (s, e) =>
+			{
+				// If leveling was on when we started, make sure it is on when we are done.
+				PrintLevelingStream.AllowLeveling = true;
+
+				probeCalibrationWizardWindow = null;
+
+				// make sure we raise the probe on close
+				if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
+					&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
+					&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
+				{
+					// make sure the servo is retracted
+					var servoRetract = printer.Settings.GetValue<double>(SettingsKey.z_servo_retracted_angle);
+					printer.Connection.QueueLine($"M280 P0 S{servoRetract}");
+				}
+			};
 		}
 
 		public static bool UsingZProbe(PrinterConfig printer)
@@ -52,13 +91,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe);
 		}
 
-		public static bool NeedsToBeRun(PrinterConfig printer)
-		{
-			// we have a probe that we are using and we have not done leveling yet
-			return UsingZProbe(printer) && !printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated);
-		}
-
-		protected override IEnumerator<LevelingWizardPage> GetWizardSteps()
+		protected override IEnumerator<PrinterSetupWizardPage> GetWizardSteps()
 		{
 			var levelingStrings = new LevelingStrings(printer.Settings);
 			var autoProbePositions = new List<ProbePosition>(3);
@@ -72,7 +105,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// make a welcome page if this is the first time calibrating the probe
 			if (!printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated))
 			{
-				yield return new LevelingWizardPage(
+				yield return new PrinterSetupWizardPage(
 					this,
 					levelingStrings.InitialPrinterSetupStepText,
 					string.Format(
@@ -82,7 +115,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			// show what steps will be taken
-			yield return new LevelingWizardPage(
+			yield return new PrinterSetupWizardPage(
 				this,
 				"Probe Calibration Overview".Localize(),
 				string.Format(
@@ -92,8 +125,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					"Probe the bed at the center".Localize(),
 					"Manually measure the extruder at the center".Localize(),
 					"We should be done in less than five minutes.".Localize(),
-					levelingStrings.ClickNext));
-
+					"Click 'Next' to continue.".Localize()));
 			// add in the homing printer page
 			yield return new HomePrinterPage(
 				this,
@@ -111,7 +143,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				var bedTemperature = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?
 					printer.Settings.GetValue<double>(SettingsKey.bed_temperature)
 					: 0;
-				if(bedTemperature > 0)
+				if (bedTemperature > 0)
 				{
 					printer.Connection.TargetBedTemperature = bedTemperature;
 				}

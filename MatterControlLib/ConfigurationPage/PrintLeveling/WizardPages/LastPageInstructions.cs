@@ -39,11 +39,11 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class LastPageInstructions : LevelingWizardPage
+	public class LastPageInstructions : PrinterSetupWizardPage
 	{
 		private List<ProbePosition> probePositions;
 
-		public LastPageInstructions(LevelingWizard context, string pageDescription, bool useZProbe, List<ProbePosition> probePositions)
+		public LastPageInstructions(PrinterSetupWizard context, string pageDescription, bool useZProbe, List<ProbePosition> probePositions)
 			: base(context, pageDescription, "")
 		{
 			this.probePositions = probePositions;
@@ -54,14 +54,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				+ "If you wish to re-calibrate leveling in the future:".Localize() + "\n"
 				+ "    1. Select the 'Controls' tab on the right" + "\n"
 				+ "    2. Look for the calibration section (pictured below)".Localize() + "\n";
-			contentRow.AddChild(this.CreateTextField(calibrated));
+			ContentRow.AddChild(this.CreateTextField(calibrated));
 
-			contentRow.AddChild(new ImageWidget(AggContext.StaticData.LoadImage(Path.Combine("Images", "leveling.png")))
+			ContentRow.AddChild(new ImageWidget(AggContext.StaticData.LoadImage(Path.Combine("Images", "leveling.png")))
 			{
 				HAnchor = HAnchor.Center
 			});
 
-			contentRow.AddChild(this.CreateTextField("Click 'Done' to close this window.".Localize()));
+			ContentRow.AddChild(this.CreateTextField("Click 'Done' to close this window.".Localize()));
 
 			this.ShowWizardFinished();
 		}

@@ -59,10 +59,10 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Stretch,
 			};
 			scrollableWidget.ScrollArea.HAnchor = HAnchor.Stretch;
-			contentRow.AddChild(scrollableWidget);
+			ContentRow.AddChild(scrollableWidget);
 
 			// No right padding removes unexpected spacing to the right of scrollbar
-			contentRow.Padding = contentRow.Padding.Clone(right: 0);
+			ContentRow.Padding = ContentRow.Padding.Clone(right: 0);
 
 			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{

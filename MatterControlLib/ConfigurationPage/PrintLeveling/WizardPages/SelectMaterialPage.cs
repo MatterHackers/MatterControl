@@ -29,21 +29,39 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class SelectMaterialPage : LevelingWizardPage
+	public class SelectMaterialPage : PrinterSetupWizardPage
 	{
-		public SelectMaterialPage(LevelingWizard context, string headerText, string instructionsText)
+		public SelectMaterialPage(PrinterSetupWizard context, string headerText, string instructionsText, bool onlyLoad)
 			: base(context, headerText, instructionsText)
 		{
-			contentRow.AddChild(
+			ContentRow.AddChild(
 				new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, theme)
 				{
 					BackgroundColor = Color.Transparent,
 					Margin = new BorderDouble(0, 0, 0, 15)
 				});
+
+			NextButton.Text = "Load";
+
+			if (!onlyLoad)
+			{
+				var alreadyLoadedButton = new TextButton("Already Loaded".Localize(), theme)
+				{
+					Name = "Already Loaded Button",
+					BackgroundColor = theme.MinimalShade
+				};
+				alreadyLoadedButton.Click += (s, e) =>
+				{
+					this.DialogWindow.CloseOnIdle();
+				};
+
+				this.AddPageAction(alreadyLoadedButton);
+			}
 		}
 	}
 }

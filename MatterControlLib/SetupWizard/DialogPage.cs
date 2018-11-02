@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl
 	public class DialogPage : FlowLayoutWidget
 	{
 		protected GuiWidget headerRow;
-		protected FlowLayoutWidget contentRow;
+		public FlowLayoutWidget ContentRow { get; }
 		protected FlowLayoutWidget footerRow;
 
 		private TextWidget headerLabel;
@@ -106,14 +106,14 @@ namespace MatterHackers.MatterControl
 			headerRow.AddChild(headerLabel);
 
 			// Create the main control container
-			contentRow = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			ContentRow = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				Padding = new BorderDouble(10),
 				BackgroundColor = theme.SectionBackgroundColor,
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch
 			};
-			this.AddChild(contentRow);
+			this.AddChild(ContentRow);
 
 			// Create the footer (button) container
 			footerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl
 
 			headerLabel.PointSize = 14;
 			headerLabel.TextColor = theme.Colors.PrimaryTextColor;
-			contentRow.Padding = new BorderDouble(5);
+			ContentRow.Padding = new BorderDouble(5);
 
 			footerRow.Padding = 0;
 			footerRow.Margin = new BorderDouble(top: theme.DefaultContainerPadding);

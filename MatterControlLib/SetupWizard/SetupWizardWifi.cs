@@ -42,14 +42,14 @@ namespace MatterHackers.MatterControl
 		{
 			this.WindowTitle = "Setup Wizard".Localize();
 
-			contentRow.AddChild(new TextWidget("Wifi Setup".Localize() + ":", 0, 0, labelFontSize)
+			ContentRow.AddChild(new TextWidget("Wifi Setup".Localize() + ":", 0, 0, labelFontSize)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				Margin = new BorderDouble(bottom: 10)
 			});
 
-			contentRow.AddChild(new TextWidget("Some features may require an internet connection.".Localize(), 0, 0, 12, textColor: ActiveTheme.Instance.PrimaryTextColor));
-			contentRow.AddChild(new TextWidget("Would you like to setup Wifi?".Localize(), 0, 0, 12, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			ContentRow.AddChild(new TextWidget("Some features may require an internet connection.".Localize(), 0, 0, 12, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			ContentRow.AddChild(new TextWidget("Would you like to setup Wifi?".Localize(), 0, 0, 12, textColor: ActiveTheme.Instance.PrimaryTextColor));
 
 			var connectButtonContainer = new FlowLayoutWidget()
 			{
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl
 			connectButtonContainer.AddChild(skipButton);
 			connectButtonContainer.AddChild(new HorizontalSpacer());
 
-			contentRow.AddChild(connectButtonContainer);
+			ContentRow.AddChild(connectButtonContainer);
 
 			this.AddPageAction(nextButton);
 		}

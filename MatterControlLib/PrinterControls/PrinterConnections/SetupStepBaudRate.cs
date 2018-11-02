@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			this.printer = printer;
 			printerBaudRateContainer = createPrinterBaudRateContainer();
-			contentRow.AddChild(printerBaudRateContainer);
+			ContentRow.AddChild(printerBaudRateContainer);
 			{
 				nextButton = theme.CreateDialogButton("Continue".Localize());
 				nextButton.Click += (s, e) =>

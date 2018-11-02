@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl
 			CriteriaRow.ResetAll();
 
 			// Clear the main container
-			contentRow.CloseAllChildren();
+			ContentRow.CloseAllChildren();
 
 			// Regen and refresh the troubleshooting criteria
 			var printerNameLabel = new TextWidget(string.Format("{0}:", "Connection Troubleshooting".Localize()), 0, 0, labelFontSize)
@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl
 				() => printer.Connection.Connect(),
 				theme);
 
-			contentRow.AddChild(connectToPrinterRow);
+			ContentRow.AddChild(connectToPrinterRow);
 
 			if (CriteriaRow.ActiveErrorItem != null) {
 
@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl
 						TextColor = theme.PrimaryAccentColor
 					});
 
-				contentRow.AddChild(errorText);
+				ContentRow.AddChild(errorText);
 			}
 		}
 

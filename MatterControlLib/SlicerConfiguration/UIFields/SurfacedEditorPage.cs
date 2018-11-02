@@ -58,8 +58,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			tabControl.TabBar.BackgroundColor = theme.TabBarBackground;
 			tabControl.TabBar.Padding = 0;
 
-			contentRow.AddChild(tabControl);
-			contentRow.Padding = 0;
+			ContentRow.AddChild(tabControl);
+			ContentRow.Padding = 0;
 
 			var editContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
