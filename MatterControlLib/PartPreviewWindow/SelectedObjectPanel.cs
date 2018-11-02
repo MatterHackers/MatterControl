@@ -54,6 +54,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GuiWidget editorPanel;
 
+		private string editorTitle = "Properties".Localize();
+
 		public SelectedObjectPanel(View3DWidget view3DWidget, BedConfig sceneContext, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
@@ -140,7 +142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			scrollableWidget.AddChild(editorPanel);
 			scrollableWidget.ScrollArea.HAnchor = HAnchor.Stretch;
 
-			editorSectionWidget = new SectionWidget("Editor", scrollableWidget, theme, toolbar, expandingContent: false, defaultExpansion: true, setContentVAnchor: false)
+			editorSectionWidget = new SectionWidget(editorTitle, scrollableWidget, theme, toolbar, expandingContent: false, defaultExpansion: true, setContentVAnchor: false)
 			{
 				VAnchor = VAnchor.Stretch
 			};
@@ -181,6 +183,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Allow caller to clean up with passing null for selectedItem
 			if (item == null)
 			{
+				editorSectionWidget.Text = editorTitle;
 				return;
 			}
 
