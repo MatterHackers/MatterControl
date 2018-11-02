@@ -1010,10 +1010,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// </summary>
 		/// <param name="testRunner"></param>
 		/// <param name="assetNames">The test assets to add to the library</param>
-		public static void AddTestAssetsToLibrary(this AutomationRunner testRunner, params string[] assetNames)
+		public static void AddTestAssetsToLibrary(this AutomationRunner testRunner, IEnumerable<string> assetNames, string targetLibrary = "Local Library Row Item Collection")
 		{
 			// Switch to the Local Library tab
-			testRunner.NavigateToFolder("Local Library Row Item Collection");
+			testRunner.NavigateToFolder(targetLibrary);
 
 			// Assert that the requested items are *not* in the list
 			foreach (string assetName in assetNames)
