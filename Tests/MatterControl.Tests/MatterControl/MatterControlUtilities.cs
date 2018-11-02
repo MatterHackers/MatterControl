@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static string PathToExportGcodeFolder
 		{
-			get { return TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "ExportedGcode", runName); }
+			get => TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "ExportedGcode", runName);
 		}
 
 		public static string GetTestItemPath(string queueItemToLoad)

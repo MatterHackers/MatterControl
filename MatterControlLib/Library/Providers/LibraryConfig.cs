@@ -88,10 +88,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public ILibraryContainer ActiveContainer
 		{
-			get
-			{
-				return activeContainer;
-			}
+			get => activeContainer;
 			set
 			{
 				if (activeContainer == value)
