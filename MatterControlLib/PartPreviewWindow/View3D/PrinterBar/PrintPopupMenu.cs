@@ -102,7 +102,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					optionsPanel.AddChild(row);
 				}
 
-				var subPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
+				var subPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				{
+					Margin = new BorderDouble(2, 0)
+				};
 
 				var sectionWidget = new SectionWidget("Advanced", subPanel, menuTheme, expanded: true)
 				{
@@ -134,7 +137,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							allUiFields));
 				}
 
-				theme.ApplyBoxStyle(sectionWidget);
+				menuTheme.ApplyBoxStyle(sectionWidget);
 
 				sectionWidget.Margin = new BorderDouble(0, 10);
 				sectionWidget.ContentPanel.Children<SettingsRow>().First().Border = new BorderDouble(0, 1);
