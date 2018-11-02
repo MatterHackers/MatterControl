@@ -435,8 +435,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					// List items
 					if (itemModel != null)
 					{
-						var activeContext = ApplicationController.Instance.DragDropData;
-						activeContext.SceneContext?.AddToPlate(new[] { itemModel });
+						ApplicationController.Instance.OpenIntoNewTab(new[] { itemModel });
 					}
 				}
 			});

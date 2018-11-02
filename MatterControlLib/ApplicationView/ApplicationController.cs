@@ -800,6 +800,15 @@ namespace MatterHackers.MatterControl
 			operationIconsByType.Add(typeof(ImageObject3D), () => AggContext.StaticData.LoadIcon("140.png", 16, 16, theme.InvertIcons));
 		}
 
+		public void OpenIntoNewTab(IEnumerable<ILibraryItem> selectedLibraryItems)
+		{
+			this.MainView.CreatePartTab().ContinueWith(task =>
+			{
+				var workspace = this.Workspaces.Last();
+				workspace.SceneContext.AddToPlate(selectedLibraryItems);
+			});
+		}
+
 		internal void BlinkTab(ITab tab)
 		{
 			var theme = this.Theme;

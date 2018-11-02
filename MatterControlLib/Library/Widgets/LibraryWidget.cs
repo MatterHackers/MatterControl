@@ -698,11 +698,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
-					ApplicationController.Instance.MainView.CreatePartTab().ContinueWith(task =>
-					{
-						var workspace = ApplicationController.Instance.Workspaces.Last();
-						workspace.SceneContext.AddToPlate(selectedLibraryItems);
-					});
+					ApplicationController.Instance.OpenIntoNewTab(selectedLibraryItems);
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
