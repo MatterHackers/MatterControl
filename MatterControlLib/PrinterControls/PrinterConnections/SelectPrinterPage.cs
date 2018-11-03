@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -39,8 +40,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
 	public class SelectPrinterPage : DialogPage
 	{
-		public SelectPrinterPage(string continueButtonText)
+		private Action<PrinterConfig> printerLoaded;
+
+		public SelectPrinterPage(string continueButtonText, Action<PrinterConfig> printerLoaded = null)
 		{
+			this.printerLoaded = printerLoaded;
+
 			this.WindowTitle = "Select Printer".Localize();
 			this.HeaderText = "Select a printer to continue".Localize();
 
@@ -104,8 +109,19 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void SwitchToPrinter(PrinterInfo printerInfo)
 		{
-			// Switch to new printer
-			PrinterDetails.SwitchPrinters(printerInfo.ID);
+			if (printerLoaded == null)
+			{
+				// Switch to the given printer and load the most recent bed plate
+				PrinterDetails.SwitchPrinters(printerInfo.ID);
+			}
+			else
+			{
+				// Switch to the given printer and let the caller do as they must
+				PrinterDetails.OpenPrinterAsync(printerInfo.ID).ContinueWith(task =>
+				{
+					printerLoaded?.Invoke(task.Result);
+				});
+			}
 
 			this.DialogWindow.CloseOnIdle();
 		}
