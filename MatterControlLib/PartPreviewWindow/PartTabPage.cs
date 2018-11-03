@@ -135,7 +135,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var leftBar = new GuiWidget()
 			{
 				VAnchor = VAnchor.Stretch,
-				HAnchor = HAnchor.Fit
+				HAnchor = HAnchor.Fit,
+				Border = new BorderDouble(top: 1, right: 1),
+				BorderColor = theme.BorderColor20,
 			};
 			favoritesBarAndView3DWidget.AddChild(leftBar);
 
@@ -146,9 +148,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "LibraryView",
 				// Drop containers
 				ContainerFilter = (container) => false,
-				BackgroundColor = theme.ActiveTabColor,
-				Border = new BorderDouble(top: 1, right: 1),
-				BorderColor = theme.BorderColor20,
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Stretch,
 				AllowContextMenu = false,
