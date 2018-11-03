@@ -92,7 +92,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						|| stringEvent.Data == SettingsKey.print_leveling_solution
 						|| stringEvent.Data == SettingsKey.bed_temperature
 						|| stringEvent.Data == SettingsKey.print_leveling_enabled
-						|| stringEvent.Data == SettingsKey.print_leveling_required_to_print))
+						|| stringEvent.Data == SettingsKey.print_leveling_required_to_print
+						|| stringEvent.Data == SettingsKey.filament_has_been_loaded))
 				{
 					SetButtonStates();
 				}
