@@ -236,7 +236,22 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 			return null;
 		}
 
+		/// <summary>
+		/// Opens the given printer and loads the most recent plate from history
+		/// </summary>
+		/// <param name="printerID">The printerID to load</param>
 		public static void SwitchPrinters(string printerID)
+		{
+			OpenPrinterAsync(printerID).ContinueWith(task =>
+			{
+				if (task.Result is PrinterConfig printer)
+				{
+					printer.Bed.LoadPlateFromHistory().ConfigureAwait(false);
+				}
+			});
+		}
+
+		public static async Task<PrinterConfig> OpenPrinterAsync(string printerID)
 		{
 			var activePrinter = ApplicationController.Instance.ActivePrinter;
 
@@ -273,23 +288,25 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 						VAnchor = VAnchor.Center
 					});
 
-					AppContext.RootSystemWindow.AddChild(reloadingOverlay);
-
-					ProfileManager.Instance.LastProfileID = printerID;
-					Task.Run(() =>
+					try
 					{
-						ProfileManager.Instance.LoadPrinter().ContinueWith(task =>
-						{
-							var printer = task.Result;
+						AppContext.RootSystemWindow.AddChild(reloadingOverlay);
 
-							// TODO: Alternatively we could hold and restore the Scene from the prior printer
-							printer.Bed.LoadPlateFromHistory().ConfigureAwait(false);
+						ProfileManager.Instance.LastProfileID = printerID;
 
-							AppContext.RootSystemWindow.RemoveChild(reloadingOverlay);
-						});
-					});
+						return await Task.Run(ProfileManager.Instance.LoadPrinter);
+					}
+					catch
+					{
+					}
+					finally
+					{
+						AppContext.RootSystemWindow.RemoveChild(reloadingOverlay);
+					}
 				}
 			}
+
+			return null;
 		}
 
 		private GuiWidget AddHeading(ImageBuffer icon, string text)

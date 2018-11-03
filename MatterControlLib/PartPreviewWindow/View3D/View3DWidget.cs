@@ -700,15 +700,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// If no active printer but profiles exist, show select printer
 				UiThread.RunOnIdle(() =>
 				{
-					var window = DialogWindow.Show(new SelectPrinterPage("Next".Localize()));
-					window.Closed += (s2, e2) =>
-					{
-						if (ApplicationController.Instance.ActivePrinter is PrinterConfig activePrinter
-							&& activePrinter.Settings.PrinterSelected)
-						{
-							CopyPlateToPrinter(sceneContext, activePrinter);
-						}
-					};
+					DialogWindow.Show(
+						new SelectPrinterPage(
+							"Next".Localize(),
+							(loadedPrinter) =>
+							{
+								if (loadedPrinter is PrinterConfig activePrinter
+									&& activePrinter.Settings.PrinterSelected)
+								{
+									CopyPlateToPrinter(sceneContext, activePrinter);
+								}
+							}));
 				});
 			}
 		}
