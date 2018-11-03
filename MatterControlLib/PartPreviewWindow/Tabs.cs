@@ -370,11 +370,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (iconImage != null)
 			{
-				tabPill = new TabPill(tabLabel, ActiveTheme.Instance.PrimaryTextColor, iconImage, pointSize);
+				tabPill = new TabPill(tabLabel, theme.TextColor, iconImage, pointSize);
 			}
 			else
 			{
-				tabPill = new TabPill(tabLabel, ActiveTheme.Instance.PrimaryTextColor, tabImageUrl, pointSize);
+				tabPill = new TabPill(tabLabel, theme.TextColor, tabImageUrl, pointSize);
 			}
 			tabPill.Margin = (hasClose) ? new BorderDouble(right: 16) : 0;
 

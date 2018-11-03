@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl
 
 			ContentRow.AddChild(new TextWidget("Macro Name".Localize() + ":", 0, 0, 12)
 			{
-				TextColor = theme.Colors.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 0, 0, 1)
 			});
@@ -71,14 +71,14 @@ namespace MatterHackers.MatterControl
 
 			ContentRow.AddChild(macroNameError = new TextWidget("Give the macro a name".Localize() + ".", 0, 0, 10)
 			{
-				TextColor = theme.Colors.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			});
 
 			ContentRow.AddChild(new TextWidget("Macro Commands".Localize() + ":", 0, 0, 12)
 			{
-				TextColor = theme.Colors.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 0, 0, 1)
 			});
@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl
 
 			ContentRow.AddChild(macroCommandError = new TextWidget("This should be in 'G-Code'".Localize() + ".", 0, 0, 10)
 			{
-				TextColor = theme.Colors.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			});

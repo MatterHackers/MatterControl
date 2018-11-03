@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			{
 				AutoExpandBoundsToText = true,
 				Margin = new BorderDouble(0, 5),
-				TextColor = theme.Colors.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Left
 			};
 
@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl.ContactForm
 
 			labelContainer.AddChild(new TextWidget(labelText, pointSize: fontSize)
 			{
-				TextColor = theme.Colors.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				VAnchor = VAnchor.Bottom,
 				HAnchor = HAnchor.Left,
 				Margin = new BorderDouble(bottom: 2)

@@ -587,7 +587,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Center
 			});
 
-			var timeWidget = new TextWidget("", pointSize: 22, textColor: theme.Colors.PrimaryTextColor)
+			var timeWidget = new TextWidget("", pointSize: 22, textColor: theme.TextColor)
 			{
 				AutoExpandBoundsToText = true,
 				Margin = new BorderDouble(10, 0, 0, 0),

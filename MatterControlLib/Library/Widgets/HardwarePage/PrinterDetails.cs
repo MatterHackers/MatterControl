@@ -325,7 +325,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 			row.AddChild(
 				new TextWidget(
 					text,
-					textColor: theme.Colors.PrimaryTextColor,
+					textColor: theme.TextColor,
 					pointSize: theme.DefaultFontSize)
 					{
 						VAnchor = VAnchor.Center
@@ -344,7 +344,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 			row.AddChild(
 				new TextWidget(
 					text,
-					textColor: theme.Colors.PrimaryTextColor,
+					textColor: theme.TextColor,
 					pointSize: theme.DefaultFontSize));
 
 			return row;

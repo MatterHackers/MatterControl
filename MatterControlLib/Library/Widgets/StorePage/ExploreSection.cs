@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 			if (content.group_title != null)
 			{
-				this.AddChild(new TextWidget(content.group_title, pointSize: theme.H1PointSize, textColor: ActiveTheme.Instance.PrimaryTextColor, bold: true)
+				this.AddChild(new TextWidget(content.group_title, pointSize: theme.H1PointSize, textColor: theme.TextColor, bold: true)
 				{
 					HAnchor = HAnchor.Left,
 					Margin = new BorderDouble(leftRightMargin, 5)

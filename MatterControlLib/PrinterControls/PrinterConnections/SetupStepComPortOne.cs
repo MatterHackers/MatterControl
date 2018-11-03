@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			var printerMessageOne = new TextWidget("MatterControl will now attempt to auto-detect printer.".Localize(), 0, 0, 10)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			};
@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			var printerMessageTwo = new TextWidget(string.Format("1.) {0} ({1}).", "Disconnect printer".Localize(), "if currently connected".Localize()), 0, 0, 12)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			};
@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			var printerMessageThree = new TextWidget(string.Format("2.) {0} '{1}'.", "Press".Localize(), "Continue".Localize()), 0, 0, 12)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			};
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			var setupManualConfigurationOrSkipConnectionWidget = new TextWidget("You can also".Localize() + ":", 0, 0, 10)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			};
@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			var manualLink = new LinkLabel("Manually Configure Connection".Localize(), theme)
 			{
 				Margin = new BorderDouble(0, 5),
-				TextColor = theme.Colors.PrimaryTextColor
+				TextColor = theme.TextColor
 			};
 			manualLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			var printerMessageFour = new TextWidget("or".Localize(), 0, 0, 10)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			};
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			var skipConnectionLink = new LinkLabel("Skip Connection Setup".Localize(), theme)
 			{
 				Margin = new BorderDouble(0, 8),
-				TextColor = theme.Colors.PrimaryTextColor
+				TextColor = theme.TextColor
 			};
 			skipConnectionLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{

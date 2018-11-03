@@ -73,8 +73,8 @@ namespace MatterHackers.MatterControl
 			{
 				HAnchor = HAnchor.Center | HAnchor.Fit
 			};
-			productTitle.AddChild(new TextWidget("MatterControl".Localize(), textColor: theme.Colors.PrimaryTextColor, pointSize: 20) { Margin = new BorderDouble(right: 3) });
-			productTitle.AddChild(new TextWidget("TM".Localize(), textColor: theme.Colors.PrimaryTextColor, pointSize: 7) { VAnchor = VAnchor.Top });
+			productTitle.AddChild(new TextWidget("MatterControl".Localize(), textColor: theme.TextColor, pointSize: 20) { Margin = new BorderDouble(right: 3) });
+			productTitle.AddChild(new TextWidget("TM".Localize(), textColor: theme.TextColor, pointSize: 7) { VAnchor = VAnchor.Top });
 
 			altHeadingRow.AddChild(productInfo);
 			productInfo.AddChild(productTitle);
@@ -103,13 +103,13 @@ namespace MatterHackers.MatterControl
 			};
 
 			productInfo.AddChild(
-				new TextWidget("Version".Localize() + " " + VersionInfo.Instance.BuildVersion, textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
+				new TextWidget("Version".Localize() + " " + VersionInfo.Instance.BuildVersion, textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 				{
 					HAnchor = HAnchor.Center
 				});
 
 			productInfo.AddChild(
-				new TextWidget("Developed By".Localize() + ": " + "MatterHackers", textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
+				new TextWidget("Developed By".Localize() + ": " + "MatterHackers", textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 				{
 					HAnchor = HAnchor.Center
 				});
@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl
 				new WrappedTextWidget(
 					"MatterControl is made possible by the team at MatterHackers and other open source software".Localize() + ":",
 					pointSize: theme.DefaultFontSize,
-					textColor: theme.Colors.PrimaryTextColor)
+					textColor: theme.TextColor)
 				{
 					HAnchor = HAnchor.Stretch,
 					Margin = new BorderDouble(0, 15)
@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl
 			this.AddPageAction(feedbackButton, highlightFirstAction: false);
 
 			ContentRow.AddChild(
-				new TextWidget("Copyright © 2018 MatterHackers, Inc.", textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
+				new TextWidget("Copyright © 2018 MatterHackers, Inc.", textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 				{
 					HAnchor = HAnchor.Center,
 				});
@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl
 			var siteLink = new LinkLabel("www.matterhackers.com", theme)
 			{
 				HAnchor = HAnchor.Center,
-				TextColor = theme.Colors.PrimaryTextColor
+				TextColor = theme.TextColor
 			};
 			siteLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
@@ -221,7 +221,7 @@ namespace MatterHackers.MatterControl
 				{
 					string content = AggContext.StaticData.ReadAllText(filePath);
 
-					this.AddChild(new WrappedTextWidget(content, theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+					this.AddChild(new WrappedTextWidget(content, theme.DefaultFontSize, textColor: theme.TextColor)
 					{
 						HAnchor = HAnchor.Stretch
 					});

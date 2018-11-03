@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			GuiWidget content;
 
-			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 			{
 				Padding = MenuPadding,
 			};
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					VAnchor = VAnchor.Fit
 				};
 
-				content.AddChild(new TextWidget(shortCut, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+				content.AddChild(new TextWidget(shortCut, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 				{
 					HAnchor = HAnchor.Right
 				});
@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				arrow.LineTo(x - 3, y + 5);
 				arrow.LineTo(x - 3, y - 5);
 
-				graphics2D.Render(arrow, theme.Colors.PrimaryTextColor);
+				graphics2D.Render(arrow, theme.TextColor);
 			}
 
 			public bool KeepMenuOpen
@@ -223,14 +223,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					RadioImage.DrawCircle(
 						radioIconChecked.NewGraphics2D(),
 						rect.Center,
-						theme.Colors.PrimaryTextColor,
+						theme.TextColor,
 						isChecked: true,
 						isActive: false);
 
 					RadioImage.DrawCircle(
 						radioIconUnchecked.NewGraphics2D(),
 						rect.Center,
-						theme.Colors.PrimaryTextColor,
+						theme.TextColor,
 						isChecked: false,
 						isActive: false);
 				}
@@ -279,7 +279,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void CreateSubMenu(string menuTitle, ThemeConfig menuTheme, Action<PopupMenu> populateSubMenu, ImageBuffer icon = null)
 		{
-			var content = new TextWidget(menuTitle, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			var content = new TextWidget(menuTitle, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 			{
 				Padding = MenuPadding,
 			};
@@ -332,7 +332,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public MenuItem CreateBoolMenuItem(string name, Func<bool> getter, Action<bool> setter, bool useRadioStyle = false, IList<GuiWidget> siblingRadioButtonList = null)
 		{
-			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 			{
 				Padding = MenuPadding,
 			};
@@ -348,7 +348,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			row.AddChild(new IconButton(icon, theme));
 
-			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 			{
 				Padding = MenuPadding,
 				VAnchor = VAnchor.Center

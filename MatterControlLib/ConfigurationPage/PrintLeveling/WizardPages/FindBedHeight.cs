@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			zButtonsAndInfo.AddChild(new GuiWidget(15, 10));
 
 			//textFields
-			TextWidget zPosition = new TextWidget("Z: 0.0      ", pointSize: 12, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			TextWidget zPosition = new TextWidget("Z: 0.0      ", pointSize: 12, textColor: theme.TextColor)
 			{
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(10, 0),

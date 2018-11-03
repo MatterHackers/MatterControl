@@ -48,7 +48,7 @@ public class LicenseAgreementPage : DialogPage
 		ContentRow.AddChild(scrollable);
 
 		scrollable.ScrollArea.Margin = new BorderDouble(0, 0, 15, 0);
-		scrollable.AddChild(new WrappedTextWidget(eulaText, textColor: ActiveTheme.Instance.PrimaryTextColor, doubleBufferText: false)
+		scrollable.AddChild(new WrappedTextWidget(eulaText, textColor: theme.TextColor, doubleBufferText: false)
 		{
 			DrawFromHintedCache = true,
 			Name = "LicenseAgreementPage",

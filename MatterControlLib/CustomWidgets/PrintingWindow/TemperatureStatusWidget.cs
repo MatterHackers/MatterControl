@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public TemperatureStatusWidget(PrinterConfig printer, string dispalyName, ThemeConfig theme)
 		{
 			this.printer = printer;
-			var extruderName = new TextWidget(dispalyName, pointSize: fontSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			var extruderName = new TextWidget(dispalyName, pointSize: fontSize, textColor: theme.TextColor)
 			{
 				AutoExpandBoundsToText = true,
 				VAnchor = VAnchor.Center,
@@ -59,12 +59,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				FillColor = theme.PrimaryAccentColor,
 				Margin = new BorderDouble(right: 10),
 				BorderColor = Color.Transparent,
-				BackgroundColor = new Color(ActiveTheme.Instance.PrimaryTextColor, 50),
+				BackgroundColor = new Color(theme.TextColor, 50),
 				VAnchor = VAnchor.Center,
 			};
 			this.AddChild(progressBar);
 
-			actualTemp = new TextWidget("", pointSize: fontSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			actualTemp = new TextWidget("", pointSize: fontSize, textColor: theme.TextColor)
 			{
 				AutoExpandBoundsToText = true,
 				VAnchor = VAnchor.Center,
@@ -75,11 +75,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			this.AddChild(new VerticalLine()
 			{
-				BackgroundColor = ActiveTheme.Instance.PrimaryTextColor,
+				BackgroundColor = theme.TextColor,
 				Margin = new BorderDouble(8, 0)
 			});
 
-			targetTemp = new TextWidget("", pointSize: fontSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			targetTemp = new TextWidget("", pointSize: fontSize, textColor: theme.TextColor)
 			{
 				AutoExpandBoundsToText = true,
 				VAnchor = VAnchor.Center,

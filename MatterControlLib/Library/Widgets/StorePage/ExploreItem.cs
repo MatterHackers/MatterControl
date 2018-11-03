@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				whiteBackground.AddChild(imageWidget);
 			}
 
-			var wrappedText = new WrappedTextWidget(item.title, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: theme.DefaultFontSize)
+			var wrappedText = new WrappedTextWidget(item.title, textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 			{
 				Selectable = false,
 				VAnchor = VAnchor.Center | VAnchor.Fit,

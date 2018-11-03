@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				});
 			};
 
-			this.HighlightRegion.AddChild(textWidget = new TextWidget(this.Text, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			this.HighlightRegion.AddChild(textWidget = new TextWidget(this.Text, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 			{
 				Selectable = false,
 				AutoExpandBoundsToText = true,

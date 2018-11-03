@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl
 				Selectable = false
 			});
 
-			row.AddChild(new TextWidget(ApplicationController.Instance.ShortProductName, textColor: theme.Colors.PrimaryTextColor)
+			row.AddChild(new TextWidget(ApplicationController.Instance.ShortProductName, textColor: theme.TextColor)
 			{
 				VAnchor = VAnchor.Center
 			});
@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Fit,
 			};
 
-			themeRow.AddChild(new TextWidget("Theme".Localize(), pointSize: menuTheme.DefaultFontSize, textColor: menuTheme.Colors.PrimaryTextColor)
+			themeRow.AddChild(new TextWidget("Theme".Localize(), pointSize: menuTheme.DefaultFontSize, textColor: menuTheme.TextColor)
 			{
 				VAnchor = VAnchor.Center,
 			});

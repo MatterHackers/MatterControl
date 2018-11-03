@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			container.Selectable = true;
 
 			// put in %
-			container.AddChild(new TextWidget("%", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			container.AddChild(new TextWidget("%", pointSize: 10, textColor: theme.TextColor)
 			{
 				VAnchor = VAnchor.Center
 			});

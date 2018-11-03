@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl
 
 			ContentRow.AddChild(new TextWidget(label, pointSize: 12)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				Margin = new BorderDouble(5),
 				HAnchor = HAnchor.Left
 			});

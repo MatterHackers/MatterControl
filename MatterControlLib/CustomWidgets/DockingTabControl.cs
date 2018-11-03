@@ -344,7 +344,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				});
 				buttonView.AfterDraw += (s, e) =>
 				{
-					e.Graphics2D.Render(rotatedLabel, theme.Colors.PrimaryTextColor);
+					e.Graphics2D.Render(rotatedLabel, theme.TextColor);
 				};
 			}
 
@@ -380,7 +380,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						BackgroundColor = theme.TabBarBackground,
 					};
 
-					titleBar.AddChild(new TextWidget(title, textColor: theme.Colors.PrimaryTextColor)
+					titleBar.AddChild(new TextWidget(title, textColor: theme.TextColor)
 					{
 						Margin = new BorderDouble(left: 8),
 						VAnchor = VAnchor.Center

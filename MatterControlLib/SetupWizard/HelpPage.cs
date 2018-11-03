@@ -365,7 +365,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Fit | (left ? HAnchor.Right: HAnchor.Left),
 				VAnchor = VAnchor.Fit
 			};
-			var content = new TextWidget(text, bold: bold, textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
+			var content = new TextWidget(text, bold: bold, textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 			{
 				Margin = (left ? new BorderDouble(5, 3, 10, 3) : new BorderDouble(10, 3, 5, 3))
 			};

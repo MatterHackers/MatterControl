@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			string baudRateLabelTextFull = string.Format("{0}:", baudRateLabelText);
 
 			TextWidget baudRateLabel = new TextWidget(baudRateLabelTextFull, 0, 0, 12);
-			baudRateLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			baudRateLabel.TextColor = theme.TextColor;
 			baudRateLabel.Margin = new BorderDouble(0, 0, 0, 10);
 			baudRateLabel.HAnchor = HAnchor.Stretch;
 
@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			baudRateMessageContainer.HAnchor = HAnchor.Stretch;
 
 			printerBaudRateError = new TextWidget("Select the baud rate.".Localize(), 0, 0, 10);
-			printerBaudRateError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			printerBaudRateError.TextColor = theme.TextColor;
 			printerBaudRateError.AutoExpandBoundsToText = true;
 
 			printerBaudRateHelpLink = new LinkLabel("What's this?".Localize(), theme)
@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			printerBaudRateHelpLink.Click += printerBaudRateHelp_Click;
 
 			printerBaudRateHelpMessage = new TextWidget("The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.".Localize(), 0, 0, 10);
-			printerBaudRateHelpMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			printerBaudRateHelpMessage.TextColor = theme.TextColor;
 			printerBaudRateHelpMessage.Margin = new BorderDouble(top: 10);
 			printerBaudRateHelpMessage.Visible = false;
 
@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				RadioButton baudOption = new RadioButton(baudRate);
 				BaudRateButtonsList.Add(baudOption);
 				baudOption.Margin = baudRateMargin;
-				baudOption.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+				baudOption.TextColor = theme.TextColor;
 				if (printer.Settings.GetValue(SettingsKey.baud_rate) == baudRate)
 				{
 					baudOption.Checked = true;
@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			otherBaudRateRadioButton = new RadioButton("Other".Localize());
 			otherBaudRateRadioButton.Margin = baudRateMargin;
-			otherBaudRateRadioButton.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			otherBaudRateRadioButton.TextColor = theme.TextColor;
 
 			baudRateContainer.AddChild(otherBaudRateRadioButton);
 

@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
 
 			this.WindowSize = new Vector2(500 * GuiWidget.DeviceScale, 320 * GuiWidget.DeviceScale);
 
-			var rightLabel = new TextWidget("mm/s".Localize(), textColor: theme.Colors.PrimaryTextColor, pointSize: theme.FontSize10)
+			var rightLabel = new TextWidget("mm/s".Localize(), textColor: theme.TextColor, pointSize: theme.FontSize10)
 			{
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(right: 20)
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Stretch
 			};
 
-			headerBar.AddChild(new TextWidget(this.WindowTitle, textColor: theme.Colors.PrimaryTextColor, pointSize: theme.FontSize10));
+			headerBar.AddChild(new TextWidget(this.WindowTitle, textColor: theme.TextColor, pointSize: theme.FontSize10));
 
 			ContentRow.AddChild(headerBar);
 
@@ -87,11 +87,11 @@ namespace MatterHackers.MatterControl
 
 				if (settingsArray[i].StartsWith("e"))
 				{
-					axisLabel = new TextWidget(string.Format("{0}(s)", "Extruder".Localize()), textColor: ActiveTheme.Instance.PrimaryTextColor);
+					axisLabel = new TextWidget(string.Format("{0}(s)", "Extruder".Localize()), textColor: theme.TextColor);
 				}
 				else
 				{
-					axisLabel = new TextWidget(string.Format("{0} {1}", "Axis".Localize(), settingsArray[i].ToUpper()), textColor: ActiveTheme.Instance.PrimaryTextColor);
+					axisLabel = new TextWidget(string.Format("{0} {1}", "Axis".Localize(), settingsArray[i].ToUpper()), textColor: theme.TextColor);
 				}
 				axisLabel.VAnchor = VAnchor.Center;
 				row.AddChild(axisLabel);

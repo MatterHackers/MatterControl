@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl
 			// Regen and refresh the troubleshooting criteria
 			var printerNameLabel = new TextWidget(string.Format("{0}:", "Connection Troubleshooting".Localize()), 0, 0, labelFontSize)
 			{
-				TextColor = theme.Colors.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				Margin = new BorderDouble(bottom: 10)
 			};
 

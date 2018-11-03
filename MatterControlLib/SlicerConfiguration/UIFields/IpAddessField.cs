@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				TabIndex = tabIndex,
 
 				Enabled = canChangeComPort,
-				TextColor = canChangeComPort ? theme.Colors.PrimaryTextColor : new Color(theme.Colors.PrimaryTextColor, 150),
+				TextColor = canChangeComPort ? theme.TextColor : new Color(theme.TextColor, 150),
 			};
 
 			//Create default option
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
 				canChangeComPort = !printer.Connection.IsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
-				dropdownList.TextColor = theme.Colors.PrimaryTextColor;
+				dropdownList.TextColor = theme.TextColor;
 				dropdownList.Enabled = canChangeComPort;
 			}, ref unregisterEvents);
 

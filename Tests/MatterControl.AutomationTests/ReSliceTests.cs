@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					var printer = ApplicationController.Instance.ActivePrinter;
-					printer.Settings.SetValue(SettingsKey.enable_line_spliting, "0");
+					printer.Settings.SetValue(SettingsKey.enable_line_splitting, "0");
 
 					var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
 					var scene = view3D.InteractionLayer.Scene;

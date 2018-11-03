@@ -310,7 +310,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				};
 				container.AddChild(imageWidget);
 
-				text = new TextWidget(item.Model.Name, 0, 0, 9, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				text = new TextWidget(item.Model.Name, 0, 0, 9, textColor: theme.TextColor)
 				{
 					AutoExpandBoundsToText = false,
 					EllipsisIfClipped = true,

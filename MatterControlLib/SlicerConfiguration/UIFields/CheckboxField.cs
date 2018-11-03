@@ -37,8 +37,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class CheckboxField : UIField
 	{
 		private CheckBox checkBoxWidget;
+		private ThemeConfig theme;
 
 		public bool Checked => checkBoxWidget.Checked;
+
+		public CheckboxField(ThemeConfig theme)
+		{
+			this.theme = theme;
+		}
 
 		public override void Initialize(int tabIndex)
 		{
@@ -46,7 +52,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				VAnchor = VAnchor.Bottom,
 				Name = this.Name,
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				Checked = this.Value == "1"
 			};
 			checkBoxWidget.CheckedStateChanged += (s, e) =>

@@ -102,7 +102,7 @@ namespace MatterHackers.Agg.UI
 					VAnchor = VAnchor.Center
 				});
 
-				titleBarRow.ActionArea.AddChild(new TextWidget(systemWindow.Title ?? "", pointSize: theme.DefaultFontSize - 1, textColor: theme.Colors.PrimaryTextColor)
+				titleBarRow.ActionArea.AddChild(new TextWidget(systemWindow.Title ?? "", pointSize: theme.DefaultFontSize - 1, textColor: theme.TextColor)
 				{
 					VAnchor = VAnchor.Center,
 				});

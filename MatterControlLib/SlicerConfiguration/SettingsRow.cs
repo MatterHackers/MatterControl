@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					});
 				}
 
-				this.AddChild(settingsLabel = SettingsRow.CreateSettingsLabel(title, helpText, theme.Colors.PrimaryTextColor));
+				this.AddChild(settingsLabel = SettingsRow.CreateSettingsLabel(title, helpText, theme.TextColor));
 
 				this.AddChild(new HorizontalSpacer());
 			}

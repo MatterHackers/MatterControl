@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					});
 
 				this.AddChild(
-					new TextWidget($"{millimetersPerSecond} mm/s", pointSize: pointSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
+					new TextWidget($"{millimetersPerSecond} mm/s", pointSize: pointSize, textColor: AppContext.Theme.TextColor)
 					{
 						VAnchor = VAnchor.Center,
 						Margin = new BorderDouble(8, 0),

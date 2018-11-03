@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.Padding = theme.DefaultContainerPadding;
 
 			// Section Label
-			this.AddChild(new TextWidget(label, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			this.AddChild(new TextWidget(label, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 			{
 				HAnchor = HAnchor.Left,
 				Margin = new BorderDouble(0)

@@ -44,12 +44,12 @@ namespace MatterHackers.MatterControl
 
 			ContentRow.AddChild(new TextWidget("Wifi Setup".Localize() + ":", 0, 0, labelFontSize)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				Margin = new BorderDouble(bottom: 10)
 			});
 
-			ContentRow.AddChild(new TextWidget("Some features may require an internet connection.".Localize(), 0, 0, 12, textColor: ActiveTheme.Instance.PrimaryTextColor));
-			ContentRow.AddChild(new TextWidget("Would you like to setup Wifi?".Localize(), 0, 0, 12, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			ContentRow.AddChild(new TextWidget("Some features may require an internet connection.".Localize(), 0, 0, 12, textColor: theme.TextColor));
+			ContentRow.AddChild(new TextWidget("Would you like to setup Wifi?".Localize(), 0, 0, 12, textColor: theme.TextColor));
 
 			var connectButtonContainer = new FlowLayoutWidget()
 			{

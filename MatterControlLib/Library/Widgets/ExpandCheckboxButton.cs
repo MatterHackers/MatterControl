@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			_expandable = expandable;
 
-			this.AddChild(textWidget = new TextWidget(text, pointSize: pointSize, textColor: theme.Colors.PrimaryTextColor)
+			this.AddChild(textWidget = new TextWidget(text, pointSize: pointSize, textColor: theme.TextColor)
 			{
 				VAnchor = VAnchor.Center,
 				AutoExpandBoundsToText = true

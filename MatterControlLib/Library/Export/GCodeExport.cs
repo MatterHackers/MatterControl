@@ -84,7 +84,9 @@ namespace MatterHackers.MatterControl.Library.Export
 				Margin = new BorderDouble(left: 40, bottom: 10),
 			};
 
-			var spiralVaseCheckbox = new CheckBox("Spiral Vase".Localize(), ActiveTheme.Instance.PrimaryTextColor, 10)
+			var theme = AppContext.Theme;
+
+			var spiralVaseCheckbox = new CheckBox("Spiral Vase".Localize(), theme.TextColor, 10)
 			{
 				Checked = false,
 				Cursor = Cursors.Hand,
@@ -98,7 +100,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			// If print leveling is enabled then add in a check box 'Apply Leveling During Export' and default checked.
 			if (printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled))
 			{
-				var levelingCheckbox = new CheckBox("Apply leveling to G-Code during export".Localize(), ActiveTheme.Instance.PrimaryTextColor, 10)
+				var levelingCheckbox = new CheckBox("Apply leveling to G-Code during export".Localize(), theme.TextColor, 10)
 				{
 					Checked = true,
 					Cursor = Cursors.Hand,
@@ -241,7 +243,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 				if(printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && this.ApplyLeveling)
 				{
-					if (printer.Settings.GetValue<bool>(SettingsKey.enable_line_spliting))
+					if (printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting))
 					{
 						finalStream = new BabyStepsStream(printer, finalStream, 1);
 					}

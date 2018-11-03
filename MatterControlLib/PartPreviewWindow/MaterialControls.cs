@@ -77,14 +77,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					DrawGrid = true,
 				});
 
-				buttonView.AddChild(new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+				buttonView.AddChild(new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 				{
 					VAnchor = VAnchor.Center
 				});
 
 				var radioButtonView = new RadioButtonView(buttonView)
 				{
-					TextColor = theme.Colors.PrimaryTextColor
+					TextColor = theme.TextColor
 				};
 				radioButtonView.RadioCircle.Margin = radioButtonView.RadioCircle.Margin.Clone(right: 5);
 
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					HAnchor = HAnchor.Fit,
 					VAnchor = VAnchor.Fit,
-					TextColor = theme.Colors.PrimaryTextColor,
+					TextColor = theme.TextColor,
 					Checked = extruderIndex == initialMaterialIndex
 				};
 				materialButtons.Add(radioButton);

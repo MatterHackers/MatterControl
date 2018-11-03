@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		TextWidget AddSetting(string title, string value)
 		{
-			var textWidget = new TextWidget(value, textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
+			var textWidget = new TextWidget(value, textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 			{
 				AutoExpandBoundsToText = true,
 				VAnchor = VAnchor.Center

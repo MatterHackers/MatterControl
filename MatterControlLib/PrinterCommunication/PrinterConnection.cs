@@ -2131,7 +2131,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			queuedCommandStream3 = new QueuedCommandsStream(firstStreamToRead);
 			macroProcessingStream4 = new MacroProcessingStream(queuedCommandStream3, printer);
 			relativeToAbsoluteStream5 = new RelativeToAbsoluteStream(macroProcessingStream4);
-			bool enableLineSpliting = gcodeFilename != null && printer.Settings.GetValue<bool>(SettingsKey.enable_line_spliting);
+			bool enableLineSpliting = gcodeFilename != null && printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
 			babyStepsStream6 = new BabyStepsStream(printer, relativeToAbsoluteStream5, enableLineSpliting ? 1 : 2000);
 			if (activePrintTask != null)
 			{

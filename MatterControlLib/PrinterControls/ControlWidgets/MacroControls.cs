@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			if (!printer.Settings.Macros.Any())
 			{
-				var noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10, textColor: theme.Colors.PrimaryTextColor);
+				var noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10, textColor: theme.TextColor);
 				this.AddChild(noMacrosFound);
 			}
 			else

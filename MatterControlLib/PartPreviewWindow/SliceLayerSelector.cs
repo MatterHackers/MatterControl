@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			currentLayerInfo = new InlineEditControl("1000")
 			{
 				Name = "currentLayerInfo",
-				TextColor = theme.Colors.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				GetDisplayString = (value) => $"{value}",
 				HAnchor = HAnchor.Right | HAnchor.Fit,
 				VAnchor = VAnchor.Absolute | VAnchor.Fit,
@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				this.sceneContext = sceneContext;
 
-				layerCountText = new TextWidget("", pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				layerCountText = new TextWidget("", pointSize: 9, textColor: theme.TextColor)
 				{
 					MinimumSize = new Vector2(20, 20),
 					AutoExpandBoundsToText = true,
@@ -176,7 +176,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				this.AddChild(layerSlider);
 
-				layerStartText = new TextWidget("1", pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				layerStartText = new TextWidget("1", pointSize: 9, textColor: theme.TextColor)
 				{
 					AutoExpandBoundsToText = true,
 					HAnchor = HAnchor.Center

@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Name = "List Item Thumbnail",
 			});
 
-			row.AddChild(new TextWidget(listViewItem.Model.Name, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+			row.AddChild(new TextWidget(listViewItem.Model.Name, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 			{
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(10, 0)

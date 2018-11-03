@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
 
-			var titleText = new TextWidget(helpArticle.Name, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: pointSize > 0 ? pointSize : theme.DefaultFontSize, bold: boldFont)
+			var titleText = new TextWidget(helpArticle.Name, textColor: theme.TextColor, pointSize: pointSize > 0 ? pointSize : theme.DefaultFontSize, bold: boldFont)
 			{
 				VAnchor = VAnchor.Center,
 				AutoExpandBoundsToText = true,

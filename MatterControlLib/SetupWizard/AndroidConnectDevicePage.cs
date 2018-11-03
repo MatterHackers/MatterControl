@@ -58,15 +58,15 @@ namespace MatterHackers.MatterControl
 		{
 			var printerNameLabel = new TextWidget("Connect Your Device".Localize() + ":", 0, 0, labelFontSize)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				Margin = new BorderDouble(bottom: 10)
 			};
 			ContentRow.AddChild(printerNameLabel);
 
-			ContentRow.AddChild(new TextWidget("Instructions".Localize() + ":", 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
-			ContentRow.AddChild(new TextWidget("1. Power on your 3D Printer.".Localize(), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
-			ContentRow.AddChild(new TextWidget("2. Attach your 3D Printer via USB.".Localize(), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
-			ContentRow.AddChild(new TextWidget("3. Press 'Connect'.".Localize(), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
+			ContentRow.AddChild(new TextWidget("Instructions".Localize() + ":", 0, 0, 12,textColor:theme.TextColor));
+			ContentRow.AddChild(new TextWidget("1. Power on your 3D Printer.".Localize(), 0, 0, 12,textColor:theme.TextColor));
+			ContentRow.AddChild(new TextWidget("2. Attach your 3D Printer via USB.".Localize(), 0, 0, 12,textColor:theme.TextColor));
+			ContentRow.AddChild(new TextWidget("3. Press 'Connect'.".Localize(), 0, 0, 12,textColor:theme.TextColor));
 
 			//Add inputs to main container
 			ApplicationController.Instance.ActivePrinter.Connection.CommunicationStateChanged.RegisterEvent(communicationStateChanged, ref unregisterEvents);
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl
 			connectButtonContainer.AddChild(new HorizontalSpacer());
 			ContentRow.AddChild(connectButtonContainer);
 
-			skipMessage = new TextWidget("(Press 'Skip' to setup connection later)".Localize(), 0, 0, 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			skipMessage = new TextWidget("(Press 'Skip' to setup connection later)".Localize(), 0, 0, 10, textColor: theme.TextColor);
 			ContentRow.AddChild(skipMessage);
 
 			generalError = new TextWidget("", 0, 0, errorFontSize)

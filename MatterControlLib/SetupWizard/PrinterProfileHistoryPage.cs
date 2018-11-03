@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 		private async void LoadHistoryItems()
 		{
 			TextWidget loadingText = new TextWidget("Retrieving History from Web...");
-			loadingText.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			loadingText.TextColor = theme.TextColor;
 			scrollWindow.AddChild(loadingText);
 
 			var results = await ApplicationController.GetProfileHistory?.Invoke(ProfileManager.Instance.ActiveProfile.DeviceToken);
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 				foreach (var group in groupedTimes)
 				{
 					// add in the group header
-					topToBottomStuff.AddChild(new TextWidget(RelativeTime.BlockDescriptions[group.Key], textColor: ActiveTheme.Instance.PrimaryTextColor)
+					topToBottomStuff.AddChild(new TextWidget(RelativeTime.BlockDescriptions[group.Key], textColor: theme.TextColor)
 					{
 						Margin = new BorderDouble(0, 0, 0, 5),
 					});
@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 					foreach (var time in group.Value)
 					{
 						// add in the radio buttons
-						var profileVersionButton = new RadioButton(time.Value, textColor: ActiveTheme.Instance.PrimaryTextColor)
+						var profileVersionButton = new RadioButton(time.Value, textColor: theme.TextColor)
 						{
 							Margin = new BorderDouble(5, 0),
 						};

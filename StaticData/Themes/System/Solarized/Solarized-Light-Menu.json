@@ -1,9 +1,6 @@
 {
   "DefaultFontSize": 11,
-  "Colors": {
-    "PrimaryTextColor": "#555555",
-    "SourceColor": "#B58900"
-  },
+  "TextColor": "#555555",
   "PresetColors": {
     "MaterialPreset": "#FF7F00",
     "QualityPreset": "#FFFF00",
