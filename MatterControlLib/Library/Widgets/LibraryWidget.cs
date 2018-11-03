@@ -80,7 +80,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				// Drop containers if ShowContainers != 1
 				ContainerFilter = (container) => UserSettings.Instance.ShowContainers,
 				BackgroundColor = theme.ActiveTabColor,
-				Border = new BorderDouble(top: 1)
+				Border = new BorderDouble(top: 1),
+				DoubleClickAction = LibraryListView.DoubleClickActions.PreviewItem
 			};
 
 			libraryView.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
