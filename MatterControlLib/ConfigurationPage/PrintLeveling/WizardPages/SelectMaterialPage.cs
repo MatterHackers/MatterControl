@@ -58,6 +58,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				alreadyLoadedButton.Click += (s, e) =>
 				{
 					this.DialogWindow.CloseOnIdle();
+					printer.Settings.SetValue(SettingsKey.filament_has_been_loaded, "1");
 				};
 
 				this.AddPageAction(alreadyLoadedButton);
