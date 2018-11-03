@@ -96,9 +96,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					BecomingActive = () =>
 					{
+						// start heating up the extruder
+						printer.Connection.SetTargetHotendTemperature(0, printer.Settings.GetValue<double>(SettingsKey.temperature));
+
 						var markdownText = printer.Settings.GetValue(SettingsKey.trim_filament_markdown);
 						var markdownWidget = new MarkdownWidget(theme);
-						markdownWidget.Markdown = markdownText;
+						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
 						trimFilamentPage.ContentRow.AddChild(markdownWidget);
 					}
 				};
@@ -118,15 +121,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					{
 						var markdownText = printer.Settings.GetValue(SettingsKey.insert_filament_markdown);
 						var markdownWidget = new MarkdownWidget(theme);
-						markdownWidget.Markdown = markdownText;
+						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
 						insertFilamentPage.ContentRow.AddChild(markdownWidget);
 
 						// turn off the fan
 						printer.Connection.FanSpeed0To255 = 0;
 						// Allow extrusion at any temperature. S0 only works on Marlin S1 works on repetier and marlin
 						printer.Connection.QueueLine("M302 S1");
-						// start heating up the extruder
-						printer.Connection.SetTargetHotendTemperature(0, printer.Settings.GetValue<double>(SettingsKey.temperature));
 
 						var runningTime = Stopwatch.StartNew();
 						runningGCodeCommands = UiThread.SetInterval(() =>
@@ -278,7 +279,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						runningCleanPage.ShowWizardFinished();
 						var markdownText = printer.Settings.GetValue(SettingsKey.running_clean_markdown);
 						var markdownWidget = new MarkdownWidget(theme);
-						markdownWidget.Markdown = markdownText;
+						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
 						runningCleanPage.ContentRow.AddChild(markdownWidget);
 
 						var runningTime = Stopwatch.StartNew();
@@ -309,6 +310,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					if (runningGCodeCommands.Continue)
 					{
 						runningGCodeCommands.Continue = false;
+						printer.Settings.SetValue(SettingsKey.filament_has_been_loaded, "1");
 					}
 				};
 
