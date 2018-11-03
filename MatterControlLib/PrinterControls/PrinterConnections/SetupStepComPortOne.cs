@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			});
 			container.AddChild(skipConnectionLink);
 
-			ContentRow.AddChild(container);
+			contentRow.AddChild(container);
 
 			//Construct buttons
 			var nextButton = theme.CreateDialogButton("Continue".Localize());

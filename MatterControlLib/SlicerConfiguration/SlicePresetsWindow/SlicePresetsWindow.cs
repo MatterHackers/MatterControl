@@ -78,19 +78,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.AnchorAll();
 
 			this.headerRow.Visible = false;
-			this.ContentRow.Padding = 0;
+			this.contentRow.Padding = 0;
 
-			ContentRow.BackgroundColor = Color.Transparent;
+			contentRow.BackgroundColor = Color.Transparent;
 
 			var inlineNameEdit = new InlineStringEdit(presetsContext.PersistenceLayer.Name, theme, presetsContext.LayerType.ToString() + " Name", boldFont: true);
 			inlineNameEdit.ValueChanged += (s, e) =>
 			{
 				printer.Settings.SetValue(SettingsKey.layer_name, inlineNameEdit.Text, presetsContext.PersistenceLayer);
 			};
-			ContentRow.AddChild(inlineNameEdit);
+			contentRow.AddChild(inlineNameEdit);
 
 			var sliceSettingsWidget = CreateSliceSettingsWidget(printer, presetsContext.PersistenceLayer);
-			ContentRow.AddChild(sliceSettingsWidget);
+			contentRow.AddChild(sliceSettingsWidget);
 
 			var duplicateButton = theme.CreateDialogButton("Duplicate".Localize());
 			duplicateButton.Click += (s, e) =>
@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					sliceSettingsWidget.Close();
 					sliceSettingsWidget = CreateSliceSettingsWidget(printer, clonedLayer);
-					ContentRow.AddChild(sliceSettingsWidget);
+					contentRow.AddChild(sliceSettingsWidget);
 
 					inlineNameEdit.Text = newProfileName;
 				});

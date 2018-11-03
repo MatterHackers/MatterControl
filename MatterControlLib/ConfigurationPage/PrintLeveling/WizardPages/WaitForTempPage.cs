@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				};
 
 				// put in bar name
-				ContentRow.AddChild(new TextWidget("Hotend Temperature:".Localize(), pointSize: 10, textColor: theme.TextColor)
+				contentRow.AddChild(new TextWidget("Hotend Temperature:".Localize(), pointSize: 10, textColor: theme.TextColor)
 				{
 					AutoExpandBoundsToText = true,
 					Margin = new BorderDouble(5, 0, 5, 5),
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				hotEndProgressHolder.AddChild(hotEndDoneText);
 
-				ContentRow.AddChild(hotEndProgressHolder);
+				contentRow.AddChild(hotEndProgressHolder);
 			}
 
 			if (bedTargetTemp > 0)
@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				};
 
 				// put in bar name
-				ContentRow.AddChild(new TextWidget("Bed Temperature:".Localize(), pointSize: 10, textColor: theme.TextColor)
+				contentRow.AddChild(new TextWidget("Bed Temperature:".Localize(), pointSize: 10, textColor: theme.TextColor)
 				{
 					AutoExpandBoundsToText = true,
 					Margin = new BorderDouble(5, 0, 5, 5),
@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				bedProgressHolder.AddChild(bedDoneText);
 
-				ContentRow.AddChild(bedProgressHolder);
+				contentRow.AddChild(bedProgressHolder);
 			}
 		}
 

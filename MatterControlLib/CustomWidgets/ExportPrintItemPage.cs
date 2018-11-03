@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl
 					Cursor = Cursors.Hand,
 					Name = plugin.ButtonText + " Button"
 				};
-				ContentRow.AddChild(pluginButton);
+				contentRow.AddChild(pluginButton);
 
 				if (isFirstItem)
 				{
@@ -104,14 +104,14 @@ namespace MatterHackers.MatterControl
 					{
 						optionPanel.HAnchor = HAnchor.Stretch;
 						optionPanel.VAnchor = VAnchor.Fit;
-						ContentRow.AddChild(optionPanel);
+						contentRow.AddChild(optionPanel);
 					}
 				}
 
 				exportPluginButtons.Add(pluginButton, plugin);
 			}
 
-			ContentRow.AddChild(new VerticalSpacer());
+			contentRow.AddChild(new VerticalSpacer());
 
 			// TODO: make this work on the mac and then delete this if
 			if (AggContext.OperatingSystem == OSType.Windows
@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl
 					HAnchor = HAnchor.Left,
 					Cursor = Cursors.Hand
 				};
-				ContentRow.AddChild(showInFolderAfterSave);
+				contentRow.AddChild(showInFolderAfterSave);
 			}
 
 			var exportButton = theme.CreateDialogButton("Export".Localize());

@@ -45,7 +45,7 @@ public class LicenseAgreementPage : DialogPage
 		var scrollable = new ScrollableWidget(true);
 		scrollable.AnchorAll();
 		scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
-		ContentRow.AddChild(scrollable);
+		contentRow.AddChild(scrollable);
 
 		scrollable.ScrollArea.Margin = new BorderDouble(0, 0, 15, 0);
 		scrollable.AddChild(new WrappedTextWidget(eulaText, textColor: theme.TextColor, doubleBufferText: false)

@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public SelectMaterialPage(PrinterSetupWizard context, string headerText, string instructionsText, bool onlyLoad)
 			: base(context, headerText, instructionsText)
 		{
-			ContentRow.AddChild(
+			contentRow.AddChild(
 				new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, theme)
 				{
 					BackgroundColor = Color.Transparent,

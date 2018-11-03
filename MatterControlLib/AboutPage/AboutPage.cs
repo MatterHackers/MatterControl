@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl
 			this.MinimumSize = new Vector2(480 * GuiWidget.DeviceScale, 520 * GuiWidget.DeviceScale);
 			this.WindowSize = new Vector2(500 * GuiWidget.DeviceScale, 550 * GuiWidget.DeviceScale);
 
-			ContentRow.BackgroundColor = Color.Transparent;
+			contentRow.BackgroundColor = Color.Transparent;
 
 			headerRow.Visible = false;
 
@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Absolute,
 				Height = 100,
 			};
-			ContentRow.AddChild(altHeadingRow);
+			contentRow.AddChild(altHeadingRow);
 
 			var productInfo = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl
 					HAnchor = HAnchor.Center
 				});
 
-			ContentRow.AddChild(
+			contentRow.AddChild(
 				new WrappedTextWidget(
 					"MatterControl is made possible by the team at MatterHackers and other open source software".Localize() + ":",
 					pointSize: theme.DefaultFontSize,
@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl
 
 			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
 			scrollable.AddChild(licensePanel);
-			ContentRow.AddChild( scrollable);
+			contentRow.AddChild( scrollable);
 
 			var feedbackButton = new TextButton("Send Feedback", theme)
 			{
@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl
 
 			this.AddPageAction(feedbackButton, highlightFirstAction: false);
 
-			ContentRow.AddChild(
+			contentRow.AddChild(
 				new TextWidget("Copyright © 2018 MatterHackers, Inc.", textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 				{
 					HAnchor = HAnchor.Center,
@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl
 			{
 				ApplicationController.Instance.LaunchBrowser("http://www.matterhackers.com");
 			});
-			ContentRow.AddChild(siteLink);
+			contentRow.AddChild(siteLink);
 		}
 
 		private class LazyLicenseText : GuiWidget

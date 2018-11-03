@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl
 				responseCallback = callback;
 				unwrappedMessage = message;
 
-				ContentRow.AddChild(messageContainer = new TextWidget(message, textColor: theme.TextColor, pointSize: 12 * DeviceScale)
+				contentRow.AddChild(messageContainer = new TextWidget(message, textColor: theme.TextColor, pointSize: 12 * DeviceScale)
 				{
 					AutoExpandBoundsToText = true,
 					HAnchor = HAnchor.Left
@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl
 				{
 					foreach (GuiWidget widget in extraWidgetsToAdd)
 					{
-						ContentRow.AddChild(widget);
+						contentRow.AddChild(widget);
 					}
 				}
 
@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (messageContainer != null)
 				{
-					double wrappingSize = ContentRow.Width - (ContentRow.Padding.Width + messageContainer.Margin.Width);
+					double wrappingSize = contentRow.Width - (contentRow.Padding.Width + messageContainer.Margin.Width);
 					if (wrappingSize > 0)
 					{
 						var wrapper = new EnglishTextWrapping(12 * GuiWidget.DeviceScale);

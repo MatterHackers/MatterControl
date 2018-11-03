@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl
 
 			GuiWidget actionButton = null;
 
-			ContentRow.AddChild(new TextWidget(label, pointSize: 12)
+			contentRow.AddChild(new TextWidget(label, pointSize: 12)
 			{
 				TextColor = theme.TextColor,
 				Margin = new BorderDouble(5),
@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl
 			{
 				actionButton.OnClick(null);
 			};
-			ContentRow.AddChild(textEditWidget);
+			contentRow.AddChild(textEditWidget);
 
 			actionButton = theme.CreateDialogButton(actionButtonTitle);
 			actionButton.Name = "InputBoxPage Action Button";

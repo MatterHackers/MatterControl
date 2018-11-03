@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl
 	public class DialogPage : FlowLayoutWidget
 	{
 		protected GuiWidget headerRow;
-		public FlowLayoutWidget ContentRow { get; }
+		protected FlowLayoutWidget contentRow;
 		protected FlowLayoutWidget footerRow;
 
 		private TextWidget headerLabel;
@@ -106,14 +106,14 @@ namespace MatterHackers.MatterControl
 			headerRow.AddChild(headerLabel);
 
 			// Create the main control container
-			ContentRow = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			contentRow = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				Padding = new BorderDouble(10),
 				BackgroundColor = theme.SectionBackgroundColor,
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch
 			};
-			this.AddChild(ContentRow);
+			this.AddChild(contentRow);
 
 			// Create the footer (button) container
 			footerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl
 
 			headerLabel.PointSize = 14;
 			headerLabel.TextColor = theme.TextColor;
-			ContentRow.Padding = new BorderDouble(5);
+			contentRow.Padding = new BorderDouble(5);
 
 			footerRow.Padding = 0;
 			footerRow.Margin = new BorderDouble(top: theme.DefaultContainerPadding);

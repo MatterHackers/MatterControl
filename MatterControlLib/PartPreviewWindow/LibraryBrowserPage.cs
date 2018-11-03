@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 
 			this.WindowSize = new Vector2(480, 500);
 
-			ContentRow.Padding = 0;
+			contentRow.Padding = 0;
 
 			// Create a new library context for the SaveAs view
 			libraryNavContext = new LibraryConfig()
@@ -72,10 +72,10 @@ namespace MatterHackers.MatterControl
 			// put in the bread crumb widget
 			breadCrumbWidget = new FolderBreadCrumbWidget(librarySelectorWidget, theme);
 			breadCrumbWidget.BackgroundColor = theme.MinimalShade;
-			ContentRow.AddChild(breadCrumbWidget);
-			ContentRow.BackgroundColor = Color.Transparent;
+			contentRow.AddChild(breadCrumbWidget);
+			contentRow.BackgroundColor = Color.Transparent;
 
-			ContentRow.AddChild(librarySelectorWidget);
+			contentRow.AddChild(librarySelectorWidget);
 
 			acceptButton = theme.CreateDialogButton(acceptButtonText);
 			acceptButton.Name = "Accept Button";
