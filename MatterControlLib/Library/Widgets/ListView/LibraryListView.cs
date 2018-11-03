@@ -44,6 +44,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class LibraryListView : ScrollableWidget
 	{
+		public enum DoubleClickActions { PreviewItem, AddToBed }
+
 		public event EventHandler ContentReloaded;
 
 		private ThemeConfig theme;
@@ -435,11 +437,21 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					// List items
 					if (itemModel != null)
 					{
-						ApplicationController.Instance.OpenIntoNewTab(new[] { itemModel });
+						if (this.DoubleClickAction == DoubleClickActions.PreviewItem)
+						{
+							ApplicationController.Instance.OpenIntoNewTab(new[] { itemModel });
+						}
+						else
+						{
+							var activeContext = ApplicationController.Instance.DragDropData;
+							activeContext.SceneContext?.AddToPlate(new[] { itemModel });
+						}
 					}
 				}
 			});
 		}
+
+		public DoubleClickActions DoubleClickAction { get; set; } = DoubleClickActions.AddToBed;
 
 		public void SetActiveContainer(ILibraryContainer container)
 		{
