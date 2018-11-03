@@ -139,7 +139,7 @@
   },
   {
     "SlicerConfigName": "bottom_infill_speed",
-    "PresentationName": "Botom Solid Infill",
+    "PresentationName": "Bottom Solid Infill",
     "HelpText": "The speed at which the bottom solid layers will print. Can be set explicitly or as a percentage of the Infill speed. Use 0 to match infill speed.",
     "DataEditType": "DOUBLE_OR_PERCENT",
     "Units": "mm/s or %",
@@ -721,7 +721,7 @@
   {
     "SlicerConfigName": "leveling_sample_points",
     "PresentationName": "Sample Points",
-    "HelpText": "A comma separated list of sample points to probe the bed at. You must specify an x and y position for each point. For example: '20,20,100,180,180,20' will saple the bad at 3 points.",
+    "HelpText": "A comma separated list of sample points to probe the bed at. You must specify an x and y position for each point. For example: '20,20,100,180,180,20' will sample the bad at 3 points.",
     "DataEditType": "MULTI_LINE_TEXT",
     "DefaultValue": "20,20,100,180,180,20",
     "ShowIfSet": "!sla_printer&!has_hardware_leveling&print_leveling_solution=Custom Points",
@@ -1862,8 +1862,8 @@
   },
   {
     "SlicerConfigName": "enable_line_spliting",
-    "PresentationName": "Enable Line Spliting",
-    "HelpText": "Allow MatterControl to split long lines to improve levesing and print canceling. Critical for printers that are significantly out of level.",
+    "PresentationName": "Enable Line Splitting",
+    "HelpText": "Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.",
     "ShowIfSet": "!sla_printer",
     "DataEditType": "CHECK_BOX",
     "DefaultValue": "1",

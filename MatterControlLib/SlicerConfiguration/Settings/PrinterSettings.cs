@@ -544,8 +544,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						warningWindowOpen = false;
 					},
 					"The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.".Localize()
-						.FormatWith(profile.Make, profile.Model), 
-					"Recovered printer profile".Localize(), 
+						.FormatWith(profile.Make, profile.Model),
+					"Recovered printer profile".Localize(),
 					messageType: StyledMessageBox.MessageType.OK);
 				});
 			}
@@ -1096,7 +1096,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						var error = "{0} must be less than or equal to the {1}.".Localize().FormatWith(
 							GetSettingsName(SettingsKey.layer_height), GetSettingsName(SettingsKey.nozzle_diameter));
 						var details = "{0} = {1}\n{2} = {3}".FormatWith(GetSettingsName(SettingsKey.layer_height),
-							GetValue<double>(SettingsKey.layer_height), 
+							GetValue<double>(SettingsKey.layer_height),
 							GetSettingsName(SettingsKey.nozzle_diameter),
 							GetValue<double>(SettingsKey.nozzle_diameter));
 						var location = GetSettingsLocation(SettingsKey.layer_height);
@@ -1106,7 +1106,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 					else if (GetValue<double>(SettingsKey.layer_height) <= 0)
 					{
-						var error = "{0} must be greate than 0.".Localize().FormatWith(
+						var error = "{0} must be greater than 0.".Localize().FormatWith(
 							GetSettingsName(SettingsKey.layer_height));
 						var location = GetSettingsLocation(SettingsKey.layer_height);
 						StyledMessageBox.ShowMessageBox($"{error}\n\n{location}", "Slice Error".Localize());
