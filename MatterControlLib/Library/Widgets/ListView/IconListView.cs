@@ -235,7 +235,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			var iconView = new IconViewItem(item, this.ThumbWidth, this.ThumbHeight, theme)
 			{
-				Margin = new BorderDouble(leftRightMargin, 0),
+				Margin = new BorderDouble(leftRightMargin, 6, leftRightMargin, 0),
 				HAnchor = HAnchor.Center
 			};
 
