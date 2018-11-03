@@ -30,7 +30,9 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+#if !__ANDROID__
 using Markdig.Agg;
+#endif
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -99,10 +101,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						// start heating up the extruder
 						printer.Connection.SetTargetHotendTemperature(0, printer.Settings.GetValue<double>(SettingsKey.temperature));
 
+#if !__ANDROID__
 						var markdownText = printer.Settings.GetValue(SettingsKey.trim_filament_markdown);
 						var markdownWidget = new MarkdownWidget(theme);
 						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
 						trimFilamentPage.ContentRow.AddChild(markdownWidget);
+#endif
 					}
 				};
 				yield return trimFilamentPage;
@@ -119,10 +123,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					BecomingActive = () =>
 					{
+#if !__ANDROID__
 						var markdownText = printer.Settings.GetValue(SettingsKey.insert_filament_markdown);
 						var markdownWidget = new MarkdownWidget(theme);
 						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
 						insertFilamentPage.ContentRow.AddChild(markdownWidget);
+#endif
 
 						// turn off the fan
 						printer.Connection.FanSpeed0To255 = 0;
@@ -277,10 +283,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					BecomingActive = () =>
 					{
 						runningCleanPage.ShowWizardFinished();
+#if !__ANDROID__
 						var markdownText = printer.Settings.GetValue(SettingsKey.running_clean_markdown);
 						var markdownWidget = new MarkdownWidget(theme);
 						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
 						runningCleanPage.ContentRow.AddChild(markdownWidget);
+#endif
 
 						var runningTime = Stopwatch.StartNew();
 						runningGCodeCommands = UiThread.SetInterval(() =>

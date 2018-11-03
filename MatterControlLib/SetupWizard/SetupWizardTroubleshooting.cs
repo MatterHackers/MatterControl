@@ -135,9 +135,9 @@ namespace MatterHackers.MatterControl
 
 			usbStatus.HasUsbPermission = usbStatus.IsDriverLoadable && FrostedSerialPort.HasPermissionToDevice(serialPort);
 
-			contentRow.AddChild(printerNameLabel);
+			ContentRow.AddChild(printerNameLabel);
 
-			contentRow.AddChild(new CriteriaRow(
+			ContentRow.AddChild(new CriteriaRow(
 				"USB Connection",
 				"Retry",
 				"No USB device found. Check and reseat cables and try again",
@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl
 				() => UiThread.RunOnIdle(RefreshStatus),
 				theme));
 
-			contentRow.AddChild(new CriteriaRow(
+			ContentRow.AddChild(new CriteriaRow(
 				"USB Driver",
 				"Fix",
 				usbStatus.Summary,
@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl
 				},
 				theme));
 
-			contentRow.AddChild(new CriteriaRow(
+			ContentRow.AddChild(new CriteriaRow(
 				"USB Permission",
 				"Request Permission",
 				"Click the 'Request Permission' button to gain Android access rights",
