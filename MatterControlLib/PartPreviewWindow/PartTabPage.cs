@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// restore to state for favorites bar size
 				Width = expanded ? 55 : 33,
-				ListContentView = new IconListView(theme, expanded ? 48 : 24),
+				ListContentView = new IconView(theme, expanded ? 48 : 24)
 			};
 			leftBar.AddChild(favoritesBar);
 
@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				UserSettings.Instance.set(UserSettingsKey.FavoritesBarExpansion, expanded ? "1" : "0");
 
-				favoritesBar.ListContentView = new IconListView(theme, expanded ? 48 : 24);
+				favoritesBar.ListContentView = new IconView(theme, expanded ? 48 : 24);
 				favoritesBar.Width = expanded ? 55 : 33;
 				expandBarButton.SetIcon(expanded ? collapsedImage : expandedImage);
 				expandBarButton.Invalidate();
