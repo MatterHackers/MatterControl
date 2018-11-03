@@ -1861,7 +1861,7 @@
     "ReloadUiWhenChanged": true
   },
   {
-    "SlicerConfigName": "enable_line_spliting",
+    "SlicerConfigName": "enable_line_splitting",
     "PresentationName": "Enable Line Splitting",
     "HelpText": "Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.",
     "ShowIfSet": "!sla_printer",

@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 				if(printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && this.ApplyLeveling)
 				{
-					if (printer.Settings.GetValue<bool>(SettingsKey.enable_line_spliting))
+					if (printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting))
 					{
 						finalStream = new BabyStepsStream(printer, finalStream, 1);
 					}
