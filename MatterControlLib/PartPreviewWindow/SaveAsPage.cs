@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl
 					Margin = new BorderDouble(5),
 					HAnchor = HAnchor.Left
 				};
-				ContentRow.AddChild(fileNameHeader);
+				contentRow.AddChild(fileNameHeader);
 
 				//Adds text box and check box to the above container
 				itemNameWidget = new MHTextEditWidget("", theme, pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Design Name Here".Localize())
@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl
 				{
 					acceptButton.InvokeClick();
 				};
-				ContentRow.AddChild(itemNameWidget);
+				contentRow.AddChild(itemNameWidget);
 			}
 		}
 	}

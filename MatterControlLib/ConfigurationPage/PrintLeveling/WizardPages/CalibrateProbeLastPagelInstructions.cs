@@ -56,14 +56,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				+ "If you wish to re-calibrate your probe in the future:".Localize() + "\n"
 				+ "    1. Select the 'Controls' tab on the right" + "\n"
 				+ "    2. Look for the calibration section (pictured below)".Localize() + "\n";
-			ContentRow.AddChild(this.CreateTextField(calibrated));
+			contentRow.AddChild(this.CreateTextField(calibrated));
 
-			ContentRow.AddChild(new ImageWidget(AggContext.StaticData.LoadImage(Path.Combine("Images", "probe.png")))
+			contentRow.AddChild(new ImageWidget(AggContext.StaticData.LoadImage(Path.Combine("Images", "probe.png")))
 			{
 				HAnchor = HAnchor.Center
 			});
 
-			ContentRow.AddChild(this.CreateTextField("Click 'Done' to close this window.".Localize()));
+			contentRow.AddChild(this.CreateTextField("Click 'Done' to close this window.".Localize()));
 
 			this.ShowWizardFinished();
 		}

@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.probePositionsBeingEditedIndex = probePositionsBeingEditedIndex;
 
 			GuiWidget spacer = new GuiWidget(15, 15);
-			ContentRow.AddChild(spacer);
+			contentRow.AddChild(spacer);
 
 			FlowLayoutWidget zButtonsAndInfo = new FlowLayoutWidget();
 			zButtonsAndInfo.HAnchor |= Agg.UI.HAnchor.Center;
@@ -85,9 +85,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			zButtonsAndInfo.AddChild(zPosition);
 
-			ContentRow.AddChild(zButtonsAndInfo);
+			contentRow.AddChild(zButtonsAndInfo);
 
-			ContentRow.AddChild(
+			contentRow.AddChild(
 				this.CreateTextField(setZHeightCoarseInstruction2));
 		}
 

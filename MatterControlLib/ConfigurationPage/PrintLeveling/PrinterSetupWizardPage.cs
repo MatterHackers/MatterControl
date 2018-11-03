@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
 
 			if (!string.IsNullOrEmpty(instructionsText))
 			{
-				ContentRow.AddChild(
+				contentRow.AddChild(
 					this.CreateTextField(instructionsText.Replace("\t", "    ")));
 			}
 
@@ -69,6 +69,8 @@ namespace MatterHackers.MatterControl
 
 			this.AddPageAction(NextButton);
 		}
+
+		public GuiWidget ContentRow => contentRow;
 
 		public override void PageIsBecomingActive()
 		{

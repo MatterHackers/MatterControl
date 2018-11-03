@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Stretch,
 			};
 			scrollWindow.ScrollArea.HAnchor = HAnchor.Stretch;
-			ContentRow.AddChild(scrollWindow);
+			contentRow.AddChild(scrollWindow);
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl
 			};
 
 			rememberChoice = new CheckBox("Don't remind me again".Localize(), theme.TextColor);
-			ContentRow.AddChild(rememberChoice);
+			contentRow.AddChild(rememberChoice);
 
 			syncButton.Visible = true;
 

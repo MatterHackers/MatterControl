@@ -61,12 +61,12 @@ namespace MatterHackers.MatterControl
 				TextColor = theme.TextColor,
 				Margin = new BorderDouble(bottom: 10)
 			};
-			ContentRow.AddChild(printerNameLabel);
+			contentRow.AddChild(printerNameLabel);
 
-			ContentRow.AddChild(new TextWidget("Instructions".Localize() + ":", 0, 0, 12,textColor:theme.TextColor));
-			ContentRow.AddChild(new TextWidget("1. Power on your 3D Printer.".Localize(), 0, 0, 12,textColor:theme.TextColor));
-			ContentRow.AddChild(new TextWidget("2. Attach your 3D Printer via USB.".Localize(), 0, 0, 12,textColor:theme.TextColor));
-			ContentRow.AddChild(new TextWidget("3. Press 'Connect'.".Localize(), 0, 0, 12,textColor:theme.TextColor));
+			contentRow.AddChild(new TextWidget("Instructions".Localize() + ":", 0, 0, 12,textColor:theme.TextColor));
+			contentRow.AddChild(new TextWidget("1. Power on your 3D Printer.".Localize(), 0, 0, 12,textColor:theme.TextColor));
+			contentRow.AddChild(new TextWidget("2. Attach your 3D Printer via USB.".Localize(), 0, 0, 12,textColor:theme.TextColor));
+			contentRow.AddChild(new TextWidget("3. Press 'Connect'.".Localize(), 0, 0, 12,textColor:theme.TextColor));
 
 			//Add inputs to main container
 			ApplicationController.Instance.ActivePrinter.Connection.CommunicationStateChanged.RegisterEvent(communicationStateChanged, ref unregisterEvents);
@@ -87,10 +87,10 @@ namespace MatterHackers.MatterControl
 			connectButtonContainer.AddChild(connectButton);
 			connectButtonContainer.AddChild(skipButton);
 			connectButtonContainer.AddChild(new HorizontalSpacer());
-			ContentRow.AddChild(connectButtonContainer);
+			contentRow.AddChild(connectButtonContainer);
 
 			skipMessage = new TextWidget("(Press 'Skip' to setup connection later)".Localize(), 0, 0, 10, textColor: theme.TextColor);
-			ContentRow.AddChild(skipMessage);
+			contentRow.AddChild(skipMessage);
 
 			generalError = new TextWidget("", 0, 0, errorFontSize)
 			{
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl
 				Visible = false,
 				Margin = new BorderDouble(top: 20),
 			};
-			ContentRow.AddChild(generalError);
+			contentRow.AddChild(generalError);
 
 			//Construct buttons
 			retryButton = theme.CreateLightDialogButton("Retry".Localize());
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl
 			retryButtonContainer.AddChild(troubleshootButton);
 			retryButtonContainer.AddChild(new HorizontalSpacer());
 
-			ContentRow.AddChild(retryButtonContainer);
+			contentRow.AddChild(retryButtonContainer);
 
 			//Construct buttons
 			nextButton = theme.CreateDialogButton("Continue".Localize());

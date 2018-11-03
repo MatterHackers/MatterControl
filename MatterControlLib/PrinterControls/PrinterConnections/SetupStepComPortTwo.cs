@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			this.printer = printer;
 
 			startingPortNames = FrostedSerialPort.GetPortNames();
-			ContentRow.AddChild(createPrinterConnectionMessageContainer());
+			contentRow.AddChild(createPrinterConnectionMessageContainer());
 
 			//Construct buttons
 			nextButton = theme.CreateDialogButton("Done".Localize());

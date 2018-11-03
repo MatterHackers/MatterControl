@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl
 
 			headerBar.AddChild(new TextWidget(this.WindowTitle, textColor: theme.TextColor, pointSize: theme.FontSize10));
 
-			ContentRow.AddChild(headerBar);
+			contentRow.AddChild(headerBar);
 
 			// put in the movement edit controls
 			string[] settingsArray = printer.Settings.Helpers.GetMovementSpeedsString().Split(',');
@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl
 				row.AddChild(valueEdit);
 				valueEditors.Add(valueEdit);
 
-				ContentRow.AddChild(row);
+				contentRow.AddChild(row);
 				preset_count += 1;
 			}
 

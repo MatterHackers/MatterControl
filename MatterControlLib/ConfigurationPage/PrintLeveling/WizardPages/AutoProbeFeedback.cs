@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.probePositionsBeingEditedIndex = probePositionsBeingEditedIndex;
 
 			var spacer = new GuiWidget(15, 15);
-			ContentRow.AddChild(spacer);
+			contentRow.AddChild(spacer);
 
 			FlowLayoutWidget textFields = new FlowLayoutWidget(FlowDirection.TopToBottom);
 		}

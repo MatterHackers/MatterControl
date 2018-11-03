@@ -1,5 +1,4 @@
-﻿
-/*
+﻿/*
 Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
