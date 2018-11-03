@@ -207,29 +207,30 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						// start heating up the extruder
 						printer.Connection.SetTargetHotendTemperature(0, printer.Settings.GetValue<double>(SettingsKey.temperature));
 
-						var loadingSpeed = printer.Settings.GetValue<double>(SettingsKey.load_filament_speed);
-						var loadLength = Math.Max(1, printer.Settings.GetValue<double>(SettingsKey.load_filament_length));
-						var remainingLength = loadLength;
-						var maxSingleExtrudeLength = 10;
+						var loadingSpeedMmPerS = printer.Settings.GetValue<double>(SettingsKey.load_filament_speed);
+						var loadLengthMm = Math.Max(1, printer.Settings.GetValue<double>(SettingsKey.load_filament_length));
+						var remainingLengthMm = loadLengthMm;
+						var maxSingleExtrudeLength = 20;
 
 						var runningTime = Stopwatch.StartNew();
+						var expectedTimeS = loadLengthMm / loadingSpeedMmPerS;
 						runningGCodeCommands = UiThread.SetInterval(() =>
 						{
 							if (printer.Connection.NumQueuedCommands == 0)
 							{
-								if (remainingLength > 0)
+								if (progressBar.RatioComplete < 1)
 								{
-									var thisExtrude = Math.Min(remainingLength, maxSingleExtrudeLength);
+									var thisExtrude = Math.Min(remainingLengthMm, maxSingleExtrudeLength);
 									var currentE = printer.Connection.CurrentExtruderDestination;
-									printer.Connection.QueueLine("G1 {0}{1:0.###} F{2}".FormatWith(PrinterCommunication.PrinterConnection.Axis.E, currentE + thisExtrude, loadingSpeed * 60));
-									remainingLength -= thisExtrude;
-									progressBar.RatioComplete = 1 - remainingLength / loadLength;
-									progressBarText.Text = $"Filament Loaded: {progressBar.RatioComplete * 100:0}%";
+									printer.Connection.QueueLine("G1 {0}{1:0.###} F{2}".FormatWith(PrinterCommunication.PrinterConnection.Axis.E, currentE + thisExtrude, loadingSpeedMmPerS * 60));
+									remainingLengthMm -= thisExtrude;
+									var elapsedSeconds = runningTime.Elapsed.TotalSeconds;
+									progressBar.RatioComplete = Math.Min(1, elapsedSeconds / expectedTimeS);
+									progressBarText.Text = $"Loading Filament: {Math.Max(0, expectedTimeS - elapsedSeconds):0}";
 								}
 							}
 
-							if (runningGCodeCommands.Continue
-								&& remainingLength <= 0)
+							if (progressBar.RatioComplete == 1)
 							{
 								runningGCodeCommands.Continue = false;
 								loadingFilamentPage.NextButton.InvokeClick();
