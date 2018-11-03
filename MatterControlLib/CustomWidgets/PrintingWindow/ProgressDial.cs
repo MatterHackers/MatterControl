@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			primaryAccentColor = theme.PrimaryAccentColor;
 			primaryAccentShade = theme.PrimaryAccentColor.WithLightnessAdjustment(0.7).ToColor();
 
-			percentCompleteWidget = new TextWidget("", pointSize: 22, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			percentCompleteWidget = new TextWidget("", pointSize: 22, textColor: theme.TextColor)
 			{
 				AutoExpandBoundsToText = true,
 				VAnchor = VAnchor.Center,
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			CompletedRatio = 0;
 
-			layerCountWidget = new TextWidget("", pointSize: 12, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			layerCountWidget = new TextWidget("", pointSize: 12, textColor: theme.TextColor)
 			{
 				AutoExpandBoundsToText = true,
 				VAnchor = VAnchor.Center,
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.AddChild(percentCompleteWidget);
 			this.AddChild(layerCountWidget);
 
-			borderColor = ActiveTheme.Instance.PrimaryTextColor;
+			borderColor = theme.TextColor;
 			borderColor.Alpha0To1 = 0.3f;
 		}
 

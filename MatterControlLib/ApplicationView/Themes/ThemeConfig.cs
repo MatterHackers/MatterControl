@@ -138,7 +138,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public ThemeColors Colors { get; set; } = new ThemeColors();
+		public Color TextColor { get; set; } = Color.Black;
+
 		public PresetColors PresetColors { get; set; } = new PresetColors();
 
 		public bool IsDarkTheme { get; set; }
@@ -155,7 +156,7 @@ namespace MatterHackers.MatterControl
 
 		public TextWidget CreateHeading(string text)
 		{
-			return new TextWidget(text, pointSize: this.H1PointSize, textColor: this.Colors.PrimaryTextColor, bold: true)
+			return new TextWidget(text, pointSize: this.H1PointSize, textColor: this.TextColor, bold: true)
 			{
 				Margin = new BorderDouble(0, 5)
 			};
@@ -241,7 +242,7 @@ namespace MatterHackers.MatterControl
 
 			this.GeneratingThumbnailIcon = AggContext.StaticData.LoadIcon("building_thumbnail_40x40.png", 40, 40, this.InvertIcons);
 
-			DefaultThumbView.ThumbColor = new Color(this.Colors.PrimaryTextColor, 30);
+			DefaultThumbView.ThumbColor = new Color(this.TextColor, 30);
 		}
 
 		public JogControls.MoveButton CreateMoveButton(PrinterConfig printer, string label, PrinterConnection.Axis axis, double movementFeedRate, bool levelingButtons = false)
@@ -438,7 +439,7 @@ namespace MatterHackers.MatterControl
 		{
 			double scrollBarWidth = 10;
 
-			wordOptionContainer.AddChild(new TextWidget(header, textColor: this.Colors.PrimaryTextColor)
+			wordOptionContainer.AddChild(new TextWidget(header, textColor: this.TextColor)
 			{
 				Margin = new BorderDouble(10, 3, 3, 5),
 				HAnchor = HAnchor.Left

@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl
 			{
 				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(left: 5, bottom: 15, top: 20),
-				TextColor = theme.Colors.PrimaryTextColor
+				TextColor = theme.TextColor
 			};
 			contentPanel.AddChild(currentBuildInfo);
 
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl
 
 			var feedLabel = new TextWidget("Update Channel".Localize(), pointSize: 12)
 			{
-				TextColor = theme.Colors.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(left: 5)
 			};
@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl
 			additionalInfoContainer.AddChild(
 				new WrappedTextWidget("Changing your update channel will change the version of MatterControl that you receive when updating".Localize() + ":")
 				{
-					TextColor = theme.Colors.PrimaryTextColor,
+					TextColor = theme.TextColor,
 					HAnchor = HAnchor.Stretch,
 					Margin = new BorderDouble(bottom: 20)
 				});
@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl
 			additionalInfoContainer.AddChild(
 				new WrappedTextWidget("Stable: The current release version of MatterControl (recommended)".Localize())
 				{
-					TextColor = theme.Colors.PrimaryTextColor,
+					TextColor = theme.TextColor,
 					HAnchor = HAnchor.Stretch,
 					Margin = new BorderDouble(bottom: 10)
 				});
@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl
 			additionalInfoContainer.AddChild(
 				new WrappedTextWidget("Beta: The release candidate version of MatterControl".Localize())
 				{
-					TextColor = theme.Colors.PrimaryTextColor,
+					TextColor = theme.TextColor,
 					HAnchor = HAnchor.Stretch,
 					Margin = new BorderDouble(bottom: 10)
 				});
@@ -171,7 +171,7 @@ namespace MatterHackers.MatterControl
 			additionalInfoContainer.AddChild(
 				new WrappedTextWidget("Alpha: The in development version of MatterControl".Localize())
 				{
-					TextColor = theme.Colors.PrimaryTextColor,
+					TextColor = theme.TextColor,
 					HAnchor = HAnchor.Stretch,
 					Margin = new BorderDouble(bottom: 10)
 				});

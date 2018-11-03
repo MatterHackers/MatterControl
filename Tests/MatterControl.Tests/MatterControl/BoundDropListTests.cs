@@ -24,10 +24,7 @@ namespace MatterControl.Tests.MatterControl
 
 			BoundDropList dropList;
 
-			var theme = new ThemeConfig()
-			{
-				Colors = ActiveTheme.Instance as ThemeColors
-			};
+			var theme = new ThemeConfig();
 
 			// Whitelist on non-OEM builds should contain all printers
 			dropList = new BoundDropList("Test", theme);

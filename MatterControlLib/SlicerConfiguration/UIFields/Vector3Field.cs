@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					userInitiated: true);
 			};
 
-			container.AddChild(new TextWidget("X:", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			container.AddChild(new TextWidget("X:", pointSize: 10, textColor: theme.TextColor)
 			{
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(5, 0),
@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					userInitiated: true);
 			};
 
-			container.AddChild(new TextWidget("Y:", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			container.AddChild(new TextWidget("Y:", pointSize: 10, textColor: theme.TextColor)
 			{
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(15, 0, 5, 0),
@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					userInitiated: true);
 			};
 
-			container.AddChild(new TextWidget("Z:", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			container.AddChild(new TextWidget("Z:", pointSize: 10, textColor: theme.TextColor)
 			{
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(15, 0, 5, 0),

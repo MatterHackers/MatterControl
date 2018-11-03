@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void Initialize(int tabIndex)
 		{
-			textWidget = new TextWidget("", textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
+			textWidget = new TextWidget("", textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 			{
 				TabIndex = tabIndex,
 				ToolTipText = this.HelpText,

@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl
 			this.BackgroundColor = theme.MinimalShade;
 			this.Padding = theme.ToolbarPadding.Clone(left: 8);
 
-			this.AddChild(updateStatusText = new TextWidget(string.Format(""), textColor: theme.Colors.PrimaryTextColor)
+			this.AddChild(updateStatusText = new TextWidget(string.Format(""), textColor: theme.TextColor)
 			{
 				AutoExpandBoundsToText = true,
 				VAnchor = VAnchor.Center

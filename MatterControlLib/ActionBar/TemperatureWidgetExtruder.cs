@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.ActionBar
 					break;
 			}
 
-			moveButtonsContainer.AddChild(new TextWidget("mm", textColor: theme.Colors.PrimaryTextColor, pointSize: 8)
+			moveButtonsContainer.AddChild(new TextWidget("mm", textColor: theme.TextColor, pointSize: 8)
 			{
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(3, 0)

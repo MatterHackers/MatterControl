@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl
 				}
 
 				// Create export button for each plugin
-				var pluginButton = new RadioButton(new RadioImageWidget(plugin.ButtonText, theme.Colors.PrimaryTextColor, plugin.Icon))
+				var pluginButton = new RadioButton(new RadioImageWidget(plugin.ButtonText, theme.TextColor, plugin.Icon))
 				{
 					HAnchor = HAnchor.Left,
 					Margin = commonMargin,
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl
 			if (AggContext.OperatingSystem == OSType.Windows
 				|| AggContext.OperatingSystem == OSType.X11)
 			{
-				showInFolderAfterSave = new CheckBox("Show file in folder after save".Localize(), ActiveTheme.Instance.PrimaryTextColor, 10)
+				showInFolderAfterSave = new CheckBox("Show file in folder after save".Localize(), theme.TextColor, 10)
 				{
 					HAnchor = HAnchor.Left,
 					Cursor = Cursors.Hand

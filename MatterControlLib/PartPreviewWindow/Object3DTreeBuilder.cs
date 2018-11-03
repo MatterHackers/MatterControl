@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Text = "Loading".Localize(),
 					Tag = item.Source,
-					TextColor = theme.Colors.PrimaryTextColor,
+					TextColor = theme.TextColor,
 					PointSize = theme.DefaultFontSize,
 				};
 			}
@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Text = GetName(item),
 				Tag = item.Source,
-				TextColor = theme.Colors.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				PointSize = theme.DefaultFontSize,
 			};
 

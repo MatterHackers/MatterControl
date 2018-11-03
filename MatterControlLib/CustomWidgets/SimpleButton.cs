@@ -410,11 +410,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.VAnchor = VAnchor.Absolute | VAnchor.Center;
 			this.Height = theme.ButtonHeight;
 			this.Padding = theme.TextButtonPadding;
-			this.TextColor = theme.Colors.PrimaryTextColor;
+			this.TextColor = theme.TextColor;
 
 			var textSize = (pointSize != -1) ? pointSize : theme.DefaultFontSize;
 
-			this.AddChild(textWidget = new TextWidget(text, pointSize: textSize, textColor: theme.Colors.PrimaryTextColor)
+			this.AddChild(textWidget = new TextWidget(text, pointSize: textSize, textColor: theme.TextColor)
 			{
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Center,
@@ -472,7 +472,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			this.AddChild(textContainer);
 
-			textContainer.AddChild(textWidget = new TextWidget(text, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor));
+			textContainer.AddChild(textWidget = new TextWidget(text, pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
 		}
 
 		public ImageWidget ImageWidget { get; }

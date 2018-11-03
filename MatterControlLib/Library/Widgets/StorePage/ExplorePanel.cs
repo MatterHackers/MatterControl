@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 						graphics2D.DrawString(content.text, image.Width/2, image.Height/2 + printer.TypeFaceStyle.EmSizeInPixels / 2, goalPointSize,
 							Justification.Center, Baseline.BoundsTop,
-							theme.Colors.PrimaryTextColor);
+							theme.TextColor);
 
 						if (content.link != null)
 						{

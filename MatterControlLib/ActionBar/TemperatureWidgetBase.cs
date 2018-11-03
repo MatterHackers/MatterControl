@@ -86,17 +86,17 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			CurrentTempIndicator = new TextWidget(textValue, pointSize: 11)
 			{
-				TextColor = theme.Colors.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				VAnchor = VAnchor.Center,
 				AutoExpandBoundsToText = true
 			};
 			container.AddChild(CurrentTempIndicator);
 
-			container.AddChild(new TextWidget("/") { TextColor = theme.Colors.PrimaryTextColor });
+			container.AddChild(new TextWidget("/") { TextColor = theme.TextColor });
 
 			goalTempIndicator = new TextWidget(textValue, pointSize: 11)
 			{
-				TextColor = theme.Colors.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				VAnchor = VAnchor.Center,
 				AutoExpandBoundsToText = true
 			};
@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			DirectionIndicator = new TextWidget(textValue, pointSize: 11)
 			{
-				TextColor = theme.Colors.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				VAnchor = VAnchor.Center,
 				AutoExpandBoundsToText = true,
 				Margin = new BorderDouble(left: 5)

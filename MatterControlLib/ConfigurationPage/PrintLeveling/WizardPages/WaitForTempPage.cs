@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				};
 
 				// put in bar name
-				ContentRow.AddChild(new TextWidget("Hotend Temperature:".Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				ContentRow.AddChild(new TextWidget("Hotend Temperature:".Localize(), pointSize: 10, textColor: theme.TextColor)
 				{
 					AutoExpandBoundsToText = true,
 					Margin = new BorderDouble(5, 0, 5, 5),
@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				hotEndProgressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))
 				{
 					FillColor = theme.PrimaryAccentColor,
-					BorderColor = ActiveTheme.Instance.PrimaryTextColor,
+					BorderColor = theme.TextColor,
 					BackgroundColor = Color.White,
 					Margin = new BorderDouble(3, 0, 0, 0),
 					VAnchor = VAnchor.Center
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				hotEndProgressHolder.AddChild(hotEndProgressBar);
 
 				// put in the status
-				hotEndProgressBarText = new TextWidget("", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				hotEndProgressBarText = new TextWidget("", pointSize: 10, textColor: theme.TextColor)
 				{
 					AutoExpandBoundsToText = true,
 					Margin = new BorderDouble(5, 0, 5, 5),
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				hotEndProgressHolder.AddChild(hotEndProgressBarText);
 
 				// message to show when done
-				hotEndDoneText = new TextWidget("Done!", textColor: ActiveTheme.Instance.PrimaryTextColor)
+				hotEndDoneText = new TextWidget("Done!", textColor: theme.TextColor)
 				{
 					AutoExpandBoundsToText = true,
 					Visible = false,
@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				};
 
 				// put in bar name
-				ContentRow.AddChild(new TextWidget("Bed Temperature:".Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				ContentRow.AddChild(new TextWidget("Bed Temperature:".Localize(), pointSize: 10, textColor: theme.TextColor)
 				{
 					AutoExpandBoundsToText = true,
 					Margin = new BorderDouble(5, 0, 5, 5),
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				bedProgressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))
 				{
 					FillColor = theme.PrimaryAccentColor,
-					BorderColor = ActiveTheme.Instance.PrimaryTextColor,
+					BorderColor = theme.TextColor,
 					BackgroundColor = Color.White,
 					Margin = new BorderDouble(3, 0, 0, 0),
 					VAnchor = VAnchor.Center
@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				bedProgressHolder.AddChild(bedProgressBar);
 
 				// put in status
-				bedProgressBarText = new TextWidget("", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				bedProgressBarText = new TextWidget("", pointSize: 10, textColor: theme.TextColor)
 				{
 					AutoExpandBoundsToText = true,
 					Margin = new BorderDouble(5, 0, 0, 0),
@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				bedProgressHolder.AddChild(bedProgressBarText);
 
 				// message to show when done
-				bedDoneText = new TextWidget("Done!", textColor: ActiveTheme.Instance.PrimaryTextColor)
+				bedDoneText = new TextWidget("Done!", textColor: theme.TextColor)
 				{
 					AutoExpandBoundsToText = true,
 					Visible = false,

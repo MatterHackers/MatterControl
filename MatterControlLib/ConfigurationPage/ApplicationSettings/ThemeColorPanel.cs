@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						name = themeset.ThemesetID.Replace("-", " ");
 					}
 
-					previewColumn.AddChild(new TextWidget(name, pointSize: theme.FontSize7, textColor: theme.Colors.PrimaryTextColor)
+					previewColumn.AddChild(new TextWidget(name, pointSize: theme.FontSize7, textColor: theme.TextColor)
 					{
 						HAnchor = HAnchor.Left,
 						Margin = new BorderDouble(12, 2)

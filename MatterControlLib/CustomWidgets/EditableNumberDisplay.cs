@@ -33,7 +33,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		public EditableNumberDisplay(double startingValue, string largestPossibleValue, ThemeConfig theme)
-			: this(startingValue, largestPossibleValue, ActiveTheme.Instance.PrimaryTextColor, theme)
+			: this(startingValue, largestPossibleValue, theme.TextColor, theme)
 		{
 		}
 

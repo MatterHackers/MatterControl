@@ -180,8 +180,7 @@ namespace MatterHackers.MatterControl
 				themeset = themeProvider.GetTheme("Modern-Dark");
 			}
 
-			DefaultThumbView.ThumbColor = new Color(themeset.Theme.Colors.PrimaryTextColor, 30);
-			ActiveTheme.Instance = themeset.Theme.Colors;
+			DefaultThumbView.ThumbColor = new Color(themeset.Theme.TextColor, 30);
 		}
 
 		public static ThemeConfig LoadTheme(string themeName)
@@ -226,9 +225,6 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(() =>
 			{
 				UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, themeset.Name);
-
-				//Set new user selected Default
-				ActiveTheme.Instance = themeset.Theme.Colors;
 
 				// Explicitly fire ReloadAll in response to user interaction
 				ApplicationController.Instance.ReloadAll();
@@ -814,7 +810,7 @@ namespace MatterHackers.MatterControl
 			var theme = this.Theme;
 			if (tab is GuiWidget guiWidget)
 			{
-				guiWidget.Descendants<TextWidget>().FirstOrDefault().FlashBackground(theme.PrimaryAccentColor.WithContrast(theme.Colors.PrimaryTextColor, 6).ToColor());
+				guiWidget.Descendants<TextWidget>().FirstOrDefault().FlashBackground(theme.PrimaryAccentColor.WithContrast(theme.TextColor, 6).ToColor());
 			}
 		}
 
@@ -2217,7 +2213,7 @@ If you experience adhesion problems, please re-run leveling."
 					{
 						var hideGCodeWarningCheckBox = new CheckBox(doNotAskAgainMessage)
 						{
-							TextColor = ActiveTheme.Instance.PrimaryTextColor,
+							TextColor = this.Theme.TextColor,
 							Margin = new BorderDouble(top: 6, left: 6),
 							HAnchor = Agg.UI.HAnchor.Left
 						};
@@ -2833,7 +2829,7 @@ If you experience adhesion problems, please re-run leveling."
 			};
 			overlay.AddChild(progressPanel);
 
-			progressPanel.AddChild(statusText = new TextWidget("", textColor: AppContext.Theme.Colors.PrimaryTextColor)
+			progressPanel.AddChild(statusText = new TextWidget("", textColor: AppContext.Theme.TextColor)
 			{
 				MinimumSize = new Vector2(200, 30),
 				HAnchor = HAnchor.Center,

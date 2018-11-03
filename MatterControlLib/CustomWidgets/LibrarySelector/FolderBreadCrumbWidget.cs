@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					Name = "Bread Crumb Button " + listView.ActiveContainer.Name,
 					VAnchor = VAnchor.Center,
 					Margin = theme.ButtonSpacing,
-					TextColor = theme.Colors.PrimaryTextColor
+					TextColor = theme.TextColor
 				};
 				this.AddChild(containerButton);
 			}
@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					if (!firstItem)
 					{
 						// Add path separator
-						this.AddChild(new TextWidget("/", pointSize: theme.DefaultFontSize + 1, textColor: ActiveTheme.Instance.PrimaryTextColor)
+						this.AddChild(new TextWidget("/", pointSize: theme.DefaultFontSize + 1, textColor: theme.TextColor)
 						{
 							VAnchor = VAnchor.Center,
 							Margin = extraSpacing.Clone(top: 2)
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						Name = "Bread Crumb Button " + container.Name,
 						VAnchor = VAnchor.Center,
 						Margin = theme.ButtonSpacing.Clone(top: 1),
-						TextColor = theme.Colors.PrimaryTextColor
+						TextColor = theme.TextColor
 					};
 					containerButton.Click += (s, e) =>
 					{
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					// lets take out the > and put in a ...
 					this.RemoveChild(1);
 
-					var separator = new TextWidget("...", textColor: ActiveTheme.Instance.PrimaryTextColor)
+					var separator = new TextWidget("...", textColor: theme.TextColor)
 					{
 						VAnchor = VAnchor.Center,
 						Margin = new BorderDouble(right:  5)

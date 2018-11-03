@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ToolTipText = "See what's new in this version of MatterControl".Localize(),
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(10, 0),
-				TextColor = theme.Colors.PrimaryTextColor
+				TextColor = theme.TextColor
 			};
 			seeWhatsNewButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					double pulseTime = 1;
 					double totalSeconds = 0;
 					var textWidgets = updateAvailableButton.Descendants<TextWidget>().Where((w) => w.Visible == true).ToArray();
-					Color startColor = theme.Colors.PrimaryTextColor;
+					Color startColor = theme.TextColor;
 					// Show a highlight on the button as the user did not click it
 					Animation flashBackground = null;
 					flashBackground = new Animation()

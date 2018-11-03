@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				var commonMargin = new BorderDouble(4, 2);
 
 				// Create export button for each plugin
-				signInRadioButton = new RadioButton(new RadioButtonViewText("Sign in to access your existing printers".Localize(), theme.Colors.PrimaryTextColor))
+				signInRadioButton = new RadioButton(new RadioButtonViewText("Sign in to access your existing printers".Localize(), theme.TextColor))
 				{
 					HAnchor = HAnchor.Left,
 					Margin = commonMargin.Clone(bottom: 10),
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				};
 				ContentRow.AddChild(signInRadioButton);
 
-				createPrinterRadioButton = new RadioButton(new RadioButtonViewText("Create a new printer", theme.Colors.PrimaryTextColor))
+				createPrinterRadioButton = new RadioButton(new RadioButtonViewText("Create a new printer", theme.TextColor))
 				{
 					HAnchor = HAnchor.Left,
 					Margin = commonMargin,
@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			TextWidget printerNameLabel = new TextWidget("Name".Localize() + ":", 0, 0, 12)
 			{
-				TextColor = theme.Colors.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 4, 0, 1)
 			};
@@ -231,7 +231,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			printerNameError = new TextWidget("", 0, 0, 10)
 			{
-				TextColor = theme.Colors.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(top: 3)
 			};
@@ -252,7 +252,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			var sectionLabel = new TextWidget(labelText, 0, 0, 12)
 			{
-				TextColor = theme.Colors.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			};

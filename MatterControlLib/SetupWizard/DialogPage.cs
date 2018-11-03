@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
 			headerLabel.PointSize = 14;
-			headerLabel.TextColor = theme.Colors.PrimaryTextColor;
+			headerLabel.TextColor = theme.TextColor;
 			ContentRow.Padding = new BorderDouble(5);
 
 			footerRow.Padding = 0;

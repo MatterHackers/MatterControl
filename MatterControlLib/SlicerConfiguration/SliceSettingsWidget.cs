@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 
 				// Add heading for My Settings view
-				searchPanel.AddChild(filteredItemsHeading = new TextWidget("My Modified Settings", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+				searchPanel.AddChild(filteredItemsHeading = new TextWidget("My Modified Settings", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 				{
 					Margin = new BorderDouble(left: 10),
 					HAnchor = HAnchor.Left,
@@ -591,7 +591,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					row.AddChild(new TextWidget(title, pointSize: 9)
 					{
 						Margin = new BorderDouble(0, 4, 10, 4),
-						TextColor = theme.Colors.PrimaryTextColor,
+						TextColor = theme.TextColor,
 					});
 
 					row.AddChild(new HorizontalSpacer());
@@ -599,7 +599,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					row.AddChild(new TextWidget(lastUpdateTime, pointSize: 9)
 					{
 						Margin = new BorderDouble(0, 4, 10, 4),
-						TextColor = theme.Colors.PrimaryTextColor,
+						TextColor = theme.TextColor,
 					});
 				}
 
@@ -745,7 +745,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				case SliceSettingData.DataEditTypes.OFFSET2:
 					placeFieldInDedicatedRow = true;
-					uiField = new ExtruderOffsetField(settingsContext, settingData.SlicerConfigName, theme.Colors.PrimaryTextColor, theme);
+					uiField = new ExtruderOffsetField(settingsContext, settingData.SlicerConfigName, theme.TextColor, theme);
 					break;
 #if !__ANDROID__
 				case SliceSettingData.DataEditTypes.IP_LIST:
@@ -757,7 +757,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// Missing Setting
 					settingsRow.AddContent(new TextWidget($"Missing the setting for '{settingData.DataEditType}'.")
 					{
-						TextColor = theme.Colors.PrimaryTextColor,
+						TextColor = theme.TextColor,
 						BackgroundColor = Color.Red
 					});
 					break;
@@ -808,7 +808,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (settingData.QuickMenuSettings.Count > 0
 					&& settingData.SlicerConfigName == "baud_rate")
 				{
-					var dropMenu = new DropMenuWrappedField(uiField, settingData, theme.Colors.PrimaryTextColor, theme);
+					var dropMenu = new DropMenuWrappedField(uiField, settingData, theme.TextColor, theme);
 					dropMenu.Initialize(tabIndexForItem);
 
 					settingsRow.AddContent(dropMenu.Content);

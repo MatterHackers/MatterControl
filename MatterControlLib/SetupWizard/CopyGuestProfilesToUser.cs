@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl
 			};
 			scrollWindow.AddChild(container);
 
-			container.AddChild(new WrappedTextWidget(importMessage, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			container.AddChild(new WrappedTextWidget(importMessage, textColor: theme.TextColor));
 
 			var byCheckbox = new Dictionary<CheckBox, PrinterInfo>();
 
@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl
 			{
 				container.AddChild(new TextWidget("Printers to Copy".Localize() + ":")
 				{
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+					TextColor = theme.TextColor,
 					Margin = new BorderDouble(0, 3, 0, 15),
 				});
 
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl
 				{
 					var checkBox = new CheckBox(printerInfo.Name)
 					{
-						TextColor = ActiveTheme.Instance.PrimaryTextColor,
+						TextColor = theme.TextColor,
 						Margin = new BorderDouble(5, 0, 0, 0),
 						HAnchor = HAnchor.Left,
 						Checked = true,
@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl
 				});
 			};
 
-			rememberChoice = new CheckBox("Don't remind me again".Localize(), ActiveTheme.Instance.PrimaryTextColor);
+			rememberChoice = new CheckBox("Don't remind me again".Localize(), theme.TextColor);
 			ContentRow.AddChild(rememberChoice);
 
 			syncButton.Visible = true;

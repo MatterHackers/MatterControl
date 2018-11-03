@@ -19,7 +19,7 @@ namespace Markdig.Renderers
 	public class TextWordX : TextWidget
 	{
 		public TextWordX(ThemeConfig theme)
-			: base("", pointSize: 10, textColor: theme.Colors.PrimaryTextColor)
+			: base("", pointSize: 10, textColor: theme.TextColor)
 		{
 			this.AutoExpandBoundsToText = true;
 		}
@@ -28,7 +28,7 @@ namespace Markdig.Renderers
 	public class TextSpaceX : TextWidget, ISkipIfFirst
 	{
 		public TextSpaceX(ThemeConfig theme)
-			: base("", pointSize: 10, textColor: theme.Colors.PrimaryTextColor)
+			: base("", pointSize: 10, textColor: theme.TextColor)
 		{
 			this.AutoExpandBoundsToText = true;
 		}

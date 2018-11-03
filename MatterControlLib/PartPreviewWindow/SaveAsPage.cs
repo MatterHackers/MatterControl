@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl
 			{
 				var fileNameHeader = new TextWidget("Design Name".Localize(), pointSize: 12)
 				{
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+					TextColor = theme.TextColor,
 					Margin = new BorderDouble(5),
 					HAnchor = HAnchor.Left
 				};

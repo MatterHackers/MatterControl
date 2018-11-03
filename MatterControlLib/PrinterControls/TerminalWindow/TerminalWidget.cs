@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 
 			filterOutput = new CheckBox("Filter Output".Localize(), textSize: theme.DefaultFontSize)
 			{
-				TextColor = theme.Colors.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				VAnchor = VAnchor.Bottom,
 			};
 			filterOutput.CheckedStateChanged += (s, e) =>
@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl
 			{
 				Margin = new BorderDouble(left: 25),
 				Checked = UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalAutoUppercase, true),
-				TextColor = theme.Colors.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				VAnchor = VAnchor.Bottom
 			};
 			autoUppercase.CheckedStateChanged += (s, e) =>
@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl
 			textScrollWidget = new TextScrollWidget(printer, printer.Connection.TerminalLog.PrinterLines)
 			{
 				BackgroundColor = theme.MinimalShade,
-				TextColor = theme.Colors.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
 				Margin = 0,

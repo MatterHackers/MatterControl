@@ -43,9 +43,9 @@ namespace MatterHackers.MatterControl
 			var menuTheme = AppContext.MenuTheme;
 
 			this.MenuItemsBackgroundColor = menuTheme.ActiveTabColor;
-			this.MenuItemsTextColor = menuTheme.Colors.PrimaryTextColor;
+			this.MenuItemsTextColor = menuTheme.TextColor;
 			this.MenuItemsBackgroundHoverColor = menuTheme.AccentMimimalOverlay;
-			this.MenuItemsTextHoverColor = menuTheme.Colors.PrimaryTextColor;
+			this.MenuItemsTextHoverColor = menuTheme.TextColor;
 			this.MenuItemsBorderColor = menuTheme.DropList.Open.BackgroundColor;
 
 			this.theme = theme;

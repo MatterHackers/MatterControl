@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl
 						moveRadioButtons.Margin = new BorderDouble(0, 3);
 						setMoveDistanceControl.AddChild(moveRadioButtons);
 
-						moveRadioButtons.AddChild(new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8)
+						moveRadioButtons.AddChild(new TextWidget("mm", textColor: theme.TextColor, pointSize: 8)
 						{
 							Margin = new BorderDouble(left: 10),
 							VAnchor = VAnchor.Center
@@ -457,7 +457,7 @@ namespace MatterHackers.MatterControl
 
 				TextWidget eMinusControlLabel = new TextWidget("Retract".Localize(), pointSize: 11)
 				{
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+					TextColor = theme.TextColor,
 					VAnchor = VAnchor.Center
 				};
 				eMinusButtonAndText.AddChild(eMinusControlLabel);
@@ -506,7 +506,7 @@ namespace MatterHackers.MatterControl
 				}
 
 				TextWidget ePlusControlLabel = new TextWidget("Extrude".Localize(), pointSize: 11);
-				ePlusControlLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+				ePlusControlLabel.TextColor = theme.TextColor;
 				ePlusControlLabel.VAnchor = VAnchor.Center;
 				ePlusButtonAndText.AddChild(ePlusControlLabel);
 				eButtons.AddChild(ePlusButtonAndText);
@@ -563,7 +563,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			setMoveDistanceControl.AddChild(
-				new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8)
+				new TextWidget("mm", textColor: theme.TextColor, pointSize: 8)
 				{
 					VAnchor = VAnchor.Center,
 					Margin = new BorderDouble(left: 10)

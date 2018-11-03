@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					&& settingData.DataEditType != SliceSettingData.DataEditTypes.HARDWARE_PRESENT)
 				{
 					unitsArea.AddChild(
-						new WrappedTextWidget(settingData.Units.Localize(), pointSize: 8, textColor: theme.Colors.PrimaryTextColor)
+						new WrappedTextWidget(settingData.Units.Localize(), pointSize: 8, textColor: theme.TextColor)
 						{
 							Margin = new BorderDouble(5, 0),
 						});

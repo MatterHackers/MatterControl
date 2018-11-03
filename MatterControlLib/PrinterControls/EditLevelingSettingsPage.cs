@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl
 					HAnchor = HAnchor.Stretch
 				};
 
-				var positionLabel = new TextWidget("{0} {1,-5}".FormatWith("Position".Localize(), row + 1), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				var positionLabel = new TextWidget("{0} {1,-5}".FormatWith("Position".Localize(), row + 1), textColor: theme.TextColor);
 
 				positionLabel.VAnchor = VAnchor.Center;
 				leftRightEdit.AddChild(positionLabel);
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl
 					}
 
 					leftRightEdit.AddChild(
-						new TextWidget($"  {axisName}: ", textColor: ActiveTheme.Instance.PrimaryTextColor)
+						new TextWidget($"  {axisName}: ", textColor: theme.TextColor)
 						{
 							VAnchor = VAnchor.Center
 						});

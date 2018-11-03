@@ -96,11 +96,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 			progressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))
 			{
 				FillColor = theme.PrimaryAccentColor,
-				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
+				BorderColor = theme.TextColor,
 				BackgroundColor = Color.White,
 				Margin = new BorderDouble(3, 0, 0, 10),
 			};
-			progressBarText = new TextWidget("", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			progressBarText = new TextWidget("", pointSize: 10, textColor: theme.TextColor)
 			{
 				AutoExpandBoundsToText = true,
 				Margin = new BorderDouble(5, 0, 0, 0),

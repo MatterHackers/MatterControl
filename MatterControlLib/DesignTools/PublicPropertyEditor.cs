@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				ToolTipText = toolTipText
 			};
 
-			var label = new TextWidget(labelText + ":", pointSize: 11, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			var label = new TextWidget(labelText + ":", pointSize: 11, textColor: AppContext.Theme.TextColor)
 			{
 				Margin = new BorderDouble(0, 0, 3, 0),
 				VAnchor = VAnchor.Center
@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				ToolTipText = toolTipText
 			};
 
-			var label = new TextWidget(labelText + ":", pointSize: 11, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			var label = new TextWidget(labelText + ":", pointSize: 11, textColor: AppContext.Theme.TextColor)
 			{
 				Margin = new BorderDouble(0, 3, 0, 0),
 				HAnchor = HAnchor.Left
@@ -655,7 +655,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					var radioButton = new RadioButton(string.IsNullOrWhiteSpace(child.Name) ? $"{itemIndex}" : $"{child.Name}")
 					{
 						Checked = childSelector.Contains(child.ID),
-						TextColor = ActiveTheme.Instance.PrimaryTextColor
+						TextColor = theme.TextColor
 					};
 					radioSiblings.Add(radioButton);
 					radioButton.SiblingRadioButtonList = radioSiblings;
@@ -666,7 +666,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					selectWidget = new CheckBox(string.IsNullOrWhiteSpace(child.Name) ? $"{itemIndex}" : $"{child.Name}")
 					{
 						Checked = childSelector.Contains(child.ID),
-						TextColor = ActiveTheme.Instance.PrimaryTextColor
+						TextColor = theme.TextColor
 					};
 				}
 

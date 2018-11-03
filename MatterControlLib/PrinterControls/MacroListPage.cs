@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl
 						Padding = new BorderDouble(3),
 					};
 
-					macroRow.AddChild(new TextWidget(GCodeMacro.FixMacroName(macro.Name), textColor: theme.Colors.PrimaryTextColor));
+					macroRow.AddChild(new TextWidget(GCodeMacro.FixMacroName(macro.Name), textColor: theme.TextColor));
 
 					macroRow.AddChild(new HorizontalSpacer());
 
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl
 					var editLink = new LinkLabel("edit".Localize(), theme)
 					{
 						Margin = new BorderDouble(right: 5),
-						TextColor = theme.Colors.PrimaryTextColor
+						TextColor = theme.TextColor
 					};
 					editLink.Click += (s, e) =>
 					{
@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl
 
 					var removeLink = new LinkLabel("remove".Localize(), theme)
 					{
-						TextColor = theme.Colors.PrimaryTextColor
+						TextColor = theme.TextColor
 					};
 					removeLink.Click += (sender, e) =>
 					{

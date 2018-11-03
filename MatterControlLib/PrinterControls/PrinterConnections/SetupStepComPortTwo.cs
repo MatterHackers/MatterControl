@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				}
 				else
 				{
-					printerErrorMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+					printerErrorMessage.TextColor = theme.TextColor;
 					printerErrorMessage.Text = "Attempting to connect".Localize() + "...";
 
 					printer.Settings.Helpers.SetComPort(candidatePort);
@@ -120,14 +120,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			string printerMessageOneText = "MatterControl will now attempt to auto-detect printer.".Localize();
 			TextWidget printerMessageOne = new TextWidget(printerMessageOneText, 0, 0, 10);
 			printerMessageOne.Margin = new BorderDouble(0, 10, 0, 5);
-			printerMessageOne.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			printerMessageOne.TextColor = theme.TextColor;
 			printerMessageOne.HAnchor = HAnchor.Stretch;
 			printerMessageOne.Margin = elementMargin;
 
 			string printerMessageFourBeg = "Connect printer (make sure it is on)".Localize();
 			string printerMessageFourFull = string.Format("1.) {0}.", printerMessageFourBeg);
 			TextWidget printerMessageFour = new TextWidget(printerMessageFourFull, 0, 0, 12);
-			printerMessageFour.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			printerMessageFour.TextColor = theme.TextColor;
 			printerMessageFour.HAnchor = HAnchor.Stretch;
 			printerMessageFour.Margin = elementMargin;
 
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			string printerMessageFiveTxtEnd = "Connect".Localize();
 			string printerMessageFiveTxtFull = string.Format("2.) {0} '{1}'.", printerMessageFiveTxtBeg, printerMessageFiveTxtEnd);
 			TextWidget printerMessageFive = new TextWidget(printerMessageFiveTxtFull, 0, 0, 12);
-			printerMessageFive.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			printerMessageFive.TextColor = theme.TextColor;
 			printerMessageFive.HAnchor = HAnchor.Stretch;
 			printerMessageFive.Margin = elementMargin;
 
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			if (printer.Connection.IsConnected)
 			{
-				printerErrorMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+				printerErrorMessage.TextColor = theme.TextColor;
 				printerErrorMessage.Text = "Connection succeeded".Localize() + "!";
 				nextButton.Visible = true;
 				connectButton.Visible = false;

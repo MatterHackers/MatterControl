@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			// Display the current baby step offset stream values
 			var offsetStreamLabel = new TextWidget("Z Offset".Localize() + ":", pointSize: 8)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				Margin = new BorderDouble(left: 10),
 				AutoExpandBoundsToText = true,
 				VAnchor = VAnchor.Center
@@ -191,9 +191,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 				Padding = 0
 			};
 
-			var xPosition = new TextWidget("X: 0.0           ", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor);
-			var yPosition = new TextWidget("Y: 0.0           ", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor);
-			var zPosition = new TextWidget("Z: 0.0           ", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor);
+			var xPosition = new TextWidget("X: 0.0           ", pointSize: theme.DefaultFontSize, textColor: theme.TextColor);
+			var yPosition = new TextWidget("Y: 0.0           ", pointSize: theme.DefaultFontSize, textColor: theme.TextColor);
+			var zPosition = new TextWidget("Z: 0.0           ", pointSize: theme.DefaultFontSize, textColor: theme.TextColor);
 
 			hwDestinationBar.AddChild(xPosition);
 			hwDestinationBar.AddChild(yPosition);
@@ -284,7 +284,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			zOffsetStreamDisplay = new TextWidget(zoffset.ToString("0.##"), pointSize: theme.DefaultFontSize)
 			{
 				AutoExpandBoundsToText = true,
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.TextColor,
 				Margin = new BorderDouble(5, 0, 8, 0),
 				VAnchor = VAnchor.Center
 			};

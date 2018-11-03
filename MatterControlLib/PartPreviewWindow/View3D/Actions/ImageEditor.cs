@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			imageSection.ContentPanel.AddChild(row);
 
 			// Invert checkbox
-			var invertCheckbox = new CheckBox(new CheckBoxViewText("Invert".Localize(), textColor: theme.Colors.PrimaryTextColor))
+			var invertCheckbox = new CheckBox(new CheckBoxViewText("Invert".Localize(), textColor: theme.TextColor))
 			{
 				Checked = imageObject.Invert,
 				Margin = new BorderDouble(0),

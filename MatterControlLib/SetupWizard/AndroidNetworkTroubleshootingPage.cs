@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl
 			ContentRow.AddChild(
 				new TextWidget(
 					"MatterControl was unable to connect to the Internet. Please check your Wifi connection and try again".Localize() + "...",
-					textColor: ActiveTheme.Instance.PrimaryTextColor));
+					textColor: theme.TextColor));
 
 			var configureButton = theme.CreateDialogButton("Configure Wifi".Localize());
 			configureButton.Margin = new BorderDouble(0, 0, 10, 0);

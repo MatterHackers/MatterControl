@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl
 
 		private TextWidget CreateNextLine(string startText)
 		{
-			return new TextWidget(startText, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			return new TextWidget(startText, textColor: AppContext.Theme.TextColor)
 			{
 				Margin = new BorderDouble(0, 2),
 				HAnchor = Agg.UI.HAnchor.Left,

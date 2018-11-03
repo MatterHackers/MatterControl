@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.EeProm
 
 			CreateSpacer(row);
 
-			row.AddChild(new TextWidget("Value".Localize(), pointSize: theme.FontSize10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			row.AddChild(new TextWidget("Value".Localize(), pointSize: theme.FontSize10, textColor: theme.TextColor)
 			{
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(left: 5, right: 60)
@@ -319,7 +319,7 @@ namespace MatterHackers.MatterControl.EeProm
 		private GuiWidget AddDescription(string description)
 		{
 			var holder = new GuiWidget(340, 40);
-			holder.AddChild(new TextWidget(description, pointSize: theme.DefaultFontSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			holder.AddChild(new TextWidget(description, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 			{
 				VAnchor = VAnchor.Center
 			});
