@@ -135,7 +135,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var leftBar = new GuiWidget()
 			{
 				VAnchor = VAnchor.Stretch,
-				HAnchor = HAnchor.Fit
+				HAnchor = HAnchor.Fit,
+				Border = new BorderDouble(top: 1, right: 1),
+				BorderColor = theme.BorderColor20,
 			};
 			favoritesBarAndView3DWidget.AddChild(leftBar);
 
@@ -146,18 +148,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "LibraryView",
 				// Drop containers
 				ContainerFilter = (container) => false,
-				BackgroundColor = theme.ActiveTabColor,
-				Border = new BorderDouble(top: 1, right: 1),
-				BorderColor = theme.BorderColor20,
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Stretch,
 				AllowContextMenu = false,
 
 				// restore to state for favorites bar size
 				Width = expanded ? 55 : 33,
-				ListContentView = new IconListView(theme, expanded ? 48 : 24),
+				ListContentView = new IconView(theme, expanded ? 48 : 24)
+				{
+					VAnchor = VAnchor.Fit | VAnchor.Top
+				},
 			};
 			leftBar.AddChild(favoritesBar);
+
+			favoritesBar.ScrollArea.VAnchor = VAnchor.Fit;
 
 			var expandedImage = AggContext.StaticData.LoadIcon("expand.png", 16, 16, theme.InvertIcons);
 			var collapsedImage = AggContext.StaticData.LoadIcon("collapse.png", 16, 16, theme.InvertIcons);
@@ -177,7 +181,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				UserSettings.Instance.set(UserSettingsKey.FavoritesBarExpansion, expanded ? "1" : "0");
 
-				favoritesBar.ListContentView = new IconListView(theme, expanded ? 48 : 24);
+				favoritesBar.ListContentView = new IconView(theme, expanded ? 48 : 24);
 				favoritesBar.Width = expanded ? 55 : 33;
 				expandBarButton.SetIcon(expanded ? collapsedImage : expandedImage);
 				expandBarButton.Invalidate();
@@ -187,7 +191,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			leftBar.AddChild(expandBarButton);
 
 			favoritesBar.Margin = new BorderDouble(bottom: expandBarButton.Height + expandBarButton.Margin.Height);
-			
+
 			favoritesBarAndView3DWidget.AddChild(view3DWidget);
 			toolbarAndView3DWidget.AddChild(favoritesBarAndView3DWidget);
 
