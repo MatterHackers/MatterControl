@@ -155,8 +155,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// restore to state for favorites bar size
 				Width = expanded ? 55 : 33,
 				ListContentView = new IconView(theme, expanded ? 48 : 24)
+				{
+					VAnchor = VAnchor.Fit | VAnchor.Top
+				},
 			};
 			leftBar.AddChild(favoritesBar);
+
+			favoritesBar.ScrollArea.VAnchor = VAnchor.Fit;
 
 			var expandedImage = AggContext.StaticData.LoadIcon("expand.png", 16, 16, theme.InvertIcons);
 			var collapsedImage = AggContext.StaticData.LoadIcon("collapse.png", 16, 16, theme.InvertIcons);
@@ -186,7 +191,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			leftBar.AddChild(expandBarButton);
 
 			favoritesBar.Margin = new BorderDouble(bottom: expandBarButton.Height + expandBarButton.Margin.Height);
-			
+
 			favoritesBarAndView3DWidget.AddChild(view3DWidget);
 			toolbarAndView3DWidget.AddChild(favoritesBarAndView3DWidget);
 
