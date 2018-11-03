@@ -95,6 +95,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string include_firmware_updater = nameof(include_firmware_updater);
 		public const string infill_overlap_perimeter = nameof(infill_overlap_perimeter);
 		public const string infill_type = nameof(infill_type);
+		public const string insert_filament_markdown = nameof(insert_filament_markdown);
 		public const string ip_address = nameof(ip_address);
 		public const string ip_port = nameof(ip_port);
 		public const string jerk_velocity = nameof(jerk_velocity);
@@ -127,6 +128,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string print_leveling_required_to_print = nameof(print_leveling_required_to_print);
 		public const string print_leveling_solution = nameof(print_leveling_solution);
 		public const string leveling_sample_points = nameof(leveling_sample_points);
+		public const string load_filament_speed = nameof(load_filament_speed);
 		public const string probe_offset_sample_point = nameof(probe_offset_sample_point);
 		public const string printer_name = nameof(printer_name);
 		public const string progress_reporting = nameof(progress_reporting);
@@ -136,8 +138,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string recover_is_enabled = nameof(recover_is_enabled);
 		public const string recover_position_before_z_home = nameof(recover_position_before_z_home);
 		public const string resume_gcode = nameof(resume_gcode);
+		public const string running_clean_markdown = nameof(running_clean_markdown);
 		public const string selector_ip_address = nameof(selector_ip_address);
 		public const string send_with_checksum = nameof(send_with_checksum);
+		public const string filament_has_been_loaded = nameof(filament_has_been_loaded);
 		public const string show_reset_connection = nameof(show_reset_connection);
 		public const string sla_printer = nameof(sla_printer);
 		public const string spiral_vase = nameof(spiral_vase);
@@ -147,6 +151,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string temperature2 = nameof(temperature2);
 		public const string temperature3 = nameof(temperature3);
 		public const string top_solid_infill_speed = nameof(top_solid_infill_speed);
+		public const string trim_filament_markdown = nameof(trim_filament_markdown);
 		public const string use_z_probe = nameof(use_z_probe);
 		public const string validate_layer_height = nameof(validate_layer_height);
 		public const string windows_driver = nameof(windows_driver);

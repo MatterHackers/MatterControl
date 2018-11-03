@@ -55,28 +55,28 @@ namespace MatterHackers.MatterControl
 
 			var elementMargin = new BorderDouble(top: 3);
 
-			contentRow.Padding += 3;
+			ContentRow.Padding += 3;
 
-			contentRow.AddChild(new TextWidget("Macro Name".Localize() + ":", 0, 0, 12)
+			ContentRow.AddChild(new TextWidget("Macro Name".Localize() + ":", 0, 0, 12)
 			{
 				TextColor = theme.Colors.PrimaryTextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 0, 0, 1)
 			});
 
-			contentRow.AddChild(macroNameInput = new MHTextEditWidget(GCodeMacro.FixMacroName(gcodeMacro.Name), theme)
+			ContentRow.AddChild(macroNameInput = new MHTextEditWidget(GCodeMacro.FixMacroName(gcodeMacro.Name), theme)
 			{
 				HAnchor = HAnchor.Stretch
 			});
 
-			contentRow.AddChild(macroNameError = new TextWidget("Give the macro a name".Localize() + ".", 0, 0, 10)
+			ContentRow.AddChild(macroNameError = new TextWidget("Give the macro a name".Localize() + ".", 0, 0, 10)
 			{
 				TextColor = theme.Colors.PrimaryTextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			});
 
-			contentRow.AddChild(new TextWidget("Macro Commands".Localize() + ":", 0, 0, 12)
+			ContentRow.AddChild(new TextWidget("Macro Commands".Localize() + ":", 0, 0, 12)
 			{
 				TextColor = theme.Colors.PrimaryTextColor,
 				HAnchor = HAnchor.Stretch,
@@ -90,9 +90,9 @@ namespace MatterHackers.MatterControl
 			};
 			macroCommandInput.ActualTextEditWidget.VAnchor = VAnchor.Stretch;
 			macroCommandInput.DrawFromHintedCache();
-			contentRow.AddChild(macroCommandInput);
+			ContentRow.AddChild(macroCommandInput);
 
-			contentRow.AddChild(macroCommandError = new TextWidget("This should be in 'G-Code'".Localize() + ".", 0, 0, 10)
+			ContentRow.AddChild(macroCommandError = new TextWidget("This should be in 'G-Code'".Localize() + ".", 0, 0, 10)
 			{
 				TextColor = theme.Colors.PrimaryTextColor,
 				HAnchor = HAnchor.Stretch,
@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Stretch
 			};
 
-			contentRow.AddChild(container);
+			ContentRow.AddChild(container);
 
 			var saveMacroButton = theme.CreateDialogButton("Save".Localize());
 			saveMacroButton.Click += (s, e) =>

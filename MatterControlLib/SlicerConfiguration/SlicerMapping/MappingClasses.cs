@@ -55,8 +55,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			new MappedSetting(SettingsKey.max_fan_speed,"max_fan_speed"),
 			new MappedSetting(SettingsKey.min_fan_speed,"min_fan_speed"),
 			new MappedSetting("retract_length","retract_length"),
-			new LoadTimeFromSpeedAndLength("load_filament_time", SettingsKey.load_filament_length, "load_filament_speed"),
-			new LoadTimeFromSpeedAndLength("unload_filament_time", "unload_filament_length", "load_filament_speed"),
+			new LoadTimeFromSpeedAndLength("unload_filament_time", "unload_filament_length", SettingsKey.load_filament_speed),
 			new MappedSetting(SettingsKey.temperature,SettingsKey.temperature),
 			new MappedSetting("z_offset","z_offset"),
 			new MappedSetting(SettingsKey.bed_temperature,SettingsKey.bed_temperature),
@@ -66,12 +65,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			new ScaledSingleNumber("retract_speed","retract_speed", 60),
 			new ScaledSingleNumber("support_material_speed","support_material_speed", 60),
 			new ScaledSingleNumber("travel_speed", "travel_speed", 60),
-			new AsPercentOfReferenceOrDirect("load_filament_length_over_six", "", SettingsKey.load_filament_length, 1.0/6.0, false),
 			new AsPercentOfReferenceOrDirect("unload_filament_length_over_six", "", "unload_filament_length", 1.0/6.0, false),
-			new ScaledSingleNumber("load_filament_speed", "load_filament_speed", 60),
-			new MappedSetting("trim_filament_markdown", "trim_filament_markdown"),
-			new MappedSetting("insert_filament_markdown", "insert_filament_markdown"),
-			new MappedSetting("running_clean_markdown", "running_clean_markdown"),
+			new ScaledSingleNumber(SettingsKey.load_filament_speed, SettingsKey.load_filament_speed, 60),
+			new MappedSetting(SettingsKey.trim_filament_markdown, SettingsKey.trim_filament_markdown),
+			new MappedSetting(SettingsKey.insert_filament_markdown, SettingsKey.insert_filament_markdown),
+			new MappedSetting(SettingsKey.running_clean_markdown, SettingsKey.running_clean_markdown),
 		};
 
 		public static string ReplaceMacroValues(string gcodeWithMacros)

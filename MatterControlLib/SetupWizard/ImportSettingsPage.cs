@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Stretch,
 			};
 			scrollWindow.ScrollArea.HAnchor = HAnchor.Stretch;
-			contentRow.AddChild(scrollWindow);
+			ContentRow.AddChild(scrollWindow);
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -244,7 +244,7 @@ namespace MatterHackers.MatterControl
 			this.WindowTitle = "Import Wizard".Localize();
 			this.HeaderText = "Import Successful".Localize();
 
-			contentRow.AddChild(new WrappedTextWidget(successMessage, textColor: theme.Colors.PrimaryTextColor));
+			ContentRow.AddChild(new WrappedTextWidget(successMessage, textColor: theme.Colors.PrimaryTextColor));
 		}
 	}
 }

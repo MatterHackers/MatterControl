@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				Margin = theme.DefaultContainerPadding
 			};
 			treeView.ScrollArea.HAnchor = HAnchor.Stretch;
-			contentRow.AddChild(treeView);
+			ContentRow.AddChild(treeView);
 
 			var nextButton = new TextButton(continueButtonText, theme)
 			{

@@ -32,6 +32,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -72,7 +73,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						LevelingWizard.ShowPrintLevelWizard(printer, theme);
+						PrintLevelingWizard.Start(printer, theme);
 					});
 				};
 				settingsRow.AddChild(runWizardButton);
@@ -126,7 +127,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							LevelingWizard.ShowProbeCalibrationWizard(printer, theme);
+							ProbeCalibrationWizard.Start(printer, theme);
 						});
 					};
 

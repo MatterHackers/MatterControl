@@ -39,7 +39,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class FindBedHeight : LevelingWizardPage
+	public class FindBedHeight : PrinterSetupWizardPage
 	{
 		private Vector3 lastReportedPosition;
 		private List<ProbePosition> probePositions;
@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		protected JogControls.MoveButton zPlusControl;
 		protected JogControls.MoveButton zMinusControl;
 
-		public FindBedHeight(LevelingWizard context, string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance,
+		public FindBedHeight(PrinterSetupWizard context, string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance,
 			List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
 			: base(context, pageDescription, setZHeightCoarseInstruction1)
 		{
@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.probePositionsBeingEditedIndex = probePositionsBeingEditedIndex;
 
 			GuiWidget spacer = new GuiWidget(15, 15);
-			contentRow.AddChild(spacer);
+			ContentRow.AddChild(spacer);
 
 			FlowLayoutWidget zButtonsAndInfo = new FlowLayoutWidget();
 			zButtonsAndInfo.HAnchor |= Agg.UI.HAnchor.Center;
@@ -85,9 +85,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			zButtonsAndInfo.AddChild(zPosition);
 
-			contentRow.AddChild(zButtonsAndInfo);
+			ContentRow.AddChild(zButtonsAndInfo);
 
-			contentRow.AddChild(
+			ContentRow.AddChild(
 				this.CreateTextField(setZHeightCoarseInstruction2));
 		}
 
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			// always make sure we don't have print leveling turned on
 			PrintLevelingStream.AllowLeveling = false;
-			nextButton.ToolTipText = string.Format("[{0}]", "Right Arrow".Localize());
+			NextButton.ToolTipText = string.Format("[{0}]", "Right Arrow".Localize());
 
 			base.PageIsBecomingActive();
 		}
@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			probePositions[probePositionsBeingEditedIndex].position = printer.Connection.LastReportedPosition;
 			base.PageIsBecomingInactive();
 
-			nextButton.ToolTipText = "";
+			NextButton.ToolTipText = "";
 		}
 
 		private FlowLayoutWidget CreateZButtons()
@@ -142,18 +142,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				case Keys.Up:
 					zPlusControl_Click(null, null);
-					nextButton.Enabled = true;
+					NextButton.Enabled = true;
 					break;
 
 				case Keys.Down:
 					zMinusControl_Click(null, null);
-					nextButton.Enabled = true;
+					NextButton.Enabled = true;
 					break;
 
 				case Keys.Right:
-					if (nextButton.Enabled)
+					if (NextButton.Enabled)
 					{
-						UiThread.RunOnIdle(() => nextButton.InvokeClick());
+						UiThread.RunOnIdle(() => NextButton.InvokeClick());
 					}
 					break;
 			}

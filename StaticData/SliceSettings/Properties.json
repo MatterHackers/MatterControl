@@ -52,24 +52,6 @@
     "DefaultValue": "80"
   },
   {
-    "SlicerConfigName": "load_filament_length_over_six",
-    "PresentationName": "Load Filament Length",
-    "HelpText": "Should be 100%. Not shown to user.",
-    "DataEditType": "DOUBLE_OR_PERCENT",
-    "Units": "%",
-    "ShowIfSet": "!sla_printer",
-    "DefaultValue": "100%"
-  },
-  {
-    "SlicerConfigName": "load_filament_time",
-    "PresentationName": "Load Filament Time",
-    "HelpText": "The time it will take to load the filament",
-    "DataEditType": "POSITIVE_DOUBLE",
-    "Units": "s",
-    "ShowIfSet": "!sla_printer",
-    "DefaultValue": "5"
-  },
-  {
     "SlicerConfigName": "unload_filament_time",
     "PresentationName": "Unload Filament Time",
     "HelpText": "The time it will take to unload the filament",
@@ -783,6 +765,15 @@
     "HelpText": "Flag keeping track if probe calibration wizard has been run.",
     "DataEditType": "CHECK_BOX",
     "ShowIfSet": "!has_hardware_leveling",
+    "DefaultValue": "0",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "filament_has_been_loaded",
+    "PresentationName": "Filament Has Been Loaded",
+    "HelpText": "Flag for the state of our filament loaded.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
     "DefaultValue": "0",
     "RebuildGCodeOnChange": false
   },

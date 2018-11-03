@@ -35,13 +35,13 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class GettingThirdPointFor2PointCalibration : LevelingWizardPage
+	public class GettingThirdPointFor2PointCalibration : PrinterSetupWizardPage
 	{
 		protected Vector3 probeStartPosition;
 		private ProbePosition probePosition;
 		private EventHandler unregisterEvents;
 
-		public GettingThirdPointFor2PointCalibration(LevelingWizard context, string pageDescription, Vector3 probeStartPosition, string instructionsText,
+		public GettingThirdPointFor2PointCalibration(PrinterSetupWizard context, string pageDescription, Vector3 probeStartPosition, string instructionsText,
 			ProbePosition probePosition)
 			: base(context, pageDescription, instructionsText)
 		{
@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			base.PageIsBecomingActive();
 
-			nextButton.Enabled = false;
+			NextButton.Enabled = false;
 		}
 
 		private void FinishedProbe(object sender, EventArgs e)
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					printer.Connection.MoveAbsolute(probeStartPosition, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 					printer.Connection.ReadPosition();
 
-					UiThread.RunOnIdle(() => nextButton.InvokeClick());
+					UiThread.RunOnIdle(() => NextButton.InvokeClick());
 				}
 			}
 		}

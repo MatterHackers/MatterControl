@@ -1500,7 +1500,7 @@ namespace MatterHackers.MatterControl
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					LevelingWizard.ShowProbeCalibrationWizard(printer, theme);
+					ProbeCalibrationWizard.Start(printer, theme);
 				});
 				return true;
 			}
@@ -1510,7 +1510,17 @@ namespace MatterHackers.MatterControl
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					LevelingWizard.ShowPrintLevelWizard(printer, theme);
+					PrintLevelingWizard.Start(printer, theme);
+				});
+				return true;
+			}
+
+			// run load filament if we need to
+			if (LoadFilamentWizard.NeedsToBeRun(printer))
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					LoadFilamentWizard.Start(printer, theme, false);
 				});
 				return true;
 			}

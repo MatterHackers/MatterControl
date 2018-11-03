@@ -50,6 +50,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 		}
 
+		public int Count => commandQueue.Count;
+
 		public void Add(string line, bool forceTopOfQueue = false)
 		{
 			// lock queue

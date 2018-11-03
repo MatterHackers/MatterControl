@@ -36,6 +36,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -63,15 +64,16 @@ namespace MatterHackers.MatterControl.ActionBar
 					Padding = theme.ToolbarPadding,
 				};
 
-				var loadFilament = new GCodeMacro()
-				{
-					GCode = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "load_filament.txt"))
-				};
-
 				var loadButton = theme.CreateDialogButton("Load".Localize());
 				loadButton.ToolTipText = "Load filament".Localize();
 				loadButton.Name = "Load Filament Button";
-				loadButton.Click += (s, e) => loadFilament.Run(printer.Connection);
+				loadButton.Click += (s, e) =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						LoadFilamentWizard.Start(printer, theme, true);
+					});
+				};
 				macroButtons.AddChild(loadButton);
 
 				var unloadFilament = new GCodeMacro()

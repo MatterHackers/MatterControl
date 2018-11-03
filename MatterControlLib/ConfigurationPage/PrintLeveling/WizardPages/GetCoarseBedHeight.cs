@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		protected Vector3 probeStartPosition;
 
-		public GetCoarseBedHeight(LevelingWizard context, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions,
+		public GetCoarseBedHeight(PrinterSetupWizard context, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions,
 			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
 			: base(context, pageDescription, "Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.".Localize(),
 				  levelingStrings.CoarseInstruction2, 1, probePositions, probePositionsBeingEditedIndex)
@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printer.Connection.MoveAbsolute(probeStartPosition, feedRates.X);
 			printer.Connection.ReadPosition();
 
-			nextButton.Enabled = false;
+			NextButton.Enabled = false;
 
 			zPlusControl.Click += zControl_Click;
 			zMinusControl.Click += zControl_Click;
@@ -76,12 +76,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		protected void zControl_Click(object sender, EventArgs mouseEvent)
 		{
-			nextButton.Enabled = true;
+			NextButton.Enabled = true;
 		}
 
 		public override void PageIsBecomingInactive()
 		{
-			nextButton.Enabled = true;
+			NextButton.Enabled = true;
 
 			base.PageIsBecomingInactive();
 		}

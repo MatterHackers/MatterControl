@@ -116,11 +116,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			if (userIsLoggedIn)
 			{
-				contentRow.AddChild(addPrinterColumn);
+				ContentRow.AddChild(addPrinterColumn);
 			}
 			else
 			{
-				contentRow.Padding = 10;
+				ContentRow.Padding = 10;
 				addPrinterColumn.Margin = new BorderDouble(28, 15, 15, 5);
 
 				var commonMargin = new BorderDouble(4, 2);
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					Cursor = Cursors.Hand,
 					Name = "Sign In Radio Button",
 				};
-				contentRow.AddChild(signInRadioButton);
+				ContentRow.AddChild(signInRadioButton);
 
 				createPrinterRadioButton = new RadioButton(new RadioButtonViewText("Create a new printer", theme.Colors.PrimaryTextColor))
 				{
@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					Name = "Create Printer Radio Button",
 					Checked = true
 				};
-				contentRow.AddChild(createPrinterRadioButton);
+				ContentRow.AddChild(createPrinterRadioButton);
 
 				createPrinterRadioButton.CheckedStateChanged += (s, e) =>
 				{
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					this.SetElementVisibility();
 				};
 
-				contentRow.AddChild(addPrinterColumn);
+				ContentRow.AddChild(addPrinterColumn);
 			}
 
 			nextButton = theme.CreateDialogButton("Next".Localize());
@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				printerModelSelector.SelectedIndex = 0;
 			}
 
-			contentRow.Invalidate();
+			ContentRow.Invalidate();
 
 			SetElementVisibility();
 		}

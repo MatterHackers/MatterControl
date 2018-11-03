@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl
 			CriteriaRow.ResetAll();
 
 			// Clear the main container
-			contentRow.CloseAllChildren();
+			ContentRow.CloseAllChildren();
 
 			// Regen and refresh the troubleshooting criteria
 			var printerNameLabel = new TextWidget(string.Format("{0}:", "Connection Troubleshooting".Localize()), 0, 0, labelFontSize)
@@ -135,9 +135,9 @@ namespace MatterHackers.MatterControl
 
 			usbStatus.HasUsbPermission = usbStatus.IsDriverLoadable && FrostedSerialPort.HasPermissionToDevice(serialPort);
 
-			contentRow.AddChild(printerNameLabel);
+			ContentRow.AddChild(printerNameLabel);
 
-			contentRow.AddChild(new CriteriaRow(
+			ContentRow.AddChild(new CriteriaRow(
 				"USB Connection",
 				"Retry",
 				"No USB device found. Check and reseat cables and try again",
@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl
 				() => UiThread.RunOnIdle(RefreshStatus),
 				theme));
 
-			contentRow.AddChild(new CriteriaRow(
+			ContentRow.AddChild(new CriteriaRow(
 				"USB Driver",
 				"Fix",
 				usbStatus.Summary,
@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl
 				},
 				theme));
 
-			contentRow.AddChild(new CriteriaRow(
+			ContentRow.AddChild(new CriteriaRow(
 				"USB Permission",
 				"Request Permission",
 				"Click the 'Request Permission' button to gain Android access rights",
@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl
 				() => printer.Connection.Connect(),
 				theme);
 
-			contentRow.AddChild(connectToPrinterRow);
+			ContentRow.AddChild(connectToPrinterRow);
 
 			if (CriteriaRow.ActiveErrorItem != null) {
 
@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl
 						TextColor = theme.PrimaryAccentColor
 					});
 
-				contentRow.AddChild(errorText);
+				ContentRow.AddChild(errorText);
 			}
 		}
 

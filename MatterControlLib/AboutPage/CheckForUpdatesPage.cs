@@ -46,10 +46,10 @@ namespace MatterHackers.MatterControl
 			this.AnchorAll();
 
 			// Clear padding so UpdateControlView toolbar appears like toolbar
-			contentRow.Padding = 0;
+			ContentRow.Padding = 0;
 
 			// Update Status Widget
-			contentRow.AddChild(
+			ContentRow.AddChild(
 				new UpdateControlView(theme));
 
 			var contentPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Stretch,
 				Padding = 8
 			};
-			contentRow.AddChild(contentPanel);
+			ContentRow.AddChild(contentPanel);
 
 			var currentBuildInfo = new TextWidget("Current Build".Localize() + $" : {VersionInfo.Instance.BuildVersion}")
 			{

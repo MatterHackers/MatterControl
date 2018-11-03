@@ -383,12 +383,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		Dictionary<string, string> blackListSettings = new Dictionary<string, string>()
 		{
-			["spiral_vase"] = "0",
-			["bottom_clip_amount"] = "0",
-			["layer_to_pause"] = "",
-			["print_leveling_data"] = "",
-			["print_leveling_enabled"] = "0",
-			["probe_has_been_calibrated"] = "0"
+			[SettingsKey.spiral_vase] = "0",
+			[SettingsKey.layer_to_pause] = "",
+			[SettingsKey.print_leveling_data] = "",
+			[SettingsKey.print_leveling_enabled] = "0",
+			[SettingsKey.probe_has_been_calibrated] = "0",
+			[SettingsKey.filament_has_been_loaded] = "0"
 		};
 
 		public void Save(bool clearBlackListSettings = false)

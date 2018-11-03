@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl
 
 		private void RebuildList(PrinterSettings printerSettings)
 		{
-			this.contentRow.CloseAllChildren();
+			this.ContentRow.CloseAllChildren();
 
 			if (printerSettings?.Macros != null)
 			{
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl
 					};
 					macroRow.AddChild(removeLink);
 
-					contentRow.AddChild(macroRow);
+					ContentRow.AddChild(macroRow);
 				}
 			}
 		}

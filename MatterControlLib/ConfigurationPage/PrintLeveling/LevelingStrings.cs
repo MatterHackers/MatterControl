@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					"To complete the next few steps you will need".Localize(),
 					"A standard sheet of paper".Localize(),
 					"We will use this paper to measure the distance between the extruder and the bed.".Localize(),
-					this.ClickNext);
+					"Click 'Next' to continue.".Localize());
 			}
 		}
 
@@ -92,8 +92,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public string FineInstruction1 => "We will now refine our measurement of the extruder height at this position.".Localize();
 
 		public string FineInstruction2 => $"\t• {setZHeightLower}\n\t• {setZHeightRaise}\n\n{setZHeightNext}";
-
-		public string ClickNext => "Click 'Next' to continue.".Localize();
 
 		public string UltraFineInstruction1 => "We will now finalize our measurement of the extruder height at this position.".Localize();
 
@@ -114,7 +112,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					this.WelcomeLine5(numberOfSteps),
 					this.turnOnLeveling,
 					this.WelcomeLine7(numberOfMinutes),
-					this.ClickNext);
+					"Click 'Next' to continue.".Localize());
 			}
 			else
 			{
@@ -124,7 +122,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					this.WelcomeLine5(numberOfSteps),
 					this.turnOnLeveling,
 					this.WelcomeLine7(numberOfMinutes),
-					this.ClickNext);
+					"Click 'Next' to continue.".Localize());
 			}
 		}
 

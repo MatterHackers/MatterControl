@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.EeProm
 
 			currentEePromSettings = new EePromRepetierStorage();
 
-			var topToBottom = contentRow;
+			var topToBottom = ContentRow;
 
 			var row = new FlowLayoutWidget
 			{

@@ -167,8 +167,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private PrinterMove currentDestination;
 
-		public double CurrentExtruderDestination { get { return currentDestination.extrusion; } }
-
 		public double CurrentFeedRate { get { return currentDestination.feedRate; } }
 
 		private double currentSdBytes = 0;
@@ -542,6 +540,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 			}
 		}
+
+		public double CurrentExtruderDestination { get { return currentDestination.extrusion; } }
 
 		public Vector3 CurrentDestination => currentDestination.position;
 
@@ -2085,7 +2085,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					newDestination.position += currentDestination.position;
 				}
 
-				if (currentDestination.position != newDestination.position)
+				if (currentDestination.position != newDestination.position
+					|| currentDestination.extrusion != newDestination.extrusion)
 				{
 					currentDestination = newDestination;
 					DestinationChanged.CallEvents(this, null);
@@ -2432,6 +2433,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 				anyHeatIsOn |= TargetBedTemperature > 0;
 				return anyHeatIsOn;
+			}
+		}
+
+		public int NumQueuedCommands
+		{
+			get
+			{
+				if(queuedCommandStream3 != null)
+				{
+					return queuedCommandStream3.Count;
+				}
+
+				return 0;
 			}
 		}
 

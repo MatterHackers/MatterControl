@@ -27,26 +27,109 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class PrintLevelingWizard : LevelingWizard
+	public class PrintLevelingWizard : PrinterSetupWizard
 	{
 		private LevelingPlan levelingPlan;
 
 		public PrintLevelingWizard(LevelingPlan levelingPlan, PrinterConfig printer)
-			: base (printer)
+			: base(printer)
 		{
 			this.levelingPlan = levelingPlan;
 		}
 
-		protected override IEnumerator<LevelingWizardPage> GetWizardSteps()
+		public static void Start(PrinterConfig printer, ThemeConfig theme)
+		{
+			// turn off print leveling
+			PrintLevelingStream.AllowLeveling = false;
+
+			// clear any data that we are going to be acquiring (sampled positions, after z home offset)
+			var levelingData = new PrintLevelingData()
+			{
+				LevelingSystem = printer.Settings.GetValue<LevelingSystem>(SettingsKey.print_leveling_solution)
+			};
+
+			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
+
+			LevelingPlan levelingPlan;
+
+			switch (levelingData.LevelingSystem)
+			{
+				case LevelingSystem.Probe3Points:
+					levelingPlan = new LevelWizard3Point(printer);
+					break;
+
+				case LevelingSystem.Probe7PointRadial:
+					levelingPlan = new LevelWizard7PointRadial(printer);
+					break;
+
+				case LevelingSystem.Probe13PointRadial:
+					levelingPlan = new LevelWizard13PointRadial(printer);
+					break;
+
+				case LevelingSystem.Probe100PointRadial:
+					levelingPlan = new LevelWizard100PointRadial(printer);
+					break;
+
+				case LevelingSystem.Probe3x3Mesh:
+					levelingPlan = new LevelWizardMesh(printer, 3, 3);
+					break;
+
+				case LevelingSystem.Probe5x5Mesh:
+					levelingPlan = new LevelWizardMesh(printer, 5, 5);
+					break;
+
+				case LevelingSystem.Probe10x10Mesh:
+					levelingPlan = new LevelWizardMesh(printer, 10, 10);
+					break;
+
+				case LevelingSystem.ProbeCustom:
+					levelingPlan = new LevelWizardCustom(printer);
+					break;
+
+				default:
+					throw new NotImplementedException();
+			}
+
+			var levelingContext = new PrintLevelingWizard(levelingPlan, printer)
+			{
+				WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Print Leveling Wizard".Localize()
+			};
+
+			var printLevelWizardWindow = DialogWindow.Show(new LevelingWizardRootPage(levelingContext)
+			{
+				WindowTitle = levelingContext.WindowTitle
+			});
+
+			printLevelWizardWindow.Closed += (s, e) =>
+			{
+				// If leveling was on when we started, make sure it is on when we are done.
+				PrintLevelingStream.AllowLeveling = true;
+
+				printLevelWizardWindow = null;
+
+				// make sure we raise the probe on close
+				if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
+					&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
+					&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
+				{
+					// make sure the servo is retracted
+					var servoRetract = printer.Settings.GetValue<double>(SettingsKey.z_servo_retracted_angle);
+					printer.Connection.QueueLine($"M280 P0 S{servoRetract}");
+				}
+			};
+		}
+
+		protected override IEnumerator<PrinterSetupWizardPage> GetWizardSteps()
 		{
 			var probePositions = new List<ProbePosition>(levelingPlan.ProbeCount);
 			for (int j = 0; j < levelingPlan.ProbeCount; j++)
@@ -62,7 +145,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			if (showWelcomeScreen)
 			{
-				yield return new LevelingWizardPage(
+				yield return new PrinterSetupWizardPage(
 					this,
 					levelingStrings.InitialPrinterSetupStepText,
 					string.Format(
@@ -80,7 +163,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			var secondsToCompleteWizard = levelingPlan.ProbeCount * (useZProbe ? secondsPerAutomaticSpot : secondsPerManualSpot);
 			secondsToCompleteWizard += (hasHeatedBed ? 60 * 3 : 0);
 
-			yield return new LevelingWizardPage(
+			yield return new PrinterSetupWizardPage(
 				this,
 				"Print Leveling Overview".Localize(),
 				levelingStrings.WelcomeText(levelingPlan.ProbeCount, (int)Math.Round(secondsToCompleteWizard / 60.0)));
@@ -110,7 +193,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				if (targetBedTemp > 0 && targetHotendTemp > 0)
 				{
 					// heating both the bed and the hotend
-					heatingInstructions = "Waiting for the bed to heat to ".Localize() + targetBedTemp +"\n"
+					heatingInstructions = "Waiting for the bed to heat to ".Localize() + targetBedTemp + "\n"
 						+ "and the hotend to heat to ".Localize() + targetHotendTemp + ".\n"
 						+ "\n"
 						+ "This will improve the accuracy of print leveling ".Localize()

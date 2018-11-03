@@ -81,6 +81,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.pause_gcode,
 			SettingsKey.print_leveling_probe_start,
 			SettingsKey.probe_has_been_calibrated,
+			SettingsKey.filament_has_been_loaded,
 			SettingsKey.print_leveling_required_to_print,
 			SettingsKey.print_leveling_solution,
 			SettingsKey.leveling_sample_points,
@@ -115,11 +116,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.ip_port,
 			SettingsKey.progress_reporting,
 			SettingsKey.load_filament_length,
-			"trim_filament_markdown",
-			"insert_filament_markdown",
-			"running_clean_markdown",
+			SettingsKey.trim_filament_markdown,
+			SettingsKey.insert_filament_markdown,
+			SettingsKey.running_clean_markdown,
 			"unload_filament_length",
-			"load_filament_speed",
+			SettingsKey.load_filament_speed,
 		};
 
 		public List<MappedSetting> MappedSettings { get; private set; }

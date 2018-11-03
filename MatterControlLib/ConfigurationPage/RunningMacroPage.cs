@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			if (macroData.showMaterialSelector)
 			{
-				contentRow.AddChild(new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, theme)
+				ContentRow.AddChild(new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, theme)
 				{
 					BackgroundColor = Color.Transparent,
 					Margin = new BorderDouble(0, 0, 0, 15)
@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 				markdown.Markdown = macroData.markdown;
 
-				contentRow.AddChild(markdown);
+				ContentRow.AddChild(markdown);
 			}
 #endif
 
@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			};
 			holder.AddChild(progressBar);
 			holder.AddChild(progressBarText);
-			contentRow.AddChild(holder);
+			ContentRow.AddChild(holder);
 			progressBar.Visible = false;
 
 			if (macroData.countDown > 0)
