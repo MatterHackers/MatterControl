@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AnchorAll();
 			this.theme = theme;
 			this.Name = "PartPreviewContent";
-			this.BackgroundColor = theme.ActiveTabColor;
+			this.BackgroundColor = theme.BackgroundColor;
 
 			// Push TouchScreenMode into GuiWidget
 			GuiWidget.TouchScreenMode = UserSettings.Instance.IsTouchScreen;
@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Stretch,
-				BackgroundColor = theme.ActiveTabColor,
+				BackgroundColor = theme.BackgroundColor,
 				BorderColor = theme.MinimalShade,
 				Border = new BorderDouble(left: 1),
 			};
@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Force the ActionArea to be as high as ButtonHeight
 			tabControl.TabBar.ActionArea.MinimumSize = new Vector2(0, theme.ButtonHeight);
 			tabControl.TabBar.BackgroundColor = theme.TabBarBackground;
-			tabControl.TabBar.BorderColor = theme.ActiveTabColor;
+			tabControl.TabBar.BorderColor = theme.BackgroundColor;
 
 			// Force common padding into top region
 			tabControl.TabBar.Padding = theme.TabbarPadding.Clone(top: theme.TabbarPadding.Top * 2, bottom: 0);
@@ -238,7 +238,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Library tab
 			var libraryWidget = new LibraryWidget(this, theme)
 			{
-				BackgroundColor = theme.ActiveTabColor
+				BackgroundColor = theme.BackgroundColor
 			};
 
 			tabControl.AddTab(
@@ -257,7 +257,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					tabControl,
 					new HardwareTabPage(theme)
 					{
-						BackgroundColor = theme.ActiveTabColor
+						BackgroundColor = theme.BackgroundColor
 					},
 					theme,
 					hasClose: false)

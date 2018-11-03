@@ -11,7 +11,7 @@
   "MinimalShade": "#0000000F",
   "Shade": "#00000078",
   "DarkShade": "#000000BE",
-  "ActiveTabColor": "#FDF6E3",
+  "BackgroundColor": "#FDF6E3",
   "TabBarBackground": "#E4DDCC",
   "InactiveTabColor": "#EEE8D5",
   "InteractionLayerOverlayColor": "#FDF6E3F0",

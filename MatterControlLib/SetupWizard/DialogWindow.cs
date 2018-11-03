@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl
 
 		private void SetBackgroundColor()
 		{
-			this.BackgroundColor = theme.ActiveTabColor;
+			this.BackgroundColor = theme.BackgroundColor;
 		}
 	}
 }

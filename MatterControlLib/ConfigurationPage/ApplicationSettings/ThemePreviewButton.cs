@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			var primaryAccentColor = theme.PrimaryAccentColor;
 
 			this.Padding = 8;
-			this.BackgroundColor = theme.ActiveTabColor;
+			this.BackgroundColor = theme.BackgroundColor;
 			this.Cursor = Cursors.Hand;
 
 			secondaryBackground = new GuiWidget()

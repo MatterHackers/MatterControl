@@ -322,10 +322,10 @@ namespace MatterHackers.MeshVisualizer
 
 			gridColors = new GridColors()
 			{
-				Gray = theme.ResolveColor(theme.ActiveTabColor, theme.GetBorderColor((theme.IsDarkTheme ? 35 : 55))),
-				Red = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.Red, (theme.IsDarkTheme ? 105 : 170))),
-				Green = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.Green, (theme.IsDarkTheme ? 105 : 170))),
-				Blue = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.Blue, 195))
+				Gray = theme.ResolveColor(theme.BackgroundColor, theme.GetBorderColor((theme.IsDarkTheme ? 35 : 55))),
+				Red = theme.ResolveColor(theme.BackgroundColor, new Color(Color.Red, (theme.IsDarkTheme ? 105 : 170))),
+				Green = theme.ResolveColor(theme.BackgroundColor, new Color(Color.Green, (theme.IsDarkTheme ? 105 : 170))),
+				Blue = theme.ResolveColor(theme.BackgroundColor, new Color(Color.Blue, 195))
 			};
 
 			gCodeMeshColor = new Color(theme.PrimaryAccentColor, 35);
@@ -855,7 +855,7 @@ namespace MatterHackers.MeshVisualizer
 				// only render if we are above the bed
 				if (sceneContext.RendererOptions.RenderBed)
 				{
-					var bedColor = theme.ResolveColor(Color.White, theme.ActiveTabColor.WithAlpha(111));
+					var bedColor = theme.ResolveColor(Color.White, theme.BackgroundColor.WithAlpha(111));
 
 
 					if (!lookingDownOnBed)

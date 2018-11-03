@@ -271,7 +271,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								{
 									Name = category.Name + " Tab",
 									InactiveTabColor = Color.Transparent,
-									ActiveTabColor = theme.ActiveTabColor
+									ActiveTabColor = theme.BackgroundColor
 								});
 						}
 					}

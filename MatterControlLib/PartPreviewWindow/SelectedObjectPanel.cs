@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var toolbar = new LeftClipFlowLayoutWidget()
 			{
-				BackgroundColor = theme.ActiveTabColor,
+				BackgroundColor = theme.BackgroundColor,
 				Padding = theme.ToolbarPadding,
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit

@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					colorNotifier: (newColor) => colorButton.BackgroundColor = newColor)
 				{
 					Padding = theme.DefaultContainerPadding,
-					BackgroundColor = theme.ActiveTabColor,
+					BackgroundColor = theme.BackgroundColor,
 					HAnchor = HAnchor.Fit,
 					VAnchor = VAnchor.Fit
 				};

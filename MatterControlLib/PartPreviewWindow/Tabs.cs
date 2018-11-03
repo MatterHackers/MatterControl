@@ -239,7 +239,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			leadingTabAdornment.AfterDraw += (s, e) =>
 			{
 				var firstItem = this.AllTabs.OfType<ChromeTab>().FirstOrDefault();
-				ChromeTab.DrawTabLowerRight(e.Graphics2D, leadingTabAdornment.LocalBounds, (firstItem == this.ActiveTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
+				ChromeTab.DrawTabLowerRight(e.Graphics2D, leadingTabAdornment.LocalBounds, (firstItem == this.ActiveTab) ? theme.BackgroundColor : theme.InactiveTabColor);
 			};
 			this.TabBar.ActionArea.AddChild(leadingTabAdornment);
 
@@ -511,7 +511,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.Border = new BorderDouble(top: 1);
 			this.InactiveTabColor = Color.Transparent;
-			this.ActiveTabColor = theme.ActiveTabColor;
+			this.ActiveTabColor = theme.BackgroundColor;
 
 			tabPill.Padding = tabPill.Padding.Clone(top: 10, bottom: 10);
 		}
@@ -588,19 +588,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			graphics2D.Render(
 				tabShape,
-				(this == activeTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
+				(this == activeTab) ? theme.BackgroundColor : theme.InactiveTabColor);
 
 			if (drawLeftTabOverlap)
 			{
 				DrawTabLowerLeft(
 					graphics2D,
 					rect,
-					(leftSiblingSelected || this == activeTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
+					(leftSiblingSelected || this == activeTab) ? theme.BackgroundColor : theme.InactiveTabColor);
 			}
 
 			if (rightSiblingSelected)
 			{
-				DrawTabLowerRight(graphics2D, rect, theme.ActiveTabColor);
+				DrawTabLowerRight(graphics2D, rect, theme.BackgroundColor);
 			}
 
 			base.OnDraw(graphics2D);
