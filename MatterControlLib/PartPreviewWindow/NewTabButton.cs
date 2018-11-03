@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ChromeTab.DrawTabLowerLeft(
 				graphics2D,
 				this.LocalBounds,
-				(parentTabControl.ActiveTab == this.LastTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
+				(parentTabControl.ActiveTab == this.LastTab) ? theme.BackgroundColor : theme.InactiveTabColor);
 
 			base.OnDraw(graphics2D);
 		}

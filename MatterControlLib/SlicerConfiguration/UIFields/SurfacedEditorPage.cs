@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
 				Padding = theme.DefaultContainerPadding,
-				BackgroundColor = theme.ActiveTabColor
+				BackgroundColor = theme.BackgroundColor
 			};
 
 			editWidget = new MHTextEditWidget("", theme, multiLine: true)

@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Name = "LibraryView",
 				// Drop containers if ShowContainers != 1
 				ContainerFilter = (container) => UserSettings.Instance.ShowContainers,
-				BackgroundColor = theme.ActiveTabColor,
+				BackgroundColor = theme.BackgroundColor,
 				Border = new BorderDouble(top: 1),
 				DoubleClickAction = LibraryListView.DoubleClickActions.PreviewItem
 			};
@@ -994,7 +994,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 											var feedbackWindow = new SavePartsSheetFeedbackWindow(
 												printItems.Count(),
 												printItems.FirstOrDefault()?.Name,
-												theme.ActiveTabColor);
+												theme.BackgroundColor);
 
 											var currentPartsInQueue = new PartsSheet(printItems, saveParams.FileName);
 											currentPartsInQueue.UpdateRemainingItems += feedbackWindow.StartingNextPart;

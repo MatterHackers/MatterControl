@@ -1,4 +1,5 @@
-﻿/*
+﻿
+/*
 Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
@@ -138,8 +139,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public Color TextColor { get; set; } = Color.Black;
-
 		public PresetColors PresetColors { get; set; } = new PresetColors();
 
 		public bool IsDarkTheme { get; set; }
@@ -149,7 +148,9 @@ namespace MatterHackers.MatterControl
 		public Color Shade { get; set; }
 		public Color DarkShade { get; set; }
 
-		public Color ActiveTabColor { get; set; }
+		public Color BackgroundColor { get; set; }
+		public Color TextColor { get; set; } = Color.Black;
+
 		public Color TabBarBackground { get; set; }
 		public Color InactiveTabColor { get; set; }
 		public Color InteractionLayerOverlayColor { get; set; }

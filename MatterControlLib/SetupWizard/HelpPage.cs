@@ -231,7 +231,7 @@ namespace MatterHackers.MatterControl
 			var description = new GuiWidget();
 			var markdownWidget = new MarkdownWidget(theme)
 			{
-				BackgroundColor = theme.ResolveColor(theme.ActiveTabColor, new Color(Color.White, 20)),
+				BackgroundColor = theme.ResolveColor(theme.BackgroundColor, new Color(Color.White, 20)),
 				Padding = new BorderDouble(left: theme.DefaultContainerPadding / 2)
 			};
 

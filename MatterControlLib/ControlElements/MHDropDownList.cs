@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl
 		{
 			var menuTheme = AppContext.MenuTheme;
 
-			this.MenuItemsBackgroundColor = menuTheme.ActiveTabColor;
+			this.MenuItemsBackgroundColor = menuTheme.BackgroundColor;
 			this.MenuItemsTextColor = menuTheme.TextColor;
 			this.MenuItemsBackgroundHoverColor = menuTheme.AccentMimimalOverlay;
 			this.MenuItemsTextHoverColor = menuTheme.TextColor;

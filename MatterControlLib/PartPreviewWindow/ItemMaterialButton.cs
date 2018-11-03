@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var materialControl = new MaterialControls(AppContext.MenuTheme, currentIndex)
 				{
 					Padding = theme.DefaultContainerPadding,
-					BackgroundColor = AppContext.MenuTheme.ActiveTabColor,
+					BackgroundColor = AppContext.MenuTheme.BackgroundColor,
 					HAnchor = HAnchor.Fit,
 					VAnchor = VAnchor.Fit,
 				};

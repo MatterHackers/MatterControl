@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Create a semi-transparent overlay with the theme color
 			var overlay = new ImageBuffer(bedImage.Width, bedImage.Height);
-			overlay.NewGraphics2D().Clear(new Color(theme.ActiveTabColor, 100));
+			overlay.NewGraphics2D().Clear(new Color(theme.BackgroundColor, 100));
 
 			// Render the overlay onto the bedImage to tint it and reduce its default overbearing light on dark contrast
 			bedImage.NewGraphics2D().Render(overlay, 0, 0);

@@ -226,7 +226,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						{
 							Name = item.key + " Tab",
 							InactiveTabColor = Color.Transparent,
-							ActiveTabColor = theme.ActiveTabColor
+							ActiveTabColor = theme.BackgroundColor
 						};
 
 					tab.CloseClicked += (s, e) =>
@@ -254,7 +254,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						Width = this.ConstrainedWidth,
 						VAnchor = VAnchor.Stretch,
 						HAnchor = HAnchor.Right,
-						BackgroundColor = theme.ActiveTabColor,
+						BackgroundColor = theme.BackgroundColor,
 						SplitterBarColor = theme.SplitterBackground,
 						SplitterWidth = theme.SplitterWidth,
 					};

@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.sceneContext = sceneContext;
 			this.theme = theme;
-			this.BackgroundColor = theme.ActiveTabColor;
+			this.BackgroundColor = theme.BackgroundColor;
 			this.Padding = 0;
 			this.printer = printer;
 

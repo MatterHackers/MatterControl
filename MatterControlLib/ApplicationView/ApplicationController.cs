@@ -2806,7 +2806,7 @@ If you experience adhesion problems, please re-run leveling."
 
 			var overlay = new GuiWidget()
 			{
-				BackgroundColor = AppContext.Theme.ActiveTabColor,
+				BackgroundColor = AppContext.Theme.BackgroundColor,
 			};
 			overlay.AnchorAll();
 

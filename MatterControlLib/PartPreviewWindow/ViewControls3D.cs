@@ -565,7 +565,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Fit,
 			};
 
-			var openColor = theme.ResolveColor(theme.ActiveTabColor, theme.SlightShade);
+			var openColor = theme.ResolveColor(theme.BackgroundColor, theme.SlightShade);
 
 			PopupMenuButton libraryPopup = null;
 			libraryPopup = new PopupMenuButton(buttonView, theme)
