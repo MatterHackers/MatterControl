@@ -983,10 +983,10 @@ namespace MatterHackers.MatterControl
 								return "Homing".Localize();
 
 							case DetailedPrintingState.HeatingBed:
-								return "Waiting for Bed to Heat to".Localize() + $" {this.Connection.TargetBedTemperature}°";
+								return "Waiting for Bed to Heat to".Localize() + $" {this.Connection.TargetBedTemperature}°C";
 
 							case DetailedPrintingState.HeatingExtruder:
-								return "Waiting for Extruder to Heat to".Localize() + $" {this.Connection.GetTargetHotendTemperature(0)}°";
+								return "Waiting for Extruder to Heat to".Localize() + $" {this.Connection.GetTargetHotendTemperature(0)}°C";
 
 							case DetailedPrintingState.Printing:
 							default:
