@@ -30,9 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-#if !__ANDROID__
 using Markdig.Agg;
-#endif
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -220,7 +218,6 @@ namespace MatterHackers.MatterControl
 
 		private void AddGuides(FlowLayoutWidget guideContainer)
 		{
-#if !__ANDROID__
 			var sequence = new ImageSequence()
 			{
 				FramesPerSecond = 3,
@@ -313,7 +310,6 @@ namespace MatterHackers.MatterControl
 			splitter.Panel1.AddChild(treeView);
 			splitter.Panel2.AddChild(markdownWidget);
 			guideContainer.AddChild(splitter);
-#endif
 		}
 
 		private TreeNode initialSelection = null;
