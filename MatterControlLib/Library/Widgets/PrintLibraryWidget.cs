@@ -31,11 +31,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-
-#if !__ANDROID__
-using Markdig.Agg;
-#endif
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -44,9 +39,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {

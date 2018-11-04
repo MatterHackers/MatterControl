@@ -28,9 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-#if !__ANDROID__
 using Markdig.Agg;
-#endif
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -81,7 +79,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 				this.AddPageAction(okButton);
 			}
 
-#if !__ANDROID__
 			if (!string.IsNullOrEmpty(macroData.markdown))
 			{
 				var markdown = new MarkdownWidget(theme);
@@ -90,7 +87,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 				contentRow.AddChild(markdown);
 			}
-#endif
 
 			var holder = new FlowLayoutWidget();
 			progressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))

@@ -28,9 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 
-#if !__ANDROID__
 using Markdig.Agg;
-#endif
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -125,7 +123,6 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 						Padding = theme.DefaultContainerPadding
 					};
 
-#if !__ANDROID__
 					var description = new MarkdownWidget(theme)
 					{
 						MinimumSize = new VectorMath.Vector2(350, 0),
@@ -134,7 +131,6 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 						Markdown = product.ProductDescription.Trim()
 					};
 					descriptionBackground.AddChild(description);
-#endif
 					descriptionBackground.BeforeDraw += (s, e) =>
 					{
 						var rect = new RoundedRect(descriptionBackground.LocalBounds, 3);
