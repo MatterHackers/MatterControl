@@ -339,12 +339,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				new Vector2(bounds.Right, bounds.Top - 32));
 
 			if (this.HasMenu
+				&& listViewItem?.ListView?.MenuActions?.Any() == true
 				&& (hitRegion.Contains(mouseEvent.Position)
 					|| mouseEvent.Button == MouseButtons.Right))
 			{
 				var menu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
-				foreach (var menuAction in this.listViewItem.ListView.MenuActions.Where(m => m.Scope == ActionScope.ListItem))
+				foreach (var menuAction in listViewItem.ListView.MenuActions.Where(m => m.Scope == ActionScope.ListItem))
 				{
 					if (menuAction is MenuSeparator)
 					{
