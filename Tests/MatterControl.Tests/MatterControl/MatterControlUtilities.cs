@@ -239,6 +239,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.WaitForName("Disconnect from printer button");
 
+			testRunner.Delay();
+			if (testRunner.NameExists("Already Loaded Button"))
+			{
+				testRunner.ClickByName("Already Loaded Button");
+			}
+
 			// Access through static instance must occur after Connect has occurred and the port has spun up
 			Emulator.Instance.RunSlow = runSlow;
 
@@ -883,6 +889,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 
 			testRunner.ClickByName("Done Button");
+
+			testRunner.Delay();
+			if (testRunner.NameExists("Already Loaded Button"))
+			{
+				testRunner.ClickByName("Already Loaded Button");
+			}
 		}
 
 		/// <summary>

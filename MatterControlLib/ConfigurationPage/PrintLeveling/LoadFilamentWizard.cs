@@ -42,9 +42,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public class LoadFilamentWizard : PrinterSetupWizard
 	{
 		private bool onlyLoad;
+		private static double temperatureAtStart;
 
 		public static void Start(PrinterConfig printer, ThemeConfig theme, bool onlyLoad)
 		{
+			temperatureAtStart = printer.Connection.GetTargetHotendTemperature(0);
 			// turn off print leveling
 			var levelingContext = new LoadFilamentWizard(printer, onlyLoad)
 			{
@@ -57,7 +59,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			});
 			loadFilamentWizardWindow.Closed += (s, e) =>
 			{
-				printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
+				printer.Connection.SetTargetHotendTemperature(0, temperatureAtStart);
 			};
 		}
 
