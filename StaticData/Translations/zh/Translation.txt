@@ -1,11 +1,17 @@
 English:
 Translated:
 
+English:    • Remove the paper
+Translated:    •取出纸张
+
+English:    2. Look for the calibration section (pictured below)
+Translated:    2.寻找校准部分（如下图所示）
+
 English:- none -
 Translated:- 没有 -
 
 English: Once it is finished homing we will heat the bed.
-Translated: 一旦它完成归巢，我们将加热床。
+Translated: 一旦完成归位，我们将加热床。
 
 English:$/kg
 Translated:$ /公斤
@@ -14,13 +20,25 @@ English:%
 Translated:％
 
 English:(Press 'Skip' to setup connection later)
-Translated:（按'跳过'稍后设置连接）
-
-English:\n\nThis copy will be made available under the terms of the 'Creative Commons Attribution 4.0 International Public License', click the link below for details.
-Translated: \ NN \此副本将根据“知识共享署名4.0国际公共许可证”的条款提供，请点击以下链接了解详情。
+Translated:（按'跳过'以稍后设置连接）
 
 English:{0} (Update Available)
 Translated:{0}（可用更新）
+
+English:{0} must be greater than 0.
+Translated:{0}必须大于0。
+
+English:{0} must be less than or equal to the {1} * 4.
+Translated:{0}必须小于或等于{1} * 4。
+
+English:{0} must be less than or equal to the {1}.
+Translated:{0}必须小于或等于{1}。
+
+English:{0} works best when set to LINES.
+Translated:设置为LINES时，{0}效果最佳。
+
+English:<< Back
+Translated:<<返回
 
 English:°
 Translated:°
@@ -29,16 +47,16 @@ English:°C
 Translated:C
 
 English:1. Power on your 3D Printer.
-Translated:1.打开3D打印机。
+Translated:1.打开3D打印机电源。
 
 English:2. Attach your 3D Printer via USB.
-Translated:2.通过USB连接您的3D打印机。
+Translated:2.通过USB连接3D打印机。
 
 English:2D Layer View
 Translated:二维图层视图
 
 English:3. Press 'Connect'.
-Translated:3.按'连接'。
+Translated:3.按“连接”。
 
 English:3D
 Translated:3D
@@ -46,20 +64,23 @@ Translated:3D
 English:3D Layer View
 Translated:3D图层视图
 
+English:A comma separated list of sample points to probe the bed at. You must specify an x and y position for each point. For example: '20,20,100,180,180,20' will sample the bad at 3 points.
+Translated:以逗号分隔的样本点列表，用于探测床位。您必须为每个点指定x和y位置。例如：'20,20,100,180,180,20'将在3点取样。
+
 English:A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.
-Translated:打印第一层的挤出宽度修改器。大于100％的值可以帮助粘附到印花床。
+Translated:第一层印刷品的挤出宽度的修饰符。大于100％的值可有助于粘附到印刷床上。
 
 English:A modifier of the width of the extrusion when printing outside perimeters. Can be useful to fine-adjust actual print size when objects print larger or smaller than specified in the digital model.
-Translated:打印外周边时，挤出宽度的修饰符。如果对象打印的数据大于或小于数字模型中指定的大小，可以对实际打印大小进行微调。
+Translated:在外围印刷时的挤出宽度的修改器。当对象打印的数量大于或小于数字模型中指定的值时，可用于微调实际打印尺寸。
 
 English:A password reset code will be sent to your email.
-Translated:密码重置代码将发送到您的电子邮件。
+Translated:密码重置代码将发送到您的电子邮箱。
 
 English:A six-digit code - sent to your email account
-Translated:一个六位数的代码 - 发送到您的电子邮件帐户
+Translated:六位数代码 - 发送到您的电子邮件帐户
 
 English:A standard sheet of paper
-Translated:标准的一张纸
+Translated:一张标准纸
 
 English:A U.S. or Canadian mobile phone number
 Translated:美国或加拿大的手机号码
@@ -73,8 +94,11 @@ Translated:中止打印
 English:About
 Translated:关于
 
-English:Acceleration
-Translated:促进
+English:Acceleration Printing
+Translated:加速印刷
+
+English:Acceleration Travel
+Translated:加速旅行
 
 English:Accept
 Translated:接受
@@ -89,13 +113,16 @@ English:Add
 Translated:加
 
 English:Add a new Macro
-Translated:添加一个新的宏
+Translated:添加一个新宏
 
 English:Add an.stl, .obj, .amf, .gcode or.zip file to the Library
-Translated:将.stl，.obj，.amf，.gcode或.zip文件添加到库中
+Translated:将an.stl，.obj，.amf，.gcode或.zip文件添加到库中
 
 English:Add Base
 Translated:添加基地
+
+English:Add Content
+Translated:添加内容
 
 English:Add Image
 Translated:添加图片
@@ -103,8 +130,8 @@ Translated:添加图片
 English:Add New Setting
 Translated:添加新设置
 
-English:Add to Plate
-Translated:添加到板
+English:Add to Bed
+Translated:加床
 
 English:Add to Selection
 Translated:添加到选择
@@ -113,19 +140,22 @@ English:Adhesion
 Translated:粘着
 
 English:Adjust this to correct differences between expected printing speeds and actual printing speeds.
-Translated:调整此项以纠正预期印刷速度与实际印刷速度之间的差异。
+Translated:调整此项以纠正预期打印速度和实际打印速度之间的差异。
 
 English:Advanced
 Translated:高级
 
 English:Advanced Array
-Translated:高级数组
+Translated:高级阵列
 
 English:After Move
 Translated:移动后
 
 English:After Tool Change G-Code
 Translated:工具更改G代码后
+
+English:After Tool Change G-Code 2
+Translated:工具更改G代码2后
 
 English:Air Gap
 Translated:气隙
@@ -137,7 +167,10 @@ English:Align
 Translated:对齐
 
 English:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
-Translated:所有的挤出都乘以这个值。将它增加到1以上会增加被挤出的长丝的数量（1.1是一个很好的最大值）;减少它会减少被挤出的数量（.9是一个很好的最小值）。
+Translated:所有挤出都乘以此值。将其增加到1以上会增加挤出的长丝量（1.1是一个很好的最大值）;减少它会减少挤出量（.9是一个很好的最小值）。
+
+English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
+Translated:允许MatterControl拆分长行以改善调平和打印取消。对于显着超出水平的打印机而言至关重要。
 
 English:Alpha
 Translated:Α
@@ -145,62 +178,62 @@ Translated:Α
 English:Alpha: The in development version of MatterControl
 Translated:Alpha：MatterControl的开发版本
 
-English:and ensure no filament is stuck to the tip of the extruder.
-Translated:并确保丝线不会粘在挤出机的尖端。
+English:Already Loaded
+Translated:已加载
+
+English:and ensure that no filament is stuck to your nozzle.
+Translated:并确保没有灯丝粘在喷嘴上。
 
 English:and the hotend to heat to 
-Translated:并热衷于
+Translated:以及加热到的热端
 
 English:Anyone with this code will have access
-Translated:具有此代码的任何人都可以访问
+Translated:拥有此代码的任何人都可以访问
+
+English:Application Cache
+Translated:应用缓存
+
+English:Application Storage
+Translated:应用存储
 
 English:Apply
 Translated:应用
 
 English:Apply leveling to G-Code during export
-Translated:在出口过程中对G代码应用调平
-
-English:Apply operation and make permanent
-Translated:应用操作并使其永久
-
-English:Apply Scale
-Translated:应用比例
+Translated:在导出期间对G-Code应用调平
 
 English:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
-Translated:从SD卡上打印时，确定要退出吗？ \ NN \注意：如果退出，建议您等到打印完成后再次运行MatterControl。
+Translated:从SD卡运行打印时，您确定要退出吗？ \ NN \注意：如果退出，建议您等到打印完成后再重新运行MatterControl。
 
 English:Are you sure you want to abort the current print and close MatterControl?
-Translated:您确定要中止当前的打印并关闭MatterControl吗？
+Translated:您确定要中止当前打印并关闭MatterControl吗？
 
 English:Are you sure you want to add this part ({0}) to the Queue?\nThe 3D part you are trying to load may be too complicated and cause performance or stability problems.\n\nConsider reducing the geometry before proceeding.
-Translated:您确定要将此部分（{0}）添加到队列吗？ \ n您尝试加载的3D零件可能过于复杂，并且会导致性能或稳定性问题。 \ NN \考虑在继续之前减少几何。
+Translated:您确定要将此部分（{0}）添加到队列吗？ \ n您尝试加载的3D部件可能过于复杂，导致性能或稳定性问题。 \ NN \在继续之前考虑减少几何体。
 
 English:Are you sure you want to delete your currently selected printer?
-Translated:您确定要删除当前选定的打印机吗？
+Translated:您确定要删除当前选择的打印机吗？
 
 English:Are you sure you want to remove the currently selected items?
 Translated:您确定要删除当前选定的项目吗？
 
 English:Are you sure you want to sign out? You will not have access to your printer profiles or cloud library.
-Translated:您确定要退出吗？您将无法访问您的打印机配置文件或云库。
+Translated:您确定要退出吗？您将无法访问打印机配置文件或云库。
 
 English:Arrange All Parts
-Translated:排列所有零件
+Translated:安排所有零件
 
 English:As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.
-Translated:随着打印图层的时间减少，风扇速度将增加到最大速度。
+Translated:随着打印层的时间减少到此，风扇速度将增加到其最大速度。
 
 English:Ascending
 Translated:上升
 
 English:Attempting to connect
-Translated:尝试连接
+Translated:试图连接
 
 English:ATX Power Control
 Translated:ATX电源控制
-
-English:Author
-Translated:作者
 
 English:Auto Calibrate
 Translated:自动校准
@@ -214,11 +247,14 @@ Translated:自动释放电机
 English:Auto Uppercase
 Translated:自动大写
 
+English:Automatic Heater Shutdown in
+Translated:自动加热器关闭
+
 English:Avoid contact with your skin.
-Translated:避免接触你的皮肤。
+Translated:避免接触皮肤。
 
 English:Avoid Crossing Perimeters
-Translated:避免穿越周界
+Translated:避免穿越边界
 
 English:Axis
 Translated:轴
@@ -229,8 +265,11 @@ Translated:轴移动速度
 English:Baby Step Offset
 Translated:婴儿步偏移
 
+English:Back
+Translated:背部
+
 English:Backup Firmware Before Update
-Translated:在更新之前备份固件
+Translated:更新前备份固件
 
 English:BadSubtract
 Translated:BadSubtract
@@ -245,16 +284,22 @@ English:Bed
 Translated:床
 
 English:Bed First Layer
-Translated:第一层床
+Translated:床头层
+
+English:Bed Leveling
+Translated:床平整
+
+English:Bed PID Settings
+Translated:床PID设置
 
 English:Bed Remove Part Temperature
-Translated:床清除零件温度
+Translated:床去除零件温度
 
 English:Bed Shape
-Translated:床的形状
+Translated:床形
 
 English:Bed Size
-Translated:床尺寸
+Translated:床的尺寸
 
 English:Bed Temperature
 Translated:床温
@@ -266,7 +311,10 @@ English:Before Tool Change
 Translated:换刀之前
 
 English:Before Tool Change G-Code
-Translated:换刀之前G代码
+Translated:在工具更改G代码之前
+
+English:Before Tool Change G-Code 2
+Translated:在换刀之前G代码2
 
 English:Behavior
 Translated:行为
@@ -277,6 +325,9 @@ Translated:Beta版
 English:Beta: The release candidate version of MatterControl
 Translated:Beta：MatterControl的候选版本
 
+English:Bottom Solid Infill
+Translated:底部固体填充物
+
 English:Bottom Solid Layers
 Translated:底部固体层
 
@@ -284,7 +335,10 @@ English:Braille
 Translated:点字
 
 English:Braille Card
-Translated:盲文卡片
+Translated:盲文卡
+
+English:Bridge Over Infill
+Translated:填充桥梁
 
 English:Bridges
 Translated:桥梁
@@ -302,7 +356,13 @@ English:Build Height
 Translated:建立高度
 
 English:Calculate and transmit a standard rep-rap checksum for all commands.
-Translated:计算并传输所有命令的标准声明校验和。
+Translated:计算并传输所有命令的标准rep-rap校验和。
+
+English:Calculate Path
+Translated:计算路径
+
+English:Calibrate Probe Offset
+Translated:校准探针偏移
 
 English:Calibration
 Translated:校准
@@ -349,12 +409,6 @@ Translated:打印时无法登录
 English:Can't switch printers while printing
 Translated:打印时无法切换打印机
 
-English:Card Holder
-Translated:持卡人
-
-English:ChairFoot
-Translated:ChairFoot
-
 English:Change
 Translated:更改
 
@@ -362,7 +416,7 @@ English:Change Password
 Translated:更改密码
 
 English:Changing your update channel will change the version of MatterControl that you receive when updating
-Translated:更新您的更新频道将更改您在更新时收到的MatterControl版本
+Translated:更改更新频道将更改更新时收到的MatterControl版本
 
 English:Check for Update
 Translated:检查更新
@@ -370,29 +424,32 @@ Translated:检查更新
 English:Check For Update
 Translated:检查更新
 
-English:Check on your prints from anywhere. With cloud monitoring, you have access to your printer no matter where you go.
-Translated:从任何地方检查你的照片。通过云监控，无论您走到哪里，都可以访问您的打印机。
+English:Checking Cloud Services
+Translated:检查云服务
 
 English:Checking for updates...
 Translated:查询更新...
 
 English:Checking with webservice
-Translated:使用webservice进行检查
+Translated:用webservice检查
 
 English:Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)
-Translated:在每次打印之前检查层高小于喷嘴直径（对于细丝粘附非常重要）
+Translated:在每次打印之前检查层高度是否小于喷嘴直径（对于长丝粘附很重要）
 
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
-Translated:选择打印机LCD屏幕上显示打印进度的命令（如果有）。
+Translated:选择用于在打印机的LCD屏幕上显示打印进度的命令（如果有）。
 
-English:Clean Nozzle Image
-Translated:清洁喷嘴图像
+English:Clean
+Translated:清洁
+
+English:Clean Filament Page
+Translated:清洁长丝页面
 
 English:Clear
 Translated:明确
 
 English:Clear Bed
-Translated:清除床
+Translated:清澈的床
 
 English:Clear Cache
 Translated:清除缓存
@@ -404,16 +461,13 @@ English:Clear ZOffset
 Translated:清除ZOffset
 
 English:Click 'Done' to close this window.
-Translated:点击“完成”关闭此窗口。
+Translated:单击“完成”关闭此窗口。
 
 English:Click 'Next' to continue.
 Translated:点击“下一步”继续。
 
 English:Click the 'Connect' button to retry the original connection attempt
-Translated:点击“连接”按钮重试原始连接尝试
-
-English:Click to show in 3D View
-Translated:点击以在3D视图中显示
+Translated:单击“连接”按钮以重试原始连接尝试
 
 English:Close
 Translated:关
@@ -424,8 +478,8 @@ Translated:关闭多边形
 English:Cloud Library
 Translated:云库
 
-English:Cloud Printer Profiles
-Translated:云打印机配置文件
+English:Coast At End
+Translated:海岸尽头
 
 English:Collapse All
 Translated:全部收缩
@@ -434,10 +488,13 @@ English:Color
 Translated:颜色
 
 English:Color View
-Translated:颜色视图
+Translated:彩色视图
 
 English:Combine
 Translated:结合
+
+English:Community
+Translated:社区
 
 English:Compile model
 Translated:编译模型
@@ -460,6 +517,9 @@ Translated:配置通知
 English:Configure Printer
 Translated:配置打印机
 
+English:Configure Wifi
+Translated:配置Wifi
+
 English:Confirm Exit
 Translated:确认退出
 
@@ -469,11 +529,11 @@ Translated:确认您的新密码
 English:Confirm your Password
 Translated:确认你的密码
 
-English:Congratulations
-Translated:祝贺
-
 English:Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.
-Translated:祝贺您连接到您的打印机。在开始首次打印之前，我们需要运行一个简单的校准程序。
+Translated:恭喜您连接到您的打印机。在开始第一次打印之前，我们需要运行一个简单的校准程序。
+
+English:Congratulations! Print Leveling is now configured and enabled.
+Translated:恭喜！现在已配置并启用了打印调平功能。
 
 English:Connect
 Translated:连
@@ -481,8 +541,8 @@ Translated:连
 English:Connect Bad Edges
 Translated:连接坏边缘
 
-English:Connect printer and power on
-Translated:连接打印机并打开电源
+English:Connect printer (make sure it is on)
+Translated:连接打印机（确保打开）
 
 English:Connect to Printer
 Translated:连接到打印机
@@ -494,7 +554,7 @@ English:Connect Your Device
 Translated:连接您的设备
 
 English:Connect your printer to check for firmware updates.
-Translated:连接打印机检查固件更新。
+Translated:连接打印机以检查固件更新。
 
 English:Connected
 Translated:连接的
@@ -541,29 +601,41 @@ Translated:冷却阈值
 English:Copy
 Translated:复制
 
+English:Copy Edges
+Translated:复制边缘
+
+English:Copy Faces
+Translated:复制面孔
+
 English:Copy Printers
-Translated:复制打印机
+Translated:复印打印机
 
 English:Copy Printers to Account
 Translated:将打印机复制到帐户
+
+English:Copy State
+Translated:复制状态
+
+English:Copy Vertices
+Translated:复制顶点
 
 English:Cost
 Translated:成本
 
 English:Could not find a selected button.
-Translated:找不到选定的按钮。
+Translated:找不到所选按钮。
+
+English:Couldn't load file
+Translated:无法加载文件
 
 English:Couldn't save file
 Translated:无法保存文件
 
 English:count or mm
-Translated:数量或毫米
+Translated:数或毫米
 
 English:Create
 Translated:创建
-
-English:Create a printer to continue
-Translated:创建一个打印机以继续
 
 English:Create Account
 Translated:创建帐号
@@ -572,7 +644,10 @@ English:Create An Account
 Translated:创建一个帐户
 
 English:Create Brim
-Translated:创建边缘
+Translated:创造边缘
+
+English:Create Dictionaries
+Translated:创建词典
 
 English:Create Folder
 Translated:创建文件夹
@@ -587,49 +662,49 @@ English:Create Printer
 Translated:创建打印机
 
 English:Create Raft
-Translated:创建木筏
+Translated:创建筏
 
 English:Create Skirt
-Translated:创建裙子
-
-English:Create your machine settings once, and have them available anywhere you want to print. All your changes appear on all your devices.
-Translated:一次创建您的机器设置，并让它们在您想要打印的任何地方都可用。所有更改都显示在您的所有设备上。
+Translated:创造裙子
 
 English:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
-Translated:创建附加到打印底部的边缘。有助于防止打印ABS（以及其他易变形的塑料）时产生翘曲，因为它可以帮助零件粘在床上。
+Translated:打印附在打印底边的边缘。在打印ABS（以及其他易翘曲的塑料）时有助于防止翘曲，因为它有助于部件粘附在床身上。
 
 English:Creates a perimeter around the part on which to wipe the other nozzle when printing using dual extrusion. Set to 0 to disable.
-Translated:使用双重挤出打印时，在用于擦拭另一个喷嘴的部分周围创建一个周边。设置为0以禁用。
+Translated:使用双挤出打印时，在擦拭另一个喷嘴的部件周围创建一个周边。设置为0以禁用。
 
 English:Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
-Translated:在打印的部分下面创建一个木筏。有助于防止打印ABS（以及其他易变形的塑料）时产生翘曲，因为它可以帮助零件粘在床上。
+Translated:在印刷部分下方创建一个木筏。在打印ABS（以及其他易翘曲的塑料）时有助于防止翘曲，因为它有助于部件粘附在床身上。
 
 English:Creates an outline around the print, but not attached to it. This is useful for priming the nozzle to ensure the plastic is flowing when the print starts.
-Translated:创建一个围绕打印的轮廓，但不附加到它。这对于启动喷嘴以确保塑料在打印开始时流动很有用。
+Translated:在打印件周围创建轮廓，但不附加到打印件上。这对于灌注喷嘴非常有用，以确保在打印开始时塑料流动。
 
 English:Creating firmware backup...
-Translated:创建固件备份...
+Translated:创建固件备份......
+
+English:Creation Data
+Translated:创作数据
 
 English:Cube
 Translated:立方体
 
 English:Current bed temperature
-Translated:当前床温
+Translated:目前的床温
 
 English:Current Build
 Translated:当前构建
 
 English:Current extruder temperature
-Translated:当前挤出机温度
+Translated:目前的挤出机温度
 
 English:Currently available serial ports.
-Translated:目前可用的串行端口。
+Translated:目前可用的串口。
 
 English:Curve
 Translated:曲线
 
 English:Custom Profile
-Translated:自定义档案
+Translated:定制档案
 
 English:Cut
 Translated:切
@@ -646,9 +721,6 @@ Translated:修改日期
 English:Default
 Translated:默认
 
-English:Default Extrusion Width
-Translated:默认挤出宽度
-
 English:Delete
 Translated:删除
 
@@ -662,7 +734,7 @@ English:Delete selection
 Translated:删除选择
 
 English:Demo Mode
-Translated:演示模式
+Translated:示范模式
 
 English:Density
 Translated:密度
@@ -683,19 +755,19 @@ English:Details
 Translated:细节
 
 English:Detect gaps between perimeters that are too thin to fill with normal infill and attempt to fill them.
-Translated:检测太薄的周界之间的间隙以填充正常填充物并尝试填充它们。
+Translated:检测周长之间的间隙，这些间隙太薄而无法填充正常的填充物并试图填充它们。
 
 English:Detect perimeters that cross over themselves and combine them.
-Translated:检测跨越自身并合并它们的周界。
+Translated:检测跨越自身并将它们组合在一起的周长。
 
 English:Detect when walls are too close together and need to be extruded as just one wall.
-Translated:检测墙壁是否靠得太近，并且需要将墙壁挤出。
+Translated:检测墙壁是否太靠近，需要挤压成一面墙。
 
 English:Detecting device firmware...
-Translated:检测设备固件...
+Translated:检测设备固件......
 
 English:Detects sections of the model that would be too thin to print and expands them to make them printable.
-Translated:检测模型的部分太薄而无法打印，并将其展开以使其可打印。
+Translated:检测模型中太薄而无法打印的部分，并将其展开以使其可打印。
 
 English:Developed By
 Translated:由开发
@@ -704,22 +776,19 @@ English:Diameter
 Translated:直径
 
 English:Disable Fan For The First
-Translated:禁用风扇为第一
-
-English:Disable Heaters
-Translated:禁用加热器
+Translated:禁用第一个风扇
 
 English:Disconnect
 Translated:断开
 
 English:Disconnect and stop the current print?
-Translated:断开并停止当前的打印？
+Translated:断开并停止当前打印？
 
 English:Disconnect from current printer
-Translated:断开当前打印机
+Translated:断开当前的打印机
 
 English:Disconnect printer
-Translated:断开打印机
+Translated:断开打印机连接
 
 English:Disconnected
 Translated:断开的
@@ -728,7 +797,7 @@ English:Disconnecting
 Translated:断开
 
 English:Disconnecting from printer...
-Translated:断开与打印机的连接...
+Translated:断开打印机...
 
 English:Distance
 Translated:距离
@@ -743,7 +812,7 @@ English:Done
 Translated:完成
 
 English:Don't remind me again
-Translated:别再提醒我
+Translated:不要再提醒我了
 
 English:Down Arrow
 Translated:向下箭头
@@ -755,10 +824,10 @@ English:Download Update
 Translated:下载更新
 
 English:Downloading firmware update...
-Translated:正在下载固件更新...
+Translated:下载固件更新...
 
 English:Downloading updates...
-Translated:正在下载更新...
+Translated:正在下载更新......
 
 English:Downloading...
 Translated:下载...
@@ -770,7 +839,7 @@ English:Duplicate
 Translated:重复
 
 English:Each individual part is printed to completion then the nozzle is lowered back to the bed and the next part is printed.
-Translated:每个单独的部分被打印完成，然后喷嘴被降回到床上，并且下一部分被打印。
+Translated:每个单独的部件打印完成然后将喷嘴降回床上并打印下一部分。
 
 English:edit
 Translated:编辑
@@ -778,17 +847,29 @@ Translated:编辑
 English:Edit
 Translated:编辑
 
+English:Edit Component
+Translated:编辑组件
+
+English:Edit Leveling Data
+Translated:编辑水平数据
+
 English:Edit Macro
 Translated:编辑宏
-
-English:Edit notification settings
-Translated:编辑通知设置
 
 English:Edit OpenSCAD script
 Translated:编辑OpenSCAD脚本
 
+English:Edit Page
+Translated:编辑页面
+
 English:Edit Selected Setting
-Translated:编辑选定的设置
+Translated:编辑所选设置
+
+English:Editor Selector
+Translated:编辑器选择器
+
+English:EEProm Settings
+Translated:EEProm设置
 
 English:Elbow
 Translated:弯头
@@ -803,28 +884,28 @@ English:Enable Auto Cooling
 Translated:启用自动冷却
 
 English:Enable Extruder Lift
-Translated:启用挤出机提升
+Translated:启用挤出机升降机
 
 English:Enable Fan
 Translated:启用风扇
+
+English:Enable Line Splitting
+Translated:启用行分割
 
 English:Enable Recovery
 Translated:启用恢复
 
 English:Enable Retractions
-Translated:启用折叠
+Translated:启用撤消
 
 English:Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.
-Translated:如果您的打印机具有硬件支持G30（自动床探测）并且您想使用它而不是手动测量探头位置，请启用此功能。
+Translated:如果您的打印机具有G30（自动床探测）的硬件支持并且您想要使用它而不是手动测量探头位置，请启用此功能。
 
 English:End
 Translated:结束
 
 English:End G-Code
 Translated:结束G代码
-
-English:Enter 12 Digit Redemption Code
-Translated:输入12位兑换码
 
 English:Enter a Design Name Here
 Translated:在此输入设计名称
@@ -839,13 +920,13 @@ English:Enter reset code
 Translated:输入重置代码
 
 English:Enter Share Code
-Translated:输入分享代码
+Translated:输入共享代码
 
 English:Enter your email address
 Translated:输入你的电子邮箱地址
 
 English:Enter your new password
-Translated:输入您的新密码
+Translated:输入新密码
 
 English:Enter your password
 Translated:输入您的密码
@@ -857,19 +938,19 @@ English:Error compiling OpenSCAD script
 Translated:编译OpenSCAD脚本时出错
 
 English:Error creating profile
-Translated:创建简档时出错
+Translated:创建配置文件出错
 
 English:Error Loading Contents
 Translated:加载内容时出错
 
 English:Error Loading Image
-Translated:加载图像时出错
+Translated:加载图片时出错
 
 English:Error Reported
-Translated:报告错误
+Translated:错误报告
 
 English:Estimated Cost
-Translated:估计成本
+Translated:估计费用
 
 English:Estimated Mass
 Translated:估计质量
@@ -881,7 +962,7 @@ English:Expand All
 Translated:展开全部
 
 English:Expand Distance
-Translated:扩大距离
+Translated:展开距离
 
 English:Expand Thin Walls
 Translated:展开薄壁
@@ -891,6 +972,12 @@ Translated:试验
 
 English:Export
 Translated:出口
+
+English:Export All Settings
+Translated:导出所有设置
+
+English:Export Bed Leveling Data
+Translated:出口床水平数据
 
 English:Export EEPROM
 Translated:导出EEPROM
@@ -905,28 +992,19 @@ English:Export File
 Translated:导出文件
 
 English:Export selection to
-Translated:将选择导出到
+Translated:导出选择到
 
-English:External Perimeter Extrusion Width = {0}
-Translated:外部周边挤出宽度= {0}
-
-English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
-Translated:外围挤压宽度= {0} \ n喷嘴直径= {1}
-
-English:'External Perimeter Extrusion Width' must be greater than 0.
-Translated:“外部周长挤出宽度”必须大于0。
-
-English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
-Translated:'外部周长挤出宽度'必须小于或等于'喷嘴直径'* 4。
+English:Exporting
+Translated:出口
 
 English:External Perimeters First
-Translated:外部周长首先
+Translated:外部边界首先
 
 English:Extra Length After Tool Change
-Translated:刀具更换后的额外长度
+Translated:换刀后的额外长度
 
 English:Extra Length On Restart
-Translated:额外的长度重新启动
+Translated:重启时的额外长度
 
 English:Extrude
 Translated:拉伸
@@ -936,9 +1014,6 @@ Translated:挤出长丝
 
 English:Extrude First Layer
 Translated:挤出第一层
-
-English:Extrude Image
-Translated:挤出图像
 
 English:Extruder
 Translated:挤出机
@@ -953,10 +1028,10 @@ English:Extruder 4 Temperature
 Translated:挤出机4温度
 
 English:Extruder Change
-Translated:挤出机改变
+Translated:挤出机更换
 
 English:Extruder Count
-Translated:挤出机计数
+Translated:挤出机数量
 
 English:Extruder Temperature
 Translated:挤出机温度
@@ -971,7 +1046,7 @@ English:Extrusion
 Translated:挤压
 
 English:Extrusion Multiplier
-Translated:挤压倍数
+Translated:挤出倍增器
 
 English:Extrusion Ratio
 Translated:挤出比
@@ -994,14 +1069,17 @@ Translated:进给率
 English:Filament
 Translated:灯丝
 
+English:Filament Has Been Loaded
+Translated:长丝已被装载
+
 English:Filament Length
-Translated:长丝长度
+Translated:灯丝长度
 
 English:Filament Speed
-Translated:纤丝速度
+Translated:灯丝速度
 
 English:Filament Volume
-Translated:长丝卷
+Translated:灯丝卷
 
 English:File May Cause Problems
 Translated:文件可能会导致问题
@@ -1013,10 +1091,10 @@ English:Fill Pattern
 Translated:填充图案
 
 English:Fill Thin Gaps
-Translated:填补空白
+Translated:填补薄弱的空白
 
 English:Filter Output
-Translated:过滤器输出
+Translated:过滤输出
 
 English:Filters
 Translated:过滤器
@@ -1024,11 +1102,17 @@ Translated:过滤器
 English:Finally click 'Next' to continue.
 Translated:最后点击“下一步”继续。
 
+English:Finish
+Translated:完
+
 English:Finished Print
-Translated:完成的打印
+Translated:完成打印
 
 English:Finished Print: {0}
-Translated:完成的打印：{0}
+Translated:完成打印：{0}
+
+English:Finishing Startup
+Translated:完成启动
 
 English:Firmware download failed
 Translated:固件下载失败
@@ -1040,7 +1124,7 @@ English:Firmware restored successfully. Please reconnect.
 Translated:固件恢复成功。请重新连接。
 
 English:Firmware updated successfully. Please reconnect.
-Translated:固件更新成功。请重新连接。
+Translated:固件已成功更新。请重新连接。
 
 English:Firmware Updates
 Translated:固件更新
@@ -1051,26 +1135,8 @@ Translated:固件版本：{0}
 English:First Layer
 Translated:第一层
 
-English:First Layer Extrusion Width = {0}
-Translated:第一层挤出宽度= {0}
-
-English:First Layer Extrusion Width = {0}\nNozzle Diameter = {1}
-Translated:第一层挤出宽度= {0} \ n喷嘴直径= {1}
-
-English:'First Layer Extrusion Width' must be greater than 0.
-Translated:'第一层挤出宽度'必须大于0。
-
-English:'First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
-Translated:'第一层挤出宽度'必须小于或等于'喷嘴直径'* 4。
-
-English:First Layer Height = {0}\nNozzle Diameter = {1}
-Translated:第一层高= {0} \ n喷嘴直径= {1}
-
-English:'First Layer Height' must be less than or equal to the 'Nozzle Diameter'.
-Translated:'第一层高度'必须小于或等于'喷嘴直径'。
-
 English:First Layer Only
-Translated:仅第一层
+Translated:仅限第一层
 
 English:First Layer Thickness
 Translated:第一层厚度
@@ -1078,11 +1144,17 @@ Translated:第一层厚度
 English:Fit to Bounds
 Translated:适合边界
 
+English:Flag for the state of our filament loaded.
+Translated:标志为我们的灯丝状态。
+
 English:Flag keeping track if probe calibration wizard has been run.
-Translated:如果探针校准向导已运行，则标记保持跟踪。
+Translated:如果已运行探针校准向导，则标记保持跟踪。
 
 English:Flat
 Translated:平面
+
+English:Flatten
+Translated:弄平
 
 English:Folder Name
 Translated:文件夹名称
@@ -1091,19 +1163,19 @@ English:Folders
 Translated:文件夹
 
 English:Force a retraction when moving between islands (distinct parts on the layer).
-Translated:在岛之间移动时强制缩回（图层上的不同部分）。
+Translated:在岛屿之间移动时强制收回（层上的不同部分）。
 
 English:Forces external perimeters to be printed first. By default, they will print last.
-Translated:首先打印强制外部边界。默认情况下，它们将最后打印。
+Translated:强制首先打印外部周长。默认情况下，它们将打印到最后。
 
 English:Forces the print to have only one extrusion and gradually increase the Z height during the print. Only one part will print at a time with this feature.
-Translated:强制打印只有一次挤出，并在打印过程中逐渐增加Z高度。此功能一次只能打印一个部分。
+Translated:强制打印只有一次挤出，并在打印过程中逐渐增加Z高度。使用此功能一次只能打印一个部件。
 
 English:Forces the printer to heat the nozzle before homing.
-Translated:归位前，强制打印机加热喷嘴。
+Translated:在归位前强制打印机加热喷嘴。
 
 English:Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.
-Translated:强制切片机尝试避免使周界线跨过现有的周界线。这可以帮助渗出或弦乐。
+Translated:强制切片机试图避免周边线穿过现有的周边线。这可以帮助渗出或串。
 
 English:Forgot Password
 Translated:忘记密码
@@ -1121,37 +1193,43 @@ English:G-Code
 Translated:G代码
 
 English:G-Code Flavor
-Translated:G代码风味
+Translated:G代码味道
 
 English:G-Code Output
 Translated:G代码输出
 
-English:G-Code to be run after every tool change.
-Translated:G代码将在每次更换刀具后运行。
+English:G-Code to be run after every tool change. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.
+Translated:每次换刀后都要运行G代码。如果需要，您可以使用[wipe_tower_x]和[wipe_tower_y]设置挤出机位置。
+
+English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.
+Translated:切换到挤出机后运行G代码2.如果未设置，将在G代码后使用标准。如果需要，您可以使用[wipe_tower_x]和[wipe_tower_y]设置挤出机位置。
 
 English:G-Code to be run after the change in Z height for the next layer.
-Translated:G代码将在下一层Z高度变化后运行。
+Translated:G代码在下一层的Z高度变化后运行。
 
 English:G-Code to be run at the end of all automatic output (the very end of the G-Code commands).
-Translated:G代码在所有自动输出（G代码命令的最后）结束时运行。
+Translated:G-Code在所有自动输出结束时运行（G-Code命令的最后）。
 
-English:G-Code to be run before every tool change.
-Translated:在每次更换刀具之前都要运行G代码。
+English:G-Code to be run before every tool change. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.
+Translated:每次换刀前都要运行G代码。如果需要，您可以使用[wipe_tower_x]和[wipe_tower_y]设置挤出机位置。
+
+English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.
+Translated:在切换到挤出机之前运行的G代码2.如果没有设置，将使用G-Code之前的标准。如果需要，您可以使用[wipe_tower_x]和[wipe_tower_y]设置挤出机位置。
 
 English:G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.
-Translated:G代码将在温度设置命令后立即运行。在本节中包含用于设置温度的命令将导致它们不在本节以外生成。将接受自定义G代码变量。
+Translated:G-Code在温度设定命令后立即运行。在本节中包含设置温度的命令将导致它们不在本节之外生成。将接受自定义G代码变量。
 
 English:G-Code to be run when the print resumes after a pause.
-Translated:G代码在暂停后恢复打印时运行。
+Translated:暂停后打印恢复时要运行的G代码。
 
 English:G-Code to run upon successful connection to a printer. This can be useful to set settings specific to a given printer.
-Translated:G代码在成功连接到打印机后运行。这可以用于设置特定于给定打印机的设置。
+Translated:G-Code在成功连接到打印机时运行。这对于设置特定于给定打印机的设置很有用。
 
 English:G-Code to run when a print is canceled.
-Translated:G代码在打印取消时运行。
+Translated:取消打印时运行的G代码。
 
 English:G-Code to run when the printer is paused.
-Translated:G代码在打印机暂停时运行。
+Translated:打印机暂停时运行的G代码。
 
 English:General
 Translated:一般
@@ -1160,13 +1238,13 @@ English:Generate Support Material
 Translated:生成支持材料
 
 English:Generates an outline around the support material to improve strength and hold up interface layers.
-Translated:围绕支撑材料生成轮廓以提高强度并支撑界面层。
+Translated:在支撑材料周围生成轮廓以提高强度并保持界面层。
 
 English:Generates support material starting on top of internal surfaces. If unchecked support will only generate starting on the bed.
-Translated:从内表面顶部开始生成支撑材料。如果未检查的支持只会在床上开始生成。
+Translated:从内部表面开始生成支撑材料。如果未经检查的支持只会在床上生成。
 
 English:Generates support material under areas of the part which may be too steep to support themselves.
-Translated:在可能太陡的部分的区域下生成支撑材料以支撑自己。
+Translated:在部件的区域下方生成支撑材料，这些区域可能太陡而无法支撑自身。
 
 English:Generating Lithophane
 Translated:生成Lithophane
@@ -1199,16 +1277,16 @@ English:Has Fan
 Translated:有粉丝
 
 English:Has Filament Runout Sensor
-Translated:有细丝跳动传感器
+Translated:有灯丝跳动传感器
 
 English:Has Hardware Leveling
-Translated:有硬件调平
+Translated:有硬件级别
 
 English:Has Heated Bed
-Translated:加热床
+Translated:有加热床
 
 English:Has Power Control
-Translated:拥有电源控制
+Translated:有电源控制
 
 English:Has SD Card Reader
 Translated:有SD卡读卡器
@@ -1220,13 +1298,13 @@ English:Has Z Servo
 Translated:有Z伺服
 
 English:Have MatterControl send you email messages about your print
-Translated:让MatterControl向您发送有关您的印刷品的电子邮件
+Translated:让MatterControl向您发送有关您的打印的电子邮件
 
 English:Have MatterControl send you text messages about your print
-Translated:让MatterControl向你发送关于你的印刷品的短信
+Translated:让MatterControl向您发送有关您的打印的短信
 
 English:Heat Before Homing
-Translated:归位前的热量
+Translated:归巢前的热量
 
 English:Heat the bed
 Translated:加热床
@@ -1244,10 +1322,10 @@ English:Height
 Translated:高度
 
 English:Help
-Translated:帮帮我
+Translated:救命
 
 English:Hide Offsets
-Translated:隐藏偏移
+Translated:隐藏偏移量
 
 English:High Precision
 Translated:高精准度
@@ -1255,56 +1333,53 @@ Translated:高精准度
 English:History
 Translated:历史
 
+English:Holding Temperature
+Translated:保持温度
+
 English:Home
 Translated:家
 
 English:Home the printer
-Translated:首页打印机
+Translated:回家打印机
 
 English:Home X
-Translated:首页X
+Translated:家X.
 
 English:Home X, Y and Z
-Translated:家X，Y和Z
+Translated:家X，Y和Z.
 
 English:Home Y
-Translated:首页Y
+Translated:家Y.
 
 English:Home Z
-Translated:家Z
+Translated:家Z.
 
 English:Home Z Max
-Translated:Home Z Max
+Translated:首页Z Max
 
 English:Homing
 Translated:归巢
 
 English:Homing Offset
-Translated:归位抵消
+Translated:归航偏移
 
 English:Homing The Printer
-Translated:寻找打印机
+Translated:归位打印机
 
 English:Hotend
 Translated:Hotend
 
 English:Hotend Temperature:
-Translated:温度温度：
+Translated:Hotend温度：
 
 English:How can we improve?
-Translated:我们如何改进？
+Translated:我们怎样才能改善？
 
 English:How to succeed with MatterControl
-Translated:MatterControl如何成功
+Translated:如何使用MatterControl取得成功
 
 English:Hz
 Translated:赫兹
-
-English:I agree to license these files under 
-Translated:我同意根据这些文件授权
-
-English:I have the right to license these files.
-Translated:我有权许可这些文件。
 
 English:if currently connected
 Translated:如果当前连接
@@ -1313,25 +1388,28 @@ English:If set, the printer will automatically attempt to connect when selected.
 Translated:如果设置，打印机将在选择时自动尝试连接。
 
 English:If the extruder has been running for a long time, it may be reporting values that are too large, this will periodically reset it.
-Translated:如果挤出机长时间运行，它可能会报告太大的值，这会定期重置它。
+Translated:如果挤出机已经运行了很长时间，它可能会报告太大的值，这会定期重置它。
 
-English:If the time to print a layer is less than this, the fan will turn on on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.
-Translated:如果打印图层的时间少于此时间，风扇将以最小速度打开。随着层次时间的减少，它将逐渐上升到最大速度。
+English:If the time to print a layer is less than this, the fan will turn on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.
+Translated:如果打印图层的时间小于此值，则风扇将以最低速度打开。随着层时间的减少，它将逐渐上升到其最大速度。
 
-English:If you need to recalibrate the printer in the future, the print leveling controls can be found under: Controls, Calibration
-Translated:如果将来需要重新校准打印机，可以在以下位置找到打印调平控件：控件，校准
+English:If you wish to re-calibrate leveling in the future:
+Translated:如果您希望将来重新校准水平测量：
+
+English:If you wish to re-calibrate your probe in the future:
+Translated:如果您希望将来重新校准探头：
 
 English:Image
 Translated:图片
 
-English:Image Coin
-Translated:图像硬币
-
-English:Image Coverter
-Translated:图像隐蔽
+English:Image Converter
+Translated:图像转换器
 
 English:Image to Path
 Translated:图像到路径
+
+English:Immediately turn off heaters
+Translated:立即关闭加热器
 
 English:Import
 Translated:进口
@@ -1355,10 +1433,10 @@ English:Import Wizard
 Translated:导入向导
 
 English:Include a picture of my print
-Translated:包含我的照片
+Translated:包括我的印刷图片
 
 English:Indicates that the Z axis homes the hot end away from the bed (z-max homing)
-Translated:表示Z轴将热端远离床面（z-max归位）
+Translated:表示Z轴将热端远离床（z-max归位）
 
 English:Infill
 Translated:腾空
@@ -1372,26 +1450,35 @@ Translated:填充重叠
 English:Infill Type
 Translated:填充类型
 
+English:Inflate Path
+Translated:膨胀路径
+
 English:Initial Layer Speed
 Translated:初始层速度
 
 English:Initial Layers
-Translated:初始层
+Translated:初始图层
 
 English:Initial Printer Setup
 Translated:初始打印机设置
 
 English:Initializing hardware...
-Translated:正在初始化硬件...
+Translated:初始化硬件......
+
+English:Initializing Library
+Translated:初始化库
 
 English:Insert
-Translated:插
+Translated:插入
 
-English:Insert Image
-Translated:插入图像
+English:Insert Filament
+Translated:插入灯丝
+
+English:Insert Filament Page
+Translated:插入细丝页面
 
 English:Inside Perimeters
-Translated:里面周长
+Translated:里面的周边
 
 English:Install Update
 Translated:安装更新
@@ -1414,6 +1501,9 @@ Translated:路口
 English:Invalid Client Token
 Translated:无效的客户端令牌
 
+English:Inventory
+Translated:库存
+
 English:Invert
 Translated:倒置
 
@@ -1424,19 +1514,19 @@ English:IP Address of printer/printer controller
 Translated:打印机/打印机控制器的IP地址
 
 English:IP Finder
-Translated:IP Finder
+Translated:IP查找器
 
 English:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
-Translated:看起来您的上一次打印未能完成。 \ NN \你想尝试从最后一次知道的位置恢复吗？
+Translated:您的上一次打印似乎无法完成。 \ NN \你想尝试从最后知道的位置恢复吗？
 
 English:It is currently set to {0}.
 Translated:它目前设置为{0}。
 
 English:Item not Found
-Translated:找不到项目
+Translated:物品未找到
 
 English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.
-Translated:现在是时候将现有的打印机设置复制到您的MatterHackers帐户。复制完成后，只要您登录到MatterControl，这些打印机就可以使用。未复制的打印机只有在未登录时才可用。
+Translated:是时候将现有的打印机设置复制到MatterHackers帐户了。复制后，只要您登录MatterControl，这些打印机就可用。未复制的打印机仅在未登录时可用。
 
 English:Jerk Velocity
 Translated:Jerk Velocity
@@ -1456,12 +1546,6 @@ Translated:层
 English:Layer Change G-Code
 Translated:图层更改G代码
 
-English:Layer Height = {0}\nNozzle Diameter = {1}
-Translated:层高= {0} \ n喷嘴直径= {1}
-
-English:'Layer Height' must be less than or equal to the 'Nozzle Diameter'.
-Translated:“层高”必须小于或等于“喷嘴直径”。
-
 English:Layer Thickness
 Translated:层厚度
 
@@ -1469,34 +1553,40 @@ English:Layer Top
 Translated:层顶
 
 English:Layer(s) To Pause
-Translated:要暂停的图层
+Translated:图层要暂停
 
 English:layers
 Translated:层
 
 English:Layers / Surface
-Translated:层/表面
+Translated:图层/表面
 
 English:layers or mm
-Translated:层或毫米
+Translated:层数或毫米
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:将其保留为0以允许自动计算挤出宽度。
 
+English:left click
+Translated:左键单击
+
+English:left drag
+Translated:左拖
+
 English:Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).
-Translated:在换刀完成后（除了换刀退刀距离的重新挤压），挤出的额外长丝的长度。
+Translated:完全换刀后挤出的额外长丝长度（除了重新挤出换刀距离之外）。
 
 English:Length of filament to extrude after a complete retraction (in addition to the re-extrusion of the Length on Move distance).
-Translated:在完全缩回后挤出的长丝的长度（除了移动距离上的长度再次挤出）。
+Translated:完全缩回后挤出的长丝长度（除了重新挤出长度移动距离外）。
 
 English:Length on Tool Change
-Translated:刀具更换长度
+Translated:换刀长度
 
 English:Leveling
 Translated:代练
 
 English:Leveling Probe
-Translated:调平探针
+Translated:调平探头
 
 English:Leveling Settings
 Translated:调平设置
@@ -1508,16 +1598,16 @@ English:Library
 Translated:图书馆
 
 English:Library - Enter Share Code
-Translated:图书馆 - 输入共享代码
+Translated:库 - 输入共享代码
 
 English:Limited Connectivity
-Translated:有限的连接
+Translated:有限的连接性
 
 English:Linear Array
 Translated:线性阵列
 
 English:Linear Extrude
-Translated:线性拉伸
+Translated:线性挤压
 
 English:List of IP's discovered on the network
 Translated:在网络上发现的IP列表
@@ -1529,13 +1619,25 @@ English:Load
 Translated:加载
 
 English:Load filament
-Translated:加载灯丝
+Translated:装载灯丝
 
 English:Load Filament Length
-Translated:加载长丝长度
+Translated:加载灯丝长度
+
+English:Load Filament Wizard
+Translated:加载灯丝向导
+
+English:Load Material
+Translated:装载材料
 
 English:Loading
 Translated:载入中
+
+English:Loading Bed
+Translated:装载床
+
+English:Loading Filament
+Translated:装载灯丝
 
 English:Loading GCode
 Translated:加载GCode
@@ -1543,50 +1645,17 @@ Translated:加载GCode
 English:Loading G-Code
 Translated:加载G代码
 
+English:Loading Help
+Translated:加载帮助
+
 English:Loading...
 Translated:载入中...
 
 English:Local Library
-Translated:本地图书馆
+Translated:地方图书馆
 
-English:Location: 'Controls' -> 'Movement' -> 'Z Offset'
-Translated:位置：'Controls' - >'Movement' - >'Z Offset'
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Cooling'
-Translated:位置：'设置和控制' - >'设置' - >'细丝' - >'冷却'
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
-Translated:位置：'设置和控制' - >'设置' - >'细丝' - >'挤出' - >'外部边界'
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'
-Translated:位置：'Settings and Controls' - >'Settings' - >'Filament' - >'Extrusion' - >'First Layer'
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
-Translated:位置：'设置和控制' - >'设置' - >'细丝' - >'细丝' - >'退回'
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill'
-Translated:位置：'设置和控制' - >'设置' - >'常规' - >'填充'
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill Type'
-Translated:位置：'设置和控制' - >'设置' - >'常规' - >'填充类型'
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'
-Translated:位置：'设置和控制' - >'设置' - >'常规' - >'图层/表面'
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Speed'
-Translated:位置：'设置和控制' - >'设置' - >'常规' - >'速度'
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom G-Code' -> 'Start G-Code'
-Translated:位置：'设置和控制' - >'设置' - >'打印机' - >'自定义G代码' - >'启动G代码'
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Features'
-Translated:位置：'设置和控制' - >'设置' - >'打印机' - >'功能'
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Print Recovery' -> 'Enable Recovery'
-Translated:位置：'设置和控制' - >'设置' - >'打印机' - >'打印恢复' - >'启用恢复'
-
-English:Lock Ratio
-Translated:锁定比率
+English:Location
+Translated:地点
 
 English:Low Precision
 Translated:低精度
@@ -1612,32 +1681,41 @@ Translated:宏预设
 English:Macros
 Translated:宏
 
+English:make
+Translated:使
+
 English:Make
 Translated:使
+
+English:Make Component
+Translated:制作组件
 
 English:Make Selection
 Translated:做出选择
 
 English:Make Support
-Translated:支持
+Translated:提供支持
 
 English:Make sure the first point on a perimeter is a concave point.
 Translated:确保周边的第一个点是凹点。
 
 English:Make sure the first point on a perimeter is not an overhang.
-Translated:确保周边的第一个点不是突出的。
+Translated:确保周边的第一个点不是悬垂。
 
-English:Manual Configuration
-Translated:手动配置
+English:Make the first layer on top of partial infill use the speed and fan for bridging.
+Translated:使部分填充顶部的第一层使用速度和风扇进行桥接。
 
 English:Manual Movement Speeds
-Translated:手动运动速度
+Translated:手动移动速度
 
 English:Manually Configure Connection
 Translated:手动配置连接
 
 English:Manually measure the extruder at the center
 Translated:手动测量中心的挤出机
+
+English:Markdown Edit
+Translated:降价编辑
 
 English:Marlin Firmware EEPROM Settings
 Translated:Marlin固件EEPROM设置
@@ -1646,7 +1724,7 @@ English:Material
 Translated:材料
 
 English:Material density. Only used for estimating mass in the Layer View.
-Translated:材料密度。仅用于估算图层视图中的质量。
+Translated:材料密度。仅用于在图层视图中估算质量。
 
 English:Material Loading
 Translated:材料装载
@@ -1658,7 +1736,10 @@ English:MatterControl
 Translated:MatterControl
 
 English:MatterControl is made possible by the team at MatterHackers and other open source software
-Translated:MatterHackers和其他开源软件团队使MatterControl成为可能
+Translated:MatterControl由MatterHackers和其他开源软件团队完成
+
+English:MatterControl was unable to connect to the Internet. Please check your Wifi connection and try again
+Translated:MatterControl无法连接到Internet。请检查您的Wifi连接，然后重试
 
 English:MatterControl will now attempt to auto-detect printer.
 Translated:MatterControl现在将尝试自动检测打印机。
@@ -1675,8 +1756,11 @@ Translated:最大速度
 English:Maximum Acceleration [mm/s²]
 Translated:最大加速度[mm /s²]
 
+English:Maximum E jerk [mm/s]
+Translated:最大加速度[mm / s]
+
 English:Maximum feedrates [mm/s]
-Translated:最大进给率[mm / s]
+Translated:最大进给量[mm / s]
 
 English:Maximum Speed
 Translated:最大速度
@@ -1685,7 +1769,7 @@ English:Maximum X-Y jerk [mm/s]
 Translated:最大X-Y加加速度[mm / s]
 
 English:Maximum Z jerk [mm/s]
-Translated:最大Z加加速度[mm / s]
+Translated:最大Z加速度[mm / s]
 
 English:Medium Precision
 Translated:中等精度
@@ -1693,20 +1777,26 @@ Translated:中等精度
 English:Merge Overlapping Lines
 Translated:合并重叠线
 
+English:Mesh
+Translated:啮合
+
 English:Message
 Translated:信息
+
+English:middle drag
+Translated:中间阻力
 
 English:Min feedrate [mm/s]
 Translated:最小进给速度[mm / s]
 
 English:Min travel feedrate [mm/s]
-Translated:最小行程进给[mm / s]
+Translated:最小行程进给率[mm / s]
 
 English:Minimum Extrusion Length
-Translated:最小挤出长度
+Translated:最小挤压长度
 
 English:Minimum Extrusion Requiring Retraction
-Translated:最小挤出需要回缩
+Translated:最小挤压需要收回
 
 English:Minimum Print Speed
 Translated:最低打印速度
@@ -1718,7 +1808,7 @@ English:Minimum Speed
 Translated:最低速度
 
 English:Minimum Travel Requiring Retraction
-Translated:最小旅行需要回退
+Translated:最低旅行要求撤退
 
 English:Mirror
 Translated:镜子
@@ -1732,26 +1822,32 @@ Translated:毫米
 English:mm or %
 Translated:毫米或％
 
-English:mm or % leave 0 for auto
-Translated:毫米或％为汽车保留0
-
 English:mm zero to disable
-Translated:毫米为零以禁用
+Translated:mm为零以禁用
 
 English:mm/s
 Translated:毫米/秒
 
 English:mm/s or %
-Translated:毫米/秒或％
+Translated:mm / s或％
 
 English:mm/s²
 Translated:毫米/秒²
+
+English:model
+Translated:模型
 
 English:Model
 Translated:模型
 
 English:Model View
 Translated:模型视图
+
+English:Model View Style
+Translated:模型视图样式
+
+English:Modify
+Translated:修改
 
 English:More
 Translated:更多
@@ -1769,28 +1865,28 @@ English:Move Item
 Translated:移动项目
 
 English:Move Part
-Translated:移动零件
+Translated:移动部分
 
 English:Move Part Constrained
 Translated:移动部分约束
 
 English:Move X negative
-Translated:移动X负值
+Translated:移动X负面
 
 English:Move X positive
-Translated:移动X正数
+Translated:移动X正面
 
 English:Move Y negative
-Translated:将Y移至负数
+Translated:移动Y负面
 
 English:Move Y positive
-Translated:将Y移动到正值
+Translated:Y移动正面
 
 English:Move Z negative
-Translated:将Z向下移动
+Translated:移动Z负面
 
 English:Move Z positive
-Translated:移动Z正数
+Translated:移动Z正面
 
 English:Movement
 Translated:运动
@@ -1799,28 +1895,31 @@ English:Movement Speeds
 Translated:运动速度
 
 English:Movement Speeds Presets
-Translated:移动加速预设
+Translated:移动速度预设
 
 English:Moves
 Translated:移动
 
 English:Moves the nozzle up and off the part to allow cooling.
-Translated:向上移动喷嘴并离开零件以冷却。
+Translated:将喷嘴向上移动并离开零件以进行冷却。
 
 English:Name
 Translated:名称
 
 English:Networked Printing
-Translated:联网打印
+Translated:网络印刷
+
+English:New Design
+Translated:新设计
 
 English:New Password
 Translated:新密码
 
 English:New updates are ready to install
-Translated:新的更新已准备好进行安装
+Translated:新的更新已准备好安装
 
 English:New updates may be available
-Translated:新的更新可能可用
+Translated:可能有新的更新
 
 English:New User? 
 Translated:新用户？
@@ -1835,28 +1934,25 @@ English:No Color
 Translated:没有颜色
 
 English:No COM ports available
-Translated:没有COM端口可用
+Translated:没有可用的COM端口
 
 English:No macros are currently set up for this printer.
-Translated:目前没有为此打印机设置宏。
-
-English:No Model
-Translated:没有模型
+Translated:当前没有为此打印机设置宏。
 
 English:None
 Translated:没有
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
-Translated:通常你会想要使用绝对的距离。如果您知道您的打印机需要相对距离，请检查此项。
+Translated:通常你会想要使用绝对距离。如果您知道打印机需要相对距离，请仅检查此项。
 
 English:Not Connected
 Translated:未连接
 
 English:Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.
-Translated:注意：切片设置在打印实际开始之前应用。打印时的更改不会影响活动打印。
+Translated:注意：在打印实际开始之前应用切片设置。打印时更改不会影响活动打印。
 
 English:NOTE: Standard messaging rates may apply.
-Translated:注意：标准消息收发率可能适用。
+Translated:注意：标准消息传递率可能适用。
 
 English:Notifications
 Translated:通知
@@ -1871,7 +1967,7 @@ English:Number
 Translated:数
 
 English:Number of layers to print before printing any parts.
-Translated:打印任何部件前要打印的层数。
+Translated:打印任何部件之前要打印的层数。
 
 English:Number of Samples
 Translated:样品数量
@@ -1882,14 +1978,20 @@ Translated:OEM
 English:of
 Translated:的
 
+English:Off
+Translated:离
+
 English:Ok
 Translated:好
 
+English:OK
+Translated:好
+
 English:On Connect G-Code
-Translated:连接G代码
+Translated:在连接G代码
 
 English:Oops! Baud Rate must be an integer.
-Translated:哎呀！波特率必须是一个整数。
+Translated:哎呀！波特率必须是整数。
 
 English:Oops! Could not complete update.
 Translated:哎呀！无法完成更新。
@@ -1907,49 +2009,37 @@ English:Oops! Invalid code.
 Translated:哎呀！无效的代码。
 
 English:Oops! Invalid username, email or password.
-Translated:哎呀！无效的用户名，电子邮件或密码。
+Translated:哎呀！用户名，电子邮件或密码无效。
 
 English:Oops! Please select a baud rate.
-Translated:哎呀！请选择一个波特率。
+Translated:哎呀！请选择波特率。
 
 English:Oops! Please select a device to continue.
-Translated:哎呀！请选择一个设备以继续。
+Translated:哎呀！请选择要继续的设备。
 
 English:Oops! Please select a serial port.
 Translated:哎呀！请选择一个串口。
-
-English:Oops! Please sign in to continue.
-Translated:哎呀！请登录以继续。
 
 English:Oops! Please sign in to enable this feature.
 Translated:哎呀！请登录以启用此功能。
 
 English:Oops! Printer could not be detected 
-Translated:哎呀！打印机无法检测到
+Translated:哎呀！无法检测到打印机
 
 English:Oops! Settings file '{0}' did not contain any settings we could import.
-Translated:哎呀！设置文件“{0}”未包含我们可以导入的任何设置。
-
-English:Oops! That code is invalid or expired.
-Translated:哎呀！该代码无效或过期。
+Translated:哎呀！设置文件“{0}”不包含我们可以导入的任何设置。
 
 English:Oops! There is no eeprom mapping for your printer's firmware.
 Translated:哎呀！打印机的固件没有eeprom映射。
 
 English:Oops! There was a problem creating your account.
-Translated:哎呀！创建您的帐户时出现问题。
+Translated:哎呀！创建帐户时出现问题。
 
 English:Oops! There was a problem processing your request.
 Translated:哎呀！处理您的请求时出现问题。
 
 English:Oops! There was a problem resetting your password.
 Translated:哎呀！重置密码时出现问题。
-
-English:Oops! There was a problem. Please try again later.
-Translated:哎呀！有一个问题。请稍后再试。
-
-English:Oops! There was an error, please sign-in again.
-Translated:哎呀！发生错误，请重新登录。
 
 English:Oops! Unable to connect to server
 Translated:哎呀！无法连接到服务器
@@ -1964,13 +2054,25 @@ English:Oops! Unable to recognize settings file '{0}'.
 Translated:哎呀！无法识别设置文件“{0}”。
 
 English:Oops! You cannot share this item.
-Translated:哎呀！你不能分享这个项目。
+Translated:哎呀！您无法分享此项目。
 
 English:Oops! Your session has expired.  Please sign-in again to continue.
 Translated:哎呀！您的会话已过期。请再次登录以继续。
 
+English:Open
+Translated:打开
+
+English:Open File
+Translated:打开文件
+
+English:Open Folder
+Translated:打开文件夹
+
 English:Open Package
 Translated:打开包装
+
+English:Open Recent
+Translated:打开最近
 
 English:OpenSCAD not installed
 Translated:未安装OpenSCAD
@@ -1984,9 +2086,6 @@ Translated:要么
 English:Other
 Translated:其他
 
-English:Out of filament detected\nYour 3D print has been paused.
-Translated:检测到未检测到灯丝\ n您的3D打印已暂停。
-
 English:Outer Surface - Perimeters
 Translated:外表面 - 周长
 
@@ -1994,13 +2093,13 @@ English:Outlines
 Translated:纲要
 
 English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
-Translated:只输出打印的第一层。特别适用于为雕刻或切割等应用输出G代码数据。
+Translated:仅输出打印的第一层。特别适用于输出雕刻或切割等应用的gcode数据。
 
 English:Outside Perimeter
 Translated:外围
 
 English:Outside Perimeters
-Translated:外围
+Translated:外围边界
 
 English:Overhang
 Translated:悬垂
@@ -2009,25 +2108,16 @@ English:Pan
 Translated:泛
 
 English:Pan View
-Translated:平移视图
+Translated:潘视图
 
 English:Parse Error while slicing
 Translated:切片时解析错误
-
-English:Part
-Translated:部分
 
 English:Part Cooling Fan
 Translated:部分冷却风扇
 
 English:Part History
-Translated:零件历史
-
-English:Part Name
-Translated:零件名称
-
-English:Parts
-Translated:部分
+Translated:部分历史
 
 English:Password
 Translated:密码
@@ -2041,14 +2131,20 @@ Translated:密码更新完成
 English:Paste
 Translated:糊
 
-English:Path
-Translated:路径
-
 English:Pattern Spacing
 Translated:图案间距
 
+English:Pause
+Translated:暂停
+
+English:Pause automatic heater shutdown
+Translated:暂停自动加热器关闭
+
 English:Pause G-Code
 Translated:暂停G代码
+
+English:Pause Print
+Translated:暂停打印
 
 English:Paused
 Translated:已暂停
@@ -2059,7 +2155,7 @@ Translated:周边
 English:Perimeters
 Translated:周边
 
-English:PID settings
+English:PID Settings
 Translated:PID设置
 
 English:Pinch
@@ -2069,7 +2165,7 @@ English:Pipe Works
 Translated:管道工程
 
 English:Place the paper under the extruder
-Translated:将纸放在挤出机下面
+Translated:将纸张放在挤出机下面
 
 English:Plating History
 Translated:电镀历史
@@ -2078,46 +2174,40 @@ English:Play a Sound
 Translated:播放声音
 
 English:Play a sound for notifications
-Translated:播放声音进行通知
+Translated:播放声音以进行通知
 
 English:Please Confirm
 Translated:请确认
 
-English:Please select the material you will be printing with, so we can accurately calibrate the printer.
-Translated:请选择您要打印的材料，以便我们可以准确校准打印机。
-
-English:Please select the material you will be printing, so we can heat the printer before calibrating.
-Translated:请选择您要打印的材料，这样我们可以在校准之前加热打印机。
+English:Please select the material you want to load.
+Translated:请选择要加载的材料。
 
 English:Please sign in to continue.
 Translated:请登录以继续。
 
 English:Please wait until the print has finished and try again.
-Translated:请等到打印完成后再试。
+Translated:请等到打印完成后再试一次。
 
 English:Please wait while we create your account...
-Translated:请等待我们创建您的帐户...
+Translated:我们正在创建您的帐户，请稍候...
 
 English:Please wait while we update your password...
-Translated:请稍候，我们更新您的密码...
+Translated:我们更新您的密码时请等待...
 
 English:Please wait. Emailing reset code...
-Translated:请稍候。电子邮件重置代码...
+Translated:请耐心等待。通过电子邮件发送重置码...
 
 English:Please wait. Redeeming code...
-Translated:请稍候。兑现代码...
+Translated:请耐心等待。兑换代码......
 
 English:Please wait. Retrieving share code...
-Translated:请稍候。检索共享代码...
+Translated:请耐心等待。检索共享代码......
 
 English:Please wait. Sending invite...
-Translated:请稍候。正在发送邀请...
+Translated:请耐心等待。发送邀请...
 
 English:Please wait. Signing in...
-Translated:请稍候。登录中...
-
-English:Please wait. Verifying code...
-Translated:请稍候。正在验证代码...
+Translated:请耐心等待。登录中...
 
 English:Polygons
 Translated:多边形
@@ -2126,10 +2216,10 @@ English:Port
 Translated:港口
 
 English:Port not found
-Translated:未找到端口
+Translated:端口未找到
 
 English:Port number to be used with IP Address to connect to printer over the network
-Translated:与IP地址一起使用的端口号通过网络连接到打印机
+Translated:与IP地址一起使用的端口号，用于通过网络连接到打印机
 
 English:Port Wizard
 Translated:端口向导
@@ -2147,10 +2237,13 @@ English:Press
 Translated:按
 
 English:Press [Z-] until there is resistance to moving the paper
-Translated:按[Z-]，直到阻止移动纸张
+Translated:按[Z-]直到无法移动纸张
 
 English:Press [Z+] once to release the paper
-Translated:按[Z +]一次释放纸张
+Translated:按[Z +]一次以释放纸张
+
+English:Preview
+Translated:预习
 
 English:Primitive Shapes
 Translated:原始形状
@@ -2170,23 +2263,11 @@ Translated:打印历史
 English:Print Leveling
 Translated:打印调平
 
-English:Print Leveling is now configured and enabled.
-Translated:打印调平现在已配置并启用。
-
 English:Print Leveling Overview
 Translated:打印调平概述
 
-English:Print Leveling Plane
-Translated:打印调平平面
-
-English:Print Leveling Probe
-Translated:打印调平探头
-
 English:Print Leveling Wizard
-Translated:打印水平调整向导
-
-English:Print Leveling Wizard - Can be re-calculated anytime there seems to be a problem with initial layer consistency
-Translated:打印调平向导 - 可以在任何时候重新计算初始图层一致性问题
+Translated:打印调平向导
 
 English:Print Notification Settings
 Translated:打印通知设置
@@ -2218,11 +2299,14 @@ Translated:打印机名称不能为空
 English:Printer Paused
 Translated:打印机已暂停
 
+English:Printer Setup
+Translated:打印机设置
+
 English:Printers
 Translated:打印机
 
 English:Printers to Copy
-Translated:打印机复制
+Translated:打印机要复制
 
 English:Printers...
 Translated:打印机...
@@ -2234,7 +2318,7 @@ English:Printing From SD Card
 Translated:从SD卡打印
 
 English:Printing Speed
-Translated:打印速度
+Translated:印刷速度
 
 English:Printing: {0}
 Translated:打印：{0}
@@ -2243,19 +2327,19 @@ English:Probe Calibration Overview
 Translated:探头校准概述
 
 English:Probe Calibration Wizard
-Translated:探头校准向导
-
-English:Probe Calibration Wizard - needed for initial setup - normally should remain calibrated unless there are changes to hardware.
-Translated:探头校准向导 - 初始设置需要 - 通常应该保持校准，除非硬件有变化。
+Translated:探针校准向导
 
 English:Probe Has Been Calibrated
-Translated:探针已经校准
+Translated:探针已经过校准
+
+English:Probe Offset Sample Point
+Translated:探针偏移采样点
 
 English:Probe the bed at the center
-Translated:探索中心的床
+Translated:探查中心的床
 
 English:Probe XY Offset
-Translated:探针XY偏移
+Translated:探头XY偏移
 
 English:Probe Z Offset
 Translated:探针Z偏移
@@ -2263,29 +2347,17 @@ Translated:探针Z偏移
 English:Progress Reporting
 Translated:进度报告
 
+English:Properties
+Translated:属性
+
 English:Provide this code to grant someone read-only access.
 Translated:提供此代码以授予某人只读访问权限。
-
-English:Publish
-Translated:发布
-
-English:Publish a copy of this part to MatterHackers.
-Translated:将这部分的副本发布到MatterHackers。
-
-English:Publish to the MatterHakers Part Community
-Translated:发布到MatterHakers零件社区
-
-English:Publish your part for everyone!
-Translated:为每个人发布您的部分！
 
 English:Purchased
 Translated:购买
 
 English:Pyramid
 Translated:金字塔
-
-English:Pyriamid
-Translated:Pyriamid
 
 English:Quality
 Translated:质量
@@ -2297,19 +2369,19 @@ English:Raft
 Translated:筏
 
 English:Raft Extruder
-Translated:筏挤出机
+Translated:筏式挤出机
 
 English:Raft Layers
-Translated:木筏层
+Translated:筏层
 
 English:Raise / Stow
-Translated:提高/收起
+Translated:提升/存放
 
 English:Randomize Starting Points
 Translated:随机化起点
 
 English:Read Filter
-Translated:阅读过滤器
+Translated:读过滤器
 
 English:Reboots the firmware on the controller
 Translated:重新启动控制器上的固件
@@ -2336,7 +2408,7 @@ English:recovered once
 Translated:恢复一次
 
 English:Recovered printer profile
-Translated:恢复打印机配置文件
+Translated:恢复的打印机配置文件
 
 English:Redeem Code
 Translated:兑换代码
@@ -2368,9 +2440,6 @@ Translated:重装
 English:Remind Me Later
 Translated:稍后提醒我
 
-English:Remote Monitoring
-Translated:远程监控
-
 English:remove
 Translated:去掉
 
@@ -2379,9 +2448,6 @@ Translated:去掉
 
 English:Remove Items?
 Translated:删除项目？
-
-English:Remove operation from parts
-Translated:从部件中删除操作
 
 English:Remove the paper
 Translated:取出纸张
@@ -2393,19 +2459,19 @@ English:Rename Item
 Translated:重命名项目
 
 English:Report a Bug
-Translated:报告错误
+Translated:举报错误
 
 English:Request the firmware to do retractions rather than specify the extruder movements directly.
-Translated:请求固件执行回缩操作，而不是直接指定挤出机移动。
+Translated:请求固件进行撤消，而不是直接指定挤出机移动。
 
 English:Require Leveling To Print
-Translated:要求打印级别
+Translated:需要调平才能打印
 
 English:Reset
 Translated:重启
 
 English:Reset Long Extrusion
-Translated:重置长时间挤压
+Translated:重置长挤压
 
 English:Reset Password
 Translated:重设密码
@@ -2432,28 +2498,34 @@ English:Restore Default
 Translated:恢复默认
 
 English:Restore Settings
-Translated:还原设置
+Translated:恢复设置
 
 English:Resume
 Translated:恢复
 
+English:Resume automatic heater shutdown
+Translated:恢复自动加热器关闭
+
 English:Resume G-Code
 Translated:恢复G代码
+
+English:Resume Print
+Translated:继续打印
 
 English:Retract
 Translated:撤回
 
 English:Retract Acceleration
-Translated:撤回加速
+Translated:收回加速度
 
 English:Retract filament
-Translated:收回灯丝
+Translated:缩回灯丝
 
 English:Retract Length
-Translated:缩短长度
+Translated:缩回长度
 
 English:Retract When Changing Islands
-Translated:在改变岛屿时收回
+Translated:改变岛屿时撤回
 
 English:Retraction
 Translated:退
@@ -2465,7 +2537,7 @@ English:Retrieving download info...
 Translated:检索下载信息...
 
 English:Retrieving sync information...
-Translated:检索同步信息...
+Translated:检索同步信息......
 
 English:Retry
 Translated:重试
@@ -2477,13 +2549,19 @@ English:Revert
 Translated:还原
 
 English:Revert Settings
-Translated:恢复设置
+Translated:还原设置
 
 English:Reverting firmware to previous version...
-Translated:将固件恢复到以前的版本...
+Translated:将固件恢复到以前的版本......
+
+English:Right
+Translated:对
 
 English:Right Arrow
 Translated:右箭头
+
+English:right drag
+Translated:右拖
 
 English:Ring
 Translated:环
@@ -2500,14 +2578,14 @@ Translated:旋转视图
 English:Rubber Band Selection
 Translated:橡皮筋选择
 
+English:Run Calibration
+Translated:运行校准
+
 English:Run Max if Below
-Translated:在下面运行最大值
+Translated:如果在下面运行Max
 
 English:Run setup configuration for printer.
 Translated:运行打印机的安装配置。
-
-English:Running Clean Image
-Translated:运行干净的图像
 
 English:Running Macro
 Translated:运行宏
@@ -2518,17 +2596,17 @@ Translated:小号
 English:Sailfish Communication
 Translated:旗鱼通讯
 
+English:Sample Points
+Translated:取样点
+
 English:Sample the bed at {0} points
-Translated:在{0}点处对床进行采样
+Translated:在{0}点对床进行取样
 
 English:Sampled Positions
-Translated:采样位置
+Translated:抽样职位
 
 English:Save
 Translated:保存
-
-English:Save & Continue
-Translated:保存并继续
 
 English:Save As
 Translated:另存为
@@ -2545,11 +2623,14 @@ Translated:保存到EEProm
 English:Save To EEPROM
 Translated:保存到EEPROM
 
-English:Save your designs to the cloud and access them from anywhere in the world. You can also share them any time with with anyone you want.
-Translated:将设计保存到云中，并从世界任何地方访问它们。你随时可以与任何你想要的人分享。
-
 English:Saving
 Translated:保存
+
+English:Saving Asset
+Translated:节省资产
+
+English:Saving changes
+Translated:保存更改
 
 English:Saving Changes
 Translated:保存更改
@@ -2576,22 +2657,19 @@ English:seconds
 Translated:秒
 
 English:See what's new in this version of MatterControl
-Translated:看看这个版本的MatterControl有什么新功能
+Translated:看看这个版本的MatterControl有什么新东西
 
 English:Select A Folder
 Translated:选择一个文件夹
 
 English:Select a new Destination
-Translated:选择一个新的目的地
+Translated:选择一个新目的地
 
 English:Select a printer to continue
-Translated:选择一台打印机继续
+Translated:选择要继续的打印机
 
 English:Select Make
 Translated:选择制作
-
-English:Select Material
-Translated:选择材质
 
 English:Select Model
 Translated:选择型号
@@ -2599,11 +2677,14 @@ Translated:选择型号
 English:Select Part
 Translated:选择零件
 
+English:Select Printer
+Translated:选择打印机
+
 English:Select the baud rate.
 Translated:选择波特率。
 
 English:Select the material you are printing
-Translated:选择您正在打印的材料
+Translated:选择要打印的材料
 
 English:Select the printer manufacturer
 Translated:选择打印机制造商
@@ -2627,7 +2708,7 @@ English:Send SMS notifications
 Translated:发送短信通知
 
 English:Send With Checksum
-Translated:与校验和一起发送
+Translated:发送校验和
 
 English:Serial Port
 Translated:串行端口
@@ -2636,22 +2717,25 @@ English:Serial port in use
 Translated:串口正在使用中
 
 English:Session Cleared
-Translated:会议已结束
+Translated:会议已清除
 
 English:Session Expired
 Translated:会话已过期
 
+English:Set as Default
+Translated:设为默认
+
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
-Translated:将MatterControl设置为尝试通过网络连接到打印机。 （您必须断开并重新连接才能生效）
+Translated:设置MatterControl以尝试通过网络连接到打印机。 （您必须断开连接并重新连接才能生效）
 
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
-Translated:将MatterControl设置为使用s3g通信方法。 （您必须断开并重新连接才能生效）
+Translated:设置MatterControl以使用s3g通信方法。 （您必须断开连接并重新连接才能生效）
 
 English:Sets the models that will be added to the queue when a new printer is created.
-Translated:设置创建新打印机时将添加到队列中的模型。
+Translated:设置创建新打印机时将添加到队列的模型。
 
 English:Sets the size of the outer solid surface (perimeter) for the entire print.
-Translated:设置整个打印的外部固体表面（周长）的大小。
+Translated:设置整个打印件的外部实体表面（周长）的大小。
 
 English:Settings
 Translated:设置
@@ -2669,16 +2753,16 @@ English:Share
 Translated:分享
 
 English:Share Code
-Translated:共享代码
+Translated:分享代码
 
 English:Share Library Item
-Translated:共享库项目
+Translated:分享图书馆资料
 
 English:Share Options
-Translated:股票期权
+Translated:分享选项
 
 English:Share Temperature
-Translated:共享温度
+Translated:分享温度
 
 English:Share with someone
 Translated:与某人分享
@@ -2687,7 +2771,10 @@ English:Shared with Me
 Translated:与我分享
 
 English:Should be 100%. Not shown to user.
-Translated:应该是100％。不向用户显示。
+Translated:应该是100％。未向用户显示。
+
+English:Show Controls
+Translated:显示控件
 
 English:Show file in folder after save
 Translated:保存后在文件夹中显示文件
@@ -2699,7 +2786,7 @@ English:Show Help
 Translated:显示帮助
 
 English:Show Materials
-Translated:显示资料
+Translated:展示材料
 
 English:Show Password
 Translated:显示密码
@@ -2713,38 +2800,32 @@ Translated:显示打印床
 English:Show Reset Connection
 Translated:显示重置连接
 
-English:Show Semi-Transparent Model
-Translated:显示半透明模型
-
 English:Show Speeds
 Translated:显示速度
 
-English:Show Wireframe Model
-Translated:显示线框模型
+English:Show Terminal
+Translated:显示终端
 
 English:Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.
 Translated:在打印机连接栏的右侧显示一个按钮，用于重置与打印机的USB连接。这可以在支持紧急停止的打印机上使用。
 
 English:sign in
-Translated:签到
+Translated:登入
 
 English:Sign in
-Translated:签到
-
-English:Sign In
-Translated:签到
+Translated:登入
 
 English:Sign in Required
-Translated:登录必需
+Translated:登录必填
 
-English:Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access
-Translated:登录访问您的云打印机配置文件。 \ NN \登录后您将可以访问
+English:Sign in to access your existing printers
+Translated:登录以访问现有的打印机
 
 English:Sign in to my account
-Translated:登录到我的帐户
+Translated:登录我的帐户
 
 English:Sign in to your MatterControl account
-Translated:登录到您的MatterControl帐户
+Translated:登录您的MatterControl帐户
 
 English:Sign Out
 Translated:登出
@@ -2774,7 +2855,7 @@ English:skirts
 Translated:裳
 
 English:Slice
-Translated:片
+Translated:切片
 
 English:Slice Error
 Translated:切片错误
@@ -2795,13 +2876,13 @@ English:Slicing Options
 Translated:切片选项
 
 English:Slow Down If Layer Print Time Is Below
-Translated:如果图层打印时间较慢，则减慢速度
+Translated:如果图层打印时间低于此值则减速
 
 English:Small Perimeters
 Translated:小周长
 
 English:Smooth Path
-Translated:平滑路径
+Translated:平滑的路径
 
 English:Snap Grid
 Translated:捕捉网格
@@ -2810,16 +2891,13 @@ English:Software License Agreement
 Translated:软件许可协议
 
 English:Solid Infill
-Translated:固体填充
-
-English:Solid Infill works best when set to LINES.
-Translated:设置为LINES时，Solid Infill的效果最佳。
+Translated:固体填充物
 
 English:Some features may require an internet connection.
 Translated:某些功能可能需要互联网连接。
 
 English:Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
-Translated:有时网格不会封闭周边。当检查到这些非关闭周界时，要关闭。
+Translated:有时网格不会关闭周边。在关闭时检查这些非闭合周长。
 
 English:Sorry!  Must be a valid email address.
 Translated:抱歉!必须是一个有效的E-mail地址。
@@ -2831,10 +2909,10 @@ English:Sorry!  We weren't able to submit your request.
 Translated:抱歉!我们无法提交您的请求。
 
 English:Sorry! Looks like an account already exists for that email address.
-Translated:抱歉!看起来这个电子邮件地址已经存在一个帐户。
+Translated:抱歉!看起来该帐户已存在该电子邮件地址。
 
 English:Sorry! Looks like an account already exists for that username.
-Translated:抱歉!看起来这个用户名已经存在一个帐户。
+Translated:抱歉!看起来该帐户已存在该用户名。
 
 English:Sorry! Looks like that reset code has expired.
 Translated:抱歉!看起来重置代码已过期。
@@ -2849,46 +2927,49 @@ English:Sorry! Unable to connect to server. Please try again later.
 Translated:抱歉!无法连接到服务器。请稍后再试。
 
 English:Sorry! We couldn't find that account.
-Translated:抱歉!我们无法找到该帐户。
+Translated:抱歉!我们找不到该帐户。
 
 English:Source
 Translated:资源
 
 English:Specifies that the firmware has support for ros_0 endstop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
-Translated:指定固件支持M119上的ros_0结束报告。触发状态定义灯丝有跳动。如果检测到跳动，打印机暂停G代码运行。
+Translated:指定固件支持M119上的ros_0 endstop报告。 TRIGGERED状态定义灯丝有跳动。如果检测到跳动，则打印机暂停G-Code运行。
 
 English:Speed
 Translated:速度
 
 English:Speed at 0.025 Height
-Translated:速度在0.025高度
+Translated:速度为0.025高度
 
 English:Speed at 0.1 Height
-Translated:速度在0.1高度
+Translated:速度为0.1高度
 
 English:Speed for Infill
-Translated:速度为填充
+Translated:填充速度
 
 English:Speed for Perimeters
-Translated:速度为周长
+Translated:周长的速度
 
 English:Speed Multiplier
-Translated:速度乘数
+Translated:速度倍增器
 
 English:Speeds
 Translated:速度
 
 English:Sphere
-Translated:领域
+Translated:球
 
 English:Spiral Vase
 Translated:螺旋花瓶
+
+English:Split
+Translated:分裂
 
 English:Stable
 Translated:稳定
 
 English:Stable: The current release version of MatterControl (recommended)
-Translated:稳定：当前版本的MatterControl（推荐）
+Translated:稳定：MatterControl的当前发布版本（推荐）
 
 English:Start
 Translated:开始
@@ -2897,10 +2978,10 @@ English:Start At Concave Points
 Translated:从凹点开始
 
 English:Start At Non Overhang
-Translated:非悬挑开始
+Translated:从非突出开始
 
 English:Start each new layer from a different vertex to reduce seams.
-Translated:从不同顶点开始每个新图层以减少接缝。
+Translated:从不同的顶点开始每个新图层以减少接缝。
 
 English:Start End Overlap
 Translated:开始结束重叠
@@ -2909,16 +2990,16 @@ English:Start G-Code
 Translated:启动G代码
 
 English:Start G-Code cannot contain G29 if Print Leveling is enabled.
-Translated:如果启用打印调平功能，启动G代码不能包含G29。
+Translated:如果启用了打印调平，则启动G代码不能包含G29。
 
 English:Start G-Code cannot contain G29 if Print Recovery is enabled.
-Translated:如果打印恢复已启用，则开始G代码不能包含G29。
+Translated:如果启用了打印恢复，则启动G代码不能包含G29。
 
 English:Start G-Code cannot contain G30 if Print Leveling is enabled.
-Translated:如果启用打印调平，启动G代码不能包含G30。
+Translated:如果启用了打印调平，则启动G代码不能包含G30。
 
 English:Start Height
-Translated:开始身高
+Translated:开始高度
 
 English:Start Print
 Translated:开始打印
@@ -2927,7 +3008,10 @@ English:Starting Angle
 Translated:起始角度
 
 English:Starting firmware update...
-Translated:开始更新固件...
+Translated:开始固件更新...
+
+English:Starting Sync
+Translated:开始同步
 
 English:Startup Failure
 Translated:启动失败
@@ -2939,16 +3023,16 @@ English:Step
 Translated:步
 
 English:Steps per mm
-Translated:每毫米步数
+Translated:每毫米的步数
 
 English:STL File
 Translated:STL文件
 
-English:Stop the current print
-Translated:停止当前的打印
-
 English:Stop trying to connect to the printer.
-Translated:停止尝试连接到打印机。
+Translated:停止尝试连接打印机。
+
+English:Store
+Translated:商店
 
 English:Subject
 Translated:学科
@@ -2956,14 +3040,11 @@ Translated:学科
 English:Submit
 Translated:提交
 
-English:Submit Button
-Translated:提交按钮
-
 English:Submit Feedback
 Translated:提交反馈
 
 English:Submitting your information...
-Translated:提交您的信息...
+Translated:提交您的信息......
 
 English:Subtract
 Translated:减去
@@ -2972,13 +3053,10 @@ English:Subtract & Replace
 Translated:减去并替换
 
 English:Success! Please check your email for the reset code.
-Translated:成功！请检查您的电子邮件了解重置代码。
+Translated:成功！请查看您的电子邮件以获取重置代码。
 
 English:Success! Your account has been created.
 Translated:成功！您的帐号已经建立。
-
-English:Success! Your code has been redeemed.
-Translated:成功！您的代码已被兑换。
 
 English:Success! Your password has been updated.
 Translated:成功！您的密码已更新。
@@ -2990,7 +3068,7 @@ English:Support Everywhere
 Translated:支持无处不在
 
 English:Support Interface Extruder
-Translated:支持接口挤出机
+Translated:支持界面挤出机
 
 English:Support Material
 Translated:支持材料
@@ -3007,20 +3085,32 @@ Translated:支持百分比
 English:Support Type
 Translated:支持类型
 
+English:Surfaced Editor
+Translated:Surfaced编辑器
+
+English:Switch
+Translated:开关
+
 English:Switch the settings interface to one intended for SLA printers.
-Translated:将设置界面切换为适用于SLA打印机的界面。
+Translated:将设置界面切换为SLA打印机的界面。
+
+English:Switch to new G-Code?
+Translated:切换到新的G代码？
+
+English:Sync Complete
+Translated:同步完成
 
 English:Sync Dashboard
 Translated:同步仪表板
 
-English:Sync Printer Profiles Page
-Translated:同步打印机配置文件页
+English:Sync Printers
+Translated:同步打印机
 
 English:Sync To Print
-Translated:同步到打印
+Translated:同步打印
 
-English:Syncing Profiles...
-Translated:同步配置文件...
+English:Syncing Printer Profiles...
+Translated:同步打印机配置文件...
 
 English:Tee
 Translated:T恤
@@ -3038,7 +3128,7 @@ English:Terminal
 Translated:终奌站
 
 English:Test Parts
-Translated:测试零件
+Translated:测试部件
 
 English:TestPart
 Translated:TestPart
@@ -3052,32 +3142,44 @@ Translated:字体大小
 English:Thank you!  Your information has been submitted.
 Translated:谢谢！您的资料已提交。
 
-English:The '{0}' must be greater than 0.
-Translated:“{0}”必须大于0。
+English:The {0} can only go as high as 100%.
+Translated:{0}只能高达100％。
+
+English:The {0} must be at least 1.
+Translated:{0}必须至少为1。
+
+English:The {0} must be between 0 and 1.
+Translated:{0}必须介于0和1之间。
+
+English:The {0} must be greater than 0.
+Translated:{0}必须大于0。
 
 English:The actual diameter of the filament used for printing.
-Translated:用于打印的灯丝的实际直径。
+Translated:用于印刷的灯丝的实际直径。
 
 English:The amount of filament to insert into the printer when loading.
-Translated:加载时插入打印机的长丝数量。
+Translated:装入时插入打印机的灯丝数量。
 
 English:The amount of filament to remove from the printer while unloading.
-Translated:卸载时从打印机中取出的细丝数量。
+Translated:卸载时从打印机中取出的灯丝数量。
 
 English:The amount of infill material to generate, expressed as a ratio or a percentage.
-Translated:要生成的填充材料的数量，以比率或百分比表示。
+Translated:要生成的填充材料的量，以比率或百分比表示。
 
 English:The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge. This can be expressed as a percentage of the Nozzle Diameter.
 Translated:填充边缘将推入周边的量。有助于确保填充物连接到边缘。这可以表示为喷嘴直径的百分比。
 
 English:The angle at which the support material lines will be drawn.
-Translated:支撑材料线将被拉伸的角度。
+Translated:将绘制支撑材料线的角度。
 
 English:The angle of the infill, measured from the X axis. Not used when bridging.
-Translated:填充角度，从X轴测量。桥接时不使用。
+Translated:从X轴测量的填充角度。桥接时不使用。
 
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
-Translated:床目前正在加热，目标温度在{0}°C之前不能改变。 \ NN \您可以在SETTINGS  - > Filament  - > Temperatures中设置起始床温度。\n\n{1}
+Translated:床正在加热，其目标温度在达到{0}°C之前无法改变。 \ NN \您可以在SETTINGS  - >灯丝 - >温度中设置起始床温度。\n\n{1}
+
+English:The date this file was originally created.
+Translated:最初创建此文件的日期。
 
 English:The diameter of the extruder's nozzle.
 Translated:挤出机喷嘴的直径。
@@ -3086,52 +3188,46 @@ English:The distance between support material lines.
 Translated:支撑材料线之间的距离。
 
 English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
-Translated:筏顶部与模型底部之间的距离。 0.6毫米是PLA的一个很好的起点，0.4毫米是ABS的一个很好的起点。数值越低表面越平滑，数值越高，打印容易移除。
+Translated:筏顶部与模型底部之间的距离。 0.6毫米是PLA的良好起点，0.4毫米是ABS的良好起点。较低的值可提供更光滑的表面，较高的值可使打印更容易移除。
 
 English:The distance between the top of the support and the bottom of the model. A good value depends on the type of material. For ABS and PLA a value between 0.4 and 0.6 works well, respectively.
-Translated:支架顶部与模型底部之间的距离。良好的价值取决于材料的类型。对于ABS和PLA，分别在0.4和0.6之间的值运行良好。
+Translated:支撑顶部与模型底部之间的距离。良好的价值取决于材料的类型。对于ABS和PLA，0.4和0.6之间的值分别很好。
 
 English:The distance filament will reverse before each qualifying non-print move
-Translated:在每次合格的非打印移动之前，距离灯丝都会反转
+Translated:在每次合格的非打印移动之前，距离灯丝将反转
 
-English:The distance from the model at which the first skirt loop is drawn. Make this 0 to create an anchor for the part to the bed, also known as a brim.
-Translated:距模型第一条裙圈的距离。使此0为该部分创建一个锚点，也称为边缘。
+English:The distance from the model at which the first skirt loop is drawn.
+Translated:绘制第一个裙边环的模型的距离。
 
 English:The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.
-Translated:周长在完成其循环时将自身重叠的距离，以喷嘴直径的百分比表示。
+Translated:周边完成其循环时自身重叠的距离，表示为喷嘴直径的百分比。
 
 English:The distance the nozzle will lift after each retraction.
-Translated:喷嘴在每次退回后将提升的距离。
+Translated:每次缩回后喷嘴将抬起的距离。
 
 English:The distance the support material will be from the object in the X and Y directions.
-Translated:支撑材料在X方向和Y方向与物体的距离。
+Translated:支撑材料在X和Y方向上距物体的距离。
 
 English:The distance the z probe is from the extruder in x and y.
-Translated:z探针距x轴和y轴的距离。
+Translated:z探针距x和y的挤出机的距离。
 
 English:The distance the z probe is from the extruder in z. For manual probing, this is thickness of the paper (or other calibration device).
-Translated:z探针距z轴挤出机的距离。对于手动探测，这是纸张（或其他校准设备）的厚度。
+Translated:z探针距离挤出机的距离为z。对于手动探测，这是纸张（或其他校准设备）的厚度。
 
 English:The distance to move the nozzle along the Z axis to ensure that it is the correct distance from the print bed. A positive number will raise the nozzle, and a negative number will lower it.
-Translated:沿Z轴移动喷嘴的距离，以确保距离喷印床的距离。正数会抬高喷嘴，负数会降低喷嘴。
+Translated:沿Z轴移动喷嘴的距离，以确保距离打印床的距离正确。正数将使喷嘴升高，负数将降低喷嘴。
+
+English:The distance to travel after completing a perimeter to improve seams.
+Translated:完成周边以改善接缝后的行程距离。
 
 English:The extra distance the raft will extend around the edge of the part.
-Translated:筏板将在零件边缘附近延伸的距离。
-
-English:The Extruder Count must be at least 1.
-Translated:挤出机计数必须至少为1。
+Translated:筏围绕零件边缘延伸的额外距离。
 
 English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
-Translated:挤出机目前正在加热，其目标温度不能改变，直到达到{0}°C。 \ NN \您可以在'Slice Settings' - >'Filament'中设置初始挤出机温度。\n\n{1}
-
-English:The extruder will wipe the nozzle over the last up to 10 mm of tool path after retracting.
-Translated:回缩后，挤出机将在最后10毫米的刀具路径上擦拭喷嘴。
+Translated:挤出机当前正在加热，其目标温度在达到{0}°C之前不能改变。 \ NN \您可以在“切片设置” - >“细丝”中设置起始挤出机温度。\n\n{1}
 
 English:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
-Translated:您尝试打印的文件是GCode文件。 \ NN \建议您只打印已知与您的打印机配置相匹配的Gcode文件。 \ NN \你确定要打印这个GCode文件吗？
-
-English:The Fill Density must be between 0 and 1.
-Translated:填充密度必须介于0和1之间。
+Translated:您尝试打印的文件是GCode文件。 \ NN \建议您只打印已知符合打印机配置的Gcode文件。 \ NN \您确定要打印此GCode文件吗？
 
 English:The geometric shape of the support structure for the inside of parts.
 Translated:零件内部支撑结构的几何形状。
@@ -3139,167 +3235,158 @@ Translated:零件内部支撑结构的几何形状。
 English:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
 Translated:打印机可打印卷的高度，以毫米为单位。控制3D视图中显示的可视打印区域的高度。
 
-English:The hot end needs to be heated to ensure it is clean.
-Translated:热端需要加热以确保清洁。
-
-English:The image to show when explaining filament running clean.
-Translated:解释灯丝运行干净时显示的图像。
-
-English:The image to show when explaining inserting.
-Translated:解释插图时显示的图像。
-
-English:The image to show when explaining leveling and calibration.
-Translated:解释校平和校准时显示的图像。
-
-English:The image to show when explaining trimming.
-Translated:解释裁剪时显示的图像。
-
 English:The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.
-Translated:用于印刷支撑材料的挤出机的指数。仅当“挤出机计数”设置为大于1的值时才适用。
+Translated:用于印刷支撑材料的挤出机的折射率。仅在挤出机计数设置为大于1的值时适用。
 
 English:The index of the extruder to use for support material interface layer(s).
-Translated:用于支撑材料界面层的挤出机的指数。
+Translated:用于支撑材料界面层的挤出机的折射率。
 
 English:The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.
-Translated:用于印刷木筏的挤出机的指数。设置为0以使用支持挤出机索引。
+Translated:用于印刷筏的挤出机的折射率。设置为0以使用支持挤出机索引。
 
 English:The layer(s) at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
-Translated:打印将暂停的图层，允许改变长丝。留空以禁用。要在多个图层上暂停，请使用分号分隔图层编号。例如：“16; 37”。
+Translated:打印将暂停的层，允许更换灯丝。留空以禁用。要在多个图层上暂停，请使用分号分隔图层编号。例如：“16; 37”。
 
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
-Translated:在多个挤出机之间进行更换时，用于擦拭下一个喷嘴的印刷背面左侧创建的塔的长度和宽度。设置为0以禁用。
+Translated:在印刷品的左后方产生的塔的长度和宽度，用于在多个挤出机之间切换时擦拭下一个喷嘴。设置为0以禁用。
 
-English:The maximum amount the printer can accelerate on a G-Code move. Only effects G-Code time estimates, does not change printer behavior.
-Translated:打印机在G代码移动时可以加速的最大数量。只影响G-Code时间估计值，不会改变打印机的行为。
+English:The Markdown that will be shown on the Clean Filament page.
+Translated:Markdown将显示在Clean Filament页面上。
 
-English:The Maximum Fan Speed can only go as high as 100%.
-Translated:最大风扇速度只能达到100％。
+English:The Markdown that will be shown on the Insert Filament page.
+Translated:Markdown将显示在“插入细丝”页面上。
+
+English:The Markdown that will be shown on the Trim Filament page.
+Translated:Markdown将显示在Trim Filament页面上。
+
+English:The maximum amount the printer can accelerate on a G-Code move.
+Translated:打印机在G代码移动时可以加速的最大量。
 
 English:The maximum speed at which the layer cooling fan will run, expressed as a percentage of full power.
-Translated:层冷却风扇运行的最大速度，以全功率的百分比表示。
+Translated:层冷却风扇运行的最大速度，表示为全功率的百分比。
 
-English:The maximum speed that the printer treats as 0 and changes direction instantly. Only effects G-Code time estimates, does not change printer behavior.
-Translated:打印机处理的最大速度为0并立即改变方向。只影响G-Code时间估计值，不会改变打印机的行为。
+English:The maximum speed that the printer treats as 0 and changes direction instantly.
+Translated:打印机将最大速度视为0并立即改变方向。
 
-English:The maximum speed the printer can move. Only effects G-Code time estimates, does not change printer behavior.
-Translated:打印机可以移动的最大速度。只影响G-Code时间估计值，不会改变打印机的行为。
+English:The maximum speed the printer can move.
+Translated:打印机可以移动的最大速度。
 
 English:The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.
-Translated:图层打印所需的最短时间。如果图层的时间少于此时间，则移动速度会降低，因此图层打印时间将与此值匹配，直到最慢的最小打印速度。
+Translated:图层打印所需的最短时间。如果图层花费的时间少于此时间，则移动速度会降低，因此图层打印时间将与此值匹配，直至最慢的最小打印速度。
 
 English:The minimum distance of a non-print move which will trigger a retraction.
-Translated:非打印移动的最小距离，它将触发缩回。
-
-English:The Minimum Fan Speed can only go as high as 100%.
-Translated:最低风扇速度只能达到100％。
+Translated:非打印移动的最小距离将触发缩回。
 
 English:The minimum feature size to consider from the model. Leave at 0 to use all the model detail.
-Translated:从模型中考虑的最小特征尺寸。留在0处使用所有模型细节。
+Translated:从模型中考虑的最小特征尺寸。保留为0以使用所有模型细节。
 
 English:The minimum length of filament that must be extruded before a retraction can occur.
-Translated:回缩前必须挤出的最小长丝长度。
+Translated:在收缩之前必须挤出的最小长丝长度。
 
 English:The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value.
-Translated:用于打印裙环的最小长丝长度。如果Loop中的值会生成比此值更短的裙子，则将绘制足够的裙摆以使用此数量的细丝，覆盖Loops中设置的值。
+Translated:使用的最小长丝打印裙边环。将绘制足够的裙边循环以使用此数量的灯丝，如果循环中的值将产生短于此值的裙子，则覆盖循环中设置的值。
 
 English:The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power.
-Translated:层冷却风扇运行的最小速度，以全功率的百分比表示。
+Translated:层冷却风扇运行的最小速度，表示为全功率的百分比。
 
 English:The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.
-Translated:为了使图层打印时间足够长以满足最小图层时间，打印机将减少到的最小速度。
+Translated:打印机将减少的最小速度，以便尝试使图层打印时间足够长以满足最小层时间。
 
 English:The next few screens will walk your through calibrating your printer.
-Translated:接下来的几个屏幕将逐步校准您的打印机。
+Translated:接下来的几个屏幕将引导您完成校准打印机的操作。
 
 English:The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
-Translated:切片时使用的CPU内核数量。增加这可能会减慢你的机器。
+Translated:切片时要使用的CPU核心数。增加此功能会降低机器速度。
 
 English:The number of degrees Centigrade to lower the temperature of a nozzle while it is not active.
-Translated:摄氏度的数量，以降低喷嘴处于非活动状态时的温度。
+Translated:摄氏度不活动时降低喷嘴温度的摄氏度数。
 
 English:The number of extruders the printer has.
 Translated:打印机具有的挤出机数量。
 
 English:The number of layers for which the layer cooling fan will be forced off at the start of the print.
-Translated:打印开始时，层冷却风扇将被强制关闭的层数。
+Translated:在打印开始时将层冷却风扇强制关闭的层数。
 
 English:The number of layers or the distance in millimeters to solid fill on the bottom surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.
-Translated:物体的数量或以毫米为单位的距离以固体填充物体的底部表面。将毫米添加到数字的末尾，以毫米为单位指定距离。
+Translated:在对象的底部表面上填充的层数或以毫米为单位的距离。将mm添加到数字的末尾以指定以毫米为单位的距离。
 
 English:The number of layers or the distance to print solid material between the supports and the part. Add mm to the end of the number to specify distance.
-Translated:层数或支架与部件之间印刷固体材料的距离。将mm添加到数字的末尾以指定距离。
+Translated:支撑和零件之间的层数或打印固体材料的距离。将mm添加到数字的末尾以指定距离。
 
 English:The number of layers to consider as the beginning of the print. These will print at initial layer speed.
-Translated:要考虑作为打印开始的层数。这些将以最初的图层速度打印。
+Translated:要考虑作为打印开始的图层数。这些将以初始层速度打印。
 
 English:The number of layers to draw the skirt.
 Translated:绘制裙子的层数。
 
 English:The number of layers, or the distance in millimeters, to solid fill on the top surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.
-Translated:层数或以毫米为单位的距离，以固体填充物体的顶部表面。将毫米添加到数字的末尾，以毫米为单位指定距离。
+Translated:在对象的顶部表面上的实心填充的层数或以毫米为单位的距离。将mm添加到数字的末尾以指定以毫米为单位的距离。
 
 English:The number of loops to draw around all the parts on the bed before starting on the parts. Used mostly to prime the nozzle so the flow is even when the actual print begins.
-Translated:在开始部件之前，在床上的所有部件上绘制环的数量。主要用于灌注喷嘴，因此即使在实际印刷开始时，流量也是如此。
+Translated:在开始零件之前，在床上所有零件周围绘制的圈数。主要用于灌注喷嘴，以便在实际打印开始时流量均匀。
 
 English:The number of loops to draw around parts. Used to provide additional bed adhesion
-Translated:圈数部分的循环次数。用于提供额外的床粘合力
+Translated:绘制零件的循环次数。用于提供额外的床附着力
 
 English:The number of times to sample each probe position (results will be averaged).
 Translated:采样每个探头位置的次数（结果将被平均）。
 
 English:The number, or total width, of external shells to create. Add mm to the end of the number to specify width in millimeters.
-Translated:要创建的外壳的数量或总宽度。将mm添加到数字的末尾以指定以毫米为单位的宽度。
+Translated:要创建的外部shell的数量或总宽度。将mm添加到数字的末尾以指定宽度（以毫米为单位）。
 
 English:The offset of each nozzle relative to the first nozzle. Only useful for multiple extruder machines.
-Translated:每个喷嘴相对于第一喷嘴的偏移量。只适用于多台挤出机。
+Translated:每个喷嘴相对于第一喷嘴的偏移。仅适用于多台挤出机。
 
 English:The pattern to draw for the generation of support material.
-Translated:用于生成支持材料的模式。
+Translated:用于生成支撑材料的图案。
 
 English:The pattern used on the bottom and top layers of the print.
-Translated:打印底部和顶部图层上使用的图案。
+Translated:印刷品底部和顶部层使用的图案。
 
 English:The percent of the extrusion width that can be overlapped and still generate.
-Translated:挤出宽度的百分比可以重叠并仍然生成。
+Translated:挤出宽度的百分比，可以重叠并仍然生成。
 
 English:The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.
-Translated:打印床中心的位置（X和Y坐标），单位为毫米。通常，这是笛卡尔打印机的床尺寸的一半，以及三角洲打印机的0,0。
+Translated:印刷床中心的位置（X和Y坐标），以毫米为单位。通常这是笛卡尔打印机的床尺寸的1/2，Delta打印机的0,0。
+
+English:The position to measure the probe offset.
+Translated:测量探头偏移的位置。
 
 English:The price of one kilogram of filament. Used for estimating the cost of a print in the Layer View.
-Translated:一公斤长丝的价格。用于评估层视图中打印的成本。
+Translated:一公斤长丝的价格。用于在图层视图中估算打印成本。
 
 English:The print leveling algorithm to use.
-Translated:要使用的打印均衡算法。
+Translated:要使用的打印校平算法。
 
 English:The printer has a heated bed.
 Translated:打印机配有加热床。
 
 English:The printer has a layer-cooling fan.
-Translated:打印机具有层式冷却风扇。
+Translated:打印机配有层冷却风扇。
 
 English:The printer has a SD card reader.
 Translated:打印机有一个SD卡读卡器。
 
 English:The printer has a servo for lowering and raising the z probe.
-Translated:打印机有一个用于降低和升高z探头的伺服器。
+Translated:打印机配有伺服器，用于降低和升高z探头。
 
 English:The printer has a z probe for measuring bed level.
-Translated:打印机有一个z探头用于测量床的高度。
+Translated:打印机配有z探头，用于测量床层。
 
 English:The printer has its own auto bed leveling probe and procedure which can be called using a G29 command during Start G-Code.
-Translated:打印机具有自己的自动床身调平探针和程序，可以在启动G代码期间使用G29命令调用该程序。
+Translated:打印机有自己的自动床调平探针和程序，可以在启动G代码期间使用G29命令调用。
 
 English:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.
-Translated:打印机有能力控制电源。启用此功能可在控制面板上显示ATX电源控制部分。
+Translated:打印机能够控制电源。启用此功能可在“控件”窗格中显示“ATX电源控制”部分。
 
 English:The printer requires print leveling to run correctly.
-Translated:打印机需要进行打印调平以正确运行。
+Translated:打印机需要打印调平才能正常运行。
 
 English:The printer should now be 'homing'.
-Translated:打印机现在应该是“归位”。
+Translated:打印机现在应该“归位”。
 
 English:The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.
-Translated:您尝试加载的配置文件已损坏。我们从最近的配置文件历史记录中加载了最后一次可用的{0} {1}配置文件。
+Translated:您尝试加载的配置文件已损坏。我们从您最近的个人资料历史记录中加载了您上次可用的{0} {1}个人资料。
 
 English:The serial driver to use
 Translated:要使用的串行驱动程序
@@ -3308,124 +3395,136 @@ English:The serial port communication speed of the printers firmware.
 Translated:打印机固件的串口通信速度。
 
 English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
-Translated:'串行端口'部分列出了您的设备上所有可用的串行\ n端口。更改打印机\ n所连接的USB端口可能会更改关联的串行端口。 \ NN \提示：如果您不确定，拔下/插入打印机\ n并点击刷新。出现的新端口应该是您的打印机。
+Translated:“串行端口”部分列出了设备上所有可用的串行端口。更改打印机连接的USB端口可能会更改相关的串行端口。 \ NN \提示：如果您不确定，请拔下/插入打印机\ n并点击刷新。出现的新端口应该是您的打印机。
 
 English:The serial port to use while connecting to this printer.
 Translated:连接到此打印机时使用的串行端口。
 
 English:The shape of the physical print bed.
-Translated:物理印花床的形状。
+Translated:实物印刷床的形状。
 
 English:The speed at which bridging between walls will print.
-Translated:墙壁之间桥接的印刷速度。
+Translated:打印墙之间的桥接速度。
 
 English:The speed at which filament will retract and re-extrude.
-Translated:长丝收缩和再挤出的速度。
+Translated:长丝缩回和再拉伸的速度。
 
 English:The speed at which infill will print.
-Translated:填充印刷的速度。
+Translated:填充将打印的速度。
 
 English:The speed at which inside perimeters will print.
-Translated:内部周边打印的速度。
+Translated:内部周边的打印速度。
 
 English:The speed at which outside, external, or the otherwise visible perimeters will print.
-Translated:外部，外部或其他可见周界打印的速度。
+Translated:外部，外部或其他可见周界的打印速度。
 
 English:The speed at which support material structures will print.
-Translated:支撑材料结构打印的速度。
+Translated:支撑材料结构的打印速度。
+
+English:The speed at which the air gap layer will print.
+Translated:气隙层打印的速度。
+
+English:The speed at which the bottom solid layers will print. Can be set explicitly or as a percentage of the Infill speed. Use 0 to match infill speed.
+Translated:底部实体层的打印速度。可以明确设置或以Infill速度的百分比设置。使用0来匹配填充速度。
 
 English:The speed at which the layer cooling fan will run when bridging, expressed as a percentage of full power.
-Translated:桥接时层冷却风扇运行的速度，以全功率的百分比表示。
+Translated:层桥冷却风扇在桥接时的运行速度，表示为全功率的百分比。
 
 English:The speed at which the layers of the raft (other than the first layer) will print. This can be set explicitly or as a percentage of the Infill speed.
-Translated:筏板的层数（第一层除外）的打印速度。这可以明确设置或作为填充速度的百分比。
+Translated:筏板（第一层除外）的印刷速度。这可以明确设置或以Infill速度的百分比设置。
 
 English:The speed at which the nozzle will move when not extruding material.
-Translated:不挤压材料时喷嘴移动的速度。
+Translated:不挤出材料时喷嘴移动的速度。
 
 English:The speed at which the nozzle will move when printing the initial layers. If expressed as a percentage the Infill speed is modified.
-Translated:印刷初始层时喷嘴移动的速度。如果以百分比表示填充速度被修改。
+Translated:打印初始图层时喷嘴移动的速度。如果以百分比表示，则填充速度被修改。
 
 English:The speed at which the nozzle will move when recovering a failed print, for 1 layer.
-Translated:恢复失败打印时，喷嘴移动的速度为1层。
+Translated:1层时恢复失败打印时喷嘴移动的速度。
 
 English:The speed at which the top solid layers will print. Can be set explicitly or as a percentage of the Infill speed.
-Translated:顶层固体层打印的速度。可以明确设置或以填充速度的百分比进行设置。
+Translated:顶部实体层的打印速度。可以明确设置或以Infill速度的百分比设置。
 
 English:The speed to move the laser when the layer height is 0.025mm. Speed will be adjusted linearly at other heights.
-Translated:层高为0.025mm时移动激光的速度。速度将在其他高度线性调整。
+Translated:当层高度为0.025mm时移动激光的速度。速度将在其他高度线性调整。
 
 English:The speed to move the laser when the layer height is 0.1mm. Speed will be adjusted linearly at other heights.
-Translated:层高为0.1mm时移动激光的速度。速度将在其他高度线性调整。
+Translated:当层高度为0.1mm时移动激光的速度。速度将在其他高度线性调整。
 
 English:The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.
-Translated:完全固化时打印填充的速度。这可以明确设置或作为填充速度的百分比。
+Translated:完全固体时打印填充的速度。这可以明确设置或以Infill速度的百分比设置。
 
 English:The speed to run filament into and out of the printer.
-Translated:运行灯丝进出打印机的速度。
+Translated:使灯丝进出打印机的速度。
 
 English:The starting height (z) of the print head before probing each print level position.
-Translated:探测每个打印级别位置之前打印头的起始高度（z）。
+Translated:在探测每个打印水平位置之前打印头的起始高度（z）。
 
 English:The target temperature the extruder will attempt to reach during the print.
-Translated:打印期间挤出机将尝试达到的目标温度。
+Translated:挤出机在印刷过程中试图达到的目标温度。
 
 English:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
-Translated:按照Custom G-Code的规定，挤出机将擦拭喷嘴的温度。
+Translated:按照Custom G-Code的规定，挤出机擦拭喷嘴的温度。
 
 English:The temperature to set the bed to before printing the first layer. The printer will wait until this temperature has been reached before printing. Set to 0 to eliminate bed temperature commands.
-Translated:在打印第一层之前设置床的温度。在打印之前，打印机将等到达到此温度。设置为0以消除床温指令。
+Translated:在打印第一层之前将床设置的温度。打印机将等到达到此温度后再打印。设置为0以消除床温命令。
 
 English:The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.
-Translated:打印期间床的温度。设置为0以禁用。
+Translated:在打印期间床将被设定的温度。设置为0以禁用。
 
 English:The temperature to which the bed will heat (or cool) in order to remove the part, as specified in Custom G-Code.
-Translated:按照Custom G-Code的规定，床将加热（或冷却）以除去零件的温度。
+Translated:根据Custom G-Code中的规定，床将加热（或冷却）以移除零件的温度。
 
 English:The temperature to which the nozzle will be heated before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.
-Translated:在印刷零件的第一层之前喷嘴将被加热的温度。在打印之前，打印机将等到达到此温度。
+Translated:在打印部件的第一层之前喷嘴将被加热的温度。打印机将等到达到此温度后再打印。
 
 English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
-Translated:术语“波特率”大致意味着\ n数据传输的速度。打印机到打印机的波特率可能不同。有关更多信息，请参阅您的打印机手册。 \ NN \提示：如果你不确定 - 试试250000。
+Translated:术语“波特率”大致意味着\ n数据传输的速度。波特率可能因打印机而异。有关详细信息，请参阅打印机手册。 \ NN \提示：如果您不确定 - 请尝试250000。
 
 English:The thickness of each layer of the print, except the first layer. A smaller number will create more layers and more vertical accuracy but also a slower print.
-Translated:除第一层外，每层印刷品的厚度。较小的数字将创建更多的图层和更多的垂直精度，但打印速度也会更慢。
+Translated:除第一层外，每层印刷的厚度。较小的数字将创建更多的图层和更高的垂直精度，但也会创建更慢的打印。
 
 English:The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.
-Translated:第一层的厚度。比默认层厚度更高的第一层可以确保与构建板的良好粘附性。
+Translated:第一层的厚度。比默认层厚度高的第一层可以确保与构建板的良好粘合。
+
+English:The time it will take to unload the filament
+Translated:卸载灯丝所需的时间
 
 English:The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.
-Translated:重新启动时额外长度增加到最大值的时间。在此时间以下，只有部分额外长度会被应用。保留0以始终应用全部金额。
+Translated:将重新启动时的额外长度增加到其最大值的时间。低于此时间，仅应用额外长度的一部分。保留0以始终应用全部金额。
+
+English:The time to print this G-Code is estimated to be {0} seconds.\n\nPlease check your part for errors if this is unexpected.
+Translated:打印此G代码的时间估计为{0}秒。 \ NN \如果出现意外，请检查您的零件是否有错误。
 
 English:The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.
-Translated:打印机固件通信的G代码版本。某些固件使用不同的G和M代码。设置这将确保输出的G代码将使用正确的命令。
+Translated:打印机固件与之通信的G-Code版本。某些固件使用不同的G和M代码。设置此项可确保输出G代码将使用正确的命令。
 
 English:The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.
-Translated:热端的X和Y位置可最大限度地减少与床上部件碰撞的机会。
+Translated:热端的X和Y位置可最大限度地减少与床上部件碰撞的可能性。
 
 English:The X and Y values of the size of the print bed, in millimeters. For printers with a circular bed, these values are the diameters on the X and Y axes.
-Translated:打印床尺寸的X和Y值，以毫米为单位。对于带圆形床的打印机，这些值是X和Y轴上的直径。
+Translated:印刷床尺寸的X和Y值，以毫米为单位。对于带圆形床的打印机，这些值是X轴和Y轴上的直径。
 
-English:The Z Offset for your printer, sometimes called Babby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.
-Translated:您的打印机的Z偏移量有时称为Babby Stepping，大于2毫米且无效。清除价值并重新调整床位。
+English:The Z Offset for your printer, sometimes called Baby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.
+Translated:打印机的Z偏移量（有时称为“婴儿步进”）大于2毫米且无效。清除价值并重新调整床位。
 
 English:The z offset to apply to improve the first layer adhesion.
-Translated:应用z偏移来改善第一层粘合。
+Translated:z偏移适用于改善第一层附着力。
 
 English:Theme
 Translated:主题
 
 English:There is a new update available for download
-Translated:有新的更新可供下载
+Translated:有一个新的更新可供下载
 
 English:There is a recommended update available
-Translated:有推荐的更新可用
+Translated:有推荐的更新
 
 English:There is a recommended update available for MatterControl. Would you like to download it now?
-Translated:推荐的更新可用于MatterControl。你想现在下载吗？
+Translated:有一个推荐的更新可用于MatterControl。你想现在下载吗？
 
 English:There is a required update available
-Translated:有可用的必需更新
+Translated:有必要的更新
 
 English:Thin Walls
 Translated:薄壁
@@ -3434,40 +3533,46 @@ English:This code to will provide read-only access.
 Translated:此代码将提供只读访问权限。
 
 English:This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.
-Translated:这是一组正则表达式，适用于从打印机接收到的行。他们将被应用，以便收到每一行。
+Translated:这是从打印机接收到行后应用于行的一组正则表达式。它们将被应用于收到的每一行。
 
 English:This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending. To return more than one instruction separate them with comma.
-Translated:这是在发送到打印机之前应用于行的一组正则表达式。它们将按发送前列出的顺序应用。要返回多个指令，请用逗号分隔它们。
-
-English:This is located on the rear of your card
-Translated:它位于卡的后部
+Translated:这是一组在发送到打印机之前应用于行的正则表达式。它们将在发送之前按列出的顺序应用。要返回多条指令，请用逗号分隔它们。
 
 English:This is the angle that lowers or deploys the z probe.
-Translated:这是降低或部署z探头的角度。
+Translated:这是降低或部署z探针的角度。
 
 English:This is the angle that raises or stows the z probe.
-Translated:这是提升或收藏z探针的角度。
+Translated:这是抬起或收起z探针的角度。
+
+English:This is the make (often the manufacturer) of printer this profile is targeting.
+Translated:这是此配置文件所针对的打印机的制造商（通常是制造商）。
+
+English:This is the model of printer this profile is targeting.
+Translated:这是此配置文件定位的打印机型号。
 
 English:This is the name of your printer that will be displayed in the choose printer menu.
 Translated:这是将在选择打印机菜单中显示的打印机名称。
 
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
-Translated:这有助于减少打印过程中的振动。如果您的打印机有共振频率导致麻烦，您可以设置此设置以尝试减少该频率下的打印。
+Translated:这有助于减少打印过程中的振动。如果您的打印机的共振频率有问题，您可以将其设置为尝试减少该频率的打印。
 
 English:This should be in 'G-Code'
-Translated:这应该在'G-Code'
+Translated:这应该是'G-Code'
 
-English:This will ensure no filament is stuck to the tip.
-Translated:这将确保没有细丝卡在尖端。
+English:This will ensure that filament is able to flow through the nozzle.
+Translated:这将确保细丝能够流过喷嘴。
 
-English:This will improve the accuracy of print leveling
-Translated:这将提高打印均衡的准确性
+English:This will ensure that no filament is stuck to your nozzle.
+Translated:这将确保没有灯丝粘在喷嘴上。
+
+English:This will improve the accuracy of print leveling 
+Translated:这将提高打印校平的准确性
 
 English:This will improve the accuracy of print leveling.
-Translated:这将提高打印均衡的准确性。
+Translated:这将提高打印校平的准确性。
 
 English:This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature
-Translated:这只适用于特定的硬件。除非您确定您的打印机控制器支持此功能，否则请勿使用
+Translated:这仅适用于特定硬件。除非您确定您的打印机控制器支持此功能，否则请勿使用
 
 English:Threads
 Translated:主题
@@ -3485,16 +3590,16 @@ English:Time From Start
 Translated:从开始的时间
 
 English:Time Multiplier
-Translated:时间乘数
+Translated:时间倍增器
 
 English:Time to End
-Translated:结束时间
+Translated:时间结束
 
 English:TM
 Translated:TM值
 
 English:To complete the next few steps you will need
-Translated:要完成接下来的几个步骤，您将需要
+Translated:要完成您需要的下几个步骤
 
 English:To Folder
 Translated:到文件夹
@@ -3503,10 +3608,10 @@ English:Toggle Selection
 Translated:切换选择
 
 English:Top Solid Infill
-Translated:顶级固体填充
+Translated:顶级固体填充物
 
 English:Top Solid Layers
-Translated:顶层固体层
+Translated:顶级固体层
 
 English:Top/Bottom Fill Pattern
 Translated:顶部/底部填充图案
@@ -3517,14 +3622,23 @@ Translated:花托
 English:Touch Screen Mode
 Translated:触摸屏模式
 
+English:Transform Wrapper
+Translated:转换包装器
+
+English:Translate
+Translated:翻译
+
 English:Transparent
 Translated:透明
 
 English:Travel
 Translated:旅行
 
-English:Trim Image
-Translated:修剪图像
+English:Trim Filament
+Translated:修剪细丝
+
+English:Trim Filament Page
+Translated:修剪细丝页面
 
 English:Troubleshoot
 Translated:疑难解答
@@ -3533,34 +3647,31 @@ English:Troubleshooting
 Translated:故障排除
 
 English:Try to connect mesh edges when the actual mesh data is not all the way connected.
-Translated:尝试在实际网格数据未完全连接时连接网格边线。
+Translated:当实际网格数据不是全部连接时，尝试连接网格边。
 
 English:Tuning Adjustment
 Translated:调整调整
 
 English:Turn auto leveling on
-Translated:打开自动调平
-
-English:Turn Off Heat in
-Translated:关闭加热
+Translated:打开自动调平功能
 
 English:Turn off motor current at end of print or after cancel print.
-Translated:在打印结束或取消打印后关闭电机电流。
+Translated:在打印结束时或取消打印后关闭电机电流。
 
 English:Turn on if Below
 Translated:如果在下面打开
 
 English:Turn retractions on and off.
-Translated:打开和关闭缩进。
+Translated:打开和关闭撤消。
 
 English:Turn the fan on and off regardless of settings.
-Translated:不管设置如何，打开和关闭风扇。
+Translated:无论设置如何，都要打开和关闭风扇。
 
 English:Turns on and off all cooling settings (all settings below this one).
-Translated:打开和关闭所有冷却设置（此设置下的所有设置）。
+Translated:打开和关闭所有冷却设置（此下面的所有设置）。
 
 English:Uh oh! Passwords do not match.
-Translated:呃哦！密码不匹配。
+Translated:哦哦！密码不匹配。
 
 English:Uh-oh! Could not connect to printer.
 Translated:嗯，哦！无法连接到打印机。
@@ -3578,7 +3689,7 @@ English:Undo
 Translated:解开
 
 English:Unexpected response
-Translated:意外的回应
+Translated:意外的反应
 
 English:Ungroup
 Translated:取消组合
@@ -3587,16 +3698,19 @@ English:Unknown
 Translated:未知
 
 English:Unknown Reason
-Translated:未知原因
+Translated:不明原因
 
 English:Unload
 Translated:卸下
 
 English:Unload filament
-Translated:卸载灯丝
+Translated:卸下灯丝
 
 English:Unload Filament Length
 Translated:卸载灯丝长度
+
+English:Unload Filament Time
+Translated:卸载灯丝时间
 
 English:Unlock
 Translated:开锁
@@ -3604,8 +3718,14 @@ Translated:开锁
 English:Unsupported Baud Rate
 Translated:不支持的波特率
 
+English:Up
+Translated:向上
+
 English:Up Arrow
 Translated:向上箭头
+
+English:Up one folder
+Translated:一个文件夹
 
 English:Update
 Translated:更新
@@ -3623,7 +3743,7 @@ English:Update my password
 Translated:更新我的密码
 
 English:Updating firmware...
-Translated:更新固件...
+Translated:更新固件......
 
 English:Upload
 Translated:上传
@@ -3638,25 +3758,22 @@ English:Use cursor keys for axis movements
 Translated:使用光标键进行轴移动
 
 English:Use Firmware Retraction
-Translated:使用固件收回
+Translated:使用固件撤消
 
 English:Use G0
 Translated:使用G0
 
 English:Use G0 for moves rather than G1.
-Translated:使用G0代替G1。
-
-English:Use Percents
-Translated:使用百分比
+Translated:使用G0进行移动而不是G1。
 
 English:Use Relative E Distances
-Translated:使用相对距离
+Translated:使用相对E距离
 
 English:Used for small perimeters (usually holes). This can be set explicitly or as a percentage of the Perimeters' speed.
-Translated:用于小周长（通常是洞）。这可以明确设置或作为Perimeters速度的百分比。
+Translated:用于小周长（通常是孔）。这可以明确设置或以Perimeters速度的百分比设置。
 
 English:Used to specify if more than one extruder share a common heater cartridge.
-Translated:用于指定是否有多个挤出机共用一个通用加热器筒。
+Translated:用于指定多个挤出机是否共用一个共用加热器盒。
 
 English:Username
 Translated:用户名
@@ -3665,10 +3782,10 @@ English:Username or Email
 Translated:用户名或电子邮件
 
 English:Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.
-Translated:使用此屏幕上的[Z]控件，我们现在将在此位置对挤出机高度进行粗略测量。
+Translated:使用此屏幕上的[Z]控件，我们现在将对此位置的挤出机高度进行粗略测量。
 
 English:Using the above controls
-Translated:使用上述控件
+Translated:使用上面的控件
 
 English:Validate Layer Height
 Translated:验证图层高度
@@ -3677,19 +3794,13 @@ English:Value
 Translated:值
 
 English:Velocity Paint
-Translated:速度漆
+Translated:速度油漆
 
 English:Version
 Translated:版
 
 English:Vibration Limit
 Translated:振动限制
-
-English:View
-Translated:视图
-
-English:View Designs
-Translated:视图设计
 
 English:View Icons
 Translated:查看图标
@@ -3706,11 +3817,11 @@ Translated:查看列表
 English:View Small Icons
 Translated:查看小图标
 
-English:View Style
-Translated:查看风格
-
 English:View XSmall Icons
 Translated:查看XSmall图标
+
+English:Wait For Running Clean
+Translated:等待清洁
 
 English:Waiting For Bed To Heat
 Translated:等待床加热
@@ -3722,7 +3833,7 @@ English:Waiting For Extruder To Heat
 Translated:等待挤压机加热
 
 English:Waiting for Extruder to Heat to
-Translated:等待挤压机加热
+Translated:等待挤压机加热到
 
 English:Waiting For Printer To Heat
 Translated:等待打印机加热
@@ -3731,7 +3842,7 @@ English:Waiting for the bed to heat to
 Translated:等待床加热到
 
 English:Waiting for the hotend to heat to 
-Translated:等待温暖
+Translated:等待热端加热到
 
 English:Warning - GCode file
 Translated:警告 -  GCode文件
@@ -3742,11 +3853,14 @@ Translated:警告 - 没有EEProm映射
 English:Warning! The tip of the nozzle will be HOT!
 Translated:警告！喷嘴的尖端会很热！
 
+English:Warning, very short print
+Translated:警告，非常短的打印
+
 English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
-Translated:警告：断开连接将停止当前的打印。 \ NN \你确定要断开连接吗？
+Translated:警告：断开连接将停止当前打印。 \ NN \您确定要断开连接吗？
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
-Translated:警告：为了执行打印恢复，您的打印机必须向下移动以达到其原始位置。 \ n如果您的打印尺寸过大，部分打印机可能会在下移时与其冲突。 \ n在继续之前，确保执行此操作是安全的。
+Translated:警告：为了执行打印恢复，您的打印机必须向下移动才能到达其原始位置。 \ n如果您的打印件太大，打印机的一部分可能会在向下移动时与其发生碰撞。 \ n在继续操作之前，请确保执行此操作是安全的。
 
 English:WARNING: Write Failed!
 Translated:警告：写入失败！
@@ -3755,25 +3869,28 @@ English:We should be done in approximately {0} minutes.
 Translated:我们应该在大约{0}分钟内完成。
 
 English:We should be done in less than five minutes.
-Translated:我们应该在五分钟内完成。
+Translated:我们应该在不到五分钟的时间内完成。
 
 English:We will now finalize our measurement of the extruder height at this position.
-Translated:我们现在将在此位置完成我们对挤出机高度的测量。
+Translated:我们现在将完成对此位置挤出机高度的测量。
 
 English:We will now refine our measurement of the extruder height at this position.
-Translated:现在我们将在这个位置改进我们对挤出机高度的测量。
+Translated:我们现在将在此位置改进挤出机高度的测量。
 
 English:We will use this paper to measure the distance between the extruder and the bed.
-Translated:我们将用这张纸来测量挤出机和床之间的距离。
+Translated:我们将使用该纸来测量挤出机和床之间的距离。
+
+English:Website
+Translated:网站
 
 English:Wedge
 Translated:楔
 
 English:Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.
-Translated:欢迎来到打印升级向导。以下是我们将要做的事情的快速概览。
+Translated:欢迎使用打印水准向导。以下是我们将要做的快速概述。
 
 English:Welcome to the probe calibration wizard. Here is a quick overview on what we are going to do.
-Translated:欢迎使用探头校准向导。以下是我们将要做的事情的快速概览。
+Translated:欢迎使用探头校准向导。以下是我们将要做的快速概述。
 
 English:What was my password again?
 Translated:我的密码又是什么？
@@ -3784,14 +3901,17 @@ Translated:什么是新的...
 English:What's this?
 Translated:这是什么？
 
+English:wheel
+Translated:轮
+
 English:When this is checked MatterControl will attempt to recover a print in the event of a failure, such as lost connection or lost power.
-Translated:如果选中此项，MatterControl将在发生故障时尝试恢复打印，如连接丢失或断电。
+Translated:检查完成后，MatterControl将在发生故障时尝试恢复打印，例如连接丢失或断电。
 
 English:When upgrading to new firmware, first save a backup of the current firmware.
 Translated:升级到新固件时，首先保存当前固件的备份。
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
-Translated:当使用多台挤出机时，在转换到不同的挤出机之前，长丝会反向。
+Translated:当使用多个挤出机时，距离长丝将在更换为不同的挤出机之前反转。
 
 English:Width
 Translated:宽度
@@ -3799,14 +3919,8 @@ Translated:宽度
 English:Wifi Setup
 Translated:Wifi设置
 
-English:Wiki
-Translated:维基
-
 English:wipe
 Translated:擦拭
-
-English:Wipe Before Retract
-Translated:擦拭之前擦拭
 
 English:Wipe Shield Distance
 Translated:擦拭屏蔽距离
@@ -3815,10 +3929,13 @@ English:Wipe Tower Size
 Translated:擦拭塔尺寸
 
 English:Would you like to setup Wifi?
-Translated:你想建立Wifi吗？
+Translated:你想设置Wifi吗？
+
+English:Would you like to switch to the new G-Code? Before you switch, check that your are seeing the changes you expect.
+Translated:您想切换到新的G代码吗？在切换之前，请检查您是否看到了预期的更改。
 
 English:Write Filter
-Translated:写入过滤器
+Translated:写过滤器
 
 English:X and Y Distance
 Translated:X和Y距离
@@ -3830,16 +3947,16 @@ English:Yes
 Translated:是
 
 English:You are currently saving a parts sheet, are you sure you want to exit?
-Translated:您目前正在保存零件清单，您确定要退出吗？
+Translated:您目前正在保存零件表，确定要退出吗？
 
 English:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
-Translated:您正在切换到不同的缩略图渲染模式。如果需要，可以删除当前缩略图并以新样式重新创建。您可以随时来回切换。在创建新的缩略图时会有一些处理开销。 \ NN \你想重建现有的缩略图吗？
+Translated:您正在切换到不同的缩略图渲染模式。如果需要，可以删除当前缩略图并以新样式重新创建。您可以随时来回切换。创建新缩略图时会有一些处理开销。 \ NN \您想立即重建现有的缩略图吗？
 
 English:You can also
 Translated:你也可以
 
 English:You can only connect when not currently connected.
-Translated:只有当前未连接时才能连接。
+Translated:您只能在当前未连接时进行连接。
 
 English:You have successfully imported a new {0} setting. You can find '{1}' in your list of {0} settings.
 Translated:您已成功导入新的{0}设置。您可以在{0}设置列表中找到“{1}”。
@@ -3848,55 +3965,55 @@ English:You have successfully imported a new printer profile. You can find '{0}'
 Translated:您已成功导入新的打印机配置文件。您可以在可用打印机列表中找到“{0}”。
 
 English:You may need to wait a minute for your printer to finish initializing.
-Translated:您可能需要等待一分钟让打印机完成初始化。
+Translated:您可能需要等待一分钟才能使打印机完成初始化。
 
-English:Your 3D print has been auto-paused.\nPause layer{0} reached.
-Translated:您的3D打印已被自动暂停。 \ n已到达暂停图层{0}。
+English:Your 3D print has been auto-paused.\n\nLayer{0} reached.
+Translated:您的3D打印已自动暂停。\n\nLayer {0}到达。
+
+English:Your 3D print has been paused.\n\nOut of filament detected.
+Translated:您的3D打印已暂停。 \ NN \检测到灯丝。
 
 English:Your application is up-to-date
-Translated:您的应用程序是最新的
+Translated:您的申请是最新的
 
 English:Your code has been redeemed.  Please check the Library.
-Translated:您的代码已被兑换。请检查图书馆。
+Translated:您的代码已被兑换。请查看图书馆。
 
 English:Your Email Address
 Translated:您的电子邮件地址
 
 English:Your invite has been sent!
-Translated:您的邀请已发送！
-
-English:Your new designs will appear in the 'Purchased' library folder.
-Translated:您的新设计将出现在“已购买”库文件夹中。
+Translated:您的邀请已被发送！
 
 English:Your Phone Number
 Translated:你的电话号码
 
-English:Your printer is reporting a hardware Error. This may prevent your printer from functioning properly.
-Translated:您的打印机正在报告硬件错误。这可能会妨碍您的打印机正常工作。
+English:Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.
+Translated:您的打印机正在报告硬件错误并已暂停。检查错误并根据需要取消打印。
 
 English:Your Probe is now calibrated.
-Translated:您的探针现在已经过校准。
+Translated:您的探头现已校准。
 
 English:Your Share Code
-Translated:您的分享代码
+Translated:您的股票代码
 
-English:Your Start G-Code should not contain a G29 if you are planning on using print leveling. Change your start G-Code or turn off print leveling
-Translated:如果您打算使用打印均衡功能，则您的开始G代码不应包含G29。更改开始的G代码或关闭打印调平
+English:Your Start G-Code should not contain a G29 if you are planning on using print leveling. Change your start G-Code or turn off print leveling.
+Translated:如果您计划使用打印校平，则您的开始G代码不应包含G29。更改您的开始G代码或关闭打印调平。
 
-English:Your Start G-Code should not contain a G29 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery
-Translated:如果您打算使用Print Recovery，则您的开始G代码不应包含G29。更改开始的G代码或关闭打印恢复
+English:Your Start G-Code should not contain a G29 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
+Translated:如果您计划使用Print Recovery，则您的开始G代码不应包含G29。更改您的开始G代码或关闭打印恢复。
 
-English:Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling
-Translated:如果您打算使用打印均衡功能，则您的开始G代码不应包含G30。更改开始的G代码或关闭打印调平
+English:Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling.
+Translated:如果您计划使用打印校平，则您的起始G代码不应包含G30。更改您的开始G代码或关闭打印调平。
 
-English:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery
-Translated:如果您计划使用打印恢复，则您的开始G代码不应包含G30。更改开始的G代码或关闭打印恢复
+English:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
+Translated:如果您计划使用Print Recovery，则您的开始G代码不应包含G30。更改您的开始G代码或关闭打印恢复。
 
 English:Z Lift
-Translated:Z电梯
+Translated:Z Lift
 
 English:Z Offset
-Translated:Z偏移量
+Translated:Z偏移
 
 English:Z Offset is too large.
 Translated:Z偏移太大。
@@ -3917,5 +4034,5 @@ English:Zoom out
 Translated:缩小
 
 English:Zoom to window
-Translated:放大到窗口
+Translated:缩放到窗口
 

@@ -1,8 +1,14 @@
 English:
 Translated:
 
+English:    • Remove the paper
+Translated:    •用紙を取り除く
+
+English:    2. Look for the calibration section (pictured below)
+Translated:    2.キャリブレーションセクションを探します（下図）
+
 English:- none -
-Translated:- なし -
+Translated:- 無し -
 
 English: Once it is finished homing we will heat the bed.
 Translated: ホーミングが終わったら、ベッドを加熱します。
@@ -16,11 +22,23 @@ Translated:％
 English:(Press 'Skip' to setup connection later)
 Translated:（後で接続を設定するには 'スキップ'を押してください）
 
-English:\n\nThis copy will be made available under the terms of the 'Creative Commons Attribution 4.0 International Public License', click the link below for details.
-Translated: \ NN \このコピーは、「Creative Commons Attribution 4.0 International Public License」の条項の下で利用可能になります。詳細については、下のリンクをクリックしてください。
-
 English:{0} (Update Available)
 Translated:{0}（利用可能な更新）
+
+English:{0} must be greater than 0.
+Translated:{0}は0より大きくなければなりません。
+
+English:{0} must be less than or equal to the {1} * 4.
+Translated:{0}は{1} * 4以下でなければなりません。
+
+English:{0} must be less than or equal to the {1}.
+Translated:{0}は{1}以下でなければなりません。
+
+English:{0} works best when set to LINES.
+Translated:{0}はLINESに設定すると最も効果的です。
+
+English:<< Back
+Translated:<<戻る
 
 English:°
 Translated:°
@@ -45,6 +63,9 @@ Translated:3D
 
 English:3D Layer View
 Translated:3Dレイヤービュー
+
+English:A comma separated list of sample points to probe the bed at. You must specify an x and y position for each point. For example: '20,20,100,180,180,20' will sample the bad at 3 points.
+Translated:ベッドを調べるためのカンマ区切りのサンプルポイントのリスト。各点にxとyの位置を指定する必要があります。たとえば、'20,20,100,180,180,20 'は3点で不良をサンプリングします。
 
 English:A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.
 Translated:プリントの第1の層のための押出の幅の変更子。 100％を超える値は、プリントベッドへの接着に役立ちます。
@@ -73,8 +94,11 @@ Translated:印刷を中止する
 English:About
 Translated:約
 
-English:Acceleration
-Translated:加速度
+English:Acceleration Printing
+Translated:加速印刷
+
+English:Acceleration Travel
+Translated:加速旅行
 
 English:Accept
 Translated:同意する
@@ -97,14 +121,17 @@ Translated:ライブラリにan.stl、.obj、.amf、.gcode、または.zipファ
 English:Add Base
 Translated:ベースを追加
 
+English:Add Content
+Translated:コンテンツを追加
+
 English:Add Image
 Translated:画像を追加
 
 English:Add New Setting
 Translated:新しい設定を追加する
 
-English:Add to Plate
-Translated:プレートに追加
+English:Add to Bed
+Translated:ベッドに追加
 
 English:Add to Selection
 Translated:選択に追加
@@ -127,6 +154,9 @@ Translated:移動後
 English:After Tool Change G-Code
 Translated:工具交換後のGコード
 
+English:After Tool Change G-Code 2
+Translated:工具交換後のGコード2
+
 English:Air Gap
 Translated:エアギャップ
 
@@ -139,14 +169,20 @@ Translated:整列
 English:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
 Translated:すべての押し出しにこの値を掛けます。 1を超えると、押出されるフィラメントの量が増加します（1.1は良好な最大値です）。それを減少させると押し出される量が減少します（.9は良好な最小値です）。
 
+English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
+Translated:MatterControlが長い線を分割してレベリングと印刷のキャンセルを改善できるようにします。著しくレベルを超えているプリンタにとっては重要です。
+
 English:Alpha
 Translated:アルファ
 
 English:Alpha: The in development version of MatterControl
 Translated:アルファ：MatterControlの開発版
 
-English:and ensure no filament is stuck to the tip of the extruder.
-Translated:フィラメントが押出機の先端にくっつかないようにする。
+English:Already Loaded
+Translated:すでに読み込まれている
+
+English:and ensure that no filament is stuck to your nozzle.
+Translated:ノズルにフィラメントが付着していないことを確認してください。
 
 English:and the hotend to heat to 
 Translated:熱くなる温泉
@@ -154,17 +190,17 @@ Translated:熱くなる温泉
 English:Anyone with this code will have access
 Translated:このコードを持つ人は誰でもアクセスできます
 
+English:Application Cache
+Translated:アプリケーションキャッシュ
+
+English:Application Storage
+Translated:アプリケーションストレージ
+
 English:Apply
 Translated:適用
 
 English:Apply leveling to G-Code during export
 Translated:エクスポート中にGコードにレベリングを適用する
-
-English:Apply operation and make permanent
-Translated:操作を適用し、永久的にする
-
-English:Apply Scale
-Translated:スケールを適用する
 
 English:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
 Translated:印刷がSDカードから実行中に終了してもよろしいですか？ \ NN \注：終了する場合は、MatterControlを再度実行する前に印刷が完了するまで待つことをお勧めします。
@@ -199,9 +235,6 @@ Translated:接続しようとしています
 English:ATX Power Control
 Translated:ATXパワーコントロール
 
-English:Author
-Translated:著者
-
 English:Auto Calibrate
 Translated:自動較正
 
@@ -213,6 +246,9 @@ Translated:オートリリースモータ
 
 English:Auto Uppercase
 Translated:自動大文字
+
+English:Automatic Heater Shutdown in
+Translated:自動ヒーターシャットダウン
 
 English:Avoid contact with your skin.
 Translated:あなたの皮膚との接触を避けてください。
@@ -228,6 +264,9 @@ Translated:軸の移動速度
 
 English:Baby Step Offset
 Translated:ベビーステップオフセット
+
+English:Back
+Translated:バック
 
 English:Backup Firmware Before Update
 Translated:更新前のファームウェアのバックアップ
@@ -246,6 +285,12 @@ Translated:ベッド
 
 English:Bed First Layer
 Translated:ベッドファーストレイヤー
+
+English:Bed Leveling
+Translated:ベッドレベリング
+
+English:Bed PID Settings
+Translated:ベッドのPID設定
 
 English:Bed Remove Part Temperature
 Translated:ベッド部品温度を除去する
@@ -268,6 +313,9 @@ Translated:工具交換前
 English:Before Tool Change G-Code
 Translated:工具交換前のGコード
 
+English:Before Tool Change G-Code 2
+Translated:工具交換前のGコード2
+
 English:Behavior
 Translated:動作
 
@@ -277,6 +325,9 @@ Translated:ベータ
 English:Beta: The release candidate version of MatterControl
 Translated:ベータ：MatterControlのリリース候補バージョン
 
+English:Bottom Solid Infill
+Translated:ボトムソリッドインフィル
+
 English:Bottom Solid Layers
 Translated:ボトムソリッドレイヤー
 
@@ -285,6 +336,9 @@ Translated:点字
 
 English:Braille Card
 Translated:点字カード
+
+English:Bridge Over Infill
+Translated:ブリッジオーバーインフィル
 
 English:Bridges
 Translated:橋
@@ -303,6 +357,12 @@ Translated:ビルドの高さ
 
 English:Calculate and transmit a standard rep-rap checksum for all commands.
 Translated:すべてのコマンドに対して標準のrep-rapチェックサムを計算して送信します。
+
+English:Calculate Path
+Translated:パスを計算する
+
+English:Calibrate Probe Offset
+Translated:プローブオフセットをキャリブレーションする
 
 English:Calibration
 Translated:較正
@@ -349,12 +409,6 @@ Translated:印刷中にサインインできない
 English:Can't switch printers while printing
 Translated:印刷中にプリンタを切り替えることができません
 
-English:Card Holder
-Translated:カードホルダー
-
-English:ChairFoot
-Translated:ChairFoot
-
 English:Change
 Translated:変化する
 
@@ -370,8 +424,8 @@ Translated:更新を確認
 English:Check For Update
 Translated:更新を確認
 
-English:Check on your prints from anywhere. With cloud monitoring, you have access to your printer no matter where you go.
-Translated:どこからでもあなたのプリントをチェックしてください。クラウド監視機能を使用すると、どこにいてもプリンタにアクセスできます。
+English:Checking Cloud Services
+Translated:クラウドサービスのチェック
 
 English:Checking for updates...
 Translated:アップデートの確認...
@@ -385,8 +439,11 @@ Translated:各印刷の前に、層の高さがノズルの直径より小さい
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:プリンタのLCD画面に印刷進行状況を表示するコマンドがある場合は、それを選択します。
 
-English:Clean Nozzle Image
-Translated:クリーンノズル画像
+English:Clean
+Translated:クリーン
+
+English:Clean Filament Page
+Translated:クリーンフィラメントページ
 
 English:Clear
 Translated:クリア
@@ -412,9 +469,6 @@ Translated:[次へ]をクリックして続行します。
 English:Click the 'Connect' button to retry the original connection attempt
 Translated:[接続]ボタンをクリックして元の接続の試行を再試行します
 
-English:Click to show in 3D View
-Translated:3Dビューで表示するにはクリックしてください
-
 English:Close
 Translated:閉じる
 
@@ -424,8 +478,8 @@ Translated:ポリゴンを閉じる
 English:Cloud Library
 Translated:クラウドライブラリ
 
-English:Cloud Printer Profiles
-Translated:クラウドプリンタープロファイル
+English:Coast At End
+Translated:コーストアットエンド
 
 English:Collapse All
 Translated:すべてを折りたたむ
@@ -438,6 +492,9 @@ Translated:カラービュー
 
 English:Combine
 Translated:結合する
+
+English:Community
+Translated:コミュニティ
 
 English:Compile model
 Translated:モデルをコンパイルする
@@ -460,6 +517,9 @@ Translated:通知の設定
 English:Configure Printer
 Translated:プリンタの設定
 
+English:Configure Wifi
+Translated:Wi-Fiを設定する
+
 English:Confirm Exit
 Translated:終了を確認
 
@@ -469,11 +529,11 @@ Translated:新しいパスワードを確認する
 English:Confirm your Password
 Translated:あなたのパスワードを確認
 
-English:Congratulations
-Translated:おめでとう
-
 English:Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.
 Translated:お使いのプリンタに接続していただきありがとうございます。最初の印刷を開始する前に、簡単な較正手順を実行する必要があります。
+
+English:Congratulations! Print Leveling is now configured and enabled.
+Translated:おめでとう！印刷レベリングが設定され、有効になりました。
 
 English:Connect
 Translated:接続する
@@ -481,8 +541,8 @@ Translated:接続する
 English:Connect Bad Edges
 Translated:バッドエッジを接続する
 
-English:Connect printer and power on
-Translated:プリンタと電源を接続する
+English:Connect printer (make sure it is on)
+Translated:プリンタを接続します（オンになっていることを確認してください）
 
 English:Connect to Printer
 Translated:プリンタに接続する
@@ -541,17 +601,32 @@ Translated:冷却しきい値
 English:Copy
 Translated:コピー
 
+English:Copy Edges
+Translated:エッジをコピー
+
+English:Copy Faces
+Translated:面をコピー
+
 English:Copy Printers
 Translated:プリンタのコピー
 
 English:Copy Printers to Account
 Translated:プリンターをアカウントにコピーする
 
+English:Copy State
+Translated:状態をコピーする
+
+English:Copy Vertices
+Translated:頂点をコピーする
+
 English:Cost
 Translated:コスト
 
 English:Could not find a selected button.
 Translated:選択したボタンが見つかりませんでした。
+
+English:Couldn't load file
+Translated:ファイルを読み込めませんでした
 
 English:Couldn't save file
 Translated:ファイルを保存できませんでした
@@ -562,9 +637,6 @@ Translated:カウントまたはmm
 English:Create
 Translated:作成する
 
-English:Create a printer to continue
-Translated:続行するプリンタを作成する
-
 English:Create Account
 Translated:アカウントを作成する
 
@@ -573,6 +645,9 @@ Translated:アカウントを作成する
 
 English:Create Brim
 Translated:錬金術を作る
+
+English:Create Dictionaries
+Translated:辞書を作成する
 
 English:Create Folder
 Translated:フォルダーを作る
@@ -592,9 +667,6 @@ Translated:ラフトの作成
 English:Create Skirt
 Translated:スカートを作る
 
-English:Create your machine settings once, and have them available anywhere you want to print. All your changes appear on all your devices.
-Translated:一度マシンの設定を作成し、印刷したい場所で使用できるようにします。すべての変更がすべてのデバイスに表示されます。
-
 English:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
 Translated:プリントのベースに付いている縁を作成します。部品がベッドに付着するのを助けるので、ABS（および他の反り易いプラスチック）を印刷する際の反りを防ぐのに便利です。
 
@@ -609,6 +681,9 @@ Translated:プリントの周りにアウトラインを作成しますが、ア
 
 English:Creating firmware backup...
 Translated:ファームウェアバックアップの作成中...
+
+English:Creation Data
+Translated:作成データ
 
 English:Cube
 Translated:キューブ
@@ -645,9 +720,6 @@ Translated:日付が変更されました
 
 English:Default
 Translated:デフォルト
-
-English:Default Extrusion Width
-Translated:デフォルトの押し出し幅
 
 English:Delete
 Translated:削除
@@ -705,9 +777,6 @@ Translated:直径
 
 English:Disable Fan For The First
 Translated:最初のファンを無効にする
-
-English:Disable Heaters
-Translated:ヒーターを無効にする
 
 English:Disconnect
 Translated:切断する
@@ -778,17 +847,29 @@ Translated:編集
 English:Edit
 Translated:編集
 
+English:Edit Component
+Translated:コンポーネントの編集
+
+English:Edit Leveling Data
+Translated:レベリングデータの編集
+
 English:Edit Macro
 Translated:マクロの編集
-
-English:Edit notification settings
-Translated:通知設定を編集する
 
 English:Edit OpenSCAD script
 Translated:OpenSCADスクリプトを編集する
 
+English:Edit Page
+Translated:ページの編集
+
 English:Edit Selected Setting
 Translated:選択した設定を編集
+
+English:Editor Selector
+Translated:エディタセレクタ
+
+English:EEProm Settings
+Translated:EEPromの設定
 
 English:Elbow
 Translated:肘
@@ -808,6 +889,9 @@ Translated:押出機リフトを有効にする
 English:Enable Fan
 Translated:ファンを有効にする
 
+English:Enable Line Splitting
+Translated:行分割を有効にする
+
 English:Enable Recovery
 Translated:回復を有効にする
 
@@ -822,9 +906,6 @@ Translated:終わり
 
 English:End G-Code
 Translated:終了Gコード
-
-English:Enter 12 Digit Redemption Code
-Translated:12桁の償還コードを入力
 
 English:Enter a Design Name Here
 Translated:ここにデザイン名を入力してください
@@ -892,6 +973,12 @@ Translated:実験的
 English:Export
 Translated:輸出する
 
+English:Export All Settings
+Translated:すべての設定をエクスポート
+
+English:Export Bed Leveling Data
+Translated:輸出ベッドレベリングデータ
+
 English:Export EEPROM
 Translated:EEPROMのエクスポート
 
@@ -907,17 +994,8 @@ Translated:エクスポートファイル
 English:Export selection to
 Translated:選択範囲をエクスポートする
 
-English:External Perimeter Extrusion Width = {0}
-Translated:外部周囲の押し出し幅= {0}
-
-English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
-Translated:外部周囲幅の幅= {0} \ nノズルの直径= {1}
-
-English:'External Perimeter Extrusion Width' must be greater than 0.
-Translated:'外部周辺の押し出し幅'は0より大きくなければなりません。
-
-English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
-Translated:「外部周方向の押し出し幅」は「ノズル直径」* 4以下でなければなりません。
+English:Exporting
+Translated:エクスポート
 
 English:External Perimeters First
 Translated:最初に外縁
@@ -936,9 +1014,6 @@ Translated:押出フィラメント
 
 English:Extrude First Layer
 Translated:最初のレイヤーを押し出す
-
-English:Extrude Image
-Translated:押し出し画像
 
 English:Extruder
 Translated:押出機
@@ -994,6 +1069,9 @@ Translated:送り速度比
 English:Filament
 Translated:フィラメント
 
+English:Filament Has Been Loaded
+Translated:フィラメントが装填されている
+
 English:Filament Length
 Translated:フィラメントの長さ
 
@@ -1024,11 +1102,17 @@ Translated:フィルタ
 English:Finally click 'Next' to continue.
 Translated:最後に「次へ」をクリックして続行します。
 
+English:Finish
+Translated:フィニッシュ
+
 English:Finished Print
 Translated:完成した印刷物
 
 English:Finished Print: {0}
 Translated:完成したプリント：{0}
+
+English:Finishing Startup
+Translated:仕上げスタートアップ
 
 English:Firmware download failed
 Translated:ファームウェアのダウンロードに失敗しました
@@ -1051,24 +1135,6 @@ Translated:ファームウェアのバージョン：{0}
 English:First Layer
 Translated:第1層
 
-English:First Layer Extrusion Width = {0}
-Translated:最初のレイヤーの押し出し幅= {0}
-
-English:First Layer Extrusion Width = {0}\nNozzle Diameter = {1}
-Translated:最初の層の押し出し幅= {0} \ nノズルの直径= {1}
-
-English:'First Layer Extrusion Width' must be greater than 0.
-Translated:「第1層押出幅」は0より大きくなければなりません。
-
-English:'First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
-Translated:「第1層押出幅」は「ノズル直径」* 4以下でなければなりません。
-
-English:First Layer Height = {0}\nNozzle Diameter = {1}
-Translated:最初の層の高さ= {0} \ nノズルの直径= {1}
-
-English:'First Layer Height' must be less than or equal to the 'Nozzle Diameter'.
-Translated:「第1層高さ」は、「ノズル直径」以下でなければなりません。
-
 English:First Layer Only
 Translated:最初のレイヤーのみ
 
@@ -1078,11 +1144,17 @@ Translated:第1層の厚さ
 English:Fit to Bounds
 Translated:境界に合わせる
 
+English:Flag for the state of our filament loaded.
+Translated:ロードされたフィラメントの状態のフラグ。
+
 English:Flag keeping track if probe calibration wizard has been run.
 Translated:プローブキャリブレーションウィザードが実行されたかどうかを記録するフラグを立てます。
 
 English:Flat
 Translated:平らな
+
+English:Flatten
+Translated:フラットン
 
 English:Folder Name
 Translated:フォルダ名
@@ -1126,8 +1198,11 @@ Translated:Gコードの味
 English:G-Code Output
 Translated:Gコード出力
 
-English:G-Code to be run after every tool change.
-Translated:ツール交換後に実行されるGコード。
+English:G-Code to be run after every tool change. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.
+Translated:ツール交換後に実行されるGコード。必要に応じて[wipe_tower_x]と[wipe_tower_y]を使って押出機の位置を設定することができます。
+
+English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.
+Translated:押出機に切り替えた後に実行されるGコード2.設定されていない場合はGコードの後に​​標準を使用します。必要に応じて[wipe_tower_x]と[wipe_tower_y]を使って押出機の位置を設定することができます。
 
 English:G-Code to be run after the change in Z height for the next layer.
 Translated:Gコードは、次のレイヤのZ高さの変更後に実行されます。
@@ -1135,8 +1210,11 @@ Translated:Gコードは、次のレイヤのZ高さの変更後に実行され�
 English:G-Code to be run at the end of all automatic output (the very end of the G-Code commands).
 Translated:すべての自動出力の最後に実行されるGコード（Gコードコマンドの最後）。
 
-English:G-Code to be run before every tool change.
-Translated:すべての工具交換の前に実行されるGコード。
+English:G-Code to be run before every tool change. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.
+Translated:すべての工具交換の前に実行されるGコード。必要に応じて[wipe_tower_x]と[wipe_tower_y]を使って押出機の位置を設定することができます。
+
+English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.
+Translated:押出機に切り替える前に実行されるGコード2.設定されていない場合、Gコードの前に標準を使用します。必要に応じて[wipe_tower_x]と[wipe_tower_y]を使って押出機の位置を設定することができます。
 
 English:G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.
 Translated:温度設定コマンドの直後に実行されるGコード。このセクションに温度を設定するコマンドを含めると、このセクションの外部では生成されません。カスタムGコード変数を受け入れます。
@@ -1220,7 +1298,7 @@ English:Has Z Servo
 Translated:Zサーボを持っている
 
 English:Have MatterControl send you email messages about your print
-Translated:MatterControlがプリントに関する電子メールメッセージを送信します
+Translated:MatterControlにあなたのプリントに関するEメー​​ルメッセージを送ってもらう
 
 English:Have MatterControl send you text messages about your print
 Translated:MatterControlにあなたのプリントに関するテキストメッセージを送ってもらう
@@ -1254,6 +1332,9 @@ Translated:高精度
 
 English:History
 Translated:歴史
+
+English:Holding Temperature
+Translated:保持温度
 
 English:Home
 Translated:ホーム
@@ -1300,12 +1381,6 @@ Translated:MatterControlで成功する方法
 English:Hz
 Translated:Hz
 
-English:I agree to license these files under 
-Translated:これらのファイルのライセンスを取得することに同意します
-
-English:I have the right to license these files.
-Translated:私はこれらのファイルをライセンスする権利があります。
-
 English:if currently connected
 Translated:現在接続されている場合
 
@@ -1315,23 +1390,26 @@ Translated:設定されている場合、プリンタは選択されると自動
 English:If the extruder has been running for a long time, it may be reporting values that are too large, this will periodically reset it.
 Translated:エクストルーダーが長時間実行されている場合は、大きすぎる値が報告されている可能性があります。これは定期的にリセットします。
 
-English:If the time to print a layer is less than this, the fan will turn on on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.
-Translated:レイヤーを印刷する時間がこれよりも短い場合、ファンは最低速度でオンになります。レイヤー時間が短くなると、最大速度まで上昇します。
+English:If the time to print a layer is less than this, the fan will turn on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.
+Translated:レイヤーを印刷する時間がこれよりも短い場合、ファンは最小速度でオンになります。レイヤー時間が短くなると、最大速度まで上昇します。
 
-English:If you need to recalibrate the printer in the future, the print leveling controls can be found under: Controls, Calibration
-Translated:将来プリンタを再校正する必要がある場合は、印刷レベリングコントロールをコントロール、校正
+English:If you wish to re-calibrate leveling in the future:
+Translated:今後レベリングを再調整したい場合は：
+
+English:If you wish to re-calibrate your probe in the future:
+Translated:将来、プローブを再調整したい場合：
 
 English:Image
 Translated:画像
 
-English:Image Coin
-Translated:イメージコイン
-
-English:Image Coverter
-Translated:画像変換装置
+English:Image Converter
+Translated:画像変換
 
 English:Image to Path
 Translated:パスへのイメージ
+
+English:Immediately turn off heaters
+Translated:ヒーターを直ちにオフにする
 
 English:Import
 Translated:インポート
@@ -1372,6 +1450,9 @@ Translated:インフィルオーバーラップ
 English:Infill Type
 Translated:インフィルタイプ
 
+English:Inflate Path
+Translated:インフレーションパス
+
 English:Initial Layer Speed
 Translated:初期レイヤー速度
 
@@ -1384,11 +1465,17 @@ Translated:初期プリンタの設定
 English:Initializing hardware...
 Translated:ハードウェアの初期化中...
 
+English:Initializing Library
+Translated:ライブラリを初期化する
+
 English:Insert
 Translated:インサート
 
-English:Insert Image
-Translated:画像を挿入する
+English:Insert Filament
+Translated:インサートフィラメント
+
+English:Insert Filament Page
+Translated:フィラメントの挿入ページ
 
 English:Inside Perimeters
 Translated:内周部
@@ -1413,6 +1500,9 @@ Translated:交差点
 
 English:Invalid Client Token
 Translated:無効なクライアントトークン
+
+English:Inventory
+Translated:目録
 
 English:Invert
 Translated:反転
@@ -1456,12 +1546,6 @@ Translated:層
 English:Layer Change G-Code
 Translated:レイヤー変更Gコード
 
-English:Layer Height = {0}\nNozzle Diameter = {1}
-Translated:層高さ= {0} \ nノズル直径= {1}
-
-English:'Layer Height' must be less than or equal to the 'Nozzle Diameter'.
-Translated:「層の高さ」は「ノズルの直径」以下でなければなりません。
-
 English:Layer Thickness
 Translated:層の厚さ
 
@@ -1482,6 +1566,12 @@ Translated:層またはmm
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:押出幅の自動計算を可能にするには、この値を0のままにします。
+
+English:left click
+Translated:左クリック
+
+English:left drag
+Translated:左ドラッグ
 
 English:Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).
 Translated:完全な工具交換後に押し出される余分なフィラメントの長さ（工具交換後退距離の再押出に加えて）。
@@ -1534,8 +1624,20 @@ Translated:フィラメントを装填する
 English:Load Filament Length
 Translated:負荷フィラメントの長さ
 
+English:Load Filament Wizard
+Translated:フィラメントのロードウィザード
+
+English:Load Material
+Translated:材料を積み込む
+
 English:Loading
 Translated:読み込み中
+
+English:Loading Bed
+Translated:ローディングベッド
+
+English:Loading Filament
+Translated:フィラメントの充填
 
 English:Loading GCode
 Translated:GCodeの読み込み
@@ -1543,50 +1645,17 @@ Translated:GCodeの読み込み
 English:Loading G-Code
 Translated:Gコードの読み込み
 
+English:Loading Help
+Translated:ヘルプの読み込み
+
 English:Loading...
 Translated:読み込んでいます...
 
 English:Local Library
 Translated:ローカルライブラリ
 
-English:Location: 'Controls' -> 'Movement' -> 'Z Offset'
-Translated:場所： 'コントロール'  - > '移動'  - > 'Zオフセット'
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Cooling'
-Translated:場所：「設定とコントロール」 - >「設定」 - >「フィラメント」 - >「冷却」
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
-Translated:場所：「設定と制御」→「設定」→「フィラメント」→「押し出し」→「外部境界」
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'
-Translated:場所： '設定と制御'  - > '設定'  - > 'フィラメント'  - > '押し出し'  - > '最初のレイヤー'
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
-Translated:場所：「設定と制御」→「設定」→「フィラメント」→「フィラメント」→「後退」
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill'
-Translated:場所：「設定とコントロール」 - >「設定」 - >「一般」 - >「インフィル」
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill Type'
-Translated:場所：「設定とコントロール」 - >「設定」 - >「一般」 - >「インフィルタイプ」
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'
-Translated:場所：「設定とコントロール」 - >「設定」 - >「一般」 - >「レイヤー/サーフェス」
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Speed'
-Translated:場所：「設定とコントロール」 - >「設定」 - >「一般」 - >「スピード」
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom G-Code' -> 'Start G-Code'
-Translated:場所： '設定とコントロール'  - > '設定'  - > 'プリンタ'  - > 'カスタムGコード'  - > 'Gコード開始'
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Features'
-Translated:場所：「設定とコントロール」 - >「設定」 - >「プリンタ」 - >「機能」
-
-English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Print Recovery' -> 'Enable Recovery'
-Translated:場所：「設定とコントロール」→「設定」→「プリンタ」→「印刷の回復」→「回復を有効にする」
-
-English:Lock Ratio
-Translated:ロック比
+English:Location
+Translated:ロケーション
 
 English:Low Precision
 Translated:低精度
@@ -1612,8 +1681,14 @@ Translated:マクロプリセット
 English:Macros
 Translated:マクロ
 
+English:make
+Translated:作る
+
 English:Make
 Translated:メイク
+
+English:Make Component
+Translated:コンポーネントを作る
 
 English:Make Selection
 Translated:選択をする
@@ -1627,8 +1702,8 @@ Translated:周囲の最初の点が凹点であることを確認します。
 English:Make sure the first point on a perimeter is not an overhang.
 Translated:周囲の最初の点がオーバーハングでないことを確認します。
 
-English:Manual Configuration
-Translated:手動構成
+English:Make the first layer on top of partial infill use the speed and fan for bridging.
+Translated:部分充填の上にある最初の層に、ブリッジングの速度とファンを使用します。
 
 English:Manual Movement Speeds
 Translated:手動移動速度
@@ -1639,11 +1714,14 @@ Translated:手動で接続を設定する
 English:Manually measure the extruder at the center
 Translated:中央で押出機を手動で測定する
 
+English:Markdown Edit
+Translated:マークダウン編集
+
 English:Marlin Firmware EEPROM Settings
 Translated:マーリンファームウェアのEEPROM設定
 
 English:Material
-Translated:材料
+Translated:素材
 
 English:Material density. Only used for estimating mass in the Layer View.
 Translated:材料密度。レイヤービューでの質量の推定にのみ使用されます。
@@ -1660,6 +1738,9 @@ Translated:マターコントロール
 English:MatterControl is made possible by the team at MatterHackers and other open source software
 Translated:MatterControllerは、MatterHackersのチームと他のオープンソースソフトウェア
 
+English:MatterControl was unable to connect to the Internet. Please check your Wifi connection and try again
+Translated:MatterControlはインターネットに接続できませんでした。 Wi-Fi接続を確認してもう一度お試しください
+
 English:MatterControl will now attempt to auto-detect printer.
 Translated:MatterControlはプリンタの自動検出を試みます。
 
@@ -1674,6 +1755,9 @@ Translated:最大速度
 
 English:Maximum Acceleration [mm/s²]
 Translated:最大加速度[mm /s²]
+
+English:Maximum E jerk [mm/s]
+Translated:最大Eジャーク[mm / s]
 
 English:Maximum feedrates [mm/s]
 Translated:最大送り速度[mm / s]
@@ -1693,8 +1777,14 @@ Translated:中程度の精度
 English:Merge Overlapping Lines
 Translated:重複する行をマージする
 
+English:Mesh
+Translated:メッシュ
+
 English:Message
 Translated:メッセージ
+
+English:middle drag
+Translated:中間抗力
 
 English:Min feedrate [mm/s]
 Translated:最小送り速度[mm / s]
@@ -1732,9 +1822,6 @@ Translated:mm
 English:mm or %
 Translated:mmまたは％
 
-English:mm or % leave 0 for auto
-Translated:mmまたは％は、autoの場合は0のままにします。
-
 English:mm zero to disable
 Translated:mmゼロを無効にする
 
@@ -1747,11 +1834,20 @@ Translated:mm / sまたは％
 English:mm/s²
 Translated:mm /s²
 
+English:model
+Translated:モデル
+
 English:Model
 Translated:モデル
 
 English:Model View
 Translated:モデルビュー
+
+English:Model View Style
+Translated:モデルビュースタイル
+
+English:Modify
+Translated:変更
 
 English:More
 Translated:もっと
@@ -1813,6 +1909,9 @@ Translated:名
 English:Networked Printing
 Translated:ネットワーク印刷
 
+English:New Design
+Translated:新しいデザイン
+
 English:New Password
 Translated:新しいパスワード
 
@@ -1840,11 +1939,8 @@ Translated:利用可能なCOMポートがありません
 English:No macros are currently set up for this printer.
 Translated:このプリンタに現在マクロは設定されていません。
 
-English:No Model
-Translated:モデルなし
-
 English:None
-Translated:なし
+Translated:無し
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
 Translated:通常、絶対距離を使用したいと思うでしょう。プリンタが相対距離を必要としていることがわかっている場合にのみ、これをチェックしてください。
@@ -1882,7 +1978,13 @@ Translated:オーム
 English:of
 Translated:の
 
+English:Off
+Translated:オフ
+
 English:Ok
+Translated:OK
+
+English:OK
 Translated:OK
 
 English:On Connect G-Code
@@ -1918,9 +2020,6 @@ Translated:おっとっと！続行するデバイスを選択してください
 English:Oops! Please select a serial port.
 Translated:おっとっと！シリアルポートを選択してください。
 
-English:Oops! Please sign in to continue.
-Translated:おっとっと！続行するにはログインしてください。
-
 English:Oops! Please sign in to enable this feature.
 Translated:おっとっと！この機能を有効にするにはログインしてください。
 
@@ -1929,9 +2028,6 @@ Translated:おっとっと！プリンタを検出できませんでした
 
 English:Oops! Settings file '{0}' did not contain any settings we could import.
 Translated:おっとっと！設定ファイル '{0}'にはインポートできる設定が含まれていませんでした。
-
-English:Oops! That code is invalid or expired.
-Translated:おっとっと！そのコードは無効または期限切れです。
 
 English:Oops! There is no eeprom mapping for your printer's firmware.
 Translated:おっとっと！プリンタのファームウェアにはeepromマッピングはありません。
@@ -1944,12 +2040,6 @@ Translated:おっとっと！リクエストの処理中に問題が発生しま
 
 English:Oops! There was a problem resetting your password.
 Translated:おっとっと！パスワードをリセットする際に問題が発生しました。
-
-English:Oops! There was a problem. Please try again later.
-Translated:おっとっと！問題がありました。後でもう一度お試しください。
-
-English:Oops! There was an error, please sign-in again.
-Translated:おっとっと！エラーが発生しました。再度ログインしてください。
 
 English:Oops! Unable to connect to server
 Translated:おっとっと！サーバーに接続できません
@@ -1969,8 +2059,20 @@ Translated:おっとっと！このアイテムは共有できません。
 English:Oops! Your session has expired.  Please sign-in again to continue.
 Translated:おっとっと！あなたのセッションは期限切れです。続行するにはもう一度ログインしてください。
 
+English:Open
+Translated:開いた
+
+English:Open File
+Translated:ファイルを開く
+
+English:Open Folder
+Translated:開いたフォルダ
+
 English:Open Package
 Translated:オープンパッケージ
+
+English:Open Recent
+Translated:オープン最近の
 
 English:OpenSCAD not installed
 Translated:OpenSCADがインストールされていません
@@ -1984,14 +2086,11 @@ Translated:または
 English:Other
 Translated:その他
 
-English:Out of filament detected\nYour 3D print has been paused.
-Translated:アウトフィラメントが検出されました\ n 3Dプリントが一時停止されました。
-
 English:Outer Surface - Perimeters
 Translated:外側表面 - 周囲
 
 English:Outlines
-Translated:アウトライン
+Translated:輪郭
 
 English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
 Translated:プリントの最初のレイヤーのみを出力します。彫刻や切り取りなどのアプリケーション用にgcodeデータを出力する場合に特に便利です。
@@ -2014,20 +2113,11 @@ Translated:パンビュー
 English:Parse Error while slicing
 Translated:スライス中の解析エラー
 
-English:Part
-Translated:部
-
 English:Part Cooling Fan
 Translated:部品冷却ファン
 
 English:Part History
 Translated:部品履歴
-
-English:Part Name
-Translated:部品名
-
-English:Parts
-Translated:部品
 
 English:Password
 Translated:パスワード
@@ -2041,14 +2131,20 @@ Translated:パスワード更新完了
 English:Paste
 Translated:ペースト
 
-English:Path
-Translated:パス
-
 English:Pattern Spacing
 Translated:パターン間隔
 
+English:Pause
+Translated:一時停止
+
+English:Pause automatic heater shutdown
+Translated:自動ヒーターシャットダウンを一時停止する
+
 English:Pause G-Code
 Translated:Gコードを一時停止する
+
+English:Pause Print
+Translated:印刷を一時停止する
 
 English:Paused
 Translated:一時停止中
@@ -2059,7 +2155,7 @@ Translated:周長
 English:Perimeters
 Translated:周長
 
-English:PID settings
+English:PID Settings
 Translated:PID設定
 
 English:Pinch
@@ -2083,11 +2179,8 @@ Translated:通知用のサウンドを再生する
 English:Please Confirm
 Translated:確認してください
 
-English:Please select the material you will be printing with, so we can accurately calibrate the printer.
-Translated:印刷する材料を選択して、プリンタを正確に校正することができます。
-
-English:Please select the material you will be printing, so we can heat the printer before calibrating.
-Translated:印刷する材料を選択してください。校正する前にプリンタを加熱することができます。
+English:Please select the material you want to load.
+Translated:読み込む資料を選択してください。
 
 English:Please sign in to continue.
 Translated:続行するにはログインしてください。
@@ -2116,14 +2209,11 @@ Translated:お待ちください。招待状を送信中...
 English:Please wait. Signing in...
 Translated:お待ちください。サインイン...
 
-English:Please wait. Verifying code...
-Translated:お待ちください。コードの確認中...
-
 English:Polygons
 Translated:ポリゴン
 
 English:Port
-Translated:ポート
+Translated:港
 
 English:Port not found
 Translated:ポートが見つかりません
@@ -2152,6 +2242,9 @@ Translated:用紙を移動させないようになるまで[Z-]を押します
 English:Press [Z+] once to release the paper
 Translated:[Z +]を1回押して用紙を離します
 
+English:Preview
+Translated:プレビュー
+
 English:Primitive Shapes
 Translated:プリミティブシェイプ
 
@@ -2170,23 +2263,11 @@ Translated:印刷履歴
 English:Print Leveling
 Translated:印刷レベリング
 
-English:Print Leveling is now configured and enabled.
-Translated:印刷レベリングが設定され、有効になりました。
-
 English:Print Leveling Overview
 Translated:印刷レベリングの概要
 
-English:Print Leveling Plane
-Translated:印刷レベリング平面
-
-English:Print Leveling Probe
-Translated:印刷レベリングプローブ
-
 English:Print Leveling Wizard
 Translated:印刷レベリングウィザード
-
-English:Print Leveling Wizard - Can be re-calculated anytime there seems to be a problem with initial layer consistency
-Translated:印刷レベリングウィザード - 初期レイヤの一貫性に問題があると思われる場合はいつでも再計算できます
 
 English:Print Notification Settings
 Translated:印刷通知の設定
@@ -2218,6 +2299,9 @@ Translated:プリンタ名は空白にすることはできません
 English:Printer Paused
 Translated:プリンタが一時停止しました
 
+English:Printer Setup
+Translated:プリンタの設定
+
 English:Printers
 Translated:プリンタ
 
@@ -2245,11 +2329,11 @@ Translated:プローブキャリブレーションの概要
 English:Probe Calibration Wizard
 Translated:プローブキャリブレーションウィザード
 
-English:Probe Calibration Wizard - needed for initial setup - normally should remain calibrated unless there are changes to hardware.
-Translated:プローブキャリブレーションウィザード - 初期セットアップに必要です。通常、ハードウェアに変更がない限り、キャリブレーションを続ける必要があります。
-
 English:Probe Has Been Calibrated
 Translated:プローブが較正されました
+
+English:Probe Offset Sample Point
+Translated:プローブオフセットサンプルポイント
 
 English:Probe the bed at the center
 Translated:ベッドを中心に探検する
@@ -2263,29 +2347,17 @@ Translated:プローブZオフセット
 English:Progress Reporting
 Translated:進捗報告
 
+English:Properties
+Translated:プロパティ
+
 English:Provide this code to grant someone read-only access.
 Translated:誰かに読み取り専用アクセスを許可するためにこのコードを提供してください。
-
-English:Publish
-Translated:公開する
-
-English:Publish a copy of this part to MatterHackers.
-Translated:このパーツのコピーをMatterHackersに公開してください。
-
-English:Publish to the MatterHakers Part Community
-Translated:MatterHakersパーツコミュニティに公開する
-
-English:Publish your part for everyone!
-Translated:みんなのためにあなたの部分を公開してください！
 
 English:Purchased
 Translated:購入した
 
 English:Pyramid
 Translated:ピラミッド
-
-English:Pyriamid
-Translated:ピリアミド
 
 English:Quality
 Translated:品質
@@ -2368,9 +2440,6 @@ Translated:リロード
 English:Remind Me Later
 Translated:後で思い出させる
 
-English:Remote Monitoring
-Translated:遠隔モニタリング
-
 English:remove
 Translated:除去する
 
@@ -2380,14 +2449,11 @@ Translated:削除する
 English:Remove Items?
 Translated:アイテムを削除しますか？
 
-English:Remove operation from parts
-Translated:パーツから操作を削除する
-
 English:Remove the paper
 Translated:紙を取り除く
 
 English:Rename
-Translated:名前を変更する
+Translated:リネーム
 
 English:Rename Item
 Translated:アイテムの名前を変更する
@@ -2437,8 +2503,14 @@ Translated:復元設定
 English:Resume
 Translated:履歴書
 
+English:Resume automatic heater shutdown
+Translated:自動ヒーターシャットダウンを再開する
+
 English:Resume G-Code
 Translated:Gコードを再開する
+
+English:Resume Print
+Translated:印刷を再開する
 
 English:Retract
 Translated:後退
@@ -2482,8 +2554,14 @@ Translated:設定を元に戻す
 English:Reverting firmware to previous version...
 Translated:ファームウェアを以前のバージョンに戻す...
 
+English:Right
+Translated:右
+
 English:Right Arrow
 Translated:右矢印
+
+English:right drag
+Translated:右ドラッグ
 
 English:Ring
 Translated:リング
@@ -2500,14 +2578,14 @@ Translated:回転ビュー
 English:Rubber Band Selection
 Translated:ラバーバンド選択
 
+English:Run Calibration
+Translated:キャリブレーションの実行
+
 English:Run Max if Below
 Translated:以下の場合はMaxを実行
 
 English:Run setup configuration for printer.
 Translated:プリンタのセットアップ構成を実行します。
-
-English:Running Clean Image
-Translated:クリーンイメージの実行
 
 English:Running Macro
 Translated:マクロの実行
@@ -2518,6 +2596,9 @@ Translated:s
 English:Sailfish Communication
 Translated:セイルフィッシュコミュニケーション
 
+English:Sample Points
+Translated:サンプルポイント
+
 English:Sample the bed at {0} points
 Translated:ベッドを{0}点でサンプリングする
 
@@ -2525,10 +2606,7 @@ English:Sampled Positions
 Translated:サンプリングされた位置
 
 English:Save
-Translated:セーブ
-
-English:Save & Continue
-Translated:保存して続行
+Translated:保存する
 
 English:Save As
 Translated:名前を付けて保存
@@ -2545,11 +2623,14 @@ Translated:EEPROMに保存
 English:Save To EEPROM
 Translated:EEPROMに保存
 
-English:Save your designs to the cloud and access them from anywhere in the world. You can also share them any time with with anyone you want.
-Translated:デザインをクラウドに保存し、世界中のどこからでもアクセスできます。また、いつでも誰とでも共有することができます。
-
 English:Saving
 Translated:保存する
+
+English:Saving Asset
+Translated:資産の保存
+
+English:Saving changes
+Translated:変更を保存する
 
 English:Saving Changes
 Translated:変更を保存する
@@ -2590,14 +2671,14 @@ Translated:続行するにはプリンタを選択してください
 English:Select Make
 Translated:Makeを選択します
 
-English:Select Material
-Translated:マテリアルを選択
-
 English:Select Model
 Translated:モデルを選択
 
 English:Select Part
 Translated:部品を選択
+
+English:Select Printer
+Translated:プリンタを選択
 
 English:Select the baud rate.
 Translated:ボーレートを選択します。
@@ -2640,6 +2721,9 @@ Translated:セッションがクリアされました
 
 English:Session Expired
 Translated:セッションの有効期限が切れ
+
+English:Set as Default
+Translated:デフォルトとして設定
 
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
 Translated:MatterControlがネットワーク経由でプリンタに接続しようとするように設定します。 （これを有効にするには、切断して再接続する必要があります）
@@ -2689,6 +2773,9 @@ Translated:私と共有
 English:Should be 100%. Not shown to user.
 Translated:100％にする必要があります。ユーザーには表示されません。
 
+English:Show Controls
+Translated:コントロールを表示する
+
 English:Show file in folder after save
 Translated:保存後にフォルダにファイルを表示する
 
@@ -2713,14 +2800,11 @@ Translated:ショープリントベッド
 English:Show Reset Connection
 Translated:Reset Connectionを表示する
 
-English:Show Semi-Transparent Model
-Translated:半透明モデルを表示する
-
 English:Show Speeds
 Translated:スピードを表示
 
-English:Show Wireframe Model
-Translated:ワイヤフレームモデルを表示する
+English:Show Terminal
+Translated:ターミナルを表示する
 
 English:Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.
 Translated:プリンタへのUSB接続をリセットするために使用されるプリンタ接続バーの右側にあるボタンを表示します。これは、緊急停止としてサポートするプリンタで使用できます。
@@ -2731,14 +2815,11 @@ Translated:サインイン
 English:Sign in
 Translated:サインイン
 
-English:Sign In
-Translated:サインイン
-
 English:Sign in Required
 Translated:サインインが必要です
 
-English:Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access
-Translated:サインインして、クラウドプリンタプロファイルにアクセスします。 \ NN \一度サインインすればアクセスできます
+English:Sign in to access your existing printers
+Translated:既存のプリンタにアクセスするにはログインしてください
 
 English:Sign in to my account
 Translated:私のアカウントにサインインする
@@ -2812,14 +2893,11 @@ Translated:ソフトウェア使用許諾契約書
 English:Solid Infill
 Translated:ソリッドインフィル
 
-English:Solid Infill works best when set to LINES.
-Translated:ソリッドインフィルは、LINESに設定すると最も効果的です。
-
 English:Some features may require an internet connection.
 Translated:一部の機能にはインターネット接続が必要な場合があります。
 
 English:Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
-Translated:メッシュが周囲を閉じていないことがあります。これがチェックされると、これらの非閉鎖周長は閉じられます。
+Translated:メッシュが周囲を閉じていないことがあります。これがチェックされると、これらの非閉鎖周囲は閉じられます。
 
 English:Sorry!  Must be a valid email address.
 Translated:ごめんなさい！有効な電子メールアドレスでなければなりません。
@@ -2879,10 +2957,13 @@ English:Speeds
 Translated:スピード
 
 English:Sphere
-Translated:球
+Translated:球体
 
 English:Spiral Vase
 Translated:スパイラル花瓶
+
+English:Split
+Translated:スプリット
 
 English:Stable
 Translated:安定
@@ -2929,6 +3010,9 @@ Translated:開始角
 English:Starting firmware update...
 Translated:ファームウェアアップデートを開始しています...
 
+English:Starting Sync
+Translated:同期の開始
+
 English:Startup Failure
 Translated:起動失敗
 
@@ -2944,20 +3028,17 @@ Translated:mmあたりのステップ数
 English:STL File
 Translated:STLファイル
 
-English:Stop the current print
-Translated:現在のプリントを停止する
-
 English:Stop trying to connect to the printer.
 Translated:プリンタへの接続を停止します。
+
+English:Store
+Translated:格納
 
 English:Subject
 Translated:件名
 
 English:Submit
 Translated:提出する
-
-English:Submit Button
-Translated:送信ボタン
 
 English:Submit Feedback
 Translated:フィードバックを送信
@@ -2976,9 +3057,6 @@ Translated:成功！リセットコードについては、電子メールを確
 
 English:Success! Your account has been created.
 Translated:成功！あなたのアカウントが作成されました。
-
-English:Success! Your code has been redeemed.
-Translated:成功！あなたのコードは償還されました。
 
 English:Success! Your password has been updated.
 Translated:成功！パスワードが更新されました。
@@ -3007,20 +3085,32 @@ Translated:サポート率
 English:Support Type
 Translated:サポートタイプ
 
+English:Surfaced Editor
+Translated:サーフェイスエディタ
+
+English:Switch
+Translated:スイッチ
+
 English:Switch the settings interface to one intended for SLA printers.
 Translated:設定インターフェースをSLAプリンター向けのインターフェースに切り替えます。
+
+English:Switch to new G-Code?
+Translated:新しいGコードに切り替えますか？
+
+English:Sync Complete
+Translated:同期完了
 
 English:Sync Dashboard
 Translated:同期ダッシュボード
 
-English:Sync Printer Profiles Page
-Translated:プリンタープロファイルの同期ページ
+English:Sync Printers
+Translated:プリンタの同期
 
 English:Sync To Print
 Translated:印刷に同期
 
-English:Syncing Profiles...
-Translated:プロファイルを同期しています...
+English:Syncing Printer Profiles...
+Translated:プリンタプロファイルの同期中...
 
 English:Tee
 Translated:ティー
@@ -3035,7 +3125,7 @@ English:Temperatures
 Translated:気温
 
 English:Terminal
-Translated:「ターミナル」
+Translated:ターミナル
 
 English:Test Parts
 Translated:テスト部品
@@ -3052,8 +3142,17 @@ Translated:文字サイズ
 English:Thank you!  Your information has been submitted.
 Translated:ありがとうございました！あなたの情報が提出されました。
 
-English:The '{0}' must be greater than 0.
-Translated:'{0}'は0より大きくなければなりません。
+English:The {0} can only go as high as 100%.
+Translated:{0}は100％にしかなりません。
+
+English:The {0} must be at least 1.
+Translated:{0}は少なくとも1でなければなりません。
+
+English:The {0} must be between 0 and 1.
+Translated:{0}は0と1の間でなければなりません。
+
+English:The {0} must be greater than 0.
+Translated:{0}は0より大きくなければなりません。
 
 English:The actual diameter of the filament used for printing.
 Translated:印刷に使用されるフィラメントの実際の直径。
@@ -3079,6 +3178,9 @@ Translated:X軸から測定したインフィルの角度。ブリッジ時に�
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
 Translated:ベッドは現在加熱中で、目標温度は{0}℃に達するまで変更できません。\n\nSETTINGS  - > Filament  - > Temperaturesで開始床温度を設定することができます。\n\n{1}
 
+English:The date this file was originally created.
+Translated:このファイルが最初に作成された日付。
+
 English:The diameter of the extruder's nozzle.
 Translated:押出機のノズルの直径。
 
@@ -3094,8 +3196,8 @@ Translated:サポートの上端とモデルの下端の間の距離。良い値
 English:The distance filament will reverse before each qualifying non-print move
 Translated:各フィラメントの非印刷移動の前に距離フィラメントが逆転する
 
-English:The distance from the model at which the first skirt loop is drawn. Make this 0 to create an anchor for the part to the bed, also known as a brim.
-Translated:最初のスカートループが描かれるモデルからの距離。これを0にして、ベッドの部分のアンカーを作成します。このアンカーは、縁としても知られています。
+English:The distance from the model at which the first skirt loop is drawn.
+Translated:最初のスカートループが描かれるモデルからの距離。
 
 English:The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.
 Translated:境界線がループを完了したときに周囲が重なる距離。ノズル直径のパーセンテージで表されます。
@@ -3115,44 +3217,23 @@ Translated:zプローブが押出機からzまでの距離。手作業による�
 English:The distance to move the nozzle along the Z axis to ensure that it is the correct distance from the print bed. A positive number will raise the nozzle, and a negative number will lower it.
 Translated:Z軸に沿ってノズルを移動させ、プリントベッドから正しい距離にあることを確認します。正の数はノズルを上げ、負の数はそれを下げます。
 
+English:The distance to travel after completing a perimeter to improve seams.
+Translated:シームを改善するために周囲を完了した後に移動する距離。
+
 English:The extra distance the raft will extend around the edge of the part.
 Translated:筏がパーツの周りに広がる余分な距離。
-
-English:The Extruder Count must be at least 1.
-Translated:Extruder Countは少なくとも1でなければなりません。
 
 English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
 Translated:押出機は現在加熱中であり、目標温度は{0}℃に達するまで変更できません。\n\n'スライス設定'  - > 'フィラメント'で開始押出温度を設定できます。\n\n{1}
 
-English:The extruder will wipe the nozzle over the last up to 10 mm of tool path after retracting.
-Translated:押出機は、引っ込めた後、最後の10mmまでの工具経路にわたってノズルを拭きます。
-
 English:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
 Translated:印刷しようとしているファイルはGCodeファイルです。 \ NN \プリンタの設定に合ったGcodeファイルのみを印刷することをお勧めします。 \ NN \このGCodeファイルを印刷しますか？
-
-English:The Fill Density must be between 0 and 1.
-Translated:塗りつぶし密度は0と1の間でなければなりません。
 
 English:The geometric shape of the support structure for the inside of parts.
 Translated:部品内部のサポート構造の幾何学的形状。
 
 English:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
 Translated:プリンタの印刷可能なボリュームの高さ（ミリメートル）。 3Dビューで表示される視覚的な印刷領域の高さを制御します。
-
-English:The hot end needs to be heated to ensure it is clean.
-Translated:ホットエンドは、クリーンであることを保証するために加熱する必要があります。
-
-English:The image to show when explaining filament running clean.
-Translated:フィラメントが清潔であることを説明するときに表示される画像。
-
-English:The image to show when explaining inserting.
-Translated:挿入を説明するときに表示する画像。
-
-English:The image to show when explaining leveling and calibration.
-Translated:レベリングとキャリブレーションを説明するときに表示する画像。
-
-English:The image to show when explaining trimming.
-Translated:トリミングを説明するときに表示する画像。
 
 English:The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.
 Translated:支持材料の印刷に使用する押出機のインデックス。押出機カウントが1より大きい値に設定されている場合にのみ適用されます。
@@ -3169,29 +3250,32 @@ Translated:プリントが一時停止するフィラメントの変更を可能
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
 Translated:複数の押出機の間で交換するときに、次のノズルを拭くために使用されるプリントの背面左に作成されたタワーの長さおよび幅。無効にするには0に設定します。
 
-English:The maximum amount the printer can accelerate on a G-Code move. Only effects G-Code time estimates, does not change printer behavior.
-Translated:プリンタがGコード移動で加速できる最大量。エフェクトGコードの時間の見積もりだけが、プリンタの動作を変更しません。
+English:The Markdown that will be shown on the Clean Filament page.
+Translated:クリーンフィラメントページに表示されるマークダウン。
 
-English:The Maximum Fan Speed can only go as high as 100%.
-Translated:最大ファン速度は100％にしか上がらない。
+English:The Markdown that will be shown on the Insert Filament page.
+Translated:フィラメントの挿入ページに表示されるマークダウン。
+
+English:The Markdown that will be shown on the Trim Filament page.
+Translated:Markdownは、Trim Filamentページに表示されます。
+
+English:The maximum amount the printer can accelerate on a G-Code move.
+Translated:プリンタがGコード移動で加速できる最大量。
 
 English:The maximum speed at which the layer cooling fan will run, expressed as a percentage of full power.
 Translated:レイヤー冷却ファンが稼働する最大速度で、フルパワーに対するパーセンテージで表されます。
 
-English:The maximum speed that the printer treats as 0 and changes direction instantly. Only effects G-Code time estimates, does not change printer behavior.
-Translated:プリンタが0として処理し、方向を即時に変更する最大速度。エフェクトGコードの時間の見積もりだけが、プリンタの動作を変更しません。
+English:The maximum speed that the printer treats as 0 and changes direction instantly.
+Translated:プリンタが0として処理し、方向を即時に変更する最大速度。
 
-English:The maximum speed the printer can move. Only effects G-Code time estimates, does not change printer behavior.
-Translated:プリンタが移動できる最大速度。エフェクトGコードの時間の見積もりだけが、プリンタの動作を変更しません。
+English:The maximum speed the printer can move.
+Translated:プリンタが移動できる最大速度。
 
 English:The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.
 Translated:印刷に必要な最短時間です。レイヤーの所要時間がこの時間よりも短くなると、移動速度が遅くなるため、レイヤーの印刷時間はこの値と一致し、最低の印刷速度まで低下します。
 
 English:The minimum distance of a non-print move which will trigger a retraction.
 Translated:収縮を引き起こす非印刷移動の最小距離。
-
-English:The Minimum Fan Speed can only go as high as 100%.
-Translated:最小ファン速度は100％にしか上がらない。
 
 English:The minimum feature size to consider from the model. Leave at 0 to use all the model detail.
 Translated:モデルから考慮する最小フィーチャサイズ。すべてのモデルの詳細を使用するには、0のままにします。
@@ -3265,6 +3349,9 @@ Translated:オーバーラップして生成できる押出幅の割合。
 English:The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.
 Translated:プリントベッドの中心の位置（X座標とY座標）（ミリメートル）。通常、これはデカルトプリンタの場合はベッドサイズの1/2、Deltaプリンタの場合は0です。
 
+English:The position to measure the probe offset.
+Translated:プローブオフセットを測定する位置。
+
 English:The price of one kilogram of filament. Used for estimating the cost of a print in the Layer View.
 Translated:フィラメント1キロの価格。レイヤービューでプリントのコストを見積るために使用します。
 
@@ -3334,6 +3421,12 @@ Translated:外部、外部、または可視境界線が印刷される速度。
 English:The speed at which support material structures will print.
 Translated:サポート材質の構造が印刷される速度。
 
+English:The speed at which the air gap layer will print.
+Translated:エアギャップ層が印刷される速度。
+
+English:The speed at which the bottom solid layers will print. Can be set explicitly or as a percentage of the Infill speed. Use 0 to match infill speed.
+Translated:下部のソリッドレイヤーが印刷される速度。明示的に、またはインフィル速度のパーセンテージとして設定できます。充填速度に合わせるには0を使用します。
+
 English:The speed at which the layer cooling fan will run when bridging, expressed as a percentage of full power.
 Translated:ブリッジング時にレイヤー冷却ファンが稼動する速度。フルパワーに対するパーセンテージで表されます。
 
@@ -3394,8 +3487,14 @@ Translated:第1層を除くプリントの各層の厚さ。数値が小さい�
 English:The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.
 Translated:第1層の厚さ。デフォルトの層の厚さよりも大きい第1の層は、ビルドプレートへの良好な接着を保証することができる。
 
+English:The time it will take to unload the filament
+Translated:フィラメントをアンロードするのにかかる時間
+
 English:The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.
 Translated:Extra Length on Restartを最大値まで増加させる時間。この時間以下では余分な長さの一部だけが適用されます。常に全額を適用するには、0のままにしておきます。
+
+English:The time to print this G-Code is estimated to be {0} seconds.\n\nPlease check your part for errors if this is unexpected.
+Translated:このGコードを印刷する時間は{0}秒と推定されます。 \ NN \予期しない場合は、エラーのためにあなたの部分を確認してください。
 
 English:The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.
 Translated:プリンタのファームウェアが通信するGコードのバージョン。いくつかのファームウェアは異なるGコードとMコードを使用します。これを設定すると、出力Gコードが正しいコマンドを使用するようになります。
@@ -3406,8 +3505,8 @@ Translated:ベッド上の部品と衝突する可能性を最小限にするホ
 English:The X and Y values of the size of the print bed, in millimeters. For printers with a circular bed, these values are the diameters on the X and Y axes.
 Translated:プリントベッドのサイズのXとYの値（ミリメートル）。円形ベッドのあるプリンタの場合、これらの値はX軸とY軸の直径です。
 
-English:The Z Offset for your printer, sometimes called Babby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.
-Translated:お使いのプリンタのZオフセット（Babby Steppingとも呼ばれることもあります）は2mmより大きく、無効です。値をクリアし、ベッドのレベルを変更します。
+English:The Z Offset for your printer, sometimes called Baby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.
+Translated:お使いのプリンターのZオフセット（時々Baby Steppingと呼ばれる）は2mmより大きく、無効です。値をクリアし、ベッドのレベルを変更します。
 
 English:The z offset to apply to improve the first layer adhesion.
 Translated:第1層の接着性を改善するために適用するzオフセット。
@@ -3439,14 +3538,17 @@ Translated:これは、プリンタから受信した行に適用する正規表
 English:This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending. To return more than one instruction separate them with comma.
 Translated:これは、プリンタに送信する前に行に適用する正規表現のセットです。それらは送信する前にリストされた順序で適用されます。複数の命令を返すには、コンマで区切ります。
 
-English:This is located on the rear of your card
-Translated:これはカードの背面にあります
-
 English:This is the angle that lowers or deploys the z probe.
 Translated:これは、zプローブを下降または配置する角度です。
 
 English:This is the angle that raises or stows the z probe.
 Translated:これは、zプローブを上げたり、上に傾けたりする角度です。
+
+English:This is the make (often the manufacturer) of printer this profile is targeting.
+Translated:これは、このプロファイルが対象とするプリンタの製造元（多くの場合、製造元）です。
+
+English:This is the model of printer this profile is targeting.
+Translated:これは、このプロファイルが対象とするプリンタのモデルです。
 
 English:This is the name of your printer that will be displayed in the choose printer menu.
 Translated:これは、プリンタの選択メニューに表示されるプリンタの名前です。
@@ -3457,10 +3559,13 @@ Translated:これは、印刷中の振動を減らすのに役立ちます。プ
 English:This should be in 'G-Code'
 Translated:これは 'Gコード'にする必要があります
 
-English:This will ensure no filament is stuck to the tip.
-Translated:これにより、フィラメントがチップにくっつかないようになります。
+English:This will ensure that filament is able to flow through the nozzle.
+Translated:これにより、フィラメントがノズルを通って流れることが保証される。
 
-English:This will improve the accuracy of print leveling
+English:This will ensure that no filament is stuck to your nozzle.
+Translated:これにより、ノズルにフィラメントが付着していないことが保証されます。
+
+English:This will improve the accuracy of print leveling 
 Translated:これにより、印刷レベリングの精度が向上します
 
 English:This will improve the accuracy of print leveling.
@@ -3517,14 +3622,23 @@ Translated:トーラス
 English:Touch Screen Mode
 Translated:タッチスクリーンモード
 
+English:Transform Wrapper
+Translated:トランスフォームラッパー
+
+English:Translate
+Translated:翻訳
+
 English:Transparent
 Translated:トランスペアレント
 
 English:Travel
 Translated:旅行
 
-English:Trim Image
-Translated:画像をトリミングする
+English:Trim Filament
+Translated:トリムフィラメント
+
+English:Trim Filament Page
+Translated:フィラメントページをトリミングする
 
 English:Troubleshoot
 Translated:トラブルシューティング
@@ -3540,9 +3654,6 @@ Translated:チューニング調整
 
 English:Turn auto leveling on
 Translated:自動レベリングをオンにする
-
-English:Turn Off Heat in
-Translated:熱をオフにする
 
 English:Turn off motor current at end of print or after cancel print.
 Translated:印刷終了時または印刷をキャンセルした後に、モータ電流をオフにします。
@@ -3566,7 +3677,7 @@ English:Uh-oh! Could not connect to printer.
 Translated:ええとああ！プリンタに接続できませんでした。
 
 English:Unable to Connect
-Translated:つなげられない
+Translated:接続できません
 
 English:Unable to connect to server
 Translated:サーバーに接続できません
@@ -3584,7 +3695,7 @@ English:Ungroup
 Translated:グループを解除する
 
 English:Unknown
-Translated:未知の
+Translated:道の
 
 English:Unknown Reason
 Translated:不明な理由
@@ -3598,14 +3709,23 @@ Translated:フィラメントを取り外す
 English:Unload Filament Length
 Translated:アンロードフィラメントの長さ
 
+English:Unload Filament Time
+Translated:アンロードフィラメント時間
+
 English:Unlock
 Translated:ロックを解除する
 
 English:Unsupported Baud Rate
 Translated:サポートされていないボーレート
 
+English:Up
+Translated:アップ
+
 English:Up Arrow
 Translated:上向き矢印
+
+English:Up one folder
+Translated:1つのフォルダを開く
 
 English:Update
 Translated:更新
@@ -3646,9 +3766,6 @@ Translated:G0を使う
 English:Use G0 for moves rather than G1.
 Translated:G1ではなく、移動にG0を使用します。
 
-English:Use Percents
-Translated:パーセンテージを使用する
-
 English:Use Relative E Distances
 Translated:相対E距離を使用する
 
@@ -3685,12 +3802,6 @@ Translated:バージョン
 English:Vibration Limit
 Translated:振動限界
 
-English:View
-Translated:ビュー
-
-English:View Designs
-Translated:デザインを表示
-
 English:View Icons
 Translated:アイコンを見る
 
@@ -3706,11 +3817,11 @@ Translated:リストを見る
 English:View Small Icons
 Translated:小さなアイコンを見る
 
-English:View Style
-Translated:スタイルを表示
-
 English:View XSmall Icons
 Translated:XSmallのアイコンを見る
+
+English:Wait For Running Clean
+Translated:きれいに走るのを待つ
 
 English:Waiting For Bed To Heat
 Translated:ベッドを熱く待っている
@@ -3742,6 +3853,9 @@ Translated:警告 -  EEPromマッピングなし
 English:Warning! The tip of the nozzle will be HOT!
 Translated:警告！ノズルの先端は熱くなります！
 
+English:Warning, very short print
+Translated:警告、非常に短いプリント
+
 English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
 Translated:警告：切断すると、現在の印刷が中止されます。 \ NN \切断してもよろしいですか？
 
@@ -3766,6 +3880,9 @@ Translated:この位置での押出機の高さの測定を改良する。
 English:We will use this paper to measure the distance between the extruder and the bed.
 Translated:このペーパーを使用して、押出機とベッドとの間の距離を測定する。
 
+English:Website
+Translated:ウェブサイト
+
 English:Wedge
 Translated:ウェッジ
 
@@ -3784,6 +3901,9 @@ Translated:新着情報...
 English:What's this?
 Translated:これは何ですか？
 
+English:wheel
+Translated:ホイール
+
 English:When this is checked MatterControl will attempt to recover a print in the event of a failure, such as lost connection or lost power.
 Translated:これがチェックされると、MatterControlは、接続が失われたり電源が切れたなどの障害が発生した場合に、プリントを回復しようとします。
 
@@ -3799,14 +3919,8 @@ Translated:幅
 English:Wifi Setup
 Translated:Wi-Fiセットアップ
 
-English:Wiki
-Translated:ウィキ
-
 English:wipe
 Translated:ワイプ
-
-English:Wipe Before Retract
-Translated:退去前に拭く
 
 English:Wipe Shield Distance
 Translated:ワイプシールド距離
@@ -3816,6 +3930,9 @@ Translated:ワイプタワーサイズ
 
 English:Would you like to setup Wifi?
 Translated:Wi-Fiをセットアップしますか？
+
+English:Would you like to switch to the new G-Code? Before you switch, check that your are seeing the changes you expect.
+Translated:あなたは新しいGコードに切り替えたいですか？スイッチを切り替える前に、期待している変更が表示されていることを確認してください。
 
 English:Write Filter
 Translated:ライトフィルタ
@@ -3850,8 +3967,11 @@ Translated:新しいプリンタプロファイルを正常にインポートし
 English:You may need to wait a minute for your printer to finish initializing.
 Translated:プリンタの初期化が完了するまで1分待つ必要があるかもしれません。
 
-English:Your 3D print has been auto-paused.\nPause layer{0} reached.
-Translated:3Dプリントが自動的に一時停止されました。 \ n一時停止層{0}に達しました。
+English:Your 3D print has been auto-paused.\n\nLayer{0} reached.
+Translated:3Dプリントが自動的に一時停止されました。\n\nLayer {0}に達しました。
+
+English:Your 3D print has been paused.\n\nOut of filament detected.
+Translated:3D印刷が一時停止されました。 \ NN \フィラメントが検出されました。
 
 English:Your application is up-to-date
 Translated:あなたのアプリケーションは最新です
@@ -3865,14 +3985,11 @@ Translated:メールアドレス
 English:Your invite has been sent!
 Translated:あなたの招待状が送信されました！
 
-English:Your new designs will appear in the 'Purchased' library folder.
-Translated:新しいデザインが[購入済み]ライブラリフォルダに表示されます。
-
 English:Your Phone Number
 Translated:あなたの電話番号
 
-English:Your printer is reporting a hardware Error. This may prevent your printer from functioning properly.
-Translated:プリンタがハードウェアエラーを報告しています。これにより、プリンタが正しく機能しなくなる可能性があります。
+English:Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.
+Translated:プリンタがハードウェアエラーを報告しており、一時停止しています。エラーを確認し、必要に応じて印刷をキャンセルしてください。
 
 English:Your Probe is now calibrated.
 Translated:これでプローブが較正されました。
@@ -3880,17 +3997,17 @@ Translated:これでプローブが較正されました。
 English:Your Share Code
 Translated:あなたのシェアコード
 
-English:Your Start G-Code should not contain a G29 if you are planning on using print leveling. Change your start G-Code or turn off print leveling
-Translated:プリントレベリングを使用する予定がある場合は、スタートGコードにG29を含めないでください。開始Gコードを変更するか、印刷レベリングをオフにする
+English:Your Start G-Code should not contain a G29 if you are planning on using print leveling. Change your start G-Code or turn off print leveling.
+Translated:プリントレベリングを使用する予定がある場合は、スタートGコードにG29を含めないでください。開始Gコードを変更するか、印刷の平準化をオフにします。
 
-English:Your Start G-Code should not contain a G29 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery
-Translated:プリントリカバリを使用する予定がある場合は、スタートGコードにG29を含めないでください。開始Gコードを変更するか、印刷の回復を無効にする
+English:Your Start G-Code should not contain a G29 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
+Translated:プリントリカバリを使用する予定がある場合は、スタートGコードにG29を含めないでください。開始Gコードを変更するか、印刷の回復をオフにします。
 
-English:Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling
-Translated:プリントレベリングを使用する予定がある場合は、スタートGコードにG30を含めないでください。開始Gコードを変更するか、印刷レベリングをオフにする
+English:Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling.
+Translated:プリントレベリングを使用する予定がある場合は、スタートGコードにG30を含めないでください。開始Gコードを変更するか、印刷の平準化をオフにします。
 
-English:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery
-Translated:プリントリカバリの使用を計画している場合は、スタートGコードにG30を含めないでください。開始Gコードを変更するか、印刷の回復を無効にする
+English:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
+Translated:プリントリカバリの使用を計画している場合は、スタートGコードにG30を含めないでください。開始Gコードを変更するか、印刷の回復をオフにします。
 
 English:Z Lift
 Translated:Zリフト
