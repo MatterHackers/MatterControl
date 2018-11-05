@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -50,6 +51,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private int partCount = 0;
 		private ThemeConfig theme;
+		private Toolbar statusBar;
+		private FlowLayoutWidget tasksContainer;
+		private GuiWidget stretchStatusPanel;
 
 		public MainViewWidget(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -312,6 +316,64 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.SelectedTabKey = tabKey;
 
+			statusBar = new Toolbar(theme)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Absolute,
+				Padding = 1,
+				Height = 23,
+				BackgroundColor = theme.BackgroundColor,
+				Border = new BorderDouble(top: 1),
+				BorderColor = theme.BorderColor20,
+			};
+			this.AddChild(statusBar);
+
+			statusBar.ActionArea.VAnchor = VAnchor.Stretch;
+
+			tasksContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Stretch,
+				BackgroundColor = theme.MinimalShade,
+				Name = "runningTasksPanel"
+			};
+			statusBar.AddChild(tasksContainer);
+
+			var tasks = ApplicationController.Instance.Tasks;
+
+			tasks.TasksChanged += (s, e) =>
+			{
+				RenderRunningTasks(theme, tasks);
+			};
+
+			stretchStatusPanel = new GuiWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+				Padding = new BorderDouble(right: 3),
+				Margin = new BorderDouble(right: 2, top: 1, bottom: 1),
+				Border = new BorderDouble(1),
+				BackgroundColor = theme.MinimalShade.WithAlpha(10),
+				BorderColor = theme.SlightShade,
+				Width = 200
+			};
+			statusBar.AddChild(stretchStatusPanel);
+
+			var networkStatus = new GuiWidget()
+			{
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Stretch,
+				Padding = new BorderDouble(right: 3),
+				Margin = new BorderDouble(right: 2, top: 1, bottom: 1),
+				Border = new BorderDouble(1),
+				BackgroundColor = theme.MinimalShade.WithAlpha(10),
+				BorderColor = theme.SlightShade,
+				Width = 80
+			};
+			statusBar.AddChild(networkStatus);
+
+			this.RenderRunningTasks(theme, tasks);
+
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent((s, e) =>
 			{
 				SetLinkButtonsVisibility(s, new StringEventArgs("Unknown"));
@@ -474,6 +536,43 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
+		}
+
+		private void RenderRunningTasks(ThemeConfig theme, RunningTasksConfig tasks)
+		{
+			var rows = tasksContainer.Children.OfType<RunningTaskStatusPanel>().ToList();
+			var displayedTasks = new HashSet<RunningTaskDetails>(rows.Select(taskRow => taskRow.taskDetails));
+			var runningTasks = tasks.RunningTasks;
+
+			// Remove expired items
+			foreach (var row in rows)
+			{
+				if (!runningTasks.Contains(row.taskDetails))
+				{
+					row.Close();
+				}
+			}
+
+			var progressBackgroundColor = new Color(theme.AccentMimimalOverlay, 35);
+
+			// Add new items
+			foreach (var taskItem in tasks.RunningTasks.Where(t => !displayedTasks.Contains(t)))
+			{
+				var runningTaskPanel = new RunningTaskStatusPanel("", taskItem, theme)
+				{
+					HAnchor = HAnchor.Absolute,
+					VAnchor = VAnchor.Stretch,
+					Margin = new BorderDouble(right: 2),
+					Border = new BorderDouble(1),
+					BorderColor = theme.SlightShade,
+					ProgressBackgroundColor = progressBackgroundColor,
+					Width = 200
+				};
+
+				tasksContainer.AddChild(runningTaskPanel);
+			}
+
+			tasksContainer.Invalidate();
 		}
 	}
 }
