@@ -70,15 +70,6 @@
     "DefaultValue": "70"
   },
   {
-    "SlicerConfigName": "unload_filament_length_over_six",
-    "PresentationName": "Unload Filament Length",
-    "HelpText": "Should be 100%. Not shown to user.",
-    "DataEditType": "DOUBLE_OR_PERCENT",
-    "Units": "%",
-    "ShowIfSet": "!sla_printer",
-    "DefaultValue": "100%"
-  },
-  {
     "SlicerConfigName": "trim_filament_markdown",
     "PresentationName": "Trim Filament Page",
     "HelpText": "The Markdown that will be shown on the Trim Filament page.",

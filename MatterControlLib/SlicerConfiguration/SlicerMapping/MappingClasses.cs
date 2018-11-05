@@ -55,7 +55,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			new MappedSetting(SettingsKey.max_fan_speed,"max_fan_speed"),
 			new MappedSetting(SettingsKey.min_fan_speed,"min_fan_speed"),
 			new MappedSetting("retract_length","retract_length"),
-			new LoadTimeFromSpeedAndLength("unload_filament_time", "unload_filament_length", SettingsKey.load_filament_speed),
 			new MappedSetting(SettingsKey.temperature,SettingsKey.temperature),
 			new MappedSetting("z_offset","z_offset"),
 			new MappedSetting(SettingsKey.bed_temperature,SettingsKey.bed_temperature),
@@ -65,7 +64,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			new ScaledSingleNumber("retract_speed","retract_speed", 60),
 			new ScaledSingleNumber("support_material_speed","support_material_speed", 60),
 			new ScaledSingleNumber("travel_speed", "travel_speed", 60),
-			new AsPercentOfReferenceOrDirect("unload_filament_length_over_six", "", "unload_filament_length", 1.0/6.0, false),
 			new ScaledSingleNumber(SettingsKey.load_filament_speed, SettingsKey.load_filament_speed, 60),
 			new MappedSetting(SettingsKey.trim_filament_markdown, SettingsKey.trim_filament_markdown),
 			new MappedSetting(SettingsKey.insert_filament_markdown, SettingsKey.insert_filament_markdown),
@@ -661,33 +659,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				finalValue *= scale;
 
 				return finalValue.ToString();
-			}
-		}
-	}
-
-	public class LoadTimeFromSpeedAndLength : MappedSetting
-	{
-		string lengthSettingName;
-		string speedSettingName;
-
-		public LoadTimeFromSpeedAndLength(string canonicalSettingsName, string lengthSettingName, string speedSettingName)
-			: base(canonicalSettingsName, "")
-		{
-			this.lengthSettingName = lengthSettingName;
-			this.speedSettingName = speedSettingName;
-		}
-
-		public override string Value
-		{
-			get
-			{
-				string lengthString = printer.Settings.GetValue(lengthSettingName);
-				double length = ParseDouble(lengthString);
-
-				string speedString = printer.Settings.GetValue(speedSettingName);
-				double speed = ParseDouble(speedString);
-
-				return (length / speed).ToString();
 			}
 		}
 	}

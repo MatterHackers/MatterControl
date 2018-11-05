@@ -187,15 +187,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private SendProgressStream sendProgressStream1 = null;
 		private PauseHandlingStream pauseHandlingStream2 = null;
 		private QueuedCommandsStream queuedCommandStream3 = null;
-		private MacroProcessingStream macroProcessingStream4 = null;
-		private RelativeToAbsoluteStream relativeToAbsoluteStream5 = null;
-		private PrintLevelingStream printLevelingStream7 = null;
-		private WaitForTempStream waitForTempStream8 = null;
-		private BabyStepsStream babyStepsStream6 = null;
-		private ExtrusionMultiplyerStream extrusionMultiplyerStream9 = null;
-		private FeedRateMultiplyerStream feedrateMultiplyerStream10 = null;
-		private RequestTemperaturesStream requestTemperaturesStream11 = null;
-		private ProcessWriteRegexStream processWriteRegExStream12 = null;
+		private RelativeToAbsoluteStream relativeToAbsoluteStream4 = null;
+		private BabyStepsStream babyStepsStream5 = null;
+		private PrintLevelingStream printLevelingStream6 = null;
+		private WaitForTempStream waitForTempStream7 = null;
+		private ExtrusionMultiplyerStream extrusionMultiplyerStream8 = null;
+		private FeedRateMultiplyerStream feedrateMultiplyerStream9 = null;
+		private RequestTemperaturesStream requestTemperaturesStream10 = null;
+		private ProcessWriteRegexStream processWriteRegExStream11 = null;
 
 		private GCodeStream totalGCodeStream = null;
 
@@ -2129,25 +2128,24 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 
 			queuedCommandStream3 = new QueuedCommandsStream(firstStreamToRead);
-			macroProcessingStream4 = new MacroProcessingStream(queuedCommandStream3, printer);
-			relativeToAbsoluteStream5 = new RelativeToAbsoluteStream(macroProcessingStream4);
+			relativeToAbsoluteStream4 = new RelativeToAbsoluteStream(queuedCommandStream3);
 			bool enableLineSpliting = gcodeFilename != null && printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
-			babyStepsStream6 = new BabyStepsStream(printer, relativeToAbsoluteStream5, enableLineSpliting ? 1 : 2000);
+			babyStepsStream5 = new BabyStepsStream(printer, relativeToAbsoluteStream4, enableLineSpliting ? 1 : 2000);
 			if (activePrintTask != null)
 			{
 				// make sure we are in the position we were when we stopped printing
-				babyStepsStream6.Offset = new Vector3(activePrintTask.PrintingOffsetX, activePrintTask.PrintingOffsetY, activePrintTask.PrintingOffsetZ);
+				babyStepsStream5.Offset = new Vector3(activePrintTask.PrintingOffsetX, activePrintTask.PrintingOffsetY, activePrintTask.PrintingOffsetZ);
 			}
-			printLevelingStream7 = new PrintLevelingStream(printer, babyStepsStream6, true);
-			waitForTempStream8 = new WaitForTempStream(this, printLevelingStream7);
-			extrusionMultiplyerStream9 = new ExtrusionMultiplyerStream(waitForTempStream8);
-			feedrateMultiplyerStream10 = new FeedRateMultiplyerStream(extrusionMultiplyerStream9);
-			requestTemperaturesStream11 = new RequestTemperaturesStream(this, feedrateMultiplyerStream10);
-			processWriteRegExStream12 = new ProcessWriteRegexStream(printer, requestTemperaturesStream11, queuedCommandStream3);
-			totalGCodeStream = processWriteRegExStream12;
+			printLevelingStream6 = new PrintLevelingStream(printer, babyStepsStream5, true);
+			waitForTempStream7 = new WaitForTempStream(this, printLevelingStream6);
+			extrusionMultiplyerStream8 = new ExtrusionMultiplyerStream(waitForTempStream7);
+			feedrateMultiplyerStream9 = new FeedRateMultiplyerStream(extrusionMultiplyerStream8);
+			requestTemperaturesStream10 = new RequestTemperaturesStream(this, feedrateMultiplyerStream9);
+			processWriteRegExStream11 = new ProcessWriteRegexStream(printer, requestTemperaturesStream10, queuedCommandStream3);
+			totalGCodeStream = processWriteRegExStream11;
 
 			// Force a reset of the printer checksum state (but allow it to be write regexed)
-			var transformedCommand = processWriteRegExStream12?.ProcessWriteRegEx("M110 N1");
+			var transformedCommand = processWriteRegExStream11?.ProcessWriteRegEx("M110 N1");
 			if (transformedCommand != null)
 			{
 				foreach (var line in transformedCommand)
@@ -2180,13 +2178,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					// Only update the amount done if it is greater than what is recorded.
 					// We don't want to mess up the resume before we actually resume it.
 					if (activePrintTask != null
-					    && babyStepsStream6 != null
+					    && babyStepsStream5 != null
 						&& activePrintTask.PercentDone < currentDone)
 					{
 						activePrintTask.PercentDone = currentDone;
-						activePrintTask.PrintingOffsetX = (float)babyStepsStream6.Offset.X;
-						activePrintTask.PrintingOffsetY = (float)babyStepsStream6.Offset.Y;
-						activePrintTask.PrintingOffsetZ = (float)babyStepsStream6.Offset.Z;
+						activePrintTask.PrintingOffsetX = (float)babyStepsStream5.Offset.X;
+						activePrintTask.PrintingOffsetY = (float)babyStepsStream5.Offset.Y;
+						activePrintTask.PrintingOffsetZ = (float)babyStepsStream5.Offset.Z;
 						activePrintTask?.Commit();
 
 						// Interval looks to be ~10ms
@@ -2277,13 +2275,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				timeSinceStartedPrint.Stop();
 				DetailedPrintingState = DetailedPrintingState.HomingAxis;
 			}
-			else if (waitForTempStream8?.HeatingBed ?? false)
+			else if (waitForTempStream7?.HeatingBed ?? false)
 			{
 				// don't time the heating bed opperation opperation
 				timeSinceStartedPrint.Stop();
 				DetailedPrintingState = DetailedPrintingState.HeatingBed;
 			}
-			else if (waitForTempStream8?.HeatingExtruder ?? false)
+			else if (waitForTempStream7?.HeatingExtruder ?? false)
 			{
 				// don't time the heating extruder opperation opperation
 				timeSinceStartedPrint.Stop();
@@ -2659,20 +2657,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public void MacroStart()
 		{
 			queuedCommandStream3?.Reset();
-			macroProcessingStream4.Reset();
 		}
 
 		public void MacroCancel()
 		{
-			babyStepsStream6?.CancelMoves();
-			waitForTempStream8?.Cancel();
+			babyStepsStream5?.CancelMoves();
+			waitForTempStream7?.Cancel();
 			queuedCommandStream3?.Cancel();
-			macroProcessingStream4?.Cancel();
-		}
-
-		public void MacroContinue()
-		{
-			macroProcessingStream4?.Continue();
 		}
 
 		public class ReadThread

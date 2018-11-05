@@ -112,7 +112,6 @@
     <None Include="StaticData\License\matterslice.txt" />
     <None Include="StaticData\License\opentk.txt" />
     <None Include="StaticData\SliceSettings\Layouts.txt" />
-    <None Include="StaticData\SliceSettings\unload_filament.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
