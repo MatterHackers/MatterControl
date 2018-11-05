@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class SelectMaterialPage : PrinterSetupWizardPage
 	{
-		public SelectMaterialPage(PrinterSetupWizard context, string headerText, string instructionsText, bool onlyLoad)
+		public SelectMaterialPage(PrinterSetupWizard context, string headerText, string instructionsText, string nextButtonText, bool onlyLoad)
 			: base(context, headerText, instructionsText)
 		{
 			contentRow.AddChild(
@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					Margin = new BorderDouble(0, 0, 0, 15)
 				});
 
-			NextButton.Text = "Load";
+			NextButton.Text = nextButtonText;
 
 			if (!onlyLoad)
 			{

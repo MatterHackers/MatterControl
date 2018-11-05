@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			var instructions = "Please select the material you want to load.".Localize();
 
 			// select the material
-			yield return new SelectMaterialPage(this, title, instructions, onlyLoad);
+			yield return new SelectMaterialPage(this, title, instructions, "Load".Localize(), onlyLoad);
 
 			var theme = ApplicationController.Instance.Theme;
 
@@ -197,6 +197,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 						// Allow extrusion at any temperature. S0 only works on Marlin S1 works on repetier and marlin
 						printer.Connection.QueueLine("M302 S1");
+						// send a dwel to empty out the current move commands
+						printer.Connection.QueueLine("G4 P1");
+						// put in a second one to use as a signal for the first being processed
+						printer.Connection.QueueLine("G4 P1");
 						// start heating up the extruder
 						printer.Connection.SetTargetHotendTemperature(0, printer.Settings.GetValue<double>(SettingsKey.temperature));
 
@@ -205,17 +209,23 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						var remainingLengthMm = loadLengthMm;
 						var maxSingleExtrudeLength = 20;
 
-						var runningTime = Stopwatch.StartNew();
+						Stopwatch runningTime = null;
 						var expectedTimeS = loadLengthMm / loadingSpeedMmPerS;
+
 						runningGCodeCommands = UiThread.SetInterval(() =>
 						{
 							if (printer.Connection.NumQueuedCommands == 0)
 							{
+								if(runningTime == null)
+								{
+									runningTime = Stopwatch.StartNew();
+								}
+
 								if (progressBar.RatioComplete < 1)
 								{
 									var thisExtrude = Math.Min(remainingLengthMm, maxSingleExtrudeLength);
 									var currentE = printer.Connection.CurrentExtruderDestination;
-									printer.Connection.QueueLine("G1 {0}{1:0.###} F{2}".FormatWith(PrinterCommunication.PrinterConnection.Axis.E, currentE + thisExtrude, loadingSpeedMmPerS * 60));
+									printer.Connection.QueueLine("G1 E{0:0.###} F{1}".FormatWith(currentE + thisExtrude, loadingSpeedMmPerS * 60));
 									remainingLengthMm -= thisExtrude;
 									var elapsedSeconds = runningTime.Elapsed.TotalSeconds;
 									progressBar.RatioComplete = Math.Min(1, elapsedSeconds / expectedTimeS);
@@ -223,7 +233,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 								}
 							}
 
-							if (progressBar.RatioComplete == 1)
+							if (runningGCodeCommands.Continue == true
+								&& progressBar.RatioComplete == 1 
+								&& remainingLengthMm <= .001)
 							{
 								runningGCodeCommands.Continue = false;
 								loadingFilamentPage.NextButton.InvokeClick();
@@ -276,8 +288,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					BecomingActive = () =>
 					{
-						runningCleanPage.ShowWizardFinished();
-
 						var markdownText = printer.Settings.GetValue(SettingsKey.running_clean_markdown);
 						var markdownWidget = new MarkdownWidget(theme);
 						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
@@ -317,6 +327,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				yield return runningCleanPage;
 			}
+
+			// put up a success message
+			PrinterSetupWizardPage finalPage = null;
+			finalPage = new PrinterSetupWizardPage(this, "Success".Localize(), "Success!\n\nYour filament should now be loaded".Localize())
+			{
+				BecomingActive = () =>
+				{
+					finalPage.ShowWizardFinished();
+				}
+			};
+
+			yield return finalPage;
 		}
 	}
 }

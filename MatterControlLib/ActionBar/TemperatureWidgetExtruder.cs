@@ -54,12 +54,12 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.HAnchor = HAnchor.Stretch;
 			this.printer = printer;
 
-			GuiWidget macroButtons = null;
+			GuiWidget loadUnloadButtons = null;
 			// We do not yet support loading filament into extruders other than 0, fix it when time.
 			if (extruderIndex == 0)
 			{
 				// add in load and unload buttons
-				macroButtons = new FlowLayoutWidget()
+				loadUnloadButtons = new FlowLayoutWidget()
 				{
 					Padding = theme.ToolbarPadding,
 				};
@@ -74,19 +74,20 @@ namespace MatterHackers.MatterControl.ActionBar
 						LoadFilamentWizard.Start(printer, theme, true);
 					});
 				};
-				macroButtons.AddChild(loadButton);
-
-				var unloadFilament = new GCodeMacro()
-				{
-					GCode = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "unload_filament.txt"))
-				};
+				loadUnloadButtons.AddChild(loadButton);
 
 				var unloadButton = theme.CreateDialogButton("Unload".Localize());
 				unloadButton.ToolTipText = "Unload filament".Localize();
-				unloadButton.Click += (s, e) => unloadFilament.Run(printer.Connection);
-				macroButtons.AddChild(unloadButton);
+				unloadButton.Click += (s, e) =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						UnloadFilamentWizard.Start(printer, theme, true);
+					});
+				};
+				loadUnloadButtons.AddChild(unloadButton);
 
-				this.AddChild(new SettingsItem("Filament".Localize(), macroButtons, theme, enforceGutter: false));
+				this.AddChild(new SettingsItem("Filament".Localize(), loadUnloadButtons, theme, enforceGutter: false));
 			}
 
 			// Add the Extrude buttons
@@ -97,7 +98,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				Padding = theme.ToolbarPadding,
 			};
 
-			int extruderButtonTopMargin = macroButtons == null ? 8 : 0;
+			int extruderButtonTopMargin = loadUnloadButtons == null ? 8 : 0;
 
 			var extrudeButton = theme.CreateDialogButton("Extrude".Localize());
 			extrudeButton.Name = "Extrude Button";
@@ -117,7 +118,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			buttonContainer.AddChild(retractButton);
 
 			this.AddChild(new SettingsItem(
-				macroButtons == null ? "Filament".Localize() : "", // Don't put the name if we put in a macro button (it has the name)
+				loadUnloadButtons == null ? "Filament".Localize() : "", // Don't put the name if we put in a load and unload button (it has the name)
 				buttonContainer,
 				theme,
 				enforceGutter: false));

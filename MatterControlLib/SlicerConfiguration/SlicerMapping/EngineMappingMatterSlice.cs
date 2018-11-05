@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.trim_filament_markdown,
 			SettingsKey.insert_filament_markdown,
 			SettingsKey.running_clean_markdown,
-			"unload_filament_length",
+			SettingsKey.unload_filament_length,
 			SettingsKey.load_filament_speed,
 		};
 
