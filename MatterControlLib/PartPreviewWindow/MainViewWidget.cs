@@ -562,7 +562,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					HAnchor = HAnchor.Absolute,
 					VAnchor = VAnchor.Stretch,
-					Margin = new BorderDouble(right: 2),
+					Margin = new BorderDouble(right: 2, top: 1, bottom: 1),
 					Border = new BorderDouble(1),
 					BorderColor = theme.SlightShade,
 					ProgressBackgroundColor = progressBackgroundColor,
