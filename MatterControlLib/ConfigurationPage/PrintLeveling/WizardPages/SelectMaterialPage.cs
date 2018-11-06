@@ -48,20 +48,43 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			NextButton.Text = nextButtonText;
 
-			if (!onlyLoad)
+			if (onlyLoad)
 			{
-				var alreadyLoadedButton = new TextButton("Already Loaded".Localize(), theme)
+			}
+			else
+			{
+				NextButton.Visible = false;
+
+				contentRow.AddChild(this.CreateTextField("Optionally, click below to get help loading this material".Localize() + ":"));
+
+				var loadFilamentButton = new TextButton("Load Filament".Localize(), theme)
 				{
-					Name = "Already Loaded Button",
+					Name = "Load Filament",
+					BackgroundColor = theme.MinimalShade,
+					VAnchor = Agg.UI.VAnchor.Absolute,
+					HAnchor = Agg.UI.HAnchor.Fit | Agg.UI.HAnchor.Left,
+					Margin = new BorderDouble(10, 0, 0, 15)
+				};
+				loadFilamentButton.Click += (s, e) =>
+				{
+					wizardContext.ShowNextPage(this.DialogWindow);
+				};
+
+				contentRow.AddChild(loadFilamentButton);
+
+				var selectButton = new TextButton("Select".Localize(), theme)
+				{
+					Name = "Select Button",
 					BackgroundColor = theme.MinimalShade
 				};
-				alreadyLoadedButton.Click += (s, e) =>
+
+				selectButton.Click += (s, e) =>
 				{
 					this.DialogWindow.CloseOnIdle();
 					printer.Settings.SetValue(SettingsKey.filament_has_been_loaded, "1");
 				};
 
-				this.AddPageAction(alreadyLoadedButton);
+				this.AddPageAction(selectButton);
 			}
 		}
 	}
