@@ -117,8 +117,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.progress_reporting,
 			SettingsKey.load_filament_length,
 			SettingsKey.trim_filament_markdown,
-			SettingsKey.insert_filament_markdown,
-			SettingsKey.running_clean_markdown,
+			SettingsKey.insert_filament_markdown2,
+			SettingsKey.running_clean_markdown2,
 			SettingsKey.unload_filament_length,
 			SettingsKey.load_filament_speed,
 		};

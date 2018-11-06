@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					BecomingActive = () =>
 					{
-						var markdownText = printer.Settings.GetValue(SettingsKey.insert_filament_markdown);
+						var markdownText = printer.Settings.GetValue(SettingsKey.insert_filament_markdown2);
 						var markdownWidget = new MarkdownWidget(theme);
 						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
 						insertFilamentPage.ContentRow.AddChild(markdownWidget);
@@ -180,18 +180,22 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						loadingFilamentPage.NextButton.Enabled = false;
 
 						// add the progress bar
-						var holder = new FlowLayoutWidget();
+						var holder = new FlowLayoutWidget()
+						{
+							Margin = new BorderDouble(3, 0, 0, 10),
+						};
 						var progressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))
 						{
 							FillColor = theme.PrimaryAccentColor,
 							BorderColor = theme.TextColor,
 							BackgroundColor = Color.White,
-							Margin = new BorderDouble(3, 0, 0, 10),
+							VAnchor = VAnchor.Center,
 						};
 						var progressBarText = new TextWidget("", pointSize: 10, textColor: theme.TextColor)
 						{
 							AutoExpandBoundsToText = true,
 							Margin = new BorderDouble(5, 0, 0, 0),
+							VAnchor = VAnchor.Center,
 						};
 						holder.AddChild(progressBar);
 						holder.AddChild(progressBarText);
@@ -290,7 +294,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					BecomingActive = () =>
 					{
-						var markdownText = printer.Settings.GetValue(SettingsKey.running_clean_markdown);
+						var markdownText = printer.Settings.GetValue(SettingsKey.running_clean_markdown2);
 						var markdownWidget = new MarkdownWidget(theme);
 						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
 						runningCleanPage.ContentRow.AddChild(markdownWidget);
@@ -323,8 +327,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					if (runningGCodeCommands.Continue)
 					{
 						runningGCodeCommands.Continue = false;
-						printer.Settings.SetValue(SettingsKey.filament_has_been_loaded, "1");
 					}
+					printer.Settings.SetValue(SettingsKey.filament_has_been_loaded, "1");
 				};
 
 				yield return runningCleanPage;

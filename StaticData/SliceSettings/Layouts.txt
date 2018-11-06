@@ -212,8 +212,8 @@ Printer
     Oem
       General
         trim_filament_markdown
-        insert_filament_markdown
-        running_clean_markdown
+        insert_filament_markdown2
+        running_clean_markdown2
         created_date
   G-Code
     G-Code

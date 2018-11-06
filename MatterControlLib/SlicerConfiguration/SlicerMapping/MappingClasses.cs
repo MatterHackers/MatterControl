@@ -66,8 +66,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			new ScaledSingleNumber("travel_speed", "travel_speed", 60),
 			new ScaledSingleNumber(SettingsKey.load_filament_speed, SettingsKey.load_filament_speed, 60),
 			new MappedSetting(SettingsKey.trim_filament_markdown, SettingsKey.trim_filament_markdown),
-			new MappedSetting(SettingsKey.insert_filament_markdown, SettingsKey.insert_filament_markdown),
-			new MappedSetting(SettingsKey.running_clean_markdown, SettingsKey.running_clean_markdown),
+			new MappedSetting(SettingsKey.insert_filament_markdown2, SettingsKey.insert_filament_markdown2),
+			new MappedSetting(SettingsKey.running_clean_markdown2, SettingsKey.running_clean_markdown2),
 		};
 
 		public static string ReplaceMacroValues(string gcodeWithMacros)
