@@ -47,11 +47,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public static void Start(PrinterConfig printer, ThemeConfig theme, bool onlyLoad)
 		{
 			temperatureAtStart = printer.Connection.GetTargetHotendTemperature(0);
-			// turn off print leveling
-			var levelingContext = new LoadFilamentWizard(printer, onlyLoad)
+
+			var levelingContext = new LoadFilamentWizard(printer, onlyLoad);
+
+			if (onlyLoad)
 			{
-				WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Load Filament Wizard".Localize()
-			};
+				levelingContext.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Load Filament Wizard".Localize();
+			}
+			else
+			{
+				levelingContext.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Select Filament Wizard".Localize();
+			}
 
 			var loadFilamentWizardWindow = DialogWindow.Show(new LevelingWizardRootPage(levelingContext)
 			{
@@ -79,11 +85,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			var levelingStrings = new LevelingStrings(printer.Settings);
 
-			var title = "Load Material".Localize();
-			var instructions = "Please select the material you want to load.".Localize();
+			var title = "Select Material".Localize();
+			var instructions = "Please select the material you will be printing with.".Localize();
+
+			if (onlyLoad)
+			{
+				title = "Load Material".Localize();
+				instructions = "Please select the material you want to load.".Localize();
+			}
 
 			// select the material
-			yield return new SelectMaterialPage(this, title, instructions, "Load".Localize(), onlyLoad);
+			yield return new SelectMaterialPage(this, title, instructions, onlyLoad ? "Load".Localize() : "Select".Localize(), onlyLoad);
 
 			var theme = ApplicationController.Instance.Theme;
 
