@@ -459,6 +459,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					if (testRunner.NameExists("Library Row Item Collection"))
 					{
 						testRunner.DoubleClickByName("Library Row Item Collection");
+						testRunner.Delay();
 					}
 
 					break;
