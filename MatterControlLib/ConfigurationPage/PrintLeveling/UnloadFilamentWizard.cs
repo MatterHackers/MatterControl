@@ -108,18 +108,22 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						unloadingFilamentPage.NextButton.Enabled = false;
 
 						// add the progress bar
-						var holder = new FlowLayoutWidget();
+						var holder = new FlowLayoutWidget()
+						{
+							Margin = new BorderDouble(3, 0, 0, 10),
+						};
 						var progressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))
 						{
 							FillColor = theme.PrimaryAccentColor,
 							BorderColor = theme.TextColor,
 							BackgroundColor = Color.White,
-							Margin = new BorderDouble(3, 0, 0, 10),
+							VAnchor = VAnchor.Center,
 						};
 						var progressBarText = new TextWidget("", pointSize: 10, textColor: theme.TextColor)
 						{
 							AutoExpandBoundsToText = true,
 							Margin = new BorderDouble(5, 0, 0, 0),
+							VAnchor = VAnchor.Center,
 						};
 						holder.AddChild(progressBar);
 						holder.AddChild(progressBarText);

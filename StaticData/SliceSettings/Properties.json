@@ -78,20 +78,20 @@
     "DefaultValue": "Trim the end of the filament to ensure a good load.  \n![](https://www.matterhackers.com/r/c3zLyf)  \nMake sure you trim it at a slight angle"
   },
   {
-    "SlicerConfigName": "insert_filament_markdown",
+    "SlicerConfigName": "insert_filament_markdown2",
     "PresentationName": "Insert Filament Page",
     "HelpText": "The Markdown that will be shown on the Insert Filament page.",
     "DataEditType": "MARKDOWN_TEXT",
     "ShowIfSet": "!sla_printer",
-    "DefaultValue": "* Insert filament into the extruder until you feel it start to feed\n  * Make sure the filament is all the way into the extruder\n  * Hold the filament for several seconds until it catches\n  * Test that it is inserted by gently pulling down, there should be some resistance  \n* Click 'Continue'  \n![](https://lh3.googleusercontent.com/S4eW9-uZ0lgpg_ws9Ss4LmUc_MiXCfHnfJmGVQ0XtOdpvr_XZQLuP5zWGv7eCSM65EbsWIdHVMC40EYL7u8k7LvMP4Y)"
+    "DefaultValue": "* Insert filament into the extruder until you feel it start to feed\\n  * Make sure the filament is all the way into the extruder\\n  * Hold the filament for several seconds until it catches\\n  * Test that it is inserted by gently pulling down, there should be some resistance  \\n* Click 'Next'  \\n![Load Filament](https://www.matterhackers.com/r/Ipj4Bb)"
   },
   {
-    "SlicerConfigName": "running_clean_markdown",
+    "SlicerConfigName": "running_clean_markdown2",
     "PresentationName": "Clean Filament Page",
     "HelpText": "The Markdown that will be shown on the Clean Filament page.",
     "DataEditType": "MARKDOWN_TEXT",
     "ShowIfSet": "!sla_printer",
-    "DefaultValue": "In a few seconds filament should be coming out of the extruder\n* Wait for the new filament to be coming out with no trace of the previous filament\n* Click 'Continue' when the new filament is running cleanly\n## Success! Your new filament should now be loaded"
+    "DefaultValue": "In a few seconds filament should be coming out of the extruder\\n* Wait for the new filament to be coming out with no trace of the previous filament\\n* Click 'Next' when the new filament is running cleanly"
   },
   {
     "SlicerConfigName": "bottom_solid_layers",
