@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				yield return trimFilamentPage;
 			}
 
-			// show the instert filament page
+			// show the insert filament page
 			{
 				RunningInterval runningGCodeCommands = null;
 				PrinterSetupWizardPage insertFilamentPage = null;

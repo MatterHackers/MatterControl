@@ -223,8 +223,14 @@ namespace MatterHackers.MatterControl.Library
 
 			if (thumbnail == null && libraryContainer != null)
 			{
-				// Ask the container - allows the container to provide its own interpretation of the item thumbnail
-				thumbnail = await libraryContainer.GetThumbnail(libraryItem, thumbWidth, thumbHeight);
+				try
+				{
+					// Ask the container - allows the container to provide its own interpretation of the item thumbnail
+					thumbnail = await libraryContainer.GetThumbnail(libraryItem, thumbWidth, thumbHeight);
+				}
+				catch
+				{
+				}
 			}
 
 			if (thumbnail == null && libraryItem is IThumbnail)

@@ -489,6 +489,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				new Vector2(bounds.Right, bounds.Top - 32));
 
 			if (this.HasMenu
+				&& this.MenuActions?.Any() == true
 				&& (hitRegion.Contains(mouseEvent.Position)
 					|| mouseEvent.Button == MouseButtons.Right))
 			{
