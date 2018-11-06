@@ -51,15 +51,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Width = 30 * GuiWidget.DeviceScale;
 			Height = 30 * GuiWidget.DeviceScale;
 
+			var menuTheme = AppContext.MenuTheme;
+
 			this.DynamicPopupContent = () =>
 			{
-				return new ColorSwatchSelector(theme,
+				return new ColorSwatchSelector(menuTheme,
 					buttonSize: 16,
 					buttonSpacing: new BorderDouble(1, 1, 0, 0),
 					colorNotifier: (newColor) => colorButton.BackgroundColor = newColor)
 				{
 					Padding = theme.DefaultContainerPadding,
-					BackgroundColor = theme.BackgroundColor,
+					BackgroundColor = menuTheme.BackgroundColor,
 					HAnchor = HAnchor.Fit,
 					VAnchor = VAnchor.Fit
 				};
@@ -72,8 +74,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Center,
 				DisabledColor = theme.MinimalShade,
-				Border = new BorderDouble(1),
-				BorderColor = theme.DropList.Inactive.BorderColor,
+				Border = 1,
+				BorderColor = theme.BorderColor20,
 				Selectable = false
 			};
 

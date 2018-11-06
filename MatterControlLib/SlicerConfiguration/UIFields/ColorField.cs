@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var container = new FlowLayoutWidget();
 
-			colorWidget = new ItemColorButton(AppContext.MenuTheme, initialColor);
+			colorWidget = new ItemColorButton(theme, initialColor);
 			colorWidget.ColorChanged += (s, e) =>
 			{
 				base.OnValueChanged(new FieldChangedEventArgs(true));
