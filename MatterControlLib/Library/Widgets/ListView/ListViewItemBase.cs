@@ -129,6 +129,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						else
 						{
 							this.SetSizedThumbnail(thumbnail);
+
+							if (listViewItem.Container is ILibraryWritableContainer writableContainer)
+							{
+								writableContainer.SetThumbnail(listViewItem.Model, thumbWidth, thumbHeight, thumbnail);
+							}
 						}
 					}
 				}
