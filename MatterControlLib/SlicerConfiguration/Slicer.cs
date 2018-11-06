@@ -196,34 +196,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return mergeString;
 		}
 
-		public static Task<bool> SliceFile(string sourceFile, string gcodeFilePath, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
-		{
-			var progressStatus = new ProgressStatus()
-			{
-				Status = "Loading"
-			};
-			progressReporter.Report(progressStatus);
-
-			IObject3D object3D;
-
-			if (string.Equals(Path.GetExtension(sourceFile), ".mcx", StringComparison.OrdinalIgnoreCase))
-			{
-				object3D = Object3D.Load(sourceFile, cancellationToken, null, (ratio, status) =>
-				{
-					progressStatus.Progress0To1 = ratio;
-					progressStatus.Status = status;
-				});
-			}
-			else
-			{
-				object3D = new Object3D()
-				{
-					MeshPath = sourceFile
-				};
-			}
-
-			return SliceItem(object3D, gcodeFilePath, printer, progressReporter, cancellationToken);
-		}
 
 		public static Task<bool> SliceItem(IObject3D object3D, string gcodeFilePath, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
 		{

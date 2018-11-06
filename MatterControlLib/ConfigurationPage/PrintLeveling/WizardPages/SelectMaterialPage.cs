@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				var selectButton = new TextButton("Select".Localize(), theme)
 				{
-					Name = "Select Button",
+					Name = "Already Loaded Button",
 					BackgroundColor = theme.MinimalShade
 				};
 
