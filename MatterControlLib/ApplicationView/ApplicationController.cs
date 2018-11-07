@@ -1731,6 +1731,7 @@ namespace MatterHackers.MatterControl
 				UiThread.RunOnIdle(() =>
 				{
 					GuiWidget.LayoutCount = 0;
+
 					using (new QuickTimer($"ReloadAll_{reloadCount++}:"))
 					{
 						MainView = new MainViewWidget(ApplicationController.Instance.Theme);
@@ -1742,6 +1743,7 @@ namespace MatterHackers.MatterControl
 							AppContext.RootSystemWindow.AddChild(MainView);
 						}
 					}
+
 					Debug.WriteLine($"LayoutCount: {GuiWidget.LayoutCount:0.0}");
 
 					this.IsReloading = false;
