@@ -44,8 +44,6 @@ namespace MatterHackers.MatterControl
 {
 	public partial class ApplicationSettingsPage : DialogPage
 	{
-		private ThemeColorPanel themeColorPanel;
-
 		public ApplicationSettingsPage()
 			: base("Close".Localize())
 		{
@@ -292,33 +290,9 @@ namespace MatterHackers.MatterControl
 
 			this.AddSettingsRow(textSizeRow, generalPanel);
 
-			var accentButtons = new ThemeColorPanel.AccentColorsWidget(AppContext.ThemeSet, 16)
-			{
-				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Center | VAnchor.Fit,
-				Margin = new BorderDouble(right: theme.DefaultContainerPadding)
-			};
-
-			themeColorPanel = new ThemeColorPanel(theme, accentButtons)
-			{
-				HAnchor = HAnchor.Stretch,
-				Margin = new BorderDouble(10, 10, 10, 2)
-			};
-
-			accentButtons.ThemeColorPanel = themeColorPanel;
-
-			var themeSection = new SectionWidget("Theme".Localize(), themeColorPanel, theme, accentButtons, expanded: true, expandingContent: false)
-			{
-				Name = "Theme Section",
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				Margin = 0
-			};
+			var themeSection = CreateThemePanel(theme);
 			contentRow.AddChild(themeSection);
-
 			theme.ApplyBoxStyle(themeSection);
-
-			themeSection.SetNonExpandableIcon(AggContext.StaticData.LoadIcon("theme.png", 16, 16, theme.InvertIcons));
 
 			var advancedPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
@@ -403,6 +377,36 @@ namespace MatterHackers.MatterControl
 					section.ContentPanel.Margin = new BorderDouble(2, 0);
 				}
 			}
+		}
+
+		public static SectionWidget CreateThemePanel(ThemeConfig theme)
+		{
+			var accentButtons = new ThemeColorPanel.AccentColorsWidget(AppContext.ThemeSet, 16)
+			{
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Center | VAnchor.Fit,
+				Margin = new BorderDouble(right: theme.DefaultContainerPadding)
+			};
+
+			var themeColorPanel = new ThemeColorPanel(theme, accentButtons)
+			{
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(10, 10, 10, 2)
+			};
+
+			accentButtons.ThemeColorPanel = themeColorPanel;
+
+			var themeSection = new SectionWidget("Theme".Localize(), themeColorPanel, theme, accentButtons, expanded: true, expandingContent: false)
+			{
+				Name = "Theme Section",
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+				Margin = 0
+			};
+
+			themeSection.SetNonExpandableIcon(AggContext.StaticData.LoadIcon("theme.png", 16, 16, theme.InvertIcons));
+
+			return themeSection;
 		}
 
 		private void AddSettingsRow(GuiWidget widget, GuiWidget container)

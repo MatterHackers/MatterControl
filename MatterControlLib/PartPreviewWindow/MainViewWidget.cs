@@ -35,6 +35,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow.PlusTab;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -168,7 +169,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (!updateAvailableButton.Visible)
 				{
-					if(showUpdateInterval != null)
+					if (showUpdateInterval != null)
 					{
 						showUpdateInterval.Continue = false;
 						showUpdateInterval = null;
@@ -265,11 +266,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					},
 					theme,
 					hasClose: false)
-					{
-						MinimumSize = new Vector2(0, theme.TabButtonHeight),
-						Name = "Hardware Tab",
-						Padding = new BorderDouble(15, 0),
-					});
+				{
+					MinimumSize = new Vector2(0, theme.TabButtonHeight),
+					Name = "Hardware Tab",
+					Padding = new BorderDouble(15, 0),
+				});
 
 			// Printer tab
 			if (printer.Settings.PrinterSelected)
@@ -321,7 +322,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Absolute,
 				Padding = 1,
-				Height = 23,
+				Height = 22,
 				BackgroundColor = theme.BackgroundColor,
 				Border = new BorderDouble(top: 1),
 				BorderColor = theme.BorderColor20,
@@ -359,18 +360,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			statusBar.AddChild(stretchStatusPanel);
 
-			var networkStatus = new GuiWidget()
-			{
-				HAnchor = HAnchor.Absolute,
-				VAnchor = VAnchor.Stretch,
-				Padding = new BorderDouble(right: 3),
-				Margin = new BorderDouble(right: 2, top: 1, bottom: 1),
-				Border = new BorderDouble(1),
-				BackgroundColor = theme.MinimalShade.WithAlpha(10),
-				BorderColor = theme.SlightShade,
-				Width = 80
-			};
-			statusBar.AddChild(networkStatus);
+			var panelBackgroundColor = theme.MinimalShade.WithAlpha(10);
+
+			statusBar.AddChild(
+				this.CreateThemeStatusPanel(theme, panelBackgroundColor));
+
+			statusBar.AddChild(
+				this.CreateNetworkStatusPanel(theme));
 
 			this.RenderRunningTasks(theme, tasks);
 
@@ -413,6 +409,107 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}, ref unregisterEvents);
 
 			ApplicationController.Instance.MainView = this;
+		}
+
+		private GuiWidget CreateNetworkStatusPanel(ThemeConfig theme)
+		{
+			var networkStatus = new GuiWidget()
+			{
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Stretch,
+				Padding = new BorderDouble(right: 3),
+				Margin = new BorderDouble(right: 2, top: 1, bottom: 1),
+				Border = new BorderDouble(1),
+				BackgroundColor = theme.MinimalShade.WithAlpha(10),
+				BorderColor = theme.SlightShade,
+				Width = 120
+			};
+			if (ApplicationController.ServicesStatusType != null)
+			{
+				var instance = Activator.CreateInstance(ApplicationController.ServicesStatusType);
+				if (instance is GuiWidget guiWidget)
+				{
+					guiWidget.HAnchor = HAnchor.Stretch;
+					guiWidget.VAnchor = VAnchor.Stretch;
+					networkStatus.AddChild(guiWidget);
+				}
+			}
+
+			return networkStatus;
+		}
+
+		private GuiWidget CreateThemeStatusPanel(ThemeConfig theme, Color panelBackgroundColor)
+		{
+			var themePanel = new GuiWidget()
+			{
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Stretch,
+				Padding = new BorderDouble(right: 3),
+				Margin = new BorderDouble(right: 2, top: 1, bottom: 1),
+				Border = new BorderDouble(1),
+				BackgroundColor = panelBackgroundColor,
+				BorderColor = theme.SlightShade,
+				Cursor = Cursors.Hand,
+				ToolTipText = "Theme".Localize(),
+				Width = 40
+			};
+
+			themePanel.AddChild(
+				new ImageWidget(AggContext.StaticData.LoadIcon("theme.png", 16, 16, theme.InvertIcons), false)
+				{
+					HAnchor = HAnchor.Left | HAnchor.Absolute,
+					VAnchor = VAnchor.Center | VAnchor.Absolute,
+					Selectable = false
+				});
+
+			themePanel.AddChild(
+				new ColorButton(theme.PrimaryAccentColor)
+				{
+					HAnchor = HAnchor.Right | HAnchor.Absolute,
+					VAnchor = VAnchor.Center | VAnchor.Absolute,
+					Width = 12,
+					Height = 12,
+					Selectable = false
+				});
+
+			themePanel.Click += (s, e) =>
+			{
+				themePanel.BackgroundColor = theme.DropList.Open.BackgroundColor;
+
+				var menuTheme = AppContext.MenuTheme;
+				var widget = new GuiWidget()
+				{
+					HAnchor = HAnchor.Absolute,
+					VAnchor = VAnchor.Fit,
+					Width = 600,
+					Border = 1,
+					BorderColor = theme.DropList.Open.BackgroundColor,
+					// Padding = theme.DefaultContainerPadding,
+					BackgroundColor = menuTheme.BackgroundColor
+				};
+
+				widget.Closed += (s2, e2) =>
+				{
+					themePanel.BackgroundColor = panelBackgroundColor;
+				};
+
+				var section = ApplicationSettingsPage.CreateThemePanel(menuTheme);
+				widget.AddChild(section);
+
+				var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+				systemWindow.ShowPopup(
+					new MatePoint(themePanel)
+					{
+						Mate = new MateOptions(MateEdge.Right, MateEdge.Top),
+						AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
+					},
+					new MatePoint(widget)
+					{
+						Mate = new MateOptions(MateEdge.Right, MateEdge.Bottom),
+						AltMate = new MateOptions(MateEdge.Right, MateEdge.Bottom)
+					});
+			};
+			return themePanel;
 		}
 
 		public ChromeTabs TabControl => tabControl;
