@@ -1547,7 +1547,7 @@ namespace MatterHackers.MatterControl
 			return mappedEditors;
 		}
 
-		internal void Shutdown()
+		public void Shutdown()
 		{
 			// Ensure all threads shutdown gracefully on close
 
@@ -1756,13 +1756,6 @@ namespace MatterHackers.MatterControl
 		public async void OnApplicationClosed()
 		{
 			this.Thumbnails.Shutdown();
-
-			// Save changes before close
-			if (this.ActivePrinter != null
-				&& this.ActivePrinter != PrinterConfig.EmptyPrinter)
-			{
-				await this.ActivePrinter.Bed.SaveChanges(null, CancellationToken.None);
-			}
 
 			ApplicationSettings.Instance.ReleaseClientToken();
 		}
