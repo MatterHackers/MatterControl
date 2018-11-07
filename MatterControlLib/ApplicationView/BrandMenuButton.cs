@@ -140,27 +140,6 @@ namespace MatterHackers.MatterControl
 
 			popupMenu.CreateSeparator();
 
-			var themeRow = new GuiWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-			};
-
-			themeRow.AddChild(new TextWidget("Theme".Localize(), pointSize: menuTheme.DefaultFontSize, textColor: menuTheme.TextColor)
-			{
-				VAnchor = VAnchor.Center,
-			});
-
-			themeRow.AddChild(new ThemeColorPanel.AccentColorsWidget(AppContext.ThemeSet, 16, 2)
-			{
-				HAnchor = HAnchor.Right
-			});
-
-			menuItem = popupMenu.CreateMenuItem(themeRow, "Theme", AggContext.StaticData.LoadIcon("theme.png", 16, 16, menuTheme.InvertIcons));
-			menuItem.Padding = menuItem.Padding.Clone(right: 5);
-
-			popupMenu.CreateSeparator();
-
 			var imageBuffer = new ImageBuffer(18, 18);
 
 			// x64 indicator icon
