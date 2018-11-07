@@ -365,6 +365,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			statusBar.AddChild(
 				this.CreateThemeStatusPanel(theme, panelBackgroundColor));
 
+			statusBar.AddChild(
+				this.CreateNetworkStatusPanel(theme));
+
 			this.RenderRunningTasks(theme, tasks);
 
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent((s, e) =>
@@ -406,6 +409,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}, ref unregisterEvents);
 
 			ApplicationController.Instance.MainView = this;
+		}
+
+		private GuiWidget CreateNetworkStatusPanel(ThemeConfig theme)
+		{
+			var networkStatus = new GuiWidget()
+			{
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Stretch,
+				Padding = new BorderDouble(right: 3),
+				Margin = new BorderDouble(right: 2, top: 1, bottom: 1),
+				Border = new BorderDouble(1),
+				BackgroundColor = theme.MinimalShade.WithAlpha(10),
+				BorderColor = theme.SlightShade,
+				Width = 120
+			};
+			if (ApplicationController.ServicesStatusType != null)
+			{
+				var instance = Activator.CreateInstance(ApplicationController.ServicesStatusType);
+				if (instance is GuiWidget guiWidget)
+				{
+					guiWidget.HAnchor = HAnchor.Stretch;
+					guiWidget.VAnchor = VAnchor.Stretch;
+					networkStatus.AddChild(guiWidget);
+				}
+			}
+
+			return networkStatus;
 		}
 
 		private GuiWidget CreateThemeStatusPanel(ThemeConfig theme, Color panelBackgroundColor)

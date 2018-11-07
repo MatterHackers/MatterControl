@@ -2137,6 +2137,7 @@ namespace MatterHackers.MatterControl
 		public static List<StartupAction> StartupActions { get; } = new List<StartupAction>();
 
 		public static List<StartupTask> StartupTasks { get; } = new List<StartupTask>();
+		public static Type ServicesStatusType { get; set; }
 
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 
