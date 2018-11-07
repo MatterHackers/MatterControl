@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 //#define TRACEREQUESTS
 
+using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using Newtonsoft.Json;
 using System;
@@ -206,7 +207,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 		}
 
 		/// <summary>
-		/// Gets or sets the time-out value in milliseconds 
+		/// Gets or sets the time-out value in milliseconds
 		/// </summary>
 		/// <value>The timeout.</value>
 		public int Timeout { get; set; } = 100000;
@@ -338,11 +339,14 @@ namespace MatterHackers.MatterControl.VersionManagement
 					responseValues = JsonConvert.DeserializeObject<JsonResponseDictionary>(requestManager.LastResponse);
 
 					string errorMessage;
-					if (responseValues.TryGetValue("ErrorMessage", out errorMessage) 
+					if (responseValues.TryGetValue("ErrorMessage", out errorMessage)
 					    && errorMessage.IndexOf("expired session",  StringComparison.OrdinalIgnoreCase) != -1)
 					{
 						// Notify connection status changed and now invalid
-						ApplicationController.Instance.ChangeCloudSyncStatus(userAuthenticated: false, reason: "Session Expired".Localize());
+						UiThread.RunOnIdle(() =>
+						{
+							ApplicationController.Instance.ChangeCloudSyncStatus(userAuthenticated: false, reason: "Session Expired".Localize());
+						});
 					}
 
 					ApplicationController.WebRequestSucceeded?.Invoke();

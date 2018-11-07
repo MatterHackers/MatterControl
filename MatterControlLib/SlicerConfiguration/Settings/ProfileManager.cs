@@ -91,25 +91,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			await printer?.Bed?.LoadLibraryContent(libraryItem);
 		}
 
-		public async Task<PrinterConfig> LoadPrinter()
+		public Task<PrinterConfig> LoadPrinter()
 		{
-			var printer = ApplicationController.Instance.ActivePrinter;
+			return this.LoadPrinter(this.LastProfileID);
+		}
+
+		public async Task<PrinterConfig> LoadPrinter(string profileID)
+		{
+			var activePrinter = ApplicationController.Instance.ActivePrinter;
 
 			// If a 'LastProfile' exists and it is missing from ActivePrinters, load it
-			var lastProfile = this[this.LastProfileID];
-			if (lastProfile != null
-				&& !ApplicationController.Instance.ActivePrinters.Where(p => p.Settings.ID == lastProfile.ID).Any())
+			var profile = this[profileID];
+			if (profile != null
+				&& !ApplicationController.Instance.ActivePrinters.Where(p => p.Settings.ID == profile.ID).Any())
 			{
-				if (printer.Settings.ID != this.LastProfileID)
+				if (activePrinter.Settings.ID != this.LastProfileID)
 				{
-					var printerConfig = new PrinterConfig(await LoadProfileAsync(this.LastProfileID));
-					await ApplicationController.Instance.SetActivePrinter(printerConfig);
+					var printer = new PrinterConfig(await LoadProfileAsync(this.LastProfileID));
+					await ApplicationController.Instance.SetActivePrinter(printer);
 
-					printer = ApplicationController.Instance.ActivePrinter;
+					return ApplicationController.Instance.ActivePrinter;
 				}
 			}
 
-			return printer;
+			return activePrinter;
 		}
 
 		private static string GetProfilesDocPathForUser(string userName)
