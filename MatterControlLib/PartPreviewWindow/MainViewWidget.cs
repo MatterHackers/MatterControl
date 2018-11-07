@@ -100,6 +100,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// Set reference on tab change
 					dragDropData.View3DWidget = tabPage.view3DWidget;
 					dragDropData.SceneContext = tabPage.sceneContext;
+
+					ApplicationController.Instance.PrinterTabSelected = true;
+				}
+				else
+				{
+					ApplicationController.Instance.PrinterTabSelected = false;
 				}
 
 				ApplicationController.Instance.MainTabKey = tabControl.SelectedTabKey;
@@ -296,6 +302,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				else
 				{
 					tabKey = "Hardware";
+				}
+			}
+
+			// HACK: Restore to the first printer tab if PrinterTabSelected and tabKey not found. This allows sign in/out to remain on the printer tab across different users
+			if (!tabControl.AllTabs.Any(t => t.Key == tabKey)
+				&& ApplicationController.Instance.PrinterTabSelected)
+			{
+				var key = tabControl.AllTabs.Where(t => t.TabContent is PrinterTabPage).FirstOrDefault()?.Key;
+				if (key != null)
+				{
+					tabKey = key;
 				}
 			}
 

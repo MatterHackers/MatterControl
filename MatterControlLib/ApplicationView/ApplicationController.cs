@@ -2130,6 +2130,8 @@ namespace MatterHackers.MatterControl
 		public static List<StartupTask> StartupTasks { get; } = new List<StartupTask>();
 		public static Type ServicesStatusType { get; set; }
 
+		public bool PrinterTabSelected { get; set; } = false;
+
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 
 		public void NotifyPrintersTabRightElement(GuiWidget sourceExentionArea)
