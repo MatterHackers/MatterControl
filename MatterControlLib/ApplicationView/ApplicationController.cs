@@ -1880,17 +1880,6 @@ namespace MatterHackers.MatterControl
 
 			// Ensure SQLite printers are imported
 			ProfileManager.Instance.EnsurePrintersImported();
-
-			var guest = ProfileManager.Load("guest");
-
-			// If profiles.json was created, run the import wizard to pull in any SQLite printers
-			if (guest?.Profiles?.Any() == true
-				&& !ProfileManager.Instance.IsGuestProfile
-				&& !ProfileManager.Instance.PrintersImported)
-			{
-				// Show the import printers wizard
-				DialogWindow.Show<CopyGuestProfilesToUser>();
-			}
 		}
 
 		private EventHandler unregisterEvent;
