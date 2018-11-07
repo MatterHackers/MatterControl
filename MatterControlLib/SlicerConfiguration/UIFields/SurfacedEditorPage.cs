@@ -131,14 +131,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 			tabControl.AddTab(previewTab);
 
-			tabControl.ActiveTabChanged += (s, e) =>
-			{
-				if (tabControl.SelectedTabIndex == 1)
-				{
-					// dummyWidget.Markdown = editWidget.Text;
-				}
-			};
-
 			tabControl.SelectedTabIndex = 0;
 
 			var saveButton = theme.CreateDialogButton("Save".Localize());

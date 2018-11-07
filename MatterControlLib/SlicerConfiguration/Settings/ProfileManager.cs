@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return this.LoadPrinter(this.LastProfileID);
 		}
 
-		public async Task<PrinterConfig> LoadPrinter(string profileID)
+		public async Task<PrinterConfig> LoadPrinter(string profileID, bool allowChangedEvent = true)
 		{
 			var activePrinter = ApplicationController.Instance.ActivePrinter;
 
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (activePrinter.Settings.ID != this.LastProfileID)
 				{
 					var printer = new PrinterConfig(await LoadProfileAsync(this.LastProfileID));
-					await ApplicationController.Instance.SetActivePrinter(printer);
+					await ApplicationController.Instance.SetActivePrinter(printer, allowChangedEvent);
 
 					return ApplicationController.Instance.ActivePrinter;
 				}
