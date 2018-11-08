@@ -1,0 +1,79 @@
+{
+  "DefaultFontSize": 11,
+  "TextColor": "#333",
+  "PresetColors": {
+    "MaterialPreset": "#FF7F00",
+    "QualityPreset": "#FFFF00",
+    "UserOverride": "#445FDC96"
+  },
+  "IsDarkTheme": false,
+  "SlightShade": "#00000028",
+  "MinimalShade": "#0000000F",
+  "Shade": "#00000078",
+  "DarkShade": "#000000BE",
+  "BackgroundColor": "#fff",
+  "TabBarBackground": "#ededed",
+  "InactiveTabColor": "#d7d7d7",
+  "InteractionLayerOverlayColor": "#eeeeeeF0",
+  "SplitterBackground": "#E1E1E1",
+  "TabBodyBackground": "#00000000",
+  "ToolbarButtonBackground": "#00000000",
+  "ThumbnailBackground": "#00000000",
+  "AccentMimimalOverlay": "#B5890050",
+  "EditFieldColors": {
+    "Focused": {
+      "BackgroundColor": "#fff",
+      "ForegroundColor": "#00000000",
+      "BorderColor": "#FF7F00",
+      "TextColor": "#222222"
+    },
+    "Hovered": {
+      "BackgroundColor": "#fff",
+      "ForegroundColor": "#00000000",
+      "BorderColor": "#FF7F00",
+      "TextColor": "#00000000"
+    },
+    "Inactive": {
+      "BackgroundColor": "#fff",
+      "ForegroundColor": "#00000000",
+      "BorderColor": "#ccc",
+      "TextColor": "#222222"
+    }
+  },
+  "LightTextColor": "#00000000",
+  "BorderColor": "#555",
+  "BorderColor40": "#555555",
+  "BorderColor20": "#ccc",
+  "RowBorder": "#ddd",
+  "DropList": {
+    "Open": {
+      "BackgroundColor": "#bbb",
+      "ForegroundColor": "#00000000",
+      "BorderColor": "#00000000",
+      "TextColor": "#222222"
+    },
+    "Focused": {
+      "BackgroundColor": "#ddd",
+      "ForegroundColor": "#00000000",
+      "BorderColor": "#FF7F00",
+      "TextColor": "#222222"
+    },
+    "Hovered": {
+      "BackgroundColor": "#ddd",
+      "ForegroundColor": "#00000000",
+      "BorderColor": "#FF7F00",
+      "TextColor": "#222222"
+    },
+    "Inactive": {
+      "BackgroundColor": "#fff",
+      "ForegroundColor": "#00000000",
+      "BorderColor": "#ddd",
+      "TextColor": "#222222"
+    }
+  },
+  "DisabledColor": "#505050",
+  "SplashAccentColor": "#EEEEEE",
+  "BedBackgroundColor": "#e9e9e9",
+  "PrimaryAccentColor": "#B58900",
+  "SectionBackgroundColor": "#F5F5F5"
+}
