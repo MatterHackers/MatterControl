@@ -66,6 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class ViewModeChangedEventArgs : EventArgs
 	{
 		public PartViewMode ViewMode { get; set; }
+		public PartViewMode PreviousMode { get; set; }
 	}
 
 	public class TransformStateChangedEventArgs : EventArgs
@@ -102,10 +103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public ViewControls3DButtons ActiveButton
 		{
-			get
-			{
-				return activeTransformState;
-			}
+			get => activeTransformState;
 			set
 			{
 				this.activeTransformState = value;

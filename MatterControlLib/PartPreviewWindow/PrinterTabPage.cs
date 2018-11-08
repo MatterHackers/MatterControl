@@ -537,17 +537,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							{
 								bottomRow.Name = printer.Bed.EditContext.GCodeFilePath;
 							}
+
 							await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer.Bed.SaveChanges);
-							// start up a new slice on a backgroud thread
+
+							// start up a new slice on a background thread
 							await ApplicationController.Instance.SliceItemLoadOutput(
 								printer,
 								printer.Bed.Scene,
 								printer.Bed.EditContext.GCodeFilePath);
+
 							// Switch to the 3D layer view if on Model view
 							if (printer.ViewState.ViewMode == PartViewMode.Model)
 							{
 								printer.ViewState.ViewMode = PartViewMode.Layers3D;
 							}
+
 							// when it is done queue it to the change to gcode stream
 							var message2 = "Would you like to switch to the new G-Code? Before you switch, check that your are seeing the changes you expect.".Localize();
 							var caption2 = "Switch to new G-Code?".Localize();

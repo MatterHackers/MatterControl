@@ -778,12 +778,16 @@ namespace MatterHackers.MatterControl
 			{
 				if (viewMode != value)
 				{
+					// Capture before/after state
+					var eventArgs = new ViewModeChangedEventArgs()
+					{
+						ViewMode = value,
+						PreviousMode = viewMode
+					};
+
 					viewMode = value;
 
-					ViewModeChanged?.Invoke(this, new ViewModeChangedEventArgs()
-					{
-						ViewMode = this.ViewMode
-					});
+					this.ViewModeChanged?.Invoke(this, eventArgs);
 				}
 			}
 		}
