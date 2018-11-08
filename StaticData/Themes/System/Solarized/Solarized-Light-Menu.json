@@ -44,7 +44,7 @@
   "BorderColor": "#666666",
   "BorderColor40": "#D3C492",
   "BorderColor20": "#F3EFE2",
-  "RowBorder": "#00000000",
+  "RowBorder": "#dedede",
   "DropList": {
     "Open": {
       "BackgroundColor": "#ccc",
@@ -75,5 +75,5 @@
   "SplashAccentColor": "#00000000",
   "BedBackgroundColor": "#00000000",
   "PrimaryAccentColor": "#B58900",
-  "SectionBackgroundColor": "#00000000"
+  "SectionBackgroundColor": "#e6e6e6"
 }
