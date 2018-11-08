@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static string EstimatedMass(this GCodeFile loadedGCode, PrinterConfig printer)
 		{
-			var totalMass = TotalCost(loadedGCode, printer);
+			var totalMass = TotalMass(loadedGCode, printer);
 			return totalMass <= 0 ? "Unknown" : string.Format("{0:0.00} g", totalMass);
 		}
 
