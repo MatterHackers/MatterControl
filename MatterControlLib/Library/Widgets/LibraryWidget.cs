@@ -74,7 +74,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			libraryView = new LibraryListView(ApplicationController.Instance.Library, theme)
+			var libraryContext = ApplicationController.Instance.Library;
+
+			libraryView = new LibraryListView(libraryContext, theme)
 			{
 				Name = "LibraryView",
 				// Drop containers if ShowContainers != 1
@@ -96,7 +98,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			allControls.AddChild(navBar);
 			theme.ApplyBottomBorder(navBar);
 
-			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView, theme);
+			breadCrumbWidget = new FolderBreadCrumbWidget(libraryContext, theme);
 			navBar.AddChild(breadCrumbWidget);
 
 			var searchPanel = new SearchInputBox(theme)
@@ -335,21 +337,23 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			treeView.AddChild(rootColumn);
 
-			ApplicationController.StartupActions.Add(new ApplicationController.StartupAction()
-			{
-				Title = "Initializing Library".Localize(),
-				Priority = 0,
-				Action = () =>
-				{
-					foreach (var item in ApplicationController.Instance.Library.RootLibaryContainer.ChildContainers)
-					{
-						var rootNode = this.CreateTreeNode(item);
-						rootNode.TreeView = treeView;
 
-						rootColumn.AddChild(rootNode);
+			if (AppContext.IsLoading)
+			{
+				ApplicationController.StartupActions.Add(new ApplicationController.StartupAction()
+				{
+					Title = "Initializing Library".Localize(),
+					Priority = 0,
+					Action = () =>
+					{
+						this.LoadRootLibraryNodes(rootColumn);
 					}
-				}
-			});
+				});
+			}
+			else
+			{
+				this.LoadRootLibraryNodes(rootColumn);
+			}
 
 			horizontalSplitter.Panel2.AddChild(libraryView);
 
@@ -366,16 +370,23 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.AddChild(allControls);
 		}
 
+		private void LoadRootLibraryNodes(FlowLayoutWidget rootColumn)
+		{
+			var rootLibraryContainer = ApplicationController.Instance.Library.RootLibaryContainer;
+
+			foreach (var item in rootLibraryContainer.ChildContainers)
+			{
+				var rootNode = this.CreateTreeNode(item, rootLibraryContainer);
+				rootNode.TreeView = treeView;
+
+				rootColumn.AddChild(rootNode);
+			}
+		}
+
 		private async Task GetExpansionItems(ILibraryItem containerItem, ContainerTreeNode treeNode)
 		{
 			if (containerItem is ILibraryContainerLink containerLink)
 			{
-				// Prevent invalid assignment of container.Parent due to overlapping load attempts that
-				// would otherwise result in containers with self referencing parent properties
-				//if (loadingContainerLink != containerLink)
-				//{
-				//	loadingContainerLink = containerLink;
-
 				try
 				{
 					// Container items
@@ -404,23 +415,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						treeNode.Expanded = treeNode.Nodes.Count > 0;
 
 						treeNode.Invalidate();
-
-						//	container.Parent = ActiveContainer;
-						// SetActiveContainer(container);
 					}
 				}
 				catch { }
-				finally
-				{
-					// Clear the loading guard and any completed load attempt
-					// loadingContainerLink = null;
-				}
 			}
 		}
 
-		private TreeNode CreateTreeNode(ILibraryItem containerItem)
+		private TreeNode CreateTreeNode(ILibraryItem containerItem, ILibraryContainer parentContainer)
 		{
-			var treeNode = new ContainerTreeNode(theme)
+			var treeNode = new ContainerTreeNode(theme, parentContainer)
 			{
 				Text = containerItem.Name,
 				Tag = containerItem,
