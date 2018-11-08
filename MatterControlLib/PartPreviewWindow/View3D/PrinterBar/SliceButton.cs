@@ -103,12 +103,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					try
 					{
-						// Switch to the 3D layer view if on Model view
-						if (printer.ViewState.ViewMode == PartViewMode.Model)
-						{
-							printer.ViewState.ViewMode = PartViewMode.Layers3D;
-						}
-
 						await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer.Bed.SaveChanges);
 
 						await ApplicationController.Instance.SliceItemLoadOutput(

@@ -2508,6 +2508,12 @@ If you experience adhesion problems, please re-run leveling."
 					}
 				}
 
+				// Switch to the 3D layer view if on Model view and slicing succeeded
+				if (printer.ViewState.ViewMode == PartViewMode.Model)
+				{
+					printer.ViewState.ViewMode = PartViewMode.Layers3D;
+				}
+
 				return Task.CompletedTask;
 			});
 
