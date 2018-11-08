@@ -289,12 +289,34 @@ namespace MatterHackers.MatterControl
 						StyledMessageBox.MessageType.YES_NO_WITHOUT_HIGHLIGHT);
 				});
 			}
-			else
+			else if(!ApplicationController.Instance.ApplicationExiting)
 			{
-				ApplicationController.Instance.ApplicationExiting = true;
-				// Make sure we tell the Application Controller to shut down. This will release the slicing thread if running.
-				ApplicationController.Instance.Shutdown();
+				// cancel the close so that we can save all our active work spaces
+				eventArgs.Cancel = true;
+
+				UiThread.RunOnIdle(async () =>
+				{
+					var application = ApplicationController.Instance;
+					// Save changes before close
+					if (application.ActivePrinter != null
+						&& application.ActivePrinter != PrinterConfig.EmptyPrinter)
+					{
+						await application.Tasks.Execute("Saving Print Bed".Localize() + "...", application.ActivePrinter.Bed.SaveChanges);
+					}
+
+					foreach (var workspace in application.Workspaces)
+					{
+						await application.Tasks.Execute("Saving Print Bed".Localize() + "...", workspace.SceneContext.SaveChanges);
+					}
+
+					application.ApplicationExiting = true;
+					// Make sure we tell the Application Controller to shut down. This will release the slicing thread if running.
+					application.Shutdown();
+					this.CloseOnIdle();
+				});
 			}
+			
+			// we are exiting and have finished saving
 		}
 
 		public override void OnClosed(EventArgs e)
