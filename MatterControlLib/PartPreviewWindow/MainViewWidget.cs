@@ -498,7 +498,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					HAnchor = HAnchor.Absolute,
 					VAnchor = VAnchor.Fit,
-					Width = 600,
+					Width = 650,
 					Border = 1,
 					BorderColor = theme.DropList.Open.BackgroundColor,
 					// Padding = theme.DefaultContainerPadding,
