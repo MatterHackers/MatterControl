@@ -42,13 +42,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class FolderBreadCrumbWidget : FlowLayoutWidget
 	{
-		private LibraryListView listView;
 		private ThemeConfig theme;
+		private ILibraryContext libraryContext;
 
-		public FolderBreadCrumbWidget(LibraryListView listView, ThemeConfig theme)
+		public FolderBreadCrumbWidget(ILibraryContext libraryContext, ThemeConfig theme)
 		{
-			this.listView = listView;
-
+			this.libraryContext = libraryContext;
 			this.Name = "FolderBreadCrumbWidget";
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
@@ -71,9 +70,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			upbutton.Click += (s, e) =>
 			{
-				if (listView.ActiveContainer.Parent != null)
+				if (libraryContext.ActiveContainer.Parent != null)
 				{
-					UiThread.RunOnIdle(() => listView.SetActiveContainer(listView.ActiveContainer.Parent));
+					UiThread.RunOnIdle(() => libraryContext.ActiveContainer = libraryContext.ActiveContainer.Parent);
 				}
 			};
 			this.AddChild(upbutton);
@@ -82,9 +81,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			if (this.Width < 250)
 			{
-				var containerButton = new LinkLabel((listView.ActiveContainer.Name == null ? "?" : listView.ActiveContainer.Name), theme)
+				var containerButton = new LinkLabel((libraryContext.ActiveContainer.Name == null ? "?" : libraryContext.ActiveContainer.Name), theme)
 				{
-					Name = "Bread Crumb Button " + listView.ActiveContainer.Name,
+					Name = "Bread Crumb Button " + libraryContext.ActiveContainer.Name,
 					VAnchor = VAnchor.Center,
 					Margin = theme.ButtonSpacing,
 					TextColor = theme.TextColor
@@ -117,7 +116,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					};
 					containerButton.Click += (s, e) =>
 					{
-						UiThread.RunOnIdle(() => listView.SetActiveContainer(container));
+						UiThread.RunOnIdle(() => libraryContext.ActiveContainer = container);
 					};
 					this.AddChild(containerButton);
 
@@ -152,7 +151,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnLoad(EventArgs args)
 		{
-			this.SetContainer(listView.ActiveContainer);
+			this.SetContainer(libraryContext.ActiveContainer);
 			base.OnLoad(args);
 		}
 	}
