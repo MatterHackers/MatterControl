@@ -263,21 +263,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					commandArgs = $"-v -o \"{gcodeFilePath}\" -c \"{configFilePath}\"";
 
+					bool forcedExit = false;
+
 					if (AggContext.OperatingSystem == OSType.Android
 						|| AggContext.OperatingSystem == OSType.Mac
 						|| RunInProcess)
 					{
 						EventHandler WriteOutput = (s, e) =>
 						{
-							if(cancellationToken.IsCancellationRequested)
+							if (cancellationToken.IsCancellationRequested)
 							{
 								MatterHackers.MatterSlice.MatterSlice.Stop();
+								forcedExit = true;
 							}
+
 							if (s is string stringValue)
 							{
-
-
-
 								sliceProgressReporter?.Report(new ProgressStatus()
 								{
 									Status = stringValue
@@ -290,11 +291,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						MatterSlice.MatterSlice.ProcessArgs(commandArgs);
 
 						MatterSlice.LogOutput.GetLogWrites -= WriteOutput;
+
+						slicingSucceeded = !forcedExit;
 					}
 					else
 					{
-						bool forcedExit = false;
-
 						var slicerProcess = new Process()
 						{
 							StartInfo = new ProcessStartInfo()
@@ -350,7 +351,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				try
 				{
-					if (File.Exists(gcodeFilePath)
+					if (slicingSucceeded
+						&& File.Exists(gcodeFilePath)
 						&& File.Exists(configFilePath))
 					{
 						// make sure we have not already written the settings onto this file
