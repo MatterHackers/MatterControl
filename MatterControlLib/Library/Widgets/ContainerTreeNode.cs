@@ -36,18 +36,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public class ContainerTreeNode : TreeNode
 	{
-		public ContainerTreeNode(ThemeConfig theme)
+		public ContainerTreeNode(ThemeConfig theme, ILibraryContainer parentContainer)
 			: base (theme, true)
 		{
+			this.ParentContainer = parentContainer;
 		}
 
 		public bool ContainerAcquired => this.Container != null;
 
 		public ILibraryContainer Container { get; set; } = null;
 
-		//public override void OnChildAdded(EventArgs e)
-		//{
-		//	base.OnChildAdded(e);
-		//}
+		public ILibraryContainer ParentContainer { get; private set; }
 	}
 }
