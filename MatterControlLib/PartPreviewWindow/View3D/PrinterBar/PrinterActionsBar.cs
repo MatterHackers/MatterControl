@@ -60,6 +60,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal RadioIconButton layers3DButton;
 		internal RadioIconButton modelViewButton;
 
+		private Dictionary<PartViewMode, RadioIconButton> viewModes = new Dictionary<PartViewMode, RadioIconButton>();
+
 		public PrinterActionsBar(PrinterConfig printer, PrinterTabPage printerTabPage, ThemeConfig theme)
 			: base(theme)
 		{
@@ -120,6 +122,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonGroupB.Add(modelViewButton);
 			AddChild(modelViewButton);
 
+			viewModes.Add(PartViewMode.Model, modelViewButton);
+
 			iconPath = Path.Combine("ViewTransformControls", "gcode_3d.png");
 			layers3DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 16, 16, theme.InvertIcons), theme)
 			{
@@ -131,6 +135,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			layers3DButton.Click += SwitchModes_Click;
 			buttonGroupB.Add(layers3DButton);
+
+			viewModes.Add(PartViewMode.Layers3D, layers3DButton);
 
 			if (!UserSettings.Instance.IsTouchScreen)
 			{
@@ -149,6 +155,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			layers2DButton.Click += SwitchModes_Click;
 			buttonGroupB.Add(layers2DButton);
 			this.AddChild(layers2DButton);
+
+			viewModes.Add(PartViewMode.Layers2D, layers2DButton);
 
 			this.AddChild(new HorizontalSpacer());
 
@@ -179,28 +187,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			printer.ViewState.ViewModeChanged += (s, e) =>
 			{
-				RadioIconButton activeButton = null;
-				if (e.ViewMode == PartViewMode.Layers2D)
+				if (viewModes[e.ViewMode] is RadioIconButton activeButton
+					&& viewModes[e.PreviousMode] is RadioIconButton previousButton
+					&& !buttonIsBeingClicked)
 				{
-					activeButton = layers2DButton;
-				}
-				else if (e.ViewMode == PartViewMode.Layers3D)
-				{
-					activeButton = layers3DButton;
-				}
-				else
-				{
-					activeButton = modelViewButton;
-				}
-
-				if(activeButton != null)
-				{
-					activeButton.Checked = true;
-
-					if (!buttonIsBeingClicked)
-					{
-						activeButton.FlashBackground(theme.PrimaryAccentColor.WithContrast(theme.TextColor, 6).ToColor());
-					}
+					// Show slide to animation from previous to current, on completion update view to current by setting active.Checked
+					previousButton.SlideToNewState(
+						activeButton,
+						this,
+						() =>
+						{
+							activeButton.Checked = true;
+						},
+						theme);
 				}
 			};
 

@@ -27,8 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -62,6 +65,60 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 			flashBackground.Start();
+		}
+
+		public static void SlideToNewState(this RadioIconButton widget, RadioIconButton newActiveButton, OverflowBar parent, Action animationComplete, ThemeConfig theme)
+		{
+			double displayTime = 600;
+			double elapsedMs = 0;
+
+			var box = new GuiWidget()
+			{
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Absolute,
+				Position = widget.Position + new VectorMath.Vector2(widget.Margin.Width, widget.Margin.Height),
+				Size = widget.Size,
+				BackgroundColor = theme.AccentMimimalOverlay,
+				Border = 1,
+				BorderColor = theme.PrimaryAccentColor
+			};
+			parent.AddChildDirect(box);
+
+			var startX = box.Position.X;
+			var startY = box.Position.Y;
+			var xdistance = (newActiveButton.Position.X + newActiveButton.Margin.Width) - startX;
+			var direction = xdistance > 0 ? 1 : -1;
+			var startedMS = UiThread.CurrentTimerMs;
+
+			Animation animation = null;
+			animation = new Animation()
+			{
+				DrawTarget = widget,
+				FramesPerSecond = 20,
+				Update = (s1, updateEvent) =>
+				{
+					elapsedMs = UiThread.CurrentTimerMs - startedMS;
+					if (elapsedMs < (displayTime + 300))
+					{
+						var ratio = Math.Min(1, elapsedMs / displayTime);
+						double blend = Easing.Cubic.In(ratio);
+						box.Position = new VectorMath.Vector2(startX + (xdistance * blend), startY);
+
+						//Console.WriteLine("Ms: {0}, Ratio: {1}, Easing: {2}, Position: {3}", elapsedMs, ratio, blend, box.Position);
+						box.Invalidate();
+					}
+					else
+					{
+						animation.Stop();
+
+						animationComplete?.Invoke();
+
+						UiThread.RunOnIdle(box.Close, .3);
+					}
+				}
+			};
+
+			animation.Start();
 		}
 	}
 }

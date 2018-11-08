@@ -70,6 +70,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			ActionArea.AddChild(childToAdd, indexInChildrenList);
 		}
+
+		public void AddChildDirect(GuiWidget guiWidget)
+		{
+			base.AddChild(guiWidget);
+		}
 	}
 
 	public class ToolbarSeparator : VerticalLine
