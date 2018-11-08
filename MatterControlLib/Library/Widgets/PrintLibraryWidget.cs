@@ -70,7 +70,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			libraryView = new LibraryListView(ApplicationController.Instance.Library, theme)
+			var libaryContext = ApplicationController.Instance.Library;
+
+			libraryView = new LibraryListView(libaryContext, theme)
 			{
 				Name = "LibraryView",
 				// Drop containers if ShowContainers != 1
@@ -249,7 +251,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				return popupMenu;
 			};
 
-			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView, theme);
+			breadCrumbWidget = new FolderBreadCrumbWidget(libaryContext, theme);
 			navBar.AddChild(breadCrumbWidget);
 
 			var searchPanel = new SearchInputBox(theme)

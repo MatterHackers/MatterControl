@@ -398,14 +398,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							container.Load();
 						});
 
-						if (treeNode.NodeParent is ContainerTreeNode parentNode)
+						if (treeNode is ContainerTreeNode containerNode)
 						{
-							container.Parent = parentNode.Container;
+							container.Parent = containerNode.ParentContainer;
 						}
 
 						foreach (var childContainer in container.ChildContainers)
 						{
-							treeNode.Nodes.Add(CreateTreeNode(childContainer));
+							treeNode.Nodes.Add(CreateTreeNode(childContainer, container));
 						}
 
 						treeNode.Container = container;

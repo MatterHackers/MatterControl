@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl
 			};
 
 			// put in the bread crumb widget
-			breadCrumbWidget = new FolderBreadCrumbWidget(librarySelectorWidget, theme);
+			breadCrumbWidget = new FolderBreadCrumbWidget(libraryNavContext, theme);
 			breadCrumbWidget.BackgroundColor = theme.MinimalShade;
 			contentRow.AddChild(breadCrumbWidget);
 			contentRow.BackgroundColor = Color.Transparent;
