@@ -49,8 +49,9 @@ namespace MatterHackers.MatterControl
 		public TerminalLog(PrinterConnection printerConnection)
 		{
 			printerConnection.ConnectionFailed.RegisterEvent(Instance_ConnectionFailed, ref unregisterEvents);
-			printerConnection.CommunicationUnconditionalFromPrinter.RegisterEvent(FromPrinter, ref unregisterEvents);
-			printerConnection.CommunicationUnconditionalToPrinter.RegisterEvent(ToPrinter, ref unregisterEvents);
+			printerConnection.CommunicationUnconditionalFromPrinter += FromPrinter;
+			printerConnection.CommunicationUnconditionalToPrinter += ToPrinter;
+
 			if (Is32Bit)
 			{
 				// About 10 megs worth. Average line length in gcode file is about 14 and we store strings as chars (16 bit) so 450,000 lines.
@@ -67,27 +68,25 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void FromPrinter(Object sender, EventArgs e)
+		private void FromPrinter(object sender, string line)
 		{
-			StringEventArgs lineString = e as StringEventArgs;
-			StringEventArgs eventArgs = new StringEventArgs("<-" + lineString.Data);
+			var eventArgs = new StringEventArgs("<-" + line);
 			PrinterLines.Add(eventArgs.Data);
 			OnHasChanged(eventArgs);
 		}
 
-		private void ToPrinter(Object sender, EventArgs e)
+		private void ToPrinter(object sender, string line)
 		{
-			StringEventArgs lineString = e as StringEventArgs;
-			StringEventArgs eventArgs = new StringEventArgs("->" + lineString.Data);
-			PrinterLines.Add(eventArgs.Data);
-			OnHasChanged(eventArgs);
+			PrinterLines.Add(line);
+
+			OnHasChanged(new StringEventArgs("->" + line));
 		}
 
 		public void WriteLine(string line)
 		{
-			StringEventArgs eventArgs = new StringEventArgs(line);
-			PrinterLines.Add(eventArgs.Data);
-			OnHasChanged(eventArgs);
+			PrinterLines.Add(line);
+
+			OnHasChanged(new StringEventArgs(line));
 		}
 
 		private void Instance_ConnectionFailed(object sender, EventArgs e)

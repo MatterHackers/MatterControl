@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				|| ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPaused))
 			{
 				gotBeginFileList = false;
-				ApplicationController.Instance.ActivePrinter.Connection.LineReceived.RegisterEvent(GetSdCardList, ref unregisterEvents);
+				ApplicationController.Instance.ActivePrinter.Connection.LineReceived += GetSdCardList;
 				StringBuilder commands = new StringBuilder();
 				commands.AppendLine("M21"); // Init SD card
 				commands.AppendLine("M20"); // List SD card
@@ -147,14 +147,13 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		private void GetSdCardList(object sender, EventArgs e)
+		private void GetSdCardList(object sender, string line)
 		{
-			StringEventArgs currentEvent = e as StringEventArgs;
-			if (currentEvent != null)
+			if (line != null)
 			{
-				if (!currentEvent.Data.StartsWith("echo:"))
+				if (!line.StartsWith("echo:"))
 				{
-					switch (currentEvent.Data)
+					switch (line)
 					{
 						case "Begin file list":
 							gotBeginFileList = true;
@@ -169,14 +168,14 @@ namespace MatterHackers.MatterControl.PrintQueue
 								foreach (PrintItem item in CreateReadOnlyPartList(false))
 								{
 									if (item.FileLocation == QueueData.SdCardFileName
-										&& item.Name == currentEvent.Data)
+										&& item.Name == line)
 									{
 										sdCardItemInQueue = true;
 										break;
 									}
 								}
 
-								string sdCardFileExtension = currentEvent.Data.ToUpper();
+								string sdCardFileExtension = line.ToUpper();
 
 								if (sdCardFileExtension.Contains(".GCO")
 									|| sdCardFileExtension.Contains(".GCODE"))
@@ -187,13 +186,13 @@ namespace MatterHackers.MatterControl.PrintQueue
 								if (!sdCardItemInQueue && validSdCardItem)
 								{
 									// If there is not already an sd card item in the queue with this name then add it.
-									AddItem(new PrintItemWrapper(new PrintItem(currentEvent.Data, QueueData.SdCardFileName)));
+									AddItem(new PrintItemWrapper(new PrintItem(line, QueueData.SdCardFileName)));
 								}
 							}
 							break;
 
 						case "End file list":
-							ApplicationController.Instance.ActivePrinter.Connection.LineReceived.UnregisterEvent(GetSdCardList, ref unregisterEvents);
+							ApplicationController.Instance.ActivePrinter.Connection.LineReceived -= GetSdCardList;
 							break;
 					}
 				}

@@ -51,9 +51,9 @@ namespace MatterHackers.SerialPortCommunication
 
 	public class FoundStringCallbacks
 	{
-		public Dictionary<string, EventHandler<FoundStringEventArgs> > dictionaryOfCallbacks = new Dictionary<string, EventHandler<FoundStringEventArgs>>();
+		public Dictionary<string, Action<string>> dictionaryOfCallbacks = new Dictionary<string, Action<string>>();
 
-		public void AddCallbackToKey(string key, EventHandler<FoundStringEventArgs> value)
+		public void AddCallbackToKey(string key, Action<string> value)
 		{
 			if (dictionaryOfCallbacks.ContainsKey(key))
 			{
@@ -65,7 +65,7 @@ namespace MatterHackers.SerialPortCommunication
 			}
 		}
 
-		public void RemoveCallbackFromKey(string key, EventHandler<FoundStringEventArgs> value)
+		public void RemoveCallbackFromKey(string key, Action<string> value)
 		{
 			if (dictionaryOfCallbacks.ContainsKey(key))
 			{
@@ -88,14 +88,13 @@ namespace MatterHackers.SerialPortCommunication
 
 	public class FoundStringStartsWithCallbacks : FoundStringCallbacks
 	{
-		public void CheckForKeys(FoundStringEventArgs e)
+		public void CheckForKeys(string s)
 		{
 			foreach (var pair in this.dictionaryOfCallbacks)
 			{
-				if (e.LineToCheck.StartsWith(pair.Key))
+				if (s.StartsWith(pair.Key))
 				{
-					e.CallbackWasCalled = true;
-					pair.Value(this, e);
+					pair.Value.Invoke(s);
 				}
 			}
 		}
@@ -103,14 +102,13 @@ namespace MatterHackers.SerialPortCommunication
 
 	public class FoundStringContainsCallbacks : FoundStringCallbacks
 	{
-		public void CheckForKeys(FoundStringEventArgs e)
+		public void CheckForKeys(string s)
 		{
 			foreach (var pair in this.dictionaryOfCallbacks)
 			{
-				if (e.LineToCheck.Contains(pair.Key))
+				if (s.Contains(pair.Key))
 				{
-					e.CallbackWasCalled = true;
-					pair.Value(this, e);
+					pair.Value.Invoke(s);
 				}
 			}
 		}

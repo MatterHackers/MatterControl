@@ -633,24 +633,22 @@ namespace MatterHackers.MatterControl.EeProm
 			printerConnection.QueueLine("M502");
 		}
 
-		public void Add(object sender, EventArgs e)
+		public void Add(object sender, string line)
 		{
-			StringEventArgs lineString = e as StringEventArgs;
-
-			if (e == null)
+			if (line == null)
 			{
 				return;
 			}
 
-			if (update(lineString.Data))
+			if (update(line))
 			{
 				if (eventAdded != null)
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						if (lineString != null)
+						if (line != null)
 						{
-							eventAdded(this, lineString);
+							eventAdded(this, new StringEventArgs(line));
 						}
 					});
 				}
