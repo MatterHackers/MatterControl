@@ -49,8 +49,8 @@ namespace MatterHackers.MatterControl
 		public TerminalLog(PrinterConnection printerConnection)
 		{
 			printerConnection.ConnectionFailed.RegisterEvent(Instance_ConnectionFailed, ref unregisterEvents);
-			printerConnection.LineReceived += FromPrinter;
-			printerConnection.LineSent += ToPrinter;
+			printerConnection.LineReceived += Printer_LineReceived;
+			printerConnection.LineSent += Printer_LineSent;
 
 			if (Is32Bit)
 			{
@@ -68,13 +68,13 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void FromPrinter(object sender, string line)
+		private void Printer_LineReceived(object sender, string line)
 		{
 			PrinterLines.Add(line);
 			OnHasChanged(new StringEventArgs("<-" + line));
 		}
 
-		private void ToPrinter(object sender, string line)
+		private void Printer_LineSent(object sender, string line)
 		{
 			PrinterLines.Add(line);
 			OnHasChanged(new StringEventArgs("->" + line));
