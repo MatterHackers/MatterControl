@@ -41,12 +41,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			this.extruderIndex = extruderIndex;
 
-			void DisplayTemp(object s, EventArgs e)
+			void BedTemperatureRead(object s, EventArgs e)
 			{
 				UpdateTemperatures();
 			}
-			printer.Connection.BedTemperatureRead += DisplayTemp;
-			this.Closed += (s, e) => printer.Connection.BedTemperatureRead -= DisplayTemp;
+			printer.Connection.BedTemperatureRead += BedTemperatureRead;
+			this.Closed += (s, e) => printer.Connection.BedTemperatureRead -= BedTemperatureRead;
 		}
 
 		public override void UpdateTemperatures()

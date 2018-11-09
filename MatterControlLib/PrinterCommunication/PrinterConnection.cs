@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public EventHandler CommunicationStateChanged;
 
-		public RootedObjectEventHandler ConnectionFailed = new RootedObjectEventHandler();
+		public EventHandler ConnectionFailed;
 
 		public RootedObjectEventHandler ConnectionSucceeded = new RootedObjectEventHandler();
 
@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			PauseOnLayer?.Invoke(this, namedItemEventArgs);
 		}
 
-		public RootedObjectEventHandler DestinationChanged = new RootedObjectEventHandler();
+		public event EventHandler DestinationChanged;
 
 		public RootedObjectEventHandler EnableChanged = new RootedObjectEventHandler();
 
@@ -245,7 +245,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			this.printer = printer;
 
-			TerminalLog = new TerminalLog(this);
+			TerminalLog = new TerminalLog(printer);
 
 			MonitorPrinterTemperature = true;
 
@@ -1230,7 +1230,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			communicationPossible = false;
 
 			var eventArgs = new ConnectFailedEventArgs(reason);
-			ConnectionFailed.CallEvents(this, eventArgs);
+			ConnectionFailed?.Invoke(this, eventArgs);
 
 			CommunicationState = CommunicationStates.Disconnected;
 			OnEnabledChanged(eventArgs);
@@ -1503,7 +1503,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			//if (currentDestination != positionRead)
 			{
 				currentDestination = lastReportedPosition;
-				DestinationChanged.CallEvents(this, null);
+				DestinationChanged?.Invoke(this, null);
 				if (totalGCodeStream != null)
 				{
 					totalGCodeStream.SetPrinterPosition(currentDestination);
@@ -2061,7 +2061,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					|| currentDestination.extrusion != newDestination.extrusion)
 				{
 					currentDestination = newDestination;
-					DestinationChanged.CallEvents(this, null);
+					DestinationChanged?.Invoke(this, null);
 				}
 			}
 		}

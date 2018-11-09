@@ -46,11 +46,13 @@ namespace MatterHackers.MatterControl
 
 		private EventHandler unregisterEvents;
 
-		public TerminalLog(PrinterConnection printerConnection)
+		public TerminalLog(PrinterConfig printer)
 		{
-			printerConnection.ConnectionFailed.RegisterEvent(Instance_ConnectionFailed, ref unregisterEvents);
-			printerConnection.LineReceived += Printer_LineReceived;
-			printerConnection.LineSent += Printer_LineSent;
+			printer.Connection.ConnectionFailed += Instance_ConnectionFailed;
+			printer.Disposed += (s, e) => printer.Connection.ConnectionFailed -= Instance_ConnectionFailed;
+
+			printer.Connection.LineReceived += Printer_LineReceived;
+			printer.Connection.LineSent += Printer_LineSent;
 
 			if (Is32Bit)
 			{

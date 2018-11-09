@@ -209,10 +209,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 				});
 			});
 
-			printer.Connection.DestinationChanged.RegisterEvent((object sender, EventArgs e) =>
+			void BedTemperatureRead(object s, EventArgs e)
 			{
 				reportDestinationChanged.CallEvent();
-			}, ref unregisterEvents);
+			}
+			printer.Connection.BedTemperatureRead += BedTemperatureRead;
+			this.Closed += (s, e) => printer.Connection.BedTemperatureRead -= BedTemperatureRead;
 
 			return hwDestinationBar;
 		}
