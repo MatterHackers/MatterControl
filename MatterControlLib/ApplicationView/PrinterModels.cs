@@ -881,6 +881,8 @@ namespace MatterHackers.MatterControl
 
 	public class PrinterConfig : IDisposable
 	{
+		public event EventHandler Disposed;
+
 		public BedConfig Bed { get; }
 
 		private EventHandler unregisterEvents;
@@ -1030,8 +1032,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public event EventHandler Disposed;
-
 		internal void SwapToSettings(PrinterSettings printerSettings)
 		{
 			_settings = printerSettings;
@@ -1110,6 +1110,7 @@ namespace MatterHackers.MatterControl
 
 		public void Dispose()
 		{
+			Connection.Dispose();
 			Disposed?.Invoke(this, null);
 		}
 	}

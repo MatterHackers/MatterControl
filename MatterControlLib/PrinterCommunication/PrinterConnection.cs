@@ -75,8 +75,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 	/// It handles opening and closing the serial port and does quite a bit of gcode parsing.
 	/// It should be refactored into better modules at some point.
 	/// </summary>
-	public class PrinterConnection
+	public class PrinterConnection : IDisposable
 	{
+		public event EventHandler Disposed;
+
 		public event EventHandler TemporarilyHoldingTemp;
 		public event EventHandler<string> ErrorReported;
 
@@ -91,7 +93,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public EventHandler ConnectionFailed;
 
-		public RootedObjectEventHandler ConnectionSucceeded = new RootedObjectEventHandler();
+		public event EventHandler ConnectionSucceeded;
 
 		public void OnPauseOnLayer(NamedItemEventArgs namedItemEventArgs)
 		{
@@ -245,7 +247,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			this.printer = printer;
 
-			TerminalLog = new TerminalLog(printer);
+			TerminalLog = new TerminalLog(this);
 
 			MonitorPrinterTemperature = true;
 
@@ -952,7 +954,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										AnyConnectionSucceeded.CallEvents(this, null);
 
 										// Call instance event
-										ConnectionSucceeded.CallEvents(this, null);
+										ConnectionSucceeded?.Invoke(this, null);
 
 										// TODO: Shouldn't we wait to start reading until after we create the stream pipeline?
 										Console.WriteLine("ReadFromPrinter thread created.");
@@ -2619,6 +2621,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			babyStepsStream5?.CancelMoves();
 			waitForTempStream7?.Cancel();
 			queuedCommandStream3?.Cancel();
+		}
+
+		public void Dispose()
+		{
+			Disposed?.Invoke(this, null);
 		}
 
 		public class ReadThread
