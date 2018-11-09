@@ -32,7 +32,7 @@ using System.Collections.Generic;
 
 namespace MatterHackers.SerialPortCommunication
 {
-	public class FoundStringCallbacks
+	public class LineActions
 	{
 		public Dictionary<string, Action<string>> dictionaryOfCallbacks = new Dictionary<string, Action<string>>();
 
@@ -69,7 +69,7 @@ namespace MatterHackers.SerialPortCommunication
 		}
 	}
 
-	public class FoundStringStartsWithCallbacks : FoundStringCallbacks
+	public class FoundStringStartsWithCallbacks : LineActions
 	{
 		public void CheckForKeys(string s)
 		{
@@ -83,7 +83,7 @@ namespace MatterHackers.SerialPortCommunication
 		}
 	}
 
-	public class FoundStringContainsCallbacks : FoundStringCallbacks
+	public class FoundStringContainsCallbacks : LineActions
 	{
 		public void CheckForKeys(string s)
 		{
