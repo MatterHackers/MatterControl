@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ namespace MatterHackers.SerialPortCommunication
 	/// <summary>
 	/// A dictionary of key to Action delegates that are invoked per received/sent line
 	/// </summary>
-	public class LineActions
+	public abstract class LineActions
 	{
 		public Dictionary<string, Action<string>> registeredActions = new Dictionary<string, Action<string>>();
 
@@ -59,7 +59,10 @@ namespace MatterHackers.SerialPortCommunication
 				{
 					throw new Exception();
 				}
+
 				registeredActions[key] -= value;
+
+				// TODO: this doesn't look like it can ever be hit. Who would have assigned null to key?
 				if (registeredActions[key] == null)
 				{
 					registeredActions.Remove(key);
@@ -70,17 +73,20 @@ namespace MatterHackers.SerialPortCommunication
 				throw new Exception();
 			}
 		}
+
+		public abstract void ProcessLine(string line);
 	}
 
 	public class StartsWithLineActions : LineActions
 	{
-		public void CheckForKeys(string s)
+		public override void ProcessLine(string line)
 		{
 			foreach (var pair in this.registeredActions)
 			{
-				if (s.StartsWith(pair.Key))
+				if (line.StartsWith(pair.Key))
 				{
-					pair.Value.Invoke(s);
+					// Invoke action of lines starting with the given key
+					pair.Value.Invoke(line);
 				}
 			}
 		}
@@ -88,13 +94,14 @@ namespace MatterHackers.SerialPortCommunication
 
 	public class ContainsStringLineActions : LineActions
 	{
-		public void CheckForKeys(string s)
+		public override void ProcessLine(string line)
 		{
 			foreach (var pair in this.registeredActions)
 			{
-				if (s.Contains(pair.Key))
+				if (line.Contains(pair.Key))
 				{
-					pair.Value.Invoke(s);
+					// Invoke action of lines containing the given key
+					pair.Value.Invoke(line);
 				}
 			}
 		}

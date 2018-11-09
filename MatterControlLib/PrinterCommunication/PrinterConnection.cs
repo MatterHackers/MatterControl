@@ -1424,10 +1424,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 											CommunicationUnconditionalFromPrinter?.Invoke(this, lastLineRead);
 										}
 
-										ReadLineStartCallBacks.CheckForKeys(lastLineRead);
-										ReadLineContainsCallBacks.CheckForKeys(lastLineRead);
+										ReadLineStartCallBacks.ProcessLine(lastLineRead);
+										ReadLineContainsCallBacks.ProcessLine(lastLineRead);
 
-										LineReceived.Invoke(this, lastLineRead);
+										LineReceived?.Invoke(this, lastLineRead);
 									}
 								}
 							} while (true);
@@ -2556,10 +2556,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 						if (lineWithoutChecksum != null)
 						{
-							WriteLineStartCallBacks.CheckForKeys(lineWithoutChecksum);
-							WriteLineContainsCallBacks.CheckForKeys(lineWithoutChecksum);
+							WriteLineStartCallBacks.ProcessLine(lineWithoutChecksum);
+							WriteLineContainsCallBacks.ProcessLine(lineWithoutChecksum);
 
-							LineSent.Invoke(this, lineToWrite);
+							LineSent?.Invoke(this, lineToWrite);
 						}
 					}
 
