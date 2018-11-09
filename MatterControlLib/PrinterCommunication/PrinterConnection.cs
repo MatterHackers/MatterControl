@@ -89,10 +89,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public RootedObjectEventHandler CommunicationStateChanged = new RootedObjectEventHandler();
 
-		public event EventHandler<string> CommunicationUnconditionalFromPrinter;
-
-		public event EventHandler<string> CommunicationUnconditionalToPrinter;
-
 		public RootedObjectEventHandler ConnectionFailed = new RootedObjectEventHandler();
 
 		public RootedObjectEventHandler ConnectionSucceeded = new RootedObjectEventHandler();
@@ -443,7 +439,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				if (communicationState != value)
 				{
-					CommunicationUnconditionalToPrinter?.Invoke(this, "Communication State: {0}\n".FormatWith(value.ToString()));
+					LineSent?.Invoke(this, string.Format("Communication State: {0}\n", value));
 
 					switch (communicationState)
 					{
@@ -1425,17 +1421,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 									// process this command
 									{
-										if (PrinterIsPrinting)
-										{
-											CommunicationUnconditionalFromPrinter?.Invoke(this, "{0} [{1:0.000}]\n".FormatWith(lastLineRead, timeSinceStartedPrint.Elapsed.TotalSeconds));
-										}
-										else
-										{
-											CommunicationUnconditionalFromPrinter?.Invoke(this, lastLineRead);
-										}
-
 										ReadLineStartCallBacks.ProcessLine(lastLineRead);
 										ReadLineContainsCallBacks.ProcessLine(lastLineRead);
+
+										if (this.PrinterIsPrinting
+											&& this.AppendElapsedTime)
+										{
+											lastLineRead = string.Format("{0} [{1:0.000}]\n", lastLineRead, timeSinceStartedPrint.Elapsed.TotalSeconds);
+										}
 
 										LineReceived?.Invoke(this, lastLineRead);
 									}
@@ -2417,6 +2410,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
+		public bool AppendElapsedTime { get; set; }
+
 		public void TurnOffBedAndExtruders(TurnOff turnOffTime)
 		{
 			if (turnOffTime == TurnOff.Now)
@@ -2554,20 +2549,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 					// write data to communication
 					{
-						if (PrinterIsPrinting)
-						{
-							string lineWidthoutCR = lineToWrite.TrimEnd();
-							CommunicationUnconditionalToPrinter?.Invoke(this, "{0} [{1:0.000}]\n".FormatWith(lineWidthoutCR, timeSinceStartedPrint.Elapsed.TotalSeconds));
-						}
-						else
-						{
-							CommunicationUnconditionalToPrinter?.Invoke(this, lineToWrite);
-						}
-
 						if (lineWithoutChecksum != null)
 						{
 							WriteLineStartCallBacks.ProcessLine(lineWithoutChecksum);
 							WriteLineContainsCallBacks.ProcessLine(lineWithoutChecksum);
+
+							if (PrinterIsPrinting)
+							{
+								string lineWithoutCR = lineToWrite.TrimEnd();
+								lineToWrite = string.Format("{0} [{1:0.000}]\n", lineWithoutCR, timeSinceStartedPrint.Elapsed.TotalSeconds);
+							}
 
 							LineSent?.Invoke(this, lineToWrite);
 						}
@@ -2661,7 +2652,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 					}
 
-					printerConnection.CommunicationUnconditionalToPrinter?.Invoke(this, "Read Thread Has Exited.\n");
+					// TODO: Consider if passing non-printer messages through LineSent is acceptable or if a dedicated event would add clarity
+					printerConnection?.LineSent?.Invoke(this, "Read Thread Has Exited.\n");
 					numRunning--;
 				});
 			}

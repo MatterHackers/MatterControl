@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.EeProm
 			};
 			this.AddPageAction(exportButton);
 
-			printer.Connection.CommunicationUnconditionalFromPrinter += currentEePromSettings.Add;
+			printer.Connection.LineReceived += currentEePromSettings.Add;
 
 			// and ask the printer to send the settings
 			currentEePromSettings.Update();

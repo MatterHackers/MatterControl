@@ -49,8 +49,8 @@ namespace MatterHackers.MatterControl
 		public TerminalLog(PrinterConnection printerConnection)
 		{
 			printerConnection.ConnectionFailed.RegisterEvent(Instance_ConnectionFailed, ref unregisterEvents);
-			printerConnection.CommunicationUnconditionalFromPrinter += FromPrinter;
-			printerConnection.CommunicationUnconditionalToPrinter += ToPrinter;
+			printerConnection.LineReceived += FromPrinter;
+			printerConnection.LineSent += ToPrinter;
 
 			if (Is32Bit)
 			{
