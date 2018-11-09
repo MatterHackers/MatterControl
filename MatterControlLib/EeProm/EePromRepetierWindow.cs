@@ -57,13 +57,15 @@ namespace MatterHackers.MatterControl.EeProm
 			this.printer = printer;
 
 			// Close window if printer is disconnected
-			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
+			void CommunicationStateChanged(object s, EventArgs e)
 			{
-				if(!printer.Connection.IsConnected)
+				if (!printer.Connection.IsConnected)
 				{
 					this.DialogWindow.CloseOnIdle();
 				}
-			}, ref unregisterEvents);
+			}
+			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
+			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
 		}
 
 		public override void OnClosed(EventArgs e)

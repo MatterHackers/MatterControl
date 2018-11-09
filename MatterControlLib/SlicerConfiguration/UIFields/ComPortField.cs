@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			RebuildMenuItems();
 
 			// Prevent droplist interaction when connected
-			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
+			void CommunicationStateChanged(object s, EventArgs e)
 			{
 				canChangeComPort = !printer.Connection.IsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
 				dropdownList.Enabled = canChangeComPort;
@@ -93,7 +93,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					dropdownList.SelectedLabel = printer.Connection.ComPort;
 				}
-			}, ref unregisterEvents);
+			}
+			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
+			dropdownList.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
 
 			// Release event listener on close
 			dropdownList.Closed += (s, e) =>

@@ -112,7 +112,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			this.AddPageAction(connectButton);
 			this.AddPageAction(refreshButton);
 
-			printer.Connection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			printer.Connection.CommunicationStateChanged += onPrinterStatusChanged;
+			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= onPrinterStatusChanged;
 		}
 
 		protected override void OnCancel(out bool abortCancel)

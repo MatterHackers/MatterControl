@@ -79,10 +79,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = theme.ButtonSpacing
 			});
 
-			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
+			void CommunicationStateChanged(object s, EventArgs e)
 			{
 				UiThread.RunOnIdle(SetButtonStates);
-			}, ref unregisterEvents);
+			}
+			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
+			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
 
 			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 			{

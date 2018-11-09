@@ -146,8 +146,14 @@ namespace MatterHackers.MatterControl.ActionBar
 				child.Margin = theme.ButtonSpacing;
 			}
 
+			void CommunicationStateChanged(object s, EventArgs e)
+			{
+				this.SetVisibleStates();
+			}
+			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
+			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
+
 			printer.Connection.EnableChanged.RegisterEvent((s, e) => SetVisibleStates(), ref unregisterEvents);
-			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) => SetVisibleStates(), ref unregisterEvents);
 			printer.Connection.ConnectionFailed.RegisterEvent((s, e) =>
 			{
 #if !__ANDROID__

@@ -91,7 +91,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				DialogWindow.ChangeToPage(new SetupStepComPortOne(printer));
 			};
 
-			printer.Connection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			printer.Connection.CommunicationStateChanged += onPrinterStatusChanged;
+			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= onPrinterStatusChanged;
 
 			this.AddPageAction(nextButton);
 			this.AddPageAction(backButton);

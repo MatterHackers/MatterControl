@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public event EventHandler BedTemperatureRead;
 
-		public RootedObjectEventHandler CommunicationStateChanged = new RootedObjectEventHandler();
+		public EventHandler CommunicationStateChanged;
 
 		public RootedObjectEventHandler ConnectionFailed = new RootedObjectEventHandler();
 
@@ -1205,7 +1205,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			AnyCommunicationStateChanged.CallEvents(this, e);
 
 			// Call instance event
-			CommunicationStateChanged.CallEvents(this, e);
+			CommunicationStateChanged?.Invoke(this, e);
 #if __ANDROID__
 
 			//Path to the printer output file
