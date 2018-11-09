@@ -30,8 +30,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void Initialize(int tabIndex)
 		{
-			EventHandler unregisterEvents = null;
-
 			base.Initialize(tabIndex);
 			bool canChangeComPort = !printer.Connection.IsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
 			//This setting defaults to Manual
@@ -55,18 +53,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			UiThread.RunOnIdle(RebuildMenuItems);
 
 			// Prevent droplist interaction when connected
-			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
+			void CommunicationStateChanged(object s, EventArgs e)
 			{
 				canChangeComPort = !printer.Connection.IsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
 				dropdownList.TextColor = theme.TextColor;
 				dropdownList.Enabled = canChangeComPort;
-			}, ref unregisterEvents);
-
-			// Release event listener on close
-			dropdownList.Closed += (s, e) =>
-			{
-				unregisterEvents?.Invoke(null, null);
-			};
+			}
+			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
+			dropdownList.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
 
 			var widget = new FlowLayoutWidget();
 			widget.AddChild(dropdownList);

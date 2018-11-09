@@ -111,10 +111,12 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			container.AddChild(DirectionIndicator);
 
-			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
+			void CommunicationStateChanged(object s, EventArgs e)
 			{
 				this.EnableControls();
-			}, ref unregisterEvents);
+			}
+			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
+			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
 
 			foreach (var child in this.Children)
 			{

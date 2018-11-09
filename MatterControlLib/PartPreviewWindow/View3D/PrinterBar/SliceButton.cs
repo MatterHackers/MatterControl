@@ -53,10 +53,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.HoverColor = theme.ToolbarButtonHover;
 			this.MouseDownColor = theme.ToolbarButtonDown;
 
-			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
+			void CommunicationStateChanged(object s, EventArgs e)
 			{
 				UiThread.RunOnIdle(SetButtonStates);
-			}, ref unregisterEvents);
+			}
+			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
+			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
 
 			SetButtonStates();
 		}

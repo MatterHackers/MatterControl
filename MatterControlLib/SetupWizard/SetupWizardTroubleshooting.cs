@@ -53,7 +53,8 @@ namespace MatterHackers.MatterControl
 			this.AddPageAction(nextButton);
 
 			// Register for connection notifications
-			printer.Connection.CommunicationStateChanged.RegisterEvent(ConnectionStatusChanged, ref unregisterEvents);
+			printer.Connection.CommunicationStateChanged += ConnectionStatusChanged;
+			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= ConnectionStatusChanged;
 		}
 
 		public void ConnectionStatusChanged(object test, EventArgs args)

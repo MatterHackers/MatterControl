@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.Library
 
 			printer = ApplicationController.Instance.ActivePrinter;
 
-			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
+			void CommunicationStateChanged(object s, EventArgs e)
 			{
 				switch (printer.Connection.CommunicationState)
 				{
@@ -77,7 +77,9 @@ namespace MatterHackers.MatterControl.Library
 						this.OnContentChanged();
 						break;
 				}
-			}, ref unregisterEvents);
+			}
+			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
+			printer.Disposed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
 		}
 
 		public override void Load()

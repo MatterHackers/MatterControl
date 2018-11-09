@@ -66,11 +66,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 				},
 				enforceGutter: false));
 
-			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
+			void CommunicationStateChanged(object s, EventArgs e)
 			{
-				this.Enabled = printer.Connection.IsConnected 
+				this.Enabled = printer.Connection.IsConnected
 					&& printer.Settings.GetValue<bool>(SettingsKey.has_power_control);
-			}, ref unregisterEvents);
+			}
+			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
+			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
 
 			printer.Connection.AtxPowerStateChanged.RegisterEvent((s, e) =>
 			{
