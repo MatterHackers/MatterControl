@@ -32,23 +32,6 @@ using System.Collections.Generic;
 
 namespace MatterHackers.SerialPortCommunication
 {
-	public class FoundStringEventArgs : EventArgs
-	{
-		public FoundStringEventArgs(string lineReceived)
-		{
-			this.LineToCheck = lineReceived.Trim();
-		}
-
-		public bool CallbackWasCalled { get; set; }
-
-		public string LineToCheck { get; }
-
-		/// <summary>
-		/// Used to conditionally invoke LineSent/LineReceived events. Setting to false suppresses notification, hiding lines from listeners
-		/// </summary>
-		public bool AllowListenerNotification { get; set; } = true;
-	}
-
 	public class FoundStringCallbacks
 	{
 		public Dictionary<string, Action<string>> dictionaryOfCallbacks = new Dictionary<string, Action<string>>();
