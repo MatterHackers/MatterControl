@@ -907,7 +907,7 @@ namespace MatterHackers.MatterControl
 			// TODO: ActiveSliceSettings is not our Settings! Move SettingsChanged to instance rather than static
 			PrinterSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
 
-			this.Connection.PrintFinished.RegisterEvent((s, e) =>
+			void PrintFinished(object s, EventArgs e)
 			{
 				// clear single use setting on print completion
 				foreach (var keyValue in this.Settings.BaseLayer)
@@ -922,7 +922,10 @@ namespace MatterHackers.MatterControl
 						this.Settings.ClearValue(keyValue.Key);
 					}
 				}
-			}, ref unregisterEvents);
+			}
+			this.Connection.PrintFinished += PrintFinished;
+			this.Disposed += (s, e) => this.Connection.PrintFinished -= PrintFinished;
+
 
 			if (!string.IsNullOrEmpty(this.Settings.GetValue(SettingsKey.baud_rate)))
 			{

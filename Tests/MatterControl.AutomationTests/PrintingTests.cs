@@ -410,10 +410,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// Wait for printing to complete
 					var printFinishedResetEvent = new AutoResetEvent(false);
-					ApplicationController.Instance.ActivePrinter.Connection.PrintFinished.RegisterEvent((s, e) =>
+					ApplicationController.Instance.ActivePrinter.Connection.PrintFinished += (s, e) =>
 					{
 						printFinishedResetEvent.Set();
-					}, ref unregisterEvents);
+					};
 
 					testRunner.StartPrint();
 
@@ -507,7 +507,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					var printer = ApplicationController.Instance.ActivePrinter;
 
 					var printFinishedResetEvent = new AutoResetEvent(false);
-					printer.Connection.PrintFinished.RegisterEvent((s, e) => printFinishedResetEvent.Set(), ref unregisterEvents);
+					printer.Connection.PrintFinished += (s, e) => printFinishedResetEvent.Set();
 
 					testRunner.StartPrint();
 

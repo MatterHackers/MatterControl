@@ -97,6 +97,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public RootedObjectEventHandler ConnectionSucceeded = new RootedObjectEventHandler();
 
+		public void OnPauseOnLayer(NamedItemEventArgs namedItemEventArgs)
+		{
+			PauseOnLayer?.Invoke(this, namedItemEventArgs);
+		}
+
 		public RootedObjectEventHandler DestinationChanged = new RootedObjectEventHandler();
 
 		public RootedObjectEventHandler EnableChanged = new RootedObjectEventHandler();
@@ -107,13 +112,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public RootedObjectEventHandler FirmwareVersionRead = new RootedObjectEventHandler();
 
+		public void OnFilamentRunout(NamedItemEventArgs namedItemEventArgs)
+		{
+			FilamentRunout?.Invoke(this, namedItemEventArgs);
+		}
+
 		public RootedObjectEventHandler PositionRead = new RootedObjectEventHandler();
 
-		public RootedObjectEventHandler PrintFinished = new RootedObjectEventHandler();
+		public event EventHandler PrintFinished;
 
-		public RootedObjectEventHandler PauseOnLayer = new RootedObjectEventHandler();
+		public event EventHandler PauseOnLayer;
 
-		public RootedObjectEventHandler FilamentRunout = new RootedObjectEventHandler();
+		public event EventHandler FilamentRunout;
 
 		public event EventHandler<string> LineReceived;
 
@@ -469,7 +479,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									// Set this early as we always want our functions to know the state we are in.
 									communicationState = value;
 									timeSinceStartedPrint.Stop();
-									PrintFinished.CallEvents(this, new NamedItemEventArgs(printer.Bed.EditContext.SourceItem.Name));
+									PrintFinished?.Invoke(this, new NamedItemEventArgs(printer.Bed.EditContext.SourceItem.Name));
 								}
 								else
 								{
