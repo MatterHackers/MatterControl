@@ -70,22 +70,19 @@ namespace MatterHackers.MatterControl
 
 		private void FromPrinter(object sender, string line)
 		{
-			var eventArgs = new StringEventArgs("<-" + line);
-			PrinterLines.Add(eventArgs.Data);
-			OnHasChanged(eventArgs);
+			PrinterLines.Add(line);
+			OnHasChanged(new StringEventArgs("<-" + line));
 		}
 
 		private void ToPrinter(object sender, string line)
 		{
 			PrinterLines.Add(line);
-
 			OnHasChanged(new StringEventArgs("->" + line));
 		}
 
 		public void WriteLine(string line)
 		{
 			PrinterLines.Add(line);
-
 			OnHasChanged(new StringEventArgs(line));
 		}
 
@@ -130,6 +127,7 @@ namespace MatterHackers.MatterControl
 			{
 				PrinterLines.Clear();
 			}
+
 			OnHasChanged(null);
 		}
 	}
