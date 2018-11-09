@@ -879,7 +879,7 @@ namespace MatterHackers.MatterControl
 		}
 	}
 
-	public class PrinterConfig
+	public class PrinterConfig : IDisposable
 	{
 		public BedConfig Bed { get; }
 
@@ -897,6 +897,10 @@ namespace MatterHackers.MatterControl
 			this.Bed = new BedConfig(ApplicationController.Instance.Library.PlatingHistory, this);
 			this.ViewState = new PrinterViewState();
 			this.Connection = new PrinterConnection(this);
+
+			// Need a way to hook up all the callbacks that exist on a given connection
+			DoConnectionBinding();
+
 			this.Settings = settings;
 			this.Settings.printer = this;
 
@@ -932,6 +936,17 @@ namespace MatterHackers.MatterControl
 			this.Connection.ExtruderCount = this.Settings.GetValue<int>(SettingsKey.extruder_count);
 			this.Connection.SendWithChecksum = this.Settings.GetValue<bool>(SettingsKey.send_with_checksum);
 			this.Connection.ReadLineReplacementString = this.Settings.GetValue(SettingsKey.read_regex);
+		}
+
+		private void DoConnectionBinding()
+		{
+			// show countdown for turning off heat if required
+			this.Connection.TemporarilyHoldingTemp += ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
+			this.Disposed += (s, e) => this.Connection.TemporarilyHoldingTemp -= ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
+
+			// hook up error reporting feedback
+			this.Connection.ErrorReported += ApplicationController.Instance.Connection_ErrorReported;
+			this.Disposed += (s, e) => this.Connection.ErrorReported -= ApplicationController.Instance.Connection_ErrorReported;
 		}
 
 		public PrinterViewState ViewState { get; }
@@ -1012,6 +1027,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public event EventHandler Disposed;
+
 		internal void SwapToSettings(PrinterSettings printerSettings)
 		{
 			_settings = printerSettings;
@@ -1086,6 +1103,11 @@ namespace MatterHackers.MatterControl
 						break;
 				}
 			}
+		}
+
+		public void Dispose()
+		{
+			Disposed?.Invoke(this, null);
 		}
 	}
 

@@ -77,15 +77,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 	/// </summary>
 	public class PrinterConnection
 	{
-		public static RootedObjectEventHandler TemporarilyHoldingTemp = new RootedObjectEventHandler();
-		public static RootedObjectEventHandler ErrorReported = new RootedObjectEventHandler();
+		public event EventHandler TemporarilyHoldingTemp;
+		public event EventHandler ErrorReported;
 
 		// this should be removed after we have better access to each running printer
 		public static RootedObjectEventHandler AnyCommunicationStateChanged = new RootedObjectEventHandler();
 
 		public static RootedObjectEventHandler AnyConnectionSucceeded = new RootedObjectEventHandler();
 
-		public RootedObjectEventHandler BedTemperatureRead = new RootedObjectEventHandler();
+		public event EventHandler BedTemperatureRead;
 
 		public RootedObjectEventHandler BedTemperatureSet = new RootedObjectEventHandler();
 
@@ -2465,7 +2465,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				TimeHaveBeenHoldingTemperature = Stopwatch.StartNew();
 				if (!currentlyWaiting)
 				{
-					TemporarilyHoldingTemp.CallEvents(this, null);
+					TemporarilyHoldingTemp?.Invoke(this, null);
 					// wait secondsToWait and turn off the heaters
 					Task.Run(() =>
 					{

@@ -1145,7 +1145,6 @@ namespace MatterHackers.MatterControl
 				},
 				iconCollector: (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons));
 
-
 			this.Graph.RegisterOperation(
 				typeof(IObject3D),
 				typeof(ScaleObject3D),
@@ -1363,11 +1362,69 @@ namespace MatterHackers.MatterControl
 				}
 			}, ref unregisterEvent);
 
-			// show countdown for turning off heat if required
-			PrinterConnection.TemporarilyHoldingTemp.RegisterEvent((s, e) =>
-			{
-				var printerConnection = this.ActivePrinter.Connection;
 
+			this.InitializeLibrary();
+
+			PrinterConnection.AnyConnectionSucceeded.RegisterEvent((s, e) =>
+			{
+				// run the print leveling wizard if we need to for this printer
+				var printer = this.ActivePrinters.Where(p => p.Connection == s).FirstOrDefault();
+				if (printer != null)
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						this.RunAnyRequiredPrinterSetup(printer, this.Theme);
+					});
+				}
+			}, ref unregisterEvents);
+
+			HashSet<IObject3DEditor> mappedEditors;
+			objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
+
+			// Initialize plugins, passing the MatterControl assembly as the only non-dll instance
+			//PluginFinder.Initialize(Assembly.GetExecutingAssembly());
+
+			foreach (IObject3DEditor editor in PluginFinder.CreateInstancesOf<IObject3DEditor>())
+			{
+				foreach (Type type in editor.SupportedTypes())
+				{
+					if (!objectEditorsByType.TryGetValue(type, out mappedEditors))
+					{
+						mappedEditors = new HashSet<IObject3DEditor>();
+						objectEditorsByType.Add(type, mappedEditors);
+					}
+
+					mappedEditors.Add(editor);
+				}
+			}
+		}
+
+		public void Connection_ErrorReported(object sender, EventArgs e)
+		{
+			var foundStringEventArgs = e as FoundStringEventArgs;
+			if (foundStringEventArgs != null)
+			{
+				string message = "Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.".Localize()
+					+ "\n"
+					+ "\n"
+					+ "Error Reported".Localize() + ":"
+					+ $" \"{foundStringEventArgs.LineToCheck}\".";
+				UiThread.RunOnIdle(() =>
+					StyledMessageBox.ShowMessageBox((clickedOk) =>
+					{
+						if (clickedOk && this.ActivePrinter.Connection.PrinterIsPaused)
+						{
+							this.ActivePrinter.Connection.Resume();
+						}
+					}, message, "Printer Hardware Error".Localize(), StyledMessageBox.MessageType.YES_NO, "Resume".Localize(), "OK".Localize())
+				);
+			}
+		}
+
+		public void Connection_TemporarilyHoldingTemp(object sender, EventArgs e)
+		{
+			if (sender is PrinterConnection printerConnection)
+			{
 				if (printerConnection.AnyHeatIsOn)
 				{
 					var paused = false;
@@ -1428,63 +1485,6 @@ namespace MatterHackers.MatterControl
 						}),
 						StopToolTip = "Immediately turn off heaters".Localize()
 					});
-				}
-			}, ref unregisterEvents);
-
-			PrinterConnection.ErrorReported.RegisterEvent((s, e) =>
-			{
-				var foundStringEventArgs = e as FoundStringEventArgs;
-				if (foundStringEventArgs != null)
-				{
-					string message = "Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.".Localize()
-						+ "\n"
-						+ "\n"
-						+ "Error Reported".Localize() + ":"
-						+ $" \"{foundStringEventArgs.LineToCheck}\".";
-					UiThread.RunOnIdle(() =>
-						StyledMessageBox.ShowMessageBox((clickedOk) =>
-						{
-							if (clickedOk && this.ActivePrinter.Connection.PrinterIsPaused)
-							{
-								this.ActivePrinter.Connection.Resume();
-							}
-						}, message, "Printer Hardware Error".Localize(), StyledMessageBox.MessageType.YES_NO, "Resume".Localize(), "OK".Localize())
-					);
-				}
-			}, ref unregisterEvent);
-
-			this.InitializeLibrary();
-
-			PrinterConnection.AnyConnectionSucceeded.RegisterEvent((s, e) =>
-			{
-				// run the print leveling wizard if we need to for this printer
-				var printer = this.ActivePrinters.Where(p => p.Connection == s).FirstOrDefault();
-				if (printer != null)
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						this.RunAnyRequiredPrinterSetup(printer, this.Theme);
-					});
-				}
-			}, ref unregisterEvents);
-
-			HashSet<IObject3DEditor> mappedEditors;
-			objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
-
-			// Initialize plugins, passing the MatterControl assembly as the only non-dll instance
-			//PluginFinder.Initialize(Assembly.GetExecutingAssembly());
-
-			foreach (IObject3DEditor editor in PluginFinder.CreateInstancesOf<IObject3DEditor>())
-			{
-				foreach (Type type in editor.SupportedTypes())
-				{
-					if (!objectEditorsByType.TryGetValue(type, out mappedEditors))
-					{
-						mappedEditors = new HashSet<IObject3DEditor>();
-						objectEditorsByType.Add(type, mappedEditors);
-					}
-
-					mappedEditors.Add(editor);
 				}
 			}
 		}
