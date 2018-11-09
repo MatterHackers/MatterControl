@@ -153,7 +153,12 @@ namespace MatterHackers.MatterControl.ActionBar
 			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
 			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
 
-			printer.Connection.EnableChanged.RegisterEvent((s, e) => SetVisibleStates(), ref unregisterEvents);
+			void EnableChanged(object s, EventArgs e)
+			{
+				SetVisibleStates();
+			}
+			printer.Connection.EnableChanged += EnableChanged;
+			this.Closed += (s, e) => printer.Connection.EnableChanged -= EnableChanged;
 
 			void ConnectionFailed(object s, EventArgs e)
 			{

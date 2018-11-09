@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public event EventHandler DestinationChanged;
 
-		public RootedObjectEventHandler EnableChanged = new RootedObjectEventHandler();
+		public event EventHandler EnableChanged;
 
 		public event EventHandler HotendTemperatureRead;
 
@@ -2203,7 +2203,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void OnEnabledChanged(EventArgs e)
 		{
-			EnableChanged.CallEvents(this, e);
+			EnableChanged?.Invoke(this, e);
 		}
 
 		private void OnHotendTemperatureRead(EventArgs e)
