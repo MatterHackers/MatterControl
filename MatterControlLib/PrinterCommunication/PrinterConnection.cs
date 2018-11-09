@@ -82,11 +82,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public event EventHandler TemporarilyHoldingTemp;
 		public event EventHandler<string> ErrorReported;
 
-		// this should be removed after we have better access to each running printer
-		public static RootedObjectEventHandler AnyCommunicationStateChanged = new RootedObjectEventHandler();
-
-		public static RootedObjectEventHandler AnyConnectionSucceeded = new RootedObjectEventHandler();
-
 		public event EventHandler BedTemperatureRead;
 
 		public EventHandler CommunicationStateChanged;
@@ -106,16 +101,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public event EventHandler HotendTemperatureRead;
 
-		public RootedObjectEventHandler FanSpeedSet = new RootedObjectEventHandler();
+		public EventHandler FanSpeedSet;
 
-		public RootedObjectEventHandler FirmwareVersionRead = new RootedObjectEventHandler();
+		public EventHandler FirmwareVersionRead;
 
 		public void OnFilamentRunout(NamedItemEventArgs namedItemEventArgs)
 		{
 			FilamentRunout?.Invoke(this, namedItemEventArgs);
 		}
-
-		public RootedObjectEventHandler PositionRead = new RootedObjectEventHandler();
 
 		public event EventHandler PrintFinished;
 
@@ -147,7 +140,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public TerminalLog TerminalLog { get; }
 
-		public RootedObjectEventHandler AtxPowerStateChanged = new RootedObjectEventHandler();
+		public EventHandler AtxPowerStateChanged;
 
 		private bool atxPowerIsOn = false;
 
@@ -950,9 +943,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 										QueueLine(this.ConnectGCode);
 
-										// Call global event
-										AnyConnectionSucceeded.CallEvents(this, null);
-
 										// Call instance event
 										ConnectionSucceeded?.Invoke(this, null);
 
@@ -1203,9 +1193,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void OnCommunicationStateChanged(EventArgs e)
 		{
-			// Call global even
-			AnyCommunicationStateChanged.CallEvents(this, e);
-
 			// Call instance event
 			CommunicationStateChanged?.Invoke(this, e);
 #if __ANDROID__
@@ -1511,8 +1498,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					totalGCodeStream.SetPrinterPosition(currentDestination);
 				}
 			}
-
-			PositionRead.CallEvents(this, null);
 
 			waitingForPosition.Reset();
 			PositionReadQueued = false;
@@ -2213,12 +2198,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void OnFanSpeedSet(EventArgs e)
 		{
-			FanSpeedSet.CallEvents(this, e);
+			FanSpeedSet?.Invoke(this, e);
 		}
 
 		private void OnFirmwareVersionRead(EventArgs e)
 		{
-			FirmwareVersionRead.CallEvents(this, e);
+			FirmwareVersionRead?.Invoke(this, e);
 		}
 
 		private bool IsNetworkPrinting()
@@ -2229,7 +2214,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private void OnAtxPowerStateChanged(bool enableAtxPower)
 		{
 			atxPowerIsOn = enableAtxPower;
-			AtxPowerStateChanged.CallEvents(this, null);
+			AtxPowerStateChanged?.Invoke(this, null);
 		}
 
 		private void SetDetailedPrintingState(string lineBeingSetToPrinter)
