@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				DisplayCurrentTemperature();
 			}
 			printer.Connection.BedTemperatureRead += DisplayTemp;
-			printer.Disposed += (s, e) => printer.Connection.BedTemperatureRead += DisplayTemp;
+			this.Closed += (s, e) => printer.Connection.BedTemperatureRead -= DisplayTemp;
 		}
 
 		protected override int ActualTemperature => (int)printer.Connection.ActualBedTemperature;

@@ -201,7 +201,12 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			this.PopupContent = this.GetPopupContent(ApplicationController.Instance.MenuTheme);
 
-			printer.Connection.HotendTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
+			void DisplayTemp(object s, EventArgs e)
+			{
+				DisplayCurrentTemperature();
+			}
+			printer.Connection.BedTemperatureRead += DisplayTemp;
+			this.Closed += (s, e) => printer.Connection.BedTemperatureRead -= DisplayTemp;
 		}
 
 		protected override int ActualTemperature => (int)printer.Connection.GetActualHotendTemperature(this.hotendIndex);

@@ -87,8 +87,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public event EventHandler BedTemperatureRead;
 
-		public RootedObjectEventHandler BedTemperatureSet = new RootedObjectEventHandler();
-
 		public RootedObjectEventHandler CommunicationStateChanged = new RootedObjectEventHandler();
 
 		public RootedObjectEventHandler CommunicationUnconditionalFromPrinter = new RootedObjectEventHandler();
@@ -103,9 +101,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public RootedObjectEventHandler EnableChanged = new RootedObjectEventHandler();
 
-		public RootedObjectEventHandler HotendTemperatureRead = new RootedObjectEventHandler();
-
-		public RootedObjectEventHandler HotendTemperatureSet = new RootedObjectEventHandler();
+		public event EventHandler HotendTemperatureRead;
 
 		public RootedObjectEventHandler FanSpeedSet = new RootedObjectEventHandler();
 
@@ -751,7 +747,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (_targetBedTemperature != value)
 				{
 					_targetBedTemperature = value;
-					OnBedTemperatureSet(new TemperatureEventArgs(0, TargetBedTemperature));
 					if (this.IsConnected)
 					{
 						QueueLine("M140 S{0}".FormatWith(_targetBedTemperature));
@@ -815,7 +810,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
 						_targetBedTemperature = tempBeingSet;
-						OnBedTemperatureSet(new TemperatureEventArgs(0, TargetBedTemperature));
 					}
 				}
 				catch (Exception)
@@ -1075,7 +1069,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
 					targetHotendTemperature[currentlyActiveExtruderIndex] = tempBeingSet;
 				}
-				OnHotendTemperatureSet(new TemperatureEventArgs((int)exturderIndex, tempBeingSet));
 			}
 		}
 
@@ -1306,7 +1299,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
 				if (foundStringEventArgs != null)
 				{
-					ErrorReported.CallEvents(null, foundStringEventArgs);
+					ErrorReported?.Invoke(null, foundStringEventArgs);
 				}
 
 				// pause the printer
@@ -1833,7 +1826,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				ContinuHoldingTemperature = false;
 				targetHotendTemperature[hotendIndex0Based] = temperature;
-				OnHotendTemperatureSet(new TemperatureEventArgs(hotendIndex0Based, temperature));
 				if (this.IsConnected)
 				{
 					QueueLine("M104 T{0} S{1}".FormatWith(hotendIndex0Based, targetHotendTemperature[hotendIndex0Based]));
@@ -2223,12 +2215,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void OnBedTemperatureRead(EventArgs e)
 		{
-			BedTemperatureRead.CallEvents(this, e);
-		}
-
-		private void OnBedTemperatureSet(EventArgs e)
-		{
-			BedTemperatureSet.CallEvents(this, e);
+			BedTemperatureRead?.Invoke(this, e);
 		}
 
 		private void OnEnabledChanged(EventArgs e)
@@ -2238,12 +2225,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void OnHotendTemperatureRead(EventArgs e)
 		{
-			HotendTemperatureRead.CallEvents(this, e);
-		}
-
-		private void OnHotendTemperatureSet(EventArgs e)
-		{
-			HotendTemperatureSet.CallEvents(this, e);
+			HotendTemperatureRead?.Invoke(this, e);
 		}
 
 		private void OnFanSpeedSet(EventArgs e)
