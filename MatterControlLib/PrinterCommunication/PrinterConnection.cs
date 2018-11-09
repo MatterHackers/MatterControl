@@ -200,9 +200,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private DetailedPrintingState _printingStatePrivate;
 
-		private FoundStringContainsCallbacks ReadLineContainsCallBacks = new FoundStringContainsCallbacks();
+		private ContainsStringLineActions ReadLineContainsCallBacks = new ContainsStringLineActions();
 
-		private FoundStringStartsWithCallbacks ReadLineStartCallBacks = new FoundStringStartsWithCallbacks();
+		private StartsWithLineActions ReadLineStartCallBacks = new StartsWithLineActions();
 
 		// we start out by setting it to a nothing file
 		private IFrostedSerialPort serialPort;
@@ -228,9 +228,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private bool PositionReadQueued { get; set; } = false;
 		private Stopwatch waitingForPosition = new Stopwatch();
 
-		private FoundStringContainsCallbacks WriteLineContainsCallBacks = new FoundStringContainsCallbacks();
+		private ContainsStringLineActions WriteLineContainsCallBacks = new ContainsStringLineActions();
 
-		private FoundStringStartsWithCallbacks WriteLineStartCallBacks = new FoundStringStartsWithCallbacks();
+		private StartsWithLineActions WriteLineStartCallBacks = new StartsWithLineActions();
 
 		private double secondsSinceUpdateHistory = 0;
 		private long lineSinceUpdateHistory = 0;

@@ -72,7 +72,7 @@ namespace MatterHackers.SerialPortCommunication
 		}
 	}
 
-	public class FoundStringStartsWithCallbacks : LineActions
+	public class StartsWithLineActions : LineActions
 	{
 		public void CheckForKeys(string s)
 		{
@@ -86,7 +86,7 @@ namespace MatterHackers.SerialPortCommunication
 		}
 	}
 
-	public class FoundStringContainsCallbacks : LineActions
+	public class ContainsStringLineActions : LineActions
 	{
 		public void CheckForKeys(string s)
 		{
