@@ -32,34 +32,37 @@ using System.Collections.Generic;
 
 namespace MatterHackers.SerialPortCommunication
 {
+	/// <summary>
+	/// A dictionary of key to Action delegates that are invoked per received/sent line
+	/// </summary>
 	public class LineActions
 	{
-		public Dictionary<string, Action<string>> dictionaryOfCallbacks = new Dictionary<string, Action<string>>();
+		public Dictionary<string, Action<string>> registeredActions = new Dictionary<string, Action<string>>();
 
-		public void AddCallbackToKey(string key, Action<string> value)
+		public void Register(string key, Action<string> value)
 		{
-			if (dictionaryOfCallbacks.ContainsKey(key))
+			if (registeredActions.ContainsKey(key))
 			{
-				dictionaryOfCallbacks[key] += value;
+				registeredActions[key] += value;
 			}
 			else
 			{
-				dictionaryOfCallbacks.Add(key, value);
+				registeredActions.Add(key, value);
 			}
 		}
 
-		public void RemoveCallbackFromKey(string key, Action<string> value)
+		public void Unregister(string key, Action<string> value)
 		{
-			if (dictionaryOfCallbacks.ContainsKey(key))
+			if (registeredActions.ContainsKey(key))
 			{
-				if (dictionaryOfCallbacks[key] == null)
+				if (registeredActions[key] == null)
 				{
 					throw new Exception();
 				}
-				dictionaryOfCallbacks[key] -= value;
-				if (dictionaryOfCallbacks[key] == null)
+				registeredActions[key] -= value;
+				if (registeredActions[key] == null)
 				{
-					dictionaryOfCallbacks.Remove(key);
+					registeredActions.Remove(key);
 				}
 			}
 			else
@@ -73,7 +76,7 @@ namespace MatterHackers.SerialPortCommunication
 	{
 		public void CheckForKeys(string s)
 		{
-			foreach (var pair in this.dictionaryOfCallbacks)
+			foreach (var pair in this.registeredActions)
 			{
 				if (s.StartsWith(pair.Key))
 				{
@@ -87,7 +90,7 @@ namespace MatterHackers.SerialPortCommunication
 	{
 		public void CheckForKeys(string s)
 		{
-			foreach (var pair in this.dictionaryOfCallbacks)
+			foreach (var pair in this.registeredActions)
 			{
 				if (s.Contains(pair.Key))
 				{

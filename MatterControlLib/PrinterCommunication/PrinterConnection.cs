@@ -243,72 +243,72 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			MonitorPrinterTemperature = true;
 
-			ReadLineStartCallBacks.AddCallbackToKey("start", FoundStart);
-			ReadLineStartCallBacks.AddCallbackToKey("start", PrintingCanContinue);
+			ReadLineStartCallBacks.Register("start", FoundStart);
+			ReadLineStartCallBacks.Register("start", PrintingCanContinue);
 
-			ReadLineStartCallBacks.AddCallbackToKey("ok", SuppressEcho);
-			ReadLineStartCallBacks.AddCallbackToKey("wait", SuppressEcho);
-			ReadLineStartCallBacks.AddCallbackToKey("T:", SuppressEcho); // repetier
+			ReadLineStartCallBacks.Register("ok", SuppressEcho);
+			ReadLineStartCallBacks.Register("wait", SuppressEcho);
+			ReadLineStartCallBacks.Register("T:", SuppressEcho); // repetier
 
-			ReadLineStartCallBacks.AddCallbackToKey("ok", PrintingCanContinue);
-			ReadLineStartCallBacks.AddCallbackToKey("Done saving file", PrintingCanContinue);
+			ReadLineStartCallBacks.Register("ok", PrintingCanContinue);
+			ReadLineStartCallBacks.Register("Done saving file", PrintingCanContinue);
 
-			ReadLineStartCallBacks.AddCallbackToKey("B:", ReadTemperatures); // smoothie
-			ReadLineContainsCallBacks.AddCallbackToKey("T0:", ReadTemperatures); // marlin
-			ReadLineContainsCallBacks.AddCallbackToKey("T:", ReadTemperatures); // repetier
+			ReadLineStartCallBacks.Register("B:", ReadTemperatures); // smoothie
+			ReadLineContainsCallBacks.Register("T0:", ReadTemperatures); // marlin
+			ReadLineContainsCallBacks.Register("T:", ReadTemperatures); // repetier
 
-			ReadLineStartCallBacks.AddCallbackToKey("SD printing byte", ReadSdProgress); // repetier
+			ReadLineStartCallBacks.Register("SD printing byte", ReadSdProgress); // repetier
 
-			ReadLineStartCallBacks.AddCallbackToKey("C:", ReadTargetPositions);
-			ReadLineStartCallBacks.AddCallbackToKey("ok C:", ReadTargetPositions); // smoothie is reporting the C: with an ok first.
-			ReadLineStartCallBacks.AddCallbackToKey("X:", ReadTargetPositions);
-			ReadLineStartCallBacks.AddCallbackToKey("ok X:", ReadTargetPositions); //
+			ReadLineStartCallBacks.Register("C:", ReadTargetPositions);
+			ReadLineStartCallBacks.Register("ok C:", ReadTargetPositions); // smoothie is reporting the C: with an ok first.
+			ReadLineStartCallBacks.Register("X:", ReadTargetPositions);
+			ReadLineStartCallBacks.Register("ok X:", ReadTargetPositions); //
 
-			ReadLineStartCallBacks.AddCallbackToKey("rs ", PrinterRequestsResend); // smoothie is lower case and no :
-			ReadLineStartCallBacks.AddCallbackToKey("RS:", PrinterRequestsResend);
-			ReadLineContainsCallBacks.AddCallbackToKey("Resend:", PrinterRequestsResend);
+			ReadLineStartCallBacks.Register("rs ", PrinterRequestsResend); // smoothie is lower case and no :
+			ReadLineStartCallBacks.Register("RS:", PrinterRequestsResend);
+			ReadLineContainsCallBacks.Register("Resend:", PrinterRequestsResend);
 
-			ReadLineContainsCallBacks.AddCallbackToKey("FIRMWARE_NAME:", PrinterStatesFirmware);
+			ReadLineContainsCallBacks.Register("FIRMWARE_NAME:", PrinterStatesFirmware);
 
 			#region hardware failure callbacks
 
 			// smoothie temperature failures
-			ReadLineContainsCallBacks.AddCallbackToKey("T:inf", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("B:inf", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("T:inf", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("B:inf", PrinterReportsError);
 
 			// marlin temperature failures
-			ReadLineContainsCallBacks.AddCallbackToKey("MINTEMP", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("MAXTEMP", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("M999", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("Error: Extruder switched off", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("Heater decoupled", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("cold extrusion prevented", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("Error:Thermal Runaway, system stopped!", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("Error:Heating failed", PrinterReportsError);
-			ReadLineStartCallBacks.AddCallbackToKey("temp sensor defect", PrinterReportsError);
-			ReadLineStartCallBacks.AddCallbackToKey("Error:Printer halted", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("MINTEMP", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("MAXTEMP", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("M999", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("Error: Extruder switched off", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("Heater decoupled", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("cold extrusion prevented", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("Error:Thermal Runaway, system stopped!", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("Error:Heating failed", PrinterReportsError);
+			ReadLineStartCallBacks.Register("temp sensor defect", PrinterReportsError);
+			ReadLineStartCallBacks.Register("Error:Printer halted", PrinterReportsError);
 
 			// repetier temperature failures
-			ReadLineContainsCallBacks.AddCallbackToKey("dry run mode", PrinterReportsError);
-			ReadLineStartCallBacks.AddCallbackToKey("accelerometer send i2c error", PrinterReportsError);
-			ReadLineStartCallBacks.AddCallbackToKey("accelerometer i2c recv error", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("dry run mode", PrinterReportsError);
+			ReadLineStartCallBacks.Register("accelerometer send i2c error", PrinterReportsError);
+			ReadLineStartCallBacks.Register("accelerometer i2c recv error", PrinterReportsError);
 
 			// s3g temperature failures
-			ReadLineContainsCallBacks.AddCallbackToKey("Bot is Shutdown due to Overheat", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("Bot is Shutdown due to Overheat", PrinterReportsError);
 
 			#endregion hardware failure callbacks
 
-			WriteLineStartCallBacks.AddCallbackToKey("G90", MovementWasSetToAbsoluteMode);
-			WriteLineStartCallBacks.AddCallbackToKey("G91", MovementWasSetToRelativeMode);
-			WriteLineStartCallBacks.AddCallbackToKey("M80", AtxPowerUpWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M81", AtxPowerDownWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M104", HotendTemperatureWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M106", FanSpeedWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M107", FanOffWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M109", HotendTemperatureWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M140", BedTemperatureWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M190", BedTemperatureWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("T", ExtruderIndexSet);
+			WriteLineStartCallBacks.Register("G90", MovementWasSetToAbsoluteMode);
+			WriteLineStartCallBacks.Register("G91", MovementWasSetToRelativeMode);
+			WriteLineStartCallBacks.Register("M80", AtxPowerUpWasWritenToPrinter);
+			WriteLineStartCallBacks.Register("M81", AtxPowerDownWasWritenToPrinter);
+			WriteLineStartCallBacks.Register("M104", HotendTemperatureWasWritenToPrinter);
+			WriteLineStartCallBacks.Register("M106", FanSpeedWasWritenToPrinter);
+			WriteLineStartCallBacks.Register("M107", FanOffWasWritenToPrinter);
+			WriteLineStartCallBacks.Register("M109", HotendTemperatureWasWritenToPrinter);
+			WriteLineStartCallBacks.Register("M140", BedTemperatureWasWritenToPrinter);
+			WriteLineStartCallBacks.Register("M190", BedTemperatureWasWritenToPrinter);
+			WriteLineStartCallBacks.Register("T", ExtruderIndexSet);
 		}
 
 		private void ExtruderIndexSet(string line)
@@ -1008,7 +1008,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			// Register to detect the file deleted confirmation.
 			// This should have worked without this by getting the normal 'ok' on the next line. But the ok is not on its own line.
-			ReadLineStartCallBacks.AddCallbackToKey("File deleted:", FileDeleteConfirmed);
+			ReadLineStartCallBacks.Register("File deleted:", FileDeleteConfirmed);
 			// and send the line to delete the file
 			QueueLine("M30 {0}".FormatWith(fileName.ToLower()));
 		}
@@ -1899,7 +1899,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			QueueLine($"M23 {m23FileName.ToLower()}"); // Select SD File
 			QueueLine("M24"); // Start/resume SD print
 
-			ReadLineStartCallBacks.AddCallbackToKey("Done printing file", DonePrintingSdFile);
+			ReadLineStartCallBacks.Register("Done printing file", DonePrintingSdFile);
 
 			return true;
 		}
@@ -2012,7 +2012,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void DonePrintingSdFile(string line)
 		{
-			ReadLineStartCallBacks.RemoveCallbackFromKey("Done printing file", DonePrintingSdFile);
+			ReadLineStartCallBacks.Unregister("Done printing file", DonePrintingSdFile);
 			CommunicationState = CommunicationStates.FinishedPrint;
 
 			this.PrintJobName = null;
@@ -2025,7 +2025,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void FileDeleteConfirmed(string line)
 		{
-			ReadLineStartCallBacks.RemoveCallbackFromKey("File deleted:", FileDeleteConfirmed);
+			ReadLineStartCallBacks.Unregister("File deleted:", FileDeleteConfirmed);
 			PrintingCanContinue(line);
 		}
 
