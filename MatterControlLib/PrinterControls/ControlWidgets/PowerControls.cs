@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
 			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
 
-			printer.Connection.AtxPowerStateChanged.RegisterEvent((s, e) =>
+			void AtxPowerStateChanged(object s, EventArgs e)
 			{
 				if (settingsItem.SettingsControl is ICheckbox toggleSwitch)
 				{
@@ -83,7 +83,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 						toggleSwitch.Checked = printer.Connection.AtxPowerEnabled;
 					}
 				}
-			}, ref unregisterEvents);
+			}
+			printer.Connection.AtxPowerStateChanged += AtxPowerStateChanged;
+			this.Closed += (s, e) => printer.Connection.AtxPowerStateChanged -= AtxPowerStateChanged;
 		}
 
 		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)

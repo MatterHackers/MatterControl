@@ -44,11 +44,11 @@ namespace MatterHackers.MatterControl
 		public RootedObjectEventHandler HasChanged = new RootedObjectEventHandler();
 		private int maxLinesToBuffer = int.MaxValue - 1;
 
-		private EventHandler unregisterEvents;
-
 		public TerminalLog(PrinterConnection printerConnection)
 		{
-			printerConnection.ConnectionFailed.RegisterEvent(Instance_ConnectionFailed, ref unregisterEvents);
+			printerConnection.ConnectionFailed += Instance_ConnectionFailed;
+			printerConnection.Disposed += (s, e) => printerConnection.ConnectionFailed -= Instance_ConnectionFailed;
+
 			printerConnection.LineReceived += Printer_LineReceived;
 			printerConnection.LineSent += Printer_LineSent;
 

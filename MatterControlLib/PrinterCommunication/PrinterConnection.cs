@@ -75,45 +75,40 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 	/// It handles opening and closing the serial port and does quite a bit of gcode parsing.
 	/// It should be refactored into better modules at some point.
 	/// </summary>
-	public class PrinterConnection
+	public class PrinterConnection : IDisposable
 	{
+		public event EventHandler Disposed;
+
 		public event EventHandler TemporarilyHoldingTemp;
 		public event EventHandler<string> ErrorReported;
-
-		// this should be removed after we have better access to each running printer
-		public static RootedObjectEventHandler AnyCommunicationStateChanged = new RootedObjectEventHandler();
-
-		public static RootedObjectEventHandler AnyConnectionSucceeded = new RootedObjectEventHandler();
 
 		public event EventHandler BedTemperatureRead;
 
 		public EventHandler CommunicationStateChanged;
 
-		public RootedObjectEventHandler ConnectionFailed = new RootedObjectEventHandler();
+		public EventHandler ConnectionFailed;
 
-		public RootedObjectEventHandler ConnectionSucceeded = new RootedObjectEventHandler();
+		public event EventHandler ConnectionSucceeded;
 
 		public void OnPauseOnLayer(NamedItemEventArgs namedItemEventArgs)
 		{
 			PauseOnLayer?.Invoke(this, namedItemEventArgs);
 		}
 
-		public RootedObjectEventHandler DestinationChanged = new RootedObjectEventHandler();
+		public event EventHandler DestinationChanged;
 
-		public RootedObjectEventHandler EnableChanged = new RootedObjectEventHandler();
+		public event EventHandler EnableChanged;
 
 		public event EventHandler HotendTemperatureRead;
 
-		public RootedObjectEventHandler FanSpeedSet = new RootedObjectEventHandler();
+		public EventHandler FanSpeedSet;
 
-		public RootedObjectEventHandler FirmwareVersionRead = new RootedObjectEventHandler();
+		public EventHandler FirmwareVersionRead;
 
 		public void OnFilamentRunout(NamedItemEventArgs namedItemEventArgs)
 		{
 			FilamentRunout?.Invoke(this, namedItemEventArgs);
 		}
-
-		public RootedObjectEventHandler PositionRead = new RootedObjectEventHandler();
 
 		public event EventHandler PrintFinished;
 
@@ -145,7 +140,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public TerminalLog TerminalLog { get; }
 
-		public RootedObjectEventHandler AtxPowerStateChanged = new RootedObjectEventHandler();
+		public EventHandler AtxPowerStateChanged;
 
 		private bool atxPowerIsOn = false;
 
@@ -948,11 +943,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 										QueueLine(this.ConnectGCode);
 
-										// Call global event
-										AnyConnectionSucceeded.CallEvents(this, null);
-
 										// Call instance event
-										ConnectionSucceeded.CallEvents(this, null);
+										ConnectionSucceeded?.Invoke(this, null);
 
 										// TODO: Shouldn't we wait to start reading until after we create the stream pipeline?
 										Console.WriteLine("ReadFromPrinter thread created.");
@@ -1201,9 +1193,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void OnCommunicationStateChanged(EventArgs e)
 		{
-			// Call global even
-			AnyCommunicationStateChanged.CallEvents(this, e);
-
 			// Call instance event
 			CommunicationStateChanged?.Invoke(this, e);
 #if __ANDROID__
@@ -1230,7 +1219,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			communicationPossible = false;
 
 			var eventArgs = new ConnectFailedEventArgs(reason);
-			ConnectionFailed.CallEvents(this, eventArgs);
+			ConnectionFailed?.Invoke(this, eventArgs);
 
 			CommunicationState = CommunicationStates.Disconnected;
 			OnEnabledChanged(eventArgs);
@@ -1503,14 +1492,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			//if (currentDestination != positionRead)
 			{
 				currentDestination = lastReportedPosition;
-				DestinationChanged.CallEvents(this, null);
+				DestinationChanged?.Invoke(this, null);
 				if (totalGCodeStream != null)
 				{
 					totalGCodeStream.SetPrinterPosition(currentDestination);
 				}
 			}
-
-			PositionRead.CallEvents(this, null);
 
 			waitingForPosition.Reset();
 			PositionReadQueued = false;
@@ -2061,7 +2048,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					|| currentDestination.extrusion != newDestination.extrusion)
 				{
 					currentDestination = newDestination;
-					DestinationChanged.CallEvents(this, null);
+					DestinationChanged?.Invoke(this, null);
 				}
 			}
 		}
@@ -2201,7 +2188,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void OnEnabledChanged(EventArgs e)
 		{
-			EnableChanged.CallEvents(this, e);
+			EnableChanged?.Invoke(this, e);
 		}
 
 		private void OnHotendTemperatureRead(EventArgs e)
@@ -2211,12 +2198,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void OnFanSpeedSet(EventArgs e)
 		{
-			FanSpeedSet.CallEvents(this, e);
+			FanSpeedSet?.Invoke(this, e);
 		}
 
 		private void OnFirmwareVersionRead(EventArgs e)
 		{
-			FirmwareVersionRead.CallEvents(this, e);
+			FirmwareVersionRead?.Invoke(this, e);
 		}
 
 		private bool IsNetworkPrinting()
@@ -2227,7 +2214,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private void OnAtxPowerStateChanged(bool enableAtxPower)
 		{
 			atxPowerIsOn = enableAtxPower;
-			AtxPowerStateChanged.CallEvents(this, null);
+			AtxPowerStateChanged?.Invoke(this, null);
 		}
 
 		private void SetDetailedPrintingState(string lineBeingSetToPrinter)
@@ -2619,6 +2606,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			babyStepsStream5?.CancelMoves();
 			waitForTempStream7?.Cancel();
 			queuedCommandStream3?.Cancel();
+		}
+
+		public void Dispose()
+		{
+			Disposed?.Invoke(this, null);
 		}
 
 		public class ReadThread

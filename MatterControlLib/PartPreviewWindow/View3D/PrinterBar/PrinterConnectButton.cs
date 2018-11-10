@@ -153,8 +153,14 @@ namespace MatterHackers.MatterControl.ActionBar
 			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
 			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
 
-			printer.Connection.EnableChanged.RegisterEvent((s, e) => SetVisibleStates(), ref unregisterEvents);
-			printer.Connection.ConnectionFailed.RegisterEvent((s, e) =>
+			void EnableChanged(object s, EventArgs e)
+			{
+				SetVisibleStates();
+			}
+			printer.Connection.EnableChanged += EnableChanged;
+			this.Closed += (s, e) => printer.Connection.EnableChanged -= EnableChanged;
+
+			void ConnectionFailed(object s, EventArgs e)
 			{
 #if !__ANDROID__
 				// TODO: Someday this functionality should be revised to an awaitable Connect() call in the Connect button that
@@ -171,7 +177,9 @@ namespace MatterHackers.MatterControl.ActionBar
 				}
 #endif
 				listenForConnectFailed = false;
-			}, ref unregisterEvents);
+			}
+			printer.Connection.ConnectionFailed += ConnectionFailed;
+			this.Closed += (s, e) => printer.Connection.ConnectionFailed -= ConnectionFailed;
 
 			this.SetVisibleStates();
 		}

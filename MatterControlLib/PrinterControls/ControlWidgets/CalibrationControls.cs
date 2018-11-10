@@ -139,7 +139,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			printer.Connection.CommunicationStateChanged += PrinterStatusChanged;
 			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= PrinterStatusChanged;
 
-			printer.Connection.EnableChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
+			printer.Connection.EnableChanged += PrinterStatusChanged;
+			this.Closed += (s, e) => printer.Connection.EnableChanged -= PrinterStatusChanged;
 
 			SetVisibleControls();
 		}
