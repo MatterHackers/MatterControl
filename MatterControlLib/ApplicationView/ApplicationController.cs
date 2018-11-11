@@ -2036,6 +2036,11 @@ namespace MatterHackers.MatterControl
 
 		public bool PrinterTabSelected { get; set; } = false;
 
+		/// <summary>
+		/// Indicates if any ActivePrinter is running a print task, either in paused or printing states
+		/// </summary>
+		public bool AnyPrintTaskRunning => this.ActivePrinters.Any(p => p.Connection.PrinterIsPrinting || p.Connection.PrinterIsPaused);
+
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 
 		public void NotifyPrintersTabRightElement(GuiWidget sourceExentionArea)
