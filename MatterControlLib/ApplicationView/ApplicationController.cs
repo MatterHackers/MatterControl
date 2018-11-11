@@ -610,7 +610,7 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionOperation()
 				{
 					TitleResolver = () => "Remove".Localize(),
-					Action = (sceneContext) => sceneContext.DeleteSelection(),
+					Action = (sceneContext) => sceneContext.Scene.DeleteSelection(),
 					IsEnabled = (scene) => scene.SelectedItem != null,
 					Icon = AggContext.StaticData.LoadIcon("remove.png").SetPreMultiply(),
 				},
@@ -2867,7 +2867,7 @@ If you experience adhesion problems, please re-run leveling."
 						case Keys.V:
 							if (keyEvent.Control)
 							{
-								view3D.Scene.Paste();
+								view3D.sceneContext.Paste();
 								keyEvent.Handled = true;
 							}
 							break;
@@ -2911,7 +2911,7 @@ If you experience adhesion problems, please re-run leveling."
 						case Keys.Insert:
 							if(keyEvent.Shift)
 							{
-								view3D.Scene.Paste();
+								view3D.sceneContext.Paste();
 								keyEvent.Handled = true;
 							}
 							break;

@@ -207,8 +207,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public static void Paste(this InteractiveScene scene)
+		public static void Paste(this BedConfig sceneContext)
 		{
+			var scene = sceneContext.Scene;
+
 			if (Clipboard.Instance.ContainsImage)
 			{
 				// Persist
@@ -229,15 +231,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (Clipboard.Instance.GetText() == "!--IObjectSelection--!")
 				{
-					scene.DuplicateItem(pastObjectXOffset, ApplicationController.ClipboardItem);
+					sceneContext.DuplicateItem(pastObjectXOffset, ApplicationController.ClipboardItem);
 					// each time we put in the object offset it a bit more
 					pastObjectXOffset += 5;
 				}
 			}
 		}
 
-		public static async void DuplicateItem(this InteractiveScene scene, double xOffset, IObject3D sourceItem = null)
+		public static async void DuplicateItem(this BedConfig sceneContext, double xOffset, IObject3D sourceItem = null)
 		{
+			var scene = sceneContext.Scene;
 			if (sourceItem == null)
 			{
 				var selectedItem = scene.SelectedItem;
