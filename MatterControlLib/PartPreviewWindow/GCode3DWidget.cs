@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				loadedGCodeSection.AddChild(
 					speedsWidget = new SectionWidget(
 						"Speeds".Localize(),
-						new SpeedsLegend(sceneContext.LoadedGCode, theme)
+						new SpeedsLegend(sceneContext.LoadedGCode, theme, printer)
 						{
 							HAnchor = HAnchor.Stretch,
 							Visible = renderSpeeds,

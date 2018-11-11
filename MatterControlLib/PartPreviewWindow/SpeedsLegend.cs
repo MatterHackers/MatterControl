@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class SpeedsLegend : FlowLayoutWidget
 	{
-		public SpeedsLegend(GCodeFile gcodeFileTest, ThemeConfig theme)
+		public SpeedsLegend(GCodeFile gcodeFileTest, ThemeConfig theme, PrinterConfig printer)
 			: base(FlowDirection.TopToBottom)
 		{
 			GCodeMemoryFile memoryFile = gcodeFileTest as GCodeMemoryFile;
@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			GCodeRenderer renderer = ApplicationController.Instance.ActivePrinter.Bed.GCodeRenderer;
+			GCodeRenderer renderer = printer.Bed.GCodeRenderer;
 			if (renderer == null)
 			{
 				// Renderer did not load for content and speeds should not be rendered
