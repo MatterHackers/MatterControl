@@ -32,6 +32,7 @@ using System;
 using System.Collections.Generic;
 using MatterHackers.Agg.Image;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl;
 
 namespace MatterHackers.Agg.UI
 {
@@ -64,7 +65,7 @@ namespace MatterHackers.Agg.UI
 
 	public class SceneSelectionOperation : LocalizedAction
 	{
-		public Action<InteractiveScene> Action { get; set; }
+		public Action<BedConfig> Action { get; set; }
 		public Func<InteractiveScene, bool> IsEnabled { get; set; }
 		public Type OperationType { get; set; }
 	}

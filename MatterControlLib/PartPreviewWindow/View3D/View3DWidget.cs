@@ -496,7 +496,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Shortcut = "Ctrl+V",
 						Action = () =>
 						{
-							sceneContext.Scene.Paste();
+							sceneContext.Paste();
 						},
 						IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
 					}
@@ -1767,7 +1767,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Title = "Paste".Localize(),
 						Action = () =>
 						{
-							Scene.Paste();
+							sceneContext.Paste();
 						},
 						IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
 					},
