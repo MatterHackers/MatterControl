@@ -260,8 +260,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 			else
 			{
 				// TODO: when this opens a new tab we will not need to check any printer
-				if (activePrinter.Connection.PrinterIsPrinting
-					|| activePrinter.Connection.PrinterIsPaused)
+				if (ApplicationController.Instance.AnyPrintTaskRunning)
 				{
 					// TODO: Rather than block here, the UI elements driving the change should be disabled while printing/paused
 					UiThread.RunOnIdle(() =>
