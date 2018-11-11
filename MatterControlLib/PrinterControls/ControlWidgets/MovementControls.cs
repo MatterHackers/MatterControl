@@ -209,10 +209,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 				});
 			});
 
-			printer.Connection.DestinationChanged.RegisterEvent((object sender, EventArgs e) =>
+			void DestinationChanged(object s, EventArgs e)
 			{
 				reportDestinationChanged.CallEvent();
-			}, ref unregisterEvents);
+			}
+			printer.Connection.DestinationChanged += DestinationChanged;
+			this.Closed += (s, e) => printer.Connection.DestinationChanged -= DestinationChanged;
 
 			return hwDestinationBar;
 		}

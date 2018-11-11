@@ -56,20 +56,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			: base(internalStream)
 		{
 			this.printer = printer;
-			printer.Connection.LineReceived.RegisterEvent((s, e) =>
+			printer.Connection.LineReceived += (s, line) =>
 			{
-				StringEventArgs currentEvent = e as StringEventArgs;
-				if (currentEvent != null)
+				if (line != null)
 				{
-					if (currentEvent.Data.Contains("ros_"))
+					if (line.Contains("ros_"))
 					{
-						if(currentEvent.Data.Contains("TRIGGERED"))
+						if(line.Contains("TRIGGERED"))
 						{
 							readOutOfFilament = true;
 						}
 					}
 				}
-			}, ref unregisterEvents);
+			};
 		}
 
 		public override void Dispose()
@@ -106,12 +105,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				case PauseReason.PauseLayerReached:
 				case PauseReason.GCodeRequest:
-					printer.Connection.PauseOnLayer.CallEvents(printer.Connection, new NamedItemEventArgs(printer.Bed.EditContext?.SourceItem?.Name ?? "Unknown"));
+					printer.Connection.OnPauseOnLayer(new NamedItemEventArgs(printer.Bed.EditContext?.SourceItem?.Name ?? "Unknown"));
 					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, layerPauseMessage.FormatWith(layerNumber), pauseCaption, StyledMessageBox.MessageType.YES_NO, "Resume".Localize(), "OK".Localize()));
 					break;
 
 				case PauseReason.FilamentRunout:
-					printer.Connection.FilamentRunout.CallEvents(printer.Connection, new NamedItemEventArgs(printer.Bed.EditContext?.SourceItem?.Name ?? "Unknown"));
+					printer.Connection.OnFilamentRunout(new NamedItemEventArgs(printer.Bed.EditContext?.SourceItem?.Name ?? "Unknown"));
 					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, filamentPauseMessage, pauseCaption, StyledMessageBox.MessageType.YES_NO, "Resume".Localize(), "OK".Localize()));
 					break;
 			}
@@ -282,7 +281,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			int layerNumber;
 			var printerRecoveryStream = internalStream as PrintRecoveryStream;
 
-			if (int.TryParse(layer, out layerNumber) 
+			if (int.TryParse(layer, out layerNumber)
 				&& printer.Settings.Helpers.LayerToPauseOn().Contains(layerNumber)
 				&& (printerRecoveryStream == null
 					|| printerRecoveryStream.RecoveryState == RecoveryState.PrintingToEnd))

@@ -64,25 +64,24 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			FlowLayoutWidget textFields = new FlowLayoutWidget(FlowDirection.TopToBottom);
 		}
 
-		private void GetZProbeHeight(object sender, EventArgs e)
+		private void GetZProbeHeight(object sender, string line)
 		{
-			StringEventArgs currentEvent = e as StringEventArgs;
-			if (currentEvent != null)
+			if (line != null)
 			{
 				double sampleRead = double.MinValue;
-				if (currentEvent.Data.StartsWith("Bed")) // marlin G30 return code (looks like: 'Bed Position X:20 Y:32 Z:.01')
+				if (line.StartsWith("Bed")) // marlin G30 return code (looks like: 'Bed Position X:20 Y:32 Z:.01')
 				{
 					probePositions[probePositionsBeingEditedIndex].position.X = probeStartPosition.X;
 					probePositions[probePositionsBeingEditedIndex].position.Y = probeStartPosition.Y;
-					GCodeFile.GetFirstNumberAfter("Z:", currentEvent.Data, ref sampleRead);
+					GCodeFile.GetFirstNumberAfter("Z:", line, ref sampleRead);
 				}
-				else if (currentEvent.Data.StartsWith("Z:")) // smoothie G30 return code (looks like: 'Z:10.01')
+				else if (line.StartsWith("Z:")) // smoothie G30 return code (looks like: 'Z:10.01')
 				{
 					probePositions[probePositionsBeingEditedIndex].position.X = probeStartPosition.X;
 					probePositions[probePositionsBeingEditedIndex].position.Y = probeStartPosition.Y;
 					// smoothie returns the position relative to the start position
 					double reportedProbeZ = 0;
-					GCodeFile.GetFirstNumberAfter("Z:", currentEvent.Data, ref reportedProbeZ);
+					GCodeFile.GetFirstNumberAfter("Z:", line, ref reportedProbeZ);
 					sampleRead = probeStartPosition.Z - reportedProbeZ;
 				}
 
@@ -158,13 +157,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				&& !(printer.Connection.PrinterIsPrinting
 				|| printer.Connection.PrinterIsPaused))
 			{
-				printer.Connection.LineReceived.RegisterEvent(GetZProbeHeight, ref unregisterEvents);
+				printer.Connection.LineReceived += GetZProbeHeight;
 			}
 		}
 
 		public override void PageIsBecomingInactive()
 		{
-			printer.Connection.LineReceived.UnregisterEvent(GetZProbeHeight, ref unregisterEvents);
+			printer.Connection.LineReceived -= GetZProbeHeight;
 			base.PageIsBecomingInactive();
 		}
 	}

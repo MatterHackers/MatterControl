@@ -107,8 +107,11 @@ namespace MatterHackers.MatterControl
 			// HACK: this is a hack to make the layout engine fire again for this control
 			UiThread.RunOnIdle(() => tuningAdjustmentControlsContainer.Width = tuningAdjustmentControlsContainer.Width + 1);
 
-			printer.Connection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-			printer.Connection.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			printer.Connection.CommunicationStateChanged += onPrinterStatusChanged;
+			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= onPrinterStatusChanged;
+
+			printer.Connection.EnableChanged += onPrinterStatusChanged;
+			this.Closed += (s, e) => printer.Connection.EnableChanged -= onPrinterStatusChanged;
 
 			SetVisibleControls();
 		}

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -32,51 +32,40 @@ using System.Collections.Generic;
 
 namespace MatterHackers.SerialPortCommunication
 {
-	public class FoundStringEventArgs : EventArgs
+	/// <summary>
+	/// A dictionary of key to Action delegates that are invoked per received/sent line
+	/// </summary>
+	public abstract class LineActions
 	{
-		public FoundStringEventArgs(string lineReceived)
+		public Dictionary<string, Action<string>> registeredActions = new Dictionary<string, Action<string>>();
+
+		public void Register(string key, Action<string> value)
 		{
-			this.LineToCheck = lineReceived.Trim();
-		}
-
-		public bool CallbackWasCalled { get; set; }
-
-		public string LineToCheck { get; }
-
-		/// <summary>
-		/// Used to conditionally invoke LineSent/LineReceived events. Setting to false suppresses notification, hiding lines from listeners
-		/// </summary>
-		public bool AllowListenerNotification { get; set; } = true;
-	}
-
-	public class FoundStringCallbacks
-	{
-		public Dictionary<string, EventHandler<FoundStringEventArgs> > dictionaryOfCallbacks = new Dictionary<string, EventHandler<FoundStringEventArgs>>();
-
-		public void AddCallbackToKey(string key, EventHandler<FoundStringEventArgs> value)
-		{
-			if (dictionaryOfCallbacks.ContainsKey(key))
+			if (registeredActions.ContainsKey(key))
 			{
-				dictionaryOfCallbacks[key] += value;
+				registeredActions[key] += value;
 			}
 			else
 			{
-				dictionaryOfCallbacks.Add(key, value);
+				registeredActions.Add(key, value);
 			}
 		}
 
-		public void RemoveCallbackFromKey(string key, EventHandler<FoundStringEventArgs> value)
+		public void Unregister(string key, Action<string> value)
 		{
-			if (dictionaryOfCallbacks.ContainsKey(key))
+			if (registeredActions.ContainsKey(key))
 			{
-				if (dictionaryOfCallbacks[key] == null)
+				if (registeredActions[key] == null)
 				{
 					throw new Exception();
 				}
-				dictionaryOfCallbacks[key] -= value;
-				if (dictionaryOfCallbacks[key] == null)
+
+				registeredActions[key] -= value;
+
+				// TODO: this doesn't look like it can ever be hit. Who would have assigned null to key?
+				if (registeredActions[key] == null)
 				{
-					dictionaryOfCallbacks.Remove(key);
+					registeredActions.Remove(key);
 				}
 			}
 			else
@@ -84,33 +73,35 @@ namespace MatterHackers.SerialPortCommunication
 				throw new Exception();
 			}
 		}
+
+		public abstract void ProcessLine(string line);
 	}
 
-	public class FoundStringStartsWithCallbacks : FoundStringCallbacks
+	public class StartsWithLineActions : LineActions
 	{
-		public void CheckForKeys(FoundStringEventArgs e)
+		public override void ProcessLine(string line)
 		{
-			foreach (var pair in this.dictionaryOfCallbacks)
+			foreach (var pair in this.registeredActions)
 			{
-				if (e.LineToCheck.StartsWith(pair.Key))
+				if (line.StartsWith(pair.Key))
 				{
-					e.CallbackWasCalled = true;
-					pair.Value(this, e);
+					// Invoke action of lines starting with the given key
+					pair.Value.Invoke(line);
 				}
 			}
 		}
 	}
 
-	public class FoundStringContainsCallbacks : FoundStringCallbacks
+	public class ContainsStringLineActions : LineActions
 	{
-		public void CheckForKeys(FoundStringEventArgs e)
+		public override void ProcessLine(string line)
 		{
-			foreach (var pair in this.dictionaryOfCallbacks)
+			foreach (var pair in this.registeredActions)
 			{
-				if (e.LineToCheck.Contains(pair.Key))
+				if (line.Contains(pair.Key))
 				{
-					e.CallbackWasCalled = true;
-					pair.Value(this, e);
+					// Invoke action of lines containing the given key
+					pair.Value.Invoke(line);
 				}
 			}
 		}

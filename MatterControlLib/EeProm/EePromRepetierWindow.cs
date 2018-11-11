@@ -57,13 +57,15 @@ namespace MatterHackers.MatterControl.EeProm
 			this.printer = printer;
 
 			// Close window if printer is disconnected
-			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
+			void CommunicationStateChanged(object s, EventArgs e)
 			{
-				if(!printer.Connection.IsConnected)
+				if (!printer.Connection.IsConnected)
 				{
 					this.DialogWindow.CloseOnIdle();
 				}
-			}, ref unregisterEvents);
+			}
+			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
+			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -189,7 +191,7 @@ namespace MatterHackers.MatterControl.EeProm
 			this.AddPageAction(exportButton);
 
 			currentEePromSettings.Clear();
-			printer.Connection.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
+			printer.Connection.LineReceived += currentEePromSettings.Add;
 			currentEePromSettings.SettingAdded += NewSettingReadFromPrinter;
 			currentEePromSettings.AskPrinterForSettings(printer.Connection);
 

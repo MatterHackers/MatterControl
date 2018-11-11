@@ -207,8 +207,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public static void Paste(this InteractiveScene scene)
+		public static void Paste(this BedConfig sceneContext)
 		{
+			var scene = sceneContext.Scene;
+
 			if (Clipboard.Instance.ContainsImage)
 			{
 				// Persist
@@ -229,15 +231,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (Clipboard.Instance.GetText() == "!--IObjectSelection--!")
 				{
-					scene.DuplicateItem(pastObjectXOffset, ApplicationController.ClipboardItem);
+					sceneContext.DuplicateItem(pastObjectXOffset, ApplicationController.ClipboardItem);
 					// each time we put in the object offset it a bit more
 					pastObjectXOffset += 5;
 				}
 			}
 		}
 
-		public static async void DuplicateItem(this InteractiveScene scene, double xOffset, IObject3D sourceItem = null)
+		public static async void DuplicateItem(this BedConfig sceneContext, double xOffset, IObject3D sourceItem = null)
 		{
+			var scene = sceneContext.Scene;
 			if (sourceItem == null)
 			{
 				var selectedItem = scene.SelectedItem;
@@ -295,23 +298,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// it might come back null due to threading
 				if (newItem != null)
 				{
-					scene.InsertNewItem(newItem);
+					sceneContext.InsertNewItem(newItem);
 				}
 			}
 		}
 
-		public static void InsertNewItem(this InteractiveScene scene, IObject3D newItem)
+		public static void InsertNewItem(this BedConfig sceneContext, IObject3D newItem)
 		{
+			var scene = sceneContext.Scene;
+
 			// Reposition first item to bed center
 			if (scene.Children.Count == 0)
 			{
-				var printer = ApplicationController.Instance.ActivePrinter;
 				var aabb = newItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 				var center = aabb.Center;
 
 				newItem.Matrix *= Matrix4X4.CreateTranslation(
-					(printer.Bed.BedCenter.X + center.X),
-					(printer.Bed.BedCenter.Y + center.Y),
+					(sceneContext.BedCenter.X + center.X),
+					(sceneContext.BedCenter.Y + center.Y),
 					 -aabb.minXYZ.Z);
 			}
 

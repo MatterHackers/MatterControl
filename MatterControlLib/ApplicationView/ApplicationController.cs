@@ -547,8 +547,9 @@ namespace MatterHackers.MatterControl
 					OperationType = typeof(GroupObject3D),
 
 					TitleResolver = () => "Group".Localize(),
-					Action = (scene) =>
+					Action = (sceneContext) =>
 					{
+						var scene = sceneContext.Scene;
 						var selectedItem = scene.SelectedItem;
 						scene.SelectedItem = null;
 
@@ -584,7 +585,7 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionOperation()
 				{
 					TitleResolver = () => "Ungroup".Localize(),
-					Action = (scene) => scene.UngroupSelection(),
+					Action = (sceneContext) => sceneContext.Scene.UngroupSelection(),
 					IsEnabled = (scene) =>
 					{
 						var selectedItem = scene.SelectedItem;
@@ -602,14 +603,14 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionOperation()
 				{
 					TitleResolver = () => "Duplicate".Localize(),
-					Action = (scene) => scene.DuplicateItem(5),
+					Action = (sceneContext) => sceneContext.DuplicateItem(5),
 					IsEnabled = (scene) => scene.SelectedItem != null,
 					Icon = AggContext.StaticData.LoadIcon("duplicate.png").SetPreMultiply(),
 				},
 				new SceneSelectionOperation()
 				{
 					TitleResolver = () => "Remove".Localize(),
-					Action = (scene) => scene.DeleteSelection(),
+					Action = (sceneContext) => sceneContext.Scene.DeleteSelection(),
 					IsEnabled = (scene) => scene.SelectedItem != null,
 					Icon = AggContext.StaticData.LoadIcon("remove.png").SetPreMultiply(),
 				},
@@ -618,8 +619,9 @@ namespace MatterHackers.MatterControl
 				{
 					OperationType = typeof(AlignObject3D),
 					TitleResolver = () => "Align".Localize(),
-					Action = (scene) =>
+					Action = (sceneContext) =>
 					{
+						var scene = sceneContext.Scene;
 						var selectedItem = scene.SelectedItem;
 						var align = new AlignObject3D();
 						align.AddSelectionAsChildren(scene, selectedItem);
@@ -631,8 +633,9 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionOperation()
 				{
 					TitleResolver = () => "Lay Flat".Localize(),
-					Action = (scene) =>
+					Action = (sceneContext) =>
 					{
+						var scene = sceneContext.Scene;
 						var selectedItem = scene.SelectedItem;
 						if (selectedItem != null)
 						{
@@ -645,8 +648,9 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionOperation()
 				{
 					TitleResolver = () => "Make Support".Localize(),
-					Action = (scene) =>
+					Action = (sceneContext) =>
 					{
+						var scene = sceneContext.Scene;
 						if (scene.SelectedItem != null
 							&& !scene.SelectedItem.VisibleMeshes().All(i => i.OutputType == PrintOutputTypes.Support))
 						{
@@ -661,7 +665,7 @@ namespace MatterHackers.MatterControl
 				{
 					OperationType = typeof(CombineObject3D),
 					TitleResolver = () => "Combine".Localize(),
-					Action = (scene) => new CombineObject3D().WrapSelectedItemAndSelect(scene),
+					Action = (sceneContext) => new CombineObject3D().WrapSelectedItemAndSelect(sceneContext.Scene),
 					Icon = AggContext.StaticData.LoadIcon("combine.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
 				},
@@ -669,7 +673,7 @@ namespace MatterHackers.MatterControl
 				{
 					OperationType = typeof(SubtractObject3D),
 					TitleResolver = () => "Subtract".Localize(),
-					Action = (scene) => new SubtractObject3D().WrapSelectedItemAndSelect(scene),
+					Action = (sceneContext) => new SubtractObject3D().WrapSelectedItemAndSelect(sceneContext.Scene),
 					Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
 				},
@@ -677,7 +681,7 @@ namespace MatterHackers.MatterControl
 				{
 					OperationType = typeof(IntersectionObject3D),
 					TitleResolver = () => "Intersect".Localize(),
-					Action = (scene) => new IntersectionObject3D().WrapSelectedItemAndSelect(scene),
+					Action = (sceneContext) => new IntersectionObject3D().WrapSelectedItemAndSelect(sceneContext.Scene),
 					Icon = AggContext.StaticData.LoadIcon("intersect.png"),
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
 				},
@@ -685,7 +689,7 @@ namespace MatterHackers.MatterControl
 				{
 					OperationType = typeof(SubtractAndReplaceObject3D),
 					TitleResolver = () => "Subtract & Replace".Localize(),
-					Action = (scene) => new SubtractAndReplaceObject3D().WrapSelectedItemAndSelect(scene),
+					Action = (sceneContext) => new SubtractAndReplaceObject3D().WrapSelectedItemAndSelect(sceneContext.Scene),
 					Icon = AggContext.StaticData.LoadIcon("subtract_and_replace.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
 				},
@@ -694,10 +698,10 @@ namespace MatterHackers.MatterControl
 				{
 					OperationType = typeof(ArrayLinearObject3D),
 					TitleResolver = () => "Linear Array".Localize(),
-					Action = (scene) =>
+					Action = (sceneContext) =>
 					{
 						var array = new ArrayLinearObject3D();
-						array.AddSelectionAsChildren(scene, scene.SelectedItem);
+						array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
 						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
@@ -707,10 +711,10 @@ namespace MatterHackers.MatterControl
 				{
 					OperationType = typeof(ArrayRadialObject3D),
 					TitleResolver = () => "Radial Array".Localize(),
-					Action = (scene) =>
+					Action = (sceneContext) =>
 					{
 						var array = new ArrayRadialObject3D();
-						array.AddSelectionAsChildren(scene, scene.SelectedItem);
+						array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
 						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_radial.png").SetPreMultiply(),
@@ -720,10 +724,10 @@ namespace MatterHackers.MatterControl
 				{
 					OperationType = typeof(ArrayAdvancedObject3D),
 					TitleResolver = () => "Advanced Array".Localize(),
-					Action = (scene) =>
+					Action = (sceneContext) =>
 					{
 						var array = new ArrayAdvancedObject3D();
-						array.AddSelectionAsChildren(scene, scene.SelectedItem);
+						array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
 						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_advanced.png").SetPreMultiply(),
@@ -734,10 +738,10 @@ namespace MatterHackers.MatterControl
 				{
 					OperationType = typeof(PinchObject3D),
 					TitleResolver = () => "Pinch".Localize(),
-					Action = (scene) =>
+					Action = (sceneContext) =>
 					{
 						var pinch = new PinchObject3D();
-						pinch.WrapSelectedItemAndSelect(scene);
+						pinch.WrapSelectedItemAndSelect(sceneContext.Scene);
 					},
 					Icon = AggContext.StaticData.LoadIcon("pinch.png", 16, 16, theme.InvertIcons),
 					IsEnabled = (scene) => scene.SelectedItem != null,
@@ -746,10 +750,10 @@ namespace MatterHackers.MatterControl
 				{
 					OperationType = typeof(CurveObject3D),
 					TitleResolver = () => "Curve".Localize(),
-					Action = (scene) =>
+					Action = (sceneContext) =>
 					{
 						var curve = new CurveObject3D();
-						curve.WrapSelectedItemAndSelect(scene);
+						curve.WrapSelectedItemAndSelect(sceneContext.Scene);
 					},
 					Icon = AggContext.StaticData.LoadIcon("curve.png", 16, 16, theme.InvertIcons),
 					IsEnabled = (scene) => scene.SelectedItem != null,
@@ -758,8 +762,9 @@ namespace MatterHackers.MatterControl
 				{
 					OperationType = typeof(FitToBoundsObject3D_2),
 					TitleResolver = () => "Fit to Bounds".Localize(),
-					Action = (scene) =>
+					Action = (sceneContext) =>
 					{
+						var scene = sceneContext.Scene;
 						var selectedItem = scene.SelectedItem;
 						scene.SelectedItem = null;
 						var fit = FitToBoundsObject3D_2.Create(selectedItem.Clone());
@@ -1145,7 +1150,6 @@ namespace MatterHackers.MatterControl
 				},
 				iconCollector: (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons));
 
-
 			this.Graph.RegisterOperation(
 				typeof(IObject3D),
 				typeof(ScaleObject3D),
@@ -1273,101 +1277,54 @@ namespace MatterHackers.MatterControl
 				}
 			}, ref unregisterEvents);
 
-			bool waitingForBedHeat = false;
-			bool waitingForExtruderHeat = false;
-			double heatDistance = 0;
-			double heatStart = 0;
+			this.InitializeLibrary();
 
-			// show temperature heating for m109 and m190
-			PrinterConnection.AnyCommunicationStateChanged.RegisterEvent((s, e) =>
+			HashSet<IObject3DEditor> mappedEditors;
+			objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
+
+			// Initialize plugins, passing the MatterControl assembly as the only non-dll instance
+			//PluginFinder.Initialize(Assembly.GetExecutingAssembly());
+
+			foreach (IObject3DEditor editor in PluginFinder.CreateInstancesOf<IObject3DEditor>())
 			{
-				var printerConnection = this.ActivePrinter.Connection;
-
-				if (printerConnection.PrinterIsPrinting || printerConnection.PrinterIsPaused)
+				foreach (Type type in editor.SupportedTypes())
 				{
-					switch (printerConnection.DetailedPrintingState)
+					if (!objectEditorsByType.TryGetValue(type, out mappedEditors))
 					{
-						case DetailedPrintingState.HeatingBed:
-							Tasks.Execute(
-								"Heating Bed".Localize(),
-								(reporter, cancellationToken) =>
-								{
-									waitingForBedHeat = true;
-									waitingForExtruderHeat = false;
-
-									var progressStatus = new ProgressStatus();
-									heatStart = printerConnection.ActualBedTemperature;
-									heatDistance = Math.Abs(printerConnection.TargetBedTemperature - heatStart);
-
-									while (heatDistance > 0 && waitingForBedHeat)
-									{
-										var remainingDistance = Math.Abs(printerConnection.TargetBedTemperature - printerConnection.ActualBedTemperature);
-										progressStatus.Status = $"Heating Bed ({printerConnection.ActualBedTemperature:0}/{printerConnection.TargetBedTemperature:0})";
-										progressStatus.Progress0To1 = (heatDistance - remainingDistance) / heatDistance;
-										reporter.Report(progressStatus);
-										Thread.Sleep(10);
-									}
-
-									return Task.CompletedTask;
-								},
-								new RunningTaskOptions()
-								{
-									ReadOnlyReporting = true
-								});
-							break;
-
-						case DetailedPrintingState.HeatingExtruder:
-							Tasks.Execute(
-								"Heating Extruder".Localize(),
-								(reporter, cancellationToken) =>
-								{
-									waitingForBedHeat = false;
-									waitingForExtruderHeat = true;
-
-									var progressStatus = new ProgressStatus();
-
-									heatStart = printerConnection.GetActualHotendTemperature(0);
-									heatDistance = Math.Abs(printerConnection.GetTargetHotendTemperature(0) - heatStart);
-
-									while (heatDistance > 0 && waitingForExtruderHeat)
-									{
-										var currentDistance = Math.Abs(printerConnection.GetTargetHotendTemperature(0) - printerConnection.GetActualHotendTemperature(0));
-										progressStatus.Progress0To1 = (heatDistance - currentDistance) / heatDistance;
-										progressStatus.Status = $"Heating Extruder ({printerConnection.GetActualHotendTemperature(0):0}/{printerConnection.GetTargetHotendTemperature(0):0})";
-										reporter.Report(progressStatus);
-										Thread.Sleep(1000);
-									}
-
-									return Task.CompletedTask;
-								},
-								new RunningTaskOptions()
-								{
-									ReadOnlyReporting = true
-								});
-							break;
-
-						case DetailedPrintingState.HomingAxis:
-						case DetailedPrintingState.Printing:
-						default:
-							// clear any existing waiting states
-							waitingForBedHeat = false;
-							waitingForExtruderHeat = false;
-							break;
+						mappedEditors = new HashSet<IObject3DEditor>();
+						objectEditorsByType.Add(type, mappedEditors);
 					}
-				}
-				else
-				{
-					// turn of any running temp feedback tasks
-					waitingForBedHeat = false;
-					waitingForExtruderHeat = false;
-				}
-			}, ref unregisterEvent);
 
-			// show countdown for turning off heat if required
-			PrinterConnection.TemporarilyHoldingTemp.RegisterEvent((s, e) =>
+					mappedEditors.Add(editor);
+				}
+			}
+		}
+
+		public void Connection_ErrorReported(object sender, string line)
+		{
+			if (line != null)
 			{
-				var printerConnection = this.ActivePrinter.Connection;
+				string message = "Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.".Localize()
+					+ "\n"
+					+ "\n"
+					+ "Error Reported".Localize() + ":"
+					+ $" \"{line}\".";
+				UiThread.RunOnIdle(() =>
+					StyledMessageBox.ShowMessageBox((clickedOk) =>
+					{
+						if (clickedOk && this.ActivePrinter.Connection.PrinterIsPaused)
+						{
+							this.ActivePrinter.Connection.Resume();
+						}
+					}, message, "Printer Hardware Error".Localize(), StyledMessageBox.MessageType.YES_NO, "Resume".Localize(), "OK".Localize())
+				);
+			}
+		}
 
+		public void Connection_TemporarilyHoldingTemp(object sender, EventArgs e)
+		{
+			if (sender is PrinterConnection printerConnection)
+			{
 				if (printerConnection.AnyHeatIsOn)
 				{
 					var paused = false;
@@ -1428,63 +1385,6 @@ namespace MatterHackers.MatterControl
 						}),
 						StopToolTip = "Immediately turn off heaters".Localize()
 					});
-				}
-			}, ref unregisterEvents);
-
-			PrinterConnection.ErrorReported.RegisterEvent((s, e) =>
-			{
-				var foundStringEventArgs = e as FoundStringEventArgs;
-				if (foundStringEventArgs != null)
-				{
-					string message = "Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.".Localize()
-						+ "\n"
-						+ "\n"
-						+ "Error Reported".Localize() + ":"
-						+ $" \"{foundStringEventArgs.LineToCheck}\".";
-					UiThread.RunOnIdle(() =>
-						StyledMessageBox.ShowMessageBox((clickedOk) =>
-						{
-							if (clickedOk && this.ActivePrinter.Connection.PrinterIsPaused)
-							{
-								this.ActivePrinter.Connection.Resume();
-							}
-						}, message, "Printer Hardware Error".Localize(), StyledMessageBox.MessageType.YES_NO, "Resume".Localize(), "OK".Localize())
-					);
-				}
-			}, ref unregisterEvent);
-
-			this.InitializeLibrary();
-
-			PrinterConnection.AnyConnectionSucceeded.RegisterEvent((s, e) =>
-			{
-				// run the print leveling wizard if we need to for this printer
-				var printer = this.ActivePrinters.Where(p => p.Connection == s).FirstOrDefault();
-				if (printer != null)
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						this.RunAnyRequiredPrinterSetup(printer, this.Theme);
-					});
-				}
-			}, ref unregisterEvents);
-
-			HashSet<IObject3DEditor> mappedEditors;
-			objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
-
-			// Initialize plugins, passing the MatterControl assembly as the only non-dll instance
-			//PluginFinder.Initialize(Assembly.GetExecutingAssembly());
-
-			foreach (IObject3DEditor editor in PluginFinder.CreateInstancesOf<IObject3DEditor>())
-			{
-				foreach (Type type in editor.SupportedTypes())
-				{
-					if (!objectEditorsByType.TryGetValue(type, out mappedEditors))
-					{
-						mappedEditors = new HashSet<IObject3DEditor>();
-						objectEditorsByType.Add(type, mappedEditors);
-					}
-
-					mappedEditors.Add(editor);
 				}
 			}
 		}
@@ -2967,7 +2867,7 @@ If you experience adhesion problems, please re-run leveling."
 						case Keys.V:
 							if (keyEvent.Control)
 							{
-								view3D.Scene.Paste();
+								view3D.sceneContext.Paste();
 								keyEvent.Handled = true;
 							}
 							break;
@@ -3011,7 +2911,7 @@ If you experience adhesion problems, please re-run leveling."
 						case Keys.Insert:
 							if(keyEvent.Shift)
 							{
-								view3D.Scene.Paste();
+								view3D.sceneContext.Paste();
 								keyEvent.Handled = true;
 							}
 							break;

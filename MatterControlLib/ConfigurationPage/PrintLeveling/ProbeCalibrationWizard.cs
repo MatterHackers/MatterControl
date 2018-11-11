@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -126,6 +127,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					"Manually measure the extruder at the center".Localize(),
 					"We should be done in less than five minutes.".Localize(),
 					"Click 'Next' to continue.".Localize()));
+
 			// add in the homing printer page
 			yield return new HomePrinterPage(
 				this,
@@ -172,6 +174,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				$"{"Step".Localize()} {i + 1} {"of".Localize()} 3: {"Position".Localize()} {i + 1} - {"Auto Calibrate".Localize()}",
 				autoProbePositions,
 				i);
+
+			// show what steps will be taken
+			yield return new PrinterSetupWizardPage(
+				this,
+				"Measure the nozzle offset".Localize(),
+				"{0}:\n\n\t• {1}\n\n{2}\n\n{3}".FormatWith(
+					"To complete the next few steps you will need".Localize(),
+					"A standard sheet of paper".Localize(),
+					"We will use this paper to measure the distance between the nozzle and the bed.".Localize(),
+					"Click 'Next' to continue.".Localize()));
 
 			// do the manual prob of the same position
 			yield return new GetCoarseBedHeight(

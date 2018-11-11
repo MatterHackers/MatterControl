@@ -487,7 +487,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						namedAction.Action.Invoke(sceneContext.Scene);
+						namedAction.Action.Invoke(sceneContext);
 						var partTab = button.Parents<PartTabPage>().FirstOrDefault();
 						var view3D = partTab.Descendants<View3DWidget>().FirstOrDefault();
 						view3D.InteractionLayer.Focus();

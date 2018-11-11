@@ -58,30 +58,30 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingActive()
 		{
 			// first make sure there is no leftover FinishedProbe event
-			printer.Connection.LineReceived.UnregisterEvent(FinishedProbe, ref unregisterEvents);
+			printer.Connection.LineReceived += FinishedProbe;
 
 			var feedRates = printer.Settings.Helpers.ManualMovementSpeeds();
 
 			printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, probeStartPosition.Z, feedRates.Z);
 			printer.Connection.MoveAbsolute(probeStartPosition, feedRates.X);
 			printer.Connection.QueueLine("G30");
-			printer.Connection.LineReceived.RegisterEvent(FinishedProbe, ref unregisterEvents);
+			printer.Connection.LineReceived += FinishedProbe;
 
 			base.PageIsBecomingActive();
 
 			NextButton.Enabled = false;
 		}
 
-		private void FinishedProbe(object sender, EventArgs e)
+		private void FinishedProbe(object sender, string line)
 		{
-			StringEventArgs currentEvent = e as StringEventArgs;
-			if (currentEvent != null)
+			if (line != null)
 			{
-				if (currentEvent.Data.Contains("endstops hit"))
+				if (line.Contains("endstops hit"))
 				{
-					printer.Connection.LineReceived.UnregisterEvent(FinishedProbe, ref unregisterEvents);
-					int zStringPos = currentEvent.Data.LastIndexOf("Z:");
-					string zProbeHeight = currentEvent.Data.Substring(zStringPos + 2);
+					printer.Connection.LineReceived -= FinishedProbe;
+
+					int zStringPos = line.LastIndexOf("Z:");
+					string zProbeHeight = line.Substring(zStringPos + 2);
 					probePosition.position = new Vector3(probeStartPosition.X, probeStartPosition.Y, double.Parse(zProbeHeight));
 					printer.Connection.MoveAbsolute(probeStartPosition, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 					printer.Connection.ReadPosition();

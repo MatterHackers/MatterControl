@@ -44,13 +44,14 @@ namespace MatterHackers.MatterControl
 		public RootedObjectEventHandler HasChanged = new RootedObjectEventHandler();
 		private int maxLinesToBuffer = int.MaxValue - 1;
 
-		private EventHandler unregisterEvents;
-
 		public TerminalLog(PrinterConnection printerConnection)
 		{
-			printerConnection.ConnectionFailed.RegisterEvent(Instance_ConnectionFailed, ref unregisterEvents);
-			printerConnection.CommunicationUnconditionalFromPrinter.RegisterEvent(FromPrinter, ref unregisterEvents);
-			printerConnection.CommunicationUnconditionalToPrinter.RegisterEvent(ToPrinter, ref unregisterEvents);
+			printerConnection.ConnectionFailed += Instance_ConnectionFailed;
+			printerConnection.Disposed += (s, e) => printerConnection.ConnectionFailed -= Instance_ConnectionFailed;
+
+			printerConnection.LineReceived += Printer_LineReceived;
+			printerConnection.LineSent += Printer_LineSent;
+
 			if (Is32Bit)
 			{
 				// About 10 megs worth. Average line length in gcode file is about 14 and we store strings as chars (16 bit) so 450,000 lines.
@@ -67,27 +68,22 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void FromPrinter(Object sender, EventArgs e)
+		private void Printer_LineReceived(object sender, string line)
 		{
-			StringEventArgs lineString = e as StringEventArgs;
-			StringEventArgs eventArgs = new StringEventArgs("<-" + lineString.Data);
-			PrinterLines.Add(eventArgs.Data);
-			OnHasChanged(eventArgs);
+			PrinterLines.Add(line);
+			OnHasChanged(new StringEventArgs("<-" + line));
 		}
 
-		private void ToPrinter(Object sender, EventArgs e)
+		private void Printer_LineSent(object sender, string line)
 		{
-			StringEventArgs lineString = e as StringEventArgs;
-			StringEventArgs eventArgs = new StringEventArgs("->" + lineString.Data);
-			PrinterLines.Add(eventArgs.Data);
-			OnHasChanged(eventArgs);
+			PrinterLines.Add(line);
+			OnHasChanged(new StringEventArgs("->" + line));
 		}
 
 		public void WriteLine(string line)
 		{
-			StringEventArgs eventArgs = new StringEventArgs(line);
-			PrinterLines.Add(eventArgs.Data);
-			OnHasChanged(eventArgs);
+			PrinterLines.Add(line);
+			OnHasChanged(new StringEventArgs(line));
 		}
 
 		private void Instance_ConnectionFailed(object sender, EventArgs e)
@@ -131,6 +127,7 @@ namespace MatterHackers.MatterControl
 			{
 				PrinterLines.Clear();
 			}
+
 			OnHasChanged(null);
 		}
 	}

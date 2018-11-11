@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					line1,
 					"To complete the next few steps you will need".Localize(),
 					"A standard sheet of paper".Localize(),
-					"We will use this paper to measure the distance between the extruder and the bed.".Localize(),
+					"We will use this paper to measure the distance between the nozzle and the bed.".Localize(),
 					"Click 'Next' to continue.".Localize());
 			}
 		}

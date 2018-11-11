@@ -69,7 +69,9 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(new TextWidget("3. Press 'Connect'.".Localize(), 0, 0, 12,textColor:theme.TextColor));
 
 			//Add inputs to main container
-			ApplicationController.Instance.ActivePrinter.Connection.CommunicationStateChanged.RegisterEvent(communicationStateChanged, ref unregisterEvents);
+			var printer = ApplicationController.Instance.ActivePrinter;
+			printer.Connection.CommunicationStateChanged += communicationStateChanged;
+			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= communicationStateChanged;
 
 			connectButtonContainer = new FlowLayoutWidget()
 			{

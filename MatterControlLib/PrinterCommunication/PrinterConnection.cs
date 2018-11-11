@@ -75,53 +75,50 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 	/// It handles opening and closing the serial port and does quite a bit of gcode parsing.
 	/// It should be refactored into better modules at some point.
 	/// </summary>
-	public class PrinterConnection
+	public class PrinterConnection : IDisposable
 	{
-		public static RootedObjectEventHandler TemporarilyHoldingTemp = new RootedObjectEventHandler();
-		public static RootedObjectEventHandler ErrorReported = new RootedObjectEventHandler();
+		public event EventHandler Disposed;
 
-		// this should be removed after we have better access to each running printer
-		public static RootedObjectEventHandler AnyCommunicationStateChanged = new RootedObjectEventHandler();
+		public event EventHandler TemporarilyHoldingTemp;
+		public event EventHandler<string> ErrorReported;
 
-		public static RootedObjectEventHandler AnyConnectionSucceeded = new RootedObjectEventHandler();
+		public event EventHandler BedTemperatureRead;
 
-		public RootedObjectEventHandler BedTemperatureRead = new RootedObjectEventHandler();
+		public EventHandler CommunicationStateChanged;
 
-		public RootedObjectEventHandler BedTemperatureSet = new RootedObjectEventHandler();
+		public EventHandler ConnectionFailed;
 
-		public RootedObjectEventHandler CommunicationStateChanged = new RootedObjectEventHandler();
+		public event EventHandler ConnectionSucceeded;
 
-		public RootedObjectEventHandler CommunicationUnconditionalFromPrinter = new RootedObjectEventHandler();
+		public void OnPauseOnLayer(NamedItemEventArgs namedItemEventArgs)
+		{
+			PauseOnLayer?.Invoke(this, namedItemEventArgs);
+		}
 
-		public RootedObjectEventHandler CommunicationUnconditionalToPrinter = new RootedObjectEventHandler();
+		public event EventHandler DestinationChanged;
 
-		public RootedObjectEventHandler ConnectionFailed = new RootedObjectEventHandler();
+		public event EventHandler EnableChanged;
 
-		public RootedObjectEventHandler ConnectionSucceeded = new RootedObjectEventHandler();
+		public event EventHandler HotendTemperatureRead;
 
-		public RootedObjectEventHandler DestinationChanged = new RootedObjectEventHandler();
+		public EventHandler FanSpeedSet;
 
-		public RootedObjectEventHandler EnableChanged = new RootedObjectEventHandler();
+		public EventHandler FirmwareVersionRead;
 
-		public RootedObjectEventHandler HotendTemperatureRead = new RootedObjectEventHandler();
+		public void OnFilamentRunout(NamedItemEventArgs namedItemEventArgs)
+		{
+			FilamentRunout?.Invoke(this, namedItemEventArgs);
+		}
 
-		public RootedObjectEventHandler HotendTemperatureSet = new RootedObjectEventHandler();
+		public event EventHandler PrintFinished;
 
-		public RootedObjectEventHandler FanSpeedSet = new RootedObjectEventHandler();
+		public event EventHandler PauseOnLayer;
 
-		public RootedObjectEventHandler FirmwareVersionRead = new RootedObjectEventHandler();
+		public event EventHandler FilamentRunout;
 
-		public RootedObjectEventHandler PositionRead = new RootedObjectEventHandler();
+		public event EventHandler<string> LineReceived;
 
-		public RootedObjectEventHandler PrintFinished = new RootedObjectEventHandler();
-
-		public RootedObjectEventHandler PauseOnLayer = new RootedObjectEventHandler();
-
-		public RootedObjectEventHandler FilamentRunout = new RootedObjectEventHandler();
-
-		public RootedObjectEventHandler LineReceived = new RootedObjectEventHandler();
-
-		public RootedObjectEventHandler LineSent = new RootedObjectEventHandler();
+		public event EventHandler<string> LineSent;
 
 		public bool WaitingForPositionRead
 		{
@@ -143,7 +140,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public TerminalLog TerminalLog { get; }
 
-		public RootedObjectEventHandler AtxPowerStateChanged = new RootedObjectEventHandler();
+		public EventHandler AtxPowerStateChanged;
 
 		private bool atxPowerIsOn = false;
 
@@ -204,9 +201,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private DetailedPrintingState _printingStatePrivate;
 
-		private FoundStringContainsCallbacks ReadLineContainsCallBacks = new FoundStringContainsCallbacks();
+		private ContainsStringLineActions ReadLineContainsCallBacks = new ContainsStringLineActions();
 
-		private FoundStringStartsWithCallbacks ReadLineStartCallBacks = new FoundStringStartsWithCallbacks();
+		private StartsWithLineActions ReadLineStartCallBacks = new StartsWithLineActions();
 
 		// we start out by setting it to a nothing file
 		private IFrostedSerialPort serialPort;
@@ -232,9 +229,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private bool PositionReadQueued { get; set; } = false;
 		private Stopwatch waitingForPosition = new Stopwatch();
 
-		private FoundStringContainsCallbacks WriteLineContainsCallBacks = new FoundStringContainsCallbacks();
+		private ContainsStringLineActions WriteLineContainsCallBacks = new ContainsStringLineActions();
 
-		private FoundStringStartsWithCallbacks WriteLineStartCallBacks = new FoundStringStartsWithCallbacks();
+		private StartsWithLineActions WriteLineStartCallBacks = new StartsWithLineActions();
 
 		private double secondsSinceUpdateHistory = 0;
 		private long lineSinceUpdateHistory = 0;
@@ -247,80 +244,78 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			MonitorPrinterTemperature = true;
 
-			ReadLineStartCallBacks.AddCallbackToKey("start", FoundStart);
-			ReadLineStartCallBacks.AddCallbackToKey("start", PrintingCanContinue);
+			ReadLineStartCallBacks.Register("start", FoundStart);
+			ReadLineStartCallBacks.Register("start", PrintingCanContinue);
 
-			ReadLineStartCallBacks.AddCallbackToKey("ok", SuppressEcho);
-			ReadLineStartCallBacks.AddCallbackToKey("wait", SuppressEcho);
-			ReadLineStartCallBacks.AddCallbackToKey("T:", SuppressEcho); // repetier
+			ReadLineStartCallBacks.Register("ok", SuppressEcho);
+			ReadLineStartCallBacks.Register("wait", SuppressEcho);
+			ReadLineStartCallBacks.Register("T:", SuppressEcho); // repetier
 
-			ReadLineStartCallBacks.AddCallbackToKey("ok", PrintingCanContinue);
-			ReadLineStartCallBacks.AddCallbackToKey("Done saving file", PrintingCanContinue);
+			ReadLineStartCallBacks.Register("ok", PrintingCanContinue);
+			ReadLineStartCallBacks.Register("Done saving file", PrintingCanContinue);
 
-			ReadLineStartCallBacks.AddCallbackToKey("B:", ReadTemperatures); // smoothie
-			ReadLineContainsCallBacks.AddCallbackToKey("T0:", ReadTemperatures); // marlin
-			ReadLineContainsCallBacks.AddCallbackToKey("T:", ReadTemperatures); // repetier
+			ReadLineStartCallBacks.Register("B:", ReadTemperatures); // smoothie
+			ReadLineContainsCallBacks.Register("T0:", ReadTemperatures); // marlin
+			ReadLineContainsCallBacks.Register("T:", ReadTemperatures); // repetier
 
-			ReadLineStartCallBacks.AddCallbackToKey("SD printing byte", ReadSdProgress); // repetier
+			ReadLineStartCallBacks.Register("SD printing byte", ReadSdProgress); // repetier
 
-			ReadLineStartCallBacks.AddCallbackToKey("C:", ReadTargetPositions);
-			ReadLineStartCallBacks.AddCallbackToKey("ok C:", ReadTargetPositions); // smoothie is reporting the C: with an ok first.
-			ReadLineStartCallBacks.AddCallbackToKey("X:", ReadTargetPositions);
-			ReadLineStartCallBacks.AddCallbackToKey("ok X:", ReadTargetPositions); //
+			ReadLineStartCallBacks.Register("C:", ReadTargetPositions);
+			ReadLineStartCallBacks.Register("ok C:", ReadTargetPositions); // smoothie is reporting the C: with an ok first.
+			ReadLineStartCallBacks.Register("X:", ReadTargetPositions);
+			ReadLineStartCallBacks.Register("ok X:", ReadTargetPositions); //
 
-			ReadLineStartCallBacks.AddCallbackToKey("rs ", PrinterRequestsResend); // smoothie is lower case and no :
-			ReadLineStartCallBacks.AddCallbackToKey("RS:", PrinterRequestsResend);
-			ReadLineContainsCallBacks.AddCallbackToKey("Resend:", PrinterRequestsResend);
+			ReadLineStartCallBacks.Register("rs ", PrinterRequestsResend); // smoothie is lower case and no :
+			ReadLineStartCallBacks.Register("RS:", PrinterRequestsResend);
+			ReadLineContainsCallBacks.Register("Resend:", PrinterRequestsResend);
 
-			ReadLineContainsCallBacks.AddCallbackToKey("FIRMWARE_NAME:", PrinterStatesFirmware);
+			ReadLineContainsCallBacks.Register("FIRMWARE_NAME:", PrinterStatesFirmware);
 
 			#region hardware failure callbacks
 
 			// smoothie temperature failures
-			ReadLineContainsCallBacks.AddCallbackToKey("T:inf", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("B:inf", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("T:inf", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("B:inf", PrinterReportsError);
 
 			// marlin temperature failures
-			ReadLineContainsCallBacks.AddCallbackToKey("MINTEMP", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("MAXTEMP", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("M999", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("Error: Extruder switched off", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("Heater decoupled", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("cold extrusion prevented", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("Error:Thermal Runaway, system stopped!", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("Error:Heating failed", PrinterReportsError);
-			ReadLineStartCallBacks.AddCallbackToKey("temp sensor defect", PrinterReportsError);
-			ReadLineStartCallBacks.AddCallbackToKey("Error:Printer halted", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("MINTEMP", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("MAXTEMP", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("M999", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("Error: Extruder switched off", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("Heater decoupled", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("cold extrusion prevented", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("Error:Thermal Runaway, system stopped!", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("Error:Heating failed", PrinterReportsError);
+			ReadLineStartCallBacks.Register("temp sensor defect", PrinterReportsError);
+			ReadLineStartCallBacks.Register("Error:Printer halted", PrinterReportsError);
 
 			// repetier temperature failures
-			ReadLineContainsCallBacks.AddCallbackToKey("dry run mode", PrinterReportsError);
-			ReadLineStartCallBacks.AddCallbackToKey("accelerometer send i2c error", PrinterReportsError);
-			ReadLineStartCallBacks.AddCallbackToKey("accelerometer i2c recv error", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("dry run mode", PrinterReportsError);
+			ReadLineStartCallBacks.Register("accelerometer send i2c error", PrinterReportsError);
+			ReadLineStartCallBacks.Register("accelerometer i2c recv error", PrinterReportsError);
 
 			// s3g temperature failures
-			ReadLineContainsCallBacks.AddCallbackToKey("Bot is Shutdown due to Overheat", PrinterReportsError);
+			ReadLineContainsCallBacks.Register("Bot is Shutdown due to Overheat", PrinterReportsError);
 
 			#endregion hardware failure callbacks
 
-			WriteLineStartCallBacks.AddCallbackToKey("G90", MovementWasSetToAbsoluteMode);
-			WriteLineStartCallBacks.AddCallbackToKey("G91", MovementWasSetToRelativeMode);
-			WriteLineStartCallBacks.AddCallbackToKey("M80", AtxPowerUpWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M81", AtxPowerDownWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M104", HotendTemperatureWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M106", FanSpeedWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M107", FanOffWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M109", HotendTemperatureWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M140", BedTemperatureWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M190", BedTemperatureWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("T", ExtruderIndexSet);
+			WriteLineStartCallBacks.Register("G90", MovementWasSetToAbsoluteMode);
+			WriteLineStartCallBacks.Register("G91", MovementWasSetToRelativeMode);
+			WriteLineStartCallBacks.Register("M80", AtxPowerUpWasWritenToPrinter);
+			WriteLineStartCallBacks.Register("M81", AtxPowerDownWasWritenToPrinter);
+			WriteLineStartCallBacks.Register("M104", HotendTemperatureWasWritenToPrinter);
+			WriteLineStartCallBacks.Register("M106", FanSpeedWasWritenToPrinter);
+			WriteLineStartCallBacks.Register("M107", FanOffWasWritenToPrinter);
+			WriteLineStartCallBacks.Register("M109", HotendTemperatureWasWritenToPrinter);
+			WriteLineStartCallBacks.Register("M140", BedTemperatureWasWritenToPrinter);
+			WriteLineStartCallBacks.Register("M190", BedTemperatureWasWritenToPrinter);
+			WriteLineStartCallBacks.Register("T", ExtruderIndexSet);
 		}
 
-		private void ExtruderIndexSet(object sender, EventArgs e)
+		private void ExtruderIndexSet(string line)
 		{
-			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
-
 			double extruderBeingSet = 0;
-			if (GCodeFile.GetFirstNumberAfter("T", foundStringEventArgs.LineToCheck, ref extruderBeingSet))
+			if (GCodeFile.GetFirstNumberAfter("T", line, ref extruderBeingSet))
 			{
 				currentlyActiveExtruderIndex = (int)extruderBeingSet;
 			}
@@ -439,7 +434,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				if (communicationState != value)
 				{
-					CommunicationUnconditionalToPrinter.CallEvents(this, new StringEventArgs("Communication State: {0}\n".FormatWith(value.ToString())));
+					LineSent?.Invoke(this, string.Format("Communication State: {0}\n", value));
 
 					switch (communicationState)
 					{
@@ -475,7 +470,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									// Set this early as we always want our functions to know the state we are in.
 									communicationState = value;
 									timeSinceStartedPrint.Stop();
-									PrintFinished.CallEvents(this, new NamedItemEventArgs(printer.Bed.EditContext.SourceItem.Name));
+									PrintFinished?.Invoke(this, new NamedItemEventArgs(printer.Bed.EditContext.SourceItem.Name));
 								}
 								else
 								{
@@ -751,7 +746,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (_targetBedTemperature != value)
 				{
 					_targetBedTemperature = value;
-					OnBedTemperatureSet(new TemperatureEventArgs(0, TargetBedTemperature));
 					if (this.IsConnected)
 					{
 						QueueLine("M140 S{0}".FormatWith(_targetBedTemperature));
@@ -800,11 +794,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			OnConnectionFailed(reason, details);
 		}
 
-		public void BedTemperatureWasWritenToPrinter(object sender, EventArgs e)
+		public void BedTemperatureWasWritenToPrinter(string line)
 		{
-			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
-
-			string[] splitOnS = foundStringEventArgs.LineToCheck.Split('S');
+			string[] splitOnS = line.Split('S');
 			if (splitOnS.Length == 2)
 			{
 				string temp = splitOnS[1];
@@ -815,10 +807,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
 						_targetBedTemperature = tempBeingSet;
-						OnBedTemperatureSet(new TemperatureEventArgs(0, TargetBedTemperature));
 					}
 				}
-				catch (Exception)
+				catch
 				{
 				}
 			}
@@ -952,11 +943,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 										QueueLine(this.ConnectGCode);
 
-										// Call global event
-										AnyConnectionSucceeded.CallEvents(this, null);
-
 										// Call instance event
-										ConnectionSucceeded.CallEvents(this, null);
+										ConnectionSucceeded?.Invoke(this, null);
 
 										// TODO: Shouldn't we wait to start reading until after we create the stream pipeline?
 										Console.WriteLine("ReadFromPrinter thread created.");
@@ -965,7 +953,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										CommunicationState = CommunicationStates.Connected;
 
 										// We do not need to wait for the M105
-										PrintingCanContinue(null, null);
+										PrintingCanContinue(null);
 									}
 									catch (ArgumentOutOfRangeException e)
 									{
@@ -1018,7 +1006,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			// Register to detect the file deleted confirmation.
 			// This should have worked without this by getting the normal 'ok' on the next line. But the ok is not on its own line.
-			ReadLineStartCallBacks.AddCallbackToKey("File deleted:", FileDeleteConfirmed);
+			ReadLineStartCallBacks.Register("File deleted:", FileDeleteConfirmed);
 			// and send the line to delete the file
 			QueueLine("M30 {0}".FormatWith(fileName.ToLower()));
 		}
@@ -1056,15 +1044,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			OnEnabledChanged(null);
 		}
 
-		public void HotendTemperatureWasWritenToPrinter(object sender, EventArgs e)
+		public void HotendTemperatureWasWritenToPrinter(string line)
 		{
-			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
-
 			double tempBeingSet = 0;
-			if (GCodeFile.GetFirstNumberAfter("S", foundStringEventArgs.LineToCheck, ref tempBeingSet))
+			if (GCodeFile.GetFirstNumberAfter("S", line, ref tempBeingSet))
 			{
 				double exturderIndex = 0;
-				if (GCodeFile.GetFirstNumberAfter("T", foundStringEventArgs.LineToCheck, ref exturderIndex))
+				if (GCodeFile.GetFirstNumberAfter("T", line, ref exturderIndex))
 				{
 					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
 					int hotendIndex0Based = Math.Min((int)exturderIndex, MAX_EXTRUDERS - 1);
@@ -1075,21 +1061,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
 					targetHotendTemperature[currentlyActiveExtruderIndex] = tempBeingSet;
 				}
-				OnHotendTemperatureSet(new TemperatureEventArgs((int)exturderIndex, tempBeingSet));
 			}
 		}
 
-		public void FanOffWasWritenToPrinter(object sender, EventArgs e)
+		public void FanOffWasWritenToPrinter(string line)
 		{
 			fanSpeed = 0;
 			OnFanSpeedSet(null);
 		}
 
-		public void FanSpeedWasWritenToPrinter(object sender, EventArgs e)
+		public void FanSpeedWasWritenToPrinter(string line)
 		{
-			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
-
-			string[] splitOnS = foundStringEventArgs.LineToCheck.Split('S');
+			string[] splitOnS = line.Split('S');
 			if (splitOnS.Length != 2)
 			{
 				// when there is no explicit S value the assumption is 255
@@ -1114,9 +1097,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void FoundStart(object sender, EventArgs e)
+		public void FoundStart(string line)
 		{
-			(e as FoundStringEventArgs).AllowListenerNotification = false;
 		}
 
 		public double GetActualHotendTemperature(int hotendIndex0Based)
@@ -1211,11 +1193,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void OnCommunicationStateChanged(EventArgs e)
 		{
-			// Call global even
-			AnyCommunicationStateChanged.CallEvents(this, e);
-
 			// Call instance event
-			CommunicationStateChanged.CallEvents(this, e);
+			CommunicationStateChanged?.Invoke(this, e);
 #if __ANDROID__
 
 			//Path to the printer output file
@@ -1240,7 +1219,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			communicationPossible = false;
 
 			var eventArgs = new ConnectFailedEventArgs(reason);
-			ConnectionFailed.CallEvents(this, eventArgs);
+			ConnectionFailed?.Invoke(this, eventArgs);
 
 			CommunicationState = CommunicationStates.Disconnected;
 			OnEnabledChanged(eventArgs);
@@ -1254,14 +1233,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void PrinterRequestsResend(object sender, EventArgs e)
+		public void PrinterRequestsResend(string line)
 		{
-			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
-
-			if (foundStringEventArgs != null
-				&& !string.IsNullOrEmpty(foundStringEventArgs.LineToCheck))
+			if (!string.IsNullOrEmpty(line))
 			{
-				string line = foundStringEventArgs.LineToCheck;
 				// marlin and repetier send a : before the number and then and ok
 				if (!GCodeFile.GetFirstNumberAfter(":", line, ref currentLineIndexToSend))
 				{
@@ -1274,7 +1249,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					if (GCodeFile.GetFirstNumberAfter("N", line, ref currentLineIndexToSend))
 					{
 						// clear waiting for ok because smoothie will not send it
-						PrintingCanContinue(null, null);
+						PrintingCanContinue(line);
 					}
 				}
 
@@ -1297,16 +1272,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private bool haveReportedError = false;
 
-		public void PrinterReportsError(object sender, EventArgs e)
+		public void PrinterReportsError(string line)
 		{
 			if (!haveReportedError)
 			{
 				haveReportedError = true;
 
-				FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
-				if (foundStringEventArgs != null)
+				if (line != null)
 				{
-					ErrorReported.CallEvents(null, foundStringEventArgs);
+					ErrorReported?.Invoke(this, line);
 				}
 
 				// pause the printer
@@ -1314,12 +1288,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void PrinterStatesFirmware(object sender, EventArgs e)
+		public void PrinterStatesFirmware(string line)
 		{
-			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
-
 			string firmwareName = "";
-			if (GCodeFile.GetFirstStringAfter("FIRMWARE_NAME:", foundStringEventArgs.LineToCheck, " ", ref firmwareName))
+			if (GCodeFile.GetFirstStringAfter("FIRMWARE_NAME:", line, " ", ref firmwareName))
 			{
 				firmwareName = firmwareName.ToLower();
 				if (firmwareName.Contains("repetier"))
@@ -1336,7 +1308,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 			}
 			string firmwareVersionReported = "";
-			if (GCodeFile.GetFirstStringAfter("MACHINE_TYPE:", foundStringEventArgs.LineToCheck, " EXTRUDER_COUNT", ref firmwareVersionReported))
+			if (GCodeFile.GetFirstStringAfter("MACHINE_TYPE:", line, " EXTRUDER_COUNT", ref firmwareVersionReported))
 			{
 				char splitChar = '^';
 				if (firmwareVersionReported.Contains(splitChar))
@@ -1360,7 +1332,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		// this is to make it misbehave
 		//int okCount = 1;
-		public void PrintingCanContinue(object sender, EventArgs e)
+		public void PrintingCanContinue(string line)
 		{
 			//if ((okCount++ % 67) != 0)
 			{
@@ -1438,25 +1410,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 									// process this command
 									{
-										StringEventArgs currentEvent = new StringEventArgs(lastLineRead);
-										if (PrinterIsPrinting)
+										ReadLineStartCallBacks.ProcessLine(lastLineRead);
+										ReadLineContainsCallBacks.ProcessLine(lastLineRead);
+
+										if (this.PrinterIsPrinting
+											&& this.AppendElapsedTime)
 										{
-											CommunicationUnconditionalFromPrinter.CallEvents(this, new StringEventArgs("{0} [{1:0.000}]\n".FormatWith(lastLineRead, timeSinceStartedPrint.Elapsed.TotalSeconds)));
-										}
-										else
-										{
-											CommunicationUnconditionalFromPrinter.CallEvents(this, currentEvent);
+											lastLineRead = string.Format("{0} [{1:0.000}]\n", lastLineRead, timeSinceStartedPrint.Elapsed.TotalSeconds);
 										}
 
-										FoundStringEventArgs foundResponse = new FoundStringEventArgs(currentEvent.Data);
-
-										ReadLineStartCallBacks.CheckForKeys(foundResponse);
-										ReadLineContainsCallBacks.CheckForKeys(foundResponse);
-
-										if (foundResponse.AllowListenerNotification)
-										{
-											LineReceived.CallEvents(this, currentEvent);
-										}
+										LineReceived?.Invoke(this, lastLineRead);
 									}
 								}
 							} while (true);
@@ -1504,12 +1467,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			PositionReadQueued = true;
 		}
 
-		public void ReadSdProgress(object sender, EventArgs e)
+		public void ReadSdProgress(string line)
 		{
-			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
-			if (foundStringEventArgs != null)
+			if (line!= null)
 			{
-				string sdProgressString = foundStringEventArgs.LineToCheck.Substring("Sd printing byte ".Length);
+				string sdProgressString = line.Substring("Sd printing byte ".Length);
 
 				string[] values = sdProgressString.Split('/');
 				currentSdBytes = long.Parse(values[0]);
@@ -1520,27 +1482,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			timeWaitingForSdProgress.Stop();
 		}
 
-		public void ReadTargetPositions(object sender, EventArgs e)
+		public void ReadTargetPositions(string line)
 		{
-			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
-
-			string lineToParse = foundStringEventArgs.LineToCheck;
-			GCodeFile.GetFirstNumberAfter("X:", lineToParse, ref lastReportedPosition.position.X);
-			GCodeFile.GetFirstNumberAfter("Y:", lineToParse, ref lastReportedPosition.position.Y);
-			GCodeFile.GetFirstNumberAfter("Z:", lineToParse, ref lastReportedPosition.position.Z);
-			GCodeFile.GetFirstNumberAfter("E:", lineToParse, ref lastReportedPosition.extrusion);
+			GCodeFile.GetFirstNumberAfter("X:", line, ref lastReportedPosition.position.X);
+			GCodeFile.GetFirstNumberAfter("Y:", line, ref lastReportedPosition.position.Y);
+			GCodeFile.GetFirstNumberAfter("Z:", line, ref lastReportedPosition.position.Z);
+			GCodeFile.GetFirstNumberAfter("E:", line, ref lastReportedPosition.extrusion);
 
 			//if (currentDestination != positionRead)
 			{
 				currentDestination = lastReportedPosition;
-				DestinationChanged.CallEvents(this, null);
+				DestinationChanged?.Invoke(this, null);
 				if (totalGCodeStream != null)
 				{
 					totalGCodeStream.SetPrinterPosition(currentDestination);
 				}
 			}
-
-			PositionRead.CallEvents(this, null);
 
 			waitingForPosition.Reset();
 			PositionReadQueued = false;
@@ -1591,10 +1548,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void ReadTemperatures(object sender, FoundStringEventArgs foundStringEventArgs)
+		public void ReadTemperatures(string line)
 		{
-			ParseTemperatureString(foundStringEventArgs.LineToCheck, actualHotendTemperature, OnHotendTemperatureRead,
-				ref actualBedTemperature, OnBedTemperatureRead);
+			ParseTemperatureString(
+				line,
+				actualHotendTemperature,
+				OnHotendTemperatureRead,
+				ref actualBedTemperature,
+				OnBedTemperatureRead);
 		}
 
 		public void RebootBoard()
@@ -1833,7 +1794,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				ContinuHoldingTemperature = false;
 				targetHotendTemperature[hotendIndex0Based] = temperature;
-				OnHotendTemperatureSet(new TemperatureEventArgs(hotendIndex0Based, temperature));
 				if (this.IsConnected)
 				{
 					QueueLine("M104 T{0} S{1}".FormatWith(hotendIndex0Based, targetHotendTemperature[hotendIndex0Based]));
@@ -1929,7 +1889,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			QueueLine($"M23 {m23FileName.ToLower()}"); // Select SD File
 			QueueLine("M24"); // Start/resume SD print
 
-			ReadLineStartCallBacks.AddCallbackToKey("Done printing file", DonePrintingSdFile);
+			ReadLineStartCallBacks.Register("Done printing file", DonePrintingSdFile);
 
 			return true;
 		}
@@ -2026,13 +1986,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				QueueLine("M25"); // : Pause SD print
 				QueueLine("M26"); // : Set SD position
 											 // never leave the extruder and the bed hot
-				DonePrintingSdFile(this, null);
+				DonePrintingSdFile(null);
 			}
 		}
 
-		public void SuppressEcho(object sender, EventArgs e)
+		public void SuppressEcho(string line)
 		{
-			(e as FoundStringEventArgs).AllowListenerNotification = false;
+			//AllowListenerNotification = false;
 		}
 
 		private void ClearQueuedGCode()
@@ -2040,9 +2000,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			gCodeFileSwitcher0?.GCodeFile?.Clear();
 		}
 
-		private void DonePrintingSdFile(object sender, FoundStringEventArgs e)
+		private void DonePrintingSdFile(string line)
 		{
-			ReadLineStartCallBacks.RemoveCallbackFromKey("Done printing file", DonePrintingSdFile);
+			ReadLineStartCallBacks.Unregister("Done printing file", DonePrintingSdFile);
 			CommunicationState = CommunicationStates.FinishedPrint;
 
 			this.PrintJobName = null;
@@ -2053,10 +2013,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReleaseMotors();
 		}
 
-		private void FileDeleteConfirmed(object sender, EventArgs e)
+		private void FileDeleteConfirmed(string line)
 		{
-			ReadLineStartCallBacks.RemoveCallbackFromKey("File deleted:", FileDeleteConfirmed);
-			PrintingCanContinue(this, null);
+			ReadLineStartCallBacks.Unregister("File deleted:", FileDeleteConfirmed);
+			PrintingCanContinue(line);
 		}
 
 		private void KeepTrackOfAbsolutePositionAndDestination(string lineBeingSent)
@@ -2088,7 +2048,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					|| currentDestination.extrusion != newDestination.extrusion)
 				{
 					currentDestination = newDestination;
-					DestinationChanged.CallEvents(this, null);
+					DestinationChanged?.Invoke(this, null);
 				}
 			}
 		}
@@ -2201,59 +2161,49 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			// Console.WriteLine("Syncing print to db stopped");
 		}
 
-		private void MovementWasSetToAbsoluteMode(object sender, EventArgs e)
+		private void MovementWasSetToAbsoluteMode(string line)
 		{
 			movementMode = PrinterMachineInstruction.MovementTypes.Absolute;
 		}
 
-		private void MovementWasSetToRelativeMode(object sender, EventArgs e)
+		private void MovementWasSetToRelativeMode(string line)
 		{
 			movementMode = PrinterMachineInstruction.MovementTypes.Relative;
 		}
 
-		private void AtxPowerUpWasWritenToPrinter(object sender, EventArgs e)
+		private void AtxPowerUpWasWritenToPrinter(string line)
 		{
 			OnAtxPowerStateChanged(true);
 		}
 
-		private void AtxPowerDownWasWritenToPrinter(object sender, EventArgs e)
+		private void AtxPowerDownWasWritenToPrinter(string line)
 		{
 			OnAtxPowerStateChanged(false);
 		}
 
 		private void OnBedTemperatureRead(EventArgs e)
 		{
-			BedTemperatureRead.CallEvents(this, e);
-		}
-
-		private void OnBedTemperatureSet(EventArgs e)
-		{
-			BedTemperatureSet.CallEvents(this, e);
+			BedTemperatureRead?.Invoke(this, e);
 		}
 
 		private void OnEnabledChanged(EventArgs e)
 		{
-			EnableChanged.CallEvents(this, e);
+			EnableChanged?.Invoke(this, e);
 		}
 
 		private void OnHotendTemperatureRead(EventArgs e)
 		{
-			HotendTemperatureRead.CallEvents(this, e);
-		}
-
-		private void OnHotendTemperatureSet(EventArgs e)
-		{
-			HotendTemperatureSet.CallEvents(this, e);
+			HotendTemperatureRead?.Invoke(this, e);
 		}
 
 		private void OnFanSpeedSet(EventArgs e)
 		{
-			FanSpeedSet.CallEvents(this, e);
+			FanSpeedSet?.Invoke(this, e);
 		}
 
 		private void OnFirmwareVersionRead(EventArgs e)
 		{
-			FirmwareVersionRead.CallEvents(this, e);
+			FirmwareVersionRead?.Invoke(this, e);
 		}
 
 		private bool IsNetworkPrinting()
@@ -2264,7 +2214,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private void OnAtxPowerStateChanged(bool enableAtxPower)
 		{
 			atxPowerIsOn = enableAtxPower;
-			AtxPowerStateChanged.CallEvents(this, null);
+			AtxPowerStateChanged?.Invoke(this, null);
 		}
 
 		private void SetDetailedPrintingState(string lineBeingSetToPrinter)
@@ -2447,6 +2397,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
+		public bool AppendElapsedTime { get; set; }
+
 		public void TurnOffBedAndExtruders(TurnOff turnOffTime)
 		{
 			if (turnOffTime == TurnOff.Now)
@@ -2465,7 +2417,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				TimeHaveBeenHoldingTemperature = Stopwatch.StartNew();
 				if (!currentlyWaiting)
 				{
-					TemporarilyHoldingTemp.CallEvents(this, null);
+					TemporarilyHoldingTemp?.Invoke(this, null);
 					// wait secondsToWait and turn off the heaters
 					Task.Run(() =>
 					{
@@ -2572,8 +2524,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				if (serialPort != null && serialPort.IsOpen)
 				{
-					FoundStringEventArgs foundStringEvent = new FoundStringEventArgs(lineWithoutChecksum);
-
 					// If we get a home command, ask the printer where it is after sending it.
 					if (lineWithoutChecksum.Contains("G28") // is a home
 						|| lineWithoutChecksum.Contains("G29") // is a bed level
@@ -2586,26 +2536,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 					// write data to communication
 					{
-						StringEventArgs currentEvent = new StringEventArgs(lineToWrite);
-						if (PrinterIsPrinting)
-						{
-							string lineWidthoutCR = lineToWrite.TrimEnd();
-							CommunicationUnconditionalToPrinter.CallEvents(this, new StringEventArgs("{0} [{1:0.000}]\n".FormatWith(lineWidthoutCR, timeSinceStartedPrint.Elapsed.TotalSeconds)));
-						}
-						else
-						{
-							CommunicationUnconditionalToPrinter.CallEvents(this, currentEvent);
-						}
-
 						if (lineWithoutChecksum != null)
 						{
-							WriteLineStartCallBacks.CheckForKeys(foundStringEvent);
-							WriteLineContainsCallBacks.CheckForKeys(foundStringEvent);
+							WriteLineStartCallBacks.ProcessLine(lineWithoutChecksum);
+							WriteLineContainsCallBacks.ProcessLine(lineWithoutChecksum);
 
-							if (foundStringEvent.AllowListenerNotification)
+							if (PrinterIsPrinting)
 							{
-								LineSent.CallEvents(this, currentEvent);
+								string lineWithoutCR = lineToWrite.TrimEnd();
+								lineToWrite = string.Format("{0} [{1:0.000}]\n", lineWithoutCR, timeSinceStartedPrint.Elapsed.TotalSeconds);
 							}
+
+							LineSent?.Invoke(this, lineToWrite);
 						}
 					}
 
@@ -2666,6 +2608,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			queuedCommandStream3?.Cancel();
 		}
 
+		public void Dispose()
+		{
+			Disposed?.Invoke(this, null);
+		}
+
 		public class ReadThread
 		{
 			private static int currentReadThreadIndex = 0;
@@ -2697,7 +2644,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 					}
 
-					printerConnection.CommunicationUnconditionalToPrinter.CallEvents(this, new StringEventArgs("Read Thread Has Exited.\n"));
+					// TODO: Consider if passing non-printer messages through LineSent is acceptable or if a dedicated event would add clarity
+					printerConnection?.LineSent?.Invoke(this, "Read Thread Has Exited.\n");
 					numRunning--;
 				});
 			}

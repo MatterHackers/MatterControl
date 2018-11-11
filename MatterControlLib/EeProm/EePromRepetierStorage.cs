@@ -65,18 +65,10 @@ namespace MatterHackers.MatterControl.EeProm
 			}
 		}
 
-		public void Add(object sender, EventArgs e)
+		public void Add(object sender, string line)
 		{
-			StringEventArgs lineString = e as StringEventArgs;
-
-			if (e == null)
-			{
-				return;
-			}
-
-			string line = lineString.Data;
-
-			if (!line.StartsWith("EPR:"))
+			if (line == null
+				|| !line.StartsWith("EPR:"))
 			{
 				return;
 			}

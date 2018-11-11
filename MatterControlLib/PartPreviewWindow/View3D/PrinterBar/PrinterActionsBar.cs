@@ -203,13 +203,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			printer.Connection.ConnectionSucceeded.RegisterEvent((s, e) =>
+			void ConnectionSucceeded(object s, EventArgs e)
 			{
 				UiThread.RunOnIdle(() =>
 				{
 					PrintRecovery.CheckIfNeedToRecoverPrint(printer);
 				});
-			}, ref unregisterEvents);
+			}
+			printer.Connection.ConnectionSucceeded += ConnectionSucceeded;
+			this.Closed += (s, e) => printer.Connection.ConnectionSucceeded -= ConnectionSucceeded;
 		}
 
 		bool buttonIsBeingClicked;

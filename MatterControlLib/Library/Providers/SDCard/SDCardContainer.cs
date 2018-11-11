@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.Library
 
 			printer = ApplicationController.Instance.ActivePrinter;
 
-			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
+			void CommunicationStateChanged(object s, EventArgs e)
 			{
 				switch (printer.Connection.CommunicationState)
 				{
@@ -77,7 +77,9 @@ namespace MatterHackers.MatterControl.Library
 						this.OnContentChanged();
 						break;
 				}
-			}, ref unregisterEvents);
+			}
+			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
+			printer.Disposed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
 		}
 
 		public override void Load()
@@ -91,7 +93,7 @@ namespace MatterHackers.MatterControl.Library
 
 				// Ask for files and listen for response
 				gotBeginFileList = false;
-				printer.Connection.LineReceived.RegisterEvent(Printer_LineRead, ref unregisterEvents);
+				printer.Connection.LineReceived += Printer_LineRead;
 				printer.Connection.QueueLine("M21\r\nM20");
 
 				// Block and wait up to timeout for response
@@ -108,13 +110,13 @@ namespace MatterHackers.MatterControl.Library
 					ApplicationController.Instance.Theme.InvertIcons));
 		}
 
-		private void Printer_LineRead(object sender, EventArgs e)
+		private void Printer_LineRead(object sender, string line)
 		{
-			if (e is StringEventArgs currentEvent)
+			if (line != null)
 			{
-				if (!currentEvent.Data.StartsWith("echo:"))
+				if (!line.StartsWith("echo:"))
 				{
-					switch (currentEvent.Data)
+					switch (line)
 					{
 						case "Begin file list":
 							gotBeginFileList = true;
@@ -122,7 +124,7 @@ namespace MatterHackers.MatterControl.Library
 							break;
 
 						case "End file list":
-							printer.Connection.LineReceived.UnregisterEvent(Printer_LineRead, ref unregisterEvents);
+							printer.Connection.LineReceived -= Printer_LineRead;
 
 							// Release the Load WaitOne
 							autoResetEvent.Set();
@@ -131,14 +133,14 @@ namespace MatterHackers.MatterControl.Library
 						default:
 							if (gotBeginFileList)
 							{
-								string sdCardFileExtension = currentEvent.Data.ToUpper();
+								string sdCardFileExtension = line.ToUpper();
 
 								bool validSdCardItem = sdCardFileExtension.Contains(".GCO") || sdCardFileExtension.Contains(".GCODE");
 								if (validSdCardItem)
 								{
 									this.Items.Add(new SDCardFileItem()
 									{
-										Name = currentEvent.Data
+										Name = line
 									});
 								}
 							}

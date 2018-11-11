@@ -37,10 +37,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public BedStatusWidget(PrinterConfig printer, bool smallScreen, ThemeConfig theme)
 			: base(printer, smallScreen ? "Bed".Localize() : "Bed Temperature".Localize(), theme)
 		{
-			printer.Connection.BedTemperatureRead.RegisterEvent((s, e) =>
+			void BedTemperatureRead(object s, EventArgs e)
 			{
 				UpdateTemperatures();
-			}, ref unregisterEvents);
+			}
+			printer.Connection.BedTemperatureRead += BedTemperatureRead;
+			this.Closed += (s, e) => printer.Connection.BedTemperatureRead -= BedTemperatureRead;
 		}
 
 		public override void UpdateTemperatures()
