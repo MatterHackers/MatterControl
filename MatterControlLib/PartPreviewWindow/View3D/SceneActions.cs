@@ -298,23 +298,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// it might come back null due to threading
 				if (newItem != null)
 				{
-					scene.InsertNewItem(newItem);
+					sceneContext.InsertNewItem(newItem);
 				}
 			}
 		}
 
-		public static void InsertNewItem(this InteractiveScene scene, IObject3D newItem)
+		public static void InsertNewItem(this BedConfig sceneContext, IObject3D newItem)
 		{
+			var scene = sceneContext.Scene;
+
 			// Reposition first item to bed center
 			if (scene.Children.Count == 0)
 			{
-				var printer = ApplicationController.Instance.ActivePrinter;
 				var aabb = newItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 				var center = aabb.Center;
 
 				newItem.Matrix *= Matrix4X4.CreateTranslation(
-					(printer.Bed.BedCenter.X + center.X),
-					(printer.Bed.BedCenter.Y + center.Y),
+					(sceneContext.BedCenter.X + center.X),
+					(sceneContext.BedCenter.Y + center.Y),
 					 -aabb.minXYZ.Z);
 			}
 

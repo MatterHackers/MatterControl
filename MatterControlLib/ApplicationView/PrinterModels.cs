@@ -308,7 +308,7 @@ namespace MatterHackers.MatterControl
 
 		public double BuildHeight  { get; internal set; }
 		public Vector3 ViewerVolume { get; internal set; }
-		public Vector2 BedCenter { get; internal set; }
+		public Vector2 BedCenter { get; internal set; } = Vector2.Zero;
 		public BedShape BedShape { get; internal set; }
 
 		// TODO: Make assignment private, wire up post slicing initialization here
