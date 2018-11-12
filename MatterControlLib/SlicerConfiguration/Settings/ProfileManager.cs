@@ -335,9 +335,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// <returns></returns>
 		public static async Task<PrinterSettings> LoadProfileAsync(string profileID, bool useActiveInstance = true)
 		{
-			var activePrinter = ApplicationController.Instance.ActivePrinter;
-
-			if (useActiveInstance && activePrinter.Settings.ID == profileID)
+			// Check loaded printers for printerID and return if found
+			if (ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == profileID) is PrinterConfig activePrinter)
 			{
 				return activePrinter.Settings;
 			}
