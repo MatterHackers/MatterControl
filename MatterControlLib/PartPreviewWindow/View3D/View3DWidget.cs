@@ -521,14 +521,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, invertIcons),
 						Action = () =>
 						{
-							UiThread.RunOnIdle(async () =>
-							{
-								DialogWindow.Show(
-									new ExportPrintItemPage(new[]
-									{
-										new InMemoryLibraryItem(sceneContext.Scene)
-									}, false));
-							});
+							ApplicationController.Instance.ExportLibraryItems(
+								new[] { new InMemoryLibraryItem(sceneContext.Scene)},
+								centerOnBed: false,
+								printer: printer);
 						},
 						IsEnabled = () => sceneContext.EditableScene
 							|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
@@ -1745,14 +1741,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, AppContext.MenuTheme.InvertIcons),
 								Action = () =>
 								{
-									UiThread.RunOnIdle(async () =>
-									{
-										DialogWindow.Show(
-											new ExportPrintItemPage(new[]
-											{
-												new InMemoryLibraryItem(selectedItem)
-											}, false));
-									});
+									ApplicationController.Instance.ExportLibraryItems(
+										new[]{ new InMemoryLibraryItem(selectedItem)},
+										centerOnBed: false,
+										printer: printer);
 								}
 							},
 							new ActionSeparator(),

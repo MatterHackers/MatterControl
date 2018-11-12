@@ -41,6 +41,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.PrintQueue;
 using static MatterHackers.MatterControl.PrintLibrary.PrintLibraryWidget;
 
@@ -929,11 +930,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
-					// Previously - exportButton_Click(object sender, EventArgs e)
-					// Open export options
-					var exportPage = new ExportPrintItemPage(libraryView.SelectedItems.Select(item => item.Model), true);
-
-					DialogWindow.Show(exportPage);
+					ApplicationController.Instance.ExportLibraryItems(libraryView.SelectedItems.Select(item => item.Model));
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{

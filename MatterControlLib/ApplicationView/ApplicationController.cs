@@ -905,6 +905,38 @@ namespace MatterHackers.MatterControl
 					() => new RootHistoryContainer()));
 		}
 
+		public void ExportLibraryItems(IEnumerable<ILibraryItem> libraryItems, bool centerOnBed = true, PrinterConfig printer = null)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				if (printer != null || this.ActivePrinters.Count == 1)
+				{
+					// If unspecified but count is one, select the one active printer
+					if (printer == null)
+					{
+						printer = this.ActivePrinters.First();
+					}
+
+					DialogWindow.Show(
+						new ExportPrintItemPage(libraryItems, centerOnBed, printer));
+				}
+				else
+				{
+					// Resolve printer context before showing export page
+					DialogWindow dialogWindow = null;
+
+					dialogWindow = DialogWindow.Show(
+						new SelectActivePrinterPage(
+							"Next".Localize(),
+							(selectedPrinter) =>
+							{
+								dialogWindow.ChangeToPage(
+									new ExportPrintItemPage(libraryItems, centerOnBed, selectedPrinter));
+							}));
+				}
+			});
+		}
+
 		public static IObject3D SelectionAsSingleClone(IObject3D selection)
 		{
 			IEnumerable<IObject3D> items = new[] { selection };
