@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			this.printerSelected = printerSelected;
 
-			InventoryTreeView.RebuildPrintersList(rootPrintersNode, theme);
+			InventoryTreeView.CreatePrinterProfilesTree(rootPrintersNode, theme);
 		}
 
 		protected override void OnTreeNodeDoubleClicked(TreeNode treeNode)
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			this.printerLoaded = printerLoaded;
 
-			InventoryTreeView.RebuildPrintersList(rootPrintersNode, theme);
+			InventoryTreeView.CreatePrinterProfilesTree(rootPrintersNode, theme);
 		}
 
 		protected override void OnTreeNodeDoubleClicked(TreeNode treeNode)
