@@ -1789,19 +1789,25 @@ namespace MatterHackers.MatterControl
 
 		public async Task<PrinterConfig> OpenPrinter(string printerID, bool loadPlateFromHistory = true)
 		{
-			ProfileManager.Instance.AddOpenPrinter(printerID);
-
-			var printer = new PrinterConfig(await ProfileManager.LoadProfileAsync(printerID));
-
-			if (loadPlateFromHistory)
+			if (!_activePrinters.Any(p => p.Settings.ID == printerID))
 			{
-				await printer.Bed.LoadPlateFromHistory();
+				ProfileManager.Instance.AddOpenPrinter(printerID);
+
+				var printer = new PrinterConfig(await ProfileManager.LoadProfileAsync(printerID));
+
+				_activePrinters.Add(printer);
+
+				if (loadPlateFromHistory)
+				{
+					await printer.Bed.LoadPlateFromHistory();
+				}
+
+				this.OnOpenPrintersChanged(new OpenPrintersChangedEventArgs(printer, OpenPrintersChangedEventArgs.OperationType.Add));
+
+				return printer;
 			}
 
-			this.OnOpenPrintersChanged(new OpenPrintersChangedEventArgs(printer, OpenPrintersChangedEventArgs.OperationType.Add));
-
-			// TODO: Need to notify that printer was opened so UI displays new tab
-			return printer;
+			return PrinterConfig.EmptyPrinter;
 		}
 
 		public async Task OpenAllPrinters()
