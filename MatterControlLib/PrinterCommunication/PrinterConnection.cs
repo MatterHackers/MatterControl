@@ -2063,19 +2063,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			GCodeStream firstStreamToRead = null;
 			if (gcodeFilename != null)
 			{
-				gCodeFileSwitcher0 = new GCodeSwitcher(gcodeFilename, this);
+				gCodeFileSwitcher0 = new GCodeSwitcher(gcodeFilename, printer);
 
 				if (this.RecoveryIsEnabled
 					&& activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
 				{
-					sendProgressStream1 = new SendProgressStream(printer, new PrintRecoveryStream(printer, gCodeFileSwitcher0, activePrintTask.PercentDone));
+					sendProgressStream1 = new SendProgressStream(new PrintRecoveryStream(gCodeFileSwitcher0, printer, activePrintTask.PercentDone), printer);
 					// And increment the recovery count
 					activePrintTask.RecoveryCount++;
 					activePrintTask.Commit();
 				}
 				else
 				{
-					sendProgressStream1 = new SendProgressStream(printer, gCodeFileSwitcher0);
+					sendProgressStream1 = new SendProgressStream(gCodeFileSwitcher0, printer);
 				}
 
 				pauseHandlingStream2 = new PauseHandlingStream(printer, sendProgressStream1);
@@ -2084,11 +2084,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			else
 			{
 				gCodeFileSwitcher0 = null;
-				firstStreamToRead = new NotPrintingStream();
+				firstStreamToRead = new NotPrintingStream(printer);
 			}
 
-			queuedCommandStream3 = new QueuedCommandsStream(firstStreamToRead);
-			relativeToAbsoluteStream4 = new RelativeToAbsoluteStream(queuedCommandStream3);
+			queuedCommandStream3 = new QueuedCommandsStream(printer, firstStreamToRead);
+			relativeToAbsoluteStream4 = new RelativeToAbsoluteStream(printer, queuedCommandStream3);
 			bool enableLineSpliting = gcodeFilename != null && printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
 			babyStepsStream5 = new BabyStepsStream(printer, relativeToAbsoluteStream4, enableLineSpliting ? 1 : 2000);
 			if (activePrintTask != null)
@@ -2097,10 +2097,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				babyStepsStream5.Offset = new Vector3(activePrintTask.PrintingOffsetX, activePrintTask.PrintingOffsetY, activePrintTask.PrintingOffsetZ);
 			}
 			printLevelingStream6 = new PrintLevelingStream(printer, babyStepsStream5, true);
-			waitForTempStream7 = new WaitForTempStream(this, printLevelingStream6);
-			extrusionMultiplyerStream8 = new ExtrusionMultiplyerStream(waitForTempStream7);
-			feedrateMultiplyerStream9 = new FeedRateMultiplyerStream(extrusionMultiplyerStream8);
-			requestTemperaturesStream10 = new RequestTemperaturesStream(this, feedrateMultiplyerStream9);
+			waitForTempStream7 = new WaitForTempStream(printer, printLevelingStream6);
+			extrusionMultiplyerStream8 = new ExtrusionMultiplyerStream(printer, waitForTempStream7);
+			feedrateMultiplyerStream9 = new FeedRateMultiplyerStream(printer, extrusionMultiplyerStream8);
+			requestTemperaturesStream10 = new RequestTemperaturesStream(printer, feedrateMultiplyerStream9);
 			processWriteRegExStream11 = new ProcessWriteRegexStream(printer, requestTemperaturesStream10, queuedCommandStream3);
 			totalGCodeStream = processWriteRegExStream11;
 

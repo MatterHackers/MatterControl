@@ -76,7 +76,9 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			MaxLengthStream maxLengthStream = new MaxLengthStream(new TestGCodeStream(lines), 6);
+			PrinterConfig printer = null;
+
+			MaxLengthStream maxLengthStream = new MaxLengthStream(printer, new TestGCodeStream(printer, lines), 6);
 
 			int expectedIndex = 0;
 			string actualLine = maxLengthStream.ReadLine();
@@ -96,14 +98,14 @@ namespace MatterControl.Tests.MatterControl
 		public static GCodeStream CreateTestGCodeStream(PrinterConfig printer, string[] inputLines, out List<GCodeStream> streamList)
 		{
 			streamList = new List<GCodeStream>();
-			streamList.Add(new TestGCodeStream(inputLines));
+			streamList.Add(new TestGCodeStream(printer, inputLines));
 			streamList.Add(new PauseHandlingStream(printer, streamList[streamList.Count - 1]));
-			streamList.Add(new QueuedCommandsStream(streamList[streamList.Count - 1]));
-			streamList.Add(new RelativeToAbsoluteStream(streamList[streamList.Count - 1]));
-			streamList.Add(new WaitForTempStream(printer.Connection, streamList[streamList.Count - 1]));
+			streamList.Add(new QueuedCommandsStream(printer, streamList[streamList.Count - 1]));
+			streamList.Add(new RelativeToAbsoluteStream(printer, streamList[streamList.Count - 1]));
+			streamList.Add(new WaitForTempStream(printer, streamList[streamList.Count - 1]));
 			streamList.Add(new BabyStepsStream(printer, streamList[streamList.Count - 1]));
-			streamList.Add(new ExtrusionMultiplyerStream(streamList[streamList.Count - 1]));
-			streamList.Add(new FeedRateMultiplyerStream(streamList[streamList.Count - 1]));
+			streamList.Add(new ExtrusionMultiplyerStream(printer, streamList[streamList.Count - 1]));
+			streamList.Add(new FeedRateMultiplyerStream(printer, streamList[streamList.Count - 1]));
 			GCodeStream totalGCodeStream = streamList[streamList.Count - 1];
 
 			return totalGCodeStream;
@@ -480,8 +482,8 @@ namespace MatterControl.Tests.MatterControl
 
 			printer.Settings.SetValue(SettingsKey.write_regex, "\"^(G28)\",\"G28,M115\"\\n\"^(M107)\",\"; none\"");
 
-			var inputLinesStream = new TestGCodeStream(inputLines);
-			var queueStream = new QueuedCommandsStream(inputLinesStream);
+			var inputLinesStream = new TestGCodeStream(printer, inputLines);
+			var queueStream = new QueuedCommandsStream(printer, inputLinesStream);
 			ProcessWriteRegexStream writeStream = new ProcessWriteRegexStream(printer, queueStream, queueStream);
 
 			int expectedIndex = 0;
@@ -507,7 +509,8 @@ namespace MatterControl.Tests.MatterControl
 
 			Assert.AreEqual(1, (int) FeedRateMultiplyerStream.FeedRateRatio, "FeedRateRatio should default to 1");
 
-			var gcodeStream = new FeedRateMultiplyerStream(new TestGCodeStream(new string[] { "G1 X10 F1000", "G1 Y5 F1000" }));
+			PrinterConfig printer = null;
+			var gcodeStream = new FeedRateMultiplyerStream(printer, new TestGCodeStream(printer, new string[] { "G1 X10 F1000", "G1 Y5 F1000" }));
 
 			line = gcodeStream.ReadLine();
 
@@ -528,7 +531,8 @@ namespace MatterControl.Tests.MatterControl
 
 			Assert.AreEqual(1, (int) ExtrusionMultiplyerStream.ExtrusionRatio, "ExtrusionRatio should default to 1");
 
-			var gcodeStream = new ExtrusionMultiplyerStream(new TestGCodeStream(new string[] { "G1 E10", "G1 E0 ; Move back to 0", "G1 E12" }));
+			PrinterConfig printer = null;
+			var gcodeStream = new ExtrusionMultiplyerStream(printer, new TestGCodeStream(printer, new string[] { "G1 E10", "G1 E0 ; Move back to 0", "G1 E12" }));
 
 			line = gcodeStream.ReadLine();
 			// Move back to E0
@@ -549,7 +553,8 @@ namespace MatterControl.Tests.MatterControl
 		private int index = 0;
 		private string[] lines;
 
-		public TestGCodeStream(string[] lines)
+		public TestGCodeStream(PrinterConfig printer, string[] lines)
+			: base(printer)
 		{
 			this.lines = lines;
 		}

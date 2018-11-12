@@ -38,13 +38,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	public class GCodeSwitcher : GCodeStream
 	{
 		private GCodeMemoryFile switchToGCode = null;
-		PrinterConnection printerConnection;
 		private object locker = new object();
 		private List<string> commandQueue = new List<string>();
 
-		public GCodeSwitcher(string gcodeFilename, PrinterConnection printerConnection, int startLine = 0)
+		public GCodeSwitcher(string gcodeFilename, PrinterConfig printer, int startLine = 0)
+			: base(printer)
 		{
-			this.printerConnection = printerConnection;
 			var fileStreaming = GCodeFile.Load(gcodeFilename,
 					new Vector4(),
 					new Vector4(),

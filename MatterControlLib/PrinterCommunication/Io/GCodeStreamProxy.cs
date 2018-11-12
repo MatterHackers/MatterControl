@@ -41,7 +41,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	{
 		protected GCodeStream internalStream;
 
-		public GCodeStreamProxy(GCodeStream internalStream)
+		public GCodeStreamProxy(PrinterConfig printer, GCodeStream internalStream)
+			: base(printer)
 		{
 			this.internalStream = internalStream;
 		}

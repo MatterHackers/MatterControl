@@ -36,7 +36,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private int printerCommandQueueLineIndex = -1;
 		public GCodeFile GCodeFile { get; }
 
-		public GCodeFileStream(GCodeFile fileStreaming, int startLine = 0)
+		public GCodeFileStream(GCodeFile fileStreaming, PrinterConfig printer, int startLine = 0)
+			: base(printer)
 		{
 			this.GCodeFile = fileStreaming;
 			printerCommandQueueLineIndex = startLine;

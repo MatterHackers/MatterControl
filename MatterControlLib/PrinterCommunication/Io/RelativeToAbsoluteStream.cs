@@ -44,8 +44,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		bool xyzAbsoluteMode = true;
 		bool eAbsoluteMode = true;
 
-		public RelativeToAbsoluteStream(GCodeStream internalStream)
-			: base(internalStream)
+		public RelativeToAbsoluteStream(PrinterConfig printer, GCodeStream internalStream)
+			: base(printer, internalStream)
 		{
 		}
 

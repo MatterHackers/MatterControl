@@ -44,12 +44,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		private QueuedCommandsStream queueStream;
 
-		private PrinterConfig printer;
-
 		public ProcessWriteRegexStream(PrinterConfig printer, GCodeStream internalStream, QueuedCommandsStream queueStream)
-			: base(internalStream)
+			: base(printer, internalStream)
 		{
-			this.printer = printer;
 			this.queueStream = queueStream;
 		}
 

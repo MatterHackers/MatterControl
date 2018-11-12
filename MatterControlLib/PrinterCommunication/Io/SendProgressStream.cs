@@ -36,12 +36,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	public class SendProgressStream : GCodeStreamProxy
 	{
 		private double nextPercent = -1;
-		PrinterConfig printer;
 
-		public SendProgressStream(PrinterConfig printer, GCodeStream internalStream)
-			: base(internalStream)
+		public SendProgressStream(GCodeStream internalStream, PrinterConfig printer)
+			: base(printer, internalStream)
 		{
-			this.printer = printer;
 		}
 
 		public override string ReadLine()

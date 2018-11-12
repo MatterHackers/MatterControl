@@ -35,20 +35,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	public class RequestTemperaturesStream : GCodeStreamProxy
 	{
 		private long nextReadTimeMs = 0;
-		PrinterConnection printerConnection;
 
-		public RequestTemperaturesStream(PrinterConnection printerConnection, GCodeStream internalStream)
-			: base(internalStream)
+		public RequestTemperaturesStream(PrinterConfig printer, GCodeStream internalStream)
+			: base(printer, internalStream)
 		{
-			this.printerConnection = printerConnection;
 			nextReadTimeMs = UiThread.CurrentTimerMs + 1000;
 		}
 
 		public override string ReadLine()
 		{
-			if (!printerConnection.WaitingForPositionRead
+			if (!printer.Connection.WaitingForPositionRead
 				&& nextReadTimeMs < UiThread.CurrentTimerMs
-				&& printerConnection.IsConnected)
+				&& printer.Connection.IsConnected)
 			{
 				nextReadTimeMs = UiThread.CurrentTimerMs + 1000;
 				return "M105";

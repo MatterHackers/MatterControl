@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl
 				["Italiano"] = "IT",
 				["Norsk"] = "NO",
 				["Polski"] = "PL",
-				["Português"] = "CR",
+				//["Português"] = "CR",
 				["Русский"] = "RU",
 				["Română"] = "RO",
 				["Türkçe"] = "TR",

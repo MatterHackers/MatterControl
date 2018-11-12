@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.Library.Export
 					using (var gcodeStream = await assetStream.GetStream(progress: null))
 					{
 						this.ApplyStreamPipelineAndExport(
-							new GCodeFileStream(new GCodeFileStreamed(gcodeStream.Stream)),
+							new GCodeFileStream(new GCodeFileStreamed(gcodeStream.Stream), printer),
 							outputPath);
 
 						return true;
@@ -236,7 +236,7 @@ namespace MatterHackers.MatterControl.Library.Export
 		{
 			try
 			{
-				var queueStream = new QueuedCommandsStream(gCodeFileStream);
+				var queueStream = new QueuedCommandsStream(printer, gCodeFileStream);
 
 				// this is added to ensure we are rewriting the G0 G1 commands as needed
 				GCodeStream finalStream = new ProcessWriteRegexStream(printer, queueStream, queueStream);
@@ -287,7 +287,8 @@ namespace MatterHackers.MatterControl.Library.Export
 							new Vector4(),
 							new Vector4(),
 							Vector4.One,
-							CancellationToken.None)),
+							CancellationToken.None)
+							, printer),
 					outputPath);
 			}
 			catch (Exception e)

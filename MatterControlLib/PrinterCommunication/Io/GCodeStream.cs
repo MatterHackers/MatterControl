@@ -49,9 +49,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		bool useG0ForMovement = false;
 
-		public GCodeStream()
+		protected PrinterConfig printer { get; }
+
+		public GCodeStream(PrinterConfig printer)
 		{
-			useG0ForMovement = ApplicationController.Instance.ActivePrinter.Settings.GetValue<bool>(SettingsKey.g0);
+			this.printer = printer;
+			if (printer != null)
+			{
+				useG0ForMovement = printer.Settings.GetValue<bool>(SettingsKey.g0);
+			}
 		}
 
 		public string CreateMovementLine(PrinterMove currentDestination)
