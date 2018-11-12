@@ -104,6 +104,15 @@
     <Content Include="application.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="libgmp-10.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libigl_boolean.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libmpfr-4.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="StaticData\MatterControl EULA.txt" />
     <None Include="StaticData\BuildInfo.txt" />
     <None Include="StaticData\License\agg-sharp.txt" />
