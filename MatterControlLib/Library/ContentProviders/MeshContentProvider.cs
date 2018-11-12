@@ -171,7 +171,7 @@ namespace MatterHackers.MatterControl
 				RenderOrthographic ? RenderType.ORTHOGROPHIC : RenderType.RAY_TRACE,
 				width,
 				height,
-				allowMultiThreading: !ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting);
+				allowMultiThreading: !ApplicationController.Instance.AnyPrintTaskRunning);
 		}
 
 		public ImageBuffer DefaultImage { get; } = AggContext.StaticData.LoadIcon("mesh.png");

@@ -331,6 +331,7 @@ namespace MatterHackers.MatterControl
 		// us down to a single point where code is making assumptions about the presence of a printer, printer counts, etc. If we previously checked for
 		// PrinterConnection.IsPrinterConnected, that could should be updated to iterate ActiverPrinters, checking each one and acting on each as it would
 		// have for the single case
+		[Obsolete("ActivePrinter references should be migrated to logic than supports multi-printer mode")]
 		public PrinterConfig ActivePrinter { get; private set; } = PrinterConfig.EmptyPrinter;
 
 		public Action RedeemDesignCode;
@@ -1309,15 +1310,25 @@ namespace MatterHackers.MatterControl
 					+ "\n"
 					+ "Error Reported".Localize() + ":"
 					+ $" \"{line}\".";
-				UiThread.RunOnIdle(() =>
-					StyledMessageBox.ShowMessageBox((clickedOk) =>
-					{
-						if (clickedOk && this.ActivePrinter.Connection.PrinterIsPaused)
-						{
-							this.ActivePrinter.Connection.Resume();
-						}
-					}, message, "Printer Hardware Error".Localize(), StyledMessageBox.MessageType.YES_NO, "Resume".Localize(), "OK".Localize())
-				);
+
+				if (sender is PrinterConnection printerConnection)
+				{
+					UiThread.RunOnIdle(() =>
+						StyledMessageBox.ShowMessageBox(
+							(clickedOk) =>
+							{
+								if (clickedOk && printerConnection.PrinterIsPaused)
+								{
+									printerConnection.Resume();
+								}
+							},
+							message,
+							"Printer Hardware Error".Localize(),
+							StyledMessageBox.MessageType.YES_NO,
+							"Resume".Localize(),
+							"OK".Localize())
+					);
+				}
 			}
 		}
 
@@ -2025,6 +2036,11 @@ namespace MatterHackers.MatterControl
 
 		public bool PrinterTabSelected { get; set; } = false;
 
+		/// <summary>
+		/// Indicates if any ActivePrinter is running a print task, either in paused or printing states
+		/// </summary>
+		public bool AnyPrintTaskRunning => this.ActivePrinters.Any(p => p.Connection.PrinterIsPrinting || p.Connection.PrinterIsPaused);
+
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 
 		public void NotifyPrintersTabRightElement(GuiWidget sourceExentionArea)
@@ -2041,8 +2057,8 @@ namespace MatterHackers.MatterControl
 			var printItemName = editContext.SourceItem.Name;
 
 			// Exit if called in a non-applicable state
-			if (this.ActivePrinter.Connection.CommunicationState != CommunicationStates.Connected
-				&& this.ActivePrinter.Connection.CommunicationState != CommunicationStates.FinishedPrint)
+			if (printer.Connection.CommunicationState != CommunicationStates.Connected
+				&& printer.Connection.CommunicationState != CommunicationStates.FinishedPrint)
 			{
 				return;
 			}
@@ -2090,7 +2106,7 @@ If you experience adhesion problems, please re-run leveling."
 					}
 
 					// clear the output cache prior to starting a print
-					this.ActivePrinter.Connection.TerminalLog.Clear();
+					printer.Connection.TerminalLog.Clear();
 
 					string hideGCodeWarning = ApplicationSettings.Instance.get(ApplicationSettingsKey.HideGCodeWarning);
 
@@ -2123,7 +2139,7 @@ If you experience adhesion problems, please re-run leveling."
 								{
 									if (messageBoxResponse)
 									{
-										this.ActivePrinter.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
+										printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
 										this.ArchiveAndStartPrint(partFilePath, gcodeFilePath, printer);
 									}
 								},
@@ -2139,7 +2155,7 @@ If you experience adhesion problems, please re-run leveling."
 					}
 					else
 					{
-						this.ActivePrinter.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
+						printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
 
 						(bool slicingSucceeded, string finalPath) = await this.SliceItemLoadOutput(
 							printer,
@@ -2154,7 +2170,7 @@ If you experience adhesion problems, please re-run leveling."
 						else
 						{
 							// TODO: Need to reset printing state? This seems like I shouldn't own this indicator
-							this.ActivePrinter.Connection.CommunicationState = CommunicationStates.Connected;
+							printer.Connection.CommunicationState = CommunicationStates.Connected;
 						}
 					}
 				}
@@ -2286,7 +2302,7 @@ If you experience adhesion problems, please re-run leveling."
 
 					if (originalIsGCode)
 					{
-						await this.ActivePrinter.Connection.StartPrint(gcodeFilePath);
+						await printer.Connection.StartPrint(gcodeFilePath);
 
 						MonitorPrintTask(printer);
 
@@ -2306,7 +2322,7 @@ If you experience adhesion problems, please re-run leveling."
 							string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
 							if (fileEnd.Contains("filament used"))
 							{
-								await this.ActivePrinter.Connection.StartPrint(gcodeFilePath);
+								await printer.Connection.StartPrint(gcodeFilePath);
 								MonitorPrintTask(printer);
 								return;
 							}
@@ -2314,7 +2330,7 @@ If you experience adhesion problems, please re-run leveling."
 					}
 				}
 
-				this.ActivePrinter.Connection.CommunicationState = CommunicationStates.Connected;
+				printer.Connection.CommunicationState = CommunicationStates.Connected;
 			}
 		}
 

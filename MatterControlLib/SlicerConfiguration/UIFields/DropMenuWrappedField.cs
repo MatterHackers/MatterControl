@@ -38,10 +38,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private UIField uiField;
 		private Color textColor;
 		private ThemeConfig theme;
+		private PrinterConfig printer;
 		private SliceSettingData settingData;
 
-		public DropMenuWrappedField(UIField uiField, SliceSettingData settingData, Color textColor, ThemeConfig theme)
+		public DropMenuWrappedField(UIField uiField, SliceSettingData settingData, Color textColor, ThemeConfig theme, PrinterConfig printer)
 		{
+			this.printer = printer;
 			this.settingData = settingData;
 			this.uiField = uiField;
 			this.textColor = textColor;
@@ -98,8 +100,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (e is StringEventArgs stringArgs
 					&& stringArgs.Data == settingData.SlicerConfigName)
 				{
-					var activePrinter = ApplicationController.Instance.ActivePrinter;
-					string newSliceSettingValue = activePrinter.Settings.GetValue(settingData.SlicerConfigName);
+					string newSliceSettingValue = printer.Settings.GetValue(settingData.SlicerConfigName);
 
 					bool foundSetting = false;
 					foreach (QuickMenuNameValue nameValue in settingData.QuickMenuSettings)
