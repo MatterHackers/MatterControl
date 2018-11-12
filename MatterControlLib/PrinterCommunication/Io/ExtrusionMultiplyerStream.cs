@@ -36,8 +36,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private double currentActualExtrusionPosition = 0;
 		private double previousGcodeRequestedExtrusionPosition = 0;
 
-		public ExtrusionMultiplyerStream(GCodeStream internalStream)
-			: base(internalStream)
+		public ExtrusionMultiplyerStream(PrinterConfig printer, GCodeStream internalStream)
+			: base(printer, internalStream)
 		{
 		}
 

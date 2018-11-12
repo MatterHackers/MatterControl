@@ -40,14 +40,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private double currentProbeOffset;
 		private bool wroteLevelingStatus = false;
 		private bool gcodeAlreadyLeveled = false;
-		private PrinterConfig printer;
 
 		public PrintLevelingStream(PrinterConfig printer, GCodeStream internalStream, bool activePrinting)
-			: base(internalStream)
+			: base(printer, internalStream)
 		{
 			// always reset this when we construct
 			AllowLeveling = true;
-			this.printer = printer;
 			this.activePrinting = activePrinting;
 		}
 

@@ -48,14 +48,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private PrinterMove moveLocationAtEndOfPauseCode;
 		private Stopwatch timeSinceLastEndstopRead = new Stopwatch();
 		bool readOutOfFilament = false;
-		private PrinterConfig printer;
 
 		private EventHandler unregisterEvents;
 
 		public PauseHandlingStream(PrinterConfig printer, GCodeStream internalStream)
-			: base(internalStream)
+			: base(printer, internalStream)
 		{
-			this.printer = printer;
 			printer.Connection.LineReceived += (s, line) =>
 			{
 				if (line != null)

@@ -46,11 +46,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		RectangleDouble boundsOfSkippedLayers = RectangleDouble.ZeroIntersection;
 
 		public RecoveryState RecoveryState { get; private set; } = RecoveryState.RemoveHeating;
-		private PrinterConfig printer;
 
-		public PrintRecoveryStream(PrinterConfig printer, GCodeSwitcher internalStream, double percentDone)
+		public PrintRecoveryStream(GCodeSwitcher internalStream, PrinterConfig printer, double percentDone)
+			: base(printer)
 		{
-			this.printer = printer;
 			this.internalStream = internalStream;
 			this.percentDone = percentDone;
 
@@ -61,7 +60,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 			recoverFeedRate *= 60;
 
-			queuedCommands = new QueuedCommandsStream(null);
+			queuedCommands = new QueuedCommandsStream(printer, null);
 		}
 
 		public override void Dispose()

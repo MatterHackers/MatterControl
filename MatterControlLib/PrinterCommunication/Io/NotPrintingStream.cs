@@ -39,7 +39,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class NotPrintingStream : GCodeStream
 	{
-		public NotPrintingStream()
+		public NotPrintingStream(PrinterConfig printer)
+			: base(printer)
 		{
 		}
 

@@ -45,8 +45,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private List<string> commandQueue = new List<string>();
 		private object locker = new object();
 
-		public QueuedCommandsStream(GCodeStream internalStream)
-			: base(internalStream)
+		public QueuedCommandsStream(PrinterConfig printer, GCodeStream internalStream)
+			: base(printer, internalStream)
 		{
 		}
 
