@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			this.printerSelected = printerSelected;
 
-			InventoryTreeView.CreatePrinterProfilesTree(rootPrintersNode, theme);
+			InventoryTreeView.CreateOpenPrintersTree(rootPrintersNode, theme);
 		}
 
 		protected override void OnTreeNodeDoubleClicked(TreeNode treeNode)

@@ -212,5 +212,37 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			printersNode.Expanded = true;
 		}
+
+		public static void CreateOpenPrintersTree(TreeNode printersNode, ThemeConfig theme)
+		{
+			if (printersNode == null)
+			{
+				return;
+			}
+
+			printersNode.Nodes.Clear();
+
+			//Add the menu items to the menu itself
+			foreach (var printer in ApplicationController.Instance.ActivePrinters)
+			{
+				string printerName = printer.Settings.GetValue(SettingsKey.printer_name);
+
+				var printerNode = new TreeNode(theme)
+				{
+					Text = printerName,
+					Name = $"{printerName} Node",
+					Tag = printer
+				};
+
+				printerNode.Load += (s, e) =>
+				{
+					printerNode.Image = OemSettings.Instance.GetIcon(printer.Settings.GetValue(SettingsKey.make));
+				};
+
+				printersNode.Nodes.Add(printerNode);
+			}
+
+			printersNode.Expanded = true;
+		}
 	}
 }
