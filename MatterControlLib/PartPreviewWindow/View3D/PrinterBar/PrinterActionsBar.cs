@@ -313,7 +313,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Title = "Restore Settings".Localize(),
 					Action = () =>
 					{
-						DialogWindow.Show<PrinterProfileHistoryPage>();
+
+						DialogWindow.Show(new PrinterProfileHistoryPage(printer));
 					}
 				},
 				new NamedAction()
@@ -362,7 +363,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							{
 								if (doDelete)
 								{
-									ProfileManager.Instance.DeleteActivePrinter(true);
+									ProfileManager.Instance.DeletePrinter(printer.Settings.ID);
 								}
 							},
 							"Are you sure you want to delete your currently selected printer?".Localize(),

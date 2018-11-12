@@ -111,13 +111,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			if (printerLoaded == null)
 			{
-				// Switch to the given printer and load the most recent bed plate
-				PrinterDetails.SwitchPrinters(printerInfo.ID);
+				ApplicationController.Instance.OpenPrinter(printerInfo.ID).ConfigureAwait(false);
 			}
 			else
 			{
 				// Switch to the given printer and let the caller do as they must
-				PrinterDetails.OpenPrinterAsync(printerInfo.ID).ContinueWith(task =>
+				ApplicationController.Instance.OpenPrinter(printerInfo.ID, loadPlateFromHistory: false).ContinueWith(task =>
 				{
 					printerLoaded?.Invoke(task.Result);
 				});

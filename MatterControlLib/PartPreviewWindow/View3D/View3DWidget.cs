@@ -682,7 +682,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var window = DialogWindow.Show(new SetupStepMakeModelName());
 					window.Closed += (s2, e2) =>
 					{
-						if (ApplicationController.Instance.ActivePrinter is PrinterConfig printer
+						if (ApplicationController.Instance.ActivePrinters.FirstOrDefault() is PrinterConfig printer
 							&& printer.Settings.PrinterSelected)
 						{
 							CopyPlateToPrinter(sceneContext, printer);
@@ -690,10 +690,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					};
 				});
 			}
-			else if (ApplicationController.Instance.ActivePrinter is PrinterConfig printer && printer.Settings.PrinterSelected)
+			else if (ApplicationController.Instance.ActivePrinters.Count() is int printerCount && printerCount > 0)
 			{
-				// If a printer exists, stash plate with undo operation, then load this scene onto the printer bed
-				CopyPlateToPrinter(sceneContext, printer);
+				if (printerCount == 1
+					&& ApplicationController.Instance.ActivePrinters.FirstOrDefault() is PrinterConfig firstPrinter)
+				{
+					// If one printer exists, stash plate with undo operation, then load this scene onto the printer bed
+					CopyPlateToPrinter(sceneContext, firstPrinter);
+				}
+				else
+				{
+					// If multiple active printers exist, show select printer dialog
+					UiThread.RunOnIdle(() =>
+					{
+						DialogWindow.Show(
+							new SelectPrinterPage(
+								"Next".Localize(),
+								(selectedPrinter) =>
+								{
+									if (selectedPrinter?.Settings.PrinterSelected == true)
+									{
+										CopyPlateToPrinter(sceneContext, selectedPrinter);
+									}
+								}));
+					});
+				}
 			}
 			else if (ProfileManager.Instance.ActiveProfiles.Any())
 			{

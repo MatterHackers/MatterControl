@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						else
 						{
 							// Open new printer tab
-							PrinterDetails.SwitchPrinters(printerInfo.ID);
+							ApplicationController.Instance.OpenPrinter(printerInfo.ID).ConfigureAwait(false);
 						}
 					}
 				}
@@ -133,8 +133,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						{
 							if (treeView?.SelectedNode.Tag is PrinterInfo printerInfo)
 							{
-									// Open printer
-									PrinterDetails.SwitchPrinters(printerInfo.ID);
+								// Open printer
+								ApplicationController.Instance.OpenPrinter(printerInfo.ID).ConfigureAwait(false);
 							}
 						};
 
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 										{
 											if (treeView.SelectedNode.Tag is PrinterInfo printerInfo)
 											{
-												ProfileManager.Instance.DeletePrinter(printerInfo.ID, true);
+												ProfileManager.Instance.DeletePrinter(printerInfo.ID);
 											}
 										}
 									},

@@ -70,9 +70,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			MaterialPresetChanged?.Invoke(null, null);
 		}
 
-		public static void OnSettingChanged(string slicerConfigName)
+		public static void OnSettingChanged(PrinterSettings settings, string slicerConfigName)
 		{
-			SettingChanged.CallEvents(null, new StringEventArgs(slicerConfigName));
+			SettingChanged.CallEvents(settings, new StringEventArgs(slicerConfigName));
 		}
 
 		public event EventHandler PrintLevelingEnabledChanged;
@@ -1423,7 +1423,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			persistenceLayer[settingsKey] = settingsValue;
 			Save();
 
-			PrinterSettings.OnSettingChanged(settingsKey);
+			PrinterSettings.OnSettingChanged(this, settingsKey);
 		}
 
 		public string ToJson()
@@ -1466,7 +1466,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				Save();
 
-				PrinterSettings.OnSettingChanged(settingsKey);
+				PrinterSettings.OnSettingChanged(this, settingsKey);
 			}
 		}
 	}

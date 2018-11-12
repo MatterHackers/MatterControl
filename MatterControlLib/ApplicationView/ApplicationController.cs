@@ -107,6 +107,20 @@ namespace MatterHackers.MatterControl
 		Titillium,
 	};
 
+	public class OpenPrintersChangedEventArgs : EventArgs
+	{
+		public OpenPrintersChangedEventArgs(PrinterConfig printer, OperationType operation)
+		{
+			this.Printer = printer;
+			this.Operation = operation;
+		}
+
+		public PrinterConfig Printer { get; }
+		public OperationType Operation { get; }
+
+		public enum OperationType { Add, Remove }
+	}
+
 	public static class AppContext
 	{
 		/// <summary>
@@ -250,7 +264,9 @@ namespace MatterHackers.MatterControl
 		public RunningTasksConfig Tasks { get; set; } = new RunningTasksConfig();
 
 		// A list of printers which are open (i.e. displaying a tab) on this instance of MatterControl
-		public IEnumerable<PrinterConfig> ActivePrinters { get; } = new List<PrinterConfig>();
+		private List<PrinterConfig> _activePrinters = new List<PrinterConfig>();
+
+		public IReadOnlyList<PrinterConfig> ActivePrinters => _activePrinters;
 
 		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu)
 		{
@@ -342,7 +358,8 @@ namespace MatterHackers.MatterControl
 		public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
 		public RootedObjectEventHandler ActiveProfileModified = new RootedObjectEventHandler();
-		public RootedObjectEventHandler ActivePrinterChanged = new RootedObjectEventHandler();
+
+		public event EventHandler<OpenPrintersChangedEventArgs> OpenPrintersChanged;
 
 		public static Action SignInAction;
 		public static Action SignOutAction;
@@ -399,7 +416,7 @@ namespace MatterHackers.MatterControl
 
 				if (allowChangedEvent)
 				{
-					this.OnActivePrinterChanged(null);
+					this.OnOpenPrintersChanged(null);
 				}
 
 				if (!AppContext.IsLoading
@@ -419,9 +436,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void OnActivePrinterChanged(EventArgs e)
+		public void OnOpenPrintersChanged(OpenPrintersChangedEventArgs e)
 		{
-			this.ActivePrinterChanged.CallEvents(null, e);
+			this.OpenPrintersChanged?.Invoke(this, e);
 		}
 
 		public string GetFavIconUrl(string oemName)
@@ -430,13 +447,21 @@ namespace MatterHackers.MatterControl
 			return "https://www.google.com/s2/favicons?domain=" + (string.IsNullOrWhiteSpace(oemUrl) ? "www.matterhackers.com" : oemUrl);
 		}
 
-		public async Task ClearActivePrinter(bool allowChangedEvent = true)
+		public void ClosePrinter(PrinterConfig printer, bool allowChangedEvent = true)
 		{
 			// Actually clear printer
-			ProfileManager.Instance.LastProfileID = "";
+			ProfileManager.Instance.OpenPrinterIDs.Remove(printer.Settings.ID);
+			ProfileManager.Instance.Save();
 
-			await this.SetActivePrinter(PrinterConfig.EmptyPrinter, allowChangedEvent);
+			_activePrinters.Remove(printer);
+
+			// TODO: Need to revised listeners to be multi-printer aware and process change rather than simply remove and add new printer tab
+			if (allowChangedEvent)
+			{
+				this.OnOpenPrintersChanged(new OpenPrintersChangedEventArgs(printer, OpenPrintersChangedEventArgs.OperationType.Remove));
+			}
 		}
+
 
 		public void LaunchBrowser(string targetUri)
 		{
@@ -459,6 +484,7 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
+		[Obsolete("Not possible in multi-print mode")]
 		public void RefreshActiveInstance(PrinterSettings updatedPrinterSettings)
 		{
 			ActivePrinter.SwapToSettings(updatedPrinterSettings);
@@ -1810,6 +1836,32 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public async Task<PrinterConfig> OpenPrinter(string printerID, bool loadPlateFromHistory = true)
+		{
+			ProfileManager.Instance.OpenPrinterIDs.Add(printerID);
+			ProfileManager.Instance.Save();
+
+			var printer = new PrinterConfig(await ProfileManager.LoadProfileAsync(printerID));
+
+			if (loadPlateFromHistory)
+			{
+				await printer.Bed.LoadPlateFromHistory();
+			}
+
+			Debugger.Break();
+
+			this.OnOpenPrintersChanged(new OpenPrintersChangedEventArgs(printer, OpenPrintersChangedEventArgs.OperationType.Add));
+
+			// TODO: Need to notify that printer was opened so UI displays new tab
+			return printer;
+		}
+
+		public Task OpenAllPrinters()
+		{
+			Debugger.Break();
+			return Task.CompletedTask;
+		}
+
 		/// <summary>
 		/// Compute hash for string encoded as UTF8
 		/// </summary>
@@ -3114,7 +3166,11 @@ If you experience adhesion problems, please re-run leveling."
 			await ProfileManager.Instance.Initialize();
 
 			reporter?.Invoke(0.25, (loading != null) ? loading : "Initialize printer");
-			var printer = await ProfileManager.Instance.LoadPrinter();
+
+			var printer = PrinterConfig.EmptyPrinter;
+
+			// Load needs to iterate open printers and restore them
+			//var printer = await ProfileManager.Instance.LoadPrinter();
 
 			// Restore bed
 			if (printer.Settings.PrinterSelected)

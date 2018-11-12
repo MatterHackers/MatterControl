@@ -365,7 +365,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (settingBeforeChange[keyName] != printer.Settings.GetValue(keyName))
 					{
-						PrinterSettings.OnSettingChanged(keyName);
+						PrinterSettings.OnSettingChanged(printer.Settings, keyName);
 					}
 				}
 			});

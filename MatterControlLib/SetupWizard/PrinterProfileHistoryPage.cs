@@ -17,12 +17,14 @@ namespace MatterHackers.MatterControl.SetupWizard
 		List<RadioButton> radioButtonList = new List<RadioButton>();
 		Dictionary<string, string> printerProfileData = new Dictionary<string, string>();
 		List<string> orderedProfiles = new List<string>();
+		private PrinterConfig printer;
 		ScrollableWidget scrollWindow;
 
-		public PrinterProfileHistoryPage()
+		public PrinterProfileHistoryPage(PrinterConfig printer)
 		{
 			this.WindowTitle = "Restore Settings".Localize();
 			this.HeaderText = "Restore Settings".Localize();
+			this.printer = printer;
 
 			scrollWindow = new ScrollableWidget()
 			{
@@ -43,10 +45,10 @@ namespace MatterHackers.MatterControl.SetupWizard
 				{
 					string profileToken = printerProfileData[orderedProfiles[index]];
 
-					var activeProfile = ProfileManager.Instance.ActiveProfile;
+					var profile = ProfileManager.Instance[printer.Settings.ID];
 
 					// Download the specified json profile
-					var printerSettings = await ApplicationController.GetPrinterProfileAsync(activeProfile, profileToken);
+					var printerSettings = await ApplicationController.GetPrinterProfileAsync(profile, profileToken);
 					if (printerSettings != null)
 					{
 						// Persist downloaded profile
@@ -70,7 +72,9 @@ namespace MatterHackers.MatterControl.SetupWizard
 			loadingText.TextColor = theme.TextColor;
 			scrollWindow.AddChild(loadingText);
 
-			var results = await ApplicationController.GetProfileHistory?.Invoke(ProfileManager.Instance.ActiveProfile.DeviceToken);
+			var profile = ProfileManager.Instance[printer.Settings.ID];
+
+			var results = await ApplicationController.GetProfileHistory?.Invoke(profile.DeviceToken);
 			printerProfileData = results;
 			if(printerProfileData != null)
 			{
@@ -118,7 +122,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 				loadingText.Text = "Failed To Download History!";
 				loadingText.TextColor = Color.Red;
 			}
-			
+
 			//remove loading profile text/icon
 		}
 

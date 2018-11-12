@@ -151,17 +151,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
-				var activePrinter = ApplicationController.Instance.ActivePrinter;
-
 				string settingsName = (e as StringEventArgs)?.Data;
 				if (settingsName != null && settingsName == SettingsKey.printer_name)
 				{
-					if (ProfileManager.Instance.ActiveProfile != null)
-					{
-						ProfileManager.Instance.ActiveProfile.Name = activePrinter.Settings.GetValue(SettingsKey.printer_name);
-						InventoryTreeView.RebuildPrintersList(printersNode, theme);
-						this.Invalidate();
-					}
+					InventoryTreeView.RebuildPrintersList(printersNode, theme);
+					this.Invalidate();
 				}
 			}, ref unregisterEvents);
 
