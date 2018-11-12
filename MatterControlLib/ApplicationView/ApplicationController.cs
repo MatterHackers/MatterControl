@@ -2549,7 +2549,6 @@ If you experience adhesion problems, please re-run leveling."
 	public class DragDropData
 	{
 		public View3DWidget View3DWidget { get; set; }
-		public PrinterConfig Printer { get; internal set; }
 		public BedConfig SceneContext { get; set; }
 	}
 
