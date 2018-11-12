@@ -85,31 +85,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		public string ProfilesDocPath => GetProfilesDocPathForUser(this.UserName);
 
-		public async Task<PrinterConfig> LoadPrinter(string profileID, bool allowChangedEvent = true)
-		{
-			var activePrinter = PrinterConfig.EmptyPrinter;
-
-			// If a 'LastProfile' exists and it is missing from ActivePrinters, load it
-			var profile = this[profileID];
-			if (profile != null
-				&& !ApplicationController.Instance.ActivePrinters.Where(p => p.Settings.ID == profile.ID).Any())
-			{
-				if (ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == profileID) is PrinterConfig openPrinter)
-				{
-					return openPrinter;
-				}
-				else
-				{
-					var printer = new PrinterConfig(await LoadProfileAsync(profileID));
-					await ApplicationController.Instance.SetActivePrinter(printer, allowChangedEvent);
-
-					return printer;
-				}
-			}
-
-			return activePrinter;
-		}
-
 		private static string GetProfilesDocPathForUser(string userName)
 		{
 			return Path.Combine(GetProfilesDirectoryForUser(userName), $"{userName}{ProfileDocExtension}");
