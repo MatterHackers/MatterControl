@@ -379,63 +379,6 @@ namespace MatterHackers.MatterControl
 
 		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
 
-		public async Task SetActivePrinter(PrinterConfig printer, bool allowChangedEvent = true)
-		{
-			var initialPrinter = this.ActivePrinter;
-			if (initialPrinter?.Settings.ID != printer.Settings.ID)
-			{
-				// TODO: Consider if autosave is appropriate
-				if (initialPrinter != PrinterConfig.EmptyPrinter)
-				{
-					await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), initialPrinter.Bed.SaveChanges);
-				}
-
-				// If we have an active printer, run Disable
-				if (initialPrinter.Settings != PrinterSettings.Empty)
-				{
-					initialPrinter?.Connection?.Disable();
-				}
-
-				// ActivePrinters is IEnumerable to force us to use SetActivePrinter until it's ingrained in our pattern
-				// Cast to list since it is one and we need to clear and add
-				if (this.ActivePrinters is List<PrinterConfig> activePrinterList)
-				{
-					activePrinterList.Clear();
-					activePrinterList.Add(printer);
-
-					this.ActivePrinter = printer;
-				}
-
-				// TODO: Decide if non-printer contexts should prompt for a printer, if we should have a default printer, or get "ActiveTab printer" working
-				// HACK: short term solution to resolve printer reference for non-printer related contexts
-				DragDropData.Printer = printer;
-
-				BedSettings.SetMakeAndModel(
-					printer.Settings.GetValue(SettingsKey.make),
-					printer.Settings.GetValue(SettingsKey.model));
-
-				if (allowChangedEvent)
-				{
-					this.OnOpenPrintersChanged(null);
-				}
-
-				if (!AppContext.IsLoading
-					&& printer.Settings.PrinterSelected
-					&& printer.Settings.GetValue<bool>(SettingsKey.auto_connect))
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						printer.Settings.printer.Connection.Connect();
-					}, 2);
-				}
-
-				if (this.Library != null)
-				{
-					this.Library.NotifyContainerChanged();
-				}
-			}
-		}
-
 		public void OnOpenPrintersChanged(OpenPrintersChangedEventArgs e)
 		{
 			this.OpenPrintersChanged?.Invoke(this, e);
