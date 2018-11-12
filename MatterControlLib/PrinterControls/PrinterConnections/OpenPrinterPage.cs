@@ -37,6 +37,48 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
+	public class SelectActivePrinterPage : SelectablePrinterPage
+	{
+		private Action<PrinterConfig> printerSelected;
+
+		public SelectActivePrinterPage(string continueButtonText, Action<PrinterConfig> printerSelected)
+			: base(continueButtonText)
+		{
+			this.printerSelected = printerSelected;
+
+			InventoryTreeView.RebuildPrintersList(rootPrintersNode, theme);
+		}
+
+		protected override void OnTreeNodeDoubleClicked(TreeNode treeNode)
+		{
+			if (treeNode.Tag is PrinterConfig printer)
+			{
+				this.OnContinue(treeNode);
+			}
+
+			base.OnTreeNodeDoubleClicked(treeNode);
+		}
+
+		protected override void OnTreeNodeSelected(TreeNode selectedNode)
+		{
+			if (selectedNode.Tag is PrinterConfig printerInfo)
+			{
+				nextButton.Enabled = true;
+			}
+
+			base.OnTreeNodeSelected(selectedNode);
+		}
+
+		protected override void OnContinue(TreeNode treeNode)
+		{
+			if (treeNode.Tag is PrinterConfig printer)
+			{
+				printerSelected.Invoke(printer);
+
+				base.OnContinue(treeNode);
+			}
+		}
+	}
 
 	public class OpenPrinterPage : SelectablePrinterPage
 	{
@@ -54,7 +96,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			if (treeNode.Tag is PrinterInfo printerInfo)
 			{
-				this.OnContinue(printerInfo);
+				this.OnContinue(treeNode);
 			}
 
 			base.OnTreeNodeDoubleClicked(treeNode);
@@ -70,22 +112,27 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			base.OnTreeNodeSelected(selectedNode);
 		}
 
-		protected override void OnContinue(PrinterInfo printerInfo)
+		protected override void OnContinue(TreeNode treeNode)
 		{
-			if (printerLoaded == null)
+			if (treeNode.Tag is PrinterInfo printerInfo)
 			{
-				ApplicationController.Instance.OpenPrinter(printerInfo.ID).ConfigureAwait(false);
-			}
-			else
-			{
-				// Switch to the given printer and let the caller do as they must
-				ApplicationController.Instance.OpenPrinter(printerInfo.ID, loadPlateFromHistory: false).ContinueWith(task =>
+				if (printerLoaded == null)
 				{
-					printerLoaded?.Invoke(task.Result);
-				});
-			}
+					ApplicationController.Instance.OpenPrinter(printerInfo.ID).ConfigureAwait(false);
+				}
+				else
+				{
+					// Switch to the given printer and let the caller do as they must
+					ApplicationController.Instance.OpenPrinter(printerInfo.ID, loadPlateFromHistory: false).ContinueWith(task =>
+					{
+						printerLoaded?.Invoke(task.Result);
+					});
+				}
 
-			base.OnContinue(printerInfo);
+				this.DialogWindow.CloseOnIdle();
+
+				base.OnContinue(treeNode);
+			}
 		}
 	}
 
@@ -114,10 +161,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			};
 			nextButton.Click += (s, e) =>
 			{
-				if (treeView?.SelectedNode.Tag is PrinterInfo printerInfo)
-				{
-					this.OnContinue(printerInfo);
-				}
+				this.OnContinue(treeView.SelectedNode);
 			};
 			this.AddPageAction(nextButton);
 
@@ -159,9 +203,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 		}
 
-		protected virtual void OnContinue(PrinterInfo printerInfo)
+		protected virtual void OnContinue(TreeNode treeNode)
 		{
-			this.DialogWindow.CloseOnIdle();
 		}
 	}
 }
