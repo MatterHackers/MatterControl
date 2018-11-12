@@ -2229,7 +2229,7 @@ If you experience adhesion problems, please re-run leveling."
 					ResumeToolTip = "Resume Print".Localize(),
 					StopAction = () => UiThread.RunOnIdle(() =>
 					{
-						printer.ConditionallyCancelPrint();
+						printer.CancelPrint();
 					}),
 					StopToolTip = "Cancel Print".Localize(),
 				});

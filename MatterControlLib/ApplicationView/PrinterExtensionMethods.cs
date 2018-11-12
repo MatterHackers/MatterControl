@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl
 		/// Conditionally cancels prints within the first two minutes or interactively prompts the user to confirm cancellation
 		/// </summary>
 		/// <returns>A boolean value indicating if the print was canceled</returns>
-		public static void ConditionallyCancelPrint(this PrinterConfig printer)
+		public static void CancelPrint(this PrinterConfig printer)
 		{
 			if (printer.Connection.SecondsPrinted > 120)
 			{
