@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			var libiglExe = "libigl_boolean.exe";
 			if (File.Exists(libiglExe)
-				&& sizeof(int) == 8) // only try to run the improved booleans if we are 64 bit and it is there
+				&& IntPtr.Size == 8) // only try to run the improved booleans if we are 64 bit and it is there
 			{
 				string folderToSaveStlsTo = Path.Combine(ApplicationDataStorage.Instance.ApplicationTempDataPath, "amf_to_stl");
 				// Create directory if needed
