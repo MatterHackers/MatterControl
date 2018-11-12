@@ -54,8 +54,8 @@ namespace MatterHackers.MatterControl.SetupWizard
 						// Persist downloaded profile
 						printerSettings.Save();
 
-						// Update active instance without calling ReloadAll
-						ApplicationController.Instance.RefreshActiveInstance(printerSettings);
+						// Update/switch printer instance to new settings
+						printer.SwapToSettings(printerSettings);
 					}
 
 					UiThread.RunOnIdle(DialogWindow.Close);

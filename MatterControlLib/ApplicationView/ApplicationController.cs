@@ -426,29 +426,6 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		[Obsolete("Not possible in multi-print mode")]
-		public void RefreshActiveInstance(PrinterSettings updatedPrinterSettings)
-		{
-			ActivePrinter.SwapToSettings(updatedPrinterSettings);
-
-			/*
-			// TODO: Should we rebroadcast settings changed events for each settings?
-			bool themeChanged = ActivePrinter.Settings.GetValue(SettingsKey.active_theme_name) != updatedProfile.GetValue(SettingsKey.active_theme_name);
-			PrinterSettings.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.printer_name));
-
-			// TODO: Decide if non-printer contexts should prompt for a printer, if we should have a default printer, or get "ActiveTab printer" working
-			// HACK: short term solution to resolve printer reference for non-printer related contexts
-			DragDropData.Printer = printer;
-			if (themeChanged)
-			{
-				UiThread.RunOnIdle(ActiveSliceSettings.SwitchToPrinterTheme);
-			}
-			else
-			{
-				UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
-			}*/
-		}
-
 		internal void MakeGrayscale(ImageBuffer sourceImage)
 		{
 			var buffer = sourceImage.GetBuffer();
