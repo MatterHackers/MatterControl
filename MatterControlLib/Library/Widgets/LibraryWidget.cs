@@ -337,7 +337,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			treeView.AddChild(rootColumn);
 
-
 			if (AppContext.IsLoading)
 			{
 				ApplicationController.StartupActions.Add(new ApplicationController.StartupAction()

@@ -139,8 +139,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (openedPrinter != null)
 			{
 				// Clear selected printer state
-				ProfileManager.Instance.OpenPrinterIDs.Remove(printerID);
-				ProfileManager.Instance.Save();
+				ProfileManager.Instance.RemoveOpenPrinter(printerID);
 			}
 
 			UiThread.RunOnIdle(() =>
@@ -259,10 +258,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		private HashSet<string> _activeProfileIDs = null;
+		private List<string> _activeProfileIDs = null;
 
 		[JsonIgnore]
-		public HashSet<string> OpenPrinterIDs
+		public IEnumerable<string> OpenPrinterIDs
 		{
 			get
 			{
@@ -272,15 +271,44 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string profileIDs = UserSettings.Instance.get($"ActiveProfileIDs-{UserName}");
 					try
 					{
-						_activeProfileIDs = JsonConvert.DeserializeObject<HashSet<string>>(profileIDs);
+						_activeProfileIDs = JsonConvert.DeserializeObject<List<string>>(profileIDs);
 					}
 					catch
 					{
-						_activeProfileIDs = new HashSet<string>();
+						_activeProfileIDs = new List<string>();
 					}
 				}
 
 				return _activeProfileIDs;
+			}
+		}
+
+		public void AddOpenPrinter(string printerID)
+		{
+			try
+			{
+				if (!_activeProfileIDs.Contains(printerID))
+				{
+					_activeProfileIDs.Add(printerID);
+					UserSettings.Instance.set($"ActiveProfileIDs-{UserName}", JsonConvert.SerializeObject(_activeProfileIDs));
+				}
+			}
+			catch
+			{
+
+			}
+		}
+
+		public void RemoveOpenPrinter(string printerID)
+		{
+			try
+			{
+				_activeProfileIDs.Remove(printerID);
+				UserSettings.Instance.set($"ActiveProfileIDs-{UserName}", JsonConvert.SerializeObject(_activeProfileIDs));
+			}
+			catch
+			{
+
 			}
 		}
 

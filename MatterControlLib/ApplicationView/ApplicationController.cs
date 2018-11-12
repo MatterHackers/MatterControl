@@ -450,8 +450,7 @@ namespace MatterHackers.MatterControl
 		public void ClosePrinter(PrinterConfig printer, bool allowChangedEvent = true)
 		{
 			// Actually clear printer
-			ProfileManager.Instance.OpenPrinterIDs.Remove(printer.Settings.ID);
-			ProfileManager.Instance.Save();
+			ProfileManager.Instance.RemoveOpenPrinter(printer.Settings.ID);
 
 			_activePrinters.Remove(printer);
 
@@ -1838,8 +1837,7 @@ namespace MatterHackers.MatterControl
 
 		public async Task<PrinterConfig> OpenPrinter(string printerID, bool loadPlateFromHistory = true)
 		{
-			ProfileManager.Instance.OpenPrinterIDs.Add(printerID);
-			ProfileManager.Instance.Save();
+			ProfileManager.Instance.AddOpenPrinter(printerID);
 
 			var printer = new PrinterConfig(await ProfileManager.LoadProfileAsync(printerID));
 
@@ -1848,18 +1846,20 @@ namespace MatterHackers.MatterControl
 				await printer.Bed.LoadPlateFromHistory();
 			}
 
-			Debugger.Break();
-
 			this.OnOpenPrintersChanged(new OpenPrintersChangedEventArgs(printer, OpenPrintersChangedEventArgs.OperationType.Add));
 
 			// TODO: Need to notify that printer was opened so UI displays new tab
 			return printer;
 		}
 
-		public Task OpenAllPrinters()
+		public async Task OpenAllPrinters()
 		{
-			Debugger.Break();
-			return Task.CompletedTask;
+			// TODO: broadcast message to UI to close all printer tabs
+
+			foreach (var printerID in ProfileManager.Instance.OpenPrinterIDs)
+			{
+				await this.OpenPrinter(printerID);
+			}
 		}
 
 		/// <summary>
@@ -3169,9 +3169,6 @@ If you experience adhesion problems, please re-run leveling."
 
 			var printer = PrinterConfig.EmptyPrinter;
 
-			// Load needs to iterate open printers and restore them
-			//var printer = await ProfileManager.Instance.LoadPrinter();
-
 			// Restore bed
 			if (printer.Settings.PrinterSelected)
 			{
@@ -3229,6 +3226,13 @@ If you experience adhesion problems, please re-run leveling."
 							}
 
 							return Task.CompletedTask;
+						});
+
+					await applicationController.Tasks.Execute(
+						"Restoring Printers".Localize(),
+						async (progress, cancellationToken) =>
+						{
+							await applicationController.OpenAllPrinters();
 						});
 
 					// Batch startup tasks
