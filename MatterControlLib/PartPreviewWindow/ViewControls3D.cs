@@ -239,14 +239,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, menuTheme.InvertIcons),
 						Action = () =>
 						{
-							UiThread.RunOnIdle(async () =>
-							{
-								DialogWindow.Show(
-									new ExportPrintItemPage(new[]
-									{
-										new InMemoryLibraryItem(sceneContext.Scene)
-									}, false));
-							});
+							ApplicationController.Instance.ExportLibraryItems(
+								new[] { new InMemoryLibraryItem(sceneContext.Scene)},
+								centerOnBed: false,
+								printer: view3DWidget.Printer);
 						},
 						IsEnabled = () => sceneContext.EditableScene
 							|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset

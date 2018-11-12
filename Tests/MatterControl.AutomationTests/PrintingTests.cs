@@ -25,7 +25,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "One printer should be defined after add");
 
 					testRunner.SelectSliceSettingsField("Printer", "end_gcode");
 
@@ -35,16 +35,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.SelectSliceSettingsField("Printer", "start_gcode");
 
+					var printer = ApplicationController.Instance.ActivePrinters.First();
+
 					// Validate GCode fields persist values
 					Assert.AreEqual(
 						"G28",
-						ApplicationController.Instance.ActivePrinter.Settings.GetValue(SettingsKey.end_gcode),
+						printer.Settings.GetValue(SettingsKey.end_gcode),
 						"Failure persisting GCode/MultilineTextField value");
 
 					testRunner.AddItemToBedplate();
 
 					// Shorten the delay so the test runs in a reasonable time
-					ApplicationController.Instance.ActivePrinter.Connection.TimeToHoldTemperature = 5;
+					printer.Connection.TimeToHoldTemperature = 5;
 
 					testRunner.StartPrint();
 
@@ -52,12 +54,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForPrintFinished();
 
 					// Wait for expected temp
-					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.GetActualHotendTemperature(0) <= 0, 10);
-					Assert.Less(ApplicationController.Instance.ActivePrinter.Connection.GetActualHotendTemperature(0), 30);
+					testRunner.WaitFor(() => printer.Connection.GetActualHotendTemperature(0) <= 0, 10);
+					Assert.Less(printer.Connection.GetActualHotendTemperature(0), 30);
 
 					// Wait for expected temp
-					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature <= 10);
-					Assert.Less(ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature, 10);
+					testRunner.WaitFor(() => printer.Connection.ActualBedTemperature <= 10);
+					Assert.Less(printer.Connection.ActualBedTemperature, 10);
 
 					// Make sure we can run this whole thing again
 					testRunner.StartPrint();
@@ -66,12 +68,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForPrintFinished();
 
 					// Wait for expected temp
-					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.GetActualHotendTemperature(0) <= 0, 10);
-					Assert.Less(ApplicationController.Instance.ActivePrinter.Connection.GetActualHotendTemperature(0), 30);
+					testRunner.WaitFor(() => printer.Connection.GetActualHotendTemperature(0) <= 0, 10);
+					Assert.Less(printer.Connection.GetActualHotendTemperature(0), 30);
 
 					// Wait for expected temp
-					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature <= 10);
-					Assert.Less(ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature, 10);
+					testRunner.WaitFor(() => printer.Connection.ActualBedTemperature <= 10);
+					Assert.Less(printer.Connection.ActualBedTemperature, 10);
 				}
 
 				return Task.CompletedTask;
@@ -88,7 +90,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator("Pulse", "A-134"))
 				{
-					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "One printer should be defined after add");
 
 					testRunner.ClickByName("Finish Setup Button");
 
@@ -97,7 +99,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// print a part
 					testRunner.AddItemToBedplate();
 
-					var currentSettings = ApplicationController.Instance.ActivePrinter.Settings;
+					var printer = ApplicationController.Instance.ActivePrinters.FirstOrDefault();
+
+					var currentSettings = printer.Settings;
 					currentSettings.SetValue(SettingsKey.pause_gcode, "");
 					currentSettings.SetValue(SettingsKey.resume_gcode, "");
 
@@ -109,9 +113,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.WaitForName("Yes Button", 20);// the yes button is 'Resume'
 
-					var printer = ApplicationController.Instance.ActivePrinter;
-
-					// the usre types in the pause layer 1 based and we are 0 based, so we should be on: user 2, printer 1.
+					// the user types in the pause layer 1 based and we are 0 based, so we should be on: user 2, printer 1.
 					Assert.AreEqual(1, printer.Connection.CurrentlyPrintingLayer);
 
 					// assert the leveling is working
@@ -132,7 +134,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.WaitForName("Yes Button", 20);// the yes button is 'Resume'
 
-					// the usre types in the pause layer 1 based and we are 0 based, so we should be on: user 2, printer 1.
+					// the user types in the pause layer 1 based and we are 0 based, so we should be on: user 2, printer 1.
 					Assert.AreEqual(1, printer.Connection.CurrentlyPrintingLayer);
 					// assert the leveling is working
 					Assert.AreEqual(12.15, emulator.ZPosition);
@@ -160,11 +162,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.WaitForName("Yes Button", 20);// the yes button is 'Resume'
 
-					// the usre types in the pause layer 1 based and we are 0 based, so we should be on: user 2, printer 1.
+					// the user types in the pause layer 1 based and we are 0 based, so we should be on: user 2, printer 1.
 					Assert.AreEqual(1, printer.Connection.CurrentlyPrintingLayer);
+
 					// assert the leveling is working
 					Assert.AreEqual(5.15, emulator.ZPosition);
-
 				}
 
 				return Task.CompletedTask;
@@ -283,7 +285,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "One printer should be defined after add");
 
 					testRunner.OpenPrintPopupMenu();
 					testRunner.ClickByName("Layer(s) To Pause Field");
@@ -324,11 +326,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					var printer = ApplicationController.Instance.ActivePrinter;
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "One printer should exist after add");
+
+					var printer = ApplicationController.Instance.ActivePrinters.First();
 					printer.Settings.SetValue(SettingsKey.recover_is_enabled, "1");
 					printer.Settings.SetValue(SettingsKey.has_hardware_leveling, "0");
-
-					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
 					// TODO: Delay needed to work around timing issue in MatterHackers/MCCentral#2415
 					testRunner.Delay(1);
@@ -402,15 +404,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "One printer should be defined after add");
 
 					testRunner.AddItemToBedplate();
 
 					testRunner.SwitchToControlsTab();
 
+					var printer = ApplicationController.Instance.ActivePrinters.FirstOrDefault();
+
 					// Wait for printing to complete
 					var printFinishedResetEvent = new AutoResetEvent(false);
-					ApplicationController.Instance.ActivePrinter.Connection.PrintFinished += (s, e) =>
+					printer.Connection.PrintFinished += (s, e) =>
 					{
 						printFinishedResetEvent.Set();
 					};
@@ -447,7 +451,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "After setting TextEdit values");
 
 					// Wait for slicing to complete before setting target values
-					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.DetailedPrintingState == DetailedPrintingState.Printing, 8);
+					testRunner.WaitFor(() => printer.Connection.DetailedPrintingState == DetailedPrintingState.Printing, 8);
 					testRunner.Delay();
 
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "While printing");
@@ -498,7 +502,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Then validate that they are picked up
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "One printer should be defined after add");
 
 					testRunner.AddItemToBedplate();
 
@@ -579,8 +583,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator(runSlow: true))
 				{
-					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
-
 					testRunner.NavigateToFolder("SD Card Row Item Collection");
 
 					testRunner.ClickByName("Row Item Item 1.gcode");
@@ -625,7 +627,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					var resetEvent = new AutoResetEvent(false);
 
-					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "One printer should exist after add");
 
 					testRunner.AddItemToBedplate();
 
@@ -637,7 +639,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						fanChangedCount++;
 					};
 
-					var printer = ApplicationController.Instance.ActivePrinter;
+					var printer = ApplicationController.Instance.ActivePrinters.First();
 
 					emulator.WaitForLayer(printer.Settings, 2);
 					emulator.RunSlow = true;

@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 			};
 			openButton.Click += (s, e) =>
 			{
-				PrinterDetails.SwitchPrinters(printerInfo.ID);
+				ApplicationController.Instance.OpenPrinter(printerInfo.ID).ConfigureAwait(false);
 			};
 			headingRow.AddChild(openButton);
 
@@ -227,78 +227,6 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 			catch (Exception ex)
 			{
 				Trace.WriteLine("Error collecting or loading printer details: " + ex.Message);
-			}
-
-			return null;
-		}
-
-		/// <summary>
-		/// Opens the given printer and loads the most recent plate from history
-		/// </summary>
-		/// <param name="printerID">The printerID to load</param>
-		public static void SwitchPrinters(string printerID)
-		{
-			OpenPrinterAsync(printerID).ContinueWith(task =>
-			{
-				if (task.Result is PrinterConfig printer)
-				{
-					printer.Bed.LoadPlateFromHistory().ConfigureAwait(false);
-				}
-			});
-		}
-
-		public static async Task<PrinterConfig> OpenPrinterAsync(string printerID)
-		{
-			var activePrinter = ApplicationController.Instance.ActivePrinter;
-
-			if (printerID == "new"
-				|| string.IsNullOrEmpty(printerID)
-				|| printerID == activePrinter.Settings.ID)
-			{
-				// do nothing
-			}
-			else
-			{
-				// TODO: when this opens a new tab we will not need to check any printer
-				if (ApplicationController.Instance.AnyPrintTaskRunning)
-				{
-					// TODO: Rather than block here, the UI elements driving the change should be disabled while printing/paused
-					UiThread.RunOnIdle(() =>
-						StyledMessageBox.ShowMessageBox("Please wait until the print has finished and try again.".Localize(), "Can't switch printers while printing".Localize())
-					);
-				}
-				else
-				{
-					var theme = ApplicationController.Instance.Theme;
-					var reloadingOverlay = new GuiWidget
-					{
-						HAnchor = HAnchor.Stretch,
-						VAnchor = VAnchor.Stretch,
-						BackgroundColor = theme.DarkShade
-					};
-
-					reloadingOverlay.AddChild(new TextWidget("Reloading".Localize() + "...", textColor: Color.White, pointSize: theme.DefaultFontSize * 1.5)
-					{
-						HAnchor = HAnchor.Center,
-						VAnchor = VAnchor.Center
-					});
-
-					try
-					{
-						AppContext.RootSystemWindow.AddChild(reloadingOverlay);
-
-						ProfileManager.Instance.LastProfileID = printerID;
-
-						return await Task.Run(ProfileManager.Instance.LoadPrinter);
-					}
-					catch
-					{
-					}
-					finally
-					{
-						AppContext.RootSystemWindow.RemoveChild(reloadingOverlay);
-					}
-				}
 			}
 
 			return null;

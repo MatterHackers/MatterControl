@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -84,39 +85,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		public string ProfilesDocPath => GetProfilesDocPathForUser(this.UserName);
 
-		public async Task LoadPrinterOpenItem(ILibraryItem libraryItem)
-		{
-			var printer = await LoadPrinter();
-
-			await printer?.Bed?.LoadLibraryContent(libraryItem);
-		}
-
-		public Task<PrinterConfig> LoadPrinter()
-		{
-			return this.LoadPrinter(this.LastProfileID);
-		}
-
-		public async Task<PrinterConfig> LoadPrinter(string profileID, bool allowChangedEvent = true)
-		{
-			var activePrinter = ApplicationController.Instance.ActivePrinter;
-
-			// If a 'LastProfile' exists and it is missing from ActivePrinters, load it
-			var profile = this[profileID];
-			if (profile != null
-				&& !ApplicationController.Instance.ActivePrinters.Where(p => p.Settings.ID == profile.ID).Any())
-			{
-				if (activePrinter.Settings.ID != this.LastProfileID)
-				{
-					var printer = new PrinterConfig(await LoadProfileAsync(this.LastProfileID));
-					await ApplicationController.Instance.SetActivePrinter(printer, allowChangedEvent);
-
-					return ApplicationController.Instance.ActivePrinter;
-				}
-			}
-
-			return activePrinter;
-		}
-
 		private static string GetProfilesDocPathForUser(string userName)
 		{
 			return Path.Combine(GetProfilesDirectoryForUser(userName), $"{userName}{ProfileDocExtension}");
@@ -133,53 +101,28 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return userProfilesDirectory;
 		}
 
-		public void DeletePrinter(string printerID, bool markedForDelete)
+		public void DeletePrinter(string printerID)
 		{
-			bool isActivePrinter = printerID == this.ActiveProfile?.ID;
-
 			var printerInfo = ProfileManager.Instance[printerID];
 			if (printerInfo != null)
 			{
-				printerInfo.MarkedForDelete = markedForDelete;
+				printerInfo.MarkedForDelete = true;
 				ProfileManager.Instance.Save();
 			}
 
-			if (isActivePrinter)
+			var openedPrinter = ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == printerID);
+			if (openedPrinter != null)
 			{
 				// Clear selected printer state
-				ProfileManager.Instance.LastProfileID = "";
+				ProfileManager.Instance.RemoveOpenPrinter(printerID);
 			}
 
-			UiThread.RunOnIdle(async () =>
+			UiThread.RunOnIdle(() =>
 			{
-				if (isActivePrinter)
+				if (openedPrinter != null)
 				{
-					await ApplicationController.Instance.ClearActivePrinter();
+					ApplicationController.Instance.ClosePrinter(openedPrinter);
 				}
-
-				// Notify listeners of a ProfileListChange event due to this printers removal
-				ProfileManager.ProfilesListChanged.CallEvents(this, null);
-
-				// Force sync after marking for delete if assigned
-				ApplicationController.SyncPrinterProfiles?.Invoke("SettingsHelpers.SetMarkedForDelete()", null);
-			});
-		}
-
-		public void DeleteActivePrinter(bool markedForDelete)
-		{
-			var printerInfo = ProfileManager.Instance.ActiveProfile;
-			if (printerInfo != null)
-			{
-				printerInfo.MarkedForDelete = markedForDelete;
-				ProfileManager.Instance.Save();
-			}
-
-			// Clear selected printer state
-			ProfileManager.Instance.LastProfileID = "";
-
-			UiThread.RunOnIdle(async () =>
-			{
-				await ApplicationController.Instance.ClearActivePrinter();
 
 				// Notify listeners of a ProfileListChange event due to this printers removal
 				ProfileManager.ProfilesListChanged.CallEvents(this, null);
@@ -216,17 +159,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			Instance.Profiles.CollectionChanged += Profiles_CollectionChanged;
 		}
 
-		public static async Task SwitchToProfile(string printerID)
-		{
-			ProfileManager.Instance.LastProfileID = printerID;
-
-			var printer = new PrinterConfig(await ProfileManager.LoadProfileAsync(printerID));
-
-			await printer.Bed.LoadPlateFromHistory();
-
-			await ApplicationController.Instance.SetActivePrinter(printer);
-		}
-
 		/// <summary>
 		/// Loads a ProfileManager for the given user
 		/// </summary>
@@ -259,23 +191,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal static void SettingsChanged(object sender, EventArgs e)
 		{
-			if (Instance?.ActiveProfile == null)
+			var printer = (sender as PrinterSettings)?.printer;
+
+			if (Instance?.OpenPrinterIDs.Any() != true
+				|| printer == null)
 			{
 				return;
 			}
 
-			var printer = ApplicationController.Instance.ActivePrinter;
+			var profile = Instance[printer.Settings.ID];
+			if (profile == null)
+			{
+				return;
+			}
 
 			string settingsKey = ((StringEventArgs)e).Data;
 			switch (settingsKey)
 			{
 				case SettingsKey.printer_name:
-					Instance.ActiveProfile.Name = printer.Settings.GetValue(SettingsKey.printer_name);
+					profile.Name = printer.Settings.GetValue(SettingsKey.printer_name);
 					Instance.Save();
 					break;
 
 				case SettingsKey.com_port:
-					Instance.ActiveProfile.ComPort = printer.Settings.Helpers.ComPort();
+					profile.ComPort = printer.Settings.Helpers.ComPort();
 					Instance.Save();
 					break;
 			}
@@ -286,23 +225,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		public IEnumerable<PrinterInfo> ActiveProfiles => Profiles.Where(profile => !profile.MarkedForDelete).ToList();
 
-		[JsonIgnore]
-		public PrinterInfo ActiveProfile
-		{
-			get
-			{
-				var printer = ApplicationController.Instance.ActivePrinter;
-
-				var activeID = printer.Settings?.ID;
-				if (activeID == null)
-				{
-					return null;
-				}
-
-				return this[activeID];
-			}
-		}
-
 		public PrinterInfo this[string profileID]
 		{
 			get
@@ -311,16 +233,57 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		private List<string> _activeProfileIDs = null;
+
 		[JsonIgnore]
-		public string LastProfileID
+		public IEnumerable<string> OpenPrinterIDs
 		{
 			get
 			{
-				return UserSettings.Instance.get($"ActiveProfileID-{UserName}");
+				// Lazy load from db if null
+				if (_activeProfileIDs == null)
+				{
+					string profileIDs = UserSettings.Instance.get($"ActiveProfileIDs-{UserName}");
+					try
+					{
+						_activeProfileIDs = JsonConvert.DeserializeObject<List<string>>(profileIDs);
+					}
+					catch
+					{
+						_activeProfileIDs = new List<string>();
+					}
+				}
+
+				return _activeProfileIDs;
 			}
-			set
+		}
+
+		public void AddOpenPrinter(string printerID)
+		{
+			try
 			{
-				UserSettings.Instance.set($"ActiveProfileID-{UserName}", value);
+				if (!_activeProfileIDs.Contains(printerID))
+				{
+					_activeProfileIDs.Add(printerID);
+					UserSettings.Instance.set($"ActiveProfileIDs-{UserName}", JsonConvert.SerializeObject(_activeProfileIDs));
+				}
+			}
+			catch
+			{
+
+			}
+		}
+
+		public void RemoveOpenPrinter(string printerID)
+		{
+			try
+			{
+				_activeProfileIDs.Remove(printerID);
+				UserSettings.Instance.set($"ActiveProfileIDs-{UserName}", JsonConvert.SerializeObject(_activeProfileIDs));
+			}
+			catch
+			{
+
 			}
 		}
 
@@ -372,9 +335,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// <returns></returns>
 		public static async Task<PrinterSettings> LoadProfileAsync(string profileID, bool useActiveInstance = true)
 		{
-			var activePrinter = ApplicationController.Instance.ActivePrinter;
-
-			if (useActiveInstance && activePrinter.Settings.ID == profileID)
+			// Check loaded printers for printerID and return if found
+			if (ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == profileID) is PrinterConfig activePrinter)
 			{
 				return activePrinter.Settings;
 			}
@@ -553,14 +515,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			printerSettings.Save(clearBlackListSettings: true);
 
 			// Set as active profile
-			ProfileManager.Instance.LastProfileID = guid;
-
-			var printer = new PrinterConfig(printerSettings);
-			await printer.Bed.LoadPlateFromHistory();
-
-			await ApplicationController.Instance.SetActivePrinter(printer);
-
-			return printer;
+			return await ApplicationController.Instance.OpenPrinter(guid);
 		}
 
 		public static List<string> ThemeIndexNameMapping = new List<string>()

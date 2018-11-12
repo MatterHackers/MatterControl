@@ -404,28 +404,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}, ref unregisterEvents);
 
-			ApplicationController.Instance.ActivePrinterChanged.RegisterEvent((s, e) =>
+			ApplicationController.Instance.OpenPrintersChanged += OpenPrinters_Changed;
+
+			ApplicationController.Instance.MainView = this;
+		}
+
+		private void OpenPrinters_Changed(object sender, OpenPrintersChangedEventArgs e)
+		{
+			var activePrinter = e.Printer;
+
+			if (e.Operation == OpenPrintersChangedEventArgs.OperationType.Add)
 			{
-				var activePrinter = ApplicationController.Instance.ActivePrinter;
-
-				// Close existing printer tabs
-				if (tabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage) is ITab tab
-					&& tab.TabContent is PrinterTabPage printerPage
-					&& (activePrinter == null || printerPage.printer != activePrinter))
-				{
-					tabControl.RemoveTab(tab);
-				}
-
 				if (activePrinter.Settings.PrinterSelected)
 				{
 					// Create and switch to new printer tab
 					tabControl.ActiveTab = this.CreatePrinterTab(activePrinter, theme);
+					tabControl.RefreshTabPointers();
 				}
-
-				tabControl.RefreshTabPointers();
-			}, ref unregisterEvents);
-
-			ApplicationController.Instance.MainView = this;
+			}
+			else
+			{
+				// Close existing printer tabs
+				if (tabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage printerTab
+						&& printerTab.printer.Settings.ID == activePrinter.Settings.ID) is ITab tab
+					&& tab.TabContent is PrinterTabPage printerPage)
+				{
+					tabControl.RemoveTab(tab);
+					tabControl.RefreshTabPointers();
+				}
+			}
 		}
 
 		private GuiWidget CreateNetworkStatusPanel(ThemeConfig theme)
@@ -562,7 +569,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				printerTab.CloseClicked += (s, e) =>
 				{
-					ApplicationController.Instance.ClearActivePrinter().ConfigureAwait(false);
+					ApplicationController.Instance.ClosePrinter(printer);
 				};
 
 				PrinterSettings.SettingChanged.RegisterEvent((s, e) =>

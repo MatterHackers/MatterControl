@@ -41,6 +41,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.PrintQueue;
 using static MatterHackers.MatterControl.PrintLibrary.PrintLibraryWidget;
 
@@ -336,7 +337,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Margin = new BorderDouble(left: 10)
 			};
 			treeView.AddChild(rootColumn);
-
 
 			if (AppContext.IsLoading)
 			{
@@ -649,7 +649,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					{
 						// TODO: Sort out the right way to have an ActivePrinter context that looks and behaves correctly
 						var activeContext = ApplicationController.Instance.DragDropData;
-						var printer = activeContext.Printer;
+						var printer = activeContext.View3DWidget.Printer;
 
 						switch (selectedLibraryItems.FirstOrDefault())
 						{
@@ -683,7 +683,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					},
 					IsEnabled = (selectedListItems, listView) =>
 					{
-						var communicationState = ApplicationController.Instance.DragDropData?.Printer?.Connection.CommunicationState;
+						var communicationState = ApplicationController.Instance.DragDropData?.View3DWidget?.Printer?.Connection.CommunicationState;
 
 						// Singleselect - disallow containers
 						return listView.SelectedItems.Count == 1
@@ -720,7 +720,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Action = (selectedLibraryItems, listView) =>
 				{
 					var activeContext = ApplicationController.Instance.DragDropData;
-					var printer = activeContext.Printer;
+					var printer = activeContext.View3DWidget.Printer;
 
 					if (listView.SelectedItems.Count == 1 &&
 						selectedLibraryItems.FirstOrDefault() is ILibraryAssetStream assetStream
@@ -930,11 +930,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
-					// Previously - exportButton_Click(object sender, EventArgs e)
-					// Open export options
-					var exportPage = new ExportPrintItemPage(libraryView.SelectedItems.Select(item => item.Model), true);
-
-					DialogWindow.Show(exportPage);
+					ApplicationController.Instance.ExportLibraryItems(libraryView.SelectedItems.Select(item => item.Model));
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{

@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			rootColumn.AddChild(printersNode);
 
-			InventoryTreeView.RebuildPrintersList(printersNode, theme);
+			InventoryTreeView.CreatePrinterProfilesTree(printersNode, theme);
 			this.Invalidate();
 
 			// Filament
@@ -151,17 +151,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
-				var activePrinter = ApplicationController.Instance.ActivePrinter;
-
 				string settingsName = (e as StringEventArgs)?.Data;
 				if (settingsName != null && settingsName == SettingsKey.printer_name)
 				{
-					if (ProfileManager.Instance.ActiveProfile != null)
-					{
-						ProfileManager.Instance.ActiveProfile.Name = activePrinter.Settings.GetValue(SettingsKey.printer_name);
-						InventoryTreeView.RebuildPrintersList(printersNode, theme);
-						this.Invalidate();
-					}
+					InventoryTreeView.CreatePrinterProfilesTree(printersNode, theme);
+					this.Invalidate();
 				}
 			}, ref unregisterEvents);
 
@@ -170,7 +164,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				string settingsName = (e as StringEventArgs)?.Data;
 				if (settingsName == SettingsKey.printer_name)
 				{
-					InventoryTreeView.RebuildPrintersList(printersNode, theme);
+					InventoryTreeView.CreatePrinterProfilesTree(printersNode, theme);
 					this.Invalidate();
 				}
 			}, ref unregisterEvents);
@@ -184,12 +178,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// Rebuild the droplist any time the Profiles list changes
 			ProfileManager.ProfilesListChanged.RegisterEvent((s, e) =>
 			{
-				InventoryTreeView.RebuildPrintersList(printersNode, theme);
+				InventoryTreeView.CreatePrinterProfilesTree(printersNode, theme);
 				this.Invalidate();
 			}, ref unregisterEvents);
 		}
 
-		public static void RebuildPrintersList(TreeNode printersNode, ThemeConfig theme)
+		public static void CreatePrinterProfilesTree(TreeNode printersNode, ThemeConfig theme)
 		{
 			if (printersNode == null)
 			{
@@ -211,6 +205,38 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				printerNode.Load += (s, e) =>
 				{
 					printerNode.Image = OemSettings.Instance.GetIcon(printer.Make);
+				};
+
+				printersNode.Nodes.Add(printerNode);
+			}
+
+			printersNode.Expanded = true;
+		}
+
+		public static void CreateOpenPrintersTree(TreeNode printersNode, ThemeConfig theme)
+		{
+			if (printersNode == null)
+			{
+				return;
+			}
+
+			printersNode.Nodes.Clear();
+
+			//Add the menu items to the menu itself
+			foreach (var printer in ApplicationController.Instance.ActivePrinters)
+			{
+				string printerName = printer.Settings.GetValue(SettingsKey.printer_name);
+
+				var printerNode = new TreeNode(theme)
+				{
+					Text = printerName,
+					Name = $"{printerName} Node",
+					Tag = printer
+				};
+
+				printerNode.Load += (s, e) =>
+				{
+					printerNode.Image = OemSettings.Instance.GetIcon(printer.Settings.GetValue(SettingsKey.make));
 				};
 
 				printersNode.Nodes.Add(printerNode);

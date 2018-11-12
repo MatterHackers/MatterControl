@@ -1135,9 +1135,11 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		internal void SwapToSettings(PrinterSettings printerSettings)
+		public void SwapToSettings(PrinterSettings printerSettings)
 		{
 			_settings = printerSettings;
+
+			// TODO: Why reload all after swap? We need to rebuild the printer tab only and should have messaging to do so...
 			ApplicationController.Instance.ReloadAll();
 		}
 

@@ -103,9 +103,10 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			printerSettings.UserLayer[SettingsKey.device_token] = printer.DeviceToken ?? "";
 			printerSettings.UserLayer[SettingsKey.device_type] = printer.DeviceType ?? "";
 
-			if (string.IsNullOrEmpty(ProfileManager.Instance.LastProfileID))
+			// Open the first imported printer if undefined
+			if (!ProfileManager.Instance.OpenPrinterIDs.Any())
 			{
-				ProfileManager.Instance.LastProfileID = printer.Id.ToString();
+				ApplicationController.Instance.OpenPrinter(printer.Id.ToString()).ConfigureAwait(false);
 			}
 
 			// Import macros from the database

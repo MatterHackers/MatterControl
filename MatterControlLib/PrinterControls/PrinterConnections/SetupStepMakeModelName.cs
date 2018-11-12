@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					var authContext = new AuthenticationContext();
 					authContext.SignInComplete += (s2, e2) =>
 					{
-						this.DialogWindow.ChangeToPage(new SelectPrinterPage("Finish".Localize()));
+						this.DialogWindow.ChangeToPage(new OpenPrinterPage("Finish".Localize()));
 					};
 
 					this.DialogWindow.ChangeToPage(ApplicationController.GetAuthPage(authContext));

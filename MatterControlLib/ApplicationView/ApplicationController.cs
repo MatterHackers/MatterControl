@@ -107,6 +107,20 @@ namespace MatterHackers.MatterControl
 		Titillium,
 	};
 
+	public class OpenPrintersChangedEventArgs : EventArgs
+	{
+		public OpenPrintersChangedEventArgs(PrinterConfig printer, OperationType operation)
+		{
+			this.Printer = printer;
+			this.Operation = operation;
+		}
+
+		public PrinterConfig Printer { get; }
+		public OperationType Operation { get; }
+
+		public enum OperationType { Add, Remove }
+	}
+
 	public static class AppContext
 	{
 		/// <summary>
@@ -250,7 +264,9 @@ namespace MatterHackers.MatterControl
 		public RunningTasksConfig Tasks { get; set; } = new RunningTasksConfig();
 
 		// A list of printers which are open (i.e. displaying a tab) on this instance of MatterControl
-		public IEnumerable<PrinterConfig> ActivePrinters { get; } = new List<PrinterConfig>();
+		private List<PrinterConfig> _activePrinters = new List<PrinterConfig>();
+
+		public IReadOnlyList<PrinterConfig> ActivePrinters => _activePrinters;
 
 		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu)
 		{
@@ -342,7 +358,8 @@ namespace MatterHackers.MatterControl
 		public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
 		public RootedObjectEventHandler ActiveProfileModified = new RootedObjectEventHandler();
-		public RootedObjectEventHandler ActivePrinterChanged = new RootedObjectEventHandler();
+
+		public event EventHandler<OpenPrintersChangedEventArgs> OpenPrintersChanged;
 
 		public static Action SignInAction;
 		public static Action SignOutAction;
@@ -362,66 +379,9 @@ namespace MatterHackers.MatterControl
 
 		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
 
-		public async Task SetActivePrinter(PrinterConfig printer, bool allowChangedEvent = true)
+		public void OnOpenPrintersChanged(OpenPrintersChangedEventArgs e)
 		{
-			var initialPrinter = this.ActivePrinter;
-			if (initialPrinter?.Settings.ID != printer.Settings.ID)
-			{
-				// TODO: Consider if autosave is appropriate
-				if (initialPrinter != PrinterConfig.EmptyPrinter)
-				{
-					await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), initialPrinter.Bed.SaveChanges);
-				}
-
-				// If we have an active printer, run Disable
-				if (initialPrinter.Settings != PrinterSettings.Empty)
-				{
-					initialPrinter?.Connection?.Disable();
-				}
-
-				// ActivePrinters is IEnumerable to force us to use SetActivePrinter until it's ingrained in our pattern
-				// Cast to list since it is one and we need to clear and add
-				if (this.ActivePrinters is List<PrinterConfig> activePrinterList)
-				{
-					activePrinterList.Clear();
-					activePrinterList.Add(printer);
-
-					this.ActivePrinter = printer;
-				}
-
-				// TODO: Decide if non-printer contexts should prompt for a printer, if we should have a default printer, or get "ActiveTab printer" working
-				// HACK: short term solution to resolve printer reference for non-printer related contexts
-				DragDropData.Printer = printer;
-
-				BedSettings.SetMakeAndModel(
-					printer.Settings.GetValue(SettingsKey.make),
-					printer.Settings.GetValue(SettingsKey.model));
-
-				if (allowChangedEvent)
-				{
-					this.OnActivePrinterChanged(null);
-				}
-
-				if (!AppContext.IsLoading
-					&& printer.Settings.PrinterSelected
-					&& printer.Settings.GetValue<bool>(SettingsKey.auto_connect))
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						printer.Settings.printer.Connection.Connect();
-					}, 2);
-				}
-
-				if (this.Library != null)
-				{
-					this.Library.NotifyContainerChanged();
-				}
-			}
-		}
-
-		public void OnActivePrinterChanged(EventArgs e)
-		{
-			this.ActivePrinterChanged.CallEvents(null, e);
+			this.OpenPrintersChanged?.Invoke(this, e);
 		}
 
 		public string GetFavIconUrl(string oemName)
@@ -430,13 +390,20 @@ namespace MatterHackers.MatterControl
 			return "https://www.google.com/s2/favicons?domain=" + (string.IsNullOrWhiteSpace(oemUrl) ? "www.matterhackers.com" : oemUrl);
 		}
 
-		public async Task ClearActivePrinter(bool allowChangedEvent = true)
+		public void ClosePrinter(PrinterConfig printer, bool allowChangedEvent = true)
 		{
 			// Actually clear printer
-			ProfileManager.Instance.LastProfileID = "";
+			ProfileManager.Instance.RemoveOpenPrinter(printer.Settings.ID);
 
-			await this.SetActivePrinter(PrinterConfig.EmptyPrinter, allowChangedEvent);
+			_activePrinters.Remove(printer);
+
+			// TODO: Need to revised listeners to be multi-printer aware and process change rather than simply remove and add new printer tab
+			if (allowChangedEvent)
+			{
+				this.OnOpenPrintersChanged(new OpenPrintersChangedEventArgs(printer, OpenPrintersChangedEventArgs.OperationType.Remove));
+			}
 		}
+
 
 		public void LaunchBrowser(string targetUri)
 		{
@@ -457,28 +424,6 @@ namespace MatterHackers.MatterControl
 				}
 				Process.Start(targetUri);
 			});
-		}
-
-		public void RefreshActiveInstance(PrinterSettings updatedPrinterSettings)
-		{
-			ActivePrinter.SwapToSettings(updatedPrinterSettings);
-
-			/*
-			// TODO: Should we rebroadcast settings changed events for each settings?
-			bool themeChanged = ActivePrinter.Settings.GetValue(SettingsKey.active_theme_name) != updatedProfile.GetValue(SettingsKey.active_theme_name);
-			PrinterSettings.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.printer_name));
-
-			// TODO: Decide if non-printer contexts should prompt for a printer, if we should have a default printer, or get "ActiveTab printer" working
-			// HACK: short term solution to resolve printer reference for non-printer related contexts
-			DragDropData.Printer = printer;
-			if (themeChanged)
-			{
-				UiThread.RunOnIdle(ActiveSliceSettings.SwitchToPrinterTheme);
-			}
-			else
-			{
-				UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
-			}*/
 		}
 
 		internal void MakeGrayscale(ImageBuffer sourceImage)
@@ -958,6 +903,38 @@ namespace MatterHackers.MatterControl
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_folder.png")),
 					() => new RootHistoryContainer()));
+		}
+
+		public void ExportLibraryItems(IEnumerable<ILibraryItem> libraryItems, bool centerOnBed = true, PrinterConfig printer = null)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				if (printer != null || this.ActivePrinters.Count == 1)
+				{
+					// If unspecified but count is one, select the one active printer
+					if (printer == null)
+					{
+						printer = this.ActivePrinters.First();
+					}
+
+					DialogWindow.Show(
+						new ExportPrintItemPage(libraryItems, centerOnBed, printer));
+				}
+				else
+				{
+					// Resolve printer context before showing export page
+					DialogWindow dialogWindow = null;
+
+					dialogWindow = DialogWindow.Show(
+						new SelectActivePrinterPage(
+							"Next".Localize(),
+							(selectedPrinter) =>
+							{
+								dialogWindow.ChangeToPage(
+									new ExportPrintItemPage(libraryItems, centerOnBed, selectedPrinter));
+							}));
+				}
+			});
 		}
 
 		public static IObject3D SelectionAsSingleClone(IObject3D selection)
@@ -1810,6 +1787,39 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public async Task<PrinterConfig> OpenPrinter(string printerID, bool loadPlateFromHistory = true)
+		{
+			if (!_activePrinters.Any(p => p.Settings.ID == printerID))
+			{
+				ProfileManager.Instance.AddOpenPrinter(printerID);
+
+				var printer = new PrinterConfig(await ProfileManager.LoadProfileAsync(printerID));
+
+				_activePrinters.Add(printer);
+
+				if (loadPlateFromHistory)
+				{
+					await printer.Bed.LoadPlateFromHistory();
+				}
+
+				this.OnOpenPrintersChanged(new OpenPrintersChangedEventArgs(printer, OpenPrintersChangedEventArgs.OperationType.Add));
+
+				return printer;
+			}
+
+			return PrinterConfig.EmptyPrinter;
+		}
+
+		public async Task OpenAllPrinters()
+		{
+			// TODO: broadcast message to UI to close all printer tabs
+
+			foreach (var printerID in ProfileManager.Instance.OpenPrinterIDs)
+			{
+				await this.OpenPrinter(printerID);
+			}
+		}
+
 		/// <summary>
 		/// Compute hash for string encoded as UTF8
 		/// </summary>
@@ -1952,34 +1962,6 @@ namespace MatterHackers.MatterControl
 			}
 			catch
 			{
-			}
-		}
-
-		/// <summary>
-		/// Cancels prints within the first two minutes or interactively prompts the user to confirm cancellation
-		/// </summary>
-		/// <returns>A boolean value indicating if the print was canceled</returns>
-		public void ConditionallyCancelPrint()
-		{
-			if (this.ActivePrinter.Connection.SecondsPrinted > 120)
-			{
-				StyledMessageBox.ShowMessageBox(
-					(bool response) =>
-					{
-						if (response)
-						{
-							UiThread.RunOnIdle(() => this.ActivePrinter.Connection.Stop());
-						}
-					},
-					"Cancel the current print?".Localize(),
-					"Cancel Print?".Localize(),
-					StyledMessageBox.MessageType.YES_NO,
-					"Cancel Print".Localize(),
-					"Continue Printing".Localize());
-			}
-			else
-			{
-				this.ActivePrinter.Connection.Stop();
 			}
 		}
 
@@ -2262,7 +2244,7 @@ If you experience adhesion problems, please re-run leveling."
 					ResumeToolTip = "Resume Print".Localize(),
 					StopAction = () => UiThread.RunOnIdle(() =>
 					{
-						this.ConditionallyCancelPrint();
+						printer.CancelPrint();
 					}),
 					StopToolTip = "Cancel Print".Localize(),
 				});
@@ -2554,7 +2536,6 @@ If you experience adhesion problems, please re-run leveling."
 	public class DragDropData
 	{
 		public View3DWidget View3DWidget { get; set; }
-		public PrinterConfig Printer { get; internal set; }
 		public BedConfig SceneContext { get; set; }
 	}
 
@@ -3114,7 +3095,8 @@ If you experience adhesion problems, please re-run leveling."
 			await ProfileManager.Instance.Initialize();
 
 			reporter?.Invoke(0.25, (loading != null) ? loading : "Initialize printer");
-			var printer = await ProfileManager.Instance.LoadPrinter();
+
+			var printer = PrinterConfig.EmptyPrinter;
 
 			// Restore bed
 			if (printer.Settings.PrinterSelected)
@@ -3173,6 +3155,13 @@ If you experience adhesion problems, please re-run leveling."
 							}
 
 							return Task.CompletedTask;
+						});
+
+					await applicationController.Tasks.Execute(
+						"Restoring Printers".Localize(),
+						async (progress, cancellationToken) =>
+						{
+							await applicationController.OpenAllPrinters();
 						});
 
 					// Batch startup tasks

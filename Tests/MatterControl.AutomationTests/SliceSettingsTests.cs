@@ -51,8 +51,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
-
 					testRunner.OpenPrintPopupMenu();
 					testRunner.ClickByName("Layer(s) To Pause Field");
 					testRunner.Type("4;2;a;not;6");
@@ -83,11 +81,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					var printer = ApplicationController.Instance.ActivePrinter;
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "One printer should exist after add");
 
+					var printer = ApplicationController.Instance.ActivePrinters.First();
 					printer.Settings.SetValue(SettingsKey.cancel_gcode, "G28 ; Cancel GCode");
-
-					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
 					testRunner.AddItemToBedplate();
 
