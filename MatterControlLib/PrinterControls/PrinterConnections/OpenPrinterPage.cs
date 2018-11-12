@@ -32,17 +32,16 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.Library.Widgets.HardwarePage;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SelectPrinterPage : DialogPage
+	public class OpenPrinterPage : DialogPage
 	{
 		private Action<PrinterConfig> printerLoaded;
 
-		public SelectPrinterPage(string continueButtonText, Action<PrinterConfig> printerLoaded = null)
+		public OpenPrinterPage(string continueButtonText, Action<PrinterConfig> printerLoaded = null)
 		{
 			this.printerLoaded = printerLoaded;
 

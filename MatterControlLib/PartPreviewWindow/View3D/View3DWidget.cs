@@ -704,7 +704,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					UiThread.RunOnIdle(() =>
 					{
 						DialogWindow.Show(
-							new SelectPrinterPage(
+							new OpenPrinterPage(
 								"Next".Localize(),
 								(selectedPrinter) =>
 								{
@@ -722,7 +722,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UiThread.RunOnIdle(() =>
 				{
 					DialogWindow.Show(
-						new SelectPrinterPage(
+						new OpenPrinterPage(
 							"Next".Localize(),
 							(loadedPrinter) =>
 							{
