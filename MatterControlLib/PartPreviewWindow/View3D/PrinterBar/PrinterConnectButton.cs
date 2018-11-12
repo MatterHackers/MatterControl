@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			cancelConnectButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				listenForConnectFailed = false;
-				ApplicationController.Instance.ConditionallyCancelPrint();
+				ApplicationController.Instance.ConditionallyCancelPrint(printer);
 				cancelConnectButton.Enabled = false;
 			});
 			this.AddChild(cancelConnectButton);
