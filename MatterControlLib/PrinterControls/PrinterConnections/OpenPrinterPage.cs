@@ -37,76 +37,40 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class OpenPrinterPage : DialogPage
+
+	public class OpenPrinterPage : SelectablePrinterPage
 	{
 		private Action<PrinterConfig> printerLoaded;
 
 		public OpenPrinterPage(string continueButtonText, Action<PrinterConfig> printerLoaded = null)
+			: base(continueButtonText)
 		{
 			this.printerLoaded = printerLoaded;
 
-			this.WindowTitle = "Select Printer".Localize();
-			this.HeaderText = "Select a printer to continue".Localize();
-
-			var treeView = new TreeView(theme)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch,
-				Margin = theme.DefaultContainerPadding
-			};
-			treeView.ScrollArea.HAnchor = HAnchor.Stretch;
-			contentRow.AddChild(treeView);
-
-			var nextButton = new TextButton(continueButtonText, theme)
-			{
-				Enabled = false
-			};
-			nextButton.Click += (s, e) =>
-			{
-				if (treeView?.SelectedNode.Tag is PrinterInfo printerInfo)
-				{
-					this.SwitchToPrinter(printerInfo);
-				}
-			};
-			this.AddPageAction(nextButton);
-
-			treeView.NodeMouseDoubleClick += (s, e) =>
-			{
-				if (e is MouseEventArgs mouseEvent
-					&& mouseEvent.Button == MouseButtons.Left
-						&& mouseEvent.Clicks == 2)
-				{
-					if (treeView?.SelectedNode.Tag is PrinterInfo printerInfo)
-					{
-						this.SwitchToPrinter(printerInfo);
-					}
-				}
-			};
-
-			treeView.AfterSelect += async (s, e) =>
-			{
-				if (treeView.SelectedNode.Tag is PrinterInfo printerInfo)
-				{
-					nextButton.Enabled = true;
-				}
-			};
-
-			// Printers
-			var printersNode = new TreeNode(theme)
-			{
-				Text = "Printers".Localize(),
-				HAnchor = HAnchor.Stretch,
-				AlwaysExpandable = true,
-				Image = AggContext.StaticData.LoadIcon("printer.png", 16, 16, theme.InvertIcons)
-			};
-			printersNode.TreeView = treeView;
-			treeView.AddChild(printersNode);
-
-			InventoryTreeView.RebuildPrintersList(printersNode, theme);
-			this.Invalidate();
+			InventoryTreeView.RebuildPrintersList(rootPrintersNode, theme);
 		}
 
-		private void SwitchToPrinter(PrinterInfo printerInfo)
+		protected override void OnTreeNodeDoubleClicked(TreeNode treeNode)
+		{
+			if (treeNode.Tag is PrinterInfo printerInfo)
+			{
+				this.OnContinue(printerInfo);
+			}
+
+			base.OnTreeNodeDoubleClicked(treeNode);
+		}
+
+		protected override void OnTreeNodeSelected(TreeNode selectedNode)
+		{
+			if (selectedNode.Tag is PrinterInfo printerInfo)
+			{
+				nextButton.Enabled = true;
+			}
+
+			base.OnTreeNodeSelected(selectedNode);
+		}
+
+		protected override void OnContinue(PrinterInfo printerInfo)
 		{
 			if (printerLoaded == null)
 			{
@@ -121,6 +85,82 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				});
 			}
 
+			base.OnContinue(printerInfo);
+		}
+	}
+
+	public abstract class SelectablePrinterPage : DialogPage
+	{
+		protected TextButton nextButton;
+		protected TreeNode rootPrintersNode;
+
+		public SelectablePrinterPage(string continueButtonText)
+		{
+			this.WindowTitle = "Select Printer".Localize();
+			this.HeaderText = "Select a printer to continue".Localize();
+
+			var treeView = new TreeView(theme)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+				Margin = theme.DefaultContainerPadding
+			};
+			treeView.ScrollArea.HAnchor = HAnchor.Stretch;
+			contentRow.AddChild(treeView);
+
+			nextButton = new TextButton(continueButtonText, theme)
+			{
+				Enabled = false
+			};
+			nextButton.Click += (s, e) =>
+			{
+				if (treeView?.SelectedNode.Tag is PrinterInfo printerInfo)
+				{
+					this.OnContinue(printerInfo);
+				}
+			};
+			this.AddPageAction(nextButton);
+
+			treeView.NodeMouseDoubleClick += (s, e) =>
+			{
+				if (e is MouseEventArgs mouseEvent
+					&& mouseEvent.Button == MouseButtons.Left
+						&& mouseEvent.Clicks == 2
+						&& treeView?.SelectedNode is TreeNode treeNode)
+				{
+					this.OnTreeNodeDoubleClicked(treeNode);
+				}
+			};
+
+			treeView.AfterSelect += (s, e) =>
+			{
+				this.OnTreeNodeSelected(treeView.SelectedNode);
+			};
+
+			// Printers
+			rootPrintersNode = new TreeNode(theme)
+			{
+				Text = "Printers".Localize(),
+				HAnchor = HAnchor.Stretch,
+				AlwaysExpandable = true,
+				Image = AggContext.StaticData.LoadIcon("printer.png", 16, 16, theme.InvertIcons)
+			};
+			rootPrintersNode.TreeView = treeView;
+			treeView.AddChild(rootPrintersNode);
+
+			this.Invalidate();
+		}
+
+		protected virtual void OnTreeNodeSelected(TreeNode selectedNode)
+		{
+		}
+
+		protected virtual void OnTreeNodeDoubleClicked(TreeNode treeNode)
+		{
+		}
+
+		protected virtual void OnContinue(PrinterInfo printerInfo)
+		{
 			this.DialogWindow.CloseOnIdle();
 		}
 	}
