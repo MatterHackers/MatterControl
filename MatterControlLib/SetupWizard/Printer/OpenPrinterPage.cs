@@ -35,7 +35,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
-namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
+namespace MatterHackers.MatterControl
 {
 	public class OpenPrinterPage : SelectablePrinterPage
 	{

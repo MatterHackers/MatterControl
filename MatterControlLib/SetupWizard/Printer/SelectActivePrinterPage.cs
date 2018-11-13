@@ -31,7 +31,7 @@ using System;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrintLibrary;
 
-namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
+namespace MatterHackers.MatterControl
 {
 	public class SelectActivePrinterPage : SelectablePrinterPage
 	{
