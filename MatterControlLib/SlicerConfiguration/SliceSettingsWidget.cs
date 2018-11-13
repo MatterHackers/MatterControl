@@ -319,7 +319,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				};
 
-				PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
+				void Printer_SettingChanged(object s, EventArgs e)
 				{
 					if (e is StringEventArgs stringEvent)
 					{
@@ -336,8 +336,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							}
 						}
 					}
-				},
-				ref unregisterEvents);
+				}
+				printer.Settings.SettingChanged += Printer_SettingChanged;
+				this.Closed -= Printer_SettingChanged;
 			}
 
 			this.PerformLayout();

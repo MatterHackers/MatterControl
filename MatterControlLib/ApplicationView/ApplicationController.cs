@@ -1244,17 +1244,6 @@ namespace MatterHackers.MatterControl
 				isVisible: (sceneItem) => sceneItem.Children.Any((i) => i is IPathObject),
 				iconCollector: (theme) => AggContext.StaticData.LoadIcon("noun_55060.png", theme.InvertIcons));
 
-
-			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
-			{
-				if (e is StringEventArgs stringArg
-					&& SettingsOrganizer.SettingsData.TryGetValue(stringArg.Data, out SliceSettingData settingsData)
-					&& settingsData.ReloadUiWhenChanged)
-				{
-					UiThread.RunOnIdle(ReloadAll);
-				}
-			}, ref unregisterEvents);
-
 			this.InitializeLibrary();
 
 			HashSet<IObject3DEditor> mappedEditors;

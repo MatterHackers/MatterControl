@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
 			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
 
-			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
+			void Printer_SettingChanged(object s, EventArgs e)
 			{
 				if (e is StringEventArgs stringEvent
 					&& (stringEvent.Data == SettingsKey.z_probe_z_offset
@@ -99,7 +99,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					SetButtonStates();
 				}
-			}, ref unregisterEvents);
+			}
+			printer.Settings.SettingChanged += Printer_SettingChanged;
+			this.Closed -= Printer_SettingChanged;
 
 			SetButtonStates();
 		}

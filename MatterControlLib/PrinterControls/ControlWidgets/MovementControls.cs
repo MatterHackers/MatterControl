@@ -263,13 +263,16 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 
-			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
+			void Printer_SettingChanged(object s, EventArgs e)
 			{
 				if ((e as StringEventArgs)?.Data == SettingsKey.baby_step_z_offset)
 				{
 					OffsetStreamChanged(null, null);
 				}
-			}, ref unregisterEvents);
+			}
+			printerSettings.SettingChanged += Printer_SettingChanged;
+			this.Closed -= Printer_SettingChanged;
+
 
 			zOffsetStreamContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{

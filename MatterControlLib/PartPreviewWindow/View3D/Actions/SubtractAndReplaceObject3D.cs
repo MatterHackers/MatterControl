@@ -93,69 +93,67 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					.SelectMany((h) => h.DescendantsAndSelf())
 					.Where((c) => c.OwnerID == this.ID).ToList();
 
-				if (paintObjects.Any()
-					&& keepObjects.Any())
+				try
 				{
-					var totalOperations = paintObjects.Count * keepObjects.Count;
-					double amountPerOperation = 1.0 / totalOperations;
-					double percentCompleted = 0;
-
-					foreach (var paint in paintObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
+					if (paintObjects.Any()
+						&& keepObjects.Any())
 					{
-						var transformedPaint = paint.obj3D.Mesh.Copy(cancellationToken);
-						transformedPaint.Transform(paint.matrix);
-						var inverseRemove = paint.matrix.Inverted;
-						Mesh paintMesh = null;
+						var totalOperations = paintObjects.Count * keepObjects.Count;
+						double amountPerOperation = 1.0 / totalOperations;
+						double percentCompleted = 0;
 
-						foreach (var keep in keepObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
+						foreach (var paint in paintObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
 						{
-							var transformedKeep = keep.obj3D.Mesh.Copy(cancellationToken);
-							transformedKeep.Transform(keep.matrix);
+							var transformedPaint = paint.obj3D.Mesh.Copy(cancellationToken);
+							transformedPaint.Transform(paint.matrix);
+							var inverseRemove = paint.matrix.Inverted;
+							Mesh paintMesh = null;
 
-							// remove the paint from the original
-							var intersectAndSubtract = PolygonMesh.Csg.CsgOperations.IntersectAndSubtract(transformedKeep, transformedPaint, (status, progress0To1) =>
+							foreach (var keep in keepObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
 							{
-								// Abort if flagged
-								cancellationToken.ThrowIfCancellationRequested();
+								var transformedKeep = keep.obj3D.Mesh.Copy(cancellationToken);
+								transformedKeep.Transform(keep.matrix);
 
-								progressStatus.Status = status;
-								progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
-								reporter?.Report(progressStatus);
-							}, cancellationToken);
-							var inverseKeep = keep.matrix.Inverted;
-							intersectAndSubtract.subtract.Transform(inverseKeep);
-							using (keep.obj3D.RebuildLock())
-							{
-								keep.obj3D.Mesh = intersectAndSubtract.subtract;
+								// remove the paint from the original
+								var subtract = BooleanProcessing.Do(transformedKeep, transformedPaint, 1, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+								var intersect = BooleanProcessing.Do(transformedKeep, transformedPaint, 2, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+
+								var inverseKeep = keep.matrix.Inverted;
+								subtract.Transform(inverseKeep);
+								using (keep.obj3D.RebuildLock())
+								{
+									keep.obj3D.Mesh = subtract;
+								}
+
+								// keep all the intersections together
+								if (paintMesh == null)
+								{
+									paintMesh = intersect;
+								}
+								else // union into the current paint
+								{
+									paintMesh = BooleanProcessing.Do(transformedKeep, intersect, 0, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+								}
+
+								if (cancellationToken.IsCancellationRequested)
+								{
+									break;
+								}
 							}
 
-							// keep all the intersections together
-							if (paintMesh == null)
+							// move the paint mesh back to its original coordinates
+							paintMesh.Transform(inverseRemove);
+
+							using (paint.obj3D.RebuildLock())
 							{
-								paintMesh = intersectAndSubtract.intersect;
-							}
-							else // union into the current paint
-							{
-								paintMesh = PolygonMesh.Csg.CsgOperations.Union(paintMesh, intersectAndSubtract.intersect);
+								paint.obj3D.Mesh = paintMesh;
 							}
 
-							if (cancellationToken.IsCancellationRequested)
-							{
-								break;
-							}
+							paint.obj3D.Color = paint.obj3D.WorldColor().WithContrast(keepObjects.First().WorldColor(), 2).ToColor();
 						}
-
-						// move the paint mesh back to its original coordinates
-						paintMesh.Transform(inverseRemove);
-
-						using (paint.obj3D.RebuildLock())
-						{
-							paint.obj3D.Mesh = paintMesh;
-						}
-
-						paint.obj3D.Color = paint.obj3D.WorldColor().WithContrast(keepObjects.First().WorldColor(), 2).ToColor();
 					}
 				}
+				catch { }
 
 				UiThread.RunOnIdle(() =>
 				{

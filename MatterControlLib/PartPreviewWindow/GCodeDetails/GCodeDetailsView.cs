@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private EventHandler unregisterEvents;
 		private ThemeConfig theme;
 
-		public GCodeDetailsView(GCodeFile gCodeMemoryFile, PrinterConfig printerConfig, ThemeConfig theme)
+		public GCodeDetailsView(GCodeFile gCodeMemoryFile, PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.theme = theme;
@@ -52,19 +52,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AddSetting("Print Time".Localize(), gCodeMemoryFile.EstimatedPrintTime());
 
 			// show the filament used
-			AddSetting("Filament Length".Localize(), gCodeMemoryFile.FilamentUsed(printerConfig));
+			AddSetting("Filament Length".Localize(), gCodeMemoryFile.FilamentUsed(printer));
 
-			AddSetting("Filament Volume".Localize(), gCodeMemoryFile.FilamentVolume(printerConfig));
+			AddSetting("Filament Volume".Localize(), gCodeMemoryFile.FilamentVolume(printer));
 
 			// Cost info is only displayed when available - conditionalCostPanel is invisible when cost <= 0
-			TextWidget costTextWidget = AddSetting("Estimated Cost".Localize(), gCodeMemoryFile.EstimatedCost(printerConfig));
+			TextWidget costTextWidget = AddSetting("Estimated Cost".Localize(), gCodeMemoryFile.EstimatedCost(printer));
 
-			TextWidget massTextWidget = AddSetting("Estimated Mass".Localize(), gCodeMemoryFile.EstimatedMass(printerConfig));
+			TextWidget massTextWidget = AddSetting("Estimated Mass".Localize(), gCodeMemoryFile.EstimatedMass(printer));
 
 			var conditionalCostContainer = costTextWidget.Parent;
-			conditionalCostContainer.Visible = gCodeMemoryFile.TotalCost(printerConfig) > 0;
+			conditionalCostContainer.Visible = gCodeMemoryFile.TotalCost(printer) > 0;
 
-			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
+			void Printer_SettingChanged(object s, EventArgs e)
 			{
 				if (e is StringEventArgs stringEvent)
 				{
@@ -72,16 +72,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						|| stringEvent.Data == SettingsKey.filament_diameter
 						|| stringEvent.Data == SettingsKey.filament_density)
 					{
-						massTextWidget.Text = gCodeMemoryFile.EstimatedMass(printerConfig);
-						conditionalCostContainer.Visible = gCodeMemoryFile.TotalCost(printerConfig) > 0;
+						massTextWidget.Text = gCodeMemoryFile.EstimatedMass(printer);
+						conditionalCostContainer.Visible = gCodeMemoryFile.TotalCost(printer) > 0;
 
-						if (gCodeMemoryFile.TotalCost(printerConfig) > 0)
+						if (gCodeMemoryFile.TotalCost(printer) > 0)
 						{
-							costTextWidget.Text = gCodeMemoryFile.EstimatedCost(printerConfig);
+							costTextWidget.Text = gCodeMemoryFile.EstimatedCost(printer);
 						}
 					}
 				}
-			}, ref unregisterEvents);
+			}
+			printer.Settings.SettingChanged += Printer_SettingChanged;
+			this.Closed -= Printer_SettingChanged;
 		}
 
 		TextWidget AddSetting(string title, string value)

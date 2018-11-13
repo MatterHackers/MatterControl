@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.Closed += (s, e) => runningInterval.Continue = false;
 
 			var settingsRow = temperatureRow.DescendantsAndSelf<SliceSettingsRow>().FirstOrDefault();
-			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
+			void SettingChanged(object s, EventArgs e)
 			{
 				if (e is StringEventArgs stringEvent)
 				{
@@ -178,8 +178,10 @@ namespace MatterHackers.MatterControl.ActionBar
 
 						settingsRow.UpdateStyle();
 					}
-				};
-			}, ref unregisterEvents);
+				}
+			}
+			printer.Settings.SettingChanged += SettingChanged;
+			printer.Disposed -= SettingChanged;
 
 			container.AddChild(graph);
 

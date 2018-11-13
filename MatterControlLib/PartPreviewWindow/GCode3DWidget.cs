@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var firstSection = this.Children<SectionWidget>().First();
 			firstSection.BorderColor = Color.Transparent; // Disable top border on first item to produce a more flat, dark top edge
 
-			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
+			void Printer_SettingChanged(object s, EventArgs e)
 			{
 				if (e is StringEventArgs stringEvent)
 				{
@@ -105,7 +105,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						printer.Bed.GCodeRenderer?.Clear3DGCode();
 					}
 				}
-			}, ref unregisterEvents);
+			}
+			printer.Settings.SettingChanged += Printer_SettingChanged;
+			this.Closed -= Printer_SettingChanged;
 
 			printer.Bed.LoadedGCodeChanged += Bed_LoadedGCodeChanged;
 			printer.Bed.RendererOptions.PropertyChanged += RendererOptions_PropertyChanged;

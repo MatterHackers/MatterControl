@@ -49,8 +49,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static ProfileManager Instance { get; private set; }
 
-		private static EventHandler unregisterEvents;
-
 		public const string ProfileExtension = ".printer";
 		public const string ConfigFileExtension = ".slice";
 		public const string ProfileDocExtension = ".profiles";
@@ -59,7 +57,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		static ProfileManager()
 		{
-			PrinterSettings.SettingChanged.RegisterEvent(SettingsChanged, ref unregisterEvents);
 			ReloadActiveUser();
 		}
 
@@ -189,7 +186,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return loadedInstance;
 		}
 
-		internal static void SettingsChanged(object sender, EventArgs e)
+		public static void SettingsChanged(object sender, EventArgs e)
 		{
 			var printer = (sender as PrinterSettings)?.printer;
 

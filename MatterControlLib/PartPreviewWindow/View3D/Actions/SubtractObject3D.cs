@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 						progressStatus.Status = "Do CSG";
 						reporter?.Report(progressStatus);
-						var result = SingleSubtract(transformedKeep, transformedRemove, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+						var result = BooleanProcessing.Do(transformedKeep, transformedRemove, 1, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
 						var inverse = keep.matrix.Inverted;
 						result.Transform(inverse);
 
@@ -104,60 +104,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					remove.obj3D.Visible = false;
 				}
 			}
-		}
-
-		private static Mesh SingleSubtract(Mesh transformedKeep, Mesh transformedRemove, IProgress<ProgressStatus> reporter, double amountPerOperation, double percentCompleted, ProgressStatus progressStatus, CancellationToken cancellationToken)
-		{
-			var libiglExe = "libigl_boolean.exe";
-			if (File.Exists(libiglExe)
-				&& IntPtr.Size == 8) // only try to run the improved booleans if we are 64 bit and it is there
-			{
-				string folderToSaveStlsTo = Path.Combine(ApplicationDataStorage.Instance.ApplicationTempDataPath, "amf_to_stl");
-				// Create directory if needed
-				Directory.CreateDirectory(folderToSaveStlsTo);
-
-				string stlFileA = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
-				StlProcessing.Save(transformedKeep, stlFileA, CancellationToken.None);
-
-				string stlFileB = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
-				StlProcessing.Save(transformedRemove, stlFileB, CancellationToken.None);
-
-				string stlFileResult = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
-
-				// if we have the libigl_boolean.exe
-				var slicerProcess = new Process()
-				{
-					StartInfo = new ProcessStartInfo()
-					{
-						Arguments = "{0} {1} {2} -".FormatWith(stlFileA, stlFileB, stlFileResult),
-						CreateNoWindow = true,
-						WindowStyle = ProcessWindowStyle.Hidden,
-						RedirectStandardError = true,
-						RedirectStandardOutput = true,
-						FileName = libiglExe,
-						UseShellExecute = false
-					}
-				};
-				slicerProcess.Start();
-				slicerProcess.WaitForExit();
-
-				// load up the 
-				var result = StlProcessing.Load(stlFileResult, CancellationToken.None);
-				if(result != null)
-				{
-					return result;
-				}
-			}
-
-			return PolygonMesh.Csg.CsgOperations.Subtract(transformedKeep, transformedRemove, (status, progress0To1) =>
-			{
-				// Abort if flagged
-				cancellationToken.ThrowIfCancellationRequested();
-
-				progressStatus.Status = status;
-				progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
-				reporter?.Report(progressStatus);
-			}, cancellationToken);
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
@@ -204,7 +150,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						.SelectMany((h) => h.DescendantsAndSelf())
 						.Where((c) => c.OwnerID == this.ID).ToList();
 
-					Subtract(keepObjects, removeObjects, cancellationToken, reporter);
+					try
+					{
+						Subtract(keepObjects, removeObjects, cancellationToken, reporter);
+					}
+					catch
+					{
+					}
 
 					UiThread.RunOnIdle(() =>
 					{
@@ -214,6 +166,114 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 					return Task.CompletedTask;
 				});
+		}
+	}
+
+	public static class BooleanProcessing
+	{
+		public static Mesh Do(Mesh transformedKeep, Mesh transformedRemove, int opperation, IProgress<ProgressStatus> reporter, double amountPerOperation, double percentCompleted, ProgressStatus progressStatus, CancellationToken cancellationToken)
+		{
+			var libiglExe = "libigl_boolean.exe";
+			if (File.Exists(libiglExe)
+				&& IntPtr.Size == 8) // only try to run the improved booleans if we are 64 bit and it is there
+			{
+				string folderToSaveStlsTo = Path.Combine(ApplicationDataStorage.Instance.ApplicationTempDataPath, "amf_to_stl");
+				// Create directory if needed
+				Directory.CreateDirectory(folderToSaveStlsTo);
+
+				string stlFileA = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
+				StlProcessing.Save(transformedKeep, stlFileA, CancellationToken.None);
+
+				string stlFileB = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
+				StlProcessing.Save(transformedRemove, stlFileB, CancellationToken.None);
+
+				// wait for files to close
+				Thread.Sleep(1000);
+
+				string stlFileResult = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
+
+				// if we have the libigl_boolean.exe
+				var opperationString = "-";
+				switch (opperation)
+				{
+					case 0:
+						opperationString = "+";
+						break;
+
+					case 1:
+						opperationString = "-";
+						break;
+
+					case 2:
+						opperationString = "&";
+						break;
+				}
+
+				var slicerProcess = new Process()
+				{
+					StartInfo = new ProcessStartInfo()
+					{
+
+						Arguments = "{0} {1} {2} {3}".FormatWith(stlFileA, stlFileB, stlFileResult, opperationString),
+						CreateNoWindow = true,
+						WindowStyle = ProcessWindowStyle.Hidden,
+						RedirectStandardError = true,
+						RedirectStandardOutput = true,
+						FileName = libiglExe,
+						UseShellExecute = false
+					}
+				};
+				slicerProcess.Start();
+				slicerProcess.WaitForExit();
+
+				// wait for file to close
+				Thread.Sleep(1000);
+
+				// load up the 
+				var result = StlProcessing.Load(stlFileResult, CancellationToken.None);
+				if (result != null)
+				{
+					return result;
+				}
+			}
+
+			switch (opperation)
+			{
+				case 0:
+					return PolygonMesh.Csg.CsgOperations.Union(transformedKeep, transformedRemove, (status, progress0To1) =>
+					{
+						// Abort if flagged
+						cancellationToken.ThrowIfCancellationRequested();
+
+						progressStatus.Status = status;
+						progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
+						reporter.Report(progressStatus);
+					}, cancellationToken);
+
+				case 1:
+					return PolygonMesh.Csg.CsgOperations.Subtract(transformedKeep, transformedRemove, (status, progress0To1) =>
+					{
+						// Abort if flagged
+						cancellationToken.ThrowIfCancellationRequested();
+
+						progressStatus.Status = status;
+						progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
+						reporter?.Report(progressStatus);
+					}, cancellationToken);
+
+				case 2:
+					return PolygonMesh.Csg.CsgOperations.Intersect(transformedKeep, transformedRemove, (status, progress0To1) =>
+					{
+						// Abort if flagged
+						cancellationToken.ThrowIfCancellationRequested();
+
+						progressStatus.Status = status;
+						progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
+						reporter.Report(progressStatus);
+					}, cancellationToken);
+			}
+
+			return null;
 		}
 	}
 }

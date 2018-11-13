@@ -20,7 +20,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
-				Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "One printer should exist after add");
+				Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should exist after add");
 
 				testRunner.SwitchToPrinterSettings();
 

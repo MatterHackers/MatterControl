@@ -149,7 +149,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			rootColumn.AddChild(materialsNode);
 
-			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
+			// need to be hooked up to every existing PrinterConfig and every new PrinterConfig
+			void AnyPrinterSettingChanged(object s, EventArgs e)
 			{
 				string settingsName = (e as StringEventArgs)?.Data;
 				if (settingsName != null && settingsName == SettingsKey.printer_name)
@@ -157,17 +158,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					InventoryTreeView.CreatePrinterProfilesTree(printersNode, theme);
 					this.Invalidate();
 				}
-			}, ref unregisterEvents);
 
-			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
-			{
-				string settingsName = (e as StringEventArgs)?.Data;
 				if (settingsName == SettingsKey.printer_name)
 				{
 					InventoryTreeView.CreatePrinterProfilesTree(printersNode, theme);
 					this.Invalidate();
 				}
-			}, ref unregisterEvents);
+			}
+			PrinterSettings.AnyPrinterSettingChanged += AnyPrinterSettingChanged;
+			this.Closed -= AnyPrinterSettingChanged;
 
 			//// Rebuild the droplist any time the ActivePrinter changes
 			//ApplicationController.Instance.ActivePrinterChanged.RegisterEvent((s, e) =>
