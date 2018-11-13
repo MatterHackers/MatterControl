@@ -926,10 +926,19 @@ namespace MatterHackers.MatterControl
 					DialogWindow dialogWindow = null;
 
 					dialogWindow = DialogWindow.Show(
-						new SelectActivePrinterPage(
+						new SelectPrinterProfilePage(
 							"Next".Localize(),
 							(selectedPrinter) =>
 							{
+								var historyContainer = ApplicationController.Instance.Library.PlatingHistory;
+
+								selectedPrinter.Bed.LoadEmptyContent(
+									new EditContext()
+									{
+										ContentStore = historyContainer,
+										SourceItem = historyContainer.NewPlatingItem()
+									});
+
 								dialogWindow.ChangeToPage(
 									new ExportPrintItemPage(libraryItems, centerOnBed, selectedPrinter));
 							}));

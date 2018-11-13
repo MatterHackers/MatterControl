@@ -35,51 +35,8 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
-namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
+namespace MatterHackers.MatterControl
 {
-	public class SelectActivePrinterPage : SelectablePrinterPage
-	{
-		private Action<PrinterConfig> printerSelected;
-
-		public SelectActivePrinterPage(string continueButtonText, Action<PrinterConfig> printerSelected)
-			: base(continueButtonText)
-		{
-			this.printerSelected = printerSelected;
-
-			InventoryTreeView.CreateOpenPrintersTree(rootPrintersNode, theme);
-		}
-
-		protected override void OnTreeNodeDoubleClicked(TreeNode treeNode)
-		{
-			if (treeNode.Tag is PrinterConfig printer)
-			{
-				this.OnContinue(treeNode);
-			}
-
-			base.OnTreeNodeDoubleClicked(treeNode);
-		}
-
-		protected override void OnTreeNodeSelected(TreeNode selectedNode)
-		{
-			if (selectedNode.Tag is PrinterConfig printerInfo)
-			{
-				nextButton.Enabled = true;
-			}
-
-			base.OnTreeNodeSelected(selectedNode);
-		}
-
-		protected override void OnContinue(TreeNode treeNode)
-		{
-			if (treeNode.Tag is PrinterConfig printer)
-			{
-				printerSelected.Invoke(printer);
-
-				base.OnContinue(treeNode);
-			}
-		}
-	}
-
 	public class OpenPrinterPage : SelectablePrinterPage
 	{
 		private Action<PrinterConfig> printerLoaded;
