@@ -60,7 +60,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		// Year|month|day|versionForDay (to support multiple revisions on a given day)
 		public static int LatestVersion { get; } = 201606271;
 
-		// TODO: Change to instance based, revise listeners and register to expect specific printer settings
+		public static EventHandler AnyPrinterSettingChanged;
+
 		public EventHandler SettingChanged;
 
 		public event EventHandler MaterialPresetChanged;
@@ -73,6 +74,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public void OnSettingChanged(string slicerConfigName)
 		{
 			SettingChanged?.Invoke(this, new StringEventArgs(slicerConfigName));
+			AnyPrinterSettingChanged?.Invoke(this, new StringEventArgs(slicerConfigName));
 		}
 
 		public event EventHandler PrintLevelingEnabledChanged;

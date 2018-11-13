@@ -353,10 +353,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.AddAndSelectPrinter();
 
-				EventHandler unregisterEvents = null;
 				int layerHeightChangedCount = 0;
 
-				PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
+				PrinterSettings.AnyPrinterSettingChanged += (s, e) =>
 				{
 					var stringEvent = e as StringEventArgs;
 					if (stringEvent != null)
@@ -366,7 +365,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 							layerHeightChangedCount++;
 						}
 					}
-				}, ref unregisterEvents);
+				};
 
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 

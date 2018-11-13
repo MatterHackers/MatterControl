@@ -328,6 +328,7 @@ namespace MatterHackers.MatterControl.ActionBar
 					}
 				}
 			}
+
 			printer.Settings.SettingChanged += SettingChanged;
 			printer.Disposed -= SettingChanged;
 

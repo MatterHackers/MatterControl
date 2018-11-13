@@ -885,8 +885,6 @@ namespace MatterHackers.MatterControl
 
 		public BedConfig Bed { get; }
 
-		private EventHandler unregisterEvents;
-
 		public static PrinterConfig EmptyPrinter { get; } = new PrinterConfig();
 
 		private PrinterConfig()
