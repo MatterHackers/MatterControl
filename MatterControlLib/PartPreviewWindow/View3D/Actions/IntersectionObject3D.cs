@@ -80,48 +80,45 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 				var participants = this.DescendantsAndSelf().Where((obj) => obj.OwnerID == this.ID);
 
-				if (participants.Count() > 1)
+				try
 				{
-					var first = participants.First();
-
-					var totalOperations = participants.Count() - 1;
-					double amountPerOperation = 1.0 / totalOperations;
-					double percentCompleted = 0;
-
-					foreach (var remove in participants)
+					if (participants.Count() > 1)
 					{
-						if (remove != first)
+						var first = participants.First();
+
+						var totalOperations = participants.Count() - 1;
+						double amountPerOperation = 1.0 / totalOperations;
+						double percentCompleted = 0;
+
+						foreach (var remove in participants)
 						{
-							var transformedRemove = remove.Mesh.Copy(CancellationToken.None);
-							transformedRemove.Transform(remove.WorldMatrix());
-
-							var transformedKeep = first.Mesh.Copy(CancellationToken.None);
-							transformedKeep.Transform(first.WorldMatrix());
-
-							transformedKeep = PolygonMesh.Csg.CsgOperations.Intersect(transformedKeep, transformedRemove, (status, progress0To1) =>
+							if (remove != first)
 							{
-									// Abort if flagged
-									cancellationToken.ThrowIfCancellationRequested();
+								var transformedRemove = remove.Mesh.Copy(CancellationToken.None);
+								transformedRemove.Transform(remove.WorldMatrix());
 
-								progressStatus.Status = status;
-								progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
+								var transformedKeep = first.Mesh.Copy(CancellationToken.None);
+								transformedKeep.Transform(first.WorldMatrix());
+
+								var result = BooleanProcessing.Do(transformedKeep, transformedRemove, 2, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+
+								var inverse = first.WorldMatrix();
+								inverse.Invert();
+								result.Transform(inverse);
+								using (first.RebuildLock())
+								{
+									first.Mesh = result;
+								}
+								remove.Visible = false;
+
+								percentCompleted += amountPerOperation;
+								progressStatus.Progress0To1 = percentCompleted;
 								reporter.Report(progressStatus);
-							}, cancellationToken);
-							var inverse = first.WorldMatrix();
-							inverse.Invert();
-							transformedKeep.Transform(inverse);
-							using (first.RebuildLock())
-							{
-								first.Mesh = transformedKeep;
 							}
-							remove.Visible = false;
-
-							percentCompleted += amountPerOperation;
-							progressStatus.Progress0To1 = percentCompleted;
-							reporter.Report(progressStatus);
 						}
 					}
 				}
+				catch { }
 
 				UiThread.RunOnIdle(() =>
 				{

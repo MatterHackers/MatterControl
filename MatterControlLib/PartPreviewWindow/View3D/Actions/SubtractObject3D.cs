@@ -262,7 +262,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					}, cancellationToken);
 
 				case 2:
-					break;
+					return PolygonMesh.Csg.CsgOperations.Intersect(transformedKeep, transformedRemove, (status, progress0To1) =>
+					{
+						// Abort if flagged
+						cancellationToken.ThrowIfCancellationRequested();
+
+						progressStatus.Status = status;
+						progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
+						reporter.Report(progressStatus);
+					}, cancellationToken);
 			}
 
 			return null;
