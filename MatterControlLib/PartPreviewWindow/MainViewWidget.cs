@@ -392,7 +392,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SetLinkButtonsVisibility(s, new StringEventArgs("Unknown"));
 			}, ref unregisterEvents);
 
-			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
+			void Printer_SettingChanged(object s, EventArgs e)
 			{
 				var activePrinter = ApplicationController.Instance.ActivePrinter;
 
@@ -402,7 +402,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					printerTab.Text = activePrinter.Settings.GetValue(SettingsKey.printer_name);
 				}
-			}, ref unregisterEvents);
+			}
+			printer.Settings.SettingChanged += Printer_SettingChanged;
+			this.Closed -= Printer_SettingChanged;
 
 			ApplicationController.Instance.OpenPrintersChanged += OpenPrinters_Changed;
 
@@ -572,14 +574,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					ApplicationController.Instance.ClosePrinter(printer);
 				};
 
-				PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
+				void Printer_SettingChanged(object s, EventArgs e)
 				{
 					string settingsName = (e as StringEventArgs)?.Data;
 					if (settingsName != null && settingsName == SettingsKey.printer_name)
 					{
 						printerTab.Title = printer.Settings.GetValue(SettingsKey.printer_name);
 					}
-				}, ref unregisterEvents);
+				}
+				printer.Settings.SettingChanged += Printer_SettingChanged;
+				this.Closed -= Printer_SettingChanged;
 
 				// Add printer into fixed position
 				if (tabControl.AllTabs.Any())

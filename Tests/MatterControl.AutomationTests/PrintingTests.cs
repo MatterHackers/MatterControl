@@ -25,7 +25,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "One printer should be defined after add");
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should be defined after add");
 
 					testRunner.SelectSliceSettingsField("Printer", "end_gcode");
 
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator("Pulse", "A-134"))
 				{
-					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "One printer should be defined after add");
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should be defined after add");
 
 					testRunner.ClickByName("Finish Setup Button");
 
@@ -285,7 +285,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "One printer should be defined after add");
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should be defined after add");
 
 					testRunner.OpenPrintPopupMenu();
 					testRunner.ClickByName("Layer(s) To Pause Field");
@@ -326,7 +326,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "One printer should exist after add");
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should exist after add");
 
 					var printer = ApplicationController.Instance.ActivePrinters.First();
 					printer.Settings.SetValue(SettingsKey.recover_is_enabled, "1");
@@ -404,7 +404,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "One printer should be defined after add");
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should be defined after add");
 
 					testRunner.AddItemToBedplate();
 
@@ -502,7 +502,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Then validate that they are picked up
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "One printer should be defined after add");
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should be defined after add");
 
 					testRunner.AddItemToBedplate();
 
@@ -627,7 +627,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					var resetEvent = new AutoResetEvent(false);
 
-					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "One printer should exist after add");
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should exist after add");
 
 					testRunner.AddItemToBedplate();
 

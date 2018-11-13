@@ -906,8 +906,8 @@ namespace MatterHackers.MatterControl
 			this.Settings = settings;
 			this.Settings.printer = this;
 
-			// TODO: ActiveSliceSettings is not our Settings! Move SettingsChanged to instance rather than static
-			PrinterSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
+			this.Settings.SettingChanged += Printer_SettingChanged;
+			this.Disposed -= Printer_SettingChanged;
 
 			void PrintFinished(object s, EventArgs e)
 			{
@@ -1055,6 +1055,22 @@ namespace MatterHackers.MatterControl
 			}
 			this.Connection.CommunicationStateChanged += CommunicationStateChanged;
 			this.Disposed += (s, e) => this.Connection.CommunicationStateChanged -= CommunicationStateChanged;
+
+
+			void Printer_SettingChanged(object s, EventArgs e)
+			{
+				if (e is StringEventArgs stringArg
+					&& SettingsOrganizer.SettingsData.TryGetValue(stringArg.Data, out SliceSettingData settingsData)
+					&& settingsData.ReloadUiWhenChanged)
+				{
+					UiThread.RunOnIdle(ApplicationController.Instance.ReloadAll);
+				}
+
+				// clean up profile manager InventoryTreeView
+				ProfileManager.SettingsChanged(s, e);
+			}
+			this.Settings.SettingChanged += Printer_SettingChanged;
+			this.Disposed += (s, e) => this.Settings.SettingChanged -= Printer_SettingChanged;
 		}
 
 		public PrinterViewState ViewState { get; }

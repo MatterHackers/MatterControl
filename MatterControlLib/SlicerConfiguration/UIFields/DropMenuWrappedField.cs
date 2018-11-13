@@ -93,9 +93,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			uiField.Content.VAnchor = VAnchor.Center;
 			totalContent.AddChild(uiField.Content);
 
-			EventHandler localUnregisterEvents = null;
-
-			PrinterSettings.SettingChanged.RegisterEvent((sender, e) =>
+			void Printer_SettingChanged(object s, EventArgs e)
 			{
 				if (e is StringEventArgs stringArgs
 					&& stringArgs.Data == settingData.SlicerConfigName)
@@ -119,12 +117,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						selectableOptions.SelectedLabel = "Custom";
 					}
 				}
-			}, ref localUnregisterEvents);
-
-			totalContent.Closed += (s, e) =>
-			{
-				localUnregisterEvents?.Invoke(s, null);
-			};
+			}
+			printer.Settings.SettingChanged += Printer_SettingChanged;
+			printer.Disposed -= Printer_SettingChanged;
 
 			this.Content = totalContent;
 		}

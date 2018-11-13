@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				settingsRow.AddChild(extrusionValue);
 			}
 
-			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
+			void Printer_SettingChanged(object s, EventArgs e)
 			{
 				var eventArgs = e as StringEventArgs;
 				if (eventArgs?.Data == SettingsKey.extrusion_ratio)
@@ -193,7 +193,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 					feedRateRatioSlider.Value = feedrateRatio;
 					feedRateValue.ActuallNumberEdit.Value = Math.Round(feedrateRatio, 2);
 				}
-			}, ref unregisterEvents);
+			}
+			printer.Settings.SettingChanged += Printer_SettingChanged;
+			this.Closed -= Printer_SettingChanged;
+
 		}
 
 		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)

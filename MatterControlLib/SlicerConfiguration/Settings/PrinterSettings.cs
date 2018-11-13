@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static int LatestVersion { get; } = 201606271;
 
 		// TODO: Change to instance based, revise listeners and register to expect specific printer settings
-		public static RootedObjectEventHandler SettingChanged = new RootedObjectEventHandler();
+		public EventHandler SettingChanged;
 
 		public event EventHandler MaterialPresetChanged;
 
@@ -70,9 +70,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			MaterialPresetChanged?.Invoke(null, null);
 		}
 
-		public static void OnSettingChanged(PrinterSettings settings, string slicerConfigName)
+		public void OnSettingChanged(string slicerConfigName)
 		{
-			SettingChanged.CallEvents(settings, new StringEventArgs(slicerConfigName));
+			SettingChanged?.Invoke(this, new StringEventArgs(slicerConfigName));
 		}
 
 		public event EventHandler PrintLevelingEnabledChanged;
@@ -1423,7 +1423,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			persistenceLayer[settingsKey] = settingsValue;
 			Save();
 
-			PrinterSettings.OnSettingChanged(this, settingsKey);
+			this.OnSettingChanged(settingsKey);
 		}
 
 		public string ToJson()
@@ -1466,7 +1466,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				Save();
 
-				PrinterSettings.OnSettingChanged(this, settingsKey);
+				this.OnSettingChanged(settingsKey);
 			}
 		}
 	}

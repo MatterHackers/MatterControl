@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "One printer should exist after add");
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should exist after add");
 
 					var printer = ApplicationController.Instance.ActivePrinters.First();
 					printer.Settings.SetValue(SettingsKey.cancel_gcode, "G28 ; Cancel GCode");

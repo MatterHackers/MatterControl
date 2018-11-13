@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.AddChild(pullDownContainer);
 
 			printer.Settings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
-			PrinterSettings.SettingChanged.RegisterEvent((s, e) =>
+			void Printer_SettingChanged(object s, EventArgs e)
 			{
 				if (e is StringEventArgs stringEvent
 					&& (stringEvent.Data == SettingsKey.default_material_presets
@@ -92,7 +92,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					RebuildDropDownList();
 				}
-			}, ref unregisterEvents);
+			}
+			printer.Settings.SettingChanged += Printer_SettingChanged;
+			this.Closed -= Printer_SettingChanged;
 		}
 
 		public FlowLayoutWidget GetPulldownContainer()
@@ -365,7 +367,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (settingBeforeChange[keyName] != printer.Settings.GetValue(keyName))
 					{
-						PrinterSettings.OnSettingChanged(printer.Settings, keyName);
+						printer.Settings.OnSettingChanged(keyName);
 					}
 				}
 			});
