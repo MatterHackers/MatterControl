@@ -84,9 +84,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 					var participants = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
 
-					if (participants.Count() > 1)
+					try
 					{
-						Combine(participants, cancellationToken, reporter);
+						if (participants.Count() > 1)
+						{
+							Combine(participants, cancellationToken, reporter);
+						}
+					}
+					catch
+					{
 					}
 
 					UiThread.RunOnIdle(() =>
@@ -113,33 +119,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			double percentCompleted = 0;
 
 			ProgressStatus progressStatus = new ProgressStatus();
-			foreach (var remove in participants)
+			foreach (var item in participants)
 			{
-				if (remove != first)
+				if (item != first)
 				{
-					var transformedRemove = remove.Mesh.Copy(CancellationToken.None);
-					transformedRemove.Transform(remove.WorldMatrix());
+					var transformedRemove = item.Mesh.Copy(CancellationToken.None);
+					transformedRemove.Transform(item.WorldMatrix());
 
 					var transformedKeep = first.Mesh.Copy(CancellationToken.None);
 					transformedKeep.Transform(first.WorldMatrix());
 
-					transformedKeep = PolygonMesh.Csg.CsgOperations.Union(transformedKeep, transformedRemove, (status, progress0To1) =>
-					{
-						// Abort if flagged
-						cancellationToken.ThrowIfCancellationRequested();
+					var result = BooleanProcessing.Do(transformedKeep, transformedRemove, 0, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
 
-						progressStatus.Status = status;
-						progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
-						reporter.Report(progressStatus);
-					}, cancellationToken);
 					var inverse = first.WorldMatrix();
 					inverse.Invert();
-					transformedKeep.Transform(inverse);
+					result.Transform(inverse);
 					using (first.RebuildLock())
 					{
-						first.Mesh = transformedKeep;
+						first.Mesh = result;
 					}
-					remove.Visible = false;
+					item.Visible = false;
 
 					percentCompleted += amountPerOperation;
 					progressStatus.Progress0To1 = percentCompleted;
