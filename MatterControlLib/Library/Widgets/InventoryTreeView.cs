@@ -158,23 +158,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					InventoryTreeView.CreatePrinterProfilesTree(printersNode, theme);
 					this.Invalidate();
 				}
-
-				if (settingsName == SettingsKey.printer_name)
-				{
-					InventoryTreeView.CreatePrinterProfilesTree(printersNode, theme);
-					this.Invalidate();
-				}
 			}
+
 			PrinterSettings.AnyPrinterSettingChanged += AnyPrinterSettingChanged;
 			this.Closed -= AnyPrinterSettingChanged;
 
-			//// Rebuild the droplist any time the ActivePrinter changes
-			//ApplicationController.Instance.ActivePrinterChanged.RegisterEvent((s, e) =>
-			//{
-			//	this.Rebuild();
-			//}, ref unregisterEvents);
-
-			// Rebuild the droplist any time the Profiles list changes
+			// Rebuild the treeview anytime the Profiles list changes
 			ProfileManager.ProfilesListChanged.RegisterEvent((s, e) =>
 			{
 				InventoryTreeView.CreatePrinterProfilesTree(printersNode, theme);
