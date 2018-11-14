@@ -47,7 +47,8 @@ namespace MatterHackers.MatterControl
 
 	public class ManualPrinterControls : ScrollableWidget, ICloseableTab
 	{
-		public static RootedObjectEventHandler AddPluginControls = new RootedObjectEventHandler();
+		public static EventHandler<ManualPrinterControls> AddPluginControls;
+
 		private static bool pluginsQueuedToAdd = false;
 
 		private GuiWidget fanControlsContainer;
@@ -56,15 +57,14 @@ namespace MatterHackers.MatterControl
 		private MovementControls movementControlsContainer;
 		private GuiWidget calibrationControlsContainer;
 
-		private EventHandler unregisterEvents;
 		private ThemeConfig theme;
-		private PrinterConfig printer;
+		public PrinterConfig Printer { get; }
 		private FlowLayoutWidget column;
 
 		public ManualPrinterControls(PrinterConfig printer, ThemeConfig theme)
 		{
 			this.theme = theme;
-			this.printer = printer;
+			this.Printer = printer;
 			this.ScrollArea.HAnchor |= HAnchor.Stretch;
 			this.AnchorAll();
 			this.AutoScroll = true;
@@ -84,25 +84,25 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(column);
 
-			movementControlsContainer = this.RegisterSection(MovementControls.CreateSection(printer, theme)) as MovementControls;
+			movementControlsContainer = this.AddPluginWidget(MovementControls.CreateSection(printer, theme)) as MovementControls;
 
 			if (!printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
-				calibrationControlsContainer = this.RegisterSection(CalibrationControls.CreateSection(printer, theme));
+				calibrationControlsContainer = this.AddPluginWidget(CalibrationControls.CreateSection(printer, theme));
 			}
 
-			macroControlsContainer = this.RegisterSection(MacroControls.CreateSection(printer, theme));
+			macroControlsContainer = this.AddPluginWidget(MacroControls.CreateSection(printer, theme));
 
 			if (printer.Settings.GetValue<bool>(SettingsKey.has_fan))
 			{
-				fanControlsContainer = this.RegisterSection(FanControls.CreateSection(printer, theme));
+				fanControlsContainer = this.AddPluginWidget(FanControls.CreateSection(printer, theme));
 			}
 
 #if !__ANDROID__
-			this.RegisterSection(PowerControls.CreateSection(printer, theme));
+			this.AddPluginWidget(PowerControls.CreateSection(printer, theme));
 #endif
 
-			tuningAdjustmentControlsContainer = this.RegisterSection(AdjustmentControls.CreateSection(printer, theme));
+			tuningAdjustmentControlsContainer = this.AddPluginWidget(AdjustmentControls.CreateSection(printer, theme));
 
 			// HACK: this is a hack to make the layout engine fire again for this control
 			UiThread.RunOnIdle(() => tuningAdjustmentControlsContainer.Width = tuningAdjustmentControlsContainer.Width + 1);
@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl
 			SetVisibleControls();
 		}
 
-		public GuiWidget RegisterSection(SectionWidget sectionWidget)
+		public GuiWidget AddPluginWidget(SectionWidget sectionWidget)
 		{
 			// Section not active due to constraints
 			if (sectionWidget == null)
@@ -142,23 +142,17 @@ namespace MatterHackers.MatterControl
 
 		public override void OnLoad(EventArgs args)
 		{
-			if (!pluginsQueuedToAdd && printer.Settings.GetValue(SettingsKey.include_firmware_updater) == "Simple Arduino")
+			if (!pluginsQueuedToAdd && Printer.Settings.GetValue(SettingsKey.include_firmware_updater) == "Simple Arduino")
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					AddPluginControls.CallEvents(this, null);
+					AddPluginControls?.Invoke(this, this);
 					pluginsQueuedToAdd = false;
 				});
 				pluginsQueuedToAdd = true;
 			}
 
 			base.OnLoad(args);
-		}
-
-		public override void OnClosed(EventArgs e)
-		{
-			unregisterEvents?.Invoke(this, null);
-			base.OnClosed(e);
 		}
 
 		private void onPrinterStatusChanged(object sender, EventArgs e)
@@ -169,7 +163,7 @@ namespace MatterHackers.MatterControl
 
 		private void SetVisibleControls()
 		{
-			if (!printer.Settings.PrinterSelected)
+			if (!Printer.Settings.PrinterSelected)
 			{
 				movementControlsContainer?.SetEnabled(false);
 				fanControlsContainer?.SetEnabled(false);
@@ -179,7 +173,7 @@ namespace MatterHackers.MatterControl
 			}
 			else // we at least have a printer selected
 			{
-				switch (printer.Connection.CommunicationState)
+				switch (Printer.Connection.CommunicationState)
 				{
 					case CommunicationStates.Disconnecting:
 					case CommunicationStates.ConnectionLost:
@@ -225,7 +219,7 @@ namespace MatterHackers.MatterControl
 
 					case CommunicationStates.PreparingToPrint:
 					case CommunicationStates.Printing:
-						switch (printer.Connection.DetailedPrintingState)
+						switch (Printer.Connection.DetailedPrintingState)
 						{
 							case DetailedPrintingState.HomingAxis:
 							case DetailedPrintingState.HeatingBed:
