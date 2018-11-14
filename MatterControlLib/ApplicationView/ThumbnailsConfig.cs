@@ -91,12 +91,14 @@ namespace MatterHackers.MatterControl
 		{
 			// try to load it from the users cache
 			var expectedCachePath = this.CachePath(libraryItem, width, height);
+
 			ImageBuffer cachedItem = LoadImage(expectedCachePath);
 			if(cachedItem != null)
 			{
 				cachedItem.SetRecieveBlender(new BlenderPreMultBGRA());
 				return cachedItem;
 			}
+
 			// if we don't find it see if it is in the cache at a bigger size
 			foreach(var cacheSize in CacheSizes.Where(s => s > width))
 			{
@@ -104,8 +106,10 @@ namespace MatterHackers.MatterControl
 				if(cachedItem != null)
 				{
 					cachedItem = cachedItem.CreateScaledImage(width, height);
-					AggContext.ImageIO.SaveImageData(expectedCachePath, cachedItem);
 					cachedItem.SetRecieveBlender(new BlenderPreMultBGRA());
+
+					AggContext.ImageIO.SaveImageData(expectedCachePath, cachedItem);
+
 					return cachedItem;
 				}
 			}
@@ -115,9 +119,12 @@ namespace MatterHackers.MatterControl
 			if (AggContext.StaticData.FileExists(staticDataFilename))
 			{
 				cachedItem = AggContext.StaticData.LoadImage(staticDataFilename);
-				cachedItem = cachedItem.CreateScaledImage(width, height);
-				AggContext.ImageIO.SaveImageData(expectedCachePath, cachedItem);
 				cachedItem.SetRecieveBlender(new BlenderPreMultBGRA());
+
+				cachedItem = cachedItem.CreateScaledImage(width, height);
+
+				AggContext.ImageIO.SaveImageData(expectedCachePath, cachedItem);
+
 				return cachedItem;
 			}
 
