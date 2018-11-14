@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static EventHandler AnyPrinterSettingChanged;
 
-		public EventHandler SettingChanged;
+		public event EventHandler SettingChanged;
 
 		public event EventHandler MaterialPresetChanged;
 
@@ -97,6 +97,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public PrinterSettingsLayer StagedUserSettings { get; set; } = new PrinterSettingsLayer();
 
+		[JsonIgnore]
 		internal PrinterConfig printer { get; set; }
 
 		static PrinterSettings()
@@ -768,8 +769,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return false;
 		}
 
-		[JsonIgnore]
 		PrinterSettingsLayer _baseLayer;
+		[JsonIgnore]
 		public PrinterSettingsLayer BaseLayer
 		{
 			get
@@ -1354,7 +1355,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			if (!valueWasNumber
-				|| (EngineMappingsMatterSlice.Instance.MapContains(speedSetting)
+				|| (printer.EngineMappingsMatterSlice.MapContains(speedSetting)
 				&& speedToCheck <= 0))
 			{
 				SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(speedSetting);
@@ -1373,8 +1374,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		#endregion
 
-		[JsonIgnore]
 		private static HashSet<string> knownSettings;
+		[JsonIgnore]
 		public static HashSet<string> KnownSettings
 		{
 			get

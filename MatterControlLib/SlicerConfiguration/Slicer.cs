@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						matrixAndMeshArgs.Append($" \"{matrixAndFile.fileName}\" ");
 					}
 
-					EngineMappingsMatterSlice.WriteSliceSettingsFile(configFilePath, rawLines: new[]
+					printer.EngineMappingsMatterSlice.WriteSliceSettingsFile(configFilePath, rawLines: new[]
 					{
 						$"booleanOperations = {mergeRules}",
 						$"additionalArgsToProcess ={matrixAndMeshArgs}"
