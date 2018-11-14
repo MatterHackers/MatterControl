@@ -118,13 +118,16 @@ namespace MatterHackers.MatterControl.Library
 		}
 
 		long lastTimeContentsChanged;
-		RunningInterval waitingForRefresh;
+
+		private RunningInterval waitingForRefresh;
+
 		private void DirectoryContentsChanged(object sender, EventArgs e)
 		{
 			// Flag for reload
 			isDirty = true;
 
 			lastTimeContentsChanged = UiThread.CurrentTimerMs;
+
 			// Only refresh content if we're the active container
 			if (isActiveContainer
 				&& waitingForRefresh == null)
@@ -138,7 +141,8 @@ namespace MatterHackers.MatterControl.Library
 			if (UiThread.CurrentTimerMs > lastTimeContentsChanged + 500
 				&& waitingForRefresh != null)
 			{
-				waitingForRefresh.Continue = false;
+				UiThread.ClearInterval(waitingForRefresh);
+
 				waitingForRefresh = null;
 				this.ReloadContent();
 			}

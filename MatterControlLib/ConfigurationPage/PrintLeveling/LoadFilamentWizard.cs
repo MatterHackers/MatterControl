@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 								int secondsToRun = 300;
 								if (runningTime.ElapsedMilliseconds > secondsToRun * 1000)
 								{
-									runningGCodeCommands.Continue = false;
+									UiThread.ClearInterval(runningGCodeCommands);
 								}
 							}
 						},
@@ -159,19 +159,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					},
 					BecomingInactive = () =>
 					{
-						if (runningGCodeCommands != null
-							&& runningGCodeCommands.Continue)
+						if (runningGCodeCommands != null)
 						{
-							runningGCodeCommands.Continue = false;
+							UiThread.ClearInterval(runningGCodeCommands);
 						}
 					}
 				};
 				insertFilamentPage.Closed += (s, e) =>
 				{
-					if (runningGCodeCommands != null
-						&& runningGCodeCommands.Continue)
+					if (runningGCodeCommands != null)
 					{
-						runningGCodeCommands.Continue = false;
+						UiThread.ClearInterval(runningGCodeCommands);
 					}
 				};
 
@@ -251,11 +249,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 								}
 							}
 
-							if (runningGCodeCommands.Continue == true
-								&& progressBar.RatioComplete == 1 
+							if (progressBar.RatioComplete == 1 
 								&& remainingLengthMm <= .001)
 							{
-								runningGCodeCommands.Continue = false;
+								UiThread.ClearInterval(runningGCodeCommands);
 								loadingFilamentPage.NextButton.InvokeClick();
 							}
 						},
@@ -263,18 +260,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					},
 					BecomingInactive = () =>
 					{
-						if (runningGCodeCommands.Continue)
-						{
-							runningGCodeCommands.Continue = false;
-						}
+						UiThread.ClearInterval(runningGCodeCommands);
 					}
 				};
 				loadingFilamentPage.Closed += (s, e) =>
 				{
-					if (runningGCodeCommands.Continue)
-					{
-						runningGCodeCommands.Continue = false;
-					}
+					UiThread.ClearInterval(runningGCodeCommands);
 				};
 
 				yield return loadingFilamentPage;
@@ -320,7 +311,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 								int secondsToRun = 90;
 								if (runningTime.ElapsedMilliseconds > secondsToRun * 1000)
 								{
-									runningGCodeCommands.Continue = false;
+									UiThread.ClearInterval(runningGCodeCommands);
 								}
 							}
 						},
@@ -328,18 +319,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					},
 					BecomingInactive = () =>
 					{
-						if (runningGCodeCommands.Continue)
-						{
-							runningGCodeCommands.Continue = false;
-						}
+						UiThread.ClearInterval(runningGCodeCommands);
 					}
 				};
 				runningCleanPage.Closed += (s, e) =>
 				{
-					if (runningGCodeCommands.Continue)
-					{
-						runningGCodeCommands.Continue = false;
-					}
+					UiThread.ClearInterval(runningGCodeCommands);
 					printer.Settings.SetValue(SettingsKey.filament_has_been_loaded, "1");
 				};
 

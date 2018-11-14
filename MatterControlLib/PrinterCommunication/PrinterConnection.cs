@@ -84,9 +84,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public event EventHandler BedTemperatureRead;
 
-		public EventHandler CommunicationStateChanged;
+		public event EventHandler CommunicationStateChanged;
 
-		public EventHandler ConnectionFailed;
+		public event EventHandler ConnectionFailed;
 
 		public event EventHandler ConnectionSucceeded;
 
@@ -101,9 +101,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public event EventHandler HotendTemperatureRead;
 
-		public EventHandler FanSpeedSet;
+		public event EventHandler FanSpeedSet;
 
-		public EventHandler FirmwareVersionRead;
+		public event EventHandler FirmwareVersionRead;
 
 		public void OnFilamentRunout(NamedItemEventArgs namedItemEventArgs)
 		{

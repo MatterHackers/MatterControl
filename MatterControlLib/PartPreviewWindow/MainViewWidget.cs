@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (showUpdateInterval != null)
 					{
-						showUpdateInterval.Continue = false;
+						UiThread.ClearInterval(showUpdateInterval);
 						showUpdateInterval = null;
 					}
 					return;

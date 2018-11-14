@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				zPosition.Text = "Z: {0:0.00}".FormatWith(destinationPosition.Z);
 			}, .3);
 
-			this.Closed += (s, e) => runningInterval.Continue = false;
+			this.Closed += (s, e) => UiThread.ClearInterval(runningInterval);
 
 			zButtonsAndInfo.AddChild(zPosition);
 
