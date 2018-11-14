@@ -147,9 +147,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.Scene.Invalidated += Scene_Invalidated;
 
-			// if the scene is invalidated invalidate the widget
-			Scene.Invalidated += (s, e) => Invalidate();
-
 			this.AnchorAll();
 
 			TrackballTumbleWidget.TransformState = TrackBallTransformType.Rotation;
@@ -1823,6 +1820,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				UiThread.RunOnIdle(this.RebuildTree);
 			}
+
+			// Invalidate widget on scene invalidate
+			this.Invalidate();
 		}
 
 		private void Scene_SelectionChanged(object sender, EventArgs e)
