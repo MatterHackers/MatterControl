@@ -439,7 +439,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
 						bool settingShouldBeShown = CheckIfShouldBeShown(settingData, settingsContext);
 
-						if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName)
+						if (printer.EngineMappingsMatterSlice.MapContains(settingData.SlicerConfigName)
 							&& settingShouldBeShown)
 						{
 							settingsRow = CreateItemRow(settingData);

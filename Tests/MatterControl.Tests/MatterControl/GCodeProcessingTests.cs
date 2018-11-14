@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
+using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
@@ -92,7 +93,8 @@ namespace MatterControl.Tests.MatterControl
 
 		private void TestMacroReplacement(string inputText, string outputControl)
 		{
-			string outputTest = GCodeProcessing.ReplaceMacroValues(inputText);
+			var printer = new PrinterConfig(new PrinterSettings());
+			string outputTest = printer.ReplaceMacroValues(inputText);
 
 			Assert.IsTrue(outputTest == outputControl);
 		}
