@@ -65,7 +65,6 @@ namespace MatterHackers.MatterControl
 			// Add in all the stl and amf files referenced in the library.
 			foreach (PrintItem printItem in allPrintItems)
 			{
-				var printItemWrapper = new PrintItemWrapper(printItem);
 				if (!filesToKeep.Contains(printItem.FileLocation))
 				{
 					filesToKeep.Add(printItem.FileLocation);

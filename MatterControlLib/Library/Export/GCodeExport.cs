@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 						string fileHashCode = Path.GetFileNameWithoutExtension(assetPath);
 
-						string gcodePath = PrintItemWrapper.GCodePath(fileHashCode);
+						string gcodePath = printer.GCodePath(fileHashCode);
 
 						if (ApplicationSettings.ValidFileExtensions.IndexOf(sourceExtension, StringComparison.OrdinalIgnoreCase) >= 0
 							|| string.Equals(sourceExtension, ".mcx", StringComparison.OrdinalIgnoreCase))

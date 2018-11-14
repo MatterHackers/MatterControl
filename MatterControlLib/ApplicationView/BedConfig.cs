@@ -286,11 +286,11 @@ namespace MatterHackers.MatterControl
 		internal void EnsureGCodeLoaded()
 		{
 			if (this.LoadedGCode == null
-				&& File.Exists(this.EditContext?.GCodeFilePath))
+				&& File.Exists(this.EditContext?.GCodeFilePath(this.Printer)))
 			{
 				UiThread.RunOnIdle(async () =>
 				{
-					using (var stream = File.OpenRead(this.EditContext.GCodeFilePath))
+					using (var stream = File.OpenRead(this.EditContext.GCodeFilePath(this.Printer)))
 					{
 						await LoadGCodeContent(stream);
 					}

@@ -69,9 +69,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 	public class PrintItemWrapper
 	{
 		private string fileType;
+		PrinterConfig printer;
 
 		public PrintItemWrapper(PrintItem printItem, ILibraryContainer sourceLibraryProviderLocator = null)
 		{
+			this.printer = printer;
 			this.PrintItem = printItem;
 
 			if (FileLocation != null)
@@ -84,6 +86,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public PrintItemWrapper(int printItemId)
 		{
+			this.printer = printer;
 			this.PrintItem = Datastore.Instance.dbSQLite.Table<PrintItem>().Where(v => v.Id == printItemId).Take(1).FirstOrDefault();
 			try
 			{
@@ -137,32 +140,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			// Reset the Id field after calling delete to clear the association and ensure that future db operations
 			// result in inserts rather than update statements on a missing row
 			this.PrintItem.Id = 0;
-		}
-
-		public string GetGCodePathAndFileName()
-		{
-			if (FileLocation.Trim() != "")
-			{
-				if (Path.GetExtension(FileLocation).ToUpper() == ".GCODE")
-				{
-					return FileLocation;
-				}
-
-				return GCodePath(this.FileHashCode);
-			}
-			else
-			{
-				return null;
-			}
-		}
-
-		public static string GCodePath(string fileHashCode)
-		{
-			long settingsHashCode = ApplicationController.Instance.ActivePrinter.Settings.GetLongHashCode();
-
-			return Path.Combine(
-				ApplicationDataStorage.Instance.GCodeOutputPath, 
-				$"{fileHashCode}_{ settingsHashCode}.gcode");
 		}
 	}
 }
