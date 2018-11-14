@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						await ApplicationController.Instance.SliceItemLoadOutput(
 							printer,
 							printer.Bed.Scene,
-							printer.Bed.EditContext.GCodeFilePath);
+							printer.Bed.EditContext.GCodeFilePath(printer));
 					}
 					catch (Exception ex)
 					{

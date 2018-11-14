@@ -536,7 +536,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							activelySlicing = true;
 							if (bottomRow.Name == null)
 							{
-								bottomRow.Name = printer.Bed.EditContext.GCodeFilePath;
+								bottomRow.Name = printer.Bed.EditContext.GCodeFilePath(printer);
 							}
 
 							await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer.Bed.SaveChanges);
@@ -545,7 +545,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							await ApplicationController.Instance.SliceItemLoadOutput(
 								printer,
 								printer.Bed.Scene,
-								printer.Bed.EditContext.GCodeFilePath);
+								printer.Bed.EditContext.GCodeFilePath(printer));
 
 							// Switch to the 3D layer view if on Model view
 							if (printer.ViewState.ViewMode == PartViewMode.Model)
@@ -563,8 +563,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									if (printer.Connection != null
 										&& (printer.Connection.PrinterIsPrinting || printer.Connection.PrinterIsPaused))
 									{
-										printer.Connection.SwitchToGCode(printer.Bed.EditContext.GCodeFilePath);
-										bottomRow.Name = printer.Bed.EditContext.GCodeFilePath;
+										printer.Connection.SwitchToGCode(printer.Bed.EditContext.GCodeFilePath(printer));
+										bottomRow.Name = printer.Bed.EditContext.GCodeFilePath(printer);
 									}
 								}
 								else

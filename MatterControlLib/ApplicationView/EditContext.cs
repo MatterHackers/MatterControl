@@ -62,13 +62,31 @@ namespace MatterHackers.MatterControl
 		}
 
 		// Natural path
-		private string gcodePath => printItem?.GetGCodePathAndFileName();
+		private string GCodePath(PrinterConfig printer)
+		{
+			if (printItem != null)
+			{
+				return printer.GetGCodePathAndFileName(printItem.FileLocation);
+			}
+			return null;
+		}
 
 		// Override path
-		public string GCodeOverridePath => Path.ChangeExtension(gcodePath, GCodeFile.PostProcessedExtension);
+		public string GCodeOverridePath(PrinterConfig printer)
+		{
+			return Path.ChangeExtension(GCodePath(printer), GCodeFile.PostProcessedExtension);
+		}
 
 		// Override or natural path
-		public string GCodeFilePath => (File.Exists(this.GCodeOverridePath)) ? this.GCodeOverridePath : gcodePath;
+		public string GCodeFilePath(PrinterConfig printer)
+		{
+			if (File.Exists(this.GCodeOverridePath(printer)))
+			{
+				return this.GCodeOverridePath(printer);
+			}
+			
+			return GCodePath(printer);
+		}
 
 		public string SourceFilePath => printItem?.FileLocation;
 

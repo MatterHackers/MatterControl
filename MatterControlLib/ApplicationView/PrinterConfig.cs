@@ -34,9 +34,11 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
+	using System.IO;
 	using System.Threading;
 	using MatterHackers.Agg;
 	using MatterHackers.Localizations;
+	using MatterHackers.MatterControl.DataStorage;
 	using MatterHackers.MatterControl.PrinterCommunication;
 	using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
 	using MatterHackers.MeshVisualizer;
@@ -127,7 +129,6 @@ namespace MatterHackers.MatterControl
 			this.Connection.PrintFinished += PrintFinished;
 			this.Disposed += (s, e) => this.Connection.PrintFinished -= PrintFinished;
 
-
 			if (!string.IsNullOrEmpty(this.Settings.GetValue(SettingsKey.baud_rate)))
 			{
 				this.Connection.BaudRate = this.Settings.GetValue<int>(SettingsKey.baud_rate);
@@ -140,6 +141,32 @@ namespace MatterHackers.MatterControl
 			this.Connection.ExtruderCount = this.Settings.GetValue<int>(SettingsKey.extruder_count);
 			this.Connection.SendWithChecksum = this.Settings.GetValue<bool>(SettingsKey.send_with_checksum);
 			this.Connection.ReadLineReplacementString = this.Settings.GetValue(SettingsKey.read_regex);
+		}
+
+		public string GetGCodePathAndFileName(string fileLocation)
+		{
+			if (fileLocation.Trim() != "")
+			{
+				if (Path.GetExtension(fileLocation).ToUpper() == ".GCODE")
+				{
+					return fileLocation;
+				}
+
+				return GCodePath(fileLocation);
+			}
+			else
+			{
+				return null;
+			}
+		}
+
+		public string GCodePath(string fileHashCode)
+		{
+			long settingsHashCode = this.Settings.GetLongHashCode();
+
+			return Path.Combine(
+				ApplicationDataStorage.Instance.GCodeOutputPath,
+				$"{fileHashCode}_{ settingsHashCode}.gcode");
 		}
 
 		public string ReplaceMacroValues(string gcodeWithMacros)
@@ -277,7 +304,6 @@ namespace MatterHackers.MatterControl
 			}
 			this.Connection.CommunicationStateChanged += CommunicationStateChanged;
 			this.Disposed += (s, e) => this.Connection.CommunicationStateChanged -= CommunicationStateChanged;
-
 
 			void Printer_SettingChanged(object s, EventArgs e)
 			{
