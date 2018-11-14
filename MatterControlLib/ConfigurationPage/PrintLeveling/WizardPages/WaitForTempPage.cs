@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			bedStartingTemp = printer.Connection.ActualBedTemperature;
 
 			var runningInterval = UiThread.SetInterval(ShowTempChangeProgress, 1);
-			this.Closed += (s, e) => runningInterval.Continue = false;
+			this.Closed += (s, e) => UiThread.ClearInterval(runningInterval);
 
 			if (bedTargetTemp > 0)
 			{

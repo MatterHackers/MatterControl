@@ -402,6 +402,8 @@ namespace MatterHackers.MatterControl
 			{
 				this.OnOpenPrintersChanged(new OpenPrintersChangedEventArgs(printer, OpenPrintersChangedEventArgs.OperationType.Remove));
 			}
+
+			printer.Dispose();
 		}
 
 

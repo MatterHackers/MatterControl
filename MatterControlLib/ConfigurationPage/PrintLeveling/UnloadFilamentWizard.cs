@@ -171,11 +171,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 								}
 							}
 
-							if (runningGCodeCommands.Continue == true
-								&& progressBar.RatioComplete == 1
+							if (progressBar.RatioComplete == 1
 								&& remainingLengthMm <= .001)
 							{
-								runningGCodeCommands.Continue = false;
+								UiThread.ClearInterval(runningGCodeCommands);
 								unloadingFilamentPage.NextButton.InvokeClick();
 							}
 						},
@@ -183,18 +182,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					},
 					BecomingInactive = () =>
 					{
-						if (runningGCodeCommands.Continue)
-						{
-							runningGCodeCommands.Continue = false;
-						}
+						UiThread.ClearInterval(runningGCodeCommands);
 					}
 				};
 				unloadingFilamentPage.Closed += (s, e) =>
 				{
-					if (runningGCodeCommands.Continue)
-					{
-						runningGCodeCommands.Continue = false;
-					}
+					UiThread.ClearInterval(runningGCodeCommands);
 				};
 
 				yield return unloadingFilamentPage;

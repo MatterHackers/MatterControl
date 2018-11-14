@@ -288,7 +288,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				graph.AddData(this.ActualTemperature);
 			}, 1);
-			this.Closed += (s, e) => runningInterval.Continue = false;
+			this.Closed += (s, e) => UiThread.ClearInterval(runningInterval);
 
 			var valueField = temperatureRow.Descendants<MHNumberEdit>().FirstOrDefault();
 			valueField.Name = "Temperature Input";

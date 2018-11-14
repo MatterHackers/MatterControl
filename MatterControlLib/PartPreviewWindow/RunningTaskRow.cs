@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 					if (this.HasBeenClosed)
 					{
-						runningInterval.Continue = false;
+						UiThread.ClearInterval(runningInterval);
 					}
 				}, .2);
 

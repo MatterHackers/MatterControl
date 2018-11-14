@@ -630,7 +630,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							break;
 					}
 				}, 1);
-			bodyRow.Closed += (s, e) => runningInterval.Continue = false;
+			bodyRow.Closed += (s, e) => UiThread.ClearInterval(runningInterval);
 
 			bodyRow.Visible = false;
 

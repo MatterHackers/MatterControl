@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl
 			timeSinceStart = Stopwatch.StartNew();
 			widgetToHighlight.AfterDraw -= ConnectToWidget;
 			var runningInterval = UiThread.SetInterval(ChangeBackgroundColor, animationDelay);
-			parent.Closed += (s, e2) => runningInterval.Continue = false;
+			parent.Closed += (s, e2) => UiThread.ClearInterval(runningInterval);
 		}
 	}
 }
