@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			: base(theme)
 		{
 			this.sceneContext = sceneContext;
-			this.PopupContent = () => ShowViewOptions(sceneContext, theme);
+			this.PopupContent = ShowViewOptions;
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
 
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private GuiWidget ShowViewOptions(BedConfig sceneContext, ThemeConfig theme)
+		private GuiWidget ShowViewOptions()
 		{
 			var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
