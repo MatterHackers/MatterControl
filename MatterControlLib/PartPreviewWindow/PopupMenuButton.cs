@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -153,6 +154,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 			set => base.BackgroundColor = value;
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			this.PopupContent?.Close();
+			base.OnClosed(e);
 		}
 
 		protected override void OnBeforePopup()

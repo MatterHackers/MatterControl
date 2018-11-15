@@ -606,6 +606,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnDraw(graphics2D);
 		}
 
+		public override void OnClosed(EventArgs e)
+		{
+			this.parentTabControl = null;
+			this.TabContent = null;
+
+			base.OnClosed(e);
+		}
+
 		public string Title
 		{
 			get => tabPill?.Text;

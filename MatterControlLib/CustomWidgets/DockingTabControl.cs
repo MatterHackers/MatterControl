@@ -120,6 +120,19 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Rebuild();
 		}
 
+		public override void OnClosed(EventArgs e)
+		{
+			// Iterate and close all held tab widgets
+			foreach (var item in allTabs)
+			{
+				item.widget.Close();
+			}
+
+			allTabs.Clear();
+
+			base.OnClosed(e);
+		}
+
 		public override void Initialize()
 		{
 			base.Initialize();
@@ -172,7 +185,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				nameWidget.widget.ClearRemovedFlag();
 			}
 
-			this.RemoveAllChildren();
+			this.CloseAllChildren();
 
 			SimpleTabs tabControl = null;
 
