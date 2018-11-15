@@ -1795,7 +1795,7 @@ namespace MatterHackers.MatterControl
 			{
 				ProfileManager.Instance.AddOpenPrinter(printerID);
 
-				var printer = new PrinterConfig(await ProfileManager.LoadProfileAsync(printerID));
+				var printer = new PrinterConfig(await ProfileManager.LoadSettingsAsync(printerID));
 
 				_activePrinters.Add(printer);
 

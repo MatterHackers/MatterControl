@@ -246,7 +246,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 					if (!File.Exists(cachePath))
 					{
 						await Task.Delay(20000);
-						await ProfileManager.LoadOemProfileAsync(publicDevice, oem, model);
+						await ProfileManager.LoadOemSettingsAsync(publicDevice, oem, model);
 
 						if (ApplicationController.Instance.ApplicationExiting)
 						{
