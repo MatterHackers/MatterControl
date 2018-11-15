@@ -403,6 +403,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseDown(mouseEvent);
 		}
 
+		public override void OnClosed(EventArgs e)
+		{
+			base.OnClosed(e);
+
+			// Clear all listeners
+			this.CloseClicked = null;
+		}
+
 		private void ConditionallyCloseTab()
 		{
 			UiThread.RunOnIdle(() =>
