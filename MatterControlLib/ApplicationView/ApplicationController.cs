@@ -1663,8 +1663,6 @@ namespace MatterHackers.MatterControl
 
 		public DragDropData DragDropData { get; set; } = new DragDropData();
 
-		public string PrintingItemName { get; set; }
-
 		public string ShortProductName => "MatterControl";
 		public string ProductName => "MatterHackers: MatterControl";
 
@@ -2054,7 +2052,7 @@ namespace MatterHackers.MatterControl
 					return;
 				}
 
-				this.PrintingItemName = printItemName;
+				printer.Connection.PrintingItemName = printItemName;
 
 				if (printer.Settings.IsValid())
 				{
