@@ -381,7 +381,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				undoButton.Enabled = undoBuffer.UndoCount > 0;
 				redoButton.Enabled = undoBuffer.RedoCount > 0;
-			};
+			}
 
 			undoBuffer.Changed += undoBuffer_Changed;
 			this.Closed += (s, e) => undoBuffer.Changed -= undoBuffer_Changed;

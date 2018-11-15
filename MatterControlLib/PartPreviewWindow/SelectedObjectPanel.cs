@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				flattenButton.Enabled = selectedItem?.CanFlatten == true;
 				removeButton.Enabled = selectedItem != null;
 				overflowButton.Enabled = selectedItem != null;
-			};
+			}
 
 			scene.SelectionChanged += scene_SelectionChanged;
 			this.Closed += (s, e) => scene.SelectionChanged -= scene_SelectionChanged;

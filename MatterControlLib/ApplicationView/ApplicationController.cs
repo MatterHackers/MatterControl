@@ -403,8 +403,6 @@ namespace MatterHackers.MatterControl
 				this.ActivePrinter = PrinterConfig.EmptyPrinter;
 			}
 
-
-			// TODO: Need to revised listeners to be multi-printer aware and process change rather than simply remove and add new printer tab
 			if (allowChangedEvent)
 			{
 				this.OnOpenPrintersChanged(new OpenPrintersChangedEventArgs(printer, OpenPrintersChangedEventArgs.OperationType.Remove));
@@ -412,7 +410,6 @@ namespace MatterHackers.MatterControl
 
 			printer.Dispose();
 		}
-
 
 		public void LaunchBrowser(string targetUri)
 		{
