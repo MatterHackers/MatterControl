@@ -270,11 +270,14 @@ namespace MatterHackers.MeshVisualizer
 
 			gCodeMeshColor = new Color(theme.PrimaryAccentColor, 35);
 
-			scene.SelectionChanged += (sender, e) =>
+			void selection_Changed (object sender, EventArgs e)
 			{
 				Invalidate();
 				lastSelectionChangedMs = UiThread.CurrentTimerMs;
-			};
+			}
+
+			scene.SelectionChanged += selection_Changed;
+			this.Closed += (s, e) => scene.SelectionChanged -= selection_Changed;
 
 			BuildVolumeColor = new ColorF(.2, .8, .3, .2).ToColor();
 

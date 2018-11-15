@@ -160,8 +160,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			_allTabs.Remove(tab);
 
-			TabBar.ActionArea.RemoveChild(tab as GuiWidget);
-			this.TabContainer.RemoveChild(tab.TabContent);
+			// Close Tab and TabContent widgets
+			tab.TabContent.Close();
+			(tab as GuiWidget)?.Close();
 
 			if (tab is ChromeTab chromeTab)
 			{
@@ -403,6 +404,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseDown(mouseEvent);
 		}
 
+		public override void OnClosed(EventArgs e)
+		{
+			base.OnClosed(e);
+
+			// Clear all listeners
+			this.CloseClicked = null;
+		}
+
 		private void ConditionallyCloseTab()
 		{
 			UiThread.RunOnIdle(() =>
@@ -430,8 +439,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					this.parentTabControl.RemoveTab(this);
 					this.CloseClicked?.Invoke(this, null);
+
+					// Must be called after CloseClicked otherwise listeners are cleared before event is invoked
+					this.parentTabControl?.RemoveTab(this);
 				}
 			});
 		}
@@ -604,6 +615,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			base.OnDraw(graphics2D);
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			this.parentTabControl = null;
+			this.TabContent = null;
+
+			base.OnClosed(e);
 		}
 
 		public string Title
