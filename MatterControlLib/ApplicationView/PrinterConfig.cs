@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl
 
 	public class PrinterConfig : IDisposable
 	{
-		MappedSetting[] replaceWithSettingsStrings = null;
+		private MappedSetting[] replaceWithSettingsStrings = null;
 
 		public event EventHandler Disposed;
 
@@ -60,6 +60,7 @@ namespace MatterHackers.MatterControl
 		{
 			this.Connection = new PrinterConnection(this);
 			var printer = this;
+
 			replaceWithSettingsStrings = new MappedSetting[]
 			{
 				// Have a mapping so that MatterSlice while always use a setting that can be set. (the user cannot set first_layer_bedTemperature in MatterSlice)
@@ -126,6 +127,7 @@ namespace MatterHackers.MatterControl
 					}
 				}
 			}
+
 			this.Connection.PrintFinished += PrintFinished;
 			this.Disposed += (s, e) => this.Connection.PrintFinished -= PrintFinished;
 
@@ -133,6 +135,7 @@ namespace MatterHackers.MatterControl
 			{
 				this.Connection.BaudRate = this.Settings.GetValue<int>(SettingsKey.baud_rate);
 			}
+
 			this.Connection.ConnectGCode = this.Settings.GetValue(SettingsKey.connect_gcode);
 			this.Connection.CancelGCode = this.Settings.GetValue(SettingsKey.cancel_gcode);
 			this.Connection.EnableNetworkPrinting = this.Settings.GetValue<bool>(SettingsKey.enable_network_printing);
@@ -479,6 +482,7 @@ namespace MatterHackers.MatterControl
 
 		public void Dispose()
 		{
+			replaceWithSettingsStrings = null;
 			Connection.Dispose();
 			Disposed?.Invoke(this, null);
 		}

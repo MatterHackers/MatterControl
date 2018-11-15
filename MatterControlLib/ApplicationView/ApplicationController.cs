@@ -397,6 +397,13 @@ namespace MatterHackers.MatterControl
 
 			_activePrinters.Remove(printer);
 
+			// Release reference
+			if (this.ActivePrinter == printer)
+			{
+				this.ActivePrinter = PrinterConfig.EmptyPrinter;
+			}
+
+
 			// TODO: Need to revised listeners to be multi-printer aware and process change rather than simply remove and add new printer tab
 			if (allowChangedEvent)
 			{
