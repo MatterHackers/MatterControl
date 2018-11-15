@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl
 		{
 			this.printerSelected = printerSelected;
 
-			InventoryTreeView.CreateOpenPrintersTree(rootPrintersNode, theme);
+			HardwareTreeView.CreateOpenPrintersTree(rootPrintersNode, theme);
 		}
 
 		protected override void OnTreeNodeDoubleClicked(TreeNode treeNode)

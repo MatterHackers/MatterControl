@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			this.AddChild(horizontalSplitter);
 
-			var treeView = new InventoryTreeView(theme)
+			var treeView = new HardwareTreeView(theme)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,

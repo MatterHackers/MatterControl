@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl
 		{
 			this.printerLoaded = printerLoaded;
 
-			InventoryTreeView.CreatePrinterProfilesTree(rootPrintersNode, theme);
+			HardwareTreeView.CreatePrinterProfilesTree(rootPrintersNode, theme);
 		}
 
 		protected override void OnTreeNodeDoubleClicked(TreeNode treeNode)

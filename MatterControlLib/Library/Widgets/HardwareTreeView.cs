@@ -42,13 +42,13 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
-	public class InventoryTreeView : TreeView
+	public class HardwareTreeView : TreeView
 	{
 		private TreeNode printersNode;
 		private FlowLayoutWidget rootColumn;
 		private EventHandler unregisterEvents;
 
-		public InventoryTreeView(ThemeConfig theme)
+		public HardwareTreeView(ThemeConfig theme)
 			: base (theme)
 		{
 			rootColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			rootColumn.AddChild(printersNode);
 
-			InventoryTreeView.CreatePrinterProfilesTree(printersNode, theme);
+			HardwareTreeView.CreatePrinterProfilesTree(printersNode, theme);
 			this.Invalidate();
 
 			// Filament
@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				string settingsName = (e as StringEventArgs)?.Data;
 				if (settingsName != null && settingsName == SettingsKey.printer_name)
 				{
-					InventoryTreeView.CreatePrinterProfilesTree(printersNode, theme);
+					HardwareTreeView.CreatePrinterProfilesTree(printersNode, theme);
 					this.Invalidate();
 				}
 			}
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// Rebuild the treeview anytime the Profiles list changes
 			ProfileManager.ProfilesListChanged.RegisterEvent((s, e) =>
 			{
-				InventoryTreeView.CreatePrinterProfilesTree(printersNode, theme);
+				HardwareTreeView.CreatePrinterProfilesTree(printersNode, theme);
 				this.Invalidate();
 			}, ref unregisterEvents);
 		}

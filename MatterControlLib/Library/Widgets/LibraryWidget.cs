@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private ThemeConfig theme;
 		private OverflowBar navBar;
 		private GuiWidget searchButton;
-		private TreeView treeView;
+		private TreeView libraryTreeView;
 
 		public LibraryWidget(MainViewWidget mainViewWidget, ThemeConfig theme)
 		{
@@ -307,15 +307,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			allControls.AddChild(horizontalSplitter);
 
-			treeView = new TreeView(theme)
+			libraryTreeView = new TreeView(theme)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
 				Margin = 5
 			};
-			treeView.AfterSelect += async (s, e) =>
+			libraryTreeView.AfterSelect += async (s, e) =>
 			{
-				if (treeView.SelectedNode is ContainerTreeNode treeNode)
+				if (libraryTreeView.SelectedNode is ContainerTreeNode treeNode)
 				{
 					if (!treeNode.ContainerAcquired)
 					{
@@ -328,7 +328,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					}
 				}
 			};
-			horizontalSplitter.Panel1.AddChild(treeView);
+			horizontalSplitter.Panel1.AddChild(libraryTreeView);
 
 			var rootColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -336,7 +336,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				VAnchor = VAnchor.Fit,
 				Margin = new BorderDouble(left: 10)
 			};
-			treeView.AddChild(rootColumn);
+			libraryTreeView.AddChild(rootColumn);
 
 			if (AppContext.IsLoading)
 			{
@@ -374,12 +374,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			var rootLibraryContainer = ApplicationController.Instance.Library.RootLibaryContainer;
 
-			foreach (var item in rootLibraryContainer.ChildContainers)
+			foreach (var libraryContainerLink in rootLibraryContainer.ChildContainers)
 			{
-				var rootNode = this.CreateTreeNode(item, rootLibraryContainer);
-				rootNode.TreeView = treeView;
+				if (libraryContainerLink.IsVisible)
+				{
+					var rootNode = this.CreateTreeNode(libraryContainerLink, rootLibraryContainer);
+					rootNode.TreeView = libraryTreeView;
 
-				rootColumn.AddChild(rootNode);
+					rootColumn.AddChild(rootNode);
+				}
 			}
 		}
 
@@ -523,10 +526,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			bool containerSupportsEdits = activeContainer is ILibraryWritableContainer;
 
-			var owningNode = treeView.SelectedNode?.Parents<ContainerTreeNode>().Where(p => p.Container == activeContainer).FirstOrDefault();
+			var owningNode = libraryTreeView.SelectedNode?.Parents<ContainerTreeNode>().Where(p => p.Container == activeContainer).FirstOrDefault();
 			if (owningNode != null)
 			{
-				treeView.SelectedNode = owningNode;
+				libraryTreeView.SelectedNode = owningNode;
 			}
 
 			searchInput.Text = activeContainer.KeywordFilter;

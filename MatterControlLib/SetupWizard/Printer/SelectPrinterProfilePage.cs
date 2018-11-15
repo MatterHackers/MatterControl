@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl
 		{
 			this.printerLoaded = printerLoaded;
 
-			InventoryTreeView.CreatePrinterProfilesTree(rootPrintersNode, theme);
+			HardwareTreeView.CreatePrinterProfilesTree(rootPrintersNode, theme);
 		}
 
 		public SelectPrinterProfilePage(string continueButtonText) : base(continueButtonText)
