@@ -515,32 +515,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return await ApplicationController.Instance.OpenPrinter(guid);
 		}
 
-		public static List<string> ThemeIndexNameMapping = new List<string>()
-		{
-			"Blue - Dark",
-			"Teal - Dark",
-			"Green - Dark",
-			"Light Blue - Dark",
-			"Orange - Dark",
-			"Purple - Dark",
-			"Red - Dark",
-			"Pink - Dark",
-			"Grey - Dark",
-			"Pink - Dark",
-
-			//Light themes
-			"Blue - Light",
-			"Teal - Light",
-			"Green - Light",
-			"Light Blue - Light",
-			"Orange - Light",
-			"Purple - Light",
-			"Red - Light",
-			"Pink - Light",
-			"Grey - Light",
-			"Pink - Light",
-		};
-
 		public async static Task<PrinterSettings> LoadOemProfileAsync(PublicDevice publicDevice, string make, string model)
 		{
 			string cacheScope = Path.Combine("public-profiles", make);
