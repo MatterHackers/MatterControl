@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using JsonPath;
@@ -151,7 +152,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.ContentPanel = editorPanel;
 			editorPanel.Padding = new BorderDouble(theme.DefaultContainerPadding, 0);
 
-			scene.SelectionChanged += (s, e) =>
+			void scene_SelectionChanged(object sender, EventArgs e)
 			{
 				if (editorPanel.Children.FirstOrDefault()?.DescendantsAndSelf<SectionWidget>().FirstOrDefault() is SectionWidget firstSectionWidget)
 				{
@@ -164,6 +165,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				removeButton.Enabled = selectedItem != null;
 				overflowButton.Enabled = selectedItem != null;
 			};
+
+			scene.SelectionChanged += scene_SelectionChanged;
+			this.Closed += (s, e) => scene.SelectionChanged -= scene_SelectionChanged;
 		}
 
 		public GuiWidget ContentPanel { get; set; }

@@ -377,11 +377,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new ToolbarSeparator(theme));
 
-			undoBuffer.Changed += (sender, e) =>
+			void undoBuffer_Changed(object sender, EventArgs e)
 			{
 				undoButton.Enabled = undoBuffer.UndoCount > 0;
 				redoButton.Enabled = undoBuffer.RedoCount > 0;
 			};
+
+			undoBuffer.Changed += undoBuffer_Changed;
+			this.Closed += (s, e) => undoBuffer.Changed -= undoBuffer_Changed;
 
 			undoButton.Enabled = undoBuffer.UndoCount > 0;
 			redoButton.Enabled = undoBuffer.RedoCount > 0;
