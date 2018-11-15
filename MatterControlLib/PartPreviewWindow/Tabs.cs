@@ -160,8 +160,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			_allTabs.Remove(tab);
 
-			TabBar.ActionArea.RemoveChild(tab as GuiWidget);
-			this.TabContainer.RemoveChild(tab.TabContent);
+			// Close Tab and TabContent widgets
+			tab.TabContent.Close();
+			(tab as GuiWidget)?.Close();
 
 			if (tab is ChromeTab chromeTab)
 			{
