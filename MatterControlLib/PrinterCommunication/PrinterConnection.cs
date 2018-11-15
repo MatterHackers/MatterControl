@@ -351,6 +351,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public bool AutoReleaseMotors { get; set; }
 
 		public bool RecoveryIsEnabled { get; set; }
+		public string LastPrintedItemName { get; private set; } = "";
+		public string PrintingItemName { get; set; } = "";
 
 		private List<(Regex Regex, string Replacement)> readLineReplacements = new List<(Regex Regex, string Replacement)>();
 
@@ -397,6 +399,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				switch (value)
 				{
 					case CommunicationStates.AttemptingToConnect:
+						PrintingItemName = "";
 #if DEBUG
 						if (serialPort == null)
 						{
@@ -409,11 +412,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						communicationPossible = true;
 						QueueLine("M115");
 						ReadPosition();
-						ApplicationController.Instance.PrintingItemName = "";
+						PrintingItemName = "";
 						break;
 
 					case CommunicationStates.ConnectionLost:
 					case CommunicationStates.Disconnected:
+						PrintingItemName = "";
 						if (communicationPossible)
 						{
 							TurnOffBedAndExtruders(TurnOff.Now);
@@ -463,9 +467,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										activePrintTask.PercentDone = 100;
 										activePrintTask.PrintComplete = true;
 										activePrintTask.Commit();
-
-										ApplicationController.Instance.PrintingItemName = "";
 									}
+
+									LastPrintedItemName = PrintingItemName;
+									PrintingItemName = "";
 
 									// Set this early as we always want our functions to know the state we are in.
 									communicationState = value;
