@@ -1016,8 +1016,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			QueueLine("M30 {0}".FormatWith(fileName.ToLower()));
 		}
 
+		/// <summary>
+		/// Disable the currently acive printer connection and job if it is being actively controled by MC
+		/// If we are observing an SD card print, do nothing.
+		/// </summary>
 		public void Disable()
 		{
+			if(this.CommunicationState == CommunicationStates.PrintingFromSd
+				|| (this.PrinterIsPaused && this.PrePauseCommunicationState == CommunicationStates.PrintingFromSd))
+			{
+				// don't turn off anything if we are prnting from sd
+				return;
+			}
+
 			if (this.IsConnected)
 			{
 				// Make sure we send this without waiting for the printer to respond. We want to try and turn off the heaters.
