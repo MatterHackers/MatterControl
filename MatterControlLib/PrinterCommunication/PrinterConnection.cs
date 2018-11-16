@@ -1494,14 +1494,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			GCodeFile.GetFirstNumberAfter("Z:", line, ref lastReportedPosition.position.Z);
 			GCodeFile.GetFirstNumberAfter("E:", line, ref lastReportedPosition.extrusion);
 
-			//if (currentDestination != positionRead)
+			currentDestination = lastReportedPosition;
+			DestinationChanged?.Invoke(this, null);
+			if (totalGCodeStream != null)
 			{
-				currentDestination = lastReportedPosition;
-				DestinationChanged?.Invoke(this, null);
-				if (totalGCodeStream != null)
-				{
-					totalGCodeStream.SetPrinterPosition(currentDestination);
-				}
+				totalGCodeStream.SetPrinterPosition(currentDestination);
 			}
 
 			waitingForPosition.Reset();
