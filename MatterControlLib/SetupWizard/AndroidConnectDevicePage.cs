@@ -39,8 +39,6 @@ namespace MatterHackers.MatterControl
 {
 	public class AndroidConnectDevicePage : DialogPage
 	{
-		private EventHandler unregisterEvents;
-
 		private TextWidget generalError;
 
 		private GuiWidget connectButton;
@@ -53,6 +51,7 @@ namespace MatterHackers.MatterControl
 
 		private FlowLayoutWidget retryButtonContainer;
 		private FlowLayoutWidget connectButtonContainer;
+		private PrinterConfig printer;
 
 		public AndroidConnectDevicePage()
 		{
@@ -69,10 +68,9 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(new TextWidget("3. Press 'Connect'.".Localize(), 0, 0, 12,textColor:theme.TextColor));
 
 			//Add inputs to main container
-			var printer = ApplicationController.Instance.ActivePrinter;
-			printer.Connection.CommunicationStateChanged += communicationStateChanged;
-			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= communicationStateChanged;
-
+			printer = ApplicationController.Instance.ActivePrinter;
+			printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
+			
 			connectButtonContainer = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch,
@@ -113,7 +111,7 @@ namespace MatterHackers.MatterControl
 			troubleshootButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				DialogWindow.ChangeToPage(
-					new SetupWizardTroubleshooting(ApplicationController.Instance.ActivePrinter));
+					new SetupWizardTroubleshooting(printer));
 			});
 
 			retryButtonContainer = new FlowLayoutWidget()
@@ -144,7 +142,7 @@ namespace MatterHackers.MatterControl
 
 		void ConnectButton_Click(object sender, EventArgs mouseEvent)
 		{
-			ApplicationController.Instance.ActivePrinter.Connection.Connect();
+			printer.Connection.Connect();
 		}
 
 		void NextButton_Click(object sender, EventArgs mouseEvent)
@@ -155,7 +153,7 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(this.DialogWindow.Close);
 		}
 
-		private void communicationStateChanged(object sender, EventArgs args)
+		private void Connection_CommunicationStateChanged(object sender, EventArgs args)
 		{
 			UiThread.RunOnIdle(() => updateControls(false));
 		}
@@ -199,7 +197,9 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosed(EventArgs e)
 		{
-			unregisterEvents?.Invoke(this, null);
+			// Unregister listeners
+			printer.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
+
 			base.OnClosed(e);
 		}
 	}

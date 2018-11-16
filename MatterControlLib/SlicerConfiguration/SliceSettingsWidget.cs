@@ -109,7 +109,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private int groupPanelCount = 0;
 		private List<(GuiWidget widget, SliceSettingData settingData)> settingsRows;
 		private TextWidget filteredItemsHeading;
-		private EventHandler unregisterEvents;
 		private Action<PopupMenu> externalExtendMenu;
 		private string scopeName;
 
@@ -179,14 +178,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					VAnchor = VAnchor.Stretch,
 				};
 				scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
-				//scrollable.ScrollArea.VAnchor = VAnchor.Fit;
 
 				var tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
 					VAnchor = VAnchor.Fit,
 					HAnchor = HAnchor.Stretch,
-					//DebugShowBounds = true,
-					//MinimumSize = new Vector2(200, 200)
 				};
 
 				scrollable.AddChild(tabContainer);
@@ -319,27 +315,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				};
 
-				void Printer_SettingChanged(object s, EventArgs e)
-				{
-					if (e is StringEventArgs stringEvent)
-					{
-						string settingsKey = stringEvent.Data;
-						if (this.allUiFields.TryGetValue(settingsKey, out UIField uifield))
-						{
-							string currentValue = settingsContext.GetValue(settingsKey);
-							if (uifield.Value != currentValue
-								|| settingsKey == "com_port")
-							{
-								uifield.SetValue(
-									currentValue,
-									userInitiated: false);
-							}
-						}
-					}
-				}
-
+				// Register listeners
 				printer.Settings.SettingChanged += Printer_SettingChanged;
-				this.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 			}
 
 			this.PerformLayout();
@@ -898,6 +875,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		List<SectionWidget> widgetsThatWereExpanded = new List<SectionWidget>();
 
+		private void Printer_SettingChanged(object s, EventArgs e)
+		{
+			if (e is StringEventArgs stringEvent)
+			{
+				string settingsKey = stringEvent.Data;
+				if (this.allUiFields.TryGetValue(settingsKey, out UIField uifield))
+				{
+					string currentValue = settingsContext.GetValue(settingsKey);
+					if (uifield.Value != currentValue
+						|| settingsKey == "com_port")
+					{
+						uifield.SetValue(
+							currentValue,
+							userInitiated: false);
+					}
+				}
+			}
+		}
+
 		private void ShowFilteredView()
 		{
 			widgetsThatWereExpanded.Clear();
@@ -922,7 +918,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void OnClosed(EventArgs e)
 		{
-			unregisterEvents?.Invoke(this, null);
+			// Unregister listeners
+			printer.Settings.SettingChanged -= Printer_SettingChanged;
+
 			base.OnClosed(e);
 		}
 

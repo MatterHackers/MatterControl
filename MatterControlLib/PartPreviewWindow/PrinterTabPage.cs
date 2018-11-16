@@ -53,7 +53,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal PrinterActionsBar printerActionsBar;
 		private DockingTabControl sideBar;
 		private SliceSettingsWidget sliceSettingsWidget;
-		private EventHandler unregisterEvents;
 
 		public PrinterTabPage(PrinterConfig printer, ThemeConfig theme, string tabTitle)
 			: base(printer, printer.Bed, theme, tabTitle)
@@ -219,12 +218,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			printer.Bed.RendererOptions.PropertyChanged += RendererOptions_PropertyChanged;
 
-			void CommunicationStateChanged(object s, EventArgs e)
-			{
-				this.SetSliderVisibility();
-			}
-			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
-			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
+			printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
 		}
 
 		private void RendererOptions_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -390,9 +384,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(EventArgs e)
 		{
-			unregisterEvents?.Invoke(null, null);
-
+			// Unregister listeners
 			sceneContext.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
+			printer.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
 			printer.ViewState.VisibilityChanged -= ProcessOptionalTabs;
 			printer.ViewState.ViewModeChanged -= ViewState_ViewModeChanged;
 			printer.Bed.RendererOptions.PropertyChanged -= RendererOptions_PropertyChanged;
@@ -465,6 +459,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			sideBar.Rebuild();
+		}
+
+		private void Connection_CommunicationStateChanged(object s, EventArgs e)
+		{
+			this.SetSliderVisibility();
 		}
 
 		public static GuiWidget PrintProgressWidget(PrinterConfig printer, ThemeConfig theme)

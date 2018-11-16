@@ -44,7 +44,6 @@ namespace MatterHackers.MatterControl.EeProm
 	{
 		private static Regex nameSanitizer = new Regex("[^_a-zA-Z0-9-]", RegexOptions.Compiled);
 
-		private EventHandler unregisterEvents;
 		protected PrinterConfig printer;
 
 		public EEPromPage(PrinterConfig printer)
@@ -52,25 +51,18 @@ namespace MatterHackers.MatterControl.EeProm
 		{
 			this.HeaderText = "EEProm Settings".Localize();
 			this.WindowSize = new VectorMath.Vector2(663, 575);
-			headerRow.Margin = this.headerRow.Margin.Clone(bottom: 0);
-
 			this.printer = printer;
 
-			// Close window if printer is disconnected
-			void CommunicationStateChanged(object s, EventArgs e)
-			{
-				if (!printer.Connection.IsConnected)
-				{
-					this.DialogWindow.CloseOnIdle();
-				}
-			}
+			headerRow.Margin = this.headerRow.Margin.Clone(bottom: 0);
+
 			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
-			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
 		}
 
 		public override void OnClosed(EventArgs e)
 		{
-			unregisterEvents?.Invoke(this, null);
+			// Unregister listeners
+			printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
+
 			base.OnClosed(e);
 		}
 
@@ -80,14 +72,20 @@ namespace MatterHackers.MatterControl.EeProm
 			string printerName = printer.Settings.GetValue(SettingsKey.printer_name).Replace(" ", "_");
 			return nameSanitizer.Replace(printerName, "");
 		}
+
+		private void CommunicationStateChanged(object s, EventArgs e)
+		{
+			if (!printer.Connection.IsConnected)
+			{
+				this.DialogWindow.CloseOnIdle();
+			}
+		}
 	}
 
 	public class RepetierEEPromPage : EEPromPage
 	{
 		private EePromRepetierStorage currentEePromSettings;
 		private FlowLayoutWidget settingsColumn;
-
-		private EventHandler unregisterEvents;
 
 		public RepetierEEPromPage(PrinterConfig printer)
 			: base(printer)
@@ -249,7 +247,6 @@ namespace MatterHackers.MatterControl.EeProm
 				currentEePromSettings.SettingAdded -= NewSettingReadFromPrinter;
 			}
 
-			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 

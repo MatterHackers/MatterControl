@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2018, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
@@ -39,7 +38,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class PowerControls : FlowLayoutWidget
 	{
-		private EventHandler unregisterEvents;
 		private PrinterConfig printer;
 		private SettingsItem settingsItem;
 
@@ -66,26 +64,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 				},
 				enforceGutter: false));
 
-			void CommunicationStateChanged(object s, EventArgs e)
-			{
-				this.Enabled = printer.Connection.IsConnected
-					&& printer.Settings.GetValue<bool>(SettingsKey.has_power_control);
-			}
-			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
-			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
-
-			void AtxPowerStateChanged(object s, EventArgs e)
-			{
-				if (settingsItem.SettingsControl is ICheckbox toggleSwitch)
-				{
-					if (toggleSwitch.Checked != printer.Connection.AtxPowerEnabled)
-					{
-						toggleSwitch.Checked = printer.Connection.AtxPowerEnabled;
-					}
-				}
-			}
-			printer.Connection.AtxPowerStateChanged += AtxPowerStateChanged;
-			this.Closed += (s, e) => printer.Connection.AtxPowerStateChanged -= AtxPowerStateChanged;
+			// Register listeners
+			printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
+			printer.Connection.AtxPowerStateChanged += Connection_AtxPowerStateChanged;
 		}
 
 		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
@@ -103,8 +84,28 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		public override void OnClosed(EventArgs e)
 		{
-			unregisterEvents?.Invoke(this, null);
+			// Unregister listeners
+			printer.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
+			printer.Connection.AtxPowerStateChanged -= Connection_AtxPowerStateChanged;
+
 			base.OnClosed(e);
+		}
+
+		private void Connection_CommunicationStateChanged(object s, EventArgs e)
+		{
+			this.Enabled = printer.Connection.IsConnected
+				&& printer.Settings.GetValue<bool>(SettingsKey.has_power_control);
+		}
+
+		private void Connection_AtxPowerStateChanged(object s, EventArgs e)
+		{
+			if (settingsItem.SettingsControl is ICheckbox toggleSwitch)
+			{
+				if (toggleSwitch.Checked != printer.Connection.AtxPowerEnabled)
+				{
+					toggleSwitch.Checked = printer.Connection.AtxPowerEnabled;
+				}
+			}
 		}
 	}
 }

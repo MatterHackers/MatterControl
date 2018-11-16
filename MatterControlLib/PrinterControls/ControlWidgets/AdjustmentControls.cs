@@ -52,13 +52,15 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private readonly double minFeedRateRatio = .25;
 		private readonly double maxFeedRateRatio = 3;
 
-		private EventHandler unregisterEvents;
+		private PrinterConfig printer;
 
 		private AdjustmentControls(PrinterConfig printer, ThemeConfig theme)
 			: base (FlowDirection.TopToBottom)
 		{
 			double sliderWidth = 300 * GuiWidget.DeviceScale;
 			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
+
+			this.printer = printer;
 
 			SettingsRow settingsRow;
 
@@ -178,25 +180,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 				settingsRow.AddChild(extrusionValue);
 			}
 
-			void Printer_SettingChanged(object s, EventArgs e)
-			{
-				var eventArgs = e as StringEventArgs;
-				if (eventArgs?.Data == SettingsKey.extrusion_ratio)
-				{
-					double extrusionRatio = printer.Settings.GetValue<double>(SettingsKey.extrusion_ratio);
-					extrusionRatioSlider.Value = extrusionRatio;
-					extrusionValue.ActuallNumberEdit.Value = Math.Round(extrusionRatio, 2);
-				}
-				else if (eventArgs?.Data == SettingsKey.feedrate_ratio)
-				{
-					double feedrateRatio = printer.Settings.GetValue<double>(SettingsKey.feedrate_ratio);
-					feedRateRatioSlider.Value = feedrateRatio;
-					feedRateValue.ActuallNumberEdit.Value = Math.Round(feedrateRatio, 2);
-				}
-			}
+			// Register listeners
 			printer.Settings.SettingChanged += Printer_SettingChanged;
-			this.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
-
 		}
 
 		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
@@ -216,8 +201,27 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		public override void OnClosed(EventArgs e)
 		{
-			unregisterEvents?.Invoke(this, null);
+			// Unregister listeners
+			printer.Settings.SettingChanged -= Printer_SettingChanged;
+
 			base.OnClosed(e);
+		}
+
+		private void Printer_SettingChanged(object s, EventArgs e)
+		{
+			var eventArgs = e as StringEventArgs;
+			if (eventArgs?.Data == SettingsKey.extrusion_ratio)
+			{
+				double extrusionRatio = printer.Settings.GetValue<double>(SettingsKey.extrusion_ratio);
+				extrusionRatioSlider.Value = extrusionRatio;
+				extrusionValue.ActuallNumberEdit.Value = Math.Round(extrusionRatio, 2);
+			}
+			else if (eventArgs?.Data == SettingsKey.feedrate_ratio)
+			{
+				double feedrateRatio = printer.Settings.GetValue<double>(SettingsKey.feedrate_ratio);
+				feedRateRatioSlider.Value = feedrateRatio;
+				feedRateValue.ActuallNumberEdit.Value = Math.Round(feedrateRatio, 2);
+			}
 		}
 	}
 }

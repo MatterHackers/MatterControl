@@ -270,15 +270,10 @@ namespace MatterHackers.MeshVisualizer
 
 			gCodeMeshColor = new Color(theme.PrimaryAccentColor, 35);
 
-			void selection_Changed (object sender, EventArgs e)
-			{
-				Invalidate();
-				lastSelectionChangedMs = UiThread.CurrentTimerMs;
-			}
-
+			// Register listeners
 			scene.SelectionChanged += selection_Changed;
-			this.Closed += (s, e) => scene.SelectionChanged -= selection_Changed;
 
+			
 			BuildVolumeColor = new ColorF(.2, .8, .3, .2).ToColor();
 
 			this.interactionLayer.DrawGlTransparentContent += Draw_GlTransparentContent;
@@ -332,6 +327,14 @@ namespace MatterHackers.MeshVisualizer
 			}
 
 			base.OnLoad(args);
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			// Unregister listeners
+			scene.SelectionChanged -= selection_Changed;
+
+			base.OnClosed(e);
 		}
 
 		public override void FindNamedChildrenRecursive(string nameToSearchFor, List<WidgetAndPosition> foundChildren, RectangleDouble touchingBounds, SearchType seachType, bool allowInvalidItems = true)
@@ -881,6 +884,12 @@ namespace MatterHackers.MeshVisualizer
 			{
 				interactionVolume.DrawGlContent(new DrawGlContentEventArgs(true, e));
 			}
+		}
+
+		void selection_Changed(object sender, EventArgs e)
+		{
+			Invalidate();
+			lastSelectionChangedMs = UiThread.CurrentTimerMs;
 		}
 
 		public enum ModelRenderStyle

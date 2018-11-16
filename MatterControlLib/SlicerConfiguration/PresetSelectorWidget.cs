@@ -50,7 +50,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private ThemeConfig theme;
 		private PrinterConfig printer;
 		private GuiWidget pullDownContainer;
-		private EventHandler unregisterEvents;
 
 		public PresetSelectorWidget(PrinterConfig printer, string label, Color accentColor, NamedSettingsLayers layerType, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -83,20 +82,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			pullDownContainer.AddChild(this.GetPulldownContainer());
 			this.AddChild(pullDownContainer);
 
+			// Register listeners
 			printer.Settings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
-
-			void Printer_SettingChanged(object s, EventArgs e)
-			{
-				if (e is StringEventArgs stringEvent
-					&& (stringEvent.Data == SettingsKey.default_material_presets
-						|| stringEvent.Data == SettingsKey.layer_name))
-				{
-					RebuildDropDownList();
-				}
-			}
-
 			printer.Settings.SettingChanged += Printer_SettingChanged;
-			this.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 		}
 
 		public FlowLayoutWidget GetPulldownContainer()
@@ -226,10 +214,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void OnClosed(EventArgs e)
 		{
+			// Unregister listeners
 			printer.Settings.MaterialPresetChanged -= ActiveSliceSettings_MaterialPresetChanged;
-			unregisterEvents?.Invoke(this, null);
+			printer.Settings.SettingChanged -= Printer_SettingChanged;
 
 			base.OnClosed(e);
+		}
+
+		private void Printer_SettingChanged(object s, EventArgs e)
+		{
+			if (e is StringEventArgs stringEvent
+				&& (stringEvent.Data == SettingsKey.default_material_presets
+					|| stringEvent.Data == SettingsKey.layer_name))
+			{
+				RebuildDropDownList();
+			}
 		}
 
 		private void ActiveSliceSettings_MaterialPresetChanged(object sender, EventArgs e)

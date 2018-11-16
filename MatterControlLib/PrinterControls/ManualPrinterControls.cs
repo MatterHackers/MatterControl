@@ -56,21 +56,19 @@ namespace MatterHackers.MatterControl
 		private GuiWidget tuningAdjustmentControlsContainer;
 		private MovementControls movementControlsContainer;
 		private GuiWidget calibrationControlsContainer;
-
 		private ThemeConfig theme;
-		public PrinterConfig Printer { get; }
+		private PrinterConfig printer;
 		private FlowLayoutWidget column;
 
 		public ManualPrinterControls(PrinterConfig printer, ThemeConfig theme)
 		{
 			this.theme = theme;
-			this.Printer = printer;
+			this.printer = printer;
 			this.ScrollArea.HAnchor |= HAnchor.Stretch;
 			this.AnchorAll();
 			this.AutoScroll = true;
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
-
 			this.Name = "ManualPrinterControls";
 
 			int headingPointSize = theme.H1PointSize;
@@ -107,14 +105,15 @@ namespace MatterHackers.MatterControl
 			// HACK: this is a hack to make the layout engine fire again for this control
 			UiThread.RunOnIdle(() => tuningAdjustmentControlsContainer.Width = tuningAdjustmentControlsContainer.Width + 1);
 
+			// Register listeners
 			printer.Connection.CommunicationStateChanged += onPrinterStatusChanged;
-			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= onPrinterStatusChanged;
-
 			printer.Connection.EnableChanged += onPrinterStatusChanged;
-			this.Closed += (s, e) => printer.Connection.EnableChanged -= onPrinterStatusChanged;
 
 			SetVisibleControls();
 		}
+
+		// Public printer member for AddPluginControls plugins
+		public PrinterConfig Printer => printer;
 
 		public GuiWidget AddPluginWidget(SectionWidget sectionWidget)
 		{
@@ -153,6 +152,15 @@ namespace MatterHackers.MatterControl
 			}
 
 			base.OnLoad(args);
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			// Unregister listeners
+			printer.Connection.CommunicationStateChanged -= onPrinterStatusChanged;
+			printer.Connection.EnableChanged -= onPrinterStatusChanged;
+
+			base.OnClosed(e);
 		}
 
 		private void onPrinterStatusChanged(object sender, EventArgs e)

@@ -36,7 +36,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class HomePrinterPage : PrinterSetupWizardPage
 	{
-		private EventHandler unregisterEvents;
 		private bool autoAdvance;
 
 		public HomePrinterPage(PrinterSetupWizard context, string headerText, string instructionsText, bool autoAdvance)
@@ -47,17 +46,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void OnClosed(EventArgs e)
 		{
-			unregisterEvents?.Invoke(this, null);
+			// Unregister listeners
+			printer.Connection.CommunicationStateChanged -= CheckHomeFinished;
+
 			base.OnClosed(e);
 		}
 
 		public override void PageIsBecomingActive()
 		{
-			// make sure we don't have anything left over
-			unregisterEvents?.Invoke(this, null);
-
 			printer.Connection.CommunicationStateChanged += CheckHomeFinished;
-			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CheckHomeFinished;
 
 			printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
 
@@ -77,9 +74,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private void CheckHomeFinished(object sender, EventArgs e)
 		{
-			if(printer.Connection.DetailedPrintingState != DetailedPrintingState.HomingAxis)
+			if (printer.Connection.DetailedPrintingState != DetailedPrintingState.HomingAxis)
 			{
-				unregisterEvents?.Invoke(this, null);
 				NextButton.Enabled = true;
 
 				if (printer.Settings.Helpers.UseZProbe())
@@ -91,7 +87,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void PageIsBecomingInactive()
 		{
-			unregisterEvents?.Invoke(this, null);
 			NextButton.Enabled = true;
 
 			base.PageIsBecomingInactive();

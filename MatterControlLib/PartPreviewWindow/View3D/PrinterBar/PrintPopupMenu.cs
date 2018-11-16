@@ -45,7 +45,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class PrintPopupMenu : PopupMenuButton
 	{
 		private PrinterConfig printer;
-		private EventHandler unregisterEvents;
 		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
 		private SettingsContext settingsContext;
 
@@ -183,33 +182,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Padding = theme.TextButtonPadding.Clone(right: 5)
 			});
 
-			void Printer_SettingChanged(object s, EventArgs e)
-			{
-				if (e is StringEventArgs stringEvent)
-				{
-					string settingsKey = stringEvent.Data;
-					if (allUiFields.TryGetValue(settingsKey, out UIField uifield))
-					{
-						string currentValue = settingsContext.GetValue(settingsKey);
-						if (uifield.Value != currentValue
-							|| settingsKey == "com_port")
-						{
-							uifield.SetValue(
-								currentValue,
-								userInitiated: false);
-						}
-					}
-				}
-			}
-
+			// Register listeners
 			printer.Settings.SettingChanged += Printer_SettingChanged;
-			this.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 		}
 
 		public override void OnClosed(EventArgs e)
 		{
-			unregisterEvents?.Invoke(this, null);
+			// Unregister listeners
+			printer.Settings.SettingChanged -= Printer_SettingChanged;
+
 			base.OnClosed(e);
+		}
+
+		private void Printer_SettingChanged(object s, EventArgs e)
+		{
+			if (e is StringEventArgs stringEvent)
+			{
+				string settingsKey = stringEvent.Data;
+				if (allUiFields.TryGetValue(settingsKey, out UIField uifield))
+				{
+					string currentValue = settingsContext.GetValue(settingsKey);
+					if (uifield.Value != currentValue
+						|| settingsKey == "com_port")
+					{
+						uifield.SetValue(
+							currentValue,
+							userInitiated: false);
+					}
+				}
+			}
 		}
 
 		private class IgnoredFlowLayout : FlowLayoutWidget, IIgnoredPopupChild

@@ -31,7 +31,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -48,6 +47,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private string waitingForBedToHeatMessage = "The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}".Localize();
 		private string waitingForBedToHeatTitle = "Waiting For Bed To Heat".Localize();
 		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
+		private RunningInterval runningInterval;
 
 		public TemperatureWidgetBed(PrinterConfig printer, ThemeConfig theme)
 			: base(printer, "150.3°", theme)
@@ -60,12 +60,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			this.PopupContent = this.GetPopupContent(ApplicationController.Instance.MenuTheme);
 
-			void BedTemperatureRead(object s, EventArgs e)
-			{
-				DisplayCurrentTemperature();
-			}
-			printer.Connection.BedTemperatureRead += BedTemperatureRead;
-			this.Closed += (s, e) => printer.Connection.BedTemperatureRead -= BedTemperatureRead;
+			// Register listeners
+			printer.Connection.BedTemperatureRead += Connection_BedTemperatureRead;
 		}
 
 		protected override int ActualTemperature => (int)printer.Connection.ActualBedTemperature;
@@ -141,11 +137,10 @@ namespace MatterHackers.MatterControl.ActionBar
 				Margin = new BorderDouble(0, 5, 0, 0),
 			};
 
-			var runningInterval = UiThread.SetInterval(() =>
+			runningInterval = UiThread.SetInterval(() =>
 			{
 				graph.AddData(this.ActualTemperature);
 			}, 1);
-			this.Closed += (s, e) => UiThread.ClearInterval(runningInterval);
 
 			var settingsRow = temperatureRow.DescendantsAndSelf<SliceSettingsRow>().FirstOrDefault();
 
@@ -200,6 +195,15 @@ namespace MatterHackers.MatterControl.ActionBar
 			base.OnDraw(graphics2D);
 		}
 
+		public override void OnClosed(EventArgs e)
+		{
+			// Unregister listeners
+			printer.Connection.BedTemperatureRead -= Connection_BedTemperatureRead;
+			UiThread.ClearInterval(runningInterval);
+
+			base.OnClosed(e);
+		}
+
 		protected override void SetTargetTemperature(double targetTemp)
 		{
 			double goalTemp = (int)(targetTemp + .5);
@@ -214,6 +218,11 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				printer.Connection.TargetBedTemperature = (int)(targetTemp + .5);
 			}
+		}
+
+		private void Connection_BedTemperatureRead(object s, EventArgs e)
+		{
+			DisplayCurrentTemperature();
 		}
 	}
 }

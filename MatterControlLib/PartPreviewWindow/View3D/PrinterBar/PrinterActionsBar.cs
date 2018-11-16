@@ -48,7 +48,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class PrinterActionsBar : OverflowBar
 	{
 		private PrinterConfig printer;
-		private EventHandler unregisterEvents;
 		private static MarlinEEPromPage marlinEEPromPage = null;
 		private static RepetierEEPromPage repetierEEPromPage = null;
 
@@ -203,15 +202,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			void ConnectionSucceeded(object s, EventArgs e)
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					PrintRecovery.CheckIfNeedToRecoverPrint(printer);
-				});
-			}
+			// Register listeners
 			printer.Connection.ConnectionSucceeded += ConnectionSucceeded;
-			this.Closed += (s, e) => printer.Connection.ConnectionSucceeded -= ConnectionSucceeded;
 		}
 
 		bool buttonIsBeingClicked;
@@ -246,8 +238,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(EventArgs e)
 		{
-			unregisterEvents?.Invoke(this, null);
+			// Unregister listeners
+			printer.Connection.ConnectionSucceeded -= ConnectionSucceeded;
+
 			base.OnClosed(e);
+		}
+
+		private void ConnectionSucceeded(object s, EventArgs e)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				PrintRecovery.CheckIfNeedToRecoverPrint(printer);
+			});
 		}
 
 		private void GeneratePrinterOverflowMenu(PopupMenu popupMenu, ThemeConfig theme)

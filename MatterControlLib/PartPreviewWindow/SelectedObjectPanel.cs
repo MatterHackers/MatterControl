@@ -75,11 +75,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Fit
 			};
 
-			var scene = sceneContext.Scene;
+			scene = sceneContext.Scene;
 
 			// put in a make permanent button
 			var icon = AggContext.StaticData.LoadIcon("noun_766157.png", 16, 16, theme.InvertIcons).SetPreMultiply();
-			var flattenButton = new IconButton(icon, theme)
+			flattenButton = new IconButton(icon, theme)
 			{
 				Margin = theme.ButtonSpacing,
 				ToolTipText = "Flatten".Localize(),
@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			toolbar.AddChild(flattenButton);
 
 			// put in a remove button
-			var removeButton = new IconButton(AggContext.StaticData.LoadIcon("remove.png", 16, 16, theme.InvertIcons), theme)
+			removeButton = new IconButton(AggContext.StaticData.LoadIcon("remove.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Margin = theme.ButtonSpacing,
 				ToolTipText = "Delete".Localize(),
@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			toolbar.AddChild(removeButton);
 
-			var overflowButton = new OverflowBar.OverflowMenuButton(theme)
+			overflowButton = new OverflowBar.OverflowMenuButton(theme)
 			{
 				Enabled = scene.SelectedItem != null,
 			};
@@ -152,27 +152,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.ContentPanel = editorPanel;
 			editorPanel.Padding = new BorderDouble(theme.DefaultContainerPadding, 0);
 
-			void scene_SelectionChanged(object sender, EventArgs e)
-			{
-				if (editorPanel.Children.FirstOrDefault()?.DescendantsAndSelf<SectionWidget>().FirstOrDefault() is SectionWidget firstSectionWidget)
-				{
-					firstSectionWidget.Margin = firstSectionWidget.Margin.Clone(top: 0);
-				}
-
-				var selectedItem = scene.SelectedItem;
-
-				flattenButton.Enabled = selectedItem?.CanFlatten == true;
-				removeButton.Enabled = selectedItem != null;
-				overflowButton.Enabled = selectedItem != null;
-			}
-
-			scene.SelectionChanged += scene_SelectionChanged;
-			this.Closed += (s, e) => scene.SelectionChanged -= scene_SelectionChanged;
+			// Register listeners
+			scene.SelectionChanged += Scene_SelectionChanged;
 		}
 
 		public GuiWidget ContentPanel { get; set; }
 
 		private JsonPathContext pathResolver = new JsonPathContext();
+		private IconButton flattenButton;
+		private IconButton removeButton;
+		private OverflowBar.OverflowMenuButton overflowButton;
+		private InteractiveScene scene;
 
 		public void SetActiveItem(IObject3D selectedItem)
 		{
@@ -370,6 +360,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				children.Remove(this.item);
 				children.Add(content);
 			});
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			// Unregister listeners
+			scene.SelectionChanged -= Scene_SelectionChanged;
+
+			base.OnClosed(e);
+		}
+
+		private void Scene_SelectionChanged(object sender, EventArgs e)
+		{
+			if (editorPanel.Children.FirstOrDefault()?.DescendantsAndSelf<SectionWidget>().FirstOrDefault() is SectionWidget firstSectionWidget)
+			{
+				firstSectionWidget.Margin = firstSectionWidget.Margin.Clone(top: 0);
+			}
+
+			var selectedItem = scene.SelectedItem;
+
+			flattenButton.Enabled = selectedItem?.CanFlatten == true;
+			removeButton.Enabled = selectedItem != null;
+			overflowButton.Enabled = selectedItem != null;
 		}
 	}
 }

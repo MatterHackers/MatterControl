@@ -61,7 +61,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private TextWidget printerComPortHelpMessage;
 		private TextWidget printerComPortError;
 
-		private EventHandler unregisterEvents;
 		protected List<SerialPortIndexRadioButton> SerialPortButtonsList = new List<SerialPortIndexRadioButton>();
 		private PrinterConfig printer;
 
@@ -112,8 +111,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			this.AddPageAction(connectButton);
 			this.AddPageAction(refreshButton);
 
-			printer.Connection.CommunicationStateChanged += onPrinterStatusChanged;
-			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= onPrinterStatusChanged;
+			// Register listeners
+			printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
 		}
 
 		protected override void OnCancel(out bool abortCancel)
@@ -124,7 +123,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		public override void OnClosed(EventArgs e)
 		{
-			unregisterEvents?.Invoke(this, null);
+			// Unregister listeners
+			printer.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
+
 			base.OnClosed(e);
 		}
 
@@ -187,7 +188,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			return container;
 		}
 
-		private void onPrinterStatusChanged(object sender, EventArgs e)
+		private void Connection_CommunicationStateChanged(object sender, EventArgs e)
 		{
 			if (printer.Connection.IsConnected)
 			{

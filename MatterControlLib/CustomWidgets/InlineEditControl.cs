@@ -81,8 +81,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			VAnchor = VAnchor.Fit;
 			HAnchor = HAnchor.Fit;
 
-			var runningInterval = UiThread.SetInterval(HideIfApplicable, .1);
-			this.Closed += (s, e) => UiThread.ClearInterval(runningInterval);
+			runningInterval = UiThread.SetInterval(HideIfApplicable, .1);
 		}
 
 		public Color TextColor { get; set; } = Color.Black;
@@ -100,6 +99,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public Func<bool> ForceHide { get; set; }
 
 		private Func<double, string> _getDisplayString = (value) => "{0:0.0}".FormatWith(value);
+		private RunningInterval runningInterval;
+
 		public Func<double, string> GetDisplayString
 		{
 			get => _getDisplayString;
@@ -185,6 +186,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 
 			base.OnMouseDown(mouseEvent);
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			// Unregister listeners
+			UiThread.ClearInterval(runningInterval);
+
+			base.OnClosed(e);
 		}
 
 		private void HideIfApplicable()

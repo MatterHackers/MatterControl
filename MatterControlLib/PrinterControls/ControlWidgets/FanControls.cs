@@ -40,18 +40,17 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class FanControls : FlowLayoutWidget
 	{
-		private EventHandler unregisterEvents;
-
 		private EditableNumberDisplay fanSpeedDisplay;
 
 		private ICheckbox toggleSwitch;
+		private PrinterConfig printer;
 
 		private FanControls(PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
 			this.HAnchor = HAnchor.Stretch;
-
+			this.printer = printer;
 
 			//Matt's test editing to add a on/off toggle switch
 			bool fanActive = printer.Connection.FanSpeed0To255 != 0;
@@ -119,22 +118,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			container.AddChild(toggleSwitch);
 			settingsRow.ActionWidget = toggleSwitch;
 
-			// CreateFanControls
-			void FanSpeedSet(object s, EventArgs e)
-			{
-				if ((int)printer.Connection.FanSpeed0To255 > 0)
-				{
-					toggleSwitch.Checked = true;
-				}
-				else
-				{
-					toggleSwitch.Checked = false;
-				}
-
-				fanSpeedDisplay.Value = printer.Connection.FanSpeed0To255 * 100 / 255;
-			}
-			printer.Connection.FanSpeedSet += FanSpeedSet;
-			this.Closed += (s, e) => printer.Connection.FanSpeedSet -= FanSpeedSet;
+			// Register listeners
+			printer.Connection.FanSpeedSet += Connection_FanSpeedSet;
 		}
 
 		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
@@ -144,8 +129,24 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		public override void OnClosed(EventArgs e)
 		{
-			unregisterEvents?.Invoke(this, null);
+			// Unregister listeners
+			printer.Connection.FanSpeedSet -= Connection_FanSpeedSet;
+
 			base.OnClosed(e);
+		}
+
+		private void Connection_FanSpeedSet(object s, EventArgs e)
+		{
+			if ((int)printer.Connection.FanSpeed0To255 > 0)
+			{
+				toggleSwitch.Checked = true;
+			}
+			else
+			{
+				toggleSwitch.Checked = false;
+			}
+
+			fanSpeedDisplay.Value = printer.Connection.FanSpeed0To255 * 100 / 255;
 		}
 	}
 }

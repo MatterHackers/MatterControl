@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using MatterHackers.Agg.Platform;
@@ -39,6 +40,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class CalibrateProbeLastPagelInstructions : PrinterSetupWizardPage
 	{
+		private bool pageWasActive = false;
 		private List<ProbePosition> autoProbePositions;
 		private List<ProbePosition> manualProbePositions;
 
@@ -80,14 +82,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
 			}
 
-			// TODO: Why not use OnClosed?
-			this.Closed += (s, e) =>
+			pageWasActive = true;
+
+			base.PageIsBecomingActive();
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			if (pageWasActive)
 			{
 				// move from this wizard to the print leveling wizard if needed
 				ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, theme);
-			};
-
-			base.PageIsBecomingActive();
+			}
 		}
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -37,12 +37,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public BedStatusWidget(PrinterConfig printer, bool smallScreen, ThemeConfig theme)
 			: base(printer, smallScreen ? "Bed".Localize() : "Bed Temperature".Localize(), theme)
 		{
-			void BedTemperatureRead(object s, EventArgs e)
-			{
-				UpdateTemperatures();
-			}
-			printer.Connection.BedTemperatureRead += BedTemperatureRead;
-			this.Closed += (s, e) => printer.Connection.BedTemperatureRead -= BedTemperatureRead;
+			// Register listeners
+			printer.Connection.BedTemperatureRead += Connection_BedTemperatureRead;
 		}
 
 		public override void UpdateTemperatures()
@@ -52,8 +48,21 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			progressBar.RatioComplete = targetValue != 0 ? actualValue / targetValue : 1;
 
-			this.actualTemp.Text = $"{actualValue:0}".PadLeft(3, (char)0x2007) + "°"; // put in padding spaces to make it at least 3 characters
-			this.targetTemp.Text = $"{targetValue:0}".PadLeft(3, (char)0x2007) + "°"; // put in padding spaces to make it at least 3 characters
+			actualTemp.Text = $"{actualValue:0}".PadLeft(3, (char)0x2007) + "°"; // put in padding spaces to make it at least 3 characters
+			targetTemp.Text = $"{targetValue:0}".PadLeft(3, (char)0x2007) + "°"; // put in padding spaces to make it at least 3 characters
+		}
+
+		private void Connection_BedTemperatureRead(object s, EventArgs e)
+		{
+			this.UpdateTemperatures();
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			// Unregister listeners
+			printer.Connection.BedTemperatureRead -= Connection_BedTemperatureRead;
+
+			base.OnClosed(e);
 		}
 	}
 }

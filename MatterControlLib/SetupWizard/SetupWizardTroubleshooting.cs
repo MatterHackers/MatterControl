@@ -24,8 +24,6 @@ namespace MatterHackers.MatterControl
 	{
 		private GuiWidget nextButton;
 
-		private EventHandler unregisterEvents;
-
 		private CriteriaRow connectToPrinterRow;
 
 		// Used in Android
@@ -52,14 +50,13 @@ namespace MatterHackers.MatterControl
 
 			this.AddPageAction(nextButton);
 
-			// Register for connection notifications
-			printer.Connection.CommunicationStateChanged += ConnectionStatusChanged;
-			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= ConnectionStatusChanged;
+			// Register listeners
+			printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
 		}
 
-		public void ConnectionStatusChanged(object test, EventArgs args)
+		public void Connection_CommunicationStateChanged(object test, EventArgs args)
 		{
-			if(printer.Connection.CommunicationState == CommunicationStates.Connected && connectToPrinterRow != null)
+			if (printer.Connection.CommunicationState == CommunicationStates.Connected && connectToPrinterRow != null)
 			{
 				connectToPrinterRow.SetSuccessful();
 				nextButton.Visible = true;
@@ -78,12 +75,14 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosed(EventArgs e)
 		{
-			if(checkForPermissionTimer != null)
+			// Unregister listeners
+			printer.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
+
+			if (checkForPermissionTimer != null)
 			{
 				checkForPermissionTimer.Dispose();
 			}
 
-			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
