@@ -1530,14 +1530,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			GCodeFile.GetFirstNumberAfter("Z:", lineToParse, ref lastReportedPosition.position.Z);
 			GCodeFile.GetFirstNumberAfter("E:", lineToParse, ref lastReportedPosition.extrusion);
 
-			//if (currentDestination != positionRead)
+			// tell the steam pipline what the actual printer position is
+			currentDestination = lastReportedPosition;
+			DestinationChanged.CallEvents(this, null);
+			if (totalGCodeStream != null)
 			{
-				currentDestination = lastReportedPosition;
-				DestinationChanged.CallEvents(this, null);
-				if (totalGCodeStream != null)
-				{
-					totalGCodeStream.SetPrinterPosition(currentDestination);
-				}
+				totalGCodeStream.SetPrinterPosition(currentDestination);
 			}
 
 			PositionRead.CallEvents(this, null);

@@ -30,12 +30,16 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using MatterControl.Printing;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class ProcessWriteRegexStream : GCodeStreamProxy
 	{
+		private PrinterMove currentMove = new PrinterMove();
+
 		private static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
 
 		private List<(Regex Regex, string Replacement)> WriteLineReplacements = new List<(Regex Regex, string Replacement)>();
@@ -75,7 +79,27 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				queueStream.Add(lines[i]);
 			}
 
-			return lines[0];
+			var lineToSend = lines[0];
+
+			if (lineToSend != null
+				&& LineIsMovement(lineToSend))
+			{
+				currentMove = GetPosition(lineToSend, currentMove);
+			}
+
+			// is it a position set?
+			if (lineToSend.StartsWith("G92"))
+			{
+				GCodeFile.GetFirstNumberAfter("X", lineToSend, ref this.currentMove.position.X);
+				GCodeFile.GetFirstNumberAfter("Y", lineToSend, ref this.currentMove.position.Y);
+				GCodeFile.GetFirstNumberAfter("Z", lineToSend, ref this.currentMove.position.Z);
+				GCodeFile.GetFirstNumberAfter("E", lineToSend, ref this.currentMove.extrusion);
+
+				// tell the steam pipline what the actual printer position is
+				this.SetPrinterPosition(this.currentMove);
+			}
+
+			return lineToSend;
 		}
 
 		public List<string> ProcessWriteRegEx(string lineToWrite)
@@ -129,6 +153,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			linesToWrite.AddRange(addedLines);
 
 			return linesToWrite;
+		}
+
+		public override void SetPrinterPosition(PrinterMove position)
+		{
+			currentMove = position;
+			internalStream.SetPrinterPosition(currentMove);
 		}
 	}
 }

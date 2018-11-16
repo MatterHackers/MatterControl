@@ -128,6 +128,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						}
 					}
 				}
+
 				return GCodeFile.Instruction(LineIndex++).Line;
 			}
 
