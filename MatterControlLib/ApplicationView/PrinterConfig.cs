@@ -107,13 +107,17 @@ namespace MatterHackers.MatterControl
 			this.Bed = new BedConfig(ApplicationController.Instance.Library.PlatingHistory, this);
 			this.ViewState = new PrinterViewState();
 
-			// Need a way to hook up all the callbacks that exist on a given connection
-			DoConnectionBinding();
-
+			// Register listeners
+			this.Connection.TemporarilyHoldingTemp += ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
+			this.Connection.ErrorReported += ApplicationController.Instance.Connection_ErrorReported;
+			this.Connection.ConnectionSucceeded += Connection_ConnectionSucceeded;
+			this.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
+			
 			this.Settings = settings;
 			this.Settings.printer = this;
 
 			this.Settings.SettingChanged += Printer_SettingChanged;
+			this.Settings.SettingChanged += Printer_SettingChanged2;
 
 			void PrintFinished(object s, EventArgs e)
 			{
@@ -202,22 +206,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			return gcodeWithMacros;
-		}
-
-		private void DoConnectionBinding()
-		{
-			// show countdown for turning off heat if required
-			this.Connection.TemporarilyHoldingTemp += ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
-
-			// hook up error reporting feedback
-			this.Connection.ErrorReported += ApplicationController.Instance.Connection_ErrorReported;
-
-			// show ui for setup if needed
-			this.Connection.ConnectionSucceeded += Connection_ConnectionSucceeded;
-
-			this.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
-
-			this.Settings.SettingChanged += Printer_SettingChanged2;
 		}
 
 		public PrinterViewState ViewState { get; }
