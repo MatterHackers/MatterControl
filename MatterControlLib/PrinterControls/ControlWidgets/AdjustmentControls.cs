@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				}
 			}
 			printer.Settings.SettingChanged += Printer_SettingChanged;
-			this.Closed -= Printer_SettingChanged;
+			this.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 
 		}
 

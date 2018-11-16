@@ -337,8 +337,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 					}
 				}
+
 				printer.Settings.SettingChanged += Printer_SettingChanged;
-				this.Closed -= Printer_SettingChanged;
+				this.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 			}
 
 			this.PerformLayout();

@@ -268,7 +268,7 @@ namespace MatterHackers.MatterControl.Library
 				// Use the listview defaults
 				if (thumbHeight < 24 && thumbWidth < 24)
 				{
-					thumbnail = ((libraryItem is ILibraryContainerLink) ? defaultFolderIconx20 : defaultItemIconx20); ;
+					thumbnail = ((libraryItem is ILibraryContainerLink) ? defaultFolderIconx20 : defaultItemIconx20);
 
 					//if (!theme.InvertIcons)
 					//{

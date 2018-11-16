@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl
 			this.PerformLayout();
 
 			printer.Settings.SettingChanged += Printer_SettingChanged;
-			this.Closed -= Printer_SettingChanged;
+			this.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 		}
 
 		internal void SetEnabledLevels(bool enableBabysteppingMode, bool enableEControls)

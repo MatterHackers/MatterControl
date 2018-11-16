@@ -30,14 +30,12 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.SettingsManagement;
 using Newtonsoft.Json;
 
@@ -267,7 +265,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			catch
 			{
-
 			}
 		}
 
@@ -280,7 +277,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			catch
 			{
-
 			}
 		}
 
@@ -302,7 +298,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return Path.Combine(UserProfilesDirectory, printer.ID + ProfileExtension);
 		}
 
-		public PrinterSettings LoadWithoutRecovery(string profileID)
+		public PrinterSettings LoadSettingsWithoutRecovery(string profileID)
 		{
 			var printerInfo = Instance[profileID];
 
@@ -325,28 +321,28 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		/// <summary>
-		/// Loads the specified PrinterProfile, performing recovery options if required
+		/// Loads the specified printer settings, performing recovery options if required
 		/// </summary>
-		/// <param name="profileID">The profile ID to load</param>
+		/// <param name="printerID">The printer ID to load</param>
 		/// <param name="useActiveInstance">Return the in memory instance if already loaded. Alternatively, reload from disk</param>
 		/// <returns></returns>
-		public static async Task<PrinterSettings> LoadProfileAsync(string profileID, bool useActiveInstance = true)
+		public static async Task<PrinterSettings> LoadSettingsAsync(string printerID, bool useActiveInstance = true)
 		{
 			// Check loaded printers for printerID and return if found
-			if (ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == profileID) is PrinterConfig activePrinter)
+			if (ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == printerID) is PrinterConfig activePrinter)
 			{
 				return activePrinter.Settings;
 			}
 
 			// Only load profiles by ID that are defined in the profiles document
-			var printerInfo = Instance[profileID];
+			var printerInfo = Instance[printerID];
 			if (printerInfo == null)
 			{
 				return null;
 			}
 
 			// Attempt to load from disk, pull from the web or fall back using recovery logic
-			PrinterSettings printerSettings = Instance.LoadWithoutRecovery(profileID);
+			PrinterSettings printerSettings = Instance.LoadSettingsWithoutRecovery(printerID);
 			if (printerSettings != null)
 			{
 				// Make sure we have the name set
@@ -478,7 +474,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return importSuccessful;
 		}
 
-		internal static async Task<PrinterConfig> CreateProfileAsync(string make, string model, string printerName)
+		internal static async Task<PrinterConfig> CreatePrinterAsync(string make, string model, string printerName)
 		{
 			string guid = Guid.NewGuid().ToString();
 
@@ -488,7 +484,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return null;
 			}
 
-			var printerSettings = await LoadOemProfileAsync(publicDevice, make, model);
+			var printerSettings = await LoadOemSettingsAsync(publicDevice, make, model);
 			if (printerSettings == null)
 			{
 				return null;
@@ -515,33 +511,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return await ApplicationController.Instance.OpenPrinter(guid);
 		}
 
-		public static List<string> ThemeIndexNameMapping = new List<string>()
-		{
-			"Blue - Dark",
-			"Teal - Dark",
-			"Green - Dark",
-			"Light Blue - Dark",
-			"Orange - Dark",
-			"Purple - Dark",
-			"Red - Dark",
-			"Pink - Dark",
-			"Grey - Dark",
-			"Pink - Dark",
-
-			//Light themes
-			"Blue - Light",
-			"Teal - Light",
-			"Green - Light",
-			"Light Blue - Light",
-			"Orange - Light",
-			"Purple - Light",
-			"Red - Light",
-			"Pink - Light",
-			"Grey - Light",
-			"Pink - Light",
-		};
-
-		public async static Task<PrinterSettings> LoadOemProfileAsync(PublicDevice publicDevice, string make, string model)
+		public async static Task<PrinterSettings> LoadOemSettingsAsync(PublicDevice publicDevice, string make, string model)
 		{
 			string cacheScope = Path.Combine("public-profiles", make);
 			string cachePath = ApplicationController.CacheablePath(cacheScope, publicDevice.CacheKey);

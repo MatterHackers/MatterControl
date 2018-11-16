@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					bool controlsValid = this.ValidateControls();
 					if (controlsValid)
 					{
-						var printer = await ProfileManager.CreateProfileAsync(activeMake, activeModel, activeName);
+						var printer = await ProfileManager.CreatePrinterAsync(activeMake, activeModel, activeName);
 						if (printer == null)
 						{
 							this.printerNameError.Text = "Error creating profile".Localize();

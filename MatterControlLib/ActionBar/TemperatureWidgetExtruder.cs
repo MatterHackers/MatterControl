@@ -295,7 +295,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			var settingsRow = temperatureRow.DescendantsAndSelf<SliceSettingsRow>().FirstOrDefault();
 
-			void SettingChanged(object s, EventArgs e)
+			void Printer_SettingChanged(object s, EventArgs e)
 			{
 				if (e is StringEventArgs stringEvent)
 				{
@@ -329,8 +329,8 @@ namespace MatterHackers.MatterControl.ActionBar
 				}
 			}
 
-			printer.Settings.SettingChanged += SettingChanged;
-			printer.Disposed -= SettingChanged;
+			printer.Settings.SettingChanged += Printer_SettingChanged;
+			printer.Disposed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 
 			container.AddChild(graph);
 

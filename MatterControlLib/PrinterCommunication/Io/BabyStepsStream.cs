@@ -52,8 +52,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					OffsetChanged();
 				}
 			}
+
 			printer.Settings.SettingChanged += Printer_SettingChanged;
-			printer.Disposed -= Printer_SettingChanged;
+			printer.Disposed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 
 			maxLengthStream = new MaxLengthStream(printer, internalStream, startingMaxLength);
 			offsetStream = new OffsetStream(maxLengthStream, printer, new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset)));

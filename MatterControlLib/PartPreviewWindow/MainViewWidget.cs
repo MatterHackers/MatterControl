@@ -404,7 +404,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 			printer.Settings.SettingChanged += Printer_SettingChanged;
-			this.Closed -= Printer_SettingChanged;
+			this.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 
 			ApplicationController.Instance.OpenPrintersChanged += OpenPrinters_Changed;
 
@@ -583,7 +583,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 				printer.Settings.SettingChanged += Printer_SettingChanged;
-				this.Closed -= Printer_SettingChanged;
+				this.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 
 				// Add printer into fixed position
 				if (tabControl.AllTabs.Any())

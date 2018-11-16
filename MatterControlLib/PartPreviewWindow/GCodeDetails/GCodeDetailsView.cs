@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 			printer.Settings.SettingChanged += Printer_SettingChanged;
-			this.Closed -= Printer_SettingChanged;
+			this.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 		}
 
 		TextWidget AddSetting(string title, string value)

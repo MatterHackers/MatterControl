@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (treeNode.Tag is PrinterInfo printerInfo)
 			{
-				ProfileManager.LoadProfileAsync(printerInfo.ID).ContinueWith(task =>
+				ProfileManager.LoadSettingsAsync(printerInfo.ID).ContinueWith(task =>
 				{
 					var settings = task.Result;
 					printerLoaded?.Invoke(new PrinterConfig(settings));
