@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl
 				if (_settings != value)
 				{
 					_settings = value;
-					this.ReloadSettings();
+					this.ReloadBedSettings();
 					this.Bed.InvalidateBedMesh();
 				}
 			}
@@ -268,7 +268,7 @@ namespace MatterHackers.MatterControl
 			ApplicationController.Instance.ReloadAll();
 		}
 
-		private void ReloadSettings()
+		private void ReloadBedSettings()
 		{
 			this.Bed.BuildHeight = this.Settings.GetValue<double>(SettingsKey.build_height);
 			this.Bed.ViewerVolume = new Vector3(this.Settings.GetValue<Vector2>(SettingsKey.bed_size), this.Bed.BuildHeight);
@@ -401,7 +401,7 @@ namespace MatterHackers.MatterControl
 					|| stringEvent.Data == SettingsKey.build_height
 					|| stringEvent.Data == SettingsKey.bed_shape)
 				{
-					this.ReloadSettings();
+					this.ReloadBedSettings();
 					this.Bed.InvalidateBedMesh();
 				}
 
