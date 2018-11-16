@@ -108,7 +108,6 @@ namespace MatterHackers.MatterControl
 			this.Settings.printer = this;
 
 			this.Settings.SettingChanged += Printer_SettingChanged;
-			this.Disposed -= Printer_SettingChanged;
 
 			void PrintFinished(object s, EventArgs e)
 			{
@@ -128,7 +127,12 @@ namespace MatterHackers.MatterControl
 			}
 
 			this.Connection.PrintFinished += PrintFinished;
-			this.Disposed += (s, e) => this.Connection.PrintFinished -= PrintFinished;
+			this.Disposed += (s, e) =>
+			{
+				// Unregister listeners
+				this.Connection.PrintFinished -= PrintFinished;
+				this.Settings.SettingChanged -= Printer_SettingChanged;
+			};
 
 			if (!string.IsNullOrEmpty(this.Settings.GetValue(SettingsKey.baud_rate)))
 			{
