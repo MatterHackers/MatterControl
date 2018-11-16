@@ -116,9 +116,7 @@ namespace MatterHackers.MatterControl
 			
 			this.Settings = settings;
 			this.Settings.printer = this;
-
 			this.Settings.SettingChanged += Printer_SettingChanged;
-			this.Settings.SettingChanged += Printer_SettingChanged2;
 
 			if (!string.IsNullOrEmpty(this.Settings.GetValue(SettingsKey.baud_rate)))
 			{
@@ -391,6 +389,13 @@ namespace MatterHackers.MatterControl
 		{
 			if (e is StringEventArgs stringEvent)
 			{
+				// Fire ReloadAll if changed setting marked with ReloadUiWhenChanged
+				if (SettingsOrganizer.SettingsData.TryGetValue(stringEvent.Data, out SliceSettingData settingsData)
+					&& settingsData.ReloadUiWhenChanged)
+				{
+					UiThread.RunOnIdle(ApplicationController.Instance.ReloadAll);
+				}
+
 				if (stringEvent.Data == SettingsKey.bed_size
 					|| stringEvent.Data == SettingsKey.print_center
 					|| stringEvent.Data == SettingsKey.build_height
@@ -449,21 +454,10 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void Printer_SettingChanged2(object s, EventArgs e)
-		{
-			if (e is StringEventArgs stringArg
-				&& SettingsOrganizer.SettingsData.TryGetValue(stringArg.Data, out SliceSettingData settingsData)
-				&& settingsData.ReloadUiWhenChanged)
-			{
-				UiThread.RunOnIdle(ApplicationController.Instance.ReloadAll);
-			}
-		}
-
 		public void Dispose()
 		{
 			// Unregister listeners
 			this.Settings.SettingChanged -= Printer_SettingChanged;
-			this.Settings.SettingChanged -= Printer_SettingChanged2;
 			this.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
 			this.Connection.ConnectionSucceeded -= Connection_ConnectionSucceeded;
 			this.Connection.PrintFinished -= Connection_PrintFinished;
