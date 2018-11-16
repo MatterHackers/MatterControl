@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// make sure we have good settings
 
 			printer.Settings.SettingChanged += Printer_SettingChanged;
-			this.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged; ;
+			this.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 
 			Printer_SettingChanged(this, null);
 

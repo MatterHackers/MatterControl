@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			printer.Settings.SettingChanged += Printer_SettingChanged;
-			printer.Disposed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged; ;
+			printer.Disposed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 
 			this.Content = totalContent;
 		}
