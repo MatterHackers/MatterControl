@@ -45,7 +45,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public static RootedObjectEventHandler ProfilesListChanged = new RootedObjectEventHandler();
 
-		public static ProfileManager Instance { get; private set; }
+		private static ProfileManager _instance = null;
+
+		public static ProfileManager Instance
+		{
+			get => _instance;
+			private set
+			{
+				_instance?.Dispose();
+				_instance = value;
+			}
+		}
 
 		public const string ProfileExtension = ".printer";
 		public const string ConfigFileExtension = ".slice";
