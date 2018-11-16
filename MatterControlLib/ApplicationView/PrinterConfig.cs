@@ -486,8 +486,10 @@ namespace MatterHackers.MatterControl
 		public void Dispose()
 		{
 			replaceWithSettingsStrings = null;
-			Connection.Dispose();
-			Disposed?.Invoke(this, null);
+
+			this.Connection.Dispose();
+			this.Disposed?.Invoke(this, null);
+			this.Disposed = null;
 		}
 	}
 }
