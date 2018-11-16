@@ -215,8 +215,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ApplicationController.Instance.NotifyPrintersTabRightElement(extensionArea);
 
-			var printer = ApplicationController.Instance.ActivePrinter;
-
 			// Store tab
 			tabControl.AddTab(
 				new ChromeTab("Store", "Store".Localize(), tabControl, new StoreTabPage(theme), theme, hasClose: false)
@@ -258,31 +256,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Padding = new BorderDouble(15, 0),
 				});
 
-			// Printer tab
-			if (printer.Settings.PrinterSelected)
-			{
-				this.CreatePrinterTab(printer, theme);
-			}
-			else
-			{
-				if (ApplicationController.Instance.Workspaces.Count == 0)
-				{
-					this.CreatePartTab().ConfigureAwait(false);
-				}
-			}
 
+			if (ApplicationController.Instance.Workspaces.Count == 0)
+			{
+				this.CreatePartTab().ConfigureAwait(false);
+			}
+			
 			string tabKey = ApplicationController.Instance.MainTabKey;
 
 			if (string.IsNullOrEmpty(tabKey))
 			{
-				if (printer.Settings.PrinterSelected)
-				{
-					tabKey = printer.Settings.GetValue(SettingsKey.printer_name);
-				}
-				else
-				{
-					tabKey = "Hardware";
-				}
+				tabKey = "Hardware";
 			}
 
 			// HACK: Restore to the first printer tab if PrinterTabSelected and tabKey not found. This allows sign in/out to remain on the printer tab across different users
@@ -650,15 +634,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Printer_SettingChanged(object s, EventArgs e)
 		{
-			if (e is StringEventArgs stringEvent
+			if (s is PrinterSettings printerSettings
+				&& e is StringEventArgs stringEvent
 				&& stringEvent.Data == SettingsKey.printer_name)
 			{
 				// Try to find a printer tab for the given printer
-
-				// If found, update its title
-				System.Diagnostics.Debugger.Break();
-				//
-				//printerTab.Title = activePrinter.Settings.GetValue(SettingsKey.printer_name);
+				var printerTab = tabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage printerPage && printerPage.printer.Settings.ID == printerSettings.ID) as ChromeTab;
+				if (printerTab != null)
+				{
+					printerTab.Title = printerSettings.GetValue(SettingsKey.printer_name);
+				}
 			}
 		}
 
