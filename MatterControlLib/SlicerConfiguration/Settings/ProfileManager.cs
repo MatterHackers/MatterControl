@@ -41,7 +41,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class ProfileManager
+	public class ProfileManager : IDisposable
 	{
 		public static RootedObjectEventHandler ProfilesListChanged = new RootedObjectEventHandler();
 
@@ -567,6 +567,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				File.WriteAllText(ProfilesDocPath, JsonConvert.SerializeObject(this, Formatting.Indented));
 			}
+		}
+
+		public void Dispose()
+		{
 		}
 	}
 }
