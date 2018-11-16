@@ -208,21 +208,16 @@ namespace MatterHackers.MatterControl
 		{
 			// show countdown for turning off heat if required
 			this.Connection.TemporarilyHoldingTemp += ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
-			this.Disposed += (s, e) => this.Connection.TemporarilyHoldingTemp -= ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
 
 			// hook up error reporting feedback
 			this.Connection.ErrorReported += ApplicationController.Instance.Connection_ErrorReported;
-			this.Disposed += (s, e) => this.Connection.ErrorReported -= ApplicationController.Instance.Connection_ErrorReported;
 
 			// show ui for setup if needed
 			this.Connection.ConnectionSucceeded += Connection_ConnectionSucceeded;
-			this.Disposed += (s, e) => this.Connection.ConnectionSucceeded -= Connection_ConnectionSucceeded;
 
 			this.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
-			this.Disposed += (s, e) => this.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
 
 			this.Settings.SettingChanged += Printer_SettingChanged2;
-			this.Disposed += (s, e) => this.Settings.SettingChanged -= Printer_SettingChanged2;
 		}
 
 		public PrinterViewState ViewState { get; }
@@ -485,8 +480,16 @@ namespace MatterHackers.MatterControl
 
 		public void Dispose()
 		{
+			// Unregister listeners
+			this.Settings.SettingChanged -= Printer_SettingChanged2;
+			this.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
+			this.Connection.ConnectionSucceeded -= Connection_ConnectionSucceeded;
+			this.Connection.TemporarilyHoldingTemp -= ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
+			this.Connection.ErrorReported -= ApplicationController.Instance.Connection_ErrorReported;
+
 			replaceWithSettingsStrings = null;
 
+			// Dispose children
 			this.Connection.Dispose();
 			this.Disposed?.Invoke(this, null);
 			this.Disposed = null;
