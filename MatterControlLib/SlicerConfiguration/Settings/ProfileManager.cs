@@ -68,6 +68,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ReloadActiveUser();
 		}
 
+		public ProfileManager()
+		{
+			// Register listeners
+			PrinterSettings.AnyPrinterSettingChanged += this.Printer_SettingsChanged;
+		}
+
 		public Task Initialize()
 		{
 			return Task.CompletedTask;
@@ -192,37 +198,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return loadedInstance;
-		}
-
-		public static void SettingsChanged(object sender, EventArgs e)
-		{
-			var printer = (sender as PrinterSettings)?.printer;
-
-			if (Instance?.OpenPrinterIDs.Any() != true
-				|| printer == null)
-			{
-				return;
-			}
-
-			var profile = Instance[printer.Settings.ID];
-			if (profile == null)
-			{
-				return;
-			}
-
-			string settingsKey = ((StringEventArgs)e).Data;
-			switch (settingsKey)
-			{
-				case SettingsKey.printer_name:
-					profile.Name = printer.Settings.GetValue(SettingsKey.printer_name);
-					Instance.Save();
-					break;
-
-				case SettingsKey.com_port:
-					profile.ComPort = printer.Settings.Helpers.ComPort();
-					Instance.Save();
-					break;
-			}
 		}
 
 		public ObservableCollection<PrinterInfo> Profiles { get; } = new ObservableCollection<PrinterInfo>();
@@ -571,6 +546,36 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ApplicationController.SyncPrinterProfiles?.Invoke("ProfileManager.Profiles_CollectionChanged()", null);
 		}
 
+		private void Printer_SettingsChanged(object sender, EventArgs e)
+		{
+			var printer = (sender as PrinterSettings)?.printer;
+
+			if (Instance?.OpenPrinterIDs.Any() != true
+				|| printer == null)
+			{
+				return;
+			}
+
+			var profile = Instance[printer.Settings.ID];
+			if (profile == null)
+			{
+				return;
+			}
+
+			string settingsKey = ((StringEventArgs)e).Data;
+			switch (settingsKey)
+			{
+				case SettingsKey.printer_name:
+					profile.Name = printer.Settings.GetValue(SettingsKey.printer_name);
+					Instance.Save();
+					break;
+
+				case SettingsKey.com_port:
+					profile.ComPort = printer.Settings.Helpers.ComPort();
+					Instance.Save();
+					break;
+			}
+		}
 		public void Save()
 		{
 			lock(writeLock)
@@ -581,6 +586,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void Dispose()
 		{
+			// Unregister listeners
+			PrinterSettings.AnyPrinterSettingChanged -= this.Printer_SettingsChanged;
 		}
 	}
 }

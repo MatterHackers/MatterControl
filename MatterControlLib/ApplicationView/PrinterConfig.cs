@@ -319,9 +319,6 @@ namespace MatterHackers.MatterControl
 				{
 					UiThread.RunOnIdle(ApplicationController.Instance.ReloadAll);
 				}
-
-				// clean up profile manager InventoryTreeView
-				ProfileManager.SettingsChanged(s, e);
 			}
 			this.Settings.SettingChanged += Printer_SettingChanged;
 			this.Disposed += (s, e) => this.Settings.SettingChanged -= Printer_SettingChanged;

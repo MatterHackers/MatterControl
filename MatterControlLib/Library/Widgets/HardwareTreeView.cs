@@ -235,7 +235,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			string settingsName = (e as StringEventArgs)?.Data;
 			if (settingsName != null && settingsName == SettingsKey.printer_name)
 			{
-				HardwareTreeView.CreatePrinterProfilesTree(printersNode, theme);
+				// Allow enough time for ProfileManager to respond and refresh its data
+				UiThread.RunOnIdle(() =>
+				{
+					HardwareTreeView.CreatePrinterProfilesTree(printersNode, theme);
+				}, .2);
+
 				this.Invalidate();
 			}
 		}
