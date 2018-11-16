@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public PrinterConnection Connection { get; private set; }
+		public PrinterConnection Connection { get; }
 
 		public string PrinterConnectionStatus
 		{
