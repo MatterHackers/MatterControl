@@ -225,18 +225,31 @@ namespace MatterHackers.MatterControl
 			string message = null;
 
 			if (!ApplicationController.Instance.ApplicationExiting
-				&& !exitDialogOpen
-				&& ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting)
+				&& !exitDialogOpen)
 			{
-				if (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState != CommunicationStates.PrintingFromSd)
+				int printingCount = 0;
+				int sdPrinting = 0;
+				foreach (var printer in ApplicationController.Instance.ActivePrinters)
+				{
+					if (printer.Connection.PrinterIsPrinting)
+					{
+						if (printer.Connection.CommunicationState == CommunicationStates.PrintingFromSd)
+						{
+							sdPrinting++;
+						}
+						printingCount++;
+					}
+				}
+
+				if (sdPrinting > 0)
+				{
+					caption = "Exit while printing".Localize();
+					message = "Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.".Localize();
+				}
+				else if (printingCount > 0)
 				{
 					caption = "Abort Print".Localize();
 					message = "Are you sure you want to abort the current print and close MatterControl?".Localize();
-				}
-				else
-				{
-					caption = "Exit while printing".Localize();
-					message = "Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.".Localize();
 				}
 			}
 #if !__ANDROID__
@@ -268,17 +281,10 @@ namespace MatterHackers.MatterControl
 								ApplicationController.Instance.ApplicationExiting = true;
 								ApplicationController.Instance.Shutdown();
 
-								// Always call PrinterConnection.Disable on exit unless PrintingFromSd
-								PrinterConnection printerConnection = ApplicationController.Instance.ActivePrinter.Connection;
-								switch (printerConnection.CommunicationState)
+								foreach (var printer in ApplicationController.Instance.ActivePrinters)
 								{
-									case CommunicationStates.PrintingFromSd:
-									case CommunicationStates.Paused when printerConnection.PrePauseCommunicationState == CommunicationStates.PrintingFromSd:
-										break;
-
-									default:
-										printerConnection.Disable();
-										break;
+									// the will shutdown any active (and non-sd) prints that are running
+									printer.Connection.Disable();
 								}
 
 								this.CloseOnIdle();
@@ -298,10 +304,12 @@ namespace MatterHackers.MatterControl
 				{
 					var application = ApplicationController.Instance;
 					// Save changes before close
-					if (application.ActivePrinter != null
-						&& application.ActivePrinter != PrinterConfig.EmptyPrinter)
+					foreach (var printer in ApplicationController.Instance.ActivePrinters)
 					{
-						await application.Tasks.Execute("Saving Print Bed".Localize() + "...", application.ActivePrinter.Bed.SaveChanges);
+						if (printer != PrinterConfig.EmptyPrinter)
+						{
+							await application.Tasks.Execute("Saving Print Bed".Localize() + "...", printer.Bed.SaveChanges);
+						}
 					}
 
 					foreach (var workspace in application.Workspaces)
@@ -321,14 +329,15 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosed(EventArgs e)
 		{
+
 			UserSettings.Instance.Fields.StartCountDurringExit = UserSettings.Instance.Fields.StartCount;
 
-			if (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState != CommunicationStates.PrintingFromSd)
+			foreach (var printer in ApplicationController.Instance.ActivePrinters)
 			{
-				ApplicationController.Instance.ActivePrinter.Connection.Disable();
+				printer.Connection.Disable();
+				//Close connection to the local datastore
+				printer.Connection.HaltConnectionThread();
 			}
-			//Close connection to the local datastore
-			ApplicationController.Instance.ActivePrinter.Connection.HaltConnectionThread();
 			ApplicationController.Instance.OnApplicationClosed();
 
 			Datastore.Instance.Exit();
