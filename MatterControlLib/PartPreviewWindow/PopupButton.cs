@@ -95,6 +95,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnClick(mouseEvent);
 		}
 
+		public override void OnClosed(EventArgs e)
+		{
+			this.PopupContent?.Close();
+			base.OnClosed(e);
+		}
+
 		public void ShowPopup()
 		{
 			if (PopupLayoutEngine == null)
