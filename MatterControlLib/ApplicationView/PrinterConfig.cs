@@ -112,37 +112,13 @@ namespace MatterHackers.MatterControl
 			this.Connection.ErrorReported += ApplicationController.Instance.Connection_ErrorReported;
 			this.Connection.ConnectionSucceeded += Connection_ConnectionSucceeded;
 			this.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
+			this.Connection.PrintFinished += Connection_PrintFinished;
 			
 			this.Settings = settings;
 			this.Settings.printer = this;
 
 			this.Settings.SettingChanged += Printer_SettingChanged;
 			this.Settings.SettingChanged += Printer_SettingChanged2;
-
-			void PrintFinished(object s, EventArgs e)
-			{
-				// clear single use setting on print completion
-				foreach (var keyValue in this.Settings.BaseLayer)
-				{
-					string currentValue = this.Settings.GetValue(keyValue.Key);
-
-					bool valueIsClear = currentValue == "0" | currentValue == "";
-
-					SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
-					if (data?.ResetAtEndOfPrint == true && !valueIsClear)
-					{
-						this.Settings.ClearValue(keyValue.Key);
-					}
-				}
-			}
-
-			this.Connection.PrintFinished += PrintFinished;
-			this.Disposed += (s, e) =>
-			{
-				// Unregister listeners
-				this.Connection.PrintFinished -= PrintFinished;
-				this.Settings.SettingChanged -= Printer_SettingChanged;
-			};
 
 			if (!string.IsNullOrEmpty(this.Settings.GetValue(SettingsKey.baud_rate)))
 			{
@@ -300,6 +276,23 @@ namespace MatterHackers.MatterControl
 			this.Bed.ViewerVolume = new Vector3(this.Settings.GetValue<Vector2>(SettingsKey.bed_size), this.Bed.BuildHeight);
 			this.Bed.BedCenter = this.Settings.GetValue<Vector2>(SettingsKey.print_center);
 			this.Bed.BedShape = this.Settings.GetValue<BedShape>(SettingsKey.bed_shape);
+		}
+
+		private void Connection_PrintFinished(object s, EventArgs e)
+		{
+			// clear single use setting on print completion
+			foreach (var keyValue in this.Settings.BaseLayer)
+			{
+				string currentValue = this.Settings.GetValue(keyValue.Key);
+
+				bool valueIsClear = currentValue == "0" | currentValue == "";
+
+				SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
+				if (data?.ResetAtEndOfPrint == true && !valueIsClear)
+				{
+					this.Settings.ClearValue(keyValue.Key);
+				}
+			}
 		}
 
 		private void Connection_CommunicationStateChanged(object s, EventArgs e)
@@ -469,9 +462,11 @@ namespace MatterHackers.MatterControl
 		public void Dispose()
 		{
 			// Unregister listeners
+			this.Settings.SettingChanged -= Printer_SettingChanged;
 			this.Settings.SettingChanged -= Printer_SettingChanged2;
 			this.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
 			this.Connection.ConnectionSucceeded -= Connection_ConnectionSucceeded;
+			this.Connection.PrintFinished -= Connection_PrintFinished;
 			this.Connection.TemporarilyHoldingTemp -= ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
 			this.Connection.ErrorReported -= ApplicationController.Instance.Connection_ErrorReported;
 
