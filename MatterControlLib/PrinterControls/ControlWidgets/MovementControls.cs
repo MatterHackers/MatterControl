@@ -271,8 +271,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				}
 			}
 			printerSettings.SettingChanged += Printer_SettingChanged;
-			this.Closed -= Printer_SettingChanged;
-
+			this.Closed += (s, e) => printerSettings.SettingChanged -= Printer_SettingChanged;
 
 			zOffsetStreamContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{

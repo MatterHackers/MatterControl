@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 
 			PrinterSettings.AnyPrinterSettingChanged += AnyPrinterSettingChanged;
-			this.Closed -= AnyPrinterSettingChanged;
+			this.Closed += (s, e) => PrinterSettings.AnyPrinterSettingChanged -= AnyPrinterSettingChanged; ;
 
 			// Rebuild the treeview anytime the Profiles list changes
 			ProfileManager.ProfilesListChanged.RegisterEvent((s, e) =>
