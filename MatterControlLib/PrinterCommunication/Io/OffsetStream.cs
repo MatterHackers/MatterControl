@@ -27,35 +27,28 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg;
-using MatterHackers.GCodeVisualizer;
 using MatterHackers.VectorMath;
-using System.Text;
-using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class OffsetStream : GCodeStreamProxy
 	{
-		Vector3 offset;
-		protected PrinterMove lastDestination = new PrinterMove();
-		public PrinterMove LastDestination { get { return lastDestination; } }
+		private PrinterMove lastDestination = new PrinterMove();
 
 		public OffsetStream(GCodeStream internalStream, PrinterConfig printer, Vector3 offset)
 			: base(printer, internalStream)
 		{
-			this.offset = offset;
+			this.Offset = offset;
 		}
 
 		public override void SetPrinterPosition(PrinterMove position)
 		{
 			lastDestination = position;
-			lastDestination.position -= offset;
+			lastDestination.position -= Offset;
 			internalStream.SetPrinterPosition(lastDestination);
 		}
 
-		public Vector3 Offset { get { return offset; } set { offset = value; } }
+		public Vector3 Offset { get; set; }
 
 		public override string ReadLine()
 		{
@@ -67,7 +60,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				PrinterMove currentMove = GetPosition(lineToSend, lastDestination);
 
 				PrinterMove moveToSend = currentMove;
-				moveToSend.position += offset;
+				moveToSend.position += Offset;
 
 				lineToSend = CreateMovementLine(moveToSend, lastDestination);
 				lastDestination = currentMove;
