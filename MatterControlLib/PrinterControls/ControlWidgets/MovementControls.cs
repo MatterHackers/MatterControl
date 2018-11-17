@@ -215,7 +215,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			return hwDestinationBar;
 		}
 
-
 		private void Connection_DestinationChanged(object s, EventArgs e)
 		{
 			reportDestinationChanged.CallEvent();

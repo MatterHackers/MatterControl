@@ -256,7 +256,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Padding = new BorderDouble(15, 0),
 				});
 
-
 			if (ApplicationController.Instance.Workspaces.Count == 0)
 			{
 				this.CreatePartTab().ConfigureAwait(false);
@@ -549,7 +548,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				printer.Settings.SettingChanged += Printer_SettingChanged;
 
 				// Unregister listener on Tab close
-				printerTab.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
+				printerTab.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
+
 				// Add printer into fixed position
 				if (tabControl.AllTabs.Any())
 				{
@@ -646,7 +646,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 		}
-
 
 		private void RenderRunningTasks(ThemeConfig theme, RunningTasksConfig tasks)
 		{

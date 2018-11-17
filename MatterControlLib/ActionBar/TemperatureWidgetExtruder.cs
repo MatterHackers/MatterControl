@@ -447,6 +447,5 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			DisplayCurrentTemperature();
 		}
-
 	}
 }

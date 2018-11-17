@@ -273,7 +273,6 @@ namespace MatterHackers.MeshVisualizer
 			// Register listeners
 			scene.SelectionChanged += selection_Changed;
 
-			
 			BuildVolumeColor = new ColorF(.2, .8, .3, .2).ToColor();
 
 			this.interactionLayer.DrawGlTransparentContent += Draw_GlTransparentContent;
