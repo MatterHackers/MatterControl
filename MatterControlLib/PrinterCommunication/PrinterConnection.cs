@@ -310,6 +310,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			WriteLineStartCallBacks.Register("M140", BedTemperatureWasWritenToPrinter);
 			WriteLineStartCallBacks.Register("M190", BedTemperatureWasWritenToPrinter);
 			WriteLineStartCallBacks.Register("T", ExtruderIndexSet);
+
+			Task.Run(() =>
+			{
+				this.OnIdle();
+				Thread.Sleep(10);
+			});
 		}
 
 		private void ExtruderIndexSet(string line)
@@ -1042,7 +1048,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				forceImmediateWrites = false;
 
 				CommunicationState = CommunicationStates.Disconnecting;
-				ReadThread.Join();
+				currentReadThreadIndex++;
 				if (serialPort != null)
 				{
 					serialPort.Close();
@@ -1241,7 +1247,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			OnEnabledChanged(eventArgs);
 		}
 
-		public void OnIdle()
+		private void OnIdle()
 		{
 			if (this.IsConnected && ReadThread.NumRunning == 0)
 			{
@@ -1584,7 +1590,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						ClearQueuedGCode();
 
 						CommunicationState = CommunicationStates.Disconnecting;
-						ReadThread.Join();
+						currentReadThreadIndex++;
 						ToggleHighLowHigh(serialPort);
 						if (serialPort != null)
 						{
@@ -1938,7 +1944,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					//connectThread.Join(JoinThreadTimeoutMs);
 
 					CommunicationState = CommunicationStates.Disconnecting;
-					ReadThread.Join();
+					currentReadThreadIndex++;
 					if (serialPort != null)
 					{
 						serialPort.Close();
@@ -2626,12 +2632,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			Disposed?.Invoke(this, null);
 		}
 
+		internal int currentReadThreadIndex = 0;
+
 		public class ReadThread
 		{
-			private static int currentReadThreadIndex = 0;
 			private int creationIndex;
 
 			private static int numRunning = 0;
+			private PrinterConnection printerConnection;
 
 			public static int NumRunning
 			{
@@ -2643,9 +2651,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			private ReadThread(PrinterConnection printerConnection)
 			{
+				this.printerConnection = printerConnection;
 				numRunning++;
-				currentReadThreadIndex++;
-				creationIndex = currentReadThreadIndex;
+				printerConnection.currentReadThreadIndex++;
+				creationIndex = printerConnection.currentReadThreadIndex;
 
 				Task.Run(() =>
 				{
@@ -2663,11 +2672,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				});
 			}
 
-			internal static void Join()
-			{
-				currentReadThreadIndex++;
-			}
-
 			internal static void Start(PrinterConnection printerConnection)
 			{
 				new ReadThread(printerConnection);
@@ -2675,7 +2679,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			internal bool IsCurrentThread()
 			{
-				return currentReadThreadIndex == creationIndex;
+				return printerConnection.currentReadThreadIndex == creationIndex;
 			}
 		}
 
