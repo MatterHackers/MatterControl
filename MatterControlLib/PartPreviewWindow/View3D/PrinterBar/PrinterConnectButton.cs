@@ -45,7 +45,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		private GuiWidget connectButton;
 		private GuiWidget disconnectButton;
 
-		private EventHandler unregisterEvents;
 		private PrinterConfig printer;
 
 		private bool listenForConnectFailed = false;
@@ -146,47 +145,21 @@ namespace MatterHackers.MatterControl.ActionBar
 				child.Margin = theme.ButtonSpacing;
 			}
 
-			void CommunicationStateChanged(object s, EventArgs e)
-			{
-				this.SetVisibleStates();
-			}
-			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
-			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
-
-			void EnableChanged(object s, EventArgs e)
-			{
-				SetVisibleStates();
-			}
-			printer.Connection.EnableChanged += EnableChanged;
-			this.Closed += (s, e) => printer.Connection.EnableChanged -= EnableChanged;
-
-			void ConnectionFailed(object s, EventArgs e)
-			{
-#if !__ANDROID__
-				// TODO: Someday this functionality should be revised to an awaitable Connect() call in the Connect button that
-				// shows troubleshooting on failed attempts, rather than hooking the failed event and trying to determine if the
-				// Connect button started the task
-				if (listenForConnectFailed
-					&& UiThread.CurrentTimerMs - connectStartMs < 25000)
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						// User initiated connect attempt failed, show port selection dialog
-						DialogWindow.Show(new SetupStepComPortOne(printer));
-					});
-				}
-#endif
-				listenForConnectFailed = false;
-			}
-			printer.Connection.ConnectionFailed += ConnectionFailed;
-			this.Closed += (s, e) => printer.Connection.ConnectionFailed -= ConnectionFailed;
+			// Register listeners
+			printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
+			printer.Connection.EnableChanged += Connection_EnableChanged;
+			printer.Connection.ConnectionFailed += Connection_Failed;
 
 			this.SetVisibleStates();
 		}
 
 		public override void OnClosed(EventArgs e)
 		{
-			unregisterEvents?.Invoke(this, null);
+			// Unregister listeners
+			printer.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
+			printer.Connection.EnableChanged -= Connection_EnableChanged;
+			printer.Connection.ConnectionFailed -= Connection_Failed;
+
 			base.OnClosed(e);
 		}
 
@@ -217,6 +190,25 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			DialogWindow.Show(
 				new SetupWizardTroubleshooting(ApplicationController.Instance.ActivePrinter));
+		}
+
+		private void Connection_Failed(object s, EventArgs e)
+		{
+#if !__ANDROID__
+			// TODO: Someday this functionality should be revised to an awaitable Connect() call in the Connect button that
+			// shows troubleshooting on failed attempts, rather than hooking the failed event and trying to determine if the
+			// Connect button started the task
+			if (listenForConnectFailed
+				&& UiThread.CurrentTimerMs - connectStartMs < 25000)
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					// User initiated connect attempt failed, show port selection dialog
+					DialogWindow.Show(new SetupStepComPortOne(printer));
+				});
+			}
+#endif
+			listenForConnectFailed = false;
 		}
 
 		private void SetChildVisible(GuiWidget visibleChild, bool enabled)
@@ -258,6 +250,16 @@ namespace MatterHackers.MatterControl.ActionBar
 					SetChildVisible(disconnectButton, true);
 					break;
 			}
+		}
+
+		private void Connection_EnableChanged(object s, EventArgs e)
+		{
+			SetVisibleStates();
+		}
+
+		private void Connection_CommunicationStateChanged(object s, EventArgs e)
+		{
+			this.SetVisibleStates();
 		}
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -41,12 +41,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			this.extruderIndex = extruderIndex;
 
-			void HotendTemperatureRead(object s, EventArgs e)
-			{
-				UpdateTemperatures();
-			}
-			printer.Connection.HotendTemperatureRead += HotendTemperatureRead;
-			this.Closed += (s, e) => printer.Connection.HotendTemperatureRead -= HotendTemperatureRead;
+			// Register listeners
+		   printer.Connection.HotendTemperatureRead += Connection_HotendTemperatureRead;
 		}
 
 		public override void UpdateTemperatures()
@@ -56,8 +52,21 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			progressBar.RatioComplete = targetValue != 0 ? actualValue / targetValue : 1;
 
-			this.actualTemp.Text = $"{actualValue:0}".PadLeft(3, (char)0x2007) + "°"; // put in padding spaces to make it at least 3 characters
-			this.targetTemp.Text = $"{targetValue:0}".PadLeft(3, (char)0x2007) + "°"; // put in padding spaces to make it at least 3 characters
+			actualTemp.Text = $"{actualValue:0}".PadLeft(3, (char)0x2007) + "°"; // put in padding spaces to make it at least 3 characters
+			targetTemp.Text = $"{targetValue:0}".PadLeft(3, (char)0x2007) + "°"; // put in padding spaces to make it at least 3 characters
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			// Unregister listeners
+			printer.Connection.HotendTemperatureRead -= Connection_HotendTemperatureRead;
+
+			base.OnClosed(e);
+		}
+
+		private void Connection_HotendTemperatureRead(object s, EventArgs e)
+		{
+			UpdateTemperatures();
 		}
 	}
 }

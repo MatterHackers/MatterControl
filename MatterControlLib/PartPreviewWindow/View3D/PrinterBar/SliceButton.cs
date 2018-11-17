@@ -40,8 +40,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private PrinterConfig printer;
 		private PrinterTabPage printerTabPage;
-		private EventHandler unregisterEvents;
-		private bool activelySlicing { get; set; }
+		private bool activelySlicing;
 
 		public SliceButton(PrinterConfig printer, PrinterTabPage printerTabPage, ThemeConfig theme)
 			: base("Slice".Localize(), theme)
@@ -53,12 +52,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.HoverColor = theme.ToolbarButtonHover;
 			this.MouseDownColor = theme.ToolbarButtonDown;
 
-			void CommunicationStateChanged(object s, EventArgs e)
-			{
-				UiThread.RunOnIdle(SetButtonStates);
-			}
-			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
-			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
+			// Register listeners
+			printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
 
 			SetButtonStates();
 		}
@@ -71,8 +66,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(EventArgs e)
 		{
-			unregisterEvents?.Invoke(this, null);
+			// Unregister listeners
+			printer.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
+
 			base.OnClosed(e);
+		}
+
+		private void Connection_CommunicationStateChanged(object s, EventArgs e)
+		{
+			UiThread.RunOnIdle(SetButtonStates);
 		}
 
 		private void SetButtonStates()

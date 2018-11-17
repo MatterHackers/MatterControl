@@ -93,6 +93,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private MainViewWidget mainViewWidget = null;
 		private PopupMenuButton bedMenuButton;
 		private ThemeConfig theme;
+		private UndoBuffer undoBuffer;
+		private IconButton undoButton;
+		private IconButton redoButton;
 
 		internal void NotifyResetView()
 		{
@@ -283,6 +286,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			: base(theme)
 		{
 			this.theme = theme;
+			this.undoBuffer = undoBuffer;
 			this.ActionArea.Click += (s, e) =>
 			{
 				view3DWidget.InteractionLayer.Focus();
@@ -317,7 +321,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new ToolbarSeparator(theme));
 
-			var undoButton = new IconButton(AggContext.StaticData.LoadIcon("Undo_grey_16x.png", 16, 16, theme.InvertIcons), theme)
+			undoButton = new IconButton(AggContext.StaticData.LoadIcon("Undo_grey_16x.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "3D View Undo",
 				ToolTipText = "Undo",
@@ -339,7 +343,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.AddChild(undoButton);
 
-			var redoButton = new IconButton(AggContext.StaticData.LoadIcon("Redo_grey_16x.png", 16, 16, theme.InvertIcons), theme)
+			redoButton = new IconButton(AggContext.StaticData.LoadIcon("Redo_grey_16x.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "3D View Redo",
 				Margin = theme.ButtonSpacing,
@@ -376,15 +380,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			this.AddChild(new ToolbarSeparator(theme));
-
-			void undoBuffer_Changed(object sender, EventArgs e)
-			{
-				undoButton.Enabled = undoBuffer.UndoCount > 0;
-				redoButton.Enabled = undoBuffer.RedoCount > 0;
-			}
-
-			undoBuffer.Changed += undoBuffer_Changed;
-			this.Closed += (s, e) => undoBuffer.Changed -= undoBuffer_Changed;
 
 			undoButton.Enabled = undoBuffer.UndoCount > 0;
 			redoButton.Enabled = undoBuffer.RedoCount > 0;
@@ -495,10 +490,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(button);
 			}
 
+			// Register listeners
+			undoBuffer.Changed += UndoBuffer_Changed;
 			sceneContext.Scene.SelectionChanged += Scene_SelectionChanged;
 
 			// Run on load
 			Scene_SelectionChanged(null, null);
+		}
+
+		private void UndoBuffer_Changed(object sender, EventArgs e)
+		{
+			undoButton.Enabled = undoBuffer.UndoCount > 0;
+			redoButton.Enabled = undoBuffer.RedoCount > 0;
 		}
 
 		private IconButton CreateOpenButton(ThemeConfig theme)
@@ -852,7 +855,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(EventArgs e)
 		{
+			// Unregister listeners
+			undoBuffer.Changed -= UndoBuffer_Changed;
 			sceneContext.Scene.SelectionChanged -= Scene_SelectionChanged;
+
 			base.OnClosed(e);
 		}
 	}

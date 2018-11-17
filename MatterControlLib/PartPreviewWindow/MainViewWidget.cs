@@ -47,7 +47,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class MainViewWidget : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
-		private ChromeTab printerTab = null;
 		private ChromeTabs tabControl;
 
 		private int partCount = 0;
@@ -55,6 +54,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Toolbar statusBar;
 		private FlowLayoutWidget tasksContainer;
 		private GuiWidget stretchStatusPanel;
+		private LinkLabel seeWhatsNewButton;
+		private LinkLabel updateAvailableButton;
 
 		public MainViewWidget(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -120,7 +121,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabControl.TabBar.Padding = theme.TabbarPadding.Clone(top: theme.TabbarPadding.Top * 2, bottom: 0);
 
 			// add in a what's new button
-			var seeWhatsNewButton = new LinkLabel("What's New...".Localize(), theme)
+			seeWhatsNewButton = new LinkLabel("What's New...".Localize(), theme)
 			{
 				Name = "What's New Link",
 				ToolTipText = "See what's new in this version of MatterControl".Localize(),
@@ -137,7 +138,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabControl.TabBar.ActionArea.AddChild(seeWhatsNewButton);
 
 			// add in the update available button
-			var updateAvailableButton = new LinkLabel("Update Available".Localize(), theme)
+			updateAvailableButton = new LinkLabel("Update Available".Localize(), theme)
 			{
 				Visible = false,
 				Name = "Update Available Link",
@@ -146,29 +147,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = new BorderDouble(10, 0)
 			};
 
-			// make the function inline so we don't have to create members for the buttons
-			EventHandler<StringEventArgs> SetLinkButtonsVisibility = (s, e) =>
-			{
-				if (UserSettings.Instance.HasLookedAtWhatsNew())
-				{
-					// hide it
-					seeWhatsNewButton.Visible = false;
-				}
-
-				if (UpdateControlData.Instance.UpdateStatus == UpdateControlData.UpdateStatusStates.UpdateAvailable)
-				{
-					updateAvailableButton.Visible = true;
-					// if we are going to show the update link hide the whats new link no matter what
-					seeWhatsNewButton.Visible = false;
-				}
-				else
-				{
-					updateAvailableButton.Visible = false;
-				}
-			};
-
+			// Register listeners
 			UserSettings.Instance.SettingChanged += SetLinkButtonsVisibility;
-			this.Closed += (s, e) => UserSettings.Instance.SettingChanged -= SetLinkButtonsVisibility;
 
 			RunningInterval showUpdateInterval = null;
 			updateAvailableButton.VisibleChanged += (s, e) =>
@@ -235,8 +215,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ApplicationController.Instance.NotifyPrintersTabRightElement(extensionArea);
 
-			var printer = ApplicationController.Instance.ActivePrinter;
-
 			// Store tab
 			tabControl.AddTab(
 				new ChromeTab("Store", "Store".Localize(), tabControl, new StoreTabPage(theme), theme, hasClose: false)
@@ -278,31 +256,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Padding = new BorderDouble(15, 0),
 				});
 
-			// Printer tab
-			if (printer.Settings.PrinterSelected)
+			if (ApplicationController.Instance.Workspaces.Count == 0)
 			{
-				this.CreatePrinterTab(printer, theme);
+				this.CreatePartTab().ConfigureAwait(false);
 			}
-			else
-			{
-				if (ApplicationController.Instance.Workspaces.Count == 0)
-				{
-					this.CreatePartTab().ConfigureAwait(false);
-				}
-			}
-
+			
 			string tabKey = ApplicationController.Instance.MainTabKey;
 
 			if (string.IsNullOrEmpty(tabKey))
 			{
-				if (printer.Settings.PrinterSelected)
-				{
-					tabKey = printer.Settings.GetValue(SettingsKey.printer_name);
-				}
-				else
-				{
-					tabKey = "Hardware";
-				}
+				tabKey = "Hardware";
 			}
 
 			// HACK: Restore to the first printer tab if PrinterTabSelected and tabKey not found. This allows sign in/out to remain on the printer tab across different users
@@ -387,28 +350,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.RenderRunningTasks(theme, tasks);
 
+			// Register listeners
+			PrinterSettings.AnyPrinterSettingChanged += Printer_SettingChanged;
+			ApplicationController.Instance.OpenPrintersChanged += OpenPrinters_Changed;
+
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent((s, e) =>
 			{
 				SetLinkButtonsVisibility(s, new StringEventArgs("Unknown"));
 			}, ref unregisterEvents);
-
-			void Printer_SettingChanged(object s, EventArgs e)
-			{
-				var activePrinter = ApplicationController.Instance.ActivePrinter;
-
-				if (e is StringEventArgs stringEvent
-					&& stringEvent.Data == SettingsKey.printer_name
-					&& printerTab != null)
-				{
-					printerTab.Text = activePrinter.Settings.GetValue(SettingsKey.printer_name);
-				}
-			}
-			printer.Settings.SettingChanged += Printer_SettingChanged;
-			this.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
-
-			ApplicationController.Instance.OpenPrintersChanged += OpenPrinters_Changed;
-
+			
 			ApplicationController.Instance.MainView = this;
+		}
+
+		private void SetLinkButtonsVisibility (object s, StringEventArgs e)
+		{
+			if (UserSettings.Instance.HasLookedAtWhatsNew())
+			{
+				// hide it
+				seeWhatsNewButton.Visible = false;
+			}
+
+			if (UpdateControlData.Instance.UpdateStatus == UpdateControlData.UpdateStatusStates.UpdateAvailable)
+			{
+				updateAvailableButton.Visible = true;
+				// if we are going to show the update link hide the whats new link no matter what
+				seeWhatsNewButton.Visible = false;
+			}
+			else
+			{
+				updateAvailableButton.Visible = false;
+			}
 		}
 
 		private void OpenPrinters_Changed(object sender, OpenPrintersChangedEventArgs e)
@@ -557,7 +528,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					tabControl.RemoveTab(tab1);
 				}
 
-				printerTab = new ChromeTab(
+				var printerTab = new ChromeTab(
 					printer.Settings.GetValue(SettingsKey.printer_name),
 					printer.Settings.GetValue(SettingsKey.printer_name),
 					tabControl,
@@ -574,16 +545,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					ApplicationController.Instance.ClosePrinter(printer);
 				};
 
-				void Printer_SettingChanged(object s, EventArgs e)
-				{
-					string settingsName = (e as StringEventArgs)?.Data;
-					if (settingsName != null && settingsName == SettingsKey.printer_name)
-					{
-						printerTab.Title = printer.Settings.GetValue(SettingsKey.printer_name);
-					}
-				}
 				printer.Settings.SettingChanged += Printer_SettingChanged;
-				this.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
+
+				// Unregister listener on Tab close
+				printerTab.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 
 				// Add printer into fixed position
 				if (tabControl.AllTabs.Any())
@@ -597,7 +562,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				return printerTab;
 			}
-			else if (printerTab != null)
+			else if (tab1 != null)
 			{
 				tabControl.ActiveTab = tab1;
 				return tab1 as ChromeTab;
@@ -659,8 +624,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(EventArgs e)
 		{
+			// Unregister listeners
+			PrinterSettings.AnyPrinterSettingChanged -= Printer_SettingChanged;
+			UserSettings.Instance.SettingChanged -= SetLinkButtonsVisibility;
+
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
+		}
+
+		private void Printer_SettingChanged(object s, EventArgs e)
+		{
+			if (s is PrinterSettings printerSettings
+				&& e is StringEventArgs stringEvent
+				&& stringEvent.Data == SettingsKey.printer_name)
+			{
+				// Try to find a printer tab for the given printer
+				var printerTab = tabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage printerPage && printerPage.printer.Settings.ID == printerSettings.ID) as ChromeTab;
+				if (printerTab != null)
+				{
+					printerTab.Title = printerSettings.GetValue(SettingsKey.printer_name);
+				}
+			}
 		}
 
 		private void RenderRunningTasks(ThemeConfig theme, RunningTasksConfig tasks)

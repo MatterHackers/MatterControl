@@ -56,6 +56,12 @@ namespace MatterHackers.MatterControl
 
 		public EngineMappingsMatterSlice EngineMappingsMatterSlice { get; }
 
+		// heating status
+		private bool waitingForBedHeat = false;
+		private bool waitingForExtruderHeat = false;
+		private double heatDistance = 0;
+		private double heatStart = 0;
+
 		private PrinterConfig()
 		{
 			this.Connection = new PrinterConnection(this);
@@ -101,38 +107,16 @@ namespace MatterHackers.MatterControl
 			this.Bed = new BedConfig(ApplicationController.Instance.Library.PlatingHistory, this);
 			this.ViewState = new PrinterViewState();
 
-			// Need a way to hook up all the callbacks that exist on a given connection
-			DoConnectionBinding();
-
+			// Register listeners
+			this.Connection.TemporarilyHoldingTemp += ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
+			this.Connection.ErrorReported += ApplicationController.Instance.Connection_ErrorReported;
+			this.Connection.ConnectionSucceeded += Connection_ConnectionSucceeded;
+			this.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
+			this.Connection.PrintFinished += Connection_PrintFinished;
+			
 			this.Settings = settings;
 			this.Settings.printer = this;
-
 			this.Settings.SettingChanged += Printer_SettingChanged;
-
-			void PrintFinished(object s, EventArgs e)
-			{
-				// clear single use setting on print completion
-				foreach (var keyValue in this.Settings.BaseLayer)
-				{
-					string currentValue = this.Settings.GetValue(keyValue.Key);
-
-					bool valueIsClear = currentValue == "0" | currentValue == "";
-
-					SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
-					if (data?.ResetAtEndOfPrint == true && !valueIsClear)
-					{
-						this.Settings.ClearValue(keyValue.Key);
-					}
-				}
-			}
-
-			this.Connection.PrintFinished += PrintFinished;
-			this.Disposed += (s, e) =>
-			{
-				// Unregister listeners
-				this.Connection.PrintFinished -= PrintFinished;
-				this.Settings.SettingChanged -= Printer_SettingChanged;
-			};
 
 			if (!string.IsNullOrEmpty(this.Settings.GetValue(SettingsKey.baud_rate)))
 			{
@@ -198,135 +182,6 @@ namespace MatterHackers.MatterControl
 			return gcodeWithMacros;
 		}
 
-		private void DoConnectionBinding()
-		{
-			// show countdown for turning off heat if required
-			this.Connection.TemporarilyHoldingTemp += ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
-			this.Disposed += (s, e) => this.Connection.TemporarilyHoldingTemp -= ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
-
-			// hook up error reporting feedback
-			this.Connection.ErrorReported += ApplicationController.Instance.Connection_ErrorReported;
-			this.Disposed += (s, e) => this.Connection.ErrorReported -= ApplicationController.Instance.Connection_ErrorReported;
-
-			// show ui for setup if needed
-			void ConnectionSucceeded(object s, EventArgs e)
-			{
-				if (s is PrinterConfig printer)
-				{
-					ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, ApplicationController.Instance.Theme);
-				}
-			}
-			this.Connection.ConnectionSucceeded += ConnectionSucceeded;
-			this.Disposed += (s, e) => this.Connection.ConnectionSucceeded -= ConnectionSucceeded;
-
-			// show heating status messages
-			bool waitingForBedHeat = false;
-			bool waitingForExtruderHeat = false;
-			double heatDistance = 0;
-			double heatStart = 0;
-
-			void CommunicationStateChanged(object s, EventArgs e)
-			{
-				var printerConnection = this.Connection;
-
-				if (printerConnection.PrinterIsPrinting || printerConnection.PrinterIsPaused)
-				{
-					switch (printerConnection.DetailedPrintingState)
-					{
-						case DetailedPrintingState.HeatingBed:
-							ApplicationController.Instance.Tasks.Execute(
-								"Heating Bed".Localize(),
-								(reporter, cancellationToken) =>
-								{
-									waitingForBedHeat = true;
-									waitingForExtruderHeat = false;
-
-									var progressStatus = new ProgressStatus();
-									heatStart = printerConnection.ActualBedTemperature;
-									heatDistance = Math.Abs(printerConnection.TargetBedTemperature - heatStart);
-
-									while (heatDistance > 0 && waitingForBedHeat)
-									{
-										var remainingDistance = Math.Abs(printerConnection.TargetBedTemperature - printerConnection.ActualBedTemperature);
-										progressStatus.Status = $"Heating Bed ({printerConnection.ActualBedTemperature:0}/{printerConnection.TargetBedTemperature:0})";
-										progressStatus.Progress0To1 = (heatDistance - remainingDistance) / heatDistance;
-										reporter.Report(progressStatus);
-										Thread.Sleep(10);
-									}
-
-									return Task.CompletedTask;
-								},
-								new RunningTaskOptions()
-								{
-									ReadOnlyReporting = true
-								});
-							break;
-
-						case DetailedPrintingState.HeatingExtruder:
-							ApplicationController.Instance.Tasks.Execute(
-								"Heating Extruder".Localize(),
-								(reporter, cancellationToken) =>
-								{
-									waitingForBedHeat = false;
-									waitingForExtruderHeat = true;
-
-									var progressStatus = new ProgressStatus();
-
-									heatStart = printerConnection.GetActualHotendTemperature(0);
-									heatDistance = Math.Abs(printerConnection.GetTargetHotendTemperature(0) - heatStart);
-
-									while (heatDistance > 0 && waitingForExtruderHeat)
-									{
-										var currentDistance = Math.Abs(printerConnection.GetTargetHotendTemperature(0) - printerConnection.GetActualHotendTemperature(0));
-										progressStatus.Progress0To1 = (heatDistance - currentDistance) / heatDistance;
-										progressStatus.Status = $"Heating Extruder ({printerConnection.GetActualHotendTemperature(0):0}/{printerConnection.GetTargetHotendTemperature(0):0})";
-										reporter.Report(progressStatus);
-										Thread.Sleep(1000);
-									}
-
-									return Task.CompletedTask;
-								},
-								new RunningTaskOptions()
-								{
-									ReadOnlyReporting = true
-								});
-							break;
-
-						case DetailedPrintingState.HomingAxis:
-						case DetailedPrintingState.Printing:
-						default:
-							// clear any existing waiting states
-							waitingForBedHeat = false;
-							waitingForExtruderHeat = false;
-							break;
-					}
-				}
-				else
-				{
-					// turn of any running temp feedback tasks
-					waitingForBedHeat = false;
-					waitingForExtruderHeat = false;
-				}
-			}
-			this.Connection.CommunicationStateChanged += CommunicationStateChanged;
-			this.Disposed += (s, e) => this.Connection.CommunicationStateChanged -= CommunicationStateChanged;
-
-			void Printer_SettingChanged(object s, EventArgs e)
-			{
-				if (e is StringEventArgs stringArg
-					&& SettingsOrganizer.SettingsData.TryGetValue(stringArg.Data, out SliceSettingData settingsData)
-					&& settingsData.ReloadUiWhenChanged)
-				{
-					UiThread.RunOnIdle(ApplicationController.Instance.ReloadAll);
-				}
-
-				// clean up profile manager InventoryTreeView
-				ProfileManager.SettingsChanged(s, e);
-			}
-			this.Settings.SettingChanged += Printer_SettingChanged;
-			this.Disposed += (s, e) => this.Settings.SettingChanged -= Printer_SettingChanged;
-		}
-
 		public PrinterViewState ViewState { get; }
 
 		private PrinterSettings _settings = PrinterSettings.Empty;
@@ -338,13 +193,13 @@ namespace MatterHackers.MatterControl
 				if (_settings != value)
 				{
 					_settings = value;
-					this.ReloadSettings();
+					this.ReloadBedSettings();
 					this.Bed.InvalidateBedMesh();
 				}
 			}
 		}
 
-		public PrinterConnection Connection { get; private set; }
+		public PrinterConnection Connection { get; }
 
 		public string PrinterConnectionStatus
 		{
@@ -413,7 +268,7 @@ namespace MatterHackers.MatterControl
 			ApplicationController.Instance.ReloadAll();
 		}
 
-		private void ReloadSettings()
+		private void ReloadBedSettings()
 		{
 			this.Bed.BuildHeight = this.Settings.GetValue<double>(SettingsKey.build_height);
 			this.Bed.ViewerVolume = new Vector3(this.Settings.GetValue<Vector2>(SettingsKey.bed_size), this.Bed.BuildHeight);
@@ -421,16 +276,132 @@ namespace MatterHackers.MatterControl
 			this.Bed.BedShape = this.Settings.GetValue<BedShape>(SettingsKey.bed_shape);
 		}
 
+		private void Connection_PrintFinished(object s, EventArgs e)
+		{
+			// clear single use setting on print completion
+			foreach (var keyValue in this.Settings.BaseLayer)
+			{
+				string currentValue = this.Settings.GetValue(keyValue.Key);
+
+				bool valueIsClear = currentValue == "0" | currentValue == "";
+
+				SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
+				if (data?.ResetAtEndOfPrint == true && !valueIsClear)
+				{
+					this.Settings.ClearValue(keyValue.Key);
+				}
+			}
+		}
+
+		private void Connection_CommunicationStateChanged(object s, EventArgs e)
+		{
+			var printerConnection = this.Connection;
+
+			if (printerConnection.PrinterIsPrinting || printerConnection.PrinterIsPaused)
+			{
+				switch (printerConnection.DetailedPrintingState)
+				{
+					case DetailedPrintingState.HeatingBed:
+						ApplicationController.Instance.Tasks.Execute(
+							"Heating Bed".Localize(),
+							(reporter, cancellationToken) =>
+							{
+								waitingForBedHeat = true;
+								waitingForExtruderHeat = false;
+
+								var progressStatus = new ProgressStatus();
+								heatStart = printerConnection.ActualBedTemperature;
+								heatDistance = Math.Abs(printerConnection.TargetBedTemperature - heatStart);
+
+								while (heatDistance > 0 && waitingForBedHeat)
+								{
+									var remainingDistance = Math.Abs(printerConnection.TargetBedTemperature - printerConnection.ActualBedTemperature);
+									progressStatus.Status = $"Heating Bed ({printerConnection.ActualBedTemperature:0}/{printerConnection.TargetBedTemperature:0})";
+									progressStatus.Progress0To1 = (heatDistance - remainingDistance) / heatDistance;
+									reporter.Report(progressStatus);
+									Thread.Sleep(10);
+								}
+
+								return Task.CompletedTask;
+							},
+							new RunningTaskOptions()
+							{
+								ReadOnlyReporting = true
+							});
+						break;
+
+					case DetailedPrintingState.HeatingExtruder:
+						ApplicationController.Instance.Tasks.Execute(
+							"Heating Extruder".Localize(),
+							(reporter, cancellationToken) =>
+							{
+								waitingForBedHeat = false;
+								waitingForExtruderHeat = true;
+
+								var progressStatus = new ProgressStatus();
+
+								heatStart = printerConnection.GetActualHotendTemperature(0);
+								heatDistance = Math.Abs(printerConnection.GetTargetHotendTemperature(0) - heatStart);
+
+								while (heatDistance > 0 && waitingForExtruderHeat)
+								{
+									var currentDistance = Math.Abs(printerConnection.GetTargetHotendTemperature(0) - printerConnection.GetActualHotendTemperature(0));
+									progressStatus.Progress0To1 = (heatDistance - currentDistance) / heatDistance;
+									progressStatus.Status = $"Heating Extruder ({printerConnection.GetActualHotendTemperature(0):0}/{printerConnection.GetTargetHotendTemperature(0):0})";
+									reporter.Report(progressStatus);
+									Thread.Sleep(1000);
+								}
+
+								return Task.CompletedTask;
+							},
+							new RunningTaskOptions()
+							{
+								ReadOnlyReporting = true
+							});
+						break;
+
+					case DetailedPrintingState.HomingAxis:
+					case DetailedPrintingState.Printing:
+					default:
+						// clear any existing waiting states
+						waitingForBedHeat = false;
+						waitingForExtruderHeat = false;
+						break;
+				}
+			}
+			else
+			{
+				// turn of any running temp feedback tasks
+				waitingForBedHeat = false;
+				waitingForExtruderHeat = false;
+			}
+		}
+
+		private void Connection_ConnectionSucceeded(object sender, EventArgs e)
+		{
+			if (sender is PrinterConfig printer)
+			{
+				ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, ApplicationController.Instance.Theme);
+			}
+		}
+
 		private void Printer_SettingChanged(object sender, EventArgs e)
 		{
 			if (e is StringEventArgs stringEvent)
 			{
+				// Fire ReloadAll if changed setting marked with ReloadUiWhenChanged
+				if (SettingsOrganizer.SettingsData.TryGetValue(stringEvent.Data, out SliceSettingData settingsData)
+					&& settingsData.ReloadUiWhenChanged)
+				{
+					UiThread.RunOnIdle(ApplicationController.Instance.ReloadAll);
+				}
+
 				if (stringEvent.Data == SettingsKey.bed_size
 					|| stringEvent.Data == SettingsKey.print_center
 					|| stringEvent.Data == SettingsKey.build_height
 					|| stringEvent.Data == SettingsKey.bed_shape)
 				{
-					this.ReloadSettings();
+					this.ReloadBedSettings();
 					this.Bed.InvalidateBedMesh();
 				}
 
@@ -485,8 +456,17 @@ namespace MatterHackers.MatterControl
 
 		public void Dispose()
 		{
+			// Unregister listeners
+			this.Settings.SettingChanged -= Printer_SettingChanged;
+			this.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
+			this.Connection.ConnectionSucceeded -= Connection_ConnectionSucceeded;
+			this.Connection.PrintFinished -= Connection_PrintFinished;
+			this.Connection.TemporarilyHoldingTemp -= ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
+			this.Connection.ErrorReported -= ApplicationController.Instance.Connection_ErrorReported;
+
 			replaceWithSettingsStrings = null;
 
+			// Dispose children
 			this.Connection.Dispose();
 			this.Disposed?.Invoke(this, null);
 			this.Disposed = null;

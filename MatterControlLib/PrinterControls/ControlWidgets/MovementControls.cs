@@ -53,8 +53,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private LimitCallingFrequency reportDestinationChanged = null;
 
-		private EventHandler unregisterEvents;
-
 		private MovementControls(PrinterConfig printer, XYZColors xyzColors, ThemeConfig theme)
 			: base (FlowDirection.TopToBottom)
 		{
@@ -72,6 +70,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.AddChild(jogControls);
 
 			this.AddChild(AddToDisableableList(GetHWDestinationBar()));
+
+			// Register listeners
+			printer.Connection.DestinationChanged += Connection_DestinationChanged;
 		}
 
 		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
@@ -90,7 +91,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		public override void OnClosed(EventArgs e)
 		{
-			unregisterEvents?.Invoke(this, null);
+			// Unregister listeners
+			printer.Connection.DestinationChanged -= Connection_DestinationChanged;
+
 			base.OnClosed(e);
 		}
 
@@ -209,14 +212,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 				});
 			});
 
-			void DestinationChanged(object s, EventArgs e)
-			{
-				reportDestinationChanged.CallEvent();
-			}
-			printer.Connection.DestinationChanged += DestinationChanged;
-			this.Closed += (s, e) => printer.Connection.DestinationChanged -= DestinationChanged;
-
 			return hwDestinationBar;
+		}
+
+		private void Connection_DestinationChanged(object s, EventArgs e)
+		{
+			reportDestinationChanged.CallEvent();
 		}
 
 		private void SetDestinationPositionText(TextWidget xPosition, TextWidget yPosition, TextWidget zPosition)
@@ -250,7 +251,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private Button clearZOffsetButton;
 		private FlowLayoutWidget zOffsetStreamContainer;
 
-		private EventHandler unregisterEvents;
 		private bool allowRemoveButton;
 		private ThemeConfig theme;
 		private PrinterSettings printerSettings;
@@ -262,16 +262,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.allowRemoveButton = allowRemoveButton;
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
-
-			void Printer_SettingChanged(object s, EventArgs e)
-			{
-				if ((e as StringEventArgs)?.Data == SettingsKey.baby_step_z_offset)
-				{
-					OffsetStreamChanged(null, null);
-				}
-			}
-			printerSettings.SettingChanged += Printer_SettingChanged;
-			this.Closed += (s, e) => printerSettings.SettingChanged -= Printer_SettingChanged;
 
 			zOffsetStreamContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
@@ -303,6 +293,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 				printerSettings.SetValue(SettingsKey.baby_step_z_offset, "0");
 			};
 			zOffsetStreamContainer.AddChild(clearZOffsetButton);
+
+			// Register listeners
+			printerSettings.SettingChanged += Printer_SettingChanged;
 		}
 
 		internal void OffsetStreamChanged(object sender, EventArgs e)
@@ -318,8 +311,18 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		public override void OnClosed(EventArgs e)
 		{
-			unregisterEvents?.Invoke(null, null);
+			// Unregister listeners
+			printerSettings.SettingChanged -= Printer_SettingChanged;
+
 			base.OnClosed(e);
+		}
+
+		private void Printer_SettingChanged(object s, EventArgs e)
+		{
+			if ((e as StringEventArgs)?.Data == SettingsKey.baby_step_z_offset)
+			{
+				OffsetStreamChanged(null, null);
+			}
 		}
 	}
 }

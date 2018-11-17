@@ -36,7 +36,6 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
@@ -49,7 +48,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private GuiWidget connectButton;
 		private TextWidget printerErrorMessage;
 
-		private EventHandler unregisterEvents;
 		private PrinterConfig printer;
 
 		public SetupStepComPortTwo(PrinterConfig printer)
@@ -91,12 +89,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				DialogWindow.ChangeToPage(new SetupStepComPortOne(printer));
 			};
 
-			printer.Connection.CommunicationStateChanged += onPrinterStatusChanged;
-			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= onPrinterStatusChanged;
-
 			this.AddPageAction(nextButton);
 			this.AddPageAction(backButton);
 			this.AddPageAction(connectButton);
+
+			// Register listeners
+			printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
 		}
 
 		protected override void OnCancel(out bool abortCancel)
@@ -107,7 +105,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		public override void OnClosed(EventArgs e)
 		{
-			unregisterEvents?.Invoke(this, null);
+			// Unregister listeners
+			printer.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
+
 			base.OnClosed(e);
 		}
 
@@ -169,7 +169,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			return container;
 		}
 
-		private void onPrinterStatusChanged(object sender, EventArgs e)
+		private void Connection_CommunicationStateChanged(object sender, EventArgs e)
 		{
 			if (printer.Connection.IsConnected)
 			{

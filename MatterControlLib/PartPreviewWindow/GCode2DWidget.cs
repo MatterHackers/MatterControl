@@ -62,7 +62,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private PrinterConfig printer;
 
 		private static Color gridColor = new Color(190, 190, 190, 255);
-		private EventHandler unregisterEvents;
 		private ImageBuffer bedImage;
 
 		public GCode2DWidget(PrinterConfig printer, ThemeConfig theme)
@@ -73,12 +72,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.LocalBounds = new RectangleDouble(0, 0, 100, 100);
 			this.AnchorAll();
 
+			// Register listeners
 			printer.Bed.LoadedGCodeChanged += LoadedGCodeChanged;
-
-			// make sure we have good settings
-
 			printer.Settings.SettingChanged += Printer_SettingChanged;
-			this.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 
 			Printer_SettingChanged(this, null);
 
@@ -317,10 +313,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(EventArgs e)
 		{
-			unregisterEvents?.Invoke(this, null);
-
-			printer.Bed.GCodeRenderer?.Dispose();
+			// Unregister listeners
+			printer.Settings.SettingChanged -= Printer_SettingChanged;
 			printer.Bed.LoadedGCodeChanged -= LoadedGCodeChanged;
+			printer.Bed.GCodeRenderer?.Dispose();
 
 			base.OnClosed(e);
 		}

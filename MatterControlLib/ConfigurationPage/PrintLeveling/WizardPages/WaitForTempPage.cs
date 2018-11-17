@@ -40,13 +40,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private ProgressBar bedProgressBar;
 		private TextWidget bedProgressBarText;
 		private double bedStartingTemp;
+		private RunningInterval runningInterval;
 		private TextWidget bedDoneText;
-		double bedTargetTemp;
+		private double bedTargetTemp;
 
 		private ProgressBar hotEndProgressBar;
 		private TextWidget hotEndProgressBarText;
 		private TextWidget hotEndDoneText;
-		double hotEndTargetTemp;
+		private double hotEndTargetTemp;
 
 		public WaitForTempPage(PrinterSetupWizard context,
 			string step, string instructions,
@@ -167,8 +168,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			bedStartingTemp = printer.Connection.ActualBedTemperature;
 
-			var runningInterval = UiThread.SetInterval(ShowTempChangeProgress, 1);
-			this.Closed += (s, e) => UiThread.ClearInterval(runningInterval);
+			runningInterval = UiThread.SetInterval(ShowTempChangeProgress, 1);
 
 			if (bedTargetTemp > 0)
 			{
@@ -199,6 +199,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			NextButton.Enabled = true;
 
 			base.PageIsBecomingInactive();
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			// Unregister listeners
+			UiThread.ClearInterval(runningInterval);
+
+			base.OnClosed(e);
 		}
 
 		private void ShowTempChangeProgress()

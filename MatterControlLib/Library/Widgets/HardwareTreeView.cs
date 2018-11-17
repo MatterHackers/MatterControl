@@ -149,19 +149,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			rootColumn.AddChild(materialsNode);
 
-			// need to be hooked up to every existing PrinterConfig and every new PrinterConfig
-			void AnyPrinterSettingChanged(object s, EventArgs e)
-			{
-				string settingsName = (e as StringEventArgs)?.Data;
-				if (settingsName != null && settingsName == SettingsKey.printer_name)
-				{
-					HardwareTreeView.CreatePrinterProfilesTree(printersNode, theme);
-					this.Invalidate();
-				}
-			}
-
-			PrinterSettings.AnyPrinterSettingChanged += AnyPrinterSettingChanged;
-			this.Closed += (s, e) => PrinterSettings.AnyPrinterSettingChanged -= AnyPrinterSettingChanged;
+			// Register listeners
+			PrinterSettings.AnyPrinterSettingChanged += Printer_SettingChanged;
 
 			// Rebuild the treeview anytime the Profiles list changes
 			ProfileManager.ProfilesListChanged.RegisterEvent((s, e) =>
@@ -231,6 +220,29 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 
 			printersNode.Expanded = true;
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			// Unregister listeners
+			PrinterSettings.AnyPrinterSettingChanged -= Printer_SettingChanged;
+
+			base.OnClosed(e);
+		}
+
+		private void Printer_SettingChanged(object s, EventArgs e)
+		{
+			string settingsName = (e as StringEventArgs)?.Data;
+			if (settingsName != null && settingsName == SettingsKey.printer_name)
+			{
+				// Allow enough time for ProfileManager to respond and refresh its data
+				UiThread.RunOnIdle(() =>
+				{
+					HardwareTreeView.CreatePrinterProfilesTree(printersNode, theme);
+				}, .2);
+
+				this.Invalidate();
+			}
 		}
 	}
 }

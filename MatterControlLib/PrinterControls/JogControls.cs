@@ -68,7 +68,6 @@ namespace MatterHackers.MatterControl
 		private GuiWidget disableableEButtons;
 		private GuiWidget keyboardFocusBorder;
 		private GuiWidget keyboardImage;
-		private EventHandler unregisterEvents;
 		private GuiWidget xyGrid = null;
 
 		public JogControls(PrinterConfig printer, XYZColors colors, ThemeConfig theme)
@@ -208,8 +207,8 @@ namespace MatterHackers.MatterControl
 
 			this.PerformLayout();
 
+			// Register listeners
 			printer.Settings.SettingChanged += Printer_SettingChanged;
-			this.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 		}
 
 		internal void SetEnabledLevels(bool enableBabysteppingMode, bool enableEControls)
@@ -271,7 +270,9 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosed(EventArgs e)
 		{
-			unregisterEvents?.Invoke(this, null);
+			// Unregister listeners
+			printer.Settings.SettingChanged -= Printer_SettingChanged;
+
 			base.OnClosed(e);
 		}
 

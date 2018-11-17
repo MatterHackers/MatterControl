@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Kevin Pope, John Lewin
+Copyright (c) 2018, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected ImageWidget ImageWidget;
 
-		protected EventHandler unregisterEvents;
 		protected PrinterConfig printer;
 		protected List<GuiWidget> alwaysEnabled;
 
@@ -111,12 +110,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			container.AddChild(DirectionIndicator);
 
-			void CommunicationStateChanged(object s, EventArgs e)
-			{
-				this.EnableControls();
-			}
-			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
-			this.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
+			// Register listeners
+			printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
 
 			foreach (var child in this.Children)
 			{
@@ -157,11 +152,18 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		public override void OnClosed(EventArgs e)
 		{
-			unregisterEvents?.Invoke(this, null);
+			// Unregister listeners
+			printer.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
+
 			base.OnClosed(e);
 		}
 
 		bool? isEnabled = null;
+
+		private void Connection_CommunicationStateChanged(object s, EventArgs e)
+		{
+			this.EnableControls();
+		}
 
 		private void EnableControls()
 		{

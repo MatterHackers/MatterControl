@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Kevin Pope, John Lewin
+Copyright (c) 2018, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,10 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
@@ -190,6 +188,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.".Localize();
 		private string waitingForExtruderToHeatMessage = "The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}".Localize();
 		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
+		private RunningInterval runningInterval;
 
 		public TemperatureWidgetHotend(PrinterConfig printer, int hotendIndex, ThemeConfig theme)
 			: base(printer, "150.3°", theme)
@@ -201,12 +200,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			this.PopupContent = this.GetPopupContent(ApplicationController.Instance.MenuTheme);
 
-			void HotendTemperatureRead(object s, EventArgs e)
-			{
-				DisplayCurrentTemperature();
-			}
-			printer.Connection.HotendTemperatureRead += HotendTemperatureRead;
-			this.Closed += (s, e) => printer.Connection.HotendTemperatureRead -= HotendTemperatureRead;
+			// Register listeners
+			printer.Connection.HotendTemperatureRead += Connection_HotendTemperatureRead;
 		}
 
 		protected override int ActualTemperature => (int)printer.Connection.GetActualHotendTemperature(this.hotendIndex);
@@ -284,12 +279,12 @@ namespace MatterHackers.MatterControl.ActionBar
 				Width = widget.Width - 20,
 				Height = 35, // this works better if it is a common multiple of the Width
 			};
-			var runningInterval = UiThread.SetInterval(() =>
+
+			runningInterval = UiThread.SetInterval(() =>
 			{
 				graph.AddData(this.ActualTemperature);
 			}, 1);
-			this.Closed += (s, e) => UiThread.ClearInterval(runningInterval);
-
+			
 			var valueField = temperatureRow.Descendants<MHNumberEdit>().FirstOrDefault();
 			valueField.Name = "Temperature Input";
 
@@ -423,6 +418,15 @@ namespace MatterHackers.MatterControl.ActionBar
 			base.OnDraw(graphics2D);
 		}
 
+		public override void OnClosed(EventArgs e)
+		{
+			// Unregister listeners
+			printer.Connection.HotendTemperatureRead -= Connection_HotendTemperatureRead;
+			UiThread.ClearInterval(runningInterval);
+
+			base.OnClosed(e);
+		}
+
 		protected override void SetTargetTemperature(double targetTemp)
 		{
 			double goalTemp = (int)(targetTemp + .5);
@@ -437,6 +441,11 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				printer.Connection.SetTargetHotendTemperature(hotendIndex, (int)(targetTemp + .5));
 			}
+		}
+
+		private void Connection_HotendTemperatureRead(object s, EventArgs e)
+		{
+			DisplayCurrentTemperature();
 		}
 	}
 }

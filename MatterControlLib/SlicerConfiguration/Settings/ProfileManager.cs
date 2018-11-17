@@ -41,11 +41,21 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class ProfileManager
+	public class ProfileManager : IDisposable
 	{
 		public static RootedObjectEventHandler ProfilesListChanged = new RootedObjectEventHandler();
 
-		public static ProfileManager Instance { get; private set; }
+		private static ProfileManager _instance = null;
+
+		public static ProfileManager Instance
+		{
+			get => _instance;
+			private set
+			{
+				_instance?.Dispose();
+				_instance = value;
+			}
+		}
 
 		public const string ProfileExtension = ".printer";
 		public const string ConfigFileExtension = ".slice";
@@ -56,6 +66,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		static ProfileManager()
 		{
 			ReloadActiveUser();
+		}
+
+		public ProfileManager()
+		{
+			// Register listeners
+			PrinterSettings.AnyPrinterSettingChanged += this.Printer_SettingsChanged;
 		}
 
 		public Task Initialize()
@@ -182,37 +198,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return loadedInstance;
-		}
-
-		public static void SettingsChanged(object sender, EventArgs e)
-		{
-			var printer = (sender as PrinterSettings)?.printer;
-
-			if (Instance?.OpenPrinterIDs.Any() != true
-				|| printer == null)
-			{
-				return;
-			}
-
-			var profile = Instance[printer.Settings.ID];
-			if (profile == null)
-			{
-				return;
-			}
-
-			string settingsKey = ((StringEventArgs)e).Data;
-			switch (settingsKey)
-			{
-				case SettingsKey.printer_name:
-					profile.Name = printer.Settings.GetValue(SettingsKey.printer_name);
-					Instance.Save();
-					break;
-
-				case SettingsKey.com_port:
-					profile.ComPort = printer.Settings.Helpers.ComPort();
-					Instance.Save();
-					break;
-			}
 		}
 
 		public ObservableCollection<PrinterInfo> Profiles { get; } = new ObservableCollection<PrinterInfo>();
@@ -561,12 +546,48 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ApplicationController.SyncPrinterProfiles?.Invoke("ProfileManager.Profiles_CollectionChanged()", null);
 		}
 
+		private void Printer_SettingsChanged(object sender, EventArgs e)
+		{
+			var printer = (sender as PrinterSettings)?.printer;
+
+			if (Instance?.OpenPrinterIDs.Any() != true
+				|| printer == null)
+			{
+				return;
+			}
+
+			var profile = Instance[printer.Settings.ID];
+			if (profile == null)
+			{
+				return;
+			}
+
+			string settingsKey = ((StringEventArgs)e).Data;
+			switch (settingsKey)
+			{
+				case SettingsKey.printer_name:
+					profile.Name = printer.Settings.GetValue(SettingsKey.printer_name);
+					Instance.Save();
+					break;
+
+				case SettingsKey.com_port:
+					profile.ComPort = printer.Settings.Helpers.ComPort();
+					Instance.Save();
+					break;
+			}
+		}
 		public void Save()
 		{
 			lock(writeLock)
 			{
 				File.WriteAllText(ProfilesDocPath, JsonConvert.SerializeObject(this, Formatting.Indented));
 			}
+		}
+
+		public void Dispose()
+		{
+			// Unregister listeners
+			PrinterSettings.AnyPrinterSettingChanged -= this.Printer_SettingsChanged;
 		}
 	}
 }

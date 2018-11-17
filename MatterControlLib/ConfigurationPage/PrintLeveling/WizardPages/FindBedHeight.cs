@@ -48,6 +48,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		protected JogControls.MoveButton zPlusControl;
 		protected JogControls.MoveButton zMinusControl;
+		private RunningInterval runningInterval;
 
 		public FindBedHeight(PrinterSetupWizard context, string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance,
 			List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
@@ -75,13 +76,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				Margin = new BorderDouble(10, 0),
 			};
 
-			var runningInterval = UiThread.SetInterval(() =>
+			runningInterval = UiThread.SetInterval(() =>
 			{
 				Vector3 destinationPosition = printer.Connection.CurrentDestination;
 				zPosition.Text = "Z: {0:0.00}".FormatWith(destinationPosition.Z);
 			}, .3);
-
-			this.Closed += (s, e) => UiThread.ClearInterval(runningInterval);
 
 			zButtonsAndInfo.AddChild(zPosition);
 
@@ -108,7 +107,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void OnClosed(EventArgs e)
 		{
+			// Unregister listeners
+			UiThread.ClearInterval(runningInterval);
 			this.DialogWindow.KeyDown -= TopWindowKeyDown;
+
 			base.OnClosed(e);
 		}
 
