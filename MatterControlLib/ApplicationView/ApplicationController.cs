@@ -3115,11 +3115,6 @@ If you experience adhesion problems, please re-run leveling."
 			reporter?.Invoke(0.91, (loading != null) ? loading : "OnLoadActions");
 			applicationController.OnLoadActions();
 
-			UiThread.SetInterval(() =>
-			{
-				applicationController.ActivePrinter.Connection.OnIdle();
-			}, .1);
-
 			// Wired up to MainView.Load with the intent to fire startup actions and tasks in order with reporting
 			async void initialWindowLoad(object s, EventArgs e)
 			{
