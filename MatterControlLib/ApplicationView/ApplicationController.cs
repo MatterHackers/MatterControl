@@ -1698,22 +1698,6 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			if (this.ActivePrinter is PrinterConfig printer
-				&& printer.Settings.PrinterSelected
-				&& printer.Settings.GetValue<bool>(SettingsKey.auto_connect))
-			{
-				ApplicationController.StartupTasks.Add(new ApplicationController.StartupTask()
-				{
-					Title = "Auto Connect".Localize(),
-					Priority = 100,
-					Action = (progress, cancellationToken) =>
-					{
-						printer.Connection.Connect();
-						return Task.CompletedTask;
-					}
-				});
-			}
-
 			if (AssetObject3D.AssetManager == null)
 			{
 				AssetObject3D.AssetManager = new AssetManager();
@@ -1805,6 +1789,12 @@ namespace MatterHackers.MatterControl
 				}
 
 				this.OnOpenPrintersChanged(new OpenPrintersChangedEventArgs(printer, OpenPrintersChangedEventArgs.OperationType.Add));
+
+				if (printer.Settings.PrinterSelected
+					&& printer.Settings.GetValue<bool>(SettingsKey.auto_connect))
+				{
+					printer.Connection.Connect();
+				}
 
 				return printer;
 			}
