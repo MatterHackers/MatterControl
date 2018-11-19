@@ -397,12 +397,6 @@ namespace MatterHackers.MatterControl
 
 			_activePrinters.Remove(printer);
 
-			// Release reference
-			if (this.ActivePrinter == printer)
-			{
-				this.ActivePrinter = PrinterConfig.EmptyPrinter;
-			}
-
 			if (allowChangedEvent)
 			{
 				this.OnOpenPrintersChanged(new OpenPrintersChangedEventArgs(printer, OpenPrintersChangedEventArgs.OperationType.Remove));
