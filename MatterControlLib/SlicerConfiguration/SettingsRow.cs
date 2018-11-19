@@ -116,21 +116,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				AutoExpandBoundsToText = true,
 				VAnchor = VAnchor.Center,
-				ToolTipText = helpText,
 			};
 		}
 
-		public override string ToolTipText
-		{
-			get => settingsLabel?.ToolTipText;
-			set
-			{
-				if (settingsLabel != null)
-				{
-					settingsLabel.ToolTipText = value;
-				}
-			}
-		}
 
 		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 		{
@@ -152,7 +140,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			mouseInBounds = true;
 			this.Invalidate();
-			base.OnMouseEnter(mouseEvent);
+			base.OnMouseEnterBounds(mouseEvent);
 		}
 
 		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)

@@ -423,6 +423,96 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							settingsRow = CreateItemRow(settingData);
 
+							if (settingsRow is SliceSettingsRow)
+							{
+								Popover previousBubble = null;
+
+								var thisRow = settingsRow;
+
+								settingsRow.MouseLeaveBounds += (s, e) =>
+								{
+									if (previousBubble != null)
+									{
+										previousBubble.Close();
+										Console.WriteLine("Close previousBubble");
+									}
+								};
+
+								settingsRow.MouseEnterBounds += (s, e) =>
+								{
+									settingsRow.Focus();
+
+									var arrow = Popover.ArrowDirection.Right;
+
+									BorderDouble padding = new BorderDouble(15, 10);
+
+									int notchSize = 5;
+
+									switch (arrow)
+									{
+										case Popover.ArrowDirection.Top:
+											padding = padding.Clone(top: padding.Top + notchSize);
+											break;
+
+										case Popover.ArrowDirection.Bottom:
+											padding = padding.Clone(bottom: padding.Bottom + notchSize);
+											break;
+
+										case Popover.ArrowDirection.Left:
+											padding = padding.Clone(left: padding.Left + notchSize);
+											break;
+
+										case Popover.ArrowDirection.Right:
+											padding = padding.Clone(right: padding.Right + notchSize);
+											break;
+									}
+
+									//double p2 = notchYOffset == 0 ? rect.YCenter : y2 - notchYOffset - (notchSize * 2);
+
+									//if (arrowDirection == ArrowDirection.Top
+									//	|| arrowDirection == ArrowDirection.Bottom)
+									//{
+									//	p2 = notchXOffset == 0 ? rect.XCenter : x2 + notchXOffset + (notchSize * 2);
+									//}
+
+									int p2 = (int)(thisRow.Height / 2);
+
+									Console.WriteLine("RowHeight: {0} - {1}", thisRow.Height, p2);
+
+									var tagContainer = new Popover()
+									{
+										HAnchor = HAnchor.Fit,
+										VAnchor = VAnchor.Fit,
+										TagColor = theme.ResolveColor(theme.BackgroundColor, theme.AccentMimimalOverlay.WithAlpha(50)),
+										Padding = padding,
+										NotchSize = notchSize,
+										Arrow = arrow,
+										P2 = p2
+									};
+
+									tagContainer.AddChild(new WrappedTextWidget(settingData.HelpText, pointSize: theme.DefaultFontSize - 1, textColor: theme.TextColor)
+									{
+										Width = 400 * GuiWidget.DeviceScale,
+										HAnchor = HAnchor.Fit,
+									});
+
+									systemWindow.ShowPopover(
+										new MatePoint(thisRow)
+										{
+											Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+											AltMate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
+										},
+										new MatePoint(tagContainer)
+										{
+											Mate = new MateOptions(MateEdge.Right, MateEdge.Top),
+											AltMate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
+										});
+
+									Console.WriteLine("Set previousBubble");
+									previousBubble = tagContainer;
+								};
+							}
+
 							if (firstRow)
 							{
 								// First row needs top and bottom border
@@ -448,6 +538,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return sectionWidget;
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+
+			base.OnLoad(args);
 		}
 
 		private UIField CreateToggleFieldForSection(SliceSettingData settingData)
@@ -503,7 +600,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			uiField.Content.Margin = uiField.Content.Margin.Clone(right: 15);
-			uiField.Content.ToolTipText = settingData.HelpText;
+			//uiField.Content.ToolTipText = settingData.HelpText;
+			uiField.Content.ToolTipText = "";
+			uiField.HelpText = "";
+
 			return uiField;
 		}
 
@@ -879,6 +979,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		List<SectionWidget> widgetsThatWereExpanded = new List<SectionWidget>();
+		private SystemWindow systemWindow;
 
 		private void Printer_SettingChanged(object s, EventArgs e)
 		{
