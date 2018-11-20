@@ -313,7 +313,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ShowUpdateAvailableAnimation()
 		{
-			double displayTime = 1;
+			double displayTime = 2;
 			double pulseTime = 1;
 			double totalSeconds = 0;
 
@@ -367,7 +367,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					updateAvailableButton.Visible = true;
 
-					this.ShowUpdateAvailableAnimation();
+					UiThread.RunOnIdle(this.ShowUpdateAvailableAnimation);
 
 					// if we are going to show the update link hide the whats new link no matter what
 					seeWhatsNewButton.Visible = false;
