@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -79,13 +79,7 @@ namespace MatterHackers.MatterControl
 
 		private UpdateStatusStates updateStatus;
 
-		public UpdateStatusStates UpdateStatus
-		{
-			get
-			{
-				return updateStatus;
-			}
-		}
+		public UpdateStatusStates UpdateStatus => updateStatus;
 
 		private void CheckVersionStatus()
 		{
@@ -98,7 +92,7 @@ namespace MatterHackers.MatterControl
 			{
 				SetUpdateStatus(UpdateStatusStates.MayBeAvailable);
 			}
-			else if (System.IO.File.Exists(updateFileName))
+			else if (File.Exists(updateFileName))
 			{
 				SetUpdateStatus(UpdateStatusStates.ReadyToInstall);
 			}
@@ -172,7 +166,8 @@ namespace MatterHackers.MatterControl
 		{
 			get
 			{
-				return updateStatus == UpdateStatusStates.UpdateAvailable && ApplicationSettings.Instance.get(LatestVersionRequest.VersionKey.UpdateRequired) == "True";
+				return updateStatus == UpdateStatusStates.UpdateAvailable 
+					&& ApplicationSettings.Instance.get(LatestVersionRequest.VersionKey.UpdateRequired) == "True";
 			}
 		}
 
@@ -200,7 +195,7 @@ namespace MatterHackers.MatterControl
 			{
 				SetUpdateStatus(UpdateStatusStates.UpToDate);
 			}
-			else if (System.IO.File.Exists(updateFileName))
+			else if (File.Exists(updateFileName))
 			{
 				SetUpdateStatus(UpdateStatusStates.ReadyToInstall);
 			}
@@ -295,16 +290,16 @@ namespace MatterHackers.MatterControl
 						downloadSize = 0;
 					}
 
-					if (!System.IO.Directory.Exists(updateFileLocation))
+					if (!Directory.Exists(updateFileLocation))
 					{
-						System.IO.Directory.CreateDirectory(updateFileLocation);
+						Directory.CreateDirectory(updateFileLocation);
 					}
 
 					updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", downloadToken, InstallerExtension));
 
 					webClient = new WebClient();
-					webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadCompleted);
-					webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressChanged);
+					webClient.DownloadFileCompleted += DownloadCompleted;
+					webClient.DownloadProgressChanged += DownloadProgressChanged;
 					try
 					{
 						webClient.DownloadFileAsync(new Uri(downloadUri), updateFileName);
@@ -330,9 +325,9 @@ namespace MatterHackers.MatterControl
 			if (e.Error != null)
 			{
 				//Delete empty/partially downloaded file
-				if (System.IO.File.Exists(updateFileName))
+				if (File.Exists(updateFileName))
 				{
-					System.IO.File.Delete(updateFileName);
+					File.Delete(updateFileName);
 				}
 
 				//Try downloading again - one time
@@ -374,12 +369,12 @@ namespace MatterHackers.MatterControl
 			}
 
 			// Now that we are running, check for an update every 24 hours.
-			var aTimer = new System.Timers.Timer(24 * 60 * 60 * 1000); //one day in milliseconds
-			aTimer.Elapsed += new ElapsedEventHandler(CheckForUpdateDaily);
-			aTimer.Start();
+			var checkUpdatesDaily = new System.Timers.Timer(24 * 60 * 60 * 1000); //one day in milliseconds
+			checkUpdatesDaily.Elapsed += DailyTimer_Elapsed;
+			checkUpdatesDaily.Start();
 		}
 
-		private void CheckForUpdateDaily(object source, ElapsedEventArgs e)
+		private void DailyTimer_Elapsed(object source, ElapsedEventArgs e)
 		{
 			CheckForUpdate();
 		}
@@ -403,15 +398,15 @@ namespace MatterHackers.MatterControl
 			string friendlyFileName = Path.Combine(updateFileLocation, "MatterControlSetup-{0}.{1}".FormatWith(releaseVersion, InstallerExtension));
 #endif
 
-			if (System.IO.File.Exists(friendlyFileName))
+			if (File.Exists(friendlyFileName))
 			{
-				System.IO.File.Delete(friendlyFileName);
+				File.Delete(friendlyFileName);
 			}
 
 			try
 			{
 				//Change download file to friendly file name
-				System.IO.File.Move(updateFileName, friendlyFileName);
+				File.Move(updateFileName, friendlyFileName);
 #if __ANDROID__
 				if (InstallUpdateFromMainActivity != null)
 				{
@@ -442,9 +437,9 @@ namespace MatterHackers.MatterControl
 			catch
 			{
 				GuiWidget.BreakInDebugger();
-				if (System.IO.File.Exists(friendlyFileName))
+				if (File.Exists(friendlyFileName))
 				{
-					System.IO.File.Delete(friendlyFileName);
+					File.Delete(friendlyFileName);
 				}
 			}
 
