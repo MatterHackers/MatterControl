@@ -192,11 +192,6 @@ namespace MatterHackers.MatterControl
 
 		private void onVersionRequestSucceeded(object sender, EventArgs e)
 		{
-			string updateAvailableMessage = "There is a recommended update available for MatterControl. Would you like to download it now?".Localize();
-			string updateAvailableTitle = "Recommended Update Available".Localize();
-			string downloadNow = "Download Now".Localize();
-			string remindMeLater = "Remind Me Later".Localize();
-
 			string currentBuildToken = ApplicationSettings.Instance.get(LatestVersionRequest.VersionKey.CurrentBuildToken);
 			string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, InstallerExtension));
 
@@ -218,7 +213,14 @@ namespace MatterHackers.MatterControl
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						StyledMessageBox.ShowMessageBox(ProcessDialogResponse, updateAvailableMessage, updateAvailableTitle, StyledMessageBox.MessageType.YES_NO, downloadNow, remindMeLater);
+						StyledMessageBox.ShowMessageBox(
+							this.ProcessDialogResponse,
+							"There is a recommended update available for MatterControl. Would you like to download it now?".Localize(),
+							"Recommended Update Available".Localize(),
+							StyledMessageBox.MessageType.YES_NO,
+							"Download Now".Localize(),
+							"Remind Me Later".Localize());
+
 						// show a dialog to tell the user there is an update
 					});
 				}
