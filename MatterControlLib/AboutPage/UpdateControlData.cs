@@ -348,23 +348,10 @@ namespace MatterHackers.MatterControl
 
 		private UpdateControlData()
 		{
-			CheckVersionStatus();
-			if (ApplicationSettings.Instance.GetClientToken() != null
-				|| OemSettings.Instance.CheckForUpdatesOnFirstRun)
-			{
-				//If we have already requested an update once, check on load
-				CheckForUpdate();
-			}
-			else
-			{
-				ApplicationSession firstSession;
-				firstSession = Datastore.Instance.dbSQLite.Table<ApplicationSession>().OrderBy(v => v.SessionStart).Take(1).FirstOrDefault();
-				if (firstSession != null
-					&& DateTime.Compare(firstSession.SessionStart.AddDays(7), DateTime.Now) < 0)
-				{
-					SetUpdateStatus(UpdateStatusStates.UpdateAvailable);
-				}
-			}
+			this.CheckVersionStatus();
+
+			// Always check for updates on startup
+			this.CheckForUpdate();
 
 			// Now that we are running, check for an update every 24 hours.
 			var checkUpdatesDaily = new System.Timers.Timer(24 * 60 * 60 * 1000); //one day in milliseconds
