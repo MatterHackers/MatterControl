@@ -47,11 +47,9 @@ namespace MatterHackers.MatterControl
 	public class UpdateControlData
 	{
 		private WebClient webClient;
-
-		private int downloadPercent;
 		private int downloadSize;
 
-		public int DownloadPercent { get { return downloadPercent; } }
+		public int DownloadPercent { get; private set; }
 
 		public enum UpdateStatusStates { MayBeAvailable, CheckingForUpdate, UpdateAvailable, UpdateDownloading, ReadyToInstall, UpToDate, UnableToConnectToServer, UpdateRequired };
 
@@ -315,7 +313,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (downloadSize > 0)
 			{
-				this.downloadPercent = (int)(e.BytesReceived * 100 / downloadSize);
+				this.DownloadPercent = (int)(e.BytesReceived * 100 / downloadSize);
 			}
 			UiThread.RunOnIdle(() => UpdateStatusChanged.CallEvents(this, e));
 		}
