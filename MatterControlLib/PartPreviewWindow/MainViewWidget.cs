@@ -165,40 +165,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				showUpdateInterval = UiThread.SetInterval(() =>
 				{
-					double displayTime = 1;
-					double pulseTime = 1;
-					double totalSeconds = 0;
-					var textWidgets = updateAvailableButton.Descendants<TextWidget>().Where((w) => w.Visible == true).ToArray();
-					Color startColor = theme.TextColor;
-					// Show a highlight on the button as the user did not click it
-					Animation flashBackground = null;
-					flashBackground = new Animation()
-					{
-						DrawTarget = updateAvailableButton,
-						FramesPerSecond = 10,
-						Update = (s1, updateEvent) =>
-						{
-							totalSeconds += updateEvent.SecondsPassed;
-							if (totalSeconds < displayTime)
-							{
-								double blend = AttentionGetter.GetFadeInOutPulseRatio(totalSeconds, pulseTime);
-								var color = new Color(startColor, (int)((1 - blend) * 255));
-								foreach (var textWidget in textWidgets)
-								{
-									textWidget.TextColor = color;
-								}
-							}
-							else
-							{
-								foreach (var textWidget in textWidgets)
-								{
-									textWidget.TextColor = startColor;
-								}
-								flashBackground.Stop();
-							}
-						}
-					};
-					flashBackground.Start();
+					ShowUpdateAvailableAnimation();
 				}, 120);
 			};
 
@@ -360,6 +327,47 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}, ref unregisterEvents);
 			
 			ApplicationController.Instance.MainView = this;
+		}
+
+		private void ShowUpdateAvailableAnimation()
+		{
+			double displayTime = 1;
+			double pulseTime = 1;
+			double totalSeconds = 0;
+			var textWidgets = updateAvailableButton.Descendants<TextWidget>().Where((w) => w.Visible == true).ToArray();
+			Color startColor = theme.TextColor;
+
+			// Show a highlight on the button as the user did not click it
+			Animation flashBackground = null;
+
+			flashBackground = new Animation()
+			{
+				DrawTarget = updateAvailableButton,
+				FramesPerSecond = 10,
+				Update = (s1, updateEvent) =>
+				{
+					totalSeconds += updateEvent.SecondsPassed;
+					if (totalSeconds < displayTime)
+					{
+						double blend = AttentionGetter.GetFadeInOutPulseRatio(totalSeconds, pulseTime);
+						var color = new Color(startColor, (int)((1 - blend) * 255));
+						foreach (var textWidget in textWidgets)
+						{
+							textWidget.TextColor = color;
+						}
+					}
+					else
+					{
+						foreach (var textWidget in textWidgets)
+						{
+							textWidget.TextColor = startColor;
+						}
+						flashBackground.Stop();
+					}
+				}
+			};
+
+			flashBackground.Start();
 		}
 
 		private void SetLinkButtonsVisibility (object s, StringEventArgs e)
