@@ -183,13 +183,13 @@ namespace MatterHackers.MatterControl
 				SetUpdateStatus(UpdateStatusStates.CheckingForUpdate);
 
 				var request = new LatestVersionRequest();
-				request.RequestSucceeded += onVersionRequestSucceeded;
-				request.RequestFailed += onVersionRequestFailed;
+				request.RequestSucceeded += VersionRequest_Succeeded;
+				request.RequestFailed += VersionRequest_Failed;
 				request.Request();
 			}
 		}
 
-		private void onVersionRequestSucceeded(object sender, EventArgs e)
+		private void VersionRequest_Succeeded(object sender, EventArgs e)
 		{
 			string currentBuildToken = ApplicationSettings.Instance.get(LatestVersionRequest.VersionKey.CurrentBuildToken);
 			string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, InstallerExtension));
@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void onVersionRequestFailed(object sender, ResponseErrorEventArgs e)
+		private void VersionRequest_Failed(object sender, ResponseErrorEventArgs e)
 		{
 			SetUpdateStatus(UpdateStatusStates.UpToDate);
 		}
