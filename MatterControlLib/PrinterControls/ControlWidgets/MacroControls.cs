@@ -54,7 +54,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			ApplicationController.Instance.ActiveProfileModified.RegisterEvent((s, e) =>
 			{
-				UiThread.RunOnIdle(() => Rebuild());
+				if (s is PrinterSettings settings
+					&& settings.ID == this.printer.Settings.ID)
+				{
+					UiThread.RunOnIdle(() => Rebuild());
+				}
+
 			}, ref unregisterEvents);
 		}
 
