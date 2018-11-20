@@ -150,25 +150,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Register listeners
 			UserSettings.Instance.SettingChanged += SetLinkButtonsVisibility;
 
-			RunningInterval showUpdateInterval = null;
-			updateAvailableButton.VisibleChanged += (s, e) =>
-			{
-				if (!updateAvailableButton.Visible)
-				{
-					if (showUpdateInterval != null)
-					{
-						UiThread.ClearInterval(showUpdateInterval);
-						showUpdateInterval = null;
-					}
-					return;
-				}
-
-				showUpdateInterval = UiThread.SetInterval(() =>
-				{
-					ShowUpdateAvailableAnimation();
-				}, 120);
-			};
-
 			SetLinkButtonsVisibility(this, null);
 			updateAvailableButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
@@ -334,6 +315,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			double displayTime = 1;
 			double pulseTime = 1;
 			double totalSeconds = 0;
+
 			var textWidgets = updateAvailableButton.Descendants<TextWidget>().Where((w) => w.Visible == true).ToArray();
 			Color startColor = theme.TextColor;
 
@@ -380,9 +362,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (UpdateControlData.Instance.UpdateStatus == UpdateControlData.UpdateStatusStates.UpdateAvailable)
 			{
-				updateAvailableButton.Visible = true;
-				// if we are going to show the update link hide the whats new link no matter what
-				seeWhatsNewButton.Visible = false;
+				if (!updateAvailableButton.Visible)
+				{
+					updateAvailableButton.Visible = true;
+
+					this.ShowUpdateAvailableAnimation();
+
+					// if we are going to show the update link hide the whats new link no matter what
+					seeWhatsNewButton.Visible = false;
+				}
 			}
 			else
 			{
