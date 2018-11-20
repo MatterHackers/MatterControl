@@ -183,8 +183,9 @@ namespace MatterHackers.MatterControl
 			if (!WaitingToCompleteTransaction())
 			{
 				SetUpdateStatus(UpdateStatusStates.CheckingForUpdate);
-				LatestVersionRequest request = new LatestVersionRequest();
-				request.RequestSucceeded += new EventHandler(onVersionRequestSucceeded);
+
+				var request = new LatestVersionRequest();
+				request.RequestSucceeded += onVersionRequestSucceeded;
 				request.RequestFailed += onVersionRequestFailed;
 				request.Request();
 			}
