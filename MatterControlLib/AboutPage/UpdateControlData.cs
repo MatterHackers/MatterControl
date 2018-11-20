@@ -174,8 +174,6 @@ namespace MatterHackers.MatterControl
 			{
 				return updateStatus == UpdateStatusStates.UpdateAvailable && ApplicationSettings.Instance.get(LatestVersionRequest.VersionKey.UpdateRequired) == "True";
 			}
-
-			private set { }
 		}
 
 		public void CheckForUpdate()

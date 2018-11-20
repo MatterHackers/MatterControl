@@ -151,6 +151,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			UserSettings.Instance.SettingChanged += SetLinkButtonsVisibility;
 
 			SetLinkButtonsVisibility(this, null);
+
 			updateAvailableButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				UpdateControlData.Instance.CheckForUpdate();
