@@ -299,11 +299,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void DeleteSelectedPrinter(AutomationRunner testRunner)
 		{
-			// delete printer
+			// Click 'Delete Printer' menu item
 			testRunner.ClickByName("Printer Overflow Menu");
 			testRunner.ClickByName("Delete Printer Menu Item");
 
-			testRunner.WaitForReloadAll(() => testRunner.ClickByName("Yes Button"));
+			// Confirm Delete
+			testRunner.WaitForName("HeaderRow");
+			testRunner.ClickByName("Yes Button");
 		}
 
 		public static void AddAndSelectPrinter(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD")

@@ -969,6 +969,11 @@ namespace MatterHackers.MatterControl
 		{
 			this.Thumbnails = new ThumbnailsConfig();
 
+			ProfileManager.UserChanged += (s, e) =>
+			{
+				_activePrinters = new List<PrinterConfig>();
+			};
+
 			this.RebuildSceneOperations(this.Theme);
 
 			HelpArticle helpArticle = null;
