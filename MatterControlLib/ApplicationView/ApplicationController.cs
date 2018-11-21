@@ -361,9 +361,6 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler<OpenPrintersChangedEventArgs> OpenPrintersChanged;
 
-		public static Action SignInAction;
-		public static Action SignOutAction;
-
 		public static Action WebRequestFailed;
 		public static Action WebRequestSucceeded;
 
@@ -1744,8 +1741,6 @@ namespace MatterHackers.MatterControl
 			// Ensure SQLite printers are imported
 			ProfileManager.Instance.EnsurePrintersImported();
 		}
-
-		private EventHandler unregisterEvent;
 
 		public Stream LoadHttpAsset(string url)
 		{
