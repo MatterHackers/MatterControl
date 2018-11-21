@@ -35,7 +35,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow.PlusTab;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -84,33 +83,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Border = new BorderDouble(left: 1),
 			};
 
-			tabControl.PlusClicked += (s, e) =>
+			tabControl.PlusClicked += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				UiThread.RunOnIdle(() =>
-				{
-					this.CreatePartTab().ConfigureAwait(false);
-				});
-			};
-
-			tabControl.ActiveTabChanged += (s, e) =>
-			{
-				if (this.tabControl.ActiveTab?.TabContent is PartTabPage tabPage)
-				{
-					var dragDropData = ApplicationController.Instance.DragDropData;
-
-					// Set reference on tab change
-					dragDropData.View3DWidget = tabPage.view3DWidget;
-					dragDropData.SceneContext = tabPage.sceneContext;
-
-					ApplicationController.Instance.PrinterTabSelected = true;
-				}
-				else
-				{
-					ApplicationController.Instance.PrinterTabSelected = false;
-				}
-
-				ApplicationController.Instance.MainTabKey = tabControl.SelectedTabKey;
-			};
+				this.CreatePartTab().ConfigureAwait(false);
+			});
 
 			// Force the ActionArea to be as high as ButtonHeight
 			tabControl.TabBar.ActionArea.MinimumSize = new Vector2(0, theme.ButtonHeight);
@@ -269,13 +245,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			statusBar.AddChild(tasksContainer);
 
-			var tasks = ApplicationController.Instance.Tasks;
-
-			tasks.TasksChanged += (s, e) =>
-			{
-				RenderRunningTasks(theme, tasks);
-			};
-
 			stretchStatusPanel = new GuiWidget()
 			{
 				HAnchor = HAnchor.Stretch,
@@ -297,11 +266,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			statusBar.AddChild(
 				this.CreateNetworkStatusPanel(theme));
 
-			this.RenderRunningTasks(theme, tasks);
+			this.RenderRunningTasks(theme, ApplicationController.Instance.Tasks);
 
 			// Register listeners
 			PrinterSettings.AnyPrinterSettingChanged += Printer_SettingChanged;
 			ApplicationController.Instance.OpenPrintersChanged += OpenPrinters_Changed;
+			ApplicationController.Instance.Tasks.TasksChanged += Tasks_TasksChanged;
+			tabControl.ActiveTabChanged += TabControl_ActiveTabChanged;
 
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent((s, e) =>
 			{
@@ -309,6 +280,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}, ref unregisterEvents);
 			
 			ApplicationController.Instance.MainView = this;
+		}
+
+		private void TabControl_ActiveTabChanged(object sender, EventArgs e)
+		{
+			if (this.tabControl.ActiveTab?.TabContent is PartTabPage tabPage)
+			{
+				var dragDropData = ApplicationController.Instance.DragDropData;
+
+				// Set reference on tab change
+				dragDropData.View3DWidget = tabPage.view3DWidget;
+				dragDropData.SceneContext = tabPage.sceneContext;
+
+				ApplicationController.Instance.PrinterTabSelected = true;
+			}
+			else
+			{
+				ApplicationController.Instance.PrinterTabSelected = false;
+			}
+
+			ApplicationController.Instance.MainTabKey = tabControl.SelectedTabKey;
+		}
+
+		private void Tasks_TasksChanged(object sender, EventArgs e)
+		{
+			this.RenderRunningTasks(theme, ApplicationController.Instance.Tasks);
 		}
 
 		private void ShowUpdateAvailableAnimation()
@@ -624,10 +620,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Unregister listeners
 			PrinterSettings.AnyPrinterSettingChanged -= Printer_SettingChanged;
 			UserSettings.Instance.SettingChanged -= SetLinkButtonsVisibility;
+			ApplicationController.Instance.OpenPrintersChanged -= OpenPrinters_Changed;
+			ApplicationController.Instance.Tasks.TasksChanged -= Tasks_TasksChanged;
+			tabControl.ActiveTabChanged -= TabControl_ActiveTabChanged;
 
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
+
+#if DEBUG
+		~MainViewWidget()
+		{
+			Console.WriteLine();
+		}
+#endif
+
 
 		private void Printer_SettingChanged(object s, EventArgs e)
 		{

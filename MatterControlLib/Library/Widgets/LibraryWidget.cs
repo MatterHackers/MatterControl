@@ -1056,6 +1056,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				ApplicationController.Instance.Library.ContainerChanged -= Library_ContainerChanged;
 			}
 
+			mainViewWidget = null;
+
 			base.OnClosed(e);
 		}
 
