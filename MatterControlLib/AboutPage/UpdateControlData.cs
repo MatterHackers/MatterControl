@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -47,11 +47,9 @@ namespace MatterHackers.MatterControl
 	public class UpdateControlData
 	{
 		private WebClient webClient;
-
-		private int downloadPercent;
 		private int downloadSize;
 
-		public int DownloadPercent { get { return downloadPercent; } }
+		public int DownloadPercent { get; private set; }
 
 		public enum UpdateStatusStates { MayBeAvailable, CheckingForUpdate, UpdateAvailable, UpdateDownloading, ReadyToInstall, UpToDate, UnableToConnectToServer, UpdateRequired };
 
@@ -79,13 +77,7 @@ namespace MatterHackers.MatterControl
 
 		private UpdateStatusStates updateStatus;
 
-		public UpdateStatusStates UpdateStatus
-		{
-			get
-			{
-				return updateStatus;
-			}
-		}
+		public UpdateStatusStates UpdateStatus => updateStatus;
 
 		private void CheckVersionStatus()
 		{
@@ -98,7 +90,7 @@ namespace MatterHackers.MatterControl
 			{
 				SetUpdateStatus(UpdateStatusStates.MayBeAvailable);
 			}
-			else if (System.IO.File.Exists(updateFileName))
+			else if (File.Exists(updateFileName))
 			{
 				SetUpdateStatus(UpdateStatusStates.ReadyToInstall);
 			}
@@ -172,10 +164,9 @@ namespace MatterHackers.MatterControl
 		{
 			get
 			{
-				return updateStatus == UpdateStatusStates.UpdateAvailable && ApplicationSettings.Instance.get(LatestVersionRequest.VersionKey.UpdateRequired) == "True";
+				return updateStatus == UpdateStatusStates.UpdateAvailable 
+					&& ApplicationSettings.Instance.get(LatestVersionRequest.VersionKey.UpdateRequired) == "True";
 			}
-
-			private set { }
 		}
 
 		public void CheckForUpdate()
@@ -183,20 +174,16 @@ namespace MatterHackers.MatterControl
 			if (!WaitingToCompleteTransaction())
 			{
 				SetUpdateStatus(UpdateStatusStates.CheckingForUpdate);
-				LatestVersionRequest request = new LatestVersionRequest();
-				request.RequestSucceeded += new EventHandler(onVersionRequestSucceeded);
-				request.RequestFailed += onVersionRequestFailed;
+
+				var request = new LatestVersionRequest();
+				request.RequestSucceeded += VersionRequest_Succeeded;
+				request.RequestFailed += VersionRequest_Failed;
 				request.Request();
 			}
 		}
 
-		private void onVersionRequestSucceeded(object sender, EventArgs e)
+		private void VersionRequest_Succeeded(object sender, EventArgs e)
 		{
-			string updateAvailableMessage = "There is a recommended update available for MatterControl. Would you like to download it now?".Localize();
-			string updateAvailableTitle = "Recommended Update Available".Localize();
-			string downloadNow = "Download Now".Localize();
-			string remindMeLater = "Remind Me Later".Localize();
-
 			string currentBuildToken = ApplicationSettings.Instance.get(LatestVersionRequest.VersionKey.CurrentBuildToken);
 			string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, InstallerExtension));
 
@@ -206,7 +193,7 @@ namespace MatterHackers.MatterControl
 			{
 				SetUpdateStatus(UpdateStatusStates.UpToDate);
 			}
-			else if (System.IO.File.Exists(updateFileName))
+			else if (File.Exists(updateFileName))
 			{
 				SetUpdateStatus(UpdateStatusStates.ReadyToInstall);
 			}
@@ -218,7 +205,14 @@ namespace MatterHackers.MatterControl
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						StyledMessageBox.ShowMessageBox(ProcessDialogResponse, updateAvailableMessage, updateAvailableTitle, StyledMessageBox.MessageType.YES_NO, downloadNow, remindMeLater);
+						StyledMessageBox.ShowMessageBox(
+							this.ProcessDialogResponse,
+							"There is a recommended update available for MatterControl. Would you like to download it now?".Localize(),
+							"Recommended Update Available".Localize(),
+							StyledMessageBox.MessageType.YES_NO,
+							"Download Now".Localize(),
+							"Remind Me Later".Localize());
+
 						// show a dialog to tell the user there is an update
 					});
 				}
@@ -240,7 +234,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void onVersionRequestFailed(object sender, ResponseErrorEventArgs e)
+		private void VersionRequest_Failed(object sender, ResponseErrorEventArgs e)
 		{
 			SetUpdateStatus(UpdateStatusStates.UpToDate);
 		}
@@ -294,16 +288,16 @@ namespace MatterHackers.MatterControl
 						downloadSize = 0;
 					}
 
-					if (!System.IO.Directory.Exists(updateFileLocation))
+					if (!Directory.Exists(updateFileLocation))
 					{
-						System.IO.Directory.CreateDirectory(updateFileLocation);
+						Directory.CreateDirectory(updateFileLocation);
 					}
 
 					updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", downloadToken, InstallerExtension));
 
 					webClient = new WebClient();
-					webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadCompleted);
-					webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressChanged);
+					webClient.DownloadFileCompleted += DownloadCompleted;
+					webClient.DownloadProgressChanged += DownloadProgressChanged;
 					try
 					{
 						webClient.DownloadFileAsync(new Uri(downloadUri), updateFileName);
@@ -319,7 +313,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (downloadSize > 0)
 			{
-				this.downloadPercent = (int)(e.BytesReceived * 100 / downloadSize);
+				this.DownloadPercent = (int)(e.BytesReceived * 100 / downloadSize);
 			}
 			UiThread.RunOnIdle(() => UpdateStatusChanged.CallEvents(this, e));
 		}
@@ -329,9 +323,9 @@ namespace MatterHackers.MatterControl
 			if (e.Error != null)
 			{
 				//Delete empty/partially downloaded file
-				if (System.IO.File.Exists(updateFileName))
+				if (File.Exists(updateFileName))
 				{
-					System.IO.File.Delete(updateFileName);
+					File.Delete(updateFileName);
 				}
 
 				//Try downloading again - one time
@@ -354,31 +348,18 @@ namespace MatterHackers.MatterControl
 
 		private UpdateControlData()
 		{
-			CheckVersionStatus();
-			if (ApplicationSettings.Instance.GetClientToken() != null
-				|| OemSettings.Instance.CheckForUpdatesOnFirstRun)
-			{
-				//If we have already requested an update once, check on load
-				CheckForUpdate();
-			}
-			else
-			{
-				ApplicationSession firstSession;
-				firstSession = Datastore.Instance.dbSQLite.Table<ApplicationSession>().OrderBy(v => v.SessionStart).Take(1).FirstOrDefault();
-				if (firstSession != null
-					&& DateTime.Compare(firstSession.SessionStart.AddDays(7), DateTime.Now) < 0)
-				{
-					SetUpdateStatus(UpdateStatusStates.UpdateAvailable);
-				}
-			}
+			this.CheckVersionStatus();
+
+			// Always check for updates on startup
+			this.CheckForUpdate();
 
 			// Now that we are running, check for an update every 24 hours.
-			var aTimer = new System.Timers.Timer(24 * 60 * 60 * 1000); //one day in milliseconds
-			aTimer.Elapsed += new ElapsedEventHandler(CheckForUpdateDaily);
-			aTimer.Start();
+			var checkUpdatesDaily = new System.Timers.Timer(24 * 60 * 60 * 1000); //one day in milliseconds
+			checkUpdatesDaily.Elapsed += DailyTimer_Elapsed;
+			checkUpdatesDaily.Start();
 		}
 
-		private void CheckForUpdateDaily(object source, ElapsedEventArgs e)
+		private void DailyTimer_Elapsed(object source, ElapsedEventArgs e)
 		{
 			CheckForUpdate();
 		}
@@ -402,15 +383,15 @@ namespace MatterHackers.MatterControl
 			string friendlyFileName = Path.Combine(updateFileLocation, "MatterControlSetup-{0}.{1}".FormatWith(releaseVersion, InstallerExtension));
 #endif
 
-			if (System.IO.File.Exists(friendlyFileName))
+			if (File.Exists(friendlyFileName))
 			{
-				System.IO.File.Delete(friendlyFileName);
+				File.Delete(friendlyFileName);
 			}
 
 			try
 			{
 				//Change download file to friendly file name
-				System.IO.File.Move(updateFileName, friendlyFileName);
+				File.Move(updateFileName, friendlyFileName);
 #if __ANDROID__
 				if (InstallUpdateFromMainActivity != null)
 				{
@@ -441,9 +422,9 @@ namespace MatterHackers.MatterControl
 			catch
 			{
 				GuiWidget.BreakInDebugger();
-				if (System.IO.File.Exists(friendlyFileName))
+				if (File.Exists(friendlyFileName))
 				{
-					System.IO.File.Delete(friendlyFileName);
+					File.Delete(friendlyFileName);
 				}
 			}
 
