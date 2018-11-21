@@ -1722,14 +1722,13 @@ namespace MatterHackers.MatterControl
 
 			CloudSyncStatusChanged.CallEvents(this, new CloudSyncEventArgs() { IsAuthenticated = userAuthenticated });
 
-			// Only fire UserChanged if it actually happened - prevents runaway positive feedback loop
 			if (!string.IsNullOrEmpty(AuthenticationData.Instance.ActiveSessionUsername)
 				&& AuthenticationData.Instance.ActiveSessionUsername != AuthenticationData.Instance.LastSessionUsername)
 			{
-				// only set it if it is an actual user name
 				AuthenticationData.Instance.LastSessionUsername = AuthenticationData.Instance.ActiveSessionUsername;
 			}
 
+			// TODO: Unclear why we'd reload on status change - it seems like this state should be managed entirely from ProfileManager and removed from this location
 			ProfileManager.ReloadActiveUser();
 		}
 
