@@ -213,30 +213,34 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		private List<string> _activeProfileIDs = null;
+		private List<string> profileIDsBackingField = null;
 
-		[JsonIgnore]
-		public IEnumerable<string> OpenPrinterIDs
+
+		private List<string> _activeProfileIDs
 		{
 			get
 			{
 				// Lazy load from db if null
-				if (_activeProfileIDs == null)
+				if (profileIDsBackingField == null)
 				{
 					string profileIDs = UserSettings.Instance.get($"ActiveProfileIDs-{UserName}");
 					try
 					{
-						_activeProfileIDs = JsonConvert.DeserializeObject<List<string>>(profileIDs);
+						profileIDsBackingField = JsonConvert.DeserializeObject<List<string>>(profileIDs);
 					}
 					catch
 					{
-						_activeProfileIDs = new List<string>();
+						profileIDsBackingField = new List<string>();
 					}
 				}
 
-				return _activeProfileIDs;
+				return profileIDsBackingField;
 			}
 		}
+
+
+		[JsonIgnore]
+		public IEnumerable<string> OpenPrinterIDs => _activeProfileIDs;
 
 		public void AddOpenPrinter(string printerID)
 		{
