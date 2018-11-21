@@ -33,8 +33,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
@@ -42,7 +40,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 	{
 		private EditableNumberDisplay fanSpeedDisplay;
 
-		private ICheckbox toggleSwitch;
+		private RoundedToggleSwitch toggleSwitch;
 		private PrinterConfig printer;
 
 		private FanControls(PrinterConfig printer, ThemeConfig theme)
@@ -94,7 +92,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				VAnchor = VAnchor.Center
 			});
 
-			var toggleSwitch = new RoundedToggleSwitch(theme)
+			toggleSwitch = new RoundedToggleSwitch(theme)
 			{
 				Margin = new BorderDouble(5, 0),
 				VAnchor = VAnchor.Center

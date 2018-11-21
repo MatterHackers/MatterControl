@@ -540,10 +540,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (IsGuestProfile && !PrintersImported)
 			{
+				int intialCount = this.Profiles.Count;
+
 				// Import Sqlite printer profiles into local json files
 				DataStorage.ClassicDB.ClassicSqlitePrinterProfiles.ImportPrinters(Instance, UserProfilesDirectory);
 				PrintersImported = true;
-				Save();
+
+				if (intialCount != this.Profiles.Count)
+				{
+					this.Save();
+				}
 			}
 		}
 
