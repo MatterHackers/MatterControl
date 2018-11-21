@@ -225,7 +225,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private List<string> profileIDsBackingField = null;
 
-
 		private List<string> _activeProfileIDs
 		{
 			get
@@ -247,7 +246,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return profileIDsBackingField;
 			}
 		}
-
 
 		[JsonIgnore]
 		public IEnumerable<string> OpenPrinterIDs => _activeProfileIDs;
@@ -593,7 +591,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal void ChangeID(string oldID, string newID)
 		{
-
 			if (_activeProfileIDs.Contains(oldID))
 			{
 				_activeProfileIDs.Remove(oldID);
