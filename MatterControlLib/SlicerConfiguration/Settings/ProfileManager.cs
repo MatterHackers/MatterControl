@@ -45,6 +45,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public static RootedObjectEventHandler ProfilesListChanged = new RootedObjectEventHandler();
 
+		public static event EventHandler UserChanged;
+
 		private static ProfileManager _instance = null;
 
 		public static ProfileManager Instance
@@ -121,12 +123,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				ProfileManager.Instance.Save();
 			}
 
+			// TODO: Consolidate ActivePrinters into ProfileManager.OpenPrinters
 			var openedPrinter = ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == printerID);
 			if (openedPrinter != null)
 			{
 				// Clear selected printer state
-				ProfileManager.Instance.RemoveOpenPrinter(printerID);
+				ProfileManager.Instance.ClosePrinter(printerID);
 			}
+
+			_activeProfileIDs.Remove(printerID);
 
 			UiThread.RunOnIdle(() =>
 			{
@@ -197,6 +202,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				loadedInstance = new ProfileManager() { UserName = userName };
 			}
 
+			ProfileManager.UserChanged?.Invoke(loadedInstance, null);
+
+			// Ensure SQLite printers are imported
+			loadedInstance.EnsurePrintersImported();
+
 			return loadedInstance;
 		}
 
@@ -213,32 +223,34 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		private List<string> _activeProfileIDs = null;
+		private List<string> profileIDsBackingField = null;
 
-		[JsonIgnore]
-		public IEnumerable<string> OpenPrinterIDs
+		private List<string> _activeProfileIDs
 		{
 			get
 			{
 				// Lazy load from db if null
-				if (_activeProfileIDs == null)
+				if (profileIDsBackingField == null)
 				{
 					string profileIDs = UserSettings.Instance.get($"ActiveProfileIDs-{UserName}");
 					try
 					{
-						_activeProfileIDs = JsonConvert.DeserializeObject<List<string>>(profileIDs);
+						profileIDsBackingField = JsonConvert.DeserializeObject<List<string>>(profileIDs);
 					}
 					catch
 					{
-						_activeProfileIDs = new List<string>();
+						profileIDsBackingField = new List<string>();
 					}
 				}
 
-				return _activeProfileIDs;
+				return profileIDsBackingField;
 			}
 		}
 
-		public void AddOpenPrinter(string printerID)
+		[JsonIgnore]
+		public IEnumerable<string> OpenPrinterIDs => _activeProfileIDs;
+
+		public void OpenPrinter(string printerID)
 		{
 			try
 			{
@@ -253,7 +265,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public void RemoveOpenPrinter(string printerID)
+		public void ClosePrinter(string printerID)
 		{
 			try
 			{
@@ -524,7 +536,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Path.Combine("Profiles", make, model + ProfileManager.ProfileExtension));
 		}
 
-		public void EnsurePrintersImported()
+		private void EnsurePrintersImported()
 		{
 			if (IsGuestProfile && !PrintersImported)
 			{
@@ -576,6 +588,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					break;
 			}
 		}
+
+		internal void ChangeID(string oldID, string newID)
+		{
+			if (_activeProfileIDs.Contains(oldID))
+			{
+				_activeProfileIDs.Remove(oldID);
+				_activeProfileIDs.Add(newID);
+			}
+		}
+
 		public void Save()
 		{
 			lock(writeLock)

@@ -448,13 +448,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			get { return id; }
 			set
 			{
-				var activePrinter = ApplicationController.Instance.ActivePrinter;
-
 				// Update in memory state if IDs match
-				if (activePrinter.Settings.ID == this.ID)
+				if (ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == this.ID) is PrinterConfig activePrinter)
 				{
 					activePrinter.Settings.ID = value;
 				}
+
+				ProfileManager.Instance.ChangeID(this.ID, value);
 
 				// Ensure the local file with the old ID moves with the new ID change
 				string existingProfilePath = ProfilePath;

@@ -361,9 +361,6 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler<OpenPrintersChangedEventArgs> OpenPrintersChanged;
 
-		public static Action SignInAction;
-		public static Action SignOutAction;
-
 		public static Action WebRequestFailed;
 		public static Action WebRequestSucceeded;
 
@@ -393,7 +390,7 @@ namespace MatterHackers.MatterControl
 		public void ClosePrinter(PrinterConfig printer, bool allowChangedEvent = true)
 		{
 			// Actually clear printer
-			ProfileManager.Instance.RemoveOpenPrinter(printer.Settings.ID);
+			ProfileManager.Instance.ClosePrinter(printer.Settings.ID);
 
 			_activePrinters.Remove(printer);
 
@@ -971,6 +968,11 @@ namespace MatterHackers.MatterControl
 		public ApplicationController()
 		{
 			this.Thumbnails = new ThumbnailsConfig();
+
+			ProfileManager.UserChanged += (s, e) =>
+			{
+				_activePrinters = new List<PrinterConfig>();
+			};
 
 			this.RebuildSceneOperations(this.Theme);
 
@@ -1725,27 +1727,15 @@ namespace MatterHackers.MatterControl
 
 			CloudSyncStatusChanged.CallEvents(this, new CloudSyncEventArgs() { IsAuthenticated = userAuthenticated });
 
-			// Only fire UserChanged if it actually happened - prevents runaway positive feedback loop
 			if (!string.IsNullOrEmpty(AuthenticationData.Instance.ActiveSessionUsername)
 				&& AuthenticationData.Instance.ActiveSessionUsername != AuthenticationData.Instance.LastSessionUsername)
 			{
-				// only set it if it is an actual user name
 				AuthenticationData.Instance.LastSessionUsername = AuthenticationData.Instance.ActiveSessionUsername;
 			}
 
-			this.UserChanged();
-		}
-
-		// Called after every startup and at the completion of every authentication change
-		public void UserChanged()
-		{
+			// TODO: Unclear why we'd reload on status change - it seems like this state should be managed entirely from ProfileManager and removed from this location
 			ProfileManager.ReloadActiveUser();
-
-			// Ensure SQLite printers are imported
-			ProfileManager.Instance.EnsurePrintersImported();
 		}
-
-		private EventHandler unregisterEvent;
 
 		public Stream LoadHttpAsset(string url)
 		{
@@ -1771,7 +1761,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (!_activePrinters.Any(p => p.Settings.ID == printerID))
 			{
-				ProfileManager.Instance.AddOpenPrinter(printerID);
+				ProfileManager.Instance.OpenPrinter(printerID);
 
 				var printer = new PrinterConfig(await ProfileManager.LoadSettingsAsync(printerID));
 

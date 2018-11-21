@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				this.CreatePartTab().ConfigureAwait(false);
 			}
-			
+
 			string tabKey = ApplicationController.Instance.MainTabKey;
 
 			if (string.IsNullOrEmpty(tabKey))
@@ -278,7 +278,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				SetLinkButtonsVisibility(s, new StringEventArgs("Unknown"));
 			}, ref unregisterEvents);
-			
+
 			ApplicationController.Instance.MainView = this;
 		}
 
@@ -634,7 +634,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Console.WriteLine();
 		}
 #endif
-
 
 		private void Printer_SettingChanged(object s, EventArgs e)
 		{
