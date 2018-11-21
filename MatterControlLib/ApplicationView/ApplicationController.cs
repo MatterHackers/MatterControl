@@ -390,7 +390,7 @@ namespace MatterHackers.MatterControl
 		public void ClosePrinter(PrinterConfig printer, bool allowChangedEvent = true)
 		{
 			// Actually clear printer
-			ProfileManager.Instance.RemoveOpenPrinter(printer.Settings.ID);
+			ProfileManager.Instance.ClosePrinter(printer.Settings.ID);
 
 			_activePrinters.Remove(printer);
 
@@ -1756,7 +1756,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (!_activePrinters.Any(p => p.Settings.ID == printerID))
 			{
-				ProfileManager.Instance.AddOpenPrinter(printerID);
+				ProfileManager.Instance.OpenPrinter(printerID);
 
 				var printer = new PrinterConfig(await ProfileManager.LoadSettingsAsync(printerID));
 

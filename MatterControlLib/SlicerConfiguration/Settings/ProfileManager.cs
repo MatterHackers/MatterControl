@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (openedPrinter != null)
 			{
 				// Clear selected printer state
-				ProfileManager.Instance.RemoveOpenPrinter(printerID);
+				ProfileManager.Instance.ClosePrinter(printerID);
 			}
 
 			UiThread.RunOnIdle(() =>
@@ -245,7 +245,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		public IEnumerable<string> OpenPrinterIDs => _activeProfileIDs;
 
-		public void AddOpenPrinter(string printerID)
+		public void OpenPrinter(string printerID)
 		{
 			try
 			{
@@ -260,7 +260,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public void RemoveOpenPrinter(string printerID)
+		public void ClosePrinter(string printerID)
 		{
 			try
 			{
