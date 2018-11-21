@@ -197,6 +197,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				loadedInstance = new ProfileManager() { UserName = userName };
 			}
 
+			// Ensure SQLite printers are imported
+			loadedInstance.EnsurePrintersImported();
+
 			return loadedInstance;
 		}
 
@@ -528,7 +531,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Path.Combine("Profiles", make, model + ProfileManager.ProfileExtension));
 		}
 
-		public void EnsurePrintersImported()
+		private void EnsurePrintersImported()
 		{
 			if (IsGuestProfile && !PrintersImported)
 			{

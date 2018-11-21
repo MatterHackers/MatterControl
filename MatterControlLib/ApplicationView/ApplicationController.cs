@@ -1730,16 +1730,7 @@ namespace MatterHackers.MatterControl
 				AuthenticationData.Instance.LastSessionUsername = AuthenticationData.Instance.ActiveSessionUsername;
 			}
 
-			this.UserChanged();
-		}
-
-		// Called after every startup and at the completion of every authentication change
-		public void UserChanged()
-		{
 			ProfileManager.ReloadActiveUser();
-
-			// Ensure SQLite printers are imported
-			ProfileManager.Instance.EnsurePrintersImported();
 		}
 
 		public Stream LoadHttpAsset(string url)
