@@ -240,7 +240,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.WaitForName("Disconnect from printer button");
 
 			testRunner.Delay();
-			if (testRunner.NameExists("Already Loaded Button"))
+			if (testRunner.NamedWidgetExists("Already Loaded Button"))
 			{
 				testRunner.ClickByName("Already Loaded Button");
 			}
@@ -773,13 +773,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// <param name="testRunner"></param>
 		public static void OpenPrintPopupMenu(this AutomationRunner testRunner)
 		{
-			var printerConnection = ApplicationController.Instance.ActivePrinter.Connection;
+			var printerConnection = ApplicationController.Instance.DragDropData.View3DWidget.Printer.Connection;
 
 			if (printerConnection.CommunicationState != CommunicationStates.Connected
 				&& printerConnection.CommunicationState != CommunicationStates.FinishedPrint)
 			{
 				testRunner.ClickByName("Connect to printer button");
 				testRunner.WaitFor(() => printerConnection.CommunicationState == CommunicationStates.Connected);
+			}
+
+			if (testRunner.NamedWidgetExists("Finish Setup Button"))
+			{
+				testRunner.ClickByName("Finish Setup Button");
+				testRunner.ClickByName("Already Loaded Button");
 			}
 
 			// Wait for button to become enabled
