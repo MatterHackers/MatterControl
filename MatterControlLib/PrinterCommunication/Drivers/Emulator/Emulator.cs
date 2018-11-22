@@ -253,7 +253,16 @@ namespace MatterHackers.PrinterEmulator
 			try
 			{
 				var sIndex = command.IndexOf('S') + 1;
-				FanSpeed = int.Parse(command.Substring(sIndex));
+
+				string fanSpeed = command.Substring(sIndex);
+
+				int spaceIndex = fanSpeed.IndexOf(' ');
+				if (spaceIndex != -1)
+				{
+					fanSpeed = fanSpeed.Substring(0, spaceIndex);
+				}
+
+				FanSpeed = int.Parse(fanSpeed);
 				FanSpeedChanged?.Invoke(this, null);
 			}
 			catch (Exception e)
@@ -397,7 +406,16 @@ namespace MatterHackers.PrinterEmulator
 			{
 				// M140 S210 or M190 S[temp]
 				var sIndex = command.IndexOf('S') + 1;
-				HeatedBed.TargetTemperature = int.Parse(command.Substring(sIndex));
+
+				string temperature = command.Substring(sIndex);
+
+				int spaceIndex = temperature.IndexOf(' ');
+				if (spaceIndex != -1)
+				{
+					temperature = temperature.Substring(0, spaceIndex);
+				}
+
+				HeatedBed.TargetTemperature = int.Parse(temperature);
 			}
 			catch (Exception e)
 			{
