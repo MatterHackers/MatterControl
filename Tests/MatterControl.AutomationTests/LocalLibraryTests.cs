@@ -78,6 +78,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Click Move
 				testRunner.ClickByName("Accept Button");
 
+				// Wait for closed window/closed row
+				testRunner.WaitForWidgetDisappear("Move Item Window", 5);
+				testRunner.WaitForWidgetDisappear("Row Item Batman", 2);
+
 				// Return to the Local Library folder
 				testRunner.ClickByName("Library Up Button");
 
