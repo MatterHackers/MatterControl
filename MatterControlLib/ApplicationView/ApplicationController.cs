@@ -348,7 +348,7 @@ namespace MatterHackers.MatterControl
 		// PrinterConnection.IsPrinterConnected, that could should be updated to iterate ActiverPrinters, checking each one and acting on each as it would
 		// have for the single case
 		[Obsolete("ActivePrinter references should be migrated to logic than supports multi-printer mode")]
-		public PrinterConfig ActivePrinter { get; private set; } = PrinterConfig.EmptyPrinter;
+		public PrinterConfig ActivePrinter => this.ActivePrinters.FirstOrDefault() ?? PrinterConfig.EmptyPrinter;
 
 		public Action RedeemDesignCode;
 		public Action EnterShareCode;

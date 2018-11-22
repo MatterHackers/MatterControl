@@ -248,7 +248,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 	public class ZTuningWidget : GuiWidget
 	{
 		private TextWidget zOffsetStreamDisplay;
-		private Button clearZOffsetButton;
+		private GuiWidget clearZOffsetButton;
 		private FlowLayoutWidget zOffsetStreamContainer;
 
 		private bool allowRemoveButton;
