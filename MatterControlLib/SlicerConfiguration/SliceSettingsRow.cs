@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private GuiWidget dataArea;
 		private GuiWidget unitsArea;
 		private GuiWidget restoreArea;
-		private Button restoreButton = null;
+		private GuiWidget restoreButton = null;
 
 		public SliceSettingsRow(PrinterConfig printer, SettingsContext settingsContext, SliceSettingData settingData, ThemeConfig theme, bool fullRowSelect = false)
 			: base (settingData.PresentationName.Localize(), settingData.HelpText.Localize(), theme, fullRowSelect: fullRowSelect)

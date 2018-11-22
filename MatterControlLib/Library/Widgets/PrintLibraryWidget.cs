@@ -515,7 +515,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	public class SearchInputBox : GuiWidget
 	{
 		internal MHTextEditWidget searchInput;
-		public Button ResetButton { get; }
+		public GuiWidget ResetButton { get; }
 
 		public SearchInputBox(ThemeConfig theme, string emptyText = null)
 		{

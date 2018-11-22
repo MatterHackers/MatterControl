@@ -421,14 +421,9 @@ namespace MatterHackers.MatterControl
 			return imageBuffer;
 		}
 
-		public Button CreateSmallResetButton()
+		public GuiWidget CreateSmallResetButton()
 		{
-			return new Button(
-				new ButtonViewStates(
-					new ImageWidget(restoreNormal),
-					new ImageWidget(restoreHover),
-					new ImageWidget(restorePressed),
-					new ImageWidget(restoreNormal)))
+			return new HoverImageWidget(restoreNormal, restoreHover)
 			{
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(0, 0, 5, 0)
