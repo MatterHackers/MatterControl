@@ -48,6 +48,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsFalse(testRunner.WaitForName("PrintPopupMenu", .5), "Start Print should not be visible if PrintLeveling is required");
 					Assert.IsTrue(testRunner.WaitForName("Finish Setup Button"), "Finish Setup should be visible if PrintLeveling is required");
 
+					// HACK: automatically resuming setup wizard. Long term we want a better plan
+					testRunner.ClickByName("Finish Setup Button");
+
 					testRunner.Complete9StepLeveling();
 
 					// make sure the button has changed to start print
