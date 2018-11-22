@@ -6,6 +6,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
@@ -498,7 +499,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 				testRunner.SwitchToSliceSettings();
 
-				var printer = ApplicationController.Instance.ActivePrinter;
+				var printer = ApplicationController.Instance.ActivePrinters.First();
 
 				testRunner.SelectSliceSettingsField("Advanced", "layer_height");
 				testRunner.Type(".5");
@@ -515,17 +516,24 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.WaitFor(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.1);
 				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.1", "Layer height is the fine override");
 
+				// Close Airwolf
+				CloseFirstPrinterTab(testRunner);
+
 				testRunner.AddAndSelectPrinter("BCN", "Sigma");
 
 				// Check Guest printer count
-				Assert.AreEqual(2, ProfileManager.Instance.ActiveProfiles.Count(), "ProfileManager has 2 Profiles");
+				Assert.AreEqual(2, ProfileManager.Instance.ActiveProfiles.Count(), "ProfileManager has 2 profiles");
+				Assert.AreEqual(1, ProfileManager.Instance.OpenPrinterIDs.Count(), "ProfileManager has 1 open profiles");
 
-				// Check if Guest printer names exists in dropdown
+				// Close BCN
+				CloseFirstPrinterTab(testRunner);
+
+				// Reopen Airwolf
 				testRunner.SwitchToHardwareTab();
 				testRunner.DoubleClickByName("Airwolf 3D HD Node");
 				testRunner.Delay(0.2);
 
-				printer = ApplicationController.Instance.ActivePrinter;
+				printer = ApplicationController.Instance.ActivePrinters.First();
 
 				testRunner.WaitFor(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.1);
 				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.1", "Layer height is the fine override");
@@ -541,6 +549,31 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				return Task.CompletedTask;
 			}, maxTimeToRun: 120);
+		}
+
+		private void CloseFirstPrinterTab(AutomationRunner testRunner)
+		{
+			// Close all printer tabs
+			var mainViewWidget = testRunner.GetWidgetByName("PartPreviewContent", out _) as MainViewWidget;
+			if (mainViewWidget.TabControl.AllTabs.First(t => t.TabContent is PrinterTabPage) is GuiWidget widget)
+			{
+				var closeWidget = widget.Descendants<ImageWidget>().First();
+				closeWidget.InvokeClick();
+			}
+		}
+
+		private void CloseAllPrinterTabs(AutomationRunner testRunner)
+		{
+			// Close all printer tabs
+			var mainViewWidget = testRunner.GetWidgetByName("PartPreviewContent", out _) as MainViewWidget;
+			foreach (var tab in mainViewWidget.TabControl.AllTabs.Where(t => t.TabContent is PrinterTabPage).ToList())
+			{
+				if (tab is GuiWidget widget)
+				{
+					var closeWidget = widget.Descendants<ImageWidget>().First();
+					closeWidget.InvokeClick();
+				}
+			}
 		}
 	}
 }
