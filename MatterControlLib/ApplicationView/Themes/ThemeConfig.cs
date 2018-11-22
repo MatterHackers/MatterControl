@@ -44,9 +44,9 @@ namespace MatterHackers.MatterControl
 
 	public class ThemeConfig
 	{
-		private static ImageBuffer restoreNormal;
-		private static ImageBuffer restoreHover;
-		private static ImageBuffer restorePressed;
+		private ImageBuffer restoreNormal;
+		private ImageBuffer restoreHover;
+		private ImageBuffer restorePressed;
 
 		public int FontSize7 { get; } = 7;
 		public int FontSize8 { get; } = 8;
