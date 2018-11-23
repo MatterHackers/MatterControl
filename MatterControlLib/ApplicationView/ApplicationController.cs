@@ -884,21 +884,6 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			this.Library.RegisterContainer(
-				new DynamicContainerLink(
-						() => "SD Card".Localize(),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_20x20.png")),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_folder.png")),
-						() => new SDCardContainer(),
-						() =>
-						{
-							var printer = this.ActivePrinter;
-							return printer.Settings.GetValue<bool>(SettingsKey.has_sd_card_reader);
-						})
-				{
-					IsReadOnly = true
-				});
-
 			this.Library.PlatingHistory = new PlatingHistoryContainer();
 
 			this.Library.RegisterContainer(

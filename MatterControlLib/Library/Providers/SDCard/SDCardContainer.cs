@@ -51,13 +51,11 @@ namespace MatterHackers.MatterControl.Library
 
 		private AutoResetEvent autoResetEvent;
 
-		public SDCardContainer()
+		public SDCardContainer(PrinterConfig printer)
 		{
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
 			this.Name = "SD Card".Localize();
-
-			printer = ApplicationController.Instance.ActivePrinter;
 
 			void CommunicationStateChanged(object s, EventArgs e)
 			{
