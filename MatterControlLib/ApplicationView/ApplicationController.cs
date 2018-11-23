@@ -254,6 +254,7 @@ namespace MatterHackers.MatterControl
 	public class ApplicationController
 	{
 		public HelpArticle HelpArticles { get; set; }
+		public event EventHandler<string> ApplicationError;
 
 		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 
@@ -340,6 +341,11 @@ namespace MatterHackers.MatterControl
 			}
 
 			return popupMenu;
+		}
+
+		public void LogError(string errorMessage)
+		{
+			this.ApplicationError?.Invoke(this, errorMessage);
 		}
 
 		// TODO: Any references to this property almost certainly need to be reconsidered. ActiveSliceSettings static references that assume a single printer

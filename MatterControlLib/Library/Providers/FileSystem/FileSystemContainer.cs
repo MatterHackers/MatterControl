@@ -281,7 +281,7 @@ namespace MatterHackers.MatterControl.Library
 							{
 								UiThread.RunOnIdle(() =>
 								{
-									ApplicationController.Instance.ActivePrinter.Connection.TerminalLog.WriteLine($"Error adding file: {targetPath}\r\n{ex.Message}");
+									ApplicationController.Instance.LogError($"Error adding file: {targetPath}\r\n{ex.Message}");
 								});
 							}
 							break;
