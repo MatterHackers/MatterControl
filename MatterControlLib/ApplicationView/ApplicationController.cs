@@ -253,10 +253,9 @@ namespace MatterHackers.MatterControl
 
 	public class ApplicationController
 	{
-		public HelpArticle HelpArticles { get; set; }
 		public event EventHandler<string> ApplicationError;
 
-		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
+		public HelpArticle HelpArticles { get; set; }
 
 		public ThemeConfig Theme => AppContext.Theme;
 
@@ -264,10 +263,12 @@ namespace MatterHackers.MatterControl
 
 		public RunningTasksConfig Tasks { get; set; } = new RunningTasksConfig();
 
+		public IReadOnlyList<PrinterConfig> ActivePrinters => _activePrinters;
+
 		// A list of printers which are open (i.e. displaying a tab) on this instance of MatterControl
 		private List<PrinterConfig> _activePrinters = new List<PrinterConfig>();
-
-		public IReadOnlyList<PrinterConfig> ActivePrinters => _activePrinters;
+		
+		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 
 		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu)
 		{
