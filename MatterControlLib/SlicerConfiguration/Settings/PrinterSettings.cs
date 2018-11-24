@@ -37,7 +37,6 @@ using System.Text;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
@@ -98,7 +97,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		static PrinterSettings()
 		{
 			Empty = new PrinterSettings() { ID = "EmptyProfile" };
-			Empty.UserLayer[SettingsKey.printer_name] = "Printers...".Localize();
+			Empty.UserLayer[SettingsKey.printer_name] = "Empty Printer";
 		}
 
 		public PrinterSettings()
