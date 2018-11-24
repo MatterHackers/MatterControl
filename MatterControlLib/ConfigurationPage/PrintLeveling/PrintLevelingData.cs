@@ -35,17 +35,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class PrintLevelingData
 	{
-		#region JSON data
-		public List<Vector3> SampledPositions = new List<Vector3>();
-		public LevelingSystem LevelingSystem;
-		public DateTime CreationDate;
-		public double BedTemperature;
-		public bool IssuedLevelingTempWarning;
-		#endregion
-
 		public PrintLevelingData()
 		{
 		}
+
+		public List<Vector3> SampledPositions = new List<Vector3>();
+
+		public LevelingSystem LevelingSystem { get; set; }
+
+		public DateTime CreationDate { get; set; }
+
+		public double BedTemperature { get; set; }
+
+		public bool IssuedLevelingTempWarning { get; set; }
 
 		public bool SamplesAreSame(List<Vector3> sampledPositions)
 		{
