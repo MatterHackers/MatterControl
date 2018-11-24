@@ -438,33 +438,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var themePanel = new GuiWidget()
 			{
-				HAnchor = HAnchor.Absolute,
+				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Stretch,
-				Padding = new BorderDouble(right: 3),
 				Margin = new BorderDouble(right: 2, top: 1, bottom: 1),
 				Border = new BorderDouble(1),
 				BackgroundColor = panelBackgroundColor,
 				BorderColor = theme.SlightShade,
 				Cursor = Cursors.Hand,
 				ToolTipText = "Theme".Localize(),
-				Width = 40
 			};
 
 			themePanel.AddChild(
 				new ImageWidget(AggContext.StaticData.LoadIcon("theme.png", 16, 16, theme.InvertIcons), false)
 				{
-					HAnchor = HAnchor.Left | HAnchor.Absolute,
+					HAnchor = HAnchor.Center | HAnchor.Absolute,
 					VAnchor = VAnchor.Center | VAnchor.Absolute,
-					Selectable = false
-				});
-
-			themePanel.AddChild(
-				new ColorButton(theme.PrimaryAccentColor)
-				{
-					HAnchor = HAnchor.Right | HAnchor.Absolute,
-					VAnchor = VAnchor.Center | VAnchor.Absolute,
-					Width = 12,
-					Height = 12,
+					Margin = new BorderDouble(5, 0),
 					Selectable = false
 				});
 

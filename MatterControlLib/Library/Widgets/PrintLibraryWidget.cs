@@ -531,8 +531,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.AddChild(searchInput);
 
 			var resetButton = theme.CreateSmallResetButton();
-			resetButton.HAnchor = HAnchor.Right | HAnchor.Fit;
-			resetButton.VAnchor = VAnchor.Center | VAnchor.Fit;
+			resetButton.HAnchor |= HAnchor.Right;
+			resetButton.VAnchor |= VAnchor.Center;
 			resetButton.Name = "Close Search";
 			resetButton.ToolTipText = "Clear".Localize();
 
