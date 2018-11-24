@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			// SHA1 value is based on UTF8 encoded file contents
 			using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(object3D.ToJson())))
 			{
-				return Object3D.ComputeSHA1(memoryStream);
+				return HashGenerator.ComputeSHA1(memoryStream);
 			}
 		}
 
@@ -373,7 +373,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			return currentTransform;
 		}
-		 
+
 		public static Vector3 GetCenter(this IObject3D item)
 		{
 			return item.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center;

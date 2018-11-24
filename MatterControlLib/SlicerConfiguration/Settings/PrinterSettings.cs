@@ -36,7 +36,6 @@ using System.Runtime.Serialization;
 using System.Text;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
-using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -446,7 +445,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// SHA1 value is based on UTF8 encoded file contents
 			using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
 			{
-				return Object3D.ComputeSHA1(memoryStream);
+				return HashGenerator.ComputeSHA1(memoryStream);
 			}
 		}
 
