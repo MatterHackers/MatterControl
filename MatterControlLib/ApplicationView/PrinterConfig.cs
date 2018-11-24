@@ -114,9 +114,8 @@ namespace MatterHackers.MatterControl
 			this.Connection.ConnectionSucceeded += Connection_ConnectionSucceeded;
 			this.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
 			this.Connection.PrintFinished += Connection_PrintFinished;
-			
+
 			this.Settings = settings;
-			this.Settings.printer = this;
 			this.Settings.SettingChanged += Printer_SettingChanged;
 
 			if (!string.IsNullOrEmpty(this.Settings.GetValue(SettingsKey.baud_rate)))

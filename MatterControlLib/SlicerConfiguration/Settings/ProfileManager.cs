@@ -680,7 +680,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void Printer_SettingsChanged(object sender, EventArgs e)
 		{
-			var printer = (sender as PrinterSettings)?.printer;
+			string printerID = (sender as PrinterSettings)?.ID;
+
+			var printer = ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == printerID);
 
 			if (Instance?.OpenPrinterIDs.Any() != true
 				|| printer == null)

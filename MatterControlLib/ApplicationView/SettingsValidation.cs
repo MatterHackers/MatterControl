@@ -38,8 +38,10 @@ namespace MatterHackers.MatterControl
 {
 	public static class SettingsValidation
 	{
-		public static bool SettingsValid(PrinterSettings settings)
+		public static bool SettingsValid(PrinterConfig printer)
 		{
+			var settings = printer.Settings;
+
 			try
 			{
 				if (settings.GetValue<bool>(SettingsKey.validate_layer_height))
@@ -257,19 +259,19 @@ namespace MatterHackers.MatterControl
 				}
 
 				// If the given speed is part of the current slice engine then check that it is greater than 0.
-				if (!ValidateGoodSpeedSettingGreaterThan0("bridge_speed", settings)) return false;
-				if (!ValidateGoodSpeedSettingGreaterThan0("air_gap_speed", settings)) return false;
-				if (!ValidateGoodSpeedSettingGreaterThan0("external_perimeter_speed", settings)) return false;
-				if (!ValidateGoodSpeedSettingGreaterThan0(SettingsKey.first_layer_speed, settings)) return false;
-				if (!ValidateGoodSpeedSettingGreaterThan0("infill_speed", settings)) return false;
-				if (!ValidateGoodSpeedSettingGreaterThan0("perimeter_speed", settings)) return false;
-				if (!ValidateGoodSpeedSettingGreaterThan0("small_perimeter_speed", settings)) return false;
-				if (!ValidateGoodSpeedSettingGreaterThan0("solid_infill_speed", settings)) return false;
-				if (!ValidateGoodSpeedSettingGreaterThan0("support_material_speed", settings)) return false;
-				if (!ValidateGoodSpeedSettingGreaterThan0(SettingsKey.top_solid_infill_speed, settings)) return false;
-				if (!ValidateGoodSpeedSettingGreaterThan0("travel_speed", settings)) return false;
+				if (!ValidateGoodSpeedSettingGreaterThan0("bridge_speed", printer)) return false;
+				if (!ValidateGoodSpeedSettingGreaterThan0("air_gap_speed", printer)) return false;
+				if (!ValidateGoodSpeedSettingGreaterThan0("external_perimeter_speed", printer)) return false;
+				if (!ValidateGoodSpeedSettingGreaterThan0(SettingsKey.first_layer_speed, printer)) return false;
+				if (!ValidateGoodSpeedSettingGreaterThan0("infill_speed", printer)) return false;
+				if (!ValidateGoodSpeedSettingGreaterThan0("perimeter_speed", printer)) return false;
+				if (!ValidateGoodSpeedSettingGreaterThan0("small_perimeter_speed", printer)) return false;
+				if (!ValidateGoodSpeedSettingGreaterThan0("solid_infill_speed", printer)) return false;
+				if (!ValidateGoodSpeedSettingGreaterThan0("support_material_speed", printer)) return false;
+				if (!ValidateGoodSpeedSettingGreaterThan0(SettingsKey.top_solid_infill_speed, printer)) return false;
+				if (!ValidateGoodSpeedSettingGreaterThan0("travel_speed", printer)) return false;
 
-				if (!ValidateGoodSpeedSettingGreaterThan0("retract_speed", settings)) return false;
+				if (!ValidateGoodSpeedSettingGreaterThan0("retract_speed", printer)) return false;
 			}
 			catch (Exception e)
 			{
@@ -317,9 +319,9 @@ namespace MatterHackers.MatterControl
 			return settingData.PresentationName.Localize();
 		}
 
-		private static bool ValidateGoodSpeedSettingGreaterThan0(string speedSetting, PrinterSettings settings)
+		private static bool ValidateGoodSpeedSettingGreaterThan0(string speedSetting, PrinterConfig printer)
 		{
-			var actualSpeedValueString = settings.GetValue(speedSetting);
+			var actualSpeedValueString = printer.Settings.GetValue(speedSetting);
 			var speedValueString = actualSpeedValueString;
 			if (speedValueString.EndsWith("%"))
 			{
@@ -333,7 +335,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			if (!valueWasNumber
-				|| (settings.printer.EngineMappingsMatterSlice.MapContains(speedSetting)
+				|| (printer.EngineMappingsMatterSlice.MapContains(speedSetting)
 				&& speedToCheck <= 0))
 			{
 				SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(speedSetting);

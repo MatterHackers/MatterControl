@@ -93,8 +93,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public PrinterSettingsLayer StagedUserSettings { get; set; } = new PrinterSettingsLayer();
 
-		[JsonIgnore]
-		internal PrinterConfig printer { get; set; }
 
 		static PrinterSettings()
 		{
