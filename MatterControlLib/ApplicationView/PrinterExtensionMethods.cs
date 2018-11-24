@@ -35,6 +35,7 @@ namespace MatterHackers.MatterControl
 	using System.Linq;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.Localizations;
+	using MatterHackers.MatterControl.SlicerConfiguration;
 	using MatterHackers.MeshVisualizer;
 
 	public static class PrinterExtensionMethods

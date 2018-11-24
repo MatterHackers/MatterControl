@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,6 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -47,6 +46,8 @@ using Newtonsoft.Json.Linq;
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public enum NamedSettingsLayers { MHBaseSettings, OEMSettings, Quality, Material, User, All }
+
+	public enum BedShape { Rectangular, Circular };
 
 	public class PrinterSettings
 	{

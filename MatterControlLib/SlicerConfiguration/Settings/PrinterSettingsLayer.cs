@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -163,5 +163,4 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 		}
 	}
-
 }
