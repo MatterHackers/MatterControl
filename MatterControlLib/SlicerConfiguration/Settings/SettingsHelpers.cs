@@ -31,14 +31,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
-using MatterHackers.Agg.Platform;
-using System.Runtime.Serialization;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {

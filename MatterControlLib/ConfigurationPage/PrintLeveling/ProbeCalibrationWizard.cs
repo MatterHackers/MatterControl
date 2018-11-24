@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			targetHotendTemp = printer.Settings.Helpers.ExtruderTemperature(0);
 
-			if (PrintLevelingData.NeedsToBeRun(printer))
+			if (LevelingValidation.NeedsToBeRun(printer))
 			{
 				// start heating up the bed as that will be needed next
 				var bedTemperature = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?

@@ -1382,7 +1382,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			// run the leveling wizard if we need to
-			if (PrintLevelingData.NeedsToBeRun(printer))
+			if (LevelingValidation.NeedsToBeRun(printer))
 			{
 				UiThread.RunOnIdle(() =>
 				{
