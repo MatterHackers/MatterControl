@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 						this.LoadCalibrationPrints();
 
 #if __ANDROID__
-						UiThread.RunOnIdle(() => DialogWindow.ChangeToPage<AndroidConnectDevicePage>());
+						UiThread.RunOnIdle(() => DialogWindow.ChangeToPage(new AndroidConnectDevicePage(printer)));
 #else
 						UiThread.RunOnIdle(() =>
 						{

@@ -53,8 +53,10 @@ namespace MatterHackers.MatterControl
 		private FlowLayoutWidget connectButtonContainer;
 		private PrinterConfig printer;
 
-		public AndroidConnectDevicePage()
+		public AndroidConnectDevicePage(PrinterConfig printer)
 		{
+			this.printer = printer;
+
 			var printerNameLabel = new TextWidget("Connect Your Device".Localize() + ":", 0, 0, labelFontSize)
 			{
 				TextColor = theme.TextColor,
@@ -68,9 +70,6 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(new TextWidget("3. Press 'Connect'.".Localize(), 0, 0, 12,textColor:theme.TextColor));
 
 			//Add inputs to main container
-			printer = ApplicationController.Instance.ActivePrinter;
-			printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
-			
 			connectButtonContainer = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch,
@@ -137,6 +136,9 @@ namespace MatterHackers.MatterControl
 
 			this.AddPageAction(nextButton);
 
+			// Register listeners
+			printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
+
 			updateControls(true);
 		}
 
@@ -168,19 +170,19 @@ namespace MatterHackers.MatterControl
 			connectButtonContainer.Visible = false;
 			retryButtonContainer.Visible = false;
 
-			if (ApplicationController.Instance.ActivePrinter.Connection.IsConnected)
+			if (printer.Connection.IsConnected)
 			{
 				generalError.Text = "{0}!".FormatWith ("Connection succeeded".Localize ());
 				generalError.Visible = true;
 				nextButton.Visible = true;
 			}
-			else if (firstLoad || ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Disconnected)
+			else if (firstLoad || printer.Connection.CommunicationState == CommunicationStates.Disconnected)
 			{
 				generalError.Text = "";
 				connectButton.Visible = true;
 				connectButtonContainer.Visible = true;
 			}
-			else if (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.AttemptingToConnect)
+			else if (printer.Connection.CommunicationState == CommunicationStates.AttemptingToConnect)
 			{
 				generalError.Text = "{0}...".FormatWith("Attempting to connect".Localize());
 				generalError.Visible = true;
