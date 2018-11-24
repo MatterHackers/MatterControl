@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl
 				AppContext.Platform.OpenCameraPreview();
 			};
 
-			var printer = ApplicationController.Instance.ActivePrinter;
+			var printer = ApplicationController.Instance.ActivePrinters.FirstOrDefault() ?? PrinterConfig.EmptyPrinter;
 
 			this.AddSettingsRow(
 				new SettingsItem(
@@ -101,7 +101,10 @@ namespace MatterHackers.MatterControl
 						}
 					},
 					previewButton,
-					AggContext.StaticData.LoadIcon("camera-24x24.png", 24, 24)),
+					AggContext.StaticData.LoadIcon("camera-24x24.png", 24, 24))
+				{
+					Enabled = printer.Settings.PrinterSelected
+				},
 				generalPanel
 			);
 #endif
