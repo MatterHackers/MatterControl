@@ -25,7 +25,8 @@
       "BackgroundColor": "#EEEEEE",
       "ForegroundColor": "#00000000",
       "BorderColor": "#FF7F00",
-      "TextColor": "#222222"
+      "TextColor": "#222222",
+      "LightTextColor": "#6e6e6e"
     },
     "Hovered": {
       "BackgroundColor": "#EEEEEE",
@@ -37,7 +38,8 @@
       "BackgroundColor": "#EEEEEE",
       "ForegroundColor": "#00000000",
       "BorderColor": "#00000000",
-      "TextColor": "#222222"
+      "TextColor": "#222222",
+      "LightTextColor": "#6e6e6e"
     }
   },
   "LightTextColor": "#00000000",
