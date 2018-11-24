@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl
 
 		// A list of printers which are open (i.e. displaying a tab) on this instance of MatterControl
 		private List<PrinterConfig> _activePrinters = new List<PrinterConfig>();
-		
+
 		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 
 		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu)
@@ -2024,7 +2024,7 @@ namespace MatterHackers.MatterControl
 
 				printer.Connection.PrintingItemName = printItemName;
 
-				if (printer.Settings.IsValid())
+				if (SettingsValidation.SettingsValid(printer.Settings))
 				{
 					// check that current bed temp is is within 10 degrees of leveling temp
 					var enabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
