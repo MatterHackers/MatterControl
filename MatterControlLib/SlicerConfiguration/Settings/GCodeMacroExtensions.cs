@@ -27,29 +27,19 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Text.RegularExpressions;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class GCodeMacro
+	public static class GCodeMacroExtensions
 	{
-		public string Name { get; set; }
-		public string GCode { get; set; }
-		public DateTime LastModified { get; set; }
-
-		public static string FixMacroName(string input)
+		public static void Run(this GCodeMacro macro, PrinterConnection printerConnection)
 		{
-			int lengthLimit = 24;
-
-			string result = Regex.Replace(input, @"\r\n?|\n", " ");
-
-			if (result.Length > lengthLimit)
+			if (printerConnection.IsConnected)
 			{
-				result = result.Substring(0, lengthLimit) + "...";
+				printerConnection.MacroStart();
+				printerConnection.QueueLine(macro.GCode);
 			}
-
-			return result;
 		}
 	}
 }
