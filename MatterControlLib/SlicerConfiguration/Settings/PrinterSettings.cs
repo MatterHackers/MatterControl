@@ -35,7 +35,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -43,8 +42,6 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.ContactForm;
-using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
-using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
@@ -490,121 +487,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public async static Task<PrinterSettings> RecoverProfile(PrinterInfo printerInfo)
-		{
-			bool userIsLoggedIn = !ApplicationController.GuestUserActive?.Invoke() ?? false;
-			if (userIsLoggedIn && printerInfo != null)
-			{
-				// Attempt to load from MCWS history
-				var printerSettings = await GetFirstValidHistoryItem(printerInfo);
-				if (printerSettings == null)
-				{
-					// Fall back to OemProfile defaults if load from history fails
-					printerSettings = RestoreFromOemProfile(printerInfo);
-				}
-
-				if (printerSettings == null)
-				{
-					// If we still have failed to recover a profile, create an empty profile with
-					// just enough data to delete the printer
-					printerSettings = PrinterSettings.Empty;
-					printerSettings.ID = printerInfo.ID;
-					printerSettings.UserLayer[SettingsKey.device_token] = printerInfo.DeviceToken;
-					printerSettings.Helpers.SetComPort(printerInfo.ComPort);
-					printerSettings.SetValue(SettingsKey.printer_name, printerInfo.Name);
-
-					// Add any setting value to the OemLayer to pass the .PrinterSelected property
-					printerSettings.OemLayer = new PrinterSettingsLayer();
-					printerSettings.OemLayer.Add("empty", "setting");
-					printerSettings.Save();
-				}
-
-				if (printerSettings != null)
-				{
-					// Persist any profile recovered above as the current
-					printerSettings.Save();
-
-					WarnAboutRevert(printerInfo);
-				}
-
-				return printerSettings;
-			}
-
-			return null;
-		}
-
-		private static bool warningWindowOpen = false;
-
-		public static void WarnAboutRevert(PrinterInfo profile)
-		{
-			if (!warningWindowOpen)
-			{
-				warningWindowOpen = true;
-				UiThread.RunOnIdle(() =>
-				{
-					StyledMessageBox.ShowMessageBox((clicedOk) =>
-					{
-						warningWindowOpen = false;
-					},
-					"The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.".Localize()
-						.FormatWith(profile.Make, profile.Model),
-					"Recovered printer profile".Localize(),
-					messageType: StyledMessageBox.MessageType.OK);
-				});
-			}
-		}
-
 		internal void OnPrintLevelingEnabledChanged(object s, EventArgs e)
 		{
 			PrintLevelingEnabledChanged?.Invoke(s, e);
-		}
-
-		public static PrinterSettings RestoreFromOemProfile(PrinterInfo profile)
-		{
-			PrinterSettings oemProfile = null;
-
-			try
-			{
-				var publicDevice = OemSettings.Instance.OemProfiles[profile.Make][profile.Model];
-				string cacheScope = Path.Combine("public-profiles", profile.Make);
-
-				string publicProfileToLoad = ApplicationController.CacheablePath(cacheScope, publicDevice.CacheKey);
-
-				oemProfile = JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(publicProfileToLoad));
-				oemProfile.ID = profile.ID;
-				oemProfile.SetValue(SettingsKey.printer_name, profile.Name);
-				oemProfile.DocumentVersion = PrinterSettings.LatestVersion;
-
-				oemProfile.Helpers.SetComPort(profile.ComPort);
-				oemProfile.Save();
-			}
-			catch { }
-
-			return oemProfile;
-		}
-
-		private static async Task<PrinterSettings> GetFirstValidHistoryItem(PrinterInfo printerInfo)
-		{
-			var recentProfileHistoryItems = await ApplicationController.GetProfileHistory?.Invoke(printerInfo.DeviceToken);
-			if (recentProfileHistoryItems != null)
-			{
-				// Iterate history, skipping the first item, limiting to the next five, attempt to load and return the first success
-				foreach (var keyValue in recentProfileHistoryItems.OrderByDescending(kvp => kvp.Key).Skip(1).Take(5))
-				{
-					// Attempt to download and parse each profile, returning if successful
-					try
-					{
-						var printerSettings = await ApplicationController.GetPrinterProfileAsync(printerInfo, keyValue.Value);
-						if (printerSettings != null)
-						{
-							return printerSettings;
-						}
-					}
-					catch { }
-				}
-			}
-
-			return null;
 		}
 
 		/// <summary>
