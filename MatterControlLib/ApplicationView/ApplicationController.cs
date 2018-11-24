@@ -253,9 +253,9 @@ namespace MatterHackers.MatterControl
 
 	public class ApplicationController
 	{
-		public HelpArticle HelpArticles { get; set; }
+		public event EventHandler<string> ApplicationError;
 
-		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
+		public HelpArticle HelpArticles { get; set; }
 
 		public ThemeConfig Theme => AppContext.Theme;
 
@@ -263,10 +263,12 @@ namespace MatterHackers.MatterControl
 
 		public RunningTasksConfig Tasks { get; set; } = new RunningTasksConfig();
 
+		public IReadOnlyList<PrinterConfig> ActivePrinters => _activePrinters;
+
 		// A list of printers which are open (i.e. displaying a tab) on this instance of MatterControl
 		private List<PrinterConfig> _activePrinters = new List<PrinterConfig>();
-
-		public IReadOnlyList<PrinterConfig> ActivePrinters => _activePrinters;
+		
+		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 
 		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu)
 		{
@@ -340,6 +342,11 @@ namespace MatterHackers.MatterControl
 			}
 
 			return popupMenu;
+		}
+
+		public void LogError(string errorMessage)
+		{
+			this.ApplicationError?.Invoke(this, errorMessage);
 		}
 
 		// TODO: Any references to this property almost certainly need to be reconsidered. ActiveSliceSettings static references that assume a single printer
@@ -876,21 +883,6 @@ namespace MatterHackers.MatterControl
 					}
 				}
 			}
-
-			this.Library.RegisterContainer(
-				new DynamicContainerLink(
-						() => "SD Card".Localize(),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_20x20.png")),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_folder.png")),
-						() => new SDCardContainer(),
-						() =>
-						{
-							var printer = this.ActivePrinter;
-							return printer.Settings.GetValue<bool>(SettingsKey.has_sd_card_reader);
-						})
-				{
-					IsReadOnly = true
-				});
 
 			this.Library.PlatingHistory = new PlatingHistoryContainer();
 

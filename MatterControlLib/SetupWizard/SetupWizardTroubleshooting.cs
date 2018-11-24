@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
 
 			UiThread.RunOnIdle(() =>
 			{
-				this.DialogWindow.ChangeToPage<AndroidConnectDevicePage>();
+				this.DialogWindow.ChangeToPage(new AndroidConnectDevicePage(printer));
 			});
 		}
 
