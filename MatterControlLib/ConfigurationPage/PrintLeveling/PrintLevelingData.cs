@@ -9,9 +9,6 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	[JsonConverter(typeof(StringEnumConverter))]
-	public enum LevelingSystem { Probe3Points, Probe7PointRadial, Probe13PointRadial, Probe100PointRadial, Probe3x3Mesh, Probe5x5Mesh, Probe10x10Mesh, ProbeCustom }
-
 	public class PrintLevelingData
 	{
 		#region JSON data

@@ -37,9 +37,9 @@ using System.Text;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
-using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -47,6 +47,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public enum NamedSettingsLayers { MHBaseSettings, OEMSettings, Quality, Material, User, All }
 
 	public enum BedShape { Rectangular, Circular };
+
+	[JsonConverter(typeof(StringEnumConverter))]
+	public enum LevelingSystem { Probe3Points, Probe7PointRadial, Probe13PointRadial, Probe100PointRadial, Probe3x3Mesh, Probe5x5Mesh, Probe10x10Mesh, ProbeCustom }
 
 	public class PrinterSettings
 	{
