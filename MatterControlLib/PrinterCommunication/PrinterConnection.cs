@@ -1229,7 +1229,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					Task.Run(() =>
 					{
-						File.WriteAllLines(pathToPrintOutputFile, ApplicationController.Instance.ActivePrinter.Connection.TerminalLog.PrinterLines);
+						File.WriteAllLines(pathToPrintOutputFile, this.TerminalLog.PrinterLines);
 					});
 				}
 			}
