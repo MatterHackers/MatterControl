@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl
 					return fileLocation;
 				}
 
-				return GCodePath(Object3D.ComputeFileSHA1(fileLocation));
+				return GCodePath(HashGenerator.ComputeFileSHA1(fileLocation));
 			}
 			else
 			{
