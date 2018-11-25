@@ -42,6 +42,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintHistory;
 using MatterHackers.MatterControl.SetupWizard;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -306,7 +307,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Title = "Export All Settings".Localize(),
 					Action = () =>
 					{
-						printer.Settings.Helpers.ExportAsMatterControlConfig();
+						ApplicationController.Instance.ExportAsMatterControlConfig(printer);
 					}
 				},
 				new ActionSeparator(),

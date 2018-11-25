@@ -344,6 +344,32 @@ namespace MatterHackers.MatterControl
 			return popupMenu;
 		}
 
+		internal void ExportAsMatterControlConfig(PrinterConfig printer)
+		{
+			AggContext.FileDialogs.SaveFileDialog(
+				new SaveFileDialogParams("MatterControl Printer Export|*.printer", title: "Export Printer Settings")
+				{
+					FileName = printer.Settings.GetValue(SettingsKey.printer_name)
+				},
+				(saveParams) =>
+				{
+					try
+					{
+						if (!string.IsNullOrWhiteSpace(saveParams.FileName))
+						{
+							File.WriteAllText(saveParams.FileName, JsonConvert.SerializeObject(printer.Settings, Formatting.Indented));
+						}
+					}
+					catch (Exception e)
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							StyledMessageBox.ShowMessageBox(e.Message, "Couldn't save file".Localize());
+						});
+					}
+				});
+		}
+
 		public void LogError(string errorMessage)
 		{
 			this.ApplicationError?.Invoke(this, errorMessage);

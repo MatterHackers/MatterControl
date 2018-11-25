@@ -32,9 +32,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
@@ -343,31 +340,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return Vector2.Zero;
-		}
-
-		public void ExportAsMatterControlConfig()
-		{
-			AggContext.FileDialogs.SaveFileDialog(
-			new SaveFileDialogParams("MatterControl Printer Export|*.printer", title: "Export Printer Settings")
-			{
-				FileName = printerSettings.GetValue(SettingsKey.printer_name)
-			},
-			(saveParams) =>
-			{
-				try
-				{
-					if (!string.IsNullOrWhiteSpace(saveParams.FileName))
-					{
-						File.WriteAllText(saveParams.FileName, JsonConvert.SerializeObject(printerSettings, Formatting.Indented));
-					}
-				}
-				catch (Exception e)
-				{
-					UiThread.RunOnIdle (() => {
-						StyledMessageBox.ShowMessageBox(e.Message, "Couldn't save file".Localize());
-					});
-				}
-			});
 		}
 
 		public void ExportAsCuraConfig()
