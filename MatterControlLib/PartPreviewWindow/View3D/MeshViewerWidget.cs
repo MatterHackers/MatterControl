@@ -51,8 +51,6 @@ using static MatterHackers.Agg.Easing;
 
 namespace MatterHackers.MeshVisualizer
 {
-	public enum BedShape { Rectangular, Circular };
-
 	public class DrawGlContentEventArgs : DrawEventArgs
 	{
 		public bool ZBuffered { get; }

@@ -529,7 +529,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					UiThread.RunOnIdle(async () =>
 					{
 						if (!activelySlicing
-							&& printer.Settings.IsValid()
+							&& SettingsValidation.SettingsValid(printer)
 							&& printer.Bed.EditContext.SourceItem != null)
 						{
 							activelySlicing = true;

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,8 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Text.RegularExpressions;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -52,15 +50,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return result;
-		}
-
-		public void Run(PrinterConnection printerConnection)
-		{
-			if (printerConnection.IsConnected)
-			{
-				printerConnection.MacroStart();
-				printerConnection.QueueLine(GCode);
-			}
 		}
 	}
 }

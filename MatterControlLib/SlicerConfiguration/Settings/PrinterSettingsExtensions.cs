@@ -27,44 +27,36 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using MatterHackers.VectorMath;
-
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class PrintLevelingData
+	public static class PrinterSettingsExtensions
 	{
-		public PrintLevelingData()
+		public static double XSpeed(this PrinterSettings printerSettings)
 		{
+			return printerSettings.Helpers.GetMovementSpeeds()["x"];
 		}
 
-		public List<Vector3> SampledPositions = new List<Vector3>();
-
-		public LevelingSystem LevelingSystem { get; set; }
-
-		public DateTime CreationDate { get; set; }
-
-		public double BedTemperature { get; set; }
-
-		public bool IssuedLevelingTempWarning { get; set; }
-
-		public bool SamplesAreSame(List<Vector3> sampledPositions)
+		public static double YSpeed(this PrinterSettings printerSettings)
 		{
-			if (sampledPositions.Count == SampledPositions.Count)
-			{
-				for (int i = 0; i < sampledPositions.Count; i++)
-				{
-					if (sampledPositions[i] != SampledPositions[i])
-					{
-						return false;
-					}
-				}
+			return printerSettings.Helpers.GetMovementSpeeds()["y"];
+		}
 
-				return true;
+		public static double ZSpeed(this PrinterSettings printerSettings)
+		{
+			return printerSettings.Helpers.GetMovementSpeeds()["z"];
+		}
+
+		public static double EFeedRate(this PrinterSettings printerSettings, int extruderIndex)
+		{
+			var movementSpeeds = printerSettings.Helpers.GetMovementSpeeds();
+
+			string extruderIndexKey = "e" + extruderIndex.ToString();
+			if (movementSpeeds.ContainsKey(extruderIndexKey))
+			{
+				return movementSpeeds[extruderIndexKey];
 			}
 
-			return false;
+			return movementSpeeds["e0"];
 		}
 	}
 }

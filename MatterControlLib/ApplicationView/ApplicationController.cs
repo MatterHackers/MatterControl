@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl
 
 		// A list of printers which are open (i.e. displaying a tab) on this instance of MatterControl
 		private List<PrinterConfig> _activePrinters = new List<PrinterConfig>();
-		
+
 		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 
 		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu)
@@ -342,6 +342,32 @@ namespace MatterHackers.MatterControl
 			}
 
 			return popupMenu;
+		}
+
+		internal void ExportAsMatterControlConfig(PrinterConfig printer)
+		{
+			AggContext.FileDialogs.SaveFileDialog(
+				new SaveFileDialogParams("MatterControl Printer Export|*.printer", title: "Export Printer Settings")
+				{
+					FileName = printer.Settings.GetValue(SettingsKey.printer_name)
+				},
+				(saveParams) =>
+				{
+					try
+					{
+						if (!string.IsNullOrWhiteSpace(saveParams.FileName))
+						{
+							File.WriteAllText(saveParams.FileName, JsonConvert.SerializeObject(printer.Settings, Formatting.Indented));
+						}
+					}
+					catch (Exception e)
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							StyledMessageBox.ShowMessageBox(e.Message, "Couldn't save file".Localize());
+						});
+					}
+				});
 		}
 
 		public void LogError(string errorMessage)
@@ -1382,7 +1408,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			// run the leveling wizard if we need to
-			if (PrintLevelingData.NeedsToBeRun(printer))
+			if (LevelingValidation.NeedsToBeRun(printer))
 			{
 				UiThread.RunOnIdle(() =>
 				{
@@ -2024,7 +2050,7 @@ namespace MatterHackers.MatterControl
 
 				printer.Connection.PrintingItemName = printItemName;
 
-				if (printer.Settings.IsValid())
+				if (SettingsValidation.SettingsValid(printer))
 				{
 					// check that current bed temp is is within 10 degrees of leveling temp
 					var enabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);

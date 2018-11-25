@@ -27,44 +27,19 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using MatterHackers.VectorMath;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class PrintLevelingData
+	public static class GCodeMacroExtensions
 	{
-		public PrintLevelingData()
+		public static void Run(this GCodeMacro macro, PrinterConnection printerConnection)
 		{
-		}
-
-		public List<Vector3> SampledPositions = new List<Vector3>();
-
-		public LevelingSystem LevelingSystem { get; set; }
-
-		public DateTime CreationDate { get; set; }
-
-		public double BedTemperature { get; set; }
-
-		public bool IssuedLevelingTempWarning { get; set; }
-
-		public bool SamplesAreSame(List<Vector3> sampledPositions)
-		{
-			if (sampledPositions.Count == SampledPositions.Count)
+			if (printerConnection.IsConnected)
 			{
-				for (int i = 0; i < sampledPositions.Count; i++)
-				{
-					if (sampledPositions[i] != SampledPositions[i])
-					{
-						return false;
-					}
-				}
-
-				return true;
+				printerConnection.MacroStart();
+				printerConnection.QueueLine(macro.GCode);
 			}
-
-			return false;
 		}
 	}
 }

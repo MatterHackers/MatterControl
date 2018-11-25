@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (printer.Settings.PrinterSelected)
 			{
 				if (!activelySlicing
-					&& printer.Settings.IsValid()
+					&& SettingsValidation.SettingsValid(printer)
 					&& printer.Bed.EditContext.SourceItem != null)
 				{
 					activelySlicing = true;
