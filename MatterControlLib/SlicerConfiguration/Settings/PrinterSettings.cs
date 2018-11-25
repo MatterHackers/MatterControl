@@ -287,7 +287,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string importValue = settingsToImport.GetValue(keyName, sourceFilter).Trim();
 
 					if (!string.IsNullOrEmpty(importValue)
-						&& currentValue != keyName
+						&& currentValue != importValue
 						&& !skipKeys.Contains(keyName))
 					{
 						destinationLayer[keyName] = importValue;
