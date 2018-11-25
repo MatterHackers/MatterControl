@@ -2268,11 +2268,13 @@ If you experience adhesion problems, please re-run leveling."
 						string now = "Workspace " + DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
 						string archivePath = Path.Combine(platingDirectory, now + ".zip");
 
+						string settingsFilePath = ProfileManager.Instance.ProfilePath(printer.Settings.ID);
+
 						using (var file = File.OpenWrite(archivePath))
 						using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
 						{
 							zip.CreateEntryFromFile(sourcePath, "PrinterPlate.mcx");
-							zip.CreateEntryFromFile(printer.Settings.DocumentPath, printer.Settings.GetValue(SettingsKey.printer_name) + ".printer");
+							zip.CreateEntryFromFile(settingsFilePath, printer.Settings.GetValue(SettingsKey.printer_name) + ".printer");
 							zip.CreateEntryFromFile(gcodeFilePath, "sliced.gcode");
 						}
 					}

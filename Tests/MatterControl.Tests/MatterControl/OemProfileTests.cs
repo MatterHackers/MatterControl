@@ -80,7 +80,7 @@ namespace MatterControl.Tests.MatterControl
 				// Only validate start_gcode configs that have M109 and extrude statements
 				if (startGcode.Contains("M109") && startGcode.Contains("G1 E"))
 				{
-					// Split start_gcode on newlines 
+					// Split start_gcode on newlines
 					var lines = startGcode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries).Select(l => l.ToUpper().Trim()).ToList();
 
 					// Find first instance of M109 or 'G1 E' extrude
@@ -351,7 +351,7 @@ namespace MatterControl.Tests.MatterControl
 
 					Assert.Less(firstLayerHeight, maximumLayerHeight, "[first_layer_height] must be less than [firstLayerExtrusionWidth]: " + printer.RelativeFilePath);
 				}
-				
+
 			});
 		}
 
@@ -449,7 +449,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		/// <summary>
-		/// Calls the given delegate for each printer as well as each quality/material layer, passing in a PrinterConfig object that has 
+		/// Calls the given delegate for each printer as well as each quality/material layer, passing in a PrinterConfig object that has
 		/// printer settings loaded into a SettingsLayer as well as state about the printer
 		/// </summary>
 		/// <param name="action">The action to invoke for each printer</param>
@@ -524,8 +524,8 @@ namespace MatterControl.Tests.MatterControl
 			public string RelativeFilePath { get; set; }
 			public PrinterSettings PrinterSettings { get; set; }
 
-			// HACK: short term hack to support a general purpose test rollup function for cases where multiple config files 
-			// violate a rule and in the short term we want to report and resolve the issues in batch rather than having a 
+			// HACK: short term hack to support a general purpose test rollup function for cases where multiple config files
+			// violate a rule and in the short term we want to report and resolve the issues in batch rather than having a
 			// single test failure. Long term the single test failure better communicates the issue and assist with troubleshooting
 			// by using  .AreEqual .LessOrEqual, etc. to communicate intent
 			public bool RuleViolated { get; set; } = false;

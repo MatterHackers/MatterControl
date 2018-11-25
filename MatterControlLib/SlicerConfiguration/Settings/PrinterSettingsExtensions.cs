@@ -27,10 +27,26 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public static class PrinterSettingsExtensions
 	{
+		private static Dictionary<string, string> blackListSettings = new Dictionary<string, string>()
+		{
+			[SettingsKey.spiral_vase] = "0",
+			[SettingsKey.layer_to_pause] = "",
+			[SettingsKey.print_leveling_data] = "",
+			[SettingsKey.print_leveling_enabled] = "0",
+			[SettingsKey.probe_has_been_calibrated] = "0",
+			[SettingsKey.filament_has_been_loaded] = "0"
+		};
+
+		private static object writeLock = new object();
+
 		public static double XSpeed(this PrinterSettings printerSettings)
 		{
 			return printerSettings.Helpers.GetMovementSpeeds()["x"];
@@ -57,6 +73,60 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return movementSpeeds["e0"];
+		}
+
+		//[JsonIgnore]
+		//public string DocumentPath => ProfileManager.Instance.ProfilePath(this.ID);
+
+		//[JsonIgnore]
+		public static bool AutoSave { get; set; } = true;
+
+		public static void Save(this PrinterSettings settings, bool clearBlackListSettings = false)
+		{
+			// Skip save operation if on the EmptyProfile
+			if (!settings.PrinterSelected || !AutoSave)
+			{
+				return;
+			}
+
+			if (clearBlackListSettings)
+			{
+				foreach (var kvp in blackListSettings)
+				{
+					if (settings.UserLayer.ContainsKey(kvp.Key))
+					{
+						settings.UserLayer.Remove(kvp.Key);
+					}
+
+					settings.OemLayer[kvp.Key] = kvp.Value;
+				}
+			}
+
+			settings.Save(
+				filePath: ProfileManager.Instance.ProfilePath(settings.ID));
+		}
+
+		public static void Save(this PrinterSettings settings, string filePath)
+		{
+			// TODO: Rewrite to be owned by ProfileManager and simply mark as dirty and every n period persist and clear dirty flags
+			lock (writeLock)
+			{
+				string json = settings.ToJson();
+
+				var printerInfo = ProfileManager.Instance[settings.ID];
+				if (printerInfo != null)
+				{
+					printerInfo.ContentSHA1 = settings.ComputeSHA1(json);
+					ProfileManager.Instance.Save();
+				}
+
+				File.WriteAllText(filePath, json);
+			}
+
+			if (ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == settings.ID) is PrinterConfig printer)
+			{
+				ApplicationController.Instance.ActiveProfileModified.CallEvents(printer.Settings, null);
+			}
 		}
 	}
 }

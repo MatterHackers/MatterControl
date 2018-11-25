@@ -83,8 +83,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string ID { get; set; }
 
-		private static object writeLock = new object();
-
 		[JsonIgnore]
 		internal PrinterSettingsLayer QualityLayer { get; private set; }
 
@@ -322,7 +320,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				SetValue(SettingsKey.active_quality_key, value);
 				QualityLayer = GetQualityLayer(value);
-				Save();
+
+				this.OnSettingChanged(SettingsKey.active_quality_key);
 			}
 		}
 
@@ -353,73 +352,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<string> MaterialSettingsKeys { get; set; } = new List<string>();
 
-		[JsonIgnore]
-		public string DocumentPath => ProfileManager.Instance.ProfilePath(this.ID);
 
 		[JsonIgnore]
 		public bool AutoSave { get; set; } = true;
-
-		Dictionary<string, string> blackListSettings = new Dictionary<string, string>()
-		{
-			[SettingsKey.spiral_vase] = "0",
-			[SettingsKey.layer_to_pause] = "",
-			[SettingsKey.print_leveling_data] = "",
-			[SettingsKey.print_leveling_enabled] = "0",
-			[SettingsKey.probe_has_been_calibrated] = "0",
-			[SettingsKey.filament_has_been_loaded] = "0"
-		};
-
-		public void Save(bool clearBlackListSettings = false)
-		{
-			// Skip save operation if on the EmptyProfile
-			if (!this.PrinterSelected || !this.AutoSave)
-			{
-				return;
-			}
-
-			if(clearBlackListSettings)
-			{
-				foreach(var kvp in blackListSettings)
-				{
-					if (UserLayer.ContainsKey(kvp.Key))
-					{
-						UserLayer.Remove(kvp.Key);
-					}
-					OemLayer[kvp.Key] = kvp.Value;
-				}
-			}
-
-			Save(DocumentPath);
-		}
-
-		public void Save(string filePath)
-		{
-			lock (writeLock)
-			{
-				string json = this.ToJson();
-
-				var printerInfo = ProfileManager.Instance[this.ID];
-				if (printerInfo != null)
-				{
-					printerInfo.ContentSHA1 = this.ComputeSHA1(json);
-					ProfileManager.Instance.Save();
-				}
-
-				File.WriteAllText(filePath, json);
-			}
-
-			if (ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == this.ID) is PrinterConfig printer)
-			{
-				ApplicationController.Instance.ActiveProfileModified.CallEvents(printer.Settings, null);
-			}
-		}
 
 		internal string ComputeSHA1()
 		{
 			return ComputeSHA1(this.ToJson());
 		}
 
-		private string ComputeSHA1(string json)
+		public string ComputeSHA1(string json)
 		{
 			// SHA1 value is based on UTF8 encoded file contents
 			using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
@@ -976,7 +918,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			// Otherwise, set and save
 			persistenceLayer[settingsKey] = settingsValue;
-			Save();
 
 			this.OnSettingChanged(settingsKey);
 		}
@@ -1018,8 +959,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 					}
 				}
-
-				Save();
 
 				this.OnSettingChanged(settingsKey);
 			}
