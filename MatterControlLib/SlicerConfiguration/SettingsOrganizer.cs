@@ -31,67 +31,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using MatterHackers.Agg.Platform;
-using MatterHackers.Localizations;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class QuickMenuNameValue
-	{
-		public string MenuName;
-		public string Value;
-	}
-
-	public class SliceSettingData
-	{
-		[JsonConverter(typeof(StringEnumConverter))]
-		public enum DataEditTypes { STRING, READONLY_STRING, WIDE_STRING, INT, INT_OR_MM, DOUBLE, POSITIVE_DOUBLE, OFFSET, DOUBLE_OR_PERCENT, VECTOR2, OFFSET2, CHECK_BOX, LIST, MULTI_LINE_TEXT, MARKDOWN_TEXT, HARDWARE_PRESENT, COM_PORT, IP_LIST };
-
-		public string SlicerConfigName { get; set; }
-
-		public string PresentationName { get; set; }
-
-		public string ShowIfSet { get; set; }
-
-		public string EnableIfSet { get; set; }
-
-		public string DefaultValue { get; set; }
-
-		public DataEditTypes DataEditType { get; set; }
-
-		public string HelpText { get; set; } = "";
-
-		public string Units { get; set; } = "";
-
-		public string ListValues { get; set; } = "";
-
-		public bool ShowAsOverride { get; set; } = true;
-
-		public List<QuickMenuNameValue> QuickMenuSettings = new List<QuickMenuNameValue>();
-
-		public List<Dictionary<string, string>> SetSettingsOnChange = new List<Dictionary<string,string>>();
-
-		public bool ResetAtEndOfPrint { get; set; } = false;
-
-		public bool RebuildGCodeOnChange { get; set; } = true;
-
-		public bool ReloadUiWhenChanged { get; set; } = false;
-
-		public SettingsOrganizer.SubGroup OrganizerSubGroup { get; set; }
-
-		public SliceSettingData(string slicerConfigName, string presentationName, DataEditTypes dataEditType, string helpText = "")
-		{
-			// During deserialization Json.net has to call this constructor but may fail to find the optional ExtraSettings
-			// value. When this occurs, it passes null overriding the default empty string. To ensure empty string instead
-			// of null, we conditionally reassign "" if null
-			this.SlicerConfigName = slicerConfigName;
-			this.PresentationName = presentationName;
-			this.DataEditType = dataEditType;
-			this.HelpText = helpText.Localize();
-		}
-	}
-
 	public class SettingsOrganizer
 	{
 		public Dictionary<string, SettingsSection> UserLevels { get; set; } = new Dictionary<string, SettingsSection>();
@@ -128,16 +71,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private SettingsOrganizer()
 		{
 			LoadAndParseSettingsFiles();
-
-#if false
-            Categories.Add(CreatePrintSettings());
-
-            SettingsCategory filamentSettingsCategory = new SettingsCategory("Filament Settings");
-            Categories.Add(filamentSettingsCategory);
-
-            SettingsCategory printerSettingsCategory = new SettingsCategory("Printer Settings");
-            Categories.Add(printerSettingsCategory);
-#endif
 		}
 
 		public bool Contains(string userLevelKey, string slicerConfigName)
