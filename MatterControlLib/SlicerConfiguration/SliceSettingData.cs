@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
-using MatterHackers.Localizations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -76,16 +75,5 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public bool ReloadUiWhenChanged { get; set; } = false;
 
 		public SettingsOrganizer.SubGroup OrganizerSubGroup { get; set; }
-
-		public SliceSettingData(string slicerConfigName, string presentationName, DataEditTypes dataEditType, string helpText = "")
-		{
-			// During deserialization Json.net has to call this constructor but may fail to find the optional ExtraSettings
-			// value. When this occurs, it passes null overriding the default empty string. To ensure empty string instead
-			// of null, we conditionally reassign "" if null
-			this.SlicerConfigName = slicerConfigName;
-			this.PresentationName = presentationName;
-			this.DataEditType = dataEditType;
-			this.HelpText = helpText.Localize();
-		}
 	}
 }
