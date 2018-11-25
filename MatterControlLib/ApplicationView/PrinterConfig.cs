@@ -37,6 +37,7 @@ namespace MatterHackers.MatterControl
 	using System.IO;
 	using System.Threading;
 	using MatterHackers.Agg;
+	using MatterHackers.DataConverters3D;
 	using MatterHackers.Localizations;
 	using MatterHackers.MatterControl.DataStorage;
 	using MatterHackers.MatterControl.PrinterCommunication;
@@ -142,7 +143,7 @@ namespace MatterHackers.MatterControl
 					return fileLocation;
 				}
 
-				return GCodePath(fileLocation);
+				return GCodePath(Object3D.ComputeFileSHA1(fileLocation));
 			}
 			else
 			{
