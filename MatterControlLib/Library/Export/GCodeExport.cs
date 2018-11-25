@@ -163,8 +163,8 @@ namespace MatterHackers.MatterControl.Library.Export
 
 				if (loadedItem != null)
 				{
-					// Necessary to ensure scene or non-persisted ILibraryObject3D content is on disk before slicing
-					loadedItem.PersistAssets(null);
+					// Ensure content is on disk before slicing
+					await loadedItem.PersistAssets(null);
 
 					try
 					{
