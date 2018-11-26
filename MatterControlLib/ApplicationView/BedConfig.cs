@@ -192,6 +192,11 @@ namespace MatterHackers.MatterControl
 
 		public InsertionGroupObject3D AddToPlate(IEnumerable<ILibraryItem> itemsToAdd)
 		{
+			if (this.Printer?.ViewState.ViewMode != PartViewMode.Model)
+			{
+				this.Printer.ViewState.ViewMode = PartViewMode.Model;
+			}
+
 			InsertionGroupObject3D insertionGroup = null;
 
 			var context = ApplicationController.Instance.DragDropData;
