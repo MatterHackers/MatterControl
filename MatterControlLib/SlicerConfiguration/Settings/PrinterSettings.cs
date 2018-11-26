@@ -339,35 +339,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			internal set
 			{
-				SetMaterialPreset(0, value);
+				if (MaterialSettingsKeys.Count == 0 || value != MaterialSettingsKeys[0])
+				{
+					MaterialSettingsKeys.Clear();
+					MaterialSettingsKeys.Add(value);
+					MaterialLayer = GetMaterialLayer(value);
+					this.OnMaterialPresetChanged();
+
+					Save();
+				}
 			}
-		}
-
-		private void SetMaterialPreset(int extruderIndex, string materialKey)
-		{
-			if (extruderIndex >= PrinterCommunication.PrinterConnection.MAX_EXTRUDERS)
-			{
-				throw new ArgumentOutOfRangeException("Requested extruder index is outside of bounds: " + extruderIndex);
-			}
-
-			// TODO: This should really be in PrinterProfile and should be run when the extruder count changes
-			if (MaterialSettingsKeys.Count <= extruderIndex)
-			{
-				var resizedArray = new string[extruderIndex + 1];
-				MaterialSettingsKeys.CopyTo(resizedArray);
-				MaterialSettingsKeys = new List<string>(resizedArray);
-			}
-
-			MaterialSettingsKeys[extruderIndex] = materialKey;
-
-			if (extruderIndex == 0)
-			{
-				MaterialLayer = GetMaterialLayer(materialKey);
-
-				this.OnMaterialPresetChanged();
-			}
-
-			Save();
 		}
 
 		public List<string> MaterialSettingsKeys { get; set; } = new List<string>();
