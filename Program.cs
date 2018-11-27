@@ -30,9 +30,13 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.ServiceModel;
+using System.ServiceModel.Description;
 using System.Threading;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using Microsoft.Extensions.Configuration;
@@ -41,6 +45,10 @@ namespace MatterHackers.MatterControl
 {
 	class Program
 	{
+		private static EventWaitHandle waitHandle;
+
+		private static string mainServiceName = "";
+
 		[STAThread]
 		static void Main(string[] args)
 		{
@@ -64,6 +72,40 @@ namespace MatterHackers.MatterControl
 
 			string userProfilePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
+			//#if IS_WINDOWS
+			waitHandle = new EventWaitHandle(false, EventResetMode.ManualReset, "MatterControl#Startup", out bool created);
+
+			if (!created)
+			{
+				// If an instance is already running, create a service proxy and execute ShellOpenFile
+				var proxy = new ServiceProxy();
+
+				// and at least one argument is an acceptable shell file extension
+				var itemsToAdd = args.Where(f => File.Exists(f) && shellFileExtensions.Contains(Path.GetExtension(f).ToLower()));
+				if (itemsToAdd.Any())
+				{
+					// notify the running instance of the event
+					proxy.ShellOpenFile(itemsToAdd.ToArray());
+				}
+
+				System.Threading.Thread.Sleep(1000);
+
+				// Finally, close the process spawned by Explorer.exe
+				return;
+			}
+			//#endif
+
+			var serviceHost = new ServiceHost(
+				typeof(LocalService), 
+				new Uri[] { new Uri("net.pipe://localhost/") });
+
+			serviceHost.AddServiceEndpoint(typeof(IMainService), new NetNamedPipeBinding(), mainServiceName);
+			serviceHost.Open();
+
+			Console.Write(
+				"Service started: {0};", 
+				string.Join(", ", serviceHost.Description.Endpoints.Select(s => s.ListenUri.AbsoluteUri).ToArray()));
+			
 			// Load optional user configuration
 			IConfiguration config = new ConfigurationBuilder()
 				.AddJsonFile("appsettings.json", optional: true)
@@ -97,5 +139,55 @@ namespace MatterHackers.MatterControl
 			var systemWindow = Application.LoadRootWindow(width, height);
 			systemWindow.ShowAsSystemWindow();
 		}
+
+		private static string[] shellFileExtensions = new string[] { ".stl", ".amf" };
+
+		private static readonly object locker = new object();
+
+		public class LocalService : IMainService
+		{
+			public void ShellOpenFile(string[] files)
+			{
+				// If at least one argument is an acceptable shell file extension
+				var itemsToAdd = files.Where(f => File.Exists(f) 
+					&& shellFileExtensions.Contains(Path.GetExtension(f).ToLower()));
+
+				if (itemsToAdd.Any())
+				{
+					lock (locker)
+					{
+						// Add each file
+						foreach (string file in itemsToAdd)
+						{
+							ApplicationController.Instance.ShellOpenFile(file);
+						}
+					}
+				}
+			}
+		}
+
+		public class ServiceProxy : ClientBase<IMainService>
+		{
+			public ServiceProxy()
+				: base(
+					new ServiceEndpoint(
+						ContractDescription.GetContract(typeof(IMainService)),
+						new NetNamedPipeBinding(), 
+						new EndpointAddress($"net.pipe://localhost/{mainServiceName}")))
+			{
+			}
+
+			public void ShellOpenFile(string[] files)
+			{
+				Channel.ShellOpenFile(files);
+			}
+		}
+	}
+
+	[ServiceContract]
+	public interface IMainService
+	{
+		[OperationContract]
+		void ShellOpenFile(string[] files);
 	}
 }
