@@ -74,6 +74,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						"Advanced",
 						theme,
 						isPrimarySettingsView: true,
+						justMySettingsTitle: "My Modified Settings".Localize(),
 						databaseMRUKey: UserSettingsKey.SliceSettingsWidget_CurrentTab));
 			}
 
@@ -112,7 +113,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private Action<PopupMenu> externalExtendMenu;
 		private string scopeName;
 
-		public SliceSettingsTabView(SettingsContext settingsContext, string scopeName, PrinterConfig printer, string UserLevel, ThemeConfig theme, bool isPrimarySettingsView, string databaseMRUKey, Action<PopupMenu> extendPopupMenu = null)
+		public SliceSettingsTabView(SettingsContext settingsContext, string scopeName, PrinterConfig printer, string UserLevel, ThemeConfig theme, bool isPrimarySettingsView, string databaseMRUKey, string justMySettingsTitle, Action<PopupMenu> extendPopupMenu = null)
 			: base (theme)
 		{
 			using (this.LayoutLock())
@@ -162,7 +163,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 
 				// Add heading for My Settings view
-				searchPanel.AddChild(filteredItemsHeading = new TextWidget("My Modified Settings", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+				searchPanel.AddChild(filteredItemsHeading = new TextWidget(justMySettingsTitle, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 				{
 					Margin = new BorderDouble(left: 10),
 					HAnchor = HAnchor.Left,
