@@ -29,12 +29,15 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow.PlusTab;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -280,12 +283,48 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.Tasks.TasksChanged += Tasks_TasksChanged;
 			tabControl.ActiveTabChanged += TabControl_ActiveTabChanged;
 
+			ApplicationController.Instance.ShellFileOpened += this.Instance_OpenNewFile;
+
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent((s, e) =>
 			{
 				SetLinkButtonsVisibility(s, new StringEventArgs("Unknown"));
 			}, ref unregisterEvents);
 
 			ApplicationController.Instance.MainView = this;
+		}
+
+		private async void Instance_OpenNewFile(object sender, string filePath)
+		{
+			
+			var history = ApplicationController.Instance.Library.PlatingHistory;
+
+			var workspace = new PartWorkspace()
+			{
+				Name = Path.GetFileName(filePath),
+				SceneContext = new BedConfig(history)
+			};
+
+			ApplicationController.Instance.Workspaces.Add(workspace);
+
+			var scene = new Object3D();
+			scene.Children.Add(
+				new Object3D
+				{
+					MeshPath = filePath,
+					Name = Path.GetFileName(filePath)
+				});
+
+			await workspace.SceneContext.LoadContent(
+				new EditContext()
+				{
+					ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+					SourceItem = new InMemoryLibraryItem(scene)
+				});
+
+			ApplicationController.Instance.Workspaces.Add(workspace);
+
+			var newTab = CreatePartTab(workspace);
+			tabControl.ActiveTab = newTab;
 		}
 
 		private void TabControl_ActiveTabChanged(object sender, EventArgs e)
@@ -473,11 +512,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					BackgroundColor = menuTheme.BackgroundColor
 				};
 
-				widget.Closed += (s2, e2) =>
-				{
-					themePanel.BackgroundColor = panelBackgroundColor;
-				};
-
 				var section = ApplicationSettingsPage.CreateThemePanel(menuTheme);
 				widget.AddChild(section);
 
@@ -617,6 +651,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			UserSettings.Instance.SettingChanged -= SetLinkButtonsVisibility;
 			ApplicationController.Instance.OpenPrintersChanged -= OpenPrinters_Changed;
 			ApplicationController.Instance.Tasks.TasksChanged -= Tasks_TasksChanged;
+			ApplicationController.Instance.ShellFileOpened -= Instance_OpenNewFile;
 			tabControl.ActiveTabChanged -= TabControl_ActiveTabChanged;
 
 			unregisterEvents?.Invoke(this, null);

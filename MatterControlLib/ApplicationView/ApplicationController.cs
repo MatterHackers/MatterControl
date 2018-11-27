@@ -261,6 +261,8 @@ namespace MatterHackers.MatterControl
 
 		public ThemeConfig MenuTheme => AppContext.MenuTheme;
 
+		public event EventHandler<string> ShellFileOpened;
+
 		public RunningTasksConfig Tasks { get; set; } = new RunningTasksConfig();
 
 		public IReadOnlyList<PrinterConfig> ActivePrinters => _activePrinters;
@@ -2495,6 +2497,11 @@ If you experience adhesion problems, please re-run leveling."
 			{
 				renderOptions.PropertyChanged -= syncProperties;
 			};
+		}
+
+		public void ShellOpenFile(string file)
+		{
+			UiThread.RunOnIdle(() => this.ShellFileOpened?.Invoke(this, file));
 		}
 
 		public class CloudSyncEventArgs : EventArgs
