@@ -345,7 +345,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					MaterialLayer = GetMaterialLayer(value);
 					this.OnMaterialPresetChanged();
 
-					Save();
+					this.OnSettingChanged(SettingsKey.active_material_key);
 				}
 			}
 		}
