@@ -89,8 +89,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			printer.ViewState.ViewModeChanged += ViewState_ViewModeChanged;
-
 			var opaqueTrackColor = theme.ResolveColor(theme.BedBackgroundColor, theme.SlightShade);
 
 			LayerScrollbar = new SliceLayerSelector(printer, sceneContext, theme)
@@ -127,8 +125,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			theme.ApplySliderStyle(layerRenderRatioSlider);
 
 			layerRenderRatioSlider.View.TrackColor = opaqueTrackColor;
-
-			sceneContext.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
 
 			AddSettingsTabBar(leftToRight, view3DWidget);
 
@@ -214,11 +210,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.LayerScrollbar.Margin = LayerScrollbar.Margin.Clone(top: tumbleCubeControl.Height + tumbleCubeControl.Margin.Height + 4);
 
+			// Register listeners
 			printer.ViewState.VisibilityChanged += ProcessOptionalTabs;
-
+			printer.ViewState.ViewModeChanged += ViewState_ViewModeChanged;
 			printer.Bed.RendererOptions.PropertyChanged += RendererOptions_PropertyChanged;
-
 			printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
+			ApplicationController.Instance.ApplicationError += ApplicationController_ApplicationError;
+			sceneContext.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
+		}
+
+		private void ApplicationController_ApplicationError(object sender, string e)
+		{
+			printer.Connection.TerminalLog.WriteLine(e);
 		}
 
 		private void RendererOptions_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -390,6 +393,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			printer.ViewState.VisibilityChanged -= ProcessOptionalTabs;
 			printer.ViewState.ViewModeChanged -= ViewState_ViewModeChanged;
 			printer.Bed.RendererOptions.PropertyChanged -= RendererOptions_PropertyChanged;
+			ApplicationController.Instance.ApplicationError -= ApplicationController_ApplicationError;
 
 			base.OnClosed(e);
 		}
