@@ -809,30 +809,9 @@ namespace MatterHackers.MatterControl
 
 		public void ShowInterfaceTour()
 		{
-			var tourSites = new List<(string site, string description)>();
-			tourSites.Add(("Add Content Menu", "Browse your library to find parts you have previously designed"));
-			tourSites.Add(("Make Support Button", "Create custom supports. Turn any object on the bed into support material"));
-			tourSites.Add(("LibraryView", "Drag primitives to the bed to create your own designs"));
-			tourSites.Add(("Open File Button", "Add parts from your hard drive to the bed"));
 			UiThread.RunOnIdle(() =>
 			{
-				GuiWidget targetWidget = null;
-				List<GuiWidget.WidgetAndPosition> foundChildren = new List<GuiWidget.WidgetAndPosition>();
-				this.MainView.FindNamedChildrenRecursive(tourSites[0].site, foundChildren);
-				foreach (var widgetAndPosition in foundChildren)
-				{
-					if(widgetAndPosition.widget.ActuallyVisibleOnScreen())
-					{
-						targetWidget = widgetAndPosition.widget;
-						break;
-					}
-				}
-
-				if (targetWidget != null)
-				{
-					var tourOverlay = new TourOverlay(targetWidget, tourSites[0].description, Theme);
-					this.MainView.TopmostParent().AddChild(tourOverlay);
-				}
+				TourOverlay.ShowSite(this.MainView.TopmostParent(), Theme, 0);
 			});
 		}
 
@@ -1729,22 +1708,6 @@ namespace MatterHackers.MatterControl
 
 		public void OnLoadActions()
 		{
-			// Show the End User License Agreement if it has not been shown (on windows it is shown in the installer)
-			if (AggContext.OperatingSystem != OSType.Windows)
-			{
-				// *********************************************************************************
-				// TODO: This should happen much earlier in the process and we should conditionally
-				//       show License page or RootSystemWindow
-				// *********************************************************************************
-				//
-				// Make sure this window is show modal (if available)
-				// show this last so it is on top
-				if (UserSettings.Instance.get(UserSettingsKey.SoftwareLicenseAccepted) != "true")
-				{
-					UiThread.RunOnIdle(() => DialogWindow.Show<LicenseAgreementPage>());
-				}
-			}
-
 			if (AssetObject3D.AssetManager == null)
 			{
 				AssetObject3D.AssetManager = new AssetManager();
@@ -3019,6 +2982,25 @@ If you experience adhesion problems, please re-run leveling."
 			// Hook SystemWindow load and spin up MatterControl once we've hit first draw
 			systemWindow.Load += (s, e) =>
 			{
+				// Show the End User License Agreement if it has not been shown (on windows it is shown in the installer)
+				if (AggContext.OperatingSystem != OSType.Windows
+					&& UserSettings.Instance.get(UserSettingsKey.SoftwareLicenseAccepted) != "true")
+				{
+					var eula = new LicenseAgreementPage(LoadMC)
+					{
+						Margin = new BorderDouble(5)
+					};
+
+					systemWindow.AddChild(eula);
+				}
+				else
+				{
+					LoadMC();
+				}
+			};
+			
+			void LoadMC()
+			{
 				ReportStartupProgress(0.02, "First draw->RunOnIdle");
 
 				//UiThread.RunOnIdle(() =>
@@ -3084,7 +3066,7 @@ If you experience adhesion problems, please re-run leveling."
 
 					AppContext.IsLoading = false;
 				});
-			};
+			}
 
 			ReportStartupProgress(0, "ShowAsSystemWindow");
 

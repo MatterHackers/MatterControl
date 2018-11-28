@@ -31,20 +31,28 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 using System;
+using System.Collections.Generic;
 
 namespace MatterControlLib.SetupWizard
 {
 	public class TourOverlay : GuiWidget
 	{
 		private GuiWidget targetWidget;
-		private string MarkDown { get; }
+		private FlowLayoutWidget content;
+		private int nextSiteIndex;
 
-		public TourOverlay(GuiWidget targetWidget, string markDown, ThemeConfig theme)
+		private string Description { get; }
+		private ThemeConfig theme;
+
+		public TourOverlay(GuiWidget targetWidget, string description, ThemeConfig theme, int nextSiteIndex)
 		{
+			this.nextSiteIndex = nextSiteIndex;
+			this.theme = theme;
 			this.targetWidget = targetWidget;
-			this.MarkDown = markDown;
+			this.Description = description;
 
 			HAnchor = HAnchor.Stretch;
 			VAnchor = VAnchor.Stretch;
@@ -52,33 +60,69 @@ namespace MatterControlLib.SetupWizard
 
 		public override void OnLoad(EventArgs args)
 		{
-			var contentBounds = GetContentBounds();
-
-			var content = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			content = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Absolute,
-				VAnchor = VAnchor.Absolute,
-				Position = new Vector2(contentBounds.Left, contentBounds.Bottom),
-				Size = new Vector2(contentBounds.Width, contentBounds.Height),
+				VAnchor = VAnchor.Fit,
 				Padding = new BorderDouble(5),
 				BackgroundColor = Color.White
 			};
 
 			this.AddChild(content);
 
-			var scrollable = new ScrollableWidget(true)
+			content.AddChild(new WrappedTextWidget(Description)
 			{
-				VAnchor = VAnchor.Stretch,
-				HAnchor = HAnchor.Stretch
+				Margin = new BorderDouble(5)
+			});
+
+			var buttonRow = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(0, 0, 0, 5)
 			};
+			buttonRow.AddChild(new HorizontalSpacer());
 
-			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
-			content.AddChild(scrollable);
+			if (nextSiteIndex > 0)
+			{
+				var nextButton = theme.CreateDialogButton("Next");
+				nextButton.Click += (s, e) =>
+				{
+					var topWindow = this.TopmostParent();
+					this.Close();
+					ShowSite(topWindow, theme, nextSiteIndex);
+				};
+				buttonRow.AddChild(nextButton);
+			}
 
-			scrollable.ScrollArea.Margin = new BorderDouble(0, 0, 15, 0);
-			scrollable.AddChild(new WrappedTextWidget(MarkDown));
+			var cancelButton = theme.CreateDialogButton("Done");
+			cancelButton.Click += (s, e) => this.Close();
+			buttonRow.AddChild(cancelButton);
+
+			content.AddChild(buttonRow);
+
+			// and last, set the size
+			var childBounds = GetChildBounds();
+			content.Size = new Vector2(250, content.Height);
+			content.Position = new Vector2(childBounds.Left, childBounds.Bottom - content.Size.Y);
+
+			this.Focus();
 
 			base.OnLoad(args);
+		}
+
+		public override void OnKeyDown(KeyEventArgs keyEvent)
+		{
+			if (keyEvent.KeyCode == Keys.Escape)
+			{
+				this.Close();
+			}
+			if (keyEvent.KeyCode == Keys.Enter)
+			{
+				var topWindow = this.TopmostParent();
+				this.Close();
+				ShowSite(topWindow, theme, nextSiteIndex);
+			}
+			base.OnKeyDown(keyEvent);
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -111,10 +155,9 @@ namespace MatterControlLib.SetupWizard
 
 		private RectangleDouble GetContentBounds()
 		{
-			var childBounds = GetChildBounds();
-
-			// depending on where the child is create the content next to it
-			return new RectangleDouble(childBounds.Left, childBounds.Bottom - 100, childBounds.Left + 250, childBounds.Bottom);
+			var contentBounds = content.TransformToScreenSpace(content.LocalBounds);
+			contentBounds = this.TransformFromScreenSpace(contentBounds);
+			return contentBounds;
 		}
 
 		private RectangleDouble GetChildBounds()
@@ -122,6 +165,47 @@ namespace MatterControlLib.SetupWizard
 			var childBounds = targetWidget.TransformToScreenSpace(targetWidget.LocalBounds);
 			childBounds = this.TransformFromScreenSpace(childBounds);
 			return childBounds;
+		}
+
+		public static void ShowSite(GuiWidget window, ThemeConfig theme, int siteIndex)
+		{
+			var tourSites = new List<(string site, string description)>();
+			tourSites.Add(("Open File Button", "Add parts from your hard drive to the bed"));
+			tourSites.Add(("LibraryView", "Drag primitives to the bed to create your own designs"));
+			tourSites.Add(("Add Content Menu", "Browse your library to find parts you have previously designed"));
+			tourSites.Add(("Make Support Button", "Create custom supports. Turn any object on the bed into support material"));
+
+			if(siteIndex >= tourSites.Count)
+			{
+				siteIndex -= tourSites.Count;
+			}
+
+			GuiWidget GetSiteWidget(ref int findSiteIndex)
+			{
+				while (findSiteIndex < tourSites.Count)
+				{
+					List<GuiWidget.WidgetAndPosition> foundChildren = new List<GuiWidget.WidgetAndPosition>();
+					window.FindNamedChildrenRecursive(tourSites[findSiteIndex].site, foundChildren);
+					foreach (var widgetAndPosition in foundChildren)
+					{
+						if (widgetAndPosition.widget.ActuallyVisibleOnScreen())
+						{
+							return widgetAndPosition.widget;
+						}
+					}
+					findSiteIndex++;
+				}
+
+				return null;
+			}
+
+			GuiWidget targetWidget = GetSiteWidget(ref siteIndex);
+
+			if (targetWidget != null)
+			{
+				var tourOverlay = new TourOverlay(targetWidget, tourSites[siteIndex].description, theme, siteIndex + 1);
+				window.AddChild(tourOverlay);
+			}
 		}
 	}
 }
