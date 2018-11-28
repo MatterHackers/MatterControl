@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl
 			return null;
 		}
 
-		static int[] CacheSizes = new int[]
+		private static int[] cacheSizes = new int[]
 		{
 			18, 22, 50, 70, 100, 256
 		};
@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			// if we don't find it see if it is in the cache at a bigger size
-			foreach(var cacheSize in CacheSizes.Where(s => s > width))
+			foreach(var cacheSize in cacheSizes.Where(s => s > width))
 			{
 				cachedItem = LoadImage(this.CachePath(libraryItem, cacheSize, cacheSize));
 				if(cachedItem != null)
