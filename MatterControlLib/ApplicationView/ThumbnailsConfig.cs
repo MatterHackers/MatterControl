@@ -35,13 +35,17 @@ namespace MatterHackers.MatterControl
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using MatterHackers.Agg;
 	using MatterHackers.Agg.Image;
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.MatterControl.Library;
 
 	public class ThumbnailsConfig
 	{
+		private static int[] cacheSizes = new int[]
+		{
+			18, 22, 50, 70, 100, 256
+		};
+
 		private readonly static object thumbsLock = new object();
 
 		private Queue<Func<Task>> queuedThumbCallbacks = new Queue<Func<Task>>();
@@ -81,11 +85,6 @@ namespace MatterHackers.MatterControl
 
 			return null;
 		}
-
-		private static int[] cacheSizes = new int[]
-		{
-			18, 22, 50, 70, 100, 256
-		};
 
 		public ImageBuffer LoadCachedImage(ILibraryItem libraryItem, int width, int height)
 		{
