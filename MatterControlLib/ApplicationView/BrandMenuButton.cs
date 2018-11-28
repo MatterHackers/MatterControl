@@ -94,6 +94,9 @@ namespace MatterHackers.MatterControl
 			menuItem = popupMenu.CreateMenuItem("Help".Localize(), AggContext.StaticData.LoadIcon("help_page.png", 16, 16, menuTheme.InvertIcons));
 			menuItem.Click += (s, e) => ApplicationController.Instance.ShowApplicationHelp();
 
+			menuItem = popupMenu.CreateMenuItem("Interface Tour".Localize(), AggContext.StaticData.LoadIcon("tour.png", 16, 16, menuTheme.InvertIcons));
+			menuItem.Click += (s, e) => ApplicationController.Instance.ShowInterfaceTour();
+
 			popupMenu.CreateSeparator();
 
 			menuItem = popupMenu.CreateMenuItem("Check For Update".Localize(), AggContext.StaticData.LoadIcon("update.png", 16, 16, menuTheme.InvertIcons));

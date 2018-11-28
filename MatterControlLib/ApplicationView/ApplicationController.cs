@@ -62,6 +62,7 @@ namespace MatterHackers.MatterControl
 	using Agg.Image;
 	using CustomWidgets;
 	using global::MatterControl.Printing;
+	using MatterControlLib.SetupWizard;
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.Agg.VertexSource;
 	using MatterHackers.DataConverters3D;
@@ -72,6 +73,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PartPreviewWindow.View3D;
+	using MatterHackers.MatterControl.PluginSystem;
 	using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 	using MatterHackers.MatterControl.SetupWizard;
 	using MatterHackers.PolygonMesh;
@@ -802,6 +804,35 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(() =>
 			{
 				DialogWindow.Show(new HelpPage("AllGuides"));
+			});
+		}
+
+		public void ShowInterfaceTour()
+		{
+			var tourSites = new List<(string site, string description)>();
+			tourSites.Add(("Add Content Menu", "Browse your library to find parts you have previously designed"));
+			tourSites.Add(("Make Support Button", "Create custom supports. Turn any object on the bed into support material"));
+			tourSites.Add(("LibraryView", "Drag primitives to the bed to create your own designs"));
+			tourSites.Add(("Open File Button", "Add parts from your hard drive to the bed"));
+			UiThread.RunOnIdle(() =>
+			{
+				GuiWidget targetWidget = null;
+				List<GuiWidget.WidgetAndPosition> foundChildren = new List<GuiWidget.WidgetAndPosition>();
+				this.MainView.FindNamedChildrenRecursive(tourSites[0].site, foundChildren);
+				foreach (var widgetAndPosition in foundChildren)
+				{
+					if(widgetAndPosition.widget.ActuallyVisibleOnScreen())
+					{
+						targetWidget = widgetAndPosition.widget;
+						break;
+					}
+				}
+
+				if (targetWidget != null)
+				{
+					var tourOverlay = new TourOverlay(targetWidget, tourSites[0].description, Theme);
+					this.MainView.TopmostParent().AddChild(tourOverlay);
+				}
 			});
 		}
 
