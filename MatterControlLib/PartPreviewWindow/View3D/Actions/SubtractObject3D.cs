@@ -41,6 +41,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -171,8 +172,48 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 	public static class BooleanProcessing
 	{
+		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int DeleteDouble(ref IntPtr handle);
+
+		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int DeleteInt(ref IntPtr handle);
+
+		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]
+		public extern static void DoBooleanOpperation(
+			double[] va, int vaCount, int[] fa, int faCount,
+			double[] vb, int vbCount, int[] fb, int fbCount,
+			int opperation,
+			out IntPtr pVc, out int vcCount, out IntPtr pVf, out int vfCount);
+
 		public static Mesh Do(Mesh transformedKeep, Mesh transformedRemove, int opperation, IProgress<ProgressStatus> reporter, double amountPerOperation, double percentCompleted, ProgressStatus progressStatus, CancellationToken cancellationToken)
 		{
+			if (false)
+			{
+				var va = new List<double>();
+				var fa = new List<int>();
+
+				var vb = new List<double>();
+				var fb = new List<int>();
+
+				IntPtr pVc;
+				int vcCount;
+				IntPtr pFc;
+				int fcCount;
+				DoBooleanOpperation(va.ToArray(), va.Count, fa.ToArray(), fa.Count,
+					vb.ToArray(), vb.Count, fb.ToArray(), fb.Count,
+					1,
+					out pVc, out vcCount, out pFc, out fcCount);
+
+				var vcArray = new double[vcCount];
+				Marshal.Copy(pVc, vcArray, 0, vcCount);
+
+				var fcArray = new int[fcCount];
+				Marshal.Copy(pFc, fcArray, 0, fcCount);
+
+				DeleteDouble(ref pVc);
+				DeleteInt(ref pFc);
+			}
+
 			var libiglExe = "libigl_boolean.exe";
 			if (File.Exists(libiglExe)
 				&& IntPtr.Size == 8) // only try to run the improved booleans if we are 64 bit and it is there
