@@ -509,7 +509,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var openButton = new IconButton(AggContext.StaticData.LoadIcon("fa-folder-open_16.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Margin = theme.ButtonSpacing,
-				ToolTipText = "Open File".Localize()
+				ToolTipText = "Open File".Localize(),
+				Name = "Open File Button"
 			};
 			openButton.Click += (s, e) =>
 			{

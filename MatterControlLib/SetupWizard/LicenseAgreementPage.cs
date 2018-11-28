@@ -33,12 +33,14 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
+using System;
 
 public class LicenseAgreementPage : DialogPage
 {
-	public LicenseAgreementPage()
+	public LicenseAgreementPage(Action acceptAction)
 	{
-		this.WindowTitle = "Software License Agreement".Localize();
+			this.WindowTitle = "Software License Agreement".Localize();
+		this.HeaderText = "Software License Agreement".Localize();
 
 		string eulaText = AggContext.StaticData.ReadAllText("MatterControl EULA.txt").Replace("\r\n", "\n");
 
@@ -58,7 +60,8 @@ public class LicenseAgreementPage : DialogPage
 		acceptButton.Click += (s, e) =>
 		{
 			UserSettings.Instance.set(UserSettingsKey.SoftwareLicenseAccepted, "true");
-			UiThread.RunOnIdle(DialogWindow.Close);
+			this.Close();
+			acceptAction?.Invoke();
 		};
 
 		acceptButton.Visible = true;
@@ -69,7 +72,7 @@ public class LicenseAgreementPage : DialogPage
 	protected override void OnCancel(out bool abortCancel)
 	{
 		// Exit if EULA is not accepted
-		UiThread.RunOnIdle(AppContext.RootSystemWindow.Close);
+		UiThread.RunOnIdle(MatterHackers.MatterControl.AppContext.RootSystemWindow.Close);
 
 		abortCancel = false;
 	}
