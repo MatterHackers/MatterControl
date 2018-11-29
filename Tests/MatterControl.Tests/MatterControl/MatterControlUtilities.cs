@@ -178,6 +178,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void OpenEmptyPartTab(this AutomationRunner testRunner)
 		{
 			// Latest product starts at empty part tab
+			if (testRunner.NameExists("Cancel Wizard Button"))
+			{
+				testRunner.ClickByName("Cancel Wizard Button");
+			}
 		}
 
 		public static void ChangeToQueueContainer(this AutomationRunner testRunner)
@@ -316,7 +320,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.WaitforDraw(systemWindow);
 
 			// close the welcome message
-			testRunner.ClickByName("Cancel Wizard Button");
+
+			if (testRunner.NameExists("Cancel Wizard Button", 1))
+			{
+				testRunner.ClickByName("Cancel Wizard Button");
+			}
 
 			// Click 'Add Printer' if not on screen
 			if (!testRunner.NameExists("Select Make", 0.2))
