@@ -40,7 +40,6 @@ namespace MatterHackers.MatterControl
 	public class WelcomePage : DialogPage
 	{
 		public WelcomePage()
-		: base("Done".Localize())
 		{
 			this.WindowTitle = "MatterControl".Localize();
 
@@ -67,7 +66,7 @@ Click 'Next' to for a quick tour of the interface";
 
 			contentRow.AddChild(textWidget);
 
-			var nextButton = new TextButton("Next".Localize(), theme)
+			var nextButton = new TextButton("Tour".Localize(), theme)
 			{
 				Name = "Next Button",
 				BackgroundColor = theme.MinimalShade
@@ -82,14 +81,12 @@ Click 'Next' to for a quick tour of the interface";
 				});
 			};
 
+			CancelButton.Click += (s, e) =>
+			{
+				UserSettings.Instance.set(UserSettingsKey.ShownWelcomeMessage, "true");
+			};
+
 			this.AddPageAction(nextButton);
-		}
-
-		public override void OnClosed(EventArgs e)
-		{
-			UserSettings.Instance.set(UserSettingsKey.ShownWelcomeMessage, "true");
-
-			base.OnClosed(e);
 		}
 	}
 }
