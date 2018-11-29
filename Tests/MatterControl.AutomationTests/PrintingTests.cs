@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.StartPrint();
 
-					testRunner.WaitForName("Yes Button", 20);// the yes button is 'Resume'
+					testRunner.WaitForName("Yes Button", 20); // the yes button is 'Resume'
 
 					// the user types in the pause layer 1 based and we are 0 based, so we should be on: user 2, printer 1.
 					Assert.AreEqual(1, printer.Connection.CurrentlyPrintingLayer);
@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.StartPrint();
 
-					testRunner.WaitForName("Yes Button", 20);// the yes button is 'Resume'
+					testRunner.WaitForName("Yes Button", 20); // the yes button is 'Resume'
 
 					// the user types in the pause layer 1 based and we are 0 based, so we should be on: user 2, printer 1.
 					Assert.AreEqual(1, printer.Connection.CurrentlyPrintingLayer);
@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.StartPrint();
 
-					testRunner.WaitForName("Yes Button", 20);// the yes button is 'Resume'
+					testRunner.WaitForName("Yes Button", 20); // the yes button is 'Resume'
 
 					// the user types in the pause layer 1 based and we are 0 based, so we should be on: user 2, printer 1.
 					Assert.AreEqual(1, printer.Connection.CurrentlyPrintingLayer);
@@ -300,7 +300,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					emulator.SimulateLineErrors = true;
 
 					// close the pause dialog pop-up (resume)
-					testRunner.WaitForName("Yes Button", 20);// the yes button is 'Resume'
+					testRunner.WaitForName("Yes Button", 20); // the yes button is 'Resume'
 					testRunner.ClickByName("Yes Button");
 
 					// simulate board reboot
