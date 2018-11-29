@@ -83,10 +83,11 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
+				string[] startGCode = settings.GetValue(SettingsKey.start_gcode).Replace("\\n", "\n").Split('\n');
+
 				// Print recovery can only work with a manually leveled or software leveled bed. Hardware leveling does not work.
 				if (settings.GetValue<bool>(SettingsKey.recover_is_enabled))
 				{
-					string[] startGCode = settings.GetValue(SettingsKey.start_gcode).Replace("\\n", "\n").Split('\n');
 					foreach (string startGCodeLine in startGCode)
 					{
 						if (startGCodeLine.StartsWith("G29"))
@@ -112,7 +113,6 @@ namespace MatterHackers.MatterControl
 				// If we have print leveling turned on then make sure we don't have any leveling commands in the start gcode.
 				if (settings.GetValue<bool>(SettingsKey.print_leveling_enabled))
 				{
-					string[] startGCode = settings.GetValue(SettingsKey.start_gcode).Replace("\\n", "\n").Split('\n');
 					foreach (string startGCodeLine in startGCode)
 					{
 						if (startGCodeLine.StartsWith("G29"))
@@ -258,6 +258,15 @@ namespace MatterHackers.MatterControl
 					return true;
 				}
 
+				// marlin firmware can only take a max of 128 bytes in a single instrection, make sure no lines are longer than that
+				if (!ValidateGCodeLinesShortEnough(SettingsKey.cancel_gcode, printer)) return false;
+				if (!ValidateGCodeLinesShortEnough(SettingsKey.connect_gcode, printer)) return false;
+				if (!ValidateGCodeLinesShortEnough(SettingsKey.end_gcode, printer)) return false;
+				if (!ValidateGCodeLinesShortEnough(SettingsKey.layer_gcode, printer)) return false;
+				if (!ValidateGCodeLinesShortEnough(SettingsKey.pause_gcode, printer)) return false;
+				if (!ValidateGCodeLinesShortEnough(SettingsKey.resume_gcode, printer)) return false;
+				if (!ValidateGCodeLinesShortEnough(SettingsKey.start_gcode, printer)) return false;
+
 				// If the given speed is part of the current slice engine then check that it is greater than 0.
 				if (!ValidateGoodSpeedSettingGreaterThan0("bridge_speed", printer)) return false;
 				if (!ValidateGoodSpeedSettingGreaterThan0("air_gap_speed", printer)) return false;
@@ -317,6 +326,33 @@ namespace MatterHackers.MatterControl
 		{
 			var settingData = SettingsOrganizer.Instance.GetSettingsData(settingsKey);
 			return settingData.PresentationName.Localize();
+		}
+
+		private static bool ValidateGCodeLinesShortEnough(string gCodeSetting, PrinterConfig printer)
+		{
+			string[] gCodeString = printer.Settings.GetValue(SettingsKey.start_gcode).Replace("\\n", "\n").Split('\n');
+
+			// make sure the custom gcode does not have lines too long to print
+			foreach (string line in gCodeString)
+			{
+				var trimedLine = line.Split(';')[0].Trim();
+				var length = trimedLine.Length;
+				if (length > 100)
+				{
+					SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(gCodeSetting);
+					if (data != null)
+					{
+						var location = GetSettingsLocation(gCodeSetting);
+
+						var error = "All G-Code lines mush be shorter than 100 characters (excluding comments).".Localize().FormatWith(data.PresentationName);
+						var details = "Found a line that is {0} characters long.\n{1}...".Localize().FormatWith(length, trimedLine.Substring(0, 20));
+						StyledMessageBox.ShowMessageBox("{0}\n\n{1}\n\n{2}".FormatWith(error, details, location), "Slice Error".Localize());
+					}
+					return false;
+				}
+			}
+
+			return true;
 		}
 
 		private static bool ValidateGoodSpeedSettingGreaterThan0(string speedSetting, PrinterConfig printer)
