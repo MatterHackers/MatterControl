@@ -811,7 +811,7 @@ namespace MatterHackers.MatterControl
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				TourOverlay.ShowSite(this.MainView.TopmostParent(), Theme, 0);
+				TourOverlay.ShowSite(this.MainView.TopmostParent(), 0);
 			});
 		}
 
@@ -3177,6 +3177,14 @@ If you experience adhesion problems, please re-run leveling."
 					foreach (var task in ApplicationController.StartupTasks.OrderByDescending(t => t.Priority))
 					{
 						await applicationController.Tasks.Execute(task.Title, task.Action);
+					}
+
+					//if (UserSettings.Instance.get(UserSettingsKey.ShownWelcomMessage) != "true")
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							DialogWindow.Show<WelcomePage>();
+						});
 					}
 				}
 				catch

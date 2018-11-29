@@ -12,6 +12,7 @@ namespace MatterHackers.MatterControl
 {
 	public static class UserSettingsKey
 	{
+		public const string ActiveThemeName = nameof(ActiveThemeName);
 		public const string AfterPrintFinishedPlaySound = nameof(AfterPrintFinishedPlaySound);
 		public const string AfterPrintFinishedSendEmail = nameof(AfterPrintFinishedSendEmail);
 		public const string AfterPrintFinishedSendTextMessage = nameof(AfterPrintFinishedSendTextMessage);
@@ -21,13 +22,12 @@ namespace MatterHackers.MatterControl
 		public const string ConfigurePrinter_CurrentTab = nameof(ConfigurePrinter_CurrentTab);
 		public const string ConfigurePrinterTabVisible = nameof(ConfigurePrinterTabVisible);
 		public const string ControlsTabVisible = nameof(ControlsTabVisible);
-		public const string TerminalTabVisible = nameof(TerminalTabVisible);
 		public const string CredentialsInvalid = nameof(CredentialsInvalid);
 		public const string CredentialsInvalidReason = nameof(CredentialsInvalidReason);
 		public const string defaultRenderSetting = nameof(defaultRenderSetting);
-		public const string SnapGridDistance = nameof(SnapGridDistance);
 		public const string DisplayedTip_LoadFilament = nameof(DisplayedTip_LoadFilament);
 		public const string EditorPanelExpanded = nameof(EditorPanelExpanded);
+		public const string FavoritesBarExpansion= nameof(FavoritesBarExpansion);
 		public const string GCodeLineColorStyle = nameof(GCodeLineColorStyle);
 		public const string GcodeModelView = nameof(GcodeModelView);
 		public const string GcodeViewerHideExtruderOffsets = nameof(GcodeViewerHideExtruderOffsets);
@@ -45,30 +45,30 @@ namespace MatterHackers.MatterControl
 		public const string NotificationEmailAddress = nameof(NotificationEmailAddress);
 		public const string NotificationPhoneNumber = nameof(NotificationPhoneNumber);
 		public const string OpenScadPath = nameof(OpenScadPath);
+		public const string PopupLibraryWidth = nameof(PopupLibraryWidth);
 		public const string PrintHistoryFilterShowCompleted = nameof(PrintHistoryFilterShowCompleted);
 		public const string PrintNotificationsEnabled = nameof(PrintNotificationsEnabled);
 		public const string PrintNotificationsIncludeImage = nameof(PrintNotificationsIncludeImage);
 		public const string PublicProfilesSha = nameof(PublicProfilesSha);
 		public const string ScalePanelExpanded = nameof(ScalePanelExpanded);
+		public const string SceneTreeRatio = nameof(SceneTreeRatio);
+		public const string SelectedObjectEditorHeight = nameof(SelectedObjectEditorHeight);
 		public const string SelectedObjectPanelWidth = nameof(SelectedObjectPanelWidth);
+		public const string SelectionTreeViewPanelExpanded = nameof(SelectionTreeViewPanelExpanded);
 		public const string ShowContainers = nameof(ShowContainers);
 		public const string SliceSettingsTabIndex = nameof(SliceSettingsTabIndex);
 		public const string SliceSettingsTabPinned = nameof(SliceSettingsTabPinned);
 		public const string SliceSettingsWidget_CurrentTab = nameof(SliceSettingsWidget_CurrentTab);
 		public const string SliceSettingsWidth = nameof(SliceSettingsWidth);
-		public const string PopupLibraryWidth = nameof(PopupLibraryWidth);
+		public const string SnapGridDistance = nameof(SnapGridDistance);
 		public const string SoftwareLicenseAccepted = nameof(SoftwareLicenseAccepted);
 		public const string TerminalAutoUppercase = nameof(TerminalAutoUppercase);
 		public const string TerminalFilterOutput = nameof(TerminalFilterOutput);
+		public const string TerminalTabVisible = nameof(TerminalTabVisible);
+		public const string ThemeName = nameof(ThemeName);
 		public const string ThumbnailRenderingMode = nameof(ThumbnailRenderingMode);
 		public const string UpdateFeedType = nameof(UpdateFeedType);
-		public const string LastReadWhatsNew = nameof(LastReadWhatsNew);
-		public const string ActiveThemeName = nameof(ActiveThemeName);
-		public const string SceneTreeRatio = nameof(SceneTreeRatio);
-		public const string SelectedObjectEditorHeight = nameof(SelectedObjectEditorHeight);
-		public const string SelectionTreeViewPanelExpanded = nameof(SelectionTreeViewPanelExpanded);
-		public const string ThemeName = nameof(ThemeName);
-		public const string FavoritesBarExpansion= nameof(FavoritesBarExpansion);
+		public const string ShownWelcomMessage = nameof(ShownWelcomMessage);
 	}
 
 	public class UserSettings
@@ -119,26 +119,6 @@ namespace MatterHackers.MatterControl
 
 				return globalInstance;
 			}
-		}
-
-		public bool HasLookedAtWhatsNew()
-		{
-			// If the last time what's new link was clicked is older than the main application show the button
-			string filePath = Assembly.GetExecutingAssembly().Location;
-			DateTime installTime = new FileInfo(filePath).LastWriteTime;
-			var lastReadWhatsNew = UserSettings.Instance.get(UserSettingsKey.LastReadWhatsNew);
-			DateTime whatsNewReadTime = installTime;
-
-			if (!string.IsNullOrWhiteSpace(lastReadWhatsNew))
-			{
-				try
-				{
-					whatsNewReadTime = JsonConvert.DeserializeObject<DateTime>(lastReadWhatsNew);
-				}
-				catch { }
-			}
-
-			return whatsNewReadTime > installTime;
 		}
 
 		public string Language { get; private set; }
