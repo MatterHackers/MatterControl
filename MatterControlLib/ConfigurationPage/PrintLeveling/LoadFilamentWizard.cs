@@ -213,7 +213,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 						// Allow extrusion at any temperature. S0 only works on Marlin S1 works on repetier and marlin
 						printer.Connection.QueueLine("M302 S1");
-						// send a dwel to empty out the current move commands
+						// send a dwell to empty out the current move commands
 						printer.Connection.QueueLine("G4 P1");
 						// put in a second one to use as a signal for the first being processed
 						printer.Connection.QueueLine("G4 P1");

@@ -2048,7 +2048,7 @@ namespace MatterHackers.MatterControl
 
 				if (SettingsValidation.SettingsValid(printer))
 				{
-					// check that current bed temp is is within 10 degrees of leveling temp
+					// check that current bed temp is within 10 degrees of leveling temp
 					var enabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
 					var required = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print);
 					if (enabled || required)

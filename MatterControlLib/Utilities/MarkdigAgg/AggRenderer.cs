@@ -101,7 +101,7 @@ namespace Markdig.Renderers
 			UiThread.RunOnIdle(() =>
 			{
 				// TODO: investigate why this is required, layout should have already done this
-				// but it didn't. markdown that looks like the following will not laout correctly without this
+				// but it didn't. markdown that looks like the following will not layout correctly without this
 				// string badLayoutMarkdown = "I [s]()\n\nT";
 				if (RootWidget?.Parent?.Parent != null)
 				{

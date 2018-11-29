@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			var path = this.Children.OfType<IPathObject>().FirstOrDefault();
 			if(path == null)
 			{
-				// cleare our existing data
+				// clear our existing data
 				VertexSource = new VertexStorage();
 				return;
 			}

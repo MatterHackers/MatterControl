@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		/// <summary>
-		/// Prepare the children of an object tha contains an OpperationSource to be removed
+		/// Prepare the children of an object that contains an OpperationSource to be removed
 		/// </summary>
 		/// <param name="parent"></param>
 		internal static void Remove(IObject3D parent)

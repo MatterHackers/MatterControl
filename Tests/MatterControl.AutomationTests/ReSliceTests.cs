@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						}
 						double printerRetraction = 7 + .1; // the airwolf has a retraction of 7 mm
 						Assert.GreaterOrEqual(delta, -printerRetraction, "We should never move back more than the retraction amount");
-						Assert.GreaterOrEqual(emulator.CurrentExtruder.AbsoluteEPosition, largestAbsoluteEPosition - printerRetraction, "Never go back more than the retaction amount");
+						Assert.GreaterOrEqual(emulator.CurrentExtruder.AbsoluteEPosition, largestAbsoluteEPosition - printerRetraction, "Never go back more than the retraction amount");
 						Assert.LessOrEqual(emulator.CurrentExtruder.AbsoluteEPosition, lastAbsoluteEPostion + 10, "We should never move up more than 10 mm");
 						lastAbsoluteEPostion = emulator.CurrentExtruder.AbsoluteEPosition;
 					};
@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Wait for done
 					testRunner.WaitForPrintFinished();
 
-					// this will make sure we turned off line spliting and had good data about the extruder position
+					// this will make sure we turned off line splitting and had good data about the extruder position
 					Assert.AreEqual(-7, largestRetraction, "Airwolf HD has a retraction of 7mm, make sure we had one");
 				}
 

@@ -883,7 +883,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Title = "Remove".Localize(),
 				Action = (selectedLibraryItems, listView) =>
 				{
-					// Perviously - deleteFromLibraryButton_Click
+					// Previously - deleteFromLibraryButton_Click
 
 					// ask before remove
 					var libraryItems = libraryView.SelectedItems.Select(p => p.Model);

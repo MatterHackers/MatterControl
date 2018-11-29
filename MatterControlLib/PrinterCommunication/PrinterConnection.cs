@@ -1023,7 +1023,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 
 		/// <summary>
-		/// Disable the currently acive printer connection and job if it is being actively controled by MC
+		/// Disable the currently active printer connection and job if it is being actively controlled by MC
 		/// If we are observing an SD card print, do nothing.
 		/// </summary>
 		public void Disable()
@@ -1031,7 +1031,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			if(this.CommunicationState == CommunicationStates.PrintingFromSd
 				|| (this.PrinterIsPaused && this.PrePauseCommunicationState == CommunicationStates.PrintingFromSd))
 			{
-				// don't turn off anything if we are prnting from sd
+				// don't turn off anything if we are printing from sd
 				return;
 			}
 
@@ -2240,19 +2240,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			if (lineBeingSetToPrinter.StartsWith("G28"))
 			{
-				// don't time the homing opperation
+				// don't time the homing operation
 				timeSinceStartedPrint.Stop();
 				DetailedPrintingState = DetailedPrintingState.HomingAxis;
 			}
 			else if (waitForTempStream7?.HeatingBed ?? false)
 			{
-				// don't time the heating bed opperation opperation
+				// don't time the heating bed operation
 				timeSinceStartedPrint.Stop();
 				DetailedPrintingState = DetailedPrintingState.HeatingBed;
 			}
 			else if (waitForTempStream7?.HeatingExtruder ?? false)
 			{
-				// don't time the heating extruder opperation opperation
+				// don't time the heating extruder operation
 				timeSinceStartedPrint.Stop();
 				DetailedPrintingState = DetailedPrintingState.HeatingExtruder;
 			}
