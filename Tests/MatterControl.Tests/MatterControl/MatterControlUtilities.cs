@@ -315,6 +315,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// make sure we wait for MC to be up and running
 			testRunner.WaitforDraw(systemWindow);
 
+			// close the welcome message
+			testRunner.ClickByName("Cancel Wizard Button");
+
 			// Click 'Add Printer' if not on screen
 			if (!testRunner.NameExists("Select Make", 0.2))
 			{

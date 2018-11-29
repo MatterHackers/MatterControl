@@ -104,7 +104,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Margin = theme.ButtonSpacing,
 				ToolTipText = "Import Printer".Localize(),
 				Height = forcedHeight,
-				Width = forcedHeight
+				Width = forcedHeight,
+				Name = "Import Printer Button"
 			};
 			importPrinter.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{

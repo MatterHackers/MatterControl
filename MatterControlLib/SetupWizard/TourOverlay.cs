@@ -65,12 +65,12 @@ namespace MatterControlLib.SetupWizard
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
 				Padding = new BorderDouble(5),
-				BackgroundColor = Color.White
+				BackgroundColor = theme.BackgroundColor
 			};
 
 			this.AddChild(content);
 
-			content.AddChild(new WrappedTextWidget(Description)
+			content.AddChild(new WrappedTextWidget(Description, textColor: theme.TextColor)
 			{
 				Margin = new BorderDouble(5)
 			});
@@ -89,7 +89,7 @@ namespace MatterControlLib.SetupWizard
 				{
 					var topWindow = this.TopmostParent();
 					this.Close();
-					ShowSite(topWindow, theme, nextSiteIndex);
+					ShowSite(topWindow, nextSiteIndex);
 				};
 				buttonRow.AddChild(nextButton);
 			}
@@ -103,7 +103,42 @@ namespace MatterControlLib.SetupWizard
 			// and last, set the size
 			var childBounds = GetChildBounds();
 			content.Size = new Vector2(250, content.Height);
-			content.Position = new Vector2(childBounds.Left, childBounds.Bottom - content.Size.Y);
+
+			if(childBounds.Right >= this.Width - content.Width - 5)
+			{
+				var left = childBounds.Right - content.Width;
+				if (childBounds.Bottom < this.Height / 2)
+				{
+					if (childBounds.Bottom - content.Size.Y < 0)
+					{
+						// position above
+						content.Position = new Vector2(left, childBounds.Top);
+					}
+					else
+					{
+						// position content to the left of site
+						content.Position = new Vector2(left, childBounds.Top - content.Size.Y);
+					}
+				}
+				else
+				{
+					// position content under site
+					content.Position = new Vector2(left, childBounds.Bottom - content.Size.Y);
+				}
+			}
+			else
+			{
+				if(childBounds.Bottom < this.Height / 2)
+				{
+					// position content to the right of site
+					content.Position = new Vector2(childBounds.Right, childBounds.Top - content.Size.Y);
+				}
+				else 
+				{
+					// position content under site
+					content.Position = new Vector2(childBounds.Left, childBounds.Bottom - content.Size.Y);
+				}
+			}
 
 			this.Focus();
 
@@ -120,14 +155,13 @@ namespace MatterControlLib.SetupWizard
 			{
 				var topWindow = this.TopmostParent();
 				this.Close();
-				ShowSite(topWindow, theme, nextSiteIndex);
+				ShowSite(topWindow, nextSiteIndex);
 			}
 			base.OnKeyDown(keyEvent);
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			DoubleBuffer = true;
 			var dimRegion = new VertexStorage();
 			dimRegion.MoveTo(LocalBounds.Left, LocalBounds.Bottom);
 			dimRegion.LineTo(LocalBounds.Right, LocalBounds.Bottom);
@@ -149,8 +183,8 @@ namespace MatterControlLib.SetupWizard
 
 			base.OnDraw(graphics2D);
 
-			graphics2D.Render(new Stroke(new RoundedRect(GetChildBounds(), 3), 4), Color.Red);
-			graphics2D.Render(new Stroke(new RoundedRect(GetContentBounds(), 3), 4), Color.Red);
+			graphics2D.Render(new Stroke(new RoundedRect(GetChildBounds(), 3), 4), theme.PrimaryAccentColor);
+			graphics2D.Render(new Stroke(new RoundedRect(GetContentBounds(), 3), 4), theme.PrimaryAccentColor);
 		}
 
 		private RectangleDouble GetContentBounds()
@@ -167,15 +201,25 @@ namespace MatterControlLib.SetupWizard
 			return childBounds;
 		}
 
-		public static void ShowSite(GuiWidget window, ThemeConfig theme, int siteIndex)
+		public static void ShowSite(GuiWidget window, int siteIndex)
 		{
 			var tourSites = new List<(string site, string description)>();
-			tourSites.Add(("Open File Button", "Add parts from your hard drive to the bed"));
-			tourSites.Add(("LibraryView", "Drag primitives to the bed to create your own designs"));
-			tourSites.Add(("Add Content Menu", "Browse your library to find parts you have previously designed"));
-			tourSites.Add(("Make Support Button", "Create custom supports. Turn any object on the bed into support material"));
+			tourSites.Add(("Open File Button", "Add parts from your hard drive to the bed."));
+			tourSites.Add(("LibraryView", "Drag primitives to the bed to create your own designs."));
+			tourSites.Add(("Add Content Menu", "Browse your library to find parts you have previously designed."));
+			tourSites.Add(("Make Support Button", "Create custom supports. Turn any object on the bed into support material."));
+			tourSites.Add(("Create Printer", "Setup a printer for the first time. Dozens of profiles are available to give you optimized settings."));
+			tourSites.Add(("Theme Select Button", "Change your color theme anytime you want."));
+			tourSites.Add(("Authentication Sign In", "Click here to sign into you MatterHackers account."));
+			tourSites.Add(("MatterControl BrandMenuButton", "Here you can find application settings, help docs, updates and more."));
+			tourSites.Add(("View Options Bar", "Reset the view, change viewing modes, hide and show the bed, and adjust the grid snap."));
+			tourSites.Add(("Tumble Cube Control", "Adjust the position of your view. You can also snap to specific views by clicking the cube."));
+			tourSites.Add(("Print Button", "Click here to start a print. This will also help you setup a printer if needed."));
+			tourSites.Add(("PrintPopupMenu", "Click here to start a print."));
+			tourSites.Add(("Hotend 0", "Your printers hotend controls. Set your temperatures, materials and load & unload filament."));
+			tourSites.Add(("Slice Settings Sidebar", "Have compete control of your printer with the ability to adjust individual print settings."));
 
-			if(siteIndex >= tourSites.Count)
+			if (siteIndex >= tourSites.Count)
 			{
 				siteIndex -= tourSites.Count;
 			}
@@ -203,7 +247,7 @@ namespace MatterControlLib.SetupWizard
 
 			if (targetWidget != null)
 			{
-				var tourOverlay = new TourOverlay(targetWidget, tourSites[siteIndex].description, theme, siteIndex + 1);
+				var tourOverlay = new TourOverlay(targetWidget, tourSites[siteIndex].description, ApplicationController.Instance.MenuTheme, siteIndex + 1);
 				window.AddChild(tourOverlay);
 			}
 		}

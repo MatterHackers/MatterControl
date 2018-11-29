@@ -56,7 +56,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Toolbar statusBar;
 		private FlowLayoutWidget tasksContainer;
 		private GuiWidget stretchStatusPanel;
-		private LinkLabel seeWhatsNewButton;
 		private LinkLabel updateAvailableButton;
 
 		public MainViewWidget(ThemeConfig theme)
@@ -98,23 +97,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Force common padding into top region
 			tabControl.TabBar.Padding = theme.TabbarPadding.Clone(top: theme.TabbarPadding.Top * 2, bottom: 0);
-
-			// add in a what's new button
-			seeWhatsNewButton = new LinkLabel("What's New...".Localize(), theme)
-			{
-				Name = "What's New Link",
-				ToolTipText = "See what's new in this version of MatterControl".Localize(),
-				VAnchor = VAnchor.Center,
-				Margin = new BorderDouble(10, 0),
-				TextColor = theme.TextColor
-			};
-			seeWhatsNewButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-			{
-				UserSettings.Instance.set(UserSettingsKey.LastReadWhatsNew, JsonConvert.SerializeObject(DateTime.Now));
-				DialogWindow.Show(new HelpPage("What's New"));
-			});
-
-			tabControl.TabBar.ActionArea.AddChild(seeWhatsNewButton);
 
 			// add in the update available button
 			updateAvailableButton = new LinkLabel("Update Available".Localize(), theme)
@@ -395,12 +377,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetLinkButtonsVisibility (object s, StringEventArgs e)
 		{
-			if (UserSettings.Instance.HasLookedAtWhatsNew())
-			{
-				// hide it
-				seeWhatsNewButton.Visible = false;
-			}
-
 			if (UpdateControlData.Instance.UpdateStatus == UpdateControlData.UpdateStatusStates.UpdateAvailable)
 			{
 				if (!updateAvailableButton.Visible)
@@ -408,9 +384,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					updateAvailableButton.Visible = true;
 
 					UiThread.RunOnIdle(this.ShowUpdateAvailableAnimation);
-
-					// if we are going to show the update link hide the whats new link no matter what
-					seeWhatsNewButton.Visible = false;
 				}
 			}
 			else
@@ -484,6 +457,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BorderColor = theme.SlightShade,
 				Cursor = Cursors.Hand,
 				ToolTipText = "Theme".Localize(),
+				Name = "Theme Select Button"
 			};
 
 			themePanel.AddChild(

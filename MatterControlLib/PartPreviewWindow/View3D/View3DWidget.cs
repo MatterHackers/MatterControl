@@ -287,6 +287,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = new BorderDouble(0, 0, 10, 35),
 				VAnchor = VAnchor.Top,
 				HAnchor = HAnchor.Right,
+				Name = "Tumble Cube Control"
 			};
 
 			this.InteractionLayer.AddChild(tumbleCubeControl);
@@ -296,7 +297,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Right | HAnchor.Fit,
 				VAnchor = VAnchor.Top | VAnchor.Fit,
 				//Margin = new BorderDouble(top: tumbleCubeControl.Height + tumbleCubeControl.Margin.Height + 2),
-				BackgroundColor = theme.MinimalShade
+				BackgroundColor = theme.MinimalShade,
+				Name = "View Options Bar"
 			};
 			this.InteractionLayer.AddChild(viewOptionsBar);
 
