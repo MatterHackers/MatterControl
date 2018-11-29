@@ -549,7 +549,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						return new HitData(i, 7, faceData.top, connections[faceData.top].Tile(i));
 					}
 
-					// we have found the face we are hiting
+					// we have found the face we are hitting
 					return new HitData(i, 4);
 				}
 			}

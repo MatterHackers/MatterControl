@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.CancelPrint();
 
-					// now modify the leveling data manualy and assert that it is applied when printing
+					// now modify the leveling data manually and assert that it is applied when printing
 					testRunner.SwitchToControlsTab();
 					testRunner.ClickByName("Edit Leveling Data Button");
 					for(int i=0; i<3; i++)

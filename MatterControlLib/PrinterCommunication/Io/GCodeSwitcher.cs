@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						// see if there is a layer height that is compatible in the new gcode
 						for (int i = 0; i < switchToGCode.LayerCount; i++)
 						{
-							// find the first layer in the new code that is greater than or eaqual to our current height
+							// find the first layer in the new code that is greater than or equal to our current height
 							var switchBottom = switchToGCode.GetLayerBottom(i);
 							if (switchBottom >= currentBottom)
 							{

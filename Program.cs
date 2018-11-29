@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl
 			CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 			CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
-			// make sure we can bulid a system relevant serial port
+			// make sure we can build a system relevant serial port
 			FrostedSerialPortFactory.GetPlatformSerialPort = (serialPortName) =>
 			{
 				return new CSharpSerialPortWrapper(serialPortName);

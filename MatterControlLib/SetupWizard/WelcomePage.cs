@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl
 
 			this.HeaderText = "Welcome to MatterControl".Localize();
 
-			var welcome = @"Thank you for installing MatterControl. We are excited to help you bring your ideas to life. This new version includes hundreds of improvmets and new features.
+			var welcome = @"Thank you for installing MatterControl. We are excited to help you bring your ideas to life. This new version includes hundreds of improvements and new features.
 
 Features:
   • Simple Setup
@@ -87,7 +87,7 @@ Click 'Next' to for a quick tour of the interface";
 
 		public override void OnClosed(EventArgs e)
 		{
-			UserSettings.Instance.set(UserSettingsKey.ShownWelcomMessage, "true");
+			UserSettings.Instance.set(UserSettingsKey.ShownWelcomeMessage, "true");
 
 			base.OnClosed(e);
 		}

@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				GCodeFile.GetFirstNumberAfter("Z", lineToSend, ref this.currentMove.position.Z);
 				GCodeFile.GetFirstNumberAfter("E", lineToSend, ref this.currentMove.extrusion);
 
-				// tell the steam pipline what the actual printer position is
+				// tell the steam pipeline what the actual printer position is
 				this.SetPrinterPosition(this.currentMove);
 			}
 

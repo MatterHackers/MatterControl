@@ -456,7 +456,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					rowContainer = CreateSettingsRow(property, field);
 				}
-				else // show the subtarct editor for boolean subtract and subtract and replace
+				else // show the subtract editor for boolean subtract and subtract and replace
 				{
 					rowContainer = CreateSettingsColumn(property);
 					rowContainer.AddChild(CreateSelector(childSelector, property.Item, theme));

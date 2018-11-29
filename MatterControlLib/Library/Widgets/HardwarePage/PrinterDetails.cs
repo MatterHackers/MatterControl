@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 				// Get the printer sid from settings
 				string storeID = null;
 
-				// Use the the make-model mapping table
+				// Use the make-model mapping table
 				if (OemSettings.Instance.OemPrinters.TryGetValue($"{printerInfo.Make}-{ printerInfo.Model}", out StorePrinterID storePrinterID))
 				{
 					storeID = storePrinterID?.SID;

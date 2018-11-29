@@ -115,7 +115,7 @@ namespace MatterHackers.PrinterEmulator
 
 			#region EPositions data
 			/// <summary>
-			/// The absolute eposition from the time the emulator was started.
+			/// The absolute e-position from the time the emulator was started.
 			/// never resets with G92
 			/// </summary>
 			public double AbsoluteEPosition { get; set; } = 0;

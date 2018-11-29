@@ -63,15 +63,15 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 			if (!TriangleToWidgetTransform(0).Transform(new Vector2(1, .5)).Equals(new Vector2(88, 50), .01))
 			{
-				//throw new Exception("Incorect transform");
+				//throw new Exception("Incorrect transform");
 			}
 			if (!TriangleToWidgetTransform(0).InverseTransform(new Vector2(88, 50)).Equals(new Vector2(1, .5), .01))
 			{
-				//throw new Exception("Incorect transform");
+				//throw new Exception("Incorrect transform");
 			}
 			if (!TriangleToWidgetTransform(0).Transform(new Vector2(0, .5)).Equals(new Vector2(23.13, 50), .01))
 			{
-				//throw new Exception("Incorect transform");
+				//throw new Exception("Incorrect transform");
 			}
 		}
 
