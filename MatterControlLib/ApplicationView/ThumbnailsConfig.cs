@@ -35,13 +35,17 @@ namespace MatterHackers.MatterControl
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using MatterHackers.Agg;
 	using MatterHackers.Agg.Image;
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.MatterControl.Library;
 
 	public class ThumbnailsConfig
 	{
+		private static int[] cacheSizes = new int[]
+		{
+			18, 22, 50, 70, 100, 256
+		};
+
 		private readonly static object thumbsLock = new object();
 
 		private Queue<Func<Task>> queuedThumbCallbacks = new Queue<Func<Task>>();
@@ -82,11 +86,6 @@ namespace MatterHackers.MatterControl
 			return null;
 		}
 
-		static int[] CacheSizes = new int[]
-		{
-			18, 22, 50, 70, 100, 256
-		};
-
 		public ImageBuffer LoadCachedImage(ILibraryItem libraryItem, int width, int height)
 		{
 			// try to load it from the users cache
@@ -100,7 +99,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			// if we don't find it see if it is in the cache at a bigger size
-			foreach(var cacheSize in CacheSizes.Where(s => s > width))
+			foreach(var cacheSize in cacheSizes.Where(s => s > width))
 			{
 				cachedItem = LoadImage(this.CachePath(libraryItem, cacheSize, cacheSize));
 				if(cachedItem != null)

@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -53,6 +54,7 @@ namespace MatterHackers.MatterControl
 					"Printer",
 					theme,
 					isPrimarySettingsView: true,
+					justMySettingsTitle: "My Modified Settings (Printer)".Localize(),
 					databaseMRUKey: UserSettingsKey.ConfigurePrinter_CurrentTab));
 		}
 	}

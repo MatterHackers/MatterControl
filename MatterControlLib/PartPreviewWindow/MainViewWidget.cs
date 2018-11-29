@@ -295,7 +295,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private async void Instance_OpenNewFile(object sender, string filePath)
 		{
-			
 			var history = ApplicationController.Instance.Library.PlatingHistory;
 
 			var workspace = new PartWorkspace()
