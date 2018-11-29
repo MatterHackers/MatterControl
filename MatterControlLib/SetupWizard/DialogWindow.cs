@@ -135,6 +135,7 @@ namespace MatterHackers.MatterControl
 			pageToChangeTo.DialogWindow = this;
 			this.CloseAllChildren();
 			this.AddChild(pageToChangeTo);
+
 			this.Invalidate();
 		}
 
