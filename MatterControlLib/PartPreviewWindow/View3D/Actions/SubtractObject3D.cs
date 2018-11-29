@@ -185,103 +185,130 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			int opperation,
 			out IntPtr pVc, out int vcCount, out IntPtr pVf, out int vfCount);
 
-		public static Mesh Do(Mesh transformedKeep, Mesh transformedRemove, int opperation, IProgress<ProgressStatus> reporter, double amountPerOperation, double percentCompleted, ProgressStatus progressStatus, CancellationToken cancellationToken)
+		public static Mesh Do(Mesh meshA, Mesh meshB, int opperation, IProgress<ProgressStatus> reporter, double amountPerOperation, double percentCompleted, ProgressStatus progressStatus, CancellationToken cancellationToken)
 		{
-			if (false)
-			{
-				var va = new List<double>();
-				var fa = new List<int>();
-
-				var vb = new List<double>();
-				var fb = new List<int>();
-
-				IntPtr pVc;
-				int vcCount;
-				IntPtr pFc;
-				int fcCount;
-				DoBooleanOpperation(va.ToArray(), va.Count, fa.ToArray(), fa.Count,
-					vb.ToArray(), vb.Count, fb.ToArray(), fb.Count,
-					1,
-					out pVc, out vcCount, out pFc, out fcCount);
-
-				var vcArray = new double[vcCount];
-				Marshal.Copy(pVc, vcArray, 0, vcCount);
-
-				var fcArray = new int[fcCount];
-				Marshal.Copy(pFc, fcArray, 0, fcCount);
-
-				DeleteDouble(ref pVc);
-				DeleteInt(ref pFc);
-			}
-
 			var libiglExe = "libigl_boolean.exe";
 			if (File.Exists(libiglExe)
 				&& IntPtr.Size == 8) // only try to run the improved booleans if we are 64 bit and it is there
 			{
-				string folderToSaveStlsTo = Path.Combine(ApplicationDataStorage.Instance.ApplicationTempDataPath, "amf_to_stl");
-				// Create directory if needed
-				Directory.CreateDirectory(folderToSaveStlsTo);
-
-				string stlFileA = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
-				StlProcessing.Save(transformedKeep, stlFileA, CancellationToken.None);
-
-				string stlFileB = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
-				StlProcessing.Save(transformedRemove, stlFileB, CancellationToken.None);
-
-				// wait for files to close
-				Thread.Sleep(1000);
-
-				string stlFileResult = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
-
-				// if we have the libigl_boolean.exe
-				var opperationString = "-";
-				switch (opperation)
+				if (true)
 				{
-					case 0:
-						opperationString = "+";
-						break;
-
-					case 1:
-						opperationString = "-";
-						break;
-
-					case 2:
-						opperationString = "&";
-						break;
-				}
-
-				var slicerProcess = new Process()
-				{
-					StartInfo = new ProcessStartInfo()
+					var va = new List<double>();
+					foreach(var vertex in meshA.Vertices)
 					{
-
-						Arguments = "{0} {1} {2} {3}".FormatWith(stlFileA, stlFileB, stlFileResult, opperationString),
-						CreateNoWindow = true,
-						WindowStyle = ProcessWindowStyle.Hidden,
-						RedirectStandardError = true,
-						RedirectStandardOutput = true,
-						FileName = libiglExe,
-						UseShellExecute = false
+						va.Add(vertex.Position.X);
+						va.Add(vertex.Position.Y);
+						va.Add(vertex.Position.Z);
 					}
-				};
-				slicerProcess.Start();
-				slicerProcess.WaitForExit();
+					var fa = new List<int>();
+					foreach(var face in meshA.Faces)
+					{
+						foreach(var vertex in face.Vertices())
+						{
+							fa.Add(meshA.Vertices.IndexOf(vertex));
+						}
+					}
 
-				// wait for file to close
-				Thread.Sleep(1000);
+					var vb = new List<double>();
+					foreach (var vertex in meshB.Vertices)
+					{
+						vb.Add(vertex.Position.X);
+						vb.Add(vertex.Position.Y);
+						vb.Add(vertex.Position.Z);
+					}
+					var fb = new List<int>();
+					foreach (var face in meshB.Faces)
+					{
+						foreach (var vertex in face.Vertices())
+						{
+							fb.Add(meshB.Vertices.IndexOf(vertex));
+						}
+					}
+					IntPtr pVc;
+					int vcCount;
+					IntPtr pFc;
+					int fcCount;
+					DoBooleanOpperation(va.ToArray(), va.Count, fa.ToArray(), fa.Count,
+						vb.ToArray(), vb.Count, fb.ToArray(), fb.Count,
+						1,
+						out pVc, out vcCount, out pFc, out fcCount);
 
-				// load up the 
-				var result = StlProcessing.Load(stlFileResult, CancellationToken.None);
-				if (result != null)
+					var vcArray = new double[vcCount];
+					Marshal.Copy(pVc, vcArray, 0, vcCount);
+
+					var fcArray = new int[fcCount];
+					Marshal.Copy(pFc, fcArray, 0, fcCount);
+
+					DeleteDouble(ref pVc);
+					DeleteInt(ref pFc);
+				}
+				else
 				{
-					return result;
+					string folderToSaveStlsTo = Path.Combine(ApplicationDataStorage.Instance.ApplicationTempDataPath, "amf_to_stl");
+					// Create directory if needed
+					Directory.CreateDirectory(folderToSaveStlsTo);
+
+					string stlFileA = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
+					StlProcessing.Save(meshA, stlFileA, CancellationToken.None);
+
+					string stlFileB = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
+					StlProcessing.Save(meshB, stlFileB, CancellationToken.None);
+
+					// wait for files to close
+					Thread.Sleep(1000);
+
+					string stlFileResult = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
+
+					// if we have the libigl_boolean.exe
+					var opperationString = "-";
+					switch (opperation)
+					{
+						case 0:
+							opperationString = "+";
+							break;
+
+						case 1:
+							opperationString = "-";
+							break;
+
+						case 2:
+							opperationString = "&";
+							break;
+					}
+
+					var slicerProcess = new Process()
+					{
+						StartInfo = new ProcessStartInfo()
+						{
+
+							Arguments = "{0} {1} {2} {3}".FormatWith(stlFileA, stlFileB, stlFileResult, opperationString),
+							CreateNoWindow = true,
+							WindowStyle = ProcessWindowStyle.Hidden,
+							RedirectStandardError = true,
+							RedirectStandardOutput = true,
+							FileName = libiglExe,
+							UseShellExecute = false
+						}
+					};
+					slicerProcess.Start();
+					slicerProcess.WaitForExit();
+
+					// wait for file to close
+					Thread.Sleep(1000);
+
+					// load up the 
+					var result = StlProcessing.Load(stlFileResult, CancellationToken.None);
+					if (result != null)
+					{
+						return result;
+					}
 				}
 			}
 
 			switch (opperation)
 			{
 				case 0:
-					return PolygonMesh.Csg.CsgOperations.Union(transformedKeep, transformedRemove, (status, progress0To1) =>
+					return PolygonMesh.Csg.CsgOperations.Union(meshA, meshB, (status, progress0To1) =>
 					{
 						// Abort if flagged
 						cancellationToken.ThrowIfCancellationRequested();
@@ -292,7 +319,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					}, cancellationToken);
 
 				case 1:
-					return PolygonMesh.Csg.CsgOperations.Subtract(transformedKeep, transformedRemove, (status, progress0To1) =>
+					return PolygonMesh.Csg.CsgOperations.Subtract(meshA, meshB, (status, progress0To1) =>
 					{
 						// Abort if flagged
 						cancellationToken.ThrowIfCancellationRequested();
@@ -303,7 +330,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					}, cancellationToken);
 
 				case 2:
-					return PolygonMesh.Csg.CsgOperations.Intersect(transformedKeep, transformedRemove, (status, progress0To1) =>
+					return PolygonMesh.Csg.CsgOperations.Intersect(meshA, meshB, (status, progress0To1) =>
 					{
 						// Abort if flagged
 						cancellationToken.ThrowIfCancellationRequested();
