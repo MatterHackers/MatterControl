@@ -130,7 +130,6 @@ namespace MatterHackers.MatterControl
 			return null;
 		}
 
-
 		public string CachePath(string cacheId, int width, int height)
 		{
 			return ApplicationController.CacheablePath(
