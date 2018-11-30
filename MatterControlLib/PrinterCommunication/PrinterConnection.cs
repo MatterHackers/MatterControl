@@ -882,7 +882,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 							var portFactory = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType);
 
-							bool serialPortIsAvailable = portFactory.SerialPortIsAvailable(serialPortName);
+							bool serialPortIsAvailable = portFactory.SerialPortIsAvailable(serialPortName, printer.Settings);
 							bool serialPortIsAlreadyOpen = this.ComPort != "Emulator" &&
 								portFactory.SerialPortAlreadyOpen(serialPortName);
 
@@ -892,7 +892,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								{
 									try
 									{
-										serialPort = portFactory.CreateAndOpen(serialPortName, baudRate, true);
+										serialPort = portFactory.CreateAndOpen(serialPortName, printer.Settings, baudRate, true);
 #if __ANDROID__
 						ToggleHighLowHigh(serialPort);
 #endif
@@ -1368,7 +1368,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			// current approach results in unpredictable behavior if the caller fails to close the connection
 			if (serialPort == null && this.printer.Settings != null)
 			{
-				IFrostedSerialPort resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort);
+				IFrostedSerialPort resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort, printer.Settings);
 				resetSerialPort.Open();
 
 				Thread.Sleep(500);
@@ -1609,7 +1609,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						// We reset the board while attempting to connect, so now we don't have a serial port.
 						// Create one and do the DTR to reset
-						var resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort);
+						var resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort, printer.Settings);
 						resetSerialPort.Open();
 
 						Thread.Sleep(500);

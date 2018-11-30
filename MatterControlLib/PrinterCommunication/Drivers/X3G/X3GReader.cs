@@ -16,15 +16,15 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
      *******************************************************/
 	public class X3GReader
 	{
-		private PrinterConfig printer;
+		private PrinterSettings settings;
 		private X3GPrinterDetails printerDetails;
 		private X3GPacketAnalyzer analyzer;
 
-		public X3GReader(X3GPrinterDetails PtrDetails, PrinterConfig printer)
+		public X3GReader(X3GPrinterDetails PtrDetails, PrinterSettings settings)
 		{
-			this.printer = printer;
+			this.settings = settings;
 			this.printerDetails = PtrDetails;
-			analyzer = new X3GPacketAnalyzer(PtrDetails, printer);
+			analyzer = new X3GPacketAnalyzer(PtrDetails, settings);
 		}
 
 		public string translate(byte[] x3gResponse, string relatedGCommand, out bool commandOK)
@@ -36,15 +36,15 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 		private class X3GPacketAnalyzer
 		{
 			private byte[] response;
-			private PrinterConfig printer;
+			private PrinterSettings settings;
 			private X3GCrc crc;
 			private string gCommandForResponse; //Figure out better name. this is the gCommand that was sent to the printer that caused this response
 			private X3GPrinterDetails printerDetails; //used to get location information and other needed response data
 			private StringBuilder temperatureResponseStrBuilder; //Saves extruder temp when we have a heated bed to send back temps together
 
-			public X3GPacketAnalyzer(X3GPrinterDetails PtrDetails, PrinterConfig printer)
+			public X3GPacketAnalyzer(X3GPrinterDetails PtrDetails, PrinterSettings settings)
 			{
-				this.printer = printer;
+				this.settings = settings;
 				crc = new X3GCrc();
 				printerDetails = PtrDetails;
 				temperatureResponseStrBuilder = new StringBuilder();
@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 
 							if (printerDetails.teperatureResponseCount == 1)
 							{
-								if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
+								if (settings.GetValue<int>(SettingsKey.extruder_count) > 1)
 								{
 									temperatureResponseStrBuilder.Append(String.Format(" T0:{0}", temperature));
 								}
@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 									temperatureResponseStrBuilder.Append(String.Format(" T:{0}", temperature));
 								}
 							}
-							else if (printerDetails.teperatureResponseCount == 2 && printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))
+							else if (printerDetails.teperatureResponseCount == 2 && settings.GetValue<bool>(SettingsKey.has_heated_bed))
 							{
 								temperatureResponseStrBuilder.Append(String.Format(" B:{0}", temperature));
 							}

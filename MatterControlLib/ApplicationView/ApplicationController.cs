@@ -257,6 +257,8 @@ namespace MatterHackers.MatterControl
 	{
 		public event EventHandler<string> ApplicationError;
 
+		public event EventHandler<string> ApplicationEvent;
+
 		public HelpArticle HelpArticles { get; set; }
 
 		public ThemeConfig Theme => AppContext.Theme;
@@ -377,6 +379,11 @@ namespace MatterHackers.MatterControl
 		public void LogError(string errorMessage)
 		{
 			this.ApplicationError?.Invoke(this, errorMessage);
+		}
+
+		public void LogInfo(string message)
+		{
+			this.ApplicationEvent?.Invoke(this, message);
 		}
 
 		// TODO: Any references to this property almost certainly need to be reconsidered. ActiveSliceSettings static references that assume a single printer
