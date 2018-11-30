@@ -35,7 +35,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.SelectSliceSettingsField("Printer", "start_gcode");
 
-					var printer = ApplicationController.Instance.ActivePrinters.First();
+					var printer = testRunner.FirstPrinter();
 
 					// Validate GCode fields persist values
 					Assert.AreEqual(
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// print a part
 					testRunner.AddItemToBedplate();
 
-					var printer = ApplicationController.Instance.ActivePrinters.FirstOrDefault();
+					var printer = testRunner.FirstPrinter();
 
 					var currentSettings = printer.Settings;
 					currentSettings.SetValue(SettingsKey.pause_gcode, "");
@@ -312,7 +312,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Yes Button");
 
 					// Wait for done
-					testRunner.WaitForPrintFinished(ApplicationController.Instance.ActivePrinters.First());
+					testRunner.WaitForPrintFinished(testRunner.FirstPrinter());
 				}
 
 				return Task.CompletedTask;
@@ -328,7 +328,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should exist after add");
 
-					var printer = ApplicationController.Instance.ActivePrinters.First();
+					var printer = testRunner.FirstPrinter();
 					printer.Settings.SetValue(SettingsKey.recover_is_enabled, "1");
 					printer.Settings.SetValue(SettingsKey.has_hardware_leveling, "0");
 
@@ -410,7 +410,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.SwitchToControlsTab();
 
-					var printer = ApplicationController.Instance.ActivePrinters.FirstOrDefault();
+					var printer = testRunner.FirstPrinter();
 
 					// Wait for printing to complete
 					var printFinishedResetEvent = new AutoResetEvent(false);
@@ -508,7 +508,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.SwitchToControlsTab();
 
-					var printer = ApplicationController.Instance.ActivePrinters.First();
+					var printer = testRunner.FirstPrinter();
 
 					var printFinishedResetEvent = new AutoResetEvent(false);
 					printer.Connection.PrintFinished += (s, e) => printFinishedResetEvent.Set();
@@ -639,7 +639,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						fanChangedCount++;
 					};
 
-					var printer = ApplicationController.Instance.ActivePrinters.First();
+					var printer = testRunner.FirstPrinter();
 
 					emulator.WaitForLayer(printer.Settings, 2);
 					emulator.RunSlow = true;

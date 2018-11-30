@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.StartPrint();
 
-					var printer = ApplicationController.Instance.ActivePrinters.First();
+					var printer = testRunner.FirstPrinter();
 
 					WaitForLayerAndResume(testRunner, printer, 2);
 					WaitForLayerAndResume(testRunner, printer, 4);
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should exist after add");
 
-					var printer = ApplicationController.Instance.ActivePrinters.First();
+					var printer = testRunner.FirstPrinter();
 					printer.Settings.SetValue(SettingsKey.cancel_gcode, "G28 ; Cancel GCode");
 
 					testRunner.AddItemToBedplate();
@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Features Tab");
 
-				var printer = ApplicationController.Instance.ActivePrinters.First();
+				var printer = testRunner.FirstPrinter();
 
 				CheckAndUncheckSetting(testRunner, printer, SettingsKey.heat_extruder_before_homing, false);
 
@@ -310,9 +310,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsTrue(testRunner.NameExists("Hotend 0"));
 					Assert.IsTrue(testRunner.NameExists("Hotend 1"));
 
-					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "ActivePrinters.First is only valid in single printer scenarios");
-
-					var printer = ApplicationController.Instance.ActivePrinters.First();
+					var printer = testRunner.FirstPrinter();
 
 					SetCheckBoxSetting(testRunner, printer, SettingsKey.extruders_share_temperature, true);
 
@@ -502,7 +500,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 				testRunner.SwitchToSliceSettings();
 
-				var printer = ApplicationController.Instance.ActivePrinters.First();
+				var printer = testRunner.FirstPrinter();
 
 				testRunner.SelectSliceSettingsField("Advanced", "layer_height");
 				testRunner.Type(".5");
@@ -536,7 +534,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.DoubleClickByName("Airwolf 3D HD Node");
 				testRunner.Delay(0.2);
 
-				printer = ApplicationController.Instance.ActivePrinters.First();
+				printer = testRunner.FirstPrinter();
 
 				testRunner.WaitFor(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.1);
 				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.1", "Layer height is the fine override");
