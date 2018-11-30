@@ -81,12 +81,14 @@ Click 'Next' to for a quick tour of the interface";
 				});
 			};
 
-			CancelButton.Click += (s, e) =>
-			{
-				UserSettings.Instance.set(UserSettingsKey.ShownWelcomeMessage, "true");
-			};
-
 			this.AddPageAction(nextButton);
+		}
+
+		protected override void OnCancel(out bool abortCancel)
+		{
+			UserSettings.Instance.set(UserSettingsKey.ShownWelcomeMessage, "true");
+
+			base.OnCancel(out abortCancel);
 		}
 	}
 }
