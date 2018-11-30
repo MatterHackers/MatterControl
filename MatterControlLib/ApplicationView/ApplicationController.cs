@@ -2027,8 +2027,6 @@ namespace MatterHackers.MatterControl
 			AddPrintersTabRightElement?.Invoke(this, new WidgetSourceEventArgs(sourceExentionArea));
 		}
 
-		private string doNotAskAgainMessage = "Don't remind me again".Localize();
-
 		public async Task PrintPart(EditContext editContext, PrinterConfig printer, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken, bool overrideAllowGCode = false)
 		{
 			var partFilePath = editContext.SourceFilePath;
@@ -2093,7 +2091,7 @@ If you experience adhesion problems, please re-run leveling."
 						&& hideGCodeWarning == null
 						&& !overrideAllowGCode)
 					{
-						var hideGCodeWarningCheckBox = new CheckBox(doNotAskAgainMessage)
+						var hideGCodeWarningCheckBox = new CheckBox("Don't remind me again".Localize())
 						{
 							TextColor = this.Theme.TextColor,
 							Margin = new BorderDouble(top: 6, left: 6),
@@ -3186,7 +3184,7 @@ If you experience adhesion problems, please re-run leveling."
 						await applicationController.Tasks.Execute(task.Title, task.Action);
 					}
 
-					if (UserSettings.Instance.get(UserSettingsKey.ShownWelcomeMessage) != "true")
+					if (ApplicationSettings.Instance.get(ApplicationSettingsKey.ShownWelcomeMessage) != "false")
 					{
 						UiThread.RunOnIdle(() =>
 						{
