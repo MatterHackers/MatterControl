@@ -1,4 +1,5 @@
-﻿using MatterHackers.Plugins.X3GDriver;
+﻿using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.Plugins.X3GDriver;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.MatterControl.Plugins.X3GDriver
@@ -7,9 +8,9 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 	{
 		override protected string GetDriverType() => "X3G";
 
-		public override IFrostedSerialPort Create(string serialPortName)
+		public override IFrostedSerialPort Create(string serialPortName, PrinterSettings settings)
 		{
-			return new X3GSerialPortWrapper(serialPortName, ApplicationController.Instance.ActivePrinter);
+			return new X3GSerialPortWrapper(serialPortName, settings);
 		}
 	}
 }

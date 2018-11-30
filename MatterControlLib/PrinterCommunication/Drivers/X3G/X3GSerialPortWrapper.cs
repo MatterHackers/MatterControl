@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MatterHackers.MatterControl;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 /*****************************************************
  * Initialization Requirements:
@@ -33,12 +34,12 @@ namespace MatterHackers.Plugins.X3GDriver
 		private bool waitForResponse;
 		private bool dtrEnable;
 
-		public X3GSerialPortWrapper(string serialPortName, PrinterConfig printer)
+		public X3GSerialPortWrapper(string serialPortName, PrinterSettings settings)
 		{
-			port = FrostedSerialPortFactory.GetAppropriateFactory("raw").Create(serialPortName);
+			port = FrostedSerialPortFactory.GetAppropriateFactory("raw").Create(serialPortName, settings);
 			printerDetails = new X3GPrinterDetails();
-			writer = new X3GWriter(printerDetails, printer);
-			reader = new X3GReader(printerDetails, printer);
+			writer = new X3GWriter(printerDetails, settings);
+			reader = new X3GReader(printerDetails, settings);
 			timeSinceLastCommandSent = new Stopwatch();
 			timeSinceLastOK = new Stopwatch();
 			sentCommandQueue = new Queue<string>();

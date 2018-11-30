@@ -28,7 +28,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				string newName = "Updated name";
 				testRunner.InlineTitleEdit("Printer Name", newName);
 
-				var printer = ApplicationController.Instance.ActivePrinters.First();
+				var printer = testRunner.FirstPrinter();
 				string printerID = printer.Settings.ID;
 
 				// Wait for change

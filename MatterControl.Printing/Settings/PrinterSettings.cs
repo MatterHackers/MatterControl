@@ -83,13 +83,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string ID { get; set; }
 
-		private static object writeLock = new object();
+		[JsonIgnore]
+		public PrinterSettingsLayer QualityLayer { get; private set; }
 
 		[JsonIgnore]
-		internal PrinterSettingsLayer QualityLayer { get; private set; }
-
-		[JsonIgnore]
-		internal PrinterSettingsLayer MaterialLayer { get; private set; }
+		public PrinterSettingsLayer MaterialLayer { get; private set; }
 
 		public PrinterSettingsLayer StagedUserSettings { get; set; } = new PrinterSettingsLayer();
 
@@ -133,7 +131,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		internal void NotifyMacrosChanged()
+		public void NotifyMacrosChanged()
 		{
 			this.MacrosChanged?.Invoke(this, null);
 		}
@@ -294,7 +292,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				destinationLayer[SettingsKey.layer_name] = settingsToImport.GetValue(SettingsKey.layer_name, sourceFilter);
 			}
 
-			this.Save();
+			this.OnSettingChanged("na");
 		}
 
 		internal PrinterSettingsLayer GetMaterialLayer(string layerID)
@@ -318,11 +316,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				return GetValue(SettingsKey.active_quality_key);
 			}
-			internal set
+			set
 			{
 				SetValue(SettingsKey.active_quality_key, value);
 				QualityLayer = GetQualityLayer(value);
-				Save();
+
+				this.OnSettingChanged(SettingsKey.active_quality_key);
 			}
 		}
 
@@ -337,7 +336,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				return null;
 			}
-			internal set
+			set
 			{
 				if (MaterialSettingsKeys.Count == 0 || value != MaterialSettingsKeys[0])
 				{
@@ -346,80 +345,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					MaterialLayer = GetMaterialLayer(value);
 					this.OnMaterialPresetChanged();
 
-					Save();
+					this.OnSettingChanged(SettingsKey.active_material_key);
 				}
 			}
 		}
 
 		public List<string> MaterialSettingsKeys { get; set; } = new List<string>();
 
-		[JsonIgnore]
-		public string DocumentPath => ProfileManager.Instance.ProfilePath(this.ID);
 
 		[JsonIgnore]
 		public bool AutoSave { get; set; } = true;
 
-		Dictionary<string, string> blackListSettings = new Dictionary<string, string>()
-		{
-			[SettingsKey.spiral_vase] = "0",
-			[SettingsKey.layer_to_pause] = "",
-			[SettingsKey.print_leveling_data] = "",
-			[SettingsKey.print_leveling_enabled] = "0",
-			[SettingsKey.probe_has_been_calibrated] = "0",
-			[SettingsKey.filament_has_been_loaded] = "0"
-		};
-
-		public void Save(bool clearBlackListSettings = false)
-		{
-			// Skip save operation if on the EmptyProfile
-			if (!this.PrinterSelected || !this.AutoSave)
-			{
-				return;
-			}
-
-			if(clearBlackListSettings)
-			{
-				foreach(var kvp in blackListSettings)
-				{
-					if (UserLayer.ContainsKey(kvp.Key))
-					{
-						UserLayer.Remove(kvp.Key);
-					}
-					OemLayer[kvp.Key] = kvp.Value;
-				}
-			}
-
-			Save(DocumentPath);
-		}
-
-		public void Save(string filePath)
-		{
-			lock (writeLock)
-			{
-				string json = this.ToJson();
-
-				var printerInfo = ProfileManager.Instance[this.ID];
-				if (printerInfo != null)
-				{
-					printerInfo.ContentSHA1 = this.ComputeSHA1(json);
-					ProfileManager.Instance.Save();
-				}
-
-				File.WriteAllText(filePath, json);
-			}
-
-			if (ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == this.ID) is PrinterConfig printer)
-			{
-				ApplicationController.Instance.ActiveProfileModified.CallEvents(printer.Settings, null);
-			}
-		}
-
-		internal string ComputeSHA1()
+		public string ComputeSHA1()
 		{
 			return ComputeSHA1(this.ToJson());
 		}
 
-		private string ComputeSHA1(string json)
+		public string ComputeSHA1(string json)
 		{
 			// SHA1 value is based on UTF8 encoded file contents
 			using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
@@ -655,7 +597,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		internal IEnumerable<PrinterSettingsLayer> defaultLayerCascade
+		public IEnumerable<PrinterSettingsLayer> defaultLayerCascade
 		{
 			get
 			{
@@ -976,7 +918,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			// Otherwise, set and save
 			persistenceLayer[settingsKey] = settingsValue;
-			Save();
 
 			this.OnSettingChanged(settingsKey);
 		}
@@ -986,7 +927,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return JsonConvert.SerializeObject(this, Formatting.Indented);
 		}
 
-		internal void ClearValue(string settingsKey, PrinterSettingsLayer layer = null)
+		public void ClearValue(string settingsKey, PrinterSettingsLayer layer = null)
 		{
 			var persistenceLayer = layer ?? UserLayer;
 			if (persistenceLayer.ContainsKey(settingsKey))
@@ -1018,8 +959,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 					}
 				}
-
-				Save();
 
 				this.OnSettingChanged(settingsKey);
 			}

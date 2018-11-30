@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 
@@ -11,17 +10,15 @@ namespace TcpipDriver
 
 		protected override string GetDriverType() => "TCPIP";
 
-		public override IFrostedSerialPort Create(string serialPortName)
+		public override IFrostedSerialPort Create(string serialPortName, PrinterSettings settings)
 		{
-			return new TcpipSerialPort(ApplicationController.Instance.ActivePrinter, serialPortName);
+			return new TcpipSerialPort(settings, serialPortName);
 		}
 
-		public override bool SerialPortIsAvailable(string serialPortName)
+		public override bool SerialPortIsAvailable(string serialPortName, PrinterSettings settings)
 		{
-			var printer = ApplicationController.Instance.ActivePrinter;
-
-			return int.TryParse(printer.Settings.GetValue(SettingsKey.ip_port), out _)
-				&& IPAddress.TryParse(printer.Settings.GetValue(SettingsKey.ip_address), out _);
+			return int.TryParse(settings.GetValue(SettingsKey.ip_port), out _)
+				&& IPAddress.TryParse(settings.GetValue(SettingsKey.ip_address), out _);
 		}
 	}
 }

@@ -260,6 +260,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		// TODO: This function should be reimplemented. Rather than swapping instance references we should sync state from the new settings into the old. This
+		// would ensure that existing listeners and references would continue to work and while still syncing updates into the loaded settings
 		public void SwapToSettings(PrinterSettings printerSettings)
 		{
 			_settings = printerSettings;

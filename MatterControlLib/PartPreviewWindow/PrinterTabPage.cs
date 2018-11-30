@@ -216,7 +216,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			printer.Bed.RendererOptions.PropertyChanged += RendererOptions_PropertyChanged;
 			printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
 			ApplicationController.Instance.ApplicationError += ApplicationController_ApplicationError;
+			ApplicationController.Instance.ApplicationEvent += ApplicationController_ApplicationEvent;
+
 			sceneContext.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
+		}
+
+		private void ApplicationController_ApplicationEvent(object sender, string e)
+		{
+			printer.Connection.TerminalLog.WriteLine(e);
 		}
 
 		private void ApplicationController_ApplicationError(object sender, string e)
@@ -394,6 +401,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			printer.ViewState.ViewModeChanged -= ViewState_ViewModeChanged;
 			printer.Bed.RendererOptions.PropertyChanged -= RendererOptions_PropertyChanged;
 			ApplicationController.Instance.ApplicationError -= ApplicationController_ApplicationError;
+			ApplicationController.Instance.ApplicationEvent -= ApplicationController_ApplicationEvent;
 
 			base.OnClosed(e);
 		}

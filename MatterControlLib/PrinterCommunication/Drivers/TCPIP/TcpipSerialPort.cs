@@ -1,12 +1,11 @@
-﻿﻿using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.SerialPortCommunication.FrostedSerial;
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace TcpipDriver
 {
@@ -42,18 +41,16 @@ namespace TcpipDriver
 		private int tempWriteTimeout;
 
 		private bool reconnecting = false;
-		PrinterConnection printerConnection;
-		private PrinterConfig printer;
+		private PrinterSettings settings;
 
-		public TcpipSerialPort(PrinterConfig printer, string name)
+		public TcpipSerialPort(PrinterSettings settings, string name)
 		{
-			this.printer = printer;
-			this.printerConnection = printer.Connection;
+			this.settings = settings;
 
 			socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-			if (int.TryParse(printer.Settings.GetValue("ip_port"), out port)
-				&& IPAddress.TryParse(printer.Settings.GetValue("ip_address"), out ipAddress))
+			if (int.TryParse(settings.GetValue("ip_port"), out port)
+				&& IPAddress.TryParse(settings.GetValue("ip_address"), out ipAddress))
 			{
 				ipEndPoint = new IPEndPoint(ipAddress, port);
 				readBuffer = new byte[1024];
@@ -155,11 +152,12 @@ namespace TcpipDriver
 		public void Open()
 		{
 			try
-			{//ADD Attempt to connect Message to just the console
-				printerConnection.TerminalLog.WriteLine("Attempting to connect to: " + ipEndPoint.Address + " on port " + ipEndPoint.Port);
+			{
+				// Attempt to connect Message to just the console
+				this.LogInfo("Attempting to connect to: " + ipEndPoint.Address + " on port " + ipEndPoint.Port);
 				socket.Connect(ipEndPoint);
 				stream = new NetworkStream(socket);
-				printerConnection.TerminalLog.WriteLine("Connected to: " + ipEndPoint.Address + " on port " + ipEndPoint.Port);
+				this.LogInfo("Connected to: " + ipEndPoint.Address + " on port " + ipEndPoint.Port);
 				if (this.BaudRate != 0)
 				{
 					//Send Telnet handshake so that esp will enter the telnet mode allowing us to set baud and reset board
@@ -170,8 +168,8 @@ namespace TcpipDriver
 				}
 			}
 			catch (Exception e)
-			{//ADD Error Message to just the console
-				printerConnection.TerminalLog.WriteLine("Exception:" + e.Message);
+			{
+				ApplicationController.Instance.LogError("Exception:" + e.Message);
 			}
 
 			//These were set before and are now set in the stream
@@ -180,6 +178,11 @@ namespace TcpipDriver
 				stream.WriteTimeout = tempWriteTimeout;
 				stream.ReadTimeout = tempReadTimeout;
 			}
+		}
+
+		private void LogInfo(string message)
+		{
+			ApplicationController.Instance.LogInfo(message);
 		}
 
 		public int Read(byte[] buffer, int offset, int count)
@@ -216,7 +219,7 @@ namespace TcpipDriver
 				}
 				catch (Exception e)
 				{
-					printerConnection.TerminalLog.WriteLine("Exception:" + e.Message);
+					this.LogInfo("Exception:" + e.Message);
 					Reconnect();
 					stream.Write(buffer, offset, count);
 				}
@@ -236,12 +239,13 @@ namespace TcpipDriver
 
 		private string ConvertBytesToString(byte[] inputBytes, int bytesRead)
 		{
-			StringBuilder builder = new StringBuilder();
+			var builder = new StringBuilder();
 
 			for (int index = 0; index < bytesRead; index++)
 			{
 				builder.Append(Convert.ToChar(inputBytes[index]));
 			}
+
 			return builder.ToString();
 		}
 
@@ -259,19 +263,21 @@ namespace TcpipDriver
 				ipEndPoint = new IPEndPoint(ipAddress, port);
 				socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 				try
-				{//ADD Attempt to connect Message to just the console
-					printerConnection.TerminalLog.WriteLine("Attempting to connect to: " + ipEndPoint.Address + " on port " + ipEndPoint.Port);
+				{
+					// Attempt to connect Message to just the console
+					this.LogInfo("Attempting to connect to: " + ipEndPoint.Address + " on port " + ipEndPoint.Port);
 					socket.Connect(ipEndPoint);
 					stream = new NetworkStream(socket);
-					printerConnection.TerminalLog.WriteLine("Connected to: " + ipEndPoint.Address + " on port " + ipEndPoint.Port);
-					//Send telnet handshake
+					this.LogInfo("Connected to: " + ipEndPoint.Address + " on port " + ipEndPoint.Port);
+					
+					// Send telnet handshake
 					byte[] bytes = new byte[] { IAC, WILL, ComPortOpt };
 					Write(bytes, 0, bytes.Length);
 					break;
 				}
 				catch (Exception e)
-				{//ADD Error Message to just the console
-					printerConnection.TerminalLog.WriteLine("Exception:" + e.Message);
+				{
+					ApplicationController.Instance.LogError("Exception:" + e.Message);
 					Thread.Sleep((int)(500 * Math.Pow(i,2)));
 				}
 			}

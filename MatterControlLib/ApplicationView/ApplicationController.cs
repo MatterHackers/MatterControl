@@ -257,6 +257,8 @@ namespace MatterHackers.MatterControl
 	{
 		public event EventHandler<string> ApplicationError;
 
+		public event EventHandler<string> ApplicationEvent;
+
 		public HelpArticle HelpArticles { get; set; }
 
 		public ThemeConfig Theme => AppContext.Theme;
@@ -379,13 +381,10 @@ namespace MatterHackers.MatterControl
 			this.ApplicationError?.Invoke(this, errorMessage);
 		}
 
-		// TODO: Any references to this property almost certainly need to be reconsidered. ActiveSliceSettings static references that assume a single printer
-		// selection are being redirected here. This allows us to break the dependency to the original statics and consolidates
-		// us down to a single point where code is making assumptions about the presence of a printer, printer counts, etc. If we previously checked for
-		// PrinterConnection.IsPrinterConnected, that could should be updated to iterate ActiverPrinters, checking each one and acting on each as it would
-		// have for the single case
-		[Obsolete("ActivePrinter references should be migrated to logic than supports multi-printer mode")]
-		public PrinterConfig ActivePrinter => this.ActivePrinters.FirstOrDefault() ?? PrinterConfig.EmptyPrinter;
+		public void LogInfo(string message)
+		{
+			this.ApplicationEvent?.Invoke(this, message);
+		}
 
 		public Action RedeemDesignCode;
 		public Action EnterShareCode;
@@ -2268,11 +2267,13 @@ If you experience adhesion problems, please re-run leveling."
 						string now = "Workspace " + DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
 						string archivePath = Path.Combine(platingDirectory, now + ".zip");
 
+						string settingsFilePath = ProfileManager.Instance.ProfilePath(printer.Settings.ID);
+
 						using (var file = File.OpenWrite(archivePath))
 						using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
 						{
 							zip.CreateEntryFromFile(sourcePath, "PrinterPlate.mcx");
-							zip.CreateEntryFromFile(printer.Settings.DocumentPath, printer.Settings.GetValue(SettingsKey.printer_name) + ".printer");
+							zip.CreateEntryFromFile(settingsFilePath, printer.Settings.GetValue(SettingsKey.printer_name) + ".printer");
 							zip.CreateEntryFromFile(gcodeFilePath, "sliced.gcode");
 						}
 					}

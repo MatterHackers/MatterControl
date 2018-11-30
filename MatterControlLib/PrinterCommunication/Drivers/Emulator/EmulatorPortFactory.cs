@@ -21,6 +21,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.PrinterEmulator
@@ -28,11 +29,11 @@ namespace MatterHackers.PrinterEmulator
 	public class EmulatorPortFactory : FrostedSerialPortFactory
 	{
 		override protected string GetDriverType() => "Emulator";
-		public override IFrostedSerialPort Create(string serialPortName) => new Emulator();
+		public override IFrostedSerialPort Create(string serialPortName, PrinterSettings settings) => new Emulator();
 
-		public override IFrostedSerialPort CreateAndOpen(string serialPortName, int baudRate, bool DtrEnableOnConnect)
+		public override IFrostedSerialPort CreateAndOpen(string serialPortName, PrinterSettings settings, int baudRate, bool DtrEnableOnConnect)
 		{
-			var port = this.Create(serialPortName);
+			var port = this.Create(serialPortName, settings);
 			port.Open();
 			return port;
 		}

@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.AddAndSelectPrinter(make, model);
 
 			// Force the configured printer to use the emulator driver
-			ApplicationController.Instance.ActivePrinter.Settings.SetValue("driver_type", "Emulator");
+			testRunner.FirstPrinter().Settings.SetValue("driver_type", "Emulator");
 
 			// edit the com port
 			testRunner.SwitchToPrinterSettings();
@@ -620,14 +620,26 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Delay(2);
 		}
 
-		public static void WaitForPrintFinished(this AutomationRunner testRunner, int maxSeconds = 500)
+		public static void WaitForPrintFinished(this AutomationRunner testRunner, PrinterConfig printer, int maxSeconds = 500)
 		{
-			testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.FinishedPrint, maxSeconds);
+			testRunner.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.FinishedPrint, maxSeconds);
 		}
 
-		public static void WaitForCommunicationStateDisconnected(this AutomationRunner testRunner, int maxSeconds = 500)
+		/// <summary>
+		/// Gets a reference to the first and only active printer. Throws if called when multiple active printers exists
+		/// </summary>
+		/// <param name="testRunner"></param>
+		/// <returns>The first active printer</returns>
+		public static PrinterConfig FirstPrinter(this AutomationRunner testRunner)
 		{
-			testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Disconnected, maxSeconds);
+			Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "FirstPrinter() is only valid in single printer scenarios");
+
+			return ApplicationController.Instance.ActivePrinters.First();
+		}
+
+		public static void WaitForCommunicationStateDisconnected(this AutomationRunner testRunner, PrinterConfig printer, int maxSeconds = 500)
+		{
+			testRunner.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Disconnected, maxSeconds);
 		}
 
 		public static async Task RunTest(
@@ -715,9 +727,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				defaultTestImages,
 				closeWindow: () =>
 				{
-					if (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Printing)
-					{
-						ApplicationController.Instance.ActivePrinter.Connection.Disable();
+					foreach(var printer in ApplicationController.Instance.ActivePrinters)
+					{ 
+						if (printer.Connection.CommunicationState == CommunicationStates.Printing)
+						{
+							printer.Connection.Disable();
+						}
 					}
 
 					rootSystemWindow.Close();

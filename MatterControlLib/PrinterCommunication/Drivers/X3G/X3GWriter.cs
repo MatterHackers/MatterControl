@@ -11,7 +11,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 {
 	public class X3GWriter
 	{
-		private PrinterConfig printer;
+		private PrinterSettings settings;
 		private X3GPrinterDetails printerDetails;
 
 		private Queue<byte[]> overFlowPackets;
@@ -31,9 +31,9 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 			lineNumber = 0;
 		}
 
-		public X3GWriter(X3GPrinterDetails printerInfo, PrinterConfig printer)
+		public X3GWriter(X3GPrinterDetails printerInfo, PrinterSettings settings)
 		{
-			this.printer = printer;
+			this.settings = settings;
 			printerDetails = printerInfo;
 			overFlowPackets = new Queue<byte[]>();
 			feedrate = 3200;
@@ -83,28 +83,34 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 							binaryPacket.addByte(0);
 							convertedMessage = binaryPacket.getX3GPacket();
 							break;
+
 						case 82://set extruder to absolute move M82
 							sendToPrinter = false;
 							printerDetails.extruderRelativePos = false;
 							break;
+
 						case 83://set extruder to relative move M83
 							sendToPrinter = false;
 							printerDetails.extruderRelativePos = true;
 							break;
+
 						case 84://Stop idle hold (release motors) M84
 							binaryPacket = new X3GPacketFactory(137);
 							binaryPacket.addByte(31);
 							convertedMessage = binaryPacket.getX3GPacket();
 							break;
+
 						case 92://set axis steps per unit M92
 							sendToPrinter = false;
 							updateStepsPerMm(commands);
 
 							break;
+
 						case 114://Get Current Position M114
 							binaryPacket = new X3GPacketFactory(21);
 							convertedMessage = binaryPacket.getX3GPacket();
 							break;
+
 						case 115://connecting M115
 							binaryPacket = new X3GPacketFactory(0x00);
 							binaryPacket.add16bits(0x28);
@@ -118,7 +124,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 							convertedMessage = binaryPacket.getX3GPacket();
 							printerDetails.requiredTemperatureResponseCount = 1;
 
-							if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))//if it has a bed get the bed temp
+							if (settings.GetValue<bool>(SettingsKey.has_heated_bed))//if it has a bed get the bed temp
 							{
 								binaryPacket = new X3GPacketFactory(10);
 								binaryPacket.addByte(0);
@@ -127,7 +133,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 								overFlowPackets.Enqueue(binaryPacket.getX3GPacket());
 							}
 
-							if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
+							if (settings.GetValue<int>(SettingsKey.extruder_count) > 1)
 							{
 								binaryPacket = new X3GPacketFactory(10);
 								binaryPacket.addByte(1);
@@ -137,6 +143,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 							}
 							printerDetails.teperatureResponseCount = 0;
 							break;
+
 						case 104://set extruder temperature M104
 							int temp = (int)getParameterValue(commands, 'S');
 							byte extruder = (byte)getParameterValue(commands, 'T');
@@ -158,6 +165,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 
 							printerDetails.targetTempForMakerbotStyleCommands = temp;
 							break;
+
 						case 109://set extruder temperature and wait M109
 							temp = (int)getParameterValue(commands, 'S');
 							extruder = (byte)getParameterValue(commands, 'T');
@@ -187,6 +195,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 							printerDetails.heatingLockout = true;
 
 							break;
+
 						case 106://Fan On M106
 							int zeroCheck = (int)getParameterValue(commands, 'S');
 							binaryPacket = new X3GPacketFactory(136);
@@ -205,6 +214,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 
 							convertedMessage = binaryPacket.getX3GPacket();
 							break;
+
 						case 107://Fan off M107
 							binaryPacket = new X3GPacketFactory(136);
 							binaryPacket.addByte(0x00);
@@ -213,10 +223,12 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 							binaryPacket.addByte(0);
 							convertedMessage = binaryPacket.getX3GPacket();
 							break;
+
 						case 110://set current line number M110
 							lineNumber = (int)getParameterValue(commands, 'N');
 							sendToPrinter = false;
 							break;
+
 						case 117://Set Display message M117
 							binaryPacket = new X3GPacketFactory(149);
 							binaryPacket.addByte(4);
@@ -232,6 +244,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 							convertedMessage = binaryPacket.getX3GPacket();
 
 							break;
+
 						case 127://Disable extra output(fan) Makerbot M127
 							binaryPacket = new X3GPacketFactory(136);
 							binaryPacket.addByte(0x00);
@@ -240,6 +253,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 							binaryPacket.addByte(0);
 							convertedMessage = binaryPacket.getX3GPacket();
 							break;
+
 						case 132://load axis offset of current home pos Makerbot M132
 
 							binaryPacket = new X3GPacketFactory(144);
@@ -248,6 +262,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 							convertedMessage = binaryPacket.getX3GPacket();
 
 							break;
+
 						case 133://wait for toolhead to heat to target temp Makerbot M133
 							temp = printerDetails.targetTempForMakerbotStyleCommands;
 							extruder = (byte)getParameterValue(commands, 'T');
@@ -276,10 +291,10 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 							printerDetails.targetExtruderTemps[extruder] = temp;
 							printerDetails.heatingLockout = true;
 							break;
-						case 134://wait for build platform temp Makerbot M134
-							if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))
-							{
 
+						case 134://wait for build platform temp Makerbot M134
+							if (settings.GetValue<bool>(SettingsKey.has_heated_bed))
+							{
 								binaryPacket = new X3GPacketFactory(136);
 								binaryPacket.addByte(0);
 								binaryPacket.addByte(31);
@@ -304,8 +319,9 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 
 							convertedMessage = binaryPacket.getX3GPacket();
 							break;
+
 						case 140://Set Bed temp M140
-							if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))
+							if (settings.GetValue<bool>(SettingsKey.has_heated_bed))
 							{
 								int temperature = (int)getParameterValue(commands, 'S');
 								binaryPacket = new X3GPacketFactory(136);
@@ -323,8 +339,9 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 							}
 
 							break;
+
 						case 190://Wait for bed to reach target temp M190
-							if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))
+							if (settings.GetValue<bool>(SettingsKey.has_heated_bed))
 							{
 								int temperature = (int)getParameterValue(commands, 'S');
 								binaryPacket = new X3GPacketFactory(136);
@@ -350,11 +367,13 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 							}
 
 							break;
+
 						case 206://Positional offset for bed M206
 							sendToPrinter = false;
 							updateBedOffset(commands);
 
 							break;
+
 						//The following are fake gcode commands to do features that are not included in gCode or are needed for printer initialization
 						case 1200: //Build Start Notification M1200
 							binaryPacket = new X3GPacketFactory(153);
@@ -369,6 +388,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 							binaryPacket.addByte(0);
 							convertedMessage = binaryPacket.getX3GPacket();
 							break;
+
 						case 1201: //Build End Notification M1201
 							binaryPacket = new X3GPacketFactory(154);
 							binaryPacket.addByte(0);
@@ -378,14 +398,17 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 							printerDetails.targetExtruderTemps[0] = 0;
 							printerDetails.targetExtruderTemps[1] = 0;
 							break;
+
 						case 1202: //dtr hi-low (reset) M1202
 							binaryPacket = new X3GPacketFactory(3);
 							convertedMessage = binaryPacket.getX3GPacket();
 							break;
+
 						case 1203: //toolhead offset M1203
 							sendToPrinter = false;
 							printerDetails.extruderOffset = new Vector2(getParameterValue(commands, 'X'), getParameterValue(commands, 'Y'));
 							break;
+
 						default:
 							sendToPrinter = false;
 							convertedMessage = new byte[] { 0 };

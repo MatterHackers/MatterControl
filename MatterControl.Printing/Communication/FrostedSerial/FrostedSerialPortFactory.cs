@@ -34,6 +34,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using Microsoft.Win32.SafeHandles;
 
 namespace MatterHackers.SerialPortCommunication.FrostedSerial
@@ -134,7 +135,7 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 		/// </summary>
 		public static Func<string, IFrostedSerialPort> GetPlatformSerialPort;
 
-		public virtual IFrostedSerialPort Create(string serialPortName)
+		public virtual IFrostedSerialPort Create(string serialPortName, PrinterSettings settings)
 		{
 #if __ANDROID__
 			//Create an instance of a FrostedSerialPort
@@ -159,7 +160,7 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 #endif // ANDROID
 		}
 
-		public virtual IFrostedSerialPort CreateAndOpen(string serialPortName, int baudRate, bool DtrEnableOnConnect)
+		public virtual IFrostedSerialPort CreateAndOpen(string serialPortName, PrinterSettings settings, int baudRate, bool DtrEnableOnConnect)
 		{
 #if __ANDROID__
 			//Create an instance of a FrostedSerialPort and open it
@@ -178,7 +179,7 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 
 			return newPort;
 #else
-			IFrostedSerialPort newPort = Create(serialPortName);
+			IFrostedSerialPort newPort = Create(serialPortName, settings);
 
 			bool isLinux = !(newPort is FrostedSerialPort) && !IsWindows;
 			bool customBaudAssignment = isLinux && baudRate > 115200;
@@ -211,7 +212,7 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 #endif // ANDROID
 		}
 
-		public virtual bool SerialPortIsAvailable(string serialPortName)
+		public virtual bool SerialPortIsAvailable(string serialPortName, PrinterSettings settings)
 		{
 			try
 			{

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -272,6 +272,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				_activeProfileIDs.Remove(printerID);
 				UserSettings.Instance.set($"ActiveProfileIDs-{UserName}", JsonConvert.SerializeObject(_activeProfileIDs));
+
+				// Unregister listener
+				if (ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == printerID) is PrinterConfig printer)
+				{
+					printer.Settings.SettingChanged -= PrinterSettings_SettingChanged;
+				}
 			}
 			catch
 			{
@@ -349,7 +355,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// This can happen when a profile is pushed to a user account from the web.
 					printerSettings.SetValue(SettingsKey.printer_name, printerInfo.Name);
 				}
-				return printerSettings;
 			}
 			else if (ApplicationController.GetPrinterProfileAsync != null)
 			{
@@ -359,12 +364,36 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					// If successful, persist downloaded profile and return
 					printerSettings.Save();
-					return printerSettings;
 				}
 			}
 
-			// Otherwise attempt to recover to a working profile
-			return await RecoverProfile(printerInfo);
+			// Recover to a default working profile if still null
+			if (printerSettings == null)
+			{
+				printerSettings = await RecoverProfile(printerInfo);
+			}
+
+			// Register listener on non-null settings
+			if (printerSettings != null)
+			{
+				// TODO: This is likely to leak and keep printerSettings in memory in some cases until we combine PrinterConfig 
+				// loading into profile manager and have a single owner of loaded printers that can unwire this when their 
+				// tabs close
+				//
+				// Register listener
+				printerSettings.SettingChanged += PrinterSettings_SettingChanged;
+			}
+
+			return printerSettings;
+		}
+
+		// Settings persistence moved from PrinterSettings into ProfileManager to break dependency around ProfileManager paths/MatterControl specific details
+		private static void PrinterSettings_SettingChanged(object sender, EventArgs e)
+		{
+			if (sender is PrinterSettings settings)
+			{
+				settings.Save();
+			}
 		}
 
 		public async static Task<PrinterSettings> RecoverProfile(PrinterInfo printerInfo)

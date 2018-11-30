@@ -32,6 +32,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public static class SettingsKey
 	{
 		public const string active_quality_key = nameof(active_quality_key);
+		public const string active_material_key = nameof(active_material_key);
 		public const string auto_connect = nameof(auto_connect);
 		public const string auto_release_motors = nameof(auto_release_motors);
 		public const string baby_step_z_offset = nameof(baby_step_z_offset);

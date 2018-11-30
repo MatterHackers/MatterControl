@@ -35,7 +35,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.SelectSliceSettingsField("Printer", "start_gcode");
 
-					var printer = ApplicationController.Instance.ActivePrinters.First();
+					var printer = testRunner.FirstPrinter();
 
 					// Validate GCode fields persist values
 					Assert.AreEqual(
@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.StartPrint();
 
 					// Wait for print to finish
-					testRunner.WaitForPrintFinished();
+					testRunner.WaitForPrintFinished(printer);
 
 					// Wait for expected temp
 					testRunner.WaitFor(() => printer.Connection.GetActualHotendTemperature(0) <= 0, 10);
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.StartPrint();
 
 					// Wait for print to finish
-					testRunner.WaitForPrintFinished();
+					testRunner.WaitForPrintFinished(printer);
 
 					// Wait for expected temp
 					testRunner.WaitFor(() => printer.Connection.GetActualHotendTemperature(0) <= 0, 10);
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// print a part
 					testRunner.AddItemToBedplate();
 
-					var printer = ApplicationController.Instance.ActivePrinters.FirstOrDefault();
+					var printer = testRunner.FirstPrinter();
 
 					var currentSettings = printer.Settings;
 					currentSettings.SetValue(SettingsKey.pause_gcode, "");
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.StartPrint();
 
-					testRunner.WaitForName("Yes Button", 20);// the yes button is 'Resume'
+					testRunner.WaitForName("Yes Button", 20); // the yes button is 'Resume'
 
 					// the user types in the pause layer 1 based and we are 0 based, so we should be on: user 2, printer 1.
 					Assert.AreEqual(1, printer.Connection.CurrentlyPrintingLayer);
@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.StartPrint();
 
-					testRunner.WaitForName("Yes Button", 20);// the yes button is 'Resume'
+					testRunner.WaitForName("Yes Button", 20); // the yes button is 'Resume'
 
 					// the user types in the pause layer 1 based and we are 0 based, so we should be on: user 2, printer 1.
 					Assert.AreEqual(1, printer.Connection.CurrentlyPrintingLayer);
@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.StartPrint();
 
-					testRunner.WaitForName("Yes Button", 20);// the yes button is 'Resume'
+					testRunner.WaitForName("Yes Button", 20); // the yes button is 'Resume'
 
 					// the user types in the pause layer 1 based and we are 0 based, so we should be on: user 2, printer 1.
 					Assert.AreEqual(1, printer.Connection.CurrentlyPrintingLayer);
@@ -300,7 +300,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					emulator.SimulateLineErrors = true;
 
 					// close the pause dialog pop-up (resume)
-					testRunner.WaitForName("Yes Button", 20);// the yes button is 'Resume'
+					testRunner.WaitForName("Yes Button", 20); // the yes button is 'Resume'
 					testRunner.ClickByName("Yes Button");
 
 					// simulate board reboot
@@ -312,7 +312,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Yes Button");
 
 					// Wait for done
-					testRunner.WaitForPrintFinished();
+					testRunner.WaitForPrintFinished(testRunner.FirstPrinter());
 				}
 
 				return Task.CompletedTask;
@@ -328,7 +328,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should exist after add");
 
-					var printer = ApplicationController.Instance.ActivePrinters.First();
+					var printer = testRunner.FirstPrinter();
 					printer.Settings.SetValue(SettingsKey.recover_is_enabled, "1");
 					printer.Settings.SetValue(SettingsKey.has_hardware_leveling, "0");
 
@@ -354,7 +354,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// the printer is now paused
 					// close the pause dialog pop-up do not resume
-					ClickDialogButton(testRunner, "No Button", 3);
+					ClickDialogButton(testRunner, printer, "No Button", 3);
 
 					// Disconnect
 					testRunner.ClickByName("Disconnect from printer button");
@@ -368,29 +368,29 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Assert that recovery happens
 
 					// Recover the print
-					ClickDialogButton(testRunner, "Yes Button", -1);
+					ClickDialogButton(testRunner, printer, "Yes Button", -1);
 
 					// The first pause that we get after recovery should be layer 6.
 					// wait for the pause and continue
-					ClickDialogButton(testRunner, "Yes Button", 5);
+					ClickDialogButton(testRunner, printer, "Yes Button", 5);
 
 					// Wait for done
-					testRunner.WaitForPrintFinished();
+					testRunner.WaitForPrintFinished(printer);
 				}
 
 				return Task.CompletedTask;
 			}, maxTimeToRun: 180);
 		}
 
-		private static void ClickDialogButton(AutomationRunner testRunner, string buttonName, int expectedLayer)
+		// TODO: convert to extension method
+		private static void ClickDialogButton(AutomationRunner testRunner, PrinterConfig printer, string buttonName, int expectedLayer)
 		{
 			testRunner.WaitForName(buttonName, 90);
-			Assert.AreEqual(expectedLayer, ApplicationController.Instance.ActivePrinter.Connection.CurrentlyPrintingLayer);
+			Assert.AreEqual(expectedLayer, printer.Connection.CurrentlyPrintingLayer);
+
 			testRunner.ClickByName(buttonName);
 			testRunner.WaitFor(() => !testRunner.NameExists(buttonName), 1);
 		}
-
-		private EventHandler unregisterEvents;
 
 		[Test, Category("Emulator")]
 		public async Task TuningAdjustmentsDefaultToOneAndPersists()
@@ -410,7 +410,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.SwitchToControlsTab();
 
-					var printer = ApplicationController.Instance.ActivePrinters.FirstOrDefault();
+					var printer = testRunner.FirstPrinter();
 
 					// Wait for printing to complete
 					var printFinishedResetEvent = new AutoResetEvent(false);
@@ -462,7 +462,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Values should match entered values
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "After print finished");
 
-					testRunner.WaitForPrintFinished();
+					testRunner.WaitForPrintFinished(printer);
 
 					// Restart the print
 					testRunner.StartPrint();
@@ -508,7 +508,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.SwitchToControlsTab();
 
-					var printer = ApplicationController.Instance.ActivePrinter;
+					var printer = testRunner.FirstPrinter();
 
 					var printFinishedResetEvent = new AutoResetEvent(false);
 					printer.Connection.PrintFinished += (s, e) => printFinishedResetEvent.Set();
@@ -554,7 +554,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Wait for printing to complete
 					printFinishedResetEvent.WaitOne();
 
-					testRunner.WaitForPrintFinished();
+					testRunner.WaitForPrintFinished(printer);
 
 					// Values should match entered values
 					testRunner.StartPrint();
@@ -639,7 +639,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						fanChangedCount++;
 					};
 
-					var printer = ApplicationController.Instance.ActivePrinters.First();
+					var printer = testRunner.FirstPrinter();
 
 					emulator.WaitForLayer(printer.Settings, 2);
 					emulator.RunSlow = true;
@@ -660,7 +660,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Yes Button");
 
 					// Wait for Disconnected CommunicationState which occurs after PrinterConnection.Disable()
-					testRunner.WaitForCommunicationStateDisconnected(maxSeconds: 30);
+					testRunner.WaitForCommunicationStateDisconnected(printer, maxSeconds: 30);
 
 					// Wait for close
 					testRunner.WaitForWidgetDisappear("Yes Button", 4);
