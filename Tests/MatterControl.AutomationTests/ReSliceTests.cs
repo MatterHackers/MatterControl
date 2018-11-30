@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
@@ -54,7 +55,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					var printer = ApplicationController.Instance.ActivePrinter;
+					var printer = ApplicationController.Instance.ActivePrinters.First();
 					printer.Settings.SetValue(SettingsKey.enable_line_splitting, "0");
 
 					var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
@@ -162,7 +163,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Resume Task Button");
 
 					// Wait for done
-					testRunner.WaitForPrintFinished();
+					testRunner.WaitForPrintFinished(printer);
 
 					// this will make sure we turned off line splitting and had good data about the extruder position
 					Assert.AreEqual(-7, largestRetraction, "Airwolf HD has a retraction of 7mm, make sure we had one");

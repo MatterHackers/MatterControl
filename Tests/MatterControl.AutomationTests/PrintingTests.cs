@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.StartPrint();
 
 					// Wait for print to finish
-					testRunner.WaitForPrintFinished();
+					testRunner.WaitForPrintFinished(printer);
 
 					// Wait for expected temp
 					testRunner.WaitFor(() => printer.Connection.GetActualHotendTemperature(0) <= 0, 10);
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.StartPrint();
 
 					// Wait for print to finish
-					testRunner.WaitForPrintFinished();
+					testRunner.WaitForPrintFinished(printer);
 
 					// Wait for expected temp
 					testRunner.WaitFor(() => printer.Connection.GetActualHotendTemperature(0) <= 0, 10);
@@ -312,7 +312,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Yes Button");
 
 					// Wait for done
-					testRunner.WaitForPrintFinished();
+					testRunner.WaitForPrintFinished(ApplicationController.Instance.ActivePrinters.First());
 				}
 
 				return Task.CompletedTask;
@@ -354,7 +354,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// the printer is now paused
 					// close the pause dialog pop-up do not resume
-					ClickDialogButton(testRunner, "No Button", 3);
+					ClickDialogButton(testRunner, printer, "No Button", 3);
 
 					// Disconnect
 					testRunner.ClickByName("Disconnect from printer button");
@@ -368,29 +368,29 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Assert that recovery happens
 
 					// Recover the print
-					ClickDialogButton(testRunner, "Yes Button", -1);
+					ClickDialogButton(testRunner, printer, "Yes Button", -1);
 
 					// The first pause that we get after recovery should be layer 6.
 					// wait for the pause and continue
-					ClickDialogButton(testRunner, "Yes Button", 5);
+					ClickDialogButton(testRunner, printer, "Yes Button", 5);
 
 					// Wait for done
-					testRunner.WaitForPrintFinished();
+					testRunner.WaitForPrintFinished(printer);
 				}
 
 				return Task.CompletedTask;
 			}, maxTimeToRun: 180);
 		}
 
-		private static void ClickDialogButton(AutomationRunner testRunner, string buttonName, int expectedLayer)
+		// TODO: convert to extension method
+		private static void ClickDialogButton(AutomationRunner testRunner, PrinterConfig printer, string buttonName, int expectedLayer)
 		{
 			testRunner.WaitForName(buttonName, 90);
-			Assert.AreEqual(expectedLayer, ApplicationController.Instance.ActivePrinter.Connection.CurrentlyPrintingLayer);
+			Assert.AreEqual(expectedLayer, printer.Connection.CurrentlyPrintingLayer);
+
 			testRunner.ClickByName(buttonName);
 			testRunner.WaitFor(() => !testRunner.NameExists(buttonName), 1);
 		}
-
-		private EventHandler unregisterEvents;
 
 		[Test, Category("Emulator")]
 		public async Task TuningAdjustmentsDefaultToOneAndPersists()
@@ -462,7 +462,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Values should match entered values
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "After print finished");
 
-					testRunner.WaitForPrintFinished();
+					testRunner.WaitForPrintFinished(printer);
 
 					// Restart the print
 					testRunner.StartPrint();
@@ -508,7 +508,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.SwitchToControlsTab();
 
-					var printer = ApplicationController.Instance.ActivePrinter;
+					var printer = ApplicationController.Instance.ActivePrinters.First();
 
 					var printFinishedResetEvent = new AutoResetEvent(false);
 					printer.Connection.PrintFinished += (s, e) => printFinishedResetEvent.Set();
@@ -554,7 +554,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Wait for printing to complete
 					printFinishedResetEvent.WaitOne();
 
-					testRunner.WaitForPrintFinished();
+					testRunner.WaitForPrintFinished(printer);
 
 					// Values should match entered values
 					testRunner.StartPrint();
@@ -660,7 +660,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Yes Button");
 
 					// Wait for Disconnected CommunicationState which occurs after PrinterConnection.Disable()
-					testRunner.WaitForCommunicationStateDisconnected(maxSeconds: 30);
+					testRunner.WaitForCommunicationStateDisconnected(printer, maxSeconds: 30);
 
 					// Wait for close
 					testRunner.WaitForWidgetDisappear("Yes Button", 4);

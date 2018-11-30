@@ -386,14 +386,6 @@ namespace MatterHackers.MatterControl
 			this.ApplicationEvent?.Invoke(this, message);
 		}
 
-		// TODO: Any references to this property almost certainly need to be reconsidered. ActiveSliceSettings static references that assume a single printer
-		// selection are being redirected here. This allows us to break the dependency to the original statics and consolidates
-		// us down to a single point where code is making assumptions about the presence of a printer, printer counts, etc. If we previously checked for
-		// PrinterConnection.IsPrinterConnected, that could should be updated to iterate ActiverPrinters, checking each one and acting on each as it would
-		// have for the single case
-		[Obsolete("ActivePrinter references should be migrated to logic than supports multi-printer mode")]
-		public PrinterConfig ActivePrinter => this.ActivePrinters.FirstOrDefault() ?? PrinterConfig.EmptyPrinter;
-
 		public Action RedeemDesignCode;
 		public Action EnterShareCode;
 

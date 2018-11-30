@@ -64,11 +64,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.StartPrint();
 
-					WaitForLayerAndResume(testRunner, 2);
-					WaitForLayerAndResume(testRunner, 4);
-					WaitForLayerAndResume(testRunner, 6);
+					var printer = ApplicationController.Instance.ActivePrinters.First();
 
-					testRunner.WaitForPrintFinished();
+					WaitForLayerAndResume(testRunner, printer, 2);
+					WaitForLayerAndResume(testRunner, printer, 4);
+					WaitForLayerAndResume(testRunner, printer, 6);
+
+					testRunner.WaitForPrintFinished(printer);
 				}
 
 				return Task.CompletedTask;
@@ -117,11 +119,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
-		private static void WaitForLayerAndResume(AutomationRunner testRunner, int indexToWaitFor)
+		// TODO: Promote to extension method
+		private static void WaitForLayerAndResume(AutomationRunner testRunner, PrinterConfig printer, int indexToWaitFor)
 		{
 			testRunner.WaitForName("Yes Button", 30);
-
-			var printer = ApplicationController.Instance.ActivePrinter;
 
 			// Wait for layer
 			testRunner.WaitFor(() => printer.Bed.ActiveLayerIndex + 1 == indexToWaitFor, 30, 500);
@@ -145,7 +146,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Features Tab");
 
-				var printer = ApplicationController.Instance.ActivePrinter;
+				var printer = ApplicationController.Instance.ActivePrinters.First();
 
 				CheckAndUncheckSetting(testRunner, printer, SettingsKey.heat_extruder_before_homing, false);
 
@@ -309,7 +310,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsTrue(testRunner.NameExists("Hotend 0"));
 					Assert.IsTrue(testRunner.NameExists("Hotend 1"));
 
-					var printer = ApplicationController.Instance.ActivePrinter;
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "ActivePrinters.First is only valid in single printer scenarios");
+
+					var printer = ApplicationController.Instance.ActivePrinters.First();
 
 					SetCheckBoxSetting(testRunner, printer, SettingsKey.extruders_share_temperature, true);
 
