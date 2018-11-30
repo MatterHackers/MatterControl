@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl
 		Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken);
 
 		bool Enabled { get; }
+		string DissabledReason { get; }
 
 		bool ExportPossible(ILibraryAsset libraryItem);
 	}

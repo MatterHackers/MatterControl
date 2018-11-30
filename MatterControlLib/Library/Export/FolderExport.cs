@@ -57,6 +57,8 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public bool Enabled => true;
 
+		public string DissabledReason => "";
+
 		public bool ExportPossible(ILibraryAsset libraryItem) => true;
 
 		public async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)

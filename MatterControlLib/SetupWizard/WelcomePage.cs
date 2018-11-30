@@ -40,14 +40,16 @@ namespace MatterHackers.MatterControl
 	public class WelcomePage : DialogPage
 	{
 		public WelcomePage()
+			: base("Done".Localize())
 		{
 			this.WindowTitle = "MatterControl".Localize();
 
-			this.HeaderText = "Welcome to MatterControl".Localize();
+			this.HeaderText = "A Quick Tour of MatterControl".Localize();
 
-			var welcome = @"Thank you for installing MatterControl. We are excited to help you bring your ideas to life. This new version includes hundreds of improvements and new features.
+			var welcome = @"Thank you for installing MatterControl. We are excited to help bring your ideas to life. This new version includes hundreds of improvements and new features.
 
-Features:
+Feature Overview:
+
   • Simple Setup
   • Automatic Leveling
   • Built in 3D Design Tools
@@ -55,7 +57,7 @@ Features:
   • SMS / Email Notifications
   • Enhanced 64 Bit support
 
-Click 'Next' to for a quick tour of the interface";
+Click 'Next' to continue the tour of the interface";
 
 			var textWidget = new WrappedTextWidget(welcome)
 			{
@@ -66,7 +68,29 @@ Click 'Next' to for a quick tour of the interface";
 
 			contentRow.AddChild(textWidget);
 
-			var nextButton = new TextButton("Tour".Localize(), theme)
+			contentRow.AddChild(new VerticalSpacer());
+
+			var showWelcomPageCheckBox = new CheckBox("Don't remind me again".Localize())
+			{
+				TextColor = theme.TextColor,
+				Margin = new BorderDouble(top: 6, left: 6),
+				HAnchor = Agg.UI.HAnchor.Left,
+				Checked = ApplicationSettings.Instance.get(ApplicationSettingsKey.ShownWelcomeMessage) == "false"
+			};
+			showWelcomPageCheckBox.Click += (sender, e) =>
+			{
+				if (showWelcomPageCheckBox.Checked)
+				{
+					ApplicationSettings.Instance.set(ApplicationSettingsKey.ShownWelcomeMessage, "false");
+				}
+				else
+				{
+					ApplicationSettings.Instance.set(ApplicationSettingsKey.ShownWelcomeMessage, "true");
+				}
+			};
+			contentRow.AddChild(showWelcomPageCheckBox);
+
+			var nextButton = new TextButton("Next".Localize(), theme)
 			{
 				Name = "Next Button",
 				BackgroundColor = theme.MinimalShade
@@ -82,13 +106,6 @@ Click 'Next' to for a quick tour of the interface";
 			};
 
 			this.AddPageAction(nextButton);
-		}
-
-		protected override void OnCancel(out bool abortCancel)
-		{
-			UserSettings.Instance.set(UserSettingsKey.ShownWelcomeMessage, "true");
-
-			base.OnCancel(out abortCancel);
 		}
 	}
 }
