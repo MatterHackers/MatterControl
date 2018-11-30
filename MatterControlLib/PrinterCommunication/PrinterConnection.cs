@@ -1550,7 +1550,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 					else
 					{
-						break;
+						continue;
 					}
 				}
 			}
