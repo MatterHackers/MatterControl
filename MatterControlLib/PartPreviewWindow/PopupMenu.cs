@@ -296,14 +296,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			subMenuItemButton.Click += (s, e) =>
 			{
+				var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+				if (systemWindow == null)
+				{
+					return;
+				}
+
 				var subMenu = new PopupMenu(menuTheme);
 				subMenuItemButton.SubMenu = subMenu;
 
 				UiThread.RunOnIdle(() =>
 				{
 					populateSubMenu(subMenu);
-
-					var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+					
 					systemWindow.ShowPopup(
 						new MatePoint(subMenuItemButton)
 						{

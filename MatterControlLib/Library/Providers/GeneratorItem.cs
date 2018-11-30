@@ -90,7 +90,8 @@ namespace MatterHackers.MatterControl.Library
 			//this.Color = ColorRange.NextColor();
 		}
 
-		public string ID => $"MatterHackers/ItemGenerator/{Name}".GetHashCode().ToString();
+		public string ID => $"MatterHackers/ItemGenerator/{Name}".GetLongHashCode().ToString();
+
 		public string Category { get; set; }
 		public string Name => nameResolver?.Invoke();
 
