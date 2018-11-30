@@ -36,6 +36,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -62,6 +63,19 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 		{
 			get => printer.Settings.PrinterSelected
 				&& printer.Settings.GetValue<bool>("enable_sailfish_communication");
+		}
+
+		public string DissabledReason
+		{
+			get
+			{
+				if (!printer.Settings.PrinterSelected)
+				{
+					return "No Printer Selected".Localize();
+				}
+
+				return "";
+			}
 		}
 
 		public bool ExportPossible(ILibraryAsset libraryItem) => true;

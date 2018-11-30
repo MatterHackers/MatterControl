@@ -1407,6 +1407,13 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public static bool PrinterNeedsToRunSetup(PrinterConfig printer)
+		{
+			return LevelingValidation.NeedsToBeRun(printer)
+				|| ProbeCalibrationWizard.NeedsToBeRun(printer)
+				|| LoadFilamentWizard.NeedsToBeRun(printer);
+		}
+
 		public bool RunAnyRequiredPrinterSetup(PrinterConfig printer, ThemeConfig theme)
 		{
 			// run probe calibration first if we need to
