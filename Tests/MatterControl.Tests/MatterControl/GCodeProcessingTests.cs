@@ -60,6 +60,21 @@ namespace MatterControl.Tests.MatterControl
 			Assert.IsTrue(bed == bedTemp);
 		}
 
+		[Test]
+		public void SmoothieDualExtruderM105Response()
+		{
+			double[] extruders = new double[16];
+			double bed = 0;
+
+			// As of 2018-11-29 with an unknown users config
+			string smoothieDualExtruderM105Response = "ok T:220.1 /220.0 @109 T1:222.7 /221.0 @49 B:32.2 /0.0 @0";
+
+			PrinterConnection.ParseTemperatureString(smoothieDualExtruderM105Response, extruders, null, ref bed, null);
+
+			Assert.AreEqual("220.1", extruders[0].ToString("0.#"), "Incorrect Extruder 0 result");
+			Assert.AreEqual("222.7", extruders[1].ToString("0.#"), "Incorrect Extruder 1 result");
+		}
+
 		[Test, Category("GCodeProcessing")]
 		public void ReplaceMacroValuesWorking()
 		{
