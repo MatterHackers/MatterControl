@@ -164,7 +164,7 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 		{
 #if __ANDROID__
 			//Create an instance of a FrostedSerialPort and open it
-			IFrostedSerialPort newPort = Create(serialPortName);
+			IFrostedSerialPort newPort = Create(serialPortName, settings);
 
 			newPort.BaudRate = baudRate;
 			if (DtrEnableOnConnect)
