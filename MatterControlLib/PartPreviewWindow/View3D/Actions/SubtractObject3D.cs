@@ -200,6 +200,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						va.Add(vertex.Position.Y);
 						va.Add(vertex.Position.Z);
 					}
+					//Debug.WriteLine(String.Join(",", va.Select(p => p.ToString()).ToArray()));
+
 					var fa = new List<int>();
 					foreach(var face in meshA.Faces)
 					{
@@ -208,6 +210,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							fa.Add(meshA.Vertices.IndexOf(vertex));
 						}
 					}
+					//Debug.WriteLine(String.Join(",", fa.Select(p => p.ToString()).ToArray()));
 
 					var vb = new List<double>();
 					foreach (var vertex in meshB.Vertices)
@@ -216,6 +219,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						vb.Add(vertex.Position.Y);
 						vb.Add(vertex.Position.Z);
 					}
+					//Debug.WriteLine(String.Join(",", vb.Select(p => p.ToString()).ToArray()));
+
 					var fb = new List<int>();
 					foreach (var face in meshB.Faces)
 					{
@@ -224,6 +229,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							fb.Add(meshB.Vertices.IndexOf(vertex));
 						}
 					}
+					//Debug.WriteLine(String.Join(",", fb.Select(p => p.ToString()).ToArray()));
+
 					IntPtr pVc;
 					int vcCount;
 					IntPtr pFc;
