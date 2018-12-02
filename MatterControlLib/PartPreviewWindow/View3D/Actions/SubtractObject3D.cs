@@ -35,7 +35,6 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -47,6 +46,156 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
+	public static class BooleanProcessing
+	{
+		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int DeleteDouble(ref IntPtr handle);
+
+		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int DeleteInt(ref IntPtr handle);
+
+		public static Mesh Do(Mesh meshA, Mesh meshB, int opperation, IProgress<ProgressStatus> reporter, double amountPerOperation, double percentCompleted, ProgressStatus progressStatus, CancellationToken cancellationToken)
+		{
+			var libiglExe = "libigl_boolean.exe";
+			if (File.Exists(libiglExe)
+				&& IntPtr.Size == 8) // only try to run the improved booleans if we are 64 bit and it is there
+			{
+				IntPtr pVc = IntPtr.Zero;
+				IntPtr pFc = IntPtr.Zero;
+				try
+				{
+					meshA.Vertices.Sort();
+					var va = new List<double>();
+					foreach (var vertex in meshA.Vertices)
+					{
+						va.Add(vertex.Position.X);
+						va.Add(vertex.Position.Y);
+						va.Add(vertex.Position.Z);
+					}
+					//Debug.WriteLine(String.Join(",", va.Select(p => p.ToString()).ToArray()));
+
+					var fa = new List<int>();
+					foreach (var face in meshA.Faces)
+					{
+						foreach (var vertex in face.VerticesAsTriangles())
+						{
+							fa.Add(meshA.Vertices.IndexOf(vertex));
+						}
+					}
+					//Debug.WriteLine(String.Join(",", fa.Select(p => p.ToString()).ToArray()));
+
+					meshB.Vertices.Sort();
+					var vb = new List<double>();
+					foreach (var vertex in meshB.Vertices)
+					{
+						vb.Add(vertex.Position.X);
+						vb.Add(vertex.Position.Y);
+						vb.Add(vertex.Position.Z);
+					}
+					//Debug.WriteLine(String.Join(",", vb.Select(p => p.ToString()).ToArray()));
+
+					var fb = new List<int>();
+					foreach (var face in meshB.Faces)
+					{
+						foreach (var vertex in face.VerticesAsTriangles())
+						{
+							fb.Add(meshB.Vertices.IndexOf(vertex));
+						}
+					}
+					//Debug.WriteLine(String.Join(",", fb.Select(p => p.ToString()).ToArray()));
+
+					int vcCount;
+					int fcCount;
+					DoBooleanOpperation(va.ToArray(), va.Count, fa.ToArray(), fa.Count,
+						vb.ToArray(), vb.Count, fb.ToArray(), fb.Count,
+						opperation,
+						out pVc, out vcCount, out pFc, out fcCount);
+
+					var vcArray = new double[vcCount];
+					Marshal.Copy(pVc, vcArray, 0, vcCount);
+
+					var fcArray = new int[fcCount];
+					Marshal.Copy(pFc, fcArray, 0, fcCount);
+
+					Mesh model = new Mesh();
+					for (int vertexIndex = 0; vertexIndex < vcCount; vertexIndex++)
+					{
+						model.CreateVertex(vcArray[vertexIndex + 0],
+							vcArray[vertexIndex + 1],
+							vcArray[vertexIndex + 2], CreateOption.CreateNew, SortOption.WillSortLater);
+						vertexIndex += 2;
+					}
+
+					for (int faceIndex = 0; faceIndex < fcCount; faceIndex++)
+					{
+						model.CreateFace(fcArray[faceIndex + 0],
+							fcArray[faceIndex + 1],
+							fcArray[faceIndex + 2], CreateOption.CreateNew);
+						faceIndex += 2;
+					}
+
+					return model;
+				}
+				finally
+				{
+					if (pVc != IntPtr.Zero)
+					{
+						DeleteDouble(ref pVc);
+					}
+					if (pFc != IntPtr.Zero)
+					{
+						DeleteInt(ref pFc);
+					}
+				}
+			}
+
+			switch (opperation)
+			{
+				case 0:
+					return PolygonMesh.Csg.CsgOperations.Union(meshA, meshB, (status, progress0To1) =>
+					{
+						// Abort if flagged
+						cancellationToken.ThrowIfCancellationRequested();
+
+						progressStatus.Status = status;
+						progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
+						reporter.Report(progressStatus);
+					}, cancellationToken);
+
+				case 1:
+					return PolygonMesh.Csg.CsgOperations.Subtract(meshA, meshB, (status, progress0To1) =>
+					{
+						// Abort if flagged
+						cancellationToken.ThrowIfCancellationRequested();
+
+						progressStatus.Status = status;
+						progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
+						reporter?.Report(progressStatus);
+					}, cancellationToken);
+
+				case 2:
+					return PolygonMesh.Csg.CsgOperations.Intersect(meshA, meshB, (status, progress0To1) =>
+					{
+						// Abort if flagged
+						cancellationToken.ThrowIfCancellationRequested();
+
+						progressStatus.Status = status;
+						progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
+						reporter.Report(progressStatus);
+					}, cancellationToken);
+			}
+
+			return null;
+		}
+
+		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]
+		public extern static void DoBooleanOpperation(
+			double[] va, int vaCount, int[] fa, int faCount,
+			double[] vb, int vbCount, int[] fb, int fbCount,
+			int opperation,
+			out IntPtr pVc, out int vcCount, out IntPtr pVf, out int vfCount);
+	}
+
 	[ShowUpdateButton]
 	public class SubtractObject3D : MeshWrapperObject3D
 	{
@@ -167,188 +316,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 					return Task.CompletedTask;
 				});
-		}
-	}
-
-	public static class BooleanProcessing
-	{
-		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern int DeleteDouble(ref IntPtr handle);
-
-		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern int DeleteInt(ref IntPtr handle);
-
-		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]
-		public extern static void DoBooleanOpperation(
-			double[] va, int vaCount, int[] fa, int faCount,
-			double[] vb, int vbCount, int[] fb, int fbCount,
-			int opperation,
-			out IntPtr pVc, out int vcCount, out IntPtr pVf, out int vfCount);
-
-		public static Mesh Do(Mesh meshA, Mesh meshB, int opperation, IProgress<ProgressStatus> reporter, double amountPerOperation, double percentCompleted, ProgressStatus progressStatus, CancellationToken cancellationToken)
-		{
-			var libiglExe = "libigl_boolean.exe";
-			if (File.Exists(libiglExe)
-				&& IntPtr.Size == 8) // only try to run the improved booleans if we are 64 bit and it is there
-			{
-				if (true)
-				{
-					var va = new List<double>();
-					foreach(var vertex in meshA.Vertices)
-					{
-						va.Add(vertex.Position.X);
-						va.Add(vertex.Position.Y);
-						va.Add(vertex.Position.Z);
-					}
-					//Debug.WriteLine(String.Join(",", va.Select(p => p.ToString()).ToArray()));
-
-					var fa = new List<int>();
-					foreach(var face in meshA.Faces)
-					{
-						foreach(var vertex in face.Vertices())
-						{
-							fa.Add(meshA.Vertices.IndexOf(vertex));
-						}
-					}
-					//Debug.WriteLine(String.Join(",", fa.Select(p => p.ToString()).ToArray()));
-
-					var vb = new List<double>();
-					foreach (var vertex in meshB.Vertices)
-					{
-						vb.Add(vertex.Position.X);
-						vb.Add(vertex.Position.Y);
-						vb.Add(vertex.Position.Z);
-					}
-					//Debug.WriteLine(String.Join(",", vb.Select(p => p.ToString()).ToArray()));
-
-					var fb = new List<int>();
-					foreach (var face in meshB.Faces)
-					{
-						foreach (var vertex in face.Vertices())
-						{
-							fb.Add(meshB.Vertices.IndexOf(vertex));
-						}
-					}
-					//Debug.WriteLine(String.Join(",", fb.Select(p => p.ToString()).ToArray()));
-
-					IntPtr pVc;
-					int vcCount;
-					IntPtr pFc;
-					int fcCount;
-					DoBooleanOpperation(va.ToArray(), va.Count, fa.ToArray(), fa.Count,
-						vb.ToArray(), vb.Count, fb.ToArray(), fb.Count,
-						1,
-						out pVc, out vcCount, out pFc, out fcCount);
-
-					var vcArray = new double[vcCount];
-					Marshal.Copy(pVc, vcArray, 0, vcCount);
-
-					var fcArray = new int[fcCount];
-					Marshal.Copy(pFc, fcArray, 0, fcCount);
-
-					DeleteDouble(ref pVc);
-					DeleteInt(ref pFc);
-				}
-				else
-				{
-					string folderToSaveStlsTo = Path.Combine(ApplicationDataStorage.Instance.ApplicationTempDataPath, "amf_to_stl");
-					// Create directory if needed
-					Directory.CreateDirectory(folderToSaveStlsTo);
-
-					string stlFileA = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
-					StlProcessing.Save(meshA, stlFileA, CancellationToken.None);
-
-					string stlFileB = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
-					StlProcessing.Save(meshB, stlFileB, CancellationToken.None);
-
-					// wait for files to close
-					Thread.Sleep(1000);
-
-					string stlFileResult = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
-
-					// if we have the libigl_boolean.exe
-					var opperationString = "-";
-					switch (opperation)
-					{
-						case 0:
-							opperationString = "+";
-							break;
-
-						case 1:
-							opperationString = "-";
-							break;
-
-						case 2:
-							opperationString = "&";
-							break;
-					}
-
-					var slicerProcess = new Process()
-					{
-						StartInfo = new ProcessStartInfo()
-						{
-
-							Arguments = "{0} {1} {2} {3}".FormatWith(stlFileA, stlFileB, stlFileResult, opperationString),
-							CreateNoWindow = true,
-							WindowStyle = ProcessWindowStyle.Hidden,
-							RedirectStandardError = true,
-							RedirectStandardOutput = true,
-							FileName = libiglExe,
-							UseShellExecute = false
-						}
-					};
-					slicerProcess.Start();
-					slicerProcess.WaitForExit();
-
-					// wait for file to close
-					Thread.Sleep(1000);
-
-					// load up the 
-					var result = StlProcessing.Load(stlFileResult, CancellationToken.None);
-					if (result != null)
-					{
-						return result;
-					}
-				}
-			}
-
-			switch (opperation)
-			{
-				case 0:
-					return PolygonMesh.Csg.CsgOperations.Union(meshA, meshB, (status, progress0To1) =>
-					{
-						// Abort if flagged
-						cancellationToken.ThrowIfCancellationRequested();
-
-						progressStatus.Status = status;
-						progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
-						reporter.Report(progressStatus);
-					}, cancellationToken);
-
-				case 1:
-					return PolygonMesh.Csg.CsgOperations.Subtract(meshA, meshB, (status, progress0To1) =>
-					{
-						// Abort if flagged
-						cancellationToken.ThrowIfCancellationRequested();
-
-						progressStatus.Status = status;
-						progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
-						reporter?.Report(progressStatus);
-					}, cancellationToken);
-
-				case 2:
-					return PolygonMesh.Csg.CsgOperations.Intersect(meshA, meshB, (status, progress0To1) =>
-					{
-						// Abort if flagged
-						cancellationToken.ThrowIfCancellationRequested();
-
-						progressStatus.Status = status;
-						progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
-						reporter.Report(progressStatus);
-					}, cancellationToken);
-			}
-
-			return null;
 		}
 	}
 }
