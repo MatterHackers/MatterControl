@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 						final.Append(",");
 					}
 					string[] xy = offset.Split('x');
-					if (xy.Length == 2)
+					if (xy.Length == 2 || xy.Length == 3)
 					{
 						double x = 0;
 						double.TryParse(xy[0], out x);

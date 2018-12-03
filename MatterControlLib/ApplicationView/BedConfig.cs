@@ -517,7 +517,7 @@ namespace MatterHackers.MatterControl
 					1,
 					0,
 					1,
-					new Vector2[]
+					new Vector3[]
 					{
 						settings.Helpers.ExtruderOffset(0),
 						settings.Helpers.ExtruderOffset(1)

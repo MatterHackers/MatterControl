@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private ThemeConfig theme;
 		private string slicerConfigName;
 
-		private List<Vector2Field> childFields;
+		private List<Vector3Field> childFields;
 
 		public ExtruderOffsetField(SettingsContext settingsContext, string slicerConfigName, Color textColor, ThemeConfig theme)
 		{
@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void Initialize(int tabIndex)
 		{
-			childFields = new List<Vector2Field>();
+			childFields = new List<Vector3Field>();
 
 			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				labelWidget.Margin = new BorderDouble(right: 60);
 				row.AddChild(labelWidget);
 
-				var field = new Vector2Field(theme);
+				var field = new Vector3Field(theme);
 				field.Initialize(tabIndex++);
 				field.Content.Margin = new BorderDouble(right: 55);
 				field.Content.VAnchor = VAnchor.Center;
