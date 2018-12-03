@@ -92,7 +92,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			this.AddChild(new PrinterConnectButton(printer, theme));
-			this.AddChild(new PrintButton(printer, theme));
+
+			// add the start print button
+			GuiWidget startPrintButton;
+			this.AddChild(startPrintButton = new PrintPopupMenu(printer, theme)
+			{
+				Margin = theme.ButtonSpacing
+			});
+
+			void SetPrintButtonStyle(object s, EventArgs e)
+			{
+				switch (printer.Connection.CommunicationState)
+				{
+					case CommunicationStates.FinishedPrint:
+					case CommunicationStates.Connected:
+						theme.ApplyPrimaryActionStyle(startPrintButton);
+						break;
+
+					default:
+						theme.RemovePrimaryActionStyle(startPrintButton);
+						break;
+				}
+			}
+			// make sure the buttons state is set correctly
+			printer.Connection.CommunicationStateChanged += SetPrintButtonStyle;
+			startPrintButton.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= SetPrintButtonStyle;
+
+			// and set the style right now
+			SetPrintButtonStyle(this, null);
 
 			this.AddChild(new SliceButton(printer, printerTabPage, theme)
 			{

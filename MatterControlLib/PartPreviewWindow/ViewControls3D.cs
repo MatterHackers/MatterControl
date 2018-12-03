@@ -652,11 +652,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = theme.ButtonSpacing,
 			};
 
-			libraryPopup.ConfigurePopup += (s, e) =>
-			{
-				e.HAnchor = HAnchor.Fit;
-				e.VAnchor = VAnchor.Fit;
-			};
+			libraryPopup.PopupHAnchor = HAnchor.Fit;
+			libraryPopup.PopupVAnchor = VAnchor.Fit;
 
 			return libraryPopup;
 		}

@@ -27,27 +27,20 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using System;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PopupButton : GuiWidget, IIgnoredPopupChild, IMenuCreator
 	{
-		public Color HoverColor { get; set; } = new Color(0, 0, 0, 40);
-
-		public Color OpenColor { get; set; } = new Color(0, 0, 0, 40);
-
-		public event EventHandler PopupWindowClosed;
-		public event EventHandler BeforePopup;
-		public event EventHandler<GuiWidget> ConfigurePopup;
-
 		protected GuiWidget buttonView;
-
-		private bool menuVisibileAtMouseDown = false;
 		protected bool menuVisible = false;
+		private bool menuVisibileAtMouseDown = false;
 		private PopupWidget popupWidget;
+		private bool overridePopupHAnchor = false;
+		private bool overridePopupVAnchor = false;
 
 		public PopupButton()
 		{
@@ -63,14 +56,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(buttonView);
 		}
 
-		public bool AlignToRightEdge { get; set; }
-		public virtual Func<GuiWidget> DynamicPopupContent { get; set; }
-		public IPopupLayoutEngine PopupLayoutEngine { get; set; }
-		public Direction PopDirection { get; set; } = Direction.Down;
-		public bool MakeScrollable { get; set; } = true;
-		public virtual GuiWidget PopupContent { get; set; }
+		public event EventHandler BeforePopup;
 
-		public Color PopupBorderColor { get; set; } = Color.Transparent;
+		public event EventHandler PopupWindowClosed;
+
+		public bool AlignToRightEdge { get; set; }
+		public bool AlwaysKeepOpen { get; set; }
 
 		public override Color BackgroundColor
 		{
@@ -78,12 +69,38 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			set => base.BackgroundColor = value;
 		}
 
-		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		public virtual Func<GuiWidget> DynamicPopupContent { get; set; }
+		public Color HoverColor { get; set; } = new Color(0, 0, 0, 40);
+
+		public bool KeepMenuOpen => menuVisible || this.AlwaysKeepOpen;
+		public bool MakeScrollable { get; set; } = true;
+		public Color OpenColor { get; set; } = new Color(0, 0, 0, 40);
+		public Direction PopDirection { get; set; } = Direction.Down;
+		public Color PopupBorderColor { get; set; } = Color.Transparent;
+		public virtual GuiWidget PopupContent { get; set; }
+		private HAnchor _popupHAnchor;
+		public HAnchor PopupHAnchor
 		{
-			// Store the menu state at the time of mousedown
-			menuVisibileAtMouseDown = menuVisible;
-			base.OnMouseDown(mouseEvent);
+			get => _popupHAnchor;
+			set
+			{
+				overridePopupHAnchor = true;
+				_popupHAnchor = value;
+			}
 		}
+		public IPopupLayoutEngine PopupLayoutEngine { get; set; }
+		private VAnchor _popupVAnchor;
+		public VAnchor PopupVAnchor
+		{
+			get => _popupVAnchor;
+			set
+			{
+				overridePopupVAnchor = true;
+				_popupVAnchor = value;
+			}
+		}
+
+		public void CloseMenu() => popupWidget?.CloseMenu();
 
 		public override void OnClick(MouseEventArgs mouseEvent)
 		{
@@ -99,6 +116,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.PopupContent?.Close();
 			base.OnClosed(e);
+		}
+
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			// Store the menu state at the time of mousedown
+			menuVisibileAtMouseDown = menuVisible;
+			base.OnMouseDown(mouseEvent);
 		}
 
 		public void ShowPopup()
@@ -139,20 +163,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.PopupWindowClosed?.Invoke(this, null);
 			};
 
-			ConfigurePopup?.Invoke(this, popupWidget);
+			if (overridePopupHAnchor)
+			{
+				popupWidget.HAnchor = PopupHAnchor;
+			}
+			if (overridePopupVAnchor)
+			{
+				popupWidget.VAnchor = PopupVAnchor;
+			}
 
 			popupWidget.Focus();
 		}
-
-		public void CloseMenu() => popupWidget?.CloseMenu();
 
 		protected virtual void OnBeforePopup()
 		{
 			this.BeforePopup?.Invoke(this, null);
 		}
-
-		public bool AlwaysKeepOpen { get; set; }
-
-		public bool KeepMenuOpen => menuVisible || this.AlwaysKeepOpen;
 	}
 }

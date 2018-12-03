@@ -62,6 +62,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 
+			this.PopupHAnchor = HAnchor.Fit;
+			this.PopupVAnchor = VAnchor.Fit;
+			this.MakeScrollable = false;
+
 			this.DynamicPopupContent = () =>
 			{
 				var menuTheme = ApplicationController.Instance.MenuTheme;
@@ -106,7 +110,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Margin = new BorderDouble(2, 0)
 				};
 
-				var sectionWidget = new SectionWidget("Advanced", subPanel, menuTheme, expanded: true)
+				bool anySettingOverridden = false;
+				anySettingOverridden |= printer.Settings.GetValue<bool>(SettingsKey.spiral_vase);
+				anySettingOverridden |= !string.IsNullOrWhiteSpace(printer.Settings.GetValue(SettingsKey.layer_to_pause));
+
+				var sectionWidget = new SectionWidget("Advanced", subPanel, menuTheme, expanded: anySettingOverridden)
 				{
 					Name = "Advanced Section",
 					HAnchor = HAnchor.Stretch,
@@ -114,15 +122,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Margin = 0
 				};
 				column.AddChild(sectionWidget);
-
-				bool anySettingOverridden = false;
-				anySettingOverridden |= printer.Settings.GetValue<bool>(SettingsKey.spiral_vase);
-				anySettingOverridden |= !string.IsNullOrWhiteSpace(printer.Settings.GetValue(SettingsKey.layer_to_pause));
-
-				sectionWidget.Load += (s, e) =>
-				{
-					sectionWidget.Checkbox.Checked = anySettingOverridden;
-				};
 
 				foreach (var key in new[] { SettingsKey.spiral_vase, SettingsKey.layer_to_pause })
 				{
@@ -142,13 +141,45 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				sectionWidget.ContentPanel.Children<SettingsRow>().First().Border = new BorderDouble(0, 1);
 				sectionWidget.ContentPanel.Children<SettingsRow>().Last().Border = 0;
 
-				var button = new TextButton("Start Print".Localize(), menuTheme)
+				var printerReadyToTakeCommands = printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.FinishedPrint
+					|| printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Connected;
+
+				var printerIsConnected = printer.Connection.CommunicationState != PrinterCommunication.CommunicationStates.Disconnected;
+				var printerNeedsToRunSetup = ApplicationController.PrinterNeedsToRunSetup(printer);
+
+				// add the start print button
+				var setupRow = new FlowLayoutWidget()
+				{
+					HAnchor = HAnchor.Stretch
+				};
+
+				var printingMessage = "";
+
+				if (!printerIsConnected)
+				{
+					printingMessage = "Need to connect before printing".Localize();
+				}
+				else if(printerNeedsToRunSetup)
+				{
+					printingMessage = "Setup needs to be run before printing".Localize();
+				}
+
+				if (!string.IsNullOrEmpty(printingMessage))
+				{
+					setupRow.AddChild(new TextWidget(printingMessage, textColor: menuTheme.TextColor)
+					{
+						VAnchor = VAnchor.Center,
+						AutoExpandBoundsToText = true,
+					});
+				}
+
+				var startPrintButton = new TextButton("Start Print".Localize(), menuTheme)
 				{
 					Name = "Start Print Button",
-					HAnchor = HAnchor.Right,
-					VAnchor = VAnchor.Absolute,
+					Enabled = printerIsConnected && !printerNeedsToRunSetup
 				};
-				button.Click += (s, e) =>
+
+				startPrintButton.Click += (s, e) =>
 				{
 					// Exit if the bed is not GCode and the bed has no printable items
 					if ((printer.Bed.EditContext.SourceItem as ILibraryAsset)?.ContentType != "gcode"
@@ -169,9 +200,43 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							CancellationToken.None);
 					});
 				};
-				column.AddChild(button);
+				setupRow.AddChild(new HorizontalSpacer());
+				setupRow.AddChild(startPrintButton);
 
-				theme.ApplyPrimaryActionStyle(button);
+				column.AddChild(setupRow);
+
+				if (!printerNeedsToRunSetup)
+				{
+					theme.ApplyPrimaryActionStyle(startPrintButton);
+				}
+
+				// put in setup if needed
+				if (printerNeedsToRunSetup && printerIsConnected)
+				{
+					// add the finish setup button
+					var finishSetupButton = new TextButton("Setup...".Localize(), theme)
+					{
+						Name = "Finish Setup Button",
+						ToolTipText = "Run setup configuration for printer.".Localize(),
+						Margin = theme.ButtonSpacing,
+						Enabled = printerReadyToTakeCommands,
+						HAnchor = HAnchor.Right,
+						VAnchor = VAnchor.Absolute,
+					};
+					theme.ApplyPrimaryActionStyle(finishSetupButton);
+					finishSetupButton.Click += (s, e) =>
+					{
+						UiThread.RunOnIdle(async () =>
+						{
+							await ApplicationController.Instance.PrintPart(
+								printer.Bed.EditContext,
+								printer,
+								null,
+								CancellationToken.None);
+						});
+					};
+					column.AddChild(finishSetupButton);
+				}
 
 				return column;
 			};
