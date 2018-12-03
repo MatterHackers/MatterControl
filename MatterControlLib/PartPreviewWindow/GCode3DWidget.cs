@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (e is StringEventArgs stringEvent)
 			{
-				if (stringEvent.Data == "extruder_offset")
+				if (stringEvent.Data == SettingsKey.extruder_offset)
 				{
 					printer.Bed.GCodeRenderer?.Clear3DGCode();
 				}

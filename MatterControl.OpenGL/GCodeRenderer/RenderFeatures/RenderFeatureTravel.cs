@@ -45,9 +45,10 @@ namespace MatterHackers.GCodeVisualizer
 			if (renderInfo.CurrentRenderType.HasFlag(RenderType.HideExtruderOffsets))
 			{
 				Vector3Float start = this.start;
-				Vector2 offset = renderInfo.GetExtruderOffset(extruderIndex);
+				Vector3 offset = renderInfo.GetExtruderOffset(extruderIndex);
 				start.x += (float)offset.X;
 				start.y += (float)offset.Y;
+				start.z += (float)offset.Z;
 				return start;
 			}
 
@@ -59,9 +60,10 @@ namespace MatterHackers.GCodeVisualizer
 			if (renderInfo.CurrentRenderType.HasFlag(RenderType.HideExtruderOffsets))
 			{
 				Vector3Float end = this.end;
-				Vector2 offset = renderInfo.GetExtruderOffset(extruderIndex);
+				Vector3 offset = renderInfo.GetExtruderOffset(extruderIndex);
 				end.x += (float)offset.X;
 				end.y += (float)offset.Y;
+				end.z += (float)offset.Z;
 				return end;
 			}
 

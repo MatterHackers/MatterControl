@@ -59,6 +59,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string expand_thin_walls = nameof(expand_thin_walls);
 		public const string external_perimeter_extrusion_width = nameof(external_perimeter_extrusion_width);
 		public const string extruder_count = nameof(extruder_count);
+		public const string extruder_offset = nameof(extruder_offset);
 		public const string extruders_share_temperature = nameof(extruders_share_temperature);
 		public const string extrusion_ratio = nameof(extrusion_ratio);
 		public const string feedrate_ratio = nameof(feedrate_ratio);

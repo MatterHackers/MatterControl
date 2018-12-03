@@ -70,8 +70,8 @@ namespace MatterHackers.GCodeVisualizer
 
 				if (renderInfo.CurrentRenderType.HasFlag(RenderType.HideExtruderOffsets))
 				{
-					Vector2 offset = renderInfo.GetExtruderOffset(extruderIndex);
-					position = position + new Vector3(offset);
+					Vector3 offset = renderInfo.GetExtruderOffset(extruderIndex);
+					position = position + offset;
 				}
 
 				// retract and unretract are the extruder color
@@ -110,8 +110,8 @@ namespace MatterHackers.GCodeVisualizer
 
 				if (renderInfo.CurrentRenderType.HasFlag(RenderType.HideExtruderOffsets))
 				{
-					Vector2 offset = renderInfo.GetExtruderOffset(extruderIndex);
-					position = position + offset;
+					Vector3 offset = renderInfo.GetExtruderOffset(extruderIndex);
+					position = position + new Vector2(offset);
 				}
 
 				renderInfo.Transform.transform(ref position);

@@ -723,7 +723,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					uiField = new Vector2Field(theme);
 					break;
 
-				case SliceSettingData.DataEditTypes.OFFSET2:
+				case SliceSettingData.DataEditTypes.VECTOR3:
+					uiField = new Vector3Field(theme);
+					break;
+
+				case SliceSettingData.DataEditTypes.OFFSET3:
 					placeFieldInDedicatedRow = true;
 					uiField = new ExtruderOffsetField(settingsContext, settingData.SlicerConfigName, theme.TextColor, theme);
 					break;

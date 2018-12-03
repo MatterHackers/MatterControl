@@ -40,7 +40,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private int layerCount = -1;
 		private MaxLengthStream maxLengthStream;
 		private OffsetStream offsetStream;
-		private EventHandler unregisterEvents;
 
 		public BabyStepsStream(PrinterConfig printer, GCodeStream internalStream, double startingMaxLength = 1)
 			: base(printer, internalStream)
@@ -71,7 +70,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			offsetStream.Dispose();
 			maxLengthStream.Dispose();
-			unregisterEvents?.Invoke(this, null);
 		}
 
 		public override string ReadLine()

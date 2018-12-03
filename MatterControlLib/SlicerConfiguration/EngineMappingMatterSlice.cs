@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new OverrideSpeedOnSlaPrinters(printer, SettingsKey.top_solid_infill_speed, "topInfillSpeed", "infill_speed"),
 				new AsPercentOfReferenceOrDirect(printer, SettingsKey.first_layer_extrusion_width, "firstLayerExtrusionWidth", SettingsKey.nozzle_diameter),
 				new AsPercentOfReferenceOrDirect(printer, SettingsKey.first_layer_height, "firstLayerThickness", SettingsKey.layer_height),
-				new ExtruderOffsets(printer, "extruder_offset", "extruderOffsets"),
+				new ExtruderOffsets(printer, SettingsKey.extruder_offset, "extruderOffsets"),
 				new GCodeForSlicer(printer, SettingsKey.end_gcode, "endCode"),
 				new GCodeForSlicer(printer, "before_toolchange_gcode", "beforeToolchangeCode"),
 				new GCodeForSlicer(printer, "toolchange_gcode", "toolChangeCode"),

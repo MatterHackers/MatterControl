@@ -168,22 +168,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			printerSettings.OnPrintLevelingEnabledChanged(this, null);
 		}
 
-		public Vector2 ExtruderOffset(int extruderIndex)
+		public Vector3 ExtruderOffset(int extruderIndex)
 		{
-			string currentOffsets = printerSettings.GetValue("extruder_offset");
+			string currentOffsets = printerSettings.GetValue(SettingsKey.extruder_offset);
 			string[] offsets = currentOffsets.Split(',');
 			int count = 0;
 			foreach (string offset in offsets)
 			{
 				if (count == extruderIndex)
 				{
-					string[] xy = offset.Split('x');
-					return new Vector2(double.Parse(xy[0]), double.Parse(xy[1]));
+					string[] xyz = offset.Split('x');
+					if (xyz.Length == 2)
+					{
+						return new Vector3(double.Parse(xyz[0]), double.Parse(xyz[1]), 0);
+					}
+					else
+					{
+						return new Vector3(double.Parse(xyz[0]), double.Parse(xyz[1]), double.Parse(xyz[2]));
+					}
 				}
 				count++;
 			}
 
-			return Vector2.Zero;
+			return Vector3.Zero;
 		}
 
 		public void ExportAsCuraConfig()

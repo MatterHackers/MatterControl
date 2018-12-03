@@ -27,12 +27,15 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterControl.Printing;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class OffsetStream : GCodeStreamProxy
 	{
+		private int extruderIndex = 0;
 		private PrinterMove lastDestination = new PrinterMove();
 
 		public OffsetStream(GCodeStream internalStream, PrinterConfig printer, Vector3 offset)
@@ -45,6 +48,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			lastDestination = position;
 			lastDestination.position -= Offset;
+			if(extruderIndex == 1)
+			{
+				var offset = printer.Settings.Helpers.ExtruderOffset(1);
+				lastDestination.position.Z -= offset.Z;
+			}
 			internalStream.SetPrinterPosition(lastDestination);
 		}
 
@@ -54,6 +62,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			string lineToSend = base.ReadLine();
 
+			if(lineToSend != null
+				&& lineToSend.StartsWith("T"))
+			{
+				int extruder = 0;
+				if(GCodeFile.GetFirstNumberAfter("T", lineToSend, ref extruder))
+				{
+					extruderIndex = extruder;
+					// correct where we think the extruder is
+				}
+			}
+
 			if (lineToSend != null
 				&& LineIsMovement(lineToSend))
 			{
@@ -61,6 +80,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				PrinterMove moveToSend = currentMove;
 				moveToSend.position += Offset;
+				if (extruderIndex == 1)
+				{
+					var offset = printer.Settings.Helpers.ExtruderOffset(1);
+					moveToSend.position.Z += offset.Z;
+				}
 
 				lineToSend = CreateMovementLine(moveToSend, lastDestination);
 				lastDestination = currentMove;
