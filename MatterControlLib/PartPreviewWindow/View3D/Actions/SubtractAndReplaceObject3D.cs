@@ -39,6 +39,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
@@ -115,8 +116,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 								transformedKeep.Transform(keep.matrix);
 
 								// remove the paint from the original
-								var subtract = BooleanProcessing.Do(transformedKeep, transformedPaint, 1, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
-								var intersect = BooleanProcessing.Do(transformedKeep, transformedPaint, 2, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+								var subtract = BooleanProcessing.Do(keep.obj3D.Mesh, keep.matrix,
+									paint.obj3D.Mesh, paint.matrix, 1, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+								var intersect = BooleanProcessing.Do(keep.obj3D.Mesh, keep.matrix,
+									paint.obj3D.Mesh, paint.matrix, 2, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
 
 								var inverseKeep = keep.matrix.Inverted;
 								subtract.Transform(inverseKeep);
@@ -132,7 +135,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 								}
 								else // union into the current paint
 								{
-									paintMesh = BooleanProcessing.Do(transformedKeep, intersect, 0, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+									paintMesh = BooleanProcessing.Do(keep.obj3D.Mesh, keep.matrix,
+										intersect, Matrix4X4.Identity, 0, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
 								}
 
 								if (cancellationToken.IsCancellationRequested)

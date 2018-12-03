@@ -94,13 +94,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						{
 							if (remove != first)
 							{
-								var transformedRemove = remove.Mesh.Copy(CancellationToken.None);
-								transformedRemove.Transform(remove.WorldMatrix());
-
-								var transformedKeep = first.Mesh.Copy(CancellationToken.None);
-								transformedKeep.Transform(first.WorldMatrix());
-
-								var result = BooleanProcessing.Do(transformedKeep, transformedRemove, 2, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+								var result = BooleanProcessing.Do(remove.Mesh, remove.WorldMatrix(),
+									first.Mesh, first.WorldMatrix(),
+									2, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
 
 								var inverse = first.WorldMatrix();
 								inverse.Invert();

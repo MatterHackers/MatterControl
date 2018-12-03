@@ -35,6 +35,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
+using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -54,7 +55,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern int DeleteInt(ref IntPtr handle);
 
-		public static Mesh Do(Mesh meshA, Mesh meshB, int opperation, IProgress<ProgressStatus> reporter, double amountPerOperation, double percentCompleted, ProgressStatus progressStatus, CancellationToken cancellationToken)
+		public static Mesh Do(Mesh inMeshA, Matrix4X4 matrixA, 
+			Mesh inMeshB, Matrix4X4 matrixB, 
+			int opperation, 
+			IProgress<ProgressStatus> reporter, double amountPerOperation, double percentCompleted, ProgressStatus progressStatus, CancellationToken cancellationToken)
 		{
 			var libiglExe = "libigl_boolean.exe";
 			if (File.Exists(libiglExe)
@@ -64,50 +68,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				IntPtr pFc = IntPtr.Zero;
 				try
 				{
-					meshA.Vertices.Sort();
-					var va = new List<double>();
-					foreach (var vertex in meshA.Vertices)
-					{
-						va.Add(vertex.Position.X);
-						va.Add(vertex.Position.Y);
-						va.Add(vertex.Position.Z);
-					}
-					//Debug.WriteLine(String.Join(",", va.Select(p => p.ToString()).ToArray()));
-
-					var fa = new List<int>();
-					foreach (var face in meshA.Faces)
-					{
-						foreach (var vertex in face.VerticesAsTriangles())
-						{
-							fa.Add(meshA.Vertices.IndexOf(vertex));
-						}
-					}
-					//Debug.WriteLine(String.Join(",", fa.Select(p => p.ToString()).ToArray()));
-
-					meshB.Vertices.Sort();
-					var vb = new List<double>();
-					foreach (var vertex in meshB.Vertices)
-					{
-						vb.Add(vertex.Position.X);
-						vb.Add(vertex.Position.Y);
-						vb.Add(vertex.Position.Z);
-					}
-					//Debug.WriteLine(String.Join(",", vb.Select(p => p.ToString()).ToArray()));
-
-					var fb = new List<int>();
-					foreach (var face in meshB.Faces)
-					{
-						foreach (var vertex in face.VerticesAsTriangles())
-						{
-							fb.Add(meshB.Vertices.IndexOf(vertex));
-						}
-					}
-					//Debug.WriteLine(String.Join(",", fb.Select(p => p.ToString()).ToArray()));
+					double[] va;
+					int[] fa;
+					meshToVerticesAndFaces(inMeshA, matrixA, out va, out fa);
+					double[] vb;
+					int[] fb;
+					meshToVerticesAndFaces(inMeshB, matrixB, out vb, out fb);
 
 					int vcCount;
 					int fcCount;
-					DoBooleanOpperation(va.ToArray(), va.Count, fa.ToArray(), fa.Count,
-						vb.ToArray(), vb.Count, fb.ToArray(), fb.Count,
+					DoBooleanOpperation(va, va.Length, fa, fa.Length,
+						vb, vb.Length, fb, fb.Length,
 						opperation,
 						out pVc, out vcCount, out pFc, out fcCount);
 
@@ -146,8 +117,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					{
 						DeleteInt(ref pFc);
 					}
+
+					progressStatus.Progress0To1 = percentCompleted + amountPerOperation;
+					reporter.Report(progressStatus);
 				}
 			}
+
+			var meshA = inMeshA.Copy(CancellationToken.None);
+			meshA.Transform(matrixA);
+
+			var meshB = inMeshB.Copy(CancellationToken.None);
+			meshB.Transform(matrixB);
 
 			switch (opperation)
 			{
@@ -186,6 +166,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 
 			return null;
+		}
+
+		private static void meshToVerticesAndFaces(Mesh inMesh, Matrix4X4 matrix, out double[] va, out int[] fa)
+		{
+			va = new double[inMesh.Vertices.Count * 3];
+			int i = 0;
+			var positionIndex = new Dictionary<(double, double, double), int>();
+			foreach (var vertex in inMesh.Vertices)
+			{
+				var key = (vertex.Position.X, vertex.Position.Y, vertex.Position.Z);
+				if (!positionIndex.ContainsKey(key))
+				{
+					positionIndex.Add(key, i);
+					var position = Vector3.Transform(vertex.Position, matrix);
+					va[i * 3 + 0] = position.X;
+					va[i * 3 + 1] = position.Y;
+					va[i * 3 + 2] = position.Z;
+					i++;
+				}
+			}
+
+			var lfa = new List<int>(inMesh.Faces.Count * 3);
+			i = 0;
+			foreach (var face in inMesh.Faces)
+			{
+				foreach (var vertex in face.VerticesAsTriangles())
+				{
+					lfa.Add(positionIndex[(vertex.v0.Position.X, vertex.v0.Position.Y, vertex.v0.Position.Z)]);
+					lfa.Add(positionIndex[(vertex.v1.Position.X, vertex.v1.Position.Y, vertex.v1.Position.Z)]);
+					lfa.Add(positionIndex[(vertex.v2.Position.X, vertex.v2.Position.Y, vertex.v2.Position.Z)]);
+				}
+			}
+
+			fa = lfa.ToArray();
 		}
 
 		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -227,17 +241,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					{
 						progressStatus.Status = "Copy Remove";
 						reporter?.Report(progressStatus);
-						var transformedRemove = remove.obj3D.Mesh.Copy(cancellationToken);
-						transformedRemove.Transform(remove.matrix);
 
 						progressStatus.Status = "Copy Keep";
 						reporter?.Report(progressStatus);
-						var transformedKeep = keep.obj3D.Mesh.Copy(cancellationToken);
-						transformedKeep.Transform(keep.matrix);
 
 						progressStatus.Status = "Do CSG";
 						reporter?.Report(progressStatus);
-						var result = BooleanProcessing.Do(transformedKeep, transformedRemove, 1, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+						var result = BooleanProcessing.Do(keep.obj3D.Mesh, keep.matrix,
+							remove.obj3D.Mesh, remove.matrix, 1, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
 						var inverse = keep.matrix.Inverted;
 						result.Transform(inverse);
 
