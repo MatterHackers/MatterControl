@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						cancellationToken.ThrowIfCancellationRequested();
 
 						progressStatus.Status = status;
-						progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
+						progressStatus.Progress0To1 = percentCompleted + (amountPerOperation * progress0To1);
 						reporter.Report(progressStatus);
 					}, cancellationToken);
 
@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						cancellationToken.ThrowIfCancellationRequested();
 
 						progressStatus.Status = status;
-						progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
+						progressStatus.Progress0To1 = percentCompleted + (amountPerOperation * progress0To1);
 						reporter?.Report(progressStatus);
 					}, cancellationToken);
 
@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						cancellationToken.ThrowIfCancellationRequested();
 
 						progressStatus.Status = status;
-						progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
+						progressStatus.Progress0To1 = percentCompleted + (amountPerOperation * progress0To1);
 						reporter.Report(progressStatus);
 					}, cancellationToken);
 			}
@@ -180,9 +180,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				{
 					positionIndex.Add(key, i);
 					var position = Vector3.Transform(vertex.Position, matrix);
-					va[i * 3 + 0] = position.X;
-					va[i * 3 + 1] = position.Y;
-					va[i * 3 + 2] = position.Z;
+					va[(i * 3) + 0] = position.X;
+					va[(i * 3) + 1] = position.Y;
+					va[(i * 3) + 2] = position.Z;
 					i++;
 				}
 			}
