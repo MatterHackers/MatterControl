@@ -144,28 +144,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public bool HideExtruderOffsets
-		{
-			get
-			{
-				string value = UserSettings.Instance.get(UserSettingsKey.GcodeViewerHideExtruderOffsets);
-				if (value == null)
-				{
-					return true;
-				}
-				return (value == "True");
-			}
-			set
-			{
-				if (this.HideExtruderOffsets != value)
-				{
-					UserSettings.Instance.set(UserSettingsKey.GcodeViewerHideExtruderOffsets, value.ToString());
-					this.IsDirty = true;
-					this.OnPropertyChanged(nameof(HideExtruderOffsets));
-				}
-			}
-		}
-
 		public bool SyncToPrint
 		{
 			get => UserSettings.Instance.get(UserSettingsKey.LayerViewSyncToPrint) == "True";

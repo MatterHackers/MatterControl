@@ -133,11 +133,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					() => gcodeOptions.TransparentExtrusion,
 					(value) => gcodeOptions.TransparentExtrusion = value),
 				new BoolOption(
-					"Hide Offsets".Localize(),
-					() => gcodeOptions.HideExtruderOffsets,
-					(value) => gcodeOptions.HideExtruderOffsets = value,
-					() => printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1),
-				new BoolOption(
 					"Sync To Print".Localize(),
 					() => gcodeOptions.SyncToPrint,
 					(value) =>

@@ -36,19 +36,6 @@ namespace MatterHackers.GCodeVisualizer
 {
 	public class GCodeRenderInfo
 	{
-		public Vector3[] extruderOffsets;
-
-		public Vector3 GetExtruderOffset(int index)
-		{
-			if (extruderOffsets != null
-				&& extruderOffsets.Length > index)
-			{
-				return extruderOffsets[index];
-			}
-
-			return Vector3.Zero;
-		}
-
 		public Func<int, Color> GetMaterialColor { get; }
 
 		public int StartLayerIndex { get; set; }
@@ -74,7 +61,6 @@ namespace MatterHackers.GCodeVisualizer
 		public GCodeRenderInfo(int startLayerIndex, int endLayerIndex,
 			Affine transform, double layerScale,
 			double featureToStartOnRatio0To1, double featureToEndOnRatio0To1,
-			Vector3[] extruderOffsets,
 			Func<RenderType> getRenderType,
 			Func<int, Color> getMaterialColor)
 		{
@@ -92,7 +78,6 @@ namespace MatterHackers.GCodeVisualizer
 
 			this.FeatureToStartOnRatio0To1 = featureToStartOnRatio0To1;
 			this.FeatureToEndOnRatio0To1 = featureToEndOnRatio0To1;
-			this.extruderOffsets = extruderOffsets;
 		}
 
 		public void RefreshRenderType()

@@ -30,7 +30,6 @@ namespace MatterHackers.MatterControl
 		public const string FavoritesBarExpansion= nameof(FavoritesBarExpansion);
 		public const string GCodeLineColorStyle = nameof(GCodeLineColorStyle);
 		public const string GcodeModelView = nameof(GcodeModelView);
-		public const string GcodeViewerHideExtruderOffsets = nameof(GcodeViewerHideExtruderOffsets);
 		public const string GcodeViewerRenderGrid = nameof(GcodeViewerRenderGrid);
 		public const string GcodeViewerRenderMoves = nameof(GcodeViewerRenderMoves);
 		public const string GcodeViewerRenderRetractions = nameof(GcodeViewerRenderRetractions);
