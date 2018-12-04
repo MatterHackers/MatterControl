@@ -71,33 +71,39 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				return "; Software Leveling Applied";
 			}
 
-			string lineFromChild = base.ReadLine();
+			string lineToSend = base.ReadLine();
 
-			if(lineFromChild == "; Software Leveling Applied")
+			if (lineToSend != null
+				&& lineToSend.EndsWith("; NO_PROCESSING"))
+			{
+				return lineToSend;
+			}
+
+			if (lineToSend == "; Software Leveling Applied")
 			{
 				gcodeAlreadyLeveled = true;
 			}
 
-			if (lineFromChild != null
+			if (lineToSend != null
 				&& LevelingActive
 				&& !gcodeAlreadyLeveled)
 			{
-				if (LineIsMovement(lineFromChild))
+				if (LineIsMovement(lineToSend))
 				{
-					PrinterMove currentDestination = GetPosition(lineFromChild, lastDestination);
-					var leveledLine = GetLeveledPosition(lineFromChild, currentDestination);
+					PrinterMove currentDestination = GetPosition(lineToSend, lastDestination);
+					var leveledLine = GetLeveledPosition(lineToSend, currentDestination);
 					lastDestination = currentDestination;
 
 					return leveledLine;
 				}
-				else if (lineFromChild.StartsWith("G29"))
+				else if (lineToSend.StartsWith("G29"))
 				{
 					// remove G29 (machine prob bed) if we are running our own leveling.
-					lineFromChild = base.ReadLine(); // get the next line instead
+					lineToSend = base.ReadLine(); // get the next line instead
 				}
 			}
 
-			return lineFromChild;
+			return lineToSend;
 		}
 
 		public override void SetPrinterPosition(PrinterMove position)

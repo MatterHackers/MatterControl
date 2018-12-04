@@ -78,6 +78,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						string lineToSend = base.ReadLine();
 
 						if (lineToSend != null
+							&& lineToSend.EndsWith("; NO_PROCESSING"))
+						{
+							return lineToSend;
+						}
+
+						if (lineToSend != null
 							&& lineToSend.StartsWith("M"))
 						{
 							// initial test is just to see if it is an M109

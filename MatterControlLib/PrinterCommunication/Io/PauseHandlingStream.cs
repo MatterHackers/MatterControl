@@ -156,6 +156,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					{
 						return lineToSend;
 					}
+					if (lineToSend.EndsWith("; NO_PROCESSING"))
+					{
+						return lineToSend;
+					}
 
 					// We got a line from the gcode we are sending check if we should queue a request for filament runout
 					if (printer.Settings.GetValue<bool>(SettingsKey.filament_runout_sensor))

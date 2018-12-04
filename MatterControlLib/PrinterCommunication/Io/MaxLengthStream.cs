@@ -60,12 +60,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			if (movesToSend.Count == 0)
 			{
-				string lineFromChild = base.ReadLine();
+				string lineToSend = base.ReadLine();
 
-				if (lineFromChild != null
-					&& LineIsMovement(lineFromChild))
+				if (lineToSend != null
+					&& lineToSend.EndsWith("; NO_PROCESSING"))
 				{
-					PrinterMove currentDestination = GetPosition(lineFromChild, lastDestination);
+					return lineToSend;
+				}
+
+				if (lineToSend != null
+					&& LineIsMovement(lineToSend))
+				{
+					PrinterMove currentDestination = GetPosition(lineToSend, lastDestination);
 					PrinterMove deltaToDestination = currentDestination - lastDestination;
 					deltaToDestination.feedRate = 0; // remove the changing of the federate (we'll set it initially)
 					double lengthSquared = Math.Max(deltaToDestination.LengthSquared, deltaToDestination.extrusion * deltaToDestination.extrusion);
@@ -109,7 +115,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 					lastDestination = currentDestination;
 				}
-				return lineFromChild;
+				return lineToSend;
 			}
 			else
 			{

@@ -62,7 +62,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			string lineToSend = base.ReadLine();
 
-			if(lineToSend != null
+			if (lineToSend != null
+				&& lineToSend.EndsWith("; NO_PROCESSING"))
+			{
+				return lineToSend;
+			}
+
+			if (lineToSend != null
 				&& lineToSend.StartsWith("T"))
 			{
 				int extruder = 0;

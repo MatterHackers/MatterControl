@@ -51,8 +51,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.settingsContext = settingsContext;
 			this.textColor = textColor;
 			this.theme = theme;
-
-			//SaveCommaSeparatedIndexSetting(extruderOffset.ExtruderIndex, settingsContext, slicerConfigName, extruderOffset.Value.Replace(",", "x"));
 		}
 
 		public override void Initialize(int tabIndex)
