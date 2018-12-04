@@ -28,8 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterControl.Printing;
+using MatterHackers.Agg;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using System;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -38,20 +40,56 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private int extruderIndex = 0;
 		private PrinterMove lastDestination = new PrinterMove();
 
+		Vector3[] extruderOffsets = new Vector3[4];
+
 		public OffsetStream(GCodeStream internalStream, PrinterConfig printer, Vector3 offset)
 			: base(printer, internalStream)
 		{
 			this.Offset = offset;
+
+			printer.Settings.SettingChanged += Settings_SettingChanged;
+
+			extruderIndex = printer.Connection.ActiveExtruderIndex;
+
+			ReadExtruderOffsets();
+		}
+
+		private void Settings_SettingChanged(object sender, EventArgs e)
+		{
+			if (e is StringEventArgs stringEvent)
+			{
+				// if the offsets change update them (unless we are actively printing)
+				if (stringEvent.Data == SettingsKey.extruder_offset
+					&& !printer.Connection.PrinterIsPrinting
+					&& !printer.Connection.PrinterIsPaused)
+				{
+					ReadExtruderOffsets();
+				}
+			}
+		}
+
+		private void ReadExtruderOffsets()
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				extruderOffsets[i] = printer.Settings.Helpers.ExtruderOffset(i);
+			}
+		}
+
+		public override void Dispose()
+		{
+			printer.Settings.SettingChanged -= Settings_SettingChanged;
+
+			base.Dispose();
 		}
 
 		public override void SetPrinterPosition(PrinterMove position)
 		{
 			lastDestination = position;
 			lastDestination.position -= Offset;
-			if(extruderIndex == 1)
+			if (extruderIndex < 4)
 			{
-				var offset = printer.Settings.Helpers.ExtruderOffset(1);
-				lastDestination.position.Z -= offset.Z;
+				lastDestination.position += extruderOffsets[extruderIndex];
 			}
 			internalStream.SetPrinterPosition(lastDestination);
 		}
@@ -72,10 +110,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				&& lineToSend.StartsWith("T"))
 			{
 				int extruder = 0;
-				if(GCodeFile.GetFirstNumberAfter("T", lineToSend, ref extruder))
+				if (GCodeFile.GetFirstNumberAfter("T", lineToSend, ref extruder))
 				{
 					extruderIndex = extruder;
-					// correct where we think the extruder is
 				}
 			}
 
@@ -86,10 +123,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				PrinterMove moveToSend = currentMove;
 				moveToSend.position += Offset;
-				if (extruderIndex == 1)
+				if (extruderIndex < 4)
 				{
-					var offset = printer.Settings.Helpers.ExtruderOffset(1);
-					moveToSend.position.Z += offset.Z;
+					moveToSend.position -= extruderOffsets[extruderIndex];
 				}
 
 				lineToSend = CreateMovementLine(moveToSend, lastDestination);

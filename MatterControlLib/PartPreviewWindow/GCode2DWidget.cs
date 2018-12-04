@@ -161,7 +161,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							layerScale,
 							options.FeatureToStartOnRatio0To1,
 							options.FeatureToEndOnRatio0To1,
-							options.extruderOffsets,
 							options.GetRenderType,
 							options.GetMaterialColor);
 

@@ -46,7 +46,6 @@ namespace MatterHackers.GCodeVisualizer
 		Retractions = 4,
 		SpeedColors = 8,
 		SimulateExtrusion = 16,
-		HideExtruderOffsets = 32,
 		TransparentExtrusion = 64,
 		GrayColors = 128
 	};

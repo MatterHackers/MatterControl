@@ -42,31 +42,11 @@ namespace MatterHackers.GCodeVisualizer
 
 		protected Vector3Float GetStart(GCodeRenderInfo renderInfo)
 		{
-			if (renderInfo.CurrentRenderType.HasFlag(RenderType.HideExtruderOffsets))
-			{
-				Vector3Float start = this.start;
-				Vector3 offset = renderInfo.GetExtruderOffset(extruderIndex);
-				start.x += (float)offset.X;
-				start.y += (float)offset.Y;
-				start.z += (float)offset.Z;
-				return start;
-			}
-
 			return this.start;
 		}
 
 		protected Vector3Float GetEnd(GCodeRenderInfo renderInfo)
 		{
-			if (renderInfo.CurrentRenderType.HasFlag(RenderType.HideExtruderOffsets))
-			{
-				Vector3Float end = this.end;
-				Vector3 offset = renderInfo.GetExtruderOffset(extruderIndex);
-				end.x += (float)offset.X;
-				end.y += (float)offset.Y;
-				end.z += (float)offset.Z;
-				return end;
-			}
-
 			return this.end;
 		}
 

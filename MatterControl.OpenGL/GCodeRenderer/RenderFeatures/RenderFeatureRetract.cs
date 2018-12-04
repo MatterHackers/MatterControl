@@ -68,12 +68,6 @@ namespace MatterHackers.GCodeVisualizer
 			{
 				Vector3 position = new Vector3(this.position);
 
-				if (renderInfo.CurrentRenderType.HasFlag(RenderType.HideExtruderOffsets))
-				{
-					Vector3 offset = renderInfo.GetExtruderOffset(extruderIndex);
-					position = position + offset;
-				}
-
 				// retract and unretract are the extruder color
 				Color color = renderInfo.GetMaterialColor(extruderIndex);
 				// except for extruder 0 where they are the red and blue we are familiar with
@@ -107,12 +101,6 @@ namespace MatterHackers.GCodeVisualizer
 			{
 				double radius = Radius(renderInfo.LayerScale);
 				Vector2 position = new Vector2(this.position.x, this.position.y);
-
-				if (renderInfo.CurrentRenderType.HasFlag(RenderType.HideExtruderOffsets))
-				{
-					Vector3 offset = renderInfo.GetExtruderOffset(extruderIndex);
-					position = position + new Vector2(offset);
-				}
 
 				renderInfo.Transform.transform(ref position);
 

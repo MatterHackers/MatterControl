@@ -251,13 +251,17 @@ namespace MatterHackers.MatterControl.Library.Export
 				var queueStream = new QueuedCommandsStream(printer, gCodeFileStream);
 				GCodeStream accumulatedStream = queueStream;
 
-				if(printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && this.ApplyLeveling)
+				if (printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting))
 				{
-					if (printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting))
-					{
-						accumulatedStream = new BabyStepsStream(printer, accumulatedStream, 1);
-					}
+					accumulatedStream = new BabyStepsStream(printer, accumulatedStream, 1);
+				}
+				else
+				{
+					accumulatedStream = new BabyStepsStream(printer, accumulatedStream, 1000);
+				}
 
+				if (printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && this.ApplyLeveling)
+				{
 					accumulatedStream = new PrintLevelingStream(printer, accumulatedStream, false);
 				}
 

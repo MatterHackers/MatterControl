@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private double actualBedTemperature;
 
-		private int currentlyActiveExtruderIndex = 0;
+		public int ActiveExtruderIndex { get; private set; }
 
 		private double[] actualHotendTemperature = new double[MAX_EXTRUDERS];
 
@@ -323,7 +323,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			double extruderBeingSet = 0;
 			if (GCodeFile.GetFirstNumberAfter("T", line, ref extruderBeingSet))
 			{
-				currentlyActiveExtruderIndex = (int)extruderBeingSet;
+				ActiveExtruderIndex = (int)extruderBeingSet;
 			}
 		}
 
@@ -1081,7 +1081,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				else
 				{
 					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
-					targetHotendTemperature[currentlyActiveExtruderIndex] = tempBeingSet;
+					targetHotendTemperature[ActiveExtruderIndex] = tempBeingSet;
 				}
 			}
 		}
@@ -2339,6 +2339,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 					if (currentSentLine != null)
 					{
+						if (currentSentLine.EndsWith("; NO_PROCESSING"))
+						{
+							// make sure our processing pipe knows the translated position after a NO_PROCESSING
+							ReadPosition(true);
+						}
+
 						if (currentSentLine.Contains("M114")
 							&& this.IsConnected)
 						{

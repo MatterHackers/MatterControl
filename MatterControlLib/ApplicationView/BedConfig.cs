@@ -481,10 +481,6 @@ namespace MatterHackers.MatterControl
 			{
 				renderType |= RenderType.TransparentExtrusion;
 			}
-			if (options.HideExtruderOffsets)
-			{
-				renderType |= RenderType.HideExtruderOffsets;
-			}
 
 			return renderType;
 		}
@@ -517,11 +513,6 @@ namespace MatterHackers.MatterControl
 					1,
 					0,
 					1,
-					new Vector3[]
-					{
-						settings.Helpers.ExtruderOffset(0),
-						settings.Helpers.ExtruderOffset(1)
-					},
 					this.GetRenderType,
 					MeshViewerWidget.GetExtruderColor);
 
