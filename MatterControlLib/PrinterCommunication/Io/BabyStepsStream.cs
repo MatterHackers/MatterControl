@@ -74,10 +74,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override string ReadLine()
 		{
-			string processedLine = offsetStream.ReadLine();
-			if (processedLine != null
+			string lineToSend = offsetStream.ReadLine();
+
+			if (lineToSend != null
+				&& lineToSend.EndsWith("; NO_PROCESSING"))
+			{
+				return lineToSend;
+			}
+
+			if (lineToSend != null
 				&& layerCount < 1
-				&& GCodeFile.IsLayerChange(processedLine))
+				&& GCodeFile.IsLayerChange(lineToSend))
 			{
 				layerCount++;
 				if (layerCount == 1)
@@ -85,7 +92,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					maxLengthStream.MaxSegmentLength = 5;
 				}
 			}
-			return processedLine;
+			return lineToSend;
 		}
 
 		private void OffsetChanged()

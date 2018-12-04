@@ -45,7 +45,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override string ReadLine()
 		{
-			return ApplyExtrusionMultiplier(internalStream.ReadLine());
+			var lineToSend = internalStream.ReadLine();
+			if (lineToSend != null
+				&& lineToSend.EndsWith("; NO_PROCESSING"))
+			{
+				return lineToSend;
+			}
+
+			return ApplyExtrusionMultiplier(lineToSend);
 		}
 
 		private string ApplyExtrusionMultiplier(string lineBeingSent)

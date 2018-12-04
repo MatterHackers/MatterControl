@@ -63,6 +63,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				return null;
 			}
 
+			if (baseLine.EndsWith("; NO_PROCESSING"))
+			{
+				return baseLine;
+			}
+
 			// if the line has no content don't process it
 			if (baseLine.Length == 0
 				|| baseLine.Trim().Length == 0)
