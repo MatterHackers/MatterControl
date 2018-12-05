@@ -199,6 +199,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							null,
 							CancellationToken.None);
 					});
+
+					this.CloseMenu();
 				};
 				setupRow.AddChild(new HorizontalSpacer());
 				setupRow.AddChild(startPrintButton);
@@ -234,6 +236,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								null,
 								CancellationToken.None);
 						});
+
+						this.CloseMenu();
 					};
 					column.AddChild(finishSetupButton);
 				}
