@@ -848,7 +848,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (!string.IsNullOrEmpty(currentPortName))
 				{
 					// TODO: Ensure that this does *not* cause a write to the settings file and should be an in memory update only
-					printer.Settings?.Helpers.SetComPort(currentPortName);
+					Printer.Settings?.Helpers.SetComPort(currentPortName);
 				}
 #endif
 
