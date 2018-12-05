@@ -1183,20 +1183,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			if (moveAmountMm != 0)
 			{
 				// TODO: Long term we need to track the active extruder and make requiresToolChange be driven by the extruder you're actually on
-				bool requiresToolChange = extruderNumber != 0;
+				bool requiresToolChange = extruderNumber != ActiveExtruderIndex;
 
 				SetMovementToRelative();
 
 				if (requiresToolChange)
 				{
-					QueueLine("T{0}".FormatWith(extruderNumber)); //Set active extruder
+					var currentExtruderIndex = ActiveExtruderIndex;
+					// Set to extrude to use
+					QueueLine($"T{extruderNumber}");
+					QueueLine($"G1 E{moveAmountMm:0.####} F{feedRateMmPerMinute}");
+					// Reset back to previous extruder
+					QueueLine($"T{currentExtruderIndex}");
 				}
-
-				QueueLine("G1 E{0:0.###} F{1}".FormatWith(moveAmountMm, feedRateMmPerMinute));
-
-				if (requiresToolChange)
+				else
 				{
-					QueueLine("T0"); //Reset back to extruder one
+					QueueLine($"G1 E{moveAmountMm:0.####} F{feedRateMmPerMinute}");
 				}
 
 				SetMovementToAbsolute();

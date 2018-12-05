@@ -196,7 +196,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return mergeString;
 		}
 
-
 		public static Task<bool> SliceItem(IObject3D object3D, string gcodeFilePath, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
 		{
 			string mergeRules = "";
