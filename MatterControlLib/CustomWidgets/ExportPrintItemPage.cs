@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl
 				// Skip plugins which are invalid for the current printer
 				if (!plugin.Enabled)
 				{
-					if (!string.IsNullOrEmpty(plugin.DissabledReason))
+					if (!string.IsNullOrEmpty(plugin.DisabledReason))
 					{
 						// add a message to let us know why not enabled
 						var disabledPluginButton = new RadioButton(new RadioImageWidget(plugin.ButtonText, theme.TextColor, plugin.Icon))
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl
 							Enabled = false
 						};
 						contentRow.AddChild(disabledPluginButton);
-						contentRow.AddChild(new TextWidget("Disabled: {0}".Localize().FormatWith(plugin.DissabledReason), textColor: theme.PrimaryAccentColor)
+						contentRow.AddChild(new TextWidget("Disabled: {0}".Localize().FormatWith(plugin.DisabledReason), textColor: theme.PrimaryAccentColor)
 						{
 							Margin = new BorderDouble(left: 80),
 							HAnchor = HAnchor.Left
