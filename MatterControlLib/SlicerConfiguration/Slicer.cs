@@ -203,7 +203,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var stlFileLocations = GetStlFileLocations(object3D, ref mergeRules, printer, progressReporter, cancellationToken);
 
-			return SliceItem(stlFileLocations, mergeRules, gcodeFilePath, printer, progressReporter, cancellationToken);
+			if (stlFileLocations.Count > 0)
+			{
+				return SliceItem(stlFileLocations, mergeRules, gcodeFilePath, printer, progressReporter, cancellationToken);
+			}
+
+			return Task.FromResult(false);
 		}
 
 		public static Task<bool> SliceItem(List<(Matrix4X4 matrix, string fileName)> stlFileLocations, string mergeRules, string gcodeFilePath, PrinterConfig printer, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
