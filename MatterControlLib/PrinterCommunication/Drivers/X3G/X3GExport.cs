@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 				&& printer.Settings.GetValue<bool>("enable_sailfish_communication");
 		}
 
-		public string DisabledReason
+		public override string DisabledReason
 		{
 			get
 			{

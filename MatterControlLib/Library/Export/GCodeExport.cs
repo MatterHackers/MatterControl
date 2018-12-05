@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				&& !ApplicationController.PrinterNeedsToRunSetup(printer);
 		}
 
-		public string DisabledReason
+		public virtual string DisabledReason
 		{
 			get
 			{
