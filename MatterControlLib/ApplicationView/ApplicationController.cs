@@ -1345,7 +1345,7 @@ namespace MatterHackers.MatterControl
 				if (printerConnection.AnyHeatIsOn)
 				{
 					var paused = false;
-					Tasks.Execute("", (reporter, cancellationToken) =>
+					Tasks.Execute("", printerConnection.Printer, (reporter, cancellationToken) =>
 					{
 						var progressStatus = new ProgressStatus();
 
@@ -2190,6 +2190,7 @@ If you experience adhesion problems, please re-run leveling."
 
 			this.Tasks.Execute(
 				"Printing".Localize(),
+				printer,
 				(reporterB, cancellationTokenB) =>
 				{
 					var progressStatus = new ProgressStatus();
@@ -2324,7 +2325,7 @@ If you experience adhesion problems, please re-run leveling."
 			// Slice
 			bool slicingSucceeded = false;
 
-			await this.Tasks.Execute("Slicing".Localize(), async (reporter, cancellationToken) =>
+			await this.Tasks.Execute("Slicing".Localize(), printer, async (reporter, cancellationToken) =>
 			{
 				slicingSucceeded = await Slicer.SliceItem(
 					object3D,
@@ -2368,7 +2369,7 @@ If you experience adhesion problems, please re-run leveling."
 				}
 			}
 
-			await this.Tasks.Execute("Loading GCode".Localize(), (innerProgress, token) =>
+			await this.Tasks.Execute("Loading GCode".Localize(), printer, (innerProgress, token) =>
 			{
 				var status = new ProgressStatus();
 
@@ -2556,6 +2557,7 @@ If you experience adhesion problems, please re-run leveling."
 		}
 
 		public string Title { get; set; }
+		public object Owner { get; set; }
 
 		public RunningTaskOptions Options { get; internal set; }
 
@@ -2649,14 +2651,15 @@ If you experience adhesion problems, please re-run leveling."
 			};
 		}
 
-		public Task Execute(string taskTitle, Func<IProgress<ProgressStatus>, CancellationToken, Task> func, RunningTaskOptions taskActions = null)
+		public Task Execute(string taskTitle, object owner, Func<IProgress<ProgressStatus>, CancellationToken, Task> func, RunningTaskOptions taskActions = null)
 		{
 			var tokenSource = new CancellationTokenSource();
 
 			var taskDetails = new RunningTaskDetails(tokenSource)
 			{
 				Options = taskActions,
-				Title = taskTitle
+				Title = taskTitle,
+				Owner = owner,
 			};
 
 			executingTasks.Add(taskDetails);
@@ -3151,6 +3154,7 @@ If you experience adhesion problems, please re-run leveling."
 					// Batch startup actions
 					await applicationController.Tasks.Execute(
 						"Finishing Startup".Localize(),
+						null,
 						(progress, cancellationToken) =>
 						{
 							var status = new ProgressStatus();
@@ -3174,6 +3178,7 @@ If you experience adhesion problems, please re-run leveling."
 
 					await applicationController.Tasks.Execute(
 						"Restoring Printers".Localize(),
+						null,
 						async (progress, cancellationToken) =>
 						{
 							await applicationController.OpenAllPrinters();
@@ -3182,7 +3187,7 @@ If you experience adhesion problems, please re-run leveling."
 					// Batch startup tasks
 					foreach (var task in ApplicationController.StartupTasks.OrderByDescending(t => t.Priority))
 					{
-						await applicationController.Tasks.Execute(task.Title, task.Action);
+						await applicationController.Tasks.Execute(task.Title, null, task.Action);
 					}
 
 					if (ApplicationSettings.Instance.get(ApplicationSettingsKey.ShownWelcomeMessage) != "false")

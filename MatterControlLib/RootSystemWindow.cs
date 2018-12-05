@@ -308,13 +308,13 @@ namespace MatterHackers.MatterControl
 					{
 						if (printer != PrinterConfig.EmptyPrinter)
 						{
-							await application.Tasks.Execute("Saving Print Bed".Localize() + "...", printer.Bed.SaveChanges);
+							await application.Tasks.Execute("Saving Print Bed".Localize() + "...", printer, printer.Bed.SaveChanges);
 						}
 					}
 
 					foreach (var workspace in application.Workspaces)
 					{
-						await application.Tasks.Execute("Saving Print Bed".Localize() + "...", workspace.SceneContext.SaveChanges);
+						await application.Tasks.Execute("Saving Print Bed".Localize() + "...", workspace, workspace.SceneContext.SaveChanges);
 					}
 
 					application.ApplicationExiting = true;

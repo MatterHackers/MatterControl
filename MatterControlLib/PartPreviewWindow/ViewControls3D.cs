@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							UiThread.RunOnIdle(async () =>
 							{
-								await ApplicationController.Instance.Tasks.Execute("Saving changes".Localize() + "...", sceneContext.SaveChanges);
+								await ApplicationController.Instance.Tasks.Execute("Saving changes".Localize() + "...", sceneContext.Printer, sceneContext.SaveChanges);
 
 								await sceneContext.LoadLibraryContent(item);
 
@@ -671,7 +671,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			iconButton.Click += (s, e) =>
 			{
-				ApplicationController.Instance.Tasks.Execute("Saving".Localize(), async(progress, cancellationToken) =>
+				ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.Printer, async(progress, cancellationToken) =>
 				{
 					saveButton.Enabled = false;
 
@@ -827,7 +827,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					IObject3D object3D = null;
 
-					await ApplicationController.Instance.Tasks.Execute("Loading".Localize() + " " + Path.GetFileName(filePath), async (progressReporter, cancellationToken) =>
+					await ApplicationController.Instance.Tasks.Execute("Loading".Localize() + " " + Path.GetFileName(filePath), sceneContext.Printer, async (progressReporter, cancellationToken) =>
 					{
 						var progressStatus = new ProgressStatus();
 

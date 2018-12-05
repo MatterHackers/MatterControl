@@ -183,6 +183,7 @@ namespace MatterHackers.MatterControl
 							{
 								ApplicationController.Instance.Tasks.Execute(
 									"Saving".Localize() + "...",
+									printer,
 									async (reporter, cancellationToken) =>
 									{
 										string path = openParams.FolderPath;
@@ -216,6 +217,7 @@ namespace MatterHackers.MatterControl
 							{
 								ApplicationController.Instance.Tasks.Execute(
 									"Exporting".Localize() + "...",
+									printer,
 									async (reporter, cancellationToken) =>
 									{
 										string extension = Path.GetExtension(savePath);

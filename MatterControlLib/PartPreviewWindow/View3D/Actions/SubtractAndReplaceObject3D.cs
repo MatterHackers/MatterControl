@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
 			// spin up a task to calculate the paint
-			ApplicationController.Instance.Tasks.Execute("Subtract".Localize(), (reporter, cancellationToken) =>
+			ApplicationController.Instance.Tasks.Execute("Subtract".Localize(), null, (reporter, cancellationToken) =>
 			{
 				var progressStatus = new ProgressStatus();
 

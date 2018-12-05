@@ -365,6 +365,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			// now create a long running task to process the image
 			ApplicationController.Instance.Tasks.Execute(
 			"Calculate Path".Localize(),
+			null,
 			(reporter, cancellationToken) =>
 			{
 				var progressStatus = new ProgressStatus();

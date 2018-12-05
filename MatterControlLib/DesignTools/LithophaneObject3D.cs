@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 			this.DebugDepth("Rebuild");
 			var activeImage = AggContext.ImageIO.LoadImage(this.Image.AssetPath);
 
-			ApplicationController.Instance.Tasks.Execute("Generating Lithophane".Localize(), (reporter, cancellationToken) =>
+			ApplicationController.Instance.Tasks.Execute("Generating Lithophane".Localize(), null, (reporter, cancellationToken) =>
 			{
 				var generatedMesh = Lithophane.Generate(
 					new Lithophane.ImageBufferImageData(activeImage, this.Width),
