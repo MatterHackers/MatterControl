@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Matt Moening, John Lewin
+Copyright (c) 2018, Matt Moening, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -38,65 +37,50 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.Library.Export;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.Plugins.X3GDriver
 {
-	public class X3GExport : IExportPlugin
+	public class X3GExport : GCodeExport
 	{
-		private PrinterConfig printer;
+		public override string ButtonText { get; } = "Machine File (X3G)";
 
-		public string ButtonText { get; } = "Machine File (X3G)";
+		public override string ExtensionFilter { get; } = "Export X3G|*.x3g";
 
-		public string ExtensionFilter { get; } = "Export X3G|*.x3g";
+		public override string FileExtension { get; } = ".x3g";
 
-		public string FileExtension { get; } = ".x3g";
+		public override ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("filetypes", "x3g.png"));
 
-		public ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("filetypes", "x3g.png"));
-
-		public void Initialize(PrinterConfig printer)
-		{
-			this.printer = printer;
-		}
-
-		public bool Enabled
+		public override bool Enabled
 		{
 			get => printer.Settings.PrinterSelected
 				&& printer.Settings.GetValue<bool>("enable_sailfish_communication");
 		}
 
-		public string DissabledReason
+		public override string DisabledReason => printer.Settings.PrinterSelected ? "" : "No Printer Selected".Localize();
+
+		public override bool ExportPossible(ILibraryAsset libraryItem) => true;
+
+		public override async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
 		{
-			get
-			{
-				if (!printer.Settings.PrinterSelected)
-				{
-					return "No Printer Selected".Localize();
-				}
+			string gcodePath = Path.ChangeExtension(outputPath, "_gcode");
 
-				return "";
-			}
-		}
+			// Generate the gcode
+			await base.Generate(libraryItems, gcodePath, progress, cancellationToken);
 
-		public bool ExportPossible(ILibraryAsset libraryItem) => true;
-
-		public async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
-		{
-			ILibraryAssetStream libraryContent = libraryItems.OfType<ILibraryAssetStream>().FirstOrDefault();
-
-			if (libraryContent == null)
+			if (!File.Exists(gcodePath))
 			{
 				return false;
 			}
 
-			var result = await libraryContent.GetStream(null);
-			StreamReader inputFile = new StreamReader(result.Stream);
-			FileStream binaryFileStream = new FileStream(outputPath, FileMode.OpenOrCreate);
-			BinaryWriter outputFile = new BinaryWriter(binaryFileStream);
+			var inputFile = new StreamReader(gcodePath);
+			var binaryFileStream = new FileStream(outputPath, FileMode.OpenOrCreate);
+			var outputFile = new BinaryWriter(binaryFileStream);
 
 			var x3gConverter = new X3GWriter(new X3GPrinterDetails(), printer.Settings);
 
-			List<byte[]> x3gLines = new List<byte[]>();
+			var x3gLines = new List<byte[]>();
 			byte[] emptyByteArray = { 0 };
 			string line;
 

@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public bool Enabled => true;
 
-		public string DissabledReason => "";
+		public string DisabledReason => "";
 
 		public bool ExportPossible(ILibraryAsset libraryItem) => true;
 
