@@ -50,22 +50,22 @@ namespace MatterHackers.MatterControl.Library.Export
 	public class GCodeExport : IExportPlugin, IExportWithOptions
 	{
 		private bool ForceSpiralVase;
-		private PrinterConfig printer;
+		protected PrinterConfig printer;
 
-		public string ButtonText => "Machine File (G-Code)".Localize();
+		public virtual string ButtonText => "Machine File (G-Code)".Localize();
 
-		public string FileExtension => ".gcode";
+		public virtual string FileExtension => ".gcode";
 
-		public string ExtensionFilter => "Export GCode|*.gcode";
+		public virtual string ExtensionFilter => "Export GCode|*.gcode";
 
-		public ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("filetypes", "gcode.png"));
+		public virtual ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("filetypes", "gcode.png"));
 
 		public void Initialize(PrinterConfig printer)
 		{
 			this.printer = printer;
 		}
 
-		public bool Enabled
+		public virtual bool Enabled
 		{
 			get => printer.Settings.PrinterSelected
 				&& !printer.Settings.GetValue<bool>("enable_sailfish_communication")
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			}
 		}
 
-		public bool ExportPossible(ILibraryAsset libraryItem) => true;
+		public virtual bool ExportPossible(ILibraryAsset libraryItem) => true;
 
 		public GuiWidget GetOptionsPanel()
 		{
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			return container;
 		}
 
-		public async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
+		public virtual async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
 		{
 			var firstItem = libraryItems.OfType<ILibraryAsset>().FirstOrDefault();
 			if (firstItem != null)
