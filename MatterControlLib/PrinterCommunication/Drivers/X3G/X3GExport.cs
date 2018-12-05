@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Matt Moening, John Lewin
+Copyright (c) 2018, Matt Moening, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -59,18 +58,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 				&& printer.Settings.GetValue<bool>("enable_sailfish_communication");
 		}
 
-		public override string DisabledReason
-		{
-			get
-			{
-				if (!printer.Settings.PrinterSelected)
-				{
-					return "No Printer Selected".Localize();
-				}
-
-				return "";
-			}
-		}
+		public override string DisabledReason => printer.Settings.PrinterSelected ? "" : "No Printer Selected".Localize();
 
 		public override bool ExportPossible(ILibraryAsset libraryItem) => true;
 
