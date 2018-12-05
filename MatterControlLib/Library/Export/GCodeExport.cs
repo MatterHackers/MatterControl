@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				else if (firstItem.AssetPath == printer.Bed.EditContext.SourceFilePath)
 				{
 					// If item is bedplate, save any pending changes before starting the print
-					await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer.Bed.SaveChanges);
+					await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer, printer.Bed.SaveChanges);
 					loadedItem = printer.Bed.Scene;
 					CenterOnBed = false;
 				}
@@ -212,6 +212,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 								await ApplicationController.Instance.Tasks.Execute(
 									"Slicing Item".Localize() + " " + loadedItem.Name,
+									printer,
 									(reporter, cancellationToken2) =>
 									{
 										return Slicer.SliceItem(loadedItem, gcodePath, printer, reporter, cancellationToken2);

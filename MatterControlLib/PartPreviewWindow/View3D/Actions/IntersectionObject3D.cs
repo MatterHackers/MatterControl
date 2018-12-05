@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			var rebuildLock = RebuildLock();
 			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
-			ApplicationController.Instance.Tasks.Execute("Intersection".Localize(), (reporter, cancellationToken) =>
+			ApplicationController.Instance.Tasks.Execute("Intersection".Localize(), null, (reporter, cancellationToken) =>
 			{
 				var progressStatus = new ProgressStatus();
 

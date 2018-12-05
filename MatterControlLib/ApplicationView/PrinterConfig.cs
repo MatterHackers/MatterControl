@@ -306,6 +306,7 @@ namespace MatterHackers.MatterControl
 					case DetailedPrintingState.HeatingBed:
 						ApplicationController.Instance.Tasks.Execute(
 							"Heating Bed".Localize(),
+							this,
 							(reporter, cancellationToken) =>
 							{
 								waitingForBedHeat = true;
@@ -335,6 +336,7 @@ namespace MatterHackers.MatterControl
 					case DetailedPrintingState.HeatingExtruder:
 						ApplicationController.Instance.Tasks.Execute(
 							"Heating Extruder".Localize(),
+							this,
 							(reporter, cancellationToken) =>
 							{
 								waitingForBedHeat = false;

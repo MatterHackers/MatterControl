@@ -87,6 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					await ApplicationController.Instance.Tasks.Execute(
 						"Ungroup".Localize(),
+						null,
 						(reporter, cancellationToken) =>
 						{
 							var progressStatus = new ProgressStatus();

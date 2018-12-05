@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					UiThread.RunOnIdle(async () =>
 					{
 						// Save any pending changes before starting print operation
-						await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), printer.Bed.SaveChanges);
+						await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), printer, printer.Bed.SaveChanges);
 
 						await ApplicationController.Instance.PrintPart(
 							printer.Bed.EditContext,

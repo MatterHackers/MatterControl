@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl
 
 		public async Task LoadGCodeContent(Stream stream)
 		{
-			await ApplicationController.Instance.Tasks.Execute("Loading G-Code".Localize(), (reporter, cancellationToken) =>
+			await ApplicationController.Instance.Tasks.Execute("Loading G-Code".Localize(), Printer, (reporter, cancellationToken) =>
 			{
 				var progressStatus = new ProgressStatus();
 				reporter.Report(progressStatus);

@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					try
 					{
-						await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer.Bed.SaveChanges);
+						await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer, printer.Bed.SaveChanges);
 
 						await ApplicationController.Instance.SliceItemLoadOutput(
 							printer,

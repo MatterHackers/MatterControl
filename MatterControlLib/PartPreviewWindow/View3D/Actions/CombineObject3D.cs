@@ -77,6 +77,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			// spin up a task to remove holes from the objects in the group
 			ApplicationController.Instance.Tasks.Execute(
 				"Combine".Localize(),
+				null,
 				(reporter, cancellationToken) =>
 				{
 					var progressStatus = new ProgressStatus();

@@ -238,7 +238,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public PrinterConnection(PrinterConfig printer)
 		{
-			this.printer = printer;
+			this.Printer = printer;
 
 			TerminalLog = new TerminalLog(this);
 
@@ -481,7 +481,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									// Set this early as we always want our functions to know the state we are in.
 									communicationState = value;
 									timeSinceStartedPrint.Stop();
-									PrintFinished?.Invoke(this, new NamedItemEventArgs(printer.Bed.EditContext.SourceItem.Name));
+									PrintFinished?.Invoke(this, new NamedItemEventArgs(Printer.Bed.EditContext.SourceItem.Name));
 								}
 								else
 								{
@@ -523,9 +523,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			gCodeFileSwitcher0.SwitchTo(gCodeFilePath);
 		}
 
-		public string ComPort => printer.Settings?.Helpers.ComPort();
+		public string ComPort => Printer.Settings?.Helpers.ComPort();
 
-		public string DriverType => (this.ComPort == "Emulator") ? "Emulator" : printer.Settings?.GetValue("driver_type");
+		public string DriverType => (this.ComPort == "Emulator") ? "Emulator" : Printer.Settings?.GetValue("driver_type");
 
 		public bool AtxPowerEnabled
 		{
@@ -787,8 +787,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		// HACK: PrinterConnection must be revised to take a constructor that receives and stores a reference to its parent PrinterConfig - this
-		private PrinterConfig printer { get; set; }
+		public PrinterConfig Printer { get; }
 
 		public void ReleaseAndReportFailedConnection(ConnectionFailure reason, string details = null)
 		{
@@ -882,7 +881,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 							var portFactory = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType);
 
-							bool serialPortIsAvailable = portFactory.SerialPortIsAvailable(serialPortName, printer.Settings);
+							bool serialPortIsAvailable = portFactory.SerialPortIsAvailable(serialPortName, Printer.Settings);
 							bool serialPortIsAlreadyOpen = this.ComPort != "Emulator" &&
 								portFactory.SerialPortAlreadyOpen(serialPortName);
 
@@ -892,7 +891,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								{
 									try
 									{
-										serialPort = portFactory.CreateAndOpen(serialPortName, printer.Settings, baudRate, true);
+										serialPort = portFactory.CreateAndOpen(serialPortName, Printer.Settings, baudRate, true);
 #if __ANDROID__
 						ToggleHighLowHigh(serialPort);
 #endif
@@ -1368,9 +1367,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			// TODO: Ideally we would shutdown the printer connection when this method is called and we're connected. The
 			// current approach results in unpredictable behavior if the caller fails to close the connection
-			if (serialPort == null && this.printer.Settings != null)
+			if (serialPort == null && this.Printer.Settings != null)
 			{
-				IFrostedSerialPort resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort, printer.Settings);
+				IFrostedSerialPort resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort, Printer.Settings);
 				resetSerialPort.Open();
 
 				Thread.Sleep(500);
@@ -1583,7 +1582,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			try
 			{
-				if (printer.Settings.PrinterSelected)
+				if (Printer.Settings.PrinterSelected)
 				{
 					// first make sure we are not printing if possible (cancel slicing)
 					if (serialPort != null) // we still have a serial port
@@ -1611,7 +1610,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						// We reset the board while attempting to connect, so now we don't have a serial port.
 						// Create one and do the DTR to reset
-						var resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort, printer.Settings);
+						var resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort, Printer.Settings);
 						resetSerialPort.Open();
 
 						Thread.Sleep(500);
@@ -1857,7 +1856,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				case CommunicationStates.PreparingToPrint:
 					{
-						var activePrintItem = printer.Bed.EditContext.printItem;
+						var activePrintItem = Printer.Bed.EditContext.printItem;
 						if (activePrintItem.PrintItem.Id == 0)
 						{
 							activePrintItem.PrintItem.Commit();
@@ -1869,7 +1868,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							activePrintTask = new PrintTask
 							{
 								PrintStart = DateTime.Now,
-								PrinterId = this.printer.Settings.ID.GetHashCode(),
+								PrinterId = this.Printer.Settings.ID.GetHashCode(),
 								PrintName = activePrintItem.PrintItem.Name,
 								PrintItemId = activePrintItem.PrintItem.Id,
 								PrintingGCodeFileName = gcodeFilename,
@@ -2084,45 +2083,45 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			GCodeStream firstStreamToRead = null;
 			if (gcodeFilename != null)
 			{
-				gCodeFileSwitcher0 = new GCodeSwitcher(gcodeFilename, printer);
+				gCodeFileSwitcher0 = new GCodeSwitcher(gcodeFilename, Printer);
 
 				if (this.RecoveryIsEnabled
 					&& activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
 				{
-					sendProgressStream1 = new SendProgressStream(new PrintRecoveryStream(gCodeFileSwitcher0, printer, activePrintTask.PercentDone), printer);
+					sendProgressStream1 = new SendProgressStream(new PrintRecoveryStream(gCodeFileSwitcher0, Printer, activePrintTask.PercentDone), Printer);
 					// And increment the recovery count
 					activePrintTask.RecoveryCount++;
 					activePrintTask.Commit();
 				}
 				else
 				{
-					sendProgressStream1 = new SendProgressStream(gCodeFileSwitcher0, printer);
+					sendProgressStream1 = new SendProgressStream(gCodeFileSwitcher0, Printer);
 				}
 
-				pauseHandlingStream2 = new PauseHandlingStream(printer, sendProgressStream1);
+				pauseHandlingStream2 = new PauseHandlingStream(Printer, sendProgressStream1);
 				firstStreamToRead = pauseHandlingStream2;
 			}
 			else
 			{
 				gCodeFileSwitcher0 = null;
-				firstStreamToRead = new NotPrintingStream(printer);
+				firstStreamToRead = new NotPrintingStream(Printer);
 			}
 
-			queuedCommandStream3 = new QueuedCommandsStream(printer, firstStreamToRead);
-			relativeToAbsoluteStream4 = new RelativeToAbsoluteStream(printer, queuedCommandStream3);
-			bool enableLineSpliting = gcodeFilename != null && printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
-			babyStepsStream5 = new BabyStepsStream(printer, relativeToAbsoluteStream4, enableLineSpliting ? 1 : 2000);
+			queuedCommandStream3 = new QueuedCommandsStream(Printer, firstStreamToRead);
+			relativeToAbsoluteStream4 = new RelativeToAbsoluteStream(Printer, queuedCommandStream3);
+			bool enableLineSpliting = gcodeFilename != null && Printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
+			babyStepsStream5 = new BabyStepsStream(Printer, relativeToAbsoluteStream4, enableLineSpliting ? 1 : 2000);
 			if (activePrintTask != null)
 			{
 				// make sure we are in the position we were when we stopped printing
 				babyStepsStream5.Offset = new Vector3(activePrintTask.PrintingOffsetX, activePrintTask.PrintingOffsetY, activePrintTask.PrintingOffsetZ);
 			}
-			printLevelingStream6 = new PrintLevelingStream(printer, babyStepsStream5, true);
-			waitForTempStream7 = new WaitForTempStream(printer, printLevelingStream6);
-			extrusionMultiplyerStream8 = new ExtrusionMultiplyerStream(printer, waitForTempStream7);
-			feedrateMultiplyerStream9 = new FeedRateMultiplyerStream(printer, extrusionMultiplyerStream8);
-			requestTemperaturesStream10 = new RequestTemperaturesStream(printer, feedrateMultiplyerStream9);
-			processWriteRegExStream11 = new ProcessWriteRegexStream(printer, requestTemperaturesStream10, queuedCommandStream3);
+			printLevelingStream6 = new PrintLevelingStream(Printer, babyStepsStream5, true);
+			waitForTempStream7 = new WaitForTempStream(Printer, printLevelingStream6);
+			extrusionMultiplyerStream8 = new ExtrusionMultiplyerStream(Printer, waitForTempStream7);
+			feedrateMultiplyerStream9 = new FeedRateMultiplyerStream(Printer, extrusionMultiplyerStream8);
+			requestTemperaturesStream10 = new RequestTemperaturesStream(Printer, feedrateMultiplyerStream9);
+			processWriteRegExStream11 = new ProcessWriteRegexStream(Printer, requestTemperaturesStream10, queuedCommandStream3);
 			totalGCodeStream = processWriteRegExStream11;
 
 			// Force a reset of the printer checksum state (but allow it to be write regexed)

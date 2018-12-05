@@ -539,7 +539,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Shortcut = "Ctrl+S",
 						Action = () =>
 						{
-							ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.SaveChanges).ConfigureAwait(false);
+							ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer, sceneContext.SaveChanges).ConfigureAwait(false);
 						},
 						IsEnabled = () => sceneContext.EditableScene
 					}
@@ -660,7 +660,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (this.Printer != null)
 			{
 				// Save any pending changes before starting print operation
-				ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), printer.Bed.SaveChanges).ContinueWith(task =>
+				ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), printer, printer.Bed.SaveChanges).ContinueWith(task =>
 				{
 					ApplicationController.Instance.PrintPart(
 						printer.Bed.EditContext,
@@ -735,7 +735,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			Task.Run(async () =>
 			{
-				await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.SaveChanges);
+				await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer, sceneContext.SaveChanges);
 
 				// Clear bed to get new MCX on disk for this item
 				printer.Bed.ClearPlate();
@@ -778,7 +778,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ApplicationController.Instance.MainView.TabControl.SelectedTabKey = printer.Settings.GetValue(SettingsKey.printer_name);
 
 				// Save any pending changes before starting print operation
-				await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), printer.Bed.SaveChanges);
+				await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), printer, printer.Bed.SaveChanges);
 
 				// Slice and print
 				await ApplicationController.Instance.PrintPart(
@@ -1920,7 +1920,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Save()
 		{
-			ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.SaveChanges);
+			ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer, sceneContext.SaveChanges);
 		}
 	}
 

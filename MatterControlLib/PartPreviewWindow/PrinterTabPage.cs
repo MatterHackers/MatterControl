@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			splitContainer.AddChild(gcodeContainer);
 
-			view3DContainer.AddChild(new RunningTasksWidget(theme)
+			view3DContainer.AddChild(new RunningTasksWidget(theme, printer)
 			{
 				MinimumSize = new Vector2(100, 0),
 				Margin = new BorderDouble(top: printerActionsBar.Height + 1, left: favoritesBar.LocalBounds.Width + favoritesBar.DeviceMarginAndBorder.Width + 1),
@@ -550,7 +550,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								bottomRow.Name = printer.Bed.EditContext.GCodeFilePath(printer);
 							}
 
-							await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer.Bed.SaveChanges);
+							await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer, printer.Bed.SaveChanges);
 
 							// start up a new slice on a background thread
 							await ApplicationController.Instance.SliceItemLoadOutput(

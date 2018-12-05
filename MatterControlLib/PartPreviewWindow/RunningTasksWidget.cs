@@ -40,9 +40,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ThemeConfig theme;
 		private Color borderColor;
 		private FlowLayoutWidget pendingTasksList;
+		private object owner;
 
-		public RunningTasksWidget(ThemeConfig theme)
+		public RunningTasksWidget(ThemeConfig theme, object owner)
 		{
+			this.owner = owner;
 			this.theme = theme;
 
 			if (theme.IsDarkTheme)
@@ -95,16 +97,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Add new items
 			foreach (var taskItem in tasks.RunningTasks.Where(t => !displayedTasks.Contains(t)))
 			{
-				var taskRow = new RunningTaskRow("", taskItem, theme)
+				// show tasks that are unfiltered (owner == null) or are owned by us
+				if (taskItem.Owner == null 
+					|| taskItem.Owner == owner)
 				{
-					HAnchor = HAnchor.Stretch,
-					BackgroundColor = theme.AccentMimimalOverlay,
-					Border = new BorderDouble(1, 1, 1, 0),
-					BorderColor = borderColor,
-					ProgressBackgroundColor = progressBackgroundColor
-				};
+					var taskRow = new RunningTaskRow("", taskItem, theme)
+					{
+						HAnchor = HAnchor.Stretch,
+						BackgroundColor = theme.AccentMimimalOverlay,
+						Border = new BorderDouble(1, 1, 1, 0),
+						BorderColor = borderColor,
+						ProgressBackgroundColor = progressBackgroundColor
+					};
 
-				pendingTasksList.AddChild(taskRow);
+					pendingTasksList.AddChild(taskRow);
+				}
+				else
+				{
+					int a = 0;
+				}
 			}
 
 			this.Visible = pendingTasksList.Children.Count > 0;
