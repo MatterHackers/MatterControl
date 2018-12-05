@@ -362,11 +362,14 @@ namespace MatterHackers.MatterControl.ActionBar
 					dropList.Margin = 0;
 				}
 
+				GuiWidget rowItem = null;
 				container.AddChild(
-					new SettingsItem("Material".Localize(), presetsSelector, menuTheme, enforceGutter: false)
+					rowItem = new SettingsItem("Material".Localize(), presetsSelector, menuTheme, enforceGutter: false)
 					{
 						Border = new BorderDouble(0, 1)
 					});
+				// material can be changed even when the printer is not connected
+				alwaysEnabled.Add(rowItem);
 
 				presetsSelector.PerformLayout();
 			}

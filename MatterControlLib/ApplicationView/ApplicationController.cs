@@ -1410,7 +1410,7 @@ namespace MatterHackers.MatterControl
 		{
 			return LevelingValidation.NeedsToBeRun(printer)
 				|| ProbeCalibrationWizard.NeedsToBeRun(printer)
-				|| LoadFilamentWizard.NeedsToBeRun(printer);
+				|| (printer.Connection.IsConnected && LoadFilamentWizard.NeedsToBeRun(printer));
 		}
 
 		public bool RunAnyRequiredPrinterSetup(PrinterConfig printer, ThemeConfig theme)
