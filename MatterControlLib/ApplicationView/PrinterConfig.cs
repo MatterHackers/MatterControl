@@ -133,33 +133,6 @@ namespace MatterHackers.MatterControl
 			this.Connection.ReadLineReplacementString = this.Settings.GetValue(SettingsKey.read_regex);
 		}
 
-		/// <summary>
-		/// Returns the computed GCode path given a content file path and considering current settings
-		/// </summary>
-		/// <param name="fileLocation">The source file</param>
-		/// <returns>The target GCode path</returns>
-		public string GetGCodePath(string fileLocation)
-		{
-			if (fileLocation.Trim() != "")
-			{
-				if (Path.GetExtension(fileLocation).ToUpper() == ".GCODE")
-				{
-					return fileLocation;
-				}
-
-				string fileHashCode = HashGenerator.ComputeFileSHA1(fileLocation);
-				long settingsHashCode = this.Settings.GetLongHashCode();
-
-				return Path.Combine(
-					ApplicationDataStorage.Instance.GCodeOutputPath,
-					$"{fileHashCode}_{ settingsHashCode}.gcode");
-			}
-			else
-			{
-				return null;
-			}
-		}
-
 		public string ReplaceMacroValues(string gcodeWithMacros)
 		{
 			foreach (MappedSetting mappedSetting in replaceWithSettingsStrings)

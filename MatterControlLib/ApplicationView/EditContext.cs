@@ -32,7 +32,9 @@ using MatterControl.Printing;
 
 namespace MatterHackers.MatterControl
 {
+	using MatterHackers.Agg;
 	using MatterHackers.DataConverters3D;
+	using MatterHackers.MatterControl.DataStorage;
 	using MatterHackers.MatterControl.Library;
 
 	public class EditContext
@@ -63,10 +65,38 @@ namespace MatterHackers.MatterControl
 		{
 			if (File.Exists(this.SourceFilePath))
 			{
-				return printer.GetGCodePath(this.SourceFilePath);
+				return this.GetGCodePath(printer, this.SourceFilePath);
 			}
 
 			return null;
+		}
+
+		/// <summary>
+		/// Returns the computed GCode path given a content file path and considering current settings
+		/// </summary>
+		/// <param name="printer">The associated printer</param>
+		/// <param name="fileLocation">The source file</param>
+		/// <returns>The target GCode path</returns>
+		private string GetGCodePath(PrinterConfig printer, string fileLocation)
+		{
+			if (fileLocation.Trim() != "")
+			{
+				if (Path.GetExtension(fileLocation).ToUpper() == ".GCODE")
+				{
+					return fileLocation;
+				}
+
+				string fileHashCode = HashGenerator.ComputeFileSHA1(fileLocation);
+				long settingsHashCode = printer.Settings.GetLongHashCode();
+
+				return Path.Combine(
+					ApplicationDataStorage.Instance.GCodeOutputPath,
+					$"{fileHashCode}_{ settingsHashCode}.gcode");
+			}
+			else
+			{
+				return null;
+			}
 		}
 
 		// Override path
