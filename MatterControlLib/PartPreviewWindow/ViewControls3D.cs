@@ -773,24 +773,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var scene = sceneContext.Scene;
 
-				// When a single gcode file is selected, swap the plate to the new GCode content
+				// When a single GCode file is selected, swap the plate to the new GCode content
 				if (filesToLoadIncludingZips.Count() == 1
 					&& filesToLoadIncludingZips.FirstOrDefault() is string firstFilePath
 					&& Path.GetExtension(firstFilePath).ToUpper() == ".GCODE")
 				{
-					// Drop handler for special case of GCode or similar (change loaded scene to new context)
+					// Special case for GCode which changes loaded scene to special mode for GCode
 					await sceneContext.LoadContent(
 						new EditContext()
 						{
 							SourceItem = new FileSystemFileItem(firstFilePath),
-							// No content store for GCode, otherwise PlatingHistory
-							ContentStore = sceneContext.EditContext.ContentStore
+							ContentStore = null // No content store for GCode, otherwise PlatingHistory
 						});
 
 					return;
 				}
 
-				List<string> filesToLoad = new List<string>();
+				var filesToLoad = new List<string>();
 				foreach (string loadedFileName in filesToLoadIncludingZips)
 				{
 					string extension = Path.GetExtension(loadedFileName).ToUpper();
