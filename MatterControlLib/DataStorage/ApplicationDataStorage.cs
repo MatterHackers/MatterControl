@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		public string GCodeOutputPath => EnsurePath(_gcodeOutputPath);
 
-		public string CacheDirectory => EnsurePath(_cacheDirectory );
+		public string CacheDirectory => EnsurePath(_cacheDirectory);
 
 		public string DownloadsDirectory { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 

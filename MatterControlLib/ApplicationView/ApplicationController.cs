@@ -1840,8 +1840,6 @@ namespace MatterHackers.MatterControl
 
 		public async Task OpenAllPrinters()
 		{
-			// TODO: broadcast message to UI to close all printer tabs
-
 			foreach (var printerID in ProfileManager.Instance.OpenPrinterIDs)
 			{
 				await this.OpenPrinter(printerID);

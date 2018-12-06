@@ -416,10 +416,7 @@ namespace MatterHackers.MatterControl
 
 		public Mesh BuildVolumeMesh => _buildVolumeMesh;
 
-		public bool EditableScene
-		{
-			get => this.EditContext?.FreezeGCode != true;
-		}
+		public bool EditableScene => this.EditContext?.FreezeGCode != true;
 
 		public string ContentType { get; private set; }
 
