@@ -67,7 +67,8 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public virtual bool Enabled
 		{
-			get => printer.Settings.PrinterSelected
+			get => printer != null
+				&& printer.Settings.PrinterSelected
 				&& !printer.Settings.GetValue<bool>("enable_sailfish_communication")
 				&& !ApplicationController.PrinterNeedsToRunSetup(printer);
 		}
@@ -76,7 +77,11 @@ namespace MatterHackers.MatterControl.Library.Export
 		{
 			get
 			{
-				if(!printer.Settings.PrinterSelected)
+				if(printer == null)
+				{
+					return "Create a printer to export G-Code".Localize();
+				}
+				else if(!printer.Settings.PrinterSelected)
 				{
 					return "No Printer Selected".Localize();
 				}

@@ -54,11 +54,26 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 
 		public override bool Enabled
 		{
-			get => printer.Settings.PrinterSelected
+			get => printer != null
+				&& printer.Settings.PrinterSelected
 				&& printer.Settings.GetValue<bool>("enable_sailfish_communication");
 		}
 
-		public override string DisabledReason => printer.Settings.PrinterSelected ? "" : "No Printer Selected".Localize();
+		public override string DisabledReason
+		{
+			get
+			{
+				if (printer == null
+					|| printer.Settings.PrinterSelected)
+				{
+					return "";
+				}
+				else
+				{
+					return "No Printer Selected".Localize();
+				}
+			}
+		}
 
 		public override bool ExportPossible(ILibraryAsset libraryItem) => true;
 

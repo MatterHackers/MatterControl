@@ -948,26 +948,58 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
-					// Resolve printer context before showing export page
-					DialogWindow dialogWindow = null;
+					// If there are no printers setup show the export dialog but have the gcode option disabled
+					if (ProfileManager.Instance.ActiveProfiles.Count() == 0)
+					{
+						DialogWindow.Show(new ExportPrintItemPage(libraryItems, centerOnBed, null));
+					}
+					// If there is only one printer constructed, use it.
+					else if (ProfileManager.Instance.ActiveProfiles.Count() == 1)
+					{
+						var historyContainer = ApplicationController.Instance.Library.PlatingHistory;
 
-					dialogWindow = DialogWindow.Show(
-						new SelectPrinterProfilePage(
-							"Next".Localize(),
-							(selectedPrinter) =>
+						var printerInfo = ProfileManager.Instance.ActiveProfiles.First();
+						ProfileManager.LoadSettingsAsync(printerInfo.ID).ContinueWith(task =>
+						{
+							var settings = task.Result;
+							var onlyPrinter = new PrinterConfig(settings);
+
+							onlyPrinter.Bed.LoadEmptyContent(
+								new EditContext()
+								{
+									ContentStore = historyContainer,
+									SourceItem = historyContainer.NewPlatingItem()
+								});
+
+							UiThread.RunOnIdle(() =>
 							{
-								var historyContainer = ApplicationController.Instance.Library.PlatingHistory;
+								DialogWindow.Show(new ExportPrintItemPage(libraryItems, centerOnBed, onlyPrinter));
+							});
+						});
+					}
+					else
+					{
+						// Resolve printer context before showing export page
+						DialogWindow dialogWindow = null;
 
-								selectedPrinter.Bed.LoadEmptyContent(
-									new EditContext()
-									{
-										ContentStore = historyContainer,
-										SourceItem = historyContainer.NewPlatingItem()
-									});
+						dialogWindow = DialogWindow.Show(
+							new SelectPrinterProfilePage(
+								"Next".Localize(),
+								(selectedPrinter) =>
+								{
+									var historyContainer = ApplicationController.Instance.Library.PlatingHistory;
 
-								dialogWindow.ChangeToPage(
-									new ExportPrintItemPage(libraryItems, centerOnBed, selectedPrinter));
-							}));
+									selectedPrinter.Bed.LoadEmptyContent(
+										new EditContext()
+										{
+											ContentStore = historyContainer,
+											SourceItem = historyContainer.NewPlatingItem()
+										});
+
+									dialogWindow.ChangeToPage(
+										new ExportPrintItemPage(libraryItems, centerOnBed, selectedPrinter));
+								}));
+					}
 				}
 			});
 		}
