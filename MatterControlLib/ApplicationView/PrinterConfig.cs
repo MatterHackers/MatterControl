@@ -133,7 +133,12 @@ namespace MatterHackers.MatterControl
 			this.Connection.ReadLineReplacementString = this.Settings.GetValue(SettingsKey.read_regex);
 		}
 
-		public string GetGCodePathAndFileName(string fileLocation)
+		/// <summary>
+		/// Returns the computed GCode path given a content file path and considering current settings
+		/// </summary>
+		/// <param name="fileLocation">The source file</param>
+		/// <returns>The target GCode path</returns>
+		public string GetGCodePath(string fileLocation)
 		{
 			if (fileLocation.Trim() != "")
 			{
@@ -142,21 +147,17 @@ namespace MatterHackers.MatterControl
 					return fileLocation;
 				}
 
-				return GCodePath(HashGenerator.ComputeFileSHA1(fileLocation));
+				string fileHashCode = HashGenerator.ComputeFileSHA1(fileLocation);
+				long settingsHashCode = this.Settings.GetLongHashCode();
+
+				return Path.Combine(
+					ApplicationDataStorage.Instance.GCodeOutputPath,
+					$"{fileHashCode}_{ settingsHashCode}.gcode");
 			}
 			else
 			{
 				return null;
 			}
-		}
-
-		private string GCodePath(string fileHashCode)
-		{
-			long settingsHashCode = this.Settings.GetLongHashCode();
-
-			return Path.Combine(
-				ApplicationDataStorage.Instance.GCodeOutputPath,
-				$"{fileHashCode}_{ settingsHashCode}.gcode");
 		}
 
 		public string ReplaceMacroValues(string gcodeWithMacros)

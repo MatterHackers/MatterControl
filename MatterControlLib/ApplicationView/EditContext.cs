@@ -66,8 +66,9 @@ namespace MatterHackers.MatterControl
 		{
 			if (printItem != null)
 			{
-				return printer.GetGCodePathAndFileName(printItem.FileLocation);
+				return printer.GetGCodePath(printItem.FileLocation);
 			}
+
 			return null;
 		}
 
