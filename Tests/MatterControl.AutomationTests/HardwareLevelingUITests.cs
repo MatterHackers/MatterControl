@@ -45,8 +45,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator("JumpStart", "V1", runSlow: false))
 				{
 					// make sure it is showing the correct button
-					Assert.IsFalse(testRunner.WaitForName("PrintPopupMenu", .5), "Start Print should not be visible if PrintLeveling is required");
-					Assert.IsTrue(testRunner.WaitForName("Finish Setup Button"), "Finish Setup should be visible if PrintLeveling is required");
+					testRunner.OpenPrintPopupMenu(false, false);
 
 					// HACK: automatically resuming setup wizard. Long term we want a better plan
 					testRunner.ClickByName("Finish Setup Button");
@@ -64,9 +63,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Reset to Defaults Menu Item");
 					testRunner.ClickByName("Yes Button");
 
+					testRunner.OpenPrintPopupMenu(false, false);
+
 					// make sure it is showing the correct button
 					Assert.IsTrue(testRunner.WaitForName("Finish Setup Button"), "Finish Setup should be visible after reset to Defaults");
-					Assert.IsTrue(!testRunner.WaitForName("PrintPopupMenu"), "Start Print should not be visible after reset to Defaults");
 				}
 
 				return Task.CompletedTask;

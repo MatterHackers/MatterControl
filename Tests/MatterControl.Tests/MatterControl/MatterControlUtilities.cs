@@ -320,7 +320,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.WaitforDraw(systemWindow);
 
 			// close the welcome message
-
 			if (testRunner.NameExists("Cancel Wizard Button", 1))
 			{
 				testRunner.ClickByName("Cancel Wizard Button");
@@ -797,7 +796,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// Switch to the primary SliceSettings tab
 		/// </summary>
 		/// <param name="testRunner"></param>
-		public static void OpenPrintPopupMenu(this AutomationRunner testRunner)
+		public static void OpenPrintPopupMenu(this AutomationRunner testRunner, bool openAdvanced = true, bool doFinishSetup = true)
 		{
 			var printerConnection = ApplicationController.Instance.DragDropData.View3DWidget.Printer.Connection;
 
@@ -808,26 +807,31 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.WaitFor(() => printerConnection.CommunicationState == CommunicationStates.Connected);
 			}
 
-			if (testRunner.NamedWidgetExists("Finish Setup Button"))
-			{
-				testRunner.ClickByName("Finish Setup Button");
-				testRunner.ClickByName("Already Loaded Button");
-			}
-
-			// Wait for button to become enabled
-			var printerPopup = testRunner.GetWidgetByName("PrintPopupMenu", out _);
-			testRunner.WaitFor(() => printerPopup.Enabled);
-
-			// check if the print menu is already open
+			// if the menu is not already open
 			if (!testRunner.NameExists("Advanced Section", .2))
 			{
 				// open it
 				testRunner.ClickByName("PrintPopupMenu");
+			}
 
-				if (!testRunner.NameExists("Layer(s) To Pause Field", .2))
-				{
-					testRunner.ClickByName("Advanced Section");
-				}
+			// wait for it to be all the way open
+			testRunner.WaitForName("Advanced Section");
+
+			// make sure we are in a state that can print
+			if (doFinishSetup
+				&& testRunner.NameExists("Finish Setup Button"))
+			{
+				testRunner.ClickByName("Finish Setup Button");
+				testRunner.ClickByName("Already Loaded Button");
+				// open it again
+				testRunner.ClickByName("PrintPopupMenu");
+				testRunner.WaitForName("Advanced Section");
+			}
+
+			if (openAdvanced 
+				&& !testRunner.NameExists("Layer(s) To Pause Field", .2))
+			{
+				testRunner.ClickByName("Advanced Section");
 			}
 		}
 
