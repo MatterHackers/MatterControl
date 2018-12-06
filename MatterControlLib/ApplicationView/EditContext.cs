@@ -41,8 +41,18 @@ namespace MatterHackers.MatterControl
 	{
 		private ILibraryItem _sourceItem;
 
+		/// <summary>
+		/// The object responsible for item persistence 
+		/// </summary>
 		public IContentStore ContentStore { get; set; }
 
+		public string SourceFilePath { get; private set; }
+
+		public bool FreezeGCode { get; set; }
+
+		/// <summary>
+		/// The library item to load and persist
+		/// </summary>
 		public ILibraryItem SourceItem
 		{
 			get => _sourceItem;
@@ -57,6 +67,28 @@ namespace MatterHackers.MatterControl
 						this.SourceFilePath = fileItem.Path;
 					}
 				}
+			}
+		}
+
+		// Override or natural path
+		public string GCodeFilePath(PrinterConfig printer)
+		{
+			if (File.Exists(this.GCodeOverridePath(printer)))
+			{
+				return this.GCodeOverridePath(printer);
+			}
+			
+			return GCodePath(printer);
+		}
+
+		internal void Save(IObject3D scene)
+		{
+			if (!this.FreezeGCode)
+			{
+				ApplicationController.Instance.Thumbnails.DeleteCache(this.SourceItem);
+
+				// Call save on the provider
+				this.ContentStore?.Save(this.SourceItem, scene);
 			}
 		}
 
@@ -103,32 +135,6 @@ namespace MatterHackers.MatterControl
 		private string GCodeOverridePath(PrinterConfig printer)
 		{
 			return Path.ChangeExtension(GCodePath(printer), GCodeFile.PostProcessedExtension);
-		}
-
-		// Override or natural path
-		public string GCodeFilePath(PrinterConfig printer)
-		{
-			if (File.Exists(this.GCodeOverridePath(printer)))
-			{
-				return this.GCodeOverridePath(printer);
-			}
-			
-			return GCodePath(printer);
-		}
-
-		public string SourceFilePath { get; private set; }
-
-		public bool FreezeGCode { get; set; }
-
-		internal void Save(IObject3D scene)
-		{
-			if (!this.FreezeGCode)
-			{
-				ApplicationController.Instance.Thumbnails.DeleteCache(this.SourceItem);
-
-				// Call save on the provider
-				this.ContentStore?.Save(this.SourceItem, scene);
-			}
 		}
 	}
 }
