@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public string GCodePath(string fileHashCode)
+		private string GCodePath(string fileHashCode)
 		{
 			long settingsHashCode = this.Settings.GetLongHashCode();
 

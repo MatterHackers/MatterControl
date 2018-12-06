@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.Library.Export
 						string sourceExtension = $".{firstItem.ContentType}";
 						string assetPath = await AssetObject3D.AssetManager.StoreMcx(loadedItem, false);
 
-						string gcodePath = printer.GCodePath(HashGenerator.ComputeFileSHA1(assetPath));
+						string gcodePath = printer.GetGCodePathAndFileName(assetPath);
 
 						if (ApplicationSettings.ValidFileExtensions.IndexOf(sourceExtension, StringComparison.OrdinalIgnoreCase) >= 0
 							|| string.Equals(sourceExtension, ".mcx", StringComparison.OrdinalIgnoreCase))
