@@ -3257,10 +3257,4 @@ If you experience adhesion problems, please re-run leveling."
 			});
 		}
 	}
-
-	public class PartWorkspace
-	{
-		public string Name { get; set; }
-		public BedConfig SceneContext { get; set; }
-	}
 }
