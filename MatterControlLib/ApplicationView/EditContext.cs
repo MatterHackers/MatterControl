@@ -27,11 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.IO;
 using MatterControl.Printing;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl
 {
@@ -55,7 +52,7 @@ namespace MatterHackers.MatterControl
 
 					if (_sourceItem is FileSystemFileItem fileItem)
 					{
-						printItem = new PrintItemWrapper(new PrintItem(fileItem.FileName, fileItem.Path));
+						this.SourceFilePath = fileItem.Path;
 					}
 				}
 			}
@@ -64,16 +61,16 @@ namespace MatterHackers.MatterControl
 		// Natural path
 		private string GCodePath(PrinterConfig printer)
 		{
-			if (printItem != null)
+			if (File.Exists(this.SourceFilePath))
 			{
-				return printer.GetGCodePath(printItem.FileLocation);
+				return printer.GetGCodePath(this.SourceFilePath);
 			}
 
 			return null;
 		}
 
 		// Override path
-		public string GCodeOverridePath(PrinterConfig printer)
+		private string GCodeOverridePath(PrinterConfig printer)
 		{
 			return Path.ChangeExtension(GCodePath(printer), GCodeFile.PostProcessedExtension);
 		}
@@ -89,15 +86,9 @@ namespace MatterHackers.MatterControl
 			return GCodePath(printer);
 		}
 
-		public string SourceFilePath => printItem?.FileLocation;
+		public string SourceFilePath { get; private set; }
 
 		public bool FreezeGCode { get; set; }
-
-		/// <summary>
-		/// Short term stop gap that should only be used until GCode path helpers, hash code and print recovery components can be extracted
-		/// </summary>
-		[Obsolete]
-		internal PrintItemWrapper printItem { get; set; }
 
 		internal void Save(IObject3D scene)
 		{
