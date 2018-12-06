@@ -62,12 +62,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public string CreateMovementLine(PrinterMove currentDestination)
 		{
-			return CreateMovementLine(currentDestination, PrinterMove.Nowhere);
+			return CreateMovementLine(currentDestination, PrinterMove.Unknown);
 		}
 
 		public string CreateMovementLine(PrinterMove destination, PrinterMove start)
 		{
-			bool moveHasExtrusion = destination.extrusion != start.extrusion;
+			bool moveHasExtrusion = destination.extrusion != double.PositiveInfinity && destination.extrusion != start.extrusion;
 
 			string command = (useG0ForMovement && !moveHasExtrusion) ? "G0 " : "G1 ";
 
@@ -77,11 +77,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				sb.AppendFormat("X{0:0.##} ", destination.position.X);
 			}
-			if (destination.position.Y != start.position.Y)
+			if (destination.position.Y != double.PositiveInfinity
+				&& destination.position.Y != start.position.Y)
 			{
 				sb.AppendFormat("Y{0:0.##} ", destination.position.Y);
 			}
-			if (destination.position.Z != start.position.Z)
+			if (destination.position.Z != double.PositiveInfinity
+				&& destination.position.Z != start.position.Z)
 			{
 				sb.AppendFormat("Z{0:0.###} ", destination.position.Z);
 			}
@@ -91,7 +93,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				sb.AppendFormat("E{0:0.###} ", destination.extrusion);
 			}
 
-			if (destination.feedRate != start.feedRate)
+			if (destination.feedRate != double.PositiveInfinity
+				&& destination.feedRate != start.feedRate)
 			{
 				sb.AppendFormat("F{0:0.##}", destination.feedRate);
 			}

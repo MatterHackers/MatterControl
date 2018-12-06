@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override void SetPrinterPosition(PrinterMove position)
 		{
-			this.LastDestination = position;
+			this.LastDestination.CopyKnowSettings(position);
 			internalStream.SetPrinterPosition(this.LastDestination);
 		}
 

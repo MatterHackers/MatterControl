@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class ProcessWriteRegexStream : GCodeStreamProxy
 	{
-		private PrinterMove currentMove = new PrinterMove();
+		private PrinterMove currentMove = PrinterMove.Unknown;
 
 		private static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
 
@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				GCodeFile.GetFirstNumberAfter("Z", lineToSend, ref this.currentMove.position.Z);
 				GCodeFile.GetFirstNumberAfter("E", lineToSend, ref this.currentMove.extrusion);
 
-				// tell the steam pipeline what the actual printer position is
+				// tell the stream pipeline what the actual printer position is
 				this.SetPrinterPosition(this.currentMove);
 			}
 
@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override void SetPrinterPosition(PrinterMove position)
 		{
-			currentMove = position;
+			this.currentMove.CopyKnowSettings(position);
 			internalStream.SetPrinterPosition(currentMove);
 		}
 	}

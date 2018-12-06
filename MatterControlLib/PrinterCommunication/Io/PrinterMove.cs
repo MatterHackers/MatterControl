@@ -28,12 +28,13 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.VectorMath;
+using System;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public struct PrinterMove
 	{
-		public static readonly PrinterMove Nowhere = new PrinterMove()
+		public static readonly PrinterMove Unknown = new PrinterMove()
 		{
 			position = new Vector3(double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity),
 			extrusion = double.PositiveInfinity,
@@ -41,8 +42,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		};
 
 		public static readonly PrinterMove Zero;
+
 		public double extrusion;
+
 		public double feedRate;
+
 		public Vector3 position;
 
 		public PrinterMove(Vector3 absoluteDestination, double currentExtruderDestination, double currentFeedRate) : this()
@@ -52,11 +56,29 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			this.feedRate = currentFeedRate;
 		}
 
+		public bool FullyKnown
+		{
+			get
+			{
+				return extrusion != Unknown.extrusion
+					&& feedRate != Unknown.feedRate
+					&& position != Unknown.position;
+			}
+		}
+
 		public double LengthSquared
 		{
 			get
 			{
 				return position.LengthSquared;
+			}
+		}
+
+		public bool PositionFullyKnown
+		{
+			get
+			{
+				return position != Unknown.position;
 			}
 		}
 
@@ -82,6 +104,30 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			left.extrusion += right.extrusion;
 			left.feedRate += right.feedRate;
 			return left;
+		}
+
+		public void CopyKnowSettings(PrinterMove copyFrom)
+		{
+			if (copyFrom.position.X != double.PositiveInfinity)
+			{
+				this.position.X = copyFrom.position.X;
+			}
+			if (copyFrom.position.Y != double.PositiveInfinity)
+			{
+				this.position.Y = copyFrom.position.Y;
+			}
+			if (copyFrom.position.Z != double.PositiveInfinity)
+			{
+				this.position.Z = copyFrom.position.Z;
+			}
+			if (copyFrom.extrusion != double.PositiveInfinity)
+			{
+				this.extrusion = copyFrom.extrusion;
+			}
+			if (copyFrom.feedRate != double.PositiveInfinity)
+			{
+				this.feedRate = copyFrom.feedRate;
+			}
 		}
 	}
 }
