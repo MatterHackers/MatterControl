@@ -36,6 +36,42 @@ namespace MatterControl.Printing
 	{
 		public byte[] byteLine;
 
+		public bool clientInsertion;
+
+		// Absolute is the RepRap default
+		public MovementTypes movementType = MovementTypes.Absolute;
+
+		public float secondsThisLine;
+
+		public float secondsToEndFromHere;
+
+		private Vector3Float xyzPosition = new Vector3Float();
+
+		public PrinterMachineInstruction(string Line)
+		{
+			this.Line = Line;
+		}
+
+		public PrinterMachineInstruction(string Line, PrinterMachineInstruction copy, bool clientInsertion = false)
+			: this(Line)
+		{
+			xyzPosition = copy.xyzPosition;
+			FeedRate = copy.FeedRate;
+			EPosition = copy.EPosition;
+			movementType = copy.movementType;
+			secondsToEndFromHere = copy.secondsToEndFromHere;
+			ExtruderIndex = copy.ExtruderIndex;
+			this.clientInsertion = clientInsertion;
+		}
+
+		public enum MovementTypes { Absolute, Relative };
+
+		public float EPosition { get; set; }
+
+		public int ExtruderIndex { get; set; }
+
+		public float FeedRate { get; set; }
+
 		public string Line
 		{
 			get
@@ -48,38 +84,6 @@ namespace MatterControl.Printing
 				byteLine = Encoding.Default.GetBytes(value);
 			}
 		}
-
-		private Vector3Float xyzPosition = new Vector3Float();
-		private float ePosition = 0;
-		private float feedRate = 0;
-
-		public enum MovementTypes { Absolute, Relative };
-
-		// Absolute is the RepRap default
-		public MovementTypes movementType = MovementTypes.Absolute;
-
-		public float secondsThisLine;
-		public float secondsToEndFromHere;
-		public bool clientInsertion;
-
-		public PrinterMachineInstruction(string Line)
-		{
-			this.Line = Line;
-		}
-
-		public PrinterMachineInstruction(string Line, PrinterMachineInstruction copy, bool clientInsertion = false)
-			: this(Line)
-		{
-			xyzPosition = copy.xyzPosition;
-			feedRate = copy.feedRate;
-			ePosition = copy.ePosition;
-			movementType = copy.movementType;
-			secondsToEndFromHere = copy.secondsToEndFromHere;
-			ExtruderIndex = copy.ExtruderIndex;
-			this.clientInsertion = clientInsertion;
-		}
-
-		public int ExtruderIndex { get; set; }
 
 		public Vector3 Position
 		{
@@ -132,21 +136,6 @@ namespace MatterControl.Printing
 					xyzPosition.z += (float)value;
 				}
 			}
-		}
-
-		public double EPosition
-		{
-			get { return ePosition; }
-			set
-			{
-				ePosition = (float)value;
-			}
-		}
-
-		public double FeedRate
-		{
-			get { return feedRate; }
-			set { feedRate = (float)value; }
 		}
 	}
 }

@@ -108,12 +108,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override void SetPrinterPosition(PrinterMove position)
 		{
-			if (LevelingActive)
+			if (LevelingActive
+				&& position.PositionFullyKnown)
 			{
 				string lineBeingSent = CreateMovementLine(position);
 				string leveledPosition = GetLeveledPosition(lineBeingSent, position);
 
-				PrinterMove leveledDestination = GetPosition(leveledPosition, PrinterMove.Nowhere);
+				PrinterMove leveledDestination = GetPosition(leveledPosition, PrinterMove.Unknown);
 				PrinterMove deltaToLeveledPosition = leveledDestination - position;
 
 				PrinterMove withoutLevelingOffset = position - deltaToLeveledPosition;
