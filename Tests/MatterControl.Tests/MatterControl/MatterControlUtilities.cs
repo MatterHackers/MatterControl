@@ -177,8 +177,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void OpenEmptyPartTab(this AutomationRunner testRunner)
 		{
+			SystemWindow systemWindow;
+			testRunner.GetWidgetByName("Hardware Tab", out systemWindow, 10);
+			testRunner.WaitforDraw(systemWindow);
+
 			// Latest product starts at empty part tab
-			if (testRunner.NameExists("Cancel Wizard Button"))
+			
+			// close the welcome message
+			if (testRunner.NameExists("Cancel Wizard Button", 10))
 			{
 				testRunner.ClickByName("Cancel Wizard Button");
 			}
