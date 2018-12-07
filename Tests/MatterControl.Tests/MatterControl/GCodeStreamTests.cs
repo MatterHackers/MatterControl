@@ -140,17 +140,7 @@ namespace MatterControl.Tests.MatterControl
 			// All communication should go through stream to minimize the difference between printing and controlling while not printing (all printing in essence).
 			string[] expected = new string[]
 			{
-			"G1 E1 F300",
-			"G1 E2",
-			"G1 E3",
-			"G1 E4",
-			"G1 E5",
-			"G1 E6",
-			"G1 E7",
-			"G1 E8",
-			"G1 E9",
-			"G1 E10",
-			"G1 E11",
+			"G1 E11 F300",
 			"G92 E0",
 			"",
 			"G1 E-1 F302",
@@ -224,8 +214,7 @@ namespace MatterControl.Tests.MatterControl
 			// All communication should go through stream to minimize the difference between printing and controlling while not printing (all printing in essence).
 			string[] expected = new string[]
 			{
-				"G1 Z-1 F300",
-				"G1 Z-2",
+				"G1 Z-2 F300",
 				"G92 Z0",
 				"G1 Z1 F300",
 				"G1 Z2",
