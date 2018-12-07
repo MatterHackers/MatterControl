@@ -222,7 +222,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MapLayerChangeGCode(printer, "layer_gcode", "layerChangeCode"),
 				new ScaledSingleNumber(printer, "fill_density", "infillPercent", 100),
 				new ScaledSingleNumber(printer, SettingsKey.perimeter_start_end_overlap, "perimeterStartEndOverlapRatio", .01),
-				new SupportExtrusionWidth(printer, "support_material_extrusion_width","supportExtrusionPercent"),
 				new ValuePlusConstant(printer, "raft_extruder", "raftExtruder", -1),
 				new ValuePlusConstant(printer, "support_material_extruder", "supportExtruder", -1),
 				new ValuePlusConstant(printer, "support_material_interface_extruder", "supportInterfaceExtruder", -1),
