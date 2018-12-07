@@ -40,9 +40,6 @@ namespace MatterControl.Printing
 {
 	public class GCodeMemoryFile : GCodeFile
 	{
-		private double amountOfAccumulatedEWhileParsing = 0;
-
-		private Vector2 center = Vector2.Zero;
 		private double parsingLastZ;
 		private bool gcodeHasExplicitLayerChangeInfo = false;
 
@@ -78,7 +75,6 @@ namespace MatterControl.Printing
 			if (loadedFile != null)
 			{
 				this.IndexOfLayerStart = loadedFile.IndexOfLayerStart;
-				this.center = loadedFile.center;
 				this.parsingLastZ = loadedFile.parsingLastZ;
 				this.GCodeCommandQueue = loadedFile.GCodeCommandQueue;
 			}
@@ -117,7 +113,7 @@ namespace MatterControl.Printing
 			GCodeCommandQueue.Insert(insertIndex, printerMachineInstruction);
 		}
 
-		public static GCodeMemoryFile Load(Stream fileStream, 
+		public static GCodeMemoryFile Load(Stream fileStream,
 			Vector4 maxAccelerationMmPerS2,
 			Vector4 maxVelocityMmPerS,
 			Vector4 velocitySameAsStopMmPerS,
@@ -129,7 +125,7 @@ namespace MatterControl.Printing
 			{
 				using (var reader = new StreamReader(fileStream))
 				{
-					var gcodeMemoryFile = ParseFileContents(reader.ReadToEnd(), 
+					var gcodeMemoryFile = ParseFileContents(reader.ReadToEnd(),
 						maxAccelerationMmPerS2, maxVelocityMmPerS, velocitySameAsStopMmPerS, speedMultiplier,
 						cancellationToken, progressReporter);
 
@@ -157,7 +153,7 @@ namespace MatterControl.Printing
 				{
 					using (var stream = File.OpenRead(filePath))
 					{
-						return Load(stream, 
+						return Load(stream,
 							maxAccelerationMmPerS2,
 							maxVelocityMmPerS,
 							velocitySameAsStopMmPerS,
@@ -327,7 +323,7 @@ namespace MatterControl.Printing
 				lineIndex++;
 			}
 
-			loadedGCodeFile.AnalyzeGCodeLines(cancellationToken, progressReporter, 
+			loadedGCodeFile.AnalyzeGCodeLines(cancellationToken, progressReporter,
 				maxAccelerationMmPerS2,
 				maxVelocityMmPerS,
 				velocitySameAsStopMmPerS,
@@ -392,7 +388,7 @@ namespace MatterControl.Printing
 					}
 				}
 
-				if (feedRateMmPerMin > 0) 
+				if (feedRateMmPerMin > 0)
 				{
 					var timeForE = Estimator.GetSecondsForMovement(deltaEPositionThisLine,
 						feedRateMmPerMin / 60.0,
@@ -413,7 +409,7 @@ namespace MatterControl.Printing
 
 				if (progressReporter != null && maxProgressReport.ElapsedMilliseconds > 200)
 				{
-					progressReporter(((double) lineIndex / GCodeCommandQueue.Count / 2) + .5, "");
+					progressReporter(((double)lineIndex / GCodeCommandQueue.Count / 2) + .5, "");
 					if (cancellationToken.IsCancellationRequested)
 					{
 						return;
@@ -430,11 +426,6 @@ namespace MatterControl.Printing
 				accumulatedTime += line.secondsThisLine;
 				line.secondsToEndFromHere = (float)accumulatedTime;
 			}
-		}
-
-		public Vector2 Center
-		{
-			get { return center; }
 		}
 
 		public override double PercentComplete(int instructionIndex)
@@ -498,11 +489,11 @@ namespace MatterControl.Printing
 					// Stop on material exhausted / Switch I/O pin
 					break;
 
-                case "72":
-                    // makerbot, Play tone or song
-                    break;
+				case "72":
+					// makerbot, Play tone or song
+					break;
 
-                case "73":
+				case "73":
 					// makerbot, Manually set build percentage
 					break;
 
@@ -510,9 +501,9 @@ namespace MatterControl.Printing
 					// set extruder to absolute mode
 					break;
 
-                case "83":
-                    //Set extruder to relative mode
-                    break;
+				case "83":
+					//Set extruder to relative mode
+					break;
 
 				case "84":
 					// lineString = "M84     ; disable motors\r"
@@ -573,19 +564,19 @@ namespace MatterControl.Printing
 					// recall stored home offsets for axis xyzab
 					break;
 
-                case "133":
-                    // MakerBot wait for toolhead to heat
-                    break;
+				case "133":
+					// MakerBot wait for toolhead to heat
+					break;
 
-                case "134":
-                    // MakerBot wait for platform to reach target temp
-                    break;
+				case "134":
+					// MakerBot wait for platform to reach target temp
+					break;
 
-                case "135":
-                    // MakerBot change toolhead
-                    break;
+				case "135":
+					// MakerBot change toolhead
+					break;
 
-                case "140":
+				case "140":
 					// set bed temperature
 					break;
 
@@ -630,15 +621,15 @@ namespace MatterControl.Printing
 
 				case "565": // M565: Set Z probe offset
 					break;
-                case "1200"://M1200 Makerbot Fake gCode command for start build notification
-                    break;
-                case "1201"://M1201 Makerbot Fake gCode command for end build notification
-                    break;
-                case "1202"://M1202 Makerbot Fake gCode command for reset board
-                    break;
+				case "1200"://M1200 Makerbot Fake gCode command for start build notification
+					break;
+				case "1201"://M1201 Makerbot Fake gCode command for end build notification
+					break;
+				case "1202"://M1202 Makerbot Fake gCode command for reset board
+					break;
 
-                default:
-                    break;
+				default:
+					break;
 			}
 		}
 
@@ -684,19 +675,12 @@ namespace MatterControl.Printing
 						double valueE = 0;
 						if (GCodeFile.GetFirstNumberAfter("E", lineString, ref valueE))
 						{
-							if (processingMachineState.movementType == PrinterMachineInstruction.MovementTypes.Absolute)
-							{
-								processingMachineState.EPosition = valueE + amountOfAccumulatedEWhileParsing;
-							}
-							else
-							{
-								processingMachineState.EPosition += valueE;
-							}
+							processingMachineState.EPosition = (float)valueE;
 						}
 						double valueF = 0;
 						if (GCodeFile.GetFirstNumberAfter("F", lineString, ref valueF))
 						{
-							processingMachineState.FeedRate = valueF;
+							processingMachineState.FeedRate = (float)valueF;
 						}
 					}
 
@@ -743,17 +727,11 @@ namespace MatterControl.Printing
 
 				case "92":
 					// set current head position values (used to reset origin)
-					double ePosition = 0;
-					if (GetFirstNumberAfter("E", lineString, ref ePosition))
-					{
-						// remember how much e position we just gave up
-						amountOfAccumulatedEWhileParsing = (processingMachineState.EPosition - ePosition);
-					}
 					break;
 
-                case "130":
-                    //Set Digital Potentiometer value
-                    break;
+				case "130":
+					//Set Digital Potentiometer value
+					break;
 
 				case "161":
 					// home x,y axis minimum
@@ -763,8 +741,8 @@ namespace MatterControl.Printing
 					// home z axis maximum
 					break;
 
-                default:
-                    break;
+				default:
+					break;
 			}
 		}
 
@@ -848,8 +826,8 @@ namespace MatterControl.Printing
 				}
 
 				filamentUsedMmCache = filamentMm;
-                diameterOfFilamentUsedMmCache = filamentDiameter;
-            }
+				diameterOfFilamentUsedMmCache = filamentDiameter;
+			}
 
 			return filamentUsedMmCache;
 		}
@@ -890,7 +868,7 @@ namespace MatterControl.Printing
 				// check the beginning of the file for the filament diameter
 				for (int i = 0; i < Math.Min(100, GCodeCommandQueue.Count); i++)
 				{
-					if(FindDiameter(i, ref filamentDiameterCache))
+					if (FindDiameter(i, ref filamentDiameterCache))
 					{
 						break;
 					}
@@ -909,7 +887,7 @@ namespace MatterControl.Printing
 					}
 				}
 
-				if(filamentDiameterCache == 0)
+				if (filamentDiameterCache == 0)
 				{
 					// it is still 0 so set it to something so we render
 					filamentDiameterCache = 1.75;
@@ -994,7 +972,7 @@ namespace MatterControl.Printing
 			if (instructionIndex >= 0
 				&& instructionIndex <= LineCount)
 			{
-				for(var i = IndexOfLayerStart.Count - 1; i >=0; i--)
+				for (var i = IndexOfLayerStart.Count - 1; i >= 0; i--)
 				{
 					var lineStart = IndexOfLayerStart[i];
 
@@ -1036,7 +1014,7 @@ namespace MatterControl.Printing
 							line = GCodeCommandQueue[Math.Min(GCodeCommandQueue.Count - 1, lastPrintLine)].Line;
 							lastPrintLine++;
 
-						} while (line != "; MatterSlice Completed Successfully" 
+						} while (line != "; MatterSlice Completed Successfully"
 							&& lastPrintLine < endIndex);
 					}
 

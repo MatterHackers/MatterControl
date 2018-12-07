@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			this.MaxSegmentLength = maxSegmentLength;
 		}
 
-		PrinterMove lastDestination { get; set; } = PrinterMove.Unknown;
+		PrinterMove lastDestination = PrinterMove.Unknown;
 		public double MaxSegmentLength { get; set; }
 
 		public void Cancel()

@@ -35,7 +35,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class FeedRateMultiplyerStream : GCodeStreamProxy
 	{
-		public PrinterMove LastDestination { get; private set; }
+		private PrinterMove lastDestination;
 
 		public FeedRateMultiplyerStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
@@ -46,8 +46,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override void SetPrinterPosition(PrinterMove position)
 		{
-			this.LastDestination.CopyKnowSettings(position);
-			internalStream.SetPrinterPosition(this.LastDestination);
+			this.lastDestination.CopyKnowSettings(position);
+			internalStream.SetPrinterPosition(this.lastDestination);
 		}
 
 		public override string ReadLine()
@@ -63,13 +63,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			if (lineToSend != null
 				&& LineIsMovement(lineToSend))
 			{
-				PrinterMove currentMove = GetPosition(lineToSend, this.LastDestination);
+				PrinterMove currentMove = GetPosition(lineToSend, this.lastDestination);
 
 				PrinterMove moveToSend = currentMove;
 				moveToSend.feedRate *= FeedRateRatio;
 
-				lineToSend = CreateMovementLine(moveToSend, this.LastDestination);
-				this.LastDestination = currentMove;
+				lineToSend = CreateMovementLine(moveToSend, this.lastDestination);
+				this.lastDestination = currentMove;
 				return lineToSend;
 			}
 
