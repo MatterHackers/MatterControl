@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Layer(s) To Pause Field");
 					testRunner.Type("2");
 
-					testRunner.ClickByName("Start Print Button");
+					testRunner.StartPrint();
 
 					// Wait for the Ok button
 					testRunner.WaitForName("Yes Button", 30);
