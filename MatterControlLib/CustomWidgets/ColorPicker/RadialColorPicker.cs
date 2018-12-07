@@ -53,6 +53,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 		private double colorAngle = 0;
 		private bool mouseDownOnRing;
 		private Vector2 unitTrianglePosition = new Vector2(1, .5);
+		private float alpha;
 
 		public RadialColorPicker()
 		{
@@ -75,6 +76,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			}
 		}
 
+		public event EventHandler SelectedColorChanged;
+
 		public bool mouseDownOnTriangle { get; private set; }
 		public double RingWidth { get => Width / 10; }
 
@@ -82,15 +85,23 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 		{
 			get
 			{
-				return ColorF.FromHSL(colorAngle / MathHelper.Tau, unitTrianglePosition.X, unitTrianglePosition.Y).ToColor();
+				return ColorF.FromHSL(colorAngle / MathHelper.Tau, unitTrianglePosition.X, unitTrianglePosition.Y, alpha).ToColor();
 			}
 
 			set
 			{
-				value.ToColorF().GetHSL(out double h, out double s, out double l);
-				colorAngle = h * MathHelper.Tau;
-				unitTrianglePosition.X = s;
-				unitTrianglePosition.Y = l;
+				if (value != SelectedColor)
+				{
+					value.ToColorF().GetHSL(out double h, out double s, out double l);
+					colorAngle = h * MathHelper.Tau;
+					unitTrianglePosition.X = s;
+					unitTrianglePosition.Y = l;
+					alpha = value.Alpha0To1;
+
+					CLampTrianglePosition(ref unitTrianglePosition);
+
+					SelectedColorChanged?.Invoke(this, null);
+				}
 			}
 		}
 
@@ -146,7 +157,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 			// draw the color circle on the triangle
 			var triangleColorCenter = TriangleToWidgetTransform(colorAngle).Transform(unitTrianglePosition);
-			graphics2D.Circle(triangleColorCenter, RingWidth / 2 - 2, SelectedColor);
+			graphics2D.Circle(triangleColorCenter, RingWidth / 2 - 2, new Color(SelectedColor, 255));
 			graphics2D.Ring(triangleColorCenter, RingWidth / 2 - 2, 2, Color.White);
 
 			// draw the color circle on the ring
@@ -166,6 +177,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 		{
 			var center = new Vector2(Width / 2, Height / 2);
 			var direction = mouseEvent.Position - center;
+			var startColor = SelectedColor;
 
 			if (mouseEvent.Button == MouseButtons.Left)
 			{
@@ -194,11 +206,18 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 				}
 			}
 
+			if(startColor != SelectedColor)
+			{
+				SelectedColorChanged?.Invoke(this, null);
+			}
+
 			base.OnMouseDown(mouseEvent);
 		}
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
+			var startColor = SelectedColor;
+
 			if (mouseDownOnRing)
 			{
 				var center = new Vector2(Width / 2, Height / 2);
@@ -215,6 +234,11 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			{
 				unitTrianglePosition = WidgetToUnitTriangle(mouseEvent.Position).position;
 				Invalidate();
+			}
+
+			if (startColor != SelectedColor)
+			{
+				SelectedColorChanged?.Invoke(this, null);
 			}
 
 			base.OnMouseMove(mouseEvent);
@@ -286,8 +310,10 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 		{
 			var start = new Vector2(radius, 0);
 
+			var position = this.TransformToScreenSpace(this.Position);
+
 			var center = new Vector2(Width / 2, Height / 2);
-			return center + Vector2.Rotate(start, angle);
+			return position + center + Vector2.Rotate(start, angle);
 		}
 
 		private Vector2 GetTrianglePoint(int index, double radius, double pontingAngle)
@@ -332,6 +358,13 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			var trianglePosition = TriangleToWidgetTransform(colorAngle)
 				.InverseTransform(widgetPosition);
 
+			bool changed = CLampTrianglePosition(ref trianglePosition);
+
+			return (!changed, trianglePosition);
+		}
+
+		private static bool CLampTrianglePosition(ref Vector2 trianglePosition)
+		{
 			bool changed = false;
 			trianglePosition.X = agg_basics.Clamp(trianglePosition.X, 0, 1, ref changed);
 			trianglePosition.Y = agg_basics.Clamp(trianglePosition.Y, 0, 1, ref changed);
@@ -341,7 +374,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 				.5 + (1 - trianglePosition.X) / 2,
 				ref changed);
 
-			return (!changed, trianglePosition);
+			return changed;
 		}
 	}
 }

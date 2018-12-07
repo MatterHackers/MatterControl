@@ -109,7 +109,6 @@ Advanced
       Extrusion Width
         first_layer_extrusion_width
         external_perimeter_extrusion_width
-        support_material_extrusion_width
     Retraction
       After Move
         retract_length

@@ -34,6 +34,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets.ColorPicker;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -53,8 +54,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var menuTheme = AppContext.MenuTheme;
 
+			MakeScrollable = false;
+
+			PopupHAnchor = HAnchor.Fit;
+			PopupVAnchor = VAnchor.Fit;
+
 			this.DynamicPopupContent = () =>
 			{
+#if false
+				var container = new GuiWidget(128, 128);
+				var picker = new RadialColorPicker()
+				{
+					SelectedColor = selectedColor,
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Stretch,
+				};
+
+				picker.SelectedColorChanged += (s, newColor) => colorButton.BackgroundColor = picker.SelectedColor;
+
+				container.AddChild(picker);
+
+				return container;
+#else
 				return new ColorSwatchSelector(menuTheme,
 					buttonSize: 16,
 					buttonSpacing: new BorderDouble(1, 1, 0, 0),
@@ -65,6 +86,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					HAnchor = HAnchor.Fit,
 					VAnchor = VAnchor.Fit
 				};
+#endif
 			};
 
 			colorButton = new ColorButton(selectedColor == Color.Transparent ? theme.SlightShade : selectedColor)
