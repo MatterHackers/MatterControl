@@ -323,6 +323,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ShowObjectEditor((IObject3DEditor editor, IObject3D item, string displayName) scopeItem, IObject3D rootSelection, bool allowOperations = true)
 		{
+			// TODO: Some editors make blind assumptions about context when using DragDropData for reference. Remove DragDropData from PublicPropertiesEditor and 
+			// similar widgets to ensure they use the context they're hosted in rather than cheating with the DragDropData reference. Until then this guard
+			// prevents invoking editors that depend on DragDropData while it's null
+			if (ApplicationController.Instance.DragDropData?.View3DWidget == null)
+			{
+				return;
+			}
+
 			var selectedItem = scopeItem.item;
 			var selectedItemType = selectedItem.GetType();
 

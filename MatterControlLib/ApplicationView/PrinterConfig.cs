@@ -34,16 +34,13 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
-	using System.IO;
 	using System.Threading;
 	using MatterHackers.Agg;
-	using MatterHackers.DataConverters3D;
 	using MatterHackers.Localizations;
-	using MatterHackers.MatterControl.DataStorage;
 	using MatterHackers.MatterControl.PrinterCommunication;
 	using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
-	using MatterHackers.MeshVisualizer;
 	using MatterHackers.VectorMath;
+	using Newtonsoft.Json;
 
 	public class PrinterConfig : IDisposable
 	{
@@ -55,6 +52,7 @@ namespace MatterHackers.MatterControl
 
 		public static PrinterConfig EmptyPrinter { get; } = new PrinterConfig();
 
+		[JsonIgnore]
 		public EngineMappingsMatterSlice EngineMappingsMatterSlice { get; }
 
 		// heating status
@@ -173,6 +171,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		[JsonIgnore]
 		public PrinterConnection Connection { get; }
 
 		public string PrinterConnectionStatus

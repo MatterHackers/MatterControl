@@ -27,43 +27,51 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
-	public class PartWorkspace
+	using MatterHackers.MatterControl.Library;
+	using Newtonsoft.Json.Linq;
+
+	public class LibraryItemConverter : JsonConverter<ILibraryItem>
 	{
-		private BedConfig _sceneContext { get; }
+		public override bool CanWrite => false;
 
-		public PartWorkspace()
+		public override ILibraryItem ReadJson(JsonReader reader, Type objectType, ILibraryItem existingValue, bool hasExistingValue, JsonSerializer serializer)
 		{
+			var jsonObject = JObject.Load(reader);
+
+			var item = new DummyItem();
+
+			serializer.Populate(jsonObject.CreateReader(), item);
+
+			return item;
 		}
 
-		public PartWorkspace(PrinterConfig printer)
-			: this (printer.Bed)
+		public override void WriteJson(JsonWriter writer, ILibraryItem value, JsonSerializer serializer)
 		{
-			this.Printer = printer;
-			this.PrinterID = printer.Settings.ID;
 		}
+	}
 
-		public PartWorkspace(BedConfig bedConfig)
-		{
-			_sceneContext = bedConfig;
-			Name = _sceneContext.EditContext?.SourceItem?.Name ?? "Unknown";
-		}
+	public class DummyItem : ILibraryItem
+	{
+		public string ID { get; set; }
 
 		public string Name { get; set; }
 
-		[JsonIgnore]
-		public BedConfig SceneContext => _sceneContext;
+		public bool IsProtected { get; set; }
 
-		public EditContext EditContext { get; set; }
+		public bool IsVisible { get; set; }
 
-		public string PrinterID { get; set; }
+		public DateTime DateModified { get; set; }
 
-		[JsonIgnore]
-		public PrinterConfig Printer { get; }
+		public DateTime DateCreated { get; set; }
 
-		public string ContentPath { get; set; }
+		public string Path { get; set; }
+
+		public string AssetPath { get; set; }
 	}
+
 }

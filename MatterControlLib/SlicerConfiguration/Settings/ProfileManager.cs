@@ -93,6 +93,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		public string ProfileThemeSetPath => Path.Combine(UserProfilesDirectory, "themeset.json");
 
+		[JsonIgnore]
+		public string OpenTabsPath => Path.Combine(UserProfilesDirectory, "opentabs.json");
+
 		/// <summary>
 		/// The user specific path to the Profiles document
 		/// </summary>
@@ -233,15 +236,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// Lazy load from db if null
 				if (profileIDsBackingField == null)
 				{
-					string profileIDs = UserSettings.Instance.get($"ActiveProfileIDs-{UserName}");
-					try
-					{
-						profileIDsBackingField = JsonConvert.DeserializeObject<List<string>>(profileIDs);
-					}
-					catch
-					{
-						profileIDsBackingField = new List<string>();
-					}
+					profileIDsBackingField = new List<string>();
 				}
 
 				return profileIDsBackingField;
@@ -251,28 +246,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		public IEnumerable<string> OpenPrinterIDs => _activeProfileIDs;
 
-		public void OpenPrinter(string printerID)
-		{
-			try
-			{
-				if (!_activeProfileIDs.Contains(printerID))
-				{
-					_activeProfileIDs.Add(printerID);
-					UserSettings.Instance.set($"ActiveProfileIDs-{UserName}", JsonConvert.SerializeObject(_activeProfileIDs));
-				}
-			}
-			catch
-			{
-			}
-		}
-
 		public void ClosePrinter(string printerID)
 		{
 			try
 			{
-				_activeProfileIDs.Remove(printerID);
-				UserSettings.Instance.set($"ActiveProfileIDs-{UserName}", JsonConvert.SerializeObject(_activeProfileIDs));
-
 				// Unregister listener
 				if (ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == printerID) is PrinterConfig printer)
 				{

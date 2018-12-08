@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -38,7 +39,9 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
@@ -295,10 +298,39 @@ namespace MatterHackers.MatterControl
 						StyledMessageBox.MessageType.YES_NO_WITHOUT_HIGHLIGHT);
 				});
 			}
-			else if(!ApplicationController.Instance.ApplicationExiting)
+			else if (!ApplicationController.Instance.ApplicationExiting)
 			{
 				// cancel the close so that we can save all our active work spaces
 				eventArgs.Cancel = true;
+
+				var workspaces = ApplicationController.Instance.Workspaces.Select(w =>
+				{
+					if (w.Printer == null)
+					{
+						return new PartWorkspace(w.SceneContext)
+						{
+							ContentPath = w.SceneContext.EditContext?.SourceFilePath,
+						};
+					}
+					else
+					{
+						return new PartWorkspace(w.Printer)
+						{
+							ContentPath = w.SceneContext.EditContext?.SourceFilePath,
+						};
+					}
+				});
+
+				// Persist part workspaces
+				File.WriteAllText(
+					ProfileManager.Instance.OpenTabsPath,
+					JsonConvert.SerializeObject(
+						workspaces,
+						Formatting.Indented,
+						new JsonSerializerSettings
+						{
+							NullValueHandling = NullValueHandling.Ignore
+						}));
 
 				UiThread.RunOnIdle(async () =>
 				{

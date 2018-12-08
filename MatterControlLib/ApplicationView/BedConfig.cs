@@ -60,10 +60,12 @@ namespace MatterHackers.MatterControl
 
 		public View3DConfig RendererOptions { get; } = new View3DConfig();
 
+		[JsonIgnore]
 		public PrinterConfig Printer { get; set; }
 
-		public EditContext EditContext { get; private set; }
+		public EditContext EditContext { get; set; }
 
+		[JsonIgnore]
 		public Mesh PrinterShape { get; private set; }
 
 		public SceneContextViewState ViewState { get; }
@@ -346,11 +348,14 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		[JsonIgnore]
 		public InteractiveScene Scene { get; } = new InteractiveScene();
 
 		public GCodeRenderInfo RenderInfo { get; set; }
 
 		private Mesh _bedMesh;
+
+		[JsonIgnore]
 		public Mesh Mesh
 		{
 			get
@@ -414,6 +419,7 @@ namespace MatterHackers.MatterControl
 
 		private Mesh _buildVolumeMesh;
 
+		[JsonIgnore]
 		public Mesh BuildVolumeMesh => _buildVolumeMesh;
 
 		public bool EditableScene => this.EditContext?.FreezeGCode != true;
