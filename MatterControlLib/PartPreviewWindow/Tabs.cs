@@ -357,6 +357,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public string Key { get; }
 
+		private bool hasClose = false;
+
 		public SimpleTab(string tabKey, string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null, bool hasClose = true, double pointSize = 12, ImageBuffer iconImage = null)
 		{
 			this.Key = tabKey;
@@ -365,6 +367,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.Padding = 0;
 			this.Margin = 0;
 			this.theme = theme;
+			this.hasClose = hasClose;
 
 			this.TabContent = tabContent;
 			this.parentTabControl = parentTabControl;
@@ -396,7 +399,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			if(mouseEvent.Button == MouseButtons.Middle)
+			if(mouseEvent.Button == MouseButtons.Middle
+				&& hasClose)
 			{
 				ConditionallyCloseTab();
 			}
