@@ -71,6 +71,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			this.AddChild(AddToDisableableList(GetHWDestinationBar()));
 
+			this.AddChild(new TextWidget("Temperature controls can be found above in the temperature menus", textColor: theme.LightTextColor, pointSize: theme.FontSize8)
+			{
+				Margin = new BorderDouble(0, 5, 0, 10),
+				HAnchor = HAnchor.Left
+			});
+
 			// Register listeners
 			printer.Connection.DestinationChanged += Connection_DestinationChanged;
 		}
