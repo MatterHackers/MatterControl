@@ -258,6 +258,8 @@ namespace MatterHackers.MatterControl.Library.Export
 				var queueStream = new QueuedCommandsStream(printer, gCodeFileStream);
 				GCodeStream accumulatedStream = queueStream;
 
+				accumulatedStream = new RelativeToAbsoluteStream(printer, accumulatedStream);
+
 				if (printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting))
 				{
 					accumulatedStream = new BabyStepsStream(printer, accumulatedStream, 1);
