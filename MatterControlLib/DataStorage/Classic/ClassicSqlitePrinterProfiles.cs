@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			// Open the first imported printer if undefined
 			if (!ProfileManager.Instance.OpenPrinterIDs.Any())
 			{
-				ApplicationController.Instance.LoadPrinter(printer.Id.ToString()).ConfigureAwait(false);
+				ApplicationController.Instance.OpenEmptyPrinter(printer.Id.ToString()).ConfigureAwait(false);
 			}
 
 			// Import macros from the database

@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 			};
 			openButton.Click += (s, e) =>
 			{
-				ApplicationController.Instance.LoadPrinter(printerInfo.ID).ConfigureAwait(false);
+				ApplicationController.Instance.OpenEmptyPrinter(printerInfo.ID).ConfigureAwait(false);
 			};
 			headingRow.AddChild(openButton);
 

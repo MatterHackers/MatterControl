@@ -1808,7 +1808,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public async Task<PrinterConfig> LoadPrinter(string printerID, bool loadPlateFromHistory = true)
+		public async Task<PrinterConfig> LoadPrinter(string printerID)
 		{
 			var printer = this.ActivePrinters.FirstOrDefault(p => p.Settings.ID == printerID);
 			if (printer == null)
@@ -1817,11 +1817,6 @@ namespace MatterHackers.MatterControl
 					&& ProfileManager.Instance[printerID] != null)
 				{
 					printer = new PrinterConfig(await ProfileManager.LoadSettingsAsync(printerID));
-				}
-
-				if (loadPlateFromHistory)
-				{
-					await printer.Bed.LoadPlateFromHistory();
 				}
 			}
 
@@ -1833,6 +1828,39 @@ namespace MatterHackers.MatterControl
 			}
 
 			return printer;
+		}
+
+		public async Task<PrinterConfig> OpenEmptyPrinter(string printerID)
+		{
+			PartWorkspace workspace = null;
+
+			if (!string.IsNullOrEmpty(printerID)
+				&& ProfileManager.Instance[printerID] != null)
+			{
+				var printer = await ApplicationController.Instance.LoadPrinter(printerID);
+
+				// Add workspace for printer
+				workspace = new PartWorkspace(printer);
+
+				var history = ApplicationController.Instance.Library.PlatingHistory;
+
+				await workspace.SceneContext.LoadContent(new EditContext()
+				{
+					ContentStore = history,
+					SourceItem = history.NewPlatingItem()
+				});
+
+				if (workspace.Printer != null)
+				{
+					workspace.Name = workspace.Printer.Settings.GetValue(SettingsKey.printer_name);
+				}
+
+				ApplicationController.Instance.OpenWorkspace(workspace);
+
+				return printer;
+			}
+
+			return null;
 		}
 
 		public void OpenWorkspace(PartWorkspace workspace)
@@ -3247,7 +3275,7 @@ If you experience adhesion problems, please re-run leveling."
 										&& ProfileManager.Instance[printerID] != null)
 									{
 										// Add workspace for printer
-										workspace = new PartWorkspace(await applicationController.LoadPrinter(persistedWorkspace.PrinterID, false));
+										workspace = new PartWorkspace(await applicationController.LoadPrinter(persistedWorkspace.PrinterID));
 									}
 									else
 									{
