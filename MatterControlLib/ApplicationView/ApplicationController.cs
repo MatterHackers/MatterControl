@@ -3246,13 +3246,12 @@ If you experience adhesion problems, please re-run leveling."
 									if (!string.IsNullOrEmpty(printerID)
 										&& ProfileManager.Instance[printerID] != null)
 									{
-										var itemPrinter = await applicationController.LoadPrinter(persistedWorkspace.PrinterID, false);
-
-										// Add workspace for printer plate
-										workspace = new PartWorkspace(itemPrinter);
+										// Add workspace for printer
+										workspace = new PartWorkspace(await applicationController.LoadPrinter(persistedWorkspace.PrinterID, false));
 									}
 									else
 									{
+										// Add workspace for part
 										workspace = new PartWorkspace(new BedConfig(history));
 									}
 
@@ -3272,7 +3271,6 @@ If you experience adhesion problems, please re-run leveling."
 									}
 
 									applicationController.OpenWorkspace(workspace);
-
 								}
 							}
 						}
