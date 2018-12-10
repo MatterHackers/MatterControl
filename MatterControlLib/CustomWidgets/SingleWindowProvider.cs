@@ -67,6 +67,8 @@ namespace MatterHackers.Agg.UI
 					PlatformWindow = platformWindow
 				};
 
+				_openWindows.FirstOrDefault().Unfocus();
+
 				systemWindow.HAnchor = HAnchor.Stretch;
 				systemWindow.VAnchor = VAnchor.Stretch;
 

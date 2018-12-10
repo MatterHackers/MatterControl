@@ -189,10 +189,12 @@ namespace MatterHackers.MatterControl.ActionBar
 		private string waitingForExtruderToHeatMessage = "The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}".Localize();
 		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
 		private RunningInterval runningInterval;
+		private ThemeConfig theme;
 
 		public TemperatureWidgetHotend(PrinterConfig printer, int hotendIndex, ThemeConfig theme, int totalHotends)
 			: base(printer, "150.3°", theme)
 		{
+			this.theme = theme;
 			this.Name = $"Hotend {hotendIndex}";
 			this.hotendIndex = hotendIndex;
 			this.DisplayCurrentTemperature();
@@ -400,7 +402,7 @@ namespace MatterHackers.MatterControl.ActionBar
 					container.AddChild(new TextWidget("Extruder".Localize() + " " + (extruderIndex + 1).ToString(), pointSize: menuTheme.DefaultFontSize)
 					{
 						AutoExpandBoundsToText = true,
-						TextColor = Color.Black,
+						TextColor = theme.TextColor,
 						HAnchor = HAnchor.Left,
 					});
 					container.AddChild(new ControlContentExtruder(printer, extruderIndex, menuTheme)
