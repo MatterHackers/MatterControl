@@ -42,6 +42,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
+using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
@@ -1856,7 +1857,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				case CommunicationStates.PreparingToPrint:
 					{
-						var activePrintItem = Printer.Bed.EditContext.printItem;
+						string filePath = this.Printer.Bed.EditContext.SourceFilePath;
+						string fileName = Path.GetFileName(filePath);
+
+						var activePrintItem = new PrintItemWrapper(new PrintItem(fileName, filePath));
+
 						if (activePrintItem.PrintItem.Id == 0)
 						{
 							activePrintItem.PrintItem.Commit();

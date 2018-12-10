@@ -166,11 +166,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Padding = new BorderDouble(15, 0),
 				});
 
-			if (ApplicationController.Instance.Workspaces.Count == 0)
-			{
-				this.CreatePartTab().ConfigureAwait(false);
-			}
-
 			string tabKey = ApplicationController.Instance.MainTabKey;
 
 			if (string.IsNullOrEmpty(tabKey))
@@ -261,7 +256,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Register listeners
 			PrinterSettings.AnyPrinterSettingChanged += Printer_SettingChanged;
-			ApplicationController.Instance.OpenPrintersChanged += OpenPrinters_Changed;
+			ApplicationController.Instance.WorkspacesChanged += Workspaces_Changed;
 			ApplicationController.Instance.Tasks.TasksChanged += Tasks_TasksChanged;
 			tabControl.ActiveTabChanged += TabControl_ActiveTabChanged;
 
@@ -279,10 +274,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var history = ApplicationController.Instance.Library.PlatingHistory;
 
-			var workspace = new PartWorkspace()
+			var workspace = new PartWorkspace(new BedConfig(history))
 			{
 				Name = Path.GetFileName(filePath),
-				SceneContext = new BedConfig(history)
 			};
 
 			ApplicationController.Instance.Workspaces.Add(workspace);
@@ -392,18 +386,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void OpenPrinters_Changed(object sender, OpenPrintersChangedEventArgs e)
+		private void Workspaces_Changed(object sender, WorkspacesChangedEventArgs e)
 		{
-			var activePrinter = e.Printer;
+			var activePrinter = e.Workspace.Printer;
 
-			if (e.Operation == OpenPrintersChangedEventArgs.OperationType.Add)
+			if (e.Operation == WorkspacesChangedEventArgs.OperationType.Add)
 			{
-				if (activePrinter.Settings.PrinterSelected)
-				{
 					// Create and switch to new printer tab
-					tabControl.ActiveTab = this.CreatePrinterTab(activePrinter, theme);
+					if (activePrinter?.Settings.PrinterSelected == true)
+					{
+						tabControl.ActiveTab = this.CreatePrinterTab(activePrinter, theme);
+					}
+					else
+					{
+						tabControl.ActiveTab = this.CreatePartTab(e.Workspace);
+					}
+
 					tabControl.RefreshTabPointers();
-				}
 			}
 			else
 			{
@@ -570,10 +569,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var history = ApplicationController.Instance.Library.PlatingHistory;
 
-			var workspace = new PartWorkspace()
+			var workspace = new PartWorkspace(new BedConfig(history))
 			{
 				Name = "New Design".Localize() + (partCount == 0 ? "" : $" ({partCount})"),
-				SceneContext = new BedConfig(history)
 			};
 
 			partCount++;
@@ -622,7 +620,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Unregister listeners
 			PrinterSettings.AnyPrinterSettingChanged -= Printer_SettingChanged;
 			UserSettings.Instance.SettingChanged -= SetLinkButtonsVisibility;
-			ApplicationController.Instance.OpenPrintersChanged -= OpenPrinters_Changed;
+			ApplicationController.Instance.WorkspacesChanged -= Workspaces_Changed;
 			ApplicationController.Instance.Tasks.TasksChanged -= Tasks_TasksChanged;
 			ApplicationController.Instance.ShellFileOpened -= Instance_OpenNewFile;
 			tabControl.ActiveTabChanged -= TabControl_ActiveTabChanged;

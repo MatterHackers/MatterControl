@@ -637,7 +637,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// <returns>The first active printer</returns>
 		public static PrinterConfig FirstPrinter(this AutomationRunner testRunner)
 		{
-			Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count, "FirstPrinter() is only valid in single printer scenarios");
+			Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "FirstPrinter() is only valid in single printer scenarios");
 
 			return ApplicationController.Instance.ActivePrinters.First();
 		}

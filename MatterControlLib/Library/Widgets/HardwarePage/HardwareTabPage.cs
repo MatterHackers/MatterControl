@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						else
 						{
 							// Open new printer tab
-							ApplicationController.Instance.OpenPrinter(printerInfo.ID).ConfigureAwait(false);
+							ApplicationController.Instance.OpenEmptyPrinter(printerInfo.ID).ConfigureAwait(false);
 						}
 					}
 				}
@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							if (treeView?.SelectedNode.Tag is PrinterInfo printerInfo)
 							{
 								// Open printer
-								ApplicationController.Instance.OpenPrinter(printerInfo.ID).ConfigureAwait(false);
+								ApplicationController.Instance.OpenEmptyPrinter(printerInfo.ID).ConfigureAwait(false);
 							}
 						};
 

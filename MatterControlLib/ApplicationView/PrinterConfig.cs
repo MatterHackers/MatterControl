@@ -34,16 +34,13 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
-	using System.IO;
 	using System.Threading;
 	using MatterHackers.Agg;
-	using MatterHackers.DataConverters3D;
 	using MatterHackers.Localizations;
-	using MatterHackers.MatterControl.DataStorage;
 	using MatterHackers.MatterControl.PrinterCommunication;
 	using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
-	using MatterHackers.MeshVisualizer;
 	using MatterHackers.VectorMath;
+	using Newtonsoft.Json;
 
 	public class PrinterConfig : IDisposable
 	{
@@ -55,6 +52,7 @@ namespace MatterHackers.MatterControl
 
 		public static PrinterConfig EmptyPrinter { get; } = new PrinterConfig();
 
+		[JsonIgnore]
 		public EngineMappingsMatterSlice EngineMappingsMatterSlice { get; }
 
 		// heating status
@@ -133,32 +131,6 @@ namespace MatterHackers.MatterControl
 			this.Connection.ReadLineReplacementString = this.Settings.GetValue(SettingsKey.read_regex);
 		}
 
-		public string GetGCodePathAndFileName(string fileLocation)
-		{
-			if (fileLocation.Trim() != "")
-			{
-				if (Path.GetExtension(fileLocation).ToUpper() == ".GCODE")
-				{
-					return fileLocation;
-				}
-
-				return GCodePath(HashGenerator.ComputeFileSHA1(fileLocation));
-			}
-			else
-			{
-				return null;
-			}
-		}
-
-		public string GCodePath(string fileHashCode)
-		{
-			long settingsHashCode = this.Settings.GetLongHashCode();
-
-			return Path.Combine(
-				ApplicationDataStorage.Instance.GCodeOutputPath,
-				$"{fileHashCode}_{ settingsHashCode}.gcode");
-		}
-
 		public string ReplaceMacroValues(string gcodeWithMacros)
 		{
 			foreach (MappedSetting mappedSetting in replaceWithSettingsStrings)
@@ -199,6 +171,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		[JsonIgnore]
 		public PrinterConnection Connection { get; }
 
 		public string PrinterConnectionStatus

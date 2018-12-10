@@ -29,9 +29,11 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -40,10 +42,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.DesignTools.Operations;
 using Newtonsoft.Json;
-using System.Collections.ObjectModel;
-using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("MatterControl.Tests")]
 [assembly: InternalsVisibleTo("MatterControl.AutomationTests")]
@@ -73,17 +72,13 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PartPreviewWindow.View3D;
-	using MatterHackers.MatterControl.PluginSystem;
 	using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
-	using MatterHackers.MatterControl.SetupWizard;
 	using MatterHackers.PolygonMesh;
 	using MatterHackers.PolygonMesh.Processors;
-	using MatterHackers.RenderOpenGl;
-	using MatterHackers.SerialPortCommunication;
 	using MatterHackers.VectorMath;
 	using MatterHackers.VectorMath.TrackBall;
 	using Newtonsoft.Json.Converters;
-	using Newtonsoft.Json.Serialization;
+	using Newtonsoft.Json.Linq;
 	using SettingsManagement;
 
 	[JsonConverter(typeof(StringEnumConverter))]
@@ -109,16 +104,16 @@ namespace MatterHackers.MatterControl
 		Titillium,
 	};
 
-	public class OpenPrintersChangedEventArgs : EventArgs
+	public class WorkspacesChangedEventArgs : EventArgs
 	{
-		public OpenPrintersChangedEventArgs(PrinterConfig printer, OperationType operation)
+		public WorkspacesChangedEventArgs(PartWorkspace workspace,  OperationType operation)
 		{
-			this.Printer = printer;
 			this.Operation = operation;
+			this.Workspace = workspace;
 		}
 
-		public PrinterConfig Printer { get; }
 		public OperationType Operation { get; }
+		public PartWorkspace Workspace { get; }
 
 		public enum OperationType { Add, Remove }
 	}
@@ -269,10 +264,7 @@ namespace MatterHackers.MatterControl
 
 		public RunningTasksConfig Tasks { get; set; } = new RunningTasksConfig();
 
-		public IReadOnlyList<PrinterConfig> ActivePrinters => _activePrinters;
-
-		// A list of printers which are open (i.e. displaying a tab) on this instance of MatterControl
-		private List<PrinterConfig> _activePrinters = new List<PrinterConfig>();
+		public IEnumerable<PrinterConfig> ActivePrinters => this.Workspaces.Where(w => w.Printer != null).Select(w => w.Printer);
 
 		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 
@@ -293,9 +285,6 @@ namespace MatterHackers.MatterControl
 						(newName) =>
 						{
 							selectedItem.Name = newName;
-
-							// TODO: Revise SelectedObjectPanel to sync name on model change
-							// editorSectionWidget.Text = newName;
 						}));
 			};
 
@@ -395,7 +384,7 @@ namespace MatterHackers.MatterControl
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
 		public RootedObjectEventHandler ActiveProfileModified = new RootedObjectEventHandler();
 
-		public event EventHandler<OpenPrintersChangedEventArgs> OpenPrintersChanged;
+		public event EventHandler<WorkspacesChangedEventArgs> WorkspacesChanged;
 
 		public static Action WebRequestFailed;
 		public static Action WebRequestSucceeded;
@@ -412,9 +401,9 @@ namespace MatterHackers.MatterControl
 
 		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
 
-		public void OnOpenPrintersChanged(OpenPrintersChangedEventArgs e)
+		public void OnWorkspacesChanged(WorkspacesChangedEventArgs e)
 		{
-			this.OpenPrintersChanged?.Invoke(this, e);
+			this.WorkspacesChanged?.Invoke(this, e);
 		}
 
 		public string GetFavIconUrl(string oemName)
@@ -428,11 +417,15 @@ namespace MatterHackers.MatterControl
 			// Actually clear printer
 			ProfileManager.Instance.ClosePrinter(printer.Settings.ID);
 
-			_activePrinters.Remove(printer);
-
 			if (allowChangedEvent)
 			{
-				this.OnOpenPrintersChanged(new OpenPrintersChangedEventArgs(printer, OpenPrintersChangedEventArgs.OperationType.Remove));
+				if (ApplicationController.Instance.Workspaces.FirstOrDefault(w => w.Printer.Settings.ID == printer.Settings.ID) is PartWorkspace workspace)
+				{
+					this.OnWorkspacesChanged(
+						new WorkspacesChangedEventArgs(
+							workspace,
+							WorkspacesChangedEventArgs.OperationType.Remove));
+				}
 			}
 
 			printer.Dispose();
@@ -935,7 +928,7 @@ namespace MatterHackers.MatterControl
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				if (printer != null || this.ActivePrinters.Count == 1)
+				if (printer != null || this.ActivePrinters.Count() == 1)
 				{
 					// If unspecified but count is one, select the one active printer
 					if (printer == null)
@@ -1032,7 +1025,7 @@ namespace MatterHackers.MatterControl
 
 			ProfileManager.UserChanged += (s, e) =>
 			{
-				_activePrinters = new List<PrinterConfig>();
+				//_activePrinters = new List<PrinterConfig>();
 			};
 
 			this.RebuildSceneOperations(this.Theme);
@@ -1809,43 +1802,69 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public async Task<PrinterConfig> OpenPrinter(string printerID, bool loadPlateFromHistory = true)
+		public async Task<PrinterConfig> LoadPrinter(string printerID)
 		{
-			if (!_activePrinters.Any(p => p.Settings.ID == printerID))
+			var printer = this.ActivePrinters.FirstOrDefault(p => p.Settings.ID == printerID);
+			if (printer == null)
 			{
-				ProfileManager.Instance.OpenPrinter(printerID);
-
-				var printer = new PrinterConfig(await ProfileManager.LoadSettingsAsync(printerID));
-
-				_activePrinters.Add(printer);
-
-				if (loadPlateFromHistory)
+				if (!string.IsNullOrEmpty(printerID)
+					&& ProfileManager.Instance[printerID] != null)
 				{
-					await printer.Bed.LoadPlateFromHistory();
+					printer = new PrinterConfig(await ProfileManager.LoadSettingsAsync(printerID));
+				}
+			}
+
+			if (printer != null
+				&& printer.Settings.PrinterSelected
+				&& printer.Settings.GetValue<bool>(SettingsKey.auto_connect))
+			{
+				printer.Connection.Connect();
+			}
+
+			return printer;
+		}
+
+		public async Task<PrinterConfig> OpenEmptyPrinter(string printerID)
+		{
+			PartWorkspace workspace = null;
+
+			if (!string.IsNullOrEmpty(printerID)
+				&& ProfileManager.Instance[printerID] != null)
+			{
+				var printer = await ApplicationController.Instance.LoadPrinter(printerID);
+
+				// Add workspace for printer
+				workspace = new PartWorkspace(printer);
+
+				var history = ApplicationController.Instance.Library.PlatingHistory;
+
+				await workspace.SceneContext.LoadContent(new EditContext()
+				{
+					ContentStore = history,
+					SourceItem = history.NewPlatingItem()
+				});
+
+				if (workspace.Printer != null)
+				{
+					workspace.Name = workspace.Printer.Settings.GetValue(SettingsKey.printer_name);
 				}
 
-				this.OnOpenPrintersChanged(new OpenPrintersChangedEventArgs(printer, OpenPrintersChangedEventArgs.OperationType.Add));
-
-				if (printer.Settings.PrinterSelected
-					&& printer.Settings.GetValue<bool>(SettingsKey.auto_connect))
-				{
-					printer.Connection.Connect();
-				}
+				ApplicationController.Instance.OpenWorkspace(workspace);
 
 				return printer;
 			}
 
-			return PrinterConfig.EmptyPrinter;
+			return null;
 		}
 
-		public async Task OpenAllPrinters()
+		public void OpenWorkspace(PartWorkspace workspace)
 		{
-			// TODO: broadcast message to UI to close all printer tabs
+			this.OnWorkspacesChanged(
+					new WorkspacesChangedEventArgs(
+						workspace,
+						WorkspacesChangedEventArgs.OperationType.Add));
 
-			foreach (var printerID in ProfileManager.Instance.OpenPrinterIDs)
-			{
-				await this.OpenPrinter(printerID);
-			}
+			ApplicationController.Instance.Workspaces.Add(workspace);
 		}
 
 		/// <summary>
@@ -3208,15 +3227,84 @@ If you experience adhesion problems, please re-run leveling."
 							return Task.CompletedTask;
 						});
 
-					await applicationController.Tasks.Execute(
-						"Restoring Printers".Localize(),
-						null,
-						async (progress, cancellationToken) =>
-						{
-							await applicationController.OpenAllPrinters();
-						});
+					var history = applicationController.Library.PlatingHistory;
 
-					// Batch startup tasks
+					// TODO: Loading previous parts/printer is a relatively huge task compared to other startup tasks. These might work better if 
+					// loaded after startup tasks and should have better progress reporting
+					if (File.Exists(ProfileManager.Instance.OpenTabsPath))
+					{
+						try
+						{
+							string openTabsText = File.ReadAllText(ProfileManager.Instance.OpenTabsPath);
+							var persistedWorkspaces = JsonConvert.DeserializeObject<List<PartWorkspace>>(
+								openTabsText, 
+								new ContentStoreConverter(),
+								new LibraryItemConverter());
+
+							foreach (var persistedWorkspace in persistedWorkspaces)
+							{
+								// Load the actual workspace if content file exists
+								if (File.Exists(persistedWorkspace.ContentPath))
+								{
+									string printerID = persistedWorkspace.PrinterID;
+
+									PartWorkspace workspace = null;
+
+									if (!string.IsNullOrEmpty(printerID)
+										&& ProfileManager.Instance[printerID] != null)
+									{
+										// Add workspace for printer
+										workspace = new PartWorkspace(await applicationController.LoadPrinter(persistedWorkspace.PrinterID));
+									}
+									else
+									{
+										// Add workspace for part
+										workspace = new PartWorkspace(new BedConfig(history));
+									}
+
+									// Load the previous content
+									await workspace.SceneContext.LoadContent(new EditContext() {
+										ContentStore = history,
+										SourceItem = new FileSystemFileItem(persistedWorkspace.ContentPath)
+									});
+
+									if (workspace.Printer != null)
+									{
+										workspace.Name = workspace.Printer.Settings.GetValue(SettingsKey.printer_name);
+									}
+									else
+									{
+										workspace.Name = workspace?.SceneContext.EditContext?.SourceItem?.Name ?? "Unknown";
+									}
+
+									applicationController.OpenWorkspace(workspace);
+								}
+							}
+						}
+						catch
+						{
+						}
+					}
+
+					if (applicationController.Workspaces.Count == 0)
+					{
+						var workspace = new PartWorkspace(new BedConfig(history))
+						{
+							Name = "New Design".Localize()
+						};
+
+						// Load it up
+						workspace.SceneContext.LoadEmptyContent(
+							new EditContext()
+							{
+								ContentStore = history,
+								SourceItem = history.NewPlatingItem()
+							});
+
+						applicationController.OpenWorkspace(workspace);
+					}
+
+					// Batch execute startup tasks
 					foreach (var task in ApplicationController.StartupTasks.OrderByDescending(t => t.Priority))
 					{
 						await applicationController.Tasks.Execute(task.Title, null, task.Action);
@@ -3260,9 +3348,19 @@ If you experience adhesion problems, please re-run leveling."
 		}
 	}
 
-	public class PartWorkspace
+	public class ContentStoreConverter : JsonConverter<IContentStore>
 	{
-		public string Name { get; set; }
-		public BedConfig SceneContext { get; set; }
+		public override bool CanWrite => false;
+
+		public override IContentStore ReadJson(JsonReader reader, Type objectType, IContentStore existingValue, bool hasExistingValue, JsonSerializer serializer)
+		{
+			var token = JToken.Load(reader);
+
+			return null;
+		}
+
+		public override void WriteJson(JsonWriter writer, IContentStore value, JsonSerializer serializer)
+		{
+		}
 	}
 }

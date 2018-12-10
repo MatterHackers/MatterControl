@@ -27,23 +27,32 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.IO;
 using MatterControl.Printing;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl
 {
+	using MatterHackers.Agg;
 	using MatterHackers.DataConverters3D;
+	using MatterHackers.MatterControl.DataStorage;
 	using MatterHackers.MatterControl.Library;
 
 	public class EditContext
 	{
 		private ILibraryItem _sourceItem;
 
+		/// <summary>
+		/// The object responsible for item persistence 
+		/// </summary>
 		public IContentStore ContentStore { get; set; }
 
+		public string SourceFilePath { get; private set; }
+
+		public bool FreezeGCode { get; set; }
+
+		/// <summary>
+		/// The library item to load and persist
+		/// </summary>
 		public ILibraryItem SourceItem
 		{
 			get => _sourceItem;
@@ -55,26 +64,10 @@ namespace MatterHackers.MatterControl
 
 					if (_sourceItem is FileSystemFileItem fileItem)
 					{
-						printItem = new PrintItemWrapper(new PrintItem(fileItem.FileName, fileItem.Path));
+						this.SourceFilePath = fileItem.Path;
 					}
 				}
 			}
-		}
-
-		// Natural path
-		private string GCodePath(PrinterConfig printer)
-		{
-			if (printItem != null)
-			{
-				return printer.GetGCodePathAndFileName(printItem.FileLocation);
-			}
-			return null;
-		}
-
-		// Override path
-		public string GCodeOverridePath(PrinterConfig printer)
-		{
-			return Path.ChangeExtension(GCodePath(printer), GCodeFile.PostProcessedExtension);
 		}
 
 		// Override or natural path
@@ -88,16 +81,6 @@ namespace MatterHackers.MatterControl
 			return GCodePath(printer);
 		}
 
-		public string SourceFilePath => printItem?.FileLocation;
-
-		public bool FreezeGCode { get; set; }
-
-		/// <summary>
-		/// Short term stop gap that should only be used until GCode path helpers, hash code and print recovery components can be extracted
-		/// </summary>
-		[Obsolete]
-		internal PrintItemWrapper printItem { get; set; }
-
 		internal void Save(IObject3D scene)
 		{
 			if (!this.FreezeGCode)
@@ -107,6 +90,51 @@ namespace MatterHackers.MatterControl
 				// Call save on the provider
 				this.ContentStore?.Save(this.SourceItem, scene);
 			}
+		}
+
+		// Natural path
+		private string GCodePath(PrinterConfig printer)
+		{
+			if (File.Exists(this.SourceFilePath))
+			{
+				return this.GetGCodePath(printer, this.SourceFilePath);
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Returns the computed GCode path given a content file path and considering current settings
+		/// </summary>
+		/// <param name="printer">The associated printer</param>
+		/// <param name="fileLocation">The source file</param>
+		/// <returns>The target GCode path</returns>
+		private string GetGCodePath(PrinterConfig printer, string fileLocation)
+		{
+			if (fileLocation.Trim() != "")
+			{
+				if (Path.GetExtension(fileLocation).ToUpper() == ".GCODE")
+				{
+					return fileLocation;
+				}
+
+				string fileHashCode = HashGenerator.ComputeFileSHA1(fileLocation);
+				long settingsHashCode = printer.Settings.GetLongHashCode();
+
+				return Path.Combine(
+					ApplicationDataStorage.Instance.GCodeOutputPath,
+					$"{fileHashCode}_{ settingsHashCode}.gcode");
+			}
+			else
+			{
+				return null;
+			}
+		}
+
+		// Override path
+		private string GCodeOverridePath(PrinterConfig printer)
+		{
+			return Path.ChangeExtension(GCodePath(printer), GCodeFile.PostProcessedExtension);
 		}
 	}
 }

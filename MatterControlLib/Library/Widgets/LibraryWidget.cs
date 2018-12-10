@@ -764,10 +764,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					if (selectedLibraryItems.FirstOrDefault() is ILibraryItem firstItem
 						&& ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer writableContainer)
 					{
-						var workspace = new PartWorkspace()
+						var workspace = new PartWorkspace(new BedConfig(ApplicationController.Instance.Library.PlatingHistory))
 						{
 							Name = firstItem.Name,
-							SceneContext = new BedConfig(ApplicationController.Instance.Library.PlatingHistory)
 						};
 
 						ApplicationController.Instance.Workspaces.Add(workspace);
