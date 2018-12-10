@@ -53,25 +53,24 @@ namespace MatterHackers.MatterControl
 		public override void WriteJson(JsonWriter writer, ILibraryItem value, JsonSerializer serializer)
 		{
 		}
+
+		public class DummyItem : ILibraryItem
+		{
+			public string ID { get; set; }
+
+			public string Name { get; set; }
+
+			public bool IsProtected { get; set; }
+
+			public bool IsVisible { get; set; }
+
+			public DateTime DateModified { get; set; }
+
+			public DateTime DateCreated { get; set; }
+
+			public string Path { get; set; }
+
+			public string AssetPath { get; set; }
+		}
 	}
-
-	public class DummyItem : ILibraryItem
-	{
-		public string ID { get; set; }
-
-		public string Name { get; set; }
-
-		public bool IsProtected { get; set; }
-
-		public bool IsVisible { get; set; }
-
-		public DateTime DateModified { get; set; }
-
-		public DateTime DateCreated { get; set; }
-
-		public string Path { get; set; }
-
-		public string AssetPath { get; set; }
-	}
-
 }

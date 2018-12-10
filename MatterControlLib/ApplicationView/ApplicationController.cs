@@ -266,9 +266,6 @@ namespace MatterHackers.MatterControl
 
 		public IEnumerable<PrinterConfig> ActivePrinters => this.Workspaces.Where(w => w.Printer != null).Select(w => w.Printer);
 
-		//// A list of printers which are open (i.e. displaying a tab) on this instance of MatterControl
-		//private List<PrinterConfig> _activePrinters = new List<PrinterConfig>();
-
 		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 
 		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu)
@@ -288,9 +285,6 @@ namespace MatterHackers.MatterControl
 						(newName) =>
 						{
 							selectedItem.Name = newName;
-
-							// TODO: Revise SelectedObjectPanel to sync name on model change
-							// editorSectionWidget.Text = newName;
 						}));
 			};
 
@@ -3242,13 +3236,10 @@ If you experience adhesion problems, please re-run leveling."
 							return Task.CompletedTask;
 						});
 
-
-					// Instead of opening printers, we should load open tabs........................
-
-					// Persist part workspaces
-
 					var history = applicationController.Library.PlatingHistory;
 
+					// TODO: Loading previous parts/printer is a relatively huge task compared to other startup tasks. These might work better if 
+					// loaded after startup tasks and should have better progress reporting
 					if (File.Exists(ProfileManager.Instance.OpenTabsPath))
 					{
 						try
@@ -3264,9 +3255,6 @@ If you experience adhesion problems, please re-run leveling."
 								// Load the actual workspace if content file exists
 								if (File.Exists(persistedWorkspace.ContentPath))
 								{
-									// Spin up the printer if specified
-									// Push item to loaded workspaces
-
 									string printerID = persistedWorkspace.PrinterID;
 
 									PartWorkspace workspace = null;
@@ -3283,7 +3271,7 @@ If you experience adhesion problems, please re-run leveling."
 										workspace = new PartWorkspace(new BedConfig(history));
 									}
 
-									// Load it up
+									// Load the previous content
 									await workspace.SceneContext.LoadContent(new EditContext() {
 										ContentStore = history,
 										SourceItem = new FileSystemFileItem(persistedWorkspace.ContentPath)
@@ -3304,12 +3292,7 @@ If you experience adhesion problems, please re-run leveling."
 						}
 						catch
 						{
-							// Create new part tab on failure?
 						}
-					}
-					else
-					{
-						// Create new part tab if no existing?
 					}
 
 					if (applicationController.Workspaces.Count == 0)
@@ -3338,7 +3321,7 @@ If you experience adhesion problems, please re-run leveling."
 							await applicationController.OpenAllPrinters();
 						});
 
-					// Batch startup tasks
+					// Batch execute startup tasks
 					foreach (var task in ApplicationController.StartupTasks.OrderByDescending(t => t.Priority))
 					{
 						await applicationController.Tasks.Execute(task.Title, null, task.Action);

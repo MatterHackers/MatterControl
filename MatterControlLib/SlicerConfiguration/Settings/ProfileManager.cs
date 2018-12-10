@@ -456,7 +456,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				oemProfile.Helpers.SetComPort(profile.ComPort);
 				oemProfile.Save();
 			}
-			catch { }
+			catch
+			{
+			}
 
 			return oemProfile;
 		}
@@ -478,13 +480,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							return printerSettings;
 						}
 					}
-					catch { }
+					catch
+					{
+					}
 				}
 			}
 
 			return null;
 		}
-
 
 		internal static bool ImportFromExisting(string settingsFilePath)
 		{
