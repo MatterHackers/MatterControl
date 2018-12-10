@@ -190,13 +190,20 @@ namespace MatterHackers.MatterControl.ActionBar
 		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
 		private RunningInterval runningInterval;
 
-		public TemperatureWidgetHotend(PrinterConfig printer, int hotendIndex, ThemeConfig theme)
+		public TemperatureWidgetHotend(PrinterConfig printer, int hotendIndex, ThemeConfig theme, int totalHotends)
 			: base(printer, "150.3°", theme)
 		{
 			this.Name = $"Hotend {hotendIndex}";
 			this.hotendIndex = hotendIndex;
 			this.DisplayCurrentTemperature();
-			this.ToolTipText = "Current extruder temperature".Localize();
+			if (totalHotends == 1)
+			{
+				this.ToolTipText = "Hotend Temperature".Localize().FormatWith(hotendIndex);
+			}
+			else
+			{
+				this.ToolTipText = "Hotend {0} Temperature".Localize().FormatWith(hotendIndex + 1);
+			}
 
 			this.PopupContent = this.GetPopupContent(ApplicationController.Instance.MenuTheme);
 
@@ -232,7 +239,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			GuiWidget hotendRow;
 			container.AddChild(hotendRow = new SettingsItem(
-				string.Format("{0} {1}", "Hotend".Localize(), hotendIndex + 1),
+				printer.Settings.Helpers.NumberOfHotends() == 1 ? "Hotend".Localize() : "Hotend {0}".Localize().FormatWith(hotendIndex + 1),
 				menuTheme,
 				new SettingsItem.ToggleSwitchConfig()
 				{
