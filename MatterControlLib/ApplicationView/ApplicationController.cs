@@ -1867,15 +1867,6 @@ namespace MatterHackers.MatterControl
 			ApplicationController.Instance.Workspaces.Add(workspace);
 		}
 
-		public async Task OpenAllPrinters()
-		{
-			//foreach (var printerID in ProfileManager.Instance.OpenPrinterIDs)
-			//{
-			//	await this.OpenPrinter(printerID);
-			//}
-
-		}
-
 		/// <summary>
 		/// Compute hash for string encoded as UTF8
 		/// </summary>
@@ -3312,14 +3303,6 @@ If you experience adhesion problems, please re-run leveling."
 
 						applicationController.OpenWorkspace(workspace);
 					}
-
-					await applicationController.Tasks.Execute(
-						"Restoring Printers".Localize(),
-						null,
-						async (progress, cancellationToken) =>
-						{
-							await applicationController.OpenAllPrinters();
-						});
 
 					// Batch execute startup tasks
 					foreach (var task in ApplicationController.StartupTasks.OrderByDescending(t => t.Priority))
