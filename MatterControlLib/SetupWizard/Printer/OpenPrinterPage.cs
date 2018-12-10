@@ -75,12 +75,12 @@ namespace MatterHackers.MatterControl
 			{
 				if (printerLoaded == null)
 				{
-					ApplicationController.Instance.OpenPrinter(printerInfo.ID).ConfigureAwait(false);
+					ApplicationController.Instance.LoadPrinter(printerInfo.ID).ConfigureAwait(false);
 				}
 				else
 				{
 					// Switch to the given printer and let the caller do as they must
-					ApplicationController.Instance.OpenPrinter(printerInfo.ID, loadPlateFromHistory: false).ContinueWith(task =>
+					ApplicationController.Instance.LoadPrinter(printerInfo.ID, loadPlateFromHistory: false).ContinueWith(task =>
 					{
 						printerLoaded?.Invoke(task.Result);
 					});

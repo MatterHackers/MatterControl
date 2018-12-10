@@ -1808,7 +1808,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public async Task<PrinterConfig> OpenPrinter(string printerID, bool loadPlateFromHistory = true)
+		public async Task<PrinterConfig> LoadPrinter(string printerID, bool loadPlateFromHistory = true)
 		{
 			var printer = this.ActivePrinters.FirstOrDefault(p => p.Settings.ID == printerID);
 			if (printer == null)
@@ -3246,10 +3246,7 @@ If you experience adhesion problems, please re-run leveling."
 									if (!string.IsNullOrEmpty(printerID)
 										&& ProfileManager.Instance[printerID] != null)
 									{
-
-										//var workspace = this.OpenWorkspace(printerID,  ));
-
-										var itemPrinter = await applicationController.OpenPrinter(persistedWorkspace.PrinterID, false);
+										var itemPrinter = await applicationController.LoadPrinter(persistedWorkspace.PrinterID, false);
 
 										// Add workspace for printer plate
 										workspace = new PartWorkspace(itemPrinter);

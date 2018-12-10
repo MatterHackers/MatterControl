@@ -406,9 +406,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				// TODO: Do the work to select the part *OR* printer tab and remove
-				System.Diagnostics.Debugger.Break();
-
 				// Close existing printer tabs
 				if (tabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage printerTab
 						&& printerTab.printer.Settings.ID == activePrinter.Settings.ID) is ITab tab
