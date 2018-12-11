@@ -194,18 +194,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.TabBar.ActionArea.AddChild(brandMenu, 0);
 
-			// Restore printer tabs
-			foreach (var printer in ApplicationController.Instance.ActivePrinters)
-			{
-				this.CreatePrinterTab(printer, theme);
-			}
-
-			// Restore active design tabs
-			foreach (var workspace in ApplicationController.Instance.Workspaces)
-			{
-				this.CreatePartTab(workspace);
-			}
-
 			tabControl.SelectedTabKey = tabKey;
 
 			statusBar = new Toolbar(theme)
