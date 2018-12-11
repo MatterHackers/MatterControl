@@ -3310,7 +3310,7 @@ If you experience adhesion problems, please re-run leveling."
 						await applicationController.Tasks.Execute(task.Title, null, task.Action);
 					}
 
-					if (ApplicationSettings.Instance.get(ApplicationSettingsKey.ShownWelcomeMessage) != "false")
+					if (ApplicationSettings.Instance.get(UserSettingsKey.ShownWelcomeMessage) != "false")
 					{
 						UiThread.RunOnIdle(() =>
 						{

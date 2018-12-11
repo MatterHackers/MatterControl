@@ -75,17 +75,17 @@ Click 'Next' to continue the tour of the interface";
 				TextColor = theme.TextColor,
 				Margin = new BorderDouble(top: 6, left: 6),
 				HAnchor = Agg.UI.HAnchor.Left,
-				Checked = ApplicationSettings.Instance.get(ApplicationSettingsKey.ShownWelcomeMessage) == "false"
+				Checked = ApplicationSettings.Instance.get(UserSettingsKey.ShownWelcomeMessage) == "false"
 			};
 			showWelcomPageCheckBox.Click += (sender, e) =>
 			{
 				if (showWelcomPageCheckBox.Checked)
 				{
-					ApplicationSettings.Instance.set(ApplicationSettingsKey.ShownWelcomeMessage, "false");
+					ApplicationSettings.Instance.set(UserSettingsKey.ShownWelcomeMessage, "false");
 				}
 				else
 				{
-					ApplicationSettings.Instance.set(ApplicationSettingsKey.ShownWelcomeMessage, "true");
+					ApplicationSettings.Instance.set(UserSettingsKey.ShownWelcomeMessage, "true");
 				}
 			};
 			contentRow.AddChild(showWelcomPageCheckBox);

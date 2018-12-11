@@ -13,7 +13,6 @@ namespace MatterHackers.MatterControl
 		public const string SuppressAuthPanel = nameof(SuppressAuthPanel);
 		public const string HardwareHasCamera = nameof(HardwareHasCamera);
 		public const string HideGCodeWarning = nameof(HideGCodeWarning);
-		public const string ShownWelcomeMessage = nameof(ShownWelcomeMessage);
 		public const string DesktopPosition = nameof(DesktopPosition);
 		public const string WindowSize = nameof(WindowSize);
 		public const string MainWindowMaximized = nameof(MainWindowMaximized);
