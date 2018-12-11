@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl
 						}
 
 						ApplicationController.Instance.ResetTranslationMap();
-						ApplicationController.Instance.ReloadAll();
+						ApplicationController.Instance.ReloadAll().ConfigureAwait(false);
 					}
 				});
 			};
@@ -268,11 +268,11 @@ namespace MatterHackers.MatterControl
 				Visible = false,
 				Margin = new BorderDouble(right: 6)
 			};
-			textSizeApplyButton.Click += (s, e) =>
+			textSizeApplyButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				GuiWidget.DeviceScale = textSizeSlider.Value;
-				ApplicationController.Instance.ReloadAll();
-			};
+				ApplicationController.Instance.ReloadAll().ConfigureAwait(false);
+			});
 			optionalContainer.AddChild(textSizeApplyButton);
 
 			textSizeSlider.ValueChanged += (s, e) =>
@@ -324,7 +324,7 @@ namespace MatterHackers.MatterControl
 							if (displayMode != UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode))
 							{
 								UserSettings.Instance.set(UserSettingsKey.ApplicationDisplayMode, displayMode);
-								ApplicationController.Instance.ReloadAll();
+								UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAll().ConfigureAwait(false));
 							}
 						}
 					}),

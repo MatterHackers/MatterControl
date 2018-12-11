@@ -238,7 +238,7 @@ namespace MatterHackers.MatterControl
 				UserSettings.Instance.set(UserSettingsKey.ActiveThemeName, themeset.Name);
 
 				// Explicitly fire ReloadAll in response to user interaction
-				ApplicationController.Instance.ReloadAll();
+				ApplicationController.Instance.ReloadAll().ConfigureAwait(false);
 			});
 		}
 
@@ -337,6 +337,38 @@ namespace MatterHackers.MatterControl
 			}
 
 			return popupMenu;
+		}
+
+		public void PersistUserTabs()
+		{
+			var workspaces = ApplicationController.Instance.Workspaces.Select(w =>
+			{
+				if (w.Printer == null)
+				{
+					return new PartWorkspace(w.SceneContext)
+					{
+						ContentPath = w.SceneContext.EditContext?.SourceFilePath,
+					};
+				}
+				else
+				{
+					return new PartWorkspace(w.Printer)
+					{
+						ContentPath = w.SceneContext.EditContext?.SourceFilePath,
+					};
+				}
+			});
+
+			// Persist part workspaces
+			File.WriteAllText(
+				ProfileManager.Instance.OpenTabsPath,
+				JsonConvert.SerializeObject(
+					workspaces,
+					Formatting.Indented,
+					new JsonSerializerSettings
+					{
+						NullValueHandling = NullValueHandling.Ignore
+					}));
 		}
 
 		internal void ExportAsMatterControlConfig(PrinterConfig printer)
@@ -1656,10 +1688,12 @@ namespace MatterHackers.MatterControl
 
 		public bool IsReloading { get; private set; } = false;
 
-		public void ReloadAll()
+		public async Task ReloadAll()
 		{
-			UiThread.RunOnIdle(() =>
+			try
 			{
+				this.IsReloading = true;
+
 				var reloadingOverlay = new GuiWidget
 				{
 					HAnchor = HAnchor.Stretch,
@@ -1675,34 +1709,36 @@ namespace MatterHackers.MatterControl
 
 				AppContext.RootSystemWindow.AddChild(reloadingOverlay);
 
-				this.IsReloading = true;
+				GuiWidget.LayoutCount = 0;
 
-				UiThread.RunOnIdle(() =>
+				using (new QuickTimer($"ReloadAll_{reloadCount++}:"))
 				{
-					GuiWidget.LayoutCount = 0;
+					MainView = new MainViewWidget(ApplicationController.Instance.Theme);
+					this.DoneReloadingAll?.CallEvents(null, null);
 
-					using (new QuickTimer($"ReloadAll_{reloadCount++}:"))
+					using (new QuickTimer("Time to AddMainview: "))
 					{
-						MainView = new MainViewWidget(ApplicationController.Instance.Theme);
-						this.DoneReloadingAll?.CallEvents(null, null);
-
-						using (new QuickTimer("Time to AddMainview: "))
-						{
-							AppContext.RootSystemWindow.CloseAllChildren();
-							AppContext.RootSystemWindow.AddChild(MainView);
-						}
+						AppContext.RootSystemWindow.CloseAllChildren();
+						AppContext.RootSystemWindow.AddChild(MainView);
 					}
+				}
 
-					Debug.WriteLine($"LayoutCount: {GuiWidget.LayoutCount:0.0}");
+				await ApplicationController.Instance.RestoreUserTabs();
+			}
+			catch
+			{
+			}
+			finally
+			{
+				this.IsReloading = false;
+			}
 
-					this.IsReloading = false;
-				});
-			});
+			Debug.WriteLine($"LayoutCount: {GuiWidget.LayoutCount:0.0}");
 		}
 
 		static int reloadCount = 0;
 
-		public async void OnApplicationClosed()
+		public void OnApplicationClosed()
 		{
 			this.Thumbnails.Shutdown();
 
@@ -1865,6 +1901,89 @@ namespace MatterHackers.MatterControl
 						WorkspacesChangedEventArgs.OperationType.Add));
 
 			ApplicationController.Instance.Workspaces.Add(workspace);
+		}
+
+		public async Task RestoreUserTabs()
+		{
+			var history = this.Library.PlatingHistory;
+
+			this.Workspaces.Clear();
+
+			// TODO: Loading previous parts/printer is a relatively huge task compared to other startup tasks. These might work better if 
+			// loaded after startup tasks and should have better progress reporting
+			if (File.Exists(ProfileManager.Instance.OpenTabsPath))
+			{
+				try
+				{
+					string openTabsText = File.ReadAllText(ProfileManager.Instance.OpenTabsPath);
+					var persistedWorkspaces = JsonConvert.DeserializeObject<List<PartWorkspace>>(
+						openTabsText,
+						new ContentStoreConverter(),
+						new LibraryItemConverter());
+
+					foreach (var persistedWorkspace in persistedWorkspaces)
+					{
+						// Load the actual workspace if content file exists
+						if (File.Exists(persistedWorkspace.ContentPath))
+						{
+							string printerID = persistedWorkspace.PrinterID;
+
+							PartWorkspace workspace = null;
+
+							if (!string.IsNullOrEmpty(printerID)
+								&& ProfileManager.Instance[printerID] != null)
+							{
+								// Add workspace for printer
+								workspace = new PartWorkspace(await this.LoadPrinter(persistedWorkspace.PrinterID));
+							}
+							else
+							{
+								// Add workspace for part
+								workspace = new PartWorkspace(new BedConfig(history));
+							}
+
+							// Load the previous content
+							await workspace.SceneContext.LoadContent(new EditContext()
+							{
+								ContentStore = history,
+								SourceItem = new FileSystemFileItem(persistedWorkspace.ContentPath)
+							});
+
+							if (workspace.Printer != null)
+							{
+								workspace.Name = workspace.Printer.Settings.GetValue(SettingsKey.printer_name);
+							}
+							else
+							{
+								workspace.Name = workspace?.SceneContext.EditContext?.SourceItem?.Name ?? "Unknown";
+							}
+
+							this.OpenWorkspace(workspace);
+						}
+					}
+				}
+				catch
+				{
+				}
+			}
+
+			if (this.Workspaces.Count == 0)
+			{
+				var workspace = new PartWorkspace(new BedConfig(history))
+				{
+					Name = "New Design".Localize()
+				};
+
+				// Load it up
+				workspace.SceneContext.LoadEmptyContent(
+					new EditContext()
+					{
+						ContentStore = history,
+						SourceItem = history.NewPlatingItem()
+					});
+
+				this.OpenWorkspace(workspace);
+			}
 		}
 
 		/// <summary>
@@ -3227,88 +3346,13 @@ If you experience adhesion problems, please re-run leveling."
 							return Task.CompletedTask;
 						});
 
-					var history = applicationController.Library.PlatingHistory;
-
-					// TODO: Loading previous parts/printer is a relatively huge task compared to other startup tasks. These might work better if 
-					// loaded after startup tasks and should have better progress reporting
-					if (File.Exists(ProfileManager.Instance.OpenTabsPath))
-					{
-						try
-						{
-							string openTabsText = File.ReadAllText(ProfileManager.Instance.OpenTabsPath);
-							var persistedWorkspaces = JsonConvert.DeserializeObject<List<PartWorkspace>>(
-								openTabsText, 
-								new ContentStoreConverter(),
-								new LibraryItemConverter());
-
-							foreach (var persistedWorkspace in persistedWorkspaces)
-							{
-								// Load the actual workspace if content file exists
-								if (File.Exists(persistedWorkspace.ContentPath))
-								{
-									string printerID = persistedWorkspace.PrinterID;
-
-									PartWorkspace workspace = null;
-
-									if (!string.IsNullOrEmpty(printerID)
-										&& ProfileManager.Instance[printerID] != null)
-									{
-										// Add workspace for printer
-										workspace = new PartWorkspace(await applicationController.LoadPrinter(persistedWorkspace.PrinterID));
-									}
-									else
-									{
-										// Add workspace for part
-										workspace = new PartWorkspace(new BedConfig(history));
-									}
-
-									// Load the previous content
-									await workspace.SceneContext.LoadContent(new EditContext() {
-										ContentStore = history,
-										SourceItem = new FileSystemFileItem(persistedWorkspace.ContentPath)
-									});
-
-									if (workspace.Printer != null)
-									{
-										workspace.Name = workspace.Printer.Settings.GetValue(SettingsKey.printer_name);
-									}
-									else
-									{
-										workspace.Name = workspace?.SceneContext.EditContext?.SourceItem?.Name ?? "Unknown";
-									}
-
-									applicationController.OpenWorkspace(workspace);
-								}
-							}
-						}
-						catch
-						{
-						}
-					}
-
-					if (applicationController.Workspaces.Count == 0)
-					{
-						var workspace = new PartWorkspace(new BedConfig(history))
-						{
-							Name = "New Design".Localize()
-						};
-
-						// Load it up
-						workspace.SceneContext.LoadEmptyContent(
-							new EditContext()
-							{
-								ContentStore = history,
-								SourceItem = history.NewPlatingItem()
-							});
-
-						applicationController.OpenWorkspace(workspace);
-					}
-
 					// Batch execute startup tasks
 					foreach (var task in ApplicationController.StartupTasks.OrderByDescending(t => t.Priority))
 					{
 						await applicationController.Tasks.Execute(task.Title, null, task.Action);
 					}
+
+					await applicationController.RestoreUserTabs();
 
 					if (ApplicationSettings.Instance.get(UserSettingsKey.ShownWelcomeMessage) != "false")
 					{
