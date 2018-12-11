@@ -42,7 +42,34 @@ namespace MatterHackers.Agg.UI
 		protected List<SystemWindow> _openWindows = new List<SystemWindow>();
 		protected IPlatformWindow platformWindow;
 
-		public SystemWindow TopWindow { get; private set; }
+		SystemWindow _topWindow;
+		public SystemWindow TopWindow
+		{
+			get => _topWindow;
+
+			private set
+			{
+				void MaintainSizes(object s, EventArgs e)
+				{
+					foreach (var window in _openWindows)
+					{
+						if (_topWindow != window)
+						{
+							window.LocalBounds = new RectangleDouble(0, 0, _topWindow.Width, _topWindow.Height);
+						}
+					}
+				}
+
+				if (_topWindow != null)
+				{
+					_topWindow.SizeChanged -= MaintainSizes;
+				}
+
+				_topWindow = value;
+
+				_topWindow.SizeChanged += MaintainSizes;
+			}
+		}
 
 		public IReadOnlyList<SystemWindow> OpenWindows => _openWindows;
 

@@ -55,6 +55,7 @@ namespace MatterHackers.MatterControl
 		public const string SelectedObjectPanelWidth = nameof(SelectedObjectPanelWidth);
 		public const string SelectionTreeViewPanelExpanded = nameof(SelectionTreeViewPanelExpanded);
 		public const string ShowContainers = nameof(ShowContainers);
+		public const string ShownWelcomeMessage = nameof(ShownWelcomeMessage);
 		public const string SliceSettingsTabIndex = nameof(SliceSettingsTabIndex);
 		public const string SliceSettingsTabPinned = nameof(SliceSettingsTabPinned);
 		public const string SliceSettingsWidget_CurrentTab = nameof(SliceSettingsWidget_CurrentTab);
