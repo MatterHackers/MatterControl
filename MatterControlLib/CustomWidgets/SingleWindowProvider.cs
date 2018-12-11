@@ -67,7 +67,10 @@ namespace MatterHackers.Agg.UI
 
 				_topWindow = value;
 
-				_topWindow.SizeChanged += MaintainSizes;
+				if (_topWindow != null)
+				{
+					_topWindow.SizeChanged += MaintainSizes;
+				}
 			}
 		}
 

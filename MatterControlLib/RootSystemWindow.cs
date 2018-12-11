@@ -334,7 +334,6 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosed(EventArgs e)
 		{
-
 			UserSettings.Instance.Fields.StartCountDurringExit = UserSettings.Instance.Fields.StartCount;
 
 			foreach (var printer in ApplicationController.Instance.ActivePrinters)
