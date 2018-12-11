@@ -28,22 +28,33 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.VectorMath;
+using System;
 using System.Text;
 
 namespace MatterControl.Printing
 {
+	[Flags]
+	public enum PositionSet
+	{
+		None = 0,
+		X = 2,
+		Y = 4,
+		Z = 8,
+		E = 16,
+	}
+
 	public class PrinterMachineInstruction
 	{
 		public byte[] byteLine;
 
-		public bool clientInsertion;
-
 		// Absolute is the RepRap default
-		public MovementTypes movementType = MovementTypes.Absolute;
+		public MovementTypes MovementType = MovementTypes.Absolute;
 
-		public float secondsThisLine;
+		public float SecondsThisLine;
 
-		public float secondsToEndFromHere;
+		public float SecondsToEndFromHere;
+
+		public PositionSet PositionSet;
 
 		private Vector3Float xyzPosition = new Vector3Float();
 
@@ -58,10 +69,9 @@ namespace MatterControl.Printing
 			xyzPosition = copy.xyzPosition;
 			FeedRate = copy.FeedRate;
 			EPosition = copy.EPosition;
-			movementType = copy.movementType;
-			secondsToEndFromHere = copy.secondsToEndFromHere;
+			MovementType = copy.MovementType;
+			SecondsToEndFromHere = copy.SecondsToEndFromHere;
 			ExtruderIndex = copy.ExtruderIndex;
-			this.clientInsertion = clientInsertion;
 		}
 
 		public enum MovementTypes { Absolute, Relative };
@@ -88,6 +98,12 @@ namespace MatterControl.Printing
 		public Vector3 Position
 		{
 			get { return new Vector3(xyzPosition); }
+			set
+			{
+				xyzPosition.x = (float)value.X;
+				xyzPosition.y = (float)value.Y;
+				xyzPosition.z = (float)value.Z;
+			}
 		}
 
 		public double X
@@ -95,7 +111,7 @@ namespace MatterControl.Printing
 			get { return xyzPosition.x; }
 			set
 			{
-				if (movementType == MovementTypes.Absolute)
+				if (MovementType == MovementTypes.Absolute)
 				{
 					xyzPosition.x = (float)value;
 				}
@@ -111,7 +127,7 @@ namespace MatterControl.Printing
 			get { return xyzPosition.y; }
 			set
 			{
-				if (movementType == MovementTypes.Absolute)
+				if (MovementType == MovementTypes.Absolute)
 				{
 					xyzPosition.y = (float)value;
 				}
@@ -127,7 +143,7 @@ namespace MatterControl.Printing
 			get { return xyzPosition.z; }
 			set
 			{
-				if (movementType == MovementTypes.Absolute)
+				if (MovementType == MovementTypes.Absolute)
 				{
 					xyzPosition.z = (float)value;
 				}

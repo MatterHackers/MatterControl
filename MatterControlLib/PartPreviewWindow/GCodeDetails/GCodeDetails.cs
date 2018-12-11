@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return "---";
 			}
 
-			return SecondsToTime(loadedGCode.Instruction(0).secondsToEndFromHere);
+			return SecondsToTime(loadedGCode.Instruction(0).SecondsToEndFromHere);
 		}
 
 		private static string InstructionTime(this GCodeFile loadedGCode, int startLayer, int endLayer)
@@ -69,8 +69,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			int startInstruction = loadedGCode.GetFirstLayerInstruction(startLayer);
 			int endInstruction = loadedGCode.GetFirstLayerInstruction(endLayer);
-			var secondsToEndFromStart = loadedGCode.Instruction(startInstruction).secondsToEndFromHere;
-			var secondsToEndFromEnd = loadedGCode.Instruction(endInstruction).secondsToEndFromHere;
+			var secondsToEndFromStart = loadedGCode.Instruction(startInstruction).SecondsToEndFromHere;
+			var secondsToEndFromEnd = loadedGCode.Instruction(endInstruction).SecondsToEndFromHere;
 			return SecondsToTime(secondsToEndFromStart - secondsToEndFromEnd);
 		}
 
@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return 0;
 			}
 
-			return loadedGCode.Instruction(0).secondsToEndFromHere;
+			return loadedGCode.Instruction(0).SecondsToEndFromHere;
 		}
 
 		public static string FilamentUsed(this GCodeFile loadedGCode, PrinterConfig printer)
