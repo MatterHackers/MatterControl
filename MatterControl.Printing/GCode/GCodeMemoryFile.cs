@@ -93,7 +93,7 @@ namespace MatterControl.Printing
 			GCodeCommandQueue.Clear();
 		}
 
-		public override double TotalSecondsInPrint => Instruction(0).secondsToEndFromHere;
+		public override double TotalSecondsInPrint => Instruction(0).SecondsToEndFromHere;
 
 		public void Add(PrinterMachineInstruction printerMachineInstruction)
 		{
@@ -404,7 +404,7 @@ namespace MatterControl.Printing
 						new Vector3(velocitySameAsStopMmPerS),
 						new Vector3(speedMultiplier));
 
-					instruction.secondsThisLine = (float)Math.Max(timeForE, timeForPosition);
+					instruction.SecondsThisLine = (float)Math.Max(timeForE, timeForPosition);
 				}
 
 				if (progressReporter != null && maxProgressReport.ElapsedMilliseconds > 200)
@@ -423,8 +423,8 @@ namespace MatterControl.Printing
 			for (int i = GCodeCommandQueue.Count - 1; i >= 0; i--)
 			{
 				PrinterMachineInstruction line = GCodeCommandQueue[i];
-				accumulatedTime += line.secondsThisLine;
-				line.secondsToEndFromHere = (float)accumulatedTime;
+				accumulatedTime += line.SecondsThisLine;
+				line.SecondsToEndFromHere = (float)accumulatedTime;
 			}
 		}
 
@@ -657,30 +657,34 @@ namespace MatterControl.Printing
 				case "1":
 					// get the x y z to move to
 					{
-						double valueX = 0;
-						if (GCodeFile.GetFirstNumberAfter("X", lineString, ref valueX))
+						double ePosition = processingMachineState.EPosition;
+						var position = processingMachineState.Position;
+						if (processingMachineState.MovementType == PrinterMachineInstruction.MovementTypes.Relative)
 						{
-							processingMachineState.X = valueX;
+							position = Vector3.Zero;
+							ePosition = 0;
 						}
-						double valueY = 0;
-						if (GCodeFile.GetFirstNumberAfter("Y", lineString, ref valueY))
+
+						GCodeFile.GetFirstNumberAfter("X", lineString, ref position.X);
+						GCodeFile.GetFirstNumberAfter("Y", lineString, ref position.Y);
+						GCodeFile.GetFirstNumberAfter("Z", lineString, ref position.Z);
+						GCodeFile.GetFirstNumberAfter("E", lineString, ref ePosition);
+
+						double feedrate = 0;
+						if (GCodeFile.GetFirstNumberAfter("F", lineString, ref feedrate))
 						{
-							processingMachineState.Y = valueY;
+							processingMachineState.FeedRate = (float)feedrate;
 						}
-						double valueZ = 0;
-						if (GCodeFile.GetFirstNumberAfter("Z", lineString, ref valueZ))
+
+						if (processingMachineState.MovementType == PrinterMachineInstruction.MovementTypes.Absolute)
 						{
-							processingMachineState.Z = valueZ;
+							processingMachineState.Position = position;
+							processingMachineState.EPosition = (float)ePosition;
 						}
-						double valueE = 0;
-						if (GCodeFile.GetFirstNumberAfter("E", lineString, ref valueE))
+						else
 						{
-							processingMachineState.EPosition = (float)valueE;
-						}
-						double valueF = 0;
-						if (GCodeFile.GetFirstNumberAfter("F", lineString, ref valueF))
-						{
-							processingMachineState.FeedRate = (float)valueF;
+							processingMachineState.Position += position;
+							processingMachineState.EPosition += (float)ePosition;
 						}
 					}
 
@@ -718,15 +722,38 @@ namespace MatterControl.Printing
 					break;
 
 				case "90": // G90 is Absolute Distance Mode
-					processingMachineState.movementType = PrinterMachineInstruction.MovementTypes.Absolute;
+					processingMachineState.MovementType = PrinterMachineInstruction.MovementTypes.Absolute;
 					break;
 
 				case "91": // G91 is Incremental Distance Mode
-					processingMachineState.movementType = PrinterMachineInstruction.MovementTypes.Relative;
+					processingMachineState.MovementType = PrinterMachineInstruction.MovementTypes.Relative;
 					break;
 
 				case "92":
-					// set current head position values (used to reset origin)
+					{
+						// set current head position values (used to reset origin)
+						double value = 0;
+						if (GCodeFile.GetFirstNumberAfter("X", lineString, ref value))
+						{
+							processingMachineState.PositionSet |= PositionSet.X;
+							processingMachineState.X = value;
+						}
+						if (GCodeFile.GetFirstNumberAfter("Y", lineString, ref value))
+						{
+							processingMachineState.PositionSet |= PositionSet.Y;
+							processingMachineState.Y = value;
+						}
+						if (GCodeFile.GetFirstNumberAfter("Z", lineString, ref value))
+						{
+							processingMachineState.PositionSet |= PositionSet.Z;
+							processingMachineState.Z = value;
+						}
+						if (GCodeFile.GetFirstNumberAfter("E", lineString, ref value))
+						{
+							processingMachineState.PositionSet |= PositionSet.E;
+							processingMachineState.EPosition = (float)value;
+						}
+					}
 					break;
 
 				case "130":
@@ -802,7 +829,7 @@ namespace MatterControl.Printing
 						double ePosition = lastEPosition;
 						if (GetFirstNumberAfter("E", lineToParse, ref ePosition))
 						{
-							if (instruction.movementType == PrinterMachineInstruction.MovementTypes.Absolute)
+							if (instruction.MovementType == PrinterMachineInstruction.MovementTypes.Absolute)
 							{
 								double deltaEPosition = ePosition - lastEPosition;
 								filamentMm += deltaEPosition;

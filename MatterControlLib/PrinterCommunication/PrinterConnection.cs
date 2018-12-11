@@ -301,7 +301,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			#endregion hardware failure callbacks
 
 			WriteLineStartCallBacks.Register("G90", MovementWasSetToAbsoluteMode);
-			WriteLineStartCallBacks.Register("G91", MovementWasSetToRelativeMode);
 			WriteLineStartCallBacks.Register("M80", AtxPowerUpWasWritenToPrinter);
 			WriteLineStartCallBacks.Register("M81", AtxPowerDownWasWritenToPrinter);
 			WriteLineStartCallBacks.Register("M104", HotendTemperatureWasWritenToPrinter);
@@ -2052,10 +2051,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				|| lineBeingSent.StartsWith("G3 "))
 			{
 				PrinterMove newDestination = currentDestination;
-				if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
-				{
-					newDestination.position = Vector3.Zero;
-				}
 
 				GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref newDestination.position.X);
 				GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref newDestination.position.Y);
@@ -2063,11 +2058,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref newDestination.extrusion);
 				GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref newDestination.feedRate);
-
-				if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
-				{
-					newDestination.position += currentDestination.position;
-				}
 
 				if (currentDestination.position != newDestination.position
 					|| currentDestination.extrusion != newDestination.extrusion)
@@ -2189,11 +2179,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private void MovementWasSetToAbsoluteMode(string line)
 		{
 			movementMode = PrinterMachineInstruction.MovementTypes.Absolute;
-		}
-
-		private void MovementWasSetToRelativeMode(string line)
-		{
-			movementMode = PrinterMachineInstruction.MovementTypes.Relative;
 		}
 
 		private void AtxPowerUpWasWritenToPrinter(string line)
