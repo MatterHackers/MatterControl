@@ -240,7 +240,10 @@ namespace MatterHackers.MatterControl
 			_settings = printerSettings;
 
 			// TODO: Why reload all after swap? We need to rebuild the printer tab only and should have messaging to do so...
-			ApplicationController.Instance.ReloadAll();
+			UiThread.RunOnIdle(() =>
+			{
+				ApplicationController.Instance.ReloadAll().ConfigureAwait(false);
+			});
 		}
 
 		private void ReloadBedSettings()
@@ -370,7 +373,13 @@ namespace MatterHackers.MatterControl
 				if (SettingsOrganizer.SettingsData.TryGetValue(stringEvent.Data, out SliceSettingData settingsData)
 					&& settingsData.ReloadUiWhenChanged)
 				{
-					UiThread.RunOnIdle(ApplicationController.Instance.ReloadAll);
+					UiThread.RunOnIdle(() =>
+					{
+						ApplicationController.Instance.ReloadAll().ConfigureAwait(false);
+					});
+
+					// No further processing if changed setting has ReloadUiWhenChanged set
+					return;
 				}
 
 				if (stringEvent.Data == SettingsKey.bed_size

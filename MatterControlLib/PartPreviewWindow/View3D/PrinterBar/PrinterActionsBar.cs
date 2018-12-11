@@ -371,7 +371,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									}
 									else
 									{
-										ApplicationController.Instance.ReloadAll();
+										ApplicationController.Instance.ReloadAll().ConfigureAwait(false);
 									}
 								}
 							},

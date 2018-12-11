@@ -303,34 +303,7 @@ namespace MatterHackers.MatterControl
 				// cancel the close so that we can save all our active work spaces
 				eventArgs.Cancel = true;
 
-				var workspaces = ApplicationController.Instance.Workspaces.Select(w =>
-				{
-					if (w.Printer == null)
-					{
-						return new PartWorkspace(w.SceneContext)
-						{
-							ContentPath = w.SceneContext.EditContext?.SourceFilePath,
-						};
-					}
-					else
-					{
-						return new PartWorkspace(w.Printer)
-						{
-							ContentPath = w.SceneContext.EditContext?.SourceFilePath,
-						};
-					}
-				});
-
-				// Persist part workspaces
-				File.WriteAllText(
-					ProfileManager.Instance.OpenTabsPath,
-					JsonConvert.SerializeObject(
-						workspaces,
-						Formatting.Indented,
-						new JsonSerializerSettings
-						{
-							NullValueHandling = NullValueHandling.Ignore
-						}));
+				ApplicationController.Instance.PersistUserTabs();
 
 				UiThread.RunOnIdle(async () =>
 				{

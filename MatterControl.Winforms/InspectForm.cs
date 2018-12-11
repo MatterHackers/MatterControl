@@ -501,7 +501,7 @@ namespace MatterHackers.MatterControl
 
 		private void btnApply_Click(object sender, EventArgs e)
 		{
-			ApplicationController.Instance.ReloadAll();
+			ApplicationController.Instance.ReloadAll().ConfigureAwait(false);
 		}
 	}
 }
