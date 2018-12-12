@@ -113,8 +113,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (parentNode != null)
 			{
 				parentNode.Nodes.Add(node);
-				parentNode.Expanded = true;
+				if(parentNode.Tag is IObject3D object3D)
+				{
+					parentNode.Expanded = object3D.Expanded;
+				}
 			}
+
+			node.ExpandedChanged += (s, e) =>
+			{
+				if (item.Source is Object3D object3D)
+				{
+					object3D.Expanded = node.Expanded;
+				}
+			};
 
 			return node;
 		}

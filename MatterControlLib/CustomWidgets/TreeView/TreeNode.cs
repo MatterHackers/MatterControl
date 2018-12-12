@@ -91,6 +91,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			expandWidget.Click += (s, e) =>
 			{
 				this.Expanded = !this.Expanded;
+				this.ExpandedChanged?.Invoke(this, null);
 				expandWidget.Expanded = this.Expanded;
 			};
 
