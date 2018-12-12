@@ -35,6 +35,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
 
 namespace MatterControlLib.SetupWizard
@@ -42,7 +43,7 @@ namespace MatterControlLib.SetupWizard
 	public class TourOverlay : GuiWidget
 	{
 		private GuiWidget targetWidget;
-		private FlowLayoutWidget content;
+		private GuiWidget popover;
 		private int nextSiteIndex;
 
 		private string description;
@@ -61,17 +62,57 @@ namespace MatterControlLib.SetupWizard
 
 		public override void OnLoad(EventArgs args)
 		{
-			content = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var arrow = Popover.ArrowDirection.Top;
+			var padding = new BorderDouble(15, 15);
+			int notchSize = 5;
+
+			int height = 20;
+
+			int p2 = (int)(height / 2);
+
+			switch (arrow)
+			{
+				case Popover.ArrowDirection.Top:
+					padding = padding.Clone(top: padding.Top + notchSize);
+					break;
+
+				case Popover.ArrowDirection.Bottom:
+					padding = padding.Clone(bottom: padding.Bottom + notchSize);
+					break;
+
+				case Popover.ArrowDirection.Left:
+					padding = padding.Clone(left: padding.Left + notchSize);
+					break;
+
+				case Popover.ArrowDirection.Right:
+					padding = padding.Clone(right: padding.Right + notchSize);
+					break;
+			}
+
+			popover = new Popover()
+			{
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Fit,
+				TagColor = theme.ResolveColor(theme.BackgroundColor, theme.AccentMimimalOverlay.WithAlpha(50)),
+				Padding = padding,
+				NotchSize = notchSize,
+				Arrow = arrow,
+				Name = "Gah",
+				P2 = p2
+			};
+			this.AddChild(popover);
+
+			var content2 = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
 				Padding = 5,
-				BackgroundColor = theme.BackgroundColor,
+				//BackgroundColor = theme.BackgroundColor,
 			};
 
-			this.AddChild(content);
+			popover.AddChild(content2);
 
-			content.AddChild(new WrappedTextWidget(description, textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
+			content2.AddChild(new WrappedTextWidget(description, textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 			{
 				Margin = 5
 			});
@@ -99,11 +140,15 @@ namespace MatterControlLib.SetupWizard
 			cancelButton.Click += (s, e) => this.Close();
 			buttonRow.AddChild(cancelButton);
 
-			content.AddChild(buttonRow);
+			content2.AddChild(buttonRow);
 
 			// and last, set the size
 			var targetBounds = this.GetTargetBounds();
-			content.Size = new Vector2(250, content.Height);
+
+
+			var content = popover;
+
+			content2.Size = new Vector2(250, content.Height);
 
 			if(targetBounds.Right >= this.Width - content.Width - 5)
 			{
@@ -182,13 +227,16 @@ namespace MatterControlLib.SetupWizard
 
 			base.OnDraw(graphics2D);
 
-			graphics2D.Render(new Stroke(new RoundedRect(GetTargetBounds(), 0), 2), theme.PrimaryAccentColor);
+			//graphics2D.Render(new Stroke(new RoundedRect(GetTargetBounds(), 0), 2), theme.PrimaryAccentColor);
 			//graphics2D.Render(new Stroke(new RoundedRect(GetContentBounds(), 3), 4), theme.PrimaryAccentColor);
 		}
 
 		private RectangleDouble GetContentBounds()
 		{
-			var contentBounds = content.TransformToScreenSpace(content.LocalBounds);
+			var xxx = popover.LocalBounds;
+			xxx.Inflate(popover.Padding);
+
+			var contentBounds = popover.TransformToScreenSpace(xxx);
 			return this.TransformFromScreenSpace(contentBounds);
 		}
 
@@ -246,7 +294,7 @@ namespace MatterControlLib.SetupWizard
 
 			if (targetWidget != null)
 			{
-				var tourOverlay = new TourOverlay(targetWidget, tourSites[siteIndex].description, ApplicationController.Instance.MenuTheme, siteIndex + 1);
+				var tourOverlay = new TourOverlay(targetWidget, tourSites[siteIndex].description, ApplicationController.Instance.Theme, siteIndex + 1);
 				window.AddChild(tourOverlay);
 			}
 		}

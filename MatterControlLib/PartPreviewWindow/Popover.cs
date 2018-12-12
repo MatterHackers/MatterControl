@@ -48,7 +48,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			Console.WriteLine("Height: " + this.Height);
 
-			tabShape = GetShape(this.Arrow, this.LocalBounds, this.NotchSize, this.LocalBounds.Top - this.P2);
+			// Works for left right
+			//tabShape = GetShape(this.Arrow, this.LocalBounds, this.NotchSize, this.LocalBounds.Top - this.P2);
+
+			// Troubleshooting top/bottom
+			tabShape = GetShape(this.Arrow, this.LocalBounds, this.NotchSize, this.LocalBounds.Left + 20);
+
 		}
 
 		public int P2 { get; set; }
