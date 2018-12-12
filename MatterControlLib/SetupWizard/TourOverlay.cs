@@ -27,14 +27,15 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
 
 namespace MatterControlLib.SetupWizard
 {
@@ -44,7 +45,7 @@ namespace MatterControlLib.SetupWizard
 		private FlowLayoutWidget content;
 		private int nextSiteIndex;
 
-		private string Description { get; }
+		private string description;
 		private ThemeConfig theme;
 
 		public TourOverlay(GuiWidget targetWidget, string description, ThemeConfig theme, int nextSiteIndex)
@@ -52,10 +53,10 @@ namespace MatterControlLib.SetupWizard
 			this.nextSiteIndex = nextSiteIndex;
 			this.theme = theme;
 			this.targetWidget = targetWidget;
-			this.Description = description;
+			this.description = description;
 
-			HAnchor = HAnchor.Stretch;
-			VAnchor = VAnchor.Stretch;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Stretch;
 		}
 
 		public override void OnLoad(EventArgs args)
@@ -64,15 +65,15 @@ namespace MatterControlLib.SetupWizard
 			{
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
-				Padding = new BorderDouble(5),
-				BackgroundColor = theme.BackgroundColor
+				Padding = 5,
+				BackgroundColor = theme.BackgroundColor,
 			};
 
 			this.AddChild(content);
 
-			content.AddChild(new WrappedTextWidget(Description, textColor: theme.TextColor)
+			content.AddChild(new WrappedTextWidget(description, textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 			{
-				Margin = new BorderDouble(5)
+				Margin = 5
 			});
 
 			var buttonRow = new FlowLayoutWidget()
@@ -84,7 +85,7 @@ namespace MatterControlLib.SetupWizard
 
 			if (nextSiteIndex > 0)
 			{
-				var nextButton = theme.CreateDialogButton("Next");
+				var nextButton = theme.CreateDialogButton("Next".Localize());
 				nextButton.Click += (s, e) =>
 				{
 					var topWindow = this.TopmostParent();
@@ -94,7 +95,7 @@ namespace MatterControlLib.SetupWizard
 				buttonRow.AddChild(nextButton);
 			}
 
-			var cancelButton = theme.CreateDialogButton("Done");
+			var cancelButton = theme.CreateDialogButton("Done".Localize());
 			cancelButton.Click += (s, e) => this.Close();
 			buttonRow.AddChild(cancelButton);
 
@@ -190,15 +191,13 @@ namespace MatterControlLib.SetupWizard
 		private RectangleDouble GetContentBounds()
 		{
 			var contentBounds = content.TransformToScreenSpace(content.LocalBounds);
-			contentBounds = this.TransformFromScreenSpace(contentBounds);
-			return contentBounds;
+			return this.TransformFromScreenSpace(contentBounds);
 		}
 
 		private RectangleDouble GetChildBounds()
 		{
 			var childBounds = targetWidget.TransformToScreenSpace(targetWidget.LocalBounds);
-			childBounds = this.TransformFromScreenSpace(childBounds);
-			return childBounds;
+			return this.TransformFromScreenSpace(childBounds);
 		}
 
 		public static void ShowSite(GuiWidget window, int siteIndex)
@@ -228,8 +227,9 @@ namespace MatterControlLib.SetupWizard
 			{
 				while (findSiteIndex < tourSites.Count)
 				{
-					List<GuiWidget.WidgetAndPosition> foundChildren = new List<GuiWidget.WidgetAndPosition>();
+					var foundChildren = new List<GuiWidget.WidgetAndPosition>();
 					window.FindNamedChildrenRecursive(tourSites[findSiteIndex].site, foundChildren);
+
 					foreach (var widgetAndPosition in foundChildren)
 					{
 						if (widgetAndPosition.widget.ActuallyVisibleOnScreen())
@@ -237,6 +237,7 @@ namespace MatterControlLib.SetupWizard
 							return widgetAndPosition.widget;
 						}
 					}
+
 					findSiteIndex++;
 				}
 
