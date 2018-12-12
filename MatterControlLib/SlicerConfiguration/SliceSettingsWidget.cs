@@ -830,6 +830,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				uiField.SetValue(sliceSettingValue, userInitiated: false);
 
+				// Disable ToolTipText on UIFields in favor of popovers
+				uiField.Content.ToolTipText = "";
+
 				// make sure the undo data goes back to the initial value after a change
 				if(uiField.Content is MHTextEditWidget textWidget)
 				{
