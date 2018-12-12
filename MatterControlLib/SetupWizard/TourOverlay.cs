@@ -180,12 +180,12 @@ namespace MatterControlLib.SetupWizard
 			var combine = new CombinePaths(dimRegion, childRect);
 			//var combine = new CombinePaths(dimRegion, new ReversePath(round));
 
-			graphics2D.Render(combine, new Color(Color.Black, 120));
+			graphics2D.Render(combine, new Color(Color.Black, 180));
 
 			base.OnDraw(graphics2D);
 
-			graphics2D.Render(new Stroke(new RoundedRect(GetChildBounds(), 3), 4), theme.PrimaryAccentColor);
-			graphics2D.Render(new Stroke(new RoundedRect(GetContentBounds(), 3), 4), theme.PrimaryAccentColor);
+			graphics2D.Render(new Stroke(new RoundedRect(GetChildBounds(), 0), 2), theme.PrimaryAccentColor);
+			//graphics2D.Render(new Stroke(new RoundedRect(GetContentBounds(), 3), 4), theme.PrimaryAccentColor);
 		}
 
 		private RectangleDouble GetContentBounds()
