@@ -37,28 +37,56 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class Popover : GuiWidget
 	{
 		private IVertexSource tabShape = null;
+		private ArrowDirection _arrow;
 
 		public Color TagColor { get; set; }
 
-		public ArrowDirection Arrow { get; set; }
+		public ArrowDirection Arrow
+		{
+			get => _arrow;
+			set
+			{
+				_arrow = value;
+				tabShape = GetShape(_arrow, this.LocalBounds, this.NotchSize, this.P2);
+			}
+		}
 
 		public override void OnBoundsChanged(EventArgs e)
 		{
 			base.OnBoundsChanged(e);
 
-			Console.WriteLine("Height: " + this.Height);
-
-			// Works for left right
-			//tabShape = GetShape(this.Arrow, this.LocalBounds, this.NotchSize, this.LocalBounds.Top - this.P2);
-
-			// Troubleshooting top/bottom
-			tabShape = GetShape(this.Arrow, this.LocalBounds, this.NotchSize, this.LocalBounds.Left + 20);
-
+			tabShape = Popover.GetShape(this.Arrow, this.LocalBounds, this.NotchSize, this.P2);
 		}
 
 		public int P2 { get; set; }
 
 		public int NotchSize { get; set; } = 5;
+
+		public override BorderDouble Padding
+		{
+			get
+			{
+				// TODO: Work with Lars to determine why adjusted padding seems to have no effect?
+				var padding = base.Padding;
+
+				switch (this.Arrow)
+				{
+					case Popover.ArrowDirection.Top:
+						return padding.Clone(top: padding.Top + this.NotchSize);
+
+					case Popover.ArrowDirection.Bottom:
+						return padding.Clone(bottom: padding.Bottom + this.NotchSize);
+
+					case Popover.ArrowDirection.Left:
+						return padding.Clone(left: padding.Left + this.NotchSize);
+
+					//case Popover.ArrowDirection.Right:
+					default:
+						return padding.Clone(right: padding.Right + this.NotchSize);
+				}
+			}
+			set => base.Padding = value;
+		}
 
 		private static IVertexSource GetShape(ArrowDirection arrowDirection, RectangleDouble rect, double notchSize, double p2)
 		{

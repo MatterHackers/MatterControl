@@ -43,7 +43,7 @@ namespace MatterControlLib.SetupWizard
 	public class TourOverlay : GuiWidget
 	{
 		private GuiWidget targetWidget;
-		private GuiWidget popover;
+		private Popover popover;
 		private int nextSiteIndex;
 
 		private string description;
@@ -63,31 +63,12 @@ namespace MatterControlLib.SetupWizard
 		public override void OnLoad(EventArgs args)
 		{
 			var arrow = Popover.ArrowDirection.Top;
-			var padding = new BorderDouble(15, 15);
-			int notchSize = 5;
+			var padding = new BorderDouble(theme.DefaultContainerPadding);
+			int notchSize = 8;
 
 			int height = 20;
 
 			int p2 = (int)(height / 2);
-
-			switch (arrow)
-			{
-				case Popover.ArrowDirection.Top:
-					padding = padding.Clone(top: padding.Top + notchSize);
-					break;
-
-				case Popover.ArrowDirection.Bottom:
-					padding = padding.Clone(bottom: padding.Bottom + notchSize);
-					break;
-
-				case Popover.ArrowDirection.Left:
-					padding = padding.Clone(left: padding.Left + notchSize);
-					break;
-
-				case Popover.ArrowDirection.Right:
-					padding = padding.Clone(right: padding.Right + notchSize);
-					break;
-			}
 
 			popover = new Popover()
 			{
@@ -102,19 +83,18 @@ namespace MatterControlLib.SetupWizard
 			};
 			this.AddChild(popover);
 
-			var content2 = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
-				Padding = 5,
-				//BackgroundColor = theme.BackgroundColor,
 			};
 
-			popover.AddChild(content2);
+			popover.AddChild(column);
 
-			content2.AddChild(new WrappedTextWidget(description, textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
+			column.AddChild(new WrappedTextWidget(description, textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 			{
-				Margin = 5
+				Margin = 5,
+				HAnchor = HAnchor.Stretch
 			});
 
 			var buttonRow = new FlowLayoutWidget()
@@ -140,49 +120,67 @@ namespace MatterControlLib.SetupWizard
 			cancelButton.Click += (s, e) => this.Close();
 			buttonRow.AddChild(cancelButton);
 
-			content2.AddChild(buttonRow);
+			column.AddChild(buttonRow);
 
 			// and last, set the size
 			var targetBounds = this.GetTargetBounds();
 
-
 			var content = popover;
 
-			content2.Size = new Vector2(250, content.Height);
+			column.Size = new Vector2(250, content.Height);
 
-			if(targetBounds.Right >= this.Width - content.Width - 5)
+			if (targetBounds.Right >= this.Width - content.Width - 5)
 			{
 				var left = targetBounds.Right - content.Width;
 				if (targetBounds.Bottom < this.Height / 2)
 				{
 					if (targetBounds.Bottom - content.Size.Y < 0)
 					{
-						// position above
+						// position above target, arrow down aligned right center,
 						content.Position = new Vector2(left, targetBounds.Top);
+						popover.P2 = (int)(content.LocalBounds.Left + content.LocalBounds.Width - (targetWidget.Width / 2));
+						popover.Arrow = Popover.ArrowDirection.Bottom;
 					}
 					else
 					{
-						// position content to the left of site
+						// position left of target, arrow right aligned top center
 						content.Position = new Vector2(left, targetBounds.Top - content.Size.Y);
+						popover.P2 = (int)(content.LocalBounds.Top - (targetWidget.Height / 2));
+						popover.Arrow = Popover.ArrowDirection.Right;
 					}
 				}
 				else
 				{
-					// position content under site
+					// position under target, arrow up aligned right center
 					content.Position = new Vector2(left, targetBounds.Bottom - content.Size.Y);
+					popover.P2 = (int)(content.LocalBounds.Left + content.LocalBounds.Width - (targetWidget.Width / 2));
+					popover.Arrow = Popover.ArrowDirection.Top;
 				}
 			}
 			else
 			{
-				if(targetBounds.Bottom < this.Height / 2)
+				if (targetBounds.Bottom < this.Height / 2)
 				{
-					// position content to the right of site
+					// position right of target, arrow left aligned top center (or top 20 if target larger than content)
 					content.Position = new Vector2(targetBounds.Right, targetBounds.Top - content.Size.Y);
+
+					if (targetWidget.Height > content.Height)
+					{
+						popover.P2 = (int)(content.LocalBounds.Top - 20);
+					}
+					else
+					{
+						popover.P2 = (int)(content.LocalBounds.Top - (targetWidget.Height / 2));
+					}
+
+					popover.Arrow = Popover.ArrowDirection.Left;
 				}
-				else 
+				else
 				{
-					// position content under site
+					// position under target, arrow up aligned left center
 					content.Position = new Vector2(targetBounds.Left, targetBounds.Bottom - content.Size.Y);
+					popover.P2 = (int)(content.LocalBounds.Left + (targetWidget.Width / 2));
+					popover.Arrow = Popover.ArrowDirection.Top;
 				}
 			}
 
