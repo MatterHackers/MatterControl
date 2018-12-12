@@ -308,6 +308,7 @@ namespace MatterHackers.MatterControl
 				UiThread.RunOnIdle(async () =>
 				{
 					var application = ApplicationController.Instance;
+
 					// Save changes before close
 					foreach (var printer in ApplicationController.Instance.ActivePrinters)
 					{
@@ -328,8 +329,6 @@ namespace MatterHackers.MatterControl
 					this.CloseOnIdle();
 				});
 			}
-			
-			// we are exiting and have finished saving
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -342,6 +341,7 @@ namespace MatterHackers.MatterControl
 				//Close connection to the local datastore
 				printer.Connection.HaltConnectionThread();
 			}
+
 			ApplicationController.Instance.OnApplicationClosed();
 
 			Datastore.Instance.Exit();
