@@ -37,18 +37,42 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class Popover : GuiWidget
 	{
 		private IVertexSource tabShape = null;
-		private ArrowDirection _arrow;
 
 		public Color TagColor { get; set; }
 
-		public ArrowDirection Arrow
+		public ArrowDirection Arrow { get; }
+
+		private Popover()
 		{
-			get => _arrow;
-			set
+		}
+
+		public Popover(ArrowDirection arrow, BorderDouble padding, int notchSize, int p2)
+		{
+			BorderDouble adjustedPadding;
+
+			switch (arrow)
 			{
-				_arrow = value;
-				tabShape = GetShape(_arrow, this.LocalBounds, this.NotchSize, this.P2);
+				case Popover.ArrowDirection.Top:
+					adjustedPadding = padding.Clone(top: padding.Top + notchSize);
+					break;
+
+				case Popover.ArrowDirection.Bottom:
+					adjustedPadding = padding.Clone(bottom: padding.Bottom + notchSize);
+					break;
+
+				case Popover.ArrowDirection.Left:
+					adjustedPadding = padding.Clone(left: padding.Left + notchSize);
+					break;
+
+				default: // ArrowDirection.Right:
+					adjustedPadding = padding.Clone(right: padding.Right + notchSize);
+					break;
 			}
+
+			this.Arrow = arrow;
+			this.NotchSize = notchSize;
+			this.Padding = adjustedPadding;
+			this.P2 = p2;
 		}
 
 		public override void OnBoundsChanged(EventArgs e)
@@ -61,35 +85,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		/// <summary>
 		/// Notch offset. See https://photos.app.goo.gl/YdTiehf6ih7fSoDA9 for point diagram
 		/// </summary>
-		public int P2 { get; set; }
+		public int P2 { get; }
 
-		public int NotchSize { get; set; } = 5;
-
-		public override BorderDouble Padding
-		{
-			get
-			{
-				// TODO: Work with Lars to determine why adjusted padding seems to have no effect?
-				var padding = base.Padding;
-
-				switch (this.Arrow)
-				{
-					case Popover.ArrowDirection.Top:
-						return padding.Clone(top: padding.Top + this.NotchSize);
-
-					case Popover.ArrowDirection.Bottom:
-						return padding.Clone(bottom: padding.Bottom + this.NotchSize);
-
-					case Popover.ArrowDirection.Left:
-						return padding.Clone(left: padding.Left + this.NotchSize);
-
-					//case Popover.ArrowDirection.Right:
-					default:
-						return padding.Clone(right: padding.Right + this.NotchSize);
-				}
-			}
-			set => base.Padding = value;
-		}
+		public int NotchSize { get; }
 
 		private static IVertexSource GetShape(ArrowDirection arrowDirection, RectangleDouble rect, double notchSize, double p2)
 		{
@@ -119,16 +117,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			int p1, p3;
 
-			if (arrowDirection == ArrowDirection.Bottom
-				|| arrowDirection == ArrowDirection.Right)
+			switch(arrowDirection)
 			{
-				p1 = (int)(p2 + notchSize);
-				p3 = (int)(p2 - notchSize);
-			}
-			else
-			{
-				p1 = (int)(p2 - notchSize);
-				p3 = (int)(p2 + notchSize);
+				case ArrowDirection.Bottom:
+					p2 = x1 + p2;
+					p1 = (int)(p2 + notchSize);
+					p3 = (int)(p2 - notchSize);
+					break;
+
+				case ArrowDirection.Right:
+					p2 = y1 - p2;
+					p1 = (int)(p2 + notchSize);
+					p3 = (int)(p2 - notchSize);
+					break;
+
+				case ArrowDirection.Top:
+					p2 = x1 + p2;
+					p1 = (int)(p2 - notchSize);
+					p3 = (int)(p2 + notchSize);
+					break;
+
+				case ArrowDirection.Left:
+				default:
+					p2 = x2 + p2;
+					p1 = (int)(p2 - notchSize);
+					p3 = (int)(p2 + notchSize);
+					break;
 			}
 
 			int notchX = (int)(p2 - notchSize);

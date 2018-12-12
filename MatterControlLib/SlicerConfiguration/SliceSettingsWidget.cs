@@ -442,52 +442,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								{
 									settingsRow.Focus();
 
-									var arrow = Popover.ArrowDirection.Right;
-
-									BorderDouble padding = new BorderDouble(15, 10);
-
-									int notchSize = 5;
-
-									switch (arrow)
-									{
-										case Popover.ArrowDirection.Top:
-											padding = padding.Clone(top: padding.Top + notchSize);
-											break;
-
-										case Popover.ArrowDirection.Bottom:
-											padding = padding.Clone(bottom: padding.Bottom + notchSize);
-											break;
-
-										case Popover.ArrowDirection.Left:
-											padding = padding.Clone(left: padding.Left + notchSize);
-											break;
-
-										case Popover.ArrowDirection.Right:
-											padding = padding.Clone(right: padding.Right + notchSize);
-											break;
-									}
-
-									//double p2 = notchYOffset == 0 ? rect.YCenter : y2 - notchYOffset - (notchSize * 2);
-
-									//if (arrowDirection == ArrowDirection.Top
-									//	|| arrowDirection == ArrowDirection.Bottom)
-									//{
-									//	p2 = notchXOffset == 0 ? rect.XCenter : x2 + notchXOffset + (notchSize * 2);
-									//}
-
 									int p2 = (int)(thisRow.Height / 2);
 
 									Console.WriteLine("RowHeight: {0} - {1}", thisRow.Height, p2);
 
-									var tagContainer = new Popover()
+									var tagContainer = new Popover(Popover.ArrowDirection.Right, new BorderDouble(15, 10), 7, p2)
 									{
 										HAnchor = HAnchor.Fit,
 										VAnchor = VAnchor.Fit,
 										TagColor = theme.ResolveColor(theme.BackgroundColor, theme.AccentMimimalOverlay.WithAlpha(50)),
-										Padding = padding,
-										NotchSize = notchSize,
-										Arrow = arrow,
-										P2 = p2
 									};
 
 									tagContainer.AddChild(new WrappedTextWidget(settingData.HelpText, pointSize: theme.DefaultFontSize - 1, textColor: theme.TextColor)
