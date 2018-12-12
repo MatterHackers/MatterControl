@@ -179,9 +179,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-
-				Console.WriteLine("gah: {0}/{1}/{2}", p1, p2, p3);
-
 				// F -> G through P1-P3
 				tabShape.LineTo(x4, p1); // F -> P1
 

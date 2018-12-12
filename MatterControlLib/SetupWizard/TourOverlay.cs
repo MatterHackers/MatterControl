@@ -66,10 +66,6 @@ namespace MatterControlLib.SetupWizard
 			var padding = new BorderDouble(theme.DefaultContainerPadding);
 			int notchSize = 8;
 
-			int height = 20;
-
-			int p2 = (int)(height / 2);
-
 			popover = new Popover()
 			{
 				HAnchor = HAnchor.Fit,
@@ -78,8 +74,6 @@ namespace MatterControlLib.SetupWizard
 				Padding = padding,
 				NotchSize = notchSize,
 				Arrow = arrow,
-				Name = "Gah",
-				P2 = p2
 			};
 			this.AddChild(popover);
 
