@@ -84,6 +84,59 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public static class SystemWindowExtension
 	{
+		public static void ShowPopover(this SystemWindow systemWindow, MatePoint anchor, MatePoint popup, RectangleDouble altBounds = default(RectangleDouble))
+		{
+			void widgetRelativeTo_PositionChanged(object sender, EventArgs e)
+			{
+				if (anchor.Widget?.Parent != null)
+				{
+					// Calculate left aligned screen space position (using widgetRelativeTo.parent)
+					Vector2 anchorLeft = anchor.Widget.Parent.TransformToScreenSpace(anchor.Widget.Position);
+					anchorLeft += new Vector2(altBounds.Left, altBounds.Bottom);
+
+					Vector2 popupPosition = anchorLeft;
+
+					var bounds = altBounds == default(RectangleDouble) ? anchor.Widget.LocalBounds : altBounds;
+
+					Vector2 xPosition = GetXAnchor(anchor.Mate, popup.Mate, popup.Widget, bounds);
+
+					Vector2 screenPosition;
+
+					screenPosition = anchorLeft + xPosition;
+
+					// Constrain
+					if (screenPosition.X + popup.Widget.Width > systemWindow.Width
+						|| screenPosition.X < 0)
+					{
+						xPosition = GetXAnchor(anchor.AltMate, popup.AltMate, popup.Widget, bounds);
+					}
+
+					popupPosition += xPosition;
+
+					Vector2 yPosition = GetYAnchor(anchor.Mate, popup.Mate, popup.Widget, bounds);
+
+					screenPosition = anchorLeft + yPosition;
+
+					// Constrain
+					if (anchor.AltMate != null
+						&& (screenPosition.Y + popup.Widget.Height > systemWindow.Height
+							|| screenPosition.Y < 0))
+					{
+						yPosition = GetYAnchor(anchor.AltMate, popup.AltMate, popup.Widget, bounds);
+					}
+
+					popupPosition += yPosition;
+
+					popup.Widget.Position = popupPosition;
+				}
+			}
+
+			widgetRelativeTo_PositionChanged(anchor.Widget, null);
+
+			// When the widgets position changes, sync the popup position
+			systemWindow?.AddChild(popup.Widget);
+		}
+
 		public static void ShowPopup(this SystemWindow systemWindow, MatePoint anchor, MatePoint popup, RectangleDouble altBounds = default(RectangleDouble))
 		{
 			var hookedParents = new HashSet<GuiWidget>();

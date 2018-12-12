@@ -27,24 +27,26 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
 
 namespace MatterControlLib.SetupWizard
 {
 	public class TourOverlay : GuiWidget
 	{
 		private GuiWidget targetWidget;
-		private FlowLayoutWidget content;
+		private Popover popover;
 		private int nextSiteIndex;
 
-		private string Description { get; }
+		private string description;
 		private ThemeConfig theme;
 
 		public TourOverlay(GuiWidget targetWidget, string description, ThemeConfig theme, int nextSiteIndex)
@@ -52,27 +54,41 @@ namespace MatterControlLib.SetupWizard
 			this.nextSiteIndex = nextSiteIndex;
 			this.theme = theme;
 			this.targetWidget = targetWidget;
-			this.Description = description;
+			this.description = description;
 
-			HAnchor = HAnchor.Stretch;
-			VAnchor = VAnchor.Stretch;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Stretch;
 		}
 
 		public override void OnLoad(EventArgs args)
 		{
-			content = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var arrow = Popover.ArrowDirection.Top;
+			var padding = new BorderDouble(theme.DefaultContainerPadding);
+			int notchSize = 8;
+
+			popover = new Popover()
+			{
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Fit,
+				TagColor = theme.ResolveColor(theme.BackgroundColor, theme.AccentMimimalOverlay.WithAlpha(50)),
+				Padding = padding,
+				NotchSize = notchSize,
+				Arrow = arrow,
+			};
+			this.AddChild(popover);
+
+			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
-				Padding = new BorderDouble(5),
-				BackgroundColor = theme.BackgroundColor
 			};
 
-			this.AddChild(content);
+			popover.AddChild(column);
 
-			content.AddChild(new WrappedTextWidget(Description, textColor: theme.TextColor)
+			column.AddChild(new WrappedTextWidget(description, textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 			{
-				Margin = new BorderDouble(5)
+				Margin = 5,
+				HAnchor = HAnchor.Stretch
 			});
 
 			var buttonRow = new FlowLayoutWidget()
@@ -84,7 +100,7 @@ namespace MatterControlLib.SetupWizard
 
 			if (nextSiteIndex > 0)
 			{
-				var nextButton = theme.CreateDialogButton("Next");
+				var nextButton = theme.CreateDialogButton("Next".Localize());
 				nextButton.Click += (s, e) =>
 				{
 					var topWindow = this.TopmostParent();
@@ -94,49 +110,71 @@ namespace MatterControlLib.SetupWizard
 				buttonRow.AddChild(nextButton);
 			}
 
-			var cancelButton = theme.CreateDialogButton("Done");
+			var cancelButton = theme.CreateDialogButton("Done".Localize());
 			cancelButton.Click += (s, e) => this.Close();
 			buttonRow.AddChild(cancelButton);
 
-			content.AddChild(buttonRow);
+			column.AddChild(buttonRow);
 
 			// and last, set the size
-			var childBounds = GetChildBounds();
-			content.Size = new Vector2(250, content.Height);
+			var targetBounds = this.GetTargetBounds();
 
-			if(childBounds.Right >= this.Width - content.Width - 5)
+			var content = popover;
+
+			column.Size = new Vector2(250, content.Height);
+
+			if (targetBounds.Right >= this.Width - content.Width - 5)
 			{
-				var left = childBounds.Right - content.Width;
-				if (childBounds.Bottom < this.Height / 2)
+				var left = targetBounds.Right - content.Width;
+				if (targetBounds.Bottom < this.Height / 2)
 				{
-					if (childBounds.Bottom - content.Size.Y < 0)
+					if (targetBounds.Bottom - content.Size.Y < 0)
 					{
-						// position above
-						content.Position = new Vector2(left, childBounds.Top);
+						// position above target, arrow down aligned right center,
+						content.Position = new Vector2(left, targetBounds.Top);
+						popover.P2 = (int)(content.LocalBounds.Left + content.LocalBounds.Width - (targetWidget.Width / 2));
+						popover.Arrow = Popover.ArrowDirection.Bottom;
 					}
 					else
 					{
-						// position content to the left of site
-						content.Position = new Vector2(left, childBounds.Top - content.Size.Y);
+						// position left of target, arrow right aligned top center
+						content.Position = new Vector2(left, targetBounds.Top - content.Size.Y);
+						popover.P2 = (int)(content.LocalBounds.Top - (targetWidget.Height / 2));
+						popover.Arrow = Popover.ArrowDirection.Right;
 					}
 				}
 				else
 				{
-					// position content under site
-					content.Position = new Vector2(left, childBounds.Bottom - content.Size.Y);
+					// position under target, arrow up aligned right center
+					content.Position = new Vector2(left, targetBounds.Bottom - content.Size.Y);
+					popover.P2 = (int)(content.LocalBounds.Left + content.LocalBounds.Width - (targetWidget.Width / 2));
+					popover.Arrow = Popover.ArrowDirection.Top;
 				}
 			}
 			else
 			{
-				if(childBounds.Bottom < this.Height / 2)
+				if (targetBounds.Bottom < this.Height / 2)
 				{
-					// position content to the right of site
-					content.Position = new Vector2(childBounds.Right, childBounds.Top - content.Size.Y);
+					// position right of target, arrow left aligned top center (or top 20 if target larger than content)
+					content.Position = new Vector2(targetBounds.Right, targetBounds.Top - content.Size.Y);
+
+					if (targetWidget.Height > content.Height)
+					{
+						popover.P2 = (int)(content.LocalBounds.Top - 20);
+					}
+					else
+					{
+						popover.P2 = (int)(content.LocalBounds.Top - (targetWidget.Height / 2));
+					}
+
+					popover.Arrow = Popover.ArrowDirection.Left;
 				}
-				else 
+				else
 				{
-					// position content under site
-					content.Position = new Vector2(childBounds.Left, childBounds.Bottom - content.Size.Y);
+					// position under target, arrow up aligned left center
+					content.Position = new Vector2(targetBounds.Left, targetBounds.Bottom - content.Size.Y);
+					popover.P2 = (int)(content.LocalBounds.Left + (targetWidget.Width / 2));
+					popover.Arrow = Popover.ArrowDirection.Top;
 				}
 			}
 
@@ -168,37 +206,33 @@ namespace MatterControlLib.SetupWizard
 			dimRegion.LineTo(LocalBounds.Right, LocalBounds.Top);
 			dimRegion.LineTo(LocalBounds.Left, LocalBounds.Top);
 
-			var childBounds = GetChildBounds();
+			var targetBounds = this.GetTargetBounds();
 
-			var childRect = new VertexStorage();
-			childRect.MoveTo(childBounds.Right, childBounds.Bottom);
-			childRect.LineTo(childBounds.Left, childBounds.Bottom);
-			childRect.LineTo(childBounds.Left, childBounds.Top);
-			childRect.LineTo(childBounds.Right, childBounds.Top);
+			var targetRect = new VertexStorage();
+			targetRect.MoveTo(targetBounds.Right, targetBounds.Bottom);
+			targetRect.LineTo(targetBounds.Left, targetBounds.Bottom);
+			targetRect.LineTo(targetBounds.Left, targetBounds.Top);
+			targetRect.LineTo(targetBounds.Right, targetBounds.Top);
 
-			var combine = new CombinePaths(dimRegion, childRect);
-			//var combine = new CombinePaths(dimRegion, new ReversePath(round));
-
-			graphics2D.Render(combine, new Color(Color.Black, 120));
+			var overlayMinusTargetRect = new CombinePaths(dimRegion, targetRect);
+			graphics2D.Render(overlayMinusTargetRect, new Color(Color.Black, 180));
 
 			base.OnDraw(graphics2D);
 
-			graphics2D.Render(new Stroke(new RoundedRect(GetChildBounds(), 3), 4), theme.PrimaryAccentColor);
-			graphics2D.Render(new Stroke(new RoundedRect(GetContentBounds(), 3), 4), theme.PrimaryAccentColor);
+			graphics2D.Render(new Stroke(new RoundedRect(GetTargetBounds(), 0), 2), Color.White.WithAlpha(50));
+			//graphics2D.Render(new Stroke(new RoundedRect(GetContentBounds(), 3), 4), theme.PrimaryAccentColor);
 		}
 
 		private RectangleDouble GetContentBounds()
 		{
-			var contentBounds = content.TransformToScreenSpace(content.LocalBounds);
-			contentBounds = this.TransformFromScreenSpace(contentBounds);
-			return contentBounds;
+			var contentBounds = popover.TransformToScreenSpace(popover.LocalBounds);
+			return this.TransformFromScreenSpace(contentBounds);
 		}
 
-		private RectangleDouble GetChildBounds()
+		private RectangleDouble GetTargetBounds()
 		{
 			var childBounds = targetWidget.TransformToScreenSpace(targetWidget.LocalBounds);
-			childBounds = this.TransformFromScreenSpace(childBounds);
-			return childBounds;
+			return this.TransformFromScreenSpace(childBounds);
 		}
 
 		public static void ShowSite(GuiWidget window, int siteIndex)
@@ -228,8 +262,9 @@ namespace MatterControlLib.SetupWizard
 			{
 				while (findSiteIndex < tourSites.Count)
 				{
-					List<GuiWidget.WidgetAndPosition> foundChildren = new List<GuiWidget.WidgetAndPosition>();
+					var foundChildren = new List<GuiWidget.WidgetAndPosition>();
 					window.FindNamedChildrenRecursive(tourSites[findSiteIndex].site, foundChildren);
+
 					foreach (var widgetAndPosition in foundChildren)
 					{
 						if (widgetAndPosition.widget.ActuallyVisibleOnScreen())
@@ -237,6 +272,7 @@ namespace MatterControlLib.SetupWizard
 							return widgetAndPosition.widget;
 						}
 					}
+
 					findSiteIndex++;
 				}
 
@@ -247,7 +283,7 @@ namespace MatterControlLib.SetupWizard
 
 			if (targetWidget != null)
 			{
-				var tourOverlay = new TourOverlay(targetWidget, tourSites[siteIndex].description, ApplicationController.Instance.MenuTheme, siteIndex + 1);
+				var tourOverlay = new TourOverlay(targetWidget, tourSites[siteIndex].description, ApplicationController.Instance.Theme, siteIndex + 1);
 				window.AddChild(tourOverlay);
 			}
 		}
