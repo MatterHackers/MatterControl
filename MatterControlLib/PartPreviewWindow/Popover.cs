@@ -58,6 +58,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabShape = Popover.GetShape(this.Arrow, this.LocalBounds, this.NotchSize, this.P2);
 		}
 
+		/// <summary>
+		/// Notch offset. See https://photos.app.goo.gl/YdTiehf6ih7fSoDA9 for point diagram
+		/// </summary>
 		public int P2 { get; set; }
 
 		public int NotchSize { get; set; } = 5;
@@ -90,6 +93,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private static IVertexSource GetShape(ArrowDirection arrowDirection, RectangleDouble rect, double notchSize, double p2)
 		{
+			// See https://photos.app.goo.gl/YdTiehf6ih7fSoDA9 for point diagram
+
 			var tabShape = new VertexStorage();
 			var centerY = rect.YCenter;
 
