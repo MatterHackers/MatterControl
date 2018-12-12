@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
@@ -103,63 +104,52 @@ namespace MatterHackers.MatterControl.DesignTools
 					rotationCenter = new Vector2(aabb.minXYZ.X + (aabb.maxXYZ.X - aabb.minXYZ.X) * (StartPercent / 100), aabb.maxXYZ.Y + radius);
 					foreach (var object3Ds in meshWrapperEnumerator)
 					{
-						var originalMatrix = object3Ds.original.WorldMatrix(this);
+						var matrix = object3Ds.original.WorldMatrix(this);
 						var curvedMesh = object3Ds.meshCopy.Mesh;
-						var originalMesh = object3Ds.original.Mesh;
 
+						// split long edges so it will be curved
 						if (false)
 						{
 							int sidesPerRotation = 30;
 							double numRotations = aabb.XSize / circumference;
 							double numberOfCuts = numRotations * sidesPerRotation;
 							var maxXLength = aabb.XSize / numberOfCuts;
-							// chop any segment that is too short in x
-							for (int i = curvedMesh.MeshEdges.Count - 1; i >= 0; i--)
-							{
-								var edgeToSplit = curvedMesh.MeshEdges[i];
-								var start = edgeToSplit.VertexOnEnd[0].Position;
-								var end = edgeToSplit.VertexOnEnd[1].Position;
-								var edgeXLength = Math.Abs(end.X - start.X);
-								int numberOfDivides = (int)(edgeXLength / maxXLength);
-								if (numberOfDivides > 1)
-								{
-									for (int j = 1; j < numberOfDivides - 1; j++)
-									{
-										IVertex newVertex;
-										MeshEdge newMeshEdge;
-										curvedMesh.SplitMeshEdge(edgeToSplit, out newVertex, out newMeshEdge);
-										var otherIndex = newMeshEdge.GetVertexEndIndex(newVertex);
-										var ratio = (numberOfDivides - j) / (double)numberOfDivides;
-										newVertex.Position = start + (end - start) * ratio;
-										edgeToSplit = newMeshEdge;
-										start = edgeToSplit.VertexOnEnd[0].Position;
-										end = edgeToSplit.VertexOnEnd[1].Position;
 
-										foreach (var face in edgeToSplit.FacesSharingMeshEdge())
-										{
-											Face newFace;
-											curvedMesh.SplitFace(face,
-												edgeToSplit.VertexOnEnd[0],
-												edgeToSplit.VertexOnEnd[1],
-												out newMeshEdge,
-												out newFace);
-										}
-									}
-								}
+							// convert the mesh into vertex and face arrays
+							double[] v;
+							int[] f;
+							curvedMesh.ToVerticesAndFaces(out v, out f);
+							MeshHelper.Transform(v, matrix);
+
+							// make lists so we can add to them
+							var vL = new List<double>(v);
+							var fL = new List<int>(f);
+
+							var facesToRemove = new List<int>();
+							// check the edge of every face
+							for (int i = 0; i < fL.Count; i += 3)
+							{
+								// if the edge is > maxXLength
+								// add a new vertex at the split
+								// add two new faces
+								// mark this face for removal
 							}
+
+							// convert the lists back into the mesh
 						}
 
-						for (int i = 0; i < originalMesh.Vertices.Count; i++)
+						if (!BendCcw)
 						{
-							var matrix = originalMatrix;
-							if (!BendCcw)
-							{
-								// rotate around so it will bend correctly
-								matrix *= Matrix4X4.CreateTranslation(0, -aabb.maxXYZ.Y, 0);
-								matrix *= Matrix4X4.CreateRotationX(MathHelper.Tau / 2);
-								matrix *= Matrix4X4.CreateTranslation(0, aabb.maxXYZ.Y - aabb.YSize, 0);
-							}
-							var worldPosition = Vector3.Transform(originalMesh.Vertices[i].Position, matrix);
+							// rotate around so it will bend correctly
+							matrix *= Matrix4X4.CreateTranslation(0, -aabb.maxXYZ.Y, 0);
+							matrix *= Matrix4X4.CreateRotationX(MathHelper.Tau / 2);
+							matrix *= Matrix4X4.CreateTranslation(0, aabb.maxXYZ.Y - aabb.YSize, 0);
+						}
+
+						var matrixInv = matrix.Inverted;
+						for (int i = 0; i < curvedMesh.Vertices.Count; i++)
+						{
+							var worldPosition = Vector3.Transform(curvedMesh.Vertices[i].Position, (Matrix4X4)matrix);
 
 							var angleToRotate = ((worldPosition.X - rotationCenter.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
 							var distanceFromCenter = rotationCenter.Y - worldPosition.Y;
@@ -167,11 +157,11 @@ namespace MatterHackers.MatterControl.DesignTools
 							var rotatePosition = new Vector3(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
 							rotatePosition.Z = worldPosition.Z;
 							var worldWithBend = rotatePosition + new Vector3(rotationCenter.X, radius + aabb.maxXYZ.Y, 0);
-							curvedMesh.Vertices[i].Position = Vector3.Transform(worldWithBend, matrix.Inverted);
+							curvedMesh.Vertices[i].Position = Vector3.Transform(worldWithBend, matrixInv);
 						}
 
 						// the vertices need to be resorted as they have moved relative to each other
-						curvedMesh.Vertices.Sort();
+						//curvedMesh.Vertices.Sort();
 
 						curvedMesh.MarkAsChanged();
 						curvedMesh.CalculateNormals();
