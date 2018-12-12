@@ -102,42 +102,42 @@ namespace MatterControlLib.SetupWizard
 			content.AddChild(buttonRow);
 
 			// and last, set the size
-			var childBounds = GetChildBounds();
+			var targetBounds = this.GetTargetBounds();
 			content.Size = new Vector2(250, content.Height);
 
-			if(childBounds.Right >= this.Width - content.Width - 5)
+			if(targetBounds.Right >= this.Width - content.Width - 5)
 			{
-				var left = childBounds.Right - content.Width;
-				if (childBounds.Bottom < this.Height / 2)
+				var left = targetBounds.Right - content.Width;
+				if (targetBounds.Bottom < this.Height / 2)
 				{
-					if (childBounds.Bottom - content.Size.Y < 0)
+					if (targetBounds.Bottom - content.Size.Y < 0)
 					{
 						// position above
-						content.Position = new Vector2(left, childBounds.Top);
+						content.Position = new Vector2(left, targetBounds.Top);
 					}
 					else
 					{
 						// position content to the left of site
-						content.Position = new Vector2(left, childBounds.Top - content.Size.Y);
+						content.Position = new Vector2(left, targetBounds.Top - content.Size.Y);
 					}
 				}
 				else
 				{
 					// position content under site
-					content.Position = new Vector2(left, childBounds.Bottom - content.Size.Y);
+					content.Position = new Vector2(left, targetBounds.Bottom - content.Size.Y);
 				}
 			}
 			else
 			{
-				if(childBounds.Bottom < this.Height / 2)
+				if(targetBounds.Bottom < this.Height / 2)
 				{
 					// position content to the right of site
-					content.Position = new Vector2(childBounds.Right, childBounds.Top - content.Size.Y);
+					content.Position = new Vector2(targetBounds.Right, targetBounds.Top - content.Size.Y);
 				}
 				else 
 				{
 					// position content under site
-					content.Position = new Vector2(childBounds.Left, childBounds.Bottom - content.Size.Y);
+					content.Position = new Vector2(targetBounds.Left, targetBounds.Bottom - content.Size.Y);
 				}
 			}
 
@@ -169,22 +169,20 @@ namespace MatterControlLib.SetupWizard
 			dimRegion.LineTo(LocalBounds.Right, LocalBounds.Top);
 			dimRegion.LineTo(LocalBounds.Left, LocalBounds.Top);
 
-			var childBounds = GetChildBounds();
+			var targetBounds = this.GetTargetBounds();
 
-			var childRect = new VertexStorage();
-			childRect.MoveTo(childBounds.Right, childBounds.Bottom);
-			childRect.LineTo(childBounds.Left, childBounds.Bottom);
-			childRect.LineTo(childBounds.Left, childBounds.Top);
-			childRect.LineTo(childBounds.Right, childBounds.Top);
+			var targetRect = new VertexStorage();
+			targetRect.MoveTo(targetBounds.Right, targetBounds.Bottom);
+			targetRect.LineTo(targetBounds.Left, targetBounds.Bottom);
+			targetRect.LineTo(targetBounds.Left, targetBounds.Top);
+			targetRect.LineTo(targetBounds.Right, targetBounds.Top);
 
-			var combine = new CombinePaths(dimRegion, childRect);
-			//var combine = new CombinePaths(dimRegion, new ReversePath(round));
-
-			graphics2D.Render(combine, new Color(Color.Black, 180));
+			var overlayMinusTargetRect = new CombinePaths(dimRegion, targetRect);
+			graphics2D.Render(overlayMinusTargetRect, new Color(Color.Black, 180));
 
 			base.OnDraw(graphics2D);
 
-			graphics2D.Render(new Stroke(new RoundedRect(GetChildBounds(), 0), 2), theme.PrimaryAccentColor);
+			graphics2D.Render(new Stroke(new RoundedRect(GetTargetBounds(), 0), 2), theme.PrimaryAccentColor);
 			//graphics2D.Render(new Stroke(new RoundedRect(GetContentBounds(), 3), 4), theme.PrimaryAccentColor);
 		}
 
@@ -194,7 +192,7 @@ namespace MatterControlLib.SetupWizard
 			return this.TransformFromScreenSpace(contentBounds);
 		}
 
-		private RectangleDouble GetChildBounds()
+		private RectangleDouble GetTargetBounds()
 		{
 			var childBounds = targetWidget.TransformToScreenSpace(targetWidget.LocalBounds);
 			return this.TransformFromScreenSpace(childBounds);
