@@ -73,6 +73,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var selectedItem = scene.SelectedItem;
 			if (selectedItem != null)
 			{
+				if(selectedItem.CanFlatten)
+				{
+					selectedItem.Flatten(scene.UndoBuffer);
+					scene.SelectedItem = null;
+					return;
+				}
 				bool isGroupItemType = selectedItem.Children.Count > 0;
 
 				// If not a Group ItemType, look for mesh volumes and split into distinct objects if found

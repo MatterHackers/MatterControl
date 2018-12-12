@@ -597,7 +597,8 @@ namespace MatterHackers.MatterControl
 						if(selectedItem != null)
 						{
 							return selectedItem is GroupObject3D
-								|| selectedItem.GetType() == typeof(Object3D);
+								|| selectedItem.GetType() == typeof(Object3D)
+								|| selectedItem.CanFlatten;
 						}
 
 						return false;
