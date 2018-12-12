@@ -1823,6 +1823,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UiThread.RunOnIdle(this.RebuildTree);
 			}
 
+			if (e.InvalidateType == InvalidateType.Name)
+			{
+				// clear and restore the selection so we have the name change
+				var lastSelectedItem = Scene.SelectedItem;
+				UiThread.RunOnIdle(this.RebuildTree);
+				Scene.SelectedItem = null;
+				Scene.SelectedItem = lastSelectedItem;
+			}
+
 			// Invalidate widget on scene invalidate
 			this.Invalidate();
 		}
