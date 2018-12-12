@@ -225,10 +225,7 @@ namespace MatterControlLib.SetupWizard
 
 		private RectangleDouble GetContentBounds()
 		{
-			var xxx = popover.LocalBounds;
-			xxx.Inflate(popover.Padding);
-
-			var contentBounds = popover.TransformToScreenSpace(xxx);
+			var contentBounds = popover.TransformToScreenSpace(popover.LocalBounds);
 			return this.TransformFromScreenSpace(contentBounds);
 		}
 
