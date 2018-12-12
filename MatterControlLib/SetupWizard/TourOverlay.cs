@@ -225,7 +225,7 @@ namespace MatterControlLib.SetupWizard
 
 			base.OnDraw(graphics2D);
 
-			//graphics2D.Render(new Stroke(new RoundedRect(GetTargetBounds(), 0), 2), theme.PrimaryAccentColor);
+			graphics2D.Render(new Stroke(new RoundedRect(GetTargetBounds(), 0), 2), Color.White.WithAlpha(50));
 			//graphics2D.Render(new Stroke(new RoundedRect(GetContentBounds(), 3), 4), theme.PrimaryAccentColor);
 		}
 
