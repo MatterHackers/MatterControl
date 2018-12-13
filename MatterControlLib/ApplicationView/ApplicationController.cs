@@ -905,6 +905,8 @@ namespace MatterHackers.MatterControl
 
 		public LibraryConfig Library { get; }
 
+		public ILibraryContext LibraryTabContext { get; private set; }
+
 		public GraphConfig Graph { get; }
 
 		private void InitializeLibrary()
@@ -955,6 +957,23 @@ namespace MatterHackers.MatterControl
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_folder.png")),
 					() => new RootHistoryContainer()));
+
+
+			// Create a new library context for the SaveAs view
+			this.LibraryTabContext = new LibraryConfig()
+			{
+				ActiveContainer = new WrappedLibraryContainer(this.Library.RootLibaryContainer)
+				{
+					ExtraContainers = new List<ILibraryContainerLink>()
+					{
+						new DynamicContainerLink(
+							() => "Printers".Localize(),
+							AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_20x20.png")),
+							AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_folder.png")),
+							() => new OpenPrintersContainer())
+					}
+				}
+			};
 		}
 
 		public void ExportLibraryItems(IEnumerable<ILibraryItem> libraryItems, bool centerOnBed = true, PrinterConfig printer = null)
@@ -2190,6 +2209,29 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		public bool AnyPrintTaskRunning => this.ActivePrinters.Any(p => p.Connection.PrinterIsPrinting || p.Connection.PrinterIsPaused);
 
+		private List<TourSite> _productTour;
+
+		public async Task<List<TourSite>> LoadProductTour()
+		{
+			if (_productTour == null)
+			{
+				_productTour = await ApplicationController.LoadCacheableAsync<List<TourSite>>(
+					"ProductTour.json",
+					"MatterHackers",
+					async () =>
+					{
+						var httpClient = new HttpClient();
+						string json = await httpClient.GetStringAsync("https://matterhackers.github.io/MatterControl-Help/ProductTour.json");
+
+						return JsonConvert.DeserializeObject<List<TourSite>>(json);
+
+					},
+					Path.Combine("OemSettings", "ProductTour.json"));
+			}
+
+			return _productTour;
+		}
+
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 
 		public void NotifyPrintersTabRightElement(GuiWidget sourceExentionArea)
@@ -3178,7 +3220,7 @@ If you experience adhesion problems, please re-run leveling."
 					LoadMC();
 				}
 			};
-			
+
 			void LoadMC()
 			{
 				ReportStartupProgress(0.02, "First draw->RunOnIdle");
@@ -3189,13 +3231,14 @@ If you experience adhesion problems, please re-run leveling."
 					try
 					{
 						ReportStartupProgress(0.15, "MatterControlApplication.Initialize");
+						
+						ApplicationController.LoadTranslationMap();
+						
 						var mainView = await Initialize(systemWindow, (progress0To1, status) =>
 						{
 							ReportStartupProgress(0.2 + progress0To1 * 0.7, status);
 						});
-
-						ApplicationController.LoadTranslationMap();
-
+						
 						ReportStartupProgress(0.9, "AddChild->MainView");
 						systemWindow.AddChild(mainView, 0);
 

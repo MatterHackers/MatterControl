@@ -31,49 +31,40 @@ using System.Collections.Generic;
 using System.IO;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class LibraryCollectionContainer : LibraryContainer
+	public class OpenPrintersContainer : LibraryContainer
 	{
-		public LibraryCollectionContainer()
+		public OpenPrintersContainer()
 		{
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
-			this.Name = "Library".Localize();
-
-			var rootLibraryCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
-			if (rootLibraryCollection != null)
-			{
-				this.ChildContainers.Add(
-					new DynamicContainerLink(
-						() => "Local Library".Localize(),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "library_20x20.png")),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "library_folder.png")),
-						() => new SqliteLibraryContainer(rootLibraryCollection.Id)));
-			}
-
-			this.ChildContainers.Add(
-				new DynamicContainerLink(
-					() => "Primitives".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
-					() => new PrimitivesContainer())
-				{
-					IsReadOnly = true
-				});
-
-			this.ChildContainers.Add(
-				new DynamicContainerLink(
-					() => "Print Queue".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "queue_20x20.png")),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "queue_folder.png")),
-					() => new PrintQueueContainer()));
+			this.Name = "Printers".Localize();
 		}
 
 		public override void Load()
 		{
+			this.Items.Clear();
+			this.ChildContainers.Clear();
+
+			foreach(var printer in ApplicationController.Instance.ActivePrinters)
+			{
+				this.ChildContainers.Add(
+					new DynamicContainerLink(
+						() => printer.Settings.GetValue(SettingsKey.printer_name),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_20x20.png")),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_folder.png")),
+						() => new PrinterContainer(printer),
+						() =>
+						{
+							return printer.Settings.GetValue<bool>(SettingsKey.has_sd_card_reader);
+						})
+					{
+						IsReadOnly = true
+					});
+			}
 		}
 	}
 }

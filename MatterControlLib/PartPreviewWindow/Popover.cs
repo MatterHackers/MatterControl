@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -38,14 +38,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private IVertexSource tabShape = null;
 
-		public Color TagColor { get; set; }
-
-		public ArrowDirection Arrow { get; }
-
-		private Popover()
-		{
-		}
-
+		/// <summary>
+		/// Constructs a new Popover with the given parameters
+		/// </summary>
+		/// <param name="arrow">The arrow to use</param>
+		/// <param name="padding">The padding of the control, adjusted internally to account for arrow region</param>
+		/// <param name="notchSize">The size of the arrow notch</param>
+		/// <param name="p2">The arrow offset in x or y given the specified arrow</param>
 		public Popover(ArrowDirection arrow, BorderDouble padding, int notchSize, int p2)
 		{
 			BorderDouble adjustedPadding;
@@ -74,6 +73,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.Padding = adjustedPadding;
 			this.P2 = p2;
 		}
+
+		public Color TagColor { get; set; }
+
+		public ArrowDirection Arrow { get; }
 
 		public override void OnBoundsChanged(EventArgs e)
 		{

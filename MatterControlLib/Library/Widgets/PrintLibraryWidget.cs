@@ -60,19 +60,19 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private ThemeConfig theme;
 		private OverflowBar navBar;
 		private GuiWidget searchButton;
+		private PartWorkspace workspace;
 
-		public PrintLibraryWidget(MainViewWidget mainViewWidget, ThemeConfig theme, PopupMenuButton popupMenuButton)
+		public PrintLibraryWidget(MainViewWidget mainViewWidget, PartWorkspace workspace, ThemeConfig theme, PopupMenuButton popupMenuButton)
 		{
 			this.theme = theme;
 			this.mainViewWidget = mainViewWidget;
 			this.Padding = 0;
 			this.AnchorAll();
+			this.workspace = workspace;
 
 			var allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			var libaryContext = ApplicationController.Instance.Library;
-
-			libraryView = new LibraryListView(libaryContext, theme)
+			libraryView = new LibraryListView(workspace.LibraryView, theme)
 			{
 				Name = "LibraryView",
 				// Drop containers if ShowContainers != 1
@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			libraryView.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
 
-			ApplicationController.Instance.Library.ContainerChanged += Library_ContainerChanged;
+			workspace.LibraryView.ContainerChanged += Library_ContainerChanged;
 
 			navBar = new OverflowBar(theme)
 			{
@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				return popupMenu;
 			};
 
-			breadCrumbWidget = new FolderBreadCrumbWidget(libaryContext, theme);
+			breadCrumbWidget = new FolderBreadCrumbWidget(workspace.LibraryView, theme);
 			navBar.AddChild(breadCrumbWidget);
 
 			var searchPanel = new SearchInputBox(theme)
@@ -432,7 +432,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			if (libraryView?.ActiveContainer != null)
 			{
 				libraryView.ActiveContainer.ContentChanged -= UpdateStatus;
-				ApplicationController.Instance.Library.ContainerChanged -= Library_ContainerChanged;
+				libraryView.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
+
+				workspace.LibraryView.ContainerChanged -= Library_ContainerChanged;
 			}
 
 			base.OnClosed(e);
@@ -472,7 +474,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public override void OnLoad(EventArgs args)
 		{
 			// Defer creating menu items until plugins have loaded
-			LibraryWidget.CreateMenuActions(libraryView, menuActions, mainViewWidget, theme, allowPrint: true);
+			LibraryWidget.CreateMenuActions(libraryView, menuActions, workspace.LibraryView, mainViewWidget, theme, allowPrint: true);
 
 			navBar.OverflowButton.Name = "Print Library Overflow Menu";
 			navBar.ExtendOverflowMenu = (popupMenu) =>
