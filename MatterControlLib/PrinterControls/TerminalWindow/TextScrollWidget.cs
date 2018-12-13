@@ -258,5 +258,49 @@ namespace MatterHackers.MatterControl
             Position0To1 = newPos;
         }
 
+		public override void OnKeyDown(KeyEventArgs keyEvent)
+		{
+			// make sure children controls get to try to handle this event first
+			base.OnKeyDown(keyEvent);
+
+			// check for arrow keys (but only if no modifiers are pressed)
+			if (!keyEvent.Handled
+				&& !keyEvent.Control
+				&& !keyEvent.Alt
+				&& !keyEvent.Shift) {
+
+				double startingScrollPosition = Position0To1;
+				double scrollDelta = (NumVisibleLines / (double)visibleLines.Count);
+				double newPos = Position0To1;
+
+				switch (keyEvent.KeyCode) {
+					case Keys.PageDown:
+						newPos -= scrollDelta;
+						break;
+					case Keys.PageUp:
+						newPos += scrollDelta;
+						break;
+					case Keys.Home:
+						newPos = 1;
+						break;
+					case Keys.End:
+						newPos = 0;
+						break;
+				}
+
+				if (newPos > 1) {
+					newPos = 1;
+				} else if (newPos < 0) {
+					newPos = 0;
+				}
+
+				Position0To1 = newPos;
+
+				// we only handled the key if it resulted in the area scrolling
+				if (startingScrollPosition != Position0To1) {
+					keyEvent.Handled = true;
+				}
+			}
+		}
     }
 }
