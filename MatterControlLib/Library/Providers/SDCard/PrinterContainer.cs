@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.Library
 			this.printer = printer;
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
-			this.Name = "Printers".Localize();
+			this.Name = printer.Settings.GetValue(SettingsKey.printer_name);
 		}
 
 		public override void Load()
