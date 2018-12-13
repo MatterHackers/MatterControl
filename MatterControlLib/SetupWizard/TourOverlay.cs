@@ -29,7 +29,9 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
@@ -249,22 +251,10 @@ namespace MatterControlLib.SetupWizard
 
 		public static void ShowSite(GuiWidget window, int siteIndex)
 		{
-			var tourSites = new List<(string site, string description)>();
-			tourSites.Add(("Open File Button", "Add parts from your hard drive to the bed."));
-			tourSites.Add(("LibraryView", "Drag primitives to the bed to create your own designs."));
-			tourSites.Add(("Add Content Menu", "Browse your library to find parts you have previously designed."));
-			tourSites.Add(("Print Button", "Click here to start a print. This will also help you setup a printer if needed."));
-			tourSites.Add(("PrintPopupMenu", "Click here to start a print."));
-			tourSites.Add(("Hotend 0", "Your printers hotend controls. Set your temperatures, materials and load & unload filament."));
-			tourSites.Add(("Slice Settings Sidebar", "Have compete control of your printer with the ability to adjust individual print settings."));
-			tourSites.Add(("View Options Bar", "Reset the view, change viewing modes, hide and show the bed, and adjust the grid snap."));
-			tourSites.Add(("Tumble Cube Control", "Adjust the position of your view. You can also snap to specific views by clicking the cube."));
-			tourSites.Add(("Make Support Button", "Create custom supports. Turn any object on the bed into support material."));
-			tourSites.Add(("MatterControl BrandMenuButton", "Here you can find application settings, help docs, updates and more."));
-			tourSites.Add(("Authentication Sign In", "Click here to sign into you MatterHackers account."));
-			tourSites.Add(("Create Printer", "Setup a printer for the first time. Dozens of profiles are available to give you optimized settings."));
-			tourSites.Add(("Theme Select Button", "Change your color theme anytime you want."));
+			string json = AggContext.StaticData.ReadAllText(Path.Combine("OemSettings", "tour.json"));
 
+			var tourSites = Newtonsoft.Json.JsonConvert.DeserializeObject<List<TourSite>>(json);
+			
 			if (siteIndex >= tourSites.Count)
 			{
 				siteIndex -= tourSites.Count;
@@ -275,7 +265,7 @@ namespace MatterControlLib.SetupWizard
 				while (findSiteIndex < tourSites.Count)
 				{
 					var foundChildren = new List<GuiWidget.WidgetAndPosition>();
-					window.FindNamedChildrenRecursive(tourSites[findSiteIndex].site, foundChildren);
+					window.FindNamedChildrenRecursive(tourSites[findSiteIndex].WidgetName, foundChildren);
 
 					foreach (var widgetAndPosition in foundChildren)
 					{
@@ -295,7 +285,7 @@ namespace MatterControlLib.SetupWizard
 
 			if (targetWidget != null)
 			{
-				var tourOverlay = new TourOverlay(targetWidget, tourSites[siteIndex].description, ApplicationController.Instance.Theme, siteIndex + 1);
+				var tourOverlay = new TourOverlay(targetWidget, tourSites[siteIndex].Description, ApplicationController.Instance.Theme, siteIndex + 1);
 				window.AddChild(tourOverlay);
 			}
 		}
