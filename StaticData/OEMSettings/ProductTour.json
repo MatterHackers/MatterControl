@@ -17,19 +17,19 @@
   },
   {
     "WidgetName": "PrintPopupMenu",
-    "Description": "Click here to start a print.",
+    "Description": "Click here to start a print."
   },
   {
     "WidgetName": "Hotend 0",
-    "Description": "Your printers hotend controls. Set your temperatures, materials and load & unload filament.",
+    "Description": "Your printers hotend controls. Set your temperatures, materials and load & unload filament."
   },
   {
     "WidgetName": "Slice Settings Sidebar",
-    "Description": "Have compete control of your printer with the ability to adjust individual print settings.",
+    "Description": "Have compete control of your printer with the ability to adjust individual print settings."
   },
   {
     "WidgetName": "View Options Bar",
-    "Description": "Reset the view, change viewing modes, hide and show the bed, and adjust the grid snap.",
+    "Description": "Reset the view, change viewing modes, hide and show the bed, and adjust the grid snap."
   },
   {
     "WidgetName": "Tumble Cube Control",

@@ -2211,18 +2211,25 @@ namespace MatterHackers.MatterControl
 
 		private List<TourSite> _productTour;
 
-		public List<TourSite> ProductTour
+		public async Task<List<TourSite>> LoadProductTour()
 		{
-			get
+			if (_productTour == null)
 			{
-				if (_productTour == null)
-				{
-					string json = AggContext.StaticData.ReadAllText(Path.Combine("OemSettings", "tour.json"));
-					_productTour = JsonConvert.DeserializeObject<List<TourSite>>(json);
-				}
+				_productTour = await ApplicationController.LoadCacheableAsync<List<TourSite>>(
+					"ProductTour.json",
+					"MatterHackers",
+					async () =>
+					{
+						var httpClient = new HttpClient();
+						string json = await httpClient.GetStringAsync("https://matterhackers.github.io/MatterControl-Help/ProductTour.json");
 
-				return _productTour;
+						return JsonConvert.DeserializeObject<List<TourSite>>(json);
+
+					},
+					Path.Combine("OemSettings", "ProductTour.json"));
 			}
+
+			return _productTour;
 		}
 
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;

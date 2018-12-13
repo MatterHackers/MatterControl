@@ -244,9 +244,9 @@ namespace MatterControlLib.SetupWizard
 			return this.TransformFromScreenSpace(childBounds);
 		}
 
-		public static void ShowSite(GuiWidget window, int siteIndex)
+		public static async void ShowSite(GuiWidget window, int siteIndex)
 		{
-			var tourSites = ApplicationController.Instance.ProductTour;
+			var tourSites = await ApplicationController.Instance.LoadProductTour();
 			
 			if (siteIndex >= tourSites.Count)
 			{
