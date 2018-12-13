@@ -133,14 +133,14 @@ namespace MatterControlLib.SetupWizard
 					if (targetBounds.Bottom - content.Size.Y < 0)
 					{
 						// position above target, arrow down aligned right center,
-						contentPosition = new Vector2(left, targetBounds.Top);
+						contentPosition = new Vector2(left, targetBounds.Top + 1);
 						p2 = (int)(content.LocalBounds.Left + content.LocalBounds.Width - (targetWidget.Width / 2));
 						arrow = Popover.ArrowDirection.Bottom;
 					}
 					else
 					{
 						// position left of target, arrow right aligned top center
-						contentPosition = new Vector2(left, targetBounds.Top - content.Size.Y);
+						contentPosition = new Vector2(left - 1, targetBounds.Top - content.Size.Y);
 						p2 = (int)(content.LocalBounds.Top - (targetWidget.Height / 2));
 						arrow = Popover.ArrowDirection.Right;
 					}
@@ -148,7 +148,7 @@ namespace MatterControlLib.SetupWizard
 				else
 				{
 					// position under target, arrow up aligned right center
-					contentPosition = new Vector2(left - content.DevicePadding.Width, targetBounds.Bottom - content.Size.Y - notchSize);
+					contentPosition = new Vector2(left - content.DevicePadding.Width, targetBounds.Bottom - content.Size.Y - notchSize - 1);
 					p2 = (int)(content.LocalBounds.Left + content.LocalBounds.Width + content.DevicePadding.Width - (targetWidget.Width / 2));
 					arrow = Popover.ArrowDirection.Top;
 				}
@@ -158,7 +158,7 @@ namespace MatterControlLib.SetupWizard
 				if (targetBounds.Bottom < this.Height / 2)
 				{
 					// position right of target, arrow left aligned top center (or top 20 if target larger than content)
-					contentPosition = new Vector2(targetBounds.Right, targetBounds.Top - content.Size.Y);
+					contentPosition = new Vector2(targetBounds.Right + 1, targetBounds.Top - content.Size.Y);
 
 					if (targetWidget.Height > content.Height)
 					{
@@ -174,7 +174,7 @@ namespace MatterControlLib.SetupWizard
 				else
 				{
 					// position under target, arrow up aligned left center
-					contentPosition = new Vector2(targetBounds.Left, targetBounds.Bottom - content.Size.Y - notchSize);
+					contentPosition = new Vector2(targetBounds.Left, targetBounds.Bottom - content.Size.Y - notchSize - 1);
 					p2 = (int)(content.LocalBounds.Left + (targetWidget.Width / 2));
 					arrow = Popover.ArrowDirection.Top;
 				}

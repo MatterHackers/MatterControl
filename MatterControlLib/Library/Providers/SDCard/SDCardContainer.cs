@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -45,8 +44,6 @@ namespace MatterHackers.MatterControl.Library
 	{
 		private bool gotBeginFileList;
 
-		private EventHandler unregisterEvents;
-
 		private PrinterConfig printer;
 
 		private AutoResetEvent autoResetEvent;
@@ -56,7 +53,7 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
 			this.Name = "SD Card".Localize();
-
+			this.printer = printer;
 			void CommunicationStateChanged(object s, EventArgs e)
 			{
 				switch (printer.Connection.CommunicationState)
@@ -150,8 +147,6 @@ namespace MatterHackers.MatterControl.Library
 
 		public override void Dispose()
 		{
-			unregisterEvents?.Invoke(this, null);
-
 			// Ensure released
 			autoResetEvent?.Set();
 		}

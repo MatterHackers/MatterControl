@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal View3DWidget view3DWidget;
 		internal BedConfig sceneContext;
 		internal PrinterConfig printer;
-
+		protected PartWorkspace workspace;
 		protected ViewControls3D viewControls3D;
 		protected ThemeConfig theme;
 		protected GuiWidget view3DContainer;
@@ -55,14 +55,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected FlowLayoutWidget leftToRight;
 		protected LibraryListView favoritesBar;
 
-		public PartTabPage(PrinterConfig printer, BedConfig sceneContext, ThemeConfig theme, string tabTitle)
+		public PartTabPage(PartWorkspace workspace, ThemeConfig theme, string tabTitle)
 			: base (tabTitle)
 		{
-			this.sceneContext = sceneContext;
+			this.sceneContext = workspace.SceneContext;
 			this.theme = theme;
 			this.BackgroundColor = theme.BackgroundColor;
 			this.Padding = 0;
-			this.printer = printer;
+			this.printer = workspace.Printer;
+			this.workspace = workspace;
 
 			bool isPrinterType = this is PrinterTabPage;
 
@@ -72,7 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch
 			};
 
-			viewControls3D = new ViewControls3D(sceneContext, theme, sceneContext.Scene.UndoBuffer, isPrinterType, !(this is PrinterTabPage))
+			viewControls3D = new ViewControls3D(workspace, theme, sceneContext.Scene.UndoBuffer, isPrinterType, !(this is PrinterTabPage))
 			{
 				VAnchor = VAnchor.Top | VAnchor.Fit,
 				HAnchor = HAnchor.Left | HAnchor.Stretch,

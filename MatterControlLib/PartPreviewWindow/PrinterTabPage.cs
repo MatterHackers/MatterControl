@@ -54,8 +54,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private DockingTabControl sideBar;
 		private SliceSettingsWidget sliceSettingsWidget;
 
-		public PrinterTabPage(PrinterConfig printer, ThemeConfig theme, string tabTitle)
-			: base(printer, printer.Bed, theme, tabTitle)
+		public PrinterTabPage(PartWorkspace workspace, ThemeConfig theme, string tabTitle)
+			: base(workspace, theme, tabTitle)
 		{
 			gcodeOptions = sceneContext.RendererOptions;
 

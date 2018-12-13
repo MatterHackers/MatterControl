@@ -383,7 +383,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// Create and switch to new printer tab
 					if (activePrinter?.Settings.PrinterSelected == true)
 					{
-						tabControl.ActiveTab = this.CreatePrinterTab(activePrinter, theme);
+						tabControl.ActiveTab = this.CreatePrinterTab(e.Workspace, theme);
 					}
 					else
 					{
@@ -493,8 +493,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public ChromeTabs TabControl => tabControl;
 
-		private ChromeTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme)
+		private ChromeTab CreatePrinterTab(PartWorkspace workspace, ThemeConfig theme)
 		{
+			var printer = workspace.Printer;
 			// Printer page is in fixed position
 			var tab1 = tabControl.AllTabs.FirstOrDefault();
 
@@ -514,7 +515,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					printer.Settings.GetValue(SettingsKey.printer_name),
 					printer.Settings.GetValue(SettingsKey.printer_name),
 					tabControl,
-					new PrinterTabPage(printer, theme, "unused_tab_title"),
+					new PrinterTabPage(workspace, theme, "unused_tab_title"),
 					theme,
 					tabImageUrl: ApplicationController.Instance.GetFavIconUrl(oemName: printer.Settings.GetValue(SettingsKey.make)))
 				{
@@ -585,7 +586,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				workspace.Name,
 				workspace.Name,
 				tabControl,
-				new PartTabPage(null, workspace.SceneContext, theme, ""),
+				new PartTabPage(workspace, theme, ""),
 				theme,
 				AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons))
 			{

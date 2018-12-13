@@ -905,6 +905,8 @@ namespace MatterHackers.MatterControl
 
 		public LibraryConfig Library { get; }
 
+		public ILibraryContext LibraryTabContext { get; private set; }
+
 		public GraphConfig Graph { get; }
 
 		private void InitializeLibrary()
@@ -955,6 +957,23 @@ namespace MatterHackers.MatterControl
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_folder.png")),
 					() => new RootHistoryContainer()));
+
+
+			// Create a new library context for the SaveAs view
+			this.LibraryTabContext = new LibraryConfig()
+			{
+				ActiveContainer = new WrappedLibraryContainer(this.Library.RootLibaryContainer)
+				{
+					ExtraContainers = new List<ILibraryContainerLink>()
+					{
+						new DynamicContainerLink(
+							() => "Printers".Localize(),
+							AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_20x20.png")),
+							AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_folder.png")),
+							() => new OpenPrintersContainer())
+					}
+				}
+			};
 		}
 
 		public void ExportLibraryItems(IEnumerable<ILibraryItem> libraryItems, bool centerOnBed = true, PrinterConfig printer = null)
@@ -3178,7 +3197,7 @@ If you experience adhesion problems, please re-run leveling."
 					LoadMC();
 				}
 			};
-			
+
 			void LoadMC()
 			{
 				ReportStartupProgress(0.02, "First draw->RunOnIdle");
