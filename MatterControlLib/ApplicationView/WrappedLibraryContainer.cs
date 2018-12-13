@@ -27,60 +27,69 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using MatterHackers.Agg.Image;
 using MatterHackers.MatterControl.Library;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
-	public class PartWorkspace
+	public class WrappedLibraryContainer : ILibraryContainer
 	{
-		private BedConfig _sceneContext { get; }
+		private ILibraryContainer _libraryContainer;
 
-		public PartWorkspace()
+		public WrappedLibraryContainer(ILibraryContainer libraryContainer)
 		{
+			_libraryContainer = libraryContainer;
 		}
 
-		[JsonIgnore]
-		public ILibraryContext LibraryView { get; set; }
+		public List<ILibraryContainerLink> ExtraContainers { get; set; } = new List<ILibraryContainerLink>();
 
-		public PartWorkspace(PrinterConfig printer)
-			: this (printer.Bed)
+		public string ID => _libraryContainer.ID;
+
+		public string Name => _libraryContainer.Name;
+
+		public string StatusMessage => _libraryContainer.StatusMessage;
+
+		public bool IsProtected => _libraryContainer.IsProtected;
+
+		public Type DefaultView => _libraryContainer.DefaultView;
+
+		public List<ILibraryContainerLink> ChildContainers => this.ExtraContainers.Concat(_libraryContainer.ChildContainers).ToList();
+
+		public List<ILibraryItem> Items => _libraryContainer.Items;
+
+		public ILibraryContainer Parent { get => _libraryContainer.Parent; set => _libraryContainer.Parent = value; }
+
+		public string KeywordFilter { get => _libraryContainer.KeywordFilter; set => _libraryContainer.KeywordFilter = value; }
+
+		public event EventHandler ContentChanged;
+
+		public void Activate()
 		{
-			this.Printer = printer;
-			this.PrinterID = printer.Settings.ID;
+			_libraryContainer.Activate();
 		}
 
-		public PartWorkspace(BedConfig bedConfig)
+		public void Deactivate()
 		{
-			// Create a new library context for the SaveAs view
-			this.LibraryView = new LibraryConfig()
-			{
-				ActiveContainer = new WrappedLibraryContainer(ApplicationController.Instance.Library.RootLibaryContainer)
-				{
-					ExtraContainers = new List<ILibraryContainerLink>()
-					{
-						new FileSystemContainer.DirectoryContainerLink(@"c:\temp")
-					}
-				}
-			};
-
-			_sceneContext = bedConfig;
-			Name = _sceneContext.EditContext?.SourceItem?.Name ?? "Unknown";
+			_libraryContainer.Deactivate();
 		}
 
-		public string Name { get; set; }
+		public void Dispose()
+		{
+			_libraryContainer.Dispose();
+		}
 
-		[JsonIgnore]
-		public BedConfig SceneContext => _sceneContext;
+		public Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
+		{
+			return _libraryContainer.GetThumbnail(item, width, height);
+		}
 
-		public EditContext EditContext { get; set; }
-
-		public string PrinterID { get; set; }
-
-		[JsonIgnore]
-		public PrinterConfig Printer { get; }
-
-		public string ContentPath { get; set; }
+		public void Load()
+		{
+			_libraryContainer.Load();
+		}
 	}
 }

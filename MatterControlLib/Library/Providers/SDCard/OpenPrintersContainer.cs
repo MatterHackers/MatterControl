@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,59 +28,43 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
-using MatterHackers.MatterControl.Library;
-using Newtonsoft.Json;
+using System.IO;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
-namespace MatterHackers.MatterControl
+namespace MatterHackers.MatterControl.Library
 {
-	public class PartWorkspace
+	public class OpenPrintersContainer : LibraryContainer
 	{
-		private BedConfig _sceneContext { get; }
-
-		public PartWorkspace()
+		public OpenPrintersContainer()
 		{
+			this.ChildContainers = new List<ILibraryContainerLink>();
+			this.Items = new List<ILibraryItem>();
+			this.Name = "Printers".Localize();
 		}
 
-		[JsonIgnore]
-		public ILibraryContext LibraryView { get; set; }
-
-		public PartWorkspace(PrinterConfig printer)
-			: this (printer.Bed)
+		public override void Load()
 		{
-			this.Printer = printer;
-			this.PrinterID = printer.Settings.ID;
-		}
+			this.Items.Clear();
+			this.ChildContainers.Clear();
 
-		public PartWorkspace(BedConfig bedConfig)
-		{
-			// Create a new library context for the SaveAs view
-			this.LibraryView = new LibraryConfig()
+			foreach(var printer in ApplicationController.Instance.ActivePrinters)
 			{
-				ActiveContainer = new WrappedLibraryContainer(ApplicationController.Instance.Library.RootLibaryContainer)
-				{
-					ExtraContainers = new List<ILibraryContainerLink>()
+				this.ChildContainers.Add(
+					new DynamicContainerLink(
+						() => printer.Settings.GetValue(SettingsKey.printer_name),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_20x20.png")),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_folder.png")),
+						() => new PrinterContainer(printer),
+						() =>
+						{
+							return printer.Settings.GetValue<bool>(SettingsKey.has_sd_card_reader);
+						})
 					{
-						new FileSystemContainer.DirectoryContainerLink(@"c:\temp")
-					}
-				}
-			};
-
-			_sceneContext = bedConfig;
-			Name = _sceneContext.EditContext?.SourceItem?.Name ?? "Unknown";
+						IsReadOnly = true
+					});
+			}
 		}
-
-		public string Name { get; set; }
-
-		[JsonIgnore]
-		public BedConfig SceneContext => _sceneContext;
-
-		public EditContext EditContext { get; set; }
-
-		public string PrinterID { get; set; }
-
-		[JsonIgnore]
-		public PrinterConfig Printer { get; }
-
-		public string ContentPath { get; set; }
 	}
 }

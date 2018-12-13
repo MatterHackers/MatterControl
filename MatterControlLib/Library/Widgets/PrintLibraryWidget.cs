@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private OverflowBar navBar;
 		private GuiWidget searchButton;
 
-		public PrintLibraryWidget(MainViewWidget mainViewWidget, ThemeConfig theme, PopupMenuButton popupMenuButton)
+		public PrintLibraryWidget(MainViewWidget mainViewWidget, PartWorkspace workspace, ThemeConfig theme, PopupMenuButton popupMenuButton)
 		{
 			this.theme = theme;
 			this.mainViewWidget = mainViewWidget;
@@ -70,9 +70,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			var libaryContext = ApplicationController.Instance.Library;
-
-			libraryView = new LibraryListView(libaryContext, theme)
+			libraryView = new LibraryListView(workspace.LibraryView, workspace.Printer, theme)
 			{
 				Name = "LibraryView",
 				// Drop containers if ShowContainers != 1
@@ -251,7 +249,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				return popupMenu;
 			};
 
-			breadCrumbWidget = new FolderBreadCrumbWidget(libaryContext, theme);
+			breadCrumbWidget = new FolderBreadCrumbWidget(workspace.LibraryView, theme);
 			navBar.AddChild(breadCrumbWidget);
 
 			var searchPanel = new SearchInputBox(theme)

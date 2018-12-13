@@ -43,7 +43,6 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrintLibrary;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -87,7 +86,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private View3DWidget view3DWidget;
 		private BedConfig sceneContext;
-
+		private PartWorkspace workspace;
 		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.PartSelect;
 		private List<(GuiWidget button, SceneSelectionOperation operation)> operationButtons;
 		private MainViewWidget mainViewWidget = null;
@@ -282,7 +281,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 		}
 
-		public ViewControls3D(BedConfig sceneContext, ThemeConfig theme,  UndoBuffer undoBuffer, bool isPrinterType, bool showPrintButton)
+		public ViewControls3D(PartWorkspace workspace, ThemeConfig theme,  UndoBuffer undoBuffer, bool isPrinterType, bool showPrintButton)
 			: base(theme)
 		{
 			this.theme = theme;
@@ -293,7 +292,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			this.IsPrinterMode = isPrinterType;
-			this.sceneContext = sceneContext;
+			this.sceneContext = workspace.SceneContext;
+			this.workspace = workspace;
 
 			string iconPath;
 
@@ -604,7 +604,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 
-					var printLibraryWidget = new PrintLibraryWidget(mainViewWidget, theme, libraryPopup)
+					var printLibraryWidget = new PrintLibraryWidget(mainViewWidget, workspace,  theme, libraryPopup)
 					{
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Absolute,
