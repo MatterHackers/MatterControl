@@ -2209,6 +2209,29 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		public bool AnyPrintTaskRunning => this.ActivePrinters.Any(p => p.Connection.PrinterIsPrinting || p.Connection.PrinterIsPaused);
 
+		private List<TourSite> _productTour;
+
+		public async Task<List<TourSite>> LoadProductTour()
+		{
+			if (_productTour == null)
+			{
+				_productTour = await ApplicationController.LoadCacheableAsync<List<TourSite>>(
+					"ProductTour.json",
+					"MatterHackers",
+					async () =>
+					{
+						var httpClient = new HttpClient();
+						string json = await httpClient.GetStringAsync("https://matterhackers.github.io/MatterControl-Help/ProductTour.json");
+
+						return JsonConvert.DeserializeObject<List<TourSite>>(json);
+
+					},
+					Path.Combine("OemSettings", "ProductTour.json"));
+			}
+
+			return _productTour;
+		}
+
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 
 		public void NotifyPrintersTabRightElement(GuiWidget sourceExentionArea)

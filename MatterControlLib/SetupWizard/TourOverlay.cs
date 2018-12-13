@@ -44,13 +44,15 @@ namespace MatterControlLib.SetupWizard
 	{
 		private GuiWidget targetWidget;
 		private Popover popover;
+		private GuiWidget tourWindow;
 		private int nextSiteIndex;
 
 		private string description;
 		private ThemeConfig theme;
 
-		public TourOverlay(GuiWidget targetWidget, string description, ThemeConfig theme, int nextSiteIndex)
+		public TourOverlay(GuiWidget tourWindow, GuiWidget targetWidget, string description, ThemeConfig theme, int nextSiteIndex)
 		{
+			this.tourWindow = tourWindow;
 			this.nextSiteIndex = nextSiteIndex;
 			this.theme = theme;
 			this.targetWidget = targetWidget;
@@ -79,6 +81,8 @@ namespace MatterControlLib.SetupWizard
 				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 0, 0, 5)
 			};
+			column.AddChild(buttonRow);
+
 			buttonRow.AddChild(new HorizontalSpacer());
 
 			if (nextSiteIndex > 0)
@@ -86,9 +90,8 @@ namespace MatterControlLib.SetupWizard
 				var nextButton = theme.CreateDialogButton("Next".Localize());
 				nextButton.Click += (s, e) =>
 				{
-					var topWindow = this.TopmostParent();
 					this.Close();
-					ShowSite(topWindow, nextSiteIndex);
+					ShowSite(tourWindow, nextSiteIndex);
 				};
 				buttonRow.AddChild(nextButton);
 			}
@@ -96,8 +99,6 @@ namespace MatterControlLib.SetupWizard
 			var cancelButton = theme.CreateDialogButton("Done".Localize());
 			cancelButton.Click += (s, e) => this.Close();
 			buttonRow.AddChild(cancelButton);
-
-			column.AddChild(buttonRow);
 
 			column.Size = new Vector2(250, column.Height);
 
@@ -122,7 +123,7 @@ namespace MatterControlLib.SetupWizard
 			var targetBounds = this.GetTargetBounds();
 
 			Vector2 contentPosition;
-			int p2;
+			int arrowPosition;
 			Popover.ArrowDirection arrow;
 
 			if (targetBounds.Right >= this.Width - content.Width - 5)
@@ -134,14 +135,14 @@ namespace MatterControlLib.SetupWizard
 					{
 						// position above target, arrow down aligned right center,
 						contentPosition = new Vector2(left, targetBounds.Top + 1);
-						p2 = (int)(content.LocalBounds.Left + content.LocalBounds.Width - (targetWidget.Width / 2));
+						arrowPosition = (int)(content.LocalBounds.Left + content.LocalBounds.Width - (targetWidget.Width / 2));
 						arrow = Popover.ArrowDirection.Bottom;
 					}
 					else
 					{
 						// position left of target, arrow right aligned top center
 						contentPosition = new Vector2(left - 1, targetBounds.Top - content.Size.Y);
-						p2 = (int)(content.LocalBounds.Top - (targetWidget.Height / 2));
+						arrowPosition = (int)(content.LocalBounds.Top - (targetWidget.Height / 2));
 						arrow = Popover.ArrowDirection.Right;
 					}
 				}
@@ -149,7 +150,7 @@ namespace MatterControlLib.SetupWizard
 				{
 					// position under target, arrow up aligned right center
 					contentPosition = new Vector2(left - content.DevicePadding.Width, targetBounds.Bottom - content.Size.Y - notchSize - 1);
-					p2 = (int)(content.LocalBounds.Left + content.LocalBounds.Width + content.DevicePadding.Width - (targetWidget.Width / 2));
+					arrowPosition = (int)(content.LocalBounds.Left + content.LocalBounds.Width + content.DevicePadding.Width - (targetWidget.Width / 2));
 					arrow = Popover.ArrowDirection.Top;
 				}
 			}
@@ -162,11 +163,11 @@ namespace MatterControlLib.SetupWizard
 
 					if (targetWidget.Height > content.Height)
 					{
-						p2 = (int)(content.LocalBounds.Top - 20);
+						arrowPosition = (int)(content.LocalBounds.Top - 20);
 					}
 					else
 					{
-						p2 = (int)(content.LocalBounds.Top - (targetWidget.Height / 2));
+						arrowPosition = (int)(content.LocalBounds.Top - (targetWidget.Height / 2));
 					}
 
 					arrow = Popover.ArrowDirection.Left;
@@ -175,7 +176,7 @@ namespace MatterControlLib.SetupWizard
 				{
 					// position under target, arrow up aligned left center
 					contentPosition = new Vector2(targetBounds.Left, targetBounds.Bottom - content.Size.Y - notchSize - 1);
-					p2 = (int)(content.LocalBounds.Left + (targetWidget.Width / 2));
+					arrowPosition = (int)(content.LocalBounds.Left + (targetWidget.Width / 2));
 					arrow = Popover.ArrowDirection.Top;
 				}
 			}
@@ -183,7 +184,7 @@ namespace MatterControlLib.SetupWizard
 			// Remove the temporarily padding to the child content
 			content.Padding = 0;
 
-			var popover = new Popover(arrow, padding, notchSize, p2)
+			var popover = new Popover(arrow, padding, notchSize, p2: arrowPosition)
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
@@ -201,12 +202,14 @@ namespace MatterControlLib.SetupWizard
 			{
 				this.Close();
 			}
+
 			if (keyEvent.KeyCode == Keys.Enter)
 			{
 				var topWindow = this.TopmostParent();
 				this.Close();
 				ShowSite(topWindow, nextSiteIndex);
 			}
+
 			base.OnKeyDown(keyEvent);
 		}
 
@@ -235,36 +238,16 @@ namespace MatterControlLib.SetupWizard
 			//graphics2D.Render(new Stroke(new RoundedRect(GetContentBounds(), 3), 4), theme.PrimaryAccentColor);
 		}
 
-		private RectangleDouble GetContentBounds()
-		{
-			var contentBounds = popover.TransformToScreenSpace(popover.LocalBounds);
-			return this.TransformFromScreenSpace(contentBounds);
-		}
-
 		private RectangleDouble GetTargetBounds()
 		{
 			var childBounds = targetWidget.TransformToScreenSpace(targetWidget.LocalBounds);
 			return this.TransformFromScreenSpace(childBounds);
 		}
 
-		public static void ShowSite(GuiWidget window, int siteIndex)
+		public static async void ShowSite(GuiWidget window, int siteIndex)
 		{
-			var tourSites = new List<(string site, string description)>();
-			tourSites.Add(("Open File Button", "Add parts from your hard drive to the bed."));
-			tourSites.Add(("LibraryView", "Drag primitives to the bed to create your own designs."));
-			tourSites.Add(("Add Content Menu", "Browse your library to find parts you have previously designed."));
-			tourSites.Add(("Print Button", "Click here to start a print. This will also help you setup a printer if needed."));
-			tourSites.Add(("PrintPopupMenu", "Click here to start a print."));
-			tourSites.Add(("Hotend 0", "Your printers hotend controls. Set your temperatures, materials and load & unload filament."));
-			tourSites.Add(("Slice Settings Sidebar", "Have compete control of your printer with the ability to adjust individual print settings."));
-			tourSites.Add(("View Options Bar", "Reset the view, change viewing modes, hide and show the bed, and adjust the grid snap."));
-			tourSites.Add(("Tumble Cube Control", "Adjust the position of your view. You can also snap to specific views by clicking the cube."));
-			tourSites.Add(("Make Support Button", "Create custom supports. Turn any object on the bed into support material."));
-			tourSites.Add(("MatterControl BrandMenuButton", "Here you can find application settings, help docs, updates and more."));
-			tourSites.Add(("Authentication Sign In", "Click here to sign into you MatterHackers account."));
-			tourSites.Add(("Create Printer", "Setup a printer for the first time. Dozens of profiles are available to give you optimized settings."));
-			tourSites.Add(("Theme Select Button", "Change your color theme anytime you want."));
-
+			var tourSites = await ApplicationController.Instance.LoadProductTour();
+			
 			if (siteIndex >= tourSites.Count)
 			{
 				siteIndex -= tourSites.Count;
@@ -275,7 +258,7 @@ namespace MatterControlLib.SetupWizard
 				while (findSiteIndex < tourSites.Count)
 				{
 					var foundChildren = new List<GuiWidget.WidgetAndPosition>();
-					window.FindNamedChildrenRecursive(tourSites[findSiteIndex].site, foundChildren);
+					window.FindNamedChildrenRecursive(tourSites[findSiteIndex].WidgetName, foundChildren);
 
 					foreach (var widgetAndPosition in foundChildren)
 					{
@@ -295,7 +278,7 @@ namespace MatterControlLib.SetupWizard
 
 			if (targetWidget != null)
 			{
-				var tourOverlay = new TourOverlay(targetWidget, tourSites[siteIndex].description, ApplicationController.Instance.Theme, siteIndex + 1);
+				var tourOverlay = new TourOverlay(window, targetWidget, tourSites[siteIndex].Description, ApplicationController.Instance.Theme, siteIndex + 1);
 				window.AddChild(tourOverlay);
 			}
 		}
