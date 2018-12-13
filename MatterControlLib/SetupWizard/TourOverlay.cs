@@ -81,6 +81,8 @@ namespace MatterControlLib.SetupWizard
 				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 0, 0, 5)
 			};
+			column.AddChild(buttonRow);
+
 			buttonRow.AddChild(new HorizontalSpacer());
 
 			if (nextSiteIndex > 0)
@@ -97,8 +99,6 @@ namespace MatterControlLib.SetupWizard
 			var cancelButton = theme.CreateDialogButton("Done".Localize());
 			cancelButton.Click += (s, e) => this.Close();
 			buttonRow.AddChild(cancelButton);
-
-			column.AddChild(buttonRow);
 
 			column.Size = new Vector2(250, column.Height);
 
@@ -236,12 +236,6 @@ namespace MatterControlLib.SetupWizard
 
 			graphics2D.Render(new Stroke(new RoundedRect(GetTargetBounds(), 0), 2), Color.White.WithAlpha(50));
 			//graphics2D.Render(new Stroke(new RoundedRect(GetContentBounds(), 3), 4), theme.PrimaryAccentColor);
-		}
-
-		private RectangleDouble GetContentBounds()
-		{
-			var contentBounds = popover.TransformToScreenSpace(popover.LocalBounds);
-			return this.TransformFromScreenSpace(contentBounds);
 		}
 
 		private RectangleDouble GetTargetBounds()
