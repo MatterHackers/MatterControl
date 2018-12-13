@@ -3208,13 +3208,14 @@ If you experience adhesion problems, please re-run leveling."
 					try
 					{
 						ReportStartupProgress(0.15, "MatterControlApplication.Initialize");
+						
+						ApplicationController.LoadTranslationMap();
+						
 						var mainView = await Initialize(systemWindow, (progress0To1, status) =>
 						{
 							ReportStartupProgress(0.2 + progress0To1 * 0.7, status);
 						});
-
-						ApplicationController.LoadTranslationMap();
-
+						
 						ReportStartupProgress(0.9, "AddChild->MainView");
 						systemWindow.AddChild(mainView, 0);
 
