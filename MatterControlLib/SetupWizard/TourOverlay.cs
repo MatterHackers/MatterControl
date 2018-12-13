@@ -29,9 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
@@ -203,12 +201,14 @@ namespace MatterControlLib.SetupWizard
 			{
 				this.Close();
 			}
+
 			if (keyEvent.KeyCode == Keys.Enter)
 			{
 				var topWindow = this.TopmostParent();
 				this.Close();
 				ShowSite(topWindow, nextSiteIndex);
 			}
+
 			base.OnKeyDown(keyEvent);
 		}
 
@@ -251,9 +251,7 @@ namespace MatterControlLib.SetupWizard
 
 		public static void ShowSite(GuiWidget window, int siteIndex)
 		{
-			string json = AggContext.StaticData.ReadAllText(Path.Combine("OemSettings", "tour.json"));
-
-			var tourSites = Newtonsoft.Json.JsonConvert.DeserializeObject<List<TourSite>>(json);
+			var tourSites = ApplicationController.Instance.ProductTour;
 			
 			if (siteIndex >= tourSites.Count)
 			{

@@ -2209,6 +2209,22 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		public bool AnyPrintTaskRunning => this.ActivePrinters.Any(p => p.Connection.PrinterIsPrinting || p.Connection.PrinterIsPaused);
 
+		private List<TourSite> _productTour;
+
+		public List<TourSite> ProductTour
+		{
+			get
+			{
+				if (_productTour == null)
+				{
+					string json = AggContext.StaticData.ReadAllText(Path.Combine("OemSettings", "tour.json"));
+					_productTour = JsonConvert.DeserializeObject<List<TourSite>>(json);
+				}
+
+				return _productTour;
+			}
+		}
+
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 
 		public void NotifyPrintersTabRightElement(GuiWidget sourceExentionArea)
