@@ -44,13 +44,15 @@ namespace MatterControlLib.SetupWizard
 	{
 		private GuiWidget targetWidget;
 		private Popover popover;
+		private GuiWidget tourWindow;
 		private int nextSiteIndex;
 
 		private string description;
 		private ThemeConfig theme;
 
-		public TourOverlay(GuiWidget targetWidget, string description, ThemeConfig theme, int nextSiteIndex)
+		public TourOverlay(GuiWidget tourWindow, GuiWidget targetWidget, string description, ThemeConfig theme, int nextSiteIndex)
 		{
+			this.tourWindow = tourWindow;
 			this.nextSiteIndex = nextSiteIndex;
 			this.theme = theme;
 			this.targetWidget = targetWidget;
@@ -86,9 +88,8 @@ namespace MatterControlLib.SetupWizard
 				var nextButton = theme.CreateDialogButton("Next".Localize());
 				nextButton.Click += (s, e) =>
 				{
-					var topWindow = this.TopmostParent();
 					this.Close();
-					ShowSite(topWindow, nextSiteIndex);
+					ShowSite(tourWindow, nextSiteIndex);
 				};
 				buttonRow.AddChild(nextButton);
 			}
@@ -283,7 +284,7 @@ namespace MatterControlLib.SetupWizard
 
 			if (targetWidget != null)
 			{
-				var tourOverlay = new TourOverlay(targetWidget, tourSites[siteIndex].Description, ApplicationController.Instance.Theme, siteIndex + 1);
+				var tourOverlay = new TourOverlay(window, targetWidget, tourSites[siteIndex].Description, ApplicationController.Instance.Theme, siteIndex + 1);
 				window.AddChild(tourOverlay);
 			}
 		}
