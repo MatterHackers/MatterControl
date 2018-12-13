@@ -60,6 +60,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private ThemeConfig theme;
 		private OverflowBar navBar;
 		private GuiWidget searchButton;
+		private PartWorkspace workspace;
 
 		public PrintLibraryWidget(MainViewWidget mainViewWidget, PartWorkspace workspace, ThemeConfig theme, PopupMenuButton popupMenuButton)
 		{
@@ -67,10 +68,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.mainViewWidget = mainViewWidget;
 			this.Padding = 0;
 			this.AnchorAll();
+			this.workspace = workspace;
 
 			var allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			libraryView = new LibraryListView(workspace.LibraryView, workspace.Printer, theme)
+			libraryView = new LibraryListView(workspace.LibraryView, theme)
 			{
 				Name = "LibraryView",
 				// Drop containers if ShowContainers != 1
@@ -81,7 +83,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			libraryView.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
 
-			ApplicationController.Instance.Library.ContainerChanged += Library_ContainerChanged;
+			workspace.LibraryView.ContainerChanged += Library_ContainerChanged;
 
 			navBar = new OverflowBar(theme)
 			{
@@ -430,7 +432,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			if (libraryView?.ActiveContainer != null)
 			{
 				libraryView.ActiveContainer.ContentChanged -= UpdateStatus;
-				ApplicationController.Instance.Library.ContainerChanged -= Library_ContainerChanged;
+				libraryView.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
+
+				workspace.LibraryView.ContainerChanged -= Library_ContainerChanged;
 			}
 
 			base.OnClosed(e);
