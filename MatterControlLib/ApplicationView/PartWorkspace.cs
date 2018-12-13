@@ -28,7 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.IO;
+using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
@@ -49,20 +52,29 @@ namespace MatterHackers.MatterControl
 		{
 			this.Printer = printer;
 			this.PrinterID = printer.Settings.ID;
+
+			if (this.LibraryView.ActiveContainer is WrappedLibraryContainer wrappedLibrary)
+			{
+				wrappedLibrary.ExtraContainers.Add(
+					new DynamicContainerLink(
+						() => printer.Settings.GetValue(SettingsKey.printer_name),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_20x20.png")),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_folder.png")),
+						() => new PrinterContainer(printer))
+					{
+						IsReadOnly = true
+					});
+			}
 		}
 
 		public PartWorkspace(BedConfig bedConfig)
 		{
+			var extraContainers = new List<ILibraryContainerLink>();
+
 			// Create a new library context for the SaveAs view
 			this.LibraryView = new LibraryConfig()
 			{
 				ActiveContainer = new WrappedLibraryContainer(ApplicationController.Instance.Library.RootLibaryContainer)
-				{
-					ExtraContainers = new List<ILibraryContainerLink>()
-					{
-						new FileSystemContainer.DirectoryContainerLink(@"c:\temp")
-					}
-				}
 			};
 
 			_sceneContext = bedConfig;
