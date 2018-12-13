@@ -41,7 +41,6 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.PrintQueue;
 using static MatterHackers.MatterControl.PrintLibrary.PrintLibraryWidget;
 
@@ -50,6 +49,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	public class LibraryWidget : GuiWidget
 	{
 		private FlowLayoutWidget buttonPanel;
+		private ILibraryContext libraryContext;
 		private LibraryListView libraryView;
 		private GuiWidget providerMessageContainer;
 		private TextWidget providerMessageWidget;
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			var libraryContext = ApplicationController.Instance.Library;
+			libraryContext = ApplicationController.Instance.LibraryTabContext;
 
 			libraryView = new LibraryListView(libraryContext, theme)
 			{
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			libraryView.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
 
-			ApplicationController.Instance.Library.ContainerChanged += Library_ContainerChanged;
+			libraryContext.ContainerChanged += Library_ContainerChanged;
 
 			navBar = new OverflowBar(theme)
 			{
@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 				else
 				{
-					searchContainer = ApplicationController.Instance.Library.ActiveContainer;
+					searchContainer = libraryContext.ActiveContainer;
 
 					breadCrumbWidget.Visible = false;
 					searchPanel.Visible = true;
@@ -324,7 +324,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 					if (treeNode.ContainerAcquired)
 					{
-						ApplicationController.Instance.Library.ActiveContainer = treeNode.Container;
+						libraryContext.ActiveContainer = treeNode.Container;
 					}
 				}
 			};
@@ -372,9 +372,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void LoadRootLibraryNodes(FlowLayoutWidget rootColumn)
 		{
-			var rootLibraryContainer = ApplicationController.Instance.Library.RootLibaryContainer;
+			var rootLibraryContainer = this.GetRootContainer();
 
-			foreach (var libraryContainerLink in rootLibraryContainer.ChildContainers)
+			foreach (var libraryContainerLink in rootLibraryContainer.ChildContainers.OrderBy(t => t.Name))
 			{
 				if (libraryContainerLink.IsVisible)
 				{
@@ -384,6 +384,18 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					rootColumn.AddChild(rootNode);
 				}
 			}
+		}
+
+		private ILibraryContainer GetRootContainer()
+		{
+			// Walk up to the root node
+			var context = libraryContext.ActiveContainer;
+			while (context.Parent != null)
+			{
+				context = context.Parent;
+			}
+
+			return context;
 		}
 
 		private async Task GetExpansionItems(ILibraryItem containerItem, ContainerTreeNode treeNode)
@@ -465,7 +477,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				ApplicationController.Instance.Library.ActiveContainer.KeywordFilter = searchInput.Text.Trim();
+				libraryContext.ActiveContainer.KeywordFilter = searchInput.Text.Trim();
 			});
 		}
 
@@ -481,7 +493,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				searchContainer.KeywordFilter = "";
 
 				// Restore the original ActiveContainer before search started - some containers may change context
-				ApplicationController.Instance.Library.ActiveContainer = searchContainer;
+				libraryContext.ActiveContainer = searchContainer;
 
 				searchContainer = null;
 			});
@@ -581,7 +593,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			providerMessageContainer.AddChild(providerMessageWidget);
 		}
 
-		public static void CreateMenuActions(LibraryListView libraryView, List<LibraryAction> menuActions, MainViewWidget mainViewWidget, ThemeConfig theme, bool allowPrint)
+		public static void CreateMenuActions(LibraryListView libraryView, List<LibraryAction> menuActions, ILibraryContext libraryContext, MainViewWidget mainViewWidget, ThemeConfig theme, bool allowPrint)
 		{
 			menuActions.Add(new LibraryAction(ActionScope.ListView)
 			{
@@ -762,7 +774,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Action = async (selectedLibraryItems, listView) =>
 				{
 					if (selectedLibraryItems.FirstOrDefault() is ILibraryItem firstItem
-						&& ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer writableContainer)
+						&& libraryContext.ActiveContainer is ILibraryWritableContainer writableContainer)
 					{
 						var workspace = new PartWorkspace(new BedConfig(ApplicationController.Instance.Library.PlatingHistory))
 						{
@@ -791,7 +803,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						&& !(firstItem is ILibraryContainer)
 						&& !firstItem.IsProtected
 						&& firstItem is ILibraryAsset asset && asset.ContentType == "mcx"
-						&& ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer;
+						&& libraryContext.ActiveContainer is ILibraryWritableContainer;
 				}
 			});
 
@@ -837,7 +849,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					return listView.SelectedItems.Count == 1
 						&& selectedListItems.FirstOrDefault()?.Model is ILibraryItem firstItem
 						&& !firstItem.IsProtected
-						&& ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer;
+						&& libraryContext.ActiveContainer is ILibraryWritableContainer;
 				}
 			});
 
@@ -856,7 +868,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							destinationContainer.Move(partItems, sourceContainer);
 
 							// Discover if item was moved to an already loaded and now stale view on an ancestor and force reload
-							var openParent = ApplicationController.Instance.Library.ActiveContainer.Ancestors().FirstOrDefault(c => c.ID == destinationContainer.ID);
+							var openParent = libraryContext.ActiveContainer.Ancestors().FirstOrDefault(c => c.ID == destinationContainer.ID);
 							if (openParent != null)
 							{
 								// TODO: Consider changing this brute force approach to instead mark as dirty and allow Activate base method to reload if dirty
@@ -872,7 +884,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					// Multiselect, WritableContainer - disallow protected
 					return listView.SelectedItems.Any()
 						&& listView.SelectedItems.All(i => !i.Model.IsProtected
-						&& ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer);
+						&& libraryContext.ActiveContainer is ILibraryWritableContainer);
 				}
 			});
 
@@ -919,7 +931,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					// Multiselect, WritableContainer - disallow protected
 					return listView.SelectedItems.Any()
 						&& listView.SelectedItems.All(i => !i.Model.IsProtected
-						&& ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer);
+						&& libraryContext.ActiveContainer is ILibraryWritableContainer);
 				}
 			});
 
@@ -1031,9 +1043,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						var container = new McxContainer(libraryAsset);
 						container.Load();
 
-						container.Parent = ApplicationController.Instance.Library.ActiveContainer;
+						container.Parent = libraryContext.ActiveContainer;
 
-						ApplicationController.Instance.Library.ActiveContainer = container;
+						libraryContext.ActiveContainer = container;
 					}
 				},
 				IsEnabled = (selectedListItems, listView) =>
@@ -1052,7 +1064,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			if (libraryView?.ActiveContainer != null)
 			{
 				libraryView.ActiveContainer.ContentChanged -= UpdateStatus;
-				ApplicationController.Instance.Library.ContainerChanged -= Library_ContainerChanged;
+				libraryContext.ContainerChanged -= Library_ContainerChanged;
 			}
 
 			mainViewWidget = null;
@@ -1094,7 +1106,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public override void OnLoad(EventArgs args)
 		{
 			// Defer creating menu items until plugins have loaded
-			LibraryWidget.CreateMenuActions(libraryView, menuActions, mainViewWidget, theme, allowPrint: false);
+			LibraryWidget.CreateMenuActions(libraryView, menuActions, libraryContext, mainViewWidget, theme, allowPrint: false);
 
 			navBar.OverflowButton.Name = "Print Library Overflow Menu";
 			navBar.ExtendOverflowMenu = (popupMenu) =>
