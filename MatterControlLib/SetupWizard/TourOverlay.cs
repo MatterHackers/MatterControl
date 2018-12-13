@@ -122,7 +122,7 @@ namespace MatterControlLib.SetupWizard
 			var targetBounds = this.GetTargetBounds();
 
 			Vector2 contentPosition;
-			int p2;
+			int arrowPosition;
 			Popover.ArrowDirection arrow;
 
 			if (targetBounds.Right >= this.Width - content.Width - 5)
@@ -134,14 +134,14 @@ namespace MatterControlLib.SetupWizard
 					{
 						// position above target, arrow down aligned right center,
 						contentPosition = new Vector2(left, targetBounds.Top + 1);
-						p2 = (int)(content.LocalBounds.Left + content.LocalBounds.Width - (targetWidget.Width / 2));
+						arrowPosition = (int)(content.LocalBounds.Left + content.LocalBounds.Width - (targetWidget.Width / 2));
 						arrow = Popover.ArrowDirection.Bottom;
 					}
 					else
 					{
 						// position left of target, arrow right aligned top center
 						contentPosition = new Vector2(left - 1, targetBounds.Top - content.Size.Y);
-						p2 = (int)(content.LocalBounds.Top - (targetWidget.Height / 2));
+						arrowPosition = (int)(content.LocalBounds.Top - (targetWidget.Height / 2));
 						arrow = Popover.ArrowDirection.Right;
 					}
 				}
@@ -149,7 +149,7 @@ namespace MatterControlLib.SetupWizard
 				{
 					// position under target, arrow up aligned right center
 					contentPosition = new Vector2(left - content.DevicePadding.Width, targetBounds.Bottom - content.Size.Y - notchSize - 1);
-					p2 = (int)(content.LocalBounds.Left + content.LocalBounds.Width + content.DevicePadding.Width - (targetWidget.Width / 2));
+					arrowPosition = (int)(content.LocalBounds.Left + content.LocalBounds.Width + content.DevicePadding.Width - (targetWidget.Width / 2));
 					arrow = Popover.ArrowDirection.Top;
 				}
 			}
@@ -162,11 +162,11 @@ namespace MatterControlLib.SetupWizard
 
 					if (targetWidget.Height > content.Height)
 					{
-						p2 = (int)(content.LocalBounds.Top - 20);
+						arrowPosition = (int)(content.LocalBounds.Top - 20);
 					}
 					else
 					{
-						p2 = (int)(content.LocalBounds.Top - (targetWidget.Height / 2));
+						arrowPosition = (int)(content.LocalBounds.Top - (targetWidget.Height / 2));
 					}
 
 					arrow = Popover.ArrowDirection.Left;
@@ -175,7 +175,7 @@ namespace MatterControlLib.SetupWizard
 				{
 					// position under target, arrow up aligned left center
 					contentPosition = new Vector2(targetBounds.Left, targetBounds.Bottom - content.Size.Y - notchSize - 1);
-					p2 = (int)(content.LocalBounds.Left + (targetWidget.Width / 2));
+					arrowPosition = (int)(content.LocalBounds.Left + (targetWidget.Width / 2));
 					arrow = Popover.ArrowDirection.Top;
 				}
 			}
@@ -183,7 +183,7 @@ namespace MatterControlLib.SetupWizard
 			// Remove the temporarily padding to the child content
 			content.Padding = 0;
 
-			var popover = new Popover(arrow, padding, notchSize, p2)
+			var popover = new Popover(arrow, padding, notchSize, p2: arrowPosition)
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
