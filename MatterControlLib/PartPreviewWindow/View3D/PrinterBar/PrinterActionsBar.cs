@@ -330,10 +330,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new NamedAction()
 				{
 					Title = "Export All Settings".Localize(),
-					Action = () =>
+					Action = () => UiThread.RunOnIdle(() =>
 					{
 						ApplicationController.Instance.ExportAsMatterControlConfig(printer);
-					}
+					})
 				},
 				new ActionSeparator(),
 				new NamedAction()
