@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 
 		private TypeFacePrinter printer = null;
 
-			public Color TextColor = new Color(102, 102, 102);
+		public Color TextColor = new Color(102, 102, 102);
 		private int forceStartLine = -1;
 
 		public double Position0To1
@@ -82,10 +82,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public int NumVisibleLines
-		{
-			get { return (int)Math.Ceiling(Height / printer.TypeFaceStyle.EmSizeInPixels); }
-		}
+		public int NumVisibleLines => (int)Math.Ceiling(Height / printer.TypeFaceStyle.EmSizeInPixels); 
 
 		public TextScrollWidget(PrinterConfig printer, List<string> sourceLines)
 		{
@@ -123,7 +120,7 @@ namespace MatterHackers.MatterControl
 
 		private void RecievedNewLine(object sender, EventArgs e)
 		{
-			StringEventArgs stringEvent = e as StringEventArgs;
+			var stringEvent = e as StringEventArgs;
 			if (stringEvent != null)
 			{
 				ConditionalyAddToVisible(stringEvent.Data);
@@ -142,7 +139,7 @@ namespace MatterHackers.MatterControl
 
 		private void CreateFilteredList()
 		{
-			lock(locker)
+			lock (locker)
 			{
 				visibleLines = new List<string>();
 				string[] allSourceLinesTemp = allSourceLines.ToArray();
@@ -187,9 +184,9 @@ namespace MatterHackers.MatterControl
 			int numLinesToDraw = NumVisibleLines;
 
 			double y = LocalBounds.Bottom + printer.TypeFaceStyle.EmSizeInPixels * numLinesToDraw;
-			lock(visibleLines)
+			lock (visibleLines)
 			{
-				lock(locker)
+				lock (locker)
 				{
 					int startLineIndex = visibleLines.Count - numLinesToDraw;
 					if (forceStartLine != -1)
@@ -230,33 +227,33 @@ namespace MatterHackers.MatterControl
 			base.OnDraw(graphics2D);
 		}
 
-        public override void OnMouseWheel(MouseEventArgs mouseEvent)
-        {
-            base.OnMouseWheel(mouseEvent);
-            double scrollDelta = (mouseEvent.WheelDelta / ((visibleLines.Count) * 60.0));
+		public override void OnMouseWheel(MouseEventArgs mouseEvent)
+		{
+			base.OnMouseWheel(mouseEvent);
+			double scrollDelta = (mouseEvent.WheelDelta / ((visibleLines.Count) * 60.0));
 
-            if (scrollDelta < 0)//Rounding seems to favor scrolling up, compensating scroll down to feel as smooth
-            {
-                scrollDelta *= 2;
-            }
-            else if (Position0To1 == 0)//IF we scroll up at the bottom get pop out from the "on screen" chunk
-            {
-                scrollDelta = (NumVisibleLines/(double)visibleLines.Count);
-            }
+			if (scrollDelta < 0)//Rounding seems to favor scrolling up, compensating scroll down to feel as smooth
+			{
+				scrollDelta *= 2;
+			}
+			else if (Position0To1 == 0)//IF we scroll up at the bottom get pop out from the "on screen" chunk
+			{
+				scrollDelta = (NumVisibleLines / (double)visibleLines.Count);
+			}
 
-            double newPos = Position0To1 + scrollDelta;
-            
-            if(newPos > 1)
-            {
-                newPos = 1;
-            }
-            else if(newPos < 0)
-            {
-                newPos = 0;
-            }
+			double newPos = Position0To1 + scrollDelta;
 
-            Position0To1 = newPos;
-        }
+			if (newPos > 1)
+			{
+				newPos = 1;
+			}
+			else if (newPos < 0)
+			{
+				newPos = 0;
+			}
+
+			Position0To1 = newPos;
+		}
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)
 		{
@@ -267,13 +264,14 @@ namespace MatterHackers.MatterControl
 			if (!keyEvent.Handled
 				&& !keyEvent.Control
 				&& !keyEvent.Alt
-				&& !keyEvent.Shift) {
-
+				&& !keyEvent.Shift)
+			{
 				double startingScrollPosition = Position0To1;
 				double scrollDelta = (NumVisibleLines / (double)visibleLines.Count);
 				double newPos = Position0To1;
 
-				switch (keyEvent.KeyCode) {
+				switch (keyEvent.KeyCode)
+				{
 					case Keys.PageDown:
 						newPos -= scrollDelta;
 						break;
@@ -288,19 +286,23 @@ namespace MatterHackers.MatterControl
 						break;
 				}
 
-				if (newPos > 1) {
+				if (newPos > 1)
+				{
 					newPos = 1;
-				} else if (newPos < 0) {
+				}
+				else if (newPos < 0)
+				{
 					newPos = 0;
 				}
 
 				Position0To1 = newPos;
 
 				// we only handled the key if it resulted in the area scrolling
-				if (startingScrollPosition != Position0To1) {
+				if (startingScrollPosition != Position0To1)
+				{
 					keyEvent.Handled = true;
 				}
 			}
 		}
-    }
+	}
 }
