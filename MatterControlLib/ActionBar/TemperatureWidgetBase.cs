@@ -168,11 +168,12 @@ namespace MatterHackers.MatterControl.ActionBar
 		private void EnableControls()
 		{
 			bool status =  printer.Connection.IsConnected && !printer.Connection.PrinterIsPrinting;
-			if (isEnabled != status)
+			if (isEnabled != status
+				&& this.PopupContent is GuiWidget popupContent)
 			{
 				isEnabled = status;
 
-				var flowLayout = this.PopupContent.Children.OfType<FlowLayoutWidget>().FirstOrDefault();
+				var flowLayout = popupContent.Children.OfType<FlowLayoutWidget>().FirstOrDefault();
 				if (flowLayout != null)
 				{
 					foreach (var child in flowLayout.Children.Except(alwaysEnabled))

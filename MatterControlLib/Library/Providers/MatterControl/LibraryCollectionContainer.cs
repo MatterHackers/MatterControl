@@ -56,6 +56,16 @@ namespace MatterHackers.MatterControl.Library
 
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
+					() => "Calibration Parts".Localize(),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
+					() => new CalibrationPartsContainer())
+				{
+					IsReadOnly = true
+				});
+
+			this.ChildContainers.Add(
+				new DynamicContainerLink(
 					() => "Primitives".Localize(),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
