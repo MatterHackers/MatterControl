@@ -255,13 +255,7 @@ namespace MatterHackers.MatterControl
 					message = "Are you sure you want to abort the current print and close MatterControl?".Localize();
 				}
 			}
-#if !__ANDROID__
-			else if (PartsSheet.IsSaving())
-			{
-				caption = "Confirm Exit".Localize();
-				message = "You are currently saving a parts sheet, are you sure you want to exit?".Localize();
-			}
-#endif
+
 			if (caption != null)
 			{
 				// Record that we are waiting for a response to the request to close

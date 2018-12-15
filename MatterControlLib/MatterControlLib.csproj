@@ -94,12 +94,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="PdfSharp">
-      <HintPath>PdfSharp.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
 

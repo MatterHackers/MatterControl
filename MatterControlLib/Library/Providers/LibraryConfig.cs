@@ -36,6 +36,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -129,6 +130,8 @@ namespace MatterHackers.MatterControl.Library
 		public PlatingHistoryContainer PlatingHistory { get; internal set; }
 
 		public LibraryCollectionContainer LibraryCollectionContainer { get; internal set; }
+
+		public List<LibraryAction> MenuExtensions { get; } = new List<LibraryAction>();
 
 		public IContentProvider GetContentProvider(ILibraryItem item)
 		{
