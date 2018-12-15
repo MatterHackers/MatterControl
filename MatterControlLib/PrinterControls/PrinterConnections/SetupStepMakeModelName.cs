@@ -181,8 +181,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 							return;
 						}
 
-						this.LoadCalibrationPrints();
-
 #if __ANDROID__
 						UiThread.RunOnIdle(() => DialogWindow.ChangeToPage(new AndroidConnectDevicePage(printer)));
 #else
@@ -324,46 +322,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					printerNameInput.Text = agg_basics.GetNonCollidingName($"{mappedMakeText} {activeModel}", existingPrinterNames);
 				}
 			});
-		}
-
-		// TODO: Do we still want to do this - constantly adding items to the queue as printers are added? What about a LibraryContainer for '[PrinterName] Calibration Files' - much cleaner to implement, never an extra files on disk or one-time processing that remain becomes inconsistent over time
-		public void LoadCalibrationPrints()
-		{
-			/*
-			// Load the calibration file names
-			string calibrationFiles = ActiveSliceSettings.Instance.GetValue("calibration_files");
-			if(string.IsNullOrEmpty(calibrationFiles))
-			{
-				return;
-			}
-
-			string[] calibrationPrintFileNames = calibrationFiles.Split(';');
-			if (calibrationPrintFileNames.Length < 1)
-			{
-				return;
-			}
-
-			var queueItems = QueueData.Instance.GetItemNames();
-
-			// Finally, ensure missing calibration parts are added to the queue if missing
-			var filenamesWithoutExtensions = calibrationPrintFileNames.Select(f => Path.GetFileNameWithoutExtension(f));
-			foreach (string nameOnly in filenamesWithoutExtensions)
-			{
-				if (queueItems.Contains(nameOnly))
-				{
-					continue;
-				}
-
-				// Find the first library item with the given name and add it to the queue
-				PrintItem libraryItem = libraryProvider.GetLibraryItems(nameOnly).FirstOrDefault();
-				if (libraryItem != null)
-				{
-					QueueData.Instance.AddItem(new PrintItemWrapper(libraryItem));
-				}
-			}
-
-			libraryProvider.Dispose();
-			*/
 		}
 
 		private bool ValidateControls()
