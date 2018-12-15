@@ -393,10 +393,7 @@ namespace MatterHackers.MatterControl
 				//Change download file to friendly file name
 				File.Move(updateFileName, friendlyFileName);
 #if __ANDROID__
-				if (InstallUpdateFromMainActivity != null)
-				{
-					InstallUpdateFromMainActivity(this, null);
-				}
+				InstallUpdateFromMainActivity?.Invoke(this, null);
 				return true;
 #else
 				int tries = 0;

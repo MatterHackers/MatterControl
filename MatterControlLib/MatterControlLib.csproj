@@ -13,6 +13,10 @@
     <DefineConstants>TRACE;USE_OPENGL;IS_WINDOWS;IS_WINDOWS_FORMS</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(SolutionFileName)'=='MatterControlAndroid.sln'">
+    <DefineConstants>$(DefineConstants);__ANDROID__</DefineConstants>
+  </PropertyGroup>
+  
   <ItemGroup>
     <Compile Remove="Community.CsharpSqlite\**" />
     <Compile Remove="Launcher\**" />

@@ -30,11 +30,13 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PluginSystem;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 
 namespace MatterHackers.MatterControl
 {
@@ -210,5 +212,31 @@ namespace MatterHackers.MatterControl
 				}
 			}
 		}
+
+		public void InitPluginFinder()
+		{
+			string searchPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
+			// Load plugins from all dlls in the startup directory
+			foreach (var file in Directory.GetFiles(searchPath, "*.dll"))
+			{
+				try
+				{
+					PluginFinder.LoadTypesFromAssembly(Assembly.LoadFile(file));
+				}
+				catch (Exception ex)
+				{
+					System.Diagnostics.Debug.WriteLine("Error loading assembly: " + ex.Message);
+				}
+			}
+		}
+
+		public GuiWidget GetConnectDevicePage(object printer)
+		{
+			return new SetupStepComPortOne(printer as PrinterConfig);
+		}
+
+		// Primarily required for Android, return true on non-Android platforms
+		public bool HasPermissionToDevice(object printer) => true;
 	}
 }

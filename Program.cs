@@ -128,8 +128,9 @@ namespace MatterHackers.MatterControl
 			// Init platformFeaturesProvider before ShowAsSystemWindow
 			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
 
-			MatterHackers.MatterControl.AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
-			MatterHackers.MatterControl.AppContext.Platform.ProcessCommandline();
+			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
+			AppContext.Platform.InitPluginFinder();
+			AppContext.Platform.ProcessCommandline();
 
 			config.Bind("MatterControl", MatterHackers.MatterControl.AppContext.Options);
 
