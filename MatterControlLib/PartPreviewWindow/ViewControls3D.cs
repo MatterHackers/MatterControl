@@ -331,15 +331,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			undoButton.Click += (sender, e) =>
 			{
-				var selectedItem = sceneContext.Scene.SelectedItem;
-				sceneContext.Scene.SelectedItem = null;
-				undoBuffer.Undo();
+				sceneContext.Scene.Undo();
 				view3DWidget.InteractionLayer.Focus();
-				// if the item we had selected is still in the scene, re-select it
-				if (sceneContext.Scene.Children.Contains(selectedItem))
-				{
-					sceneContext.Scene.SelectedItem = selectedItem;
-				}
 			};
 			this.AddChild(undoButton);
 
@@ -353,15 +346,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			redoButton.Click += (sender, e) =>
 			{
-				var selectedItem = sceneContext.Scene.SelectedItem;
-				sceneContext.Scene.SelectedItem = null;
-				undoBuffer.Redo();
+				sceneContext.Scene.Redo();
 				view3DWidget.InteractionLayer.Focus();
-				// if the item we had selected is still in the scene, re-select it
-				if (sceneContext.Scene.Children.Contains(selectedItem))
-				{
-					sceneContext.Scene.SelectedItem = selectedItem;
-				}
 			};
 			this.AddChild(redoButton);
 

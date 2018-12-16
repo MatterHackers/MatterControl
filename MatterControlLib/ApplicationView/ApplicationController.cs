@@ -3112,12 +3112,12 @@ If you experience adhesion problems, please re-run leveling."
 							{
 								if (keyEvent.Shift)
 								{
-									view3D.Scene.UndoBuffer.Redo();
+									view3D.Scene.Redo();
 								}
 								else
 								{
 									// undo last operation
-									view3D.Scene.UndoBuffer.Undo();
+									view3D.Scene.Undo();
 								}
 								keyEvent.Handled = true;
 							}
