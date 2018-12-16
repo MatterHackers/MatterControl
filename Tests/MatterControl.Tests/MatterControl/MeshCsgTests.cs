@@ -52,6 +52,62 @@ namespace MatterHackers.PolygonMesh.UnitTests
 	public class MeshCsgTests
 	{
 		[Test]
+		public void TeselateTest()
+		{
+			// split edge 0
+			{
+				var vt = new Vector3List(new double[]
+				{
+					0, 0, 0,
+					12, 0, 0,
+					6, 6, 0,
+				});
+				var ft = new FaceList(new int[]
+				{
+					0, 1, 2
+				});
+				Teselate.SplitEdges(vt, ft, 10);
+
+				Assert.AreEqual(4, vt.Count);
+				Assert.AreEqual(2, ft.Count);
+			}
+			// split edge 1
+			{
+				var vt = new Vector3List(new double[]
+				{
+					0, 0, 0,
+					12, 0, 0,
+					6, 6, 0,
+				});
+				var ft = new FaceList(new int[]
+				{
+					1, 2, 0
+				});
+				Teselate.SplitEdges(vt, ft, 10);
+
+				Assert.AreEqual(4, vt.Count);
+				Assert.AreEqual(2, ft.Count);
+			}
+			// split edge 2
+			{
+				var vt = new Vector3List(new double[]
+				{
+					0, 0, 0,
+					12, 0, 0,
+					6, 6, 0,
+				});
+				var ft = new FaceList(new int[]
+				{
+					2, 0, 1
+				});
+				Teselate.SplitEdges(vt, ft, 10);
+
+				Assert.AreEqual(4, vt.Count);
+				Assert.AreEqual(2, ft.Count);
+			}
+
+		}
+		[Test]
 		public void CsgCylinderMinusCylinder()
 		{
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));

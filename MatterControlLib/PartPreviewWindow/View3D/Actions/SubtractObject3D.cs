@@ -70,10 +70,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				{
 					double[] va;
 					int[] fa;
-					meshToVerticesAndFaces(inMeshA, matrixA, out va, out fa);
+					inMeshA.ToVerticesAndFaces(matrixA, out va, out fa);
 					double[] vb;
 					int[] fb;
-					meshToVerticesAndFaces(inMeshB, matrixB, out vb, out fb);
+					inMeshB.ToVerticesAndFaces(matrixB, out vb, out fb);
 
 					int vcCount;
 					int fcCount;
@@ -88,24 +88,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					var fcArray = new int[fcCount];
 					Marshal.Copy(pFc, fcArray, 0, fcCount);
 
-					Mesh model = new Mesh();
-					for (int vertexIndex = 0; vertexIndex < vcCount; vertexIndex++)
-					{
-						model.CreateVertex(vcArray[vertexIndex + 0],
-							vcArray[vertexIndex + 1],
-							vcArray[vertexIndex + 2], CreateOption.CreateNew, SortOption.WillSortLater);
-						vertexIndex += 2;
-					}
-
-					for (int faceIndex = 0; faceIndex < fcCount; faceIndex++)
-					{
-						model.CreateFace(fcArray[faceIndex + 0],
-							fcArray[faceIndex + 1],
-							fcArray[faceIndex + 2], CreateOption.CreateNew);
-						faceIndex += 2;
-					}
-
-					return model;
+					return new Mesh(vcArray, fcArray);
 				}
 				finally
 				{
@@ -166,40 +149,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 
 			return null;
-		}
-
-		private static void meshToVerticesAndFaces(Mesh inMesh, Matrix4X4 matrix, out double[] va, out int[] fa)
-		{
-			va = new double[inMesh.Vertices.Count * 3];
-			int i = 0;
-			var positionIndex = new Dictionary<(double, double, double), int>();
-			foreach (var vertex in inMesh.Vertices)
-			{
-				var key = (vertex.Position.X, vertex.Position.Y, vertex.Position.Z);
-				if (!positionIndex.ContainsKey(key))
-				{
-					positionIndex.Add(key, i);
-					var position = Vector3.Transform(vertex.Position, matrix);
-					va[(i * 3) + 0] = position.X;
-					va[(i * 3) + 1] = position.Y;
-					va[(i * 3) + 2] = position.Z;
-					i++;
-				}
-			}
-
-			var lfa = new List<int>(inMesh.Faces.Count * 3);
-			i = 0;
-			foreach (var face in inMesh.Faces)
-			{
-				foreach (var vertex in face.VerticesAsTriangles())
-				{
-					lfa.Add(positionIndex[(vertex.v0.Position.X, vertex.v0.Position.Y, vertex.v0.Position.Z)]);
-					lfa.Add(positionIndex[(vertex.v1.Position.X, vertex.v1.Position.Y, vertex.v1.Position.Z)]);
-					lfa.Add(positionIndex[(vertex.v2.Position.X, vertex.v2.Position.Y, vertex.v2.Position.Z)]);
-				}
-			}
-
-			fa = lfa.ToArray();
 		}
 
 		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]

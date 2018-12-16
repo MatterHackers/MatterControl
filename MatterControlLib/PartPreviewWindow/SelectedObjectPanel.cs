@@ -38,6 +38,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using static JsonPath.JsonPathContext.ReflectionValueSystem;
@@ -83,11 +84,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Margin = theme.ButtonSpacing,
 				ToolTipText = "Flatten".Localize(),
-				Enabled = scene.SelectedItem?.CanFlatten == true
+				Enabled = true
 			};
 			flattenButton.Click += (s, e) =>
 			{
-				this.item.Flatten(view3DWidget.Scene.UndoBuffer);
+				if (this.item.CanFlatten)
+				{
+					this.item.Flatten(view3DWidget.Scene.UndoBuffer);
+				}
+				else
+				{
+					// try to ungroup it
+					sceneContext.Scene.UngroupSelection();
+				}
 				scene.SelectedItem = null;
 			};
 			toolbar.AddChild(flattenButton);
@@ -387,7 +396,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var selectedItem = scene.SelectedItem;
 
-			flattenButton.Enabled = selectedItem?.CanFlatten == true;
+			flattenButton.Enabled = selectedItem != null
+				&& (selectedItem is GroupObject3D
+				|| selectedItem.GetType() == typeof(Object3D)
+				|| selectedItem.CanFlatten);
 			removeButton.Enabled = selectedItem != null;
 			overflowButton.Enabled = selectedItem != null;
 		}
