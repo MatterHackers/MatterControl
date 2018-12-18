@@ -49,26 +49,43 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public override void Flatten(UndoBuffer undoBuffer)
 		{
-			var meshWrappers = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
+			var ownedMeshWrappers = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
+
+			var newMeshObjects = new List<IObject3D>();
 
 			// remove all the meshWrappers (collapse the children)
-			foreach (var meshWrapper in meshWrappers)
+			foreach (var ownedMeshWrapper in ownedMeshWrappers)
 			{
-				var parent = meshWrapper.Parent;
-				if (meshWrapper.Visible)
+				var wrapperParent = ownedMeshWrapper.Parent;
+				if (ownedMeshWrapper.Visible)
 				{
 					var newMesh = new Object3D()
 					{
-						Mesh = meshWrapper.Mesh
+						Mesh = ownedMeshWrapper.Mesh.Copy(CancellationToken.None)
 					};
-					newMesh.CopyProperties(meshWrapper, Object3DPropertyFlags.All);
+					newMesh.CopyProperties(ownedMeshWrapper, Object3DPropertyFlags.All);
+					var matrix = ownedMeshWrapper.WorldMatrix(this);
+					newMesh.Mesh.Transform(matrix);
+					newMesh.Matrix = Matrix4X4.Identity;
 					newMesh.Name = this.Name;
-					parent.Children.Add(newMesh);
+					newMeshObjects.Add(newMesh);
 				}
 
 				// remove it
-				parent.Children.Remove(meshWrapper);
+				wrapperParent.Children.Remove(ownedMeshWrapper);
 			}
+
+			this.Matrix = Matrix4X4.Identity;
+
+			this.Children.Modify(children =>
+			{
+				children.Clear();
+				children.AddRange(newMeshObjects);
+				foreach(var child in children)
+				{
+					child.MakeNameNonColliding();
+				}
+			});
 
 			base.Flatten(undoBuffer);
 		}

@@ -89,7 +89,7 @@ namespace MatterControl.Tests.MatterControl
 			TestMacroReplacement("[external_perimeter_speed]", "1260");
 			TestMacroReplacement("[extruder_wipe_temperature]", "0");
 			TestMacroReplacement("[filament_diameter]", "3");
-			TestMacroReplacement("[first_layer_bed_temperature]", "75");
+			TestMacroReplacement("[first_layer_bed_temperature]", "70");
 			TestMacroReplacement("[first_layer_temperature]", "205");
 			TestMacroReplacement("{max_fan_speed}", "100");
 			TestMacroReplacement("{min_fan_speed}", "35");
