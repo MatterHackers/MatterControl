@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"enable_fan",
 			"extruder_wipe_temperature",
 			"extruders_share_temperature",
+			"first_layer_bed_temperature",
 			"g0",
 			"layer_to_pause",
 			"selector_ip_address",

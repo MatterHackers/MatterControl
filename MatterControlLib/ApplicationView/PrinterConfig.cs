@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl
 				new MappedSetting(this, "air_gap_speed", "air_gap_speed"),
 				new MappedSetting(this, "extruder_wipe_temperature","extruder_wipe_temperature"),
 				new MappedSetting(this, SettingsKey.filament_diameter,SettingsKey.filament_diameter),
-				new MappedSetting(this, "first_layer_bed_temperature", SettingsKey.bed_temperature),
+				new ReplaceWithSetting(this, "first_layer_bed_temperature", SettingsKey.bed_temperature, SettingsKey.bed_temperature), 
 				new MappedSetting(this, "first_layer_temperature", SettingsKey.temperature),
 				new MappedSetting(this, SettingsKey.max_fan_speed,"max_fan_speed"),
 				new MappedSetting(this, SettingsKey.min_fan_speed,"min_fan_speed"),
