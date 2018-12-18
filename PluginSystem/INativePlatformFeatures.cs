@@ -41,9 +41,12 @@ namespace MatterHackers.MatterControl
 		void ConfigureWifi();
 		bool CameraInUseByExternalProcess { get; set; }
 		bool IsNetworkConnected();
+		void InitPluginFinder();
+		GuiWidget GetConnectDevicePage(object printer);
 		void FindAndInstantiatePlugins(SystemWindow systemWindow);
 		void ProcessCommandline();
 		void PlatformInit(Action<string> reporter);
 		void GenerateLocalizationValidationFile();
+		bool HasPermissionToDevice(object printer);
 	}
 }

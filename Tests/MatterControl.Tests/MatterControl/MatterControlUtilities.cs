@@ -52,6 +52,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PrinterEmulator;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using SQLiteWin32;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
@@ -407,7 +408,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void OverrideAppDataLocation(string matterControlDirectory)
 		{
 			string tempFolderPath = Path.Combine(matterControlDirectory, "Tests", "temp", runName, $"Test{testID++}");
-			ApplicationDataStorage.Instance.OverrideAppDataLocation(tempFolderPath);
+			ApplicationDataStorage.Instance.OverrideAppDataLocation(tempFolderPath, DesktopSqlite.CreateInstance());
 		}
 
 		public static void AddItemsToQueue(string queueItemFolderToLoad)

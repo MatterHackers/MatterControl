@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		// Year|month|day|versionForDay (to support multiple revisions on a given day)
 		public static int LatestVersion { get; } = 201606271;
 
-		public static EventHandler AnyPrinterSettingChanged;
+		public static event EventHandler AnyPrinterSettingChanged;
 
 		public event EventHandler SettingChanged;
 

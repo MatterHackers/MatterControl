@@ -13,6 +13,10 @@
     <DefineConstants>TRACE;USE_OPENGL;IS_WINDOWS;IS_WINDOWS_FORMS</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(SolutionFileName)'=='MatterControlAndroid.sln'">
+    <DefineConstants>$(DefineConstants);__ANDROID__</DefineConstants>
+  </PropertyGroup>
+  
   <ItemGroup>
     <Compile Remove="Community.CsharpSqlite\**" />
     <Compile Remove="Launcher\**" />
@@ -71,7 +75,6 @@
     <ProjectReference Include="..\Submodules\agg-sharp\RayTracer\RayTracer.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\VectorMath\VectorMath.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\Tesselate\Tesselate.csproj" />
-    <ProjectReference Include="..\Community.CsharpSqlite\Community.CsharpSqlite.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj" />
     <ProjectReference Include="..\PluginSystem\MatterControlPluginSystem.csproj" />
@@ -88,12 +91,6 @@
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
     <PackageReference Include="Zeroconf" Version="3.0.30" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="PdfSharp">
-      <HintPath>PdfSharp.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>

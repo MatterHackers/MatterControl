@@ -103,12 +103,10 @@ namespace MatterHackers.MatterControl.DataStorage
 		/// <returns></returns>
 		public string DatastorePath => Path.Combine(EnsurePath(_applicationUserDataPath), datastoreName);
 
-#if __ANDROID__
 		/// <summary>
 		/// Returns the public storage folder (ex. download folder on Android)
 		/// </summary>
-		public string PublicDataStoragePath { get; } = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath;
-#endif
+		public string PublicDataStoragePath { get; set;  }
 
 		/// <summary>
 		/// Invokes CreateDirectory on all paths, creating if missing, before returning
@@ -124,7 +122,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		/// Overrides the AppData location. Used by tests to set a non-standard AppData location
 		/// </summary>
 		/// <param name="path">The new AppData path.</param>
-		internal void OverrideAppDataLocation(string path)
+		internal void OverrideAppDataLocation(string path, ISQLite sqlite)
 		{
 			Console.WriteLine("   Overriding ApplicationUserDataPath: " + path);
 
@@ -135,7 +133,7 @@ namespace MatterHackers.MatterControl.DataStorage
 
 			// Initialize a fresh datastore instance after overriding the AppData path
 			Datastore.Instance = new Datastore();
-			Datastore.Instance.Initialize();
+			Datastore.Instance.Initialize(sqlite);
 		}
 
 		public string GetTempFileName(string fileExtension = null)

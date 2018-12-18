@@ -44,9 +44,35 @@ using Sqlite3Statement = System.IntPtr;
 
 using MatterHackers.MatterControl.DataStorage;
 using System.Runtime.InteropServices;
+using MatterHackers.Agg.Platform;
 
 namespace SQLiteWin32
 {
+	public static class DesktopSqlite
+	{
+		public static ISQLite CreateInstance()
+		{
+			ISQLite dbSQLite;
+
+			string datastoreLocation = ApplicationDataStorage.Instance.DatastorePath;
+			switch (AggContext.OperatingSystem)
+			{
+
+				case OSType.Mac:
+					return new SQLiteUnix.SQLiteConnection(datastoreLocation);
+					break;
+
+				case OSType.X11:
+					return new SQLiteUnix.SQLiteConnection(datastoreLocation);
+					break;
+
+				default:
+					return new SQLiteWin32.SQLiteConnection(datastoreLocation);
+					break;
+			}
+		}
+	}
+
 	public class SQLiteException : System.Exception
 	{
 		public SQLite3.Result Result { get; private set; }

@@ -978,58 +978,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// Extension point - RegisteredLibraryActions not defined in this file/assembly can insert here via this named token
 			menuActions.AddRange(ApplicationController.Instance.RegisteredLibraryActions("StandardLibraryOperations"));
 
-#if !__ANDROID__
 			menuActions.Add(new MenuSeparator("Other"));
 
-			// PDF export is limited to Windows
-			if (AggContext.OperatingSystem == OSType.Windows)
+			foreach(var extension in ApplicationController.Instance.Library.MenuExtensions)
 			{
-				menuActions.Add(new LibraryAction(ActionScope.ListItem)
-				{
-					Title = "Create Part Sheet".Localize(),
-					Action = (selectedLibraryItems, listView) =>
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							var printItems = selectedLibraryItems.OfType<ILibraryAssetStream>();
-							if (printItems.Any())
-							{
-								AggContext.FileDialogs.SaveFileDialog(
-									new SaveFileDialogParams("Save Parts Sheet|*.pdf")
-									{
-										ActionButtonLabel = "Save Parts Sheet".Localize(),
-										Title = ApplicationController.Instance.ProductName + " - " + "Save".Localize()
-									},
-									(saveParams) =>
-									{
-										if (!string.IsNullOrEmpty(saveParams.FileName))
-										{
-											var feedbackWindow = new SavePartsSheetFeedbackWindow(
-												printItems.Count(),
-												printItems.FirstOrDefault()?.Name,
-												theme.BackgroundColor);
-
-											var currentPartsInQueue = new PartsSheet(printItems, saveParams.FileName);
-											currentPartsInQueue.UpdateRemainingItems += feedbackWindow.StartingNextPart;
-											currentPartsInQueue.DoneSaving += feedbackWindow.DoneSaving;
-
-											feedbackWindow.ShowAsSystemWindow();
-
-											currentPartsInQueue.SaveSheets().ConfigureAwait(false);
-										}
-									});
-							}
-						});
-					},
-					IsEnabled = (selectedListItems, listView) =>
-					{
-						// Multiselect - disallow containers
-						return listView.SelectedItems.Any()
-							&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainerLink));
-					}
-				});
+				menuActions.Add(extension);
 			}
-#endif
 
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{

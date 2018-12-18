@@ -893,7 +893,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									{
 										serialPort = portFactory.CreateAndOpen(serialPortName, Printer.Settings, baudRate, true);
 #if __ANDROID__
-						ToggleHighLowHigh(serialPort);
+										ToggleHighLowHigh(serialPort);
 #endif
 										// TODO: Review and reconsider the cases where this was required
 										// wait a bit of time to let the firmware start up

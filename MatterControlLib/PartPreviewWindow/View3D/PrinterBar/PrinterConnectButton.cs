@@ -170,26 +170,13 @@ namespace MatterHackers.MatterControl.ActionBar
 				listenForConnectFailed = true;
 				connectStartMs = UiThread.CurrentTimerMs;
 
-#if __ANDROID__
 				if (!printer.Settings.GetValue<bool>(SettingsKey.enable_network_printing)
-					&& !FrostedSerialPort.HasPermissionToDevice())
-				{
-					// Opens the USB device permissions dialog which will call back into our UsbDevice broadcast receiver to connect
-					FrostedSerialPort.RequestPermissionToDevice(this.RunTroubleShooting);
-				}
-				else
-#endif
+					&& AppContext.Platform.HasPermissionToDevice(printer))
 				{
 					printer.Connection.HaltConnectionThread();
 					printer.Connection.Connect();
 				}
 			}
-		}
-
-		private void RunTroubleShooting()
-		{
-			DialogWindow.Show(
-				new SetupWizardTroubleshooting(printer));
 		}
 
 		private void Connection_Failed(object s, EventArgs e)

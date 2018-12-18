@@ -181,14 +181,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 							return;
 						}
 
-#if __ANDROID__
-						UiThread.RunOnIdle(() => DialogWindow.ChangeToPage(new AndroidConnectDevicePage(printer)));
-#else
 						UiThread.RunOnIdle(() =>
 						{
-							DialogWindow.ChangeToPage(new SetupStepComPortOne(printer));
+							DialogWindow.ChangeToPage(AppContext.Platform.GetConnectDevicePage(printer) as DialogPage);
 						});
-#endif
 					}
 				}
 			});
