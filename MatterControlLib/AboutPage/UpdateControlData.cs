@@ -369,7 +369,7 @@ namespace MatterHackers.MatterControl
 			UpdateStatusChanged.CallEvents(this, e);
 		}
 
-		public static EventHandler InstallUpdateFromMainActivity = null;
+		public static event EventHandler InstallUpdateFromMainActivity = null;
 
 		public bool InstallUpdate()
 		{

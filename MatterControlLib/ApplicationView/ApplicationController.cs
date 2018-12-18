@@ -284,7 +284,7 @@ namespace MatterHackers.MatterControl
 						"Rename".Localize(),
 						(newName) =>
 						{
-							// TODO: add undo data to this opperation
+							// TODO: add undo data to this operation
 							selectedItem.Name = newName;
 						}));
 			};

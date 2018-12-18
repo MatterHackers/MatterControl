@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl
 
 	public class ManualPrinterControls : ScrollableWidget, ICloseableTab
 	{
-		public static EventHandler<ManualPrinterControls> AddPluginControls;
+		public static event EventHandler<ManualPrinterControls> AddPluginControls;
 
 		private static bool pluginsQueuedToAdd = false;
 
