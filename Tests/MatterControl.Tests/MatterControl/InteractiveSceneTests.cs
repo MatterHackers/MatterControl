@@ -62,7 +62,6 @@ namespace MatterControl.Tests.MatterControl
 			{
 				var root = new Object3D();
 				var cube = new CubeObject3D(20, 20, 20);
-				root.Children.Add(cube);
 				var fit = FitToBoundsObject3D_2.Create(cube);
 
 				fit.SizeX = 50;

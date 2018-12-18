@@ -49,28 +49,73 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public override void Flatten(UndoBuffer undoBuffer)
 		{
-			var meshWrappers = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
+			var ownedMeshWrappers = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
+
+			var newMeshObjects = new List<IObject3D>();
 
 			// remove all the meshWrappers (collapse the children)
-			foreach (var meshWrapper in meshWrappers)
+			foreach (var ownedMeshWrapper in ownedMeshWrappers)
 			{
-				var parent = meshWrapper.Parent;
-				if (meshWrapper.Visible)
+				var wrapperParent = ownedMeshWrapper.Parent;
+				if (ownedMeshWrapper.Visible)
 				{
 					var newMesh = new Object3D()
 					{
-						Mesh = meshWrapper.Mesh
+						Mesh = ownedMeshWrapper.Mesh.Copy(CancellationToken.None)
 					};
-					newMesh.CopyProperties(meshWrapper, Object3DPropertyFlags.All);
+					newMesh.CopyProperties(ownedMeshWrapper, Object3DPropertyFlags.All);
+					var matrix = ownedMeshWrapper.WorldMatrix(this);
+					newMesh.Mesh.Transform(matrix);
+					newMesh.Matrix = Matrix4X4.Identity;
 					newMesh.Name = this.Name;
-					parent.Children.Add(newMesh);
+					newMeshObjects.Add(newMesh);
 				}
 
 				// remove it
-				parent.Children.Remove(meshWrapper);
+				wrapperParent.Children.Remove(ownedMeshWrapper);
 			}
 
+			this.Matrix = Matrix4X4.Identity;
+
+			this.Children.Modify(children =>
+			{
+				children.Clear();
+				children.AddRange(newMeshObjects);
+				foreach(var child in children)
+				{
+					child.MakeNameNonColliding();
+				}
+			});
+
 			base.Flatten(undoBuffer);
+		}
+
+		/// <summary>
+		/// MeshWrapperObject3D overrides GetAabb so that it can only check the geometry that it has created
+		/// </summary>
+		/// <param name="matrix"></param>
+		/// <returns></returns>
+		public override AxisAlignedBoundingBox GetAxisAlignedBoundingBox(Matrix4X4 matrix)
+		{
+			AxisAlignedBoundingBox totalBounds = AxisAlignedBoundingBox.Empty();
+
+			// This needs to be Descendants because we need to move past the first visible mesh to our owned objects
+			foreach (var child in this.Descendants().Where(i => i.OwnerID == this.ID && i.Visible))
+			{
+				var childMesh = child.Mesh;
+				if (childMesh != null)
+				{
+					// Add the bounds of each child object
+					var childBounds = childMesh.GetAxisAlignedBoundingBox(child.WorldMatrix(this) * matrix);
+					// Check if the child actually has any bounds
+					if (childBounds.XSize > 0)
+					{
+						totalBounds += childBounds;
+					}
+				}
+			}
+
+			return totalBounds;
 		}
 
 		public IEnumerable<(IObject3D original, IObject3D meshCopy)> WrappedObjects()

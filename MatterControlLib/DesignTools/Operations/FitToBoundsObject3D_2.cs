@@ -78,9 +78,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			scaleItem.Children.Add(itemToFit);
 			fitToBounds.Children.Add(bounds);
 
-			fitToBounds.SizeX = aabb.XSize;
-			fitToBounds.SizeY = aabb.YSize;
-			fitToBounds.SizeZ = aabb.ZSize;
+			fitToBounds.boundsSize.X = aabb.XSize;
+			fitToBounds.boundsSize.Y = aabb.YSize;
+			fitToBounds.boundsSize.Z = aabb.ZSize;
+			fitToBounds.Rebuild(null);
 
 			return fitToBounds;
 		}
