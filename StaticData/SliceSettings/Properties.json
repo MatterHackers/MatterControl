@@ -405,15 +405,6 @@
     "DefaultValue": "1"
   },
   {
-    "SlicerConfigName": "first_layer_bed_temperature",
-    "PresentationName": "Bed First Layer",
-    "HelpText": "The temperature to set the bed to before printing the first layer. The printer will wait until this temperature has been reached before printing. Set to 0 to eliminate bed temperature commands.",
-    "DataEditType": "DOUBLE",
-    "Units": "°C",
-    "ShowIfSet": "has_heated_bed",
-    "DefaultValue": "75"
-  },
-  {
     "SlicerConfigName": "first_layer_extrusion_width",
     "PresentationName": "First Layer",
     "HelpText": "A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.",
