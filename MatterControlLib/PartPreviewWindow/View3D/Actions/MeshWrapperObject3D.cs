@@ -73,34 +73,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			base.Flatten(undoBuffer);
 		}
 
-		/// <summary>
-		/// MeshWrapperObject3D overrides GetAabb so that it can only check the geometry that it has created
-		/// </summary>
-		/// <param name="matrix"></param>
-		/// <returns></returns>
-		public override AxisAlignedBoundingBox GetAxisAlignedBoundingBox(Matrix4X4 matrix)
-		{
-			AxisAlignedBoundingBox totalBounds = AxisAlignedBoundingBox.Empty();
-
-			// This needs to be Descendants because we need to move past the first visible mesh to our owned objects
-			foreach (var child in this.Descendants().Where(i => i.OwnerID == this.ID && i.Visible))
-			{
-				var childMesh = child.Mesh;
-				if (childMesh != null)
-				{
-					// Add the bounds of each child object
-					var childBounds = childMesh.GetAxisAlignedBoundingBox(child.WorldMatrix(this) * matrix);
-					// Check if the child actually has any bounds
-					if (childBounds.XSize > 0)
-					{
-						totalBounds += childBounds;
-					}
-				}
-			}
-
-			return totalBounds;
-		}
-
 		public IEnumerable<(IObject3D original, IObject3D meshCopy)> WrappedObjects()
 		{
 			return this.Descendants()
