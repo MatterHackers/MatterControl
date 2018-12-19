@@ -712,6 +712,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Automation runner must do as much as program.cs to spin up platform
 			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
 			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
+			AppContext.Platform.InitPluginFinder();
 			AppContext.Platform.ProcessCommandline();
 
 			var (width, height) = RootSystemWindow.GetStartupBounds();
