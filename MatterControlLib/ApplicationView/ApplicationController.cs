@@ -1711,7 +1711,8 @@ namespace MatterHackers.MatterControl
 
 		public bool IsReloading { get; private set; } = false;
 
-		public async Task ReloadAll()
+		// TODO: No longer contains async child methods. Leaving async compatible pattern in place in case it's needed in the near future, revert back to void if not
+		public Task ReloadAll()
 		{
 			try
 			{
@@ -1745,8 +1746,6 @@ namespace MatterHackers.MatterControl
 						AppContext.RootSystemWindow.AddChild(MainView);
 					}
 				}
-
-				await this.RestoreUserTabs();
 			}
 			catch
 			{
@@ -1757,6 +1756,8 @@ namespace MatterHackers.MatterControl
 			}
 
 			Debug.WriteLine($"LayoutCount: {GuiWidget.LayoutCount:0.0}");
+
+			return Task.CompletedTask;
 		}
 
 		static int reloadCount = 0;
@@ -1926,14 +1927,23 @@ namespace MatterHackers.MatterControl
 			this.Workspaces.Add(workspace);
 		}
 
+
+		private string loadedUserTabs = null;
+
 		public async Task RestoreUserTabs()
 		{
+			// Prevent reload of loaded user
+			if (loadedUserTabs == ProfileManager.Instance.UserName)
+			{
+				return;
+			}
+
+			loadedUserTabs = ProfileManager.Instance.UserName;
+
 			var history = this.Library.PlatingHistory;
 
 			this.Workspaces.Clear();
 
-			// TODO: Loading previous parts/printer is a relatively huge task compared to other startup tasks. These might work better if 
-			// loaded after startup tasks and should have better progress reporting
 			if (File.Exists(ProfileManager.Instance.OpenTabsPath))
 			{
 				try
@@ -3399,6 +3409,7 @@ If you experience adhesion problems, please re-run leveling."
 						await applicationController.Tasks.Execute(task.Title, null, task.Action);
 					}
 
+					// Initial load builds UI elements, then constructs workspace tabs as they're encountered in RestoreUserTabs()
 					await applicationController.RestoreUserTabs();
 
 					if (ApplicationSettings.Instance.get(UserSettingsKey.ShownWelcomeMessage) != "false")
