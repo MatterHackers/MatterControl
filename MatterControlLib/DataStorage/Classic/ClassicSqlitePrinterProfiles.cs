@@ -91,8 +91,8 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			printerSettings.UserLayer[SettingsKey.device_token] = printer.DeviceToken ?? "";
 			printerSettings.UserLayer[SettingsKey.device_type] = printer.DeviceType ?? "";
 
-			// Open the first imported printer if undefined
-			if (!ProfileManager.Instance.OpenPrinterIDs.Any())
+			// Open the first imported printer if no active printer
+			if (!ApplicationController.Instance.ActivePrinters.Any())
 			{
 				ApplicationController.Instance.OpenEmptyPrinter(printer.Id.ToString()).ConfigureAwait(false);
 			}
