@@ -243,9 +243,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		[JsonIgnore]
-		public IEnumerable<string> OpenPrinterIDs => _activeProfileIDs;
-
 		public void ClosePrinter(string printerID)
 		{
 			try
@@ -689,19 +686,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void Printer_SettingsChanged(object sender, EventArgs e)
 		{
-			string printerID = (sender as PrinterSettings)?.ID;
+			var settings = (sender as PrinterSettings);
+			string printerID = settings?.ID;
 
-			var printer = ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == printerID);
-
-			if (Instance?.OpenPrinterIDs.Any() != true
-				|| printer == null)
+			if (string.IsNullOrWhiteSpace(printerID))
 			{
+				// Exit early if PrinterSettings or ID is invalid
 				return;
 			}
 
-			var profile = Instance[printer.Settings.ID];
+			var profile = Instance[printerID];
 			if (profile == null)
 			{
+				// Exit early if printer is not known
 				return;
 			}
 
@@ -709,12 +706,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			switch (settingsKey)
 			{
 				case SettingsKey.printer_name:
-					profile.Name = printer.Settings.GetValue(SettingsKey.printer_name);
+					profile.Name = settings.GetValue(SettingsKey.printer_name);
 					Instance.Save();
 					break;
 
 				case SettingsKey.com_port:
-					profile.ComPort = printer.Settings.Helpers.ComPort();
+					profile.ComPort = settings.Helpers.ComPort();
 					Instance.Save();
 					break;
 			}

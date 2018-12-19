@@ -270,7 +270,7 @@ namespace MatterHackers.MatterControl
 
 		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu)
 		{
-			var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+			var popupMenu = new PopupMenu(this.MenuTheme);
 
 			var menuItem = popupMenu.CreateMenuItem("Rename".Localize());
 			menuItem.Click += (s, e) =>
@@ -293,13 +293,13 @@ namespace MatterHackers.MatterControl
 
 			var selectedItemType = selectedItem.GetType();
 
-			var menuTheme = ApplicationController.Instance.MenuTheme;
+			var menuTheme = this.MenuTheme;
 
 			if (addInSubmenu)
 			{
-				popupMenu.CreateSubMenu("Modify".Localize(), ApplicationController.Instance.MenuTheme, (modifyMenu) =>
+				popupMenu.CreateSubMenu("Modify".Localize(), this.MenuTheme, (modifyMenu) =>
 				{
-					foreach (var nodeOperation in ApplicationController.Instance.Graph.Operations)
+					foreach (var nodeOperation in this.Graph.Operations)
 					{
 						foreach (var type in nodeOperation.MappedTypes)
 						{
@@ -319,7 +319,7 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				foreach (var nodeOperation in ApplicationController.Instance.Graph.Operations)
+				foreach (var nodeOperation in this.Graph.Operations)
 				{
 					foreach (var type in nodeOperation.MappedTypes)
 					{
@@ -342,7 +342,7 @@ namespace MatterHackers.MatterControl
 
 		public void PersistUserTabs()
 		{
-			var workspaces = ApplicationController.Instance.Workspaces.Select(w =>
+			var workspaces = this.Workspaces.Select(w =>
 			{
 				if (w.Printer == null)
 				{
@@ -452,8 +452,10 @@ namespace MatterHackers.MatterControl
 
 			if (allowChangedEvent)
 			{
-				if (ApplicationController.Instance.Workspaces.FirstOrDefault(w => w.Printer.Settings.ID == printer.Settings.ID) is PartWorkspace workspace)
+				if (this.Workspaces.FirstOrDefault(w => w.Printer?.Settings.ID == printer.Settings.ID) is PartWorkspace workspace)
 				{
+					this.Workspaces.Remove(workspace);
+
 					this.OnWorkspacesChanged(
 						new WorkspacesChangedEventArgs(
 							workspace,
@@ -1002,7 +1004,7 @@ namespace MatterHackers.MatterControl
 					// If there is only one printer constructed, use it.
 					else if (ProfileManager.Instance.ActiveProfiles.Count() == 1)
 					{
-						var historyContainer = ApplicationController.Instance.Library.PlatingHistory;
+						var historyContainer = this.Library.PlatingHistory;
 
 						var printerInfo = ProfileManager.Instance.ActiveProfiles.First();
 						ProfileManager.LoadSettingsAsync(printerInfo.ID).ContinueWith(task =>
@@ -1033,7 +1035,7 @@ namespace MatterHackers.MatterControl
 								"Next".Localize(),
 								(selectedPrinter) =>
 								{
-									var historyContainer = ApplicationController.Instance.Library.PlatingHistory;
+									var historyContainer = this.Library.PlatingHistory;
 
 									selectedPrinter.Bed.LoadEmptyContent(
 										new EditContext()
@@ -1734,7 +1736,7 @@ namespace MatterHackers.MatterControl
 
 				using (new QuickTimer($"ReloadAll_{reloadCount++}:"))
 				{
-					MainView = new MainViewWidget(ApplicationController.Instance.Theme);
+					MainView = new MainViewWidget(this.Theme);
 					this.DoneReloadingAll?.CallEvents(null, null);
 
 					using (new QuickTimer("Time to AddMainview: "))
@@ -1744,7 +1746,7 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				await ApplicationController.Instance.RestoreUserTabs();
+				await this.RestoreUserTabs();
 			}
 			catch
 			{
@@ -1888,12 +1890,12 @@ namespace MatterHackers.MatterControl
 			if (!string.IsNullOrEmpty(printerID)
 				&& ProfileManager.Instance[printerID] != null)
 			{
-				var printer = await ApplicationController.Instance.LoadPrinter(printerID);
+				var printer = await this.LoadPrinter(printerID);
 
 				// Add workspace for printer
 				workspace = new PartWorkspace(printer);
 
-				var history = ApplicationController.Instance.Library.PlatingHistory;
+				var history = this.Library.PlatingHistory;
 
 				await workspace.SceneContext.LoadContent(new EditContext()
 				{
@@ -1906,7 +1908,7 @@ namespace MatterHackers.MatterControl
 					workspace.Name = workspace.Printer.Settings.GetValue(SettingsKey.printer_name);
 				}
 
-				ApplicationController.Instance.OpenWorkspace(workspace);
+				this.OpenWorkspace(workspace);
 
 				return printer;
 			}
@@ -1921,7 +1923,7 @@ namespace MatterHackers.MatterControl
 						workspace,
 						WorkspacesChangedEventArgs.OperationType.Add));
 
-			ApplicationController.Instance.Workspaces.Add(workspace);
+			this.Workspaces.Add(workspace);
 		}
 
 		public async Task RestoreUserTabs()

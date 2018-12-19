@@ -519,12 +519,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Close Airwolf
 				CloseFirstPrinterTab(testRunner);
+				
+				// Assert printer counts
+				Assert.AreEqual(1, ProfileManager.Instance.ActiveProfiles.Count(), "ProfileManager should have 1 profile after Airwolf close");
+				Assert.AreEqual(0, ApplicationController.Instance.ActivePrinters.Count(), "Zero printers should be active after Airwolf close");
 
 				testRunner.AddAndSelectPrinter("BCN", "Sigma");
 
-				// Check Guest printer count
+				// Assert printer counts
 				Assert.AreEqual(2, ProfileManager.Instance.ActiveProfiles.Count(), "ProfileManager has 2 profiles");
-				Assert.AreEqual(1, ProfileManager.Instance.OpenPrinterIDs.Count(), "ProfileManager has 1 open profiles");
+				Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should be active after BCN add");
 
 				// Close BCN
 				CloseFirstPrinterTab(testRunner);
@@ -559,7 +563,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			if (mainViewWidget.TabControl.AllTabs.First(t => t.TabContent is PrinterTabPage) is GuiWidget widget)
 			{
 				var closeWidget = widget.Descendants<ImageWidget>().First();
-				closeWidget.InvokeClick();
+				testRunner.ClickWidget(closeWidget);
 			}
 		}
 
