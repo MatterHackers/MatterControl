@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		/// Overrides the AppData location. Used by tests to set a non-standard AppData location
 		/// </summary>
 		/// <param name="path">The new AppData path.</param>
-		internal void OverrideAppDataLocation(string path, ISQLite sqlite)
+		internal void OverrideAppDataLocation(string path, Func<ISQLite> sqliteBuilder)
 		{
 			Console.WriteLine("   Overriding ApplicationUserDataPath: " + path);
 
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.DataStorage
 
 			// Initialize a fresh datastore instance after overriding the AppData path
 			Datastore.Instance = new Datastore();
-			Datastore.Instance.Initialize(sqlite);
+			Datastore.Instance.Initialize(sqliteBuilder.Invoke());
 		}
 
 		public string GetTempFileName(string fileExtension = null)

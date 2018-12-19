@@ -408,7 +408,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void OverrideAppDataLocation(string matterControlDirectory)
 		{
 			string tempFolderPath = Path.Combine(matterControlDirectory, "Tests", "temp", runName, $"Test{testID++}");
-			ApplicationDataStorage.Instance.OverrideAppDataLocation(tempFolderPath, DesktopSqlite.CreateInstance());
+			ApplicationDataStorage.Instance.OverrideAppDataLocation(tempFolderPath, () => DesktopSqlite.CreateInstance());
 		}
 
 		public static void AddItemsToQueue(string queueItemFolderToLoad)
