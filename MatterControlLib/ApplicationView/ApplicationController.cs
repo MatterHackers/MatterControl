@@ -452,8 +452,10 @@ namespace MatterHackers.MatterControl
 
 			if (allowChangedEvent)
 			{
-				if (ApplicationController.Instance.Workspaces.FirstOrDefault(w => w.Printer.Settings.ID == printer.Settings.ID) is PartWorkspace workspace)
+				if (this.Workspaces.FirstOrDefault(w => w.Printer?.Settings.ID == printer.Settings.ID) is PartWorkspace workspace)
 				{
+					this.Workspaces.Remove(workspace);
+
 					this.OnWorkspacesChanged(
 						new WorkspacesChangedEventArgs(
 							workspace,
