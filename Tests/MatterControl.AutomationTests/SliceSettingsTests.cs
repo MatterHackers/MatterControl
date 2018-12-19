@@ -563,7 +563,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			if (mainViewWidget.TabControl.AllTabs.First(t => t.TabContent is PrinterTabPage) is GuiWidget widget)
 			{
 				var closeWidget = widget.Descendants<ImageWidget>().First();
-				closeWidget.InvokeClick();
+				testRunner.ClickWidget(closeWidget);
 			}
 		}
 
