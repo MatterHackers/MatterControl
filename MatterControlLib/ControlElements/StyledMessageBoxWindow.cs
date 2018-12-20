@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using Markdig.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -58,7 +59,7 @@ namespace MatterHackers.MatterControl
 		private class MessageBoxPage : DialogPage
 		{
 			private string unwrappedMessage;
-			private TextWidget messageContainer;
+			private MarkdownWidget messageContainer;
 			private Action<bool> responseCallback;
 			bool haveResponded = false;
 
@@ -78,10 +79,9 @@ namespace MatterHackers.MatterControl
 				responseCallback = callback;
 				unwrappedMessage = message;
 
-				contentRow.AddChild(messageContainer = new TextWidget(message, textColor: theme.TextColor, pointSize: 12 * DeviceScale)
+				contentRow.AddChild(messageContainer = new MarkdownWidget(theme)
 				{
-					AutoExpandBoundsToText = true,
-					HAnchor = HAnchor.Left
+					Markdown = message,
 				});
 
 				if (extraWidgetsToAdd != null)
