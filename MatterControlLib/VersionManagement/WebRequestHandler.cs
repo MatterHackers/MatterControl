@@ -105,29 +105,19 @@ namespace MatterHackers.MatterControl.VersionManagement
 		//This gets called after failure or success
 		protected void OnRequestComplete()
 		{
-			if (RequestComplete != null)
-			{
-				RequestComplete(this, null);
-			}
+			RequestComplete?.Invoke(this, null);
 		}
 
 		protected void OnRequestFailed(JsonResponseDictionary responseValues)
 		{
-			if (RequestFailed != null)
-			{
-				RequestFailed(this, new ResponseErrorEventArgs() { ResponseValues = responseValues });
-			}
+			RequestFailed?.Invoke(this, new ResponseErrorEventArgs() { ResponseValues = responseValues });
 
 			ApplicationController.WebRequestFailed?.Invoke();
 		}
 
 		protected void OnRequestSuceeded(ResponseType responseItem)
 		{
-			EventHandler<ResponseSuccessEventArgs<ResponseType>> tempHandler = RequestSucceeded;
-			if (tempHandler != null)
-			{
-				tempHandler(this, new ResponseSuccessEventArgs<ResponseType>() { ResponseItem = responseItem });
-			}
+			RequestSucceeded?.Invoke(this, new ResponseSuccessEventArgs<ResponseType>() { ResponseItem = responseItem });
 			ApplicationController.WebRequestSucceeded?.Invoke();
 		}
 
@@ -264,26 +254,17 @@ namespace MatterHackers.MatterControl.VersionManagement
 		//This gets called after failure or success
 		protected void OnRequestComplete()
 		{
-			if (RequestComplete != null)
-			{
-				RequestComplete(this, null);
-			}
+			RequestComplete?.Invoke(this, null);
 		}
 
 		protected void OnRequestFailed(JsonResponseDictionary responseValues)
 		{
-			if (RequestFailed != null)
-			{
-				RequestFailed(this, new ResponseErrorEventArgs() { ResponseValues = responseValues });
-			}
+			RequestFailed?.Invoke(this, new ResponseErrorEventArgs() { ResponseValues = responseValues });
 		}
 
 		protected void OnRequestSuceeded()
 		{
-			if (RequestSucceeded != null)
-			{
-				RequestSucceeded(this, null);
-			}
+			RequestSucceeded?.Invoke(this, null);
 		}
 		protected virtual void ProcessResponse(object sender, RunWorkerCompletedEventArgs e)
 		{

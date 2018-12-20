@@ -194,6 +194,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.TabBar.ActionArea.AddChild(brandMenu, 0);
 
+			// Restore active workspace tabs
+			foreach (var workspace in ApplicationController.Instance.Workspaces)
+			{
+				// Create and switch to new printer tab
+				if (workspace.Printer?.Settings.PrinterSelected == true)
+				{
+					tabControl.ActiveTab = this.CreatePrinterTab(workspace, theme);
+				}
+				else
+				{
+					tabControl.ActiveTab = this.CreatePartTab(workspace);
+				}
+
+				tabControl.RefreshTabPointers();
+			}
+
 			tabControl.SelectedTabKey = tabKey;
 
 			statusBar = new Toolbar(theme)

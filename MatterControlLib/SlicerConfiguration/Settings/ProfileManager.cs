@@ -177,6 +177,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			// Wire up the CollectionChanged event
 			Instance.Profiles.CollectionChanged += Profiles_CollectionChanged;
+
+			// Only execute RestoreUserTabs if the application is up and running, never during startup
+			// During startup this behavior must be executed after the MainViewWidget has loaded
+			if (!AppContext.IsLoading)
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					// Delay then load user tabs
+					ApplicationController.Instance.RestoreUserTabs().ConfigureAwait(false);
+				}, .2);
+			}
 		}
 
 		/// <summary>
