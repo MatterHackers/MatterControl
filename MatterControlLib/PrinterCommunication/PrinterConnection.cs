@@ -39,7 +39,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using MatterControl.Printing;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.PrintQueue;
@@ -970,6 +972,36 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										TerminalLog.WriteLine("Exception:" + e.Message);
 
 										OnConnectionFailed(ConnectionFailure.UnsupportedBaudRate);
+									}
+									catch (IOException e)
+									{
+										TerminalLog.WriteLine("Exception:" + e.Message);
+										OnConnectionFailed(ConnectionFailure.IOException);
+										if (AggContext.OperatingSystem == OSType.X11 && e.Message == "Permission denied")
+										{
+											UiThread.RunOnIdle(() =>
+											{
+												string message = @"In order for MatterControl to access the serial ports on Linux, you will need to give your user account the appropriate permissions. Run these commands in a terminal to add yourself to the correct group.
+													
+Ubuntu/Debian
+--------------
+
+```
+# sudo gpasswd -a $USER dialout
+```
+
+Arch
+----
+
+```
+# sudo gpasswd -a $USER uucp
+# sudo gpasswd -a $USER lock
+```
+
+You will then need to logout and log back in to the computer for the changes to take effect. ";
+												StyledMessageBox.ShowMessageBox(message, "Permission Denied".Localize());
+											});
+										}
 									}
 									catch (Exception ex)
 									{
