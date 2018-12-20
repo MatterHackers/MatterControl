@@ -448,9 +448,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 									settingsRow.Focus();
 
-									int p2 = (int)(thisRow.Height / 2);
+									int arrowOffset = (int)(thisRow.Height / 2);
 
-									var tagContainer = new Popover(Popover.ArrowDirection.Right, new BorderDouble(15, 10), 7, p2)
+									var tagContainer = new Popover(Popover.ArrowDirection.Right, new BorderDouble(15, 10), 7, arrowOffset)
 									{
 										HAnchor = HAnchor.Fit,
 										VAnchor = VAnchor.Fit,
