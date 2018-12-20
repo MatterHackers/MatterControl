@@ -373,7 +373,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		// Settings persistence moved from PrinterSettings into ProfileManager to break dependency around ProfileManager paths/MatterControl specific details
-		private static void PrinterSettings_SettingChanged(object sender, EventArgs e)
+		private static void PrinterSettings_SettingChanged(object sender, StringEventArgs e)
 		{
 			if (sender is PrinterSettings settings)
 			{
@@ -695,7 +695,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ApplicationController.SyncPrinterProfiles?.Invoke("ProfileManager.Profiles_CollectionChanged()", null);
 		}
 
-		private void Printer_SettingsChanged(object sender, EventArgs e)
+		private void Printer_SettingsChanged(object sender, StringEventArgs e)
 		{
 			var settings = (sender as PrinterSettings);
 			string printerID = settings?.ID;
@@ -713,7 +713,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return;
 			}
 
-			string settingsKey = ((StringEventArgs)e).Data;
+			string settingsKey = e?.Data;
 			switch (settingsKey)
 			{
 				case SettingsKey.printer_name:

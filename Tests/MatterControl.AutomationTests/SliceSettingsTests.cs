@@ -357,9 +357,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				int layerHeightChangedCount = 0;
 
-				PrinterSettings.AnyPrinterSettingChanged += (s, e) =>
+				PrinterSettings.AnyPrinterSettingChanged += (s, stringEvent) =>
 				{
-					var stringEvent = e as StringEventArgs;
 					if (stringEvent != null)
 					{
 						if (stringEvent.Data == SettingsKey.layer_height)

@@ -231,9 +231,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			base.OnClosed(e);
 		}
 
-		private void Printer_SettingChanged(object s, EventArgs e)
+		private void Printer_SettingChanged(object s, StringEventArgs e)
 		{
-			string settingsName = (e as StringEventArgs)?.Data;
+			string settingsName = e?.Data;
 			if (settingsName != null && settingsName == SettingsKey.printer_name)
 			{
 				// Allow enough time for ProfileManager to respond and refresh its data

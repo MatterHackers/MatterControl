@@ -207,9 +207,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			base.OnClosed(e);
 		}
 
-		private void Printer_SettingChanged(object s, EventArgs e)
+		private void Printer_SettingChanged(object s, StringEventArgs eventArgs)
 		{
-			var eventArgs = e as StringEventArgs;
 			if (eventArgs?.Data == SettingsKey.extrusion_ratio)
 			{
 				double extrusionRatio = printer.Settings.GetValue<double>(SettingsKey.extrusion_ratio);

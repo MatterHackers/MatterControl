@@ -317,9 +317,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 			base.OnClosed(e);
 		}
 
-		private void Printer_SettingChanged(object s, EventArgs e)
+		private void Printer_SettingChanged(object s, StringEventArgs e)
 		{
-			if ((e as StringEventArgs)?.Data == SettingsKey.baby_step_z_offset)
+			if (e?.Data == SettingsKey.baby_step_z_offset)
 			{
 				OffsetStreamChanged(null, null);
 			}

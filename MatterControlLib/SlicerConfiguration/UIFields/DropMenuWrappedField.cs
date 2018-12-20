@@ -93,10 +93,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			uiField.Content.VAnchor = VAnchor.Center;
 			totalContent.AddChild(uiField.Content);
 
-			void Printer_SettingChanged(object s, EventArgs e)
+			void Printer_SettingChanged(object s, StringEventArgs stringArgs)
 			{
-				if (e is StringEventArgs stringArgs
-					&& stringArgs.Data == settingData.SlicerConfigName)
+				if (stringArgs.Data == settingData.SlicerConfigName)
 				{
 					string newSliceSettingValue = printer.Settings.GetValue(settingData.SlicerConfigName);
 

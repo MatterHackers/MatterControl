@@ -144,9 +144,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			var settingsRow = temperatureRow.DescendantsAndSelf<SliceSettingsRow>().FirstOrDefault();
 
-			void Printer_SettingChanged(object s, EventArgs e)
+			void Printer_SettingChanged(object s, StringEventArgs stringEvent)
 			{
-				if (e is StringEventArgs stringEvent)
+				if (stringEvent != null)
 				{
 					string settingsKey = stringEvent.Data;
 					if (this.allUiFields.TryGetValue(settingsKey, out UIField uifield))
