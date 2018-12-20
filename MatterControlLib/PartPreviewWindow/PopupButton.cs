@@ -161,6 +161,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				popupWidget = null;
 
 				this.PopupWindowClosed?.Invoke(this, null);
+
+				// If DynamicPopupContent is used, we need to close the PopupContent reference as it's constructed every time
+				if (this.DynamicPopupContent != null)
+				{
+					this.PopupContent.Close();
+				}
 			};
 
 			if (overridePopupHAnchor)
