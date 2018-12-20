@@ -441,7 +441,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								settingsRow.MouseEnterBounds += (s, e) =>
 								{
 									// Only display popovers when we're the active widget, exit if we're not first under mouse
-									if (!this.FirstWidgetUnderMouse)
+									if (!this.ContainsFirstUnderMouseRecursive())
 									{
 										return;
 									}
