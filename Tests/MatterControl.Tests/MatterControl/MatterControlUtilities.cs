@@ -369,7 +369,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.WaitFor(() => testRunner.WidgetExists<SetupStepComPortOne>());
 			testRunner.ClickByName("Cancel Wizard Button");
+
 			testRunner.WaitFor(() => !testRunner.WidgetExists<SetupStepComPortOne>());
+
+			testRunner.EnsureWelcomePageClosed();
 		}
 
 		private static void EnsureWelcomePageClosed(this AutomationRunner testRunner)
