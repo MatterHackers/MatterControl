@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				case ArrowDirection.Left:
 				default:
-					p2 = x2 + p2;
+					p2 = y1 - p2;
 					p1 = (int)(p2 - notchSize);
 					p3 = (int)(p2 + notchSize);
 					break;
