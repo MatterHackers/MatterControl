@@ -30,14 +30,97 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
+using System.Linq;
 
 namespace MatterControl.Tests.MatterControl
 {
 	[TestFixture]
 	public class InteractiveSceneTests
 	{
+		[Test, Category("InteractiveScene")]
+		public void FlatenAsExpectedForBooleanOperations()
+		{
+			// Combine has correct number of results
+			{
+				var root = new Object3D();
+				var cubeA = new CubeObject3D(20, 20, 20);
+				var cubeB = new CubeObject3D(20, 20, 20);
+				var offsetCubeB = new TranslateObject3D(cubeB, 10);
+
+				var union = new CombineObject3D();
+				union.Children.Add(cubeA);
+				union.Children.Add(offsetCubeB);
+				root.Children.Add(union);
+
+				union.Combine();
+				union.Flatten(null);
+
+				Assert.AreEqual(1, root.Children.Count());
+				var rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.IsTrue(new AxisAlignedBoundingBox(
+					-10, -10, -10,
+					20, 10, 10).Equals(rootAabb, .001));
+			}
+
+			// make sure the MatterCAD add function is working
+			{
+				var cubeA = new CubeObject3D(20, 20, 20);
+				var cubeB = new CubeObject3D(20, 20, 20);
+				var offsetCubeB = new TranslateObject3D(cubeB, 10);
+
+				var plus = cubeA.Plus(offsetCubeB);
+
+				Assert.AreEqual(0, plus.Children.Count());
+				Assert.IsTrue(plus.Mesh != null);
+				var aabb = plus.GetAxisAlignedBoundingBox();
+				Assert.IsTrue(new AxisAlignedBoundingBox(
+					-10, -10, -10,
+					20, 10, 10).Equals(aabb, .001));
+			}
+
+			// Subtract has correct number of results
+			{
+				var root = new Object3D();
+				var cubeA = new CubeObject3D(20, 20, 20);
+				var cubeB = new CubeObject3D(20, 20, 20);
+				var offsetCubeB = new TranslateObject3D(cubeB, 10);
+
+				var subtract = new SubtractObject3D();
+				subtract.Children.Add(cubeA);
+				subtract.Children.Add(offsetCubeB);
+				subtract.ItemsToSubtract.Add(offsetCubeB.ID);
+				root.Children.Add(subtract);
+
+				subtract.Subtract();
+				subtract.Flatten(null);
+
+				Assert.AreEqual(1, root.Children.Count());
+				var rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.IsTrue(new AxisAlignedBoundingBox(
+					-10, -10, -10,
+					0, 10, 10).Equals(rootAabb, .001));
+			}
+
+			// make sure the MatterCAD subtract function is working
+			{
+				var cubeA = new CubeObject3D(20, 20, 20);
+				var cubeB = new CubeObject3D(20, 20, 20);
+				var offsetCubeB = new TranslateObject3D(cubeB, 10);
+
+				var subtract = cubeA.Minus(offsetCubeB);
+
+				Assert.AreEqual(0, subtract.Children.Count());
+				Assert.IsTrue(subtract.Mesh != null);
+				var aabb = subtract.GetAxisAlignedBoundingBox();
+				Assert.IsTrue(new AxisAlignedBoundingBox(
+					-10, -10, -10,
+					0, 10, 10).Equals(aabb, .001));
+			}
+		}
+
 		[Test, Category("InteractiveScene")]
 		public void AabbCalculatedCorrectlyForPinchedFitObjects()
 		{

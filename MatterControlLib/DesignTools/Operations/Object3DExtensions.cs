@@ -131,13 +131,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return objectToTranslate;
 		}
 
-		public static IObject3D Minus(this IObject3D a, IObject3D b)
-		{
-			var resultsA = a.Clone();
-			SubtractObject3D.Subtract(resultsA.VisibleMeshes().ToList(), b.VisibleMeshes().ToList());
-			return resultsA;
-		}
-
 		private static VertexStorage CombinePaths(IVertexSource a, IVertexSource b, ClipType clipType)
 		{
 			List<List<IntPoint>> aPolys = a.CreatePolygons();
@@ -239,12 +232,34 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static IObject3D Plus(this IObject3D a, IObject3D b)
 		{
-			var results = new Object3D();
+			var combine = new CombineObject3D();
+			combine.Children.Add(a.Clone());
+			combine.Children.Add(b.Clone());
 
-			results.Children.Add(a.Clone());
-			results.Children.Add(b.Clone());
+			combine.Combine();
 
-			return results;
+			var finalMesh = combine.VisibleMeshes().First().Mesh;
+			return new Object3D()
+			{
+				Mesh = finalMesh
+			};
+		}
+
+		public static IObject3D Minus(this IObject3D a, IObject3D b)
+		{
+			var subtract = new SubtractObject3D();
+			subtract.Children.Add(a.Clone());
+			var bClone = b.Clone();
+			subtract.Children.Add(bClone);
+			subtract.ItemsToSubtract.Add(bClone.ID);
+
+			subtract.Subtract();
+
+			var finalMesh = subtract.VisibleMeshes().First().Mesh;
+			return new Object3D()
+			{
+				Mesh = finalMesh
+			};
 		}
 
 		public static IVertexSource Minus(this IVertexSource a, IVertexSource b)

@@ -72,7 +72,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			var rebuildLock = RebuildLock();
-			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
 			// spin up a task to remove holes from the objects in the group
 			ApplicationController.Instance.Tasks.Execute(
@@ -83,14 +82,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					var progressStatus = new ProgressStatus();
 					reporter.Report(progressStatus);
 
-					var participants = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
-
 					try
 					{
-						if (participants.Count() > 1)
-						{
-							Combine(participants, cancellationToken, reporter);
-						}
+						Combine(cancellationToken, reporter);
 					}
 					catch
 					{
@@ -106,13 +100,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				});
 		}
 
-		public static void Combine(List<IObject3D> participants)
+		public void Combine()
 		{
-			Combine(participants, CancellationToken.None, null);
+			Combine(CancellationToken.None, null);
 		}
 
-		public static void Combine(List<IObject3D> participants, CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
+		public void Combine(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
 		{
+			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, cancellationToken);
+
+			var participants = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
+			if (participants.Count() < 2)
+			{
+				return;
+			}
+
 			var first = participants.First();
 
 			var totalOperations = participants.Count() - 1;
@@ -140,7 +142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 					percentCompleted += amountPerOperation;
 					progressStatus.Progress0To1 = percentCompleted;
-					reporter.Report(progressStatus);
+					reporter?.Report(progressStatus);
 				}
 			}
 		}
