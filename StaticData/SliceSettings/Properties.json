@@ -104,7 +104,7 @@
   {
     "SlicerConfigName": "layer_to_pause",
     "PresentationName": "Layer(s) To Pause",
-    "HelpText": "The layer(s) at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: \"16; 37\".",
+    "HelpText": "The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: \"16; 37\".",
     "DataEditType": "STRING",
     "ShowIfSet": "!sla_printer",
     "ResetAtEndOfPrint": true,
