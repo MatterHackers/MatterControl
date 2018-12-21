@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		[ShowAsList]
 		[DisplayName("Anchor")]
-		public ChildrenSelector AnchorObjectSelector { get; set; } = new ChildrenSelector();
+		public SelectedChildren AnchorObjectSelector { get; set; } = new SelectedChildren();
 
 		public bool Advanced { get; set; } = false;
 

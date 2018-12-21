@@ -160,14 +160,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 	}
 
 	[ShowUpdateButton]
-	public class SubtractObject3D : MeshWrapperObject3D
+	public class SubtractObject3D : MeshWrapperObject3D, ISelectableChildContainer
 	{
 		public SubtractObject3D()
 		{
 			Name = "Subtract";
 		}
 
-		public ChildrenSelector ItemsToSubtract { get; set; } = new ChildrenSelector();
+		public SelectedChildren ItemsToSubtract { get; set; } = new SelectedChildren();
+
+		public SelectedChildren SelectedChildren => ItemsToSubtract;
 
 		public void Subtract()
 		{
