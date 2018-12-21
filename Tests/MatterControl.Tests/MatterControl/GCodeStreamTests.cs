@@ -121,7 +121,8 @@ namespace MatterControl.Tests.MatterControl
 			{
 				"M117 Starting Print",
 				"M104 S0",
-				"G28",
+				"; comment line",
+				"G28 ; home all axes",
 				"G1 Z10 F1800",
 				"G1 Z11",
 				"G1 X1 Y0 Z9",

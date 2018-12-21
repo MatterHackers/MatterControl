@@ -276,8 +276,6 @@ namespace MatterHackers.MatterControl.Library.Export
 			// this is added to ensure we are rewriting the G0 G1 commands as needed
 			accumulatedStream = new ProcessWriteRegexStream(printer, accumulatedStream, queueStream);
 
-			accumulatedStream = new RemoveCommentsStream(printer, accumulatedStream);
-
 			return accumulatedStream;
 		}
 
