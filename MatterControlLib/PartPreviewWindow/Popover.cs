@@ -37,6 +37,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class Popover : GuiWidget
 	{
 		private IVertexSource tabShape = null;
+		private Stroke tabStroke;
+		private Color _tagColor;
 
 		/// <summary>
 		/// Constructs a new Popover with the given parameters
@@ -45,7 +47,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		/// <param name="padding">The padding of the control, adjusted internally to account for arrow region</param>
 		/// <param name="notchSize">The size of the arrow notch</param>
 		/// <param name="p2">The arrow offset in x or y given the specified arrow</param>
-		public Popover(ArrowDirection arrow, BorderDouble padding, int notchSize, int p2)
+		public Popover(ArrowDirection arrow, BorderDouble padding, int notchSize, int p2, bool autoBorderColor = true)
 		{
 			BorderDouble adjustedPadding;
 
@@ -72,9 +74,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.NotchSize = notchSize;
 			this.Padding = adjustedPadding;
 			this.P2 = p2;
+			this.autoBorderColor = autoBorderColor;
 		}
 
-		public Color TagColor { get; set; }
+		public Color TagColor
+		{
+			get => _tagColor;
+			set
+			{
+				_tagColor = value;
+
+				if (autoBorderColor)
+				{
+					this.BorderColor = TagColor.WithLightnessAdjustment(AppContext.Theme.IsDarkTheme ? 1.3 : .8).ToColor();
+				}
+			}
+		}
 
 		public ArrowDirection Arrow { get; }
 
@@ -83,12 +98,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnBoundsChanged(e);
 
 			tabShape = Popover.GetShape(this.Arrow, this.LocalBounds, this.NotchSize, this.P2);
+			tabStroke = new Stroke(tabShape);
 		}
 
 		/// <summary>
 		/// Notch offset. See https://photos.app.goo.gl/YdTiehf6ih7fSoDA9 for point diagram
 		/// </summary>
 		public int P2 { get; }
+
+		private bool autoBorderColor;
 
 		public int NotchSize { get; }
 
@@ -120,7 +138,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			int p1, p3;
 
-			switch(arrowDirection)
+			switch (arrowDirection)
 			{
 				case ArrowDirection.Bottom:
 					p2 = x1 + p2;
@@ -235,6 +253,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (tabShape != null)
 			{
 				graphics2D.Render(tabShape, this.TagColor);
+			}
+
+			if (this.BorderColor != Color.Transparent)
+			{
+				graphics2D.Render(tabStroke, this.BorderColor);
 			}
 		}
 	}
