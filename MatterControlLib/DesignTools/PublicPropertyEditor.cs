@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			typeof(Color),
 			typeof(Vector2), typeof(Vector3),
 			typeof(DirectionVector), typeof(DirectionAxis),
-			typeof(ChildrenSelector),
+			typeof(SelectedChildren),
 			typeof(ImageBuffer),
 			typeof(List<string>)
 		};
@@ -435,7 +435,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				rowContainer.AddChild(row2);
 			}
-			else if (propertyValue is ChildrenSelector childSelector)
+			else if (propertyValue is SelectedChildren childSelector)
 			{
 				var showAsList = property.PropertyInfo.GetCustomAttributes(true).OfType<ShowAsListAttribute>().FirstOrDefault() != null;
 				if (showAsList)
@@ -446,7 +446,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					RegisterValueChanged(field,
 						(valueString) => 
 						{
-							var childrenSelector = new ChildrenSelector();
+							var childrenSelector = new SelectedChildren();
 							foreach (var child in valueString.Split(','))
 							{
 								childrenSelector.Add(child);
@@ -608,7 +608,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return new ImageWidget(imageBuffer);
 		}
 
-		private static GuiWidget CreateSelector(ChildrenSelector childSelector, IObject3D parent, ThemeConfig theme)
+		private static GuiWidget CreateSelector(SelectedChildren childSelector, IObject3D parent, ThemeConfig theme)
 		{
 			GuiWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
@@ -618,16 +618,6 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					using (child.RebuildLock())
 					{
-						if (!childSelector.Contains(child.ID)
-							|| tabContainer.HasBeenClosed)
-						{
-							child.Color = new Color(child.WorldColor(), 255);
-						}
-						else
-						{
-							child.Color = new Color(child.WorldColor(), 200);
-						}
-
 						if (selectionChanged)
 						{
 							child.Visible = true;
