@@ -1723,7 +1723,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					|| forceImmediateWrites)
 				{
 					lineToWrite = lineToWrite.Split(';')[0].Trim();
-					if (lineToWrite.Trim().Length > 0)
+					if (lineToWrite.Length > 0)
 					{
 						// sometimes we need to send code without buffering (like when we are closing the program).
 						WriteRaw(lineToWrite + "\n", lineToWrite);
