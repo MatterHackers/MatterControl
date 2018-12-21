@@ -423,62 +423,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							settingsRow = CreateItemRow(settingData);
 
-							if (settingsRow is SliceSettingsRow)
-							{
-								Popover previousBubble = null;
-
-								var thisRow = settingsRow;
-
-								settingsRow.MouseLeaveBounds += (s, e) =>
-								{
-									if (previousBubble != null)
-									{
-										previousBubble.Close();
-										Console.WriteLine("Close previousBubble");
-									}
-								};
-
-								settingsRow.MouseEnterBounds += (s, e) =>
-								{
-									// Only display popovers when we're the active widget, exit if we're not first under mouse
-									if (!this.ContainsFirstUnderMouseRecursive())
-									{
-										return;
-									}
-
-									settingsRow.Focus();
-
-									int arrowOffset = (int)(thisRow.Height / 2);
-
-									var tagContainer = new Popover(Popover.ArrowDirection.Right, new BorderDouble(15, 10), 7, arrowOffset)
-									{
-										HAnchor = HAnchor.Fit,
-										VAnchor = VAnchor.Fit,
-										TagColor = theme.ResolveColor(theme.BackgroundColor, theme.AccentMimimalOverlay.WithAlpha(50)),
-									};
-
-									tagContainer.AddChild(new WrappedTextWidget(settingData.HelpText, pointSize: theme.DefaultFontSize - 1, textColor: theme.TextColor)
-									{
-										Width = 400 * GuiWidget.DeviceScale,
-										HAnchor = HAnchor.Fit,
-									});
-
-									systemWindow.ShowPopover(
-										new MatePoint(thisRow)
-										{
-											Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-											AltMate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
-										},
-										new MatePoint(tagContainer)
-										{
-											Mate = new MateOptions(MateEdge.Right, MateEdge.Top),
-											AltMate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
-										});
-
-									previousBubble = tagContainer;
-								};
-							}
-
 							if (firstRow)
 							{
 								// First row needs top and bottom border

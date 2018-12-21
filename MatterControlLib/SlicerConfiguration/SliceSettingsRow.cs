@@ -40,6 +40,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class SliceSettingsRow : SettingsRow
 	{
 		private SettingsContext settingsContext;
+
+		public string HelpText { get; }
+
 		private PrinterConfig printer;
 		private SliceSettingData settingData;
 
@@ -48,12 +51,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private GuiWidget restoreArea;
 		private GuiWidget restoreButton = null;
 
+		private Popover popoverBubble = null;
+		private SystemWindow systemWindow = null;
+
 		public SliceSettingsRow(PrinterConfig printer, SettingsContext settingsContext, SliceSettingData settingData, ThemeConfig theme, bool fullRowSelect = false)
 			: base (settingData.PresentationName.Localize(), settingData.HelpText.Localize(), theme, fullRowSelect: fullRowSelect)
 		{
 			this.printer = printer;
 			this.settingData = settingData;
 			this.settingsContext = settingsContext;
+			this.HelpText = settingData.HelpText;
 
 			using (this.LayoutLock())
 			{
@@ -191,6 +198,75 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			base.OnClick(mouseEvent);
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+			base.OnLoad(args);
+		}
+
+		public Popover.ArrowDirection ArrowDirection { get; set; } = Popover.ArrowDirection.Right;
+
+		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
+		{
+			if (systemWindow == null)
+			{
+				return;
+			}
+
+			var settingsRow = this;
+
+			// Only display popovers when we're the active widget, exit if we're not first under mouse
+			if (!this.ContainsFirstUnderMouseRecursive())
+			{
+				return;
+			}
+
+			settingsRow.Focus();
+
+			int arrowOffset = (int)(settingsRow.Height / 2);
+
+			var tagContainer = new Popover(this.ArrowDirection, new BorderDouble(15, 10), 7, arrowOffset)
+			{
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Fit,
+				TagColor = theme.ResolveColor(AppContext.Theme.BackgroundColor, AppContext.Theme.AccentMimimalOverlay.WithAlpha(50)),
+			};
+
+			tagContainer.AddChild(new WrappedTextWidget(settingsRow.HelpText, pointSize: theme.DefaultFontSize - 1, textColor: AppContext.Theme.TextColor)
+			{
+				Width = 400 * GuiWidget.DeviceScale,
+				HAnchor = HAnchor.Fit,
+			});
+
+			bool alignLeft = this.ArrowDirection == Popover.ArrowDirection.Right;
+
+			systemWindow.ShowPopover(
+				new MatePoint(settingsRow)
+				{
+					Mate = new MateOptions(alignLeft ? MateEdge.Left : MateEdge.Right, MateEdge.Top),
+					AltMate = new MateOptions(alignLeft ? MateEdge.Left : MateEdge.Right, MateEdge.Bottom),
+					Offset = new RectangleDouble(12, 0, 12, 0)
+				},
+				new MatePoint(tagContainer)
+				{
+					Mate = new MateOptions(alignLeft ? MateEdge.Right : MateEdge.Left, MateEdge.Top),
+					AltMate = new MateOptions(alignLeft ? MateEdge.Left : MateEdge.Right, MateEdge.Bottom),
+					//Offset = new RectangleDouble(12, 0, 12, 0)
+				});
+
+			popoverBubble = tagContainer;
+
+			base.OnMouseEnterBounds(mouseEvent);
+		}
+
+		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
+		{
+			// Close any active popover bubble
+			popoverBubble?.Close();
+
+			base.OnMouseLeaveBounds(mouseEvent);
 		}
 
 		public void UpdateStyle()
