@@ -1817,6 +1817,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (this.IsConnected)
 				{
 					QueueLine("M104 T{0} S{1}".FormatWith(hotendIndex0Based, targetHotendTemperature[hotendIndex0Based]));
+					if (ActiveExtruderIndex != hotendIndex0Based)
+					{
+						// For smoothie, switch back to the extrude we were using before the temp change (smoothie switches to the specified extruder, marlin repetier do not)
+						QueueLine("T{0}".FormatWith(ActiveExtruderIndex));
+					}
 				}
 			}
 		}
