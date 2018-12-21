@@ -128,8 +128,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					moveToSend.position -= extruderOffsets[extruderIndex];
 				}
 
-				lineToSend = CreateMovementLine(moveToSend, lastDestination);
+				if (moveToSend.HaveAnyPosition)
+				{
+					lineToSend = CreateMovementLine(moveToSend, lastDestination);
+				}
 				lastDestination = currentMove;
+
 				return lineToSend;
 			}
 

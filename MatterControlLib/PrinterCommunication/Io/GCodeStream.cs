@@ -104,19 +104,30 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public static PrinterMove GetPosition(string lineBeingSent, PrinterMove startPositionPosition)
 		{
+			if (lineBeingSent.StartsWith("G28")
+				|| lineBeingSent.StartsWith("G29")
+				|| lineBeingSent.StartsWith("G30"))
+			{
+				return PrinterMove.Unknown;
+			}
+
 			PrinterMove currentDestination = startPositionPosition;
 			GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref currentDestination.position.X);
 			GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref currentDestination.position.Y);
 			GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref currentDestination.position.Z);
 			GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref currentDestination.extrusion);
 			GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref currentDestination.feedRate);
+
 			return currentDestination;
 		}
 
 		public static bool LineIsMovement(string lineBeingSent)
 		{
 			if (lineBeingSent.StartsWith("G0 ")
-				|| lineBeingSent.StartsWith("G1 "))
+				|| lineBeingSent.StartsWith("G1 ")
+				|| lineBeingSent.StartsWith("G28")
+				|| lineBeingSent.StartsWith("G29")
+				|| lineBeingSent.StartsWith("G30"))
 			{
 				return true;
 			}

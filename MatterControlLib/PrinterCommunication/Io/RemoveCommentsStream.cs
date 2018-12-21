@@ -27,56 +27,34 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterControl.Printing;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-	public class FeedRateMultiplyerStream : GCodeStreamProxy
+	public class RemoveCommentsStream : GCodeStreamProxy
 	{
-		private PrinterMove lastDestination;
-
-		public FeedRateMultiplyerStream(PrinterConfig printer, GCodeStream internalStream)
+		public RemoveCommentsStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
 		}
 
-		public static double FeedRateRatio { get; set; } = 1;
-
-		public override void SetPrinterPosition(PrinterMove position)
-		{
-			this.lastDestination.CopyKnowSettings(position);
-			internalStream.SetPrinterPosition(this.lastDestination);
-		}
-
 		public override string ReadLine()
 		{
-			string lineToSend = internalStream.ReadLine();
-
-			if (lineToSend != null
-				&& lineToSend.EndsWith("; NO_PROCESSING"))
+			do
 			{
-				return lineToSend;
-			}
-
-			if (lineToSend != null
-				&& LineIsMovement(lineToSend))
-			{
-				PrinterMove currentMove = GetPosition(lineToSend, this.lastDestination);
-
-				PrinterMove moveToSend = currentMove;
-				moveToSend.feedRate *= FeedRateRatio;
-
-				if (moveToSend.HaveAnyPosition)
+				var lineToSend = internalStream.ReadLine();
+				if (lineToSend == null)
 				{
-					lineToSend = CreateMovementLine(moveToSend, this.lastDestination);
+					return null;
 				}
-				this.lastDestination = currentMove;
-				return lineToSend;
-			}
 
-			return lineToSend;
+				var splitLine = lineToSend.Split(';')[0].Trim();
+				if (splitLine.Trim().Length > 0)
+				{
+					// sometimes we need to send code without buffering (like when we are closing the program).
+					return splitLine;
+				}
+			} while (true);
 		}
 	}
 }
