@@ -114,6 +114,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			// See https://photos.app.goo.gl/YdTiehf6ih7fSoDA9 for point diagram
 
+			notchSize += 0.5;
+
 			var tabShape = new VertexStorage();
 			var centerY = rect.YCenter;
 
