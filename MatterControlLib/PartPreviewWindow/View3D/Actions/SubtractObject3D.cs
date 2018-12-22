@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 						progressStatus.Status = status;
 						progressStatus.Progress0To1 = percentCompleted + (amountPerOperation * progress0To1);
-						reporter.Report(progressStatus);
+						reporter?.Report(progressStatus);
 					}, cancellationToken);
 
 				case 1:
@@ -160,22 +160,51 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 	}
 
 	[ShowUpdateButton]
-	public class SubtractObject3D : MeshWrapperObject3D
+	public class SubtractObject3D : MeshWrapperObject3D, ISelectableChildContainer
 	{
 		public SubtractObject3D()
 		{
 			Name = "Subtract";
 		}
 
-		public ChildrenSelector ItemsToSubtract { get; set; } = new ChildrenSelector();
+		public SelectedChildren ItemsToSubtract { get; set; } = new SelectedChildren();
 
-		public static void Subtract(List<IObject3D> keepObjects, List<IObject3D> removeObjects)
+		public SelectedChildren SelectedChildren => ItemsToSubtract;
+
+		public void Subtract()
 		{
-			Subtract(keepObjects, removeObjects, CancellationToken.None, null);
+			Subtract(CancellationToken.None, null);
 		}
 
-		public static void Subtract(List<IObject3D> keepObjects, List<IObject3D> removeObjects, CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
+		public void Subtract(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
 		{
+			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, cancellationToken);
+
+			bool ItemInSubtractList(IObject3D item)
+			{
+				if(ItemsToSubtract.Contains(item.ID))
+				{
+					return true;
+				}
+
+				// check if the wrapped item is in the subtract list
+				if(item.Children.Count > 0 && ItemsToSubtract.Contains(item.Children.First().ID))
+				{
+					return true;
+				}
+
+				return false;
+			}
+
+			var removeObjects = this.Children
+				.Where((i) => ItemInSubtractList(i))
+				.SelectMany((h) => h.DescendantsAndSelf())
+				.Where((c) => c.OwnerID == this.ID).ToList();
+			var keepObjects = this.Children
+				.Where((i) => !ItemInSubtractList(i))
+				.SelectMany((h) => h.DescendantsAndSelf())
+				.Where((c) => c.OwnerID == this.ID).ToList();
+
 			if (removeObjects.Any()
 				&& keepObjects.Any())
 			{
@@ -241,7 +270,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			this.DebugDepth("Rebuild");
 			var rebuildLock = RebuildLock();
-			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
 			// spin up a task to remove holes from the objects in the group
 			ApplicationController.Instance.Tasks.Execute(
@@ -252,18 +280,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					var progressStatus = new ProgressStatus();
 					reporter.Report(progressStatus);
 
-					var removeObjects = this.Children
-						.Where((i) => ItemsToSubtract.Contains(i.ID))
-						.SelectMany((h) => h.DescendantsAndSelf())
-						.Where((c) => c.OwnerID == this.ID).ToList();
-					var keepObjects = this.Children
-						.Where((i) => !ItemsToSubtract.Contains(i.ID))
-						.SelectMany((h) => h.DescendantsAndSelf())
-						.Where((c) => c.OwnerID == this.ID).ToList();
-
 					try
 					{
-						Subtract(keepObjects, removeObjects, cancellationToken, reporter);
+						Subtract(cancellationToken, reporter);
 					}
 					catch
 					{

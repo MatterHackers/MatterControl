@@ -70,39 +70,5 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			root.Children.Add(pinch1);
 			Assert.AreEqual(3, root.Descendants().Count());
 		}
-
-		[Test, Ignore("Unstable test failing after unrelated changes")]
-		public void PinchTextMaintainsWrapping()
-		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-
-			var root = new Object3D();
-			var text = new TextObject3D();
-			root.Children.Add(text);
-			text.Invalidate(new InvalidateArgs(text, InvalidateType.Properties, null));
-			Assert.AreEqual(5, root.Descendants().Count());
-
-			// now add a pinch
-			var pinch1 = new PinchObject3D();
-			pinch1.WrapItems(new List<IObject3D>() { text });
-			root.Children.Remove(text);
-			root.Children.Add(pinch1);
-			Assert.AreEqual(10, root.Descendants().Count());
-
-			// now remove pinch
-			pinch1.Remove(null);
-			Assert.AreEqual(5, root.Descendants().Count());
-			Assert.AreEqual(1, root.Children.Count());
-
-			// now add it again
-			var first = root.Children.First(); // the wrap made a copy so set text to be the current text
-			Assert.IsTrue(first is TextObject3D);
-			pinch1 = new PinchObject3D();
-			pinch1.WrapItems(new List<IObject3D>() { first });
-			root.Children.Remove(first);
-			root.Children.Add(pinch1);
-			Assert.AreEqual(10, root.Descendants().Count());
-		}
 	}
 }

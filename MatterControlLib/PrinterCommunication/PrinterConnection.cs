@@ -1755,7 +1755,7 @@ You will then need to logout and log back in to the computer for the changes to 
 					|| forceImmediateWrites)
 				{
 					lineToWrite = lineToWrite.Split(';')[0].Trim();
-					if (lineToWrite.Trim().Length > 0)
+					if (lineToWrite.Length > 0)
 					{
 						// sometimes we need to send code without buffering (like when we are closing the program).
 						WriteRaw(lineToWrite + "\n", lineToWrite);
@@ -1849,6 +1849,11 @@ You will then need to logout and log back in to the computer for the changes to 
 				if (this.IsConnected)
 				{
 					QueueLine("M104 T{0} S{1}".FormatWith(hotendIndex0Based, targetHotendTemperature[hotendIndex0Based]));
+					if (ActiveExtruderIndex != hotendIndex0Based)
+					{
+						// For smoothie, switch back to the extrude we were using before the temp change (smoothie switches to the specified extruder, marlin repetier do not)
+						QueueLine("T{0}".FormatWith(ActiveExtruderIndex));
+					}
 				}
 			}
 		}

@@ -74,6 +74,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 		}
 
+		public bool HaveAnyPosition
+		{
+			get
+			{
+				return position.X != double.PositiveInfinity
+					|| position.Y != double.PositiveInfinity
+					|| position.Z != double.PositiveInfinity;
+			}
+		}
+
 		public bool PositionFullyKnown
 		{
 			get

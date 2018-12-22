@@ -39,6 +39,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.EditableTypes;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -453,8 +454,10 @@ namespace MatterHackers.MeshVisualizer
 
 		public bool SuppressUiVolumes { get; set; } = false;
 
-		private void DrawObject(IObject3D object3D, List<Object3DView> transparentMeshes, bool parentSelected, DrawEventArgs e)
+		private void DrawObject(IObject3D object3D, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
+			var selectedItem = scene.SelectedItem;
+
 			foreach (var item in object3D.VisibleMeshes())
 			{
 				// check for correct persistable rendering
@@ -487,6 +490,14 @@ namespace MatterHackers.MeshVisualizer
 				}
 
 				Color drawColor = GetItemColor(item);
+
+				if(selectedItem is ISelectableChildContainer selectableChildContainer)
+				{
+					if(selectableChildContainer.SelectedChildren.Contains(item.ID))
+					{
+						drawColor = new Color(drawColor, 200);
+					}
+				}
 
 				bool isDebugItem = (item == scene.DebugItem);
 
@@ -524,7 +535,6 @@ namespace MatterHackers.MeshVisualizer
 					transparentMeshes.Add(new Object3DView(item, drawColor));
 				}
 
-				var selectedItem = scene.SelectedItem;
 				bool isSelected = selectedItem != null
 					&& (selectedItem.DescendantsAndSelf().Any((i) => i == item)
 						|| selectedItem.Parents<ModifiedMeshObject3D>().Any((mw) => mw == item));
@@ -721,7 +731,7 @@ namespace MatterHackers.MeshVisualizer
 			{
 				if (object3D.Visible)
 				{
-					DrawObject(object3D, transparentMeshes, false, e);
+					DrawObject(object3D, transparentMeshes, e);
 				}
 			}
 

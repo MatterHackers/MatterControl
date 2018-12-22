@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,56 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.SlicerConfiguration;
 
-namespace MatterHackers.MatterControl.PrinterCommunication.Io
+using MatterHackers.DataConverters3D;
+
+namespace MatterHackers.MatterControl.DesignTools
 {
-	public class FeedRateMultiplyerStream : GCodeStreamProxy
+	public interface ISelectableChildContainer
 	{
-		private PrinterMove lastDestination;
-
-		public FeedRateMultiplyerStream(PrinterConfig printer, GCodeStream internalStream)
-			: base(printer, internalStream)
+		SelectedChildren SelectedChildren
 		{
-		}
-
-		public static double FeedRateRatio { get; set; } = 1;
-
-		public override void SetPrinterPosition(PrinterMove position)
-		{
-			this.lastDestination.CopyKnowSettings(position);
-			internalStream.SetPrinterPosition(this.lastDestination);
-		}
-
-		public override string ReadLine()
-		{
-			string lineToSend = internalStream.ReadLine();
-
-			if (lineToSend != null
-				&& lineToSend.EndsWith("; NO_PROCESSING"))
-			{
-				return lineToSend;
-			}
-
-			if (lineToSend != null
-				&& LineIsMovement(lineToSend))
-			{
-				PrinterMove currentMove = GetPosition(lineToSend, this.lastDestination);
-
-				PrinterMove moveToSend = currentMove;
-				moveToSend.feedRate *= FeedRateRatio;
-
-				if (moveToSend.HaveAnyPosition)
-				{
-					lineToSend = CreateMovementLine(moveToSend, this.lastDestination);
-				}
-				this.lastDestination = currentMove;
-				return lineToSend;
-			}
-
-			return lineToSend;
+			get;
 		}
 	}
 }

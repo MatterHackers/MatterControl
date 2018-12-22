@@ -33,6 +33,7 @@ using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl;
+using MatterHackers.MatterControl.Library.Export;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
@@ -67,9 +68,7 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X12",
 				"G1 X18",
 				"G28",
-				"G1 X12 F500",
-				"G1 X6",
-				"G1 X0",
+				"G1 X0 Y0 Z0 E0 F500",
 				null,
 			};
 
@@ -92,6 +91,76 @@ namespace MatterControl.Tests.MatterControl
 				expectedLine = expected[expectedIndex++];
 
 				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from MaxLengthStream");
+			}
+		}
+
+		[Test]
+		public void ExportStreamCorrectForG30()
+		{
+			string[] inputLines = new string[]
+			{
+				"M117 Starting Print",
+				"M104 S0",
+				"; comment line",
+				"G28 ; home all axes",
+				"G0 Z10 F1800",
+				"G0 Z11 F1800",
+				"G0 X1Y0Z9 F1800",
+				"G0 Z10 F1801",
+				"G30 Z0",
+				"M114",
+				"G0 Z10 F1800",
+				"M114",
+				"M109 S[temperature]",
+				null,
+			};
+
+			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
+			// All communication should go through stream to minimize the difference between printing and controlling while not printing (all printing in essence).
+			string[] expected = new string[]
+			{
+				"M117 Starting Print",
+				"M104 S0",
+				"; comment line",
+				"G28 ; home all axes",
+				"G1 Z10 F1800",
+				"G1 Z11",
+				"G1 X1 Y0 Z9",
+				"G1 Z10 F1801",
+				"G30 Z0",
+				"M114",
+				"G1 Z10 F1800",
+				"M114",
+				"M109 S[temperature]",
+				 null,
+			};
+
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			var printer = new PrinterConfig(new PrinterSettings());
+
+			var testStream = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, inputLines), true);
+
+			int expectedIndex = 0;
+			string actualLine = testStream.ReadLine();
+			string expectedLine = expected[expectedIndex++];
+
+			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
+			Debug.WriteLine(actualLine);
+
+			while (actualLine != null)
+			{
+				actualLine = testStream.ReadLine();
+				if (actualLine == "G92 E0")
+				{
+					testStream.SetPrinterPosition(new PrinterMove(new Vector3(), 0, 300));
+				}
+
+				expectedLine = expected[expectedIndex++];
+
+				Debug.WriteLine(actualLine);
+				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
 			}
 		}
 

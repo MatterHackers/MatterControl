@@ -327,10 +327,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.WaitforDraw(systemWindow);
 
 			// close the welcome message
-			if (testRunner.NameExists("Cancel Wizard Button", 1))
-			{
-				testRunner.ClickByName("Cancel Wizard Button");
-			}
+			testRunner.EnsureWelcomePageClosed();
 
 			// Click 'Add Printer' if not on screen
 			if (!testRunner.NameExists("Select Make", 0.2))
@@ -372,7 +369,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.WaitFor(() => testRunner.WidgetExists<SetupStepComPortOne>());
 			testRunner.ClickByName("Cancel Wizard Button");
+
 			testRunner.WaitFor(() => !testRunner.WidgetExists<SetupStepComPortOne>());
+
+			testRunner.EnsureWelcomePageClosed();
+		}
+
+		private static void EnsureWelcomePageClosed(this AutomationRunner testRunner)
+		{
+			// Close the WelcomePage window if active
+			if (testRunner.GetWidgetByName("HeaderRow", out _) is GuiWidget headerRow
+				&& headerRow.Parents<DialogPage>().FirstOrDefault() is WelcomePage welcomePage
+				&& testRunner.NameExists("Cancel Wizard Button", 1))
+			{
+				testRunner.ClickByName("Cancel Wizard Button");
+			}
 		}
 
 		public static void SwitchToHardwareTab(this AutomationRunner testRunner)

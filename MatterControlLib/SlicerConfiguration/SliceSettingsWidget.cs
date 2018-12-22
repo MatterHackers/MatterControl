@@ -440,13 +440,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 								settingsRow.MouseEnterBounds += (s, e) =>
 								{
+									// Only display popovers when we're the active widget, exit if we're not first under mouse
+									if (!this.FirstWidgetUnderMouse)
+									{
+										return;
+									}
+
 									settingsRow.Focus();
 
-									int p2 = (int)(thisRow.Height / 2);
+									int arrowOffset = (int)(thisRow.Height / 2);
 
-									Console.WriteLine("RowHeight: {0} - {1}", thisRow.Height, p2);
-
-									var tagContainer = new Popover(Popover.ArrowDirection.Right, new BorderDouble(15, 10), 7, p2)
+									var tagContainer = new Popover(Popover.ArrowDirection.Right, new BorderDouble(15, 10), 7, arrowOffset)
 									{
 										HAnchor = HAnchor.Fit,
 										VAnchor = VAnchor.Fit,
@@ -471,7 +475,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 											AltMate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
 										});
 
-									Console.WriteLine("Set previousBubble");
 									previousBubble = tagContainer;
 								};
 							}

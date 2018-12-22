@@ -44,14 +44,16 @@ using MatterHackers.VectorMath;
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
 	[ShowUpdateButton]
-	public class SubtractAndReplaceObject3D : MeshWrapperObject3D
+	public class SubtractAndReplaceObject3D : MeshWrapperObject3D, ISelectableChildContainer
 	{
 		public SubtractAndReplaceObject3D()
 		{
 			Name = "Subtract and Replace";
 		}
 
-		public ChildrenSelector ItemsToSubtract { get; set; } = new ChildrenSelector();
+		public SelectedChildren ItemsToSubtract { get; set; } = new SelectedChildren();
+
+		public SelectedChildren SelectedChildren => ItemsToSubtract;
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -81,7 +83,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
 			// spin up a task to calculate the paint
-			ApplicationController.Instance.Tasks.Execute("Subtract".Localize(), null, (reporter, cancellationToken) =>
+			ApplicationController.Instance.Tasks.Execute("Replacing".Localize(), null, (reporter, cancellationToken) =>
 			{
 				var progressStatus = new ProgressStatus();
 

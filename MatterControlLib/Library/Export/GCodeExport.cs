@@ -252,31 +252,38 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public bool CenterOnBed { get; set; }
 
+		public static GCodeStream GetExportStream(PrinterConfig printer, GCodeStream gCodeBaseStream, bool applyLeveling)
+		{
+			var queueStream = new QueuedCommandsStream(printer, gCodeBaseStream);
+			GCodeStream accumulatedStream = queueStream;
+
+			accumulatedStream = new RelativeToAbsoluteStream(printer, accumulatedStream);
+
+			if (printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting))
+			{
+				accumulatedStream = new BabyStepsStream(printer, accumulatedStream, 1);
+			}
+			else
+			{
+				accumulatedStream = new BabyStepsStream(printer, accumulatedStream, 1000);
+			}
+
+			if (printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && applyLeveling)
+			{
+				accumulatedStream = new PrintLevelingStream(printer, accumulatedStream, false);
+			}
+
+			// this is added to ensure we are rewriting the G0 G1 commands as needed
+			accumulatedStream = new ProcessWriteRegexStream(printer, accumulatedStream, queueStream);
+
+			return accumulatedStream;
+		}
+
 		private void ApplyStreamPipelineAndExport(GCodeFileStream gCodeFileStream, string outputPath)
 		{
 			try
 			{
-				var queueStream = new QueuedCommandsStream(printer, gCodeFileStream);
-				GCodeStream accumulatedStream = queueStream;
-
-				accumulatedStream = new RelativeToAbsoluteStream(printer, accumulatedStream);
-
-				if (printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting))
-				{
-					accumulatedStream = new BabyStepsStream(printer, accumulatedStream, 1);
-				}
-				else
-				{
-					accumulatedStream = new BabyStepsStream(printer, accumulatedStream, 1000);
-				}
-
-				if (printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && this.ApplyLeveling)
-				{
-					accumulatedStream = new PrintLevelingStream(printer, accumulatedStream, false);
-				}
-
-				// this is added to ensure we are rewriting the G0 G1 commands as needed
-				GCodeStream finalStream = new ProcessWriteRegexStream(printer, accumulatedStream, queueStream);
+				var finalStream = GetExportStream(printer, gCodeFileStream, this.ApplyLeveling);
 
 				// Run each line from the source gcode through the loaded pipeline and dump to the output location
 				using (var file = new StreamWriter(outputPath))
