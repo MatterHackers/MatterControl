@@ -2451,6 +2451,11 @@ You will then need to logout and log back in to the computer for the changes to 
 		}
 
 		public bool AppendElapsedTime { get; set; }
+		public bool AllowLeveling
+		{
+			get => printLevelingStream6.AllowLeveling;
+			set => printLevelingStream6.AllowLeveling = value;
+		}
 
 		public void TurnOffBedAndExtruders(TurnOff turnOffTime)
 		{

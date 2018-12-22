@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// Invoke setter forcing persistence of leveling data
 			printer.Settings.Helpers.SetPrintLevelingData(levelingData, true);
-			PrintLevelingStream.AllowLeveling = true;
+			printer.Connection.AllowLeveling = true;
 			printer.Settings.Helpers.DoPrintLeveling(true);
 
 			if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))

@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			this.activePrinting = activePrinting;
 		}
 
-		public static bool AllowLeveling { get; set; }
+		public bool AllowLeveling { get; set; }
 
 		public PrinterMove LastDestination => lastDestination;
 
