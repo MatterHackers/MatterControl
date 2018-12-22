@@ -34,6 +34,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ActionBar;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls
@@ -41,6 +42,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 	public class TemperatureControls : FlowLayoutWidget
 	{
 		private PrinterConfig printer;
+		private TextButton preHeatButton;
+		private TextButton offButton;
 
 		private TemperatureControls(PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -50,6 +53,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.printer = printer;
 
 			int hotendCount = printer.Settings.Helpers.NumberOfHotends();
+
+			// add in the hotend controls
 			for (int extruderIndex = 0; extruderIndex < hotendCount; extruderIndex++)
 			{
 				var settingsRow = new SettingsRow(
@@ -73,11 +78,93 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 				this.AddChild(settingsRow);
 			}
+
+			// add in the all heaters section
+			var heatersRow = new SettingsRow(
+				"All Heaters".Localize(),
+				null,
+				theme);
+
+			this.AddChild(heatersRow);
+			var container = new FlowLayoutWidget();
+			heatersRow.AddChild(container);
+
+			preHeatButton = new TextButton("Preheat".Localize(), theme)
+			{
+				BackgroundColor = theme.MinimalShade,
+				Margin = new BorderDouble(right: 10)
+			};
+			container.AddChild(preHeatButton);
+			preHeatButton.Click += (s, e) =>
+			{
+				// turn on the bed
+				printer.Connection.TargetBedTemperature = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
+				for (int extruderIndex = 0; extruderIndex < hotendCount; extruderIndex++)
+				{
+					printer.Connection.SetTargetHotendTemperature(extruderIndex, printer.Settings.Helpers.ExtruderTemperature(extruderIndex));
+				}
+				printer.Connection.TurnOffBedAndExtruders(PrinterCommunication.TurnOff.AfterDelay);
+			};
+
+			offButton = new TextButton("Off".Localize(), theme)
+			{
+				BackgroundColor = theme.MinimalShade,
+			};
+			container.AddChild(offButton);
+			offButton.Click += (s, e) =>
+			{
+				printer.Connection.TurnOffBedAndExtruders(PrinterCommunication.TurnOff.Now);
+			};
+
+			// Register listeners
+			printer.Connection.CommunicationStateChanged += onPrinterStatusChanged;
+			printer.Connection.EnableChanged += onPrinterStatusChanged;
+			SetVisibleControls();
 		}
 
 		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
 		{
 			return new SectionWidget("Temperature".Localize(), new TemperatureControls(printer, theme), theme);
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			// Unregister listeners
+			printer.Connection.CommunicationStateChanged -= onPrinterStatusChanged;
+			printer.Connection.EnableChanged -= onPrinterStatusChanged;
+
+			base.OnClosed(e);
+		}
+
+		private void onPrinterStatusChanged(object sender, EventArgs e)
+		{
+			SetVisibleControls();
+			UiThread.RunOnIdle(this.Invalidate);
+		}
+
+		private void SetVisibleControls()
+		{
+			if (!printer.Settings.PrinterSelected)
+			{
+				offButton?.SetEnabled(false);
+				preHeatButton?.SetEnabled(false);
+			}
+			else // we at least have a printer selected
+			{
+				switch (printer.Connection.CommunicationState)
+				{
+					case CommunicationStates.FinishedPrint:
+					case CommunicationStates.Connected:
+						offButton?.SetEnabled(true);
+						preHeatButton?.SetEnabled(true);
+						break;
+
+					default:
+						offButton?.SetEnabled(false);
+						preHeatButton?.SetEnabled(false);
+						break;
+				}
+			}
 		}
 	}
 }
