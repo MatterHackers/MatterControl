@@ -90,20 +90,6 @@ namespace MatterHackers.MatterControl.Library
 			base.Deactivate();
 		}
 
-		private string keywordFilter = "";
-		public override string KeywordFilter
-		{
-			get => keywordFilter;
-			set
-			{
-				if (keywordFilter != value)
-				{
-					keywordFilter = value;
-					this.ReloadContent();
-				}
-			}
-		}
-
 		public override void Dispose()
 		{
 			if (directoryWatcher != null)
@@ -159,7 +145,7 @@ namespace MatterHackers.MatterControl.Library
 
 			try
 			{
-				string filter = this.KeywordFilter.Trim();
+				string filter = ""; // keywordFilter.Trim();
 
 				var allFiles = Directory.GetFiles(FullPath, "*.*", searchDepth);
 

@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 
 		public ILibraryContainer Parent { get => _libraryContainer.Parent; set => _libraryContainer.Parent = value; }
 
-		public string KeywordFilter { get => _libraryContainer.KeywordFilter; set => _libraryContainer.KeywordFilter = value; }
+		public ICustomSearch CustomSearch => _libraryContainer.CustomSearch;
 
 		public event EventHandler ContentChanged;
 

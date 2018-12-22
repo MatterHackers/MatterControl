@@ -317,7 +317,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				ApplicationController.Instance.Library.ActiveContainer.KeywordFilter = searchInput.Text.Trim();
+				if (ApplicationController.Instance.Library.ActiveContainer.CustomSearch is ICustomSearch customSearch)
+				{
+					customSearch.ApplyFilter(searchInput.Text.Trim(), ApplicationController.Instance.Library);
+				}
 			});
 		}
 
@@ -330,7 +333,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			UiThread.RunOnIdle(() =>
 			{
-				searchContainer.KeywordFilter = "";
+				if (searchContainer.CustomSearch is ICustomSearch customSearch)
+				{
+					customSearch.ClearFilter();
+				}
 
 				// Restore the original ActiveContainer before search started - some containers may change context
 				ApplicationController.Instance.Library.ActiveContainer = searchContainer;
@@ -378,7 +384,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			bool containerSupportsEdits = activeContainer is ILibraryWritableContainer;
 
-			searchInput.Text = activeContainer.KeywordFilter;
+			//searchInput.Text = activeContainer.KeywordFilter;
 			breadCrumbWidget.SetContainer(activeContainer);
 
 			activeContainer.ContentChanged += UpdateStatus;

@@ -68,27 +68,15 @@ namespace MatterHackers.MatterControl.Library
 
 		public int CollectionID { get; private set; }
 
-		public override string KeywordFilter
-		{
-			get
-			{
-				return base.KeywordFilter;
-			}
-			set
-			{
-				if (base.KeywordFilter != value)
-				{
-					base.KeywordFilter = value;
-					this.ReloadContent();
-				}
-			}
-		}
+		private string keywordFilter = "";
+
+		public ICustomSearch CustomSearch { get; } = null;
 
 		public override void Load()
 		{
 			var childCollections = this.GetChildCollections();
 
-			var allFiles = this.GetLibraryItems(KeywordFilter);
+			var allFiles = this.GetLibraryItems(keywordFilter);
 
 			var zipFiles = allFiles.Where(f => string.Equals(Path.GetExtension(f.FileLocation), ".zip", StringComparison.OrdinalIgnoreCase));
 

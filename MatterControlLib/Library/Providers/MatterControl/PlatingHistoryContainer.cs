@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public event EventHandler<ItemChangedEventArgs> ItemContentChanged;
 
-		public bool AllowAction(ContainerActions containerActions)
+		public override bool AllowAction(ContainerActions containerActions)
 		{
 			switch(containerActions)
 			{

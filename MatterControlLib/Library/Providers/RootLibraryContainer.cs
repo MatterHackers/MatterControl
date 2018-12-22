@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public string StatusMessage { get; set; }
 
-		public string KeywordFilter { get; set; } = "";
+		public ICustomSearch CustomSearch { get; } = null;
 
 		public Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
 		{

@@ -477,7 +477,17 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				libraryContext.ActiveContainer.KeywordFilter = searchInput.Text.Trim();
+				if (libraryContext.ActiveContainer.CustomSearch  is ICustomSearch customSearch)
+				{
+					// Do custom search
+					customSearch.ApplyFilter(searchInput.Text.Trim(), libraryContext);
+				}
+				else
+				{
+					// Do basic filtering
+					// filter the view with a predicate, applying the active sort
+					libraryView.ApplyFilter(searchInput.Text.Trim());
+				}
 			});
 		}
 
@@ -490,11 +500,20 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			UiThread.RunOnIdle(() =>
 			{
-				searchContainer.KeywordFilter = "";
+				if (libraryContext.ActiveContainer.CustomSearch is ICustomSearch customSearch)
+				{
+					// Clear custom search
+					customSearch.ClearFilter();
 
-				// Restore the original ActiveContainer before search started - some containers may change context
-				libraryContext.ActiveContainer = searchContainer;
-
+					// Restore the original ActiveContainer before search started - some containers may change context
+					libraryContext.ActiveContainer = searchContainer;
+				}
+				else
+				{
+					// Clear basic filtering
+					libraryView.ClearFilter();
+				}
+				
 				searchContainer = null;
 			});
 		}
@@ -544,7 +563,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				libraryTreeView.SelectedNode = owningNode;
 			}
 
-			searchInput.Text = activeContainer.KeywordFilter;
+			//searchInput.Text = activeContainer.KeywordFilter;
 			breadCrumbWidget.SetContainer(activeContainer);
 
 			activeContainer.ContentChanged += UpdateStatus;
