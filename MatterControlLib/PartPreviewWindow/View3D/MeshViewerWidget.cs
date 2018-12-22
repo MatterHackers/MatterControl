@@ -493,7 +493,7 @@ namespace MatterHackers.MeshVisualizer
 
 				if(selectedItem is ISelectableChildContainer selectableChildContainer)
 				{
-					if(selectableChildContainer.SelectedChildren.Contains(item.ID))
+					if(item.AncestorsAndSelf().Any(i => selectableChildContainer.SelectedChildren.Contains(i.ID)))
 					{
 						drawColor = new Color(drawColor, 200);
 					}

@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 								}
 								else // union into the current paint
 								{
-									paintMesh = BooleanProcessing.Do(keep.obj3D.Mesh, keep.matrix,
+									paintMesh = BooleanProcessing.Do(paintMesh, Matrix4X4.Identity,
 										intersect, Matrix4X4.Identity, 0, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
 								}
 
