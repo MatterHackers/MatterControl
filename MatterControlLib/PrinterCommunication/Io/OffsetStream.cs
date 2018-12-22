@@ -54,9 +54,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			ReadExtruderOffsets();
 		}
 
-		private void Settings_SettingChanged(object sender, EventArgs e)
+		private void Settings_SettingChanged(object sender, StringEventArgs stringEvent)
 		{
-			if (e is StringEventArgs stringEvent)
+			if (stringEvent != null)
 			{
 				// if the offsets change update them (unless we are actively printing)
 				if (stringEvent.Data == SettingsKey.extruder_offset

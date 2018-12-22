@@ -98,9 +98,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 		}
 
-		private void Printer_SettingChanged(object sender, EventArgs e)
+		private void Printer_SettingChanged(object sender, StringEventArgs stringEvent)
 		{
-			if (e is StringEventArgs stringEvent)
+			if (stringEvent != null)
 			{
 				if (stringEvent.Data == SettingsKey.bed_size
 					|| stringEvent.Data == SettingsKey.print_center

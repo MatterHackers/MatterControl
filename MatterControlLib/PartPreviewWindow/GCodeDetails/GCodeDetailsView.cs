@@ -100,9 +100,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnClosed(e);
 		}
 
-		private void Printer_SettingChanged(object s, EventArgs e)
+		private void Printer_SettingChanged(object s, StringEventArgs stringEvent)
 		{
-			if (e is StringEventArgs stringEvent)
+			if (stringEvent != null)
 			{
 				if (stringEvent.Data == SettingsKey.filament_cost
 					|| stringEvent.Data == SettingsKey.filament_diameter

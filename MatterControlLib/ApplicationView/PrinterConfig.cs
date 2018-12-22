@@ -368,9 +368,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void Printer_SettingChanged(object sender, EventArgs e)
+		private void Printer_SettingChanged(object sender, StringEventArgs stringEvent)
 		{
-			if (e is StringEventArgs stringEvent)
+			if (stringEvent != null)
 			{
 				// Fire ReloadAll if changed setting marked with ReloadUiWhenChanged
 				if (SettingsOrganizer.SettingsData.TryGetValue(stringEvent.Data, out SliceSettingData settingsData)

@@ -101,6 +101,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var settingsData = SettingsOrganizer.Instance.GetSettingsData(key);
 					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
 
+					if (row is SliceSettingsRow settingsRow)
+					{
+						settingsRow.ArrowDirection = Popover.ArrowDirection.Left;
+					}
 
 					optionsPanel.AddChild(row);
 				}
@@ -125,14 +129,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				foreach (var key in new[] { SettingsKey.spiral_vase, SettingsKey.layer_to_pause })
 				{
-					subPanel.AddChild(
-						SliceSettingsTabView.CreateItemRow(
-							SettingsOrganizer.Instance.GetSettingsData(key),
-							settingsContext,
-							printer,
-							menuTheme,
-							ref tabIndex,
-							allUiFields));
+					var advancedRow = SliceSettingsTabView.CreateItemRow(
+						SettingsOrganizer.Instance.GetSettingsData(key),
+						settingsContext,
+						printer,
+						menuTheme,
+						ref tabIndex,
+						allUiFields);
+
+					if (advancedRow is SliceSettingsRow settingsRow)
+					{
+						settingsRow.ArrowDirection = Popover.ArrowDirection.Left;
+					}
+
+					subPanel.AddChild(advancedRow);
 				}
 
 				menuTheme.ApplyBoxStyle(sectionWidget);
@@ -263,9 +273,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnClosed(e);
 		}
 
-		private void Printer_SettingChanged(object s, EventArgs e)
+		private void Printer_SettingChanged(object s, StringEventArgs stringEvent)
 		{
-			if (e is StringEventArgs stringEvent)
+			if (stringEvent != null)
 			{
 				string settingsKey = stringEvent.Data;
 				if (allUiFields.TryGetValue(settingsKey, out UIField uifield))

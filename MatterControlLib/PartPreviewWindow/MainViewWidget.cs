@@ -641,11 +641,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 #endif
 
-		private void Printer_SettingChanged(object s, EventArgs e)
+		private void Printer_SettingChanged(object s, StringEventArgs stringEvent)
 		{
 			if (s is PrinterSettings printerSettings
-				&& e is StringEventArgs stringEvent
-				&& stringEvent.Data == SettingsKey.printer_name)
+				&& stringEvent?.Data == SettingsKey.printer_name)
 			{
 				// Try to find a printer tab for the given printer
 				var printerTab = tabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage printerPage && printerPage.printer.Settings.ID == printerSettings.ID) as ChromeTab;

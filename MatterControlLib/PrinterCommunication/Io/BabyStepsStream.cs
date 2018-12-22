@@ -44,9 +44,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public BabyStepsStream(PrinterConfig printer, GCodeStream internalStream, double startingMaxLength = 1)
 			: base(printer, internalStream)
 		{
-			void Printer_SettingChanged(object s, EventArgs e)
+			void Printer_SettingChanged(object s, StringEventArgs e)
 			{
-				if ((e as StringEventArgs)?.Data == SettingsKey.baby_step_z_offset)
+				if (e?.Data == SettingsKey.baby_step_z_offset)
 				{
 					OffsetChanged();
 				}
