@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public static void Start(PrinterConfig printer, ThemeConfig theme)
 		{
 			// turn off print leveling
-			PrintLevelingStream.AllowLeveling = false;
+			printer.Connection.AllowLeveling = false;
 
 			// clear any data that we are going to be acquiring (sampled positions, after z home offset)
 			var levelingData = new PrintLevelingData()
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizardWindow.Closed += (s, e) =>
 			{
 				// If leveling was on when we started, make sure it is on when we are done.
-				PrintLevelingStream.AllowLeveling = true;
+				printer.Connection.AllowLeveling = true;
 
 				printLevelWizardWindow = null;
 

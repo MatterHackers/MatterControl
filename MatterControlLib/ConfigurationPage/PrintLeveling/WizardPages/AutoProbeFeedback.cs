@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingActive()
 		{
 			// always make sure we don't have print leveling turned on
-			PrintLevelingStream.AllowLeveling = false;
+			printer.Connection.AllowLeveling = false;
 
 			base.PageIsBecomingActive();
 
