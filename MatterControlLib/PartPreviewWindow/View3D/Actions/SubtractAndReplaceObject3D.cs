@@ -76,90 +76,102 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 		}
 
+		public void SubtractAndReplace()
+		{
+			SubtractAndReplace(CancellationToken.None, null);
+		}
+
+		public void SubtractAndReplace(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
+		{
+			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, cancellationToken);
+
+			var paintObjects = this.Children
+				.Where((i) => ItemsToSubtract.Contains(i.ID))
+				.SelectMany((h) => h.DescendantsAndSelf())
+				.Where((c) => c.OwnerID == this.ID).ToList();
+			var keepObjects = this.Children
+				.Where((i) => !ItemsToSubtract.Contains(i.ID))
+				.SelectMany((h) => h.DescendantsAndSelf())
+				.Where((c) => c.OwnerID == this.ID).ToList();
+
+			if (paintObjects.Any()
+				&& keepObjects.Any())
+			{
+				var totalOperations = paintObjects.Count * keepObjects.Count;
+				double amountPerOperation = 1.0 / totalOperations;
+				double percentCompleted = 0;
+
+				foreach (var paint in paintObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
+				{
+					var transformedPaint = paint.obj3D.Mesh.Copy(cancellationToken);
+					transformedPaint.Transform(paint.matrix);
+					var inverseRemove = paint.matrix.Inverted;
+					Mesh paintMesh = null;
+
+					var progressStatus = new ProgressStatus();
+					foreach (var keep in keepObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
+					{
+						var transformedKeep = keep.obj3D.Mesh.Copy(cancellationToken);
+						transformedKeep.Transform(keep.matrix);
+
+						// remove the paint from the original
+						var subtract = BooleanProcessing.Do(keep.obj3D.Mesh, keep.matrix,
+							paint.obj3D.Mesh, paint.matrix, 1, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+						var intersect = BooleanProcessing.Do(keep.obj3D.Mesh, keep.matrix,
+							paint.obj3D.Mesh, paint.matrix, 2, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+
+						var inverseKeep = keep.matrix.Inverted;
+						subtract.Transform(inverseKeep);
+						using (keep.obj3D.RebuildLock())
+						{
+							keep.obj3D.Mesh = subtract;
+						}
+
+						// keep all the intersections together
+						if (paintMesh == null)
+						{
+							paintMesh = intersect;
+						}
+						else // union into the current paint
+						{
+							paintMesh = BooleanProcessing.Do(paintMesh, Matrix4X4.Identity,
+								intersect, Matrix4X4.Identity, 0, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+						}
+
+						if (cancellationToken.IsCancellationRequested)
+						{
+							break;
+						}
+					}
+
+					// move the paint mesh back to its original coordinates
+					paintMesh.Transform(inverseRemove);
+
+					using (paint.obj3D.RebuildLock())
+					{
+						paint.obj3D.Mesh = paintMesh;
+					}
+
+					paint.obj3D.Color = paint.obj3D.WorldColor().WithContrast(keepObjects.First().WorldColor(), 2).ToColor();
+				}
+			}
+		}
+
 		private void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.DebugDepth("Rebuild");
 			var rebuildLock = RebuildLock();
-			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
 
 			// spin up a task to calculate the paint
 			ApplicationController.Instance.Tasks.Execute("Replacing".Localize(), null, (reporter, cancellationToken) =>
 			{
-				var progressStatus = new ProgressStatus();
-
-				var paintObjects = this.Children
-					.Where((i) => ItemsToSubtract.Contains(i.ID))
-					.SelectMany((h) => h.DescendantsAndSelf())
-					.Where((c) => c.OwnerID == this.ID).ToList();
-				var keepObjects = this.Children
-					.Where((i) => !ItemsToSubtract.Contains(i.ID))
-					.SelectMany((h) => h.DescendantsAndSelf())
-					.Where((c) => c.OwnerID == this.ID).ToList();
-
 				try
 				{
-					if (paintObjects.Any()
-						&& keepObjects.Any())
-					{
-						var totalOperations = paintObjects.Count * keepObjects.Count;
-						double amountPerOperation = 1.0 / totalOperations;
-						double percentCompleted = 0;
-
-						foreach (var paint in paintObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
-						{
-							var transformedPaint = paint.obj3D.Mesh.Copy(cancellationToken);
-							transformedPaint.Transform(paint.matrix);
-							var inverseRemove = paint.matrix.Inverted;
-							Mesh paintMesh = null;
-
-							foreach (var keep in keepObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
-							{
-								var transformedKeep = keep.obj3D.Mesh.Copy(cancellationToken);
-								transformedKeep.Transform(keep.matrix);
-
-								// remove the paint from the original
-								var subtract = BooleanProcessing.Do(keep.obj3D.Mesh, keep.matrix,
-									paint.obj3D.Mesh, paint.matrix, 1, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
-								var intersect = BooleanProcessing.Do(keep.obj3D.Mesh, keep.matrix,
-									paint.obj3D.Mesh, paint.matrix, 2, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
-
-								var inverseKeep = keep.matrix.Inverted;
-								subtract.Transform(inverseKeep);
-								using (keep.obj3D.RebuildLock())
-								{
-									keep.obj3D.Mesh = subtract;
-								}
-
-								// keep all the intersections together
-								if (paintMesh == null)
-								{
-									paintMesh = intersect;
-								}
-								else // union into the current paint
-								{
-									paintMesh = BooleanProcessing.Do(paintMesh, Matrix4X4.Identity,
-										intersect, Matrix4X4.Identity, 0, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
-								}
-
-								if (cancellationToken.IsCancellationRequested)
-								{
-									break;
-								}
-							}
-
-							// move the paint mesh back to its original coordinates
-							paintMesh.Transform(inverseRemove);
-
-							using (paint.obj3D.RebuildLock())
-							{
-								paint.obj3D.Mesh = paintMesh;
-							}
-
-							paint.obj3D.Color = paint.obj3D.WorldColor().WithContrast(keepObjects.First().WorldColor(), 2).ToColor();
-						}
-					}
+					SubtractAndReplace(cancellationToken, reporter);
 				}
-				catch { }
+				catch
+				{
+				}
 
 				UiThread.RunOnIdle(() =>
 				{
