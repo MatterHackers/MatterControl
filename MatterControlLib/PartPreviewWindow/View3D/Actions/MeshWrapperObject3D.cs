@@ -64,8 +64,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						Mesh = ownedMeshWrapper.Mesh.Copy(CancellationToken.None)
 					};
 					newMesh.CopyProperties(ownedMeshWrapper, Object3DPropertyFlags.All);
+					// move the mesh to the actual new position
 					var matrix = ownedMeshWrapper.WorldMatrix(this);
 					newMesh.Mesh.Transform(matrix);
+					// then set the matrix to identity
 					newMesh.Matrix = Matrix4X4.Identity;
 					newMesh.Name = this.Name;
 					newMeshObjects.Add(newMesh);

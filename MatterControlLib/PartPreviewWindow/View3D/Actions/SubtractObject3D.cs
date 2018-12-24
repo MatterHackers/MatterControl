@@ -33,132 +33,16 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public static class BooleanProcessing
-	{
-		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern int DeleteDouble(ref IntPtr handle);
-
-		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern int DeleteInt(ref IntPtr handle);
-
-		public static Mesh Do(Mesh inMeshA, Matrix4X4 matrixA, 
-			Mesh inMeshB, Matrix4X4 matrixB, 
-			int opperation, 
-			IProgress<ProgressStatus> reporter, double amountPerOperation, double percentCompleted, ProgressStatus progressStatus, CancellationToken cancellationToken)
-		{
-			var libiglExe = "libigl_boolean.exe";
-			if (File.Exists(libiglExe)
-				&& IntPtr.Size == 8) // only try to run the improved booleans if we are 64 bit and it is there
-			{
-				IntPtr pVc = IntPtr.Zero;
-				IntPtr pFc = IntPtr.Zero;
-				try
-				{
-					double[] va;
-					int[] fa;
-					inMeshA.ToVerticesAndFaces(matrixA, out va, out fa);
-					double[] vb;
-					int[] fb;
-					inMeshB.ToVerticesAndFaces(matrixB, out vb, out fb);
-
-					int vcCount;
-					int fcCount;
-					DoBooleanOpperation(va, va.Length, fa, fa.Length,
-						vb, vb.Length, fb, fb.Length,
-						opperation,
-						out pVc, out vcCount, out pFc, out fcCount);
-
-					var vcArray = new double[vcCount];
-					Marshal.Copy(pVc, vcArray, 0, vcCount);
-
-					var fcArray = new int[fcCount];
-					Marshal.Copy(pFc, fcArray, 0, fcCount);
-
-					return new Mesh(vcArray, fcArray);
-				}
-				finally
-				{
-					if (pVc != IntPtr.Zero)
-					{
-						DeleteDouble(ref pVc);
-					}
-					if (pFc != IntPtr.Zero)
-					{
-						DeleteInt(ref pFc);
-					}
-
-					progressStatus.Progress0To1 = percentCompleted + amountPerOperation;
-					reporter.Report(progressStatus);
-				}
-			}
-
-			var meshA = inMeshA.Copy(CancellationToken.None);
-			meshA.Transform(matrixA);
-
-			var meshB = inMeshB.Copy(CancellationToken.None);
-			meshB.Transform(matrixB);
-
-			switch (opperation)
-			{
-				case 0:
-					return PolygonMesh.Csg.CsgOperations.Union(meshA, meshB, (status, progress0To1) =>
-					{
-						// Abort if flagged
-						cancellationToken.ThrowIfCancellationRequested();
-
-						progressStatus.Status = status;
-						progressStatus.Progress0To1 = percentCompleted + (amountPerOperation * progress0To1);
-						reporter?.Report(progressStatus);
-					}, cancellationToken);
-
-				case 1:
-					return PolygonMesh.Csg.CsgOperations.Subtract(meshA, meshB, (status, progress0To1) =>
-					{
-						// Abort if flagged
-						cancellationToken.ThrowIfCancellationRequested();
-
-						progressStatus.Status = status;
-						progressStatus.Progress0To1 = percentCompleted + (amountPerOperation * progress0To1);
-						reporter?.Report(progressStatus);
-					}, cancellationToken);
-
-				case 2:
-					return PolygonMesh.Csg.CsgOperations.Intersect(meshA, meshB, (status, progress0To1) =>
-					{
-						// Abort if flagged
-						cancellationToken.ThrowIfCancellationRequested();
-
-						progressStatus.Status = status;
-						progressStatus.Progress0To1 = percentCompleted + (amountPerOperation * progress0To1);
-						reporter.Report(progressStatus);
-					}, cancellationToken);
-			}
-
-			return null;
-		}
-
-		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]
-		public extern static void DoBooleanOpperation(
-			double[] va, int vaCount, int[] fa, int faCount,
-			double[] vb, int vbCount, int[] fb, int fbCount,
-			int opperation,
-			out IntPtr pVc, out int vcCount, out IntPtr pVf, out int vfCount);
-	}
-
 	[ShowUpdateButton]
 	public class SubtractObject3D : MeshWrapperObject3D, ISelectableChildContainer
 	{
