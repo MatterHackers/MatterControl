@@ -375,7 +375,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.EnsureWelcomePageClosed();
 		}
 
-		private static void EnsureWelcomePageClosed(this AutomationRunner testRunner)
+		public static void EnsureWelcomePageClosed(this AutomationRunner testRunner)
 		{
 			// Close the WelcomePage window if active
 			if (testRunner.GetWidgetByName("HeaderRow", out _) is GuiWidget headerRow
@@ -384,6 +384,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.ClickByName("Cancel Wizard Button");
 			}
+		}
+
+		public static void WaitForAndCancelPrinterSetupPage(this AutomationRunner testRunner)
+		{
+			testRunner.WaitFor(() =>
+			{
+				return testRunner.GetWidgetByName("HeaderRow", out _) is GuiWidget headerRow
+					&& headerRow.Parents<DialogPage>().FirstOrDefault() is SetupStepMakeModelName;
+			});
+
+			testRunner.ClickByName("Cancel Wizard Button");
 		}
 
 		public static void SwitchToHardwareTab(this AutomationRunner testRunner)
@@ -475,6 +486,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			switch (libraryRowItemName)
 			{
+				case "SD Card Row Item Collection":
+					if (ApplicationController.Instance.DragDropData.View3DWidget?.Printer is PrinterConfig printer)
+					{
+						testRunner.DoubleClickByName($"{printer.Settings.GetValue(SettingsKey.printer_name)} Row Item Collection");
+
+						testRunner.Delay();
+
+						testRunner.ClickByName(libraryRowItemName);
+					}
+
+					break;
+
 				case "Calibration Parts Row Item Collection":
 				case "Cloud Library Row Item Collection":
 				case "Print Queue Row Item Collection":
@@ -530,6 +553,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.ClickByName("Add Content Menu");
 			}
+		}
+
+		public static void OpenRequiredSetupAndConfigureMaterial(this AutomationRunner testRunner)
+		{
+			// Complete new material selection requirement
+			testRunner.ClickByName("PrintPopupMenu");
+			testRunner.ClickByName("Finish Setup Button");
+
+			// Configure ABS as selected material
+			//testRunner.ClickByName("Material DropDown List");
+			//testRunner.ClickByName("ABS Menu");
+			
+			// Currently material selection is not required, simply act of clicking 'Select' clears setup required
+			testRunner.ClickByName("Already Loaded Button");
 		}
 
 		public static void NavigateToLibraryHome(this AutomationRunner testRunner)
