@@ -475,6 +475,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			switch (libraryRowItemName)
 			{
+				case "SD Card Row Item Collection":
+					if (ApplicationController.Instance.DragDropData.View3DWidget?.Printer is PrinterConfig printer)
+					{
+						testRunner.DoubleClickByName($"{printer.Settings.GetValue(SettingsKey.printer_name)} Row Item Collection");
+
+						testRunner.Delay();
+
+						testRunner.ClickByName(libraryRowItemName);
+					}
+
+					break;
+
 				case "Calibration Parts Row Item Collection":
 				case "Cloud Library Row Item Collection":
 				case "Print Queue Row Item Collection":
