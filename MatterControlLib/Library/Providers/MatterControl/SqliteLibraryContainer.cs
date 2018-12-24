@@ -50,15 +50,20 @@ namespace MatterHackers.MatterControl.Library
 		public override string Name { get => this.PrintItem.Name; set => this.PrintItem.Name = value; }
 	}
 
-	public class SqliteLibraryContainer : WritableContainer
+	public class SqliteLibraryContainer : WritableContainer, ICustomSearch
 	{
+		private string keywordFilter = "";
+
 		// Use default rootCollectionID - normally this constructor isn't used but exists to validate behavior in tests
 		public SqliteLibraryContainer()
 			: this(Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault()?.Id ?? 0)
-		{ }
+		{
+		}
 
 		public SqliteLibraryContainer(int collectionID)
 		{
+			this.CustomSearch = this;
+
 			this.IsProtected = false;
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
@@ -68,9 +73,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public int CollectionID { get; private set; }
 
-		private string keywordFilter = "";
-
-		public ICustomSearch CustomSearch { get; } = null;
+		public override ICustomSearch CustomSearch { get; }
 
 		public override void Load()
 		{
@@ -152,7 +155,7 @@ namespace MatterHackers.MatterControl.Library
 			});
 		}
 
-		public List<PrintItem> GetLibraryItems(string keyphrase = null)
+		private List<PrintItem> GetLibraryItems(string keyphrase = null)
 		{
 			// TODO: String concatenation to build sql statements is the root of all sql injection attacks. This needs to be changed to use parameter objects as would be expected
 			string query;
@@ -240,6 +243,20 @@ namespace MatterHackers.MatterControl.Library
 
 		public override void Dispose()
 		{
+		}
+
+		public void ApplyFilter(string filter, ILibraryContext libraryContext)
+		{
+			keywordFilter = filter;
+			this.Load();
+			this.OnContentChanged();
+		}
+
+		public void ClearFilter()
+		{
+			keywordFilter = null;
+			this.Load();
+			this.OnContentChanged();
 		}
 
 		public class SqliteLibraryContainerLink : ILibraryContainerLink

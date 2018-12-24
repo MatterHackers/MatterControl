@@ -477,7 +477,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				if (libraryContext.ActiveContainer.CustomSearch  is ICustomSearch customSearch)
+				if (libraryContext.ActiveContainer.CustomSearch is ICustomSearch customSearch)
 				{
 					// Do custom search
 					customSearch.ApplyFilter(searchInput.Text.Trim(), libraryContext);

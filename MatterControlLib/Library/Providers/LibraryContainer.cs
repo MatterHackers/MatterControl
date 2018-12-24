@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public string StatusMessage { get; set; } = "";
 
-		public ICustomSearch CustomSearch { get; } = null;
+		public virtual ICustomSearch CustomSearch { get; } = null;
 
 		/// <summary>
 		/// Reloads the container when contents have changes and fires ContentChanged to notify listeners
