@@ -544,6 +544,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
+		public static void OpenRequiredSetupAndConfigureMaterial(this AutomationRunner testRunner)
+		{
+			// Complete new material selection requirement
+			testRunner.ClickByName("PrintPopupMenu");
+			testRunner.ClickByName("Finish Setup Button");
+
+			// Configure ABS as selected material
+			//testRunner.ClickByName("Material DropDown List");
+			//testRunner.ClickByName("ABS Menu");
+			
+			// Currently material selection is not required, simply act of clicking 'Select' clears setup required
+			testRunner.ClickByName("Already Loaded Button");
+		}
+
 		public static void NavigateToLibraryHome(this AutomationRunner testRunner)
 		{
 			testRunner.EnsureContentMenuOpen();
