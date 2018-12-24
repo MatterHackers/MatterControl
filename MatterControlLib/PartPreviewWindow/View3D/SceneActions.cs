@@ -184,6 +184,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			await Task.Run(() =>
 			{
+				// Clear selection to ensure all root level children are arranged on the bed
+				scene.SelectedItem = null;
+
 				PlatingHelper.ArrangeOnBed(scene.Children.ToList(), scene, bedCenter);
 			});
 		}
