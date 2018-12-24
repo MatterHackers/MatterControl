@@ -39,15 +39,17 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class FileSystemContainer : WritableContainer
+	public class FileSystemContainer : WritableContainer, ICustomSearch
 	{
 		private FileSystemWatcher directoryWatcher;
 
 		private bool isActiveContainer;
 		private bool isDirty;
+		private string keywordFilter;
 
 		public FileSystemContainer(string fullPath)
 		{
+			this.CustomSearch = this;
 			this.FullPath = fullPath;
 			this.Name = Path.GetFileName(fullPath);
 
@@ -84,24 +86,12 @@ namespace MatterHackers.MatterControl.Library
 			base.Activate();
 		}
 
+		public override ICustomSearch CustomSearch { get; }
+
 		public override void Deactivate()
 		{
 			this.isActiveContainer = false;
 			base.Deactivate();
-		}
-
-		private string keywordFilter = "";
-		public override string KeywordFilter
-		{
-			get => keywordFilter;
-			set
-			{
-				if (keywordFilter != value)
-				{
-					keywordFilter = value;
-					this.ReloadContent();
-				}
-			}
 		}
 
 		public override void Dispose()
@@ -159,7 +149,7 @@ namespace MatterHackers.MatterControl.Library
 
 			try
 			{
-				string filter = this.KeywordFilter.Trim();
+				string filter = keywordFilter?.Trim() ?? "";
 
 				var allFiles = Directory.GetFiles(FullPath, "*.*", searchDepth);
 
@@ -230,6 +220,20 @@ namespace MatterHackers.MatterControl.Library
 			var validName = agg_basics.GetNonCollidingName(fileName, (testName) => !File.Exists(testName));
 
 			return validName;
+		}
+
+		public void ApplyFilter(string filter, ILibraryContext libraryContext)
+		{
+			keywordFilter = filter;
+			this.Load();
+			this.OnContentChanged();
+		}
+
+		public void ClearFilter()
+		{
+			keywordFilter = null;
+			this.Load();
+			this.OnContentChanged();
 		}
 
 		public async override void Add(IEnumerable<ILibraryItem> items)

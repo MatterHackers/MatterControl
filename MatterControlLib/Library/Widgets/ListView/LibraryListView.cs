@@ -182,6 +182,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 
 		private bool _ascending = true;
+		private string filterText;
+
 		public bool Ascending
 		{
 			get => _ascending;
@@ -198,6 +200,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private void ApplySort()
 		{
 			this.Reload().ConfigureAwait(false);
+		}
+
+		private bool ContainsActiveFilter(ILibraryItem item)
+		{
+			return string.IsNullOrWhiteSpace(filterText)
+				|| item.Name.IndexOf(filterText, StringComparison.OrdinalIgnoreCase) >= 0;
 		}
 
 		/// <summary>
@@ -233,6 +241,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			IEnumerable<ILibraryItem> containerItems = from item in sourceContainer.ChildContainers
 								 where item.IsVisible && this.ContainerFilter(item)
+									&& this.ContainsActiveFilter(item)
 								 select item;
 
 			// Folder items
@@ -254,6 +263,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 									  where item.IsVisible
 											&& (item.IsContentFileType() || item is MissingFileItem)
 											&& this.ItemFilter(item)
+											&& this.ContainsActiveFilter(item)
 									  select item;
 
 				foreach (var item in this.SortItems(filteredResults))
@@ -541,6 +551,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					},
 					altBounds: popupBounds);
 			}
+		}
+
+		internal void ApplyFilter(string filterText)
+		{
+			this.filterText = filterText;
+			this.Reload().ConfigureAwait(false);
+		}
+
+		internal void ClearFilter()
+		{
+			this.filterText = null;
+			this.Reload().ConfigureAwait(false);
 		}
 
 		public override void OnMouseWheel(MouseEventArgs mouseEvent)

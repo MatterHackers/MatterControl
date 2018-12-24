@@ -35,12 +35,17 @@ using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
 {
+	public interface ICustomSearch
+	{
+		void ApplyFilter(string filter, ILibraryContext libraryContext);
+		void ClearFilter();
+	}
+
 	public interface ILibraryContainer : IDisposable
 	{
 		string ID { get; }
 		string Name { get; }
 		string StatusMessage { get; }
-		string KeywordFilter { get; set; }
 		bool IsProtected { get; }
 
 		Type DefaultView { get; }
@@ -49,6 +54,7 @@ namespace MatterHackers.MatterControl.Library
 
 		List<ILibraryContainerLink> ChildContainers { get; }
 		List<ILibraryItem> Items { get; }
+		ICustomSearch CustomSearch { get; }
 
 		ILibraryContainer Parent { get; set; }
 

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public string StatusMessage { get; set; } = "";
 
-		public virtual string KeywordFilter { get; set; } = "";
+		public virtual ICustomSearch CustomSearch { get; } = null;
 
 		/// <summary>
 		/// Reloads the container when contents have changes and fires ContentChanged to notify listeners

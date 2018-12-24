@@ -105,7 +105,11 @@ namespace MatterHackers.MatterControl.Library
 				{
 					activeContainer.Deactivate();
 					activeContainer.ContentChanged -= ActiveContainer_ContentChanged;
-					activeContainer.KeywordFilter = "";
+
+					if (activeContainer.CustomSearch is ICustomSearch customSearch)
+					{
+						customSearch.ClearFilter();
+					}
 
 					// If the new container is an ancestor of the active container we need to Dispose everyone up to that point
 					if (activeContainer.Ancestors().Where(p => p == newContainer).Any())
