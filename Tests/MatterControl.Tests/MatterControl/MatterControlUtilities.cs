@@ -375,7 +375,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.EnsureWelcomePageClosed();
 		}
 
-		private static void EnsureWelcomePageClosed(this AutomationRunner testRunner)
+		public static void EnsureWelcomePageClosed(this AutomationRunner testRunner)
 		{
 			// Close the WelcomePage window if active
 			if (testRunner.GetWidgetByName("HeaderRow", out _) is GuiWidget headerRow
@@ -384,6 +384,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.ClickByName("Cancel Wizard Button");
 			}
+		}
+
+		public static void WaitForAndCancelPrinterSetupPage(this AutomationRunner testRunner)
+		{
+			testRunner.WaitFor(() =>
+			{
+				return testRunner.GetWidgetByName("HeaderRow", out _) is GuiWidget headerRow
+					&& headerRow.Parents<DialogPage>().FirstOrDefault() is SetupStepMakeModelName;
+			});
+
+			testRunner.ClickByName("Cancel Wizard Button");
 		}
 
 		public static void SwitchToHardwareTab(this AutomationRunner testRunner)
