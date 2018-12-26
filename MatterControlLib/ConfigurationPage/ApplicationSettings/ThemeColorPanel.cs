@@ -46,14 +46,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 	{
 		private Color lastColor;
 		private AccentColorsWidget colorSelector;
-
+		private ThemeConfig theme;
 		private IColorTheme _themeProvider;
 		private GuiWidget previewButtonPanel;
 
-		public ThemeColorPanel(ThemeConfig activeTheme, AccentColorsWidget colorSelector)
+		public ThemeColorPanel(ThemeConfig theme, AccentColorsWidget colorSelector)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.colorSelector = colorSelector;
+			this.theme = theme;
+
 			string currentProviderName = UserSettings.Instance.get(UserSettingsKey.ThemeName) ?? "";
 
 			if (AppContext.ThemeProviders.TryGetValue(currentProviderName, out IColorTheme currentProvider))
@@ -65,9 +67,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				_themeProvider = AppContext.ThemeProviders.Values.First();
 			}
 
-			accentPanelColor = activeTheme.ResolveColor(activeTheme.SectionBackgroundColor, activeTheme.SlightShade);
+			accentPanelColor = theme.ResolveColor(theme.SectionBackgroundColor, theme.SlightShade);
 
-			this.SelectionColor = activeTheme.MinimalShade;
+			this.SelectionColor = theme.MinimalShade;
 
 			this.AddChild(previewButtonPanel = new FlowLayoutWidget()
 			{
@@ -97,11 +99,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				this.CreateThemeModeButtons();
 			}
 		}
+
 		private void CreateThemeModeButtons()
 		{
 			previewButtonPanel.CloseAllChildren();
-
-			var theme = AppContext.Theme;
 
 			var accentColor = theme.PrimaryAccentColor;
 
