@@ -84,8 +84,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public static class SystemWindowExtension
 	{
-		public static void ShowPopover(this SystemWindow systemWindow, MatePoint anchor, MatePoint popup, RectangleDouble altBounds = default(RectangleDouble))
+		public static void ShowPopover(this SystemWindow systemWindow, MatePoint anchor, MatePoint popup, RectangleDouble altBounds = default(RectangleDouble), double secondsToClose = 0)
 		{
+			var hookedWidgets = new HashSet<GuiWidget>();
+			void anchor_Closed(object sender, EventArgs e)
+			{
+				// If the owning widget closed, so should we
+				popup.Widget.Close();
+
+				foreach (var widget in hookedWidgets)
+				{
+					widget.Closed -= anchor_Closed;
+				}
+			}
+
 			void widgetRelativeTo_PositionChanged(object sender, EventArgs e)
 			{
 				if (anchor.Widget?.Parent != null)
@@ -125,6 +137,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						yPosition = GetYAnchor(anchor.AltMate, popup.AltMate, popup.Widget, bounds);
 					}
 
+					popup.Widget.Closed += anchor_Closed;
+					anchor.Widget.Closed += anchor_Closed;
+					hookedWidgets.Add(anchor.Widget);
+
+					foreach (var widget in anchor.Widget.Parents<GuiWidget>())
+					{
+						widget.Closed += anchor_Closed;
+						hookedWidgets.Add(widget);
+					}
+
 					popupPosition += yPosition;
 
 					popup.Widget.Position = popupPosition;
@@ -135,6 +157,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// When the widgets position changes, sync the popup position
 			systemWindow?.AddChild(popup.Widget);
+
+			if(secondsToClose > 0)
+			{
+				UiThread.RunOnIdle(() => anchor_Closed(null, null), secondsToClose);
+			}
 		}
 
 		public static void ShowPopup(this SystemWindow systemWindow, MatePoint anchor, MatePoint popup, RectangleDouble altBounds = default(RectangleDouble))
@@ -192,6 +219,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				popup.Widget.Close();
 
+				anchor.Widget.Closed -= anchor_Closed;
+				
 				// Unbind callbacks on parents for position_changed if we're closing
 				foreach (GuiWidget widget in hookedParents)
 				{

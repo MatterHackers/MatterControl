@@ -223,7 +223,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return;
 			}
 
-			settingsRow.Focus();
+			// We should not take focus as the mouse enters, focus could be in a text control and this sets the value and stops the editing.
+			// Is there a known reason we need to do something with focus here to get other intended behavior?
+			//settingsRow.Focus();
 
 			int arrowOffset = (int)(settingsRow.Height / 2);
 
@@ -242,6 +244,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			bool alignLeft = this.ArrowDirection == Popover.ArrowDirection.Right;
 
+			// after a certain amount of time make the popover close (just like a tool tip)
+			double closeSeconds = Math.Max(1, (settingsRow.HelpText.Length / 50.0)) * 5;
+
 			systemWindow.ShowPopover(
 				new MatePoint(settingsRow)
 				{
@@ -254,7 +259,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Mate = new MateOptions(alignLeft ? MateEdge.Right : MateEdge.Left, MateEdge.Top),
 					AltMate = new MateOptions(alignLeft ? MateEdge.Left : MateEdge.Right, MateEdge.Bottom),
 					//Offset = new RectangleDouble(12, 0, 12, 0)
-				});
+				}, secondsToClose: closeSeconds);
 
 			popoverBubble = tagContainer;
 
