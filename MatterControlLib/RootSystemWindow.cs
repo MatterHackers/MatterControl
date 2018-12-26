@@ -297,29 +297,17 @@ namespace MatterHackers.MatterControl
 				// cancel the close so that we can save all our active work spaces
 				eventArgs.Cancel = true;
 
-				ApplicationController.Instance.PersistUserTabs();
-
 				UiThread.RunOnIdle(async () =>
 				{
 					var application = ApplicationController.Instance;
 
-					// Save changes before close
-					foreach (var printer in ApplicationController.Instance.ActivePrinters)
-					{
-						if (printer != PrinterConfig.EmptyPrinter)
-						{
-							await application.Tasks.Execute("Saving Print Bed".Localize() + "...", printer, printer.Bed.SaveChanges);
-						}
-					}
-
-					foreach (var workspace in application.Workspaces)
-					{
-						await application.Tasks.Execute("Saving Print Bed".Localize() + "...", workspace, workspace.SceneContext.SaveChanges);
-					}
+					await application.PersistUserTabs();
 
 					application.ApplicationExiting = true;
+
 					// Make sure we tell the Application Controller to shut down. This will release the slicing thread if running.
 					application.Shutdown();
+
 					this.CloseOnIdle();
 				});
 			}

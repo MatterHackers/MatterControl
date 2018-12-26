@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl
 			ApplicationController.Instance.ChangeCloudSyncStatus(userAuthenticated: true);
 			AuthSessionChanged.CallEvents(null, null);
 		}
-		
+
 		public bool ClientAuthenticatedSessionValid
 		{
 			get
