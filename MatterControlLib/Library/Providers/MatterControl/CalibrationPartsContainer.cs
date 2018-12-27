@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -78,7 +79,7 @@ namespace MatterHackers.MatterControl.Library
 
 			public string Category { get; } = "";
 
-			public string ID => relativePath.GetHashCode().ToString();
+			public string ID => agg_basics.GetLongHashCode(relativePath).ToString();
 
 			public string Name => this.FileName;
 

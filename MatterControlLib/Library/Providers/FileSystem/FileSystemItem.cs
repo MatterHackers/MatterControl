@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using System;
 using System.IO;
 
@@ -75,7 +76,7 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		public virtual string ID => this.Path.GetHashCode().ToString();
+		public virtual string ID => agg_basics.GetLongHashCode(this.Path).ToString();
 
 		public DateTime DateCreated { get; }
 
