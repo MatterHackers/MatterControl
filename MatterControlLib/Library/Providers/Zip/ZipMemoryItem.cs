@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using System;
 using System.IO;
 using System.IO.Compression;
@@ -45,7 +46,7 @@ namespace MatterHackers.MatterControl.Library
 			this.FileSize = fileSize;
 		}
 
-		public override string ID => $"{this.Path}/{this.RelativePath}".GetHashCode().ToString();
+		public override string ID => agg_basics.GetLongHashCode($"{this.Path}/{this.RelativePath}").ToString();
 
 		public string RelativePath { get; set; }
 
