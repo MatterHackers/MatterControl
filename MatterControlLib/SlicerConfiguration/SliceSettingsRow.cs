@@ -202,7 +202,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void OnLoad(EventArgs args)
 		{
-			systemWindow = this.Parents<SystemWindow>().LastOrDefault();
+			systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 			base.OnLoad(args);
 		}
 
