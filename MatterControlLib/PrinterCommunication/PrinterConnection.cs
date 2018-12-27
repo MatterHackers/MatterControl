@@ -2679,13 +2679,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			private static int numRunning = 0;
 			private PrinterConnection printerConnection;
 
-			public static int NumRunning
-			{
-				get
-				{
-					return numRunning;
-				}
-			}
+			public static int NumRunning => numRunning;
 
 			private ReadThread(PrinterConnection printerConnection)
 			{
