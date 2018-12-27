@@ -1513,6 +1513,8 @@ You will then need to logout and log back in to the computer for the changes to 
 				{
 				}
 			}
+
+			Console.WriteLine("Exiting ReadFromPrinter method: " + communicationState.ToString());
 		}
 
 		public void ReadPosition(bool forceToTopOfQueue = false)
