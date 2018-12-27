@@ -49,47 +49,77 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public override void Flatten(UndoBuffer undoBuffer)
 		{
-			var ownedMeshWrappers = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
-
-			var newMeshObjects = new List<IObject3D>();
-
-			// remove all the meshWrappers (collapse the children)
-			foreach (var ownedMeshWrapper in ownedMeshWrappers)
+			using (RebuildLock())
 			{
-				var wrapperParent = ownedMeshWrapper.Parent;
-				if (ownedMeshWrapper.Visible)
+				var thisCopy = this.Clone();
+
+				var ownedMeshWrappers = thisCopy.Descendants().Where(o => o.OwnerID == thisCopy.ID).ToList();
+
+				var newMeshObjects = new List<IObject3D>();
+
+				// remove all the meshWrappers (collapse the children)
+				foreach (var ownedMeshWrapper in ownedMeshWrappers)
 				{
-					var newMesh = new Object3D()
+					var wrapperParent = ownedMeshWrapper.Parent;
+					if (ownedMeshWrapper.Visible)
 					{
-						Mesh = ownedMeshWrapper.Mesh.Copy(CancellationToken.None)
-					};
-					newMesh.CopyProperties(ownedMeshWrapper, Object3DPropertyFlags.All);
-					// move the mesh to the actual new position
-					var matrix = ownedMeshWrapper.WorldMatrix(this);
-					newMesh.Mesh.Transform(matrix);
-					// then set the matrix to identity
-					newMesh.Matrix = Matrix4X4.Identity;
-					newMesh.Name = this.Name;
-					newMeshObjects.Add(newMesh);
+						var newMesh = new Object3D()
+						{
+							Mesh = ownedMeshWrapper.Mesh.Copy(CancellationToken.None)
+						};
+						newMesh.CopyProperties(ownedMeshWrapper, Object3DPropertyFlags.All);
+						// move the mesh to the actual new position
+						var matrix = ownedMeshWrapper.WorldMatrix(thisCopy);
+						newMesh.Mesh.Transform(matrix);
+						// then set the matrix to identity
+						newMesh.Matrix = Matrix4X4.Identity;
+						newMesh.Name = thisCopy.Name;
+						newMeshObjects.Add(newMesh);
+					}
+
+					// remove it
+					wrapperParent.Children.Remove(ownedMeshWrapper);
 				}
 
-				// remove it
-				wrapperParent.Children.Remove(ownedMeshWrapper);
+				thisCopy.Matrix = Matrix4X4.Identity;
+
+				thisCopy.Children.Modify(children =>
+				{
+					children.Clear();
+					children.AddRange(newMeshObjects);
+					foreach (var child in children)
+					{
+						child.MakeNameNonColliding();
+					}
+				});
+
+				List<IObject3D> newChildren = new List<IObject3D>();
+				// push our matrix into a copy of our children
+				foreach (var child in thisCopy.Children)
+				{
+					var newChild = child.Clone();
+					newChildren.Add(newChild);
+					newChild.Matrix *= thisCopy.Matrix;
+					var flags = Object3DPropertyFlags.Visible;
+					if (thisCopy.Color.alpha != 0) flags |= Object3DPropertyFlags.Color;
+					if (thisCopy.OutputType != PrintOutputTypes.Default) flags |= Object3DPropertyFlags.OutputType;
+					if (thisCopy.MaterialIndex != -1) flags |= Object3DPropertyFlags.MaterialIndex;
+					newChild.CopyProperties(thisCopy, flags);
+				}
+
+				// and replace us with the children
+				var replaceCommand = new ReplaceCommand(new List<IObject3D> { this }, newChildren);
+				if (undoBuffer != null)
+				{
+					undoBuffer.AddAndDo(replaceCommand);
+				}
+				else
+				{
+					replaceCommand.Do();
+				}
 			}
 
-			this.Matrix = Matrix4X4.Identity;
-
-			this.Children.Modify(children =>
-			{
-				children.Clear();
-				children.AddRange(newMeshObjects);
-				foreach(var child in children)
-				{
-					child.MakeNameNonColliding();
-				}
-			});
-
-			base.Flatten(undoBuffer);
+			Invalidate(new InvalidateArgs(this, InvalidateType.Content, undoBuffer));
 		}
 
 		/// <summary>
@@ -131,19 +161,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			using (RebuildLock())
 			{
-				// remove all the mesh wrappers that we own
-				var meshWrappers = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
-				foreach (var meshWrapper in meshWrappers)
-				{
-					meshWrapper.Remove(null);
-				}
-				foreach (var child in Children)
-				{
-					child.OutputType = PrintOutputTypes.Default;
-				}
+				var thisClone = this.Clone();
 
-				// collapse our children into our parent
-				base.Remove(null);
+				using (thisClone.RebuildLock())
+				{
+					// remove all the mesh wrappers that we own
+					var meshWrappers = thisClone.Descendants().Where(o => o.OwnerID == thisClone.ID).ToArray();
+					foreach (var meshWrapper in meshWrappers)
+					{
+						meshWrapper.Remove(null);
+					}
+					foreach (var child in thisClone.Children)
+					{
+						child.OutputType = PrintOutputTypes.Default;
+
+						// push our matrix into a copy of our children (so they don't jump away)
+						using (child.RebuildLock())
+						{
+							child.Matrix *= thisClone.Matrix;
+						}
+					}
+
+					// collapse our children into our parent
+					// and replace us with the children
+					var replaceCommand = new ReplaceCommand(new List<IObject3D> { this }, thisClone.Children.ToList());
+					if (undoBuffer != null)
+					{
+						undoBuffer.AddAndDo(replaceCommand);
+					}
+					else
+					{
+						replaceCommand.Do();
+					}
+				}
 			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Content));

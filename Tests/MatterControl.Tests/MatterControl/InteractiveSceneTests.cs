@@ -27,10 +27,15 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
+using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
 using System.Linq;
@@ -41,9 +46,18 @@ namespace MatterControl.Tests.MatterControl
 	public class InteractiveSceneTests
 	{
 		[Test, Category("InteractiveScene")]
-		public void FlatenAsExpectedForBooleanOperations()
+		public void FlattenAsExpectedForBooleanOperations()
 		{
-			// Combine has correct number of results
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			// Automation runner must do as much as program.cs to spin up platform
+			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
+			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
+			AppContext.Platform.InitPluginFinder();
+			AppContext.Platform.ProcessCommandline();
+
+			// Combine has correct results
 			{
 				var root = new Object3D();
 				var cubeA = new CubeObject3D(20, 20, 20);
@@ -63,6 +77,111 @@ namespace MatterControl.Tests.MatterControl
 				Assert.IsTrue(new AxisAlignedBoundingBox(
 					-10, -10, -10,
 					20, 10, 10).Equals(rootAabb, .001));
+			}
+
+			// now make sure undo has the right results for flatten
+			{
+				var root = new Object3D();
+				var cubeA = new CubeObject3D(20, 20, 20);
+				var cubeB = new CubeObject3D(20, 20, 20);
+				var offsetCubeB = new TranslateObject3D(cubeB, 10);
+
+				var combine = new CombineObject3D();
+				combine.Children.Add(cubeA);
+				combine.Children.Add(offsetCubeB);
+				root.Children.Add(combine);
+				Assert.AreEqual(5, root.Descendants().Count(), "Should have the 1 combine, 2 cubeA, 3 cubeB, 4 offset cubeB, 5 offset sourceItem");
+
+				combine.Combine();
+				Assert.AreEqual(7, root.Descendants().Count(), "Should have the 1 combine, 2 cubeA, 3 wrapped cubeA, 4 cubeB, 5 offset cubeB, 6 offset sourceItem, wrapped cubeB");
+				var rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.IsTrue(new AxisAlignedBoundingBox(
+					-10, -10, -10,
+					20, 10, 10).Equals(rootAabb, .001));
+
+				var undoBuffer = new UndoBuffer();
+				combine.Flatten(undoBuffer);
+
+				Assert.AreEqual(1, root.Descendants().Count());
+				Assert.AreEqual(1, root.Children.Count());
+				rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.IsTrue(new AxisAlignedBoundingBox(
+					-10, -10, -10,
+					20, 10, 10).Equals(rootAabb, .001));
+
+				undoBuffer.Undo();
+				Assert.AreEqual(7, root.Descendants().Count(), "Should have the 1 combine, 2 cubeA, 3 wrapped cubeA, 4 cubeB, 5 offset cubeB, 6 offset sourceItem, wrapped cubeB");
+			}
+
+			// now make sure undo has the right results for remove
+			{
+				var root = new Object3D();
+				var cubeA = new CubeObject3D(20, 20, 20)
+				{
+					Name = "cubeA"
+				};
+				var cubeB = new CubeObject3D(20, 20, 20)
+				{
+					Name = "cubeB"
+				};
+
+				var combine = new CombineObject3D();
+				combine.Children.Add(cubeA);
+				combine.Children.Add(cubeB);
+				root.Children.Add(combine);
+				Assert.AreEqual(3, root.Descendants().Count(), "Should have the 1 combine, 2 cubeA, 3 cubeB");
+
+				combine.Combine();
+				Assert.AreEqual(5, root.Descendants().Count(), "Should have the 1 combine, 2 cubeA, 3 wrapped cubeA, 4 cubeB, 5 wrapped cubeB");
+				var rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.IsTrue(new AxisAlignedBoundingBox(
+					-10, -10, -10,
+					10, 10, 10).Equals(rootAabb, .001));
+
+				var undoBuffer = new UndoBuffer();
+				combine.Remove(undoBuffer);
+
+				Assert.AreEqual(2, root.Descendants().Count(), "Should have the 1 cubeA, 2 cubeB");
+				rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.IsTrue(new AxisAlignedBoundingBox(
+					-10, -10, -10,
+					10, 10, 10).Equals(rootAabb, .001));
+
+				undoBuffer.Undo();
+				Assert.AreEqual(5, root.Descendants().Count(), "Should have the 1 combine, 2 cubeA, 3 wrapped cubeA, 4 cubeB, 5 wrapped cubeB");
+			}
+
+			// now make sure undo has the right results for remove
+			{
+				var root = new Object3D();
+				var cubeA = new CubeObject3D(20, 20, 20);
+				var cubeB = new CubeObject3D(20, 20, 20);
+				var offsetCubeB = new TranslateObject3D(cubeB, 10);
+
+				var combine = new CombineObject3D();
+				combine.Children.Add(cubeA);
+				combine.Children.Add(offsetCubeB);
+				root.Children.Add(combine);
+				Assert.AreEqual(5, root.Descendants().Count(), "Should have the 1 combine, 2 cubeA, 3 cubeB, 4 offset cubeB, 5 offset sourceItem");
+
+				combine.Combine();
+				Assert.AreEqual(7, root.Descendants().Count(), "Should have the 1 combine, 2 cubeA, 3 wrapped cubeA, 4 cubeB, 5 offset cubeB, 6 offset sourceItem, wrapped cubeB");
+				var rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.IsTrue(new AxisAlignedBoundingBox(
+					-10, -10, -10,
+					20, 10, 10).Equals(rootAabb, .001));
+
+				var undoBuffer = new UndoBuffer();
+				combine.Remove(undoBuffer);
+
+				Assert.AreEqual(4, root.Descendants().Count(), "Should have the 1 cubeA, 2 cubeB, 3 offset cubeB, 4 offset sourceItem");
+				rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.IsTrue(new AxisAlignedBoundingBox(
+					-10, -10, -10,
+					20, 10, 10).Equals(rootAabb, .001));
+
+				undoBuffer.Undo();
+				Assert.AreEqual(7, root.Descendants().Count(), "Should have the 1 combine, 2 cubeA, 3 wrapped cubeA, 4 cubeB, 5 offset cubeB, 6 offset sourceItem, wrapped cubeB");
 			}
 
 			// make sure the MatterCAD add function is working
