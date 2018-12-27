@@ -457,6 +457,9 @@ namespace MatterHackers.MatterControl
 			// Actually clear printer
 			ProfileManager.Instance.ClosePrinter(printer.Settings.ID);
 
+			// Shutdown the printer connection
+			printer.Connection.Disable();
+
 			if (allowChangedEvent)
 			{
 				if (this.Workspaces.FirstOrDefault(w => w.Printer?.Settings.ID == printer.Settings.ID) is PartWorkspace workspace)
