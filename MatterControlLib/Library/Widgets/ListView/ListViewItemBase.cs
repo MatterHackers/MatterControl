@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 
 			// On first draw, lookup and set best thumbnail
-			this.LoadItemThumbnail().ConfigureAwait(false);
+			Task.Run(this.LoadItemThumbnail);
 
 			base.OnLoad(args);
 		}
