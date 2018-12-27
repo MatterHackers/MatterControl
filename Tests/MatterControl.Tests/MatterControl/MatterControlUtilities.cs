@@ -691,6 +691,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return ApplicationController.Instance.ActivePrinters.First();
 		}
 
+		public static void CloseFirstPrinterTab(this AutomationRunner testRunner)
+		{
+			// Close all printer tabs
+			var mainViewWidget = testRunner.GetWidgetByName("PartPreviewContent", out _) as MainViewWidget;
+			if (mainViewWidget.TabControl.AllTabs.First(t => t.TabContent is PrinterTabPage) is GuiWidget widget)
+			{
+				var closeWidget = widget.Descendants<ImageWidget>().First();
+				Assert.AreEqual("Close Tab Button", closeWidget.Name, "Expected widget ('Close Tab Button') not found");
+
+				testRunner.ClickWidget(closeWidget);
+			}
+		}
+
 		public static void WaitForCommunicationStateDisconnected(this AutomationRunner testRunner, PrinterConfig printer, int maxSeconds = 500)
 		{
 			testRunner.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Disconnected, maxSeconds);
