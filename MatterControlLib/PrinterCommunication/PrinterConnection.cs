@@ -958,7 +958,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										// Call instance event
 										ConnectionSucceeded?.Invoke(this, null);
 
-										// TODO: Shouldn't we wait to start reading until after we create the stream pipeline?
 										Console.WriteLine("ReadFromPrinter thread created.");
 										ReadThread.Start(this);
 
