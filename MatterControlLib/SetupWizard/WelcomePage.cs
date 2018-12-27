@@ -90,11 +90,8 @@ Click 'Next' to continue the tour of the interface";
 			};
 			contentRow.AddChild(showWelcomPageCheckBox);
 
-			var nextButton = new TextButton("Next".Localize(), theme)
-			{
-				Name = "Next Button",
-				BackgroundColor = theme.MinimalShade
-			};
+			var nextButton = theme.CreateDialogButton("Next".Localize());
+			nextButton.Name = "Next Button";
 			nextButton.Click += (s, e) =>
 			{
 				this.DialogWindow.CloseOnIdle();

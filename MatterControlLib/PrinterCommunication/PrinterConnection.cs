@@ -958,7 +958,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										// Call instance event
 										ConnectionSucceeded?.Invoke(this, null);
 
-										// TODO: Shouldn't we wait to start reading until after we create the stream pipeline?
 										Console.WriteLine("ReadFromPrinter thread created.");
 										ReadThread.Start(this);
 
@@ -1514,6 +1513,8 @@ You will then need to logout and log back in to the computer for the changes to 
 				{
 				}
 			}
+
+			Console.WriteLine("Exiting ReadFromPrinter method: " + communicationState.ToString());
 		}
 
 		public void ReadPosition(bool forceToTopOfQueue = false)
@@ -2680,13 +2681,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			private static int numRunning = 0;
 			private PrinterConnection printerConnection;
 
-			public static int NumRunning
-			{
-				get
-				{
-					return numRunning;
-				}
-			}
+			public static int NumRunning => numRunning;
 
 			private ReadThread(PrinterConnection printerConnection)
 			{

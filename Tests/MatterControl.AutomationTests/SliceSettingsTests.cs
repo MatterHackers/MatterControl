@@ -517,8 +517,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.1", "Layer height is the fine override");
 
 				// Close Airwolf
-				CloseFirstPrinterTab(testRunner);
-				
+				testRunner.CloseFirstPrinterTab();
+
 				// Assert printer counts
 				Assert.AreEqual(1, ProfileManager.Instance.ActiveProfiles.Count(), "ProfileManager should have 1 profile after Airwolf close");
 				Assert.AreEqual(0, ApplicationController.Instance.ActivePrinters.Count(), "Zero printers should be active after Airwolf close");
@@ -530,7 +530,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should be active after BCN add");
 
 				// Close BCN
-				CloseFirstPrinterTab(testRunner);
+				testRunner.CloseFirstPrinterTab();
 
 				// Reopen Airwolf
 				testRunner.SwitchToHardwareTab();
@@ -553,17 +553,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				return Task.CompletedTask;
 			}, maxTimeToRun: 120);
-		}
-
-		private void CloseFirstPrinterTab(AutomationRunner testRunner)
-		{
-			// Close all printer tabs
-			var mainViewWidget = testRunner.GetWidgetByName("PartPreviewContent", out _) as MainViewWidget;
-			if (mainViewWidget.TabControl.AllTabs.First(t => t.TabContent is PrinterTabPage) is GuiWidget widget)
-			{
-				var closeWidget = widget.Descendants<ImageWidget>().First();
-				testRunner.ClickWidget(closeWidget);
-			}
 		}
 
 		private void CloseAllPrinterTabs(AutomationRunner testRunner)

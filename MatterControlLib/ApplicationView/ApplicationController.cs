@@ -340,8 +340,15 @@ namespace MatterHackers.MatterControl
 			return popupMenu;
 		}
 
-		public void PersistUserTabs()
+		public async Task PersistUserTabs()
 		{
+			// Persist all pending changes in all workspaces to disk
+			foreach (var workspace in this.Workspaces)
+			{
+				await this.Tasks.Execute("Saving ".Localize() + $" \"{workspace.Name}\" ...",  workspace, workspace.SceneContext.SaveChanges);
+			}
+
+			// Project workspace definitions to serializable structure
 			var workspaces = this.Workspaces.Select(w =>
 			{
 				if (w.Printer == null)
@@ -360,7 +367,7 @@ namespace MatterHackers.MatterControl
 				}
 			});
 
-			// Persist part workspaces
+			// Persist workspace definitions to disk
 			File.WriteAllText(
 				ProfileManager.Instance.OpenTabsPath,
 				JsonConvert.SerializeObject(
@@ -449,6 +456,9 @@ namespace MatterHackers.MatterControl
 		{
 			// Actually clear printer
 			ProfileManager.Instance.ClosePrinter(printer.Settings.ID);
+
+			// Shutdown the printer connection
+			printer.Connection.Disable();
 
 			if (allowChangedEvent)
 			{

@@ -549,15 +549,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Unregister listener on Tab close
 				printerTab.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 
-				// Add printer into fixed position
-				if (tabControl.AllTabs.Any())
-				{
-					tabControl.AddTab(printerTab, 3);
-				}
-				else
-				{
-					tabControl.AddTab(printerTab);
-				}
+				// Add printer tab
+				tabControl.AddTab(printerTab);
 
 				return printerTab;
 			}
@@ -578,8 +571,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Name = "New Design".Localize() + (partCount == 0 ? "" : $" ({partCount})"),
 			};
-
-			partCount++;
 
 			await workspace.SceneContext.LoadContent(
 				new EditContext()
