@@ -143,22 +143,19 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						var deleteMenuItem = menu.CreateMenuItem("Delete".Localize());
 						deleteMenuItem.Click += (s2, e2) =>
 						{
-								// Delete printer
+							// Delete printer
+							if (treeView.SelectedNode.Tag is PrinterInfo printerInfo) {
 								StyledMessageBox.ShowMessageBox(
-									(deletePrinter) =>
-									{
-										if (deletePrinter)
-										{
-											if (treeView.SelectedNode.Tag is PrinterInfo printerInfo)
-											{
-												ProfileManager.Instance.DeletePrinter(printerInfo.ID);
-											}
+									(deletePrinter) => {
+										if (deletePrinter) {
+											ProfileManager.Instance.DeletePrinter(printerInfo.ID);
 										}
 									},
-									"Are you sure you want to delete your currently selected printer?".Localize(),
+									$"Are you sure you want to delete {printerInfo.Name}?",
 									"Delete Printer?".Localize(),
 									StyledMessageBox.MessageType.YES_NO,
 									"Delete Printer".Localize());
+							}
 						};
 
 
