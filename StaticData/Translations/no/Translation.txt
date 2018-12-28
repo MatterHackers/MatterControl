@@ -19,9 +19,6 @@ Translated:$ / Kg
 English:%
 Translated:%
 
-English:(Press 'Skip' to setup connection later)
-Translated:(Trykk på "Hopp" for å opprette forbindelse senere)
-
 English:{0} (Update Available)
 Translated:{0} (oppdatering tilgjengelig)
 
@@ -46,17 +43,8 @@ Translated:°
 English:°C
 Translated:° C
 
-English:1. Power on your 3D Printer.
-Translated:1. Slå på 3D-skriveren.
-
-English:2. Attach your 3D Printer via USB.
-Translated:2. Fest 3D-skriveren via USB.
-
 English:2D Layer View
 Translated:2D-lagvisning
-
-English:3. Press 'Connect'.
-Translated:3. Trykk på "Koble".
 
 English:3D
 Translated:3D
@@ -75,6 +63,9 @@ Translated:En modifikator av ekstruderingsbredden når du trykker ut ytterperime
 
 English:A password reset code will be sent to your email.
 Translated:En kode for tilbakestilling av passord vil bli sendt til e-posten din.
+
+English:A Quick Tour of MatterControl
+Translated:En rask gjennomgang av MatterControl
 
 English:A six-digit code - sent to your email account
 Translated:En sekssifret kode - sendt til din e-postkonto
@@ -169,6 +160,12 @@ Translated:Rette inn
 English:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
 Translated:Alle ekstruderinger multipliseres med denne verdien. Økning av det over 1 vil øke mengden filament som ekstruderes (1,1 er en god maks verdi); reduserer det vil redusere mengden som ekstruderes (.9 er en god minimumsverdi).
 
+English:All G-Code lines mush be shorter than 100 characters (excluding comments).
+Translated:Alle G-Code linjer mush være kortere enn 100 tegn (unntatt kommentarer).
+
+English:All Heaters
+Translated:Alle varmeapparater
+
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:Tillat MatterControl å dele lange linjer for å forbedre utjevning og utskriftsrekvisisjon. Kritisk for skrivere som er betydelig ute av nivå.
 
@@ -177,9 +174,6 @@ Translated:Alpha
 
 English:Alpha: The in development version of MatterControl
 Translated:Alpha: Den i utviklingsversjonen av MatterControl
-
-English:Already Loaded
-Translated:Allerede lastet
 
 English:and ensure that no filament is stuck to your nozzle.
 Translated:og sørg for at ingen tråd er fast i dysen din.
@@ -202,9 +196,6 @@ Translated:Søke om
 English:Apply leveling to G-Code during export
 Translated:Påfør nivåering til G-kode under eksport
 
-English:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
-Translated:Er du sikker på at du vil avslutte mens en utskrift kjører fra SD-kort?\n\nMerk: Hvis du avslutter, anbefales det å vente til utskriften er fullført før du kjører MatterControl igjen.
-
 English:Are you sure you want to abort the current print and close MatterControl?
 Translated:Er du sikker på at du vil avbryte gjeldende utskrift og lukke MatterControl?
 
@@ -213,6 +204,9 @@ Translated:Er du sikker på at du vil legge til denne delen ({0}) i køen?\n3D-d
 
 English:Are you sure you want to delete your currently selected printer?
 Translated:Er du sikker på at du vil slette den valgte skriveren du har valgt?
+
+English:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
+Translated:Er du sikker på at du vil avslutte mens en utskrift kjører fra SD-kort?\n\nMerk: Hvis du avslutter, anbefales det å vente til utskriften er fullført før du kjører MatterControl igjen.
 
 English:Are you sure you want to remove the currently selected items?
 Translated:Er du sikker på at du vil fjerne de valgte elementene?
@@ -282,9 +276,6 @@ Translated:Baud Rate
 
 English:Bed
 Translated:Seng
-
-English:Bed First Layer
-Translated:Seng første lag
 
 English:Bed Leveling
 Translated:Bed Leveling
@@ -406,9 +397,6 @@ Translated:Kan ikke logge ut mens du skriver ut
 English:Can't sign in while printing
 Translated:Kan ikke logge på mens du skriver ut
 
-English:Can't switch printers while printing
-Translated:Kan ikke bytte skrivere under utskrift
-
 English:Change
 Translated:Endring
 
@@ -466,9 +454,6 @@ Translated:Klikk på 'Ferdig' for å lukke dette vinduet.
 English:Click 'Next' to continue.
 Translated:Klikk på "Neste" for å fortsette.
 
-English:Click the 'Connect' button to retry the original connection attempt
-Translated:Klikk på "Koble" -knappen for å prøve det opprinnelige tilkoblingsforsøket
-
 English:Close
 Translated:Lukk
 
@@ -517,12 +502,6 @@ Translated:Konfigurer varsler
 English:Configure Printer
 Translated:Konfigurer skriver
 
-English:Configure Wifi
-Translated:Konfigurer Wifi
-
-English:Confirm Exit
-Translated:Bekreft Avslutt
-
 English:Confirm your new password
 Translated:Bekreft ditt nye passord
 
@@ -544,14 +523,8 @@ Translated:Koble til dårlige kanter
 English:Connect printer (make sure it is on)
 Translated:Koble til skriveren (pass på at den er på)
 
-English:Connect to Printer
-Translated:Koble til skriveren
-
 English:Connect to the currently selected printer
 Translated:Koble til den valgte skriveren
-
-English:Connect Your Device
-Translated:Koble enheten din
 
 English:Connect your printer to check for firmware updates.
 Translated:Koble skriveren din til å sjekke om fastvareoppdateringer.
@@ -568,14 +541,8 @@ Translated:Tilkoblingen mislyktes
 English:Connection Lost
 Translated:Forbindelse mistet
 
-English:Connection Status
-Translated:Tilkoblingsstatus
-
 English:Connection succeeded
 Translated:Forbindelse lyktes
-
-English:Connection Troubleshooting
-Translated:Feilsøking for tilkobling
 
 English:Continue
 Translated:Fortsette
@@ -637,6 +604,9 @@ Translated:telle eller mm
 English:Create
 Translated:Skape
 
+English:Create a printer to export G-Code
+Translated:Opprett en skriver for å eksportere G-kode
+
 English:Create Account
 Translated:Opprett konto
 
@@ -688,14 +658,8 @@ Translated:Opprettelsesdata
 English:Cube
 Translated:Cube
 
-English:Current bed temperature
-Translated:Gjeldende sengetemperatur
-
 English:Current Build
 Translated:Nåværende Bygg
-
-English:Current extruder temperature
-Translated:Strøm ekstruder temperatur
 
 English:Currently available serial ports.
 Translated:Foreløpig tilgjengelige serielle porter.
@@ -777,6 +741,9 @@ Translated:Diameter
 
 English:Disable Fan For The First
 Translated:Deaktiver fan for først
+
+English:Disabled: {0}
+Translated:Deaktivert: {0}
 
 English:Disconnect
 Translated:Koble fra
@@ -1172,16 +1139,19 @@ English:Forces the print to have only one extrusion and gradually increase the Z
 Translated:Forsøker utskriften til å ha bare en ekstrudering og gradvis øke Z-høyden under utskriften. Bare en del skrives ut av gangen med denne funksjonen.
 
 English:Forces the printer to heat the nozzle before homing.
-Translated:Tvinger skriveren til å varme dysen før han går hjem.
+Translated:Forstyrrer skriveren for å varme dysen før den går i gang.
 
 English:Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.
-Translated:Forcerer skiveren for å forsøke å unngå at perimeterlinjen krysse over eksisterende perimeterlinjer. Dette kan hjelpe med å øse eller strengene.
+Translated:Forcerer skiveren for å forsøke å unngå at perimeterlinjen krysser over eksisterende perimeterlinjer. Dette kan hjelpe med å øse eller strengene.
 
 English:Forgot Password
 Translated:Glemt passord
 
 English:Forums
 Translated:Forums
+
+English:Found a line that is {0} characters long.\n{1}...
+Translated:Funnet en linje som er {0} tegn lang.\n{1} ...
 
 English:g/cm³
 Translated:g / cm³
@@ -1198,11 +1168,11 @@ Translated:G-kode smaken
 English:G-Code Output
 Translated:G-kodeutgang
 
-English:G-Code to be run after every tool change. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.
-Translated:G-kode som skal kjøres etter hver bytte av verktøy. Du kan bruke [wipe_tower_x] og [wipe_tower_y] for å stille ekstruderposisjonen om nødvendig.
+English:G-Code to be run after every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
+Translated:G-kode som skal kjøres etter hver bytte av verktøy. Du kan bruke [wipe_tower_x] [wipe_tower_y] og [wipe_tower_z] for å stille ekstruderposisjonen om nødvendig. Du kan også bruke '; WRITE_RAW 'å hoppe over checksum eller'; NO_PROCESSING 'for å hoppe over posisjonenes offsetting.
 
-English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.
-Translated:G-kode som skal kjøres etter bytte til ekstruder 2. Vil bruke standard etter G-kode hvis ikke innstilt. Du kan bruke [wipe_tower_x] og [wipe_tower_y] for å stille ekstruderposisjonen om nødvendig.
+English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
+Translated:G-kode som skal kjøres etter bytte til ekstruder 2. Vil bruke standard etter G-kode hvis ikke innstilt. Du kan bruke [wipe_tower_x] [wipe_tower_y] og [wipe_tower_z] for å stille ekstruderposisjonen om nødvendig. Du kan også bruke '; WRITE_RAW 'å hoppe over checksum eller'; NO_PROCESSING 'for å hoppe over posisjonenes offsetting.
 
 English:G-Code to be run after the change in Z height for the next layer.
 Translated:G-kode som skal kjøres etter endringen i Z-høyden for neste lag.
@@ -1210,11 +1180,11 @@ Translated:G-kode som skal kjøres etter endringen i Z-høyden for neste lag.
 English:G-Code to be run at the end of all automatic output (the very end of the G-Code commands).
 Translated:G-kode som skal kjøres på slutten av alle automatiske utdataene (hele enden av G-Kod-kommandoene).
 
-English:G-Code to be run before every tool change. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.
-Translated:G-kode som skal kjøres før alle verktøyendringer. Du kan bruke [wipe_tower_x] og [wipe_tower_y] for å stille ekstruderposisjonen om nødvendig.
+English:G-Code to be run before every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z] to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
+Translated:G-kode som skal kjøres før alle verktøyendringer. Du kan bruke [wipe_tower_x] [wipe_tower_y] og [wipe_tower_z] for å stille ekstruderposisjonen om nødvendig. Du kan også bruke '; WRITE_RAW 'å hoppe over checksum eller'; NO_PROCESSING 'for å hoppe over posisjonenes offsetting.
 
-English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.
-Translated:G-kode som skal kjøres før du bytter til ekstruder 2. Vil bruke standard før G-kode hvis ikke innstilt. Du kan bruke [wipe_tower_x] og [wipe_tower_y] for å stille ekstruderposisjonen om nødvendig.
+English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
+Translated:G-kode som skal kjøres før du bytter til ekstruder 2. Vil bruke standard før G-kode hvis ikke innstilt. Du kan bruke [wipe_tower_x] [wipe_tower_y] og [wipe_tower_z] for å stille ekstruderposisjonen om nødvendig. Du kan også bruke '; WRITE_RAW 'å hoppe over checksum eller'; NO_PROCESSING 'for å hoppe over posisjonenes offsetting.
 
 English:G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.
 Translated:G-koden skal kjøres umiddelbart etter temperaturinnstillingene. Inkludert kommandoer for å angi temperatur i denne delen vil føre til at de ikke genereres utenfor denne delen. Vil godta tilpassede G-kode variabler.
@@ -1324,9 +1294,6 @@ Translated:Høyde
 English:Help
 Translated:Hjelp
 
-English:Hide Offsets
-Translated:Skjul Offsets
-
 English:High Precision
 Translated:Høy presisjon
 
@@ -1368,6 +1335,15 @@ Translated:Homing skriveren
 
 English:Hotend
 Translated:Hotend
+
+English:Hotend {0}
+Translated:Hotend {0}
+
+English:Hotend {0} Temperature
+Translated:Hotend {0} Temperatur
+
+English:Hotend Temperature
+Translated:Varme temperaturen
 
 English:Hotend Temperature:
 Translated:Hotend Temperatur:
@@ -1483,14 +1459,14 @@ Translated:Innvendige perimetre
 English:Install Update
 Translated:Installer oppdatering
 
-English:Instructions
-Translated:Bruksanvisning
-
 English:Interface
 Translated:Interface
 
 English:Interface Layers
 Translated:Grensesnittlag
+
+English:Interface Tour
+Translated:Interface Tour
 
 English:Intersect
 Translated:Krysse
@@ -1621,6 +1597,9 @@ Translated:Laste
 English:Load filament
 Translated:Last filament
 
+English:Load Filament
+Translated:Last filament
+
 English:Load Filament Length
 Translated:Legg filamentlengde
 
@@ -1738,9 +1717,6 @@ Translated:MatterControl
 English:MatterControl is made possible by the team at MatterHackers and other open source software
 Translated:MatterControl er gjort mulig av teamet hos MatterHackers og annen åpen kildekode programvare
 
-English:MatterControl was unable to connect to the Internet. Please check your Wifi connection and try again
-Translated:MatterControl kunne ikke koble til Internett. Vennligst sjekk Wifi-tilkoblingen din og prøv igjen
-
 English:MatterControl will now attempt to auto-detect printer.
 Translated:MatterControl vil nå forsøke å auto-detektere skriveren.
 
@@ -1770,6 +1746,9 @@ Translated:Maksimal X-Y jerk [mm / s]
 
 English:Maximum Z jerk [mm/s]
 Translated:Maksimal Z jerk [mm / s]
+
+English:Measure the nozzle offset
+Translated:Mål dyseforskyvningen
 
 English:Medium Precision
 Translated:Middels presisjon
@@ -1903,8 +1882,17 @@ Translated:Beveger seg
 English:Moves the nozzle up and off the part to allow cooling.
 Translated:Flytter dysen opp og ut av delen for å tillate kjøling.
 
+English:My Modified Settings
+Translated:Mine endrede innstillinger
+
+English:My Modified Settings (Printer)
+Translated:Mine endrede innstillinger (Skriver)
+
 English:Name
 Translated:Navn
+
+English:Need to connect before printing
+Translated:Trenger å koble til før utskrift
 
 English:Networked Printing
 Translated:Nettverksutskrift
@@ -1938,6 +1926,9 @@ Translated:Ingen COM-porter tilgjengelig
 
 English:No macros are currently set up for this printer.
 Translated:Det er ikke konfigurert noen makroer for denne skriveren.
+
+English:No Printer Selected
+Translated:Ingen skriver valgt
 
 English:None
 Translated:Ingen
@@ -2077,6 +2068,9 @@ Translated:Åpne Nylig
 English:OpenSCAD not installed
 Translated:OpenSCAD ikke installert
 
+English:Optionally, click below to get help loading this material
+Translated:Du kan eventuelt klikke nedenfor for å få hjelp til å laste inn dette materialet
+
 English:Options
 Translated:alternativer
 
@@ -2155,6 +2149,9 @@ Translated:utkant
 English:Perimeters
 Translated:utkant
 
+English:Permission Denied
+Translated:Tillatelse avslått
+
 English:PID Settings
 Translated:PID-innstillinger
 
@@ -2181,6 +2178,12 @@ Translated:Vennligst bekreft
 
 English:Please select the material you want to load.
 Translated:Vennligst velg materialet du vil laste.
+
+English:Please select the material you want to unload.
+Translated:Vennligst velg materialet du vil laste ut.
+
+English:Please select the material you will be printing with.
+Translated:Vennligst velg det materialet du skal skrive ut med.
 
 English:Please sign in to continue.
 Translated:Vennligst logg inn for å fortsette.
@@ -2229,6 +2232,9 @@ Translated:Stilling
 
 English:Power Control
 Translated:Maktkontroll
+
+English:Preheat
+Translated:Forvarm
 
 English:Preparing To Print
 Translated:Forbereder å skrive ut
@@ -2307,9 +2313,6 @@ Translated:skrivere
 
 English:Printers to Copy
 Translated:Skrivere til kopiering
-
-English:Printers...
-Translated:Skrivere ...
 
 English:Printing
 Translated:Printing
@@ -2458,6 +2461,9 @@ Translated:Gi nytt navn
 English:Rename Item
 Translated:Endre navn på element
 
+English:Replacing
+Translated:Erstatte
+
 English:Report a Bug
 Translated:Rapporter en feil
 
@@ -2539,9 +2545,6 @@ Translated:Henter nedlastingsinfo ...
 English:Retrieving sync information...
 Translated:Henter synkroniseringsinformasjon ...
 
-English:Retry
-Translated:Prøv på nytt
-
 English:Retry Login
 Translated:Prøv på nytt
 
@@ -2587,9 +2590,6 @@ Translated:Kjør Max hvis nedenfor
 English:Run setup configuration for printer.
 Translated:Kjør konfigurasjonskonfigurasjon for skriver.
 
-English:Running Macro
-Translated:Kjører makro
-
 English:s
 Translated:s
 
@@ -2626,6 +2626,9 @@ Translated:Lagre til EEPROM
 English:Saving
 Translated:besparende
 
+English:Saving 
+Translated:besparende
+
 English:Saving Asset
 Translated:Lagre aktiva
 
@@ -2656,8 +2659,8 @@ Translated:Søkeresultater
 English:seconds
 Translated:sekunder
 
-English:See what's new in this version of MatterControl
-Translated:Se hva som er nytt i denne versjonen av MatterControl
+English:Select
+Translated:Å velge
 
 English:Select A Folder
 Translated:Velg en mappe
@@ -2668,8 +2671,14 @@ Translated:Velg en ny destinasjon
 English:Select a printer to continue
 Translated:Velg en skriver for å fortsette
 
+English:Select Filament Wizard
+Translated:Velg Filamentveiviser
+
 English:Select Make
 Translated:Velg Lag
+
+English:Select Material
+Translated:Velg materiale
 
 English:Select Model
 Translated:Velg Modell
@@ -2716,6 +2725,9 @@ Translated:Seriell port
 English:Serial port in use
 Translated:Seriell port i bruk
 
+English:Services
+Translated:tjenester
+
 English:Session Cleared
 Translated:Sesjonen slettet
 
@@ -2739,6 +2751,12 @@ Translated:Angir størrelsen på den ytre faste overflaten (perimeter) for hele 
 
 English:Settings
 Translated:innstillinger
+
+English:Setup Needs to be Run
+Translated:Oppsettet må kjøre
+
+English:Setup needs to be run before printing
+Translated:Oppsettet må kjøres før utskrift
 
 English:Setup Wizard
 Translated:Setup Wizard
@@ -2769,9 +2787,6 @@ Translated:Del med noen
 
 English:Shared with Me
 Translated:Delt med meg
-
-English:Should be 100%. Not shown to user.
-Translated:Bør være 100%. Ikke vist til brukeren.
 
 English:Show Controls
 Translated:Vis kontroller
@@ -3052,6 +3067,9 @@ Translated:Trekke fra
 English:Subtract & Replace
 Translated:Trekk og erstatt
 
+English:Success
+Translated:Suksess
+
 English:Success! Please check your email for the reset code.
 Translated:Suksess! Vennligst sjekk e-posten din for tilbakestillings-koden.
 
@@ -3060,6 +3078,12 @@ Translated:Suksess! Din konto har blitt laget.
 
 English:Success! Your password has been updated.
 Translated:Suksess! Ditt passord har blitt oppdatert.
+
+English:Success!\n\nYour filament should now be loaded
+Translated:Suksess!\n\nFilamentet ditt skal nå lastes
+
+English:Success!\n\nYour filament should now be unloaded
+Translated:Suksess!\n\nDin filament bør nå lastes ut
 
 English:Support
 Translated:Brukerstøtte
@@ -3120,6 +3144,9 @@ Translated:Temp lavere beløp
 
 English:temperature
 Translated:temperatur
+
+English:Temperature
+Translated:Temperatur
 
 English:Temperatures
 Translated:temperaturer
@@ -3244,8 +3271,8 @@ Translated:Indeksen til ekstruderen som skal brukes til grensesnittlag for støt
 English:The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.
 Translated:Indeksen til ekstruderen som skal brukes til å skrive ut flåten. Sett til 0 for å bruke støtte ekstruder-indeksen.
 
-English:The layer(s) at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
-Translated:Laget (ene) der utskriften vil stoppe, muliggjør forandring av filament. La være tom for å deaktivere. For å pause på flere lag, skiller lagstallene med semikolon. For eksempel: "16; 37".
+English:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
+Translated:Laget (ene) der utskriften vil stoppe, muliggjør forandring av filament. Skriveren er satt på pause før du starter det oppgitte laget. La være tom for å deaktivere. For å pause på flere lag, skiller lagstallene med semikolon. For eksempel: "16; 37".
 
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
 Translated:Lengden og bredden av et tårn opprettet på baksiden til venstre for utskriften som brukes til å tørke neste dyse når du skifter mellom flere ekstrudere. Sett til 0 for å deaktivere.
@@ -3290,7 +3317,7 @@ English:The minimum speed at which the layer cooling fan will run, expressed as 
 Translated:Minste hastighet som lagkjølerviften vil kjøre, uttrykt som prosent av full effekt.
 
 English:The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.
-Translated:Minimumshastigheten som skriveren vil redusere til for å forsøke å lage lagets utskriftstid lenge nok til å tilfredsstille minimums lagtid.
+Translated:Minimumshastigheten som skriveren vil redusere til for å forsøke å lage lagets utskriftstid lenge nok til å tilfredsstille minimumslagetiden.
 
 English:The next few screens will walk your through calibrating your printer.
 Translated:De neste par skjermbildene vil gå gjennom kalibrering av skriveren din.
@@ -3466,9 +3493,6 @@ Translated:Måltemperaturen ekstruderen vil forsøke å nå under utskriften.
 English:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
 Translated:Temperaturen ved hvilken ekstruderen vil tørke dysen, som spesifisert ved tilpasset G-kode.
 
-English:The temperature to set the bed to before printing the first layer. The printer will wait until this temperature has been reached before printing. Set to 0 to eliminate bed temperature commands.
-Translated:Temperaturen for å sette sengen til før du skriver ut det første laget. Skriveren venter til denne temperaturen er nådd før utskrift. Still inn på 0 for å eliminere sengetemperaturkommandoer.
-
 English:The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.
 Translated:Temperaturen som sengen vil bli satt inn for varigheten av utskriften. Sett til 0 for å deaktivere.
 
@@ -3640,12 +3664,6 @@ Translated:Trim filament
 English:Trim Filament Page
 Translated:Trim filament siden
 
-English:Troubleshoot
-Translated:Feilsøk
-
-English:Troubleshooting
-Translated:Feilsøking
-
 English:Try to connect mesh edges when the actual mesh data is not all the way connected.
 Translated:Prøv å koble til kantkanter når de faktiske maskerdataene ikke er helt tilkoblet.
 
@@ -3711,6 +3729,15 @@ Translated:Løs filamentlengden
 
 English:Unload Filament Time
 Translated:Løsne filamenttid
+
+English:Unload Filament Wizard
+Translated:Løs filamentveiviseren
+
+English:Unload Material
+Translated:Løs materialet
+
+English:Unloading Filament
+Translated:Løsning av filament
 
 English:Unlock
 Translated:Låse opp
@@ -3877,8 +3904,8 @@ Translated:Vi vil nå fullføre måling av ekstruderhøyden på denne posisjonen
 English:We will now refine our measurement of the extruder height at this position.
 Translated:Vi vil nå avgrense vår måling av ekstruderhøyden på denne posisjonen.
 
-English:We will use this paper to measure the distance between the extruder and the bed.
-Translated:Vi vil bruke dette papiret til å måle avstanden mellom ekstruderen og sengen.
+English:We will use this paper to measure the distance between the nozzle and the bed.
+Translated:Vi bruker dette papiret til å måle avstanden mellom dysen og sengen.
 
 English:Website
 Translated:nettsted
@@ -3894,9 +3921,6 @@ Translated:Velkommen til sondekalibreringsveiviseren. Her er en rask oversikt ov
 
 English:What was my password again?
 Translated:Hva var passordet mitt på nytt?
-
-English:What's New...
-Translated:Hva er nytt...
 
 English:What's this?
 Translated:Hva er dette?
@@ -3946,9 +3970,6 @@ Translated:XY Homing Position
 English:Yes
 Translated:Ja
 
-English:You are currently saving a parts sheet, are you sure you want to exit?
-Translated:Du lagrer for øyeblikket et delark, er du sikker på at du vil avslutte?
-
 English:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
 Translated:Du bytter til en annen miniatyr rendering modus. Hvis du vil, kan dine nåværende miniatyrer bli fjernet og gjenskapt i den nye stilen. Du kan bytte frem og tilbake når som helst. Det vil bli noen prosesseringskostnader mens de nye miniatyrbildene opprettes.\n\nVil du gjenoppbygge dine eksisterende miniatyrbilder nå?
 
@@ -3965,7 +3986,7 @@ English:You have successfully imported a new printer profile. You can find '{0}'
 Translated:Du har importert en ny skriverprofil. Du finner '{0}' i listen over tilgjengelige skrivere.
 
 English:You may need to wait a minute for your printer to finish initializing.
-Translated:Det kan hende du må vente et minutt for at skriveren skal fullføre initialiseringen.
+Translated:Du må kanskje vente et minutt for at skriveren skal fullføre initialiseringen.
 
 English:Your 3D print has been auto-paused.\n\nLayer{0} reached.
 Translated:Din 3D-utskrift er midlertidig stoppet.\n\nLayer {0} nådd.
