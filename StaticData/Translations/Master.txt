@@ -19,9 +19,6 @@ Translated:$/kg
 English:%
 Translated:%
 
-English:(Press 'Skip' to setup connection later)
-Translated:(Press 'Skip' to setup connection later)
-
 English:{0} (Update Available)
 Translated:{0} (Update Available)
 
@@ -46,17 +43,8 @@ Translated:°
 English:°C
 Translated:°C
 
-English:1. Power on your 3D Printer.
-Translated:1. Power on your 3D Printer.
-
-English:2. Attach your 3D Printer via USB.
-Translated:2. Attach your 3D Printer via USB.
-
 English:2D Layer View
 Translated:2D Layer View
-
-English:3. Press 'Connect'.
-Translated:3. Press 'Connect'.
 
 English:3D
 Translated:3D
@@ -75,6 +63,9 @@ Translated:A modifier of the width of the extrusion when printing outside perime
 
 English:A password reset code will be sent to your email.
 Translated:A password reset code will be sent to your email.
+
+English:A Quick Tour of MatterControl
+Translated:A Quick Tour of MatterControl
 
 English:A six-digit code - sent to your email account
 Translated:A six-digit code - sent to your email account
@@ -169,6 +160,12 @@ Translated:Align
 English:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
 Translated:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
 
+English:All G-Code lines mush be shorter than 100 characters (excluding comments).
+Translated:All G-Code lines mush be shorter than 100 characters (excluding comments).
+
+English:All Heaters
+Translated:All Heaters
+
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 
@@ -177,9 +174,6 @@ Translated:Alpha
 
 English:Alpha: The in development version of MatterControl
 Translated:Alpha: The in development version of MatterControl
-
-English:Already Loaded
-Translated:Already Loaded
 
 English:and ensure that no filament is stuck to your nozzle.
 Translated:and ensure that no filament is stuck to your nozzle.
@@ -202,9 +196,6 @@ Translated:Apply
 English:Apply leveling to G-Code during export
 Translated:Apply leveling to G-Code during export
 
-English:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
-Translated:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
-
 English:Are you sure you want to abort the current print and close MatterControl?
 Translated:Are you sure you want to abort the current print and close MatterControl?
 
@@ -213,6 +204,9 @@ Translated:Are you sure you want to add this part ({0}) to the Queue?\nThe 3D pa
 
 English:Are you sure you want to delete your currently selected printer?
 Translated:Are you sure you want to delete your currently selected printer?
+
+English:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
+Translated:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
 
 English:Are you sure you want to remove the currently selected items?
 Translated:Are you sure you want to remove the currently selected items?
@@ -282,9 +276,6 @@ Translated:Baud Rate
 
 English:Bed
 Translated:Bed
-
-English:Bed First Layer
-Translated:Bed First Layer
 
 English:Bed Leveling
 Translated:Bed Leveling
@@ -406,9 +397,6 @@ Translated:Can't log out while printing
 English:Can't sign in while printing
 Translated:Can't sign in while printing
 
-English:Can't switch printers while printing
-Translated:Can't switch printers while printing
-
 English:Change
 Translated:Change
 
@@ -466,9 +454,6 @@ Translated:Click 'Done' to close this window.
 English:Click 'Next' to continue.
 Translated:Click 'Next' to continue.
 
-English:Click the 'Connect' button to retry the original connection attempt
-Translated:Click the 'Connect' button to retry the original connection attempt
-
 English:Close
 Translated:Close
 
@@ -517,12 +502,6 @@ Translated:Configure Notifications
 English:Configure Printer
 Translated:Configure Printer
 
-English:Configure Wifi
-Translated:Configure Wifi
-
-English:Confirm Exit
-Translated:Confirm Exit
-
 English:Confirm your new password
 Translated:Confirm your new password
 
@@ -544,14 +523,8 @@ Translated:Connect Bad Edges
 English:Connect printer (make sure it is on)
 Translated:Connect printer (make sure it is on)
 
-English:Connect to Printer
-Translated:Connect to Printer
-
 English:Connect to the currently selected printer
 Translated:Connect to the currently selected printer
-
-English:Connect Your Device
-Translated:Connect Your Device
 
 English:Connect your printer to check for firmware updates.
 Translated:Connect your printer to check for firmware updates.
@@ -568,14 +541,8 @@ Translated:Connection Failed
 English:Connection Lost
 Translated:Connection Lost
 
-English:Connection Status
-Translated:Connection Status
-
 English:Connection succeeded
 Translated:Connection succeeded
-
-English:Connection Troubleshooting
-Translated:Connection Troubleshooting
 
 English:Continue
 Translated:Continue
@@ -637,6 +604,9 @@ Translated:count or mm
 English:Create
 Translated:Create
 
+English:Create a printer to export G-Code
+Translated:Create a printer to export G-Code
+
 English:Create Account
 Translated:Create Account
 
@@ -688,14 +658,8 @@ Translated:Creation Data
 English:Cube
 Translated:Cube
 
-English:Current bed temperature
-Translated:Current bed temperature
-
 English:Current Build
 Translated:Current Build
-
-English:Current extruder temperature
-Translated:Current extruder temperature
 
 English:Currently available serial ports.
 Translated:Currently available serial ports.
@@ -777,6 +741,9 @@ Translated:Diameter
 
 English:Disable Fan For The First
 Translated:Disable Fan For The First
+
+English:Disabled: {0}
+Translated:Disabled: {0}
 
 English:Disconnect
 Translated:Disconnect
@@ -1183,6 +1150,9 @@ Translated:Forgot Password
 English:Forums
 Translated:Forums
 
+English:Found a line that is {0} characters long.\n{1}...
+Translated:Found a line that is {0} characters long.\n{1}...
+
 English:g/cm³
 Translated:g/cm³
 
@@ -1198,11 +1168,11 @@ Translated:G-Code Flavor
 English:G-Code Output
 Translated:G-Code Output
 
-English:G-Code to be run after every tool change. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.
-Translated:G-Code to be run after every tool change. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.
+English:G-Code to be run after every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
+Translated:G-Code to be run after every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
 
-English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.
-Translated:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.
+English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
+Translated:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
 
 English:G-Code to be run after the change in Z height for the next layer.
 Translated:G-Code to be run after the change in Z height for the next layer.
@@ -1210,11 +1180,11 @@ Translated:G-Code to be run after the change in Z height for the next layer.
 English:G-Code to be run at the end of all automatic output (the very end of the G-Code commands).
 Translated:G-Code to be run at the end of all automatic output (the very end of the G-Code commands).
 
-English:G-Code to be run before every tool change. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.
-Translated:G-Code to be run before every tool change. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.
+English:G-Code to be run before every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z] to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
+Translated:G-Code to be run before every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z] to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
 
-English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.
-Translated:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] & [wipe_tower_y] to set the extruder position if needed.
+English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
+Translated:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
 
 English:G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.
 Translated:G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.
@@ -1324,9 +1294,6 @@ Translated:Height
 English:Help
 Translated:Help
 
-English:Hide Offsets
-Translated:Hide Offsets
-
 English:High Precision
 Translated:High Precision
 
@@ -1368,6 +1335,15 @@ Translated:Homing The Printer
 
 English:Hotend
 Translated:Hotend
+
+English:Hotend {0}
+Translated:Hotend {0}
+
+English:Hotend {0} Temperature
+Translated:Hotend {0} Temperature
+
+English:Hotend Temperature
+Translated:Hotend Temperature
 
 English:Hotend Temperature:
 Translated:Hotend Temperature:
@@ -1483,14 +1459,14 @@ Translated:Inside Perimeters
 English:Install Update
 Translated:Install Update
 
-English:Instructions
-Translated:Instructions
-
 English:Interface
 Translated:Interface
 
 English:Interface Layers
 Translated:Interface Layers
+
+English:Interface Tour
+Translated:Interface Tour
 
 English:Intersect
 Translated:Intersect
@@ -1621,6 +1597,9 @@ Translated:Load
 English:Load filament
 Translated:Load filament
 
+English:Load Filament
+Translated:Load Filament
+
 English:Load Filament Length
 Translated:Load Filament Length
 
@@ -1738,9 +1717,6 @@ Translated:MatterControl
 English:MatterControl is made possible by the team at MatterHackers and other open source software
 Translated:MatterControl is made possible by the team at MatterHackers and other open source software
 
-English:MatterControl was unable to connect to the Internet. Please check your Wifi connection and try again
-Translated:MatterControl was unable to connect to the Internet. Please check your Wifi connection and try again
-
 English:MatterControl will now attempt to auto-detect printer.
 Translated:MatterControl will now attempt to auto-detect printer.
 
@@ -1770,6 +1746,9 @@ Translated:Maximum X-Y jerk [mm/s]
 
 English:Maximum Z jerk [mm/s]
 Translated:Maximum Z jerk [mm/s]
+
+English:Measure the nozzle offset
+Translated:Measure the nozzle offset
 
 English:Medium Precision
 Translated:Medium Precision
@@ -1903,8 +1882,17 @@ Translated:Moves
 English:Moves the nozzle up and off the part to allow cooling.
 Translated:Moves the nozzle up and off the part to allow cooling.
 
+English:My Modified Settings
+Translated:My Modified Settings
+
+English:My Modified Settings (Printer)
+Translated:My Modified Settings (Printer)
+
 English:Name
 Translated:Name
+
+English:Need to connect before printing
+Translated:Need to connect before printing
 
 English:Networked Printing
 Translated:Networked Printing
@@ -1938,6 +1926,9 @@ Translated:No COM ports available
 
 English:No macros are currently set up for this printer.
 Translated:No macros are currently set up for this printer.
+
+English:No Printer Selected
+Translated:No Printer Selected
 
 English:None
 Translated:None
@@ -2077,6 +2068,9 @@ Translated:Open Recent
 English:OpenSCAD not installed
 Translated:OpenSCAD not installed
 
+English:Optionally, click below to get help loading this material
+Translated:Optionally, click below to get help loading this material
+
 English:Options
 Translated:Options
 
@@ -2155,6 +2149,9 @@ Translated:perimeters
 English:Perimeters
 Translated:Perimeters
 
+English:Permission Denied
+Translated:Permission Denied
+
 English:PID Settings
 Translated:PID Settings
 
@@ -2181,6 +2178,12 @@ Translated:Please Confirm
 
 English:Please select the material you want to load.
 Translated:Please select the material you want to load.
+
+English:Please select the material you want to unload.
+Translated:Please select the material you want to unload.
+
+English:Please select the material you will be printing with.
+Translated:Please select the material you will be printing with.
 
 English:Please sign in to continue.
 Translated:Please sign in to continue.
@@ -2229,6 +2232,9 @@ Translated:Position
 
 English:Power Control
 Translated:Power Control
+
+English:Preheat
+Translated:Preheat
 
 English:Preparing To Print
 Translated:Preparing To Print
@@ -2307,9 +2313,6 @@ Translated:Printers
 
 English:Printers to Copy
 Translated:Printers to Copy
-
-English:Printers...
-Translated:Printers...
 
 English:Printing
 Translated:Printing
@@ -2458,6 +2461,9 @@ Translated:Rename
 English:Rename Item
 Translated:Rename Item
 
+English:Replacing
+Translated:Replacing
+
 English:Report a Bug
 Translated:Report a Bug
 
@@ -2539,9 +2545,6 @@ Translated:Retrieving download info...
 English:Retrieving sync information...
 Translated:Retrieving sync information...
 
-English:Retry
-Translated:Retry
-
 English:Retry Login
 Translated:Retry Login
 
@@ -2587,9 +2590,6 @@ Translated:Run Max if Below
 English:Run setup configuration for printer.
 Translated:Run setup configuration for printer.
 
-English:Running Macro
-Translated:Running Macro
-
 English:s
 Translated:s
 
@@ -2626,6 +2626,9 @@ Translated:Save To EEPROM
 English:Saving
 Translated:Saving
 
+English:Saving 
+Translated:Saving 
+
 English:Saving Asset
 Translated:Saving Asset
 
@@ -2656,8 +2659,8 @@ Translated:Search Results
 English:seconds
 Translated:seconds
 
-English:See what's new in this version of MatterControl
-Translated:See what's new in this version of MatterControl
+English:Select
+Translated:Select
 
 English:Select A Folder
 Translated:Select A Folder
@@ -2668,8 +2671,14 @@ Translated:Select a new Destination
 English:Select a printer to continue
 Translated:Select a printer to continue
 
+English:Select Filament Wizard
+Translated:Select Filament Wizard
+
 English:Select Make
 Translated:Select Make
+
+English:Select Material
+Translated:Select Material
 
 English:Select Model
 Translated:Select Model
@@ -2716,6 +2725,9 @@ Translated:Serial Port
 English:Serial port in use
 Translated:Serial port in use
 
+English:Services
+Translated:Services
+
 English:Session Cleared
 Translated:Session Cleared
 
@@ -2739,6 +2751,12 @@ Translated:Sets the size of the outer solid surface (perimeter) for the entire p
 
 English:Settings
 Translated:Settings
+
+English:Setup Needs to be Run
+Translated:Setup Needs to be Run
+
+English:Setup needs to be run before printing
+Translated:Setup needs to be run before printing
 
 English:Setup Wizard
 Translated:Setup Wizard
@@ -2769,9 +2787,6 @@ Translated:Share with someone
 
 English:Shared with Me
 Translated:Shared with Me
-
-English:Should be 100%. Not shown to user.
-Translated:Should be 100%. Not shown to user.
 
 English:Show Controls
 Translated:Show Controls
@@ -3052,6 +3067,9 @@ Translated:Subtract
 English:Subtract & Replace
 Translated:Subtract & Replace
 
+English:Success
+Translated:Success
+
 English:Success! Please check your email for the reset code.
 Translated:Success! Please check your email for the reset code.
 
@@ -3060,6 +3078,12 @@ Translated:Success! Your account has been created.
 
 English:Success! Your password has been updated.
 Translated:Success! Your password has been updated.
+
+English:Success!\n\nYour filament should now be loaded
+Translated:Success!\n\nYour filament should now be loaded
+
+English:Success!\n\nYour filament should now be unloaded
+Translated:Success!\n\nYour filament should now be unloaded
 
 English:Support
 Translated:Support
@@ -3120,6 +3144,9 @@ Translated:Temp Lower Amount
 
 English:temperature
 Translated:temperature
+
+English:Temperature
+Translated:Temperature
 
 English:Temperatures
 Translated:Temperatures
@@ -3244,8 +3271,8 @@ Translated:The index of the extruder to use for support material interface layer
 English:The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.
 Translated:The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.
 
-English:The layer(s) at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
-Translated:The layer(s) at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
+English:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
+Translated:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
 
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
 Translated:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
@@ -3466,9 +3493,6 @@ Translated:The target temperature the extruder will attempt to reach during the 
 English:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
 Translated:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
 
-English:The temperature to set the bed to before printing the first layer. The printer will wait until this temperature has been reached before printing. Set to 0 to eliminate bed temperature commands.
-Translated:The temperature to set the bed to before printing the first layer. The printer will wait until this temperature has been reached before printing. Set to 0 to eliminate bed temperature commands.
-
 English:The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.
 Translated:The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.
 
@@ -3640,12 +3664,6 @@ Translated:Trim Filament
 English:Trim Filament Page
 Translated:Trim Filament Page
 
-English:Troubleshoot
-Translated:Troubleshoot
-
-English:Troubleshooting
-Translated:Troubleshooting
-
 English:Try to connect mesh edges when the actual mesh data is not all the way connected.
 Translated:Try to connect mesh edges when the actual mesh data is not all the way connected.
 
@@ -3711,6 +3729,15 @@ Translated:Unload Filament Length
 
 English:Unload Filament Time
 Translated:Unload Filament Time
+
+English:Unload Filament Wizard
+Translated:Unload Filament Wizard
+
+English:Unload Material
+Translated:Unload Material
+
+English:Unloading Filament
+Translated:Unloading Filament
 
 English:Unlock
 Translated:Unlock
@@ -3877,8 +3904,8 @@ Translated:We will now finalize our measurement of the extruder height at this p
 English:We will now refine our measurement of the extruder height at this position.
 Translated:We will now refine our measurement of the extruder height at this position.
 
-English:We will use this paper to measure the distance between the extruder and the bed.
-Translated:We will use this paper to measure the distance between the extruder and the bed.
+English:We will use this paper to measure the distance between the nozzle and the bed.
+Translated:We will use this paper to measure the distance between the nozzle and the bed.
 
 English:Website
 Translated:Website
@@ -3894,9 +3921,6 @@ Translated:Welcome to the probe calibration wizard. Here is a quick overview on 
 
 English:What was my password again?
 Translated:What was my password again?
-
-English:What's New...
-Translated:What's New...
 
 English:What's this?
 Translated:What's this?
@@ -3945,9 +3969,6 @@ Translated:XY Homing Position
 
 English:Yes
 Translated:Yes
-
-English:You are currently saving a parts sheet, are you sure you want to exit?
-Translated:You are currently saving a parts sheet, are you sure you want to exit?
 
 English:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
 Translated:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
