@@ -239,6 +239,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			itemsContentView.BeginReload();
 
+			var layoutLock = contentView.LayoutLock();
+
 			IEnumerable<ILibraryItem> containerItems = from item in sourceContainer.ChildContainers
 								 where item.IsVisible && this.ContainerFilter(item)
 									&& this.ContainsActiveFilter(item)
@@ -288,6 +290,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.ScrollPositionFromTop = Vector2.Zero;
 
 			this.ContentReloaded?.Invoke(this, null);
+
+			if (itemsContentView is GuiWidget guiWidget)
+			{
+				guiWidget.Invalidate();
+			}
+
+			layoutLock.Dispose();
+
+			contentView.PerformLayout();
 
 			return Task.CompletedTask;
 		}

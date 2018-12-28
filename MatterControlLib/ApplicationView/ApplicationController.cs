@@ -1964,6 +1964,8 @@ namespace MatterHackers.MatterControl
 						new ContentStoreConverter(),
 						new LibraryItemConverter());
 
+					var loadedPrinters = new HashSet<string>();
+
 					foreach (var persistedWorkspace in persistedWorkspaces)
 					{
 						// Load the actual workspace if content file exists
@@ -1976,8 +1978,19 @@ namespace MatterHackers.MatterControl
 							if (!string.IsNullOrEmpty(printerID)
 								&& ProfileManager.Instance[printerID] != null)
 							{
-								// Add workspace for printer
-								workspace = new PartWorkspace(await this.LoadPrinter(persistedWorkspace.PrinterID));
+								// Only create one workspace per printer
+								if (!loadedPrinters.Contains(printerID))
+								{
+									// Add workspace for printer
+									workspace = new PartWorkspace(await this.LoadPrinter(persistedWorkspace.PrinterID));
+
+									loadedPrinters.Add(printerID);
+								}
+								else
+								{
+									// Ignore additional workspaces for the same printer once one is loaded
+									continue;
+								}
 							}
 							else
 							{
