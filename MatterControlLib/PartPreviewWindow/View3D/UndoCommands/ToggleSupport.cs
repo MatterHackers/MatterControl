@@ -34,12 +34,12 @@ using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class MakeSupport : IUndoRedoCommand
+	public class ToggleSupport : IUndoRedoCommand
 	{
 		List<PrintOutputTypes> itemsPrintOutputType = new List<PrintOutputTypes>();
 		List<IObject3D> itemsToChange = new List<IObject3D>();
 
-		public MakeSupport(IObject3D selectedItem)
+		public ToggleSupport(IObject3D selectedItem)
 		{
 			if (selectedItem is SelectionGroupObject3D)
 			{
@@ -62,9 +62,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		void IUndoRedoCommand.Do()
 		{
-			foreach(var item in this.itemsToChange)
+			for (int i = 0; i < this.itemsToChange.Count; i++)
 			{
-				item.OutputType = PrintOutputTypes.Support;
+				if (itemsPrintOutputType[i] == PrintOutputTypes.Support)
+				{
+					itemsToChange[i].OutputType = PrintOutputTypes.Default;
+				}
+				else
+				{
+					itemsToChange[i].OutputType = PrintOutputTypes.Support;
+				}
 			}
 		}
 

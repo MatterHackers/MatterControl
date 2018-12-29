@@ -145,6 +145,10 @@ namespace MatterHackers.MatterControl.Library
 						};
 					})
 					{ DateCreated = new System.DateTime(index++) },
+				new GeneratorItem(
+					() => "Supports".Localize(),
+					() => SupportControls.Create())
+					{ DateCreated = new System.DateTime(index++) },
 			};
 
 			string title = "Primitive Shapes".Localize();
