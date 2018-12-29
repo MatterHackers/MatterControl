@@ -39,6 +39,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private IVertexSource tabShape = null;
 		private Stroke tabStroke;
 		private Color _tagColor;
+		private BorderDouble originalPadding;
 
 		/// <summary>
 		/// Constructs a new Popover with the given parameters
@@ -49,31 +50,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		/// <param name="p2">The arrow offset in x or y given the specified arrow</param>
 		public Popover(ArrowDirection arrow, BorderDouble padding, int notchSize, int p2, bool autoBorderColor = true)
 		{
-			BorderDouble adjustedPadding;
-
-			switch (arrow)
-			{
-				case Popover.ArrowDirection.Top:
-					adjustedPadding = padding.Clone(top: padding.Top + notchSize);
-					break;
-
-				case Popover.ArrowDirection.Bottom:
-					adjustedPadding = padding.Clone(bottom: padding.Bottom + notchSize);
-					break;
-
-				case Popover.ArrowDirection.Left:
-					adjustedPadding = padding.Clone(left: padding.Left + notchSize);
-					break;
-
-				default: // ArrowDirection.Right:
-					adjustedPadding = padding.Clone(right: padding.Right + notchSize);
-					break;
-			}
-
-			this.Arrow = arrow;
+			this.originalPadding = padding;
 			this.NotchSize = notchSize;
-			this.Padding = adjustedPadding;
-			this.P2 = p2;
+			this.Arrow = arrow;
+			this.ArrowOffset = p2;
 			this.autoBorderColor = autoBorderColor;
 		}
 
@@ -91,22 +71,54 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public ArrowDirection Arrow { get; }
+		public ArrowDirection Arrow
+		{
+			get => _arrow;
+			protected set
+			{
+				_arrow = value;
+
+				switch (_arrow)
+				{
+					case Popover.ArrowDirection.Top:
+						this.Padding = originalPadding.Clone(top: originalPadding.Top + this.NotchSize);
+						break;
+
+					case Popover.ArrowDirection.Bottom:
+						this.Padding = originalPadding.Clone(bottom: originalPadding.Bottom + this.NotchSize);
+						break;
+
+					case Popover.ArrowDirection.Left:
+						this.Padding = originalPadding.Clone(left: originalPadding.Left + this.NotchSize);
+						break;
+
+					default: // ArrowDirection.Right:
+						this.Padding = originalPadding.Clone(right: originalPadding.Right + this.NotchSize);
+						break;
+				}
+			}
+		}
 
 		public override void OnBoundsChanged(EventArgs e)
 		{
 			base.OnBoundsChanged(e);
 
-			tabShape = Popover.GetShape(this.Arrow, this.LocalBounds, this.NotchSize, this.P2);
+			this.RebuildShape();
+		}
+
+		protected void RebuildShape()
+		{
+			tabShape = Popover.GetShape(this.Arrow, this.LocalBounds, this.NotchSize, this.ArrowOffset);
 			tabStroke = new Stroke(tabShape);
 		}
 
 		/// <summary>
 		/// Notch offset. See https://photos.app.goo.gl/YdTiehf6ih7fSoDA9 for point diagram
 		/// </summary>
-		public int P2 { get; }
+		public int ArrowOffset { get; protected set; }
 
 		private bool autoBorderColor;
+		private ArrowDirection _arrow;
 
 		public int NotchSize { get; }
 
