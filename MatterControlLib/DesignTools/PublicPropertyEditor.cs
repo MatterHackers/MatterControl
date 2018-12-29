@@ -165,6 +165,13 @@ namespace MatterHackers.MatterControl.DesignTools
 						scope = column;
 					}
 
+					// Create SectionWidget for SectionStartAttributes
+					if (property.PropertyInfo.GetCustomAttributes(true).OfType<SectionEndAttribute>().Any())
+					{
+						// Push scope back to mainContainer on 
+						scope = mainContainer;
+					}
+
 					var editor = CreatePropertyEditor(property, undoBuffer, context, theme);
 					if (editor != null)
 					{
