@@ -150,42 +150,42 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		[ShowAsList]
-		[DisplayName("Anchor")]
+		[DisplayName("Primary")]
 		public SelectedChildren AnchorObjectSelector { get; set; } = new SelectedChildren();
 
 		public bool Advanced { get; set; } = false;
 
-		[DisplayName("X")]
+		[SectionStart("X Axis"), DisplayName("Align")]
 		[Icons(new string[] { "424.png", "align_left.png", "align_center_x.png", "align_right.png", "align_origin.png" })]
 		public Align XAlign { get; set; } = Align.None;
 
-		[DisplayName("Start X")]
+		[DisplayName("Anchor")]
 		[Icons(new string[] { "424.png", "align_to_left.png", "align_to_center_x.png", "align_to_right.png", "" })]
 		public Align XAlignTo { get; set; } = Align.None;
 
-		[DisplayName("Offset X")]
+		[DisplayName("Offset")]
 		public double XOffset { get; set; } = 0;
 
-		[DisplayName("Y")]
+		[SectionStart("Y Axis"), DisplayName("Align")]
 		[Icons(new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_Top.png", "align_origin.png" })]
 		public Align YAlign { get; set; } = Align.None;
 
-		[DisplayName("Start Y")]
+		[DisplayName("Anchor")]
 		[Icons(new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png", "" })]
 		public Align YAlignTo { get; set; } = Align.None;
 
-		[DisplayName("Offset Y")]
+		[DisplayName("Offset")]
 		public double YOffset { get; set; } = 0;
 
-		[DisplayName("Z")]
+		[SectionStart("Z Axis"), DisplayName("Align")]
 		[Icons(new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_Top.png", "align_origin.png" })]
 		public Align ZAlign { get; set; } = Align.None;
 
-		[DisplayName("Start Z")]
+		[DisplayName("Anchor")]
 		[Icons(new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png", "" })]
 		public Align ZAlignTo { get; set; } = Align.None;
 
-		[DisplayName("Offset Z")]
+		[DisplayName("Offset")]
 		public double ZOffset { get; set; } = 0;
 
 		public override bool CanFlatten => true;

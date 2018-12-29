@@ -43,9 +43,9 @@ namespace MatterHackers.MatterControl.DesignTools
 	/// </summary>
 	public class ImageContentProvider : ISceneContentProvider
 	{
-		public async Task<IObject3D> CreateItem(ILibraryItem item, Action<double, string> reporter)
+		public Task<IObject3D> CreateItem(ILibraryItem item, Action<double, string> reporter)
 		{
-			return await Task.Run(async () =>
+			return Task.Run<IObject3D>(async () =>
 			{
 				var imageBuffer = await this.LoadImage(item);
 				if (imageBuffer != null)
@@ -70,10 +70,8 @@ namespace MatterHackers.MatterControl.DesignTools
 						Name = "Image"
 					};
 				}
-				else
-				{
-					return null;
-				}
+
+				return null;
 			});
 		}
 
@@ -96,9 +94,23 @@ namespace MatterHackers.MatterControl.DesignTools
 			return null;
 		}
 
-		public async Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
+		public Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
 		{
-			return await LoadImage(item);
+			return Task.Run<ImageBuffer>(async () =>
+			{
+				var thumbnail = await LoadImage(item);
+				if (thumbnail != null)
+				{
+					thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, width, height);
+
+					// Cache library thumbnail
+					AggContext.ImageIO.SaveImageData(
+						ApplicationController.Instance.Thumbnails.CachePath(item, width, height),
+						thumbnail);
+				}
+
+				return thumbnail;
+			});
 		}
 
 		public ImageBuffer DefaultImage => AggContext.StaticData.LoadIcon("140.png", 16, 16);

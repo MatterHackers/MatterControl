@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -211,17 +212,17 @@ namespace MatterHackers.MatterControl.Library
 
 		public async Task LoadItemThumbnail(Action<ImageBuffer> thumbnailListener, Action<MeshContentProvider> buildThumbnail, ILibraryItem libraryItem, ILibraryContainer libraryContainer, int thumbWidth, int thumbHeight, ThemeConfig theme)
 		{
-			void setItemThumbnail(ImageBuffer icon)
+			async void setItemThumbnail(ImageBuffer icon)
 			{
 				if (icon != null)
 				{
-					icon = this.EnsureCorrectThumbnailSizing(icon, thumbWidth, thumbHeight);
+					icon = await Task.Run(() => this.EnsureCorrectThumbnailSizing(icon, thumbWidth, thumbHeight));
 					thumbnailListener?.Invoke(icon);
 				}
 			}
 
 			// Load from cache via LibraryID
-			var thumbnail = ApplicationController.Instance.Thumbnails.LoadCachedImage(libraryItem, thumbWidth, thumbHeight);
+			var thumbnail = await Task.Run(() => ApplicationController.Instance.Thumbnails.LoadCachedImage(libraryItem, thumbWidth, thumbHeight));
 			if (thumbnail != null)
 			{
 				setItemThumbnail(thumbnail);

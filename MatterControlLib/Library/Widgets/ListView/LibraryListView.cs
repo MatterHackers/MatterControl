@@ -239,55 +239,64 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			itemsContentView.BeginReload();
 
-			IEnumerable<ILibraryItem> containerItems = from item in sourceContainer.ChildContainers
-								 where item.IsVisible && this.ContainerFilter(item)
-									&& this.ContainsActiveFilter(item)
-								 select item;
-
-			// Folder items
-			foreach (var childContainer in this.SortItems(containerItems))
+			using (contentView.LayoutLock())
 			{
-				var listViewItem = new ListViewItem(childContainer, this.ActiveContainer, this);
-				listViewItem.DoubleClick += listViewItem_DoubleClick;
-				items.Add(listViewItem);
+				IEnumerable<ILibraryItem> containerItems = from item in sourceContainer.ChildContainers
+					where item.IsVisible && this.ContainerFilter(item)
+					                     && this.ContainsActiveFilter(item)
+					select item;
 
-				listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
-				listViewItem.ViewWidget.HasMenu = this.AllowContextMenu;
-				listViewItem.ViewWidget.Name = childContainer.Name + " Row Item Collection";
-			}
-
-			// List items
-			if (this.ShowItems)
-			{
-				var filteredResults = from item in sourceContainer.Items
-									  where item.IsVisible
-											&& (item.IsContentFileType() || item is MissingFileItem)
-											&& this.ItemFilter(item)
-											&& this.ContainsActiveFilter(item)
-									  select item;
-
-				foreach (var item in this.SortItems(filteredResults))
+				// Folder items
+				foreach (var childContainer in this.SortItems(containerItems))
 				{
-					var listViewItem = new ListViewItem(item, this.ActiveContainer, this);
+					var listViewItem = new ListViewItem(childContainer, this.ActiveContainer, this);
 					listViewItem.DoubleClick += listViewItem_DoubleClick;
 					items.Add(listViewItem);
 
 					listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
 					listViewItem.ViewWidget.HasMenu = this.AllowContextMenu;
-					listViewItem.ViewWidget.Name = "Row Item " + item.Name;
+					listViewItem.ViewWidget.Name = childContainer.Name + " Row Item Collection";
 				}
 
-				itemsContentView.EndReload();
+				// List items
+				if (this.ShowItems)
+				{
+					var filteredResults = from item in sourceContainer.Items
+						where item.IsVisible
+						      && (item.IsContentFileType() || item is MissingFileItem)
+						      && this.ItemFilter(item)
+						      && this.ContainsActiveFilter(item)
+						select item;
+
+					foreach (var item in this.SortItems(filteredResults))
+					{
+						var listViewItem = new ListViewItem(item, this.ActiveContainer, this);
+						listViewItem.DoubleClick += listViewItem_DoubleClick;
+						items.Add(listViewItem);
+
+						listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
+						listViewItem.ViewWidget.HasMenu = this.AllowContextMenu;
+						listViewItem.ViewWidget.Name = "Row Item " + item.Name;
+					}
+
+					itemsContentView.EndReload();
+				}
+
+				if (sourceContainer is ILibraryWritableContainer writableContainer)
+				{
+					writableContainer.ItemContentChanged += WritableContainer_ItemContentChanged;
+				}
+
+				this.ContentReloaded?.Invoke(this, null);
+
+				if (itemsContentView is GuiWidget guiWidget)
+				{
+					guiWidget.Invalidate();
+				}
 			}
 
-			if (sourceContainer is ILibraryWritableContainer writableContainer)
-			{
-				writableContainer.ItemContentChanged += WritableContainer_ItemContentChanged;
-			}
-
+			contentView.PerformLayout();
 			this.ScrollPositionFromTop = Vector2.Zero;
-
-			this.ContentReloaded?.Invoke(this, null);
 
 			return Task.CompletedTask;
 		}

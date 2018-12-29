@@ -27,12 +27,22 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-namespace MatterControlLib.SetupWizard
-{
-	public class TourSite
-	{
-		public string WidgetName { get; set; }
+using System;
 
-		public string Description { get; set; }
+namespace MatterHackers.MatterControl.DesignTools
+{
+	[AttributeUsage(AttributeTargets.Property)]
+	public class SectionStartAttribute : Attribute
+	{
+		public string Title { get; }
+
+		public SectionStartAttribute()
+		{
+		}
+
+		public SectionStartAttribute(string title)
+		{
+			this.Title = title;
+		}
 	}
 }

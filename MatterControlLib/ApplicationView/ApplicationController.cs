@@ -547,8 +547,6 @@ namespace MatterHackers.MatterControl
 
 		public MainViewWidget MainView;
 
-		private EventHandler unregisterEvents;
-
 		private Dictionary<string, List<LibraryAction>> registeredLibraryActions = new Dictionary<string, List<LibraryAction>>();
 
 		private List<SceneSelectionOperation> registeredSceneOperations;
@@ -645,7 +643,7 @@ namespace MatterHackers.MatterControl
 						align.AddSelectionAsChildren(scene, selectedItem);
 						align.Invalidate(new InvalidateArgs(align, InvalidateType.Properties, null));
 					},
-					Icon = AggContext.StaticData.LoadIcon("align_left.png", 16, 16, theme.InvertIcons).SetPreMultiply(),
+					Icon = AggContext.StaticData.LoadIcon("align_left_dark.png", 16, 16, theme.InvertIcons).SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
 				},
 				new SceneSelectionOperation()
@@ -665,14 +663,14 @@ namespace MatterHackers.MatterControl
 				},
 				new SceneSelectionOperation()
 				{
-					TitleResolver = () => "Make Support".Localize(),
+					TitleResolver = () => "Toggle Support".Localize(),
 					Action = (sceneContext) =>
 					{
 						var scene = sceneContext.Scene;
-						if (scene.SelectedItem != null
-							&& !scene.SelectedItem.VisibleMeshes().All(i => i.OutputType == PrintOutputTypes.Support))
+						var selectedItem = scene.SelectedItem;
+						if (selectedItem != null)
 						{
-							scene.UndoBuffer.AddAndDo(new MakeSupport(scene.SelectedItem));
+							scene.UndoBuffer.AddAndDo(new ToggleSupport(selectedItem));
 						}
 					},
 					Icon = AggContext.StaticData.LoadIcon("support.png").SetPreMultiply(),
@@ -849,7 +847,7 @@ namespace MatterHackers.MatterControl
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				TourOverlay.ShowSite(this.MainView.TopmostParent(), 0);
+				TourOverlay.ShowLocation(this.MainView.TopmostParent(), 0);
 			});
 		}
 
@@ -1964,6 +1962,8 @@ namespace MatterHackers.MatterControl
 						new ContentStoreConverter(),
 						new LibraryItemConverter());
 
+					var loadedPrinters = new HashSet<string>();
+
 					foreach (var persistedWorkspace in persistedWorkspaces)
 					{
 						// Load the actual workspace if content file exists
@@ -1976,8 +1976,19 @@ namespace MatterHackers.MatterControl
 							if (!string.IsNullOrEmpty(printerID)
 								&& ProfileManager.Instance[printerID] != null)
 							{
-								// Add workspace for printer
-								workspace = new PartWorkspace(await this.LoadPrinter(persistedWorkspace.PrinterID));
+								// Only create one workspace per printer
+								if (!loadedPrinters.Contains(printerID))
+								{
+									// Add workspace for printer
+									workspace = new PartWorkspace(await this.LoadPrinter(persistedWorkspace.PrinterID));
+
+									loadedPrinters.Add(printerID);
+								}
+								else
+								{
+									// Ignore additional workspaces for the same printer once one is loaded
+									continue;
+								}
 							}
 							else
 							{
@@ -2232,13 +2243,13 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		public bool AnyPrintTaskRunning => this.ActivePrinters.Any(p => p.Connection.PrinterIsPrinting || p.Connection.PrinterIsPaused);
 
-		private List<TourSite> _productTour;
+		private List<TourLocation> _productTour;
 
-		public async Task<List<TourSite>> LoadProductTour()
+		public async Task<List<TourLocation>> LoadProductTour()
 		{
 			if (_productTour == null)
 			{
-				_productTour = await ApplicationController.LoadCacheableAsync<List<TourSite>>(
+				_productTour = await ApplicationController.LoadCacheableAsync<List<TourLocation>>(
 					"ProductTour.json",
 					"MatterHackers",
 					async () =>
@@ -2246,7 +2257,7 @@ namespace MatterHackers.MatterControl
 						var httpClient = new HttpClient();
 						string json = await httpClient.GetStringAsync("https://matterhackers.github.io/MatterControl-Help/docs/product-tour.json");
 
-						return JsonConvert.DeserializeObject<List<TourSite>>(json);
+						return JsonConvert.DeserializeObject<List<TourLocation>>(json);
 
 					},
 					Path.Combine("OemSettings", "ProductTour.json"));
