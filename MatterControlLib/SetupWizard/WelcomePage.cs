@@ -98,7 +98,7 @@ Click 'Next' to continue the tour of the interface";
 
 				UiThread.RunOnIdle(() =>
 				{
-					TourOverlay.ShowSite(ApplicationController.Instance.MainView.TopmostParent(), 0);
+					TourOverlay.ShowLocation(ApplicationController.Instance.MainView.TopmostParent(), 0);
 				});
 			};
 

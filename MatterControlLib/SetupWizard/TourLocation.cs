@@ -29,7 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterControlLib.SetupWizard
 {
-	public class TourSite
+	public class TourLocation
 	{
 		public string WidgetName { get; set; }
 

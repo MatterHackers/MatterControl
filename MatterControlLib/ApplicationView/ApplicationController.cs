@@ -547,8 +547,6 @@ namespace MatterHackers.MatterControl
 
 		public MainViewWidget MainView;
 
-		private EventHandler unregisterEvents;
-
 		private Dictionary<string, List<LibraryAction>> registeredLibraryActions = new Dictionary<string, List<LibraryAction>>();
 
 		private List<SceneSelectionOperation> registeredSceneOperations;
@@ -665,14 +663,14 @@ namespace MatterHackers.MatterControl
 				},
 				new SceneSelectionOperation()
 				{
-					TitleResolver = () => "Make Support".Localize(),
+					TitleResolver = () => "Toggle Support".Localize(),
 					Action = (sceneContext) =>
 					{
 						var scene = sceneContext.Scene;
-						if (scene.SelectedItem != null
-							&& !scene.SelectedItem.VisibleMeshes().All(i => i.OutputType == PrintOutputTypes.Support))
+						var selectedItem = scene.SelectedItem;
+						if (selectedItem != null)
 						{
-							scene.UndoBuffer.AddAndDo(new MakeSupport(scene.SelectedItem));
+							scene.UndoBuffer.AddAndDo(new ToggleSupport(selectedItem));
 						}
 					},
 					Icon = AggContext.StaticData.LoadIcon("support.png").SetPreMultiply(),
@@ -849,7 +847,7 @@ namespace MatterHackers.MatterControl
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				TourOverlay.ShowSite(this.MainView.TopmostParent(), 0);
+				TourOverlay.ShowLocation(this.MainView.TopmostParent(), 0);
 			});
 		}
 
@@ -2245,13 +2243,13 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		public bool AnyPrintTaskRunning => this.ActivePrinters.Any(p => p.Connection.PrinterIsPrinting || p.Connection.PrinterIsPaused);
 
-		private List<TourSite> _productTour;
+		private List<TourLocation> _productTour;
 
-		public async Task<List<TourSite>> LoadProductTour()
+		public async Task<List<TourLocation>> LoadProductTour()
 		{
 			if (_productTour == null)
 			{
-				_productTour = await ApplicationController.LoadCacheableAsync<List<TourSite>>(
+				_productTour = await ApplicationController.LoadCacheableAsync<List<TourLocation>>(
 					"ProductTour.json",
 					"MatterHackers",
 					async () =>
@@ -2259,7 +2257,7 @@ namespace MatterHackers.MatterControl
 						var httpClient = new HttpClient();
 						string json = await httpClient.GetStringAsync("https://matterhackers.github.io/MatterControl-Help/docs/product-tour.json");
 
-						return JsonConvert.DeserializeObject<List<TourSite>>(json);
+						return JsonConvert.DeserializeObject<List<TourLocation>>(json);
 
 					},
 					Path.Combine("OemSettings", "ProductTour.json"));

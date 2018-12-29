@@ -45,15 +45,15 @@ namespace MatterControlLib.SetupWizard
 		private GuiWidget targetWidget;
 		private Popover popover;
 		private GuiWidget tourWindow;
-		private int nextSiteIndex;
+		private int nextLocationIndex;
 
 		private string description;
 		private ThemeConfig theme;
 
-		public TourOverlay(GuiWidget tourWindow, GuiWidget targetWidget, string description, ThemeConfig theme, int nextSiteIndex)
+		public TourOverlay(GuiWidget tourWindow, GuiWidget targetWidget, string description, ThemeConfig theme, int nextLocationIndex)
 		{
 			this.tourWindow = tourWindow;
-			this.nextSiteIndex = nextSiteIndex;
+			this.nextLocationIndex = nextLocationIndex;
 			this.theme = theme;
 			this.targetWidget = targetWidget;
 			this.description = description;
@@ -85,13 +85,13 @@ namespace MatterControlLib.SetupWizard
 
 			buttonRow.AddChild(new HorizontalSpacer());
 
-			if (nextSiteIndex > 0)
+			if (nextLocationIndex > 0)
 			{
 				var nextButton = theme.CreateDialogButton("Next".Localize());
 				nextButton.Click += (s, e) =>
 				{
 					this.Close();
-					ShowSite(tourWindow, nextSiteIndex);
+					ShowLocation(tourWindow, nextLocationIndex);
 				};
 				buttonRow.AddChild(nextButton);
 			}
@@ -207,7 +207,7 @@ namespace MatterControlLib.SetupWizard
 			{
 				var topWindow = this.TopmostParent();
 				this.Close();
-				ShowSite(topWindow, nextSiteIndex);
+				ShowLocation(topWindow, nextLocationIndex);
 			}
 
 			base.OnKeyDown(keyEvent);
@@ -244,21 +244,21 @@ namespace MatterControlLib.SetupWizard
 			return this.TransformFromScreenSpace(childBounds);
 		}
 
-		public static async void ShowSite(GuiWidget window, int siteIndex)
+		public static async void ShowLocation(GuiWidget window, int locationIndex)
 		{
-			var tourSites = await ApplicationController.Instance.LoadProductTour();
+			var tourLocations = await ApplicationController.Instance.LoadProductTour();
 			
-			if (siteIndex >= tourSites.Count)
+			if (locationIndex >= tourLocations.Count)
 			{
-				siteIndex -= tourSites.Count;
+				locationIndex -= tourLocations.Count;
 			}
 
-			GuiWidget GetSiteWidget(ref int findSiteIndex)
+			GuiWidget GetLocationWidget(ref int findLocationIndex)
 			{
-				while (findSiteIndex < tourSites.Count)
+				while (findLocationIndex < tourLocations.Count)
 				{
 					var foundChildren = new List<GuiWidget.WidgetAndPosition>();
-					window.FindNamedChildrenRecursive(tourSites[findSiteIndex].WidgetName, foundChildren);
+					window.FindNamedChildrenRecursive(tourLocations[findLocationIndex].WidgetName, foundChildren);
 
 					foreach (var widgetAndPosition in foundChildren)
 					{
@@ -268,17 +268,17 @@ namespace MatterControlLib.SetupWizard
 						}
 					}
 
-					findSiteIndex++;
+					findLocationIndex++;
 				}
 
 				return null;
 			}
 
-			GuiWidget targetWidget = GetSiteWidget(ref siteIndex);
+			GuiWidget targetWidget = GetLocationWidget(ref locationIndex);
 
 			if (targetWidget != null)
 			{
-				var tourOverlay = new TourOverlay(window, targetWidget, tourSites[siteIndex].Description, ApplicationController.Instance.Theme, siteIndex + 1);
+				var tourOverlay = new TourOverlay(window, targetWidget, tourLocations[locationIndex].Description, ApplicationController.Instance.Theme, locationIndex + 1);
 				window.AddChild(tourOverlay);
 			}
 		}
