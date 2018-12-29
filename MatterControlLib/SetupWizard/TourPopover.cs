@@ -81,10 +81,7 @@ namespace MatterControlLib.SetupWizard
 
 			column.AddChild(content);
 
-			var padding = new BorderDouble(theme.DefaultContainerPadding);
-
-			// Temporarily add the popover padding to the child content
-			content.Padding = padding.Clone(top: 0);
+			content.Padding = new BorderDouble(theme.DefaultContainerPadding).Clone(top: 0);
 
 			var totalWidth = this.Width + this.DeviceMarginAndBorder.Width;
 			var totalHeight = this.Height + this.DeviceMarginAndBorder.Height;
