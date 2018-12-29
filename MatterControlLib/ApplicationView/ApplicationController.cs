@@ -643,7 +643,7 @@ namespace MatterHackers.MatterControl
 						align.AddSelectionAsChildren(scene, selectedItem);
 						align.Invalidate(new InvalidateArgs(align, InvalidateType.Properties, null));
 					},
-					Icon = AggContext.StaticData.LoadIcon("align_left.png", 16, 16, theme.InvertIcons).SetPreMultiply(),
+					Icon = AggContext.StaticData.LoadIcon("align_left_dark.png", 16, 16, theme.InvertIcons).SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
 				},
 				new SceneSelectionOperation()
