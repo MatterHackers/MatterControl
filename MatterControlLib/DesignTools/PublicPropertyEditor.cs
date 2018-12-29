@@ -143,13 +143,32 @@ namespace MatterHackers.MatterControl.DesignTools
 				// CreateEditor
 				AddUnlockLinkIfRequired(context, mainContainer, theme);
 
+				GuiWidget scope = mainContainer;
+
 				// Create a field editor for each editable property detected via reflection
 				foreach (var property in GetEditablePropreties(context.item))
 				{
+					// Create SectionWidget for SectionStartAttributes
+					if (property.PropertyInfo.GetCustomAttributes(true).OfType<SectionStartAttribute>().FirstOrDefault() is SectionStartAttribute sectionStart)
+					{
+						var column = new FlowLayoutWidget()
+						{
+							FlowDirection = FlowDirection.TopToBottom,
+							Padding = new BorderDouble(theme.DefaultContainerPadding).Clone(top: 0)
+						};
+
+						var section = new SectionWidget(sectionStart.Title, column, theme);
+						theme.ApplyBoxStyle(section);
+
+						mainContainer.AddChild(section);
+
+						scope = column;
+					}
+
 					var editor = CreatePropertyEditor(property, undoBuffer, context, theme);
 					if (editor != null)
 					{
-						mainContainer.AddChild(editor);
+						scope.AddChild(editor);
 					}
 				}
 
