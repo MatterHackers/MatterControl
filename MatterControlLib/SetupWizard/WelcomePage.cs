@@ -44,20 +44,9 @@ namespace MatterHackers.MatterControl
 		{
 			this.WindowTitle = "MatterControl".Localize();
 
-			this.HeaderText = "A Quick Tour of MatterControl".Localize();
+			this.HeaderText = "Welcome to MatterControl".Localize();
 
-			var welcome = @"Thank you for installing MatterControl. We are excited to help bring your ideas to life. This new version includes hundreds of improvements and new features.
-
-Feature Overview:
-
-  • Simple Setup
-  • Automatic Leveling
-  • Built in 3D Design Tools
-  • Customizable Supports
-  • SMS / Email Notifications
-  • Enhanced 64 Bit support
-
-Click 'Next' to continue the tour of the interface";
+			var welcome = "Let's show you around before you get started.";
 
 			var textWidget = new WrappedTextWidget(welcome)
 			{

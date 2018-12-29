@@ -27,8 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -37,29 +35,143 @@ using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
+using System;
+using System.Collections.Generic;
 
 namespace MatterControlLib.SetupWizard
 {
 	public class TourOverlay : GuiWidget
 	{
-		private GuiWidget targetWidget;
-		private Popover popover;
-		private GuiWidget tourWindow;
-		private int nextLocationIndex;
-
 		private string description;
+		private int displayCount;
+		private int displayIndex;
+		private int nextLocationIndex;
+		private Popover popover;
+		private GuiWidget targetWidget;
 		private ThemeConfig theme;
+		private GuiWidget tourWindow;
 
-		public TourOverlay(GuiWidget tourWindow, GuiWidget targetWidget, string description, ThemeConfig theme, int nextLocationIndex)
+		public TourOverlay(GuiWidget tourWindow, GuiWidget targetWidget, string description, ThemeConfig theme, int nextLocationIndex, int displayIndex, int displayCount)
 		{
 			this.tourWindow = tourWindow;
 			this.nextLocationIndex = nextLocationIndex;
 			this.theme = theme;
 			this.targetWidget = targetWidget;
 			this.description = description;
+			this.displayIndex = displayIndex;
+			this.displayCount = displayCount;
 
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
+		}
+
+		public static async void ShowLocation(GuiWidget window, int locationIndex, int direction = 1)
+		{
+			var tourLocations = await ApplicationController.Instance.LoadProductTour();
+
+			if (locationIndex >= tourLocations.Count)
+			{
+				locationIndex -= tourLocations.Count;
+			}
+
+			// Find the widget on screen to show
+			GuiWidget GetLocationWidget(ref int findLocationIndex, out int displayIndex2, out int displayCount2)
+			{
+				displayIndex2 = 0;
+				displayCount2 = 0;
+
+				int checkLocation = 0;
+				GuiWidget tourLocationWidget = null;
+				while (checkLocation < tourLocations.Count)
+				{
+					var foundChildren = new List<GuiWidget.WidgetAndPosition>();
+					window.FindNamedChildrenRecursive(tourLocations[checkLocation].WidgetName, foundChildren);
+
+					GuiWidget foundLocation = null;
+					foreach (var widgetAndPosition in foundChildren)
+					{
+						if (widgetAndPosition.widget.ActuallyVisibleOnScreen())
+						{
+							foundLocation = widgetAndPosition.widget;
+							// we have found a target that is visible on screen, count it up
+							displayCount2++;
+							break;
+						}
+					}
+
+					checkLocation++;
+
+					// if we have not found the target yet
+					if (checkLocation >= findLocationIndex
+						&& tourLocationWidget == null)
+					{
+						tourLocationWidget = foundLocation;
+						// set the index to the count when we found the widget we want
+						displayIndex2 = displayCount2 - 1;
+						findLocationIndex = (checkLocation < tourLocations.Count) ? checkLocation : 0;
+					}
+				}
+
+				return tourLocationWidget;
+			}
+
+			int displayIndex;
+			int displayCount;
+			GuiWidget targetWidget = GetLocationWidget(ref locationIndex, out displayIndex, out displayCount);
+
+			if (targetWidget != null)
+			{
+				var tourOverlay = new TourOverlay(window,
+					targetWidget,
+					tourLocations[locationIndex].Description,
+					ApplicationController.Instance.Theme,
+					locationIndex + 1,
+					displayIndex,
+					displayCount);
+				window.AddChild(tourOverlay);
+			}
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			var dimRegion = new VertexStorage();
+			dimRegion.MoveTo(LocalBounds.Left, LocalBounds.Bottom);
+			dimRegion.LineTo(LocalBounds.Right, LocalBounds.Bottom);
+			dimRegion.LineTo(LocalBounds.Right, LocalBounds.Top);
+			dimRegion.LineTo(LocalBounds.Left, LocalBounds.Top);
+
+			var targetBounds = this.GetTargetBounds();
+
+			var targetRect = new VertexStorage();
+			targetRect.MoveTo(targetBounds.Right, targetBounds.Bottom);
+			targetRect.LineTo(targetBounds.Left, targetBounds.Bottom);
+			targetRect.LineTo(targetBounds.Left, targetBounds.Top);
+			targetRect.LineTo(targetBounds.Right, targetBounds.Top);
+
+			var overlayMinusTargetRect = new CombinePaths(dimRegion, targetRect);
+			graphics2D.Render(overlayMinusTargetRect, new Color(Color.Black, 180));
+
+			base.OnDraw(graphics2D);
+
+			graphics2D.Render(new Stroke(new RoundedRect(GetTargetBounds(), 0), 2), Color.White.WithAlpha(50));
+			//graphics2D.Render(new Stroke(new RoundedRect(GetContentBounds(), 3), 4), theme.PrimaryAccentColor);
+		}
+
+		public override void OnKeyDown(KeyEventArgs keyEvent)
+		{
+			if (keyEvent.KeyCode == Keys.Escape)
+			{
+				this.Close();
+			}
+
+			if (keyEvent.KeyCode == Keys.Enter)
+			{
+				var topWindow = this.TopmostParent();
+				this.Close();
+				ShowLocation(topWindow, nextLocationIndex);
+			}
+
+			base.OnKeyDown(keyEvent);
 		}
 
 		public override void OnLoad(EventArgs args)
@@ -83,18 +195,27 @@ namespace MatterControlLib.SetupWizard
 			};
 			column.AddChild(buttonRow);
 
+			var prevButton = theme.CreateDialogButton("Prev".Localize());
+			prevButton.Click += (s, e) =>
+			{
+				this.Close();
+				ShowLocation(tourWindow, nextLocationIndex, -1);
+			};
+			buttonRow.AddChild(prevButton);
+
 			buttonRow.AddChild(new HorizontalSpacer());
 
-			if (nextLocationIndex > 0)
+			buttonRow.AddChild(new TextWidget($"{displayIndex + 1} of {displayCount}", pointSize: theme.H1PointSize, textColor: theme.TextColor));
+
+			buttonRow.AddChild(new HorizontalSpacer());
+
+			var nextButton = theme.CreateDialogButton("Next".Localize());
+			nextButton.Click += (s, e) =>
 			{
-				var nextButton = theme.CreateDialogButton("Next".Localize());
-				nextButton.Click += (s, e) =>
-				{
-					this.Close();
-					ShowLocation(tourWindow, nextLocationIndex);
-				};
-				buttonRow.AddChild(nextButton);
-			}
+				this.Close();
+				ShowLocation(tourWindow, nextLocationIndex);
+			};
+			buttonRow.AddChild(nextButton);
 
 			var cancelButton = theme.CreateDialogButton("Done".Localize());
 			cancelButton.Click += (s, e) => this.Close();
@@ -115,7 +236,7 @@ namespace MatterControlLib.SetupWizard
 		{
 			int notchSize = 8;
 			var padding = new BorderDouble(theme.DefaultContainerPadding);
-			
+
 			// Temporarily add the popover padding to the child content
 			content.Padding = padding;
 
@@ -196,91 +317,10 @@ namespace MatterControlLib.SetupWizard
 			return popover;
 		}
 
-		public override void OnKeyDown(KeyEventArgs keyEvent)
-		{
-			if (keyEvent.KeyCode == Keys.Escape)
-			{
-				this.Close();
-			}
-
-			if (keyEvent.KeyCode == Keys.Enter)
-			{
-				var topWindow = this.TopmostParent();
-				this.Close();
-				ShowLocation(topWindow, nextLocationIndex);
-			}
-
-			base.OnKeyDown(keyEvent);
-		}
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			var dimRegion = new VertexStorage();
-			dimRegion.MoveTo(LocalBounds.Left, LocalBounds.Bottom);
-			dimRegion.LineTo(LocalBounds.Right, LocalBounds.Bottom);
-			dimRegion.LineTo(LocalBounds.Right, LocalBounds.Top);
-			dimRegion.LineTo(LocalBounds.Left, LocalBounds.Top);
-
-			var targetBounds = this.GetTargetBounds();
-
-			var targetRect = new VertexStorage();
-			targetRect.MoveTo(targetBounds.Right, targetBounds.Bottom);
-			targetRect.LineTo(targetBounds.Left, targetBounds.Bottom);
-			targetRect.LineTo(targetBounds.Left, targetBounds.Top);
-			targetRect.LineTo(targetBounds.Right, targetBounds.Top);
-
-			var overlayMinusTargetRect = new CombinePaths(dimRegion, targetRect);
-			graphics2D.Render(overlayMinusTargetRect, new Color(Color.Black, 180));
-
-			base.OnDraw(graphics2D);
-
-			graphics2D.Render(new Stroke(new RoundedRect(GetTargetBounds(), 0), 2), Color.White.WithAlpha(50));
-			//graphics2D.Render(new Stroke(new RoundedRect(GetContentBounds(), 3), 4), theme.PrimaryAccentColor);
-		}
-
 		private RectangleDouble GetTargetBounds()
 		{
 			var childBounds = targetWidget.TransformToScreenSpace(targetWidget.LocalBounds);
 			return this.TransformFromScreenSpace(childBounds);
-		}
-
-		public static async void ShowLocation(GuiWidget window, int locationIndex)
-		{
-			var tourLocations = await ApplicationController.Instance.LoadProductTour();
-			
-			if (locationIndex >= tourLocations.Count)
-			{
-				locationIndex -= tourLocations.Count;
-			}
-
-			GuiWidget GetLocationWidget(ref int findLocationIndex)
-			{
-				while (findLocationIndex < tourLocations.Count)
-				{
-					var foundChildren = new List<GuiWidget.WidgetAndPosition>();
-					window.FindNamedChildrenRecursive(tourLocations[findLocationIndex].WidgetName, foundChildren);
-
-					foreach (var widgetAndPosition in foundChildren)
-					{
-						if (widgetAndPosition.widget.ActuallyVisibleOnScreen())
-						{
-							return widgetAndPosition.widget;
-						}
-					}
-
-					findLocationIndex++;
-				}
-
-				return null;
-			}
-
-			GuiWidget targetWidget = GetLocationWidget(ref locationIndex);
-
-			if (targetWidget != null)
-			{
-				var tourOverlay = new TourOverlay(window, targetWidget, tourLocations[locationIndex].Description, ApplicationController.Instance.Theme, locationIndex + 1);
-				window.AddChild(tourOverlay);
-			}
 		}
 	}
 }
