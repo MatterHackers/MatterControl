@@ -62,9 +62,9 @@ namespace MatterControlLib.SetupWizard
 
 		public int Count { get; }
 
-		public int ActiveIndex { get; }
+		public int ActiveIndex { get; private set; }
 
-		public TourLocation ActiveItem { get; }
+		public TourLocation ActiveItem { get; private set; }
 
 		private static async void ShowLocation(GuiWidget window, ProductTour productTour, int locationIndex, int direction = 1)
 		{
@@ -121,6 +121,9 @@ namespace MatterControlLib.SetupWizard
 
 			if (targetWidget != null)
 			{
+				productTour.ActiveIndex = locationIndex;
+				productTour.ActiveItem = tourLocations[locationIndex];
+
 				var tourOverlay = new TourOverlay(
 					window,
 					productTour,
