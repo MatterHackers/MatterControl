@@ -36,7 +36,6 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.Localizations;
 	using MatterHackers.MatterControl.SlicerConfiguration;
-	using MatterHackers.MeshVisualizer;
 
 	public static class PrinterExtensionMethods
 	{
@@ -98,7 +97,9 @@ namespace MatterHackers.MatterControl
 		/// <returns></returns>
 		public static IEnumerable<IObject3D> PrintableItems(this PrinterConfig printer, IObject3D source)
 		{
-			return source.VisibleMeshes().Where(item => printer.InsideBuildVolume(item) && item.WorldPersistable());
+			return source.VisibleMeshes().Where(item => printer.InsideBuildVolume(item) 
+														&& item.WorldPersistable()
+														&& !item.GetType().GetCustomAttributes(typeof(NonPrintableAttribute), true).Any());
 		}
 
 		/// <summary>

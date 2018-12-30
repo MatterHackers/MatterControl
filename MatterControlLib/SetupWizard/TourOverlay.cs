@@ -217,104 +217,16 @@ namespace MatterControlLib.SetupWizard
 			};
 			buttonRow.AddChild(nextButton);
 
-			var cancelButton = theme.CreateDialogButton("Done".Localize());
-			cancelButton.Click += (s, e) => this.Close();
-			buttonRow.AddChild(cancelButton);
-
 			column.Size = new Vector2(250, column.Height);
 
-			popover = this.GetPopover(column);
-			popover.AddChild(column);
+			popover = new TourPopover(column, theme, targetWidget, this.GetTargetBounds());
+
+			//popover.AddChild(column);
 			this.AddChild(popover);
 
 			this.Focus();
 
 			base.OnLoad(args);
-		}
-
-		private Popover GetPopover(FlowLayoutWidget content)
-		{
-			int notchSize = 8;
-			var padding = new BorderDouble(theme.DefaultContainerPadding);
-
-			// Temporarily add the popover padding to the child content
-			content.Padding = padding;
-
-			// and last, set the size
-			var targetBounds = this.GetTargetBounds();
-
-			Vector2 contentPosition;
-			int arrowPosition;
-			Popover.ArrowDirection arrow;
-
-			if (targetBounds.Right >= this.Width - content.Width - 5)
-			{
-				var left = targetBounds.Right - content.Width;
-				if (targetBounds.Bottom < this.Height / 2)
-				{
-					if (targetBounds.Bottom - content.Size.Y < 0)
-					{
-						// position above target, arrow down aligned right center,
-						contentPosition = new Vector2(left, targetBounds.Top + 1);
-						arrowPosition = (int)(content.LocalBounds.Left + content.LocalBounds.Width - (targetWidget.Width / 2));
-						arrow = Popover.ArrowDirection.Bottom;
-					}
-					else
-					{
-						// position left of target, arrow right aligned top center
-						contentPosition = new Vector2(left - 1, targetBounds.Top - content.Size.Y);
-						arrowPosition = (int)(content.LocalBounds.Top - (targetWidget.Height / 2));
-						arrow = Popover.ArrowDirection.Right;
-					}
-				}
-				else
-				{
-					// position under target, arrow up aligned right center
-					contentPosition = new Vector2(left - content.DevicePadding.Width, targetBounds.Bottom - content.Size.Y - notchSize - 1);
-					arrowPosition = (int)(content.LocalBounds.Left + content.LocalBounds.Width + content.DevicePadding.Width - (targetWidget.Width / 2));
-					arrow = Popover.ArrowDirection.Top;
-				}
-			}
-			else
-			{
-				if (targetBounds.Bottom < this.Height / 2)
-				{
-					// position right of target, arrow left aligned top center (or top 20 if target larger than content)
-					contentPosition = new Vector2(targetBounds.Right + 1, targetBounds.Top - content.Size.Y);
-
-					if (targetWidget.Height > content.Height)
-					{
-						arrowPosition = (int)(content.LocalBounds.Top - 20);
-					}
-					else
-					{
-						arrowPosition = (int)(content.LocalBounds.Top - (targetWidget.Height / 2));
-					}
-
-					arrow = Popover.ArrowDirection.Left;
-				}
-				else
-				{
-					// position under target, arrow up aligned left center
-					contentPosition = new Vector2(targetBounds.Left, targetBounds.Bottom - content.Size.Y - notchSize - 1);
-					arrowPosition = (int)(content.LocalBounds.Left + (targetWidget.Width / 2));
-					arrow = Popover.ArrowDirection.Top;
-				}
-			}
-
-			// Remove the temporarily padding to the child content
-			content.Padding = 0;
-
-			var popover = new Popover(arrow, padding, notchSize, p2: arrowPosition)
-			{
-				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Fit,
-				TagColor = theme.ResolveColor(theme.BackgroundColor, theme.AccentMimimalOverlay.WithAlpha(50)),
-			};
-
-			popover.Position = contentPosition;
-
-			return popover;
 		}
 
 		private RectangleDouble GetTargetBounds()

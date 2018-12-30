@@ -303,8 +303,6 @@ namespace MatterHackers.MeshVisualizer
 			public Color Gray { get; set; }
 		}
 
-		public event EventHandler LoadDone;
-
 		public bool AllowBedRenderingWhenEmpty { get; set; }
 
 		public Color BuildVolumeColor { get; set; }
