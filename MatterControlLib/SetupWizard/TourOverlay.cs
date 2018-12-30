@@ -112,53 +112,7 @@ namespace MatterControlLib.SetupWizard
 
 		public override void OnLoad(EventArgs args)
 		{
-			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Absolute,
-				VAnchor = VAnchor.Fit,
-			};
-
-			column.AddChild(new WrappedTextWidget(description, textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
-			{
-				Margin = 5,
-				HAnchor = HAnchor.Stretch
-			});
-
-			var buttonRow = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				Margin = new BorderDouble(0, 0, 0, 5)
-			};
-			column.AddChild(buttonRow);
-
-			var prevButton = theme.CreateDialogButton("Prev".Localize());
-			prevButton.Click += (s, e) =>
-			{
-				this.Close();
-
-				productTour.ShowPrevious();
-			};
-			buttonRow.AddChild(prevButton);
-
-			buttonRow.AddChild(new HorizontalSpacer());
-
-			buttonRow.AddChild(new TextWidget($"{displayIndex + 1} of {displayCount}", pointSize: theme.H1PointSize, textColor: theme.TextColor));
-
-			buttonRow.AddChild(new HorizontalSpacer());
-
-			var nextButton = theme.CreateDialogButton("Next".Localize());
-			nextButton.Click += (s, e) =>
-			{
-				this.Close();
-				productTour.ShowNext();
-			};
-			buttonRow.AddChild(nextButton);
-
-			column.Size = new Vector2(250, column.Height);
-
-			popover = new TourPopover(column, theme, targetWidget, this.GetTargetBounds());
-
-			//popover.AddChild(column);
+			popover = new TourPopover(productTour, theme, targetWidget, this.GetTargetBounds());
 			this.AddChild(popover);
 
 			this.Focus();
