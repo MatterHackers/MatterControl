@@ -346,7 +346,7 @@ namespace MatterHackers.MatterControl
 			{
 				var namedChildren = new List<GuiWidget.WidgetAndPosition>();
 				inspectedSystemWindow.FindDescendants(
-					"",
+					new[] { "" },
 					namedChildren,
 					new RectangleDouble(mousePosition.X, mousePosition.Y, mousePosition.X + 1, mousePosition.Y + 1),
 					GuiWidget.SearchType.Partial,
