@@ -29,7 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg.UI;
 
-namespace MatterControlLib.SetupWizard
+namespace MatterHackers.MatterControl.Tour
 {
 	public class TourLocation
 	{

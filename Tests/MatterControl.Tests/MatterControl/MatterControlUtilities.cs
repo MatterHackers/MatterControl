@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.WaitforDraw(systemWindow);
 
 			// Latest product starts at empty part tab
-			
+
 			// close the welcome message
 			if (testRunner.NameExists("Cancel Wizard Button", 10))
 			{
@@ -379,7 +379,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			// Close the WelcomePage window if active
 			if (testRunner.GetWidgetByName("HeaderRow", out _) is GuiWidget headerRow
-				&& headerRow.Parents<DialogPage>().FirstOrDefault() is WelcomePage welcomePage
+				&& headerRow.Parents<DialogPage>().FirstOrDefault() is Tour.WelcomePage welcomePage
 				&& testRunner.NameExists("Cancel Wizard Button", 1))
 			{
 				testRunner.ClickByName("Cancel Wizard Button");
@@ -564,7 +564,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Configure ABS as selected material
 			//testRunner.ClickByName("Material DropDown List");
 			//testRunner.ClickByName("ABS Menu");
-			
+
 			// Currently material selection is not required, simply act of clicking 'Select' clears setup required
 			testRunner.ClickByName("Already Loaded Button");
 		}
@@ -797,7 +797,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				closeWindow: () =>
 				{
 					foreach(var printer in ApplicationController.Instance.ActivePrinters)
-					{ 
+					{
 						if (printer.Connection.CommunicationState == CommunicationStates.Printing)
 						{
 							printer.Connection.Disable();
@@ -898,7 +898,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.WaitForName("Advanced Section");
 			}
 
-			if (openAdvanced 
+			if (openAdvanced
 				&& !testRunner.NameExists("Layer(s) To Pause Field", .2))
 			{
 				testRunner.ClickByName("Advanced Section");

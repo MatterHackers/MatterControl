@@ -61,7 +61,6 @@ namespace MatterHackers.MatterControl
 	using Agg.Image;
 	using CustomWidgets;
 	using global::MatterControl.Printing;
-	using MatterControlLib.SetupWizard;
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.Agg.VertexSource;
 	using MatterHackers.DataConverters3D;
@@ -73,6 +72,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 	using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
+	using MatterHackers.MatterControl.Tour;
 	using MatterHackers.PolygonMesh;
 	using MatterHackers.PolygonMesh.Processors;
 	using MatterHackers.VectorMath;
@@ -3262,14 +3262,14 @@ If you experience adhesion problems, please re-run leveling."
 					try
 					{
 						ReportStartupProgress(0.15, "MatterControlApplication.Initialize");
-						
+
 						ApplicationController.LoadTranslationMap();
-						
+
 						var mainView = await Initialize(systemWindow, (progress0To1, status) =>
 						{
 							ReportStartupProgress(0.2 + progress0To1 * 0.7, status);
 						});
-						
+
 						ReportStartupProgress(0.9, "AddChild->MainView");
 						systemWindow.AddChild(mainView, 0);
 

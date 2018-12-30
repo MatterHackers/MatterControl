@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					DialogWindow.Show<WelcomePage>();
+					DialogWindow.Show<Tour.WelcomePage>();
 				});
 			};
 

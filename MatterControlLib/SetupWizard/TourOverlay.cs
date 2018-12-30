@@ -34,7 +34,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PartPreviewWindow;
 
-namespace MatterControlLib.SetupWizard
+namespace MatterHackers.MatterControl.Tour
 {
 	public class TourOverlay : GuiWidget
 	{

@@ -36,7 +36,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
 using System;
 
-namespace MatterControlLib.SetupWizard
+namespace MatterHackers.MatterControl.Tour
 {
 	public class TourPopover : Popover
 	{
@@ -103,8 +103,6 @@ namespace MatterControlLib.SetupWizard
 				{
 					if (targetBounds.Bottom - totalBounds.Height < 0)
 					{
-						Console.WriteLine("B1");
-
 						// Down arrow
 						this.Arrow = Popover.ArrowDirection.Bottom;
 
@@ -119,8 +117,6 @@ namespace MatterControlLib.SetupWizard
 					}
 					else
 					{
-						Console.WriteLine("B2");
-
 						// Right arrow
 						this.Arrow = Popover.ArrowDirection.Right;
 
@@ -136,8 +132,6 @@ namespace MatterControlLib.SetupWizard
 				}
 				else
 				{
-					Console.WriteLine("A2");
-
 					// Up arrow
 					this.Arrow = Popover.ArrowDirection.Top;
 
@@ -155,8 +149,6 @@ namespace MatterControlLib.SetupWizard
 			{
 				if (targetBounds.Bottom < totalBounds.Height)
 				{
-					Console.WriteLine("D1");
-
 					// Left arrow
 					this.Arrow = Popover.ArrowDirection.Left;
 
@@ -178,8 +170,6 @@ namespace MatterControlLib.SetupWizard
 				}
 				else
 				{
-					Console.WriteLine("D2");
-
 					this.Arrow = Popover.ArrowDirection.Top;
 
 					// Arrow centered on target in x, to the left
