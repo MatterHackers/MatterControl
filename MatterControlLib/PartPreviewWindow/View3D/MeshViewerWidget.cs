@@ -333,7 +333,7 @@ namespace MatterHackers.MeshVisualizer
 			base.OnClosed(e);
 		}
 
-		public override void FindNamedChildrenRecursive(string nameToSearchFor, List<WidgetAndPosition> foundChildren, RectangleDouble touchingBounds, SearchType seachType, bool allowInvalidItems = true)
+		public override List<WidgetAndPosition> FindDescendants(string nameToSearchFor, List<WidgetAndPosition> foundChildren, RectangleDouble touchingBounds, SearchType seachType, bool allowInvalidItems = true)
 		{
 			foreach (InteractionVolume child in interactionLayer.InteractionVolumes)
 			{
@@ -429,7 +429,7 @@ namespace MatterHackers.MeshVisualizer
 				}
 			}
 
-			base.FindNamedChildrenRecursive(nameToSearchFor, foundChildren, touchingBounds, seachType, allowInvalidItems);
+			return base.FindDescendants(nameToSearchFor, foundChildren, touchingBounds, seachType, allowInvalidItems);
 		}
 
 		public static Color GetExtruderColor(int extruderIndex)

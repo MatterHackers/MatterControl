@@ -84,8 +84,7 @@ namespace MatterControlLib.SetupWizard
 				GuiWidget tourLocationWidget = null;
 				while (checkLocation < tourLocations.Count)
 				{
-					var foundChildren = new List<GuiWidget.WidgetAndPosition>();
-					window.FindNamedChildrenRecursive(tourLocations[checkLocation].WidgetName, foundChildren);
+					var foundChildren = window.FindDescendants(tourLocations[checkLocation].WidgetName);
 
 					GuiWidget foundLocation = null;
 					foreach (var widgetAndPosition in foundChildren)
