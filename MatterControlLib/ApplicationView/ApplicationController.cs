@@ -845,10 +845,7 @@ namespace MatterHackers.MatterControl
 
 		public void ShowInterfaceTour()
 		{
-			UiThread.RunOnIdle(() =>
-			{
-				TourOverlay.ShowLocation(this.MainView.TopmostParent(), 0);
-			});
+			UiThread.RunOnIdle(ProductTour.StartTour);
 		}
 
 		public void ShowAboutPage()

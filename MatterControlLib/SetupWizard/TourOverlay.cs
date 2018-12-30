@@ -44,6 +44,7 @@ namespace MatterControlLib.SetupWizard
 	{
 		private string description;
 		private int displayCount;
+		private ProductTour productTour;
 		private int displayIndex;
 		private int nextLocationIndex;
 		private Popover popover;
@@ -51,7 +52,7 @@ namespace MatterControlLib.SetupWizard
 		private ThemeConfig theme;
 		private GuiWidget tourWindow;
 
-		public TourOverlay(GuiWidget tourWindow, GuiWidget targetWidget, string description, ThemeConfig theme, int nextLocationIndex, int displayIndex, int displayCount)
+		public TourOverlay(GuiWidget tourWindow, ProductTour productTour, GuiWidget targetWidget, string description, ThemeConfig theme, int nextLocationIndex, int displayIndex, int displayCount)
 		{
 			this.tourWindow = tourWindow;
 			this.nextLocationIndex = nextLocationIndex;
@@ -60,75 +61,10 @@ namespace MatterControlLib.SetupWizard
 			this.description = description;
 			this.displayIndex = displayIndex;
 			this.displayCount = displayCount;
+			this.productTour = productTour;
 
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
-		}
-
-		public static async void ShowLocation(GuiWidget window, int locationIndex, int direction = 1)
-		{
-			var tourLocations = await ApplicationController.Instance.LoadProductTour();
-
-			if (locationIndex >= tourLocations.Count)
-			{
-				locationIndex -= tourLocations.Count;
-			}
-
-			// Find the widget on screen to show
-			GuiWidget GetLocationWidget(ref int findLocationIndex, out int displayIndex2, out int displayCount2)
-			{
-				displayIndex2 = 0;
-				displayCount2 = 0;
-
-				int checkLocation = 0;
-				GuiWidget tourLocationWidget = null;
-				while (checkLocation < tourLocations.Count)
-				{
-					var foundChildren = window.FindDescendants(tourLocations[checkLocation].WidgetName);
-
-					GuiWidget foundLocation = null;
-					foreach (var widgetAndPosition in foundChildren)
-					{
-						if (widgetAndPosition.widget.ActuallyVisibleOnScreen())
-						{
-							foundLocation = widgetAndPosition.widget;
-							// we have found a target that is visible on screen, count it up
-							displayCount2++;
-							break;
-						}
-					}
-
-					checkLocation++;
-
-					// if we have not found the target yet
-					if (checkLocation >= findLocationIndex
-						&& tourLocationWidget == null)
-					{
-						tourLocationWidget = foundLocation;
-						// set the index to the count when we found the widget we want
-						displayIndex2 = displayCount2 - 1;
-						findLocationIndex = (checkLocation < tourLocations.Count) ? checkLocation : 0;
-					}
-				}
-
-				return tourLocationWidget;
-			}
-
-			int displayIndex;
-			int displayCount;
-			GuiWidget targetWidget = GetLocationWidget(ref locationIndex, out displayIndex, out displayCount);
-
-			if (targetWidget != null)
-			{
-				var tourOverlay = new TourOverlay(window,
-					targetWidget,
-					tourLocations[locationIndex].Description,
-					ApplicationController.Instance.Theme,
-					locationIndex + 1,
-					displayIndex,
-					displayCount);
-				window.AddChild(tourOverlay);
-			}
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -167,7 +103,8 @@ namespace MatterControlLib.SetupWizard
 			{
 				var topWindow = this.TopmostParent();
 				this.Close();
-				ShowLocation(topWindow, nextLocationIndex);
+
+				productTour.ShowNext();
 			}
 
 			base.OnKeyDown(keyEvent);
@@ -198,7 +135,8 @@ namespace MatterControlLib.SetupWizard
 			prevButton.Click += (s, e) =>
 			{
 				this.Close();
-				ShowLocation(tourWindow, nextLocationIndex, -1);
+
+				productTour.ShowPrevious();
 			};
 			buttonRow.AddChild(prevButton);
 
@@ -212,7 +150,7 @@ namespace MatterControlLib.SetupWizard
 			nextButton.Click += (s, e) =>
 			{
 				this.Close();
-				ShowLocation(tourWindow, nextLocationIndex);
+				productTour.ShowNext();
 			};
 			buttonRow.AddChild(nextButton);
 
