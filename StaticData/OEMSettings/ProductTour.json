@@ -1,58 +1,72 @@
 [
   {
+    "Title": "Open Files",
     "WidgetName": "Open File Button",
-    "Description": "Add parts from your hard drive to the bed."
+    "Description": "Add local parts from your hard drive to the bed."
   },
   {
+    "Title": "Primitive Shapes",
     "WidgetName": "LibraryView",
     "Description": "Drag primitives to the bed to create your own designs."
   },
   {
+    "Title": "Library",
     "WidgetName": "Add Content Menu",
-    "Description": "Browse your library to find parts you have previously designed.",
+    "Description": "Add content from MatterHackers and more"
   },
   {
+    "Title": "Print",
     "WidgetName": "Print Button",
     "Description": "Click here to start a print. This will also help you setup a printer if needed."
   },
   {
+    "Title": "Print",
     "WidgetName": "PrintPopupMenu",
     "Description": "Click here to start a print."
   },
   {
+    "Title": "Hotend Controls",
     "WidgetName": "Hotend 0",
     "Description": "Your printers hotend controls. Set your temperatures, materials and load & unload filament."
   },
   {
+    "Title": "Slice Settings",
     "WidgetName": "Slice Settings Sidebar",
-    "Description": "Have compete control of your printer with the ability to adjust individual print settings."
+    "Description": "Have complete control of your printer with the ability to adjust individual print settings."
   },
   {
+    "Title": "View Options",
     "WidgetName": "View Options Bar",
     "Description": "Reset the view, change viewing modes, hide and show the bed, and adjust the grid snap."
   },
   {
+    "Title": "Tumble Cube",
     "WidgetName": "Tumble Cube Control",
     "Description": "Adjust the position of your view. You can also snap to specific views by clicking the cube."
   },
   {
-    "WidgetName": "Make Support Button",
+    "Title": "Custom Supports",
+    "WidgetName": "Toggle Support Button",
     "Description": "Create custom supports. Turn any object on the bed into support material."
   },
   {
+    "Title": "Application Menu",
     "WidgetName": "MatterControl BrandMenuButton",
     "Description": "Here you can find application settings, help docs, updates and more."
   },
   {
+    "Title": "Sign In",
     "WidgetName": "Authentication Sign In",
     "Description": "Click here to sign into you MatterHackers account."
   },
   {
+    "Title": "Printer Setup",
     "WidgetName": "Create Printer",
     "Description": "Setup a printer for the first time. Dozens of profiles are available to give you optimized settings."
   },
   {
+    "Title": "Themes",
     "WidgetName": "Theme Select Button",
-    "Description": "Change your color theme anytime you want.",
+    "Description": "Change your color theme anytime you want."
   }
 ]

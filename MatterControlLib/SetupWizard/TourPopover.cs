@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.Tour
 			};
 			column.AddChild(row);
 
-			var title = new TextWidget("Title", pointSize: theme.DefaultFontSize, textColor: theme.PrimaryAccentColor)
+			var title = new TextWidget(productTour.ActiveItem.Title, pointSize: theme.DefaultFontSize, textColor: theme.PrimaryAccentColor)
 			{
 				HAnchor = HAnchor.Left,
 				Margin = new BorderDouble(top: 4, left: 4),
