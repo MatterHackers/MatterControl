@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.UI;
+
 namespace MatterControlLib.SetupWizard
 {
 	public class TourLocation
@@ -34,5 +36,6 @@ namespace MatterControlLib.SetupWizard
 		public string WidgetName { get; set; }
 
 		public string Description { get; set; }
+		public GuiWidget Widget { get; internal set; }
 	}
 }

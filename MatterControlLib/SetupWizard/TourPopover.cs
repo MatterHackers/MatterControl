@@ -42,13 +42,14 @@ namespace MatterControlLib.SetupWizard
 	{
 		private ThemeConfig theme;
 
-		public TourPopover(ProductTour productTour, ThemeConfig theme, GuiWidget targetWidget, RectangleDouble targetBounds)
-			// (arrow, 0 /* padding */, notchSize, p2: arrowPosition
+		public TourPopover(ProductTour productTour, ThemeConfig theme, RectangleDouble targetBounds)
 			: base(ArrowDirection.Left, 0, 7, 0)
 		{
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
 			this.theme = theme;
+
+			var targetWidget = productTour.ActiveItem.Widget;
 
 			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{

@@ -27,40 +27,27 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
-using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
 
 namespace MatterControlLib.SetupWizard
 {
 	public class TourOverlay : GuiWidget
 	{
-		private string description;
-		private int displayCount;
 		private ProductTour productTour;
-		private int displayIndex;
-		private int nextLocationIndex;
 		private Popover popover;
-		private GuiWidget targetWidget;
 		private ThemeConfig theme;
 		private GuiWidget tourWindow;
+		private RectangleDouble targetBounds;
 
-		public TourOverlay(GuiWidget tourWindow, ProductTour productTour, GuiWidget targetWidget, string description, ThemeConfig theme, int nextLocationIndex, int displayIndex, int displayCount)
+		public TourOverlay(SystemWindow tourWindow, ProductTour productTour, ThemeConfig theme)
 		{
 			this.tourWindow = tourWindow;
-			this.nextLocationIndex = nextLocationIndex;
 			this.theme = theme;
-			this.targetWidget = targetWidget;
-			this.description = description;
-			this.displayIndex = displayIndex;
-			this.displayCount = displayCount;
 			this.productTour = productTour;
 
 			this.HAnchor = HAnchor.Stretch;
@@ -69,13 +56,13 @@ namespace MatterControlLib.SetupWizard
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
+			targetBounds = this.GetTargetBounds(productTour.ActiveItem.Widget);
+
 			var dimRegion = new VertexStorage();
 			dimRegion.MoveTo(LocalBounds.Left, LocalBounds.Bottom);
 			dimRegion.LineTo(LocalBounds.Right, LocalBounds.Bottom);
 			dimRegion.LineTo(LocalBounds.Right, LocalBounds.Top);
 			dimRegion.LineTo(LocalBounds.Left, LocalBounds.Top);
-
-			var targetBounds = this.GetTargetBounds();
 
 			var targetRect = new VertexStorage();
 			targetRect.MoveTo(targetBounds.Right, targetBounds.Bottom);
@@ -88,7 +75,7 @@ namespace MatterControlLib.SetupWizard
 
 			base.OnDraw(graphics2D);
 
-			graphics2D.Render(new Stroke(new RoundedRect(GetTargetBounds(), 0), 2), Color.White.WithAlpha(50));
+			graphics2D.Render(new Stroke(new RoundedRect(targetBounds, 0), 2), Color.White.WithAlpha(50));
 			//graphics2D.Render(new Stroke(new RoundedRect(GetContentBounds(), 3), 4), theme.PrimaryAccentColor);
 		}
 
@@ -112,7 +99,7 @@ namespace MatterControlLib.SetupWizard
 
 		public override void OnLoad(EventArgs args)
 		{
-			popover = new TourPopover(productTour, theme, targetWidget, this.GetTargetBounds());
+			popover = new TourPopover(productTour, theme, this.GetTargetBounds(productTour.ActiveItem.Widget));
 			this.AddChild(popover);
 
 			this.Focus();
@@ -120,9 +107,9 @@ namespace MatterControlLib.SetupWizard
 			base.OnLoad(args);
 		}
 
-		private RectangleDouble GetTargetBounds()
+		private RectangleDouble GetTargetBounds(GuiWidget widget)
 		{
-			var childBounds = targetWidget.TransformToScreenSpace(targetWidget.LocalBounds);
+			var childBounds = widget.TransformToScreenSpace(widget.LocalBounds);
 			return this.TransformFromScreenSpace(childBounds);
 		}
 	}

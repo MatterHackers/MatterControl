@@ -27,6 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl;
 
@@ -34,107 +37,71 @@ namespace MatterControlLib.SetupWizard
 {
 	public class ProductTour
 	{
-		private SystemWindow topWindow;
-		private int nextLocationIndex = 0;
+		private List<TourLocation> tourLocations;
+		private SystemWindow systemWindow;
+		private ThemeConfig theme;
 
-		public ProductTour(SystemWindow topWindow)
+		public ProductTour(SystemWindow topWindow, List<TourLocation> tourLocations, ThemeConfig theme)
 		{
-			this.topWindow = topWindow;
+			this.tourLocations = tourLocations;
+			this.systemWindow = topWindow;
+			this.Count = tourLocations.Count;
+			this.theme = theme;
 		}
 
-		public static void StartTour()
+		public static async void StartTour()
 		{
-			var topWindow = ApplicationController.Instance.MainView.TopmostParent();
-			ShowLocation(topWindow, new ProductTour(topWindow as SystemWindow), 0);
+			var topWindow = ApplicationController.Instance.MainView.TopmostParent() as SystemWindow;
+
+			var tourLocations = await ApplicationController.Instance.LoadProductTour();
+
+			// Finding matching widgets by name
+			var visibleTourWidgets = topWindow.FindDescendants(tourLocations.Select(t => t.WidgetName));
+
+			// Filter to on-screen items
+			var visibleTourItems = tourLocations.Where(t =>
+			{
+				var widget = visibleTourWidgets.FirstOrDefault(w => w.name == t.WidgetName && w.widget.ActuallyVisibleOnScreen());
+
+				// Update widget reference on tour object
+				t.Widget = widget?.widget;
+
+				return widget != null;
+			});
+
+			var productTour = new ProductTour(topWindow, visibleTourItems.ToList(), ApplicationController.Instance.Theme);
+			productTour.ShowNext();
 		}
 
 		public void ShowNext()
 		{
-			nextLocationIndex += 1;
-			ShowLocation(topWindow, this, nextLocationIndex);
+			ShowLocation(this.ActiveIndex + 1);
 		}
 
 		public void ShowPrevious()
 		{
-			nextLocationIndex -= 1;
-			ShowLocation(topWindow, this, nextLocationIndex);
+			ShowLocation(this.ActiveIndex - 1);
 		}
 
 		public int Count { get; }
 
-		public int ActiveIndex { get; private set; }
+
+		public int ActiveIndex { get; private set; } = -1;
 
 		public TourLocation ActiveItem { get; private set; }
 
-		private static async void ShowLocation(GuiWidget window, ProductTour productTour, int locationIndex, int direction = 1)
+		private void ShowLocation(int locationIndex)
 		{
-			var tourLocations = await ApplicationController.Instance.LoadProductTour();
-
-			if (locationIndex >= tourLocations.Count)
+			if (locationIndex < 0 || locationIndex >= this.Count)
 			{
-				locationIndex -= tourLocations.Count;
+				locationIndex = 0;
 			}
 
-			// Find the widget on screen to show
-			GuiWidget GetLocationWidget(ref int findLocationIndex, out int displayIndex2, out int displayCount2)
-			{
-				displayIndex2 = 0;
-				displayCount2 = 0;
+			this.ActiveIndex = locationIndex;
+			this.ActiveItem = tourLocations[locationIndex];
 
-				int checkLocation = 0;
-				GuiWidget tourLocationWidget = null;
-				while (checkLocation < tourLocations.Count)
-				{
-					var foundChildren = window.FindDescendants(tourLocations[checkLocation].WidgetName);
-
-					GuiWidget foundLocation = null;
-					foreach (var widgetAndPosition in foundChildren)
-					{
-						if (widgetAndPosition.widget.ActuallyVisibleOnScreen())
-						{
-							foundLocation = widgetAndPosition.widget;
-							// we have found a target that is visible on screen, count it up
-							displayCount2++;
-							break;
-						}
-					}
-
-					checkLocation++;
-
-					// if we have not found the target yet
-					if (checkLocation >= findLocationIndex
-						&& tourLocationWidget == null)
-					{
-						tourLocationWidget = foundLocation;
-						// set the index to the count when we found the widget we want
-						displayIndex2 = displayCount2 - 1;
-						findLocationIndex = (checkLocation < tourLocations.Count) ? checkLocation : 0;
-					}
-				}
-
-				return tourLocationWidget;
-			}
-
-			int displayIndex;
-			int displayCount;
-			GuiWidget targetWidget = GetLocationWidget(ref locationIndex, out displayIndex, out displayCount);
-
-			if (targetWidget != null)
-			{
-				productTour.ActiveIndex = locationIndex;
-				productTour.ActiveItem = tourLocations[locationIndex];
-
-				var tourOverlay = new TourOverlay(
-					window,
-					productTour,
-					targetWidget,
-					tourLocations[locationIndex].Description,
-					ApplicationController.Instance.Theme,
-					locationIndex + 1,
-					displayIndex,
-					displayCount);
-				window.AddChild(tourOverlay);
-			}
+			var tourOverlay = new TourOverlay(systemWindow, this, theme);
+			systemWindow.AddChild(tourOverlay);
 		}
 	}
 }

@@ -84,7 +84,6 @@ namespace MatterHackers.MatterControl
 			nextButton.Click += (s, e) =>
 			{
 				this.DialogWindow.CloseOnIdle();
-
 				UiThread.RunOnIdle(ProductTour.StartTour);
 			};
 
