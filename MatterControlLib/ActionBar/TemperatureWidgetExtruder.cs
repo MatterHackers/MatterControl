@@ -352,7 +352,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				// Hide TextWidget
 				presetsSelector.Children.First().Visible = false;
 
-				var pulldownContainer = presetsSelector.FindNamedChildRecursive("Preset Pulldown Container");
+				var pulldownContainer = presetsSelector.FindDescendant("Preset Pulldown Container");
 				if (pulldownContainer != null)
 				{
 					pulldownContainer.Padding = menuTheme.ToolbarPadding;

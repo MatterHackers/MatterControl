@@ -333,7 +333,7 @@ namespace MatterHackers.MeshVisualizer
 			base.OnClosed(e);
 		}
 
-		public override void FindNamedChildrenRecursive(string nameToSearchFor, List<WidgetAndPosition> foundChildren, RectangleDouble touchingBounds, SearchType seachType, bool allowInvalidItems = true)
+		public override List<WidgetAndPosition> FindDescendants(IEnumerable<string> namesToSearchFor, List<WidgetAndPosition> foundChildren, RectangleDouble touchingBounds, SearchType seachType, bool allowInvalidItems = true)
 		{
 			foreach (InteractionVolume child in interactionLayer.InteractionVolumes)
 			{
@@ -341,19 +341,24 @@ namespace MatterHackers.MeshVisualizer
 
 				bool nameFound = false;
 
-				if (seachType == SearchType.Exact)
+				foreach (var nameToSearchFor in namesToSearchFor)
 				{
-					if (object3DName == nameToSearchFor)
+					if (seachType == SearchType.Exact)
 					{
-						nameFound = true;
+						if (object3DName == nameToSearchFor)
+						{
+							nameFound = true;
+							break;
+						}
 					}
-				}
-				else
-				{
-					if (nameToSearchFor == ""
-						|| object3DName.Contains(nameToSearchFor))
+					else
 					{
-						nameFound = true;
+						if (nameToSearchFor == ""
+							|| object3DName.Contains(nameToSearchFor))
+						{
+							nameFound = true;
+							break;
+						}
 					}
 				}
 
@@ -391,19 +396,24 @@ namespace MatterHackers.MeshVisualizer
 
 				bool nameFound = false;
 
-				if (seachType == SearchType.Exact)
+				foreach (var nameToSearchFor in namesToSearchFor)
 				{
-					if (object3DName == nameToSearchFor)
+					if (seachType == SearchType.Exact)
 					{
-						nameFound = true;
+						if (object3DName == nameToSearchFor)
+						{
+							nameFound = true;
+							break;
+						}
 					}
-				}
-				else
-				{
-					if (nameToSearchFor == ""
-						|| object3DName.Contains(nameToSearchFor))
+					else
 					{
-						nameFound = true;
+						if (nameToSearchFor == ""
+							|| object3DName.Contains(nameToSearchFor))
+						{
+							nameFound = true;
+							break;
+						}
 					}
 				}
 
@@ -429,7 +439,7 @@ namespace MatterHackers.MeshVisualizer
 				}
 			}
 
-			base.FindNamedChildrenRecursive(nameToSearchFor, foundChildren, touchingBounds, seachType, allowInvalidItems);
+			return base.FindDescendants(namesToSearchFor, foundChildren, touchingBounds, seachType, allowInvalidItems);
 		}
 
 		public static Color GetExtruderColor(int extruderIndex)

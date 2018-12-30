@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				modelViewSidePanel.Width = gcodeContainer.Width;
 			};
 
-			var splitContainer = view3DWidget.FindNamedChildRecursive("SplitContainer");
+			var splitContainer = view3DWidget.FindDescendant("SplitContainer");
 
 			splitContainer.AddChild(gcodeContainer);
 

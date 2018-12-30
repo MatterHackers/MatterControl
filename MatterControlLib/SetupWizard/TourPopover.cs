@@ -29,21 +29,27 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
 using System;
 
-namespace MatterControlLib.SetupWizard
+namespace MatterHackers.MatterControl.Tour
 {
 	public class TourPopover : Popover
 	{
-		public TourPopover(FlowLayoutWidget content, ThemeConfig theme, GuiWidget targetWidget, RectangleDouble targetBounds)
-			// (arrow, 0 /* padding */, notchSize, p2: arrowPosition
+		private ThemeConfig theme;
+
+		public TourPopover(ProductTour productTour, ThemeConfig theme, RectangleDouble targetBounds)
 			: base(ArrowDirection.Left, 0, 7, 0)
 		{
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
+			this.theme = theme;
+
+			var targetWidget = productTour.ActiveItem.Widget;
 
 			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -79,9 +85,9 @@ namespace MatterControlLib.SetupWizard
 
 			row.AddChild(closeButton);
 
-			column.AddChild(content);
-
-			content.Padding = new BorderDouble(theme.DefaultContainerPadding).Clone(top: 0);
+			var body = this.CreateBodyWidget(productTour);
+			body.Padding = new BorderDouble(theme.DefaultContainerPadding).Clone(top: 0);
+			column.AddChild(body);
 
 			var totalWidth = this.Width + this.DeviceMarginAndBorder.Width;
 			var totalHeight = this.Height + this.DeviceMarginAndBorder.Height;
@@ -97,8 +103,6 @@ namespace MatterControlLib.SetupWizard
 				{
 					if (targetBounds.Bottom - totalBounds.Height < 0)
 					{
-						Console.WriteLine("B1");
-
 						// Down arrow
 						this.Arrow = Popover.ArrowDirection.Bottom;
 
@@ -108,13 +112,11 @@ namespace MatterControlLib.SetupWizard
 
 						// Popover positioned above target, aligned right
 						this.Position = new Vector2(
-							this.LeftForAlignTargetRight(targetBounds.Right, totalBounds), 
+							this.LeftForAlignTargetRight(targetBounds.Right, totalBounds),
 							targetBounds.Top + 1);
 					}
 					else
 					{
-						Console.WriteLine("B2");
-
 						// Right arrow
 						this.Arrow = Popover.ArrowDirection.Right;
 
@@ -124,14 +126,12 @@ namespace MatterControlLib.SetupWizard
 
 						// Popover positioned left of target, aligned top
 						this.Position = new Vector2(
-							this.LeftForAlignTargetRight(targetBounds.Right, totalBounds), 
+							this.LeftForAlignTargetRight(targetBounds.Right, totalBounds),
 							targetBounds.Top - totalBounds.Height);
 					}
 				}
 				else
 				{
-					Console.WriteLine("A2");
-
 					// Up arrow
 					this.Arrow = Popover.ArrowDirection.Top;
 
@@ -141,7 +141,7 @@ namespace MatterControlLib.SetupWizard
 
 					// Popover positioned below target, aligned right
 					this.Position = new Vector2(
-						this.LeftForAlignTargetRight(targetBounds.Right, totalBounds), 
+						this.LeftForAlignTargetRight(targetBounds.Right, totalBounds),
 						targetBounds.Bottom - totalBounds.Height - 1);
 				}
 			}
@@ -149,8 +149,6 @@ namespace MatterControlLib.SetupWizard
 			{
 				if (targetBounds.Bottom < totalBounds.Height)
 				{
-					Console.WriteLine("D1");
-
 					// Left arrow
 					this.Arrow = Popover.ArrowDirection.Left;
 
@@ -167,22 +165,20 @@ namespace MatterControlLib.SetupWizard
 
 					// Popover positioned right of target, aligned top
 					this.Position = new Vector2(
-						targetBounds.Right + 1, 
+						targetBounds.Right + 1,
 						targetBounds.Top - totalBounds.Height);
 				}
 				else
 				{
-					Console.WriteLine("D2");
-
 					this.Arrow = Popover.ArrowDirection.Top;
 
 					// Arrow centered on target in x, to the left
 					totalBounds = this.GetTotalBounds();
-					this.ArrowOffset = (int)(content.LocalBounds.Left + targetCenterX);
+					this.ArrowOffset = (int) targetCenterX;
 
 					// Popover positioned below target, aligned left
 					this.Position = new Vector2(
-						targetBounds.Left, 
+						targetBounds.Left,
 						targetBounds.Bottom - totalBounds.Height - 1);
 				}
 			}
@@ -190,6 +186,61 @@ namespace MatterControlLib.SetupWizard
 			this.TagColor = theme.ResolveColor(theme.BackgroundColor, theme.AccentMimimalOverlay.WithAlpha(50));
 
 			this.RebuildShape();
+		}
+
+		private GuiWidget CreateBodyWidget(ProductTour productTour)
+		{
+			var body = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Fit,
+			};
+
+			body.AddChild(new WrappedTextWidget(productTour.ActiveItem.Description, textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
+			{
+				Margin = 5,
+				HAnchor = HAnchor.Stretch
+			});
+
+			var buttonRow = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(10, 0, 10, 5)
+			};
+			body.AddChild(buttonRow);
+
+			var prevButton = new LinkLabel("Prev".Localize(), theme, pointSize: theme.DefaultFontSize - 2)
+			{
+				TextColor = theme.TextColor
+			};
+			prevButton.Click += (s, e) =>
+			{
+				this.Parent.Close();
+				productTour.ShowPrevious();
+			};
+			buttonRow.AddChild(prevButton);
+
+			buttonRow.AddChild(new HorizontalSpacer());
+
+			buttonRow.AddChild(new CarouselIndicators(productTour, theme));
+
+			buttonRow.AddChild(new HorizontalSpacer());
+
+			var nextButton = new LinkLabel("Next".Localize(), theme, pointSize: theme.DefaultFontSize - 2)
+			{
+				TextColor = theme.TextColor
+			};
+			nextButton.Click += (s, e) =>
+			{
+				this.Parent.Close();
+
+				productTour.ShowNext();
+			};
+			buttonRow.AddChild(nextButton);
+
+			body.Size = new Vector2(250, body.Height);
+
+			return body;
 		}
 
 		private double LeftForAlignTargetRight(double targetRight, RectangleDouble totalBounds)
