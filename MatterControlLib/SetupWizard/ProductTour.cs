@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.Linq;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.Tour
@@ -38,6 +39,7 @@ namespace MatterHackers.MatterControl.Tour
 		private List<TourLocation> tourLocations;
 		private SystemWindow systemWindow;
 		private ThemeConfig theme;
+		private int _activeIndex = -1;
 
 		public ProductTour(SystemWindow topWindow, List<TourLocation> tourLocations, ThemeConfig theme)
 		{
@@ -46,6 +48,8 @@ namespace MatterHackers.MatterControl.Tour
 			this.Count = tourLocations.Count;
 			this.theme = theme;
 		}
+
+		public IReadOnlyList<TourLocation> Locations => tourLocations;
 
 		public static async void StartTour()
 		{
@@ -84,7 +88,21 @@ namespace MatterHackers.MatterControl.Tour
 		public int Count { get; }
 
 
-		public int ActiveIndex { get; private set; } = -1;
+		public int ActiveIndex
+		{
+			get =>_activeIndex;
+			set
+			{
+				if (_activeIndex != value)
+				{
+					_activeIndex = value;
+					this.ActiveItem = tourLocations[_activeIndex];
+
+					var tourOverlay = new TourOverlay(systemWindow, this, theme);
+					systemWindow.AddChild(tourOverlay);
+				}
+			}
+		}
 
 		public TourLocation ActiveItem { get; private set; }
 
@@ -96,10 +114,6 @@ namespace MatterHackers.MatterControl.Tour
 			}
 
 			this.ActiveIndex = locationIndex;
-			this.ActiveItem = tourLocations[locationIndex];
-
-			var tourOverlay = new TourOverlay(systemWindow, this, theme);
-			systemWindow.AddChild(tourOverlay);
 		}
 	}
 }

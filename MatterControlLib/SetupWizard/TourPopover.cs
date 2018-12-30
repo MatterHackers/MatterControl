@@ -205,11 +205,14 @@ namespace MatterHackers.MatterControl.Tour
 			var buttonRow = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch,
-				Margin = new BorderDouble(0, 0, 0, 5)
+				Margin = new BorderDouble(10, 0, 10, 5)
 			};
 			body.AddChild(buttonRow);
 
-			var prevButton = theme.CreateDialogButton("Prev".Localize());
+			var prevButton = new LinkLabel("Prev".Localize(), theme, pointSize: theme.DefaultFontSize - 2)
+			{
+				TextColor = theme.TextColor
+			};
 			prevButton.Click += (s, e) =>
 			{
 				this.Parent.Close();
@@ -219,11 +222,14 @@ namespace MatterHackers.MatterControl.Tour
 
 			buttonRow.AddChild(new HorizontalSpacer());
 
-			buttonRow.AddChild(new TextWidget($"{productTour.ActiveIndex + 1} of {productTour.Count}", pointSize: theme.H1PointSize, textColor: theme.TextColor));
+			buttonRow.AddChild(new CarouselIndicators(productTour, theme));
 
 			buttonRow.AddChild(new HorizontalSpacer());
 
-			var nextButton = theme.CreateDialogButton("Next".Localize());
+			var nextButton = new LinkLabel("Next".Localize(), theme, pointSize: theme.DefaultFontSize - 2)
+			{
+				TextColor = theme.TextColor
+			};
 			nextButton.Click += (s, e) =>
 			{
 				this.Parent.Close();
