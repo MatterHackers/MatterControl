@@ -661,21 +661,6 @@ namespace MatterHackers.MatterControl
 					IsEnabled = (scene) => scene.SelectedItem != null,
 					Icon = AggContext.StaticData.LoadIcon("lay_flat.png", 16, 16).SetPreMultiply(),
 				},
-				new SceneSelectionOperation()
-				{
-					TitleResolver = () => "Toggle Support".Localize(),
-					Action = (sceneContext) =>
-					{
-						var scene = sceneContext.Scene;
-						var selectedItem = scene.SelectedItem;
-						if (selectedItem != null)
-						{
-							scene.UndoBuffer.AddAndDo(new ToggleSupport(selectedItem));
-						}
-					},
-					Icon = AggContext.StaticData.LoadIcon("support.png").SetPreMultiply(),
-					IsEnabled = (scene) => scene.SelectedItem != null,
-				},
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
 				{
@@ -683,7 +668,11 @@ namespace MatterHackers.MatterControl
 					TitleResolver = () => "Combine".Localize(),
 					Action = (sceneContext) => new CombineObject3D().WrapSelectedItemAndSelect(sceneContext.Scene),
 					Icon = AggContext.StaticData.LoadIcon("combine.png").SetPreMultiply(),
-					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
+					IsEnabled = (scene) =>
+					{
+						var selectedItem = scene.SelectedItem;
+						return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
+					},
 				},
 				new SceneSelectionOperation()
 				{

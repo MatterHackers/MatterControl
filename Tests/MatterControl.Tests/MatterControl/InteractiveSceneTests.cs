@@ -46,7 +46,7 @@ namespace MatterControl.Tests.MatterControl
 	public class InteractiveSceneTests
 	{
 		[Test, Category("InteractiveScene")]
-		public void FlattenAsExpectedForBooleanOperations()
+		public void CombineTests()
 		{
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
@@ -200,7 +200,40 @@ namespace MatterControl.Tests.MatterControl
 					20, 10, 10).Equals(aabb, .001));
 			}
 
-			// Subtract has correct number of results
+			// test single object combine
+			{
+				var root = new Object3D();
+				var cubeA = new CubeObject3D(20, 20, 20);
+				var cubeB = new CubeObject3D(20, 20, 20);
+				var offsetCubeB = new TranslateObject3D(cubeB, 10);
+
+				var group = new Object3D();
+				group.Children.Add(cubeA);
+				group.Children.Add(offsetCubeB);
+
+				var union = new CombineObject3D();
+				union.Children.Add(group);
+
+				root.Children.Add(union);
+
+				union.Combine();
+				Assert.AreEqual(8, root.Descendants().Count(), "group, union, wa, a, wtb, tb, b");
+
+				union.Flatten(null);
+				Assert.AreEqual(1, root.Descendants().Count(), "Should have the union result");
+
+				Assert.AreEqual(1, root.Children.Count());
+				var rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.IsTrue(new AxisAlignedBoundingBox(
+					-10, -10, -10,
+					20, 10, 10).Equals(rootAabb, .001));
+			}
+		}
+
+
+		[Test, Category("InteractiveScene")]
+		public void SubtractTests()
+		{	// Subtract has correct number of results
 			{
 				var root = new Object3D();
 				var cubeA = new CubeObject3D(20, 20, 20);

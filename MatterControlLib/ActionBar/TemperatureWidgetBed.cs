@@ -121,7 +121,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
 			container.AddChild(temperatureRow);
 
-			alwaysEnabled.Add(hotendRow);
+			// Add the temperature row to the always enabled list ensuring the field can be set when disconnected
+			alwaysEnabled.Add(temperatureRow);
 
 			// add in the temp graph
 			var graph = new DataViewGraph()

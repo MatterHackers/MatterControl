@@ -41,6 +41,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.VectorMath;
@@ -439,6 +440,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (namedAction.Icon != null)
 				{
+					// add the create support before the align
+					if (namedAction.OperationType == typeof(AlignObject3D))
+					{
+						this.AddChild(CreateSupportButton(theme));
+					}
+
 					button = new IconButton(namedAction.Icon, theme)
 					{
 						Name = namedAction.Title + " Button",
@@ -642,6 +649,52 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			libraryPopup.PopupVAnchor = VAnchor.Fit;
 
 			return libraryPopup;
+		}
+
+		private GuiWidget CreateSupportButton(ThemeConfig theme)
+		{
+			PopupMenuButton toggleSupportButton = null;
+
+			var iconButton = new IconButton(
+				AggContext.StaticData.LoadIcon("support.png", 16, 16, theme.InvertIcons),
+				theme)
+			{
+				ToolTipText = "Toggle Support".Localize(),
+			};
+
+			iconButton.Click += (s, e) =>
+			{
+				var scene = sceneContext.Scene;
+				var selectedItem = scene.SelectedItem;
+				if (selectedItem != null)
+				{
+					scene.UndoBuffer.AddAndDo(new ToggleSupport(selectedItem));
+				}
+			};
+
+			sceneContext.Scene.SelectionChanged += (s, e) =>
+			{
+				iconButton.Enabled = sceneContext.Scene.SelectedItem != null;
+			};
+
+			// Remove right Padding for drop style
+			iconButton.Padding = iconButton.Padding.Clone(right: 0);
+
+			toggleSupportButton = new PopupMenuButton(iconButton, theme)
+			{
+				Name = "Support SplitButton",
+				ToolTipText = "Generate Support".Localize(),
+				PopupContent = new GenerateSupportPannel(theme, sceneContext.Scene),
+				BackgroundColor = theme.ToolbarButtonBackground,
+				HoverColor = theme.ToolbarButtonHover,
+				MouseDownColor = theme.ToolbarButtonDown,
+				DrawArrow = true,
+				Margin = theme.ButtonSpacing,
+			};
+
+			iconButton.Selectable = true;
+
+			return toggleSupportButton;
 		}
 
 		private GuiWidget CreateSaveButton(ThemeConfig theme)

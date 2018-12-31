@@ -27,84 +27,39 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
+using System;
+using System.Linq;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
-using System.ComponentModel;
-using System.Linq;
 
-namespace MatterHackers.MatterControl.DesignTools
+namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	[ShowUpdateButton]
-	public class SupportControls : Object3D
+	public class GenerateSupportPannel : GuiWidget
 	{
-		public SupportControls()
+		private ThemeConfig theme;
+		private InteractiveScene scene;
+
+		public GenerateSupportPannel(ThemeConfig theme, InteractiveScene scene)
 		{
-			Name = "Support Controls".Localize();
-			Color = Color.Yellow;
+			this.theme = theme;
+			this.scene = scene;
 		}
 
-		public SupportControls(double width, double depth, double height)
-			: this()
+		public double MaxOverHangAngle { get; private set; }
+
+		private void Rebuild()
 		{
-			Rebuild(null);
-		}
-
-		//[JsonConverter(typeof(StringEnumConverter))]
-		//public enum SupportTypes { Solid, Pillars, Tree }
-
-		//[Description("Sets the type of support will be added to the scene and output by the slicing engine.")]
-		//public SupportTypes SupportType { get; set; } = SupportTypes.Solid;
-
-		[Description("The angle of the faces that need to be supported.")]
-		public double MaxOverHangAngle { get; set; } = 45;
-
-		// Clear All Supports // Remove all the supports that are currently in the scene
-		// Group All Supports // Make supports into a sigle grouped object
-		// Generate Supports // anywhere we need support and there is not currently support there, add support
-
-		public static SupportControls Create()
-		{
-			var item = new SupportControls();
-
-			item.Mesh = PlatonicSolids.CreateCube(20, 20, 20);
-
-			PlatingHelper.PlaceMeshAtHeight(item, 0);
-
-			return item;
-		}
-
-		public override void OnInvalidate(InvalidateArgs invalidateType)
-		{
-			if (invalidateType.InvalidateType == InvalidateType.Properties
-				&& invalidateType.Source == this)
-			{
-				Rebuild(null);
-			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
-		}
-
-		private void Rebuild(UndoBuffer undoBuffer)
-		{
-			var parent = this.Parent;
-
 			// Find all the other objects of our parent
-			var peers = parent.Children.Where(i => i != this).ToArray();
+			var peers = scene.Children.Where(i => i != this).ToArray();
 
 			// eventually we will not remove any support that is already in the scene
 			// but for now, remove all the stuff that is there first
 			var existingSupports = peers.Where(i => i.OutputType == PrintOutputTypes.Support);
 
-			parent.Children.Modify((list) =>
+			scene.Children.Modify((list) =>
 			{
 				foreach (var item in existingSupports)
 				{
@@ -120,10 +75,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			// find all the faces that are candidates for support
 			var verts = new Vector3List();
 			var faces = new FaceList();
-			foreach(var item in supportCandidates)
+			foreach (var item in supportCandidates)
 			{
-				var matrix = item.WorldMatrix(parent);
-				foreach(var face in item.Mesh.Faces)
+				var matrix = item.WorldMatrix(scene);
+				foreach (var face in item.Mesh.Faces)
 				{
 					var face0Normal = Vector3.TransformVector(face.Normal, matrix).GetNormal();
 					var angle = MathHelper.RadiansToDegrees(Math.Acos(Vector3.Dot(Vector3.UnitZ, face0Normal)));
