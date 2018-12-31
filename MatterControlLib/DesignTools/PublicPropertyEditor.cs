@@ -759,21 +759,27 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& !string.IsNullOrEmpty(unlockLink.UnlockPageLink)
 				&& !context.item.Persistable)
 			{
-				var row = CreateSettingsRow(context.item.Persistable ? "Registered".Localize() : "Demo Mode".Localize());
-
-				var detailsLink = new TextIconButton("Unlock".Localize(), AggContext.StaticData.LoadIcon("locked.png", 16, 16, theme.InvertIcons), theme)
-				{
-					Margin = 5
-				};
-				detailsLink.Click += (s, e) =>
-				{
-					ApplicationController.Instance.LaunchBrowser(UnlockLinkAttribute.UnlockPageBaseUrl + unlockLink.UnlockPageLink);
-				};
-				row.AddChild(detailsLink);
-				theme.ApplyPrimaryActionStyle(detailsLink);
+				FlowLayoutWidget row = GetUnlockRow(theme, unlockLink.UnlockPageLink);
 
 				editControlsContainer.AddChild(row);
 			}
+		}
+
+		public static FlowLayoutWidget GetUnlockRow(ThemeConfig theme, string unlockLinkUrl)
+		{
+			var row = CreateSettingsRow("Demo Mode".Localize());
+
+			var detailsLink = new TextIconButton("Unlock".Localize(), AggContext.StaticData.LoadIcon("locked.png", 16, 16, theme.InvertIcons), theme)
+			{
+				Margin = 5
+			};
+			detailsLink.Click += (s, e) =>
+			{
+				ApplicationController.Instance.LaunchBrowser(UnlockLinkAttribute.UnlockPageBaseUrl + unlockLinkUrl);
+			};
+			row.AddChild(detailsLink);
+			theme.ApplyPrimaryActionStyle(detailsLink);
+			return row;
 		}
 
 		private void AddWebPageLinkIfRequired(PPEContext context, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
