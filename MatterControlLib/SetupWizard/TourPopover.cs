@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.Tour
 
 			row.AddChild(closeButton);
 
-			var body = this.CreateBodyWidget(productTour);
+			var body = this.CreateBodyWidgets(productTour);
 			body.Padding = new BorderDouble(theme.DefaultContainerPadding).Clone(top: 0);
 			column.AddChild(body);
 
@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.Tour
 			this.RebuildShape();
 		}
 
-		private GuiWidget CreateBodyWidget(ProductTour productTour)
+		private GuiWidget CreateBodyWidgets(ProductTour productTour)
 		{
 			var body = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl.Tour
 			var buttonRow = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch,
-				Margin = new BorderDouble(10, 0, 10, 5)
+				Margin = new BorderDouble(0, 0, 0, 5)
 			};
 			body.AddChild(buttonRow);
 
