@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.Tour
 
 			this.HeaderText = "Welcome to MatterControl".Localize();
 
-			var welcome = "Let's show you around before you get started.";
+			var welcome = "Let's show you around before you get started.".Localize();
 
 			var textWidget = new WrappedTextWidget(welcome)
 			{
@@ -58,16 +58,16 @@ namespace MatterHackers.MatterControl.Tour
 
 			contentRow.AddChild(new VerticalSpacer());
 
-			var showWelcomPageCheckBox = new CheckBox("Don't remind me again".Localize())
+			var showWelcomePageCheckBox = new CheckBox("Don't remind me again".Localize())
 			{
 				TextColor = theme.TextColor,
 				Margin = new BorderDouble(top: 6, left: 6),
 				HAnchor = Agg.UI.HAnchor.Left,
 				Checked = ApplicationSettings.Instance.get(UserSettingsKey.ShownWelcomeMessage) == "false"
 			};
-			showWelcomPageCheckBox.Click += (sender, e) =>
+			showWelcomePageCheckBox.Click += (sender, e) =>
 			{
-				if (showWelcomPageCheckBox.Checked)
+				if (showWelcomePageCheckBox.Checked)
 				{
 					ApplicationSettings.Instance.set(UserSettingsKey.ShownWelcomeMessage, "false");
 				}
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.Tour
 					ApplicationSettings.Instance.set(UserSettingsKey.ShownWelcomeMessage, "true");
 				}
 			};
-			contentRow.AddChild(showWelcomPageCheckBox);
+			contentRow.AddChild(showWelcomePageCheckBox);
 
 			var nextButton = theme.CreateDialogButton("Next".Localize());
 			nextButton.Name = "Next Button";

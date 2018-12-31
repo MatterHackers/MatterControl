@@ -77,16 +77,15 @@ namespace MatterHackers.MatterControl.Tour
 
 		public void ShowNext()
 		{
-			ShowLocation(this.ActiveIndex + 1);
+			this.ActiveIndex = (this.ActiveIndex >= this.Count) ? 0 : this.ActiveIndex + 1;
 		}
 
 		public void ShowPrevious()
 		{
-			ShowLocation(this.ActiveIndex - 1);
+			this.ActiveIndex = (this.ActiveIndex > 0) ? this.ActiveIndex - 1 : this.Count - 1;
 		}
 
 		public int Count { get; }
-
 
 		public int ActiveIndex
 		{
@@ -95,6 +94,12 @@ namespace MatterHackers.MatterControl.Tour
 			{
 				if (_activeIndex != value)
 				{
+					// Constrain to valid range
+					if (value < 0 || value >= this.Count)
+					{
+						value = 0;
+					}
+
 					_activeIndex = value;
 					this.ActiveItem = tourLocations[_activeIndex];
 
@@ -105,15 +110,5 @@ namespace MatterHackers.MatterControl.Tour
 		}
 
 		public TourLocation ActiveItem { get; private set; }
-
-		private void ShowLocation(int locationIndex)
-		{
-			if (locationIndex < 0 || locationIndex >= this.Count)
-			{
-				locationIndex = 0;
-			}
-
-			this.ActiveIndex = locationIndex;
-		}
 	}
 }
