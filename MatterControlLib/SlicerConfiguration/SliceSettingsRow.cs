@@ -223,26 +223,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return;
 			}
 
-			// We should not take focus as the mouse enters, focus could be in a text control and this sets the value and stops the editing.
-			// Is there a known reason we need to do something with focus here to get other intended behavior?
-			//settingsRow.Focus();
-
 			int arrowOffset = (int)(settingsRow.Height / 2);
 
-			var tagContainer = new Popover(this.ArrowDirection, new BorderDouble(15, 10), 7, arrowOffset)
+			var popover = new Popover(this.ArrowDirection, new BorderDouble(15, 10), 7, arrowOffset)
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
 				TagColor = theme.ResolveColor(AppContext.Theme.BackgroundColor, AppContext.Theme.AccentMimimalOverlay.WithAlpha(50)),
 			};
 
-			tagContainer.AddChild(new WrappedTextWidget(settingsRow.HelpText, pointSize: theme.DefaultFontSize - 1, textColor: AppContext.Theme.TextColor)
+			popover.AddChild(new WrappedTextWidget(settingsRow.HelpText, pointSize: theme.DefaultFontSize - 1, textColor: AppContext.Theme.TextColor)
 			{
 				Width = 400 * GuiWidget.DeviceScale,
 				HAnchor = HAnchor.Fit,
 			});
 
-			bool alignLeft = this.ArrowDirection == ArrowDirection.Right;
+			bool alignLeft = (this.ArrowDirection == ArrowDirection.Right);
 
 			// after a certain amount of time make the popover close (just like a tool tip)
 			double closeSeconds = Math.Max(1, (settingsRow.HelpText.Length / 50.0)) * 5;
@@ -254,14 +250,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					AltMate = new MateOptions(alignLeft ? MateEdge.Left : MateEdge.Right, MateEdge.Bottom),
 					Offset = new RectangleDouble(12, 0, 12, 0)
 				},
-				new MatePoint(tagContainer)
+				new MatePoint(popover)
 				{
 					Mate = new MateOptions(alignLeft ? MateEdge.Right : MateEdge.Left, MateEdge.Top),
 					AltMate = new MateOptions(alignLeft ? MateEdge.Left : MateEdge.Right, MateEdge.Bottom),
 					//Offset = new RectangleDouble(12, 0, 12, 0)
 				}, secondsToClose: closeSeconds);
 
-			popoverBubble = tagContainer;
+			popoverBubble = popover;
 
 			base.OnMouseEnterBounds(mouseEvent);
 		}
