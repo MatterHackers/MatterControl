@@ -276,10 +276,10 @@ namespace MatterHackers.MatterControl.Tour
 					var leftArrow = new ImageBuffer(rightArrow);
 					leftArrow.FlipX();
 
-					this.Image = rightArrow;
+					this.Image = leftArrow;
 				}
 
-				this.ArrowDirection = ArrowDirection;
+				this.ArrowDirection = arrowDirection;
 			}
 
 			public ImageBuffer Image { get; }
