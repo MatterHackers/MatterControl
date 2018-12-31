@@ -211,15 +211,8 @@ namespace MatterHackers.MatterControl.Tour
 			};
 			body.AddChild(buttonRow);
 
-			var rightArrow = AggContext.StaticData.LoadIcon("fa-angle-right_12.png", 10, 10, theme.InvertIcons);
-
-			var leftArrow = new ImageBuffer(rightArrow);
-			leftArrow.FlipX();
-
-			var prevButton = new ArrowButton("Prev".Localize(), theme, pointSize: theme.DefaultFontSize - 2)
+			var prevButton = new ArrowButton("Prev".Localize(), ArrowDirection.Left, theme, pointSize: theme.DefaultFontSize - 2)
 			{
-				Image = leftArrow,
-				ImageAnchor = HAnchor.Left,
 				Height = theme.ButtonHeight - 4,
 				Padding = theme.TextButtonPadding.Clone(left: theme.TextButtonPadding.Left + 8)
 			};
@@ -236,10 +229,8 @@ namespace MatterHackers.MatterControl.Tour
 
 			buttonRow.AddChild(new HorizontalSpacer());
 
-			var nextButton = new ArrowButton("Next".Localize(), theme, pointSize: theme.DefaultFontSize - 2)
+			var nextButton = new ArrowButton("Next".Localize(), ArrowDirection.Right, theme, pointSize: theme.DefaultFontSize - 2)
 			{
-				Image = rightArrow,
-				ImageAnchor = HAnchor.Right,
 				Height = theme.ButtonHeight - 4,
 				Padding = theme.TextButtonPadding.Clone(right: theme.TextButtonPadding.Right + 8)
 			};
@@ -266,20 +257,34 @@ namespace MatterHackers.MatterControl.Tour
 			var totalWidth = this.Width + this.DeviceMarginAndBorder.Width;
 			var totalHeight = this.Height + this.DeviceMarginAndBorder.Height;
 
-			var totalBounds = new RectangleDouble(0, 0, totalWidth, totalHeight);
-			return totalBounds;
+			return new RectangleDouble(0, 0, totalWidth, totalHeight);
 		}
 
 		private class ArrowButton : TextButton
 		{
-			public ArrowButton(string text, ThemeConfig theme, double pointSize = -1)
+			public ArrowButton(string text, ArrowDirection arrowDirection, ThemeConfig theme, double pointSize = -1)
 				: base(text, theme, pointSize)
 			{
+				var rightArrow = AggContext.StaticData.LoadIcon("fa-angle-right_12.png", 10, 10, theme.InvertIcons);
+
+				if (arrowDirection == ArrowDirection.Right)
+				{
+					this.Image = rightArrow;
+				}
+				else
+				{
+					var leftArrow = new ImageBuffer(rightArrow);
+					leftArrow.FlipX();
+
+					this.Image = rightArrow;
+				}
+
+				this.ArrowDirection = ArrowDirection;
 			}
 
-			public HAnchor ImageAnchor { get; set; }
+			public ImageBuffer Image { get; }
 
-			public ImageBuffer Image { get; set; }
+			public ArrowDirection ArrowDirection { get; }
 
 			public override void OnDraw(Graphics2D graphics2D)
 			{
@@ -291,7 +296,7 @@ namespace MatterHackers.MatterControl.Tour
 
 					var centerY = (this.Height / 2) - (this.Image.Height / 2) + bounds.Bottom;
 
-					if (this.ImageAnchor == HAnchor.Left)
+					if (this.ArrowDirection == ArrowDirection.Left)
 					{
 						graphics2D.Render(this.Image, bounds.Left + 8, centerY);
 					}
