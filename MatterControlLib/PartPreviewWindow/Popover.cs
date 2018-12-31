@@ -44,15 +44,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		/// <summary>
 		/// Constructs a new Popover with the given parameters
 		/// </summary>
-		/// <param name="arrow">The arrow to use</param>
+		/// <param name="arrowDirection">The direction the popover arrow should point</param>
 		/// <param name="padding">The padding of the control, adjusted internally to account for arrow region</param>
 		/// <param name="notchSize">The size of the arrow notch</param>
 		/// <param name="p2">The arrow offset in x or y given the specified arrow</param>
-		public Popover(ArrowDirection arrow, BorderDouble padding, int notchSize, int p2, bool autoBorderColor = true)
+		public Popover(ArrowDirection arrowDirection, BorderDouble padding, int notchSize, int p2, bool autoBorderColor = true)
 		{
 			this.originalPadding = padding;
 			this.NotchSize = notchSize;
-			this.Arrow = arrow;
+			this.ArrowDirection = arrowDirection;
 			this.ArrowOffset = p2;
 			this.autoBorderColor = autoBorderColor;
 		}
@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public ArrowDirection Arrow
+		public ArrowDirection ArrowDirection
 		{
 			get => _arrow;
 			protected set
@@ -80,15 +80,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				switch (_arrow)
 				{
-					case Popover.ArrowDirection.Top:
+					case ArrowDirection.Top:
 						this.Padding = originalPadding.Clone(top: originalPadding.Top + this.NotchSize);
 						break;
 
-					case Popover.ArrowDirection.Bottom:
+					case ArrowDirection.Bottom:
 						this.Padding = originalPadding.Clone(bottom: originalPadding.Bottom + this.NotchSize);
 						break;
 
-					case Popover.ArrowDirection.Left:
+					case ArrowDirection.Left:
 						this.Padding = originalPadding.Clone(left: originalPadding.Left + this.NotchSize);
 						break;
 
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected void RebuildShape()
 		{
-			tabShape = Popover.GetShape(this.Arrow, this.LocalBounds, this.NotchSize, this.ArrowOffset);
+			tabShape = Popover.GetShape(this.ArrowDirection, this.LocalBounds, this.NotchSize, this.ArrowOffset);
 			tabStroke = new Stroke(tabShape);
 		}
 
@@ -257,8 +257,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			return new FlattenCurves(tabShape);
 		}
-
-		public enum ArrowDirection { Right, Left, Top, Bottom }
 
 		public override void OnDrawBackground(Graphics2D graphics2D)
 		{

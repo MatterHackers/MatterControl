@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			base.OnLoad(args);
 		}
 
-		public Popover.ArrowDirection ArrowDirection { get; set; } = Popover.ArrowDirection.Right;
+		public ArrowDirection ArrowDirection { get; set; } = ArrowDirection.Right;
 
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
@@ -242,7 +242,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				HAnchor = HAnchor.Fit,
 			});
 
-			bool alignLeft = this.ArrowDirection == Popover.ArrowDirection.Right;
+			bool alignLeft = this.ArrowDirection == ArrowDirection.Right;
 
 			// after a certain amount of time make the popover close (just like a tool tip)
 			double closeSeconds = Math.Max(1, (settingsRow.HelpText.Length / 50.0)) * 5;

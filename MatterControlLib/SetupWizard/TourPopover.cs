@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.Tour
 					if (targetBounds.Bottom - totalBounds.Height < 0)
 					{
 						// Down arrow
-						this.Arrow = Popover.ArrowDirection.Bottom;
+						this.ArrowDirection = ArrowDirection.Bottom;
 
 						// Arrow centered on target in x, to the right
 						totalBounds = this.GetTotalBounds();
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.Tour
 					else
 					{
 						// Right arrow
-						this.Arrow = Popover.ArrowDirection.Right;
+						this.ArrowDirection = ArrowDirection.Right;
 
 						//  Arrow centered on target in y, to the top
 						totalBounds = this.GetTotalBounds();
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.Tour
 				else
 				{
 					// Up arrow
-					this.Arrow = Popover.ArrowDirection.Top;
+					this.ArrowDirection = ArrowDirection.Top;
 
 					// Arrow centered on target in x, to the right
 					totalBounds = this.GetTotalBounds();
@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.Tour
 				if (targetBounds.Bottom < totalBounds.Height)
 				{
 					// Left arrow
-					this.Arrow = Popover.ArrowDirection.Left;
+					this.ArrowDirection = ArrowDirection.Left;
 
 					// Arrow centered on target in y (or top - 20 if target larger than content)
 					totalBounds = this.GetTotalBounds();
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.Tour
 				}
 				else
 				{
-					this.Arrow = Popover.ArrowDirection.Top;
+					this.ArrowDirection = ArrowDirection.Top;
 
 					// Arrow centered on target in x, to the left
 					totalBounds = this.GetTotalBounds();
