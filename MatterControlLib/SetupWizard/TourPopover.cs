@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
@@ -85,7 +87,7 @@ namespace MatterHackers.MatterControl.Tour
 
 			row.AddChild(closeButton);
 
-			var body = this.CreateBodyWidget(productTour);
+			var body = this.CreateBodyWidgets(productTour);
 			body.Padding = new BorderDouble(theme.DefaultContainerPadding).Clone(top: 0);
 			column.AddChild(body);
 
@@ -188,7 +190,7 @@ namespace MatterHackers.MatterControl.Tour
 			this.RebuildShape();
 		}
 
-		private GuiWidget CreateBodyWidget(ProductTour productTour)
+		private GuiWidget CreateBodyWidgets(ProductTour productTour)
 		{
 			var body = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -205,13 +207,21 @@ namespace MatterHackers.MatterControl.Tour
 			var buttonRow = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch,
-				Margin = new BorderDouble(10, 0, 10, 5)
+				Margin = new BorderDouble(0, 0, 0, 5)
 			};
 			body.AddChild(buttonRow);
 
-			var prevButton = new LinkLabel("Prev".Localize(), theme, pointSize: theme.DefaultFontSize - 2)
+			var rightArrow = AggContext.StaticData.LoadIcon("fa-angle-right_12.png", 10, 10, theme.InvertIcons);
+
+			var leftArrow = new ImageBuffer(rightArrow);
+			leftArrow.FlipX();
+
+			var prevButton = new ArrowButton("Prev".Localize(), theme, pointSize: theme.DefaultFontSize - 2)
 			{
-				TextColor = theme.TextColor
+				Image = leftArrow,
+				ImageAnchor = HAnchor.Left,
+				Height = theme.ButtonHeight - 4,
+				Padding = theme.TextButtonPadding.Clone(left: theme.TextButtonPadding.Left + 8)
 			};
 			prevButton.Click += (s, e) =>
 			{
@@ -226,9 +236,12 @@ namespace MatterHackers.MatterControl.Tour
 
 			buttonRow.AddChild(new HorizontalSpacer());
 
-			var nextButton = new LinkLabel("Next".Localize(), theme, pointSize: theme.DefaultFontSize - 2)
+			var nextButton = new ArrowButton("Next".Localize(), theme, pointSize: theme.DefaultFontSize - 2)
 			{
-				TextColor = theme.TextColor
+				Image = rightArrow,
+				ImageAnchor = HAnchor.Right,
+				Height = theme.ButtonHeight - 4,
+				Padding = theme.TextButtonPadding.Clone(right: theme.TextButtonPadding.Right + 8)
 			};
 			nextButton.Click += (s, e) =>
 			{
@@ -238,7 +251,7 @@ namespace MatterHackers.MatterControl.Tour
 			};
 			buttonRow.AddChild(nextButton);
 
-			body.Size = new Vector2(250, body.Height);
+			body.Size = new Vector2(280, body.Height);
 
 			return body;
 		}
@@ -255,6 +268,39 @@ namespace MatterHackers.MatterControl.Tour
 
 			var totalBounds = new RectangleDouble(0, 0, totalWidth, totalHeight);
 			return totalBounds;
+		}
+
+		private class ArrowButton : TextButton
+		{
+			public ArrowButton(string text, ThemeConfig theme, double pointSize = -1)
+				: base(text, theme, pointSize)
+			{
+			}
+
+			public HAnchor ImageAnchor { get; set; }
+
+			public ImageBuffer Image { get; set; }
+
+			public override void OnDraw(Graphics2D graphics2D)
+			{
+				base.OnDraw(graphics2D);
+
+				if (this.Image != null)
+				{
+					var bounds = this.LocalBounds;
+
+					var centerY = (this.Height / 2) - (this.Image.Height / 2) + bounds.Bottom;
+
+					if (this.ImageAnchor == HAnchor.Left)
+					{
+						graphics2D.Render(this.Image, bounds.Left + 8, centerY);
+					}
+					else
+					{
+						graphics2D.Render(this.Image, bounds.Right - this.Image.Width - 8, centerY);
+					}
+				}
+			}
 		}
 	}
 }
