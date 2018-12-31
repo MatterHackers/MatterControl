@@ -77,16 +77,15 @@ namespace MatterHackers.MatterControl.Tour
 
 		public void ShowNext()
 		{
-			ShowLocation((this.ActiveIndex >= this.Count ? 0 : this.ActiveIndex + 1));
+			this.ActiveIndex = (this.ActiveIndex >= this.Count) ? 0 : this.ActiveIndex + 1;
 		}
 
 		public void ShowPrevious()
 		{
-			ShowLocation((this.ActiveIndex > 0) ? this.ActiveIndex - 1 : this.Count - 1);
+			this.ActiveIndex = (this.ActiveIndex > 0) ? this.ActiveIndex - 1 : this.Count - 1;
 		}
 
 		public int Count { get; }
-
 
 		public int ActiveIndex
 		{
@@ -111,10 +110,5 @@ namespace MatterHackers.MatterControl.Tour
 		}
 
 		public TourLocation ActiveItem { get; private set; }
-
-		private void ShowLocation(int locationIndex)
-		{
-			this.ActiveIndex = locationIndex;
-		}
 	}
 }
