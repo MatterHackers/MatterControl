@@ -39,6 +39,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SliceSettingsRow : SettingsRow
 	{
+		private static Popover activePopover = null;
+
 		private SettingsContext settingsContext;
 
 		public string HelpText { get; }
@@ -243,6 +245,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// after a certain amount of time make the popover close (just like a tool tip)
 			double closeSeconds = Math.Max(1, (settingsRow.HelpText.Length / 50.0)) * 5;
 
+			activePopover?.Close();
+
+			activePopover = popover;
+
 			systemWindow.ShowPopover(
 				new MatePoint(settingsRow)
 				{
@@ -264,8 +270,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
 		{
-			// Close any active popover bubble
-			popoverBubble?.Close();
+			if (popoverBubble != null)
+			{
+				// Allow a moment to elapse to determine if the mouse is withing the bubble or has returned to this control, close otherwise
+				UiThread.RunOnIdle(() =>
+				{
+					if (this.FirstWidgetUnderMouse)
+					{
+						// Often we get OnMouseLeaveBounds when the mouse is still within bounds (as child mouse events are processed)
+						// If the mouse is in bounds of this widget, abort the popover close below
+						return;
+					}
+
+					if (!popoverBubble.ContainsFirstUnderMouseRecursive())
+					{
+						// Close any active popover bubble
+						popoverBubble?.Close();
+					}
+				}, 1);
+			}
 
 			base.OnMouseLeaveBounds(mouseEvent);
 		}
