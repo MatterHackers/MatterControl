@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.Tour
 
 		public void ShowPrevious()
 		{
-			ShowLocation(this.ActiveIndex - 1);
+			ShowLocation((this.ActiveIndex > 0) ? this.ActiveIndex - 1 : this.Count - 1);
 		}
 
 		public int Count { get; }
