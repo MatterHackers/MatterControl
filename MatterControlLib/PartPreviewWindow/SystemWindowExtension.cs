@@ -89,6 +89,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var hookedWidgets = new HashSet<GuiWidget>();
 			void anchor_Closed(object sender, EventArgs e)
 			{
+				if (popup.Widget is Popover popover
+					&& !popover.AllowAutoClose)
+				{
+					return;
+				}
+
 				// If the owning widget closed, so should we
 				popup.Widget.Close();
 

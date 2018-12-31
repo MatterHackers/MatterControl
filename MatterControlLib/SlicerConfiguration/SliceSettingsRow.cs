@@ -261,7 +261,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Mate = new MateOptions(alignLeft ? MateEdge.Right : MateEdge.Left, MateEdge.Top),
 					AltMate = new MateOptions(alignLeft ? MateEdge.Left : MateEdge.Right, MateEdge.Bottom),
 					//Offset = new RectangleDouble(12, 0, 12, 0)
-				}, secondsToClose: closeSeconds);
+				},
+				secondsToClose: closeSeconds);
 
 			popoverBubble = popover;
 
@@ -275,6 +276,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// Allow a moment to elapse to determine if the mouse is withing the bubble or has returned to this control, close otherwise
 				UiThread.RunOnIdle(() =>
 				{
+					// Skip close if we are FirstWidgetUnderMouse
 					if (this.FirstWidgetUnderMouse)
 					{
 						// Often we get OnMouseLeaveBounds when the mouse is still within bounds (as child mouse events are processed)
@@ -282,6 +284,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						return;
 					}
 
+					// Close the popover as long as it doesn't contain the mouse
 					if (!popoverBubble.ContainsFirstUnderMouseRecursive())
 					{
 						// Close any active popover bubble
