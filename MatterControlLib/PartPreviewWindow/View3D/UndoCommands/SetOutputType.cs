@@ -34,13 +34,16 @@ using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class ToggleSupport : IUndoRedoCommand
+	public class SetOutputType : IUndoRedoCommand
 	{
-		List<PrintOutputTypes> itemsPrintOutputType = new List<PrintOutputTypes>();
+		List<PrintOutputTypes> startingOutputType = new List<PrintOutputTypes>();
 		List<IObject3D> itemsToChange = new List<IObject3D>();
+		PrintOutputTypes outputType;
 
-		public ToggleSupport(IObject3D selectedItem)
+		public SetOutputType(IObject3D selectedItem, PrintOutputTypes outputType)
 		{
+			this.outputType = outputType;
+
 			if (selectedItem is SelectionGroupObject3D)
 			{
 				SetData(selectedItem.Children.ToList());
@@ -56,7 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			foreach (var item in itemsToChange)
 			{
 				this.itemsToChange.Add(item);
-				this.itemsPrintOutputType.Add(item.OutputType);
+				this.startingOutputType.Add(item.OutputType);
 			}
 		}
 
@@ -64,14 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			for (int i = 0; i < this.itemsToChange.Count; i++)
 			{
-				if (itemsPrintOutputType[i] == PrintOutputTypes.Support)
-				{
-					itemsToChange[i].OutputType = PrintOutputTypes.Default;
-				}
-				else
-				{
-					itemsToChange[i].OutputType = PrintOutputTypes.Support;
-				}
+				itemsToChange[i].OutputType = outputType;
 			}
 		}
 
@@ -79,7 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			for(int i=0; i< this.itemsToChange.Count; i++)
 			{
-				itemsToChange[i].OutputType = itemsPrintOutputType[i];
+				itemsToChange[i].OutputType = startingOutputType[i];
 			}
 		}
 	}

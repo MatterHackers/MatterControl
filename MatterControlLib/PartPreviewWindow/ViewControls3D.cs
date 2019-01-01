@@ -668,7 +668,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var selectedItem = scene.SelectedItem;
 				if (selectedItem != null)
 				{
-					scene.UndoBuffer.AddAndDo(new ToggleSupport(selectedItem));
+					bool allAreSupport = false;
+					if (selectedItem is SelectionGroupObject3D)
+					{
+						allAreSupport = selectedItem.Children.All(i => i.OutputType == PrintOutputTypes.Support);
+					}
+					else
+					{
+						allAreSupport = selectedItem.OutputType == PrintOutputTypes.Support;
+					}
+
+					scene.UndoBuffer.AddAndDo(new SetOutputType(selectedItem, allAreSupport ? PrintOutputTypes.Default : PrintOutputTypes.Support));
 				}
 			};
 
