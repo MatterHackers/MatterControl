@@ -27,37 +27,116 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Linq;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
-using MatterHackers.MatterControl.Library;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
+using System;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class GenerateSupportPannel : GuiWidget
+	[UnlockLinkAttribute("175mm-pla-filament-yellow-1-kg")]
+	public class GeneratedSupportObject3D : Object3D
 	{
-		private ThemeConfig theme;
+		public override bool Persistable { get => ApplicationController.Instance.UserHasPermissions(typeof(GeneratedSupportObject3D)); }
+	}
+
+	public class GenerateSupportPannel : FlowLayoutWidget
+	{
 		private InteractiveScene scene;
+		private ThemeConfig theme;
 
 		public GenerateSupportPannel(ThemeConfig theme, InteractiveScene scene)
+			: base(FlowDirection.TopToBottom)
 		{
 			this.theme = theme;
 			this.scene = scene;
+
+			VAnchor = VAnchor.Fit;
+			HAnchor = HAnchor.Absolute;
+			Width = 400;
+
+			// put in the registered information
+			if (!ApplicationController.Instance.UserHasPermissions(typeof(GeneratedSupportObject3D)))
+			{
+				this.AddChild(PublicPropertyEditor.GetUnlockRow(theme, "175mm-pla-filament-yellow-1-kg"));
+
+				var wrappedText = @"Advanced Support Generation
+
+This tool can automatically analize and add support to your parts.
+Just select the part you want to add support to and click 'Generate'.
+
+You can try it out for free, then upgrade when you want to print with your automatic supports".Localize();
+				this.AddChild(new WrappedTextWidget(wrappedText, theme.H1PointSize)
+				{
+					TextColor = theme.TextColor,
+					Margin = 5
+				});
+			}
+
+			// put in support pillar size
+
+			// support pillar resolution
+			var pillarSizeField = new DoubleField(theme);
+			pillarSizeField.Initialize(0);
+			pillarSizeField.DoubleValue = PillarSize;
+			pillarSizeField.ValueChanged += (s, e) =>
+			{
+				PillarSize = pillarSizeField.DoubleValue;
+			};
+
+			var pillarRow = PublicPropertyEditor.CreateSettingsRow("Pillar Size".Localize(), "The width and depth of the support pillars".Localize());
+			pillarRow.AddChild(pillarSizeField.Content);
+			this.AddChild(pillarRow);
+
+			// put in the angle setting
+			var overHangField = new DoubleField(theme);
+			overHangField.Initialize(0);
+			overHangField.DoubleValue = MaxOverHangAngle;
+			overHangField.ValueChanged += (s, e) =>
+			{
+				MaxOverHangAngle = overHangField.DoubleValue;
+			};
+
+			var overHangRow = PublicPropertyEditor.CreateSettingsRow("Overhang Angle".Localize(), "The angle to generate support for".Localize());
+			overHangRow.AddChild(overHangField.Content);
+			this.AddChild(overHangRow);
+
+			// add 'Generate Supports' button
+			var generateButton = new TextButton("Generate".Localize(), theme)
+			{
+				VAnchor = VAnchor.Fit,
+				HAnchor = HAnchor.Right,
+				Margin = 5,
+				ToolTipText = "Find and create supports where needed".Localize()
+			};
+			this.AddChild(generateButton);
+			generateButton.Click += (s, e) => Rebuild();
+
+			// add 'Remove Auto Supports' button
+			var removeButton = new TextButton("Remove".Localize(), theme)
+			{
+				VAnchor = VAnchor.Fit,
+				HAnchor = HAnchor.Right,
+				Margin = 5,
+				ToolTipText = "Remvoe all auto generated supports".Localize()
+			};
+			this.AddChild(removeButton);
+			removeButton.Click += (s, e) => RemoveExisting();
 		}
 
-		public double MaxOverHangAngle { get; private set; }
+		public double MaxOverHangAngle { get; private set; } = 45;
 
-		private void Rebuild()
+		public double PillarSize { get; private set; } = 4;
+
+		void RemoveExisting()
 		{
-			// Find all the other objects of our parent
-			var peers = scene.Children.Where(i => i != this).ToArray();
-
-			// eventually we will not remove any support that is already in the scene
-			// but for now, remove all the stuff that is there first
-			var existingSupports = peers.Where(i => i.OutputType == PrintOutputTypes.Support);
+			var existingSupports = scene.Children.Where(i => i.GetType() == typeof(GeneratedSupportObject3D));
 
 			scene.Children.Modify((list) =>
 			{
@@ -66,9 +145,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					list.Remove(item);
 				}
 			});
+		}
 
+		private void Rebuild()
+		{
 			// Get visible meshes for each of them
-			var visibleMeshes = peers.SelectMany(i => i.VisibleMeshes());
+			var visibleMeshes = scene.Children.SelectMany(i => i.VisibleMeshes());
+
+			var selectedItem = scene.SelectedItem;
+			if(selectedItem != null)
+			{
+				visibleMeshes = selectedItem.VisibleMeshes();
+			}
 
 			var supportCandidates = visibleMeshes.Where(i => i.OutputType != PrintOutputTypes.Support);
 
@@ -81,7 +169,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				foreach (var face in item.Mesh.Faces)
 				{
 					var face0Normal = Vector3.TransformVector(face.Normal, matrix).GetNormal();
-					var angle = MathHelper.RadiansToDegrees(Math.Acos(Vector3.Dot(Vector3.UnitZ, face0Normal)));
+					var angle = MathHelper.RadiansToDegrees(Math.Acos(Vector3.Dot(-Vector3.UnitZ, face0Normal)));
 
 					if (angle < MaxOverHangAngle)
 					{
@@ -95,11 +183,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 			}
+
+			if (faces.Count > 0)
+			{
+				// get the bounds of all verts
+				var bounds = verts.Bounds();
+
+				// create the gird of possible support
+				// foreach face set the support heights in the overlapped support grid
+				// foreach grid column that has data
+				// trace down from the top to the first bottom hit (or bed)
+				// add a support column
+				var first = faces.First();
+				var position = verts[first[0]];
+				AddSupportColumn(position.X, position.Y, position.Z, 0);
+			}
+
+			// this is the theory for regions rather than pillars
 			// separate the faces into face patch groups (these are the new support tops)
 			// project all the vertecies of each patch group down until they hit an up face in the scene (or 0)
 			// make a new patch group at the z of the hit (thes will bthe bottoms)
 			// find the outline of the patch groups (these will be the walls of the top and bottom patches
 			// make a new mesh object with the top, bottom and walls, add it to the scene and mark it as support
+		}
+
+		private void AddSupportColumn(double gridX, double gridY, double topZ, double bottomZ)
+		{
+			scene.Children.Add(new GeneratedSupportObject3D()
+			{
+				Mesh = PlatonicSolids.CreateCube(PillarSize / 2, PillarSize / 2, topZ - bottomZ),
+				Matrix = Matrix4X4.CreateTranslation(gridX, gridY, bottomZ + (topZ - bottomZ) / 2)
+			});
 		}
 	}
 }
