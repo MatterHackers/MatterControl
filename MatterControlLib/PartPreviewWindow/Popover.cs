@@ -106,18 +106,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.RebuildShape();
 		}
 
-		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
-		{
-			this.AllowAutoClose = false;
-			base.OnMouseEnterBounds(mouseEvent);
-		}
-
-		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
-		{
-			this.Close();
-			base.OnMouseLeaveBounds(mouseEvent);
-		}
-
 		protected void RebuildShape()
 		{
 			tabShape = Popover.GetShape(this.ArrowDirection, this.LocalBounds, this.NotchSize, this.ArrowOffset);
@@ -133,8 +121,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ArrowDirection _arrow;
 
 		public int NotchSize { get; }
-
-		public bool AllowAutoClose { get; set; } = true;
 
 		private static IVertexSource GetShape(ArrowDirection arrowDirection, RectangleDouble rect, double notchSize, double p2)
 		{

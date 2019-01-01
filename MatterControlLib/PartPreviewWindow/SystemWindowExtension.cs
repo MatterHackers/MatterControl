@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var hookedWidgets = new HashSet<GuiWidget>();
 			void anchor_Closed(object sender, EventArgs e)
 			{
-				if (popup.Widget is Popover popover
+				if (popup.Widget is SliceSettingsPopover popover
 					&& !popover.AllowAutoClose)
 				{
 					return;
@@ -226,7 +226,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				popup.Widget.Close();
 
 				anchor.Widget.Closed -= anchor_Closed;
-				
+
 				// Unbind callbacks on parents for position_changed if we're closing
 				foreach (GuiWidget widget in hookedParents)
 				{

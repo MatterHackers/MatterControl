@@ -227,7 +227,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			int arrowOffset = (int)(settingsRow.Height / 2);
 
-			var popover = new Popover(this.ArrowDirection, new BorderDouble(15, 10), 7, arrowOffset)
+			var popover = new SliceSettingsPopover(this.ArrowDirection, new BorderDouble(15, 10), 7, arrowOffset)
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
