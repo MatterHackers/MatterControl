@@ -59,12 +59,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			VAnchor = VAnchor.Fit;
 			HAnchor = HAnchor.Absolute;
-			Width = 200;
+			Width = 400;
 
 			// put in the registered information
 			if (!ApplicationController.Instance.UserHasPermissions(typeof(GeneratedSupportObject3D)))
 			{
 				this.AddChild(PublicPropertyEditor.GetUnlockRow(theme, "175mm-pla-filament-yellow-1-kg"));
+
+				var wrappedText = @"Advanced Support Generation
+
+This tool can automatically analize and add support to your parts.
+Just select the part you want to add support to and click 'Generate'.
+
+You can try it out for free, then upgrade when you want to print with your automatic supports".Localize();
+				this.AddChild(new WrappedTextWidget(wrappedText, theme.H1PointSize)
+				{
+					TextColor = theme.TextColor,
+					Margin = 5
+				});
 			}
 
 			// put in support pillar size
@@ -137,11 +149,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Rebuild()
 		{
-			// for now, remove all the stuff that is there first
-			RemoveExisting();
-
 			// Get visible meshes for each of them
 			var visibleMeshes = scene.Children.SelectMany(i => i.VisibleMeshes());
+
+			var selectedItem = scene.SelectedItem;
+			if(selectedItem != null)
+			{
+				visibleMeshes = selectedItem.VisibleMeshes();
+			}
 
 			var supportCandidates = visibleMeshes.Where(i => i.OutputType != PrintOutputTypes.Support);
 
