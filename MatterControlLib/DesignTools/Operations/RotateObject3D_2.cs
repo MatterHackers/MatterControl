@@ -50,20 +50,22 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public RotateObject3D_2(IObject3D itemToRotate, double xRadians = 0, double yRadians = 0, double zRadians = 0, string name = "")
 			: this()
 		{
-			var aabb = itemToRotate.GetAxisAlignedBoundingBox();
+			WrapItem(itemToRotate);
 
-			this.RotateAbout.Origin = aabb.Center;
-
-			var rotateItem = new Object3D();
-			this.Children.Add(rotateItem);
-			rotateItem.Children.Add(itemToRotate);
-
-			Rebuild(null);
+			// TODO: set the rotation
 		}
 
 		public RotateObject3D_2(IObject3D itemToRotate, Vector3 translation, string name = "")
 			: this(itemToRotate, translation.X, translation.Y, translation.Z, name)
 		{
+		}
+
+		public override void WrapItem(IObject3D item, UndoBuffer undoBuffer = null)
+		{
+			base.WrapItem(item, undoBuffer);
+
+			var aabb = item.GetAxisAlignedBoundingBox();
+			this.RotateAbout.Origin = aabb.Center;
 		}
 
 		public override bool CanFlatten => true;

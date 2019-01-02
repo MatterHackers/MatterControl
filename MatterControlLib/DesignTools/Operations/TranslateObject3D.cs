@@ -50,14 +50,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public TranslateObject3D(IObject3D itemToTranslate, Vector3 translation)
 			: this()
 		{
-			Translation = translation;
-			var aabb = itemToTranslate.GetAxisAlignedBoundingBox();
-
-			var translateItem = new Object3D();
-			this.Children.Add(translateItem);
-			translateItem.Children.Add(itemToTranslate);
-
-			Rebuild(null);
+			WrapItem(itemToTranslate);
 		}
 
 		public override bool CanFlatten => true;
