@@ -95,7 +95,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test]
-		public void ExportStreamCorrectForG30()
+		public void ExportStreamG30Tests()
 		{
 			string[] inputLines = new string[]
 			{
@@ -157,6 +157,59 @@ namespace MatterControl.Tests.MatterControl
 					testStream.SetPrinterPosition(new PrinterMove(new Vector3(), 0, 300));
 				}
 
+				expectedLine = expected[expectedIndex++];
+
+				Debug.WriteLine(actualLine);
+				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
+			}
+		}
+
+		[Test]
+		public void SmoothieRewriteTest()
+		{
+			string[] inputLines = new string[]
+			{
+				"G28",
+				"M119",
+				null,
+			};
+
+			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
+			// All communication should go through stream to minimize the difference between printing and controlling while not printing (all printing in essence).
+			string[] expected = new string[]
+			{
+				"G28",
+				"M280 P0 S10.6",
+				"G4 P400",
+				"M280 P0 S7",
+				"G4 P400",
+				"M117 Ready ",
+				"M119",
+				"switch filament; WRITE_RAW",
+				 null,
+			};
+
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			var printer = new PrinterConfig(new PrinterSettings());
+
+			var write_filter = "\"^(G28)\", \"G28,M280 P0 S10.6,G4 P400,M280 P0 S7,G4 P400,M117 Ready \"";
+			write_filter += "\\n\"^(M119)\", \"M119,switch filament; WRITE_RAW\"";
+			printer.Settings.SetValue(SettingsKey.write_regex, write_filter);
+
+			var testStream = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, inputLines), true);
+
+			int expectedIndex = 0;
+			string actualLine = testStream.ReadLine();
+			string expectedLine = expected[expectedIndex++];
+
+			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
+			Debug.WriteLine(actualLine);
+
+			while (actualLine != null)
+			{
+				actualLine = testStream.ReadLine();
 				expectedLine = expected[expectedIndex++];
 
 				Debug.WriteLine(actualLine);
