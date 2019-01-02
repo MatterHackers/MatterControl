@@ -43,6 +43,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 			this.originalReference = originalReference;
 		}
 
+		public string ReferencedSetting => originalReference;
+
 		public override string Value
 		{
 			get
