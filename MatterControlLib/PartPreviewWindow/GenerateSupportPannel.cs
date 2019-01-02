@@ -40,10 +40,12 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	[UnlockLinkAttribute("175mm-pla-filament-yellow-1-kg")]
 	public class GeneratedSupportObject3D : Object3D
 	{
-		public override bool Persistable { get => ApplicationController.Instance.UserHasPermissions(typeof(GeneratedSupportObject3D)); }
+		public GeneratedSupportObject3D()
+		{
+			OutputType = PrintOutputTypes.Support;
+		}
 	}
 
 	public class GenerateSupportPannel : FlowLayoutWidget
@@ -60,24 +62,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			VAnchor = VAnchor.Fit;
 			HAnchor = HAnchor.Absolute;
 			Width = 400;
-
-			// put in the registered information
-			if (!ApplicationController.Instance.UserHasPermissions(typeof(GeneratedSupportObject3D)))
-			{
-				this.AddChild(PublicPropertyEditor.GetUnlockRow(theme, "175mm-pla-filament-yellow-1-kg"));
-
-				var wrappedText = @"Advanced Support Generation
-
-This tool can automatically analize and add support to your parts.
-Just select the part you want to add support to and click 'Generate'.
-
-You can try it out for free, then upgrade when you want to print with your automatic supports".Localize();
-				this.AddChild(new WrappedTextWidget(wrappedText, theme.H1PointSize)
-				{
-					TextColor = theme.TextColor,
-					Margin = 5
-				});
-			}
 
 			// put in support pillar size
 
