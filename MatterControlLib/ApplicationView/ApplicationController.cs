@@ -1047,28 +1047,6 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		public static IObject3D SelectionAsSingleClone(IObject3D selection)
-		{
-			IEnumerable<IObject3D> items = new[] { selection };
-
-			// If SelectionGroup, operate on Children instead
-			if (selection is SelectionGroupObject3D)
-			{
-				items = selection.Children;
-
-				var group = new GroupObject3D();
-
-				group.Children.Modify(children =>
-				{
-					children.AddRange(items.Select(o => o.Clone()));
-				});
-
-				return group;
-			}
-
-			return selection.Clone();
-		}
-
 		public ApplicationController()
 		{
 			this.Thumbnails = new ThumbnailsConfig();
@@ -1139,14 +1117,10 @@ namespace MatterHackers.MatterControl
 				(sceneItem, scene) =>
 				{
 					var selectedItem = scene.SelectedItem;
-					var replaceItems = (selectedItem is SelectionGroupObject3D) ? selectedItem.Children.ToList() : new List<IObject3D> { selectedItem };
 					scene.SelectedItem = null;
-					var selectedClone = SelectionAsSingleClone(selectedItem);
-					var tranlate = TranslateObject3D.Create(selectedClone);
-					tranlate.MakeNameNonColliding();
-
-					scene.UndoBuffer.AddAndDo(new ReplaceCommand(replaceItems, new List<IObject3D> { tranlate }));
-					scene.SelectedItem = tranlate;
+					var scale = new TranslateObject3D();
+					scale.WrapItem(selectedItem, scene.UndoBuffer);
+					scene.SelectedItem = scale;
 
 					return Task.CompletedTask;
 				},
@@ -1159,18 +1133,44 @@ namespace MatterHackers.MatterControl
 				(sceneItem, scene) =>
 				{
 					var selectedItem = scene.SelectedItem;
-					var replaceItems = (selectedItem is SelectionGroupObject3D) ? selectedItem.Children.ToList() : new List<IObject3D> { selectedItem };
 					scene.SelectedItem = null;
-					var selectedClone = SelectionAsSingleClone(selectedItem);
-					var rotate = new RotateObject3D_2(selectedClone);
-					rotate.MakeNameNonColliding();
-
-					scene.UndoBuffer.AddAndDo(new ReplaceCommand(replaceItems, new List<IObject3D> { rotate }));
-					scene.SelectedItem = rotate;
+					var scale = new RotateObject3D_2();
+					scale.WrapItem(selectedItem, scene.UndoBuffer);
+					scene.SelectedItem = scale;
 
 					return Task.CompletedTask;
 				},
 				iconCollector: (theme) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16, theme.InvertIcons));
+
+
+			this.Graph.RegisterOperation(
+				typeof(IObject3D),
+				typeof(ScaleObject3D),
+				"Scale".Localize(),
+				(sceneItem, scene) =>
+				{
+					var selectedItem = scene.SelectedItem;
+					scene.SelectedItem = null;
+					var scale = new ScaleObject3D();
+					scale.WrapItem(selectedItem, scene.UndoBuffer);
+					scene.SelectedItem = scale;
+
+					return Task.CompletedTask;
+				},
+				iconCollector: (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons));
+
+			this.Graph.RegisterOperation(
+				typeof(IObject3D),
+				typeof(MirrorObject3D),
+				"Mirror".Localize(),
+				(sceneItem, scene) =>
+				{
+					var mirror = new MirrorObject3D();
+					mirror.WrapSelectedItemAndSelect(scene);
+
+					return Task.CompletedTask;
+				},
+				iconCollector: (theme) => AggContext.StaticData.LoadIcon("mirror_32x32.png", 16, 16, theme.InvertIcons));
 
 			this.Graph.RegisterOperation(
 				typeof(IObject3D),
@@ -1242,39 +1242,6 @@ namespace MatterHackers.MatterControl
 						&& componentObject.Finalized;
 				},
 				iconCollector: (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons));
-
-			this.Graph.RegisterOperation(
-				typeof(IObject3D),
-				typeof(ScaleObject3D),
-				"Scale".Localize(),
-				(sceneItem, scene) =>
-				{
-					var selectedItem = scene.SelectedItem;
-					var replaceItems = (selectedItem is SelectionGroupObject3D) ? selectedItem.Children.ToList() : new List<IObject3D> { selectedItem };
-					scene.SelectedItem = null;
-					var selectedClone = SelectionAsSingleClone(selectedItem);
-					var scale = new ScaleObject3D(selectedClone);
-					scale.MakeNameNonColliding();
-
-					scene.UndoBuffer.AddAndDo(new ReplaceCommand(replaceItems, new List<IObject3D> { scale }));
-					scene.SelectedItem = scale;
-
-					return Task.CompletedTask;
-				},
-				iconCollector: (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons));
-
-			this.Graph.RegisterOperation(
-				typeof(IObject3D),
-				typeof(MirrorObject3D),
-				"Mirror".Localize(),
-				(sceneItem, scene) =>
-				{
-					var mirror = new MirrorObject3D();
-					mirror.WrapSelectedItemAndSelect(scene);
-
-					return Task.CompletedTask;
-				},
-				iconCollector: (theme) => AggContext.StaticData.LoadIcon("mirror_32x32.png", 16, 16, theme.InvertIcons));
 
 			this.Graph.RegisterOperation(
 				typeof(IPathObject),

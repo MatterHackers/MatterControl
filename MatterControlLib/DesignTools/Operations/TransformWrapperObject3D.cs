@@ -28,11 +28,13 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
@@ -75,6 +77,41 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public TransformWrapperObject3D()
 		{
 			Name = "Transform Wrapper".Localize();
+		}
+
+		public virtual void WrapItem(IObject3D item, UndoBuffer undoBuffer = null)
+		{
+			if (item is SelectionGroupObject3D)
+			{
+				throw new Exception("The selection should have been cleared before you wrap this item");
+			}
+
+			// if the items we are replacing ar already in a list
+			if (item.Parent != null)
+			{
+				var replaceItems = new List<IObject3D> { item };
+				IObject3D itemClone = item.Clone();
+
+				var firstChild = new Object3D();
+				this.Children.Add(firstChild);
+				firstChild.Children.Add(itemClone);
+
+				var replace = new ReplaceCommand(replaceItems, new List<IObject3D> { this });
+				if (undoBuffer != null)
+				{
+					undoBuffer.AddAndDo(replace);
+				}
+				else
+				{
+					replace.Do();
+				}
+			}
+			else // just add them
+			{
+				var firstChild = new Object3D();
+				firstChild.Children.Add(item);
+				this.Children.Add(firstChild);
+			}
 		}
 
 		public override void Flatten(UndoBuffer undoBuffer)

@@ -57,20 +57,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public ScaleObject3D(IObject3D itemToScale, Vector3 scale)
 			: this()
 		{
-			var aabb = itemToScale.GetAxisAlignedBoundingBox();
-			// move our inner content to a centered position
+			WrapItem(itemToScale);
+		}
+
+		public override void WrapItem(IObject3D item, UndoBuffer undoBuffer = null)
+		{
+			base.WrapItem(item, undoBuffer);
+
+			var aabb = item.GetAxisAlignedBoundingBox();
 			var newCenter = new Vector3(aabb.Center.X, aabb.Center.Y, aabb.minXYZ.Z);
-			itemToScale.Translate(-newCenter);
+			item.Translate(-newCenter);
 			this.Translate(newCenter);
-
-			// set some state
-			this.ScaleRatio = scale;
-
-			var scaleItem = new Object3D();
-			this.Children.Add(scaleItem);
-			scaleItem.Children.Add(itemToScale);
-
-			Rebuild(null);
 		}
 
 		public override bool CanFlatten => true;
