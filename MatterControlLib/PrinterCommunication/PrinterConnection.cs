@@ -2600,13 +2600,14 @@ You will then need to logout and log back in to the computer for the changes to 
 							WriteLineStartCallBacks.ProcessLine(lineWithoutChecksum);
 							WriteLineContainsCallBacks.ProcessLine(lineWithoutChecksum);
 
+							var terminalLine = lineToWrite;
 							if (PrinterIsPrinting)
 							{
-								string lineWithoutCR = lineToWrite.TrimEnd();
-								lineToWrite = string.Format("{0} [{1:0.000}]\n", lineWithoutCR, timeSinceStartedPrint.Elapsed.TotalSeconds);
+								string lineWithoutCR = terminalLine.TrimEnd();
+								terminalLine = string.Format("{0} [{1:0.000}]\n", lineWithoutCR, timeSinceStartedPrint.Elapsed.TotalSeconds);
 							}
 
-							LineSent?.Invoke(this, lineToWrite);
+							LineSent?.Invoke(this, terminalLine);
 						}
 					}
 
