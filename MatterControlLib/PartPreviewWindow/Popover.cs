@@ -34,7 +34,7 @@ using MatterHackers.Agg.VertexSource;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class Popover : GuiWidget
+	public class Popover : FlowLayoutWidget
 	{
 		private IVertexSource tabShape = null;
 		private Stroke tabStroke;
@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		/// <param name="notchSize">The size of the arrow notch</param>
 		/// <param name="p2">The arrow offset in x or y given the specified arrow</param>
 		public Popover(ArrowDirection arrowDirection, BorderDouble padding, int notchSize, int p2, bool autoBorderColor = true)
+			: base (FlowDirection.TopToBottom)
 		{
 			this.originalPadding = padding;
 			this.NotchSize = notchSize;
