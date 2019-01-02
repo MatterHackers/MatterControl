@@ -51,6 +51,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			: this()
 		{
 			WrapItem(itemToTranslate);
+			Matrix = Matrix4X4.CreateTranslation(translation);
 		}
 
 		public override bool CanFlatten => true;

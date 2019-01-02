@@ -81,37 +81,36 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public virtual void WrapItem(IObject3D item, UndoBuffer undoBuffer = null)
 		{
-			var replaceItems = (item is SelectionGroupObject3D) ? item.Children.ToList() : new List<IObject3D> { item };
-			IObject3D itemClone;
-			// If SelectionGroup, operate on Children instead
 			if (item is SelectionGroupObject3D)
 			{
-				IEnumerable<IObject3D> items = item.Children;
+				throw new Exception("The selection should have been cleared before you wrap this item");
+			}
 
-				itemClone = new GroupObject3D();
+			// if the items we are replacing ar already in a list
+			if (item.Parent != null)
+			{
+				var replaceItems = new List<IObject3D> { item };
+				IObject3D itemClone = item.Clone();
 
-				itemClone.Children.Modify(children =>
+				var firstChild = new Object3D();
+				this.Children.Add(firstChild);
+				firstChild.Children.Add(itemClone);
+
+				var replace = new ReplaceCommand(replaceItems, new List<IObject3D> { this });
+				if (undoBuffer != null)
 				{
-					children.AddRange(items.Select(o => o.Clone()));
-				});
+					undoBuffer.AddAndDo(replace);
+				}
+				else
+				{
+					replace.Do();
+				}
 			}
-			else
+			else // just add them
 			{
-				itemClone = item.Clone();
-			}
-
-			var firstChild = new Object3D();
-			this.Children.Add(firstChild);
-			firstChild.Children.Add(itemClone);
-
-			var replace = new ReplaceCommand(replaceItems, new List<IObject3D> { this });
-			if (undoBuffer != null)
-			{
-				undoBuffer.AddAndDo(replace);
-			}
-			else
-			{
-				replace.Do();
+				var firstChild = new Object3D();
+				firstChild.Children.Add(item);
+				this.Children.Add(firstChild);
 			}
 		}
 
