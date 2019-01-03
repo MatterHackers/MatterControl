@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,52 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
+
+namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class AsPercentOfReferenceOrDirect : MappedSetting
-	{
-		private bool change0ToReference;
-		private string originalReference;
-		private double scale;
-
-		public AsPercentOfReferenceOrDirect(PrinterConfig printer, string canonicalSettingsName, string exportedName, string originalReference, double scale = 1, bool change0ToReference = true)
-			: base(printer, canonicalSettingsName, exportedName)
-		{
-			this.change0ToReference = change0ToReference;
-			this.scale = scale;
-			this.originalReference = originalReference;
-		}
-
-		public string ReferencedSetting => originalReference;
-
-		public override string Value
-		{
-			get
-			{
-				double finalValue = 0;
-				if (base.Value.Contains("%"))
-				{
-					string withoutPercent = base.Value.Replace("%", "");
-					double ratio = ParseDouble(withoutPercent) / 100.0;
-					string originalReferenceString = printer.Settings.GetValue(originalReference);
-					double valueToModify = ParseDouble(originalReferenceString);
-					finalValue = valueToModify * ratio;
-				}
-				else
-				{
-					finalValue = ParseDouble(base.Value);
-				}
-
-				if (change0ToReference
-					&& finalValue == 0)
-				{
-					finalValue = ParseDouble(printer.Settings.GetValue(originalReference));
-				}
-
-				finalValue *= scale;
-
-				return finalValue.ToString();
-			}
-		}
-	}
+	public enum ArrowDirection { Right, Left, Top, Bottom }
 }

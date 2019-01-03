@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					if (row is SliceSettingsRow settingsRow)
 					{
-						settingsRow.ArrowDirection = Popover.ArrowDirection.Left;
+						settingsRow.ArrowDirection = ArrowDirection.Left;
 					}
 
 					optionsPanel.AddChild(row);
@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					if (advancedRow is SliceSettingsRow settingsRow)
 					{
-						settingsRow.ArrowDirection = Popover.ArrowDirection.Left;
+						settingsRow.ArrowDirection = ArrowDirection.Left;
 					}
 
 					subPanel.AddChild(advancedRow);

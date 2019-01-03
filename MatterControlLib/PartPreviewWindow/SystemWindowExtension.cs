@@ -33,6 +33,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -89,6 +90,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var hookedWidgets = new HashSet<GuiWidget>();
 			void anchor_Closed(object sender, EventArgs e)
 			{
+				if (popup.Widget is SliceSettingsPopover popover
+					&& !popover.AllowAutoClose)
+				{
+					return;
+				}
+
 				// If the owning widget closed, so should we
 				popup.Widget.Close();
 
@@ -220,7 +227,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				popup.Widget.Close();
 
 				anchor.Widget.Closed -= anchor_Closed;
-				
+
 				// Unbind callbacks on parents for position_changed if we're closing
 				foreach (GuiWidget widget in hookedParents)
 				{

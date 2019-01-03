@@ -28,17 +28,50 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SliceSettingsRow : SettingsRow
 	{
+		private static Dictionary<string, Func<PrinterSettings, GuiWidget>> extendedInfo = new Dictionary<string, Func<PrinterSettings, GuiWidget>>()
+		{
+#if DEBUG
+			{ "perimeter_start_end_overlap", (settings) =>
+				{
+
+					var theme = AppContext.Theme;
+
+					var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
+					{
+						Margin = new BorderDouble(top: 8),
+						HAnchor = HAnchor.Stretch
+					};
+
+					var markdown = new MarkdownWidget(theme);
+					markdown.HAnchor = HAnchor.Stretch;
+					markdown.VAnchor = VAnchor.Fit;
+					markdown.Markdown = "**Hello From Markdown**\r\n\r\n ![xxx](https://gravit.io/assets/home/oldusermessagebg.png)";
+
+					column.AddChild(markdown);
+
+
+					return column;
+				}
+			}
+#endif
+		};
+
+		private static Popover activePopover = null;
+
 		private SettingsContext settingsContext;
 
 		public string HelpText { get; }
@@ -84,7 +117,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					&& settingData.DataEditType != SliceSettingData.DataEditTypes.HARDWARE_PRESENT)
 				{
 					unitsArea.AddChild(
-						new WrappedTextWidget(settingData.Units.Localize(), pointSize: 8, textColor: theme.TextColor)
+						new WrappedTextWidget(settingData.Units.Localize(), pointSize: theme.FontSize8, textColor: theme.TextColor)
 						{
 							Margin = new BorderDouble(5, 0),
 						});
@@ -206,7 +239,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			base.OnLoad(args);
 		}
 
-		public Popover.ArrowDirection ArrowDirection { get; set; } = Popover.ArrowDirection.Right;
+		public ArrowDirection ArrowDirection { get; set; } = ArrowDirection.Right;
 
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
@@ -223,29 +256,92 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return;
 			}
 
-			// We should not take focus as the mouse enters, focus could be in a text control and this sets the value and stops the editing.
-			// Is there a known reason we need to do something with focus here to get other intended behavior?
-			//settingsRow.Focus();
-
 			int arrowOffset = (int)(settingsRow.Height / 2);
 
-			var tagContainer = new Popover(this.ArrowDirection, new BorderDouble(15, 10), 7, arrowOffset)
+			var popover = new SliceSettingsPopover(this.ArrowDirection, new BorderDouble(15, 10), 7, arrowOffset)
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
 				TagColor = theme.ResolveColor(AppContext.Theme.BackgroundColor, AppContext.Theme.AccentMimimalOverlay.WithAlpha(50)),
 			};
 
-			tagContainer.AddChild(new WrappedTextWidget(settingsRow.HelpText, pointSize: theme.DefaultFontSize - 1, textColor: AppContext.Theme.TextColor)
+			popover.AddChild(new WrappedTextWidget(settingsRow.HelpText, pointSize: theme.DefaultFontSize - 1, textColor: AppContext.Theme.TextColor)
 			{
 				Width = 400 * GuiWidget.DeviceScale,
 				HAnchor = HAnchor.Fit,
 			});
 
-			bool alignLeft = this.ArrowDirection == Popover.ArrowDirection.Right;
+			bool alignLeft = (this.ArrowDirection == ArrowDirection.Right);
+
+			string mapsTo = "";
 
 			// after a certain amount of time make the popover close (just like a tool tip)
 			double closeSeconds = Math.Max(1, (settingsRow.HelpText.Length / 50.0)) * 5;
+
+			if (printer.EngineMappingsMatterSlice.MappedSettings.FirstOrDefault(m => m.CanonicalSettingsName == settingData.SlicerConfigName) is AsPercentOfReferenceOrDirect percentReference)
+			{
+				mapsTo = " -> " + percentReference.ExportedName;
+
+				var settings = printer.Settings;
+
+				string settingValue = settings.GetValue(percentReference.CanonicalSettingsName);
+				string referencedSetting = settings.GetValue(percentReference.ReferencedSetting);
+
+				double.TryParse(referencedSetting, out double referencedValue);
+
+				var theme = AppContext.Theme;
+
+				var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				{
+					Margin = new BorderDouble(top: 8),
+					HAnchor = HAnchor.Stretch
+				};
+
+				if (settingValue.Contains("%")
+					&& SettingsOrganizer.SettingsData.TryGetValue(percentReference.ReferencedSetting, out SliceSettingData referencedSettingData))
+				{
+					column.AddChild(
+						new TextWidget(
+							string.Format("{0}: {1} ({2})", "Percentage of".Localize(), referencedSettingData.PresentationName, referencedSetting),
+							textColor: theme.TextColor,
+							pointSize: theme.DefaultFontSize - 1));
+
+					settingValue = settingValue.Replace("%", "").Trim();
+
+					if (int.TryParse(settingValue, out int percent))
+					{
+						double ratio = (double)percent / 100;
+
+						string line = string.Format(
+									"{0}% of {1} is {2:0.##}",
+									percent,
+									referencedValue,
+									percentReference.Value);
+
+						column.AddChild(new TextWidget(line, textColor: theme.TextColor, pointSize: theme.DefaultFontSize - 1));
+
+						popover.AddChild(column);
+					}
+				}
+			}
+
+			if (extendedInfo.TryGetValue(settingData.SlicerConfigName, out Func<PrinterSettings, GuiWidget> extender))
+			{
+				if (extender.Invoke(printer.Settings) is GuiWidget widget)
+				{
+					popover.AddChild(widget);
+				}
+			}
+
+#if DEBUG
+			popover.AddChild(new TextWidget(settingData.SlicerConfigName + mapsTo, pointSize: theme.DefaultFontSize - 1, textColor: AppContext.Theme.TextColor)
+			{
+				Margin = new BorderDouble(top: 10)
+			});
+#endif
+			activePopover?.Close();
+
+			activePopover = popover;
 
 			systemWindow.ShowPopover(
 				new MatePoint(settingsRow)
@@ -254,22 +350,42 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					AltMate = new MateOptions(alignLeft ? MateEdge.Left : MateEdge.Right, MateEdge.Bottom),
 					Offset = new RectangleDouble(12, 0, 12, 0)
 				},
-				new MatePoint(tagContainer)
+				new MatePoint(popover)
 				{
 					Mate = new MateOptions(alignLeft ? MateEdge.Right : MateEdge.Left, MateEdge.Top),
 					AltMate = new MateOptions(alignLeft ? MateEdge.Left : MateEdge.Right, MateEdge.Bottom),
 					//Offset = new RectangleDouble(12, 0, 12, 0)
-				}, secondsToClose: closeSeconds);
+				},
+				secondsToClose: closeSeconds);
 
-			popoverBubble = tagContainer;
+			popoverBubble = popover;
 
 			base.OnMouseEnterBounds(mouseEvent);
 		}
 
 		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
 		{
-			// Close any active popover bubble
-			popoverBubble?.Close();
+			if (popoverBubble != null)
+			{
+				// Allow a moment to elapse to determine if the mouse is withing the bubble or has returned to this control, close otherwise
+				UiThread.RunOnIdle(() =>
+				{
+					// Skip close if we are FirstWidgetUnderMouse
+					if (this.FirstWidgetUnderMouse)
+					{
+						// Often we get OnMouseLeaveBounds when the mouse is still within bounds (as child mouse events are processed)
+						// If the mouse is in bounds of this widget, abort the popover close below
+						return;
+					}
+
+					// Close the popover as long as it doesn't contain the mouse
+					if (!popoverBubble.ContainsFirstUnderMouseRecursive())
+					{
+						// Close any active popover bubble
+						popoverBubble?.Close();
+					}
+				}, 1);
+			}
 
 			base.OnMouseLeaveBounds(mouseEvent);
 		}
