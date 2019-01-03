@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -34,8 +35,10 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PolygonMesh;
+using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -50,6 +53,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public class GenerateSupportPannel : FlowLayoutWidget
 	{
+		/// <summary>
+		/// The amount ot reduce the pilars so they are separated in the 3D view
+		/// </summary>
+		private double reduceAmount => PillarSize / 8;
+
 		private InteractiveScene scene;
 		private ThemeConfig theme;
 
@@ -61,9 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			VAnchor = VAnchor.Fit;
 			HAnchor = HAnchor.Absolute;
-			Width = 400;
-
-			// put in support pillar size
+			Width = 300;
 
 			// support pillar resolution
 			var pillarSizeField = new DoubleField(theme);
@@ -118,16 +124,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public double PillarSize { get; private set; } = 4;
 
-		void RemoveExisting()
+		private void AddSupportColumn(double gridX, double gridY, double bottomZ, double topZ)
 		{
-			var existingSupports = scene.Children.Where(i => i.GetType() == typeof(GeneratedSupportObject3D));
-
-			scene.Children.Modify((list) =>
+			scene.Children.Add(new GeneratedSupportObject3D()
 			{
-				foreach (var item in existingSupports)
-				{
-					list.Remove(item);
-				}
+				Mesh = PlatonicSolids.CreateCube(PillarSize - reduceAmount, PillarSize - reduceAmount, topZ - bottomZ),
+				Matrix = Matrix4X4.CreateTranslation(gridX, gridY, bottomZ + (topZ - bottomZ) / 2)
 			});
 		}
 
@@ -137,7 +139,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var visibleMeshes = scene.Children.SelectMany(i => i.VisibleMeshes());
 
 			var selectedItem = scene.SelectedItem;
-			if(selectedItem != null)
+			if (selectedItem != null)
 			{
 				visibleMeshes = selectedItem.VisibleMeshes();
 			}
@@ -145,8 +147,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var supportCandidates = visibleMeshes.Where(i => i.OutputType != PrintOutputTypes.Support);
 
 			// find all the faces that are candidates for support
-			var verts = new Vector3List();
-			var faces = new FaceList();
+			var upVerts = new Vector3List();
+			var upFaces = new FaceList();
+			var downVerts = new Vector3List();
+			var downFaces = new FaceList();
 			foreach (var item in supportCandidates)
 			{
 				var matrix = item.WorldMatrix(scene);
@@ -159,28 +163,63 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						foreach (var triangle in face.AsTriangles())
 						{
-							faces.Add(new int[] { verts.Count, verts.Count + 1, verts.Count + 2 });
-							verts.Add(Vector3.Transform(triangle.p0, matrix));
-							verts.Add(Vector3.Transform(triangle.p0, matrix));
-							verts.Add(Vector3.Transform(triangle.p0, matrix));
+							downFaces.Add(new int[] { downVerts.Count, downVerts.Count + 1, downVerts.Count + 2 });
+							downVerts.Add(Vector3.Transform(triangle.p0, matrix));
+							downVerts.Add(Vector3.Transform(triangle.p1, matrix));
+							downVerts.Add(Vector3.Transform(triangle.p2, matrix));
+						}
+					}
+
+					if(angle > 0)
+					{
+						foreach (var triangle in face.AsTriangles())
+						{
+							upFaces.Add(new int[] { upVerts.Count, upVerts.Count + 1, upVerts.Count + 2 });
+							upVerts.Add(Vector3.Transform(triangle.p0, matrix));
+							upVerts.Add(Vector3.Transform(triangle.p1, matrix));
+							upVerts.Add(Vector3.Transform(triangle.p2, matrix));
 						}
 					}
 				}
 			}
 
-			if (faces.Count > 0)
+			if (downFaces.Count > 0)
 			{
+				var downTraceData = downFaces.CreateTraceData(downVerts, 0);
+				var upTraceData = upFaces.CreateTraceData(upVerts, 0);
+
 				// get the bounds of all verts
-				var bounds = verts.Bounds();
+				var bounds = downVerts.Bounds();
 
 				// create the gird of possible support
+				RectangleDouble gridBounds = new RectangleDouble(Math.Floor(bounds.minXYZ.X / PillarSize),
+					Math.Floor(bounds.minXYZ.Y / PillarSize),
+					Math.Ceiling(bounds.maxXYZ.X / PillarSize),
+					Math.Ceiling(bounds.maxXYZ.Y / PillarSize));
+
+				var supportGrid = new List<List<double>>((int)(gridBounds.Width * gridBounds.Height));
+
+				// at the center of every grid item add in a list of all the top faces to look down from
+				for(int y=0; y<gridBounds.Height; y++)
+				{
+					for(int x=0; x<gridBounds.Width; x++)
+					{
+						var ray = new Ray(new Vector3((gridBounds.Left + x) * PillarSize, (gridBounds.Bottom + y) * PillarSize, 0), Vector3.UnitZ, intersectionType: IntersectionType.Both);
+						var traceData = downTraceData.GetClosestIntersection(ray);
+						if(traceData != null)
+						{
+							AddSupportColumn(traceData.HitPosition.X, traceData.HitPosition.Y, 0, traceData.HitPosition.Z);
+						}
+					}
+				}
+
 				// foreach face set the support heights in the overlapped support grid
 				// foreach grid column that has data
 				// trace down from the top to the first bottom hit (or bed)
 				// add a support column
-				var first = faces.First();
-				var position = verts[first[0]];
-				AddSupportColumn(position.X, position.Y, position.Z, 0);
+				var first = downFaces.First();
+				var position = downVerts[first[0]];
+				//AddSupportColumn(position.X, position.Y, position.Z, 0);
 			}
 
 			// this is the theory for regions rather than pillars
@@ -191,13 +230,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// make a new mesh object with the top, bottom and walls, add it to the scene and mark it as support
 		}
 
-		private void AddSupportColumn(double gridX, double gridY, double topZ, double bottomZ)
+		private void RemoveExisting()
 		{
-			scene.Children.Add(new GeneratedSupportObject3D()
+			var existingSupports = scene.Children.Where(i => i.GetType() == typeof(GeneratedSupportObject3D));
+
+			scene.Children.Modify((list) =>
 			{
-				Mesh = PlatonicSolids.CreateCube(PillarSize / 2, PillarSize / 2, topZ - bottomZ),
-				Matrix = Matrix4X4.CreateTranslation(gridX, gridY, bottomZ + (topZ - bottomZ) / 2)
+				foreach (var item in existingSupports)
+				{
+					list.Remove(item);
+				}
 			});
+		}
+	}
+
+	public static class FaceListExtensions
+	{
+		public static IPrimitive CreateTraceData(this FaceList faceList, Vector3List vertexList, int maxRecursion = int.MaxValue)
+		{
+			List<IPrimitive> allPolys = new List<IPrimitive>();
+
+			foreach (var face in faceList)
+			{
+				allPolys.Add(new TriangleShape(vertexList[face[0]], vertexList[face[1]], vertexList[face[2]], null));
+			}
+
+			return BoundingVolumeHierarchy.CreateNewHierachy(allPolys, maxRecursion);
 		}
 	}
 }
