@@ -694,7 +694,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Name = "Support SplitButton",
 				ToolTipText = "Generate Support".Localize(),
-				DynamicPopupContent = () => new GenerateSupportPannel(theme, sceneContext.Scene),
+				DynamicPopupContent = () => new GenerateSupportPanel(AppContext.MenuTheme, sceneContext.Scene),
 				PopupHAnchor = HAnchor.Fit,
 				PopupVAnchor = VAnchor.Fit,
 				MakeScrollable = false,

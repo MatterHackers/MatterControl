@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -37,9 +40,6 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -51,25 +51,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 	}
 
-	public class GenerateSupportPannel : FlowLayoutWidget
+	public class GenerateSupportPanel : FlowLayoutWidget
 	{
 		/// <summary>
-		/// The amount ot reduce the pilars so they are separated in the 3D view
+		/// The amount to reduce the pillars so they are separated in the 3D view
 		/// </summary>
 		private double reduceAmount => PillarSize / 8;
 
 		private InteractiveScene scene;
 		private ThemeConfig theme;
 
-		public GenerateSupportPannel(ThemeConfig theme, InteractiveScene scene)
+		public GenerateSupportPanel(ThemeConfig theme, InteractiveScene scene)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.theme = theme;
 			this.scene = scene;
 
-			VAnchor = VAnchor.Fit;
-			HAnchor = HAnchor.Absolute;
-			Width = 300;
+			this.VAnchor = VAnchor.Fit;
+			this.HAnchor = HAnchor.Absolute;
+			this.Width = 300;
+			this.BackgroundColor = theme.BackgroundColor;
+			this.Padding = theme.DefaultContainerPadding;
+
+			// put in support pillar size
 
 			// support pillar resolution
 			var pillarSizeField = new DoubleField(theme);
@@ -97,27 +101,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			overHangRow.AddChild(overHangField.Content);
 			this.AddChild(overHangRow);
 
-			// add 'Generate Supports' button
-			var generateButton = new TextButton("Generate".Localize(), theme)
+			var buttonRow = new FlowLayoutWidget()
 			{
+				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
-				HAnchor = HAnchor.Right,
-				Margin = 5,
-				ToolTipText = "Find and create supports where needed".Localize()
+				Margin = new BorderDouble(top: 5)
 			};
-			this.AddChild(generateButton);
-			generateButton.Click += (s, e) => Rebuild();
+			this.AddChild(buttonRow);
+
+			buttonRow.AddChild(new HorizontalSpacer());
 
 			// add 'Remove Auto Supports' button
-			var removeButton = new TextButton("Remove".Localize(), theme)
-			{
-				VAnchor = VAnchor.Fit,
-				HAnchor = HAnchor.Right,
-				Margin = 5,
-				ToolTipText = "Remvoe all auto generated supports".Localize()
-			};
-			this.AddChild(removeButton);
+			var removeButton = theme.CreateDialogButton("Remove".Localize());
+			removeButton.ToolTipText = "Remove all auto generated supports".Localize();
 			removeButton.Click += (s, e) => RemoveExisting();
+			buttonRow.AddChild(removeButton);
+
+			// add 'Generate Supports' button
+			var generateButton = theme.CreateDialogButton("Generate".Localize());
+			generateButton.ToolTipText = "Find and create supports where needed".Localize();
+			generateButton.Click += (s, e) => Rebuild();
+			buttonRow.AddChild(generateButton);
+			theme.ApplyPrimaryActionStyle(generateButton);
 		}
 
 		public double MaxOverHangAngle { get; private set; } = 45;
@@ -243,8 +248,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// this is the theory for regions rather than pillars
 			// separate the faces into face patch groups (these are the new support tops)
-			// project all the vertecies of each patch group down until they hit an up face in the scene (or 0)
-			// make a new patch group at the z of the hit (thes will bthe bottoms)
+			// project all the vertices of each patch group down until they hit an up face in the scene (or 0)
+			// make a new patch group at the z of the hit (these will be the bottoms)
 			// find the outline of the patch groups (these will be the walls of the top and bottom patches
 			// make a new mesh object with the top, bottom and walls, add it to the scene and mark it as support
 		}
@@ -267,7 +272,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public static IPrimitive CreateTraceData(this FaceList faceList, Vector3List vertexList, int maxRecursion = int.MaxValue)
 		{
-			List<IPrimitive> allPolys = new List<IPrimitive>();
+			var allPolys = new List<IPrimitive>();
 
 			foreach (var face in faceList)
 			{
