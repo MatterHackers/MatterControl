@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl
 
 		public NumberEdit ActuallNumberEdit { get; }
 
-		public MHNumberEdit(double startingValue, ThemeConfig theme, double pixelWidth = 0, double pixelHeight = 0, bool allowNegatives = false, bool allowDecimals = false, double minValue = int.MinValue, double maxValue = int.MaxValue, double increment = 1, int tabIndex = 0)
+		public MHNumberEdit(double startingValue, ThemeConfig theme, char singleCharLabel = char.MaxValue, double pixelWidth = 0, double pixelHeight = 0, bool allowNegatives = false, bool allowDecimals = false, double minValue = int.MinValue, double maxValue = int.MaxValue, double increment = 1, int tabIndex = 0)
 		{
 			using (this.LayoutLock())
 			{
@@ -48,10 +48,27 @@ namespace MatterHackers.MatterControl
 				this.Border = 1;
 				this.theme = theme;
 
+				double labelWidth = 0;
+
+				if (singleCharLabel != char.MaxValue)
+				{
+					var labelWidget = new TextWidget(singleCharLabel.ToString(), pointSize: theme.DefaultFontSize - 2, textColor: theme.PrimaryAccentColor)
+					{
+						Margin = new BorderDouble(left: 2),
+						HAnchor = HAnchor.Left,
+						VAnchor = VAnchor.Center
+					};
+					labelWidth = labelWidget.Width + labelWidget.Margin.Left;
+
+					this.AddChild(labelWidget);
+				}
+
 				this.ActuallNumberEdit = new NumberEdit(startingValue, 0, 0, theme.DefaultFontSize, pixelWidth, pixelHeight, allowNegatives, allowDecimals, minValue, maxValue, increment, tabIndex)
 				{
 					VAnchor = VAnchor.Bottom,
 				};
+
+				ActuallNumberEdit.Margin = ActuallNumberEdit.Margin.Clone(left: labelWidth + 2);
 
 				var internalWidget = this.ActuallNumberEdit.InternalTextEditWidget;
 				internalWidget.TextColor = theme.EditFieldColors.Inactive.TextColor;
