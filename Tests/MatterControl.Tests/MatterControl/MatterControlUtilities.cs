@@ -100,12 +100,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void SignOutUser(this AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("User Options Menu");
-			testRunner.ClickByName("Sign Out Menu Item");
-			testRunner.Delay(.5);
+			testRunner.ClickSignOut();
 
 			// Rather than waiting a fixed amount of time, we wait for the ReloadAll to complete before returning
 			testRunner.WaitForReloadAll(() => testRunner.ClickByName("Yes Button"));
+		}
+
+		public static void ClickSignOut(this AutomationRunner testRunner)
+		{
+			testRunner.ClickByName("User Options Menu");
+			testRunner.ClickByName("Sign Out Menu Item");
+			testRunner.Delay(.5);
 		}
 
 		public static void WaitForReloadAll(this AutomationRunner testRunner, Action reloadAllAction)
