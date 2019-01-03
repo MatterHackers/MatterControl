@@ -62,11 +62,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double InfillAmount { get; set; } = 3;
 		public double ExtrusionHeight { get; set; } = 5;
 
-		public override void Flatten(UndoBuffer undoBuffer)
-		{
-			base.Flatten(undoBuffer);
-		}
-
 		public override void Remove(UndoBuffer undoBuffer)
 		{
 			using (RebuildLock())

@@ -73,6 +73,12 @@ namespace MatterHackers.MatterControl.Library
 					() => "Text".Localize(),
 					() => TextObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
+#if DEBUG
+				new GeneratorItem(
+					() => "Text".Localize(),
+					() => TextPathObject3D.Create())
+					{ DateCreated = new System.DateTime(index++) },
+#endif
 				new GeneratorItem(
 					() => "Cylinder".Localize(),
 					() => CylinderObject3D.Create())
