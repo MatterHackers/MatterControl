@@ -78,6 +78,36 @@ namespace MatterControl.Tests.MatterControl
 					-10, -10, -10,
 					20, 10, 10).Equals(rootAabb, .001));
 			}
+		
+			// Combine has correct results when inner content is changed
+			{
+				var root = new Object3D();
+				var cubeA = new CubeObject3D(20, 20, 20);
+				var cubeB = new CubeObject3D(20, 20, 20);
+
+				var union = new CombineObject3D();
+				union.Children.Add(cubeA);
+				union.Children.Add(cubeB);
+				root.Children.Add(union);
+
+				union.Combine();
+
+				Assert.AreEqual(5, root.Descendants().Count());
+				var rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.IsTrue(new AxisAlignedBoundingBox(
+					-10, -10, -10,
+					10, 10, 10).Equals(rootAabb, .001));
+
+				var offsetCubeB = new TranslateObject3D(cubeB, 10);
+				offsetCubeB.WrapItem(cubeB);
+
+				union.Combine();
+				Assert.AreEqual(6, root.Descendants().Count());
+				rootAabb = root.GetAxisAlignedBoundingBox();
+				Assert.IsTrue(new AxisAlignedBoundingBox(
+					-10, -10, -10,
+					20, 10, 10).Equals(rootAabb, .001));
+			}
 
 			// now make sure undo has the right results for flatten
 			{
