@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -43,6 +44,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private static Dictionary<string, Func<PrinterSettings, GuiWidget>> extendedInfo = new Dictionary<string, Func<PrinterSettings, GuiWidget>>()
 		{
+#if DEBUG
+			{ "perimeter_start_end_overlap", (settings) =>
+				{
+
+					var theme = AppContext.Theme;
+
+					var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
+					{
+						Margin = new BorderDouble(top: 8),
+						HAnchor = HAnchor.Stretch
+					};
+
+					var markdown = new MarkdownWidget(theme);
+					markdown.HAnchor = HAnchor.Stretch;
+					markdown.VAnchor = VAnchor.Fit;
+					markdown.Markdown = "**Hello From Markdown**\r\n\r\n ![xxx](https://gravit.io/assets/home/oldusermessagebg.png)";
+
+					column.AddChild(markdown);
+
+
+					return column;
+				}
+			}
+#endif
 		};
 
 		private static Popover activePopover = null;
