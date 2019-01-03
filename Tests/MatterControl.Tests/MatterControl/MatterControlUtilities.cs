@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Directory.Delete(PathToDownloadsSubFolder, true);
 		}
 
-		public static void SignOut(this AutomationRunner testRunner)
+		public static void SignOutUser(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("User Options Menu");
 			testRunner.ClickByName("Sign Out Menu Item");
