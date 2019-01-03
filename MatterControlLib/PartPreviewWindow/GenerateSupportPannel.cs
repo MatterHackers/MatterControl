@@ -202,14 +202,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// at the center of every grid item add in a list of all the top faces to look down from
 				for(int y=0; y<gridBounds.Height; y++)
 				{
-					for(int x=0; x<gridBounds.Width; x++)
+					var yPos = (gridBounds.Bottom + y) * PillarSize;
+					for (int x=0; x<gridBounds.Width; x++)
 					{
-						var ray = new Ray(new Vector3((gridBounds.Left + x) * PillarSize, (gridBounds.Bottom + y) * PillarSize, 0), Vector3.UnitZ, intersectionType: IntersectionType.Both);
-						var traceData = downTraceData.GetClosestIntersection(ray);
-						if(traceData != null)
+						var xPos = (gridBounds.Left + x) * PillarSize;
+						IntersectInfo upHit = null;
+						var upRay = new Ray(new Vector3(xPos, yPos, 0), Vector3.UnitZ, intersectionType: IntersectionType.Both);
+						do
 						{
-							AddSupportColumn(traceData.HitPosition.X, traceData.HitPosition.Y, 0, traceData.HitPosition.Z);
-						}
+							upHit = downTraceData.GetClosestIntersection(upRay);
+							if (upHit != null)
+							{
+								// we found a ceiling above this spot, look down from that to find the first floor
+								var downRay = new Ray(new Vector3(xPos, yPos, upHit.HitPosition.Z - .001), -Vector3.UnitZ, intersectionType: IntersectionType.Both);
+								var downHit = upTraceData.GetClosestIntersection(downRay);
+								if (downHit != null)
+								{
+									AddSupportColumn(downHit.HitPosition.X, downHit.HitPosition.Y, downHit.HitPosition.Z, upHit.HitPosition.Z);
+								}
+								else
+								{
+									// did not find a hit, go to the bed
+									AddSupportColumn(upHit.HitPosition.X, upHit.HitPosition.Y, upRay.origin.Z, upHit.HitPosition.Z);
+								}
+
+								upRay = new Ray(new Vector3(xPos, yPos, upHit.HitPosition.Z + .001), Vector3.UnitZ, intersectionType: IntersectionType.Both);
+							}
+						} while (upHit != null);
 					}
 				}
 
