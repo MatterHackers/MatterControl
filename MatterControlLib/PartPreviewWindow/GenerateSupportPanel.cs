@@ -67,9 +67,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.scene = scene;
 
-			VAnchor = VAnchor.Fit;
-			HAnchor = HAnchor.Absolute;
-			Width = 300;
+			this.VAnchor = VAnchor.Fit;
+			this.HAnchor = HAnchor.Absolute;
+			this.Width = 300;
+			this.BackgroundColor = theme.BackgroundColor;
+			this.Padding = theme.DefaultContainerPadding;
+
+			// put in support pillar size
 
 			// support pillar resolution
 			var pillarSizeField = new DoubleField(theme);
@@ -97,27 +101,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			overHangRow.AddChild(overHangField.Content);
 			this.AddChild(overHangRow);
 
-			// add 'Generate Supports' button
-			var generateButton = new TextButton("Generate".Localize(), theme)
+			var buttonRow = new FlowLayoutWidget()
 			{
+				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
-				HAnchor = HAnchor.Right,
-				Margin = 5,
-				ToolTipText = "Find and create supports where needed".Localize()
+				Margin = new BorderDouble(top: 5)
 			};
-			this.AddChild(generateButton);
-			generateButton.Click += (s, e) => Rebuild();
+			this.AddChild(buttonRow);
+
+			buttonRow.AddChild(new HorizontalSpacer());
 
 			// add 'Remove Auto Supports' button
-			var removeButton = new TextButton("Remove".Localize(), theme)
-			{
-				VAnchor = VAnchor.Fit,
-				HAnchor = HAnchor.Right,
-				Margin = 5,
-				ToolTipText = "Remove all auto generated supports".Localize()
-			};
-			this.AddChild(removeButton);
+			var removeButton = theme.CreateDialogButton("Remove".Localize());
+			removeButton.ToolTipText = "Remove all auto generated supports".Localize();
 			removeButton.Click += (s, e) => RemoveExisting();
+			buttonRow.AddChild(removeButton);
+
+			// add 'Generate Supports' button
+			var generateButton = theme.CreateDialogButton("Generate".Localize());
+			generateButton.ToolTipText = "Find and create supports where needed".Localize();
+			generateButton.Click += (s, e) => Rebuild();
+			buttonRow.AddChild(generateButton);
+			theme.ApplyPrimaryActionStyle(generateButton);
 		}
 
 		public double MaxOverHangAngle { get; private set; } = 45;
