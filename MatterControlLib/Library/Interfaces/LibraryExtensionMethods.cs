@@ -36,14 +36,19 @@ namespace MatterHackers.MatterControl.Library
 {
 	public static class LibraryExtensionMethods
 	{
-		public static Task<IObject3D> CreateContent(this ILibraryItem libraryItem, Action<double, string> progressReporter)
+		public static async Task<IObject3D> CreateContent(this ILibraryItem libraryItem, Action<double, string> progressReporter)
 		{
-			if (ApplicationController.Instance.Library.GetContentProvider(libraryItem) is ISceneContentProvider contentProvider)
+			if (libraryItem is IRequireInitialize requiresInitialize)
 			{
-				return contentProvider?.CreateItem(libraryItem, progressReporter);
+				await requiresInitialize.Initialize();
 			}
 
-			return Task.FromResult<IObject3D>(null);
+			if (ApplicationController.Instance.Library.GetContentProvider(libraryItem) is ISceneContentProvider contentProvider)
+			{
+				return await contentProvider?.CreateItem(libraryItem, progressReporter);
+			}
+
+			return null;
 		}
 
 		public static bool IsContentFileType(this ILibraryItem item)

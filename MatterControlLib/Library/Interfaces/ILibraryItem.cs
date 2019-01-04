@@ -60,6 +60,11 @@ namespace MatterHackers.MatterControl.Library
 		Task<StreamAndLength> GetStream(Action<double, string> progress);
 	}
 
+	public interface IRequireInitialize
+	{
+		Task Initialize();
+	}
+
 	public interface ILibraryAsset : ILibraryItem
 	{
 		string ContentType { get; }

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, John Lewin
+Copyright (c) 2019, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class RemoteLibraryItem : ILibraryAssetStream
+	public class RemoteLibraryItem : ILibraryAssetStream, IRequireInitialize
 	{
 		private string url;
 		private HttpClient httpClient;
@@ -43,21 +43,6 @@ namespace MatterHackers.MatterControl.Library
 		public RemoteLibraryItem(string url, string name)
 		{
 			httpClient = new HttpClient();
-
-			// TODO: We need a way to ask library items to initialize before use, so that content type could be requested from the remote source before the stream is acquired. Currently properties are 
-			// tested before GetStream is invoked that determine which provider should be used, which is impossible to know before we have the actual content type
-
-			//// Send HEAD request to help bypass the 401 auth challenge for the latter POST assuming
-			//// that the authentication will be cached and re-used later when PreAuthenticate is true.
-			//var request = new HttpRequestMessage(HttpMethod.Head, url);
-
-			//httpClient.SendAsync(request).ContinueWith(t =>
-			//{
-			//	var headers = t.Result.Content.Headers;
-
-			//	this.ContentType = headers.ContentType.MediaType.Replace("image/", "");
-			//	this.FileSize = headers.ContentLength ?? 0;
-			//});
 
 			this.url = url;
 			this.Name = name ?? "Unknown".Localize();
@@ -90,18 +75,27 @@ namespace MatterHackers.MatterControl.Library
 
 		public async Task<StreamAndLength> GetStream(Action<double, string> progress)
 		{
-
 			var response = await httpClient.GetAsync(this.url);
 
 			var headers = response.Content.Headers;
-
-			//this.ContentType = headers.ContentType.MediaType;
 
 			return new StreamAndLength()
 			{
 				Stream = await response.Content.ReadAsStreamAsync(),
 				Length = headers.ContentLength ?? 0
 			};
+		}
+
+		public async Task Initialize()
+		{
+			var request = new HttpRequestMessage(HttpMethod.Head, url);
+
+			var response = await httpClient.SendAsync(request);
+
+			var headers = response.Content.Headers;
+
+			this.ContentType = headers.ContentType.MediaType.Replace("image/", "");
+			this.FileSize = headers.ContentLength ?? 0;
 		}
 	}
 }
