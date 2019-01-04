@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,74 +28,55 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Net.Http;
+using System.IO;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class RemoteLibraryItem : ILibraryAssetStream, IRequireInitialize
+	public class BufferLibraryItem : ILibraryAssetStream
 	{
-		private string url;
-		private HttpClient httpClient;
+		private byte[] buffer;
 
-		public RemoteLibraryItem(string url, string name)
+		public BufferLibraryItem(byte[] buffer, string contentType, string name)
 		{
-			httpClient = new HttpClient();
-
-			this.url = url;
 			this.Name = name ?? "Unknown".Localize();
-			this.ID = agg_basics.GetLongHashCode(url).ToString();
+			this.buffer = buffer;
+			this.FileSize = buffer.Length;
+			this.ContentType = contentType.Replace("image/", "");
 		}
 
-		public string ID { get; set; }
+		public string ID { get; set; } = Guid.NewGuid().ToString();
 
 		public string Name { get; set; }
 
 		public string FileName => $"{this.Name}.{this.ContentType}";
 
-		public bool IsProtected => false;
+		public bool IsProtected { get; } = false;
 
-		public bool IsVisible => true;
+		public bool IsVisible { get; } = true;
 
 		public DateTime DateCreated { get; } = DateTime.Now;
 
 		public DateTime DateModified { get; } = DateTime.Now;
 
-		public string ContentType { get; private set; } = "jpg";
+		public string ContentType { get; set; }
 
 		public string Category => "General";
 
 		public string AssetPath { get; set; }
 
-		public long FileSize { get; private set; } = 0;
+		public long FileSize { get; }
 
 		public bool LocalContentExists => false;
 
-		public async Task<StreamAndLength> GetStream(Action<double, string> progress)
+		public Task<StreamAndLength> GetStream(Action<double, string> progress)
 		{
-			var response = await httpClient.GetAsync(this.url);
-
-			var headers = response.Content.Headers;
-
-			return new StreamAndLength()
+			return Task.FromResult(new StreamAndLength()
 			{
-				Stream = await response.Content.ReadAsStreamAsync(),
-				Length = headers.ContentLength ?? 0
-			};
-		}
-
-		public async Task Initialize()
-		{
-			var request = new HttpRequestMessage(HttpMethod.Head, url);
-
-			var response = await httpClient.SendAsync(request);
-
-			var headers = response.Content.Headers;
-
-			this.ContentType = headers.ContentType.MediaType.Replace("image/", "");
-			this.FileSize = headers.ContentLength ?? 0;
+				Stream = new MemoryStream(buffer),
+				Length = this.FileSize
+			});
 		}
 	}
 }

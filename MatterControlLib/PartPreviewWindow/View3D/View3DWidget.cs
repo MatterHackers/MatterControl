@@ -1388,7 +1388,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						return ApplicationController.Instance.IsLoadableFile(filePath)
 							// Disallow GCode drop in part view
 							&& (this.Printer != null || !string.Equals(System.IO.Path.GetExtension(filePath), ".gcode", StringComparison.OrdinalIgnoreCase))
-							|| filePath.StartsWith("http", StringComparison.OrdinalIgnoreCase);
+							|| filePath.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+							|| filePath.StartsWith("data:", StringComparison.OrdinalIgnoreCase);
 					});
 
 			// View3DWidgets Filesystem DropDrop handler
@@ -1405,8 +1406,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					this.StartDragDrop(
 						mouseEvent.DragFiles.Select<string, ILibraryItem>(path =>
 						{
-							if (path.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+							if (path.StartsWith("data:"))
 							{
+								// Basic support for images encoded as Base64 data urls
+								var match = Regex.Match(path, @"data:(?<type>.+?);base64,(?<data>.+)");
+								var base64Data = match.Groups["data"].Value;
+								var contentType = match.Groups["type"].Value;
+								var binData = Convert.FromBase64String(base64Data);
+
+								return new BufferLibraryItem(binData, contentType, "unknown");
+							}
+							else if (path.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+							{
+								// Basic support for images via remote urls
 								return new RemoteLibraryItem(path, null);
 							}
 
