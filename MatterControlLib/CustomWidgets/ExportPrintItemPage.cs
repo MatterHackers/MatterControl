@@ -226,7 +226,7 @@ namespace MatterHackers.MatterControl
 											savePath += targetExtension;
 										}
 
-										bool succeeded = false;
+										ExportResult exportResult = ExportResult.Failure;
 
 										if (activePlugin != null)
 										{
@@ -234,14 +234,14 @@ namespace MatterHackers.MatterControl
 											{
 												gCodeExport.CenterOnBed = centerOnBed;
 											}
-											succeeded = await activePlugin.Generate(libraryItems, savePath, reporter, cancellationToken);
+											exportResult = await activePlugin.Generate(libraryItems, savePath, reporter, cancellationToken);
 										}
 
-										if (succeeded)
+										if (exportResult == ExportResult.Success)
 										{
 											ShowFileIfRequested(savePath);
 										}
-										else
+										else if(exportResult == ExportResult.Failure)
 										{
 											UiThread.RunOnIdle(() =>
 											{

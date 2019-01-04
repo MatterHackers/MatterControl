@@ -61,14 +61,17 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public bool ExportPossible(ILibraryAsset libraryItem) => true;
 
-		public Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
+		public async Task<ExportResult> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
 		{
 			if (libraryItems.OfType<ILibraryAsset>().FirstOrDefault() is ILibraryAsset libraryItem)
 			{
-				return MeshExport.ExportMesh(libraryItem, outputPath);
+				if(MeshExport.ExportMesh(libraryItem, outputPath).Result)
+				{
+					return ExportResult.Success;
+				}
 			}
 
-			return Task.FromResult(false);
+			return ExportResult.Failure;
 		}
 	}
 }

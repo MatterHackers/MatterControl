@@ -40,6 +40,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -135,7 +136,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			return container;
 		}
 
-		public virtual async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
+		public virtual async Task<ExportResult> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
 		{
 			var firstItem = libraryItems.OfType<ILibraryAsset>().FirstOrDefault();
 			if (firstItem != null)
@@ -151,7 +152,7 @@ namespace MatterHackers.MatterControl.Library.Export
 							new GCodeFileStream(new GCodeFileStreamed(gcodeStream.Stream), printer),
 							outputPath);
 
-						return true;
+						return ExportResult.Success;
 					}
 				}
 				else if (firstItem.AssetPath == printer.Bed.EditContext.SourceFilePath)
@@ -216,6 +217,11 @@ namespace MatterHackers.MatterControl.Library.Export
 									printer.Settings.SetValue(SettingsKey.spiral_vase, "1");
 								}
 
+								if(!SettingsValidation.SettingsValid(printer))
+								{
+									return ExportResult.Failure_With_Error;
+								}
+
 								await ApplicationController.Instance.Tasks.Execute(
 									"Slicing Item".Localize() + " " + loadedItem.Name,
 									printer,
@@ -236,7 +242,18 @@ namespace MatterHackers.MatterControl.Library.Export
 						if (File.Exists(gcodePath))
 						{
 							ApplyStreamPipelineAndExport(gcodePath, outputPath);
-							return true;
+
+							// last let's check if there is any support in the scene and if it looks like it is needed
+							if (GenerateSupportPanel.RequiresSupport(printer.Bed.Scene))
+							{
+								UiThread.RunOnIdle(() =>
+								{
+									var warning = "Some of the parts appear to require support. Consider adding support and re-exporting to get the best results possible.".Localize();
+									StyledMessageBox.ShowMessageBox(warning, "Warning: Support Required".Localize());
+								});
+							}
+
+							return ExportResult.Success;
 						}
 					}
 					catch
@@ -245,7 +262,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				}
 			}
 
-			return false;
+			return ExportResult.Failure;
 		}
 
 		public bool ApplyLeveling { get; set; } = true;

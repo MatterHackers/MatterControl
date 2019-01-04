@@ -77,16 +77,16 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 
 		public override bool ExportPossible(ILibraryAsset libraryItem) => true;
 
-		public override async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
+		public override async Task<ExportResult> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
 		{
 			string gcodePath = Path.ChangeExtension(outputPath, "_gcode");
 
 			// Generate the gcode
-			await base.Generate(libraryItems, gcodePath, progress, cancellationToken);
+			var result = await base.Generate(libraryItems, gcodePath, progress, cancellationToken);
 
-			if (!File.Exists(gcodePath))
+			if (result != ExportResult.Success)
 			{
-				return false;
+				return result;
 			}
 
 			var inputFile = new StreamReader(gcodePath);
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 			inputFile.Close();
 			outputFile.Close();
 
-			return true;
+			return ExportResult.Success;
 		}
 
 		private static byte[] TrimPacketStructure(byte[] s3gPacket)

@@ -369,7 +369,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		// Known sections which have toggle fields that enabled/disable said feature/section
 		private Dictionary<string, string> toggleSwitchSectionKeys = new Dictionary<string, string>
 		{
-			{ "Support", "support_material" },
 			{ "Skirt", "create_skirt" },
 			{ "Raft", "create_raft" },
 			{ "Brim", "create_brim" },
