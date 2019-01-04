@@ -2195,7 +2195,7 @@ namespace MatterHackers.MatterControl
 		/// <summary>
 		/// Indicates if any ActivePrinter is running a print task, either in paused or printing states
 		/// </summary>
-		public bool AnyPrintTaskRunning => this.ActivePrinters.Any(p => p.Connection.PrinterIsPrinting || p.Connection.PrinterIsPaused);
+		public bool AnyPrintTaskRunning => this.ActivePrinters.Any(p => p.Connection.PrinterIsPrinting || p.Connection.PrinterIsPaused || p.Connection.CommunicationState == CommunicationStates.PreparingToPrint);
 
 		private List<TourLocation> _productTour;
 
