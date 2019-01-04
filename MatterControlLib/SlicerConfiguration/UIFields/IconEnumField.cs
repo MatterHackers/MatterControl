@@ -80,7 +80,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (iconsAttribute.Width > 0)
 					{
-						iconImage = AggContext.StaticData.LoadIcon(iconPath, iconsAttribute.Width, iconsAttribute.Height);
+						// If the attribute allows invert, use the theme.InvertIcons state
+						bool invertIcons = iconsAttribute.InvertIcons ? theme.InvertIcons : false;
+
+						iconImage = AggContext.StaticData.LoadIcon(iconPath, iconsAttribute.Width, iconsAttribute.Height, invertIcons);
 					}
 					else
 					{

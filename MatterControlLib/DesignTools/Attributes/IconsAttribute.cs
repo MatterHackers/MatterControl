@@ -34,10 +34,6 @@ namespace MatterHackers.MatterControl.DesignTools
 	[AttributeUsage(AttributeTargets.Property)]
 	public class IconsAttribute : Attribute
 	{
-		public bool Item0IsNone { get; private set; }
-		public string[] IconPaths { get; private set; }
-		public int Width { get; set; }
-		public int Height { get; set; }
 		public IconsAttribute(string[] iconPaths, int width = 16, int height = 16, bool item0IsNone = true)
 		{
 			Width = width;
@@ -45,5 +41,15 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.IconPaths = iconPaths;
 			Item0IsNone = item0IsNone;
 		}
+
+		public bool Item0IsNone { get; private set; }
+
+		public string[] IconPaths { get; private set; }
+
+		public int Width { get; set; }
+
+		public int Height { get; set; }
+
+		public bool InvertIcons { get; set; } = false;
 	}
 }

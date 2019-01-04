@@ -1467,12 +1467,6 @@ You will then need to logout and log back in to the computer for the changes to 
 										ReadLineStartCallBacks.ProcessLine(lastLineRead);
 										ReadLineContainsCallBacks.ProcessLine(lastLineRead);
 
-										if (this.PrinterIsPrinting
-											&& this.AppendElapsedTime)
-										{
-											lastLineRead = string.Format("{0} [{1:0.000}]\n", lastLineRead, timeSinceStartedPrint.Elapsed.TotalSeconds);
-										}
-
 										LineReceived?.Invoke(this, lastLineRead);
 									}
 								}
@@ -2451,7 +2445,6 @@ You will then need to logout and log back in to the computer for the changes to 
 			}
 		}
 
-		public bool AppendElapsedTime { get; set; }
 		public bool AllowLeveling
 		{
 			get => printLevelingStream6.AllowLeveling;
@@ -2600,14 +2593,7 @@ You will then need to logout and log back in to the computer for the changes to 
 							WriteLineStartCallBacks.ProcessLine(lineWithoutChecksum);
 							WriteLineContainsCallBacks.ProcessLine(lineWithoutChecksum);
 
-							var terminalLine = lineToWrite;
-							if (PrinterIsPrinting)
-							{
-								string lineWithoutCR = terminalLine.TrimEnd();
-								terminalLine = string.Format("{0} [{1:0.000}]\n", lineWithoutCR, timeSinceStartedPrint.Elapsed.TotalSeconds);
-							}
-
-							LineSent?.Invoke(this, terminalLine);
+							LineSent?.Invoke(this, lineToWrite);
 						}
 					}
 

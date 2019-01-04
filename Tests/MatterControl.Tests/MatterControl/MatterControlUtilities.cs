@@ -98,14 +98,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Directory.Delete(PathToDownloadsSubFolder, true);
 		}
 
-		public static void SignOut(AutomationRunner testRunner)
+		public static void SignOutUser(this AutomationRunner testRunner)
+		{
+			testRunner.ClickSignOut();
+
+			// Rather than waiting a fixed amount of time, we wait for the ReloadAll to complete before returning
+			testRunner.WaitForReloadAll(() => testRunner.ClickByName("Yes Button"));
+		}
+
+		public static void ClickSignOut(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("User Options Menu");
 			testRunner.ClickByName("Sign Out Menu Item");
 			testRunner.Delay(.5);
-
-			// Rather than waiting a fixed amount of time, we wait for the ReloadAll to complete before returning
-			testRunner.WaitForReloadAll(() => testRunner.ClickByName("Yes Button"));
 		}
 
 		public static void WaitForReloadAll(this AutomationRunner testRunner, Action reloadAllAction)
@@ -214,8 +219,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static Emulator LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD", bool runSlow = false)
 		{
-			SystemWindow systemWindow;
-			testRunner.GetWidgetByName("Hardware Tab", out systemWindow, 10);
+			var hardwareTab = testRunner.GetWidgetByName("Hardware Tab", out SystemWindow systemWindow, 10);
+
 			// make sure we wait for MC to be up and running
 			testRunner.WaitforDraw(systemWindow);
 
@@ -231,8 +236,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Create the printer
 			testRunner.AddAndSelectPrinter(make, model);
 
-			// Force the configured printer to use the emulator driver
-			testRunner.FirstPrinter().Settings.SetValue("driver_type", "Emulator");
 
 			// edit the com port
 			testRunner.SwitchToPrinterSettings();
