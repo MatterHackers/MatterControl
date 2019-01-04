@@ -1387,7 +1387,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						return ApplicationController.Instance.IsLoadableFile(filePath)
 							// Disallow GCode drop in part view
-							&& (this.Printer != null || !string.Equals(System.IO.Path.GetExtension(filePath), ".gcode", StringComparison.OrdinalIgnoreCase));
+							&& (this.Printer != null || !string.Equals(System.IO.Path.GetExtension(filePath), ".gcode", StringComparison.OrdinalIgnoreCase))
+							|| filePath.StartsWith("http", StringComparison.OrdinalIgnoreCase);
 					});
 
 			// View3DWidgets Filesystem DropDrop handler
@@ -1402,7 +1403,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					// Project DragFiles to IEnumerable<FileSystemFileItem>
 					this.StartDragDrop(
-						mouseEvent.DragFiles.Select(path => new FileSystemFileItem(path)),
+						mouseEvent.DragFiles.Select<string, ILibraryItem>(path =>
+						{
+							if (path.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+							{
+								return new RemoteLibraryItem(path, null);
+							}
+
+							return new FileSystemFileItem(path);
+						}),
 						screenSpaceMousePosition: this.TransformToScreenSpace(mouseEvent.Position),
 						trackSourceFiles: true);
 				}
