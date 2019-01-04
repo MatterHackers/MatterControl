@@ -219,8 +219,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static Emulator LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD", bool runSlow = false)
 		{
-			SystemWindow systemWindow;
-			testRunner.GetWidgetByName("Hardware Tab", out systemWindow, 10);
+			var hardwareTab = testRunner.GetWidgetByName("Hardware Tab", out SystemWindow systemWindow, 10);
+
 			// make sure we wait for MC to be up and running
 			testRunner.WaitforDraw(systemWindow);
 
