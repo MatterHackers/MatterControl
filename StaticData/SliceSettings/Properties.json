@@ -1479,7 +1479,6 @@
     "PresentationName": "Support Percent",
     "HelpText": "The percent of the extrusion width that can be overlapped and still generate.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "EnableIfSet": "support_material",
     "ShowIfSet": "!sla_printer",
     "Units": "%",
     "DefaultValue": "50"
@@ -1492,15 +1491,6 @@
     "ShowIfSet": "!sla_printer",
     "Units": "°",
     "DefaultValue": "45"
-  },
-  {
-    "SlicerConfigName": "support_material_create_internal_support",
-    "PresentationName": "Support Everywhere",
-    "HelpText": "Generates support material starting on top of internal surfaces. If unchecked support will only generate starting on the bed.",
-    "EnableIfSet": "support_material",
-    "ShowIfSet": "!sla_printer",
-    "DataEditType": "CHECK_BOX",
-    "DefaultValue": "1"
   },
   {
     "SlicerConfigName": "support_material_create_perimeter",
@@ -1570,15 +1560,6 @@
     "ShowIfSet": "!sla_printer",
     "Units": "mm",
     "DefaultValue": "0.7"
-  },
-  {
-    "SlicerConfigName": "support_material",
-    "PresentationName": "Generate Support Material",
-    "HelpText": "Generates support material under areas of the part which may be too steep to support themselves.",
-    "DataEditType": "CHECK_BOX",
-    "ShowIfSet": "NEVER_SHOW",
-    "ReloadUiWhenChanged": true,
-    "DefaultValue": "0"
   },
   {
     "SlicerConfigName": "support_type",

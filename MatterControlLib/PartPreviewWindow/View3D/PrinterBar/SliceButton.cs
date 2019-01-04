@@ -98,9 +98,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (printer.Settings.PrinterSelected)
 			{
-				if (!activelySlicing
-					&& SettingsValidation.SettingsValid(printer)
-					&& printer.Bed.EditContext.SourceItem != null)
+				bool doSlicing = !activelySlicing && printer.Bed.EditContext.SourceItem != null;
+				if (doSlicing)
+				{
+					var errors = SettingsValidation.SettingsValid(printer);
+					if (errors.Count > 0)
+					{
+						doSlicing = false;
+						StyledMessageBox.ShowMessageBox(String.Join("\n__________________\n\n", errors.ToArray()), "Slicing Error".Localize());
+					}
+				}
+
+				if (doSlicing)
 				{
 					activelySlicing = true;
 					this.SetButtonStates();

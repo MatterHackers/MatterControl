@@ -61,14 +61,18 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public bool ExportPossible(ILibraryAsset libraryItem) => true;
 
-		public Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
+		public async Task<List<string>> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
 		{
-			if (libraryItems.OfType<ILibraryAsset>().FirstOrDefault() is ILibraryAsset libraryItem)
+			var firstItem = libraryItems.OfType<ILibraryAsset>().FirstOrDefault();
+			if (firstItem is ILibraryAsset libraryItem)
 			{
-				return MeshExport.ExportMesh(libraryItem, outputPath);
+				if(MeshExport.ExportMesh(libraryItem, outputPath).Result)
+				{
+					return null;
+				}
 			}
 
-			return Task.FromResult(false);
+			return new List<string>() { "Item cannot be exported as STL".Localize() + " " + firstItem != null ? firstItem.ToString() : "" };
 		}
 	}
 }

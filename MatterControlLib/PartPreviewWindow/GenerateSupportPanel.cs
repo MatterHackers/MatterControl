@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			theme.ApplyPrimaryActionStyle(generateButton);
 		}
 
-		public double MaxOverHangAngle { get; private set; } = 45;
+		public static double MaxOverHangAngle { get; private set; } = 45;
 
 		public double PillarSize { get; private set; } = 4;
 
@@ -265,6 +265,47 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					list.Remove(item);
 				}
 			});
+		}
+
+		public static bool RequiresSupport(InteractiveScene scene)
+		{
+			bool supportInScene = scene.VisibleMeshes().Any(i => i.WorldOutputType() == PrintOutputTypes.Support);
+			if (!supportInScene)
+			{
+				// there is no support in the scene check if there are faces that require support
+				var supportCandidates = scene.VisibleMeshes().Where(i => i.OutputType != PrintOutputTypes.Support);
+
+				// find all the faces that are candidates for support
+				foreach (var item in supportCandidates)
+				{
+					var matrix = item.WorldMatrix(scene);
+					foreach (var face in item.Mesh.Faces)
+					{
+						bool aboveBed = false;
+						foreach(var vertex in face.Vertices())
+						{
+							if(Vector3.Transform(vertex.Position, matrix).Z > 0)
+							{
+								aboveBed = true;
+								break;
+							}
+						}
+						if (aboveBed)
+						{
+							var face0Normal = Vector3.TransformVector(face.Normal, matrix).GetNormal();
+							var angle = MathHelper.RadiansToDegrees(Math.Acos(Vector3.Dot(-Vector3.UnitZ, face0Normal)));
+
+							if (angle < MaxOverHangAngle)
+							{
+								// TODO: consider how much area all supported polygons represent
+								return true;
+							}
+						}
+					}
+				}
+			}
+
+			return false;
 		}
 	}
 

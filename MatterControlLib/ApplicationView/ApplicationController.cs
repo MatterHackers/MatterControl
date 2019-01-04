@@ -2251,8 +2251,20 @@ namespace MatterHackers.MatterControl
 
 				printer.Connection.PrintingItemName = printItemName;
 
-				if (SettingsValidation.SettingsValid(printer))
+				var errors = SettingsValidation.SettingsValid(printer);
+				if(errors.Count > 0)
 				{
+					StyledMessageBox.ShowMessageBox(String.Join("\n__________________\n\n", errors.ToArray()), "Slice Error".Localize());
+				}
+				else // there are no erros continue printing
+				{
+					// last let's check if there is any support in the scene and if it looks like it is needed
+					if (GenerateSupportPanel.RequiresSupport(printer.Bed.Scene))
+					{
+						var warning = "Some of the parts appear to require support. Consider canceling this print then adding support to get the best results possible.".Localize();
+						StyledMessageBox.ShowMessageBox(warning, "Warning: Support Required".Localize());
+					}
+
 					// check that current bed temp is within 10 degrees of leveling temp
 					var enabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
 					var required = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print);

@@ -998,7 +998,7 @@ Arch
 ```
 
 You will then need to logout and log back in to the computer for the changes to take effect. ";
-												StyledMessageBox.ShowMessageBox(message, "Permission Denied".Localize());
+												StyledMessageBox.ShowMessageBox(message, "Permission Denied".Localize(), useMarkdown: true);
 											});
 										}
 									}

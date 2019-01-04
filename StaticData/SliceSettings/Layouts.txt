@@ -77,8 +77,6 @@ Advanced
   Support
     Support
       Support
-        support_material
-        support_material_create_internal_support
         support_material_percent
     Advanced
       Support Options

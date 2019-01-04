@@ -212,8 +212,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedToBoolString(printer, "external_perimeters_first", "outsidePerimetersFirst"),
 				new MappedToBoolString(printer, "output_only_first_layer", "outputOnlyFirstLayer"),
 				new MappedToBoolString(printer, "retract_when_changing_islands", "retractWhenChangingIslands"),
-				new MappedToBoolString(printer, "support_material", "generateSupport"),
-				new MappedToBoolString(printer, "support_material_create_internal_support", "generateInternalSupport"),
 				new MappedToBoolString(printer, "support_material_create_perimeter", "generateSupportPerimeter"),
 				new MappedToBoolString(printer, SettingsKey.expand_thin_walls, "expandThinWalls"),
 				new MappedToBoolString(printer, SettingsKey.merge_overlapping_lines, "MergeOverlappingLines"),

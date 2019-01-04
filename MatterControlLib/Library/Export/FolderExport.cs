@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public bool ExportPossible(ILibraryAsset libraryItem) => true;
 
-		public async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
+		public async Task<List<string>> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
 		{
 			var streamItems = libraryItems.OfType<ILibraryAssetStream>();
 			if (streamItems.Any())
@@ -89,10 +89,10 @@ namespace MatterHackers.MatterControl.Library.Export
 					}
 				});
 
-				return true;
+				return null;
 			}
 
-			return false;
+			return new List<string>() { "No items to Export".Localize() };
 		}
 	}
 }
