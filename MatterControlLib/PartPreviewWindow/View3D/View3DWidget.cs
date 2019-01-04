@@ -1385,11 +1385,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					&& mouseEvent.DragFiles?.Count > 0
 					&& mouseEvent.DragFiles.TrueForAll(filePath =>
 					{
-						return ApplicationController.Instance.IsLoadableFile(filePath)
-							// Disallow GCode drop in part view
-							&& (this.Printer != null || !string.Equals(System.IO.Path.GetExtension(filePath), ".gcode", StringComparison.OrdinalIgnoreCase))
-							|| filePath.StartsWith("http", StringComparison.OrdinalIgnoreCase)
-							|| filePath.StartsWith("data:", StringComparison.OrdinalIgnoreCase);
+						return filePath.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+							|| filePath.StartsWith("data:", StringComparison.OrdinalIgnoreCase)
+							|| filePath.StartsWith("text:", StringComparison.OrdinalIgnoreCase)
+							|| ApplicationController.Instance.IsLoadableFile(filePath)
+								// Disallow GCode drop in part view
+								&& (this.Printer != null || !string.Equals(System.IO.Path.GetExtension(filePath), ".gcode", StringComparison.OrdinalIgnoreCase));
 					});
 
 			// View3DWidgets Filesystem DropDrop handler
@@ -1421,8 +1422,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								// Basic support for images via remote urls
 								return new RemoteLibraryItem(path, null);
 							}
+							else if (path.StartsWith("text:"))
+							{
+								var text = new TextObject3D()
+								{
+									NameToWrite = path.Substring(5)
+								};
 
-							return new FileSystemFileItem(path);
+								text.Rebuild(null);
+
+								return new InMemoryLibraryItem(text);
+							}
+							else
+							{
+								return new FileSystemFileItem(path);
+							}
 						}),
 						screenSpaceMousePosition: this.TransformToScreenSpace(mouseEvent.Position),
 						trackSourceFiles: true);
