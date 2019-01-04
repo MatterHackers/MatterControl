@@ -79,16 +79,21 @@ namespace MatterHackers.MatterControl
 				responseCallback = callback;
 				unwrappedMessage = message;
 
+				var scrollable = new ScrollableWidget(true);
+				scrollable.AnchorAll();
+				scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
+				contentRow.AddChild(scrollable);
+
 				if (useMarkdown)
 				{
-					contentRow.AddChild(messageContainer = new MarkdownWidget(theme)
+					scrollable.AddChild(messageContainer = new MarkdownWidget(theme)
 					{
 						Markdown = message,
 					});
 				}
 				else
 				{
-					contentRow.AddChild(messageContainer = new TextWidget(message, textColor: theme.TextColor, pointSize: 12 * DeviceScale)
+					scrollable.AddChild(messageContainer = new TextWidget(message, textColor: theme.TextColor, pointSize: 12 * DeviceScale)
 					{
 						AutoExpandBoundsToText = true,
 						HAnchor = HAnchor.Left
@@ -99,7 +104,7 @@ namespace MatterHackers.MatterControl
 				{
 					foreach (GuiWidget widget in extraWidgetsToAdd)
 					{
-						contentRow.AddChild(widget);
+						scrollable.AddChild(widget);
 					}
 				}
 

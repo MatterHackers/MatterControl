@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (errors.Count > 0)
 					{
 						doSlicing = false;
-						StyledMessageBox.ShowMessageBox(String.Join("\n\n\n\n", errors.ToArray()), "Slicing Error".Localize());
+						StyledMessageBox.ShowMessageBox(String.Join("\n__________________\n\n", errors.ToArray()), "Slicing Error".Localize());
 					}
 				}
 

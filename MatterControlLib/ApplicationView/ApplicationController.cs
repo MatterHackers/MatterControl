@@ -2254,7 +2254,7 @@ namespace MatterHackers.MatterControl
 				var errors = SettingsValidation.SettingsValid(printer);
 				if(errors.Count > 0)
 				{
-					StyledMessageBox.ShowMessageBox(String.Join("\n\n\n\n", errors.ToArray()), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(String.Join("\n__________________\n\n", errors.ToArray()), "Slice Error".Localize());
 				}
 				else // there are no erros continue printing
 				{

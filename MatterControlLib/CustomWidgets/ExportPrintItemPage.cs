@@ -245,7 +245,7 @@ namespace MatterHackers.MatterControl
 										{
 											UiThread.RunOnIdle(() =>
 											{
-												StyledMessageBox.ShowMessageBox(String.Join("\n\n\n\n", exportErrors.ToArray()), "Export Error".Localize());
+												StyledMessageBox.ShowMessageBox(String.Join("\n__________________\n\n", exportErrors.ToArray()), "Export Error".Localize());
 											});
 										}
 									});
