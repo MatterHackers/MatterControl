@@ -226,7 +226,7 @@ namespace MatterHackers.MatterControl
 											savePath += targetExtension;
 										}
 
-										ExportResult exportResult = ExportResult.Failure;
+										List<string> exportErrors = null;
 
 										if (activePlugin != null)
 										{
@@ -234,18 +234,18 @@ namespace MatterHackers.MatterControl
 											{
 												gCodeExport.CenterOnBed = centerOnBed;
 											}
-											exportResult = await activePlugin.Generate(libraryItems, savePath, reporter, cancellationToken);
+											exportErrors = await activePlugin.Generate(libraryItems, savePath, reporter, cancellationToken);
 										}
 
-										if (exportResult == ExportResult.Success)
+										if (exportErrors == null || exportErrors.Count == 0)
 										{
 											ShowFileIfRequested(savePath);
 										}
-										else if(exportResult == ExportResult.Failure)
+										else
 										{
 											UiThread.RunOnIdle(() =>
 											{
-												StyledMessageBox.ShowMessageBox("Export failed".Localize(), title);
+												StyledMessageBox.ShowMessageBox(String.Join("\n\n\n\n", exportErrors.ToArray()), "Export Error".Localize());
 											});
 										}
 									});

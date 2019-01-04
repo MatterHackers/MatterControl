@@ -37,8 +37,6 @@ using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl
 {
-	public enum ExportResult { Success, Failure, Failure_With_Error };
-
 	public interface IExportPlugin
 	{
 		string ButtonText { get; }
@@ -48,7 +46,7 @@ namespace MatterHackers.MatterControl
 
 		void Initialize(PrinterConfig printer);
 
-		Task<ExportResult> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken);
+		Task<List<string>> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken);
 
 		bool Enabled { get; }
 		string DisabledReason { get; }

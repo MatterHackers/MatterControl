@@ -2251,7 +2251,12 @@ namespace MatterHackers.MatterControl
 
 				printer.Connection.PrintingItemName = printItemName;
 
-				if (SettingsValidation.SettingsValid(printer))
+				var errors = SettingsValidation.SettingsValid(printer);
+				if(errors.Count > 0)
+				{
+					StyledMessageBox.ShowMessageBox(String.Join("\n\n\n\n", errors.ToArray()), "Slice Error".Localize());
+				}
+				else // there are no erros continue printing
 				{
 					// last let's check if there is any support in the scene and if it looks like it is needed
 					if (GenerateSupportPanel.RequiresSupport(printer.Bed.Scene))

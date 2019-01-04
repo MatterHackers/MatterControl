@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			return container;
 		}
 
-		public virtual async Task<ExportResult> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
+		public virtual async Task<List<string>> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
 		{
 			var firstItem = libraryItems.OfType<ILibraryAsset>().FirstOrDefault();
 			if (firstItem != null)
@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.Library.Export
 							new GCodeFileStream(new GCodeFileStreamed(gcodeStream.Stream), printer),
 							outputPath);
 
-						return ExportResult.Success;
+						return null;
 					}
 				}
 				else if (firstItem.AssetPath == printer.Bed.EditContext.SourceFilePath)
@@ -217,9 +217,11 @@ namespace MatterHackers.MatterControl.Library.Export
 									printer.Settings.SetValue(SettingsKey.spiral_vase, "1");
 								}
 
-								if(!SettingsValidation.SettingsValid(printer))
+								var errors = SettingsValidation.SettingsValid(printer);
+
+								if(errors.Count > 0)
 								{
-									return ExportResult.Failure_With_Error;
+									return errors;
 								}
 
 								await ApplicationController.Instance.Tasks.Execute(
@@ -253,7 +255,7 @@ namespace MatterHackers.MatterControl.Library.Export
 								});
 							}
 
-							return ExportResult.Success;
+							return null;
 						}
 					}
 					catch
@@ -262,7 +264,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				}
 			}
 
-			return ExportResult.Failure;
+			return new List<string>() { "Item cannot be exported".Localize() + " " + firstItem  != null ? firstItem.ToString() : "" };
 		}
 
 		public bool ApplyLeveling { get; set; } = true;
