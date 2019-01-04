@@ -50,8 +50,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public TranslateObject3D(IObject3D itemToTranslate, Vector3 translation)
 			: this()
 		{
-			WrapItem(itemToTranslate);
-			Matrix = Matrix4X4.CreateTranslation(translation);
+			using (this.RebuildLock())
+			{
+				WrapItem(itemToTranslate);
+				Matrix = Matrix4X4.CreateTranslation(translation);
+			}
 		}
 
 		public override bool CanFlatten => true;

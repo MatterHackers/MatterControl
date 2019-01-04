@@ -37,6 +37,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
@@ -81,9 +82,21 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public virtual void WrapItem(IObject3D item, UndoBuffer undoBuffer = null)
 		{
+			var locks = item.RebuilLockAll();
+
+			if(item.Parent != null)
+			{
+				locks.Add(item.Parent.RebuildLock());
+			}
+
 			if (item is SelectionGroupObject3D)
 			{
 				throw new Exception("The selection should have been cleared before you wrap this item");
+			}
+
+			while(item.Parent is ModifiedMeshObject3D)
+			{
+				item = item.Parent;
 			}
 
 			// if the items we are replacing ar already in a list
@@ -112,6 +125,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				firstChild.Children.Add(item);
 				this.Children.Add(firstChild);
 			}
+
+			locks.ResumeAll();
 		}
 
 		public override void Flatten(UndoBuffer undoBuffer)
