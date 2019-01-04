@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public Align XAlign { get; set; } = Align.None;
 
 		[DisplayName("Anchor")]
-		[Icons(new string[] { "424.png", "align_to_left.png", "align_to_center_x.png", "align_to_right.png", "" })]
+		[Icons(new string[] { "424.png", "align_to_left.png", "align_to_center_x.png", "align_to_right.png", "" }, InvertIcons = true)]
 		public Align XAlignTo { get; set; } = Align.None;
 
 		[DisplayName("Offset")]
@@ -171,7 +171,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public Align YAlign { get; set; } = Align.None;
 
 		[DisplayName("Anchor")]
-		[Icons(new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png", "" })]
+		[Icons(new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png", "" }, InvertIcons = true)]
 		public Align YAlignTo { get; set; } = Align.None;
 
 		[DisplayName("Offset")]
@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public Align ZAlign { get; set; } = Align.None;
 
 		[DisplayName("Anchor")]
-		[Icons(new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png", "" })]
+		[Icons(new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png", "" }, InvertIcons = true)]
 		public Align ZAlignTo { get; set; } = Align.None;
 
 		[DisplayName("Offset")]
