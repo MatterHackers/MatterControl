@@ -548,8 +548,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							{
 								doSlicing = false;
 
-								// Project to newline separated Error/Details string
-								var formattedErrors = errors.Select(err => $"{err.Error}\n\n{err.Details}").ToArray();
+								// Project to newline separated Error/Details/Location string
+								var formattedErrors = errors.Select(err =>
+								{
+									// Conditionally combine Error/Details/Location when not empty
+									return err.Error +
+										((string.IsNullOrWhiteSpace(err.Details)) ? "" : $"\n\n{err.Details}") +
+										((string.IsNullOrWhiteSpace(err.Location)) ? "" : $"\n\n{err.Location}");
+								}).ToArray();
 
 								StyledMessageBox.ShowMessageBox(
 										string.Join("\n__________________\n\n", formattedErrors),

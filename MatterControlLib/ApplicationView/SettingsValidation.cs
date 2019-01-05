@@ -59,7 +59,8 @@ namespace MatterHackers.MatterControl
 							{
 								Error = "{0} must be less than or equal to the {1}.".Localize().FormatWith(
 									GetSettingsName(SettingsKey.layer_height), GetSettingsName(SettingsKey.nozzle_diameter)),
-								Details = $"{details}\n\n{GetSettingsLocation(SettingsKey.layer_height)}"
+								Details = details,
+								Location = GetSettingsLocation(SettingsKey.layer_height)
 							});
 					}
 					else if (settings.GetValue<double>(SettingsKey.layer_height) <= 0)
@@ -68,7 +69,7 @@ namespace MatterHackers.MatterControl
 							new ValidationError()
 							{
 								Error = "{0} must be greater than 0.".Localize().FormatWith(GetSettingsName(SettingsKey.layer_height)),
-								Details = GetSettingsLocation(SettingsKey.layer_height)
+								Location = GetSettingsLocation(SettingsKey.layer_height)
 							});
 					}
 					else if (settings.GetValue<double>(SettingsKey.first_layer_height) > settings.GetValue<double>(SettingsKey.nozzle_diameter))
@@ -79,15 +80,14 @@ namespace MatterHackers.MatterControl
 							GetSettingsName(SettingsKey.nozzle_diameter),
 							settings.GetValue<double>(SettingsKey.nozzle_diameter));
 
-						var location = GetSettingsLocation(SettingsKey.first_layer_height);
-
 						errors.Add(
 							new ValidationError()
 							{
 								Error = "{0} must be less than or equal to the {1}.".Localize().FormatWith(
 									GetSettingsName(SettingsKey.layer_height),
 									GetSettingsName(SettingsKey.nozzle_diameter)),
-								Details = "{0}\n\n{1}".FormatWith(details, location)
+								Details = details,
+								Location = GetSettingsLocation(SettingsKey.first_layer_height)
 							});
 					}
 				}
@@ -99,29 +99,25 @@ namespace MatterHackers.MatterControl
 				{
 					foreach (string startGCodeLine in startGCode)
 					{
-						var location = GetSettingsLocation(SettingsKey.start_gcode);
-
 						if (startGCodeLine.StartsWith("G29"))
 						{
-							var details = "Your Start G-Code should not contain a G29 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.".Localize();
-
 							errors.Add(
 								new ValidationError()
 								{
 									Error = "Start G-Code cannot contain G29 if Print Recovery is enabled.".Localize(),
-									Details = "{0}\n\n{1}".FormatWith(details, location)
+									Details = "Your Start G-Code should not contain a G29 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.".Localize(),
+									Location = GetSettingsLocation(SettingsKey.start_gcode)
 								});
 						}
 
 						if (startGCodeLine.StartsWith("G30"))
 						{
-							var details = "Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.".Localize();
-
 							errors.Add(
 								new ValidationError()
 								{
 									Error = "Start G-Code cannot contain G30 if Print Leveling is enabled.".Localize(),
-									Details = "{0}\n\n{1}".FormatWith(details, location)
+									Details = "Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.".Localize(),
+									Location = GetSettingsLocation(SettingsKey.start_gcode)
 								});
 						}
 					}
@@ -134,27 +130,23 @@ namespace MatterHackers.MatterControl
 					{
 						if (startGCodeLine.StartsWith("G29"))
 						{
-							var location = GetSettingsLocation(SettingsKey.start_gcode);
-							var details = "Your Start G-Code should not contain a G29 if you are planning on using print leveling. Change your start G-Code or turn off print leveling.".Localize();
-
 							errors.Add(
 								new ValidationError()
 								{
 									Error = "Start G-Code cannot contain G29 if Print Leveling is enabled.".Localize(),
-									Details = "{0}\n\n{1}".FormatWith(details, location)
+									Details = "Your Start G-Code should not contain a G29 if you are planning on using print leveling. Change your start G-Code or turn off print leveling.".Localize(),
+									Location = GetSettingsLocation(SettingsKey.start_gcode)
 								});
 						}
 
 						if (startGCodeLine.StartsWith("G30"))
 						{
-							var location = GetSettingsLocation(SettingsKey.start_gcode);
-							var details = "Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling.".Localize();
-
 							errors.Add(
 								new ValidationError()
 								{
 									Error = "Start G-Code cannot contain G30 if Print Leveling is enabled.".Localize(),
-									Details = "{0}\n\n{1}".FormatWith(details, location)
+									Details = "Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling.".Localize(),
+									Location = GetSettingsLocation(SettingsKey.start_gcode)
 								});
 						}
 					}
@@ -163,6 +155,7 @@ namespace MatterHackers.MatterControl
 				// If we have print leveling turned on then make sure we don't have any leveling commands in the start gcode.
 				if (Math.Abs(settings.GetValue<double>(SettingsKey.baby_step_z_offset)) > 2)
 				{
+					// TODO: is this different than GetSettingsLocation?
 					var location = "Location".Localize() + ":";
 					location += "\n" + "Controls".Localize();
 					location += "\n  • " + "Movement".Localize();
@@ -174,7 +167,8 @@ namespace MatterHackers.MatterControl
 						new ValidationError()
 						{
 							Error = "Z Offset is too large.".Localize(),
-							Details = "{0}\n\n{1}".FormatWith(details, location)
+							Details = details,
+							Location = location
 						});
 				}
 
@@ -186,31 +180,28 @@ namespace MatterHackers.MatterControl
 						GetSettingsName(SettingsKey.nozzle_diameter),
 						settings.GetValue<double>(SettingsKey.nozzle_diameter));
 
-					string location = GetSettingsLocation(SettingsKey.first_layer_extrusion_width);
-
 					errors.Add(
 						new ValidationError()
 						{
 							Error = "{0} must be less than or equal to the {1} * 4.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.first_layer_extrusion_width),
 								GetSettingsName(SettingsKey.nozzle_diameter)),
-							Details = "{0}\n\n{1}".FormatWith(details, location)
+							Details = details,
+							Location = GetSettingsLocation(SettingsKey.first_layer_extrusion_width)
 						});
 				}
 
 				if (settings.GetValue<double>(SettingsKey.first_layer_extrusion_width) <= 0)
 				{
-					var details = "{0} = {1}".FormatWith(
-							GetSettingsName(SettingsKey.first_layer_extrusion_width),
-							settings.GetValue<double>(SettingsKey.first_layer_extrusion_width));
-					string location = GetSettingsLocation(SettingsKey.first_layer_extrusion_width);
-
 					errors.Add(
 						new ValidationError()
 						{
 							Error = "{0} must be greater than 0.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.first_layer_extrusion_width)),
-							Details = "{0}\n\n{1}".FormatWith(details, location)
+							Details = "{0} = {1}".FormatWith(
+								GetSettingsName(SettingsKey.first_layer_extrusion_width),
+								settings.GetValue<double>(SettingsKey.first_layer_extrusion_width)),
+							Location = GetSettingsLocation(SettingsKey.first_layer_extrusion_width)
 						});
 				}
 
@@ -221,7 +212,6 @@ namespace MatterHackers.MatterControl
 							settings.GetValue<double>(SettingsKey.external_perimeter_extrusion_width),
 							GetSettingsName(SettingsKey.nozzle_diameter),
 							settings.GetValue<double>(SettingsKey.nozzle_diameter));
-					string location = GetSettingsLocation(SettingsKey.external_perimeter_extrusion_width);
 
 					errors.Add(
 						new ValidationError()
@@ -229,87 +219,75 @@ namespace MatterHackers.MatterControl
 							Error = "{0} must be less than or equal to the {1} * 4.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.external_perimeter_extrusion_width),
 								GetSettingsName(SettingsKey.nozzle_diameter)),
-							Details = "{0}\n\n{1}".FormatWith(details, location)
+							Details = details,
+							Location = GetSettingsLocation(SettingsKey.external_perimeter_extrusion_width)
 						});
 				}
 
 				if (settings.GetValue<double>(SettingsKey.external_perimeter_extrusion_width) <= 0)
 				{
-					var details = "{0} = {1}".FormatWith(
-							GetSettingsName(SettingsKey.external_perimeter_extrusion_width),
-							settings.GetValue<double>(SettingsKey.external_perimeter_extrusion_width));
-					var location = GetSettingsLocation(SettingsKey.external_perimeter_extrusion_width);
 
 					errors.Add(
 						new ValidationError()
 						{
 							Error = "{0} must be greater than 0.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.external_perimeter_extrusion_width)),
-							Details = "{0}\n\n{1}".FormatWith(details, location)
+							Details = "{0} = {1}".FormatWith(
+								GetSettingsName(SettingsKey.external_perimeter_extrusion_width),
+								settings.GetValue<double>(SettingsKey.external_perimeter_extrusion_width)),
+							Location = GetSettingsLocation(SettingsKey.external_perimeter_extrusion_width)
 						});
 				}
 
 				if (settings.GetValue<double>(SettingsKey.min_fan_speed) > 100)
 				{
-					var details = "It is currently set to {0}.".Localize().FormatWith(
-						settings.GetValue<double>(SettingsKey.min_fan_speed));
-
-					var location = GetSettingsLocation(SettingsKey.min_fan_speed);
-
 					errors.Add(
 						new ValidationError()
 						{
 							Error = "The {0} can only go as high as 100%.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.min_fan_speed)),
-							Details = "{0}\n\n{1}".FormatWith(details, location)
+							Details = "It is currently set to {0}.".Localize().FormatWith(
+								settings.GetValue<double>(SettingsKey.min_fan_speed)),
+							Location = GetSettingsLocation(SettingsKey.min_fan_speed)
 						});
 				}
 
 				if (settings.GetValue<double>(SettingsKey.max_fan_speed) > 100)
 				{
-					var details = "It is currently set to {0}.".Localize().FormatWith(
-						settings.GetValue<double>(SettingsKey.max_fan_speed));
-					var location = GetSettingsLocation(SettingsKey.max_fan_speed);
-
 					errors.Add(
 						new ValidationError()
 						{
 							Error = "The {0} can only go as high as 100%.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.max_fan_speed)),
-							Details = "{0}\n\n{1".FormatWith(details, location)
+							Details = "It is currently set to {0}.".Localize().FormatWith(
+								settings.GetValue<double>(SettingsKey.max_fan_speed)),
+							Location = GetSettingsLocation(SettingsKey.max_fan_speed)
 						});
 				}
 
 				if (settings.GetValue<int>(SettingsKey.extruder_count) < 1)
 				{
-					var details = "It is currently set to {0}.".Localize().FormatWith(
-						settings.GetValue<int>(SettingsKey.extruder_count));
-
-					var location = GetSettingsLocation(SettingsKey.extruder_count);
-
 					errors.Add(
 						new ValidationError()
 						{
 							Error = "The {0} must be at least 1.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.extruder_count)),
-							Details=  "{0}\n\n{1}".FormatWith(details, location)
+							Details= "It is currently set to {0}.".Localize().FormatWith(
+								settings.GetValue<int>(SettingsKey.extruder_count)),
+							Location = GetSettingsLocation(SettingsKey.extruder_count)
 						});
 				}
 
 				if (settings.GetValue<double>(SettingsKey.fill_density) < 0 || settings.GetValue<double>(SettingsKey.fill_density) > 1)
 				{
-					var error = "The {0} must be between 0 and 1.".Localize().FormatWith(
-						GetSettingsName(SettingsKey.fill_density));
-					var details = "It is currently set to {0}.".Localize().FormatWith(
-						settings.GetValue<double>(SettingsKey.fill_density));
-					var location = GetSettingsLocation(SettingsKey.filament_density);
-
-
 					errors.Add(
 						new ValidationError()
 						{
-							Error = error,
-							Details = "{0}\n\n{1}".FormatWith(details, location)
+							Error = "The {0} must be between 0 and 1.".Localize().FormatWith(
+								GetSettingsName(SettingsKey.fill_density)),
+							Details = "It is currently set to {0}.".Localize().FormatWith(
+								settings.GetValue<double>(SettingsKey.fill_density)),
+							Location = GetSettingsLocation(SettingsKey.filament_density)
 						});
 				}
 
@@ -392,14 +370,13 @@ namespace MatterHackers.MatterControl
 					SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(gCodeSetting);
 					if (data != null)
 					{
-						var location = GetSettingsLocation(gCodeSetting);
-
 						var details = "Found a line that is {0} characters long.\n{1}...".Localize().FormatWith(length, trimedLine.Substring(0, 20));
 						errors.Add(
 							new ValidationError()
 							{
 								Error = "All G-Code lines mush be shorter than 100 characters (excluding comments).".Localize().FormatWith(data.PresentationName),
-								Details = "{0}\n\n{1}".FormatWith(details, location)
+								Details = details,
+								Location = GetSettingsLocation(gCodeSetting)
 							});
 					}
 
@@ -433,15 +410,12 @@ namespace MatterHackers.MatterControl
 				SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(speedSetting);
 				if (data != null)
 				{
-					var location = GetSettingsLocation(speedSetting);
-
-					var details = "It is currently set to {0}.".Localize().FormatWith(actualSpeedValueString);
-
 					errors.Add(
 						new ValidationError()
 						{
 							Error = "The {0} must be greater than 0.".Localize().FormatWith(data.PresentationName),
-							Details = "{0}\n\n{1}".FormatWith(details, location)
+							Details = "It is currently set to {0}.".Localize().FormatWith(actualSpeedValueString),
+							Location = GetSettingsLocation(speedSetting)
 						});
 				}
 			}

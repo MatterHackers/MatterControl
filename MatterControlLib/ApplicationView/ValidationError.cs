@@ -38,5 +38,7 @@ namespace MatterHackers.MatterControl
 		public string Source { get; set; }
 
 		public string SourceName { get; set; }
+
+		public string Location { get; set; }
 	}
 }

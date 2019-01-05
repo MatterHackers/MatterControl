@@ -2254,14 +2254,20 @@ namespace MatterHackers.MatterControl
 				var errors = SettingsValidation.SettingsValid(printer);
 				if(errors.Count > 0)
 				{
-					// Project to newline separated Error/Details string
-					var formattedErrors = errors.Select(err => $"{err.Error}\n\n{err.Details}").ToArray();
+					// Project to newline separated Error/Details/Location string
+					var formattedErrors = errors.Select(err =>
+					{
+						// Conditionally combine Error/Details/Location when not empty
+						return err.Error +
+							((string.IsNullOrWhiteSpace(err.Details)) ? "" : $"\n\n{err.Details}") +
+							((string.IsNullOrWhiteSpace(err.Location)) ? "" : $"\n\n{err.Location}");
+					}).ToArray();
 
 					StyledMessageBox.ShowMessageBox(
 							string.Join("\n__________________\n\n", formattedErrors),
 							"Export Error".Localize());
 				}
-				else // there are no erros continue printing
+				else // there are no errors continue printing
 				{
 					// last let's check if there is any support in the scene and if it looks like it is needed
 					if (GenerateSupportPanel.RequiresSupport(printer.Bed.Scene))
