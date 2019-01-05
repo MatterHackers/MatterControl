@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Markdig.Agg;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -42,6 +44,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SliceSettingsRow : SettingsRow
 	{
+		private IEnumerable<SettingsValidationError> validationErrors;
+
 		private static Dictionary<string, Func<PrinterSettings, GuiWidget>> extendedInfo = new Dictionary<string, Func<PrinterSettings, GuiWidget>>()
 		{
 #if DEBUG
@@ -86,6 +90,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private Popover popoverBubble = null;
 		private SystemWindow systemWindow = null;
+		private ValidationWrapper validationWrapper;
 
 		public SliceSettingsRow(PrinterConfig printer, SettingsContext settingsContext, SliceSettingData settingData, ThemeConfig theme, bool fullRowSelect = false)
 			: base (settingData.PresentationName.Localize(), settingData.HelpText.Localize(), theme, fullRowSelect: fullRowSelect)
@@ -156,6 +161,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.PerformLayout();
 		}
 
+		public void UpdateValidationState(List<ValidationError> errors)
+		{
+			var fieldErrors = errors.OfType<SettingsValidationError>().Where(e => e.CanonicalSettingsName == this.settingData.SlicerConfigName);
+			if (fieldErrors.Any())
+			{
+				validationErrors = fieldErrors;
+				this.ContentValid = false;
+			}
+			else
+			{
+				validationErrors = Enumerable.Empty<SettingsValidationError>();
+				this.ContentValid = true;
+			}
+		}
+
+		public SettingsValidationError ValidationEror { get; set; }
+
 		public Color HighlightColor
 		{
 			get => overrideIndicator.BackgroundColor;
@@ -164,6 +186,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (overrideIndicator.BackgroundColor != value)
 				{
 					overrideIndicator.BackgroundColor = value;
+				}
+			}
+		}
+
+		public bool ContentValid
+		{
+			get => validationWrapper?.ContentValid ?? true;
+			set
+			{
+				if (validationWrapper != null
+					&& validationWrapper.ContentValid != value)
+				{
+					validationWrapper.ContentValid = value;
+
+					// ShowPopever performs bounds validation and should have no effect if mouse is not in bounds
+					this.ShowPopover(this);
 				}
 			}
 		}
@@ -241,17 +279,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public ArrowDirection ArrowDirection { get; set; } = ArrowDirection.Right;
 
+		public UIField UIField { get; internal set; }
+
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
-			if (systemWindow == null)
-			{
-				return;
-			}
+			this.ShowPopover(this);
 
-			var settingsRow = this;
+			base.OnMouseEnterBounds(mouseEvent);
+		}
 
+		private void ShowPopover(SliceSettingsRow settingsRow)
+		{
 			// Only display popovers when we're the active widget, exit if we're not first under mouse
-			if (!this.ContainsFirstUnderMouseRecursive())
+			if (systemWindow == null
+				|| !this.ContainsFirstUnderMouseRecursive())
 			{
 				return;
 			}
@@ -333,6 +374,33 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
+			if (validationErrors.Any())
+			{
+				var errorsPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				{
+					Padding = theme.DefaultContainerPadding / 2,
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit
+				};
+				popover.AddChild(errorsPanel);
+
+				foreach (var item in validationErrors)
+				{
+					var errorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+					{
+						Margin = new BorderDouble(0, 5)
+					};
+					errorsPanel.AddChild(errorPanel);
+
+					errorsPanel.AddChild(
+						new WrappedTextWidget(item.Error, pointSize: theme.DefaultFontSize - 1, textColor: Color.Red)
+						{
+							Margin = new BorderDouble(bottom: 3)
+						});
+					errorsPanel.AddChild(new WrappedTextWidget(item.Details, pointSize: theme.DefaultFontSize - 1, textColor: Color.Red));
+				}
+			}
+
 #if DEBUG
 			popover.AddChild(new TextWidget(settingData.SlicerConfigName + mapsTo, pointSize: theme.DefaultFontSize - 1, textColor: AppContext.Theme.TextColor)
 			{
@@ -359,8 +427,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				secondsToClose: closeSeconds);
 
 			popoverBubble = popover;
-
-			base.OnMouseEnterBounds(mouseEvent);
 		}
 
 		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
@@ -476,7 +542,59 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void AddContent(GuiWidget content)
 		{
-			dataArea.AddChild(content);
+			validationWrapper = new ValidationWrapper();
+			dataArea.AddChild(validationWrapper);
+
+			validationWrapper.AddChild(content);
+		}
+
+		/// <summary>
+		/// Wraps UIFields and conditionally displays validation error hints when validation errors occur
+		/// </summary>
+		private class ValidationWrapper : GuiWidget
+		{
+			private bool _contentValid = true;
+			private ImageBuffer exclamation;
+
+			public ValidationWrapper()
+			{
+				this.VAnchor = VAnchor.Fit;
+				this.HAnchor = HAnchor.Fit;
+				this.Padding = new BorderDouble(left: 5);
+
+				exclamation = AggContext.StaticData.LoadIcon("exclamation.png");
+
+				this.Border = new BorderDouble(bottom: 1);
+			}
+
+			public bool ContentValid
+			{
+				get => _contentValid;
+				set
+				{
+					if (_contentValid != value)
+					{
+						_contentValid = value;
+						this.Invalidate();
+					}
+				}
+			}
+
+			public override Color BorderColor
+			{
+				get => (this.ContentValid) ? base.BorderColor : Color.Red;
+				set => base.BorderColor = value;
+			}
+
+			public override void OnDraw(Graphics2D graphics2D)
+			{
+				base.OnDraw(graphics2D);
+
+				if (!this.ContentValid)
+				{
+					graphics2D.Render(exclamation, this.LocalBounds.Left, this.LocalBounds.Top - exclamation.Height);
+				}
+			}
 		}
 	}
 }

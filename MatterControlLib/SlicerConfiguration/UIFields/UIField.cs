@@ -62,6 +62,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string Name { get; set; }
 
+		public SliceSettingsRow Row { get; internal set; }
+
 		protected virtual string ConvertValue(string newValue)
 		{
 			return newValue;
