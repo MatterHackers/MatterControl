@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl
 							new SettingsValidationError(SettingsKey.first_layer_height)
 							{
 								Error = "{0} must be less than or equal to the {1}.".Localize().FormatWith(
-									GetSettingsName(SettingsKey.layer_height),
+									GetSettingsName(SettingsKey.first_layer_height),
 									GetSettingsName(SettingsKey.nozzle_diameter)),
 								ValueDetails = "{0} = {1}\n{2} = {3}".FormatWith(
 									GetSettingsName(SettingsKey.first_layer_height),
