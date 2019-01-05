@@ -354,7 +354,7 @@ namespace MatterHackers.MatterControl
 
 		private static bool ValidateGCodeLinesShortEnough(string gCodeSetting, PrinterConfig printer, List<ValidationError> errors)
 		{
-			string[] gCodeString = printer.Settings.GetValue(SettingsKey.start_gcode).Replace("\\n", "\n").Split('\n');
+			string[] gCodeString = printer.Settings.GetValue(gCodeSetting).Replace("\\n", "\n").Split('\n');
 
 			// make sure the custom gcode does not have lines too long to print
 			foreach (string line in gCodeString)
