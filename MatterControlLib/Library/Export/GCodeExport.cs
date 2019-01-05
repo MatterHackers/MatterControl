@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl.Library.Export
 									printer.Settings.SetValue(SettingsKey.spiral_vase, "1");
 								}
 
-								var errors = SettingsValidation.SettingsValid(printer);
+								var errors = printer.ValidateSettings();
 
 								if(errors.Count > 0)
 								{

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@ namespace MatterHackers.MatterControl
 {
 	public static class SettingsValidation
 	{
-		public static List<ValidationError> SettingsValid(PrinterConfig printer)
+		public static List<ValidationError> ValidateSettings(this PrinterConfig printer)
 		{
 			var settings = printer.Settings;
 
@@ -289,7 +289,7 @@ namespace MatterHackers.MatterControl
 						});
 				}
 
-				// marlin firmware can only take a max of 128 bytes in a single instrection, make sure no lines are longer than that
+				// marlin firmware can only take a max of 128 bytes in a single instruction, make sure no lines are longer than that
 				ValidateGCodeLinesShortEnough(SettingsKey.cancel_gcode, printer, errors);
 				ValidateGCodeLinesShortEnough(SettingsKey.connect_gcode, printer, errors);
 				ValidateGCodeLinesShortEnough(SettingsKey.end_gcode, printer, errors);

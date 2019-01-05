@@ -543,7 +543,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						bool doSlicing = !activelySlicing && printer.Bed.EditContext.SourceItem != null;
 						if (doSlicing)
 						{
-							var errors = SettingsValidation.SettingsValid(printer);
+							var errors = printer.ValidateSettings();
 							if(errors.Count > 0)
 							{
 								doSlicing = false;

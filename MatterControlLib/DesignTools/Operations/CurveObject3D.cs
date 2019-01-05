@@ -117,10 +117,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Range(3, 360, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		[Description("Ensurs the rotated part has a minimum number of sides per complete rotation")]
 		public double MinSidesPerRotation { get; set; } = 3;
-		
+
 		// holds where we rotate the object
 		Vector2 rotationCenter;
-			
+
 		public CurveObject3D()
 		{
 			Name = "Curve".Localize();
@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& layer.Scene.SelectedItem != null
 				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
 			{
-				// we want to measure the 
+				// we want to measure the
 				var currentMatrixInv = Matrix.Inverted;
 				var aabb = this.GetAxisAlignedBoundingBox(currentMatrixInv);
 
