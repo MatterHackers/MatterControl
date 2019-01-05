@@ -49,17 +49,17 @@ namespace MatterHackers.MatterControl
 				{
 					if (settings.GetValue<double>(SettingsKey.layer_height) > settings.GetValue<double>(SettingsKey.nozzle_diameter))
 					{
-						var details = "{0} = {1}\n{2} = {3}".FormatWith(GetSettingsName(SettingsKey.layer_height),
-							settings.GetValue<double>(SettingsKey.layer_height),
-							GetSettingsName(SettingsKey.nozzle_diameter),
-							settings.GetValue<double>(SettingsKey.nozzle_diameter));
-
 						errors.Add(
 							new SettingsValidationError(SettingsKey.layer_height)
 							{
 								Error = "{0} must be less than or equal to the {1}.".Localize().FormatWith(
-									GetSettingsName(SettingsKey.layer_height), GetSettingsName(SettingsKey.nozzle_diameter)),
-								Details = details,
+									GetSettingsName(SettingsKey.layer_height),
+									GetSettingsName(SettingsKey.nozzle_diameter)),
+								Details = "{0} = {1}\n{2} = {3}".FormatWith(
+									GetSettingsName(SettingsKey.layer_height),
+									settings.GetValue<double>(SettingsKey.layer_height),
+									GetSettingsName(SettingsKey.nozzle_diameter),
+									settings.GetValue<double>(SettingsKey.nozzle_diameter)),
 							});
 					}
 					else if (settings.GetValue<double>(SettingsKey.layer_height) <= 0)
@@ -73,19 +73,17 @@ namespace MatterHackers.MatterControl
 
 					if (settings.GetValue<double>(SettingsKey.first_layer_height) > settings.GetValue<double>(SettingsKey.nozzle_diameter))
 					{
-						var details = "{0} = {1}\n{2} = {3}".FormatWith(
-							GetSettingsName(SettingsKey.first_layer_height),
-							settings.GetValue<double>(SettingsKey.first_layer_height),
-							GetSettingsName(SettingsKey.nozzle_diameter),
-							settings.GetValue<double>(SettingsKey.nozzle_diameter));
-
 						errors.Add(
 							new SettingsValidationError(SettingsKey.first_layer_height)
 							{
 								Error = "{0} must be less than or equal to the {1}.".Localize().FormatWith(
 									GetSettingsName(SettingsKey.layer_height),
 									GetSettingsName(SettingsKey.nozzle_diameter)),
-								Details = details,
+								Details = "{0} = {1}\n{2} = {3}".FormatWith(
+									GetSettingsName(SettingsKey.first_layer_height),
+									settings.GetValue<double>(SettingsKey.first_layer_height),
+									GetSettingsName(SettingsKey.nozzle_diameter),
+									settings.GetValue<double>(SettingsKey.nozzle_diameter)),
 							});
 					}
 				}
@@ -168,11 +166,6 @@ namespace MatterHackers.MatterControl
 
 				if (settings.GetValue<double>(SettingsKey.first_layer_extrusion_width) > settings.GetValue<double>(SettingsKey.nozzle_diameter) * 4)
 				{
-					var details = "{0} = {1}\n{2} = {3}".FormatWith(
-						GetSettingsName(SettingsKey.first_layer_extrusion_width),
-						settings.GetValue<double>(SettingsKey.first_layer_extrusion_width),
-						GetSettingsName(SettingsKey.nozzle_diameter),
-						settings.GetValue<double>(SettingsKey.nozzle_diameter));
 
 					errors.Add(
 						new SettingsValidationError(SettingsKey.first_layer_extrusion_width)
@@ -180,7 +173,11 @@ namespace MatterHackers.MatterControl
 							Error = "{0} must be less than or equal to the {1} * 4.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.first_layer_extrusion_width),
 								GetSettingsName(SettingsKey.nozzle_diameter)),
-							Details = details
+							Details = "{0} = {1}\n{2} = {3}".FormatWith(
+								GetSettingsName(SettingsKey.first_layer_extrusion_width),
+								settings.GetValue<double>(SettingsKey.first_layer_extrusion_width),
+								GetSettingsName(SettingsKey.nozzle_diameter),
+								settings.GetValue<double>(SettingsKey.nozzle_diameter))
 						});
 				}
 
@@ -199,25 +196,22 @@ namespace MatterHackers.MatterControl
 
 				if (settings.GetValue<double>(SettingsKey.external_perimeter_extrusion_width) > settings.GetValue<double>(SettingsKey.nozzle_diameter) * 4)
 				{
-					var details = "{0} = {1}\n{2} = {3}".FormatWith(
-							GetSettingsName(SettingsKey.external_perimeter_extrusion_width),
-							settings.GetValue<double>(SettingsKey.external_perimeter_extrusion_width),
-							GetSettingsName(SettingsKey.nozzle_diameter),
-							settings.GetValue<double>(SettingsKey.nozzle_diameter));
-
 					errors.Add(
 						new SettingsValidationError(SettingsKey.external_perimeter_extrusion_width)
 						{
 							Error = "{0} must be less than or equal to the {1} * 4.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.external_perimeter_extrusion_width),
 								GetSettingsName(SettingsKey.nozzle_diameter)),
-							Details = details,
+							Details = "{0} = {1}\n{2} = {3}".FormatWith(
+								GetSettingsName(SettingsKey.external_perimeter_extrusion_width),
+								settings.GetValue<double>(SettingsKey.external_perimeter_extrusion_width),
+								GetSettingsName(SettingsKey.nozzle_diameter),
+								settings.GetValue<double>(SettingsKey.nozzle_diameter)),
 						});
 				}
 
 				if (settings.GetValue<double>(SettingsKey.external_perimeter_extrusion_width) <= 0)
 				{
-
 					errors.Add(
 						new SettingsValidationError(SettingsKey.external_perimeter_extrusion_width)
 						{
@@ -260,7 +254,7 @@ namespace MatterHackers.MatterControl
 						{
 							Error = "The {0} must be at least 1.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.extruder_count)),
-							Details= "It is currently set to {0}.".Localize().FormatWith(
+							Details = "It is currently set to {0}.".Localize().FormatWith(
 								settings.GetValue<int>(SettingsKey.extruder_count)),
 						});
 				}
