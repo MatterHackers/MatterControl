@@ -2251,12 +2251,12 @@ namespace MatterHackers.MatterControl
 
 				printer.Connection.PrintingItemName = printItemName;
 
-				var errors = SettingsValidation.SettingsValid(printer);
+				var errors = printer.ValidateSettings();
 				if(errors.Count > 0)
 				{
-					StyledMessageBox.ShowMessageBox(String.Join("\n__________________\n\n", errors.ToArray()), "Slice Error".Localize());
+					this.ShowValidationErrors("Export Error".Localize(), errors);
 				}
-				else // there are no erros continue printing
+				else // there are no errors continue printing
 				{
 					// last let's check if there is any support in the scene and if it looks like it is needed
 					if (GenerateSupportPanel.RequiresSupport(printer.Bed.Scene))
@@ -2367,6 +2367,25 @@ If you experience adhesion problems, please re-run leveling."
 			catch (Exception)
 			{
 			}
+		}
+
+		public void ShowValidationErrors(string windowTitle, List<ValidationError> errors)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				// Project to newline separated Error/Details/Location string
+				var formattedErrors = errors.Select(err =>
+				{
+					// Conditionally combine Error/Details/Location when not empty
+					return err.Error +
+						((string.IsNullOrWhiteSpace(err.Details)) ? "" : $"\n\n{err.Details}") +
+						((string.IsNullOrWhiteSpace(err.Location)) ? "" : $"\n\n{err.Location}");
+				}).ToArray();
+
+				StyledMessageBox.ShowMessageBox(
+						string.Join("\n__________________\n\n", formattedErrors),
+						windowTitle);
+			});
 		}
 
 		public void ResetTranslationMap()
