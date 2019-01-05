@@ -155,19 +155,17 @@ namespace MatterHackers.MatterControl
 				// If we have print leveling turned on then make sure we don't have any leveling commands in the start gcode.
 				if (Math.Abs(settings.GetValue<double>(SettingsKey.baby_step_z_offset)) > 2)
 				{
-					// TODO: is this different than GetSettingsLocation?
-					var location = "Location".Localize() + ":";
-					location += "\n" + "Controls".Localize();
-					location += "\n  • " + "Movement".Localize();
-					location += "\n    • " + "Z Offset".Localize();
-
-					var details = "The Z Offset for your printer, sometimes called Baby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.".Localize();
+					// Static path generation for non-SliceSettings value
+					var location = "Location".Localize() + ":"
+						+ "\n" + "Controls".Localize()
+						+ "\n  • " + "Movement".Localize()
+						+ "\n    • " + "Z Offset".Localize();
 
 					errors.Add(
 						new ValidationError()
 						{
 							Error = "Z Offset is too large.".Localize(),
-							Details = details,
+							Details = "The Z Offset for your printer, sometimes called Baby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.".Localize(),
 							Location = location
 						});
 				}
@@ -341,13 +339,11 @@ namespace MatterHackers.MatterControl
 				setingsSectionName = "Slice Settings";
 			}
 
-			var location = "Location".Localize() + ":";
-			location += "\n" + setingsSectionName.Localize();
-			location += "\n  • " + category.Name.Localize();
-			location += "\n    • " + subGroup.Group.Name.Localize();
-			location += "\n      • " + settingData.PresentationName.Localize();
-
-			return location;
+			return "Location".Localize() + ":"
+				 + "\n" + setingsSectionName.Localize()
+				 + "\n  • " + category.Name.Localize()
+				 + "\n    • " + subGroup.Group.Name.Localize()
+				 + "\n      • " + settingData.PresentationName.Localize();
 		}
 
 		private static string GetSettingsName(string settingsKey)
