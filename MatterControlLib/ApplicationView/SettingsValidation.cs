@@ -70,7 +70,8 @@ namespace MatterHackers.MatterControl
 								Error = "{0} must be greater than 0.".Localize().FormatWith(GetSettingsName(SettingsKey.layer_height)),
 							});
 					}
-					else if (settings.GetValue<double>(SettingsKey.first_layer_height) > settings.GetValue<double>(SettingsKey.nozzle_diameter))
+
+					if (settings.GetValue<double>(SettingsKey.first_layer_height) > settings.GetValue<double>(SettingsKey.nozzle_diameter))
 					{
 						var details = "{0} = {1}\n{2} = {3}".FormatWith(
 							GetSettingsName(SettingsKey.first_layer_height),
