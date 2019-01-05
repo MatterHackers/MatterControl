@@ -2377,15 +2377,18 @@ If you experience adhesion problems, please re-run leveling."
 				var formattedErrors = errors.Select(err =>
 				{
 					string location = null;
+					string valueDetails = null;
 
 					if (err is SettingsValidationError settingsError)
 					{
 						location = settingsError.Location;
+						valueDetails = settingsError.ValueDetails;
 					}
 
 					// Conditionally combine Error/Details/Location when not empty
 					return err.Error +
 						((string.IsNullOrWhiteSpace(err.Details)) ? "" : $"\n\n{err.Details}") +
+						((string.IsNullOrWhiteSpace(valueDetails)) ? "" : $"\n\n{valueDetails}") +
 						((string.IsNullOrWhiteSpace(location)) ? "" : $"\n\n{location}");
 				}).ToArray();
 

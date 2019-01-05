@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl
 								Error = "{0} must be less than or equal to the {1}.".Localize().FormatWith(
 									GetSettingsName(SettingsKey.layer_height),
 									GetSettingsName(SettingsKey.nozzle_diameter)),
-								Details = "{0} = {1}\n{2} = {3}".FormatWith(
+								ValueDetails = "{0} = {1}\n{2} = {3}".FormatWith(
 									GetSettingsName(SettingsKey.layer_height),
 									settings.GetValue<double>(SettingsKey.layer_height),
 									GetSettingsName(SettingsKey.nozzle_diameter),
@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl
 								Error = "{0} must be less than or equal to the {1}.".Localize().FormatWith(
 									GetSettingsName(SettingsKey.layer_height),
 									GetSettingsName(SettingsKey.nozzle_diameter)),
-								Details = "{0} = {1}\n{2} = {3}".FormatWith(
+								ValueDetails = "{0} = {1}\n{2} = {3}".FormatWith(
 									GetSettingsName(SettingsKey.first_layer_height),
 									settings.GetValue<double>(SettingsKey.first_layer_height),
 									GetSettingsName(SettingsKey.nozzle_diameter),
@@ -166,14 +166,13 @@ namespace MatterHackers.MatterControl
 
 				if (settings.GetValue<double>(SettingsKey.first_layer_extrusion_width) > settings.GetValue<double>(SettingsKey.nozzle_diameter) * 4)
 				{
-
 					errors.Add(
 						new SettingsValidationError(SettingsKey.first_layer_extrusion_width)
 						{
 							Error = "{0} must be less than or equal to the {1} * 4.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.first_layer_extrusion_width),
 								GetSettingsName(SettingsKey.nozzle_diameter)),
-							Details = "{0} = {1}\n{2} = {3}".FormatWith(
+							ValueDetails = "{0} = {1}\n{2} = {3}".FormatWith(
 								GetSettingsName(SettingsKey.first_layer_extrusion_width),
 								settings.GetValue<double>(SettingsKey.first_layer_extrusion_width),
 								GetSettingsName(SettingsKey.nozzle_diameter),
@@ -188,7 +187,7 @@ namespace MatterHackers.MatterControl
 						{
 							Error = "{0} must be greater than 0.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.first_layer_extrusion_width)),
-							Details = "{0} = {1}".FormatWith(
+							ValueDetails = "{0} = {1}".FormatWith(
 								GetSettingsName(SettingsKey.first_layer_extrusion_width),
 								settings.GetValue<double>(SettingsKey.first_layer_extrusion_width)),
 						});
@@ -202,7 +201,7 @@ namespace MatterHackers.MatterControl
 							Error = "{0} must be less than or equal to the {1} * 4.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.external_perimeter_extrusion_width),
 								GetSettingsName(SettingsKey.nozzle_diameter)),
-							Details = "{0} = {1}\n{2} = {3}".FormatWith(
+							ValueDetails = "{0} = {1}\n{2} = {3}".FormatWith(
 								GetSettingsName(SettingsKey.external_perimeter_extrusion_width),
 								settings.GetValue<double>(SettingsKey.external_perimeter_extrusion_width),
 								GetSettingsName(SettingsKey.nozzle_diameter),
@@ -217,7 +216,7 @@ namespace MatterHackers.MatterControl
 						{
 							Error = "{0} must be greater than 0.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.external_perimeter_extrusion_width)),
-							Details = "{0} = {1}".FormatWith(
+							ValueDetails = "{0} = {1}".FormatWith(
 								GetSettingsName(SettingsKey.external_perimeter_extrusion_width),
 								settings.GetValue<double>(SettingsKey.external_perimeter_extrusion_width)),
 						});
@@ -230,7 +229,7 @@ namespace MatterHackers.MatterControl
 						{
 							Error = "The {0} can only go as high as 100%.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.min_fan_speed)),
-							Details = "It is currently set to {0}.".Localize().FormatWith(
+							ValueDetails = "It is currently set to {0}.".Localize().FormatWith(
 								settings.GetValue<double>(SettingsKey.min_fan_speed)),
 						});
 				}
@@ -242,7 +241,7 @@ namespace MatterHackers.MatterControl
 						{
 							Error = "The {0} can only go as high as 100%.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.max_fan_speed)),
-							Details = "It is currently set to {0}.".Localize().FormatWith(
+							ValueDetails = "It is currently set to {0}.".Localize().FormatWith(
 								settings.GetValue<double>(SettingsKey.max_fan_speed)),
 						});
 				}
@@ -254,7 +253,7 @@ namespace MatterHackers.MatterControl
 						{
 							Error = "The {0} must be at least 1.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.extruder_count)),
-							Details = "It is currently set to {0}.".Localize().FormatWith(
+							ValueDetails = "It is currently set to {0}.".Localize().FormatWith(
 								settings.GetValue<int>(SettingsKey.extruder_count)),
 						});
 				}
@@ -266,7 +265,7 @@ namespace MatterHackers.MatterControl
 						{
 							Error = "The {0} must be between 0 and 1.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.fill_density)),
-							Details = "It is currently set to {0}.".Localize().FormatWith(
+							ValueDetails = "It is currently set to {0}.".Localize().FormatWith(
 								settings.GetValue<double>(SettingsKey.fill_density)),
 						});
 				}
