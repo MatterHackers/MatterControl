@@ -32,10 +32,35 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
-	public class ValidationError
+	public class SettingsValidationError : ValidationError
 	{
-		public string Error { get; set; }
+		public SettingsValidationError(string settingsName)
+		{
+			this.CanonicalSettingsName = settingsName;
+		}
 
-		public string Details { get; set; }
+		public string CanonicalSettingsName { get; }
+
+		public string Location => SettingsLocation(this.CanonicalSettingsName);
+
+		private static string SettingsLocation(string settingsKey)
+		{
+			var settingData = SettingsOrganizer.Instance.GetSettingsData(settingsKey);
+			var setingsSectionName = settingData.OrganizerSubGroup.Group.Category.SettingsSection.Name;
+			var rootLevel = SettingsOrganizer.Instance.UserLevels[setingsSectionName];
+			var subGroup = rootLevel.GetContainerForSetting(settingsKey);
+			var category = subGroup.Group.Category;
+
+			if (setingsSectionName == "Advanced")
+			{
+				setingsSectionName = "Slice Settings";
+			}
+
+			return "Location".Localize() + ":"
+				 + "\n" + setingsSectionName.Localize()
+				 + "\n  • " + category.Name.Localize()
+				 + "\n    • " + subGroup.Group.Name.Localize()
+				 + "\n      • " + settingData.PresentationName.Localize();
+		}
 	}
 }

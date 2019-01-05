@@ -208,6 +208,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				allUiFields = new Dictionary<string, UIField>();
 
+				var errors = printer.ValidateSettings();
+
 				// Loop over categories creating a tab for each
 				foreach (var category in userLevel.Categories)
 				{
@@ -236,7 +238,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									this.CreateOemProfileInfoRow());
 							}
 
-							var groupSection = this.CreateGroupSection(group);
+							var groupSection = this.CreateGroupSection(group, errors);
 
 							groupSection.Name = group.Name + " Panel";
 
@@ -376,7 +378,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{ "Fan", "enable_fan" },
 		};
 
-		public SectionWidget CreateGroupSection(SettingsOrganizer.Group group)
+		public SectionWidget CreateGroupSection(SettingsOrganizer.Group group, List<ValidationError> errors)
 		{
 			var groupPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -420,7 +422,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						if (printer.EngineMappingsMatterSlice.MapContains(settingData.SlicerConfigName)
 							&& settingShouldBeShown)
 						{
-							settingsRow = CreateItemRow(settingData);
+							settingsRow = CreateItemRow(settingData, errors);
 
 							if (firstRow)
 							{
@@ -600,12 +602,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return dataArea;
 		}
 
-		internal GuiWidget CreateItemRow(SliceSettingData settingData)
+		internal GuiWidget CreateItemRow(SliceSettingData settingData, List<ValidationError> errors)
 		{
-			return CreateItemRow(settingData, settingsContext, printer, theme, ref tabIndexForItem, allUiFields);
+			return CreateItemRow(settingData, settingsContext, printer, theme, ref tabIndexForItem, allUiFields, errors);
 		}
 
-		public static GuiWidget CreateItemRow(SliceSettingData settingData, SettingsContext settingsContext, PrinterConfig printer, ThemeConfig theme, ref int tabIndexForItem, Dictionary<string, UIField> fieldCache = null)
+		public static GuiWidget CreateItemRow(SliceSettingData settingData, SettingsContext settingsContext, PrinterConfig printer, ThemeConfig theme, ref int tabIndexForItem, Dictionary<string, UIField> fieldCache = null, List<ValidationError> errors = null)
 		{
 			string sliceSettingValue = settingsContext.GetValue(settingData.SlicerConfigName);
 
@@ -819,6 +821,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
+			settingsRow.UIField = uiField;
+			uiField.Row = settingsRow;
+
+			if (errors?.Any() == true)
+			{
+				settingsRow.UpdateValidationState(errors);
+			}
+
 			// Invoke the UpdateStyle implementation
 			settingsRow.UpdateStyle();
 
@@ -895,6 +905,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void Printer_SettingChanged(object s, StringEventArgs stringEvent)
 		{
+			var errors = printer.ValidateSettings();
+
 			if (stringEvent != null)
 			{
 				string settingsKey = stringEvent.Data;
@@ -908,6 +920,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							currentValue,
 							userInitiated: false);
 					}
+
+					uifield.Row.UpdateValidationState(errors);
 				}
 			}
 		}

@@ -2376,10 +2376,17 @@ If you experience adhesion problems, please re-run leveling."
 				// Project to newline separated Error/Details/Location string
 				var formattedErrors = errors.Select(err =>
 				{
+					string location = null;
+
+					if (err is SettingsValidationError settingsError)
+					{
+						location = settingsError.Location;
+					}
+
 					// Conditionally combine Error/Details/Location when not empty
 					return err.Error +
 						((string.IsNullOrWhiteSpace(err.Details)) ? "" : $"\n\n{err.Details}") +
-						((string.IsNullOrWhiteSpace(err.Location)) ? "" : $"\n\n{err.Location}");
+						((string.IsNullOrWhiteSpace(location)) ? "" : $"\n\n{location}");
 				}).ToArray();
 
 				StyledMessageBox.ShowMessageBox(
