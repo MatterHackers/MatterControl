@@ -132,6 +132,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void AddSupportColumn(double gridX, double gridY, double bottomZ, double topZ)
 		{
+			if(topZ - bottomZ < .01)
+			{
+				// less than 10 micros high, don't ad it
+				return;
+			}
 			scene.Children.Add(new GeneratedSupportObject3D()
 			{
 				Mesh = PlatonicSolids.CreateCube(PillarSize - reduceAmount, PillarSize - reduceAmount, topZ - bottomZ),
@@ -222,7 +227,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								if (upHit != null)
 								{
 									// we found a ceiling above this spot, look down from that to find the first floor
-									var downRay = new Ray(new Vector3(xPos, yPos, upHit.HitPosition.Z - .001), -Vector3.UnitZ, intersectionType: IntersectionType.Both);
+									var downRay = new Ray(new Vector3(upHit.HitPosition.X, upHit.HitPosition.Y, upHit.HitPosition.Z - .001), -Vector3.UnitZ, intersectionType: IntersectionType.Both);
 									var downHit = upTraceData.GetClosestIntersection(downRay);
 									if (downHit != null)
 									{
@@ -234,6 +239,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 										AddSupportColumn(upHit.HitPosition.X, upHit.HitPosition.Y, upRay.origin.Z, upHit.HitPosition.Z);
 									}
 
+									// make a new ray just past the last hit to keep looking for up hits
 									upRay = new Ray(new Vector3(xPos, yPos, upHit.HitPosition.Z + .001), Vector3.UnitZ, intersectionType: IntersectionType.Both);
 								}
 							} while (upHit != null);
@@ -288,7 +294,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						bool aboveBed = false;
 						foreach(var vertex in face.Vertices())
 						{
-							if(Vector3.Transform(vertex.Position, matrix).Z > 0)
+							if(Vector3.Transform(vertex.Position, matrix).Z > .01)
 							{
 								aboveBed = true;
 								break;
