@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2019, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,59 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-
-namespace MatterHackers.MatterControl.Library.Export
+namespace MatterHackers.MatterControl
 {
-	public class StlExport : IExportPlugin
+	public class ValidationError
 	{
-		public string ButtonText => "STL File".Localize();
+		public string Error { get; set; }
 
-		public string FileExtension => ".stl";
+		public string Details { get; set; }
 
-		public string ExtensionFilter => "Save as STL|*.stl";
+		public string Source { get; set; }
 
-		public ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("filetypes", "stl.png"));
-
-		public void Initialize(PrinterConfig printer)
-		{
-		}
-
-		public bool Enabled => true;
-
-		public string DisabledReason => "";
-
-		public bool ExportPossible(ILibraryAsset libraryItem) => true;
-
-		public async Task<List<ValidationError>> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
-		{
-			var firstItem = libraryItems.OfType<ILibraryAsset>().FirstOrDefault();
-			if (firstItem is ILibraryAsset libraryItem)
-			{
-				if(MeshExport.ExportMesh(libraryItem, outputPath).Result)
-				{
-					return null;
-				}
-			}
-
-			return new List<ValidationError>()
-			{
-				new ValidationError()
-				{
-					Error = "Item cannot be exported as STL".Localize(),
-					Details = firstItem?.ToString() ?? ""
-				}
-			};
-		}
+		public string SourceName { get; set; }
 	}
 }

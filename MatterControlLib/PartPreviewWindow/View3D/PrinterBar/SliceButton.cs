@@ -32,6 +32,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -105,7 +106,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (errors.Count > 0)
 					{
 						doSlicing = false;
-						StyledMessageBox.ShowMessageBox(String.Join("\n__________________\n\n", errors.ToArray()), "Slicing Error".Localize());
+
+						// Project to newline separated Error/Details string
+						var formattedErrors = errors.Select(err => $"{err.Error}\n\n{err.Details}").ToArray();
+
+						StyledMessageBox.ShowMessageBox(
+								string.Join("\n__________________\n\n", formattedErrors),
+								"Slicing Error".Localize());
 					}
 				}
 

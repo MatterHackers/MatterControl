@@ -226,7 +226,7 @@ namespace MatterHackers.MatterControl
 											savePath += targetExtension;
 										}
 
-										List<string> exportErrors = null;
+										List<ValidationError> exportErrors = null;
 
 										if (activePlugin != null)
 										{
@@ -245,7 +245,12 @@ namespace MatterHackers.MatterControl
 										{
 											UiThread.RunOnIdle(() =>
 											{
-												StyledMessageBox.ShowMessageBox(String.Join("\n__________________\n\n", exportErrors.ToArray()), "Export Error".Localize());
+												// Project to newline separated Error/Details string
+												var formattedErrors = exportErrors.Select(err => $"{err.Error}\n\n{err.Details}").ToArray();
+
+												StyledMessageBox.ShowMessageBox(
+														string.Join("\n__________________\n\n", formattedErrors),
+														"Export Error".Localize());
 											});
 										}
 									});

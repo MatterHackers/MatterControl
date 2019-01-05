@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			return container;
 		}
 
-		public virtual async Task<List<string>> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
+		public virtual async Task<List<ValidationError>> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
 		{
 			var firstItem = libraryItems.OfType<ILibraryAsset>().FirstOrDefault();
 			if (firstItem != null)
@@ -264,7 +264,14 @@ namespace MatterHackers.MatterControl.Library.Export
 				}
 			}
 
-			return new List<string>() { "Item cannot be exported".Localize() + " " + firstItem  != null ? firstItem.ToString() : "" };
+			return new List<ValidationError>
+			{
+				new ValidationError()
+				{
+					Error = "Item cannot be exported".Localize(),
+					Details = firstItem?.ToString() ?? ""
+				}
+			};
 		}
 
 		public bool ApplyLeveling { get; set; } = true;
