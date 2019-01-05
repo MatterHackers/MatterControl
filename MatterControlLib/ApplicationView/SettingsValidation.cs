@@ -352,9 +352,9 @@ namespace MatterHackers.MatterControl
 			return settingData.PresentationName.Localize();
 		}
 
-		private static bool ValidateGCodeLinesShortEnough(string gCodeSetting, PrinterConfig printer, List<ValidationError> errors)
+		private static bool ValidateGCodeLinesShortEnough(string settingsKey, PrinterConfig printer, List<ValidationError> errors)
 		{
-			string[] gCodeString = printer.Settings.GetValue(gCodeSetting).Replace("\\n", "\n").Split('\n');
+			string[] gCodeString = printer.Settings.GetValue(settingsKey).Replace("\\n", "\n").Split('\n');
 
 			// make sure the custom gcode does not have lines too long to print
 			foreach (string line in gCodeString)
@@ -363,7 +363,7 @@ namespace MatterHackers.MatterControl
 				var length = trimedLine.Length;
 				if (length > 100)
 				{
-					SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(gCodeSetting);
+					SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(settingsKey);
 					if (data != null)
 					{
 						var details = "Found a line that is {0} characters long.\n{1}...".Localize().FormatWith(length, trimedLine.Substring(0, 20));
@@ -372,7 +372,7 @@ namespace MatterHackers.MatterControl
 							{
 								Error = "All G-Code lines mush be shorter than 100 characters (excluding comments).".Localize().FormatWith(data.PresentationName),
 								Details = details,
-								Location = GetSettingsLocation(gCodeSetting)
+								Location = GetSettingsLocation(settingsKey)
 							});
 					}
 
