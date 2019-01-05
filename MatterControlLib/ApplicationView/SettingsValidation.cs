@@ -299,19 +299,18 @@ namespace MatterHackers.MatterControl
 				ValidateGCodeLinesShortEnough(SettingsKey.start_gcode, printer, errors);
 
 				// If the given speed is part of the current slice engine then check that it is greater than 0.
-				ValidateGoodSpeedSettingGreaterThan0("bridge_speed", printer, errors);
-				ValidateGoodSpeedSettingGreaterThan0("air_gap_speed", printer, errors);
-				ValidateGoodSpeedSettingGreaterThan0("external_perimeter_speed", printer, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.bridge_speed, printer, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.air_gap_speed, printer, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.external_perimeter_speed, printer, errors);
 				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.first_layer_speed, printer, errors);
-				ValidateGoodSpeedSettingGreaterThan0("infill_speed", printer, errors);
-				ValidateGoodSpeedSettingGreaterThan0("perimeter_speed", printer, errors);
-				ValidateGoodSpeedSettingGreaterThan0("small_perimeter_speed", printer, errors);
-				ValidateGoodSpeedSettingGreaterThan0("solid_infill_speed", printer, errors);
-				ValidateGoodSpeedSettingGreaterThan0("support_material_speed", printer, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.infill_speed, printer, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.perimeter_speed, printer, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.small_perimeter_speed, printer, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.solid_infill_speed, printer, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.support_material_speed, printer, errors);
 				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.top_solid_infill_speed, printer, errors);
-				ValidateGoodSpeedSettingGreaterThan0("travel_speed", printer, errors);
-
-				ValidateGoodSpeedSettingGreaterThan0("retract_speed", printer, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.travel_speed, printer, errors);
+				ValidateGoodSpeedSettingGreaterThan0(SettingsKey.retract_speed, printer, errors);
 			}
 			catch (Exception e)
 			{

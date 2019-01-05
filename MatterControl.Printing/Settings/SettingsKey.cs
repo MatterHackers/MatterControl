@@ -152,5 +152,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string z_probe_z_offset = nameof(z_probe_z_offset);
 		public const string z_servo_depolyed_angle = nameof(z_servo_depolyed_angle);
 		public const string z_servo_retracted_angle = nameof(z_servo_retracted_angle);
+		public const string small_perimeter_speed = nameof(small_perimeter_speed);
+		public const string bridge_speed = nameof(bridge_speed);
+		public const string air_gap_speed = nameof(air_gap_speed);
+		public const string external_perimeter_speed = nameof(external_perimeter_speed);
+		public const string infill_speed = nameof(infill_speed);
+		public const string perimeter_speed = nameof(perimeter_speed);
+		public const string solid_infill_speed = nameof(solid_infill_speed);
+		public const string support_material_speed = nameof(support_material_speed);
+		public const string travel_speed = nameof(travel_speed);
+		public const string retract_speed = nameof(retract_speed);
 	}
 }
