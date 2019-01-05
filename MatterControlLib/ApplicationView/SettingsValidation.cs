@@ -55,21 +55,19 @@ namespace MatterHackers.MatterControl
 							settings.GetValue<double>(SettingsKey.nozzle_diameter));
 
 						errors.Add(
-							new ValidationError()
+							new SettingsValidationError(SettingsKey.layer_height)
 							{
 								Error = "{0} must be less than or equal to the {1}.".Localize().FormatWith(
 									GetSettingsName(SettingsKey.layer_height), GetSettingsName(SettingsKey.nozzle_diameter)),
 								Details = details,
-								Location = GetSettingsLocation(SettingsKey.layer_height)
 							});
 					}
 					else if (settings.GetValue<double>(SettingsKey.layer_height) <= 0)
 					{
 						errors.Add(
-							new ValidationError()
+							new SettingsValidationError(SettingsKey.layer_height)
 							{
 								Error = "{0} must be greater than 0.".Localize().FormatWith(GetSettingsName(SettingsKey.layer_height)),
-								Location = GetSettingsLocation(SettingsKey.layer_height)
 							});
 					}
 					else if (settings.GetValue<double>(SettingsKey.first_layer_height) > settings.GetValue<double>(SettingsKey.nozzle_diameter))
@@ -81,13 +79,12 @@ namespace MatterHackers.MatterControl
 							settings.GetValue<double>(SettingsKey.nozzle_diameter));
 
 						errors.Add(
-							new ValidationError()
+							new SettingsValidationError(SettingsKey.first_layer_height)
 							{
 								Error = "{0} must be less than or equal to the {1}.".Localize().FormatWith(
 									GetSettingsName(SettingsKey.layer_height),
 									GetSettingsName(SettingsKey.nozzle_diameter)),
 								Details = details,
-								Location = GetSettingsLocation(SettingsKey.first_layer_height)
 							});
 					}
 				}
@@ -102,22 +99,20 @@ namespace MatterHackers.MatterControl
 						if (startGCodeLine.StartsWith("G29"))
 						{
 							errors.Add(
-								new ValidationError()
+								new SettingsValidationError(SettingsKey.start_gcode)
 								{
 									Error = "Start G-Code cannot contain G29 if Print Recovery is enabled.".Localize(),
 									Details = "Your Start G-Code should not contain a G29 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.".Localize(),
-									Location = GetSettingsLocation(SettingsKey.start_gcode)
 								});
 						}
 
 						if (startGCodeLine.StartsWith("G30"))
 						{
 							errors.Add(
-								new ValidationError()
+								new SettingsValidationError(SettingsKey.start_gcode)
 								{
 									Error = "Start G-Code cannot contain G30 if Print Leveling is enabled.".Localize(),
 									Details = "Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.".Localize(),
-									Location = GetSettingsLocation(SettingsKey.start_gcode)
 								});
 						}
 					}
@@ -131,22 +126,20 @@ namespace MatterHackers.MatterControl
 						if (startGCodeLine.StartsWith("G29"))
 						{
 							errors.Add(
-								new ValidationError()
+								new SettingsValidationError(SettingsKey.start_gcode)
 								{
 									Error = "Start G-Code cannot contain G29 if Print Leveling is enabled.".Localize(),
 									Details = "Your Start G-Code should not contain a G29 if you are planning on using print leveling. Change your start G-Code or turn off print leveling.".Localize(),
-									Location = GetSettingsLocation(SettingsKey.start_gcode)
 								});
 						}
 
 						if (startGCodeLine.StartsWith("G30"))
 						{
 							errors.Add(
-								new ValidationError()
+								new SettingsValidationError(SettingsKey.start_gcode)
 								{
 									Error = "Start G-Code cannot contain G30 if Print Leveling is enabled.".Localize(),
 									Details = "Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling.".Localize(),
-									Location = GetSettingsLocation(SettingsKey.start_gcode)
 								});
 						}
 					}
@@ -165,8 +158,10 @@ namespace MatterHackers.MatterControl
 						new ValidationError()
 						{
 							Error = "Z Offset is too large.".Localize(),
-							Details = "The Z Offset for your printer, sometimes called Baby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.".Localize(),
-							Location = location
+							Details = string.Format(
+								"{0}\n\n{1}",
+								"The Z Offset for your printer, sometimes called Baby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.".Localize(),
+								location)
 						});
 				}
 
@@ -179,27 +174,25 @@ namespace MatterHackers.MatterControl
 						settings.GetValue<double>(SettingsKey.nozzle_diameter));
 
 					errors.Add(
-						new ValidationError()
+						new SettingsValidationError(SettingsKey.first_layer_extrusion_width)
 						{
 							Error = "{0} must be less than or equal to the {1} * 4.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.first_layer_extrusion_width),
 								GetSettingsName(SettingsKey.nozzle_diameter)),
-							Details = details,
-							Location = GetSettingsLocation(SettingsKey.first_layer_extrusion_width)
+							Details = details
 						});
 				}
 
 				if (settings.GetValue<double>(SettingsKey.first_layer_extrusion_width) <= 0)
 				{
 					errors.Add(
-						new ValidationError()
+						new SettingsValidationError(SettingsKey.first_layer_extrusion_width)
 						{
 							Error = "{0} must be greater than 0.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.first_layer_extrusion_width)),
 							Details = "{0} = {1}".FormatWith(
 								GetSettingsName(SettingsKey.first_layer_extrusion_width),
 								settings.GetValue<double>(SettingsKey.first_layer_extrusion_width)),
-							Location = GetSettingsLocation(SettingsKey.first_layer_extrusion_width)
 						});
 				}
 
@@ -212,13 +205,12 @@ namespace MatterHackers.MatterControl
 							settings.GetValue<double>(SettingsKey.nozzle_diameter));
 
 					errors.Add(
-						new ValidationError()
+						new SettingsValidationError(SettingsKey.external_perimeter_extrusion_width)
 						{
 							Error = "{0} must be less than or equal to the {1} * 4.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.external_perimeter_extrusion_width),
 								GetSettingsName(SettingsKey.nozzle_diameter)),
 							Details = details,
-							Location = GetSettingsLocation(SettingsKey.external_perimeter_extrusion_width)
 						});
 				}
 
@@ -226,66 +218,61 @@ namespace MatterHackers.MatterControl
 				{
 
 					errors.Add(
-						new ValidationError()
+						new SettingsValidationError(SettingsKey.external_perimeter_extrusion_width)
 						{
 							Error = "{0} must be greater than 0.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.external_perimeter_extrusion_width)),
 							Details = "{0} = {1}".FormatWith(
 								GetSettingsName(SettingsKey.external_perimeter_extrusion_width),
 								settings.GetValue<double>(SettingsKey.external_perimeter_extrusion_width)),
-							Location = GetSettingsLocation(SettingsKey.external_perimeter_extrusion_width)
 						});
 				}
 
 				if (settings.GetValue<double>(SettingsKey.min_fan_speed) > 100)
 				{
 					errors.Add(
-						new ValidationError()
+						new SettingsValidationError(SettingsKey.min_fan_speed)
 						{
 							Error = "The {0} can only go as high as 100%.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.min_fan_speed)),
 							Details = "It is currently set to {0}.".Localize().FormatWith(
 								settings.GetValue<double>(SettingsKey.min_fan_speed)),
-							Location = GetSettingsLocation(SettingsKey.min_fan_speed)
 						});
 				}
 
 				if (settings.GetValue<double>(SettingsKey.max_fan_speed) > 100)
 				{
 					errors.Add(
-						new ValidationError()
+						new SettingsValidationError(SettingsKey.max_fan_speed)
 						{
 							Error = "The {0} can only go as high as 100%.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.max_fan_speed)),
 							Details = "It is currently set to {0}.".Localize().FormatWith(
 								settings.GetValue<double>(SettingsKey.max_fan_speed)),
-							Location = GetSettingsLocation(SettingsKey.max_fan_speed)
 						});
 				}
 
 				if (settings.GetValue<int>(SettingsKey.extruder_count) < 1)
 				{
 					errors.Add(
-						new ValidationError()
+						new SettingsValidationError(SettingsKey.extruder_count)
 						{
 							Error = "The {0} must be at least 1.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.extruder_count)),
 							Details= "It is currently set to {0}.".Localize().FormatWith(
 								settings.GetValue<int>(SettingsKey.extruder_count)),
-							Location = GetSettingsLocation(SettingsKey.extruder_count)
 						});
 				}
 
 				if (settings.GetValue<double>(SettingsKey.fill_density) < 0 || settings.GetValue<double>(SettingsKey.fill_density) > 1)
 				{
 					errors.Add(
-						new ValidationError()
+						new SettingsValidationError(SettingsKey.fill_density)
 						{
 							Error = "The {0} must be between 0 and 1.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.fill_density)),
 							Details = "It is currently set to {0}.".Localize().FormatWith(
 								settings.GetValue<double>(SettingsKey.fill_density)),
-							Location = GetSettingsLocation(SettingsKey.filament_density)
 						});
 				}
 
@@ -325,26 +312,6 @@ namespace MatterHackers.MatterControl
 			return errors;
 		}
 
-		private static string GetSettingsLocation(string settingsKey)
-		{
-			var settingData = SettingsOrganizer.Instance.GetSettingsData(settingsKey);
-			var setingsSectionName = settingData.OrganizerSubGroup.Group.Category.SettingsSection.Name;
-			var rootLevel = SettingsOrganizer.Instance.UserLevels[setingsSectionName];
-			var subGroup = rootLevel.GetContainerForSetting(settingsKey);
-			var category = subGroup.Group.Category;
-
-			if (setingsSectionName == "Advanced")
-			{
-				setingsSectionName = "Slice Settings";
-			}
-
-			return "Location".Localize() + ":"
-				 + "\n" + setingsSectionName.Localize()
-				 + "\n  • " + category.Name.Localize()
-				 + "\n    • " + subGroup.Group.Name.Localize()
-				 + "\n      • " + settingData.PresentationName.Localize();
-		}
-
 		private static string GetSettingsName(string settingsKey)
 		{
 			var settingData = SettingsOrganizer.Instance.GetSettingsData(settingsKey);
@@ -365,11 +332,10 @@ namespace MatterHackers.MatterControl
 					{
 						var details = "Found a line that is {0} characters long.\n{1}...".Localize().FormatWith(length, trimedLine.Substring(0, 20));
 						errors.Add(
-							new ValidationError()
+							new SettingsValidationError(settingsKey)
 							{
 								Error = "All G-Code lines mush be shorter than 100 characters (excluding comments).".Localize().FormatWith(data.PresentationName),
 								Details = details,
-								Location = GetSettingsLocation(settingsKey)
 							});
 					}
 
@@ -380,9 +346,9 @@ namespace MatterHackers.MatterControl
 			return true;
 		}
 
-		private static void ValidateGoodSpeedSettingGreaterThan0(string speedSetting, PrinterConfig printer, List<ValidationError> errors)
+		private static void ValidateGoodSpeedSettingGreaterThan0(string settingsKey, PrinterConfig printer, List<ValidationError> errors)
 		{
-			var actualSpeedValueString = printer.Settings.GetValue(speedSetting);
+			var actualSpeedValueString = printer.Settings.GetValue(settingsKey);
 			var speedValueString = actualSpeedValueString;
 			if (speedValueString.EndsWith("%"))
 			{
@@ -397,18 +363,17 @@ namespace MatterHackers.MatterControl
 			}
 
 			if (!valueWasNumber
-				|| (printer.EngineMappingsMatterSlice.MapContains(speedSetting)
+				|| (printer.EngineMappingsMatterSlice.MapContains(settingsKey)
 				&& speedToCheck <= 0))
 			{
-				SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(speedSetting);
+				SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(settingsKey);
 				if (data != null)
 				{
 					errors.Add(
-						new ValidationError()
+						new SettingsValidationError(settingsKey)
 						{
 							Error = "The {0} must be greater than 0.".Localize().FormatWith(data.PresentationName),
 							Details = "It is currently set to {0}.".Localize().FormatWith(actualSpeedValueString),
-							Location = GetSettingsLocation(speedSetting)
 						});
 				}
 			}
