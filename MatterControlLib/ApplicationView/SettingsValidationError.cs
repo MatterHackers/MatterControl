@@ -43,6 +43,8 @@ namespace MatterHackers.MatterControl
 
 		public string Location => SettingsLocation(this.CanonicalSettingsName);
 
+		public string ValueDetails { get; set; }
+
 		private static string SettingsLocation(string settingsKey)
 		{
 			var settingData = SettingsOrganizer.Instance.GetSettingsData(settingsKey);
