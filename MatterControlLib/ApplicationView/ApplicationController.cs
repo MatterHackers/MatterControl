@@ -2254,18 +2254,7 @@ namespace MatterHackers.MatterControl
 				var errors = SettingsValidation.SettingsValid(printer);
 				if(errors.Count > 0)
 				{
-					// Project to newline separated Error/Details/Location string
-					var formattedErrors = errors.Select(err =>
-					{
-						// Conditionally combine Error/Details/Location when not empty
-						return err.Error +
-							((string.IsNullOrWhiteSpace(err.Details)) ? "" : $"\n\n{err.Details}") +
-							((string.IsNullOrWhiteSpace(err.Location)) ? "" : $"\n\n{err.Location}");
-					}).ToArray();
-
-					StyledMessageBox.ShowMessageBox(
-							string.Join("\n__________________\n\n", formattedErrors),
-							"Export Error".Localize());
+					this.ShowValidationErrors("Export Error".Localize(), errors);
 				}
 				else // there are no errors continue printing
 				{
@@ -2378,6 +2367,25 @@ If you experience adhesion problems, please re-run leveling."
 			catch (Exception)
 			{
 			}
+		}
+
+		public void ShowValidationErrors(string windowTitle, List<ValidationError> errors)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				// Project to newline separated Error/Details/Location string
+				var formattedErrors = errors.Select(err =>
+				{
+					// Conditionally combine Error/Details/Location when not empty
+					return err.Error +
+						((string.IsNullOrWhiteSpace(err.Details)) ? "" : $"\n\n{err.Details}") +
+						((string.IsNullOrWhiteSpace(err.Location)) ? "" : $"\n\n{err.Location}");
+				}).ToArray();
+
+				StyledMessageBox.ShowMessageBox(
+						string.Join("\n__________________\n\n", formattedErrors),
+						windowTitle);
+			});
 		}
 
 		public void ResetTranslationMap()
