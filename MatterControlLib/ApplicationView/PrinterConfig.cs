@@ -83,7 +83,6 @@ namespace MatterHackers.MatterControl
 				new MappedSetting(this, SettingsKey.min_fan_speed,"min_fan_speed"),
 				new MappedSetting(this, "retract_length","retract_length"),
 				new MappedSetting(this, SettingsKey.temperature,SettingsKey.temperature),
-				new MappedSetting(this, "z_offset","z_offset"),
 				new MappedSetting(this, SettingsKey.bed_temperature,SettingsKey.bed_temperature),
 				new MappedSetting(this, SettingsKey.temperature1, SettingsKey.temperature1),
 				new MappedSetting(this, SettingsKey.temperature2, SettingsKey.temperature2),

@@ -147,6 +147,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string windows_driver = nameof(windows_driver);
 		public const string write_regex = nameof(write_regex);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
+		public const string z_offset = nameof(z_offset);
 		public const string z_probe_samples = nameof(z_probe_samples);
 		public const string z_probe_xy_offset = nameof(z_probe_xy_offset);
 		public const string z_probe_z_offset = nameof(z_probe_z_offset);
