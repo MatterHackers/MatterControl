@@ -58,6 +58,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static Dictionary<string, SliceSettingData> SettingsData { get; }
 
+		public static SettingsLayout Layout { get; }
+
 		public static event EventHandler<StringEventArgs> AnyPrinterSettingChanged;
 
 		public event EventHandler<StringEventArgs> SettingChanged;
@@ -103,6 +105,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				SettingsData.Add(settingsData.SlicerConfigName, settingsData);
 			}
+
+			PrinterSettings.Layout = new SettingsLayout();
 
 			Empty = new PrinterSettings() { ID = "EmptyProfile" };
 			Empty.UserLayer[SettingsKey.printer_name] = "Empty Printer";

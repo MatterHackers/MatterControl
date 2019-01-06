@@ -27,13 +27,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should be defined after add");
 
-					testRunner.SelectSliceSettingsField(SettingsLayout.Instance.Printer, "end_gcode");
+					testRunner.SelectSliceSettingsField(PrinterSettings.Layout.Printer, "end_gcode");
 
 					testRunner.Type("^a");
 					testRunner.Type("{BACKSPACE}");
 					testRunner.Type("G28");
 
-					testRunner.SelectSliceSettingsField(SettingsLayout.Instance.Printer, "start_gcode");
+					testRunner.SelectSliceSettingsField(PrinterSettings.Layout.Printer, "start_gcode");
 
 					var printer = testRunner.FirstPrinter();
 

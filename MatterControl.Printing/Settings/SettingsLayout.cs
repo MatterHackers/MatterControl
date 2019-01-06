@@ -45,20 +45,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static SettingsLayout instance = null;
 
-		public static SettingsLayout Instance
-		{
-			get
-			{
-				if (instance == null)
-				{
-					instance = new SettingsLayout();
-				}
-
-				return instance;
-			}
-		}
-
-		private SettingsLayout()
+		internal SettingsLayout()
 		{
 			LoadAndParseSettingsFiles();
 		}

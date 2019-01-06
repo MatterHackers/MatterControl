@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						settingsContext,
 						"SliceSettings",
 						printer,
-						SettingsLayout.Instance.SliceSettings,
+						PrinterSettings.Layout.SliceSettings,
 						theme,
 						isPrimarySettingsView: true,
 						justMySettingsTitle: "My Modified Settings".Localize(),
