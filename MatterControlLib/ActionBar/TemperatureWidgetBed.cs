@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			int tabIndex = 0;
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 
-			var settingsData = SettingsOrganizer.Instance.GetSettingsData(SettingsKey.bed_temperature);
+			var settingsData = SettingsOrganizer.SettingsData[SettingsKey.bed_temperature];
 			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
 			container.AddChild(temperatureRow);
 

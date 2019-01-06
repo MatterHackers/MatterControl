@@ -47,11 +47,8 @@ namespace MatterHackers.MatterControl
 
 		private static string SettingsLocation(string settingsKey)
 		{
-			var settingData = SettingsOrganizer.Instance.GetSettingsData(settingsKey);
+			var settingData = SettingsOrganizer.SettingsData[settingsKey];
 			var setingsSectionName = settingData.OrganizerSubGroup.Group.Category.SettingsSection.Name;
-			var rootLevel = SettingsOrganizer.Instance.UserLevels[setingsSectionName];
-			var subGroup = rootLevel.GetContainerForSetting(settingsKey);
-			var category = subGroup.Group.Category;
 
 			if (setingsSectionName == "Advanced")
 			{
@@ -60,8 +57,8 @@ namespace MatterHackers.MatterControl
 
 			return "Location".Localize() + ":"
 				 + "\n" + setingsSectionName.Localize()
-				 + "\n  • " + category.Name.Localize()
-				 + "\n    • " + subGroup.Group.Name.Localize()
+				 + "\n  • " + settingData.OrganizerSubGroup.Group.Category.Name.Localize()
+				 + "\n    • " + settingData.OrganizerSubGroup.Group.Name.Localize()
 				 + "\n      • " + settingData.PresentationName.Localize();
 		}
 	}

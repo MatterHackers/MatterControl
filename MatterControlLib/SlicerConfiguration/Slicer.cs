@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			// If we have raft enabled and are using an extruder other than 0 for it
-			if (printer.Settings.GetValue<bool>("create_raft"))
+			if (printer.Settings.GetValue<bool>(SettingsKey.create_raft))
 			{
 				if (printer.Settings.GetValue<int>("raft_extruder") != 0)
 				{

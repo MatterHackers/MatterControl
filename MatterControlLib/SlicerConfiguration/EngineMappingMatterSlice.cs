@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedSetting(printer, SettingsKey.nozzle_diameter, "extrusionWidth"),
 				new MappedSetting(printer, "extruder_count", "extruderCount"),
 				new MappedToBoolString(printer, "avoid_crossing_perimeters", "avoidCrossingPerimeters"),
-				new MappedToBoolString(printer, "create_raft", "enableRaft"),
+				new MappedToBoolString(printer, SettingsKey.create_raft, "enableRaft"),
 				new MappedToBoolString(printer, "external_perimeters_first", "outsidePerimetersFirst"),
 				new MappedToBoolString(printer, "output_only_first_layer", "outputOnlyFirstLayer"),
 				new MappedToBoolString(printer, "retract_when_changing_islands", "retractWhenChangingIslands"),

@@ -374,7 +374,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			if (validationErrors != null && validationErrors.Any())
+			if (validationErrors?.Any() == true)
 			{
 				var errorsPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
