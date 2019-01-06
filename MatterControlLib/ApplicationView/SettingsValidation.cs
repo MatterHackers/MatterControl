@@ -308,7 +308,7 @@ namespace MatterHackers.MatterControl
 
 		private static string GetSettingsName(string settingsKey)
 		{
-			var settingData = SettingsOrganizer.Instance.GetSettingsData(settingsKey);
+			var settingData = SettingsOrganizer.SettingsData[settingsKey];
 			return settingData.PresentationName.Localize();
 		}
 
@@ -321,17 +321,14 @@ namespace MatterHackers.MatterControl
 				var length = trimedLine.Length;
 				if (length > 100)
 				{
-					SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(settingsKey);
-					if (data != null)
-					{
-						var details = "Found a line that is {0} characters long.\n{1}...".Localize().FormatWith(length, trimedLine.Substring(0, 20));
-						errors.Add(
-							new SettingsValidationError(settingsKey)
-							{
-								Error = "All G-Code lines mush be shorter than 100 characters (excluding comments).".Localize().FormatWith(data.PresentationName),
-								Details = details,
-							});
-					}
+					var details = "Found a line that is {0} characters long.\n{1}...".Localize().FormatWith(length, trimedLine.Substring(0, 20));
+					errors.Add(
+						new SettingsValidationError(settingsKey)
+						{
+							Error = "All G-Code lines mush be shorter than 100 characters (excluding comments).".Localize().FormatWith(
+								GetSettingsName(settingsKey)),
+							Details = details,
+						});
 
 					return false;
 				}
@@ -360,16 +357,12 @@ namespace MatterHackers.MatterControl
 				|| (printer.EngineMappingsMatterSlice.MapContains(settingsKey)
 				&& speedToCheck <= 0))
 			{
-				SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(settingsKey);
-				if (data != null)
-				{
 					errors.Add(
 						new SettingsValidationError(settingsKey)
 						{
-							Error = "The {0} must be greater than 0.".Localize().FormatWith(data.PresentationName),
+							Error = "The {0} must be greater than 0.".Localize().FormatWith(GetSettingsName(settingsKey)),
 							Details = "It is currently set to {0}.".Localize().FormatWith(actualSpeedValueString),
 						});
-				}
 			}
 		}
 	}

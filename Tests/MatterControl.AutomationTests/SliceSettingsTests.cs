@@ -417,7 +417,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		private static void SetCheckBoxSetting(AutomationRunner testRunner, PrinterConfig printer, string settingToChange, bool valueToSet)
 		{
-			var settingsData = SettingsOrganizer.Instance.GetSettingsData(settingToChange);
+			var settingsData = SettingsOrganizer.SettingsData[settingToChange];
 			string checkBoxName = $"{settingsData.PresentationName} Field";
 
 			Assert.IsTrue(printer.Settings.GetValue<bool>(settingToChange) != valueToSet);

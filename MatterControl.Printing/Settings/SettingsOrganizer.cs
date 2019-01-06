@@ -87,16 +87,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return false;
 		}
 
-		public SliceSettingData GetSettingsData(string slicerConfigName)
-		{
-			if (SettingsOrganizer.SettingsData.TryGetValue(slicerConfigName, out SliceSettingData settingsData))
-			{
-				return settingsData;
-			}
-
-			return null;
-		}
-
 		private void LoadAndParseSettingsFiles()
 		{
 			SettingsSection sectionToAddTo = null;
@@ -132,8 +122,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							break;
 
 						case 8:
-							SliceSettingData data = GetSettingsData(sanitizedLine);
-							if (data != null)
+							if (SettingsData.TryGetValue(sanitizedLine, out SliceSettingData data))
 							{
 								subGroupToAddTo.Settings.Add(data);
 								data.OrganizerSubGroup = subGroupToAddTo;

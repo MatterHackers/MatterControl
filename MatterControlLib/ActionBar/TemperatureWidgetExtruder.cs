@@ -269,7 +269,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			int tabIndex = 0;
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
-			var settingsData = SettingsOrganizer.Instance.GetSettingsData(TemperatureKey);
+
+			// TODO: Add guards around computed settings key to handle invalid/missing keys
+			var settingsData = SettingsOrganizer.SettingsData[TemperatureKey];
 			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
 			container.AddChild(temperatureRow);
 
@@ -293,7 +295,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				graph.AddData(this.ActualTemperature);
 			}, 1);
-			
+
 			var valueField = temperatureRow.Descendants<MHNumberEdit>().FirstOrDefault();
 			valueField.Name = "Temperature Input";
 

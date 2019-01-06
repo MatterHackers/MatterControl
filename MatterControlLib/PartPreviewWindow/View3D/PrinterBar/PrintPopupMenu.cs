@@ -96,9 +96,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				column.AddChild(optionsPanel);
 
-				foreach (var key in new[] { "layer_height", "fill_density", SettingsKey.create_raft })
+				foreach (var key in new[] { SettingsKey.layer_height, SettingsKey.fill_density, SettingsKey.create_raft })
 				{
-					var settingsData = SettingsOrganizer.Instance.GetSettingsData(key);
+					var settingsData = SettingsOrganizer.SettingsData[key];
 					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
 
 					if (row is SliceSettingsRow settingsRow)
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				foreach (var key in new[] { SettingsKey.spiral_vase, SettingsKey.layer_to_pause })
 				{
 					var advancedRow = SliceSettingsTabView.CreateItemRow(
-						SettingsOrganizer.Instance.GetSettingsData(key),
+						SettingsOrganizer.SettingsData[key],
 						settingsContext,
 						printer,
 						menuTheme,

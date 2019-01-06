@@ -855,7 +855,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			foreach (var keyValue in this.BaseLayer)
 			{
 				// Add key/value to accumulating string for hash
-				SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
+				SliceSettingData data = SettingsOrganizer.SettingsData[keyValue.Key];
 				if (data?.RebuildGCodeOnChange == true)
 				{
 					bigStringForHashCode.Append(keyValue.Key);
