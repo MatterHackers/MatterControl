@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				column.AddChild(optionsPanel);
 
-				foreach (var key in new[] { "layer_height", "fill_density", "create_raft"})
+				foreach (var key in new[] { "layer_height", "fill_density", SettingsKey.create_raft })
 				{
 					var settingsData = SettingsOrganizer.Instance.GetSettingsData(key);
 					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);

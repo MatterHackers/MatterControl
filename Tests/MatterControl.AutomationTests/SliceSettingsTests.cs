@@ -30,7 +30,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddItemToBedplate("", "Row Item Rook");
 
 				testRunner.SwitchToSliceSettings();
-				testRunner.SelectSliceSettingsField(SettingsOrganizer.Instance.SliceSettings, "create_raft");
+				testRunner.SelectSliceSettingsField(SettingsOrganizer.Instance.SliceSettings, SettingsKey.create_raft);
 				testRunner.Delay(.5);
 
 				testRunner.StartSlicing();

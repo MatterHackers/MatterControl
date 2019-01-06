@@ -370,7 +370,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private Dictionary<string, string> toggleSwitchSectionKeys = new Dictionary<string, string>
 		{
 			{ "Skirt", "create_skirt" },
-			{ "Raft", "create_raft" },
+			{ "Raft", SettingsKey.create_raft },
 			{ "Brim", "create_brim" },
 			{ "Retraction", "enable_retractions" },
 			{ "Fan", "enable_fan" },
