@@ -35,7 +35,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class SettingsOrganizer
+	public class SettingsLayout
 	{
 		private Dictionary<string, SettingsSection> sections { get; set; } = new Dictionary<string, SettingsSection>();
 
@@ -43,22 +43,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SettingsSection Printer => sections["Printer"];
 
-		private static SettingsOrganizer instance = null;
+		private static SettingsLayout instance = null;
 
-		public static SettingsOrganizer Instance
+		public static SettingsLayout Instance
 		{
 			get
 			{
 				if (instance == null)
 				{
-					instance = new SettingsOrganizer();
+					instance = new SettingsLayout();
 				}
 
 				return instance;
 			}
 		}
 
-		private SettingsOrganizer()
+		private SettingsLayout()
 		{
 			LoadAndParseSettingsFiles();
 		}

@@ -30,7 +30,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddItemToBedplate("", "Row Item Rook");
 
 				testRunner.SwitchToSliceSettings();
-				testRunner.SelectSliceSettingsField(SettingsOrganizer.Instance.SliceSettings, SettingsKey.create_raft);
+				testRunner.SelectSliceSettingsField(SettingsLayout.Instance.SliceSettings, SettingsKey.create_raft);
 				testRunner.Delay(.5);
 
 				testRunner.StartSlicing();
@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Switch back to the general tab
 					testRunner.ClickByName("General Tab");
 
-					testRunner.SelectSliceSettingsField(SettingsOrganizer.Instance.Printer, SettingsKey.extruder_count);
+					testRunner.SelectSliceSettingsField(SettingsLayout.Instance.Printer, SettingsKey.extruder_count);
 					testRunner.Type("2");
 					testRunner.Type("{Enter}");
 
@@ -333,7 +333,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData"));
 
-			var organizer = SettingsOrganizer.Instance;
+			var organizer = SettingsLayout.Instance;
 
 			var userLevel = organizer.SliceSettings;
 			Assert.IsNotNull(userLevel);
@@ -374,7 +374,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.SwitchToSliceSettings();
 
 				// Navigate to General Tab -> Layers / Surface Tab
-				testRunner.SelectSliceSettingsField(SettingsOrganizer.Instance.SliceSettings, "layer_height");
+				testRunner.SelectSliceSettingsField(SettingsLayout.Instance.SliceSettings, "layer_height");
 				Assert.AreEqual(0, layerHeightChangedCount, "No change to layer height yet.");
 
 				testRunner.ClickByName("Quality");
@@ -424,7 +424,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			//testRunner.ScrollIntoView(checkBoxName);
 			//testRunner.ClickByName(checkBoxName);
-			testRunner.SelectSliceSettingsField(SettingsOrganizer.Instance.Printer, settingToChange);
+			testRunner.SelectSliceSettingsField(SettingsLayout.Instance.Printer, settingToChange);
 
 			// give some time for the ui to update if necessary
 			testRunner.Delay(2);
@@ -444,7 +444,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(printer.Settings.UserLayer.ContainsKey(settingToChange));
 
 			// make sure the setting is still open in case of a reload all
-			testRunner.NavigateToSliceSettingsField(SettingsOrganizer.Instance.Printer, settingToChange);
+			testRunner.NavigateToSliceSettingsField(SettingsLayout.Instance.Printer, settingToChange);
 			// Click the cancel user override button
 			testRunner.ClickByName("Restore " + settingToChange);
 			testRunner.Delay(2);
@@ -466,17 +466,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Navigate to Settings Tab and make sure Bed Temp Text box is visible
 				testRunner.SwitchToSliceSettings();
 
-				testRunner.SelectSliceSettingsField(SettingsOrganizer.Instance.SliceSettings, SettingsKey.bed_temperature);
-				testRunner.SelectSliceSettingsField(SettingsOrganizer.Instance.SliceSettings, SettingsKey.temperature);
+				testRunner.SelectSliceSettingsField(SettingsLayout.Instance.SliceSettings, SettingsKey.bed_temperature);
+				testRunner.SelectSliceSettingsField(SettingsLayout.Instance.SliceSettings, SettingsKey.temperature);
 
 				// Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
 				testRunner.SwitchToPrinterSettings();
 
-				testRunner.SelectSliceSettingsField(SettingsOrganizer.Instance.Printer, SettingsKey.has_heated_bed);
+				testRunner.SelectSliceSettingsField(SettingsLayout.Instance.Printer, SettingsKey.has_heated_bed);
 				testRunner.Delay(.5);
 
 				testRunner.SwitchToSliceSettings();
-				testRunner.NavigateToSliceSettingsField(SettingsOrganizer.Instance.SliceSettings, SettingsKey.temperature);
+				testRunner.NavigateToSliceSettingsField(SettingsLayout.Instance.SliceSettings, SettingsKey.temperature);
 				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Textbox", .5), "Filament -> Bed Temp should not be visible after Heated Bed unchecked");
 
 				// Make sure Bed Temperature Options are not visible in printer controls
@@ -501,11 +501,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				var printer = testRunner.FirstPrinter();
 
-				testRunner.SelectSliceSettingsField(SettingsOrganizer.Instance.SliceSettings, "layer_height");
+				testRunner.SelectSliceSettingsField(SettingsLayout.Instance.SliceSettings, "layer_height");
 				testRunner.Type(".5");
 
 				// Force lose focus
-				testRunner.SelectSliceSettingsField(SettingsOrganizer.Instance.SliceSettings, "first_layer_height");
+				testRunner.SelectSliceSettingsField(SettingsLayout.Instance.SliceSettings, "first_layer_height");
 
 				testRunner.WaitFor(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.5);
 				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.5", "Layer height is what we set it to");
