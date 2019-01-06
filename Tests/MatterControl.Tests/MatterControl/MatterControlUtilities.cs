@@ -1040,9 +1040,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			var settingData = SettingsOrganizer.Instance.GetSettingsData(slicerConfigName);
 
-			var subGroup = rootLevel.GetContainerForSetting(slicerConfigName);
+			var subGroup = settingData.OrganizerSubGroup;
 
-			var category = subGroup.Group.Category;
+			var category = settingData.OrganizerSubGroup.Group.Category;
 
 			// Click tab
 			testRunner.ClickByName(category.Name + " Tab");

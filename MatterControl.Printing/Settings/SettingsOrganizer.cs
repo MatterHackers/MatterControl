@@ -177,11 +177,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			public bool ContainsKey(string settingsKey) => mappedSettings.ContainsKey(settingsKey);
-
-			public SubGroup GetContainerForSetting(string slicerConfigName)
-			{
-				return mappedSettings[slicerConfigName];
-			}
 		}
 
 		public class Category
