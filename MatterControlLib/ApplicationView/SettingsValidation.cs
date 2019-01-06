@@ -308,7 +308,7 @@ namespace MatterHackers.MatterControl
 
 		private static string GetSettingsName(string settingsKey)
 		{
-			var settingData = SettingsOrganizer.SettingsData[settingsKey];
+			var settingData = PrinterSettings.SettingsData[settingsKey];
 			return settingData.PresentationName.Localize();
 		}
 

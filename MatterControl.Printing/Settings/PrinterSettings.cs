@@ -56,6 +56,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		// Year|month|day|versionForDay (to support multiple revisions on a given day)
 		public static int LatestVersion { get; } = 201606271;
 
+		public static Dictionary<string, SliceSettingData> SettingsData { get; }
+
 		public static event EventHandler<StringEventArgs> AnyPrinterSettingChanged;
 
 		public event EventHandler<StringEventArgs> SettingChanged;
@@ -91,9 +93,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public PrinterSettingsLayer StagedUserSettings { get; set; } = new PrinterSettingsLayer();
 
-
 		static PrinterSettings()
 		{
+			string propertiesFileContents = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
+			var propertiesJsonData = JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents);
+
+			SettingsData = new Dictionary<string, SliceSettingData>();
+			foreach (var settingsData in propertiesJsonData)
+			{
+				SettingsData.Add(settingsData.SlicerConfigName, settingsData);
+			}
+
 			Empty = new PrinterSettings() { ID = "EmptyProfile" };
 			Empty.UserLayer[SettingsKey.printer_name] = "Empty Printer";
 		}
@@ -650,7 +660,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			keysToRetain.Remove(SettingsKey.print_leveling_enabled);
 
 			// Iterate all items that have .ShowAsOverride = false and conditionally add to the retention list
-			foreach (var item in SettingsOrganizer.SettingsData.Values.Where(settingsItem => settingsItem.ShowAsOverride == false))
+			foreach (var item in PrinterSettings.SettingsData.Values.Where(settingsItem => settingsItem.ShowAsOverride == false))
 			{
 				switch (item.SlicerConfigName)
 				{
@@ -855,7 +865,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			foreach (var keyValue in this.BaseLayer)
 			{
 				// Add key/value to accumulating string for hash
-				SliceSettingData data = SettingsOrganizer.SettingsData[keyValue.Key];
+				SliceSettingData data = PrinterSettings.SettingsData[keyValue.Key];
 				if (data?.RebuildGCodeOnChange == true)
 				{
 					bigStringForHashCode.Append(keyValue.Key);
@@ -940,7 +950,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					RestoreUserOverride(layer, settingsKey);
 				}
 
-				if (SettingsOrganizer.SettingsData.TryGetValue(settingsKey, out SliceSettingData settingData))
+				if (PrinterSettings.SettingsData.TryGetValue(settingsKey, out SliceSettingData settingData))
 				{
 					if (settingData.DataEditType == SliceSettingData.DataEditTypes.CHECK_BOX)
 					{

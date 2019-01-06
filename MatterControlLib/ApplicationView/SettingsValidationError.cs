@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl
 
 		private static string SettingsLocation(string settingsKey)
 		{
-			var settingData = SettingsOrganizer.SettingsData[settingsKey];
+			var settingData = PrinterSettings.SettingsData[settingsKey];
 			var setingsSectionName = settingData.OrganizerSubGroup.Group.Category.SettingsSection.Name;
 
 			if (setingsSectionName == "Advanced")

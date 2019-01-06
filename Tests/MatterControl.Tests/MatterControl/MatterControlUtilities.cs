@@ -1036,7 +1036,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static SliceSettingData NavigateToSliceSettingsField(this AutomationRunner testRunner, SettingsOrganizer.SettingsSection rootLevel, string slicerConfigName)
 		{
-			var settingData = SettingsOrganizer.SettingsData[slicerConfigName];
+			var settingData = PrinterSettings.SettingsData[slicerConfigName];
 
 			var subGroup = settingData.OrganizerSubGroup;
 

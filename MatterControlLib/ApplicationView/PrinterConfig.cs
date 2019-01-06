@@ -265,7 +265,7 @@ namespace MatterHackers.MatterControl
 
 				bool valueIsClear = currentValue == "0" | currentValue == "";
 
-				SliceSettingData data = SettingsOrganizer.SettingsData[keyValue.Key];
+				SliceSettingData data = PrinterSettings.SettingsData[keyValue.Key];
 				if (data?.ResetAtEndOfPrint == true && !valueIsClear)
 				{
 					this.Settings.ClearValue(keyValue.Key);
@@ -372,7 +372,7 @@ namespace MatterHackers.MatterControl
 			if (stringEvent != null)
 			{
 				// Fire ReloadAll if changed setting marked with ReloadUiWhenChanged
-				if (SettingsOrganizer.SettingsData.TryGetValue(stringEvent.Data, out SliceSettingData settingsData)
+				if (PrinterSettings.SettingsData.TryGetValue(stringEvent.Data, out SliceSettingData settingsData)
 					&& settingsData.ReloadUiWhenChanged)
 				{
 					UiThread.RunOnIdle(() =>

@@ -271,7 +271,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 
 			// TODO: Add guards around computed settings key to handle invalid/missing keys
-			var settingsData = SettingsOrganizer.SettingsData[TemperatureKey];
+			var settingsData = PrinterSettings.SettingsData[TemperatureKey];
 			var temperatureRow = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);
 			container.AddChild(temperatureRow);
 

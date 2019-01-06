@@ -396,7 +396,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (toggleSwitchSectionKeys.TryGetValue(group.Name, out string toggleFieldKey))
 			{
-				var settingData = SettingsOrganizer.SettingsData[toggleFieldKey];
+				var settingData = PrinterSettings.SettingsData[toggleFieldKey];
 				uiField = CreateToggleFieldForSection(settingData);
 			}
 
