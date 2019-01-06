@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// </summary>
 		public class SettingsSection
 		{
-			private Dictionary<string, SubGroup> mappedSettings = new Dictionary<string, SubGroup>();
+			private Dictionary<string, SubGroup> subgroups = new Dictionary<string, SubGroup>();
 
 			public SettingsSection(string settingsSectionName)
 			{
@@ -173,10 +173,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			internal void AddSetting(string slicerConfigName, SubGroup organizerSubGroup)
 			{
-				mappedSettings.Add(slicerConfigName, organizerSubGroup);
+				subgroups.Add(slicerConfigName, organizerSubGroup);
 			}
 
-			public bool ContainsKey(string settingsKey) => mappedSettings.ContainsKey(settingsKey);
+			public bool ContainsKey(string settingsKey) => subgroups.ContainsKey(settingsKey);
 		}
 
 		public class Category
