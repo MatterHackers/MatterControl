@@ -138,7 +138,6 @@ Printer
         bed_size
         print_center
         build_height
-        z_offset
         bed_shape
     Extruders
       Extruders

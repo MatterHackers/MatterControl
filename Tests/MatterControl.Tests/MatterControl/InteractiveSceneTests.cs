@@ -99,16 +99,13 @@ namespace MatterControl.Tests.MatterControl
 					10, 10, 10).Equals(rootAabb, .001));
 
 				var offsetCubeB = new TranslateObject3D(cubeB, 10);
-#if false
-				offsetCubeB.WrapItem(cubeB);
 
 				union.Combine();
-				Assert.AreEqual(6, root.Descendants().Count());
+				Assert.AreEqual(7, root.Descendants().Count());
 				rootAabb = root.GetAxisAlignedBoundingBox();
 				Assert.IsTrue(new AxisAlignedBoundingBox(
 					-10, -10, -10,
 					20, 10, 10).Equals(rootAabb, .001));
-#endif
 			}
 
 			// now make sure undo has the right results for flatten

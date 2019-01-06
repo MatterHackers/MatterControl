@@ -42,11 +42,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private Color textColor;
 		private ThemeConfig theme;
 		private string slicerConfigName;
+		PrinterConfig printer;
 
 		private List<Vector3Field> childFields;
 
-		public ExtruderOffsetField(SettingsContext settingsContext, string slicerConfigName, Color textColor, ThemeConfig theme)
+		public ExtruderOffsetField(PrinterConfig printer, SettingsContext settingsContext, string slicerConfigName, Color textColor, ThemeConfig theme)
 		{
+			this.printer = printer;
 			this.slicerConfigName = slicerConfigName;
 			this.settingsContext = settingsContext;
 			this.textColor = textColor;
@@ -109,6 +111,33 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			base.Initialize(tabIndex);
+		}
+
+		protected override string ConvertValue(string newValue)
+		{
+			var offsets = newValue?.Split(',');
+			string corrected = "";
+			bool first = true;
+			foreach (string offset in offsets)
+			{
+				if(!first)
+				{
+					corrected += ",";
+				}
+				string[] xyz = offset.Split('x');
+				if (xyz.Length == 2)
+				{
+					var zOffset = printer.Settings.GetValue<double>(SettingsKey.z_offset);
+					corrected += xyz[0] + "x" + xyz[1] + "x" + (-zOffset).ToString();
+				}
+				else
+				{
+					corrected += offset;
+				}
+				first = false;
+			}
+
+			return corrected;
 		}
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
