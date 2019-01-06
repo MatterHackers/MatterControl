@@ -97,20 +97,66 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		static PrinterSettings()
 		{
-			string propertiesFileContents = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
-			var propertiesJsonData = JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents);
-
-			SettingsData = new Dictionary<string, SliceSettingData>();
-			foreach (var settingsData in propertiesJsonData)
-			{
-				SettingsData.Add(settingsData.SlicerConfigName, settingsData);
-			}
+			// Load settings
+			PrinterSettings.SettingsData = LoadAllSettings();
 
 			PrinterSettings.Layout = new SettingsLayout();
 
 			Empty = new PrinterSettings() { ID = "EmptyProfile" };
 			Empty.UserLayer[SettingsKey.printer_name] = "Empty Printer";
 		}
+
+		private static Dictionary<string, SliceSettingData> LoadAllSettings()
+		{
+			var settings = new Dictionary<string, SliceSettingData>();
+
+			foreach (var settingsData in SliceSettingsFields.AllSettings())
+			{
+				settings.Add(settingsData.SlicerConfigName, settingsData);
+			}
+
+			return settings;
+		}
+
+		//static SettingsOrganizerValidateAgainstJson()
+		//{
+		//	string propertiesFileContents = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
+		//	var propertiesJsonData = JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents);
+
+		//	SettingsData = new Dictionary<string, SliceSettingData>();
+
+		//	foreach (var settingsData in propertiesJsonData)
+		//	{
+		//		SettingsData.Add(settingsData.SlicerConfigName, settingsData);
+		//	}
+
+		//	var SettingsData2 = new Dictionary<string, SliceSettingData>();
+
+		//	foreach (var settingsData in Gah.GetSettings())
+		//	{
+		//		SettingsData2.Add(settingsData.SlicerConfigName, settingsData);
+		//	}
+
+		//	var i = 0;
+
+		//	foreach (var key in SettingsData.Keys)
+		//	{
+		//		var itemA = SettingsData[key];
+		//		var itemSA = JsonConvert.SerializeObject(itemA, Formatting.Indented);
+
+		//		var itemB = SettingsData2[key];
+		//		var itemSB = JsonConvert.SerializeObject(itemB, Formatting.Indented);
+
+		//		if (itemSA != itemSB)
+		//		{
+		//			File.WriteAllText($@"c:\temp\sa{i}.txt", itemSA);
+		//			File.WriteAllText($@"c:\temp\sb{i}.txt", itemSB);
+
+		//			i += 1;
+		//			Console.WriteLine();
+		//		}
+		//	}
+		//}
 
 		public PrinterSettings()
 		{
