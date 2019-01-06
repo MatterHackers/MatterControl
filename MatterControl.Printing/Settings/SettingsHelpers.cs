@@ -173,6 +173,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string currentOffsets = printerSettings.GetValue(SettingsKey.extruder_offset);
 			string[] offsets = currentOffsets.Split(',');
 			int count = 0;
+			var zOffset = printerSettings.GetValue<double>(SettingsKey.z_offset);
 			foreach (string offset in offsets)
 			{
 				if (count == extruderIndex)
@@ -180,7 +181,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string[] xyz = offset.Split('x');
 					if (xyz.Length == 2)
 					{
-						return new Vector3(double.Parse(xyz[0]), double.Parse(xyz[1]), 0);
+						return new Vector3(double.Parse(xyz[0]), double.Parse(xyz[1]), -zOffset);
 					}
 					else
 					{
