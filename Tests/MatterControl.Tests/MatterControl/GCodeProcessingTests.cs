@@ -99,7 +99,6 @@ namespace MatterControl.Tests.MatterControl
 			TestMacroReplacement("{retract_speed}", "1800");
 			TestMacroReplacement("{support_material_speed}", "3600");
 			TestMacroReplacement("{temperature}", "200");
-			TestMacroReplacement("{z_offset}", "0");
 			TestMacroReplacement("[" + SettingsKey.bed_temperature + "]", "70");
 			TestMacroReplacement("{infill_speed}", "3600");
 			TestMacroReplacement("{min_print_speed}", "600");
