@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl
 					settingsContext,
 					"ConfigurePrinter",
 					printer,
-					"Printer",
+					SettingsOrganizer.Instance.Printer,
 					theme,
 					isPrimarySettingsView: true,
 					justMySettingsTitle: "My Modified Settings (Printer)".Localize(),

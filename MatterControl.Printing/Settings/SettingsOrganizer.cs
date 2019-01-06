@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Kevin Pope, John Lewin
+Copyright (c) 2019, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SettingsOrganizer
 	{
-		public Dictionary<string, SettingsSection> UserLevels { get; set; } = new Dictionary<string, SettingsSection>();
+		private Dictionary<string, SettingsSection> sections { get; set; } = new Dictionary<string, SettingsSection>();
+
+		public SettingsSection SliceSettings => sections["Advanced"];
+
+		public SettingsSection Printer => sections["Printer"];
 
 		private static SettingsOrganizer instance = null;
 
@@ -73,11 +77,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			LoadAndParseSettingsFiles();
 		}
 
-		public bool Contains(string userLevelKey, string slicerConfigName)
+		public bool Contains(string sectionKey, string slicerConfigName)
 		{
-			if (this.UserLevels.TryGetValue(userLevelKey, out SettingsSection userLevel))
+			if (this.sections.TryGetValue(sectionKey, out SettingsSection section))
 			{
-				return userLevel.ContainsKey(slicerConfigName);
+				return section.ContainsKey(slicerConfigName);
 			}
 
 			return false;
@@ -95,7 +99,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void LoadAndParseSettingsFiles()
 		{
-			SettingsSection userLevelToAddTo = null;
+			SettingsSection sectionToAddTo = null;
 			Category categoryToAddTo = null;
 			Group groupToAddTo = null;
 			SubGroup subGroupToAddTo = null;
@@ -108,13 +112,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					switch (CountLeadingSpaces(line))
 					{
 						case 0:
-							userLevelToAddTo = new SettingsSection(sanitizedLine);
-							UserLevels.Add(sanitizedLine, userLevelToAddTo);
+							sectionToAddTo = new SettingsSection(sanitizedLine);
+							sections.Add(sanitizedLine, sectionToAddTo);
 							break;
 
 						case 2:
-							categoryToAddTo = new Category(sanitizedLine, userLevelToAddTo);
-							userLevelToAddTo.Categories.Add(categoryToAddTo);
+							categoryToAddTo = new Category(sanitizedLine, sectionToAddTo);
+							sectionToAddTo.Categories.Add(categoryToAddTo);
 							break;
 
 						case 4:
@@ -133,7 +137,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								subGroupToAddTo.Settings.Add(data);
 								data.OrganizerSubGroup = subGroupToAddTo;
-								userLevelToAddTo.AddSetting(data.SlicerConfigName, subGroupToAddTo);
+								sectionToAddTo.AddSetting(data.SlicerConfigName, subGroupToAddTo);
 							}
 
 							break;

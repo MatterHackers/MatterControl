@@ -1034,10 +1034,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName(controlName + " Save");
 		}
 
-		public static SliceSettingData NavigateToSliceSettingsField(this AutomationRunner testRunner, string userLevel, string slicerConfigName)
+		public static SliceSettingData NavigateToSliceSettingsField(this AutomationRunner testRunner, SettingsOrganizer.SettingsSection rootLevel, string slicerConfigName)
 		{
-			var rootLevel = SettingsOrganizer.Instance.UserLevels[userLevel];
-
 			var settingData = SettingsOrganizer.Instance.GetSettingsData(slicerConfigName);
 
 			var subGroup = settingData.OrganizerSubGroup;
@@ -1062,9 +1060,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return settingData;
 		}
 
-		public static void SelectSliceSettingsField(this AutomationRunner testRunner, string userLevel, string slicerConfigName)
+		public static void SelectSliceSettingsField(this AutomationRunner testRunner, SettingsOrganizer.SettingsSection settingsSection, string slicerConfigName)
 		{
-			var settingData = NavigateToSliceSettingsField(testRunner, userLevel, slicerConfigName);
+			var settingData = NavigateToSliceSettingsField(testRunner, settingsSection, slicerConfigName);
 			// Click field
 			testRunner.ClickByName($"{settingData.PresentationName} Field");
 		}

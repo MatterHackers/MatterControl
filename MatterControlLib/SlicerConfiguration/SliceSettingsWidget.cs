@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						settingsContext,
 						"SliceSettings",
 						printer,
-						"Advanced",
+						SettingsOrganizer.Instance.SliceSettings,
 						theme,
 						isPrimarySettingsView: true,
 						justMySettingsTitle: "My Modified Settings".Localize(),
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private Action<PopupMenu> externalExtendMenu;
 		private string scopeName;
 
-		public SliceSettingsTabView(SettingsContext settingsContext, string scopeName, PrinterConfig printer, string UserLevel, ThemeConfig theme, bool isPrimarySettingsView, string databaseMRUKey, string justMySettingsTitle, Action<PopupMenu> extendPopupMenu = null)
+		public SliceSettingsTabView(SettingsContext settingsContext, string scopeName, PrinterConfig printer, SettingsOrganizer.SettingsSection settingsSection, ThemeConfig theme, bool isPrimarySettingsView, string databaseMRUKey, string justMySettingsTitle, Action<PopupMenu> extendPopupMenu = null)
 			: base (theme)
 		{
 			using (this.LayoutLock())
@@ -202,8 +202,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				tabIndexForItem = 0;
 
-				var userLevel = SettingsOrganizer.Instance.UserLevels[UserLevel];
-
 				this.settingsRows = new List<(GuiWidget, SliceSettingData)>();
 
 				allUiFields = new Dictionary<string, UIField>();
@@ -211,7 +209,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				var errors = printer.ValidateSettings();
 
 				// Loop over categories creating a tab for each
-				foreach (var category in userLevel.Categories)
+				foreach (var category in settingsSection.Categories)
 				{
 					if (category.Name == "Printer"
 						&& (settingsContext.ViewFilter == NamedSettingsLayers.Material || settingsContext.ViewFilter == NamedSettingsLayers.Quality))
