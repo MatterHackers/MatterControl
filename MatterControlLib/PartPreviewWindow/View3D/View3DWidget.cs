@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -388,6 +389,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			foreach (var child in sceneContext.Scene.Children)
 			{
+				if (child.GetType().IsDefined(typeof(HideFromTreeViewAttribute), false))
+				{
+					continue;
+				}
+
 				var rootNode = Object3DTreeBuilder.BuildTree(child, keyValues, theme);
 				treeNodeContainer.AddChild(rootNode);
 				rootNode.TreeView = treeView;

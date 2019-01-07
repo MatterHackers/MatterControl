@@ -295,9 +295,31 @@ namespace MatterHackers.MatterControl
 
 			var menuTheme = this.MenuTheme;
 
-			if (addInSubmenu)
+			if (!selectedItemType.IsDefined(typeof(ImmutableAttribute), false))
 			{
-				popupMenu.CreateSubMenu("Modify".Localize(), this.MenuTheme, (modifyMenu) =>
+				if (addInSubmenu)
+				{
+					popupMenu.CreateSubMenu("Modify".Localize(), this.MenuTheme, (modifyMenu) =>
+					{
+						foreach (var nodeOperation in this.Graph.Operations)
+						{
+							foreach (var type in nodeOperation.MappedTypes)
+							{
+								if (type.IsAssignableFrom(selectedItemType)
+									&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
+									&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
+								{
+									var subMenuItem = modifyMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme));
+									subMenuItem.Click += (s2, e2) =>
+									{
+										nodeOperation.Operation(selectedItem, scene).ConfigureAwait(false);
+									};
+								}
+							}
+						}
+					});
+				}
+				else
 				{
 					foreach (var nodeOperation in this.Graph.Operations)
 					{
@@ -307,31 +329,12 @@ namespace MatterHackers.MatterControl
 								&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
 								&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
 							{
-								var subMenuItem = modifyMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme));
-								subMenuItem.Click += (s2, e2) =>
+								menuItem = popupMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme));
+								menuItem.Click += (s2, e2) =>
 								{
 									nodeOperation.Operation(selectedItem, scene).ConfigureAwait(false);
 								};
 							}
-						}
-					}
-				});
-			}
-			else
-			{
-				foreach (var nodeOperation in this.Graph.Operations)
-				{
-					foreach (var type in nodeOperation.MappedTypes)
-					{
-						if (type.IsAssignableFrom(selectedItemType)
-							&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
-							&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
-						{
-							menuItem = popupMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme));
-							menuItem.Click += (s2, e2) =>
-							{
-								nodeOperation.Operation(selectedItem, scene).ConfigureAwait(false);
-							};
 						}
 					}
 				}

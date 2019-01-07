@@ -44,6 +44,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+	[HideFromTreeViewAttribute, Immutable]
 	public class GeneratedSupportObject3D : Object3D
 	{
 		public GeneratedSupportObject3D()

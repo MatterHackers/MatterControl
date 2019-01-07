@@ -42,14 +42,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		public PinchObject3D()
 		{
 			Name = "Pinch".Localize();
-			// TODO: This feels like the wronge approach. I think changing the safe list should always
-			// call into invalidate for every Object3D (this will cause a lot of classes to need to be fixed).
-			Children.ItemsModified += Children_ItemsModified;
-		}
-
-		private void Children_ItemsModified(object sender, System.EventArgs e)
-		{
-			OnInvalidate(new InvalidateArgs(null, InvalidateType.Content));
 		}
 
 		[DisplayName("Back Ratio")]
