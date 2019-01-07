@@ -31,7 +31,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using MatterHackers.Agg.Platform;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -47,7 +46,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal SettingsLayout()
 		{
-			LoadAndParseSettingsFiles();
+			LoadAndParseLayoutFile();
 		}
 
 		public bool Contains(string sectionKey, string slicerConfigName)
@@ -60,7 +59,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return false;
 		}
 
-		private void LoadAndParseSettingsFiles()
+		private void LoadAndParseLayoutFile()
 		{
 			SettingsSection sectionToAddTo = null;
 			Category categoryToAddTo = null;
@@ -172,7 +171,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			public List<SubGroup> SubGroups { get; set; } = new List<SubGroup>();
 
-
 			public Category Category { get; }
 		}
 
@@ -190,6 +188,5 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			public Group Group { get; }
 		}
-
 	}
 }
