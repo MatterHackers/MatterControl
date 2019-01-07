@@ -164,5 +164,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string travel_speed = nameof(travel_speed);
 		public const string retract_speed = nameof(retract_speed);
 		public const string create_raft = nameof(create_raft);
+		public const string bottom_solid_layers = nameof(bottom_solid_layers);
+		public const string perimeters = nameof(perimeters);
+		public const string raft_extra_distance_around_part = nameof(raft_extra_distance_around_part);
+		public const string support_material_interface_layers = nameof(support_material_interface_layers);
+		public const string top_solid_layers = nameof(top_solid_layers);
+		public const string raft_print_speed = nameof(raft_print_speed);
+		public const string before_toolchange_gcode = nameof(before_toolchange_gcode);
+		public const string toolchange_gcode = nameof(toolchange_gcode);
+		public const string before_toolchange_gcode_1 = nameof(before_toolchange_gcode_1);
+		public const string toolchange_gcode_1 = nameof(toolchange_gcode_1);
+		public const string retract_before_travel = nameof(retract_before_travel);
+		public const string retract_length = nameof(retract_length);
+		public const string retract_lift = nameof(retract_lift);
+		public const string retract_restart_extra = nameof(retract_restart_extra);
+		public const string retract_restart_extra_time_to_apply = nameof(retract_restart_extra_time_to_apply);
+		public const string bottom_infill_speed = nameof(bottom_infill_speed);
+		public const string bridge_over_infill = nameof(bridge_over_infill);
+		public const string extrusion_multiplier = nameof(extrusion_multiplier);
+		public const string fill_angle = nameof(fill_angle);
+		public const string min_extrusion_before_retract = nameof(min_extrusion_before_retract);
+		public const string min_print_speed = nameof(min_print_speed);
+		public const string raft_air_gap = nameof(raft_air_gap);
 	}
 }

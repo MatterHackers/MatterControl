@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			InjectPauseGCode("M114"); // make sure we know where we are after this resume code
 
 			// make sure we are moving at a reasonable speed
-			var outerPerimeterSpeed = printer.Settings.GetValue<double>("perimeter_speed") * 60;
+			var outerPerimeterSpeed = printer.Settings.GetValue<double>(SettingsKey.perimeter_speed) * 60;
 			InjectPauseGCode("G91"); // move relative
 			InjectPauseGCode($"G1 X.1 F{outerPerimeterSpeed}"); // ensure good extrusion speed
 			InjectPauseGCode($"G1 -X.1 F{outerPerimeterSpeed}"); // move back

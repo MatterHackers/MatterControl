@@ -222,7 +222,7 @@ namespace MatterControl.Tests.MatterControl
 		public void testRetractLengthLessThanTwenty(PrinterSettingsLayer layer, string sourceFile)
 		{
 			string settingValue;
-			if (!layer.TryGetValue("retract_length", out settingValue))
+			if (!layer.TryGetValue(SettingsKey.retract_length, out settingValue))
 			{
 				return;
 			}
@@ -288,7 +288,7 @@ namespace MatterControl.Tests.MatterControl
 		public void testBottomSolidLayersOneMM(PrinterSettingsLayer layer, string sourceFile)
 		{
 			string settingValue;
-			if (!layer.TryGetValue("bottom_solid_layers", out settingValue))
+			if (!layer.TryGetValue(SettingsKey.bottom_solid_layers, out settingValue))
 			{
 				return;
 			}

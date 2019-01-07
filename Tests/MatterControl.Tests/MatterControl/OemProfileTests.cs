@@ -159,7 +159,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				string retractLengthString = settings.GetValue("retract_length");
+				string retractLengthString = settings.GetValue(SettingsKey.retract_length);
 				if (!string.IsNullOrEmpty(retractLengthString))
 				{
 					float retractLength;
@@ -285,7 +285,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				string bottomSolidLayers = settings.GetValue("bottom_solid_layers");
+				string bottomSolidLayers = settings.GetValue(SettingsKey.bottom_solid_layers);
 				if (!string.IsNullOrEmpty(bottomSolidLayers))
 				{
 					if (bottomSolidLayers == "0")
