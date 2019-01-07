@@ -84,7 +84,7 @@ namespace MatterControl.Tests.MatterControl
 			double firstLayerSpeed;
 			if (firstLayerSpeedString.Contains("%"))
 			{
-				string infillSpeedString = settings.GetValue("infill_speed");
+				string infillSpeedString = settings.GetValue(SettingsKey.infill_speed);
 				double infillSpeed = double.Parse(infillSpeedString);
 
 				firstLayerSpeedString = firstLayerSpeedString.Replace("%", "");

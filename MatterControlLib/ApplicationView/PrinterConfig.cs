@@ -68,9 +68,9 @@ namespace MatterHackers.MatterControl
 			replaceWithSettingsStrings = new MappedSetting[]
 			{
 				// Have a mapping so that MatterSlice while always use a setting that can be set. (the user cannot set first_layer_bedTemperature in MatterSlice)
-				new AsPercentOfReferenceOrDirect(this, SettingsKey.first_layer_speed, "first_layer_speed", "infill_speed", 60),
+				new AsPercentOfReferenceOrDirect(this, SettingsKey.first_layer_speed, SettingsKey.first_layer_speed, SettingsKey.infill_speed, 60),
 				new AsPercentOfReferenceOrDirect(this, "external_perimeter_speed","external_perimeter_speed", "perimeter_speed", 60),
-				new AsPercentOfReferenceOrDirect(this, "raft_print_speed", "raft_print_speed", "infill_speed", 60),
+				new AsPercentOfReferenceOrDirect(this, "raft_print_speed", "raft_print_speed", SettingsKey.infill_speed, 60),
 				new MappedSetting(this, SettingsKey.bed_remove_part_temperature,SettingsKey.bed_remove_part_temperature),
 				new MappedSetting(this, "bridge_fan_speed","bridge_fan_speed"),
 				new MappedSetting(this, "bridge_speed","bridge_speed"),
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl
 				new MappedSetting(this, SettingsKey.temperature1, SettingsKey.temperature1),
 				new MappedSetting(this, SettingsKey.temperature2, SettingsKey.temperature2),
 				new MappedSetting(this, SettingsKey.temperature3, SettingsKey.temperature3),
-				new ScaledSingleNumber(this, "infill_speed", "infill_speed", 60),
+				new ScaledSingleNumber(this, SettingsKey.infill_speed, SettingsKey.infill_speed, 60),
 				new ScaledSingleNumber(this, "min_print_speed", "min_print_speed", 60),
 				new ScaledSingleNumber(this, "perimeter_speed","perimeter_speed", 60),
 				new ScaledSingleNumber(this, "retract_speed","retract_speed", 60),
