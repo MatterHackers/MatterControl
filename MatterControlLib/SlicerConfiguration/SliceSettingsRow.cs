@@ -339,7 +339,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 
 				if (settingValue.Contains("%")
-					&& SettingsOrganizer.SettingsData.TryGetValue(percentReference.ReferencedSetting, out SliceSettingData referencedSettingData))
+					&& PrinterSettings.SettingsData.TryGetValue(percentReference.ReferencedSetting, out SliceSettingData referencedSettingData))
 				{
 					column.AddChild(
 						new TextWidget(

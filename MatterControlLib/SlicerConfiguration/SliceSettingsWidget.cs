@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						settingsContext,
 						"SliceSettings",
 						printer,
-						SettingsOrganizer.Instance.SliceSettings,
+						PrinterSettings.Layout.SliceSettings,
 						theme,
 						isPrimarySettingsView: true,
 						justMySettingsTitle: "My Modified Settings".Localize(),
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private Action<PopupMenu> externalExtendMenu;
 		private string scopeName;
 
-		public SliceSettingsTabView(SettingsContext settingsContext, string scopeName, PrinterConfig printer, SettingsOrganizer.SettingsSection settingsSection, ThemeConfig theme, bool isPrimarySettingsView, string databaseMRUKey, string justMySettingsTitle, Action<PopupMenu> extendPopupMenu = null)
+		public SliceSettingsTabView(SettingsContext settingsContext, string scopeName, PrinterConfig printer, SettingsLayout.SettingsSection settingsSection, ThemeConfig theme, bool isPrimarySettingsView, string databaseMRUKey, string justMySettingsTitle, Action<PopupMenu> extendPopupMenu = null)
 			: base (theme)
 		{
 			using (this.LayoutLock())
@@ -376,7 +376,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{ "Fan", "enable_fan" },
 		};
 
-		public SectionWidget CreateGroupSection(SettingsOrganizer.Group group, List<ValidationError> errors)
+		public SectionWidget CreateGroupSection(SettingsLayout.Group group, List<ValidationError> errors)
 		{
 			var groupPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -396,7 +396,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (toggleSwitchSectionKeys.TryGetValue(group.Name, out string toggleFieldKey))
 			{
-				var settingData = SettingsOrganizer.SettingsData[toggleFieldKey];
+				var settingData = PrinterSettings.SettingsData[toggleFieldKey];
 				uiField = CreateToggleFieldForSection(settingData);
 			}
 

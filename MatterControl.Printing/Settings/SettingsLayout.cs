@@ -35,7 +35,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class SettingsOrganizer
+	public class SettingsLayout
 	{
 		private Dictionary<string, SettingsSection> sections { get; set; } = new Dictionary<string, SettingsSection>();
 
@@ -43,36 +43,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SettingsSection Printer => sections["Printer"];
 
-		private static SettingsOrganizer instance = null;
+		private static SettingsLayout instance = null;
 
-		public static Dictionary<string, SliceSettingData> SettingsData { get; }
-
-		static SettingsOrganizer()
-		{
-			string propertiesFileContents = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
-			var propertiesJsonData = JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents);
-
-			SettingsData = new Dictionary<string, SliceSettingData>();
-			foreach (var settingsData in propertiesJsonData)
-			{
-				SettingsData.Add(settingsData.SlicerConfigName, settingsData);
-			}
-		}
-
-		public static SettingsOrganizer Instance
-		{
-			get
-			{
-				if (instance == null)
-				{
-					instance = new SettingsOrganizer();
-				}
-
-				return instance;
-			}
-		}
-
-		private SettingsOrganizer()
+		internal SettingsLayout()
 		{
 			LoadAndParseSettingsFiles();
 		}
@@ -122,7 +95,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							break;
 
 						case 8:
-							if (SettingsData.TryGetValue(sanitizedLine, out SliceSettingData data))
+							if (PrinterSettings.SettingsData.TryGetValue(sanitizedLine, out SliceSettingData data))
 							{
 								subGroupToAddTo.Settings.Add(data);
 								data.OrganizerSubGroup = subGroupToAddTo;

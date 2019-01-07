@@ -74,6 +74,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool ReloadUiWhenChanged { get; set; } = false;
 
-		public SettingsOrganizer.SubGroup OrganizerSubGroup { get; set; }
+		public SettingsLayout.SubGroup OrganizerSubGroup { get; set; }
 	}
 }
