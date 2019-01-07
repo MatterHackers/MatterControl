@@ -32,18 +32,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 	public class AsPercentOfReferenceOrDirect : MappedSetting
 	{
 		private bool change0ToReference;
-		private string originalReference;
 		private double scale;
 
-		public AsPercentOfReferenceOrDirect(PrinterConfig printer, string canonicalSettingsName, string exportedName, string originalReference, double scale = 1, bool change0ToReference = true)
+		public AsPercentOfReferenceOrDirect(PrinterConfig printer, string canonicalSettingsName, string exportedName, string referencedSetting, double scale = 1, bool change0ToReference = true)
 			: base(printer, canonicalSettingsName, exportedName)
 		{
 			this.change0ToReference = change0ToReference;
 			this.scale = scale;
-			this.originalReference = originalReference;
+			this.ReferencedSetting = referencedSetting;
 		}
 
-		public string ReferencedSetting => originalReference;
+		public string ReferencedSetting { get; }
 
 		public override string Value
 		{
@@ -54,7 +53,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 				{
 					string withoutPercent = base.Value.Replace("%", "");
 					double ratio = ParseDouble(withoutPercent) / 100.0;
-					string originalReferenceString = printer.Settings.GetValue(originalReference);
+					string originalReferenceString = printer.Settings.GetValue(this.ReferencedSetting);
 					double valueToModify = ParseDouble(originalReferenceString);
 					finalValue = valueToModify * ratio;
 				}
@@ -66,7 +65,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 				if (change0ToReference
 					&& finalValue == 0)
 				{
-					finalValue = ParseDouble(printer.Settings.GetValue(originalReference));
+					finalValue = ParseDouble(printer.Settings.GetValue(ReferencedSetting));
 				}
 
 				finalValue *= scale;
