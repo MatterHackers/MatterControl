@@ -53,69 +53,72 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			{
 				var thisCopy = this.Clone();
 
-				var ownedMeshWrappers = thisCopy.Descendants().Where(o => o.OwnerID == thisCopy.ID).ToList();
-
-				var newMeshObjects = new List<IObject3D>();
-
-				// remove all the meshWrappers (collapse the children)
-				foreach (var ownedMeshWrapper in ownedMeshWrappers)
+				using (thisCopy.RebuilLockAll())
 				{
-					var wrapperParent = ownedMeshWrapper.Parent;
-					if (ownedMeshWrapper.Visible)
+					var ownedMeshWrappers = thisCopy.Descendants().Where(o => o.OwnerID == thisCopy.ID).ToList();
+
+					var newMeshObjects = new List<IObject3D>();
+
+					// remove all the meshWrappers (collapse the children)
+					foreach (var ownedMeshWrapper in ownedMeshWrappers)
 					{
-						var newMesh = new Object3D()
+						var wrapperParent = ownedMeshWrapper.Parent;
+						if (ownedMeshWrapper.Visible)
 						{
-							Mesh = ownedMeshWrapper.Mesh.Copy(CancellationToken.None)
-						};
-						newMesh.CopyProperties(ownedMeshWrapper, Object3DPropertyFlags.All);
-						// move the mesh to the actual new position
-						var matrix = ownedMeshWrapper.WorldMatrix(thisCopy);
-						newMesh.Mesh.Transform(matrix);
-						// then set the matrix to identity
-						newMesh.Matrix = Matrix4X4.Identity;
-						newMesh.Name = thisCopy.Name;
-						newMeshObjects.Add(newMesh);
+							var newMesh = new Object3D()
+							{
+								Mesh = ownedMeshWrapper.Mesh.Copy(CancellationToken.None)
+							};
+							newMesh.CopyProperties(ownedMeshWrapper, Object3DPropertyFlags.All);
+							// move the mesh to the actual new position
+							var matrix = ownedMeshWrapper.WorldMatrix(thisCopy);
+							newMesh.Mesh.Transform(matrix);
+							// then set the matrix to identity
+							newMesh.Matrix = Matrix4X4.Identity;
+							newMesh.Name = thisCopy.Name;
+							newMeshObjects.Add(newMesh);
+						}
+
+						// remove it
+						wrapperParent.Children.Remove(ownedMeshWrapper);
 					}
 
-					// remove it
-					wrapperParent.Children.Remove(ownedMeshWrapper);
-				}
+					thisCopy.Matrix = Matrix4X4.Identity;
 
-				thisCopy.Matrix = Matrix4X4.Identity;
-
-				thisCopy.Children.Modify(children =>
-				{
-					children.Clear();
-					children.AddRange(newMeshObjects);
-					foreach (var child in children)
+					thisCopy.Children.Modify(children =>
 					{
-						child.MakeNameNonColliding();
+						children.Clear();
+						children.AddRange(newMeshObjects);
+						foreach (var child in children)
+						{
+							child.MakeNameNonColliding();
+						}
+					});
+
+					List<IObject3D> newChildren = new List<IObject3D>();
+					// push our matrix into a copy of our children
+					foreach (var child in thisCopy.Children)
+					{
+						var newChild = child.Clone();
+						newChildren.Add(newChild);
+						newChild.Matrix *= thisCopy.Matrix;
+						var flags = Object3DPropertyFlags.Visible;
+						if (thisCopy.Color.alpha != 0) flags |= Object3DPropertyFlags.Color;
+						if (thisCopy.OutputType != PrintOutputTypes.Default) flags |= Object3DPropertyFlags.OutputType;
+						if (thisCopy.MaterialIndex != -1) flags |= Object3DPropertyFlags.MaterialIndex;
+						newChild.CopyProperties(thisCopy, flags);
 					}
-				});
 
-				List<IObject3D> newChildren = new List<IObject3D>();
-				// push our matrix into a copy of our children
-				foreach (var child in thisCopy.Children)
-				{
-					var newChild = child.Clone();
-					newChildren.Add(newChild);
-					newChild.Matrix *= thisCopy.Matrix;
-					var flags = Object3DPropertyFlags.Visible;
-					if (thisCopy.Color.alpha != 0) flags |= Object3DPropertyFlags.Color;
-					if (thisCopy.OutputType != PrintOutputTypes.Default) flags |= Object3DPropertyFlags.OutputType;
-					if (thisCopy.MaterialIndex != -1) flags |= Object3DPropertyFlags.MaterialIndex;
-					newChild.CopyProperties(thisCopy, flags);
-				}
-
-				// and replace us with the children
-				var replaceCommand = new ReplaceCommand(new List<IObject3D> { this }, newChildren);
-				if (undoBuffer != null)
-				{
-					undoBuffer.AddAndDo(replaceCommand);
-				}
-				else
-				{
-					replaceCommand.Do();
+					// and replace us with the children
+					var replaceCommand = new ReplaceCommand(new List<IObject3D> { this }, newChildren);
+					if (undoBuffer != null)
+					{
+						undoBuffer.AddAndDo(replaceCommand);
+					}
+					else
+					{
+						replaceCommand.Do();
+					}
 				}
 			}
 
