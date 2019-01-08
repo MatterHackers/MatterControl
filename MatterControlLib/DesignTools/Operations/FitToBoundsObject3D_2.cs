@@ -63,25 +63,28 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public static FitToBoundsObject3D_2 Create(IObject3D itemToFit)
 		{
 			var fitToBounds = new FitToBoundsObject3D_2();
-			var aabb = itemToFit.GetAxisAlignedBoundingBox();
-
-			var bounds = new Object3D()
+			using (fitToBounds.RebuildLock())
 			{
-				Visible = false,
-				Color = new Color(Color.Red, 100),
-				Mesh = PlatonicSolids.CreateCube()
-			};
+				var aabb = itemToFit.GetAxisAlignedBoundingBox();
 
-			// add all the children
-			var scaleItem = new Object3D();
-			fitToBounds.Children.Add(scaleItem);
-			scaleItem.Children.Add(itemToFit);
-			fitToBounds.Children.Add(bounds);
+				var bounds = new Object3D()
+				{
+					Visible = false,
+					Color = new Color(Color.Red, 100),
+					Mesh = PlatonicSolids.CreateCube()
+				};
 
-			fitToBounds.boundsSize.X = aabb.XSize;
-			fitToBounds.boundsSize.Y = aabb.YSize;
-			fitToBounds.boundsSize.Z = aabb.ZSize;
-			fitToBounds.Rebuild(null);
+				// add all the children
+				var scaleItem = new Object3D();
+				fitToBounds.Children.Add(scaleItem);
+				scaleItem.Children.Add(itemToFit);
+				fitToBounds.Children.Add(bounds);
+
+				fitToBounds.boundsSize.X = aabb.XSize;
+				fitToBounds.boundsSize.Y = aabb.YSize;
+				fitToBounds.boundsSize.Z = aabb.ZSize;
+				fitToBounds.Rebuild(null);
+			}
 
 			return fitToBounds;
 		}

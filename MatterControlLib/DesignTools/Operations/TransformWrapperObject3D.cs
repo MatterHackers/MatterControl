@@ -82,51 +82,53 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public virtual void WrapItem(IObject3D item, UndoBuffer undoBuffer = null)
 		{
-			var locks = item.RebuilLockAll();
-
-			if(item.Parent != null)
+			using (item.RebuilLockAll())
 			{
-				locks.Add(item.Parent.RebuildLock());
-			}
-
-			if (item is SelectionGroupObject3D)
-			{
-				throw new Exception("The selection should have been cleared before you wrap this item");
-			}
-
-			while(item.Parent is ModifiedMeshObject3D)
-			{
-				item = item.Parent;
-			}
-
-			// if the items we are replacing ar already in a list
-			if (item.Parent != null)
-			{
-				var replaceItems = new List<IObject3D> { item };
-				IObject3D itemClone = item.Clone();
-
-				var firstChild = new Object3D();
-				this.Children.Add(firstChild);
-				firstChild.Children.Add(itemClone);
-
-				var replace = new ReplaceCommand(replaceItems, new List<IObject3D> { this });
-				if (undoBuffer != null)
+				RebuildLock parentLock = null;
+				if (item.Parent != null)
 				{
-					undoBuffer.AddAndDo(replace);
+					parentLock = item.Parent.RebuildLock();
 				}
-				else
-				{
-					replace.Do();
-				}
-			}
-			else // just add them
-			{
-				var firstChild = new Object3D();
-				firstChild.Children.Add(item);
-				this.Children.Add(firstChild);
-			}
 
-			locks.ResumeAll();
+				if (item is SelectionGroupObject3D)
+				{
+					throw new Exception("The selection should have been cleared before you wrap this item");
+				}
+
+				while (item.Parent is ModifiedMeshObject3D)
+				{
+					item = item.Parent;
+				}
+
+				// if the items we are replacing ar already in a list
+				if (item.Parent != null)
+				{
+					var replaceItems = new List<IObject3D> { item };
+					IObject3D itemClone = item.Clone();
+
+					var firstChild = new Object3D();
+					this.Children.Add(firstChild);
+					firstChild.Children.Add(itemClone);
+
+					var replace = new ReplaceCommand(replaceItems, new List<IObject3D> { this });
+					if (undoBuffer != null)
+					{
+						undoBuffer.AddAndDo(replace);
+					}
+					else
+					{
+						replace.Do();
+					}
+				}
+				else // just add them
+				{
+					var firstChild = new Object3D();
+					firstChild.Children.Add(item);
+					this.Children.Add(firstChild);
+				}
+
+				parentLock?.Dispose();
+			}
 		}
 
 		public override void Flatten(UndoBuffer undoBuffer)

@@ -334,6 +334,7 @@ namespace MatterControl.Tests.MatterControl
 
 				var pinch = new PinchObject3D();
 				pinch.Children.Add(fit);
+				pinch.Invalidate(new InvalidateArgs(pinch, InvalidateType.Properties));
 				root.Children.Add(pinch);
 				var rootAabb = root.GetAxisAlignedBoundingBox();
 				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)), .001));
