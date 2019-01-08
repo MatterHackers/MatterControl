@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public RoundedToggleSwitch(ThemeConfig theme)
 		{
 			this.theme = theme;
-			this.DoubleBuffer = true;
+			// this.DoubleBuffer = true;
 			inactiveBarColor = theme.IsDarkTheme ? theme.Shade : theme.SlightShade;
 			activeBarColor = new Color(theme.PrimaryAccentColor, (theme.IsDarkTheme ? 100 : 70));
 
@@ -218,16 +218,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				graphics2D.Render(backgroundBar, barColor);
 
 				// Draw toggle circle
-				BackBuffer.SetRecieveBlender(new BlenderBGRA());
-
 				graphics2D.Circle(
 					new Vector2(
 						position,
 						centerY),
 					toggleRadius,
 					toggleColor);
-
-				BackBuffer.SetRecieveBlender(new BlenderPreMultBGRA());
 			}
 		}
 
