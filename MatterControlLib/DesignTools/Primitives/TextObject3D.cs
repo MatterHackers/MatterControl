@@ -110,45 +110,46 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override Task Rebuild()
 		{
-			this.DebugDepth("Rebuild");
-			using (RebuildLock())
+			return Task.Run(() =>
 			{
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				this.Children.Modify((list) =>
+				this.DebugDepth("Rebuild");
+				using (RebuildLock())
 				{
-					list.Clear();
+					var aabb = this.GetAxisAlignedBoundingBox();
 
-					var offest = 0.0;
-					double pointsToMm = 0.352778;
-					foreach (var letter in NameToWrite.ToCharArray())
+					this.Children.Modify((list) =>
 					{
-						var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.GetTypeFace(Font), PointSize))
-						{
-							ResolutionScale = 10
-						};
-						var scalledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
-						IObject3D letterObject = new Object3D()
-						{
-							Mesh = VertexSourceToMesh.Extrude(scalledLetterPrinter, Height)
-						};
+						list.Clear();
 
-						letterObject.Matrix = Matrix4X4.CreateTranslation(offest, 0, 0);
-						list.Add(letterObject);
+						var offest = 0.0;
+						double pointsToMm = 0.352778;
+						foreach (var letter in NameToWrite.ToCharArray())
+						{
+							var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.GetTypeFace(Font), PointSize))
+							{
+								ResolutionScale = 10
+							};
+							var scalledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
+							IObject3D letterObject = new Object3D()
+							{
+								Mesh = VertexSourceToMesh.Extrude(scalledLetterPrinter, Height)
+							};
 
-						offest += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
+							letterObject.Matrix = Matrix4X4.CreateTranslation(offest, 0, 0);
+							list.Add(letterObject);
+
+							offest += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
+						}
+					});
+
+
+					if (aabb.ZSize > 0)
+					{
+						// If the part was already created and at a height, maintain the height.
+						PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 					}
-				});
-
-
-				if (aabb.ZSize > 0)
-				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 				}
-			}
-
-			return Task.CompletedTask;
+			});
 		}
 	}
 }
