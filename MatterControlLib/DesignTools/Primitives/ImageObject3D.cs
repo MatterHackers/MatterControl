@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 
 					// send the invalidate on image change
-					this.OnInvalidate(new InvalidateArgs(this, InvalidateType.Redraw));
+					this.OnInvalidate(new InvalidateArgs(this, InvalidateType.Content));
 				}
 
 				return _image;

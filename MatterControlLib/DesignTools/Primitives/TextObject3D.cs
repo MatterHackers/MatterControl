@@ -42,6 +42,7 @@ using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -57,7 +58,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var item = new TextObject3D();
 
-			item.Rebuild(null);
+			item.Invalidate(new InvalidateArgs(null, InvalidateType.Content, null));
 			return item;
 		}
 
@@ -86,7 +87,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			undoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { this }, new List<IObject3D> { newContainer }));
 		}
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if ((invalidateType.InvalidateType == InvalidateType.Content
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
@@ -94,20 +95,20 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				await Rebuild();
+				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
 			}
 			else if (invalidateType.InvalidateType == InvalidateType.Properties
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				await Rebuild();
+				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())
@@ -147,7 +148,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+			return Task.CompletedTask;
 		}
 	}
 }
