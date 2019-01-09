@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			Name = "Combine";
 		}
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if ((invalidateType.InvalidateType == InvalidateType.Content
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
@@ -56,25 +56,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				await Rebuild();
+				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
 			}
 			else if (invalidateType.InvalidateType == InvalidateType.Properties
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				await Rebuild();
+				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		public override Task Rebuild()
 		{
-			var rebuildLock = RebuildLock();
+			var rebuildLocks = this.RebuilLockAll();
 
 			// spin up a task to remove holes from the objects in the group
-			ApplicationController.Instance.Tasks.Execute(
+			return ApplicationController.Instance.Tasks.Execute(
 				"Combine".Localize(),
 				null,
 				(reporter, cancellationToken) =>
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 					UiThread.RunOnIdle(() =>
 					{
-						rebuildLock.Dispose();
+						rebuildLocks.Dispose();
 						base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 					});
 

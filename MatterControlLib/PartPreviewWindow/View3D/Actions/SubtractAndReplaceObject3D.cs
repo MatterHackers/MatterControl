@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public SelectedChildren SelectedChildren => ItemsToSubtract;
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if ((invalidateType.InvalidateType == InvalidateType.Content
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
@@ -63,17 +63,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				await Rebuild();
+				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
 			}
 			else if (invalidateType.InvalidateType == InvalidateType.Properties
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				await Rebuild();
+				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
 		public void SubtractAndReplace()
@@ -157,13 +157,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		public override Task Rebuild()
 		{
-			this.DebugDepth("Rebuild");
-			var rebuildLock = RebuildLock();
+			var rebuildLocks = this.RebuilLockAll();
 
 			// spin up a task to calculate the paint
-			ApplicationController.Instance.Tasks.Execute("Replacing".Localize(), null, (reporter, cancellationToken) =>
+			return ApplicationController.Instance.Tasks.Execute("Replacing".Localize(), null, (reporter, cancellationToken) =>
 			{
 				try
 				{
@@ -175,7 +174,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 				UiThread.RunOnIdle(() =>
 				{
-					rebuildLock.Dispose();
+					rebuildLocks.Dispose();
 					base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 				});
 

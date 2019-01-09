@@ -34,6 +34,7 @@ using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -62,7 +63,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			RotationZDegrees = MathHelper.RadiansToDegrees(zRadians);
 			Children.Add(item.Clone());
 
-			Rebuild(null);
+			Rebuild();
 		}
 
 		public RotateObject3D(IObject3D item, Vector3 translation, string name = "")
@@ -70,7 +71,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 
@@ -94,6 +95,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix, null));
+
+			return Task.CompletedTask;
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
@@ -104,17 +107,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				Rebuild();
+				invalidateType = new InvalidateArgs(this, InvalidateType.Matrix, invalidateType.UndoBuffer);
 			}
 			else if (invalidateType.InvalidateType == InvalidateType.Properties
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
+				invalidateType = new InvalidateArgs(this, InvalidateType.Matrix, invalidateType.UndoBuffer);
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateType);
 		}
 	}
 }
