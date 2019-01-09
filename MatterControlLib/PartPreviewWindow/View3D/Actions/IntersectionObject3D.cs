@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			Name = "Intersection";
 		}
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if ((invalidateType.InvalidateType == InvalidateType.Content
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
@@ -56,74 +56,87 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				await Rebuild();
+				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
 			}
 			else if (invalidateType.InvalidateType == InvalidateType.Properties
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				await Rebuild();
+				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		public override Task Rebuild()
 		{
-			var rebuildLock = RebuildLock();
-			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
+			var rebuildLocks = this.RebuilLockAll();
 
-			ApplicationController.Instance.Tasks.Execute("Intersection".Localize(), null, (reporter, cancellationToken) =>
+			return ApplicationController.Instance.Tasks.Execute("Intersection".Localize(), null, (reporter, cancellationToken) =>
 			{
 				var progressStatus = new ProgressStatus();
-
-				var participants = this.DescendantsAndSelf().Where((obj) => obj.OwnerID == this.ID);
+				reporter.Report(progressStatus);
 
 				try
 				{
-					if (participants.Count() > 1)
-					{
-						var first = participants.First();
-
-						var totalOperations = participants.Count() - 1;
-						double amountPerOperation = 1.0 / totalOperations;
-						double percentCompleted = 0;
-
-						foreach (var remove in participants)
-						{
-							if (remove != first)
-							{
-								var result = BooleanProcessing.Do(remove.Mesh, remove.WorldMatrix(),
-									first.Mesh, first.WorldMatrix(),
-									2, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
-
-								var inverse = first.WorldMatrix();
-								inverse.Invert();
-								result.Transform(inverse);
-								using (first.RebuildLock())
-								{
-									first.Mesh = result;
-								}
-								remove.Visible = false;
-
-								percentCompleted += amountPerOperation;
-								progressStatus.Progress0To1 = percentCompleted;
-								reporter.Report(progressStatus);
-							}
-						}
-					}
+					Intersect(cancellationToken, reporter);
 				}
 				catch { }
 
 				UiThread.RunOnIdle(() =>
 				{
-					rebuildLock.Dispose();
+					rebuildLocks.Dispose();
 					base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 				});
 
 				return Task.CompletedTask;
 			});
+		}
+
+		public void Intersect()
+		{
+			Intersect(CancellationToken.None, null);
+		}
+
+		private void Intersect(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
+		{
+			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, cancellationToken);
+
+			var participants = this.DescendantsAndSelf().Where((obj) => obj.OwnerID == this.ID);
+
+			if (participants.Count() > 1)
+			{
+				var first = participants.First();
+
+				var totalOperations = participants.Count() - 1;
+				double amountPerOperation = 1.0 / totalOperations;
+				double percentCompleted = 0;
+
+				ProgressStatus progressStatus = new ProgressStatus();
+				foreach (var remove in participants)
+				{
+					if (remove != first)
+					{
+						var result = BooleanProcessing.Do(remove.Mesh, remove.WorldMatrix(),
+							first.Mesh, first.WorldMatrix(),
+							2, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+
+						var inverse = first.WorldMatrix();
+						inverse.Invert();
+						result.Transform(inverse);
+						using (first.RebuildLock())
+						{
+							first.Mesh = result;
+						}
+						remove.Visible = false;
+
+						percentCompleted += amountPerOperation;
+						progressStatus.Progress0To1 = percentCompleted;
+						reporter.Report(progressStatus);
+					}
+				}
+			}
 		}
 	}
 }
