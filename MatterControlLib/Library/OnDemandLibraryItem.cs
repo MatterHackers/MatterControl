@@ -40,6 +40,9 @@ namespace MatterHackers.MatterControl.Library
 		public OnDemandLibraryItem(string name)
 		{
 			this.Name = name ?? "Unknown".Localize();
+
+			// TODO: Fix cheat this quick hack which in the short term naively allows IsContentFileType to return true and drag/drop to succeed
+			this.ContentType = "mcx";
 		}
 
 		public string ID => Guid.NewGuid().ToString();
