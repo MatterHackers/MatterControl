@@ -999,13 +999,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Set the hitplane to the bed plane
 			CurrentSelectInfo.HitPlane = bedPlane;
 
-			var insertionGroup = new InsertionGroupObject3D(
-				items,
-				this,
-				Scene,
-				Vector2.Zero,
-				null,
-				trackSourceFiles);
+			// Add item to scene
+			var insertionGroup = sceneContext.AddToPlate(items, Vector2.Zero, moveToOpenPosition: false);
 
 			// Find intersection position of the mouse with the bed plane
 			var intersectInfo = GetIntersectPosition(screenSpaceMousePosition);
@@ -1020,11 +1015,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.deferEditorTillMouseUp = true;
 
-			// Add item to scene and select it
-			Scene.Children.Modify(list =>
-			{
-				list.Add(insertionGroup);
-			});
 			Scene.SelectedItem = insertionGroup;
 
 			this.DragDropObject = insertionGroup;
