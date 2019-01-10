@@ -35,6 +35,8 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
+using AngleSharp.Parser.Html;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -1385,9 +1387,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					&& mouseEvent.DragFiles?.Count > 0
 					&& mouseEvent.DragFiles.TrueForAll(filePath =>
 					{
-						return ApplicationController.Instance.IsLoadableFile(filePath)
-							// Disallow GCode drop in part view
-							&& (this.Printer != null || !string.Equals(System.IO.Path.GetExtension(filePath), ".gcode", StringComparison.OrdinalIgnoreCase));
+						return filePath.StartsWith("html:", StringComparison.OrdinalIgnoreCase)
+							|| filePath.StartsWith("data:", StringComparison.OrdinalIgnoreCase)
+							|| filePath.StartsWith("text:", StringComparison.OrdinalIgnoreCase)
+							|| ApplicationController.Instance.IsLoadableFile(filePath)
+								// Disallow GCode drop in part view
+								&& (this.Printer != null || !string.Equals(System.IO.Path.GetExtension(filePath), ".gcode", StringComparison.OrdinalIgnoreCase));
 					});
 
 			// View3DWidgets Filesystem DropDrop handler
@@ -1402,7 +1407,71 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					// Project DragFiles to IEnumerable<FileSystemFileItem>
 					this.StartDragDrop(
-						mouseEvent.DragFiles.Select(path => new FileSystemFileItem(path)),
+						mouseEvent.DragFiles.Select<string, ILibraryItem>(path =>
+						{
+							if (path.StartsWith("html:"))
+							{
+								var html = path;
+
+								int startTagPosition = html.IndexOf("<html");
+
+								html = html.Substring(startTagPosition);
+
+								// Parse HTML into something usable for the scene
+								var parser = new HtmlParser();
+								var document = parser.Parse(html);
+
+								// TODO: This needs to become much smarter. Ideally it would inject a yet to be built Object3D for HTML
+								// snippets which could initially infer the content to use but would allow for interactive selection.
+								// There's already a model for this in the experimental SVG tool. For now, find any embedded svg
+								if (document.QuerySelector("img") is IElement img)
+								{
+									path = img.Attributes["src"].Value;
+								}
+								else
+								{
+									// If no image was found, extract the text content
+									path = "text:" + document.DocumentElement.TextContent;
+								}
+							}
+
+							if (path.StartsWith("data:"))
+							{
+								// Basic support for images encoded as Base64 data urls
+								var match = Regex.Match(path, @"data:(?<type>.+?);base64,(?<data>.+)");
+								var base64Data = match.Groups["data"].Value;
+								var contentType = match.Groups["type"].Value;
+								var binData = Convert.FromBase64String(base64Data);
+
+								return new BufferLibraryItem(binData, contentType, "unknown");
+							}
+							else if (path.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+							{
+								// Basic support for images via remote urls
+								return new RemoteLibraryItem(path, null);
+							}
+							else if (path.StartsWith("text:"))
+							{
+								return new OnDemandLibraryItem("xxx")
+								{
+									Object3DProvider = async () =>
+									{
+										var text = new TextObject3D()
+										{
+											NameToWrite = path.Substring(5)
+										};
+
+										await text.Rebuild();
+
+										return text;
+									}
+								};
+							}
+							else
+							{
+								return new FileSystemFileItem(path);
+							}
+						}),
 						screenSpaceMousePosition: this.TransformToScreenSpace(mouseEvent.Position),
 						trackSourceFiles: true);
 				}

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,48 +28,55 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.IO;
 using System.Threading.Tasks;
-using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public interface ILibraryItem
+	public class BufferLibraryItem : ILibraryAssetStream
 	{
-		string ID { get; }
-		string Name { get; }
-		bool IsProtected { get; }
-		bool IsVisible { get; }
-		DateTime DateModified { get; }
-		DateTime DateCreated { get; }
-	}
+		private byte[] buffer;
 
-	public interface ILibraryObject3D : ILibraryAsset
-	{
-		Task<IObject3D> GetObject3D(Action<double, string> reportProgress);
-	}
+		public BufferLibraryItem(byte[] buffer, string contentType, string name)
+		{
+			this.Name = name ?? "Unknown".Localize();
+			this.buffer = buffer;
+			this.FileSize = buffer.Length;
+			this.ContentType = contentType.Replace("image/", "");
+		}
 
-	public interface ILibraryAssetStream : ILibraryAsset
-	{
-		/// <summary>
-		// Gets the size, in bytes, of the current file.
-		/// </summary>
-		long FileSize { get; }
+		public string ID { get; set; } = Guid.NewGuid().ToString();
 
-		bool LocalContentExists { get; }
+		public string Name { get; set; }
 
-		Task<StreamAndLength> GetStream(Action<double, string> progress);
-	}
+		public string FileName => $"{this.Name}.{this.ContentType}";
 
-	public interface IRequireInitialize
-	{
-		Task Initialize();
-	}
+		public bool IsProtected { get; } = false;
 
-	public interface ILibraryAsset : ILibraryItem
-	{
-		string ContentType { get; }
-		string Category { get; }
-		string FileName { get; }
-		string AssetPath { get; }
+		public bool IsVisible { get; } = true;
+
+		public DateTime DateCreated { get; } = DateTime.Now;
+
+		public DateTime DateModified { get; } = DateTime.Now;
+
+		public string ContentType { get; set; }
+
+		public string Category => "General";
+
+		public string AssetPath { get; set; }
+
+		public long FileSize { get; }
+
+		public bool LocalContentExists => false;
+
+		public Task<StreamAndLength> GetStream(Action<double, string> progress)
+		{
+			return Task.FromResult(new StreamAndLength()
+			{
+				Stream = new MemoryStream(buffer),
+				Length = this.FileSize
+			});
+		}
 	}
 }

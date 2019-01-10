@@ -457,7 +457,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					mouseEvent.AcceptDrop = mouseEvent.DragFiles?.Count > 0
 						&& mouseEvent.DragFiles.TrueForAll(filePath => ApplicationController.Instance.IsLoadableFile(filePath)
 							|| (Path.GetExtension(filePath) is string extension
-							&& string.Equals(extension, ".zip", StringComparison.OrdinalIgnoreCase)));
+								&& string.Equals(extension, ".zip", StringComparison.OrdinalIgnoreCase))
+							|| filePath.StartsWith("http", StringComparison.OrdinalIgnoreCase));
 				}
 			}
 

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,48 +28,69 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public interface ILibraryItem
+	public class OnDemandLibraryItem : ILibraryAssetStream
 	{
-		string ID { get; }
-		string Name { get; }
-		bool IsProtected { get; }
-		bool IsVisible { get; }
-		DateTime DateModified { get; }
-		DateTime DateCreated { get; }
-	}
+		public OnDemandLibraryItem(string name)
+		{
+			this.Name = name ?? "Unknown".Localize();
 
-	public interface ILibraryObject3D : ILibraryAsset
-	{
-		Task<IObject3D> GetObject3D(Action<double, string> reportProgress);
-	}
+			// TODO: Fix cheat this quick hack which in the short term naively allows IsContentFileType to return true and drag/drop to succeed
+			this.ContentType = "mcx";
+		}
 
-	public interface ILibraryAssetStream : ILibraryAsset
-	{
-		/// <summary>
-		// Gets the size, in bytes, of the current file.
-		/// </summary>
-		long FileSize { get; }
+		public string ID => Guid.NewGuid().ToString();
 
-		bool LocalContentExists { get; }
+		public string Name { get; set; }
 
-		Task<StreamAndLength> GetStream(Action<double, string> progress);
-	}
+		public string FileName => $"{this.Name}.{this.ContentType}";
 
-	public interface IRequireInitialize
-	{
-		Task Initialize();
-	}
+		public bool IsProtected => false;
 
-	public interface ILibraryAsset : ILibraryItem
-	{
-		string ContentType { get; }
-		string Category { get; }
-		string FileName { get; }
-		string AssetPath { get; }
+		public bool IsVisible => true;
+
+		public DateTime DateCreated { get; } = DateTime.Now;
+
+		public DateTime DateModified { get; } = DateTime.Now;
+
+		public string ContentType { get; set; }
+
+		public string Category => "General";
+
+		public string AssetPath { get; set; }
+
+		public long FileSize => -1;
+
+		public bool LocalContentExists => false;
+
+		public async Task<StreamAndLength> GetStream(Action<double, string> progress)
+		{
+			return new StreamAndLength()
+			{
+				Stream = await ToStream()
+			};
+		}
+
+		public Func<Task<IObject3D>> Object3DProvider { get; set; }
+
+		private async Task<MemoryStream> ToStream()
+		{
+			// Serialize to in memory stream
+			var memoryStream = new MemoryStream();
+
+			var object3D = await this.Object3DProvider();
+			object3D.SaveTo(memoryStream);
+
+			// Reset to start of content
+			memoryStream.Position = 0;
+
+			return memoryStream;
+		}
 	}
 }
