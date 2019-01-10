@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -37,9 +37,11 @@ using System.Threading;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using Microsoft.Extensions.Configuration;
+using Mindscape.Raygun4Net;
 using SQLiteWin32;
 
 namespace MatterHackers.MatterControl
@@ -48,14 +50,22 @@ namespace MatterHackers.MatterControl
 	{
 		private static EventWaitHandle waitHandle;
 
+		private const int RaygunMaxNotifications = 15;
+
+		private static int raygunNotificationCount = 0;
+
+		private static RaygunClient _raygunClient;
+
 		private static string mainServiceName = "";
 
 		[STAThread]
 		static void Main(string[] args)
 		{
-			// this sets the global culture for the app and all new threads
+			// Set the global culture for the app, current thread and all new threads
 			CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 			CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
 			// make sure we can build a system relevant serial port
 			FrostedSerialPortFactory.GetPlatformSerialPort = (serialPortName) =>
@@ -63,12 +73,7 @@ namespace MatterHackers.MatterControl
 				return new CSharpSerialPortWrapper(serialPortName);
 			};
 
-			// and make sure the app is set correctly
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-
 			// Set default Agg providers
-			//AggContext.Config.ProviderTypes.SystemWindowProvider = "MatterHackers.Agg.UI.OpenGLWinformsWindowProvider, agg_platform_win32";
 			AggContext.Config.ProviderTypes.SystemWindowProvider = "MatterHackers.MatterControl.WinformsSingleWindowProvider, MatterControl.Winforms";
 
 			string userProfilePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -118,12 +123,33 @@ namespace MatterHackers.MatterControl
 			config.Bind("Agg:GraphicsMode", AggContext.Config.GraphicsMode);
 
 			Slicer.RunInProcess = config.GetValue<bool>("MatterControl:Slicer:Debug");
-			Slicer.RunInProcess = true;
 
 			// Make sure we have the right working directory as we assume everything relative to the executable.
 			Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
 
 			Datastore.Instance.Initialize(DesktopSqlite.CreateInstance());
+#if !DEBUG
+			// Conditionally spin up error reporting if not on the Stable channel
+			string channel = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
+			if (string.IsNullOrEmpty(channel) || channel != "release" || OemSettings.Instance.WindowTitleExtra == "Experimental")
+#endif
+			{
+				System.Windows.Forms.Application.ThreadException += (s, e) =>
+				{
+					if(raygunNotificationCount++ < RaygunMaxNotifications)
+					{
+						_raygunClient.Send(e.Exception);
+					}
+				};
+
+				AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+				{
+					if (raygunNotificationCount++ < RaygunMaxNotifications)
+					{
+						_raygunClient.Send(e.ExceptionObject as Exception);
+					}
+				};
+			}
 
 			// Init platformFeaturesProvider before ShowAsSystemWindow
 			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";

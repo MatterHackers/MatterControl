@@ -1430,7 +1430,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								}
 								else
 								{
-									// If no image was found, extact the text content
+									// If no image was found, extract the text content
 									path = "text:" + document.DocumentElement.TextContent;
 								}
 							}
