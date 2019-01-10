@@ -146,18 +146,6 @@ Printer
         extruders_share_temperature
         extruder_offset
   Features
-    Features
-      Interface
-        sla_printer
-        show_reset_connection
-        include_firmware_updater
-        backup_firmware_before_update
-      Print Recovery
-        recover_is_enabled
-        recover_first_layer_speed
-        recover_position_before_z_home
-      Other
-        progress_reporting
     Leveling
       Print Leveling
         print_leveling_solution
@@ -172,6 +160,28 @@ Printer
         z_probe_z_offset
         z_servo_depolyed_angle
         z_servo_retracted_angle
+    Features
+      Interface
+        show_reset_connection
+        include_firmware_updater
+        backup_firmware_before_update
+      Print Recovery
+        recover_is_enabled
+        recover_first_layer_speed
+        recover_position_before_z_home
+      Other
+        progress_reporting
+    Behavior
+      Behavior
+        z_homes_to_max
+        heat_extruder_before_homing
+        auto_release_motors
+        validate_layer_height
+        send_with_checksum
+        reset_long_extrusion
+      Slicing Options
+        output_only_first_layer
+        g0
     Hardware
       Hardware
         has_fan
@@ -184,23 +194,11 @@ Printer
         has_z_servo
         enable_network_printing
         enable_sailfish_communication
-    Behavior
-      Behavior
-        z_homes_to_max
-        heat_extruder_before_homing
-        auto_release_motors
-        validate_layer_height
-        send_with_checksum
-        reset_long_extrusion
+        sla_printer
         max_acceleration
         max_velocity
         jerk_velocity
         print_time_estimate_multiplier
-    Slicing
-      Slicing Options
-        output_only_first_layer
-        g0
-    Material Loading
       Loading
         load_filament_length
         unload_filament_length
