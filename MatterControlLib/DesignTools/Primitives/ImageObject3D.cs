@@ -92,7 +92,6 @@ namespace MatterHackers.MatterControl.DesignTools
 						var graphics2D = _image.NewGraphics2D();
 						graphics2D.Clear(Color.White);
 						graphics2D.DrawString("Bad Load", 100, 100);
-
 					}
 
 					// we don't want to invalidate on the mesh change

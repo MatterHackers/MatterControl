@@ -194,6 +194,11 @@ namespace MatterHackers.MatterControl
 
 		public InsertionGroupObject3D AddToPlate(IEnumerable<ILibraryItem> itemsToAdd)
 		{
+			return this.AddToPlate(itemsToAdd, (this.Printer != null) ? this.Printer.Bed.BedCenter : Vector2.Zero, true);
+		}
+
+		public InsertionGroupObject3D AddToPlate(IEnumerable<ILibraryItem> itemsToAdd, Vector2 initialPosition, bool moveToOpenPosition)
+		{
 			if (this.Printer != null
 				&& this.Printer.ViewState.ViewMode != PartViewMode.Model)
 			{
@@ -211,10 +216,13 @@ namespace MatterHackers.MatterControl
 						itemsToAdd,
 						context.View3DWidget,
 						scene,
-						(Printer != null) ? Printer.Bed.BedCenter : Vector2.Zero,
+						initialPosition,
 						(item, itemsToAvoid) =>
 						{
-							PlatingHelper.MoveToOpenPositionRelativeGroup(item, itemsToAvoid);
+							if (moveToOpenPosition)
+							{
+								PlatingHelper.MoveToOpenPositionRelativeGroup(item, itemsToAvoid);
+							}
 						}));
 			});
 

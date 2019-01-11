@@ -142,7 +142,6 @@ namespace MatterHackers.MatterControl.DesignTools
 						}
 					});
 
-
 					if (aabb.ZSize > 0)
 					{
 						// If the part was already created and at a height, maintain the height.
