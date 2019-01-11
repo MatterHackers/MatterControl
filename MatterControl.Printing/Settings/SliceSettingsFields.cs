@@ -974,24 +974,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					QuickMenuSettings = { { "Minimum", "0.3" }, { "Standard", "0.6" }, { "Full", "1" } },
 					SetSettingsOnChange = new List<Dictionary<string, string>>
-				{
-				new Dictionary<string, string>()
-				{
-				{ "TargetSetting", "bottom_solid_layers" },
-				{ "Value", "[current_value]" },
-				},
-				new Dictionary<string, string>()
-				{
-				{ "TargetSetting", "top_solid_layers" },
-				{ "Value", "[current_value]" }
-				},
-				new Dictionary<string, string>()
-				{
-				{ "TargetSetting", "perimeters" },
-				{ "Value", "[current_value]" }
-				}
-				},
-					SlicerConfigName = SettingsKey.solid_shell,
+					{
+						new Dictionary<string, string>()
+						{
+							{ "TargetSetting", "bottom_solid_layers" },
+							{ "Value", "[current_value]" },
+						},
+						new Dictionary<string, string>()
+						{
+							{ "TargetSetting", "top_solid_layers" },
+							{ "Value", "[current_value]" }
+						},
+						new Dictionary<string, string>()
+						{
+							{ "TargetSetting", "perimeters" },
+							{ "Value", "[current_value]" }
+						}
+					},
+						SlicerConfigName = SettingsKey.solid_shell,
 					PresentationName = "Width",
 					HelpText = "Sets the size of the outer solid surface (perimeter) for the entire print.",
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
@@ -1956,14 +1956,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowIfSet = "!sla_printer",
 					DataEditType = DataEditTypes.CHECK_BOX,
 					SetSettingsOnChange = new List<Dictionary<string, string>>
-				{
-				new  Dictionary<string, string>
-				{
-				{ "TargetSetting", "driver_type" },
-				{ "OnValue", "TCPIP" },
-				{ "OffValue", "RepRap" },
-				}
-				},
+					{
+						new  Dictionary<string, string>
+						{
+							{ "TargetSetting", SettingsKey.driver_type },
+							{ "OnValue", "TCPIP" },
+							{ "OffValue", "RepRap" },
+						}
+					},
 					DefaultValue = "0",
 					RebuildGCodeOnChange = false,
 					ReloadUiWhenChanged = true
@@ -1986,14 +1986,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowIfSet = "!sla_printer",
 					DataEditType = DataEditTypes.CHECK_BOX,
 					SetSettingsOnChange = new List<Dictionary<string, string>>
-				{
-				new Dictionary<string, string>
-				{
-				{ "TargetSetting", "driver_type" },
-				{ "OnValue", "X3G" },
-				{ "OffValue", "RepRap" }
-				}
-				},
+					{
+						new Dictionary<string, string>
+						{
+							{ "TargetSetting", SettingsKey.driver_type },
+							{ "OnValue", "X3G" },
+							{ "OffValue", "RepRap" }
+						}
+					},
 					DefaultValue = "0",
 					RebuildGCodeOnChange = false,
 					ReloadUiWhenChanged = true
