@@ -207,14 +207,8 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			string propertiesFileContents = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
-			var allSettings = JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents);
-
-			var settingsByName = new Dictionary<string, SliceSettingData>();
-			foreach (var settingsData in allSettings)
-			{
-				settingsByName.Add(settingsData.SlicerConfigName, settingsData);
-			}
+			var settingsByName = PrinterSettings.SettingsData;
+			var allSettings = settingsByName.Values;
 
 			foreach(var boundSetting in allSettings.Where(s => s.SetSettingsOnChange.Count > 0))
 			{
@@ -235,8 +229,7 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			string propertiesFileContents = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
-			var allSettings = JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents);
+			var allSettings = PrinterSettings.SettingsData.Values;
 
 			foreach (var setting in allSettings)
 			{
