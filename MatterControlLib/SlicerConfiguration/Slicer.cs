@@ -71,9 +71,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// If we have support enabled and are using an extruder other than 0 for it
 			if (object3D.VisibleMeshes().Any(i => i.WorldOutputType() == PrintOutputTypes.Support))
 			{
-				if (printer.Settings.GetValue<int>("support_material_extruder") != 0)
+				if (printer.Settings.GetValue<int>(SettingsKey.support_material_extruder) != 0)
 				{
-					int supportExtruder = Math.Max(0, Math.Min(printer.Settings.GetValue<int>(SettingsKey.extruder_count) - 1, printer.Settings.GetValue<int>("support_material_extruder") - 1));
+					int supportExtruder = Math.Max(0, Math.Min(printer.Settings.GetValue<int>(SettingsKey.extruder_count) - 1, printer.Settings.GetValue<int>(SettingsKey.support_material_extruder) - 1));
 					extrudersUsed[supportExtruder] = true;
 				}
 			}
@@ -81,9 +81,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// If we have raft enabled and are using an extruder other than 0 for it
 			if (printer.Settings.GetValue<bool>(SettingsKey.create_raft))
 			{
-				if (printer.Settings.GetValue<int>("raft_extruder") != 0)
+				if (printer.Settings.GetValue<int>(SettingsKey.raft_extruder) != 0)
 				{
-					int raftExtruder = Math.Max(0, Math.Min(printer.Settings.GetValue<int>(SettingsKey.extruder_count) - 1, printer.Settings.GetValue<int>("raft_extruder") - 1));
+					int raftExtruder = Math.Max(0, Math.Min(printer.Settings.GetValue<int>(SettingsKey.extruder_count) - 1, printer.Settings.GetValue<int>(SettingsKey.raft_extruder) - 1));
 					extrudersUsed[raftExtruder] = true;
 				}
 			}

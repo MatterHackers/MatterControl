@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetDriverType(string driver)
 		{
-			printerSettings.SetValue("driver_type", driver);
+			printerSettings.SetValue(SettingsKey.driver_type, driver);
 		}
 
 		public void SetDeviceToken(string token)
