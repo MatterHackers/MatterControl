@@ -369,11 +369,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		// Known sections which have toggle fields that enabled/disable said feature/section
 		private Dictionary<string, string> toggleSwitchSectionKeys = new Dictionary<string, string>
 		{
-			{ "Skirt", "create_skirt" },
+			{ "Skirt", SettingsKey.create_skirt },
 			{ "Raft", SettingsKey.create_raft },
-			{ "Brim", "create_brim" },
-			{ "Retraction", "enable_retractions" },
-			{ "Fan", "enable_fan" },
+			{ "Brim", SettingsKey.create_brim },
+			{ "Retraction", SettingsKey.enable_retractions },
+			{ "Fan", SettingsKey.enable_fan },
 		};
 
 		public SectionWidget CreateGroupSection(SettingsLayout.Group group, List<ValidationError> errors)

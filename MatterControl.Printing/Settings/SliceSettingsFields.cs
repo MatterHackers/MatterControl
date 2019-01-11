@@ -1005,7 +1005,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The minimum length of filament that must be extruded before a retraction can occur.",
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm",
-					EnableIfSet = "enable_retractions",
+					EnableIfSet = SettingsKey.enable_retractions,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = ".1"
 				},
@@ -1037,7 +1037,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.INT,
 					Units = "seconds",
 					ShowIfSet = "has_fan",
-					EnableIfSet = "enable_fan",
+					EnableIfSet = SettingsKey.enable_fan,
 					DefaultValue = "60"
 				},
 				new SliceSettingData()
@@ -1048,7 +1048,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.INT,
 					Units = "seconds",
 					ShowIfSet = "has_fan",
-					EnableIfSet = "enable_fan",
+					EnableIfSet = SettingsKey.enable_fan,
 					DefaultValue = "30"
 				},
 				new SliceSettingData()
@@ -1059,7 +1059,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.INT,
 					Units = "%",
 					ShowIfSet = "has_fan",
-					EnableIfSet = "enable_fan",
+					EnableIfSet = SettingsKey.enable_fan,
 					DefaultValue = "35"
 				},
 				new SliceSettingData()
@@ -1070,7 +1070,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.INT,
 					Units = "%",
 					ShowIfSet = "has_fan",
-					EnableIfSet = "enable_fan",
+					EnableIfSet = SettingsKey.enable_fan,
 					DefaultValue = "100"
 				},
 				new SliceSettingData()
@@ -1081,7 +1081,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.INT,
 					Units = "%",
 					ShowIfSet = "has_fan",
-					EnableIfSet = "enable_fan",
+					EnableIfSet = SettingsKey.enable_fan,
 					DefaultValue = "100"
 				},
 				new SliceSettingData()
@@ -1092,7 +1092,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.INT,
 					Units = "layers",
 					ShowIfSet = "has_fan",
-					EnableIfSet = "enable_fan",
+					EnableIfSet = SettingsKey.enable_fan,
 					DefaultValue = "1"
 				},
 				new SliceSettingData()
@@ -1112,7 +1112,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value.",
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					ShowIfSet = "!sla_printer",
-					EnableIfSet = "create_skirt",
+					EnableIfSet = SettingsKey.create_skirt,
 					Units = "mm",
 					DefaultValue = "0"
 				},
@@ -1268,7 +1268,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm",
 					ShowIfSet = "!sla_printer",
-					EnableIfSet = "enable_retractions",
+					EnableIfSet = SettingsKey.enable_retractions,
 					DefaultValue = "20"
 				},
 				new SliceSettingData()
@@ -1300,7 +1300,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "mm",
 					DefaultValue = "1",
 					ShowIfSet = "!sla_printer",
-					EnableIfSet = "enable_retractions"
+					EnableIfSet = SettingsKey.enable_retractions
 				},
 				new SliceSettingData()
 				{
@@ -1310,7 +1310,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					Units = "mm",
-					EnableIfSet = "enable_retractions",
+					EnableIfSet = SettingsKey.enable_retractions,
 					DefaultValue = "10"
 				},
 				new SliceSettingData()
@@ -1320,7 +1320,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Force a retraction when moving between islands (distinct parts on the layer).",
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
-					EnableIfSet = "enable_retractions",
+					EnableIfSet = SettingsKey.enable_retractions,
 					DefaultValue = "1"
 				},
 				new SliceSettingData()
@@ -1331,7 +1331,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm",
 					ShowIfSet = "!sla_printer",
-					EnableIfSet = "enable_retractions",
+					EnableIfSet = SettingsKey.enable_retractions,
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
@@ -1341,7 +1341,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).",
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					ShowIfSet = "!sla_printer&extruder_count>1",
-					EnableIfSet = "enable_retractions",
+					EnableIfSet = SettingsKey.enable_retractions,
 					Units = "mm zero to disable",
 					DefaultValue = "0"
 				},
@@ -1371,7 +1371,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE,
 					Units = "mm",
 					ShowIfSet = "!sla_printer",
-					EnableIfSet = "enable_retractions",
+					EnableIfSet = SettingsKey.enable_retractions,
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
@@ -1382,7 +1382,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE,
 					Units = "s",
 					ShowIfSet = "!sla_printer",
-					EnableIfSet = "enable_retractions",
+					EnableIfSet = SettingsKey.enable_retractions,
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
@@ -1393,7 +1393,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s",
 					ShowIfSet = "!sla_printer",
-					EnableIfSet = "enable_retractions",
+					EnableIfSet = SettingsKey.enable_retractions,
 					DefaultValue = "30"
 				},
 				new SliceSettingData()
@@ -1429,7 +1429,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The distance from the model at which the first skirt loop is drawn.",
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					ShowIfSet = "!sla_printer",
-					EnableIfSet = "create_skirt",
+					EnableIfSet = SettingsKey.create_skirt,
 					Units = "mm",
 					DefaultValue = "6"
 				},
@@ -1449,7 +1449,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The number of loops to draw around all the parts on the bed before starting on the parts. Used mostly to prime the nozzle so the flow is even when the actual print begins.",
 					DataEditType = DataEditTypes.INT_OR_MM,
 					ShowIfSet = "!sla_printer",
-					EnableIfSet = "create_skirt",
+					EnableIfSet = SettingsKey.create_skirt,
 					Units = "count or mm",
 					DefaultValue = "1"
 				},
@@ -1459,7 +1459,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Distance or Loops",
 					HelpText = "The number of loops to draw around parts. Used to provide additional bed adhesion",
 					DataEditType = DataEditTypes.INT_OR_MM,
-					EnableIfSet = "create_brim",
+					EnableIfSet = SettingsKey.create_brim,
 					Units = "count or mm",
 					DefaultValue = "8mm"
 				},

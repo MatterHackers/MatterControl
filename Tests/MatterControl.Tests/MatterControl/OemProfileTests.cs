@@ -305,7 +305,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateOnAllPrinters((printer, settings) =>
 			{
 				string startGcode = settings.GetValue(SettingsKey.start_gcode);
-				Assert.False(startGcode.Contains("first_layer_bed_temperature"), "[start_gcode] should not contain [first_layer_bed_temperature]" + printer.RelativeFilePath);
+				Assert.False(startGcode.Contains(SettingsKey.first_layer_bed_temperature), "[start_gcode] should not contain [first_layer_bed_temperature]" + printer.RelativeFilePath);
 			});
 		}
 
@@ -314,7 +314,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				if (settings.GetValue("output_only_first_layer") == "1")
+				if (settings.GetValue(SettingsKey.output_only_first_layer) == "1")
 				{
 					return;
 				}
@@ -360,7 +360,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				if (settings.GetValue("output_only_first_layer") == "1")
+				if (settings.GetValue(SettingsKey.output_only_first_layer) == "1")
 				{
 					return;
 				}
@@ -408,7 +408,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				string supportMaterialExtruder = settings.GetValue("support_material_extruder");
+				string supportMaterialExtruder = settings.GetValue(SettingsKey.support_material_extruder);
 				if (!string.IsNullOrEmpty(supportMaterialExtruder) && printer.Oem != "Esagono")
 				{
 					Assert.AreEqual("1", supportMaterialExtruder, "[support_material_extruder] must be assigned to extruder 1: " + printer.RelativeFilePath);
