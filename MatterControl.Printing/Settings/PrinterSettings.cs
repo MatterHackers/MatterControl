@@ -642,10 +642,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (_baseLayer == null)
 				{
-					string propertiesFileContents = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
-
 					var settingsLayer = new PrinterSettingsLayer();
-					foreach (var settingsData in JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents))
+
+					foreach (var settingsData in PrinterSettings.SettingsData.Values)
 					{
 						settingsLayer[settingsData.SlicerConfigName] = settingsData.DefaultValue;
 					}
@@ -945,10 +944,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static HashSet<string> LoadSettingsNamesFromPropertiesJson()
 		{
-			string propertiesJson = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
-			var settingsData = JArray.Parse(propertiesJson);
-
-			return new HashSet<string>(settingsData.Select(s => s["SlicerConfigName"].Value<string>()));
+			return new HashSet<string>(PrinterSettings.SettingsData.Keys);
 		}
 
 		public void SetValue(string settingsKey, string settingsValue, PrinterSettingsLayer layer = null)
