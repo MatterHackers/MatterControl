@@ -100,56 +100,56 @@ namespace MatterControl.Printing
 			get { return new Vector3(xyzPosition); }
 			set
 			{
-				xyzPosition.x = (float)value.X;
-				xyzPosition.y = (float)value.Y;
-				xyzPosition.z = (float)value.Z;
+				xyzPosition.X = (float)value.X;
+				xyzPosition.Y = (float)value.Y;
+				xyzPosition.Z = (float)value.Z;
 			}
 		}
 
 		public double X
 		{
-			get { return xyzPosition.x; }
+			get { return xyzPosition.X; }
 			set
 			{
 				if (MovementType == MovementTypes.Absolute)
 				{
-					xyzPosition.x = (float)value;
+					xyzPosition.X = (float)value;
 				}
 				else
 				{
-					xyzPosition.x += (float)value;
+					xyzPosition.X += (float)value;
 				}
 			}
 		}
 
 		public double Y
 		{
-			get { return xyzPosition.y; }
+			get { return xyzPosition.Y; }
 			set
 			{
 				if (MovementType == MovementTypes.Absolute)
 				{
-					xyzPosition.y = (float)value;
+					xyzPosition.Y = (float)value;
 				}
 				else
 				{
-					xyzPosition.y += (float)value;
+					xyzPosition.Y += (float)value;
 				}
 			}
 		}
 
 		public double Z
 		{
-			get { return xyzPosition.z; }
+			get { return xyzPosition.Z; }
 			set
 			{
 				if (MovementType == MovementTypes.Absolute)
 				{
-					xyzPosition.z = (float)value;
+					xyzPosition.Z = (float)value;
 				}
 				else
 				{
-					xyzPosition.z += (float)value;
+					xyzPosition.Z += (float)value;
 				}
 			}
 		}

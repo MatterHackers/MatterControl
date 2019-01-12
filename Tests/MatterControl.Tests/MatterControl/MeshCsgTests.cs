@@ -56,12 +56,12 @@ namespace MatterHackers.PolygonMesh.UnitTests
 		{
 			// split edge 0
 			{
-				var vt = new Vector3List(new double[]
+				var vt = new double[]
 				{
 					0, 0, 0,
 					12, 0, 0,
 					6, 6, 0,
-				});
+				}.ToVector3List();
 				var ft = new FaceList(new int[]
 				{
 					0, 1, 2
@@ -73,12 +73,12 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			}
 			// split edge 1
 			{
-				var vt = new Vector3List(new double[]
+				var vt = new double[]
 				{
 					0, 0, 0,
 					12, 0, 0,
 					6, 6, 0,
-				});
+				}.ToVector3List();
 				var ft = new FaceList(new int[]
 				{
 					1, 2, 0
@@ -90,12 +90,12 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			}
 			// split edge 2
 			{
-				var vt = new Vector3List(new double[]
+				var vt = new double[]
 				{
 					0, 0, 0,
 					12, 0, 0,
 					6, 6, 0,
-				});
+				}.ToVector3List();
 				var ft = new FaceList(new int[]
 				{
 					2, 0, 1
@@ -110,100 +110,101 @@ namespace MatterHackers.PolygonMesh.UnitTests
 		[Test]
 		public void CsgCylinderMinusCylinder()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+			throw new NotImplementedException();
+			//AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			//MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(5));
+			//AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData"));
+			//MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(5));
 
-			// check that we subtract two 3 sided cylinders
-			{
-				double topHeight = 10;
-				int sides = 3;
-				IObject3D keep = CylinderObject3D.Create(20, topHeight * 2, sides);
-				IObject3D subtract = CylinderObject3D.Create(10, topHeight * 2, sides);
+			//// check that we subtract two 3 sided cylinders
+			//{
+			//	double topHeight = 10;
+			//	int sides = 3;
+			//	IObject3D keep = CylinderObject3D.Create(20, topHeight * 2, sides);
+			//	IObject3D subtract = CylinderObject3D.Create(10, topHeight * 2, sides);
 
-				var keepMesh = keep.Mesh;
-				var subtractMesh = subtract.Mesh;
+			//	var keepMesh = keep.Mesh;
+			//	var subtractMesh = subtract.Mesh;
 
-				if (false)
-				{
-					var split1 = new DebugFace()
-					{
-						EvaluateHeight = topHeight,
-						FileName = "Split1"
-					};
+			//	if (false)
+			//	{
+			//		var split1 = new DebugFace()
+			//		{
+			//			EvaluateHeight = topHeight,
+			//			FileName = "Split1"
+			//		};
 
-					BooleanModeller.Object1SplitFace = split1.Split;
-					BooleanModeller.Object1SplitResults = split1.Result;
+			//		BooleanModeller.Object1SplitFace = split1.Split;
+			//		BooleanModeller.Object1SplitResults = split1.Result;
 
-					BooleanModeller.Object1ClassifyFace = split1.Classify1;
-					BooleanModeller.Object2ClassifyFace = split1.Classify2;
-				}
+			//		BooleanModeller.Object1ClassifyFace = split1.Classify1;
+			//		BooleanModeller.Object2ClassifyFace = split1.Classify2;
+			//	}
 
-				var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None);
+			//	var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None);
 
-				// this is for debugging the operation
-				//split1.FinishOutput();
-				//resultMesh.Save("c:/temp/mesh1.stl", CancellationToken.None);
+			//	// this is for debugging the operation
+			//	//split1.FinishOutput();
+			//	//resultMesh.Save("c:/temp/mesh1.stl", CancellationToken.None);
 
-				var topZero = new Vector3(0, 0, topHeight);
-				foreach (var topVertex in keepMesh.Vertices
-					.Where((v) => v.Position.Z == topHeight && v.Position != topZero)
-					.Select((gv) => gv.Position))
-				{
-					Assert.IsTrue(resultMesh.Vertices.Where((v) => v.Position == topVertex).Any(), "Have all top vertexes");
-				}
-				foreach (var topVertex in subtractMesh.Vertices
-					.Where((v) => v.Position.Z == topHeight && v.Position != topZero)
-					.Select((gv) => gv.Position))
-				{
-					Assert.IsTrue(resultMesh.Vertices.Where((v) => v.Position == topVertex).Any(), "Have all top vertexes");
-				}
-			}
+			//	var topZero = new Vector3(0, 0, topHeight);
+			//	foreach (var topVertex in keepMesh.Vertices
+			//		.Where((v) => v.Position.Z == topHeight && v.Position != topZero)
+			//		.Select((gv) => gv.Position))
+			//	{
+			//		Assert.IsTrue(resultMesh.Vertices.Where((v) => v.Position == topVertex).Any(), "Have all top vertexes");
+			//	}
+			//	foreach (var topVertex in subtractMesh.Vertices
+			//		.Where((v) => v.Position.Z == topHeight && v.Position != topZero)
+			//		.Select((gv) => gv.Position))
+			//	{
+			//		Assert.IsTrue(resultMesh.Vertices.Where((v) => v.Position == topVertex).Any(), "Have all top vertexes");
+			//	}
+			//}
 
-			// check that we subtract two 3 side cylinders
-			{
-				int sides = 3;
-				IObject3D keep = CylinderObject3D.Create(20, 20, sides);
-				IObject3D subtract = CylinderObject3D.Create(10, 22, sides);
+			//// check that we subtract two 3 side cylinders
+			//{
+			//	int sides = 3;
+			//	IObject3D keep = CylinderObject3D.Create(20, 20, sides);
+			//	IObject3D subtract = CylinderObject3D.Create(10, 22, sides);
 
-				var keepMesh = keep.Mesh;
-				var subtractMesh = subtract.Mesh;
+			//	var keepMesh = keep.Mesh;
+			//	var subtractMesh = subtract.Mesh;
 
-				if (false)
-				{
-					var split1 = new DebugFace()
-					{
-						EvaluateHeight = 10,
-						FileName = "Split2"
-					};
+			//	if (false)
+			//	{
+			//		var split1 = new DebugFace()
+			//		{
+			//			EvaluateHeight = 10,
+			//			FileName = "Split2"
+			//		};
 
-					BooleanModeller.Object1SplitFace = split1.Split;
-					BooleanModeller.Object1SplitResults = split1.Result;
-				}
+			//		BooleanModeller.Object1SplitFace = split1.Split;
+			//		BooleanModeller.Object1SplitResults = split1.Result;
+			//	}
 
-				var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None);
+			//	var resultMesh = keepMesh.Subtract(subtractMesh, null, CancellationToken.None);
 
-				// this is for debugging the operation
-				//split1.FinishOutput();
-				//resultMesh.Save("c:/temp/mesh2.stl", CancellationToken.None);
+			//	// this is for debugging the operation
+			//	//split1.FinishOutput();
+			//	//resultMesh.Save("c:/temp/mesh2.stl", CancellationToken.None);
 
-				foreach (var topVertex in keepMesh.Vertices
-					.Where((v) => v.Position.Z == 10 && v.Position != new Vector3(0, 0, 10))
-					.Select((gv) => gv.Position))
-				{
-					Assert.IsTrue(resultMesh.Vertices.Where((v) => v.Position == topVertex).Any(), "Have all top vertexes");
-				}
-				foreach (var topVertex in subtractMesh.Vertices
-					.Where((v) => v.Position.Z == 11 && v.Position != new Vector3(0, 0, 11))
-					.Select((gv) => gv.Position))
-				{
-					Assert.IsTrue(resultMesh.Vertices
-						.Where((v) => v.Position.Equals(new Vector3(topVertex.X, topVertex.Y, 10), .0001))
-						.Any(), "Have all top vertexes");
-				}
-			}
+			//	foreach (var topVertex in keepMesh.Vertices
+			//		.Where((v) => v.Position.Z == 10 && v.Position != new Vector3(0, 0, 10))
+			//		.Select((gv) => gv.Position))
+			//	{
+			//		Assert.IsTrue(resultMesh.Vertices.Where((v) => v.Position == topVertex).Any(), "Have all top vertexes");
+			//	}
+			//	foreach (var topVertex in subtractMesh.Vertices
+			//		.Where((v) => v.Position.Z == 11 && v.Position != new Vector3(0, 0, 11))
+			//		.Select((gv) => gv.Position))
+			//	{
+			//		Assert.IsTrue(resultMesh.Vertices
+			//			.Where((v) => v.Position.Equals(new Vector3(topVertex.X, topVertex.Y, 10), .0001))
+			//			.Any(), "Have all top vertexes");
+			//	}
+			//}
 		}
 	}
 

@@ -114,12 +114,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}
 							progressStatus.Status = "Clean".Localize();
 							reporter.Report(progressStatus);
-							ungroupMesh.CleanAndMergeMesh(cancellationToken, 0, (progress0To1, processingState) =>
-							{
-								progressStatus.Progress0To1 = .2 + progress0To1 * .3;
-								progressStatus.Status = processingState;
-								reporter.Report(progressStatus);
-							});
+							throw new NotImplementedException();
+							//ungroupMesh.CleanAndMergeMesh(cancellationToken, 0, (progress0To1, processingState) =>
+							//{
+							//	progressStatus.Progress0To1 = .2 + progress0To1 * .3;
+							//	progressStatus.Status = processingState;
+							//	reporter.Report(progressStatus);
+							//});
 							if (cancellationToken.IsCancellationRequested)
 							{
 								return Task.CompletedTask;
@@ -326,7 +327,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				newItem.Matrix *= Matrix4X4.CreateTranslation(
 					(sceneContext.BedCenter.X - center.X),
 					(sceneContext.BedCenter.Y - center.Y),
-					 -aabb.minXYZ.Z);
+					 -aabb.MinXYZ.Z);
 			}
 
 			// Create and perform a new insert operation
@@ -358,16 +359,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			IObject3D objectToLayFlat = objectToLayFlatGroup;
 
-			IVertex lowestVertex = null;
-			Vector3 lowestVertexPosition = Vector3.Zero;
+			Vector3Float lowestPosition = Vector3Float.PositiveInfinity;
+			Vector3Float sourceVertexPosition = Vector3Float.NegativeInfinity;
 			IObject3D itemToLayFlat = null;
+			Mesh meshWithLowest = null;
 
 			// Process each child, checking for the lowest vertex
 			foreach (var itemToCheck in objectToLayFlat.VisibleMeshes())
 			{
 				var meshToCheck = itemToCheck.Mesh.GetConvexHull(false);
 
-				if(meshToCheck == null
+				if (meshToCheck == null
 					&& meshToCheck.Vertices.Count < 3)
 				{
 					continue;
@@ -377,41 +379,53 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (int testIndex = 0; testIndex < meshToCheck.Vertices.Count; testIndex++)
 				{
 					var vertex = meshToCheck.Vertices[testIndex];
-					Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToCheck.WorldMatrix());
+					var vertexPosition = vertex.Transform(itemToCheck.WorldMatrix());
 					if (firstVertex)
 					{
-						lowestVertex = meshToCheck.Vertices[testIndex];
-						lowestVertexPosition = vertexPosition;
+						meshWithLowest = meshToCheck;
+						lowestPosition = vertexPosition;
+						sourceVertexPosition = vertex;
 						itemToLayFlat = itemToCheck;
 						firstVertex = false;
 					}
-					else if (vertexPosition.Z < lowestVertexPosition.Z)
+					else if (vertexPosition.Z < lowestPosition.Z)
 					{
-						lowestVertex = meshToCheck.Vertices[testIndex];
-						lowestVertexPosition = vertexPosition;
+						meshWithLowest = meshToCheck;
+						lowestPosition = vertexPosition;
+						sourceVertexPosition = vertex;
 						itemToLayFlat = itemToCheck;
 					}
 				}
 			}
 
-			if (lowestVertex == null)
+			if (meshWithLowest == null)
 			{
 				// didn't find any selected mesh
 				return;
 			}
 
-			PolygonMesh.Face faceToLayFlat = null;
+			int faceToLayFlat = -1;
 			double lowestAngleOfAnyFace = double.MaxValue;
 			// Check all the faces that are connected to the lowest point to find out which one to lay flat.
-			foreach (var face in lowestVertex.ConnectedFaces())
+			for (int faceIndex=0; faceIndex<meshWithLowest.Faces.Count; faceIndex++)
 			{
-				double biggestAngleToFaceVertex = double.MinValue;
-				foreach (IVertex faceVertex in face.Vertices())
+				var face = meshWithLowest.Faces[faceIndex];
+				if (meshWithLowest.Vertices[face.v0] != sourceVertexPosition
+					&& meshWithLowest.Vertices[face.v1] != sourceVertexPosition
+					&& meshWithLowest.Vertices[face.v2] != sourceVertexPosition)
 				{
-					if (faceVertex != lowestVertex)
+					// this face does not contain the vertex
+					continue;
+				}
+
+				double biggestAngleToFaceVertex = double.MinValue;
+				var faceIndices = new int[] { face.v0, face.v1, face.v2 };
+				foreach (var vi in faceIndices)
+				{
+					if (meshWithLowest.Vertices[vi] != lowestPosition)
 					{
-						Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, itemToLayFlat.WorldMatrix());
-						Vector3 pointRelLowest = faceVertexPosition - lowestVertexPosition;
+						var faceVertexPosition = meshWithLowest.Vertices[vi].Transform(itemToLayFlat.WorldMatrix());
+						var pointRelLowest = faceVertexPosition - lowestPosition;
 						double xLeg = new Vector2(pointRelLowest.X, pointRelLowest.Y).Length;
 						double yLeg = pointRelLowest.Z;
 						double angle = Math.Atan2(yLeg, xLeg);
@@ -424,27 +438,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (biggestAngleToFaceVertex < lowestAngleOfAnyFace)
 				{
 					lowestAngleOfAnyFace = biggestAngleToFaceVertex;
-					faceToLayFlat = face;
+					faceToLayFlat = faceIndex;
 				}
 			}
 
 			double maxDistFromLowestZ = 0;
-			List<Vector3> faceVertices = new List<Vector3>();
-			foreach (IVertex vertex in faceToLayFlat.Vertices())
+			var lowestFace = meshWithLowest.Faces[faceToLayFlat];
+			var lowestFaceIndices = new int[] { lowestFace.v0, lowestFace.v1, lowestFace.v2 };
+			var faceVertices = new List<Vector3Float>();
+			foreach (var vertex in lowestFaceIndices)
 			{
-				Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToLayFlat.WorldMatrix());
+				var vertexPosition = meshWithLowest.Vertices[vertex].Transform(itemToLayFlat.WorldMatrix());
 				faceVertices.Add(vertexPosition);
-				maxDistFromLowestZ = Math.Max(maxDistFromLowestZ, vertexPosition.Z - lowestVertexPosition.Z);
+				maxDistFromLowestZ = Math.Max(maxDistFromLowestZ, vertexPosition.Z - lowestPosition.Z);
 			}
 
 			if (maxDistFromLowestZ > .001)
 			{
-				Vector3 xPositive = (faceVertices[1] - faceVertices[0]).GetNormal();
-				Vector3 yPositive = (faceVertices[2] - faceVertices[0]).GetNormal();
-				Vector3 planeNormal = Vector3.Cross(xPositive, yPositive).GetNormal();
+				var xPositive = (faceVertices[1] - faceVertices[0]).GetNormal();
+				var yPositive = (faceVertices[2] - faceVertices[0]).GetNormal();
+				var planeNormal = xPositive.Cross(yPositive).GetNormal();
 
 				// this code takes the minimum rotation required and looks much better.
-				Quaternion rotation = new Quaternion(planeNormal, new Vector3(0, 0, -1));
+				Quaternion rotation = new Quaternion(planeNormal, new Vector3Float(0, 0, -1));
 				Matrix4X4 partLevelMatrix = Matrix4X4.CreateRotation(rotation);
 
 				// rotate it

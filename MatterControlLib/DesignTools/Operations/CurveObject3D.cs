@@ -50,56 +50,57 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public static class Teselate
 	{
-		public static void SplitEdges(Vector3List vL, FaceList fL, double maxLength)
+		public static void SplitEdges(List<Vector3> vL, FaceList fL, double maxLength)
 		{
-			var maxLengthSqrd = maxLength * maxLength;
-			var facesToRemove = new HashSet<int>();
-			// check every face
-			for (int faceIndex = 0; faceIndex < fL.Count; faceIndex++)
-			{
-				var face = fL[faceIndex];
-				// check the edge of every face
-				for (int i = 0; i < 3; i++)
-				{
-					var endIndex = face[((i + 1) % 3)];
-					var startIndex = face[i];
-					var start = vL[startIndex];
-					var end = vL[endIndex];
-					var lengthSqrd = (end.X - start.X) * (end.X - start.X);
-					//var lengthSqrd = (end - start).LengthSquared;
-					// if the edge is > maxXLength
-					if (lengthSqrd > maxLengthSqrd)
-					{
-						int lastIndex = face[((i + 2) % 3)];
-						// add a new vertex at the split
-						var newPosition = (start + end) / 2;
-						var newIndex = vL.Count;
-						vL.Add(newPosition);
-						// add two new faces
-						// start, new, last
-						fL.Add(new int[] { startIndex, newIndex, lastIndex });
-						// new, end, last
-						fL.Add(new int[] { newIndex, endIndex, lastIndex });
-						// mark this face for removal
-						facesToRemove.Add(faceIndex);
-						// go on to next face
-						break;
-					}
-				}
-			}
+			throw new NotImplementedException();
+			//var maxLengthSqrd = maxLength * maxLength;
+			//var facesToRemove = new HashSet<int>();
+			//// check every face
+			//for (int faceIndex = 0; faceIndex < fL.Count; faceIndex++)
+			//{
+			//	var face = fL[faceIndex];
+			//	// check the edge of every face
+			//	for (int i = 0; i < 3; i++)
+			//	{
+			//		var endIndex = face[((i + 1) % 3)];
+			//		var startIndex = face[i];
+			//		var start = vL[startIndex];
+			//		var end = vL[endIndex];
+			//		var lengthSqrd = (end.X - start.X) * (end.X - start.X);
+			//		//var lengthSqrd = (end - start).LengthSquared;
+			//		// if the edge is > maxXLength
+			//		if (lengthSqrd > maxLengthSqrd)
+			//		{
+			//			int lastIndex = face[((i + 2) % 3)];
+			//			// add a new vertex at the split
+			//			var newPosition = (start + end) / 2;
+			//			var newIndex = vL.Count;
+			//			vL.Add(newPosition);
+			//			// add two new faces
+			//			// start, new, last
+			//			fL.Add(new int[] { startIndex, newIndex, lastIndex });
+			//			// new, end, last
+			//			fL.Add(new int[] { newIndex, endIndex, lastIndex });
+			//			// mark this face for removal
+			//			facesToRemove.Add(faceIndex);
+			//			// go on to next face
+			//			break;
+			//		}
+			//	}
+			//}
 
-			// remove all the faces that are marked for removal (make a new list with only keep)
-			var fLN = new FaceList();
-			for (int i = 0; i < fL.Count; i++)
-			{
-				if (!facesToRemove.Contains(i))
-				{
-					fLN.Add(fL[i]);
-				}
-			}
+			//// remove all the faces that are marked for removal (make a new list with only keep)
+			//var fLN = new FaceList();
+			//for (int i = 0; i < fL.Count; i++)
+			//{
+			//	if (!facesToRemove.Contains(i))
+			//	{
+			//		fLN.Add(fL[i]);
+			//	}
+			//}
 
-			fL.Clear();
-			fL.AddRange(fLN);
+			//fL.Clear();
+			//fL.AddRange(fLN);
 		}
 	}
 
@@ -160,16 +161,16 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					var radius = Diameter / 2;
 					var circumference = MathHelper.Tau * radius;
-					rotationCenter = new Vector2(aabb.minXYZ.X + (aabb.maxXYZ.X - aabb.minXYZ.X) * (StartPercent / 100), aabb.maxXYZ.Y + radius);
+					rotationCenter = new Vector2(aabb.MinXYZ.X + (aabb.MaxXYZ.X - aabb.MinXYZ.X) * (StartPercent / 100), aabb.MaxXYZ.Y + radius);
 					foreach (var object3Ds in meshWrapperEnumerator)
 					{
 						var matrix = object3Ds.original.WorldMatrix(this);
 						if (!BendCcw)
 						{
 							// rotate around so it will bend correctly
-							matrix *= Matrix4X4.CreateTranslation(0, -aabb.maxXYZ.Y, 0);
+							matrix *= Matrix4X4.CreateTranslation(0, -aabb.MaxXYZ.Y, 0);
 							matrix *= Matrix4X4.CreateRotationX(MathHelper.Tau / 2);
-							matrix *= Matrix4X4.CreateTranslation(0, aabb.maxXYZ.Y - aabb.YSize, 0);
+							matrix *= Matrix4X4.CreateTranslation(0, aabb.MaxXYZ.Y - aabb.YSize, 0);
 						}
 
 						var matrixInv = matrix.Inverted;
@@ -187,10 +188,11 @@ namespace MatterHackers.MatterControl.DesignTools
 							// convert the mesh into vertex and face arrays
 							double[] v;
 							int[] f;
-							curvedMesh.ToVerticesAndFaces(out v, out f);
+							v = curvedMesh.Vertices.ToDoubleArray(object3Ds.meshCopy.Matrix);
+							f = curvedMesh.Faces.ToIntArray();
 
 							// make lists so we can add to them
-							var vL = new Vector3List(v);
+							var vL = v.ToVector3List();
 							vL.Transform(matrix);
 							var fL = new FaceList(f);
 
@@ -204,15 +206,16 @@ namespace MatterHackers.MatterControl.DesignTools
 
 						for (int i = 0; i < curvedMesh.Vertices.Count; i++)
 						{
-							var worldPosition = Vector3.Transform(curvedMesh.Vertices[i].Position, (Matrix4X4)matrix);
+							throw new NotImplementedException();
+							//var worldPosition = Vector3Ex.Transform(curvedMesh.Vertices[i].Position, (Matrix4X4)matrix);
 
-							var angleToRotate = ((worldPosition.X - rotationCenter.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
-							var distanceFromCenter = rotationCenter.Y - worldPosition.Y;
+							//var angleToRotate = ((worldPosition.X - rotationCenter.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
+							//var distanceFromCenter = rotationCenter.Y - worldPosition.Y;
 
-							var rotatePosition = new Vector3(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
-							rotatePosition.Z = worldPosition.Z;
-							var worldWithBend = rotatePosition + new Vector3(rotationCenter.X, radius + aabb.maxXYZ.Y, 0);
-							curvedMesh.Vertices[i].Position = Vector3.Transform(worldWithBend, matrixInv);
+							//var rotatePosition = new Vector3(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
+							//rotatePosition.Z = worldPosition.Z;
+							//var worldWithBend = rotatePosition + new Vector3(rotationCenter.X, radius + aabb.maxXYZ.Y, 0);
+							//curvedMesh.Vertices[i].Position = Vector3Ex.Transform(worldWithBend, matrixInv);
 						}
 
 						// the vertices need to be resorted as they have moved relative to each other
@@ -225,7 +228,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (!BendCcw)
 					{
 						// fix the stored center so we draw correctly
-						rotationCenter = new Vector2(rotationCenter.X, aabb.minXYZ.Y - radius);
+						rotationCenter = new Vector2(rotationCenter.X, aabb.MinXYZ.Y - radius);
 					}
 				}
 

@@ -86,9 +86,9 @@ namespace MatterHackers.MatterControl
 					if (displayVolumeToBuild.Z > 0)
 					{
 						buildVolume = PlatonicSolids.CreateCube(displayVolumeToBuild);
-						foreach (Vertex vertex in buildVolume.Vertices)
+						for(int i=0; i< buildVolume.Vertices.Count; i++)
 						{
-							vertex.Position = vertex.Position + new Vector3(0, 0, displayVolumeToBuild.Z / 2);
+							buildVolume.Vertices[i] = buildVolume.Vertices[i] + new Vector3Float(0, 0, displayVolumeToBuild.Z / 2);
 						}
 						var bspTree = FaceBspTree.Create(buildVolume);
 						buildVolume.FaceBspTree = bspTree;
@@ -96,8 +96,7 @@ namespace MatterHackers.MatterControl
 
 					printerBed = PlatonicSolids.CreateCube(displayVolumeToBuild.X, displayVolumeToBuild.Y, 1.8);
 					{
-						Face face = printerBed.Faces[0];
-						MeshHelper.PlaceTextureOnFace(face, bedplateImage);
+						printerBed.PlaceTextureOnFace(0, bedplateImage);
 					}
 					break;
 
@@ -106,27 +105,10 @@ namespace MatterHackers.MatterControl
 						if (displayVolumeToBuild.Z > 0)
 						{
 							buildVolume = VertexSourceToMesh.Extrude(new Ellipse(new Vector2(), displayVolumeToBuild.X / 2, displayVolumeToBuild.Y / 2), displayVolumeToBuild.Z);
-							foreach (Vertex vertex in buildVolume.Vertices)
-							{
-								vertex.Position = vertex.Position + new Vector3(0, 0, .2);
-							}
 						}
 
 						printerBed = VertexSourceToMesh.Extrude(new Ellipse(new Vector2(), displayVolumeToBuild.X / 2, displayVolumeToBuild.Y / 2), 1.8);
-						{
-							foreach (Face face in printerBed.Faces)
-							{
-								if (face.Normal.Z > 0)
-								{
-									face.SetTexture(0, bedplateImage);
-									foreach (FaceEdge faceEdge in face.FaceEdges())
-									{
-										faceEdge.SetUv(0, new Vector2((displayVolumeToBuild.X / 2 + faceEdge.FirstVertex.Position.X) / displayVolumeToBuild.X,
-											(displayVolumeToBuild.Y / 2 + faceEdge.FirstVertex.Position.Y) / displayVolumeToBuild.Y));
-									}
-								}
-							}
-						}
+						printerBed.PlaceTextureOnFace(0, bedplateImage);
 					}
 					break;
 
@@ -134,17 +116,17 @@ namespace MatterHackers.MatterControl
 					throw new NotImplementedException();
 			}
 
-			var zTop = printerBed.GetAxisAlignedBoundingBox().maxXYZ.Z;
-			foreach (Vertex vertex in printerBed.Vertices)
+			var zTop = printerBed.GetAxisAlignedBoundingBox().MaxXYZ.Z;
+			for (int i = 0; i < printerBed.Vertices.Count; i++)
 			{
-				vertex.Position = vertex.Position - new Vector3(-printer.Bed.BedCenter, zTop + .02);
+				printerBed.Vertices[i] = printerBed.Vertices[i] - new Vector3Float(-printer.Bed.BedCenter, zTop + .02);
 			}
 
 			if (buildVolume != null)
 			{
-				foreach (Vertex vertex in buildVolume.Vertices)
+				for (int i = 0; i < buildVolume.Vertices.Count; i++)
 				{
-					vertex.Position = vertex.Position - new Vector3(-printer.Bed.BedCenter, 2.2);
+					buildVolume.Vertices[i] = buildVolume.Vertices[i] - new Vector3Float(-printer.Bed.BedCenter, zTop + .02);
 				}
 			}
 

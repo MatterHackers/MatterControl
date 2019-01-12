@@ -122,27 +122,27 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			if (IsSet(boundingFacesToAlign, FaceAlign.Left, FaceAlign.Right))
 			{
-				positionToAlignTo.X = positionToAlignTo.X - bounds.minXYZ.X;
+				positionToAlignTo.X = positionToAlignTo.X - bounds.MinXYZ.X;
 			}
 			if (IsSet(boundingFacesToAlign, FaceAlign.Right, FaceAlign.Left))
 			{
-				positionToAlignTo.X = positionToAlignTo.X - bounds.minXYZ.X - (bounds.maxXYZ.X - bounds.minXYZ.X);
+				positionToAlignTo.X = positionToAlignTo.X - bounds.MinXYZ.X - (bounds.MaxXYZ.X - bounds.MinXYZ.X);
 			}
 			if (IsSet(boundingFacesToAlign, FaceAlign.Front, FaceAlign.Back))
 			{
-				positionToAlignTo.Y = positionToAlignTo.Y - bounds.minXYZ.Y;
+				positionToAlignTo.Y = positionToAlignTo.Y - bounds.MinXYZ.Y;
 			}
 			if (IsSet(boundingFacesToAlign, FaceAlign.Back, FaceAlign.Front))
 			{
-				positionToAlignTo.Y = positionToAlignTo.Y - bounds.minXYZ.Y - (bounds.maxXYZ.Y - bounds.minXYZ.Y);
+				positionToAlignTo.Y = positionToAlignTo.Y - bounds.MinXYZ.Y - (bounds.MaxXYZ.Y - bounds.MinXYZ.Y);
 			}
 			if (IsSet(boundingFacesToAlign, FaceAlign.Bottom, FaceAlign.Top))
 			{
-				positionToAlignTo.Z = positionToAlignTo.Z - bounds.minXYZ.Z;
+				positionToAlignTo.Z = positionToAlignTo.Z - bounds.MinXYZ.Z;
 			}
 			if (IsSet(boundingFacesToAlign, FaceAlign.Top, FaceAlign.Bottom))
 			{
-				positionToAlignTo.Z = positionToAlignTo.Z - bounds.minXYZ.Z - (bounds.maxXYZ.Z - bounds.minXYZ.Z);
+				positionToAlignTo.Z = positionToAlignTo.Z - bounds.MinXYZ.Z - (bounds.MaxXYZ.Z - bounds.MinXYZ.Z);
 			}
 
 			Matrix *= Matrix4X4.CreateTranslation(positionToAlignTo);
@@ -245,27 +245,27 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Vector3 positionToAlignTo = new Vector3();
 			if (IsSet(boundingFacesToAlignTo, FaceAlign.Left, FaceAlign.Right))
 			{
-				positionToAlignTo.X = objectToAlignTo.GetAxisAlignedBoundingBox().minXYZ.X;
+				positionToAlignTo.X = objectToAlignTo.GetAxisAlignedBoundingBox().MinXYZ.X;
 			}
 			if (IsSet(boundingFacesToAlignTo, FaceAlign.Right, FaceAlign.Left))
 			{
-				positionToAlignTo.X = objectToAlignTo.GetAxisAlignedBoundingBox().maxXYZ.X;
+				positionToAlignTo.X = objectToAlignTo.GetAxisAlignedBoundingBox().MaxXYZ.X;
 			}
 			if (IsSet(boundingFacesToAlignTo, FaceAlign.Front, FaceAlign.Back))
 			{
-				positionToAlignTo.Y = objectToAlignTo.GetAxisAlignedBoundingBox().minXYZ.Y;
+				positionToAlignTo.Y = objectToAlignTo.GetAxisAlignedBoundingBox().MinXYZ.Y;
 			}
 			if (IsSet(boundingFacesToAlignTo, FaceAlign.Back, FaceAlign.Front))
 			{
-				positionToAlignTo.Y = objectToAlignTo.GetAxisAlignedBoundingBox().maxXYZ.Y;
+				positionToAlignTo.Y = objectToAlignTo.GetAxisAlignedBoundingBox().MaxXYZ.Y;
 			}
 			if (IsSet(boundingFacesToAlignTo, FaceAlign.Bottom, FaceAlign.Top))
 			{
-				positionToAlignTo.Z = objectToAlignTo.GetAxisAlignedBoundingBox().minXYZ.Z;
+				positionToAlignTo.Z = objectToAlignTo.GetAxisAlignedBoundingBox().MinXYZ.Z;
 			}
 			if (IsSet(boundingFacesToAlignTo, FaceAlign.Top, FaceAlign.Bottom))
 			{
-				positionToAlignTo.Z = objectToAlignTo.GetAxisAlignedBoundingBox().maxXYZ.Z;
+				positionToAlignTo.Z = objectToAlignTo.GetAxisAlignedBoundingBox().MaxXYZ.Z;
 			}
 			return positionToAlignTo + extraOffset;
 		}
@@ -329,7 +329,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					});
 				}
 
-				this.Children.Modify(list =>
+				this.Children.Modify((Action<List<IObject3D>>)((List<IObject3D> list) =>
 				{
 					if (list.Count == 0)
 					{
@@ -348,7 +348,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							if (i < OriginalChildrenBounds.Count)
 							{
 								// make sure it is where it started
-								AlignAxis(0, Align.Min, OriginalChildrenBounds[i].minXYZ.X, 0, child);
+								AlignAxis(0, Align.Min, (double)OriginalChildrenBounds[i].MinXYZ.X, 0, child);
 							}
 						}
 
@@ -357,7 +357,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						{
 							if (i < OriginalChildrenBounds.Count)
 							{
-								AlignAxis(1, Align.Min, OriginalChildrenBounds[i].minXYZ.Y, 0, child);
+								AlignAxis(1, Align.Min, (double)OriginalChildrenBounds[i].MinXYZ.Y, 0, child);
 							}
 						}
 
@@ -366,7 +366,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						{
 							if (i < OriginalChildrenBounds.Count)
 							{
-								AlignAxis(2, Align.Min, OriginalChildrenBounds[i].minXYZ.Z, 0, child);
+								AlignAxis(2, Align.Min, (double)OriginalChildrenBounds[i].MinXYZ.Z, 0, child);
 							}
 						}
 						i++;
@@ -382,8 +382,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							if (XAlign == Align.Origin)
 							{
 								// find the origin in world space of the child
-								var firstOrigin = Vector3.Transform(Vector3.Zero, AnchorObject.WorldMatrix());
-								var childOrigin = Vector3.Transform(Vector3.Zero, child.WorldMatrix());
+								var firstOrigin = Vector3Ex.Transform(Vector3.Zero, AnchorObject.WorldMatrix());
+								var childOrigin = Vector3Ex.Transform(Vector3.Zero, child.WorldMatrix());
 								child.Translate(new Vector3(-(childOrigin - firstOrigin).X + (Advanced ? XOffset : 0), 0, 0));
 							}
 							else
@@ -398,8 +398,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							if (YAlign == Align.Origin)
 							{
 								// find the origin in world space of the child
-								var firstOrigin = Vector3.Transform(Vector3.Zero, AnchorObject.WorldMatrix());
-								var childOrigin = Vector3.Transform(Vector3.Zero, child.WorldMatrix());
+								var firstOrigin = Vector3Ex.Transform(Vector3.Zero, AnchorObject.WorldMatrix());
+								var childOrigin = Vector3Ex.Transform(Vector3.Zero, child.WorldMatrix());
 								child.Translate(new Vector3(0, -(childOrigin - firstOrigin).Y + (Advanced ? YOffset : 0), 0));
 							}
 							else
@@ -414,8 +414,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							if (ZAlign == Align.Origin)
 							{
 								// find the origin in world space of the child
-								var firstOrigin = Vector3.Transform(Vector3.Zero, AnchorObject.WorldMatrix());
-								var childOrigin = Vector3.Transform(Vector3.Zero, child.WorldMatrix());
+								var firstOrigin = Vector3Ex.Transform(Vector3.Zero, AnchorObject.WorldMatrix());
+								var childOrigin = Vector3Ex.Transform(Vector3.Zero, child.WorldMatrix());
 								child.Translate(new Vector3(0, 0, -(childOrigin - firstOrigin).Z + (Advanced ? ZOffset : 0)));
 							}
 							else
@@ -425,7 +425,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						}
 						i++;
 					}
-				});
+				}));
 			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix, null));
@@ -442,7 +442,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					foreach (var child in Children)
 					{
 						// Where you are minus where you started to get back to where you started
-						child.Translate(-(child.GetAxisAlignedBoundingBox().minXYZ - OriginalChildrenBounds[i].minXYZ));
+						child.Translate(-(child.GetAxisAlignedBoundingBox().MinXYZ - OriginalChildrenBounds[i].MinXYZ));
 						i++;
 					}
 				}
@@ -491,7 +491,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			switch (align)
 			{
 				case Align.Min:
-					translate[axis] = alignTo - aabb.minXYZ[axis] + offset;
+					translate[axis] = alignTo - aabb.MinXYZ[axis] + offset;
 					break;
 
 				case Align.Center:
@@ -499,7 +499,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					break;
 
 				case Align.Max:
-					translate[axis] = alignTo - aabb.maxXYZ[axis] + offset;
+					translate[axis] = alignTo - aabb.MaxXYZ[axis] + offset;
 					break;
 			}
 
@@ -511,13 +511,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			switch (alignTo)
 			{
 				case Align.Min:
-					return currentChildrenBounds[AnchorObjectIndex].minXYZ[axis];
+					return currentChildrenBounds[AnchorObjectIndex].MinXYZ[axis];
 
 				case Align.Center:
 					return currentChildrenBounds[AnchorObjectIndex].Center[axis];
 
 				case Align.Max:
-					return currentChildrenBounds[AnchorObjectIndex].maxXYZ[axis];
+					return currentChildrenBounds[AnchorObjectIndex].MaxXYZ[axis];
 
 				default:
 					throw new NotImplementedException();

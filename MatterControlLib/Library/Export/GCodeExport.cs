@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 								// Move to bed center
 								var bedCenter = printer.Bed.BedCenter;
-								loadedItem.Matrix *= Matrix4X4.CreateTranslation((double)-aabb.Center.X, (double)-aabb.Center.Y, (double)-aabb.minXYZ.Z) * Matrix4X4.CreateTranslation(bedCenter.X, bedCenter.Y, 0);
+								loadedItem.Matrix *= Matrix4X4.CreateTranslation((double)-aabb.Center.X, (double)-aabb.Center.Y, (double)-aabb.MinXYZ.Z) * Matrix4X4.CreateTranslation(bedCenter.X, bedCenter.Y, 0);
 							}
 
 							string originalSpiralVase = printer.Settings.GetValue(SettingsKey.spiral_vase);

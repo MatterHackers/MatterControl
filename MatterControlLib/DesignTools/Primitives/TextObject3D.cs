@@ -110,14 +110,14 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override Task Rebuild()
 		{
-			return Task.Run(() =>
+			return Task.Run((System.Action)(() =>
 			{
-				this.DebugDepth("Rebuild");
+				(this).DebugDepth("Rebuild");
 				using (RebuildLock())
 				{
-					var aabb = this.GetAxisAlignedBoundingBox();
+					var aabb = (this).GetAxisAlignedBoundingBox();
 
-					this.Children.Modify((list) =>
+					this.Children.Modify((List<IObject3D> list) =>
 					{
 						list.Clear();
 
@@ -145,10 +145,10 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (aabb.ZSize > 0)
 					{
 						// If the part was already created and at a height, maintain the height.
-						PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+						PlatingHelper.PlaceMeshAtHeight(this, (double)aabb.MinXYZ.Z);
 					}
 				}
-			});
+			}));
 		}
 	}
 }

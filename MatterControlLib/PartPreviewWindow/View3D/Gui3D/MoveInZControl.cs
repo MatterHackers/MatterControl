@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-				var moveAmount = newZPosition - originalSelectedBounds.minXYZ.Z;
+				var moveAmount = newZPosition - originalSelectedBounds.MinXYZ.Z;
 
 				if (moveAmount != 0)
 				{
@@ -177,9 +177,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public Vector3 GetTopPosition(IObject3D selectedItem)
 		{
 			AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-			if (originalSelectedBounds.minXYZ.X != double.PositiveInfinity)
+			if (originalSelectedBounds.MinXYZ.X != double.PositiveInfinity)
 			{
-				return new Vector3(originalSelectedBounds.Center.X, originalSelectedBounds.Center.Y, originalSelectedBounds.maxXYZ.Z);
+				return new Vector3(originalSelectedBounds.Center.X, originalSelectedBounds.Center.Y, originalSelectedBounds.MaxXYZ.Z);
 			}
 
 			return Vector3.Zero;
@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				zHeightDisplayInfo.Visible = true;
 
-				double distanceToHit = Vector3.Dot(mouseEvent3D.info.HitPosition, mouseEvent3D.MouseRay.directionNormal);
+				double distanceToHit = Vector3Ex.Dot(mouseEvent3D.info.HitPosition, mouseEvent3D.MouseRay.directionNormal);
 				hitPlane = new PlaneShape(mouseEvent3D.MouseRay.directionNormal, distanceToHit, null);
 
 				initialHitPosition = mouseEvent3D.info.HitPosition;
@@ -230,7 +230,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					var delta = info.HitPosition.Z - initialHitPosition.Z;
 
-					double newZPosition = mouseDownSelectedBounds.minXYZ.Z + delta;
+					double newZPosition = mouseDownSelectedBounds.MinXYZ.Z + delta;
 
 					if (InteractionContext.SnapGridDistance > 0)
 					{
@@ -242,7 +242,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 
 					AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-					var moveAmount = newZPosition - originalSelectedBounds.minXYZ.Z;
+					var moveAmount = newZPosition - originalSelectedBounds.MinXYZ.Z;
 
 					if (moveAmount != 0)
 					{
@@ -283,7 +283,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 			Vector3 topPosition = GetTopPosition(selectedItem);
-			Vector3 bottomPosition = new Vector3(topPosition.X, topPosition.Y, selectedBounds.minXYZ.Z);
+			Vector3 bottomPosition = new Vector3(topPosition.X, topPosition.Y, selectedBounds.MinXYZ.Z);
 			double distBetweenPixelsWorldSpace = InteractionContext.World.GetWorldUnitsPerScreenPixelAtPosition(topPosition);
 
 			Vector3 boxCenter = topPosition;
@@ -326,7 +326,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
-					zHeightDisplayInfo.Value = selectedBounds.minXYZ.Z;
+					zHeightDisplayInfo.Value = selectedBounds.MinXYZ.Z;
 					zHeightDisplayInfo.OriginRelativeParent = lines[1] + new Vector2(10, - zHeightDisplayInfo.LocalBounds.Center.Y);
 				}
 			}
