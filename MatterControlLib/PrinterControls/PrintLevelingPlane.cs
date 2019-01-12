@@ -30,12 +30,12 @@ namespace MatterHackers.MatterControl
 
 		public Vector3 ApplyLeveling(Vector3 inPosition)
 		{
-			return Vector3.TransformPosition(inPosition, bedLevelMatrix);
+			return Vector3Ex.TransformPosition(inPosition, bedLevelMatrix);
 		}
 
 		public Vector3 ApplyLevelingRotation(Vector3 inPosition)
 		{
-			return Vector3.TransformVector(inPosition, bedLevelMatrix);
+			return Vector3Ex.TransformVector(inPosition, bedLevelMatrix);
 		}
 
 		public string ApplyLeveling(Vector3 currentDestination, string lineBeingSent)

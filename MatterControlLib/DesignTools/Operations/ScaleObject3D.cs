@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			base.WrapItem(item, undoBuffer);
 
 			var aabb = item.GetAxisAlignedBoundingBox();
-			var newCenter = new Vector3(aabb.Center.X, aabb.Center.Y, aabb.minXYZ.Z);
+			var newCenter = new Vector3(aabb.Center.X, aabb.Center.Y, aabb.MinXYZ.Z);
 			item.Translate(-newCenter);
 			this.Translate(newCenter);
 		}

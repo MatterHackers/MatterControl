@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				if (startingAabb.ZSize > 0)
 				{
 					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, startingAabb.minXYZ.Z);
+					PlatingHelper.PlaceMeshAtHeight(this, startingAabb.MinXYZ.Z);
 				}
 			}
 

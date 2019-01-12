@@ -217,13 +217,13 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 					else if (vertex.IsLineTo)
 					{
-						GL.Vertex3(lastPosition.X, lastPosition.Y, aabb.maxXYZ.Z + 0.002);
-						GL.Vertex3(position.X, position.Y, aabb.maxXYZ.Z + 0.002);
+						GL.Vertex3(lastPosition.X, lastPosition.Y, aabb.MaxXYZ.Z + 0.002);
+						GL.Vertex3(position.X, position.Y, aabb.MaxXYZ.Z + 0.002);
 					}
 					else if (vertex.IsClose)
 					{
-						GL.Vertex3(firstMove.X, firstMove.Y, aabb.maxXYZ.Z + 0.002);
-						GL.Vertex3(lastPosition.X, lastPosition.Y, aabb.maxXYZ.Z + 0.002);
+						GL.Vertex3(firstMove.X, firstMove.Y, aabb.MaxXYZ.Z + 0.002);
+						GL.Vertex3(lastPosition.X, lastPosition.Y, aabb.MaxXYZ.Z + 0.002);
 					}
 
 					lastPosition = position;

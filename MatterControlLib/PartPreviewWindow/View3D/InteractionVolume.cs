@@ -128,11 +128,11 @@ namespace MatterHackers.MeshVisualizer
 
 		public static Vector3 SetBottomControlHeight(AxisAlignedBoundingBox originalSelectedBounds, Vector3 cornerPosition)
 		{
-			if (originalSelectedBounds.minXYZ.Z < 0)
+			if (originalSelectedBounds.MinXYZ.Z < 0)
 			{
-				if (originalSelectedBounds.maxXYZ.Z < 0)
+				if (originalSelectedBounds.MaxXYZ.Z < 0)
 				{
-					cornerPosition.Z = originalSelectedBounds.maxXYZ.Z;
+					cornerPosition.Z = originalSelectedBounds.MaxXYZ.Z;
 				}
 				else
 				{

@@ -88,40 +88,41 @@ namespace MatterHackers.MatterControl.Slicing
 				currentZ += otherLayerHeights;
 			}
 
-			foreach (Face face in meshToSlice.Faces)
-			{
-				double minZ = double.MaxValue;
-				double maxZ = double.MinValue;
-				foreach (FaceEdge faceEdge in face.FaceEdges())
-				{
-					minZ = Math.Min(minZ, faceEdge.FirstVertex.Position.Z);
-					maxZ = Math.Max(maxZ, faceEdge.FirstVertex.Position.Z);
-				}
+			throw new NotImplementedException();
+			//foreach (Face face in meshToSlice.Faces)
+			//{
+			//	double minZ = double.MaxValue;
+			//	double maxZ = double.MinValue;
+			//	foreach (FaceEdge faceEdge in face.FaceEdges())
+			//	{
+			//		minZ = Math.Min(minZ, faceEdge.FirstVertex.Position.Z);
+			//		maxZ = Math.Max(maxZ, faceEdge.FirstVertex.Position.Z);
+			//	}
 
-				for (int layerIndex = 0; layerIndex < layerCount; layerIndex++)
-				{
-					SliceLayer layer = AllLayers[layerIndex];
-					double zHeight = layer.SlicePlane.DistanceToPlaneFromOrigin;
-					if (zHeight < minZ)
-					{
-						// not up to the start of the face yet
-						continue;
-					}
-					if (zHeight > maxZ)
-					{
-						// done with this face
-						break;
-					}
-					Plane cutPlane = new Plane(Vector3.UnitZ, zHeight);
+			//	for (int layerIndex = 0; layerIndex < layerCount; layerIndex++)
+			//	{
+			//		SliceLayer layer = AllLayers[layerIndex];
+			//		double zHeight = layer.SlicePlane.DistanceToPlaneFromOrigin;
+			//		if (zHeight < minZ)
+			//		{
+			//			// not up to the start of the face yet
+			//			continue;
+			//		}
+			//		if (zHeight > maxZ)
+			//		{
+			//			// done with this face
+			//			break;
+			//		}
+			//		Plane cutPlane = new Plane(Vector3.UnitZ, zHeight);
 
-					var start = Vector3.Zero;
-					var end = Vector3.Zero;
-					if (face.GetCutLine(cutPlane, ref start, ref end))
-					{
-						layer.UnorderedSegments.Add(new Segment(new Vector2(start.X, start.Y), new Vector2(end.X, end.Y)));
-					}
-				}
-			}
+			//		var start = Vector3.Zero;
+			//		var end = Vector3.Zero;
+			//		if (face.GetCutLine(cutPlane, ref start, ref end))
+			//		{
+			//			layer.UnorderedSegments.Add(new Segment(new Vector2(start.X, start.Y), new Vector2(end.X, end.Y)));
+			//		}
+			//	}
+			//}
 		}
 	}
 }

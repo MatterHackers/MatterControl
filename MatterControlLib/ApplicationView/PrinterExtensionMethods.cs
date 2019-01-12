@@ -53,8 +53,8 @@ namespace MatterHackers.MatterControl
 			var bed = printerConfig.Bed;
 
 			if (bed.BuildHeight > 0
-					&& aabb.maxXYZ.Z >= bed.BuildHeight
-				|| aabb.maxXYZ.Z <= 0)
+					&& aabb.MaxXYZ.Z >= bed.BuildHeight
+				|| aabb.MaxXYZ.Z <= 0)
 			{
 				// object completely below the bed or any part above the build volume
 				return false;
@@ -63,10 +63,10 @@ namespace MatterHackers.MatterControl
 			switch (bed.BedShape)
 			{
 				case BedShape.Rectangular:
-					if (aabb.minXYZ.X < bed.BedCenter.X - bed.ViewerVolume.X / 2
-						|| aabb.maxXYZ.X > bed.BedCenter.X + bed.ViewerVolume.X / 2
-						|| aabb.minXYZ.Y < bed.BedCenter.Y - bed.ViewerVolume.Y / 2
-						|| aabb.maxXYZ.Y > bed.BedCenter.Y + bed.ViewerVolume.Y / 2)
+					if (aabb.MinXYZ.X < bed.BedCenter.X - bed.ViewerVolume.X / 2
+						|| aabb.MaxXYZ.X > bed.BedCenter.X + bed.ViewerVolume.X / 2
+						|| aabb.MinXYZ.Y < bed.BedCenter.Y - bed.ViewerVolume.Y / 2
+						|| aabb.MaxXYZ.Y > bed.BedCenter.Y + bed.ViewerVolume.Y / 2)
 					{
 						return false;
 					}
@@ -75,10 +75,10 @@ namespace MatterHackers.MatterControl
 				case BedShape.Circular:
 					// This could be much better if it checked the actual vertex data of the mesh against the cylinder
 					// first check if any of it is outside the bed rect
-					if (aabb.minXYZ.X < bed.BedCenter.X - bed.ViewerVolume.X / 2
-						|| aabb.maxXYZ.X > bed.BedCenter.X + bed.ViewerVolume.X / 2
-						|| aabb.minXYZ.Y < bed.BedCenter.Y - bed.ViewerVolume.Y / 2
-						|| aabb.maxXYZ.Y > bed.BedCenter.Y + bed.ViewerVolume.Y / 2)
+					if (aabb.MinXYZ.X < bed.BedCenter.X - bed.ViewerVolume.X / 2
+						|| aabb.MaxXYZ.X > bed.BedCenter.X + bed.ViewerVolume.X / 2
+						|| aabb.MinXYZ.Y < bed.BedCenter.Y - bed.ViewerVolume.Y / 2
+						|| aabb.MaxXYZ.Y > bed.BedCenter.Y + bed.ViewerVolume.Y / 2)
 					{
 						// TODO: then check if all of it is outside the bed circle
 						return false;

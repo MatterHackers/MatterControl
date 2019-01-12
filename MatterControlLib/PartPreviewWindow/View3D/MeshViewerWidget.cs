@@ -72,13 +72,13 @@ namespace MatterHackers.MeshVisualizer
 			for (int i = 0; i < sides; i++)
 			{
 				var rotatedPoint = new Vector3(Math.Cos(MathHelper.Tau * i / sides), Math.Sin(MathHelper.Tau * i / sides), 0) * Diameter / 2;
-				var sideTop = Vector3.Transform(center + rotatedPoint + new Vector3(0, 0, Height / 2), worldMatrix);
-				var sideBottom = Vector3.Transform(center + rotatedPoint + new Vector3(0, 0, -Height / 2), worldMatrix);
+				var sideTop = Vector3Ex.Transform(center + rotatedPoint + new Vector3(0, 0, Height / 2), worldMatrix);
+				var sideBottom = Vector3Ex.Transform(center + rotatedPoint + new Vector3(0, 0, -Height / 2), worldMatrix);
 				var rotated2Point = new Vector3(Math.Cos(MathHelper.Tau * (i + 1) / sides), Math.Sin(MathHelper.Tau * (i + 1) / sides), 0) * Diameter / 2;
 				var topStart = sideTop;
-				var topEnd = Vector3.Transform(center + rotated2Point + new Vector3(0, 0, Height / 2), worldMatrix);
+				var topEnd = Vector3Ex.Transform(center + rotated2Point + new Vector3(0, 0, Height / 2), worldMatrix);
 				var bottomStart = sideBottom;
-				var bottomEnd = Vector3.Transform(center + rotated2Point + new Vector3(0, 0, -Height / 2), worldMatrix);
+				var bottomEnd = Vector3Ex.Transform(center + rotated2Point + new Vector3(0, 0, -Height / 2), worldMatrix);
 
 				if (extendLineLength > 0)
 				{
@@ -101,14 +101,14 @@ namespace MatterHackers.MeshVisualizer
 			Frustum frustum = world.GetClippingFrustum();
 			for (int i = 0; i < 4; i++)
 			{
-				Vector3 sideStartPosition = Vector3.Transform(bounds.GetBottomCorner(i), matrix);
-				Vector3 sideEndPosition = Vector3.Transform(bounds.GetTopCorner(i), matrix);
+				Vector3 sideStartPosition = Vector3Ex.Transform(bounds.GetBottomCorner(i), matrix);
+				Vector3 sideEndPosition = Vector3Ex.Transform(bounds.GetTopCorner(i), matrix);
 
 				Vector3 bottomStartPosition = sideStartPosition;
-				Vector3 bottomEndPosition = Vector3.Transform(bounds.GetBottomCorner((i + 1) % 4), matrix);
+				Vector3 bottomEndPosition = Vector3Ex.Transform(bounds.GetBottomCorner((i + 1) % 4), matrix);
 
 				Vector3 topStartPosition = sideEndPosition;
-				Vector3 topEndPosition = Vector3.Transform(bounds.GetTopCorner((i + 1) % 4), matrix);
+				Vector3 topEndPosition = Vector3Ex.Transform(bounds.GetTopCorner((i + 1) % 4), matrix);
 
 				if (extendLineLength > 0)
 				{
@@ -136,11 +136,11 @@ namespace MatterHackers.MeshVisualizer
 			{
 				var min = position;
 				min[i] -= length[i];
-				Vector3 start = Vector3.Transform(min, matrix);
+				Vector3 start = Vector3Ex.Transform(min, matrix);
 
 				var max = position;
 				max[i] += length[i];
-				Vector3 end = Vector3.Transform(max, matrix);
+				Vector3 end = Vector3Ex.Transform(max, matrix);
 
 				var color = Agg.Color.Red;
 				switch (i)
@@ -172,10 +172,10 @@ namespace MatterHackers.MeshVisualizer
 			// draw center line
 			{
 				var min = axis.Origin - length;
-				Vector3 start = Vector3.Transform(min, matrix);
+				Vector3 start = Vector3Ex.Transform(min, matrix);
 
 				var max = axis.Origin + length;
-				Vector3 end = Vector3.Transform(max, matrix);
+				Vector3 end = Vector3Ex.Transform(max, matrix);
 
 				world.Render3DLineNoPrep(frustum, start, end, color, 1);
 			}
@@ -186,13 +186,13 @@ namespace MatterHackers.MeshVisualizer
 			bool first = true;
 			var firstEnd = Vector3.Zero;
 			var lastEnd = Vector3.Zero;
-			var center = Vector3.Transform(axis.Origin, matrix);
+			var center = Vector3Ex.Transform(axis.Origin, matrix);
 			for (int i = 0; i < count; i++)
 			{
-				var rotation = size/4 * Vector3.Transform(perpendicular, Matrix4X4.CreateRotation(axis.Normal, MathHelper.Tau * i / count));
+				var rotation = size/4 * Vector3Ex.Transform(perpendicular, Matrix4X4.CreateRotation(axis.Normal, MathHelper.Tau * i / count));
 				// draw center line
 				var max = axis.Origin + rotation;
-				Vector3 end = Vector3.Transform(max, matrix);
+				Vector3 end = Vector3Ex.Transform(max, matrix);
 
 				world.Render3DLineNoPrep(frustum, center, end, color, 1);
 				if (!first)
@@ -473,7 +473,8 @@ namespace MatterHackers.MeshVisualizer
 					&& item.Mesh.Faces.Count > 0)
 				{
 					ImageBuffer faceTexture = null;
-					item.Mesh.FaceTexture.TryGetValue((item.Mesh.Faces[0], 0), out faceTexture);
+
+					//item.Mesh.FaceTexture.TryGetValue((item.Mesh.Faces[0], 0), out faceTexture);
 					bool hasPersistableTexture = faceTexture == MeshViewerWidget.ViewOnlyTexture;
 
 					if (item.WorldPersistable())
@@ -525,8 +526,10 @@ namespace MatterHackers.MeshVisualizer
 					}
 				}
 
+				bool hasTransparentTextures = item.Mesh.FaceTextures.Any((ft) => ft.Value.image.HasTransparency);
+
 				if ((drawColor.alpha == 255
-					&& !item.Mesh.FaceTexture.Where((ft) => ft.Value.HasTransparency).Any())
+					&& !hasTransparentTextures)
 					|| isDebugItem)
 				{
 					// Render as solid
@@ -628,24 +631,25 @@ namespace MatterHackers.MeshVisualizer
 
 		private void RenderNormals(IObject3D renderData)
 		{
-			var frustum = World.GetClippingFrustum();
+			throw new NotImplementedException();
+			//var frustum = World.GetClippingFrustum();
 
-			foreach (var face in renderData.Mesh.Faces)
-			{
-				int vertexCount = 0;
-				Vector3 faceCenter = Vector3.Zero;
-				foreach (var vertex in face.Vertices())
-				{
-					faceCenter += vertex.Position;
-					vertexCount++;
-				}
-				faceCenter /= vertexCount;
+			//foreach (var face in renderData.Mesh.Faces)
+			//{
+			//	int vertexCount = 0;
+			//	Vector3 faceCenter = Vector3.Zero;
+			//	foreach (var vertex in face.Vertices())
+			//	{
+			//		faceCenter += vertex.Position;
+			//		vertexCount++;
+			//	}
+			//	faceCenter /= vertexCount;
 
-				var transformed1 = Vector3.Transform(faceCenter, renderData.Matrix);
-				var normal = Vector3.TransformNormal(face.Normal, renderData.Matrix).GetNormal();
+			//	var transformed1 = Vector3Ex.Transform(faceCenter, renderData.Matrix);
+			//	var normal = Vector3Ex.TransformNormal(face.Normal, renderData.Matrix).GetNormal();
 
-				World.Render3DLineNoPrep(frustum, transformed1, transformed1 + normal, Color.Red, 2);
-			}
+			//	World.Render3DLineNoPrep(frustum, transformed1, transformed1 + normal, Color.Red, 2);
+			//}
 		}
 
 		private void RenderSelection(IObject3D item, Frustum frustum, Color selectionColor)
@@ -703,13 +707,13 @@ namespace MatterHackers.MeshVisualizer
 				return -1;
 			}
 
-			var aCenterWorld = Vector3.Transform(meshA.GetAxisAlignedBoundingBox().Center, a.Object3D.Matrix);
+			var aCenterWorld = Vector3Ex.Transform(meshA.GetAxisAlignedBoundingBox().Center, a.Object3D.Matrix);
 			aCenterWorld.Z = 0; // we only want to look at the distance on xy in world space
-			var aCenterInViewSpace = Vector3.Transform(aCenterWorld, World.ModelviewMatrix);
+			var aCenterInViewSpace = Vector3Ex.Transform(aCenterWorld, World.ModelviewMatrix);
 
-			var bCenterWorld = Vector3.Transform(meshB.GetAxisAlignedBoundingBox().Center, b.Object3D.Matrix);
+			var bCenterWorld = Vector3Ex.Transform(meshB.GetAxisAlignedBoundingBox().Center, b.Object3D.Matrix);
 			bCenterWorld.Z = 0; // we only want to look at the distance on xy in world space
-			var bCenterInViewSpace = Vector3.Transform(bCenterWorld, World.ModelviewMatrix);
+			var bCenterInViewSpace = Vector3Ex.Transform(bCenterWorld, World.ModelviewMatrix);
 
 			return bCenterInViewSpace.LengthSquared.CompareTo(aCenterInViewSpace.LengthSquared);
 		}
@@ -745,9 +749,9 @@ namespace MatterHackers.MeshVisualizer
 
 			transparentMeshes.Sort(BackToFrontXY);
 
-			var bedNormalInViewSpace = Vector3.TransformNormal(Vector3.UnitZ, World.ModelviewMatrix).GetNormal();
-			var pointOnBedInViewSpace = Vector3.Transform(new Vector3(10, 10, 0), World.ModelviewMatrix);
-			var lookingDownOnBed = Vector3.Dot(bedNormalInViewSpace, pointOnBedInViewSpace) < 0;
+			var bedNormalInViewSpace = Vector3Ex.TransformNormal(Vector3.UnitZ, World.ModelviewMatrix).GetNormal();
+			var pointOnBedInViewSpace = Vector3Ex.Transform(new Vector3(10, 10, 0), World.ModelviewMatrix);
+			var lookingDownOnBed = Vector3Ex.Dot(bedNormalInViewSpace, pointOnBedInViewSpace) < 0;
 
 			if (lookingDownOnBed)
 			{

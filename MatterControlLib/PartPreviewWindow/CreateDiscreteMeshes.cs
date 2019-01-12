@@ -52,74 +52,75 @@ namespace MatterHackers.MatterControl
 	{
 		public static List<Mesh> SplitVolumesIntoMeshes(Mesh meshToSplit, CancellationToken cancellationToken, Action<double, string> reportProgress)
 		{
-			Stopwatch maxProgressReport = Stopwatch.StartNew();
-			List<Mesh> discreetVolumes = new List<Mesh>();
-			HashSet<Face> facesThatHaveBeenAdded = new HashSet<Face>();
-			Mesh meshFromCurrentVolume = null;
-			Stack<Face> attachedFaces = new Stack<Face>();
-			int faceCount = meshToSplit.Faces.Count;
-			for (int faceIndex = 0; faceIndex < faceCount; faceIndex++)
-			{
-				if (reportProgress != null)
-				{
-					if (maxProgressReport.ElapsedMilliseconds > 200)
-					{
-						reportProgress(faceIndex / (double)faceCount, "Merging Mesh Edges");
-						maxProgressReport.Restart();
-						if (cancellationToken.IsCancellationRequested)
-						{
-							return null;
-						}
-					}
-				}
+			throw new NotImplementedException();
+			//Stopwatch maxProgressReport = Stopwatch.StartNew();
+			//List<Mesh> discreetVolumes = new List<Mesh>();
+			//HashSet<Face> facesThatHaveBeenAdded = new HashSet<Face>();
+			//Mesh meshFromCurrentVolume = null;
+			//Stack<Face> attachedFaces = new Stack<Face>();
+			//int faceCount = meshToSplit.Faces.Count;
+			//for (int faceIndex = 0; faceIndex < faceCount; faceIndex++)
+			//{
+			//	if (reportProgress != null)
+			//	{
+			//		if (maxProgressReport.ElapsedMilliseconds > 200)
+			//		{
+			//			reportProgress(faceIndex / (double)faceCount, "Merging Mesh Edges");
+			//			maxProgressReport.Restart();
+			//			if (cancellationToken.IsCancellationRequested)
+			//			{
+			//				return null;
+			//			}
+			//		}
+			//	}
 
-				Face currentFace = meshToSplit.Faces[faceIndex];
-				// If this face as not been added to any volume, create a new volume and add all of the attached faces.
-				if (!facesThatHaveBeenAdded.Contains(currentFace))
-				{
-					attachedFaces.Push(currentFace);
-					meshFromCurrentVolume = new Mesh();
+			//	Face currentFace = meshToSplit.Faces[faceIndex];
+			//	// If this face as not been added to any volume, create a new volume and add all of the attached faces.
+			//	if (!facesThatHaveBeenAdded.Contains(currentFace))
+			//	{
+			//		attachedFaces.Push(currentFace);
+			//		meshFromCurrentVolume = new Mesh();
 
-					while (attachedFaces.Count > 0)
-					{
-						Face faceToAdd = attachedFaces.Pop();
-						foreach (IVertex attachedVertex in faceToAdd.Vertices())
-						{
-							foreach (Face faceAttachedToVertex in attachedVertex.ConnectedFaces())
-							{
-								if (!facesThatHaveBeenAdded.Contains(faceAttachedToVertex))
-								{
-									// mark that this face has been taken care of
-									facesThatHaveBeenAdded.Add(faceAttachedToVertex);
-									// add it to the list of faces we need to walk
-									attachedFaces.Push(faceAttachedToVertex);
+			//		while (attachedFaces.Count > 0)
+			//		{
+			//			Face faceToAdd = attachedFaces.Pop();
+			//			foreach (IVertex attachedVertex in faceToAdd.Vertices())
+			//			{
+			//				foreach (Face faceAttachedToVertex in attachedVertex.ConnectedFaces())
+			//				{
+			//					if (!facesThatHaveBeenAdded.Contains(faceAttachedToVertex))
+			//					{
+			//						// mark that this face has been taken care of
+			//						facesThatHaveBeenAdded.Add(faceAttachedToVertex);
+			//						// add it to the list of faces we need to walk
+			//						attachedFaces.Push(faceAttachedToVertex);
 
-									// Add a new face to the new mesh we are creating.
-									var faceVertices = new List<IVertex>();
-									foreach (FaceEdge faceEdgeToAdd in faceAttachedToVertex.FaceEdges())
-									{
-										var newVertex = meshFromCurrentVolume.CreateVertex(faceEdgeToAdd.FirstVertex.Position, CreateOption.CreateNew, SortOption.WillSortLater);
-										faceVertices.Add(newVertex);
-									}
+			//						// Add a new face to the new mesh we are creating.
+			//						var faceVertices = new List<IVertex>();
+			//						foreach (FaceEdge faceEdgeToAdd in faceAttachedToVertex.FaceEdges())
+			//						{
+			//							var newVertex = meshFromCurrentVolume.CreateVertex(faceEdgeToAdd.FirstVertex.Position, CreateOption.CreateNew, SortOption.WillSortLater);
+			//							faceVertices.Add(newVertex);
+			//						}
 
-									meshFromCurrentVolume.CreateFace(faceVertices.ToArray(), CreateOption.CreateNew);
-								}
-							}
-						}
-					}
+			//						meshFromCurrentVolume.CreateFace(faceVertices.ToArray(), CreateOption.CreateNew);
+			//					}
+			//				}
+			//			}
+			//		}
 
-					discreetVolumes.Add(meshFromCurrentVolume);
-					meshFromCurrentVolume = null;
-				}
+			//		discreetVolumes.Add(meshFromCurrentVolume);
+			//		meshFromCurrentVolume = null;
+			//	}
 
-				if (reportProgress != null)
-				{
-					double progress = faceIndex / (double)meshToSplit.Faces.Count;
-					reportProgress(progress, "Split Into Meshes");
-				}
-			}
+			//	if (reportProgress != null)
+			//	{
+			//		double progress = faceIndex / (double)meshToSplit.Faces.Count;
+			//		reportProgress(progress, "Split Into Meshes");
+			//	}
+			//}
 
-			return discreetVolumes;
+			//return discreetVolumes;
 		}
 
 		public static bool PointInPolygon(Polygon polygon, IntPoint testPosition)

@@ -60,10 +60,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				{
 					double[] va;
 					int[] fa;
-					inMeshA.ToVerticesAndFaces(matrixA, out va, out fa);
+					va = inMeshA.Vertices.ToDoubleArray(matrixA);
+					fa = inMeshA.Faces.ToIntArray();
 					double[] vb;
 					int[] fb;
-					inMeshB.ToVerticesAndFaces(matrixB, out vb, out fb);
+					vb = inMeshB.Vertices.ToDoubleArray(matrixB);
+					fb = inMeshB.Faces.ToIntArray();
 
 					int vcCount;
 					int fcCount;

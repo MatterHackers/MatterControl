@@ -1026,7 +1026,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var sourceItemBounds = insertionGroup.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 			var center = sourceItemBounds.Center;
 
-			insertionGroup.Matrix *= Matrix4X4.CreateTranslation(-center.X, -center.Y, -sourceItemBounds.minXYZ.Z);
+			insertionGroup.Matrix *= Matrix4X4.CreateTranslation(-center.X, -center.Y, -sourceItemBounds.MinXYZ.Z);
 			insertionGroup.Matrix *= Matrix4X4.CreateTranslation(new Vector3(intersectInfo.HitPosition));
 
 			CurrentSelectInfo.PlaneDownHitPos = intersectInfo.HitPosition;
@@ -1163,13 +1163,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				return false;
 			}
-			if (x.Bvh is TriangleShape tri)
+			if (x.Bvh is ITriangle tri)
 			{
 				// check if any vertex in screen rect
 				// calculate all the top and bottom screen positions
 				for (int i = 0; i < 3; i++)
 				{
-					Vector3 bottomStartPosition = Vector3.Transform(tri.GetVertex(i), x.TransformToWorld);
+					Vector3 bottomStartPosition = Vector3Ex.Transform(tri.GetVertex(i), x.TransformToWorld);
 					traceBottoms[i] = this.World.GetScreenPosition(bottomStartPosition);
 				}
 
@@ -1187,10 +1187,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// calculate all the top and bottom screen positions
 				for (int i = 0; i < 4; i++)
 				{
-					Vector3 bottomStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), x.TransformToWorld);
+					Vector3 bottomStartPosition = Vector3Ex.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), x.TransformToWorld);
 					traceBottoms[i] = this.World.GetScreenPosition(bottomStartPosition);
 
-					Vector3 topStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), x.TransformToWorld);
+					Vector3 topStartPosition = Vector3Ex.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), x.TransformToWorld);
 					traceTops[i] = this.World.GetScreenPosition(topStartPosition);
 				}
 
@@ -1534,26 +1534,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// snap this position to the grid
 					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
-					double xSnapOffset = selectedBounds.minXYZ.X;
+					double xSnapOffset = selectedBounds.MinXYZ.X;
 					// snap the x position
 					if (CurrentSelectInfo.HitQuadrant == HitQuadrant.RB
 						|| CurrentSelectInfo.HitQuadrant == HitQuadrant.RT)
 					{
 						// switch to the other side
-						xSnapOffset = selectedBounds.maxXYZ.X;
+						xSnapOffset = selectedBounds.MaxXYZ.X;
 					}
 					double xToSnap = xSnapOffset + delta.X;
 
 					double snappedX = ((int)((xToSnap / snapGridDistance) + .5)) * snapGridDistance;
 					delta.X = snappedX - xSnapOffset;
 
-					double ySnapOffset = selectedBounds.minXYZ.Y;
+					double ySnapOffset = selectedBounds.MinXYZ.Y;
 					// snap the y position
 					if (CurrentSelectInfo.HitQuadrant == HitQuadrant.LT
 						|| CurrentSelectInfo.HitQuadrant == HitQuadrant.RT)
 					{
 						// switch to the other side
-						ySnapOffset = selectedBounds.maxXYZ.Y;
+						ySnapOffset = selectedBounds.MaxXYZ.Y;
 					}
 					double yToSnap = ySnapOffset + delta.Y;
 

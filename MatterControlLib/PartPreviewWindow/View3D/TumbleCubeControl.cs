@@ -172,13 +172,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// this data needs to be made on the ui thread
 			UiThread.RunOnIdle(() =>
 			{
-				cube.CleanAndMergeMesh(CancellationToken.None);
-				TextureFace(cube.Faces[0], "Top");
-				TextureFace(cube.Faces[1], "Left", Matrix4X4.CreateRotationZ(MathHelper.Tau / 4));
-				TextureFace(cube.Faces[2], "Right", Matrix4X4.CreateRotationZ(-MathHelper.Tau / 4));
-				TextureFace(cube.Faces[3], "Bottom", Matrix4X4.CreateRotationZ(MathHelper.Tau / 2));
-				TextureFace(cube.Faces[4], "Back", Matrix4X4.CreateRotationZ(MathHelper.Tau / 2));
-				TextureFace(cube.Faces[5], "Front");
+				TextureFace(0, "Top");
+				TextureFace(1, "Left", Matrix4X4.CreateRotationZ(MathHelper.Tau / 4));
+				TextureFace(2, "Right", Matrix4X4.CreateRotationZ(-MathHelper.Tau / 4));
+				TextureFace(3, "Bottom", Matrix4X4.CreateRotationZ(MathHelper.Tau / 2));
+				TextureFace(4, "Back", Matrix4X4.CreateRotationZ(MathHelper.Tau / 2));
+				TextureFace(5, "Front");
 				cube.MarkAsChanged();
 
 				connections.Add(new ConnectedFaces(2, 1, 1, 5, 2, 4));
@@ -208,10 +207,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			world = new WorldView(screenSpaceBounds.Width, screenSpaceBounds.Height);
 
 			var forward = -Vector3.UnitZ;
-			var directionForward = Vector3.TransformNormal(forward, interactionLayer.World.InverseModelviewMatrix);
+			var directionForward = Vector3Ex.TransformNormal(forward, interactionLayer.World.InverseModelviewMatrix);
 
 			var up = Vector3.UnitY;
-			var directionUp = Vector3.TransformNormal(up, interactionLayer.World.InverseModelviewMatrix);
+			var directionUp = Vector3Ex.TransformNormal(up, interactionLayer.World.InverseModelviewMatrix);
 			world.RotationMatrix = Matrix4X4.LookAt(Vector3.Zero, directionForward, directionUp) * Matrix4X4.CreateScale(.8);
 
 			GLHelper.SetGlContext(world, screenSpaceBounds, lighting);
@@ -580,7 +579,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			lastHitData = new HitData();
 		}
 
-		private void TextureFace(Face face, string name, Matrix4X4? initialRotation = null)
+		private void TextureFace(int face, string name, Matrix4X4? initialRotation = null)
 		{
 			ImageBuffer sourceTexture = new ImageBuffer(256, 256);
 			var frontGraphics = sourceTexture.NewGraphics2D();
@@ -594,7 +593,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			frontGraphics.Render(new Stroke(new RoundedRect(.5, .5, 254.5, 254.4, 0), 6), Color.DarkGray);
 			var activeTexture = new ImageBuffer(sourceTexture);
 			ImageGlPlugin.GetImageGlPlugin(activeTexture, true);
-			MeshHelper.PlaceTextureOnFace(face, activeTexture, MeshHelper.GetMaxFaceProjection(face, activeTexture, initialRotation));
+			cube.PlaceTextureOnFace(face, activeTexture, cube.GetMaxFaceProjection(face, activeTexture, initialRotation));
 
 			textureDatas.Add(new TextureData()
 			{

@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				if (startingAabb.ZSize > 0)
 				{
 					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, startingAabb.minXYZ.Z);
+					PlatingHelper.PlaceMeshAtHeight(this, startingAabb.MinXYZ.Z);
 				}
 			}
 
@@ -158,12 +158,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				// Convert VertexSource into expected Polygons
 				Polygons polygonShape = (vertexSource == null) ? null : vertexSource.CreatePolygons();
-				GenerateBase(polygonShape, firstChild.GetAxisAlignedBoundingBox().minXYZ.Z);
+				GenerateBase(polygonShape, firstChild.GetAxisAlignedBoundingBox().MinXYZ.Z);
 
 				if (startingAabb.ZSize > 0)
 				{
 					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, startingAabb.minXYZ.Z);
+					PlatingHelper.PlaceMeshAtHeight(this, startingAabb.MinXYZ.Z);
 				}
 			}
 

@@ -32,6 +32,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.VectorMath;
+using System;
 using System.ComponentModel;
 using System.Threading;
 
@@ -91,21 +92,22 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					for (int i = 0; i < originalMesh.Vertices.Count; i++)
 					{
-						var pos = originalMesh.Vertices[i].Position;
-						pos = Vector3.Transform(pos, itemMatrix);
+						throw new NotImplementedException();
+						//var pos = originalMesh.Vertices[i].Position;
+						//pos = Vector3Ex.Transform(pos, itemMatrix);
 
-						var ratioToApply = PinchRatio;
+						//var ratioToApply = PinchRatio;
 
-						var distFromCenter = pos.X - aabb.Center.X;
-						var distanceToPinch = distFromCenter * (1 - PinchRatio);
-						var delta = (aabb.Center.X + distFromCenter * ratioToApply) - pos.X;
+						//var distFromCenter = pos.X - aabb.Center.X;
+						//var distanceToPinch = distFromCenter * (1 - PinchRatio);
+						//var delta = (aabb.Center.X + distFromCenter * ratioToApply) - pos.X;
 
-						// find out how much to pinch based on y position
-						var amountOfRatio = (pos.Y - aabb.minXYZ.Y) / aabb.YSize;
+						//// find out how much to pinch based on y position
+						//var amountOfRatio = (pos.Y - aabb.minXYZ.Y) / aabb.YSize;
 
-						var newPos = new Vector3(pos.X + delta * amountOfRatio, pos.Y, pos.Z);
+						//var newPos = new Vector3(pos.X + delta * amountOfRatio, pos.Y, pos.Z);
 
-						transformedMesh.Vertices[i].Position = Vector3.Transform(newPos, invItemMatrix);
+						//transformedMesh.Vertices[i].Position = Vector3Ex.Transform(newPos, invItemMatrix);
 					}
 
 					// the vertices need to be resorted as they have moved relative to each other

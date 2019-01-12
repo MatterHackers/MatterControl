@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					}
 
 					var next = lastChild.Clone();
-					offset = Vector3.Transform(offset, Matrix4X4.CreateRotationZ(rotateRadians));
+					offset = Vector3Ex.Transform(offset, Matrix4X4.CreateRotationZ(rotateRadians));
 					next.Matrix *= Matrix4X4.CreateTranslation(offset);
 
 					if (RotatePart)

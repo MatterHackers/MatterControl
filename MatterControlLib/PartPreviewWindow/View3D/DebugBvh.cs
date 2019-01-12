@@ -99,20 +99,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// the sides
 			RenderLine(transform.Peek(),
-				new Vector3(aabb.minXYZ.X, aabb.minXYZ.Y, aabb.minXYZ.Z),
-				new Vector3(aabb.minXYZ.X, aabb.minXYZ.Y, aabb.maxXYZ.Z),
+				new Vector3(aabb.MinXYZ.X, aabb.MinXYZ.Y, aabb.MinXYZ.Z),
+				new Vector3(aabb.MinXYZ.X, aabb.MinXYZ.Y, aabb.MaxXYZ.Z),
 				color);
 			RenderLine(transform.Peek(),
-				new Vector3(aabb.maxXYZ.X, aabb.minXYZ.Y, aabb.minXYZ.Z),
-				new Vector3(aabb.maxXYZ.X, aabb.minXYZ.Y, aabb.maxXYZ.Z),
+				new Vector3(aabb.MaxXYZ.X, aabb.MinXYZ.Y, aabb.MinXYZ.Z),
+				new Vector3(aabb.MaxXYZ.X, aabb.MinXYZ.Y, aabb.MaxXYZ.Z),
 				color);
 			RenderLine(transform.Peek(),
-				new Vector3(aabb.minXYZ.X, aabb.maxXYZ.Y, aabb.minXYZ.Z),
-				new Vector3(aabb.minXYZ.X, aabb.maxXYZ.Y, aabb.maxXYZ.Z),
+				new Vector3(aabb.MinXYZ.X, aabb.MaxXYZ.Y, aabb.MinXYZ.Z),
+				new Vector3(aabb.MinXYZ.X, aabb.MaxXYZ.Y, aabb.MaxXYZ.Z),
 				color);
 			RenderLine(transform.Peek(),
-				new Vector3(aabb.maxXYZ.X, aabb.maxXYZ.Y, aabb.minXYZ.Z),
-				new Vector3(aabb.maxXYZ.X, aabb.maxXYZ.Y, aabb.maxXYZ.Z),
+				new Vector3(aabb.MaxXYZ.X, aabb.MaxXYZ.Y, aabb.MinXYZ.Z),
+				new Vector3(aabb.MaxXYZ.X, aabb.MaxXYZ.Y, aabb.MaxXYZ.Z),
 				color);
 		}
 
@@ -130,11 +130,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				RenderRecursive((dynamic)child, level + 1);
 			}
-		}
-
-		public void RenderRecursive(MeshFaceTraceable objectToProcess, int level = 0)
-		{
-			RenderBounds(objectToProcess.GetAxisAlignedBoundingBox());
 		}
 
 		public void RenderRecursive(Transform objectToProcess, int level = 0)
