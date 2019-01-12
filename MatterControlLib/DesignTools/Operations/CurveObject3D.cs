@@ -52,7 +52,6 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public static void SplitEdges(List<Vector3> vL, FaceList fL, double maxLength)
 		{
-			throw new NotImplementedException();
 			//var maxLengthSqrd = maxLength * maxLength;
 			//var facesToRemove = new HashSet<int>();
 			//// check every face
@@ -206,20 +205,16 @@ namespace MatterHackers.MatterControl.DesignTools
 
 						for (int i = 0; i < curvedMesh.Vertices.Count; i++)
 						{
-							throw new NotImplementedException();
-							//var worldPosition = Vector3Ex.Transform(curvedMesh.Vertices[i].Position, (Matrix4X4)matrix);
+							var worldPosition = curvedMesh.Vertices[i].Transform((Matrix4X4)matrix);
 
-							//var angleToRotate = ((worldPosition.X - rotationCenter.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
-							//var distanceFromCenter = rotationCenter.Y - worldPosition.Y;
+							var angleToRotate = ((worldPosition.X - rotationCenter.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
+							var distanceFromCenter = rotationCenter.Y - worldPosition.Y;
 
-							//var rotatePosition = new Vector3(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
-							//rotatePosition.Z = worldPosition.Z;
-							//var worldWithBend = rotatePosition + new Vector3(rotationCenter.X, radius + aabb.maxXYZ.Y, 0);
-							//curvedMesh.Vertices[i].Position = Vector3Ex.Transform(worldWithBend, matrixInv);
+							var rotatePosition = new Vector3Float(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
+							rotatePosition.Z = worldPosition.Z;
+							var worldWithBend = rotatePosition + new Vector3Float(rotationCenter.X, radius + aabb.MaxXYZ.Y, 0);
+							curvedMesh.Vertices[i] = worldWithBend.Transform(matrixInv);
 						}
-
-						// the vertices need to be resorted as they have moved relative to each other
-						//curvedMesh.Vertices.Sort();
 
 						curvedMesh.MarkAsChanged();
 						curvedMesh.CalculateNormals();
