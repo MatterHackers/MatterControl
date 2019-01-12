@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Rebuild()
 		{
-			Task.Run(() =>
+			Task.Run((Action)(() =>
 			{
 				// Get visible meshes for each of them
 				var visibleMeshes = scene.Children.SelectMany(i => i.VisibleMeshes());
@@ -161,39 +161,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var supportCandidates = visibleMeshes.Where(i => i.OutputType != PrintOutputTypes.Support);
 
 				// find all the faces that are candidates for support
-				var upVerts = new Vector3List();
+				var upVerts = new List<Vector3>();
 				var upFaces = new FaceList();
-				var downVerts = new Vector3List();
+				var downVerts = new List<Vector3>();
 				var downFaces = new FaceList();
 				foreach (var item in supportCandidates)
 				{
 					var matrix = item.WorldMatrix(scene);
 					foreach (var face in item.Mesh.Faces)
 					{
-						var face0Normal = Vector3.TransformVector(face.Normal, matrix).GetNormal();
-						var angle = MathHelper.RadiansToDegrees(Math.Acos(Vector3.Dot(-Vector3.UnitZ, face0Normal)));
+						throw new NotImplementedException();
+						//var face0Normal = Vector3Ex.TransformVector(face.Normal, matrix).GetNormal();
+						//var angle = MathHelper.RadiansToDegrees(Math.Acos(Vector3Ex.Dot(-Vector3.UnitZ, face0Normal)));
 
-						if (angle < MaxOverHangAngle)
-						{
-							foreach (var triangle in face.AsTriangles())
-							{
-								downFaces.Add(new int[] { downVerts.Count, downVerts.Count + 1, downVerts.Count + 2 });
-								downVerts.Add(Vector3.Transform(triangle.p0, matrix));
-								downVerts.Add(Vector3.Transform(triangle.p1, matrix));
-								downVerts.Add(Vector3.Transform(triangle.p2, matrix));
-							}
-						}
+						//if (angle < MaxOverHangAngle)
+						//{
+						//	foreach (var triangle in face.AsTriangles())
+						//	{
+						//		downFaces.Add(new int[] { downVerts.Count, downVerts.Count + 1, downVerts.Count + 2 });
+						//		downVerts.Add(Vector3Ex.Transform(triangle.p0, matrix));
+						//		downVerts.Add(Vector3Ex.Transform(triangle.p1, matrix));
+						//		downVerts.Add(Vector3Ex.Transform(triangle.p2, matrix));
+						//	}
+						//}
 
-						if (angle > 0)
-						{
-							foreach (var triangle in face.AsTriangles())
-							{
-								upFaces.Add(new int[] { upVerts.Count, upVerts.Count + 1, upVerts.Count + 2 });
-								upVerts.Add(Vector3.Transform(triangle.p0, matrix));
-								upVerts.Add(Vector3.Transform(triangle.p1, matrix));
-								upVerts.Add(Vector3.Transform(triangle.p2, matrix));
-							}
-						}
+						//if (angle > 0)
+						//{
+						//	foreach (var triangle in face.AsTriangles())
+						//	{
+						//		upFaces.Add(new int[] { upVerts.Count, upVerts.Count + 1, upVerts.Count + 2 });
+						//		upVerts.Add(Vector3Ex.Transform(triangle.p0, matrix));
+						//		upVerts.Add(Vector3Ex.Transform(triangle.p1, matrix));
+						//		upVerts.Add(Vector3Ex.Transform(triangle.p2, matrix));
+						//	}
+						//}
 					}
 				}
 
@@ -206,10 +207,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var bounds = downVerts.Bounds();
 
 					// create the gird of possible support
-					RectangleDouble gridBounds = new RectangleDouble(Math.Floor(bounds.minXYZ.X / PillarSize),
-						Math.Floor(bounds.minXYZ.Y / PillarSize),
-						Math.Ceiling(bounds.maxXYZ.X / PillarSize),
-						Math.Ceiling(bounds.maxXYZ.Y / PillarSize));
+					var gridBounds = new RectangleDouble(Math.Floor((double)(bounds.MinXYZ.X / PillarSize)),
+						Math.Floor((double)(bounds.MinXYZ.Y / PillarSize)),
+						Math.Ceiling(bounds.MaxXYZ.X / PillarSize),
+						Math.Ceiling(bounds.MaxXYZ.Y / PillarSize));
 
 					var supportGrid = new List<List<double>>((int)(gridBounds.Width * gridBounds.Height));
 
@@ -252,7 +253,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// trace down from the top to the first bottom hit (or bed)
 					// add a support column
 					var first = downFaces.First();
-					var position = downVerts[first[0]];
+					var position = downVerts[first.v0];
 					//AddSupportColumn(position.X, position.Y, position.Z, 0);
 				}
 
@@ -262,7 +263,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// make a new patch group at the z of the hit (these will be the bottoms)
 				// find the outline of the patch groups (these will be the walls of the top and bottom patches
 				// make a new mesh object with the top, bottom and walls, add it to the scene and mark it as support
-			});
+			}));
 		}
 
 		private void RemoveExisting()
@@ -280,55 +281,56 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static bool RequiresSupport(InteractiveScene scene)
 		{
-			bool supportInScene = scene.VisibleMeshes().Any(i => i.WorldOutputType() == PrintOutputTypes.Support);
-			if (!supportInScene)
-			{
-				// there is no support in the scene check if there are faces that require support
-				var supportCandidates = scene.VisibleMeshes().Where(i => i.OutputType != PrintOutputTypes.Support);
+			throw new NotImplementedException();
+			//bool supportInScene = scene.VisibleMeshes().Any(i => i.WorldOutputType() == PrintOutputTypes.Support);
+			//if (!supportInScene)
+			//{
+			//	// there is no support in the scene check if there are faces that require support
+			//	var supportCandidates = scene.VisibleMeshes().Where(i => i.OutputType != PrintOutputTypes.Support);
 
-				// find all the faces that are candidates for support
-				foreach (var item in supportCandidates)
-				{
-					var matrix = item.WorldMatrix(scene);
-					foreach (var face in item.Mesh.Faces)
-					{
-						bool aboveBed = false;
-						foreach(var vertex in face.Vertices())
-						{
-							if(Vector3.Transform(vertex.Position, matrix).Z > .01)
-							{
-								aboveBed = true;
-								break;
-							}
-						}
-						if (aboveBed)
-						{
-							var face0Normal = Vector3.TransformVector(face.Normal, matrix).GetNormal();
-							var angle = MathHelper.RadiansToDegrees(Math.Acos(Vector3.Dot(-Vector3.UnitZ, face0Normal)));
+			//	// find all the faces that are candidates for support
+			//	foreach (var item in supportCandidates)
+			//	{
+			//		var matrix = item.WorldMatrix(scene);
+			//		foreach (var face in item.Mesh.Faces)
+			//		{
+			//			bool aboveBed = false;
+			//			foreach(var vertex in face.Vertices())
+			//			{
+			//				if(Vector3Ex.Transform(vertex.Position, matrix).Z > .01)
+			//				{
+			//					aboveBed = true;
+			//					break;
+			//				}
+			//			}
+			//			if (aboveBed)
+			//			{
+			//				var face0Normal = Vector3Ex.TransformVector(face.Normal, matrix).GetNormal();
+			//				var angle = MathHelper.RadiansToDegrees(Math.Acos(Vector3Ex.Dot(-Vector3.UnitZ, face0Normal)));
 
-							if (angle < MaxOverHangAngle)
-							{
-								// TODO: consider how much area all supported polygons represent
-								return true;
-							}
-						}
-					}
-				}
-			}
+			//				if (angle < MaxOverHangAngle)
+			//				{
+			//					// TODO: consider how much area all supported polygons represent
+			//					return true;
+			//				}
+			//			}
+			//		}
+			//	}
+			//}
 
-			return false;
+			//return false;
 		}
 	}
 
 	public static class FaceListExtensions
 	{
-		public static IPrimitive CreateTraceData(this FaceList faceList, Vector3List vertexList, int maxRecursion = int.MaxValue)
+		public static IPrimitive CreateTraceData(this FaceList faceList, List<Vector3> vertexList, int maxRecursion = int.MaxValue)
 		{
 			var allPolys = new List<IPrimitive>();
 
 			foreach (var face in faceList)
 			{
-				allPolys.Add(new TriangleShape(vertexList[face[0]], vertexList[face[1]], vertexList[face[2]], null));
+				allPolys.Add(new TriangleShape(vertexList[face.v0], vertexList[face.v1], vertexList[face.v2], null));
 			}
 
 			return BoundingVolumeHierarchy.CreateNewHierachy(allPolys, maxRecursion);

@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.Library
 						placeholderItem.Visible = false;
 
 						// Copy scale/rotation/translation from the source and Center
-						loadedItem.Matrix = loadedItem.Matrix * Matrix4X4.CreateTranslation((double)-aabb.Center.X, (double)-aabb.Center.Y, (double)-aabb.minXYZ.Z) * placeholderItem.Matrix;
+						loadedItem.Matrix = loadedItem.Matrix * Matrix4X4.CreateTranslation((double)-aabb.Center.X, (double)-aabb.Center.Y, (double)-aabb.MinXYZ.Z) * placeholderItem.Matrix;
 
 						// check if the item has 0 height (it is probably an image)
 						if(loadedItem.ZSize() == 0)

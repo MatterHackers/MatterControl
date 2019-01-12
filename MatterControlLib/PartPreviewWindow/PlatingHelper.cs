@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl
 			for (int meshGroupIndex = 0; meshGroupIndex < object3DList.Count; meshGroupIndex++)
 			{
 				var object3D = object3DList[meshGroupIndex];
-				Vector3 meshLowerLeft = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).minXYZ;
+				Vector3 meshLowerLeft = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).MinXYZ;
 				object3D.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft);
 
 				PlatingHelper.MoveToOpenPositionRelativeGroup(object3D, scene.Children);
@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl
 					bounds = AxisAlignedBoundingBox.Union(bounds, object3DList[i].GetAxisAlignedBoundingBox(Matrix4X4.Identity));
 				}
 
-				Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
+				Vector3 boundsCenter = (bounds.MaxXYZ + bounds.MinXYZ) / 2;
 				for (int i = 0; i < object3DList.Count; i++)
 				{
 					object3DList[i].Matrix *= Matrix4X4.CreateTranslation(-boundsCenter + new Vector3(0, 0, bounds.ZSize / 2) + bedCenter);
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl
 		public static void PlaceOnBed(IObject3D object3D)
 		{
 			AxisAlignedBoundingBox bounds = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-			Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
+			Vector3 boundsCenter = (bounds.MaxXYZ + bounds.MinXYZ) / 2;
 
 			object3D.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.Z + bounds.ZSize / 2));
 		}
@@ -134,9 +134,9 @@ namespace MatterHackers.MatterControl
 		{
 			AxisAlignedBoundingBox bounds = objectToMove.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
-			if (bounds.minXYZ.Z != zHeight)
+			if (bounds.MinXYZ.Z != zHeight)
 			{
-				objectToMove.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, zHeight - bounds.minXYZ.Z));
+				objectToMove.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, zHeight - bounds.MinXYZ.Z));
 			}
 		}
 
@@ -156,12 +156,12 @@ namespace MatterHackers.MatterControl
 			AxisAlignedBoundingBox allPlacedMeshBounds = itemsToAvoid.GetUnionedAxisAlignedBoundingBox();
 
 			// move the part to the total bounds lower left side
-			Vector3 meshLowerLeft = objectToAdd.GetAxisAlignedBoundingBox(Matrix4X4.Identity).minXYZ;
-			objectToAdd.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft + allPlacedMeshBounds.minXYZ);
+			Vector3 meshLowerLeft = objectToAdd.GetAxisAlignedBoundingBox(Matrix4X4.Identity).MinXYZ;
+			objectToAdd.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft + allPlacedMeshBounds.MinXYZ);
 
 			// make sure it is on the 0 plane
 			var aabb = objectToAdd.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-			objectToAdd.Matrix *= Matrix4X4.CreateTranslation(0, 0, -aabb.minXYZ.Z);
+			objectToAdd.Matrix *= Matrix4X4.CreateTranslation(0, 0, -aabb.MinXYZ.Z);
 
 			// keep moving the item until its in an open slot 
 			MoveToOpenPosition(objectToAdd, itemsToAvoid);
@@ -178,8 +178,8 @@ namespace MatterHackers.MatterControl
 			AxisAlignedBoundingBox itemToMoveBounds = itemToMove.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 			// add in a few mm so that it will not be touching
-			itemToMoveBounds.minXYZ -= new Vector3(2, 2, 0);
-			itemToMoveBounds.maxXYZ += new Vector3(2, 2, 0);
+			itemToMoveBounds.MinXYZ -= new Vector3(2, 2, 0);
+			itemToMoveBounds.MaxXYZ += new Vector3(2, 2, 0);
 
 			Matrix4X4 transform = Matrix4X4.Identity;
 			int currentSize = 1;
@@ -234,7 +234,7 @@ namespace MatterHackers.MatterControl
 			double yStepAmount = 5;
 
 			Matrix4X4 positionTransform = Matrix4X4.CreateTranslation(xStep * xStepAmount, yStep * yStepAmount, 0);
-			Vector3 newPosition = Vector3.Transform(Vector3.Zero, positionTransform);
+			Vector3 newPosition = Vector3Ex.Transform(Vector3.Zero, positionTransform);
 
 			transform = Matrix4X4.CreateTranslation(newPosition);
 

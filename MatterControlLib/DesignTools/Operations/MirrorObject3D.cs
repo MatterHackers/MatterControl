@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -86,7 +87,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					// move it to us then mirror then move it back
 					item.meshCopy.Mesh.Transform(meshCopyToThis * mirrorMatrix * meshCopyToThis.Inverted);
 
-					item.meshCopy.Mesh.ReverseFaceEdges();
+					throw new NotImplementedException();
+					//item.meshCopy.Mesh.ReverseFaceEdges();
 					item.meshCopy.Mesh.CalculateNormals();
 					item.meshCopy.Mesh.MarkAsChanged();
 				}

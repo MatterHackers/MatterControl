@@ -32,6 +32,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.VectorMath;
+using System;
 using System.ComponentModel;
 using System.Threading;
 
@@ -91,8 +92,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					for (int i = 0; i < originalMesh.Vertices.Count; i++)
 					{
-						var pos = originalMesh.Vertices[i].Position;
-						pos = Vector3.Transform(pos, itemMatrix);
+						var pos = originalMesh.Vertices[i];
+						pos = pos.Transform(itemMatrix);
 
 						var ratioToApply = PinchRatio;
 
@@ -101,15 +102,12 @@ namespace MatterHackers.MatterControl.DesignTools
 						var delta = (aabb.Center.X + distFromCenter * ratioToApply) - pos.X;
 
 						// find out how much to pinch based on y position
-						var amountOfRatio = (pos.Y - aabb.minXYZ.Y) / aabb.YSize;
+						var amountOfRatio = (pos.Y - aabb.MinXYZ.Y) / aabb.YSize;
 
-						var newPos = new Vector3(pos.X + delta * amountOfRatio, pos.Y, pos.Z);
+						var newPos = new Vector3Float(pos.X + delta * amountOfRatio, pos.Y, pos.Z);
 
-						transformedMesh.Vertices[i].Position = Vector3.Transform(newPos, invItemMatrix);
+						transformedMesh.Vertices[i] = newPos.Transform(invItemMatrix);
 					}
-
-					// the vertices need to be resorted as they have moved relative to each other
-					transformedMesh.Vertices.Sort();
 
 					transformedMesh.MarkAsChanged();
 					transformedMesh.CalculateNormals();

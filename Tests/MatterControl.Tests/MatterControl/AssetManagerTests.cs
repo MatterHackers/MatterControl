@@ -126,7 +126,7 @@ namespace MatterControl.Tests.MatterControl
 
 			// Validate
 			Assert.AreEqual(1, Directory.GetFiles(Object3D.AssetsPath).Length, "Unexpected asset file count");
-			Assert.AreEqual("0C7160BCF12B11C8717BA6ADC9A7FFFF219DC9AE.stl", object3D.MeshPath, "Unexpected MeshPath");
+			Assert.AreEqual("CF58E6637ED36311082F66EC5FA3A279E0513FE6.stl", object3D.MeshPath, "Unexpected MeshPath");
 			Assert.AreEqual(0, assetManager.PublishCount, "No files should have been published");
 		}
 

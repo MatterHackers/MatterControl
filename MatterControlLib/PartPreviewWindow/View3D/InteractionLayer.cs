@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var bvhIterator = new BvhIterator(Scene?.TraceData(), decentFilter: (x) =>
 			{
 				var center = x.Bvh.GetCenter();
-				var worldCenter = Vector3.Transform(center, x.TransformToWorld);
+				var worldCenter = Vector3Ex.Transform(center, x.TransformToWorld);
 				if (worldCenter.Z > 0)
 				{
 					return true;
@@ -119,16 +119,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				for (int i = 0; i < 4; i++)
 				{
-					Vector3 bottomStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), x.TransformToWorld);
+					Vector3 bottomStartPosition = Vector3Ex.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), x.TransformToWorld);
 					var bottomStartScreenPos = World.GetScreenPosition(bottomStartPosition);
 
-					Vector3 bottomEndPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner((i + 1) % 4), x.TransformToWorld);
+					Vector3 bottomEndPosition = Vector3Ex.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner((i + 1) % 4), x.TransformToWorld);
 					var bottomEndScreenPos = World.GetScreenPosition(bottomEndPosition);
 
-					Vector3 topStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), x.TransformToWorld);
+					Vector3 topStartPosition = Vector3Ex.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), x.TransformToWorld);
 					var topStartScreenPos = World.GetScreenPosition(topStartPosition);
 
-					Vector3 topEndPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner((i + 1) % 4), x.TransformToWorld);
+					Vector3 topEndPosition = Vector3Ex.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner((i + 1) % 4), x.TransformToWorld);
 					var topEndScreenPos = World.GetScreenPosition(topEndPosition);
 
 					e.Graphics2D.Line(bottomStartScreenPos, bottomEndScreenPos, Color.Black);
@@ -136,13 +136,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					e.Graphics2D.Line(topStartScreenPos, bottomStartScreenPos, Color.Black);
 				}
 
-				TriangleShape tri = x.Bvh as TriangleShape;
+				ITriangle tri = x.Bvh as ITriangle;
 				if (tri != null)
 				{
 					for (int i = 0; i < 3; i++)
 					{
 						var vertexPos = tri.GetVertex(i);
-						var screenCenter = Vector3.Transform(vertexPos, x.TransformToWorld);
+						var screenCenter = Vector3Ex.Transform(vertexPos, x.TransformToWorld);
 						var screenPos = World.GetScreenPosition(screenCenter);
 
 						e.Graphics2D.Circle(screenPos, 3, Color.Red);
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				else
 				{
 					var center = x.Bvh.GetCenter();
-					var worldCenter = Vector3.Transform(center, x.TransformToWorld);
+					var worldCenter = Vector3Ex.Transform(center, x.TransformToWorld);
 					var screenPos2 = World.GetScreenPosition(worldCenter);
 					e.Graphics2D.Circle(screenPos2, 3, Color.Yellow);
 					e.Graphics2D.DrawString($"{x.Depth},", screenPos2.X + 12 * x.Depth, screenPos2.Y);

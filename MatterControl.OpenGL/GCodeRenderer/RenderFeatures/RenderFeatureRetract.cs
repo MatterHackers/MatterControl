@@ -100,7 +100,7 @@ namespace MatterHackers.GCodeVisualizer
 			if ((renderInfo.CurrentRenderType & RenderType.Retractions) == RenderType.Retractions)
 			{
 				double radius = Radius(renderInfo.LayerScale);
-				Vector2 position = new Vector2(this.position.x, this.position.y);
+				Vector2 position = new Vector2(this.position.X, this.position.Y);
 
 				renderInfo.Transform.transform(ref position);
 

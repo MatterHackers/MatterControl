@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				if (!string.IsNullOrWhiteSpace(this.AssetPath)
 					// TODO: Remove this hack needed to work around Persistable = false
-					&& (base.Mesh == null || base.Mesh.FaceTexture.Count <= 0))
+					&& (base.Mesh == null || base.Mesh.FaceTextures.Count <= 0))
 				{
 					using (this.RebuildLock())
 					{
@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					double height = ScaleMmPerPixels * imageBuffer.Height;
 
 					Mesh textureMesh = PlatonicSolids.CreateCube(width, height, 0.2);
-					MeshHelper.PlaceTextureOnFace(textureMesh.Faces[0], imageBuffer);
+					textureMesh.PlaceTextureOnFace(0, imageBuffer);
 
 					return textureMesh;
 				}

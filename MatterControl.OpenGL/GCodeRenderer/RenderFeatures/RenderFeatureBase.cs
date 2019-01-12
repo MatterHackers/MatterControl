@@ -71,8 +71,8 @@ namespace MatterHackers.GCodeVisualizer
 			for (int i = 0; i < steps; i++)
 			{
 				// create tube ends verts
-				Vector3 tubeNormal = Vector3.Transform(startSweepDirection, Matrix4X4.CreateRotation(direction, MathHelper.Tau / (steps * 2) + MathHelper.Tau / (steps) * i));
-				Vector3 offset = Vector3.Transform(startSweepDirection * radius, Matrix4X4.CreateRotation(direction, MathHelper.Tau / (steps * 2) + MathHelper.Tau / (steps) * i));
+				Vector3 tubeNormal = Vector3Ex.Transform(startSweepDirection, Matrix4X4.CreateRotation(direction, MathHelper.Tau / (steps * 2) + MathHelper.Tau / (steps) * i));
+				Vector3 offset = Vector3Ex.Transform(startSweepDirection * radius, Matrix4X4.CreateRotation(direction, MathHelper.Tau / (steps * 2) + MathHelper.Tau / (steps) * i));
 				offset *= scale;
 
 				Vector3 tubeStart = startPos + offset;
@@ -84,9 +84,9 @@ namespace MatterHackers.GCodeVisualizer
 				colorVertexData.Add(new ColorVertexData(tubeEnd, tubeNormal, color));
 
 				// create cap verts
-				Vector3 rotateAngle = Vector3.Cross(startSweepDirection, direction);
-				Vector3 capStartNormal = Vector3.Transform(startSweepDirection, Matrix4X4.CreateRotation(rotateAngle, MathHelper.Tau / 8));
-				capStartNormal = Vector3.Transform(capStartNormal, Matrix4X4.CreateRotation(direction, MathHelper.Tau / (steps * 2) + MathHelper.Tau / (steps) * i));
+				Vector3 rotateAngle = Vector3Ex.Cross(startSweepDirection, direction);
+				Vector3 capStartNormal = Vector3Ex.Transform(startSweepDirection, Matrix4X4.CreateRotation(rotateAngle, MathHelper.Tau / 8));
+				capStartNormal = Vector3Ex.Transform(capStartNormal, Matrix4X4.CreateRotation(direction, MathHelper.Tau / (steps * 2) + MathHelper.Tau / (steps) * i));
 				capStartNormal = (capStartNormal * scale).GetNormal();
 				Vector3 capStartOffset = capStartNormal * radius;
 				capStartOffset *= scale;
@@ -94,8 +94,8 @@ namespace MatterHackers.GCodeVisualizer
 				capStartIndices[i] = colorVertexData.Count;
 				colorVertexData.Add(new ColorVertexData(capStart, capStartNormal, color));
 
-				Vector3 capEndNormal = Vector3.Transform(startSweepDirection, Matrix4X4.CreateRotation(-rotateAngle, MathHelper.Tau / 8));
-				capEndNormal = Vector3.Transform(capEndNormal, Matrix4X4.CreateRotation(direction, MathHelper.Tau / (steps * 2) + MathHelper.Tau / (steps) * i));
+				Vector3 capEndNormal = Vector3Ex.Transform(startSweepDirection, Matrix4X4.CreateRotation(-rotateAngle, MathHelper.Tau / 8));
+				capEndNormal = Vector3Ex.Transform(capEndNormal, Matrix4X4.CreateRotation(direction, MathHelper.Tau / (steps * 2) + MathHelper.Tau / (steps) * i));
 				capEndNormal = (capEndNormal * scale).GetNormal();
 				Vector3 capEndOffset = capEndNormal * radius;
 				capEndOffset *= scale;
@@ -163,8 +163,8 @@ namespace MatterHackers.GCodeVisualizer
 			for (int i = 0; i < steps; i++)
 			{
 				// create tube ends verts
-				Vector3 tubeNormal = Vector3.Transform(startSweepDirection, Matrix4X4.CreateRotation(direction, MathHelper.Tau / (steps * 2) + MathHelper.Tau / (steps) * i));
-				Vector3 offset = Vector3.Transform(startSweepDirection * radius, Matrix4X4.CreateRotation(direction, MathHelper.Tau / (steps * 2) + MathHelper.Tau / (steps) * i));
+				Vector3 tubeNormal = Vector3Ex.Transform(startSweepDirection, Matrix4X4.CreateRotation(direction, MathHelper.Tau / (steps * 2) + MathHelper.Tau / (steps) * i));
+				Vector3 offset = Vector3Ex.Transform(startSweepDirection * radius, Matrix4X4.CreateRotation(direction, MathHelper.Tau / (steps * 2) + MathHelper.Tau / (steps) * i));
 				Vector3 tubeStart = startPos + offset;
 				tubeStartIndices[i] = colorVertexData.Count;
 				colorVertexData.Add(new ColorVertexData(tubeStart, tubeNormal, color));

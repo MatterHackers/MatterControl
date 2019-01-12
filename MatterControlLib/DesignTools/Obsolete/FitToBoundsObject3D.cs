@@ -171,7 +171,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				if (aabb.ZSize > 0)
 				{
 					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
 				}
 			}
 
@@ -254,8 +254,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					var minXyz = center - new Vector3(Width / 2, Depth / 2, Height / 2);
 					var maxXyz = center + new Vector3(Width / 2, Depth / 2, Height / 2);
 					var bounds = new AxisAlignedBoundingBox(minXyz, maxXyz);
-					//var leftW = Vector3.Transform(, worldMatrix);
-					var right = Vector3.Transform(center + new Vector3(Width / 2, 0, 0), worldMatrix);
+					//var leftW = Vector3Ex.Transform(, worldMatrix);
+					var right = Vector3Ex.Transform(center + new Vector3(Width / 2, 0, 0), worldMatrix);
 					// layer.World.Render3DLine(left, right, Agg.Color.Red);
 					layer.World.RenderAabb(bounds, worldMatrix, Agg.Color.Red, 1, 1);
 				}
