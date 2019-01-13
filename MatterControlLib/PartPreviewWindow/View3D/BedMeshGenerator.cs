@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl
 
 					printerBed = PlatonicSolids.CreateCube(displayVolumeToBuild.X, displayVolumeToBuild.Y, 1.8);
 					{
-						printerBed.PlaceTextureOnFace(0, bedplateImage);
+						printerBed.PlaceTextureOnFaces(0, bedplateImage);
 					}
 					break;
 
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl
 						}
 
 						printerBed = VertexSourceToMesh.Extrude(new Ellipse(new Vector2(), displayVolumeToBuild.X / 2, displayVolumeToBuild.Y / 2), 1.8);
-						printerBed.PlaceTextureOnFace(0, bedplateImage);
+						printerBed.PlaceTextureOnFaces(0, bedplateImage);
 					}
 					break;
 
