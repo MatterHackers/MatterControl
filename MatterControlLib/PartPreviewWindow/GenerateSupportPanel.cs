@@ -161,40 +161,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var supportCandidates = visibleMeshes.Where(i => i.OutputType != PrintOutputTypes.Support);
 
 				// find all the faces that are candidates for support
-				var upVerts = new List<Vector3>();
+				var upVerts = new List<Vector3Float>();
 				var upFaces = new FaceList();
-				var downVerts = new List<Vector3>();
+				var downVerts = new List<Vector3Float>();
 				var downFaces = new FaceList();
 				foreach (var item in supportCandidates)
 				{
 					var matrix = item.WorldMatrix(scene);
-					foreach (var face in item.Mesh.Faces)
+					for (int faceIndex = 0; faceIndex < item.Mesh.Faces.Count; faceIndex++)
 					{
-						throw new NotImplementedException();
-						//var face0Normal = Vector3Ex.TransformVector(face.Normal, matrix).GetNormal();
-						//var angle = MathHelper.RadiansToDegrees(Math.Acos(Vector3Ex.Dot(-Vector3.UnitZ, face0Normal)));
+						var face0Normal = item.Mesh.FaceNormals[faceIndex].TransformVector(matrix).GetNormal();
+						var angle = MathHelper.RadiansToDegrees(Math.Acos(face0Normal.Dot(-Vector3Float.UnitZ)));
 
-						//if (angle < MaxOverHangAngle)
-						//{
-						//	foreach (var triangle in face.AsTriangles())
-						//	{
-						//		downFaces.Add(new int[] { downVerts.Count, downVerts.Count + 1, downVerts.Count + 2 });
-						//		downVerts.Add(Vector3Ex.Transform(triangle.p0, matrix));
-						//		downVerts.Add(Vector3Ex.Transform(triangle.p1, matrix));
-						//		downVerts.Add(Vector3Ex.Transform(triangle.p2, matrix));
-						//	}
-						//}
+						if (angle < MaxOverHangAngle)
+						{
+							var face = item.Mesh.Faces[faceIndex];
+							var verts = new int[] { face.v0, face.v1, face.v2 };
+							var fc = downVerts.Count;
+							downFaces.Add((fc, fc+1, fc+2));
+							downVerts.Add(item.Mesh.Vertices[face.v0].Transform(matrix));
+							downVerts.Add(item.Mesh.Vertices[face.v1].Transform(matrix));
+							downVerts.Add(item.Mesh.Vertices[face.v2].Transform(matrix));
+						}
 
-						//if (angle > 0)
-						//{
-						//	foreach (var triangle in face.AsTriangles())
-						//	{
-						//		upFaces.Add(new int[] { upVerts.Count, upVerts.Count + 1, upVerts.Count + 2 });
-						//		upVerts.Add(Vector3Ex.Transform(triangle.p0, matrix));
-						//		upVerts.Add(Vector3Ex.Transform(triangle.p1, matrix));
-						//		upVerts.Add(Vector3Ex.Transform(triangle.p2, matrix));
-						//	}
-						//}
+						if (angle > 0)
+						{
+							var face = item.Mesh.Faces[faceIndex];
+							var verts = new int[] { face.v0, face.v1, face.v2 };
+							var fc = upFaces.Count;
+							upFaces.Add((fc, fc + 1, fc + 2));
+							upVerts.Add(item.Mesh.Vertices[face.v0].Transform(matrix));
+							upVerts.Add(item.Mesh.Vertices[face.v1].Transform(matrix));
+							upVerts.Add(item.Mesh.Vertices[face.v2].Transform(matrix));
+						}
 					}
 				}
 
@@ -281,50 +280,63 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static bool RequiresSupport(InteractiveScene scene)
 		{
-			throw new NotImplementedException();
-			//bool supportInScene = scene.VisibleMeshes().Any(i => i.WorldOutputType() == PrintOutputTypes.Support);
-			//if (!supportInScene)
-			//{
-			//	// there is no support in the scene check if there are faces that require support
-			//	var supportCandidates = scene.VisibleMeshes().Where(i => i.OutputType != PrintOutputTypes.Support);
+			bool supportInScene = scene.VisibleMeshes().Any(i => i.WorldOutputType() == PrintOutputTypes.Support);
+			if (!supportInScene)
+			{
+				// there is no support in the scene check if there are faces that require support
+				var supportCandidates = scene.VisibleMeshes().Where(i => i.OutputType != PrintOutputTypes.Support);
 
-			//	// find all the faces that are candidates for support
-			//	foreach (var item in supportCandidates)
-			//	{
-			//		var matrix = item.WorldMatrix(scene);
-			//		foreach (var face in item.Mesh.Faces)
-			//		{
-			//			bool aboveBed = false;
-			//			foreach(var vertex in face.Vertices())
-			//			{
-			//				if(Vector3Ex.Transform(vertex.Position, matrix).Z > .01)
-			//				{
-			//					aboveBed = true;
-			//					break;
-			//				}
-			//			}
-			//			if (aboveBed)
-			//			{
-			//				var face0Normal = Vector3Ex.TransformVector(face.Normal, matrix).GetNormal();
-			//				var angle = MathHelper.RadiansToDegrees(Math.Acos(Vector3Ex.Dot(-Vector3.UnitZ, face0Normal)));
+				// find all the faces that are candidates for support
+				foreach (var item in supportCandidates)
+				{
+					var matrix = item.WorldMatrix(scene);
+					for (int faceIndex = 0; faceIndex < item.Mesh.Faces.Count; faceIndex++)
+					{
+						bool aboveBed = false;
+						var face = item.Mesh.Faces[faceIndex];
+						var verts = new int[] { face.v0, face.v1, face.v2 };
+						foreach(var vertex in verts)
+						{
+							if(item.Mesh.Vertices[vertex].Transform(matrix).Z > .01)
+							{
+								aboveBed = true;
+								break;
+							}
+						}
+						if (aboveBed)
+						{
+							var face0Normal = item.Mesh.FaceNormals[faceIndex].TransformVector(matrix).GetNormal();
+							var angle = MathHelper.RadiansToDegrees(Math.Acos(face0Normal.Dot(-Vector3Float.UnitZ)));
 
-			//				if (angle < MaxOverHangAngle)
-			//				{
-			//					// TODO: consider how much area all supported polygons represent
-			//					return true;
-			//				}
-			//			}
-			//		}
-			//	}
-			//}
+							if (angle < MaxOverHangAngle)
+							{
+								// TODO: consider how much area all supported polygons represent
+								return true;
+							}
+						}
+					}
+				}
+			}
 
-			//return false;
+			return false;
 		}
 	}
 
 	public static class FaceListExtensions
 	{
 		public static IPrimitive CreateTraceData(this FaceList faceList, List<Vector3> vertexList, int maxRecursion = int.MaxValue)
+		{
+			var allPolys = new List<IPrimitive>();
+
+			foreach (var face in faceList)
+			{
+				allPolys.Add(new TriangleShape(vertexList[face.v0], vertexList[face.v1], vertexList[face.v2], null));
+			}
+
+			return BoundingVolumeHierarchy.CreateNewHierachy(allPolys, maxRecursion);
+		}
+
+		public static IPrimitive CreateTraceData(this FaceList faceList, List<Vector3Float> vertexList, int maxRecursion = int.MaxValue)
 		{
 			var allPolys = new List<IPrimitive>();
 

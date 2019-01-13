@@ -87,8 +87,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					// move it to us then mirror then move it back
 					item.meshCopy.Mesh.Transform(meshCopyToThis * mirrorMatrix * meshCopyToThis.Inverted);
 
-					throw new NotImplementedException();
-					//item.meshCopy.Mesh.ReverseFaceEdges();
+					item.meshCopy.Mesh.ReverseFaces();
 					item.meshCopy.Mesh.CalculateNormals();
 					item.meshCopy.Mesh.MarkAsChanged();
 				}
