@@ -173,11 +173,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			UiThread.RunOnIdle(() =>
 			{
 				TextureFace(0, "Top");
-				TextureFace(1, "Left", Matrix4X4.CreateRotationZ(MathHelper.Tau / 4));
-				TextureFace(2, "Right", Matrix4X4.CreateRotationZ(-MathHelper.Tau / 4));
-				TextureFace(3, "Bottom", Matrix4X4.CreateRotationZ(MathHelper.Tau / 2));
-				TextureFace(4, "Back", Matrix4X4.CreateRotationZ(MathHelper.Tau / 2));
-				TextureFace(5, "Front");
+				TextureFace(2, "Left", Matrix4X4.CreateRotationZ(MathHelper.Tau / 4));
+				TextureFace(4, "Right", Matrix4X4.CreateRotationZ(-MathHelper.Tau / 4));
+				TextureFace(6, "Bottom", Matrix4X4.CreateRotationZ(MathHelper.Tau / 2));
+				TextureFace(8, "Back", Matrix4X4.CreateRotationZ(MathHelper.Tau / 2));
+				TextureFace(10, "Front");
 				cube.MarkAsChanged();
 
 				connections.Add(new ConnectedFaces(2, 1, 1, 5, 2, 4));
@@ -593,7 +593,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			frontGraphics.Render(new Stroke(new RoundedRect(.5, .5, 254.5, 254.4, 0), 6), Color.DarkGray);
 			var activeTexture = new ImageBuffer(sourceTexture);
 			ImageGlPlugin.GetImageGlPlugin(activeTexture, true);
-			cube.PlaceTextureOnFace(face, activeTexture, cube.GetMaxFaceProjection(face, activeTexture, initialRotation));
+			var faces = cube.GetCoplanerFaces(face);
+			cube.PlaceTextureOnFaces(faces, activeTexture, cube.GetMaxPlaneProjection(faces, activeTexture, initialRotation));
 
 			textureDatas.Add(new TextureData()
 			{

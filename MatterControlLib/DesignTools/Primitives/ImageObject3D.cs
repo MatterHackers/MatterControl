@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					double height = ScaleMmPerPixels * imageBuffer.Height;
 
 					Mesh textureMesh = PlatonicSolids.CreateCube(width, height, 0.2);
-					textureMesh.PlaceTextureOnFace(0, imageBuffer);
+					textureMesh.PlaceTextureOnFaces(0, imageBuffer);
 
 					return textureMesh;
 				}
