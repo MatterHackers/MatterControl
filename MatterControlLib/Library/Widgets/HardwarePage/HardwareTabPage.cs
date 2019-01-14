@@ -129,12 +129,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						var menu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
 						var openMenuItem = menu.CreateMenuItem("Open".Localize());
-						openMenuItem.Click += (s2, e2) =>
+						openMenuItem.Click += async (s2, e2) =>
 						{
 							if (treeView?.SelectedNode.Tag is PrinterInfo printerInfo)
 							{
 								// Open printer
-								ApplicationController.Instance.OpenEmptyPrinter(printerInfo.ID).ConfigureAwait(false);
+								await ApplicationController.Instance.OpenEmptyPrinter(printerInfo.ID);
 							}
 						};
 

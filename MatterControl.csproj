@@ -65,7 +65,6 @@
     <None Include="StaticData\OEMSettings\OEMUrls.json" />
     <None Include="StaticData\OEMSettings\Printers.json" />
     <None Include="StaticData\OEMSettings\Settings.json" />
-    <None Include="StaticData\SliceSettings\Properties.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Community.CsharpSqlite\Community.CsharpSqlite.csproj">

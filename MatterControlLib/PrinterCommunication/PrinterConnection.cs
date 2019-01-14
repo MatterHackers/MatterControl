@@ -527,7 +527,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public string ComPort => Printer.Settings?.Helpers.ComPort();
 
-		public string DriverType => (this.ComPort == "Emulator") ? "Emulator" : Printer.Settings?.GetValue("driver_type");
+		public string DriverType => (this.ComPort == "Emulator") ? "Emulator" : Printer.Settings?.GetValue(SettingsKey.driver_type);
 
 		public bool AtxPowerEnabled
 		{

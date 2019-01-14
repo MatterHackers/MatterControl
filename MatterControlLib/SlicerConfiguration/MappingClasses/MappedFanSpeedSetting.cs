@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 		{
 			get
 			{
-				if (printer.Settings.GetValue<bool>("enable_fan"))
+				if (printer.Settings.GetValue<bool>(SettingsKey.enable_fan))
 				{
 					return base.Value;
 				}

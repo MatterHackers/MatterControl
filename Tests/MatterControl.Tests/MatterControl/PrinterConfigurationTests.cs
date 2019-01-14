@@ -304,7 +304,7 @@ namespace MatterControl.Tests.MatterControl
 				return;
 			}
 
-			Assert.False(settingValue.Contains("first_layer_temperature"), "start_gcode should not contain first_layer_temperature: " + sourceFile);
+			Assert.False(settingValue.Contains(SettingsKey.first_layer_temperature), "start_gcode should not contain first_layer_temperature: " + sourceFile);
 		}
 
 		public void testFirstLayerBedTemperatureNotInStartGcode(PrinterSettingsLayer layer, string sourceFile)
@@ -315,7 +315,7 @@ namespace MatterControl.Tests.MatterControl
 				return;
 			}
 
-			Assert.False(settingValue.Contains("first_layer_bed_temperature"), "start_gcode should not contain first_layer_bed_temperature: " + sourceFile);
+			Assert.False(settingValue.Contains(SettingsKey.first_layer_bed_temperature), "start_gcode should not contain first_layer_bed_temperature: " + sourceFile);
 		}
 	}
 }

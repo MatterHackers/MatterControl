@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 		{
 			get
 			{
-				if (printer.Settings.GetValue<bool>("create_brim"))
+				if (printer.Settings.GetValue<bool>(SettingsKey.create_brim))
 				{
 					return base.Value;
 				}

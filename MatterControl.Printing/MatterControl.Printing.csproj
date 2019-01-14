@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj">
     </ProjectReference>
+    <ProjectReference Include="..\Submodules\agg-sharp\Localizations\Localizations.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\VectorMath\VectorMath.csproj">
     </ProjectReference>
   </ItemGroup>
