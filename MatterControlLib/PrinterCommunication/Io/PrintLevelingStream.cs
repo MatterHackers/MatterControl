@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class PrintLevelingStream : GCodeStreamProxy
 	{
-		private PrinterMove lastDestination = new PrinterMove();
+		private PrinterMove _lastDestination = PrinterMove.Unknown;
 		private bool activePrinting;
 		private LevelingFunctions currentLevelingFunctions = null;
 		private double currentProbeOffset;
@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public bool AllowLeveling { get; set; }
 
-		public PrinterMove LastDestination => lastDestination;
+		public PrinterMove LastDestination => _lastDestination;
 
 		bool LevelingActive
 		{
@@ -90,9 +90,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				if (LineIsMovement(lineToSend))
 				{
-					PrinterMove currentDestination = GetPosition(lineToSend, lastDestination);
+					PrinterMove currentDestination = GetPosition(lineToSend, LastDestination);
 					var leveledLine = GetLeveledPosition(lineToSend, currentDestination);
-					lastDestination = currentDestination;
+					_lastDestination = currentDestination;
 
 					return leveledLine;
 				}
@@ -119,11 +119,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				PrinterMove withoutLevelingOffset = position - deltaToLeveledPosition;
 
-				lastDestination = withoutLevelingOffset;
-				lastDestination.extrusion = position.extrusion;
-				lastDestination.feedRate = position.feedRate;
+				_lastDestination = withoutLevelingOffset;
+				_lastDestination.extrusion = position.extrusion;
+				_lastDestination.feedRate = position.feedRate;
 
-				internalStream.SetPrinterPosition(lastDestination);
+				internalStream.SetPrinterPosition(_lastDestination);
 			}
 			else
 			{
