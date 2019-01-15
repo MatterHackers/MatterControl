@@ -103,25 +103,23 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				// if the items we are replacing ar already in a list
 				if (item.Parent != null)
 				{
-					var replaceItems = new List<IObject3D> { item };
-					IObject3D replaceItem = item;
-					if (undoBuffer != null)
-					{
-						replaceItem = item.Clone();
-					}
-
 					var firstChild = new Object3D();
 					this.Children.Add(firstChild);
-					firstChild.Children.Add(replaceItem);
-
-					var replace = new ReplaceCommand(replaceItems, new List<IObject3D> { this });
 					if (undoBuffer != null)
 					{
+						IObject3D replaceItem = item.Clone();
+						firstChild.Children.Add(replaceItem);
+						var replace = new ReplaceCommand(new List<IObject3D> { item }, new List<IObject3D> { this });
 						undoBuffer.AddAndDo(replace);
 					}
 					else
 					{
-						replace.Do();
+						item.Parent.Children.Modify(list =>
+						{
+							list.Remove(item);
+							list.Add(this);
+						});
+						firstChild.Children.Add(item);
 					}
 				}
 				else // just add them
