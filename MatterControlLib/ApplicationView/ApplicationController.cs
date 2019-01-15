@@ -268,8 +268,14 @@ namespace MatterHackers.MatterControl
 
 		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 
-		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu)
+		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu, IEnumerable<NodeOperation> nodeOperations = null)
 		{
+			// If parameter was not supplied, fall back to unfiltered list of operations
+			if (nodeOperations == null)
+			{
+				nodeOperations = this.Graph.Operations.Values;
+			}
+
 			var popupMenu = new PopupMenu(this.MenuTheme);
 
 			var menuItem = popupMenu.CreateMenuItem("Rename".Localize());
@@ -291,10 +297,6 @@ namespace MatterHackers.MatterControl
 
 			popupMenu.CreateSeparator();
 
-#if DEBUG
-			GC.Collect();
-#endif
-
 			var selectedItemType = selectedItem.GetType();
 
 			var menuTheme = this.MenuTheme;
@@ -305,7 +307,7 @@ namespace MatterHackers.MatterControl
 				{
 					popupMenu.CreateSubMenu("Modify".Localize(), this.MenuTheme, (modifyMenu) =>
 					{
-						foreach (var nodeOperation in this.Graph.Operations)
+						foreach (var nodeOperation in nodeOperations)
 						{
 							foreach (var type in nodeOperation.MappedTypes)
 							{
@@ -325,7 +327,7 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
-					foreach (var nodeOperation in this.Graph.Operations)
+					foreach (var nodeOperation in nodeOperations)
 					{
 						foreach (var type in nodeOperation.MappedTypes)
 						{
@@ -1101,237 +1103,341 @@ namespace MatterHackers.MatterControl
 			this.Library.ContentProviders.Add(new[] { "png", "gif", "jpg", "jpeg" }, new ImageContentProvider());
 
 			this.Graph.RegisterOperation(
-				typeof(ImageObject3D),
-				typeof(ImageToPathObject3D),
-				"Image to Path".Localize(),
-				(sceneItem, scene) =>
+				new NodeOperation()
 				{
-					if (sceneItem is IObject3D imageObject)
+					OperationID = "ImageToPath".Localize(),
+					Title = "Image to Path".Localize(),
+					MappedTypes = new List<Type> { typeof(ImageObject3D) },
+					ResultType = typeof(ImageToPathObject3D),
+					Operation = (sceneItem, scene) =>
 					{
-						var path = new ImageToPathObject3D();
-						sceneItem.WrapWith(path, scene);
-						path.Invalidate(new InvalidateArgs(path, InvalidateType.Properties, null));
-					}
+						if (sceneItem is IObject3D imageObject)
+						{
+							var path = new ImageToPathObject3D();
+							sceneItem.WrapWith(path, scene);
+							path.Invalidate(new InvalidateArgs(path, InvalidateType.Properties, null));
+						}
 
-					return Task.CompletedTask;
-				},
-				iconCollector: (theme) => AggContext.StaticData.LoadIcon("noun_479927.png", theme.InvertIcons));
-
-			this.Graph.RegisterOperation(
-				typeof(IObject3D),
-				typeof(TranslateObject3D),
-				"Translate".Localize(),
-				(sceneItem, scene) =>
-				{
-					var selectedItem = scene.SelectedItem;
-					scene.SelectedItem = null;
-					var scale = new TranslateObject3D();
-					scale.WrapItem(selectedItem, scene.UndoBuffer);
-					scene.SelectedItem = scale;
-
-					return Task.CompletedTask;
-				},
-				iconCollector: (theme) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16, theme.InvertIcons));
+						return Task.CompletedTask;
+					},
+					IconCollector = (theme) => AggContext.StaticData.LoadIcon("noun_479927.png", theme.InvertIcons)
+				});
 
 			this.Graph.RegisterOperation(
-				typeof(IObject3D),
-				typeof(RotateObject3D_2),
-				"Rotate".Localize(),
-				(sceneItem, scene) =>
+				new NodeOperation()
 				{
-					var selectedItem = scene.SelectedItem;
-					scene.SelectedItem = null;
-					var scale = new RotateObject3D_2();
-					scale.WrapItem(selectedItem, scene.UndoBuffer);
-					scene.SelectedItem = scale;
-
-					return Task.CompletedTask;
-				},
-				iconCollector: (theme) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16, theme.InvertIcons));
-
-
-			this.Graph.RegisterOperation(
-				typeof(IObject3D),
-				typeof(ScaleObject3D),
-				"Scale".Localize(),
-				(sceneItem, scene) =>
-				{
-					var selectedItem = scene.SelectedItem;
-					scene.SelectedItem = null;
-					var scale = new ScaleObject3D();
-					scale.WrapItem(selectedItem, scene.UndoBuffer);
-					scene.SelectedItem = scale;
-
-					return Task.CompletedTask;
-				},
-				iconCollector: (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons));
-
-			this.Graph.RegisterOperation(
-				typeof(IObject3D),
-				typeof(MirrorObject3D),
-				"Mirror".Localize(),
-				(sceneItem, scene) =>
-				{
-					var mirror = new MirrorObject3D();
-					mirror.WrapSelectedItemAndSelect(scene);
-
-					return Task.CompletedTask;
-				},
-				iconCollector: (theme) => AggContext.StaticData.LoadIcon("mirror_32x32.png", 16, 16, theme.InvertIcons));
-
-			this.Graph.RegisterOperation(
-				typeof(IObject3D),
-				typeof(ComponentObject3D),
-				"Make Component".Localize(),
-				(sceneItem, scene) =>
-				{
-					IEnumerable<IObject3D> items = new[] { sceneItem };
-
-					// If SelectionGroup, operate on Children instead
-					if (sceneItem is SelectionGroupObject3D)
+					OperationID = "Translate".Localize(),
+					Title = "Translate".Localize(),
+					MappedTypes = new List<Type> { typeof(IObject3D) },
+					ResultType = typeof(TranslateObject3D),
+					Operation = (sceneItem, scene) =>
 					{
-						items = sceneItem.Children;
-					}
-
-					// Dump selection forcing collapse of selection group
-					scene.SelectedItem = null;
-
-					var component = new ComponentObject3D
-					{
-						Name = "New Component",
-						Finalized = false
-					};
-
-					// Copy an selected item into the component as a clone
-					component.Children.Modify(children =>
-					{
-						children.AddRange(items.Select(o => o.Clone()));
-					});
-
-					component.MakeNameNonColliding();
-
-					scene.UndoBuffer.AddAndDo(new ReplaceCommand(items, new [] { component }));
-					scene.SelectedItem = component;
-
-					return Task.CompletedTask;
-				},
-				isVisible: (sceneItem) =>
-				{
-					return sceneItem.Parent != null
-						&& sceneItem.Parent.Parent == null
-						&&  sceneItem.DescendantsAndSelf().All(d => !(d is ComponentObject3D));
-				},
-				iconCollector: (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons));
-
-			this.Graph.RegisterOperation(
-				typeof(IObject3D),
-				typeof(ComponentObject3D),
-				"Edit Component".Localize(),
-				(sceneItem, scene) =>
-				{
-					if (sceneItem is ComponentObject3D componentObject)
-					{
-						// Enable editing mode
-						componentObject.Finalized = false;
-
-						// Force editor rebuild
+						var selectedItem = scene.SelectedItem;
 						scene.SelectedItem = null;
-						scene.SelectedItem = componentObject;
-					}
+						var scale = new TranslateObject3D();
+						scale.WrapItem(selectedItem, scene.UndoBuffer);
+						scene.SelectedItem = scale;
 
-					return Task.CompletedTask;
-				},
-				isVisible: (sceneItem) =>
-				{
-					return sceneItem.Parent != null
-						&& sceneItem.Parent.Parent == null
-						&& sceneItem is ComponentObject3D componentObject
-						&& componentObject.Finalized;
-				},
-				iconCollector: (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons));
+						return Task.CompletedTask;
+					},
+					IconCollector = (theme) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16, theme.InvertIcons)
+				});
 
 			this.Graph.RegisterOperation(
-				typeof(IPathObject),
-				typeof(LinearExtrudeObject3D),
-				"Linear Extrude".Localize(),
-				(sceneItem, scene) =>
+				new NodeOperation()
 				{
-					if (sceneItem is IPathObject imageObject)
+					OperationID = "Rotate".Localize(),
+					Title = "Rotate".Localize(),
+					MappedTypes = new List<Type> { typeof(IObject3D) },
+					ResultType = typeof(RotateObject3D_2),
+					Operation = (sceneItem, scene) =>
 					{
+						var selectedItem = scene.SelectedItem;
+						scene.SelectedItem = null;
+						var scale = new RotateObject3D_2();
+						scale.WrapItem(selectedItem, scene.UndoBuffer);
+						scene.SelectedItem = scale;
+
+						return Task.CompletedTask;
+					},
+					IconCollector = (theme) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16, theme.InvertIcons)
+				});
+
+			this.Graph.RegisterOperation(
+				new NodeOperation()
+				{
+					OperationID = "Scale".Localize(),
+					Title = "Scale".Localize(),
+					MappedTypes = new List<Type> { typeof(IObject3D) },
+					ResultType = typeof(ScaleObject3D),
+					Operation = (sceneItem, scene) =>
+					{
+						var selectedItem = scene.SelectedItem;
+						scene.SelectedItem = null;
+						var scale = new ScaleObject3D();
+						scale.WrapItem(selectedItem, scene.UndoBuffer);
+						scene.SelectedItem = scale;
+
+						return Task.CompletedTask;
+					},
+					IconCollector = (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons)
+				});
+
+			this.Graph.RegisterOperation(
+				new NodeOperation()
+				{
+					OperationID = "ImageConverter".Localize(),
+					Title = "Image Converter".Localize(),
+					MappedTypes = new List<Type> { typeof(ImageObject3D) },
+					ResultType = typeof(ComponentObject3D),
+					Operation = (sceneItem, scene) =>
+					{
+						var imageObject = scene.SelectedItem;
+						scene.SelectedItem = null;
+
+						var path = new ImageToPathObject3D();
+						path.Children.Add(imageObject);
+						path.Invalidate(new InvalidateArgs(path, InvalidateType.Properties, null));
+
+						var smooth = new SmoothPathObject3D();
+						smooth.Children.Add(path);
+						smooth.Invalidate(new InvalidateArgs(smooth, InvalidateType.Properties, null));
+
 						var extrude = new LinearExtrudeObject3D();
-						sceneItem.WrapWith(extrude, scene);
+						extrude.Children.Add(smooth);
 						extrude.Invalidate(new InvalidateArgs(extrude, InvalidateType.Properties, null));
-					}
 
-					return Task.CompletedTask;
-				},
-				iconCollector: (theme) => AggContext.StaticData.LoadIcon("noun_84751.png", theme.InvertIcons));
+						var baseObject = new BaseObject3D()
+						{
+							BaseType = BaseTypes.None
+						};
+						baseObject.Children.Add(extrude);
+						baseObject.Invalidate(new InvalidateArgs(baseObject, InvalidateType.Properties, null));
 
-			this.Graph.RegisterOperation(
-				typeof(IPathObject),
-				typeof(SmoothPathObject3D),
-				"Smooth Path".Localize(),
-				(sceneItem, scene) =>
-				{
-					if (sceneItem is IPathObject imageObject)
-					{
-						var smoothPath = new SmoothPathObject3D();
-						sceneItem.WrapWith(smoothPath, scene);
-						smoothPath.Invalidate(new InvalidateArgs(smoothPath, InvalidateType.Properties, null));
-					}
+						var component = new ComponentObject3D(new[] { baseObject })
+						{
+							Name = "Image Converter".Localize(),
+							ComponentID = "4D9BD8DB-C544-4294-9C08-4195A409217A",
+							SurfacedEditors = new List<string>
+							{
+								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D>.Children<ImageObject3D>",
+								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Height",
+								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.SmoothDistance",
+								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D>",
+								"$.Children<BaseObject3D>",
+							}
+						};
 
-					return Task.CompletedTask;
-				},
-				iconCollector: (theme) => AggContext.StaticData.LoadIcon("noun_simplify_340976_000000.png", 16, 16, theme.InvertIcons));
+						// Swap original item with new wrapping component
+						scene.Children.Modify(children =>
+						{
+							children.Remove(imageObject);
+							children.Add(component);
+						});
 
-			this.Graph.RegisterOperation(
-				typeof(IPathObject),
-				typeof(InflatePathObject3D),
-				"Inflate Path".Localize(),
-				(sceneItem, scene) =>
-				{
-					if (sceneItem is IPathObject imageObject)
-					{
-						var inflatePath = new InflatePathObject3D();
-						sceneItem.WrapWith(inflatePath, scene);
-						inflatePath.Invalidate(new InvalidateArgs(inflatePath, InvalidateType.Properties, null));
-					}
+						scene.SelectedItem = component;
 
-					return Task.CompletedTask;
-				},
-				iconCollector: (theme) => AggContext.StaticData.LoadIcon("noun_expand_1823853_000000.png", 16, 16, theme.InvertIcons));
+						return Task.CompletedTask;
+					},
+					IconCollector = (theme) => AggContext.StaticData.LoadIcon("140.png", 16, 16, theme.InvertIcons)
+				});
+
+			this.Graph.PrimaryOperations.Add(typeof(ImageObject3D), new List<NodeOperation> { this.Graph.Operations["ImageConverter"] });
 
 			this.Graph.RegisterOperation(
-				typeof(IObject3D),
-				typeof(BaseObject3D),
-				"Add Base".Localize(),
-				(item, scene) =>
+				new NodeOperation()
 				{
-					bool wasSelected = scene.SelectedItem == item;
-
-					var newChild = item.Clone();
-					var baseMesh = new BaseObject3D()
+					OperationID = "Mirror".Localize(),
+					Title = "Mirror".Localize(),
+					MappedTypes = new List<Type> { typeof(IObject3D) },
+					ResultType = typeof(MirrorObject3D),
+					Operation = (sceneItem, scene) =>
 					{
-						Matrix = newChild.Matrix
-					};
-					newChild.Matrix = Matrix4X4.Identity;
-					baseMesh.Children.Add(newChild);
-					baseMesh.Invalidate(new InvalidateArgs(baseMesh, InvalidateType.Properties, null));
+						var mirror = new MirrorObject3D();
+						mirror.WrapSelectedItemAndSelect(scene);
 
-					scene.UndoBuffer.AddAndDo(
-						new ReplaceCommand(
-							new List<IObject3D> { item },
-							new List<IObject3D> { baseMesh }));
+						return Task.CompletedTask;
+					},
+					IconCollector = (theme) => AggContext.StaticData.LoadIcon("mirror_32x32.png", 16, 16, theme.InvertIcons)
+				});
 
-					if(wasSelected)
+			this.Graph.RegisterOperation(
+				new NodeOperation()
+				{
+					OperationID = "MakeComponent".Localize(),
+					Title = "Make Component".Localize(),
+					MappedTypes = new List<Type> { typeof(IObject3D) },
+					ResultType = typeof(ComponentObject3D),
+					Operation = (sceneItem, scene) =>
 					{
-						scene.SelectedItem = baseMesh;
-					}
+						IEnumerable<IObject3D> items = new[] { sceneItem };
 
-					return Task.CompletedTask;
-				},
-				isVisible: (sceneItem) => sceneItem.Children.Any((i) => i is IPathObject),
-				iconCollector: (theme) => AggContext.StaticData.LoadIcon("noun_55060.png", theme.InvertIcons));
+						// If SelectionGroup, operate on Children instead
+						if (sceneItem is SelectionGroupObject3D)
+						{
+							items = sceneItem.Children;
+						}
+
+						// Dump selection forcing collapse of selection group
+						scene.SelectedItem = null;
+
+						var component = new ComponentObject3D
+						{
+							Name = "New Component",
+							Finalized = false
+						};
+
+						// Copy an selected item into the component as a clone
+						component.Children.Modify(children =>
+											{
+												children.AddRange(items.Select(o => o.Clone()));
+											});
+
+						component.MakeNameNonColliding();
+
+						scene.UndoBuffer.AddAndDo(new ReplaceCommand(items, new[] { component }));
+						scene.SelectedItem = component;
+
+						return Task.CompletedTask;
+					},
+					IsVisible = (sceneItem) =>
+					{
+						return sceneItem.Parent != null
+							&& sceneItem.Parent.Parent == null
+							&& sceneItem.DescendantsAndSelf().All(d => !(d is ComponentObject3D));
+					},
+					IconCollector = (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons)
+				});
+
+			this.Graph.RegisterOperation(
+				new NodeOperation()
+				{
+					OperationID = "EditComponent".Localize(),
+					Title = "Edit Component".Localize(),
+					MappedTypes = new List<Type> { typeof(IObject3D) },
+					ResultType = typeof(ComponentObject3D),
+					Operation = (sceneItem, scene) =>
+					{
+						if (sceneItem is ComponentObject3D componentObject)
+						{
+							// Enable editing mode
+							componentObject.Finalized = false;
+
+							// Force editor rebuild
+							scene.SelectedItem = null;
+							scene.SelectedItem = componentObject;
+						}
+
+						return Task.CompletedTask;
+					},
+					IsVisible = (sceneItem) =>
+					{
+						return sceneItem.Parent != null
+							&& sceneItem.Parent.Parent == null
+							&& sceneItem is ComponentObject3D componentObject
+							&& componentObject.Finalized;
+					},
+					IconCollector = (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons)
+				});
+
+			this.Graph.RegisterOperation(
+				new NodeOperation()
+				{
+					OperationID = "LinearExtrude".Localize(),
+					Title = "Linear Extrude".Localize(),
+					MappedTypes = new List<Type> { typeof(IPathObject) },
+					ResultType = typeof(LinearExtrudeObject3D),
+					Operation = (sceneItem, scene) =>
+					{
+						if (sceneItem is IPathObject imageObject)
+						{
+							var extrude = new LinearExtrudeObject3D();
+							sceneItem.WrapWith(extrude, scene);
+							extrude.Invalidate(new InvalidateArgs(extrude, InvalidateType.Properties, null));
+						}
+
+						return Task.CompletedTask;
+					},
+					IconCollector = (theme) => AggContext.StaticData.LoadIcon("noun_84751.png", theme.InvertIcons)
+				});
+
+			this.Graph.RegisterOperation(
+				new NodeOperation()
+				{
+					OperationID = "SmoothPath".Localize(),
+					Title = "Smooth Path".Localize(),
+					MappedTypes = new List<Type> { typeof(IPathObject) },
+					ResultType = typeof(SmoothPathObject3D),
+					Operation = (sceneItem, scene) =>
+					{
+						if (sceneItem is IPathObject imageObject)
+						{
+							var smoothPath = new SmoothPathObject3D();
+							sceneItem.WrapWith(smoothPath, scene);
+							smoothPath.Invalidate(new InvalidateArgs(smoothPath, InvalidateType.Properties, null));
+						}
+
+						return Task.CompletedTask;
+					},
+					IconCollector = (theme) => AggContext.StaticData.LoadIcon("noun_simplify_340976_000000.png", 16, 16, theme.InvertIcons)
+				});
+
+			this.Graph.RegisterOperation(
+				new NodeOperation()
+				{
+					OperationID = "InflatePath".Localize(),
+					Title = "Inflate Path".Localize(),
+					MappedTypes = new List<Type> { typeof(IPathObject) },
+					ResultType = typeof(InflatePathObject3D),
+					Operation = (sceneItem, scene) =>
+					{
+						if (sceneItem is IPathObject imageObject)
+						{
+							var inflatePath = new InflatePathObject3D();
+							sceneItem.WrapWith(inflatePath, scene);
+							inflatePath.Invalidate(new InvalidateArgs(inflatePath, InvalidateType.Properties, null));
+						}
+
+						return Task.CompletedTask;
+					},
+					IconCollector = (theme) => AggContext.StaticData.LoadIcon("noun_expand_1823853_000000.png", 16, 16, theme.InvertIcons)
+				});
+
+			this.Graph.RegisterOperation(
+				new NodeOperation()
+				{
+					OperationID = "AddBase".Localize(),
+					Title = "Add Base".Localize(),
+					MappedTypes = new List<Type> { typeof(IObject3D) },
+					ResultType = typeof(BaseObject3D),
+					Operation = (item, scene) =>
+					{
+						bool wasSelected = scene.SelectedItem == item;
+
+						var newChild = item.Clone();
+						var baseMesh = new BaseObject3D()
+						{
+							Matrix = newChild.Matrix
+						};
+						newChild.Matrix = Matrix4X4.Identity;
+						baseMesh.Children.Add(newChild);
+						baseMesh.Invalidate(new InvalidateArgs(baseMesh, InvalidateType.Properties, null));
+
+						scene.UndoBuffer.AddAndDo(
+							new ReplaceCommand(
+								new List<IObject3D> { item },
+								new List<IObject3D> { baseMesh }));
+
+						if (wasSelected)
+						{
+							scene.SelectedItem = baseMesh;
+						}
+
+						return Task.CompletedTask;
+					},
+					IsVisible = (sceneItem) => sceneItem.Children.Any((i) => i is IPathObject),
+					IconCollector = (theme) => AggContext.StaticData.LoadIcon("noun_55060.png", theme.InvertIcons)
+				});
 
 			this.InitializeLibrary();
 

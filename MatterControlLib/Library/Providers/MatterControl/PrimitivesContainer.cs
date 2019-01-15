@@ -111,44 +111,28 @@ namespace MatterHackers.MatterControl.Library
 					() => "Image Converter".Localize(),
 					() =>
 					{
-						// Build ImageConverter stack
+						// Construct an image
 						var imageObject = new ImageObject3D()
 						{
 							AssetPath = AggContext.StaticData.ToAssetPath(Path.Combine("Images", "mh-logo.png"))
 						};
-						imageObject.Invalidate(new InvalidateArgs(imageObject, InvalidateType.Properties, null));
 
-						var path = new ImageToPathObject3D();
-						path.Children.Add(imageObject);
-						path.Invalidate(new InvalidateArgs(path, InvalidateType.Properties, null));
+						// Construct a scene
+						var tempScene = new InteractiveScene();
+						tempScene.Children.Add(imageObject);
+						tempScene.SelectedItem = imageObject;
 
-						var smooth = new SmoothPathObject3D();
-						smooth.Children.Add(path);
-						smooth.Invalidate(new InvalidateArgs(smooth, InvalidateType.Properties, null));
+						// Invoke ImageConverter operation, passing image and scene
+						ApplicationController.Instance.Graph.Operations["ImageConverter"].Operation(imageObject, tempScene);
 
-						var extrude = new LinearExtrudeObject3D();
-						extrude.Children.Add(smooth);
-						extrude.Invalidate(new InvalidateArgs(extrude, InvalidateType.Properties, null));
+						// Invalidate image, forcing rebuild
+						imageObject.Invalidate(new InvalidateArgs(imageObject, InvalidateType.Content, null));
 
-						var baseObject = new BaseObject3D()
-						{
-							BaseType = BaseTypes.None
-						};
-						baseObject.Children.Add(extrude);
-						baseObject.Invalidate(new InvalidateArgs(baseObject, InvalidateType.Properties, null));
+						// Return replacement object constructed in ImageConverter operation
+						var constructedComponent = tempScene.SelectedItem;
+						tempScene.Children.Remove(constructedComponent);
 
-						return new ComponentObject3D(new [] { baseObject })
-						{
-							ComponentID = "4D9BD8DB-C544-4294-9C08-4195A409217A",
-							SurfacedEditors = new List<string>
-							{
-								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D>.Children<ImageObject3D>",
-								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Height",
-								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.SmoothDistance",
-								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D>",
-								"$.Children<BaseObject3D>",
-							}
-						};
+						return constructedComponent;
 					})
 					{ DateCreated = new System.DateTime(index++) },
 			};

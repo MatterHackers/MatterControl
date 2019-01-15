@@ -38,46 +38,43 @@ namespace MatterHackers.MatterControl.Library
 {
 	public class NodeOperation
 	{
+		public string OperationID { get; set; }
 		public string Title { get; set; }
-		public List<Type> MappedTypes { get; set; }
+		public IEnumerable<Type> MappedTypes { get; set; }
 		public Func<IObject3D, InteractiveScene, Task> Operation { get; set; }
 		public Func<IObject3D, bool> IsEnabled { get; set; }
 		public Func<IObject3D, bool> IsVisible { get; set; }
 		public Func<ThemeConfig, ImageBuffer> IconCollector { get; set; }
-		public Type ResultType { get; internal set; }
+		public Type ResultType { get; set; }
 	}
 
 	public class GraphConfig
 	{
-		private List<NodeOperation> _operations = new List<NodeOperation>();
 		private ApplicationController applicationController;
 
-		public IEnumerable<NodeOperation> Operations => _operations;
+		public Dictionary<string, NodeOperation> Operations { get; } = new Dictionary<string, NodeOperation>();
+
+		public Dictionary<Type, List<NodeOperation>> PrimaryOperations { get; } = new Dictionary<Type, List<NodeOperation>>();
 
 		public GraphConfig(ApplicationController applicationController)
 		{
 			this.applicationController = applicationController;
 		}
 
-		public void RegisterOperation(Type type, Type resultType, string title, Func<IObject3D, InteractiveScene, Task> operation, Func<IObject3D, bool> isEnabled = null, Func<IObject3D, bool> isVisible = null, Func<ThemeConfig, ImageBuffer> iconCollector = null)
+		public NodeOperation RegisterOperation(NodeOperation nodeOperation)
 		{
 			var thumbnails = applicationController.Thumbnails;
 
+			var resultType = nodeOperation.ResultType;
+
 			if (!thumbnails.OperationIcons.ContainsKey(resultType))
 			{
-				thumbnails.OperationIcons.Add(resultType, () => iconCollector(applicationController.Theme));
+				thumbnails.OperationIcons.Add(resultType, () => nodeOperation.IconCollector(applicationController.Theme));
 			}
 
-			_operations.Add(new NodeOperation()
-			{
-				MappedTypes = new List<Type> { type },
-				ResultType = resultType,
-				Title = title,
-				Operation = operation,
-				IsEnabled = isEnabled,
-				IsVisible = isVisible,
-				IconCollector = iconCollector
-			});
+			this.Operations.Add(nodeOperation.OperationID, nodeOperation);
+
+			return nodeOperation;
 		}
 	}
 }
