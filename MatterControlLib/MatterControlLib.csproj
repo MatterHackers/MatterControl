@@ -86,7 +86,7 @@
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="0.9.11" />
     <PackageReference Include="Markdig" Version="0.15.2" />
-    <PackageReference Include="MIConvexHull" Version="1.1.17.1019" />
+    <PackageReference Include="MIConvexHull" Version="1.1.18.1016" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
