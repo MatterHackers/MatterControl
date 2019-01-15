@@ -125,9 +125,6 @@ namespace MatterHackers.MatterControl.Library
 						// Invoke ImageConverter operation, passing image and scene
 						ApplicationController.Instance.Graph.Operations["ImageConverter"].Operation(imageObject, tempScene);
 
-						// Invalidate image, forcing rebuild
-						imageObject.Invalidate(new InvalidateArgs(imageObject, InvalidateType.Content, null));
-
 						// Return replacement object constructed in ImageConverter operation
 						var constructedComponent = tempScene.SelectedItem;
 						tempScene.Children.Remove(constructedComponent);
