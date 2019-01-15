@@ -297,10 +297,6 @@ namespace MatterHackers.MatterControl
 
 			popupMenu.CreateSeparator();
 
-#if DEBUG
-			GC.Collect();
-#endif
-
 			var selectedItemType = selectedItem.GetType();
 
 			var menuTheme = this.MenuTheme;
