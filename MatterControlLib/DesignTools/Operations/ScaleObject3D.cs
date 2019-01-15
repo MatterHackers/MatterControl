@@ -64,11 +64,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			base.WrapItem(item, undoBuffer);
 
-			var aabb = item.GetAxisAlignedBoundingBox();
+			// use source item as it may be a copy of item by the time we have wrapped it
+			var aabb = SourceItem.GetAxisAlignedBoundingBox();
 			var newCenter = new Vector3(aabb.Center.X, aabb.Center.Y, aabb.MinXYZ.Z);
-			item.Translate(-newCenter);
+			SourceItem.Translate(-newCenter);
 			this.Translate(newCenter);
-			this.ScaleAbout = newCenter;
 		}
 
 		public override bool CanFlatten => true;

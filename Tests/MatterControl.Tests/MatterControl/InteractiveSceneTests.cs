@@ -79,7 +79,7 @@ namespace MatterControl.Tests.MatterControl
 					-10, -10, -10,
 					20, 10, 10).Equals(rootAabb, .001));
 			}
-		
+
 			// Combine has correct results when inner content is changed
 			{
 				var root = new Object3D();
@@ -388,6 +388,59 @@ namespace MatterControl.Tests.MatterControl
 				root.Children.Add(pinch);
 				var rootAabb = root.GetAxisAlignedBoundingBox();
 				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(1, -10, -10), new Vector3(21, 10, 10)), .001));
+			}
+		}
+
+		[Test, Category("InteractiveScene")]
+		public void ScaleObjectMantainsCorrectAabb()
+		{
+			// build cube with scale and undo
+			{
+				// create a simple cube with translation
+				var root = new Object3D();
+				var cube = new CubeObject3D(20, 20, 20);
+				cube.Matrix = Matrix4X4.CreateTranslation(50, 60, 10);
+				root.Children.Add(cube);
+				Assert.AreEqual(2, root.DescendantsAndSelf().Count());
+				var preScaleAabb = root.GetAxisAlignedBoundingBox();
+
+				var undoBuffer = new UndoBuffer();
+
+				// add a scale to it (that is not scaled)
+				var scaleObject = new ScaleObject3D();
+				scaleObject.WrapItem(cube, undoBuffer);
+
+				// ensure that the object did not move
+				Assert.IsTrue(scaleObject.ScaleAbout.Equals(Vector3.Zero), "The objects have been moved to be scalling about 0.");
+				Assert.AreEqual(4, root.DescendantsAndSelf().Count());
+				var postScaleAabb = root.GetAxisAlignedBoundingBox();
+
+				Assert.IsTrue(preScaleAabb.Equals(postScaleAabb, .001));
+
+				Assert.AreNotEqual(cube, scaleObject.SourceItem, "There is an undo buffer, there should have been a clone");
+			}
+			
+			// build cube with scale
+			{
+				// create a simple cube with translation
+				var root = new Object3D();
+				var cube = new CubeObject3D(20, 20, 20);
+				cube.Matrix = Matrix4X4.CreateTranslation(50, 60, 10);
+				root.Children.Add(cube);
+				Assert.AreEqual(2, root.DescendantsAndSelf().Count());
+				var preScaleAabb = root.GetAxisAlignedBoundingBox();
+
+				// add a scale to it (that is not scaled)
+				var scaleObject = new ScaleObject3D(cube);
+
+				// ensure that the object did not move
+				Assert.IsTrue(scaleObject.ScaleAbout.Equals(Vector3.Zero), "The objects have been moved to be scalling about 0.");
+				Assert.AreEqual(4, root.DescendantsAndSelf().Count());
+				var postScaleAabb = root.GetAxisAlignedBoundingBox();
+
+				Assert.IsTrue(preScaleAabb.Equals(postScaleAabb, .001));
+
+				Assert.AreEqual(cube, scaleObject.SourceItem, "There is no undo buffer, there should not have been a clone");
 			}
 		}
 
