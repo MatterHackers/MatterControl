@@ -52,12 +52,16 @@ namespace MatterHackers.MatterControl
 
 				if (singleCharLabel != char.MaxValue)
 				{
-					var labelWidget = new TextWidget(singleCharLabel.ToString(), pointSize: theme.DefaultFontSize - 2, textColor: theme.PrimaryAccentColor)
+					singleCharEditColor = theme.PrimaryAccentColor.WithContrast(theme.EditFieldColors.Focused.BackgroundColor, 3).ToColor();
+
+					labelWidget = new TextWidget(singleCharLabel.ToString(), pointSize: theme.DefaultFontSize - 2, textColor: theme.PrimaryAccentColor)
 					{
 						Margin = new BorderDouble(left: 2),
 						HAnchor = HAnchor.Left,
-						VAnchor = VAnchor.Center
+						VAnchor = VAnchor.Center,
+						Selectable = false
 					};
+
 					labelWidth = labelWidget.Width + labelWidget.Margin.Left;
 
 					this.AddChild(labelWidget);
@@ -75,6 +79,7 @@ namespace MatterHackers.MatterControl
 				internalWidget.FocusChanged += (s, e) =>
 				{
 					internalWidget.TextColor = (internalWidget.Focused) ? theme.EditFieldColors.Focused.TextColor : theme.EditFieldColors.Inactive.TextColor;
+					labelWidget.TextColor = (internalWidget.Focused) ? singleCharEditColor : theme.PrimaryAccentColor;
 				};
 
 				this.ActuallNumberEdit.InternalNumberEdit.MaxDecimalsPlaces = 5;
@@ -133,6 +138,8 @@ namespace MatterHackers.MatterControl
 		}
 
 		private bool mouseInBounds = false;
+		private Color singleCharEditColor;
+		private TextWidget labelWidget;
 
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
