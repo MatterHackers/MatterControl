@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.Library
 		public Func<IObject3D, bool> IsEnabled { get; set; }
 		public Func<IObject3D, bool> IsVisible { get; set; }
 		public Func<ThemeConfig, ImageBuffer> IconCollector { get; set; }
-		public Type ResultType { get; internal set; }
+		public Type ResultType { get; set; }
 	}
 
 	public class GraphConfig
@@ -59,30 +59,16 @@ namespace MatterHackers.MatterControl.Library
 			this.applicationController = applicationController;
 		}
 
-		public NodeOperation RegisterOperation(Type mappedType, Type resultType, string title, Func<IObject3D, InteractiveScene, Task> operation, Func<IObject3D, bool> isEnabled = null, Func<IObject3D, bool> isVisible = null, Func<ThemeConfig, ImageBuffer> iconCollector = null)
-		{
-			return this.RegisterOperation(new[] { mappedType }, resultType, title, operation, isEnabled, isVisible, iconCollector);
-		}
-
-		public NodeOperation RegisterOperation(IEnumerable<Type> mappedTypes, Type resultType, string title, Func<IObject3D, InteractiveScene, Task> operation, Func<IObject3D, bool> isEnabled = null, Func<IObject3D, bool> isVisible = null, Func<ThemeConfig, ImageBuffer> iconCollector = null)
+		public NodeOperation RegisterOperation(NodeOperation nodeOperation)
 		{
 			var thumbnails = applicationController.Thumbnails;
 
+			var resultType = nodeOperation.ResultType;
+
 			if (!thumbnails.OperationIcons.ContainsKey(resultType))
 			{
-				thumbnails.OperationIcons.Add(resultType, () => iconCollector(applicationController.Theme));
+				thumbnails.OperationIcons.Add(resultType, () => nodeOperation.IconCollector(applicationController.Theme));
 			}
-
-			var nodeOperation = new NodeOperation()
-			{
-				MappedTypes = mappedTypes,
-				ResultType = resultType,
-				Title = title,
-				Operation = operation,
-				IsEnabled = isEnabled,
-				IsVisible = isVisible,
-				IconCollector = iconCollector
-			};
 
 			_operations.Add(nodeOperation);
 
