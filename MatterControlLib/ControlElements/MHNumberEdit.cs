@@ -79,7 +79,11 @@ namespace MatterHackers.MatterControl
 				internalWidget.FocusChanged += (s, e) =>
 				{
 					internalWidget.TextColor = (internalWidget.Focused) ? theme.EditFieldColors.Focused.TextColor : theme.EditFieldColors.Inactive.TextColor;
-					labelWidget.TextColor = (internalWidget.Focused) ? singleCharEditColor : theme.PrimaryAccentColor;
+
+					if (labelWidget != null)
+					{
+						labelWidget.TextColor = (internalWidget.Focused) ? singleCharEditColor : theme.PrimaryAccentColor;
+					}
 				};
 
 				this.ActuallNumberEdit.InternalNumberEdit.MaxDecimalsPlaces = 5;
