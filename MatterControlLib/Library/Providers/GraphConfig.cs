@@ -59,7 +59,12 @@ namespace MatterHackers.MatterControl.Library
 			this.applicationController = applicationController;
 		}
 
-		public void RegisterOperation(Type type, Type resultType, string title, Func<IObject3D, InteractiveScene, Task> operation, Func<IObject3D, bool> isEnabled = null, Func<IObject3D, bool> isVisible = null, Func<ThemeConfig, ImageBuffer> iconCollector = null)
+		public NodeOperation RegisterOperation(Type mappedType, Type resultType, string title, Func<IObject3D, InteractiveScene, Task> operation, Func<IObject3D, bool> isEnabled = null, Func<IObject3D, bool> isVisible = null, Func<ThemeConfig, ImageBuffer> iconCollector = null)
+		{
+			return this.RegisterOperation(new[] { mappedType }, resultType, title, operation, isEnabled, isVisible, iconCollector);
+		}
+
+		public NodeOperation RegisterOperation(IEnumerable<Type> mappedTypes, Type resultType, string title, Func<IObject3D, InteractiveScene, Task> operation, Func<IObject3D, bool> isEnabled = null, Func<IObject3D, bool> isVisible = null, Func<ThemeConfig, ImageBuffer> iconCollector = null)
 		{
 			var thumbnails = applicationController.Thumbnails;
 
@@ -68,16 +73,20 @@ namespace MatterHackers.MatterControl.Library
 				thumbnails.OperationIcons.Add(resultType, () => iconCollector(applicationController.Theme));
 			}
 
-			_operations.Add(new NodeOperation()
+			var nodeOperation = new NodeOperation()
 			{
-				MappedTypes = new List<Type> { type },
+				MappedTypes = mappedTypes,
 				ResultType = resultType,
 				Title = title,
 				Operation = operation,
 				IsEnabled = isEnabled,
 				IsVisible = isVisible,
 				IconCollector = iconCollector
-			});
+			};
+
+			_operations.Add(nodeOperation);
+
+			return nodeOperation;
 		}
 	}
 }
