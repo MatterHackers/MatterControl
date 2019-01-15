@@ -1197,22 +1197,18 @@ namespace MatterHackers.MatterControl
 
 						var path = new ImageToPathObject3D();
 						path.Children.Add(imageObject);
-						path.Invalidate(new InvalidateArgs(path, InvalidateType.Properties, null));
 
 						var smooth = new SmoothPathObject3D();
 						smooth.Children.Add(path);
-						smooth.Invalidate(new InvalidateArgs(smooth, InvalidateType.Properties, null));
 
 						var extrude = new LinearExtrudeObject3D();
 						extrude.Children.Add(smooth);
-						extrude.Invalidate(new InvalidateArgs(extrude, InvalidateType.Properties, null));
 
 						var baseObject = new BaseObject3D()
 						{
 							BaseType = BaseTypes.None
 						};
 						baseObject.Children.Add(extrude);
-						baseObject.Invalidate(new InvalidateArgs(baseObject, InvalidateType.Properties, null));
 
 						var component = new ComponentObject3D(new[] { baseObject })
 						{
@@ -1227,6 +1223,9 @@ namespace MatterHackers.MatterControl
 								"$.Children<BaseObject3D>",
 							}
 						};
+
+						// Invalidate image to kick off rebuild of ImageConverter stack 
+						imageObject.Invalidate(new InvalidateArgs(imageObject, InvalidateType.Image, null));
 
 						// Swap original item with new wrapping component
 						scene.Children.Modify(children =>
