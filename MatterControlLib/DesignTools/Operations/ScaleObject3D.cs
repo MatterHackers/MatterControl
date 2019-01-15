@@ -68,6 +68,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			var newCenter = new Vector3(aabb.Center.X, aabb.Center.Y, aabb.MinXYZ.Z);
 			item.Translate(-newCenter);
 			this.Translate(newCenter);
+			this.ScaleAbout = newCenter;
 		}
 
 		public override bool CanFlatten => true;
