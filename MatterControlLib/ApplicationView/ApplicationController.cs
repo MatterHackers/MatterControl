@@ -305,7 +305,7 @@ namespace MatterHackers.MatterControl
 				{
 					popupMenu.CreateSubMenu("Modify".Localize(), this.MenuTheme, (modifyMenu) =>
 					{
-						foreach (var nodeOperation in this.Graph.Operations)
+						foreach (var nodeOperation in this.Graph.Operations.Values)
 						{
 							foreach (var type in nodeOperation.MappedTypes)
 							{
@@ -325,7 +325,7 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
-					foreach (var nodeOperation in this.Graph.Operations)
+					foreach (var nodeOperation in this.Graph.Operations.Values)
 					{
 						foreach (var type in nodeOperation.MappedTypes)
 						{
@@ -1103,6 +1103,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					OperationID = "ImageToPath".Localize(),
 					Title = "Image to Path".Localize(),
 					MappedTypes = new List<Type> { typeof(ImageObject3D) },
 					ResultType = typeof(ImageToPathObject3D),
@@ -1123,6 +1124,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					OperationID = "Translate".Localize(),
 					Title = "Translate".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(TranslateObject3D),
@@ -1142,6 +1144,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					OperationID = "Rotate".Localize(),
 					Title = "Rotate".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(RotateObject3D_2),
@@ -1161,6 +1164,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					OperationID = "Scale".Localize(),
 					Title = "Scale".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(ScaleObject3D),
@@ -1180,6 +1184,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					OperationID = "Mirror".Localize(),
 					Title = "Mirror".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(MirrorObject3D),
@@ -1196,6 +1201,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					OperationID = "MakeComponent".Localize(),
 					Title = "Make Component".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(ComponentObject3D),
@@ -1243,6 +1249,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					OperationID = "EditComponent".Localize(),
 					Title = "Edit Component".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(ComponentObject3D),
@@ -1273,6 +1280,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					OperationID = "LinearExtrude".Localize(),
 					Title = "Linear Extrude".Localize(),
 					MappedTypes = new List<Type> { typeof(IPathObject) },
 					ResultType = typeof(LinearExtrudeObject3D),
@@ -1293,6 +1301,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					OperationID = "SmoothPath".Localize(),
 					Title = "Smooth Path".Localize(),
 					MappedTypes = new List<Type> { typeof(IPathObject) },
 					ResultType = typeof(SmoothPathObject3D),
@@ -1313,6 +1322,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					OperationID = "InflatePath".Localize(),
 					Title = "Inflate Path".Localize(),
 					MappedTypes = new List<Type> { typeof(IPathObject) },
 					ResultType = typeof(InflatePathObject3D),
@@ -1333,6 +1343,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					OperationID = "AddBase".Localize(),
 					Title = "Add Base".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(BaseObject3D),

@@ -38,6 +38,7 @@ namespace MatterHackers.MatterControl.Library
 {
 	public class NodeOperation
 	{
+		public string OperationID { get; set; }
 		public string Title { get; set; }
 		public List<Type> MappedTypes { get; set; }
 		public Func<IObject3D, InteractiveScene, Task> Operation { get; set; }
@@ -49,10 +50,9 @@ namespace MatterHackers.MatterControl.Library
 
 	public class GraphConfig
 	{
-		private List<NodeOperation> _operations = new List<NodeOperation>();
 		private ApplicationController applicationController;
 
-		public IEnumerable<NodeOperation> Operations => _operations;
+		public Dictionary<string, NodeOperation> Operations { get; } = new Dictionary<string, NodeOperation>();
 
 		public GraphConfig(ApplicationController applicationController)
 		{
@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.Library
 				thumbnails.OperationIcons.Add(resultType, () => nodeOperation.IconCollector(applicationController.Theme));
 			}
 
-			_operations.Add(nodeOperation);
+			this.Operations.Add(nodeOperation.OperationID, nodeOperation);
 
 			return nodeOperation;
 		}
