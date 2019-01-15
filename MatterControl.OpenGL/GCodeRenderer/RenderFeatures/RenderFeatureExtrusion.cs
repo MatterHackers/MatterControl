@@ -157,8 +157,8 @@ namespace MatterHackers.GCodeVisualizer
 					VertexSourceApplyTransform transformedPathStorage = new VertexSourceApplyTransform(pathStorage, renderInfo.Transform);
 					Stroke stroke = new Stroke(transformedPathStorage, extrusionLineWidths / 2);
 
-					stroke.line_cap(LineCap.Round);
-					stroke.line_join(LineJoin.Round);
+					stroke.LineCap = LineCap.Round;
+					stroke.LineJoin = LineJoin.Round;
 
 					Vector3Float start = this.GetStart(renderInfo);
 					Vector3Float end = this.GetEnd(renderInfo);

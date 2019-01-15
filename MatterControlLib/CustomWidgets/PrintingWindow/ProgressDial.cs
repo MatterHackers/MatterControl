@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Arc.Direction.CounterClockWise);
 
 			var arcStroke = new Stroke(ringArc);
-			arcStroke.width(outerRingStrokeWidth);
+			arcStroke.Width = outerRingStrokeWidth;
 			graphics2D.Render(
 				arcStroke.Rotate(90, AngleType.Degrees).Translate(bounds.Center),
 				primaryAccentShade);
@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				0,
 				Arc.Direction.CounterClockWise);
 			arcStroke = new Stroke(ringArc);
-			arcStroke.width(innerRingStrokeWidth);
+			arcStroke.Width = innerRingStrokeWidth;
 			graphics2D.Render(
 				arcStroke.Rotate(90, AngleType.Degrees).Translate(bounds.Center),
 				primaryAccentColor);
