@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var matrix = item.WorldMatrix(scene);
 					for (int faceIndex = 0; faceIndex < item.Mesh.Faces.Count; faceIndex++)
 					{
-						var face0Normal = item.Mesh.FaceNormals[faceIndex].TransformVector(matrix).GetNormal();
+						var face0Normal = item.Mesh.Faces[faceIndex].normal.TransformNormal(matrix).GetNormal();
 						var angle = MathHelper.RadiansToDegrees(Math.Acos(face0Normal.Dot(-Vector3Float.UnitZ)));
 
 						if (angle < MaxOverHangAngle)
@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							var face = item.Mesh.Faces[faceIndex];
 							var verts = new int[] { face.v0, face.v1, face.v2 };
 							var fc = downVerts.Count;
-							downFaces.Add((fc, fc+1, fc+2));
+							downFaces.Add(fc, fc+1, fc+2, downVerts);
 							downVerts.Add(item.Mesh.Vertices[face.v0].Transform(matrix));
 							downVerts.Add(item.Mesh.Vertices[face.v1].Transform(matrix));
 							downVerts.Add(item.Mesh.Vertices[face.v2].Transform(matrix));
@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							var face = item.Mesh.Faces[faceIndex];
 							var verts = new int[] { face.v0, face.v1, face.v2 };
 							var fc = upFaces.Count;
-							upFaces.Add((fc, fc + 1, fc + 2));
+							upFaces.Add(fc, fc + 1, fc + 2, upVerts);
 							upVerts.Add(item.Mesh.Vertices[face.v0].Transform(matrix));
 							upVerts.Add(item.Mesh.Vertices[face.v1].Transform(matrix));
 							upVerts.Add(item.Mesh.Vertices[face.v2].Transform(matrix));
@@ -305,7 +305,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						if (aboveBed)
 						{
-							var face0Normal = item.Mesh.FaceNormals[faceIndex].TransformVector(matrix).GetNormal();
+							var face0Normal = item.Mesh.Faces[faceIndex].normal.TransformNormal(matrix).GetNormal();
 							var angle = MathHelper.RadiansToDegrees(Math.Acos(face0Normal.Dot(-Vector3Float.UnitZ)));
 
 							if (angle < MaxOverHangAngle)

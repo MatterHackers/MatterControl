@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							// make lists so we can add to them
 							var vL = v.ToVector3List();
 							vL.Transform(matrix);
-							var fL = new FaceList(f);
+							var fL = new FaceList(f, curvedMesh.Vertices);
 
 							Teselate.SplitEdges(vL, fL, maxXLength);
 							vL.Transform(matrixInv);
