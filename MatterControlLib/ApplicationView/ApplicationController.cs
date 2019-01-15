@@ -1103,9 +1103,9 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					Title = "Image to Path".Localize(),
 					MappedTypes = new List<Type> { typeof(ImageObject3D) },
 					ResultType = typeof(ImageToPathObject3D),
-					Title = "Image to Path".Localize(),
 					Operation = (sceneItem, scene) =>
 					{
 						if (sceneItem is IObject3D imageObject)
@@ -1123,9 +1123,9 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					Title = "Translate".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(TranslateObject3D),
-					Title = "Translate".Localize(),
 					Operation = (sceneItem, scene) =>
 					{
 						var selectedItem = scene.SelectedItem;
@@ -1142,9 +1142,9 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					Title = "Rotate".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(RotateObject3D_2),
-					Title = "Rotate".Localize(),
 					Operation = (sceneItem, scene) =>
 					{
 						var selectedItem = scene.SelectedItem;
@@ -1161,9 +1161,9 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					Title = "Scale".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(ScaleObject3D),
-					Title = "Scale".Localize(),
 					Operation = (sceneItem, scene) =>
 					{
 						var selectedItem = scene.SelectedItem;
@@ -1180,9 +1180,9 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					Title = "Mirror".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(MirrorObject3D),
-					Title = "Mirror".Localize(),
 					Operation = (sceneItem, scene) =>
 					{
 						var mirror = new MirrorObject3D();
@@ -1196,9 +1196,9 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					Title = "Make Component".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(ComponentObject3D),
-					Title = "Make Component".Localize(),
 					Operation = (sceneItem, scene) =>
 					{
 						IEnumerable<IObject3D> items = new[] { sceneItem };
@@ -1243,9 +1243,9 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					Title = "Edit Component".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(ComponentObject3D),
-					Title = "Edit Component".Localize(),
 					Operation = (sceneItem, scene) =>
 					{
 						if (sceneItem is ComponentObject3D componentObject)
@@ -1273,9 +1273,9 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					Title = "Linear Extrude".Localize(),
 					MappedTypes = new List<Type> { typeof(IPathObject) },
 					ResultType = typeof(LinearExtrudeObject3D),
-					Title = "Linear Extrude".Localize(),
 					Operation = (sceneItem, scene) =>
 					{
 						if (sceneItem is IPathObject imageObject)
@@ -1293,9 +1293,9 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					Title = "Smooth Path".Localize(),
 					MappedTypes = new List<Type> { typeof(IPathObject) },
 					ResultType = typeof(SmoothPathObject3D),
-					Title = "Smooth Path".Localize(),
 					Operation = (sceneItem, scene) =>
 					{
 						if (sceneItem is IPathObject imageObject)
@@ -1313,9 +1313,9 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					Title = "Inflate Path".Localize(),
 					MappedTypes = new List<Type> { typeof(IPathObject) },
 					ResultType = typeof(InflatePathObject3D),
-					Title = "Inflate Path".Localize(),
 					Operation = (sceneItem, scene) =>
 					{
 						if (sceneItem is IPathObject imageObject)
@@ -1333,9 +1333,9 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					Title = "Add Base".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(BaseObject3D),
-					Title = "Add Base".Localize(),
 					Operation = (item, scene) =>
 					{
 						bool wasSelected = scene.SelectedItem == item;
