@@ -136,22 +136,20 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				lastDestinationWithLevelingApplied = outPosition;
 
-				newLine = newLine.Append(String.Format("X{0:0.##} Y{1:0.##} Z{2:0.###}", outPosition.X, outPosition.Y, outPosition.Z));
+				newLine = newLine.Append($"X{outPosition.X:0.##} Y{outPosition.Y:0.##} Z{outPosition.Z:0.##} ");
 			}
 
-			if (extruderDelta != 0)
+			if (lineBeingSent.Contains("E"))
 			{
-				newLine = newLine.Append(String.Format(" E{0:0.###}", extruderDelta));
+				newLine = newLine.Append($"E{extruderDelta:0.###} ");
 			}
 
-			if (feedRate != 0)
+			if (lineBeingSent.Contains("F"))
 			{
-				newLine = newLine.Append(String.Format(" F{0:0.##}", feedRate));
+				newLine = newLine.Append($"F{feedRate:0.##}");
 			}
 
-			lineBeingSent = newLine.ToString();
-
-			return lineBeingSent;
+			return newLine.ToString().Trim();
 		}
 
 		public Vector3 GetPositionWithZOffset(Vector3 currentDestination)

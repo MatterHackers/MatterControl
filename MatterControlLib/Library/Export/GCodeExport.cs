@@ -285,7 +285,10 @@ namespace MatterHackers.MatterControl.Library.Export
 
 			accumulatedStream = new RelativeToAbsoluteStream(printer, accumulatedStream);
 
-			if (printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting))
+			bool levelingEnabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && applyLeveling;
+
+			if (levelingEnabled
+				&& printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting))
 			{
 				accumulatedStream = new BabyStepsStream(printer, accumulatedStream, 1);
 			}
@@ -294,7 +297,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				accumulatedStream = new BabyStepsStream(printer, accumulatedStream, 1000);
 			}
 
-			if (printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && applyLeveling)
+			if (levelingEnabled)
 			{
 				accumulatedStream = new PrintLevelingStream(printer, accumulatedStream, false);
 			}

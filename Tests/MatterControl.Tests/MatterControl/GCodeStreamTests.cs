@@ -217,6 +217,108 @@ namespace MatterControl.Tests.MatterControl
 			}
 		}
 
+		[Test]
+		public void LineCuttingOffWhenNoLevelingTest()
+		{
+			string[] inputLines = new string[]
+			{
+				"G1 X0Y0Z0E0 F1000",
+				"G1 X10 Y0 Z0 F1000",
+				null,
+			};
+
+			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
+			// All communication should go through stream to minimize the difference between printing and controlling while not printing (all printing in essence).
+			string[] expected = new string[]
+			{
+				"G1 X0 Y0 Z0 E0 F1000",
+				"G1 X10",
+				 null,
+			};
+
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			var printer = new PrinterConfig(new PrinterSettings());
+
+			printer.Settings.SetValue(SettingsKey.has_hardware_leveling, "1");
+
+			var testStream = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, inputLines), true);
+
+			int expectedIndex = 0;
+			string actualLine = testStream.ReadLine();
+			string expectedLine = expected[expectedIndex++];
+
+			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
+			Debug.WriteLine(actualLine);
+
+			while (actualLine != null)
+			{
+				actualLine = testStream.ReadLine();
+				expectedLine = expected[expectedIndex++];
+
+				Debug.WriteLine(actualLine);
+				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
+			}
+		}
+
+		[Test]
+		public void LineCuttingOnWhenLevelingOnTest()
+		{
+			string[] inputLines = new string[]
+			{
+				"G1 X0Y0Z0E0F1000",
+				"G1 X0Y0Z0E1F1000",
+				"G1 X10 Y0 Z0 F1000",
+				null,
+			};
+
+			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
+			// All communication should go through stream to minimize the difference between printing and controlling while not printing (all printing in essence).
+			string[] expected = new string[]
+			{
+				"; Software Leveling Applied",
+				"G1 X0 Y0 Z-0.1 E0 F1000",
+				"G1 E1",
+				"G1 X1 Y0 Z-0.1",
+				"G1 X2 Y0 Z-0.1",
+				"G1 X3 Y0 Z-0.1",
+				"G1 X4 Y0 Z-0.1",
+				"G1 X5 Y0 Z-0.1",
+				"G1 X6 Y0 Z-0.1",
+				"G1 X7 Y0 Z-0.1",
+				"G1 X8 Y0 Z-0.1",
+				"G1 X9 Y0 Z-0.1",
+				"G1 X10 Y0 Z-0.1",
+				 null,
+			};
+
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			var printer = new PrinterConfig(new PrinterSettings());
+
+			printer.Settings.SetValue(SettingsKey.print_leveling_enabled, "1");
+
+			var testStream = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, inputLines), true);
+
+			int expectedIndex = 0;
+			string actualLine = testStream.ReadLine();
+			string expectedLine = expected[expectedIndex++];
+
+			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
+			Debug.WriteLine(actualLine);
+
+			while (actualLine != null)
+			{
+				actualLine = testStream.ReadLine();
+				expectedLine = expected[expectedIndex++];
+
+				Debug.WriteLine(actualLine);
+				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
+			}
+		}
+
 		public static GCodeStream CreateTestGCodeStream(PrinterConfig printer, string[] inputLines, out List<GCodeStream> streamList)
 		{
 			streamList = new List<GCodeStream>();
@@ -262,33 +364,33 @@ namespace MatterControl.Tests.MatterControl
 			// All communication should go through stream to minimize the difference between printing and controlling while not printing (all printing in essence).
 			string[] expected = new string[]
 			{
-			"G1 E11 F300",
-			"G92 E0",
-			"",
-			"G1 E-1 F302",
-			"G1 E-2",
-			"G1 E-3",
-			"G1 E-4",
-			"G1 E-5",
-			"G90",
-			"",
-			"G1 E-4 F150",
-			"G1 E-3",
-			"G1 E-2",
-			"G1 E-1",
-			"G1 E0",
-			"G1 E1",
-			"G1 E2",
-			"G1 E3",
-			"G90",
-			"G4 P0",
-			"G92 E0",
-			"G4 P0",
-			"",
-			"G1 E-1 F301",
-			"G1 E-2",
-			"G90",
-			 null,
+				"G1 E11 F300",
+				"G92 E0",
+				"",
+				"G1 E-1 F302",
+				"G1 E-2",
+				"G1 E-3",
+				"G1 E-4",
+				"G1 E-5",
+				"G90",
+				"",
+				"G1 E-4 F150",
+				"G1 E-3",
+				"G1 E-2",
+				"G1 E-1",
+				"G1 E0",
+				"G1 E1",
+				"G1 E2",
+				"G1 E3",
+				"G90",
+				"G4 P0",
+				"G92 E0",
+				"G4 P0",
+				"",
+				"G1 E-1 F301",
+				"G1 E-2",
+				"G90",
+				 null,
 			};
 
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
