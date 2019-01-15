@@ -104,11 +104,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				if (item.Parent != null)
 				{
 					var replaceItems = new List<IObject3D> { item };
-					IObject3D itemClone = item.Clone();
+					IObject3D replaceItem = item;
+					if (undoBuffer != null)
+					{
+						replaceItem = item.Clone();
+					}
 
 					var firstChild = new Object3D();
 					this.Children.Add(firstChild);
-					firstChild.Children.Add(itemClone);
+					firstChild.Children.Add(replaceItem);
 
 					var replace = new ReplaceCommand(replaceItems, new List<IObject3D> { this });
 					if (undoBuffer != null)

@@ -64,7 +64,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			base.WrapItem(item, undoBuffer);
 
-			var aabb = item.GetAxisAlignedBoundingBox();
+			// use source item as the wrape may have cloned it
+			var aabb = SourceItem.GetAxisAlignedBoundingBox();
 			this.RotateAbout.Origin = aabb.Center;
 		}
 
