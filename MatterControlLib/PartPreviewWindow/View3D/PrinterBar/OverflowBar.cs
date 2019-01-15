@@ -145,6 +145,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					bool hasOverflowItems = false;
 					foreach (var widget in overflowBar.ActionArea.Children.Where(c => !c.Visible && !ignoredInMenuTypes.Contains(c.GetType())))
 					{
+						if (widget is ToolbarSeparator)
+						{
+							popupMenu.CreateSeparator();
+							continue;
+						}
+
 						hasOverflowItems = true;
 
 						PopupMenu.MenuItem menuItem;
