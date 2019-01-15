@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public bool BendCcw { get; set; } = true;
 
 		[Range(3, 360, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
-		[Description("Ensurs the rotated part has a minimum number of sides per complete rotation")]
+		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
 		public double MinSidesPerRotation { get; set; } = 3;
 
 		// holds where we rotate the object

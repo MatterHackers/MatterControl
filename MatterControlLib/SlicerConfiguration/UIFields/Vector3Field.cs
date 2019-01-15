@@ -75,11 +75,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyzValueStrings[0], out double currentXValue);
 
-			xEditWidget = new MHNumberEdit(currentXValue, theme, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
+			xEditWidget = new MHNumberEdit(currentXValue, theme, 'X', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex,
-				SelectAllOnFocus = true
+				SelectAllOnFocus = true,
+				Margin = theme.ButtonSpacing
 			};
 			xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
@@ -91,20 +92,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					userInitiated: true);
 			};
 
-			container.AddChild(new TextWidget("X:", pointSize: 10, textColor: theme.TextColor)
-			{
-				VAnchor = VAnchor.Center,
-				Margin = new BorderDouble(5, 0),
-			});
 			container.AddChild(xEditWidget);
 
 			double.TryParse(xyzValueStrings[1], out double currentYValue);
 
-			yEditWidget = new MHNumberEdit(currentYValue, theme, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
+			yEditWidget = new MHNumberEdit(currentYValue, theme, 'Y', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex + 1,
 				SelectAllOnFocus = true,
+				Margin = theme.ButtonSpacing
 			};
 			yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
@@ -116,20 +113,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					userInitiated: true);
 			};
 
-			container.AddChild(new TextWidget("Y:", pointSize: 10, textColor: theme.TextColor)
-			{
-				VAnchor = VAnchor.Center,
-				Margin = new BorderDouble(15, 0, 5, 0),
-			});
 			container.AddChild(yEditWidget);
 
 			double.TryParse(xyzValueStrings[2], out double currentZValue);
 
-			zEditWidget = new MHNumberEdit(currentZValue, theme, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
+			zEditWidget = new MHNumberEdit(currentZValue, theme, 'Z', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex + 1,
 				SelectAllOnFocus = true,
+				Margin = theme.ButtonSpacing
 			};
 			zEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
@@ -141,11 +134,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					userInitiated: true);
 			};
 
-			container.AddChild(new TextWidget("Z:", pointSize: 10, textColor: theme.TextColor)
-			{
-				VAnchor = VAnchor.Center,
-				Margin = new BorderDouble(15, 0, 5, 0),
-			});
 			container.AddChild(zEditWidget);
 
 			this.Content = container;

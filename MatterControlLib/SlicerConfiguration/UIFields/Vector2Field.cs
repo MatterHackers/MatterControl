@@ -74,11 +74,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyValueStrings[0], out double currentXValue);
 
-			xEditWidget = new MHNumberEdit(currentXValue, theme, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
+			xEditWidget = new MHNumberEdit(currentXValue, theme, singleCharLabel: 'X', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex,
-				SelectAllOnFocus = true
+				SelectAllOnFocus = true,
+				Margin = theme.ButtonSpacing
 			};
 			xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
@@ -87,16 +88,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					userInitiated: true);
 			};
 
-			container.AddChild(new TextWidget("X:", pointSize: 10, textColor: theme.TextColor)
-			{
-				VAnchor = VAnchor.Center,
-				Margin = new BorderDouble(5, 0),
-			});
 			container.AddChild(xEditWidget);
 
 			double.TryParse(xyValueStrings[1], out double currentYValue);
 
-			yEditWidget = new MHNumberEdit(currentYValue, theme, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
+			yEditWidget = new MHNumberEdit(currentYValue, theme, 'Y', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex + 1,
@@ -109,11 +105,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					userInitiated: true);
 			};
 
-			container.AddChild(new TextWidget("Y:", pointSize: 10, textColor: theme.TextColor)
-			{
-				VAnchor = VAnchor.Center,
-				Margin = new BorderDouble(15, 0, 5, 0),
-			});
 			container.AddChild(yEditWidget);
 
 			this.Content = container;
