@@ -125,13 +125,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			toolbar.AddChild(removeButton);
 
+			primaryActionsPanel = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Center | VAnchor.Fit
+			};
+
+			toolbar.AddChild(primaryActionsPanel);
+
 			overflowButton = new OverflowBar.OverflowMenuButton(theme)
 			{
 				Enabled = scene.SelectedItem != null,
 			};
 			overflowButton.DynamicPopupContent = () =>
 			{
-				return ApplicationController.Instance.GetActionMenuForSceneItem(item, sceneContext.Scene, false);
+				var remainingOperations = ApplicationController.Instance.Graph.Operations.Values.Except(primaryActions);
+
+				return ApplicationController.Instance.GetActionMenuForSceneItem(item, sceneContext.Scene, false, remainingOperations);
 			};
 			toolbar.AddChild(overflowButton);
 
@@ -172,6 +182,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private IconButton removeButton;
 		private OverflowBar.OverflowMenuButton overflowButton;
 		private InteractiveScene scene;
+		private FlowLayoutWidget primaryActionsPanel;
+
+		private List<NodeOperation> primaryActions;
 
 		public void SetActiveItem(IObject3D selectedItem)
 		{
@@ -191,6 +204,38 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			var selectedItemType = selectedItem.GetType();
+
+			primaryActionsPanel.RemoveAllChildren();
+
+			var graph = ApplicationController.Instance.Graph;
+			if (!graph.PrimaryOperations.TryGetValue(selectedItemType, out primaryActions))
+			{
+				primaryActions = new List<NodeOperation>();
+			}
+			else
+			{
+				// Loop over primary actions creating a button for each
+				foreach(var primaryAction in primaryActions)
+				{
+					// TODO: Run visible/enable rules on actions, conditionally add/enable as appropriate
+					var button = new IconButton(primaryAction.IconCollector(theme), theme)
+					{
+						//Name = namedAction.Title + " Button",
+						//ToolTipText = namedAction.Title,
+						Margin = theme.ButtonSpacing,
+						BackgroundColor = theme.ToolbarButtonBackground,
+						HoverColor = theme.ToolbarButtonHover,
+						MouseDownColor = theme.ToolbarButtonDown,
+					};
+
+					button.Click += (s, e) =>
+					{
+						primaryAction.Operation.Invoke(item, scene);
+					};
+
+					primaryActionsPanel.AddChild(button);
+				}
+			}
 
 			editorSectionWidget.Text = selectedItem.Name ?? selectedItemType.Name;
 

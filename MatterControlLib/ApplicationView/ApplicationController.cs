@@ -268,8 +268,14 @@ namespace MatterHackers.MatterControl
 
 		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 
-		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu)
+		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu, IEnumerable<NodeOperation> nodeOperations = null)
 		{
+			// If parameter was not supplied, fall back to unfiltered list of operations
+			if (nodeOperations == null)
+			{
+				nodeOperations = this.Graph.Operations.Values;
+			}
+
 			var popupMenu = new PopupMenu(this.MenuTheme);
 
 			var menuItem = popupMenu.CreateMenuItem("Rename".Localize());
@@ -305,7 +311,7 @@ namespace MatterHackers.MatterControl
 				{
 					popupMenu.CreateSubMenu("Modify".Localize(), this.MenuTheme, (modifyMenu) =>
 					{
-						foreach (var nodeOperation in this.Graph.Operations.Values)
+						foreach (var nodeOperation in nodeOperations)
 						{
 							foreach (var type in nodeOperation.MappedTypes)
 							{
@@ -325,7 +331,7 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
-					foreach (var nodeOperation in this.Graph.Operations.Values)
+					foreach (var nodeOperation in nodeOperations)
 					{
 						foreach (var type in nodeOperation.MappedTypes)
 						{

@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.Library
 	{
 		public string OperationID { get; set; }
 		public string Title { get; set; }
-		public List<Type> MappedTypes { get; set; }
+		public IEnumerable<Type> MappedTypes { get; set; }
 		public Func<IObject3D, InteractiveScene, Task> Operation { get; set; }
 		public Func<IObject3D, bool> IsEnabled { get; set; }
 		public Func<IObject3D, bool> IsVisible { get; set; }
@@ -53,6 +53,8 @@ namespace MatterHackers.MatterControl.Library
 		private ApplicationController applicationController;
 
 		public Dictionary<string, NodeOperation> Operations { get; } = new Dictionary<string, NodeOperation>();
+
+		public Dictionary<Type, List<NodeOperation>> PrimaryOperations { get; } = new Dictionary<Type, List<NodeOperation>>();
 
 		public GraphConfig(ApplicationController applicationController)
 		{
