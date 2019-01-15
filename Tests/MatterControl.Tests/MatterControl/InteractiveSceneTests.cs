@@ -48,7 +48,6 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("InteractiveScene")]
 		public void CombineTests()
 		{
-			return;
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
@@ -64,6 +63,9 @@ namespace MatterControl.Tests.MatterControl
 				var cubeA = new CubeObject3D(20, 20, 20);
 				var cubeB = new CubeObject3D(20, 20, 20);
 				var offsetCubeB = new TranslateObject3D(cubeB, 10);
+				Assert.IsTrue(offsetCubeB.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(
+					0, -10, -10,
+					20, 10, 10), .001));
 
 				var union = new CombineObject3D();
 				union.Children.Add(cubeA);
@@ -71,6 +73,10 @@ namespace MatterControl.Tests.MatterControl
 				root.Children.Add(union);
 
 				union.Combine();
+				Assert.IsTrue(union.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(
+					-10, -10, -10,
+					20, 10, 10), .001));
+
 				union.Flatten(null);
 
 				Assert.AreEqual(1, root.Children.Count());
@@ -264,7 +270,6 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("InteractiveScene")]
 		public void SubtractTests()
 		{
-			return;
 			// Subtract has correct number of results
 			{
 				var root = new Object3D();
