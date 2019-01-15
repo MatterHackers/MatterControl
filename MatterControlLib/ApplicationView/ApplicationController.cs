@@ -1184,6 +1184,67 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					OperationID = "ImageConverter".Localize(),
+					Title = "Image Converter".Localize(),
+					MappedTypes = new List<Type> { typeof(ImageObject3D) },
+					ResultType = typeof(ComponentObject3D),
+					Operation = (sceneItem, scene) =>
+					{
+						var imageObject = scene.SelectedItem;
+						scene.SelectedItem = null;
+
+						var path = new ImageToPathObject3D();
+						path.Children.Add(imageObject);
+						path.Invalidate(new InvalidateArgs(path, InvalidateType.Properties, null));
+
+						var smooth = new SmoothPathObject3D();
+						smooth.Children.Add(path);
+						smooth.Invalidate(new InvalidateArgs(smooth, InvalidateType.Properties, null));
+
+						var extrude = new LinearExtrudeObject3D();
+						extrude.Children.Add(smooth);
+						extrude.Invalidate(new InvalidateArgs(extrude, InvalidateType.Properties, null));
+
+						var baseObject = new BaseObject3D()
+						{
+							BaseType = BaseTypes.None
+						};
+						baseObject.Children.Add(extrude);
+						baseObject.Invalidate(new InvalidateArgs(baseObject, InvalidateType.Properties, null));
+
+						var component = new ComponentObject3D(new[] { baseObject })
+						{
+							Name = "Image Converter".Localize(),
+							ComponentID = "4D9BD8DB-C544-4294-9C08-4195A409217A",
+							SurfacedEditors = new List<string>
+							{
+								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D>.Children<ImageObject3D>",
+								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Height",
+								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.SmoothDistance",
+								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D>",
+								"$.Children<BaseObject3D>",
+							}
+						};
+
+						// Swap original item with new wrapping component
+						scene.Children.Modify(children =>
+						{
+							children.Remove(imageObject);
+							children.Add(component);
+						});
+
+						scene.SelectedItem = component;
+
+						return Task.CompletedTask;
+					},
+					IconCollector = (theme) => AggContext.StaticData.LoadIcon("140.png", 16, 16, theme.InvertIcons)
+				});
+
+			this.Graph.PrimaryOperations.Add(typeof(ImageObject3D), new List<NodeOperation> { this.Graph.Operations["ImageConverter"] });
+
+			this.Graph.RegisterOperation(
+				new NodeOperation()
+				{
 					OperationID = "Mirror".Localize(),
 					Title = "Mirror".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
