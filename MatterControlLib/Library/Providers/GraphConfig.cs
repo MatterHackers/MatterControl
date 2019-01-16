@@ -38,7 +38,11 @@ namespace MatterHackers.MatterControl.Library
 {
 	public class NodeOperation
 	{
+		/// <summary>
+		/// Gets or sets the unlocalized string identifier for an operation
+		/// </summary>
 		public string OperationID { get; set; }
+
 		public string Title { get; set; }
 		public IEnumerable<Type> MappedTypes { get; set; }
 		public Func<IObject3D, InteractiveScene, Task> Operation { get; set; }

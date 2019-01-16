@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Add a callback to check that every line has an extruder 
 					// distance greater than the largest distance minus the max retraction 
 					// amount and less than some amount that is reasonable
-					double lastAbsoluteEPostion = 0;
+					double lastAbsoluteEPosition = 0;
 					double largestAbsoluteEPosition = 0;
 					double largestRetraction = 0;
 					emulator.RecievedInstruction += (e, s) =>
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					emulator.EPositionChanged += (e, s) =>
 					{
 						largestAbsoluteEPosition = Math.Max(largestAbsoluteEPosition, emulator.CurrentExtruder.AbsoluteEPosition);
-						var delta = emulator.CurrentExtruder.AbsoluteEPosition - lastAbsoluteEPostion;
+						var delta = emulator.CurrentExtruder.AbsoluteEPosition - lastAbsoluteEPosition;
 						if(delta < largestRetraction)
 						{
 							largestRetraction = delta;
@@ -92,8 +92,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						double printerRetraction = 7 + .1; // the airwolf has a retraction of 7 mm
 						Assert.GreaterOrEqual(delta, -printerRetraction, "We should never move back more than the retraction amount");
 						Assert.GreaterOrEqual(emulator.CurrentExtruder.AbsoluteEPosition, largestAbsoluteEPosition - printerRetraction, "Never go back more than the retraction amount");
-						Assert.LessOrEqual(emulator.CurrentExtruder.AbsoluteEPosition, lastAbsoluteEPostion + 10, "We should never move up more than 10 mm");
-						lastAbsoluteEPostion = emulator.CurrentExtruder.AbsoluteEPosition;
+						Assert.LessOrEqual(emulator.CurrentExtruder.AbsoluteEPosition, lastAbsoluteEPosition + 10, "We should never move up more than 10 mm");
+						lastAbsoluteEPosition = emulator.CurrentExtruder.AbsoluteEPosition;
 					};
 
 					// Add a cube to the bed
