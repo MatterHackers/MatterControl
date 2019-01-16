@@ -919,7 +919,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							userInitiated: false);
 					}
 
-					uifield.Row.UpdateValidationState(errors);
+					// Some fields are hosted outside of SettingsRows (e.g. Section Headers like Brim) and should skip validation updates
+					uifield.Row?.UpdateValidationState(errors);
 				}
 			}
 		}

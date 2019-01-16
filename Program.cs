@@ -102,16 +102,16 @@ namespace MatterHackers.MatterControl
 			//#endif
 
 			var serviceHost = new ServiceHost(
-				typeof(LocalService), 
+				typeof(LocalService),
 				new Uri[] { new Uri("net.pipe://localhost/") });
 
 			serviceHost.AddServiceEndpoint(typeof(IMainService), new NetNamedPipeBinding(), mainServiceName);
 			serviceHost.Open();
 
 			Console.Write(
-				"Service started: {0};", 
+				"Service started: {0};",
 				string.Join(", ", serviceHost.Description.Endpoints.Select(s => s.ListenUri.AbsoluteUri).ToArray()));
-			
+
 			// Load optional user configuration
 			IConfiguration config = new ConfigurationBuilder()
 				.AddJsonFile("appsettings.json", optional: true)
@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl
 			public void ShellOpenFile(string[] files)
 			{
 				// If at least one argument is an acceptable shell file extension
-				var itemsToAdd = files.Where(f => File.Exists(f) 
+				var itemsToAdd = files.Where(f => File.Exists(f)
 					&& shellFileExtensions.Contains(Path.GetExtension(f).ToLower()));
 
 				if (itemsToAdd.Any())
@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl
 				: base(
 					new ServiceEndpoint(
 						ContractDescription.GetContract(typeof(IMainService)),
-						new NetNamedPipeBinding(), 
+						new NetNamedPipeBinding(),
 						new EndpointAddress($"net.pipe://localhost/{mainServiceName}")))
 			{
 			}

@@ -29,9 +29,12 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
@@ -69,6 +72,45 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				return Task.CompletedTask;
 			});
+		}
+
+		[Test]
+		public async Task PrinterTabRemainsAfterReloadAll()
+		{
+			await MatterControlUtilities.RunTest((testRunner) =>
+			{
+				testRunner.WaitForFirstDraw();
+
+				// Add Guest printers
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
+				Assert.AreEqual(
+					1,
+					ApplicationController.Instance.ActivePrinters.Count(),
+					"One printer should exist after Airwolf add");
+
+				testRunner.SwitchToSliceSettings();
+
+				// Move to Adhesion tab
+				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.SliceSettings, "skirts");
+
+				// Click Brim toggle field forcing ReloadAll
+				testRunner.WaitForReloadAll(() => testRunner.ClickByName("Create Brim Field"));
+
+				// Ensure tabs remain
+				Assert.AreEqual(
+					1,
+					ApplicationController.Instance.ActivePrinters.Count(),
+					"One printer should exist after Airwolf add");
+
+				testRunner.Delay(2);
+
+				Assert.AreEqual(
+					1,
+					ApplicationController.Instance.MainView.TabControl.AllTabs.Select(t => t.TabContent).OfType<PrinterTabPage>().Count(),
+					"One printer tab should exist after ReloadAll");
+
+				return Task.CompletedTask;
+			}, maxTimeToRun: 120);
 		}
 	}
 }
