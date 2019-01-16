@@ -131,138 +131,152 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public double PillarSize { get; private set; } = 4;
 
-		private void AddSupportColumn(double gridX, double gridY, double bottomZ, double topZ)
+		private void AddSupportColumn(IObject3D holder, double gridX, double gridY, double bottomZ, double topZ)
 		{
 			if(topZ - bottomZ < .01)
 			{
 				// less than 10 micros high, don't ad it
 				return;
 			}
-			scene.Children.Add(new GeneratedSupportObject3D()
+			holder.Children.Add(new GeneratedSupportObject3D()
 			{
 				Mesh = PlatonicSolids.CreateCube(PillarSize - reduceAmount, PillarSize - reduceAmount, topZ - bottomZ),
 				Matrix = Matrix4X4.CreateTranslation(gridX, gridY, bottomZ + (topZ - bottomZ) / 2)
 			});
 		}
 
-		private void Rebuild()
+		private Task Rebuild()
 		{
-			Task.Run((Action)(() =>
-			{
-				// Get visible meshes for each of them
-				var visibleMeshes = scene.Children.SelectMany(i => i.VisibleMeshes());
-
-				var selectedItem = scene.SelectedItem;
-				if (selectedItem != null)
+			return ApplicationController.Instance.Tasks.Execute(
+				"Create Support".Localize(),
+				null,
+				(reporter, cancellationToken) =>
 				{
-					visibleMeshes = selectedItem.VisibleMeshes();
-				}
+					// Get visible meshes for each of them
+					var visibleMeshes = scene.Children.SelectMany(i => i.VisibleMeshes());
 
-				var supportCandidates = visibleMeshes.Where(i => i.OutputType != PrintOutputTypes.Support);
-
-				// find all the faces that are candidates for support
-				var upVerts = new List<Vector3Float>();
-				var upFaces = new FaceList();
-				var downVerts = new List<Vector3Float>();
-				var downFaces = new FaceList();
-				foreach (var item in supportCandidates)
-				{
-					var matrix = item.WorldMatrix(scene);
-					for (int faceIndex = 0; faceIndex < item.Mesh.Faces.Count; faceIndex++)
+					var selectedItem = scene.SelectedItem;
+					if (selectedItem != null)
 					{
-						var face0Normal = item.Mesh.Faces[faceIndex].normal.TransformNormal(matrix).GetNormal();
-						var angle = MathHelper.RadiansToDegrees(Math.Acos(face0Normal.Dot(-Vector3Float.UnitZ)));
-
-						if (angle < MaxOverHangAngle)
-						{
-							var face = item.Mesh.Faces[faceIndex];
-							var verts = new int[] { face.v0, face.v1, face.v2 };
-							var fc = downVerts.Count;
-							downFaces.Add(fc, fc+1, fc+2, downVerts);
-							downVerts.Add(item.Mesh.Vertices[face.v0].Transform(matrix));
-							downVerts.Add(item.Mesh.Vertices[face.v1].Transform(matrix));
-							downVerts.Add(item.Mesh.Vertices[face.v2].Transform(matrix));
-						}
-
-						if (angle > 0)
-						{
-							var face = item.Mesh.Faces[faceIndex];
-							var verts = new int[] { face.v0, face.v1, face.v2 };
-							var fc = upFaces.Count;
-							upFaces.Add(fc, fc + 1, fc + 2, upVerts);
-							upVerts.Add(item.Mesh.Vertices[face.v0].Transform(matrix));
-							upVerts.Add(item.Mesh.Vertices[face.v1].Transform(matrix));
-							upVerts.Add(item.Mesh.Vertices[face.v2].Transform(matrix));
-						}
+						visibleMeshes = selectedItem.VisibleMeshes();
 					}
-				}
 
-				if (downFaces.Count > 0)
-				{
-					var downTraceData = downFaces.CreateTraceData(downVerts, 0);
-					var upTraceData = upFaces.CreateTraceData(upVerts, 0);
+					var supportCandidates = visibleMeshes.Where(i => i.OutputType != PrintOutputTypes.Support);
 
-					// get the bounds of all verts
-					var bounds = downVerts.Bounds();
-
-					// create the gird of possible support
-					var gridBounds = new RectangleDouble(Math.Floor((double)(bounds.MinXYZ.X / PillarSize)),
-						Math.Floor((double)(bounds.MinXYZ.Y / PillarSize)),
-						Math.Ceiling(bounds.MaxXYZ.X / PillarSize),
-						Math.Ceiling(bounds.MaxXYZ.Y / PillarSize));
-
-					var supportGrid = new List<List<double>>((int)(gridBounds.Width * gridBounds.Height));
-
-					// at the center of every grid item add in a list of all the top faces to look down from
-					for (int y = 0; y < gridBounds.Height; y++)
+					// find all the faces that are candidates for support
+					var upVerts = new List<Vector3Float>();
+					var upFaces = new FaceList();
+					var downVerts = new List<Vector3Float>();
+					var downFaces = new FaceList();
+					foreach (var item in supportCandidates)
 					{
-						var yPos = (gridBounds.Bottom + y) * PillarSize;
-						for (int x = 0; x < gridBounds.Width; x++)
+						var matrix = item.WorldMatrix(scene);
+						for (int faceIndex = 0; faceIndex < item.Mesh.Faces.Count; faceIndex++)
 						{
-							var xPos = (gridBounds.Left + x) * PillarSize;
-							IntersectInfo upHit = null;
-							var upRay = new Ray(new Vector3(xPos, yPos, 0), Vector3.UnitZ, intersectionType: IntersectionType.Both);
-							do
+							var face0Normal = item.Mesh.Faces[faceIndex].normal.TransformNormal(matrix).GetNormal();
+							var angle = MathHelper.RadiansToDegrees(Math.Acos(face0Normal.Dot(-Vector3Float.UnitZ)));
+
+							if (angle < MaxOverHangAngle)
 							{
-								upHit = downTraceData.GetClosestIntersection(upRay);
-								if (upHit != null)
-								{
-									// we found a ceiling above this spot, look down from that to find the first floor
-									var downRay = new Ray(new Vector3(upHit.HitPosition.X, upHit.HitPosition.Y, upHit.HitPosition.Z - .001), -Vector3.UnitZ, intersectionType: IntersectionType.Both);
-									var downHit = upTraceData.GetClosestIntersection(downRay);
-									if (downHit != null)
-									{
-										AddSupportColumn(downHit.HitPosition.X, downHit.HitPosition.Y, downHit.HitPosition.Z, upHit.HitPosition.Z);
-									}
-									else
-									{
-										// did not find a hit, go to the bed
-										AddSupportColumn(upHit.HitPosition.X, upHit.HitPosition.Y, upRay.origin.Z, upHit.HitPosition.Z);
-									}
+								var face = item.Mesh.Faces[faceIndex];
+								var verts = new int[] { face.v0, face.v1, face.v2 };
+								var fc = downVerts.Count;
+								downVerts.Add(item.Mesh.Vertices[face.v0].Transform(matrix));
+								downVerts.Add(item.Mesh.Vertices[face.v1].Transform(matrix));
+								downVerts.Add(item.Mesh.Vertices[face.v2].Transform(matrix));
 
-									// make a new ray just past the last hit to keep looking for up hits
-									upRay = new Ray(new Vector3(xPos, yPos, upHit.HitPosition.Z + .001), Vector3.UnitZ, intersectionType: IntersectionType.Both);
-								}
-							} while (upHit != null);
+								downFaces.Add(fc, fc + 1, fc + 2, downVerts);
+							}
+
+							if (angle > 0)
+							{
+								var face = item.Mesh.Faces[faceIndex];
+								var verts = new int[] { face.v0, face.v1, face.v2 };
+								var fc = upFaces.Count;
+								upVerts.Add(item.Mesh.Vertices[face.v0].Transform(matrix));
+								upVerts.Add(item.Mesh.Vertices[face.v1].Transform(matrix));
+								upVerts.Add(item.Mesh.Vertices[face.v2].Transform(matrix));
+
+								upFaces.Add(fc, fc + 1, fc + 2, upVerts);
+							}
 						}
 					}
 
-					// foreach face set the support heights in the overlapped support grid
-					// foreach grid column that has data
-					// trace down from the top to the first bottom hit (or bed)
-					// add a support column
-					var first = downFaces.First();
-					var position = downVerts[first.v0];
-					//AddSupportColumn(position.X, position.Y, position.Z, 0);
-				}
+					if (downFaces.Count > 0)
+					{
+						var downTraceData = downFaces.CreateTraceData(downVerts, 0);
+						var upTraceData = upFaces.CreateTraceData(upVerts, 0);
 
-				// this is the theory for regions rather than pillars
-				// separate the faces into face patch groups (these are the new support tops)
-				// project all the vertices of each patch group down until they hit an up face in the scene (or 0)
-				// make a new patch group at the z of the hit (these will be the bottoms)
-				// find the outline of the patch groups (these will be the walls of the top and bottom patches
-				// make a new mesh object with the top, bottom and walls, add it to the scene and mark it as support
-			}));
+						// get the bounds of all verts
+						var bounds = downVerts.Bounds();
+
+						// create the gird of possible support
+						var gridBounds = new RectangleDouble(Math.Floor((double)(bounds.MinXYZ.X / PillarSize)),
+							Math.Floor((double)(bounds.MinXYZ.Y / PillarSize)),
+							Math.Ceiling(bounds.MaxXYZ.X / PillarSize),
+							Math.Ceiling(bounds.MaxXYZ.Y / PillarSize));
+
+						var supportGrid = new List<List<double>>((int)(gridBounds.Width * gridBounds.Height));
+
+						IObject3D holder = new Object3D();
+
+						// at the center of every grid item add in a list of all the top faces to look down from
+						for (int y = 0; y < gridBounds.Height; y++)
+						{
+							var yPos = (gridBounds.Bottom + y) * PillarSize;
+							for (int x = 0; x < gridBounds.Width; x++)
+							{
+								var xPos = (gridBounds.Left + x) * PillarSize;
+								IntersectInfo upHit = null;
+								var upRay = new Ray(new Vector3(xPos, yPos, 0), Vector3.UnitZ, intersectionType: IntersectionType.Both);
+								do
+								{
+									upHit = downTraceData.GetClosestIntersection(upRay);
+									if (upHit != null)
+									{
+										// we found a ceiling above this spot, look down from that to find the first floor
+										var downRay = new Ray(new Vector3(upHit.HitPosition.X, upHit.HitPosition.Y, upHit.HitPosition.Z - .001), -Vector3.UnitZ, intersectionType: IntersectionType.Both);
+										var downHit = upTraceData.GetClosestIntersection(downRay);
+										if (downHit != null)
+										{
+											AddSupportColumn(holder, downHit.HitPosition.X, downHit.HitPosition.Y, downHit.HitPosition.Z, upHit.HitPosition.Z);
+										}
+										else
+										{
+											// did not find a hit, go to the bed
+											AddSupportColumn(holder, upHit.HitPosition.X, upHit.HitPosition.Y, upRay.origin.Z, upHit.HitPosition.Z);
+										}
+
+										// make a new ray just past the last hit to keep looking for up hits
+										upRay = new Ray(new Vector3(xPos, yPos, upHit.HitPosition.Z + .001), Vector3.UnitZ, intersectionType: IntersectionType.Both);
+									}
+								} while (upHit != null);
+							}
+						}
+
+						// foreach face set the support heights in the overlapped support grid
+						// foreach grid column that has data
+						// trace down from the top to the first bottom hit (or bed)
+						// add a support column
+						var first = downFaces.First();
+						var position = downVerts[first.v0];
+						//AddSupportColumn(position.X, position.Y, position.Z, 0);
+
+						scene.Children.Modify(list =>
+						{
+							list.AddRange(holder.Children);
+						});
+					}
+
+					// this is the theory for regions rather than pillars
+					// separate the faces into face patch groups (these are the new support tops)
+					// project all the vertices of each patch group down until they hit an up face in the scene (or 0)
+					// make a new patch group at the z of the hit (these will be the bottoms)
+					// find the outline of the patch groups (these will be the walls of the top and bottom patches
+					// make a new mesh object with the top, bottom and walls, add it to the scene and mark it as support
+
+					return Task.CompletedTask;
+				});
 		}
 
 		private void RemoveExisting()

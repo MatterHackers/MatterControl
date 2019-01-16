@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -46,6 +47,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			this.levelingPlan = levelingPlan;
 		}
+
+		public bool WindowHasBeenClosed { get; private set; }
 
 		public static void Start(PrinterConfig printer, ThemeConfig theme)
 		{
@@ -116,6 +119,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.AllowLeveling = true;
 
 				printLevelWizardWindow = null;
+				levelingContext.WindowHasBeenClosed = true;
 
 				// make sure we raise the probe on close
 				if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
@@ -231,6 +235,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			int i = 0;
 			foreach (var goalProbePosition in levelingPlan.GetPrintLevelPositionToSample())
 			{
+				if(this.WindowHasBeenClosed)
+				{
+					// Make sure when the wizard is done we turn off the bed heating
+					printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
+
+					if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
+					{
+						printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
+					}
+
+					yield break;
+				}
+
 				var validProbePosition = EnsureInPrintBounds(printer.Settings, goalProbePosition);
 
 				if (printer.Settings.Helpers.UseZProbe())

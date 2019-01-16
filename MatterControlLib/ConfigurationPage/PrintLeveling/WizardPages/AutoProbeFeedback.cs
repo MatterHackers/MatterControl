@@ -46,7 +46,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private List<ProbePosition> probePositions;
 		private int probePositionsBeingEditedIndex;
 
-		private EventHandler unregisterEvents;
 		protected Vector3 probeStartPosition;
 
 		public AutoProbeFeedback(PrinterSetupWizard context, Vector3 probeStartPosition, string headerText, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
@@ -104,17 +103,23 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 						UiThread.RunOnIdle(() => NextButton.InvokeClick());
 					}
+
+					if (numberOfSamples-- > 0
+						&& !this.HasBeenClosed)
+					{
+						// add the next request for probe
+						printer.Connection.QueueLine("G30");
+						// raise the probe after each sample
+						printer.Connection.MoveAbsolute(adjustedProbePosition, feedRates.X);
+					}
 				}
 			}
 		}
 
-		public override void OnClosed(EventArgs e)
-		{
-			unregisterEvents?.Invoke(this, null);
-			base.OnClosed(e);
-		}
-
 		List<double> samples = new List<double>();
+		private int numberOfSamples;
+		private Vector3 feedRates;
+		private Vector3 adjustedProbePosition;
 
 		public override void PageIsBecomingActive()
 		{
@@ -132,9 +137,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.QueueLine($"M280 P0 S{servoDeploy}");
 			}
 
-			var feedRates = printer.Settings.Helpers.ManualMovementSpeeds();
+			feedRates = printer.Settings.Helpers.ManualMovementSpeeds();
 
-			var adjustedProbePosition = probeStartPosition;
+			adjustedProbePosition = probeStartPosition;
 			// subtract out the probe offset
 			var probeOffset = printer.Settings.GetValue<Vector2>(SettingsKey.z_probe_xy_offset);
 			adjustedProbePosition -= new Vector3(probeOffset);
@@ -142,14 +147,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, probeStartPosition.Z, feedRates.Z);
 			printer.Connection.MoveAbsolute(adjustedProbePosition, feedRates.X);
 
-			int numberOfSamples = printer.Settings.GetValue<int>(SettingsKey.z_probe_samples);
-			for (int i = 0; i < numberOfSamples; i++)
-			{
-				// probe the current position
-				printer.Connection.QueueLine("G30");
-				// raise the probe after each sample
-				printer.Connection.MoveAbsolute(adjustedProbePosition, feedRates.X);
-			}
+			numberOfSamples = printer.Settings.GetValue<int>(SettingsKey.z_probe_samples)-1;
+
+			// probe the current position
+			printer.Connection.QueueLine("G30");
+			// raise the probe after each sample
+			printer.Connection.MoveAbsolute(adjustedProbePosition, feedRates.X);
 
 			NextButton.Enabled = false;
 

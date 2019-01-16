@@ -64,11 +64,12 @@ namespace MatterHackers.MatterControl
 				pages.Current?.Close();
 
 				// Advance
-				pages.MoveNext();
+				if (pages.MoveNext())
+				{
+					pages.Current?.PageIsBecomingActive();
 
-				pages.Current?.PageIsBecomingActive();
-
-				dialogWindow.ChangeToPage(pages.Current);
+					dialogWindow.ChangeToPage(pages.Current);
+				}
 			});
 		}
 	}

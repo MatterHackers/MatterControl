@@ -89,20 +89,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printer.Connection.AllowLeveling = true;
 			printer.Settings.Helpers.DoPrintLeveling(true);
 
+			// Make sure when the wizard is done we turn off the bed heating
+			printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
+
 			if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
 			{
 				printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
 			}
-
-			// Make sure when the wizard is done we turn off the bed heating
-			printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
 
 			Closed += (s, e) =>
 			{
 				// give instruction about how to load filament if the user has not gotten them
 				ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, theme);
 			};
-
 
 			base.PageIsBecomingActive();
 		}
