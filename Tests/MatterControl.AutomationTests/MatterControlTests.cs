@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.SwitchToSliceSettings();
 
 				// Move to Adhesion tab
-				testRunner.SelectSliceSettingsField("Advanced", "skirts");
+				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.SliceSettings, "skirts");
 
 				// Click Brim toggle field forcing ReloadAll
 				testRunner.WaitForReloadAll(() => testRunner.ClickByName("Create Brim Field"));
@@ -102,9 +102,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					ApplicationController.Instance.ActivePrinters.Count(),
 					"One printer should exist after Airwolf add");
 
+				testRunner.Delay(2);
+
 				Assert.AreEqual(
 					1,
-					ApplicationController.Instance.MainView.TabControl.AllTabs.OfType<PrinterTabPage>().Count(),
+					ApplicationController.Instance.MainView.TabControl.AllTabs.Select(t => t.TabContent).OfType<PrinterTabPage>().Count(),
 					"One printer tab should exist after ReloadAll");
 
 				return Task.CompletedTask;
