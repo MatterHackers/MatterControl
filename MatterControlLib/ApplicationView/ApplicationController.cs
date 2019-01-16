@@ -1105,7 +1105,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
-					OperationID = "ImageToPath".Localize(),
+					OperationID = "ImageToPath",
 					Title = "Image to Path".Localize(),
 					MappedTypes = new List<Type> { typeof(ImageObject3D) },
 					ResultType = typeof(ImageToPathObject3D),
@@ -1126,7 +1126,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
-					OperationID = "Translate".Localize(),
+					OperationID = "Translate",
 					Title = "Translate".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(TranslateObject3D),
@@ -1146,7 +1146,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
-					OperationID = "Rotate".Localize(),
+					OperationID = "Rotate",
 					Title = "Rotate".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(RotateObject3D_2),
@@ -1166,7 +1166,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
-					OperationID = "Scale".Localize(),
+					OperationID = "Scale",
 					Title = "Scale".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(ScaleObject3D),
@@ -1186,7 +1186,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
-					OperationID = "ImageConverter".Localize(),
+					OperationID = "ImageConverter",
 					Title = "Image Converter".Localize(),
 					MappedTypes = new List<Type> { typeof(ImageObject3D) },
 					ResultType = typeof(ComponentObject3D),
@@ -1246,7 +1246,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
-					OperationID = "Mirror".Localize(),
+					OperationID = "Mirror",
 					Title = "Mirror".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(MirrorObject3D),
@@ -1263,7 +1263,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
-					OperationID = "MakeComponent".Localize(),
+					OperationID = "MakeComponent",
 					Title = "Make Component".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(ComponentObject3D),
@@ -1311,7 +1311,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
-					OperationID = "EditComponent".Localize(),
+					OperationID = "EditComponent",
 					Title = "Edit Component".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(ComponentObject3D),
@@ -1342,7 +1342,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
-					OperationID = "LinearExtrude".Localize(),
+					OperationID = "LinearExtrude",
 					Title = "Linear Extrude".Localize(),
 					MappedTypes = new List<Type> { typeof(IPathObject) },
 					ResultType = typeof(LinearExtrudeObject3D),
@@ -1363,7 +1363,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
-					OperationID = "SmoothPath".Localize(),
+					OperationID = "SmoothPath",
 					Title = "Smooth Path".Localize(),
 					MappedTypes = new List<Type> { typeof(IPathObject) },
 					ResultType = typeof(SmoothPathObject3D),
@@ -1384,7 +1384,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
-					OperationID = "InflatePath".Localize(),
+					OperationID = "InflatePath",
 					Title = "Inflate Path".Localize(),
 					MappedTypes = new List<Type> { typeof(IPathObject) },
 					ResultType = typeof(InflatePathObject3D),
@@ -1405,7 +1405,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
-					OperationID = "AddBase".Localize(),
+					OperationID = "AddBase",
 					Title = "Add Base".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
 					ResultType = typeof(BaseObject3D),
