@@ -114,13 +114,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}
 							progressStatus.Status = "Clean".Localize();
 							reporter.Report(progressStatus);
-							throw new NotImplementedException();
-							//ungroupMesh.CleanAndMergeMesh(cancellationToken, 0, (progress0To1, processingState) =>
-							//{
-							//	progressStatus.Progress0To1 = .2 + progress0To1 * .3;
-							//	progressStatus.Status = processingState;
-							//	reporter.Report(progressStatus);
-							//});
 							if (cancellationToken.IsCancellationRequested)
 							{
 								return Task.CompletedTask;
