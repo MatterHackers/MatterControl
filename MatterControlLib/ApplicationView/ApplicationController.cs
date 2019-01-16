@@ -3046,6 +3046,8 @@ If you experience adhesion problems, please re-run leveling."
 		private static string lastSection = "";
 		private static Stopwatch timer;
 
+		public static bool EnableF5Collect { get; set; }
+
 		public static SystemWindow LoadRootWindow(int width, int height)
 		{
 			timer = Stopwatch.StartNew();
@@ -3138,6 +3140,13 @@ If you experience adhesion problems, please re-run leveling."
 					{
 						DialogWindow.Show(new HelpPage("AllGuides"));
 					});
+				}
+
+				if (EnableF5Collect
+					&& keyEvent.KeyCode == Keys.F5)
+				{
+					GC.Collect();
+					systemWindow.Invalidate();
 				}
 
 				if (!keyEvent.Handled
