@@ -38,6 +38,7 @@ using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -190,23 +191,19 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else if (invalidateArgs.InvalidateType == InvalidateType.Properties
 				&& invalidateArgs.Source == this)
 			{
-				Rebuild(invalidateArgs.UndoBuffer);
+				Rebuild();
 			}
-			else
-			{
-				base.OnInvalidate(invalidateArgs);
-			}
+
+			base.OnInvalidate(invalidateArgs);
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		public override Task Rebuild()
 		{
-			this.DebugDepth("Rebuild");
-
 			using (RebuildLock())
 			{
 				// set the matrix for the transform object
@@ -217,6 +214,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix, null));
+
+			return Task.CompletedTask;
 		}
 
 		public void UpdateControls(PublicPropertyChange change)
@@ -255,7 +254,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						break;
 				}
 				ScaleRatio = new Vector3(scale, scale, scale);
-				Rebuild(null);
+				Rebuild();
 			}
 			else if(change.Changed == nameof(UsePercentage))
 			{
@@ -268,8 +267,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					var maxScale = Math.Max(ScaleRatio.X, Math.Max(ScaleRatio.Y, ScaleRatio.Z));
 					ScaleRatio = new Vector3(maxScale, maxScale, maxScale);
-					Rebuild(null);
-					base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
+					Rebuild();
 				}
 			}
 			else if (change.Changed == nameof(SizeX))
@@ -279,8 +277,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					// scale y and z to match
 					ScaleRatio[1] = ScaleRatio[0];
 					ScaleRatio[2] = ScaleRatio[0];
-					Rebuild(null);
-					base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
+					Rebuild();
 				}
 			}
 			else if (change.Changed == nameof(SizeY))
@@ -290,8 +287,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					// scale y and z to match
 					ScaleRatio[0] = ScaleRatio[1];
 					ScaleRatio[2] = ScaleRatio[1];
-					Rebuild(null);
-					base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
+					Rebuild();
 				}
 			}
 			else if (change.Changed == nameof(SizeZ))
@@ -301,8 +297,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					// scale y and z to match
 					ScaleRatio[0] = ScaleRatio[2];
 					ScaleRatio[1] = ScaleRatio[2];
-					Rebuild(null);
-					base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
+					Rebuild();
 				}
 			}
 		}

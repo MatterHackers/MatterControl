@@ -37,6 +37,7 @@ using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -72,7 +73,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public override bool CanFlatten => true;
 
 		#region // editable properties
-		public DirectionAxis RotateAbout { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
+		public DirectionAxis RotateAbout { get; set; } = new DirectionAxis() { Origin = Vector3.Zero, Normal = Vector3.UnitZ };
 		[DisplayName("Angle")]
 		public double AngleDegrees { get; set; } = 0;
 		#endregion
@@ -101,31 +102,27 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
-				&& invalidateType.Source != this
+			if ((invalidateArgs.InvalidateType == InvalidateType.Content
+				|| invalidateArgs.InvalidateType == InvalidateType.Matrix
+				|| invalidateArgs.InvalidateType == InvalidateType.Mesh)
+				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
-				&& invalidateType.Source == this)
+			else if (invalidateArgs.InvalidateType == InvalidateType.Properties
+				&& invalidateArgs.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateArgs);
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		public override Task Rebuild()
 		{
-			this.DebugDepth("Rebuild");
-
 			using (RebuildLock())
 			{
 				// set the matrix for the inner object
@@ -133,6 +130,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix, null));
+
+			return Task.CompletedTask;
 		}
 	}
 }

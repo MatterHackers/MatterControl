@@ -450,6 +450,67 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Category("InteractiveScene")]
+		public void ScaleAndRotateMantainsCorrectAabb()
+		{
+			{
+				// create a simple cube with translation
+				var root = new Object3D();
+				var cube = new CubeObject3D(20, 20, 20);
+				cube.Matrix = Matrix4X4.CreateTranslation(50, 60, 10);
+				root.Children.Add(cube);
+				Assert.AreEqual(2, root.DescendantsAndSelf().Count());
+				var preScaleAabb = root.GetAxisAlignedBoundingBox();
+
+				// add a scale to it (that is not scaled)
+				var scaleObject = new ScaleObject3D(cube);
+
+				// ensure that the object did not move
+				Assert.IsTrue(scaleObject.ScaleAbout.Equals(Vector3.Zero), "The objects have been moved to be scalling about 0.");
+				Assert.AreEqual(4, root.DescendantsAndSelf().Count());
+				var postScaleAabb = root.GetAxisAlignedBoundingBox();
+
+				Assert.IsTrue(preScaleAabb.Equals(postScaleAabb, .001));
+
+				Assert.AreEqual(cube, scaleObject.SourceItem, "There is no undo buffer, there should not have been a clone");
+
+				var rotateScaleObject = new RotateObject3D_2(cube);
+				// ensure that the object did not move
+				Assert.AreEqual(6, root.DescendantsAndSelf().Count());
+				var postRotateScaleAabb = root.GetAxisAlignedBoundingBox();
+
+				Assert.IsTrue(preScaleAabb.Equals(postRotateScaleAabb, .001));
+
+				Assert.AreEqual(cube, rotateScaleObject.SourceItem, "There is no undo buffer, there should not have been a clone");
+			}
+		}
+
+		[Test, Category("InteractiveScene")]
+		public void RotateMantainsCorrectAabb()
+		{
+			{
+				// create a simple cube with translation
+				var root = new Object3D();
+				var cube = new CubeObject3D(20, 20, 20);
+				cube.Matrix = Matrix4X4.CreateTranslation(50, 60, 10);
+				root.Children.Add(cube);
+				Assert.AreEqual(2, root.DescendantsAndSelf().Count());
+				var preRotateAabb = root.GetAxisAlignedBoundingBox();
+
+				// add a rotate to it (that is not rotated)
+				var rotateObject = new RotateObject3D_2(cube);
+
+				// ensure that the object did not move
+				Assert.IsTrue(rotateObject.RotateAbout.Origin.Equals(new Vector3(50, 60, 10)));
+				Assert.AreEqual(4, root.DescendantsAndSelf().Count());
+				var postRotateAabb = root.GetAxisAlignedBoundingBox();
+
+				Assert.IsTrue(preRotateAabb.Equals(postRotateAabb, .001));
+
+				Assert.AreEqual(cube, rotateObject.SourceItem, "There is no undo buffer, there should not have been a clone");
+			}
+		}
+
+		[Test, Category("InteractiveScene")]
 		public void AabbCalculatedCorrectlyForCurvedFitObjects()
 		{
 			var root = new Object3D();
