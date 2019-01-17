@@ -1154,9 +1154,9 @@ namespace MatterHackers.MatterControl
 					{
 						var selectedItem = scene.SelectedItem;
 						scene.SelectedItem = null;
-						var scale = new RotateObject3D_2();
-						scale.WrapItem(selectedItem, scene.UndoBuffer);
-						scene.SelectedItem = scale;
+						var rotate = new RotateObject3D_2();
+						rotate.WrapItem(selectedItem, scene.UndoBuffer);
+						scene.SelectedItem = rotate;
 
 						return Task.CompletedTask;
 					},

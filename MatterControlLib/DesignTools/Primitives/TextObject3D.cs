@@ -112,7 +112,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			return Task.Run((System.Action)(() =>
 			{
-				(this).DebugDepth("Rebuild");
 				using (RebuildLock())
 				{
 					var aabb = (this).GetAxisAlignedBoundingBox();
