@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		/// <summary>
 		/// The amount to reduce the pillars so they are separated in the 3D view
 		/// </summary>
-		private double reduceAmount => PillarSize / 8;
+		private double reduceAmount => .99;
 
 		private InteractiveScene scene;
 		private ThemeConfig theme;
@@ -127,9 +127,50 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			theme.ApplyPrimaryActionStyle(generateButton);
 		}
 
-		public static double MaxOverHangAngle { get; private set; } = 45;
+		public static double MaxOverHangAngle
+		{
+			get
+			{
+				if(UserSettings.Instance.get(UserSettingsKey.SupportMaxOverHangAngle) == null)
+				{
+					return 45;
+				}
+				var value = UserSettings.Instance.GetValue<double>(UserSettingsKey.SupportMaxOverHangAngle);
+				if (value < 0)
+				{
+					return 0;
+				}
+				if(value > 180)
+				{
+					value = 180;
+				}
 
-		public double PillarSize { get; private set; } = 4;
+				return value;
+			}
+
+			private set
+			{
+				UserSettings.Instance.set(UserSettingsKey.SupportMaxOverHangAngle, value.ToString());
+			}
+		}
+
+		public double PillarSize
+		{
+			get
+			{
+				var value = UserSettings.Instance.GetValue<double>(UserSettingsKey.SupportPillarSize);
+				if(value < 1.5)
+				{
+					return 1.5;
+				}
+
+				return value;
+			}
+			private set
+			{
+				UserSettings.Instance.set(UserSettingsKey.SupportPillarSize, value.ToString());
+			}
+		}
 
 		private void AddSupportColumn(IObject3D holder, double gridX, double gridY, double bottomZ, double topZ)
 		{
@@ -176,7 +217,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							var face0Normal = item.Mesh.Faces[faceIndex].normal.TransformNormal(matrix).GetNormal();
 							var angle = MathHelper.RadiansToDegrees(Math.Acos(face0Normal.Dot(-Vector3Float.UnitZ)));
 
-							if (angle < MaxOverHangAngle)
+							if (angle <= MaxOverHangAngle)
 							{
 								var face = item.Mesh.Faces[faceIndex];
 								var verts = new int[] { face.v0, face.v1, face.v2 };
