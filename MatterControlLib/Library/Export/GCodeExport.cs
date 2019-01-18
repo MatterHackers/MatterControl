@@ -246,7 +246,8 @@ namespace MatterHackers.MatterControl.Library.Export
 							ApplyStreamPipelineAndExport(gcodePath, outputPath);
 
 							// last let's check if there is any support in the scene and if it looks like it is needed
-							if (GenerateSupportPanel.RequiresSupport(printer.Bed.Scene))
+							var supportGenerator = new SupportGenerator(printer.Bed.Scene);
+							if (supportGenerator.RequiresSupport())
 							{
 								UiThread.RunOnIdle(() =>
 								{
