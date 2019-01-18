@@ -32,10 +32,17 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
+	public enum ValidationErrorLevel
+	{
+		Information, Warning, Error
+	}
+
 	public class ValidationError
 	{
 		public string Error { get; set; }
 
 		public string Details { get; set; }
+
+		public ValidationErrorLevel ErrorLevel { get; set; } = ValidationErrorLevel.Error;
 	}
 }
