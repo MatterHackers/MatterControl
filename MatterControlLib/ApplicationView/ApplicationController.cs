@@ -2448,8 +2448,7 @@ If you experience adhesion problems, please re-run leveling."
 								"Warning - GCode file".Localize(),
 								new GuiWidget[]
 								{
-										new VerticalSpacer(),
-										hideGCodeWarningCheckBox
+									hideGCodeWarningCheckBox
 								},
 								StyledMessageBox.MessageType.YES_NO);
 						});

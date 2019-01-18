@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					BackgroundColor = theme.MinimalShade,
 					VAnchor = Agg.UI.VAnchor.Absolute,
 					HAnchor = Agg.UI.HAnchor.Fit | Agg.UI.HAnchor.Left,
-					Margin = new BorderDouble(10, 0, 0, 15)
+					Margin = new BorderDouble(10, 10, 0, 15)
 				};
 				loadFilamentButton.Click += (s, e) =>
 				{

@@ -32,6 +32,7 @@ using Markdig.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
@@ -104,7 +105,7 @@ namespace MatterHackers.MatterControl
 				{
 					foreach (GuiWidget widget in extraWidgetsToAdd)
 					{
-						scrollable.AddChild(widget);
+						contentRow.AddChild(widget);
 					}
 				}
 

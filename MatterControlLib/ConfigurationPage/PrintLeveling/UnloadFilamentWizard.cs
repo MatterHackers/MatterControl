@@ -30,10 +30,12 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -194,16 +196,41 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			// put up a success message
-			PrinterSetupWizardPage finalPage = null;
-			finalPage = new PrinterSetupWizardPage(this, "Success".Localize(), "Success!\n\nYour filament should now be unloaded".Localize())
+			yield return new DoneUnloadingPage(this);
+		}
+	}
+
+	public class DoneUnloadingPage : PrinterSetupWizardPage
+	{
+		public DoneUnloadingPage(PrinterSetupWizard setupWizard)
+			: base(setupWizard, "Success".Localize(), "Success!\n\nYour filament should now be unloaded".Localize())
+		{
+			contentRow.AddChild(new VerticalSpacer());
+
+			contentRow.AddChild(this.CreateTextField("You can optionally click below to get help loading new material".Localize() + ":"));
+
+			var loadFilamentButton = new TextButton("Load Filament".Localize(), theme)
 			{
-				BecomingActive = () =>
-				{
-					finalPage.ShowWizardFinished();
-				}
+				Name = "Load Filament",
+				BackgroundColor = theme.MinimalShade,
+				VAnchor = Agg.UI.VAnchor.Absolute,
+				HAnchor = Agg.UI.HAnchor.Fit | Agg.UI.HAnchor.Left,
+				Margin = new BorderDouble(10, 10, 0, 15)
+			};
+			loadFilamentButton.Click += (s, e) =>
+			{
+				loadFilamentButton.Parents<SystemWindow>().First().Close();
+				LoadFilamentWizard.Start(printer, theme, true);
 			};
 
-			yield return finalPage;
+			contentRow.AddChild(loadFilamentButton);
+		}
+
+		public override void PageIsBecomingActive()
+		{
+			ShowWizardFinished();
+
+			base.PageIsBecomingActive();
 		}
 	}
 }
