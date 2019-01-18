@@ -42,6 +42,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class PauseHandlingStream : GCodeStreamProxy
 	{
+		internal class PositionSensorData
+		{
+			public bool RecievingData { get; internal set; }
+
+			public double LastSensorDistance { get; internal set; }
+			public double LastStepperDistance { get; internal set; }
+			public int ExtrusionDiscrepency { get; internal set; }
+		}
+
 		protected PrinterMove lastDestination = new PrinterMove();
 		private List<string> commandQueue = new List<string>();
 		private object locker = new object();
@@ -49,30 +58,75 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private Stopwatch timeSinceLastEndstopRead = new Stopwatch();
 		bool readOutOfFilament = false;
 
-		private EventHandler unregisterEvents;
+		PositionSensorData positionSensorData = new PositionSensorData();
 
 		public PauseHandlingStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
-			printer.Connection.LineReceived += (s, line) =>
+			// if we have a runout sensor, register to listen for lines to check it
+			if (printer.Settings.GetValue<bool>(SettingsKey.filament_runout_sensor))
 			{
-				if (line != null)
+				printer.Connection.LineReceived += (s, line) =>
 				{
-					if (line.Contains("ros_"))
+					if (line != null)
 					{
-						if(line.Contains("TRIGGERED"))
+						if (line.Contains("ros_"))
 						{
-							readOutOfFilament = true;
+							if (line.Contains("TRIGGERED"))
+							{
+								readOutOfFilament = true;
+							}
+						}
+
+						if (line.Contains("pos_"))
+						{
+							double sensorDistance = 0;
+							double stepperDistance = 0;
+							if (GCodeFile.GetFirstNumberAfter("SENSOR:", line, ref sensorDistance))
+							{
+								if (sensorDistance < -1 || sensorDistance > 1)
+								{
+									positionSensorData.RecievingData = true;
+								}
+
+								if (positionSensorData.RecievingData)
+								{
+									GCodeFile.GetFirstNumberAfter("STEPPER:", line, ref stepperDistance);
+
+									var stepperDelta = Math.Abs(stepperDistance - positionSensorData.LastStepperDistance);
+
+									// if we think we should have move the filament by more than 1mm
+									if (stepperDelta > .2)
+									{
+										var sensorDelta = Math.Abs(sensorDistance - positionSensorData.LastSensorDistance);
+										// check if the sensor data is within a tolerance of the stepper data
+
+										var deltaRatio = sensorDelta / stepperDelta;
+										if (deltaRatio < .9 || deltaRatio > 1.1)
+										{
+											// we have a repartable discrepency set a runout state
+											positionSensorData.ExtrusionDiscrepency++;
+											if (positionSensorData.ExtrusionDiscrepency > 2)
+											{
+												readOutOfFilament = true;
+												positionSensorData.ExtrusionDiscrepency = 0;
+											}
+										}
+										else
+										{
+											positionSensorData.ExtrusionDiscrepency = 0;
+										}
+
+										// and recard this position
+										positionSensorData.LastSensorDistance = sensorDistance;
+										positionSensorData.LastStepperDistance = stepperDistance;
+									}
+								}
+							}
 						}
 					}
-				}
-			};
-		}
-
-		public override void Dispose()
-		{
-			unregisterEvents?.Invoke(this, null);
-			base.Dispose();
+				};
+			}
 		}
 
 		public enum PauseReason { UserRequested, PauseLayerReached, GCodeRequest, FilamentRunout }
@@ -88,12 +142,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 		}
 
-		string pauseCaption = "Printer Paused".Localize();
-		string layerPauseMessage = "Your 3D print has been auto-paused.\n\nLayer{0} reached.".Localize();
-		string filamentPauseMessage = "Your 3D print has been paused.\n\nOut of filament detected.".Localize();
 		private long lastSendTimeMs;
 
-		public void DoPause(PauseReason pauseReason, string layerNumber = "")
+		public void DoPause(PauseReason pauseReason, int layerNumber = -1)
 		{
 			switch (pauseReason)
 			{
@@ -103,13 +154,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				case PauseReason.PauseLayerReached:
 				case PauseReason.GCodeRequest:
-					printer.Connection.OnPauseOnLayer(new NamedItemEventArgs(printer.Bed.EditContext?.SourceItem?.Name ?? "Unknown"));
-					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, layerPauseMessage.FormatWith(layerNumber), pauseCaption, StyledMessageBox.MessageType.YES_NO, "Resume".Localize(), "OK".Localize()));
+					printer.Connection.OnPauseOnLayer(new PrintPauseEventArgs(printer.Bed.EditContext?.SourceItem?.Name ?? "Unknown", false, layerNumber));
 					break;
 
 				case PauseReason.FilamentRunout:
-					printer.Connection.OnFilamentRunout(new NamedItemEventArgs(printer.Bed.EditContext?.SourceItem?.Name ?? "Unknown"));
-					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, filamentPauseMessage, pauseCaption, StyledMessageBox.MessageType.YES_NO, "Resume".Localize(), "OK".Localize()));
+					printer.Connection.OnFilamentRunout(new PrintPauseEventArgs(printer.Bed.EditContext?.SourceItem?.Name ?? "Unknown", true, layerNumber));
 					break;
 			}
 
@@ -123,15 +172,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			InjectPauseGCode("M114");
 
 			InjectPauseGCode("MH_PAUSE");
-		}
-
-		private void ResumePrint(bool clickedOk)
-		{
-			// They clicked either Resume or Ok
-			if (clickedOk && printer.Connection.PrinterIsPaused)
-			{
-				printer.Connection.Resume();
-			}
 		}
 
 		public override string ReadLine()
@@ -194,7 +234,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					// make the string 1 based (the internal code is 0 based)
 					int layerIndex;
 					int.TryParse(layerNumber, out layerIndex);
-					DoPause(PauseReason.PauseLayerReached, $" {layerIndex + 1}");
+					DoPause(PauseReason.PauseLayerReached, layerIndex + 1);
 				}
 			}
 			else if (lineToSend.StartsWith("M226")

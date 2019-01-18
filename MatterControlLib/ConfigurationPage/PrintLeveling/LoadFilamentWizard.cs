@@ -30,10 +30,12 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -332,16 +334,38 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			// put up a success message
-			PrinterSetupWizardPage finalPage = null;
-			finalPage = new PrinterSetupWizardPage(this, "Success".Localize(), "Success!\n\nYour filament should now be loaded".Localize())
-			{
-				BecomingActive = () =>
-				{
-					finalPage.ShowWizardFinished();
-				}
-			};
+			yield return new DoneLoadingPage(this);
+		}
+	}
 
-			yield return finalPage;
+	public class DoneLoadingPage : PrinterSetupWizardPage
+	{
+		public DoneLoadingPage(PrinterSetupWizard setupWizard)
+			: base(setupWizard, "Success".Localize(), "Success!\n\nYour filament should now be loaded".Localize())
+		{
+			if (printer.Connection.PrinterIsPaused)
+			{
+				var resumePrintingButton = new TextButton("Resume Printing".Localize(), theme)
+				{
+					Name = "Resume Printing Button",
+					BackgroundColor = theme.MinimalShade,
+				};
+				resumePrintingButton.Click += (s, e) =>
+				{
+					resumePrintingButton.Parents<SystemWindow>().First().Close();
+					printer.Connection.Resume();
+				};
+
+				theme.ApplyPrimaryActionStyle(resumePrintingButton);
+				this.AddPageAction(resumePrintingButton);
+			}
+		}
+
+		public override void PageIsBecomingActive()
+		{
+			ShowWizardFinished();
+
+			base.PageIsBecomingActive();
 		}
 	}
 }

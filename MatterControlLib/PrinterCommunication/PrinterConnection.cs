@@ -93,9 +93,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public event EventHandler ConnectionSucceeded;
 
-		public void OnPauseOnLayer(NamedItemEventArgs namedItemEventArgs)
+		public void OnPauseOnLayer(PrintPauseEventArgs printPauseEventArgs)
 		{
-			PauseOnLayer?.Invoke(this, namedItemEventArgs);
+			PauseOnLayer?.Invoke(this, printPauseEventArgs);
 		}
 
 		public event EventHandler DestinationChanged;
@@ -108,16 +108,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public event EventHandler FirmwareVersionRead;
 
-		public void OnFilamentRunout(NamedItemEventArgs namedItemEventArgs)
+		public void OnFilamentRunout(PrintPauseEventArgs printPauseEventArgs)
 		{
-			FilamentRunout?.Invoke(this, namedItemEventArgs);
+			FilamentRunout?.Invoke(this, printPauseEventArgs);
 		}
 
-		public event EventHandler PrintFinished;
+		public event EventHandler<PrintFinishedEventArgs> PrintFinished;
 
-		public event EventHandler PauseOnLayer;
+		public event EventHandler<PrintPauseEventArgs> PauseOnLayer;
 
-		public event EventHandler FilamentRunout;
+		public event EventHandler<PrintPauseEventArgs> FilamentRunout;
 
 		public event EventHandler<string> LineReceived;
 
@@ -483,7 +483,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									// Set this early as we always want our functions to know the state we are in.
 									communicationState = value;
 									timeSinceStartedPrint.Stop();
-									PrintFinished?.Invoke(this, new NamedItemEventArgs(Printer.Bed.EditContext.SourceItem.Name));
+									PrintFinished?.Invoke(this, new PrintFinishedEventArgs(Printer.Bed.EditContext.SourceItem.Name));
 								}
 								else
 								{
@@ -2767,14 +2767,28 @@ You will then need to logout and log back in to the computer for the changes to 
 		UsbDisconnected
 	}
 
-	public class NamedItemEventArgs : EventArgs
+	public class PrintFinishedEventArgs : EventArgs
 	{
-		public NamedItemEventArgs(string name)
+		public PrintFinishedEventArgs(string name)
 		{
 			this.ItemName = name;
 		}
 
 		public string ItemName { get; }
+	}
+
+	public class PrintPauseEventArgs : EventArgs
+	{
+		public PrintPauseEventArgs(string name, bool filamentRunout, int layerNumber)
+		{
+			this.ItemName = name;
+			this.filamentRunout = filamentRunout;
+			this.layerNumber = layerNumber;
+		}
+
+		public string ItemName { get; }
+		public bool filamentRunout { get; }
+		public int layerNumber { get; }
 	}
 
 	/// <summary>

@@ -33,11 +33,13 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
+using static MatterHackers.MatterControl.StyledMessageBox;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -213,12 +215,103 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Register listeners
 			printer.ViewState.VisibilityChanged += ProcessOptionalTabs;
 			printer.ViewState.ViewModeChanged += ViewState_ViewModeChanged;
+
 			printer.Bed.RendererOptions.PropertyChanged += RendererOptions_PropertyChanged;
+
+			// register for communication messages
 			printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
+			printer.Connection.PauseOnLayer += Connection_PauseOnLayer;
+			printer.Connection.FilamentRunout += Connection_FilamentRunout;
+
 			ApplicationController.Instance.ApplicationError += ApplicationController_ApplicationError;
 			ApplicationController.Instance.ApplicationEvent += ApplicationController_ApplicationEvent;
 
 			sceneContext.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
+		}
+
+		string pauseCaption = "Printer Paused".Localize();
+
+		private void ResumePrint(bool clickedOk)
+		{
+			// They clicked either Resume or Ok
+			if (clickedOk && printer.Connection.PrinterIsPaused)
+			{
+				printer.Connection.Resume();
+			}
+		}
+
+		protected GuiWidget CreateTextField(string text)
+		{
+			return new WrappedTextWidget(text)
+			{
+				Margin = new BorderDouble(left: 10, top: 10),
+				TextColor = theme.TextColor,
+				HAnchor = HAnchor.Stretch
+			};
+		}
+
+		private void Connection_FilamentRunout(object sender, PrintPauseEventArgs e)
+		{
+			if (e is PrintPauseEventArgs printePauseEventArgs)
+			{
+				if (printePauseEventArgs.filamentRunout)
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						var unloadFilamentButton = new TextButton("Unload Filament".Localize(), theme)
+						{
+							Name = "unload Filament",
+							BackgroundColor = theme.MinimalShade,
+							VAnchor = Agg.UI.VAnchor.Absolute,
+							HAnchor = Agg.UI.HAnchor.Fit | Agg.UI.HAnchor.Left,
+							Margin = new BorderDouble(10, 10, 0, 15)
+						};
+
+						unloadFilamentButton.Click += (s, e2) =>
+						{
+							UiThread.RunOnIdle(() =>
+							{
+								unloadFilamentButton.Parents<SystemWindow>().First().Close();
+								UnloadFilamentWizard.Start(printer, theme, true);
+							});
+						};
+
+						theme.ApplyPrimaryActionStyle(unloadFilamentButton);
+
+						string filamentPauseMessage = "Your 3D print has been paused.\n\nOut of filament, or jam, detected. Please load more filament or clear the jam.".Localize();
+
+						var messageBox = new MessageBoxPage(ResumePrint,
+							filamentPauseMessage.FormatWith(printePauseEventArgs.layerNumber),
+							pauseCaption,
+							StyledMessageBox.MessageType.YES_NO_WITHOUT_HIGHLIGHT,
+							null,
+							500,
+							400,
+							"Resume".Localize(),
+							"OK".Localize(),
+							ApplicationController.Instance.Theme, false);
+
+						messageBox.AddPageAction(unloadFilamentButton);
+
+						DialogWindow.Show(messageBox);
+					});
+				}
+			}
+		}
+
+		private void Connection_PauseOnLayer(object sender, EventArgs e)
+		{
+			if (e is PrintPauseEventArgs printePauseEventArgs)
+			{
+				string layerPauseMessage = "Your 3D print has been auto-paused.\n\nLayer{0} reached.".Localize();
+
+				UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint,
+					layerPauseMessage.FormatWith(printePauseEventArgs.layerNumber),
+					pauseCaption,
+					StyledMessageBox.MessageType.YES_NO,
+					"Resume".Localize(),
+					"OK".Localize()));
+			}
 		}
 
 		private void ApplicationController_ApplicationEvent(object sender, string e)
@@ -397,6 +490,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Unregister listeners
 			sceneContext.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
 			printer.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
+
+			printer.Connection.PauseOnLayer -= Connection_PauseOnLayer;
+			printer.Connection.FilamentRunout -= Connection_FilamentRunout;
+
 			printer.ViewState.VisibilityChanged -= ProcessOptionalTabs;
 			printer.ViewState.ViewModeChanged -= ViewState_ViewModeChanged;
 			printer.Bed.RendererOptions.PropertyChanged -= RendererOptions_PropertyChanged;
