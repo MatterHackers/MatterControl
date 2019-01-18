@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
@@ -42,6 +43,17 @@ namespace MatterHackers.MatterControl
 			var settings = printer.Settings;
 
 			var errors = new List<ValidationError>();
+
+			// last let's check if there is any support in the scene and if it looks like it is needed
+			if (GenerateSupportPanel.RequiresSupport(printer.Bed.Scene))
+			{
+				errors.Add(new ValidationError()
+				{
+					Error = "Support Recommended".Localize(),
+					Details = "Some of the parts appear to require support. Consider canceling this print then adding support to get the best results possible.".Localize(),
+					ErrorLevel = ValidationErrorLevel.Warning
+				});
+			}
 
 			try
 			{
