@@ -256,35 +256,45 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (printePauseEventArgs.filamentRunout)
 				{
-					string filamentPauseMessage = "Your 3D print has been paused.\n\nOut of filament, or jam, detected. Please load more filament or clear the jam.".Localize();
-
-					var optionText = this.CreateTextField("Optionally, click below to get help unloading this material".Localize() + ":");
-
-					var unloadFilamentButton = new TextButton("Unload Filament".Localize(), theme)
+					UiThread.RunOnIdle(() =>
 					{
-						Name = "unload Filament",
-						BackgroundColor = theme.MinimalShade,
-						VAnchor = Agg.UI.VAnchor.Absolute,
-						HAnchor = Agg.UI.HAnchor.Fit | Agg.UI.HAnchor.Left,
-						Margin = new BorderDouble(10, 10, 0, 15)
-					};
-
-					unloadFilamentButton.Click += (s, e2) =>
-					{
-						UiThread.RunOnIdle(() =>
+						var unloadFilamentButton = new TextButton("Unload Filament".Localize(), theme)
 						{
-							unloadFilamentButton.Parents<SystemWindow>().First().Close();
-							UnloadFilamentWizard.Start(printer, theme, true);
-						});
-					};
+							Name = "unload Filament",
+							BackgroundColor = theme.MinimalShade,
+							VAnchor = Agg.UI.VAnchor.Absolute,
+							HAnchor = Agg.UI.HAnchor.Fit | Agg.UI.HAnchor.Left,
+							Margin = new BorderDouble(10, 10, 0, 15)
+						};
 
-					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint,
-						filamentPauseMessage.FormatWith(printePauseEventArgs.layerNumber),
-						pauseCaption,
-						new GuiWidget[] { optionText, unloadFilamentButton },
-						StyledMessageBox.MessageType.YES_NO,
-						"Resume".Localize(),
-						"OK".Localize()));
+						unloadFilamentButton.Click += (s, e2) =>
+						{
+							UiThread.RunOnIdle(() =>
+							{
+								unloadFilamentButton.Parents<SystemWindow>().First().Close();
+								UnloadFilamentWizard.Start(printer, theme, true);
+							});
+						};
+
+						theme.ApplyPrimaryActionStyle(unloadFilamentButton);
+
+						string filamentPauseMessage = "Your 3D print has been paused.\n\nOut of filament, or jam, detected. Please load more filament or clear the jam.".Localize();
+
+						var messageBox = new MessageBoxPage(ResumePrint,
+							filamentPauseMessage.FormatWith(printePauseEventArgs.layerNumber),
+							pauseCaption,
+							StyledMessageBox.MessageType.YES_NO_WITHOUT_HIGHLIGHT,
+							null,
+							500,
+							400,
+							"Resume".Localize(),
+							"OK".Localize(),
+							ApplicationController.Instance.Theme, false);
+
+						messageBox.AddPageAction(unloadFilamentButton);
+
+						DialogWindow.Show(messageBox);
+					});
 				}
 			}
 		}

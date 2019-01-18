@@ -345,17 +345,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			if (printer.Connection.PrinterIsPaused)
 			{
-				contentRow.AddChild(new VerticalSpacer());
-
-				contentRow.AddChild(this.CreateTextField("You can optionally click below to resume your paused print.".Localize() + ":"));
-
 				var resumePrintingButton = new TextButton("Resume Printing".Localize(), theme)
 				{
 					Name = "Resume Printing Button",
 					BackgroundColor = theme.MinimalShade,
-					VAnchor = Agg.UI.VAnchor.Absolute,
-					HAnchor = Agg.UI.HAnchor.Fit | Agg.UI.HAnchor.Left,
-					Margin = new BorderDouble(10, 15, 0, 15)
 				};
 				resumePrintingButton.Click += (s, e) =>
 				{
@@ -363,7 +356,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					printer.Connection.Resume();
 				};
 
-				contentRow.AddChild(resumePrintingButton);
+				theme.ApplyPrimaryActionStyle(resumePrintingButton);
+				this.AddPageAction(resumePrintingButton);
 			}
 		}
 

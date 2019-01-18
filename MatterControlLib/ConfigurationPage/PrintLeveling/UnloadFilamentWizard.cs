@@ -205,25 +205,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public DoneUnloadingPage(PrinterSetupWizard setupWizard)
 			: base(setupWizard, "Success".Localize(), "Success!\n\nYour filament should now be unloaded".Localize())
 		{
-			contentRow.AddChild(new VerticalSpacer());
-
-			contentRow.AddChild(this.CreateTextField("You can optionally click below to get help loading new material".Localize() + ":"));
-
 			var loadFilamentButton = new TextButton("Load Filament".Localize(), theme)
 			{
 				Name = "Load Filament",
 				BackgroundColor = theme.MinimalShade,
-				VAnchor = Agg.UI.VAnchor.Absolute,
-				HAnchor = Agg.UI.HAnchor.Fit | Agg.UI.HAnchor.Left,
-				Margin = new BorderDouble(10, 10, 0, 15)
 			};
 			loadFilamentButton.Click += (s, e) =>
 			{
 				loadFilamentButton.Parents<SystemWindow>().First().Close();
 				LoadFilamentWizard.Start(printer, theme, true);
 			};
+			theme.ApplyPrimaryActionStyle(loadFilamentButton);
 
-			contentRow.AddChild(loadFilamentButton);
+			this.AddPageAction(loadFilamentButton);
 		}
 
 		public override void PageIsBecomingActive()

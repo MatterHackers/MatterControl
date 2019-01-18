@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
 				new MessageBoxPage(callback, message, caption, messageType, extraWidgetsToAdd, 400, 300, yesOk, noCancel, ApplicationController.Instance.Theme, useMarkdown));
 		}
 
-		private class MessageBoxPage : DialogPage
+		public class MessageBoxPage : DialogPage
 		{
 			private string unwrappedMessage;
 			private GuiWidget messageContainer;

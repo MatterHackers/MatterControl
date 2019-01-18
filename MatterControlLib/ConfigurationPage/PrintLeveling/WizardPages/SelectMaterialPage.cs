@@ -55,24 +55,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				NextButton.Visible = false;
 
-				contentRow.AddChild(this.CreateTextField("Optionally, click below to get help loading this material".Localize() + ":"));
-
 				var loadFilamentButton = new TextButton("Load Filament".Localize(), theme)
 				{
 					Name = "Load Filament",
 					BackgroundColor = theme.MinimalShade,
-					VAnchor = Agg.UI.VAnchor.Absolute,
-					HAnchor = Agg.UI.HAnchor.Fit | Agg.UI.HAnchor.Left,
-					Margin = new BorderDouble(10, 10, 0, 15)
 				};
 				loadFilamentButton.Click += (s, e) =>
 				{
 					wizardContext.ShowNextPage(this.DialogWindow);
 				};
 
-				contentRow.AddChild(loadFilamentButton);
+				this.AddPageAction(loadFilamentButton);
 
-				var selectButton = new TextButton("Select".Localize(), theme)
+				var selectButton = new TextButton("Already Loaded".Localize(), theme)
 				{
 					Name = "Already Loaded Button",
 					BackgroundColor = theme.MinimalShade
