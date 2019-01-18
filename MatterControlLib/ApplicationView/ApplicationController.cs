@@ -2364,7 +2364,7 @@ namespace MatterHackers.MatterControl
 				printer.Connection.PrintingItemName = printItemName;
 
 				var errors = printer.ValidateSettings();
-				if(errors.Count > 0)
+				if(errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error))
 				{
 					this.ShowValidationErrors("Export Error".Localize(), errors);
 				}
