@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl
 
 		public bool RenderMoves
 		{
-			get => UserSettings.Instance.get(UserSettingsKey.GcodeViewerRenderMoves) == "True";
+			get => UserSettings.Instance.get(UserSettingsKey.GcodeViewerRenderMoves) != "False";
 			set
 			{
 				if (this.RenderMoves != value)
@@ -88,14 +88,14 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public string GCodeModelView
+		public bool GCodeModelView
 		{
-			get => UserSettings.Instance.get(UserSettingsKey.GcodeModelView);
+			get => UserSettings.Instance.get(UserSettingsKey.GcodeModelView) != "False";
 			set
 			{
 				if (this.GCodeModelView != value)
 				{
-					UserSettings.Instance.set(UserSettingsKey.GcodeModelView, value);
+					UserSettings.Instance.set(UserSettingsKey.GcodeModelView, value.ToString());
 					this.IsDirty = true;
 					this.OnPropertyChanged(nameof(GCodeModelView));
 				}
@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl
 
 		public bool SimulateExtrusion
 		{
-			get => UserSettings.Instance.get(UserSettingsKey.GcodeViewerSimulateExtrusion) == "True";
+			get => UserSettings.Instance.get(UserSettingsKey.GcodeViewerSimulateExtrusion) != "False";
 			set
 			{
 				if (this.SimulateExtrusion != value)

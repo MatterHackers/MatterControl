@@ -114,8 +114,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				new BoolOption(
 					"Model".Localize(),
-					() => gcodeOptions.GCodeModelView == "Semi-Transparent",
-					(value) => gcodeOptions.GCodeModelView = (value) ? "Semi-Transparent" : "None"),
+					() => gcodeOptions.GCodeModelView,
+					(value) => gcodeOptions.GCodeModelView = value),
 				new BoolOption(
 					"Moves".Localize(),
 					() => gcodeOptions.RenderMoves,
