@@ -154,39 +154,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var printerReadyToTakeCommands = printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.FinishedPrint
 					|| printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Connected;
 
-				var printerIsConnected = printer.Connection.CommunicationState != PrinterCommunication.CommunicationStates.Disconnected;
-				var printerNeedsToRunSetup = ApplicationController.PrinterNeedsToRunSetup(printer);
-
 				// add the start print button
 				var setupRow = new FlowLayoutWidget()
 				{
 					HAnchor = HAnchor.Stretch
 				};
 
-				var printingMessage = "";
+				var errors = printer.ValidateSettings();
 
-				if (!printerIsConnected)
-				{
-					printingMessage = "Need to connect before printing".Localize();
-				}
-				else if(printerNeedsToRunSetup)
-				{
-					printingMessage = "Setup needs to be run before printing".Localize();
-				}
-
-				if (!string.IsNullOrEmpty(printingMessage))
-				{
-					setupRow.AddChild(new TextWidget(printingMessage, textColor: menuTheme.TextColor)
-					{
-						VAnchor = VAnchor.Center,
-						AutoExpandBoundsToText = true,
-					});
-				}
+				var printEnabled = !errors.Any(err => err.ErrorLevel == ValidationErrorLevel.Error);
 
 				var startPrintButton = new TextButton("Start Print".Localize(), menuTheme)
 				{
 					Name = "Start Print Button",
-					Enabled = printerIsConnected && !printerNeedsToRunSetup
+					Enabled = printEnabled
 				};
 
 				startPrintButton.Click += (s, e) =>
@@ -216,6 +197,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				setupRow.AddChild(startPrintButton);
 
 				column.AddChild(setupRow);
+
+				var printerNeedsToRunSetup = ApplicationController.PrinterNeedsToRunSetup(printer);
 
 				if (!printerNeedsToRunSetup)
 				{

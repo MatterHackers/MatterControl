@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -44,6 +45,25 @@ namespace MatterHackers.MatterControl
 
 			var errors = new List<ValidationError>();
 
+			var printerIsConnected = printer.Connection.CommunicationState != PrinterCommunication.CommunicationStates.Disconnected;
+			if (!printerIsConnected)
+			{
+				errors.Add(new ValidationError()
+				{
+					Error = "Printer Disconnected".Localize(),
+					Details = "Connect to your printer to continue".Localize()
+				});
+			}
+
+			if (ApplicationController.PrinterNeedsToRunSetup(printer))
+			{
+				errors.Add(new ValidationError()
+				{
+					Error = "Setup Required".Localize(),
+					Details = "Setup needs to be run before printing".Localize()
+				});
+			}
+
 			// last let's check if there is any support in the scene and if it looks like it is needed
 			if (GenerateSupportPanel.RequiresSupport(printer.Bed.Scene))
 			{
@@ -51,7 +71,16 @@ namespace MatterHackers.MatterControl
 				{
 					Error = "Support Recommended".Localize(),
 					Details = "Some of the parts appear to require support. Consider canceling this print then adding support to get the best results possible.".Localize(),
-					ErrorLevel = ValidationErrorLevel.Warning
+					ErrorLevel = ValidationErrorLevel.Warning,
+					FixAction = new NamedAction()
+					{
+						 Title = "Add Supports".Localize(),
+						 Action = () =>
+						 {
+							 // Do something like popup the supports panel or directly show the popup
+							 System.Diagnostics.Debugger.Break();
+						 }
+					}
 				});
 			}
 
