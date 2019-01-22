@@ -208,6 +208,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					theme.ApplyPrimaryActionStyle(startPrintButton);
 				}
+				else
+				{
+					startPrintButton.BackgroundColor = theme.MinimalShade;
+				}
 
 				if (errors.Any())
 				{
