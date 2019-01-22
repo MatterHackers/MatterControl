@@ -48,6 +48,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private Color hoverColor;
 		private bool fullRowSelect;
 		private GuiWidget settingsLabel;
+
+		private Popover popoverBubble = null;
+		private static Popover activePopover = null;
+		private SystemWindow systemWindow = null;
+
 		protected ImageWidget imageWidget;
 
 		public GuiWidget ActionWidget { get; set; }
@@ -56,6 +61,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			using (this.LayoutLock())
 			{
+				this.HelpText = helpText;
 				this.theme = theme;
 				this.fullRowSelect = fullRowSelect;
 
@@ -119,12 +125,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 		}
 
+		public string HelpText { get; protected set; }
+
+		public ArrowDirection ArrowDirection { get; set; } = ArrowDirection.Right;
 
 		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 		{
 			if (fullRowSelect)
 			{
-				childToAdd.Selectable  = false;
+				childToAdd.Selectable = false;
 			}
 
 			base.AddChild(childToAdd, indexInChildrenList);
@@ -136,10 +145,20 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			set => base.BackgroundColor = value;
 		}
 
+
+		public override void OnLoad(EventArgs args)
+		{
+			systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+			base.OnLoad(args);
+		}
+
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
 			mouseInBounds = true;
 			this.Invalidate();
+
+			this.ShowPopover(this);
+
 			base.OnMouseEnterBounds(mouseEvent);
 		}
 
@@ -148,7 +167,89 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			mouseInBounds = false;
 
 			this.Invalidate();
+
+			if (popoverBubble != null)
+			{
+				// Allow a moment to elapse to determine if the mouse is within the bubble or has returned to this control, close otherwise
+				UiThread.RunOnIdle(() =>
+				{
+					// Skip close if we are FirstWidgetUnderMouse
+					if (this.FirstWidgetUnderMouse)
+					{
+						// Often we get OnMouseLeaveBounds when the mouse is still within bounds (as child mouse events are processed)
+						// If the mouse is in bounds of this widget, abort the popover close below
+						return;
+					}
+
+					// Close the popover as long as it doesn't contain the mouse
+					if (!popoverBubble.ContainsFirstUnderMouseRecursive())
+					{
+						// Close any active popover bubble
+						popoverBubble?.Close();
+					}
+				}, 1);
+			}
+
 			base.OnMouseLeaveBounds(mouseEvent);
+		}
+
+
+		protected virtual void ExtendPopover(SliceSettingsPopover popover)
+		{
+		}
+
+		protected void ShowPopover(SettingsRow settingsRow)
+		{
+			// Only display popovers when we're the active widget, exit if we're not first under mouse
+			if (systemWindow == null
+				|| !this.ContainsFirstUnderMouseRecursive())
+			{
+				return;
+			}
+
+			int arrowOffset = (int)(settingsRow.Height / 2);
+
+			var popover = new SliceSettingsPopover(this.ArrowDirection, new BorderDouble(15, 10), 7, arrowOffset)
+			{
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Fit,
+				TagColor = theme.ResolveColor(AppContext.Theme.BackgroundColor, AppContext.Theme.AccentMimimalOverlay.WithAlpha(50)),
+			};
+
+			popover.AddChild(new WrappedTextWidget(settingsRow.HelpText, pointSize: theme.DefaultFontSize - 1, textColor: AppContext.Theme.TextColor)
+			{
+				Width = 400 * GuiWidget.DeviceScale,
+				HAnchor = HAnchor.Fit,
+			});
+
+			bool alignLeft = (this.ArrowDirection == ArrowDirection.Right);
+
+			// after a certain amount of time make the popover close (just like a tool tip)
+			double closeSeconds = Math.Max(1, (settingsRow.HelpText.Length / 50.0)) * 5;
+
+			this.ExtendPopover(popover);
+
+			activePopover?.Close();
+
+			activePopover = popover;
+
+			systemWindow.ShowPopover(
+				new MatePoint(settingsRow)
+				{
+					Mate = new MateOptions(alignLeft ? MateEdge.Left : MateEdge.Right, MateEdge.Top),
+					AltMate = new MateOptions(alignLeft ? MateEdge.Left : MateEdge.Right, MateEdge.Bottom),
+					Offset = new RectangleDouble(12, 0, 12, 0)
+				},
+				new MatePoint(popover)
+				{
+					Mate = new MateOptions(alignLeft ? MateEdge.Right : MateEdge.Left, MateEdge.Top),
+					AltMate = new MateOptions(alignLeft ? MateEdge.Left : MateEdge.Right, MateEdge.Bottom),
+					//Offset = new RectangleDouble(12, 0, 12, 0)
+				},
+				secondsToClose: closeSeconds);
+
+			popoverBubble = popover;
+
 		}
 	}
 }

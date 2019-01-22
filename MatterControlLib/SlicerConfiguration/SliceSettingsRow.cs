@@ -78,8 +78,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private SettingsContext settingsContext;
 
-		public string HelpText { get; }
-
 		private PrinterConfig printer;
 		private SliceSettingData settingData;
 
@@ -88,8 +86,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private GuiWidget restoreArea;
 		private GuiWidget restoreButton = null;
 
-		private Popover popoverBubble = null;
-		private SystemWindow systemWindow = null;
 		private ValidationWrapper validationWrapper;
 
 		public SliceSettingsRow(PrinterConfig printer, SettingsContext settingsContext, SliceSettingData settingData, ThemeConfig theme, bool fullRowSelect = false)
@@ -98,7 +94,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.printer = printer;
 			this.settingData = settingData;
 			this.settingsContext = settingsContext;
-			this.HelpText = settingData.HelpText;
 
 			using (this.LayoutLock())
 			{
@@ -271,53 +266,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			base.OnClick(mouseEvent);
 		}
 
-		public override void OnLoad(EventArgs args)
-		{
-			systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-			base.OnLoad(args);
-		}
-
-		public ArrowDirection ArrowDirection { get; set; } = ArrowDirection.Right;
-
 		public UIField UIField { get; internal set; }
 
-		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
+		protected override void ExtendPopover(SliceSettingsPopover popover)
 		{
-			this.ShowPopover(this);
-
-			base.OnMouseEnterBounds(mouseEvent);
-		}
-
-		private void ShowPopover(SliceSettingsRow settingsRow)
-		{
-			// Only display popovers when we're the active widget, exit if we're not first under mouse
-			if (systemWindow == null
-				|| !this.ContainsFirstUnderMouseRecursive())
-			{
-				return;
-			}
-
-			int arrowOffset = (int)(settingsRow.Height / 2);
-
-			var popover = new SliceSettingsPopover(this.ArrowDirection, new BorderDouble(15, 10), 7, arrowOffset)
-			{
-				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Fit,
-				TagColor = theme.ResolveColor(AppContext.Theme.BackgroundColor, AppContext.Theme.AccentMimimalOverlay.WithAlpha(50)),
-			};
-
-			popover.AddChild(new WrappedTextWidget(settingsRow.HelpText, pointSize: theme.DefaultFontSize - 1, textColor: AppContext.Theme.TextColor)
-			{
-				Width = 400 * GuiWidget.DeviceScale,
-				HAnchor = HAnchor.Fit,
-			});
-
-			bool alignLeft = (this.ArrowDirection == ArrowDirection.Right);
-
 			string mapsTo = "";
-
-			// after a certain amount of time make the popover close (just like a tool tip)
-			double closeSeconds = Math.Max(1, (settingsRow.HelpText.Length / 50.0)) * 5;
 
 			if (printer.EngineMappingsMatterSlice.MappedSettings.FirstOrDefault(m => m.CanonicalSettingsName == settingData.SlicerConfigName) is AsPercentOfReferenceOrDirect percentReference)
 			{
@@ -412,54 +365,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Margin = new BorderDouble(top: 10)
 			});
 #endif
-			activePopover?.Close();
 
-			activePopover = popover;
-
-			systemWindow.ShowPopover(
-				new MatePoint(settingsRow)
-				{
-					Mate = new MateOptions(alignLeft ? MateEdge.Left : MateEdge.Right, MateEdge.Top),
-					AltMate = new MateOptions(alignLeft ? MateEdge.Left : MateEdge.Right, MateEdge.Bottom),
-					Offset = new RectangleDouble(12, 0, 12, 0)
-				},
-				new MatePoint(popover)
-				{
-					Mate = new MateOptions(alignLeft ? MateEdge.Right : MateEdge.Left, MateEdge.Top),
-					AltMate = new MateOptions(alignLeft ? MateEdge.Left : MateEdge.Right, MateEdge.Bottom),
-					//Offset = new RectangleDouble(12, 0, 12, 0)
-				},
-				secondsToClose: closeSeconds);
-
-			popoverBubble = popover;
 		}
 
-		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
-		{
-			if (popoverBubble != null)
-			{
-				// Allow a moment to elapse to determine if the mouse is withing the bubble or has returned to this control, close otherwise
-				UiThread.RunOnIdle(() =>
-				{
-					// Skip close if we are FirstWidgetUnderMouse
-					if (this.FirstWidgetUnderMouse)
-					{
-						// Often we get OnMouseLeaveBounds when the mouse is still within bounds (as child mouse events are processed)
-						// If the mouse is in bounds of this widget, abort the popover close below
-						return;
-					}
-
-					// Close the popover as long as it doesn't contain the mouse
-					if (!popoverBubble.ContainsFirstUnderMouseRecursive())
-					{
-						// Close any active popover bubble
-						popoverBubble?.Close();
-					}
-				}, 1);
-			}
-
-			base.OnMouseLeaveBounds(mouseEvent);
-		}
 
 		public void UpdateStyle()
 		{
