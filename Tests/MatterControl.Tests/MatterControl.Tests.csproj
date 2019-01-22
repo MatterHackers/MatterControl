@@ -65,6 +65,7 @@
     <Compile Include="MatterControl\Slicing\SliceLayersTests.cs" />
     <Compile Include="MatterControl\LevelingTests.cs" />
     <Compile Include="MatterControl\GCodeStreamTests.cs" />
+    <Compile Include="MatterControl\SupportGeneratorTests.cs" />
     <Compile Include="MatterControl\TranslationsTests.cs" />
     <Compile Include="MatterControl\UIFieldTestWindow.cs" />
     <Compile Include="MatterControl\PathTests.cs" />
