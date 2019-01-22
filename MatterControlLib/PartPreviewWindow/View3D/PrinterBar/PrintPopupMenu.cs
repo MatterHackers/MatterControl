@@ -67,6 +67,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.PopupVAnchor = VAnchor.Fit;
 			this.MakeScrollable = false;
 
+			var errorImage = AggContext.StaticData.LoadIcon("SettingsGroupError_16x.png", 16, 16, theme.InvertIcons);
+			var warningImage = AggContext.StaticData.LoadIcon("SettingsGroupWarning_16x.png", 16, 16, theme.InvertIcons);
+
 			this.DynamicPopupContent = () =>
 			{
 				var menuTheme = ApplicationController.Instance.MenuTheme;
@@ -211,27 +214,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var errorsPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 					{
 						HAnchor = HAnchor.Absolute,
-						VAnchor = VAnchor.Fit | VAnchor.Top,
+						VAnchor = VAnchor.Fit | VAnchor,
 						BackgroundColor = theme.ResolveColor(menuTheme.BackgroundColor, theme.PrimaryAccentColor.WithAlpha(30)),
-						Width = 350
-					};
-					errorsPanel.Load += (s, e) =>
-					{
-						errorsPanel.Parent.BackgroundColor = Color.Transparent;
+						Width = 350,
+						Name = "errorsPanel"
 					};
 
-					errorsPanel.AddChild(new TextWidget("Warnings and Errors".Localize(), textColor: menuTheme.TextColor)
-					{
-						HAnchor = HAnchor.Left
-					});
 
 					var fixIcon = AggContext.StaticData.LoadIcon("noun_1306.png", 16, 16, theme.InvertIcons);
 
-					foreach(var error in errors)
+					foreach(var validationError in errors)
 					{
-						var row = new SettingsRow(error.Error, null, theme);
 
-						if (error.FixAction is NamedAction action)
+						string errorText, errorDetails;
+
+						if (validationError is SettingsValidationError settingsValidationError)
+						{
+							errorText = "SliceSettings Error".Localize();
+							errorDetails = validationError.Error;
+						}
+						else
+						{
+							errorText = validationError.Error;
+							errorDetails = validationError.Details ?? "";
+						}
+
+						var row = new SettingsRow(errorText, errorDetails, theme, validationError.ErrorLevel == ValidationErrorLevel.Error ? errorImage : warningImage)
+						{
+							ArrowDirection = ArrowDirection.Left
+						};
+
+						if (validationError.FixAction is NamedAction action)
 						{
 							var button = new IconButton(fixIcon, theme)
 							{
@@ -249,14 +262,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 
 					// Conditional layout for right or bottom errors panel alignment
-					//var layoutStyle = FlowDirection.TopToBottom;
-					var layoutStyle = FlowDirection.LeftToRight;
+					var layoutStyle = FlowDirection.TopToBottom;
+					//var layoutStyle = FlowDirection.LeftToRight;
+
+					if (layoutStyle == FlowDirection.LeftToRight)
+					{
+						errorsPanel.HAnchor = HAnchor.Absolute;
+						errorsPanel.VAnchor = VAnchor.Fit | VAnchor.Top;
+						errorsPanel.BackgroundColor = theme.ResolveColor(menuTheme.BackgroundColor, theme.PrimaryAccentColor.WithAlpha(30));
+						errorsPanel.Width = 350;
+
+						errorsPanel.Load += (s, e) =>
+						{
+							errorsPanel.Parent.BackgroundColor = Color.Transparent;
+						};
+					}
+					else
+					{
+						errorsPanel.HAnchor = HAnchor.Stretch;
+						errorsPanel.VAnchor = VAnchor.Fit;
+						errorsPanel.Margin = 3;
+					}
 
 					// Instead of the typical case where the print panel is returned, wrap and append validation errors panel
 					var errorsContainer = new FlowLayoutWidget(layoutStyle)
 					{
 						HAnchor = HAnchor.Fit,
-						VAnchor = VAnchor.Fit
+						VAnchor = VAnchor.Fit,
+						BackgroundColor = layoutStyle == FlowDirection.TopToBottom ? printPanel.BackgroundColor : Color.Transparent
 					};
 					errorsContainer.AddChild(printPanel);
 					errorsContainer.AddChild(errorsPanel);
