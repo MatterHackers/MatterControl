@@ -722,19 +722,13 @@ namespace MatterHackers.MeshVisualizer
 		{
 			var gcodeOptions = sceneContext.RendererOptions;
 
-			switch(gcodeOptions.GCodeModelView)
+			if (gcodeOptions.GCodeModelView)
 			{
-				case "Wireframe":
-					modelRenderStyle = ModelRenderStyle.Wireframe;
-					break;
-
-				case "Semi-Transparent":
-					modelRenderStyle = ModelRenderStyle.WireframeAndSolid;
-					break;
-
-				default:
-					modelRenderStyle = ModelRenderStyle.None;
-					break;
+				modelRenderStyle = ModelRenderStyle.WireframeAndSolid;
+			}
+			else
+			{
+				modelRenderStyle = ModelRenderStyle.None;
 			}
 
 			// Draw solid objects, extract transparent
