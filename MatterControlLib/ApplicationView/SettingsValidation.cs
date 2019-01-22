@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -65,7 +66,8 @@ namespace MatterHackers.MatterControl
 			}
 
 			// last let's check if there is any support in the scene and if it looks like it is needed
-			if (GenerateSupportPanel.RequiresSupport(printer.Bed.Scene))
+			var supportGenerator = new SupportGenerator(printer.Bed.Scene);
+			if (supportGenerator.RequiresSupport())
 			{
 				errors.Add(new ValidationError()
 				{
