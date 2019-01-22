@@ -234,7 +234,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						if (validationError is SettingsValidationError settingsValidationError)
 						{
-							errorText = "SliceSettings Error".Localize();
+							errorText = string.Format(
+								"{0} {1}", 
+								settingsValidationError.PresentationName,
+								validationError.ErrorLevel == ValidationErrorLevel.Error ? "Error".Localize() : "Warning".Localize());
+
 							errorDetails = validationError.Error;
 						}
 						else
