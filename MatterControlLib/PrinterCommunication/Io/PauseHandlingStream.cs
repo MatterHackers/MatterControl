@@ -44,8 +44,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	{
 		internal class PositionSensorData
 		{
-			public bool RecievingData { get; internal set; }
-
 			public double LastSensorDistance { get; internal set; }
 			public double LastStepperDistance { get; internal set; }
 			public int ExtrusionDiscrepency { get; internal set; }
@@ -86,10 +84,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							{
 								if (sensorDistance < -1 || sensorDistance > 1)
 								{
-									positionSensorData.RecievingData = true;
+									printer.Connection.FilamentPositionSensorDetected = true;
 								}
 
-								if (positionSensorData.RecievingData)
+								if (printer.Connection.FilamentPositionSensorDetected)
 								{
 									GCodeFile.GetFirstNumberAfter("STEPPER:", line, ref stepperDistance);
 

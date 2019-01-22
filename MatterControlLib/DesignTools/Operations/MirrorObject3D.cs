@@ -88,8 +88,6 @@ namespace MatterHackers.MatterControl.DesignTools
 					item.meshCopy.Mesh.Transform(meshCopyToThis * mirrorMatrix * meshCopyToThis.Inverted);
 
 					item.meshCopy.Mesh.ReverseFaces();
-					item.meshCopy.Mesh.CalculateNormals();
-					item.meshCopy.Mesh.MarkAsChanged();
 				}
 
 				this.Matrix = oldMatrix;
