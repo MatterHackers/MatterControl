@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -145,7 +145,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			set => base.BackgroundColor = value;
 		}
 
-
 		public override void OnLoad(EventArgs args)
 		{
 			systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
@@ -192,7 +191,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			base.OnMouseLeaveBounds(mouseEvent);
 		}
-
 
 		protected virtual void ExtendPopover(SliceSettingsPopover popover)
 		{
@@ -249,7 +247,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				secondsToClose: closeSeconds);
 
 			popoverBubble = popover;
-
 		}
 	}
 }
