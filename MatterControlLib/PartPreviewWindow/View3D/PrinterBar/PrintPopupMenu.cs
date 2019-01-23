@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -65,11 +64,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.PopupHAnchor = HAnchor.Fit;
 			this.PopupVAnchor = VAnchor.Fit;
 			this.MakeScrollable = false;
-
-			var errorImage = AggContext.StaticData.LoadIcon("SettingsGroupError_16x.png", 16, 16, theme.InvertIcons);
-			var warningImage = AggContext.StaticData.LoadIcon("SettingsGroupWarning_16x.png", 16, 16, theme.InvertIcons);
-			var infoImage = AggContext.StaticData.LoadIcon("StatusInfoTip_16x.png", 16, 16);
-			var fixIcon = AggContext.StaticData.LoadIcon("noun_1306.png", 16, 16, theme.InvertIcons);
 
 			this.DynamicPopupContent = () =>
 			{
@@ -231,66 +225,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (hasErrorsOrWarnings)
 				{
-					var errorsPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-					{
-						HAnchor = HAnchor.Absolute,
-						VAnchor = VAnchor.Fit | VAnchor,
-						BackgroundColor = theme.ResolveColor(menuTheme.BackgroundColor, theme.PrimaryAccentColor.WithAlpha(30)),
-						Width = 350,
-						Name = "errorsPanel"
-					};
-
-					foreach (var validationError in errors.OrderByDescending(e => e.ErrorLevel))
-					{
-						string errorText, errorDetails;
-
-						var settingsValidationError = validationError as SettingsValidationError;
-						if (settingsValidationError != null)
-						{
-							errorText = string.Format(
-								"{0} {1}", 
-								settingsValidationError.PresentationName,
-								validationError.ErrorLevel == ValidationErrorLevel.Error ? "Error".Localize() : "Warning".Localize());
-
-							errorDetails = validationError.Error;
-						}
-						else
-						{
-							errorText = validationError.Error;
-							errorDetails = validationError.Details ?? "";
-						}
-
-						var row = new SettingsRow(errorText, errorDetails, theme, validationError.ErrorLevel == ValidationErrorLevel.Error ? errorImage : warningImage)
-						{
-							ArrowDirection = ArrowDirection.Left
-						};
-
-						if (validationError.FixAction is NamedAction action)
-						{
-							// Show fix button
-							var button = new IconButton(fixIcon, theme)
-							{
-								ToolTipText = action.Title
-							};
-							button.Click += (s, e) =>
-							{
-								action.Action.Invoke();
-							};
-
-							row.AddChild(button);
-						}
-						else
-						{
-							// Show info indicator hinting that hover will reveal additional details
-							var button = new IconButton(infoImage, theme)
-							{
-								Selectable = false
-							};
-							row.AddChild(button);
-						}
-
-						errorsPanel.AddChild(row);
-					}
+					var errorsPanel = new ValidationErrorsPanel(errors, menuTheme);
 
 					// Conditional layout for right or bottom errors panel alignment
 					var layoutStyle = FlowDirection.TopToBottom;
