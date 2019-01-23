@@ -71,6 +71,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PartPreviewWindow.View3D;
+	using MatterHackers.MatterControl.Plugins;
 	using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 	using MatterHackers.MatterControl.Tour;
 	using MatterHackers.PolygonMesh;
@@ -1101,6 +1102,7 @@ namespace MatterHackers.MatterControl
 			this.Library.ContentProviders.Add(new[] { "stl", "obj", "amf", "mcx" }, new MeshContentProvider());
 			this.Library.ContentProviders.Add("gcode", new GCodeContentProvider());
 			this.Library.ContentProviders.Add(new[] { "png", "gif", "jpg", "jpeg" }, new ImageContentProvider());
+			this.Library.ContentProviders.Add(new[] { "scad" }, new OpenScadContentProvider());
 
 			this.Graph.RegisterOperation(
 				new NodeOperation()
