@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -98,6 +99,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			overHangRow.AddChild(overHangField.Content);
 			this.AddChild(overHangRow);
 
+			// Add an editor field for the SupportGenerator.SupportType
+			PropertyInfo propertyInfo = typeof(SupportGenerator).GetProperty(nameof(SupportGenerator.SupportType));
+
+			var editor = PublicPropertyEditor.CreatePropertyEditor(
+				new EditableProperty(propertyInfo, supportGenerator), 
+				null, 
+				new PPEContext(), 
+				theme);
+			if (editor != null)
+			{
+				this.AddChild(editor);
+			}
+
+			// Button Row
 			var buttonRow = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch,
