@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			using (this.LayoutLock())
 			{
-				this.HelpText = helpText;
+				this.HelpText = helpText ?? "";
 				this.theme = theme;
 				this.fullRowSelect = fullRowSelect;
 
