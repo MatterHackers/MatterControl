@@ -345,6 +345,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			return supportFaces.CreateTraceData(supportVerts);
 		}
 
+		public Agg.UI.HAnchor SupportType { get; set; } = Agg.UI.HAnchor.Fit;
+
 		public void RemoveExisting()
 		{
 			var existingSupports = scene.Children.Where(i => i.GetType() == typeof(GeneratedSupportObject3D));
