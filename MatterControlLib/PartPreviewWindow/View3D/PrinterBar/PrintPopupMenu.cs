@@ -316,38 +316,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return errorsContainer;
 				}
 
-				/*
-				// put in setup if needed
-				if (printerNeedsToRunSetup && printerIsConnected)
-				{
-					// add the finish setup button
-					var finishSetupButton = new TextButton("Setup...".Localize(), theme)
-					{
-						Name = "Finish Setup Button",
-						ToolTipText = "Run setup configuration for printer.".Localize(),
-						Margin = theme.ButtonSpacing,
-						Enabled = printerReadyToTakeCommands,
-						HAnchor = HAnchor.Right,
-						VAnchor = VAnchor.Absolute,
-					};
-					theme.ApplyPrimaryActionStyle(finishSetupButton);
-					finishSetupButton.Click += (s, e) =>
-					{
-						UiThread.RunOnIdle(async () =>
-						{
-							await ApplicationController.Instance.PrintPart(
-								printer.Bed.EditContext,
-								printer,
-								null,
-								CancellationToken.None);
-						});
-
-						this.CloseMenu();
-					};
-					column.AddChild(finishSetupButton);
-				}
-				*/
-
 				return printPanel;
 			};
 
