@@ -203,18 +203,136 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			}
 
-			status.Status = "SupportMap";
+			// get all the support plane intersections
+			status.Status = "Trace";
 			progress.Report(status);
-			// create an image buffer to mark with the columns that need to be considered
-			var traceData = GetTraceData(supportCandidates);
+			var detectedPlanes = DetectRequiredSupportByTracing(gridBounds, supportCandidates);
 
+			status.Status = "Columns";
+			progress.Report(status);
+
+			AddSupportColumns(gridBounds, detectedPlanes);
+
+			// this is the theory for regions rather than pillars
+			// separate the faces into face patch groups (these are the new support tops)
+			// project all the vertices of each patch group down until they hit an up face in the scene (or 0)
+			// make a new patch group at the z of the hit (these will be the bottoms)
+			// find the outline of the patch groups (these will be the walls of the top and bottom patches
+			// make a new mesh object with the top, bottom and walls, add it to the scene and mark it as support
+
+			return Task.CompletedTask;
+		}
+
+		int GetNextTop(int i, List<(double z, bool bottom)> planes)
+		{
+			while (i < planes.Count
+				&& planes[i].bottom)
+			{
+				i++;
+			}
+
+			return i;
+		}
+
+		int GetNextBottom(int i, List<(double z, bool bottom)> planes)
+		{
+			// first skip all the tops
+			while (i < planes.Count
+				&& !planes[i].bottom)
+			{
+				i++;
+			}
+
+			// then look for the last bottom before next top
+			while (i < planes.Count
+				&& planes[i].bottom
+				&& planes.Count > i + 1
+				&& planes[i + 1].bottom)
+			{
+				i++;
+			}
+
+			return i;
+		}
+
+		private void AddSupportColumns(RectangleDouble gridBounds, Dictionary<(int x, int y), List<(double z, bool bottom)>> detectedPlanes)
+		{
 			IObject3D supportColumnsToAdd = new Object3D();
+			bool fromBed = false;
+			foreach (var kvp in detectedPlanes)
+			{
+				if(kvp.Value.Count == 0)
+				{
+					continue;
+				}
+
+				int i = 0;
+
+				kvp.Value.Sort((a, b) =>
+				{
+					return a.z.CompareTo(b.z);
+				});
+
+				var yPos = (gridBounds.Bottom + kvp.Key.y) * PillarSize;
+				var xPos = (gridBounds.Left + kvp.Key.x) * PillarSize;
+
+				if (fromBed)
+				{
+					i = GetNextBottom(i, kvp.Value);
+					if (kvp.Value[i].bottom)
+					{
+						AddSupportColumn(supportColumnsToAdd, xPos, yPos, 0, kvp.Value[i].z);
+					}
+				}
+				else
+				{
+					double lastTopZ = 0;
+					int lastBottom = i;
+					do
+					{
+						// if the first plane is a top, move to the last top before we find a bottom
+						if(i == 0
+							&& !kvp.Value[i].bottom)
+						{
+							i = GetNextTop(i + 1, kvp.Value);
+							if (i < kvp.Value.Count)
+							{
+								lastTopZ = kvp.Value[i].z;
+							}
+						}
+						lastBottom = i;
+						// find all open arreas in the list and add support
+						i = GetNextBottom(i, kvp.Value);
+						if (i < kvp.Value.Count
+							&& kvp.Value[i].bottom)
+						{
+							AddSupportColumn(supportColumnsToAdd, xPos, yPos, lastTopZ, kvp.Value[i].z);
+						}
+						i = GetNextTop(i+1, kvp.Value);
+						if (i < kvp.Value.Count)
+						{
+							lastTopZ = kvp.Value[i].z;
+						}
+					} while (i != lastBottom && i < kvp.Value.Count);
+				}
+			}
+
+			scene.Children.Modify(list =>
+			{
+				list.AddRange(supportColumnsToAdd.Children);
+			});
+		}
+
+		private Dictionary<(int x, int y), List<(double z, bool bottom)>> DetectRequiredSupportByTracing(RectangleDouble gridBounds, IEnumerable<IObject3D> supportCandidates)
+		{
+			var traceData = GetTraceData(supportCandidates);
 
 			// keep a list of all the detected planes in each support column
 			var detectedPlanes = new Dictionary<(int x, int y), List<(double z, bool bottom)>>();
 
-			status.Status = "Trace";
-			progress.Report(status);
+			int gridWidth = (int)gridBounds.Width;
+			int gridHeight = (int)gridBounds.Height;
+
 			// at the center of every grid item add in a list of all the top faces to look down from
 			for (int y = 0; y < gridHeight; y++)
 			{
@@ -251,51 +369,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			}
 
-			bool fromBed = true;
-			foreach (var kvp in detectedPlanes)
-			{
-				kvp.Value.Sort((a, b) =>
-				{
-					return a.z.CompareTo(b.z);
-				});
-				if (fromBed)
-				{
-					var yPos = (gridBounds.Bottom + kvp.Key.y) * PillarSize;
-					var xPos = (gridBounds.Left + kvp.Key.x) * PillarSize;
-					var topOfFirstBottom = kvp.Value[0];
-					int i = 1;
-					while(topOfFirstBottom.bottom 
-						&& kvp.Value.Count > i
-						&& kvp.Value[i].bottom)
-					{
-						topOfFirstBottom = kvp.Value[i++];
-					}
-					if (topOfFirstBottom.bottom)
-					{
-						AddSupportColumn(supportColumnsToAdd, xPos, yPos, 0, topOfFirstBottom.z);
-					}
-				}
-				else
-				{
-					// find all open arreas in the list and add support
-				}
-			}
-
-			status.Status = "Columns";
-			progress.Report(status);
-			scene.Children.Modify(list =>
-			{
-				list.AddRange(supportColumnsToAdd.Children);
-			});
-
-			// this is the theory for regions rather than pillars
-			// separate the faces into face patch groups (these are the new support tops)
-			// project all the vertices of each patch group down until they hit an up face in the scene (or 0)
-			// make a new patch group at the z of the hit (these will be the bottoms)
-			// find the outline of the patch groups (these will be the walls of the top and bottom patches
-			// make a new mesh object with the top, bottom and walls, add it to the scene and mark it as support
-
-			return Task.CompletedTask;
+			return detectedPlanes;
 		}
 
 		private IPrimitive GetTraceData(IEnumerable<IObject3D> supportCandidates)
@@ -410,11 +484,14 @@ namespace MatterHackers.MatterControl.DesignTools
 				// less than 10 micros high, don't ad it
 				return;
 			}
-			holder.Children.Add(new GeneratedSupportObject3D()
+			var support = new GeneratedSupportObject3D()
 			{
-				Mesh = PlatonicSolids.CreateCube(PillarSize - reduceAmount, PillarSize - reduceAmount, topZ - bottomZ),
-				Matrix = Matrix4X4.CreateTranslation(gridX, gridY, bottomZ + (topZ - bottomZ) / 2)
-			});
+				Mesh = PlatonicSolids.CreateCube(1, 1, 1)
+			};
+			support.Matrix = Matrix4X4.CreateScale(PillarSize - reduceAmount, PillarSize - reduceAmount, topZ - bottomZ)
+				* Matrix4X4.CreateTranslation(gridX, gridY, bottomZ + (topZ - bottomZ) / 2);
+
+			holder.Children.Add(support);
 		}
 	}
 }
