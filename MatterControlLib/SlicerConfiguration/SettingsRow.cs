@@ -147,7 +147,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnLoad(EventArgs args)
 		{
-			systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+			// The top level SystemWindow - due to single window implementation details, multiple SystemWindow parents may exist - proceed to the topmost one
+			systemWindow = this.Parents<SystemWindow>().LastOrDefault();
 			base.OnLoad(args);
 		}
 
