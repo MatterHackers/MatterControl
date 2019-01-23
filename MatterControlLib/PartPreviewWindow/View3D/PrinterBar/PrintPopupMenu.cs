@@ -38,7 +38,6 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -201,6 +200,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					this.CloseMenu();
 				};
+
+				var hasErrors = errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error);
+				var hasErrorsOrWarnings = errors.Any();
+
+				if (hasErrorsOrWarnings)
+				{
+					string label = hasErrors ? "Action Required".Localize() : "Action Recommended".Localize();
+
+					setupRow.AddChild(new TextWidget(label, textColor: (hasErrors ? Color.Red : theme.PrimaryAccentColor), pointSize: theme.DefaultFontSize)
+					{
+						VAnchor = VAnchor.Bottom,
+						AutoExpandBoundsToText = true,
+					});
+				}
+
 				setupRow.AddChild(new HorizontalSpacer());
 				setupRow.AddChild(startPrintButton);
 
@@ -215,7 +229,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					startPrintButton.BackgroundColor = theme.MinimalShade;
 				}
 
-				if (errors.Any())
+				if (hasErrorsOrWarnings)
 				{
 					var errorsPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 					{
@@ -226,7 +240,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Name = "errorsPanel"
 					};
 
-					foreach(var validationError in errors.OrderByDescending(e => e.ErrorLevel))
+					foreach (var validationError in errors.OrderByDescending(e => e.ErrorLevel))
 					{
 						string errorText, errorDetails;
 
@@ -308,6 +322,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						VAnchor = VAnchor.Fit,
 						BackgroundColor = layoutStyle == FlowDirection.TopToBottom ? printPanel.BackgroundColor : Color.Transparent
 					};
+
+					// Clear bottom padding
+					printPanel.Padding = printPanel.Padding.Clone(bottom: 2);
+
 					errorsContainer.AddChild(printPanel);
 					errorsContainer.AddChild(errorsPanel);
 

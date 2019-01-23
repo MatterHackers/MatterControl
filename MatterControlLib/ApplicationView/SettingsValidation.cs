@@ -63,8 +63,8 @@ namespace MatterHackers.MatterControl
 			{
 				errors.Add(new ValidationError()
 				{
-					Error = "Setup Required".Localize(),
-					Details = "Setup needs to be run before printing".Localize(),
+					Error = "Printer Setup Required".Localize(),
+					Details = "Printer Setup must be run before printing".Localize(),
 					FixAction = new NamedAction()
 					{
 						Title = "Setup".Localize() + "...",
