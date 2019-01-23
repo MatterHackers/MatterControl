@@ -69,6 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var errorImage = AggContext.StaticData.LoadIcon("SettingsGroupError_16x.png", 16, 16, theme.InvertIcons);
 			var warningImage = AggContext.StaticData.LoadIcon("SettingsGroupWarning_16x.png", 16, 16, theme.InvertIcons);
+			var infoImage = AggContext.StaticData.LoadIcon("StatusInfoTip_16x.png", 16, 16);
 
 			this.DynamicPopupContent = () =>
 			{
@@ -229,10 +230,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					foreach(var validationError in errors)
 					{
-
 						string errorText, errorDetails;
 
-						if (validationError is SettingsValidationError settingsValidationError)
+						var settingsValidationError = validationError as SettingsValidationError;
+						if (settingsValidationError != null)
 						{
 							errorText = string.Format(
 								"{0} {1}", 
@@ -254,6 +255,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						if (validationError.FixAction is NamedAction action)
 						{
+							// Show fix button
 							var button = new IconButton(fixIcon, theme)
 							{
 								ToolTipText = action.Title
@@ -263,6 +265,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								action.Action.Invoke();
 							};
 
+							row.AddChild(button);
+						}
+						else
+						{
+							// Show info indicator hinting that hover will reveal additional details
+							var button = new IconButton(infoImage, theme)
+							{
+								Selectable = false
+							};
 							row.AddChild(button);
 						}
 
