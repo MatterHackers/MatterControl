@@ -29,6 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -56,12 +58,28 @@ namespace MatterHackers.MatterControl
 				});
 			}
 
+			// TODO: Consider splitting out each individual requirement in PrinterNeedsToRunSetup and reporting validation in a more granular fashion
 			if (ApplicationController.PrinterNeedsToRunSetup(printer))
 			{
 				errors.Add(new ValidationError()
 				{
 					Error = "Setup Required".Localize(),
-					Details = "Setup needs to be run before printing".Localize()
+					Details = "Setup needs to be run before printing".Localize(),
+					FixAction = new NamedAction()
+					{
+						Title = "Setup".Localize() + "...",
+						Action = () =>
+						{
+							UiThread.RunOnIdle(async () =>
+							{
+								await ApplicationController.Instance.PrintPart(
+									printer.Bed.EditContext,
+									printer,
+									null,
+									CancellationToken.None);
+							});
+						}
+					}
 				});
 			}
 
