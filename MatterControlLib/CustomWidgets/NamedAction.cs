@@ -36,33 +36,6 @@ using MatterHackers.MatterControl;
 
 namespace MatterHackers.Agg.UI
 {
-	public class NamedAction
-	{
-		public string Title { get; set; }
-		public string Shortcut { get; set; }
-		public Action Action { get; set; }
-		public ImageBuffer Icon { get; set; }
-		public Func<bool> IsEnabled { get; set; }
-		public string ID { get; internal set; }
-	}
-
-	public class ActionSeparator : NamedAction
-	{
-	}
-
-	public class NamedBoolAction : NamedAction
-	{
-		public Func<bool> GetIsActive { get; set; }
-		public Action<bool> SetIsActive { get; set; }
-	}
-
-	public abstract class LocalizedAction
-	{
-		public Func<string> TitleResolver { get; set; }
-		public string Title => this.TitleResolver?.Invoke();
-		public ImageBuffer Icon { get; set; }
-	}
-
 	public class SceneSelectionOperation : LocalizedAction
 	{
 		public Action<BedConfig> Action { get; set; }

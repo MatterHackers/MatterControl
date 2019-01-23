@@ -32,12 +32,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -66,6 +66,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.PopupVAnchor = VAnchor.Fit;
 			this.MakeScrollable = false;
 
+			var errorImage = AggContext.StaticData.LoadIcon("SettingsGroupError_16x.png", 16, 16, theme.InvertIcons);
+			var warningImage = AggContext.StaticData.LoadIcon("SettingsGroupWarning_16x.png", 16, 16, theme.InvertIcons);
+			var infoImage = AggContext.StaticData.LoadIcon("StatusInfoTip_16x.png", 16, 16);
+			var fixIcon = AggContext.StaticData.LoadIcon("noun_1306.png", 16, 16, theme.InvertIcons);
+
 			this.DynamicPopupContent = () =>
 			{
 				var menuTheme = ApplicationController.Instance.MenuTheme;
@@ -74,13 +79,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				allUiFields.Clear();
 
-				var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				var printPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
 					Padding = theme.DefaultContainerPadding,
 					BackgroundColor = menuTheme.BackgroundColor
 				};
 
-				column.AddChild(new TextWidget("Options".Localize(), textColor: menuTheme.TextColor)
+				printPanel.AddChild(new TextWidget("Options".Localize(), textColor: menuTheme.TextColor)
 				{
 					HAnchor = HAnchor.Left
 				});
@@ -94,7 +99,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					MinimumSize = new Vector2(400, 65),
 					Margin = new BorderDouble(top: 10),
 				};
-				column.AddChild(optionsPanel);
+				printPanel.AddChild(optionsPanel);
 
 				foreach (var key in new[] { SettingsKey.layer_height, SettingsKey.fill_density, SettingsKey.create_raft })
 				{
@@ -125,7 +130,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					VAnchor = VAnchor.Fit,
 					Margin = 0
 				};
-				column.AddChild(sectionWidget);
+				printPanel.AddChild(sectionWidget);
 
 				foreach (var key in new[] { SettingsKey.spiral_vase, SettingsKey.layer_to_pause })
 				{
@@ -154,39 +159,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var printerReadyToTakeCommands = printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.FinishedPrint
 					|| printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Connected;
 
-				var printerIsConnected = printer.Connection.CommunicationState != PrinterCommunication.CommunicationStates.Disconnected;
-				var printerNeedsToRunSetup = ApplicationController.PrinterNeedsToRunSetup(printer);
-
 				// add the start print button
 				var setupRow = new FlowLayoutWidget()
 				{
 					HAnchor = HAnchor.Stretch
 				};
 
-				var printingMessage = "";
+				// Perform validation before popup
+				var errors = printer.ValidateSettings();
 
-				if (!printerIsConnected)
-				{
-					printingMessage = "Need to connect before printing".Localize();
-				}
-				else if(printerNeedsToRunSetup)
-				{
-					printingMessage = "Setup needs to be run before printing".Localize();
-				}
-
-				if (!string.IsNullOrEmpty(printingMessage))
-				{
-					setupRow.AddChild(new TextWidget(printingMessage, textColor: menuTheme.TextColor)
-					{
-						VAnchor = VAnchor.Center,
-						AutoExpandBoundsToText = true,
-					});
-				}
+				// Enable print option when no validation Errors exists
+				var printEnabled = !errors.Any(err => err.ErrorLevel == ValidationErrorLevel.Error);
 
 				var startPrintButton = new TextButton("Start Print".Localize(), menuTheme)
 				{
 					Name = "Start Print Button",
-					Enabled = printerIsConnected && !printerNeedsToRunSetup
+					Enabled = printEnabled
 				};
 
 				startPrintButton.Click += (s, e) =>
@@ -212,47 +200,139 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					this.CloseMenu();
 				};
+
+				var hasErrors = errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error);
+				var hasErrorsOrWarnings = errors.Any();
+
+				if (hasErrorsOrWarnings)
+				{
+					string label = hasErrors ? "Action Required".Localize() : "Action Recommended".Localize();
+
+					setupRow.AddChild(new TextWidget(label, textColor: (hasErrors ? Color.Red : theme.PrimaryAccentColor), pointSize: theme.DefaultFontSize)
+					{
+						VAnchor = VAnchor.Bottom,
+						AutoExpandBoundsToText = true,
+					});
+				}
+
 				setupRow.AddChild(new HorizontalSpacer());
 				setupRow.AddChild(startPrintButton);
 
-				column.AddChild(setupRow);
+				printPanel.AddChild(setupRow);
 
-				if (!printerNeedsToRunSetup)
+				if (printEnabled)
 				{
 					theme.ApplyPrimaryActionStyle(startPrintButton);
 				}
-
-				// put in setup if needed
-				if (printerNeedsToRunSetup && printerIsConnected)
+				else
 				{
-					// add the finish setup button
-					var finishSetupButton = new TextButton("Setup...".Localize(), theme)
-					{
-						Name = "Finish Setup Button",
-						ToolTipText = "Run setup configuration for printer.".Localize(),
-						Margin = theme.ButtonSpacing,
-						Enabled = printerReadyToTakeCommands,
-						HAnchor = HAnchor.Right,
-						VAnchor = VAnchor.Absolute,
-					};
-					theme.ApplyPrimaryActionStyle(finishSetupButton);
-					finishSetupButton.Click += (s, e) =>
-					{
-						UiThread.RunOnIdle(async () =>
-						{
-							await ApplicationController.Instance.PrintPart(
-								printer.Bed.EditContext,
-								printer,
-								null,
-								CancellationToken.None);
-						});
-
-						this.CloseMenu();
-					};
-					column.AddChild(finishSetupButton);
+					startPrintButton.BackgroundColor = theme.MinimalShade;
 				}
 
-				return column;
+				if (hasErrorsOrWarnings)
+				{
+					var errorsPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+					{
+						HAnchor = HAnchor.Absolute,
+						VAnchor = VAnchor.Fit | VAnchor,
+						BackgroundColor = theme.ResolveColor(menuTheme.BackgroundColor, theme.PrimaryAccentColor.WithAlpha(30)),
+						Width = 350,
+						Name = "errorsPanel"
+					};
+
+					foreach (var validationError in errors.OrderByDescending(e => e.ErrorLevel))
+					{
+						string errorText, errorDetails;
+
+						var settingsValidationError = validationError as SettingsValidationError;
+						if (settingsValidationError != null)
+						{
+							errorText = string.Format(
+								"{0} {1}", 
+								settingsValidationError.PresentationName,
+								validationError.ErrorLevel == ValidationErrorLevel.Error ? "Error".Localize() : "Warning".Localize());
+
+							errorDetails = validationError.Error;
+						}
+						else
+						{
+							errorText = validationError.Error;
+							errorDetails = validationError.Details ?? "";
+						}
+
+						var row = new SettingsRow(errorText, errorDetails, theme, validationError.ErrorLevel == ValidationErrorLevel.Error ? errorImage : warningImage)
+						{
+							ArrowDirection = ArrowDirection.Left
+						};
+
+						if (validationError.FixAction is NamedAction action)
+						{
+							// Show fix button
+							var button = new IconButton(fixIcon, theme)
+							{
+								ToolTipText = action.Title
+							};
+							button.Click += (s, e) =>
+							{
+								action.Action.Invoke();
+							};
+
+							row.AddChild(button);
+						}
+						else
+						{
+							// Show info indicator hinting that hover will reveal additional details
+							var button = new IconButton(infoImage, theme)
+							{
+								Selectable = false
+							};
+							row.AddChild(button);
+						}
+
+						errorsPanel.AddChild(row);
+					}
+
+					// Conditional layout for right or bottom errors panel alignment
+					var layoutStyle = FlowDirection.TopToBottom;
+					//var layoutStyle = FlowDirection.LeftToRight;
+
+					if (layoutStyle == FlowDirection.LeftToRight)
+					{
+						errorsPanel.HAnchor = HAnchor.Absolute;
+						errorsPanel.VAnchor = VAnchor.Fit | VAnchor.Top;
+						errorsPanel.BackgroundColor = theme.ResolveColor(menuTheme.BackgroundColor, theme.PrimaryAccentColor.WithAlpha(30));
+						errorsPanel.Width = 350;
+
+						errorsPanel.Load += (s, e) =>
+						{
+							errorsPanel.Parent.BackgroundColor = Color.Transparent;
+						};
+					}
+					else
+					{
+						errorsPanel.HAnchor = HAnchor.Stretch;
+						errorsPanel.VAnchor = VAnchor.Fit;
+						errorsPanel.Margin = 3;
+					}
+
+					// Instead of the typical case where the print panel is returned, wrap and append validation errors panel
+					var errorsContainer = new FlowLayoutWidget(layoutStyle)
+					{
+						HAnchor = HAnchor.Fit,
+						VAnchor = VAnchor.Fit,
+						BackgroundColor = layoutStyle == FlowDirection.TopToBottom ? printPanel.BackgroundColor : Color.Transparent
+					};
+
+					// Clear bottom padding
+					printPanel.Padding = printPanel.Padding.Clone(bottom: 2);
+
+					errorsContainer.AddChild(printPanel);
+					errorsContainer.AddChild(errorsPanel);
+
+					return errorsContainer;
+				}
+
+				return printPanel;
 			};
 
 			this.AddChild(new TextButton("Print".Localize(), theme)

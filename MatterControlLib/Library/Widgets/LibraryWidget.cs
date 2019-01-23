@@ -688,10 +688,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						switch (selectedLibraryItems.FirstOrDefault())
 						{
 							case SDCardFileItem sdcardItem:
-							// TODO: Confirm SD printing?
-							// TODO: Need to rewrite library menu item validation can write one off validations like below so we don't end up here
-							//  - ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader)
-							printer.Connection.StartSdCardPrint(sdcardItem.Name.ToLower());
+								// TODO: Confirm SD printing?
+								// TODO: Need to rewrite library menu item validation can write one off validations like below so we don't end up here
+								//  - ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader)
+								printer.Connection.StartSdCardPrint(sdcardItem.Name.ToLower());
 								break;
 							case FileSystemFileItem fileItem when Path.GetExtension(fileItem.FileName).IndexOf(".gco", StringComparison.OrdinalIgnoreCase) == 0:
 								if (printer != null)

@@ -29,8 +29,13 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
@@ -42,6 +47,67 @@ namespace MatterHackers.MatterControl
 			var settings = printer.Settings;
 
 			var errors = new List<ValidationError>();
+
+			var printerIsConnected = printer.Connection.CommunicationState != PrinterCommunication.CommunicationStates.Disconnected;
+			if (!printerIsConnected)
+			{
+				errors.Add(new ValidationError()
+				{
+					Error = "Printer Disconnected".Localize(),
+					Details = "Connect to your printer to continue".Localize()
+				});
+			}
+
+			// TODO: Consider splitting out each individual requirement in PrinterNeedsToRunSetup and reporting validation in a more granular fashion
+			if (ApplicationController.PrinterNeedsToRunSetup(printer))
+			{
+				errors.Add(new ValidationError()
+				{
+					Error = "Printer Setup Required".Localize(),
+					Details = "Printer Setup must be run before printing".Localize(),
+					FixAction = new NamedAction()
+					{
+						Title = "Setup".Localize() + "...",
+						Action = () =>
+						{
+							UiThread.RunOnIdle(async () =>
+							{
+								await ApplicationController.Instance.PrintPart(
+									printer.Bed.EditContext,
+									printer,
+									null,
+									CancellationToken.None);
+							});
+						}
+					}
+				});
+			}
+
+			// last let's check if there is any support in the scene and if it looks like it is needed
+			var supportGenerator = new SupportGenerator(printer.Bed.Scene);
+			if (supportGenerator.RequiresSupport())
+			{
+				errors.Add(new ValidationError()
+				{
+					Error = "Support Recommended".Localize(),
+					Details = "Some of the parts appear to require support. Consider canceling this print then adding support to get the best results possible.".Localize(),
+					ErrorLevel = ValidationErrorLevel.Warning,
+					FixAction = new NamedAction()
+					{
+						 Title = "Generate Supports".Localize(),
+						 Action = () =>
+						 {
+							 // Find and InvokeClick on the Generate Supports toolbar button
+							 var sharedParent = ApplicationController.Instance.DragDropData.View3DWidget.Parents<GuiWidget>().FirstOrDefault(w => w.Name == "View3DContainerParent");
+							 if (sharedParent != null)
+							 {
+								 var supportsPopup = sharedParent.FindDescendant("Support SplitButton");
+								 supportsPopup.InvokeClick();
+							 }
+						 }
+					}
+				});
+			}
 
 			try
 			{

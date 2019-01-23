@@ -1,5 +1,6 @@
 ﻿/*
 Copyright (c) 2019, John Lewin
+
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,42 +28,48 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.SlicerConfiguration;
+using System;
+using System.Collections.Generic;
+using MatterHackers.Agg.Image;
 
 namespace MatterHackers.MatterControl
 {
-	public class SettingsValidationError : ValidationError
+	public class NamedAction
 	{
-		public SettingsValidationError(string settingsName)
+		public string Title { get; set; }
+		public string Shortcut { get; set; }
+		public Action Action { get; set; }
+		public ImageBuffer Icon { get; set; }
+		public Func<bool> IsEnabled { get; set; }
+		public string ID { get; set; }
+	}
+
+	public class ActionSeparator : NamedAction
+	{
+	}
+
+	public class NamedBoolAction : NamedAction
+	{
+		public Func<bool> GetIsActive { get; set; }
+		public Action<bool> SetIsActive { get; set; }
+	}
+
+	public abstract class LocalizedAction
+	{
+		public Func<string> TitleResolver { get; set; }
+		public string Title => this.TitleResolver?.Invoke();
+		public ImageBuffer Icon { get; set; }
+	}
+
+	public static class NamedActionExtensions
+	{
+		public static void Add(this List<NamedAction> list, string title, Action action)
 		{
-			this.CanonicalSettingsName = settingsName;
-			this.PresentationName = PrinterSettings.SettingsData[settingsName].PresentationName;
-		}
-
-		public string CanonicalSettingsName { get; }
-
-		public string PresentationName { get; }
-
-		public string Location => SettingsLocation(this.CanonicalSettingsName);
-
-		public string ValueDetails { get; set; }
-
-		private static string SettingsLocation(string settingsKey)
-		{
-			var settingData = PrinterSettings.SettingsData[settingsKey];
-			var setingsSectionName = settingData.OrganizerSubGroup.Group.Category.SettingsSection.Name;
-
-			if (setingsSectionName == "Advanced")
+			list.Add(new NamedAction()
 			{
-				setingsSectionName = "Slice Settings";
-			}
-
-			return "Location".Localize() + ":"
-				 + "\n" + setingsSectionName.Localize()
-				 + "\n  • " + settingData.OrganizerSubGroup.Group.Category.Name.Localize()
-				 + "\n    • " + settingData.OrganizerSubGroup.Group.Name.Localize()
-				 + "\n      • " + settingData.PresentationName.Localize();
+				Title = title,
+				Action = action
+			});
 		}
 	}
 }
