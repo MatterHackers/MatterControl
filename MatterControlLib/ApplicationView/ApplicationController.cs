@@ -2488,7 +2488,6 @@ If you experience adhesion problems, please re-run leveling."
 
 				dialogPage.ContentRow.AddChild(new ValidationErrorsPanel(errors, AppContext.Theme)
 				{
-					FlowDirection = FlowDirection.TopToBottom,
 					HAnchor = HAnchor.Stretch
 				});
 
