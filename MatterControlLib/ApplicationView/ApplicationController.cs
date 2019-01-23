@@ -2479,28 +2479,20 @@ If you experience adhesion problems, please re-run leveling."
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				// Project to newline separated Error/Details/Location string
-				var formattedErrors = errors.Select(err =>
+				var dialogPage = new DialogPage("Close".Localize())
 				{
-					string location = null;
-					string valueDetails = null;
+					HAnchor = HAnchor.Stretch,
+					WindowTitle = windowTitle,
+					HeaderText = "Action Required".Localize()
+				};
 
-					if (err is SettingsValidationError settingsError)
-					{
-						location = settingsError.Location;
-						valueDetails = settingsError.ValueDetails;
-					}
+				dialogPage.ContentRow.AddChild(new ValidationErrorsPanel(errors, AppContext.Theme)
+				{
+					FlowDirection = FlowDirection.TopToBottom,
+					HAnchor = HAnchor.Stretch
+				});
 
-					// Conditionally combine Error/Details/Location when not empty
-					return err.Error +
-						((string.IsNullOrWhiteSpace(err.Details)) ? "" : $"\n\n{err.Details}") +
-						((string.IsNullOrWhiteSpace(valueDetails)) ? "" : $"\n\n{valueDetails}") +
-						((string.IsNullOrWhiteSpace(location)) ? "" : $"\n\n{location}");
-				}).ToArray();
-
-				StyledMessageBox.ShowMessageBox(
-						string.Join("\n__________________\n\n", formattedErrors),
-						windowTitle);
+				DialogWindow.Show(dialogPage);
 			});
 		}
 
