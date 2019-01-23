@@ -40,6 +40,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class ValidationErrorsPanel : FlowLayoutWidget
 	{
 		public ValidationErrorsPanel(IEnumerable<ValidationError> errors, ThemeConfig theme)
+			: base (FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Absolute;
 			this.VAnchor = VAnchor.Fit | VAnchor;
