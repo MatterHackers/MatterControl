@@ -200,7 +200,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			// Only display popovers when we're the active widget, exit if we're not first under mouse
 			if (systemWindow == null
-				|| !this.ContainsFirstUnderMouseRecursive())
+				|| !this.ContainsFirstUnderMouseRecursive()
+				|| string.IsNullOrEmpty(settingsRow.HelpText))
 			{
 				return;
 			}
