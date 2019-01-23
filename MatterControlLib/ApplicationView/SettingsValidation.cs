@@ -89,8 +89,8 @@ namespace MatterHackers.MatterControl
 			{
 				errors.Add(new ValidationError()
 				{
-					Error = "Support Recommended".Localize(),
-					Details = "Some of the parts appear to require support. Consider canceling this print then adding support to get the best results possible.".Localize(),
+					Error = "Unsupported Parts Detected".Localize(),
+					Details = "Some parts are unsupported and require support structures to print correctly".Localize(),
 					ErrorLevel = ValidationErrorLevel.Warning,
 					FixAction = new NamedAction()
 					{
