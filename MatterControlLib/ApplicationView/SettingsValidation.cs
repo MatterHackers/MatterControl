@@ -76,11 +76,16 @@ namespace MatterHackers.MatterControl
 					ErrorLevel = ValidationErrorLevel.Warning,
 					FixAction = new NamedAction()
 					{
-						 Title = "Add Supports".Localize(),
+						 Title = "Generate Supports".Localize(),
 						 Action = () =>
 						 {
-							 // Do something like popup the supports panel or directly show the popup
-							 System.Diagnostics.Debugger.Break();
+							 // Find and InvokeClick on the Generate Supports toolbar button
+							 var sharedParent = ApplicationController.Instance.DragDropData.View3DWidget.Parents<GuiWidget>().FirstOrDefault(w => w.Name == "View3DContainerParent");
+							 if (sharedParent != null)
+							 {
+								 var supportsPopup = sharedParent.FindDescendant("Support SplitButton");
+								 supportsPopup.InvokeClick();
+							 }
 						 }
 					}
 				});
