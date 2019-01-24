@@ -65,12 +65,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				await Rebuild();
 				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
 			}
-
-			base.OnInvalidate(invalidateType);
 		}
 
 		public override Task Rebuild()
 		{
+			this.DebugDepth("Rebuild");
+
 			var rebuildLocks = this.RebuilLockAll();
 
 			// spin up a task to remove holes from the objects in the group

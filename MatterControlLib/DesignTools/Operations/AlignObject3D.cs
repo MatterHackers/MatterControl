@@ -31,8 +31,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -214,7 +217,31 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				if (AnchorObjectSelector.Count == 1)
 				{
-					return this.Children.Where(c => c.ID == AnchorObjectSelector[0]).FirstOrDefault();
+					var anchorChild = this.Children.Where(c => c.ID == AnchorObjectSelector[0]).FirstOrDefault();
+
+					if (anchorChild != null)
+					{
+						return anchorChild;
+					}
+
+					// try to update the item if possible
+					var id = AnchorObjectSelector[0];
+
+					// check if we can set it to something better
+					var anchorItem = this.Descendants<IObject3D>().Where(i => i.ID == id).FirstOrDefault();
+					if (anchorItem != null)
+					{
+						// we found the item, try to walk up it to find the last object that has a mesh (probably walking up the mesh wrapper chain)
+						var parentThatIsChildeOfThis = anchorItem.Parents<IObject3D>().Where(i => i.Parent == this).FirstOrDefault();
+						if (parentThatIsChildeOfThis != null)
+						{
+							OriginalChildrenBounds.Clear();
+							AnchorObjectSelector.Clear();
+							AnchorObjectSelector.Add(parentThatIsChildeOfThis.ID);
+
+							return parentThatIsChildeOfThis;
+						}
+					}
 				}
 
 				return null;
@@ -229,14 +256,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				int index = 0;
 				foreach(var child in this.Children)
 				{ 
-					if(child.ID == AnchorObjectSelector[0])
+					if(child == AnchorObject)
 					{
 						return index;
 					}
 					index++;
 				}
 
-				return -1;
+				return 0;
 			}
 		}
 
@@ -278,34 +305,22 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				Rebuild();
+				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Matrix, invalidateType.UndoBuffer));
 			}
 			else if (invalidateType.InvalidateType == InvalidateType.Properties
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
-			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
+				Rebuild();
+				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Matrix, invalidateType.UndoBuffer));
 			}
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 
 			var childrenIds = Children.Select(c => c.ID).ToArray();
-			if(childrenIds.Length == 0)
-			{
-				AnchorObjectSelector.Clear();
-			}
-			else if (AnchorObjectSelector.Count != 1
-				|| !AnchorObjectSelector.Where(i => childrenIds.Contains(i)).Any())
-			{
-				AnchorObjectSelector.Clear();
-				AnchorObjectSelector.Add(childrenIds[0]);
-			}
 
 			// if the count of our children changed clear our cache of the bounds
 			if (Children.Count != OriginalChildrenBounds.Count)
@@ -315,6 +330,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			using (RebuildLock())
 			{
+				var xxx = this.Parents<MeshWrapperObject3D>().FirstOrDefault();
+				if(xxx != null)
+				{
+					xxx.ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
+				}
+
 				var aabb = this.GetAxisAlignedBoundingBox();
 
 				// TODO: check if the has code for the children
@@ -428,7 +449,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}));
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix, null));
+			return Task.CompletedTask;
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)
