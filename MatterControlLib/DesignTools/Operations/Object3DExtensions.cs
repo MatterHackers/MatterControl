@@ -316,51 +316,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						itemsToReplace,
 						new List<IObject3D> { newParent }));
 
-				SelectModifiedItem(selectedItem, newParent, scene);
-			}
-		}
-
-		public static void WrapWith(this IObject3D originalItem, IObject3D wrapper, InteractiveScene scene)
-		{
-			// make sure we walk to the top of a mesh wrapper stack before we wrap the item (all mesh wrappers should be under the add)
-			while(originalItem.Parent is ModifiedMeshObject3D modifiedMesh)
-			{
-				originalItem = modifiedMesh;
-			}
-
-			using (originalItem.RebuildLock())
-			{
-				originalItem.Parent.Children.Modify(list =>
-				{
-					list.Remove(originalItem);
-
-					wrapper.Matrix = originalItem.Matrix;
-
-					originalItem.Matrix = Matrix4X4.Identity;
-					wrapper.Children.Add(originalItem);
-
-					list.Add(wrapper);
-				});
-
-				SelectModifiedItem(originalItem, wrapper, scene);
-			}
-		}
-
-		private static void SelectModifiedItem(IObject3D originalItem, IObject3D wrapper, InteractiveScene scene)
-		{
-			if (scene != null)
-			{
-				var topParent = wrapper.Parents<IObject3D>().LastOrDefault((i) => i.Parent != null);
+				var topParent = newParent.Parents<IObject3D>().LastOrDefault((i) => i.Parent != null);
 				UiThread.RunOnIdle(() =>
 				{
-					var sceneSelection = topParent != null ? topParent : wrapper;
-					scene.SelectedItem = sceneSelection;
-
-					if (sceneSelection != originalItem)
-					{
-						// select the sub item in the tree view
-						//scene.SelectedItem =  originalItem;
-					}
+					scene.SelectedItem = topParent != null ? topParent : newParent;
 				});
 			}
 		}
