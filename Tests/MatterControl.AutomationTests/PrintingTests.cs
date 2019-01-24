@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.OpenPrintPopupMenu(false, false);
 
-					testRunner.ClickByName("Finish Setup Button");
+					testRunner.ClickByName("SetupPrinter");
 
 					testRunner.Complete9StepLeveling();
 
