@@ -35,6 +35,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
@@ -358,10 +359,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			}
 
-			scene.Children.Modify(list =>
-			{
-				list.AddRange(supportColumnsToAdd.Children);
-			});
+			scene.UndoBuffer.AddAndDo(new InsertCommand(scene, supportColumnsToAdd.Children));
 		}
 
 		private Dictionary<(int x, int y), List<(double z, bool bottom)>> DetectRequiredSupportByTracing(RectangleDouble gridBounds, IEnumerable<IObject3D> supportCandidates)
