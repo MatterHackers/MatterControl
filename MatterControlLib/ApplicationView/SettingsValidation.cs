@@ -67,6 +67,7 @@ namespace MatterHackers.MatterControl
 					Details = "Printer Setup must be run before printing".Localize(),
 					FixAction = new NamedAction()
 					{
+						ID = "SetupPrinter",
 						Title = "Setup".Localize() + "...",
 						Action = () =>
 						{
