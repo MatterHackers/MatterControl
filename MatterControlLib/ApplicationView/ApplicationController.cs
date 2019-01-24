@@ -1116,7 +1116,13 @@ namespace MatterHackers.MatterControl
 						if (sceneItem is IObject3D imageObject)
 						{
 							var path = new ImageToPathObject3D();
-							sceneItem.WrapWith(path, scene);
+
+							var itemClone = sceneItem.Clone();
+							path.Children.Add(itemClone);
+							path.Matrix = itemClone.Matrix;
+							itemClone.Matrix = Matrix4X4.Identity;
+
+							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { path }));
 							path.Invalidate(new InvalidateArgs(path, InvalidateType.Properties, null));
 						}
 
@@ -1194,7 +1200,8 @@ namespace MatterHackers.MatterControl
 					ResultType = typeof(ComponentObject3D),
 					Operation = (sceneItem, scene) =>
 					{
-						var imageObject = scene.SelectedItem;
+						var selectedItem = scene.SelectedItem;
+						var imageObject = selectedItem.Clone() as ImageObject3D;
 						scene.SelectedItem = null;
 
 						var path = new ImageToPathObject3D();
@@ -1226,15 +1233,14 @@ namespace MatterHackers.MatterControl
 							}
 						};
 
-						// Invalidate image to kick off rebuild of ImageConverter stack 
-						imageObject.Invalidate(new InvalidateArgs(imageObject, InvalidateType.Image, null));
+						component.Matrix = imageObject.Matrix;
+						imageObject.Matrix = Matrix4X4.Identity;
 
 						// Swap original item with new wrapping component
-						scene.Children.Modify(children =>
-						{
-							children.Remove(imageObject);
-							children.Add(component);
-						});
+						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { component }));
+
+						// Invalidate image to kick off rebuild of ImageConverter stack 
+						imageObject.Invalidate(new InvalidateArgs(imageObject, InvalidateType.Image, null));
 
 						scene.SelectedItem = component;
 
@@ -1353,7 +1359,13 @@ namespace MatterHackers.MatterControl
 						if (sceneItem is IPathObject imageObject)
 						{
 							var extrude = new LinearExtrudeObject3D();
-							sceneItem.WrapWith(extrude, scene);
+
+							var itemClone = sceneItem.Clone();
+							extrude.Children.Add(itemClone);
+							extrude.Matrix = itemClone.Matrix;
+							itemClone.Matrix = Matrix4X4.Identity;
+
+							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { extrude }));
 							extrude.Invalidate(new InvalidateArgs(extrude, InvalidateType.Properties, null));
 						}
 
@@ -1374,7 +1386,12 @@ namespace MatterHackers.MatterControl
 						if (sceneItem is IPathObject imageObject)
 						{
 							var smoothPath = new SmoothPathObject3D();
-							sceneItem.WrapWith(smoothPath, scene);
+							var itemClone = sceneItem.Clone();
+							smoothPath.Children.Add(itemClone);
+							smoothPath.Matrix = itemClone.Matrix;
+							itemClone.Matrix = Matrix4X4.Identity;
+
+							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { smoothPath }));
 							smoothPath.Invalidate(new InvalidateArgs(smoothPath, InvalidateType.Properties, null));
 						}
 
@@ -1395,7 +1412,12 @@ namespace MatterHackers.MatterControl
 						if (sceneItem is IPathObject imageObject)
 						{
 							var inflatePath = new InflatePathObject3D();
-							sceneItem.WrapWith(inflatePath, scene);
+							var itemClone = sceneItem.Clone();
+							inflatePath.Children.Add(itemClone);
+							inflatePath.Matrix = itemClone.Matrix;
+							itemClone.Matrix = Matrix4X4.Identity;
+
+							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { inflatePath }));
 							inflatePath.Invalidate(new InvalidateArgs(inflatePath, InvalidateType.Properties, null));
 						}
 
