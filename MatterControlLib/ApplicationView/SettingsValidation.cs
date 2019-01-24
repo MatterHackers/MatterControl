@@ -42,47 +42,16 @@ namespace MatterHackers.MatterControl
 {
 	public static class SettingsValidation
 	{
+		/// <summary>
+		/// Validates the printer settings satisfy all requirements
+		/// </summary>
+		/// <param name="printer">The printer to validate</param>
+		/// <returns>A list of all warnings and errors</returns>
 		public static List<ValidationError> ValidateSettings(this PrinterConfig printer)
 		{
 			var settings = printer.Settings;
 
 			var errors = new List<ValidationError>();
-
-			var printerIsConnected = printer.Connection.CommunicationState != PrinterCommunication.CommunicationStates.Disconnected;
-			if (!printerIsConnected)
-			{
-				errors.Add(new ValidationError()
-				{
-					Error = "Printer Disconnected".Localize(),
-					Details = "Connect to your printer to continue".Localize()
-				});
-			}
-
-			// TODO: Consider splitting out each individual requirement in PrinterNeedsToRunSetup and reporting validation in a more granular fashion
-			if (ApplicationController.PrinterNeedsToRunSetup(printer))
-			{
-				errors.Add(new ValidationError()
-				{
-					Error = "Printer Setup Required".Localize(),
-					Details = "Printer Setup must be run before printing".Localize(),
-					FixAction = new NamedAction()
-					{
-						ID = "SetupPrinter",
-						Title = "Setup".Localize() + "...",
-						Action = () =>
-						{
-							UiThread.RunOnIdle(async () =>
-							{
-								await ApplicationController.Instance.PrintPart(
-									printer.Bed.EditContext,
-									printer,
-									null,
-									CancellationToken.None);
-							});
-						}
-					}
-				});
-			}
 
 			// last let's check if there is any support in the scene and if it looks like it is needed
 			var supportGenerator = new SupportGenerator(printer.Bed.Scene);
@@ -369,6 +338,57 @@ namespace MatterHackers.MatterControl
 						Details = e.Message
 					});
 			}
+
+			return errors;
+		}
+
+		/// <summary>
+		/// Validates printer satisfies all requirements
+		/// </summary>
+		/// <param name="printer">The printer to validate</param>
+		/// <returns>A list of all warnings and errors</returns>
+		public static List<ValidationError> Validate(this PrinterConfig printer)
+		{
+			var errors = new List<ValidationError>();
+
+			var printerIsConnected = printer.Connection.CommunicationState != PrinterCommunication.CommunicationStates.Disconnected;
+			if (!printerIsConnected)
+			{
+				errors.Add(new ValidationError()
+				{
+					Error = "Printer Disconnected".Localize(),
+					Details = "Connect to your printer to continue".Localize()
+				});
+			}
+
+			// TODO: Consider splitting out each individual requirement in PrinterNeedsToRunSetup and reporting validation in a more granular fashion
+			if (ApplicationController.PrinterNeedsToRunSetup(printer))
+			{
+				errors.Add(new ValidationError()
+				{
+					Error = "Printer Setup Required".Localize(),
+					Details = "Printer Setup must be run before printing".Localize(),
+					FixAction = new NamedAction()
+					{
+						ID = "SetupPrinter",
+						Title = "Setup".Localize() + "...",
+						Action = () =>
+						{
+							UiThread.RunOnIdle(async () =>
+							{
+								await ApplicationController.Instance.PrintPart(
+									printer.Bed.EditContext,
+									printer,
+									null,
+									CancellationToken.None);
+							});
+						}
+					}
+				});
+			}
+
+			// Concat printer and settings errors
+			errors.AddRange(printer.ValidateSettings());
 
 			return errors;
 		}
