@@ -308,18 +308,27 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 
 					//field.Content
-					undoBuffer.AddAndDo(new UndoRedoActions(() =>
+					if (undoBuffer != null)
 					{
-						property.SetValue(valueFromString(oldValue));
-						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
-						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-					},
-					() =>
+						undoBuffer.AddAndDo(new UndoRedoActions(() =>
+						{
+							property.SetValue(valueFromString(oldValue));
+							object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
+							propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+						},
+						() =>
+						{
+							property.SetValue(valueFromString(newValue));
+							object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
+							propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+						}));
+					}
+					else
 					{
 						property.SetValue(valueFromString(newValue));
 						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties, undoBuffer));
 						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
-					}));
+					}
 				};
 			}
 
