@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl.Library.Export
 						// TODO: Prior code bypassed GCodeOverridePath mechanisms in EditContext. Consolidating into a single pathway
 						string gcodePath = printer.Bed.EditContext.GCodeFilePath(printer);
 
-						List<ValidationError> errors = new List<ValidationError>();
+						var errors = new List<ValidationError>();
 
 						if (ApplicationSettings.ValidFileExtensions.IndexOf(sourceExtension, StringComparison.OrdinalIgnoreCase) >= 0
 							|| string.Equals(sourceExtension, ".mcx", StringComparison.OrdinalIgnoreCase))
