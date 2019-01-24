@@ -34,8 +34,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Transform;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
@@ -88,6 +86,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.scene = scene;
 		}
 
+		public enum SupportGenerationType { Normal, From_Bed }
+
 		public double MaxOverHangAngle
 		{
 			get
@@ -133,29 +133,29 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+		public SupportGenerationType SupportType
+		{
+			get
+			{
+				var supportString = UserSettings.Instance.get(UserSettingsKey.SupportGenerationType);
+				if (Enum.TryParse(supportString, out SupportGenerationType supportType))
+				{
+					return supportType;
+				}
+
+				return SupportGenerationType.Normal;
+			}
+
+			set
+			{
+				UserSettings.Instance.set(UserSettingsKey.SupportGenerationType, value.ToString());
+			}
+		}
+
 		/// <summary>
 		/// The amount to reduce the pillars so they are separated in the 3D view
 		/// </summary>
 		private double reduceAmount => .99;
-
-		// function to get all the columns that need support generation
-		IEnumerable<(int x, int y)> GetSupportCorrodinates(ImageBuffer supportNeededImage)
-		{
-			var buffer = supportNeededImage.GetBuffer();
-			// check if the image has any alpha set to something other than 255
-			for (int y = 0; y < supportNeededImage.Height; y++)
-			{
-				var yOffset = supportNeededImage.GetBufferOffsetY(y);
-				for (int x = 0; x < supportNeededImage.Width; x++)
-				{
-					// get the alpha at this pixel
-					//if (buffer[yOffset + x] > 0)
-					{
-						yield return (x, y);
-					}
-				}
-			}
-		}
 
 		public Task Create(IProgress<ProgressStatus> progress, CancellationToken cancelationToken)
 		{
@@ -177,8 +177,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			AxisAlignedBoundingBox allBounds = AxisAlignedBoundingBox.Empty();
 			foreach (var candidate in supportCandidates)
 			{
-				var matrix = candidate.WorldMatrix(scene);
-				allBounds += candidate.GetAxisAlignedBoundingBox();
+				allBounds += candidate.GetAxisAlignedBoundingBox(candidate.Matrix.Inverted * candidate.WorldMatrix());
 			}
 
 			// create the gird of possible support
@@ -222,204 +221,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			return Task.CompletedTask;
 		}
-
-		int GetNextTop(int i, List<(double z, bool bottom)> planes)
-		{
-			while (i < planes.Count
-				&& planes[i].bottom)
-			{
-				i++;
-			}
-
-			return i;
-		}
-
-		int GetNextBottom(int i, List<(double z, bool bottom)> planes)
-		{
-			// first skip all the tops
-			while (i < planes.Count
-				&& !planes[i].bottom)
-			{
-				i++;
-			}
-
-			// then look for the last bottom before next top
-			while (i < planes.Count
-				&& planes[i].bottom
-				&& planes.Count > i + 1
-				&& planes[i + 1].bottom)
-			{
-				i++;
-			}
-
-			return i;
-		}
-
-		private void AddSupportColumns(RectangleDouble gridBounds, Dictionary<(int x, int y), List<(double z, bool bottom)>> detectedPlanes)
-		{
-			IObject3D supportColumnsToAdd = new Object3D();
-			bool fromBed = false;
-			foreach (var kvp in detectedPlanes)
-			{
-				if(kvp.Value.Count == 0)
-				{
-					continue;
-				}
-
-				int i = 0;
-
-				kvp.Value.Sort((a, b) =>
-				{
-					return a.z.CompareTo(b.z);
-				});
-
-				var yPos = (gridBounds.Bottom + kvp.Key.y) * PillarSize;
-				var xPos = (gridBounds.Left + kvp.Key.x) * PillarSize;
-
-				if (fromBed)
-				{
-					i = GetNextBottom(i, kvp.Value);
-					if (kvp.Value[i].bottom)
-					{
-						AddSupportColumn(supportColumnsToAdd, xPos, yPos, 0, kvp.Value[i].z);
-					}
-				}
-				else
-				{
-					double lastTopZ = 0;
-					int lastBottom = i;
-					do
-					{
-						// if the first plane is a top, move to the last top before we find a bottom
-						if(i == 0
-							&& !kvp.Value[i].bottom)
-						{
-							i = GetNextTop(i + 1, kvp.Value);
-							if (i < kvp.Value.Count)
-							{
-								lastTopZ = kvp.Value[i].z;
-							}
-						}
-						lastBottom = i;
-						// find all open arreas in the list and add support
-						i = GetNextBottom(i, kvp.Value);
-						if (i < kvp.Value.Count
-							&& kvp.Value[i].bottom)
-						{
-							AddSupportColumn(supportColumnsToAdd, xPos, yPos, lastTopZ, kvp.Value[i].z);
-						}
-						i = GetNextTop(i+1, kvp.Value);
-						if (i < kvp.Value.Count)
-						{
-							lastTopZ = kvp.Value[i].z;
-						}
-					} while (i != lastBottom && i < kvp.Value.Count);
-				}
-			}
-
-			scene.Children.Modify(list =>
-			{
-				list.AddRange(supportColumnsToAdd.Children);
-			});
-		}
-
-		private Dictionary<(int x, int y), List<(double z, bool bottom)>> DetectRequiredSupportByTracing(RectangleDouble gridBounds, IEnumerable<IObject3D> supportCandidates)
-		{
-			var traceData = GetTraceData(supportCandidates);
-
-			// keep a list of all the detected planes in each support column
-			var detectedPlanes = new Dictionary<(int x, int y), List<(double z, bool bottom)>>();
-
-			int gridWidth = (int)gridBounds.Width;
-			int gridHeight = (int)gridBounds.Height;
-
-			// at the center of every grid item add in a list of all the top faces to look down from
-			for (int y = 0; y < gridHeight; y++)
-			{
-				for (int x = 0; x < gridWidth; x++)
-				{
-					IntersectInfo upHit = null;
-
-					for (double yOffset = -1; yOffset <= 1; yOffset++)
-					{
-						for (double xOffset = -1; xOffset <= 1; xOffset++)
-						{
-							var yPos = (gridBounds.Bottom + y) * PillarSize + (yOffset * PillarSize / 2);
-							var xPos = (gridBounds.Left + x) * PillarSize + (xOffset * PillarSize / 2);
-
-							var upRay = new Ray(new Vector3(xPos + .000013, yPos - .00027, 0), Vector3.UnitZ, intersectionType: IntersectionType.Both);
-							do
-							{
-								upHit = traceData.GetClosestIntersection(upRay);
-								if (upHit != null)
-								{
-									if (!detectedPlanes.ContainsKey((x, y)))
-									{
-										detectedPlanes.Add((x, y), new List<(double z, bool bottom)>());
-									}
-
-									detectedPlanes[(x, y)].Add((upHit.HitPosition.Z, upHit.normalAtHit.Z < 0));
-
-									// make a new ray just past the last hit to keep looking for up hits
-									upRay = new Ray(new Vector3(xPos, yPos, upHit.HitPosition.Z + .001), Vector3.UnitZ, intersectionType: IntersectionType.Both);
-								}
-							} while (upHit != null);
-						}
-					}
-				}
-			}
-
-			return detectedPlanes;
-		}
-
-		private IPrimitive GetTraceData(IEnumerable<IObject3D> supportCandidates)
-		{
-			List<Vector3Float> supportVerts;
-			FaceList supportFaces;
-
-			// find all the faces that are candidates for support
-			supportVerts = new List<Vector3Float>();
-			supportFaces = new FaceList();
-			foreach (var item in supportCandidates)
-			{
-				// add all the down faces to supportNeededImage
-				var matrix = item.WorldMatrix(scene);
-				for (int faceIndex = 0; faceIndex < item.Mesh.Faces.Count; faceIndex++)
-				{
-					var face0Normal = item.Mesh.Faces[faceIndex].normal.TransformNormal(matrix).GetNormal();
-					var angle = MathHelper.RadiansToDegrees(Math.Acos(face0Normal.Dot(-Vector3Float.UnitZ)));
-
-					// check if the face is pointing in the up direction at all
-					bool isUpFace = angle > 90;
-
-					// check if the face is pointing down 
-
-					if (angle < MaxOverHangAngle
-						|| isUpFace)
-					{
-						var face = item.Mesh.Faces[faceIndex];
-						var verts = new int[] { face.v0, face.v1, face.v2 };
-						var p0 = item.Mesh.Vertices[face.v0].Transform(matrix);
-						var p1 = item.Mesh.Vertices[face.v1].Transform(matrix);
-						var p2 = item.Mesh.Vertices[face.v2].Transform(matrix);
-						var vc = supportVerts.Count;
-						supportVerts.Add(p0);
-						supportVerts.Add(p1);
-						supportVerts.Add(p2);
-
-						supportFaces.Add(vc, vc + 1, vc + 2, face0Normal);
-					}
-				}
-
-				// add all mesh edges that need support
-
-				// add all unsupported vertices (low points of a face group that individually do not need support)
-			}
-
-			return supportFaces.CreateTraceData(supportVerts);
-		}
-
-		public Agg.UI.HAnchor SupportType { get; set; } = Agg.UI.HAnchor.Fit;
 
 		public void RemoveExisting()
 		{
@@ -492,6 +293,223 @@ namespace MatterHackers.MatterControl.DesignTools
 				* Matrix4X4.CreateTranslation(gridX, gridY, bottomZ + (topZ - bottomZ) / 2);
 
 			holder.Children.Add(support);
+		}
+
+		private void AddSupportColumns(RectangleDouble gridBounds, Dictionary<(int x, int y), List<(double z, bool bottom)>> detectedPlanes)
+		{
+			IObject3D supportColumnsToAdd = new Object3D();
+			bool fromBed = SupportType == SupportGenerationType.From_Bed;
+			var halfPillar = PillarSize / 2;
+			foreach (var kvp in detectedPlanes)
+			{
+				if (kvp.Value.Count == 0)
+				{
+					continue;
+				}
+
+				int i = 0;
+
+				kvp.Value.Sort((a, b) =>
+				{
+					return a.z.CompareTo(b.z);
+				});
+
+				var yPos = (gridBounds.Bottom + kvp.Key.y) * PillarSize + halfPillar;
+				var xPos = (gridBounds.Left + kvp.Key.x) * PillarSize + halfPillar;
+
+				if (fromBed)
+				{
+					i = GetNextBottom(i, kvp.Value);
+					if (kvp.Value[i].bottom)
+					{
+						AddSupportColumn(supportColumnsToAdd, xPos, yPos, 0, kvp.Value[i].z);
+					}
+				}
+				else
+				{
+					double lastTopZ = 0;
+					int lastBottom = i;
+					do
+					{
+						// if the first plane is a top, move to the last top before we find a bottom
+						if (i == 0
+							&& !kvp.Value[i].bottom)
+						{
+							i = GetNextTop(i + 1, kvp.Value);
+							if (i < kvp.Value.Count)
+							{
+								lastTopZ = kvp.Value[i].z;
+							}
+						}
+						lastBottom = i;
+						// find all open arreas in the list and add support
+						i = GetNextBottom(i, kvp.Value);
+						if (i < kvp.Value.Count
+							&& kvp.Value[i].bottom)
+						{
+							AddSupportColumn(supportColumnsToAdd, xPos, yPos, lastTopZ, kvp.Value[i].z);
+						}
+						i = GetNextTop(i + 1, kvp.Value);
+						if (i < kvp.Value.Count)
+						{
+							lastTopZ = kvp.Value[i].z;
+						}
+					} while (i != lastBottom && i < kvp.Value.Count);
+				}
+			}
+
+			scene.Children.Modify(list =>
+			{
+				list.AddRange(supportColumnsToAdd.Children);
+			});
+		}
+
+		private Dictionary<(int x, int y), List<(double z, bool bottom)>> DetectRequiredSupportByTracing(RectangleDouble gridBounds, IEnumerable<IObject3D> supportCandidates)
+		{
+			var traceData = GetTraceData(supportCandidates);
+
+			// keep a list of all the detected planes in each support column
+			var detectedPlanes = new Dictionary<(int x, int y), List<(double z, bool bottom)>>();
+
+			int gridWidth = (int)gridBounds.Width;
+			int gridHeight = (int)gridBounds.Height;
+
+			// at the center of every grid item add in a list of all the top faces to look down from
+			for (int y = 0; y < gridHeight; y++)
+			{
+				for (int x = 0; x < gridWidth; x++)
+				{
+					IntersectInfo upHit = null;
+
+					for (double yOffset = -1; yOffset <= 1; yOffset++)
+					{
+						for (double xOffset = -1; xOffset <= 1; xOffset++)
+						{
+							var halfPillar = PillarSize / 2;
+							var yPos = (gridBounds.Bottom + y) * PillarSize + halfPillar + (yOffset * halfPillar);
+							var xPos = (gridBounds.Left + x) * PillarSize + halfPillar + (xOffset * halfPillar);
+
+							var upRay = new Ray(new Vector3(xPos + .000013, yPos - .00027, 0), Vector3.UnitZ, intersectionType: IntersectionType.Both);
+							do
+							{
+								upHit = traceData.GetClosestIntersection(upRay);
+								if (upHit != null)
+								{
+									if (!detectedPlanes.ContainsKey((x, y)))
+									{
+										detectedPlanes.Add((x, y), new List<(double z, bool bottom)>());
+									}
+
+									detectedPlanes[(x, y)].Add((upHit.HitPosition.Z, upHit.normalAtHit.Z < 0));
+
+									// make a new ray just past the last hit to keep looking for up hits
+									upRay = new Ray(new Vector3(xPos, yPos, upHit.HitPosition.Z + .001), Vector3.UnitZ, intersectionType: IntersectionType.Both);
+								}
+							} while (upHit != null);
+						}
+					}
+				}
+			}
+
+			return detectedPlanes;
+		}
+
+		private int GetNextBottom(int i, List<(double z, bool bottom)> planes)
+		{
+			// first skip all the tops
+			while (i < planes.Count
+				&& !planes[i].bottom)
+			{
+				i++;
+			}
+
+			// then look for the last bottom before next top
+			while (i < planes.Count
+				&& planes[i].bottom
+				&& planes.Count > i + 1
+				&& planes[i + 1].bottom)
+			{
+				i++;
+			}
+
+			return i;
+		}
+
+		private int GetNextTop(int i, List<(double z, bool bottom)> planes)
+		{
+			while (i < planes.Count
+				&& planes[i].bottom)
+			{
+				i++;
+			}
+
+			return i;
+		}
+
+		// function to get all the columns that need support generation
+		private IEnumerable<(int x, int y)> GetSupportCorrodinates(ImageBuffer supportNeededImage)
+		{
+			var buffer = supportNeededImage.GetBuffer();
+			// check if the image has any alpha set to something other than 255
+			for (int y = 0; y < supportNeededImage.Height; y++)
+			{
+				var yOffset = supportNeededImage.GetBufferOffsetY(y);
+				for (int x = 0; x < supportNeededImage.Width; x++)
+				{
+					// get the alpha at this pixel
+					//if (buffer[yOffset + x] > 0)
+					{
+						yield return (x, y);
+					}
+				}
+			}
+		}
+
+		private IPrimitive GetTraceData(IEnumerable<IObject3D> supportCandidates)
+		{
+			List<Vector3Float> supportVerts;
+			FaceList supportFaces;
+
+			// find all the faces that are candidates for support
+			supportVerts = new List<Vector3Float>();
+			supportFaces = new FaceList();
+			foreach (var item in supportCandidates)
+			{
+				// add all the down faces to supportNeededImage
+				var matrix = item.WorldMatrix(scene);
+				for (int faceIndex = 0; faceIndex < item.Mesh.Faces.Count; faceIndex++)
+				{
+					var face0Normal = item.Mesh.Faces[faceIndex].normal.TransformNormal(matrix).GetNormal();
+					var angle = MathHelper.RadiansToDegrees(Math.Acos(face0Normal.Dot(-Vector3Float.UnitZ)));
+
+					// check if the face is pointing in the up direction at all
+					bool isUpFace = angle > 90;
+
+					// check if the face is pointing down
+
+					if (angle < MaxOverHangAngle
+						|| isUpFace)
+					{
+						var face = item.Mesh.Faces[faceIndex];
+						var verts = new int[] { face.v0, face.v1, face.v2 };
+						var p0 = item.Mesh.Vertices[face.v0].Transform(matrix);
+						var p1 = item.Mesh.Vertices[face.v1].Transform(matrix);
+						var p2 = item.Mesh.Vertices[face.v2].Transform(matrix);
+						var vc = supportVerts.Count;
+						supportVerts.Add(p0);
+						supportVerts.Add(p1);
+						supportVerts.Add(p2);
+
+						supportFaces.Add(vc, vc + 1, vc + 2, face0Normal);
+					}
+				}
+
+				// add all mesh edges that need support
+
+				// add all unsupported vertices (low points of a face group that individually do not need support)
+			}
+
+			return supportFaces.CreateTraceData(supportVerts);
 		}
 	}
 }

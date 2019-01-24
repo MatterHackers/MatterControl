@@ -61,9 +61,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.BackgroundColor = theme.BackgroundColor;
 			this.Padding = theme.DefaultContainerPadding;
 
-			// put in support pillar size
+			// Add an editor field for the SupportGenerator.SupportType
+			PropertyInfo propertyInfo = typeof(SupportGenerator).GetProperty(nameof(SupportGenerator.SupportType));
 
-			// support pillar resolution
+			var editor = PublicPropertyEditor.CreatePropertyEditor(
+				new EditableProperty(propertyInfo, supportGenerator),
+				null,
+				new PPEContext(),
+				theme);
+			if (editor != null)
+			{
+				this.AddChild(editor);
+			}
+
+			// put in support pillar size
 			var pillarSizeField = new DoubleField(theme);
 			pillarSizeField.Initialize(0);
 			pillarSizeField.DoubleValue = supportGenerator.PillarSize;
@@ -98,19 +109,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var overHangRow = PublicPropertyEditor.CreateSettingsRow("Overhang Angle".Localize(), "The angle to generate support for".Localize());
 			overHangRow.AddChild(overHangField.Content);
 			this.AddChild(overHangRow);
-
-			// Add an editor field for the SupportGenerator.SupportType
-			PropertyInfo propertyInfo = typeof(SupportGenerator).GetProperty(nameof(SupportGenerator.SupportType));
-
-			var editor = PublicPropertyEditor.CreatePropertyEditor(
-				new EditableProperty(propertyInfo, supportGenerator), 
-				null, 
-				new PPEContext(), 
-				theme);
-			if (editor != null)
-			{
-				this.AddChild(editor);
-			}
 
 			// Button Row
 			var buttonRow = new FlowLayoutWidget()
