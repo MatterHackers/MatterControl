@@ -83,6 +83,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						ToolTipText = action.Title
 					};
+
+					if (!string.IsNullOrEmpty(action.ID))
+					{
+						button.Name = action.ID;
+					}
+
 					button.Click += (s, e) =>
 					{
 						action.Action.Invoke();
