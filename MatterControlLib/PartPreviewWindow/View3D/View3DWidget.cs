@@ -238,8 +238,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SplitterSize = theme.SplitterWidth,
 				SplitterBackground = theme.SplitterBackground
 			};
-			historyAndProperties.Panel1.MinimumSize = new Vector2(0, 120);
-			historyAndProperties.Panel2.MinimumSize = new Vector2(0, 120);
+			historyAndProperties.Panel1.MinimumSize = new Vector2(0, 60);
+			historyAndProperties.Panel2.MinimumSize = new Vector2(0, 60);
 
 			modelViewSidePanel.AddChild(historyAndProperties);
 
