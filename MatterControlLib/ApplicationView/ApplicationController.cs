@@ -1115,6 +1115,9 @@ namespace MatterHackers.MatterControl
 					{
 						if (sceneItem is IObject3D imageObject)
 						{
+							// TODO: make it look like this (and get rid of all the other stuff)
+							//scene.Replace(sceneItem, new ImageToPathObject3D(sceneItem.Clone()));
+
 							var path = new ImageToPathObject3D();
 
 							var itemClone = sceneItem.Clone();
