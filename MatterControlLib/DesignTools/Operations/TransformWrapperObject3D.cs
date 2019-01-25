@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					{
 						IObject3D replaceItem = item.Clone();
 						firstChild.Children.Add(replaceItem);
-						var replace = new ReplaceCommand(new List<IObject3D> { item }, new List<IObject3D> { this });
+						var replace = new ReplaceCommand(new[] { item }, new[] { this });
 						undoBuffer.AddAndDo(replace);
 					}
 					else

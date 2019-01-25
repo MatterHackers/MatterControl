@@ -597,7 +597,7 @@ namespace MatterHackers.MatterControl
 							});
 						});
 
-						scene.UndoBuffer.AddAndDo(new ReplaceCommand(selectedItem.Children.ToList(), new List<IObject3D> { newGroup }));
+						scene.UndoBuffer.AddAndDo(new ReplaceCommand(selectedItem.Children.ToList(), new[] { newGroup }));
 
 						newGroup.MakeNameNonColliding();
 
@@ -786,7 +786,7 @@ namespace MatterHackers.MatterControl
 						var fit = FitToBoundsObject3D_2.Create(selectedItem.Clone());
 						fit.MakeNameNonColliding();
 
-						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, new List<IObject3D> { fit }));
+						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));
 						scene.SelectedItem = fit;
 					},
 					Icon = AggContext.StaticData.LoadIcon("fit.png", 16, 16, theme.InvertIcons),
@@ -1296,9 +1296,9 @@ namespace MatterHackers.MatterControl
 
 						// Copy an selected item into the component as a clone
 						component.Children.Modify(children =>
-											{
-												children.AddRange(items.Select(o => o.Clone()));
-											});
+						{
+							children.AddRange(items.Select(o => o.Clone()));
+						});
 
 						component.MakeNameNonColliding();
 

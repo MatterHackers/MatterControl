@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				newContainer.Children.Add(child.Clone());
 			}
-			undoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { this }, new List<IObject3D> { newContainer }));
+			undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { newContainer }));
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)

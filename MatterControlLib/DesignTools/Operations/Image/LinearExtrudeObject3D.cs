@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				meshOnlyItem.CopyProperties(this, Object3DPropertyFlags.All);
 
 				// and replace us with the children 
-				undoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { this }, new List<IObject3D> { meshOnlyItem }));
+				undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { meshOnlyItem }));
 			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Content));

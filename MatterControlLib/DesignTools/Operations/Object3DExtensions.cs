@@ -314,7 +314,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				scene.UndoBuffer.AddAndDo(
 					new ReplaceCommand(
 						itemsToReplace,
-						new List<IObject3D> { newParent }));
+						new[] { newParent }));
 
 				var topParent = newParent.Parents<IObject3D>().LastOrDefault((i) => i.Parent != null);
 				UiThread.RunOnIdle(() =>
