@@ -102,30 +102,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							scene.SelectedItem = null;
 							progressStatus.Status = "Copy".Localize();
 							reporter.Report(progressStatus);
-							var ungroupMesh = selectedItem.Mesh.Copy(cancellationToken, (progress0To1, processingState) =>
-							{
-								progressStatus.Progress0To1 = progress0To1 * .2;
-								progressStatus.Status = processingState;
-								reporter.Report(progressStatus);
-							});
-							if(cancellationToken.IsCancellationRequested)
-							{
-								return Task.CompletedTask;
-							}
-							progressStatus.Status = "Clean".Localize();
-							reporter.Report(progressStatus);
-							if (cancellationToken.IsCancellationRequested)
-							{
-								return Task.CompletedTask;
-							}
-							using (selectedItem.RebuildLock())
-							{
-								selectedItem.Mesh = ungroupMesh;
-							}
 
 							// try to cut it up into multiple meshes
 							progressStatus.Status = "Split".Localize();
-							var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(ungroupMesh, cancellationToken, (double progress0To1, string processingState) =>
+							var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(selectedItem.Mesh, cancellationToken, (double progress0To1, string processingState) =>
 							{
 								progressStatus.Progress0To1 = .5 + progress0To1 * .5;
 								progressStatus.Status = processingState;
