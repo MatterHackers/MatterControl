@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var selectedItem = scene.SelectedItem;
 			if (selectedItem != null)
 			{
-				if(selectedItem.CanFlatten)
+				if (selectedItem.CanFlatten)
 				{
 					selectedItem.Flatten(scene.UndoBuffer);
 					scene.SelectedItem = null;
@@ -102,30 +102,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							scene.SelectedItem = null;
 							progressStatus.Status = "Copy".Localize();
 							reporter.Report(progressStatus);
-							var ungroupMesh = selectedItem.Mesh.Copy(cancellationToken, (progress0To1, processingState) =>
-							{
-								progressStatus.Progress0To1 = progress0To1 * .2;
-								progressStatus.Status = processingState;
-								reporter.Report(progressStatus);
-							});
-							if(cancellationToken.IsCancellationRequested)
-							{
-								return Task.CompletedTask;
-							}
-							progressStatus.Status = "Clean".Localize();
-							reporter.Report(progressStatus);
-							if (cancellationToken.IsCancellationRequested)
-							{
-								return Task.CompletedTask;
-							}
-							using (selectedItem.RebuildLock())
-							{
-								selectedItem.Mesh = ungroupMesh;
-							}
 
 							// try to cut it up into multiple meshes
 							progressStatus.Status = "Split".Localize();
-							var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(ungroupMesh, cancellationToken, (double progress0To1, string processingState) =>
+							var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(selectedItem.Mesh, cancellationToken, (double progress0To1, string processingState) =>
 							{
 								progressStatus.Progress0To1 = .5 + progress0To1 * .5;
 								progressStatus.Status = processingState;
@@ -150,14 +130,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								Mesh = mesh,
 							}));
 
-							foreach(var item in addItems)
+							foreach (var item in addItems)
 							{
 								item.CopyProperties(selectedItem, Object3DPropertyFlags.All);
 								item.Visible = true;
 							}
 
 							// add and do the undo data
-							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, addItems));
+							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, addItems));
 
 							foreach (var item in addItems)
 							{
@@ -266,7 +246,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							// the selection is a group of objects that need to be copied
 							var copyList = sourceItem.Children.ToList();
 							scene.SelectedItem = null;
-							foreach(var item in copyList)
+							foreach (var item in copyList)
 							{
 								var clonedItem = item.Clone();
 								clonedItem.Translate(xOffset);
@@ -400,7 +380,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			int faceToLayFlat = -1;
 			double lowestAngleOfAnyFace = double.MaxValue;
 			// Check all the faces that are connected to the lowest point to find out which one to lay flat.
-			for (int faceIndex=0; faceIndex<meshWithLowest.Faces.Count; faceIndex++)
+			for (int faceIndex = 0; faceIndex < meshWithLowest.Faces.Count; faceIndex++)
 			{
 				var face = meshWithLowest.Faces[faceIndex];
 				if (meshWithLowest.Vertices[face.v0] != sourceVertexPosition

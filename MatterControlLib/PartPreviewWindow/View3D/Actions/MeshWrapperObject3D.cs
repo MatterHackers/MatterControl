@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 					// collapse our children into our parent
 					// and replace us with the children
-					var replaceCommand = new ReplaceCommand(new List<IObject3D> { this }, thisClone.Children.ToList());
+					var replaceCommand = new ReplaceCommand(new[] { this }, thisClone.Children.ToList());
 					if (undoBuffer != null)
 					{
 						undoBuffer.AddAndDo(replaceCommand);
