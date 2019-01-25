@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					newChildren.Add(meshOnlyItem);
 				}
 
-				if(newChildren.Count > 1)
+				if (newChildren.Count > 1)
 				{
 					var group = new GroupObject3D();
 					group.Name = this.Name;
@@ -84,13 +84,13 @@ namespace MatterHackers.MatterControl.DesignTools
 					newChildren.Clear();
 					newChildren.Add(group);
 				}
-				else if(newChildren.Count == 1)
+				else if (newChildren.Count == 1)
 				{
 					newChildren[0].Name = this.Name;
 				}
 
 				// and replace us with the children
-				undoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { this }, newChildren));
+				undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, newChildren));
 			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Content, undoBuffer));

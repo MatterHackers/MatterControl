@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}
 
 							// add and do the undo data
-							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, addItems));
+							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, addItems));
 
 							foreach (var item in addItems)
 							{
