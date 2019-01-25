@@ -90,12 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					{
 					}
 
-					UiThread.RunOnIdle(() =>
-					{
-						rebuildLocks.Dispose();
-						base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
-					});
-
+					rebuildLocks.Dispose();
 					return Task.CompletedTask;
 				});
 		}
