@@ -34,11 +34,14 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using System.Collections.Generic;
 using MatterHackers.Localizations;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
 	public class ComponentObject3D : Object3D, IVisualLeafNode
 	{
+		private const string imageConverterComponentID = "4D9BD8DB-C544-4294-9C08-4195A409217A";
+
 		public ComponentObject3D()
 		{
 		}
@@ -94,6 +97,42 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Content, undoBuffer));
+		}
+
+		public override void Remove(UndoBuffer undoBuffer)
+		{
+			// Custom remove for ImageConverter
+			if (this.ComponentID == imageConverterComponentID)
+			{
+				var parent = this.Parent;
+
+				using (RebuildLock())
+				{
+					if (this.Descendants<ImageObject3D>().FirstOrDefault() is ImageObject3D imageObject3D)
+					{
+						imageObject3D.Matrix = this.Matrix;
+
+						if (undoBuffer != null)
+						{
+							undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { imageObject3D }));
+						}
+						else
+						{
+							parent.Children.Modify(list =>
+							{
+								list.Remove(this);
+								list.Add(imageObject3D);
+							});
+						}
+					}
+				}
+
+				parent.Invalidate(new InvalidateArgs(this, InvalidateType.Content, null));
+			}
+			else
+			{
+				base.Remove(undoBuffer);
+			}
 		}
 	}
 }
