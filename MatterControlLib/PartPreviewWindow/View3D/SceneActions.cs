@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var selectedItem = scene.SelectedItem;
 			if (selectedItem != null)
 			{
-				if(selectedItem.CanFlatten)
+				if (selectedItem.CanFlatten)
 				{
 					selectedItem.Flatten(scene.UndoBuffer);
 					scene.SelectedItem = null;
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								Mesh = mesh,
 							}));
 
-							foreach(var item in addItems)
+							foreach (var item in addItems)
 							{
 								item.CopyProperties(selectedItem, Object3DPropertyFlags.All);
 								item.Visible = true;
@@ -246,7 +246,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							// the selection is a group of objects that need to be copied
 							var copyList = sourceItem.Children.ToList();
 							scene.SelectedItem = null;
-							foreach(var item in copyList)
+							foreach (var item in copyList)
 							{
 								var clonedItem = item.Clone();
 								clonedItem.Translate(xOffset);
@@ -380,7 +380,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			int faceToLayFlat = -1;
 			double lowestAngleOfAnyFace = double.MaxValue;
 			// Check all the faces that are connected to the lowest point to find out which one to lay flat.
-			for (int faceIndex=0; faceIndex<meshWithLowest.Faces.Count; faceIndex++)
+			for (int faceIndex = 0; faceIndex < meshWithLowest.Faces.Count; faceIndex++)
 			{
 				var face = meshWithLowest.Faces[faceIndex];
 				if (meshWithLowest.Vertices[face.v0] != sourceVertexPosition
