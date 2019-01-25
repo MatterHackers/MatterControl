@@ -1123,6 +1123,8 @@ namespace MatterHackers.MatterControl
 							itemClone.Matrix = Matrix4X4.Identity;
 
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { path }));
+							scene.SelectedItem = null;
+							scene.SelectedItem = path;
 							path.Invalidate(new InvalidateArgs(path, InvalidateType.Properties, null));
 						}
 
@@ -1180,10 +1182,10 @@ namespace MatterHackers.MatterControl
 					ResultType = typeof(ScaleObject3D),
 					Operation = (sceneItem, scene) =>
 					{
-						var selectedItem = scene.SelectedItem;
-						scene.SelectedItem = null;
 						var scale = new ScaleObject3D();
-						scale.WrapItem(selectedItem, scene.UndoBuffer);
+						scale.WrapItem(sceneItem, scene.UndoBuffer);
+
+						scene.SelectedItem = null;
 						scene.SelectedItem = scale;
 
 						return Task.CompletedTask;
@@ -1200,9 +1202,7 @@ namespace MatterHackers.MatterControl
 					ResultType = typeof(ComponentObject3D),
 					Operation = (sceneItem, scene) =>
 					{
-						var selectedItem = scene.SelectedItem;
-						var imageObject = selectedItem.Clone() as ImageObject3D;
-						scene.SelectedItem = null;
+						var imageObject = sceneItem.Clone() as ImageObject3D;
 
 						var path = new ImageToPathObject3D();
 						path.Children.Add(imageObject);
@@ -1237,19 +1237,16 @@ namespace MatterHackers.MatterControl
 						imageObject.Matrix = Matrix4X4.Identity;
 
 						// Swap original item with new wrapping component
-						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { component }));
-
+						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { component }));
+						scene.SelectedItem = null;
+						scene.SelectedItem = component;
 						// Invalidate image to kick off rebuild of ImageConverter stack 
 						imageObject.Invalidate(new InvalidateArgs(imageObject, InvalidateType.Image, null));
-
-						scene.SelectedItem = component;
 
 						return Task.CompletedTask;
 					},
 					IconCollector = (theme) => AggContext.StaticData.LoadIcon("140.png", 16, 16, theme.InvertIcons)
 				});
-
-			this.Graph.PrimaryOperations.Add(typeof(ImageObject3D), new List<NodeOperation> { this.Graph.Operations["ImageConverter"] });
 
 			this.Graph.RegisterOperation(
 				new NodeOperation()
@@ -1366,6 +1363,8 @@ namespace MatterHackers.MatterControl
 							itemClone.Matrix = Matrix4X4.Identity;
 
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { extrude }));
+							scene.SelectedItem = null;
+							scene.SelectedItem = extrude;
 							extrude.Invalidate(new InvalidateArgs(extrude, InvalidateType.Properties, null));
 						}
 
@@ -1392,6 +1391,8 @@ namespace MatterHackers.MatterControl
 							itemClone.Matrix = Matrix4X4.Identity;
 
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { smoothPath }));
+							scene.SelectedItem = null;
+							scene.SelectedItem = smoothPath;
 							smoothPath.Invalidate(new InvalidateArgs(smoothPath, InvalidateType.Properties, null));
 						}
 
@@ -1418,6 +1419,8 @@ namespace MatterHackers.MatterControl
 							itemClone.Matrix = Matrix4X4.Identity;
 
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { inflatePath }));
+							scene.SelectedItem = null;
+							scene.SelectedItem = inflatePath;
 							inflatePath.Invalidate(new InvalidateArgs(inflatePath, InvalidateType.Properties, null));
 						}
 
@@ -1483,6 +1486,12 @@ namespace MatterHackers.MatterControl
 					mappedEditors.Add(editor);
 				}
 			}
+
+			this.Graph.PrimaryOperations.Add(typeof(ImageObject3D), new List<NodeOperation> { this.Graph.Operations["ImageConverter"], this.Graph.Operations["ImageToPath"], });
+			this.Graph.PrimaryOperations.Add(typeof(ImageToPathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"], this.Graph.Operations["SmoothPath"], this.Graph.Operations["InflatePath"] });
+			this.Graph.PrimaryOperations.Add(typeof(SmoothPathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"], this.Graph.Operations["InflatePath"] });
+			this.Graph.PrimaryOperations.Add(typeof(InflatePathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"] });
+			this.Graph.PrimaryOperations.Add(typeof(Object3D), new List<NodeOperation> { this.Graph.Operations["Scale"] });
 		}
 
 		public void Connection_ErrorReported(object sender, string line)

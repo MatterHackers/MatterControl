@@ -221,7 +221,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var button = new IconButton(primaryAction.IconCollector(theme), theme)
 					{
 						//Name = namedAction.Title + " Button",
-						//ToolTipText = namedAction.Title,
+						ToolTipText = primaryAction.Title,
 						Margin = theme.ButtonSpacing,
 						BackgroundColor = theme.ToolbarButtonBackground,
 						HoverColor = theme.ToolbarButtonHover,
@@ -447,6 +447,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				|| selectedItem.CanFlatten);
 			removeButton.Enabled = selectedItem != null;
 			overflowButton.Enabled = selectedItem != null;
+			if(selectedItem == null)
+			{
+				primaryActionsPanel.RemoveAllChildren();
+			}
 		}
 	}
 }
