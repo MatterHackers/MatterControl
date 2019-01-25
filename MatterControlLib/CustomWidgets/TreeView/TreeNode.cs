@@ -212,6 +212,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		}
 
+		public override string ToString()
+		{
+			return textWidget?.Text ?? "";
+		}
+
 		#region Properties
 
 		public bool Checked { get; set; }
