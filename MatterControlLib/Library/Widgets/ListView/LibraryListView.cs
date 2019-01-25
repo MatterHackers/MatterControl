@@ -82,7 +82,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.LibraryContext = context;
 
 			// Set Display Attributes
-			this.MinimumSize = new Vector2(0, 200);
 			this.AnchorAll();
 			this.AutoScroll = true;
 			this.ScrollArea.Padding = new BorderDouble(3);
