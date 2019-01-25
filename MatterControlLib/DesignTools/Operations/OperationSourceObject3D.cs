@@ -27,11 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Linq;
+using System.Threading.Tasks;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -42,49 +43,50 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Visible = false;
 			Name = "Source".Localize();
 		}
+	}
 
-		public override bool Visible { get => base.Visible; set => base.Visible = value; }
-
-		/// <summary>
-		/// This function will return the source container and if it does not find one will:
-		/// <para>find the first child of the parent widget</para>
-		/// <para>remove it from parent</item>
-		/// <para>create a new OperationSource</para>
-		/// <para>add the first child to the OperationSource</para>
-		/// <para>add the OperationSource to the parent</para>
-		/// </summary>
-		/// <param name="parent"></param>
-		/// <returns>The existing or created OperationSource</returns>
-		public static IObject3D GetOrCreateSourceContainer(IObject3D parent)
+	public class OperationSourceContainerObject3D : Object3D
+	{
+		[JsonIgnore]
+		public IObject3D SourceContainer
 		{
-			IObject3D sourceContainer;
-			using (parent.RebuildLock())
+			get
 			{
-				sourceContainer = parent.Children.FirstOrDefault(c => c is OperationSourceObject3D);
+				IObject3D sourceContainer = this.Children.FirstOrDefault(c => c is OperationSourceObject3D);
 				if (sourceContainer == null)
 				{
-					sourceContainer = new OperationSourceObject3D();
+					using (this.RebuildLock())
+					{
+						sourceContainer = new OperationSourceObject3D();
 
-					// Move first child to sourceContainer
-					var firstChild = parent.Children.First();
-					parent.Children.Remove(firstChild);
-					sourceContainer.Children.Add(firstChild);
+						// Move all the children to sourceContainer
+						this.Children.Modify(thisChildren =>
+						{
+							sourceContainer.Children.Modify(sourceChildren =>
+							{
+								foreach (var child in thisChildren)
+								{
+									thisChildren.Remove(child);
+									sourceChildren.Add(child);
+								}
+							});
+
+							// and then add the source container to this
+							thisChildren.Add(sourceContainer);
+						});
+					}
 				}
-			}
 
-			return sourceContainer;
+				return sourceContainer;
+			}
 		}
 
-		/// <summary>
-		/// Flatten the children of an object that has an OperationSource in it
-		/// </summary>
-		/// <param name="item"></param>
-		public static void Flatten(IObject3D item)
+		public override void Flatten(UndoBuffer undoBuffer)
 		{
-			using (item.RebuildLock())
+			using (this.RebuildLock())
 			{
 				// The idea is we leave everything but the source and that is the applied operation
-				item.Children.Modify(list =>
+				this.Children.Modify(list =>
 				{
 					var sourceItem = list.FirstOrDefault(c => c is OperationSourceObject3D);
 					if (sourceItem != null)
@@ -106,17 +108,46 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					}
 				});
 			}
+
+			base.Flatten(undoBuffer);
 		}
 
-		/// <summary>
-		/// Prepare the children of an object that contains an OpperationSource to be removed
-		/// </summary>
-		/// <param name="parent"></param>
-		internal static void Remove(IObject3D parent)
+		public override async Task Rebuild()
 		{
-			using (parent.RebuildLock())
+			var rebuildLock = this.RebuildLock();
+
+			await ApplicationController.Instance.Tasks.Execute(
+				"Linear Array".Localize(),
+				null,
+				(reporter, cancellationToken) =>
+				{
+					IObject3D sourceContainer = this.Children.FirstOrDefault(c => c is OperationSourceObject3D);
+					if (sourceContainer == null)
+					{
+						sourceContainer = new OperationSourceObject3D();
+
+						// Move first child to sourceContainer
+						var firstChild = this.Children.First();
+						this.Children.Remove(firstChild);
+						sourceContainer.Children.Add(firstChild);
+					}
+
+					this.Children.Modify(list =>
+					{
+						list.Clear();
+						list.Add(sourceContainer);
+					});
+
+					rebuildLock.Dispose();
+					return Task.CompletedTask;
+				});
+		}
+
+		public override void Remove(UndoBuffer undoBuffer)
+		{
+			using (this.RebuildLock())
 			{
-				parent.Children.Modify(list =>
+				this.Children.Modify(list =>
 				{
 					var sourceItem = list.FirstOrDefault(c => c is OperationSourceObject3D);
 					if (sourceItem != null)
@@ -130,6 +161,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					}
 				});
 			}
+
+			base.Remove(undoBuffer);
 		}
 	}
 }
