@@ -27,24 +27,18 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class OperationSourceObject3D : Object3D
-	{
-		public OperationSourceObject3D()
-		{
-			Visible = false;
-			Name = "Source".Localize();
-		}
-	}
-
 	public class OperationSourceContainerObject3D : Object3D
 	{
 		[JsonIgnore]
@@ -66,12 +60,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							{
 								foreach (var child in thisChildren)
 								{
-									thisChildren.Remove(child);
 									sourceChildren.Add(child);
 								}
 							});
 
 							// and then add the source container to this
+							thisChildren.Clear();
 							thisChildren.Add(sourceContainer);
 						});
 					}
@@ -112,37 +106,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			base.Flatten(undoBuffer);
 		}
 
-		public override async Task Rebuild()
-		{
-			var rebuildLock = this.RebuildLock();
-
-			await ApplicationController.Instance.Tasks.Execute(
-				"Linear Array".Localize(),
-				null,
-				(reporter, cancellationToken) =>
-				{
-					IObject3D sourceContainer = this.Children.FirstOrDefault(c => c is OperationSourceObject3D);
-					if (sourceContainer == null)
-					{
-						sourceContainer = new OperationSourceObject3D();
-
-						// Move first child to sourceContainer
-						var firstChild = this.Children.First();
-						this.Children.Remove(firstChild);
-						sourceContainer.Children.Add(firstChild);
-					}
-
-					this.Children.Modify(list =>
-					{
-						list.Clear();
-						list.Add(sourceContainer);
-					});
-
-					rebuildLock.Dispose();
-					return Task.CompletedTask;
-				});
-		}
-
 		public override void Remove(UndoBuffer undoBuffer)
 		{
 			using (this.RebuildLock())
@@ -163,6 +126,63 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			base.Remove(undoBuffer);
+		}
+
+		public void RemoveAllButSource()
+		{
+			var sourceContainer = SourceContainer;
+			this.Children.Modify(list =>
+			{
+				list.Clear();
+				list.Add(sourceContainer);
+			});
+		}
+
+		public void WrapSelectedItemAndSelect(InteractiveScene scene)
+		{
+			using (RebuildLock())
+			{
+				var selectedItems = scene.GetSelectedItems();
+
+				if (selectedItems.Count > 0)
+				{
+					// clear the selected item
+					scene.SelectedItem = null;
+
+					using (RebuildLock())
+					{
+						var clonedItemsToAdd = new List<IObject3D>(selectedItems.Select((i) => i.Clone()));
+
+						Children.Modify((list) =>
+						{
+							list.Clear();
+
+							foreach (var child in clonedItemsToAdd)
+							{
+								list.Add(child);
+							}
+						});
+					}
+
+					scene.UndoBuffer.AddAndDo(
+						new ReplaceCommand(
+							new List<IObject3D>(selectedItems),
+							new List<IObject3D> { this }));
+
+					// and select this
+					scene.SelectedItem = this;
+				}
+			}
+
+			Invalidate(new InvalidateArgs(this, InvalidateType.Properties, null));
+		}
+	}
+
+	public class OperationSourceObject3D : Object3D
+	{
+		public OperationSourceObject3D()
+		{
+			Name = "Source".Localize();
 		}
 	}
 }
