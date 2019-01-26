@@ -32,6 +32,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -85,20 +86,18 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else if (invalidateType.InvalidateType == InvalidateType.Properties
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 
@@ -109,6 +108,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix, null));
+			return Task.CompletedTask;
 		}
 	}
 }
