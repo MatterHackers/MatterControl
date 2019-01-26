@@ -78,55 +78,92 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override void Flatten(UndoBuffer undoBuffer)
 		{
-			using (this.RebuildLock())
+			using (RebuildLock())
 			{
-				// The idea is we leave everything but the source and that is the applied operation
-				this.Children.Modify(list =>
+				List<IObject3D> newChildren = new List<IObject3D>();
+				// push our matrix into a copy of our children
+				foreach (var child in this.Children)
 				{
-					var sourceItem = list.FirstOrDefault(c => c is OperationSourceObject3D);
-					if (sourceItem != null)
+					if (!(child is OperationSourceObject3D))
 					{
-						list.Remove(sourceItem);
+						var newChild = child.Clone();
+						newChildren.Add(newChild);
+						newChild.Matrix *= this.Matrix;
+						var flags = Object3DPropertyFlags.Visible;
+						if (this.Color.alpha != 0) flags |= Object3DPropertyFlags.Color;
+						if (this.OutputType != PrintOutputTypes.Default) flags |= Object3DPropertyFlags.OutputType;
+						if (this.MaterialIndex != -1) flags |= Object3DPropertyFlags.MaterialIndex;
+						newChild.CopyProperties(this, flags);
 					}
+				}
 
-					if (list.Count > 1)
+				if (newChildren.Count > 1)
+				{
+					// wrap the children in an object so they remain a group
+					var group = new Object3D()
 					{
-						// wrap the children in an object so they remain a group
-						var group = new Object3D();
-						group.Children.Modify((groupList) =>
-						{
-							groupList.AddRange(list);
-						});
+						Name = this.Name + " - " + "Flattened".Localize()
+					};
+					group.Children.Modify((groupList) =>
+					{
+						groupList.AddRange(newChildren);
+					});
 
-						list.Clear();
-						list.Add(group);
-					}
-				});
+					newChildren.Clear();
+					newChildren.Add(group);
+				}
+
+				// and replace us with the children
+				var replaceCommand = new ReplaceCommand(new[] { this }, newChildren);
+				if (undoBuffer != null)
+				{
+					undoBuffer.AddAndDo(replaceCommand);
+				}
+				else
+				{
+					replaceCommand.Do();
+				}
+
+				foreach(var child in newChildren[0].DescendantsAndSelf())
+				{
+					child.MakeNameNonColliding();
+				}
 			}
 
-			base.Flatten(undoBuffer);
+			Invalidate(new InvalidateArgs(this, InvalidateType.Content, undoBuffer));
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)
 		{
-			using (this.RebuildLock())
+			using (RebuildLock())
 			{
-				this.Children.Modify(list =>
+				List<IObject3D> newChildren = new List<IObject3D>();
+				// push our matrix into a copy of our children
+				foreach (var child in this.SourceContainer.Children)
 				{
-					var sourceItem = list.FirstOrDefault(c => c is OperationSourceObject3D);
-					if (sourceItem != null)
-					{
-						IObject3D firstChild = sourceItem.Children.First();
-						if (firstChild != null)
-						{
-							list.Clear();
-							list.Add(firstChild);
-						}
-					}
-				});
+					var newChild = child.Clone();
+					newChildren.Add(newChild);
+					newChild.Matrix *= this.Matrix;
+					var flags = Object3DPropertyFlags.Visible;
+					if (this.Color.alpha != 0) flags |= Object3DPropertyFlags.Color;
+					if (this.OutputType != PrintOutputTypes.Default) flags |= Object3DPropertyFlags.OutputType;
+					if (this.MaterialIndex != -1) flags |= Object3DPropertyFlags.MaterialIndex;
+					newChild.CopyProperties(this, flags);
+				}
+
+				// and replace us with the children
+				var replaceCommand = new ReplaceCommand(new[] { this }, newChildren);
+				if (undoBuffer != null)
+				{
+					undoBuffer.AddAndDo(replaceCommand);
+				}
+				else
+				{
+					replaceCommand.Do();
+				}
 			}
 
-			base.Remove(undoBuffer);
+			Invalidate(new InvalidateArgs(this, InvalidateType.Content, undoBuffer));
 		}
 
 		public void RemoveAllButSource()
