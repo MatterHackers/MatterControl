@@ -27,109 +27,200 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
+using MatterHackers.DataConverters3D.UndoCommands;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
+	public class OperationSourceContainerObject3D : Object3D
+	{
+		public override bool CanFlatten => true;
+
+		[JsonIgnore]
+		public IObject3D SourceContainer
+		{
+			get
+			{
+				IObject3D sourceContainer = this.Children.FirstOrDefault(c => c is OperationSourceObject3D);
+				if (sourceContainer == null)
+				{
+					using (this.RebuildLock())
+					{
+						sourceContainer = new OperationSourceObject3D();
+
+						// Move all the children to sourceContainer
+						this.Children.Modify(thisChildren =>
+						{
+							sourceContainer.Children.Modify(sourceChildren =>
+							{
+								foreach (var child in thisChildren)
+								{
+									sourceChildren.Add(child);
+								}
+							});
+
+							// and then add the source container to this
+							thisChildren.Clear();
+							thisChildren.Add(sourceContainer);
+						});
+					}
+				}
+
+				return sourceContainer;
+			}
+		}
+
+		public override void Flatten(UndoBuffer undoBuffer)
+		{
+			using (RebuildLock())
+			{
+				List<IObject3D> newChildren = new List<IObject3D>();
+				// push our matrix into a copy of our children
+				foreach (var child in this.Children)
+				{
+					if (!(child is OperationSourceObject3D))
+					{
+						var newChild = child.Clone();
+						newChildren.Add(newChild);
+						newChild.Matrix *= this.Matrix;
+						var flags = Object3DPropertyFlags.Visible;
+						if (this.Color.alpha != 0) flags |= Object3DPropertyFlags.Color;
+						if (this.OutputType != PrintOutputTypes.Default) flags |= Object3DPropertyFlags.OutputType;
+						if (this.MaterialIndex != -1) flags |= Object3DPropertyFlags.MaterialIndex;
+						newChild.CopyProperties(this, flags);
+					}
+				}
+
+				if (newChildren.Count > 1)
+				{
+					// wrap the children in an object so they remain a group
+					var group = new Object3D()
+					{
+						Name = this.Name + " - " + "Flattened".Localize()
+					};
+					group.Children.Modify((groupList) =>
+					{
+						groupList.AddRange(newChildren);
+					});
+
+					newChildren.Clear();
+					newChildren.Add(group);
+				}
+
+				// and replace us with the children
+				var replaceCommand = new ReplaceCommand(new[] { this }, newChildren);
+				if (undoBuffer != null)
+				{
+					undoBuffer.AddAndDo(replaceCommand);
+				}
+				else
+				{
+					replaceCommand.Do();
+				}
+
+				foreach(var child in newChildren[0].DescendantsAndSelf())
+				{
+					child.MakeNameNonColliding();
+				}
+			}
+
+			Invalidate(new InvalidateArgs(this, InvalidateType.Content, undoBuffer));
+		}
+
+		public override void Remove(UndoBuffer undoBuffer)
+		{
+			using (RebuildLock())
+			{
+				List<IObject3D> newChildren = new List<IObject3D>();
+				// push our matrix into a copy of our children
+				foreach (var child in this.SourceContainer.Children)
+				{
+					var newChild = child.Clone();
+					newChildren.Add(newChild);
+					newChild.Matrix *= this.Matrix;
+					var flags = Object3DPropertyFlags.Visible;
+					if (this.Color.alpha != 0) flags |= Object3DPropertyFlags.Color;
+					if (this.OutputType != PrintOutputTypes.Default) flags |= Object3DPropertyFlags.OutputType;
+					if (this.MaterialIndex != -1) flags |= Object3DPropertyFlags.MaterialIndex;
+					newChild.CopyProperties(this, flags);
+				}
+
+				// and replace us with the children
+				var replaceCommand = new ReplaceCommand(new[] { this }, newChildren);
+				if (undoBuffer != null)
+				{
+					undoBuffer.AddAndDo(replaceCommand);
+				}
+				else
+				{
+					replaceCommand.Do();
+				}
+			}
+
+			Invalidate(new InvalidateArgs(this, InvalidateType.Content, undoBuffer));
+		}
+
+		public void RemoveAllButSource()
+		{
+			var sourceContainer = SourceContainer;
+			this.Children.Modify(list =>
+			{
+				list.Clear();
+				list.Add(sourceContainer);
+			});
+		}
+
+		public void WrapSelectedItemAndSelect(InteractiveScene scene)
+		{
+			using (RebuildLock())
+			{
+				var selectedItems = scene.GetSelectedItems();
+
+				if (selectedItems.Count > 0)
+				{
+					// clear the selected item
+					scene.SelectedItem = null;
+
+					using (RebuildLock())
+					{
+						var clonedItemsToAdd = new List<IObject3D>(selectedItems.Select((i) => i.Clone()));
+
+						Children.Modify((list) =>
+						{
+							list.Clear();
+
+							foreach (var child in clonedItemsToAdd)
+							{
+								list.Add(child);
+							}
+						});
+					}
+
+					scene.UndoBuffer.AddAndDo(
+						new ReplaceCommand(
+							new List<IObject3D>(selectedItems),
+							new List<IObject3D> { this }));
+
+					// and select this
+					scene.SelectedItem = this;
+				}
+			}
+
+			Invalidate(new InvalidateArgs(this, InvalidateType.Properties, null));
+		}
+	}
+
 	public class OperationSourceObject3D : Object3D
 	{
 		public OperationSourceObject3D()
 		{
-			Visible = false;
 			Name = "Source".Localize();
-		}
-
-		public override bool Visible { get => base.Visible; set => base.Visible = value; }
-
-		/// <summary>
-		/// This function will return the source container and if it does not find one will:
-		/// <para>find the first child of the parent widget</para>
-		/// <para>remove it from parent</item>
-		/// <para>create a new OperationSource</para>
-		/// <para>add the first child to the OperationSource</para>
-		/// <para>add the OperationSource to the parent</para>
-		/// </summary>
-		/// <param name="parent"></param>
-		/// <returns>The existing or created OperationSource</returns>
-		public static IObject3D GetOrCreateSourceContainer(IObject3D parent)
-		{
-			IObject3D sourceContainer;
-			using (parent.RebuildLock())
-			{
-				sourceContainer = parent.Children.FirstOrDefault(c => c is OperationSourceObject3D);
-				if (sourceContainer == null)
-				{
-					sourceContainer = new OperationSourceObject3D();
-
-					// Move first child to sourceContainer
-					var firstChild = parent.Children.First();
-					parent.Children.Remove(firstChild);
-					sourceContainer.Children.Add(firstChild);
-				}
-			}
-
-			return sourceContainer;
-		}
-
-		/// <summary>
-		/// Flatten the children of an object that has an OperationSource in it
-		/// </summary>
-		/// <param name="item"></param>
-		public static void Flatten(IObject3D item)
-		{
-			using (item.RebuildLock())
-			{
-				// The idea is we leave everything but the source and that is the applied operation
-				item.Children.Modify(list =>
-				{
-					var sourceItem = list.FirstOrDefault(c => c is OperationSourceObject3D);
-					if (sourceItem != null)
-					{
-						list.Remove(sourceItem);
-					}
-
-					if (list.Count > 1)
-					{
-						// wrap the children in an object so they remain a group
-						var group = new Object3D();
-						group.Children.Modify((groupList) =>
-						{
-							groupList.AddRange(list);
-						});
-
-						list.Clear();
-						list.Add(group);
-					}
-				});
-			}
-		}
-
-		/// <summary>
-		/// Prepare the children of an object that contains an OpperationSource to be removed
-		/// </summary>
-		/// <param name="parent"></param>
-		internal static void Remove(IObject3D parent)
-		{
-			using (parent.RebuildLock())
-			{
-				parent.Children.Modify(list =>
-				{
-					var sourceItem = list.FirstOrDefault(c => c is OperationSourceObject3D);
-					if (sourceItem != null)
-					{
-						IObject3D firstChild = sourceItem.Children.First();
-						if (firstChild != null)
-						{
-							list.Clear();
-							list.Add(firstChild);
-						}
-					}
-				});
-			}
 		}
 	}
 }

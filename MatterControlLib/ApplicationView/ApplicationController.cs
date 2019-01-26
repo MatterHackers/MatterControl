@@ -675,9 +675,9 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
 				{
-					OperationType = typeof(CombineObject3D),
+					OperationType = typeof(CombineObject3D_2),
 					TitleResolver = () => "Combine".Localize(),
-					Action = (sceneContext) => new CombineObject3D().WrapSelectedItemAndSelect(sceneContext.Scene),
+					Action = (sceneContext) => new CombineObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 					Icon = AggContext.StaticData.LoadIcon("combine.png").SetPreMultiply(),
 					IsEnabled = (scene) =>
 					{
@@ -1115,6 +1115,9 @@ namespace MatterHackers.MatterControl
 					{
 						if (sceneItem is IObject3D imageObject)
 						{
+							// TODO: make it look like this (and get rid of all the other stuff)
+							//scene.Replace(sceneItem, new ImageToPathObject3D(sceneItem.Clone()));
+
 							var path = new ImageToPathObject3D();
 
 							var itemClone = sceneItem.Clone();

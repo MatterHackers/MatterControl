@@ -172,6 +172,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Source = item
 					};
 
+				case OperationSourceContainerObject3D operationSourceContainerObject3D:
+					return new ObjectView()
+					{
+						Children = item.Children.OfType<OperationSourceObject3D>().ToList(),
+						Name = operationSourceContainerObject3D.Name,
+						Source = item
+					};
+
+
 				default:
 					return new ObjectView(item);
 			}

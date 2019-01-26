@@ -32,10 +32,11 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayAdvancedObject3D : Object3D
+	public class ArrayAdvancedObject3D : OperationSourceContainerObject3D
 	{
 		public ArrayAdvancedObject3D()
 		{
@@ -56,14 +57,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public bool ScaleOffset { get; set; } = true;
 
-		public override void Flatten(UndoBuffer undoBuffer)
-		{
-			OperationSourceObject3D.Flatten(this);
-
-			base.Flatten(undoBuffer);
-		}
-
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if ((invalidateType.InvalidateType == InvalidateType.Content
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
@@ -71,12 +65,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				await Rebuild();
+				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer));
 			}
 			else if (invalidateType.InvalidateType == InvalidateType.Properties
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				await Rebuild();
+				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer));
 			}
 			else
 			{
@@ -84,44 +80,51 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		public override async Task Rebuild()
 		{
-			this.DebugDepth("Rebuild");
-			this.Children.Modify(list =>
-			{
-				IObject3D lastChild = list.First();
-				list.Clear();
-				list.Add(lastChild);
-				var offset = Offset;
-				for (int i = 1; i < Count; i++)
+			var rebuildLock = this.RebuildLock();
+			SourceContainer.Visible = true;
+
+			await ApplicationController.Instance.Tasks.Execute(
+				"Advanced Array".Localize(),
+				null,
+				(reporter, cancellationToken) =>
 				{
-					var rotateRadians = MathHelper.DegreesToRadians(Rotate);
-					if (ScaleOffset)
+					this.DebugDepth("Rebuild");
+					var sourceContainer = SourceContainer;
+					this.Children.Modify(list =>
 					{
-						offset *= Scale;
-					}
+						list.Clear();
+						list.Add(sourceContainer);
+						var lastChild = sourceContainer.Children.First();
+						list.Add(lastChild.Clone());
+						var offset = Offset;
+						for (int i = 1; i < Count; i++)
+						{
+							var rotateRadians = MathHelper.DegreesToRadians(Rotate);
+							if (ScaleOffset)
+							{
+								offset *= Scale;
+							}
 
-					var next = lastChild.Clone();
-					offset = Vector3Ex.Transform(offset, Matrix4X4.CreateRotationZ(rotateRadians));
-					next.Matrix *= Matrix4X4.CreateTranslation(offset);
+							var next = lastChild.Clone();
+							offset = Vector3Ex.Transform(offset, Matrix4X4.CreateRotationZ(rotateRadians));
+							next.Matrix *= Matrix4X4.CreateTranslation(offset);
 
-					if (RotatePart)
-					{
-						next.Matrix = next.ApplyAtBoundsCenter(Matrix4X4.CreateRotationZ(rotateRadians));
-					}
+							if (RotatePart)
+							{
+								next.Matrix = next.ApplyAtBoundsCenter(Matrix4X4.CreateRotationZ(rotateRadians));
+							}
 
-					next.Matrix = next.ApplyAtBoundsCenter(Matrix4X4.CreateScale(Scale));
-					list.Add(next);
-					lastChild = next;
-				}
-			});
-		}
-
-		public override void Remove(UndoBuffer undoBuffer)
-		{
-			OperationSourceObject3D.Remove(this);
-
-			base.Remove(undoBuffer);
+							next.Matrix = next.ApplyAtBoundsCenter(Matrix4X4.CreateScale(Scale));
+							list.Add(next);
+							lastChild = next;
+						}
+					});
+					SourceContainer.Visible = false;
+					rebuildLock.Dispose();
+					return Task.CompletedTask;
+				});
 		}
 	}
 }

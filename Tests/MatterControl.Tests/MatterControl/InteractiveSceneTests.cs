@@ -67,10 +67,18 @@ namespace MatterControl.Tests.MatterControl
 					0, -10, -10,
 					20, 10, 10), .001));
 
-				var union = new CombineObject3D();
+				var union = new CombineObject3D_2();
 				union.Children.Add(cubeA);
 				union.Children.Add(offsetCubeB);
 				root.Children.Add(union);
+
+				Assert.IsTrue(union.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(
+					-10, -10, -10,
+					20, 10, 10), .001));
+
+				Assert.IsTrue(root.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(
+					-10, -10, -10,
+					20, 10, 10), .001));
 
 				union.Combine();
 				Assert.IsTrue(union.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(
@@ -92,7 +100,7 @@ namespace MatterControl.Tests.MatterControl
 				var cubeA = new CubeObject3D(20, 20, 20);
 				var cubeB = new CubeObject3D(20, 20, 20);
 
-				var union = new CombineObject3D();
+				var union = new CombineObject3D_2();
 				union.Children.Add(cubeA);
 				union.Children.Add(cubeB);
 				root.Children.Add(union);
@@ -122,7 +130,7 @@ namespace MatterControl.Tests.MatterControl
 				var cubeB = new CubeObject3D(20, 20, 20);
 				var offsetCubeB = new TranslateObject3D(cubeB, 10);
 
-				var combine = new CombineObject3D();
+				var combine = new CombineObject3D_2();
 				combine.Children.Add(cubeA);
 				combine.Children.Add(offsetCubeB);
 				root.Children.Add(combine);
@@ -161,7 +169,7 @@ namespace MatterControl.Tests.MatterControl
 					Name = "cubeB"
 				};
 
-				var combine = new CombineObject3D();
+				var combine = new CombineObject3D_2();
 				combine.Children.Add(cubeA);
 				combine.Children.Add(cubeB);
 				root.Children.Add(combine);
@@ -194,7 +202,7 @@ namespace MatterControl.Tests.MatterControl
 				var cubeB = new CubeObject3D(20, 20, 20);
 				var offsetCubeB = new TranslateObject3D(cubeB, 10);
 
-				var combine = new CombineObject3D();
+				var combine = new CombineObject3D_2();
 				combine.Children.Add(cubeA);
 				combine.Children.Add(offsetCubeB);
 				root.Children.Add(combine);
@@ -247,7 +255,7 @@ namespace MatterControl.Tests.MatterControl
 				group.Children.Add(cubeA);
 				group.Children.Add(offsetCubeB);
 
-				var union = new CombineObject3D();
+				var union = new CombineObject3D_2();
 				union.Children.Add(group);
 
 				root.Children.Add(union);

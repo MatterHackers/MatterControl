@@ -37,10 +37,12 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
+	[Obsolete("Use CombineObject3D_2 instead", false)]
 	public class CombineObject3D : MeshWrapperObject3D
 	{
 		public CombineObject3D()
@@ -65,6 +67,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				await Rebuild();
 				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
 			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
 		public override Task Rebuild()
@@ -90,12 +94,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					{
 					}
 
-					UiThread.RunOnIdle(() =>
-					{
-						rebuildLocks.Dispose();
-						base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
-					});
-
+					rebuildLocks.Dispose();
 					return Task.CompletedTask;
 				});
 		}
@@ -138,7 +137,120 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					{
 						first.Mesh = result;
 					}
-					item.Visible = false;
+
+					percentCompleted += amountPerOperation;
+					progressStatus.Progress0To1 = percentCompleted;
+					reporter?.Report(progressStatus);
+				}
+			}
+		}
+	}
+
+	public class CombineObject3D_2 : OperationSourceContainerObject3D
+	{
+		public CombineObject3D_2()
+		{
+			Name = "Combine";
+		}
+
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if ((invalidateType.InvalidateType == InvalidateType.Content
+				|| invalidateType.InvalidateType == InvalidateType.Matrix
+				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+				&& invalidateType.Source != this
+				&& !RebuildLocked)
+			{
+				await Rebuild();
+				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
+			{
+				await Rebuild();
+				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
+			}
+
+			base.OnInvalidate(invalidateType);
+		}
+
+		public override Task Rebuild()
+		{
+			this.DebugDepth("Rebuild");
+
+			var rebuildLocks = this.RebuilLockAll();
+
+			// spin up a task to remove holes from the objects in the group
+			return ApplicationController.Instance.Tasks.Execute(
+				"Combine".Localize(),
+				null,
+				(reporter, cancellationToken) =>
+				{
+					var progressStatus = new ProgressStatus();
+					reporter.Report(progressStatus);
+
+					try
+					{
+						Combine(cancellationToken, reporter);
+					}
+					catch
+					{
+					}
+
+					rebuildLocks.Dispose();
+					return Task.CompletedTask;
+				});
+		}
+
+		public void Combine()
+		{
+			Combine(CancellationToken.None, null);
+		}
+
+		public void Combine(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
+		{
+			SourceContainer.Visible = true;
+			RemoveAllButSource();
+
+			var participants = SourceContainer.VisibleMeshes();
+			if (participants.Count() < 2)
+			{
+				if(participants.Count() == 1)
+				{
+					var newMesh = new Object3D();
+					newMesh.CopyProperties(participants.First(), Object3DPropertyFlags.All);
+					this.Children.Add(newMesh);
+				}
+				return;
+			}
+
+			var first = participants.First();
+			var firstWorldMatrix = first.WorldMatrix(SourceContainer);
+
+			var totalOperations = participants.Count() - 1;
+			double amountPerOperation = 1.0 / totalOperations;
+			double percentCompleted = 0;
+
+			ProgressStatus progressStatus = new ProgressStatus();
+			foreach (var item in participants)
+			{
+				if (item != first)
+				{
+					var itemWorldMatrix = item.WorldMatrix(SourceContainer);
+					var resultMesh = BooleanProcessing.Do(item.Mesh, itemWorldMatrix,
+						first.Mesh, firstWorldMatrix,
+						0,
+						reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+
+					//resultMesh.Transform(firstWorldMatrix.Inverted);
+					var resultsItem = new Object3D()
+					{
+						Mesh = resultMesh
+					};
+					resultsItem.CopyProperties(first, Object3DPropertyFlags.All);
+					this.Children.Add(resultsItem);
+
+					SourceContainer.Visible = false;
 
 					percentCompleted += amountPerOperation;
 					progressStatus.Progress0To1 = percentCompleted;

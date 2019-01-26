@@ -90,14 +90,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (this.item.CanFlatten)
 				{
-					this.item.Flatten(view3DWidget.Scene.UndoBuffer);
+					var item = this.item;
+					using (new SelectionMaintainer(view3DWidget.Scene))
+					{
+						item.Flatten(view3DWidget.Scene.UndoBuffer);
+					}
 				}
 				else
 				{
 					// try to ungroup it
 					sceneContext.Scene.UngroupSelection();
 				}
-				scene.SelectedItem = null;
 			};
 			toolbar.AddChild(flattenButton);
 
@@ -110,17 +113,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			removeButton.Click += (s, e) =>
 			{
-				var rootSelection = scene.SelectedItemRoot;
-
-				var removeItem = item;
-				removeItem.Remove(view3DWidget.Scene.UndoBuffer);
-
-				scene.SelectedItem = null;
-
-				// Only restore the root selection if it wasn't the item removed
-				if (removeItem != rootSelection)
+				var item = this.item;
+				using (new SelectionMaintainer(view3DWidget.Scene))
 				{
-					scene.SelectedItem = rootSelection;
+					item.Remove(view3DWidget.Scene.UndoBuffer);
 				}
 			};
 			toolbar.AddChild(removeButton);
