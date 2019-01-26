@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					{
 						Mesh = resultMesh
 					};
-					resultsItem.CopyProperties(first, Object3DPropertyFlags.All);
+					resultsItem.CopyProperties(first, Object3DPropertyFlags.All & (~Object3DPropertyFlags.Matrix));
 					this.Children.Add(resultsItem);
 
 					SourceContainer.Visible = false;
