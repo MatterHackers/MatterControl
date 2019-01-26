@@ -225,6 +225,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 
 			var first = participants.First();
+			var firstWorldMatrix = first.WorldMatrix(SourceContainer);
 
 			var totalOperations = participants.Count() - 1;
 			double amountPerOperation = 1.0 / totalOperations;
@@ -235,14 +236,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			{
 				if (item != first)
 				{
-					var resultMesh = BooleanProcessing.Do(item.Mesh, item.WorldMatrix(),
-						first.Mesh, first.WorldMatrix(),
+					var itemWorldMatrix = item.WorldMatrix(SourceContainer);
+					var resultMesh = BooleanProcessing.Do(item.Mesh, itemWorldMatrix,
+						first.Mesh, firstWorldMatrix,
 						0,
 						reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
 
-					var inverse = first.WorldMatrix();
-					inverse.Invert();
-					resultMesh.Transform(inverse);
+					//resultMesh.Transform(firstWorldMatrix.Inverted);
 					var resultsItem = new Object3D()
 					{
 						Mesh = resultMesh
