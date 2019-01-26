@@ -100,10 +100,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				if (newChildren.Count > 1)
 				{
 					// wrap the children in an object so they remain a group
-					var group = new Object3D()
-					{
-						Name = this.Name + " - " + "Flattened".Localize()
-					};
+					var group = new Object3D();
 					group.Children.Modify((groupList) =>
 					{
 						groupList.AddRange(newChildren);
@@ -112,6 +109,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					newChildren.Clear();
 					newChildren.Add(group);
 				}
+
+				// add flatten to the name to show what happened
+				newChildren[0].Name = this.Name + " - " + "Flattened".Localize();
 
 				// and replace us with the children
 				var replaceCommand = new ReplaceCommand(new[] { this }, newChildren);
