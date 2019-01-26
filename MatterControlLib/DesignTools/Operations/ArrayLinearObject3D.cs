@@ -27,12 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.EditableTypes;
 using MatterHackers.VectorMath;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -75,10 +75,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override async Task Rebuild()
 		{
-			//let the Operation Source base rebuild first
-			await base.Rebuild();
-
 			var rebuildLock = this.RebuildLock();
+			SourceContainer.Visible = true;
 
 			await ApplicationController.Instance.Tasks.Execute(
 				"Linear Array".Localize(),
@@ -87,24 +85,27 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					this.DebugDepth("Rebuild");
 
-					var sourceContainer = SourceContainer;
+					var newChildren = new List<IObject3D>();
 
-					this.Children.Modify(list =>
+					newChildren.Add(SourceContainer);
+
+					var arrayItem = SourceContainer.Children.First();
+
+					// add in all the array items
+					for (int i = 0; i < Math.Max(Count, 1); i++)
+					{
+						var next = arrayItem.Clone();
+						next.Matrix = arrayItem.Matrix * Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance * i);
+						newChildren.Add(next);
+					}
+
+					Children.Modify(list =>
 					{
 						list.Clear();
-						// add back in the sourceContainer
-						list.Add(sourceContainer);
-						// get the source item
-						var sourceItem = sourceContainer.Children.First();
-
-						for (int i = 0; i < Math.Max(Count, 1); i++)
-						{
-							var next = sourceItem.Clone();
-							next.Matrix = sourceItem.Matrix * Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance * i);
-							list.Add(next);
-						}
+						list.AddRange(newChildren);
 					});
 
+					SourceContainer.Visible = false;
 					rebuildLock.Dispose();
 					return Task.CompletedTask;
 				});

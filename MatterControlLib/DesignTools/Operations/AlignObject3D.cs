@@ -94,6 +94,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	{
 		// We need to serialize this so we can remove the arrange and get back to the objects before arranging
 		public List<Aabb> OriginalChildrenBounds = new List<Aabb>();
+		private SelectedChildren _anchorObjectSelector = new SelectedChildren();
 
 		public AlignObject3D()
 		{
@@ -154,7 +155,34 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		[ShowAsList]
 		[DisplayName("Primary")]
-		public SelectedChildren AnchorObjectSelector { get; set; } = new SelectedChildren();
+		public SelectedChildren AnchorObjectSelector
+		{
+			get
+			{
+				if (Children.Count > 0)
+				{
+					if (_anchorObjectSelector.Count != 1)
+					{
+						_anchorObjectSelector.Clear();
+						_anchorObjectSelector.Add(Children.First().ID);
+					}
+
+					if (!this.Children.Any(c => c.ID == _anchorObjectSelector[0]))
+					{
+						// we don't have an id of any of our current children
+						_anchorObjectSelector.Clear();
+						_anchorObjectSelector.Add(Children.First().ID);
+					}
+				}
+				else
+				{
+					_anchorObjectSelector.Clear();
+				}
+
+				return _anchorObjectSelector;
+			}
+			set => _anchorObjectSelector = value;
+		}
 
 		public bool Advanced { get; set; } = false;
 
@@ -215,36 +243,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			get
 			{
-				if (AnchorObjectSelector.Count == 1)
-				{
-					var anchorChild = this.Children.Where(c => c.ID == AnchorObjectSelector[0]).FirstOrDefault();
-
-					if (anchorChild != null)
-					{
-						return anchorChild;
-					}
-
-					// try to update the item if possible
-					var id = AnchorObjectSelector[0];
-
-					// check if we can set it to something better
-					var anchorItem = this.Descendants<IObject3D>().Where(i => i.ID == id).FirstOrDefault();
-					if (anchorItem != null)
-					{
-						// we found the item, try to walk up it to find the last object that has a mesh (probably walking up the mesh wrapper chain)
-						var parentThatIsChildeOfThis = anchorItem.Parents<IObject3D>().Where(i => i.Parent == this).FirstOrDefault();
-						if (parentThatIsChildeOfThis != null)
-						{
-							OriginalChildrenBounds.Clear();
-							AnchorObjectSelector.Clear();
-							AnchorObjectSelector.Add(parentThatIsChildeOfThis.ID);
-
-							return parentThatIsChildeOfThis;
-						}
-					}
-				}
-
-				return null;
+				return this.Children.Where(c => c.ID == AnchorObjectSelector[0]).FirstOrDefault();
 			}
 		}
 
@@ -254,9 +253,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			get
 			{
 				int index = 0;
-				foreach(var child in this.Children)
-				{ 
-					if(child == AnchorObject)
+				foreach (var child in this.Children)
+				{
+					if (child == AnchorObject)
 					{
 						return index;
 					}
@@ -330,12 +329,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			using (RebuildLock())
 			{
-				var xxx = this.Parents<MeshWrapperObject3D>().FirstOrDefault();
-				if(xxx != null)
-				{
-					xxx.ResetMeshWrapperMeshes(Object3DPropertyFlags.All, CancellationToken.None);
-				}
-
 				var aabb = this.GetAxisAlignedBoundingBox();
 
 				// TODO: check if the has code for the children

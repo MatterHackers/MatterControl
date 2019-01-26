@@ -82,10 +82,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override async Task Rebuild()
 		{
-			//let the Operation Source base rebuild first
-			await base.Rebuild();
-
 			var rebuildLock = this.RebuildLock();
+			SourceContainer.Visible = true;
 
 			await ApplicationController.Instance.Tasks.Execute(
 				"Advanced Array".Localize(),
@@ -123,6 +121,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							lastChild = next;
 						}
 					});
+					SourceContainer.Visible = false;
 					rebuildLock.Dispose();
 					return Task.CompletedTask;
 				});

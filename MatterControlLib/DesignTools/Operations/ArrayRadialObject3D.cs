@@ -98,10 +98,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				Axis.Origin = this.GetAxisAlignedBoundingBox().Center - new Vector3(-30, 0, 0);
 			}
 
-			//let the Operation Source base rebuild first
-			await base.Rebuild();
-
 			var rebuildLock = this.RebuildLock();
+			SourceContainer.Visible = true;
 
 			await ApplicationController.Instance.Tasks.Execute(
 				"Radial Array".Localize(),
@@ -150,6 +148,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							list.Add(next);
 						}
 					});
+					SourceContainer.Visible = false;
 					rebuildLock.Dispose();
 					return Task.CompletedTask;
 				});

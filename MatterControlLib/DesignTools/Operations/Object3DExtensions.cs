@@ -232,7 +232,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static IObject3D Plus(this IObject3D a, IObject3D b)
 		{
-			var combine = new CombineObject3D();
+			var combine = new CombineObject3D_2();
 			combine.Children.Add(a.Clone());
 			combine.Children.Add(b.Clone());
 
