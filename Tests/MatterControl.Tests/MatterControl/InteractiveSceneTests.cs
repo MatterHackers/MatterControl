@@ -321,6 +321,20 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("InteractiveScene")]
 		public void AabbCalculatedCorrectlyForPinchedFitObjects()
 		{
+			DoAabbCalculatedCorrectlyForPinchedFitObjects();
+		}
+
+		async void DoAabbCalculatedCorrectlyForPinchedFitObjects()
+		{
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			// Automation runner must do as much as program.cs to spin up platform
+			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
+			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
+			AppContext.Platform.InitPluginFinder();
+			AppContext.Platform.ProcessCommandline();
+			
 			// build without pinch
 			{
 				var root = new Object3D();
@@ -348,9 +362,9 @@ namespace MatterControl.Tests.MatterControl
 				fit.SizeY = 20;
 				fit.SizeZ = 20;
 
-				var pinch = new PinchObject3D();
+				var pinch = new PinchObject3D_2();
 				pinch.Children.Add(fit);
-				pinch.Invalidate(new InvalidateArgs(pinch, InvalidateType.Properties));
+				await pinch.Rebuild();
 				root.Children.Add(pinch);
 				var rootAabb = root.GetAxisAlignedBoundingBox();
 				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)), .001));
@@ -375,10 +389,10 @@ namespace MatterControl.Tests.MatterControl
 
 				var translate = new TranslateObject3D(cube, 11, 0, 0);
 
-				var pinch = new PinchObject3D();
+				var pinch = new PinchObject3D_2();
 				pinch.Children.Add(translate);
 				root.Children.Add(pinch);
-				pinch.Invalidate(new InvalidateArgs(pinch, InvalidateType.Properties));
+				await pinch.Rebuild();
 				var rootAabb = root.GetAxisAlignedBoundingBox();
 				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(1, -10, -10), new Vector3(21, 10, 10)), .001));
 			}
@@ -395,9 +409,9 @@ namespace MatterControl.Tests.MatterControl
 
 				var translate = new TranslateObject3D(fit, 11, 0, 0);
 
-				var pinch = new PinchObject3D();
+				var pinch = new PinchObject3D_2();
 				pinch.Children.Add(translate);
-				pinch.Invalidate(new InvalidateArgs(pinch, InvalidateType.Properties));
+				await pinch.Rebuild();
 				root.Children.Add(pinch);
 				var rootAabb = root.GetAxisAlignedBoundingBox();
 				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(1, -10, -10), new Vector3(21, 10, 10)), .001));

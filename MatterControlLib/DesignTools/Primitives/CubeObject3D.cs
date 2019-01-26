@@ -41,6 +41,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			Name = "Cube".Localize();
 			Color = Operations.Object3DExtensions.PrimitiveColors["Cube"];
+			Rebuild();
 		}
 
 		public CubeObject3D(double width, double depth, double height)
@@ -49,7 +50,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			Width = width;
 			Depth = depth;
 			Height = height;
-			Rebuild(null);
+			Rebuild();
 		}
 
 		public double Width { get; set; } = 20;
@@ -59,7 +60,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public static CubeObject3D Create()
 		{
 			var item = new CubeObject3D();
-			item.Rebuild(null);
+			item.Rebuild();
 			return item;
 		}
 
@@ -72,7 +73,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				Height = z,
 			};
 
-			item.Rebuild(null);
+			item.Rebuild();
 			return item;
 		}
 
@@ -81,15 +82,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (invalidateType.InvalidateType == InvalidateType.Properties
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		private void Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())
@@ -104,8 +103,6 @@ namespace MatterHackers.MatterControl.DesignTools
 					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
 				}
 			}
-
-			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}
 	}
 }
