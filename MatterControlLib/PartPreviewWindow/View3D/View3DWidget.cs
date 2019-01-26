@@ -382,6 +382,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void RebuildTree()
 		{
+			rebuildTreePending = false;
 			workspaceName.Text = sceneContext.Scene.Name ?? "";
 
 			// Top level selection only - rebuild tree
@@ -391,7 +392,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			foreach (var child in sceneContext.Scene.Children)
 			{
-				if (child.GetType().IsDefined(typeof(HideFromTreeViewAttribute), false))
+				if (child is GeneratedSupportObject3D)
 				{
 					continue;
 				}
@@ -1881,10 +1882,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		// TODO: Consider if we should always allow DragDrop or if we should prevent during printer or other scenarios
 		private bool AllowDragDrop() => true;
 
+		private bool rebuildTreePending = false;
+
 		private void Scene_Invalidated(object sender, InvalidateArgs e)
 		{
-			if (e.InvalidateType == InvalidateType.Content)
+			if (e.InvalidateType == InvalidateType.Content
+				&& !rebuildTreePending)
 			{
+				rebuildTreePending = true;
 				UiThread.RunOnIdle(this.RebuildTree);
 			}
 
@@ -1892,7 +1897,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				// clear and restore the selection so we have the name change
 				var lastSelectedItem = Scene.SelectedItem;
-				UiThread.RunOnIdle(this.RebuildTree);
+				if (!rebuildTreePending)
+				{
+					rebuildTreePending = true;
+					UiThread.RunOnIdle(this.RebuildTree);
+				}
 				Scene.SelectedItem = null;
 				Scene.SelectedItem = lastSelectedItem;
 			}
