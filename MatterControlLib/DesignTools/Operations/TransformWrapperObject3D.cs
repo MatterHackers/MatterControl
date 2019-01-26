@@ -84,10 +84,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			using (item.RebuilLockAll())
 			{
-				RebuildLock parentLock = null;
+				RebuildLock itemLock = null;
 				if (item.Parent != null)
 				{
-					parentLock = item.Parent.RebuildLock();
+					itemLock = item.Parent.RebuildLock();
 				}
 
 				if (item is SelectionGroupObject3D)
@@ -129,8 +129,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					this.Children.Add(firstChild);
 				}
 
-				parentLock?.Dispose();
+				itemLock?.Dispose();
 			}
+
+			item.Parent?.Invalidate(new InvalidateArgs(item, InvalidateType.Content));
 		}
 
 		public override void Flatten(UndoBuffer undoBuffer)
