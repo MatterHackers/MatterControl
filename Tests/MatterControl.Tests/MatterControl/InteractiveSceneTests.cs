@@ -72,6 +72,14 @@ namespace MatterControl.Tests.MatterControl
 				union.Children.Add(offsetCubeB);
 				root.Children.Add(union);
 
+				Assert.IsTrue(union.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(
+					-10, -10, -10,
+					20, 10, 10), .001));
+
+				Assert.IsTrue(root.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(
+					-10, -10, -10,
+					20, 10, 10), .001));
+
 				union.Combine();
 				Assert.IsTrue(union.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(
 					-10, -10, -10,

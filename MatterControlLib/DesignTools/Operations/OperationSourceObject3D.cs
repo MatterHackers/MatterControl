@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
@@ -41,6 +40,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public class OperationSourceContainerObject3D : Object3D
 	{
+		public override bool CanFlatten => true;
+
 		[JsonIgnore]
 		public IObject3D SourceContainer
 		{
