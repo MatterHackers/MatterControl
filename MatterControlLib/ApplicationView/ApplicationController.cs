@@ -752,11 +752,11 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
 				{
-					OperationType = typeof(PinchObject3D),
+					OperationType = typeof(PinchObject3D_2),
 					TitleResolver = () => "Pinch".Localize(),
 					Action = (sceneContext) =>
 					{
-						var pinch = new PinchObject3D();
+						var pinch = new PinchObject3D_2();
 						pinch.WrapSelectedItemAndSelect(sceneContext.Scene);
 					},
 					Icon = AggContext.StaticData.LoadIcon("pinch.png", 16, 16, theme.InvertIcons),

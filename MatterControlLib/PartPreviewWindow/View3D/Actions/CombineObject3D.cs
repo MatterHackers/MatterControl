@@ -39,6 +39,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
@@ -225,6 +226,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 
 			var first = participants.First();
+			var resultsMesh = first.Mesh;
 			var firstWorldMatrix = first.WorldMatrix(SourceContainer);
 
 			var totalOperations = participants.Count() - 1;
@@ -237,26 +239,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				if (item != first)
 				{
 					var itemWorldMatrix = item.WorldMatrix(SourceContainer);
-					var resultMesh = BooleanProcessing.Do(item.Mesh, itemWorldMatrix,
-						first.Mesh, firstWorldMatrix,
+					resultsMesh = BooleanProcessing.Do(item.Mesh, itemWorldMatrix,
+						resultsMesh, firstWorldMatrix,
 						0,
 						reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
-
-					//resultMesh.Transform(firstWorldMatrix.Inverted);
-					var resultsItem = new Object3D()
-					{
-						Mesh = resultMesh
-					};
-					resultsItem.CopyProperties(first, Object3DPropertyFlags.All & (~Object3DPropertyFlags.Matrix));
-					this.Children.Add(resultsItem);
-
-					SourceContainer.Visible = false;
+					// after the first union we are working with the transformed mesh and don't need the first transform
+					firstWorldMatrix = Matrix4X4.Identity;
 
 					percentCompleted += amountPerOperation;
 					progressStatus.Progress0To1 = percentCompleted;
 					reporter?.Report(progressStatus);
 				}
 			}
+
+			var resultsItem = new Object3D()
+			{
+				Mesh = resultsMesh
+			};
+			resultsItem.CopyProperties(first, Object3DPropertyFlags.All & (~Object3DPropertyFlags.Matrix));
+			this.Children.Add(resultsItem);
+			SourceContainer.Visible = false;
 		}
 	}
 }
