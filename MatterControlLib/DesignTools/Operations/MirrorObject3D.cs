@@ -31,6 +31,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -53,7 +54,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Mirror".Localize();
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 
@@ -94,6 +95,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+
+			return Task.CompletedTask;
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
@@ -104,12 +107,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else if (invalidateType.InvalidateType == InvalidateType.Properties
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else
 			{
