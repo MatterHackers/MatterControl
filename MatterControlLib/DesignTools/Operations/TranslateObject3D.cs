@@ -58,8 +58,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public override bool CanFlatten => true;
-
 		public static TranslateObject3D Create(IObject3D itemToTranslate)
 		{
 			var translate = new TranslateObject3D();
