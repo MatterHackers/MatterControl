@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -41,16 +42,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			Name = "Cube".Localize();
 			Color = Operations.Object3DExtensions.PrimitiveColors["Cube"];
-			Rebuild();
-		}
-
-		public CubeObject3D(double width, double depth, double height)
-			: this()
-		{
-			Width = width;
-			Depth = depth;
-			Height = height;
-			Rebuild();
 		}
 
 		public double Width { get; set; } = 20;
@@ -88,7 +79,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			base.OnInvalidate(invalidateType);
 		}
 
-		private void Rebuild()
+		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())
@@ -103,6 +94,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
 				}
 			}
+
+			return Task.CompletedTask;
 		}
 	}
 }

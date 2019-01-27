@@ -60,8 +60,8 @@ namespace MatterControl.Tests.MatterControl
 			// Combine has correct results
 			{
 				var root = new Object3D();
-				var cubeA = new CubeObject3D(20, 20, 20);
-				var cubeB = new CubeObject3D(20, 20, 20);
+				var cubeA = CubeObject3D.Create(20, 20, 20);
+				var cubeB = CubeObject3D.Create(20, 20, 20);
 				var offsetCubeB = new TranslateObject3D(cubeB, 10);
 				Assert.IsTrue(offsetCubeB.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(
 					0, -10, -10,
@@ -97,8 +97,8 @@ namespace MatterControl.Tests.MatterControl
 			// Combine has correct results when inner content is changed
 			{
 				var root = new Object3D();
-				var cubeA = new CubeObject3D(20, 20, 20);
-				var cubeB = new CubeObject3D(20, 20, 20);
+				var cubeA = CubeObject3D.Create(20, 20, 20);
+				var cubeB = CubeObject3D.Create(20, 20, 20);
 
 				var union = new CombineObject3D_2();
 				union.Children.Add(cubeA);
@@ -126,8 +126,8 @@ namespace MatterControl.Tests.MatterControl
 			// now make sure undo has the right results for flatten
 			{
 				var root = new Object3D();
-				var cubeA = new CubeObject3D(20, 20, 20);
-				var cubeB = new CubeObject3D(20, 20, 20);
+				var cubeA = CubeObject3D.Create(20, 20, 20);
+				var cubeB = CubeObject3D.Create(20, 20, 20);
 				var offsetCubeB = new TranslateObject3D(cubeB, 10);
 
 				var combine = new CombineObject3D_2();
@@ -160,14 +160,10 @@ namespace MatterControl.Tests.MatterControl
 			// now make sure undo has the right results for remove
 			{
 				var root = new Object3D();
-				var cubeA = new CubeObject3D(20, 20, 20)
-				{
-					Name = "cubeA"
-				};
-				var cubeB = new CubeObject3D(20, 20, 20)
-				{
-					Name = "cubeB"
-				};
+				var cubeA = CubeObject3D.Create(20, 20, 20);
+				cubeA.Name = "cubeA";
+				var cubeB = CubeObject3D.Create(20, 20, 20);
+				cubeB.Name = "cubeB";
 
 				var combine = new CombineObject3D_2();
 				combine.Children.Add(cubeA);
@@ -198,8 +194,8 @@ namespace MatterControl.Tests.MatterControl
 			// now make sure undo has the right results for remove
 			{
 				var root = new Object3D();
-				var cubeA = new CubeObject3D(20, 20, 20);
-				var cubeB = new CubeObject3D(20, 20, 20);
+				var cubeA = CubeObject3D.Create(20, 20, 20);
+				var cubeB = CubeObject3D.Create(20, 20, 20);
 				var offsetCubeB = new TranslateObject3D(cubeB, 10);
 
 				var combine = new CombineObject3D_2();
@@ -230,8 +226,8 @@ namespace MatterControl.Tests.MatterControl
 
 			// make sure the MatterCAD add function is working
 			{
-				var cubeA = new CubeObject3D(20, 20, 20);
-				var cubeB = new CubeObject3D(20, 20, 20);
+				var cubeA = CubeObject3D.Create(20, 20, 20);
+				var cubeB = CubeObject3D.Create(20, 20, 20);
 				var offsetCubeB = new TranslateObject3D(cubeB, 10);
 
 				var plus = cubeA.Plus(offsetCubeB);
@@ -247,8 +243,8 @@ namespace MatterControl.Tests.MatterControl
 			// test single object combine
 			{
 				var root = new Object3D();
-				var cubeA = new CubeObject3D(20, 20, 20);
-				var cubeB = new CubeObject3D(20, 20, 20);
+				var cubeA = CubeObject3D.Create(20, 20, 20);
+				var cubeB = CubeObject3D.Create(20, 20, 20);
 				var offsetCubeB = new TranslateObject3D(cubeB, 10);
 
 				var group = new Object3D();
@@ -281,8 +277,8 @@ namespace MatterControl.Tests.MatterControl
 			// Subtract has correct number of results
 			{
 				var root = new Object3D();
-				var cubeA = new CubeObject3D(20, 20, 20);
-				var cubeB = new CubeObject3D(20, 20, 20);
+				var cubeA = CubeObject3D.Create(20, 20, 20);
+				var cubeB = CubeObject3D.Create(20, 20, 20);
 				var offsetCubeB = new TranslateObject3D(cubeB, 10);
 
 				var subtract = new SubtractObject3D();
@@ -303,8 +299,8 @@ namespace MatterControl.Tests.MatterControl
 
 			// make sure the MatterCAD subtract function is working
 			{
-				var cubeA = new CubeObject3D(20, 20, 20);
-				var cubeB = new CubeObject3D(20, 20, 20);
+				var cubeA = CubeObject3D.Create(20, 20, 20);
+				var cubeB = CubeObject3D.Create(20, 20, 20);
 				var offsetCubeB = new TranslateObject3D(cubeB, 10);
 
 				var subtract = cubeA.Minus(offsetCubeB);
@@ -338,7 +334,7 @@ namespace MatterControl.Tests.MatterControl
 			// build without pinch
 			{
 				var root = new Object3D();
-				var cube = new CubeObject3D(20, 20, 20);
+				var cube = CubeObject3D.Create(20, 20, 20);
 				root.Children.Add(cube);
 				Assert.IsTrue(root.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)), .001));
 				root.Children.Remove(cube);
@@ -355,7 +351,7 @@ namespace MatterControl.Tests.MatterControl
 			// build with pinch
 			{
 				var root = new Object3D();
-				var cube = new CubeObject3D(20, 20, 20);
+				var cube = CubeObject3D.Create(20, 20, 20);
 				var fit = FitToBoundsObject3D_2.Create(cube);
 
 				fit.SizeX = 50;
@@ -373,7 +369,7 @@ namespace MatterControl.Tests.MatterControl
 			// build with translate
 			{
 				var root = new Object3D();
-				var cube = new CubeObject3D(20, 20, 20);
+				var cube = CubeObject3D.Create(20, 20, 20);
 
 				var translate = new TranslateObject3D(cube, 11, 0, 0);
 
@@ -385,7 +381,7 @@ namespace MatterControl.Tests.MatterControl
 			// build with pinch and translate
 			{
 				var root = new Object3D();
-				var cube = new CubeObject3D(20, 20, 20);
+				var cube = CubeObject3D.Create(20, 20, 20);
 
 				var translate = new TranslateObject3D(cube, 11, 0, 0);
 
@@ -400,7 +396,7 @@ namespace MatterControl.Tests.MatterControl
 			// build with pinch and translate
 			{
 				var root = new Object3D();
-				var cube = new CubeObject3D(20, 20, 20);
+				var cube = CubeObject3D.Create(20, 20, 20);
 				var fit = FitToBoundsObject3D_2.Create(cube);
 
 				fit.SizeX = 50;
@@ -425,7 +421,7 @@ namespace MatterControl.Tests.MatterControl
 			{
 				// create a simple cube with translation
 				var root = new Object3D();
-				var cube = new CubeObject3D(20, 20, 20);
+				var cube = CubeObject3D.Create(20, 20, 20);
 				cube.Matrix = Matrix4X4.CreateTranslation(50, 60, 10);
 				root.Children.Add(cube);
 				Assert.AreEqual(2, root.DescendantsAndSelf().Count());
@@ -451,7 +447,7 @@ namespace MatterControl.Tests.MatterControl
 			{
 				// create a simple cube with translation
 				var root = new Object3D();
-				var cube = new CubeObject3D(20, 20, 20);
+				var cube = CubeObject3D.Create(20, 20, 20);
 				cube.Matrix = Matrix4X4.CreateTranslation(50, 60, 10);
 				root.Children.Add(cube);
 				Assert.AreEqual(2, root.DescendantsAndSelf().Count());
@@ -477,7 +473,7 @@ namespace MatterControl.Tests.MatterControl
 			{
 				// create a simple cube with translation
 				var root = new Object3D();
-				var cube = new CubeObject3D(20, 20, 20);
+				var cube = CubeObject3D.Create(20, 20, 20);
 				cube.Matrix = Matrix4X4.CreateTranslation(50, 60, 10);
 				root.Children.Add(cube);
 				Assert.AreEqual(2, root.DescendantsAndSelf().Count());
@@ -512,7 +508,7 @@ namespace MatterControl.Tests.MatterControl
 			{
 				// create a simple cube with translation
 				var root = new Object3D();
-				var cube = new CubeObject3D(20, 20, 20);
+				var cube = CubeObject3D.Create(20, 20, 20);
 				cube.Matrix = Matrix4X4.CreateTranslation(50, 60, 10);
 				root.Children.Add(cube);
 				Assert.AreEqual(2, root.DescendantsAndSelf().Count());
@@ -536,7 +532,7 @@ namespace MatterControl.Tests.MatterControl
 		public void AabbCalculatedCorrectlyForCurvedFitObjects()
 		{
 			var root = new Object3D();
-			var cube = new CubeObject3D(20, 20, 20);
+			var cube = CubeObject3D.Create(20, 20, 20);
 			var fit = FitToBoundsObject3D_2.Create(cube);
 
 			fit.SizeX = 50;
