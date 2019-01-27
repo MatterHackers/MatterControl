@@ -92,7 +92,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			this.DebugDepth("Invalidate");
 
-			if (eventArgs.InvalidateType == InvalidateType.Path
+			if ((eventArgs.InvalidateType == InvalidateType.Path
+					||  eventArgs.InvalidateType == InvalidateType.Content)
 				&& eventArgs.Source != this
 				&& !RebuildLocked)
 			{
