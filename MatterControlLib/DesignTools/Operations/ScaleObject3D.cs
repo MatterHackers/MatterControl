@@ -72,8 +72,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			this.Translate(newCenter);
 		}
 
-		public override bool CanFlatten => true;
-
 		// this is the size we actually serialize
 		public Vector3 ScaleRatio = Vector3.One;
 

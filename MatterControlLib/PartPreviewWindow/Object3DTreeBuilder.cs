@@ -139,10 +139,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			switch (item)
 			{
-				case TransformWrapperObject3D fitToBounds3D:
+				case TransformWrapperObject3D transformWrapperObject3D:
 					return new ObjectView()
 					{
-						Children = new IObject3D[] { fitToBounds3D.SourceItem },
+						Children = new IObject3D[] { transformWrapperObject3D.SourceItem },
 						Name = item.Name,
 						Source = item
 					};

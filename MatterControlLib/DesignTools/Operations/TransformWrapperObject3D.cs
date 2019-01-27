@@ -28,38 +28,24 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.RenderOpenGl;
-using MatterHackers.RenderOpenGl.OpenGl;
-using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public abstract class TransformWrapperObject3D : Object3D
 	{
-		protected IObject3D TransformItem
+		public TransformWrapperObject3D()
 		{
-			get
-			{
-				if (Children.Count > 0)
-				{
-					return Children.First();
-				}
-
-				return null;
-			}
+			Name = "Transform Wrapper".Localize();
 		}
+
+		public override bool CanFlatten => true;
 
 		[JsonIgnore]
 		public IObject3D SourceItem
@@ -75,9 +61,61 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public TransformWrapperObject3D()
+		protected IObject3D TransformItem
 		{
-			Name = "Transform Wrapper".Localize();
+			get
+			{
+				if (Children.Count > 0)
+				{
+					return Children.First();
+				}
+
+				return null;
+			}
+		}
+
+		public override void Flatten(UndoBuffer undoBuffer)
+		{
+			using (RebuildLock())
+			{
+				// push our matrix into our children
+				foreach (var child in this.Children)
+				{
+					child.Matrix *= this.Matrix;
+				}
+
+				// push child into children
+				SourceItem.Matrix *= TransformItem.Matrix;
+
+				// add our children to our parent and remove from parent
+				this.Parent.Children.Modify(list =>
+				{
+					list.Remove(this);
+					list.AddRange(TransformItem.Children);
+				});
+			}
+			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+		}
+
+		public override void Remove(UndoBuffer undoBuffer)
+		{
+			using (RebuildLock())
+			{
+				// push our matrix into inner children
+				foreach (var child in TransformItem.Children)
+				{
+					child.Matrix *= this.Matrix;
+				}
+
+				// add inner children to our parent and remove from parent
+				this.Parent.Children.Modify(list =>
+				{
+					list.Remove(this);
+					list.AddRange(TransformItem.Children);
+				});
+			}
+
+			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
 
 		public virtual void WrapItem(IObject3D item, UndoBuffer undoBuffer = null)
@@ -133,50 +171,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			item.Parent?.Invalidate(new InvalidateArgs(item, InvalidateType.Content));
-		}
-
-		public override void Flatten(UndoBuffer undoBuffer)
-		{
-			using (RebuildLock())
-			{
-				// push our matrix into our children
-				foreach (var child in this.Children)
-				{
-					child.Matrix *= this.Matrix;
-				}
-
-				// push child into children
-				SourceItem.Matrix *= TransformItem.Matrix;
-
-				// add our children to our parent and remove from parent
-				this.Parent.Children.Modify(list =>
-				{
-					list.Remove(this);
-					list.AddRange(TransformItem.Children);
-				});
-			}
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
-		}
-
-		public override void Remove(UndoBuffer undoBuffer)
-		{
-			using (RebuildLock())
-			{
-				// push our matrix into inner children
-				foreach (var child in TransformItem.Children)
-				{
-					child.Matrix *= this.Matrix;
-				}
-
-				// add inner children to our parent and remove from parent
-				this.Parent.Children.Modify(list =>
-				{
-					list.Remove(this);
-					list.AddRange(TransformItem.Children);
-				});
-			}
-
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
 	}
 }
