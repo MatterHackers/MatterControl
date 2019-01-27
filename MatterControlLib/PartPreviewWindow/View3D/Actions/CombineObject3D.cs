@@ -220,7 +220,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				{
 					var newMesh = new Object3D();
 					newMesh.CopyProperties(participants.First(), Object3DPropertyFlags.All);
+					newMesh.Mesh = participants.First().Mesh;
 					this.Children.Add(newMesh);
+					SourceContainer.Visible = false;
 				}
 				return;
 			}

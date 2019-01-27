@@ -162,7 +162,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var rebuildLocks = this.RebuilLockAll();
 
-			// spin up a task to remove holes from the objects in the group
 			return ApplicationController.Instance.Tasks.Execute(
 				"Pinch".Localize(),
 				null,

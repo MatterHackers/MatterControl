@@ -531,6 +531,11 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("InteractiveScene")]
 		public void AabbCalculatedCorrectlyForCurvedFitObjects()
 		{
+			DoAabbCalculatedCorrectlyForCurvedFitObjects();
+		}
+
+		public async void DoAabbCalculatedCorrectlyForCurvedFitObjects()
+		{
 			var root = new Object3D();
 			var cube = CubeObject3D.Create(20, 20, 20);
 			var fit = FitToBoundsObject3D_2.Create(cube);
@@ -539,9 +544,9 @@ namespace MatterControl.Tests.MatterControl
 			fit.SizeY = 20;
 			fit.SizeZ = 20;
 
-			var curve = new CurveObject3D();
+			var curve = new CurveObject3D_2();
 			curve.Children.Add(fit);
-			curve.Invalidate(new InvalidateArgs(curve, InvalidateType.Properties));
+			await curve.Rebuild();
 			root.Children.Add(curve);
 			var rootAabb = root.GetAxisAlignedBoundingBox();
 			Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-25, 4, -10), new Vector3(25, 15, 10)), 1.0));
