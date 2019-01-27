@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using MatterHackers.Agg;
@@ -154,8 +155,13 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					using (this.RebuildLock())
 					{
-						// TODO: Revise fallback mesh
-						base.Mesh = this.InitMesh() ?? PlatonicSolids.CreateCube(100, 100, 0.2);
+						var bounds = this.VertexSource.GetBounds();
+						var center = bounds.Center;
+						var mesh = PlatonicSolids.CreateCube(Math.Max(8, bounds.Width), Math.Max(8, bounds.Height), 0.2);
+
+						mesh.Translate(new Vector3(center.X, center.Y, 0));
+
+						base.Mesh = mesh;
 					}
 				}
 
