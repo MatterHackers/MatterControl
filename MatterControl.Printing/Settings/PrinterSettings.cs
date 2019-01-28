@@ -804,8 +804,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						break;
 #endif
 				}
-
-				return (T)(object)(LevelingSystem.Probe3Points);
 			}
 			else if (typeof(T) == typeof(bool))
 			{
