@@ -786,12 +786,13 @@ namespace MatterHackers.MatterControl
 					{
 						var scene = sceneContext.Scene;
 						var selectedItem = scene.SelectedItem;
-						scene.SelectedItem = null;
-						var fit = FitToBoundsObject3D_2.Create(selectedItem.Clone());
-						fit.MakeNameNonColliding();
+						using (new SelectionMaintainer(scene))
+						{
+							var fit = FitToBoundsObject3D_2.Create(selectedItem.Clone());
+							fit.MakeNameNonColliding();
 
-						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));
-						scene.SelectedItem = fit;
+							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));
+						}
 					},
 					Icon = AggContext.StaticData.LoadIcon("fit.png", 16, 16, theme.InvertIcons),
 					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
@@ -1149,11 +1150,11 @@ namespace MatterHackers.MatterControl
 					ResultType = typeof(TranslateObject3D),
 					Operation = (sceneItem, scene) =>
 					{
-						var selectedItem = scene.SelectedItem;
-						scene.SelectedItem = null;
-						var scale = new TranslateObject3D();
-						scale.WrapItem(selectedItem, scene.UndoBuffer);
-						scene.SelectedItem = scale;
+						using (new SelectionMaintainer(scene))
+						{
+							var scale = new TranslateObject3D();
+							scale.WrapItem(sceneItem, scene.UndoBuffer);
+						}
 
 						return Task.CompletedTask;
 					},
@@ -1169,11 +1170,11 @@ namespace MatterHackers.MatterControl
 					ResultType = typeof(RotateObject3D_2),
 					Operation = (sceneItem, scene) =>
 					{
-						var selectedItem = scene.SelectedItem;
-						scene.SelectedItem = null;
-						var rotate = new RotateObject3D_2();
-						rotate.WrapItem(selectedItem, scene.UndoBuffer);
-						scene.SelectedItem = rotate;
+						using (new SelectionMaintainer(scene))
+						{
+							var rotate = new RotateObject3D_2();
+							rotate.WrapItem(sceneItem, scene.UndoBuffer);
+						}
 
 						return Task.CompletedTask;
 					},
@@ -1261,10 +1262,10 @@ namespace MatterHackers.MatterControl
 					OperationID = "Mirror",
 					Title = "Mirror".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
-					ResultType = typeof(MirrorObject3D),
+					ResultType = typeof(MirrorObject3D_2),
 					Operation = (sceneItem, scene) =>
 					{
-						var mirror = new MirrorObject3D();
+						var mirror = new MirrorObject3D_2();
 						mirror.WrapSelectedItemAndSelect(scene);
 
 						return Task.CompletedTask;

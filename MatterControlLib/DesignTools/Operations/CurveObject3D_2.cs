@@ -110,6 +110,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
+
 			bool propertyUpdated = Diameter == double.MinValue;
 			if (StartPercent < 0
 				|| StartPercent > 100)
