@@ -124,13 +124,38 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					replaceCommand.Do();
 				}
 
-				foreach(var child in newChildren[0].DescendantsAndSelf())
+				foreach (var child in newChildren[0].DescendantsAndSelf())
 				{
 					child.MakeNameNonColliding();
 				}
 			}
 
 			Invalidate(new InvalidateArgs(this, InvalidateType.Content, undoBuffer));
+		}
+
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			// TODO: color and output type could have special consideration that would not require a rebulid
+			// They could jus propagate the color and output type to the corecty child and everything would be good
+			if ((invalidateType.InvalidateType == InvalidateType.Content
+				|| invalidateType.InvalidateType == InvalidateType.Matrix
+				|| invalidateType.InvalidateType == InvalidateType.Mesh
+				|| invalidateType.InvalidateType == InvalidateType.Color
+				|| invalidateType.InvalidateType == InvalidateType.OutputType)
+				&& invalidateType.Source != this
+				&& !RebuildLocked)
+			{
+				await Rebuild();
+				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
+			}
+			else if (invalidateType.InvalidateType == InvalidateType.Properties
+				&& invalidateType.Source == this)
+			{
+				await Rebuild();
+				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
+			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)
