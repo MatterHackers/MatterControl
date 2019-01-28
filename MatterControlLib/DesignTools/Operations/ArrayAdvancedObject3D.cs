@@ -57,29 +57,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public bool ScaleOffset { get; set; } = true;
 
-		public override async void OnInvalidate(InvalidateArgs invalidateType)
-		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
-				&& invalidateType.Source != this
-				&& !RebuildLocked)
-			{
-				await Rebuild();
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer));
-			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
-				&& invalidateType.Source == this)
-			{
-				await Rebuild();
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer));
-			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
-		}
-
 		public override async Task Rebuild()
 		{
 			var rebuildLock = this.RebuildLock();

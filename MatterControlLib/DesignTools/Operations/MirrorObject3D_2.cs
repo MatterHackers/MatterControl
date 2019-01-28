@@ -27,75 +27,73 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class PinchObject3D_2 : OperationSourceContainerObject3D
+	public class MirrorObject3D_2 : OperationSourceContainerObject3D
 	{
-		public PinchObject3D_2()
+		public MirrorObject3D_2()
 		{
-			Name = "Pinch".Localize();
+			Name = "Mirror".Localize();
 		}
 
-		[DisplayName("Back Ratio")]
-		public double PinchRatio { get; set; } = .5;
+		public enum MirrorAxis { X_Axis, Y_Axis, Z_Axis };
+
+		public MirrorAxis MirrorOn { get; set; } = MirrorAxis.X_Axis;
 
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 
-			var rebuildLocks = this.RebuilLockAll();
+			var rebuildLock = this.RebuildLock();
 
 			return ApplicationController.Instance.Tasks.Execute(
-				"Pinch".Localize(),
+				"Mirror".Localize(),
 				null,
 				(reporter, cancellationToken) =>
 				{
 					SourceContainer.Visible = true;
 					RemoveAllButSource();
-					
-					// remember the current matrix then clear it so the parts will rotate at the original wrapped position
-					var currentMatrix = Matrix;
-					Matrix = Matrix4X4.Identity;
 
-					var aabb = SourceContainer.GetAxisAlignedBoundingBox();
+					var oldMatrix = this.Matrix;
+					this.Matrix = Matrix4X4.Identity;
+
+					var mirrorMatrix = Matrix4X4.Identity;
+					switch (MirrorOn)
+					{
+						case MirrorAxis.X_Axis:
+							mirrorMatrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateScale(-1, 1, 1));
+							break;
+
+						case MirrorAxis.Y_Axis:
+							mirrorMatrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateScale(1, -1, 1));
+							break;
+
+						case MirrorAxis.Z_Axis:
+							mirrorMatrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateScale(1, 1, -1));
+							break;
+					}
 
 					foreach (var sourceItem in SourceContainer.VisibleMeshes())
 					{
 						var originalMesh = sourceItem.Mesh;
 						var transformedMesh = originalMesh.Copy(CancellationToken.None);
-						var itemMatrix = sourceItem.WorldMatrix(SourceContainer);
-						var invItemMatrix = itemMatrix.Inverted;
 
-						for (int i = 0; i < originalMesh.Vertices.Count; i++)
-						{
-							var pos = originalMesh.Vertices[i];
-							pos = pos.Transform(itemMatrix);
+						var sourceToThisMatrix = sourceItem.WorldMatrix(this);
 
-							var ratioToApply = PinchRatio;
+						// move it to us then mirror then move it back
+						transformedMesh.Transform(sourceToThisMatrix * mirrorMatrix * sourceToThisMatrix.Inverted);
 
-							var distFromCenter = pos.X - aabb.Center.X;
-							var distanceToPinch = distFromCenter * (1 - PinchRatio);
-							var delta = (aabb.Center.X + distFromCenter * ratioToApply) - pos.X;
-
-							// find out how much to pinch based on y position
-							var amountOfRatio = (pos.Y - aabb.MinXYZ.Y) / aabb.YSize;
-
-							var newPos = new Vector3Float(pos.X + delta * amountOfRatio, pos.Y, pos.Z);
-
-							transformedMesh.Vertices[i] = newPos.Transform(invItemMatrix);
-						}
-
-						transformedMesh.MarkAsChanged();
-						transformedMesh.CalculateNormals();
+						transformedMesh.ReverseFaces();
 
 						var newMesh = new Object3D()
 						{
@@ -105,10 +103,9 @@ namespace MatterHackers.MatterControl.DesignTools
 						this.Children.Add(newMesh);
 					}
 
-					// set the matrix back
-					Matrix = currentMatrix;
+					this.Matrix = oldMatrix;
 					SourceContainer.Visible = false;
-					rebuildLocks.Dispose();
+					rebuildLock.Dispose();
 					return Task.CompletedTask;
 				});
 		}
