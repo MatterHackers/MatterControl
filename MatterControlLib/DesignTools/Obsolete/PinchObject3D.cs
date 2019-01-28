@@ -30,14 +30,12 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 using System;
 using System.ComponentModel;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -122,104 +120,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
-		}
-	}
-
-	public class PinchObject3D_2 : OperationSourceContainerObject3D
-	{
-		public PinchObject3D_2()
-		{
-			Name = "Pinch".Localize();
-		}
-
-		[DisplayName("Back Ratio")]
-		public double PinchRatio { get; set; } = .5;
-
-		public override async void OnInvalidate(InvalidateArgs invalidateType)
-		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
-				&& invalidateType.Source != this
-				&& !RebuildLocked)
-			{
-				await Rebuild();
-				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
-			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
-				&& invalidateType.Source == this)
-			{
-				await Rebuild();
-				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
-			}
-
-			base.OnInvalidate(invalidateType);
-		}
-
-		public override Task Rebuild()
-		{
-			this.DebugDepth("Rebuild");
-
-			var rebuildLocks = this.RebuilLockAll();
-
-			// spin up a task to remove holes from the objects in the group
-			return ApplicationController.Instance.Tasks.Execute(
-				"Pinch".Localize(),
-				null,
-				(reporter, cancellationToken) =>
-				{
-					SourceContainer.Visible = true;
-					RemoveAllButSource();
-					
-					// remember the current matrix then clear it so the parts will rotate at the original wrapped position
-					var currentMatrix = Matrix;
-					Matrix = Matrix4X4.Identity;
-
-					var aabb = SourceContainer.GetAxisAlignedBoundingBox();
-
-					foreach (var sourceItem in SourceContainer.VisibleMeshes())
-					{
-						var originalMesh = sourceItem.Mesh;
-						var transformedMesh = originalMesh.Copy(CancellationToken.None);
-						var itemMatrix = sourceItem.WorldMatrix(SourceContainer);
-						var invItemMatrix = itemMatrix.Inverted;
-
-						for (int i = 0; i < originalMesh.Vertices.Count; i++)
-						{
-							var pos = originalMesh.Vertices[i];
-							pos = pos.Transform(itemMatrix);
-
-							var ratioToApply = PinchRatio;
-
-							var distFromCenter = pos.X - aabb.Center.X;
-							var distanceToPinch = distFromCenter * (1 - PinchRatio);
-							var delta = (aabb.Center.X + distFromCenter * ratioToApply) - pos.X;
-
-							// find out how much to pinch based on y position
-							var amountOfRatio = (pos.Y - aabb.MinXYZ.Y) / aabb.YSize;
-
-							var newPos = new Vector3Float(pos.X + delta * amountOfRatio, pos.Y, pos.Z);
-
-							transformedMesh.Vertices[i] = newPos.Transform(invItemMatrix);
-						}
-
-						transformedMesh.MarkAsChanged();
-						transformedMesh.CalculateNormals();
-
-						var newMesh = new Object3D()
-						{
-							Mesh = transformedMesh
-						};
-						newMesh.CopyWorldProperties(sourceItem, this, Object3DPropertyFlags.All);
-						this.Children.Add(newMesh);
-					}
-
-					// set the matrix back
-					Matrix = currentMatrix;
-					SourceContainer.Visible = false;
-					rebuildLocks.Dispose();
-					return Task.CompletedTask;
-				});
 		}
 	}
 }

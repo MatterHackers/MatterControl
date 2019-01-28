@@ -41,11 +41,12 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public class IntersectionObject3D : MeshWrapperObject3D
+	[Obsolete("Use CombineObject3D_2 instead", false)]
+	public class CombineObject3D : MeshWrapperObject3D
 	{
-		public IntersectionObject3D()
+		public CombineObject3D()
 		{
-			Name = "Intersection";
+			Name = "Combine";
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
@@ -71,70 +72,74 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public override Task Rebuild()
 		{
+			this.DebugDepth("Rebuild");
+
 			var rebuildLocks = this.RebuilLockAll();
 
-			return ApplicationController.Instance.Tasks.Execute("Intersection".Localize(), null, (reporter, cancellationToken) =>
-			{
-				var progressStatus = new ProgressStatus();
-				reporter.Report(progressStatus);
-
-				try
+			// spin up a task to remove holes from the objects in the group
+			return ApplicationController.Instance.Tasks.Execute(
+				"Combine".Localize(),
+				null,
+				(reporter, cancellationToken) =>
 				{
-					Intersect(cancellationToken, reporter);
-				}
-				catch { }
+					var progressStatus = new ProgressStatus();
+					reporter.Report(progressStatus);
 
-				UiThread.RunOnIdle(() =>
-				{
+					try
+					{
+						Combine(cancellationToken, reporter);
+					}
+					catch
+					{
+					}
+
 					rebuildLocks.Dispose();
-					base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+					return Task.CompletedTask;
 				});
-
-				return Task.CompletedTask;
-			});
 		}
 
-		public void Intersect()
+		public void Combine()
 		{
-			Intersect(CancellationToken.None, null);
+			Combine(CancellationToken.None, null);
 		}
 
-		private void Intersect(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
+		public void Combine(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
 		{
 			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, cancellationToken);
 
-			var participants = this.DescendantsAndSelf().Where((obj) => obj.OwnerID == this.ID);
-
-			if (participants.Count() > 1)
+			var participants = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
+			if (participants.Count() < 2)
 			{
-				var first = participants.First();
+				return;
+			}
 
-				var totalOperations = participants.Count() - 1;
-				double amountPerOperation = 1.0 / totalOperations;
-				double percentCompleted = 0;
+			var first = participants.First();
 
-				ProgressStatus progressStatus = new ProgressStatus();
-				foreach (var remove in participants)
+			var totalOperations = participants.Count() - 1;
+			double amountPerOperation = 1.0 / totalOperations;
+			double percentCompleted = 0;
+
+			ProgressStatus progressStatus = new ProgressStatus();
+			foreach (var item in participants)
+			{
+				if (item != first)
 				{
-					if (remove != first)
+					var result = BooleanProcessing.Do(item.Mesh, item.WorldMatrix(),
+						first.Mesh,  first.WorldMatrix(),
+						0, 
+						reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+
+					var inverse = first.WorldMatrix();
+					inverse.Invert();
+					result.Transform(inverse);
+					using (first.RebuildLock())
 					{
-						var result = BooleanProcessing.Do(remove.Mesh, remove.WorldMatrix(),
-							first.Mesh, first.WorldMatrix(),
-							2, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
-
-						var inverse = first.WorldMatrix();
-						inverse.Invert();
-						result.Transform(inverse);
-						using (first.RebuildLock())
-						{
-							first.Mesh = result;
-						}
-						remove.Visible = false;
-
-						percentCompleted += amountPerOperation;
-						progressStatus.Progress0To1 = percentCompleted;
-						reporter.Report(progressStatus);
+						first.Mesh = result;
 					}
+
+					percentCompleted += amountPerOperation;
+					progressStatus.Progress0To1 = percentCompleted;
+					reporter?.Report(progressStatus);
 				}
 			}
 		}

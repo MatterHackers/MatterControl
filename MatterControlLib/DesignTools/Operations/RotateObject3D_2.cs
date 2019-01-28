@@ -70,8 +70,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			this.RotateAbout.Origin = aabb.Center;
 		}
 
-		public override bool CanFlatten => true;
-
 		#region // editable properties
 		public DirectionAxis RotateAbout { get; set; } = new DirectionAxis() { Origin = Vector3.Zero, Normal = Vector3.UnitZ };
 		[DisplayName("Angle")]

@@ -38,6 +38,7 @@ using MatterHackers.VectorMath;
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -57,7 +58,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Fit to Bounds".Localize();
 		}
 
-		public override bool CanFlatten => true;
 		private IObject3D FitBounds => Children.Last();
 
 		public static FitToBoundsObject3D_2 Create(IObject3D itemToFit)
@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				fitToBounds.boundsSize.X = aabb.XSize;
 				fitToBounds.boundsSize.Y = aabb.YSize;
 				fitToBounds.boundsSize.Z = aabb.ZSize;
-				fitToBounds.Rebuild(null);
+				fitToBounds.Rebuild();
 			}
 
 			return fitToBounds;
@@ -143,12 +143,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else if (invalidateType.InvalidateType == InvalidateType.Properties
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else if ((invalidateType.InvalidateType == InvalidateType.Properties
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
@@ -156,15 +156,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				|| invalidateType.InvalidateType == InvalidateType.Content))
 			{
 				cacheThisMatrix = Matrix4X4.Identity;
-				base.OnInvalidate(invalidateType);
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())
@@ -185,7 +182,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 
-			base.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
+			return Task.CompletedTask;
 		}
 
 		private void AdjustChildSize(object sender, EventArgs e)
@@ -265,7 +262,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			set
 			{
 				boundsSize.X = value;
-				Rebuild(null);
+				Rebuild();
 			}
 		}
 
@@ -276,7 +273,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			set
 			{
 				boundsSize.Y = value;
-				Rebuild(null);
+				Rebuild();
 			}
 		}
 
@@ -287,7 +284,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			set
 			{
 				boundsSize.Z = value;
-				Rebuild(null);
+				Rebuild();
 			}
 		}
 
