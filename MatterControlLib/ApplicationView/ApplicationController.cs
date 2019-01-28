@@ -695,11 +695,15 @@ namespace MatterHackers.MatterControl
 				},
 				new SceneSelectionOperation()
 				{
-					OperationType = typeof(IntersectionObject3D),
+					OperationType = typeof(IntersectionObject3D_2),
 					TitleResolver = () => "Intersect".Localize(),
-					Action = (sceneContext) => new IntersectionObject3D().WrapSelectedItemAndSelect(sceneContext.Scene),
+					Action = (sceneContext) => new IntersectionObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 					Icon = AggContext.StaticData.LoadIcon("intersect.png"),
-					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
+					IsEnabled = (scene) =>
+					{
+						var selectedItem = scene.SelectedItem;
+						return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
+					},
 				},
 				new SceneSelectionOperation()
 				{

@@ -176,7 +176,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			});
 		}
 
-		public void WrapSelectedItemAndSelect(InteractiveScene scene)
+		public async void WrapSelectedItemAndSelect(InteractiveScene scene)
 		{
 			using (RebuildLock())
 			{
@@ -207,12 +207,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							new List<IObject3D>(selectedItems),
 							new List<IObject3D> { this }));
 
+					await this.Rebuild();
+
 					// and select this
 					scene.SelectedItem = this;
 				}
 			}
-
-			Invalidate(new InvalidateArgs(this, InvalidateType.Properties, null));
 		}
 	}
 

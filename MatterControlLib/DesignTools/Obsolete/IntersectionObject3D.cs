@@ -28,22 +28,25 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DesignTools.Operations;
-using MatterHackers.VectorMath;
+using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public class CombineObject3D_2 : OperationSourceContainerObject3D
+	[Obsolete("Use IntersectionObject3D_2 instead", false)]
+	public class IntersectionObject3D : MeshWrapperObject3D
 	{
-		public CombineObject3D_2()
+		public IntersectionObject3D()
 		{
-			Name = "Combine";
+			Name = "Intersection";
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
@@ -69,89 +72,72 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public override Task Rebuild()
 		{
-			this.DebugDepth("Rebuild");
-
 			var rebuildLocks = this.RebuilLockAll();
 
-			return ApplicationController.Instance.Tasks.Execute(
-				"Combine".Localize(),
-				null,
-				(reporter, cancellationToken) =>
+			return ApplicationController.Instance.Tasks.Execute("Intersection".Localize(), null, (reporter, cancellationToken) =>
+			{
+				var progressStatus = new ProgressStatus();
+				reporter.Report(progressStatus);
+
+				try
 				{
-					var progressStatus = new ProgressStatus();
-					reporter.Report(progressStatus);
+					Intersect(cancellationToken, reporter);
+				}
+				catch { }
 
-					try
-					{
-						Combine(cancellationToken, reporter);
-					}
-					catch
-					{
-					}
-
+				UiThread.RunOnIdle(() =>
+				{
 					rebuildLocks.Dispose();
-					return Task.CompletedTask;
+					base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 				});
+
+				return Task.CompletedTask;
+			});
 		}
 
-		public void Combine()
+		public void Intersect()
 		{
-			Combine(CancellationToken.None, null);
+			Intersect(CancellationToken.None, null);
 		}
 
-		public void Combine(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
+		private void Intersect(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
 		{
-			SourceContainer.Visible = true;
-			RemoveAllButSource();
+			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, cancellationToken);
 
-			var participants = SourceContainer.VisibleMeshes();
-			if (participants.Count() < 2)
+			var participants = this.DescendantsAndSelf().Where((obj) => obj.OwnerID == this.ID);
+
+			if (participants.Count() > 1)
 			{
-				if(participants.Count() == 1)
+				var first = participants.First();
+
+				var totalOperations = participants.Count() - 1;
+				double amountPerOperation = 1.0 / totalOperations;
+				double percentCompleted = 0;
+
+				ProgressStatus progressStatus = new ProgressStatus();
+				foreach (var remove in participants)
 				{
-					var newMesh = new Object3D();
-					newMesh.CopyProperties(participants.First(), Object3DPropertyFlags.All);
-					newMesh.Mesh = participants.First().Mesh;
-					this.Children.Add(newMesh);
-					SourceContainer.Visible = false;
-				}
-				return;
-			}
+					if (remove != first)
+					{
+						var result = BooleanProcessing.Do(remove.Mesh, remove.WorldMatrix(),
+							first.Mesh, first.WorldMatrix(),
+							2, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
 
-			var first = participants.First();
-			var resultsMesh = first.Mesh;
-			var firstWorldMatrix = first.WorldMatrix(SourceContainer);
+						var inverse = first.WorldMatrix();
+						inverse.Invert();
+						result.Transform(inverse);
+						using (first.RebuildLock())
+						{
+							first.Mesh = result;
+						}
+						remove.Visible = false;
 
-			var totalOperations = participants.Count() - 1;
-			double amountPerOperation = 1.0 / totalOperations;
-			double percentCompleted = 0;
-
-			ProgressStatus progressStatus = new ProgressStatus();
-			foreach (var item in participants)
-			{
-				if (item != first)
-				{
-					var itemWorldMatrix = item.WorldMatrix(SourceContainer);
-					resultsMesh = BooleanProcessing.Do(item.Mesh, itemWorldMatrix,
-						resultsMesh, firstWorldMatrix,
-						0,
-						reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
-					// after the first union we are working with the transformed mesh and don't need the first transform
-					firstWorldMatrix = Matrix4X4.Identity;
-
-					percentCompleted += amountPerOperation;
-					progressStatus.Progress0To1 = percentCompleted;
-					reporter?.Report(progressStatus);
+						percentCompleted += amountPerOperation;
+						progressStatus.Progress0To1 = percentCompleted;
+						reporter.Report(progressStatus);
+					}
 				}
 			}
-
-			var resultsItem = new Object3D()
-			{
-				Mesh = resultsMesh
-			};
-			resultsItem.CopyProperties(first, Object3DPropertyFlags.All & (~Object3DPropertyFlags.Matrix));
-			this.Children.Add(resultsItem);
-			SourceContainer.Visible = false;
 		}
 	}
 }
