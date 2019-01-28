@@ -208,11 +208,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							new List<IObject3D> { this }));
 
 					await this.Rebuild();
-
-					// and select this
-					scene.SelectedItem = this;
 				}
 			}
+
+			// and select this
+			scene.SelectedItem = this;
+
+			this.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
 	}
 
