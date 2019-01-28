@@ -88,22 +88,23 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Linear Extrude".Localize();
 		}
 
-		public override async void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs eventArgs)
 		{
 			this.DebugDepth("Invalidate");
 
-			if (invalidateType.InvalidateType == InvalidateType.Path
-				&& invalidateType.Source != this
+			if ((eventArgs.InvalidateType == InvalidateType.Path
+					||  eventArgs.InvalidateType == InvalidateType.Content)
+				&& eventArgs.Source != this
 				&& !RebuildLocked)
 			{
 				await Rebuild();
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Mesh, invalidateType.UndoBuffer));
+				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Mesh, eventArgs.UndoBuffer));
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
-				&& invalidateType.Source == this)
+			else if (eventArgs.InvalidateType == InvalidateType.Properties
+				&& eventArgs.Source == this)
 			{
 				await Rebuild();
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Mesh, invalidateType.UndoBuffer));
+				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Mesh, eventArgs.UndoBuffer));
 			}
 		}
 

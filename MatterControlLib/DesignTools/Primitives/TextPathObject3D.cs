@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using MatterHackers.Agg;
@@ -114,13 +115,16 @@ namespace MatterHackers.MatterControl.DesignTools
 			using (RebuildLock())
 			{
 				double pointsToMm = 0.352778;
+
 				var printer = new TypeFacePrinter(Text, new StyledTypeFace(ApplicationController.GetTypeFace(Font), PointSize))
 				{
 					ResolutionScale = 10
 				};
-				var scalledLetterPrinter = new VertexSourceApplyTransform(printer, Affine.NewScaling(pointsToMm));
+
+				var scaledLetterPrinter = new VertexSourceApplyTransform(printer, Affine.NewScaling(pointsToMm));
 				var vertexSource = new VertexStorage();
-				foreach (var vertex in scalledLetterPrinter.Vertices())
+
+				foreach (var vertex in scaledLetterPrinter.Vertices())
 				{
 					if (vertex.IsMoveTo)
 					{
@@ -135,11 +139,12 @@ namespace MatterHackers.MatterControl.DesignTools
 						vertexSource.ClosePolygon();
 					}
 				}
-				VertexSource = vertexSource;
+
+				this.VertexSource = vertexSource;
 				base.Mesh = null;
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+			this.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
 		}
 
 		public override Mesh Mesh
@@ -150,8 +155,13 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					using (this.RebuildLock())
 					{
-						// TODO: Revise fallback mesh
-						base.Mesh = this.InitMesh() ?? PlatonicSolids.CreateCube(100, 100, 0.2);
+						var bounds = this.VertexSource.GetBounds();
+						var center = bounds.Center;
+						var mesh = PlatonicSolids.CreateCube(Math.Max(8, bounds.Width), Math.Max(8, bounds.Height), 0.2);
+
+						mesh.Translate(new Vector3(center.X, center.Y, 0));
+
+						base.Mesh = mesh;
 					}
 				}
 
