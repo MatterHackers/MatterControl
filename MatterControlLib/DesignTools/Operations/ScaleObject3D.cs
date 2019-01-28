@@ -183,21 +183,23 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
-			if ((invalidateArgs.InvalidateType == InvalidateType.Content
-				|| invalidateArgs.InvalidateType == InvalidateType.Matrix
-				|| invalidateArgs.InvalidateType == InvalidateType.Mesh)
+			if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Mesh))
 				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
 				Rebuild();
 			}
-			else if (invalidateArgs.InvalidateType == InvalidateType.Properties
+			else if (invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateArgs.Source == this)
 			{
 				Rebuild();
 			}
-
-			base.OnInvalidate(invalidateArgs);
+			else
+			{
+				base.OnInvalidate(invalidateArgs);
+			}
 		}
 
 		public override Task Rebuild()
@@ -211,7 +213,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				TransformItem.Matrix *= Matrix4X4.CreateTranslation(ScaleAbout);
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix, null));
+			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
 
 			return Task.CompletedTask;
 		}

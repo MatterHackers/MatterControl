@@ -48,8 +48,8 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class CurveObject3D_2 : OperationSourceContainerObject3D, IEditorDraw
 	{
-		// holds where we rotate the object
-		private Vector2 rotationCenter;
+		// this needs to serialize but not be editable
+		public Vector3 rotationOffset;
 
 		public CurveObject3D_2()
 		{
@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				var currentMatrixInv = Matrix.Inverted;
 				var aabb = this.GetAxisAlignedBoundingBox(currentMatrixInv);
 
-				layer.World.RenderCylinderOutline(this.WorldMatrix(), new Vector3(rotationCenter, aabb.Center.Z), Diameter, aabb.ZSize, 30, Color.Red);
+				layer.World.RenderCylinderOutline(this.WorldMatrix(), Vector3.Zero, Diameter, aabb.ZSize, 30, Color.Red);
 			}
 
 			// turn the lighting back on
@@ -105,6 +105,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				null,
 				(reporter, cancellationToken) =>
 				{
+					this.Translate(-rotationOffset);
 					SourceContainer.Visible = true;
 					RemoveAllButSource();
 
@@ -125,7 +126,15 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						var radius = Diameter / 2;
 						var circumference = MathHelper.Tau * radius;
-						rotationCenter = new Vector2(aabb.MinXYZ.X + (aabb.MaxXYZ.X - aabb.MinXYZ.X) * (StartPercent / 100), aabb.MaxXYZ.Y + radius);
+						var rotationCenter = new Vector3(aabb.MinXYZ.X + (aabb.MaxXYZ.X - aabb.MinXYZ.X) * (StartPercent / 100), aabb.MaxXYZ.Y + radius, aabb.Center.Z);
+
+						rotationOffset = rotationCenter;
+						if (!BendCcw)
+						{
+							// fix the stored center so we draw correctly
+							rotationOffset.Y = aabb.MinXYZ.Y - radius;
+						}
+
 						foreach (var sourceItem in SourceContainer.VisibleMeshes())
 						{
 							var originalMesh = sourceItem.Mesh;
@@ -152,7 +161,8 @@ namespace MatterHackers.MatterControl.DesignTools
 								var rotatePosition = new Vector3Float(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
 								rotatePosition.Z = worldPosition.Z;
 								var worldWithBend = rotatePosition + new Vector3Float(rotationCenter.X, radius + aabb.MaxXYZ.Y, 0);
-								transformedMesh.Vertices[i] = worldWithBend.Transform(invItemMatrix);
+
+								transformedMesh.Vertices[i] = worldWithBend.Transform(invItemMatrix) - new Vector3Float(rotationOffset);
 							}
 
 							transformedMesh.MarkAsChanged();
@@ -165,18 +175,14 @@ namespace MatterHackers.MatterControl.DesignTools
 							newMesh.CopyWorldProperties(sourceItem, this, Object3DPropertyFlags.All);
 							this.Children.Add(newMesh);
 						}
-
-						if (!BendCcw)
-						{
-							// fix the stored center so we draw correctly
-							rotationCenter = new Vector2(rotationCenter.X, aabb.MinXYZ.Y - radius);
-						}
 					}
 
 					// set the matrix back
 					Matrix = currentMatrix;
+					this.Translate(new Vector3(rotationOffset));
 					SourceContainer.Visible = false;
 					rebuildLocks.Dispose();
+					base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Children));
 					return Task.CompletedTask;
 				});
 		}

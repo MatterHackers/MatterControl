@@ -539,7 +539,7 @@ namespace MatterControl.Tests.MatterControl
 			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
 			AppContext.Platform.ProcessCommandline();
 
-			//DoAabbCalculatedCorrectlyForCurvedFitObjects();
+			DoAabbCalculatedCorrectlyForCurvedFitObjects();
 		}
 
 		public async void DoAabbCalculatedCorrectlyForCurvedFitObjects()

@@ -84,6 +84,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 					SourceContainer.Visible = false;
 					rebuildLock.Dispose();
+					base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Children));
 					return Task.CompletedTask;
 				});
 		}

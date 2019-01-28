@@ -65,24 +65,25 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 
 		public Vector3 ImageOffset { get; private set; } = Vector3.Zero;
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
-				&& invalidateType.Source != this
+			var invalidateType = invalidateArgs.InvalidateType;
+			if ((invalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Mesh))
+				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
 				Rebuild(null);
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
-				&& invalidateType.Source == this)
+			else if (invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties)
+				&& invalidateArgs.Source == this)
 			{
 				Rebuild(null);
 			}
 			else
 			{
-				base.OnInvalidate(invalidateType);
+				base.OnInvalidate(invalidateArgs);
 			}
 		}
 
@@ -112,6 +113,8 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 
 				// Apply offset
 				this.Matrix *= Matrix4X4.CreateTranslation(-this.ImageOffset);
+
+				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Children));
 
 				return Task.CompletedTask;
 			});
