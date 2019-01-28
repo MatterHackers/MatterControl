@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					list.AddRange(ScaleItem.Children);
 				});
 			}
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+			Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)
@@ -122,20 +122,20 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				});
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+			Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
 				Rebuild(null);
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
 				Rebuild(null);

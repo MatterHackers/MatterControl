@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { meshOnlyItem }));
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+			Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 		}
 
 		public LinearExtrudeObject3D()
@@ -92,19 +92,21 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			this.DebugDepth("Invalidate");
 
-			if ((eventArgs.InvalidateType == InvalidateType.Path
-					||  eventArgs.InvalidateType == InvalidateType.Content)
+			if ((eventArgs.InvalidateType.HasFlag(InvalidateType.Path)
+					||  eventArgs.InvalidateType.HasFlag(InvalidateType.Children))
 				&& eventArgs.Source != this
 				&& !RebuildLocked)
 			{
 				await Rebuild();
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Mesh, eventArgs.UndoBuffer));
 			}
-			else if (eventArgs.InvalidateType == InvalidateType.Properties
+			else if (eventArgs.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& eventArgs.Source == this)
 			{
 				await Rebuild();
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Mesh, eventArgs.UndoBuffer));
+			}
+			else
+			{
+				base.OnInvalidate(eventArgs);
 			}
 		}
 

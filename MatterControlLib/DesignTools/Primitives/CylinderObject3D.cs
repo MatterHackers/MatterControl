@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if (invalidateType.InvalidateType == InvalidateType.Properties
+			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
 				Rebuild(null);

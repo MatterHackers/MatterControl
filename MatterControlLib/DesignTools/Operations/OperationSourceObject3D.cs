@@ -130,32 +130,32 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content, undoBuffer));
+			Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			// TODO: color and output type could have special consideration that would not require a rebulid
 			// They could jus propagate the color and output type to the corecty child and everything would be good
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh
-				|| invalidateType.InvalidateType == InvalidateType.Color
-				|| invalidateType.InvalidateType == InvalidateType.OutputType)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Color)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.OutputType))
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
 				await Rebuild();
-				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
 				await Rebuild();
-				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
 			}
-
-			base.OnInvalidate(invalidateType);
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)
@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content, undoBuffer));
+			Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 		}
 
 		public void RemoveAllButSource()
@@ -239,7 +239,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			// and select this
 			scene.SelectedItem = this;
 
-			this.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+			this.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 		}
 	}
 

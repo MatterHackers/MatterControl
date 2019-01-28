@@ -137,25 +137,26 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
 				await Rebuild();
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
 				await Rebuild();
 			}
-			else if ((invalidateType.InvalidateType == InvalidateType.Properties
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh
-				|| invalidateType.InvalidateType == InvalidateType.Content))
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Children))
 			{
 				cacheThisMatrix = Matrix4X4.Identity;
+				base.OnInvalidate(invalidateType);
 			}
 
 			base.OnInvalidate(invalidateType);
@@ -186,6 +187,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 
+			base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Matrix));
 			return Task.CompletedTask;
 		}
 
@@ -266,7 +268,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			set
 			{
 				boundsSize.X = value;
-				Rebuild();
+				if (this.Children.Count() > 0)
+				{
+					Rebuild();
+				}
 			}
 		}
 
@@ -277,7 +282,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			set
 			{
 				boundsSize.Y = value;
-				Rebuild();
+				if (this.Children.Count() > 0)
+				{
+					Rebuild();
+				}
 			}
 		}
 
@@ -288,7 +296,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			set
 			{
 				boundsSize.Z = value;
-				Rebuild();
+				if (this.Children.Count() > 0)
+				{
+					Rebuild();
+				}
 			}
 		}
 

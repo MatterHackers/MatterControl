@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, newChildren));
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content, undoBuffer));
+			Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)
@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 				}
 
-				parent.Invalidate(new InvalidateArgs(this, InvalidateType.Content, null));
+				parent.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 			}
 			else
 			{

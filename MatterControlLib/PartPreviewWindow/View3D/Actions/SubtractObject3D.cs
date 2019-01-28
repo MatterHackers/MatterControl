@@ -131,20 +131,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
 				await Rebuild();
-				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
 				await Rebuild();
-				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
 			}
 
 			base.OnInvalidate(invalidateType);
@@ -172,11 +170,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					{
 					}
 
-					UiThread.RunOnIdle(() =>
-					{
-						rebuildLocks.Dispose();
-						base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
-					});
+					rebuildLocks.Dispose();
+					base.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 
 					return Task.CompletedTask;
 				});

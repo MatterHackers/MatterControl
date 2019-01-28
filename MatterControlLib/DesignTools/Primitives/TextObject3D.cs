@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var item = new TextObject3D();
 
-			item.Invalidate(new InvalidateArgs(null, InvalidateType.Content, null));
+			item.Invalidate(new InvalidateArgs(null, InvalidateType.Children));
 			return item;
 		}
 
@@ -89,23 +89,23 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
 				await Rebuild();
-				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
 				await Rebuild();
-				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
 			}
-
-			base.OnInvalidate(invalidateType);
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
 		}
 
 		public override Task Rebuild()
@@ -153,6 +153,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 
 					rebuildLock.Dispose();
+					base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Children));
 					return Task.CompletedTask;
 				});
 		}
