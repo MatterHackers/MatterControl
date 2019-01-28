@@ -813,8 +813,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else if (typeof(T) == typeof(int))
 			{
-				int result;
-				int.TryParse(this.GetValue(settingsKey), out result);
+				int.TryParse(this.GetValue(settingsKey), out int result);
 				return (T)(object)(result);
 			}
 			else if (typeof(T) == typeof(Vector2))
@@ -852,8 +851,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				else if (settingsKey == SettingsKey.first_layer_extrusion_width
 					|| settingsKey == SettingsKey.external_perimeter_extrusion_width)
 				{
-					double extrusionResult;
-					double.TryParse(this.GetValue(settingsKey), out extrusionResult);
+					double.TryParse(this.GetValue(settingsKey), out double extrusionResult);
 					return (T)(object)(extrusionResult == 0 ? GetValue<double>(SettingsKey.nozzle_diameter) : extrusionResult);
 				}
 
@@ -863,8 +861,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return (T)Convert.ChangeType(0, typeof(double));
 				}
 
-				double result;
-				double.TryParse(this.GetValue(settingsKey), out result);
+				double.TryParse(this.GetValue(settingsKey), out double result);
 				return (T)(object)(result);
 			}
 			else if (typeof(T) == typeof(BedShape))
