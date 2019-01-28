@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return base.GetAxisAlignedBoundingBox(matrix);
 		}
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if ((invalidateType.InvalidateType == InvalidateType.Content
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
@@ -143,12 +143,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild();
+				await Rebuild();
 			}
 			else if (invalidateType.InvalidateType == InvalidateType.Properties
 				&& invalidateType.Source == this)
 			{
-				Rebuild();
+				await Rebuild();
 			}
 			else if ((invalidateType.InvalidateType == InvalidateType.Properties
 				|| invalidateType.InvalidateType == InvalidateType.Matrix
@@ -174,6 +174,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 				cacheRequestedMatrix = new Matrix4X4();
 				var after = this.GetAxisAlignedBoundingBox();
+
+				var newAabbb = this.GetAxisAlignedBoundingBox();
+
+				this.Translate(aabb.Center - newAabbb.Center);
 
 				if (aabb.ZSize > 0)
 				{
