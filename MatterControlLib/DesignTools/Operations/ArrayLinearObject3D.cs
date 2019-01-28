@@ -49,30 +49,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public int Count { get; set; } = 3;
 		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };
 		public double Distance { get; set; } = 30;
-
-		public override async void OnInvalidate(InvalidateArgs invalidateType)
-		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
-				&& invalidateType.Source != this
-				&& !RebuildLocked)
-			{
-				await Rebuild();
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer));
-			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
-				&& invalidateType.Source == this)
-			{
-				await Rebuild();
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer));
-			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
-		}
-
+		
 		public override async Task Rebuild()
 		{
 			var rebuildLock = this.RebuildLock();
