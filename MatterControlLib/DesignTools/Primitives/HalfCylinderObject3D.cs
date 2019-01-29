@@ -100,10 +100,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+			Invalidate(InvalidateType.Mesh);
 			if (changed)
 			{
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
+				Invalidate(InvalidateType.Properties);
 			}
 		}
 	}

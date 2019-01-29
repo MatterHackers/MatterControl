@@ -43,6 +43,7 @@ using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Threading.Tasks;
+using System;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -54,11 +55,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			Color = Operations.Object3DExtensions.PrimitiveColors["Text"];
 		}
 
-		public static TextObject3D Create()
+		public static async Task<TextObject3D> Create()
 		{
 			var item = new TextObject3D();
 
-			item.Invalidate(new InvalidateArgs(null, InvalidateType.Children));
+			await item.Rebuild();
+
 			return item;
 		}
 
@@ -153,7 +155,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 
 					rebuildLock.Dispose();
-					base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Children));
+					Invalidate(InvalidateType.Children);
 					return Task.CompletedTask;
 				});
 		}

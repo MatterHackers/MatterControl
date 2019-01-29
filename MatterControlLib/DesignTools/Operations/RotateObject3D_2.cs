@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				TransformItem.Matrix = RotationMatrix;
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
+			Invalidate(InvalidateType.Matrix);
 
 			return Task.CompletedTask;
 		}

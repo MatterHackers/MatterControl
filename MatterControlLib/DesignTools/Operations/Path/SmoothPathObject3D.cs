@@ -59,8 +59,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			this.DebugDepth("Invalidate");
-
 			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Path))
@@ -93,7 +91,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					DoSmoothing((long)(SmoothDistance * 1000), Iterations);
 
 					rebuildLock.Dispose();
-					Invalidate(new InvalidateArgs(this, InvalidateType.Path));
+					Invalidate(InvalidateType.Path);
 					return Task.CompletedTask;
 				});
 		}
