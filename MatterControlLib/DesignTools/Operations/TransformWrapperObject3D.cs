@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					list.AddRange(TransformItem.Children);
 				});
 			}
-			Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+			Invalidate(InvalidateType.Children);
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				});
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+			Invalidate(InvalidateType.Children);
 		}
 
 		public virtual void WrapItem(IObject3D item, UndoBuffer undoBuffer = null)

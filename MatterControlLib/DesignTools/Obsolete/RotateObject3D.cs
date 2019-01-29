@@ -97,12 +97,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
+			Invalidate(InvalidateType.Matrix);
 
 			return Task.CompletedTask;
 		}
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
@@ -110,14 +110,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild();
-				invalidateType = new InvalidateArgs(this, InvalidateType.Matrix);
+				await Rebuild();
 			}
 			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild();
-				invalidateType = new InvalidateArgs(this, InvalidateType.Matrix);
+				await Rebuild();
 			}
 
 			base.OnInvalidate(invalidateType);

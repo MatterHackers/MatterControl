@@ -274,10 +274,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				Matrix = currentMatrix;
 			}
 
-			base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+			Invalidate(InvalidateType.Mesh);
 			if (propertyUpdated)
 			{
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
+				Invalidate(InvalidateType.Properties);
 			}
 		}
 	}

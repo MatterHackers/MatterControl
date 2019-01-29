@@ -443,7 +443,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}));
 			}
 
-			base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Matrix));
+			Invalidate(InvalidateType.Matrix);
 			return Task.CompletedTask;
 		}
 
@@ -466,7 +466,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				base.Remove(undoBuffer);
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+			Invalidate(InvalidateType.Children);
 		}
 
 		public void UpdateControls(PublicPropertyChange change)

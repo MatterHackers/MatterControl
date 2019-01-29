@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					Height = BaseHeight
 				};
 
-				textObject.Invalidate(new InvalidateArgs(textObject, InvalidateType.Properties));
+				textObject.Invalidate(InvalidateType.Properties);
 				IObject3D letterObject = new RotateObject3D(textObject, MathHelper.Tau / 4);
 				letterObject = new AlignObject3D(letterObject, FaceAlign.Bottom | FaceAlign.Front, brailleLetter, FaceAlign.Top | FaceAlign.Front, 0, 0, 3.5);
 				letterObject = new SetCenterObject3D(letterObject, brailleLetter.GetCenter(), true, false, false);
@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+			Invalidate(InvalidateType.Children);
 		}
 	}
 }
