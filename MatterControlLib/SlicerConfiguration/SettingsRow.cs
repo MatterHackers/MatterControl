@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				new MatePoint(settingsRow)
 				{
 					Mate = new MateOptions(alignLeft ? MateEdge.Left : MateEdge.Right, MateEdge.Top),
-					AltMate = new MateOptions(alignLeft ? MateEdge.Left : MateEdge.Right, MateEdge.Bottom),
+					AltMate = new MateOptions(alignLeft ? MateEdge.Right : MateEdge.Left, MateEdge.Bottom),
 					Offset = new RectangleDouble(12, 0, 12, 0)
 				},
 				new MatePoint(popover)
