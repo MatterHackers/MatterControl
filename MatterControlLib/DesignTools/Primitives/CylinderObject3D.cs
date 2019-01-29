@@ -35,6 +35,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
 using System;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -53,7 +54,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			Height = height;
 			Sides = sides;
 
-			Rebuild(null);
+			Rebuild();
 		}
 
 		public static CylinderObject3D Create(double diameter, double height, int sides, Alignment alignment = Alignment.Z)
@@ -77,7 +78,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				Sides = sides,
 			};
 
-			item.Rebuild(null);
+			item.Rebuild();
 			switch (alignment)
 			{
 				case Alignment.X:
@@ -106,7 +107,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var item = new CylinderObject3D();
 
-			item.Rebuild(null);
+			item.Rebuild();
 			return item;
 		}
 
@@ -124,15 +125,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		override public Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 			bool changed = false;
@@ -173,6 +172,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				Invalidate(InvalidateType.Properties);
 			}
+
+			return Task.CompletedTask;
 		}
 
 		public void UpdateControls(PublicPropertyChange change)

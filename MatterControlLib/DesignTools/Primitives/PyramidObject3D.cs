@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
@@ -49,7 +50,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var item = new PyramidObject3D();
 
-			item.Rebuild(null);
+			item.Rebuild();
 			return item;
 		}
 
@@ -62,7 +63,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else
 			{
@@ -70,7 +71,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		override public Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())
@@ -89,6 +90,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			Invalidate(InvalidateType.Mesh);
+			return Task.CompletedTask;
 		}
 	}
 }

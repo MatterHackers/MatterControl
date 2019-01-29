@@ -39,6 +39,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -156,12 +157,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else
 			{
@@ -169,7 +170,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		override public Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 			bool propertyUpdated = Diameter == double.MinValue;
@@ -279,6 +280,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				Invalidate(InvalidateType.Properties);
 			}
+
+			return Task.CompletedTask;
 		}
 	}
 }

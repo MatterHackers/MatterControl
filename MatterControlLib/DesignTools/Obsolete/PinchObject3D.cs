@@ -41,6 +41,7 @@ using MatterHackers.VectorMath;
 using System;
 using System.ComponentModel;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -63,12 +64,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else
 			{
@@ -76,7 +77,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		override public Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 
@@ -125,6 +126,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			Invalidate(InvalidateType.Children);
+			return Task.CompletedTask;
 		}
 	}
 }
