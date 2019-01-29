@@ -922,7 +922,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public long GetLongHashCode()
+		public ulong GetLongHashCode()
 		{
 			var bigStringForHashCode = new StringBuilder();
 
@@ -937,7 +937,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			return agg_basics.ComputeHash(bigStringForHashCode.ToString());
+			return bigStringForHashCode.ToString().GetLongHashCode();
 		}
 
 		#endregion

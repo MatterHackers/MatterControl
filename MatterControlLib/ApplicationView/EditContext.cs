@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl
 				}
 
 				string fileHashCode = HashGenerator.ComputeFileSHA1(fileLocation);
-				long settingsHashCode = printer.Settings.GetLongHashCode();
+				ulong settingsHashCode = printer.Settings.GetLongHashCode();
 
 				return Path.Combine(
 					ApplicationDataStorage.Instance.GCodeOutputPath,
