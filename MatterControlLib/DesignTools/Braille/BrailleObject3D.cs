@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.ComponentModel;
 using System.IO;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Platform;
@@ -55,14 +56,14 @@ namespace MatterHackers.MatterControl.DesignTools
 		public BrailleObject3D(string textToEncode)
 		{
 			TextToEncode = textToEncode;
-			Rebuild(null);
+			Rebuild();
 		}
 
 		public static BrailleObject3D Create()
 		{
 			var item = new BrailleObject3D();
 
-			item.Rebuild(null);
+			item.Rebuild();
 			return item;
 		}
 
@@ -89,15 +90,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		override public Task Rebuild()
 		{
 			using (RebuildLock())
 			{
@@ -263,6 +262,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			Invalidate(InvalidateType.Children);
+			return Task.CompletedTask;
 		}
 	}
 }

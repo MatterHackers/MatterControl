@@ -35,6 +35,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -133,12 +134,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else
 			{
@@ -164,7 +165,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return fitToBounds;
 		}
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		override public Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())
@@ -176,6 +177,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			Invalidate(InvalidateType.Matrix);
+			return Task.CompletedTask;
 		}
 
 		public override AxisAlignedBoundingBox GetAxisAlignedBoundingBox(Matrix4X4 matrix)

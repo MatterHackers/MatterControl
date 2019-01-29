@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -51,7 +52,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var item = new HalfCylinderObject3D();
 
-			item.Rebuild(null);
+			item.Rebuild();
 			return item;
 		}
 
@@ -64,15 +65,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		override public Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 			bool changed = false;
@@ -101,6 +100,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				Invalidate(InvalidateType.Properties);
 			}
+
+			return Task.CompletedTask;
 		}
 	}
 }
