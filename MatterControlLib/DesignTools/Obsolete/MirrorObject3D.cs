@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				this.Matrix = oldMatrix;
 			}
 
-			base.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+			Invalidate(InvalidateType.Children);
 
 			return Task.CompletedTask;
 		}

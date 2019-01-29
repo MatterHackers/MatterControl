@@ -213,7 +213,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				TransformItem.Matrix *= Matrix4X4.CreateTranslation(ScaleAbout);
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
+			Invalidate(InvalidateType.Matrix);
 
 			return Task.CompletedTask;
 		}
@@ -259,7 +259,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			else if(change.Changed == nameof(UsePercentage))
 			{
 				// make sure we update the controls on screen to reflect the different data type
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
+				Invalidate(InvalidateType.Properties);
 			}
 			else if (change.Changed == nameof(MaitainProportions))
 			{

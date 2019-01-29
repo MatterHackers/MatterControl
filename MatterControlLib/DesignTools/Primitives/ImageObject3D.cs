@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 
 					// send the invalidate on image change
-					this.OnInvalidate(new InvalidateArgs(this, InvalidateType.Image));
+					Invalidate(InvalidateType.Image);
 				}
 
 				return _image;
@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					_invert = value;
 					_image = null;
 
-					this.OnInvalidate(new InvalidateArgs(this, InvalidateType.Image));
+					Invalidate(InvalidateType.Image);
 				}
 			}
 		}

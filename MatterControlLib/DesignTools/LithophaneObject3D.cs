@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 				// Apply offset
 				this.Matrix *= Matrix4X4.CreateTranslation(-this.ImageOffset);
 
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Children));
+				Invalidate(InvalidateType.Children);
 
 				return Task.CompletedTask;
 			});

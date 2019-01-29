@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				base.Mesh = null;
 			}
 
-			this.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
+			Invalidate(InvalidateType.Path);
 		}
 
 		public override Mesh Mesh

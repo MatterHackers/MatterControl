@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					}
 
 					rebuildLocks.Dispose();
-					base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Children));
+					Invalidate(InvalidateType.Children);
 					return Task.CompletedTask;
 				});
 		}

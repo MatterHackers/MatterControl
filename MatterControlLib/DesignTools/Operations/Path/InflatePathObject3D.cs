@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				InsetPath();
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Path));
+			Invalidate(InvalidateType.Path);
 		}
 
 		private void InsetPath()

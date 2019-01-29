@@ -308,22 +308,20 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			this.DebugDepth("Invalidate");
-
 			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Image)
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
 				await Rebuild();
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Path));
 			}
 			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
 				UpdateHistogramDisplay();
 				await Rebuild();
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Path));
 			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
 		private Color GetRGBA(byte[] buffer, int offset)
@@ -384,11 +382,11 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (propertyUpdated)
 					{
 						UpdateHistogramDisplay();
-						Invalidate(new InvalidateArgs(this, InvalidateType.Properties));
+						Invalidate(InvalidateType.Properties);
 					}
 
 					rebuildLock.Dispose();
-					Invalidate(new InvalidateArgs(this, InvalidateType.Path));
+					Invalidate(InvalidateType.Path);
 					return Task.CompletedTask;
 				});
 		}

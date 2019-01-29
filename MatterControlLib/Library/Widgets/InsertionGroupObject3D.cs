@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.Library
 				this.Children.Remove(placeholderItem);
 				this.Collapse();
 
-				this.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+				this.Invalidate(InvalidateType.Children);
 			}));
 		}
 

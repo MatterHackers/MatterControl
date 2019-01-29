@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { meshOnlyItem }));
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+			Invalidate(InvalidateType.Children);
 		}
 
 		public LinearExtrudeObject3D()
@@ -90,8 +90,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override async void OnInvalidate(InvalidateArgs eventArgs)
 		{
-			this.DebugDepth("Invalidate");
-
 			if ((eventArgs.InvalidateType.HasFlag(InvalidateType.Path)
 					||  eventArgs.InvalidateType.HasFlag(InvalidateType.Children))
 				&& eventArgs.Source != this
@@ -129,7 +127,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 
 					rebuildLock.Dispose();
-					Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+					Invalidate(InvalidateType.Mesh);
 					return Task.CompletedTask;
 				});
 		}

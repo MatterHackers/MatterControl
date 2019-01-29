@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+			Invalidate(InvalidateType.Children);
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+			Invalidate(InvalidateType.Children);
 		}
 
 		public void RemoveAllButSource()
@@ -239,7 +239,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			// and select this
 			scene.SelectedItem = this;
 
-			this.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+			this.Invalidate(InvalidateType.Children);
 		}
 	}
 

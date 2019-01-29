@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					this.Translate(new Vector3(rotationOffset));
 					SourceContainer.Visible = false;
 					rebuildLocks.Dispose();
-					base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Children));
+					Invalidate(InvalidateType.Children);
 					return Task.CompletedTask;
 				});
 		}

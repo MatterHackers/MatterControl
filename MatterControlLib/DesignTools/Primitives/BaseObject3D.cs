@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+			Invalidate(InvalidateType.Mesh);
 		}
 
 		private static Polygon GetBoundingPolygon(Polygons basePolygons)

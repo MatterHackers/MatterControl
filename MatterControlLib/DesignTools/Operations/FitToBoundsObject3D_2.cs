@@ -84,6 +84,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				fitToBounds.boundsSize.Y = aabb.YSize;
 				fitToBounds.boundsSize.Z = aabb.ZSize;
 				fitToBounds.Rebuild();
+
+				var newAabbb = fitToBounds.GetAxisAlignedBoundingBox();
+				fitToBounds.Translate(aabb.Center - newAabbb.Center);
+				PlatingHelper.PlaceMeshAtHeight(fitToBounds, aabb.MinXYZ.Z);
 			}
 
 			return fitToBounds;
@@ -187,7 +191,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 
-			base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Matrix));
+			Invalidate(InvalidateType.Matrix);
 			return Task.CompletedTask;
 		}
 

@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+			Invalidate(InvalidateType.Mesh);
 		}
 	}
 }
