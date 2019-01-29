@@ -131,12 +131,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (screenPosition.X + popup.Widget.Width > systemWindow.Width
 						|| screenPosition.X < 0)
 					{
-						xPosition = GetXAnchor(anchor.AltMate, popup.AltMate, popup.Widget, bounds);
+						var altXPosition = GetXAnchor(anchor.AltMate, popup.AltMate, popup.Widget, bounds);
 
-						if (settingsRow != null
-							&& popoverWidget != null)
+						// Prefer clipping right edge to left - empowers user to resize window to reveal contents
+						if ((anchorLeft + altXPosition).X > -15)
 						{
-							popoverWidget.ArrowDirection = settingsRow.ArrowDirection == ArrowDirection.Left ? ArrowDirection.Right : ArrowDirection.Left;
+							xPosition = altXPosition;
+
+							if (settingsRow != null
+								&& popoverWidget != null)
+							{
+								popoverWidget.ArrowDirection = settingsRow.ArrowDirection == ArrowDirection.Left ? ArrowDirection.Right : ArrowDirection.Left;
+							}
 						}
 					}
 
