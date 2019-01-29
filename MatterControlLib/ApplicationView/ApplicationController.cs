@@ -652,7 +652,6 @@ namespace MatterHackers.MatterControl
 						var selectedItem = scene.SelectedItem;
 						var align = new AlignObject3D();
 						align.AddSelectionAsChildren(scene, selectedItem);
-						align.Invalidate(new InvalidateArgs(align, InvalidateType.Properties));
 					},
 					Icon = AggContext.StaticData.LoadIcon("align_left_dark.png", 16, 16, theme.InvertIcons).SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
@@ -722,7 +721,6 @@ namespace MatterHackers.MatterControl
 					{
 						var array = new ArrayLinearObject3D();
 						array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
-						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
@@ -735,7 +733,6 @@ namespace MatterHackers.MatterControl
 					{
 						var array = new ArrayRadialObject3D();
 						array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
-						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_radial.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
@@ -748,7 +745,6 @@ namespace MatterHackers.MatterControl
 					{
 						var array = new ArrayAdvancedObject3D();
 						array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
-						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_advanced.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),

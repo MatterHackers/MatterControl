@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public override void OnInvalidate(InvalidateArgs invalidateArgs)
+		public async override void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
 			if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Children)
 				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Matrix)
@@ -189,12 +189,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild();
+				await Rebuild();
 			}
 			else if (invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateArgs.Source == this)
 			{
-				Rebuild();
+				await Rebuild();
 			}
 			else
 			{
