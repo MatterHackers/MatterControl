@@ -33,6 +33,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -87,6 +88,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public static void ShowPopover(this SystemWindow systemWindow, MatePoint anchor, MatePoint popup, RectangleDouble altBounds = default(RectangleDouble), double secondsToClose = 0)
 		{
+			var settingsRow = anchor.Widget as SettingsRow;
+			var popoverWidget = popup.Widget as SliceSettingsPopover;
+
 			var hookedWidgets = new HashSet<GuiWidget>();
 			void anchor_Closed(object sender, EventArgs e)
 			{
@@ -128,6 +132,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						|| screenPosition.X < 0)
 					{
 						xPosition = GetXAnchor(anchor.AltMate, popup.AltMate, popup.Widget, bounds);
+
+						if (settingsRow != null
+							&& popoverWidget != null)
+						{
+							popoverWidget.ArrowDirection = settingsRow.ArrowDirection == ArrowDirection.Left ? ArrowDirection.Right : ArrowDirection.Left;
+						}
 					}
 
 					popupPosition += xPosition;
@@ -142,6 +152,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							|| screenPosition.Y < 0))
 					{
 						yPosition = GetYAnchor(anchor.AltMate, popup.AltMate, popup.Widget, bounds);
+
+						if (settingsRow != null)
+						{
+							settingsRow.ArrowDirection = settingsRow.ArrowDirection == ArrowDirection.Top ? ArrowDirection.Bottom: ArrowDirection.Top;
+						}
 					}
 
 					popup.Widget.Closed += anchor_Closed;
