@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ClipperLib;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
@@ -106,14 +107,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public static BaseObject3D Create()
+		public static async Task<BaseObject3D> Create()
 		{
 			var item = new BaseObject3D();
-			item.Rebuild(null);
+			await item.Rebuild();
 			return item;
 		}
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
@@ -122,52 +123,56 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				await Rebuild();
 			}
 			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				await Rebuild();
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 
-			using (RebuildLock())
-			{
-				var startingAabb = this.GetAxisAlignedBoundingBox();
+			var rebuildLock = this.RebuildLock();
 
-				var firstChild = this.Children.FirstOrDefault();
-
-				// remove the base mesh we added
-				this.Children.Modify(list =>
+			return ApplicationController.Instance.Tasks.Execute(
+				"Base".Localize(),
+				null,
+				(reporter, cancellationToken) =>
 				{
-					list.Clear();
-					// add back in the sourceContainer
-					list.Add(firstChild);
+					var startingAabb = this.GetAxisAlignedBoundingBox();
+
+					var firstChild = this.Children.FirstOrDefault();
+
+					// remove the base mesh we added
+					this.Children.Modify(list =>
+					{
+						list.Clear();
+						// add back in the sourceContainer
+						list.Add(firstChild);
+					});
+
+					// and create the base
+					var vertexSource = this.VertexSource;
+
+					// Convert VertexSource into expected Polygons
+					Polygons polygonShape = (vertexSource == null) ? null : vertexSource.CreatePolygons();
+					GenerateBase(polygonShape, firstChild.GetAxisAlignedBoundingBox().MinXYZ.Z);
+
+					if (startingAabb.ZSize > 0)
+					{
+						// If the part was already created and at a height, maintain the height.
+						PlatingHelper.PlaceMeshAtHeight(this, startingAabb.MinXYZ.Z);
+					}
+					rebuildLock.Dispose();
+					Invalidate(InvalidateType.Children);
+					return Task.CompletedTask;
 				});
-
-				// and create the base
-				var vertexSource = this.VertexSource;
-
-				// Convert VertexSource into expected Polygons
-				Polygons polygonShape = (vertexSource == null) ? null : vertexSource.CreatePolygons();
-				GenerateBase(polygonShape, firstChild.GetAxisAlignedBoundingBox().MinXYZ.Z);
-
-				if (startingAabb.ZSize > 0)
-				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, startingAabb.MinXYZ.Z);
-				}
-			}
-
-			Invalidate(InvalidateType.Mesh);
 		}
 
 		private static Polygon GetBoundingPolygon(Polygons basePolygons)
