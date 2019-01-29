@@ -767,19 +767,40 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		///<summary>
 		///Returns the first matching value discovered while enumerating the settings layers
 		///</summary>
-		public T GetValue<T>(string settingsKey) where T : IConvertible
+		public T GetValue<T>(string settingsKey, IEnumerable<PrinterSettingsLayer> layerCascade = null) where T : IConvertible
 		{
 #if DEBUG
 			ValidateType<T>(settingsKey);
 #endif
+
+			if (layerCascade == null)
+			{
+				layerCascade = defaultLayerCascade;
+			}
+
+			string settingsValue = null;
+
+			foreach (PrinterSettingsLayer layer in layerCascade)
+			{
+				if (layer.TryGetValue(settingsKey, out settingsValue))
+				{
+					break;
+				}
+			}
+
+			if (settingsValue == null)
+			{
+				settingsValue = "";
+			}
+
 			if (typeof(T) == typeof(string))
 			{
 				// this way we can use the common pattern without error
-				return (T)(object)this.GetValue(settingsKey);
+				return (T)(object)settingsValue;
 			}
 			else if(typeof(T) == typeof(LevelingSystem))
 			{
-				switch(this.GetValue(settingsKey))
+				switch(settingsValue)
 				{
 					case "3 Point Plane":
 						return (T)(object)(LevelingSystem.Probe3Points);
@@ -807,11 +828,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else if (typeof(T) == typeof(bool))
 			{
-				return (T)(object)(this.GetValue(settingsKey) == "1");
+				return (T)(object)(settingsValue == "1");
 			}
 			else if (typeof(T) == typeof(int))
 			{
-				int.TryParse(this.GetValue(settingsKey), out int result);
+				int.TryParse(settingsValue, out int result);
 				return (T)(object)(result);
 			}
 			else if (typeof(T) == typeof(Vector2))
@@ -828,20 +849,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else if (typeof(T) == typeof(double))
 			{
-				string settingsStringh = GetValue(settingsKey);
-				if (settingsStringh.Contains("%"))
+				if (settingsValue.Contains("%"))
 				{
-					string onlyNumber = settingsStringh.Replace("%", "");
+					string onlyNumber = settingsValue.Replace("%", "");
 					double ratio = Helpers.ParseDouble(onlyNumber) / 100;
 
 					if (settingsKey == SettingsKey.first_layer_height)
 					{
-						return (T)(object)(GetValue<double>(SettingsKey.layer_height) * ratio);
+						return (T)(object)(this.GetValue<double>(SettingsKey.layer_height) * ratio);
 					}
 					else if (settingsKey == SettingsKey.first_layer_extrusion_width
 						|| settingsKey == SettingsKey.external_perimeter_extrusion_width)
 					{
-						return (T)(object)(GetValue<double>(SettingsKey.nozzle_diameter) * ratio);
+						return (T)(object)(this.GetValue<double>(SettingsKey.nozzle_diameter) * ratio);
 					}
 
 					return (T)(object)(ratio);
@@ -849,8 +869,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				else if (settingsKey == SettingsKey.first_layer_extrusion_width
 					|| settingsKey == SettingsKey.external_perimeter_extrusion_width)
 				{
-					double.TryParse(this.GetValue(settingsKey), out double extrusionResult);
-					return (T)(object)(extrusionResult == 0 ? GetValue<double>(SettingsKey.nozzle_diameter) : extrusionResult);
+					double.TryParse(settingsValue, out double extrusionResult);
+					return (T)(object)(extrusionResult == 0 ? this.GetValue<double>(SettingsKey.nozzle_diameter) : extrusionResult);
 				}
 
 				if (settingsKey == SettingsKey.bed_temperature
@@ -859,7 +879,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return (T)Convert.ChangeType(0, typeof(double));
 				}
 
-				double.TryParse(this.GetValue(settingsKey), out double result);
+				double.TryParse(settingsValue, out double result);
 				return (T)(object)(result);
 			}
 			else if (typeof(T) == typeof(BedShape))

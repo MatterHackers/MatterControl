@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				allUiFields = new Dictionary<string, UIField>();
 
-				var errors = printer.ValidateSettings();
+				var errors = printer.ValidateSettings(settingsContext);
 
 				// Loop over categories creating a tab for each
 				foreach (var category in settingsSection.Categories)
@@ -903,7 +903,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void Printer_SettingChanged(object s, StringEventArgs stringEvent)
 		{
-			var errors = printer.ValidateSettings();
+			var errors = printer.ValidateSettings(settingsContext);
 
 			if (stringEvent != null)
 			{
