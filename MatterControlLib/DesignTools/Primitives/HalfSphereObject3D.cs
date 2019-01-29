@@ -34,6 +34,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -88,25 +89,21 @@ namespace MatterHackers.MatterControl.DesignTools
 				LatitudeSides = agg_basics.Clamp(LatitudeSides, 3, 180, ref changed);
 				LongitudeSides = agg_basics.Clamp(LongitudeSides, 3, 360, ref changed);
 
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				var radius = Diameter / 2;
-				var angleDelta = MathHelper.Tau / 4 / LatitudeSides;
-				var angle = 0.0;
-				var path = new VertexStorage();
-				path.MoveTo(0, 0);
-				path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-				for (int i = 0; i < LatitudeSides; i++)
+				using (new CenterAndHeightMantainer(this))
 				{
-					angle += angleDelta;
+					var radius = Diameter / 2;
+					var angleDelta = MathHelper.Tau / 4 / LatitudeSides;
+					var angle = 0.0;
+					var path = new VertexStorage();
+					path.MoveTo(0, 0);
 					path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-				}
+					for (int i = 0; i < LatitudeSides; i++)
+					{
+						angle += angleDelta;
+						path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
+					}
 
-				Mesh = VertexSourceToMesh.Revolve(path, LongitudeSides);
-				if (aabb.ZSize > 0)
-				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
+					Mesh = VertexSourceToMesh.Revolve(path, LongitudeSides);
 				}
 			}
 

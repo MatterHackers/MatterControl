@@ -36,6 +36,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
@@ -87,18 +88,15 @@ namespace MatterHackers.MatterControl.DesignTools
 				(reporter, cancellationToken) =>
 				{
 					Sides = agg_basics.Clamp(Sides, 3, 360, ref changed);
-					var aabb = this.GetAxisAlignedBoundingBox();
-
-					var path = new VertexStorage();
-					path.MoveTo(0, 0);
-					path.LineTo(Diameter / 2, 0);
-					path.LineTo(0, Height);
-
-					Mesh = VertexSourceToMesh.Revolve(path, Sides);
-					if (aabb.ZSize > 0)
+					using (new CenterAndHeightMantainer(this))
 					{
-						// If the part was already created and at a height, maintain the height.
-						PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
+
+						var path = new VertexStorage();
+						path.MoveTo(0, 0);
+						path.LineTo(Diameter / 2, 0);
+						path.LineTo(0, Height);
+
+						Mesh = VertexSourceToMesh.Revolve(path, Sides);
 					}
 					rebuildLock.Dispose();
 					Invalidate(InvalidateType.Children);

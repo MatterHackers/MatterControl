@@ -77,19 +77,15 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())
 			{
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				var path = new VertexStorage();
-				path.MoveTo(0, 0);
-				path.LineTo(Width, 0);
-				path.LineTo(0, Height);
-
-				Mesh = VertexSourceToMesh.Extrude(path, Depth);
-				Mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
-				if (aabb.ZSize > 0)
+				using (new CenterAndHeightMantainer(this))
 				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
+					var path = new VertexStorage();
+					path.MoveTo(0, 0);
+					path.LineTo(Width, 0);
+					path.LineTo(0, Height);
+
+					Mesh = VertexSourceToMesh.Extrude(path, Depth);
+					Mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
 				}
 			}
 

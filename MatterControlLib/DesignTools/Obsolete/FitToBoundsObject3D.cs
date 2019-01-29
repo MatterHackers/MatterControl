@@ -169,14 +169,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())
 			{
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				AdjustChildSize(null, null);
-
-				if (aabb.ZSize > 0)
+				using (new CenterAndHeightMantainer(this))
 				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
+					AdjustChildSize(null, null);
 				}
 			}
 

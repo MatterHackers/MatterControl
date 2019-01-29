@@ -73,59 +73,54 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			using (RebuildLock())
 			{
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				this.Children.Modify(list =>
+				using (new CenterAndHeightMantainer(this))
+				{
+					this.Children.Modify(list =>
 				{
 					list.Clear();
 				});
 
-				var brailleLetter = new BrailleObject3D()
-				{
-					TextToEncode = Letter.ToString(),
-					BaseHeight = BaseHeight,
-				};
-				brailleLetter.Rebuild(null);
-				this.Children.Add(brailleLetter);
+					var brailleLetter = new BrailleObject3D()
+					{
+						TextToEncode = Letter.ToString(),
+						BaseHeight = BaseHeight,
+					};
+					brailleLetter.Rebuild(null);
+					this.Children.Add(brailleLetter);
 
-				var textObject = new TextObject3D()
-				{
-					PointSize = 46,
-					Color = Color.LightBlue,
-					NameToWrite = Letter.ToString(),
-					Height = BaseHeight
-				};
+					var textObject = new TextObject3D()
+					{
+						PointSize = 46,
+						Color = Color.LightBlue,
+						NameToWrite = Letter.ToString(),
+						Height = BaseHeight
+					};
 
-				textObject.Invalidate(InvalidateType.Properties);
-				IObject3D letterObject = new RotateObject3D(textObject, MathHelper.Tau / 4);
-				letterObject = new AlignObject3D(letterObject, FaceAlign.Bottom | FaceAlign.Front, brailleLetter, FaceAlign.Top | FaceAlign.Front, 0, 0, 3.5);
-				letterObject = new SetCenterObject3D(letterObject, brailleLetter.GetCenter(), true, false, false);
-				this.Children.Add(letterObject);
+					textObject.Invalidate(InvalidateType.Properties);
+					IObject3D letterObject = new RotateObject3D(textObject, MathHelper.Tau / 4);
+					letterObject = new AlignObject3D(letterObject, FaceAlign.Bottom | FaceAlign.Front, brailleLetter, FaceAlign.Top | FaceAlign.Front, 0, 0, 3.5);
+					letterObject = new SetCenterObject3D(letterObject, brailleLetter.GetCenter(), true, false, false);
+					this.Children.Add(letterObject);
 
-				var basePath = new RoundedRect(0, 0, 22, 34, 3)
-				{
-					ResolutionScale = 10
-				};
+					var basePath = new RoundedRect(0, 0, 22, 34, 3)
+					{
+						ResolutionScale = 10
+					};
 
-				IObject3D basePlate = new Object3D()
-				{
-					Mesh = VertexSourceToMesh.Extrude(basePath, BaseHeight),
-					Matrix = Matrix4X4.CreateRotationX(MathHelper.Tau / 4)
-				};
+					IObject3D basePlate = new Object3D()
+					{
+						Mesh = VertexSourceToMesh.Extrude(basePath, BaseHeight),
+						Matrix = Matrix4X4.CreateRotationX(MathHelper.Tau / 4)
+					};
 
-				basePlate = new AlignObject3D(basePlate, FaceAlign.Bottom | FaceAlign.Back, brailleLetter, FaceAlign.Bottom | FaceAlign.Back);
-				basePlate = new SetCenterObject3D(basePlate, brailleLetter.GetCenter(), true, false, false);
-				this.Children.Add(basePlate);
+					basePlate = new AlignObject3D(basePlate, FaceAlign.Bottom | FaceAlign.Back, brailleLetter, FaceAlign.Bottom | FaceAlign.Back);
+					basePlate = new SetCenterObject3D(basePlate, brailleLetter.GetCenter(), true, false, false);
+					this.Children.Add(basePlate);
 
-				IObject3D underline = CubeObject3D.Create(basePlate.XSize(), .2, 1);
-				underline = new AlignObject3D(underline, FaceAlign.Bottom, brailleLetter, FaceAlign.Top);
-				underline = new AlignObject3D(underline, FaceAlign.Back | FaceAlign.Left, basePlate, FaceAlign.Front | FaceAlign.Left, 0, .01);
-				this.Children.Add(underline);
-
-				if (aabb.ZSize > 0)
-				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
+					IObject3D underline = CubeObject3D.Create(basePlate.XSize(), .2, 1);
+					underline = new AlignObject3D(underline, FaceAlign.Bottom, brailleLetter, FaceAlign.Top);
+					underline = new AlignObject3D(underline, FaceAlign.Back | FaceAlign.Left, basePlate, FaceAlign.Front | FaceAlign.Left, 0, .01);
+					this.Children.Add(underline);
 				}
 			}
 

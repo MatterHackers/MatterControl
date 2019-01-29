@@ -62,26 +62,28 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					this.DebugDepth("Rebuild");
 
-					var newChildren = new List<IObject3D>();
-
-					newChildren.Add(SourceContainer);
-
-					var arrayItem = SourceContainer.Children.First();
-
-					// add in all the array items
-					for (int i = 0; i < Math.Max(Count, 1); i++)
+					using (new CenterAndHeightMantainer(this))
 					{
-						var next = arrayItem.Clone();
-						next.Matrix = arrayItem.Matrix * Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance * i);
-						newChildren.Add(next);
+						var newChildren = new List<IObject3D>();
+
+						newChildren.Add(SourceContainer);
+
+						var arrayItem = SourceContainer.Children.First();
+
+						// add in all the array items
+						for (int i = 0; i < Math.Max(Count, 1); i++)
+						{
+							var next = arrayItem.Clone();
+							next.Matrix = arrayItem.Matrix * Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance * i);
+							newChildren.Add(next);
+						}
+
+						Children.Modify(list =>
+						{
+							list.Clear();
+							list.AddRange(newChildren);
+						});
 					}
-
-					Children.Modify(list =>
-					{
-						list.Clear();
-						list.AddRange(newChildren);
-					});
-
 					SourceContainer.Visible = false;
 					rebuildLock.Dispose();
 					Invalidate(InvalidateType.Children);

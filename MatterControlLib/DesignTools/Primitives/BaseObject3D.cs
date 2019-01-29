@@ -38,6 +38,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
@@ -67,22 +68,17 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			using (RebuildLock())
 			{
-				var startingAabb = this.GetAxisAlignedBoundingBox();
-
-				var firstChild = this.Children.FirstOrDefault();
-
-				// only keep the first object
-				this.Children.Modify(list =>
+				using (new CenterAndHeightMantainer(this))
 				{
-					list.Clear();
-				// add back in the sourceContainer
-				list.Add(firstChild);
-				});
+					var firstChild = this.Children.FirstOrDefault();
 
-				if (startingAabb.ZSize > 0)
-				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, startingAabb.MinXYZ.Z);
+					// only keep the first object
+					this.Children.Modify(list =>
+					{
+						list.Clear();
+						// add back in the sourceContainer
+						list.Add(firstChild);
+					});
 				}
 			}
 
@@ -145,29 +141,24 @@ namespace MatterHackers.MatterControl.DesignTools
 				null,
 				(reporter, cancellationToken) =>
 				{
-					var startingAabb = this.GetAxisAlignedBoundingBox();
-
-					var firstChild = this.Children.FirstOrDefault();
-
-					// remove the base mesh we added
-					this.Children.Modify(list =>
+					using (new CenterAndHeightMantainer(this))
 					{
-						list.Clear();
+						var firstChild = this.Children.FirstOrDefault();
+
+						// remove the base mesh we added
+						this.Children.Modify(list =>
+						{
+							list.Clear();
 						// add back in the sourceContainer
 						list.Add(firstChild);
-					});
+						});
 
-					// and create the base
-					var vertexSource = this.VertexSource;
+						// and create the base
+						var vertexSource = this.VertexSource;
 
-					// Convert VertexSource into expected Polygons
-					Polygons polygonShape = (vertexSource == null) ? null : vertexSource.CreatePolygons();
-					GenerateBase(polygonShape, firstChild.GetAxisAlignedBoundingBox().MinXYZ.Z);
-
-					if (startingAabb.ZSize > 0)
-					{
-						// If the part was already created and at a height, maintain the height.
-						PlatingHelper.PlaceMeshAtHeight(this, startingAabb.MinXYZ.Z);
+						// Convert VertexSource into expected Polygons
+						Polygons polygonShape = (vertexSource == null) ? null : vertexSource.CreatePolygons();
+						GenerateBase(polygonShape, firstChild.GetAxisAlignedBoundingBox().MinXYZ.Z);
 					}
 					rebuildLock.Dispose();
 					Invalidate(InvalidateType.Children);
