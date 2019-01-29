@@ -34,6 +34,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -78,25 +79,20 @@ namespace MatterHackers.MatterControl.DesignTools
 			using (RebuildLock())
 			{
 				Sides = agg_basics.Clamp(Sides, 3, 180, ref changed);
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				var path = new VertexStorage();
-				path.MoveTo(Width / 2, 0);
-
-				for (int i = 1; i < Sides; i++)
+				using (new CenterAndHeightMantainer(this))
 				{
-					var angle = MathHelper.Tau * i / 2 / (Sides - 1);
-					path.LineTo(Math.Cos(angle) * Width / 2, Math.Sin(angle) * Width / 2);
-				}
+					var path = new VertexStorage();
+					path.MoveTo(Width / 2, 0);
 
-				var mesh = VertexSourceToMesh.Extrude(path, Depth);
-				mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
-				Mesh = mesh;
+					for (int i = 1; i < Sides; i++)
+					{
+						var angle = MathHelper.Tau * i / 2 / (Sides - 1);
+						path.LineTo(Math.Cos(angle) * Width / 2, Math.Sin(angle) * Width / 2);
+					}
 
-				if (aabb.ZSize > 0)
-				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
+					var mesh = VertexSourceToMesh.Extrude(path, Depth);
+					mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
+					Mesh = mesh;
 				}
 			}
 

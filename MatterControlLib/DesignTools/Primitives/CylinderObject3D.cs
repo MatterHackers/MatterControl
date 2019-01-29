@@ -143,33 +143,28 @@ namespace MatterHackers.MatterControl.DesignTools
 				Height = Math.Max(Height, .001);
 				Diameter = Math.Max(Diameter, .1);
 
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				if (!Advanced)
+				using (new CenterAndHeightMantainer(this))
 				{
-					var path = new VertexStorage();
-					path.MoveTo(0, -Height / 2);
-					path.LineTo(Diameter / 2, -Height / 2);
-					path.LineTo(Diameter / 2, Height / 2);
-					path.LineTo(0, Height / 2);
+					if (!Advanced)
+					{
+						var path = new VertexStorage();
+						path.MoveTo(0, -Height / 2);
+						path.LineTo(Diameter / 2, -Height / 2);
+						path.LineTo(Diameter / 2, Height / 2);
+						path.LineTo(0, Height / 2);
 
-					Mesh = VertexSourceToMesh.Revolve(path, Sides);
-				}
-				else
-				{
-					var path = new VertexStorage();
-					path.MoveTo(0, -Height / 2);
-					path.LineTo(Diameter / 2, -Height / 2);
-					path.LineTo(DiameterTop / 2, Height / 2);
-					path.LineTo(0, Height / 2);
+						Mesh = VertexSourceToMesh.Revolve(path, Sides);
+					}
+					else
+					{
+						var path = new VertexStorage();
+						path.MoveTo(0, -Height / 2);
+						path.LineTo(Diameter / 2, -Height / 2);
+						path.LineTo(DiameterTop / 2, Height / 2);
+						path.LineTo(0, Height / 2);
 
-					Mesh = VertexSourceToMesh.Revolve(path, Sides, MathHelper.DegreesToRadians(StartingAngle), MathHelper.DegreesToRadians(EndingAngle));
-				}
-
-				if (aabb.ZSize > 0)
-				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
+						Mesh = VertexSourceToMesh.Revolve(path, Sides, MathHelper.DegreesToRadians(StartingAngle), MathHelper.DegreesToRadians(EndingAngle));
+					}
 				}
 			}
 

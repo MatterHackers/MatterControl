@@ -34,6 +34,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -93,40 +94,36 @@ namespace MatterHackers.MatterControl.DesignTools
 				Sides = agg_basics.Clamp(Sides, 3, 360, ref changed);
 				LatitudeSides = agg_basics.Clamp(LatitudeSides, 3, 360, ref changed);
 
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				var startingAngle = StartingAngle;
-				var endingAngle = EndingAngle;
-				var latitudeSides = LatitudeSides;
-				if (!Advanced)
+				using (new CenterAndHeightMantainer(this))
 				{
-					startingAngle = 0;
-					endingAngle = 360;
-					latitudeSides = Sides;
-				}
+					var startingAngle = StartingAngle;
+					var endingAngle = EndingAngle;
+					var latitudeSides = LatitudeSides;
+					if (!Advanced)
+					{
+						startingAngle = 0;
+						endingAngle = 360;
+						latitudeSides = Sides;
+					}
 
-				var path = new VertexStorage();
-				var angleDelta = MathHelper.Tau / 2 / latitudeSides;
-				var angle = -MathHelper.Tau / 4;
-				var radius = Diameter / 2;
-				path.MoveTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-				for (int i = 0; i < latitudeSides; i++)
-				{
-					angle += angleDelta;
-					path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-				}
+					var path = new VertexStorage();
+					var angleDelta = MathHelper.Tau / 2 / latitudeSides;
+					var angle = -MathHelper.Tau / 4;
+					var radius = Diameter / 2;
+					path.MoveTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
+					for (int i = 0; i < latitudeSides; i++)
+					{
+						angle += angleDelta;
+						path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
+					}
 
-				var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
-				var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
-				var steps = Math.Max(1, (int)(Sides * MathHelper.Tau / Math.Abs(MathHelper.GetDeltaAngle(startAngle, endAngle)) + .5));
-				Mesh = VertexSourceToMesh.Revolve(path,
-					steps,
-					startAngle,
-					endAngle);
-				if (aabb.ZSize > 0)
-				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
+					var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
+					var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
+					var steps = Math.Max(1, (int)(Sides * MathHelper.Tau / Math.Abs(MathHelper.GetDeltaAngle(startAngle, endAngle)) + .5));
+					Mesh = VertexSourceToMesh.Revolve(path,
+						steps,
+						startAngle,
+						endAngle);
 				}
 			}
 

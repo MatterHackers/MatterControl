@@ -35,6 +35,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
@@ -98,33 +99,28 @@ namespace MatterHackers.MatterControl.DesignTools
 				InnerDiameter = agg_basics.Clamp(InnerDiameter, 0, OuterDiameter - .1, ref changed);
 				Sides = agg_basics.Clamp(Sides, 3, 360, ref changed);
 
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				var startingAngle = StartingAngle;
-				var endingAngle = EndingAngle;
-				if (!Advanced)
+				using (new CenterAndHeightMantainer(this))
 				{
-					startingAngle = 0;
-					endingAngle = 360;
-				}
+					var startingAngle = StartingAngle;
+					var endingAngle = EndingAngle;
+					if (!Advanced)
+					{
+						startingAngle = 0;
+						endingAngle = 360;
+					}
 
-				var innerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
+					var innerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
 
-				var path = new VertexStorage();
-				path.MoveTo(OuterDiameter / 2, -Height / 2);
-				path.LineTo(OuterDiameter / 2, Height / 2);
-				path.LineTo(innerDiameter / 2, Height / 2);
-				path.LineTo(innerDiameter / 2, -Height / 2);
-				path.LineTo(OuterDiameter / 2, -Height / 2);
+					var path = new VertexStorage();
+					path.MoveTo(OuterDiameter / 2, -Height / 2);
+					path.LineTo(OuterDiameter / 2, Height / 2);
+					path.LineTo(innerDiameter / 2, Height / 2);
+					path.LineTo(innerDiameter / 2, -Height / 2);
+					path.LineTo(OuterDiameter / 2, -Height / 2);
 
-				var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
-				var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
-				Mesh = VertexSourceToMesh.Revolve(path, Sides, startAngle, endAngle);
-
-				if (aabb.ZSize > 0)
-				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
+					var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
+					var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
+					Mesh = VertexSourceToMesh.Revolve(path, Sides, startAngle, endAngle);
 				}
 			}
 

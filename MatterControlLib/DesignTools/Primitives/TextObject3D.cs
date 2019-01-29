@@ -121,37 +121,32 @@ namespace MatterHackers.MatterControl.DesignTools
 				null,
 				(reporter, cancellationToken) =>
 				{
-					var aabb = (this).GetAxisAlignedBoundingBox();
-
-					this.Children.Modify((List<IObject3D> list) =>
+					using (new CenterAndHeightMantainer(this))
 					{
-						list.Clear();
-
-						var offest = 0.0;
-						double pointsToMm = 0.352778;
-						foreach (var letter in NameToWrite.ToCharArray())
+						this.Children.Modify((List<IObject3D> list) =>
 						{
-							var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.GetTypeFace(Font), PointSize))
+							list.Clear();
+
+							var offest = 0.0;
+							double pointsToMm = 0.352778;
+							foreach (var letter in NameToWrite.ToCharArray())
 							{
-								ResolutionScale = 10
-							};
-							var scalledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
-							IObject3D letterObject = new Object3D()
-							{
-								Mesh = VertexSourceToMesh.Extrude(scalledLetterPrinter, Height)
-							};
+								var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.GetTypeFace(Font), PointSize))
+								{
+									ResolutionScale = 10
+								};
+								var scalledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
+								IObject3D letterObject = new Object3D()
+								{
+									Mesh = VertexSourceToMesh.Extrude(scalledLetterPrinter, Height)
+								};
 
-							letterObject.Matrix = Matrix4X4.CreateTranslation(offest, 0, 0);
-							list.Add(letterObject);
+								letterObject.Matrix = Matrix4X4.CreateTranslation(offest, 0, 0);
+								list.Add(letterObject);
 
-							offest += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
-						}
-					});
-
-					if (aabb.ZSize > 0)
-					{
-						// If the part was already created and at a height, maintain the height.
-						PlatingHelper.PlaceMeshAtHeight(this, (double)aabb.MinXYZ.Z);
+								offest += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
+							}
+						});
 					}
 
 					rebuildLock.Dispose();
