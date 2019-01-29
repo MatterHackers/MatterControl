@@ -109,6 +109,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					Matrix = currentMatrix;
 					SourceContainer.Visible = false;
 					rebuildLocks.Dispose();
+					Invalidate(InvalidateType.Children);
 					return Task.CompletedTask;
 				});
 		}
