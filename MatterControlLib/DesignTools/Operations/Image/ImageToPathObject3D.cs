@@ -310,19 +310,19 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			this.DebugDepth("Invalidate");
 
-			if (invalidateType.InvalidateType == InvalidateType.Image
+			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Image)
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
 				await Rebuild();
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Path, invalidateType.UndoBuffer));
+				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Path));
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
 				UpdateHistogramDisplay();
 				await Rebuild();
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Path, invalidateType.UndoBuffer));
+				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Path));
 			}
 		}
 
@@ -384,11 +384,11 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (propertyUpdated)
 					{
 						UpdateHistogramDisplay();
-						Invalidate(new InvalidateArgs(this, InvalidateType.Properties, null));
+						Invalidate(new InvalidateArgs(this, InvalidateType.Properties));
 					}
 
 					rebuildLock.Dispose();
-					Invalidate(new InvalidateArgs(this, InvalidateType.Path, null));
+					Invalidate(new InvalidateArgs(this, InvalidateType.Path));
 					return Task.CompletedTask;
 				});
 		}

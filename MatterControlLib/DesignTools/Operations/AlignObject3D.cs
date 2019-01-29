@@ -296,23 +296,24 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return positionToAlignTo + extraOffset;
 		}
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild();
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Matrix, invalidateType.UndoBuffer));
+				await Rebuild();
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild();
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Matrix, invalidateType.UndoBuffer));
+				await Rebuild();
 			}
+
+			// and also always pass back the actual type
+			base.OnInvalidate(invalidateType);
 		}
 
 		public override Task Rebuild()
@@ -442,6 +443,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}));
 			}
 
+			base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Matrix));
 			return Task.CompletedTask;
 		}
 
@@ -464,7 +466,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				base.Remove(undoBuffer);
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+			Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 		}
 
 		public void UpdateControls(PublicPropertyChange change)

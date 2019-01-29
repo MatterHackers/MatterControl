@@ -202,7 +202,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			imageObject.Invalidated += (s, e) =>
 			{
-				if (e.InvalidateType == InvalidateType.Image
+				if (e.InvalidateType.HasFlag(InvalidateType.Image)
 					&& activeImage != imageObject.Image)
 				{
 					thumbnailImage = SetImage(theme, imageObject);

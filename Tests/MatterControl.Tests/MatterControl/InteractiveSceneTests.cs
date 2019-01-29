@@ -48,15 +48,6 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("InteractiveScene")]
 		public void CombineTests()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-
-			// Automation runner must do as much as program.cs to spin up platform
-			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
-			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
-			AppContext.Platform.InitPluginFinder();
-			AppContext.Platform.ProcessCommandline();
-
 			// Combine has correct results
 			{
 				var root = new Object3D();
@@ -539,7 +530,7 @@ namespace MatterControl.Tests.MatterControl
 			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
 			AppContext.Platform.ProcessCommandline();
 
-			//DoAabbCalculatedCorrectlyForCurvedFitObjects();
+			DoAabbCalculatedCorrectlyForCurvedFitObjects();
 		}
 
 		public async void DoAabbCalculatedCorrectlyForCurvedFitObjects()
@@ -560,7 +551,7 @@ namespace MatterControl.Tests.MatterControl
 			var curveAabb = curve.GetAxisAlignedBoundingBox();
 			root.Children.Add(curve);
 			var rootAabb = root.GetAxisAlignedBoundingBox();
-			Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-25, 4, -10), new Vector3(25, 15, 10)), 1.0));
+			Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-17.5, -6.4, -10), new Vector3(17.5, 11.9, 10)), 1.0));
 		}
 	}
 }

@@ -652,7 +652,6 @@ namespace MatterHackers.MatterControl
 						var selectedItem = scene.SelectedItem;
 						var align = new AlignObject3D();
 						align.AddSelectionAsChildren(scene, selectedItem);
-						align.Invalidate(new InvalidateArgs(align, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("align_left_dark.png", 16, 16, theme.InvertIcons).SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
@@ -722,7 +721,6 @@ namespace MatterHackers.MatterControl
 					{
 						var array = new ArrayLinearObject3D();
 						array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
-						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
@@ -735,7 +733,6 @@ namespace MatterHackers.MatterControl
 					{
 						var array = new ArrayRadialObject3D();
 						array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
-						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_radial.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
@@ -748,7 +745,6 @@ namespace MatterHackers.MatterControl
 					{
 						var array = new ArrayAdvancedObject3D();
 						array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
-						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_advanced.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
@@ -1133,7 +1129,7 @@ namespace MatterHackers.MatterControl
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { path }));
 							scene.SelectedItem = null;
 							scene.SelectedItem = path;
-							path.Invalidate(new InvalidateArgs(path, InvalidateType.Properties, null));
+							path.Invalidate(new InvalidateArgs(path, InvalidateType.Properties));
 						}
 
 						return Task.CompletedTask;
@@ -1249,7 +1245,7 @@ namespace MatterHackers.MatterControl
 						scene.SelectedItem = null;
 						scene.SelectedItem = component;
 						// Invalidate image to kick off rebuild of ImageConverter stack 
-						imageObject.Invalidate(new InvalidateArgs(imageObject, InvalidateType.Image, null));
+						imageObject.Invalidate(new InvalidateArgs(imageObject, InvalidateType.Image));
 
 						return Task.CompletedTask;
 					},
@@ -1373,7 +1369,7 @@ namespace MatterHackers.MatterControl
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { extrude }));
 							scene.SelectedItem = null;
 							scene.SelectedItem = extrude;
-							extrude.Invalidate(new InvalidateArgs(extrude, InvalidateType.Properties, null));
+							extrude.Invalidate(new InvalidateArgs(extrude, InvalidateType.Properties));
 						}
 
 						return Task.CompletedTask;
@@ -1401,7 +1397,7 @@ namespace MatterHackers.MatterControl
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { smoothPath }));
 							scene.SelectedItem = null;
 							scene.SelectedItem = smoothPath;
-							smoothPath.Invalidate(new InvalidateArgs(smoothPath, InvalidateType.Properties, null));
+							smoothPath.Invalidate(new InvalidateArgs(smoothPath, InvalidateType.Properties));
 						}
 
 						return Task.CompletedTask;
@@ -1429,7 +1425,7 @@ namespace MatterHackers.MatterControl
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { inflatePath }));
 							scene.SelectedItem = null;
 							scene.SelectedItem = inflatePath;
-							inflatePath.Invalidate(new InvalidateArgs(inflatePath, InvalidateType.Properties, null));
+							inflatePath.Invalidate(new InvalidateArgs(inflatePath, InvalidateType.Properties));
 						}
 
 						return Task.CompletedTask;
@@ -1455,7 +1451,7 @@ namespace MatterHackers.MatterControl
 						};
 						newChild.Matrix = Matrix4X4.Identity;
 						baseMesh.Children.Add(newChild);
-						baseMesh.Invalidate(new InvalidateArgs(baseMesh, InvalidateType.Properties, null));
+						baseMesh.Invalidate(new InvalidateArgs(baseMesh, InvalidateType.Properties));
 
 						scene.UndoBuffer.AddAndDo(
 							new ReplaceCommand(

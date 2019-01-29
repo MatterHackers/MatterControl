@@ -97,27 +97,27 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix, null));
+			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
 
 			return Task.CompletedTask;
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
 				Rebuild();
-				invalidateType = new InvalidateArgs(this, InvalidateType.Matrix, invalidateType.UndoBuffer);
+				invalidateType = new InvalidateArgs(this, InvalidateType.Matrix);
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
 				Rebuild();
-				invalidateType = new InvalidateArgs(this, InvalidateType.Matrix, invalidateType.UndoBuffer);
+				invalidateType = new InvalidateArgs(this, InvalidateType.Matrix);
 			}
 
 			base.OnInvalidate(invalidateType);

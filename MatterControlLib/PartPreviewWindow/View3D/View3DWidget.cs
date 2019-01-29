@@ -1069,7 +1069,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.deferEditorTillMouseUp = false;
 				Scene_SelectionChanged(null, null);
 
-				Scene.Invalidate(new InvalidateArgs(null, InvalidateType.Content, null));
+				Scene.Invalidate(new InvalidateArgs(null, InvalidateType.Children));
 
 				// Set focus to View3DWidget after drag-drop
 				UiThread.RunOnIdle(this.Focus);
@@ -1886,14 +1886,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Scene_Invalidated(object sender, InvalidateArgs e)
 		{
-			if (e.InvalidateType == InvalidateType.Content
+			if (e.InvalidateType.HasFlag(InvalidateType.Children)
 				&& !rebuildTreePending)
 			{
 				rebuildTreePending = true;
 				UiThread.RunOnIdle(this.RebuildTree);
 			}
 
-			if (e.InvalidateType == InvalidateType.Name)
+			if (e.InvalidateType.HasFlag(InvalidateType.Name))
 			{
 				// clear and restore the selection so we have the name change
 				var lastSelectedItem = Scene.SelectedItem;

@@ -41,6 +41,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.VectorMath;
 
@@ -287,40 +288,31 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return item.GetAxisAlignedBoundingBox().ZSize;
 		}
 
-		public static void AddSelectionAsChildren(this IObject3D newParent, InteractiveScene scene, IObject3D selectedItem)
+		public static async void AddSelectionAsChildren(this IObject3D newParent, InteractiveScene scene, IObject3D selectedItem)
 		{
 			if (selectedItem != null)
 			{
-				List<IObject3D> itemsToReplace;
+				var selectedItems = scene.GetSelectedItems();
 
-				if (selectedItem is SelectionGroupObject3D)
+				using (new SelectionMaintainer(scene))
 				{
-					itemsToReplace = selectedItem.Children.ToList();
-					foreach (var child in itemsToReplace)
+					using (selectedItem.Parent.RebuildLock())
 					{
-						newParent.Children.Add(child.Clone());
+						foreach (var item in selectedItems)
+						{
+							newParent.Children.Add(item.Clone());
+						}
+
+						newParent.MakeNameNonColliding();
+
+						scene.UndoBuffer.AddAndDo(
+							new ReplaceCommand(
+								selectedItems,
+								new[] { newParent }));
 					}
+
+					await newParent.Rebuild();
 				}
-				else
-				{
-					itemsToReplace = new List<IObject3D> { selectedItem };
-					newParent.Children.Add(selectedItem.Clone());
-				}
-
-				scene.SelectedItem = null;
-
-				newParent.MakeNameNonColliding();
-
-				scene.UndoBuffer.AddAndDo(
-					new ReplaceCommand(
-						itemsToReplace,
-						new[] { newParent }));
-
-				var topParent = newParent.Parents<IObject3D>().LastOrDefault((i) => i.Parent != null);
-				UiThread.RunOnIdle(() =>
-				{
-					scene.SelectedItem = topParent != null ? topParent : newParent;
-				});
 			}
 		}
 
