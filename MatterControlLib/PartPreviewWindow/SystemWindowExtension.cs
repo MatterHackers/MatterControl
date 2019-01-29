@@ -133,8 +133,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						var altXPosition = GetXAnchor(anchor.AltMate, popup.AltMate, popup.Widget, bounds);
 
-						// Prefer clipping right edge to left - empowers user to resize window to reveal contents
-						if ((anchorLeft + altXPosition).X > -15)
+						var altScreenPosition = anchorLeft + altXPosition;
+
+						// Prefer clipping on edge revealed by resize
+						if ((popup.AltMate.Right && altScreenPosition.X > -15)
+							|| (popup.AltMate.Left && altScreenPosition.X + popup.Widget.Width < systemWindow.Width))
 						{
 							xPosition = altXPosition;
 
