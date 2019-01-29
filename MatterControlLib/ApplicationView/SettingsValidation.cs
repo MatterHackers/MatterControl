@@ -47,9 +47,12 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		/// <param name="printer">The printer to validate</param>
 		/// <returns>A list of all warnings and errors</returns>
-		public static List<ValidationError> ValidateSettings(this PrinterConfig printer)
+		public static List<ValidationError> ValidateSettings(this PrinterConfig printer, SettingsContext settings = null)
 		{
-			var settings = printer.Settings;
+			if (settings == null)
+			{
+				settings = new SettingsContext(printer, null, NamedSettingsLayers.All);
+			}
 
 			var errors = new List<ValidationError>();
 

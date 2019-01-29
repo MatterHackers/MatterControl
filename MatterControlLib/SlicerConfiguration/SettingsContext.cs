@@ -85,5 +85,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			return printer.Settings.ParseShowString(enableIfSet);
 		}
+
+		public T GetValue<T>(string slicerConfigName) where T : IConvertible
+		{
+			return printer.Settings.GetValue<T>(slicerConfigName, this.layerCascade);
+		}
 	}
 }
