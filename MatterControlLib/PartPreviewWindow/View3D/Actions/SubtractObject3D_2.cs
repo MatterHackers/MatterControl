@@ -27,11 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-/*********************************************************************/
-/**************************** OBSOLETE! ******************************/
-/************************ USE NEWER VERSION **************************/
-/*********************************************************************/
-
 using System;
 using System.Linq;
 using System.Threading;
@@ -41,14 +36,13 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.DesignTools.Operations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	[Obsolete("Use SubtractObject3D_2 instead", false)]
-	[ShowUpdateButton]
-	public class SubtractObject3D : MeshWrapperObject3D, ISelectableChildContainer
+	public class SubtractObject3D_2 : OperationSourceContainerObject3D, ISelectableChildContainer
 	{
-		public SubtractObject3D()
+		public SubtractObject3D_2()
 		{
 			Name = "Subtract";
 		}
@@ -109,9 +103,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			Subtract(CancellationToken.None, null);
 		}
 
-		public void Subtract(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
+		private void Subtract(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
 		{
-			ResetMeshWrapperMeshes(Object3DPropertyFlags.All, cancellationToken);
+			SourceContainer.Visible = true;
+			RemoveAllButSource();
+
+			var participants = SourceContainer.VisibleMeshes();
+			if (participants.Count() < 2)
+			{
+				if (participants.Count() == 1)
+				{
+					var newMesh = new Object3D();
+					newMesh.CopyProperties(participants.First(), Object3DPropertyFlags.All);
+					newMesh.Mesh = participants.First().Mesh;
+					this.Children.Add(newMesh);
+					SourceContainer.Visible = false;
+				}
+				return;
+			}
 
 			bool ItemInSubtractList(IObject3D item)
 			{
@@ -174,6 +183,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					}
 
 					remove.obj3D.Visible = false;
+					SourceContainer.Visible = false;
 				}
 			}
 		}
