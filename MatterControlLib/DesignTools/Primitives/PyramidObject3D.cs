@@ -28,11 +28,12 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterHackers.Agg;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -49,7 +50,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var item = new PyramidObject3D();
 
-			item.Rebuild(null);
+			item.Rebuild();
 			return item;
 		}
 
@@ -62,7 +63,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else
 			{
@@ -70,30 +71,26 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		override public Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())
 			{
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				var path = new VertexStorage();
-				path.MoveTo(0, 0);
-				path.LineTo(Math.Sqrt(2), 0);
-				path.LineTo(0, Height);
-
-				var mesh = VertexSourceToMesh.Revolve(path, 4);
-				mesh.Transform(Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(45)) * Matrix4X4.CreateScale(Width / 2, Depth / 2, 1));
-				Mesh = mesh;
-
-				if (aabb.ZSize > 0)
+				using (new CenterAndHeightMantainer(this))
 				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
+					var path = new VertexStorage();
+					path.MoveTo(0, 0);
+					path.LineTo(Math.Sqrt(2), 0);
+					path.LineTo(0, Height);
+
+					var mesh = VertexSourceToMesh.Revolve(path, 4);
+					mesh.Transform(Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(45)) * Matrix4X4.CreateScale(Width / 2, Depth / 2, 1));
+					Mesh = mesh;
 				}
 			}
 
 			Invalidate(InvalidateType.Mesh);
+			return Task.CompletedTask;
 		}
 	}
 }

@@ -329,7 +329,7 @@ namespace MatterControl.Tests.MatterControl
 				root.Children.Add(cube);
 				Assert.IsTrue(root.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)), .001));
 				root.Children.Remove(cube);
-				var fit = FitToBoundsObject3D_2.Create(cube);
+				var fit = FitToBoundsObject3D_2.Create(cube).Result;
 
 				fit.SizeX = 50;
 				fit.SizeY = 20;
@@ -343,7 +343,7 @@ namespace MatterControl.Tests.MatterControl
 			{
 				var root = new Object3D();
 				var cube = CubeObject3D.Create(20, 20, 20);
-				var fit = FitToBoundsObject3D_2.Create(cube);
+				var fit = FitToBoundsObject3D_2.Create(cube).Result;
 
 				fit.SizeX = 50;
 				fit.SizeY = 20;
@@ -388,7 +388,7 @@ namespace MatterControl.Tests.MatterControl
 			{
 				var root = new Object3D();
 				var cube = CubeObject3D.Create(20, 20, 20);
-				var fit = FitToBoundsObject3D_2.Create(cube);
+				var fit = FitToBoundsObject3D_2.Create(cube).Result;
 
 				fit.SizeX = 50;
 				fit.SizeY = 20;
@@ -537,7 +537,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			var root = new Object3D();
 			var cube = CubeObject3D.Create(20, 20, 20);
-			var fit = FitToBoundsObject3D_2.Create(cube);
+			var fit = FitToBoundsObject3D_2.Create(cube).Result;
 
 			fit.SizeX = 50;
 			fit.SizeY = 20;
@@ -551,7 +551,7 @@ namespace MatterControl.Tests.MatterControl
 			var curveAabb = curve.GetAxisAlignedBoundingBox();
 			root.Children.Add(curve);
 			var rootAabb = root.GetAxisAlignedBoundingBox();
-			Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-17.5, -6.4, -10), new Vector3(17.5, 11.9, 10)), 1.0));
+			Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-17.5, -9.2, -10), new Vector3(17.5, 9.2, 10)), 1.0));
 		}
 	}
 }

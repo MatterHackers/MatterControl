@@ -60,34 +60,32 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		private IObject3D FitBounds => Children.Last();
 
-		public static FitToBoundsObject3D_2 Create(IObject3D itemToFit)
+		public static async Task<FitToBoundsObject3D_2> Create(IObject3D itemToFit)
 		{
 			var fitToBounds = new FitToBoundsObject3D_2();
 			using (fitToBounds.RebuildLock())
 			{
-				var aabb = itemToFit.GetAxisAlignedBoundingBox();
-
-				var bounds = new Object3D()
+				using (new CenterAndHeightMantainer(itemToFit))
 				{
-					Visible = false,
-					Color = new Color(Color.Red, 100),
-					Mesh = PlatonicSolids.CreateCube()
-				};
+					var aabb = itemToFit.GetAxisAlignedBoundingBox();
+					var bounds = new Object3D()
+					{
+						Visible = false,
+						Color = new Color(Color.Red, 100),
+						Mesh = PlatonicSolids.CreateCube()
+					};
 
-				// add all the children
-				var scaleItem = new Object3D();
-				fitToBounds.Children.Add(scaleItem);
-				scaleItem.Children.Add(itemToFit);
-				fitToBounds.Children.Add(bounds);
+					// add all the children
+					var scaleItem = new Object3D();
+					fitToBounds.Children.Add(scaleItem);
+					scaleItem.Children.Add(itemToFit);
+					fitToBounds.Children.Add(bounds);
 
-				fitToBounds.boundsSize.X = aabb.XSize;
-				fitToBounds.boundsSize.Y = aabb.YSize;
-				fitToBounds.boundsSize.Z = aabb.ZSize;
-				fitToBounds.Rebuild();
-
-				var newAabbb = fitToBounds.GetAxisAlignedBoundingBox();
-				fitToBounds.Translate(aabb.Center - newAabbb.Center);
-				PlatingHelper.PlaceMeshAtHeight(fitToBounds, aabb.MinXYZ.Z);
+					fitToBounds.boundsSize.X = aabb.XSize;
+					fitToBounds.boundsSize.Y = aabb.YSize;
+					fitToBounds.boundsSize.Z = aabb.ZSize;
+					await fitToBounds.Rebuild();
+				}
 			}
 
 			return fitToBounds;
@@ -171,23 +169,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())
 			{
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				AdjustChildSize(null, null);
-
-				UpdateBoundsItem();
-
-				cacheRequestedMatrix = new Matrix4X4();
-				var after = this.GetAxisAlignedBoundingBox();
-
-				var newAabbb = this.GetAxisAlignedBoundingBox();
-
-				this.Translate(aabb.Center - newAabbb.Center);
-
-				if (aabb.ZSize > 0)
+				using (new CenterAndHeightMantainer(this))
 				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
+					AdjustChildSize(null, null);
+
+					UpdateBoundsItem();
+
+					cacheRequestedMatrix = new Matrix4X4();
+					var after = this.GetAxisAlignedBoundingBox();
 				}
 			}
 

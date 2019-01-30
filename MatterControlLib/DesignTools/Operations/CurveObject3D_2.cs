@@ -98,6 +98,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				propertyUpdated = true;
 			}
 
+			var originalAabb = this.GetAxisAlignedBoundingBox();
+
 			var rebuildLocks = this.RebuilLockAll();
 
 			return ApplicationController.Instance.Tasks.Execute(
@@ -105,84 +107,87 @@ namespace MatterHackers.MatterControl.DesignTools
 				null,
 				(reporter, cancellationToken) =>
 				{
-					this.Translate(-rotationOffset);
-					SourceContainer.Visible = true;
-					RemoveAllButSource();
-
-					// remember the current matrix then clear it so the parts will rotate at the original wrapped position
-					var currentMatrix = Matrix;
-					Matrix = Matrix4X4.Identity;
-
-					var aabb = SourceContainer.GetAxisAlignedBoundingBox();
-
-					if (Diameter == double.MinValue)
+					using (new CenterAndHeightMantainer(this))
 					{
-						// uninitialized set to a reasonable value
-						Diameter = (int)aabb.XSize;
-						// TODO: ensure that the editor display value is updated
-					}
+						this.Translate(-rotationOffset);
+						SourceContainer.Visible = true;
+						RemoveAllButSource();
 
-					if (Diameter > 0)
-					{
-						var radius = Diameter / 2;
-						var circumference = MathHelper.Tau * radius;
-						var rotationCenter = new Vector3(aabb.MinXYZ.X + (aabb.MaxXYZ.X - aabb.MinXYZ.X) * (StartPercent / 100), aabb.MaxXYZ.Y + radius, aabb.Center.Z);
+						// remember the current matrix then clear it so the parts will rotate at the original wrapped position
+						var currentMatrix = Matrix;
+						Matrix = Matrix4X4.Identity;
 
-						rotationOffset = rotationCenter;
-						if (!BendCcw)
+						var aabb = this.GetAxisAlignedBoundingBox();
+						if (Diameter == double.MinValue)
 						{
-							// fix the stored center so we draw correctly
-							rotationOffset.Y = aabb.MinXYZ.Y - radius;
+							// uninitialized set to a reasonable value
+							Diameter = (int)aabb.XSize;
+							// TODO: ensure that the editor display value is updated
 						}
 
-						foreach (var sourceItem in SourceContainer.VisibleMeshes())
+						if (Diameter > 0)
 						{
-							var originalMesh = sourceItem.Mesh;
-							var transformedMesh = originalMesh.Copy(CancellationToken.None);
-							var itemMatrix = sourceItem.WorldMatrix(SourceContainer);
+							var radius = Diameter / 2;
+							var circumference = MathHelper.Tau * radius;
+							var rotationCenter = new Vector3(aabb.MinXYZ.X + (aabb.MaxXYZ.X - aabb.MinXYZ.X) * (StartPercent / 100), aabb.MaxXYZ.Y + radius, aabb.Center.Z);
 
+							rotationOffset = rotationCenter;
 							if (!BendCcw)
 							{
-								// rotate around so it will bend correctly
-								itemMatrix *= Matrix4X4.CreateTranslation(0, -aabb.MaxXYZ.Y, 0);
-								itemMatrix *= Matrix4X4.CreateRotationX(MathHelper.Tau / 2);
-								itemMatrix *= Matrix4X4.CreateTranslation(0, aabb.MaxXYZ.Y - aabb.YSize, 0);
+								// fix the stored center so we draw correctly
+								rotationOffset.Y = aabb.MinXYZ.Y - radius;
 							}
 
-							var invItemMatrix = itemMatrix.Inverted;
-
-							for (int i = 0; i < transformedMesh.Vertices.Count; i++)
+							foreach (var sourceItem in SourceContainer.VisibleMeshes())
 							{
-								var worldPosition = transformedMesh.Vertices[i].Transform((Matrix4X4)itemMatrix);
+								var originalMesh = sourceItem.Mesh;
+								var transformedMesh = originalMesh.Copy(CancellationToken.None);
+								var itemMatrix = sourceItem.WorldMatrix(SourceContainer);
 
-								var angleToRotate = ((worldPosition.X - rotationCenter.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
-								var distanceFromCenter = rotationCenter.Y - worldPosition.Y;
+								if (!BendCcw)
+								{
+									// rotate around so it will bend correctly
+									itemMatrix *= Matrix4X4.CreateTranslation(0, -aabb.MaxXYZ.Y, 0);
+									itemMatrix *= Matrix4X4.CreateRotationX(MathHelper.Tau / 2);
+									itemMatrix *= Matrix4X4.CreateTranslation(0, aabb.MaxXYZ.Y - aabb.YSize, 0);
+								}
 
-								var rotatePosition = new Vector3Float(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
-								rotatePosition.Z = worldPosition.Z;
-								var worldWithBend = rotatePosition + new Vector3Float(rotationCenter.X, radius + aabb.MaxXYZ.Y, 0);
+								var invItemMatrix = itemMatrix.Inverted;
 
-								transformedMesh.Vertices[i] = worldWithBend.Transform(invItemMatrix) - new Vector3Float(rotationOffset);
+								for (int i = 0; i < transformedMesh.Vertices.Count; i++)
+								{
+									var worldPosition = transformedMesh.Vertices[i].Transform((Matrix4X4)itemMatrix);
+
+									var angleToRotate = ((worldPosition.X - rotationCenter.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
+									var distanceFromCenter = rotationCenter.Y - worldPosition.Y;
+
+									var rotatePosition = new Vector3Float(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
+									rotatePosition.Z = worldPosition.Z;
+									var worldWithBend = rotatePosition + new Vector3Float(rotationCenter.X, radius + aabb.MaxXYZ.Y, 0);
+
+									transformedMesh.Vertices[i] = worldWithBend.Transform(invItemMatrix) - new Vector3Float(rotationOffset);
+								}
+
+								transformedMesh.MarkAsChanged();
+								transformedMesh.CalculateNormals();
+
+								var newMesh = new Object3D()
+								{
+									Mesh = transformedMesh
+								};
+								newMesh.CopyWorldProperties(sourceItem, this, Object3DPropertyFlags.All);
+								this.Children.Add(newMesh);
 							}
 
-							transformedMesh.MarkAsChanged();
-							transformedMesh.CalculateNormals();
-
-							var newMesh = new Object3D()
-							{
-								Mesh = transformedMesh
-							};
-							newMesh.CopyWorldProperties(sourceItem, this, Object3DPropertyFlags.All);
-							this.Children.Add(newMesh);
+							// set the matrix back
+							Matrix = currentMatrix;
+							this.Translate(new Vector3(rotationOffset));
+							SourceContainer.Visible = false;
+							rebuildLocks.Dispose();
 						}
+						Invalidate(InvalidateType.Children);
 					}
 
-					// set the matrix back
-					Matrix = currentMatrix;
-					this.Translate(new Vector3(rotationOffset));
-					SourceContainer.Visible = false;
-					rebuildLocks.Dispose();
-					Invalidate(InvalidateType.Children);
 					return Task.CompletedTask;
 				});
 		}

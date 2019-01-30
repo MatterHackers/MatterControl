@@ -130,16 +130,6 @@ namespace MatterHackers.MatterControl
 			object3D.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.Z + bounds.ZSize / 2));
 		}
 
-		public static void PlaceMeshAtHeight(IObject3D objectToMove, double zHeight)
-		{
-			AxisAlignedBoundingBox bounds = objectToMove.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-
-			if (bounds.MinXYZ.Z != zHeight)
-			{
-				objectToMove.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, zHeight - bounds.MinXYZ.Z));
-			}
-		}
-
 		/// <summary>
 		/// Moves the target object to the first non-colliding position, starting from the lower left corner of the bounding box containing all sceneItems
 		/// </summary>

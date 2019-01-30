@@ -74,12 +74,12 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else if (invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateArgs.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else
 			{
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 			}
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		override public Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 			var activeImage = AggContext.ImageIO.LoadImage(this.Image.AssetPath);
@@ -118,6 +118,8 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 
 				return Task.CompletedTask;
 			});
+
+			return Task.CompletedTask;
 		}
 	}
 }

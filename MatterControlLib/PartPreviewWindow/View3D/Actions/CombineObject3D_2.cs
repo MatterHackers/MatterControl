@@ -69,6 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					}
 
 					rebuildLocks.Dispose();
+					Invalidate(InvalidateType.Children);
 					return Task.CompletedTask;
 				});
 		}

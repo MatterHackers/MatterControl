@@ -686,9 +686,9 @@ namespace MatterHackers.MatterControl
 				},
 				new SceneSelectionOperation()
 				{
-					OperationType = typeof(SubtractObject3D),
+					OperationType = typeof(SubtractObject3D_2),
 					TitleResolver = () => "Subtract".Localize(),
-					Action = (sceneContext) => new SubtractObject3D().WrapSelectedItemAndSelect(sceneContext.Scene),
+					Action = (sceneContext) => new SubtractObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 					Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
 				},
@@ -784,7 +784,7 @@ namespace MatterHackers.MatterControl
 						var selectedItem = scene.SelectedItem;
 						using (new SelectionMaintainer(scene))
 						{
-							var fit = FitToBoundsObject3D_2.Create(selectedItem.Clone());
+							var fit = FitToBoundsObject3D_2.Create(selectedItem.Clone()).Result;
 							fit.MakeNameNonColliding();
 
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));

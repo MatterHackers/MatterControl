@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.Library
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Cone".Localize(),
-					() => ConeObject3D.Create())
+					() => ConeObject3D.Create().Result)
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Half Cylinder".Localize(),
