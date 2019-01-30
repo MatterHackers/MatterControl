@@ -442,11 +442,6 @@ namespace MatterHackers.MeshVisualizer
 			return base.FindDescendants(namesToSearchFor, foundChildren, touchingBounds, seachType, allowInvalidItems);
 		}
 
-		public static Color GetExtruderColor(int extruderIndex)
-		{
-			return MaterialRendering.Color(extruderIndex);
-		}
-
 		public void CreateGlDataObject(IObject3D item)
 		{
 			if(item.Mesh != null)
