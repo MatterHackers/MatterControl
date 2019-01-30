@@ -328,6 +328,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static void MakeLowestFaceFlat(this InteractiveScene scene, IObject3D objectToLayFlatGroup)
 		{
+			var preLayFlatMatrix = objectToLayFlatGroup.Matrix;
+
 			bool firstVertex = true;
 
 			IObject3D objectToLayFlat = objectToLayFlatGroup;
@@ -378,7 +380,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			int faceToLayFlat = -1;
-			double lowestAngleOfAnyFace = double.MaxValue;
+			double largestAreaOfAnyFace = double.MinValue;
 			// Check all the faces that are connected to the lowest point to find out which one to lay flat.
 			for (int faceIndex = 0; faceIndex < meshWithLowest.Faces.Count; faceIndex++)
 			{
@@ -391,26 +393,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					continue;
 				}
 
-				double biggestAngleToFaceVertex = double.MinValue;
-				var faceIndices = new int[] { face.v0, face.v1, face.v2 };
-				foreach (var vi in faceIndices)
+				double largestAreaFound = double.MinValue;
+				var faceVeretexIndices = new int[] { face.v0, face.v1, face.v2 };
+				foreach (var vi in faceVeretexIndices)
 				{
 					if (meshWithLowest.Vertices[vi] != lowestPosition)
 					{
 						var faceVertexPosition = meshWithLowest.Vertices[vi].Transform(itemToLayFlat.WorldMatrix());
 						var pointRelLowest = faceVertexPosition - lowestPosition;
-						double xLeg = new Vector2(pointRelLowest.X, pointRelLowest.Y).Length;
-						double yLeg = pointRelLowest.Z;
-						double angle = Math.Atan2(yLeg, xLeg);
-						if (angle > biggestAngleToFaceVertex)
+						var planSurfaceArea = 0.0;
+						foreach (var coPlanarFace in meshWithLowest.GetCoplanerFaces(faceIndex))
 						{
-							biggestAngleToFaceVertex = angle;
+							planSurfaceArea += meshWithLowest.GetSurfaceArea(coPlanarFace);
+						}
+						if (planSurfaceArea > largestAreaFound)
+						{
+							largestAreaFound = planSurfaceArea;
 						}
 					}
 				}
-				if (biggestAngleToFaceVertex < lowestAngleOfAnyFace)
+				if (largestAreaFound > largestAreaOfAnyFace)
 				{
-					lowestAngleOfAnyFace = biggestAngleToFaceVertex;
+					largestAreaOfAnyFace = largestAreaFound;
 					faceToLayFlat = faceIndex;
 				}
 			}
@@ -441,6 +445,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			PlatingHelper.PlaceOnBed(objectToLayFlatGroup);
+			scene.UndoBuffer.Add(new TransformCommand(objectToLayFlatGroup, preLayFlatMatrix, objectToLayFlatGroup.Matrix));
 		}
 
 		internal class ArrangeUndoCommand : IUndoRedoCommand
