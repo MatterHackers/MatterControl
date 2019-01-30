@@ -784,7 +784,7 @@ namespace MatterHackers.MatterControl
 						var selectedItem = scene.SelectedItem;
 						using (new SelectionMaintainer(scene))
 						{
-							var fit = FitToBoundsObject3D_2.Create(selectedItem.Clone());
+							var fit = FitToBoundsObject3D_2.Create(selectedItem.Clone()).Result;
 							fit.MakeNameNonColliding();
 
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));

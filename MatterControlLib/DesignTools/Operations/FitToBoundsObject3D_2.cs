@@ -60,14 +60,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		private IObject3D FitBounds => Children.Last();
 
-		public static FitToBoundsObject3D_2 Create(IObject3D itemToFit)
+		public static async Task<FitToBoundsObject3D_2> Create(IObject3D itemToFit)
 		{
 			var fitToBounds = new FitToBoundsObject3D_2();
 			using (fitToBounds.RebuildLock())
 			{
-				using (new CenterAndHeightMantainer(fitToBounds))
+				using (new CenterAndHeightMantainer(itemToFit))
 				{
-					var aabb = fitToBounds.GetAxisAlignedBoundingBox();
+					var aabb = itemToFit.GetAxisAlignedBoundingBox();
 					var bounds = new Object3D()
 					{
 						Visible = false,
@@ -84,8 +84,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					fitToBounds.boundsSize.X = aabb.XSize;
 					fitToBounds.boundsSize.Y = aabb.YSize;
 					fitToBounds.boundsSize.Z = aabb.ZSize;
-					fitToBounds.Rebuild();
-
+					await fitToBounds.Rebuild();
 				}
 			}
 
