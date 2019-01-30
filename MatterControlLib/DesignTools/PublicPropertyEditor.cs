@@ -206,16 +206,21 @@ namespace MatterHackers.MatterControl.DesignTools
 			return mainContainer;
 		}
 
-		private static FlowLayoutWidget CreateSettingsRow(EditableProperty property, UIField field)
+		private static FlowLayoutWidget CreateSettingsRow(EditableProperty property, UIField field, ThemeConfig theme = null)
 		{
-			var row = CreateSettingsRow(property.DisplayName.Localize(), property.Description.Localize());
+			var row = CreateSettingsRow(property.DisplayName.Localize(), property.Description.Localize(), theme);
 			row.AddChild(field.Content);
 
 			return row;
 		}
 
-		public static FlowLayoutWidget CreateSettingsRow(string labelText, string toolTipText = null)
+		public static FlowLayoutWidget CreateSettingsRow(string labelText, string toolTipText = null, ThemeConfig theme = null)
 		{
+			if (theme == null)
+			{
+				theme = AppContext.Theme;
+			}
+
 			var rowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
 				HAnchor = HAnchor.Stretch,
@@ -223,12 +228,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				ToolTipText = toolTipText
 			};
 
-			var label = new TextWidget(labelText + ":", pointSize: 11, textColor: AppContext.Theme.TextColor)
+			rowContainer.AddChild(new TextWidget(labelText + ":", pointSize: 11, textColor: theme.TextColor)
 			{
 				Margin = new BorderDouble(0, 0, 3, 0),
-				VAnchor = VAnchor.Center
-			};
-			rowContainer.AddChild(label);
+				VAnchor = VAnchor.Center,
+			});
 
 			rowContainer.AddChild(new HorizontalSpacer());
 
@@ -623,7 +627,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
-				rowContainer = CreateSettingsRow(property, field);
+				rowContainer = CreateSettingsRow(property, field, theme);
 			}
 			// Use known IObject3D editors
 			else if (propertyValue is IObject3D item

@@ -75,9 +75,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public ArrowDirection ArrowDirection
 		{
 			get => _arrow;
-			protected set
+			set
 			{
 				_arrow = value;
+
+				this.RebuildShape();
 
 				switch (_arrow)
 				{
