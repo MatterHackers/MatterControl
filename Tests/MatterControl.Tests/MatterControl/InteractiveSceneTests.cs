@@ -551,7 +551,7 @@ namespace MatterControl.Tests.MatterControl
 			var curveAabb = curve.GetAxisAlignedBoundingBox();
 			root.Children.Add(curve);
 			var rootAabb = root.GetAxisAlignedBoundingBox();
-			Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-17.5, -6.4, -10), new Vector3(17.5, 11.9, 10)), 1.0));
+			Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-17.5, -9.2, -10), new Vector3(17.5, 9.2, 10)), 1.0));
 		}
 	}
 }
