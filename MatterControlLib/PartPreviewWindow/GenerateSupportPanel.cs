@@ -69,6 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				null,
 				new PPEContext(),
 				theme);
+
 			if (editor != null)
 			{
 				this.AddChild(editor);
@@ -88,7 +89,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			var pillarRow = PublicPropertyEditor.CreateSettingsRow("Pillar Size".Localize(), "The width and depth of the support pillars".Localize());
+			var pillarRow = PublicPropertyEditor.CreateSettingsRow("Pillar Size".Localize(), "The width and depth of the support pillars".Localize(), theme);
 			pillarRow.AddChild(pillarSizeField.Content);
 			this.AddChild(pillarRow);
 
@@ -106,7 +107,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			var overHangRow = PublicPropertyEditor.CreateSettingsRow("Overhang Angle".Localize(), "The angle to generate support for".Localize());
+			var overHangRow = PublicPropertyEditor.CreateSettingsRow("Overhang Angle".Localize(), "The angle to generate support for".Localize(), theme);
 			overHangRow.AddChild(overHangField.Content);
 			this.AddChild(overHangRow);
 
