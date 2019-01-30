@@ -27,9 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -45,32 +45,32 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 		}
 
-		public static BrailleCardObject3D Create()
+		public static async Task<BrailleCardObject3D> Create()
 		{
 			var item = new BrailleCardObject3D();
 
-			item.Rebuild();
+			await item.Rebuild();
 			return item;
 		}
+
+		public override bool CanFlatten => true;
 
 		public char Letter { get; set; } = 'a';
 
 		public double BaseHeight { get; set; } = 4;
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild();
+				await Rebuild();
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
-		override public Task Rebuild()
+		override public async Task Rebuild()
 		{
 			using (RebuildLock())
 			{
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						TextToEncode = Letter.ToString(),
 						BaseHeight = BaseHeight,
 					};
-					brailleLetter.Rebuild();
+					await brailleLetter.Rebuild();
 					this.Children.Add(brailleLetter);
 
 					var textObject = new TextObject3D()
@@ -97,8 +97,14 @@ namespace MatterHackers.MatterControl.DesignTools
 						Height = BaseHeight
 					};
 
-					textObject.Invalidate(InvalidateType.Properties);
-					IObject3D letterObject = new RotateObject3D(textObject, MathHelper.Tau / 4);
+					await textObject.Rebuild();
+					IObject3D letterObject = new RotateObject3D_2(textObject, Vector3.UnitX, -90);
+					await letterObject.Rebuild();
+					var scaleRatio = Math.Max(letterObject.XSize() / 17, letterObject.ZSize() / 17);
+					if (scaleRatio > 1)
+					{
+						letterObject = new ScaleObject3D(letterObject, 1.0/scaleRatio, 1, 1.0/scaleRatio);
+					}
 					letterObject = new AlignObject3D(letterObject, FaceAlign.Bottom | FaceAlign.Front, brailleLetter, FaceAlign.Top | FaceAlign.Front, 0, 0, 3.5);
 					letterObject = new SetCenterObject3D(letterObject, brailleLetter.GetCenter(), true, false, false);
 					this.Children.Add(letterObject);
@@ -126,7 +132,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			Invalidate(InvalidateType.Children);
-			return Task.CompletedTask;
 		}
 	}
 }
