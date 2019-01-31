@@ -59,6 +59,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			: this()
 		{
 			WrapItem(itemToScale);
+
+			ScaleRatio = scale;
+			Rebuild();
 		}
 
 		public override void WrapItem(IObject3D item, UndoBuffer undoBuffer = null)

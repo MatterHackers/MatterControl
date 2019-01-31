@@ -380,33 +380,45 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			int faceToLayFlat = -1;
-			double largestAreaOfAnyFace = double.MinValue;
+			double largestAreaOfAnyFace = 0;
+			var facesSharingLowestVertex = meshWithLowest.Faces
+				.Select((face, i) => new { face, i })
+				.Where(faceAndIndex => meshWithLowest.Vertices[faceAndIndex.face.v0] == sourceVertexPosition
+					|| meshWithLowest.Vertices[faceAndIndex.face.v1] == sourceVertexPosition
+					|| meshWithLowest.Vertices[faceAndIndex.face.v2] == sourceVertexPosition)
+				.Select(j => j.i);
+
+			var lowestFacesByAngle = facesSharingLowestVertex.OrderBy(i =>
+			{
+				var face = meshWithLowest.Faces[i];
+				var worldNormal = face.normal.TransformNormal(itemToLayFlat.WorldMatrix());
+				return worldNormal.CalculateAngle(-Vector3Float.UnitZ);
+			});
+
 			// Check all the faces that are connected to the lowest point to find out which one to lay flat.
-			for (int faceIndex = 0; faceIndex < meshWithLowest.Faces.Count; faceIndex++)
+			foreach (var faceIndex in lowestFacesByAngle)
 			{
 				var face = meshWithLowest.Faces[faceIndex];
-				if (meshWithLowest.Vertices[face.v0] != sourceVertexPosition
-					&& meshWithLowest.Vertices[face.v1] != sourceVertexPosition
-					&& meshWithLowest.Vertices[face.v2] != sourceVertexPosition)
-				{
-					// this face does not contain the vertex
-					continue;
-				}
 
-				double largestAreaFound = double.MinValue;
+				var worldNormal = face.normal.TransformNormal(itemToLayFlat.WorldMatrix());
+				var worldAngleDegrees = MathHelper.RadiansToDegrees(worldNormal.CalculateAngle(-Vector3Float.UnitZ));
+
+				double largestAreaFound = 0;
 				var faceVeretexIndices = new int[] { face.v0, face.v1, face.v2 };
+
 				foreach (var vi in faceVeretexIndices)
 				{
 					if (meshWithLowest.Vertices[vi] != lowestPosition)
 					{
-						var faceVertexPosition = meshWithLowest.Vertices[vi].Transform(itemToLayFlat.WorldMatrix());
-						var pointRelLowest = faceVertexPosition - lowestPosition;
 						var planSurfaceArea = 0.0;
 						foreach (var coPlanarFace in meshWithLowest.GetCoplanerFaces(faceIndex))
 						{
 							planSurfaceArea += meshWithLowest.GetSurfaceArea(coPlanarFace);
 						}
-						if (planSurfaceArea > largestAreaFound)
+
+						if (largestAreaOfAnyFace == 0
+							|| (planSurfaceArea > largestAreaFound
+								&& worldAngleDegrees < 45))
 						{
 							largestAreaFound = planSurfaceArea;
 						}

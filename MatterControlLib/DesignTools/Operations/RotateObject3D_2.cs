@@ -48,16 +48,26 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Rotate".Localize();
 		}
 
+		public RotateObject3D_2(IObject3D itemToRotate, Vector3 normal, double angleDegrees)
+			: this()
+		{
+			WrapItem(itemToRotate);
+
+			RotateAbout.Normal = normal;
+			AngleDegrees = angleDegrees;
+		}
+
 		public RotateObject3D_2(IObject3D itemToRotate, double xRadians = 0, double yRadians = 0, double zRadians = 0, string name = "")
 			: this()
 		{
 			WrapItem(itemToRotate);
 
 			// TODO: set the rotation
+			//RotateAbout.Normal = Vector3.UnitZ.TransformNormal(Matrix4X4.CreateRotation(new Vector3(xRadians, yRadians, zRadians)));
 		}
 
-		public RotateObject3D_2(IObject3D itemToRotate, Vector3 translation, string name = "")
-			: this(itemToRotate, translation.X, translation.Y, translation.Z, name)
+		public RotateObject3D_2(IObject3D itemToRotate, Vector3 rotation, string name = "")
+			: this(itemToRotate, rotation.X, rotation.Y, rotation.Z, name)
 		{
 		}
 
@@ -100,7 +110,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public override void OnInvalidate(InvalidateArgs invalidateArgs)
+		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
 			if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Children)
 				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Matrix)
@@ -108,17 +118,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild();
+				await Rebuild();
 			}
 			else if (invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateArgs.Source == this)
 			{
-				Rebuild();
+				await Rebuild();
 			}
-			else
-			{
-				base.OnInvalidate(invalidateArgs);
-			}
+
+			base.OnInvalidate(invalidateArgs);
 		}
 
 		public override Task Rebuild()

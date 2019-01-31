@@ -686,9 +686,9 @@ namespace MatterHackers.MatterControl
 				},
 				new SceneSelectionOperation()
 				{
-					OperationType = typeof(SubtractObject3D_2),
+					OperationType = typeof(SubtractObject3D),
 					TitleResolver = () => "Subtract".Localize(),
-					Action = (sceneContext) => new SubtractObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
+					Action = (sceneContext) => new SubtractObject3D().WrapSelectedItemAndSelect(sceneContext.Scene),
 					Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
 				},
