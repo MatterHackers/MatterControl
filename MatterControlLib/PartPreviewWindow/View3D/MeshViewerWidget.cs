@@ -260,19 +260,6 @@ namespace MatterHackers.MeshVisualizer
 			return base.FindDescendants(namesToSearchFor, foundChildren, touchingBounds, seachType, allowInvalidItems);
 		}
 
-		public void CreateGlDataObject(IObject3D item)
-		{
-			if(item.Mesh != null)
-			{
-				GLMeshTrianglePlugin.Get(item.Mesh);
-			}
-
-			foreach (IObject3D child in item.Children.Where(o => o.Mesh != null))
-			{
-				GLMeshTrianglePlugin.Get(child.Mesh);
-			}
-		}
-
 		public bool SuppressUiVolumes { get; set; } = false;
 
 		private void DrawObject(IObject3D object3D, List<Object3DView> transparentMeshes, DrawEventArgs e)
