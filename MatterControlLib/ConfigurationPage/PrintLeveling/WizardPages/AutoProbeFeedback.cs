@@ -103,9 +103,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 						UiThread.RunOnIdle(() => NextButton.InvokeClick());
 					}
-
-					if (numberOfSamples-- > 0
-						&& !this.HasBeenClosed)
+					else if (!this.HasBeenClosed)
 					{
 						// add the next request for probe
 						printer.Connection.QueueLine("G30");
