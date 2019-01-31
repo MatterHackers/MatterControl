@@ -44,6 +44,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Threading.Tasks;
 using System;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -82,11 +83,27 @@ namespace MatterHackers.MatterControl.DesignTools
 			// change this from a text object to a group
 			var newContainer = new GroupObject3D();
 			newContainer.CopyProperties(this, Object3DPropertyFlags.All);
+			int index = 0;
 			foreach (var child in this.Children)
 			{
-				newContainer.Children.Add(child.Clone());
+				var clone = child.Clone();
+				var newName = index < NameToWrite.Length ? NameToWrite[index++].ToString() : "Letter".Localize();
+				clone.Name = MapIfSymbol(newName);
+				newContainer.Children.Add(clone);
 			}
 			undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { newContainer }));
+			newContainer.Name = this.Name + " - " + "Flattened".Localize();
+		}
+
+		private string MapIfSymbol(string newName)
+		{
+			switch(newName)
+			{
+				case " ":
+					return "space";
+			}
+
+			return newName;
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
