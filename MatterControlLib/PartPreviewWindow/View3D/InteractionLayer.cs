@@ -76,10 +76,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal void SetRenderTarget(GuiWidget renderSource)
 		{
 			this.renderSource = renderSource;
-			renderSource.AfterDraw += RenderSource_DrawExtra;
+			renderSource.AfterDraw += renderSource_AfterDraw;
 		}
 
-		private void RenderSource_DrawExtra(object sender, DrawEventArgs e)
+		// The primary draw hook. Kick off our draw operation when the renderSource fires AfterDraw
+		private void renderSource_AfterDraw(object sender, DrawEventArgs e)
 		{
 			if (DoOpenGlDrawing)
 			{
