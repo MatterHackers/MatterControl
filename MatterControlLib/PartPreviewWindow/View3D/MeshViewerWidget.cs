@@ -582,6 +582,7 @@ namespace MatterHackers.MeshVisualizer
 					wireColor = lightWireframe;
 					break;
 			}
+
 			// Draw transparent objects
 			foreach (var item in transparentMeshes)
 			{
