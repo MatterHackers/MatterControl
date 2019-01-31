@@ -2376,7 +2376,7 @@ namespace MatterHackers.MatterControl
 			AddPrintersTabRightElement?.Invoke(this, new WidgetSourceEventArgs(sourceExentionArea));
 		}
 
-		public async Task PrintPart(EditContext editContext, PrinterConfig printer, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken, bool overrideAllowGCode = false)
+		public async Task PrintPart(EditContext editContext, PrinterConfig printer, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
 		{
 			var partFilePath = editContext.SourceFilePath;
 			var gcodeFilePath = editContext.GCodeFilePath(printer);
@@ -2441,47 +2441,53 @@ If you experience adhesion problems, please re-run leveling."
 
 					string hideGCodeWarning = ApplicationSettings.Instance.get(ApplicationSettingsKey.HideGCodeWarning);
 
-					if (Path.GetExtension(partFilePath).ToUpper() == ".GCODE"
-						&& hideGCodeWarning == null
-						&& !overrideAllowGCode)
+					if (Path.GetExtension(partFilePath).ToUpper() == ".GCODE")
 					{
-						var hideGCodeWarningCheckBox = new CheckBox("Don't remind me again".Localize())
+						if (hideGCodeWarning != "true")
 						{
-							TextColor = this.Theme.TextColor,
-							Margin = new BorderDouble(top: 6, left: 6),
-							HAnchor = Agg.UI.HAnchor.Left
-						};
-						hideGCodeWarningCheckBox.Click += (sender, e) =>
-						{
-							if (hideGCodeWarningCheckBox.Checked)
+							var hideGCodeWarningCheckBox = new CheckBox("Don't remind me again".Localize())
 							{
-								ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, "true");
-							}
-							else
+								TextColor = this.Theme.TextColor,
+								Margin = new BorderDouble(top: 6, left: 6),
+								HAnchor = Agg.UI.HAnchor.Left
+							};
+							hideGCodeWarningCheckBox.Click += (sender, e) =>
 							{
-								ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, null);
-							}
-						};
+								if (hideGCodeWarningCheckBox.Checked)
+								{
+									ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, "true");
+								}
+								else
+								{
+									ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, null);
+								}
+							};
 
-						UiThread.RunOnIdle(() =>
-						{
-							StyledMessageBox.ShowMessageBox(
-								(messageBoxResponse) =>
-								{
-									if (messageBoxResponse)
+							UiThread.RunOnIdle(() =>
+							{
+								StyledMessageBox.ShowMessageBox(
+									(messageBoxResponse) =>
 									{
-										printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-										this.ArchiveAndStartPrint(partFilePath, gcodeFilePath, printer);
-									}
-								},
-								"The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?".Localize(),
-								"Warning - GCode file".Localize(),
-								new GuiWidget[]
-								{
+										if (messageBoxResponse)
+										{
+											printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
+											this.ArchiveAndStartPrint(partFilePath, gcodeFilePath, printer);
+										}
+									},
+									"The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?".Localize(),
+									"Warning - GCode file".Localize(),
+									new GuiWidget[]
+									{
 									hideGCodeWarningCheckBox
-								},
-								StyledMessageBox.MessageType.YES_NO);
-						});
+									},
+									StyledMessageBox.MessageType.YES_NO);
+							});
+						}
+						else
+						{
+							printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
+							this.ArchiveAndStartPrint(partFilePath, gcodeFilePath, printer);
+						}
 					}
 					else
 					{

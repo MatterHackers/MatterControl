@@ -325,7 +325,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			undoButton = new IconButton(AggContext.StaticData.LoadIcon("Undo_grey_16x.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "3D View Undo",
-				ToolTipText = "Undo",
+				ToolTipText = "Undo".Localize(),
 				Enabled = false,
 				Margin = theme.ButtonSpacing,
 				VAnchor = VAnchor.Center
@@ -341,7 +341,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Name = "3D View Redo",
 				Margin = theme.ButtonSpacing,
-				ToolTipText = "Redo",
+				ToolTipText = "Redo".Localize(),
 				Enabled = false,
 				VAnchor = VAnchor.Center
 			};
