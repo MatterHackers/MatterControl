@@ -220,13 +220,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			scene.SelectedItem = null;
 			var existingSupports = scene.Children.Where(i => i.GetType() == typeof(GeneratedSupportObject3D));
 
-			scene.Children.Modify((list) =>
-			{
-				foreach (var item in existingSupports)
-				{
-					list.Remove(item);
-				}
-			});
+			scene.UndoBuffer.AddAndDo(new DeleteCommand(scene, existingSupports.ToList()));
 		}
 
 		public bool RequiresSupport()
@@ -380,7 +374,8 @@ namespace MatterHackers.MatterControl.DesignTools
 							var yPos = (gridBounds.Bottom + y) * PillarSize + halfPillar + (yOffset * halfPillar);
 							var xPos = (gridBounds.Left + x) * PillarSize + halfPillar + (xOffset * halfPillar);
 
-							var upRay = new Ray(new Vector3(xPos + .000013, yPos - .00027, 0), Vector3.UnitZ, intersectionType: IntersectionType.Both);
+							// detect all the bottom plans (surfaces that might need support
+							var upRay = new Ray(new Vector3(xPos + .000013, yPos - .00027, 0), Vector3.UnitZ, intersectionType: IntersectionType.FrontFace);
 							do
 							{
 								upHit = traceData.GetClosestIntersection(upRay);
@@ -390,13 +385,34 @@ namespace MatterHackers.MatterControl.DesignTools
 									{
 										detectedPlanes.Add((x, y), new List<(double z, bool bottom)>());
 										// add a single plane at the bed so we always know the bed is a top
-										detectedPlanes[(x, y)].Add((0, false));
+										//detectedPlanes[(x, y)].Add((0, false));
 									}
 
-									detectedPlanes[(x, y)].Add((upHit.HitPosition.Z, upHit.normalAtHit.Z < 0));
+									detectedPlanes[(x, y)].Add((upHit.HitPosition.Z, true));
 
 									// make a new ray just past the last hit to keep looking for up hits
-									upRay = new Ray(new Vector3(xPos, yPos, upHit.HitPosition.Z + .001), Vector3.UnitZ, intersectionType: IntersectionType.Both);
+									upRay = new Ray(new Vector3(xPos, yPos, upHit.HitPosition.Z + .001), Vector3.UnitZ, intersectionType: IntersectionType.FrontFace);
+								}
+							} while (upHit != null);
+
+							// detect all the up plans (surfaces that will have support on top of them)
+							upRay = new Ray(new Vector3(xPos + .000013, yPos - .00027, 0), Vector3.UnitZ, intersectionType: IntersectionType.BackFace);
+							do
+							{
+								upHit = traceData.GetClosestIntersection(upRay);
+								if (upHit != null)
+								{
+									if (!detectedPlanes.ContainsKey((x, y)))
+									{
+										detectedPlanes.Add((x, y), new List<(double z, bool bottom)>());
+										// add a single plane at the bed so we always know the bed is a top
+										//detectedPlanes[(x, y)].Add((0, false));
+									}
+
+									detectedPlanes[(x, y)].Add((upHit.HitPosition.Z, false));
+
+									// make a new ray just past the last hit to keep looking for up hits
+									upRay = new Ray(new Vector3(xPos, yPos, upHit.HitPosition.Z + .001), Vector3.UnitZ, intersectionType: IntersectionType.BackFace);
 								}
 							} while (upHit != null);
 						}
