@@ -3078,6 +3078,7 @@ If you experience adhesion problems, please re-run leveling."
 		private static Stopwatch timer;
 
 		public static bool EnableF5Collect { get; set; }
+		public static bool EnableNetworkTraffic { get; set; }
 
 		public static SystemWindow LoadRootWindow(int width, int height)
 		{

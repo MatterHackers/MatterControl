@@ -103,14 +103,17 @@ namespace MatterHackers.MatterControl
 				});
 			};
 
-			popupMenu.CreateSeparator();
-
-			menuItem = popupMenu.CreateMenuItem("Check For Update".Localize(), AggContext.StaticData.LoadIcon("update.png", 16, 16, menuTheme.InvertIcons));
-			menuItem.Click += (s, e) => UiThread.RunOnIdle(() =>
+			if (Application.EnableNetworkTraffic)
 			{
-				UpdateControlData.Instance.CheckForUpdate();
-				DialogWindow.Show<CheckForUpdatesPage>();
-			});
+				popupMenu.CreateSeparator();
+
+				menuItem = popupMenu.CreateMenuItem("Check For Update".Localize(), AggContext.StaticData.LoadIcon("update.png", 16, 16, menuTheme.InvertIcons));
+				menuItem.Click += (s, e) => UiThread.RunOnIdle(() =>
+				{
+					UpdateControlData.Instance.CheckForUpdate();
+					DialogWindow.Show<CheckForUpdatesPage>();
+				});
+			}
 
 			popupMenu.CreateSeparator();
 
