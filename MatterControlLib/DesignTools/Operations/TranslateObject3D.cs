@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			using (this.RebuildLock())
 			{
-				WrapItem(itemToTranslate);
+				WrapItems(new IObject3D[] { itemToTranslate });
 				Matrix = Matrix4X4.CreateTranslation(translation);
 			}
 		}
