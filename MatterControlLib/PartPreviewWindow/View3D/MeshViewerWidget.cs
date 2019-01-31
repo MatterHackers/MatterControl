@@ -370,28 +370,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return drawColor;
 		}
 
-		private void RenderNormals(IObject3D renderData)
-		{
-			throw new NotImplementedException();
-			//var frustum = World.GetClippingFrustum();
-
-			//foreach (var face in renderData.Mesh.Faces)
-			//{
-			//	int vertexCount = 0;
-			//	Vector3 faceCenter = Vector3.Zero;
-			//	foreach (var vertex in face.Vertices())
-			//	{
-			//		faceCenter += vertex.Position;
-			//		vertexCount++;
-			//	}
-			//	faceCenter /= vertexCount;
-
-			//	var transformed1 = Vector3Ex.Transform(faceCenter, renderData.Matrix);
-			//	var normal = Vector3Ex.TransformNormal(face.Normal, renderData.Matrix).GetNormal();
-
-			//	World.Render3DLineNoPrep(frustum, transformed1, transformed1 + normal, Color.Red, 2);
-			//}
-		}
 
 		private void RenderSelection(IObject3D item, Frustum frustum, Color selectionColor)
 		{

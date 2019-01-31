@@ -126,23 +126,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnDraw(graphics2D);
 		}
 
-		private void RendereSceneTraceData(DrawEventArgs e)
-		{
-			var bvhIterator = new BvhIterator(Scene?.TraceData(), decentFilter: (x) =>
-			{
-				var center = x.Bvh.GetCenter();
-				var worldCenter = Vector3Ex.Transform(center, x.TransformToWorld);
-				if (worldCenter.Z > 0)
-				{
-					return true;
-				}
-
-				return false;
-			});
-
-			RenderBounds(e, World, bvhIterator);
-		}
-
 		public static void RenderBounds(DrawEventArgs e, WorldView World, IEnumerable<BvhIterator> allResults)
 		{
 			foreach (var x in allResults)

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,17 +29,38 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public interface IDrawable
+	public class TraceDataDrawable : IDrawable
 	{
-		void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world);
-	}
+		private BedConfig sceneContext;
+		private InteractiveScene scene;
 
-	public interface IDrawableItem
-	{
-		void Draw(GuiWidget sender, IObject3D item, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world);
+		public TraceDataDrawable(BedConfig sceneContext)
+		{
+			this.sceneContext = sceneContext;
+			this.scene = sceneContext.Scene;
+		}
+
+		public void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
+		{
+			// RenderSceneTraceData
+			var bvhIterator = new BvhIterator(scene?.TraceData(), decentFilter: (x) =>
+			{
+				var center = x.Bvh.GetCenter();
+				var worldCenter = Vector3Ex.Transform(center, x.TransformToWorld);
+				if (worldCenter.Z > 0)
+				{
+					return true;
+				}
+
+				return false;
+			});
+
+			InteractionLayer.RenderBounds(e, world, bvhIterator);
+		}
 	}
 }

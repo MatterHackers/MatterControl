@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,19 +27,60 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Drawing;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public interface IDrawable
+	public class NormalsDrawable : IDrawableItem
 	{
-		void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world);
-	}
+		private BedConfig sceneContext;
+		private InteractiveScene scene;
 
-	public interface IDrawableItem
-	{
-		void Draw(GuiWidget sender, IObject3D item, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world);
+		public NormalsDrawable(BedConfig sceneContext)
+		{
+			this.sceneContext = sceneContext;
+			this.scene = sceneContext.Scene;
+		}
+
+		public void Draw(GuiWidget sender, IObject3D item, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
+		{
+			throw new NotImplementedException();
+#if false
+			if (item.Mesh?.Faces.Count <= 0)
+			{
+				return;
+			}
+
+			var frustum = world.GetClippingFrustum();
+
+			var mesh = item.Mesh;
+
+			foreach (var face in mesh.Faces)
+			{
+				int vertexCount = 0;
+				Vector3 faceCenter = Vector3.Zero;
+				foreach (var v in  new[] { face.v0, face.v1, face.v2 })
+				{
+					var vertex = mesh.Vertices[v];
+
+					faceCenter += vertex.Position;
+					vertexCount++;
+				}
+				faceCenter /= vertexCount;
+
+				var matrix = item.WorldMatrix();
+
+				var transformed1 = Vector3Ex.Transform(faceCenter, matrix);
+				var normal = Vector3Ex.TransformNormal(face.Normal, matrix).GetNormal();
+
+				world.Render3DLineNoPrep(frustum, transformed1, transformed1 + normal, Color.Red, 2);
+			}
+#endif
+		}
 	}
 }
