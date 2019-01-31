@@ -45,7 +45,7 @@ namespace MatterControl.Tests.MatterControl
 			var supportGenerator = new SupportGenerator(scene);
 		}
 
-		[Test, Category("Support Generator")]
+		[Test, Category("Support Generator"), Ignore("WIP")]
 		public void TopBottomWalkingTest()
 		{
 			{
