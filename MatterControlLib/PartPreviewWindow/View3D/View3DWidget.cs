@@ -422,38 +422,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				new NamedAction()
 				{
-					ID = "Insert",
-					Title = "Insert".Localize(),
-					Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, invertIcons),
-					Action = () =>
-					{
-						var extensionsWithoutPeriod = new HashSet<string>(ApplicationSettings.OpenDesignFileParams.Split('|').First().Split(',').Select(s => s.Trim().Trim('.')));
-
-						foreach(var extension in ApplicationController.Instance.Library.ContentProviders.Keys)
-						{
-							extensionsWithoutPeriod.Add(extension.ToUpper());
-						}
-
-						var extensionsArray = extensionsWithoutPeriod.OrderBy(t => t).ToArray();
-
-						string filter = string.Format(
-							"{0}|{1}",
-							string.Join(",", extensionsArray),
-							string.Join("", extensionsArray.Select(e => $"*.{e.ToLower()};").ToArray()));
-
-						UiThread.RunOnIdle(() =>
-						{
-							AggContext.FileDialogs.OpenFileDialog(
-								new OpenFileDialogParams(filter, multiSelect: true),
-								(openParams) =>
-								{
-									ViewControls3D.LoadAndAddPartsToPlate(this, openParams.FileNames, sceneContext);
-								});
-						});
-					}
-				},
-				new NamedAction()
-				{
 					ID = "Print",
 					Title = "Print".Localize(),
 					Shortcut = "Ctrl+P",
