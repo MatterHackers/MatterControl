@@ -136,22 +136,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			theme.ApplyPrimaryActionStyle(generateButton);
 		}
 
-		public override void OnKeyDown(KeyEventArgs keyEvent)
-		{
-			if (!keyEvent.Handled)
-			{
-				switch (keyEvent.KeyCode)
-				{
-					case Keys.Enter:
-						Rebuild();
-						keyEvent.Handled = true;
-						break;
-				}
-			}
-
-			base.OnKeyDown(keyEvent);
-		}
-
 		private Task Rebuild()
 		{
 			return ApplicationController.Instance.Tasks.Execute(

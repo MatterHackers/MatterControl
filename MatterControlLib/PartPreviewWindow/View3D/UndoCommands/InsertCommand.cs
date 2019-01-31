@@ -38,18 +38,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private IEnumerable<IObject3D> items;
 		private InteractiveScene scene;
+		private bool selectAfterInsert;
 
 		bool firstPass = true;
 
-		public InsertCommand(InteractiveScene scene, IObject3D insertingItem)
-			: this(scene, new IObject3D[] { insertingItem })
+		public InsertCommand(InteractiveScene scene, IObject3D insertingItem, bool selectAfterInsert = true)
+			: this(scene, new IObject3D[] { insertingItem }, selectAfterInsert)
 		{
 		}
 
-		public InsertCommand(InteractiveScene scene, IEnumerable<IObject3D> insertingItem)
+		public InsertCommand(InteractiveScene scene, IEnumerable<IObject3D> insertingItem, bool selectAfterInsert = true)
 		{
 			this.scene = scene;
 			this.items = insertingItem;
+			this.selectAfterInsert = selectAfterInsert;
 		}
 
 		public void Do()
@@ -62,9 +64,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			scene.Children.Modify(list => list.AddRange(items));
 
 			scene.SelectedItem = null;
-			foreach(var item in items)
+			if (selectAfterInsert)
 			{
-				scene.AddToSelection(item);
+				foreach (var item in items)
+				{
+					scene.AddToSelection(item);
+				}
 			}
 
 			scene.Invalidate(new InvalidateArgs(null, InvalidateType.Children));

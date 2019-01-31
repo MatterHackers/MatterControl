@@ -98,28 +98,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Force common padding into top region
 			tabControl.TabBar.Padding = theme.TabbarPadding.Clone(top: theme.TabbarPadding.Top * 2, bottom: 0);
 
-			// add in the update available button
-			updateAvailableButton = new LinkLabel("Update Available".Localize(), theme)
+			if (Application.EnableNetworkTraffic)
 			{
-				Visible = false,
-				Name = "Update Available Link",
-				ToolTipText = "There is a new update available for download".Localize(),
-				VAnchor = VAnchor.Center,
-				Margin = new BorderDouble(10, 0)
-			};
+				// add in the update available button
+				updateAvailableButton = new LinkLabel("Update Available".Localize(), theme)
+				{
+					Visible = false,
+					Name = "Update Available Link",
+					ToolTipText = "There is a new update available for download".Localize(),
+					VAnchor = VAnchor.Center,
+					Margin = new BorderDouble(10, 0)
+				};
 
-			// Register listeners
-			UserSettings.Instance.SettingChanged += SetLinkButtonsVisibility;
+				// Register listeners
+				UserSettings.Instance.SettingChanged += SetLinkButtonsVisibility;
 
-			SetLinkButtonsVisibility(this, null);
+				SetLinkButtonsVisibility(this, null);
 
-			updateAvailableButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-			{
-				UpdateControlData.Instance.CheckForUpdate();
-				DialogWindow.Show<CheckForUpdatesPage>();
-			});
+				updateAvailableButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+				{
+					UpdateControlData.Instance.CheckForUpdate();
+					DialogWindow.Show<CheckForUpdatesPage>();
+				});
 
-			tabControl.TabBar.ActionArea.AddChild(updateAvailableButton);
+				tabControl.TabBar.ActionArea.AddChild(updateAvailableButton);
+
+				UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent((s, e) =>
+				{
+					SetLinkButtonsVisibility(s, new StringEventArgs("Unknown"));
+				}, ref unregisterEvents);
+			}
 
 			this.AddChild(tabControl);
 
@@ -265,11 +273,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabControl.ActiveTabChanged += TabControl_ActiveTabChanged;
 
 			ApplicationController.Instance.ShellFileOpened += this.Instance_OpenNewFile;
-
-			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent((s, e) =>
-			{
-				SetLinkButtonsVisibility(s, new StringEventArgs("Unknown"));
-			}, ref unregisterEvents);
 
 			ApplicationController.Instance.MainView = this;
 		}
