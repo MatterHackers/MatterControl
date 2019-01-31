@@ -82,6 +82,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			BuildVolumeColor = new ColorF(.2, .8, .3, .2).ToColor();
 
 			floorDrawable = new FloorDrawable(editorType, sceneContext, this.BuildVolumeColor, theme);
+
+			traceDataDebugger = new TraceDataDrawable(sceneContext);
+
 			///////////////////////// this.interactionLayer.DrawGlTransparentContent += Draw_GlTransparentContent;
 
 			if (ViewOnlyTexture == null)

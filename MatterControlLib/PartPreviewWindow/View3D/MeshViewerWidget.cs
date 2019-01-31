@@ -63,6 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private ThemeConfig theme;
 		private FloorDrawable floorDrawable;
+		private TraceDataDrawable traceDataDebugger;
 
 		public bool AllowBedRenderingWhenEmpty { get; set; }
 
@@ -314,6 +315,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					RenderSelection(item, frustum, selectionColor);
 				}
 
+
+
 #if DEBUG
 				if (isDebugItem)
 				{
@@ -473,6 +476,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				floorDrawable.Draw(this, e, Matrix4X4.Identity, this.World);
 			}
+
+			traceDataDebugger.Draw(this, e, Matrix4X4.Identity, this.World);
 
 			var wireColor = Color.Transparent;
 			switch(modelRenderStyle)
