@@ -39,11 +39,13 @@ using Newtonsoft.Json;
 namespace MatterHackers.MatterControl
 {
 	using System.Collections.Generic;
+	using System.Linq;
 	using System.Threading;
 	using MatterHackers.Agg;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.GCodeVisualizer;
 	using MatterHackers.Localizations;
+	using MatterHackers.MatterControl.DataStorage;
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MeshVisualizer;
@@ -228,6 +230,68 @@ namespace MatterHackers.MatterControl
 
 			return insertionGroup;
 		}
+
+		public async void AddToPlate(string[] filesToLoadIncludingZips)
+		{
+			if (filesToLoadIncludingZips?.Any() == true)
+			{
+				var scene = this.Scene;
+
+				// When a single GCode file is selected, swap the plate to the new GCode content
+				if (filesToLoadIncludingZips.Count() == 1
+					&& filesToLoadIncludingZips.FirstOrDefault() is string firstFilePath
+					&& Path.GetExtension(firstFilePath).ToUpper() == ".GCODE")
+				{
+					// Special case for GCode which changes loaded scene to special mode for GCode
+					await this.LoadContent(
+						new EditContext()
+						{
+							SourceItem = new FileSystemFileItem(firstFilePath),
+							ContentStore = null // No content store for GCode, otherwise PlatingHistory
+						});
+
+					return;
+				}
+
+				var filePaths = await Task.Run(() =>
+				{
+					var filesToLoad = new List<string>();
+					foreach (string loadedFileName in filesToLoadIncludingZips)
+					{
+						string extension = Path.GetExtension(loadedFileName).ToUpper();
+						if ((extension != ""
+							&& extension != ".ZIP"
+							&& extension != ".GCODE"
+							&& ApplicationController.Instance.Library.IsContentFileType(loadedFileName))
+							)
+						{
+							filesToLoad.Add(loadedFileName);
+						}
+						else if (extension == ".ZIP")
+						{
+							List<PrintItem> partFiles = ProjectFileHandler.ImportFromProjectArchive(loadedFileName);
+							if (partFiles != null)
+							{
+								foreach (PrintItem part in partFiles)
+								{
+									string itemExtension = Path.GetExtension(part.FileLocation).ToUpper();
+									if (itemExtension != ".GCODE")
+									{
+										filesToLoad.Add(part.FileLocation);
+									}
+								}
+							}
+						}
+					}
+
+					return filesToLoad;
+				});
+
+				var itemCache = new Dictionary<string, IObject3D>();
+				this.AddToPlate(filePaths.Select(f => new FileSystemFileItem(f)));
+			}
+		}
+
 
 		/// <summary>
 		/// Loads content to the bed and prepares edit/persistence context for use

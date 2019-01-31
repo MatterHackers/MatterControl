@@ -630,7 +630,6 @@ namespace MatterHackers.MeshVisualizer
 				{
 					var bedColor = theme.ResolveColor(Color.White, theme.BackgroundColor.WithAlpha(111));
 
-
 					if (!lookingDownOnBed)
 					{
 						bedColor = new Color(bedColor, bedColor.alpha / 4);
