@@ -1146,10 +1146,11 @@ namespace MatterHackers.MatterControl
 					ResultType = typeof(TranslateObject3D),
 					Operation = (sceneItem, scene) =>
 					{
+						var items = scene.GetSelectedItems();
 						using (new SelectionMaintainer(scene))
 						{
-							var scale = new TranslateObject3D();
-							scale.WrapItem(sceneItem, scene.UndoBuffer);
+							var translate = new TranslateObject3D();
+							translate.WrapItems(items, scene.UndoBuffer);
 						}
 
 						return Task.CompletedTask;
@@ -1166,10 +1167,11 @@ namespace MatterHackers.MatterControl
 					ResultType = typeof(RotateObject3D_2),
 					Operation = (sceneItem, scene) =>
 					{
+						var items = scene.GetSelectedItems();
 						using (new SelectionMaintainer(scene))
 						{
 							var rotate = new RotateObject3D_2();
-							rotate.WrapItem(sceneItem, scene.UndoBuffer);
+							rotate.WrapItems(items, scene.UndoBuffer);
 						}
 
 						return Task.CompletedTask;
@@ -1186,12 +1188,12 @@ namespace MatterHackers.MatterControl
 					ResultType = typeof(ScaleObject3D),
 					Operation = (sceneItem, scene) =>
 					{
-						var scale = new ScaleObject3D();
-						scale.WrapItem(sceneItem, scene.UndoBuffer);
-
-						scene.SelectedItem = null;
-						scene.SelectedItem = scale;
-
+						var items = scene.GetSelectedItems();
+						using (new SelectionMaintainer(scene))
+						{
+							var scale = new ScaleObject3D();
+							scale.WrapItems(items, scene.UndoBuffer);
+						}
 						return Task.CompletedTask;
 					},
 					IconCollector = (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons)
@@ -1240,11 +1242,10 @@ namespace MatterHackers.MatterControl
 						component.Matrix = imageObject.Matrix;
 						imageObject.Matrix = Matrix4X4.Identity;
 
-						// Swap original item with new wrapping component
-						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { component }));
-						scene.SelectedItem = null;
-						scene.SelectedItem = component;
-						// Invalidate image to kick off rebuild of ImageConverter stack 
+						using (new SelectionMaintainer(scene))
+						{
+							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { component }));
+						}						// Invalidate image to kick off rebuild of ImageConverter stack 
 						imageObject.Invalidate(InvalidateType.Image);
 
 						return Task.CompletedTask;
@@ -1287,24 +1288,24 @@ namespace MatterHackers.MatterControl
 						}
 
 						// Dump selection forcing collapse of selection group
-						scene.SelectedItem = null;
-
-						var component = new ComponentObject3D
+						using (new SelectionMaintainer(scene))
 						{
-							Name = "New Component",
-							Finalized = false
-						};
+							var component = new ComponentObject3D
+							{
+								Name = "New Component",
+								Finalized = false
+							};
 
-						// Copy an selected item into the component as a clone
-						component.Children.Modify(children =>
-						{
-							children.AddRange(items.Select(o => o.Clone()));
-						});
+							// Copy an selected item into the component as a clone
+							component.Children.Modify(children =>
+							{
+								children.AddRange(items.Select(o => o.Clone()));
+							});
 
-						component.MakeNameNonColliding();
+							component.MakeNameNonColliding();
 
-						scene.UndoBuffer.AddAndDo(new ReplaceCommand(items, new[] { component }));
-						scene.SelectedItem = component;
+							scene.UndoBuffer.AddAndDo(new ReplaceCommand(items, new[] { component }));
+						}
 
 						return Task.CompletedTask;
 					},
@@ -1366,9 +1367,10 @@ namespace MatterHackers.MatterControl
 							extrude.Matrix = itemClone.Matrix;
 							itemClone.Matrix = Matrix4X4.Identity;
 
-							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { extrude }));
-							scene.SelectedItem = null;
-							scene.SelectedItem = extrude;
+							using (new SelectionMaintainer(scene))
+							{
+								scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { extrude }));
+							}
 							extrude.Invalidate(InvalidateType.Properties);
 						}
 
@@ -1394,9 +1396,10 @@ namespace MatterHackers.MatterControl
 							smoothPath.Matrix = itemClone.Matrix;
 							itemClone.Matrix = Matrix4X4.Identity;
 
-							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { smoothPath }));
-							scene.SelectedItem = null;
-							scene.SelectedItem = smoothPath;
+							using (new SelectionMaintainer(scene))
+							{
+								scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { smoothPath }));
+							}
 							smoothPath.Invalidate(InvalidateType.Properties);
 						}
 
@@ -1422,9 +1425,10 @@ namespace MatterHackers.MatterControl
 							inflatePath.Matrix = itemClone.Matrix;
 							itemClone.Matrix = Matrix4X4.Identity;
 
-							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { inflatePath }));
-							scene.SelectedItem = null;
-							scene.SelectedItem = inflatePath;
+							using (new SelectionMaintainer(scene))
+							{
+								scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { inflatePath }));
+							}
 							inflatePath.Invalidate(InvalidateType.Properties);
 						}
 
