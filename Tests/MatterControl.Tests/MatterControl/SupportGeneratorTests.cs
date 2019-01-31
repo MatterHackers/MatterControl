@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools;
 using NUnit.Framework;
@@ -36,12 +37,43 @@ namespace MatterControl.Tests.MatterControl
 	[TestFixture]
 	public class SupportGeneratorTests
 	{
-		[Test, Category("InteractiveScene")]
+		[Test, Category("Support Generator")]
 		public void SupportExtentsTests()
 		{
 			// make a cube in the air and ensure that no mater where it is placed, support is always under the entire extents
 			InteractiveScene scene = new InteractiveScene();
 			var supportGenerator = new SupportGenerator(scene);
+		}
+
+		[Test, Category("Support Generator")]
+		public void TopBottomWalkingTest()
+		{
+			{
+				var planes = new List<(double z, bool bottom)>()
+				{
+					(0, false),
+					(5, true),
+					(10, false),
+				};
+
+				int bottom = SupportGenerator.GetNextBottom(0, planes);
+				Assert.AreEqual(1, bottom);
+
+				int bottom1 = SupportGenerator.GetNextBottom(1, planes);
+				Assert.AreEqual(0, bottom);
+			}
+
+			{
+				var planes = new List<(double z, bool bottom)>()
+				{
+					(10, false),
+					(10, true),
+					(20, false)
+				};
+
+				int bottom = SupportGenerator.GetNextBottom(0, planes);
+				Assert.AreEqual(0, bottom);
+			}
 		}
 	}
 }
