@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				anySettingOverridden |= printer.Settings.GetValue<bool>(SettingsKey.spiral_vase);
 				anySettingOverridden |= !string.IsNullOrWhiteSpace(printer.Settings.GetValue(SettingsKey.layer_to_pause));
 
-				var sectionWidget = new SectionWidget("Advanced", subPanel, menuTheme, expanded: anySettingOverridden)
+				var sectionWidget = new SectionWidget("Advanced".Localize(), subPanel, menuTheme, expanded: anySettingOverridden)
 				{
 					Name = "Advanced Section",
 					HAnchor = HAnchor.Stretch,
