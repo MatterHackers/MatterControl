@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,21 +29,19 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.RayTracer;
 using MatterHackers.RayTracer.Traceable;
 using MatterHackers.RenderOpenGl;
-using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
-using static MatterHackers.MeshVisualizer.MeshViewerWidget;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class InteractionLayer : GuiWidget, IInteractionVolumeContext
+	public partial class InteractionLayer : GuiWidget, IInteractionVolumeContext
 	{
 		private int volumeIndexWithMouseDown = -1;
 
@@ -65,22 +63,60 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private LightingData lighting = new LightingData();
 		private GuiWidget renderSource;
 
-		public InteractionLayer(WorldView world, UndoBuffer undoBuffer, InteractiveScene scene)
+		public InteractionLayer(WorldView world, UndoBuffer undoBuffer, BedConfig sceneContext, ThemeConfig theme, EditorType editorType = EditorType.Part)
 		{
-			this.Scene = scene;
+			this.DebugShowBounds = true;
+			this.sceneContext = sceneContext;
+			this.Scene = scene = sceneContext.Scene;
 			this.World = world;
 			this.InteractionVolumes = interactionVolumes;
 			this.undoBuffer = undoBuffer;
+			this.EditorMode = editorType;
+			this.theme = theme;
+
+			gridColors = new GridColors()
+			{
+				Gray = theme.ResolveColor(theme.BackgroundColor, theme.GetBorderColor((theme.IsDarkTheme ? 35 : 55))),
+				Red = theme.ResolveColor(theme.BackgroundColor, new Color(Color.Red, (theme.IsDarkTheme ? 105 : 170))),
+				Green = theme.ResolveColor(theme.BackgroundColor, new Color(Color.Green, (theme.IsDarkTheme ? 105 : 170))),
+				Blue = theme.ResolveColor(theme.BackgroundColor, new Color(Color.Blue, 195))
+			};
+
+			gCodeMeshColor = new Color(theme.PrimaryAccentColor, 35);
+
+			// Register listeners
+			scene.SelectionChanged += selection_Changed;
+
+			BuildVolumeColor = new ColorF(.2, .8, .3, .2).ToColor();
+
+			///////////////////////// this.interactionLayer.DrawGlTransparentContent += Draw_GlTransparentContent;
+
+			if (ViewOnlyTexture == null)
+			{
+				// TODO: What is the ViewOnlyTexture???
+				UiThread.RunOnIdle(() =>
+				{
+					ViewOnlyTexture = new ImageBuffer(32, 32, 32);
+					var graphics2D = ViewOnlyTexture.NewGraphics2D();
+					graphics2D.Clear(Color.White);
+					graphics2D.FillRectangle(0, 0, ViewOnlyTexture.Width / 2, ViewOnlyTexture.Height, Color.LightGray);
+					// request the texture so we can set it to repeat
+					var plugin = ImageGlPlugin.GetImageGlPlugin(ViewOnlyTexture, true, true, false);
+				});
+			}
 		}
 
 		internal void SetRenderTarget(GuiWidget renderSource)
 		{
 			this.renderSource = renderSource;
-			renderSource.AfterDraw += renderSource_AfterDraw;
+
+			// Hook our drawing operation to the renderSource so we can draw unclipped in the source objects bounds. At the time of writing,
+			// this mechanism is needed to draw bed items under the semi-transparent right treeview/editor panel
+			renderSource.BeforeDraw += renderSource_BeforeDraw;
 		}
 
 		// The primary draw hook. Kick off our draw operation when the renderSource fires AfterDraw
-		private void renderSource_AfterDraw(object sender, DrawEventArgs e)
+		private void renderSource_BeforeDraw(object sender, DrawEventArgs e)
 		{
 			if (DoOpenGlDrawing)
 			{
@@ -343,7 +379,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void OnDrawGlContent(DrawEventArgs e)
 		{
 			DrawGlOpaqueContent?.Invoke(this, e);
-			DrawGlTransparentContent?.Invoke(this, e);
+
+			this.Draw_GlTransparentContent(this, e);
 		}
 	}
 }

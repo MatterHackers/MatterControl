@@ -31,27 +31,23 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 using static MatterHackers.Agg.Easing;
 
-namespace MatterHackers.MeshVisualizer
+namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class MeshViewerWidget : GuiWidget
+	public partial class InteractionLayer : GuiWidget
 	{
 		private static ImageBuffer ViewOnlyTexture;
 
@@ -62,54 +58,9 @@ namespace MatterHackers.MeshVisualizer
 
 		private InteractiveScene scene;
 
-		private InteractionLayer interactionLayer;
-
 		private BedConfig sceneContext;
 
 		private Color debugBorderColor = Color.Green;
-
-		public MeshViewerWidget(BedConfig sceneContext, InteractionLayer interactionLayer, ThemeConfig theme, EditorType editorType = EditorType.Part)
-		{
-			this.EditorMode = editorType;
-			this.scene = sceneContext.Scene;
-			this.sceneContext = sceneContext;
-			this.interactionLayer = interactionLayer;
-			this.World = interactionLayer.World;
-			this.theme = theme;
-
-			gridColors = new GridColors()
-			{
-				Gray = theme.ResolveColor(theme.BackgroundColor, theme.GetBorderColor((theme.IsDarkTheme ? 35 : 55))),
-				Red = theme.ResolveColor(theme.BackgroundColor, new Color(Color.Red, (theme.IsDarkTheme ? 105 : 170))),
-				Green = theme.ResolveColor(theme.BackgroundColor, new Color(Color.Green, (theme.IsDarkTheme ? 105 : 170))),
-				Blue = theme.ResolveColor(theme.BackgroundColor, new Color(Color.Blue, 195))
-			};
-
-			gCodeMeshColor = new Color(theme.PrimaryAccentColor, 35);
-
-			// Register listeners
-			scene.SelectionChanged += selection_Changed;
-
-			BuildVolumeColor = new ColorF(.2, .8, .3, .2).ToColor();
-
-			this.interactionLayer.DrawGlTransparentContent += Draw_GlTransparentContent;
-
-			if (ViewOnlyTexture == null)
-			{
-				// TODO: What is the ViewOnlyTexture???
-				UiThread.RunOnIdle(() =>
-				{
-					ViewOnlyTexture = new ImageBuffer(32, 32, 32);
-					var graphics2D = ViewOnlyTexture.NewGraphics2D();
-					graphics2D.Clear(Color.White);
-					graphics2D.FillRectangle(0, 0, ViewOnlyTexture.Width / 2, ViewOnlyTexture.Height, Color.LightGray);
-					// request the texture so we can set it to repeat
-					var plugin = ImageGlPlugin.GetImageGlPlugin(ViewOnlyTexture, true, true, false);
-				});
-			}
-		}
-
-		public WorldView World { get; }
 
 		private ThemeConfig theme;
 
@@ -153,7 +104,7 @@ namespace MatterHackers.MeshVisualizer
 
 		public override List<WidgetAndPosition> FindDescendants(IEnumerable<string> namesToSearchFor, List<WidgetAndPosition> foundChildren, RectangleDouble touchingBounds, SearchType seachType, bool allowInvalidItems = true)
 		{
-			foreach (InteractionVolume child in interactionLayer.InteractionVolumes)
+			foreach (InteractionVolume child in this.InteractionVolumes)
 			{
 				string object3DName = child.Name;
 
@@ -260,8 +211,6 @@ namespace MatterHackers.MeshVisualizer
 			return base.FindDescendants(namesToSearchFor, foundChildren, touchingBounds, seachType, allowInvalidItems);
 		}
 
-		public bool SuppressUiVolumes { get; set; } = false;
-
 		private void DrawObject(IObject3D object3D, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
 			var selectedItem = scene.SelectedItem;
@@ -269,13 +218,13 @@ namespace MatterHackers.MeshVisualizer
 			foreach (var item in object3D.VisibleMeshes())
 			{
 				// check for correct persistable rendering
-				if(MeshViewerWidget.ViewOnlyTexture != null
+				if(InteractionLayer.ViewOnlyTexture != null
 					&& item.Mesh.Faces.Count > 0)
 				{
 					ImageBuffer faceTexture = null;
 
 					//item.Mesh.FaceTexture.TryGetValue((item.Mesh.Faces[0], 0), out faceTexture);
-					bool hasPersistableTexture = faceTexture == MeshViewerWidget.ViewOnlyTexture;
+					bool hasPersistableTexture = faceTexture == InteractionLayer.ViewOnlyTexture;
 
 					if (item.WorldPersistable())
 					{
@@ -682,7 +631,7 @@ namespace MatterHackers.MeshVisualizer
 			}
 
 			// draw on top of anything that is already drawn
-			foreach (InteractionVolume interactionVolume in interactionLayer.InteractionVolumes)
+			foreach (InteractionVolume interactionVolume in this.InteractionVolumes)
 			{
 				if (interactionVolume.DrawOnTop)
 				{
@@ -693,7 +642,7 @@ namespace MatterHackers.MeshVisualizer
 			}
 
 			// Draw again setting the depth buffer and ensuring that all the interaction objects are sorted as well as we can
-			foreach (InteractionVolume interactionVolume in interactionLayer.InteractionVolumes)
+			foreach (InteractionVolume interactionVolume in this.InteractionVolumes)
 			{
 				interactionVolume.DrawGlContent(new DrawGlContentEventArgs(true, e));
 			}
@@ -713,7 +662,8 @@ namespace MatterHackers.MeshVisualizer
 			None
 		}
 
-		private ModelRenderStyle modelRenderStyle = MeshViewerWidget.ModelRenderStyle.Wireframe;
+		private ModelRenderStyle modelRenderStyle = ModelRenderStyle.Wireframe;
+
 		private long lastSelectionChangedMs;
 
 		private class Object3DView

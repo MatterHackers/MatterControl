@@ -308,7 +308,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				// Mouse and widget positions
 				var screenSpaceMousePosition = this.TransformToScreenSpace(mouseEvent.Position);
-				var meshViewerPosition = view3DWidget.meshViewerWidget.TransformToScreenSpace(view3DWidget.meshViewerWidget.LocalBounds);
+				var meshViewerPosition = view3DWidget.InteractionLayer.TransformToScreenSpace(view3DWidget.InteractionLayer.LocalBounds);
 
 				// Notify of drag operation complete
 				view3DWidget.FinishDrop(mouseUpInBounds: meshViewerPosition.Contains(screenSpaceMousePosition));

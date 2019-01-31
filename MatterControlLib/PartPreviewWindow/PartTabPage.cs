@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				viewControls3D,
 				theme,
 				this,
-				editorType: (isPrinterType) ? MeshViewerWidget.EditorType.Printer : MeshViewerWidget.EditorType.Part);
+				editorType: (isPrinterType) ? InteractionLayer.EditorType.Printer : InteractionLayer.EditorType.Part);
 
 			viewControls3D.SetView3DWidget(view3DWidget);
 

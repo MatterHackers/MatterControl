@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void ProgressReporter(double progress0To1, string processingState)
 		{
 			progressBar.RatioComplete = progress0To1;
-			view3DWidget?.meshViewerWidget?.Invalidate();
+			view3DWidget?.InteractionLayer?.Invalidate();
 
 			this.State = processingState;
 
