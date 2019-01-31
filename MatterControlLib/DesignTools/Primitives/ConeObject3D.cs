@@ -53,7 +53,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		public static async Task<ConeObject3D> Create()
 		{
 			var item = new ConeObject3D();
-			item.Rebuild();
+			await item.Rebuild();
+
 			return item;
 		}
 
