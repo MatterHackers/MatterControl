@@ -74,14 +74,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.EditorMode = editorType;
 			this.theme = theme;
 
-			gridColors = new GridColors()
-			{
-				Gray = theme.ResolveColor(theme.BackgroundColor, theme.GetBorderColor((theme.IsDarkTheme ? 35 : 55))),
-				Red = theme.ResolveColor(theme.BackgroundColor, new Color(Color.Red, (theme.IsDarkTheme ? 105 : 170))),
-				Green = theme.ResolveColor(theme.BackgroundColor, new Color(Color.Green, (theme.IsDarkTheme ? 105 : 170))),
-				Blue = theme.ResolveColor(theme.BackgroundColor, new Color(Color.Blue, 195))
-			};
-
 			gCodeMeshColor = new Color(theme.PrimaryAccentColor, 35);
 
 			// Register listeners
@@ -89,6 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			BuildVolumeColor = new ColorF(.2, .8, .3, .2).ToColor();
 
+			floorDrawable = new FloorDrawable(editorType, sceneContext, this.BuildVolumeColor, theme);
 			///////////////////////// this.interactionLayer.DrawGlTransparentContent += Draw_GlTransparentContent;
 
 			if (ViewOnlyTexture == null)

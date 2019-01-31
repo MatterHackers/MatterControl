@@ -53,7 +53,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Color lightWireframe = new Color("#aaa4");
 		private Color darkWireframe = new Color("#3334");
-		private GridColors gridColors;
 		private Color gCodeMeshColor;
 
 		private InteractiveScene scene;
@@ -63,14 +62,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Color debugBorderColor = Color.Green;
 
 		private ThemeConfig theme;
-
-		private class GridColors
-		{
-			public Color Red { get; set; }
-			public Color Green { get; set; }
-			public Color Blue { get; set; }
-			public Color Gray { get; set; }
-		}
+		private FloorDrawable floorDrawable;
 
 		public bool AllowBedRenderingWhenEmpty { get; set; }
 
@@ -467,6 +459,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return bCenterInViewSpace.LengthSquared.CompareTo(aCenterInViewSpace.LengthSquared);
 		}
 
+
 		private void Draw_GlTransparentContent(object sender, DrawEventArgs e)
 		{
 			var gcodeOptions = sceneContext.RendererOptions;
@@ -496,9 +489,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var pointOnBedInViewSpace = Vector3Ex.Transform(new Vector3(10, 10, 0), World.ModelviewMatrix);
 			var lookingDownOnBed = Vector3Ex.Dot(bedNormalInViewSpace, pointOnBedInViewSpace) < 0;
 
+			floorDrawable.LookingDownOnBed = lookingDownOnBed;
+
 			if (lookingDownOnBed)
 			{
-				RenderBedMesh(lookingDownOnBed);
+				floorDrawable.Draw(this, e, Matrix4X4.Identity, this.World);
 			}
 
 			var wireColor = Color.Transparent;
@@ -528,7 +523,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (!lookingDownOnBed)
 			{
-				RenderBedMesh(lookingDownOnBed);
+				floorDrawable.Draw(this, e, Matrix4X4.Identity, this.World);
 			}
 
 			// we don't want to render the bed or build volume before we load a model.
@@ -556,72 +551,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					RenderTypes.Wireframe, debugItem.WorldMatrix() * World.ModelviewMatrix);
 			}
 		}
-
-		private void RenderBedMesh(bool lookingDownOnBed)
-		{
-			if (this.EditorMode == EditorType.Printer)
-			{
-				// only render if we are above the bed
-				if (sceneContext.RendererOptions.RenderBed)
-				{
-					var bedColor = theme.ResolveColor(Color.White, theme.BackgroundColor.WithAlpha(111));
-
-					if (!lookingDownOnBed)
-					{
-						bedColor = new Color(bedColor, bedColor.alpha / 4);
-					}
-
-					GLHelper.Render(sceneContext.Mesh, bedColor, RenderTypes.Shaded, World.ModelviewMatrix);
-
-					if (sceneContext.PrinterShape != null)
-					{
-						GLHelper.Render(sceneContext.PrinterShape, bedColor, RenderTypes.Shaded, World.ModelviewMatrix);
-					}
-				}
-
-				if (sceneContext.BuildVolumeMesh != null && sceneContext.RendererOptions.RenderBuildVolume)
-				{
-					GLHelper.Render(sceneContext.BuildVolumeMesh, this.BuildVolumeColor, RenderTypes.Shaded, World.ModelviewMatrix);
-				}
-			}
-			else
-			{
-				GL.Disable(EnableCap.Texture2D);
-				GL.Disable(EnableCap.Blend);
-				GL.Disable(EnableCap.Lighting);
-
-				int width = 600;
-
-				GL.Begin(BeginMode.Lines);
-				{
-					for (int i = -width; i <= width; i += 50)
-					{
-						GL.Color4(gridColors.Gray);
-						GL.Vertex3(i, width, 0);
-						GL.Vertex3(i, -width, 0);
-
-						GL.Vertex3(width, i, 0);
-						GL.Vertex3(-width, i, 0);
-					}
-
-					// X axis
-					GL.Color4(gridColors.Red);
-					GL.Vertex3(width, 0, 0);
-					GL.Vertex3(-width, 0, 0);
-
-					// Y axis
-					GL.Color4(gridColors.Green);
-					GL.Vertex3(0, width, 0);
-					GL.Vertex3(0, -width, 0);
-
-					// Z axis
-					GL.Color4(gridColors.Blue);
-					GL.Vertex3(0, 0, 10);
-					GL.Vertex3(0, 0, -10);
-				}
-				GL.End();
-			}
-		}
+		
 
 		private void DrawInteractionVolumes(DrawEventArgs e)
 		{
