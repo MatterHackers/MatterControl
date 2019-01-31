@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& layer.Scene.SelectedItem != null
 				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
 			{
-				var aabb = SourceItem.GetAxisAlignedBoundingBox();
+				var aabb = SourceItems.GetAxisAlignedBoundingBox();
 
 				var center = aabb.Center;
 				var worldMatrix = this.WorldMatrix();
@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			if (Children.Count > 0)
 			{
-				var aabb = SourceItem.GetAxisAlignedBoundingBox();
+				var aabb = SourceItems.GetAxisAlignedBoundingBox();
 				TransformItem.Matrix = Matrix4X4.Identity;
 				var scale = Vector3.One;
 				if (StretchX)

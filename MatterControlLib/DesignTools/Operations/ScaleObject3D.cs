@@ -36,6 +36,7 @@ using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -58,20 +59,20 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public ScaleObject3D(IObject3D itemToScale, Vector3 scale)
 			: this()
 		{
-			WrapItem(itemToScale);
+			WrapItems(new IObject3D[] { itemToScale });
 
 			ScaleRatio = scale;
 			Rebuild();
 		}
 
-		public override void WrapItem(IObject3D item, UndoBuffer undoBuffer = null)
+		public override void WrapItems(IEnumerable<IObject3D> items, UndoBuffer undoBuffer = null)
 		{
-			base.WrapItem(item, undoBuffer);
+			base.WrapItems(items, undoBuffer);
 
 			// use source item as it may be a copy of item by the time we have wrapped it
-			var aabb = SourceItem.GetAxisAlignedBoundingBox();
+			var aabb = SourceItems.GetAxisAlignedBoundingBox();
 			var newCenter = new Vector3(aabb.Center.X, aabb.Center.Y, aabb.MinXYZ.Z);
-			SourceItem.Translate(-newCenter);
+			SourceItems.Translate(-newCenter);
 			this.Translate(newCenter);
 		}
 
@@ -92,7 +93,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					return ScaleRatio.X * 100;
 				}
 
-				return ScaleRatio.X * SourceItem.XSize();
+				return ScaleRatio.X * SourceItems.GetAxisAlignedBoundingBox().XSize;
 			}
 
 			set
@@ -103,7 +104,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 				else
 				{
-					ScaleRatio.X = value / SourceItem.XSize();
+					ScaleRatio.X = value / SourceItems.GetAxisAlignedBoundingBox().XSize;
 				}
 			}
 		}
@@ -119,7 +120,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					return ScaleRatio.Y * 100;
 				}
 
-				return ScaleRatio.Y * SourceItem.YSize();
+				return ScaleRatio.Y * SourceItems.GetAxisAlignedBoundingBox().YSize;
 			}
 
 			set
@@ -130,7 +131,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 				else
 				{
-					ScaleRatio.Y = value / SourceItem.YSize();
+					ScaleRatio.Y = value / SourceItems.GetAxisAlignedBoundingBox().YSize;
 				}
 			}
 		}
@@ -146,7 +147,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					return ScaleRatio.Z * 100;
 				}
 
-				return ScaleRatio.Z * SourceItem.ZSize();
+				return ScaleRatio.Z * SourceItems.GetAxisAlignedBoundingBox().ZSize;
 			}
 
 			set
@@ -157,7 +158,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 				else
 				{
-					ScaleRatio.Z = value / SourceItem.ZSize();
+					ScaleRatio.Z = value / SourceItems.GetAxisAlignedBoundingBox().ZSize;
 				}
 			}
 		}

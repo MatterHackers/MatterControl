@@ -35,6 +35,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -51,7 +52,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public RotateObject3D_2(IObject3D itemToRotate, Vector3 normal, double angleDegrees)
 			: this()
 		{
-			WrapItem(itemToRotate);
+			WrapItems(new IObject3D[] { itemToRotate });
 
 			RotateAbout.Normal = normal;
 			AngleDegrees = angleDegrees;
@@ -60,7 +61,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public RotateObject3D_2(IObject3D itemToRotate, double xRadians = 0, double yRadians = 0, double zRadians = 0, string name = "")
 			: this()
 		{
-			WrapItem(itemToRotate);
+			WrapItems(new IObject3D[] { itemToRotate });
 
 			// TODO: set the rotation
 			//RotateAbout.Normal = Vector3.UnitZ.TransformNormal(Matrix4X4.CreateRotation(new Vector3(xRadians, yRadians, zRadians)));
@@ -71,12 +72,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 		}
 
-		public override void WrapItem(IObject3D item, UndoBuffer undoBuffer = null)
+		public override void WrapItems(IEnumerable<IObject3D> items, UndoBuffer undoBuffer = null)
 		{
-			base.WrapItem(item, undoBuffer);
+			base.WrapItems(items, undoBuffer);
 
 			// use source item as the wrape may have cloned it
-			var aabb = SourceItem.GetAxisAlignedBoundingBox();
+			var aabb = SourceItems.GetAxisAlignedBoundingBox();
 			this.RotateAbout.Origin = aabb.Center;
 		}
 
