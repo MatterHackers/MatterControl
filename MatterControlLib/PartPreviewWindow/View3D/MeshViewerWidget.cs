@@ -434,6 +434,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				modelRenderStyle = ModelRenderStyle.None;
 			}
 
+			foreach (var drawable in drawables.Where(d => d.DrawStage == DrawStage.First || d.DrawStage == DrawStage.OpaqueContent).OrderBy(d => d.DrawStage))
+			{
+				drawable.Draw(this, e, Matrix4X4.Identity, this.World);
+			}
+
 			// Draw solid objects, extract transparent
 			var transparentMeshes = new List<Object3DView>();
 			foreach (var object3D in scene.Children)
@@ -497,12 +502,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			DrawInteractionVolumes(e);
 
-			foreach(var drawable in drawables)
+			foreach(var drawable in drawables.Where(d => d.DrawStage == DrawStage.TransparentContent || d.DrawStage == DrawStage.Last).OrderBy(d => d.DrawStage))
 			{
 				drawable.Draw(this, e, Matrix4X4.Identity, this.World);
 			}
 		}
-		
 
 		private void DrawInteractionVolumes(DrawEventArgs e)
 		{

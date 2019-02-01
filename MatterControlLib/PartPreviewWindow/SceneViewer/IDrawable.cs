@@ -33,7 +33,13 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public enum DrawStage { First, OpaqueContent, TransparentContent, Last };
+	public enum DrawStage
+	{
+		First = 0,
+		OpaqueContent = 1,
+		TransparentContent = 2,
+		Last = 3
+	};
 
 	public interface IDrawable
 	{
