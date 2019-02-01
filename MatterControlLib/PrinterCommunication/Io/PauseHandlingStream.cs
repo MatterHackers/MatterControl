@@ -94,13 +94,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 									var stepperDelta = Math.Abs(stepperDistance - positionSensorData.LastStepperDistance);
 
 									// if we think we should have move the filament by more than 1mm
-									if (stepperDelta > .2)
+									if (stepperDelta > 1)
 									{
 										var sensorDelta = Math.Abs(sensorDistance - positionSensorData.LastSensorDistance);
 										// check if the sensor data is within a tolerance of the stepper data
 
 										var deltaRatio = sensorDelta / stepperDelta;
-										if (deltaRatio < .9 || deltaRatio > 1.1)
+										if (deltaRatio < .5 || deltaRatio > 1.5)
 										{
 											// we have a repartable discrepency set a runout state
 											positionSensorData.ExtrusionDiscrepency++;
