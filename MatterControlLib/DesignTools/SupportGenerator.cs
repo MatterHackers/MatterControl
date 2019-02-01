@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public void RemoveExisting()
 		{
 			scene.SelectedItem = null;
-			var existingSupports = scene.Children.Where(i => i.GetType() == typeof(GeneratedSupportObject3D));
+			var existingSupports = scene.Descendants().Where(i => i.GetType() == typeof(GeneratedSupportObject3D));
 
 			scene.UndoBuffer.AddAndDo(new DeleteCommand(scene, existingSupports.ToList()));
 		}

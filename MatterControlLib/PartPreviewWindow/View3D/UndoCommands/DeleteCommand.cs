@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class DeleteCommand : IUndoRedoCommand
 	{
-		private List<IObject3D> items = new List<IObject3D>();
+		private List<(IObject3D parent, IObject3D item)> items = new List<(IObject3D parent, IObject3D item)>();
 
 		private InteractiveScene scene;
 
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// save them in our list
 			foreach (var item in deletingItems)
 			{
-				items.Add(item);
+				items.Add((item.Parent, item));
 			}
 		}
 
@@ -72,13 +72,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			using (new SelectionMaintainer(scene))
 			{
-				scene.Children.Modify(list =>
+				foreach(var item in items)
 				{
-					foreach (var item in items)
-					{
-						list.Remove(item);
-					}
-				});
+					item.parent.Children.Remove(item.item);
+				}
 			}
 		}
 
@@ -86,13 +83,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			using (new SelectionMaintainer(scene))
 			{
-				scene.Children.Modify(list =>
+				foreach (var item in items)
 				{
-					foreach (var item in items)
-					{
-						list.Add(item);
-					}
-				});
+					item.parent.Children.Add(item.item);
+				}
 			}
 		}
 	}
