@@ -148,8 +148,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					e.Graphics2D.Line(topStartScreenPos, bottomStartScreenPos, Color.Black);
 				}
 
-				ITriangle tri = x.Bvh as ITriangle;
-				if (tri != null)
+				if (x.Bvh is ITriangle tri)
 				{
 					for (int i = 0; i < 3; i++)
 					{
@@ -182,9 +181,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& !SuppressUiVolumes
 				&& FindInteractionVolumeHit(ray, out volumeHitIndex, out info))
 			{
-				MouseEvent3DArgs mouseEvent3D = new MouseEvent3DArgs(mouseEvent, ray, info);
 				volumeIndexWithMouseDown = volumeHitIndex;
-				interactionVolumes[volumeHitIndex].OnMouseDown(mouseEvent3D);
+				interactionVolumes[volumeHitIndex].OnMouseDown(new MouseEvent3DArgs(mouseEvent, ray, info));
 				SelectedInteractionVolume = interactionVolumes[volumeHitIndex];
 			}
 			else
@@ -313,15 +311,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			return false;
-		}
-
-		public void AddTransformSnapshot(Matrix4X4 originalTransform)
-		{
-			var selectedItem = Scene.SelectedItem;
-			if (selectedItem != null && selectedItem.Matrix != originalTransform)
-			{
-				this.undoBuffer.Add(new TransformCommand(selectedItem, originalTransform, Scene.SelectedItem.Matrix));
-			}
 		}
 
 		public bool SuppressUiVolumes { get; set; } = false;

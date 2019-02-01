@@ -460,6 +460,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			scene.UndoBuffer.Add(new TransformCommand(objectToLayFlatGroup, preLayFlatMatrix, objectToLayFlatGroup.Matrix));
 		}
 
+		public static void AddTransformSnapshot(this InteractiveScene scene, Matrix4X4 originalTransform)
+		{
+			var selectedItem = scene.SelectedItem;
+			if (selectedItem != null && selectedItem.Matrix != originalTransform)
+			{
+				scene.UndoBuffer.Add(new TransformCommand(selectedItem, originalTransform, selectedItem.Matrix));
+			}
+		}
+
 		internal class ArrangeUndoCommand : IUndoRedoCommand
 		{
 			private List<TransformCommand> allUndoTransforms = new List<TransformCommand>();

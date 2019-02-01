@@ -426,7 +426,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return bCenterInViewSpace.LengthSquared.CompareTo(aCenterInViewSpace.LengthSquared);
 		}
 
-
 		private void DrawGlContent(DrawEventArgs e)
 		{
 			var gcodeOptions = sceneContext.RendererOptions;

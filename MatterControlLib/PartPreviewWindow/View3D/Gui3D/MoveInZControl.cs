@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Invalidate();
 				}
 
-				context.AddTransformSnapshot(startingTransform);
+				context.Scene.AddTransformSnapshot(startingTransform);
 			};
 
 			InteractionContext.GuiSurface.AddChild(zHeightDisplayInfo);
@@ -257,7 +257,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseUp(MouseEvent3DArgs mouseEvent3D)
 		{
-			InteractionContext.AddTransformSnapshot(transformOnMouseDown);
+			InteractionContext.Scene.AddTransformSnapshot(transformOnMouseDown);
 			base.OnMouseUp(mouseEvent3D);
 		}
 

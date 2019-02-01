@@ -1525,7 +1525,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					&& CurrentSelectInfo.DownOnPart
 					&& CurrentSelectInfo.LastMoveDelta != Vector3.Zero)
 				{
-					InteractionLayer.AddTransformSnapshot(TransformOnMouseDown);
+					this.Scene.AddTransformSnapshot(TransformOnMouseDown);
 				}
 				else if (DragSelectionInProgress)
 				{
