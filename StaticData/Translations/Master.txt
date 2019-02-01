@@ -181,11 +181,17 @@ Translated:Alpha: The in development version of MatterControl
 English:Already Loaded
 Translated:Already Loaded
 
+English:Anchor
+Translated:Anchor
+
 English:and ensure that no filament is stuck to your nozzle.
 Translated:and ensure that no filament is stuck to your nozzle.
 
 English:and the hotend to heat to 
 Translated:and the hotend to heat to 
+
+English:Angle
+Translated:Angle
 
 English:Anyone with this code will have access
 Translated:Anyone with this code will have access
@@ -268,6 +274,12 @@ Translated:Baby Step Offset
 English:Back
 Translated:Back
 
+English:Back Ratio
+Translated:Back Ratio
+
+English:Backing Depth
+Translated:Backing Depth
+
 English:Backup Firmware Before Update
 Translated:Backup Firmware Before Update
 
@@ -312,6 +324,9 @@ Translated:Before Tool Change G-Code 2
 
 English:Behavior
 Translated:Behavior
+
+English:Bend Up
+Translated:Bend Up
 
 English:Beta
 Translated:Beta
@@ -690,6 +705,9 @@ Translated:Demo Mode
 
 English:Density
 Translated:Density
+
+English:Depth
+Translated:Depth
 
 English:Descending
 Translated:Descending
@@ -1453,6 +1471,12 @@ Translated:Initializing hardware...
 English:Initializing Library
 Translated:Initializing Library
 
+English:Inner Radius
+Translated:Inner Radius
+
+English:Inner Size
+Translated:Inner Size
+
 English:Insert Filament
 Translated:Insert Filament
 
@@ -1518,6 +1542,9 @@ Translated:It's time to copy your existing printer settings to your MatterHacker
 
 English:Jerk Velocity
 Translated:Jerk Velocity
+
+English:Keep Within Angle
+Translated:Keep Within Angle
 
 English:Keys
 Translated:Keys
@@ -1677,6 +1704,9 @@ Translated:Macro Presets
 
 English:Macros
 Translated:Macros
+
+English:Maintain Proportions
+Translated:Maintain Proportions
 
 English:make
 Translated:make
@@ -1990,6 +2020,9 @@ Translated:of
 English:Off
 Translated:Off
 
+English:Offset
+Translated:Offset
+
 English:Ok
 Translated:Ok
 
@@ -2095,6 +2128,12 @@ Translated:or
 English:Other
 Translated:Other
 
+English:Outer Radius
+Translated:Outer Radius
+
+English:Outer Size
+Translated:Outer Size
+
 English:Outer Surface - Perimeters
 Translated:Outer Surface - Perimeters
 
@@ -2181,6 +2220,9 @@ Translated:Pinch
 
 English:Pipe Works
 Translated:Pipe Works
+
+English:Pixels Per mm
+Translated:Pixels Per mm
 
 English:Place the paper under the extruder
 Translated:Place the paper under the extruder
@@ -2274,6 +2316,9 @@ Translated:Prev
 
 English:Preview
 Translated:Preview
+
+English:Primary
+Translated:Primary
 
 English:Primitive Shapes
 Translated:Primitive Shapes
@@ -2415,6 +2460,9 @@ Translated:Raise / Stow
 
 English:Randomize Starting Points
 Translated:Randomize Starting Points
+
+English:Reach
+Translated:Reach
 
 English:Read Filter
 Translated:Read Filter
@@ -2610,6 +2658,9 @@ Translated:Rotate
 
 English:Rotate (Alt + Left Mouse)
 Translated:Rotate (Alt + Left Mouse)
+
+English:Rotate About
+Translated:Rotate About
 
 English:Rotate View
 Translated:Rotate View
@@ -4015,11 +4066,17 @@ Translated:Would you like to switch to the new G-Code? Before you switch, check 
 English:Write Filter
 Translated:Write Filter
 
+English:X
+Translated:X
+
 English:X and Y Distance
 Translated:X and Y Distance
 
 English:XY Homing Position
 Translated:XY Homing Position
+
+English:Y
+Translated:Y
 
 English:Yes
 Translated:Yes
@@ -4083,6 +4140,9 @@ Translated:Your Start G-Code should not contain a G30 if you are planning on usi
 
 English:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
 Translated:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
+
+English:Z
+Translated:Z
 
 English:Z Lift
 Translated:Z Lift
