@@ -83,7 +83,8 @@ namespace RoslynLocalizeDetector
 			var attributSyntax = node as AttributeSyntax;
 			var name = GetSimpleNameFromNode(attributSyntax);
 
-			if (name.Identifier.Value.ToString() == "DisplayName"
+			if ((name.Identifier.Value.ToString() == "DisplayName"
+				|| name.Identifier.Value.ToString() == "Description")
 				&& attributSyntax.ArgumentList.Arguments.FirstOrDefault() is AttributeArgumentSyntax attributeArgument
 				&& attributeArgument.Expression is LiteralExpressionSyntax literalExpression)
 			{
