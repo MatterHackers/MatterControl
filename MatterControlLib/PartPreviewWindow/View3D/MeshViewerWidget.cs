@@ -245,8 +245,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 
-				bool isDebugItem = (item == scene.DebugItem);
-
 				if (!sceneContext.ViewState.ModelView)
 				{
 					if (modelRenderStyle == ModelRenderStyle.WireframeAndSolid)
@@ -267,7 +265,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if ((drawColor.alpha == 255
 					&& !hasTransparentTextures)
-					|| isDebugItem)
+					|| (item == scene.DebugItem))
 				{
 					// Render as solid
 					GLHelper.Render(item.Mesh,
@@ -309,27 +307,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					RenderSelection(item, frustum, selectionColor);
 				}
-
-
-
-#if DEBUG
-				if (isDebugItem)
-				{
-					var frustum = World.GetClippingFrustum();
-
-					var aabb = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-
-					World.RenderAabb(aabb, Matrix4X4.Identity, debugBorderColor, 1);
-
-					if (item.Mesh != null)
-					{
-						GLHelper.Render(item.Mesh, debugBorderColor, item.WorldMatrix(),
-							RenderTypes.Wireframe, item.WorldMatrix() * World.ModelviewMatrix);
-					}
-				}
-#endif
-
-				// RenderNormals(renderData);
 
 				// turn lighting back on after rendering selection outlines
 				GL.Enable(EnableCap.Lighting);
@@ -502,13 +479,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			DrawInteractionVolumes(e);
-
-			if (scene.DebugItem?.Mesh != null)
-			{
-				var debugItem = scene.DebugItem;
-				GLHelper.Render(debugItem.Mesh, debugBorderColor, debugItem.WorldMatrix(),
-					RenderTypes.Wireframe, debugItem.WorldMatrix() * World.ModelviewMatrix);
-			}
 
 			foreach(var drawable in drawables)
 			{
