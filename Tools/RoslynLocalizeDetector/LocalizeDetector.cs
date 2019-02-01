@@ -33,6 +33,7 @@ namespace RoslynLocalizeDetector
 		public override void Initialize(AnalysisContext context)
 		{
 			context.RegisterSyntaxNodeAction(AnalyzeInvocation, SyntaxKind.InvocationExpression);
+			context.RegisterSyntaxNodeAction(AnalyzeAttributeNodes, SyntaxKind.Attribute);
 		}
 
 		private void AnalyzeInvocation(SyntaxNodeAnalysisContext analysisContext)
@@ -74,5 +75,35 @@ namespace RoslynLocalizeDetector
 
 			return null;
 		}
+
+		// Find DisplayName attributes and extract localization strings from them
+		private void AnalyzeAttributeNodes(SyntaxNodeAnalysisContext analysisContext)
+		{
+			var node = analysisContext.Node;
+			var attributSyntax = node as AttributeSyntax;
+			var name = GetSimpleNameFromNode(attributSyntax);
+
+			if (name.Identifier.Value.ToString() == "DisplayName"
+				&& attributSyntax.ArgumentList.Arguments.FirstOrDefault() is AttributeArgumentSyntax attributeArgument
+				&& attributeArgument.Expression is LiteralExpressionSyntax literalExpression)
+			{
+				var textInvokedOn = literalExpression.Token.ValueText;
+				localizeListener.Invoke(textInvokedOn);
+			}
+		}
+
+		private static SimpleNameSyntax GetSimpleNameFromNode(AttributeSyntax node)
+		{
+			var identifierNameSyntax = node.Name as IdentifierNameSyntax;
+			var qualifiedNameSyntax = node.Name as QualifiedNameSyntax;
+
+			return
+				identifierNameSyntax
+				??
+				qualifiedNameSyntax?.Right
+				??
+				(node.Name as AliasQualifiedNameSyntax).Name;
+		}
+
 	}
 }
