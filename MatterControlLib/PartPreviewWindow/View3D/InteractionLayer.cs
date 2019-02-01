@@ -205,15 +205,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			Ray ray = this.World.GetRayForLocalBounds(mouseEvent.Position);
 			IntersectInfo info = null;
+			var mouseEvent3D = new MouseEvent3DArgs(mouseEvent, ray, info);
+
 			if (MouseDownOnInteractionVolume && volumeIndexWithMouseDown != -1)
 			{
-				MouseEvent3DArgs mouseEvent3D = new MouseEvent3DArgs(mouseEvent, ray, info);
 				interactionVolumes[volumeIndexWithMouseDown].OnMouseMove(mouseEvent3D);
 			}
 			else
 			{
-				MouseEvent3DArgs mouseEvent3D = new MouseEvent3DArgs(mouseEvent, ray, info);
-
 				int volumeHitIndex;
 				FindInteractionVolumeHit(ray, out volumeHitIndex, out info);
 
