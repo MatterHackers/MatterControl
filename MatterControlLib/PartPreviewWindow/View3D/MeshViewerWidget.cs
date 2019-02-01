@@ -509,22 +509,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				floorDrawable.Draw(this, e, Matrix4X4.Identity, this.World);
 			}
 
-			// we don't want to render the bed or build volume before we load a model.
-			if (scene.HasChildren() || AllowBedRenderingWhenEmpty)
-			{
-				if (false) // this is code to draw a small axis indicator
-				{
-					double big = 10;
-					double small = 1;
-					Mesh xAxis = PlatonicSolids.CreateCube(big, small, small);
-					GLHelper.Render(xAxis, Color.Red);
-					Mesh yAxis = PlatonicSolids.CreateCube(small, big, small);
-					GLHelper.Render(yAxis, Color.Green);
-					Mesh zAxis = PlatonicSolids.CreateCube(small, small, big);
-					GLHelper.Render(zAxis, Color.Blue);
-				}
-			}
-
 			DrawInteractionVolumes(e);
 
 			if (scene.DebugItem?.Mesh != null)
