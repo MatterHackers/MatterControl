@@ -112,7 +112,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (DoOpenGlDrawing)
 			{
 				GLHelper.SetGlContext(this.World, renderSource.TransformToScreenSpace(renderSource.LocalBounds), lighting);
-				OnDrawGlContent(e);
+
+				// OnDrawGlContent
+				DrawGlOpaqueContent?.Invoke(this, e);
+				this.Draw_GlTransparentContent(e);
+
 				GLHelper.UnsetGlContext();
 			}
 		}
@@ -342,12 +346,5 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		} 
 
 		public GuiWidget GuiSurface => this;
-
-		private void OnDrawGlContent(DrawEventArgs e)
-		{
-			DrawGlOpaqueContent?.Invoke(this, e);
-
-			this.Draw_GlTransparentContent(this, e);
-		}
 	}
 }
