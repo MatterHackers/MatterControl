@@ -308,7 +308,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				if (fromBed)
 				{
 					i = GetNextBottom(i, kvp.Value);
-					if (kvp.Value[i].bottom)
+					if (i < kvp.Value.Count
+						&& kvp.Value[i].bottom)
 					{
 						AddSupportColumn(supportColumnsToAdd, xPos, yPos, 0, kvp.Value[i].z + .01);
 					}
