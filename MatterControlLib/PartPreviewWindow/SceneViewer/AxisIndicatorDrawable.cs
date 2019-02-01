@@ -46,6 +46,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 		}
 
+		public string Title { get; } = "Axis Indicator";
+
+		public string Description { get; } = "Render Axis Indicator at origin";
+
+		public DrawStage DrawStage { get; } = DrawStage.Last;
+
 		public void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
 		{
 			Mesh xAxis = PlatonicSolids.CreateCube(big, small, small);

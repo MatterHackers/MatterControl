@@ -65,6 +65,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 		}
 
+		public string Title { get; } = "Render Floor";
+
+		public string Description { get; } = "Render a plane or bed floor";
+
+		// TODO: Investigate if stage should really change dynamically based on lookingDownOnBed
+		public DrawStage DrawStage { get; } = DrawStage.First;
+
 		public bool LookingDownOnBed { get; set; }
 
 		public void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)

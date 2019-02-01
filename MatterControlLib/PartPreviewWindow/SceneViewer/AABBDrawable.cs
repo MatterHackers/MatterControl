@@ -42,6 +42,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.sceneContext = sceneContext;
 		}
 
+		public string Title { get; } = "AABB Render";
+
+		public string Description { get; } = "Render AABB for each scene child";
+
+		public DrawStage DrawStage { get; } = DrawStage.Last;
+
 		public void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
 		{
 			foreach (var child in sceneContext.Scene.Children)

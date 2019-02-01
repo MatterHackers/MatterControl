@@ -33,9 +33,14 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+	public enum DrawStage { First, OpaqueContent, TransparentContent, Last };
+
 	public interface IDrawable
 	{
+		string Title { get; }
+		string Description { get; }
 		void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world);
+		DrawStage DrawStage { get; }
 	}
 
 	public interface IDrawableItem
