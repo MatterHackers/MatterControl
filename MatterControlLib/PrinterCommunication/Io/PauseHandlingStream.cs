@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 										// check if the sensor data is within a tolerance of the stepper data
 
 										var deltaRatio = sensorDelta / stepperDelta;
-										if (deltaRatio < .5 || deltaRatio > 1.5)
+										if (deltaRatio < .5 || deltaRatio > 2)
 										{
 											// we have a repartable discrepency set a runout state
 											positionSensorData.ExtrusionDiscrepency++;
