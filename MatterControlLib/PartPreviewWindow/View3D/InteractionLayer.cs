@@ -100,6 +100,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.drawables.Add(drawable);
 		}
 
+		public IEnumerable<IDrawable> Drawables => drawables;
+
 		internal void SetRenderTarget(GuiWidget renderSource)
 		{
 			this.renderSource = renderSource;
