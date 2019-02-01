@@ -44,11 +44,6 @@ namespace MatterHackers.MeshVisualizer
 	[Flags]
 	public enum LineArrows { None = 0, Start = 1, End = 2, Both = 3 };
 
-	public interface IInteractionVolume
-	{
-
-	}
-
 	public class InteractionVolume
 	{
 		public bool MouseDownOnControl;

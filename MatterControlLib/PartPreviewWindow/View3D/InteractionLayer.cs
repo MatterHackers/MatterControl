@@ -56,18 +56,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private List<InteractionVolume> interactionVolumes = new List<InteractionVolume>();
 		public List<InteractionVolume> InteractionVolumes { get; }
 
-		private UndoBuffer undoBuffer;
-
 		private LightingData lighting = new LightingData();
 		private GuiWidget renderSource;
 
-		public InteractionLayer(WorldView world, UndoBuffer undoBuffer, BedConfig sceneContext, ThemeConfig theme, EditorType editorType = EditorType.Part)
+		public InteractionLayer(WorldView world, BedConfig sceneContext, ThemeConfig theme, EditorType editorType = EditorType.Part)
 		{
 			this.sceneContext = sceneContext;
 			this.Scene = scene = sceneContext.Scene;
 			this.World = world;
 			this.InteractionVolumes = interactionVolumes;
-			this.undoBuffer = undoBuffer;
 			this.EditorMode = editorType;
 			this.theme = theme;
 

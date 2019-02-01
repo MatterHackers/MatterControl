@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.printerTabPage = printerTabBase as PrinterTabPage;
 			this.Printer = printer;
 
-			this.InteractionLayer = new InteractionLayer(this.World, Scene.UndoBuffer, sceneContext, theme, editorType)
+			this.InteractionLayer = new InteractionLayer(this.World, sceneContext, theme, editorType)
 			{
 				Name = "InteractionLayer",
 			};
