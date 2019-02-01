@@ -82,8 +82,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			floorDrawable = new FloorDrawable(editorType, sceneContext, this.BuildVolumeColor, theme);
 
-			///////////////////////// this.interactionLayer.DrawGlTransparentContent += Draw_GlTransparentContent;
-
 			if (ViewOnlyTexture == null)
 			{
 				// TODO: What is the ViewOnlyTexture???
@@ -117,13 +115,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				OnDrawGlContent(e);
 				GLHelper.UnsetGlContext();
 			}
-		}
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			//RendereSceneTraceData(new DrawEventArgs(graphics2D));
-
-			base.OnDraw(graphics2D);
 		}
 
 		public static void RenderBounds(DrawEventArgs e, WorldView World, IEnumerable<BvhIterator> allResults)

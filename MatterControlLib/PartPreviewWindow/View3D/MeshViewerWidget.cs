@@ -59,15 +59,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private BedConfig sceneContext;
 
-		private Color debugBorderColor = Color.Green;
-
 		private ThemeConfig theme;
 		private FloorDrawable floorDrawable;
 
 		private ModelRenderStyle modelRenderStyle = ModelRenderStyle.Wireframe;
 		private long lastSelectionChangedMs;
-		private List<IDrawable> drawables = new List<IDrawable>();
 
+		private List<IDrawable> drawables = new List<IDrawable>();
+		private List<IDrawableItem> itemDrawables = new List<IDrawableItem>();
 
 		public bool AllowBedRenderingWhenEmpty { get; set; }
 
@@ -77,7 +76,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			drawables.Add(new AxisIndicatorDrawable());
 			//drawables.Add(new TraceDataDrawable(sceneContext));
-			drawables.Add(new AABBDrawable(sceneContext));
+			//drawables.Add(new AABBDrawable(sceneContext));
+
+#if DEBUG
+			itemDrawables.Add(new InspectedItemDrawable(sceneContext));
+#endif
 
 			base.OnLoad(args);
 		}
@@ -306,6 +309,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 
 					RenderSelection(item, frustum, selectionColor);
+				}
+
+				// Invoke all item Drawables
+				foreach(var drawable in itemDrawables)
+				{
+					drawable.Draw(this, item, e, Matrix4X4.Identity, this.World);
 				}
 
 				// turn lighting back on after rendering selection outlines
