@@ -4,8 +4,11 @@ Translated:
 English:    • Remove the paper
 Translated:    • Verwijder het papier
 
+English:    1. Select the 'Controls' tab on the right
+Translated:    1. Selecteer het tabblad 'Besturingselementen' aan de rechterkant
+
 English:    2. Look for the calibration section (pictured below)
-Translated:    2. Zoek naar de kalibratiesectie (hieronder afgebeeld)
+Translated:    2. Zoek naar de kalibratiegedeelte (hieronder afgebeeld)
 
 English:- none -
 Translated:- geen -
@@ -31,9 +34,6 @@ Translated:{0} moet kleiner zijn dan of gelijk aan {1} * 4.
 English:{0} must be less than or equal to the {1}.
 Translated:{0} moet kleiner zijn dan of gelijk aan {1}.
 
-English:{0} works best when set to LINES.
-Translated:{0} werkt het beste als het is ingesteld op LINES.
-
 English:<< Back
 Translated:<< Terug
 
@@ -56,16 +56,13 @@ English:A comma separated list of sample points to probe the bed at. You must sp
 Translated:Een door komma's gescheiden lijst met voorbeeldpunten om het bed te onderzoeken. U moet voor elk punt een x- en y-positie opgeven. Bijvoorbeeld: '20, 20,100,180,180,20 'zal het slechte op 3 punten samplen.
 
 English:A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.
-Translated:Een modifier van de breedte van de extrusie voor de eerste laag van de afdruk. Een waarde van meer dan 100% kan helpen bij de hechting aan het printbed.
+Translated:Een wijziging van de breedte van de extrusie voor de eerste laag van de afdruk. Een waarde van meer dan 100% kan helpen bij de hechting aan het printbed.
 
 English:A modifier of the width of the extrusion when printing outside perimeters. Can be useful to fine-adjust actual print size when objects print larger or smaller than specified in the digital model.
-Translated:Een wijziging van de breedte van de extrusie bij afdrukken buiten de omtrek. Kan handig zijn om de werkelijke afdrukgrootte fijn af te stellen wanneer objecten groter of kleiner afdrukken dan is opgegeven in het digitale model.
+Translated:Een wijziging van de breedte van de extrusie bij afdrukken buiten de omtrek. Kan handig zijn om de werkelijke afdrukgrootte fijn af te stellen wanneer objecten groter of kleiner afdrukken dan in het digitale model is opgegeven.
 
 English:A password reset code will be sent to your email.
 Translated:Een wachtwoordherstelcode wordt naar uw e-mailadres verzonden.
-
-English:A Quick Tour of MatterControl
-Translated:Een snelle rondleiding door MatterControl
 
 English:A six-digit code - sent to your email account
 Translated:Een zescijferige code - verzonden naar uw e-mailaccount
@@ -100,6 +97,12 @@ Translated:Account aangemaakt
 English:Action
 Translated:Actie
 
+English:Action Recommended
+Translated:Actie aanbevolen
+
+English:Action Required
+Translated:Actie vereist
+
 English:Add
 Translated:Toevoegen
 
@@ -131,7 +134,7 @@ English:Adhesion
 Translated:adhesie
 
 English:Adjust this to correct differences between expected printing speeds and actual printing speeds.
-Translated:Pas dit aan om verschillen tussen verwachte printsnelheden en werkelijke printsnelheden te corrigeren.
+Translated:Pas dit aan om verschillen tussen verwachte afdruksnelheden en werkelijke afdruksnelheden te corrigeren.
 
 English:Advanced
 Translated:gevorderd
@@ -158,7 +161,7 @@ English:Align
 Translated:richten
 
 English:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
-Translated:Alle extrusies worden met deze waarde vermenigvuldigd. Als u de waarde hoger dan 1 verhoogt, wordt de hoeveelheid geëxtrudeerd filament groter (1,1 is een goede max-waarde); Als u dit verlaagt, wordt de hoeveelheid die wordt geëxtrudeerd kleiner (0,9 is een goede minimumwaarde).
+Translated:Alle extrusies worden met deze waarde vermenigvuldigd. Als deze boven 1 wordt verhoogd, neemt de hoeveelheid filament die wordt geëxtrudeerd toe (1,1 is een goede max-waarde); als u dit verlaagt, wordt de hoeveelheid die wordt geëxtrudeerd kleiner (0,9 is een goede minimumwaarde).
 
 English:All G-Code lines mush be shorter than 100 characters (excluding comments).
 Translated:Alle G-Code regels zijn korter dan 100 tekens (exclusief opmerkingen).
@@ -167,7 +170,7 @@ English:All Heaters
 Translated:Alle kachels
 
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
-Translated:Sta MatterControl toe om lange lijnen te splitsen om het nivelleren en het annuleren van de afdruk te verbeteren. Kritiek voor printers die aanzienlijk van niveau zijn.
+Translated:Sta MatterControl toe om lange lijnen te splitsen om het nivelleren en printen annuleren te verbeteren. Kritiek voor printers die aanzienlijk te laag zijn.
 
 English:Alpha
 Translated:Alpha
@@ -175,11 +178,20 @@ Translated:Alpha
 English:Alpha: The in development version of MatterControl
 Translated:Alpha: de in ontwikkeling versie van MatterControl
 
+English:Already Loaded
+Translated:Al geladen
+
+English:Anchor
+Translated:Anker
+
 English:and ensure that no filament is stuck to your nozzle.
 Translated:en zorg ervoor dat er geen filament aan uw mondstuk vastzit.
 
 English:and the hotend to heat to 
 Translated:en de hotend om te verwarmen
+
+English:Angle
+Translated:Hoek
 
 English:Anyone with this code will have access
 Translated:Iedereen met deze code heeft toegang
@@ -188,7 +200,7 @@ English:Application Cache
 Translated:Application Cache
 
 English:Application Storage
-Translated:Opslag van toepassingen
+Translated:Opslag van applicaties
 
 English:Apply
 Translated:Van toepassing zijn
@@ -200,10 +212,10 @@ English:Are you sure you want to abort the current print and close MatterControl
 Translated:Weet u zeker dat u de huidige afdruk wilt afbreken en MatterControl wilt afsluiten?
 
 English:Are you sure you want to add this part ({0}) to the Queue?\nThe 3D part you are trying to load may be too complicated and cause performance or stability problems.\n\nConsider reducing the geometry before proceeding.
-Translated:Weet u zeker dat u dit onderdeel ({0}) aan de wachtrij wilt toevoegen?\nHet 3D-onderdeel dat u probeert te laden, is mogelijk te gecompliceerd en veroorzaakt prestatie- of stabiliteitsproblemen.\n\nOverweeg de geometrie te verlagen voordat u doorgaat.
+Translated:Weet u zeker dat u dit onderdeel ({0}) aan de wachtrij wilt toevoegen?\nHet 3D-onderdeel dat u probeert te laden, is mogelijk te ingewikkeld en veroorzaakt prestatie- of stabiliteitsproblemen.\n\nOverweeg de geometrie te verlagen voordat u doorgaat.
 
-English:Are you sure you want to delete your currently selected printer?
-Translated:Weet u zeker dat u uw momenteel geselecteerde printer wilt verwijderen?
+English:Are you sure you want to delete printer '{0}'?
+Translated:Weet u zeker dat u printer '{0}' wilt verwijderen?
 
 English:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
 Translated:Weet u zeker dat u wilt afsluiten terwijl een afdruk wordt uitgevoerd vanaf een SD-kaart?\n\nOpmerking: als u afsluit, wordt u aanbevolen te wachten tot de afdruk is voltooid voordat MatterControl opnieuw wordt uitgevoerd.
@@ -218,7 +230,7 @@ English:Arrange All Parts
 Translated:Schik alle onderdelen
 
 English:As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.
-Translated:Naarmate de tijd om een laag af te drukken afneemt, wordt de ventilatorsnelheid verhoogd tot de maximale snelheid.
+Translated:Naarmate de tijd voor het afdrukken van een laag afneemt, wordt de ventilatorsnelheid verhoogd tot de maximale snelheid.
 
 English:Ascending
 Translated:oplopend
@@ -248,7 +260,7 @@ English:Avoid contact with your skin.
 Translated:Vermijd contact met uw huid.
 
 English:Avoid Crossing Perimeters
-Translated:Vermijd het passeren van omtrekken
+Translated:Vermijd het passeren van perimeters
 
 English:Axis
 Translated:As
@@ -262,11 +274,14 @@ Translated:Baby Step Offset
 English:Back
 Translated:Terug
 
+English:Back Ratio
+Translated:Back Ratio
+
+English:Backing Depth
+Translated:Backing Depth
+
 English:Backup Firmware Before Update
 Translated:Back-upfirmware vóór update
-
-English:BadSubtract
-Translated:BadSubtract
 
 English:Base
 Translated:Baseren
@@ -310,11 +325,14 @@ Translated:Voor het gereedschap G-code 2 wijzigen
 English:Behavior
 Translated:Gedrag
 
+English:Bend Up
+Translated:Omhoog buigen
+
 English:Beta
 Translated:beta
 
 English:Beta: The release candidate version of MatterControl
-Translated:Beta: De release candidate-versie van MatterControl
+Translated:Beta: De release-kandidaatversie van MatterControl
 
 English:Bottom Solid Infill
 Translated:Bottom Solid Infill
@@ -353,13 +371,10 @@ English:Calculate Path
 Translated:Bereken het pad
 
 English:Calibrate Probe Offset
-Translated:Kalibreer de sonde-offset
+Translated:Kalibreer de offset van de sonde
 
 English:Calibration
 Translated:ijking
-
-English:Calibration Error
-Translated:Kalibratiefout
 
 English:Calibration Files
 Translated:Kalibratiebestanden
@@ -427,11 +442,8 @@ Translated:Controleert voor elke afdruk dat de laaghoogte kleiner is dan de spui
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:Kies de opdracht voor het weergeven van de voortgang van de afdruk op het LCD-scherm van de printer, indien aanwezig.
 
-English:Clean
-Translated:Schoon
-
 English:Clean Filament Page
-Translated:Schone filamentpagina
+Translated:Schone gloeidraadpagina
 
 English:Clear
 Translated:Duidelijk
@@ -482,7 +494,7 @@ English:Community
 Translated:Gemeenschap
 
 English:Compile model
-Translated:Compileer het model
+Translated:Compileer model
 
 English:Complete Individual Objects
 Translated:Individuele objecten voltooien
@@ -526,6 +538,9 @@ Translated:Sluit de printer aan (zorg ervoor dat deze is ingeschakeld)
 English:Connect to the currently selected printer
 Translated:Maak verbinding met de momenteel geselecteerde printer
 
+English:Connect to your printer to continue
+Translated:Maak verbinding met uw printer om door te gaan
+
 English:Connect your printer to check for firmware updates.
 Translated:Sluit uw printer aan om te controleren op firmware-updates.
 
@@ -568,23 +583,11 @@ Translated:Koeling Drempels
 English:Copy
 Translated:Kopiëren
 
-English:Copy Edges
-Translated:Randen kopiëren
-
-English:Copy Faces
-Translated:Gezichten kopiëren
-
 English:Copy Printers
 Translated:Printers kopiëren
 
 English:Copy Printers to Account
 Translated:Printers naar account kopiëren
-
-English:Copy State
-Translated:Kopieer staat
-
-English:Copy Vertices
-Translated:Kopieer hoekpunten
 
 English:Cost
 Translated:Kosten
@@ -616,14 +619,11 @@ Translated:Account aanmaken
 English:Create Brim
 Translated:Maak rand
 
-English:Create Dictionaries
-Translated:Woordenboeken maken
-
 English:Create Folder
 Translated:Map aanmaken
 
 English:Create Part Sheet
-Translated:Maak een deelblad
+Translated:Deelblad maken
 
 English:Create Perimeter
 Translated:Perimeter maken
@@ -637,11 +637,14 @@ Translated:Creëer Raft
 English:Create Skirt
 Translated:Maak rok
 
+English:Create Support
+Translated:Draagvlak te creëren
+
 English:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
-Translated:Hiermee maakt u een rand bevestigd aan de onderkant van de afdruk. Handig om kromtrekken te voorkomen bij het afdrukken van ABS (en andere kromtrekkingsgevoelige kunststoffen) omdat het helpt delen aan het bed hechten.
+Translated:Hiermee maakt u een rand vast aan de onderkant van de afdruk. Handig om kromtrekken te voorkomen bij het afdrukken van ABS (en andere kromtrekkingsgevoelige kunststoffen) omdat het helpt delen aan het bed hechten.
 
 English:Creates a perimeter around the part on which to wipe the other nozzle when printing using dual extrusion. Set to 0 to disable.
-Translated:Maakt een omtrek rond het gedeelte waarop de andere spuitmond moet worden schoongeveegd bij het afdrukken met behulp van dubbele extrusie. Stel in op 0 om uit te schakelen.
+Translated:Maakt een omtrek rond het gedeelte waarop de andere spuitmond moet worden schoongeveegd bij afdrukken met dubbele extrusie. Stel in op 0 om uit te schakelen.
 
 English:Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
 Translated:Creëert een vlot onder het afgedrukte deel. Handig om kromtrekken te voorkomen bij het afdrukken van ABS (en andere kromtrekkingsgevoelige kunststoffen) omdat het helpt delen aan het bed hechten.
@@ -650,7 +653,7 @@ English:Creates an outline around the print, but not attached to it. This is use
 Translated:Hiermee wordt een omtrek rond de afdruk gemaakt, maar er niet aan gekoppeld. Dit is handig voor het vullen van de spuitmond om te zorgen dat het plastic stroomt wanneer de afdruk start.
 
 English:Creating firmware backup...
-Translated:Firmware-back-up maken
+Translated:Firmware-backup maken ...
 
 English:Creation Data
 Translated:Aanmaakgegevens
@@ -703,6 +706,9 @@ Translated:Demonstratie modus
 English:Density
 Translated:Dichtheid
 
+English:Depth
+Translated:Diepte
+
 English:Descending
 Translated:Aflopend
 
@@ -719,7 +725,7 @@ English:Details
 Translated:Details
 
 English:Detect gaps between perimeters that are too thin to fill with normal infill and attempt to fill them.
-Translated:Detecteer openingen tussen perimeters die te dun zijn om te vullen met normale infill en probeer ze te vullen.
+Translated:Detecteer openingen tussen perimeters die te dun zijn om te vullen met normaal infill en probeer ze te vullen.
 
 English:Detect perimeters that cross over themselves and combine them.
 Translated:Detecteer perimeters die zichzelf kruisen en combineer ze.
@@ -731,7 +737,7 @@ English:Detecting device firmware...
 Translated:Firmware van apparaat detecteren ...
 
 English:Detects sections of the model that would be too thin to print and expands them to make them printable.
-Translated:Detecteert delen van het model die te dun zijn om te worden afgedrukt en breidt ze uit om ze afdrukbaar te maken.
+Translated:Detecteert secties van het model die te dun zijn om te worden afgedrukt en breidt ze uit om ze afdrukbaar te maken.
 
 English:Developed By
 Translated:Ontwikkeld door
@@ -764,7 +770,7 @@ English:Disconnecting
 Translated:loskoppelen
 
 English:Disconnecting from printer...
-Translated:Ontkoppelen van de printer ...
+Translated:Verbinding met de printer verbreken ...
 
 English:Distance
 Translated:Afstand
@@ -782,7 +788,7 @@ English:Don't remind me again
 Translated:Herinner me niet nog een keer
 
 English:Down Arrow
-Translated:Pijl-omlaag
+Translated:Pijl naar beneden
 
 English:Download Now
 Translated:Download nu
@@ -806,7 +812,7 @@ English:Duplicate
 Translated:Duplicaat
 
 English:Each individual part is printed to completion then the nozzle is lowered back to the bed and the next part is printed.
-Translated:Elk afzonderlijk onderdeel wordt tot voltooiing afgedrukt en vervolgens wordt het mondstuk naar het bed teruggebracht en wordt het volgende deel afgedrukt.
+Translated:Elk afzonderlijk onderdeel wordt tot voltooiing afgedrukt en vervolgens wordt het mondstuk terug naar het bed neergelaten en wordt het volgende deel afgedrukt.
 
 English:edit
 Translated:Bewerk
@@ -872,7 +878,7 @@ English:End
 Translated:Einde
 
 English:End G-Code
-Translated:Eindig G-Code
+Translated:G-code beëindigen
 
 English:Enter a Design Name Here
 Translated:Voer hier een ontwerpnaam in
@@ -900,6 +906,9 @@ Translated:Voer uw wachtwoord in
 
 English:Enter your username or email address
 Translated:Voer je gebruikersnaam of e-mailadres in
+
+English:Error
+Translated:Fout
 
 English:Error compiling OpenSCAD script
 Translated:Fout bij het compileren van OpenSCAD-script
@@ -932,7 +941,7 @@ English:Expand Distance
 Translated:Vergroot afstand
 
 English:Expand Thin Walls
-Translated:Breid Thin Walls uit
+Translated:Expand Thin Walls
 
 English:Experimental
 Translated:experimenteel
@@ -952,8 +961,8 @@ Translated:EEPROM exporteren
 English:Export EEPROM Settings
 Translated:EEPROM-instellingen exporteren
 
-English:Export failed
-Translated:Export mislukt
+English:Export Error
+Translated:Fout exporteren
 
 English:Export File
 Translated:Bestand exporteren
@@ -989,7 +998,7 @@ English:Extruder 2 Temperature
 Translated:Temperatuur extruder 2
 
 English:Extruder 3 Temperature
-Translated:Extruder 3 Temperatuur
+Translated:Extruder 3 temperatuur
 
 English:Extruder 4 Temperature
 Translated:Extruder 4 Temperatuur
@@ -998,7 +1007,7 @@ English:Extruder Change
 Translated:Extruder wijzigen
 
 English:Extruder Count
-Translated:Extruder Count
+Translated:Extruderteller
 
 English:Extruder Temperature
 Translated:Extrudertemperatuur
@@ -1040,10 +1049,10 @@ English:Filament Has Been Loaded
 Translated:Filament is geladen
 
 English:Filament Length
-Translated:Gloeidraadlengte
+Translated:Gloeidraad lengte
 
 English:Filament Speed
-Translated:Filament snelheid
+Translated:Gloeidraadsnelheid
 
 English:Filament Volume
 Translated:Gloeidraad volume
@@ -1069,6 +1078,9 @@ Translated:filters
 English:Finally click 'Next' to continue.
 Translated:Klik ten slotte op 'Volgende' om door te gaan.
 
+English:Find and create supports where needed
+Translated:Vind en creëer ondersteuningen waar nodig
+
 English:Finish
 Translated:Af hebben
 
@@ -1082,7 +1094,7 @@ English:Finishing Startup
 Translated:Afwerking opstarten
 
 English:Firmware download failed
-Translated:Firmware downloaden is mislukt
+Translated:Firmware downloaden mislukt
 
 English:Firmware EEPROM Settings
 Translated:Firmware EEPROM-instellingen
@@ -1112,7 +1124,7 @@ English:Fit to Bounds
 Translated:Fit to Bounds
 
 English:Flag for the state of our filament loaded.
-Translated:Vlag voor de status van onze gloeidraad geladen.
+Translated:Vlag voor de toestand van onze gloeidraad geladen.
 
 English:Flag keeping track if probe calibration wizard has been run.
 Translated:Markering houdt bij of de sonde-kalibratiewizard is uitgevoerd.
@@ -1122,6 +1134,9 @@ Translated:Vlak
 
 English:Flatten
 Translated:vlakken
+
+English:Flattened
+Translated:afgeplat
 
 English:Folder Name
 Translated:Naam van de map
@@ -1142,7 +1157,7 @@ English:Forces the printer to heat the nozzle before homing.
 Translated:Forceert de printer om het mondstuk te verwarmen voordat het wordt doorgevoerd.
 
 English:Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.
-Translated:Forceert dat de snijmachine probeert te voorkomen dat de omtreklijn bestaande omtreklijnen overschrijdt. Dit kan helpen met lekt of snaren.
+Translated:Forceert dat de snijmachine probeert te voorkomen dat de omtreklijn bestaande omtreklijnen overschrijdt. Dit kan helpen met lekt of strings.
 
 English:Forgot Password
 Translated:Wachtwoord vergeten
@@ -1171,23 +1186,35 @@ Translated:G-code uitvoer
 English:G-Code to be run after every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
 Translated:G-code moet na elke gereedschapswissel worden uitgevoerd. U kunt [wipe_tower_x] [wipe_tower_y] en [wipe_tower_z] gebruiken om de positie van de extruder zo nodig in te stellen. Je kan ook gebruiken '; WRITE_RAW 'om checksums over te slaan of'; NO_PROCESSING 'om positie-offset over te slaan.
 
+English:G-Code to be run after every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:G-code moet na elke gereedschapswissel worden uitgevoerd. U kunt [wipe_tower_x] [wipe_tower_y] en [wipe_tower_z] gebruiken om de positie van de extruder zo nodig in te stellen. Je kan ook gebruiken '; WRITE_RAW 'om checksums over te slaan of'; NO_PROCESSING 'om positieverplaatsing over te slaan.
+
 English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
 Translated:G-code wordt uitgevoerd na overschakelen naar extruder 2. Zal standaard gebruiken na G-code indien niet ingesteld. U kunt [wipe_tower_x] [wipe_tower_y] en [wipe_tower_z] gebruiken om de positie van de extruder zo nodig in te stellen. Je kan ook gebruiken '; WRITE_RAW 'om checksums over te slaan of'; NO_PROCESSING 'om positie-offset over te slaan.
+
+English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:G-code wordt uitgevoerd na overschakelen naar extruder 2. Zal standaard gebruiken na G-code indien niet ingesteld. U kunt [wipe_tower_x] [wipe_tower_y] en [wipe_tower_z] gebruiken om de positie van de extruder zo nodig in te stellen. Je kan ook gebruiken '; WRITE_RAW 'om checksums over te slaan of'; NO_PROCESSING 'om positieverplaatsing over te slaan.
 
 English:G-Code to be run after the change in Z height for the next layer.
 Translated:G-code wordt uitgevoerd na de wijziging in Z-hoogte voor de volgende laag.
 
 English:G-Code to be run at the end of all automatic output (the very end of the G-Code commands).
-Translated:G-code die moet worden uitgevoerd aan het einde van alle automatische uitvoer (helemaal aan het einde van de G-code-opdrachten).
+Translated:G-code moet worden uitgevoerd aan het einde van alle automatische uitvoer (het einde van de G-code-opdrachten).
 
 English:G-Code to be run before every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z] to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-Translated:G-code moet worden uitgevoerd vóór elke gereedschapswisseling. U kunt [wipe_tower_x] [wipe_tower_y] en [wipe_tower_z] gebruiken om de positie van de extruder zo nodig in te stellen. Je kan ook gebruiken '; WRITE_RAW 'om checksums over te slaan of'; NO_PROCESSING 'om positie-offset over te slaan.
+Translated:G-code moet vóór elke gereedschapswissel worden uitgevoerd. U kunt [wipe_tower_x] [wipe_tower_y] en [wipe_tower_z] gebruiken om de positie van de extruder zo nodig in te stellen. Je kan ook gebruiken '; WRITE_RAW 'om checksums over te slaan of'; NO_PROCESSING 'om positie-offset over te slaan.
+
+English:G-Code to be run before every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z] to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:G-code moet vóór elke gereedschapswissel worden uitgevoerd. U kunt [wipe_tower_x] [wipe_tower_y] en [wipe_tower_z] gebruiken om de positie van de extruder zo nodig in te stellen. Je kan ook gebruiken '; WRITE_RAW 'om checksums over te slaan of'; NO_PROCESSING 'om positieverplaatsing over te slaan.
 
 English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-Translated:G-code moet worden uitgevoerd voordat naar extruder 2 wordt geschakeld. Gebruikt de standaard vóór G-code als deze niet is ingesteld. U kunt [wipe_tower_x] [wipe_tower_y] en [wipe_tower_z] gebruiken om de positie van de extruder zo nodig in te stellen. Je kan ook gebruiken '; WRITE_RAW 'om checksums over te slaan of'; NO_PROCESSING 'om positie-offset over te slaan.
+Translated:G-code moet worden uitgevoerd voordat er naar extruder 2 wordt geschakeld. Gebruikt de standaard vóór G-code als deze niet is ingesteld. U kunt [wipe_tower_x] [wipe_tower_y] en [wipe_tower_z] gebruiken om de positie van de extruder zo nodig in te stellen. Je kan ook gebruiken '; WRITE_RAW 'om checksums over te slaan of'; NO_PROCESSING 'om positie-offset over te slaan.
+
+English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:G-code moet worden uitgevoerd voordat er naar extruder 2 wordt geschakeld. Gebruikt de standaard vóór G-code als deze niet is ingesteld. U kunt [wipe_tower_x] [wipe_tower_y] en [wipe_tower_z] gebruiken om de positie van de extruder zo nodig in te stellen. Je kan ook gebruiken '; WRITE_RAW 'om checksums over te slaan of'; NO_PROCESSING 'om positieverplaatsing over te slaan.
 
 English:G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.
-Translated:G-code moet onmiddellijk worden uitgevoerd na de commando's voor het instellen van de temperatuur. Het opnemen van opdrachten om de temperatuur in dit gedeelte in te stellen, zorgt ervoor dat ze niet buiten dit gedeelte worden gegenereerd. Accepteert aangepaste G-codevariabelen.
+Translated:G-code moet direct worden uitgevoerd na de commando's voor het instellen van de temperatuur. Het opnemen van commando's om de temperatuur in dit gedeelte in te stellen, zorgt ervoor dat ze niet buiten dit gedeelte worden gegenereerd. Accepteert aangepaste G-codevariabelen.
 
 English:G-Code to be run when the print resumes after a pause.
 Translated:G-code wordt uitgevoerd wanneer de afdruk na een pauze wordt hervat.
@@ -1199,22 +1226,22 @@ English:G-Code to run when a print is canceled.
 Translated:G-code die moet worden uitgevoerd wanneer een afdruk wordt geannuleerd.
 
 English:G-Code to run when the printer is paused.
-Translated:G-code die moet worden uitgevoerd als de printer is onderbroken.
+Translated:G-code die moet worden uitgevoerd wanneer de printer is onderbroken.
 
 English:General
 Translated:Algemeen
 
-English:Generate Support Material
-Translated:Genereer ondersteuningsmateriaal
+English:Generate
+Translated:voortbrengen
+
+English:Generate Support
+Translated:Ondersteuning genereren
+
+English:Generate Supports
+Translated:Ondersteuningen genereren
 
 English:Generates an outline around the support material to improve strength and hold up interface layers.
 Translated:Genereert een omtrek rond het ondersteuningsmateriaal om de sterkte te verbeteren en interface-lagen omhoog te houden.
-
-English:Generates support material starting on top of internal surfaces. If unchecked support will only generate starting on the bed.
-Translated:Genereert ondersteunend materiaal dat bovenop de interne oppervlakken begint. Als niet-gecontroleerde ondersteuning alleen start op het bed genereert.
-
-English:Generates support material under areas of the part which may be too steep to support themselves.
-Translated:Genereert ondersteunend materiaal onder gedeelten van het onderdeel die mogelijk te steil zijn om zichzelf te ondersteunen.
 
 English:Generating Lithophane
 Translated:Lithofaan aanmaken
@@ -1250,7 +1277,7 @@ English:Has Filament Runout Sensor
 Translated:Heeft gloeidraadsensor
 
 English:Has Hardware Leveling
-Translated:Heeft hardware levelling
+Translated:Heeft hardwarepeiling
 
 English:Has Heated Bed
 Translated:Heeft een verwarmd bed
@@ -1271,10 +1298,10 @@ English:Have MatterControl send you email messages about your print
 Translated:Laat MatterControl u e-mailberichten over uw afdruk sturen
 
 English:Have MatterControl send you text messages about your print
-Translated:Laat MatterControl u sms-berichten sturen over uw afdruk
+Translated:Laat MatterControl u sms-berichten over uw afdruk sturen
 
 English:Heat Before Homing
-Translated:Verwarm voor het homing
+Translated:Hitte voor de homing
 
 English:Heat the bed
 Translated:Verwarm het bed
@@ -1316,7 +1343,7 @@ English:Home X, Y and Z
 Translated:Thuis X, Y en Z
 
 English:Home Y
-Translated:Thuis Y
+Translated:Home Y
 
 English:Home Z
 Translated:Home Z
@@ -1367,7 +1394,7 @@ English:If the extruder has been running for a long time, it may be reporting va
 Translated:Als de extruder al lang in gebruik is, worden mogelijk te grote waarden gerapporteerd, waarna deze periodiek opnieuw worden ingesteld.
 
 English:If the time to print a layer is less than this, the fan will turn on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.
-Translated:Als de tijd om een laag af te drukken kleiner is dan deze, wordt de ventilator ingeschakeld op de minimum snelheid. Het zal dan oplopen naar zijn maximale snelheid als de laagtijd afneemt.
+Translated:Als de tijd voor het afdrukken van een laag kleiner is dan dit, wordt de ventilator ingeschakeld op de minimum snelheid. Het zal dan oplopen naar zijn maximale snelheid naarmate de laagtijd afneemt.
 
 English:If you wish to re-calibrate leveling in the future:
 Translated:Als u de nivellering in de toekomst opnieuw wilt kalibreren:
@@ -1394,7 +1421,7 @@ English:Import EEPROM
 Translated:Importeer EEPROM
 
 English:Import EEPROM Settings
-Translated:Importeer EEPROM-instellingen
+Translated:EEPROM-instellingen importeren
 
 English:Import Presets
 Translated:Voorinstellingen importeren
@@ -1444,14 +1471,17 @@ Translated:Hardware initialiseren ...
 English:Initializing Library
 Translated:Bibliotheek initialiseren
 
-English:Insert
-Translated:invoegen
+English:Inner Radius
+Translated:Inner Radius
+
+English:Inner Size
+Translated:Innerlijke grootte
 
 English:Insert Filament
 Translated:Plaats filament
 
 English:Insert Filament Page
-Translated:Voer de filamentpagina in
+Translated:Plaats een filamentpagina
 
 English:Inside Perimeters
 Translated:Binnenste perimeters
@@ -1493,19 +1523,28 @@ English:IP Finder
 Translated:IP Finder
 
 English:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
-Translated:Het lijkt erop dat je laatste afdruk niet kon worden voltooid.\n\nZou je willen proberen te herstellen van de laatst bekende positie?
+Translated:Het lijkt erop dat uw laatste afdruk niet kon worden voltooid.\n\nZou je willen proberen te herstellen van de laatst bekende positie?
 
 English:It is currently set to {0}.
 Translated:Het is momenteel ingesteld op {0}.
+
+English:Item cannot be exported
+Translated:Item kan niet worden geëxporteerd
+
+English:Item cannot be exported as STL
+Translated:Item kan niet worden geëxporteerd als STL
 
 English:Item not Found
 Translated:Item niet gevonden
 
 English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.
-Translated:Het is tijd om uw bestaande printerinstellingen naar uw MatterHackers-account te kopiëren. Eenmaal gekopieerd, zijn deze printers beschikbaar wanneer u zich aanmeldt bij MatterControl. Printers die niet zijn gekopieerd zijn alleen beschikbaar als ze niet zijn aangemeld.
+Translated:Het is tijd om uw bestaande printerinstellingen naar uw MatterHackers-account te kopiëren. Eenmaal gekopieerd, zijn deze printers beschikbaar wanneer u zich aanmeldt bij MatterControl. Printers die niet worden gekopieerd zijn alleen beschikbaar als ze niet zijn aangemeld.
 
 English:Jerk Velocity
 Translated:Jerk Velocity
+
+English:Keep Within Angle
+Translated:Keep Within Angle
 
 English:Keys
 Translated:Keys
@@ -1529,7 +1568,7 @@ English:Layer Top
 Translated:Laag bovenaan
 
 English:Layer(s) To Pause
-Translated:Laag (lagen) om te pauzeren
+Translated:Laag (s) om te pauzeren
 
 English:layers
 Translated:lagen
@@ -1550,13 +1589,19 @@ English:left drag
 Translated:linker slepen
 
 English:Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).
-Translated:Lengte van extra filament om te extruderen na een volledige gereedschapswisseling (naast de re-extrusie van de retractieafstand van gereedschapswisseling).
+Translated:Lengte van extra gloeidraad om te extruderen na een complete gereedschapswisseling (naast de re-extrusie van de retractieafstand van gereedschapswisseling).
 
 English:Length of filament to extrude after a complete retraction (in addition to the re-extrusion of the Length on Move distance).
 Translated:Lengte van filament om te extruderen na een volledige terugtrekking (naast de re-extrusie van de lengte op verplaatsing afstand).
 
 English:Length on Tool Change
 Translated:Lengte bij gereedschapswisseling
+
+English:Let's show you around before you get started.
+Translated:Laten we je rondleiden voordat je begint.
+
+English:Letter
+Translated:Brief
 
 English:Leveling
 Translated:nivellering
@@ -1565,7 +1610,7 @@ English:Leveling Probe
 Translated:Nivelleersonde
 
 English:Leveling Settings
-Translated:Nivelleerinstellingen
+Translated:Nivelleringsinstellingen
 
 English:Leveling Solution
 Translated:Nivellerende oplossing
@@ -1660,6 +1705,9 @@ Translated:Macro-voorinstellingen
 English:Macros
 Translated:macro's
 
+English:Maintain Proportions
+Translated:Proportions handhaven
+
 English:make
 Translated:maken
 
@@ -1672,9 +1720,6 @@ Translated:Component maken
 English:Make Selection
 Translated:Maak een selectie
 
-English:Make Support
-Translated:Maak ondersteuning
-
 English:Make sure the first point on a perimeter is a concave point.
 Translated:Zorg ervoor dat het eerste punt op een perimeter een hol punt is.
 
@@ -1682,7 +1727,7 @@ English:Make sure the first point on a perimeter is not an overhang.
 Translated:Zorg ervoor dat het eerste punt op een perimeter geen overstek is.
 
 English:Make the first layer on top of partial infill use the speed and fan for bridging.
-Translated:Maak de eerste laag bovenop gedeeltelijke infill gebruik de snelheid en de ventilator voor overbrugging.
+Translated:Maak de eerste laag bovenop gedeeltelijk infill en gebruik de snelheid en de ventilator voor overbrugging.
 
 English:Manual Movement Speeds
 Translated:Handmatige bewegingssnelheden
@@ -1704,9 +1749,6 @@ Translated:Materiaal
 
 English:Material density. Only used for estimating mass in the Layer View.
 Translated:Materiële dichtheid. Alleen gebruikt voor het schatten van massa in de laagweergave.
-
-English:Material Loading
-Translated:Materiaal laden
 
 English:Materials
 Translated:materialen
@@ -1733,7 +1775,7 @@ English:Maximum Acceleration [mm/s²]
 Translated:Maximale versnelling [mm / s²]
 
 English:Maximum E jerk [mm/s]
-Translated:Maximale e eikel [mm / s]
+Translated:Maximum E echo [mm / s]
 
 English:Maximum feedrates [mm/s]
 Translated:Maximale voedingssnelheid [mm / s]
@@ -1754,7 +1796,7 @@ English:Medium Precision
 Translated:Gemiddelde precisie
 
 English:Merge Overlapping Lines
-Translated:Samenvallende lijnen samenvoegen
+Translated:Voeg overlappende lijnen samen
 
 English:Mesh
 Translated:maas
@@ -1847,7 +1889,7 @@ English:Move Part
 Translated:Verplaats deel
 
 English:Move Part Constrained
-Translated:Verplaats Deel Beperkt
+Translated:Move Part Constrained
 
 English:Move X negative
 Translated:Verplaats X negatief
@@ -1891,9 +1933,6 @@ Translated:Mijn gewijzigde instellingen (printer)
 English:Name
 Translated:Naam
 
-English:Need to connect before printing
-Translated:Moet verbinding maken voordat u gaat afdrukken
-
 English:Networked Printing
 Translated:Printen via netwerk
 
@@ -1924,6 +1963,12 @@ Translated:Geen kleur
 English:No COM ports available
 Translated:Geen COM-poorten beschikbaar
 
+English:No items to Export
+Translated:Geen items om te exporteren
+
+English:No Items to Export
+Translated:Geen items om te exporteren
+
 English:No macros are currently set up for this printer.
 Translated:Er zijn momenteel geen macro's ingesteld voor deze printer.
 
@@ -1948,6 +1993,9 @@ Translated:OPMERKING: Standaard tarieven voor berichten zijn mogelijk van toepas
 English:Notifications
 Translated:meldingen
 
+English:Nozzle
+Translated:Mondstuk
+
 English:Nozzle Diameter
 Translated:Mondstuk diameter
 
@@ -1971,6 +2019,9 @@ Translated:van
 
 English:Off
 Translated:Uit
+
+English:Offset
+Translated:compenseren
 
 English:Ok
 Translated:OK
@@ -2068,9 +2119,6 @@ Translated:Recentelijk geopend
 English:OpenSCAD not installed
 Translated:OpenSCAD niet geïnstalleerd
 
-English:Optionally, click below to get help loading this material
-Translated:Klik desgewenst hieronder voor hulp bij het laden van dit materiaal
-
 English:Options
 Translated:opties
 
@@ -2079,6 +2127,12 @@ Translated:of
 
 English:Other
 Translated:anders
+
+English:Outer Radius
+Translated:Buitenste straal
+
+English:Outer Size
+Translated:Buitenste grootte
 
 English:Outer Surface - Perimeters
 Translated:Outer Surface - Perimeters
@@ -2098,14 +2152,14 @@ Translated:Buitenperimeter
 English:Overhang
 Translated:uitsteeksel
 
+English:Overhang Angle
+Translated:Overhanghoek
+
 English:Pan
 Translated:Pan
 
 English:Pan View
 Translated:Pan View
-
-English:Parse Error while slicing
-Translated:Ontleedt tijdens het snijden
 
 English:Part Cooling Fan
 Translated:Deel koelventilator
@@ -2143,6 +2197,9 @@ Translated:Pauzeer afdruk
 English:Paused
 Translated:Onderbroken
 
+English:Percentage of
+Translated:Percentage van
+
 English:perimeters
 Translated:perimeters
 
@@ -2155,11 +2212,17 @@ Translated:Geen toestemming
 English:PID Settings
 Translated:PID-instellingen
 
+English:Pillar Size
+Translated:Pijler grootte
+
 English:Pinch
 Translated:Knijpen
 
 English:Pipe Works
 Translated:Pipe Works
+
+English:Pixels Per mm
+Translated:Pixels per mm
 
 English:Place the paper under the extruder
 Translated:Plaats het papier onder de extruder
@@ -2180,7 +2243,7 @@ English:Please select the material you want to load.
 Translated:Selecteer het materiaal dat u wilt laden.
 
 English:Please select the material you want to unload.
-Translated:Selecteer het materiaal dat u wilt uitladen.
+Translated:Selecteer het materiaal dat u wilt verwijderen.
 
 English:Please select the material you will be printing with.
 Translated:Selecteer het materiaal waarmee u gaat afdrukken.
@@ -2222,7 +2285,7 @@ English:Port not found
 Translated:Poort niet gevonden
 
 English:Port number to be used with IP Address to connect to printer over the network
-Translated:Poortnummer dat moet worden gebruikt met IP-adres om via het netwerk verbinding met de printer te maken
+Translated:Poortnummer dat moet worden gebruikt met IP-adres om via het netwerk verbinding te maken met de printer
 
 English:Port Wizard
 Translated:Poortwizard
@@ -2248,8 +2311,14 @@ Translated:Druk op [Z-] totdat er weerstand is tegen het verplaatsen van het pap
 English:Press [Z+] once to release the paper
 Translated:Druk één keer op [Z +] om het papier los te laten
 
+English:Prev
+Translated:Vorige
+
 English:Preview
 Translated:Voorbeeld
+
+English:Primary
+Translated:primair
 
 English:Primitive Shapes
 Translated:Primitieve vormen
@@ -2290,6 +2359,9 @@ Translated:Print tijd
 English:Printer
 Translated:Printer
 
+English:Printer Disconnected
+Translated:Printer losgekoppeld
+
 English:Printer Hardware Error
 Translated:Printerhardwarefout
 
@@ -2307,6 +2379,12 @@ Translated:Printer gepauzeerd
 
 English:Printer Setup
 Translated:Printer instellingen
+
+English:Printer Setup must be run before printing
+Translated:De printerinstellingen moeten worden uitgevoerd voordat ze worden afgedrukt
+
+English:Printer Setup Required
+Translated:Printerinstelling vereist
 
 English:Printers
 Translated:printers
@@ -2378,10 +2456,13 @@ English:Raft Layers
 Translated:Vlot lagen
 
 English:Raise / Stow
-Translated:Heffen / opbergen
+Translated:Heffen / Opbergen
 
 English:Randomize Starting Points
 Translated:Startpunten randomiseren
+
+English:Reach
+Translated:Bereiken
 
 English:Read Filter
 Translated:Lees Filter
@@ -2393,7 +2474,7 @@ English:Rebuild
 Translated:herbouwen
 
 English:Rebuild Thumbnails Now
-Translated:Rebuild Thumbnails Now
+Translated:Bouw nu Thumbnails opnieuw
 
 English:Recommended Update Available
 Translated:Aanbevolen update beschikbaar
@@ -2428,9 +2509,6 @@ Translated:Voer paswoord opnieuw in
 English:Refresh
 Translated:verversen
 
-English:Registered
-Translated:Geregistreerd
-
 English:Release
 Translated:Vrijlating
 
@@ -2449,6 +2527,9 @@ Translated:verwijderen
 English:Remove
 Translated:Verwijderen
 
+English:Remove all auto generated supports
+Translated:Verwijder alle automatisch gegenereerde ondersteuningen
+
 English:Remove Items?
 Translated:Verwijder items?
 
@@ -2465,7 +2546,7 @@ English:Replacing
 Translated:Vervangen
 
 English:Report a Bug
-Translated:Meld een bug
+Translated:Rapporteer een bug
 
 English:Request the firmware to do retractions rather than specify the extruder movements directly.
 Translated:Vraag de firmware om retracties uit te voeren in plaats van de extruderbewegingen direct op te geven.
@@ -2516,6 +2597,9 @@ English:Resume G-Code
 Translated:Hervat G-Code
 
 English:Resume Print
+Translated:Doorgaan met afdrukken
+
+English:Resume Printing
 Translated:Doorgaan met afdrukken
 
 English:Retract
@@ -2575,6 +2659,9 @@ Translated:Draaien
 English:Rotate (Alt + Left Mouse)
 Translated:Roteren (Alt + linker muis)
 
+English:Rotate About
+Translated:Roteer over
+
 English:Rotate View
 Translated:Draai de weergave
 
@@ -2586,9 +2673,6 @@ Translated:Voer kalibratie uit
 
 English:Run Max if Below
 Translated:Voer Max uit als hieronder
-
-English:Run setup configuration for printer.
-Translated:Voer de configuratie van de installatie uit voor de printer.
 
 English:s
 Translated:s
@@ -2603,7 +2687,7 @@ English:Sample the bed at {0} points
 Translated:Proef het bed op {0} punten
 
 English:Sampled Positions
-Translated:Sampled Positions
+Translated:Bemonsterde posities
 
 English:Save
 Translated:Opslaan
@@ -2693,7 +2777,7 @@ English:Select the baud rate.
 Translated:Selecteer de baudrate.
 
 English:Select the material you are printing
-Translated:Selecteer het materiaal dat u wilt afdrukken
+Translated:Selecteer het materiaal dat u afdrukt
 
 English:Select the printer manufacturer
 Translated:Selecteer de printerfabrikant
@@ -2738,13 +2822,13 @@ English:Set as Default
 Translated:Stel in als standaard
 
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
-Translated:Stelt MatterControl in om via het netwerk verbinding met een printer te maken. (U moet de verbinding verbreken en opnieuw verbinden om dit van kracht te laten worden)
+Translated:Stelt MatterControl in om via het netwerk verbinding te maken met een printer. (U moet de verbinding verbreken en opnieuw verbinden om dit van kracht te laten worden)
 
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
 Translated:Stelt MatterControl in om de s3g-communicatiemethode te gebruiken. (U moet de verbinding verbreken en opnieuw verbinden om dit van kracht te laten worden)
 
 English:Sets the models that will be added to the queue when a new printer is created.
-Translated:Stelt de modellen in die aan de wachtrij worden toegevoegd wanneer een nieuwe printer wordt gemaakt.
+Translated:Hiermee stelt u de modellen in die aan de wachtrij worden toegevoegd wanneer een nieuwe printer wordt gemaakt.
 
 English:Sets the size of the outer solid surface (perimeter) for the entire print.
 Translated:Stelt de grootte van het buitenste massieve oppervlak (perimeter) in voor de hele afdruk.
@@ -2752,17 +2836,14 @@ Translated:Stelt de grootte van het buitenste massieve oppervlak (perimeter) in 
 English:Settings
 Translated:instellingen
 
+English:Setup
+Translated:Opstelling
+
 English:Setup Needs to be Run
 Translated:Setup moet worden uitgevoerd
 
-English:Setup needs to be run before printing
-Translated:De instellingen moeten worden uitgevoerd voordat ze worden afgedrukt
-
 English:Setup Wizard
 Translated:Installatiewizard
-
-English:Setup...
-Translated:Opstelling...
 
 English:Shaded
 Translated:Shaded
@@ -2792,7 +2873,7 @@ English:Show Controls
 Translated:Toon bedieningselementen
 
 English:Show file in folder after save
-Translated:Bestand in map weergeven na opslaan
+Translated:Toon bestand in map na opslaan
 
 English:Show Firmware Updater
 Translated:Show Firmware Updater
@@ -2801,7 +2882,7 @@ English:Show Help
 Translated:Hulp laten zien
 
 English:Show Materials
-Translated:Show Materials
+Translated:Toon materialen
 
 English:Show Password
 Translated:Laat wachtwoord zien
@@ -2822,7 +2903,7 @@ English:Show Terminal
 Translated:Terminal tonen
 
 English:Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.
-Translated:Toont een knop aan de rechterkant van de printerverbindingsbalk die wordt gebruikt om de USB-verbinding met de printer te resetten. Dit kan worden gebruikt op printers die het ondersteunen als een noodstop.
+Translated:Toont een knop aan de rechterkant van de Printer Connection Bar die wordt gebruikt om de USB-verbinding met de printer te resetten. Dit kan worden gebruikt op printers die het ondersteunen als een noodstop.
 
 English:sign in
 Translated:aanmelden
@@ -2858,7 +2939,7 @@ English:Skip
 Translated:Overspringen
 
 English:Skip Connection Setup
-Translated:Verbindingsinstellingen overslaan
+Translated:Sla de verbindingsinstellingen over
 
 English:Skirt
 Translated:Rok
@@ -2872,9 +2953,6 @@ Translated:rokken
 English:Slice
 Translated:Plak
 
-English:Slice Error
-Translated:Slice-fout
-
 English:Slice Presets Editor
 Translated:Slice Presets Editor
 
@@ -2883,6 +2961,9 @@ Translated:Slice-instellingen
 
 English:Slicing
 Translated:snijden
+
+English:Slicing Error
+Translated:Snijfout
 
 English:Slicing Item
 Translated:Snijdend voorwerp
@@ -2911,8 +2992,14 @@ Translated:Solid Infill
 English:Some features may require an internet connection.
 Translated:Voor sommige functies is mogelijk een internetverbinding vereist.
 
+English:Some of the parts appear to require support. Consider adding support and re-exporting to get the best results possible.
+Translated:Sommige delen lijken ondersteuning nodig te hebben. Overweeg ondersteuning toe te voegen en opnieuw te exporteren om de best mogelijke resultaten te krijgen.
+
+English:Some parts are unsupported and require support structures to print correctly
+Translated:Sommige onderdelen worden niet ondersteund en hebben ondersteuningsstructuren nodig om goed te kunnen afdrukken
+
 English:Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
-Translated:Soms heeft een gaas een perimeter niet gesloten. Wanneer dit is gecontroleerd, zijn deze niet-gesloten perimeters gesloten.
+Translated:Soms heeft een gaas een perimeter niet gesloten. Wanneer dit is gecontroleerd, worden deze niet-gesloten randen gesloten.
 
 English:Sorry!  Must be a valid email address.
 Translated:Sorry! Moet een geldig e-mail adres zijn.
@@ -2948,7 +3035,7 @@ English:Source
 Translated:Bron
 
 English:Specifies that the firmware has support for ros_0 endstop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
-Translated:Geeft aan dat de firmware ondersteuning biedt voor end_staging van ros_0 op M119. TRIGGERED-toestand bepaalt dat gloeidraad is weggevallen. Als de uitloop wordt gedetecteerd, pauzeren de printers G-code wordt uitgevoerd.
+Translated:Geeft aan dat de firmware ondersteuning biedt voor end_posting van de ros_0 op M119. TRIGGERED-toestand bepaalt dat gloeidraad is weggevallen. Als er een uitloop is gedetecteerd, pauzeren de printers G-code wordt uitgevoerd.
 
 English:Speed
 Translated:Snelheid
@@ -2996,7 +3083,7 @@ English:Start At Non Overhang
 Translated:Begin bij niet overhangen
 
 English:Start each new layer from a different vertex to reduce seams.
-Translated:Begin elke nieuwe laag vanaf een andere hoek om naden te verminderen.
+Translated:Begin elke nieuwe laag vanuit een ander hoekpunt om naden te verminderen.
 
 English:Start End Overlap
 Translated:Begin einde overlapping
@@ -3005,13 +3092,13 @@ English:Start G-Code
 Translated:Start G-Code
 
 English:Start G-Code cannot contain G29 if Print Leveling is enabled.
-Translated:Start G-Code kan G29 niet bevatten als Print Levelling is ingeschakeld.
+Translated:Start G-Code kan G29 niet bevatten als Printnivellering is ingeschakeld.
 
 English:Start G-Code cannot contain G29 if Print Recovery is enabled.
 Translated:Start G-Code kan G29 niet bevatten als Print Recovery is ingeschakeld.
 
 English:Start G-Code cannot contain G30 if Print Leveling is enabled.
-Translated:Start G-Code kan G30 niet bevatten als Print Levelling is ingeschakeld.
+Translated:Begin G-Code kan G30 niet bevatten als Printnivellering is ingeschakeld.
 
 English:Start Height
 Translated:Begin hoogte
@@ -3088,9 +3175,6 @@ Translated:Succes!\n\nUw filament moet nu worden leeggemaakt
 English:Support
 Translated:Ondersteuning
 
-English:Support Everywhere
-Translated:Overal ondersteuning
-
 English:Support Interface Extruder
 Translated:Ondersteuning Interface Extruder
 
@@ -3131,7 +3215,7 @@ English:Sync Printers
 Translated:Sync-printers
 
 English:Sync To Print
-Translated:Synchroniseren met afdrukken
+Translated:Synchroniseren om af te drukken
 
 English:Syncing Printer Profiles...
 Translated:Printerprofielen synchroniseren ...
@@ -3153,12 +3237,6 @@ Translated:temperaturen
 
 English:Terminal
 Translated:Terminal
-
-English:Test Parts
-Translated:Test onderdelen
-
-English:TestPart
-Translated:TestPart
 
 English:Text
 Translated:Tekst
@@ -3185,7 +3263,7 @@ English:The actual diameter of the filament used for printing.
 Translated:De werkelijke diameter van het filament dat wordt gebruikt voor afdrukken.
 
 English:The amount of filament to insert into the printer when loading.
-Translated:De hoeveelheid filament die in de printer moet worden geplaatst tijdens het laden.
+Translated:De hoeveelheid filament die tijdens het laden in de printer moet worden gestoken.
 
 English:The amount of filament to remove from the printer while unloading.
 Translated:De hoeveelheid filament die tijdens het uitladen uit de printer moet worden verwijderd.
@@ -3202,6 +3280,9 @@ Translated:De hoek waaronder de lijnen van het ondersteuningsmateriaal worden ge
 English:The angle of the infill, measured from the X axis. Not used when bridging.
 Translated:De hoek van de invulling, gemeten vanaf de X-as. Niet gebruikt bij overbrugging.
 
+English:The angle to generate support for
+Translated:De hoek om ondersteuning voor te genereren
+
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
 Translated:Het bed is momenteel aan het verwarmen en de doeltemperatuur kan niet worden gewijzigd totdat het {0} ° C bereikt.\n\nU kunt de startbedtemperatuur instellen in INSTELLINGEN -> Gloeidraad -> Temperaturen.\n\n{1}
 
@@ -3212,7 +3293,7 @@ English:The diameter of the extruder's nozzle.
 Translated:De diameter van het mondstuk van de extruder.
 
 English:The distance between support material lines.
-Translated:De afstand tussen lijnen van ondersteuningsmateriaal.
+Translated:De afstand tussen ondersteunende materiaallijnen.
 
 English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
 Translated:De afstand tussen de bovenkant van het vlot en de onderkant van het model. 0.6 mm is een goed startpunt voor PLA en 0.4 mm is een goed startpunt voor ABS. Lagere waarden geven een gladder oppervlak, hogere waarden maken de afdruk gemakkelijker te verwijderen.
@@ -3224,7 +3305,7 @@ English:The distance filament will reverse before each qualifying non-print move
 Translated:De gloeidraad op afstand wordt omgekeerd vóór elke kwalificerende beweging zonder afdruk
 
 English:The distance from the model at which the first skirt loop is drawn.
-Translated:De afstand vanaf het model waarbij de eerste roklus is getekend.
+Translated:De afstand vanaf het model waarbij de eerste roklus wordt getrokken.
 
 English:The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.
 Translated:De afstand die een perimeter zichzelf zal overlappen wanneer het zijn lus voltooit, uitgedrukt als een percentage van de mondstukdiameter.
@@ -3260,7 +3341,7 @@ English:The geometric shape of the support structure for the inside of parts.
 Translated:De geometrische vorm van de steunstructuur voor de binnenkant van onderdelen.
 
 English:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
-Translated:De hoogte van het afdrukbare volume van de printer, in millimeters. Bepaalt de hoogte van het zichtbare afdrukgebied dat wordt weergegeven in 3D View.
+Translated:De hoogte van het afdrukbare volume van de printer, in millimeters. Bepaalt de hoogte van het zichtbare afdrukgebied dat wordt weergegeven in 3D-weergave.
 
 English:The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.
 Translated:De index van de extruder om te gebruiken voor het afdrukken van ondersteunend materiaal. Alleen van toepassing als Extruderteller is ingesteld op een waarde van meer dan 1.
@@ -3272,7 +3353,7 @@ English:The index of the extruder to use to print the raft. Set to 0 to use the 
 Translated:De index van de extruder om te gebruiken voor het afdrukken van het vlot. Stel in op 0 om de support-extruderindex te gebruiken.
 
 English:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
-Translated:De laag (lagen) waarop de afdruk zal pauzeren, waardoor een verandering in de gloeidraad mogelijk wordt. De printer is gepauzeerd voordat de opgegeven laag wordt gestart. Laat dit leeg om uit te schakelen. Als u meerdere lagen wilt onderbreken, scheidt u de laagnummers met puntkomma's. Bijvoorbeeld: "16; 37".
+Translated:De laag (lagen) waarop de afdruk zal pauzeren, waardoor een verandering van gloeidraad mogelijk wordt. Printer is gepauzeerd voordat de gegeven laag is gestart. Laat dit leeg om uit te schakelen. Als u meerdere lagen wilt onderbreken, scheidt u de laagnummers met puntkomma's. Bijvoorbeeld: "16; 37".
 
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
 Translated:De lengte en breedte van een toren links achter de afdruk die wordt gebruikt voor het vegen van de volgende spuitmond bij het wisselen tussen meerdere extruders. Stel in op 0 om uit te schakelen.
@@ -3290,7 +3371,7 @@ English:The maximum amount the printer can accelerate on a G-Code move.
 Translated:Het maximale bedrag dat de printer kan versnellen bij een verplaatsing met G-code.
 
 English:The maximum speed at which the layer cooling fan will run, expressed as a percentage of full power.
-Translated:De maximale snelheid waarmee de koelventilator van de laag zal werken, uitgedrukt als een percentage van het volledige vermogen.
+Translated:De maximale snelheid waarmee de koelventilator van de laag zal lopen, uitgedrukt als een percentage van het volledige vermogen.
 
 English:The maximum speed that the printer treats as 0 and changes direction instantly.
 Translated:De maximale snelheid die de printer als 0 behandelt en direct van richting verandert.
@@ -3305,22 +3386,22 @@ English:The minimum distance of a non-print move which will trigger a retraction
 Translated:De minimumafstand van een niet-drukbeweging die een intrekking veroorzaakt.
 
 English:The minimum feature size to consider from the model. Leave at 0 to use all the model detail.
-Translated:De minimale grootte van de functies die in het model moet worden gebruikt. Laat op 0 staan om alle modeldetails te gebruiken.
+Translated:De minimale grootte van de functies die u in het model moet gebruiken. Laat op 0 staan om alle modeldetails te gebruiken.
 
 English:The minimum length of filament that must be extruded before a retraction can occur.
 Translated:De minimale lengte van de gloeidraad die moet worden geëxtrudeerd voordat een retractie kan plaatsvinden.
 
 English:The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value.
-Translated:De minimale lengte van het filament om de roklussen te bedrukken. Er zullen voldoende roklussen worden getrokken om deze hoeveelheid filament te gebruiken, waarbij de waarde die is ingesteld in Loops wordt overschreven als de waarde in Loops een rok zal produceren die korter is dan deze waarde.
+Translated:De minimale lengte van het te gebruiken filament om de roklussen te bedrukken. Er worden voldoende roklussen getrokken om deze hoeveelheid filament te gebruiken, waarbij de waarde die is ingesteld in Loops wordt overschreven als de waarde in Loops een korte rok produceert dan deze waarde.
 
 English:The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power.
 Translated:De minimale snelheid waarmee de koelventilator van de laag zal werken, uitgedrukt als een percentage van het volledige vermogen.
 
 English:The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.
-Translated:De minimumsnelheid waarnaar de printer zal worden teruggebracht om te proberen de laagafdruktijd lang genoeg te maken om aan de minimale laagtijd te voldoen.
+Translated:De minimale snelheid waarnaar de printer zal gaan draaien om te proberen de laagafdruktijd lang genoeg te maken om aan de minimale laagtijd te voldoen.
 
 English:The next few screens will walk your through calibrating your printer.
-Translated:De volgende schermen zullen u door de kalibratie van uw printer leiden.
+Translated:De volgende schermen lopen door totdat je je printer hebt gekalibreerd.
 
 English:The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
 Translated:Het aantal CPU-kernen dat moet worden gebruikt tijdens het snijden. Als u dit verhoogt, kan uw machine trager worden.
@@ -3338,7 +3419,7 @@ English:The number of layers or the distance in millimeters to solid fill on the
 Translated:Het aantal lagen of de afstand in millimeters tot vaste vulling op de onderzijde (n) van het object. Voeg mm toe aan het einde van het nummer om de afstand in millimeters te specificeren.
 
 English:The number of layers or the distance to print solid material between the supports and the part. Add mm to the end of the number to specify distance.
-Translated:Het aantal lagen of de afstand om vast materiaal af te drukken tussen de steunen en het onderdeel. Voeg mm toe aan het einde van het nummer om de afstand op te geven.
+Translated:Het aantal lagen of de afstand om vast materiaal tussen de steunen en het onderdeel af te drukken. Voeg mm toe aan het einde van het nummer om de afstand op te geven.
 
 English:The number of layers to consider as the beginning of the print. These will print at initial layer speed.
 Translated:Het aantal lagen dat moet worden beschouwd als het begin van de afdruk. Deze worden afgedrukt bij de beginsnelheid van de laag.
@@ -3350,19 +3431,19 @@ English:The number of layers, or the distance in millimeters, to solid fill on t
 Translated:Het aantal lagen of de afstand in millimeters tot vaste vulling op de bovenzijde (n) van het object. Voeg mm toe aan het einde van het nummer om de afstand in millimeters te specificeren.
 
 English:The number of loops to draw around all the parts on the bed before starting on the parts. Used mostly to prime the nozzle so the flow is even when the actual print begins.
-Translated:Het aantal lussen om rond alle delen van het bed te tekenen voordat u aan de onderdelen begint. Meestal gebruikt om het mondstuk te vullen, zodat de stroom zelfs wanneer de eigenlijke afdruk begint.
+Translated:Het aantal lussen om rond alle delen van het bed te tekenen voordat u aan de onderdelen begint. Meestal gebruikt om het mondstuk te vullen, zodat de stroming gelijk is, zelfs wanneer de eigenlijke afdruk begint.
 
 English:The number of loops to draw around parts. Used to provide additional bed adhesion
 Translated:Het aantal lussen om rond delen te tekenen. Wordt gebruikt voor extra bedhechting
 
 English:The number of times to sample each probe position (results will be averaged).
-Translated:Het aantal keren dat elke sondepositie wordt bemonsterd (de resultaten worden gemiddeld).
+Translated:Het aantal keren dat elke probepositie wordt bemonsterd (resultaten worden gemiddeld).
 
 English:The number, or total width, of external shells to create. Add mm to the end of the number to specify width in millimeters.
-Translated:Het aantal of de totale breedte van externe shells om te creëren. Voeg mm toe aan het einde van het cijfer om de breedte in millimeters op te geven.
+Translated:Het aantal of de totale breedte van externe shells om te creëren. Voeg mm toe aan het einde van het nummer om de breedte in millimeters op te geven.
 
 English:The offset of each nozzle relative to the first nozzle. Only useful for multiple extruder machines.
-Translated:De offset van elke nozzle ten opzichte van de eerste nozzle. Alleen nuttig voor meerdere extrudermachines.
+Translated:De offset van elk mondstuk ten opzichte van het eerste mondstuk. Alleen nuttig voor meerdere extrudermachines.
 
 English:The pattern to draw for the generation of support material.
 Translated:Het patroon om te tekenen voor het genereren van ondersteunend materiaal.
@@ -3380,7 +3461,7 @@ English:The position to measure the probe offset.
 Translated:De positie om de probe-offset te meten.
 
 English:The price of one kilogram of filament. Used for estimating the cost of a print in the Layer View.
-Translated:De prijs van één kilogram filament. Wordt gebruikt voor het schatten van de kosten van een afdruk in de laagweergave.
+Translated:De prijs van één kilogram gloeidraad. Wordt gebruikt voor het schatten van de kosten van een afdruk in de laagweergave.
 
 English:The print leveling algorithm to use.
 Translated:Het algoritme voor afdruknivellering dat moet worden gebruikt.
@@ -3395,7 +3476,7 @@ English:The printer has a SD card reader.
 Translated:De printer heeft een SD-kaartlezer.
 
 English:The printer has a servo for lowering and raising the z probe.
-Translated:De printer heeft een servo om de z-sonde omlaag te brengen en te verhogen.
+Translated:De printer heeft een servo om de z-sonde omlaag te brengen en omhoog te brengen.
 
 English:The printer has a z probe for measuring bed level.
 Translated:De printer heeft een z-sensor voor het meten van het bedniveau.
@@ -3404,7 +3485,7 @@ English:The printer has its own auto bed leveling probe and procedure which can 
 Translated:De printer heeft een eigen automatische bed-nivelleerprobe en procedure die kan worden aangeroepen met een G29-commando tijdens Start G-Code.
 
 English:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.
-Translated:De printer heeft de mogelijkheid om de voeding te regelen. Schakel deze functie in om de ATX Power Control-sectie in het deelvenster Besturingselementen weer te geven.
+Translated:De printer heeft de mogelijkheid om de voeding te regelen. Schakel deze functie in om het gedeelte ATX Power Control in het deelvenster Besturingselementen weer te geven.
 
 English:The printer requires print leveling to run correctly.
 Translated:De printer vereist dat de afdruknivellering correct verloopt.
@@ -3455,10 +3536,10 @@ English:The speed at which the bottom solid layers will print. Can be set explic
 Translated:De snelheid waarmee de onderste volle lagen worden afgedrukt. Kan expliciet of als een percentage van de vullingssnelheid worden ingesteld. Gebruik 0 om de infillsnelheid aan te passen.
 
 English:The speed at which the layer cooling fan will run when bridging, expressed as a percentage of full power.
-Translated:De snelheid waarmee de koellaagventilator tijdens het overbruggen zal werken, uitgedrukt als een percentage van het volledige vermogen.
+Translated:De snelheid waarmee de koelventilator bij het overbruggen zal werken, uitgedrukt als een percentage van het volledige vermogen.
 
 English:The speed at which the layers of the raft (other than the first layer) will print. This can be set explicitly or as a percentage of the Infill speed.
-Translated:De snelheid waarmee de lagen van het vlot (anders dan de eerste laag) worden afgedrukt. Dit kan expliciet of als een percentage van de vullingssnelheid worden ingesteld.
+Translated:De snelheid waarmee de lagen van het vlot (met uitzondering van de eerste laag) worden afgedrukt. Dit kan expliciet of als een percentage van de vullingssnelheid worden ingesteld.
 
 English:The speed at which the nozzle will move when not extruding material.
 Translated:De snelheid waarmee het mondstuk zal bewegen wanneer het materiaal niet wordt geëxtrudeerd.
@@ -3467,7 +3548,7 @@ English:The speed at which the nozzle will move when printing the initial layers
 Translated:De snelheid waarmee het mondstuk zal bewegen bij het afdrukken van de beginlagen. Indien uitgedrukt als een percentage wordt de vullingssnelheid aangepast.
 
 English:The speed at which the nozzle will move when recovering a failed print, for 1 layer.
-Translated:De snelheid waarmee het mondstuk wordt verplaatst bij het herstellen van een mislukte afdruk, voor 1 laag.
+Translated:De snelheid waarmee het mondstuk zal bewegen wanneer een mislukte afdruk wordt hersteld, voor 1 laag.
 
 English:The speed at which the top solid layers will print. Can be set explicitly or as a percentage of the Infill speed.
 Translated:De snelheid waarmee de bovenste volle lagen worden afgedrukt. Kan expliciet of als een percentage van de vullingssnelheid worden ingesteld.
@@ -3476,7 +3557,7 @@ English:The speed to move the laser when the layer height is 0.025mm. Speed will
 Translated:De snelheid om de laser te verplaatsen wanneer de laaghoogte 0,025 mm is. Snelheid zal lineair worden aangepast op andere hoogtes.
 
 English:The speed to move the laser when the layer height is 0.1mm. Speed will be adjusted linearly at other heights.
-Translated:De snelheid om de laser te verplaatsen wanneer de laaghoogte 0,1 mm is. Snelheid zal lineair worden aangepast op andere hoogtes.
+Translated:De snelheid om de laser te bewegen wanneer de laaghoogte 0,1 mm is. Snelheid zal lineair worden aangepast op andere hoogtes.
 
 English:The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.
 Translated:De snelheid waarmee infill wordt afgedrukt wanneer deze helemaal vast is. Dit kan expliciet of als een percentage van de vullingssnelheid worden ingesteld.
@@ -3485,7 +3566,7 @@ English:The speed to run filament into and out of the printer.
 Translated:De snelheid om filament in en uit de printer te laten lopen.
 
 English:The starting height (z) of the print head before probing each print level position.
-Translated:De beginhoogte (z) van de printkop voordat elke afdrukniveaupositie wordt gescand.
+Translated:De beginhoogte (z) van de printkop voordat elke afdrukniveau-positie wordt gescand.
 
 English:The target temperature the extruder will attempt to reach during the print.
 Translated:De doeltemperatuur die de extruder tijdens het afdrukken probeert te bereiken.
@@ -3497,25 +3578,25 @@ English:The temperature to which the bed will be set for the duration of the pri
 Translated:De temperatuur waarop het bed wordt ingesteld voor de duur van de afdruk. Stel in op 0 om uit te schakelen.
 
 English:The temperature to which the bed will heat (or cool) in order to remove the part, as specified in Custom G-Code.
-Translated:De temperatuur waartoe het bed zal verwarmen (of afkoelen) om het onderdeel te verwijderen, zoals gespecificeerd in Aangepaste G-code.
+Translated:De temperatuur waarop het bed zal verwarmen (of afkoelen) om het onderdeel te verwijderen, zoals gespecificeerd in Aangepaste G-code.
 
 English:The temperature to which the nozzle will be heated before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.
-Translated:De temperatuur tot welke het mondstuk wordt verwarmd voordat de eerste laag van een onderdeel wordt afgedrukt. De printer wacht totdat deze temperatuur is bereikt alvorens af te drukken.
+Translated:De temperatuur tot welke het mondstuk wordt verwarmd voordat de eerste laag van een onderdeel wordt afgedrukt. De printer wacht totdat deze temperatuur is bereikt voordat deze wordt afgedrukt.
 
 English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
-Translated:De term 'baudsnelheid' betekent ruwweg de snelheid waarmee\ngegevens worden verzonden. Baud-snelheden kunnen verschillen van printer naar \ nprinter. Raadpleeg de handleiding van uw printer voor meer informatie.\n\nTip: als je niet zeker bent, probeer dan 250000.
+Translated:De term 'baudsnelheid' betekent grofweg de snelheid waarmee\ngegevens worden verzonden. Baud-snelheden kunnen verschillen van printer naar \ nprinter. Raadpleeg de handleiding van uw printer voor meer informatie.\n\nTip: als je niet zeker bent, probeer dan 250000.
 
 English:The thickness of each layer of the print, except the first layer. A smaller number will create more layers and more vertical accuracy but also a slower print.
 Translated:De dikte van elke laag van de afdruk, behalve de eerste laag. Een kleiner aantal zal meer lagen en meer verticale nauwkeurigheid creëren, maar ook een langzamere afdruk.
 
 English:The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.
-Translated:De dikte van de eerste laag. Een eerste laag die groter is dan de standaardlaagdikte kan zorgen voor een goede hechting op de bouwplaat.
+Translated:De dikte van de eerste laag. Een eerste laag groter dan de standaardlaagdikte kan zorgen voor een goede hechting op de bouwplaat.
 
 English:The time it will take to unload the filament
 Translated:De tijd die nodig is om de gloeidraad te ontladen
 
 English:The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.
-Translated:De tijd waarover de extra lengte bij opnieuw opstarten wordt verhoogd tot de maximale waarde. Onder deze tijd zal slechts een deel van de extra lengte worden toegepast. Laat 0 staan om het volledige bedrag de hele tijd toe te passen.
+Translated:De tijd waarover de extra lengte bij opnieuw opstarten wordt verhoogd tot de maximale waarde. Onder deze tijd wordt slechts een deel van de extra lengte toegepast. Laat 0 staan om het hele bedrag altijd toe te passen.
 
 English:The time to print this G-Code is estimated to be {0} seconds.\n\nPlease check your part for errors if this is unexpected.
 Translated:De tijd om deze G-code af te drukken wordt geschat op {0} seconden.\n\nControleer uw onderdeel op fouten als dit onverwacht is.
@@ -3523,8 +3604,11 @@ Translated:De tijd om deze G-code af te drukken wordt geschat op {0} seconden.\n
 English:The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.
 Translated:De versie van G-Code waarmee de firmware van de printer communiceert. Sommige firmware gebruiken verschillende G- en M-codes. Als u dit instelt, zorgt u ervoor dat de G-code van de uitvoer de juiste opdrachten gebruikt.
 
+English:The width and depth of the support pillars
+Translated:De breedte en diepte van de steunpilaren
+
 English:The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.
-Translated:De X- en Y-positie van het hete uiteinde minimaliseert de kans op botsen met de onderdelen op het bed.
+Translated:De X- en Y-positie van het warme uiteinde minimaliseert de kans op botsen met de onderdelen op het bed.
 
 English:The X and Y values of the size of the print bed, in millimeters. For printers with a circular bed, these values are the diameters on the X and Y axes.
 Translated:De X- en Y-waarden van de grootte van het printbed, in millimeters. Voor printers met een cirkelvormig bed zijn deze waarden de diameters op de X- en Y-assen.
@@ -3557,7 +3641,7 @@ English:This code to will provide read-only access.
 Translated:Deze code biedt alleen-lezen toegang.
 
 English:This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.
-Translated:Dit is een reeks reguliere expressies die op regels moet worden toegepast nadat deze van de printer zijn ontvangen. Ze worden toegepast om elke ontvangen regel te ontvangen.
+Translated:Dit is een reeks reguliere expressies die op regels moet worden toegepast nadat ze van de printer zijn ontvangen. Ze worden toegepast om elke ontvangen regel te ontvangen.
 
 English:This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending. To return more than one instruction separate them with comma.
 Translated:Dit is een reeks reguliere expressies die op regels moet worden toegepast voordat ze naar een printer worden verzonden. Ze worden toegepast in de volgorde die wordt vermeld voordat ze worden verzonden. Als u meer dan één instructie wilt retourneren, scheidt u ze met een komma.
@@ -3569,7 +3653,7 @@ English:This is the angle that raises or stows the z probe.
 Translated:Dit is de hoek die de z-sonde opheft of opbergt.
 
 English:This is the make (often the manufacturer) of printer this profile is targeting.
-Translated:Dit is het merk (vaak de fabrikant) van de printer waarop dit profiel gericht is.
+Translated:Dit is het merk (vaak de fabrikant) van de printer waarop dit profiel is gericht.
 
 English:This is the model of printer this profile is targeting.
 Translated:Dit is het printermodel waarop dit profiel is gericht.
@@ -3578,10 +3662,10 @@ English:This is the name of your printer that will be displayed in the choose pr
 Translated:Dit is de naam van uw printer die wordt weergegeven in het menu Printer kiezen.
 
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
-Translated:Dit is bedoeld om trillingen tijdens het afdrukken te verminderen. Als uw printer een resonantiefrequentie heeft die problemen veroorzaakt, kunt u dit instellen om te proberen het afdrukken op die frequentie te verminderen.
+Translated:Dit helpt om trillingen tijdens het afdrukken te verminderen. Als uw printer een resonantiefrequentie heeft die problemen veroorzaakt, kunt u dit instellen om te proberen het afdrukken op die frequentie te verminderen.
 
 English:This should be in 'G-Code'
-Translated:Dit zou in 'G-Code' moeten staan
+Translated:Dit hoort in 'G-Code' te staan
 
 English:This will ensure that filament is able to flow through the nozzle.
 Translated:Dit zorgt ervoor dat het filament door het mondstuk kan stromen.
@@ -3630,6 +3714,9 @@ Translated:Naar map
 
 English:Toggle Selection
 Translated:Selectie wisselen
+
+English:Toggle Support
+Translated:Schakel ondersteuning in
 
 English:Top Solid Infill
 Translated:Top Solid Infill
@@ -3680,7 +3767,7 @@ English:Turn on if Below
 Translated:Schakel in als hieronder
 
 English:Turn retractions on and off.
-Translated:Schakel retracties in en uit.
+Translated:Schakel het intrekken in en uit.
 
 English:Turn the fan on and off regardless of settings.
 Translated:Schakel de ventilator in en uit, ongeacht de instellingen.
@@ -3706,6 +3793,9 @@ Translated:Kan niet importeren
 English:Undo
 Translated:ongedaan maken
 
+English:Unexpected error validating settings
+Translated:Onverwachte fout bij het valideren van instellingen
+
 English:Unexpected response
 Translated:Onverwachte reactie
 
@@ -3724,14 +3814,17 @@ Translated:Lossen
 English:Unload filament
 Translated:Ontladen van gloeidraad
 
+English:Unload Filament
+Translated:Filament ontladen
+
 English:Unload Filament Length
-Translated:De filamentlengte ontladen
+Translated:Ontlaad de lengte van de gloeidraad
 
 English:Unload Filament Time
 Translated:Maak de filamenttijd leeg
 
 English:Unload Filament Wizard
-Translated:Maak Filament Wizard leeg
+Translated:Filamentwizard ontladen
 
 English:Unload Material
 Translated:Materiaal ontladen
@@ -3744,6 +3837,9 @@ Translated:ontsluiten
 
 English:Unsupported Baud Rate
 Translated:Niet-ondersteunde baudsnelheid
+
+English:Unsupported Parts Detected
+Translated:Niet-ondersteunde onderdelen gedetecteerd
 
 English:Up
 Translated:omhoog
@@ -3782,7 +3878,7 @@ English:Use Automatic Z Probe
 Translated:Gebruik de automatische Z-probe
 
 English:Use cursor keys for axis movements
-Translated:Gebruik de cursortoetsen voor asbewegingen
+Translated:Gebruik cursortoetsen voor asbewegingen
 
 English:Use Firmware Retraction
 Translated:Gebruik Firmware Retraction
@@ -3797,7 +3893,7 @@ English:Use Relative E Distances
 Translated:Gebruik relatieve afstanden
 
 English:Used for small perimeters (usually holes). This can be set explicitly or as a percentage of the Perimeters' speed.
-Translated:Gebruikt voor kleine omtrekken (meestal gaten). Dit kan expliciet of als een percentage van de snelheid van de Perimeters worden ingesteld.
+Translated:Gebruikt voor kleine omtrekken (meestal gaten). Dit kan expliciet worden ingesteld of als een percentage van de snelheid van de Perimeters.
 
 English:Used to specify if more than one extruder share a common heater cartridge.
 Translated:Wordt gebruikt om aan te geven of meer dan één extruder een gemeenschappelijke verwarmingspatroon deelt.
@@ -3851,7 +3947,7 @@ English:Wait For Running Clean
 Translated:Wait For Running Clean
 
 English:Waiting For Bed To Heat
-Translated:Wachten op bed om te verwarmen
+Translated:Wachten op bed te verwarmen
 
 English:Waiting for Bed to Heat to
 Translated:Wachten op bed om te verwarmen
@@ -3860,16 +3956,19 @@ English:Waiting For Extruder To Heat
 Translated:Waiting For Extruder To Heat
 
 English:Waiting for Extruder to Heat to
-Translated:Wachten tot Extruder is verwarmd naar
+Translated:Wachten tot Extruder is verwarmd tot
 
 English:Waiting For Printer To Heat
-Translated:Wachten op te verwarmen printer
+Translated:Wachten totdat de printer is opgewarmd
 
 English:Waiting for the bed to heat to 
 Translated:Wachtend op het bed om te verwarmen
 
 English:Waiting for the hotend to heat to 
 Translated:Wachtend op de hotend om te verwarmen
+
+English:Warning
+Translated:Waarschuwing
 
 English:Warning - GCode file
 Translated:Waarschuwing - GCode-bestand
@@ -3878,7 +3977,7 @@ English:Warning - No EEProm Mapping
 Translated:Waarschuwing - Geen EEProm-toewijzing
 
 English:Warning! The tip of the nozzle will be HOT!
-Translated:Waarschuwing! De punt van het mondstuk zal HEET zijn!
+Translated:Waarschuwing! De punt van het mondstuk is HEET!
 
 English:Warning, very short print
 Translated:Waarschuwing, zeer korte afdruk
@@ -3889,6 +3988,9 @@ Translated:WAARSCHUWING: het loskoppelen stopt de huidige afdruk.\n\nWeet je zek
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:WAARSCHUWING: om het afdrukherstel uit te voeren, moet uw printer naar beneden gaan om zijn uitgangspositie te bereiken.\nAls uw afdruk te groot is, kan een deel van uw printer er tegenaan botsen wanneer u naar beneden gaat.\nControleer of het veilig is om deze bewerking uit te voeren voordat u doorgaat.
 
+English:Warning: Support Required
+Translated:Waarschuwing: ondersteuning vereist
+
 English:WARNING: Write Failed!
 Translated:WAARSCHUWING: Schrijven is mislukt!
 
@@ -3896,22 +3998,25 @@ English:We should be done in approximately {0} minutes.
 Translated:We moeten ongeveer in {0} minuten klaar zijn.
 
 English:We should be done in less than five minutes.
-Translated:We moeten in minder dan vijf minuten klaar zijn.
+Translated:We zouden in minder dan vijf minuten klaar moeten zijn.
 
 English:We will now finalize our measurement of the extruder height at this position.
-Translated:We zullen nu onze meting van de hoogte van de extruder op deze positie voltooien.
+Translated:We zullen nu onze meting van de hoogte van de extruder op deze positie afronden.
 
 English:We will now refine our measurement of the extruder height at this position.
 Translated:We zullen nu onze meting van de hoogte van de extruder op deze positie verfijnen.
 
 English:We will use this paper to measure the distance between the nozzle and the bed.
-Translated:We gebruiken dit papier om de afstand tussen het mondstuk en het bed te meten.
+Translated:We zullen dit papier gebruiken om de afstand tussen het mondstuk en het bed te meten.
 
 English:Website
 Translated:Website
 
 English:Wedge
 Translated:Wig
+
+English:Welcome to MatterControl
+Translated:Welkom bij MatterControl
 
 English:Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.
 Translated:Welkom bij de afdruknivelleringswizard. Hier is een kort overzicht van wat we gaan doen.
@@ -3961,11 +4066,17 @@ Translated:Wilt u overschakelen naar de nieuwe G-code? Controleer voordat u over
 English:Write Filter
 Translated:Schrijf filter
 
+English:X
+Translated:X
+
 English:X and Y Distance
 Translated:X en Y afstand
 
 English:XY Homing Position
 Translated:XY-positie
+
+English:Y
+Translated:Y
 
 English:Yes
 Translated:Ja
@@ -3977,13 +4088,13 @@ English:You can also
 Translated:Je kan ook
 
 English:You can only connect when not currently connected.
-Translated:U kunt alleen verbinding maken als er geen verbinding is.
+Translated:U kunt alleen verbinding maken wanneer deze momenteel niet is verbonden.
 
 English:You have successfully imported a new {0} setting. You can find '{1}' in your list of {0} settings.
-Translated:U hebt met succes een nieuwe instelling {0} geïmporteerd. U kunt '{1}' vinden in uw lijst met {0} instellingen.
+Translated:U hebt met succes een nieuwe instelling {0} geïmporteerd. Je kunt '{1}' vinden in je lijst met {0} instellingen.
 
 English:You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.
-Translated:U hebt met succes een nieuw printerprofiel geïmporteerd. U kunt '{0}' vinden in uw lijst met beschikbare printers.
+Translated:U hebt met succes een nieuw printerprofiel geïmporteerd. U vindt '{0}' in uw lijst met beschikbare printers.
 
 English:You may need to wait a minute for your printer to finish initializing.
 Translated:U moet mogelijk een minuutje wachten voordat uw printer klaar is met initialiseren.
@@ -3991,11 +4102,11 @@ Translated:U moet mogelijk een minuutje wachten voordat uw printer klaar is met 
 English:Your 3D print has been auto-paused.\n\nLayer{0} reached.
 Translated:Je 3D-afdruk is automatisch gepauzeerd.\n\nLayer {0} bereikt.
 
-English:Your 3D print has been paused.\n\nOut of filament detected.
-Translated:Je 3D-afdruk is gepauzeerd.\n\nGeen filament gevonden.
+English:Your 3D print has been paused.\n\nOut of filament, or jam, detected. Please load more filament or clear the jam.
+Translated:Je 3D-afdruk is gepauzeerd.\n\nGeen filament of vastgelopen papier gevonden. Plaats meer filament of verwijder de storing.
 
 English:Your application is up-to-date
-Translated:Je applicatie is up-to-date
+Translated:Uw applicatie is up-to-date
 
 English:Your code has been redeemed.  Please check the Library.
 Translated:Je code is ingewisseld. Controleer de bibliotheek.
@@ -4016,7 +4127,7 @@ English:Your Probe is now calibrated.
 Translated:Uw probe is nu gekalibreerd.
 
 English:Your Share Code
-Translated:Uw gedeelde code
+Translated:Uw deelcode
 
 English:Your Start G-Code should not contain a G29 if you are planning on using print leveling. Change your start G-Code or turn off print leveling.
 Translated:Uw Start G-Code mag geen G29 bevatten als u van plan bent om print-leveling te gebruiken. Wijzig uw start G-Code of schakel afdruknivellering uit.
@@ -4028,7 +4139,10 @@ English:Your Start G-Code should not contain a G30 if you are planning on using 
 Translated:Uw Start G-Code mag geen G30 bevatten als u van plan bent om print-leveling te gebruiken. Wijzig uw start G-Code of schakel afdruknivellering uit.
 
 English:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
-Translated:Uw Start G-Code mag geen G30 bevatten als u van plan bent om Print Recovery te gebruiken. Wijzig uw start G-Code of schakel Print Recovery uit.
+Translated:Uw start G-code mag geen G30 bevatten als u van plan bent om Print Recovery te gebruiken. Wijzig uw start G-Code of schakel Print Recovery uit.
+
+English:Z
+Translated:Z
 
 English:Z Lift
 Translated:Z Opheffen

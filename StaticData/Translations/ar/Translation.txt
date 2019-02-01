@@ -4,6 +4,9 @@ Translated:
 English:    • Remove the paper
 Translated:    • قم بإزالة الورق
 
+English:    1. Select the 'Controls' tab on the right
+Translated:    1. حدد علامة التبويب "عناصر التحكم" على اليسار
+
 English:    2. Look for the calibration section (pictured below)
 Translated:    2. ابحث عن قسم المعايرة (في الصورة أدناه)
 
@@ -31,9 +34,6 @@ Translated:يجب أن يكون {0} أقل من أو يساوي {1} * 4.
 English:{0} must be less than or equal to the {1}.
 Translated:يجب أن يكون {0} أقل من أو يساوي {1}.
 
-English:{0} works best when set to LINES.
-Translated:يعمل {0} بشكل أفضل عند التعيين على LINES.
-
 English:<< Back
 Translated:<< رجوع
 
@@ -53,7 +53,7 @@ English:3D Layer View
 Translated:عرض طبقة ثلاثية الأبعاد
 
 English:A comma separated list of sample points to probe the bed at. You must specify an x and y position for each point. For example: '20,20,100,180,180,20' will sample the bad at 3 points.
-Translated:قائمة مفصولة بفواصل لنقاط العينة لفحص السرير في. يجب تحديد موضع x و y لكل نقطة. على سبيل المثال: "20، 20،100،180،180،20" سوف يقوم بتجربة سيئة على 3 نقاط.
+Translated:قائمة مفصولة بفواصل لنقاط العينة لفحص السرير في. يجب تحديد موضع x و y لكل نقطة. على سبيل المثال: "20، 20،100،180،180،20" سيختبر السيئة عند 3 نقاط.
 
 English:A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.
 Translated:معدل عرض البثق للطبقة الأولى من الطباعة. يمكن للقيمة الأكبر من 100٪ المساعدة في الالتصاق بسرير الطباعة.
@@ -63,9 +63,6 @@ Translated:معدل عرض البثق عند الطباعة خارج المحي�
 
 English:A password reset code will be sent to your email.
 Translated:سيتم إرسال رمز إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.
-
-English:A Quick Tour of MatterControl
-Translated:جولة سريعة من MatterControl
 
 English:A six-digit code - sent to your email account
 Translated:رمز مكون من ستة أرقام - يتم إرساله إلى حساب بريدك الإلكتروني
@@ -77,7 +74,7 @@ English:A U.S. or Canadian mobile phone number
 Translated:رقم هاتف جوال أمريكي أو كندي
 
 English:A valid email address
-Translated:عنوان بريد الكتروني صالح
+Translated:عنوان بريد إلكتروني صالح
 
 English:Abort Print
 Translated:إحباط الطباعة
@@ -99,6 +96,12 @@ Translated:تم إنشاء الحساب
 
 English:Action
 Translated:عمل
+
+English:Action Recommended
+Translated:العمل الموصى به
+
+English:Action Required
+Translated:الإجراء مطلوب
 
 English:Add
 Translated:إضافة
@@ -125,13 +128,13 @@ English:Add to Bed
 Translated:أضف إلى السرير
 
 English:Add to Selection
-Translated:إضافة إلى التحديد
+Translated:أضف للاختيار
 
 English:Adhesion
 Translated:التصاق
 
 English:Adjust this to correct differences between expected printing speeds and actual printing speeds.
-Translated:اضبط هذا لإصلاح الاختلافات بين سرعات الطباعة المتوقعة وسرعات الطباعة الفعلية.
+Translated:قم بضبط ذلك لتصحيح الاختلافات بين سرعات الطباعة المتوقعة وسرعات الطباعة الفعلية.
 
 English:Advanced
 Translated:المتقدمة
@@ -158,7 +161,7 @@ English:Align
 Translated:محاذاة
 
 English:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
-Translated:يتم ضرب كافة extrusions بهذه القيمة. زيادة حجمه فوق 1 سيزيد من كمية الفتيل الذي يتم سحبه (1.1 هي قيمة قصوى جيدة) ؛ خفض ذلك سيقلل من كمية مقذوف (.9 قيمة الحد الأدنى جيد).
+Translated:يتم ضرب كافة extrusions بهذه القيمة. زيادة حجمه فوق 1 سيزيد من كمية الفتيل التي يتم تبديدها (1.1 هي قيمة قصوى جيدة) ؛ خفض ذلك سيقلل من كمية مقذوف (.9 قيمة الحد الأدنى جيدة).
 
 English:All G-Code lines mush be shorter than 100 characters (excluding comments).
 Translated:تكون جميع خطوط G-Code أقصر من 100 حرف (باستثناء التعليقات).
@@ -167,7 +170,7 @@ English:All Heaters
 Translated:جميع السخانات
 
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
-Translated:اسمح لـ MatterControl بتقسيم الأسطر الطويلة لتحسين التسوية وإلغاء الطباعة. حرجة للطابعات التي هي خارج المستوى بشكل ملحوظ.
+Translated:اسمح لـ MatterControl بتقسيم الأسطر الطويلة لتحسين التسوية وإلغاء الطباعة. الحرجة للطابعات التي هي خارج المستوى بشكل ملحوظ.
 
 English:Alpha
 Translated:ألفا
@@ -175,11 +178,20 @@ Translated:ألفا
 English:Alpha: The in development version of MatterControl
 Translated:Alpha: الإصدار قيد التطوير من MatterControl
 
+English:Already Loaded
+Translated:محملة بالفعل
+
+English:Anchor
+Translated:مذيع الأخبار
+
 English:and ensure that no filament is stuck to your nozzle.
 Translated:وتأكد من أن أي خيوط عالقة في فوهة الخاص بك.
 
 English:and the hotend to heat to 
 Translated:و hotend للحرارة ل
+
+English:Angle
+Translated:زاوية
 
 English:Anyone with this code will have access
 Translated:سيتمكن أي شخص لديه هذا الرمز من الوصول
@@ -200,10 +212,10 @@ English:Are you sure you want to abort the current print and close MatterControl
 Translated:هل أنت متأكد من أنك تريد إلغاء الطباعة الحالية وإغلاق MatterControl؟
 
 English:Are you sure you want to add this part ({0}) to the Queue?\nThe 3D part you are trying to load may be too complicated and cause performance or stability problems.\n\nConsider reducing the geometry before proceeding.
-Translated:هل أنت متأكد من أنك تريد إضافة هذا الجزء ({0}) إلى قائمة الانتظار؟\nقد يكون الجزء ثلاثي الأبعاد الذي تحاول تحميله معقدًا للغاية ويسبب مشاكل في الأداء أو الاستقرار.\n\nضع في اعتبارك تقليل الهندسة قبل المتابعة.
+Translated:هل أنت متأكد من أنك تريد إضافة هذا الجزء ({0}) إلى قائمة الانتظار؟\nقد يكون الجزء ثلاثي الأبعاد الذي تحاول تحميله شديد التعقيد ويتسبب في مشاكل في الأداء أو الاستقرار.\n\nضع في اعتبارك تقليل الهندسة قبل المتابعة.
 
-English:Are you sure you want to delete your currently selected printer?
-Translated:هل أنت متأكد من أنك تريد حذف الطابعة المحددة حاليًا؟
+English:Are you sure you want to delete printer '{0}'?
+Translated:هل أنت متأكد من أنك تريد حذف الطابعة '{0}'؟
 
 English:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
 Translated:هل أنت متأكد من أنك تريد الخروج أثناء تشغيل الطباعة من بطاقة SD؟\n\nملاحظة: إذا قمت بالخروج ، فمن المستحسن الانتظار حتى اكتمال الطباعة قبل تشغيل MatterControl مرة أخرى.
@@ -218,7 +230,7 @@ English:Arrange All Parts
 Translated:ترتيب جميع الأجزاء
 
 English:As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.
-Translated:مع انخفاض وقت طباعة الطبقة إلى هذا ، سيتم زيادة سرعة المروحة إلى أقصى سرعة لها.
+Translated:مع انخفاض وقت طباعة الطبقة إلى ذلك ، ستزداد سرعة المروحة إلى أقصى سرعة لها.
 
 English:Ascending
 Translated:تصاعدي
@@ -236,16 +248,16 @@ English:Auto Connect
 Translated:اتصال تلقائي
 
 English:Auto Release Motors
-Translated:السيارات الإصدار للسيارات
+Translated:Auto Release Motors
 
 English:Auto Uppercase
 Translated:الأحرف الكبيرة التلقائية
 
 English:Automatic Heater Shutdown in
-Translated:سخان الاوتوماتيكي اغلاق في
+Translated:اغلاق الاوتوماتيكيه في
 
 English:Avoid contact with your skin.
-Translated:تجنب ملامسة بشرتك.
+Translated:تجنب ملامسة الجلد.
 
 English:Avoid Crossing Perimeters
 Translated:تجنب عبور المحيط
@@ -262,11 +274,14 @@ Translated:طفل خطوة الاوفست
 English:Back
 Translated:الى الخلف
 
+English:Back Ratio
+Translated:نسبة الظهر
+
+English:Backing Depth
+Translated:دعم العمق
+
 English:Backup Firmware Before Update
 Translated:البرامج الثابتة النسخ الاحتياطي قبل التحديث
-
-English:BadSubtract
-Translated:BadSubtract
 
 English:Base
 Translated:قاعدة
@@ -281,7 +296,7 @@ English:Bed Leveling
 Translated:الاستواء السرير
 
 English:Bed PID Settings
-Translated:إعدادات السرير PID
+Translated:إعدادات سرير PID
 
 English:Bed Remove Part Temperature
 Translated:سرير إزالة درجة الحرارة الجزء
@@ -310,6 +325,9 @@ Translated:قبل تغيير أداة G-Code 2
 English:Behavior
 Translated:سلوك
 
+English:Bend Up
+Translated:ينحني حتى
+
 English:Beta
 Translated:بيتا
 
@@ -317,7 +335,7 @@ English:Beta: The release candidate version of MatterControl
 Translated:الإصدار التجريبي: إصدار المرشح لإصدار MatterControl
 
 English:Bottom Solid Infill
-Translated:Bottom Solid Infill
+Translated:أسفل الصلبة دفن
 
 English:Bottom Solid Layers
 Translated:الطبقات الصلبة السفلى
@@ -353,13 +371,10 @@ English:Calculate Path
 Translated:احسب المسار
 
 English:Calibrate Probe Offset
-Translated:معايرة تحقيق المسبار
+Translated:معايرة مسبار الاوفست
 
 English:Calibration
 Translated:معايرة
-
-English:Calibration Error
-Translated:خطأ في المعايرة
 
 English:Calibration Files
 Translated:ملفات المعايرة
@@ -380,7 +395,7 @@ English:Cancel Print
 Translated:إلغاء الطباعة
 
 English:Cancel Print?
-Translated:إلغاء الطباعة
+Translated:إلغاء الطباعة؟
 
 English:Cancel the current print?
 Translated:إلغاء الطباعة الحالية؟
@@ -426,9 +441,6 @@ Translated:التحقق قبل كل طباعة أن ارتفاع الطبقة أ
 
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:اختر الأمر لإظهار تقدم الطباعة على شاشة LCD الخاصة بالطابعة ، إذا كان يحتوي على واحدة.
-
-English:Clean
-Translated:نظيف
 
 English:Clean Filament Page
 Translated:صفحة الشعيرات النظيفة
@@ -485,7 +497,7 @@ English:Compile model
 Translated:ترجمة النموذج
 
 English:Complete Individual Objects
-Translated:أكمل الكائنات الفردية
+Translated:أكمل كائنات فردية
 
 English:Cone
 Translated:مخروط
@@ -525,6 +537,9 @@ Translated:توصيل الطابعة (تأكد من تشغيلها)
 
 English:Connect to the currently selected printer
 Translated:قم بالاتصال بالطابعة المحددة حاليًا
+
+English:Connect to your printer to continue
+Translated:اتصل بطابعتك للمتابعة
 
 English:Connect your printer to check for firmware updates.
 Translated:قم بتوصيل الطابعة للتحقق من وجود تحديثات للبرامج الثابتة.
@@ -568,23 +583,11 @@ Translated:عتبات التبريد
 English:Copy
 Translated:نسخ
 
-English:Copy Edges
-Translated:نسخ الحواف
-
-English:Copy Faces
-Translated:وجوه النسخ
-
 English:Copy Printers
 Translated:نسخ الطابعات
 
 English:Copy Printers to Account
 Translated:نسخ الطابعات إلى الحساب
-
-English:Copy State
-Translated:نسخة الدولة
-
-English:Copy Vertices
-Translated:نسخ الرؤوس
 
 English:Cost
 Translated:كلفة
@@ -616,14 +619,11 @@ Translated:انشئ حساب
 English:Create Brim
 Translated:خلق بريم
 
-English:Create Dictionaries
-Translated:إنشاء قواميس
-
 English:Create Folder
 Translated:أنشئ مجلد
 
 English:Create Part Sheet
-Translated:إنشاء ورقة جزء
+Translated:خلق ورقة الجزء
 
 English:Create Perimeter
 Translated:خلق محيط
@@ -637,14 +637,17 @@ Translated:خلق الطوافة
 English:Create Skirt
 Translated:خلق تنورة
 
+English:Create Support
+Translated:خلق الدعم
+
 English:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
-Translated:ينشئ حافة مرفقة بقاعدة الطباعة. مفيد لمنع التشويش عند طباعة ABS (والبلاستيك المعرض للتشويش) حيث يساعد الأجزاء على التمسك بالسرير.
+Translated:ينشئ حافة مرفقة بقاعدة الطباعة. مفيد لمنع التشويش عند طباعة ABS (والبلاستيك المعرض للتشكيل) حيث يساعد الأجزاء على التمسك بالسرير.
 
 English:Creates a perimeter around the part on which to wipe the other nozzle when printing using dual extrusion. Set to 0 to disable.
-Translated:ينشئ محيطًا حول الجزء الذي يتم فيه مسح الفوهة الأخرى عند الطباعة باستخدام البثق الثنائي. اضبط على 0 لتعطيله.
+Translated:ينشئ محيطًا حول الجزء الذي يتم فيه مسح الفوهة الأخرى عند الطباعة باستخدام البثق الثنائي. اضبط على 0 للتعطيل.
 
 English:Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
-Translated:يخلق طوف تحت الجزء المطبوع. مفيد لمنع التشويش عند طباعة ABS (والبلاستيك المعرض للتشويش) حيث يساعد الأجزاء على التمسك بالسرير.
+Translated:يخلق طوف تحت الجزء المطبوع. مفيد لمنع التشويش عند طباعة ABS (والبلاستيك المعرض للتشكيل) حيث يساعد الأجزاء على التمسك بالسرير.
 
 English:Creates an outline around the print, but not attached to it. This is useful for priming the nozzle to ensure the plastic is flowing when the print starts.
 Translated:ينشئ مخططًا حول الطباعة ، ولكن غير مرفق به. هذا مفيد لتهيئة الفوهة لضمان تدفق البلاستيك عند بدء الطباعة.
@@ -703,6 +706,9 @@ Translated:وضع العرض
 English:Density
 Translated:كثافة
 
+English:Depth
+Translated:عمق
+
 English:Descending
 Translated:تنازلي
 
@@ -725,13 +731,13 @@ English:Detect perimeters that cross over themselves and combine them.
 Translated:الكشف عن الحدود التي تعبر نفسها ودمجها.
 
 English:Detect when walls are too close together and need to be extruded as just one wall.
-Translated:اكتشاف عندما تكون الجدران قريبة جدا من بعضها البعض وتحتاج إلى أن تكون مقذوف كجدار واحد فقط.
+Translated:اكشف عندما تكون الجدران قريبة جدًا من بعضها ويجب أن تكون مقذوفًا كجدار واحد فقط.
 
 English:Detecting device firmware...
 Translated:اكتشاف البرامج الثابتة للجهاز ...
 
 English:Detects sections of the model that would be too thin to print and expands them to make them printable.
-Translated:يكتشف أجزاء النموذج التي قد تكون رقيقة جدًا للطباعة وتوسيعها لجعلها قابلة للطباعة.
+Translated:يكتشف أجزاء النموذج التي قد تكون رقيقة جدًا للطباعة وتوسعها لجعلها قابلة للطباعة.
 
 English:Developed By
 Translated:طورت بواسطة
@@ -815,10 +821,10 @@ English:Edit
 Translated:تصحيح
 
 English:Edit Component
-Translated:تحرير مكون
+Translated:تحرير المكون
 
 English:Edit Leveling Data
-Translated:تحرير بيانات التسوية
+Translated:تحرير بيانات الاستواء
 
 English:Edit Macro
 Translated:تحرير ماكرو
@@ -866,7 +872,7 @@ English:Enable Retractions
 Translated:تمكين عمليات التراجع
 
 English:Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.
-Translated:قم بتمكين ذلك إذا كانت الطابعة تحتوي على دعم الأجهزة لـ G30 (فحص سريري تلقائي) وتريد استخدامه بدلاً من قياس مواضع الفحص يدويًا.
+Translated:قم بتمكين ذلك إذا كانت الطابعة مزودة بدعم الأجهزة لـ G30 (فحص سريري تلقائي) وتريد استخدامه بدلاً من قياس مواضع الفحص يدويًا.
 
 English:End
 Translated:النهاية
@@ -884,7 +890,7 @@ English:Enter New Name Here
 Translated:أدخل اسم جديد هنا
 
 English:Enter reset code
-Translated:أدخل رمز إعادة التعيين
+Translated:أدخل رمز إعادة الضبط
 
 English:Enter Share Code
 Translated:أدخل رمز المشاركة
@@ -900,6 +906,9 @@ Translated:ادخل رقمك السري
 
 English:Enter your username or email address
 Translated:أدخل اسم المستخدم أو عنوان البريد الإلكتروني الخاص بك
+
+English:Error
+Translated:خطأ
 
 English:Error compiling OpenSCAD script
 Translated:خطأ في تجميع البرنامج النصي OpenSCAD
@@ -952,8 +961,8 @@ Translated:تصدير EEPROM
 English:Export EEPROM Settings
 Translated:تصدير إعدادات EEPROM
 
-English:Export failed
-Translated:فشل التصدير
+English:Export Error
+Translated:خطأ في التصدير
 
 English:Export File
 Translated:ملف التصدير
@@ -971,7 +980,7 @@ English:Extra Length After Tool Change
 Translated:طول إضافي بعد تغيير الأداة
 
 English:Extra Length On Restart
-Translated:طول إضافي في إعادة التشغيل
+Translated:طول إضافي عند إعادة التشغيل
 
 English:Extrude
 Translated:بثق
@@ -1049,7 +1058,7 @@ English:Filament Volume
 Translated:حجم الفتيل
 
 English:File May Cause Problems
-Translated:قد يتسبب الملف مشاكل
+Translated:قد يتسبب الملف في مشاكل
 
 English:Fill Density
 Translated:ملء الكثافة
@@ -1068,6 +1077,9 @@ Translated:مرشحات
 
 English:Finally click 'Next' to continue.
 Translated:وأخيرا انقر فوق "التالي" للمتابعة.
+
+English:Find and create supports where needed
+Translated:البحث وإنشاء الدعم عند الحاجة
 
 English:Finish
 Translated:إنهاء
@@ -1109,7 +1121,7 @@ English:First Layer Thickness
 Translated:سمك الطبقة الأولى
 
 English:Fit to Bounds
-Translated:تناسب الحدود
+Translated:يصلح لحدود
 
 English:Flag for the state of our filament loaded.
 Translated:العلم عن حالة خيوطنا تحميلها.
@@ -1122,6 +1134,9 @@ Translated:مسطحة
 
 English:Flatten
 Translated:تسطح
+
+English:Flattened
+Translated:المسطح
 
 English:Folder Name
 Translated:إسم الملف
@@ -1136,13 +1151,13 @@ English:Forces external perimeters to be printed first. By default, they will pr
 Translated:يجبر محيطات خارجية ليتم طباعتها أولاً. بشكل افتراضي ، سيتم طباعتها أخيرًا.
 
 English:Forces the print to have only one extrusion and gradually increase the Z height during the print. Only one part will print at a time with this feature.
-Translated:يفرض على الطباعة أن يكون لها بثق واحد فقط وأن تزيد ارتفاع Z بشكل تدريجي أثناء الطباعة. جزء واحد فقط سوف يطبع في وقت واحد مع هذه الميزة.
+Translated:يفرض على الطباعة أن يكون لها بثق واحد فقط وأن يزيد ارتفاع Z بشكل تدريجي أثناء الطباعة. جزء واحد فقط سوف يطبع في وقت واحد مع هذه الميزة.
 
 English:Forces the printer to heat the nozzle before homing.
 Translated:يجبر الطابعة على تسخين الفوهة قبل المرور.
 
 English:Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.
-Translated:يجبر القطة على محاولة تجنب وجود خط محيط يعبر عبر خطوط المحيط الموجودة. هذا يمكن أن يساعد في ناز أو أوتار.
+Translated:يجبر القطة على محاولة تجنب وجود خط محيط يعبر عبر خطوط المحيط الموجودة. هذا يمكن أن يساعد في ناز أو السلاسل.
 
 English:Forgot Password
 Translated:هل نسيت كلمة المرور
@@ -1151,7 +1166,7 @@ English:Forums
 Translated:المنتديات
 
 English:Found a line that is {0} characters long.\n{1}...
-Translated:تم العثور على سطر طوله {0} حرفًا.\n{1} ...
+Translated:العثور على سطر طوله {0} حرفًا.\n{1} ...
 
 English:g/cm³
 Translated:ز / سم مكعب
@@ -1171,8 +1186,14 @@ Translated:ناتج G-Code
 English:G-Code to be run after every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
 Translated:يجب تشغيل G-Code بعد تغيير كل أداة. يمكنك استخدام [wipe_tower_x] [wipe_tower_y] و [wipe_tower_z] لتعيين موضع الطارد إذا لزم الأمر. تستطيع ايضا استخذام '؛ WRITE_RAW "لتخطي المجموع الاختباري أو"؛ NO_PROCESSING "لتخطي موقف الموازنة.
 
+English:G-Code to be run after every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:يجب تشغيل G-Code بعد تغيير كل أداة. يمكنك استخدام [wipe_tower_x] [wipe_tower_y] و [wipe_tower_z] لتعيين موضع الطارد إذا لزم الأمر. تستطيع ايضا استخذام '؛ WRITE_RAW "لتخطي المجموع الاختباري أو"؛ NO_PROCESSING "لتخطي موازنة المواضع.
+
 English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
 Translated:G-Code ليتم تشغيله بعد التبديل إلى جهاز البثق 2. سوف يستخدم المعيار بعد G-Code إذا لم يتم ضبطه. يمكنك استخدام [wipe_tower_x] [wipe_tower_y] و [wipe_tower_z] لتعيين موضع الطارد إذا لزم الأمر. تستطيع ايضا استخذام '؛ WRITE_RAW "لتخطي المجموع الاختباري أو"؛ NO_PROCESSING "لتخطي موقف الموازنة.
+
+English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:G-Code ليتم تشغيله بعد التبديل إلى جهاز البثق 2. سوف يستخدم المعيار بعد G-Code إذا لم يتم ضبطه. يمكنك استخدام [wipe_tower_x] [wipe_tower_y] و [wipe_tower_z] لتعيين موضع الطارد إذا لزم الأمر. تستطيع ايضا استخذام '؛ WRITE_RAW "لتخطي المجموع الاختباري أو"؛ NO_PROCESSING "لتخطي موازنة المواضع.
 
 English:G-Code to be run after the change in Z height for the next layer.
 Translated:يجب تشغيل G-Code بعد التغيير في ارتفاع Z للطبقة التالية.
@@ -1183,8 +1204,14 @@ Translated:يجب تشغيل G-Code في نهاية كل المخرجات الت
 English:G-Code to be run before every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z] to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
 Translated:يجب تشغيل G-Code قبل تغيير كل أداة. يمكنك استخدام [wipe_tower_x] [wipe_tower_y] و [wipe_tower_z] لتعيين موضع الطارد إذا لزم الأمر. تستطيع ايضا استخذام '؛ WRITE_RAW "لتخطي المجموع الاختباري أو"؛ NO_PROCESSING "لتخطي موقف الموازنة.
 
+English:G-Code to be run before every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z] to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:يجب تشغيل G-Code قبل تغيير كل أداة. يمكنك استخدام [wipe_tower_x] [wipe_tower_y] و [wipe_tower_z] لتعيين موضع الطارد إذا لزم الأمر. تستطيع ايضا استخذام '؛ WRITE_RAW "لتخطي المجموع الاختباري أو"؛ NO_PROCESSING "لتخطي موازنة المواضع.
+
 English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
 Translated:يجب تشغيل G-Code قبل التبديل إلى جهاز البثق 2. سوف تستخدم المعيار قبل G-Code إذا لم يتم ضبطه. يمكنك استخدام [wipe_tower_x] [wipe_tower_y] و [wipe_tower_z] لتعيين موضع الطارد إذا لزم الأمر. تستطيع ايضا استخذام '؛ WRITE_RAW "لتخطي المجموع الاختباري أو"؛ NO_PROCESSING "لتخطي موقف الموازنة.
+
+English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:يجب تشغيل G-Code قبل التبديل إلى جهاز البثق 2. سوف تستخدم المعيار قبل G-Code إذا لم يتم ضبطه. يمكنك استخدام [wipe_tower_x] [wipe_tower_y] و [wipe_tower_z] لتعيين موضع الطارد إذا لزم الأمر. تستطيع ايضا استخذام '؛ WRITE_RAW "لتخطي المجموع الاختباري أو"؛ NO_PROCESSING "لتخطي موازنة المواضع.
 
 English:G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.
 Translated:يجب تشغيل G-Code مباشرة بعد أوامر ضبط درجة الحرارة. سيؤدي تضمين الأوامر لتعيين درجة الحرارة في هذا القسم إلى عدم توليدها خارج هذا القسم. سيقبل متغيرات G-Code المخصصة.
@@ -1193,7 +1220,7 @@ English:G-Code to be run when the print resumes after a pause.
 Translated:G-Code ليتم تشغيله عند استئناف الطباعة بعد التوقف المؤقت.
 
 English:G-Code to run upon successful connection to a printer. This can be useful to set settings specific to a given printer.
-Translated:G-Code لتشغيلها عند الاتصال الناجح بالطابعة. قد يكون ذلك مفيدًا في ضبط الإعدادات الخاصة بطابعة معينة.
+Translated:G-Code لتشغيله عند اتصال ناجح بالطابعة. قد يكون ذلك مفيدًا في ضبط الإعدادات الخاصة بطابعة معينة.
 
 English:G-Code to run when a print is canceled.
 Translated:G-Code للتشغيل عند إلغاء الطباعة.
@@ -1204,17 +1231,17 @@ Translated:G-Code لتشغيله عندما تكون الطابعة متوقفة
 English:General
 Translated:جنرال لواء
 
-English:Generate Support Material
-Translated:توليد مواد الدعم
+English:Generate
+Translated:توفير
+
+English:Generate Support
+Translated:توليد الدعم
+
+English:Generate Supports
+Translated:توليد يدعم
 
 English:Generates an outline around the support material to improve strength and hold up interface layers.
 Translated:يولد مخططًا حول مادة الدعم لتحسين القوة ورفع طبقات الواجهة.
-
-English:Generates support material starting on top of internal surfaces. If unchecked support will only generate starting on the bed.
-Translated:يولد مواد الدعم التي تبدأ من أعلى الأسطح الداخلية. إذا كان الدعم غير المحدود سيولد فقط على السرير.
-
-English:Generates support material under areas of the part which may be too steep to support themselves.
-Translated:يولد مواد الدعم تحت مناطق من الجزء الذي قد يكون شديد الانحدار لدعم أنفسهم.
 
 English:Generating Lithophane
 Translated:توليد الليتوفان
@@ -1319,7 +1346,7 @@ English:Home Y
 Translated:الصفحة الرئيسية
 
 English:Home Z
-Translated:الصفحة الرئيسية
+Translated:الرئيسية
 
 English:Home Z Max
 Translated:Home Z Max
@@ -1379,7 +1406,7 @@ English:Image
 Translated:صورة
 
 English:Image Converter
-Translated:تحويل الصورة
+Translated:محول الصور
 
 English:Image to Path
 Translated:صورة إلى المسار
@@ -1444,8 +1471,11 @@ Translated:جارٍ تهيئة الأجهزة ...
 English:Initializing Library
 Translated:تهيئة المكتبة
 
-English:Insert
-Translated:إدراج
+English:Inner Radius
+Translated:دائرة نصف قطرها الداخلي
+
+English:Inner Size
+Translated:الحجم الداخلي
 
 English:Insert Filament
 Translated:إدراج خيوط
@@ -1493,19 +1523,28 @@ English:IP Finder
 Translated:مكتشف IP
 
 English:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
-Translated:يبدو أن آخر طباعة أخفقت لا تكتمل.\n\nهل ترغب في محاولة استرداد من آخر موقف المعرفة؟
+Translated:يبدو أن آخر طباعة أخفقت لم تكتمل.\n\nهل ترغب في محاولة استرداد من آخر موقف معرفة؟
 
 English:It is currently set to {0}.
 Translated:تم ضبطه حاليًا على {0}.
+
+English:Item cannot be exported
+Translated:البند لا يمكن تصديرها
+
+English:Item cannot be exported as STL
+Translated:لا يمكن تصدير العنصر باسم STL
 
 English:Item not Found
 Translated:العنصر غير موجود
 
 English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.
-Translated:لقد حان الوقت لنسخ إعدادات الطابعة الحالية إلى حساب MatterHackers الخاص بك. بمجرد نسخها ، ستكون هذه الطابعات متاحة كلما قمت بتسجيل الدخول إلى MatterControl. الطابعات التي لا يتم نسخها ستكون متاحة فقط عند عدم تسجيل الدخول.
+Translated:لقد حان الوقت لنسخ إعدادات الطابعة الحالية إلى حساب MatterHackers الخاص بك. بمجرد نسخها ، ستتوفر هذه الطابعات متى قمت بتسجيل الدخول إلى MatterControl. الطابعات التي لا يتم نسخها ستكون متاحة فقط عند عدم تسجيل الدخول.
 
 English:Jerk Velocity
 Translated:رعشة السرعة
+
+English:Keep Within Angle
+Translated:تبقي داخل الزاوية
 
 English:Keys
 Translated:مفاتيح
@@ -1547,16 +1586,22 @@ English:left click
 Translated:الزر الأيسر
 
 English:left drag
-Translated:اليسار السحب
+Translated:السحب الأيسر
 
 English:Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).
-Translated:طول خيوط إضافية لقذف بعد تغيير أداة كاملة (بالإضافة إلى إعادة بثق المسافة تغيير أداة التغيير).
+Translated:طول خيوط إضافية لقذف بعد تغيير أداة كاملة (بالإضافة إلى إعادة البثق من مسافة تغيير أداة التغيير).
 
 English:Length of filament to extrude after a complete retraction (in addition to the re-extrusion of the Length on Move distance).
-Translated:طول خيوط البثق بعد التراجع الكامل (بالإضافة إلى إعادة بثق المسافة على طول المسافة).
+Translated:طول خيوط القذف بعد التراجع الكامل (بالإضافة إلى إعادة بثق المسافة على طول المسافة).
 
 English:Length on Tool Change
 Translated:طول تغيير الأداة
+
+English:Let's show you around before you get started.
+Translated:دعنا نريكم قبل البدء.
+
+English:Letter
+Translated:رسالة
 
 English:Leveling
 Translated:الإستواء
@@ -1640,7 +1685,7 @@ English:Low Precision
 Translated:دقة منخفضة
 
 English:Lower / Deploy
-Translated:أقل / نشر
+Translated:خفض / نشر
 
 English:Machine File (G-Code)
 Translated:ملف الآلة (G-Code)
@@ -1660,6 +1705,9 @@ Translated:ماكرو المسبقة
 English:Macros
 Translated:وحدات الماكرو
 
+English:Maintain Proportions
+Translated:الحفاظ على النسب
+
 English:make
 Translated:يصنع
 
@@ -1671,9 +1719,6 @@ Translated:جعل مكون
 
 English:Make Selection
 Translated:الاختيار
-
-English:Make Support
-Translated:تقديم الدعم
 
 English:Make sure the first point on a perimeter is a concave point.
 Translated:تأكد من أن النقطة الأولى في محيط هي نقطة مقعرة.
@@ -1688,7 +1733,7 @@ English:Manual Movement Speeds
 Translated:سرعات الحركة اليدوية
 
 English:Manually Configure Connection
-Translated:تكوين اتصال يدويًا
+Translated:قم بتكوين الاتصال يدويًا
 
 English:Manually measure the extruder at the center
 Translated:قم بقياس الطارد يدويًا في المركز
@@ -1705,9 +1750,6 @@ Translated:مواد
 English:Material density. Only used for estimating mass in the Layer View.
 Translated:كثافة المواد. تستخدم فقط لتقدير الكتلة في طبقة العرض.
 
-English:Material Loading
-Translated:تحميل المواد
-
 English:Materials
 Translated:المواد
 
@@ -1715,7 +1757,7 @@ English:MatterControl
 Translated:MatterControl
 
 English:MatterControl is made possible by the team at MatterHackers and other open source software
-Translated:أصبح MatterControl ممكنًا بفضل الفريق في MatterHackers والبرامج الأخرى المفتوحة المصدر
+Translated:أصبح MatterControl ممكنًا بفضل الفريق في MatterHackers والبرامج الأخرى مفتوحة المصدر
 
 English:MatterControl will now attempt to auto-detect printer.
 Translated:ستحاول الآن MatterControl الكشف عن الطابعة تلقائيًا.
@@ -1724,7 +1766,7 @@ English:MatterControl: Select Firmware File
 Translated:MatterControl: حدد Firmware File
 
 English:Max Acceleration
-Translated:ماكس تسريع
+Translated:تسريع الحد الأقصى
 
 English:Max Velocity
 Translated:ماكس السرعة
@@ -1745,7 +1787,7 @@ English:Maximum X-Y jerk [mm/s]
 Translated:أقصى رعشة X-Y [mm / s]
 
 English:Maximum Z jerk [mm/s]
-Translated:أقصى رعشة z [mm / s]
+Translated:أقصى نبرة Z [mm / s]
 
 English:Measure the nozzle offset
 Translated:قياس تعويض الفوهة
@@ -1823,7 +1865,7 @@ English:Model View
 Translated:عرض نموذج
 
 English:Model View Style
-Translated:نموذج عرض الطراز
+Translated:نمط عرض النموذج
 
 English:Modify
 Translated:تعديل
@@ -1859,7 +1901,7 @@ English:Move Y negative
 Translated:انقل Y سلبي
 
 English:Move Y positive
-Translated:حرك Y إيجابي
+Translated:نقل Y إيجابي
 
 English:Move Z negative
 Translated:تحرك Z سلبي
@@ -1891,9 +1933,6 @@ Translated:إعداداتي المعدلة (الطابعة)
 English:Name
 Translated:اسم
 
-English:Need to connect before printing
-Translated:تحتاج إلى الاتصال قبل الطباعة
-
 English:Networked Printing
 Translated:الطباعة الشبكية
 
@@ -1924,6 +1963,12 @@ Translated:لا لون
 English:No COM ports available
 Translated:لا منافذ COM المتاحة
 
+English:No items to Export
+Translated:لا توجد عناصر للتصدير
+
+English:No Items to Export
+Translated:لا توجد عناصر للتصدير
+
 English:No macros are currently set up for this printer.
 Translated:لا يتم إعداد أي وحدات ماكرو حاليًا لهذه الطابعة.
 
@@ -1948,6 +1993,9 @@ Translated:ملاحظة: قد يتم تطبيق أسعار الرسائل الق
 English:Notifications
 Translated:إخطارات
 
+English:Nozzle
+Translated:فوهة
+
 English:Nozzle Diameter
 Translated:قطر فوهة
 
@@ -1958,7 +2006,7 @@ English:Number
 Translated:رقم
 
 English:Number of layers to print before printing any parts.
-Translated:عدد الطبقات للطباعة قبل طباعة أي أجزاء.
+Translated:عدد الطبقات التي سيتم طباعتها قبل طباعة أي أجزاء.
 
 English:Number of Samples
 Translated:عدد العينات
@@ -1971,6 +2019,9 @@ Translated:من
 
 English:Off
 Translated:إيقاف
+
+English:Offset
+Translated:الأوفست
 
 English:Ok
 Translated:حسنا
@@ -2068,9 +2119,6 @@ Translated:فتح مؤخرا
 English:OpenSCAD not installed
 Translated:OpenSCAD غير مثبت
 
-English:Optionally, click below to get help loading this material
-Translated:بشكل اختياري ، انقر أدناه للحصول على مساعدة في تحميل هذه المادة
-
 English:Options
 Translated:خيارات
 
@@ -2079,6 +2127,12 @@ Translated:أو
 
 English:Other
 Translated:آخر
+
+English:Outer Radius
+Translated:الشعاع الخارجي
+
+English:Outer Size
+Translated:الحجم الخارجي
 
 English:Outer Surface - Perimeters
 Translated:السطح الخارجي - محيط
@@ -2098,14 +2152,14 @@ Translated:خارج المحيط
 English:Overhang
 Translated:البروز
 
+English:Overhang Angle
+Translated:زاوية تعلو
+
 English:Pan
 Translated:مقلاة
 
 English:Pan View
 Translated:عرض Pan
-
-English:Parse Error while slicing
-Translated:خطأ في التحليل أثناء التقسيم
 
 English:Part Cooling Fan
 Translated:مروحة تبريد الجزء
@@ -2143,6 +2197,9 @@ Translated:وقفة الطباعة
 English:Paused
 Translated:توقف
 
+English:Percentage of
+Translated:نسبة من
+
 English:perimeters
 Translated:محيط
 
@@ -2155,11 +2212,17 @@ Translated:طلب الاذن مرفوض
 English:PID Settings
 Translated:إعدادات PID
 
+English:Pillar Size
+Translated:حجم العمود
+
 English:Pinch
 Translated:قرصة
 
 English:Pipe Works
 Translated:أعمال الأنابيب
+
+English:Pixels Per mm
+Translated:بكسل لكل ملم
 
 English:Place the paper under the extruder
 Translated:ضع الورقة تحت الطارد
@@ -2177,7 +2240,7 @@ English:Please Confirm
 Translated:يرجى تأكيد
 
 English:Please select the material you want to load.
-Translated:يرجى اختيار المادة التي تريد تحميلها.
+Translated:يرجى تحديد المادة التي تريد تحميلها.
 
 English:Please select the material you want to unload.
 Translated:يرجى تحديد المادة التي تريد تفريغها.
@@ -2192,7 +2255,7 @@ English:Please wait until the print has finished and try again.
 Translated:الرجاء الانتظار حتى انتهاء الطباعة والمحاولة مرة أخرى.
 
 English:Please wait while we create your account...
-Translated:يرجى الانتظار بينما نقوم بإنشاء حسابك ...
+Translated:الرجاء الانتظار بينما نقوم بإنشاء حسابك ...
 
 English:Please wait while we update your password...
 Translated:يرجى الانتظار بينما نقوم بتحديث كلمة المرور الخاصة بك ...
@@ -2243,13 +2306,19 @@ English:Press
 Translated:صحافة
 
 English:Press [Z-] until there is resistance to moving the paper
-Translated:اضغط [Z-] حتى تكون هناك مقاومة لتحريك الورق
+Translated:اضغط على [Z-] حتى تكون هناك مقاومة لتحريك الورق
 
 English:Press [Z+] once to release the paper
 Translated:اضغط على [Z +] مرة واحدة لتحرير الورقة
 
+English:Prev
+Translated:السابق
+
 English:Preview
 Translated:معاينة
+
+English:Primary
+Translated:ابتدائي
 
 English:Primitive Shapes
 Translated:الأشكال البدائية
@@ -2270,7 +2339,7 @@ English:Print Leveling
 Translated:طباعة التسوية
 
 English:Print Leveling Overview
-Translated:طباعة الاستواء نظرة عامة
+Translated:نظرة عامة على التسوية
 
 English:Print Leveling Wizard
 Translated:معالج تسوية الطباعة
@@ -2290,6 +2359,9 @@ Translated:وقت الطباعة
 English:Printer
 Translated:طابعة
 
+English:Printer Disconnected
+Translated:الطابعة غير متصلة
+
 English:Printer Hardware Error
 Translated:خطأ في طابعة الأجهزة
 
@@ -2303,10 +2375,16 @@ English:Printer name cannot be blank
 Translated:لا يمكن أن يكون اسم الطابعة فارغًا
 
 English:Printer Paused
-Translated:الطابعة متوقفة مؤقتًا
+Translated:الطابعة موقوفة مؤقتًا
 
 English:Printer Setup
 Translated:إعدادات الطابعه
+
+English:Printer Setup must be run before printing
+Translated:يجب تشغيل "إعداد الطابعة" قبل الطباعة
+
+English:Printer Setup Required
+Translated:إعداد الطابعة مطلوب
 
 English:Printers
 Translated:طابعات
@@ -2342,7 +2420,7 @@ English:Probe the bed at the center
 Translated:دقق السرير في المركز
 
 English:Probe XY Offset
-Translated:دقق XY تعويض
+Translated:دقق XY إزاحة
 
 English:Probe Z Offset
 Translated:التحقيق Z إزاحة
@@ -2383,6 +2461,9 @@ Translated:رفع / Stow
 English:Randomize Starting Points
 Translated:عشوائية نقطة البداية
 
+English:Reach
+Translated:تصل
+
 English:Read Filter
 Translated:قراءة مرشح
 
@@ -2402,7 +2483,7 @@ English:Recover Last Print
 Translated:استرجاع آخر طباعة
 
 English:Recover Layer Speed
-Translated:استرداد سرعة طبقة
+Translated:استرداد سرعة الطبقة
 
 English:Recover Print
 Translated:استعادة الطباعة
@@ -2428,9 +2509,6 @@ Translated:اعادة ادخال كلمة السر
 English:Refresh
 Translated:تحديث
 
-English:Registered
-Translated:مسجل
-
 English:Release
 Translated:إطلاق سراح
 
@@ -2448,6 +2526,9 @@ Translated:إزالة
 
 English:Remove
 Translated:إزالة
+
+English:Remove all auto generated supports
+Translated:قم بإزالة كافة الدعامات التي تم إنشاؤها تلقائيًا
 
 English:Remove Items?
 Translated:إزالة العناصر؟
@@ -2483,7 +2564,7 @@ English:Reset Password
 Translated:إعادة ضبط كلمة المرور
 
 English:Reset to Defaults
-Translated:إعادة تعيين إلى الإعدادات الافتراضية
+Translated:إعادة التعيين إلى الافتراضيات
 
 English:Reset to Factory Defaults
 Translated:الرجوع الى ضبط المصنع
@@ -2492,7 +2573,7 @@ English:Reset View
 Translated:إعادة عرض
 
 English:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
-Translated:ستؤدي إعادة تعيين القيم الافتراضية إلى إزالة التخطيات الحالية واستعادة إعدادات الطابعة الأصلية.\nهل تريد بالتأكيد المتابعة؟
+Translated:ستؤدي إعادة الضبط إلى القيم الافتراضية إلى إزالة التخطيات الحالية واستعادة إعدادات الطابعة الأصلية.\nهل أنت متأكد من أنك تريد المتابعة؟
 
 English:Resolution
 Translated:القرار
@@ -2516,6 +2597,9 @@ English:Resume G-Code
 Translated:استئناف G-Code
 
 English:Resume Print
+Translated:استئناف الطباعة
+
+English:Resume Printing
 Translated:استئناف الطباعة
 
 English:Retract
@@ -2575,6 +2659,9 @@ Translated:استدارة
 English:Rotate (Alt + Left Mouse)
 Translated:تدوير (Alt + Left Mouse)
 
+English:Rotate About
+Translated:تدوير حول
+
 English:Rotate View
 Translated:تدوير عرض
 
@@ -2587,14 +2674,11 @@ Translated:تشغيل المعايرة
 English:Run Max if Below
 Translated:تشغيل ماكس اذا ادناه
 
-English:Run setup configuration for printer.
-Translated:قم بتشغيل تكوين الإعداد للطابعة.
-
 English:s
 Translated:الصورة
 
 English:Sailfish Communication
-Translated:سمكة الزعنفة السمكية
+Translated:سمكة الزعنفة الشراعية
 
 English:Sample Points
 Translated:نقاط العينة
@@ -2744,7 +2828,7 @@ English:Sets MatterControl to use s3g communication method. (You must disconnect
 Translated:يضبط MatterControl لاستخدام طريقة الاتصال s3g. (يجب عليك قطع الاتصال وإعادة الاتصال بهذا ليكون ساري المفعول)
 
 English:Sets the models that will be added to the queue when a new printer is created.
-Translated:يضبط النماذج التي ستتم إضافتها إلى قائمة الانتظار عند إنشاء طابعة جديدة.
+Translated:يعيّن النماذج التي ستتم إضافتها إلى قائمة الانتظار عند إنشاء طابعة جديدة.
 
 English:Sets the size of the outer solid surface (perimeter) for the entire print.
 Translated:يضبط حجم السطح الصلب الخارجي (المحيط) للطباعة بكاملها.
@@ -2752,17 +2836,14 @@ Translated:يضبط حجم السطح الصلب الخارجي (المحيط) �
 English:Settings
 Translated:الإعدادات
 
-English:Setup Needs to be Run
-Translated:الإعداد يجب أن يكون قيد التشغيل
+English:Setup
+Translated:اقامة
 
-English:Setup needs to be run before printing
-Translated:يجب تشغيل الإعداد قبل الطباعة
+English:Setup Needs to be Run
+Translated:الإعداد يحتاج إلى تشغيل
 
 English:Setup Wizard
 Translated:معالج الاعداد
-
-English:Setup...
-Translated:اقامة...
 
 English:Shaded
 Translated:مظللة
@@ -2801,7 +2882,7 @@ English:Show Help
 Translated:عرض المساعدة
 
 English:Show Materials
-Translated:عرض المواد
+Translated:إظهار المواد
 
 English:Show Password
 Translated:عرض كلمة المرور
@@ -2822,7 +2903,7 @@ English:Show Terminal
 Translated:إظهار المحطة
 
 English:Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.
-Translated:يعرض زرًا على الجانب الأيمن من شريط اتصال الطابعة المستخدم لإعادة ضبط توصيل USB بالطابعة. يمكن استخدام هذا على الطابعات التي تدعمه كمحطة للطوارئ.
+Translated:لعرض زر في الجانب الأيمن من شريط اتصال الطابعة المستخدم لإعادة ضبط توصيل USB بالطابعة. يمكن استخدام هذا على الطابعات التي تدعمه كمحطة للطوارئ.
 
 English:sign in
 Translated:تسجيل الدخول
@@ -2872,9 +2953,6 @@ Translated:التنانير
 English:Slice
 Translated:شريحة
 
-English:Slice Error
-Translated:خطأ شريحة
-
 English:Slice Presets Editor
 Translated:محرر مسبقة شريحة
 
@@ -2883,6 +2961,9 @@ Translated:إعدادات الشريحة
 
 English:Slicing
 Translated:تشريح
+
+English:Slicing Error
+Translated:خطأ تشريح
 
 English:Slicing Item
 Translated:عنصر التشريح
@@ -2906,10 +2987,16 @@ English:Software License Agreement
 Translated:اتفاقية ترخيص البرامج
 
 English:Solid Infill
-Translated:دفن صلبة
+Translated:دفن الصلبة
 
 English:Some features may require an internet connection.
 Translated:قد تتطلب بعض الميزات اتصالاً بالإنترنت.
+
+English:Some of the parts appear to require support. Consider adding support and re-exporting to get the best results possible.
+Translated:يبدو أن بعض الأجزاء تتطلب دعمًا. فكر في إضافة الدعم وإعادة التصدير للحصول على أفضل النتائج الممكنة.
+
+English:Some parts are unsupported and require support structures to print correctly
+Translated:بعض الأجزاء غير مدعومة وتتطلب هياكل الدعم للطباعة بشكل صحيح
 
 English:Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
 Translated:في وقت ما لن تغلق شبكة محيط. عندما يتم التحقق من ذلك ، يتم إغلاق هذه الحدود غير المغلقة.
@@ -2927,7 +3014,7 @@ English:Sorry! Looks like an account already exists for that email address.
 Translated:آسف! يبدو وكأنه حساب موجود بالفعل لعنوان البريد الإلكتروني هذا.
 
 English:Sorry! Looks like an account already exists for that username.
-Translated:آسف! يبدو وكأنه حساب موجود بالفعل لاسم المستخدم هذا.
+Translated:آسف! يبدو أنه يوجد حساب بالفعل لاسم المستخدم هذا.
 
 English:Sorry! Looks like that reset code has expired.
 Translated:آسف! يبدو أن رمز إعادة التعيين قد انتهت صلاحيته.
@@ -2936,7 +3023,7 @@ English:Sorry! Looks like that reset code is invalid.
 Translated:آسف! يبدو أن رمز إعادة التعيين غير صالح.
 
 English:Sorry! Too many sign in attempts. Please try again later.
-Translated:آسف! هناك عدد كبير من محاولات تسجيل الدخول. الرجاء معاودة المحاولة في وقت لاحق.
+Translated:آسف! هناك عدد كبير جدًا من محاولات تسجيل الدخول. الرجاء معاودة المحاولة في وقت لاحق.
 
 English:Sorry! Unable to connect to server. Please try again later.
 Translated:آسف! غير قادر على الإتصال بالسيرفر. الرجاء معاودة المحاولة في وقت لاحق.
@@ -2960,7 +3047,7 @@ English:Speed at 0.1 Height
 Translated:السرعة عند 0.1 الارتفاع
 
 English:Speed for Infill
-Translated:السرعة للالفنار
+Translated:السرعة للملء
 
 English:Speed for Perimeters
 Translated:السرعة للمحيط
@@ -3002,7 +3089,7 @@ English:Start End Overlap
 Translated:بدء نهاية التداخل
 
 English:Start G-Code
-Translated:ابدأ G-Code
+Translated:بدء G-Code
 
 English:Start G-Code cannot contain G29 if Print Leveling is enabled.
 Translated:لا يمكن أن يحتوي بدء G-Code على G29 إذا تم تمكين تسوية الطباعة.
@@ -3020,13 +3107,13 @@ English:Start Print
 Translated:ابدأ الطباعة
 
 English:Starting Angle
-Translated:ابتداء من زاوية
+Translated:ابتداء من الزاوية
 
 English:Starting firmware update...
 Translated:جارٍ بدء تحديث البرامج الثابتة ...
 
 English:Starting Sync
-Translated:بدء المزامنة
+Translated:جارٍ بدء المزامنة
 
 English:Startup Failure
 Translated:فشل بدء التشغيل
@@ -3088,9 +3175,6 @@ Translated:نجاح!\n\nينبغي الآن تفريغ خيوطك
 English:Support
 Translated:الدعم
 
-English:Support Everywhere
-Translated:دعم في كل مكان
-
 English:Support Interface Extruder
 Translated:دعم واجهة الطارد
 
@@ -3125,7 +3209,7 @@ English:Sync Complete
 Translated:اكتمل المزامنة
 
 English:Sync Dashboard
-Translated:لوحة تحكم المزامنة
+Translated:لوحة التحكم في المزامنة
 
 English:Sync Printers
 Translated:طابعات متزامنة
@@ -3153,12 +3237,6 @@ Translated:درجات الحرارة
 
 English:Terminal
 Translated:طرفية
-
-English:Test Parts
-Translated:اختبار أجزاء
-
-English:TestPart
-Translated:TestPart
 
 English:Text
 Translated:نص
@@ -3191,16 +3269,19 @@ English:The amount of filament to remove from the printer while unloading.
 Translated:كمية خيوط لإزالة من الطابعة أثناء التفريغ.
 
 English:The amount of infill material to generate, expressed as a ratio or a percentage.
-Translated:كمية المادة الملوثة المراد إنشاؤها ، والتي يتم التعبير عنها كنسبة أو نسبة مئوية.
+Translated:كمية المواد الملوثة المراد إنشاؤها ، والتي يتم التعبير عنها كنسبة أو نسبة مئوية.
 
 English:The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge. This can be expressed as a percentage of the Nozzle Diameter.
-Translated:كمية الحافة الملساء ستدفع داخل المحيط. يساعد على ضمان أن الحشوة متصلة بالحافة. يمكن التعبير عن ذلك كنسبة مئوية من قطر الخرطوم.
+Translated:كمية الحافة الملحقة ستدفع داخل المحيط. يساعد على ضمان أن الحشوة متصلة بالحافة. يمكن التعبير عن ذلك كنسبة مئوية من قطر الخرطوم.
 
 English:The angle at which the support material lines will be drawn.
 Translated:الزاوية التي سيتم رسم خطوط المواد الداعمة لها.
 
 English:The angle of the infill, measured from the X axis. Not used when bridging.
-Translated:زاوية التسديد ، تم قياسها من المحور X. لا تستخدم عند التجسير.
+Translated:زاوية الحشوة ، تقاس من محور X. لا تستخدم عند التجسير.
+
+English:The angle to generate support for
+Translated:الزاوية لتوليد الدعم ل
 
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
 Translated:يتم تسخين السرير حاليًا ولا يمكن تغيير درجة الحرارة المستهدفة حتى تصل إلى {0} درجة مئوية.\n\nيمكنك ضبط درجة حرارة سرير البدء في SETTINGS -> الشعيرة -> درجات الحرارة.\n\n{1}
@@ -3221,7 +3302,7 @@ English:The distance between the top of the support and the bottom of the model.
 Translated:المسافة بين الجزء العلوي من الدعم وأسفل النموذج. تعتمد القيمة الجيدة على نوع المادة. بالنسبة لـ ABS و PLA ، تعمل القيمة بين 0.4 و 0.6 بشكل جيد على التوالي.
 
 English:The distance filament will reverse before each qualifying non-print move
-Translated:سوف تنعكس خيوط المسافات قبل كل حركة غير مطبوعة
+Translated:سوف تنعكس خيوط المسافات قبل كل خطوة غير مؤهلة للطباعة
 
 English:The distance from the model at which the first skirt loop is drawn.
 Translated:المسافة من النموذج الذي يتم فيه رسم حلقة التنورة الأولى.
@@ -3233,16 +3314,16 @@ English:The distance the nozzle will lift after each retraction.
 Translated:المسافة التي سترفعها الفوهة بعد كل سحب.
 
 English:The distance the support material will be from the object in the X and Y directions.
-Translated:المسافة ستكون مادة الدعم من الكائن في اتجاه X و Y.
+Translated:المسافة ستكون مواد الدعم من الكائن في اتجاه X و Y.
 
 English:The distance the z probe is from the extruder in x and y.
 Translated:المسافة هي z التحقيق من الطارد في س و ص.
 
 English:The distance the z probe is from the extruder in z. For manual probing, this is thickness of the paper (or other calibration device).
-Translated:المسافة هي z التحقيق من الطارد في ض. بالنسبة إلى الاختبار اليدوي ، يكون هذا سمك الورق (أو جهاز المعايرة الآخر).
+Translated:المسافة هي z التحقيق من الطارد في ض. بالنسبة للفحص اليدوي ، هذا هو سمك الورق (أو جهاز المعايرة الآخر).
 
 English:The distance to move the nozzle along the Z axis to ensure that it is the correct distance from the print bed. A positive number will raise the nozzle, and a negative number will lower it.
-Translated:المسافة لتحريك الفوهة على طول المحور Z للتأكد من أنها المسافة الصحيحة من سرير الطباعة. سيؤدي الرقم الموجب إلى رفع الفوهة ، وسيعمل الرقم السالب على خفضها.
+Translated:المسافة لتحريك الفوهة على طول المحور Z للتأكد من أنها المسافة الصحيحة من سرير الطباعة. سيؤدي الرقم الموجب إلى رفع الفوهة ، وسيؤدي العدد السالب إلى خفضه.
 
 English:The distance to travel after completing a perimeter to improve seams.
 Translated:المسافة إلى السفر بعد الانتهاء من محيط لتحسين اللحامات.
@@ -3251,10 +3332,10 @@ English:The extra distance the raft will extend around the edge of the part.
 Translated:المسافة الزائدة سوف تمتد الطوف حول حافة الجزء.
 
 English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
-Translated:الطارد هو التسخين حاليا ولا يمكن تغيير درجة الحرارة المستهدفة حتى تصل إلى {0} درجة مئوية.\n\nيمكنك ضبط درجة حرارة وحدة بدء الطارد في 'Slice Settings' -> 'Filament'.\n\n{1}
+Translated:يتم حالياً بثق جهاز البثق ولا يمكن تغيير درجة الحرارة المستهدفة حتى تصل إلى {0} درجة مئوية.\n\nيمكنك ضبط درجة حرارة وحدة بدء الطارد في 'Slice Settings' -> 'Filament'.\n\n{1}
 
 English:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
-Translated:الملف الذي تحاول طباعته هو ملف GCode.\n\nمن المستحسن أن تقوم فقط بطباعة ملفات Gcode المعروفة لمطابقة تكوين الطابعة الخاصة بك.\n\nهل أنت متأكد أنك تريد طباعة ملف GCode هذا؟
+Translated:الملف الذي تحاول طباعته هو ملف GCode.\n\nمن المستحسن أن تقوم فقط بطباعة ملفات Gcode المعروفة لمطابقة تهيئة الطابعة الخاصة بك.\n\nهل أنت متأكد أنك تريد طباعة ملف GCode هذا؟
 
 English:The geometric shape of the support structure for the inside of parts.
 Translated:الشكل الهندسي لهيكل الدعم للجزء الداخلي من الأجزاء.
@@ -3263,19 +3344,19 @@ English:The height of the printer's printable volume, in millimeters. Controls t
 Translated:ارتفاع حجم الطابعة القابلة للطباعة بالميليمترات. يتحكم في ارتفاع مساحة الطباعة المرئية المعروضة في العرض ثلاثي الأبعاد.
 
 English:The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.
-Translated:مؤشر الطارد لاستخدامه في طباعة مواد الدعم. قابل للتطبيق فقط عند ضبط Extruder Count على قيمة أكثر من 1.
+Translated:مؤشر الطارد لاستخدامه في طباعة مواد الدعم. قابل للتطبيق فقط عندما يتم ضبط Extruder Count على قيمة أكثر من 1.
 
 English:The index of the extruder to use for support material interface layer(s).
 Translated:مؤشر الطارد لاستخدامه في طبقة (طبقات) واجهة مواد الدعم.
 
 English:The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.
-Translated:مؤشر الطارد لاستخدام لطباعة الطوافة. اضبط على 0 لاستخدام مؤشر دعم الطارد.
+Translated:مؤشر الطارد لاستخدام لطباعة طوف. اضبط على 0 لاستخدام مؤشر دعم الطارد.
 
 English:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
 Translated:الطبقة (الطبقات) التي تتوقف عندها الطباعة ، مما يسمح بتغيير في الفتيل. تم إيقاف الطابعة مؤقتًا قبل بدء الطبقة المعينة. اتركه فارغًا لتعطيله. لإيقاف طبقات متعددة ، افصل بين أرقام الطبقات بفواصل منقوطة. على سبيل المثال: "16 ؛ 37".
 
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
-Translated:طول وعرض البرج الذي تم إنشاؤه في الجزء الخلفي الأيسر من الطباعة المستخدمة لمسح الفوهة التالية عند التغيير بين الطاردات المتعددة. اضبط على 0 لتعطيله.
+Translated:طول وعرض البرج الذي تم إنشاؤه في الجزء الخلفي الأيسر من الطباعة المستخدمة لمسح الفوهة التالية عند التغيير بين الطاردات المتعددة. اضبط على 0 للتعطيل.
 
 English:The Markdown that will be shown on the Clean Filament page.
 Translated:The Markdown الذي سيظهر على الصفحة Clean Filament.
@@ -3284,7 +3365,7 @@ English:The Markdown that will be shown on the Insert Filament page.
 Translated:The Markdown الذي سيظهر في صفحة Insert Filament.
 
 English:The Markdown that will be shown on the Trim Filament page.
-Translated:The Markdown التي سيتم عرضها على صفحة Trim Filament.
+Translated:The Markdown الذي سيظهر على صفحة Trim Filament.
 
 English:The maximum amount the printer can accelerate on a G-Code move.
 Translated:الحد الأقصى للمبلغ الذي يمكن للطابعة تسريعه عند تحريك G-Code.
@@ -3299,7 +3380,7 @@ English:The maximum speed the printer can move.
 Translated:السرعة القصوى التي يمكن للطابعة نقلها.
 
 English:The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.
-Translated:الحد الأدنى من الوقت الذي يجب أن تستغرقه الطبقة للطباعة. إذا أخذت طبقة ما أقل من هذا الوقت من الوقت ، يتم تقليل سرعة الحركة بحيث يطابق وقت طباعة الطبقة هذه القيمة ، وصولاً إلى الحد الأدنى لسرعة الطباعة عند الأبطأ.
+Translated:الحد الأدنى من الوقت الذي يجب أن تستغرقه الطبقة للطباعة. إذا استغرقت طبقة ما أقل من هذا المقدار من الوقت ، يتم تقليل سرعة الحركة بحيث يتطابق وقت طباعة الطبقة مع هذه القيمة ، وصولاً إلى الحد الأدنى لسرعة الطباعة عند الأبطأ.
 
 English:The minimum distance of a non-print move which will trigger a retraction.
 Translated:المسافة الدنيا لحركة غير مطبوعة والتي ستؤدي إلى التراجع.
@@ -3317,19 +3398,19 @@ English:The minimum speed at which the layer cooling fan will run, expressed as 
 Translated:الحد الأدنى للسرعة التي يتم تشغيل مروحة التبريد بها ، ويتم التعبير عنها كنسبة مئوية من الطاقة الكاملة.
 
 English:The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.
-Translated:الحد الأدنى للسرعة التي ستقلل بها الطابعة من أجل محاولة جعل طبقة الطباعة وقتًا طويلاً بما يكفي لتلبية الحد الأدنى لوقت الطبقة.
+Translated:الحد الأدنى للسرعة التي ستختزلها الطابعة من أجل محاولة جعل طبقة الطباعة وقتًا طويلاً بما يكفي لتلبية الحد الأدنى لوقت الطبقة.
 
 English:The next few screens will walk your through calibrating your printer.
-Translated:ستشاهد الشاشات القليلة التالية من خلال معايرة الطابعة.
+Translated:ستقود الشاشات القليلة التالية من خلال معايرة الطابعة.
 
 English:The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
-Translated:عدد نواة وحدة المعالجة المركزية لاستخدامها أثناء إجراء التقسيم. زيادة هذا يمكن أن تبطئ جهازك.
+Translated:عدد نواة وحدة المعالجة المركزية لاستخدامها أثناء التقسيم. زيادة هذا يمكن أن تبطئ جهازك.
 
 English:The number of degrees Centigrade to lower the temperature of a nozzle while it is not active.
 Translated:عدد درجات مئوية إلى انخفاض درجة حرارة فوهة في حين أنها ليست نشطة.
 
 English:The number of extruders the printer has.
-Translated:عدد الطاردات التي تحتوي عليها الطابعة.
+Translated:عدد الطارد يحتوي على الطابعة.
 
 English:The number of layers for which the layer cooling fan will be forced off at the start of the print.
 Translated:عدد الطبقات التي سيتم إجبار مروحة تبريد الطبقة عليها عند بدء الطباعة.
@@ -3347,7 +3428,7 @@ English:The number of layers to draw the skirt.
 Translated:عدد الطبقات لرسم التنورة.
 
 English:The number of layers, or the distance in millimeters, to solid fill on the top surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.
-Translated:عدد الطبقات ، أو المسافة بالميليمتر ، إلى التعبئة الصلبة على السطح (السطوح) الأعلى للكائن. أضف mm إلى نهاية الرقم لتحديد المسافة بالملليمتر.
+Translated:عدد الطبقات ، أو المسافة بالميليمتر ، إلى التعبئة الصلبة على السطح (السطوح) العلوي من الكائن. أضف mm إلى نهاية الرقم لتحديد المسافة بالملليمتر.
 
 English:The number of loops to draw around all the parts on the bed before starting on the parts. Used mostly to prime the nozzle so the flow is even when the actual print begins.
 Translated:عدد الحلقات لرسم جميع الأجزاء على السرير قبل البدء في الأجزاء. تستخدم غالبًا لتوجيه الفوهة بحيث يكون التدفق حتى عند بدء الطباعة الفعلية.
@@ -3374,13 +3455,13 @@ English:The percent of the extrusion width that can be overlapped and still gene
 Translated:نسبة عرض البثق التي يمكن تراكبها وما زالت تولد.
 
 English:The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.
-Translated:الموضع (إحداثيات X و Y) لمركز السرير المطبوع بالملليمتر. عادة هذا هو 1/2 حجم السرير للطابعات الديكارتي و 0 ، 0 للطابعات دلتا.
+Translated:الموضع (إحداثيات X و Y) لمركز السرير المطبوع بالميليمترات. عادة هذا هو 1/2 حجم السرير للطابعات الديكارتيه و 0 ، 0 للطابعات دلتا.
 
 English:The position to measure the probe offset.
 Translated:الموقف لقياس تعويض المسبار.
 
 English:The price of one kilogram of filament. Used for estimating the cost of a print in the Layer View.
-Translated:سعر كيلوغرام واحد من خيوط. تُستخدم لتقدير تكلفة الطباعة في طبقة العرض.
+Translated:سعر كيلوغرام واحد من خيوط. يستخدم لتقدير تكلفة الطباعة في طبقة العرض.
 
 English:The print leveling algorithm to use.
 Translated:خوارزمية تسوية الطباعة لاستخدامها.
@@ -3395,13 +3476,13 @@ English:The printer has a SD card reader.
 Translated:تحتوي الطابعة على قارئ بطاقة SD.
 
 English:The printer has a servo for lowering and raising the z probe.
-Translated:تحتوي الطابعة على مضاعفات لتقليل ورفع مجس الزد.
+Translated:تحتوي الطابعة على جهاز لتقليل ورفع مجس الزد.
 
 English:The printer has a z probe for measuring bed level.
 Translated:تحتوي الطابعة على مسبار z لقياس مستوى السرير.
 
 English:The printer has its own auto bed leveling probe and procedure which can be called using a G29 command during Start G-Code.
-Translated:تحتوي الطابعة على مسبار وضبط التسوية التلقائي الخاص بها والذي يمكن تسميته باستخدام أمر G29 أثناء بدء G-Code.
+Translated:تشتمل الطابعة على مسبار وإجراءات تحديد مستوى السرير التلقائي الخاصة بها والتي يمكن استدعاؤها باستخدام أمر G29 أثناء بدء G-Code.
 
 English:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.
 Translated:تتمتع الطابعة بالقدرة على التحكم في مصدر الطاقة. قم بتمكين هذه الوظيفة لإظهار قسم التحكم في الطاقة ATX في جزء عناصر التحكم.
@@ -3410,10 +3491,10 @@ English:The printer requires print leveling to run correctly.
 Translated:تتطلب الطابعة تسوية الطباعة لتعمل بشكل صحيح.
 
 English:The printer should now be 'homing'.
-Translated:يجب أن تكون الطابعة "صاروخًا" الآن.
+Translated:يجب أن تكون الطابعة "صاروخًا".
 
 English:The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.
-Translated:الملف الشخصي الذي تحاول تحميله تالف. لقد حمّلنا ملفك الشخصي {0} {1} القابل للاستخدام من سجل ملفك الشخصي الأخير بدلاً من ذلك.
+Translated:الملف الشخصي الذي تحاول تحميله تالف. لقد حمّلنا ملفك الشخصي الأخير {0} {1} من سجل ملفك الشخصي الأخير بدلاً من ذلك.
 
 English:The serial driver to use
 Translated:برنامج التشغيل التسلسلي لاستخدام
@@ -3422,7 +3503,7 @@ English:The serial port communication speed of the printers firmware.
 Translated:سرعة الاتصال المنفذ التسلسلي للطابعات الثابتة.
 
 English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
-Translated:يسرد قسم "المنفذ التسلسلي" جميع المنافذ التسلسلية المتوفرة على جهازك. قد يؤدي تغيير منفذ USB الذي تتصل به الطابعة إلى تغيير المنفذ التسلسلي المقترن.\n\nTip: إذا كنت غير متأكد ، فقم بفصل / توصيل الطابعة\nواضغط على التحديث. يجب أن يكون المنفذ الجديد الذي يظهر هو\nطابعتك.
+Translated:يسرد قسم "المنفذ التسلسلي" جميع المنافذ التسلسلية المتوفرة على جهازك. تغيير منفذ USB الذي تتصل به الطابعة قد يتغير المنفذ التسلسلي المقترن.\n\nTip: إذا كنت غير متأكد ، فقم بفصل / توصيل الطابعة\nواضغط على تحديث. يجب أن يكون المنفذ الجديد الذي يظهر هو\nطابعتك.
 
 English:The serial port to use while connecting to this printer.
 Translated:المنفذ التسلسلي لاستخدامه أثناء الاتصال بهذه الطابعة.
@@ -3437,7 +3518,7 @@ English:The speed at which filament will retract and re-extrude.
 Translated:السرعة التي يتراجع بها الشعيرة ويعيد بثها.
 
 English:The speed at which infill will print.
-Translated:السرعة التي سيتم طباعة الملوثة بها.
+Translated:السرعة التي سيتم طباعة الصورة.
 
 English:The speed at which inside perimeters will print.
 Translated:السرعة التي تطبع بها المناطق الداخلية.
@@ -3488,13 +3569,13 @@ English:The starting height (z) of the print head before probing each print leve
 Translated:ارتفاع البدء (z) لرأس الطباعة قبل التحقق من كل موضع على مستوى الطباعة.
 
 English:The target temperature the extruder will attempt to reach during the print.
-Translated:درجة الحرارة المستهدفة التي يحاول الطارد الوصول إليها أثناء الطباعة.
+Translated:درجة الحرارة المستهدفة التي سيحاول جهاز البثق الوصول إليها أثناء الطباعة.
 
 English:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
 Translated:درجة الحرارة التي يقوم فيها الطارد بمسح الفوهة ، وفقًا لما تحدده Custom G-Code.
 
 English:The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.
-Translated:درجة الحرارة التي سيتم تعيين السرير خلال فترة الطباعة. اضبط على 0 لتعطيله.
+Translated:درجة الحرارة التي سيتم تعيين السرير خلال فترة الطباعة. اضبط على 0 للتعطيل.
 
 English:The temperature to which the bed will heat (or cool) in order to remove the part, as specified in Custom G-Code.
 Translated:درجة الحرارة التي يسخن فيها السرير (أو يبرد) لإزالة الجزء ، كما هو محدد في Custom G-Code.
@@ -3506,7 +3587,7 @@ English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitt
 Translated:يعني مصطلح "معدل Baud" تقريبًا السرعة التي يتم بها إرسال\nالبيانات. قد تختلف معدلات الباود من الطابعة إلى الطابعة \ n. ارجع إلى دليل الطابعة لمزيد من المعلومات.\n\nTip: إذا كنت غير متأكد - حاول 250000.
 
 English:The thickness of each layer of the print, except the first layer. A smaller number will create more layers and more vertical accuracy but also a slower print.
-Translated:سمك كل طبقة من الطباعة ، باستثناء الطبقة الأولى. عدد أصغر سيخلق طبقات أكثر ودقة رأسية أكثر ولكن أيضًا بطباعة أبطأ.
+Translated:سمك كل طبقة من الطباعة ، باستثناء الطبقة الأولى. عدد أصغر سيخلق طبقات أكثر ودقة رأسية أكثر ولكن أيضاً بطباعة أبطأ.
 
 English:The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.
 Translated:سمك الطبقة الأولى. يمكن للطبقة الأولى الأطول من سماكة الطبقة الافتراضية أن تضمن التصاق جيد للوحة التصميم.
@@ -3521,13 +3602,16 @@ English:The time to print this G-Code is estimated to be {0} seconds.\n\nPlease 
 Translated:يُقدر أن وقت طباعة رمز G هذا هو {0} ثانية.\n\nالرجاء التحقق من الجزء الخاص بك عن الأخطاء إذا كان هذا غير متوقع.
 
 English:The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.
-Translated:إصدار G-Code الذي يتصل به البرنامج الثابت للطابعة. تستخدم بعض البرامج الثابتة رموز G و M المختلفة. يضمن تحديد هذا أن المخرجات G-Code ستستخدم الأوامر الصحيحة.
+Translated:إصدار G-Code الذي يتصل به البرنامج الثابت للطابعة. تستخدم بعض البرامج الثابتة أكواد G و M مختلفة. يضمن تحديد هذا أن المخرجات G-Code ستستخدم الأوامر الصحيحة.
+
+English:The width and depth of the support pillars
+Translated:عرض وعمق أعمدة الدعم
 
 English:The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.
-Translated:موقف X و Y من النهاية الساخنة يقلل من فرصة الاصطدام بالأجزاء الموجودة على السرير.
+Translated:وضع X و Y من النهاية الساخنة يقلل من فرصة الاصطدام بالأجزاء الموجودة على السرير.
 
 English:The X and Y values of the size of the print bed, in millimeters. For printers with a circular bed, these values are the diameters on the X and Y axes.
-Translated:قيم X و Y لحجم سرير الطباعة ، بالميليمترات. بالنسبة إلى الطابعات التي تحتوي على سرير دائري ، تكون هذه القيم هي الأقطار على محوري X و Y.
+Translated:قيم X و Y لحجم سرير الطباعة بالميليمترات. بالنسبة إلى الطابعات المزودة بسرير دائري ، تكون هذه القيم هي الأقطار على محوري X و Y.
 
 English:The Z Offset for your printer, sometimes called Baby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.
 Translated:إن Z Offset للطابعة الخاصة بك ، والتي تسمى أحيانًا Baby Stepping ، أكبر من 2 مم و غير صالحة. مسح القيمة وإعادة المستوى السرير.
@@ -3578,13 +3662,13 @@ English:This is the name of your printer that will be displayed in the choose pr
 Translated:هذا هو اسم طابعتك التي سيتم عرضها في قائمة اختيار الطابعة.
 
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
-Translated:هذا للمساعدة في تقليل الاهتزازات أثناء الطباعة. إذا كانت طابعتك تحتوي على تردد رنين يسبب مشكلة ، فيمكنك تعيينه لمحاولة تقليل الطباعة على هذا التردد.
+Translated:هذا للمساعدة في تقليل الاهتزازات أثناء الطباعة. إذا كان للطابعة تردد رنين يسبب لك مشكلة ، فيمكنك تعيينه لمحاولة تقليل الطباعة على هذا التردد.
 
 English:This should be in 'G-Code'
 Translated:يجب أن يكون هذا في "G-Code"
 
 English:This will ensure that filament is able to flow through the nozzle.
-Translated:سيضمن ذلك أن الشعيرة قادرة على التدفق من خلال الفوهة.
+Translated:هذا سيضمن أن الشعيرة قادرة على التدفق من خلال الفوهة.
 
 English:This will ensure that no filament is stuck to your nozzle.
 Translated:هذا سيضمن عدم تعليق أي خيوط على فوهة الخاص بك.
@@ -3631,6 +3715,9 @@ Translated:إلى مجلد
 English:Toggle Selection
 Translated:تبديل التحديد
 
+English:Toggle Support
+Translated:تبديل الدعم
+
 English:Top Solid Infill
 Translated:Top Solid Infill
 
@@ -3662,7 +3749,7 @@ English:Trim Filament
 Translated:تقليم الشعيرة
 
 English:Trim Filament Page
-Translated:خيوط تقليم صفحة
+Translated:خيوط تقليم الصفحة
 
 English:Try to connect mesh edges when the actual mesh data is not all the way connected.
 Translated:حاول توصيل أطراف الشبكة عندما تكون البيانات الشبكية الفعلية غير متصلة بالكامل.
@@ -3706,6 +3793,9 @@ Translated:غير قادر على الاستيراد
 English:Undo
 Translated:فك
 
+English:Unexpected error validating settings
+Translated:خطأ غير متوقع في التحقق من صحة الإعدادات
+
 English:Unexpected response
 Translated:استجابة غير متوقعة
 
@@ -3724,11 +3814,14 @@ Translated:تفريغ
 English:Unload filament
 Translated:تفريغ الفتيل
 
+English:Unload Filament
+Translated:تفريغ الشعيرة
+
 English:Unload Filament Length
 Translated:تفريغ طول الشعيرة
 
 English:Unload Filament Time
-Translated:تفريغ الشعيرة الوقت
+Translated:تفريغ الوقت الشعيرة
 
 English:Unload Filament Wizard
 Translated:تفريغ معالج الشعيرة
@@ -3744,6 +3837,9 @@ Translated:فتح
 
 English:Unsupported Baud Rate
 Translated:معدل الباود غير معتمد
+
+English:Unsupported Parts Detected
+Translated:تم اكتشاف أجزاء غير مدعومة
 
 English:Up
 Translated:فوق
@@ -3842,7 +3938,7 @@ English:View List
 Translated:عرض القائمة
 
 English:View Small Icons
-Translated:عرض الأيقونات الصغيرة
+Translated:عرض الصغيرة أيقونات
 
 English:View XSmall Icons
 Translated:عرض XSmall Icons
@@ -3851,7 +3947,7 @@ English:Wait For Running Clean
 Translated:انتظر الجري النظيف
 
 English:Waiting For Bed To Heat
-Translated:في انتظار الفراش للحرارة
+Translated:في انتظار الفراش لتسخين
 
 English:Waiting for Bed to Heat to
 Translated:في انتظار السرير لتسخين
@@ -3863,13 +3959,16 @@ English:Waiting for Extruder to Heat to
 Translated:في انتظار الطارد للحرارة
 
 English:Waiting For Printer To Heat
-Translated:انتظار الطابعة لتسخين
+Translated:انتظار الطابعة للتسخين
 
 English:Waiting for the bed to heat to 
 Translated:في انتظار السرير للتدفئة
 
 English:Waiting for the hotend to heat to 
 Translated:في انتظار hotend للتدفئة
+
+English:Warning
+Translated:تحذير
 
 English:Warning - GCode file
 Translated:تحذير - ملف GCode
@@ -3887,7 +3986,10 @@ English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you 
 Translated:تحذير: سيؤدي قطع الاتصال إلى إيقاف الطباعة الحالية.\n\nهل أنت متأكد من أنك تريد قطع الاتصال؟
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
-Translated:ﺗﺤﺬﻳﺮ: ﻣﻦ أﺟﻞ اﻟﻘﻴﺎم ﺑﻌﻤﻠﻴﺔ اﺳﺘﻌﺎدة اﻟﻄﺒﺎﻋﺔ ، ﻳﺠﺐ أن ﺗﻨﺘﻘﻞ اﻟﻄﺎﺑﻌﺔ إﻟﻰ اﻷﺳﻔﻞ ﻟﻠﻮﺻﻮل إﻟﻰ ﻣﻮﺿﻌﻬﺎ اﻟﺮﺋﻴﺴﻲ.\nإذا كانت الطباعة كبيرة جدًا ، فقد يتعارض جزء من طابعتك معها عند الانتقال لأسفل.\nتأكد من سلامة تنفيذ هذه العملية قبل المتابعة.
+Translated:تحذير: من أجل إجراء عملية استرداد الطباعة ، يجب أن تنتقل الطابعة إلى الأسفل للوصول إلى موضعها الرئيسي.\nإذا كانت الطباعة كبيرة جدًا ، فقد يتعارض جزء من طابعتك معها عند الانتقال لأسفل.\nتأكد من سلامة تنفيذ هذه العملية قبل المتابعة.
+
+English:Warning: Support Required
+Translated:تحذير: الدعم مطلوب
 
 English:WARNING: Write Failed!
 Translated:تحذير: فشلت الكتابة!
@@ -3913,6 +4015,9 @@ Translated:موقع الكتروني
 English:Wedge
 Translated:وتد
 
+English:Welcome to MatterControl
+Translated:مرحبًا بك في MatterControl
+
 English:Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.
 Translated:مرحبًا بك في معالج تسوية الطباعة. فيما يلي نظرة عامة سريعة على ما سنفعله.
 
@@ -3932,10 +4037,10 @@ English:When this is checked MatterControl will attempt to recover a print in th
 Translated:عند التحقق من ذلك ، سيحاول MatterControl استرداد الطباعة في حالة حدوث فشل ، مثل الاتصال المفقود أو فقدان الطاقة.
 
 English:When upgrading to new firmware, first save a backup of the current firmware.
-Translated:عند الترقية إلى نظام تشغيل جديد ، قم أولاً بحفظ نسخة احتياطية من البرنامج الثابت الحالي.
+Translated:عند الترقية إلى برامج ثابتة جديدة ، قم أولاً بحفظ نسخة احتياطية من البرنامج الثابت الحالي.
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
-Translated:عند استخدام بثق متعدد ، سوف تنعكس خيوط المسافة قبل تغييرها إلى آلة بثق مختلفة.
+Translated:عند استخدام بثق متعدد ، سوف تنعكس خيوط المسافة قبل أن تتحول إلى آلة بثق مختلفة.
 
 English:Width
 Translated:عرض
@@ -3959,7 +4064,10 @@ English:Would you like to switch to the new G-Code? Before you switch, check tha
 Translated:هل تريد التبديل إلى G-Code الجديد؟ قبل التبديل ، تحقق من رؤية التغييرات التي تتوقعها.
 
 English:Write Filter
-Translated:اكتب فلتر
+Translated:اكتب مرشح
+
+English:X
+Translated:X
 
 English:X and Y Distance
 Translated:X و Y المسافة
@@ -3967,11 +4075,14 @@ Translated:X و Y المسافة
 English:XY Homing Position
 Translated:XY Homing Position
 
+English:Y
+Translated:Y
+
 English:Yes
 Translated:نعم فعلا
 
 English:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
-Translated:أنت تنتقل إلى وضع عرض صورة مصغّرة مختلف. إذا كنت تريد ، يمكن إزالة الصور المصغرة الحالية وإعادة إنشائها في النمط الجديد. يمكنك التبديل ذهابًا وإيابًا في أي وقت. سيكون هناك بعض عمليات المعالجة أثناء إنشاء الصور المصغرة الجديدة.\n\nهل تريد إعادة إنشاء الصور المصغرة الموجودة لديك الآن؟
+Translated:أنت تنتقل إلى وضع عرض مصغّر مختلف. إذا كنت تريد ، يمكن إزالة الصور المصغرة الحالية وإعادة إنشائها في النمط الجديد. يمكنك التبديل ذهابًا وإيابًا في أي وقت. سيكون هناك بعض عمليات المعالجة أثناء إنشاء الصور المصغرة الجديدة.\n\nهل تريد إعادة إنشاء الصور المصغرة الموجودة لديك الآن؟
 
 English:You can also
 Translated:بامكانك ايضا
@@ -3991,8 +4102,8 @@ Translated:قد تحتاج إلى الانتظار لمدة دقيقة حتى ت
 English:Your 3D print has been auto-paused.\n\nLayer{0} reached.
 Translated:تم إيقاف الطباعة ثلاثية الأبعاد تلقائيًا. تم الوصول إلى\n\nLayer {0}.
 
-English:Your 3D print has been paused.\n\nOut of filament detected.
-Translated:تم إيقاف الطباعة ثلاثية الأبعاد.\n\nخرجت من خيوط.
+English:Your 3D print has been paused.\n\nOut of filament, or jam, detected. Please load more filament or clear the jam.
+Translated:تم إيقاف الطباعة ثلاثية الأبعاد.\n\nخرجت من خيوط أو مربى. يرجى تحميل المزيد من الشعيرات أو مسح المربى.
 
 English:Your application is up-to-date
 Translated:طلبك محدّث
@@ -4019,16 +4130,19 @@ English:Your Share Code
 Translated:قانون الاسهم الخاص بك
 
 English:Your Start G-Code should not contain a G29 if you are planning on using print leveling. Change your start G-Code or turn off print leveling.
-Translated:يجب ألا يحتوي مفتاح G-Code على G29 إذا كنت تخطط لاستخدام تسوية الطباعة. قم بتغيير بدء G-Code أو إيقاف تشغيل تسوية الطباعة.
+Translated:يجب ألا يحتوي مفتاح G-Code الخاص بك على G29 إذا كنت تخطط لاستخدام تسوية الطباعة. تغيير بداية G-Code أو إيقاف تشغيل تسوية الطباعة.
 
 English:Your Start G-Code should not contain a G29 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
 Translated:يجب ألا يحتوي مفتاح G-Code على G29 إذا كنت تخطط لاستخدام Print Recovery. تغيير بداية G-Code أو إيقاف تشغيل Print Recovery.
 
 English:Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling.
-Translated:يجب ألا يحتوي مفتاح G-Code على G30 إذا كنت تخطط لاستخدام تسوية الطباعة. قم بتغيير بدء G-Code أو إيقاف تشغيل تسوية الطباعة.
+Translated:يجب ألا يحتوي مفتاح G-Code على G30 إذا كنت تخطط لاستخدام تسوية الطباعة. تغيير بداية G-Code أو إيقاف تشغيل تسوية الطباعة.
 
 English:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
-Translated:يجب ألا يحتوي مفتاح G-Code على G30 إذا كنت تخطط لاستخدام Print Recovery. تغيير بداية G-Code أو إيقاف تشغيل Print Recovery.
+Translated:يجب ألا يحتوي مفتاح G-Code الخاص بك على G30 إذا كنت تخطط لاستخدام Print Recovery. تغيير بداية G-Code أو إيقاف تشغيل Print Recovery.
+
+English:Z
+Translated:Z
 
 English:Z Lift
 Translated:ض ارفع
