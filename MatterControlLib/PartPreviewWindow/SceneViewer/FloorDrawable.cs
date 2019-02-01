@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.RenderOpenGl;
@@ -38,11 +39,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class FloorDrawable : IDrawable
 	{
 		private GridColors gridColors;
-		private Color buildVolumeColor;
 		private BedConfig sceneContext;
 		private InteractionLayer.EditorType editorType;
 		private ThemeConfig theme;
+		private Color buildVolumeColor;
 		private Color bedColor;
+		private Color underBedColor;
 
 		public FloorDrawable(InteractionLayer.EditorType editorType, BedConfig sceneContext, Color buildVolumeColor, ThemeConfig theme)
 		{
@@ -50,7 +52,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.sceneContext = sceneContext;
 			this.editorType = editorType;
 			this.theme = theme;
-			this.bedColor = theme.ResolveColor(Color.White, theme.BackgroundColor.WithAlpha(111));
+
+			bedColor = theme.ResolveColor(Color.White, theme.BackgroundColor.WithAlpha(111));
+			underBedColor = new Color(bedColor, bedColor.alpha / 4);
 
 			gridColors = new GridColors()
 			{
@@ -70,12 +74,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// only render if we are above the bed
 				if (sceneContext.RendererOptions.RenderBed)
 				{
-					if (!this.LookingDownOnBed)
-					{
-						bedColor = new Color(bedColor, bedColor.alpha / 4);
-					}
-
-					GLHelper.Render(sceneContext.Mesh, bedColor, RenderTypes.Shaded, world.ModelviewMatrix);
+					GLHelper.Render(
+						sceneContext.Mesh,
+						this.LookingDownOnBed ? bedColor : underBedColor, 
+						RenderTypes.Shaded, 
+						world.ModelviewMatrix);
 
 					if (sceneContext.PrinterShape != null)
 					{
