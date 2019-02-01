@@ -59,11 +59,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private LightingData lighting = new LightingData();
 		private GuiWidget renderSource;
 
-		public InteractionLayer(WorldView world, BedConfig sceneContext, ThemeConfig theme, EditorType editorType = EditorType.Part)
+		public InteractionLayer(BedConfig sceneContext, ThemeConfig theme, EditorType editorType = EditorType.Part)
 		{
 			this.sceneContext = sceneContext;
 			this.Scene = scene = sceneContext.Scene;
-			this.World = world;
 			this.InteractionVolumes = interactionVolumes;
 			this.EditorMode = editorType;
 			this.theme = theme;

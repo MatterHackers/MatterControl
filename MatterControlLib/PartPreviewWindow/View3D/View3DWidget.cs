@@ -85,8 +85,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private WorldView World => sceneContext.World;
-
 		public TrackballTumbleWidget TrackballTumbleWidget { get; private set;}
 
 		public InteractionLayer InteractionLayer { get; }
@@ -103,7 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.printerTabPage = printerTabBase as PrinterTabPage;
 			this.Printer = printer;
 
-			this.InteractionLayer = new InteractionLayer(this.World, sceneContext, theme, editorType)
+			this.InteractionLayer = new InteractionLayer(sceneContext, theme, editorType)
 			{
 				Name = "InteractionLayer",
 			};
@@ -1041,7 +1039,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					InteractionLayer.RenderBounds(e, World, allResults);
+					InteractionLayer.RenderBounds(e, sceneContext.World, allResults);
 				}
 			}
 		}
@@ -1064,7 +1062,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (int i = 0; i < 3; i++)
 				{
 					Vector3 bottomStartPosition = Vector3Ex.Transform(tri.GetVertex(i), x.TransformToWorld);
-					traceBottoms[i] = this.World.GetScreenPosition(bottomStartPosition);
+					traceBottoms[i] = sceneContext.World.GetScreenPosition(bottomStartPosition);
 				}
 
 				for (int i = 0; i < 3; i++)
@@ -1082,10 +1080,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (int i = 0; i < 4; i++)
 				{
 					Vector3 bottomStartPosition = Vector3Ex.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), x.TransformToWorld);
-					traceBottoms[i] = this.World.GetScreenPosition(bottomStartPosition);
+					traceBottoms[i] = sceneContext.World.GetScreenPosition(bottomStartPosition);
 
 					Vector3 topStartPosition = Vector3Ex.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), x.TransformToWorld);
-					traceTops[i] = this.World.GetScreenPosition(topStartPosition);
+					traceTops[i] = sceneContext.World.GetScreenPosition(topStartPosition);
 				}
 
 				RectangleDouble.OutCode allPoints = RectangleDouble.OutCode.Inside;
@@ -1124,7 +1122,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var selectedItem = Scene.SelectedItem;
 			mouseDownPositon = mouseEvent.Position;
-			worldMatrixOnMouseDown = World.GetTransform4X4();
+			worldMatrixOnMouseDown = sceneContext.World.GetTransform4X4();
 			// Show transform override
 			if (activeButtonBeforeMouseOverride == null
 				&& (mouseEvent.Button == MouseButtons.Right || Keyboard.IsKeyDown(Keys.Control)))
@@ -1385,7 +1383,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Translate to local
 			Vector2 localPosition = this.InteractionLayer.TransformFromScreenSpace(screenSpacePosition);
 
-			Ray ray = this.World.GetRayForLocalBounds(localPosition);
+			Ray ray = sceneContext.World.GetRayForLocalBounds(localPosition);
 
 			return CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
 		}
@@ -1393,7 +1391,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void DragSelectedObject(IObject3D selectedItem, Vector2 localMousePosition)
 		{
 			Vector2 meshViewerWidgetScreenPosition = this.InteractionLayer.TransformFromParentSpace(this, localMousePosition);
-			Ray ray = this.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
+			Ray ray = sceneContext.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
 			if (!PositionWithinLocalBounds(localMousePosition.X, localMousePosition.Y))
 			{
@@ -1500,7 +1498,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			TrackballTumbleWidget.ZeroVelocity();
 
-			var world = this.World;
+			var world = sceneContext.World;
 
 			world.Reset();
 			world.Scale = .03;
@@ -1545,7 +1543,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// if we had a down and an up that did not move the view
-			if (worldMatrixOnMouseDown == World.GetTransform4X4())
+			if (worldMatrixOnMouseDown == sceneContext.World.GetTransform4X4())
 			{
 				// and we are the first under mouse
 				if (TrackballTumbleWidget.UnderMouseState == UnderMouseState.FirstUnderMouse)
@@ -1873,7 +1871,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected IObject3D FindHitObject3D(Vector2 screenPosition, ref IntersectInfo intersectionInfo)
 		{
 			Vector2 meshViewerWidgetScreenPosition = this.InteractionLayer.TransformFromParentSpace(this, screenPosition);
-			Ray ray = this.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
+			Ray ray = sceneContext.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
 			intersectionInfo = Scene.TraceData().GetClosestIntersection(ray);
 			if (intersectionInfo != null)
@@ -1912,11 +1910,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				for (int i = 0; i < 2; i++)
 				{
-					World.Render3DLine(
+					sceneContext.World.Render3DLine(
 						drawCenter - new Vector3(-50, 0, 0),
 						drawCenter - new Vector3(50, 0, 0), drawColor, zBuffer, 2);
 
-					World.Render3DLine(
+					sceneContext.World.Render3DLine(
 						drawCenter - new Vector3(0, -50, 0),
 						drawCenter - new Vector3(0, 50, 0), drawColor, zBuffer, 2);
 
