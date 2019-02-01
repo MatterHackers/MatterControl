@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public Align XAlign { get; set; } = Align.None;
 
 		[DisplayName("Anchor")]
-		[Icons(new string[] { "424.png", "align_to_left.png", "align_to_center_x.png", "align_to_right.png", "" }, InvertIcons = true)]
+		[Icons(new string[] { "424.png", "align_to_left.png", "align_to_center_x.png", "align_to_right.png", "align_origin.png" }, InvertIcons = true)]
 		public Align XAlignTo { get; set; } = Align.None;
 
 		[DisplayName("Offset")]
@@ -202,7 +202,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public Align YAlign { get; set; } = Align.None;
 
 		[DisplayName("Anchor")]
-		[Icons(new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png", "" }, InvertIcons = true)]
+		[Icons(new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png", "align_origin.png" }, InvertIcons = true)]
 		public Align YAlignTo { get; set; } = Align.None;
 
 		[DisplayName("Offset")]
@@ -213,7 +213,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public Align ZAlign { get; set; } = Align.None;
 
 		[DisplayName("Anchor")]
-		[Icons(new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png", "" }, InvertIcons = true)]
+		[Icons(new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png", "align_origin.png" }, InvertIcons = true)]
 		public Align ZAlignTo { get; set; } = Align.None;
 
 		[DisplayName("Offset")]
@@ -387,56 +387,26 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						i++;
 					}
 
-					// the align all the objects to it
+					// then align all the objects to it
 					i = 0;
 					foreach (var child in list)
 					{
 						if (XAlign != Align.None
 							&& i != anchorIndex)
 						{
-							if (XAlign == Align.Origin)
-							{
-								// find the origin in world space of the child
-								var firstOrigin = Vector3Ex.Transform(Vector3.Zero, AnchorObject.WorldMatrix());
-								var childOrigin = Vector3Ex.Transform(Vector3.Zero, child.WorldMatrix());
-								child.Translate(new Vector3(-(childOrigin - firstOrigin).X + (Advanced ? XOffset : 0), 0, 0));
-							}
-							else
-							{
-								AlignAxis(0, XAlign, GetAlignToOffset(CurrentChildrenBounds, 0, (!Advanced || XAlignTo == Align.None) ? XAlign : XAlignTo), XOffset, child);
-							}
+							AlignAxis(0, XAlign, GetAlignToOffset(CurrentChildrenBounds, 0, (!Advanced || XAlignTo == Align.None) ? XAlign : XAlignTo), XOffset, child);
 						}
 
 						if (YAlign != Align.None
 							&& i != anchorIndex)
 						{
-							if (YAlign == Align.Origin)
-							{
-								// find the origin in world space of the child
-								var firstOrigin = Vector3Ex.Transform(Vector3.Zero, AnchorObject.WorldMatrix());
-								var childOrigin = Vector3Ex.Transform(Vector3.Zero, child.WorldMatrix());
-								child.Translate(new Vector3(0, -(childOrigin - firstOrigin).Y + (Advanced ? YOffset : 0), 0));
-							}
-							else
-							{
-								AlignAxis(1, YAlign, GetAlignToOffset(CurrentChildrenBounds, 1, (!Advanced || YAlignTo == Align.None) ? YAlign : YAlignTo), YOffset, child);
-							}
+							AlignAxis(1, YAlign, GetAlignToOffset(CurrentChildrenBounds, 1, (!Advanced || YAlignTo == Align.None) ? YAlign : YAlignTo), YOffset, child);
 						}
 
 						if (ZAlign != Align.None
 							&& i != anchorIndex)
 						{
-							if (ZAlign == Align.Origin)
-							{
-								// find the origin in world space of the child
-								var firstOrigin = Vector3Ex.Transform(Vector3.Zero, AnchorObject.WorldMatrix());
-								var childOrigin = Vector3Ex.Transform(Vector3.Zero, child.WorldMatrix());
-								child.Translate(new Vector3(0, 0, -(childOrigin - firstOrigin).Z + (Advanced ? ZOffset : 0)));
-							}
-							else
-							{
-								AlignAxis(2, ZAlign, GetAlignToOffset(CurrentChildrenBounds, 2, (!Advanced || ZAlignTo == Align.None) ? ZAlign : ZAlignTo), ZOffset, child);
-							}
+							AlignAxis(2, ZAlign, GetAlignToOffset(CurrentChildrenBounds, 2, (!Advanced || ZAlignTo == Align.None) ? ZAlign : ZAlignTo), ZOffset, child);
 						}
 						i++;
 					}
@@ -472,15 +442,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public void UpdateControls(PublicPropertyChange change)
 		{
 			var editRow = change.Context.GetEditRow(nameof(XAlignTo));
-			if (editRow != null) editRow.Visible = Advanced && XAlign != Align.Origin;
+			if (editRow != null) editRow.Visible = Advanced;
 			editRow = change.Context.GetEditRow(nameof(XOffset));
 			if (editRow != null) editRow.Visible = Advanced;
 			editRow = change.Context.GetEditRow(nameof(YAlignTo));
-			if (editRow != null) editRow.Visible = Advanced && YAlign != Align.Origin;
+			if (editRow != null) editRow.Visible = Advanced;
 			editRow = change.Context.GetEditRow(nameof(YOffset));
 			if (editRow != null) editRow.Visible = Advanced;
 			editRow = change.Context.GetEditRow(nameof(ZAlignTo));
-			if (editRow != null) editRow.Visible = Advanced && ZAlign != Align.Origin;
+			if (editRow != null) editRow.Visible = Advanced;
 			editRow = change.Context.GetEditRow(nameof(ZOffset));
 			if (editRow != null) editRow.Visible = Advanced;
 		}
@@ -517,6 +487,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				case Align.Max:
 					translate[axis] = alignTo - aabb.MaxXYZ[axis] + offset;
 					break;
+
+				case Align.Origin:
+					// find the origin in world space of the item
+					var itemOrigin = Vector3Ex.Transform(Vector3.Zero, item.WorldMatrix());
+					translate[axis] = alignTo - itemOrigin[axis] + offset;
+					break;
 			}
 
 			item.Translate(translate);
@@ -534,6 +510,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 				case Align.Max:
 					return currentChildrenBounds[AnchorObjectIndex].MaxXYZ[axis];
+
+				case Align.Origin:
+					return Vector3Ex.Transform(Vector3.Zero, AnchorObject.WorldMatrix())[axis];
 
 				default:
 					throw new NotImplementedException();
