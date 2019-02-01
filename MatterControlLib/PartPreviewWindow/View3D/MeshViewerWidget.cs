@@ -75,21 +75,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnLoad(EventArgs args)
 		{
-			// some debug code to be able to click on parts
-			if (false)
-			{
-				AfterDraw += (sender, e) =>
-				{
-					foreach (var child in scene.Children)
-					{
-						this.World.RenderDebugAABB(e.Graphics2D, child.TraceData().GetAxisAlignedBoundingBox());
-						this.World.RenderDebugAABB(e.Graphics2D, child.GetAxisAlignedBoundingBox(Matrix4X4.Identity));
-					}
-				};
-			}
-
 			drawables.Add(new AxisIndicatorDrawable());
-			drawables.Add(new TraceDataDrawable(sceneContext));
+			//drawables.Add(new TraceDataDrawable(sceneContext));
+			drawables.Add(new AABBDrawable(sceneContext));
 
 			base.OnLoad(args);
 		}
