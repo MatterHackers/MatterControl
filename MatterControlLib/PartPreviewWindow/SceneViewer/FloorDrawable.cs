@@ -65,6 +65,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 		}
 
+		public bool Enabled { get; set; }
+
 		public string Title { get; } = "Render Floor";
 
 		public string Description { get; } = "Render a plane or bed floor";

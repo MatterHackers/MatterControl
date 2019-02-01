@@ -45,6 +45,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.scene = sceneContext.Scene;
 		}
 
+		public bool Enabled { get; set; }
+
 		public string Title { get; } = "TraceData Render";
 
 		public string Description { get; } = "Render TraceData for the scene";

@@ -48,6 +48,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public DrawStage DrawStage { get; } = DrawStage.Last;
 
+		public bool Enabled { get; set; }
+
 		public void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
 		{
 			foreach (var child in sceneContext.Scene.Children)

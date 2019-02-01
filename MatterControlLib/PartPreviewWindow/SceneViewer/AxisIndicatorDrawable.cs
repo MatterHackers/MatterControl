@@ -46,6 +46,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 		}
 
+		public bool Enabled { get; set; }
+
 		public string Title { get; } = "Axis Indicator";
 
 		public string Description { get; } = "Render Axis Indicator at origin";

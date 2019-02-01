@@ -45,6 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		string Title { get; }
 		string Description { get; }
+		bool Enabled { get; set; }
 		void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world);
 		DrawStage DrawStage { get; }
 	}
