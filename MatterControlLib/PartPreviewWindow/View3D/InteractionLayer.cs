@@ -50,7 +50,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public InteractiveScene Scene { get; }
 
 		public event EventHandler<DrawEventArgs> DrawGlOpaqueContent;
-		public event EventHandler<DrawEventArgs> DrawGlTransparentContent;
 
 		public bool DoOpenGlDrawing { get; set; } = true;
 
@@ -113,9 +112,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				GLHelper.SetGlContext(this.World, renderSource.TransformToScreenSpace(renderSource.LocalBounds), lighting);
 
-				// OnDrawGlContent
+				// Draw Gl Content
 				DrawGlOpaqueContent?.Invoke(this, e);
-				this.Draw_GlTransparentContent(e);
+				this.DrawGlTransparentContent(e);
 
 				GLHelper.UnsetGlContext();
 			}

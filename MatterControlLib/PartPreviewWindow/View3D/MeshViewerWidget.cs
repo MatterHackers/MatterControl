@@ -421,7 +421,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 
-		private void Draw_GlTransparentContent(DrawEventArgs e)
+		private void DrawGlTransparentContent(DrawEventArgs e)
 		{
 			var gcodeOptions = sceneContext.RendererOptions;
 
