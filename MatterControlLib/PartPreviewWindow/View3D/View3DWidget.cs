@@ -58,7 +58,7 @@ using MatterHackers.VectorMath.TrackBall;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class View3DWidget : GuiWidget
+	public class View3DWidget : GuiWidget, IDrawable
 	{
 		private bool deferEditorTillMouseUp = false;
 
@@ -108,6 +108,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "InteractionLayer",
 			};
 			this.InteractionLayer.AnchorAll();
+
+			// Register ourself as an IDrawable
+			this.InteractionLayer.RegisterDrawable(this);
 
 			this.viewControls3D = viewControls3D;
 			this.printer = printer;
@@ -361,8 +364,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Scene.SelectFirstChild();
 
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
-
-			this.InteractionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
 
 			sceneContext.SceneLoaded += SceneContext_SceneLoaded;
 
@@ -764,49 +765,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Scene.SetSelection(Scene.Children.ToList());
 		}
 
-		private void Draw_GlOpaqueContent(object sender, DrawEventArgs e)
-		{
-			if (CurrentSelectInfo.DownOnPart
-				&& TrackballTumbleWidget.TransformState == TrackBallTransformType.None
-				&& Keyboard.IsKeyDown(Keys.ShiftKey))
-			{
-				// draw marks on the bed to show that the part is constrained to x and y
-				AxisAlignedBoundingBox selectedBounds = Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-
-				var drawCenter = CurrentSelectInfo.PlaneDownHitPos;
-				var drawColor = new Color(Color.Red, 20);
-				bool zBuffer = false;
-
-				for (int i = 0; i < 2; i++)
-				{
-					World.Render3DLine(
-						drawCenter - new Vector3(-50, 0, 0),
-						drawCenter - new Vector3(50, 0, 0), drawColor, zBuffer, 2);
-
-					World.Render3DLine(
-						drawCenter - new Vector3(0, -50, 0),
-						drawCenter - new Vector3(0, 50, 0), drawColor, zBuffer, 2);
-
-					drawColor = Color.Black;
-					drawCenter.Z = 0;
-					zBuffer = true;
-				}
-
-				GL.Enable(EnableCap.Lighting);
-			}
-
-			// Render 3D GCode if applicable
-			if (sceneContext.LoadedGCode != null
-				&& sceneContext.GCodeRenderer != null
-				&& printerTabPage?.printer.ViewState.ViewMode == PartViewMode.Layers3D)
-			{
-				sceneContext.RenderGCode3D(e);
-			}
-
-			// This shows the BVH as rects around the scene items
-			//Scene?.TraceData().RenderBvhRecursive(0, 3);
-		}
-
 		public void AddUndoOperation(IUndoRedoCommand operation)
 		{
 			Scene.UndoBuffer.Add(operation);
@@ -821,7 +779,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Release events
 			this.Scene.SelectionChanged -= Scene_SelectionChanged;
 			this.Scene.Invalidated -= Scene_Invalidated;
-			this.InteractionLayer.DrawGlOpaqueContent -= Draw_GlOpaqueContent;
 
 			sceneContext.SceneLoaded -= SceneContext_SceneLoaded;
 			modelViewSidePanel.Resized -= ModelViewSidePanel_Resized;
@@ -1937,6 +1894,46 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void Save()
 		{
 			ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer, sceneContext.SaveChanges);
+		}
+
+		void IDrawable.Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
+		{
+			if (CurrentSelectInfo.DownOnPart
+				&& TrackballTumbleWidget.TransformState == TrackBallTransformType.None
+				&& Keyboard.IsKeyDown(Keys.ShiftKey))
+			{
+				// draw marks on the bed to show that the part is constrained to x and y
+				AxisAlignedBoundingBox selectedBounds = Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+
+				var drawCenter = CurrentSelectInfo.PlaneDownHitPos;
+				var drawColor = new Color(Color.Red, 20);
+				bool zBuffer = false;
+
+				for (int i = 0; i < 2; i++)
+				{
+					World.Render3DLine(
+						drawCenter - new Vector3(-50, 0, 0),
+						drawCenter - new Vector3(50, 0, 0), drawColor, zBuffer, 2);
+
+					World.Render3DLine(
+						drawCenter - new Vector3(0, -50, 0),
+						drawCenter - new Vector3(0, 50, 0), drawColor, zBuffer, 2);
+
+					drawColor = Color.Black;
+					drawCenter.Z = 0;
+					zBuffer = true;
+				}
+
+				GL.Enable(EnableCap.Lighting);
+			}
+
+			// Render 3D GCode if applicable
+			if (sceneContext.LoadedGCode != null
+				&& sceneContext.GCodeRenderer != null
+				&& printerTabPage?.printer.ViewState.ViewMode == PartViewMode.Layers3D)
+			{
+				sceneContext.RenderGCode3D(e);
+			}
 		}
 	}
 

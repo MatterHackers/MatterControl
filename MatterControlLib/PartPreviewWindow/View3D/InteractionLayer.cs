@@ -96,6 +96,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public void RegisterDrawable(IDrawable drawable)
+		{
+			this.drawables.Add(drawable);
+		}
+
 		internal void SetRenderTarget(GuiWidget renderSource)
 		{
 			this.renderSource = renderSource;
