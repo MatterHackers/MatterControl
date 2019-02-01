@@ -65,7 +65,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public InteractionLayer(WorldView world, UndoBuffer undoBuffer, BedConfig sceneContext, ThemeConfig theme, EditorType editorType = EditorType.Part)
 		{
-			this.DebugShowBounds = true;
 			this.sceneContext = sceneContext;
 			this.Scene = scene = sceneContext.Scene;
 			this.World = world;
@@ -82,8 +81,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			BuildVolumeColor = new ColorF(.2, .8, .3, .2).ToColor();
 
 			floorDrawable = new FloorDrawable(editorType, sceneContext, this.BuildVolumeColor, theme);
-
-			traceDataDebugger = new TraceDataDrawable(sceneContext);
 
 			///////////////////////// this.interactionLayer.DrawGlTransparentContent += Draw_GlTransparentContent;
 

@@ -63,7 +63,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private ThemeConfig theme;
 		private FloorDrawable floorDrawable;
-		private TraceDataDrawable traceDataDebugger;
+
+		private ModelRenderStyle modelRenderStyle = ModelRenderStyle.Wireframe;
+		private long lastSelectionChangedMs;
+		private List<IDrawable> drawables = new List<IDrawable>();
+
 
 		public bool AllowBedRenderingWhenEmpty { get; set; }
 
@@ -83,6 +87,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 			}
+
+			drawables.Add(new AxisIndicatorDrawable());
+			drawables.Add(new TraceDataDrawable(sceneContext));
 
 			base.OnLoad(args);
 		}
@@ -373,7 +380,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return drawColor;
 		}
 
-
 		private void RenderSelection(IObject3D item, Frustum frustum, Color selectionColor)
 		{
 			if (item.Mesh == null)
@@ -477,8 +483,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				floorDrawable.Draw(this, e, Matrix4X4.Identity, this.World);
 			}
 
-			traceDataDebugger.Draw(this, e, Matrix4X4.Identity, this.World);
-
 			var wireColor = Color.Transparent;
 			switch(modelRenderStyle)
 			{
@@ -516,6 +520,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var debugItem = scene.DebugItem;
 				GLHelper.Render(debugItem.Mesh, debugBorderColor, debugItem.WorldMatrix(),
 					RenderTypes.Wireframe, debugItem.WorldMatrix() * World.ModelviewMatrix);
+			}
+
+			foreach(var drawable in drawables)
+			{
+				drawable.Draw(this, e, Matrix4X4.Identity, this.World);
 			}
 		}
 		
@@ -558,10 +567,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			WireframeAndSolid,
 			None
 		}
-
-		private ModelRenderStyle modelRenderStyle = ModelRenderStyle.Wireframe;
-
-		private long lastSelectionChangedMs;
 
 		private class Object3DView
 		{

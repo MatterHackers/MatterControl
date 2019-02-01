@@ -47,8 +47,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
 		{
-			return;
-
 			// RenderSceneTraceData
 			var bvhIterator = new BvhIterator(scene?.TraceData(), decentFilter: (x) =>
 			{
