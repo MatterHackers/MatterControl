@@ -244,33 +244,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 
-				Color drawColor = GetItemColor(item);
+				Color drawColor = this.GetItemColor(item, selectedItem);
 
-				if(selectedItem is ISelectableChildContainer selectableChildContainer)
-				{
-					if(item.AncestorsAndSelf().Any(i => selectableChildContainer.SelectedChildren.Contains(i.ID)))
-					{
-						drawColor = new Color(drawColor, 200);
-					}
-				}
-
-				if (!sceneContext.ViewState.ModelView)
-				{
-					if (modelRenderStyle == ModelRenderStyle.WireframeAndSolid)
-					{
-						drawColor = gCodeMeshColor;
-					}
-					else if(modelRenderStyle == ModelRenderStyle.Wireframe)
-					{
-						drawColor = new Color(gCodeMeshColor, 1);
-					}
-					else if (modelRenderStyle == ModelRenderStyle.None)
-					{
-						drawColor = Color.Transparent;
-					}
-				}
-
-				bool hasTransparentTextures = item.Mesh.FaceTextures.Any((ft) => ft.Value.image.HasTransparency);
+				bool hasTransparentTextures = item.Mesh.FaceTextures.Any(ft => ft.Value.image.HasTransparency);
 
 				if ((drawColor.alpha == 255
 					&& !hasTransparentTextures)
@@ -328,7 +304,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private Color GetItemColor(IObject3D item)
+		private Color GetItemColor(IObject3D item, IObject3D selectedItem)
 		{
 			Color drawColor = item.WorldColor();
 			if (item.WorldOutputType() == PrintOutputTypes.Support)
@@ -355,6 +331,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& item is Object3D item3D)
 			{
 				item3D.EnsureTransparentSorting();
+			}
+
+			if (selectedItem is ISelectableChildContainer selectableChildContainer)
+			{
+				if (item.AncestorsAndSelf().Any(i => selectableChildContainer.SelectedChildren.Contains(i.ID)))
+				{
+					drawColor = new Color(drawColor, 200);
+				}
+			}
+
+			if (!sceneContext.ViewState.ModelView)
+			{
+				if (modelRenderStyle == ModelRenderStyle.WireframeAndSolid)
+				{
+					drawColor = gCodeMeshColor;
+				}
+				else if (modelRenderStyle == ModelRenderStyle.Wireframe)
+				{
+					drawColor = new Color(gCodeMeshColor, 1);
+				}
+				else if (modelRenderStyle == ModelRenderStyle.None)
+				{
+					drawColor = Color.Transparent;
+				}
 			}
 
 			return drawColor;
