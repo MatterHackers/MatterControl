@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -116,7 +117,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				GLHelper.SetGlContext(this.World, renderSource.TransformToScreenSpace(renderSource.LocalBounds), lighting);
 
 				// Draw Gl Content
-				this.DrawGlTransparentContent(e);
+				this.DrawGlContent(e);
 
 				GLHelper.UnsetGlContext();
 			}
