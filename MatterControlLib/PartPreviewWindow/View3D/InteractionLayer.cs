@@ -49,8 +49,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public InteractiveScene Scene { get; }
 
-		public event EventHandler<DrawEventArgs> DrawGlOpaqueContent;
-
 		public bool DoOpenGlDrawing { get; set; } = true;
 
 		// TODO: Collapse into auto-property
@@ -118,7 +116,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				GLHelper.SetGlContext(this.World, renderSource.TransformToScreenSpace(renderSource.LocalBounds), lighting);
 
 				// Draw Gl Content
-				DrawGlOpaqueContent?.Invoke(this, e);
 				this.DrawGlTransparentContent(e);
 
 				GLHelper.UnsetGlContext();
