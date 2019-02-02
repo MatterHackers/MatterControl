@@ -172,6 +172,15 @@ Translated:Tous les chauffages
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:Autorisez MatterControl à fractionner de longues lignes pour améliorer le nivellement et l'annulation de l'impression. Critique pour les imprimantes qui sont nettement hors niveau.
 
+English:Allows you turn on and off applying the fit to the x axis.
+Translated:Vous permet d'activer et de désactiver l'application de l'ajustement à l'axe des x.
+
+English:Allows you turn on and off applying the fit to the y axis.
+Translated:Vous permet d'activer et de désactiver l'application de l'ajustement à l'axe des ordonnées.
+
+English:Allows you turn on and off applying the fit to the z axis.
+Translated:Vous permet d'activer et de désactiver l'application de l'ajustement à l'axe des z.
+
 English:Alpha
 Translated:Alpha
 
@@ -418,6 +427,12 @@ Translated:Changement
 English:Change Password
 Translated:Changer le mot de passe
 
+English:Change the scale of the image within the coin.
+Translated:Changer l'échelle de l'image dans la pièce.
+
+English:Change the width of the image lines.
+Translated:Changer la largeur des lignes de l'image.
+
 English:Changing your update channel will change the version of MatterControl that you receive when updating
 Translated:Changer votre canal de mise à jour changera la version de MatterControl que vous recevrez lors de la mise à jour
 
@@ -441,6 +456,9 @@ Translated:Vérifie avant chaque impression que la hauteur de la couche est inf�
 
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:Choisissez la commande permettant d'afficher la progression de l'impression sur l'écran LCD de l'imprimante, le cas échéant.
+
+English:Choose to render as Braille or standard text. This can help show how grade 2 works.
+Translated:Choisissez de rendre le texte en braille ou standard. Cela peut aider à montrer comment fonctionne la 2e année.
 
 English:Clean Filament Page
 Translated:Nettoyer le filament
@@ -606,6 +624,12 @@ Translated:compter ou mm
 
 English:Create
 Translated:Créer
+
+English:Create a hook so that the coin can be hung from a chain.
+Translated:Créez un crochet afin que la pièce puisse être suspendue à une chaîne.
+
+English:Create a hook so the Braille can be hung from a necklace or keychain.
+Translated:Créez un crochet pour suspendre le braille à un collier ou à un porte-clés.
 
 English:Create a printer to export G-Code
 Translated:Créer une imprimante pour exporter le code G
@@ -879,6 +903,12 @@ Translated:Fin
 
 English:End G-Code
 Translated:Fin G-Code
+
+English:Ensure that the part maintains its proportions.
+Translated:Assurez-vous que la pièce conserve ses proportions.
+
+English:Ensures the rotated part has a minimum number of sides per complete rotation
+Translated:Assure que la pièce tournée a un nombre minimum de côtés par rotation complète
 
 English:Enter a Design Name Here
 Translated:Entrez un nom de conception ici
@@ -1190,7 +1220,7 @@ English:G-Code to be run after every tool change. You can use [wipe_tower_x] [wi
 Translated:G-Code à exécuter après chaque changement d’outil. Vous pouvez utiliser [wipe_tower_x] [wipe_tower_y] et [wipe_tower_z] pour définir la position de l'extrudeuse si nécessaire. Vous pouvez aussi utiliser '; WRITE_RAW 'pour ignorer les sommes de contrôle ou'; NO_PROCESSING 'pour ignorer le décalage de position.
 
 English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-Translated:G-Code à exécuter après le passage à l'extrudeuse 2. Utilisera standard après le G-Code si non défini. Vous pouvez utiliser [wipe_tower_x] [wipe_tower_y] et [wipe_tower_z] pour définir la position de l'extrudeuse si nécessaire. Vous pouvez aussi utiliser '; WRITE_RAW 'pour ignorer les sommes de contrôle ou'; NO_PROCESSING 'pour ignorer le décalage de position.
+Translated:Le code G doit être exécuté après le passage à l'extrudeuse 2. Utilisera un standard après le code G s'il n'est pas défini. Vous pouvez utiliser [wipe_tower_x] [wipe_tower_y] et [wipe_tower_z] pour définir la position de l'extrudeuse si nécessaire. Vous pouvez aussi utiliser '; WRITE_RAW 'pour ignorer les sommes de contrôle ou'; NO_PROCESSING 'pour ignorer le décalage de position.
 
 English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
 Translated:Le code G doit être exécuté après le passage à l'extrudeuse 2. Utilisera un standard après le code G s'il n'est pas défini. Vous pouvez utiliser [wipe_tower_x] [wipe_tower_y] et [wipe_tower_z] pour définir la position de l'extrudeuse si nécessaire. Vous pouvez aussi utiliser '; WRITE_RAW 'pour ignorer les sommes de contrôle ou'; NO_PROCESSING 'pour ignorer le décalage de position.
@@ -1542,6 +1572,9 @@ Translated:Il est temps de copier les paramètres de votre imprimante existante 
 
 English:Jerk Velocity
 Translated:Jerk Velocity
+
+English:Keep the entire extents of the part within the angle described.
+Translated:Conservez les étendues entières de la pièce dans l’angle décrit.
 
 English:Keep Within Angle
 Translated:Garder dans l'angle
@@ -1977,6 +2010,9 @@ Translated:Aucune imprimante sélectionnée
 
 English:None
 Translated:Aucun
+
+English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
+Translated:Normalement, l'image est agrandie jusqu'au bord. Cela va essayer de centrer le poids de l'image visuellement.
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
 Translated:Normalement, vous voudrez utiliser des distances e absolues. Cochez cette case uniquement si vous savez que votre imprimante a besoin de distances relatives.
@@ -2662,6 +2698,18 @@ Translated:Tourner (Alt + Souris Gauche)
 English:Rotate About
 Translated:Faire pivoter
 
+English:Rotate about the X axis
+Translated:Faire pivoter autour de l'axe X
+
+English:Rotate about the Y axis
+Translated:Tourner autour de l'axe Y
+
+English:Rotate about the Z axis
+Translated:Faire pivoter autour de l'axe Z
+
+English:Rotate the part to the same angle as the array.
+Translated:Faites pivoter la pièce selon le même angle que le tableau.
+
 English:Rotate View
 Translated:Vue en rotation
 
@@ -2821,11 +2869,20 @@ Translated:La session a expiré
 English:Set as Default
 Translated:Définir par défaut
 
+English:Set the rules for how to maintain the part while scaling.
+Translated:Définissez les règles pour la maintenance de la pièce lors de la mise à l'échelle.
+
+English:Set the shape the part will be fit into.
+Translated:Définissez la forme dans laquelle la pièce sera adaptée.
+
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
 Translated:Configure MatterControl pour tenter de se connecter à une imprimante via le réseau. (Vous devez vous déconnecter et vous reconnecter pour que cela prenne effet)
 
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
 Translated:Configure MatterControl pour utiliser la méthode de communication s3g. (Vous devez vous déconnecter et vous reconnecter pour que cela prenne effet)
+
+English:Sets the depth of the tile the Braille is printed on
+Translated:Définit la profondeur de la tuile sur laquelle le braille est imprimé
 
 English:Sets the models that will be added to the queue when a new printer is created.
 Translated:Définit les modèles qui seront ajoutés à la file d'attente lors de la création d'une nouvelle imprimante.
@@ -3153,6 +3210,9 @@ Translated:Soustraire
 
 English:Subtract & Replace
 Translated:Soustrayez et remplacez
+
+English:Subtract the image from a disk so that the negative space will be printed.
+Translated:Soustrayez l'image d'un disque pour que l'espace négatif soit imprimé.
 
 English:Success
 Translated:Succès
@@ -3661,6 +3721,9 @@ Translated:Ceci est le modèle d'imprimante ciblé par ce profil.
 English:This is the name of your printer that will be displayed in the choose printer menu.
 Translated:C'est le nom de votre imprimante qui sera affiché dans le menu Choisir une imprimante.
 
+English:This is the position to perform the scale about.
+Translated:C'est la position pour effectuer l'échelle environ.
+
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
 Translated:Ceci permet de réduire les vibrations lors de l’impression. Si votre imprimante a une fréquence de résonance qui pose problème, vous pouvez l’essayer pour réduire l’impression à cette fréquence.
 
@@ -3711,6 +3774,9 @@ Translated:Pour compléter les prochaines étapes, vous aurez besoin
 
 English:To Folder
 Translated:Dans le dossier
+
+English:Toggle between specifying the size or the percentage to scale.
+Translated:Basculez entre spécifier la taille ou le pourcentage à mettre à l'échelle.
 
 English:Toggle Selection
 Translated:Basculer la sélection
@@ -3877,6 +3943,9 @@ Translated:Téléchargement...
 English:Use Automatic Z Probe
 Translated:Utiliser la sonde automatique Z
 
+English:Use Braille grade 2 (contractions)
+Translated:Utilisez le degré 2 en braille (contractions)
+
 English:Use cursor keys for axis movements
 Translated:Utilisez les touches du curseur pour les mouvements d'axes
 
@@ -4041,6 +4110,9 @@ Translated:Lors de la mise à niveau vers un nouveau microprogramme, sauvegardez
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
 Translated:Si vous utilisez plusieurs extrudeuses, le filament de distance sera inversé avant de passer à une autre extrudeuse.
+
+English:Where to start the bend as a percent of the width of the part
+Translated:Où commencer le pli en tant que pourcentage de la largeur de la pièce
 
 English:Width
 Translated:Largeur

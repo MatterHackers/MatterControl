@@ -172,6 +172,15 @@ Translated:Tüm Isıtıcılar
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:MatterControl'ün düzleştirme ve baskı iptalini geliştirmek için uzun çizgiler bölmesine izin verin. Belirgin düzeyde olmayan yazıcılar için kritik.
 
+English:Allows you turn on and off applying the fit to the x axis.
+Translated:X eksenine uyumu uygulayarak açıp kapatmanıza olanak tanır.
+
+English:Allows you turn on and off applying the fit to the y axis.
+Translated:Y eksenine uyumu uygulayarak açıp kapatmanıza izin verir.
+
+English:Allows you turn on and off applying the fit to the z axis.
+Translated:Z eksenine uyumu uygulayarak açıp kapatmanıza olanak tanır.
+
 English:Alpha
 Translated:Alfa
 
@@ -418,6 +427,12 @@ Translated:Değişiklik
 English:Change Password
 Translated:Şifre değiştir
 
+English:Change the scale of the image within the coin.
+Translated:Bozuk para içindeki görüntünün ölçeğini değiştirin.
+
+English:Change the width of the image lines.
+Translated:Görüntü çizgilerinin genişliğini değiştirin.
+
 English:Changing your update channel will change the version of MatterControl that you receive when updating
 Translated:Güncelleme kanalınızı değiştirmek, güncelleme yaparken aldığınız MatterControl sürümünü değiştirecektir.
 
@@ -441,6 +456,9 @@ Translated:Her baskıdan önce, tabaka yüksekliğinin meme çapından daha az o
 
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:Yazıcının ilerlemesini göstermek için, varsa yazıcının LCD ekranında gösterilen komutu seçin.
+
+English:Choose to render as Braille or standard text. This can help show how grade 2 works.
+Translated:Braille veya standart metin olarak oluşturmayı seçin. Bu, 2. sınıfın nasıl çalıştığını göstermeye yardımcı olabilir.
 
 English:Clean Filament Page
 Translated:Filament Sayfasını Temizle
@@ -607,6 +625,12 @@ Translated:saymak veya mm
 English:Create
 Translated:yaratmak
 
+English:Create a hook so that the coin can be hung from a chain.
+Translated:Madeni para bir zincire asılabilmesi için bir kanca oluşturun.
+
+English:Create a hook so the Braille can be hung from a necklace or keychain.
+Translated:Braille'in bir kolye veya anahtarlıktan asılabilmesi için bir kanca oluşturun.
+
 English:Create a printer to export G-Code
 Translated:G Kodunu dışa aktarmak için bir yazıcı oluşturun
 
@@ -647,7 +671,7 @@ English:Creates a perimeter around the part on which to wipe the other nozzle wh
 Translated:İkili ekstrüzyon kullanarak yazdırırken diğer memeyi silecek parçanın etrafında bir çevre oluşturur. Devre dışı bırakmak için 0 olarak ayarlayın.
 
 English:Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
-Translated:Yazdırılan kısmın altında bir sal oluşturur. Parçaların yatağa yapışmasına yardımcı olduğundan, ABS (ve diğer eğilme eğilimli plastikleri) yazdırırken çarpmayı önlemek için kullanışlıdır.
+Translated:Yazdırılan kısmın altında bir sal oluşturur. Parçaların yatağa yapışmasına yardımcı olduğundan, ABS'yi (ve diğer çarpma eğilimli plastikleri) yazdırırken çarpmayı önlemek için kullanışlıdır.
 
 English:Creates an outline around the print, but not attached to it. This is useful for priming the nozzle to ensure the plastic is flowing when the print starts.
 Translated:Baskının etrafında bir anahat oluşturur, ancak buna eklenmez. Bu, baskı başladığında plastiğin akmasını sağlamak için nozülü doldurmak için kullanışlıdır.
@@ -879,6 +903,12 @@ Translated:Son
 
 English:End G-Code
 Translated:G kodunu sonlandır
+
+English:Ensure that the part maintains its proportions.
+Translated:Parçanın oranlarını koruduğundan emin olun.
+
+English:Ensures the rotated part has a minimum number of sides per complete rotation
+Translated:Döndürülmüş parçanın tam dönüş başına minimum kenar sayısına sahip olmasını sağlar
 
 English:Enter a Design Name Here
 Translated:Buraya Bir Tasarım Adı Girin
@@ -1543,6 +1573,9 @@ Translated:Mevcut yazıcı ayarlarınızı MatterHackers hesabınıza kopyalaman
 English:Jerk Velocity
 Translated:Jerk Velocity
 
+English:Keep the entire extents of the part within the angle described.
+Translated:Parçanın tüm uzantılarını açıklanan açıda tutun.
+
 English:Keep Within Angle
 Translated:Açıda Tut
 
@@ -1977,6 +2010,9 @@ Translated:Seçili Yazıcı Yok
 
 English:None
 Translated:Yok
+
+English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
+Translated:Normal olarak görüntü kenara genişletilir. Bu, görüntünün ağırlığını görsel olarak ortalamaya çalışır.
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
 Translated:Normalde mutlak e mesafeleri kullanmak isteyeceksiniz. Bunu yalnızca yazıcınızın göreceli mesafelere ihtiyacı olduğunu biliyorsanız kontrol edin.
@@ -2662,6 +2698,18 @@ Translated:Döndür (Alt + Sol Fare)
 English:Rotate About
 Translated:Hakkında Döndür
 
+English:Rotate about the X axis
+Translated:X ekseni etrafında döndürün
+
+English:Rotate about the Y axis
+Translated:Y ekseni etrafında döndür
+
+English:Rotate about the Z axis
+Translated:Z ekseni etrafında döndür
+
+English:Rotate the part to the same angle as the array.
+Translated:Parçayı, diziyle aynı açıya döndürün.
+
 English:Rotate View
 Translated:Görüntüyü döndür
 
@@ -2821,11 +2869,20 @@ Translated:Oturum süresi doldu
 English:Set as Default
 Translated:Varsayılan olarak ayarla
 
+English:Set the rules for how to maintain the part while scaling.
+Translated:Ölçeklendirme sırasında parçanın nasıl korunacağına ilişkin kuralları belirleyin.
+
+English:Set the shape the part will be fit into.
+Translated:Parçanın sığacağı şekli ayarlayın.
+
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
 Translated:Ağ üzerinden bir yazıcıya bağlanmayı denemek için MatterControl'ü ayarlar. (Bunun etkili olması için bağlantıyı kesip yeniden bağlamanız gerekir)
 
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
 Translated:MatterControl'ü s3g iletişim yöntemini kullanacak şekilde ayarlar. (Bunun etkili olması için bağlantıyı kesip yeniden bağlamanız gerekir)
+
+English:Sets the depth of the tile the Braille is printed on
+Translated:Braille’in üzerine basıldığı döşemenin derinliğini ayarlar
 
 English:Sets the models that will be added to the queue when a new printer is created.
 Translated:Yeni bir yazıcı oluşturulduğunda kuyruğa eklenecek modelleri ayarlar.
@@ -3153,6 +3210,9 @@ Translated:çıkarmak
 
 English:Subtract & Replace
 Translated:Çıkar ve Değiştir
+
+English:Subtract the image from a disk so that the negative space will be printed.
+Translated:Negatif alanın yazdırılması için görüntüyü bir diskten çıkarın.
 
 English:Success
 Translated:başarı
@@ -3661,6 +3721,9 @@ Translated:Bu, bu profilin hedef aldığı yazıcının modelidir.
 English:This is the name of your printer that will be displayed in the choose printer menu.
 Translated:Bu, yazıcı seçim menüsünde görüntülenecek yazıcınızın adıdır.
 
+English:This is the position to perform the scale about.
+Translated:Bu, ölçeği gerçekleştirecek konumdur.
+
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
 Translated:Bu, yazdırma sırasındaki titreşimleri azaltmaya yardımcı olmak içindir. Yazıcınızın sorun çıkaran bir rezonans frekansı varsa, bunu bu frekansta yazdırmayı denemek ve azaltmak için ayarlayabilirsiniz.
 
@@ -3711,6 +3774,9 @@ Translated:Sonraki birkaç adımı tamamlamak için ihtiyacınız olacak.
 
 English:To Folder
 Translated:Klasöre
+
+English:Toggle between specifying the size or the percentage to scale.
+Translated:Boyut belirtme ile ölçeklenecek yüzdeyi belirleme arasında geçiş yapın.
 
 English:Toggle Selection
 Translated:Geçiş Seçimi
@@ -3877,6 +3943,9 @@ Translated:Yükleme ...
 English:Use Automatic Z Probe
 Translated:Otomatik Z Probunu Kullan
 
+English:Use Braille grade 2 (contractions)
+Translated:Braille 2. sınıfını kullanın (kasılmalar)
+
 English:Use cursor keys for axis movements
 Translated:Eksen hareketleri için imleç tuşlarını kullanın
 
@@ -4041,6 +4110,9 @@ Translated:Yeni bellenime yükseltirken, önce geçerli bellenimin yedeklemesini
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
 Translated:Birden fazla ekstrüder kullanılırken, mesafe filamenti farklı bir ekstrüdere geçmeden önce tersine dönecektir.
+
+English:Where to start the bend as a percent of the width of the part
+Translated:Parçanın genişliğinin yüzdesi olarak bükülmeye nerede başlanır
 
 English:Width
 Translated:Genişlik
