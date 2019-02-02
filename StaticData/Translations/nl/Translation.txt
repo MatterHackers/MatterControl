@@ -172,6 +172,15 @@ Translated:Alle kachels
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:Sta MatterControl toe om lange lijnen te splitsen om het nivelleren en printen annuleren te verbeteren. Kritiek voor printers die aanzienlijk te laag zijn.
 
+English:Allows you turn on and off applying the fit to the x axis.
+Translated:Hiermee kunt u het toepassen van de aanpassing op de x-as in- en uitschakelen.
+
+English:Allows you turn on and off applying the fit to the y axis.
+Translated:Hiermee kunt u het toepassen van de aanpassing op de y-as in- en uitschakelen.
+
+English:Allows you turn on and off applying the fit to the z axis.
+Translated:Hiermee kunt u het toepassen van de aanpassing op de z-as in- en uitschakelen.
+
 English:Alpha
 Translated:Alpha
 
@@ -418,6 +427,12 @@ Translated:Verandering
 English:Change Password
 Translated:Wachtwoord wijzigen
 
+English:Change the scale of the image within the coin.
+Translated:Verander de schaal van de afbeelding binnen de munt.
+
+English:Change the width of the image lines.
+Translated:Verander de breedte van de beeldlijnen.
+
 English:Changing your update channel will change the version of MatterControl that you receive when updating
 Translated:Als u uw updatekanaal wijzigt, verandert de versie van MatterControl die u ontvangt tijdens het bijwerken
 
@@ -441,6 +456,9 @@ Translated:Controleert voor elke afdruk dat de laaghoogte kleiner is dan de spui
 
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:Kies de opdracht voor het weergeven van de voortgang van de afdruk op het LCD-scherm van de printer, indien aanwezig.
+
+English:Choose to render as Braille or standard text. This can help show how grade 2 works.
+Translated:Kies ervoor om te renderen als braille of standaardtekst. Dit kan helpen laten zien hoe Grade 2 werkt.
 
 English:Clean Filament Page
 Translated:Schone gloeidraadpagina
@@ -606,6 +624,12 @@ Translated:tellen of mm
 
 English:Create
 Translated:creëren
+
+English:Create a hook so that the coin can be hung from a chain.
+Translated:Maak een haak zodat de munt aan een ketting kan worden gehangen.
+
+English:Create a hook so the Braille can be hung from a necklace or keychain.
+Translated:Maak een haak zodat de braille aan een ketting of sleutelhanger kan worden gehangen.
 
 English:Create a printer to export G-Code
 Translated:Maak een printer om G-code te exporteren
@@ -879,6 +903,12 @@ Translated:Einde
 
 English:End G-Code
 Translated:G-code beëindigen
+
+English:Ensure that the part maintains its proportions.
+Translated:Zorg ervoor dat het onderdeel zijn verhoudingen behoudt.
+
+English:Ensures the rotated part has a minimum number of sides per complete rotation
+Translated:Zorgt ervoor dat het geroteerde deel een minimum aantal zijden heeft per volledige rotatie
 
 English:Enter a Design Name Here
 Translated:Voer hier een ontwerpnaam in
@@ -1543,6 +1573,9 @@ Translated:Het is tijd om uw bestaande printerinstellingen naar uw MatterHackers
 English:Jerk Velocity
 Translated:Jerk Velocity
 
+English:Keep the entire extents of the part within the angle described.
+Translated:Houd de gehele delen van het onderdeel binnen de beschreven hoek.
+
 English:Keep Within Angle
 Translated:Keep Within Angle
 
@@ -1977,6 +2010,9 @@ Translated:Geen printer geselecteerd
 
 English:None
 Translated:Geen
+
+English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
+Translated:Normaal gesproken wordt het beeld uitgebreid tot de rand. Hiermee wordt geprobeerd het gewicht van de afbeelding visueel te centreren.
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
 Translated:Normaal gesproken wilt u absolute e afstanden gebruiken. Schakel dit alleen in als u weet dat uw printer relatieve afstanden nodig heeft.
@@ -2662,6 +2698,18 @@ Translated:Roteren (Alt + linker muis)
 English:Rotate About
 Translated:Roteer over
 
+English:Rotate about the X axis
+Translated:Roteer rond de X-as
+
+English:Rotate about the Y axis
+Translated:Roteer rond de Y-as
+
+English:Rotate about the Z axis
+Translated:Roteer rond de Z-as
+
+English:Rotate the part to the same angle as the array.
+Translated:Roteer het onderdeel in dezelfde hoek als de array.
+
 English:Rotate View
 Translated:Draai de weergave
 
@@ -2821,11 +2869,20 @@ Translated:Sessie verlopen
 English:Set as Default
 Translated:Stel in als standaard
 
+English:Set the rules for how to maintain the part while scaling.
+Translated:Stel de regels in voor het onderhoud van het onderdeel tijdens het schalen.
+
+English:Set the shape the part will be fit into.
+Translated:Stel de vorm in waartoe het onderdeel zal passen.
+
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
 Translated:Stelt MatterControl in om via het netwerk verbinding te maken met een printer. (U moet de verbinding verbreken en opnieuw verbinden om dit van kracht te laten worden)
 
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
 Translated:Stelt MatterControl in om de s3g-communicatiemethode te gebruiken. (U moet de verbinding verbreken en opnieuw verbinden om dit van kracht te laten worden)
+
+English:Sets the depth of the tile the Braille is printed on
+Translated:Hiermee stelt u de diepte in van de tegel waarop de braille is afgedrukt
 
 English:Sets the models that will be added to the queue when a new printer is created.
 Translated:Hiermee stelt u de modellen in die aan de wachtrij worden toegevoegd wanneer een nieuwe printer wordt gemaakt.
@@ -3153,6 +3210,9 @@ Translated:Aftrekken
 
 English:Subtract & Replace
 Translated:Aftrekken en vervangen
+
+English:Subtract the image from a disk so that the negative space will be printed.
+Translated:Trek de afbeelding van een schijf af, zodat de negatieve spatie wordt afgedrukt.
 
 English:Success
 Translated:Succes
@@ -3661,6 +3721,9 @@ Translated:Dit is het printermodel waarop dit profiel is gericht.
 English:This is the name of your printer that will be displayed in the choose printer menu.
 Translated:Dit is de naam van uw printer die wordt weergegeven in het menu Printer kiezen.
 
+English:This is the position to perform the scale about.
+Translated:Dit is de positie om de schaal uit te voeren.
+
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
 Translated:Dit helpt om trillingen tijdens het afdrukken te verminderen. Als uw printer een resonantiefrequentie heeft die problemen veroorzaakt, kunt u dit instellen om te proberen het afdrukken op die frequentie te verminderen.
 
@@ -3711,6 +3774,9 @@ Translated:Om de volgende paar stappen te voltooien die je nodig hebt
 
 English:To Folder
 Translated:Naar map
+
+English:Toggle between specifying the size or the percentage to scale.
+Translated:Wissel tussen het opgeven van de grootte of het percentage dat u wilt schalen.
 
 English:Toggle Selection
 Translated:Selectie wisselen
@@ -3877,6 +3943,9 @@ Translated:Uploaden ...
 English:Use Automatic Z Probe
 Translated:Gebruik de automatische Z-probe
 
+English:Use Braille grade 2 (contractions)
+Translated:Gebruik braille graad 2 (weeën)
+
 English:Use cursor keys for axis movements
 Translated:Gebruik cursortoetsen voor asbewegingen
 
@@ -4041,6 +4110,9 @@ Translated:Bij het upgraden naar nieuwe firmware, sla eerst een back-up van de h
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
 Translated:Bij gebruik van meerdere extruders, zal de afstandsdraad omkeren voordat er naar een andere extruder wordt overgeschakeld.
+
+English:Where to start the bend as a percent of the width of the part
+Translated:Waar de bocht begint als een percentage van de breedte van het onderdeel
 
 English:Width
 Translated:Breedte

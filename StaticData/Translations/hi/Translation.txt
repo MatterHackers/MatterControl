@@ -172,6 +172,15 @@ Translated:सभी हीटर
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:MatterControl को समतल करने और प्रिंट रद्द करने में सुधार करने के लिए लंबी लाइनों को विभाजित करने की अनुमति दें। प्रिंटर के लिए महत्वपूर्ण है जो स्तर से काफी बाहर हैं।
 
+English:Allows you turn on and off applying the fit to the x axis.
+Translated:आपको एक्स अक्ष पर फिट को लागू करने की अनुमति देता है।
+
+English:Allows you turn on and off applying the fit to the y axis.
+Translated:आपको फिट को y अक्ष पर लागू करने की अनुमति देता है।
+
+English:Allows you turn on and off applying the fit to the z axis.
+Translated:आपको फिट को z अक्ष पर लागू करने की अनुमति देता है।
+
 English:Alpha
 Translated:अल्फा
 
@@ -418,6 +427,12 @@ Translated:परिवर्तन
 English:Change Password
 Translated:पासवर्ड बदलें
 
+English:Change the scale of the image within the coin.
+Translated:सिक्के के भीतर की छवि का पैमाना बदलें।
+
+English:Change the width of the image lines.
+Translated:छवि लाइनों की चौड़ाई बदलें।
+
 English:Changing your update channel will change the version of MatterControl that you receive when updating
 Translated:अपडेट करते समय आपके अपडेट चैनल को बदलने से MatterControl का संस्करण बदल जाएगा
 
@@ -441,6 +456,9 @@ Translated:प्रत्येक प्रिंट से पहले ज�
 
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:प्रिंटर की एलसीडी स्क्रीन पर प्रिंट प्रगति दिखाने के लिए कमांड चुनें, अगर यह एक है।
+
+English:Choose to render as Braille or standard text. This can help show how grade 2 works.
+Translated:ब्रेल या मानक पाठ के रूप में प्रस्तुत करना चुनें। यह दिखाने में मदद कर सकता है कि ग्रेड 2 कैसे काम करता है।
 
 English:Clean Filament Page
 Translated:स्वच्छ फिलामेंट पेज
@@ -606,6 +624,12 @@ Translated:गिनती या मिमी
 
 English:Create
 Translated:सर्जन करना
+
+English:Create a hook so that the coin can be hung from a chain.
+Translated:एक हुक बनाएं ताकि सिक्का एक श्रृंखला से लटका दिया जा सके।
+
+English:Create a hook so the Braille can be hung from a necklace or keychain.
+Translated:एक हुक बनाएं ताकि ब्रेल को एक हार या किचेन से लटका दिया जा सके।
 
 English:Create a printer to export G-Code
 Translated:G-Code निर्यात करने के लिए एक प्रिंटर बनाएँ
@@ -879,6 +903,12 @@ Translated:समाप्त
 
 English:End G-Code
 Translated:अंत जी कोड
+
+English:Ensure that the part maintains its proportions.
+Translated:सुनिश्चित करें कि भाग अपने अनुपात को बनाए रखता है।
+
+English:Ensures the rotated part has a minimum number of sides per complete rotation
+Translated:सुनिश्चित करता है कि घुमाए गए भाग में पूर्ण रोटेशन के प्रति न्यूनतम संख्या हो
 
 English:Enter a Design Name Here
 Translated:यहां एक डिज़ाइन नाम दर्ज करें
@@ -1543,6 +1573,9 @@ Translated:यह आपके मौजूदा प्रिंटर से�
 English:Jerk Velocity
 Translated:झटका वेग
 
+English:Keep the entire extents of the part within the angle described.
+Translated:वर्णित कोण के भीतर भाग के पूरे विस्तार रखें।
+
 English:Keep Within Angle
 Translated:एंगल के भीतर रखें
 
@@ -1977,6 +2010,9 @@ Translated:कोई प्रिंटर चयनित नहीं है
 
 English:None
 Translated:कोई नहीं
+
+English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
+Translated:आम तौर पर छवि को किनारे तक विस्तारित किया जाता है। यह छवि के वजन को नेत्रहीन रूप से केंद्रित करने की कोशिश करेगा।
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
 Translated:आम तौर पर आप निरपेक्ष ई दूरी का उपयोग करना चाहते हैं। यह तभी जांचें जब आपको पता हो कि आपके प्रिंटर को सापेक्ष ई दूरियां चाहिए।
@@ -2662,6 +2698,18 @@ Translated:घुमाएँ (Alt + वाम माउस)
 English:Rotate About
 Translated:के बारे में घुमाएँ
 
+English:Rotate about the X axis
+Translated:एक्स अक्ष के बारे में घुमाएँ
+
+English:Rotate about the Y axis
+Translated:Y अक्ष के बारे में घुमाएँ
+
+English:Rotate about the Z axis
+Translated:Z अक्ष के बारे में घुमाएँ
+
+English:Rotate the part to the same angle as the array.
+Translated:सरणी के समान भाग को घुमाएँ।
+
 English:Rotate View
 Translated:घुमाएँ दृश्य
 
@@ -2821,11 +2869,20 @@ Translated:सत्र समाप्त हुआ
 English:Set as Default
 Translated:डिफाल्ट के रूप में सेट
 
+English:Set the rules for how to maintain the part while scaling.
+Translated:स्केलिंग करते समय भाग को कैसे बनाए रखें, इसके लिए नियम निर्धारित करें।
+
+English:Set the shape the part will be fit into.
+Translated:आकार सेट करें भाग में फिट किया जाएगा।
+
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
 Translated:नेटवर्क पर प्रिंटर से कनेक्ट करने का प्रयास करने के लिए MatterControl सेट करता है। (प्रभावी होने के लिए आपको इसे डिस्कनेक्ट और पुनः कनेक्ट करना होगा)
 
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
 Translated:S3g संचार विधि का उपयोग करने के लिए MatterControl सेट करता है। (प्रभावी होने के लिए आपको इसे डिस्कनेक्ट और पुनः कनेक्ट करना होगा)
+
+English:Sets the depth of the tile the Braille is printed on
+Translated:टाइल की गहराई सेट करता है जिस पर ब्रेल मुद्रित है
 
 English:Sets the models that will be added to the queue when a new printer is created.
 Translated:जब एक नया प्रिंटर बनाया जाता है, तो मॉडल को कतार में जोड़ा जाएगा।
@@ -3153,6 +3210,9 @@ Translated:घटाना
 
 English:Subtract & Replace
 Translated:घटाना और बदलना
+
+English:Subtract the image from a disk so that the negative space will be printed.
+Translated:डिस्क से छवि को घटाएं ताकि नकारात्मक स्थान मुद्रित हो जाए।
 
 English:Success
 Translated:सफलता
@@ -3661,6 +3721,9 @@ Translated:यह प्रिंटर का मॉडल है जो इस
 English:This is the name of your printer that will be displayed in the choose printer menu.
 Translated:यह आपके प्रिंटर का नाम है जिसे चुनिंदा प्रिंटर मेनू में प्रदर्शित किया जाएगा।
 
+English:This is the position to perform the scale about.
+Translated:इस पैमाने के बारे में प्रदर्शन करने की स्थिति है।
+
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
 Translated:यह मुद्रण के दौरान कंपन को कम करने में मदद करना है। यदि आपके प्रिंटर में एक अनुनाद आवृत्ति है जो परेशानी पैदा कर रही है तो आप इसे उस आवृत्ति पर मुद्रण को कम करने के लिए सेट कर सकते हैं।
 
@@ -3711,6 +3774,9 @@ Translated:अगले कुछ चरणों को पूरा करन�
 
 English:To Folder
 Translated:फोल्डर को
+
+English:Toggle between specifying the size or the percentage to scale.
+Translated:आकार या प्रतिशत को निर्दिष्ट करने के बीच टॉगल करें
 
 English:Toggle Selection
 Translated:चयन टॉगल करें
@@ -3877,6 +3943,9 @@ Translated:अपलोड हो रहा है ...
 English:Use Automatic Z Probe
 Translated:स्वचालित Z जांच का उपयोग करें
 
+English:Use Braille grade 2 (contractions)
+Translated:ब्रेल ग्रेड 2 (संकुचन) का उपयोग करें
+
 English:Use cursor keys for axis movements
 Translated:अक्ष चाल के लिए कर्सर कुंजियों का उपयोग करें
 
@@ -4041,6 +4110,9 @@ Translated:नए फर्मवेयर में अपग्रेड क�
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
 Translated:कई एक्सट्रूडर का उपयोग करते समय, दूरी फ़िलामेंट एक अलग एक्सट्रूडर में बदलने से पहले रिवर्स होगा।
+
+English:Where to start the bend as a percent of the width of the part
+Translated:भाग की चौड़ाई के प्रतिशत के रूप में मोड़ शुरू करने के लिए कहाँ
 
 English:Width
 Translated:चौड़ाई

@@ -172,6 +172,15 @@ Translated:Alle varmeapparater
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:Tillad MatterControl at opdele lange linjer for at forbedre udjævning og udskriftsafbrydelse. Kritisk for printere, der er betydeligt ude af niveau.
 
+English:Allows you turn on and off applying the fit to the x axis.
+Translated:Giver dig mulighed for at tænde og slukke for at anvende pasformen til x-aksen.
+
+English:Allows you turn on and off applying the fit to the y axis.
+Translated:Giver dig mulighed for at tænde og slukke for at anvende pasformen til y-aksen.
+
+English:Allows you turn on and off applying the fit to the z axis.
+Translated:Giver dig mulighed for at tænde og slukke for pasformen til z-aksen.
+
 English:Alpha
 Translated:Alpha
 
@@ -418,6 +427,12 @@ Translated:Lave om
 English:Change Password
 Translated:Skift kodeord
 
+English:Change the scale of the image within the coin.
+Translated:Skift billedets skala inden for mønten.
+
+English:Change the width of the image lines.
+Translated:Ændre bredden af billedslinjerne.
+
 English:Changing your update channel will change the version of MatterControl that you receive when updating
 Translated:Hvis du ændrer din opdateringskanal, ændres den version af MatterControl, du modtager, når du opdaterer
 
@@ -441,6 +456,9 @@ Translated:Kontroller før hvert tryk, at lagets højde er mindre end dysediamet
 
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:Vælg kommandoen for at vise udskriftsfremgangen på printerens LCD-skærm, hvis den har en.
+
+English:Choose to render as Braille or standard text. This can help show how grade 2 works.
+Translated:Vælg at gøre som Braille eller standardtekst. Dette kan hjælpe med at vise, hvordan lønklasse 2 virker.
 
 English:Clean Filament Page
 Translated:Rens filamentside
@@ -606,6 +624,12 @@ Translated:tæller eller mm
 
 English:Create
 Translated:skab
+
+English:Create a hook so that the coin can be hung from a chain.
+Translated:Lav en krog, så mønten kan hænges fra en kæde.
+
+English:Create a hook so the Braille can be hung from a necklace or keychain.
+Translated:Lav en krog, så Braille kan hænges fra en halskæde eller nøglering.
 
 English:Create a printer to export G-Code
 Translated:Opret en printer til at eksportere G-kode
@@ -879,6 +903,12 @@ Translated:Ende
 
 English:End G-Code
 Translated:Afslut G-kode
+
+English:Ensure that the part maintains its proportions.
+Translated:Sørg for, at delen opretholder sine proportioner.
+
+English:Ensures the rotated part has a minimum number of sides per complete rotation
+Translated:Sikrer den roterede del har et minimum antal sider pr. Fuldstændig rotation
 
 English:Enter a Design Name Here
 Translated:Indtast et designnavn her
@@ -1543,6 +1573,9 @@ Translated:Det er på tide at kopiere dine eksisterende printerindstillinger til
 English:Jerk Velocity
 Translated:Jerk Velocity
 
+English:Keep the entire extents of the part within the angle described.
+Translated:Hold hele delens udstrækning inden for den beskrevne vinkel.
+
 English:Keep Within Angle
 Translated:Hold indenfor vinkel
 
@@ -1977,6 +2010,9 @@ Translated:Ingen printer valgt
 
 English:None
 Translated:Ingen
+
+English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
+Translated:Normalt udvides billedet til kanten. Dette vil forsøge at centrere vægten af billedet visuelt.
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
 Translated:Normalt vil du bruge absolutte afstande. Kontroller kun dette, hvis du ved, at din printer har brug for relative e-afstande.
@@ -2662,6 +2698,18 @@ Translated:Rotér (Alt + Venstre mus)
 English:Rotate About
 Translated:Roter omkring
 
+English:Rotate about the X axis
+Translated:Drej om X-aksen
+
+English:Rotate about the Y axis
+Translated:Drej om Y-aksen
+
+English:Rotate about the Z axis
+Translated:Drej om Z-aksen
+
+English:Rotate the part to the same angle as the array.
+Translated:Drej delen i samme vinkel som arrayet.
+
 English:Rotate View
 Translated:Roter visning
 
@@ -2821,11 +2869,20 @@ Translated:Sessionen er udløbet
 English:Set as Default
 Translated:Indstillet som standard
 
+English:Set the rules for how to maintain the part while scaling.
+Translated:Indstil reglerne for, hvordan du opretholder delen, mens du skalerer.
+
+English:Set the shape the part will be fit into.
+Translated:Indstil formen, som delen passer ind i.
+
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
 Translated:Indstiller MatterControl for at forsøge at oprette forbindelse til en printer via netværket. (Du skal frakoble og genoprette forbindelse til dette for at træde i kraft)
 
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
 Translated:Sætter MatterControl til at bruge s3g kommunikationsmetode. (Du skal frakoble og genoprette forbindelse til dette for at træde i kraft)
+
+English:Sets the depth of the tile the Braille is printed on
+Translated:Indstiller dybden af den flise, som punktskriftet er trykt på
 
 English:Sets the models that will be added to the queue when a new printer is created.
 Translated:Indstiller de modeller, der vil blive tilføjet til køen, når der oprettes en ny printer.
@@ -3153,6 +3210,9 @@ Translated:Trække fra
 
 English:Subtract & Replace
 Translated:Træk og erstat
+
+English:Subtract the image from a disk so that the negative space will be printed.
+Translated:Træk billedet fra en disk, så det negative rum bliver udskrevet.
 
 English:Success
 Translated:Succes
@@ -3661,6 +3721,9 @@ Translated:Dette er typen af printer, som denne profil målretter mod.
 English:This is the name of your printer that will be displayed in the choose printer menu.
 Translated:Dette er navnet på din printer, der vises i den valgte printermenu.
 
+English:This is the position to perform the scale about.
+Translated:Dette er positionen til at udføre skalaen omkring.
+
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
 Translated:Dette er for at hjælpe med at reducere vibrationer under udskrivning. Hvis din printer har en resonansfrekvens, der forårsager problemer, kan du indstille dette for at forsøge at reducere udskrivningen ved den frekvens.
 
@@ -3711,6 +3774,9 @@ Translated:For at gennemføre de næste trin skal du bruge
 
 English:To Folder
 Translated:Til mappe
+
+English:Toggle between specifying the size or the percentage to scale.
+Translated:Skift mellem angivelse af størrelsen eller procentdelen til skalaen.
 
 English:Toggle Selection
 Translated:Veksle valg
@@ -3877,6 +3943,9 @@ Translated:Uploader ...
 English:Use Automatic Z Probe
 Translated:Brug Automatisk Z Probe
 
+English:Use Braille grade 2 (contractions)
+Translated:Brug punktskrift 2 (sammentrækninger)
+
 English:Use cursor keys for axis movements
 Translated:Brug markørtaster til aksebevægelser
 
@@ -4041,6 +4110,9 @@ Translated:Når du opgraderer til ny firmware, skal du først gemme en sikkerhed
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
 Translated:Ved anvendelse af flere ekstrudere vil afstandsfilamentet vende om, inden der skiftes til en anden ekstruder.
+
+English:Where to start the bend as a percent of the width of the part
+Translated:Hvor skal man starte bøjningen som en procentdel af bredden af delen
 
 English:Width
 Translated:Bredde
