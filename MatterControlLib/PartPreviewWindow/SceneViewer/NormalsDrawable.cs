@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.scene = sceneContext.Scene;
 		}
 
-		public void Draw(GuiWidget sender, IObject3D item, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
+		public void Draw(GuiWidget sender, IObject3D item, bool isSelected, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
 		{
 			throw new NotImplementedException();
 #if false

@@ -36,14 +36,12 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
-using static MatterHackers.Agg.Easing;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -63,7 +61,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private FloorDrawable floorDrawable;
 
 		private ModelRenderStyle modelRenderStyle = ModelRenderStyle.Wireframe;
-		private long lastSelectionChangedMs;
 
 		private List<IDrawable> drawables = new List<IDrawable>();
 		private List<IDrawableItem> itemDrawables = new List<IDrawableItem>();
@@ -84,19 +81,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Enabled = false
 			});
 
+			itemDrawables.Add(new SelectedItemDrawable(sceneContext, this));
+
 #if DEBUG
 			itemDrawables.Add(new InspectedItemDrawable(sceneContext));
 #endif
 
+
 			base.OnLoad(args);
-		}
-
-		public override void OnClosed(EventArgs e)
-		{
-			// Unregister listeners
-			scene.SelectionChanged -= selection_Changed;
-
-			base.OnClosed(e);
 		}
 
 		public override List<WidgetAndPosition> FindDescendants(IEnumerable<string> namesToSearchFor, List<WidgetAndPosition> foundChildren, RectangleDouble touchingBounds, SearchType seachType, bool allowInvalidItems = true)
@@ -270,33 +262,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					&& (selectedItem.DescendantsAndSelf().Any((i) => i == item)
 						|| selectedItem.Parents<ModifiedMeshObject3D>().Any((mw) => mw == item));
 
-				if (isSelected && scene.DrawSelection)
-				{
-					var frustum = World.GetClippingFrustum();
-
-					var selectionColor = Color.White;
-					double secondsSinceSelectionChanged = (UiThread.CurrentTimerMs - lastSelectionChangedMs) / 1000.0;
-					if (secondsSinceSelectionChanged < .5)
-					{
-						var accentColor = Color.LightGray;
-						if (secondsSinceSelectionChanged < .25)
-						{
-							selectionColor = Color.White.Blend(accentColor, Quadratic.InOut(secondsSinceSelectionChanged * 4));
-						}
-						else
-						{
-							selectionColor = accentColor.Blend(Color.White, Quadratic.InOut((secondsSinceSelectionChanged - .25) * 4));
-						}
-						Invalidate();
-					}
-
-					RenderSelection(item, frustum, selectionColor);
-				}
 
 				// Invoke all item Drawables
 				foreach(var drawable in itemDrawables)
 				{
-					drawable.Draw(this, item, e, Matrix4X4.Identity, this.World);
+					drawable.Draw(this, item, isSelected, e, Matrix4X4.Identity, this.World);
 				}
 
 				// turn lighting back on after rendering selection outlines
@@ -358,43 +328,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			return drawColor;
-		}
-
-		private void RenderSelection(IObject3D item, Frustum frustum, Color selectionColor)
-		{
-			if (item.Mesh == null)
-			{
-				return;
-			}
-
-			// Turn off lighting
-			GL.Disable(EnableCap.Lighting);
-			// Only render back faces
-			GL.CullFace(CullFaceMode.Front);
-			// Expand the object
-			var worldMatrix = item.WorldMatrix();
-			var worldBounds = item.Mesh.GetAxisAlignedBoundingBox(worldMatrix);
-			var worldCenter = worldBounds.Center;
-			double distBetweenPixelsWorldSpace = World.GetWorldUnitsPerScreenPixelAtPosition(worldCenter);
-			var pixelsAccross = worldBounds.Size / distBetweenPixelsWorldSpace;
-			var pixelsWant = pixelsAccross + Vector3.One * 4 * Math.Sqrt(2);
-
-			var wantMm = pixelsWant * distBetweenPixelsWorldSpace;
-
-			var scaleMatrix = worldMatrix.ApplyAtPosition(worldCenter, Matrix4X4.CreateScale(
-				wantMm.X / worldBounds.XSize,
-				wantMm.Y / worldBounds.YSize,
-				wantMm.Z / worldBounds.ZSize));
-
-			GLHelper.Render(item.Mesh,
-				selectionColor,
-				scaleMatrix, RenderTypes.Shaded,
-				null,
-				darkWireframe);
-
-			// restore settings
-			GL.CullFace(CullFaceMode.Back);
-			GL.Enable(EnableCap.Lighting);
 		}
 
 		public enum EditorType { Printer, Part }
@@ -562,12 +495,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				interactionVolume.DrawGlContent(new DrawGlContentEventArgs(true, e));
 			}
-		}
-
-		void selection_Changed(object sender, EventArgs e)
-		{
-			Invalidate();
-			lastSelectionChangedMs = UiThread.CurrentTimerMs;
 		}
 
 		public enum ModelRenderStyle

@@ -52,6 +52,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public interface IDrawableItem
 	{
-		void Draw(GuiWidget sender, IObject3D item, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world);
+		void Draw(GuiWidget sender, IObject3D item, bool isSelected, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world);
 	}
 }

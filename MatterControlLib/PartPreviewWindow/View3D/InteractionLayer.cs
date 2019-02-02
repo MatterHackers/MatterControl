@@ -70,9 +70,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			gCodeMeshColor = new Color(theme.PrimaryAccentColor, 35);
 
-			// Register listeners
-			scene.SelectionChanged += selection_Changed;
-
 			BuildVolumeColor = new ColorF(.2, .8, .3, .2).ToColor();
 
 			floorDrawable = new FloorDrawable(editorType, sceneContext, this.BuildVolumeColor, theme);
