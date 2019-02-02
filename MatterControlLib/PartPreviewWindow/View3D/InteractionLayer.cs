@@ -113,12 +113,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (DoOpenGlDrawing)
 			{
-				GLHelper.SetGlContext(this.World, renderSource.TransformToScreenSpace(renderSource.LocalBounds), lighting);
-
 				// Draw Gl Content
 				this.DrawGlContent(e);
-
-				GLHelper.UnsetGlContext();
 			}
 		}
 

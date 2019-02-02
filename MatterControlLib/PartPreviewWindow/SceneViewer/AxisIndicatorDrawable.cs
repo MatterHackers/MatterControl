@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public string Description { get; } = "Render Axis Indicator at origin";
 
-		public DrawStage DrawStage { get; } = DrawStage.Last;
+		public DrawStage DrawStage { get; } = DrawStage.OpaqueContent;
 
 		public void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
 		{
